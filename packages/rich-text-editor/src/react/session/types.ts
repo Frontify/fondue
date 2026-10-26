@@ -22,49 +22,49 @@ export const DEFAULT_TOOLBAR_SHORTCUT = 'Alt-F10';
 
 /** What one mount keeps for its whole life: a changed `definition` or `profile` needs a new mount. */
 export type Mounted = {
-    readonly definition: CompiledEditorDefinition<object>;
-    readonly profile: Props['profile'];
+    definition: CompiledEditorDefinition<object>;
+    profile: Props['profile'];
     /** `undefined` for a blocked document, which gets no session. */
-    readonly decoded: { readonly tree: TreeNode; readonly capabilities: readonly CapabilityRef[] } | undefined;
-    readonly blocked: Extract<DecodeResult, { readonly status: 'blocked' }> | undefined;
+    decoded: { tree: TreeNode; capabilities: readonly CapabilityRef[] } | undefined;
+    blocked: Extract<DecodeResult, { status: 'blocked' }> | undefined;
     /** The document's own language and direction, which win over the theme's. */
-    readonly lang: string | undefined;
-    readonly dir: 'ltr' | 'rtl' | undefined;
+    lang: string | undefined;
+    dir: 'ltr' | 'rtl' | undefined;
     /** Mounted with `services.persistence`, which keeps the session managed for its whole life. */
-    readonly managed: boolean;
+    managed: boolean;
 };
 
 /** What the parts share for the toolbars and focus moves between the surface and the chrome. */
 export type Chrome = {
-    readonly items: readonly ToolbarItem[];
+    items: readonly ToolbarItem[];
     /** The rows that only the More menus hold. */
-    readonly menu: readonly ToolbarItem[];
+    menu: readonly ToolbarItem[];
     /** The block conversions the Turn into menus of node chrome and the context menu narrow to their block. */
-    readonly turnInto: readonly TurnIntoEntry[];
-    readonly strings: ToolbarStrings;
+    turnInto: readonly TurnIntoEntry[];
+    strings: ToolbarStrings;
     /** The bubble toolbar's and the context menu's names, and the More rows that switch the toolbar mode. */
-    readonly labels: {
-        readonly bubble: string;
-        readonly toBubble: string;
-        readonly toFixed: string;
-        readonly contextMenu: string;
-        readonly turnInto: string;
+    labels: {
+        bubble: string;
+        toBubble: string;
+        toFixed: string;
+        contextMenu: string;
+        turnInto: string;
     };
     /** The surface element `id`, generated when a toolbar's `aria-controls` needs one and the host set none. */
-    readonly surfaceId: string | undefined;
-    readonly toolbarRef: MutableRefObject<HTMLDivElement | null>;
-    readonly bubbleRef: MutableRefObject<HTMLDivElement | null>;
+    surfaceId: string | undefined;
+    toolbarRef: MutableRefObject<HTMLDivElement | null>;
+    bubbleRef: MutableRefObject<HTMLDivElement | null>;
     /** Opens the bubble toolbar of bubble mode at the selection and focuses it. */
-    readonly showBubbleRef: MutableRefObject<(() => void) | null>;
-    readonly mode: ToolbarMode;
+    showBubbleRef: MutableRefObject<(() => void) | null>;
+    mode: ToolbarMode;
     /** Switches the toolbar and reports the new mode to the host. */
-    readonly setMode: (mode: ToolbarMode) => void;
+    setMode: (mode: ToolbarMode) => void;
     /** The height the on-screen keyboard of a touch device covers, which a focused editor docks its toolbar above. */
-    readonly keyboard: number;
+    keyboard: number;
     /** The language of the chrome's strings, which the root, node chrome and plugin labels take (WCAG 2.2 SC 3.1.2). */
-    readonly lang: string;
+    lang: string;
     /** The chrome's strings in the shown locale. */
-    readonly t: ReturnType<typeof readerContext>['t'];
+    t: ReturnType<typeof readerContext>['t'];
 };
 
 /** The props the parts read, so a host rerender with equal props leaves the context alone. */
@@ -85,34 +85,34 @@ export const PART_KEYS = [
 export type PartProps = { readonly [K in (typeof PART_KEYS)[number]]?: Props[K] | undefined };
 
 export type RootContextValue = {
-    readonly props: PartProps;
+    props: PartProps;
     /** Stable, and call the host's latest callback. */
-    readonly onFocus: NonNullable<Props['onFocus']>;
-    readonly onBlur: NonNullable<Props['onBlur']>;
-    readonly submits: boolean;
-    readonly mounted: Mounted;
-    readonly coordinator: MountCoordinator;
-    readonly chrome: Chrome;
+    onFocus: NonNullable<Props['onFocus']>;
+    onBlur: NonNullable<Props['onBlur']>;
+    submits: boolean;
+    mounted: Mounted;
+    coordinator: MountCoordinator;
+    chrome: Chrome;
 };
 
 /** A running session and the write its coordinator left with an unknown outcome, which Retry hands on. */
 export type RecoverySession = {
-    readonly handle: RuntimeHandle;
-    readonly unresolved: () => SaveRequest | undefined;
+    handle: RuntimeHandle;
+    unresolved: () => SaveRequest | undefined;
 };
 
 export type SessionProps = Defined & {
-    readonly children: ReactNode;
+    children: ReactNode;
     /** The snapshot Retry mounts this session from, in place of `defaultValue`. */
-    readonly retried: LoadedDocument | undefined;
+    retried: LoadedDocument | undefined;
     /** Receives the handle of each session it runs, whose snapshot the recovery shell reads. */
-    readonly onSession: (session: RecoverySession) => void;
+    onSession: (session: RecoverySession) => void;
     /** The document holds changes the failed session before Retry never saved. */
-    readonly unsavedOnMount: boolean;
+    unsavedOnMount: boolean;
     /** The write the failed session left unresolved, which this one replays first. */
-    readonly carried: SaveRequest | undefined;
+    carried: SaveRequest | undefined;
     /** Mounts the editor again from this session's snapshot. */
-    readonly onRetry: () => void;
+    onRetry: () => void;
 };
 
 /** The session's props that stay when its own parts are taken out: the host's, and what Retry hands on. */

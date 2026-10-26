@@ -121,8 +121,8 @@ test.describe('on an image, by keyboard alone', () => {
 
     const imageAttrs = async (page: Page) => {
         const content = (await contentOf(page)) as readonly {
-            readonly type: string;
-            readonly content?: readonly { readonly attrs: Readonly<Record<string, unknown>> }[];
+            type: string;
+            content?: readonly { attrs: Readonly<Record<string, unknown>> }[];
         }[];
         const figure = content.find(({ type }) => type === 'figure');
         const children = figure?.content;

@@ -9,17 +9,17 @@ import { type EditorPort, hasSurface, nodeChromeOf, passesToBrowser } from '#/ru
 import { pressesBinding } from '#/ui/shortcuts';
 
 type ChromeFocus = {
-    readonly runtime: EditorPort | undefined;
+    runtime: EditorPort | undefined;
     /** The fixed toolbar, unless none renders or the editor is disabled. */
-    readonly toolbar: HTMLElement | null;
+    toolbar: HTMLElement | null;
     /** The toolbar of a plugin's standing overlay while it shows, such as a bubble at the caret. */
-    readonly overlayToolbar: HTMLElement | null;
+    overlayToolbar: HTMLElement | null;
     /** The bubble toolbar while it shows. */
-    readonly bubble: HTMLElement | null;
+    bubble: HTMLElement | null;
     /** In bubble mode, opens the bubble toolbar at the selection and focuses it. */
-    readonly showBubble: (() => void) | null;
+    showBubble: (() => void) | null;
     /** The package key binding that moves focus between the toolbars. */
-    readonly shortcut: string;
+    shortcut: string;
 };
 
 /** A toolbar Alt+F10 focuses, or the opener of the bubble toolbar that bubble mode has not shown yet. */

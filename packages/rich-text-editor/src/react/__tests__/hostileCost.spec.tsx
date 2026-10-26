@@ -32,12 +32,12 @@ const EXTRA_MS = 50;
 const RUNS = 3;
 
 type Fixture = {
-    readonly name: string;
-    readonly boundary: string;
-    readonly limits?: Partial<ResourceLimits>;
-    readonly input: unknown;
+    name: string;
+    boundary: string;
+    limits?: Partial<ResourceLimits>;
+    input: unknown;
 };
-type Part = string | { readonly repeat: string; readonly times: number };
+type Part = string | { repeat: string; times: number };
 
 /** A value with each `{ text: [...] }` of parts joined, as the hostile fixtures keep their long strings small. */
 const expand = (value: unknown): unknown => {
@@ -242,7 +242,7 @@ describe('hostile Markdown', () => {
     it.each(inBoundary('markdown-import').map((fixture) => [fixture.name, fixture] as const))(
         'imports %s within 50 ms beyond valid Markdown of its size, or a limit rejects it',
         (_name, { input, limits }) => {
-            const { markdown } = input as { readonly markdown: string };
+            const { markdown } = input as { markdown: string };
             const own = createCodecs(model, { limits: limits ?? {} });
             const result = own.fromMarkdown(markdown);
             if (result.status === 'blocked' && rejectedByLimit(result.diagnostics)) {
@@ -277,7 +277,7 @@ describe('hostile pasted content', () => {
     it.each(inBoundary('paste-and-drop').map((fixture) => [fixture.name, fixture] as const))(
         'pastes %s within 50 ms beyond a valid paste of its size, or a limit rejects it',
         async (_name, { input }) => {
-            const { mime } = input as { readonly mime: Readonly<Record<string, unknown>> };
+            const { mime } = input as { mime: Readonly<Record<string, unknown>> };
             const data: Record<string, string> = {};
             for (const [type, value] of Object.entries(mime)) {
                 data[type] = typeof value === 'string' ? value : JSON.stringify(value);

@@ -40,26 +40,26 @@ import { type Mounted, type RecoverySession, type SessionRest } from './types';
 
 /** Where the file chooser's files go, once the chooser reports them. */
 export type Choosing = {
-    readonly place: UploadPlace;
-    readonly session: SessionToken;
+    place: UploadPlace;
+    session: SessionToken;
 };
 
 type SessionWiring = {
-    readonly mounted: Mounted;
-    readonly loaded: LoadedDocument;
-    readonly coordinator: MountCoordinator;
-    readonly portals: PortalStore;
-    readonly work: ReactWork | undefined;
-    readonly announcer: Announcer;
-    readonly hosts: EditorHosts;
-    readonly scope: InteractionScope;
-    readonly latestRef: MutableRefObject<SessionRest>;
-    readonly chooserRef: MutableRefObject<HTMLInputElement | null>;
-    readonly choosingRef: MutableRefObject<Choosing | undefined>;
-    readonly handleRef: MutableRefObject<EditorHandle<object> | null>;
-    readonly setLive: (runtime: EditorPort | undefined) => void;
-    readonly setFaulted: (document: RichTextDocument) => void;
-    readonly onSession: (session: RecoverySession) => void;
+    mounted: Mounted;
+    loaded: LoadedDocument;
+    coordinator: MountCoordinator;
+    portals: PortalStore;
+    work: ReactWork | undefined;
+    announcer: Announcer;
+    hosts: EditorHosts;
+    scope: InteractionScope;
+    latestRef: MutableRefObject<SessionRest>;
+    chooserRef: MutableRefObject<HTMLInputElement | null>;
+    choosingRef: MutableRefObject<Choosing | undefined>;
+    handleRef: MutableRefObject<EditorHandle<object> | null>;
+    setLive: (runtime: EditorPort | undefined) => void;
+    setFaulted: (document: RichTextDocument) => void;
+    onSession: (session: RecoverySession) => void;
 };
 
 type Decoded = NonNullable<Mounted['decoded']>;

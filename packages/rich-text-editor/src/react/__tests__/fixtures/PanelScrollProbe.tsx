@@ -40,7 +40,7 @@ const definition = defineEditor({ id: 'test.panel-scroll', model, plugins: units
 declare global {
     // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
-        panelScroll?: { readonly open: () => void };
+        panelScroll?: { open: () => void };
     }
 }
 

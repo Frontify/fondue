@@ -330,8 +330,8 @@ export const editorEngine = (
     model: ContentModel,
     units: readonly RichTextPlugin[],
 ): {
-    readonly engine: CompiledDefinition;
-    readonly plugins: readonly EditorPart[];
+    engine: CompiledDefinition;
+    plugins: readonly EditorPart[];
 } => {
     const plugins = collectPlugins(model, units);
     const built = {
@@ -376,7 +376,7 @@ export const extensionsOf = (model: ContentModel, units: readonly RichTextPlugin
 
 /** Compiles an editor definition once, from units that cover the model exactly. */
 export const compileEditor = <Model extends ContentModel, Plugins extends readonly RichTextPlugin[]>(
-    options: EditorDefinitionOptions<Model> & { readonly plugins: Plugins },
+    options: EditorDefinitionOptions<Model> & { plugins: Plugins },
     profile?: RichTextProfile,
 ): CompiledEditorDefinition<CommandsOfPlugins<Plugins>> => {
     const { id, model, policy } = options;

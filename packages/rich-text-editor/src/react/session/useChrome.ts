@@ -31,20 +31,20 @@ const REASON_KEYS: Readonly<Record<string, `RichTextEditor_${string}`>> = {
 };
 
 type ChromeSources = {
-    readonly props: Props;
-    readonly shell: ReturnType<typeof shellPropsOf>;
-    readonly mounted: Mounted;
-    readonly hosts: EditorHosts;
-    readonly generatedId: string;
-    readonly langRef: MutableRefObject<string>;
-    readonly tRef: MutableRefObject<ReturnType<typeof readerContext>['t']>;
-    readonly overlayToolbarsRef: MutableRefObject<(HTMLElement | null)[]>;
-    readonly toolbarRef: MutableRefObject<HTMLDivElement | null>;
-    readonly bubbleRef: MutableRefObject<HTMLDivElement | null>;
-    readonly showBubbleRef: MutableRefObject<(() => void) | null>;
-    readonly toolbarMode: ToolbarMode;
-    readonly switchToolbar: (next: ToolbarMode) => void;
-    readonly keyboard: number;
+    props: Props;
+    shell: ReturnType<typeof shellPropsOf>;
+    mounted: Mounted;
+    hosts: EditorHosts;
+    generatedId: string;
+    langRef: MutableRefObject<string>;
+    tRef: MutableRefObject<ReturnType<typeof readerContext>['t']>;
+    overlayToolbarsRef: MutableRefObject<(HTMLElement | null)[]>;
+    toolbarRef: MutableRefObject<HTMLDivElement | null>;
+    bubbleRef: MutableRefObject<HTMLDivElement | null>;
+    showBubbleRef: MutableRefObject<(() => void) | null>;
+    toolbarMode: ToolbarMode;
+    switchToolbar: (next: ToolbarMode) => void;
+    keyboard: number;
 };
 
 /** The chrome the parts share: the shown language, the strings, the toolbar items and the plugins' standing overlays. */
@@ -171,13 +171,13 @@ export const useChrome = (sources: ChromeSources) => {
 };
 
 type KeySources = {
-    readonly props: Props;
-    readonly coordinator: MountCoordinator;
-    readonly toolbarRef: MutableRefObject<HTMLDivElement | null>;
-    readonly bubbleRef: MutableRefObject<HTMLDivElement | null>;
-    readonly showBubbleRef: MutableRefObject<(() => void) | null>;
-    readonly overlayToolbarsRef: MutableRefObject<(HTMLElement | null)[]>;
-    readonly toolbarMode: ToolbarMode;
+    props: Props;
+    coordinator: MountCoordinator;
+    toolbarRef: MutableRefObject<HTMLDivElement | null>;
+    bubbleRef: MutableRefObject<HTMLDivElement | null>;
+    showBubbleRef: MutableRefObject<(() => void) | null>;
+    overlayToolbarsRef: MutableRefObject<(HTMLElement | null)[]>;
+    toolbarMode: ToolbarMode;
 };
 
 /** Moves focus between the surface and the chrome on the keys the root hears. */
@@ -206,12 +206,12 @@ export const chromeKeyDownOf =
     };
 
 type OverlaySources = {
-    readonly props: Props;
-    readonly mounted: Mounted;
-    readonly overlayRoot: HTMLElement | null;
-    readonly scope: InteractionScope;
-    readonly pluginOverlay: PluginOverlay | undefined;
-    readonly chromeContext: ReturnType<typeof readerContext>;
+    props: Props;
+    mounted: Mounted;
+    overlayRoot: HTMLElement | null;
+    scope: InteractionScope;
+    pluginOverlay: PluginOverlay | undefined;
+    chromeContext: ReturnType<typeof readerContext>;
 };
 
 /** Where the overlays render, whether the file chooser exists, and the reference list's strings. */

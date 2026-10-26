@@ -29,9 +29,9 @@ const presentation = defineReactPresentation({
 
 /** One change as the probe records it: where it came from and the document content after it. */
 export type ListChange = {
-    readonly origin: string;
-    readonly commandId: string | null;
-    readonly content: unknown;
+    origin: string;
+    commandId: string | null;
+    content: unknown;
 };
 
 declare global {
@@ -39,9 +39,9 @@ declare global {
     interface Window {
         /** The list probe's handle, the selection helper and each change. */
         listRte?: {
-            readonly handle: EditorHandle<UnitCommands>;
-            readonly setSelection: typeof setSelection;
-            readonly changes: ListChange[];
+            handle: EditorHandle<UnitCommands>;
+            setSelection: typeof setSelection;
+            changes: ListChange[];
         };
     }
 }
@@ -68,15 +68,15 @@ export const ListProbe = ({
     strikeCheckedTasks = false,
 }: {
     /** Stored blocks, such as `list-blocks.ts` builds. */
-    readonly blocks: readonly object[];
+    blocks: readonly object[];
     /** The theme direction. */
-    readonly dir?: 'ltr' | 'rtl';
-    readonly reader?: boolean;
-    readonly listLevels?: ListLevels;
+    dir?: 'ltr' | 'rtl';
+    reader?: boolean;
+    listLevels?: ListLevels;
     /** Passed to the editor when set, else the editor keeps its default. */
-    readonly tabMovesFocus?: boolean;
+    tabMovesFocus?: boolean;
     /** Strikethrough and the secondary text colour on a checked task, in the editor and the reader. */
-    readonly strikeCheckedTasks?: boolean;
+    strikeCheckedTasks?: boolean;
 }) => {
     let options: Pick<RichTextEditorProps, 'tabMovesFocus'> = {};
     if (tabMovesFocus !== undefined) {

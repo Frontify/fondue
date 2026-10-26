@@ -11,7 +11,7 @@ const model = compileContentModel(featuresById(PERF_FEATURES), { id: 'test.many'
 const definition = defineEditor({ id: 'test.many', model, plugins: unitsOf(model) });
 
 /** `count` editors on one page, each with the `small` fixture, as a page of comments holds. */
-export const ManyEditors = ({ count }: { readonly count: number }) => (
+export const ManyEditors = ({ count }: { count: number }) => (
     <>
         {Array.from({ length: count }, (_, index) => (
             <RichTextEditor

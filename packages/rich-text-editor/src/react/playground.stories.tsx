@@ -281,37 +281,37 @@ const COLOR_TOKENS: readonly ColorToken[] = [
 type Commands = CommandsOfPlugins<typeof plugins>;
 type PlaygroundProps = RichTextEditorProps<Commands> & {
     /** The `create` value of the `marks.bold` authoring policy, which `updatePolicy` applies to the mounted editor. */
-    readonly allowNewBold: boolean;
+    allowNewBold: boolean;
     /** The `paste` value of the `marks.bold` authoring policy: off, pasted and dropped bold keeps its text only. */
-    readonly allowPastedBold: boolean;
+    allowPastedBold: boolean;
     /** The presentation's `sliceContext`; empty is `null`, the package's value for this page load. */
-    readonly sliceContext: string;
+    sliceContext: string;
     /** The presentation's `contentClassName`, which the surface carries beside `fondue-rte-content`. */
-    readonly contentClassName: string;
+    contentClassName: string;
     /** The presentation's `toolbarShortcut`, which moves focus between the surface and the toolbars. */
-    readonly toolbarShortcut: string;
+    toolbarShortcut: string;
     /** The presentation's `columns`, 1 to 6; above 1, the first `columns - 1` column breaks each end a column. */
-    readonly columns: number;
+    columns: number;
     /** The presentation's `columnGap`: `normal`, or a length in `px` or `rem`. */
-    readonly columnGap: string;
+    columnGap: string;
     /** Throws in render at mount, so the story opens on the recovery shell. */
-    readonly brokenAtMount: boolean;
+    brokenAtMount: boolean;
     /** Composes `RichTextEditor.BubbleToolbar`, which shows above a text selection beside the fixed toolbar. */
-    readonly bubbleToolbar: boolean;
+    bubbleToolbar: boolean;
     /** Renders the editor's overlays into a host element below the editor, as `portalContainer`. */
-    readonly hostPortalContainer: boolean;
+    hostPortalContainer: boolean;
     /** How the in-memory server answers each save, so `RichTextEditor.Status` shows each message. */
-    readonly serverAnswer: 'saved' | 'conflict' | 'forbidden' | 'invalid' | 'incompatible-writer';
+    serverAnswer: 'saved' | 'conflict' | 'forbidden' | 'invalid' | 'incompatible-writer';
     /** Strikethrough and secondary text colour on a checked task item, in the editor and the reader. */
-    readonly strikeCheckedTasks: boolean;
+    strikeCheckedTasks: boolean;
     /** The font size of the Lead brand style's recipe, in px; a change restyles every Lead block with no document change. */
-    readonly leadFontSize: number;
+    leadFontSize: number;
     /** The presentation's `resolveAssetUrl`; off, every image shows Image unavailable with its label. */
-    readonly resolveImages: boolean;
+    resolveImages: boolean;
     /** `services.assets`; off, Image opens the file chooser, whose files upload through `services.uploads`. */
-    readonly assetPicker: boolean;
+    assetPicker: boolean;
     /** Shows the host test buttons, the selection, save status, event log and JSON snapshot around the editor. */
-    readonly debug: boolean;
+    debug: boolean;
 };
 
 /** Reads the selection through `useEditorSelection`, which rerenders only when the shown text changes. */
@@ -322,7 +322,7 @@ const SelectionReadout = () => {
 };
 
 /** A host part that throws while rendering when `armed`, which shows the recovery shell. */
-const Breaker = ({ armed }: { readonly armed: boolean }) => {
+const Breaker = ({ armed }: { armed: boolean }) => {
     if (armed) {
         throw new Error('The playground broke the editor on purpose.');
     }
@@ -391,7 +391,7 @@ const Playground = ({
         columnGap,
         resolveImages,
     ]);
-    const [events, setEvents] = useState<readonly { readonly id: number; readonly text: string }[]>([]);
+    const [events, setEvents] = useState<readonly { id: number; text: string }[]>([]);
     const counterRef = useRef(0);
     const handleRef = useRef<EditorHandle<Commands>>(null);
     const targetRef = useRef<SelectionHandle | null>(null);
@@ -1178,7 +1178,7 @@ const PROFILE_MODELS = {
 } as const;
 
 /** A shipped profile's editor with its own definition and toolbar, which submits with its submit keys. */
-const ProfileEditor = ({ profile, required }: { readonly profile: RichTextProfile; readonly required: boolean }) => {
+const ProfileEditor = ({ profile, required }: { profile: RichTextProfile; required: boolean }) => {
     const [submits, setSubmits] = useState<readonly number[]>([]);
     const defaultValue = useMemo(
         () => ({

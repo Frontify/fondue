@@ -15,8 +15,8 @@ const slugOf = (heading: string) =>
         .replaceAll(/\s+/g, '-');
 
 type Described = {
-    readonly title: string;
-    readonly text: string;
+    title: string;
+    text: string;
 };
 
 /** The relative links and anchors in `text` that resolve to no story, docs page or heading. */
@@ -49,9 +49,7 @@ const brokenLinks = ({ text }: Described, ids: ReadonlySet<string>): string[] =>
 
 const STORY_IDS = new Set(COMPOSED_STORIES.flatMap(({ id }) => [id, `${id.split('--')[0] ?? ''}--documentation`]));
 const descriptions: readonly Described[] = COMPOSED_STORIES.map(({ file, name, parameters }) => {
-    const docs = parameters.docs as
-        | { readonly description?: { readonly component?: string; readonly story?: string } }
-        | undefined;
+    const docs = parameters.docs as { description?: { component?: string; story?: string } } | undefined;
     const description = docs?.description;
     let component = '';
     let story = '';

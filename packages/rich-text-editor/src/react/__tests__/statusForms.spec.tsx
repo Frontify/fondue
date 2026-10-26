@@ -75,7 +75,7 @@ const STORED = loaded('document-1', null, para(text('ab')));
 
 /** One `save` call, which waits until the test answers it. */
 type Call = {
-    readonly request: SaveRequest;
+    request: SaveRequest;
     /** Resolves with `response`, or with the reference fake's answer. */
     answer(response?: SaveResponse): void;
     fail(): void;
@@ -108,8 +108,8 @@ const Host = ({
     fieldRef,
     ...props
 }: Props & {
-    readonly editorRef: RefObject<EditorHandle<object>>;
-    readonly fieldRef: { current: RichTextFormField | null };
+    editorRef: RefObject<EditorHandle<object>>;
+    fieldRef: { current: RichTextFormField | null };
 }) => {
     fieldRef.current = useRichTextFormField(editorRef);
 
@@ -843,7 +843,7 @@ describe('useRichTextFormField', () => {
         });
 
         expect(value).toBe(handle().getSnapshot().document);
-        expect(JSON.stringify((value as { readonly content: unknown }).content)).toContain('"text":"abc"');
+        expect(JSON.stringify((value as { content: unknown }).content)).toContain('"text":"abc"');
     });
 
     it('resolves the settled value at once while no composition is active', async () => {

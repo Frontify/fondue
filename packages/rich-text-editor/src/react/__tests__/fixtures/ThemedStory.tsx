@@ -8,9 +8,9 @@ import { ThemeProviderWrapper } from '#storybook/components/StoryWithTheme';
 const Links = composeStory(links.Default, links.default);
 
 type ThemedStoryProps = {
-    readonly theme: 'light' | 'dark' | 'both';
-    readonly direction: 'ltr' | 'rtl';
-    readonly locale: string;
+    theme: 'light' | 'dark' | 'both';
+    direction: 'ltr' | 'rtl';
+    locale: string;
 };
 
 /** The links story's definition and arguments, wrapped as the root Storybook's preview wraps every story. */

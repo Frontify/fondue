@@ -17,7 +17,7 @@ import { PERF_FEATURES, perfDocument } from '../../model/__tests__/fixtures/perf
 // The spy wraps the real function, since the editor still hashes a document where it must, such as a replacement.
 const hashes = vi.hoisted(() => ({ calls: 0 }));
 vi.mock('#/model/hash', async (importOriginal) => {
-    const original = await importOriginal<{ readonly hashDocument: typeof RealHash }>();
+    const original = await importOriginal<{ hashDocument: typeof RealHash }>();
 
     return {
         ...original,
@@ -95,7 +95,7 @@ it('serializes, hashes and calls toJSON on no document over 100 keystrokes in th
 it('rejects typing from the byte limit on in the large fixture, counting bytes with no toJSON call', () => {
     const model = compileContentModel(featuresById(PERF_FEATURES), { id: 'test.keystroke-limit', version: 1 });
     let document = perfDocument('large', model);
-    const mountWith = (limits: { readonly maxDocumentBytes?: number }) => {
+    const mountWith = (limits: { maxDocumentBytes?: number }) => {
         const defaultValue = { documentId: 'document-1', revision: null, document };
         const definition = defineEditor({ id: 'test.keystroke-limit', model, limits, plugins: unitsOf(model) });
         const ref = createRef<EditorHandle>();

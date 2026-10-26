@@ -12,7 +12,7 @@ import { validityOf } from './validity';
 /** A handle for a form to read the editor's document and check that it is valid. */
 export type RichTextFormField = {
     getValue(): RichTextDocument;
-    validate(): { readonly valid: true } | { readonly valid: false; readonly reason: 'empty' | 'too-long' };
+    validate(): { valid: true } | { valid: false; reason: 'empty' | 'too-long' };
     /**
      * Replaces with the `defaultValue` record, discarding unsaved changes, and empties the history. A host whose session
      * saves through `services.persistence` keeps `defaultValue` at the last acknowledged record, so a reset discards only
@@ -20,13 +20,13 @@ export type RichTextFormField = {
      */
     reset(): Promise<ReplaceResult>;
     /** Resolves with the committed document, or rejects with code `timeout`. */
-    getSettledValue(options: { readonly timeoutMs: number }): Promise<RichTextDocument>;
+    getSettledValue(options: { timeoutMs: number }): Promise<RichTextDocument>;
 };
 
 /** The editor props the form field reads, by the handle of the session that renders with them. */
 type FieldProps = {
-    readonly required?: boolean | undefined;
-    readonly defaultValue: LoadedDocument;
+    required?: boolean | undefined;
+    defaultValue: LoadedDocument;
 };
 const fieldProps = new WeakMap<object, () => FieldProps>();
 

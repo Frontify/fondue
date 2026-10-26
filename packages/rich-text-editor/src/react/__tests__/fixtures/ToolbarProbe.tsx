@@ -77,18 +77,18 @@ declare global {
     interface Window {
         /** The mounted toolbar editor's handle, for tests that drive it from the page. */
         toolbarEditor?: {
-            readonly handle: EditorHandle<UnitCommands>;
-            readonly setSelection: typeof setSelection;
+            handle: EditorHandle<UnitCommands>;
+            setSelection: typeof setSelection;
             /** The HTML of the runtime's document, as the surface shows it. */
-            readonly html: () => string;
+            html: () => string;
             /** The runtime's view, which a theme or media change must keep. */
-            readonly view: () => object | undefined;
+            view: () => object | undefined;
         };
     }
 }
 
 /** A button that announces a message through the editor's live region, which the tests press. */
-const Announce = ({ message, coalesce }: { readonly message: string; readonly coalesce: string | undefined }) => {
+const Announce = ({ message, coalesce }: { message: string; coalesce: string | undefined }) => {
     const announcer = useContext(AnnouncerContext);
 
     return (
@@ -115,25 +115,25 @@ export const ToolbarProbe = ({
     controls,
     announce,
 }: {
-    readonly texts?: readonly string[];
-    readonly blocks?: readonly ContentNodeJSON[];
-    readonly disabled?: boolean;
-    readonly readOnly?: boolean;
-    readonly boldBlocked?: boolean;
-    readonly dir?: 'ltr' | 'rtl';
-    readonly theme?: 'light' | 'dark';
-    readonly toolbarShortcut?: string;
+    texts?: readonly string[];
+    blocks?: readonly ContentNodeJSON[];
+    disabled?: boolean;
+    readOnly?: boolean;
+    boldBlocked?: boolean;
+    dir?: 'ltr' | 'rtl';
+    theme?: 'light' | 'dark';
+    toolbarShortcut?: string;
     /** The editor's width in CSS pixels. */
-    readonly width?: number;
+    width?: number;
     /** Puts the editor in a scrolling container of this height. */
-    readonly scrollHeight?: number;
+    scrollHeight?: number;
     /** Composes `RichTextEditor.Root` with the toolbar and the surface in place of `RichTextEditor`. */
-    readonly compose?: boolean;
+    compose?: boolean;
     /** Adds the six heading levels to the toolbar. */
-    readonly wide?: boolean;
-    readonly controls?: ReactPresentation['controls'];
+    wide?: boolean;
+    controls?: ReactPresentation['controls'];
     /** Adds a button that announces this message, which the live region of the composed editor reads. */
-    readonly announce?: string;
+    announce?: string;
 }) => {
     const ref = useRef<EditorHandle<object>>(null);
     const presentation = useMemo(() => {

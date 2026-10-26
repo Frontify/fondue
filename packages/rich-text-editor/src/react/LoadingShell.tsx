@@ -8,13 +8,13 @@ import { contentClasses } from '#/model/internal';
 
 /** What the loading shell names: the host's accessible name and test id, and the profile's line mode. */
 export type LoadingShellProps = {
-    readonly locale: RichTextLocale;
-    readonly testId: string;
-    readonly contentClassName: string | undefined;
-    readonly multiline: boolean;
-    readonly label: string | undefined;
-    readonly labelledBy: string | undefined;
-    readonly spellCheck: boolean;
+    locale: RichTextLocale;
+    testId: string;
+    contentClassName: string | undefined;
+    multiline: boolean;
+    label: string | undefined;
+    labelledBy: string | undefined;
+    spellCheck: boolean;
 };
 
 /** The markup the server renders before hydration, shown while a profile's module loads, so the page and a screen reader find the textbox. */

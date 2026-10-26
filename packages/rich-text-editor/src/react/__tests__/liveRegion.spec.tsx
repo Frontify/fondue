@@ -8,10 +8,10 @@ import { describe, expect, it, vi } from 'vitest';
 import { liveRegionFaults } from './fixtures/liveRegion';
 
 type StoriesModule = Parameters<typeof composeStories>[0];
-type Glob = (patterns: readonly string[], options: { readonly eager: true }) => Record<string, StoriesModule>;
+type Glob = (patterns: readonly string[], options: { eager: true }) => Record<string, StoriesModule>;
 
 // Every story file of the package, as the Storybook test runner renders them.
-const modules = (import.meta as unknown as { readonly glob: Glob }).glob(['../../**/*.stories.tsx'], { eager: true });
+const modules = (import.meta as unknown as { glob: Glob }).glob(['../../**/*.stories.tsx'], { eager: true });
 const stories = Object.entries(modules).flatMap(([path, module]) =>
     Object.entries(composeStories(module)).map(([name, Story]) => ({
         title: `${path} ${name}`,

@@ -13,14 +13,14 @@ import { memberOf, pluginPresentationOf } from './helpers';
 import { DEFAULT_TEST_ID, type SessionRest } from './types';
 
 type HostWiring = {
-    readonly coordinator: MountCoordinator;
-    readonly scope: InteractionScope;
-    readonly announcer: Announcer;
-    readonly panelActionsRef: Parameters<typeof usePluginHosts>[0]['panels'];
-    readonly openPanelRef: MutableRefObject<string | undefined>;
-    readonly tRef: MutableRefObject<ReturnType<typeof readerContext>['t']>;
-    readonly langRef: MutableRefObject<string>;
-    readonly latestRef: MutableRefObject<SessionRest>;
+    coordinator: MountCoordinator;
+    scope: InteractionScope;
+    announcer: Announcer;
+    panelActionsRef: Parameters<typeof usePluginHosts>[0]['panels'];
+    openPanelRef: MutableRefObject<string | undefined>;
+    tRef: MutableRefObject<ReturnType<typeof readerContext>['t']>;
+    langRef: MutableRefObject<string>;
+    latestRef: MutableRefObject<SessionRest>;
 };
 
 /** The hosts the plugins call, reading the newest props, strings and language when they run. */

@@ -13,13 +13,13 @@ import { ready } from './fixtures/ready';
 
 type Effect = {
     /** The editor sets `onSubmit`. */
-    readonly submits?: boolean;
+    submits?: boolean;
     /** The editor gets the host services an image needs. */
-    readonly services?: boolean;
+    services?: boolean;
     /** The toolbar mode the editor mounts with. */
-    readonly toolbarMode: 'fixed' | 'bubble';
+    toolbarMode: 'fixed' | 'bubble';
     /** Presses `key` and asserts the effect the row of the keyboard reference states. */
-    readonly run: (page: Page, key: string) => Promise<void>;
+    run: (page: Page, key: string) => Promise<void>;
 };
 
 const surfaceOf = (page: Page) => page.getByRole('textbox', { name: 'Message' });

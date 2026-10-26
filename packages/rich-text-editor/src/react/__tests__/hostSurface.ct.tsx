@@ -17,7 +17,7 @@ const placeholderShown = (page: Page) =>
     surfaceOf(page).evaluate((surface) => getComputedStyle(surface, '::before').content);
 
 /** Adds a host button that runs `command` with `options` through the handle when pressed. */
-const hostButton = (page: Page, name: string, command: string, options?: { readonly focus: string }) =>
+const hostButton = (page: Page, name: string, command: string, options?: { focus: string }) =>
     page.evaluate(
         ([label, id, given]) => {
             const button = document.createElement('button');
@@ -25,7 +25,7 @@ const hostButton = (page: Page, name: string, command: string, options?: { reado
             button.textContent = label;
             button.addEventListener('click', () => {
                 const handle = window.rte?.handle as unknown as {
-                    execute: (command: string, payload?: unknown, options?: unknown) => { readonly status: string };
+                    execute: (command: string, payload?: unknown, options?: unknown) => { status: string };
                 };
                 button.dataset.result = handle.execute(id, undefined, given).status;
             });

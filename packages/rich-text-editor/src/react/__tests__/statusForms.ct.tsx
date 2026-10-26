@@ -11,7 +11,7 @@ declare global {
     // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The replacement a test started, which the page holds while it waits. */
-        replacement?: Promise<{ readonly status: string }>;
+        replacement?: Promise<{ status: string }>;
     }
 }
 
@@ -268,7 +268,7 @@ test('rejects the settled value with code timeout while the composition goes on 
     const outcome = await page.evaluate(() =>
         (window.rte as Rte).field.getSettledValue({ timeoutMs: 200 }).then(
             () => 'resolved',
-            (error: { readonly code?: string }) => error.code,
+            (error: { code?: string }) => error.code,
         ),
     );
 

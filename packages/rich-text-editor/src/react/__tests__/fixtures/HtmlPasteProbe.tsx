@@ -20,8 +20,8 @@ declare global {
         /** The mounted editor of the HTML stand-ins and what the HTML paste tests read of it. */
         htmlPaste?: {
             /** The stored content of the published document. */
-            readonly content: () => unknown;
-            readonly selectAll: () => void;
+            content: () => unknown;
+            selectAll: () => void;
         };
     }
 }

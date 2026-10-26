@@ -16,17 +16,17 @@ const definition = defineEditor({ id: 'test.ct', model, plugins: unitsOf(model) 
 
 export type EditorHydrationResult = {
     /** `process.env.NODE_ENV` as the bundle was built; `development` keeps React's mismatch warnings. */
-    readonly mode: string;
+    mode: string;
     /** Every error React reported through `onRecoverableError`. */
-    readonly recoverable: readonly string[];
-    readonly serverHtml: string;
+    recoverable: readonly string[];
+    serverHtml: string;
     /** The surface text in the layout effects of the hydration commit, before any frame paints. */
-    readonly atCommit: string;
+    atCommit: string;
     /** The surface text in each animation frame from the hydration commit on. */
-    readonly frames: readonly string[];
+    frames: readonly string[];
 };
 
-const Committed = ({ onCommit }: { readonly onCommit: () => void }) => {
+const Committed = ({ onCommit }: { onCommit: () => void }) => {
     useLayoutEffect(onCommit, [onCommit]);
 
     return null;
@@ -41,10 +41,10 @@ export const EditorHydrationProbe = ({
     blocked = false,
     onDone,
 }: {
-    readonly text: string;
+    text: string;
     /** Stores the text in an unknown format version, which shows the blocked shell. */
-    readonly blocked?: boolean;
-    readonly onDone: (result: EditorHydrationResult) => void;
+    blocked?: boolean;
+    onDone: (result: EditorHydrationResult) => void;
 }) => {
     const hostRef = useRef<HTMLDivElement>(null);
     useEffect(() => {

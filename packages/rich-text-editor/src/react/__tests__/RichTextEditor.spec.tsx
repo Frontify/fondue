@@ -182,7 +182,7 @@ describe('RichTextEditor', () => {
     });
 
     it('destroys the view of a detached surface at once and attaches a new one', () => {
-        const Layout = ({ surfaceKey }: { readonly surfaceKey: string }) => (
+        const Layout = ({ surfaceKey }: { surfaceKey: string }) => (
             <RichTextEditor.Root aria-label="Notes" definition={definition} defaultValue={defaultValue()}>
                 <RichTextEditor.Surface key={surfaceKey} />
             </RichTextEditor.Root>
@@ -535,7 +535,7 @@ describe('RichTextEditor documents', () => {
             .filter((name) => name.endsWith('.json'))
             .sort()
             .map((name) => [`migration/${name}`, load('migration', name), notes] as const)
-            .filter(([, document]) => (document as { readonly model: { readonly version: number } }).model.version < 3),
+            .filter(([, document]) => (document as { model: { version: number } }).model.version < 3),
     ];
 
     it.each(opened)('opens %s with no document change or save for 2 seconds', (_name, document, used) => {
@@ -564,7 +564,7 @@ describe('RichTextEditor documents', () => {
         unmount();
     });
 
-    const urls = load('urls.json') as readonly { readonly input: string; readonly ok: boolean }[];
+    const urls = load('urls.json') as readonly { input: string; ok: boolean }[];
     const urlModel = compileContentModel([core(), links(), fixtureMedia()], { id: 'fixture.vocabulary', version: 1 });
     const linked = defineEditor({ id: 'test.urls', model: urlModel, plugins: unitsOf(urlModel) });
     const withUrl = (url: string) =>

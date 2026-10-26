@@ -6,19 +6,19 @@ import { type ComponentType } from 'react';
 import { ThemeProviderWrapper } from '#storybook/components/StoryWithTheme';
 
 type StoriesModule = Parameters<typeof composeStories>[0];
-type Glob = (patterns: readonly string[], options: { readonly eager: true }) => Record<string, StoriesModule>;
+type Glob = (patterns: readonly string[], options: { eager: true }) => Record<string, StoriesModule>;
 
 /** A story of the package as `composeStories` composes it. */
 export type ComposedStory = {
     /** The story file's path under `src`. */
-    readonly file: string;
-    readonly name: string;
-    readonly id: string;
-    readonly tags: readonly string[];
-    readonly args: Readonly<Record<string, unknown>>;
-    readonly parameters: Readonly<Record<string, unknown>>;
-    readonly play: ((context: { readonly canvasElement: HTMLElement }) => Promise<void>) | undefined;
-    readonly Story: ComponentType;
+    file: string;
+    name: string;
+    id: string;
+    tags: readonly string[];
+    args: Readonly<Record<string, unknown>>;
+    parameters: Readonly<Record<string, unknown>>;
+    play: ((context: { canvasElement: HTMLElement }) => Promise<void>) | undefined;
+    Story: ComponentType;
 };
 
 // The root preview's decorator, without its MDX docs page and global CSS that the test builds cannot load.
@@ -26,7 +26,7 @@ setProjectAnnotations({ decorators: [ThemeProviderWrapper] });
 
 // A root-absolute glob misses in the component test build, whose root is its `playwright` folder, so the keys are relative to this folder.
 const FOLDER = 'file:///react/__tests__/fixtures/';
-const modules = (import.meta as unknown as { readonly glob: Glob }).glob(['../../../**/*.stories.tsx'], {
+const modules = (import.meta as unknown as { glob: Glob }).glob(['../../../**/*.stories.tsx'], {
     eager: true,
 });
 

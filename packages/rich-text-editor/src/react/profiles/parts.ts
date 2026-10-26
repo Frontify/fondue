@@ -9,8 +9,8 @@ export const NOT_CREATABLE: FeaturePolicy = { create: false, edit: true, remove:
 
 /** A shipped profile's definition and its default presentation. */
 export type ShippedProfile = {
-    readonly definition: CompiledEditorDefinition<object>;
-    readonly presentation: ReactPresentation;
+    definition: CompiledEditorDefinition<object>;
+    presentation: ReactPresentation;
     /** The default presentation on a touch device, whose toolbar starts with undo and redo. */
-    readonly touchPresentation?: ReactPresentation;
+    touchPresentation?: ReactPresentation;
 };

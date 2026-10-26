@@ -13,8 +13,8 @@ const pixels = (value: string): number => {
 };
 
 type Columns = {
-    readonly count: number;
-    readonly gap: string;
+    count: number;
+    gap: string;
 };
 
 /** The surface's column layout: the latest presentation columns, and teardown. */

@@ -43,10 +43,7 @@ const pngBytes = () => {
 const STILL_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
 
 /** The axe violations of the whole page, each with the markup of its nodes. */
-const violations = async (
-    page: Page,
-    intended: readonly { readonly rule: string; readonly selector: string }[] = [],
-) => {
+const violations = async (page: Page, intended: readonly { rule: string; selector: string }[] = []) => {
     // WebKit keeps a lazy chunk's stylesheet out of the cascade while others load, so axe reads unstyled markup before.
     await stylesApplied(page);
     // Overlays fade in, so axe reads them once their finite animations have ended.

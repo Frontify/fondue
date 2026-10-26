@@ -19,13 +19,13 @@ declare global {
          * with the selection and command helpers that specs prepare a state with.
          */
         profileProbe?: {
-            readonly submitted: string[];
-            readonly enterKeys: boolean[];
+            submitted: string[];
+            enterKeys: boolean[];
             handle: EditorHandle<object> | null;
-            readonly select: (target: SelectionTarget) => void;
+            select: (target: SelectionTarget) => void;
             /** Selects the first node of type `name` as a node, which a block with no `nodeId` cannot be named by. */
-            readonly selectNode: (name: string) => void;
-            readonly execute: (command: string, payload?: unknown) => void;
+            selectNode: (name: string) => void;
+            execute: (command: string, payload?: unknown) => void;
         };
     }
 }
@@ -67,22 +67,22 @@ const probe: NonNullable<Window['profileProbe']> = {
 window.profileProbe = probe;
 
 type ProfileProbeProps = {
-    readonly profile: RichTextProfile;
+    profile: RichTextProfile;
     /** Sets `onSubmit`, which records each submitted snapshot's text. */
-    readonly submits?: boolean;
-    readonly required?: boolean;
+    submits?: boolean;
+    required?: boolean;
     /** Sets `enterBehavior: 'none'` once the editor is ready. */
-    readonly enterNone?: boolean;
-    readonly defaultToolbarMode?: ToolbarMode;
-    readonly disabled?: boolean;
-    readonly readOnly?: boolean;
-    readonly status?: 'neutral' | 'error';
+    enterNone?: boolean;
+    defaultToolbarMode?: ToolbarMode;
+    disabled?: boolean;
+    readOnly?: boolean;
+    status?: 'neutral' | 'error';
     /** Gives a host asset picker and reference search, so Image and Mention run. */
-    readonly withServices?: boolean;
+    withServices?: boolean;
     /** Sets the surface's `id`, the `aria-describedby` and the `aria-errormessage` it names. */
-    readonly id?: string;
-    readonly describedby?: string;
-    readonly errormessage?: string;
+    id?: string;
+    describedby?: string;
+    errormessage?: string;
 };
 
 // A host picker that hands back one asset, and a directory of one person.

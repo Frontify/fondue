@@ -49,7 +49,7 @@ const envelope = (content: readonly JsonValue[], version = 1) => ({
 const persistence = () => ({ save: vi.fn(), read: vi.fn() });
 
 /** A host part inside `RichTextEditor.Root` that throws in render while `armed`, as a broken part would. */
-const Bomb = ({ armed }: { readonly armed: boolean }) => {
+const Bomb = ({ armed }: { armed: boolean }) => {
     if (armed) {
         throw new Error('render failed');
     }

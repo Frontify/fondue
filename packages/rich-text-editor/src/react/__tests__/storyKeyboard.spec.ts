@@ -15,9 +15,7 @@ import { type RichTextProfile } from '#/react/types';
 import { shortcutText } from '#/ui/shortcuts';
 
 // A new profile with no entry here, or no story, fails to compile.
-const BY_PROFILE: Readonly<
-    Record<RichTextProfile, { readonly shipped: typeof inline; readonly story: typeof profileStories.Inline }>
-> = {
+const BY_PROFILE: Readonly<Record<RichTextProfile, { shipped: typeof inline; story: typeof profileStories.Inline }>> = {
     inline: { shipped: inline, story: profileStories.Inline },
     comment: { shipped: comment, story: profileStories.Comment },
     document: { shipped: document, story: profileStories.Document },

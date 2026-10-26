@@ -58,9 +58,9 @@ describe('RichTextEditor host surface', () => {
 
     it('keeps a selector result with equal fields under a shallow equality function', () => {
         const ref = createRef<EditorHandle<object>>();
-        const seen: { readonly active: boolean }[] = [];
+        const seen: { active: boolean }[] = [];
         let renders = 0;
-        const shallow = (a: { readonly active: boolean }, b: { readonly active: boolean }) => a.active === b.active;
+        const shallow = (a: { active: boolean }, b: { active: boolean }) => a.active === b.active;
         const Collapsed = () => {
             seen.push(useEditorSelection((selection) => ({ active: selection.collapsed }), shallow));
 
@@ -236,7 +236,7 @@ describe('RichTextEditor host surface', () => {
                 return commands.execute('text.insert', { text: 'x' });
             };
 
-            const Caller = ({ calling }: { readonly calling: boolean }) => {
+            const Caller = ({ calling }: { calling: boolean }) => {
                 if (calling && during === 'render') {
                     results.push(insert());
                 }
@@ -337,7 +337,7 @@ describe('RichTextEditor host surface', () => {
         const onDiagnostic = vi.fn<(diagnostic: Diagnostic) => void>(() => {
             inner.push(insert());
         });
-        const Caller = ({ calling }: { readonly calling: boolean }) => {
+        const Caller = ({ calling }: { calling: boolean }) => {
             if (calling) {
                 insert();
             }
@@ -374,7 +374,7 @@ describe('RichTextEditor host surface', () => {
         const ref = createRef<EditorHandle<object>>();
         const onDiagnostic = vi.fn<(diagnostic: Diagnostic) => void>();
         const results: CommandResult[] = [];
-        const Caller = ({ calling }: { readonly calling: boolean }) => {
+        const Caller = ({ calling }: { calling: boolean }) => {
             if (calling) {
                 results.push(
                     (ref.current as unknown as Pick<RuntimeHandle, 'execute'>).execute('text.insert', { text: 'x' }),

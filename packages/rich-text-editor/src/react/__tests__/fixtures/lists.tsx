@@ -89,9 +89,8 @@ export const outline = (node: ContentNodeJSON): unknown => {
 };
 
 /** The outline of each top-level block of a handle's snapshot. */
-export const outlineOf = (handle: {
-    getSnapshot(): { readonly document: { readonly content: ContentNodeJSON } };
-}): unknown[] => (handle.getSnapshot().document.content.content ?? []).map(outline);
+export const outlineOf = (handle: { getSnapshot(): { document: { content: ContentNodeJSON } } }): unknown[] =>
+    (handle.getSnapshot().document.content.content ?? []).map(outline);
 
 /** The outline of an item of `kind`, as `outline` writes it. */
 export const itemOutline = (kind: ListKind, ...blocks: readonly unknown[]): unknown => {

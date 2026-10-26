@@ -14,5 +14,5 @@ export { defineReactPresentation } from './presentation';
  * checked like option values.
  */
 export const defineEditor = <Model extends ContentModel, const Plugins extends readonly RichTextPlugin[]>(
-    options: EditorDefinitionOptions<Model> & { readonly plugins: Plugins },
+    options: EditorDefinitionOptions<Model> & { plugins: Plugins },
 ): CompiledEditorDefinition<CommandsOfPlugins<Plugins>> => compileEditor(options);

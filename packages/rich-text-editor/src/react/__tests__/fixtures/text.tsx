@@ -85,15 +85,15 @@ export const text = (value: string, ...marks: readonly string[]): ContentNodeJSO
 export { storedIn };
 
 type Mount<Model extends ContentModel> = {
-    readonly model?: Model;
-    readonly blocks?: readonly ContentNodeJSON[];
-    readonly document?: RichTextDocument;
-    readonly policy?: Partial<AuthoringPolicy>;
-    readonly toolbar?: ReactPresentation['toolbar'];
-    readonly inputRules?: Rules;
-    readonly readOnly?: boolean;
+    model?: Model;
+    blocks?: readonly ContentNodeJSON[];
+    document?: RichTextDocument;
+    policy?: Partial<AuthoringPolicy>;
+    toolbar?: ReactPresentation['toolbar'];
+    inputRules?: Rules;
+    readOnly?: boolean;
     /** Host editor parts, for features a test adds. */
-    readonly plugins?: readonly EditorPart[];
+    plugins?: readonly EditorPart[];
 };
 
 /** Mounts `RichTextEditor` and runs the first frame, so the editor is `ready`. */
@@ -128,14 +128,14 @@ export const mountText = <Model extends ContentModel = ContentModel<ReturnType<t
         });
     }
 
-    let shown: { readonly presentation?: ReactPresentation } = {};
+    let shown: { presentation?: ReactPresentation } = {};
     if (toolbar !== undefined) {
         shown = { presentation: defineReactPresentation({ toolbar }) };
     }
 
     let locale: RichTextLocale | undefined;
     const element = (inputRules: Rules) => {
-        let rules: { readonly inputRules?: NonNullable<Rules> } = {};
+        let rules: { inputRules?: NonNullable<Rules> } = {};
         if (inputRules !== undefined) {
             rules = { inputRules };
         }

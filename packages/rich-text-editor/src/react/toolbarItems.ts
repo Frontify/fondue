@@ -16,8 +16,8 @@ import { type ToolbarItem } from '#/ui/toolbar/Toolbar';
 import { type ReactPresentation } from './types';
 
 type ButtonEntry = Omit<PluginToolbarEntry, 'labelKey' | 'label'> & {
-    readonly labelKey: string;
-    readonly label?: Readonly<Record<string, string>>;
+    labelKey: string;
+    label?: Readonly<Record<string, string>>;
 };
 
 /** The control ID of the text style picker in a presentation's toolbar. */
@@ -212,7 +212,7 @@ export const toolbarItems = (
             return [];
         }
 
-        const rows: (ToolbarItem & { readonly offered: boolean })[] = defaults.map((entry) => ({
+        const rows: (ToolbarItem & { offered: boolean })[] = defaults.map((entry) => ({
             ...itemOf(entry, false, false),
             offered: true,
             brand: { appliesTo: [...STYLED_BLOCKS], preview: {} },

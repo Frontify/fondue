@@ -10,8 +10,8 @@ import { COMPOSED_STORIES } from './composedStories';
 
 /** The error reports a story throws on purpose, as its `reports` parameter allows them: each message bounded by count. */
 type Reports = {
-    readonly console: { readonly message: RegExp; readonly max: number };
-    readonly page: { readonly message: RegExp; readonly max: number };
+    console: { message: RegExp; max: number };
+    page: { message: RegExp; max: number };
 };
 
 declare global {
@@ -20,27 +20,27 @@ declare global {
         storyProbe?: {
             /** Every story of the package, with what the harness reads of its tags and parameters. */
             stories: readonly {
-                readonly file: string;
-                readonly name: string;
+                file: string;
+                name: string;
                 /** Tagged `documents-behavior`, so its play function must assert what it documents. */
-                readonly documented: boolean;
+                documented: boolean;
                 /** Its `noSurface` parameter: it renders no editable surface. */
-                readonly noSurface: boolean;
-                readonly reports: Reports | undefined;
+                noSurface: boolean;
+                reports: Reports | undefined;
             }[];
             /** `passed` once the play function resolved, `none` without one, else its error. */
             played: string;
             /** Records the live editor views and counts each `replaceDocument` from now on. */
             watch(): void;
             /** The `replaceDocument` calls since `watch`, and whether any view it recorded was replaced. */
-            changes(): { readonly replaced: number; readonly remounted: boolean };
+            changes(): { replaced: number; remounted: boolean };
             /** Focuses the first editable surface with the caret at its last text position. */
             caretAtEnd(): void;
         };
     }
 }
 
-let watched: { readonly views: readonly EditorView[]; replaced: number } = { views: [], replaced: 0 };
+let watched: { views: readonly EditorView[]; replaced: number } = { views: [], replaced: 0 };
 
 window.storyProbe = {
     stories: COMPOSED_STORIES.map(({ file, name, tags, parameters }) => ({
@@ -85,7 +85,7 @@ window.storyProbe = {
 };
 
 /** The story `name` of the story file at `file` under `src`, composed with the project annotations, and its play function run; no story without them. */
-export const StoryProbe = ({ file, name }: { readonly file?: string; readonly name?: string }) => {
+export const StoryProbe = ({ file, name }: { file?: string; name?: string }) => {
     const canvasRef = useRef<HTMLDivElement>(null);
     const composed = COMPOSED_STORIES.find((story) => story.file === file && story.name === name);
     useEffect(() => {

@@ -59,8 +59,8 @@ const loaded = (...blocks: readonly JsonValue[]) => ({
 });
 
 type Props = Partial<RichTextEditorBaseProps<object>> & {
-    readonly children?: ReactNode;
-    readonly onBubbleRender?: () => void;
+    children?: ReactNode;
+    onBubbleRender?: () => void;
 };
 
 /** Composes the fixed and bubble toolbars, the surface and `children` in `RichTextEditor.Root`, ready. */
@@ -110,8 +110,8 @@ const Opened = ({
     Overlay,
     onClose = () => undefined,
 }: {
-    readonly Overlay: ComponentType<FixtureOverlayProps>;
-    readonly onClose?: () => void;
+    Overlay: ComponentType<FixtureOverlayProps>;
+    onClose?: () => void;
 }) => {
     const [open, setOpen] = useState(true);
 
@@ -318,7 +318,7 @@ describe('editor overlays', () => {
     });
 
     it('leaves a second editor unchanged when the first opens an overlay, with every ID unique', () => {
-        const Editor = ({ label, children }: { readonly label: string; readonly children?: ReactNode }) => (
+        const Editor = ({ label, children }: { label: string; children?: ReactNode }) => (
             <RichTextEditor.Root
                 aria-label={label}
                 definition={definition}
@@ -331,7 +331,7 @@ describe('editor overlays', () => {
                 {children}
             </RichTextEditor.Root>
         );
-        const Page = ({ open }: { readonly open: boolean }) => (
+        const Page = ({ open }: { open: boolean }) => (
             <>
                 <Editor label="A">{open && <Opened Overlay={FixtureLinkPopover} />}</Editor>
                 <Editor label="B" />
@@ -371,7 +371,7 @@ describe('editor overlays', () => {
             );
         };
 
-        const Editor = ({ label, children }: { readonly label: string; readonly children: ReactNode }) => (
+        const Editor = ({ label, children }: { label: string; children: ReactNode }) => (
             <RichTextEditor.Root
                 aria-label={label}
                 definition={definition}

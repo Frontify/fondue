@@ -14,9 +14,9 @@ export const PROFILE_MODELS: Readonly<Record<RichTextProfile, ContentModel>> = {
 };
 
 export type Inline = {
-    readonly type: 'text';
-    readonly text: string;
-    readonly marks?: readonly { readonly type: string }[];
+    type: 'text';
+    text: string;
+    marks?: readonly { type: string }[];
 };
 
 export const text = (value: string): Inline => ({ type: 'text', text: value });
@@ -106,7 +106,7 @@ export const textOf = (value: unknown): string => {
         return '';
     }
 
-    const node = value as { readonly text?: unknown; readonly content?: unknown };
+    const node = value as { text?: unknown; content?: unknown };
     if (typeof node.text === 'string') {
         return node.text;
     }
@@ -117,7 +117,7 @@ export const textOf = (value: unknown): string => {
 
     const children: unknown[] = node.content;
     let separator = '';
-    if (children.some((child) => Array.isArray((child as { readonly content?: unknown }).content))) {
+    if (children.some((child) => Array.isArray((child as { content?: unknown }).content))) {
         separator = '\n';
     }
 

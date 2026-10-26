@@ -31,13 +31,13 @@ import { type Choosing } from './useSessionRuntime';
 type ChromeContext = ReturnType<typeof readerContext>;
 
 type ProviderValues = {
-    readonly root: RootContextValue;
-    readonly hosts: EditorHosts;
-    readonly live: EditorPort | undefined;
-    readonly work: ReactWork | undefined;
-    readonly announcer: Announcer;
-    readonly overlays: Overlays;
-    readonly turnInto: readonly TurnIntoEntry[];
+    root: RootContextValue;
+    hosts: EditorHosts;
+    live: EditorPort | undefined;
+    work: ReactWork | undefined;
+    announcer: Announcer;
+    overlays: Overlays;
+    turnInto: readonly TurnIntoEntry[];
 };
 
 /** What the parts, the plugins and the overlays of one session read from context. */
@@ -99,9 +99,9 @@ const FileChooser = ({
 );
 
 type Standing = {
-    readonly key: string;
-    readonly component: ComponentType<{ toolbarRef: (element: HTMLElement | null) => void; covered: boolean }>;
-    readonly toolbarRef: (element: HTMLElement | null) => void;
+    key: string;
+    component: ComponentType<{ toolbarRef: (element: HTMLElement | null) => void; covered: boolean }>;
+    toolbarRef: (element: HTMLElement | null) => void;
 };
 
 /** The plugins' standing overlays, and the plugin overlay a command opened. */
@@ -133,30 +133,30 @@ const PluginOverlays = ({
 );
 
 export type FrameProps = {
-    readonly rootRef: MutableRefObject<HTMLDivElement | null>;
-    readonly lang: string;
-    readonly testId: string;
-    readonly live: EditorPort | undefined;
-    readonly coordinator: MountCoordinator;
-    readonly onKeyDown: KeyboardEventHandler<HTMLDivElement>;
-    readonly work: ReactWork | undefined;
-    readonly announcer: Announcer;
-    readonly panelState: PanelController;
-    readonly toolbarMode: ToolbarMode;
-    readonly chrome: Chrome;
-    readonly disabled: boolean;
-    readonly portals: PortalStore;
-    readonly chromeContext: ChromeContext;
-    readonly onFlush: () => void;
-    readonly referenceStrings: ReturnType<typeof referenceListStrings>;
-    readonly standing: readonly Standing[];
-    readonly pluginOverlay: PluginOverlay | undefined;
-    readonly hosts: EditorHosts;
-    readonly choosesFiles: boolean;
-    readonly chooserRef: MutableRefObject<HTMLInputElement | null>;
-    readonly choosingRef: MutableRefObject<Choosing | undefined>;
-    readonly overlayRootElement: ReactNode;
-    readonly children: ReactNode;
+    rootRef: MutableRefObject<HTMLDivElement | null>;
+    lang: string;
+    testId: string;
+    live: EditorPort | undefined;
+    coordinator: MountCoordinator;
+    onKeyDown: KeyboardEventHandler<HTMLDivElement>;
+    work: ReactWork | undefined;
+    announcer: Announcer;
+    panelState: PanelController;
+    toolbarMode: ToolbarMode;
+    chrome: Chrome;
+    disabled: boolean;
+    portals: PortalStore;
+    chromeContext: ChromeContext;
+    onFlush: () => void;
+    referenceStrings: ReturnType<typeof referenceListStrings>;
+    standing: readonly Standing[];
+    pluginOverlay: PluginOverlay | undefined;
+    hosts: EditorHosts;
+    choosesFiles: boolean;
+    chooserRef: MutableRefObject<HTMLInputElement | null>;
+    choosingRef: MutableRefObject<Choosing | undefined>;
+    overlayRootElement: ReactNode;
+    children: ReactNode;
 };
 
 /** The root element of a session: the host's parts, then the chrome that every session renders. */

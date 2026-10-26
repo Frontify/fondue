@@ -9,12 +9,12 @@ const INSERTS = /\.insert$/u;
 
 /** A unit as the list reads it: the toolbar entries of its editor part. */
 type Unit = {
-    readonly editor: Pick<EditorPartSpec, 'toolbar'>;
+    editor: Pick<EditorPartSpec, 'toolbar'>;
 };
 
 type Group = {
-    readonly headingKey: keyof TranslationStrings;
-    readonly entries: readonly PluginToolbarEntry[];
+    headingKey: keyof TranslationStrings;
+    entries: readonly PluginToolbarEntry[];
 };
 
 const labelOf = (api: EditorApi<'commands'>, entry: PluginToolbarEntry): string => {

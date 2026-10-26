@@ -57,15 +57,15 @@ export type { ColorToken, ListLevels, OperationMetric, PresentationStyle, StyleR
 
 /** What a host passes to define an editor: its id, content model, editor parts and limits. */
 export type EditorDefinitionOptions<Model extends ContentModel = ContentModel> = {
-    readonly id: string;
-    readonly model: Model;
+    id: string;
+    model: Model;
     /** One unit per feature of the model, of the same ID and version. */
-    readonly plugins: readonly RichTextPlugin[];
-    readonly policy?: Partial<AuthoringPolicy>;
+    plugins: readonly RichTextPlugin[];
+    policy?: Partial<AuthoringPolicy>;
     /** May only make limits stricter. */
-    readonly limits?: Partial<ResourceLimits>;
+    limits?: Partial<ResourceLimits>;
     /** The only way to loosen a limit, set by a host per consumer. */
-    readonly limitOverrides?: Partial<ResourceLimits>;
+    limitOverrides?: Partial<ResourceLimits>;
 };
 /** The id, content model and capabilities of a compiled editor definition. */
 export type EditorDefinitionInfo = {
@@ -91,15 +91,15 @@ export type CommandsOfPlugins<Plugins extends readonly RichTextPlugin[]> = Union
 
 /** A search a host answers when the user looks for something to mention or link. */
 export type ReferenceSearchRequest = {
-    readonly query: string;
+    query: string;
     /** Empty means any type. */
-    readonly resourceTypes: readonly string[];
-    readonly cursor: string | null;
+    resourceTypes: readonly string[];
+    cursor: string | null;
 };
 /** One page of results for a reference search, with the cursor for the next page. */
 export type ReferencePage = {
-    readonly items: readonly ReferenceValue[];
-    readonly nextCursor: string | null;
+    items: readonly ReferenceValue[];
+    nextCursor: string | null;
 };
 /** The host service that searches for the things a document can mention. */
 export type ReferenceService = {
@@ -107,21 +107,21 @@ export type ReferenceService = {
 };
 /** An asset a host uploaded or picked, as a document stores it. */
 export type AssetValue = {
-    readonly assetId: string;
-    readonly mediaType: string;
-    readonly labelSnapshot: string;
+    assetId: string;
+    mediaType: string;
+    labelSnapshot: string;
 };
 /** What the editor sends to the upload service: the file and the operation it belongs to. */
 export type UploadRequest = {
-    readonly operationId: string;
-    readonly blob: Blob;
-    readonly filename: string;
+    operationId: string;
+    blob: Blob;
+    filename: string;
 };
 /** The host service that uploads a file and returns its asset. */
 export type UploadService = {
     upload(
         request: UploadRequest,
-        context: ServiceContext & { readonly reportProgress: (fraction: number) => void },
+        context: ServiceContext & { reportProgress: (fraction: number) => void },
     ): Promise<AssetValue>;
     /** Server-managed cleanup; never deletes an asset still referenced elsewhere. */
     releaseUnused(operationId: string, context: ServiceContext): Promise<void>;
@@ -129,27 +129,27 @@ export type UploadService = {
 /** A host asset library; `image.insert` opens it with its purpose when set, else the file chooser. */
 export type AssetPickerService = {
     /** `purpose` is `image` for the shipped features; a later feature may pass its own purpose, so implementations handle any string. */
-    pick(request: { readonly purpose: string }, context: ServiceContext): Promise<AssetValue | null>;
+    pick(request: { purpose: string }, context: ServiceContext): Promise<AssetValue | null>;
 };
 /** The services a host gives the editor, such as persistence, recovery, references and uploads. */
 export type EditorServices = {
-    readonly persistence?: PersistenceService;
-    readonly recovery?: RecoveryService;
-    readonly references?: ReferenceService;
-    readonly uploads?: UploadService;
-    readonly assets?: AssetPickerService;
+    persistence?: PersistenceService;
+    recovery?: RecoveryService;
+    references?: ReferenceService;
+    uploads?: UploadService;
+    assets?: AssetPickerService;
 };
 
 /** The events the editor emits, each with the value its listeners get. */
 export type EditorEventMap = {
-    readonly ready: SessionToken;
-    readonly documentChange: DocumentChange;
-    readonly selectionChange: SelectionSummary;
-    readonly saveStatusChange: SaveStatus;
-    readonly diagnostic: Diagnostic;
-    readonly operationMetric: OperationMetric;
-    readonly replaced: SessionToken;
-    readonly disposed: SessionToken;
+    ready: SessionToken;
+    documentChange: DocumentChange;
+    selectionChange: SelectionSummary;
+    saveStatusChange: SaveStatus;
+    diagnostic: Diagnostic;
+    operationMetric: OperationMetric;
+    replaced: SessionToken;
+    disposed: SessionToken;
 };
 /**
  * The session of a mounted editor. With `profile`, the ref holds `null` until the profile's module has loaded and the
@@ -184,23 +184,23 @@ export type EditorHandle<C extends object = ShippedCommands> = {
 export type ToolbarMode = 'fixed' | 'bubble';
 /** The reader presentation's resolvers, its other fields, and the editor's toolbar and controls. */
 export type ReactPresentation = {
-    readonly styles: readonly PresentationStyle[];
-    readonly colorTokens: readonly ColorToken[];
-    readonly listLevels?: ListLevels;
+    styles: readonly PresentationStyle[];
+    colorTokens: readonly ColorToken[];
+    listLevels?: ListLevels;
     /** 1 to 6. */
-    readonly columns?: number;
+    columns?: number;
     /**
      * `normal`, or a length in `px` or `rem`. With `normal` and a font size on `contentClassName` that differs from the
      * surrounding font, the reader's column thresholds use the surrounding font; a `px` or `rem` gap avoids it.
      */
-    readonly columnGap?: string;
-    readonly contentClassName?: string;
+    columnGap?: string;
+    contentClassName?: string;
     /** Groups of command IDs, `{ command, payload }` items and the `text-style` control ID, in order. */
-    readonly toolbar: readonly (readonly CommandRef[])[];
-    readonly controls?: Readonly<Record<string, { readonly labelKey?: string; readonly icon?: string }>>;
-    readonly sliceContext: string | null;
+    toolbar: readonly (readonly CommandRef[])[];
+    controls?: Readonly<Record<string, { labelKey?: string; icon?: string }>>;
+    sliceContext: string | null;
     /** Package key syntax; default `Alt-F10`. */
-    readonly toolbarShortcut?: string;
+    toolbarShortcut?: string;
 } & ReaderPresentation;
 
 /** The name of a shipped profile: inline, comment, document or brand-document. */
@@ -211,64 +211,61 @@ export type RichTextEditorBaseProps<C extends object = ShippedCommands> = {
      * Default `document`; ignored when `definition` is set. The profile's module loads on first use: until it has, the
      * editor renders nothing, `ref` holds `null` and no callback runs. A profile loaded once renders at once.
      */
-    readonly profile?: RichTextProfile;
-    readonly definition?: CompiledEditorDefinition<C>;
-    readonly presentation?: ReactPresentation;
-    readonly defaultValue: LoadedDocument;
-    readonly 'aria-describedby'?: string;
-    readonly 'aria-errormessage'?: string;
+    profile?: RichTextProfile;
+    definition?: CompiledEditorDefinition<C>;
+    presentation?: ReactPresentation;
+    defaultValue: LoadedDocument;
+    'aria-describedby'?: string;
+    'aria-errormessage'?: string;
     /** `error` sets `aria-invalid`. */
-    readonly status?: 'neutral' | 'success' | 'error' | 'loading';
-    readonly required?: boolean;
-    readonly disabled?: boolean;
-    readonly readOnly?: boolean;
-    readonly placeholder?: string;
+    status?: 'neutral' | 'success' | 'error' | 'loading';
+    required?: boolean;
+    disabled?: boolean;
+    readOnly?: boolean;
+    placeholder?: string;
     /** Default: the `ThemeProvider` locale when the package ships it, else `enUS`. */
-    readonly locale?: RichTextLocale;
-    readonly services?: EditorServices;
-    readonly persistenceOptions?: PersistenceOptions;
-    readonly portalContainer?: HTMLElement | null;
-    readonly spellCheck?: boolean;
-    readonly inputRules?: false | { readonly exclude: readonly string[] };
+    locale?: RichTextLocale;
+    services?: EditorServices;
+    persistenceOptions?: PersistenceOptions;
+    portalContainer?: HTMLElement | null;
+    spellCheck?: boolean;
+    inputRules?: false | { exclude: readonly string[] };
     /** When true, Tab and Shift+Tab move focus and do not indent or change cells. Default false. */
-    readonly tabMovesFocus?: boolean;
+    tabMovesFocus?: boolean;
     /** When false, the view does not scroll the selection into view. Default true. */
-    readonly scrollSelectionIntoView?: boolean;
-    readonly defaultToolbarMode?: ToolbarMode;
+    scrollSelectionIntoView?: boolean;
+    defaultToolbarMode?: ToolbarMode;
     /** For the session id and the `nodeId`s the editor creates. Default: `crypto.randomUUID()`, or a version 4 UUID where that is missing. */
-    readonly generateId?: () => string;
+    generateId?: () => string;
     /** The surface element `id`. */
-    readonly id?: string;
+    id?: string;
     /** Default `fondue-rich-text-editor`, with suffixed IDs on the parts. */
-    readonly 'data-test-id'?: string;
-    readonly onReady?: (session: SessionToken) => void;
-    readonly onDocumentChange?: (change: DocumentChange) => void;
-    readonly onDiagnostic?: (diagnostic: Diagnostic) => void;
+    'data-test-id'?: string;
+    onReady?: (session: SessionToken) => void;
+    onDocumentChange?: (change: DocumentChange) => void;
+    onDiagnostic?: (diagnostic: Diagnostic) => void;
     /**
      * Runs only when `validate()` passes. Mod+Enter calls it in the Comment profile, and Enter wherever the policy sets
      * `enterBehavior: 'submit'`, in the Inline profile also Shift+Enter and Mod+Enter; the Document and Brand document
      * profiles call it only with that policy.
      */
-    readonly onSubmit?: (snapshot: Snapshot) => void;
+    onSubmit?: (snapshot: Snapshot) => void;
     /**
      * Native focus events of the surface, including moves into the editor's own overlays.
      * Pointer and focus events bubble out of the editor root. There is no further focus callback.
      * The bubble toolbar hides when the editor loses focus, and the selection stays.
      */
-    readonly onFocus?: (event: FocusEvent<HTMLElement>) => void;
-    readonly onBlur?: (event: FocusEvent<HTMLElement>) => void;
-    readonly onToolbarModeChange?: (mode: ToolbarMode) => void;
+    onFocus?: (event: FocusEvent<HTMLElement>) => void;
+    onBlur?: (event: FocusEvent<HTMLElement>) => void;
+    onToolbarModeChange?: (mode: ToolbarMode) => void;
     /** `null` until the session exists, which with `profile` is once the profile's module has loaded. */
-    readonly ref?: Ref<EditorHandle<C>>;
+    ref?: Ref<EditorHandle<C>>;
 };
 /** Exactly one accessible name source is required. */
 export type RichTextEditorProps<C extends object = ShippedCommands> = RichTextEditorBaseProps<C> &
-    (
-        | { readonly 'aria-label': string; readonly 'aria-labelledby'?: never }
-        | { readonly 'aria-labelledby': string; readonly 'aria-label'?: never }
-    );
+    ({ 'aria-label': string; 'aria-labelledby'?: never } | { 'aria-labelledby': string; 'aria-label'?: never });
 
 /** The editor props as the session reads them: the `RichTextEditor` props of any command set. */
 export type Props = RichTextEditorProps<object>;
 /** The props once `definition` is known to be set. */
-export type Defined = Props & { readonly definition: CompiledEditorDefinition<object> };
+export type Defined = Props & { definition: CompiledEditorDefinition<object> };

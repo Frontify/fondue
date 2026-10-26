@@ -28,8 +28,8 @@ const rendered = async (page: Page) => {
 };
 
 type Allowance = {
-    readonly message: RegExp;
-    readonly max: number;
+    message: RegExp;
+    max: number;
 };
 
 /** The messages that no allowance covers, and that the allowance holds to its count. */

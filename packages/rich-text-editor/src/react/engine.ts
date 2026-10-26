@@ -11,7 +11,7 @@ import { editorEngine as engineWith, extensionsOf as extensionsWith } from './co
 export const editorEngine = (
     model: ContentModel,
     units: readonly RichTextPlugin[],
-): { readonly engine: CompiledDefinition; readonly plugins: readonly EditorPart[] } => engineWith(model, units);
+): { engine: CompiledDefinition; plugins: readonly EditorPart[] } => engineWith(model, units);
 
 /** What the editor parts of `units` add to the engine of `model`, for a definition compiled without React. */
 export const extensionsOf = (model: ContentModel, units: readonly RichTextPlugin[]): readonly EngineExtension[] =>

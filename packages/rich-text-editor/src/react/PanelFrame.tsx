@@ -14,14 +14,14 @@ import { passesToBrowser } from '#/runtime/port';
 import styles from './styles/panels.module.scss';
 
 export type BoundaryProps = {
-    readonly message: string;
-    readonly closeLabel: string;
-    readonly onClose: () => void;
-    readonly children: ReactNode;
+    message: string;
+    closeLabel: string;
+    onClose: () => void;
+    children: ReactNode;
 };
 
 type BoundaryState = {
-    readonly failed: boolean;
+    failed: boolean;
 };
 
 /** Replaces only the panel that threw, and leaves the rest of the editor mounted. */
@@ -63,9 +63,9 @@ const PanelFallback = ({
     closeLabel,
     onClose,
 }: {
-    readonly message: string;
-    readonly closeLabel: string;
-    readonly onClose: () => void;
+    message: string;
+    closeLabel: string;
+    onClose: () => void;
 }) => {
     const buttonRef = useRef<HTMLButtonElement>(null);
     const announce = useAnnounce();
@@ -93,12 +93,12 @@ export const PanelFrame = ({
     testId,
     onClose,
 }: {
-    readonly id: string;
-    readonly panel: ComponentType<PanelComponentProps>;
-    readonly t: CodecContext['t'];
-    readonly requested: number;
-    readonly testId: string;
-    readonly onClose: () => void;
+    id: string;
+    panel: ComponentType<PanelComponentProps>;
+    t: CodecContext['t'];
+    requested: number;
+    testId: string;
+    onClose: () => void;
 }) => {
     const slotRef = useRef<HTMLDivElement>(null);
     // Runs after the panel's own layout effects, so a panel that focused itself keeps that focus.

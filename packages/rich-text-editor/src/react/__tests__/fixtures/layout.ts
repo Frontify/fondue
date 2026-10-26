@@ -13,10 +13,9 @@ export const PROFILES = ['inline', 'comment', 'document', 'brand-document'] as c
 const SRC = join(import.meta.dirname, '..', '..', '..');
 
 /** Each feature story's file under `src` and the feature its title names, so a new feature story is never left out. */
-export const FEATURE_STORIES: readonly { readonly feature: string; readonly file: string }[] = globSync(
-    'features/*/*.stories.tsx',
-    { cwd: SRC },
-)
+export const FEATURE_STORIES: readonly { feature: string; file: string }[] = globSync('features/*/*.stories.tsx', {
+    cwd: SRC,
+})
     .map((path) => path.replaceAll('\\', '/'))
     .sort()
     .map((file) => {

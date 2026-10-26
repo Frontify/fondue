@@ -58,26 +58,26 @@ declare global {
     interface Window {
         /** The mounted editor and what the clipboard tests read of it. */
         clip?: {
-            readonly handle: EditorHandle;
-            readonly changes: readonly DocumentChange[];
+            handle: EditorHandle;
+            changes: readonly DocumentChange[];
             /** How often the upload service was called. */
-            readonly uploads: () => number;
+            uploads: () => number;
             /** The stored content of the published document. */
-            readonly content: () => unknown;
-            readonly select: (target: SelectionTarget) => void;
+            content: () => unknown;
+            select: (target: SelectionTarget) => void;
             /** Selects the top-level block at `index` as a node. */
-            readonly selectBlock: (index: number) => void;
+            selectBlock: (index: number) => void;
             /** The selection's anchor and head. */
-            readonly selection: () => readonly [number, number];
+            selection: () => readonly [number, number];
         };
     }
 }
 
 /** One task item the probe stores when `tasks` is set. */
 type ProbeTask = {
-    readonly nodeId: string;
-    readonly text: string;
-    readonly checked: boolean;
+    nodeId: string;
+    text: string;
+    checked: boolean;
 };
 
 /**
@@ -94,16 +94,16 @@ export const ClipboardProbe = ({
     dragged = 'Dropped',
     tasks,
 }: {
-    readonly texts?: readonly string[];
-    readonly readOnly?: boolean;
+    texts?: readonly string[];
+    readOnly?: boolean;
     /** Mounts the definition whose policy sets `paste: false` for the mention. */
-    readonly unpasted?: boolean;
+    unpasted?: boolean;
     /** Ends the document with an unknown `callout` block of `nodeId` `c-1` and the text Kept, which loads as an island. */
-    readonly island?: boolean;
-    readonly scroll?: boolean;
-    readonly dragged?: string;
+    island?: boolean;
+    scroll?: boolean;
+    dragged?: string;
     /** Replaces the paragraphs with one task list of these items, on a model that installs `lists.task`. */
-    readonly tasks?: readonly ProbeTask[];
+    tasks?: readonly ProbeTask[];
 }) => {
     const ref = useRef<EditorHandle<object>>(null);
     const [changes] = useState<DocumentChange[]>([]);
@@ -155,10 +155,8 @@ export const ClipboardProbe = ({
     }, [changes, uploads]);
     let blocks: ContentNodeJSON[] = texts.map(paragraphOf);
     let shown = definition;
-    let documentModel: { readonly id: string; readonly version: number } = { id: 'test.clipboard', version: 1 };
-    let requiredCapabilities: readonly { readonly id: string; readonly version: number }[] = [
-        { id: 'core', version: 1 },
-    ];
+    let documentModel: { id: string; version: number } = { id: 'test.clipboard', version: 1 };
+    let requiredCapabilities: readonly { id: string; version: number }[] = [{ id: 'core', version: 1 }];
     if (unpasted) {
         shown = unpastedMentions;
     }

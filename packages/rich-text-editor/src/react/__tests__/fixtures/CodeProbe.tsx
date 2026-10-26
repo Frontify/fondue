@@ -19,9 +19,9 @@ const definition = defineEditor({ id: 'test.code-ct', model, plugins: unitsOf(mo
 
 /** One change as the probe records it: where it came from and the document content after it. */
 export type CodeChange = {
-    readonly origin: string;
-    readonly commandId: string | null;
-    readonly content: unknown;
+    origin: string;
+    commandId: string | null;
+    content: unknown;
 };
 
 declare global {
@@ -29,9 +29,9 @@ declare global {
     interface Window {
         /** The code probe's handle, the selection helper and each change. */
         codeRte?: {
-            readonly handle: EditorHandle;
-            readonly setSelection: typeof setSelection;
-            readonly changes: CodeChange[];
+            handle: EditorHandle;
+            setSelection: typeof setSelection;
+            changes: CodeChange[];
         };
     }
 }
@@ -46,7 +46,7 @@ const documentOf = (blocks: readonly object[]): RichTextDocument =>
     }) as unknown as RichTextDocument;
 
 /** Mounts a code block, including inside a list, between two focusable buttons. */
-export const CodeProbe = ({ blocks }: { readonly blocks: readonly object[] }) => {
+export const CodeProbe = ({ blocks }: { blocks: readonly object[] }) => {
     const ref = useRef<EditorHandle>(null);
     const changesRef = useRef<CodeChange[]>([]);
     useEffect(() => {

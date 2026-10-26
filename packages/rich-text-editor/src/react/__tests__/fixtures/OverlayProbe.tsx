@@ -51,24 +51,24 @@ declare global {
     interface Window {
         /** The mounted overlay editor, for tests that drive it from the page. */
         overlayProbe?: {
-            readonly handle: EditorHandle<UnitCommands>;
-            readonly select: (target: Parameters<typeof setSelection>[1]) => void;
-            readonly open: (kind: OverlayKind) => void;
+            handle: EditorHandle<UnitCommands>;
+            select: (target: Parameters<typeof setSelection>[1]) => void;
+            open: (kind: OverlayKind) => void;
             /** Removes the node with `nodeId`, as another author's change would. */
-            readonly remove: (nodeId: string) => void;
+            remove: (nodeId: string) => void;
             /** Renders the probe again, which gives each overlay a new `onOpenChange`. */
-            readonly rerender: () => void;
+            rerender: () => void;
             /** The bottom of the scroll margin the caret keeps clear of the keyboard and a docked toolbar. */
-            readonly bottomMargin: () => number | undefined;
+            bottomMargin: () => number | undefined;
             /** Inserts `text` at document position `at`, away from the selection. */
-            readonly insert: (text: string, at: number) => void;
+            insert: (text: string, at: number) => void;
             /** The HTML of the runtime's document, without the kept selection. */
-            readonly html: () => string;
+            html: () => string;
             /** The anchor and head of the runtime's selection. */
-            readonly selection: () => { readonly anchor: number; readonly head: number } | undefined;
+            selection: () => { anchor: number; head: number } | undefined;
             /** The modes `onToolbarModeChange` reported. */
-            readonly modes: ToolbarMode[];
-            readonly hostDialogChanges: boolean[];
+            modes: ToolbarMode[];
+            hostDialogChanges: boolean[];
         };
     }
 }
@@ -77,7 +77,7 @@ const paragraph = (text: string) =>
     ({ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] }) as unknown as ContentNodeJSON;
 
 /** Renders `children` in an open shadow root or an iframe's body, as a host page that embeds the editor does. */
-const Embedded = ({ into, children }: { readonly into: 'shadow' | 'iframe'; readonly children: ReactNode }) => {
+const Embedded = ({ into, children }: { into: 'shadow' | 'iframe'; children: ReactNode }) => {
     const hostRef = useRef<HTMLDivElement>(null);
     const frameRef = useRef<HTMLIFrameElement>(null);
     const [target, setTarget] = useState<HTMLElement | ShadowRoot | null>(null);
@@ -127,30 +127,30 @@ export const OverlayProbe = ({
     scrollSelectionIntoView,
     header = false,
 }: {
-    readonly blocks?: readonly ContentNodeJSON[];
-    readonly texts?: readonly string[];
-    readonly toolbar?: ReactPresentation['toolbar'];
-    readonly defaultToolbarMode?: ToolbarMode;
-    readonly toolbarShortcut?: string;
+    blocks?: readonly ContentNodeJSON[];
+    texts?: readonly string[];
+    toolbar?: ReactPresentation['toolbar'];
+    defaultToolbarMode?: ToolbarMode;
+    toolbarShortcut?: string;
     /** Composes `RichTextEditor.BubbleToolbar`. */
-    readonly bubble?: boolean;
+    bubble?: boolean;
     /** `modal` is a closed native `dialog`, which a test opens with `showModal()`. */
-    readonly within?: 'dialog' | 'modal' | 'shadow' | 'iframe';
+    within?: 'dialog' | 'modal' | 'shadow' | 'iframe';
     /** Puts the editor in a scrolling container of this height. */
-    readonly scrollHeight?: number;
+    scrollHeight?: number;
     /** The height of host content above the editor, which moves it towards the viewport's bottom edge. */
-    readonly spacer?: number | string;
-    readonly width?: number;
+    spacer?: number | string;
+    width?: number;
     /** Passes a host element as `portalContainer`. */
-    readonly hostContainer?: boolean;
-    readonly dir?: 'ltr' | 'rtl';
-    readonly theme?: 'light' | 'dark';
+    hostContainer?: boolean;
+    dir?: 'ltr' | 'rtl';
+    theme?: 'light' | 'dark';
     /** Puts host buttons before and after the editor. */
-    readonly hostButtons?: boolean;
+    hostButtons?: boolean;
     /** Passed to the editor when set, else the editor keeps its default. */
-    readonly scrollSelectionIntoView?: boolean;
+    scrollSelectionIntoView?: boolean;
     /** Covers the top of the viewport with a fixed host header of `z-index` 10. */
-    readonly header?: boolean;
+    header?: boolean;
 }) => {
     let options: Pick<RichTextEditorProps, 'scrollSelectionIntoView'> = {};
     if (scrollSelectionIntoView !== undefined) {

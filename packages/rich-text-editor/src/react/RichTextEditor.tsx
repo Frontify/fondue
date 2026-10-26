@@ -17,19 +17,19 @@ import { RecoveryShell } from './Shells';
 import { type Defined, type EditorHandle, type RichTextEditorProps, type RichTextProfile } from './types';
 
 export type RecoveryProps = {
-    readonly props: Defined & { readonly children: ReactNode };
-    readonly editorRef: ForwardedRef<EditorHandle<object> | null>;
+    props: Defined & { children: ReactNode };
+    editorRef: ForwardedRef<EditorHandle<object> | null>;
 };
 type RecoveryState = {
-    readonly failed: boolean;
+    failed: boolean;
     /** The snapshot that Retry mounts the editor from, under the ID and revision it was loaded with. */
-    readonly retried: LoadedDocument | undefined;
+    retried: LoadedDocument | undefined;
     /** Whether that snapshot holds changes the failed session never saved, which the remount then saves. */
-    readonly unsavedOnMount: boolean;
+    unsavedOnMount: boolean;
     /** The write the failed session left with an unknown outcome, which the remount replays first. */
-    readonly carried: SaveRequest | undefined;
+    carried: SaveRequest | undefined;
     /** Counts Retries, so each mounts a new session even when no render error unmounted the last. */
-    readonly retries: number;
+    retries: number;
 };
 
 /**
@@ -59,9 +59,9 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
 
     /** What the last session left: its snapshot under its own document ID and acknowledged revision, and what it never saved. */
     private left(): {
-        readonly retried: LoadedDocument;
-        readonly unsavedOnMount: boolean;
-        readonly carried: SaveRequest | undefined;
+        retried: LoadedDocument;
+        unsavedOnMount: boolean;
+        carried: SaveRequest | undefined;
     } {
         let { documentId, document, revision } = this.defaultValue();
         let unsavedOnMount = false;
@@ -108,49 +108,47 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
     }
 }
 
-const Root = forwardRef(
-    (props: Props & { readonly children: ReactNode }, ref: ForwardedRef<EditorHandle<object> | null>) => {
-        const { definition } = props;
-        const locale = useEditorLocale(props.locale);
-        let profile: RichTextProfile | undefined;
-        if (definition === undefined) {
-            profile = props.profile ?? 'document';
+const Root = forwardRef((props: Props & { children: ReactNode }, ref: ForwardedRef<EditorHandle<object> | null>) => {
+    const { definition } = props;
+    const locale = useEditorLocale(props.locale);
+    let profile: RichTextProfile | undefined;
+    if (definition === undefined) {
+        profile = props.profile ?? 'document';
+    }
+
+    const shipped = useProfile(profile);
+    const coarse = useCoarsePointer();
+    if (definition !== undefined) {
+        return <Recovery props={{ ...props, definition, locale }} editorRef={ref} />;
+    }
+
+    // The profile's module loads through `import()`, and the editor renders once it has.
+    if (shipped === undefined) {
+        return (
+            <LoadingShell
+                locale={locale}
+                testId={props['data-test-id'] ?? DEFAULT_TEST_ID}
+                contentClassName={props.presentation?.contentClassName}
+                multiline={profile !== 'inline'}
+                label={props['aria-label']}
+                labelledBy={props['aria-labelledby']}
+                spellCheck={props.spellCheck ?? true}
+            />
+        );
+    }
+
+    let resolved: Defined & { children: ReactNode } = { ...props, definition: shipped.definition, locale };
+    if (props.presentation === undefined) {
+        let { presentation } = shipped;
+        if (coarse && shipped.touchPresentation !== undefined) {
+            presentation = shipped.touchPresentation;
         }
 
-        const shipped = useProfile(profile);
-        const coarse = useCoarsePointer();
-        if (definition !== undefined) {
-            return <Recovery props={{ ...props, definition, locale }} editorRef={ref} />;
-        }
+        resolved = { ...resolved, presentation };
+    }
 
-        // The profile's module loads through `import()`, and the editor renders once it has.
-        if (shipped === undefined) {
-            return (
-                <LoadingShell
-                    locale={locale}
-                    testId={props['data-test-id'] ?? DEFAULT_TEST_ID}
-                    contentClassName={props.presentation?.contentClassName}
-                    multiline={profile !== 'inline'}
-                    label={props['aria-label']}
-                    labelledBy={props['aria-labelledby']}
-                    spellCheck={props.spellCheck ?? true}
-                />
-            );
-        }
-
-        let resolved: Defined & { readonly children: ReactNode } = { ...props, definition: shipped.definition, locale };
-        if (props.presentation === undefined) {
-            let { presentation } = shipped;
-            if (coarse && shipped.touchPresentation !== undefined) {
-                presentation = shipped.touchPresentation;
-            }
-
-            resolved = { ...resolved, presentation };
-        }
-
-        return <Recovery props={resolved} editorRef={ref} />;
-    },
-);
+    return <Recovery props={resolved} editorRef={ref} />;
+});
 Root.displayName = 'RichTextEditor.Root';
 
 const Editor = forwardRef((props: Props, ref: ForwardedRef<EditorHandle<object> | null>) => (
@@ -173,12 +171,10 @@ export const RichTextEditor = Object.assign(Editor, {
     Panels,
 }) as (<C extends object = ShippedCommands>(props: RichTextEditorProps<C>) => ReactNode) & {
     /** Takes the editor props and renders its own layout from the parts; `RichTextEditor` is Root with the default parts. */
-    readonly Root: <C extends object = ShippedCommands>(
-        props: RichTextEditorProps<C> & { readonly children: ReactNode },
-    ) => ReactNode;
-    readonly Surface: ComponentType<object>;
-    readonly Toolbar: ComponentType<object>;
-    readonly BubbleToolbar: ComponentType<object>;
-    readonly Status: ComponentType<object>;
-    readonly Panels: ComponentType<object>;
+    Root: <C extends object = ShippedCommands>(props: RichTextEditorProps<C> & { children: ReactNode }) => ReactNode;
+    Surface: ComponentType<object>;
+    Toolbar: ComponentType<object>;
+    BubbleToolbar: ComponentType<object>;
+    Status: ComponentType<object>;
+    Panels: ComponentType<object>;
 };

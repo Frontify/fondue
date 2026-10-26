@@ -5,7 +5,7 @@ import { type RefObject } from 'react';
 import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
 
 type Attached = {
-    readonly element: HTMLStyleElement;
+    element: HTMLStyleElement;
     count: number;
 };
 

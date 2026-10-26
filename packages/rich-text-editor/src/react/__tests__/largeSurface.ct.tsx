@@ -13,7 +13,7 @@ const textOf = (nodes: readonly ContentNodeJSON[]): string =>
     nodes
         .map((node) => {
             if (node.type === 'text') {
-                return (node as unknown as { readonly text: string }).text;
+                return (node as unknown as { text: string }).text;
             }
 
             return textOf(node.content ?? []);

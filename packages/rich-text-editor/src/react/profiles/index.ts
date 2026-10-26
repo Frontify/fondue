@@ -7,7 +7,7 @@ import { type RichTextProfile } from '../types';
 import { type ShippedProfile } from './parts';
 
 // One `import()` per profile, so a host's initial chunk holds no profile's features.
-const LOADERS: Readonly<Record<RichTextProfile, () => Promise<{ readonly shipped: () => ShippedProfile }>>> = {
+const LOADERS: Readonly<Record<RichTextProfile, () => Promise<{ shipped: () => ShippedProfile }>>> = {
     inline: () => import('./inline'),
     comment: () => import('./comment'),
     document: () => import('./document'),
@@ -47,7 +47,7 @@ export const loadProfile = (profile: RichTextProfile): Promise<ShippedProfile> =
 
 /** The profile's definition and presentation once its module has loaded; `undefined` while it loads or for none. */
 export const useProfile = (profile: RichTextProfile | undefined): ShippedProfile | undefined => {
-    const [shipped, setShipped] = useState<{ readonly profile: RichTextProfile; readonly value: ShippedProfile }>();
+    const [shipped, setShipped] = useState<{ profile: RichTextProfile; value: ShippedProfile }>();
     const [failure, setFailure] = useState<Error>();
     useEffect(() => {
         if (profile === undefined || loaded.has(profile)) {

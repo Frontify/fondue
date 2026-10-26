@@ -20,25 +20,25 @@ import { type ReferenceService } from './types';
 
 /** The overlay a plugin command opened, with what it renders with; `id` remounts it when it opens again. */
 export type PluginOverlay = {
-    readonly id: number;
-    readonly component: ComponentType<OverlayProps>;
-    readonly props: object;
-    readonly anchor: OverlayAnchor;
-    readonly opener: Element | null;
+    id: number;
+    component: ComponentType<OverlayProps>;
+    props: object;
+    anchor: OverlayAnchor;
+    opener: Element | null;
 };
 
 /** What the hosts read when a plugin calls them: the session's parts, and the newest props, strings and language. */
 type HostSources = {
-    readonly coordinator: MountCoordinator;
-    readonly scope: InteractionScope;
-    readonly announcer: Announcer;
-    readonly panels: MutableRefObject<{ open(id: string): void; close(): void; toggle(id: string): void }>;
-    readonly openPanel: MutableRefObject<string | undefined>;
-    readonly t: () => CodecContext['t'];
-    readonly lang: () => string;
-    readonly presentation: () => PluginPresentation;
-    readonly references: () => ReferenceService | undefined;
-    readonly testId: () => string;
+    coordinator: MountCoordinator;
+    scope: InteractionScope;
+    announcer: Announcer;
+    panels: MutableRefObject<{ open(id: string): void; close(): void; toggle(id: string): void }>;
+    openPanel: MutableRefObject<string | undefined>;
+    t: () => CodecContext['t'];
+    lang: () => string;
+    presentation: () => PluginPresentation;
+    references: () => ReferenceService | undefined;
+    testId: () => string;
 };
 
 /** The hosts an editor gives its plugins, built once per mount, and the overlay a plugin command opened, which it renders. */

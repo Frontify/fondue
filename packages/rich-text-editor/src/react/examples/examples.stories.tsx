@@ -44,8 +44,8 @@ const DESCRIPTION = recordOf(model, 'description-1', text('Select text and press
 
 /** The args of an example that mounts one editor: its definition and the record it opens. */
 type EditorArgs = {
-    readonly definition: CompiledEditorDefinition<object>;
-    readonly defaultValue: LoadedDocument;
+    definition: CompiledEditorDefinition<object>;
+    defaultValue: LoadedDocument;
 };
 
 // The editor's profile or the host's delays settle before a play function reads the surface.
@@ -122,11 +122,11 @@ const SubmitSnapshotExample = ({
     profile,
     defaultValue,
 }: {
-    readonly profile: RichTextProfile;
-    readonly defaultValue: LoadedDocument;
+    profile: RichTextProfile;
+    defaultValue: LoadedDocument;
 }) => {
     const handleRef = useRef<EditorHandle>(null);
-    const [sent, setSent] = useState<readonly { readonly id: number; readonly text: string }[]>([]);
+    const [sent, setSent] = useState<readonly { id: number; text: string }[]>([]);
     const send = (snapshot: Snapshot) =>
         setSent((previous) => [...previous, { id: previous.length, text: textOf(snapshot.document.content) }]);
 
@@ -189,7 +189,7 @@ const ExternalReplacementExample = ({
     definition,
     defaultValue,
     replacement,
-}: EditorArgs & { readonly replacement: LoadedDocument }) => {
+}: EditorArgs & { replacement: LoadedDocument }) => {
     const handleRef = useRef<EditorHandle>(null);
     const [services] = useState(() => ({ persistence: createFakePersistenceService() }));
     const [outcome, setOutcome] = useState('');
@@ -248,7 +248,7 @@ const ReadonlyAndReaderExample = ({
     definition,
     defaultValue,
     model: readerModel,
-}: EditorArgs & { readonly model: ContentModel }) => (
+}: EditorArgs & { model: ContentModel }) => (
     <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
         <section aria-label="Read-only editor">
             <RichTextEditor
@@ -271,9 +271,9 @@ const TwoEditorsExample = ({
     summary,
     details,
 }: {
-    readonly definition: CompiledEditorDefinition<object>;
-    readonly summary: LoadedDocument;
-    readonly details: LoadedDocument;
+    definition: CompiledEditorDefinition<object>;
+    summary: LoadedDocument;
+    details: LoadedDocument;
 }) => (
     <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '1rem' }}>
         <RichTextEditor
@@ -428,7 +428,7 @@ export const InitialLoad: StoryObj<EditorArgs> = {
 };
 
 /** Mod+Enter, or the Send button, hands the host the current snapshot. */
-export const SubmitSnapshot: StoryObj<{ readonly profile: RichTextProfile; readonly defaultValue: LoadedDocument }> = {
+export const SubmitSnapshot: StoryObj<{ profile: RichTextProfile; defaultValue: LoadedDocument }> = {
     args: { profile: 'comment', defaultValue: EMPTY_COMMENT },
     render: (args) => <SubmitSnapshotExample {...args} />,
     play: async ({ canvasElement }) => {
@@ -464,7 +464,7 @@ export const SaveFailure: StoryObj<EditorArgs> = {
 };
 
 /** A newer version replaces the document through `replaceDocument`. */
-export const ExternalReplacement: StoryObj<EditorArgs & { readonly replacement: LoadedDocument }> = {
+export const ExternalReplacement: StoryObj<EditorArgs & { replacement: LoadedDocument }> = {
     args: { ...editorArgs, defaultValue: OPENED_NOTE, replacement: COLLEAGUE_NOTE },
     render: (args) => <ExternalReplacementExample {...args} />,
     play: async ({ canvasElement }) => {
@@ -485,7 +485,7 @@ export const ExternalReplacement: StoryObj<EditorArgs & { readonly replacement: 
 };
 
 /** One document in a read-only editor and in the reader. */
-export const ReadonlyAndReader: StoryObj<EditorArgs & { readonly model: ContentModel }> = {
+export const ReadonlyAndReader: StoryObj<EditorArgs & { model: ContentModel }> = {
     args: { ...editorArgs, model, defaultValue: PUBLISHED },
     render: (args) => <ReadonlyAndReaderExample {...args} />,
     // A read-only editor and the reader: no surface takes typing.
@@ -504,9 +504,9 @@ export const ReadonlyAndReader: StoryObj<EditorArgs & { readonly model: ContentM
 
 /** Two editors on one page, sharing a definition. */
 export const TwoEditors: StoryObj<{
-    readonly definition: CompiledEditorDefinition<object>;
-    readonly summary: LoadedDocument;
-    readonly details: LoadedDocument;
+    definition: CompiledEditorDefinition<object>;
+    summary: LoadedDocument;
+    details: LoadedDocument;
 }> = {
     args: { ...editorArgs, summary: SUMMARY, details: DETAILS },
     render: (args) => <TwoEditorsExample {...args} />,

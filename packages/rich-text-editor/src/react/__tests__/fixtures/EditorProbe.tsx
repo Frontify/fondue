@@ -94,20 +94,20 @@ declare global {
     interface Window {
         /** The mounted editor's handle and the selection helper, for tests that drive it from the page. */
         rte?: {
-            readonly handle: EditorHandle;
+            handle: EditorHandle;
             /** The runtime behind the handle, which starts async operations through its coordinator. */
-            readonly runtime: EditorRuntime | undefined;
-            readonly setSelection: typeof setSelection;
+            runtime: EditorRuntime | undefined;
+            setSelection: typeof setSelection;
             /** The text of the runtime's document. */
-            readonly text: () => string | undefined;
+            text: () => string | undefined;
             /** The undo steps of the runtime's history. */
-            readonly undoDepth: () => number | undefined;
+            undoDepth: () => number | undefined;
             /** Each request the fake persistence service got, when the probe mounts with `persistence`. */
-            readonly saves: readonly SaveRequest[];
+            saves: readonly SaveRequest[];
             /** Answers each save that `holdSaves` holds. */
-            readonly answerSaves: () => void;
+            answerSaves: () => void;
             /** The editor as a host form field. */
-            readonly field: RichTextFormField;
+            field: RichTextFormField;
         };
     }
 }
@@ -136,30 +136,30 @@ export const EditorProbe = ({
     holdSaves = false,
     onChange,
 }: {
-    readonly texts?: readonly string[];
+    texts?: readonly string[];
     /** The document's blocks as stored JSON, in place of `texts`, such as the node view stand-ins of `fixture.chrome`. */
-    readonly blocks?: readonly ContentNodeJSON[];
-    readonly readOnly?: boolean;
+    blocks?: readonly ContentNodeJSON[];
+    readOnly?: boolean;
     /** Mounts the definition whose policy keeps every paragraph as it is. */
-    readonly guarded?: boolean;
+    guarded?: boolean;
     /** Mounts the definition with the heading input rule. */
-    readonly inputRules?: boolean;
-    readonly placeholder?: string;
-    readonly contentClassName?: string;
+    inputRules?: boolean;
+    placeholder?: string;
+    contentClassName?: string;
     /** Mounts a definition of this fixture profile in place of the component-test model's. */
-    readonly profile?: string;
+    profile?: string;
     /** Renders the reader of the same document after the editor, in a region named Reader. */
-    readonly withReader?: boolean;
+    withReader?: boolean;
     /** Puts the editor in a form. */
-    readonly inForm?: boolean;
+    inForm?: boolean;
     /** Renders the editor in the body of a same-origin iframe, after a parent page button named Parent. */
-    readonly inFrame?: boolean;
-    readonly rerendered?: Rerendered;
+    inFrame?: boolean;
+    rerendered?: Rerendered;
     /** Mounts with the reference fake persistence service, which records each request in `window.rte.saves`. */
-    readonly persistence?: boolean;
+    persistence?: boolean;
     /** Holds each save of the fake service until `window.rte.answerSaves()`. */
-    readonly holdSaves?: boolean;
-    readonly onChange?: (change: { readonly origin: string; readonly commandId: string | null }) => void;
+    holdSaves?: boolean;
+    onChange?: (change: { origin: string; commandId: string | null }) => void;
 }) => {
     const ref = useRef<EditorHandle<object>>(null);
     const field = useRichTextFormField(ref);

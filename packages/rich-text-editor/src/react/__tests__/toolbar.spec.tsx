@@ -49,7 +49,7 @@ const loaded = (...blocks: readonly JsonValue[]) => ({
     },
 });
 
-type Props = Partial<RichTextEditorBaseProps<object>> & { readonly children?: ReactNode };
+type Props = Partial<RichTextEditorBaseProps<object>> & { children?: ReactNode };
 type Theme = Omit<Parameters<typeof ThemeProvider>[0], 'children'>;
 
 /** Mounts the toolbar stand-ins, under `theme` when given, and runs the first frame, so the editor is `ready`. */
@@ -348,7 +348,7 @@ describe('the fixed toolbar', () => {
 });
 
 describe('the announcer', () => {
-    const Announce = ({ message, coalesce }: { readonly message: string; readonly coalesce?: string }) => {
+    const Announce = ({ message, coalesce }: { message: string; coalesce?: string }) => {
         const announcer = useContext(AnnouncerContext);
 
         return (
@@ -513,7 +513,7 @@ const pullQuote = () =>
         formats: { html: 'lossless', text: 'lossy', markdown: 'unsupported' },
     })();
 const pullQuotePlugin = (
-    label: Readonly<Record<string, string>> & { readonly 'en-US': string },
+    label: Readonly<Record<string, string>> & { 'en-US': string },
     keys: Readonly<Partial<Record<KeyBinding, CommandRef>>> = {},
 ) =>
     defineEditorPart(pullQuote(), {

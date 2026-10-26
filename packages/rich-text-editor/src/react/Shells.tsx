@@ -16,18 +16,18 @@ import { readerContext } from '#/reader/context';
 import { type ReaderOverrides } from '#/reader/plan';
 import { type ReaderPresentation, ReaderWith } from '#/reader/reader';
 
-type Blocked = Extract<DecodeResult, { readonly status: 'blocked' }>;
+type Blocked = Extract<DecodeResult, { status: 'blocked' }>;
 
 /** What both shells read the document with, in place of the editor. */
 export type ShellProps = {
-    readonly model: ContentModel;
+    model: ContentModel;
     /** The definition's reader overrides, so the shells load no reader of a feature the definition does not install. */
-    readonly readers: ReaderOverrides;
+    readers: ReaderOverrides;
     /** The definition's limits, which a host may have loosened. */
-    readonly limits: ResourceLimits;
-    readonly presentation: ReaderPresentation;
-    readonly locale: RichTextLocale;
-    readonly testId: string;
+    limits: ResourceLimits;
+    presentation: ReaderPresentation;
+    locale: RichTextLocale;
+    testId: string;
 };
 
 const ENVELOPE_CODES: ReadonlySet<DiagnosticCode> = new Set(['format.unknown-format-version', 'format.wrong-model']);
@@ -93,9 +93,9 @@ const CopyButton = ({
     failure,
     children,
 }: {
-    readonly copy: () => Promise<boolean>;
-    readonly failure: string;
-    readonly children: ReactNode;
+    copy: () => Promise<boolean>;
+    failure: string;
+    children: ReactNode;
 }) => {
     const [failed, setFailed] = useState(false);
 
@@ -126,7 +126,7 @@ export const BlockedShell = ({
     presentation,
     locale,
     testId,
-}: ShellProps & { readonly result: Blocked }) => {
+}: ShellProps & { result: Blocked }) => {
     const { t } = readerContext(locale, presentation);
 
     return (
@@ -173,7 +173,7 @@ export const RecoveryShell = ({
     document,
     onRetry,
     ...shell
-}: ShellProps & { readonly document: RichTextDocument; readonly onRetry: () => void }) => {
+}: ShellProps & { document: RichTextDocument; onRetry: () => void }) => {
     const { model, readers, limits, presentation, locale, testId } = shell;
     const { t } = readerContext(locale, presentation);
     const messageRef = useRef<HTMLParagraphElement>(null);

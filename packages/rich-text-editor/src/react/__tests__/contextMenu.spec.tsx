@@ -125,13 +125,7 @@ describe('the context menu', () => {
     });
 
     /** Mounts images with `media.image`, its toolbar showing the moves or only Image, and selects the image. */
-    const mountSelected = async ({
-        readOnly,
-        shippedParts,
-    }: {
-        readonly readOnly: boolean;
-        readonly shippedParts: boolean;
-    }) => {
+    const mountSelected = async ({ readOnly, shippedParts }: { readOnly: boolean; shippedParts: boolean }) => {
         const model = imageModel([core(), mediaImage()]);
         // A host core part that shows Move up and Move down in the toolbar leaves More no row of its own.
         const toolbarMoves = defineEditorPart(core(), {

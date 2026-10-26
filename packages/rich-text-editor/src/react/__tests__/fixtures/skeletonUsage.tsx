@@ -109,22 +109,22 @@ export const authored = defineEditorPart(core, {
         'acme.plain': { run: (api) => api.marks.toggle('bold') },
         'acme.level': {
             payload: { fields: { level: { type: 'integer' } } },
-            run: (api, payload: { readonly level: number }) => api.attributes.set('heading', payload),
+            run: (api, payload: { level: number }) => api.attributes.set('heading', payload),
         },
         'acme.undeclared': {
             // @ts-expect-error: `run` takes a payload that `payload` does not declare.
-            run: (api, payload: { readonly level: number }) => api.attributes.set('heading', payload),
+            run: (api, payload: { level: number }) => api.attributes.set('heading', payload),
         },
         'acme.wrong': {
             payload: { fields: { level: { type: 'string' } } },
             // @ts-expect-error: `run` takes a number where `payload` declares a string.
-            run: (api, payload: { readonly level: number }) => api.attributes.set('heading', payload),
+            run: (api, payload: { level: number }) => api.attributes.set('heading', payload),
         },
     },
 });
 
 // @ts-expect-error: a command typed with a payload declares it.
-export const bare: EditorCommand<{ readonly level: number }> = { run: () => true };
+export const bare: EditorCommand<{ level: number }> = { run: () => true };
 
 // A toolbar entry has an accessible name: `labelKey`, or `label` with an `en-US` entry.
 export const toolbar = defineEditorPart(core, {

@@ -59,10 +59,7 @@ const presentation = defineReactPresentation({
     ],
 });
 
-const documentOf = (
-    blocks: readonly ContentNodeJSON[],
-    capabilities: readonly { readonly id: string; readonly version: number }[],
-) => ({
+const documentOf = (blocks: readonly ContentNodeJSON[], capabilities: readonly { id: string; version: number }[]) => ({
     documentId: 'document-1',
     revision: null,
     document: {
@@ -113,13 +110,13 @@ declare global {
     // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The handles of the two editors of `MarkedAndPlainProbe`, by name, and the selection helper. */
-        markedAndPlain?: { readonly Marked: EditorHandle; readonly setSelection: typeof setSelection };
+        markedAndPlain?: { Marked: EditorHandle; setSelection: typeof setSelection };
         /** The text probe's handle, the selection helper, and each change as `origin commandId`. */
         textRte?: {
-            readonly handle: EditorHandle;
-            readonly setSelection: typeof setSelection;
-            readonly changes: string[];
-            readonly text: () => string | undefined;
+            handle: EditorHandle;
+            setSelection: typeof setSelection;
+            changes: string[];
+            text: () => string | undefined;
         };
     }
 }
@@ -141,12 +138,12 @@ export const TextProbe = ({
     quoted = false,
     dir = 'ltr',
 }: {
-    readonly texts: readonly string[];
-    readonly nodeViewFirst?: boolean;
+    texts: readonly string[];
+    nodeViewFirst?: boolean;
     /** Puts the paragraphs in a quote. */
-    readonly quoted?: boolean;
+    quoted?: boolean;
     /** The theme direction. */
-    readonly dir?: 'ltr' | 'rtl';
+    dir?: 'ltr' | 'rtl';
 }) => {
     let blocks = texts.map(plainParagraph);
     if (nodeViewFirst) {
@@ -190,7 +187,7 @@ export const TextProbe = ({
  * The same lines twice: with marks and links in the editor named Marked, and as plain text in a bare `contenteditable`
  * named Plain, with the surface's content styles, so the browser alone edits it.
  */
-export const MarkedAndPlainProbe = ({ lines }: { readonly lines: readonly string[] }) => {
+export const MarkedAndPlainProbe = ({ lines }: { lines: readonly string[] }) => {
     const markedRef = useRef<EditorHandle>(null);
     useEffect(() => {
         if (markedRef.current !== null) {

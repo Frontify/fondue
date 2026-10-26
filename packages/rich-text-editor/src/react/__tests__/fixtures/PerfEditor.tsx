@@ -29,7 +29,7 @@ export const perfValue = (fixture: PerfFixtureName): RichTextEditorProps['defaul
 });
 
 /** One editor over a perf fixture, which a component test mounts. */
-export const PerfEditor = ({ fixture }: { readonly fixture: PerfFixtureName }) => {
+export const PerfEditor = ({ fixture }: { fixture: PerfFixtureName }) => {
     const [value] = useState(() => perfValue(fixture));
 
     return (
@@ -43,7 +43,7 @@ export const PerfEditor = ({ fixture }: { readonly fixture: PerfFixtureName }) =
 };
 
 /** An editor over a perf fixture, then the reader of the same document in a region named Reader. */
-export const PerfEditorWithReader = ({ fixture }: { readonly fixture: PerfFixtureName }) => {
+export const PerfEditorWithReader = ({ fixture }: { fixture: PerfFixtureName }) => {
     const [value] = useState(() => perfValue(fixture));
 
     return (
@@ -70,10 +70,10 @@ export const PerfTree = ({
     onRender = noop,
     onHandle = noop,
 }: {
-    readonly values: readonly RichTextEditorProps['defaultValue'][];
-    readonly onReady: (handles: EditorHandle[]) => void;
-    readonly onRender?: ProfilerOnRenderCallback;
-    readonly onHandle?: (handle: EditorHandle) => void;
+    values: readonly RichTextEditorProps['defaultValue'][];
+    onReady: (handles: EditorHandle[]) => void;
+    onRender?: ProfilerOnRenderCallback;
+    onHandle?: (handle: EditorHandle) => void;
 }) => {
     const handlesRef = useRef<EditorHandle[]>([]);
     const readyRef = useRef(0);

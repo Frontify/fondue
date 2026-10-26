@@ -13,10 +13,10 @@ import { type CompiledEditorDefinition, type ReactPresentation } from '#/react/t
 import { COMPOSED_STORIES } from './fixtures/composedStories';
 
 type StoryArgs = {
-    readonly definition?: CompiledEditorDefinition<object>;
-    readonly model?: ContentModel;
-    readonly profile?: RichTextProfile;
-    readonly presentation?: ReactPresentation;
+    definition?: CompiledEditorDefinition<object>;
+    model?: ContentModel;
+    profile?: RichTextProfile;
+    presentation?: ReactPresentation;
 };
 
 // Stories that show what the content checks find, whose content has issues on purpose.
@@ -54,9 +54,7 @@ const automaticIssues = (document: RichTextDocument, model: ContentModel | undef
 };
 
 const isDocument = (value: unknown): value is RichTextDocument =>
-    typeof value === 'object' &&
-    value !== null &&
-    (value as { readonly format?: unknown }).format === 'frontify.rich-text';
+    typeof value === 'object' && value !== null && (value as { format?: unknown }).format === 'frontify.rich-text';
 
 /** The documents a story's args hold, as a document or as the `document` of a stored record. */
 const documentsOf = (args: StoryArgs): RichTextDocument[] =>
@@ -65,7 +63,7 @@ const documentsOf = (args: StoryArgs): RichTextDocument[] =>
             return [value];
         }
 
-        const record = value as { readonly document?: unknown } | null | undefined;
+        const record = value as { document?: unknown } | null | undefined;
         const document = record?.document;
         if (isDocument(document)) {
             return [document];

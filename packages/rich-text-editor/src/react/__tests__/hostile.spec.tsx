@@ -52,14 +52,14 @@ const BOUNDARIES = [
 type Boundary = (typeof BOUNDARIES)[number];
 
 type Fixture = {
-    readonly name: string;
-    readonly boundary: Boundary;
-    readonly limits?: Partial<ResourceLimits>;
-    readonly unresolved?: true;
-    readonly input: unknown;
-    readonly expected: Readonly<Record<string, unknown>>;
+    name: string;
+    boundary: Boundary;
+    limits?: Partial<ResourceLimits>;
+    unresolved?: true;
+    input: unknown;
+    expected: Readonly<Record<string, unknown>>;
 };
-type Part = string | { readonly repeat: string; readonly times: number };
+type Part = string | { repeat: string; times: number };
 
 /** A value with each `{ text: [...] }` of parts joined, where a part is a string or `{ repeat, times }`, so the files stay small. */
 const expand = (value: unknown): unknown => {
@@ -131,24 +131,24 @@ const presentationOf = ({ unresolved: fails }: Fixture) => {
 };
 
 type Published = {
-    readonly diagnostics: Diagnostic[];
-    readonly metrics: OperationMetric[];
-    readonly statuses: unknown[];
+    diagnostics: Diagnostic[];
+    metrics: OperationMetric[];
+    statuses: unknown[];
 };
 type Held = {
-    readonly doc: EditorState['doc'];
-    readonly selection: Selection;
-    readonly undo: number;
-    readonly redo: boolean;
+    doc: EditorState['doc'];
+    selection: Selection;
+    undo: number;
+    redo: boolean;
 };
 /** What a boundary answered, whether it refused the input, and the editor state around the call. */
 type Outcome = {
-    readonly answer: Readonly<Record<string, unknown>>;
-    readonly refused: boolean;
-    readonly states?: { readonly before: Held; readonly after: Held };
-    readonly published: Published;
+    answer: Readonly<Record<string, unknown>>;
+    refused: boolean;
+    states?: { before: Held; after: Held };
+    published: Published;
     /** Every diagnostic and manifest a package API returned for the fixture. */
-    readonly returned: readonly unknown[];
+    returned: readonly unknown[];
 };
 
 /** A ready editor of the shipped parts over `document`, with every diagnostic, metric and save status it publishes. */
@@ -275,7 +275,7 @@ const hrefsOf = (value: unknown): string[] => {
     const { type, attrs, content, marks } = value as Record<string, unknown>;
     const own: string[] = [];
     if (type === 'link') {
-        own.push(String((attrs as { readonly href?: unknown }).href));
+        own.push(String((attrs as { href?: unknown }).href));
     }
 
     return [...own, ...hrefsOf(content), ...hrefsOf(marks)];
@@ -306,7 +306,7 @@ const decodedOf = (fixture: Fixture, input: unknown) => {
 };
 
 const runRemoteConfiguration = async (fixture: Fixture): Promise<Outcome> => {
-    const { call, argument } = fixture.input as { readonly call: string; readonly argument: unknown };
+    const { call, argument } = fixture.input as { call: string; argument: unknown };
     if (call === 'featuresById') {
         const published = { diagnostics: [], metrics: [], statuses: [] };
         const throws = throwsOf(() => featuresById(argument as string[]));
@@ -367,7 +367,7 @@ const runLoadedDocument = async (fixture: Fixture): Promise<Outcome> => {
 };
 
 const runCommandPayload = async (fixture: Fixture): Promise<Outcome> => {
-    const { command, payload } = fixture.input as { readonly command: string; readonly payload: unknown };
+    const { command, payload } = fixture.input as { command: string; payload: unknown };
     const mounted = await mountWithHistory(fixture);
     const before = heldBy(mounted);
     const result = (
@@ -381,7 +381,7 @@ const runCommandPayload = async (fixture: Fixture): Promise<Outcome> => {
 };
 
 const runPasteAndDrop = async (fixture: Fixture): Promise<Outcome> => {
-    const { mime } = fixture.input as { readonly mime: Readonly<Record<string, unknown>> };
+    const { mime } = fixture.input as { mime: Readonly<Record<string, unknown>> };
     const data: Record<string, string> = {};
     for (const [type, value] of Object.entries(mime)) {
         if (typeof value === 'string') {
@@ -402,7 +402,7 @@ const runPasteAndDrop = async (fixture: Fixture): Promise<Outcome> => {
         const rejection = mounted.published.diagnostics.find(({ code }) => code === 'clipboard.paste-rejected');
         let answer: Record<string, unknown>;
         if (rejection !== undefined && after.doc === before.doc) {
-            answer = { rejected: (rejection.details as { readonly reason: string }).reason };
+            answer = { rejected: (rejection.details as { reason: string }).reason };
         } else {
             // The paste lands after the typed text, a drop before it.
             const inserted = mounted.view.state.doc.textContent.replace(typed, '');
@@ -422,7 +422,7 @@ const runPasteAndDrop = async (fixture: Fixture): Promise<Outcome> => {
 };
 
 const runMarkdownImport = (fixture: Fixture): Outcome => {
-    const { markdown } = fixture.input as { readonly markdown: string };
+    const { markdown } = fixture.input as { markdown: string };
     const published = { diagnostics: [], metrics: [], statuses: [] };
     const result = createCodecs(model, { limits: fixture.limits ?? {} }).fromMarkdown(markdown);
     if (result.status === 'blocked') {
@@ -437,7 +437,7 @@ const runMarkdownImport = (fixture: Fixture): Outcome => {
 };
 
 const runAsyncResult = async (fixture: Fixture): Promise<Outcome> => {
-    const { command, result } = fixture.input as { readonly command: string; readonly result: unknown };
+    const { command, result } = fixture.input as { command: string; result: unknown };
     const mounted = await mountWithHistory(fixture);
     const before = heldBy(mounted);
     const runtime = runtimeOf(mounted.handle);
@@ -455,7 +455,7 @@ const runAsyncResult = async (fixture: Fixture): Promise<Outcome> => {
     });
     await settle();
     const discarded = mounted.published.diagnostics.find(({ code }) => code === 'runtime.async-discarded');
-    const details = discarded?.details as { readonly reason?: string } | undefined;
+    const details = discarded?.details as { reason?: string } | undefined;
     const reason = details?.reason;
     const states = { before, after: heldBy(mounted) };
     mounted.unmount();

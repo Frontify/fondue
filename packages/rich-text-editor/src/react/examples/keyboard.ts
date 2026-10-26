@@ -12,31 +12,31 @@ export type Area = (typeof AREAS)[number];
  * platforms and on the others; empty where it does not apply.
  */
 export type ShortcutRow = {
-    readonly area: Area;
-    readonly action: string;
-    readonly command: string;
-    readonly payload: JsonValue | null;
-    readonly key: KeyBinding;
-    readonly apple: string;
-    readonly other: string;
-    readonly profiles: readonly RichTextProfile[];
+    area: Area;
+    action: string;
+    command: string;
+    payload: JsonValue | null;
+    key: KeyBinding;
+    apple: string;
+    other: string;
+    profiles: readonly RichTextProfile[];
 };
 
 /** A key the surface handles itself, outside the compiled keymap, with its text on Apple platforms and on the others. */
 export type SurfaceKeyRow = {
-    readonly action: string;
-    readonly key: KeyBinding;
-    readonly apple: string;
-    readonly other: string;
-    readonly profiles: readonly RichTextProfile[];
+    action: string;
+    key: KeyBinding;
+    apple: string;
+    other: string;
+    profiles: readonly RichTextProfile[];
 };
 
 /** One input rule a profile installs: what the author types and what it turns into. */
 export type InputRuleRow = {
-    readonly id: string;
-    readonly trigger: string;
-    readonly result: string;
-    readonly profiles: readonly RichTextProfile[];
+    id: string;
+    trigger: string;
+    result: string;
+    profiles: readonly RichTextProfile[];
 };
 
 const ALL: readonly RichTextProfile[] = ['inline', 'comment', 'document', 'brand-document'];

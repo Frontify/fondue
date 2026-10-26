@@ -19,7 +19,7 @@ vi.mock('../profiles/inline', async (importOriginal) => {
 });
 
 /** Shows `failed` once a child threw, as a host's error boundary around the editor does. */
-class Boundary extends Component<{ readonly children: ReactNode }, { readonly failed: boolean }> {
+class Boundary extends Component<{ children: ReactNode }, { failed: boolean }> {
     override state = { failed: false };
 
     static getDerivedStateFromError() {
