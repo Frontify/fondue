@@ -3,8 +3,8 @@
 import { defineEditorPart } from '#/bridge/plugin';
 import { blockRule } from '#/model';
 
+import { taskItemView } from './components/TaskCheckbox';
 import { checkList } from './feature';
-import { taskItemView } from './view';
 
 /**
  * Toggles a task list from Mod+Shift+9, `[ ] ` or `[x] ` at a line start, or the toolbar, and checks an item from its

@@ -5,8 +5,8 @@ import { Flyout, TextInput } from '@frontify/fondue-components';
 import { Listbox } from '#/bridge/define';
 import { type EditorApi, type OverlayProps, useEditorApi } from '#/bridge/plugin';
 
-import styles from '../styles/emoji.module.scss';
 import { useEmojiPickerState } from '../hooks/useEmojiPickerState';
+import styles from '../styles/emoji.module.scss';
 
 /**
  * The emoji picker: a dialog at the selection with a search combobox over a listbox, as the WAI-ARIA combobox pattern

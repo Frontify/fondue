@@ -3,8 +3,8 @@
 import { Label, RadioList, SegmentedControl, Text, TextInput } from '@frontify/fondue-components';
 
 import { directionLabel, directions, labelOf } from '../helpers/languageModel';
-import styles from '../styles/language.module.scss';
 import { type LanguageState } from '../hooks/useLanguageState';
+import styles from '../styles/language.module.scss';
 
 // The segmented control ignores an empty value, so "no direction" gets a name of its own.
 const NO_DIRECTION = 'none';

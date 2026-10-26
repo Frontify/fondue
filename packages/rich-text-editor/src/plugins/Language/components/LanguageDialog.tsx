@@ -5,9 +5,10 @@ import { Button } from '@frontify/fondue-components';
 import { EditorDialog } from '#/bridge/define';
 import { type OverlayProps } from '#/bridge/plugin';
 
-import { DirectionSelect, LanguageRadios, TagField } from './LanguageFields';
-import styles from '../styles/language.module.scss';
 import { useLanguageState } from '../hooks/useLanguageState';
+import styles from '../styles/language.module.scss';
+
+import { DirectionSelect, LanguageRadios, TagField } from './LanguageFields';
 
 export { SET_LANGUAGE } from '../helpers/languageModel';
 

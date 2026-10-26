@@ -380,14 +380,14 @@ With `emptyBlock: true` in `rules`, the list opens only at the start of an empty
 
 A node view is a React component around the editable content of a node. It reads its node through `useRichTextNodeView` and renders `NodeViewContent` where the content goes. The editor renders it again only when its node or the selection changes.
 
-Source: `src/plugins/CheckList/view.tsx`
+Source: `src/plugins/CheckList/components/TaskCheckbox.tsx`
 
 ```tsx
 const { attrs, nodeId, contentId, context, execute } = useRichTextNodeView<TaskCommands>();
 const checked = attrs.checked === true;
 ```
 
-Source: `src/plugins/CheckList/view.tsx`
+Source: `src/plugins/CheckList/components/TaskCheckbox.tsx`
 
 ```tsx
 let labelledBy: string | undefined;
@@ -417,7 +417,7 @@ return (
 );
 ```
 
-Source: `src/plugins/CheckList/view.tsx`
+Source: `src/plugins/CheckList/components/TaskCheckbox.tsx`
 
 ```tsx
 export const taskItemView: NodeViewDeclaration = { node: 'task_item', component: TaskCheckbox };

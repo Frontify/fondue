@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 import { NodeViewContent, type NodeViewDeclaration, useRichTextNodeView } from '#/bridge/define';
 import { useEditorApi } from '#/bridge/plugin';
 
-import styles from './styles/task.module.scss';
+import styles from '../styles/task.module.scss';
 
 // Node chrome stays out of the Tab order, so Tab leaves the editor; Mod+Enter toggles the item from the keyboard.
 const OUT_OF_TAB_ORDER = -1;

@@ -3,8 +3,8 @@
 import { lazyPart } from '#/bridge/define';
 import { defineEditorPart } from '#/bridge/plugin';
 
-import { loadEmoji, searchEmoji } from './helpers/data';
 import { emoji } from './feature';
+import { loadEmoji, searchEmoji } from './helpers/data';
 
 const EmojiPicker = lazyPart(() => import('./components/EmojiPicker').then((loaded) => loaded.EmojiPicker));
 
