@@ -11,10 +11,10 @@ import {
     type RichTextDocument,
     type ValueDeclaration,
 } from '#/model';
-import { attributesOf, type CompiledMark, compiledModel, type CompiledNode } from '#/model/compile';
-import { advanceMatch, type ContentMatch, matchEnds, startMatch } from '#/model/contentExpression';
-import { canonicalJson } from '#/model/hash';
-import { isValidValue } from '#/model/values';
+import { attributesOf, type CompiledMark, compiledModel, type CompiledNode } from '#/model/compile/compile';
+import { advanceMatch, type ContentMatch, matchEnds, startMatch } from '#/model/helpers/contentExpression';
+import { canonicalJson } from '#/model/helpers/hash';
+import { isValidValue } from '#/model/helpers/values';
 import { storedIn } from '#/plugins/__tests__/fixtures/documents';
 
 export type JsonNode = { [key: string]: JsonValue };

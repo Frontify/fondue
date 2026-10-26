@@ -16,8 +16,8 @@ import { fixtureProfiles } from '#/plugins/__tests__/fixtures/profiles';
 import { core } from '#/plugins/Core/feature';
 import { link } from '#/plugins/Link/feature';
 
-import { orderPlugins, type PluginDescriptor } from '../capabilities';
-import { compiledModel } from '../compile';
+import { orderPlugins, type PluginDescriptor } from '../compile/capabilities';
+import { compiledModel } from '../compile/compile';
 
 import { compile, requiresCore, feature, failureOf, block } from './fixtures/compileFeatures';
 

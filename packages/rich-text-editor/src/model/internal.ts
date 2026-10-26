@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 // The model exports that the package's own code uses and the public `./model` entry does not.
-export { ASSET_IMAGE, FIGURE, IMAGE_FEATURE, imageSource, leavesOutUnresolved } from './assets';
+export { ASSET_IMAGE, FIGURE, IMAGE_FEATURE, imageSource, leavesOutUnresolved } from './content/assets';
 export {
     BASE_KEYS_PLUGIN,
     BLOCK_DECORATIONS_PLUGIN,
@@ -23,8 +23,8 @@ export {
     keyHandlersPlugin,
     keymapPlugin,
     orderPlugins,
-} from './capabilities';
-export { CONTENT_REPAIRS, DOCUMENT_RULES, type LocatedIssue, locateContentIssues } from './checks';
+} from './compile/capabilities';
+export { CONTENT_REPAIRS, DOCUMENT_RULES, type LocatedIssue, locateContentIssues } from './compile/checks';
 export {
     type CompiledFeature,
     type CompiledParseRule,
@@ -32,7 +32,7 @@ export {
     attributesOf,
     compiledModel,
     markHrefPolicy,
-} from './compile';
+} from './compile/compile';
 export {
     ISLAND_BLOCK,
     ISLAND_INLINE,
@@ -42,7 +42,7 @@ export {
     type Vocabulary,
     isIsland,
     vocabularyOf,
-} from './content';
+} from './content/content';
 export {
     type BlockDecorationSource,
     type DecoratedBlock,
@@ -50,14 +50,14 @@ export {
     type ResolveAssetUrl,
     type SuggestionPage,
     type SuggestionRules,
-} from './declarations';
-export { decodeToTree, limitsOf } from './decode';
-export { encodeTree, writeMark, writeNode } from './encode';
-export { findMisshapenCapabilities, isRoot } from './envelope';
-export { pointer } from './errors';
-export { attachToFeature, attachedTo, featureInternals } from './feature';
-export { diagnostic } from './format';
-export { canonicalJson } from './hash';
+} from './vocabulary/declarations';
+export { decodeToTree, limitsOf } from './document/decode';
+export { encodeTree, writeMark, writeNode } from './document/encode';
+export { findMisshapenCapabilities, isRoot } from './document/envelope';
+export { pointer } from './vocabulary/errors';
+export { attachToFeature, attachedTo, featureInternals } from './vocabulary/feature';
+export { diagnostic } from './vocabulary/format';
+export { canonicalJson } from './helpers/hash';
 export {
     type DirectedRun,
     type HtmlTemplate,
@@ -66,8 +66,8 @@ export {
     resolveHtmlSpec,
     treeRuns,
     withAutoDirection,
-} from './htmlSpec';
-export { packageVersionOf } from './migrate';
+} from './output/htmlSpec';
+export { packageVersionOf } from './document/migrate';
 export {
     COLOR_PROPERTIES,
     COLUMN_BREAK,
@@ -104,12 +104,18 @@ export {
     withStyle,
     withStyleId,
     writesAttribute,
-} from './output';
-export { isApple, isPlatformBinding, keyOn, modOn } from './platform';
-export { randomId } from './randomId';
-export { exceedsBytes } from './read';
-export { type ResolveReference, holdsControls, resolvingSafely, shownLabel, withoutBidiControls } from './references';
-export { appliesToOf, colorOf, cssValue } from './styles';
+} from './output/output';
+export { isApple, isPlatformBinding, keyOn, modOn } from './helpers/platform';
+export { randomId } from './document/randomId';
+export { exceedsBytes } from './document/read';
+export {
+    type ResolveReference,
+    holdsControls,
+    resolvingSafely,
+    shownLabel,
+    withoutBidiControls,
+} from './compile/references';
+export { appliesToOf, colorOf, cssValue } from './styling/styles';
 export { type LanguageTag, type StoredId } from './types';
 export {
     OBJECT_REPLACEMENT,
@@ -120,4 +126,4 @@ export {
     ownValue,
     parsedAttributes,
     snapshot,
-} from './values';
+} from './helpers/values';

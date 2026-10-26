@@ -16,7 +16,7 @@ import { PERF_FEATURES, perfDocument } from '../../model/__tests__/fixtures/perf
 
 // The spy wraps the real function, since the editor still hashes a document where it must, such as a replacement.
 const hashes = vi.hoisted(() => ({ calls: 0 }));
-vi.mock('#/model/hash', async (importOriginal) => {
+vi.mock('#/model/helpers/hash', async (importOriginal) => {
     const original = await importOriginal<{ hashDocument: typeof RealHash }>();
 
     return {

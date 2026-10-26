@@ -29,9 +29,9 @@ import {
 import { core } from '#/plugins/Core/feature';
 import { compileDefinition } from '#/runtime/definition';
 
-import { decodeToTree } from '../decode';
-import { encodeTree } from '../encode';
-import { canonicalJson } from '../hash';
+import { decodeToTree } from '../document/decode';
+import { encodeTree } from '../document/encode';
+import { canonicalJson } from '../helpers/hash';
 
 const model = vocabularyModel();
 const outcome = (result: DecodeResult) =>

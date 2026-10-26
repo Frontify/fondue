@@ -15,7 +15,7 @@ import { fixtureHeading } from '#/plugins/__tests__/fixtures/features';
 import { core } from '#/plugins/Core/feature';
 import { link } from '#/plugins/Link/feature';
 
-import { pointer } from '../errors';
+import { pointer } from '../vocabulary/errors';
 
 import { compile, requiresCore, feature, failureOf, block } from './fixtures/compileFeatures';
 

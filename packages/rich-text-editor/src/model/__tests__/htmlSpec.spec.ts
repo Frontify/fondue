@@ -4,9 +4,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type SharedAttribute } from '../compile';
-import { type HtmlSpec } from '../declarations';
-import { islandText, renderSpaces, resolveHtmlSpec, withAutoDirection } from '../htmlSpec';
+import { type SharedAttribute } from '../compile/compile';
+import { islandText, renderSpaces, resolveHtmlSpec, withAutoDirection } from '../output/htmlSpec';
+import { type HtmlSpec } from '../vocabulary/declarations';
 
 const heading: HtmlSpec = [
     { attr: 'level', tags: { 1: 'h1', 2: 'h2' } },

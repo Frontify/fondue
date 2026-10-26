@@ -7,7 +7,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 import { type PresentationStyle, resolveStyle, type StyleRecipe, styleSheetOf } from '#/model';
-import { colorOf, cssValue } from '#/model/styles';
+import { colorOf, cssValue } from '#/model/styling/styles';
 
 const linkStyle = (recipe: StyleRecipe, id = 'brand.link'): PresentationStyle => ({
     id,

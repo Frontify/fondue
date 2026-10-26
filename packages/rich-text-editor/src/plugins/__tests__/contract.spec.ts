@@ -46,7 +46,7 @@ import { pressKey, runFeatureContract, setSelection } from '#/testing';
 import { featureFixtures } from '#/testing/conformance/fixtures';
 
 vi.mock('#/codecs', { spy: true });
-vi.mock('#/model/compile', { spy: true });
+vi.mock('#/model/compile/compile', { spy: true });
 
 runFeatureContract([...featuresById(Object.keys(registry)), highlight()], {
     fixtures: [highlightDocument, badgeDocument],

@@ -15,7 +15,7 @@ import { defineReaderFeature } from '../define';
 import { semanticModel } from './fixtures/semantic';
 
 // The spy wraps the real decoder the reader calls, so the output stays real.
-vi.mock('#/model/decode', async (importOriginal) => {
+vi.mock('#/model/document/decode', async (importOriginal) => {
     const actual = await importOriginal<{ decodeToTree: typeof decodeToTree }>();
 
     return { ...actual, decodeToTree: vi.fn(actual.decodeToTree) };

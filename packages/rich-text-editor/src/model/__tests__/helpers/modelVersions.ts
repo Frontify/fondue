@@ -12,8 +12,8 @@ import {
 } from '#/model';
 import { core } from '#/plugins/Core/feature';
 
-import { compiledModel } from '../../compile';
-import { canonicalJson, sha256 } from '../../hash';
+import { compiledModel } from '../../compile/compile';
+import { canonicalJson, sha256 } from '../../helpers/hash';
 
 /**
  * What a model stores: its reference, each capability with a hash of its own schema, the model's schema, and the

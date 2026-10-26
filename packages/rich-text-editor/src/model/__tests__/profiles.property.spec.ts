@@ -14,15 +14,15 @@ import {
     type JsonValue,
     type ResourceLimits,
 } from '#/model';
-import { compiledModel } from '#/model/compile';
+import { compiledModel } from '#/model/compile/compile';
 import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/plugins';
 import { storedIn } from '#/plugins/__tests__/fixtures/documents';
 import { fcSettings, seeded } from '#/plugins/__tests__/fixtures/generated';
 import { longestAttributeValue } from '#/react/compileEditor';
 
-import { decodeToTree } from '../decode';
-import { encodeTree } from '../encode';
-import { canonicalJson } from '../hash';
+import { decodeToTree } from '../document/decode';
+import { encodeTree } from '../document/encode';
+import { canonicalJson } from '../helpers/hash';
 
 import { type JsonNode, modelDocumentArb } from './helpers/documents';
 

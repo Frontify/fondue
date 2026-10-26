@@ -9,7 +9,7 @@ import { defineReactPresentation } from '#/entries/authoring';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
 // oxlint-disable-next-line no-restricted-imports -- the spies need the hash module's own namespace, not a re-export.
-import * as hash from '#/model/hash';
+import * as hash from '#/model/helpers/hash';
 import { featuresById } from '#/plugins';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { registry } from '#/plugins/registry';

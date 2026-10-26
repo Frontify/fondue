@@ -7,7 +7,7 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 import { type LanguageTag, type StoredId } from '#/runtime/types';
 
 import { type AttrsOf, defaultLimits, type KeyBinding, type ResourceLimits } from '..';
-import { limitsOf } from '../decode';
+import { limitsOf } from '../document/decode';
 
 const declarations = {
     level: { type: 'integer', min: 1, max: 6, required: true },

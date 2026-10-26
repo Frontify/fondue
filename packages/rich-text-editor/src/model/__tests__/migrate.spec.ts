@@ -29,10 +29,10 @@ import {
 } from '#/plugins/__tests__/fixtures/notes';
 import { core } from '#/plugins/Core/feature';
 
-import { type TreeNode } from '../content';
-import { decodeToTree } from '../decode';
-import { encodeTree } from '../encode';
-import { canonicalJson } from '../hash';
+import { type TreeNode } from '../content/content';
+import { decodeToTree } from '../document/decode';
+import { encodeTree } from '../document/encode';
+import { canonicalJson } from '../helpers/hash';
 
 type Json = Record<string, JsonValue>;
 const root = new URL('./fixtures/migration/', import.meta.url);

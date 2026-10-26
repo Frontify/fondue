@@ -32,10 +32,10 @@ import {
 } from '#/plugins/__tests__/fixtures/documents';
 import { vocabularyModel } from '#/plugins/__tests__/fixtures/vocabulary';
 
-import { type TreeNode } from '../content';
-import { decodeToTree } from '../decode';
-import { encodeTree } from '../encode';
-import { canonicalJson } from '../hash';
+import { type TreeNode } from '../content/content';
+import { decodeToTree } from '../document/decode';
+import { encodeTree } from '../document/encode';
+import { canonicalJson } from '../helpers/hash';
 
 const model = vocabularyModel();
 // Generated content may use any installed capability, so the stored list names them all.

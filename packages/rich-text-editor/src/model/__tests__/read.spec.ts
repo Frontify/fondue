@@ -19,8 +19,8 @@ import {
 } from '#/plugins/__tests__/fixtures/documents';
 import { vocabularyModel } from '#/plugins/__tests__/fixtures/vocabulary';
 
-import { decodeToTree } from '../decode';
-import { readInput } from '../read';
+import { decodeToTree } from '../document/decode';
+import { readInput } from '../document/read';
 
 const model = vocabularyModel();
 const MIB = 1024 * 1024;

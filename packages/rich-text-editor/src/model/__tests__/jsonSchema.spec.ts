@@ -30,8 +30,8 @@ import {
 } from '#/plugins/__tests__/fixtures/documents';
 import { vocabularyFeatures, vocabularyModel } from '#/plugins/__tests__/fixtures/vocabulary';
 
-import { attributesOf, compiledModel } from '../compile';
-import { featureInternals } from '../feature';
+import { attributesOf, compiledModel } from '../compile/compile';
+import { featureInternals } from '../vocabulary/feature';
 
 const ajvOf = () => new Ajv2020({ strict: true, strictTypes: false, allowUnionTypes: true });
 const compile = (schema: JsonObject) => ajvOf().compile(schema);

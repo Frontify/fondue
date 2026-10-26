@@ -14,7 +14,7 @@ import {
     findContentIssues,
     type RichTextDocument,
 } from '#/model';
-import { GENERIC_IMAGE_WORDS, VAGUE_LINK_TEXTS } from '#/model/checks';
+import { GENERIC_IMAGE_WORDS, VAGUE_LINK_TEXTS } from '#/model/compile/checks';
 import { contentChecks, core, fontColor, heading, language, link, image } from '#/plugins';
 import { CONTENT_RULE_IDS } from '#/plugins/__tests__/fixtures/contentRules';
 

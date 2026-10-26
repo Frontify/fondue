@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { blockRule, markRule, textRule } from './capabilities';
+export { blockRule, markRule, textRule } from './compile/capabilities';
 export {
     altOf,
     figureAlign,
@@ -10,11 +10,17 @@ export {
     type Unavailable,
     unavailableOf,
     type UnresolvedAsset,
-} from './assets';
-export { type ContentCheckOptions, type ContentIssue, findContentIssues, ruleHelpKey, ruleNameKey } from './checks';
-export { hexColor } from './colors';
-export { compileContentModel } from './compile';
-export { composite, contrastOf, parseColor, type Rgba } from './contrast';
+} from './content/assets';
+export {
+    type ContentCheckOptions,
+    type ContentIssue,
+    findContentIssues,
+    ruleHelpKey,
+    ruleNameKey,
+} from './compile/checks';
+export { hexColor } from './styling/colors';
+export { compileContentModel } from './compile/compile';
+export { composite, contrastOf, parseColor, type Rgba } from './styling/contrast';
 export {
     type AttributeDeclaration,
     type AttributeDeclarations,
@@ -63,7 +69,7 @@ export {
     type SuggestionResult,
     type ValueDeclaration,
     type ValueOf,
-} from './declarations';
+} from './vocabulary/declarations';
 export {
     type ContentFinding,
     type ContentRepair,
@@ -74,10 +80,10 @@ export {
     type ContentRuleSubject,
     type FeatureContentDeclaration,
     type ReferenceDeclaration,
-} from './contentRules';
-export { createEmptyDocument, decodeDocument } from './decode';
-export { DefinitionError, type DefinitionErrorCode } from './errors';
-export { defineFeature } from './feature';
+} from './vocabulary/contentRules';
+export { createEmptyDocument, decodeDocument } from './document/decode';
+export { DefinitionError, type DefinitionErrorCode } from './vocabulary/errors';
+export { defineFeature } from './vocabulary/feature';
 export {
     type ContentNodeJSON,
     type DecodeOptions,
@@ -93,14 +99,20 @@ export {
     type ResourceLimits,
     type RichTextDocument,
     type RichTextSlice,
-} from './format';
-export { hashDocument, sameDocument } from './hash';
-export { checkHref, type HrefPolicy, type HrefResult, hrefPolicyOf } from './href';
-export { decorationLines, inheritedAnswer } from './inheritedStyle';
-export { isTaskListElement } from './taskListMarkup';
-export { toJsonSchema } from './jsonSchema';
-export { type MigrationManifest, type MigrationResult, migrateDocument } from './migrate';
-export { diffReferences, type MentionLabel, mentionLabel, type ReferenceDiff, unavailableNote } from './references';
+} from './vocabulary/format';
+export { hashDocument, sameDocument } from './helpers/hash';
+export { checkHref, type HrefPolicy, type HrefResult, hrefPolicyOf } from './vocabulary/href';
+export { decorationLines, inheritedAnswer } from './styling/inheritedStyle';
+export { isTaskListElement } from './helpers/taskListMarkup';
+export { toJsonSchema } from './compile/jsonSchema';
+export { type MigrationManifest, type MigrationResult, migrateDocument } from './document/migrate';
+export {
+    diffReferences,
+    type MentionLabel,
+    mentionLabel,
+    type ReferenceDiff,
+    unavailableNote,
+} from './compile/references';
 export {
     type ColorToken,
     isPresentationStyle,
@@ -110,5 +122,5 @@ export {
     type StyleRecipe,
     type StyleResolution,
     styleSheetOf,
-} from './styles';
-export { findInvalidPayload, isRecord } from './values';
+} from './styling/styles';
+export { findInvalidPayload, isRecord } from './helpers/values';

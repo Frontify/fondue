@@ -19,7 +19,7 @@ import {
     seededRandom,
 } from './fixtures/mounted';
 
-vi.mock('#/model/encode', { spy: true });
+vi.mock('#/model/document/encode', { spy: true });
 
 installPersistenceHooks();
 

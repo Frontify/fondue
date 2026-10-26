@@ -5,7 +5,7 @@
 import { expect, test } from 'vitest';
 
 import { enUS } from '#/locales/en-US';
-import { findContentIssues } from '#/model/checks';
+import { findContentIssues } from '#/model/compile/checks';
 
 import { measureNode } from '../../../perf/node';
 

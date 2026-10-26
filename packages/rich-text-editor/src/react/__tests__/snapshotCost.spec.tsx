@@ -15,7 +15,7 @@ import { PERF_FEATURES, perfDocument } from '../../model/__tests__/fixtures/perf
 
 // The spy wraps the real function, since a value that fails the JSON check still reports its path.
 const pointers = vi.hoisted(() => ({ calls: 0 }));
-vi.mock('#/model/errors', async (importOriginal) => {
+vi.mock('#/model/vocabulary/errors', async (importOriginal) => {
     const original = await importOriginal<{ pointer: typeof RealPointer }>();
 
     return {

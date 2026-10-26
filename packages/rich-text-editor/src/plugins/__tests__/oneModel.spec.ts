@@ -14,7 +14,7 @@ import { heading } from '#/plugins/Heading/feature';
 import { renderReader } from '#/reader/__tests__/helpers/helpers';
 import { fromHTML } from '#/runtime/import/fromHtml';
 
-vi.mock('#/model/compile', { spy: true });
+vi.mock('#/model/compile/compile', { spy: true });
 
 describe('one compiled model with the outside fixture feature on a server', () => {
     it('renders its fixture in the reader and through every codec from that model alone', () => {
