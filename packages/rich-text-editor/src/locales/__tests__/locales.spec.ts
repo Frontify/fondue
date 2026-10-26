@@ -23,13 +23,16 @@ const localeOf = async (file: string) => {
     if (locale === undefined) {
         throw new Error(`${file} exports no locale`);
     }
+
     return locale;
 };
+
 /** The count placeholders of `value` that stand anywhere but after a colon, an optional space or no-break space, and before the end or a period. */
 const misplacedCounts = (value: string) =>
     COUNT_PLACEHOLDERS.filter((name) => {
         const all = value.split(`\${${name}}`).length - 1;
         const placed = value.match(new RegExp(`:[ \u00A0]?\\$\\{${name}\\}(?=\\.?$)`, 'g')) ?? [];
+
         return all !== placed.length;
     });
 
@@ -74,6 +77,7 @@ describe('package locales', () => {
             if ('labelKey' in language) {
                 return [language.labelKey];
             }
+
             return [];
         });
 
