@@ -454,6 +454,23 @@ test.describe('TreeRoot item decorators', () => {
         await expect(component.getByRole('treeitem')).toHaveAttribute('aria-selected', 'false');
     });
 
+    test('bubbles clicks from the decorator to the row with propagateClicks', async ({ mount }) => {
+        let rowClicks = 0;
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1" onClick={() => (rowClicks += 1)}>
+                    <Tree.Label>Row</Tree.Label>
+                    <Tree.Decorator propagateClicks>
+                        <span data-test-id="row-decorator">hidden</span>
+                    </Tree.Decorator>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByTestId('row-decorator').click();
+        expect(rowClicks).toBe(1);
+    });
+
     test('does not select or expand a folder from clicks in portaled decorator content', async ({ mount, page }) => {
         let rowClicks = 0;
         let expandChanges = 0;

@@ -142,7 +142,8 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
     };
 
     // Keep decorator and action clicks from bubbling into the row's select/expand handler.
-    // React bubbles through portals, so this also covers flyouts opened from them.
+    // React bubbles through portals, so this also covers flyouts opened from them. A
+    // decorator can opt out via `propagateClicks` for passive content.
     const stopClickPropagation = (event: MouseEvent<HTMLElement>) => {
         event.stopPropagation();
     };
@@ -205,7 +206,10 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
                         <span className={styles.label}>{item.getItemName()}</span>
                         {data.decorator !== undefined && data.decorator !== null && (
                             // eslint-disable-next-line jsx-a11y-x/click-events-have-key-events, jsx-a11y-x/no-static-element-interactions
-                            <span className={styles.decorator} onClick={stopClickPropagation}>
+                            <span
+                                className={styles.decorator}
+                                onClick={data.decoratorPropagatesClicks ? undefined : stopClickPropagation}
+                            >
                                 {data.decorator}
                             </span>
                         )}

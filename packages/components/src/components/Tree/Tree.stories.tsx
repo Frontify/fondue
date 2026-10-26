@@ -725,8 +725,10 @@ export const WithDecorators: Story = {
                 story:
                     'Render badges or status icons right after the label by nesting `<Tree.Decorator>` ' +
                     "inside a `<Tree.Item>` or a folder's `<Tree.FolderHeader>`. Unlike `<Tree.Action>` (right-aligned), " +
-                    'the decorator hugs the label text. Both are click-isolated: clicks inside them, including from ' +
-                    'portaled content such as a flyout opened from a badge, do not select, expand or activate the row.',
+                    'the decorator hugs the label text. Both are click-isolated by default: clicks inside them, including ' +
+                    'from portaled content such as a flyout opened from a badge, do not select, expand or activate the ' +
+                    'row. Set `propagateClicks` on a decorator with passive content, like the "hidden" badge here, to ' +
+                    'pass its clicks on to the row.',
             },
         },
     },
@@ -746,7 +748,7 @@ export const WithDecorators: Story = {
         ]);
 
         const hiddenBadge = (
-            <Tree.Decorator>
+            <Tree.Decorator propagateClicks>
                 <Badge emphasis="weak" size="small" aria-label="Hidden">
                     <IconEyeOff size={12} />
                 </Badge>
