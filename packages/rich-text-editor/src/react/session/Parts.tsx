@@ -217,17 +217,17 @@ export const Bubble = () => {
         [items],
     );
     // A request to open the toolbar made before its chunk loads waits here and runs once the loaded toolbar registers.
-    const loadedShow = useRef<(() => void) | null>(null);
-    const requested = useRef(false);
+    const loadedShowRef = useRef<(() => void) | null>(null);
+    const requestedRef = useRef(false);
     const registry = useMemo(
         () => ({
             get current() {
-                return loadedShow.current;
+                return loadedShowRef.current;
             },
             set current(show: (() => void) | null) {
-                loadedShow.current = show;
-                if (show !== null && requested.current) {
-                    requested.current = false;
+                loadedShowRef.current = show;
+                if (show !== null && requestedRef.current) {
+                    requestedRef.current = false;
                     show();
                 }
             },
@@ -239,15 +239,15 @@ export const Bubble = () => {
             return undefined;
         }
         showBubbleRef.current = () => {
-            if (loadedShow.current === null) {
-                requested.current = true;
+            if (loadedShowRef.current === null) {
+                requestedRef.current = true;
                 return;
             }
-            loadedShow.current();
+            loadedShowRef.current();
         };
         return () => {
             showBubbleRef.current = null;
-            requested.current = false;
+            requestedRef.current = false;
         };
     }, [mode, showBubbleRef]);
     let more: BubbleMore | undefined;
