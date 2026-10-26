@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Label, RadioList, SegmentedControl, TextInput } from '@frontify/fondue-components';
+import { Label, RadioList, SegmentedControl, Text, TextInput } from '@frontify/fondue-components';
 
 import { directionLabel, directions, labelOf } from './languageModel';
 import styles from './styles/language.module.scss';
@@ -55,7 +55,9 @@ export const LanguageRadios = ({ state }: { readonly state: LanguageState }) => 
                 aria-invalid={invalid || undefined}
                 aria-errormessage={errorMessage}
             >
-                <span id={ids.legend}>{strings.tag}</span>
+                <Text id={ids.legend} weight="strong" size="small">
+                    {strings.tag}
+                </Text>
                 <div className={styles.options}>
                     {offered.map((option) => (
                         <div key={option} className={styles.option}>
@@ -83,9 +85,10 @@ export const LanguageRadios = ({ state }: { readonly state: LanguageState }) => 
 /** The text direction control. */
 export const DirectionSelect = ({ state }: { readonly state: LanguageState }) => (
     <>
-        <Label id={state.ids.directionLabel} htmlFor={state.ids.direction}>
+        {/* A radio group takes no `label for`, so its name is Fondue's group label text, as in RadioList's stories. */}
+        <Text id={state.ids.directionLabel} weight="strong" size="small">
             {state.strings.direction}
-        </Label>
+        </Text>
         <SegmentedControl.Root
             id={state.ids.direction}
             aria-labelledby={state.ids.directionLabel}
