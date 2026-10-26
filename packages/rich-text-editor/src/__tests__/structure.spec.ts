@@ -18,6 +18,7 @@ import {
     FUNCTIONS_OVER_6_LETS,
     KNOWN_CYCLES,
     PROSEMIRROR_NODES,
+    READONLY_MEMBERS,
     SPECS_OVER_1000_LINES,
     SPEC_REFERENCES,
 } from './structure.allowlist';
@@ -414,6 +415,83 @@ const prosemirrorNodes = () => {
     return [...nodes].sort();
 };
 
+const isSignature = (node: ts.Node) =>
+    ts.isFunctionTypeNode(node) ||
+    ts.isConstructorTypeNode(node) ||
+    ts.isMethodSignature(node) ||
+    ts.isCallSignatureDeclaration(node) ||
+    ts.isConstructSignatureDeclaration(node);
+
+// The type that holds a member, with `>` after it when a member's type nests the literal. A literal outside any type
+// declaration is named by its members, and one inside a function type is never an allowed owner.
+const memberOwner = (member: ts.TypeElement, file: ts.SourceFile) => {
+    const literal = member.parent as ts.TypeLiteralNode | ts.InterfaceDeclaration;
+    let declaration: ts.TypeAliasDeclaration | ts.InterfaceDeclaration | undefined;
+    if (ts.isInterfaceDeclaration(literal)) {
+        declaration = literal;
+    }
+
+    let nested = false;
+    let inSignature = false;
+    let node: ts.Node = literal;
+    while (declaration === undefined && node.parent !== undefined) {
+        const parent: ts.Node = node.parent;
+        if (ts.isTypeAliasDeclaration(parent)) {
+            declaration = parent;
+        } else if (
+            ts.isSourceFile(parent) ||
+            ts.isExpression(parent) ||
+            ts.isStatement(parent) ||
+            ts.isParameter(parent)
+        ) {
+            break;
+        } else if (isSignature(parent)) {
+            inSignature = true;
+        } else if (
+            ts.isPropertySignature(parent) ||
+            ts.isIndexSignatureDeclaration(parent) ||
+            ts.isMappedTypeNode(parent)
+        ) {
+            nested = true;
+        }
+
+        node = parent;
+    }
+
+    if (declaration === undefined) {
+        return `{ ${literal.members.map((element) => (element.name ? element.name.getText(file) : '[index]')).join(', ')} }`;
+    }
+
+    if (inSignature) {
+        return '(signature)';
+    }
+
+    return `${declaration.name.text}${nested ? '>' : ''}`;
+};
+
+const readonlyMembers = () => {
+    const found = new Map<string, string[]>();
+    for (const path of allFiles) {
+        const file = parse(path);
+        const visit = (node: ts.Node) => {
+            if (
+                (ts.isPropertySignature(node) || ts.isIndexSignatureDeclaration(node)) &&
+                node.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ReadonlyKeyword)
+            ) {
+                const key = `${toKey(path)}#${memberOwner(node, file)}`;
+                const line = file.getLineAndCharacterOfPosition(node.getStart(file)).line + 1;
+                found.set(key, [...(found.get(key) ?? []), `${toKey(path)}:${line}`]);
+            }
+
+            ts.forEachChild(node, visit);
+        };
+
+        visit(file);
+    }
+
+    return found;
+};
+
 const walkAll = (directory: string): string[] => {
     const files: string[] = [];
     for (const entry of readdirSync(directory, { withFileTypes: true })) {
@@ -585,6 +663,32 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
 
     it('no file of the package or its workflow names a spec, decision or plan ID, or a spec section', () => {
         expect(ratchet(specReferenceCounts(), SPEC_REFERENCES)).toEqual([]);
+    });
+
+    it('no property or index signature is readonly, except the members of types frozen at run time', () => {
+        const found = readonlyMembers();
+        const allowed = new Set<string>();
+        const stale: string[] = [];
+        for (const { types = [], deep = [] } of READONLY_MEMBERS) {
+            for (const type of types) {
+                allowed.add(type);
+                if (!found.has(type)) {
+                    stale.push(type);
+                }
+            }
+
+            for (const type of deep) {
+                allowed.add(type);
+                allowed.add(`${type}>`);
+                if (!found.has(type) && !found.has(`${type}>`)) {
+                    stale.push(type);
+                }
+            }
+        }
+
+        const unlisted = [...found].filter(([key]) => !allowed.has(key)).flatMap(([, places]) => places);
+        expect(unlisted, 'readonly members outside the allowlist').toEqual([]);
+        expect(stale, 'allowlist entries that no longer match').toEqual([]);
     });
 
     it('as unknown as casts in product files do not grow', () => {
