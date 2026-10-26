@@ -1,7 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AssistiveTreeDescription } from '@headless-tree/react';
-import { Fragment, useCallback, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import {
+    Fragment,
+    useCallback,
+    useEffect,
+    useId,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState,
+    type ReactNode,
+} from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -71,6 +81,19 @@ export const TreeRoot = ({
     if (hasFocusWithin && items.length === 0) {
         setHasFocusWithin(false);
     }
+    // A focused control removed by an outside press (a portalled menu dismissed) fires no blur, and focus falls to the page body.
+    useEffect(() => {
+        if (!hasFocusWithin) {
+            return;
+        }
+        const handlePointerUp = () => {
+            if (document.activeElement === document.body) {
+                setHasFocusWithin(false);
+            }
+        };
+        document.addEventListener('pointerup', handlePointerUp);
+        return () => document.removeEventListener('pointerup', handlePointerUp);
+    }, [hasFocusWithin]);
     const tree = useTreeController({
         items,
         onChange,
