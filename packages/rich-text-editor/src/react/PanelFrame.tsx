@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button } from '@frontify/fondue-components';
+import { Button, ScrollArea } from '@frontify/fondue-components';
 import { Component, type ComponentType, type ReactNode, useRef } from 'react';
 
 import { useAnnounce } from '#/bridge/announcer';
@@ -138,14 +138,18 @@ export const PanelFrame = ({
             data-rte-panel-id={id}
             data-test-id={`${testId}-panel`}
         >
-            <PanelBoundary
-                key={id}
-                message={t('RichTextEditor_panelError')}
-                closeLabel={t('RichTextEditor_close')}
-                onClose={onClose}
-            >
-                <Panel close={onClose} t={t} requested={requested} />
-            </PanelBoundary>
+            <ScrollArea type="auto" maxHeight="16rem" data-test-id={`${testId}-panel-scroll`}>
+                <div className={styles.content}>
+                    <PanelBoundary
+                        key={id}
+                        message={t('RichTextEditor_panelError')}
+                        closeLabel={t('RichTextEditor_close')}
+                        onClose={onClose}
+                    >
+                        <Panel close={onClose} t={t} requested={requested} />
+                    </PanelBoundary>
+                </div>
+            </ScrollArea>
         </div>
     );
 };
