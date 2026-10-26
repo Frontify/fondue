@@ -3,7 +3,7 @@
 import { PluginKey, type Transaction } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
-import { exceededStructure } from '#/clipboard/import/limits';
+import { exceededStructure } from '#/runtime/import/limits';
 
 import { type Pasted } from './paste';
 import { announce, type Connected, reject } from './session';

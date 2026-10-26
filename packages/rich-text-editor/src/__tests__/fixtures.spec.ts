@@ -44,11 +44,13 @@ describe('the fixtures CI runs on a change to src', () => {
         }
     });
 
-    it.each(namesIn('../html/__tests__/fixtures/clipboard/', '.html'))(
+    it.each(namesIn('../runtime/import/__tests__/fixtures/clipboard/', '.html'))(
         'gives the pasted HTML %s its expected document in a .paste.json file',
         (name) => {
             expect(
-                existsSync(folder(`../html/__tests__/fixtures/clipboard/${name.replace('.html', '.paste.json')}`)),
+                existsSync(
+                    folder(`../runtime/import/__tests__/fixtures/clipboard/${name.replace('.html', '.paste.json')}`),
+                ),
             ).toBe(true);
         },
     );

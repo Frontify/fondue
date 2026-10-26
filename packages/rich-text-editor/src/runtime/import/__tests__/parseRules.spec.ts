@@ -6,12 +6,12 @@ import { JSDOM } from 'jsdom';
 import { type Node } from 'prosemirror-model';
 import { describe, expect, it } from 'vitest';
 
-import { NO_COLORS } from '#/clipboard/import/colors';
-import { importHtml } from '#/clipboard/import/html';
 import { core } from '#/features/core/feature';
 import { compileContentModel, defaultLimits, defineFeature, type Feature, type ResourceLimits } from '#/model';
 import { compiledModel } from '#/model/internal';
 import { buildSchema } from '#/runtime/definition/schema';
+import { NO_COLORS } from '#/runtime/import/colors';
+import { importHtml } from '#/runtime/import/html';
 
 const { window } = new JSDOM('');
 const requires = [{ id: 'core', version: 1 }];

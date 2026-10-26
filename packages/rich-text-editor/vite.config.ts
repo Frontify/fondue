@@ -1,5 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { dirname } from 'node:path';
+
 import { type Plugin } from 'vite';
 import dts from 'vite-plugin-dts';
 import tsConfigPaths from 'vite-tsconfig-paths';
@@ -51,6 +54,18 @@ export default defineConfig({
                 'src/react/examples/**',
                 'src/docs/**',
             ],
+            // The `./html` export keeps its declaration path while the source lives in runtime/import.
+            afterBuild: (emittedFiles) => {
+                const suffix = '/runtime/import/fromHtml.d.ts';
+                const source = [...emittedFiles.keys()].find((file) => file.endsWith(suffix));
+                if (source === undefined) {
+                    throw new Error(`The build emitted no ${suffix}.`);
+                }
+
+                const entry = `${source.slice(0, -suffix.length)}/html/index.d.ts`;
+                mkdirSync(dirname(entry), { recursive: true });
+                writeFileSync(entry, "export * from '../runtime/import/fromHtml';\n");
+            },
         }),
         externalizeJsDeps(),
     ],
@@ -63,7 +78,7 @@ export default defineConfig({
                 'entries/reader': './src/entries/reader.ts',
                 'entries/authoring': './src/entries/authoring.ts',
                 'codecs/index': './src/codecs/index.ts',
-                'html/index': './src/html/index.ts',
+                'html/index': './src/runtime/import/fromHtml.ts',
                 'testing/index': './src/testing/index.ts',
             },
             cssFileName: 'style',
@@ -106,7 +121,7 @@ export default defineConfig({
                 'src/model/**': { lines: 95, branches: 90 },
                 'src/runtime/**': { lines: 95, branches: 90 },
                 'src/persistence/**': { lines: 95, branches: 90 },
-                'src/clipboard/**': { lines: 95, branches: 90 },
+                'src/runtime/import/**': { lines: 95, branches: 90 },
                 'src/codecs/**': { lines: 95, branches: 90 },
             },
         },

@@ -2,7 +2,6 @@
 
 import { Fragment, type Node, type Schema, Slice } from 'prosemirror-model';
 
-import { openDepth } from '#/clipboard/import/policy';
 import { type ContentModel, type ContentNodeJSON, type ResourceLimits, type RichTextSlice, isRecord } from '#/model';
 import {
     ISLAND_BLOCK,
@@ -17,6 +16,7 @@ import {
     writeNode,
     pointer,
 } from '#/model/internal';
+import { openDepth } from '#/runtime/import/policy';
 
 /** The clipboard type of the internal slice. */
 export const SLICE_TYPE = 'application/x-frontify-rich-text+json';

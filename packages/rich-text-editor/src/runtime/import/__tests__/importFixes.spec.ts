@@ -5,15 +5,15 @@
 import { JSDOM } from 'jsdom';
 import { describe, expect, it } from 'vitest';
 
-import { NO_COLORS } from '#/clipboard/import/colors';
-import { importHtml } from '#/clipboard/import/html';
 import { htmlModel } from '#/features/__tests__/fixtures/html';
 import { core } from '#/features/core/feature';
 import { links } from '#/features/links/feature';
 import { compileContentModel, defaultLimits } from '#/model';
 import { buildSchema } from '#/runtime/definition/schema';
+import { NO_COLORS } from '#/runtime/import/colors';
+import { importHtml } from '#/runtime/import/html';
 
-import { fromHTML } from '../index';
+import { fromHTML } from '../fromHtml';
 
 const { window } = new JSDOM('');
 const dom = window as unknown as Window;

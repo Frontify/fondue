@@ -8,7 +8,7 @@ import { type Page } from '@playwright/test';
 import { ClipboardProbe } from '#/react/__tests__/fixtures/ClipboardProbe';
 import { HtmlPasteProbe } from '#/react/__tests__/fixtures/HtmlPasteProbe';
 
-import { cspViolationsOf } from '../../../playwright/csp';
+import { cspViolationsOf } from '../../../../playwright/csp';
 
 test.afterEach(async ({ page }) => {
     // No paste or render path needs inline script, `eval` or a foreign origin.
@@ -610,11 +610,11 @@ test('pastes text/plain only with Ctrl+Shift+V in Chromium @engine', async ({ mo
     ]);
 });
 
-const securityFixtures = new URL('../../html/__tests__/fixtures/security/', import.meta.url);
+const securityFixtures = new URL('../../import/__tests__/fixtures/security/', import.meta.url);
 const pastedFixtures = [
-    new URL('../../html/__tests__/fixtures/clipboard/', import.meta.url),
-    new URL('./fixtures/vendor/', import.meta.url),
-    new URL('./fixtures/colors/', import.meta.url),
+    new URL('../../import/__tests__/fixtures/clipboard/', import.meta.url),
+    new URL('../../import/__tests__/fixtures/vendor/', import.meta.url),
+    new URL('../../import/__tests__/fixtures/colors/', import.meta.url),
 ].flatMap((directory) =>
     readdirSync(directory)
         .filter((file) => file.endsWith('.html'))

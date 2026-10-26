@@ -3,11 +3,11 @@
 import { Fragment, type Node, type NodeType } from 'prosemirror-model';
 import { type EditorState, type Transaction } from 'prosemirror-state';
 
-import { exceededWrite } from '#/clipboard/import/limits';
-import { refusedNames } from '#/clipboard/import/policy';
 import { type ContentNodeJSON, type JsonObject, isRecord } from '#/model';
 import { hasNodeId, attributesOf, compiledModel, decodeToTree, randomId } from '#/model/internal';
 import { withNodeIds } from '#/runtime/definition';
+import { exceededWrite } from '#/runtime/import/limits';
+import { refusedNames } from '#/runtime/import/policy';
 
 import { type WriteOutcome, type WriteTarget } from '../documentApi';
 import { positionOf } from '../positions';

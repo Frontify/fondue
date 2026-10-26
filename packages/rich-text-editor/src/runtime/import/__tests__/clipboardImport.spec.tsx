@@ -16,7 +16,6 @@ import { quote } from '#/features/blocksQuote/feature';
 import { core } from '#/features/core/feature';
 import { language } from '#/features/marksLanguage/feature';
 import { registry } from '#/features/registry';
-import { fromHTML } from '#/html';
 import {
     compileContentModel,
     type ContentModel,
@@ -27,10 +26,11 @@ import {
 } from '#/model';
 import { compiledModel } from '#/model/internal';
 import { loadMarkdownReader } from '#/runtime/clipboard/markdown';
+import { fromHTML } from '#/runtime/import/fromHtml';
 import { setSelection } from '#/testing';
 
-import { NO_COLORS } from '../import/colors';
-import { importHtml } from '../import/html';
+import { NO_COLORS } from '../colors';
+import { importHtml } from '../html';
 
 import { model, ALLOW, type Options, mount, pasteInto, copyFrom, selectAll } from './fixtures/mount';
 
@@ -340,8 +340,8 @@ describe('pasted HTML', () => {
 
     // A path, not a `URL`: happy-dom replaces the global `URL`, which rejects a `file:` URL.
     const here = dirname(fileURLToPath(import.meta.url));
-    const valid = join(here, '..', '..', 'model', '__tests__', 'fixtures', 'model', 'valid');
-    const security = join(here, '..', '..', 'html', '__tests__', 'fixtures', 'security');
+    const valid = join(here, '..', '..', '..', 'model', '__tests__', 'fixtures', 'model', 'valid');
+    const security = join(here, 'fixtures', 'security');
     it.each(readdirSync(valid))(
         'parses the copied text/html and the toHTML output of %s to equal documents',
         (name) => {

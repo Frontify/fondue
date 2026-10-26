@@ -110,30 +110,30 @@ const CASES: readonly Case[] = [
         "import { Schema } from 'prosemirror-model';",
     ),
 
-    // clipboard/import
-    banned('clipboard/import: another layer', 'src/clipboard/import/layer.ts', "import { run } from '#/runtime/run';"),
+    // runtime/import
+    banned('runtime/import: another layer', 'src/runtime/import/layer.ts', "import { run } from '#/runtime/run';"),
     banned(
-        'clipboard/import: the clipboard plugin',
-        'src/clipboard/import/plugin.ts',
+        'runtime/import: the clipboard plugin',
+        'src/runtime/import/plugin.ts',
         "import { plugin } from '#/runtime/clipboard/plugin';",
     ),
     banned(
-        'clipboard/import: the engine view',
-        'src/clipboard/import/view.ts',
+        'runtime/import: the engine view',
+        'src/runtime/import/view.ts',
         "import { EditorView } from 'prosemirror-view';",
     ),
-    banned('clipboard/import: react', 'src/clipboard/import/react.ts', "import { memo } from 'react';"),
-    allowed('clipboard/import: model', 'src/clipboard/import/model.ts', "import { node } from '#/model';"),
+    banned('runtime/import: react', 'src/runtime/import/react.ts', "import { memo } from 'react';"),
+    allowed('runtime/import: model', 'src/runtime/import/model.ts', "import { node } from '#/model';"),
     allowed(
-        'clipboard/import: prosemirror-model',
-        'src/clipboard/import/engine.ts',
+        'runtime/import: prosemirror-model',
+        'src/runtime/import/engine.ts',
         "import { Slice } from 'prosemirror-model';",
     ),
-    allowed('clipboard/import: a sibling file', 'src/clipboard/import/sibling.ts', "import { parse } from './parse';"),
+    allowed('runtime/import: a sibling file', 'src/runtime/import/sibling.ts', "import { parse } from './parse';"),
     allowed(
-        'clipboard/import: itself by alias',
-        'src/clipboard/import/alias.ts',
-        "import { parse } from '#/clipboard/import';",
+        'runtime/import: itself by alias',
+        'src/runtime/import/alias.ts',
+        "import { parse } from '#/runtime/import';",
     ),
 
     // clipboard engine files
@@ -157,9 +157,9 @@ const CASES: readonly Case[] = [
     allowed('runtime/clipboard: model', 'src/runtime/clipboard/model.ts', "import { node } from '#/model';"),
     allowed('runtime/clipboard: codecs', 'src/runtime/clipboard/codecs.ts', "import { planOf } from '#/codecs/plan';"),
     allowed(
-        'runtime/clipboard: clipboard/import',
+        'runtime/clipboard: runtime/import',
         'src/runtime/clipboard/import.ts',
-        "import { parse } from '#/clipboard/import';",
+        "import { parse } from '#/runtime/import';",
     ),
     banned(
         'runtime/clipboard: persistence',
@@ -167,23 +167,35 @@ const CASES: readonly Case[] = [
         "import { save } from '#/persistence/save';",
     ),
     banned(
-        'clipboard/import: runtime/history, which its parent folder may import',
-        'src/clipboard/import/history.ts',
+        'runtime/import: runtime/history, which its parent folder may import',
+        'src/runtime/import/history.ts',
         "import { run } from '#/runtime/history';",
     ),
 
-    // html
-    banned('html: another layer', 'src/html/layer.ts', "import { run } from '#/runtime/run';"),
-    banned('html: the engine view', 'src/html/view.ts', "import { EditorView } from 'prosemirror-view';"),
+    // runtime/import/fromHtml
+    banned('fromHtml: another layer', 'src/runtime/import/fromHtml.ts', "import { run } from '#/runtime/run';"),
     banned(
-        'html: the rest of the definition',
-        'src/html/definition.ts',
+        'fromHtml: the engine view',
+        'src/runtime/import/fromHtml.ts',
+        "import { EditorView } from 'prosemirror-view';",
+    ),
+    banned(
+        'fromHtml: the rest of the definition',
+        'src/runtime/import/fromHtml.ts',
         "import { other } from '#/runtime/definition/other';",
     ),
-    allowed('html: the schema', 'src/html/schema.ts', "import { schema } from '#/runtime/definition/schema';"),
-    allowed('html: clipboard/import', 'src/html/import.ts', "import { parse } from '#/clipboard/import';"),
-    allowed('html: prosemirror-model', 'src/html/engine.ts', "import { Slice } from 'prosemirror-model';"),
-    allowed('html: model', 'src/html/model.ts', "import { node } from '#/model';"),
+    allowed(
+        'fromHtml: the schema',
+        'src/runtime/import/fromHtml.ts',
+        "import { schema } from '#/runtime/definition/schema';",
+    ),
+    allowed('fromHtml: runtime/import', 'src/runtime/import/fromHtml.ts', "import { parse } from '#/runtime/import';"),
+    allowed(
+        'fromHtml: prosemirror-model',
+        'src/runtime/import/fromHtml.ts',
+        "import { Slice } from 'prosemirror-model';",
+    ),
+    allowed('fromHtml: model', 'src/runtime/import/fromHtml.ts', "import { node } from '#/model';"),
 
     // feature.ts and migration.ts
     banned('feature file: a model subpath', 'src/features/bold/feature.ts', "import { node } from '#/model/node';"),
@@ -439,7 +451,7 @@ const CASES: readonly Case[] = [
 
     // feature units in the server side layers
     banned('units: model', 'src/model/unit.ts', "import { boldPlugin } from '#/features/bold/index';"),
-    banned('units: html', 'src/html/unit.ts', "import { boldPlugin } from '#/features/bold/index';"),
+    banned('units: fromHtml', 'src/runtime/import/fromHtml.ts', "import { boldPlugin } from '#/features/bold/index';"),
     banned('units: reader', 'src/reader/unit.ts', "import { boldPlugin } from '#/features/bold/index';"),
     banned(
         'units: reader by relative path',
@@ -580,7 +592,7 @@ const CASES: readonly Case[] = [
         'src/runtime/relative.ts',
         "import { save } from '../persistence/save';",
     ),
-    banned('runtime: the clipboard plugin', 'src/runtime/plugin.ts', "import { plugin } from '#/clipboard/plugin';"),
+    banned('runtime: the html entry', 'src/runtime/plugin.ts', "import { fromHTML } from '#/runtime/import/fromHtml';"),
     banned('runtime: react', 'src/runtime/react.ts', "import { memo } from 'react';"),
     banned(
         'runtime: prosemirror-history outside runtime/history',
@@ -592,7 +604,7 @@ const CASES: readonly Case[] = [
         'src/runtime/definition.ts',
         "import { schema } from '#/runtime/definition/schema';",
     ),
-    allowed('runtime: clipboard/import', 'src/runtime/import.ts', "import { parse } from '#/clipboard/import';"),
+    allowed('runtime: runtime/import', 'src/runtime/import.ts', "import { parse } from '#/runtime/import';"),
     allowed('runtime: the engine', 'src/runtime/engine.ts', "import { EditorState } from 'prosemirror-state';"),
     allowed('runtime: model', 'src/runtime/model.ts', "import { node } from '#/model';"),
 

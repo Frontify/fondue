@@ -11,11 +11,11 @@ import { featuresById } from '#/features';
 import { storedIn } from '#/features/__tests__/fixtures/documents';
 import { documentArb, fcSettings, nodeIdsIn, nodesIn, seeded } from '#/features/__tests__/fixtures/generated';
 import { registry } from '#/features/registry';
-import { fromHTML } from '#/html';
 import { compileContentModel, type ContentModel, type ContentNodeJSON, type RichTextDocument } from '#/model';
 import { compiledModel, type TreeNode, decodeToTree } from '#/model/internal';
 import { PROFILE_MODELS } from '#/react/examples/records';
 import { buildSchema } from '#/runtime/definition/schema';
+import { fromHTML } from '#/runtime/import/fromHtml';
 
 const ADDRESSED = ['heading', 'task_item', 'mention', 'figure', 'asset_image', 'embed', 'table'];
 const { window } = new JSDOM('');

@@ -5,15 +5,15 @@
 import { JSDOM } from 'jsdom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { exceedsMarkupDepth } from '#/clipboard/import/limits';
 import { core } from '#/features/core/feature';
 import { bulletList } from '#/features/listsBullet/feature';
 import { listItem } from '#/features/listsItem/feature';
 import { orderedList } from '#/features/listsOrdered/feature';
 import { taskList } from '#/features/listsTask/feature';
 import { compileContentModel } from '#/model';
+import { exceedsMarkupDepth } from '#/runtime/import/limits';
 
-import { fromHTML } from '../index';
+import { fromHTML } from '../fromHtml';
 
 const { window } = new JSDOM('');
 const dom = window as unknown as Window;

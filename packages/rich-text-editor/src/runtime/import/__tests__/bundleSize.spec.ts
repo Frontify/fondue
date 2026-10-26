@@ -4,11 +4,11 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { budgets, measure } from '../../__tests__/fixtures/size/bundle';
+import { budgets, measure } from '../../../__tests__/fixtures/size/bundle';
 
 describe('html bundle', () => {
     it('stays within its Brotli budget, prosemirror-model included', async () => {
-        const { bytes, modules } = await measure("export * from '#/html';");
+        const { bytes, modules } = await measure("export * from '#/runtime/import/fromHtml';");
 
         expect(modules.some((id) => id.includes('prosemirror-model'))).toBe(true);
         expect(bytes).toBeLessThanOrEqual(budgets['./html'] ?? 0);

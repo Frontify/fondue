@@ -10,11 +10,11 @@ import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { align } from '#/features/blocksAlign/feature';
 import { heading } from '#/features/blocksHeading/feature';
 import { core } from '#/features/core/feature';
-import { fromHTML } from '#/html';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { deDE } from '#/locales/de-DE';
 import { compileContentModel, type ContentModel } from '#/model';
 import { mountText, para, storedIn, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
+import { fromHTML } from '#/runtime/import/fromHtml';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection, typeText } from '#/testing';
 

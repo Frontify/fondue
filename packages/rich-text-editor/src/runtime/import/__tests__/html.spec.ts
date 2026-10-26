@@ -15,7 +15,7 @@ import { core } from '#/features/core/feature';
 import { compileContentModel, defineFeature, type RichTextDocument } from '#/model';
 import { defineEditor } from '#/react/define';
 
-import { fromHTML } from '../index';
+import { fromHTML } from '../fromHtml';
 
 const { window } = new JSDOM('');
 const model = htmlModel();
@@ -25,8 +25,8 @@ const readUrl = (url: URL) => readFileSync(url, 'utf8');
 const htmlNames = (directory: URL) => readdirSync(directory).filter((name) => name.endsWith('.html'));
 const pastedFixtures = [
     clipboardFixtures,
-    new URL('../../clipboard/__tests__/fixtures/vendor/', import.meta.url),
-    new URL('../../clipboard/__tests__/fixtures/colors/', import.meta.url),
+    new URL('./fixtures/vendor/', import.meta.url),
+    new URL('./fixtures/colors/', import.meta.url),
 ].flatMap((directory) => htmlNames(directory).map((name) => [name, directory] as const));
 const withoutNodeIds = (value: unknown): unknown =>
     JSON.parse(JSON.stringify(value, (key, item: unknown) => (key === 'nodeId' ? undefined : item)));

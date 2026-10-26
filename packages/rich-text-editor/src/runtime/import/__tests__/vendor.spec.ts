@@ -9,11 +9,6 @@ import { JSDOM } from 'jsdom';
 import { type Node as EngineNode, DOMParser as SchemaParser } from 'prosemirror-model';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { NO_COLORS } from '#/clipboard/import/colors';
-import { cleanGoogleDocs } from '#/clipboard/import/googleDocs';
-import { importHtml } from '#/clipboard/import/html';
-import { removeEmptySpans, removeItemBreaks, removeMarkup } from '#/clipboard/import/markup';
-import { rebuildOfficeLists, removeOfficeMarkup } from '#/clipboard/import/office';
 import { htmlFeatures, htmlModel } from '#/features/__tests__/fixtures/html';
 import { core } from '#/features/core/feature';
 import { bulletList } from '#/features/listsBullet/feature';
@@ -23,12 +18,17 @@ import { taskList } from '#/features/listsTask/feature';
 import { compileContentModel, type ContentModel, defaultLimits, defineFeature } from '#/model';
 import { compiledModel } from '#/model/internal';
 import { buildSchema } from '#/runtime/definition/schema';
+import { NO_COLORS } from '#/runtime/import/colors';
+import { cleanGoogleDocs } from '#/runtime/import/googleDocs';
+import { importHtml } from '#/runtime/import/html';
+import { removeEmptySpans, removeItemBreaks, removeMarkup } from '#/runtime/import/markup';
+import { rebuildOfficeLists, removeOfficeMarkup } from '#/runtime/import/office';
 
-import { fromHTML } from '../index';
+import { fromHTML } from '../fromHtml';
 
 const { window } = new JSDOM('');
 const host = window as unknown as Window;
-const fixtures = new URL('../../clipboard/__tests__/fixtures/vendor/', import.meta.url);
+const fixtures = new URL('./fixtures/vendor/', import.meta.url);
 const readFixture = (name: string) => readFileSync(new URL(name, fixtures), 'utf8');
 // Without literal colours, as `marks.font-color` ships, so the colour every Google Docs run sets stays out.
 const vendorModel = compileContentModel(

@@ -24,7 +24,7 @@ import { shipped as commentProfile } from '#/react/profiles/comment';
 import { shipped as documentProfile } from '#/react/profiles/document';
 import { shipped as inlineProfile } from '#/react/profiles/inline';
 
-import { fromHTML } from '../index';
+import { fromHTML } from '../fromHtml';
 
 import { htmlArb, policyFaults, unsafeHtml, unsafeParts } from './helpers/hostileHtml';
 

@@ -35,7 +35,7 @@ import {
     caretAtEnd,
     slicePayload,
     nodeIdsOf,
-} from './fixtures/mount';
+} from '../../import/__tests__/fixtures/mount';
 
 // Paste reads Markdown only after an editor's first idle moment, which these synchronous cases do not wait for.
 beforeAll(loadMarkdownReader);

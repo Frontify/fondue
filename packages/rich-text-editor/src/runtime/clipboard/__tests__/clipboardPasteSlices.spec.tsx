@@ -8,7 +8,14 @@ import { loadMarkdownReader } from '#/runtime/clipboard/markdown';
 import { SLICE_TYPE } from '#/runtime/clipboard/slice';
 import { setSelection } from '#/testing';
 
-import { mount, pasteInto, pasteEventInto, copyFrom, selectAll, slicePayload } from './fixtures/mount';
+import {
+    mount,
+    pasteInto,
+    pasteEventInto,
+    copyFrom,
+    selectAll,
+    slicePayload,
+} from '../../import/__tests__/fixtures/mount';
 
 // Paste reads Markdown only after an editor's first idle moment, which these synchronous cases do not wait for.
 beforeAll(loadMarkdownReader);

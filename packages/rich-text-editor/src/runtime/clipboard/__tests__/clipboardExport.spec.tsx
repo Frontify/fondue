@@ -14,7 +14,7 @@ import { mediaImage } from '#/features/mediaImage/feature';
 import { compileContentModel, type JsonValue } from '#/model';
 import { loadMarkdownReader } from '#/runtime/clipboard/markdown';
 
-import { mount, copyFrom, selectAll } from './fixtures/mount';
+import { mount, copyFrom, selectAll } from '../../import/__tests__/fixtures/mount';
 
 // Paste reads Markdown only after an editor's first idle moment, which these synchronous cases do not wait for.
 beforeAll(loadMarkdownReader);

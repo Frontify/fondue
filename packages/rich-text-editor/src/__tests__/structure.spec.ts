@@ -261,15 +261,15 @@ const allFunctionMeasures = () => productFiles.flatMap((path) => functionMeasure
 
 const folderExists = (path: string) => existsSync(path) && statSync(path).isDirectory();
 
-// Maps a path under src (as segments) to its graph node; `split` gives `clipboard/import` and each feature their own node.
+// Maps a path under src (as segments) to its graph node; `split` gives `runtime/import` and each feature their own node.
 const nodeOf = (segments: string[], split: boolean) => {
     const [first, second] = segments;
     if (first === undefined || !folderExists(join(srcRoot, first))) {
         return ROOT_NODE;
     }
 
-    if (split && second !== undefined && first === 'clipboard' && second === 'import') {
-        return 'clipboard/import';
+    if (split && second !== undefined && first === 'runtime' && second === 'import') {
+        return 'runtime/import';
     }
 
     if (split && second !== undefined && first === 'features' && folderExists(join(srcRoot, first, second))) {

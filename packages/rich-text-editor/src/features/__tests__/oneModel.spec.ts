@@ -10,9 +10,9 @@ import { highlight, highlightDocument } from '#/features/__tests__/fixtures/outs
 import { align } from '#/features/blocksAlign/feature';
 import { heading } from '#/features/blocksHeading/feature';
 import { core } from '#/features/core/feature';
-import { fromHTML } from '#/html';
 import { compileContentModel } from '#/model';
 import { renderReader } from '#/reader/__tests__/helpers/helpers';
+import { fromHTML } from '#/runtime/import/fromHtml';
 
 vi.mock('#/model/compile', { spy: true });
 

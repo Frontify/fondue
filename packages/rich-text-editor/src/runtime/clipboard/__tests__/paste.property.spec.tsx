@@ -7,12 +7,12 @@ import { describe, expect, it } from 'vitest';
 
 import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/features';
 import { fcSettings, seeded } from '#/features/__tests__/fixtures/generated';
-import { htmlArb, policyFaults, unsafeParts } from '#/html/__tests__/helpers/hostileHtml';
 import { type ContentModel, decodeDocument, type RichTextSlice } from '#/model';
 import { mountProfile } from '#/react/__tests__/fixtures/profiles';
 import { loadProfile } from '#/react/profiles';
 import { type RichTextProfile } from '#/react/types';
 import { SLICE_TYPE } from '#/runtime/clipboard/slice';
+import { htmlArb, policyFaults, unsafeParts } from '#/runtime/import/__tests__/helpers/hostileHtml';
 import { paste } from '#/testing';
 
 const settings = fcSettings(60);

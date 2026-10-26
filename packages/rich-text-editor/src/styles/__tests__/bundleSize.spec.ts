@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { budgets, measure } from '../../__tests__/fixtures/size/bundle';
 
 // Every public entry, so the stylesheet holds what `./styles` ships.
-const ENTRIES = ['#/index', '#/features', '#/entries/reader', '#/codecs', '#/html', '#/testing']
+const ENTRIES = ['#/index', '#/features', '#/entries/reader', '#/codecs', '#/runtime/import/fromHtml', '#/testing']
     .map((entry) => `export * from '${entry}';`)
     .join('\n');
 
