@@ -2,8 +2,8 @@
 
 import { useCallback, useContext, useEffect, useRef, useSyncExternalStore } from 'react';
 
-import { useAnnounce } from '#/bridge/announcer';
-import { SessionContext } from '#/bridge/session';
+import { SessionContext } from '#/bridge/session/helpers/sessionContext';
+import { useAnnounce } from '#/bridge/session/hooks/useAnnounce';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import { type CodecContext } from '#/model';
 import { type SaveStatus } from '#/runtime/port';

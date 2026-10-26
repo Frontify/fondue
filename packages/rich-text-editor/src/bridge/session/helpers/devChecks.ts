@@ -1,8 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createContext, useContext, useEffect } from 'react';
-
-import { useClientLayoutEffect } from './session/hooks/useClientLayoutEffect';
+import { createContext } from 'react';
 
 /**
  * Whether the editor's React tree renders or runs effects now, which a development build marks for
@@ -29,50 +27,6 @@ export const inReactWork = (work: ReactWork | undefined): boolean =>
 /** The session's marks, which a production build leaves `undefined`. */
 export const ReactWorkContext = createContext<ReactWork | undefined>(undefined);
 ReactWorkContext.displayName = 'RichTextEditorReactWorkContext';
-
-/**
- * Marks the render of the part that calls it until its commit; a render that never commits closes at the next
- * microtask, so no event handler finds it open.
- */
-export const useRenderMark = (): void => {
-    const work = useContext(ReactWorkContext);
-    if (work !== undefined && !work.rendering) {
-        work.rendering = true;
-        // oxlint-disable-next-line @eslint-react/purity -- a render that never commits runs no effect to close its mark.
-        queueMicrotask(() => {
-            work.rendering = false;
-        });
-    }
-
-    useClientLayoutEffect(() => {
-        if (work !== undefined) {
-            work.rendering = false;
-        }
-    });
-};
-
-/**
- * Marks the render, layout effects and effects of the parts between an opening and a closing `Phase`, which React
- * runs in tree order; a render that never commits closes at the next microtask.
- */
-export const Phase = ({ work, open }: { work: ReactWork; open: boolean }) => {
-    work.phase = open;
-    if (open) {
-        // oxlint-disable-next-line @eslint-react/purity -- a render that never commits runs no effect to close its mark.
-        queueMicrotask(() => {
-            work.phase = false;
-        });
-    }
-
-    useClientLayoutEffect(() => {
-        work.phase = open;
-    });
-    useEffect(() => {
-        work.phase = open;
-    });
-
-    return null;
-};
 
 /** The accessible name of a surface: the text its `aria-labelledby` elements hold, else its `aria-label`. */
 const nameOf = (surface: Element): string => {

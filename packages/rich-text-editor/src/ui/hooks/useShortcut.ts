@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useApplePlatform } from '#/bridge/platform';
-import { useSessionValue } from '#/bridge/session';
+import { useApplePlatform } from '#/bridge/session/hooks/useApplePlatform';
+import { useSessionValue } from '#/bridge/session/hooks/useSessionValue';
 import { keyOn } from '#/model/internal';
 import { type ToolbarItem } from '#/ui/helpers/items';
 import { ariaShortcut, bindingHere, shortcutText } from '#/ui/helpers/shortcuts';

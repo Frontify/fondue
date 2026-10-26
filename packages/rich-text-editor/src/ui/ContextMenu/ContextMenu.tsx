@@ -5,8 +5,8 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { useEditorOverlay } from '#/bridge/overlays/hooks/useEditorOverlay';
 import { type OverlayAnchor } from '#/bridge/pluginApi/plugin';
-import { SessionContext } from '#/bridge/session';
 import { lazyPart } from '#/bridge/session/helpers/lazyPart';
+import { SessionContext } from '#/bridge/session/helpers/sessionContext';
 import { atomPositionAt, selectedNodePosition, surfaceElement } from '#/runtime/port';
 import { offeredRows, type ToolbarItem, type ToolbarStrings } from '#/ui/helpers/items';
 import { pressesBinding } from '#/ui/helpers/shortcuts';

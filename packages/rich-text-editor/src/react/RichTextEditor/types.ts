@@ -2,11 +2,11 @@
 
 import { type ComponentType, type KeyboardEventHandler, type MutableRefObject, type ReactNode } from 'react';
 
-import { type Announcer } from '#/bridge/announcer';
 import { type TurnIntoEntry } from '#/bridge/chrome/helpers/turnInto';
-import { type ReactWork } from '#/bridge/devChecks';
 import { type PortalStore } from '#/bridge/nodeViews/helpers/portals';
 import { type EditorHosts } from '#/bridge/pluginApi/plugin';
+import { type Announcer } from '#/bridge/session/helpers/announcer';
+import { type ReactWork } from '#/bridge/session/helpers/devChecks';
 import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 import {
     type CapabilityRef,

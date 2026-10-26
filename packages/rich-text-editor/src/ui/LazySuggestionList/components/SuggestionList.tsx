@@ -3,11 +3,12 @@
 import { Flyout, LoadingCircle } from '@frontify/fondue-components';
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useAnnounce } from '#/bridge/announcer';
 import { Listbox } from '#/bridge/chrome/components/Listbox';
 import { useEditorOverlay } from '#/bridge/overlays/hooks/useEditorOverlay';
-import { SessionContext, useSessionValue } from '#/bridge/session';
+import { SessionContext } from '#/bridge/session/helpers/sessionContext';
+import { useAnnounce } from '#/bridge/session/hooks/useAnnounce';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
+import { useSessionValue } from '#/bridge/session/hooks/useSessionValue';
 import {
     acceptSuggestionIn,
     type ActiveSuggestion,

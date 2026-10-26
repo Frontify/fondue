@@ -2,7 +2,7 @@
 
 import { useContext } from 'react';
 
-import { SessionContext } from '#/bridge/session';
+import { SessionContext } from '#/bridge/session/helpers/sessionContext';
 import { type ShippedCommands } from '#/runtime/port';
 
 import { type EditorHandle } from '../types';

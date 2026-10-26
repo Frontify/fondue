@@ -2,7 +2,6 @@
 
 import { type ComponentType, type MutableRefObject, useMemo, useRef, useState } from 'react';
 
-import { type Announcer } from '#/bridge/announcer';
 import { anchorOf } from '#/bridge/overlays/helpers/anchor';
 import { type InteractionScope } from '#/bridge/overlays/helpers/interactionScope';
 import {
@@ -12,6 +11,7 @@ import {
     type OverlayProps,
     type PluginPresentation,
 } from '#/bridge/pluginApi/plugin';
+import { type Announcer } from '#/bridge/session/helpers/announcer';
 import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 import { type CodecContext } from '#/model';
 import { contentChecksOf, referenceValues, surfaceElement } from '#/runtime/port';

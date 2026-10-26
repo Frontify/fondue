@@ -2,10 +2,10 @@
 
 import { type MutableRefObject } from 'react';
 
-import { Phase } from '#/bridge/devChecks';
 import { PortalHost } from '#/bridge/nodeViews/components/PortalHost';
 import { OverlayBody } from '#/bridge/overlays/components/OverlayBody';
 import { type EditorHosts } from '#/bridge/pluginApi/plugin';
+import { Phase } from '#/bridge/session/components/Phase';
 import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 import { mediaOf } from '#/runtime/port';
 import { VISUALLY_HIDDEN } from '#/styles/visuallyHidden';

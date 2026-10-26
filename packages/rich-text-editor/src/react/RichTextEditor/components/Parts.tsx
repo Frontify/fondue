@@ -4,10 +4,10 @@ import { useFondueTheme } from '@frontify/fondue-components';
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 
 import { useScopedFocus } from '#/bridge/overlays/hooks/useScopedFocus';
-import { useApplePlatform } from '#/bridge/platform';
-import { useSessionValue } from '#/bridge/session';
 import { lazyPart } from '#/bridge/session/helpers/lazyPart';
+import { useApplePlatform } from '#/bridge/session/hooks/useApplePlatform';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
+import { useSessionValue } from '#/bridge/session/hooks/useSessionValue';
 import { contentClasses } from '#/model/internal';
 import { type EditorPort, isEmptyDocument } from '#/runtime/port';
 import { type BubbleMore } from '#/ui/BubbleToolbar/BubbleToolbar';

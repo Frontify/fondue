@@ -4,7 +4,7 @@ import { Component, type ReactNode } from 'react';
 
 import { type JsonObject } from '#/model';
 
-import { type ReactWork, ReactWorkContext } from '../../devChecks';
+import { type ReactWork, ReactWorkContext } from '../../session/helpers/devChecks';
 
 export type BoundaryProps = {
     message: string;

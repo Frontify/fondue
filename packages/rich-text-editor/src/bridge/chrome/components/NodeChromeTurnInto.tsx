@@ -2,7 +2,7 @@
 
 import { useContext } from 'react';
 
-import { useEditorApi } from '../../pluginApi/plugin';
+import { useEditorApi } from '../../pluginApi/hooks/useEditorApi';
 import { turnIntoChoices, TurnIntoContext, type TurnIntoNode } from '../helpers/turnInto';
 
 import { NodeChromeMenu } from './NodeChromeMenu';

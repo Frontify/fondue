@@ -4,7 +4,7 @@ import { Dropdown } from '@frontify/fondue-components';
 import { type AriaAttributes, type AriaRole, useId } from 'react';
 
 import { CheckedSlot } from '#/bridge/chrome/components/CheckedSlot';
-import { useCommandQuery } from '#/bridge/hooks';
+import { useCommandQuery } from '#/bridge/pluginApi/hooks/useCommandQuery';
 import { type ToolbarItem, type ToolbarStrings } from '#/ui/helpers/items';
 import { useOpenPanel } from '#/ui/hooks/useOpenPanel';
 import { useShortcut } from '#/ui/hooks/useShortcut';

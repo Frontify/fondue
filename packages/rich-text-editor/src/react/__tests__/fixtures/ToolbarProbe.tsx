@@ -3,7 +3,7 @@
 import { ThemeProvider } from '@frontify/fondue-components';
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-import { AnnouncerContext } from '#/bridge/announcer';
+import { AnnouncerContext } from '#/bridge/session/helpers/announcer';
 import { defineReactPresentation } from '#/entries/authoring';
 import { defineEditor, type EditorHandle, type ReactPresentation, RichTextEditor } from '#/index';
 import { enUS } from '#/locales/en-US';

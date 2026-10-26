@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useSessionValue } from '#/bridge/session';
+import { useSessionValue } from '#/bridge/session/hooks/useSessionValue';
 import { offeredRows, type ToolbarItem } from '#/ui/helpers/items';
 
 const sameRows = (previous: readonly ToolbarItem[], next: readonly ToolbarItem[]) =>

@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export { modelOf, type RichTextPlugin } from '#/bridge/pluginApi/definePlugin';
-export { useCommandState, useEditorSelection } from '#/bridge/hooks';
+export { useCommandState } from '#/bridge/pluginApi/hooks/useCommandState';
+export { useEditorSelection } from '#/bridge/pluginApi/hooks/useEditorSelection';
 export { contentChecksPlugin } from '#/plugins/ContentChecks';
 export { alignPlugin } from '#/plugins/Align';
 export { codeBlockPlugin } from '#/plugins/CodeBlock';

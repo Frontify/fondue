@@ -6,10 +6,11 @@ import { createPortal } from 'react-dom';
 
 import { type EditorPort, mediaOf } from '#/runtime/port';
 
-import { type NodePending, type NodeViewContext, NodeViewStateContext } from '../../pluginApi/define';
-import { useSessionValue } from '../../session';
+import { type NodePending, type NodeViewContext } from '../../pluginApi/define';
 import { useClientLayoutEffect } from '../../session/hooks/useClientLayoutEffect';
+import { useSessionValue } from '../../session/hooks/useSessionValue';
 import { NodeViewContentContext } from '../helpers/nodeViewContentContext';
+import { NodeViewStateContext } from '../helpers/nodeViewStateContext';
 import { type PortalEntry, type PortalStore } from '../helpers/portals';
 
 import { ChromeBoundary } from './ChromeBoundary';

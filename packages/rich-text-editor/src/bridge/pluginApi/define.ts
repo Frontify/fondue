@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ComponentType, createContext, useContext } from 'react';
+import { type ComponentType } from 'react';
 
 import { type CodecContext, type JsonObject } from '#/model';
 import { type ReaderContext } from '#/model/internal';
@@ -11,8 +11,6 @@ import {
     type CommandState,
     type ShippedCommands,
 } from '#/runtime/types';
-
-import { useRenderMark } from '../devChecks';
 
 export { suggestionOptionId } from '#/runtime/capabilities/suggestions/optionId';
 export { CheckedSlot } from '../chrome/components/CheckedSlot';
@@ -34,6 +32,8 @@ export { TurnIntoMenu } from '../chrome/components/TurnIntoMenu';
 export { OverlayBody } from '../overlays/components/OverlayBody';
 export { type EditorOverlay } from '../overlays/helpers/overlayContext';
 export { useEditorOverlay } from '../overlays/hooks/useEditorOverlay';
+export { NodeViewStateContext } from '../nodeViews/helpers/nodeViewStateContext';
+export { useRichTextNodeView } from '../nodeViews/hooks/useRichTextNodeView';
 
 /** What node chrome reads besides attributes: the reader's `ReaderContext`, which `src/bridge` may not import from the reader. */
 export type NodeViewContext = ReaderContext;
@@ -93,19 +93,4 @@ export type PanelDeclaration = {
     /** The id a plugin opens this panel by, such as `checks`. */
     control: string;
     component: ComponentType<PanelComponentProps>;
-};
-
-/** The state of the node view whose chrome renders, which the portal host provides. */
-export const NodeViewStateContext = createContext<NodeViewState<object> | null>(null);
-NodeViewStateContext.displayName = 'RichTextNodeViewContext';
-
-/** The node of the chrome that calls it, with its node-ID actions. */
-export const useRichTextNodeView = <C extends object = ShippedCommands>(): NodeViewState<C> => {
-    useRenderMark();
-    const state = useContext(NodeViewStateContext);
-    if (state === null) {
-        throw new Error('useRichTextNodeView must be called inside node view chrome.');
-    }
-
-    return state as NodeViewState<C>;
 };

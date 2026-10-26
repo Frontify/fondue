@@ -2,7 +2,7 @@
 
 import { type RefObject, useContext, useRef } from 'react';
 
-import { SessionContext } from '#/bridge/session';
+import { SessionContext } from '#/bridge/session/helpers/sessionContext';
 import { returnFocus, runItem, type ToolbarItem } from '#/ui/helpers/items';
 
 /**

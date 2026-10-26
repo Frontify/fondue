@@ -3,7 +3,7 @@
 import { act, fireEvent, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { COALESCE_MS } from '#/bridge/announcer';
+import { COALESCE_MS } from '#/bridge/session/helpers/announcer';
 import { defineEditorPart, useEditorApi, useEditorValue } from '#/entries/authoring';
 import { contentChecks } from '#/plugins';
 import { pluginsById } from '#/plugins/plugins';

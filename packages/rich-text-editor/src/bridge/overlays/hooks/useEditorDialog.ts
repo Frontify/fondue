@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { useAnnounce } from '../../announcer';
+import { useAnnounce } from '../../session/hooks/useAnnounce';
 import { type EditorOverlay } from '../helpers/overlayContext';
 
 import { useEditorOverlay } from './useEditorOverlay';

@@ -2,8 +2,8 @@
 
 import { type MutableRefObject } from 'react';
 
-import { type Announcer } from '#/bridge/announcer';
 import { type InteractionScope } from '#/bridge/overlays/helpers/interactionScope';
+import { type Announcer } from '#/bridge/session/helpers/announcer';
 import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 import { type readerContext } from '#/reader/helpers/context';
 

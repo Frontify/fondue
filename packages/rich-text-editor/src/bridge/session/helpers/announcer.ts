@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createContext, useContext } from 'react';
+import { createContext } from 'react';
 
 /** Messages with one coalescing key that arrive within this time announce only the latest. */
 export const COALESCE_MS = 500;
@@ -101,13 +101,3 @@ export const createAnnouncer = (): Announcer => {
 
 export const AnnouncerContext = createContext<Announcer | null>(null);
 AnnouncerContext.displayName = 'RichTextEditorAnnouncerContext';
-
-/** Announces through the live region of the editor around the caller. */
-export const useAnnounce = (): Announcer['announce'] => {
-    const announcer = useContext(AnnouncerContext);
-    if (announcer === null) {
-        throw new Error('useAnnounce must be called inside RichTextEditor.Root.');
-    }
-
-    return announcer.announce;
-};

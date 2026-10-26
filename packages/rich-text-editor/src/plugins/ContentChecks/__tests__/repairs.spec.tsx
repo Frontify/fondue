@@ -3,7 +3,7 @@
 import { act, fireEvent, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { COALESCE_MS } from '#/bridge/announcer';
+import { COALESCE_MS } from '#/bridge/session/helpers/announcer';
 import { core, emoji, fontColor } from '#/plugins';
 import { fixturePickerPanel, openFind } from '#/plugins/__tests__/fixtures/panels';
 import { mountText, textModel } from '#/react/__tests__/fixtures/text';

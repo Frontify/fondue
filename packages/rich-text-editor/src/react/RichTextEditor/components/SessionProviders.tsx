@@ -2,12 +2,13 @@
 
 import { type ReactNode } from 'react';
 
-import { AnnouncerContext, type Announcer } from '#/bridge/announcer';
 import { TurnIntoContext, type TurnIntoEntry } from '#/bridge/chrome/helpers/turnInto';
-import { ReactWorkContext, type ReactWork } from '#/bridge/devChecks';
 import { OverlayContext, type Overlays } from '#/bridge/overlays/helpers/overlayContext';
-import { EditorHostsContext, type EditorHosts } from '#/bridge/pluginApi/plugin';
-import { SessionContext } from '#/bridge/session';
+import { EditorHostsContext } from '#/bridge/pluginApi/helpers/editorHostsContext';
+import { type EditorHosts } from '#/bridge/pluginApi/plugin';
+import { AnnouncerContext, type Announcer } from '#/bridge/session/helpers/announcer';
+import { ReactWorkContext, type ReactWork } from '#/bridge/session/helpers/devChecks';
+import { SessionContext } from '#/bridge/session/helpers/sessionContext';
 import { type EditorPort } from '#/runtime/port';
 
 import { RootContext } from '../helpers/rootContext';

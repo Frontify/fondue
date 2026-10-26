@@ -4,7 +4,7 @@ import { act, render } from '@testing-library/react';
 import { createRef, Profiler, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { useEditorSelection } from '#/bridge/hooks';
+import { useEditorSelection } from '#/bridge/pluginApi/hooks/useEditorSelection';
 import { compileContentModel, type Diagnostic } from '#/model';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { core } from '#/plugins/Core/feature';

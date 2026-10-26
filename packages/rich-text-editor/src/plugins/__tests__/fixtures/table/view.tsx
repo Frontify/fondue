@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { NodeChromeButton, NodeChromeToolbar, useRichTextNodeView } from '#/bridge/pluginApi/define';
+import { useRichTextNodeView } from '#/bridge/nodeViews/hooks/useRichTextNodeView';
+import { NodeChromeButton, NodeChromeToolbar } from '#/bridge/pluginApi/define';
 import { defineEditorPart } from '#/bridge/pluginApi/plugin';
 
 import { fixtureTableBlock } from './feature';

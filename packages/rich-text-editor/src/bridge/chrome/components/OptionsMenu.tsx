@@ -6,7 +6,8 @@ import { useCallback, useState } from 'react';
 import { type JsonValue } from '#/model';
 
 import { useEditorOverlay } from '../../overlays/hooks/useEditorOverlay';
-import { type EditorApi, type OverlayProps, useEditorApi } from '../../pluginApi/plugin';
+import { useEditorApi } from '../../pluginApi/hooks/useEditorApi';
+import { type EditorApi, type OverlayProps } from '../../pluginApi/plugin';
 
 import { OptionItem } from './OptionItem';
 

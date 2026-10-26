@@ -4,8 +4,10 @@ import { type ComponentType } from 'react';
 
 import { ISLAND_BLOCK, ISLAND_INLINE, islandLabel, islandText } from '#/model/internal';
 
-import { NodeChromeButton, NodeChromeToolbar, useRichTextNodeView } from '../../pluginApi/define';
-import { useEditorApi, useEditorValue } from '../../pluginApi/plugin';
+import { NodeChromeButton, NodeChromeToolbar } from '../../pluginApi/define';
+import { useEditorApi } from '../../pluginApi/hooks/useEditorApi';
+import { useEditorValue } from '../../pluginApi/hooks/useEditorValue';
+import { useRichTextNodeView } from '../hooks/useRichTextNodeView';
 
 import { islandReplacement } from './helpers/islandReplacement';
 import styles from './styles/island.module.scss';

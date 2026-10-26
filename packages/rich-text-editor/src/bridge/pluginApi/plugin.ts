@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ComponentType, createContext, type RefCallback, useContext } from 'react';
+import { type ComponentType, type RefCallback } from 'react';
 
 import {
     type CodecContext,
@@ -21,11 +21,8 @@ import { type EditorRange } from '#/runtime/api/documentApi';
 import { type ContentChecksApi } from '#/runtime/capabilities/checks/api';
 import { type AuthoringPolicy, type ReferenceValue } from '#/runtime/types';
 
-import { SessionContext, useSessionValue } from '../session';
-
 import { type EditorApi, type EditorFacet } from './apiFacets';
 import { type NodeViewDeclaration, type PanelDeclaration } from './define';
-import { editorApiOf } from './liveApi';
 
 export { type CheckedIssue, type ContentChecksApi, type ContentChecksResult } from '#/runtime/capabilities/checks/api';
 export {
@@ -43,7 +40,7 @@ export {
 } from '#/runtime/api/documentApi';
 export { passesToBrowser } from '#/runtime/dom/browserKeys';
 export { type ReferenceValue, type SelectionHandle, type UploadStatus } from '#/runtime/types';
-export { type Announcer, createAnnouncer } from '../announcer';
+export { type Announcer, createAnnouncer } from '../session/helpers/announcer';
 export { type EditorApi, type EditorControlApi, type EditorFacet, type EditorFacets } from './apiFacets';
 export { useClientLayoutEffect } from '../session/hooks/useClientLayoutEffect';
 export { OverlayBody } from '../overlays/components/OverlayBody';
@@ -51,7 +48,10 @@ export { passEscape } from '../overlays/helpers/escape';
 export { useEditorOverlay } from '../overlays/hooks/useEditorOverlay';
 export { useOverlayContainer } from '../overlays/hooks/useOverlayContainer';
 export { useScopedFocus } from '../overlays/hooks/useScopedFocus';
-export { useApplePlatform } from '../platform';
+export { useApplePlatform } from '../session/hooks/useApplePlatform';
+export { EditorHostsContext } from './helpers/editorHostsContext';
+export { useEditorApi } from './hooks/useEditorApi';
+export { useEditorValue } from './hooks/useEditorValue';
 
 /** A rectangle an overlay anchors to, as Fondue's `virtualAnchor` takes it. */
 export type OverlayAnchor = {
@@ -375,37 +375,4 @@ export const partWithOptions = (plugin: EditorPart, options: JsonObject): Editor
     }
 
     return Object.freeze({ ...partsOf(options), feature: plugin.feature });
-};
-
-export const EditorHostsContext = createContext<EditorHosts | null>(null);
-EditorHostsContext.displayName = 'RichTextEditorHostsContext';
-
-/**
- * The API of the editor around the caller, or `undefined` until its session is ready. Plugin UI acts through it;
- * `useEditorHandle` is the host's own handle, which a plugin does not use.
- */
-export const useEditorApi = (): EditorApi | undefined => {
-    const runtime = useContext(SessionContext);
-    const hosts = useContext(EditorHostsContext);
-    if (runtime === undefined || hosts === null) {
-        return undefined;
-    }
-
-    return editorApiOf(runtime, hosts);
-};
-
-/** A value read through the editor API, which rerenders the caller only when `isEqual` finds it changed. */
-export const useEditorValue = <T>(
-    read: (api: EditorApi | undefined) => T,
-    isEqual: (previous: T, next: T) => boolean = Object.is,
-): T => {
-    const hosts = useContext(EditorHostsContext);
-
-    return useSessionValue((runtime) => {
-        if (runtime === undefined || hosts === null) {
-            return read(undefined);
-        }
-
-        return read(editorApiOf(runtime, hosts));
-    }, isEqual);
 };

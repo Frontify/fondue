@@ -7,8 +7,9 @@ import { useContext, useRef, useState } from 'react';
 
 import { keepFocus } from '#/bridge/chrome/helpers/keepFocus';
 import { useOverlayContainer } from '#/bridge/overlays/hooks/useOverlayContainer';
-import { SessionContext, useSessionValue } from '#/bridge/session';
 import { lazyPart } from '#/bridge/session/helpers/lazyPart';
+import { SessionContext } from '#/bridge/session/helpers/sessionContext';
+import { useSessionValue } from '#/bridge/session/hooks/useSessionValue';
 import { blockTypeOf } from '#/ui/helpers/blockTypeOf';
 import { tabStop, type ToolbarItem, type ToolbarStrings } from '#/ui/helpers/items';
 import { useOfferedRows } from '#/ui/hooks/useOfferedRows';

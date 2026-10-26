@@ -2,8 +2,8 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { isApplePlatform } from '#/bridge/platform';
 import { defineEditorPart, type EditorApi } from '#/bridge/pluginApi/plugin';
+import { isApplePlatform } from '#/bridge/session/helpers/platform';
 import { compileContentModel, defineFeature, type FeatureDeclaration } from '#/model';
 import { fixtureHeadingSet } from '#/plugins/__tests__/fixtures/features';
 import { bold } from '#/plugins/Bold/feature';

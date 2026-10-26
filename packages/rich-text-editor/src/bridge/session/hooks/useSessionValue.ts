@@ -1,15 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createContext, useCallback, useContext, useRef, useSyncExternalStore } from 'react';
+import { useCallback, useContext, useRef, useSyncExternalStore } from 'react';
 
 import { type EditorPort } from '#/runtime/port';
 
-import { useRenderMark } from './devChecks';
-import { useClientLayoutEffect } from './session/hooks/useClientLayoutEffect';
+import { SessionContext } from '../helpers/sessionContext';
 
-/** The session of the editor around a hook once it is ready. */
-export const SessionContext = createContext<EditorPort | undefined>(undefined);
-SessionContext.displayName = 'RichTextEditorSessionContext';
+import { useClientLayoutEffect } from './useClientLayoutEffect';
+import { useRenderMark } from './useRenderMark';
 
 /**
  * `read` of the session through one selector store, so the component rerenders only when `isEqual` finds a new value;

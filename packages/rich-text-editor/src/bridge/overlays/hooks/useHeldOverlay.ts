@@ -6,7 +6,7 @@ import { type EditorPort } from '#/runtime/port';
 import { engineOf } from '#/runtime/portEngine';
 
 import { type AnchorTarget } from '../../pluginApi/plugin';
-import { SessionContext } from '../../session';
+import { SessionContext } from '../../session/helpers/sessionContext';
 import { useClientLayoutEffect } from '../../session/hooks/useClientLayoutEffect';
 import { createSelectionAnchor } from '../helpers/anchor';
 import { type EditorOverlay, type SelectionAnchor } from '../helpers/overlayContext';

@@ -3,13 +3,8 @@
 import { Dialog } from '@frontify/fondue-components';
 import { useId, useState } from 'react';
 
-import {
-    NodeChromeButton,
-    NodeChromeToolbar,
-    OverlayBody,
-    useEditorOverlay,
-    useRichTextNodeView,
-} from '#/bridge/pluginApi/define';
+import { useRichTextNodeView } from '#/bridge/nodeViews/hooks/useRichTextNodeView';
+import { NodeChromeButton, NodeChromeToolbar, OverlayBody, useEditorOverlay } from '#/bridge/pluginApi/define';
 import { defineEditorPart } from '#/bridge/pluginApi/plugin';
 
 import { fixtureMediaImage } from './feature';

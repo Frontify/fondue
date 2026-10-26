@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { isolate } from '#/bridge/announcer';
+import { isolate } from '#/bridge/session/helpers/announcer';
 import { type CodecContext, type ResourceLimits } from '#/model';
 import { MAX_IMAGE_SIDE, megabytes, type UploadEvent, type UploadRejection } from '#/runtime/port';
 

@@ -4,7 +4,8 @@ import { act, render } from '@testing-library/react';
 import { createRef, Profiler, useReducer } from 'react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
-import { useCommandQuery, useEditorSelection } from '#/bridge/hooks';
+import { useCommandQuery } from '#/bridge/pluginApi/hooks/useCommandQuery';
+import { useEditorSelection } from '#/bridge/pluginApi/hooks/useEditorSelection';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
 import { featuresById } from '#/plugins';

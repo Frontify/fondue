@@ -5,7 +5,7 @@ import { type Ref, useContext } from 'react';
 
 import { OptionItem } from '#/bridge/chrome/components/OptionItem';
 import { TurnIntoContext, turnIntoChoices, type TurnIntoEntry } from '#/bridge/chrome/helpers/turnInto';
-import { SessionContext } from '#/bridge/session';
+import { SessionContext } from '#/bridge/session/helpers/sessionContext';
 import { MoreRow } from '#/ui/components/MoreRow';
 import { type ToolbarItem, type ToolbarStrings } from '#/ui/helpers/items';
 import { type useRowRuns } from '#/ui/hooks/useRowRuns';

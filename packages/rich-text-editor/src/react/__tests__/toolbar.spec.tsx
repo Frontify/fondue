@@ -5,8 +5,8 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { createRef, Profiler, type ReactNode, useContext } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { AnnouncerContext } from '#/bridge/announcer';
 import { defineEditorPart } from '#/bridge/pluginApi/plugin';
+import { AnnouncerContext } from '#/bridge/session/helpers/announcer';
 import { deDE } from '#/locales/de-DE';
 import { enUS } from '#/locales/en-US';
 import {

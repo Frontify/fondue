@@ -6,7 +6,7 @@ import { type MutableRefObject } from 'react';
 
 import { ChromeBoundary } from '#/bridge/nodeViews/components/ChromeBoundary';
 import { NO_ATTRS } from '#/bridge/nodeViews/helpers/noAttrs';
-import { useApplePlatform } from '#/bridge/platform';
+import { useApplePlatform } from '#/bridge/session/hooks/useApplePlatform';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import { Item } from '#/ui/components/Item';
 import { More, type ModeSwitch } from '#/ui/components/More';

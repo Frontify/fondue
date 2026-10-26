@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { isolate } from '#/bridge/announcer';
 import { type ListboxOption } from '#/bridge/chrome/components/Listbox';
+import { isolate } from '#/bridge/session/helpers/announcer';
 import { type CodecContext } from '#/model';
 
 /** What a list says about its search, in the UI locale. */

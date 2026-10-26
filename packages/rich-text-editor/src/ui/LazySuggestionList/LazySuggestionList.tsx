@@ -2,8 +2,8 @@
 
 import { type ComponentProps } from 'react';
 
-import { useSessionValue } from '#/bridge/session';
 import { lazyPart } from '#/bridge/session/helpers/lazyPart';
+import { useSessionValue } from '#/bridge/session/hooks/useSessionValue';
 import { activeSuggestionOf } from '#/runtime/port';
 
 const SuggestionList = lazyPart(() => import('./components/SuggestionList').then((loaded) => loaded.SuggestionList));

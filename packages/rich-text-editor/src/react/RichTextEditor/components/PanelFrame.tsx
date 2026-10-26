@@ -3,10 +3,10 @@
 import { Button, ScrollArea } from '@frontify/fondue-components';
 import { Component, type ComponentType, type ReactNode, useRef } from 'react';
 
-import { useAnnounce } from '#/bridge/announcer';
-import { type ReactWork, ReactWorkContext } from '#/bridge/devChecks';
 import { TABBABLE } from '#/bridge/overlays/helpers/tabbable';
 import { type PanelComponentProps } from '#/bridge/pluginApi/define';
+import { type ReactWork, ReactWorkContext } from '#/bridge/session/helpers/devChecks';
+import { useAnnounce } from '#/bridge/session/hooks/useAnnounce';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import { type CodecContext } from '#/model';
 import { passesToBrowser } from '#/runtime/port';

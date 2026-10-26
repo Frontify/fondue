@@ -5,10 +5,10 @@ import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { type ComponentType, useCallback, useContext, useRef } from 'react';
 
 import { keepFocus } from '#/bridge/chrome/helpers/keepFocus';
-import { useCommandQuery } from '#/bridge/hooks';
 import { useOverlayContainer } from '#/bridge/overlays/hooks/useOverlayContainer';
+import { useCommandQuery } from '#/bridge/pluginApi/hooks/useCommandQuery';
 import { type ToolbarControlProps } from '#/bridge/pluginApi/plugin';
-import { SessionContext } from '#/bridge/session';
+import { SessionContext } from '#/bridge/session/helpers/sessionContext';
 import { pressItem, runItem, tabStop, type ToolbarItem, type ToolbarStrings } from '#/ui/helpers/items';
 import { useOpenPanel } from '#/ui/hooks/useOpenPanel';
 import { useShortcut } from '#/ui/hooks/useShortcut';

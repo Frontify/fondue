@@ -6,7 +6,7 @@ import { type JsonValue } from '#/model';
 import { type CommandState } from '#/runtime/port';
 
 import { type EditorApi, type OverlayProps } from '../../pluginApi/plugin';
-import { SessionContext } from '../../session';
+import { SessionContext } from '../../session/helpers/sessionContext';
 import { turnIntoChoices, TurnIntoContext } from '../helpers/turnInto';
 
 import { type MenuOption, OptionsMenu } from './OptionsMenu';
