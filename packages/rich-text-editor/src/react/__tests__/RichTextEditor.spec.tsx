@@ -34,6 +34,7 @@ import { compileContentModel, defaultLimits, DefinitionError, type Diagnostic } 
 import * as model from '#/model';
 import { type LoadedDocument, type PersistenceService } from '#/persistence/types';
 import { fixturesIn } from '#/reader/__tests__/helpers/helpers';
+import { type ReaderPresentation } from '#/reader/reader';
 import { type AsyncOperation } from '#/runtime/async';
 import { runtimeOf } from '#/runtime/runtime';
 import { type DocumentChange } from '#/runtime/types';
@@ -41,7 +42,7 @@ import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 
 import { defineEditor } from '../define';
 import { RichTextEditor } from '../RichTextEditor';
-import { type EditorHandle, type RichTextEditorProps } from '../types';
+import { type EditorHandle, type ReactPresentation, type RichTextEditorProps } from '../types';
 
 import {
     features,
@@ -354,6 +355,12 @@ describe('RichTextEditor', () => {
         expectTypeOf<Extract<keyof RichTextEditorProps, `on${string}${'Focus' | 'Blur'}${string}`>>().toEqualTypeOf<
             'onFocus' | 'onBlur'
         >();
+    });
+
+    it('keeps the presentation fields it shares with the reader at the types the reader declares', () => {
+        type Shared = 'styles' | 'colorTokens' | 'listLevels' | 'columns' | 'columnGap' | 'contentClassName';
+        expectTypeOf<Pick<ReactPresentation, Shared>>().toEqualTypeOf<Pick<ReaderPresentation, Shared>>();
+        expectTypeOf<ReactPresentation>().toExtend<ReaderPresentation>();
     });
 
     it('compiles and builds the schema once across ten rerenders and a StrictMode remount', () => {
