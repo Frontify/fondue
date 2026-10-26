@@ -14,6 +14,7 @@ import { type EditorHandle } from '../types';
 
 vi.mock('../profiles/inline', async (importOriginal) => {
     const actual = await importOriginal<typeof inlineProfile>();
+
     return { ...actual, shipped: vi.fn(actual.shipped) };
 });
 
@@ -29,6 +30,7 @@ class Boundary extends Component<{ readonly children: ReactNode }, { readonly fa
         if (this.state.failed) {
             return 'failed';
         }
+
         return this.props.children;
     }
 }

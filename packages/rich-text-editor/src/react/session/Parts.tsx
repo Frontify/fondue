@@ -37,17 +37,21 @@ const submitHint = (submits: boolean, definition: CompiledEditorDefinition<objec
     if (!submits) {
         return undefined;
     }
+
     const profile = profileOf(definition);
     const key = (binding: string) => shortcutText(binding, apple);
     if (definition.authoring.enterBehavior === 'submit' && profile === 'inline') {
         return t('RichTextEditor_submitHintSingleLine', { submit: key('Enter') });
     }
+
     if (definition.authoring.enterBehavior === 'submit') {
         return t('RichTextEditor_submitHint', { submit: key('Enter'), newLine: key('Shift-Enter') });
     }
+
     if (profile === 'comment') {
         return t('RichTextEditor_submitHint', { submit: key('Mod-Enter'), newLine: key('Enter') });
     }
+
     return undefined;
 };
 
@@ -55,6 +59,7 @@ const emptiness = (runtime: EditorPort | undefined) => {
     if (runtime === undefined) {
         return undefined;
     }
+
     return isEmptyDocument(runtime);
 };
 
@@ -73,6 +78,7 @@ export const Surface = () => {
     if (lang === undefined) {
         lang = chrome.lang;
     }
+
     const dir = mounted.dir ?? theme.dir;
     const hintId = useId();
     const hint = submitHint(submits, mounted.definition, chrome.t, useApplePlatform());
@@ -95,8 +101,10 @@ export const Surface = () => {
         if (surface === null || contentClassName === undefined) {
             return undefined;
         }
+
         const names = hostClassNames(contentClassName);
         surface.classList.add(...names);
+
         return () => surface.classList.remove(...names);
     }, [contentClassName]);
     // A document that is not empty shows no placeholder; before the session is ready the container is empty, as on the server.
@@ -104,6 +112,7 @@ export const Surface = () => {
     if (useSessionValue(emptiness, Object.is) === false) {
         shownPlaceholder = undefined;
     }
+
     return (
         <>
             <div
@@ -147,6 +156,7 @@ export const Surface = () => {
         </>
     );
 };
+
 Surface.displayName = 'RichTextEditor.Surface';
 
 /** The fixed toolbar the presentation configures; with no item, or in bubble mode, it renders nothing. */
@@ -160,6 +170,7 @@ export const Toolbar = () => {
     if (keyboard > 0 && focus !== null && !disabled) {
         docked = keyboard;
     }
+
     // The caret scrolls clear of the sticky or docked toolbar's measured height.
     const shown = items.length > 0 && mode === 'fixed';
     useEffect(() => {
@@ -167,17 +178,21 @@ export const Toolbar = () => {
         if (element === null) {
             return undefined;
         }
+
         const observer = new ResizeObserver(() => {
             const { height } = element.getBoundingClientRect();
             if (docked === undefined) {
                 coordinator.chrome.setTopInset(height);
                 coordinator.chrome.setDockedInset(0);
+
                 return;
             }
+
             coordinator.chrome.setTopInset(0);
             coordinator.chrome.setDockedInset(height);
         });
         observer.observe(element);
+
         return () => {
             observer.disconnect();
             coordinator.chrome.setTopInset(0);
@@ -187,6 +202,7 @@ export const Toolbar = () => {
     if (!shown || surfaceId === undefined) {
         return null;
     }
+
     return (
         <FixedToolbar
             items={items}
@@ -202,6 +218,7 @@ export const Toolbar = () => {
         />
     );
 };
+
 Toolbar.displayName = 'RichTextEditor.Toolbar';
 
 /** The bubble toolbar, with the rest of the toolbar in its More menu in bubble mode. */
@@ -238,13 +255,17 @@ export const Bubble = () => {
         if (mode !== 'bubble') {
             return undefined;
         }
+
         showBubbleRef.current = () => {
             if (loadedShowRef.current === null) {
                 requestedRef.current = true;
+
                 return;
             }
+
             loadedShowRef.current();
         };
+
         return () => {
             showBubbleRef.current = null;
             requestedRef.current = false;
@@ -259,9 +280,11 @@ export const Bubble = () => {
         };
         showRef = registry;
     }
+
     if (bubbleItems.length === 0 && more === undefined) {
         return null;
     }
+
     return (
         <BubbleToolbar
             items={bubbleItems}
@@ -275,6 +298,7 @@ export const Bubble = () => {
         />
     );
 };
+
 Bubble.displayName = 'RichTextEditor.Bubble';
 
 /** The bubble toolbar of a fixed toolbar mode, near a text selection; bubble mode shows its own. */
@@ -283,8 +307,10 @@ export const BubbleToolbarPart = () => {
     if (chrome.mode === 'bubble') {
         return null;
     }
+
     return <Bubble />;
 };
+
 BubbleToolbarPart.displayName = 'RichTextEditor.BubbleToolbar';
 
 /** The session's save state. */
@@ -295,8 +321,10 @@ export const Status = () => {
     if (!mounted.managed) {
         return null;
     }
+
     return <SaveStatusText t={chrome.t} testId={testId} />;
 };
+
 Status.displayName = 'RichTextEditor.Status';
 
 /** The open panel, between the toolbar and the surface unless a host places this part elsewhere. */
@@ -310,6 +338,7 @@ export const Panels = () => {
     if (panels === null || id === undefined || Panel === undefined) {
         return null;
     }
+
     return (
         <PanelFrame
             id={id}
@@ -321,4 +350,5 @@ export const Panels = () => {
         />
     );
 };
+
 Panels.displayName = 'RichTextEditor.Panels';

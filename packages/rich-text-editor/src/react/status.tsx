@@ -52,10 +52,12 @@ const keyOf = (status: SaveStatus, causes: SaveCauses | undefined): Key | null =
             return REJECTION_KEYS[rejection];
         }
     }
+
     // Saved means a revision the host acknowledged, so a record no save has reached says nothing.
     if (status.state === 'clean' && status.revision === null) {
         return null;
     }
+
     return STATE_KEYS[status.state];
 };
 
@@ -85,32 +87,41 @@ export const announcementOf = (
     if (next.generation !== previous.generation) {
         return [QUIET, null];
     }
+
     if (next.state === previous.state) {
         return [memory, null];
     }
+
     let { recovering, outage } = memory;
     if (RECOVERING.has(previous.state)) {
         recovering = true;
     }
+
     // A settled write, a conflict or a failure ends the outage, so a later one is new.
     if (next.state === 'clean' || next.state === 'dirty' || next.state === 'conflict' || next.state === 'error') {
         outage = null;
     }
+
     if (ANNOUNCED.has(next.state)) {
         if (previous.state === 'saving' && next.state === outage) {
             return [{ recovering, outage }, null];
         }
+
         if (next.state === 'uncertain' || next.state === 'offline') {
             outage = next.state;
         }
+
         return [{ recovering, outage }, next.key];
     }
+
     if (next.state !== 'clean') {
         return [{ recovering, outage }, null];
     }
+
     if (!recovering && !committed) {
         return [{ recovering, outage }, null];
     }
+
     return [{ recovering: false, outage }, next.key];
 };
 
@@ -126,6 +137,7 @@ export const SaveStatusText = ({ t, testId }: { readonly t: CodecContext['t']; r
             if (runtime === undefined) {
                 return () => undefined;
             }
+
             return runtime.handle.subscribe('saveStatusChange', changed);
         },
         [runtime],
@@ -134,8 +146,10 @@ export const SaveStatusText = ({ t, testId }: { readonly t: CodecContext['t']; r
         if (runtime === undefined) {
             return null;
         }
+
         return keyOf(runtime.handle.getSaveStatus(), causesByHandle.get(runtime.handle));
     };
+
     const key = useSyncExternalStore(subscribe, read, read);
     const announce = useAnnounce();
     const tRef = useRef(t);
@@ -147,6 +161,7 @@ export const SaveStatusText = ({ t, testId }: { readonly t: CodecContext['t']; r
         if (runtime === undefined) {
             return undefined;
         }
+
         const causes = causesByHandle.get(runtime.handle);
         const seen = (status: SaveStatus): Seen => ({
             state: status.state,
@@ -155,6 +170,7 @@ export const SaveStatusText = ({ t, testId }: { readonly t: CodecContext['t']; r
         });
         let previous = seen(runtime.handle.getSaveStatus());
         let memory = QUIET;
+
         return runtime.handle.subscribe('saveStatusChange', (status: SaveStatus) => {
             const next = seen(status);
             const [kept, announced] = announcementOf(memory, previous, next, causes?.committed() === true);
@@ -169,6 +185,7 @@ export const SaveStatusText = ({ t, testId }: { readonly t: CodecContext['t']; r
     if (key !== null) {
         text = t(key);
     }
+
     return (
         <div className={styles.status} data-test-id={`${testId}-status`}>
             {text}

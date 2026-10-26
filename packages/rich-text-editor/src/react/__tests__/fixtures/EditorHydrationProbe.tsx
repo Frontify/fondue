@@ -28,6 +28,7 @@ export type EditorHydrationResult = {
 
 const Committed = ({ onCommit }: { readonly onCommit: () => void }) => {
     useLayoutEffect(onCommit, [onCommit]);
+
     return null;
 };
 
@@ -51,6 +52,7 @@ export const EditorHydrationProbe = ({
         if (blocked) {
             defaultValue = { ...defaultValue, document: { ...defaultValue.document, formatVersion: 2 as 1 } };
         }
+
         const container = window.document.createElement('div');
         const tree = (done: () => void) => (
             <>
@@ -69,16 +71,21 @@ export const EditorHydrationProbe = ({
             if (surface === null || surface.textContent === null) {
                 return '';
             }
+
             return surface.textContent;
         };
+
         const sample = () => {
             frames.push(surfaceText());
             if (frames.length < 3) {
                 requestAnimationFrame(sample);
+
                 return;
             }
+
             onDone({ mode: `${process.env.NODE_ENV}`, recoverable, serverHtml, atCommit, frames });
         };
+
         const root = hydrateRoot(
             container,
             tree(() => {
@@ -88,7 +95,9 @@ export const EditorHydrationProbe = ({
             }),
             { onRecoverableError: (error) => recoverable.push(String(error)) },
         );
+
         return () => root.unmount();
     }, [text, blocked, onDone]);
+
     return <div ref={hostRef} />;
 };

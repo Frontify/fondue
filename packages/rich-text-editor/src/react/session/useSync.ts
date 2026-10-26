@@ -38,8 +38,10 @@ export const usePresentationSync = (
     useClientLayoutEffect(() => {
         if (recipes === undefined || colorTokens === undefined) {
             coordinator.chrome.setStyles(undefined);
+
             return;
         }
+
         coordinator.chrome.setStyles({
             styles: recipes,
             colorTokens,
@@ -71,9 +73,11 @@ export const useChangeWatch = (props: Defined, mounted: Mounted, coordinator: Mo
         if (process.env.NODE_ENV === 'production') {
             return;
         }
+
         if (definition === mounted.definition && profile === mounted.profile) {
             return;
         }
+
         const runtime = coordinator.runtime;
         if (runtime !== undefined) {
             runtime.report({
@@ -93,10 +97,12 @@ export const useChangeWatch = (props: Defined, mounted: Mounted, coordinator: Mo
         if (process.env.NODE_ENV === 'production' || previous === defaultValue) {
             return;
         }
+
         // A host that builds an equal record on each render changes nothing.
         if (previous.documentId === defaultValue.documentId && sameDocument(previous.document, defaultValue.document)) {
             return;
         }
+
         coordinator.runtime?.report({
             code: 'react.default-value-changed',
             severity: 'warning',

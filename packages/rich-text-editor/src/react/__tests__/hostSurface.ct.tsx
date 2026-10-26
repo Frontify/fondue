@@ -40,6 +40,7 @@ const press = async (page: Page, name: string) => {
     await button.focus();
     await page.keyboard.press('Enter');
     await expect(button).toHaveAttribute('data-result', /.+/);
+
     return button;
 };
 
@@ -147,6 +148,7 @@ test('keeps the document, selection and undo depth over 20 mode switches while t
             if (rte === undefined) {
                 return undefined;
             }
+
             return {
                 document: JSON.stringify(rte.handle.getSnapshot().document),
                 selection: rte.runtime?.state.selection.toJSON() as unknown,
@@ -171,11 +173,13 @@ test('keeps the document, selection and undo depth over 20 mode switches while t
             if (JSON.stringify(after) !== JSON.stringify(before)) {
                 changed.push({ index, mode, before, after });
             }
+
             const surfaceAttributes = await attributes();
             if (JSON.stringify(surfaceAttributes) !== JSON.stringify(shown[mode])) {
                 changed.push({ index, mode, surfaceAttributes });
             }
         }
+
         await page.evaluate(() => window.rte?.handle.focus());
     }
 
@@ -245,6 +249,7 @@ test('opens no overlay or chrome popup, submits nothing and keeps focus when the
     if (paragraph === null) {
         throw new Error('The paragraph has no box.');
     }
+
     await page.mouse.click(paragraph.x + paragraph.width - 2, paragraph.y + paragraph.height / 2);
     await expect(surfaceOf(page)).toBeFocused();
     await expect(overlays()).toHaveCount(0);

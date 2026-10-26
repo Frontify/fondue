@@ -29,8 +29,10 @@ const budgetOf = (id: string): number => {
     if (budget === null || budget === undefined) {
         throw new Error(`No budget for ${id}.`);
     }
+
     return budget;
 };
+
 // The budgets in ms, both p95 on the large fixture.
 const KEYSTROKE_BUDGET_P95 = budgetOf('keystroke-large-p95');
 const COMMIT_PIPELINE_BUDGET_P95 = budgetOf('commit-large-p95');
@@ -102,6 +104,7 @@ const mountLarge = () => {
     if (handle === null || runtime === undefined) {
         throw new Error('The editor did not mount.');
     }
+
     let nodes = 0;
     runtime.state.doc.descendants(() => {
         nodes += 1;
@@ -111,6 +114,7 @@ const mountLarge = () => {
     act(() => {
         runtime.select({ anchor: middle, head: middle });
     });
+
     return { handle, runtime, nodes };
 };
 
@@ -132,6 +136,7 @@ it('types a character and moves the caret in a 20,000-node document within the k
         });
         moving.push(now() - moved);
     }
+
     expect(nodes).toBeGreaterThanOrEqual(20000);
     expect(percentile(typing, 'p95')).toBeLessThanOrEqual(KEYSTROKE_BUDGET_P95);
     expect(percentile(moving, 'p95')).toBeLessThanOrEqual(COMMIT_PIPELINE_BUDGET_P95);
@@ -207,6 +212,7 @@ it('types a character in a highlighted 2,000-line code block within the keystrok
     if (handle === null || runtime === undefined) {
         throw new Error('The editor did not mount.');
     }
+
     const middle = Math.floor(runtime.state.doc.content.size / 2);
     act(() => {
         runtime.select({ anchor: middle, head: middle });
@@ -219,6 +225,7 @@ it('types a character in a highlighted 2,000-line code block within the keystrok
         });
         typing.push(now() - started);
     }
+
     expect(container.querySelector('[class*="hljs-"]')).not.toBeNull();
     expect(percentile(typing, 'p95')).toBeLessThanOrEqual(KEYSTROKE_BUDGET_P95);
 }, 120_000);

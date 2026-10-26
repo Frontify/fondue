@@ -26,6 +26,7 @@ const tallPart = defineEditorPart(tall, {
             readOnly: true,
             run: (api) => {
                 api.panels.open('find');
+
                 return true;
             },
         },
@@ -52,6 +53,7 @@ export const PanelScrollProbe = () => {
             window.panelScroll = { open: () => openFind(handle) };
         }
     });
+
     return (
         <RichTextEditor
             ref={ref}

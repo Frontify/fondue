@@ -39,6 +39,7 @@ test('is one tab stop with a label, aria-controls and arrow, Home and End keys',
         await page.keyboard.press(key);
         await expectFocus(page, name);
     }
+
     await page.keyboard.press('Home');
     await expectFocus(page, 'Bold');
     await page.keyboard.press('ArrowRight');
@@ -140,6 +141,7 @@ test('disables every item and keeps the toolbar out of the Tab order, with typin
         await expect(itemOf(page, name)).toBeDisabled();
         await expect(itemOf(page, name)).toHaveAttribute('tabindex', '-1');
     }
+
     await expect(toolbarOf(page)).toHaveAttribute('tabindex', '-1');
     await page.getByRole('button', { name: 'Before' }).focus();
     await page.keyboard.press('Tab');
@@ -175,6 +177,7 @@ test('takes a read-only surface out of the Tab order when disabled turns on and 
         await page.keyboard.press('Tab');
         const first = await focusedName(page);
         await page.keyboard.press('Tab');
+
         return { tabindex, landed: [first, await focusedName(page)] };
     };
 
@@ -219,6 +222,7 @@ test('cycles Alt+F10 through node chrome and the toolbar, then Escape keeps the 
         await page.keyboard.press('Alt+F10');
         await expectFocus(page, name);
     }
+
     await page.keyboard.press('Escape');
 
     await expectFocus(page, 'Notes');
@@ -236,6 +240,7 @@ test('walks node chrome and the toolbar with the presentation toolbarShortcut', 
         await page.keyboard.press('ControlOrMeta+Alt+t');
         await expectFocus(page, name);
     }
+
     await page.keyboard.press('Escape');
 
     await expectFocus(page, 'Notes');

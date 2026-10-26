@@ -40,7 +40,9 @@ export const mountProfile = async (
     if (handle === null || view === undefined) {
         throw new Error(`The ${profile} profile mounted no editor.`);
     }
+
     const announced = () => rendered.container.querySelector('[aria-live="polite"]')?.textContent;
     const content = () => handle.getSnapshot().document.content.content as unknown;
+
     return { handle, view, announced, content, rendered };
 };

@@ -27,11 +27,13 @@ const press = ({ view }: Mounted, key: keyof typeof KEYS, init: KeyboardEventIni
     const host = (heard: KeyboardEvent) => {
         reached = heard.defaultPrevented;
     };
+
     document.addEventListener('keydown', host);
     act(() => {
         view.dom.dispatchEvent(event);
     });
     document.removeEventListener('keydown', host);
+
     return { event, prevented: reached };
 };
 
@@ -42,10 +44,12 @@ const withEnter = async (profile: 'inline' | 'comment', enterBehavior: 'none' | 
     if (runtime === undefined) {
         throw new Error('no session');
     }
+
     act(() => {
         mounted.handle.updatePolicy({ ...runtime.policy, enterBehavior });
         typeText(mounted.handle, 'hi');
     });
+
     return mounted;
 };
 
@@ -170,6 +174,7 @@ describe('the submit keys', () => {
         if (runtime === undefined) {
             throw new Error('no session');
         }
+
         act(() => {
             mounted.handle.updatePolicy({ ...runtime.policy, enterBehavior: 'submit' });
             typeText(mounted.handle, 'hi');

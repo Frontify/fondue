@@ -38,6 +38,7 @@ const unallowed = (messages: readonly string[], allowed: Allowance | undefined) 
     const allowedMax = allowed?.max;
     const max = allowedMax ?? 0;
     expect(own.length).toBeLessThanOrEqual(max);
+
     return messages.filter((message) => allowed?.message.test(message) !== true);
 };
 
@@ -108,6 +109,7 @@ for (const file of FILES) {
                 // A failed query prints the page, so the report keeps the head of each message.
                 failures.push(`${story.name}: ${String(error).slice(0, 400)}`);
             }
+
             consoleErrors.length = 0;
             pageErrors.length = 0;
         }

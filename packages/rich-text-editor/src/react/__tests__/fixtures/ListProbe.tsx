@@ -82,14 +82,17 @@ export const ListProbe = ({
     if (tabMovesFocus !== undefined) {
         options = { tabMovesFocus };
     }
+
     const [shownPresentation] = useState(() => {
         let next = presentation;
         if (listLevels !== undefined) {
             next = { ...presentation, listLevels };
         }
+
         if (strikeCheckedTasks) {
             next = { ...next, strikeCheckedTasks: true };
         }
+
         return next;
     });
     const ref = useRef<EditorHandle<UnitCommands>>(null);
@@ -101,6 +104,7 @@ export const ListProbe = ({
             window.listRte = { handle, setSelection, changes: changesRef.current };
         }
     }, []);
+
     return (
         <ThemeProvider dir={dir}>
             {/* An explicit tabindex, since WebKit leaves buttons out of the Tab order by default. */}

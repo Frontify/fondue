@@ -21,6 +21,7 @@ const labelOf = (api: EditorApi<'commands'>, entry: PluginToolbarEntry): string 
     if (entry.labelKey === undefined) {
         return entry.label['en-US'];
     }
+
     return api.t(entry.labelKey as keyof TranslationStrings);
 };
 
@@ -28,6 +29,7 @@ const payloadOf = ({ command, payload }: PluginToolbarEntry): JsonObject => {
     if (payload === undefined) {
         return { command };
     }
+
     return { command, payload };
 };
 
@@ -43,6 +45,7 @@ export const slashMenu = (plugins: readonly Unit[]): Omit<EditorPartSpec<'comman
         { headingKey: 'RichTextEditor_slashTurnInto', entries: turnInto },
         { headingKey: 'RichTextEditor_slashInsert', entries: inserts },
     ];
+
     return {
         needs: ['commands'],
         suggestions: [
@@ -63,6 +66,7 @@ export const slashMenu = (plugins: readonly Unit[]): Omit<EditorPartSpec<'comman
                             ) {
                                 return [];
                             }
+
                             return [
                                 {
                                     key: entry.id,
@@ -73,6 +77,7 @@ export const slashMenu = (plugins: readonly Unit[]): Omit<EditorPartSpec<'comman
                             ];
                         }),
                     );
+
                     return Promise.resolve({ items, nextCursor: null });
                 },
                 command: 'slash.run',

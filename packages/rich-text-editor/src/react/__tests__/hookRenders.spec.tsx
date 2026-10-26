@@ -46,8 +46,10 @@ it('rerenders a component that selects the block type and a command state on no 
         const blockType = useEditorSelection((selection) => selection.blockType);
         const bold = useCommandQuery('mark.bold.toggle');
         seen.push([blockType, bold.active]);
+
         return null;
     };
+
     const ref = createRef<EditorHandle>();
     render(
         <RichTextEditor.Root
@@ -69,6 +71,7 @@ it('rerenders a component that selects the block type and a command state on no 
     if (runtime === undefined) {
         throw new Error('The editor did not mount.');
     }
+
     const start = 2;
     act(() => {
         runtime.select({ anchor: start, head: start });
@@ -125,6 +128,7 @@ it('rerenders no part when the host rerenders the editor with equal props', () =
     const Host = () => {
         const [pass, tick] = useReducer((count: number) => count + 1, 0);
         rerender = tick;
+
         return (
             <RichTextEditor.Root
                 aria-label="Notes"
@@ -138,6 +142,7 @@ it('rerenders no part when the host rerenders the editor with equal props', () =
             </RichTextEditor.Root>
         );
     };
+
     const { container } = render(<Host />);
     act(() => {
         vi.advanceTimersToNextFrame();

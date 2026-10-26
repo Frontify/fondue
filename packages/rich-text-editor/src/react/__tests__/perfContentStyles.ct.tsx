@@ -17,8 +17,10 @@ test('gives the reader root the same classes and content styles as the editor su
         root.evaluate((element) => {
             const read = (target: Element, names: readonly string[]) => {
                 const style = getComputedStyle(target);
+
                 return names.map((name) => style.getPropertyValue(name));
             };
+
             return {
                 variables: read(element, ['--rte-content-paragraph-spacing', '--rte-content-text-color']),
                 blocks: [...element.children].map((block) => [

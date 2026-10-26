@@ -14,6 +14,7 @@ export const useRoot = (part: string): RootContextValue => {
     if (context === null) {
         throw new Error(`RichTextEditor.${part} must be rendered inside RichTextEditor.Root.`);
     }
+
     return context;
 };
 
@@ -32,7 +33,9 @@ export const useRootContext = (
         partProps = picked;
         setHeld(picked);
     }
+
     const submits = props.onSubmit !== undefined;
+
     return useMemo<RootContextValue>(
         () => ({
             props: partProps,

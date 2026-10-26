@@ -39,6 +39,7 @@ describe('RichTextEditor host surface', () => {
             useEffect(() => {
                 seen.push(ref.current);
             }, []);
+
             return (
                 <RichTextEditor
                     aria-label="Notes"
@@ -48,6 +49,7 @@ describe('RichTextEditor host surface', () => {
                 />
             );
         };
+
         render(<Host />);
 
         expect(seen).toHaveLength(1);
@@ -61,8 +63,10 @@ describe('RichTextEditor host surface', () => {
         const shallow = (a: { readonly active: boolean }, b: { readonly active: boolean }) => a.active === b.active;
         const Collapsed = () => {
             seen.push(useEditorSelection((selection) => ({ active: selection.collapsed }), shallow));
+
             return null;
         };
+
         const { unmount } = render(
             <RichTextEditor.Root
                 aria-label="Notes"
@@ -118,6 +122,7 @@ describe('RichTextEditor host surface', () => {
             });
             const codes = (spy: typeof firstDiagnostics) => spy.mock.calls.map(([{ code }]) => code);
             unmount();
+
             return [codes(firstDiagnostics), codes(secondDiagnostics)];
         };
 
@@ -227,12 +232,15 @@ describe('RichTextEditor host surface', () => {
             const results: CommandResult[] = [];
             const insert = () => {
                 const commands = ref.current as unknown as Pick<RuntimeHandle, 'execute'>;
+
                 return commands.execute('text.insert', { text: 'x' });
             };
+
             const Caller = ({ calling }: { readonly calling: boolean }) => {
                 if (calling && during === 'render') {
                     results.push(insert());
                 }
+
                 useEffect(() => {
                     if (calling && during === 'effect') {
                         results.push(insert());
@@ -243,8 +251,10 @@ describe('RichTextEditor host surface', () => {
                         results.push(insert());
                     }
                 });
+
                 return null;
             };
+
             const tree = (calling: boolean) => (
                 <RichTextEditor.Root
                     aria-label="Notes"
@@ -289,8 +299,10 @@ describe('RichTextEditor host surface', () => {
                 const commands = ref.current as unknown as Pick<RuntimeHandle, 'execute'>;
                 results.push(commands.execute('text.insert', { text: kind }));
             }
+
             return null;
         };
+
         const { unmount } = render(
             <RichTextEditor.Root
                 aria-label="Notes"
@@ -329,8 +341,10 @@ describe('RichTextEditor host surface', () => {
             if (calling) {
                 insert();
             }
+
             return null;
         };
+
         const tree = (calling: boolean) => (
             <RichTextEditor.Root
                 aria-label="Notes"
@@ -366,8 +380,10 @@ describe('RichTextEditor host surface', () => {
                     (ref.current as unknown as Pick<RuntimeHandle, 'execute'>).execute('text.insert', { text: 'x' }),
                 );
             }
+
             return null;
         };
+
         const tree = (calling: boolean) => (
             <RichTextEditor.Root
                 aria-label="Notes"

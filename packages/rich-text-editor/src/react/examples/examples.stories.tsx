@@ -56,6 +56,7 @@ const surfaceOf = (root: HTMLElement, name: string) =>
         const live = within(root).getByRole('textbox', { name });
         // The shell has no `contenteditable`; the mounted surface has it, `false` while read-only.
         await expect(live).toHaveAttribute('contenteditable');
+
         return live;
     }, LOAD);
 /** The surface once its editor is ready: until then it shows the content but takes no focus, so typing is lost. */
@@ -63,6 +64,7 @@ const editableSurfaceOf = (root: HTMLElement, name: string) =>
     waitFor(async () => {
         const live = within(root).getByRole('textbox', { name });
         await expect(live).toHaveAttribute('contenteditable', 'true');
+
         return live;
     }, LOAD);
 
@@ -71,6 +73,7 @@ const modKey = () => {
     if (/Mac|iP(hone|[oa]d)/.test(navigator.platform)) {
         return 'Meta';
     }
+
     return 'Control';
 };
 
@@ -90,9 +93,11 @@ const InitialLoadExample = ({ definition, defaultValue }: EditorArgs) => {
                 if (live) {
                     setRecord(loaded);
                 }
+
                 return loaded;
             })
             .catch(() => undefined);
+
         return () => {
             live = false;
         };
@@ -100,6 +105,7 @@ const InitialLoadExample = ({ definition, defaultValue }: EditorArgs) => {
     if (record === null) {
         return <p role="status">Loading the note</p>;
     }
+
     return (
         <RichTextEditor aria-label="Note" definition={definition} presentation={presentation} defaultValue={record} />
     );
@@ -123,6 +129,7 @@ const SubmitSnapshotExample = ({
     const [sent, setSent] = useState<readonly { readonly id: number; readonly text: string }[]>([]);
     const send = (snapshot: Snapshot) =>
         setSent((previous) => [...previous, { id: previous.length, text: textOf(snapshot.document.content) }]);
+
     return (
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '1rem' }}>
             <RichTextEditor
@@ -186,6 +193,7 @@ const ExternalReplacementExample = ({
     const handleRef = useRef<EditorHandle>(null);
     const [services] = useState(() => ({ persistence: createFakePersistenceService() }));
     const [outcome, setOutcome] = useState('');
+
     return (
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '1rem' }}>
             <button
@@ -195,6 +203,7 @@ const ExternalReplacementExample = ({
                     if (handle === null) {
                         return;
                     }
+
                     const result = await handle.replaceDocument({
                         expected: handle.getSnapshot().stamp,
                         next: replacement,
@@ -204,8 +213,10 @@ const ExternalReplacementExample = ({
                     });
                     if (result.status === 'rejected') {
                         setOutcome(`Not replaced: ${result.code}`);
+
                         return;
                     }
+
                     setOutcome('Replaced with the colleague’s version');
                 }}
             >
@@ -285,6 +296,7 @@ const PopupInHostDialogExample = ({ definition, defaultValue }: EditorArgs) => {
     const [open, setOpen] = useState(true);
     // The dialog renders into the story, so the docs page shows it in place.
     const [host, setHost] = useState<HTMLElement | null>(null);
+
     return (
         <div ref={setHost}>
             <button type="button" onClick={() => setOpen(true)}>
@@ -327,6 +339,7 @@ const FormFieldExample = ({ definition, defaultValue }: EditorArgs) => {
     if (invalid) {
         status = 'error';
     }
+
     return (
         <form
             aria-label="Feedback form"
@@ -336,8 +349,10 @@ const FormFieldExample = ({ definition, defaultValue }: EditorArgs) => {
                 if (!field.validate().valid) {
                     setInvalid(true);
                     setMessage('');
+
                     return;
                 }
+
                 setInvalid(false);
                 const value = await field.getSettledValue({ timeoutMs: 1000 });
                 setMessage(`Sent: ${textOf(value.content)}`);
@@ -528,6 +543,7 @@ export const PopupInHostDialog: StoryObj<EditorArgs> = {
             if (found === null) {
                 throw new Error('The link popover is not open.');
             }
+
             return found;
         }, LOAD);
         await waitFor(() => expect(within(popover).getByRole('textbox', { name: 'URL' })).toHaveFocus(), LOAD);

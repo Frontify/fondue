@@ -42,7 +42,9 @@ const previewOf = ({ recipe }: PresentationStyle): Readonly<Record<string, strin
             preview[name] = value;
         }
     }
+
     preview.lineHeight = '1.25';
+
     return preview;
 };
 
@@ -59,6 +61,7 @@ export const translatedLabel = (label: Readonly<Record<string, string>>, lang: s
             return found;
         }
     }
+
     return label['en-US'] ?? '';
 };
 
@@ -72,6 +75,7 @@ const applying = (binding: Keymap[number], keymap: Keymap): readonly string[] =>
     if (isPlatformBinding(binding.key)) {
         return [binding.key];
     }
+
     const replaced = (platform: 'mac' | 'other') =>
         keymap.some(({ plugin, key }) => plugin === binding.plugin && key === `${platform}:${binding.key}`);
     const onApple = !replaced('mac');
@@ -79,12 +83,15 @@ const applying = (binding: Keymap[number], keymap: Keymap): readonly string[] =>
     if (onApple && onOther) {
         return [binding.key];
     }
+
     if (onApple) {
         return [`mac:${binding.key}`];
     }
+
     if (onOther) {
         return [`other:${binding.key}`];
     }
+
     return [];
 };
 
@@ -92,12 +99,14 @@ const payloadKey = (payload: JsonValue | null | undefined) => {
     if (payload === undefined) {
         return canonicalJson(null);
     }
+
     return canonicalJson(payload);
 };
 
 /** Whether the policy lets the author create nothing with the feature of `command`. */
 const refusedBy = (authoring: AuthoringPolicy, engine: CompiledDefinition, command: string) => {
     const featureId = engine.commands.get(command)?.featureId;
+
     return featureId !== undefined && authoring.features[featureId]?.create === false;
 };
 
@@ -111,6 +120,7 @@ const routeOf = (ref: CommandRef) => {
     if (typeof ref === 'string') {
         return { command: ref, payload: undefined };
     }
+
     return { command: ref.command, payload: ref.payload };
 };
 
@@ -133,6 +143,7 @@ export const toolbarItems = (
     if (presentation === undefined) {
         return [];
     }
+
     const { keymap } = engine;
     const entries: ButtonEntry[] = [];
     for (const plugin of plugins) {
@@ -140,6 +151,7 @@ export const toolbarItems = (
         const shown = (plugin.toolbar ?? []).filter((entry) => entry.node === undefined);
         entries.push(...shown.map((entry) => ({ ...entry, labelKey: entry.labelKey ?? '' })));
     }
+
     const marks = (ref: CommandRef) =>
         entries.some((entry) => entry.command === routeOf(ref).command && entry.bubble === true);
     const runnable = (command: string) => engine.commands.has(command) && !refusedBy(authoring, engine, command);
@@ -152,14 +164,17 @@ export const toolbarItems = (
         } else {
             label = translatedLabel(entry.label, lang);
         }
+
         let { icon } = entry;
         const control = presentation.controls?.[command];
         if (control !== undefined) {
             if (control.labelKey !== undefined) {
                 label = t(control.labelKey as `RichTextEditor_${string}`);
             }
+
             icon = control.icon ?? icon;
         }
+
         const bindings = bindingsOf(keymap, command, payload);
         const key = `${command} ${payloadKey(payload)}`;
         const item: ToolbarItem = {
@@ -178,8 +193,10 @@ export const toolbarItems = (
         if (entry.control === undefined) {
             return item;
         }
+
         return { ...item, component: entry.control };
     };
+
     // A heading level the policy cannot create only names a stored heading.
     const offered = ({ command, payload }: ButtonEntry) =>
         engine.commands.get(command)?.policyRefuses?.(authoring, payload) !== true;
@@ -194,6 +211,7 @@ export const toolbarItems = (
         if (!runnable(SET_STYLE) || styles.length === 0) {
             return [];
         }
+
         const rows: (ToolbarItem & { readonly offered: boolean })[] = defaults.map((entry) => ({
             ...itemOf(entry, false, false),
             offered: true,
@@ -215,8 +233,10 @@ export const toolbarItems = (
                 brand: { appliesTo: style.appliesTo, preview: previewOf(style) },
             });
         }
+
         return rows;
     };
+
     const items: ToolbarItem[] = [];
     for (const group of presentation.toolbar) {
         let groupStart = items.length > 0;
@@ -245,8 +265,10 @@ export const toolbarItems = (
                     });
                     groupStart = false;
                 }
+
                 continue;
             }
+
             const key = `${command} ${payloadKey(payload)}`;
             const entry = entries.find(
                 (candidate) => candidate.command === command && payloadKey(candidate.payload) === payloadKey(payload),
@@ -254,10 +276,12 @@ export const toolbarItems = (
             if (entry === undefined || !runnable(command) || items.some((item) => item.key === key)) {
                 continue;
             }
+
             items.push(itemOf(entry, groupStart, bubble));
             groupStart = false;
         }
     }
+
     return items;
 };
 
@@ -286,11 +310,13 @@ export const menuItems = (
             if (typeof ref !== 'object' || ref.labelKey === undefined || !engine.commands.has(ref.command)) {
                 continue;
             }
+
             const { command, payload } = ref;
             const key = `${command} ${payloadKey(payload)}`;
             if (refusedBy(authoring, engine, command) || shown.has(key) || rows.some((row) => row.key === key)) {
                 continue;
             }
+
             const bindings = bindingsOf(keymap, command, payload);
             const label = t(ref.labelKey as `RichTextEditor_${string}`);
             rows.push({
@@ -305,6 +331,7 @@ export const menuItems = (
                 bubble: false,
             });
         }
+
         // A command that opens an overlay has no key, so its toolbar entry names its row, as Start numbering at does;
         // a node's entry is a row with its payload, which shows while that node is selected.
         for (const entry of declaration.toolbar) {
@@ -315,18 +342,22 @@ export const menuItems = (
                 const spec = engine.commands.get(entry.command);
                 refused = spec !== undefined && spec.policyRefuses?.(authoring, entry.payload) === true;
             }
+
             if (!engine.commands.has(entry.command) || refused) {
                 continue;
             }
+
             if (shown.has(key) || rows.some((row) => row.key === key)) {
                 continue;
             }
+
             let label: string;
             if (entry.label === undefined) {
                 label = t(entry.labelKey as `RichTextEditor_${string}`);
             } else {
                 label = translatedLabel(entry.label, lang);
             }
+
             rows.push({
                 key,
                 command: entry.command,
@@ -342,5 +373,6 @@ export const menuItems = (
             });
         }
     }
+
     return rows;
 };

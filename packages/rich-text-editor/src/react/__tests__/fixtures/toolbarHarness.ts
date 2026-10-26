@@ -19,6 +19,7 @@ export const ready = async (page: Page) => {
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', /true|false/);
     await expect(page.locator('[data-test-id="fondue-rich-text-editor"]')).not.toHaveAttribute('aria-busy');
 };
+
 export const select = (page: Page, text: string) =>
     page.evaluate((target) => window.toolbarEditor?.setSelection(window.toolbarEditor.handle, { text: target }), text);
 /** The accessible name of the focused element, as its `aria-label` or text. */
@@ -28,6 +29,7 @@ export const focusedName = (page: Page) =>
         if (active === null) {
             return null;
         }
+
         return active.getAttribute('aria-label') ?? active.textContent;
     });
 // Radix Toolbar moves focus in a timeout after the key, so focus is read once it settles. Tests focus the surface
@@ -53,23 +55,30 @@ export const luminance = (color: string) => {
         if (scaled <= 0.040_45) {
             return scaled / 12.92;
         }
+
         return ((scaled + 0.055) / 1.055) ** 2.4;
     };
+
     return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
 };
+
 export const contrast = (a: string, b: string) => {
     const lighter = Math.max(luminance(a), luminance(b));
     const darker = Math.min(luminance(a), luminance(b));
+
     return (lighter + 0.05) / (darker + 0.05);
 };
+
 /** The box of a rendered element, which every element these tests measure has. */
 export const boxOf = async (locator: Locator) => {
     const box = await locator.boundingBox();
     if (box === null) {
         throw new Error('the element is not rendered');
     }
+
     return box;
 };
+
 /** The focused element's outline and the colour behind it once it lost focus. */
 export const outlineOf = (locator: Locator) =>
     locator.evaluate((element) => {
@@ -80,6 +89,7 @@ export const outlineOf = (locator: Locator) =>
             background = getComputedStyle(behind).backgroundColor;
             behind = behind.parentElement;
         }
+
         return {
             width: Number.parseFloat(style.outlineWidth),
             style: style.outlineStyle,
@@ -91,13 +101,17 @@ export const outlineOf = (locator: Locator) =>
 /** The pixels around `locator`, its focus outline included. */
 export const shotAround = async (page: Page, locator: Locator) => {
     const box = await boxOf(locator);
+
     return page.screenshot({ clip: { x: box.x - 6, y: box.y - 6, width: box.width + 12, height: box.height + 12 } });
 };
+
 /** The bottom strip of `locator`, where a pressed item draws its bar. */
 export const barOf = async (page: Page, locator: Locator) => {
     const box = await boxOf(locator);
+
     return page.screenshot({ clip: { x: box.x, y: box.y + box.height - 3, width: box.width, height: 3 } });
 };
+
 /** What `value` computes to as a colour beside the surface, read from an element styled with it. */
 export const computedColor = (page: Page, value: string) =>
     surfaceOf(page).evaluate((surface, given) => {
@@ -106,6 +120,7 @@ export const computedColor = (page: Page, value: string) =>
         surface.parentElement?.append(probe);
         const color = getComputedStyle(probe).color;
         probe.remove();
+
         return color;
     }, value);
 export const linked = {
@@ -128,6 +143,7 @@ export const session = (page: Page) =>
         kept.firstView ??= probe?.view();
         const commits = probe?.handle.getSummary().commitSequence;
         const view = probe?.view();
+
         return { commits, sameView: kept.firstView === view };
     });
 export const frames = (page: Page) =>

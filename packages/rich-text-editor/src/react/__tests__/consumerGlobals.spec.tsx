@@ -21,11 +21,13 @@ beforeAll(() => {
             },
         );
     }
+
     for (const name of MISSING) {
         const descriptor = Object.getOwnPropertyDescriptor(globalThis, name);
         if (descriptor !== undefined) {
             saved.set(name, descriptor);
         }
+
         Reflect.deleteProperty(globalThis, name);
     }
 });

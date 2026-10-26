@@ -11,6 +11,7 @@ const ready = async (page: Page) => {
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
     await expect.poll(() => page.evaluate(() => window.imageRte !== undefined)).toBe(true);
 };
+
 const selectImage = (page: Page) =>
     page.evaluate(() => {
         const rte = window.imageRte;
@@ -35,6 +36,7 @@ test('leaves contextmenu on text to the browser and opens the package menu on a 
             .evaluate((element) => {
                 const event = new MouseEvent('contextmenu', { bubbles: true, cancelable: true, button: 2 });
                 element.dispatchEvent(event);
+
                 return event.defaultPrevented;
             });
 

@@ -67,11 +67,14 @@ export const mount = (props: Props = {}, strict = false, theme?: Theme) => {
         if (strict) {
             editor = <StrictMode>{editor}</StrictMode>;
         }
+
         if (shown === undefined) {
             return editor;
         }
+
         return <ThemeProvider theme={shown}>{editor}</ThemeProvider>;
     };
+
     const view = render(wrap({}));
     act(() => {
         vi.runAllTimers();
@@ -80,8 +83,10 @@ export const mount = (props: Props = {}, strict = false, theme?: Theme) => {
         if (ref.current === null) {
             throw new Error('no handle');
         }
+
         return ref.current;
     };
+
     return {
         ...view,
         handle,
@@ -93,12 +98,15 @@ export const surface = () => screen.getByRole('textbox', { name: 'Notes' });
 /** Undoes once, and reads whether another undo step is left. */
 export const undoOnce = (handle: EditorHandle<object>) => {
     const commands = handle as unknown as Pick<RuntimeHandle, 'execute' | 'query'>;
+
     return [commands.execute('history.undo').status, commands.query('history.undo').enabled];
 };
+
 export const viewOf = () => {
     const [view] = liveResources.views;
     if (view === undefined) {
         throw new Error('no live view');
     }
+
     return view;
 };

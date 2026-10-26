@@ -46,19 +46,23 @@ export const useRichTextFormField = <C extends object = ShippedCommands>(
             if (ref === null || typeof ref === 'function' || ref.current === null) {
                 throw new Error(NOT_MOUNTED);
             }
+
             const handle = ref.current;
             const runtime = portOfHandle(handle);
             const read = fieldProps.get(handle);
             if (runtime === undefined || read === undefined) {
                 throw new Error(NOT_MOUNTED);
             }
+
             return { handle, runtime, props: read() };
         };
+
         return {
             // The committed document, never the DOM's.
             getValue: () => sessionOf().handle.getSnapshot().document,
             validate: () => {
                 const { runtime, props } = sessionOf();
+
                 return validityOf(runtime, props.required);
             },
             reset: async () => {
@@ -75,6 +79,7 @@ export const useRichTextFormField = <C extends object = ShippedCommands>(
                 if (result.status === 'replaced' && result.session.generation === generation) {
                     runtime.clearHistory();
                 }
+
                 return result;
             },
             // A form never submits half-composed text.
@@ -83,16 +88,21 @@ export const useRichTextFormField = <C extends object = ShippedCommands>(
                 if (!handle.getSummary().compositionActive) {
                     return Promise.resolve(handle.getSnapshot().document);
                 }
+
                 return new Promise((resolve, reject) => {
                     runtime.afterInput((outcome) => {
                         if (outcome === 'settled') {
                             resolve(handle.getSnapshot().document);
+
                             return;
                         }
+
                         if (outcome === 'disposed') {
                             reject(new Error(NOT_MOUNTED));
+
                             return;
                         }
+
                         reject(Object.assign(new Error('The input did not settle in time.'), { code: 'timeout' }));
                     }, timeoutMs);
                 });

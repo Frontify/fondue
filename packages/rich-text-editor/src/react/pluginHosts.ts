@@ -54,6 +54,7 @@ export const usePluginHosts = (sources: HostSources) => {
             pluginOverlayRef.current = next;
             setPluginOverlay(next);
         };
+
         return {
             t: (key, values) => sources.t()(key, values),
             locale: sources.lang,
@@ -65,6 +66,7 @@ export const usePluginHosts = (sources: HostSources) => {
                     if (service === undefined || runtime === undefined) {
                         return undefined;
                     }
+
                     return {
                         search: async (query, resourceTypes, signal, cursor) => {
                             const session = runtime.handle.getSummary().session;
@@ -77,6 +79,7 @@ export const usePluginHosts = (sources: HostSources) => {
                             if (kept === undefined) {
                                 throw new TypeError('The reference service answered no page.');
                             }
+
                             return kept;
                         },
                     };
@@ -86,6 +89,7 @@ export const usePluginHosts = (sources: HostSources) => {
                     if (runtime === undefined) {
                         return undefined;
                     }
+
                     return contentChecksOf(runtime);
                 },
             },
@@ -119,6 +123,7 @@ export const usePluginHosts = (sources: HostSources) => {
             generation: () => coordinator.runtime?.handle.getSummary().session.generation,
         };
     });
+
     return { hosts, pluginOverlay };
 };
 

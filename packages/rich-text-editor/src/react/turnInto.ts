@@ -28,6 +28,7 @@ const labelOf = (t: CodecContext['t'], lang: string, entry: PluginToolbarEntry):
     if (entry.labelKey === undefined) {
         return translatedLabel(entry.label, lang);
     }
+
     return t(entry.labelKey as `RichTextEditor_${string}`);
 };
 

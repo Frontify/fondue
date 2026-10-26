@@ -74,8 +74,10 @@ describe('the entries a block takes', () => {
             if (isRecord(payload)) {
                 level = JSON.stringify(payload.level);
             }
+
             return { ...(table[`${command} ${level}`] ?? { enabled: false, active: false }), disabledReason: null };
         };
+
     const currentOf = (choices: ReturnType<typeof turnIntoChoices>) =>
         choices.filter(({ current }) => current).map(({ entry: { command } }) => command);
 
@@ -130,10 +132,13 @@ describe('the entries a selected node of a live editor takes', () => {
             if (node.type.name !== name) {
                 return true;
             }
+
             runtime.select({ node: pos });
+
             return false;
         });
     };
+
     const choicesOf = (handle: Handle) =>
         turnIntoChoices(installedChoices(pluginsOf(document().definition), t, 'en-US'), (command, payload) =>
             (handle.query as (id: string, payload?: JsonValue) => CommandState)(command, payload),
@@ -141,6 +146,7 @@ describe('the entries a selected node of a live editor takes', () => {
             if (current) {
                 return `${label} (current)`;
             }
+
             return label;
         });
 

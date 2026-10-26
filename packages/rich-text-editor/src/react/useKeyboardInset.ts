@@ -17,6 +17,7 @@ export const useKeyboardInset = (rootRef: RefObject<HTMLElement | null>, coordin
         if (view === null || view === undefined || viewport === null || viewport === undefined) {
             return undefined;
         }
+
         const measure = () => {
             const inset = Math.max(0, view.innerHeight - viewport.offsetTop - viewport.height);
             coordinator.chrome.setKeyboardInset(inset);
@@ -26,14 +27,17 @@ export const useKeyboardInset = (rootRef: RefObject<HTMLElement | null>, coordin
                 setKeyboard(inset);
             }
         };
+
         measure();
         // A pan of the visual viewport, as iOS makes above its keyboard, changes `offsetTop` with no resize.
         viewport.addEventListener('resize', measure);
         viewport.addEventListener('scroll', measure);
+
         return () => {
             viewport.removeEventListener('resize', measure);
             viewport.removeEventListener('scroll', measure);
         };
     }, [rootRef, coordinator]);
+
     return keyboard;
 };

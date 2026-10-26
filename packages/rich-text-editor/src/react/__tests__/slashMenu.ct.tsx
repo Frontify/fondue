@@ -19,6 +19,7 @@ const focusSurface = async (page: Page) => {
     await surfaceOf(page).focus();
     await settleFocus(page);
 };
+
 const announced = (page: Page) => page.locator('[aria-live="polite"]').textContent();
 const frames = (page: Page) =>
     page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));

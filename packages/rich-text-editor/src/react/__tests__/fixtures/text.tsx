@@ -49,6 +49,7 @@ export const textFeatures = (typography?: Typography) => {
     if (typography !== undefined) {
         rules = inputRules({ typography });
     }
+
     return [
         core(),
         bold(),
@@ -77,6 +78,7 @@ export const text = (value: string, ...marks: readonly string[]): ContentNodeJSO
     if (marks.length === 0) {
         return { type: 'text', text: value };
     }
+
     return { type: 'text', text: value, marks: marks.map((type) => ({ type })) };
 };
 
@@ -102,6 +104,7 @@ export const mountText = <Model extends ContentModel = ContentModel<ReturnType<t
     if (options !== undefined) {
         given = options;
     }
+
     const {
         model = textModel() as unknown as Model,
         blocks = [para()],
@@ -124,16 +127,19 @@ export const mountText = <Model extends ContentModel = ContentModel<ReturnType<t
             plugins: units,
         });
     }
+
     let shown: { readonly presentation?: ReactPresentation } = {};
     if (toolbar !== undefined) {
         shown = { presentation: defineReactPresentation({ toolbar }) };
     }
+
     let locale: RichTextLocale | undefined;
     const element = (inputRules: Rules) => {
         let rules: { readonly inputRules?: NonNullable<Rules> } = {};
         if (inputRules !== undefined) {
             rules = { inputRules };
         }
+
         return (
             <RichTextEditor
                 {...shown}
@@ -152,6 +158,7 @@ export const mountText = <Model extends ContentModel = ContentModel<ReturnType<t
             />
         );
     };
+
     const rendered = render(element(rules));
     act(() => {
         vi.advanceTimersToNextFrame();
@@ -160,10 +167,12 @@ export const mountText = <Model extends ContentModel = ContentModel<ReturnType<t
     if (handle === null) {
         throw new Error('The editor did not mount.');
     }
+
     const view = runtimeOf(handle)?.view;
     if (view === undefined) {
         throw new Error('The editor has no view.');
     }
+
     return {
         ...rendered,
         handle,

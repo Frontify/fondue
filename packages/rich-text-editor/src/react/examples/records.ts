@@ -105,17 +105,21 @@ export const textOf = (value: unknown): string => {
     if (typeof value !== 'object' || value === null) {
         return '';
     }
+
     const node = value as { readonly text?: unknown; readonly content?: unknown };
     if (typeof node.text === 'string') {
         return node.text;
     }
+
     if (!Array.isArray(node.content)) {
         return '';
     }
+
     const children: unknown[] = node.content;
     let separator = '';
     if (children.some((child) => Array.isArray((child as { readonly content?: unknown }).content))) {
         separator = '\n';
     }
+
     return children.map(textOf).join(separator);
 };

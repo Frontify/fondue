@@ -41,6 +41,7 @@ test.describe('at 320 CSS pixels', () => {
             page: document.documentElement.scrollWidth > document.documentElement.clientWidth,
             toolbar: (() => {
                 const toolbar = document.querySelector('[role="toolbar"]');
+
                 return toolbar !== null && toolbar.scrollWidth > toolbar.clientWidth;
             })(),
         }));
@@ -84,6 +85,7 @@ test.describe('at 320 CSS pixels', () => {
                     .map((node) => node.textContent ?? '')
                     .join('')
                     .trim();
+
                 return { label, starts: (item.textContent ?? '').trim().startsWith(label) && label !== '' };
             }),
         );
@@ -107,6 +109,7 @@ test('sticks to the top of its scrolling container while the document scrolls', 
     const scroller = page.locator('[data-scroller]');
     const top = async () => {
         const [toolbar, container] = await Promise.all([boxOf(toolbarOf(page)), boxOf(scroller)]);
+
         return Math.round(toolbar.y - container.y);
     };
 
@@ -205,10 +208,12 @@ for (const theme of ['light', 'dark'] as const) {
             if (name !== 'Bold') {
                 await page.keyboard.press('ArrowRight');
             }
+
             await expectFocus(page, name);
             outlines.push(await outlineOf(itemOf(page, name)));
             changed.push(unfocused === 'none' || name === 'Bold');
         }
+
         await page.keyboard.press('Tab');
         await expectFocus(page, 'Notes');
         outlines.push(await outlineOf(surfaceOf(page)));
@@ -277,6 +282,7 @@ for (const forcedColors of ['none', 'active'] as const) {
         await expect(decoration).toHaveText('two');
         const shown = await decoration.evaluate((element) => {
             const style = getComputedStyle(element);
+
             return style.backgroundColor !== 'rgba(0, 0, 0, 0)' || style.outlineStyle === 'solid';
         });
         await testInfo.attach('selection with focus in the toolbar', {
@@ -535,6 +541,7 @@ test('follows a theme switch in the toolbar without a transaction or a new view'
         item: await itemOf(page, 'Bold').evaluate((item) => getComputedStyle(item).color),
         surface: await surfaceOf(page).evaluate((surface) => {
             const style = getComputedStyle(surface);
+
             return { background: style.backgroundColor, color: style.color };
         }),
         tokens: {
@@ -553,10 +560,12 @@ test('follows a theme switch in the toolbar without a transaction or a new view'
     for (const { shown: colors } of [before, after]) {
         expect({ toolbar: colors.toolbar, item: colors.item }).toEqual(colors.tokens);
     }
+
     // The surface draws the surface token behind the primary text token, in each theme.
     for (const { shown: colors } of [before, after]) {
         expect(colors.surface).toEqual({ background: colors.tokens.toolbar, color: colors.tokens.item });
     }
+
     expect(after.shown.surface.background).not.toBe(before.shown.surface.background);
     expect(after.shown.surface.color).not.toBe(before.shown.surface.color);
     expect(after.shown.item).not.toBe(before.shown.item);
@@ -591,6 +600,7 @@ test('mirrors a nested list and a quote under rtl, the selected item frame inclu
                 if (outer === undefined) {
                     throw new Error('no parent item');
                 }
+
                 return {
                     insets,
                     // How far the nested item sits in from the parent's left and right edges.
@@ -602,6 +612,7 @@ test('mirrors a nested list and a quote under rtl, the selected item frame inclu
         await ready(page);
         const found = await sides();
         await editor.unmount();
+
         return found;
     };
 

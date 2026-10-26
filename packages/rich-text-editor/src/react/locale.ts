@@ -30,21 +30,25 @@ export const useEditorLocale = (locale: RichTextLocale | undefined): RichTextLoc
     if (locale === undefined && lang !== undefined) {
         load = LOADERS[lang];
     }
+
     const [loaded, setLoaded] = useState<RichTextLocale>(enUS);
     useEffect(() => {
         if (load === undefined) {
             return undefined;
         }
+
         let current = true;
         const show = (next: RichTextLocale) => {
             if (current) {
                 setLoaded(next);
             }
         };
+
         // A chunk that fails to load leaves the strings the editor shows.
         load()
             .then(show)
             .catch(() => undefined);
+
         return () => {
             current = false;
         };
@@ -52,8 +56,10 @@ export const useEditorLocale = (locale: RichTextLocale | undefined): RichTextLoc
     if (locale !== undefined) {
         return locale;
     }
+
     if (load === undefined) {
         return enUS;
     }
+
     return loaded;
 };

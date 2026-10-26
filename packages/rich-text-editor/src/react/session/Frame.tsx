@@ -218,6 +218,7 @@ export const SessionFrame = ({
                     if (typeof name === 'string') {
                         return chromeContext.t(name as `RichTextEditor_${string}`);
                     }
+
                     return translatedLabel(name, lang);
                 }}
                 strings={referenceStrings}

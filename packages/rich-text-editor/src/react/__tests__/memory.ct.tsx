@@ -25,17 +25,21 @@ test('returns DOM nodes and event listeners to within 2% and the heap to within 
         await client.send('HeapProfiler.collectGarbage');
         const { nodes, jsEventListeners } = await client.send('Memory.getDOMCounters');
         const { usedSize } = await client.send('Runtime.getHeapUsage');
+
         return { nodes, listeners: jsEventListeners, heap: usedSize };
     };
+
     // V8's optimised code and ProseMirror's attribute cache table keep growing over the first tens of cycles, then hold.
     for (let cycle = 0; cycle < method.warmup; cycle += 1) {
         await page.evaluate(() => window.rteCycle?.('typical'));
     }
+
     const baseline = await measure();
 
     for (let cycle = 0; cycle < CYCLES; cycle += 1) {
         await page.evaluate(() => window.rteCycle?.('typical'));
     }
+
     const after = await measure();
 
     expect(Math.abs(after.nodes - baseline.nodes)).toBeLessThanOrEqual(baseline.nodes * TOLERANCE);

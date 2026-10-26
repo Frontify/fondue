@@ -27,6 +27,7 @@ export const useColumns = (
         columnCount = columns.count;
         columnGap = columns.length;
     }
+
     const [columnsFit, setColumnsFit] = useState(false);
     const breakLabel = t('RichTextEditor_columnBreak');
     const inactiveBreakLabel = t('RichTextEditor_columnBreakInactive');
@@ -44,19 +45,24 @@ export const useColumns = (
         if (live === undefined || surface === undefined) {
             return undefined;
         }
+
         const holds = (write: () => void) => {
             if (!isComposing(live)) {
                 return false;
             }
+
             live.afterInput((outcome) => {
                 if (outcome !== 'disposed') {
                     write();
                 }
             }, COMPOSITION_WAIT_MS);
+
             return true;
         };
+
         const layout = showColumns(surface, setColumnsFit, holds);
         columnsLayoutRef.current = layout;
+
         return () => {
             columnsLayoutRef.current = undefined;
             layout.dispose();

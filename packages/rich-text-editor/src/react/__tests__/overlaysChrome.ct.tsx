@@ -157,6 +157,7 @@ test.describe('the Overlay focus table', () => {
             await page.keyboard.press('Tab');
             expect(await dialogOf(page).evaluate((dialog) => dialog.contains(document.activeElement))).toBe(true);
         }
+
         expect(await imageAlt(page)).toBe('');
         await dialogOf(page).getByRole('textbox', { name: 'Description' }).fill('A dog');
         await page.keyboard.press('Escape');
@@ -219,6 +220,7 @@ for (const within of ['shadow', 'iframe'] as const) {
         if (within === 'iframe') {
             root = page.frameLocator('iframe').locator(':root');
         }
+
         const surface = root.getByRole('textbox', { name: 'Notes' });
         await expect(surface).toHaveAttribute('contenteditable', 'true');
         await expect.poll(() => page.evaluate(() => window.overlayProbe !== undefined)).toBe(true);
@@ -259,6 +261,7 @@ for (const within of ['shadow', 'iframe'] as const) {
                     '[data-test-id="fixture-link-popover"], [data-rte-bubble-toolbar]',
                 ),
             ];
+
             return overlays.map(
                 (overlay) => overlay.ownerDocument === element.ownerDocument && overlay.getRootNode() === rootNode,
             );
@@ -277,6 +280,7 @@ for (const within of ['shadow', 'iframe'] as const) {
         if (within === 'iframe') {
             root = page.frameLocator('iframe').locator(':root');
         }
+
         const surface = root.getByRole('textbox', { name: 'Notes' });
         await expect(surface).toHaveAttribute('contenteditable', 'true');
         await expect.poll(() => page.evaluate(() => window.overlayProbe !== undefined)).toBe(true);

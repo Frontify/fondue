@@ -22,6 +22,7 @@ export const item = (kind: ListKind, value: string, ...children: readonly Conten
     if (kind === 'task') {
         return { type: 'task_item', attrs: { nodeId: `task-${value}`, checked: false }, content };
     }
+
     return { type: 'list_item', content };
 };
 
@@ -37,9 +38,11 @@ export const list = (kind: ListKind, items: readonly ContentNodeJSON[], start = 
     if (kind === 'bullet') {
         return { type: 'bullet_list', attrs: { marker: null }, content: [...items] };
     }
+
     if (kind === 'ordered') {
         return { type: 'ordered_list', attrs: { start, marker: null }, content: [...items] };
     }
+
     return { type: 'task_list', content: [...items] };
 };
 
@@ -54,27 +57,34 @@ export const outline = (node: ContentNodeJSON): unknown => {
     if (node.type === 'text') {
         return node.text;
     }
+
     if (node.type === 'paragraph' || node.type === 'heading') {
         return children.join('');
     }
+
     const key = LIST_KEYS[node.type];
     if (key !== undefined) {
         const start = node.attrs?.start;
         if (typeof start === 'number' && start !== 1) {
             return { [key]: children, start };
         }
+
         return { [key]: children };
     }
+
     if (node.type === 'task_item') {
         let box = '[ ]';
         if (node.attrs?.checked === true) {
             box = '[x]';
         }
+
         return [box, ...children];
     }
+
     if (node.type === 'list_item') {
         return children;
     }
+
     return { [node.type]: children };
 };
 
@@ -88,6 +98,7 @@ export const itemOutline = (kind: ListKind, ...blocks: readonly unknown[]): unkn
     if (kind === 'task') {
         return ['[ ]', ...blocks];
     }
+
     return [...blocks];
 };
 
@@ -97,5 +108,6 @@ export const listOutline = (kind: ListKind, items: readonly unknown[], start = 1
     if (start !== 1) {
         return { [key]: [...items], start };
     }
+
     return { [key]: [...items] };
 };

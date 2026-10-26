@@ -59,10 +59,12 @@ window.storyProbe = {
             if (handle === undefined) {
                 continue;
             }
+
             // Counts a call when it starts, not when its `replace` metric fires at the end.
             const replaceDocument = handle.replaceDocument.bind(handle);
             handle.replaceDocument = (request) => {
                 watched.replaced += 1;
+
                 return replaceDocument(request);
             };
         }
@@ -76,6 +78,7 @@ window.storyProbe = {
         if (view === undefined) {
             throw new Error('No editable surface.');
         }
+
         view.focus();
         view.dispatch(view.state.tr.setSelection(Selection.atEnd(view.state.doc)));
     },
@@ -91,10 +94,13 @@ export const StoryProbe = ({ file, name }: { readonly file?: string; readonly na
         if (composed === undefined || probe === undefined || canvasElement === null) {
             return undefined;
         }
+
         if (composed.play === undefined) {
             probe.played = 'none';
+
             return undefined;
         }
+
         // A play function of a story that has since unmounted must not set the result of the next one.
         let live = true;
         composed
@@ -103,6 +109,7 @@ export const StoryProbe = ({ file, name }: { readonly file?: string; readonly na
                 if (live) {
                     probe.played = 'passed';
                 }
+
                 return undefined;
             })
             .catch((error: unknown) => {
@@ -110,6 +117,7 @@ export const StoryProbe = ({ file, name }: { readonly file?: string; readonly na
                     probe.played = String(error);
                 }
             });
+
         return () => {
             live = false;
         };
@@ -117,9 +125,11 @@ export const StoryProbe = ({ file, name }: { readonly file?: string; readonly na
     if (file === undefined || name === undefined) {
         return null;
     }
+
     if (composed === undefined) {
         throw new Error(`No story ${name} in ${file}.`);
     }
+
     // Each story is a module-level component that composeStories made once.
     return (
         <div key={`${file} ${name}`} ref={canvasRef}>

@@ -52,6 +52,7 @@ class PanelBoundary extends Component<BoundaryProps, BoundaryState> {
                 />
             );
         }
+
         return this.props.children;
     }
 }
@@ -72,6 +73,7 @@ const PanelFallback = ({
         buttonRef.current?.focus();
         announce(message);
     }, [announce, message]);
+
     return (
         <div className={styles.fallback}>
             <p>{message}</p>
@@ -105,6 +107,7 @@ export const PanelFrame = ({
         if (node === null || node.contains(node.ownerDocument.activeElement)) {
             return;
         }
+
         node.querySelector<HTMLElement>(TABBABLE)?.focus();
     }, [id]);
     useClientLayoutEffect(() => {
@@ -113,6 +116,7 @@ export const PanelFrame = ({
         if (node === null || view === null || view === undefined) {
             return undefined;
         }
+
         const onKeyDown = (event: globalThis.KeyboardEvent) => {
             const target = event.composedPath()[0];
             if (
@@ -123,13 +127,17 @@ export const PanelFrame = ({
             ) {
                 return;
             }
+
             event.preventDefault();
             event.stopPropagation();
             onClose();
         };
+
         view.addEventListener('keydown', onKeyDown, true);
+
         return () => view.removeEventListener('keydown', onKeyDown, true);
     }, [onClose]);
+
     return (
         <div
             ref={slotRef}

@@ -15,8 +15,10 @@ export const usePanels = (rootRef: RefObject<HTMLElement | null>, coordinator: M
         open: (id: string) => {
             if (openPanelRef.current === id) {
                 setPanelRequests((count) => count + 1);
+
                 return;
             }
+
             openPanelRef.current = id;
             setOpenPanel(id);
         },
@@ -27,14 +29,17 @@ export const usePanels = (rootRef: RefObject<HTMLElement | null>, coordinator: M
             if (openPanelRef.current !== undefined && root?.contains(root.ownerDocument.activeElement) === true) {
                 coordinator.runtime?.handle.focus();
             }
+
             openPanelRef.current = undefined;
             setOpenPanel(undefined);
         },
         toggle: (id: string) => {
             if (openPanelRef.current === id) {
                 panelActionsRef.current.close();
+
                 return;
             }
+
             panelActionsRef.current.open(id);
         },
     });
@@ -46,5 +51,6 @@ export const usePanels = (rootRef: RefObject<HTMLElement | null>, coordinator: M
         }),
         [openPanel, panelRequests],
     );
+
     return { openPanelRef, panelActionsRef, panelState };
 };

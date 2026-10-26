@@ -31,9 +31,11 @@ export const CycleHost = () => {
             root.unmount();
             container.remove();
         };
+
         return () => {
             delete window.rteCycle;
         };
     }, []);
+
     return null;
 };

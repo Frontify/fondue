@@ -29,17 +29,21 @@ const brokenLinks = ({ text }: Described, ids: ReadonlySet<string>): string[] =>
         if (/^[a-z][a-z\d+.-]*:/i.test(href)) {
             continue;
         }
+
         if (href.startsWith('#')) {
             if (!anchors.has(href.slice(1))) {
                 broken.push(href);
             }
+
             continue;
         }
+
         const path = /^\.?\/?\?path=\/(story|docs)\/([^&#]+)/.exec(href);
         if (path === null || !ids.has(path[2] ?? '')) {
             broken.push(href);
         }
     }
+
     return broken;
 };
 
@@ -55,6 +59,7 @@ const descriptions: readonly Described[] = COMPOSED_STORIES.map(({ file, name, p
         component = description.component ?? '';
         story = description.story ?? '';
     }
+
     return { title: `${file} ${name}`, text: `${component}\n${story}` };
 });
 

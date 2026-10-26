@@ -85,6 +85,7 @@ const Embedded = ({ into, children }: { readonly into: 'shadow' | 'iframe'; read
         if (into === 'shadow' && hostRef.current !== null) {
             setTarget(hostRef.current.attachShadow({ mode: 'open' }));
         }
+
         const frame = frameRef.current;
         if (into === 'iframe' && frame !== null && frame.contentDocument !== null) {
             setTarget(frame.contentDocument.body);
@@ -95,6 +96,7 @@ const Embedded = ({ into, children }: { readonly into: 'shadow' | 'iframe'; read
         // oxlint-disable-next-line @eslint-react/dom-no-missing-iframe-sandbox -- WebKit runs no event listener in a sandboxed document.
         host = <iframe ref={frameRef} title="Embedded editor" style={{ inlineSize: 600, blockSize: 400 }} />;
     }
+
     return (
         <>
             {host}
@@ -154,6 +156,7 @@ export const OverlayProbe = ({
     if (scrollSelectionIntoView !== undefined) {
         options = { scrollSelectionIntoView };
     }
+
     const ref = useRef<EditorHandle<object>>(null);
     const [open, setOpen] = useState<OverlayKind | null>(null);
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
@@ -185,6 +188,7 @@ export const OverlayProbe = ({
             if (handle === null) {
                 return;
             }
+
             clearInterval(timer);
             window.overlayProbe = {
                 handle,
@@ -198,6 +202,7 @@ export const OverlayProbe = ({
                     if (typeof margin === 'object') {
                         return margin.bottom;
                     }
+
                     return margin;
                 },
                 insert: (text, at) => {
@@ -209,11 +214,14 @@ export const OverlayProbe = ({
                     if (view === undefined) {
                         return '';
                     }
+
                     const copy = view.dom.cloneNode(true) as HTMLElement;
                     for (const decoration of copy.querySelectorAll('[data-rte-selection]')) {
                         decoration.replaceWith(...decoration.childNodes);
                     }
+
                     copy.normalize();
+
                     return copy.innerHTML;
                 },
                 selection: () => {
@@ -221,13 +229,16 @@ export const OverlayProbe = ({
                     if (runtime === undefined) {
                         return undefined;
                     }
+
                     const { anchor, head } = runtime.state.selection;
+
                     return { anchor, head };
                 },
                 modes,
                 hostDialogChanges,
             };
         }, 10);
+
         return () => clearInterval(timer);
     }, [modes]);
     const overlay = (kind: OverlayKind) => ({
@@ -278,6 +289,7 @@ export const OverlayProbe = ({
             </div>
         );
     }
+
     let body = editor;
     if (hostButtons) {
         body = (
@@ -296,6 +308,7 @@ export const OverlayProbe = ({
             </>
         );
     }
+
     if (within === 'dialog') {
         body = (
             <Dialog.Root modal open onOpenChange={(next) => hostDialogChanges.push(next)}>
@@ -308,12 +321,15 @@ export const OverlayProbe = ({
             </Dialog.Root>
         );
     }
+
     if (within === 'modal') {
         body = <dialog aria-label="Modal host">{body}</dialog>;
     }
+
     if (within === 'shadow' || within === 'iframe') {
         body = <Embedded into={within}>{body}</Embedded>;
     }
+
     return (
         <ThemeProvider theme={theme} dir={dir}>
             {header && (
@@ -364,6 +380,7 @@ export const ReorderProbe = () => {
             ]),
         ),
     );
+
     return (
         <ThemeProvider>
             <button type="button" onClick={() => setOrder([...order].reverse())}>

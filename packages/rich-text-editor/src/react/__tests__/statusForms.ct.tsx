@@ -44,6 +44,7 @@ const replaceWithTwo = (page: Page, where: 'start' | 'end') =>
             selection,
             history: 'reset',
         });
+
         return result.status;
     }, where);
 
@@ -110,6 +111,7 @@ test('gives focus back to the editor when a replacement fails after step 4', asy
     const result = await page.evaluate(async () => {
         const { handle } = window.rte as Rte;
         const { stamp, document } = handle.getSnapshot();
+
         return handle.replaceDocument({
             expected: stamp,
             next: { documentId: 'document-2', revision: null, document },
@@ -147,6 +149,7 @@ test('moves no focus on a later setMode once a replacement that went readonly ha
             await new Promise((resolve) => setTimeout(resolve, 50));
             rte.answerSaves();
             const result = await replaced;
+
             return result.status;
         }),
     ).toBe('replaced');
@@ -180,6 +183,7 @@ test('gives focus back to a surface that went readonly during the replacement', 
         await new Promise((resolve) => setTimeout(resolve, 50));
         rte.answerSaves();
         const result = await replaced;
+
         return result.status;
     });
 
@@ -227,6 +231,7 @@ const composeAfter = async (page: Page, text: string) => {
     }, text);
     const cdp = await page.context().newCDPSession(page);
     await cdp.send('Input.imeSetComposition', { text: 'x', selectionStart: 1, selectionEnd: 1 });
+
     return cdp;
 };
 

@@ -58,6 +58,7 @@ export const useChrome = (sources: ChromeSources) => {
     if (lang === undefined) {
         lang = enUS.lang;
     }
+
     const shownLang = lang;
     useClientLayoutEffect(() => {
         langRef.current = shownLang;
@@ -105,6 +106,7 @@ export const useChrome = (sources: ChromeSources) => {
         const overlays = plugins.flatMap((plugin) =>
             (plugin.overlays ?? []).map((component, index) => ({ key: `${plugin.feature} ${index}`, component })),
         );
+
         return overlays.map(({ key, component }, index) => ({
             key,
             component,
@@ -119,6 +121,7 @@ export const useChrome = (sources: ChromeSources) => {
         if (surfaceId === undefined && items.length > 0) {
             surfaceId = generatedId;
         }
+
         const strings = {
             label: t('RichTextEditor_toolbar'),
             more: t('RichTextEditor_more'),
@@ -131,6 +134,7 @@ export const useChrome = (sources: ChromeSources) => {
             contextMenu: t('RichTextEditor_contextMenu'),
             turnInto: t('RichTextEditor_slashTurnInto'),
         };
+
         return {
             items,
             menu,
@@ -162,6 +166,7 @@ export const useChrome = (sources: ChromeSources) => {
         keyboard,
         lang,
     ]);
+
     return { lang, chromeContext, renderedHosts, standing, chrome };
 };
 
@@ -184,10 +189,12 @@ export const chromeKeyDownOf =
         if (props.disabled === true) {
             toolbar = null;
         }
+
         let showBubble: (() => void) | null = null;
         if (toolbarMode === 'bubble') {
             showBubble = showBubbleRef.current;
         }
+
         moveChromeFocus(event, {
             runtime: coordinator.runtime,
             toolbar,
@@ -221,12 +228,14 @@ export const useOverlayValues = ({
     if (pluginOverlay !== undefined) {
         opener = pluginOverlay.opener;
     }
+
     const overlays = useMemo(() => ({ container: overlayRoot, scope, opener }), [overlayRoot, scope, opener]);
     // The file chooser exists where `media.image` takes files that `services.uploads` sends.
     const choosesFiles =
         engineOf(mounted.definition).model.capabilities.some(({ id }) => id === UPLOAD_FEATURE) &&
         memberOf(props.services, 'uploads') !== undefined;
     const referenceStrings = useMemo(() => referenceListStrings(chromeContext.t), [chromeContext]);
+
     return { overlays, choosesFiles, referenceStrings };
 };
 
@@ -245,6 +254,7 @@ export const useSessionRefs = () => {
     // The file chooser of hosts with no asset picker, and where the files it gives go.
     const chooserRef = useRef<HTMLInputElement | null>(null);
     const choosingRef = useRef<Choosing | undefined>(undefined);
+
     return {
         generatedId,
         toolbarRef,
@@ -269,5 +279,6 @@ export const useToolbarMode = (initial: ToolbarMode | undefined, latestRef: Muta
         },
         [latestRef],
     );
+
     return { toolbarMode, switchToolbar };
 };

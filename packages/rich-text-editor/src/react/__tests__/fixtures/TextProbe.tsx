@@ -86,16 +86,20 @@ const markedParagraph = (text: string): ContentNodeJSON => ({
             if (part.startsWith('*')) {
                 return { type: 'text', text: inner, marks: [{ type: 'italic' }] };
             }
+
             if (part.startsWith('_')) {
                 return { type: 'text', text: inner, marks: [{ type: 'bold' }, { type: 'underline' }] };
             }
+
             if (part.startsWith('[')) {
                 const link = {
                     type: 'link',
                     attrs: { href: 'https://example.com', openInNewWindow: false, styleId: null },
                 };
+
                 return { type: 'text', text: inner, marks: [link] };
             }
+
             return { type: 'text', text: part };
         }),
 });
@@ -148,9 +152,11 @@ export const TextProbe = ({
     if (nodeViewFirst) {
         blocks = [nodeView, ...blocks];
     }
+
     if (quoted) {
         blocks = [{ type: 'blockquote', content: blocks }];
     }
+
     const ref = useRef<EditorHandle>(null);
     const changesRef = useRef<string[]>([]);
     useEffect(() => {
@@ -164,6 +170,7 @@ export const TextProbe = ({
             };
         }
     }, []);
+
     return (
         <ThemeProvider dir={dir}>
             <button type="button">Before</button>
@@ -190,6 +197,7 @@ export const MarkedAndPlainProbe = ({ lines }: { readonly lines: readonly string
             window.markedAndPlain = { Marked: markedRef.current, setSelection };
         }
     }, []);
+
     return (
         <>
             <RichTextEditor

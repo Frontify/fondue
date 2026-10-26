@@ -13,6 +13,7 @@ const ready = async (page: Page) => {
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', /true|false/);
     await expect(page.locator('[data-test-id="fondue-rich-text-editor"]')).not.toHaveAttribute('aria-busy');
 };
+
 const para = (...content: readonly object[]) => ({ type: 'paragraph', attrs: { lang: null }, content });
 const text = (value: string) => ({ type: 'text', text: value });
 const link = { type: 'link', attrs: { href: 'https://example.com/followed', openInNewWindow: false, styleId: null } };
@@ -38,6 +39,7 @@ const computedColor = (page: Page, value: string) =>
         surface.parentElement?.append(probe);
         const color = getComputedStyle(probe).color;
         probe.remove();
+
         return color;
     }, value);
 
@@ -55,8 +57,10 @@ const pixelDifference = (page: Page, first: Buffer, second: Buffer) =>
                 const context = canvas.getContext('2d');
                 context?.drawImage(image, 0, 0);
                 const pixelData = context?.getImageData(0, 0, image.width, image.height).data;
+
                 return pixelData ?? new Uint8ClampedArray();
             };
+
             const x = await pixels(a);
             const y = await pixels(b);
             let largest = 0;
@@ -68,11 +72,13 @@ const pixelDifference = (page: Page, first: Buffer, second: Buffer) =>
                     const right = y[channel] ?? 0;
                     pixel = Math.max(pixel, Math.abs(left - right));
                 }
+
                 largest = Math.max(largest, pixel);
                 if (pixel > 0) {
                     differing += 1;
                 }
             }
+
             return { largest, share: differing / Math.max(1, x.length / 4), sameSize: x.length === y.length };
         },
         { a: first.toString('base64'), b: second.toString('base64') },
@@ -165,8 +171,10 @@ test('gives the reader root the same classes and content styles as the editor su
         root.evaluate((element) => {
             const read = (target: Element, names: readonly string[]) => {
                 const style = getComputedStyle(target);
+
                 return names.map((name) => style.getPropertyValue(name));
             };
+
             return {
                 variables: read(element, ['--rte-content-paragraph-spacing', '--rte-content-text-color']),
                 blocks: [...element.children].map((block) => [
@@ -263,6 +271,7 @@ test('follows a theme switch in the content without a transaction or a new view'
         surface: await surfaceOf(page).evaluate((surface) => getComputedStyle(surface).backgroundColor),
         tokens: await tokens.evaluate((probe) => {
             const style = getComputedStyle(probe);
+
             return { text: style.color, surface: style.backgroundColor };
         }),
     });
@@ -272,8 +281,10 @@ test('follows a theme switch in the content without a transaction or a new view'
             if (rte === undefined) {
                 return undefined;
             }
+
             const kept = window as unknown as { firstView?: unknown };
             kept.firstView ??= rte.runtime?.view;
+
             return {
                 commitSequence: rte.handle.getSummary().commitSequence,
                 sameView: kept.firstView === rte.runtime?.view,
@@ -291,6 +302,7 @@ test('follows a theme switch in the content without a transaction or a new view'
         expect(colors.text).toBe(colors.tokens.text);
         expect(colors.surface).toBe(colors.tokens.surface);
     }
+
     expect(after.shown.text).not.toBe(before.shown.text);
     expect(after.image.equals(before.image)).toBe(false);
     expect(after.session).toEqual(before.session);
@@ -382,6 +394,7 @@ test('paints no native selection over the text of a selected node', async ({ mou
     if (box === null) {
         throw new Error('The code block content has no box.');
     }
+
     // The selected node's outline can reach the content box edge in WebKit, so the text is compared without the edges.
     const shot = () => page.screenshot({ clip: { ...box, width: box.width - 4, height: box.height - 4 } });
     const unselected = await shot();

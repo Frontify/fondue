@@ -21,6 +21,7 @@ export const ready = async (page: Page) => {
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
     await expect.poll(() => page.evaluate(() => window.overlayProbe !== undefined)).toBe(true);
 };
+
 export const select = (page: Page, text: string) =>
     page.evaluate((target) => window.overlayProbe?.select({ text: target }), text);
 export const open = (page: Page, kind: 'link' | 'suggestions' | 'menu') =>
@@ -38,15 +39,18 @@ export const focusedName = (page: Page) =>
                 break;
             }
         }
+
         if (active === null) {
             return null;
         }
+
         // A field's name is its label's text.
         const { labels } = active as Partial<HTMLInputElement>;
         const label = labels?.[0];
         if (label !== undefined) {
             return label.textContent;
         }
+
         return active.getAttribute('aria-label') ?? active.textContent;
     });
 // Radix Toolbar moves focus in a timeout after the key, so focus is read once it settles.
@@ -58,6 +62,7 @@ export const textBox = (page: Page, text: string) =>
         if (surface === null) {
             throw new Error('No surface');
         }
+
         const walker = document.createTreeWalker(surface, NodeFilter.SHOW_TEXT);
         for (let node = walker.nextNode(); node !== null; node = walker.nextNode()) {
             const index = (node.textContent ?? '').indexOf(target);
@@ -66,9 +71,11 @@ export const textBox = (page: Page, text: string) =>
                 range.setStart(node, index);
                 range.setEnd(node, index + target.length);
                 const { top, bottom, left, right } = range.getBoundingClientRect();
+
                 return { top, bottom, left, right };
             }
         }
+
         throw new Error(`No text ${target}`);
     }, text);
 export const boxOf = async (locator: Locator) => {
@@ -76,8 +83,10 @@ export const boxOf = async (locator: Locator) => {
     if (box === null) {
         throw new Error('No box');
     }
+
     return { top: box.y, bottom: box.y + box.height, left: box.x, right: box.x + box.width };
 };
+
 // Radix listens for Escape and places an overlay in effects and frames after it shows.
 export const frames = (page: Page) =>
     page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
@@ -90,8 +99,10 @@ export const stylesApplied = (page: Page) =>
     );
 export const bottomOf = async (locator: Locator) => {
     const box = await boxOf(locator);
+
     return box.bottom;
 };
+
 export const documentHtml = (page: Page) => page.evaluate(() => window.overlayProbe?.html());
 /** The `alt` of the image in the runtime's snapshot document. */
 export const imageAlt = (page: Page) =>
@@ -101,6 +112,7 @@ export const imageAlt = (page: Page) =>
         if (image === undefined) {
             return undefined;
         }
+
         return image.attrs?.alt;
     });
 /** Counts the `focusout` events of the surface from now on; read the count with `focusOuts`. */
@@ -147,6 +159,7 @@ export const shownWhole = (locator: Locator) =>
         if (top < 0 || left < 0 || bottom > window.innerHeight || right > window.innerWidth) {
             return false;
         }
+
         const points = [
             [left + 2, top + 2],
             [right - 2, top + 2],
@@ -154,5 +167,6 @@ export const shownWhole = (locator: Locator) =>
             [right - 2, bottom - 2],
             [(left + right) / 2, (top + bottom) / 2],
         ];
+
         return points.every(([x, y]) => element.contains(document.elementFromPoint(x ?? 0, y ?? 0)));
     });

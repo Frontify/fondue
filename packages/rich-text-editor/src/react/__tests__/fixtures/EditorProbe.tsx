@@ -56,13 +56,16 @@ const textOf = (text: string) =>
         if (part === '') {
             return [];
         }
+
         if (!part.startsWith('[')) {
             return [{ type: 'text', text: part }];
         }
+
         const link = {
             type: 'link',
             attrs: { href: 'https://example.com/followed', openInNewWindow: false, styleId: null },
         };
+
         return [{ type: 'text', text: part.slice(1, -1), marks: [link] }];
     });
 
@@ -174,6 +177,7 @@ export const EditorProbe = ({
         if (!persistence) {
             return undefined;
         }
+
         const server = createFakePersistenceService();
         const service: PersistenceService = {
             save: (request, context) => {
@@ -181,44 +185,53 @@ export const EditorProbe = ({
                 if (!holdSaves) {
                     return server.save(request, context);
                 }
+
                 return new Promise((resolve) => {
                     held.push(() => resolve(server.save(request, context)));
                 });
             },
             read: server.read,
         };
+
         return { persistence: service };
     });
     let defaultValue = storedOf(...texts);
     if (blocks !== undefined) {
         defaultValue = documentOf(blocks, ['core', 'fixture.chrome']);
     }
+
     const [profileDefinition] = useState(() => {
         if (profile === undefined) {
             return undefined;
         }
+
         const features = fixtureProfiles()[profile] ?? [];
         const profileModel = compileContentModel(features, { id: 'test.ct', version: 1 });
+
         return defineEditor({ id: `test.${profile}`, model: profileModel, plugins: unitsOf(profileModel) });
     });
     const presentation = useMemo(() => {
         if (contentClassName === undefined) {
             return undefined;
         }
+
         return defineReactPresentation({ contentClassName });
     }, [contentClassName]);
     let definition: CompiledEditorDefinition<object> = definitions.open;
     if (guarded) {
         definition = definitions.guarded;
     }
+
     let readerModel: ContentModel = model;
     if (inputRules) {
         definition = definitions.inputRules;
         readerModel = inputRulesModel;
     }
+
     if (profileDefinition !== undefined) {
         definition = profileDefinition;
     }
+
     useEffect(() => {
         if (ref.current !== null) {
             const handle = ref.current as EditorHandle;
@@ -268,6 +281,7 @@ export const EditorProbe = ({
     if (inForm) {
         return <form onSubmit={(event) => event.preventDefault()}>{editor}</form>;
     }
+
     if (inFrame) {
         return (
             <>
@@ -278,6 +292,7 @@ export const EditorProbe = ({
             </>
         );
     }
+
     return editor;
 };
 
@@ -288,6 +303,7 @@ export const ThemeSwitchProbe = () => {
     if (theme === 'dark') {
         next = 'light';
     }
+
     return (
         <>
             <button type="button" onClick={() => setTheme(next)}>

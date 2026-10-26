@@ -27,6 +27,7 @@ const withoutModEnter = (unit: RichTextPlugin): RichTextPlugin => {
     if (keys?.['Mod-Enter'] === undefined) {
         return unit;
     }
+
     return extendPlugin(unit, {
         keys: Object.fromEntries(Object.entries(keys).filter(([key]) => key !== 'Mod-Enter')),
     });

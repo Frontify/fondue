@@ -24,12 +24,14 @@ const chromeCommands = async (page: Page) => {
             names.push(name);
             continue;
         }
+
         await button.click();
         const items = await page.getByRole('menu').locator('[role^="menuitem"]').allInnerTexts();
         names.push(...items.map((item) => item.split('\n')[0] ?? ''));
         await page.keyboard.press('Escape');
         await expect(page.getByRole('menu')).toHaveCount(0);
     }
+
     return names;
 };
 
@@ -49,6 +51,7 @@ const moreRows = async (page: Page) => {
     await expect(page.getByRole('menu')).toBeVisible();
     const rows = await page.getByRole('menu').locator('[role^="menuitem"]').allInnerTexts();
     await closeMenus(page);
+
     return rows.map((row) => row.split('\n')[0] ?? '');
 };
 
@@ -69,6 +72,7 @@ const moreCommands = async (page: Page, nodeRows: readonly string[], select: () 
             await closeMenus(page);
             continue;
         }
+
         await item.click();
         // A row that opens a control opens it once More has closed.
         await expect(page.getByRole('menu', { name: 'More' })).toHaveCount(0);
@@ -79,6 +83,7 @@ const moreCommands = async (page: Page, nodeRows: readonly string[], select: () 
             names.push(...items.map((entry) => entry.split('\n')[0] ?? ''));
             await closeMenus(page);
         }
+
         const dialog = page.getByRole('dialog');
         if ((await dialog.count()) > 0) {
             await expect(dialog.locator(':focus')).toHaveCount(1);
@@ -86,6 +91,7 @@ const moreCommands = async (page: Page, nodeRows: readonly string[], select: () 
             await expect(dialog).toHaveCount(0);
         }
     }
+
     return names;
 };
 
@@ -98,7 +104,9 @@ const missing = (chrome: readonly string[], more: readonly string[]) =>
         if (CHROME_ONLY.includes(name)) {
             return false;
         }
+
         const wanted = name.toLowerCase();
+
         return !more.some((row) => wanted === row.toLowerCase() || wanted.endsWith(` ${row.toLowerCase()}`));
     });
 
@@ -106,8 +114,10 @@ const missing = (chrome: readonly string[], more: readonly string[]) =>
 const selectNode = async (page: Page, target: 'image' | 'code') => {
     if (target === 'code') {
         await select(page, { text: 'x = 1', from: 1, to: 1 });
+
         return;
     }
+
     await selectImage(page);
 };
 
@@ -120,6 +130,7 @@ const nodeRowsOf = async (page: Page, kind: 'image' | 'code') => {
     const before = await moreRows(page);
     await selectNode(page, kind);
     const during = await moreRows(page);
+
     return during.filter((row) => !before.includes(row));
 };
 
@@ -176,6 +187,7 @@ const widthsOf = (page: Page) =>
                 widths[attrs.nodeId] = attrs.displayWidth;
             }
         }
+
         return widths;
     });
 

@@ -8,6 +8,7 @@ const pixels = (value: string): number => {
     if (Number.isNaN(parsed)) {
         return 0;
     }
+
     return parsed;
 };
 
@@ -45,6 +46,7 @@ export const showColumns = (
         surface.style.removeProperty('--rte-column-gap');
         onFit(false);
     };
+
     const measure = (columns: Columns) => {
         const style = getComputedStyle(surface);
         const width = surface.clientWidth - pixels(style.paddingInlineStart) - pixels(style.paddingInlineEnd);
@@ -52,26 +54,33 @@ export const showColumns = (
         surface.toggleAttribute('data-rte-columns-fit', fits);
         onFit(fits);
     };
+
     const write = () => {
         if (wanted === undefined) {
             if (shown !== undefined) {
                 clear();
             }
+
             shown = undefined;
+
             return;
         }
+
         if (shown?.count !== wanted.count || shown.gap !== wanted.gap) {
             surface.setAttribute('data-rte-columns', String(wanted.count));
             surface.style.setProperty('--rte-columns', String(wanted.count));
             surface.style.setProperty('--rte-column-gap', wanted.gap);
             shown = wanted;
         }
+
         measure(wanted);
     };
+
     const schedule = () => {
         if (disposed || waiting) {
             return;
         }
+
         waiting = holds(() => {
             waiting = false;
             schedule();
@@ -80,11 +89,13 @@ export const showColumns = (
             write();
         }
     };
+
     let observer: ResizeObserver | undefined;
     if (typeof ResizeObserver !== 'undefined') {
         observer = new ResizeObserver(schedule);
         observer.observe(surface);
     }
+
     return {
         update: (count, gap) => {
             wanted = count === undefined || gap === undefined ? undefined : { count, gap };

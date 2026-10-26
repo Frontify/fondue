@@ -44,6 +44,7 @@ const expand = (value: unknown): unknown => {
     if (typeof value !== 'object' || value === null || Array.isArray(value)) {
         return value;
     }
+
     const entries = Object.entries(value);
     const [first] = entries;
     if (entries.length === 1 && first?.[0] === 'text' && Array.isArray(first[1])) {
@@ -51,6 +52,7 @@ const expand = (value: unknown): unknown => {
             .map((part) => (typeof part === 'string' ? part : part.repeat.repeat(part.times)))
             .join('');
     }
+
     return Object.fromEntries(entries.map(([key, member]) => [key, expand(member)]));
 };
 
@@ -59,6 +61,7 @@ const fixtures: readonly Fixture[] = readdirSync(HOSTILE)
     .sort()
     .map((file) => {
         const parsed = JSON.parse(readFileSync(join(HOSTILE, file), 'utf8')) as Omit<Fixture, 'name'>;
+
         return { ...parsed, name: file.replace('.json', ''), input: expand(parsed.input) };
     });
 const inBoundary = (boundary: string) => fixtures.filter((fixture) => fixture.boundary === boundary);
@@ -74,6 +77,7 @@ const fastest = (run: () => unknown): number => {
         run();
         best = Math.min(best, now() - started);
     }
+
     return best;
 };
 
@@ -93,8 +97,10 @@ const validDocument = (size: number, like: unknown): unknown => {
         requiredCapabilities: model.capabilities,
         content: { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: paragraphs },
     };
+
     return typeof like === 'string' ? JSON.stringify(document) : document;
 };
+
 const sizeOf = (input: unknown): number => (typeof input === 'string' ? input.length : JSON.stringify(input).length);
 
 const rejectedByLimit = (diagnostics: readonly Diagnostic[]): boolean =>
@@ -125,6 +131,7 @@ const mountWith = async (document: unknown, limits: Partial<ResourceLimits> = {}
     if (ref.current === null || runtime === undefined || runtime.view === undefined) {
         throw new Error('The editor did not mount.');
     }
+
     return { handle: ref.current, runtime, view: runtime.view, unmount: rendered.unmount };
 };
 
@@ -137,6 +144,7 @@ const inputOf = (data: Readonly<Record<string, string>>): Parameters<typeof past
     if (slice === undefined) {
         return input;
     }
+
     return { ...input, slice: JSON.parse(slice) as RichTextSlice };
 };
 
@@ -156,6 +164,7 @@ describe('a hostile document', () => {
             if (result.status === 'blocked' && rejectedByLimit(result.diagnostics)) {
                 return;
             }
+
             const valid = validDocument(sizeOf(input), input);
 
             expect(fastest(() => decodeDocument(input, model, options))).toBeLessThanOrEqual(
@@ -173,6 +182,7 @@ describe('a hostile document', () => {
             if (result.status !== 'editable') {
                 return;
             }
+
             const valid = validDocument(sizeOf(input), input);
             const run = (document: unknown) => () => {
                 own.toHTML(document as RichTextDocument);
@@ -203,6 +213,7 @@ describe('a hostile document', () => {
                         longest = node.content.size;
                         end = position + 1 + node.content.size;
                     }
+
                     return true;
                 });
                 act(() => {
@@ -214,8 +225,10 @@ describe('a hostile document', () => {
                 });
                 const elapsed = now() - started;
                 mounted.unmount();
+
                 return elapsed;
             };
+
             const valid = validDocument(sizeOf(input), input);
 
             const hostile = await typed(input);
@@ -235,6 +248,7 @@ describe('hostile Markdown', () => {
             if (result.status === 'blocked' && rejectedByLimit(result.diagnostics)) {
                 return;
             }
+
             const valid = `${words(markdown.length - 1)}\n`;
 
             expect(fastest(() => own.fromMarkdown(markdown))).toBeLessThanOrEqual(
@@ -256,6 +270,7 @@ describe('hostile pasted content', () => {
         });
         const elapsed = now() - started;
         mounted.unmount();
+
         return elapsed;
     };
 
@@ -267,6 +282,7 @@ describe('hostile pasted content', () => {
             for (const [type, value] of Object.entries(mime)) {
                 data[type] = typeof value === 'string' ? value : JSON.stringify(value);
             }
+
             const size = Object.values(data).reduce((total, value) => total + value.length, 0);
             const valid = { 'text/html': `<p>${words(Math.max(1, size - 7))}</p>` };
 

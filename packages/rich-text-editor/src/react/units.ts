@@ -16,12 +16,14 @@ export const checkCover = (model: ContentModel, units: readonly RichTextPlugin[]
                 path: pointer('plugins', index),
             });
         }
+
         if (units.findIndex(({ id }) => id === unit.id) !== index) {
             throw new DefinitionError('definition.duplicate-id', {
                 feature: unit.id,
                 path: pointer('plugins', index),
             });
         }
+
         if (installed.version !== unit.feature.version) {
             throw new DefinitionError('definition.version-mismatch', {
                 feature: unit.id,
@@ -31,6 +33,7 @@ export const checkCover = (model: ContentModel, units: readonly RichTextPlugin[]
             });
         }
     }
+
     for (const { id } of features) {
         if (!units.some((unit) => unit.id === id)) {
             throw new DefinitionError('definition.missing-plugin', { feature: id, path: pointer('plugins') });

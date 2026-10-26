@@ -66,6 +66,7 @@ const expand = (value: unknown): unknown => {
     if (typeof value !== 'object' || value === null || Array.isArray(value)) {
         return value;
     }
+
     const entries = Object.entries(value);
     const [first] = entries;
     if (entries.length === 1 && first?.[0] === 'text' && Array.isArray(first[1])) {
@@ -74,10 +75,12 @@ const expand = (value: unknown): unknown => {
                 if (typeof part === 'string') {
                     return part;
                 }
+
                 return part.repeat.repeat(part.times);
             })
             .join('');
     }
+
     return Object.fromEntries(entries.map(([key, member]) => [key, expand(member)]));
 };
 
@@ -87,6 +90,7 @@ const fixtureFiles = readdirSync(HOSTILE)
 const sources = fixtureFiles.map((file) => readFileSync(join(HOSTILE, file), 'utf8'));
 const fixtures: readonly Fixture[] = fixtureFiles.map((file, index) => {
     const parsed = JSON.parse(sources[index] ?? '') as Omit<Fixture, 'name'>;
+
     return { ...parsed, name: file.replace('.json', ''), input: expand(parsed.input) };
 });
 const inBoundary = (boundary: Boundary) => fixtures.filter((fixture) => fixture.boundary === boundary);
@@ -122,6 +126,7 @@ const presentationOf = ({ unresolved: fails }: Fixture) => {
     if (fails === true) {
         return unresolved;
     }
+
     return plain;
 };
 
@@ -184,12 +189,15 @@ const mount = async (fixture: Fixture, document: unknown) => {
     if (handle === null) {
         throw new Error('no editor');
     }
+
     const view = runtimeOf(handle)?.view;
     if (view === undefined) {
         throw new Error('no view');
     }
+
     return { handle, view, published, unmount: rendered.unmount };
 };
+
 type Mounted = Awaited<ReturnType<typeof mount>>;
 
 const heldBy = ({ view }: Mounted): Held => ({
@@ -207,6 +215,7 @@ const mountWithHistory = async (fixture: Fixture) => {
         typeText(mounted.handle, '!');
         setSelection(mounted.handle, { text: 'ab', from: 2, to: 2 });
     });
+
     return mounted;
 };
 
@@ -220,8 +229,10 @@ const transfer = (data: Readonly<Record<string, string>>) => {
     for (const [type, value] of Object.entries(data)) {
         dataTransfer.setData(type, value);
     }
+
     return dataTransfer;
 };
+
 /** What `data` hands the paste order, as the `paste` helper takes it. */
 const inputOf = (data: Readonly<Record<string, string>>): Parameters<typeof paste>[1] => {
     const html = data['text/html'] ?? '';
@@ -231,13 +242,16 @@ const inputOf = (data: Readonly<Record<string, string>>): Parameters<typeof past
     if (slice === undefined) {
         return input;
     }
+
     return { ...input, slice: JSON.parse(slice) as RichTextSlice };
 };
+
 const pasteInto = ({ handle }: Mounted, data: Readonly<Record<string, string>>) => {
     act(() => {
         paste(handle, inputOf(data));
     });
 };
+
 const dropInto = ({ view }: Mounted, data: Readonly<Record<string, string>>) => {
     vi.spyOn(view, 'posAtCoords').mockReturnValue({ pos: 1, inside: 0 });
     const event = new DragEvent('drop', { bubbles: true, cancelable: true });
@@ -253,14 +267,17 @@ const hrefsOf = (value: unknown): string[] => {
     if (Array.isArray(value)) {
         return value.flatMap(hrefsOf);
     }
+
     if (typeof value !== 'object' || value === null) {
         return [];
     }
+
     const { type, attrs, content, marks } = value as Record<string, unknown>;
     const own: string[] = [];
     if (type === 'link') {
         own.push(String((attrs as { readonly href?: unknown }).href));
     }
+
     return [...own, ...hrefsOf(content), ...hrefsOf(marks)];
 };
 
@@ -271,8 +288,10 @@ const throwsOf = (call: () => unknown): string => {
         if (error instanceof DefinitionError) {
             return error.code;
         }
+
         throw error;
     }
+
     return 'nothing';
 };
 
@@ -282,6 +301,7 @@ const decodedOf = (fixture: Fixture, input: unknown) => {
     if (decoded.status === 'blocked') {
         return { answer: { status: decoded.status, reason: decoded.reason }, returned: decoded.diagnostics };
     }
+
     return { answer: { status: decoded.status }, returned: decoded.diagnostics };
 };
 
@@ -290,8 +310,10 @@ const runRemoteConfiguration = async (fixture: Fixture): Promise<Outcome> => {
     if (call === 'featuresById') {
         const published = { diagnostics: [], metrics: [], statuses: [] };
         const throws = throwsOf(() => featuresById(argument as string[]));
+
         return { answer: { throws }, refused: throws !== 'nothing', published, returned: [] };
     }
+
     const mounted = await mountWithHistory(fixture);
     const before = heldBy(mounted);
     const policy = argument as AuthoringPolicy;
@@ -299,6 +321,7 @@ const runRemoteConfiguration = async (fixture: Fixture): Promise<Outcome> => {
     expect(throwsOf(() => defineEditor({ id: 'test.hostile', model, policy, plugins: unitsOf(model) }))).toBe(throws);
     const states = { before, after: heldBy(mounted) };
     mounted.unmount();
+
     return { answer: { throws }, refused: throws !== 'nothing', states, published: mounted.published, returned: [] };
 };
 
@@ -313,8 +336,10 @@ const runLoadedDocument = async (fixture: Fixture): Promise<Outcome> => {
             typeText(mounted.handle, '!');
         });
         mounted.unmount();
+
         return { answer, refused: false, published: mounted.published, returned: manifests };
     }
+
     const mounted = await mountWithHistory(fixture);
     const before = heldBy(mounted);
     const { handle } = mounted;
@@ -323,6 +348,7 @@ const runLoadedDocument = async (fixture: Fixture): Promise<Outcome> => {
     if (typeof input === 'string') {
         forms.push(JSON.parse(input));
     }
+
     for (const document of forms) {
         const replaced = await handle.replaceDocument({
             expected: handle.getSnapshot().stamp,
@@ -333,8 +359,10 @@ const runLoadedDocument = async (fixture: Fixture): Promise<Outcome> => {
         });
         expect(replaced).toEqual({ status: 'rejected', code: 'invalid-document' });
     }
+
     const states = { before, after: heldBy(mounted) };
     mounted.unmount();
+
     return { answer, refused: true, states, published: mounted.published, returned: manifests };
 };
 
@@ -348,6 +376,7 @@ const runCommandPayload = async (fixture: Fixture): Promise<Outcome> => {
     const states = { before, after: heldBy(mounted) };
     mounted.unmount();
     const answer = { status: result.status, code: result.code };
+
     return { answer, refused: result.status === 'rejected', states, published: mounted.published, returned: [] };
 };
 
@@ -361,6 +390,7 @@ const runPasteAndDrop = async (fixture: Fixture): Promise<Outcome> => {
             data[type] = JSON.stringify(value);
         }
     }
+
     const answers: Record<string, unknown>[] = [];
     let outcome: Outcome | undefined;
     for (const gesture of [pasteInto, dropInto]) {
@@ -378,13 +408,16 @@ const runPasteAndDrop = async (fixture: Fixture): Promise<Outcome> => {
             const inserted = mounted.view.state.doc.textContent.replace(typed, '');
             answer = { inserted: { text: inserted, hrefs: hrefsOf(mounted.handle.getSnapshot().document.content) } };
         }
+
         answers.push(answer);
         const refused = rejection !== undefined && after.doc === before.doc;
         outcome = { answer, refused, states: { before, after }, published: mounted.published, returned: [] };
         mounted.unmount();
     }
+
     // A paste and a drop give the same answer.
     expect(answers[1]).toEqual(answers[0]);
+
     return outcome as Outcome;
 };
 
@@ -394,9 +427,12 @@ const runMarkdownImport = (fixture: Fixture): Outcome => {
     const result = createCodecs(model, { limits: fixture.limits ?? {} }).fromMarkdown(markdown);
     if (result.status === 'blocked') {
         const answer = { status: result.status, reason: result.reason };
+
         return { answer, refused: true, published, returned: result.diagnostics };
     }
+
     const hrefs = hrefsOf(result.document.content);
+
     return { answer: { status: result.status, hrefs }, refused: false, published, returned: result.diagnostics };
 };
 
@@ -408,6 +444,7 @@ const runAsyncResult = async (fixture: Fixture): Promise<Outcome> => {
     if (runtime === undefined) {
         throw new Error('no runtime');
     }
+
     runtime.startAsync({
         key: 'search',
         service: 'references',
@@ -422,6 +459,7 @@ const runAsyncResult = async (fixture: Fixture): Promise<Outcome> => {
     const reason = details?.reason;
     const states = { before, after: heldBy(mounted) };
     mounted.unmount();
+
     return {
         answer: { discarded: reason },
         refused: reason !== undefined,

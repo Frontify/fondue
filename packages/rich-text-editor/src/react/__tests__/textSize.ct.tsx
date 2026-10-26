@@ -26,10 +26,13 @@ for (const profile of PROFILES) {
                     if (element === null) {
                         return 0;
                     }
+
                     const range = document.createRange();
                     range.selectNodeContents(element);
+
                     return range.getBoundingClientRect().height;
                 };
+
                 return {
                     content: height(document.querySelector('[role="textbox"] p')),
                     chrome: height(document.querySelector('[role="menu"] [role^="menuitem"] > span')),
@@ -37,8 +40,10 @@ for (const profile of PROFILES) {
             });
             const clips = await clipped(page);
             await component.unmount();
+
             return { ...measured, clips };
         };
+
         let before;
         if (browserName === 'firefox') {
             // The 16 px run: a root font size that undoes the preference for rem-sized text.
@@ -49,6 +54,7 @@ for (const profile of PROFILES) {
             before = await heights();
             await page.addStyleTag({ content: 'html { font-size: 32px; }' });
         }
+
         const after = await heights();
 
         expect(after.content / before.content).toBeGreaterThan(1.8);

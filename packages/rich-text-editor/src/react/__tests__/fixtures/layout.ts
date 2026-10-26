@@ -24,6 +24,7 @@ export const FEATURE_STORIES: readonly { readonly feature: string; readonly file
         if (feature === undefined) {
             throw new Error(`${file} names no feature in its title.`);
         }
+
         return { feature, file };
     });
 
@@ -33,6 +34,7 @@ export const storyOf = (feature: string): string => {
     if (story === undefined) {
         throw new Error(`No feature story for ${feature}.`);
     }
+
     return story.file;
 };
 
@@ -62,8 +64,10 @@ export const clipped = (page: Page) =>
                 if (element.clientHeight <= 1 || element.clientWidth <= 1 || style.display === 'none') {
                     return false;
                 }
+
                 const down = hides(style.overflowY) && element.scrollHeight > element.clientHeight + 1;
                 const across = hides(style.overflowX) && element.scrollWidth > element.clientWidth + 1;
+
                 return down || across;
             })
             .map(
@@ -86,6 +90,7 @@ export const focusedName = (page: Page) =>
         const content = source?.textContent;
         const text = content?.trim();
         const named = label ?? text;
+
         return named ?? '';
     });
 
@@ -110,12 +115,15 @@ export const pressUntil = async (page: Page, key: string, name: string | RegExp)
         if (name instanceof RegExp) {
             reached = name.test(focused);
         }
+
         if (reached) {
             return;
         }
+
         seen.add(focused);
         await press(page, key);
     }
+
     throw new Error(`${key} never reached ${String(name)}, only ${[...seen].join(', ')}.`);
 };
 

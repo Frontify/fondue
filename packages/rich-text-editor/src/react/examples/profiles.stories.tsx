@@ -27,12 +27,14 @@ const shown = (text: string) => {
     if (text === '') {
         return 'none';
     }
+
     return text;
 };
 
 /** The profile's shortcuts by area, its surface keys and its input rules, on Apple and other platforms. */
 const KeyboardReference = ({ profile }: { readonly profile: RichTextProfile }) => {
     const shortcuts = SHORTCUT_ROWS.filter(({ profiles }) => profiles.includes(profile));
+
     return (
         <section aria-label="Keyboard reference" className={styles.reference}>
             <h2>Keyboard shortcuts</h2>
@@ -180,6 +182,7 @@ const documents =
         await waitFor(async () => {
             const live = canvas.getByRole('textbox', { name: surface });
             await expect(live).toHaveAttribute('contenteditable', 'true');
+
             return live;
         }, LOAD);
         await expect([...reference.querySelectorAll('caption')].map(({ textContent }) => textContent)).toEqual(tables);
@@ -199,6 +202,7 @@ const documents =
                     .map(({ textContent }) => textContent),
             ).toEqual([...cells]);
         }
+
         for (const command of absent) {
             // The whole cell, since `list.task.toggle` holds `task.toggle`.
             await expect(

@@ -23,6 +23,7 @@ const mount = async (...given: Parameters<typeof mountProfile>) => {
     act(() => {
         vi.advanceTimersToNextFrame();
     });
+
     return mounted;
 };
 
@@ -31,6 +32,7 @@ const listed = async ({ view }: Mounted) => {
     await vi.waitFor(() => {
         expect(activeSuggestion(view.state)?.status).toBe('ready');
     });
+
     return (activeSuggestion(view.state)?.items ?? []).map((item) => `${item.group}: ${item.label}`);
 };
 

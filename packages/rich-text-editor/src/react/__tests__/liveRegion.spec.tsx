@@ -38,6 +38,7 @@ describe('the live regions of every story', () => {
         if (title.includes('/reader.stories.tsx')) {
             rendered = '*';
         }
+
         vi.spyOn(console, 'error').mockImplementation(() => undefined);
         const { container, unmount } = render(<Story />);
 

@@ -15,6 +15,7 @@ const textOf = (nodes: readonly ContentNodeJSON[]): string =>
             if (node.type === 'text') {
                 return (node as unknown as { readonly text: string }).text;
             }
+
             return textOf(node.content ?? []);
         })
         .join('');
@@ -36,15 +37,19 @@ test('keeps every node of the large fixture in the editable DOM, with no windowi
             if (node instanceof Text) {
                 return node.data;
             }
+
             if (node instanceof Element && node.getAttribute('contenteditable') === 'false') {
                 return '';
             }
+
             return [...node.childNodes].map(editableText).join('');
         };
+
         const element = document.querySelector('[data-rte-surface]');
         if (!element) {
             return { text: '', blocks: 0 };
         }
+
         return { text: editableText(element), blocks: element.children.length };
     });
 

@@ -37,13 +37,16 @@ const blockedKey = ({ reason, diagnostics }: Blocked) => {
     if (reason === 'invalid') {
         return 'RichTextEditor_blockedInvalid';
     }
+
     if (reason === 'limit-exceeded') {
         return 'RichTextEditor_blockedLimit';
     }
+
     // The envelope check blocks with one of these codes; a migration step may refuse with any code.
     if (diagnostics.some(({ code }) => ENVELOPE_CODES.has(code))) {
         return 'RichTextEditor_blockedVersion';
     }
+
     return 'RichTextEditor_blockedMigration';
 };
 
@@ -51,6 +54,7 @@ const originalText = (original: unknown): string => {
     if (typeof original === 'string') {
         return original;
     }
+
     return JSON.stringify(original) ?? '';
 };
 
@@ -63,16 +67,20 @@ const writeClipboard = async (plain: string, html?: string): Promise<boolean> =>
     if (clipboard === undefined) {
         return false;
     }
+
     try {
         if (html === undefined || typeof ClipboardItem !== 'function') {
             await clipboard.writeText(plain);
+
             return true;
         }
+
         const item = new ClipboardItem({
             'text/plain': new Blob([plain], { type: 'text/plain' }),
             'text/html': new Blob([html], { type: 'text/html' }),
         });
         await clipboard.write([item]);
+
         return true;
     } catch {
         return false;
@@ -90,6 +98,7 @@ const CopyButton = ({
     readonly children: ReactNode;
 }) => {
     const [failed, setFailed] = useState(false);
+
     return (
         <>
             <Button
@@ -119,6 +128,7 @@ export const BlockedShell = ({
     testId,
 }: ShellProps & { readonly result: Blocked }) => {
     const { t } = readerContext(locale, presentation);
+
     return (
         <div data-test-id={testId} data-rte-shell="blocked">
             <ReaderWith
@@ -149,7 +159,9 @@ const copyContent = async ({ model, limits, locale }: ShellProps, document: Rich
         // A chunk that fails to load is a failed copy, which the button names.
         return false;
     }
+
     const codecs = codecsModule.createCodecs(model, { limits });
+
     return writeClipboard(codecs.toPlainText(document).text, codecs.toHTML(document, { locale }).html);
 };
 
@@ -174,6 +186,7 @@ export const RecoveryShell = ({
             message.focus();
         }
     }, []);
+
     return (
         <div data-test-id={testId} data-rte-shell="recovery">
             <p ref={messageRef} tabIndex={-1}>

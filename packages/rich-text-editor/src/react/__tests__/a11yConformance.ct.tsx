@@ -46,6 +46,7 @@ const crampedTargets = (page: Page) =>
                 if (box.width === 0 || box.height === 0 || element.closest('[hidden], [aria-hidden="true"]') !== null) {
                     return false;
                 }
+
                 return !(element.tagName === 'A' && surface?.contains(element) === true);
             })
             .map((element) => ({ element, box: element.getBoundingClientRect() }));
@@ -55,8 +56,10 @@ const crampedTargets = (page: Page) =>
             const { x, y } = centre(box);
             const nearX = Math.max(other.left, Math.min(x, other.right));
             const nearY = Math.max(other.top, Math.min(y, other.bottom));
+
             return Math.hypot(x - nearX, y - nearY) < 12;
         };
+
         return small
             .filter(({ element, box }) =>
                 targets.some((other) => {
@@ -67,18 +70,22 @@ const crampedTargets = (page: Page) =>
                     ) {
                         return false;
                     }
+
                     if (meetsBox(box, other.box)) {
                         return true;
                     }
+
                     const isSmall = small.some((candidate) => candidate.element === other.element);
                     const a = centre(box);
                     const b = centre(other.box);
+
                     return isSmall && Math.hypot(a.x - b.x, a.y - b.y) < 24;
                 }),
             )
             .map(({ element, box }) => {
                 const text = element.textContent?.trim();
                 const label = element.getAttribute('aria-label') ?? text;
+
                 return `${label} ${Math.round(box.width)}x${Math.round(box.height)}`;
             });
     }, TARGETS);
@@ -100,6 +107,7 @@ const iconOnly = async (scope: Locator) => {
             controls.push(control);
         }
     }
+
     return controls;
 };
 
@@ -139,6 +147,7 @@ for (const profile of PROFILES) {
             const label = await row.locator(':scope > span').first().textContent();
             await expect(row).toHaveAccessibleName(literalStart((label ?? '').trim()));
         }
+
         await page.keyboard.press('Escape');
 
         if (profile === 'document' || profile === 'brand-document') {
@@ -147,6 +156,7 @@ for (const profile of PROFILES) {
             await selectImage(page);
             await expectNamedAsTooltips(page, surfaceOf(page).getByRole('toolbar', { name: 'Image' }));
         }
+
         if (profile !== 'inline') {
             await surfaceOf(page).focus();
             await select(page, { text: 'quick' });
@@ -177,6 +187,7 @@ for (const profile of PROFILES) {
                                 buttons
                                     .filter((button) => {
                                         const box = button.getBoundingClientRect();
+
                                         return box.left < 0 || box.right > width || box.width === 0;
                                     })
                                     .map((button) => button.getAttribute('aria-label')),
@@ -223,6 +234,7 @@ for (const profile of PROFILES) {
                     .locator('pre')
                     .evaluate((block) => {
                         const { overflowX } = getComputedStyle(block);
+
                         return block.scrollWidth <= block.clientWidth || overflowX === 'auto' || overflowX === 'scroll';
                     });
 

@@ -193,6 +193,7 @@ test('leaves the host dialog open when Escape or a click outside closes an edito
         const box = await boxOf(host);
         await page.mouse.click(box.left + 6, box.top + 6);
     };
+
     const overlays = [
         {
             name: 'popover',
@@ -319,12 +320,14 @@ for (const [where, blocks, name] of [
         if (blocks !== undefined) {
             probe = <OverlayProbe within="dialog" bubble={false} blocks={blocks} />;
         }
+
         await mount(probe);
         await ready(page);
         await surfaceOf(page).focus();
         if (blocks !== undefined) {
             await select(page, 'code');
         }
+
         await page.keyboard.press('Alt+F10');
         await expectFocus(page, name);
         if (blocks === undefined) {

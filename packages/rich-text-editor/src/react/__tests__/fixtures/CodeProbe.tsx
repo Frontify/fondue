@@ -55,6 +55,7 @@ export const CodeProbe = ({ blocks }: { readonly blocks: readonly object[] }) =>
             window.codeRte = { handle, setSelection, changes: changesRef.current };
         }
     }, []);
+
     return (
         <ThemeProvider>
             <button type="button" tabIndex={0}>

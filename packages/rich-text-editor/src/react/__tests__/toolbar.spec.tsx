@@ -75,9 +75,11 @@ const mount = (props: Props = {}, toolbar: ReactPresentation['toolbar'] = TOOLBA
             </RichTextEditor.Root>
         );
     }
+
     if (theme !== undefined) {
         element = <ThemeProvider {...theme}>{element}</ThemeProvider>;
     }
+
     const view = render(element);
     act(() => {
         vi.advanceTimersToNextFrame();
@@ -86,8 +88,10 @@ const mount = (props: Props = {}, toolbar: ReactPresentation['toolbar'] = TOOLBA
         if (ref.current === null) {
             throw new Error('no handle');
         }
+
         return ref.current;
     };
+
     return { ...view, handle };
 };
 
@@ -346,12 +350,14 @@ describe('the fixed toolbar', () => {
 describe('the announcer', () => {
     const Announce = ({ message, coalesce }: { readonly message: string; readonly coalesce?: string }) => {
         const announcer = useContext(AnnouncerContext);
+
         return (
             <button type="button" onClick={() => announcer?.announce(message, coalesce)}>
                 {message}
             </button>
         );
     };
+
     const region = () => screen.getByTestId('fondue-rich-text-editor-announcer');
 
     it('renders one polite region at mount, off the surface, that a save message reaches', () => {
@@ -404,6 +410,7 @@ describe('the announcer', () => {
                 vi.advanceTimersByTime(100);
             });
         }
+
         const early = region().textContent;
         act(() => {
             vi.advanceTimersByTime(500);
@@ -423,6 +430,7 @@ describe('the announcer', () => {
                 }
             }
         }).observe(region(), { childList: true });
+
         return seen;
     };
 
@@ -536,6 +544,7 @@ describe('a toolbar item that throws while rendering', () => {
     const Broken = (): never => {
         throw new Error('item render failed');
     };
+
     const brokenDefinition = defineEditor({
         id: 'test.toolbar',
         model: compileContentModel([core(), bold(), pullQuote()], { id: 'test.toolbar', version: 1 }),
@@ -663,6 +672,7 @@ describe('toolbar theming and localization', () => {
             const { unmount } = mount({ definition, locale: { ...enUS, lang } }, [['acme.pull-quote.set']]);
             const name = within(screen.getByRole('toolbar')).getAllByRole('button')[0]?.getAttribute('aria-label');
             unmount();
+
             return name;
         });
 
@@ -744,6 +754,7 @@ describe('toolbar theming and localization', () => {
         if (slot === null) {
             throw new Error('no node chrome');
         }
+
         expect([slot.getAttribute('lang'), slot.getAttribute('dir')]).toEqual(['en-US', 'ltr']);
         unmount();
     });
@@ -765,6 +776,7 @@ describe('toolbar theming and localization', () => {
         if (slot === null) {
             throw new Error('no node chrome');
         }
+
         expect(slot).toHaveAttribute('lang', 'de-DE');
         expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveAttribute('lang', 'en-US');
         unmount();
@@ -859,6 +871,7 @@ describe('toolbar theming and localization', () => {
             const { unmount } = mount({ definition }, [['acme.pull-quote.set']]);
             const shown = screen.getByRole('button', { name: 'Pull quote' }).getAttribute('aria-keyshortcuts');
             unmount();
+
             return shown;
         };
 

@@ -69,6 +69,7 @@ test('keeps the bubble toolbar focus ring and pressed bar visible in forced colo
     const bold = bubbleOf(page).getByRole('button', { name: 'Bold' });
     const around = async () => {
         const box = await boxOf(bold);
+
         return page.screenshot({
             clip: {
                 x: box.left - 6,
@@ -78,12 +79,15 @@ test('keeps the bubble toolbar focus ring and pressed bar visible in forced colo
             },
         });
     };
+
     const bar = async () => {
         const box = await boxOf(bold);
+
         return page.screenshot({
             clip: { x: box.left, y: box.bottom - 3, width: box.right - box.left, height: 3 },
         });
     };
+
     const unfocused = await around();
     const unpressed = await bar();
 
@@ -93,6 +97,7 @@ test('keeps the bubble toolbar focus ring and pressed bar visible in forced colo
     const focused = await around();
     const ring = await bold.evaluate((element) => {
         const style = getComputedStyle(element);
+
         return { style: style.outlineStyle, width: Number.parseFloat(style.outlineWidth) };
     });
     await testInfo.attach('focused bubble toolbar item in forced colours', { body: focused, contentType: 'image/png' });
@@ -124,14 +129,18 @@ for (const theme of ['light', 'dark'] as const) {
                 if (element === null) {
                     throw new Error('no flyout around the bubble toolbar');
                 }
+
                 const style = getComputedStyle(element);
+
                 return { background: style.backgroundColor, color: style.color };
             };
+
             const probe = document.createElement('span');
             probe.style.color = 'var(--color-surface-default)';
             toolbar.append(probe);
             const surface = getComputedStyle(probe).color;
             probe.remove();
+
             return { toolbar: colors(toolbar), flyout: colors(flyout), surface };
         });
 
@@ -168,9 +177,11 @@ test('shows the bubble toolbar of an editor that a keyed list moved', async ({ m
         if (text === null || text === undefined) {
             throw new Error('No text');
         }
+
         range.setStart(text, 0);
         range.setEnd(text, 'alpha'.length);
         const { top, bottom, left, right } = range.getBoundingClientRect();
+
         return { top, bottom, left, right };
     });
     const middle = (word.top + word.bottom) / 2;
@@ -217,6 +228,7 @@ for (const kind of ['bubble', 'link', 'suggestions', 'menu'] as const) {
         if (kind !== 'bubble') {
             await open(page, kind);
         }
+
         await expect(overlay).toBeVisible();
         const placements: { touches: boolean; inside: boolean }[] = [];
         const measure = async () => {
@@ -338,6 +350,7 @@ for (const width of [320, 1280] as const) {
                         if (selection === null || selection.rangeCount === 0) {
                             return [];
                         }
+
                         return [...selection.getRangeAt(0).getClientRects()].map(({ top, bottom, left, right }) => ({
                             top,
                             bottom,
@@ -351,6 +364,7 @@ for (const width of [320, 1280] as const) {
                     if (first !== undefined) {
                         topsOfAnchor.push(first.top);
                     }
+
                     for (const rect of rects) {
                         const overlaps =
                             rect.left < toolbar.right &&
@@ -374,6 +388,7 @@ for (const width of [320, 1280] as const) {
                     if (width === 1280) {
                         repeat = 40;
                     }
+
                     await page.evaluate(
                         (count) => window.overlayProbe?.insert('wrapping words '.repeat(count), 1),
                         repeat,
@@ -443,6 +458,7 @@ test('outlines the focused bubble toolbar item', async ({ mount, page }) => {
 
     const outline = await bold.evaluate((item) => {
         const style = getComputedStyle(item);
+
         return { style: style.outlineStyle, width: Number.parseFloat(style.outlineWidth) };
     });
     expect(before).toBe('none');
@@ -470,6 +486,7 @@ test('cycles Alt+F10 through node chrome, the bubble toolbar and the fixed toolb
         await expectFocus(page, name);
         expect(await bubbleOf(page).evaluate((bubble) => bubble.contains(document.activeElement))).toBe(inBubble);
     }
+
     // The bubble toolbar's layer takes Escape again once the fixed toolbar's tooltip has closed.
     await expect(page.getByRole('tooltip')).toHaveCount(0);
     await frames(page);
@@ -517,6 +534,7 @@ test('opens the bubble toolbar and moves focus to it when Alt+F10 is pressed bef
     const held: (() => Promise<void>)[] = [];
     await page.route(/BubbleToolbar[^/]*\.js/, (route) => {
         held.push(() => route.continue());
+
         return Promise.resolve();
     });
     await mount(<OverlayProbe defaultToolbarMode="bubble" />);
@@ -657,6 +675,7 @@ const sampleMotion = async (page: Page, reducedMotion: 'reduce' | 'no-preference
         seen[kind] = await running(page);
         await page.keyboard.press('Escape');
     }
+
     await surfaceOf(page).focus();
     await select(page, 'two');
     await page.keyboard.press('Shift+F10');
@@ -665,6 +684,7 @@ const sampleMotion = async (page: Page, reducedMotion: 'reduce' | 'no-preference
     await page.keyboard.press('Escape');
     await openAltText(page);
     seen['node chrome and dialog'] = await running(page);
+
     return seen;
 };
 
@@ -692,6 +712,7 @@ const probeMotion = (page: Page) =>
         while (![...document.styleSheets].includes(style.sheet as CSSStyleSheet)) {
             await new Promise((resolve) => requestAnimationFrame(resolve));
         }
+
         // Reading the style commits the start value, so the next change runs as a transition.
         probe.getBoundingClientRect();
         probe.setAttribute('data-moved', '');

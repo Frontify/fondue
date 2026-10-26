@@ -12,8 +12,10 @@ const pressUntilFocused = async (page: Page, key: string, control: Locator) => {
         if (await control.evaluate((element) => element === element.ownerDocument.activeElement)) {
             return;
         }
+
         await press(page, key);
     }
+
     throw new Error(`${key} never focused the control.`);
 };
 
@@ -30,6 +32,7 @@ const typeAndSelect = async (page: Page, text: string, word: string) => {
     for (let step = 0; step < word.length; step += 1) {
         await press(page, 'Shift+ArrowLeft');
     }
+
     await expect.poll(() => page.evaluate(() => window.getSelection()?.toString())).toBe(word);
 };
 
@@ -45,6 +48,7 @@ const runByKeyboard = async (page: Page, name: string) => {
         await expect(page.getByRole('menu')).toBeVisible();
         await pressUntil(page, 'ArrowDown', name);
     }
+
     await press(page, 'Enter');
 };
 
@@ -114,6 +118,7 @@ test.describe('on an image, by keyboard alone', () => {
         await runByKeyboard(page, 'Image');
         await expect(surfaceOf(page).locator('figure')).toHaveCount(1);
     };
+
     const imageAttrs = async (page: Page) => {
         const content = (await contentOf(page)) as readonly {
             readonly type: string;
@@ -122,8 +127,10 @@ test.describe('on an image, by keyboard alone', () => {
         const figure = content.find(({ type }) => type === 'figure');
         const children = figure?.content;
         const first = children?.[0];
+
         return first?.attrs;
     };
+
     /** Opens the image's alternative text dialog from its chrome by Alt+F10 and the arrows. */
     const openAltText = async (page: Page) => {
         // The image ends the document, so ArrowLeft from the end selects it.
@@ -171,6 +178,7 @@ test.describe('on an image, by keyboard alone', () => {
         if (browserName === 'webkit') {
             tab = 'Alt+Tab';
         }
+
         await pressUntil(page, tab, 'Save');
         await press(page, 'Enter');
 

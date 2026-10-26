@@ -17,20 +17,25 @@ const isBlank = (content: unknown, port: EditorPort): boolean => {
     if (!isRecord(content)) {
         return true;
     }
+
     const { type } = content;
     if (type === 'text') {
         return typeof content.text !== 'string' || content.text.trim() === '';
     }
+
     if (type === HARD_BREAK) {
         return true;
     }
+
     const kind = nodeKindOf(port, String(type));
     if (kind !== 'branch') {
         return false;
     }
+
     if (!Array.isArray(content.content)) {
         return true;
     }
+
     return content.content.every((child) => isBlank(child, port));
 };
 
@@ -42,5 +47,6 @@ export const validityOf = (
     if (required === true && isBlank(runtime.handle.getSnapshot().document.content, runtime)) {
         return EMPTY;
     }
+
     return VALID;
 };

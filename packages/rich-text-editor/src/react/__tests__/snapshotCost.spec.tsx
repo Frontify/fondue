@@ -17,10 +17,12 @@ import { PERF_FEATURES, perfDocument } from '../../model/__tests__/fixtures/perf
 const pointers = vi.hoisted(() => ({ calls: 0 }));
 vi.mock('#/model/errors', async (importOriginal) => {
     const original = await importOriginal<{ readonly pointer: typeof RealPointer }>();
+
     return {
         ...original,
         pointer: (...args: (string | number)[]) => {
             pointers.calls += 1;
+
             return original.pointer(...args);
         },
     };
@@ -52,6 +54,7 @@ beforeEach(async () => {
             typeText(edited, 'a');
         });
     }
+
     // The portal store renders the node views' chrome a microtask later.
     await act(async () => {
         await Promise.resolve();
@@ -65,6 +68,7 @@ it('builds no path while it snapshots the large fixture after an edit, and the s
     if (handle === null) {
         throw new Error('The editor did not mount.');
     }
+
     pointers.calls = 0;
 
     const { document } = handle.getSnapshot();

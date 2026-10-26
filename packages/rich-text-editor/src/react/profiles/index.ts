@@ -23,13 +23,16 @@ export const loadProfile = (profile: RichTextProfile): Promise<ShippedProfile> =
     if (pending !== undefined) {
         return pending;
     }
+
     if (!Object.hasOwn(LOADERS, profile)) {
         return Promise.reject(new Error(`RichTextEditor has no profile named ${String(profile)}.`));
     }
+
     const started = LOADERS[profile]()
         .then(({ shipped }) => {
             const value = shipped();
             loaded.set(profile, value);
+
             return value;
         })
         .catch((error: unknown) => {
@@ -38,6 +41,7 @@ export const loadProfile = (profile: RichTextProfile): Promise<ShippedProfile> =
             throw error;
         });
     loading.set(profile, started);
+
     return started;
 };
 
@@ -49,12 +53,14 @@ export const useProfile = (profile: RichTextProfile | undefined): ShippedProfile
         if (profile === undefined || loaded.has(profile)) {
             return undefined;
         }
+
         let live = true;
         loadProfile(profile)
             .then((value) => {
                 if (live) {
                     setShipped({ profile, value });
                 }
+
                 return value;
             })
             .catch((error: unknown) => {
@@ -62,6 +68,7 @@ export const useProfile = (profile: RichTextProfile | undefined): ShippedProfile
                     setFailure(error instanceof Error ? error : new Error(String(error)));
                 }
             });
+
         return () => {
             live = false;
         };
@@ -70,12 +77,15 @@ export const useProfile = (profile: RichTextProfile | undefined): ShippedProfile
     if (failure !== undefined) {
         throw failure;
     }
+
     if (profile === undefined) {
         return undefined;
     }
+
     if (shipped !== undefined && shipped.profile === profile) {
         return shipped.value;
     }
+
     // A profile that an earlier editor loaded renders at once.
     return loaded.get(profile);
 };
@@ -88,7 +98,9 @@ const subscribePointer = (onChange: () => void) => {
     if (typeof query?.addEventListener !== 'function') {
         return () => undefined;
     }
+
     query.addEventListener('change', onChange);
+
     return () => query.removeEventListener('change', onChange);
 };
 

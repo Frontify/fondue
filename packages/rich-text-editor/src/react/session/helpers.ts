@@ -27,6 +27,7 @@ export const toolbarShortcutOf = ({ presentation }: PartProps) => {
     if (presentation === undefined || presentation.toolbarShortcut === undefined) {
         return DEFAULT_TOOLBAR_SHORTCUT;
     }
+
     return presentation.toolbarShortcut;
 };
 
@@ -37,6 +38,7 @@ export const memberOf = <K extends (typeof SERVICE_MEMBERS)[number]>(
     if (services === undefined) {
         return undefined;
     }
+
     return services[member];
 };
 
@@ -45,6 +47,7 @@ export const layoutOf = (presentation: ReaderPresentation | undefined) => {
     if (presentation === undefined) {
         return columnLayout(undefined, undefined);
     }
+
     return columnLayout(presentation.columns, presentation.columnGap);
 };
 
@@ -55,6 +58,7 @@ export const columnsAtMount = (presentation: ReaderPresentation | undefined, t: 
     if (layout !== undefined) {
         count = layout.count;
     }
+
     return {
         count,
         fits: false,
@@ -72,12 +76,14 @@ export const pluginPresentationOf = (presentation: ReaderPresentation | undefine
         columns = layout.count;
         columnGap = layout.length;
     }
+
     let styles: PluginPresentation['styles'] = [];
     let colorTokens: PluginPresentation['colorTokens'] = [];
     if (presentation !== undefined) {
         styles = presentation.styles ?? [];
         colorTokens = presentation.colorTokens ?? [];
     }
+
     return { styles, colorTokens, columns, columnGap };
 };
 
@@ -91,12 +97,14 @@ export const backgroundOf = (runtime: EditorPort | undefined): string | undefine
     if (surface === undefined || owner === null || owner === undefined) {
         return undefined;
     }
+
     for (let element: Element | null = surface; element !== null; element = element.parentElement) {
         const color = owner.getComputedStyle(element).backgroundColor;
         if (color !== '' && color !== 'transparent' && !/^rgba\(.*,\s*0\)$/.test(color)) {
             return color;
         }
     }
+
     return undefined;
 };
 
@@ -105,7 +113,9 @@ export const memberChanged = (previous: object | undefined, next: object | undef
     if (previous === undefined || next === undefined) {
         return previous !== next;
     }
+
     const names = new Set([...Object.keys(previous), ...Object.keys(next)]);
+
     return [...names].some((name) => Reflect.get(previous, name) !== Reflect.get(next, name));
 };
 
@@ -114,6 +124,7 @@ export const mountOf = (props: Defined, loaded: LoadedDocument): Mounted => {
     if (definition === undefined) {
         throw new Error('RichTextEditor needs a `definition`.');
     }
+
     const engine = engineOf(definition);
     const { result, tree } = decodeToTree(loaded.document, engine.model, { limits: definition.limits });
     const managed = memberOf(props.services, 'persistence') !== undefined;
@@ -121,20 +132,25 @@ export const mountOf = (props: Defined, loaded: LoadedDocument): Mounted => {
     if (result.status === 'blocked') {
         return { definition, profile, decoded: undefined, blocked: result, ...unset };
     }
+
     if (tree === undefined) {
         return { definition, profile, decoded: undefined, blocked: undefined, ...unset };
     }
+
     // The surface spellchecks in the document's language when it declares one.
     let lang: string | undefined;
     let dir: Mounted['dir'];
     if (tree.attrs !== undefined && typeof tree.attrs.lang === 'string') {
         lang = tree.attrs.lang;
     }
+
     // `auto`, the default, sets no direction.
     if (tree.attrs !== undefined && (tree.attrs.dir === 'ltr' || tree.attrs.dir === 'rtl')) {
         dir = tree.attrs.dir;
     }
+
     const decoded = { tree, capabilities: result.document.requiredCapabilities };
+
     return { definition, profile, decoded, blocked: undefined, lang, dir, managed };
 };
 
@@ -142,6 +158,7 @@ export const modeOf = ({ readOnly, disabled }: Props) => {
     if (readOnly === true || disabled === true) {
         return 'readonly';
     }
+
     return 'editable';
 };
 
@@ -153,6 +170,7 @@ export const shellPropsOf = (props: Defined) => {
         presentation = NO_PRESENTATION,
         'data-test-id': testId = DEFAULT_TEST_ID,
     } = props;
+
     return {
         model: engineOf(definition).model,
         readers: readersOf(definition),

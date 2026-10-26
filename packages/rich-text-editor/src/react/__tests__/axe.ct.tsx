@@ -35,6 +35,7 @@ const pngBytes = () => {
     bytes.writeUInt32BE(40, 16);
     bytes.writeUInt32BE(30, 20);
     bytes.set([8, 6, 0, 0, 0], 24);
+
     return bytes;
 };
 
@@ -71,10 +72,12 @@ const violations = async (
                 kept.push(html);
             }
         }
+
         if (kept.length > 0) {
             reported.push(`${id}: ${kept.join(' | ')}`);
         }
     }
+
     return reported;
 };
 
@@ -92,8 +95,10 @@ const runItem = async (page: Page, name: string) => {
     const item = toolbarOf(page).getByRole('button', { name, exact: true });
     if ((await item.count()) > 0) {
         await item.click();
+
         return;
     }
+
     await moreOf(page).click();
     await page
         .getByRole('menu')
@@ -107,11 +112,13 @@ const offers = async (page: Page, name: string) => {
     if ((await toolbarOf(page).getByRole('button', { name, exact: true }).count()) > 0) {
         return true;
     }
+
     await moreOf(page).click();
     // More loads its rows on first use.
     await expect(page.getByRole('menu')).toBeVisible();
     const rows = await page.getByRole('menu').locator('[role^="menuitem"]').allInnerTexts();
     await page.keyboard.press('Escape');
+
     return rows.some((row) => row.split('\n')[0] === name);
 };
 
@@ -202,12 +209,14 @@ for (const profile of PROFILES) {
                     await settled(page);
                     await page.keyboard.press('Shift+Home');
                 }
+
                 test.skip(!(await offers(page, name)), `The ${profile} profile offers no ${name}.`);
                 // The outline lists headings, so its panel holds one.
                 if (name === 'Outline') {
                     await runItem(page, 'Normal text');
                     await page.getByRole('menuitemradio', { name: 'Heading 1' }).click();
                 }
+
                 await runItem(page, name);
                 await expect(shown(page)).toBeVisible();
 

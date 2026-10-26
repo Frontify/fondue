@@ -28,6 +28,7 @@ const namesAndIcons = async (page: Page, inMore: boolean) => {
         await expect(page.getByRole('menu')).toBeVisible();
         items = menuRows(page);
     }
+
     return items.evaluateAll((elements) =>
         elements
             .map((element) => {
@@ -36,6 +37,7 @@ const namesAndIcons = async (page: Page, inMore: boolean) => {
                 copy.querySelector('kbd')?.remove();
                 const name = element.getAttribute('aria-label') ?? copy.textContent;
                 const svg = element.querySelector('svg');
+
                 return { name, icon: svg?.getAttribute('data-test-id') };
             })
             .filter(({ name }) => name !== 'More'),

@@ -24,6 +24,7 @@ test.describe('tabMovesFocus', () => {
         await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
         await expect.poll(() => page.evaluate(() => window.listRte !== undefined)).toBe(true);
     };
+
     const caretIn = async (page: Page, text: string) => {
         await surfaceOf(page).focus();
         await settleFocus(page);
@@ -32,6 +33,7 @@ test.describe('tabMovesFocus', () => {
             rte.setSelection(rte.handle, { text: value, from: 1 });
         }, text);
     };
+
     const commandsOf = (page: Page) =>
         page.evaluate(() => (window.listRte as ListRte).changes.map(({ commandId }) => commandId));
 
@@ -101,6 +103,7 @@ test.describe('bubble toolbar and focus leaving the editor', () => {
         await surfaceOf(page).focus();
         await settleFocus(page);
     };
+
     const select = (page: Page, text: string) =>
         page.evaluate((target) => window.overlayProbe?.select({ text: target }), text);
     const selectionOf = (page: Page) => page.evaluate(() => window.overlayProbe?.selection());
@@ -175,8 +178,10 @@ test.describe('scrollSelectionIntoView', () => {
         for (let count = 0; count < 10; count += 1) {
             await page.keyboard.press('Enter');
         }
+
         await frames(page);
     };
+
     /** How far the caret's block sits below the scroller's visible bottom edge. */
     const caretBelow = (page: Page) =>
         scrollerOf(page).evaluate((scroller) => {
@@ -187,9 +192,11 @@ test.describe('scrollSelectionIntoView', () => {
             } else if (node !== null && node !== undefined) {
                 block = node.parentElement;
             }
+
             if (block === null) {
                 throw new Error('No caret');
             }
+
             return block.getBoundingClientRect().top - scroller.getBoundingClientRect().bottom;
         });
     const scrollTopOf = (page: Page) => scrollerOf(page).evaluate((scroller) => scroller.scrollTop);

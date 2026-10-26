@@ -53,6 +53,7 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
         if (this.state.retried !== undefined) {
             return this.state.retried;
         }
+
         return this.props.props.defaultValue;
     }
 
@@ -77,6 +78,7 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
             unsavedOnMount = status.state !== 'clean' && status.state !== 'unmanaged';
             carried = this.session.unresolved();
         }
+
         return { retried: { documentId, revision, document }, unsavedOnMount, carried };
     }
 
@@ -99,6 +101,7 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
                 />
             );
         }
+
         return (
             <RecoveryShell document={this.left().retried.document} {...shellPropsOf(props)} onRetry={this.onRetry} />
         );
@@ -113,11 +116,13 @@ const Root = forwardRef(
         if (definition === undefined) {
             profile = props.profile ?? 'document';
         }
+
         const shipped = useProfile(profile);
         const coarse = useCoarsePointer();
         if (definition !== undefined) {
             return <Recovery props={{ ...props, definition, locale }} editorRef={ref} />;
         }
+
         // The profile's module loads through `import()`, and the editor renders once it has.
         if (shipped === undefined) {
             return (
@@ -132,14 +137,17 @@ const Root = forwardRef(
                 />
             );
         }
+
         let resolved: Defined & { readonly children: ReactNode } = { ...props, definition: shipped.definition, locale };
         if (props.presentation === undefined) {
             let { presentation } = shipped;
             if (coarse && shipped.touchPresentation !== undefined) {
                 presentation = shipped.touchPresentation;
             }
+
             resolved = { ...resolved, presentation };
         }
+
         return <Recovery props={resolved} editorRef={ref} />;
     },
 );

@@ -31,6 +31,7 @@ export const perfValue = (fixture: PerfFixtureName): RichTextEditorProps['defaul
 /** One editor over a perf fixture, which a component test mounts. */
 export const PerfEditor = ({ fixture }: { readonly fixture: PerfFixtureName }) => {
     const [value] = useState(() => perfValue(fixture));
+
     return (
         <RichTextEditor
             aria-label="Perf"
@@ -44,6 +45,7 @@ export const PerfEditor = ({ fixture }: { readonly fixture: PerfFixtureName }) =
 /** An editor over a perf fixture, then the reader of the same document in a region named Reader. */
 export const PerfEditorWithReader = ({ fixture }: { readonly fixture: PerfFixtureName }) => {
     const [value] = useState(() => perfValue(fixture));
+
     return (
         <>
             <RichTextEditor
@@ -76,6 +78,7 @@ export const PerfTree = ({
     const handlesRef = useRef<EditorHandle[]>([]);
     const readyRef = useRef(0);
     const editors = values.map((value, index) => ({ id: `editor-${index}`, value }));
+
     return (
         <ThemeProvider theme="light">
             {editors.map(({ id, value }) => (

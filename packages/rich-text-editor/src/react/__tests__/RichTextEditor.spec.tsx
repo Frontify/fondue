@@ -149,8 +149,10 @@ describe('RichTextEditor', () => {
                     run: () => new Promise(() => undefined),
                 });
             });
+
             return started;
         };
+
         const search = start('references');
         const upload = start('uploads');
 
@@ -330,8 +332,10 @@ describe('RichTextEditor', () => {
         const tab = () => {
             const event = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
             view.dom.dispatchEvent(event);
+
             return event.defaultPrevented;
         };
+
         const keyDown = vi.fn(() => true);
         view.setProps({ handleKeyDown: keyDown });
         expect(skipsScroll()).toBe(false);
@@ -418,6 +422,7 @@ describe('RichTextEditor', () => {
             } catch (error) {
                 failure = error;
             }
+
             expect(failure).toBeInstanceOf(DefinitionError);
             expect(failure).toMatchObject({ code: 'definition.invalid-option', details: { path } });
         }
@@ -581,6 +586,7 @@ describe('RichTextEditor documents', () => {
         act(() => {
             vi.advanceTimersToNextFrame();
         });
+
         return view;
     };
 

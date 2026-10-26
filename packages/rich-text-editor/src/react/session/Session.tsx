@@ -137,9 +137,11 @@ const SessionComponent = (
     if (mounted.blocked !== undefined) {
         return <BlockedShell result={mounted.blocked} {...shell} />;
     }
+
     if (faulted !== undefined) {
         return <RecoveryShell document={faulted} {...shell} onRetry={onRetry} />;
     }
+
     return (
         <SessionProviders
             values={{ root: context, hosts: renderedHosts, live, work, announcer, overlays, turnInto: chrome.turnInto }}

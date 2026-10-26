@@ -200,6 +200,7 @@ test.describe('the context menu Turn into row', () => {
             .evaluate((element) => {
                 const event = new MouseEvent('contextmenu', { bubbles: true, cancelable: true, button: 2 });
                 element.dispatchEvent(event);
+
                 return event.defaultPrevented;
             });
 

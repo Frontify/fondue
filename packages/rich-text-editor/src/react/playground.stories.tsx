@@ -73,6 +73,7 @@ import { createFakePersistenceService, createFakeReferenceService } from '#/test
 const CalloutChrome = () => {
     const { attrs, update } = useRichTextNodeView();
     const warning = attrs.tone === 'warning';
+
     return (
         <button
             type="button"
@@ -82,6 +83,7 @@ const CalloutChrome = () => {
                 if (warning) {
                     tone = 'info';
                 }
+
                 update({ tone });
             }}
         >
@@ -245,6 +247,7 @@ const assets: AssetPickerService = {
     pick: () => {
         const assetId = LIBRARY[pickedAssets % LIBRARY.length] ?? 'harbour';
         pickedAssets += 1;
+
         return Promise.resolve({ assetId, mediaType: 'image/jpeg', labelSnapshot: `${assetId}.jpg` });
     },
 };
@@ -314,6 +317,7 @@ type PlaygroundProps = RichTextEditorProps<Commands> & {
 /** Reads the selection through `useEditorSelection`, which rerenders only when the shown text changes. */
 const SelectionReadout = () => {
     const shown = useEditorSelection((selection) => `${selection.kind}, collapsed ${String(selection.collapsed)}`);
+
     return <p>Selection: {shown}</p>;
 };
 
@@ -322,6 +326,7 @@ const Breaker = ({ armed }: { readonly armed: boolean }) => {
     if (armed) {
         throw new Error('The playground broke the editor on purpose.');
     }
+
     return null;
 };
 
@@ -329,9 +334,11 @@ const resultText = (result: CommandResult | undefined) => {
     if (result === undefined) {
         return 'no editor';
     }
+
     if (result.status === 'rejected') {
         return `rejected ${result.code}`;
     }
+
     return result.status;
 };
 
@@ -361,6 +368,7 @@ const Playground = ({
         if (sliceContext !== '') {
             context = sliceContext;
         }
+
         return defineReactPresentation({
             contentClassName,
             toolbar: TOOLBAR,
@@ -404,14 +412,17 @@ const Playground = ({
                 if (answer === 'saved') {
                     return server.save(request, context);
                 }
+
                 let response: SaveResponse = { status: 'conflict', currentRevision: 'story-remote' };
                 if (answer !== 'conflict') {
                     response = { status: 'rejected', code: answer, diagnostics: [] };
                 }
+
                 return Promise.resolve(response);
             },
             read: server.read,
         };
+
         return { persistence, references, uploads };
     });
     const shownServices = useMemo(() => (assetPicker ? { ...services, assets } : services), [services, assetPicker]);
@@ -421,6 +432,7 @@ const Playground = ({
         const id = counterRef.current;
         setEvents((previous) => [...previous.slice(-19), { id, text }]);
     };
+
     useEffect(() => {
         const { authoring } = definition;
         const rules = { create: allowNewBold, edit: true, remove: true, paste: allowPastedBold };
@@ -431,6 +443,7 @@ const Playground = ({
     if (hostPortalContainer) {
         portalContainer = hostContainer;
     }
+
     // The part works again once the shell shows, so Retry mounts the editor.
     useEffect(() => {
         if (broken) {
@@ -438,6 +451,7 @@ const Playground = ({
             setBroken(false);
         }
     }, [broken]);
+
     return (
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '1rem' }}>
             {debug && (
@@ -562,11 +576,14 @@ const Playground = ({
                             });
                             if (captured === undefined) {
                                 log('captureTarget no editor');
+
                                 return;
                             }
+
                             if (captured.status === 'captured') {
                                 targetRef.current = captured.target;
                             }
+
                             log(`captureTarget ${captured.status}`);
                         }}
                     >
@@ -578,8 +595,10 @@ const Playground = ({
                             const target = targetRef.current;
                             if (target === null) {
                                 log('no captured target');
+
                                 return;
                             }
+
                             log(
                                 `execute mark.bold.toggle on the target ${resultText(handleRef.current?.execute('mark.bold.toggle', undefined, { target }))}`,
                             );
@@ -593,8 +612,10 @@ const Playground = ({
                             const target = targetRef.current;
                             if (target === null) {
                                 log('no captured target');
+
                                 return;
                             }
+
                             handleRef.current?.releaseTarget(target);
                             targetRef.current = null;
                             log('releaseTarget');
@@ -608,8 +629,10 @@ const Playground = ({
                             const snapshot = handleRef.current?.getSnapshot();
                             if (snapshot === undefined) {
                                 log('getSnapshot no editor');
+
                                 return;
                             }
+
                             log(
                                 `getSnapshot #${snapshot.stamp.sequence} compositionActive ${snapshot.compositionActive}`,
                             );
@@ -624,6 +647,7 @@ const Playground = ({
                             if (handle === null) {
                                 return;
                             }
+
                             const result = await handle.replaceDocument({
                                 expected: handle.getSnapshot().stamp,
                                 next: {
@@ -637,8 +661,10 @@ const Playground = ({
                             });
                             if (result.status === 'rejected') {
                                 log(`replaceDocument rejected ${result.code}`);
+
                                 return;
                             }
+
                             log(`replaceDocument ${result.status}`);
                         }}
                     >
@@ -655,12 +681,15 @@ const Playground = ({
                             });
                             if (result === undefined) {
                                 log('requestCommit no editor');
+
                                 return;
                             }
+
                             let code = '';
                             if (result.status !== 'acknowledged') {
                                 code = result.code;
                             }
+
                             log(`requestCommit ${result.status} ${code}`);
                         }}
                     >
@@ -674,6 +703,7 @@ const Playground = ({
                             if (handle === null || panel === null) {
                                 return;
                             }
+
                             handle.registerInteractionRoot(panel);
                             log('registerInteractionRoot host panel');
                         }}
@@ -696,12 +726,14 @@ const Playground = ({
                     if (handle === null) {
                         return;
                     }
+
                     const show = () => {
                         const { state, latestSequence, acknowledgedSequence, revision } = handle.getSaveStatus();
                         setSaveStatus(
                             `${state}, #${latestSequence} of which #${acknowledgedSequence} saved as ${revision}`,
                         );
                     };
+
                     show();
                     handle.subscribe('saveStatusChange', (status) => {
                         log(
@@ -723,11 +755,13 @@ const Playground = ({
                     if (added.length > 0 || removed.length > 0) {
                         log(`mentions added ${added.length} removed ${removed.length}`);
                     }
+
                     // What would block publishing: images whose upload never finished.
                     const unresolved = findUnresolvedAssets(next);
                     if (unresolved.length > 0) {
                         log(`unresolved images ${unresolved.length}`);
                     }
+
                     // What a host could show before publishing: the errors the content checks find, which never block a save.
                     const errors = findContentIssues(next, { locale: enUS, colorTokens: COLOR_TOKENS, model }).filter(
                         ({ severity }) => severity === 'error',
@@ -735,6 +769,7 @@ const Playground = ({
                     if (errors.length > 0) {
                         log(`content errors ${errors.map(({ id }) => id).join(' ')}`);
                     }
+
                     previousRef.current = next;
                     setDocument(next.content as unknown as JsonValue);
                 }}
@@ -763,8 +798,10 @@ const Playground = ({
                             const result = field.validate();
                             if (result.valid) {
                                 log('validate valid');
+
                                 return;
                             }
+
                             log(`validate ${result.reason}`);
                         }}
                     >
@@ -776,8 +813,10 @@ const Playground = ({
                             const result = await field.reset();
                             if (result.status === 'rejected') {
                                 log(`reset rejected ${result.code}`);
+
                                 return;
                             }
+
                             log(`reset ${result.status}`);
                         }}
                     >
@@ -1149,6 +1188,7 @@ const ProfileEditor = ({ profile, required }: { readonly profile: RichTextProfil
         }),
         [profile],
     );
+
     return (
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '1rem' }}>
             <RichTextEditor

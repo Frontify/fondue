@@ -18,10 +18,12 @@ import { PERF_FEATURES, perfDocument } from '../../model/__tests__/fixtures/perf
 const hashes = vi.hoisted(() => ({ calls: 0 }));
 vi.mock('#/model/hash', async (importOriginal) => {
     const original = await importOriginal<{ readonly hashDocument: typeof RealHash }>();
+
     return {
         ...original,
         hashDocument: (...args: Parameters<typeof RealHash>) => {
             hashes.calls += 1;
+
             return original.hashDocument(...args);
         },
     };
@@ -58,6 +60,7 @@ it('serializes, hashes and calls toJSON on no document over 100 keystrokes in th
     if (handle === null || runtime === undefined) {
         throw new Error('The editor did not mount.');
     }
+
     // A caret in the middle of the document, inside a text run.
     const middle = runtime.state.doc.resolve(runtime.state.doc.content.size / 2).start() + 2;
     act(() => {
@@ -106,8 +109,10 @@ it('rejects typing from the byte limit on in the large fixture, counting bytes w
         if (ref.current === null || runtime === undefined) {
             throw new Error('The editor did not mount.');
         }
+
         return { handle: ref.current, runtime, unmount: rendered.unmount };
     };
+
     const loaded = mountWith({});
     const stored = loaded.handle.getSnapshot().document;
     // The editor counts every installed capability, since a keystroke may add content that needs any of them.

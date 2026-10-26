@@ -37,30 +37,37 @@ export const moveChromeFocus = (
     if (!toToolbars && event.key !== 'Escape') {
         return;
     }
+
     // A tooltip or menu that closed on this Escape keeps focus where it is; the bubble toolbar hands it on.
     const taken = event.defaultPrevented && !escapePassed(event.nativeEvent);
     if (taken || passesToBrowser(event.nativeEvent) || runtime === undefined) {
         return;
     }
+
     if (!hasSurface(runtime)) {
         return;
     }
+
     const stops: Stop[] = [];
     if (overlayToolbar !== null) {
         stops.push(overlayToolbar);
     }
+
     const nodeChrome = nodeChromeOf(runtime);
     if (nodeChrome !== null) {
         stops.push(nodeChrome);
     }
+
     if (bubble !== null) {
         stops.push(bubble);
     } else if (showBubble !== null) {
         stops.push(showBubble);
     }
+
     if (toolbar !== null) {
         stops.push(toolbar);
     }
+
     const target = event.target as Node;
     const inside = stops.findIndex((stop) => typeof stop !== 'function' && stop.contains(target));
     if (toToolbars) {
@@ -68,22 +75,29 @@ export const moveChromeFocus = (
         if (next === undefined) {
             return;
         }
+
         event.preventDefault();
         if (typeof next === 'function') {
             next();
+
             return;
         }
+
         // A standing overlay, node chrome and the bubble toolbar open on their first enabled control; Radix Toolbar sends focus to the last focused item.
         const first = next.querySelector<HTMLElement>('button:not([disabled])');
         if (next !== toolbar && first !== null) {
             // WebKit's focus scroll ignores `scroll-margin`, which `scrollIntoView` keeps clear of the sticky toolbar.
             first.focus({ preventScroll: true });
             first.scrollIntoView({ block: 'nearest' });
+
             return;
         }
+
         next.focus();
+
         return;
     }
+
     // Node chrome away from the selection is not a stop, yet Escape leaves it too.
     if (inside >= 0 || leavesToSurface(target, toolbar, event.currentTarget)) {
         event.preventDefault();
@@ -97,10 +111,12 @@ const leavesToSurface = (target: EventTarget | null | undefined, toolbar: HTMLEl
     if (target === null || target === undefined || !('closest' in target)) {
         return false;
     }
+
     const element = target as Element;
     if (toolbar !== null && toolbar.contains(element)) {
         return true;
     }
+
     return root.contains(element) && element.closest('[data-rte-node-chrome]') !== null;
 };
 
@@ -121,6 +137,7 @@ export const useEscapeToSurface = (
         if (root === null || view === null || view === undefined) {
             return undefined;
         }
+
         const onKeyDown = (event: globalThis.KeyboardEvent) => {
             const overlays = overlayRootRef.current;
             if (
@@ -130,14 +147,18 @@ export const useEscapeToSurface = (
             ) {
                 return;
             }
+
             if (!leavesToSurface(event.composedPath()[0], toolbarRef.current, root)) {
                 return;
             }
+
             event.stopPropagation();
             event.preventDefault();
             coordinator.runtime?.handle.focus();
         };
+
         view.addEventListener('keydown', onKeyDown, true);
+
         return () => view.removeEventListener('keydown', onKeyDown, true);
     }, [rootRef, toolbarRef, overlayRootRef, coordinator]);
 };

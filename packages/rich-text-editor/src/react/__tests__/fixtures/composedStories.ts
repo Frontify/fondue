@@ -36,6 +36,7 @@ export const COMPOSED_STORIES: readonly ComposedStory[] = Object.entries(modules
     .flatMap(([path, module]) =>
         Object.entries(composeStories(module)).map(([name, story]) => {
             const { id, tags, args, parameters, play } = story as Omit<ComposedStory, 'file' | 'name' | 'Story'>;
+
             return {
                 file: new URL(path, FOLDER).pathname.slice(1),
                 name,

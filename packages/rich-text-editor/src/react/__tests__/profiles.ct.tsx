@@ -95,6 +95,7 @@ test('keeps one paragraph in an Inline field that pastes its own select-all copy
         for (const [type, value] of entries) {
             clipboardData.setData(type, value);
         }
+
         const surface = document.querySelector('[data-rte-surface]') as HTMLElement;
         surface.dispatchEvent(new ClipboardEvent('paste', { clipboardData, bubbles: true, cancelable: true }));
     }, flavors);
@@ -239,8 +240,10 @@ for (const profile of ['document', 'brand-document'] as const) {
 
                 if (shown.includes('Accessibility checks')) {
                     expect(shown.indexOf('Accessibility checks')).toBe(shown.indexOf('Outline') - 1);
+
                     return;
                 }
+
                 expect(shown).not.toContain('Outline');
                 await toolbarOf(page).getByRole('button', { name: 'More', exact: true }).click();
                 // More loads its rows on first use.

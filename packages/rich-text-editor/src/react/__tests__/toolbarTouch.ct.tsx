@@ -78,6 +78,7 @@ test.describe('with a coarse pointer', () => {
             .evaluateAll((buttons) =>
                 buttons.map((button) => {
                     const { width, height } = button.getBoundingClientRect();
+
                     return width >= 44 && height >= 44;
                 }),
             );
@@ -97,6 +98,7 @@ test.describe('with a coarse pointer', () => {
         const sizes = await buttons.evaluateAll((elements) =>
             elements.map((element) => {
                 const { width, height } = element.getBoundingClientRect();
+
                 return { label: element.getAttribute('aria-label'), width, height };
             }),
         );
@@ -123,11 +125,13 @@ test.describe('on a phone with a sticky toolbar', () => {
                 if (selection === null || selection.rangeCount === 0 || toolbar === null) {
                     return false;
                 }
+
                 const caret = selection.getRangeAt(0).getBoundingClientRect();
                 let height = window.innerHeight;
                 if (window.visualViewport !== null) {
                     height = window.visualViewport.height;
                 }
+
                 return caret.top >= toolbar.getBoundingClientRect().bottom && caret.bottom <= height;
             });
         /** Puts the caret at the end of a line that sits under the toolbar, then types there. */
@@ -140,6 +144,7 @@ test.describe('on a phone with a sticky toolbar', () => {
                 if (paragraph === undefined || toolbar === null) {
                     return;
                 }
+
                 const under = toolbar.getBoundingClientRect().bottom - 4;
                 window.scrollBy(0, paragraph.getBoundingClientRect().bottom - under);
                 window.toolbarEditor?.setSelection(window.toolbarEditor.handle, { text, from: text.length });

@@ -43,6 +43,7 @@ test.describe('on a touch device', () => {
             if (viewport === null) {
                 return;
             }
+
             const height = window.innerHeight / 2;
             Object.defineProperty(viewport, 'height', { configurable: true, get: () => height });
             viewport.dispatchEvent(new Event('resize'));
@@ -73,6 +74,7 @@ test.describe('on a touch device', () => {
             if (viewport === null) {
                 return;
             }
+
             Object.defineProperty(viewport, 'offsetTop', { configurable: true, get: () => 100 });
             viewport.dispatchEvent(new Event('scroll'));
         });
@@ -166,6 +168,7 @@ test.describe('on a touch device', () => {
             if (paragraph === undefined || toolbar === null) {
                 return;
             }
+
             window.scrollBy(0, paragraph.getBoundingClientRect().top - toolbar.getBoundingClientRect().top - 4);
             window.overlayProbe?.select({ text: 'Line 40', from: 7 });
         });
@@ -177,7 +180,9 @@ test.describe('on a touch device', () => {
             if (selection === null || selection.rangeCount === 0 || toolbar === null) {
                 return false;
             }
+
             const caret = selection.getRangeAt(0).getBoundingClientRect();
+
             return caret.bottom <= toolbar.getBoundingClientRect().top && caret.top >= 0;
         });
         expect(clear).toBe(true);

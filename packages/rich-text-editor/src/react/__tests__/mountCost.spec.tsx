@@ -46,10 +46,12 @@ beforeEach(async () => {
         observer.disconnect();
         throw new Error('The editor did not mount.');
     }
+
     const records = observer.takeRecords();
     for (const node of surface.querySelectorAll('*')) {
         drawn.add(node);
     }
+
     decorated = surface.querySelector('[style], [class], [dir]');
     // The portal store renders the node views' chrome a microtask later.
     await act(async () => {

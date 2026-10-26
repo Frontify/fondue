@@ -26,17 +26,21 @@ const modelOf = (args: StoryArgs): ContentModel | undefined => {
     if (args.definition !== undefined) {
         return engineOf(args.definition).model;
     }
+
     if (args.model !== undefined) {
         return args.model;
     }
+
     if (args.profile !== undefined) {
         return PROFILE_MODELS[args.profile];
     }
+
     return undefined;
 };
 
 const automaticIssues = (document: RichTextDocument, model: ContentModel | undefined, args: StoryArgs) => {
     const tokens = args.presentation?.colorTokens;
+
     return findContentIssues(document, {
         locale: enUS,
         // A story with no model of its own is checked against every shipped rule.
@@ -60,11 +64,13 @@ const documentsOf = (args: StoryArgs): RichTextDocument[] =>
         if (isDocument(value)) {
             return [value];
         }
+
         const record = value as { readonly document?: unknown } | null | undefined;
         const document = record?.document;
         if (isDocument(document)) {
             return [document];
         }
+
         return [];
     });
 
@@ -78,10 +84,12 @@ const stories = COMPOSED_STORIES.filter(({ file }) => !NAMED_FOR_A_CHECK.test(fi
     if (title === PROFILE_EDITOR && storyArgs.profile !== undefined) {
         documents = [createEmptyDocument(PROFILE_MODELS[storyArgs.profile])];
     }
+
     // A story whose content its component builds, such as the persistence story, has none to check.
     if (documents.length === 0) {
         return [];
     }
+
     return [{ title, documents, args: storyArgs }];
 });
 

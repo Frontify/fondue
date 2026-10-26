@@ -94,8 +94,10 @@ const mount = ({ children, onBubbleRender, ...rest }: Props) => {
         if (ref.current === null) {
             throw new Error('no handle');
         }
+
         return ref.current;
     };
+
     return { ...view, handle };
 };
 
@@ -112,6 +114,7 @@ const Opened = ({
     readonly onClose?: () => void;
 }) => {
     const [open, setOpen] = useState(true);
+
     return (
         <Overlay
             open={open}
@@ -119,6 +122,7 @@ const Opened = ({
                 if (!next) {
                     onClose();
                 }
+
                 setOpen(next);
             }}
         />
@@ -168,12 +172,15 @@ describe('editor overlays', () => {
                 if (kind === 'menu') {
                     props = { ...props, children: <Opened Overlay={FixtureMenu} /> };
                 }
+
                 if (kind === 'alternative text dialog') {
                     props = { ...props, defaultValue: loaded(para('one'), image) };
                 }
+
                 if (portalContainer !== undefined) {
                     props = { ...props, portalContainer };
                 }
+
                 const { unmount } = mount(props);
                 // Node chrome renders once the portal store's microtask runs.
                 await act(async () => {
@@ -190,6 +197,7 @@ describe('editor overlays', () => {
                     });
                     overlay = screen.getAllByRole('tooltip')[0];
                 }
+
                 if (kind === 'More menu') {
                     act(() => {
                         fireEvent.keyDown(document.querySelector('[data-rte-toolbar-more]') as HTMLElement, {
@@ -198,19 +206,23 @@ describe('editor overlays', () => {
                     });
                     overlay = screen.getByRole('menu');
                 }
+
                 if (kind === 'menu') {
                     overlay = screen.getByTestId('fixture-menu');
                 }
+
                 if (kind === 'alternative text dialog') {
                     act(() => {
                         fireEvent.click(screen.getByRole('button', { name: 'Alternative text' }));
                     });
                     overlay = screen.getByRole('dialog', { name: 'Alternative text' });
                 }
+
                 let root: Element | null = null;
                 if (overlay !== undefined) {
                     root = overlay.closest('[data-rte-overlays]');
                 }
+
                 let own = false;
                 if (portalContainer === undefined) {
                     own =
@@ -219,6 +231,7 @@ describe('editor overlays', () => {
                 } else {
                     own = root?.parentElement === portalContainer;
                 }
+
                 results.push({
                     inside: own,
                     owner: overlay?.ownerDocument === document,
@@ -226,6 +239,7 @@ describe('editor overlays', () => {
                 });
                 unmount();
             }
+
             host.remove();
 
             expect(results).toEqual([
@@ -277,8 +291,10 @@ describe('editor overlays', () => {
                     unregisterRef.current = handle.registerInteractionRoot(hostModal);
                 }
             }, [handle]);
+
             return null;
         };
+
         const closed = vi.fn();
         mount({
             children: (
@@ -344,6 +360,7 @@ describe('editor overlays', () => {
         const closedA = vi.fn();
         const Later = () => {
             const [open, setOpen] = useState(false);
+
             return (
                 <>
                     <button type="button" onClick={() => setOpen(true)}>
@@ -353,6 +370,7 @@ describe('editor overlays', () => {
                 </>
             );
         };
+
         const Editor = ({ label, children }: { readonly label: string; readonly children: ReactNode }) => (
             <RichTextEditor.Root
                 aria-label={label}
@@ -399,6 +417,7 @@ describe('editor overlays', () => {
         onBlur.mockImplementation(() => events.push('blur'));
         const Link = () => {
             const [open, setOpen] = useState(false);
+
             return (
                 <>
                     <button type="button" onClick={() => setOpen(true)}>
@@ -408,6 +427,7 @@ describe('editor overlays', () => {
                 </>
             );
         };
+
         mount({ onFocus, onBlur, children: <Link /> });
 
         act(() => surface().focus());
@@ -569,6 +589,7 @@ describe('overlay accessibility', () => {
         if (handle === null) {
             throw new Error('no handle');
         }
+
         const view = runtimeOf(handle)?.view;
 
         expect(screen.getByRole('toolbar', { name: 'Text formatting' })).toBeInTheDocument();
@@ -753,6 +774,7 @@ describe('overlay focus and loading', () => {
         );
         const Chrome = () => {
             const [open, setOpen] = useState(false);
+
             return (
                 <>
                     <button type="button" onClick={() => setOpen(true)}>
@@ -762,6 +784,7 @@ describe('overlay focus and loading', () => {
                 </>
             );
         };
+
         const lazyModel = compileContentModel([core(), fixtureMediaImage()], { id: 'test.overlays', version: 1 });
         const lazyChrome = defineEditorPart(fixtureMediaImage, {
             views: [{ node: 'media_image', component: Chrome }],
@@ -843,6 +866,7 @@ describe('overlay focus and loading', () => {
                     counted.renders += 1;
                 },
             });
+
             return { handle, counted };
         };
 

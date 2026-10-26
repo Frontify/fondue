@@ -40,6 +40,7 @@ export const withSlashMenu = (plugins: readonly RichTextPlugin[]): readonly Rich
         if (unit.id !== 'core') {
             return unit;
         }
+
         return extendPlugin(unit, slashMenu(plugins));
     });
 

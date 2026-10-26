@@ -19,9 +19,11 @@ const caret = (page: Page) =>
         if (surface === null || selection === null || selection.anchorNode === null) {
             return { focused: false, offset: -1 };
         }
+
         const range = document.createRange();
         range.setStart(surface, 0);
         range.setEnd(selection.anchorNode, selection.anchorOffset);
+
         return { focused: document.activeElement === surface, offset: range.toString().length };
     });
 
@@ -59,6 +61,7 @@ test('makes the surface editable again in the same task', async ({ mount, page }
         window.rte?.handle.setMode('readonly');
         const readonly = surface?.getAttribute('contenteditable');
         window.rte?.handle.setMode('editable');
+
         return [readonly, surface?.getAttribute('contenteditable')];
     });
 

@@ -90,6 +90,7 @@ declare global {
 /** A button that announces a message through the editor's live region, which the tests press. */
 const Announce = ({ message, coalesce }: { readonly message: string; readonly coalesce: string | undefined }) => {
     const announcer = useContext(AnnouncerContext);
+
     return (
         <button type="button" data-announce="" onClick={() => announcer?.announce(message, coalesce)}>
             Announce
@@ -140,17 +141,21 @@ export const ToolbarProbe = ({
         if (wide) {
             toolbar = WIDE_TOOLBAR;
         }
+
         const input: Partial<ReactPresentation> = { toolbar };
         if (toolbarShortcut !== undefined) {
             Object.assign(input, { toolbarShortcut });
         }
+
         if (controls !== undefined) {
             Object.assign(input, { controls });
         }
+
         return defineReactPresentation(input);
     }, [toolbarShortcut, wide, controls]);
     const [defaultValue] = useState(() => {
         const content = blocks ?? texts.map(paragraph);
+
         return {
             documentId: 'document-1',
             revision: null,
@@ -171,6 +176,7 @@ export const ToolbarProbe = ({
         if (handle === null) {
             return;
         }
+
         window.toolbarEditor = {
             handle,
             setSelection,
@@ -180,12 +186,15 @@ export const ToolbarProbe = ({
                 if (view === undefined) {
                     return '';
                 }
+
                 // The kept selection is a decoration, not content.
                 const copy = view.dom.cloneNode(true) as HTMLElement;
                 for (const decoration of copy.querySelectorAll('[data-rte-selection]')) {
                     decoration.replaceWith(...decoration.childNodes);
                 }
+
                 copy.normalize();
+
                 return copy.innerHTML;
             },
         };
@@ -194,6 +203,7 @@ export const ToolbarProbe = ({
     if (boldBlocked) {
         definition = toolbarDefinitions.boldBlocked;
     }
+
     const props = {
         'aria-label': 'Notes',
         definition,
@@ -214,6 +224,7 @@ export const ToolbarProbe = ({
             </RichTextEditor.Root>
         );
     }
+
     let body = editor;
     if (scrollHeight !== undefined) {
         body = (
@@ -222,6 +233,7 @@ export const ToolbarProbe = ({
             </div>
         );
     }
+
     return (
         <ThemeProvider theme={theme} dir={dir}>
             <form

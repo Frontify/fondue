@@ -119,24 +119,31 @@ const effectOf = (key: string, profile: RichTextProfile): Effect | undefined => 
     if (key === 'Alt-F10') {
         return focusMoves;
     }
+
     if (key === 'Shift-F10' || key === 'ContextMenu') {
         return contextMenuOpens;
     }
+
     if (key === 'Tab' || key === 'Shift-Tab') {
         return focusLeaves;
     }
+
     if (key === 'Escape') {
         return bubbleCloses;
     }
+
     if (key === 'ArrowDown') {
         return newParagraphAfterCodeBlock;
     }
+
     if (key === 'Mod-Enter' && (profile === 'document' || profile === 'brand-document')) {
         return newParagraphAfterCodeBlock;
     }
+
     if (key === 'Enter' || key === 'Shift-Enter' || key === 'Mod-Enter') {
         return submits;
     }
+
     return undefined;
 };
 
@@ -147,6 +154,7 @@ for (const { action, key, profiles } of SURFACE_KEY_ROWS) {
             if (effect === undefined) {
                 throw new Error(`No effect is pinned for ${key} in the ${profile} profile.`);
             }
+
             await mount(
                 <ProfileProbe
                     profile={profile}

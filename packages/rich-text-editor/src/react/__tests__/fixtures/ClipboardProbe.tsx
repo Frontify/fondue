@@ -40,12 +40,16 @@ const paragraphOf = (text: string): ContentNodeJSON => {
         if (part === '') {
             return [];
         }
+
         if (part === '@') {
             const attrs = { nodeId: 'm-1', resourceType: 'user', resourceId: 'u-1', labelSnapshot: 'Ada' };
+
             return [{ type: 'mention', attrs }];
         }
+
         return [{ type: 'text', text: part }];
     });
+
     return { type: 'paragraph', attrs: { lang: null }, content } as unknown as ContentNodeJSON;
 };
 
@@ -108,10 +112,12 @@ export const ClipboardProbe = ({
         const service: UploadService = {
             upload: () => {
                 calls += 1;
+
                 return Promise.reject(new Error('no upload'));
             },
             releaseUnused: () => Promise.resolve(),
         };
+
         return { service, calls: () => calls };
     });
     useEffect(() => {
@@ -120,6 +126,7 @@ export const ClipboardProbe = ({
         if (handle === null || runtime === undefined) {
             return;
         }
+
         window.clip = {
             handle,
             changes,
@@ -134,10 +141,12 @@ export const ClipboardProbe = ({
                 if (view === undefined) {
                     return;
                 }
+
                 let position = 0;
                 for (let child = 0; child < index; child += 1) {
                     position += view.state.doc.child(child).nodeSize;
                 }
+
                 view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, position)));
                 handle.focus();
             },
@@ -153,6 +162,7 @@ export const ClipboardProbe = ({
     if (unpasted) {
         shown = unpastedMentions;
     }
+
     if (tasks !== undefined) {
         shown = taskDefinition;
         documentModel = taskEditorModel.ref;
@@ -174,6 +184,7 @@ export const ClipboardProbe = ({
             } as unknown as ContentNodeJSON,
         ];
     }
+
     if (island) {
         blocks.push({
             type: 'callout',
@@ -181,6 +192,7 @@ export const ClipboardProbe = ({
             content: [paragraphOf('Kept')],
         } as unknown as ContentNodeJSON);
     }
+
     const document = {
         format: 'frontify.rich-text' as const,
         formatVersion: 1 as const,
@@ -207,6 +219,7 @@ export const ClipboardProbe = ({
             </div>
         );
     }
+
     return (
         <>
             <style>

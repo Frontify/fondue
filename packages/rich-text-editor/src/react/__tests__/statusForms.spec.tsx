@@ -96,6 +96,7 @@ const serviceOf = () => {
         ),
         read: server.read,
     };
+
     return { service, calls };
 };
 
@@ -111,6 +112,7 @@ const Host = ({
     readonly fieldRef: { current: RichTextFormField | null };
 }) => {
     fieldRef.current = useRichTextFormField(editorRef);
+
     return (
         <RichTextEditor aria-label="Notes" definition={definition} defaultValue={STORED} ref={editorRef} {...props} />
     );
@@ -119,13 +121,16 @@ const Host = ({
 /** Seeded so backoff delays stay repeatable. */
 const seededRandom = (seed: number) => {
     let state = seed >>> 0;
+
     return () => {
         state = (state + 0x6d2b79f5) >>> 0;
         let value = Math.imul(state ^ (state >>> 15), state | 1);
         value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+
         return ((value ^ (value >>> 14)) >>> 0) / 4_294_967_296;
     };
 };
+
 beforeEach(() => {
     vi.useFakeTimers();
     vi.spyOn(Math, 'random').mockImplementation(seededRandom(1));
@@ -156,14 +161,18 @@ const mount = (props: Props = {}) => {
         if (editorRef.current === null) {
             throw new Error('no handle');
         }
+
         return editorRef.current;
     };
+
     const field = () => {
         if (fieldRef.current === null) {
             throw new Error('no field');
         }
+
         return fieldRef.current;
     };
+
     return {
         ...view,
         handle,
@@ -201,10 +210,13 @@ const listen = () => {
             spoken.push(...[...record.addedNodes].map((node) => (node.textContent ?? '').trim()));
         }
     };
+
     const observer = new MutationObserver(collect);
     observer.observe(screen.getByTestId('fondue-rich-text-editor-announcer'), { childList: true });
+
     return () => {
         collect(observer.takeRecords());
+
         return spoken.splice(0);
     };
 };
@@ -215,13 +227,16 @@ const mountSaving = (persistenceOptions: PersistenceOptions = {}) => {
     const mounted = mount({ services: { persistence: service }, persistenceOptions });
     mounted.type('c');
     mounted.advance(500);
+
     return { ...mounted, calls, service };
 };
+
 const lastCall = (calls: readonly Call[]) => {
     const call = calls.at(-1);
     if (call === undefined) {
         throw new Error('no save call');
     }
+
     return call;
 };
 
@@ -264,10 +279,12 @@ describe('the status announcements as a transition', () => {
     const run = (first: Seen, steps: readonly (readonly [Seen, boolean])[]) => {
         let memory: Memory = QUIET;
         let previous = first;
+
         return steps.map(([next, committed]) => {
             const [kept, key] = announcementOf(memory, previous, next, committed);
             memory = kept;
             previous = next;
+
             return key;
         });
     };
@@ -441,8 +458,10 @@ describe('leaving the editor', () => {
             added.mock.calls.filter(([type]) => type === name).length -
             removed.mock.calls.filter(([type]) => type === name).length;
         const everAdded = () => added.mock.calls.map(([type]) => type);
+
         return { count, everAdded };
     };
+
     afterEach(() => {
         vi.restoreAllMocks();
     });
@@ -680,6 +699,7 @@ describe('RichTextEditor.Status', () => {
             // Past the third backoff with its jitter and before the write timeout, so one replay is in flight.
             advance(5_000);
         }
+
         expect(calls).toHaveLength(4);
         lastCall(calls).answer();
         await settle();
@@ -834,6 +854,7 @@ describe('useRichTextFormField', () => {
             .getSettledValue({ timeoutMs: 100 })
             .then((document) => {
                 resolved = true;
+
                 return document;
             });
         await settle();
@@ -977,6 +998,7 @@ describe('RichTextEditor in a form', () => {
             event.preventDefault();
             submitted = [...new FormData(event.currentTarget).entries()];
         };
+
         const { container } = render(
             <form onSubmit={onSubmit}>
                 <input name="title" defaultValue="Notes" />

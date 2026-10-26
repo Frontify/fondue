@@ -34,10 +34,12 @@ export const HtmlPasteProbe = () => {
         if (handle === null) {
             return;
         }
+
         const view = runtimeOf(handle)?.view;
         if (view === undefined) {
             return;
         }
+
         window.htmlPaste = {
             content: () => handle.getSnapshot().document.content.content,
             selectAll: () => {
@@ -46,6 +48,7 @@ export const HtmlPasteProbe = () => {
             },
         };
     }, []);
+
     return (
         <RichTextEditor
             aria-label="Notes"

@@ -26,6 +26,7 @@ const watchDocumentListeners = () => {
         if (ENGINE_FRAME.test(new Error('caller').stack ?? '')) {
             return;
         }
+
         const set = live.get(type) ?? new Set();
         set.add(listener);
         live.set(type, set);
@@ -34,6 +35,7 @@ const watchDocumentListeners = () => {
         live.get(type)?.delete(listener);
         remove(type, listener, options);
     });
+
     return () => Object.fromEntries([...live].filter(([, set]) => set.size > 0).map(([type, set]) => [type, set.size]));
 };
 
@@ -62,6 +64,7 @@ const mountEditors = async () => {
     });
     const surfaces = [...container.querySelectorAll<HTMLElement>('[data-rte-surface]')];
     expect(surfaces).toHaveLength(EDITORS);
+
     return { counts, surfaces };
 };
 

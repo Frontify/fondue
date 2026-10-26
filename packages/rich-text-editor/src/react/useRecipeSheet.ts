@@ -18,6 +18,7 @@ const attach = (owner: Document, css: string) => {
         byText = new Map();
         sheets.set(owner, byText);
     }
+
     const texts = byText;
     let attached = texts.get(css);
     if (attached === undefined) {
@@ -28,8 +29,10 @@ const attach = (owner: Document, css: string) => {
         attached = { element, count: 0 };
         texts.set(css, attached);
     }
+
     const entry = attached;
     entry.count += 1;
+
     return () => {
         entry.count -= 1;
         if (entry.count === 0) {
@@ -46,6 +49,7 @@ export const useRecipeSheet = (ref: RefObject<HTMLElement | null>, css: string):
         if (owner === undefined || css === '') {
             return undefined;
         }
+
         return attach(owner, css);
     }, [ref, css]);
 };

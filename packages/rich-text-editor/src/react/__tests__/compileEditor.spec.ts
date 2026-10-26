@@ -25,8 +25,10 @@ const failureOf = (units: readonly RichTextPlugin[]) => {
         if (error instanceof DefinitionError) {
             return { code: error.code, details: error.details };
         }
+
         throw error;
     }
+
     return undefined;
 };
 

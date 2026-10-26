@@ -71,6 +71,7 @@ export const engineOf = (definition: CompiledEditorDefinition<object>): Compiled
     if (engine === undefined) {
         throw new Error('RichTextEditor takes only a definition that defineEditor made.');
     }
+
     return engine;
 };
 
@@ -98,11 +99,13 @@ export const profileOf = (definition: CompiledEditorDefinition<object>): RichTex
 const collectPlugins = (model: ContentModel, units: readonly RichTextPlugin[]): readonly EditorPart[] => {
     checkCover(model, units);
     const { features } = compiledModel(model);
+
     return features.flatMap(({ id, options }) => {
         const unit = units.find((candidate) => candidate.id === id);
         if (unit === undefined) {
             return [];
         }
+
         return [partWithOptions(unit.editor, options)];
     });
 };
@@ -118,9 +121,11 @@ const engineSuggestion = (
         if (runtime === undefined) {
             return false;
         }
+
         if (available === undefined) {
             return true;
         }
+
         return available(facetsOf(editorApiOf(runtime, host as EditorHosts), needs, feature));
     },
     search: async (query, { view, host, signal, cursor }) => {
@@ -128,6 +133,7 @@ const engineSuggestion = (
         if (runtime === undefined) {
             throw new Error('The list has no session.');
         }
+
         return search(query, {
             api: facetsOf(editorApiOf(runtime, host as EditorHosts), needs, feature),
             signal,
@@ -151,6 +157,7 @@ const extensionOf = (model: ContentModel, plugin: EditorPart): EngineExtension =
                 handlers[key] = pluginCommand({ run: handler }, model, schema, lookup, partCommandApiOf(plugin));
             }
         }
+
         return handlers;
     },
     inputRules: plugin.inputRules ?? [],
@@ -161,6 +168,7 @@ const extensionOf = (model: ContentModel, plugin: EditorPart): EngineExtension =
         for (const [id, spec] of Object.entries(plugin.commands ?? {})) {
             commands[id] = pluginCommand(spec, model, schema, lookup, partCommandApiOf(plugin));
         }
+
         return commands;
     },
 });
@@ -171,6 +179,7 @@ const executeFor: NonNullable<Parameters<typeof compileDefinition>[1]>['execute'
     if (runtime === undefined) {
         return false;
     }
+
     return runtime.handle.execute(id, payload ?? undefined).status !== 'rejected';
 };
 
@@ -180,6 +189,7 @@ const handleKeyFor: NonNullable<Parameters<typeof compileDefinition>[1]>['handle
     if (runtime === undefined) {
         return false;
     }
+
     return performIn(runtime, handler);
 };
 
@@ -191,13 +201,17 @@ const intakeOf =
         if (runtime === undefined) {
             return false;
         }
+
         const range = rangeOfPort(runtime, from, to);
+
         return plugins.some((plugin) => {
             const { files: take } = plugin;
             if (take === undefined) {
                 return false;
             }
+
             const run = (api: EditorApi) => take(api, files, { origin, range });
+
             return performIn(runtime, sessionCommand(runtime, run, model, partCommandApiOf(plugin)));
         });
     };
@@ -217,9 +231,11 @@ const collectViews = (model: ContentModel, plugins: readonly EditorPart[]) => {
                     path: pointer('nodeViews', node),
                 });
             }
+
             views.set(node, view);
         }
     }
+
     return views;
 };
 
@@ -231,6 +247,7 @@ const collectPanels = (plugins: readonly EditorPart[]) => {
             panels.set(panel.control, panel);
         }
     }
+
     return panels;
 };
 
@@ -242,6 +259,7 @@ const limitsWithin = (limits: Partial<ResourceLimits> | undefined, overrides: Pa
     for (const name of Object.keys(loosened) as (keyof ResourceLimits)[]) {
         result[name] = Math.min(loosened[name], result[name]);
     }
+
     return result;
 };
 
@@ -254,12 +272,14 @@ export const longestAttributeValue = (model: ContentModel): number => {
         if (declaration.type === 'enum') {
             values.push(...declaration.values);
         }
+
         for (const value of values) {
             if (typeof value === 'string') {
                 longest = Math.max(longest, value.length);
             }
         }
     };
+
     const declared = [...nodes.map((node) => attributesOf(node)), ...marks.map((mark) => mark.declaration.attrs)];
     for (const attributes of declared) {
         for (const [name, declaration] of Object.entries(attributes)) {
@@ -269,6 +289,7 @@ export const longestAttributeValue = (model: ContentModel): number => {
             }
         }
     }
+
     return longest;
 };
 
@@ -281,8 +302,10 @@ const checkLimits = (model: ContentModel, limits: ResourceLimits, given: Partial
         if (given?.[name] === limits[name]) {
             return pointer('limits', name);
         }
+
         return pointer('limitOverrides', name);
     };
+
     const minimum = longestAttributeValue(model);
     if (limits.maxAttributeLength < minimum) {
         throw new DefinitionError('definition.invalid-option', {
@@ -290,6 +313,7 @@ const checkLimits = (model: ContentModel, limits: ResourceLimits, given: Partial
             minimum,
         });
     }
+
     const empty = decodeDocument(createEmptyDocument(model), model, { limits });
     if (empty.status === 'blocked') {
         const exceeded = empty.diagnostics.find(({ code }) => code === 'format.limit-exceeded');
@@ -331,6 +355,7 @@ export const editorEngine = (
             }
         }
     }
+
     // The server offers a repair when the model installs its feature, so the editor must have its command.
     const { features } = compiledModel(model);
     for (const { command, feature } of CONTENT_REPAIRS(model)) {
@@ -341,6 +366,7 @@ export const editorEngine = (
             });
         }
     }
+
     return { engine, plugins };
 };
 
@@ -374,5 +400,6 @@ export const compileEditor = <Model extends ContentModel, Plugins extends readon
     if (profile !== undefined) {
         profiles.set(definition, profile);
     }
+
     return definition as CompiledEditorDefinition<CommandsOfPlugins<Plugins>>;
 };

@@ -27,9 +27,11 @@ export const useMountState = (props: Defined, retried: LoadedDocument | undefine
         if (process.env.NODE_ENV === 'production') {
             return undefined;
         }
+
         return createReactWork();
     });
     const [announcer] = useState(createAnnouncer);
     useEffect(() => () => announcer.dispose(), [announcer]);
+
     return { loaded, mounted, faulted, setFaulted, coordinator, portals, work, announcer };
 };

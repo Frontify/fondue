@@ -25,6 +25,7 @@ const signature = (page: Page) =>
             [...document.querySelectorAll(selector)].filter((element) => element.getClientRects().length > 0).length;
         const content = surface?.innerHTML;
         const focus = document.activeElement?.outerHTML.slice(0, 200);
+
         return JSON.stringify({
             content,
             overlays: shown('[role="dialog"], [role="menu"], [role="listbox"], [role="region"], nav'),
@@ -49,9 +50,11 @@ const prepare = async (page: Page, name: string) => {
     if (name === 'Redo') {
         await execute(page, 'history.undo');
     }
+
     if (name === 'Clear formatting') {
         await execute(page, 'mark.bold.toggle');
     }
+
     if (name === 'Start numbering at') {
         await execute(page, 'list.ordered.toggle', { start: 1 });
     }
@@ -162,6 +165,7 @@ for (const profile of ['document', 'brand-document'] as const) {
                 const label = item.querySelector(':scope > span');
                 const labelText = label?.textContent;
                 const text = labelText?.trim();
+
                 return { name: text ?? '', enabled: item.getAttribute('aria-disabled') !== 'true' };
             }),
         );
@@ -178,6 +182,7 @@ for (const profile of ['document', 'brand-document'] as const) {
             if (!enabled) {
                 continue;
             }
+
             const before = await signature(page);
 
             await press(page, 'Enter');

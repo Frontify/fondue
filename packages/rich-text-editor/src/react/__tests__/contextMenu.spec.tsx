@@ -37,6 +37,7 @@ const prevents = (element: Element) => {
     act(() => {
         dispatched = fireEvent.contextMenu(element, { button: 2 });
     });
+
     return !dispatched;
 };
 
@@ -56,9 +57,11 @@ const rowsOf = (menu: HTMLElement) => {
                     keys: row.getAttribute('aria-keyshortcuts'),
                 });
             }
+
             return true;
         },
     });
+
     return rows;
 };
 
@@ -149,6 +152,7 @@ describe('the context menu', () => {
             plugins = [];
             toolbar = [['image.insert']];
         }
+
         const ref = createRef<EditorHandle<object>>();
         const view = render(
             <RichTextEditor

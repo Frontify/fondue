@@ -81,17 +81,21 @@ const pickerOf =
             ) {
                 return;
             }
+
             let place: UploadPlace = { kind: 'insert', origin: 'command' };
             if (nodeId !== undefined) {
                 place = { kind: 'replace', nodeId };
             }
+
             choosingRef.current = { place, session: session.handle.getSummary().session };
             chooser.accept = accepts.join(',');
             chooser.multiple = nodeId === undefined;
             chooser.value = '';
             chooser.click();
+
             return;
         }
+
         pickAsset(session, picker, {
             ...(nodeId === undefined ? {} : { nodeId }),
             removed: (kind) => {
@@ -126,9 +130,11 @@ const savesOf = (
                 model: engine.model,
                 generateId: ids,
             });
+
             return result.created;
         };
     }
+
     return result;
 };
 
@@ -170,11 +176,14 @@ const buildRuntime = (
                 if (onSubmit === undefined) {
                     return;
                 }
+
                 if (!validityOf(runtime, required).valid) {
                     const { locale } = shellPropsOf(latestRef.current);
                     announcer.announce(codecContext(locale, enUS).t('RichTextEditor_submitEmpty'));
+
                     return;
                 }
+
                 onSubmit(runtime.handle.getSnapshot());
             },
         },
@@ -193,6 +202,7 @@ const buildRuntime = (
         contentChecks: () => {
             const background = backgroundOf(runtime);
             const tokens = latestRef.current.presentation?.colorTokens;
+
             return {
                 locale: shellPropsOf(latestRef.current).locale,
                 colorTokens: tokens ?? [],
@@ -200,6 +210,7 @@ const buildRuntime = (
             };
         },
     });
+
     return runtime;
 };
 
@@ -232,6 +243,7 @@ const subscribeSession = (
                 messageKey: 'react.duplicate-accessible-name',
             });
         }
+
         latestRef.current.onReady?.(session);
     });
     runtime.handle.subscribe('documentChange', (change: DocumentChange) =>
@@ -245,6 +257,7 @@ const subscribeSession = (
             setFaulted(runtime.handle.getSnapshot().document);
         }
     });
+
     return () => cancelPrefetch?.();
 };
 
@@ -261,6 +274,7 @@ const startSession = (wiring: SessionWiring, decoded: Decoded) => {
             if (presentation === undefined) {
                 return null;
             }
+
             return presentation.sliceContext;
         },
         locale: () => shellPropsOf(latestRef.current).locale,
@@ -273,9 +287,11 @@ const startSession = (wiring: SessionWiring, decoded: Decoded) => {
     if (saving.created !== undefined) {
         registerSaveCauses(runtime.handle, saving.created);
     }
+
     registerFormField(runtime.handle, () => latestRef.current);
     onSession({ handle: runtime.handle, unresolved: () => saving.created?.unresolved() });
     coordinator.start(runtime);
+
     return () => {
         cancelPrefetch();
         coordinator.stop();
@@ -293,6 +309,7 @@ export const useSessionRuntime = (wiring: SessionWiring) => {
         if (decoded === undefined) {
             return;
         }
+
         return startSession(wiring, decoded);
     }, [mounted, loaded, coordinator, portals, work, onSession, scope, hosts]);
 };

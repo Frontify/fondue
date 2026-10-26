@@ -29,14 +29,17 @@ const watchDocumentListeners = (page: Page) =>
             if (/\bconnectSelection\b/.test(new Error('caller').stack ?? '')) {
                 return;
             }
+
             const set = live.get(type) ?? new Set();
             set.add(listener);
             live.set(type, set);
         };
+
         document.removeEventListener = (type: string, listener: unknown, options?: unknown) => {
             live.get(type)?.delete(listener);
             remove(type, listener as EventListener, options as EventListenerOptions);
         };
+
         window.documentListeners = () =>
             Object.fromEntries([...live].filter(([, set]) => set.size > 0).map(([type, set]) => [type, set.size]));
     });

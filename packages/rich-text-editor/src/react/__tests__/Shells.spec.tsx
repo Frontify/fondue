@@ -53,6 +53,7 @@ const Bomb = ({ armed }: { readonly armed: boolean }) => {
     if (armed) {
         throw new Error('render failed');
     }
+
     return null;
 };
 
@@ -60,6 +61,7 @@ const handleOf = (ref: RefObject<EditorHandle<object>>) => {
     if (ref.current === null) {
         throw new Error('no handle');
     }
+
     return ref.current;
 };
 
@@ -89,6 +91,7 @@ const breakAfterTyping = () => {
     view.rerender(tree(true));
     // The shell stays until Retry, so the host part is fixed first.
     view.rerender(tree(false));
+
     return { ...view, tree, ref, spy, before };
 };
 
@@ -97,6 +100,7 @@ const shell = (kind: string) => {
     if (element === null) {
         throw new Error(`no ${kind} shell`);
     }
+
     return element;
 };
 
@@ -112,6 +116,7 @@ const withoutClipboard = () => {
     vi.stubGlobal('navigator', { ...navigator, clipboard: undefined });
     const rejections = vi.fn();
     process.on('unhandledRejection', rejections);
+
     return {
         rejections: async () => {
             // A rejection is reported after the microtask queue drains.
@@ -121,6 +126,7 @@ const withoutClipboard = () => {
                 });
             });
             process.off('unhandledRejection', rejections);
+
             return rejections.mock.calls.length;
         },
     };
@@ -163,6 +169,7 @@ describe('the recovery shell', () => {
         if (focused === 'surface') {
             before = screen.getByRole('textbox', { name: 'Notes' });
         }
+
         act(() => before.focus());
 
         view.rerender(tree(true));
@@ -172,6 +179,7 @@ describe('the recovery shell', () => {
         } else {
             expect(screen.getByText(/^The editor stopped working\./)).toHaveFocus();
         }
+
         view.unmount();
     });
 
@@ -323,8 +331,10 @@ describe('the recovery shell', () => {
             if (requests.length === 1) {
                 return new Promise<SaveResponse>(() => undefined);
             }
+
             return answer;
         };
+
         const ref = createRef<EditorHandle<object>>();
         const tree = (armed: boolean) => (
             <RichTextEditor.Root
@@ -463,13 +473,16 @@ describe('the recovery shell', () => {
             if (strict) {
                 return <StrictMode>{root}</StrictMode>;
             }
+
             return root;
         };
+
         const view = render(tree(false));
         const breakAgain = () => {
             view.rerender(tree(true));
             view.rerender(tree(false));
         };
+
         act(() => {
             vi.advanceTimersToNextFrame();
         });
@@ -481,6 +494,7 @@ describe('the recovery shell', () => {
                 vi.advanceTimersToNextFrame();
             });
         };
+
         const saveAll = async () => {
             act(() => {
                 vi.advanceTimersByTime(10_000);
@@ -489,6 +503,7 @@ describe('the recovery shell', () => {
                 await vi.advanceTimersByTimeAsync(0);
             });
         };
+
         return { view, ref, save, diagnostics, breakAgain, retry, saveAll };
     };
 
@@ -547,8 +562,10 @@ describe('the recovery shell', () => {
         expect(item.types).toEqual(['text/plain', 'text/html']);
         const typed = async (type: string) => {
             const blob = await item.getType(type);
+
             return blob.text();
         };
+
         const codecs = createCodecs(model);
         expect(await typed('text/plain')).toBe(codecs.toPlainText(before.document).text);
         expect(await typed('text/html')).toBe(codecs.toHTML(before.document).html);
@@ -699,6 +716,7 @@ describe('the blocked shell', () => {
             if (typeof original === 'string') {
                 text = original;
             }
+
             const { unmount } = render(
                 <RichTextEditor
                     aria-label="Notes"

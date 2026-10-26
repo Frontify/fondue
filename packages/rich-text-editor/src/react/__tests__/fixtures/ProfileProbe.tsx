@@ -45,12 +45,15 @@ const probe: NonNullable<Window['profileProbe']> = {
         if (probe.handle === null) {
             return;
         }
+
         const runtime = runtimeOf(probe.handle);
         runtime?.view?.state.doc.descendants((node, pos) => {
             if (node.type.name !== name) {
                 return true;
             }
+
             runtime.select({ node: pos });
+
             return false;
         });
     },
@@ -117,29 +120,36 @@ export const ProfileProbe = ({
         if (!enterNone || ref.current === null) {
             return;
         }
+
         const runtime = runtimeOf(ref.current);
         if (runtime !== undefined) {
             ref.current.updatePolicy({ ...runtime.policy, enterBehavior: 'none' });
         }
     };
+
     let submitting = {};
     if (submits) {
         submitting = { onSubmit: recordSubmit };
     }
+
     let services = {};
     if (withServices) {
         services = { services: SERVICES };
     }
+
     let labelling = {};
     if (id !== undefined) {
         labelling = { ...labelling, id };
     }
+
     if (describedby !== undefined) {
         labelling = { ...labelling, 'aria-describedby': describedby };
     }
+
     if (errormessage !== undefined) {
         labelling = { ...labelling, 'aria-errormessage': errormessage };
     }
+
     return (
         <RichTextEditor
             aria-label="Message"

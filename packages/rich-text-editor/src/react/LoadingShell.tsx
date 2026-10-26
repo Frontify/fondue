@@ -29,6 +29,7 @@ export const LoadingShell = ({
 }: LoadingShellProps) => {
     const theme = useFondueTheme();
     const lang = locale.lang ?? theme.lang ?? enUS.lang;
+
     return (
         <div lang={lang} data-test-id={testId} aria-busy="true">
             <div
