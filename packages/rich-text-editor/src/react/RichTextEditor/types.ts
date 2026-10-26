@@ -5,7 +5,7 @@ import { type ComponentType, type KeyboardEventHandler, type MutableRefObject, t
 import { type Announcer } from '#/bridge/announcer';
 import { type ReactWork } from '#/bridge/devChecks';
 import { type PortalStore } from '#/bridge/nodeViews/helpers/portals';
-import { type EditorHosts } from '#/bridge/plugin';
+import { type EditorHosts } from '#/bridge/pluginApi/plugin';
 import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 import { type TurnIntoEntry } from '#/bridge/turnInto';
 import {

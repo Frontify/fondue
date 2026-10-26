@@ -4,8 +4,8 @@ import { Accordion, Badge, Button, Checkbox, Label } from '@frontify/fondue-comp
 import { IconExclamationMarkCircle, IconExclamationMarkTriangle, IconQuestionMarkCircle } from '@frontify/fondue-icons';
 import { type FocusEvent, useId, useRef, useState } from 'react';
 
-import { type PanelComponentProps } from '#/bridge/define';
-import { type CheckedIssue, useClientLayoutEffect, useEditorApi, useEditorValue } from '#/bridge/plugin';
+import { type PanelComponentProps } from '#/bridge/pluginApi/define';
+import { type CheckedIssue, useClientLayoutEffect, useEditorApi, useEditorValue } from '#/bridge/pluginApi/plugin';
 import { type ContentIssue, ruleHelpKey, ruleNameKey } from '#/model';
 
 import styles from '../styles/checks.module.scss';

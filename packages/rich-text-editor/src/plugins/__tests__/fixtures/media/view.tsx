@@ -9,8 +9,8 @@ import {
     OverlayBody,
     useEditorOverlay,
     useRichTextNodeView,
-} from '#/bridge/define';
-import { defineEditorPart } from '#/bridge/plugin';
+} from '#/bridge/pluginApi/define';
+import { defineEditorPart } from '#/bridge/pluginApi/plugin';
 
 import { fixtureMediaImage } from './feature';
 

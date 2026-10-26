@@ -3,8 +3,8 @@
 import { Button, ColorPicker, Dropdown, Flyout } from '@frontify/fondue-components';
 import { type CSSProperties, useEffect, useId, useRef, useState } from 'react';
 
-import { CheckedSlot } from '#/bridge/define';
-import { type EditorApi, type OverlayProps, useEditorApi, useEditorOverlay } from '#/bridge/plugin';
+import { CheckedSlot } from '#/bridge/pluginApi/define';
+import { type EditorApi, type OverlayProps, useEditorApi, useEditorOverlay } from '#/bridge/pluginApi/plugin';
 import { type CodecContext, type ColorToken, hexColor } from '#/model';
 
 import styles from '../styles/color.module.scss';

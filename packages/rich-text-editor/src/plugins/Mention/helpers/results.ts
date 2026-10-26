@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ListboxOption } from '#/bridge/define';
-import { type ReferenceValue } from '#/bridge/plugin';
+import { type ListboxOption } from '#/bridge/pluginApi/define';
+import { type ReferenceValue } from '#/bridge/pluginApi/plugin';
 import { type CodecContext, type SuggestionResult } from '#/model';
 
 // The suggestion list's total, which the dialog's pages stop at too.

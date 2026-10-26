@@ -4,7 +4,7 @@ import { type ComponentType } from 'react';
 
 import { liveResources } from '#/runtime/runtime';
 
-import { type NodeViewState } from '../../define';
+import { type NodeViewState } from '../../pluginApi/define';
 
 /** One node view's chrome: the slot it renders into and the state it reads, whose context the portal host adds. */
 export type PortalEntry = {

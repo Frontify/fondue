@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorPart, partWithOptions } from '#/bridge/plugin';
+import { type EditorPart, partWithOptions } from '#/bridge/pluginApi/plugin';
 import { createCodecs } from '#/codecs';
 import { enUS } from '#/locales/en-US';
 import {

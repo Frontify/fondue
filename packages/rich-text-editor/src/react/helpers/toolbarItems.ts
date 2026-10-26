@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorPart, type PluginToolbarEntry } from '#/bridge/plugin';
+import { type EditorPart, type PluginToolbarEntry } from '#/bridge/pluginApi/plugin';
 import {
     type CodecContext,
     type CommandRef,

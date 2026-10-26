@@ -109,13 +109,13 @@ export const READONLY_MEMBERS: ReadonlyMembers[] = [
         deep: ['src/model/types.ts#JsonObject', 'src/model/types.ts#JsonValue'],
     },
     {
-        site: 'src/bridge/plugin.ts:355',
+        site: 'src/bridge/pluginApi/plugin.ts:355',
         why: 'defineEditorPart freezes the editor part, so a write throws.',
         types: [
-            'src/bridge/plugin.ts#EditorPartSpec',
-            'src/bridge/plugin.ts#EditorPart',
-            'src/bridge/plugin.ts#{ feature }',
-            'src/bridge/plugin.ts#{ [OPTION_PARTS] }',
+            'src/bridge/pluginApi/plugin.ts#EditorPartSpec',
+            'src/bridge/pluginApi/plugin.ts#EditorPart',
+            'src/bridge/pluginApi/plugin.ts#{ feature }',
+            'src/bridge/pluginApi/plugin.ts#{ [OPTION_PARTS] }',
         ],
     },
     {

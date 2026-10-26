@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 
-import { type NodeViewDeclaration, useRichTextNodeView } from '#/bridge/define';
-import { defineEditorPart } from '#/bridge/plugin';
+import { type NodeViewDeclaration, useRichTextNodeView } from '#/bridge/pluginApi/define';
+import { defineEditorPart } from '#/bridge/pluginApi/plugin';
 
 import { fixtureChrome } from './feature';
 

@@ -4,7 +4,7 @@ import { Dropdown } from '@frontify/fondue-components';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { useEditorOverlay } from '#/bridge/overlays';
-import { type OverlayAnchor } from '#/bridge/plugin';
+import { type OverlayAnchor } from '#/bridge/pluginApi/plugin';
 import { SessionContext } from '#/bridge/session';
 import { lazyPart } from '#/bridge/session/helpers/lazyPart';
 import { atomPositionAt, selectedNodePosition, surfaceElement } from '#/runtime/port';

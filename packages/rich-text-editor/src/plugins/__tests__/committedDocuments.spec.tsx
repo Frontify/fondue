@@ -6,7 +6,7 @@ import { TextSelection } from 'prosemirror-state';
 import { createRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { partWithOptions } from '#/bridge/plugin';
+import { partWithOptions } from '#/bridge/pluginApi/plugin';
 import { createCodecs } from '#/codecs';
 import { decodeDocument, type JsonValue, type KeyBinding, type RichTextDocument } from '#/model';
 import { compiledModel } from '#/model/internal';

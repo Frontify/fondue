@@ -3,7 +3,7 @@
 import { Dropdown, Flyout } from '@frontify/fondue-components';
 import { type ComponentType, useEffect, useId, useState } from 'react';
 
-import { OverlayBody, useEditorOverlay } from '#/bridge/define';
+import { OverlayBody, useEditorOverlay } from '#/bridge/pluginApi/define';
 import { useEditorApi } from '#/entries/authoring';
 import { useEditorHandle } from '#/index';
 

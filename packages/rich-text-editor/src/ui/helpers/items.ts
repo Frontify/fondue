@@ -2,7 +2,7 @@
 
 import { type ComponentType } from 'react';
 
-import { type ToolbarControlProps } from '#/bridge/plugin';
+import { type ToolbarControlProps } from '#/bridge/pluginApi/plugin';
 import { type JsonValue } from '#/model';
 import { type EditorPort, endCompositionOf, selectedNodeNames } from '#/runtime/port';
 

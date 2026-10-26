@@ -10,7 +10,7 @@ import {
     useEditorOverlay,
     useEditorValue,
     useScopedFocus,
-} from '#/bridge/plugin';
+} from '#/bridge/pluginApi/plugin';
 import { type CodecContext } from '#/model';
 
 import { caretLink, caretOf, linkBubbleStrings, returnFocus, sameLink } from '../helpers/linkBubbleModel';

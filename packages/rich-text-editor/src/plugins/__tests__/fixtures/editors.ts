@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPart, type EditorPart } from '#/bridge/plugin';
+import { defineEditorPart, type EditorPart } from '#/bridge/pluginApi/plugin';
 import { type ContentModel, type ContentNodeJSON } from '#/model';
 
 import {

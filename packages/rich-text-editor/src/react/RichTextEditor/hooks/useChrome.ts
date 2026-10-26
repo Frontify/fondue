@@ -4,7 +4,7 @@ import { useFondueTheme } from '@frontify/fondue-components';
 import { type MutableRefObject, useCallback, useId, useMemo, useRef, useState } from 'react';
 
 import { type InteractionScope } from '#/bridge/overlays/helpers/interactionScope';
-import { type EditorHosts } from '#/bridge/plugin';
+import { type EditorHosts } from '#/bridge/pluginApi/plugin';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import { enUS } from '#/locales/en-US';
 import { codecContext } from '#/model/internal';

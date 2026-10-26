@@ -5,7 +5,7 @@
 import { EditorState, type Plugin } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
-import { defineEditorPart, type EditorPart, type EditorPartSpec } from '#/bridge/plugin';
+import { defineEditorPart, type EditorPart, type EditorPartSpec } from '#/bridge/pluginApi/plugin';
 import {
     compileContentModel,
     type ContentModel,

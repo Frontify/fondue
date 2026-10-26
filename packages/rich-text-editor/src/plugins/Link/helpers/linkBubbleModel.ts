@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorApi, type MarkRunValue, sameRange } from '#/bridge/plugin';
+import { type EditorApi, type MarkRunValue, sameRange } from '#/bridge/pluginApi/plugin';
 import { checkHref, type CodecContext } from '#/model';
 
 /** The commands the bubble runs. */

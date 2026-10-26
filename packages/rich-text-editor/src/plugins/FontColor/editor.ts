@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { lazyPart } from '#/bridge/define';
-import { defineEditorPart } from '#/bridge/plugin';
+import { lazyPart } from '#/bridge/pluginApi/define';
+import { defineEditorPart } from '#/bridge/pluginApi/plugin';
 import { type JsonObject } from '#/model';
 
 import { fontColor } from './feature';

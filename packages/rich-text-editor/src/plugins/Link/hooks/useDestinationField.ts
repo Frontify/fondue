@@ -2,8 +2,8 @@
 
 import { type CompositionEvent, type KeyboardEvent, useRef } from 'react';
 
-import { suggestionOptionId } from '#/bridge/define';
-import { passesToBrowser } from '#/bridge/plugin';
+import { suggestionOptionId } from '#/bridge/pluginApi/define';
+import { passesToBrowser } from '#/bridge/pluginApi/plugin';
 
 import { type Destination } from '../helpers/destination';
 import { type LinkSearch, wrapped } from '../helpers/linkPopoverModel';

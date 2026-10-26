@@ -2,8 +2,8 @@
 
 import { type FormEvent, useCallback, useEffect, useId, useRef, useState } from 'react';
 
-import { useEditorDialog } from '#/bridge/define';
-import { type OverlayProps, useEditorApi } from '#/bridge/plugin';
+import { useEditorDialog } from '#/bridge/pluginApi/define';
+import { type OverlayProps, useEditorApi } from '#/bridge/pluginApi/plugin';
 
 import {
     SET_LANGUAGE,

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorApi, type UploadStatus, useEditorValue } from '#/bridge/plugin';
+import { type EditorApi, type UploadStatus, useEditorValue } from '#/bridge/pluginApi/plugin';
 import { type CodecContext } from '#/model';
 
 const sameStatus = (a: UploadStatus | undefined, b: UploadStatus | undefined) =>

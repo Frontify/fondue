@@ -7,7 +7,7 @@ import { type ComponentType, createRef, lazy, Profiler, type ReactNode, useEffec
 import { renderToString } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { defineEditorPart } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/pluginApi/plugin';
 import { compileContentModel, type ContentNodeJSON, type JsonValue } from '#/model';
 import { fixtureCodeBlock } from '#/plugins/__tests__/fixtures/code-block/feature';
 import { fixtureItalic, fixtureToolbar } from '#/plugins/__tests__/fixtures/features';

@@ -4,7 +4,7 @@ import { act, render } from '@testing-library/react';
 import { createRef } from 'react';
 import { vi } from 'vitest';
 
-import { type EditorPart } from '#/bridge/plugin';
+import { type EditorPart } from '#/bridge/pluginApi/plugin';
 import { defineReactPresentation } from '#/entries/authoring';
 import {
     type AuthoringPolicy,

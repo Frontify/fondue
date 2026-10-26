@@ -1,15 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type NodeViewDeclaration, type PanelDeclaration } from '#/bridge/define';
+import { type NodeViewDeclaration, type PanelDeclaration } from '#/bridge/pluginApi/define';
+import { type RichTextPlugin } from '#/bridge/pluginApi/definePlugin';
+import { editorApiOf, facetsOf, partCommandApiOf } from '#/bridge/pluginApi/liveApi';
 import {
     type EditorApi,
     type EditorHosts,
     type EditorPart,
     type EditorSuggestion,
     partWithOptions,
-} from '#/bridge/plugin';
-import { type RichTextPlugin } from '#/bridge/pluginApi/definePlugin';
-import { editorApiOf, facetsOf, partCommandApiOf } from '#/bridge/pluginApi/liveApi';
+} from '#/bridge/pluginApi/plugin';
 import {
     type CommandRef,
     type ContentModel,

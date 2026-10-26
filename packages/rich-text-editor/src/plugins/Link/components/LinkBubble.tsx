@@ -4,8 +4,8 @@ import { Flyout, Tooltip } from '@frontify/fondue-components';
 import { IconArrowOutExternal, IconClipboard, IconPen, IconTrashBin } from '@frontify/fondue-icons';
 import { type ReactNode } from 'react';
 
-import { ChromeToolbarButton, NodeChromeToolbar } from '#/bridge/define';
-import { passEscape, type StandingOverlayProps } from '#/bridge/plugin';
+import { ChromeToolbarButton, NodeChromeToolbar } from '#/bridge/pluginApi/define';
+import { passEscape, type StandingOverlayProps } from '#/bridge/pluginApi/plugin';
 
 import { EDIT_LINK, openLink, REMOVE_LINK } from '../helpers/linkBubbleModel';
 import { useLinkBubbleState } from '../hooks/useLinkBubbleState';

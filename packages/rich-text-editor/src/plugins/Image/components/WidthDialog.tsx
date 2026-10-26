@@ -3,8 +3,8 @@
 import { Label, TextInput } from '@frontify/fondue-components';
 import { type FormEvent, useId, useRef, useState } from 'react';
 
-import { EditorDialog, useEditorDialog } from '#/bridge/define';
-import { type OverlayProps, useEditorApi } from '#/bridge/plugin';
+import { EditorDialog, useEditorDialog } from '#/bridge/pluginApi/define';
+import { type OverlayProps, useEditorApi } from '#/bridge/pluginApi/plugin';
 
 import { MAX_WIDTH, MIN_WIDTH, SET_SIZE, type WidthStrings } from '../helpers/dialogStrings';
 import styles from '../styles/media.module.scss';

@@ -16,7 +16,7 @@ import {
     type EditorHosts,
     type EditorPart,
     partWithOptions,
-} from '#/bridge/plugin';
+} from '#/bridge/pluginApi/plugin';
 import { PortalHost } from '#/bridge/PortalHost';
 import { enUS } from '#/locales/en-US';
 import {

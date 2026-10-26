@@ -2,8 +2,8 @@
 
 import { type ComponentType, type ReactNode, useContext } from 'react';
 
-import { type PanelComponentProps } from '#/bridge/define';
-import { defineEditorPart } from '#/bridge/plugin';
+import { type PanelComponentProps } from '#/bridge/pluginApi/define';
+import { defineEditorPart } from '#/bridge/pluginApi/plugin';
 import { SessionContext } from '#/bridge/session';
 import { type EditorHandle } from '#/index';
 import { defineFeature } from '#/model';

@@ -1,5 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type UploadStatus } from '#/bridge/plugin';
+import { type UploadStatus } from '#/bridge/pluginApi/plugin';
 
 export const isRunning = (status: UploadStatus) => status.state === 'running' || status.state === 'queued';

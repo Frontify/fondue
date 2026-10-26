@@ -12,7 +12,7 @@ import {
     type ShippedCommands,
 } from '#/runtime/types';
 
-import { useRenderMark } from './devChecks';
+import { useRenderMark } from '../devChecks';
 
 export { suggestionOptionId } from '#/runtime/capabilities/suggestions/optionId';
 export {
@@ -25,13 +25,13 @@ export {
     NodeChromeToolbar,
     OptionItem,
     OptionsMenu,
-} from './chromeToolbar';
-export { EditorDialog, type EditorDialogControl, useEditorDialog } from './EditorDialog';
-export { lazyPart } from './session/helpers/lazyPart';
-export { Listbox, type ListboxOption } from './chrome/components/Listbox';
-export { NodeViewContent } from './NodeViewContent';
-export { NodeChromeTurnInto, type TurnIntoCommands, TurnIntoMenu } from './turnInto';
-export { type EditorOverlay, OverlayBody, useEditorOverlay } from './overlays';
+} from '../chromeToolbar';
+export { EditorDialog, type EditorDialogControl, useEditorDialog } from '../EditorDialog';
+export { lazyPart } from '../session/helpers/lazyPart';
+export { Listbox, type ListboxOption } from '../chrome/components/Listbox';
+export { NodeViewContent } from '../NodeViewContent';
+export { NodeChromeTurnInto, type TurnIntoCommands, TurnIntoMenu } from '../turnInto';
+export { type EditorOverlay, OverlayBody, useEditorOverlay } from '../overlays';
 
 /** What node chrome reads besides attributes: the reader's `ReaderContext`, which `src/bridge` may not import from the reader. */
 export type NodeViewContext = ReaderContext;

@@ -2,8 +2,8 @@
 
 import { type FocusEvent, type Ref } from 'react';
 
-import { type CommandsOfPart } from '#/bridge/plugin';
 import { type RichTextPlugin } from '#/bridge/pluginApi/definePlugin';
+import { type CommandsOfPart } from '#/bridge/pluginApi/plugin';
 import {
     type CapabilityRef,
     type ColorToken,

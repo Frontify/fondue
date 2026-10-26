@@ -2,8 +2,8 @@
 
 import { Button, Label, RadioList, TextInput } from '@frontify/fondue-components';
 
-import { EditorDialog } from '#/bridge/define';
-import { type OverlayProps } from '#/bridge/plugin';
+import { EditorDialog } from '#/bridge/pluginApi/define';
+import { type OverlayProps } from '#/bridge/pluginApi/plugin';
 
 import { type AltTextStrings } from '../helpers/dialogStrings';
 import { type AltTextState, useAltTextDialogState } from '../hooks/useAltTextDialogState';

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorPart } from '#/bridge/plugin';
 import { partCommandApiOf } from '#/bridge/pluginApi/liveApi';
+import { type EditorPart } from '#/bridge/pluginApi/plugin';
 import { type CommandRef, type ContentModel } from '#/model';
 import { pluginCommand } from '#/runtime/api/editorApi';
 import { type EngineCommand, type EngineExtension } from '#/runtime/definition';

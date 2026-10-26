@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { OptionsMenu, TurnIntoMenu } from '#/bridge/define';
-import { defineEditorPart, type EditorApi } from '#/bridge/plugin';
+import { OptionsMenu, TurnIntoMenu } from '#/bridge/pluginApi/define';
+import { defineEditorPart, type EditorApi } from '#/bridge/pluginApi/plugin';
 import { type BlockDecoration, blockRule, type JsonObject } from '#/model';
 
 import { codeBlockView } from './components/CodeChrome';

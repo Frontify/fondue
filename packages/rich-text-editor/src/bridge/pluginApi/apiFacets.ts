@@ -2,7 +2,7 @@
 
 import { type DocumentApi } from '#/runtime/api/documentApi';
 
-import { type EditorHosts } from '../plugin';
+import { type EditorHosts } from './plugin';
 
 /**
  * What plugin commands and plugin UI act through, with no engine type: reads of the selection and content, writes that

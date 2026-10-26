@@ -18,7 +18,7 @@ import { engineOf } from '#/runtime/portEngine';
 
 import { createSelectionAnchor } from './overlays/helpers/anchor';
 import { type InteractionScope } from './overlays/helpers/interactionScope';
-import { type AnchorTarget, type OverlayAnchor } from './plugin';
+import { type AnchorTarget, type OverlayAnchor } from './pluginApi/plugin';
 import { SessionContext } from './session';
 import { useClientLayoutEffect } from './session/hooks/useClientLayoutEffect';
 

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPart } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/pluginApi/plugin';
 
 import { subscript } from './feature';
 

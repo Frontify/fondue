@@ -2,7 +2,7 @@
 
 import { type ChangeEvent, useEffect, useId, useRef, useState } from 'react';
 
-import { type OverlayProps, useEditorApi, useEditorOverlay } from '#/bridge/plugin';
+import { type OverlayProps, useEditorApi, useEditorOverlay } from '#/bridge/pluginApi/plugin';
 import { type CodecContext, type PresentationStyle } from '#/model';
 
 import {

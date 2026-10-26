@@ -233,12 +233,12 @@ const CASES: readonly Case[] = [
     allowed(
         'editor part: the plugin bridge',
         'src/plugins/bold/plugin.tsx',
-        "import { definePlugin } from '#/bridge/plugin';",
+        "import { definePlugin } from '#/bridge/pluginApi/plugin';",
     ),
     allowed(
         'editor part: the define bridge',
         'src/plugins/bold/define.tsx',
-        "import { defineView } from '#/bridge/define';",
+        "import { defineView } from '#/bridge/pluginApi/define';",
     ),
     allowed('editor part: model', 'src/plugins/bold/entry.tsx', "import { node } from '#/model';"),
     allowed('editor part: react', 'src/plugins/bold/react.tsx', "import { memo } from 'react';"),
@@ -431,7 +431,7 @@ const CASES: readonly Case[] = [
     banned(
         'feature index: another bridge module',
         'src/plugins/bold/index.ts',
-        "import { define } from '#/bridge/define';",
+        "import { define } from '#/bridge/pluginApi/define';",
     ),
     banned('feature index: its migration', 'src/plugins/bold/index.ts', "import { migrate } from './migration';"),
     banned('feature index: its view', 'src/plugins/bold/index.ts', "import { view } from './view';"),
@@ -462,7 +462,7 @@ const CASES: readonly Case[] = [
     banned(
         'feature plugins: another bridge module',
         'src/plugins/plugins.ts',
-        "import { define } from '#/bridge/define';",
+        "import { define } from '#/bridge/pluginApi/define';",
     ),
     banned('feature plugins: a feature file', 'src/plugins/plugins.ts', "import { bold } from './bold/feature';"),
     banned(
@@ -837,7 +837,7 @@ const CASES: readonly Case[] = [
     allowed(
         'stories: the plugin bridge',
         'src/ui/plugin.stories.tsx',
-        "import { definePlugin } from '#/bridge/plugin';",
+        "import { definePlugin } from '#/bridge/pluginApi/plugin';",
     ),
     allowed(
         'stories: the shared examples',
@@ -880,7 +880,7 @@ const CASES: readonly Case[] = [
     banned('ui: the react layer', 'src/ui/react-layer.ts', "import { Editor } from '#/react/editor';"),
     banned('ui: persistence', 'src/ui/persistence.ts', "import { save } from '#/persistence/save';"),
     banned('ui: the clipboard plugin', 'src/ui/clipboard.ts', "import { plugin } from '#/runtime/clipboard/plugin';"),
-    allowed('ui: the bridge', 'src/ui/bridge.ts', "import { definePlugin } from '#/bridge/plugin';"),
+    allowed('ui: the bridge', 'src/ui/bridge.ts', "import { definePlugin } from '#/bridge/pluginApi/plugin';"),
 
     // docs
     banned('docs: an internal module', 'src/docs/internal.tsx', "import { run } from '#/runtime/run';"),

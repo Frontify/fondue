@@ -75,7 +75,7 @@ const NODE_BUILTINS = [
     ...builtinModules.filter((name) => !name.startsWith('node:')).flatMap((name) => [name, `${name}/**`]),
 ];
 
-const EDITOR_PART_MESSAGE = `An editor part acts only through \`#/bridge/plugin\`: it imports that module, \`#/bridge/define\`, \`#/model\` and its own feature folder, and of other packages only ${UI_PACKAGES_TEXT}, never Node built-ins, the engine, the runtime, the editor layers or another feature.`;
+const EDITOR_PART_MESSAGE = `An editor part acts only through \`#/bridge/pluginApi/plugin\`: it imports that module, \`#/bridge/pluginApi/define\`, \`#/model\` and its own feature folder, and of other packages only ${UI_PACKAGES_TEXT}, never Node built-ins, the engine, the runtime, the editor layers or another feature.`;
 
 const COMPONENT_DIRECTION_MESSAGE =
     'A component imports hooks, helpers and its sibling components, never a root file of its plugin (`index`, `editor`, `reader`, `feature`), because static imports run components, hooks, helpers.';
@@ -180,7 +180,13 @@ const PUBLIC_ENTRY_MODULES = Object.entries(packageJson.exports)
     .map((path) => (path === 'features' ? 'plugins' : path));
 
 // The public entries, the modules they re-export to plugins and the shared story folder, through the alias.
-const STORY_MODULES = [...PUBLIC_ENTRY_MODULES, 'bridge/plugin', 'bridge/define', 'reader/define', 'react/examples/**'];
+const STORY_MODULES = [
+    ...PUBLIC_ENTRY_MODULES,
+    'bridge/pluginApi/plugin',
+    'bridge/pluginApi/define',
+    'reader/define',
+    'react/examples/**',
+];
 
 const STORY_MESSAGE = `A story imports only the public entries and the modules they re-export to plugins (${STORY_MODULES.map((path) => `\`#/${path}\``).join(', ')}), files of its own folder, ${UI_PACKAGES_TEXT}, \`storybook/*\` and \`@storybook/*\`, as an outside host must.`;
 
@@ -383,7 +389,7 @@ const editorPartRestrictions = (outside: string): ImportRestriction[] => [
         group: [
             ...aliasPatterns(editorPartFolders),
             '#/model/**',
-            ...exceptPatterns(['bridge/plugin', 'bridge/define']),
+            ...exceptPatterns(['bridge/pluginApi/plugin', 'bridge/pluginApi/define']),
             '#/plugins/**',
             outside,
         ],
@@ -429,7 +435,7 @@ const TESTING_MESSAGE =
     '`testing` may import `model`, `runtime` (but not `runtime/import`), `persistence`, `reader`, `codecs` and `locales`, from `runtime/clipboard` only `runtime/clipboard/plugin`, and from `plugins` only conformance and fixtures.';
 
 const CONFORMANCE_MESSAGE =
-    'The contract suite drives editor parts through the engine, so it also imports `react`, `react-dom/server`, `#/bridge/plugin`, `#/plugins/plugins`, `#/plugins/registry` and `#/react/compile/engine`.';
+    'The contract suite drives editor parts through the engine, so it also imports `react`, `react-dom/server`, `#/bridge/pluginApi/plugin`, `#/plugins/plugins`, `#/plugins/registry` and `#/react/compile/engine`.';
 
 const RUNTIME_MESSAGE = '`runtime` imports `model`, `runtime/definition`, `runtime/import` and ProseMirror.';
 
@@ -829,7 +835,12 @@ export default defineConfig({
                     ...featurePathPatterns(TESTING_FEATURE_TAILS),
                     ...ENGINE_PATTERNS,
                     ...exceptPatterns(['runtime/clipboard/plugin']),
-                    ...exceptPatterns(['bridge/plugin', 'plugins/plugins', 'plugins/registry', 'react/compile/engine']),
+                    ...exceptPatterns([
+                        'bridge/pluginApi/plugin',
+                        'plugins/plugins',
+                        'plugins/registry',
+                        'react/compile/engine',
+                    ]),
                     '!react',
                     '!react-dom/server',
                 ],

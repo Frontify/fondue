@@ -2,8 +2,8 @@
 
 import { useRef, useState } from 'react';
 
-import { type PanelComponentProps } from '#/bridge/define';
-import { type EditorApi, useClientLayoutEffect, useEditorApi } from '#/bridge/plugin';
+import { type PanelComponentProps } from '#/bridge/pluginApi/define';
+import { type EditorApi, useClientLayoutEffect, useEditorApi } from '#/bridge/pluginApi/plugin';
 
 import styles from '../styles/outline.module.scss';
 

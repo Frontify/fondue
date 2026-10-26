@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 
-import { defineEditorPart } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/pluginApi/plugin';
 import { defineReactPresentation } from '#/entries/authoring';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, defineFeature } from '#/model';

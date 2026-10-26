@@ -8,7 +8,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { createElement, createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { type EditorApi, type EditorCommand, type EditorPart } from '#/bridge/plugin';
+import { type EditorApi, type EditorCommand, type EditorPart } from '#/bridge/pluginApi/plugin';
 import { createCodecs } from '#/codecs';
 import { defineEditorPart, defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';

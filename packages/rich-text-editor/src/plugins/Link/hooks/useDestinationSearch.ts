@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { type EditorApi } from '#/bridge/plugin';
+import { type EditorApi } from '#/bridge/pluginApi/plugin';
 import { type HrefPolicy } from '#/model';
 
 import { type Destination, destinationsOf } from '../helpers/destination';

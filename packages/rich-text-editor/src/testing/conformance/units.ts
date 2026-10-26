@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorPart } from '#/bridge/plugin';
+import { type EditorPart } from '#/bridge/pluginApi/plugin';
 import { type Feature } from '#/model';
 import { pluginIds, pluginsById } from '#/plugins/plugins';
 

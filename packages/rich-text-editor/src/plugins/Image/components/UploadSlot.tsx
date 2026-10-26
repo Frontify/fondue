@@ -3,7 +3,7 @@
 import { LoadingBar } from '@frontify/fondue-components';
 import { type CSSProperties, type MouseEvent, useEffect, useState } from 'react';
 
-import { type UploadStatus } from '#/bridge/plugin';
+import { type UploadStatus } from '#/bridge/pluginApi/plugin';
 import { type CodecContext } from '#/model';
 
 import { isRunning } from '../helpers/isRunning';

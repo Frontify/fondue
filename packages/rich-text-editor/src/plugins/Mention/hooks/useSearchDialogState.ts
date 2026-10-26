@@ -2,8 +2,13 @@
 
 import { type CompositionEvent, type KeyboardEvent, useEffect, useId, useMemo, useRef, useState } from 'react';
 
-import { suggestionOptionId, useEditorDialog } from '#/bridge/define';
-import { type EditorApi, passesToBrowser, type SelectionHandle, useClientLayoutEffect } from '#/bridge/plugin';
+import { suggestionOptionId, useEditorDialog } from '#/bridge/pluginApi/define';
+import {
+    type EditorApi,
+    passesToBrowser,
+    type SelectionHandle,
+    useClientLayoutEffect,
+} from '#/bridge/pluginApi/plugin';
 
 import {
     afterFailure,

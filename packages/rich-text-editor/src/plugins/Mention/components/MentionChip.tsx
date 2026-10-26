@@ -2,8 +2,8 @@
 
 import { useEffect } from 'react';
 
-import { type NodeViewDeclaration, useRichTextNodeView } from '#/bridge/define';
-import { type EditorApi, useEditorApi } from '#/bridge/plugin';
+import { type NodeViewDeclaration, useRichTextNodeView } from '#/bridge/pluginApi/define';
+import { type EditorApi, useEditorApi } from '#/bridge/pluginApi/plugin';
 import { mentionLabel } from '#/model';
 
 import styles from '../styles/mention.module.scss';

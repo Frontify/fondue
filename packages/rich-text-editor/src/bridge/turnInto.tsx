@@ -6,7 +6,7 @@ import { type CodecContext, type JsonValue } from '#/model';
 import { type CommandState } from '#/runtime/port';
 
 import { type MenuOption, NodeChromeMenu, OptionItem, OptionsMenu } from './chromeToolbar';
-import { type EditorApi, type OverlayProps, useEditorApi } from './plugin';
+import { type EditorApi, type OverlayProps, useEditorApi } from './pluginApi/plugin';
 import { SessionContext } from './session';
 
 /** One block conversion of the Turn into menus: the command that makes it, and its label. */

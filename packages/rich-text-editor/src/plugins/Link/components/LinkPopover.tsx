@@ -3,8 +3,8 @@
 import { Button, Checkbox, Dropdown, Flyout, Label, TextInput } from '@frontify/fondue-components';
 import { useId } from 'react';
 
-import { CheckedSlot, Listbox } from '#/bridge/define';
-import { type OverlayProps, type useEditorOverlay } from '#/bridge/plugin';
+import { CheckedSlot, Listbox } from '#/bridge/pluginApi/define';
+import { type OverlayProps, type useEditorOverlay } from '#/bridge/pluginApi/plugin';
 
 import { type LinkInitial, type LinkPopoverStrings, type LinkStyleOption } from '../helpers/linkPopoverModel';
 import { useLinkPopoverState } from '../hooks/useLinkPopoverState';

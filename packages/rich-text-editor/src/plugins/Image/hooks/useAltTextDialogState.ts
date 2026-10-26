@@ -2,8 +2,8 @@
 
 import { type FormEvent, useCallback, useId, useRef, useState } from 'react';
 
-import { useEditorDialog } from '#/bridge/define';
-import { type EditorApi, useEditorApi } from '#/bridge/plugin';
+import { useEditorDialog } from '#/bridge/pluginApi/define';
+import { type EditorApi, useEditorApi } from '#/bridge/pluginApi/plugin';
 import { REPLACED_ASSET } from '#/model';
 
 export type Intent = 'meaningful' | 'decorative';

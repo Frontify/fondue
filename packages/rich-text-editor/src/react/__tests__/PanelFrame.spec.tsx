@@ -3,7 +3,7 @@
 import { act, fireEvent, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { type EditorPart } from '#/bridge/plugin';
+import { type EditorPart } from '#/bridge/pluginApi/plugin';
 import { type ContentModel, type Feature } from '#/model';
 import {
     fixtureFindPanel,

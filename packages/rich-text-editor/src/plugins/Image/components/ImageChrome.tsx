@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type NodeViewDeclaration } from '#/bridge/define';
+import { type NodeViewDeclaration } from '#/bridge/pluginApi/define';
 
 import { useImageChromeState } from '../hooks/useImageChromeState';
 import styles from '../styles/image.module.scss';

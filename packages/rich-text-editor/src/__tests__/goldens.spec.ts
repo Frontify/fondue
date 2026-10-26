@@ -4,7 +4,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type EditorPart } from '#/bridge/plugin';
+import { type EditorPart } from '#/bridge/pluginApi/plugin';
 import { DefinitionError } from '#/model';
 import { brandDocumentModel } from '#/plugins/profiles/brandDocument';
 import { commentModel } from '#/plugins/profiles/comment';

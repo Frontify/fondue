@@ -21,10 +21,11 @@ import { type EditorRange } from '#/runtime/api/documentApi';
 import { type ContentChecksApi } from '#/runtime/capabilities/checks/api';
 import { type AuthoringPolicy, type ReferenceValue } from '#/runtime/types';
 
+import { SessionContext, useSessionValue } from '../session';
+
+import { type EditorApi, type EditorFacet } from './apiFacets';
 import { type NodeViewDeclaration, type PanelDeclaration } from './define';
-import { type EditorApi, type EditorFacet } from './pluginApi/apiFacets';
-import { editorApiOf } from './pluginApi/liveApi';
-import { SessionContext, useSessionValue } from './session';
+import { editorApiOf } from './liveApi';
 
 export { type CheckedIssue, type ContentChecksApi, type ContentChecksResult } from '#/runtime/capabilities/checks/api';
 export {
@@ -42,11 +43,11 @@ export {
 } from '#/runtime/api/documentApi';
 export { passesToBrowser } from '#/runtime/dom/browserKeys';
 export { type ReferenceValue, type SelectionHandle, type UploadStatus } from '#/runtime/types';
-export { type Announcer, createAnnouncer } from './announcer';
-export { type EditorApi, type EditorControlApi, type EditorFacet, type EditorFacets } from './pluginApi/apiFacets';
-export { useClientLayoutEffect } from './session/hooks/useClientLayoutEffect';
-export { OverlayBody, passEscape, useEditorOverlay, useOverlayContainer, useScopedFocus } from './overlays';
-export { useApplePlatform } from './platform';
+export { type Announcer, createAnnouncer } from '../announcer';
+export { type EditorApi, type EditorControlApi, type EditorFacet, type EditorFacets } from './apiFacets';
+export { useClientLayoutEffect } from '../session/hooks/useClientLayoutEffect';
+export { OverlayBody, passEscape, useEditorOverlay, useOverlayContainer, useScopedFocus } from '../overlays';
+export { useApplePlatform } from '../platform';
 
 /** A rectangle an overlay anchors to, as Fondue's `virtualAnchor` takes it. */
 export type OverlayAnchor = {

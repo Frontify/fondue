@@ -13,8 +13,8 @@ import {
 } from '#/runtime/dom/viewBridge';
 import { type EditorRuntime, liveResources, type NodeTarget } from '#/runtime/runtime';
 
-import { type NodeViewDeclaration } from '../define';
 import { ISLAND_VIEWS } from '../island';
+import { type NodeViewDeclaration } from '../pluginApi/define';
 
 import { createPlacement, ignoresMutation, sameTags, stopsEvent, syncLayers } from './helpers/nodeViewParts';
 import { type PortalEntry, type PortalStore } from './helpers/portals';

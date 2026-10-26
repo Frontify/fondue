@@ -2,7 +2,7 @@
 
 import { type FormEvent, type RefObject, useEffect, useState } from 'react';
 
-import { type EditorApi, type SelectionHandle, type useEditorOverlay } from '#/bridge/plugin';
+import { type EditorApi, type SelectionHandle, type useEditorOverlay } from '#/bridge/pluginApi/plugin';
 import { checkHref, type HrefPolicy } from '#/model';
 
 import { withScheme, type Destination } from '../helpers/destination';

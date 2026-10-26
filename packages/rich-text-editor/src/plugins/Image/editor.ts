@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { OptionsMenu } from '#/bridge/define';
-import { defineEditorPart, type EditorApi, type EditorControlApi } from '#/bridge/plugin';
+import { OptionsMenu } from '#/bridge/pluginApi/define';
+import { defineEditorPart, type EditorApi, type EditorControlApi } from '#/bridge/pluginApi/plugin';
 import { figureAlign } from '#/model';
 
 import { imageView } from './components/ImageChrome';

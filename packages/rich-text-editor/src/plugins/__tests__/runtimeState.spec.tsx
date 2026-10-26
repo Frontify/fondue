@@ -4,7 +4,7 @@ import { act, screen } from '@testing-library/react';
 import { AllSelection } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { partWithOptions } from '#/bridge/plugin';
+import { partWithOptions } from '#/bridge/pluginApi/plugin';
 import { type ContentNodeJSON } from '#/model';
 import { compiledModel } from '#/model/internal';
 import { brandDocumentModel } from '#/plugins';

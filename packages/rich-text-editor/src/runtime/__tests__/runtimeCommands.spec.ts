@@ -7,7 +7,7 @@ import { type EditorState, Plugin, TextSelection, type Transaction } from 'prose
 import { tableEditing, tableNodes } from 'prosemirror-tables';
 import { describe, expect, it, vi } from 'vitest';
 
-import { defineEditorPart } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/pluginApi/plugin';
 import { type CommandsOfPart } from '#/entries/authoring';
 import { type EditorHandle } from '#/index';
 import { compileContentModel, defineFeature, type Diagnostic } from '#/model';

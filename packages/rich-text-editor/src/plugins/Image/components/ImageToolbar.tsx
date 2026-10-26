@@ -2,8 +2,8 @@
 
 import { IconArrowSwap, IconPause, IconPlay } from '@frontify/fondue-icons';
 
-import { NodeChromeButton, NodeChromeMenu, NodeChromeToolbar, OptionItem } from '#/bridge/define';
-import { type EditorApi } from '#/bridge/plugin';
+import { NodeChromeButton, NodeChromeMenu, NodeChromeToolbar, OptionItem } from '#/bridge/pluginApi/define';
+import { type EditorApi } from '#/bridge/pluginApi/plugin';
 import { REPLACED_ASSET } from '#/model';
 
 import { altTextStrings, SET_SIZE } from '../helpers/dialogStrings';

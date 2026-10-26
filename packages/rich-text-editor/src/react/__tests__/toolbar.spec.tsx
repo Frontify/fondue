@@ -6,7 +6,7 @@ import { createRef, Profiler, type ReactNode, useContext } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AnnouncerContext } from '#/bridge/announcer';
-import { defineEditorPart } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/pluginApi/plugin';
 import { deDE } from '#/locales/de-DE';
 import { enUS } from '#/locales/en-US';
 import {

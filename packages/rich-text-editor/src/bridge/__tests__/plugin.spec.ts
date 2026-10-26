@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { core } from '#/plugins/Core/feature';
 
-import { defineEditorPart, partWithOptions } from '../plugin';
+import { defineEditorPart, partWithOptions } from '../pluginApi/plugin';
 
 describe('defineEditorPart with parts that depend on options', () => {
     it('gives the same parts through a spread copy as through the plugin', () => {

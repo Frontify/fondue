@@ -2,8 +2,8 @@
 
 import { Flyout, TextInput } from '@frontify/fondue-components';
 
-import { Listbox } from '#/bridge/define';
-import { type EditorApi, type OverlayProps, useEditorApi } from '#/bridge/plugin';
+import { Listbox } from '#/bridge/pluginApi/define';
+import { type EditorApi, type OverlayProps, useEditorApi } from '#/bridge/pluginApi/plugin';
 
 import { useEmojiPickerState } from '../hooks/useEmojiPickerState';
 import styles from '../styles/emoji.module.scss';

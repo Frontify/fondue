@@ -22,7 +22,7 @@ export {
     type PanelDeclaration,
     suggestionOptionId,
     useRichTextNodeView,
-} from '#/bridge/define';
+} from '#/bridge/pluginApi/define';
 export { definePlugin, extendPlugin } from '#/bridge/pluginApi/definePlugin';
 export {
     type AncestorValue,
@@ -74,7 +74,7 @@ export {
     useScopedFocus,
     type WriteOutcome,
     type WriteTarget,
-} from '#/bridge/plugin';
+} from '#/bridge/pluginApi/plugin';
 export { defineReaderFeature, type ReaderContext, type ReaderNodeProps, type ReaderRenderers } from '#/reader/define';
 export type { BlockDecoration, SuggestionResult } from '#/model';
 export type { BlockDecorationSource, DecoratedBlock, SuggestionPage, SuggestionRules } from '#/model/internal';

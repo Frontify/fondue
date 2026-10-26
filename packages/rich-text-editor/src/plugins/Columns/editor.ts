@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineEditorPart, type EditorApi } from '#/bridge/plugin';
+import { defineEditorPart, type EditorApi } from '#/bridge/pluginApi/plugin';
 
 import { columns } from './feature';
 

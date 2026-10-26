@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type MenuOption } from '#/bridge/define';
+import { type MenuOption } from '#/bridge/pluginApi/define';
 import { type CodecContext } from '#/model';
 
 import { SET_SIZE } from './dialogStrings';

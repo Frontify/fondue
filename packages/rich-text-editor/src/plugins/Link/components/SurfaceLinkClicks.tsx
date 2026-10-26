@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 
-import { useApplePlatform, useEditorApi } from '#/bridge/plugin';
+import { useApplePlatform, useEditorApi } from '#/bridge/pluginApi/plugin';
 
 import { openLink } from '../helpers/linkBubbleModel';
 

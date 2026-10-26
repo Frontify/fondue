@@ -2,8 +2,8 @@
 
 import { type MouseEvent, useEffect, useId, useMemo, useRef, useState } from 'react';
 
-import { type MenuOption, useRichTextNodeView } from '#/bridge/define';
-import { type EditorApi, type UploadStatus, useEditorApi, useEditorValue } from '#/bridge/plugin';
+import { type MenuOption, useRichTextNodeView } from '#/bridge/pluginApi/define';
+import { type EditorApi, type UploadStatus, useEditorApi, useEditorValue } from '#/bridge/pluginApi/plugin';
 import { altOf, figureAlign, imageOutput, isRecord, type JsonObject, REPLACED_ASSET, unavailableOf } from '#/model';
 
 import { mayAnimate } from '../helpers/animation';

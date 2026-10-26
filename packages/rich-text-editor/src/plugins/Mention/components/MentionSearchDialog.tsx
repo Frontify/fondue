@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { EditorDialog } from '#/bridge/define';
-import { type EditorApi, type OverlayProps, useEditorApi } from '#/bridge/plugin';
+import { EditorDialog } from '#/bridge/pluginApi/define';
+import { type EditorApi, type OverlayProps, useEditorApi } from '#/bridge/pluginApi/plugin';
 
 import { useSearchDialogState } from '../hooks/useSearchDialogState';
 

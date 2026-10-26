@@ -2,8 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 
-import { NodeViewContent, type NodeViewDeclaration, useRichTextNodeView } from '#/bridge/define';
-import { useEditorApi } from '#/bridge/plugin';
+import { NodeViewContent, type NodeViewDeclaration, useRichTextNodeView } from '#/bridge/pluginApi/define';
+import { useEditorApi } from '#/bridge/pluginApi/plugin';
 
 import styles from '../styles/task.module.scss';
 

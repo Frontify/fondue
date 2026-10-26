@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type PluginPresentation } from '#/bridge/plugin';
+import { type PluginPresentation } from '#/bridge/pluginApi/plugin';
 import { enUS } from '#/locales/en-US';
 import { type CodecContext } from '#/model';
 import { decodeToTree, columnLayout } from '#/model/internal';

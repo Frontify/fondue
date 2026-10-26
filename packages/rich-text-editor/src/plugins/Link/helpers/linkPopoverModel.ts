@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorApi, type EditorRange, type SelectionHandle } from '#/bridge/plugin';
+import { type EditorApi, type EditorRange, type SelectionHandle } from '#/bridge/pluginApi/plugin';
 import {
     type CodecContext,
     type HrefPolicy,

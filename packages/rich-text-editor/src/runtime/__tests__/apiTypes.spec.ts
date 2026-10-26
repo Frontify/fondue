@@ -2,7 +2,12 @@
 
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
-import { type CommandsOfPart, defineEditorPart, type EditorApi, type EditorControlApi } from '#/bridge/plugin';
+import {
+    type CommandsOfPart,
+    defineEditorPart,
+    type EditorApi,
+    type EditorControlApi,
+} from '#/bridge/pluginApi/plugin';
 import { bold } from '#/plugins/Bold/feature';
 
 import { type CommandOutcome } from '../api/documentApi';

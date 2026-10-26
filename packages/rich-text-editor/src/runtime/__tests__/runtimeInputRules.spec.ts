@@ -3,7 +3,7 @@
 import { type Node } from 'prosemirror-model';
 import { describe, expect, it } from 'vitest';
 
-import { defineEditorPart } from '#/bridge/plugin';
+import { defineEditorPart } from '#/bridge/pluginApi/plugin';
 import { compileContentModel, defineFeature, type JsonValue } from '#/model';
 import { fixtureHeadingSet, fixtureInputRules, fixtureItalic } from '#/plugins/__tests__/fixtures/features';
 import { bold } from '#/plugins/Bold/feature';

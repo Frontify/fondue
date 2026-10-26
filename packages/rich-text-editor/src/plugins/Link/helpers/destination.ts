@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReferenceValue } from '#/bridge/plugin';
+import { type ReferenceValue } from '#/bridge/pluginApi/plugin';
 import { checkHref, type HrefPolicy } from '#/model';
 
 const SCHEME = /^[a-z][a-z\d+.-]*:/i;

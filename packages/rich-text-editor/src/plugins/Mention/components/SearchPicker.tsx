@@ -2,7 +2,7 @@
 
 import { LoadingCircle, TextInput } from '@frontify/fondue-components';
 
-import { Listbox } from '#/bridge/define';
+import { Listbox } from '#/bridge/pluginApi/define';
 
 import { resultsOf } from '../helpers/results';
 import { type useSearchDialogState } from '../hooks/useSearchDialogState';

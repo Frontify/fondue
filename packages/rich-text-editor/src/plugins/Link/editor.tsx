@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { lazyPart } from '#/bridge/define';
-import { defineEditorPart, type EditorApi, type EditorCommand } from '#/bridge/plugin';
+import { lazyPart } from '#/bridge/pluginApi/define';
+import { defineEditorPart, type EditorApi, type EditorCommand } from '#/bridge/pluginApi/plugin';
 import { markRule } from '#/model';
 
 import { SurfaceLinkClicks } from './components/SurfaceLinkClicks';

@@ -2,7 +2,7 @@
 
 import { type PointerEvent, type RefObject, useEffect, useRef, useState } from 'react';
 
-import { type EditorApi } from '#/bridge/plugin';
+import { type EditorApi } from '#/bridge/pluginApi/plugin';
 
 import { MAX_WIDTH, MIN_WIDTH } from '../helpers/dialogStrings';
 

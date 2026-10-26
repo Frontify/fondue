@@ -2,8 +2,8 @@
 
 import { type FocusEvent, useRef } from 'react';
 
-import { NodeChromeButton } from '#/bridge/define';
-import { type UploadStatus, useClientLayoutEffect, useEditorApi } from '#/bridge/plugin';
+import { NodeChromeButton } from '#/bridge/pluginApi/define';
+import { type UploadStatus, useClientLayoutEffect, useEditorApi } from '#/bridge/pluginApi/plugin';
 import { type CodecContext } from '#/model';
 
 import { isRunning } from '../helpers/isRunning';

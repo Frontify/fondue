@@ -11,8 +11,8 @@ import {
     useState,
 } from 'react';
 
-import { type ListboxOption, suggestionOptionId } from '#/bridge/define';
-import { type EditorApi, passesToBrowser, useEditorOverlay } from '#/bridge/plugin';
+import { type ListboxOption, suggestionOptionId } from '#/bridge/pluginApi/define';
+import { type EditorApi, passesToBrowser, useEditorOverlay } from '#/bridge/pluginApi/plugin';
 import { type CodecContext } from '#/model';
 
 import { type EmojiEntry, loadEmoji, searchEmoji } from '../helpers/data';

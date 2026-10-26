@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorPart, OPTION_PARTS, partWithOptions } from '#/bridge/plugin';
 import { type RichTextPlugin } from '#/bridge/pluginApi/definePlugin';
+import { type EditorPart, OPTION_PARTS, partWithOptions } from '#/bridge/pluginApi/plugin';
 import { type ContentModel, type Feature, type JsonObject } from '#/model';
 import { compiledModel } from '#/model/internal';
 import { pluginsById } from '#/plugins/plugins';

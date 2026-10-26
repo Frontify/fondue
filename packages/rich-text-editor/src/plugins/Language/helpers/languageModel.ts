@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorApi } from '#/bridge/plugin';
+import { type EditorApi } from '#/bridge/pluginApi/plugin';
 import { type CodecContext } from '#/model';
 
 /** The command the dialog runs. */

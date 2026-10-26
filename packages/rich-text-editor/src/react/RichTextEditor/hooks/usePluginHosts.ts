@@ -11,7 +11,7 @@ import {
     type OverlayAnchor,
     type OverlayProps,
     type PluginPresentation,
-} from '#/bridge/plugin';
+} from '#/bridge/pluginApi/plugin';
 import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 import { type CodecContext } from '#/model';
 import { contentChecksOf, referenceValues, surfaceElement } from '#/runtime/port';

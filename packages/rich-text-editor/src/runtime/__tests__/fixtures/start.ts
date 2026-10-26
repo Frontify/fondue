@@ -5,7 +5,7 @@ import { Plugin } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterAll, afterEach, beforeAll, beforeEach, expect, vi } from 'vitest';
 
-import { type EditorApi, type EditorPart } from '#/bridge/plugin';
+import { type EditorApi, type EditorPart } from '#/bridge/pluginApi/plugin';
 import { type PersistenceService } from '#/index';
 import {
     compileContentModel,

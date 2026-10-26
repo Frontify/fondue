@@ -12,7 +12,7 @@ import {
     type NodeViewDeclaration,
     type TurnIntoCommands,
     useRichTextNodeView,
-} from '#/bridge/define';
+} from '#/bridge/pluginApi/define';
 
 import { languageChoices } from '../helpers/languages';
 import styles from '../styles/code.module.scss';
