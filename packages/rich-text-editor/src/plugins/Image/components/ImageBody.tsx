@@ -6,7 +6,7 @@ import { SET_SIZE } from '../helpers/dialogStrings';
 import { type ImageChromeState } from '../hooks/useImageChromeState';
 import { ImageUnavailable } from '../reader';
 import styles from '../styles/image.module.scss';
-import { ContentImage } from './image';
+import { ContentImage } from './ContentImage';
 import { UploadSlot } from '../helpers/uploadParts';
 
 /** A stored intrinsic size, or `null` where the image has none. */

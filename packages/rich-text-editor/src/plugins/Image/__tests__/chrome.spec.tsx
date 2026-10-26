@@ -17,7 +17,7 @@ import { SLICE_TYPE } from '#/runtime/clipboard/slice';
 import { nodeStateOf } from '#/runtime/nodeState';
 
 import { mayAnimate } from '../helpers/animation';
-import { drawStill } from '../components/image';
+import { drawStill } from '../helpers/drawStill';
 
 import {
     deferredPicker,
