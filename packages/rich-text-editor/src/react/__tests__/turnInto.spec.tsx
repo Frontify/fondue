@@ -1,13 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { act } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import { turnIntoChoices, type TurnIntoEntry } from '#/bridge/turnInto';
 import { enUS } from '#/locales/en-US';
 import { isRecord, type JsonValue } from '#/model';
 import { codecContext } from '#/model/internal';
 import { mountProfile } from '#/react/__tests__/fixtures/profiles';
+import { loadProfile } from '#/react/profiles';
 import { type CommandState } from '#/runtime/port';
 import { runtimeOf } from '#/runtime/runtime';
 
@@ -115,6 +116,11 @@ describe('the entries a block takes', () => {
 });
 
 describe('the entries a selected node of a live editor takes', () => {
+    // The profile's module loads cold in a hook, which has the longer timeout, not in the first mount.
+    beforeAll(async () => {
+        await loadProfile('document');
+    });
+
     type Handle = Awaited<ReturnType<typeof mountProfile>>['handle'];
     // The handle's typed `execute` and `query` list shipped commands only, and these name them by string.
     const run = (handle: Handle, id: string) => (handle.execute as (id: string) => unknown)(id);
