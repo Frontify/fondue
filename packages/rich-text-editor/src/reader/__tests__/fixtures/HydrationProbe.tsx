@@ -20,6 +20,7 @@ export type HydrationResult = {
 
 const Done = ({ onDone }: { onDone: () => void }) => {
     useEffect(onDone, [onDone]);
+
     return null;
 };
 
@@ -53,7 +54,9 @@ export const HydrationProbe = ({
             tree(() => onDone({ mode: `${process.env.NODE_ENV}`, recoverable, html: container.innerHTML })),
             { onRecoverableError: (error) => recoverable.push(String(error)) },
         );
+
         return () => root.unmount();
     }, [document, html, onDone]);
+
     return <div ref={hostRef} />;
 };

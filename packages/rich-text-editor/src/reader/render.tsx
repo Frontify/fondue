@@ -90,9 +90,11 @@ const styleOf = (text: string): Readonly<Record<string, string>> => {
             if (!name.startsWith('--')) {
                 property = name.replaceAll(/-([a-z])/g, (_, letter: string) => letter.toUpperCase());
             }
+
             style[property] = declaration.slice(colon + 1).trim();
         }
     }
+
     return style;
 };
 
@@ -103,6 +105,7 @@ const propsOf = (attrs: Readonly<Record<string, string>>): Record<string, unknow
         if (!writesAttribute(name)) {
             continue;
         }
+
         if (name.toLowerCase() === 'style') {
             props.style = styleOf(value);
         } else if (Object.hasOwn(PROP_NAMES, name)) {
@@ -111,6 +114,7 @@ const propsOf = (attrs: Readonly<Record<string, string>>): Record<string, unknow
             props[name] = value;
         }
     }
+
     return props;
 };
 
@@ -120,19 +124,23 @@ const build = (template: HtmlTemplate, children: readonly ReactNode[]): ReactNod
     if (template.content) {
         content = children;
     }
+
     let element: ReactNode = null;
     for (let index = template.layers.length - 1; index >= 0; index -= 1) {
         const layer = template.layers[index];
         if (layer === undefined) {
             continue;
         }
+
         let inside = content;
         if (VOID_TAGS.has(layer.tag)) {
             inside = [];
         }
+
         element = createElement(layer.tag, propsOf(layer.attrs), ...inside);
         content = [element];
     }
+
     return element;
 };
 
@@ -144,6 +152,7 @@ const fallback = (
     children: readonly ReactNode[],
 ): ReactElement => {
     const label = islandLabel(state.context, feature);
+
     return createElement(tag, { role: 'group', 'aria-label': label, 'data-rte-island': '' }, ...children);
 };
 
@@ -164,6 +173,7 @@ const callOverride = (override: ComponentType<ReaderNodeProps>, props: ReaderNod
     if (result === undefined) {
         return null;
     }
+
     return result;
 };
 
@@ -181,23 +191,29 @@ const decorated = (
     if (outer === undefined || Object.keys(outer.attrs).length === 0) {
         return rendered;
     }
+
     const props = propsOf(outer.attrs);
     if (!isValidElement<Record<string, unknown>>(rendered) || typeof rendered.type !== 'string') {
         if (!wraps) {
             return rendered;
         }
+
         return createElement('span', props, rendered);
     }
+
     const own = rendered.props;
     if (typeof own.className === 'string' && typeof props.className === 'string') {
         props.className = `${own.className} ${props.className}`;
     }
+
     if (isRecord(own.style) && isRecord(props.style)) {
         props.style = Object.assign({ ...own.style }, props.style);
     }
+
     if (own['data-rte-style'] !== undefined) {
         delete props['data-rte-style'];
     }
+
     // oxlint-disable-next-line @eslint-react/no-clone-element -- the override's own root takes what the declared path writes on it.
     return cloneElement(rendered, props);
 };
@@ -212,6 +228,7 @@ const styled = (state: RenderState, type: string, attrs: JsonObject, path: strin
             state.diagnostics.push(unknownStyle(path));
         }
     }
+
     return style;
 };
 
@@ -229,23 +246,28 @@ const renderMark = (
     if (plan === undefined) {
         return createElement(Fragment, null, ...children);
     }
+
     const attrs = attrsOf(mark.attrs);
     // A link whose `href` fails the check is its text alone, with no link style, as `toHTML` and the editor show it.
     if (mark.type === 'link' && plan.featureId === 'links' && !checkHref(textOf(attrs.href)).ok) {
         return createElement(Fragment, null, ...children);
     }
+
     const style = styled(state, mark.type, attrs, markPath(items, index));
     const decorate = (template: HtmlTemplate) =>
         withColor(withStyle(withStyleId(template, attrs), style, false), mark.type, attrs, state.styles.colorTokens);
     if (plan.override !== undefined) {
         try {
             const props = { attrs, children: createElement(Fragment, null, ...children), context: state.context };
+
             return decorated(callOverride(plan.override, props), true, decorate);
         } catch {
             reportFailure(state, plan.featureId, markPath(items, index), mark.type);
+
             return fallback(state, 'span', plan.featureId, children);
         }
     }
+
     return build(decorate(resolveHtmlSpec(plan.spec, attrs, plan.options)), children);
 };
 
@@ -255,22 +277,30 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
         if (pre) {
             return text;
         }
+
         return spaced(state, text);
     }
+
     if (isIsland(node)) {
         const { tag, featureId, text } = islandFallback(state, node);
+
         return fallback(state, tag, featureId, [text]);
     }
+
     const plan = state.plan.nodes.get(node.type);
     if (plan === undefined) {
         state.carried = 0;
+
         return null;
     }
+
     // An unfinished upload is no published content, so its figure is left out and never resolved.
     if (leavesOutUnresolved(state, plan.featureId, node, path)) {
         state.carried = 0;
+
         return null;
     }
+
     const before = state.carried;
     const { children, entered } = state.depths.within(node.type, (level) => ({
         children: renderChildren(state, node, path, plan.pre),
@@ -283,28 +313,35 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
             const rendered = callOverride(plan.override, props);
             state.carried = 0;
             const style = styled(state, node.type, attrs, path);
+
             return decorated(rendered, false, (template) => withStyle(withStyleId(template, attrs), style, false));
         } catch {
             reportFailure(state, plan.featureId, path, node.type);
             const { tag, text } = failedFallback(state, node, plan, before);
+
             return fallback(state, tag, plan.featureId, [text]);
         }
     }
+
     state.carried = 0;
     let template = resolveHtmlSpec(plan.spec, attrs, plan.options, plan.shared);
     if (entered !== undefined) {
         template = withListLevel(template, attrs, entered.kind, entered.depth, state.listLevels);
     }
+
     if (!plan.inline) {
         template = withAutoDirection(template, passageDirection(treeRuns(node.content)));
     }
+
     template = withStyle(template, styled(state, node.type, attrs, path), false);
     if (node.type === COLUMN_BREAK) {
         if (state.columns !== undefined && state.breaks < state.columns.count - 1) {
             template = withActiveBreak(template);
         }
+
         state.breaks += 1;
     }
+
     return build(template, children);
 };
 
@@ -337,6 +374,7 @@ export const message = ({ locale, t }: ReaderContext, kind: keyof typeof MESSAGE
     if (locale.lang !== undefined) {
         props.lang = locale.lang;
     }
+
     return createElement('div', props, t(MESSAGE_KEYS[kind]));
 };
 
@@ -358,23 +396,29 @@ export const renderDocument = (
     if (typeof lang === 'string') {
         props.lang = lang;
     }
+
     if (dir === 'ltr' || dir === 'rtl') {
         props.dir = dir;
     }
+
     if (state.strikeCheckedTasks) {
         props['data-rte-strike-checked-tasks'] = '';
     }
+
     if (state.islands > 0) {
         children.push(message(state.context, 'islands'));
     }
+
     const content = createElement('div', props, ...children);
     const laidOut = withColumns(state.columns, content);
     if (styleSheet === '') {
         return laidOut;
     }
+
     // The stylesheet holds only checked declarations, so it can never close its element.
     // oxlint-disable-next-line react/no-danger -- React 18 escapes a text child of `<style>` on the server.
     const sheet = createElement('style', { 'data-rte-styles': '', dangerouslySetInnerHTML: { __html: styleSheet } });
+
     return createElement(Fragment, null, sheet, laidOut);
 };
 
@@ -383,12 +427,14 @@ const withColumns = (columns: ColumnLayout | undefined, content: ReactElement): 
     if (columns === undefined) {
         return content;
     }
+
     const style = {
         '--rte-columns': String(columns.count),
         '--rte-column-gap': columns.length,
         container: 'fondue-rte-columns / inline-size',
         paddingInlineEnd: 'calc((var(--rte-columns) - 1) * var(--rte-column-gap))',
     };
+
     return createElement(
         'div',
         { className: 'fondue-rte-columns', 'data-rte-columns': String(columns.count), style },

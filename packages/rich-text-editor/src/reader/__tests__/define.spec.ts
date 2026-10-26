@@ -18,6 +18,7 @@ const readerOverrides = (feature: Feature) => {
     if (internals === undefined) {
         return undefined;
     }
+
     return declaredOverrides(internals.declaration);
 };
 
@@ -34,6 +35,7 @@ describe('defineReaderFeature', () => {
         } catch (error) {
             failure = error;
         }
+
         expect(failure).toBeInstanceOf(DefinitionError);
         expect(failure).toMatchObject({
             code: 'definition.missing-reader',
@@ -52,6 +54,7 @@ describe('defineReaderFeature', () => {
         } catch (error) {
             failure = error;
         }
+
         expect(failure).toBeInstanceOf(DefinitionError);
         expect(failure).toMatchObject({
             code: 'definition.invalid-declaration',

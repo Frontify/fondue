@@ -14,5 +14,6 @@ export type ReaderResolvers = {
 /** The codec context plus `resolveReference`. A resolver that throws gives `null` or `unknown` for that call only. */
 export const readerContext = (locale: RichTextLocale, resolvers: ReaderResolvers): ReaderContext => {
     const { resolveAssetUrl, resolveReference } = resolvers;
+
     return { ...codecContext(locale, enUS, resolveAssetUrl), resolveReference: resolvingSafely(resolveReference) };
 };

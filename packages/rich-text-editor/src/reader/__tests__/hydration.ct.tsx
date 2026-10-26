@@ -27,6 +27,7 @@ const watch = (page: Page) => {
             problems.push(`console.error: ${message.text()}`);
         }
     });
+
     return problems;
 };
 
@@ -37,6 +38,7 @@ const settle = async (read: () => HydrationResult | undefined): Promise<Hydratio
     if (result === undefined) {
         throw new Error('The probe never reported.');
     }
+
     return result;
 };
 

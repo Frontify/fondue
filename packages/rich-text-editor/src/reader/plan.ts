@@ -23,9 +23,11 @@ const overrideOf =
         if (renderers === undefined) {
             renderers = ownValue(shipped, feature.id);
         }
+
         if (renderers === undefined) {
             return { override: undefined };
         }
+
         return { override: ownValue(renderers, name) };
     };
 
@@ -38,11 +40,13 @@ export const planOf = (model: ContentModel, shipped: ReaderOverrides): Plan => {
         byModel = new WeakMap();
         plans.set(shipped, byModel);
     }
+
     let plan = byModel.get(model);
     if (plan === undefined) {
         const override = overrideOf(shipped);
         plan = buildPlan(model, override, override);
         byModel.set(model, plan);
     }
+
     return plan;
 };

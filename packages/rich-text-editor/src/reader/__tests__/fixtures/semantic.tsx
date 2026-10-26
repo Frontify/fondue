@@ -274,6 +274,7 @@ const colors = defineFeature({
 /** A mention as `@label`: the reader override of the mentions feature, from the snapshot alone. */
 const Mention = ({ attrs }: ReaderNodeProps): ReactElement => {
     const label = attrs.labelSnapshot;
+
     return <span data-rte-mention="">@{typeof label === 'string' ? label : ''}</span>;
 };
 
@@ -290,6 +291,7 @@ const Table = ({ attrs, children }: ReaderNodeProps): ReactElement => {
     if (attrs.dir === 'ltr' || attrs.dir === 'rtl') {
         dir = attrs.dir;
     }
+
     return (
         <table dir={dir}>
             {split > 0 && <thead>{rows.slice(0, split)}</thead>}

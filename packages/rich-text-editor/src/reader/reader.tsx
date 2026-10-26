@@ -75,6 +75,7 @@ const listOf = <T,>(value: readonly T[] | undefined): readonly T[] => {
     if (value !== undefined && Array.isArray(value)) {
         return value as readonly T[];
     }
+
     return [];
 };
 
@@ -83,6 +84,7 @@ const build = ({ document, model, presentation, locale = enUS, limits, overrides
     if (presentation !== undefined) {
         resolvers = presentation;
     }
+
     const styles = listOf<PresentationStyle>(resolvers.styles);
     const context = readerContext(locale, resolvers);
     const notified = new WeakSet<object>();
@@ -90,6 +92,7 @@ const build = ({ document, model, presentation, locale = enUS, limits, overrides
     if (limits !== undefined) {
         options = { limits };
     }
+
     const { result, tree } = decodeToTree(document, model, options);
     // The decode diagnostics come first, as the codecs report them.
     const diagnostics: Diagnostic[] = [...result.diagnostics];
@@ -98,11 +101,14 @@ const build = ({ document, model, presentation, locale = enUS, limits, overrides
         if (result.reason === 'unsupported') {
             reason = 'unsupported';
         }
+
         return { element: message(context, reason), diagnostics, notified };
     }
+
     if (tree === undefined) {
         return { element: message(context, 'invalid'), diagnostics, notified };
     }
+
     const state: RenderState = {
         plan: planOf(model, overrides),
         context,
@@ -119,6 +125,7 @@ const build = ({ document, model, presentation, locale = enUS, limits, overrides
         breaks: 0,
     };
     const element = renderDocument(state, tree, resolvers.contentClassName, styleSheetOf(styles));
+
     return { element, diagnostics, notified };
 };
 
@@ -139,6 +146,7 @@ const outputOf = (props: ReaderProps): Output => {
     if (typeof document !== 'string' && (typeof document !== 'object' || document === null)) {
         return build(props);
     }
+
     let level = outputs;
     for (const key of [overrides, model, presentation ?? NONE]) {
         let next = level.get(key) as Level | undefined;
@@ -146,14 +154,17 @@ const outputOf = (props: ReaderProps): Output => {
             next = new WeakMap();
             level.set(key, next);
         }
+
         level = next;
     }
+
     const localized = locale ?? NONE;
     let slots = level.get(localized) as Map<string, Slot> | undefined;
     if (slots === undefined) {
         slots = new Map();
         level.set(localized, slots);
     }
+
     const limitsKey = canonicalJson((limits ?? {}) as JsonValue);
     let slot = slots.get(limitsKey);
     if (slot === undefined) {
@@ -165,19 +176,23 @@ const outputOf = (props: ReaderProps): Output => {
     } else {
         slots.delete(limitsKey);
     }
+
     slots.set(limitsKey, slot);
     if (typeof document === 'string') {
         if (slot.output === undefined || slot.text !== document) {
             slot.output = build(props);
             slot.text = document;
         }
+
         return slot.output;
     }
+
     let output = slot.objects.get(document);
     if (output === undefined) {
         output = build(props);
         slot.objects.set(document, output);
     }
+
     return output;
 };
 
@@ -191,5 +206,6 @@ export const ReaderWith = (props: ReaderProps): ReactElement => {
             onDiagnostic(diagnostic);
         }
     }
+
     return output.element;
 };

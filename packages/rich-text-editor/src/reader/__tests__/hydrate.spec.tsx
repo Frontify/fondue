@@ -37,6 +37,7 @@ describe('the reader hydrating in the DOM', () => {
                 onRecoverableError: (error) => recoverable.push(error),
             });
         });
+
         return { container, recoverable, errors };
     };
 

@@ -36,15 +36,18 @@ export const defineReaderFeature = <F extends Feature>(feature: F, renderers: Re
             }
         }
     }
+
     for (const [name, renderer] of Object.entries(renderers)) {
         const path = declared.get(name);
         if (path === undefined) {
             throw new DefinitionError('definition.missing-reader', { feature: feature.id, name });
         }
+
         // The reader calls an override as a function to catch its throw, which a `memo` or `forwardRef` object cannot take.
         if (typeof renderer !== 'function') {
             throw new DefinitionError('definition.invalid-declaration', { feature: feature.id, path });
         }
     }
+
     return attachToFeature(feature, 'reader', renderers);
 };

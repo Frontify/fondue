@@ -290,14 +290,18 @@ describe('RichTextReader unknown marks and attributes', () => {
             if (typeof value !== 'object' || value === null || Array.isArray(value)) {
                 return value;
             }
+
             const stripped = strip(value as JsonObject);
             const { content } = stripped;
             if (!Array.isArray(content)) {
                 return stripped;
             }
+
             return { ...stripped, content: content.map(visit) };
         };
+
         const { content } = document as RichTextDocument;
+
         return { ...(document as object), content: visit(content as unknown as JsonValue) };
     };
 
@@ -306,6 +310,7 @@ describe('RichTextReader unknown marks and attributes', () => {
             if (!Array.isArray(value.marks)) {
                 return value;
             }
+
             return { ...value, marks: value.marks.filter((mark) => (mark as JsonObject).type !== 'sparkle') };
         });
 
@@ -319,7 +324,9 @@ describe('RichTextReader unknown marks and attributes', () => {
             if (value.type !== 'paragraph') {
                 return value;
             }
+
             const { tone: _tone, ...attrs } = value.attrs as JsonObject;
+
             return { ...value, attrs };
         });
 
@@ -335,6 +342,7 @@ describe('RichTextReader format attributes', () => {
         if (typeof value !== 'object' || value === null || Array.isArray(value)) {
             return value;
         }
+
         const item = value as JsonObject;
         const copy: Record<string, JsonValue> = { ...item };
         if (item.type !== 'text') {
@@ -343,13 +351,16 @@ describe('RichTextReader format attributes', () => {
             Object.assign(attrs, hostile);
             copy.attrs = attrs;
         }
+
         for (const key of ['content', 'marks']) {
             if (Array.isArray(item[key])) {
                 copy[key] = (item[key] as readonly JsonValue[]).map(withHostileAttributes);
             }
         }
+
         return copy;
     };
+
     const documents = fixturesIn('valid').map(([name, document]) => [name, document as RichTextDocument] as const);
 
     it.each(documents)('renders %s with no style, class or className read from the document', (_, document) => {
@@ -374,8 +385,10 @@ describe('RichTextReader format attributes', () => {
         const seen: JsonObject[] = [];
         const Probe = ({ attrs }: ReaderNodeProps) => {
             seen.push(attrs);
+
             return null;
         };
+
         const probed = compileContentModel([core(), defineReaderFeature(vocabularyMention(), { mention: Probe })], {
             id: 'fixture.vocabulary',
             version: 1,
@@ -422,6 +435,7 @@ describe('RichTextReader override failures', () => {
     const Throws = () => {
         throw new Error('boom');
     };
+
     const overridden = compileContentModel(
         [
             core(),
@@ -435,8 +449,10 @@ describe('RichTextReader override failures', () => {
     const collect = (document: unknown) => {
         const diagnostics: Diagnostic[] = [];
         const html = renderReader(document, overridden, { onDiagnostic: (diagnostic) => diagnostics.push(diagnostic) });
+
         return { html, diagnostics };
     };
+
     const document = envelope(
         doc(
             paragraph(text('Hello '), mention('m-1'), text(' there')),
@@ -657,6 +673,7 @@ describe('RichTextReader document attributes', () => {
         if (attrs !== undefined) {
             content.attrs = attrs;
         }
+
         return { ...(wrap() as object), content };
     };
 

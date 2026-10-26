@@ -18,8 +18,10 @@ const load = async () => {
     const { createElement } = await import('react');
     const model = await import('#/model');
     const reader = await import('#/entries/reader');
+
     return { semanticModel, renderToString, createElement, model, reader };
 };
+
 let loaded: Awaited<ReturnType<typeof load>>;
 
 // Node 21 and later define `navigator` as a configurable global, which the tests delete for the length of the file.

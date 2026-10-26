@@ -17,6 +17,7 @@ import { semanticModel } from './fixtures/semantic';
 // The spy wraps the real decoder the reader calls, so the output stays real.
 vi.mock('#/model/decode', async (importOriginal) => {
     const actual = await importOriginal<{ readonly decodeToTree: typeof decodeToTree }>();
+
     return { ...actual, decodeToTree: vi.fn(actual.decodeToTree) };
 });
 
@@ -74,6 +75,7 @@ describe('RichTextReader rerenders', () => {
         for (let nodes = 101; nodes < 116; nodes += 1) {
             view.rerender(limited(nodes));
         }
+
         view.rerender(limited(100));
         expect(decodeToTree).toHaveBeenCalledTimes(16);
 
@@ -102,6 +104,7 @@ describe('RichTextReader rerenders', () => {
         const Throws = () => {
             throw new Error('boom');
         };
+
         const failing = compileContentModel([core(), defineReaderFeature(vocabularyMention(), { mention: Throws })], {
             id: 'fixture.vocabulary',
             version: 1,

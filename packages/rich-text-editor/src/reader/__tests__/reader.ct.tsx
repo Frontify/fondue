@@ -63,6 +63,7 @@ test.describe('wrapping in print', () => {
         if (box === null) {
             throw new Error('The paragraph has no box.');
         }
+
         const lineHeight = await paragraph.evaluate(
             (element) => parseFloat(getComputedStyle(element).lineHeight) || 16,
         );
