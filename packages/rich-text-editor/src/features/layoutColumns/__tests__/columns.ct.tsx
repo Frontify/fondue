@@ -35,10 +35,14 @@ const columnStarts = async (root: Locator, texts: readonly string[]) => {
 
 /** Adds a host stylesheet before every other one, so the package rules come later in the cascade. */
 const hostStylesheet = (page: Page, css: string) =>
-    page.evaluate((source) => {
+    page.evaluate(async (source) => {
         const style = document.createElement('style');
         style.textContent = source;
         document.head.prepend(style);
+        // WebKit keeps a new sheet out of the cascade while the editor's prefetched stylesheets are still loading.
+        while (![...document.styleSheets].includes(style.sheet as CSSStyleSheet)) {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
     }, css);
 
 const noSidewaysScroll = (page: Page) =>
