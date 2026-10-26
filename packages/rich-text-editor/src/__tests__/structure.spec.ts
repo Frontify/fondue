@@ -27,10 +27,24 @@ const srcRoot = join(packageRoot, 'src');
 
 const ROOT_NODE = '(root)';
 const CODE_FILE = /\.tsx?$/;
+// The spaces sit in classes so that this list does not match itself.
 const SPEC_REFERENCE_PATTERNS = [
-    /\b(DR|AC|SPEC)-[0-9a-z]/g,
-    /row [0-9]+|key precedence|release stages|default toolbars|decode order|plugin contract|package layout|working rules/gi,
+    /\b(DR|AC|SPEC|OD|BC|PG)-[0-9a-z]/g,
+    /\bT-[0-9]{2}\b/g,
+    /\bW[0-9]{1,2}[a-z]?\b/g,
+    /row[ ][0-9]+|key[ ]precedence|release[ ]stages|default[ ]toolbars|decode[ ]order|plugin[ ]contract|package[ ]layout|working[ ]rules/gi,
 ];
+const SPEC_REFERENCE_SKIPPED_DIRECTORIES = new Set([
+    'node_modules',
+    'dist',
+    'storybook-static',
+    'coverage',
+    'playwright-report',
+    'test-results',
+    '.cache',
+]);
+// The changelog quotes past release notes word for word.
+const SPEC_REFERENCE_SKIPPED_FILES = new Set(['CHANGELOG.md']);
 
 const walk = (directory: string): string[] => {
     const files: string[] = [];
@@ -367,16 +381,47 @@ const prosemirrorNodes = () => {
     return [...nodes].sort();
 };
 
+const walkAll = (directory: string): string[] => {
+    const files: string[] = [];
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+        const path = join(directory, entry.name);
+        if (entry.isDirectory()) {
+            if (!SPEC_REFERENCE_SKIPPED_DIRECTORIES.has(entry.name)) {
+                files.push(...walkAll(path));
+            }
+        } else {
+            files.push(path);
+        }
+    }
+    return files.sort();
+};
+
 const specReferenceFiles = () => [
-    ...productFiles,
-    join(packageRoot, 'oxlint.config.ts'),
-    join(packageRoot, 'CONTRIBUTING.md'),
+    ...walkAll(packageRoot).filter((path) => !SPEC_REFERENCE_SKIPPED_FILES.has(toKey(path))),
+    join(packageRoot, '../../.github/workflows/rich-text-editor-pull-requests.yaml'),
 ];
+
+// The `decision` field of a qualification record names its decision record by design, and so does the record's spec.
+const specReferenceSource = (path: string) => {
+    const buffer = readFileSync(path);
+    if (buffer.includes(0)) {
+        return '';
+    }
+    const source = buffer.toString('utf8');
+    const key = toKey(path);
+    if (!key.startsWith('qualification/') && key !== 'src/__tests__/qualification.spec.ts') {
+        return source;
+    }
+    return source
+        .split('\n')
+        .filter((line) => !/(?:^\s*"decision":|\bdecision: 'DR-\d{3}')/.test(line))
+        .join('\n');
+};
 
 const specReferenceCounts = () => {
     const counts = new Map<string, number>();
     for (const path of specReferenceFiles()) {
-        const source = readFileSync(path, 'utf8');
+        const source = specReferenceSource(path);
         let count = 0;
         for (const pattern of SPEC_REFERENCE_PATTERNS) {
             count += source.match(pattern)?.length ?? 0;
@@ -452,7 +497,7 @@ const unitExports = (path: string) => {
 
 // Each measure parses every product file, which outlasts the default timeout on a loaded machine.
 describe('package structure ratchet', { timeout: 60_000 }, () => {
-    it('T-01: product files over 600 lines only shrink, data tables excepted', () => {
+    it('no product file over 600 lines grows, data tables excepted', () => {
         const exempt = Object.keys(DATA_TABLES);
         const missing = exempt.filter((key) => !existsSync(join(packageRoot, key)));
         expect(missing, 'data table entries must exist').toEqual([]);
@@ -460,11 +505,11 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
         expect(ratchet(filesOver(files, 600), FILES_OVER_600_LINES)).toEqual([]);
     });
 
-    it('T-02: product files over 400 lines only shrink', () => {
+    it('no product file over 400 lines grows', () => {
         expect(ratchet(filesOver(productFiles, 400), FILES_OVER_400_LINES)).toEqual([]);
     });
 
-    it('T-03: function bodies over 150 lines only shrink', () => {
+    it('no function body over 150 lines grows', () => {
         const measured = new Map<string, number>();
         for (const { key, lines } of allFunctionMeasures()) {
             if (lines > 150) {
@@ -474,7 +519,7 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
         expect(ratchet(measured, FUNCTIONS_OVER_150_LINES)).toEqual([]);
     });
 
-    it('T-04: function bodies with more than 6 let declarators only shrink', () => {
+    it('no function body with more than 6 let declarators grows', () => {
         const measured = new Map<string, number>();
         for (const { key, lets } of allFunctionMeasures()) {
             if (lets > 6) {
@@ -484,23 +529,23 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
         expect(ratchet(measured, FUNCTIONS_OVER_6_LETS)).toEqual([]);
     });
 
-    it('T-18: spec files over 1000 lines only shrink', () => {
+    it('no spec file over 1000 lines grows', () => {
         expect(ratchet(filesOver(specFiles, 1000), SPECS_OVER_1000_LINES)).toEqual([]);
     });
 
-    it('T-05: folder import cycles are exactly the known ones', () => {
+    it('folder import cycles are exactly the known ones', () => {
         expect(cycles(folderGraph())).toEqual([...KNOWN_CYCLES].sort());
     });
 
-    it('T-06: only the allowlisted nodes import prosemirror packages', () => {
+    it('only the allowlisted nodes import prosemirror packages', () => {
         expect(prosemirrorNodes()).toEqual([...PROSEMIRROR_NODES].sort());
     });
 
-    it('T-10: spec references in product files and docs only shrink', () => {
+    it('no file of the package or its workflow names a spec, decision or plan ID, or a spec section', () => {
         expect(ratchet(specReferenceCounts(), SPEC_REFERENCES)).toEqual([]);
     });
 
-    it('T-11: as unknown as casts in product files do not grow', () => {
+    it('as unknown as casts in product files do not grow', () => {
         let count = 0;
         for (const path of productFiles) {
             count += sourceOf(path).match(/as unknown as/g)?.length ?? 0;

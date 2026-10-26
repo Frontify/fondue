@@ -4,7 +4,7 @@
 
 export const FILES_OVER_600_LINES: Record<string, number> = {};
 
-// Data tables exempt from the 600 line limit (T-01); each must still exist.
+// Data tables exempt from the 600 line limit; each must still exist.
 export const DATA_TABLES: Record<string, string> = {
     'src/features/blocksCode/languages.ts': 'Flat list of code language ids and labels, no logic.',
 };

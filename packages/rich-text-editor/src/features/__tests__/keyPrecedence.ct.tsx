@@ -156,24 +156,23 @@ const boldRuleAfter = async (page: Page, text?: string) => {
 const document = { features: 'document' } as const;
 const comment = { features: 'comment' } as const;
 
-// One case per row of the Key precedence table and key it handles. Deferred: row 5 (table cells, TASK-rte-tables)
-// and row 8a (indented blocks, blocks.indent in TASK-rte-extras), whose features are 1.x. Row 4's profile submit keys
-// run in surface-keys.ct.tsx, and the Comment profile's Enter in enter-keys.spec.tsx.
+// One case per key rule and key it handles. Deferred: table cells and indented blocks (blocks.indent), whose features
+// are 1.x. The profile submit keys run in surface-keys.ct.tsx, and the Comment profile's Enter in enter-keys.spec.tsx.
 const ROWS: readonly Case[] = [
     ...['Enter', 'Backspace', 'Tab', 'Escape'].flatMap((key): Case[] => [
         {
-            name: `row 1, composition active: leaves ${key} with isComposing to the browser`,
+            name: `composition active: leaves ${key} with isComposing to the browser`,
             probe: { ...document, blocks: [p('Hello')] },
             run: leftToComposition(key, 'isComposing'),
         },
         {
-            name: `row 1, composition active: leaves ${key} with only keyCode 229 to the browser`,
+            name: `composition active: leaves ${key} with only keyCode 229 to the browser`,
             probe: { ...document, blocks: [p('Hello')] },
             run: leftToComposition(key, 'keyCode'),
         },
     ]),
     {
-        name: 'row 2, suggestion list open: Enter accepts the active option',
+        name: 'suggestion list open: Enter accepts the active option',
         probe: { ...comment, blocks: [p('Hi')] },
         run: async (page) => {
             await mentionListAfter(page, 'Hi');
@@ -184,7 +183,7 @@ const ROWS: readonly Case[] = [
         },
     },
     {
-        name: 'row 2, suggestion list open: Backspace edits the query and keeps the list',
+        name: 'suggestion list open: Backspace edits the query and keeps the list',
         probe: { ...comment, blocks: [p('Hi')] },
         run: async (page) => {
             await mentionListAfter(page, 'Hi');
@@ -195,7 +194,7 @@ const ROWS: readonly Case[] = [
         },
     },
     {
-        name: 'row 2, suggestion list open: Tab accepts the active option',
+        name: 'suggestion list open: Tab accepts the active option',
         probe: { ...comment, blocks: [p('Hi')] },
         run: async (page) => {
             await mentionListAfter(page, 'Hi');
@@ -207,7 +206,7 @@ const ROWS: readonly Case[] = [
         },
     },
     {
-        name: 'row 2, suggestion list open: Shift+Tab closes the list, keeps the text and moves focus back',
+        name: 'suggestion list open: Shift+Tab closes the list, keeps the text and moves focus back',
         probe: { ...comment, blocks: [p('Hi')] },
         run: async (page) => {
             await mentionListAfter(page, 'Hi');
@@ -219,7 +218,7 @@ const ROWS: readonly Case[] = [
         },
     },
     {
-        name: 'row 2, suggestion list open: Escape closes the list and keeps the text',
+        name: 'suggestion list open: Escape closes the list and keeps the text',
         probe: { ...comment, blocks: [p('Hi')] },
         run: async (page) => {
             await mentionListAfter(page, 'Hi');
@@ -231,7 +230,7 @@ const ROWS: readonly Case[] = [
         },
     },
     {
-        name: 'row 3, right after an input rule: Backspace undoes the rule',
+        name: 'right after an input rule: Backspace undoes the rule',
         probe: document,
         run: async (page) => {
             await boldRuleAfter(page);
@@ -241,7 +240,7 @@ const ROWS: readonly Case[] = [
         },
     },
     {
-        name: 'row 3, right after an input rule: Enter passes to the next row and splits the paragraph',
+        name: 'right after an input rule: Enter passes to the next row and splits the paragraph',
         probe: document,
         run: async (page) => {
             await boldRuleAfter(page);
@@ -251,7 +250,7 @@ const ROWS: readonly Case[] = [
         },
     },
     {
-        name: 'row 3, right after an input rule: Tab passes to the next row and moves focus out',
+        name: 'right after an input rule: Tab passes to the next row and moves focus out',
         probe: document,
         run: async (page) => {
             await boldRuleAfter(page);
@@ -262,7 +261,7 @@ const ROWS: readonly Case[] = [
         },
     },
     {
-        name: 'row 3, right after an input rule: Escape passes to the next row and reaches the host',
+        name: 'right after an input rule: Escape passes to the next row and reaches the host',
         probe: document,
         run: async (page) => {
             await boldRuleAfter(page);
@@ -273,7 +272,7 @@ const ROWS: readonly Case[] = [
         },
     },
     {
-        name: 'row 4, a definition whose policy makes Enter submit: Enter submits',
+        name: 'a definition whose policy makes Enter submit: Enter submits',
         probe: { ...comment, enterBehavior: 'submit', blocks: [p('Hello')] },
         run: async (page) => {
             await caretIn(page, 'Hello');
@@ -284,93 +283,93 @@ const ROWS: readonly Case[] = [
         },
     },
     {
-        name: 'row 4, a definition whose policy makes Enter submit: Shift+Enter runs as Enter and splits a list item',
+        name: 'a definition whose policy makes Enter submit: Shift+Enter runs as Enter and splits a list item',
         probe: { ...comment, enterBehavior: 'submit', blocks: [bullets('one')] },
         run: pressTo('one', 'Shift+Enter', ['bullet_list(list_item(paragraph(one))|list_item(paragraph))']),
     },
     {
-        name: 'row 4, a definition whose policy makes Enter submit: Backspace passes to the next rows',
+        name: 'a definition whose policy makes Enter submit: Backspace passes to the next rows',
         probe: { ...comment, enterBehavior: 'submit', blocks: [p('Hello')] },
         run: pressTo('Hello', 'Backspace', ['paragraph(Hell)']),
     },
     {
-        name: 'row 4, a definition whose policy makes Enter submit: Tab passes to the next rows and moves focus out',
+        name: 'a definition whose policy makes Enter submit: Tab passes to the next rows and moves focus out',
         probe: { ...comment, enterBehavior: 'submit', blocks: [p('Hello')] },
         run: focusLeavesOn('Hello', 'Tab'),
     },
     {
-        name: 'row 4, a definition whose policy makes Enter submit: Escape passes to the next rows and reaches the host',
+        name: 'a definition whose policy makes Enter submit: Escape passes to the next rows and reaches the host',
         probe: { ...comment, enterBehavior: 'submit', blocks: [p('Hello')] },
         run: escapeLeftToHost('Hello'),
     },
     {
-        name: 'row 6, code block: Enter inserts a newline',
+        name: 'code block: Enter inserts a newline',
         probe: { ...document, blocks: [{ type: 'code_block', content: [{ type: 'text', text: 'x = 1' }] }] },
         run: pressTo('x = 1', 'Enter', ['code_block(x = 1\n)']),
     },
     {
-        name: 'row 6, code block: Mod+Enter leaves the block',
+        name: 'code block: Mod+Enter leaves the block',
         probe: { ...document, blocks: [{ type: 'code_block', content: [{ type: 'text', text: 'x = 1' }] }] },
         run: pressTo('x = 1', 'ControlOrMeta+Enter', ['code_block(x = 1)', 'paragraph']),
     },
     {
-        name: 'row 6, code block: Backspace deletes the character before the caret',
+        name: 'code block: Backspace deletes the character before the caret',
         probe: { ...document, blocks: [{ type: 'code_block', content: [{ type: 'text', text: 'x = 1' }] }] },
         run: pressTo('x = 1', 'Backspace', ['code_block(x = )']),
     },
     {
-        name: 'row 6, code block: Tab moves focus out of the editor',
+        name: 'code block: Tab moves focus out of the editor',
         probe: { ...document, blocks: [{ type: 'code_block', content: [{ type: 'text', text: 'x = 1' }] }] },
         run: focusLeavesOn('x = 1', 'Tab'),
     },
     {
-        name: 'row 6, code block: Shift+Tab moves focus out of the editor',
+        name: 'code block: Shift+Tab moves focus out of the editor',
         probe: { ...document, blocks: [{ type: 'code_block', content: [{ type: 'text', text: 'x = 1' }] }] },
         run: focusLeavesOn('x = 1', 'Shift+Tab'),
     },
     {
-        name: 'row 6, code block: Escape passes to the next row and reaches the host',
+        name: 'code block: Escape passes to the next row and reaches the host',
         probe: { ...document, blocks: [{ type: 'code_block', content: [{ type: 'text', text: 'x = 1' }] }] },
         run: escapeLeftToHost('x = 1'),
     },
     {
-        name: 'row 7, list item: Enter splits the item',
+        name: 'list item: Enter splits the item',
         probe: { ...document, blocks: [bullets('one', 'two')] },
         run: pressTo('one', 'Enter', [
             'bullet_list(list_item(paragraph(one))|list_item(paragraph)|list_item(paragraph(two)))',
         ]),
     },
     {
-        name: 'row 7, list item: Backspace at the start of a top-level item turns it into a paragraph',
+        name: 'list item: Backspace at the start of a top-level item turns it into a paragraph',
         probe: { ...document, blocks: [bullets('one', 'two')] },
         run: pressTo('two', 'Backspace', ['bullet_list(list_item(paragraph(one)))', 'paragraph(two)'], 0),
     },
     {
-        name: 'row 7, list item: Tab nests an item under its previous sibling',
+        name: 'list item: Tab nests an item under its previous sibling',
         probe: { ...document, blocks: [bullets('one', 'two')] },
         run: pressTo('two', 'Tab', ['bullet_list(list_item(paragraph(one)|bullet_list(list_item(paragraph(two)))))']),
     },
     {
-        name: 'row 7, list item: Tab moves focus out of an item that cannot move',
+        name: 'list item: Tab moves focus out of an item that cannot move',
         probe: { ...document, blocks: [bullets('one', 'two')] },
         run: focusLeavesOn('one', 'Tab'),
     },
     {
-        name: 'row 7, list item: Shift+Tab turns a top-level item into a paragraph',
+        name: 'list item: Shift+Tab turns a top-level item into a paragraph',
         probe: { ...document, blocks: [bullets('one', 'two')] },
         run: pressTo('two', 'Shift+Tab', ['bullet_list(list_item(paragraph(one)))', 'paragraph(two)']),
     },
     {
-        name: 'row 7, list item: Escape passes to the next row and reaches the host',
+        name: 'list item: Escape passes to the next row and reaches the host',
         probe: { ...document, blocks: [bullets('one', 'two')] },
         run: escapeLeftToHost('one'),
     },
     {
-        name: 'row 8, empty last paragraph of a quote: Enter leaves the quote',
+        name: 'empty last paragraph of a quote: Enter leaves the quote',
         probe: { ...document, blocks: [{ type: 'blockquote', content: [p('quoted')] }, p('after')] },
         run: async (page) => {
             await caretIn(page, 'quoted');
-            // The first Enter splits as row 10 does, leaving the caret in an empty last paragraph of the quote.
+            // The first Enter splits as it does anywhere else, leaving the caret in an empty last paragraph of the quote.
             await page.keyboard.press('Enter');
             await expect
                 .poll(() => shapeOf(page))
@@ -383,7 +382,7 @@ const ROWS: readonly Case[] = [
         },
     },
     {
-        name: 'row 8, empty last paragraph of a quote in a comment whose Enter submits: Shift+Enter leaves the quote and submits nothing',
+        name: 'empty last paragraph of a quote in a comment whose Enter submits: Shift+Enter leaves the quote and submits nothing',
         probe: {
             ...comment,
             enterBehavior: 'submit',
@@ -405,7 +404,7 @@ const ROWS: readonly Case[] = [
     },
     ...(['Backspace', 'Tab', 'Escape'] as const).map(
         (key): Case => ({
-            name: `row 8, empty last paragraph of a quote: ${key} passes to the next rows`,
+            name: `empty last paragraph of a quote: ${key} passes to the next rows`,
             probe: { ...document, blocks: [{ type: 'blockquote', content: [p('quoted')] }, p('after')] },
             run: async (page) => {
                 await caretIn(page, 'quoted');
@@ -427,17 +426,17 @@ const ROWS: readonly Case[] = [
         }),
     ),
     {
-        name: 'row 9, caret right after a column break: Backspace removes the break',
+        name: 'caret right after a column break: Backspace removes the break',
         probe: { features: 'brand-document', blocks: [p('one'), { type: 'column_break' }, p('two')] },
         run: pressTo('two', 'Backspace', ['paragraph(one)', 'paragraph(two)'], 0),
     },
     {
-        name: 'row 9, caret right after a column break: Enter passes to the next rows and adds a paragraph',
+        name: 'caret right after a column break: Enter passes to the next rows and adds a paragraph',
         probe: { features: 'brand-document', blocks: [p('one'), { type: 'column_break' }, p('two')] },
         run: pressTo('two', 'Enter', ['paragraph(one)', 'column_break', 'paragraph', 'paragraph(two)'], 0),
     },
     {
-        name: 'row 9, caret right after a column break: Tab passes to the next rows and moves focus out',
+        name: 'caret right after a column break: Tab passes to the next rows and moves focus out',
         probe: { features: 'brand-document', blocks: [p('one'), { type: 'column_break' }, p('two')] },
         run: async (page) => {
             await caretIn(page, 'two', 0);
@@ -448,7 +447,7 @@ const ROWS: readonly Case[] = [
         },
     },
     {
-        name: 'row 9, caret right after a column break: Escape passes to the next rows and reaches the host',
+        name: 'caret right after a column break: Escape passes to the next rows and reaches the host',
         probe: { features: 'brand-document', blocks: [p('one'), { type: 'column_break' }, p('two')] },
         run: async (page) => {
             await caretIn(page, 'two', 0);
@@ -459,27 +458,27 @@ const ROWS: readonly Case[] = [
         },
     },
     {
-        name: 'row 10, anywhere else: Enter splits the paragraph',
+        name: 'anywhere else: Enter splits the paragraph',
         probe: { ...document, blocks: [p('Hello')] },
         run: pressTo('Hello', 'Enter', ['paragraph(Hel)', 'paragraph(lo)'], 3),
     },
     {
-        name: 'row 10, anywhere else: Backspace joins the paragraph to the one before',
+        name: 'anywhere else: Backspace joins the paragraph to the one before',
         probe: { ...document, blocks: [p('one'), p('two')] },
         run: pressTo('two', 'Backspace', ['paragraph(onetwo)'], 0),
     },
     {
-        name: 'row 10, anywhere else: Tab moves focus out of the editor',
+        name: 'anywhere else: Tab moves focus out of the editor',
         probe: { ...document, blocks: [p('Hello')] },
         run: focusLeavesOn('Hello', 'Tab'),
     },
     {
-        name: 'row 10, anywhere else: Shift+Tab moves focus out of the editor',
+        name: 'anywhere else: Shift+Tab moves focus out of the editor',
         probe: { ...document, blocks: [p('Hello')] },
         run: focusLeavesOn('Hello', 'Shift+Tab'),
     },
     {
-        name: 'row 10, anywhere else: Escape closes the bubble toolbar and prevents the event',
+        name: 'anywhere else: Escape closes the bubble toolbar and prevents the event',
         probe: { ...document, bubble: true, blocks: [p('Hello')] },
         run: async (page) => {
             await caretIn(page, 'Hello');
@@ -492,7 +491,7 @@ const ROWS: readonly Case[] = [
         },
     },
     {
-        name: 'row 10, anywhere else: Escape with nothing shown reaches the host unprevented',
+        name: 'anywhere else: Escape with nothing shown reaches the host unprevented',
         probe: { ...document, blocks: [p('Hello')] },
         run: escapeLeftToHost('Hello'),
     },

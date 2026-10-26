@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - packages/rich-text-editor/**
-      # A changed ProseMirror, markdown-it or React version runs the engine qualification group (core AC-037).
+      # A changed ProseMirror, markdown-it or React version runs the engine qualification group.
       - pnpm-lock.yaml
       - .github/workflows/rich-text-editor-pull-requests.yaml
 
@@ -104,7 +104,7 @@ jobs:
       - name: Empty the Vite transform cache
         run: rm -rf node_modules/.vite packages/rich-text-editor/node_modules/.vite
 
-      # Each test file of the `node` environment names it in a docblock (quality AC-036).
+      # Each test file of the `node` environment names it in a docblock.
       - name: Node environment tests
         working-directory: packages/rich-text-editor
         run: pnpm exec vitest run --coverage.enabled=false $(grep -rl '@vitest-environment node' src)
@@ -158,11 +158,11 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm --stream --filter {packages/rich-text-editor} install:playwright
 
-      # The browser editing, IME automation and clipboard tests (core AC-037).
+      # The browser editing, IME automation and clipboard tests.
       - name: Engine qualification tests
         run: pnpm --filter {packages/rich-text-editor} exec playwright test --grep @engine
 
-  # The pinned runner of the performance budgets (quality AC-016): a config test pins `runs-on` to `perf/method.json`, and the perf script reads every other setting from it.
+  # The pinned runner of the performance budgets: a config test pins `runs-on` to `perf/method.json`, and the perf script reads every other setting from it.
   performance:
     name: Performance
     runs-on: ubuntu-24.04

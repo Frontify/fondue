@@ -80,7 +80,7 @@ const violations = async (
 
 /**
  * What stories render on purpose for the content checks to report: an image whose `altIntent` is `missing` has no
- * `alt` (blocks AC-024), and the checks story's pale text sample has too little contrast.
+ * `alt`, and the checks story's pale text sample has too little contrast.
  */
 const INTENDED = [
     { rule: 'image-alt', selector: '[role="textbox"] figure img:not([alt])' },
@@ -304,7 +304,7 @@ test.describe('axe on an image', () => {
         );
     });
 
-    // The editor and the reader both show the image whose `altIntent` is `missing` without `alt` (blocks AC-024).
+    // The editor and the reader both show the image whose `altIntent` is `missing` without `alt`.
     const imageWithoutAlt = 'figure img:not([alt])';
     const missingAlt = [{ rule: 'image-alt', selector: imageWithoutAlt }];
 

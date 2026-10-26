@@ -84,7 +84,7 @@ const flowText = fc.string({
 });
 
 /**
- * The document with each U+00A0 right after a U+0020 replaced: AC-046 writes two spaces the same way, so paste reads
+ * The document with each U+00A0 right after a U+0020 replaced: the writer writes two spaces the same way, so paste reads
  * that U+00A0 as a space.
  */
 const withHtmlSpaces = (stored: RichTextDocument): RichTextDocument => {
@@ -127,7 +127,7 @@ describe.each(PROFILES)(seeded('the HTML round trip of the %s profile'), (_, mod
         features.filter(({ declaration }) => declaration.formats?.html !== 'lossy').map(({ id }) => id),
     );
     const literalColors = features.find(({ id }) => id === 'marks.font-color')?.options.literalColors === true;
-    // Without `literalColors` paste drops a literal colour as removed formatting (DR-042).
+    // Without `literalColors` paste drops a literal colour as removed formatting.
     const attribute = (owner: string, name: string) => literalColors || owner !== 'font_color' || name !== 'value';
     const documents = modelDocumentArb(model, { feature: (id) => lossless.has(id), attribute, text: flowText }).map(
         withHtmlSpaces,
@@ -142,7 +142,7 @@ describe.each(PROFILES)(seeded('the HTML round trip of the %s profile'), (_, mod
                 const result = fromHTML(html, model, { window: domWindow });
                 expect(result.status).toBe('editable');
                 const blocks = content.content as JsonNode[];
-                // An empty document, one textblock with no content, writes the empty string (AC-050).
+                // An empty document, one textblock with no content, writes the empty string.
                 if (blocks.length === 1 && blocks[0]?.content === undefined && html === '') {
                     expect(result).toMatchObject({ document: createEmptyDocument(model) });
                 } else if (result.status === 'editable') {

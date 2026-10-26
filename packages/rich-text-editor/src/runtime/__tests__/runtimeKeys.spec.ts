@@ -15,7 +15,7 @@ import { stored, para, words, TEXT_INSERT, start, heading, textOf, installRuntim
 
 installRuntimeHooks();
 
-describe('key precedence', () => {
+describe('key order', () => {
     it('runs the commands features bind to one key in plugin order until one applies', () => {
         const leaveHeading = defineFeature({
             id: 'fixture.leave-heading',

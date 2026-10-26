@@ -19,7 +19,7 @@ describe('package stylesheets', () => {
         expect(stylesheets.length).toBeGreaterThan(10);
     });
 
-    // Accessibility AC-005: nothing locks or restyles the editor for one orientation only.
+    // Nothing locks or restyles the editor for one orientation only.
     it.each(stylesheets)('holds no orientation media query in %s', (path) => {
         const css = readFileSync(join(SOURCE, path), 'utf8').replaceAll(/\/\*[\s\S]*?\*\//g, '');
 

@@ -72,7 +72,7 @@ const mount = async (model: ContentModel, services: EditorServices = {}) => {
 };
 
 describe('the observability guide examples', () => {
-    it('counts import failures and unknown capabilities from the format diagnostics of decodeDocument (SPEC-rich-text-quality/AC-031)', () => {
+    it('counts import failures and unknown capabilities from the format diagnostics of decodeDocument', () => {
         const valid = createEmptyDocument(inlineModel);
         const stored = [
             valid,
@@ -116,7 +116,7 @@ describe('the observability guide examples', () => {
             },
         } as RichTextDocument;
 
-        it('counts one reader.override-failed from the onDiagnostic prop of RichTextReader (SPEC-rich-text-quality/AC-031)', () => {
+        it('counts one reader.override-failed from the onDiagnostic prop of RichTextReader', () => {
             const counter = createRendererFailureCounter();
 
             renderToStaticMarkup(readerElement(counter, model, stored));
@@ -124,7 +124,7 @@ describe('the observability guide examples', () => {
             expect(counter.failures()).toBe(1);
         });
 
-        it('counts one codecs.override-failed from the diagnostics of toHTML (SPEC-rich-text-quality/AC-031)', () => {
+        it('counts one codecs.override-failed from the diagnostics of toHTML', () => {
             const counter = createRendererFailureCounter();
 
             recordCodecFailures(counter, model, stored);
@@ -132,7 +132,7 @@ describe('the observability guide examples', () => {
             expect(counter.failures()).toBe(1);
         });
 
-        it('counts one runtime.view-fault from the diagnostic event of an editor (SPEC-rich-text-quality/AC-031)', async () => {
+        it('counts one runtime.view-fault from the diagnostic event of an editor', async () => {
             // A node view that cannot build is the one way to fault a view, so the portal store throws for it.
             let armed = false;
             vi.mocked(createPortalStore).mockImplementationOnce(() => {
@@ -161,7 +161,7 @@ describe('the observability guide examples', () => {
         });
     });
 
-    it('counts a save conflict from the saveStatusChange event once, however long the state stays conflict (SPEC-rich-text-quality/AC-031)', async () => {
+    it('counts a save conflict from the saveStatusChange event once, however long the state stays conflict', async () => {
         const persistence: PersistenceService = {
             save: () => Promise.resolve({ status: 'conflict', currentRevision: 'revision-9' }),
             read: () => Promise.reject(new Error('The conflict handler reads nothing.')),
@@ -179,7 +179,7 @@ describe('the observability guide examples', () => {
         counter.stop();
     });
 
-    it('counts operations and normalization transactions from the operationMetric event (SPEC-rich-text-quality/AC-031)', async () => {
+    it('counts operations and normalization transactions from the operationMetric event', async () => {
         const handle = await mount(documentModel);
         const metrics = collectOperationMetrics(handle);
         act(() => typeText(handle, 'abc'));

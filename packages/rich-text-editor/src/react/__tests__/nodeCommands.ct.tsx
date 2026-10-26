@@ -90,7 +90,7 @@ const moreCommands = async (page: Page, nodeRows: readonly string[], select: () 
 };
 
 /** The chrome commands More lacks; a chrome name may lead with the state its command fixes, as Add alternative text. */
-// Copy code and Pause or Play are chrome actions, not commands (accessibility AC-018), so More need not offer them.
+// Copy code and Pause or Play are chrome actions, not commands, so More need not offer them.
 const CHROME_ONLY: readonly string[] = ['Copy code', 'Pause animation', 'Play animation', 'Keep alternative text'];
 
 const missing = (chrome: readonly string[], more: readonly string[]) =>

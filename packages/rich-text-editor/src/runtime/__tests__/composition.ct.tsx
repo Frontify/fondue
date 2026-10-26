@@ -8,7 +8,7 @@ import { EditorProbe } from '../../react/__tests__/fixtures/EditorProbe';
 import { type CommandResult } from '../types';
 
 test.afterEach(async ({ page }) => {
-    // Quality AC-032: no paste or render path needs inline script, `eval` or a foreign origin.
+    // No paste or render path needs inline script, `eval` or a foreign origin.
     expect(await cspViolationsOf(page)).toEqual([]);
 });
 

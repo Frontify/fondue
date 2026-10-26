@@ -6,7 +6,7 @@ import { expect, it } from 'vitest';
 
 import { budgets } from './fixtures/size/bundle';
 
-it('holds exactly the rows of the Bundle budgets table, each a positive byte count', () => {
+it('holds exactly the bundle budgets of each entry, each a positive byte count', () => {
     expect(Object.keys(budgets).sort()).toEqual(
         [
             './reader',

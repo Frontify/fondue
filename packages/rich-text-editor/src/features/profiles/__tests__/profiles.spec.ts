@@ -17,7 +17,7 @@ import { shipped as inline } from '#/react/profiles/inline';
 import { type ShippedProfile } from '#/react/profiles/parts';
 import { featureFixtures } from '#/testing/conformance/fixtures';
 
-// The Profiles tables of SPEC-rich-text, before the Release stages filter.
+// The profile tables, before the filter by release stage.
 const INLINE = [
     'core',
     'marks.bold',
@@ -70,7 +70,7 @@ const DOCUMENT_CREATABLE = [
     'blocks.indent',
 ];
 
-// The profile columns of the input rule table in SPEC-rich-text-editing, with `link.autolink` of `links`; typography is off.
+// The profile columns of the input rules, with `link.autolink` of `links`; typography is off.
 const INLINE_RULES = ['bold.stars', 'bold.underscores', 'italic.star', 'italic.underscore', 'link.autolink'];
 const COMMENT_RULES = [
     ...INLINE_RULES,

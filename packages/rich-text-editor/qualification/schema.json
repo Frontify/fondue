@@ -1,7 +1,7 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "title": "Qualification record of a @frontify/fondue-rich-text-editor release",
-    "description": "The automated evidence of one release (SPEC-rich-text-quality, Qualification record). A result that only a CI job can give names that job in pendingIn until the release pull request fills it in.",
+    "description": "The automated evidence of one release (the qualification record). A result that only a CI job can give names that job in pendingIn until the release pull request fills it in.",
     "type": "object",
     "additionalProperties": false,
     "required": ["version", "commit", "date", "suites", "performance", "bundle", "findings", "acceptedFailures"],

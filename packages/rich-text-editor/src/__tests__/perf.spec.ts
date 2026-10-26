@@ -23,7 +23,7 @@ const workflow = readFileSync(
 
 const rows = budgets.rows as readonly BudgetRow[];
 
-/** The Performance budgets table of `SPEC-rich-text-quality`, as `[id, budget in ms or null]`. */
+/** The performance budgets, as `[id, budget in ms or null]`. */
 const TABLE: readonly (readonly [string, number | null])[] = [
     ['keystroke-typical-p95', 50],
     ['keystroke-typical-p99', 100],
@@ -50,7 +50,7 @@ const TABLE: readonly (readonly [string, number | null])[] = [
 ];
 
 describe('the performance budgets', () => {
-    it('hold exactly the rows of the Performance budgets table', () => {
+    it('hold exactly the budgets of the performance method', () => {
         expect(rows.map(({ id, budgetMs }) => [id, budgetMs])).toEqual(TABLE);
     });
 

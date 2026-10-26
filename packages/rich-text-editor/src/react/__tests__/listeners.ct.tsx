@@ -15,7 +15,7 @@ const EDITORS = 20;
 
 /**
  * Counts the listeners the package adds on `document` by event type from now on: each add less the removals of the
- * same listener. The `selectionchange` listener `prosemirror-view` adds per view is not counted (DR-123).
+ * same listener. The `selectionchange` listener `prosemirror-view` adds per view is not counted.
  */
 const watchDocumentListeners = (page: Page) =>
     page.evaluate(() => {

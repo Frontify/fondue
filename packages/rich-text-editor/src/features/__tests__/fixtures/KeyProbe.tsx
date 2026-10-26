@@ -20,7 +20,7 @@ const services = {
 
 declare global {
     interface Window {
-        /** The key precedence probe's handle, selection helper, submitted texts, host dialog changes and keys. */
+        /** The key order probe's handle, selection helper, submitted texts, host dialog changes and keys. */
         keyProbe?: {
             readonly handle: EditorHandle;
             readonly setSelection: typeof setSelection;

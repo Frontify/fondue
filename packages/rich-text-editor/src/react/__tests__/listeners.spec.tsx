@@ -10,7 +10,7 @@ import { perfDocument, perfModel } from '../../model/__tests__/fixtures/perf/doc
 
 const EDITORS = 20;
 
-// The engine adds one `selectionchange` listener per view, which AC-015 leaves out of the count (DR-123).
+// The engine adds one `selectionchange` listener per view, which the listener count leaves out.
 const ENGINE_FRAME = /[\\/]prosemirror-view[\\/]/;
 
 /**

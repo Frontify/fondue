@@ -53,7 +53,7 @@ const filesUnder = (directory: string, suffixes: readonly string[]): string[] =>
     });
 
 describe('the docs pages', () => {
-    it('has one MDX page for each guide, titled under Rich Text Editor/Guides (DR-104)', () => {
+    it('has one MDX page for each guide, titled under Rich Text Editor/Guides', () => {
         for (const name of PAGES) {
             expect(existsSync(join(PACKAGE, `src/docs/${name}.mdx`)), name).toBe(true);
             expect(page(name)).toMatch(/<Meta title="Rich Text Editor\/Guides\/[^"]+" \/>/);
@@ -80,7 +80,7 @@ describe('the package README', () => {
 describe('the accessibility guide', () => {
     const source = page('accessibility');
 
-    it('has a section for the keyboard model, the toolbar, the content checks, alternative text and language marking (SPEC-rich-text-accessibility/AC-064)', () => {
+    it('has a section for the keyboard model, the toolbar, the content checks, alternative text and language marking ', () => {
         expect(headingsOf(source)).toEqual(
             expect.arrayContaining([
                 'Keyboard model',
@@ -92,20 +92,20 @@ describe('the accessibility guide', () => {
         );
     });
 
-    it('names the toolbar shortcut and its default in the keyboard model and the toolbar (SPEC-rich-text-accessibility/AC-064)', () => {
+    it('names the toolbar shortcut and its default in the keyboard model and the toolbar ', () => {
         expect(source).toContain('Alt+F10');
         expect(source).toContain('toolbarShortcut');
         expect(source).toContain('tabMovesFocus');
     });
 
-    it('lists every content check rule of the model in its content checks table (SPEC-rich-text-accessibility/AC-064)', () => {
+    it('lists every content check rule of the model in its content checks table ', () => {
         expect(CONTENT_RULE_IDS.length).toBeGreaterThan(0);
         for (const rule of CONTENT_RULE_IDS) {
             expect(hasRow(source, rule), rule).toBe(true);
         }
     });
 
-    it('lists the locales the package ships in its language marking section (SPEC-rich-text-accessibility/AC-064)', () => {
+    it('lists the locales the package ships in its language marking section ', () => {
         const shipped = readdirSync(join(PACKAGE, 'src/locales'))
             .filter((name) => /^[a-z]{2}-[A-Z]{2}\.ts$/.test(name))
             .map((name) => name.replace('.ts', ''));
@@ -155,12 +155,12 @@ describe('the reader and codecs guide', () => {
     const source = page('reader-codecs');
     const outside = source.slice(source.indexOf('## `toHTML` output outside the editor'));
 
-    it('has the caching and outside-the-editor sections (SPEC-rich-text-output/AC-037, AC-039)', () => {
+    it('has the caching and outside-the-editor sections ', () => {
         expect(source).toContain('## Caching reader and codec output');
         expect(source).toContain('## `toHTML` output outside the editor');
     });
 
-    it('names the stylesheet entry that the package exports (SPEC-rich-text-output/AC-039)', () => {
+    it('names the stylesheet entry that the package exports ', () => {
         const { exports } = JSON.parse(read('package.json')) as { readonly exports: Readonly<Record<string, unknown>> };
 
         expect(exports['./styles']).toBeDefined();
@@ -177,11 +177,11 @@ describe('the observability guide', () => {
         ['Latency and normalization counts', 'operationMetrics', 'operationMetrics'],
     ] as const;
 
-    it('has one section for each row of the counter table (SPEC-rich-text-quality/AC-031)', () => {
+    it('has one section for each row of the counter table ', () => {
         expect(headingsOf(source)).toEqual(expect.arrayContaining(SECTIONS.map(([heading]) => heading)));
     });
 
-    it('shows the example module of each section, which a test runs (SPEC-rich-text-quality/AC-031)', () => {
+    it('shows the example module of each section, which a test runs ', () => {
         for (const [heading, file, name] of SECTIONS) {
             const body = source.slice(source.indexOf(`## ${heading}`)).split(/\n## /)[0] ?? '';
 
@@ -256,7 +256,7 @@ describe('the limitations guide', () => {
         ),
     );
 
-    it('lists every stage 1.x feature that no shipped profile installs (SPEC-rich-text/AC-048)', () => {
+    it('lists every stage 1.x feature that no shipped profile installs ', () => {
         expect(UNSHIPPED_FEATURES.length).toBeGreaterThan(0);
         for (const id of UNSHIPPED_FEATURES) {
             expect(installed.has(id), id).toBe(false);
@@ -265,7 +265,7 @@ describe('the limitations guide', () => {
         }
     });
 
-    it('installs the feature of every story title and every feature tag in a shipped profile (SPEC-rich-text/AC-048)', () => {
+    it('installs the feature of every story title and every feature tag in a shipped profile ', () => {
         const ids = new Set<string>();
         for (const file of filesUnder('src', ['.stories.tsx'])) {
             const story = read(file);
@@ -283,7 +283,7 @@ describe('the limitations guide', () => {
         }
     });
 
-    it('lists every feature that a docs page names and no shipped profile installs (SPEC-rich-text/AC-048)', () => {
+    it('lists every feature that a docs page names and no shipped profile installs ', () => {
         const known = new Set([...Object.keys(registry), ...UNSHIPPED_FEATURES]);
         for (const name of PAGES) {
             for (const [, id] of page(name).matchAll(/`([a-z0-9]+(?:[.-][a-z0-9]+)*)`/g)) {
@@ -295,7 +295,7 @@ describe('the limitations guide', () => {
         }
     });
 
-    it('names only locale strings the locale holds (SPEC-rich-text/AC-048)', () => {
+    it('names only locale strings the locale holds ', () => {
         const keys = Object.keys(enUS.translationStrings);
 
         for (const [key] of source.matchAll(/RichTextEditor_\w+/g)) {
@@ -303,7 +303,7 @@ describe('the limitations guide', () => {
         }
     });
 
-    it('throws definition.unknown-feature from featuresById for each of them (SPEC-rich-text/AC-048)', () => {
+    it('throws definition.unknown-feature from featuresById for each of them ', () => {
         for (const id of UNSHIPPED_FEATURES) {
             expect(() => featuresById([id]), id).toThrow(
                 expect.objectContaining({ code: 'definition.unknown-feature' }),

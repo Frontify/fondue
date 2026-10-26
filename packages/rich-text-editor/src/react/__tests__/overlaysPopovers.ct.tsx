@@ -31,7 +31,7 @@ import {
 import { OverlayProbe } from './fixtures/OverlayProbe';
 
 test.afterEach(async ({ page }) => {
-    // Quality AC-032: no paste or render path needs inline script, `eval` or a foreign origin.
+    // No paste or render path needs inline script, `eval` or a foreign origin.
     expect(await cspViolationsOf(page)).toEqual([]);
 });
 

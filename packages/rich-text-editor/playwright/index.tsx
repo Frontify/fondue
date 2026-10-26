@@ -11,7 +11,7 @@ declare global {
     }
 }
 
-// Quality AC-032: the page runs under a Content Security Policy, and a suite fails on any violation it records.
+// The page runs under a Content Security Policy, and a suite fails on any violation it records.
 window.cspViolations = [];
 document.addEventListener('securitypolicyviolation', ({ violatedDirective, blockedURI }) => {
     window.cspViolations?.push(`${violatedDirective} ${blockedURI}`);

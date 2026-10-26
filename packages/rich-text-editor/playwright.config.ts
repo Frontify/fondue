@@ -3,7 +3,7 @@
 import { defineConfig, devices } from '@playwright/experimental-ct-react';
 import tsConfigPaths from 'vite-tsconfig-paths';
 
-// The policy the CT page is served under: no inline script, `eval` or foreign origin (quality AC-032).
+// The policy the CT page is served under: no inline script, `eval` or foreign origin.
 const CONTENT_SECURITY_POLICY =
     "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob:; connect-src 'self'";
 

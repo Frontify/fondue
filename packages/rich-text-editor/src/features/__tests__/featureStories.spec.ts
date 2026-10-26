@@ -32,7 +32,7 @@ const installable = (id: string): ReadonlySet<string> => {
     return found;
 };
 
-// Features whose purpose is to act on other features' content, so their stories install those too (DR-134).
+// Features whose purpose is to act on other features' content, so their stories install those too.
 const ALLOWANCES: Readonly<Record<string, readonly string[]>> = {
     'format.clear': ['marks.bold', 'blocks.align', 'lists.item', 'lists.bullet', 'blocks.heading'],
     'nav.outline': ['blocks.heading'],

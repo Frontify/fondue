@@ -36,7 +36,7 @@ test('gives the editor and the reader of each contract fixture the same text, ro
         await component.update(<ParityProbe name={name} />);
         const editor = page.getByRole('textbox', { name: 'Editor' });
         await expect(editor).toHaveAttribute('contenteditable', 'true');
-        // Node view toolbars and column break separators are authoring controls only the editor shows (blocks AC-035).
+        // Node view toolbars and column break separators are authoring controls only the editor shows.
         await editor.evaluate((surface) => {
             for (const control of surface.querySelectorAll(
                 '[data-rte-chrome] [role="toolbar"], [data-rte-column-break]',

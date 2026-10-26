@@ -49,7 +49,7 @@ test('lists a story file for every story of the package', async ({ mount, page }
 });
 
 for (const file of FILES) {
-    // SPEC-rich-text-quality/AC-024 and SPEC-rich-text/AC-045: each story renders without console.error, passes its play function, which asserts what it documents.
+    // Each story renders without console.error, passes its play function, which asserts what it documents.
     test(`renders the stories of ${file} without console.error and passes their play functions`, async ({
         mount,
         page,
@@ -86,7 +86,7 @@ for (const file of FILES) {
                         );
                     }
 
-                    // SPEC-rich-text/AC-046: typing never passes a new document into the editor.
+                    // Typing never passes a new document into the editor.
                     const surfaces = await editableSurfaces(page).count();
                     expect(surfaces === 0, `${story.name} has ${surfaces} editable surfaces`).toBe(story.noSurface);
                     if (surfaces > 0) {

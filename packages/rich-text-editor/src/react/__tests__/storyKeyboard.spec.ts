@@ -61,7 +61,7 @@ describe('the keyboard reference of each profile story', () => {
         );
     });
 
-    // The Apple and other-platform cells of the Shortcuts table of SPEC-rich-text-editing, by command and payload.
+    // The Apple and other-platform shortcuts, by command and payload.
     it.each([
         ['history.undo', null, ['⌘Z'], ['Ctrl+Z']],
         ['history.redo', null, ['⇧⌘Z'], ['Ctrl+Shift+Z', 'Ctrl+Y']],
@@ -79,7 +79,7 @@ describe('the keyboard reference of each profile story', () => {
         ['block.move.down', null, ['⌥⌘↓'], ['Ctrl+Alt+Down']],
         ['column.break.insert', null, ['⇧⌘Enter'], ['Ctrl+Shift+Enter']],
         ['hard-break.insert', null, ['⇧Enter'], ['Shift+Enter']],
-    ] as const)('shows %s as the Shortcuts table of the spec writes it', (command, payload, apple, other) => {
+    ] as const)('shows %s as the shortcut table of the story writes it', (command, payload, apple, other) => {
         const rows = SHORTCUT_ROWS.filter(
             (row) =>
                 row.profiles.includes('brand-document') &&

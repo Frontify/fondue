@@ -8,7 +8,7 @@ import { ThemedStory } from './fixtures/ThemedStory';
 const themeClass = (theme: string) => new RegExp(`(^|[_\\s-])${theme}([_\\s-]|$)`);
 const providers = (page: Page) => page.getByTestId('themed-story').locator('.fondue-theme-provider');
 
-// SPEC-rich-text/AC-094: the preview wraps every story in a ThemeProvider driven by theme, direction and locale globals.
+// The preview wraps every story in a ThemeProvider driven by theme, direction and locale globals.
 test.describe('storybook preview wrapper', () => {
     for (const theme of ['light', 'dark'] as const) {
         test(`renders the story once in the ${theme} theme`, async ({ mount, page }) => {

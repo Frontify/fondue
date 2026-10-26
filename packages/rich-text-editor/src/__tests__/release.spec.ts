@@ -34,7 +34,7 @@ const manifestOf = (root: string) =>
         readonly exports?: Exports;
     };
 
-// The dependencies whose resolved versions the release notes record (DR-102).
+// The dependencies whose resolved versions the release notes record.
 const RECORDED = /^(?:prosemirror-[\w-]+|markdown-it|@radix-ui\/react-toolbar|lowlight|emojibase-data)$/;
 
 /** Each recorded dependency of `resolved` whose `name@version` the release notes do not name. */
@@ -89,7 +89,7 @@ const qualificationErrors = (record: unknown): string[] => {
     return [...errors, ...pendingResults(record).map((result) => `${result} is pending`)];
 };
 
-// The unions a minor release may grow, and the aliases they are made of (`SPEC-rich-text.extensibility.md`).
+// The unions a minor release may grow, and the aliases they are made of.
 const GROWABLE = [
     'DiagnosticCode',
     'ChangeOrigin',
@@ -743,7 +743,7 @@ describe.runIf(process.env.RTE_RELEASE === 'true')('the release this run prepare
         expect(missingTargets(packed, LOCALES)).toEqual([]);
     });
 
-    // 1.0 needs its record before it publishes, a later release only after it publishes (AC-026).
+    // 1.0 needs its record before it publishes, a later release only after it publishes.
     it.skipIf(release === undefined)(
         'holds a qualification record that passes its schema with no result pending',
         () => {

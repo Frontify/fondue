@@ -10,7 +10,7 @@ import { build, type Rollup } from 'vite';
 
 const root = fileURLToPath(new URL('../../../..', import.meta.url));
 
-/** The budgets of the Bundle budgets table in bytes, from `size-budgets.json` alone. */
+/** The bundle budgets in bytes, from `size-budgets.json` alone. */
 export const budgets = JSON.parse(readFileSync(join(root, 'size-budgets.json'), 'utf8')) as Readonly<
     Record<string, number>
 >;

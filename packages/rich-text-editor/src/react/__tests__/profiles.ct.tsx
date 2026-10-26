@@ -147,7 +147,7 @@ test('submits a comment with Mod+Enter, while Enter starts a new paragraph', asy
     await expect(surfaceOf(page).locator('p')).toHaveText(['One', 'Two']);
 });
 
-// Mod+Enter belongs to submit in a comment (Key precedence row 4), so with no `onSubmit` no part acts on it.
+// Mod+Enter belongs to submit in a comment (the key order of a comment), so with no `onSubmit` no part acts on it.
 test('keeps the caret in a comment code block on Mod+Enter', async ({ mount, page }) => {
     await mount(<ProfileProbe profile="comment" />);
     await ready(page);

@@ -86,7 +86,7 @@ describe('the context menu', () => {
             fireEvent.keyDown(screen.getByRole('button', { name: 'More' }), { key: 'Enter' });
         });
 
-        // The image chrome's commands follow the rows of the parts before `media.image`, while the image is selected (DR-126).
+        // The image chrome's commands follow the rows of the parts before `media.image`, while the image is selected.
         expect(context.map(({ name }) => name)).toEqual([
             'Move up',
             'Move down',
@@ -223,7 +223,7 @@ describe('the context menu', () => {
         view.unmount();
     });
 
-    it('opens on a selected image with only its chrome rows when the toolbar shows the moves (DR-126)', async () => {
+    it('opens on a selected image with only its chrome rows when the toolbar shows the moves', async () => {
         const view = await mountSelected({ readOnly: false, shippedParts: false });
 
         expect(prevents(view.container.querySelector('figure') as Element)).toBe(true);

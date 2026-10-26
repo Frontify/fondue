@@ -2,7 +2,7 @@
 
 import { defineConfig } from '@playwright/test';
 
-// Proves quality AC-008: under `CI=1` the run reports the fixture as flaky and exits non-zero. Never part of the component test run.
+// Proves that under `CI=1` the run reports the fixture as flaky and exits non-zero. Never part of the component test run.
 export default defineConfig({
     testDir: './playwright/flaky',
     // Not `*.spec.ts`, which Vitest would collect.

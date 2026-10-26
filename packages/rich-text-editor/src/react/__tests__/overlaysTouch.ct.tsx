@@ -29,7 +29,7 @@ import {
 import { OverlayProbe } from './fixtures/OverlayProbe';
 
 test.afterEach(async ({ page }) => {
-    // Quality AC-032: no paste or render path needs inline script, `eval` or a foreign origin.
+    // No paste or render path needs inline script, `eval` or a foreign origin.
     expect(await cspViolationsOf(page)).toEqual([]);
 });
 
@@ -102,7 +102,7 @@ test.describe('on a touch device', () => {
         expect(await documentHtml(page)).toBe('<p>one <strong>two</strong> three</p>');
     });
 
-    // Accessibility AC-027: only the docked toolbar's items prevent the press default that moves focus.
+    // Only the docked toolbar's items prevent the press default that moves focus.
     test('prevents the press default of a toolbar item only while the toolbar is docked', async ({ mount, page }) => {
         await mount(<OverlayProbe bubble={false} toolbar={TOUCH_TOOLBAR} />);
         await ready(page);

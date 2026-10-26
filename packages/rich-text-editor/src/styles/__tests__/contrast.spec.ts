@@ -202,7 +202,7 @@ const elementsOf = (): Element[] => {
 const ELEMENTS = elementsOf();
 
 const isSurface = (element: Element) =>
-    // The selection fill shown while focus is in the chrome is a state, which AC-008 leaves out (DR-127).
+    // The selection fill shown while focus is in the chrome is a state, which the text contrast limits leave out.
     element.restBackgrounds.size > 0 && element.texts.size === 0 && !element.sized && !element.selection;
 
 const SURFACES = ELEMENTS.filter(isSurface);
@@ -331,12 +331,11 @@ describe('token contrast of the package styles', () => {
     });
 
     for (const theme of ['light', 'dark'] as const) {
-        // Accessibility AC-008.
         it(`gives every default text colour 4.5:1 on its backgrounds in the ${theme} theme`, () => {
             expect(belowOf(TEXT_GROUPS, theme, 4.5)).toEqual([]);
         });
 
-        // Accessibility AC-012; the editor's table borders arrive with tables in 1.x.
+        // The editor's table borders arrive with tables in 1.x.
         it(`gives focus indicators, pressed toggles and control borders 3:1 against adjacent colours in the ${theme} theme`, () => {
             expect(belowOf(NON_TEXT_GROUPS, theme, 3)).toEqual([]);
         });

@@ -369,7 +369,7 @@ describe('package manifest and built output', () => {
         expect(publicTypeFaults()).toEqual([]);
     });
 
-    // React AC-052: every colour of the built stylesheet comes from a token variable.
+    // Every colour of the built stylesheet comes from a token variable.
     it('holds no literal colour in the built stylesheet outside a var() fallback', () => {
         expect(literalColorsOf(readFileSync(join(outDir, 'style.css'), 'utf8'))).toEqual([]);
     });
