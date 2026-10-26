@@ -9,9 +9,11 @@ export const transfer = (data: Readonly<Record<string, string>>, files: readonly
     for (const [type, value] of Object.entries(data)) {
         dataTransfer.setData(type, value);
     }
+
     for (const file of files) {
         dataTransfer.items.add(file);
     }
+
     return dataTransfer;
 };
 
@@ -27,5 +29,6 @@ export const inputOf = (
     if (slice === undefined) {
         return input;
     }
+
     return { ...input, slice: JSON.parse(slice) as RichTextSlice };
 };

@@ -41,8 +41,10 @@ const colorsIn = (nodes: readonly ContentNodeJSON[], found: string[] = []): stri
                 found.push(`${mark.type} ${JSON.stringify(mark.attrs?.value)}`);
             }
         }
+
         colorsIn(node.content ?? [], found);
     }
+
     return found;
 };
 
@@ -54,12 +56,14 @@ const pasteHtml = (model: ContentModel, html: string) => {
     const colors = colorsIn(mounted.handle.getSnapshot().document.content.content ?? []);
     const announced = mounted.container.querySelector('[aria-live="polite"]')?.textContent;
     mounted.unmount();
+
     return { colors, announced };
 };
 
 const profiles = (): Readonly<Record<string, ContentModel>> => {
     const delivered = deliveredProfiles();
     const lists = { ...delivered, brand: [...(delivered.document ?? []), fontColor(), brandStyles()] };
+
     return Object.fromEntries(
         Object.entries(lists).map(([name, features]) => [
             name,

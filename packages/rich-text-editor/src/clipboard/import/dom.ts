@@ -12,6 +12,7 @@ export const descriptorOf = (prototype: object, name: string): PropertyDescripto
             return descriptor;
         }
     }
+
     throw new Error(`The DOM implementation has no ${name}.`);
 };
 
@@ -20,6 +21,7 @@ export const createElementBeside = (node: Node, name: string): HTMLElement => {
     const owner = node.ownerDocument as Document;
     const create = descriptorOf(Object.getPrototypeOf(owner) as object, 'createElement')
         .value as Document['createElement'];
+
     return create.call(owner, name);
 };
 
@@ -28,5 +30,6 @@ export const unwrap = (element: Element) => {
     for (let child = element.firstChild; child !== null; child = element.firstChild) {
         element.before(child);
     }
+
     element.remove();
 };

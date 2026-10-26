@@ -58,17 +58,20 @@ export const importHtml = (html: string, schema: Schema, window: Window, setting
     if (exceedsMarkupDepth(html)) {
         throw new RangeError('The markup nests deeper than a browser parser reads.');
     }
+
     const inert = new dom.DOMParser().parseFromString(html, 'text/html');
     // No rule reads a base URL, and jsdom throws resolving URLs against a `base` whose `xlink:href` it misreads.
     const query = descriptorOf(dom.Document.prototype, 'querySelectorAll').value as Document['querySelectorAll'];
     for (const base of Array.from(query.call(inert, 'base'))) {
         base.remove();
     }
+
     // An element named `body` shadows `document.body`.
     const body = (descriptorOf(dom.Document.prototype, 'body').get as () => HTMLElement | null).call(inert);
     if (body === null) {
         return { content: Fragment.empty, droppedImages: 0, removedColors: 0, removedTables: 0 };
     }
+
     // First, since a control of a form shadows what every later step reads.
     replaceForms(dom, inert);
     // Before any step that queries by class.
@@ -103,6 +106,7 @@ export const importHtml = (html: string, schema: Schema, window: Window, setting
     const preserveWhitespace = body.querySelector('.fondue-rte-content') !== null;
     let content = withSpaces(parser.parse(body, { preserveWhitespace }).content);
     content = withValidAttributes(schema, content, settings.limits, settings.headingLevels);
+
     return { content, droppedImages, removedColors, removedTables };
 };
 
@@ -122,5 +126,6 @@ export const importModelHtml = (
         colors: colorReadingOf(model),
         rules: compiledModel(model).parseRules,
     });
+
     return { ...imported, content: withinLinkPolicy(imported.content, markHrefPolicy(model, 'link')) };
 };

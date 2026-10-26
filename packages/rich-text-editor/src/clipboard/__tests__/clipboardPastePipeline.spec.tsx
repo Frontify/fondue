@@ -284,6 +284,7 @@ describe('the paste pipeline', () => {
         const { document } = literal.handle.getSnapshot();
         const written = { ...document, requiredCapabilities: installed.map((id) => ({ id, version: 1 })) };
         literal.unmount();
+
         return new TextEncoder().encode(JSON.stringify(written)).byteLength;
     };
 
@@ -343,6 +344,7 @@ describe('the paste pipeline', () => {
             limits: { maxDocumentNodes: 50 },
             generateId: () => {
                 drawn += 1;
+
                 return `n-${drawn}`;
             },
         });
@@ -380,6 +382,7 @@ describe('the paste pipeline', () => {
             step.mockRestore();
             expect(new Set(nodeIdsOf(mounted.content())).size).toBe(count);
             mounted.unmount();
+
             return steps;
         };
 

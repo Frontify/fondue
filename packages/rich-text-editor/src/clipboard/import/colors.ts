@@ -21,8 +21,10 @@ export const colorReadingOf = (model: ContentModel): ColorReading => {
         if (mark === undefined) {
             return false;
         }
+
         return features.some(({ id, options }) => id === mark.featureId && options.literalColors === true);
     };
+
     return { color: literal('font_color'), background: literal('highlight') };
 };
 
@@ -56,6 +58,7 @@ const UNPAINTED = new Set(['transparent', 'inherit', 'initial', 'unset', 'curren
 /** Whether removing the pasted colour `text` removes formatting: any colour but one that paints nothing. */
 const paints = (text: string, hex: string | undefined) => {
     const value = text.trim().toLowerCase();
+
     return value !== '' && !UNPAINTED.has(value) && (hex === undefined || !isClear(hex));
 };
 
@@ -80,21 +83,28 @@ export const normalizeColors = (body: HTMLElement, reading: ColorReading): numbe
         if (text === '') {
             return false;
         }
+
         const hex = hexColor(text);
         if (block && property === 'color' && hex !== undefined && isDefaultText(hex)) {
             style.removeProperty(property);
+
             return false;
         }
+
         if (keep && hex !== undefined && !isClear(hex)) {
             style.setProperty(property, hex);
+
             return true;
         }
+
         style.removeProperty(property);
         if (!token && paints(text, hex)) {
             removed += 1;
         }
+
         return false;
     };
+
     for (const element of Array.from(body.querySelectorAll<HTMLElement>('[style]'))) {
         const { style } = element;
         if (element.hasAttribute('data-rte-style')) {
@@ -102,6 +112,7 @@ export const normalizeColors = (body: HTMLElement, reading: ColorReading): numbe
             style.removeProperty('background-color');
             continue;
         }
+
         const token = element.hasAttribute('data-rte-color');
         const block = UNCOLORED_BLOCKS.has(element.localName);
         const color = settle(style, 'color', reading.color, token, block);
@@ -111,12 +122,15 @@ export const normalizeColors = (body: HTMLElement, reading: ColorReading): numbe
         if (color && !span) {
             moved.push('color');
         }
+
         if (background && (color || !span)) {
             moved.push('background-color');
         }
+
         if (element.firstChild === null) {
             continue;
         }
+
         let holder: HTMLElement = element;
         for (const property of moved) {
             const inner = createElementBeside(element, 'span');
@@ -125,10 +139,12 @@ export const normalizeColors = (body: HTMLElement, reading: ColorReading): numbe
             for (let child = holder.firstChild; child !== null; child = holder.firstChild) {
                 inner.append(child);
             }
+
             holder.append(inner);
             holder = inner;
         }
     }
+
     for (const font of Array.from(body.querySelectorAll('font[color]'))) {
         const text = font.getAttribute('color') ?? '';
         const hex = hexColor(text);
@@ -136,14 +152,17 @@ export const normalizeColors = (body: HTMLElement, reading: ColorReading): numbe
             font.removeAttribute('color');
             continue;
         }
+
         if (reading.color && hex !== undefined) {
             font.setAttribute('color', hex);
             continue;
         }
+
         font.removeAttribute('color');
         if (paints(text, hex)) {
             removed += 1;
         }
     }
+
     return removed;
 };

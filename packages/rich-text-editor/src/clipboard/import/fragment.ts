@@ -14,10 +14,12 @@ export const withSpaces = (fragment: Fragment): Fragment => {
             nodes.push(node);
             continue;
         }
+
         if (!node.isTextblock) {
             nodes.push(node.copy(withSpaces(node.content)));
             continue;
         }
+
         let previous = '';
         const inline: Node[] = [];
         for (const child of node.content.content) {
@@ -26,12 +28,15 @@ export const withSpaces = (fragment: Fragment): Fragment => {
                 inline.push(child);
                 continue;
             }
+
             const text = `${previous}${child.text}`.replace(SPACED, ' ').slice(previous.length);
             previous = child.text.slice(-1);
             inline.push(child.type.schema.text(text, child.marks));
         }
+
         nodes.push(node.copy(Fragment.from(inline)));
     }
+
     return Fragment.from(nodes);
 };
 
@@ -43,6 +48,7 @@ const nearestLevel = (level: number, levels: readonly number[]) => {
             nearest = allowed;
         }
     }
+
     return nearest;
 };
 
@@ -64,22 +70,28 @@ export const withValidAttributes = (
             if (name === 'href' || typeof value !== 'string' || value.length <= limits.maxAttributeLength) {
                 continue;
             }
+
             const attribute = type.spec.attrs?.[name];
             if (attribute === undefined || !('default' in attribute)) {
                 return undefined;
             }
+
             result[name] = attribute.default;
         }
+
         return result;
     };
+
     const paragraph = schema.nodes.paragraph as Node['type'];
     // Only what the paragraph declares carries over from the node it replaces.
     const asParagraph = (node: Node, content: Fragment, marks: readonly Mark[]) => {
         const declared = Object.fromEntries(
             Object.keys(paragraph.spec.attrs ?? {}).map((name) => [name, node.attrs[name]]),
         );
+
         return paragraph.create(valid(paragraph, declared) ?? null, content, marks);
     };
+
     const nodes: Node[] = [];
     for (const node of fragment.content) {
         const marks = node.marks.flatMap((mark) => {
@@ -87,12 +99,14 @@ export const withValidAttributes = (
             if (attrs === undefined) {
                 return [];
             }
+
             return [mark.type.create(attrs)];
         });
         if (node.text !== undefined) {
             nodes.push(node.mark(marks));
             continue;
         }
+
         const content = withValidAttributes(schema, node.content, limits, levels);
         const attrs = valid(node.type, node.attrs);
         if (attrs === undefined) {
@@ -102,18 +116,23 @@ export const withValidAttributes = (
             } else if (!node.isLeaf) {
                 nodes.push(...content.content);
             }
+
             continue;
         }
+
         if (node.type.name !== 'heading' || levels === undefined) {
             nodes.push(node.type.create(attrs, content, marks));
             continue;
         }
+
         const level = nearestLevel(node.attrs.level as number, levels);
         if (level === undefined) {
             nodes.push(asParagraph(node, content, marks));
             continue;
         }
+
         nodes.push(node.type.create({ ...attrs, level }, content, marks));
     }
+
     return Fragment.from(nodes);
 };

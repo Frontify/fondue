@@ -24,6 +24,7 @@ export const replaceForms = (dom: DomWindow, inert: Document) => {
         for (let child = firstChild.call(form); child !== null; child = firstChild.call(form)) {
             append.call(block, child);
         }
+
         const parent = parentNode.call(form);
         if (parent !== null) {
             replace.call(parent, block, form);
@@ -58,9 +59,11 @@ export const replaceForeign = (body: HTMLElement) => {
         if (!foreign.isConnected) {
             continue;
         }
+
         for (const hidden of Array.from(foreign.querySelectorAll('script, style, title'))) {
             hidden.remove();
         }
+
         // The whitespace at its edges lays out markup, and would stay as a leading space between blocks.
         foreign.replaceWith((foreign.textContent ?? '').trim());
     }
@@ -81,11 +84,13 @@ export const replaceTables = (body: HTMLElement, schema: Schema) => {
     if (holdsCells) {
         return 0;
     }
+
     for (const cell of Array.from(body.querySelectorAll('td, th'))) {
         const block = cell.ownerDocument.createElement('div');
         block.append(...Array.from(cell.childNodes));
         cell.replaceWith(block);
     }
+
     return body.querySelectorAll('table').length;
 };
 
@@ -100,6 +105,7 @@ export const replaceImages = (body: HTMLElement) => {
             image.replaceWith(alt);
         }
     }
+
     return images.length;
 };
 

@@ -35,6 +35,7 @@ const runsOf = (features: readonly Feature[], html: string, limits: Partial<Reso
             runs.push(`${node.text}|${marks.join(',')}`);
         }
     });
+
     return runs;
 };
 

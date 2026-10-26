@@ -55,20 +55,25 @@ const formatOf = (marker: string): MarkerFormat | null => {
     if (token === undefined) {
         return null;
     }
+
     if (/^\d+$/.test(token)) {
         return 'decimal';
     }
+
     const lower = token === token.toLowerCase();
     const roman = ROMAN.test(token) && (token.length > 1 || token.toLowerCase() === 'i');
     if (roman && lower) {
         return 'lower-roman';
     }
+
     if (roman) {
         return 'upper-roman';
     }
+
     if (lower) {
         return 'lower-alpha';
     }
+
     return 'upper-alpha';
 };
 
@@ -82,11 +87,14 @@ const markerSpans = (element: Element) => {
         if (isList(next)) {
             continue;
         }
+
         if (next.localName === 'span' && MSO_IGNORE.test(declaredStyle(next))) {
             markers.push(next);
         }
+
         pending.push(...Array.from(next.children).reverse());
     }
+
     return markers;
 };
 
@@ -95,11 +103,13 @@ const readListParagraph = (element: Element): ListParagraph | undefined => {
     if (!element.matches(LIST_PARAGRAPHS)) {
         return undefined;
     }
+
     const declared = MSO_LIST.exec(declaredStyle(element));
     // A level below 1 names no list level, so the paragraph stays a paragraph.
     if (declared === null || Number(declared[2]) < 1) {
         return undefined;
     }
+
     const markers = markerSpans(element);
     // An item that Word writes as `li` may have no marker span, and its list says what it is.
     let ordered = element.localName === 'li' && element.parentNode?.nodeName === 'OL';
@@ -109,9 +119,11 @@ const readListParagraph = (element: Element): ListParagraph | undefined => {
         format = formatOf(marker);
         ordered = format !== null;
     }
+
     for (const span of markers) {
         span.remove();
     }
+
     return { element, list: `${declared[1]} ${declared[3] ?? ''}`, level: Number(declared[2]), ordered, format };
 };
 
@@ -126,15 +138,19 @@ const runFrom = (first: ListParagraph) => {
         if (isLayout(next)) {
             continue;
         }
+
         if (next.nodeType !== next.ELEMENT_NODE || next.nodeName === 'LI') {
             break;
         }
+
         const item = readListParagraph(next as Element);
         if (item === undefined) {
             break;
         }
+
         run.push(item);
     }
+
     return run;
 };
 
@@ -148,6 +164,7 @@ const outermostList = (item: Element, body: HTMLElement) => {
             break;
         }
     }
+
     return outermost;
 };
 
@@ -158,6 +175,7 @@ const deepestLevel = (element: Element, body: HTMLElement, maxDepth: number, dep
     for (let parent = element.parentElement; parent !== null && parent !== body; parent = parent.parentElement) {
         around += 1;
     }
+
     // Each level adds a list and an item, and the innermost item a paragraph and its text: `depth + 2 * level + 1`.
     // 0 when not even one level fits, which leaves the paragraphs as paragraphs.
     return Math.max(0, Math.floor((maxDepth - depth - around - 1) / 2));
@@ -181,6 +199,7 @@ const rebuildRun = (run: readonly ListParagraph[], deepest: number, numbering: N
         for (let top = open.at(-1); top !== undefined && top.level > level; top = open.at(-1)) {
             open.pop();
         }
+
         const current = open.at(-1);
         // Another list or marker kind at the same level starts a new list.
         if (
@@ -190,26 +209,31 @@ const rebuildRun = (run: readonly ListParagraph[], deepest: number, numbering: N
         ) {
             open.pop();
         }
+
         let counts = numbering.get(list);
         if (counts === undefined) {
             counts = [];
             numbering.set(list, counts);
         }
+
         let parent = open.at(-1);
         if (parent === undefined || parent.level < level) {
             let tag = 'ul';
             if (ordered) {
                 tag = 'ol';
             }
+
             const created = createElementBeside(element, tag);
             const numbered = counts[level] ?? 0;
             if (ordered && numbered > 0) {
                 created.setAttribute('start', String(numbered + 1));
             }
+
             // An explicit format, so a list nested in another keeps Word's numbering instead of its depth's default.
             if (ordered && format !== null) {
                 created.setAttribute('data-marker', format);
             }
+
             if (parent !== undefined) {
                 parent.element.lastElementChild?.append(created);
             } else if (anchor === undefined) {
@@ -217,9 +241,11 @@ const rebuildRun = (run: readonly ListParagraph[], deepest: number, numbering: N
             } else {
                 anchor.before(created);
             }
+
             parent = { element: created, list, level, ordered };
             open.push(parent);
         }
+
         counts[level] = (counts[level] ?? 0) + 1;
         // An item restarts the numbering of the levels below it.
         counts.length = level + 1;
@@ -231,11 +257,13 @@ const rebuildRun = (run: readonly ListParagraph[], deepest: number, numbering: N
                 item.append(child);
             }
         }
+
         parent?.element.append(item);
         if (anchor === undefined) {
             element.remove();
         }
     }
+
     anchor?.remove();
 };
 
@@ -256,14 +284,17 @@ const itemsOf = (list: Element) => {
     if (!holdsOnlyItems(list)) {
         return undefined;
     }
+
     const items: ListParagraph[] = [];
     for (const item of Array.from(list.querySelectorAll('li'))) {
         const read = readListParagraph(item);
         if (read === undefined) {
             return undefined;
         }
+
         items.push(read);
     }
+
     return items;
 };
 
@@ -281,30 +312,37 @@ export const rebuildOfficeLists = (body: HTMLElement, maxDepth: number, depth: n
         if (read.has(paragraph)) {
             continue;
         }
+
         if (paragraph.localName === 'li') {
             const list = outermostList(paragraph, body);
             // A task list keeps its items' states for the task list rules; a rebuilt `li` would lose them.
             if (list === undefined || isTaskListElement(list)) {
                 continue;
             }
+
             for (const item of Array.from(list.querySelectorAll('li'))) {
                 read.add(item);
             }
+
             const items = itemsOf(list);
             const deepest = deepestLevel(list, body, maxDepth, depth);
             if (items !== undefined && deepest > 0) {
                 rebuildRun(items, deepest, numbering, list);
             }
+
             continue;
         }
+
         const first = readListParagraph(paragraph);
         if (first === undefined) {
             continue;
         }
+
         const run = runFrom(first);
         for (const item of run) {
             read.add(item.element);
         }
+
         const deepest = deepestLevel(paragraph, body, maxDepth, depth);
         if (deepest > 0) {
             rebuildRun(run, deepest, numbering);
@@ -325,6 +363,7 @@ export const removeOfficeMarkup = (body: HTMLElement) => {
             unwrap(marker);
         }
     }
+
     // One write per element: removing tokens one at a time rewrites the attribute each time, quadratic in hostile input.
     for (const element of Array.from(body.querySelectorAll('[class]'))) {
         const kept = (element.getAttribute('class') ?? '')
@@ -334,13 +373,16 @@ export const removeOfficeMarkup = (body: HTMLElement) => {
             element.removeAttribute('class');
             continue;
         }
+
         element.setAttribute('class', kept.join(' '));
     }
+
     for (const element of Array.from(body.querySelectorAll('[style]'))) {
         const style = (element as HTMLElement).style as CSSStyleDeclaration | undefined;
         if (style === undefined || !MSO_PROPERTY.test(element.getAttribute('style') ?? '')) {
             continue;
         }
+
         // The style keeps only the properties it parsed, and no engine parses an `mso-` one.
         const kept = style.cssText;
         if (kept === '') {

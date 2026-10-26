@@ -12,6 +12,7 @@ const edgeOf = (fragment: Fragment, side: 'start' | 'end') => {
     if (side === 'start') {
         return fragment.firstChild;
     }
+
     return fragment.lastChild;
 };
 
@@ -23,6 +24,7 @@ export const openDepth = (fragment: Fragment, side: 'start' | 'end'): number => 
         depth += 1;
         node = edgeOf(node.content, side);
     }
+
     return depth;
 };
 
@@ -31,7 +33,9 @@ export const resliced = (slice: Slice, content: Fragment): Slice => {
     if (content.size === 0) {
         return Slice.empty;
     }
+
     const openStart = Math.min(slice.openStart, openDepth(content, 'start'));
+
     return new Slice(content, openStart, Math.min(slice.openEnd, openDepth(content, 'end')));
 };
 
@@ -41,10 +45,12 @@ export const labelText = (schema: Schema, node: Node): Node[] => {
     if (typeof stored !== 'string') {
         return [];
     }
+
     const label = shownLabel(stored);
     if (label === '') {
         return [];
     }
+
     return [schema.text(label, node.marks)];
 };
 
@@ -54,6 +60,7 @@ export const refusedNames = (model: ContentModel, policy: PastePolicy) => {
     const refused = ({ featureId }: { readonly featureId: string }) => policy[featureId]?.paste === false;
     // Paragraphs and text hold what the refused content keeps.
     const kept = (name: string) => name !== 'paragraph' && name !== 'text';
+
     return {
         nodes: new Set(nodes.filter((node) => refused(node) && kept(node.name)).map(({ name }) => name)),
         marks: new Set(marks.filter(refused).map(({ name }) => name)),
@@ -66,6 +73,7 @@ export const withoutRefused = (slice: Slice, schema: Schema, model: ContentModel
     if (refusedNodes.size === 0 && refusedMarks.size === 0) {
         return slice;
     }
+
     const paragraph = schema.nodes.paragraph as NodeType;
     // A prefix match, as an open slice may start inside a node's content.
     const fits = (type: NodeType, content: Fragment) => type.contentMatch.matchFragment(content) !== null;
@@ -75,6 +83,7 @@ export const withoutRefused = (slice: Slice, schema: Schema, model: ContentModel
             if (child.type.isInGroup('block')) {
                 return [child];
             }
+
             return keep(child.content);
         });
     const keep = (fragment: Fragment): Node[] => fragment.content.flatMap((node) => filter(node));
@@ -83,22 +92,28 @@ export const withoutRefused = (slice: Slice, schema: Schema, model: ContentModel
         if (node.isText) {
             return [node.mark(kept)];
         }
+
         if (!refusedNodes.has(node.type.name)) {
             const content = keep(node.content);
             // A kept container whose refused children left it content its type forbids goes as a refused one does.
             if (fits(node.type, node.content) && !fits(node.type, Fragment.from(content))) {
                 return unwrapped(content);
             }
+
             return [node.type.create(node.attrs, content, kept)];
         }
+
         if (node.isTextblock) {
             return [paragraph.create(null, keep(node.content))];
         }
+
         if (node.isLeaf) {
             return labelText(schema, node);
         }
+
         return unwrapped(keep(node.content));
     };
+
     return resliced(slice, Fragment.from(keep(slice.content)));
 };
 
@@ -110,6 +125,7 @@ export const withinLinkPolicy = (fragment: Fragment, policy: HrefPolicy | undefi
     if (policy === undefined) {
         return fragment;
     }
+
     const nodes: Node[] = [];
     for (const node of fragment.content) {
         const marked = node.mark(
@@ -120,5 +136,6 @@ export const withinLinkPolicy = (fragment: Fragment, policy: HrefPolicy | undefi
         );
         nodes.push(marked.isText ? marked : marked.copy(withinLinkPolicy(node.content, policy)));
     }
+
     return Fragment.fromArray(nodes);
 };

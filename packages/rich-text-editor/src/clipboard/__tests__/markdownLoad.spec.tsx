@@ -23,6 +23,7 @@ let modules: {
 const mountFresh = async () => {
     const mounted = await modules.mountProfile('document');
     await vi.waitFor(() => expect(mounted.view.dom).toHaveAttribute('contenteditable', 'true'));
+
     return mounted;
 };
 
@@ -47,6 +48,7 @@ describe('the Markdown reader of paste', () => {
         vi.stubGlobal('requestIdleCallback', (callback: () => void) => {
             next += 1;
             pending.set(next, callback);
+
             return next;
         });
         vi.stubGlobal('cancelIdleCallback', (id: number) => {
@@ -80,6 +82,7 @@ describe('the Markdown reader of paste', () => {
             for (const start of pending.values()) {
                 start();
             }
+
             await vi.dynamicImportSettled();
         });
         pasteText(mounted, MARKDOWN);

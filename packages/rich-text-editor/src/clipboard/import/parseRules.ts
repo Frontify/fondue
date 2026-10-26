@@ -31,20 +31,24 @@ export const readAnswers = (body: HTMLElement, rules: readonly CompiledParseRule
             if (answer !== null) {
                 continue;
             }
+
             const elements = refused.get(rule.name) ?? new Set<Element>();
             elements.add(element);
             refused.set(rule.name, elements);
         }
     }
+
     // Only once every rule has read the elements, so no rule reads the property.
     for (const rule of rules) {
         if (rule.kind !== 'mark') {
             continue;
         }
+
         for (const element of refused.get(rule.name) ?? []) {
             (element as HTMLElement).style.setProperty(refusalOf(rule.name), 'refused');
         }
     }
+
     return { byRule, refused };
 };
 
@@ -57,6 +61,7 @@ export const functionRules = (schema: Schema, rules: readonly CompiledParseRule[
                 ? []
                 : [{ tag: rule.tag, mark: rule.name, getAttrs, consuming: false }];
         }
+
         return schema.nodes[rule.name] === undefined ? [] : [{ tag: rule.tag, node: rule.name, getAttrs }];
     });
 
@@ -65,22 +70,27 @@ export const withRefusals = (rule: ParseRule, answers: Answers): ParseRule => {
     if (rule.tag === undefined) {
         return rule;
     }
+
     const owner = rule.mark ?? rule.node;
     const refused = answers.refused.get(owner ?? '');
     if (refused === undefined) {
         return rule;
     }
+
     const { getAttrs } = rule;
     const fixed = rule.attrs ?? null;
+
     return {
         ...rule,
         getAttrs: (element: HTMLElement) => {
             if (refused.has(element)) {
                 return false;
             }
+
             if (getAttrs === undefined) {
                 return fixed;
             }
+
             return getAttrs(element);
         },
     };

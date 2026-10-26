@@ -55,17 +55,21 @@ const breaksAsParagraphs = (root: Element) => {
             pending.push(child);
             continue;
         }
+
         if (child.nodeType === child.TEXT_NODE && (child.textContent ?? '').trim() === '') {
             continue;
         }
+
         if (isBlock(before) && isBlock(child)) {
             for (const br of pending) {
                 breaks.push(br);
             }
         }
+
         pending = [];
         before = child;
     }
+
     for (const br of breaks) {
         br.replaceWith(createElementBeside(br, 'p'));
     }
@@ -81,6 +85,7 @@ export const cleanGoogleDocs = (body: HTMLElement) => {
     if (marked === null) {
         return;
     }
+
     marked.removeAttribute('id');
     let root: Element = body;
     if (marked.localName === 'b') {
@@ -89,5 +94,6 @@ export const cleanGoogleDocs = (body: HTMLElement) => {
         // The id marks a capture only on the wrapper or, in Firefox, on the first block; anywhere else it is not one.
         return;
     }
+
     breaksAsParagraphs(root);
 };

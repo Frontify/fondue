@@ -65,6 +65,7 @@ export const mount = (options?: Options) => {
     if (options !== undefined) {
         given = options;
     }
+
     const {
         blocks = [paragraph(text('ab'))],
         sliceContext = null,
@@ -86,6 +87,7 @@ export const mount = (options?: Options) => {
     if (generateId !== undefined) {
         ids.generateId = generateId;
     }
+
     const diagnostics: Diagnostic[] = [];
     const changes: DocumentChange[] = [];
     const rendered = render(
@@ -113,17 +115,23 @@ export const mount = (options?: Options) => {
     if (handle === null) {
         throw new Error('no editor');
     }
+
     const view = runtimeOf(handle)?.view;
     if (view === undefined) {
         throw new Error('no view');
     }
+
     const announced = () => {
         const region = rendered.container.querySelector('[aria-live="polite"]');
+
         return region?.textContent;
     };
+
     const content = () => handle.getSnapshot().document.content.content as unknown;
+
     return { handle, view, diagnostics, changes, announced, content, unmount: rendered.unmount };
 };
+
 export type Mounted = ReturnType<typeof mount>;
 
 export const pasteInto = ({ handle }: Mounted, data: Readonly<Record<string, string>>, files: readonly File[] = []) => {
@@ -146,6 +154,7 @@ export const pasteEventInto = (
     act(() => {
         view.dom.dispatchEvent(event);
     });
+
     return event;
 };
 
@@ -158,6 +167,7 @@ export const dropInto = ({ view }: Mounted, data: Readonly<Record<string, string
     act(() => {
         view.dom.dispatchEvent(event);
     });
+
     return event;
 };
 
@@ -166,6 +176,7 @@ export const copyFrom = ({ view }: Mounted, type: 'copy' | 'cut' = 'copy') => {
     act(() => {
         view.dom.dispatchEvent(new ClipboardEvent(type, { clipboardData, bubbles: true, cancelable: true }));
     });
+
     return {
         html: clipboardData.getData('text/html'),
         text: clipboardData.getData('text/plain'),
@@ -212,15 +223,18 @@ export const nodeIdsOf = (value: unknown): string[] => {
     if (Array.isArray(value)) {
         return value.flatMap(nodeIdsOf);
     }
+
     if (typeof value !== 'object' || value === null) {
         return [];
     }
+
     const record = value as Record<string, unknown>;
     const own: string[] = [];
     const attrs = record.attrs as Record<string, unknown> | undefined;
     if (attrs !== undefined && typeof attrs.nodeId === 'string') {
         own.push(attrs.nodeId);
     }
+
     return [...own, ...nodeIdsOf(record.content)];
 };
 

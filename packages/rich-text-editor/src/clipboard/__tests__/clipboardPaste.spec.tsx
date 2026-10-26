@@ -236,6 +236,7 @@ describe('paste order', () => {
         } else {
             setSelection(mounted.handle, { text: 'a', from: 1, to: 1 });
         }
+
         if (_name.startsWith('Shift keeps')) {
             pressKey(mounted.handle, 'Shift');
         }
@@ -437,6 +438,7 @@ describe('readonly', () => {
         act(() => {
             view.dom.dispatchEvent(event);
         });
+
         return { 'text/plain': dataTransfer.getData('text/plain'), [SLICE_TYPE]: dataTransfer.getData(SLICE_TYPE) };
     };
 

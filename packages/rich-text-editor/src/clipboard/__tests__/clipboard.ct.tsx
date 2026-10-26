@@ -45,6 +45,7 @@ const ready = async (page: Page, readOnly = false) => {
         await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
     }
 };
+
 const paragraph = (text: string) => ({ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] });
 
 /** Records the flavors of the next `type` event once the editor's own handler wrote them. */
@@ -71,8 +72,10 @@ const recordFlavors = (page: Page, type: 'copy' | 'cut' | 'dragstart') =>
     );
 const flavorsOf = async (page: Page) => {
     await page.waitForFunction(() => window.flavors !== undefined);
+
     return page.evaluate(() => window.flavors as Flavors);
 };
+
 /** Disabled and checked, in document order, for each checkbox `html` writes. */
 const checkboxStates = (html: string) => {
     const states: { readonly disabled: boolean; readonly checked: boolean }[] = [];
@@ -80,11 +83,14 @@ const checkboxStates = (html: string) => {
         const tag = match[0];
         states.push({ disabled: tag.includes('disabled'), checked: tag.includes('checked') });
     }
+
     return states;
 };
+
 const copied = async (page: Page) => {
     await recordFlavors(page, 'copy');
     await page.keyboard.press('ControlOrMeta+c');
+
     return flavorsOf(page);
 };
 
@@ -97,6 +103,7 @@ const select = async (page: Page, target: Parameters<Clip['select']>[0]) => {
     await page.evaluate((selected) => (window.clip as Clip).select(selected), target);
     await settled(page);
 };
+
 const selectBlock = async (page: Page, index: number) => {
     await page.evaluate((block) => (window.clip as Clip).selectBlock(block), index);
     await settled(page);
@@ -109,6 +116,7 @@ const pasteAtSurface = (page: Page, data: Readonly<Record<string, string>>) =>
         for (const [type, value] of Object.entries(entries)) {
             clipboardData.setData(type, value);
         }
+
         const surface = document.querySelector('[data-rte-surface]') as HTMLElement;
         surface.dispatchEvent(new ClipboardEvent('paste', { clipboardData, bubbles: true, cancelable: true }));
     }, data);
@@ -123,6 +131,7 @@ const cursorBoundary = (page: Page) =>
         if (cursor === null) {
             return null;
         }
+
         const { y, height } = cursor.getBoundingClientRect();
         const middle = y + height / 2;
         const paragraphs = [...document.querySelectorAll('[data-rte-surface] p')].map((element) =>
@@ -132,10 +141,12 @@ const cursorBoundary = (page: Page) =>
             if (middle <= box.y + 2) {
                 return index;
             }
+
             if (middle < box.bottom - 2) {
                 return -1;
             }
         }
+
         return paragraphs.length;
     });
 
@@ -157,6 +168,7 @@ const dragFile = async (page: Page, point: Point, end: 'drop' | 'dragleave') => 
     await send('dragover');
     const shown = await cursorBoundary(page);
     await send(end);
+
     return shown;
 };
 
@@ -166,8 +178,10 @@ const boxOf = async (page: Page, index: number) => {
     if (box === null) {
         throw new Error('no paragraph box');
     }
+
     return box;
 };
+
 /** A point over the text of the paragraph at `index`, at `fraction` of its text's width. */
 const overText = async (page: Page, index: number, fraction: number) => {
     const width = await surfaceOf(page)
@@ -176,11 +190,14 @@ const overText = async (page: Page, index: number, fraction: number) => {
         .evaluate((element) => {
             const range = document.createRange();
             range.selectNodeContents(element);
+
             return range.getBoundingClientRect().width;
         });
     const box = await boxOf(page, index);
+
     return { x: box.x + width * fraction, y: box.y + box.height / 2 };
 };
+
 /**
  * Sends the drag events of the selected node to `to`, holding the platform's copy modifier at the drop when `copy`
  * is set (or the other platform's modifier when `wrong` is), and reads the drop cursor before the drop. A pointer drag of an inline atom races the `selectionchange`
@@ -194,6 +211,7 @@ const dragNode = async (page: Page, to: Point, copy = false, wrong = false) => {
                     window.dragData = new DataTransfer();
                     window.dragSource = document.querySelector('.ProseMirror-selectednode') as Element;
                 }
+
                 const selected = window.dragSource as Element;
                 const box = selected.getBoundingClientRect();
                 let target = selected;
@@ -202,6 +220,7 @@ const dragNode = async (page: Page, to: Point, copy = false, wrong = false) => {
                     target = document.elementFromPoint(x, y) as Element;
                     point = { x, y };
                 }
+
                 const apple = /Mac|iP(hone|[oa]d)/.test(navigator.platform);
                 target.dispatchEvent(
                     new DragEvent(eventType, {
@@ -223,6 +242,7 @@ const dragNode = async (page: Page, to: Point, copy = false, wrong = false) => {
     const cursor = await cursorBoundary(page);
     await send('drop', false);
     await send('dragend', true);
+
     return cursor;
 };
 
@@ -236,18 +256,22 @@ const drag = async (page: Page, from: Point, to: Point, modifier?: string) => {
         await page.keyboard.down(modifier);
         await page.mouse.move(to.x + 1, to.y, { steps: 2 });
     }
+
     const cursor = await cursorBoundary(page);
     await page.mouse.up();
     if (modifier !== undefined) {
         await page.keyboard.up(modifier);
     }
+
     return cursor;
 };
+
 const centerOf = async (page: Page, selector: string): Promise<Point> => {
     const box = await page.locator(selector).first().boundingBox();
     if (box === null) {
         throw new Error(`no box for ${selector}`);
     }
+
     return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
 };
 
@@ -305,6 +329,7 @@ test('writes a disabled checkbox for a checked task item and an unchecked one on
         if (selected === null) {
             throw new Error('no selected task list');
         }
+
         const dataTransfer = new DataTransfer();
         selected.dispatchEvent(new DragEvent('dragstart', { dataTransfer, bubbles: true, cancelable: true }));
     });
@@ -366,6 +391,7 @@ for (const [name, copies] of [
             expect(ids[1]).not.toBe('m-1');
             expect(ids).toHaveLength(2);
         }
+
         await page.keyboard.press('ControlOrMeta+z');
         expect(await contentOf(page)).toEqual(original);
     });
@@ -504,6 +530,7 @@ test('scrolls a paste in a long document only as far as the caret needs @engine'
     const offsets = () =>
         page.evaluate(() => {
             const box = document.querySelector('[data-test-id="scroller"]') as HTMLElement;
+
             return { box: box.scrollTop, page: window.scrollY };
         });
     const before = await offsets();
@@ -516,6 +543,7 @@ test('scrolls a paste in a long document only as far as the caret needs @engine'
     if (box === null) {
         throw new Error('no scroller box');
     }
+
     const line = await boxOf(page, 0);
     expect(caret.y).toBeGreaterThanOrEqual(box.y);
     expect(caret.y + caret.height).toBeLessThanOrEqual(box.y + box.height);
@@ -609,13 +637,16 @@ const mountHtml = async (page: Page, mount: (component: React.JSX.Element) => Pr
     await page.waitForFunction(() => window.htmlPaste !== undefined);
     // The view takes a paste only once the session is ready and editable.
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'true');
+
     return requests;
 };
+
 /** Selects the whole document, pastes `html` as the only flavor and waits for the published document to change. */
 const pasteHtml = async (page: Page, html: string) => {
     const before = await page.evaluate(() => {
         const probe = window.htmlPaste as NonNullable<Window['htmlPaste']>;
         probe.selectAll();
+
         return JSON.stringify(probe.content());
     });
     await pasteAtSurface(page, { 'text/html': html });
@@ -624,6 +655,7 @@ const pasteHtml = async (page: Page, html: string) => {
         before,
     );
 };
+
 const htmlContentOf = (page: Page) =>
     page.evaluate(() => (window.htmlPaste as NonNullable<Window['htmlPaste']>).content());
 // A fetch or handler that a live parse would start lands within a few frames, so the absence checks wait that long.
@@ -737,6 +769,7 @@ for (const [name, directory] of pastedFixtures) {
         if (!existsSync(golden) || testInfo.config.updateSnapshots === 'all') {
             writeFileSync(golden, `${JSON.stringify(content, null, 4)}\n`);
         }
+
         expect(content).toEqual(JSON.parse(readFileSync(golden, 'utf8')));
     });
 }

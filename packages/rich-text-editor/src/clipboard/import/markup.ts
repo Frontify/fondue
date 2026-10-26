@@ -16,6 +16,7 @@ const commentsUnder = (root: Node) => {
             }
         }
     }
+
     return comments;
 };
 
@@ -27,6 +28,7 @@ export const removeMarkup = (body: HTMLElement) => {
     for (const element of Array.from(body.querySelectorAll(NO_CONTENT))) {
         element.remove();
     }
+
     for (const comment of commentsUnder(body)) {
         comment.remove();
     }

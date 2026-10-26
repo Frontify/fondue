@@ -159,6 +159,7 @@ describe('pasted HTML', () => {
                 if ('style' in rule) {
                     read.push(`style:${rule.style}`);
                 }
+
                 for (const source of Object.values('tag' in rule ? (rule.attrs ?? {}) : {})) {
                     if ('from' in source) {
                         read.push(`attr:${source.from}`);
@@ -168,6 +169,7 @@ describe('pasted HTML', () => {
                 }
             }
         }
+
         for (const { parse } of shipped.nodes.flatMap(({ shared }) => shared.map(({ declaration }) => declaration))) {
             if (parse !== undefined && 'attr' in parse) {
                 read.push(`attr:${parse.attr}`);
@@ -180,6 +182,7 @@ describe('pasted HTML', () => {
         expect(
             read.filter((entry) => {
                 const [kind, name] = entry.split(':') as [string, string];
+
                 return !(kind === 'attr' ? attributes : styles).has(name);
             }),
         ).toEqual([]);
@@ -223,6 +226,7 @@ describe('pasted HTML', () => {
                     levels.map((level) => ['heading', level]),
                 );
             }
+
             mounted.unmount();
         },
     );
@@ -377,6 +381,7 @@ describe('pasted HTML', () => {
         mounted.unmount();
         const result = fromHTML(html, editorModel, { window });
         expect(result.status).toBe('editable');
+
         return { imported: result.status === 'editable' && result.document.content.content, source };
     };
 
