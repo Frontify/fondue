@@ -25,8 +25,6 @@ export default defineConfig({
         ctPort: 3101,
         ctViteConfig: {
             plugins: [tsConfigPaths()],
-            // One stylesheet up front, as a host loads `./styles`; per-chunk CSS would load with each lazy part instead.
-            build: { cssCodeSplit: false },
             define: { 'process.env.NODE_ENV': JSON.stringify('development') },
             preview: { headers: { 'Content-Security-Policy': CONTENT_SECURITY_POLICY } },
         },
