@@ -5,8 +5,8 @@ import { defineEditorPart, type EditorApi } from '#/bridge/plugin';
 import { type BlockDecoration, blockRule, type JsonObject } from '#/model';
 
 import { codeBlock } from './feature';
-import { languageChoices } from './languages';
-import { codeBlockView } from './view';
+import { languageChoices } from './helpers/languages';
+import { codeBlockView } from './components/CodeChrome';
 
 type HastChild = {
     type: string;

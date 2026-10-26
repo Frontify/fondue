@@ -14,8 +14,8 @@ import {
     useRichTextNodeView,
 } from '#/bridge/define';
 
-import { languageChoices } from './languages';
-import styles from './styles/code.module.scss';
+import { languageChoices } from '../helpers/languages';
+import styles from '../styles/code.module.scss';
 
 type CodeCommands = { 'code-block.language.set': { languageId: string | null } };
 

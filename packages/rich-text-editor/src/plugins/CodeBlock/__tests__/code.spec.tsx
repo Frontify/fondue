@@ -10,7 +10,7 @@ import { compileContentModel, type ContentNodeJSON, type Diagnostic } from '#/mo
 import { codeBlock, core } from '#/plugins';
 import { fixtureMention } from '#/plugins/__tests__/fixtures/features';
 import { bulletList } from '#/plugins/BulletList/feature';
-import { CODE_LANGUAGES, languageChoices } from '#/plugins/CodeBlock/languages';
+import { CODE_LANGUAGES, languageChoices } from '#/plugins/CodeBlock/helpers/languages';
 import { listItem } from '#/plugins/ListItem/feature';
 import { mountProfile } from '#/react/__tests__/fixtures/profiles';
 import { mountText, para, storedIn, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
