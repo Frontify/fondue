@@ -662,6 +662,10 @@ const probeMotion = (page: Page) =>
         const probe = document.createElement('div');
         probe.setAttribute('data-motion-probe', '');
         document.body.append(style, probe);
+        // WebKit keeps a new sheet out of the cascade while the editor's prefetched stylesheets are still loading.
+        while (![...document.styleSheets].includes(style.sheet as CSSStyleSheet)) {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
         // Reading the style commits the start value, so the next change runs as a transition.
         probe.getBoundingClientRect();
         probe.setAttribute('data-moved', '');
