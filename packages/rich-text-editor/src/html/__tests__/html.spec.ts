@@ -161,7 +161,7 @@ describe('fromHTML', () => {
 
         const content = contentOf('<h2>a</h2><h3>b</h3>', { generateId });
 
-        expect(content.map((block) => (block.attrs as { readonly nodeId: string }).nodeId)).toEqual(['id-1', 'id-2']);
+        expect(content.map((block) => (block.attrs as { nodeId: string }).nodeId)).toEqual(['id-1', 'id-2']);
     });
 
     it('reads a `b` or `strong` that sets a normal weight as no bold, as paste does', () => {
@@ -302,7 +302,7 @@ describe('external HTML', () => {
     it('clamps the mso-list levels of Word list paragraphs so the nesting fits limits.maxDepth', () => {
         const html = [1, 2, 3, 4, 5, 2_000_000_000].map((level) => wordItem('l0', level, '·', `L${level}`)).join('');
         let deepest = 0;
-        const visit = (node: { readonly content?: readonly object[] }, depth: number) => {
+        const visit = (node: { content?: readonly object[] }, depth: number) => {
             deepest = Math.max(deepest, depth);
             for (const child of node.content ?? []) {
                 visit(child, depth + 1);
@@ -370,8 +370,8 @@ describe('external HTML', () => {
         content
             .map((block) => {
                 const { text, content: children = [] } = block as {
-                    readonly text?: string;
-                    readonly content?: readonly unknown[];
+                    text?: string;
+                    content?: readonly unknown[];
                 };
                 if (text !== undefined) {
                     return text;

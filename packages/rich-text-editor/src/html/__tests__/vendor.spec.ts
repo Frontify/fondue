@@ -150,7 +150,7 @@ describe('vendor cleanups', () => {
 
     it('hands the cleaned inert body straight to the schema parser, parsing the HTML once', () => {
         const parseFromString = vi.spyOn(window.DOMParser.prototype, 'parseFromString');
-        let parsed: { readonly node: unknown; readonly html: string } | undefined;
+        let parsed: { node: unknown; html: string } | undefined;
         const original = SchemaParser.prototype.parse;
         vi.spyOn(SchemaParser.prototype, 'parse').mockImplementation(function (this: SchemaParser, node, options) {
             parsed = { node, html: (node as HTMLElement).outerHTML };
@@ -176,7 +176,7 @@ describe('the Office lists', () => {
     it('keeps a Word list paragraph at level0 as a paragraph with its text', () => {
         const content = contentOf(wordItem('Zero', 0));
 
-        expect(content.map((block) => (block as { readonly type: string }).type)).toEqual(['paragraph']);
+        expect(content.map((block) => (block as { type: string }).type)).toEqual(['paragraph']);
         expect(JSON.stringify(content)).toContain('Zero');
     });
 

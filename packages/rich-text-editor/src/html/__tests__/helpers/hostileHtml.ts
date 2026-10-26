@@ -140,7 +140,7 @@ const UNSAFE_SCHEME = /^[\s\u0000-\u001F]*(?:j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s
 /** The document problems a safe import never has: unsafe URLs, event handler or style attributes, unsafe scheme strings. */
 export const unsafeParts = (model: ContentModel, content: unknown): string[] => {
     const { nodes, marks } = compiledModel(model);
-    const declared = new Map<string, Readonly<Record<string, { readonly type: string }>>>();
+    const declared = new Map<string, Readonly<Record<string, { type: string }>>>();
     for (const node of nodes) {
         declared.set(node.name, attributesOf(node));
     }
@@ -214,7 +214,7 @@ export const unsafeHtml = (html: string): string[] => {
 /** The nodes and marks of features whose policy refuses paste, and headings at levels the definition cannot create. */
 export const policyFaults = (
     model: ContentModel,
-    authoring: { readonly features: PastePolicy; readonly creatableHeadingLevels: readonly number[] },
+    authoring: { features: PastePolicy; creatableHeadingLevels: readonly number[] },
     content: unknown,
 ): string[] => {
     const refused = refusedNames(model, authoring.features);

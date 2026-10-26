@@ -10,23 +10,23 @@ import { type TreeNode, limitsOf, encodeTree, diagnostic, randomId, exceedsBytes
 
 /** What `fromHTML` reads of a `CompiledEditorDefinition`, which `./html` cannot import from the editor layers. */
 type HtmlImportDefinition = {
-    readonly authoring: {
+    authoring: {
         // The shape of PastePolicy, whose module imports prosemirror-model.
-        readonly features: Readonly<Record<string, { readonly paste: boolean }>>;
-        readonly creatableHeadingLevels: readonly number[];
+        features: Readonly<Record<string, { paste: boolean }>>;
+        creatableHeadingLevels: readonly number[];
     };
-    readonly limits: ResourceLimits;
+    limits: ResourceLimits;
 };
 
 /** Options for reading HTML into a document: the DOM to use and the definition whose creation policy applies. */
 export type HtmlImportOptions = {
     /** A DOM implementation: the browser window, or one from jsdom or linkedom on a server. */
-    readonly window: Window;
+    window: Window;
     /** Applies that definition's creation policy, as paste does; without it, everything the model holds is kept. */
-    readonly definition?: HtmlImportDefinition;
-    readonly limits?: Partial<ResourceLimits>;
+    definition?: HtmlImportDefinition;
+    limits?: Partial<ResourceLimits>;
     /** For the `nodeId`s of imported occurrences; `randomId` when omitted. */
-    readonly generateId?: () => string;
+    generateId?: () => string;
 };
 
 /**
