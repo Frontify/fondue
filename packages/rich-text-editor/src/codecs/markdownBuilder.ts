@@ -31,10 +31,10 @@ const FEATURE_OF: Readonly<Record<string, string>> = {
 };
 
 export type Frame = {
-    readonly node: { type: string; attrs: Record<string, unknown>; content: TreeNode[] } | undefined;
-    readonly path: string;
+    node: { type: string; attrs: Record<string, unknown>; content: TreeNode[] } | undefined;
+    path: string;
     /** List frames: whether its items become task items. */
-    readonly task: boolean;
+    task: boolean;
 };
 
 export class Builder {

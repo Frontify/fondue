@@ -23,9 +23,7 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
 
     const parser = createParser(markHrefPolicy(model, 'link'));
     /** The decode diagnostics and the island tree, or no tree when the document is blocked. */
-    const decode = (
-        document: unknown,
-    ): { readonly tree?: TreeNode; readonly diagnostics: readonly Diagnostic[]; readonly blocked: boolean } => {
+    const decode = (document: unknown): { tree?: TreeNode; diagnostics: readonly Diagnostic[]; blocked: boolean } => {
         const { result, tree } = decodeToTree(document, model, decodeOptions);
         const blocked = result.status === 'blocked';
         if (blocked || tree === undefined) {

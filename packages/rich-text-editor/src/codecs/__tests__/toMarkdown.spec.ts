@@ -70,13 +70,13 @@ const resolveAssetUrl = (assetId: string) => {
 };
 
 type Row = {
-    readonly name: string;
-    readonly blocks: readonly JsonValue[];
-    readonly markdown: string;
-    readonly losses: readonly { readonly featureId: string; readonly count: number }[];
+    name: string;
+    blocks: readonly JsonValue[];
+    markdown: string;
+    losses: readonly { featureId: string; count: number }[];
     /** What a reference parser renders from the output: `markdown-it` in CommonMark mode, or `micromark` with GFM for the GFM rows. */
-    readonly parsed: string;
-    readonly dialect: 'commonmark' | 'gfm';
+    parsed: string;
+    dialect: 'commonmark' | 'gfm';
 };
 
 const rows: readonly Row[] = [
@@ -349,7 +349,7 @@ const textOf = (value: unknown): string => {
         return '';
     }
 
-    const { text: own = '', content = [] } = value as { readonly text?: string; readonly content?: readonly unknown[] };
+    const { text: own = '', content = [] } = value as { text?: string; content?: readonly unknown[] };
 
     return own + content.map(textOf).join('|');
 };

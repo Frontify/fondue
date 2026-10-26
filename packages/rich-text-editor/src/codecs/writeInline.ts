@@ -22,9 +22,9 @@ import { reportFailure, type WalkState } from './walk';
 
 export type MarkdownState = {
     /** Reads written inline Markdown back, to find emphasis that the delimiters cannot express. */
-    readonly parser: Parser;
+    parser: Parser;
     /** `*`, or `_` where `*` runs of italic and bold would meet and parse as other emphasis. */
-    readonly italic: '*' | '_';
+    italic: '*' | '_';
 } & WalkState;
 
 /** Where inline content sits: a heading or a table cell holds one line, so a hard break there cannot be written. */
@@ -34,7 +34,7 @@ const DELIMITERS: Readonly<Record<string, string>> = { bold: '**', italic: '*', 
 
 type MarkdownItem = {
     /** Written as a code span. */
-    readonly code: boolean;
+    code: boolean;
 } & Item;
 
 const markLost = (state: MarkdownState, plan: MarkPlan) => state.losses.add(plan.featureId);
@@ -44,8 +44,8 @@ const markLost = (state: MarkdownState, plan: MarkPlan) => state.losses.add(plan
  * is `undefined` for an href that fails `checkHref`. `lost` says whether writing it loses part of the mark.
  */
 type MarkSyntax =
-    | { readonly kind: 'none' | 'code' | 'custom' | 'delimiter'; readonly lost: boolean }
-    | { readonly kind: 'link'; readonly lost: boolean; readonly target: string | undefined };
+    | { kind: 'none' | 'code' | 'custom' | 'delimiter'; lost: boolean }
+    | { kind: 'link'; lost: boolean; target: string | undefined };
 
 const markSyntax = (mark: TreeMark, plan: MarkPlan): MarkSyntax => {
     if (plan.formats.markdown === 'unsupported') {

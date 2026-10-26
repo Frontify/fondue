@@ -7,13 +7,13 @@ import { type CodecPlan, type Format, type Losses, setShared } from './plan';
 
 /** What one walk shares: the plan, the losses and diagnostics so far, and the heading IDs a link may target. */
 export type WalkState = {
-    readonly plan: CodecPlan;
-    readonly context: CodecContext;
-    readonly losses: Losses;
-    readonly diagnostics: Diagnostic[];
-    readonly headings: ReadonlySet<string>;
+    plan: CodecPlan;
+    context: CodecContext;
+    losses: Losses;
+    diagnostics: Diagnostic[];
+    headings: ReadonlySet<string>;
     /** Mention labels as the reader shows them; without it, each mention's stored label. */
-    readonly resolveReference?: ResolveReference | undefined;
+    resolveReference?: ResolveReference | undefined;
 };
 
 /** The `nodeId` of every heading, so a link to `#` plus one of them is known as a link inside the document. */
@@ -36,7 +36,7 @@ export const headingIds = (root: TreeNode): ReadonlySet<string> => {
 
 /** One `codecs.override-failed` error naming the feature and the path. */
 export const reportFailure = (
-    state: { readonly diagnostics: Diagnostic[] },
+    state: { diagnostics: Diagnostic[] },
     featureId: string,
     path: string,
     name: string,
@@ -53,11 +53,7 @@ export const reportFailure = (
 };
 
 /** Counts a use of a node, with its shared attributes, when its feature declares `format` other than `lossless`. */
-export const noteNode = (
-    state: { readonly plan: CodecPlan; readonly losses: Losses },
-    node: TreeNode,
-    format: Format,
-): void => {
+export const noteNode = (state: { plan: CodecPlan; losses: Losses }, node: TreeNode, format: Format): void => {
     const plan = state.plan.nodes.get(node.type);
     if (plan === undefined) {
         return;
@@ -76,7 +72,7 @@ export const noteNode = (
 
 /** Keeps the marks the model knows, counting each use whose feature declares `format` other than `lossless`. */
 export const keepMark =
-    (state: { readonly plan: CodecPlan; readonly losses: Losses }, format: Format) =>
+    (state: { plan: CodecPlan; losses: Losses }, format: Format) =>
     (mark: TreeMark): boolean => {
         const plan = state.plan.marks.get(mark.type);
         if (plan === undefined) {

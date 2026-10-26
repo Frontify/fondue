@@ -29,13 +29,13 @@ type Write = (inner: string, attrs: JsonObject, context: CodecContext) => string
 
 /** What every codec reads about one node type: the shared plan and its overrides. */
 export type NodePlan = {
-    readonly html: ((attrs: JsonObject, context: CodecContext) => HtmlSpec) | undefined;
-    readonly markdown: Write | undefined;
-    readonly text: Write | undefined;
+    html: ((attrs: JsonObject, context: CodecContext) => HtmlSpec) | undefined;
+    markdown: Write | undefined;
+    text: Write | undefined;
 } & BaseNodePlan;
 export type MarkPlan = {
-    readonly markdown: Write | undefined;
-    readonly text: ((inner: string, attrs: JsonObject) => string) | undefined;
+    markdown: Write | undefined;
+    text: ((inner: string, attrs: JsonObject) => string) | undefined;
 } & BaseMarkPlan;
 export type CodecPlan = Plan<NodePlan, MarkPlan>;
 

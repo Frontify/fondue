@@ -12,9 +12,9 @@ export const TASK = /^\[([ xX])\](?:[ \t]|$)/;
 
 /** What an inline token holds as both Markdown readers take it, or `undefined` for one each treats on its own. */
 type InlineToken =
-    | { readonly kind: 'text' | 'code'; readonly text: string }
-    | { readonly kind: 'break' | 'close' }
-    | { readonly kind: 'open'; readonly mark: string; readonly href: string };
+    | { kind: 'text' | 'code'; text: string }
+    | { kind: 'break' | 'close' }
+    | { kind: 'open'; mark: string; href: string };
 
 export const inlineToken = (token: MarkdownToken): InlineToken | undefined => {
     if (token.type === 'text' || token.type === 'text_special') {

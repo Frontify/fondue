@@ -37,7 +37,7 @@ const linkTarget = (state: WalkState, attrs: TreeMark['attrs']): string | undefi
 };
 
 const INDENT = '  ';
-const NO_OPTIONS: { readonly resolveReference?: ResolveReference | undefined } = Object.freeze({});
+const NO_OPTIONS: { resolveReference?: ResolveReference | undefined } = Object.freeze({});
 const LISTS = new Set(['bullet_list', 'ordered_list', 'task_list']);
 
 const renderInline = (state: WalkState, node: TreeNode, path: string): string => {
@@ -282,8 +282,8 @@ export const writeText = (
     plan: CodecPlan,
     root: TreeNode,
     context: CodecContext,
-    { resolveReference }: { readonly resolveReference?: ResolveReference | undefined } = NO_OPTIONS,
-): { readonly text: string; readonly losses: readonly CodecLoss[]; readonly diagnostics: readonly Diagnostic[] } => {
+    { resolveReference }: { resolveReference?: ResolveReference | undefined } = NO_OPTIONS,
+): { text: string; losses: readonly CodecLoss[]; diagnostics: readonly Diagnostic[] } => {
     const state: WalkState = {
         plan,
         context,

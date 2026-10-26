@@ -8,18 +8,14 @@ import { inlineToken } from './fromMarkdown';
  * Inline output before escaping: text to escape, literal syntax, an emphasis delimiter run, or a hard break.
  * Delimiters carry their feature, which loses its mark when no escaping can make the run open or close.
  */
-export type Piece =
-    | { readonly kind: 'text'; readonly text: string }
-    | { readonly kind: 'literal'; readonly text: string }
-    | Delimiter
-    | { readonly kind: 'break' };
+export type Piece = { kind: 'text'; text: string } | { kind: 'literal'; text: string } | Delimiter | { kind: 'break' };
 /** One side of an emphasis pair; `pair` ties an opening delimiter to its closing one. */
 export type Delimiter = {
-    readonly kind: 'delimiter';
-    readonly text: string;
-    readonly open: boolean;
-    readonly featureId: string;
-    readonly pair: number;
+    kind: 'delimiter';
+    text: string;
+    open: boolean;
+    featureId: string;
+    pair: number;
 };
 
 // Character classes of CommonMark's flanking rules: Unicode whitespace, then Unicode punctuation and symbols.
@@ -44,10 +40,10 @@ const ALWAYS_ESCAPED = new Set(['\\', '`', '*', '_', '[', ']', '<', '&', '|', '~
 const LINE_START_ESCAPED = new Set(['-', '+', '=', '>']);
 
 type Token =
-    | { readonly kind: 'char'; readonly char: string; entity: boolean }
-    | { readonly kind: 'literal'; readonly text: string }
+    | { kind: 'char'; char: string; entity: boolean }
+    | { kind: 'literal'; text: string }
     | Delimiter
-    | { readonly kind: 'break' };
+    | { kind: 'break' };
 
 const entity = (char: string) => `&#x${(char.codePointAt(0) ?? 0).toString(16).toUpperCase()};`;
 
@@ -79,9 +75,9 @@ const neighbour = (token: Token | undefined, side: 'before' | 'after'): CharClas
 /** Each run of delimiters of one character, with the tokens around it. */
 const runsOf = (tokens: readonly Token[]) => {
     const runs: {
-        readonly run: readonly Delimiter[];
-        readonly before: Token | undefined;
-        readonly after: Token | undefined;
+        run: readonly Delimiter[];
+        before: Token | undefined;
+        after: Token | undefined;
     }[] = [];
     let index = 0;
     while (index < tokens.length) {
@@ -341,7 +337,7 @@ export const destination = (href: string): string => {
 };
 
 /** A stretch of inline content as `fromMarkdown` reads it: text with its mark names, or a hard break. */
-export type Run = { readonly text: string; readonly marks: string } | { readonly break: true; readonly marks: string };
+export type Run = { text: string; marks: string } | { break: true; marks: string };
 
 /** Joins neighbouring text with the same marks, as the document encoding joins text nodes. */
 export const joinRuns = (runs: readonly Run[]): Run[] => {

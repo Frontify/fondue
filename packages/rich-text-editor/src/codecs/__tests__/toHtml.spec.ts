@@ -72,7 +72,7 @@ const wrap = (...blocks: readonly JsonValue[]) =>
 const HOSTILE = '"><script>alert(1)</script><img src=x onerror=alert(1)>&amp;\'';
 const urls = (
     JSON.parse(readFileSync(new URL('../../model/__tests__/fixtures/urls.json', import.meta.url), 'utf8')) as {
-        readonly input: string;
+        input: string;
     }[]
 ).map(({ input }) => input);
 const linked = (href: string, openInNewWindow: boolean) => mark('link', { href, openInNewWindow });

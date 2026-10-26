@@ -357,7 +357,7 @@ describe('format attributes', () => {
         (_, fixture) => {
             const clean = fixture as RichTextDocument;
             const dirty = withStyle(fixture) as RichTextDocument;
-            const strip = <T extends { readonly diagnostics: readonly Diagnostic[] }>(output: T) => ({
+            const strip = <T extends { diagnostics: readonly Diagnostic[] }>(output: T) => ({
                 ...output,
                 diagnostics: output.diagnostics.filter(({ code }) => code !== 'format.unknown-attribute'),
             });
@@ -472,8 +472,8 @@ describe('carried legs of earlier packets', () => {
         JSON.parse(
             readFileSync(new URL('../../model/__tests__/fixtures/urls.json', import.meta.url), 'utf8'),
         ) as readonly {
-            readonly input: string;
-            readonly ok: boolean;
+            input: string;
+            ok: boolean;
         }[]
     ).flatMap(({ input, ok }) => {
         if (ok) {

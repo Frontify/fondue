@@ -52,16 +52,16 @@ import { type CodecPlan, Losses } from './plan';
 import { keepMark, noteNode, reportFailure } from './walk';
 
 type HtmlState = {
-    readonly plan: CodecPlan;
-    readonly context: CodecContext;
-    readonly diagnostics: Diagnostic[];
+    plan: CodecPlan;
+    context: CodecContext;
+    diagnostics: Diagnostic[];
     /** Uses of features whose `html` support is `lossy`. */
-    readonly losses: Losses;
-    readonly listLevels: ListLevels | undefined;
-    readonly depths: ListDepths;
-    readonly styles: OutputStyles;
-    readonly columns: ColumnLayout | undefined;
-    readonly resolveReference: ResolveReference | undefined;
+    losses: Losses;
+    listLevels: ListLevels | undefined;
+    depths: ListDepths;
+    styles: OutputStyles;
+    columns: ColumnLayout | undefined;
+    resolveReference: ResolveReference | undefined;
     /** The column breaks written so far, whose first `count - 1` are active. */
     breaks: number;
 } & Spacing;
@@ -70,12 +70,12 @@ const NO_STYLES: OutputStyles = { styles: [], colorTokens: [], inline: false };
 
 /** What `writeHtml` writes around and into the blocks; every field is optional. */
 export type HtmlWriteOptions = {
-    readonly contentClassName?: string | undefined;
-    readonly listLevels?: ListLevels | undefined;
-    readonly columns?: ColumnLayout | undefined;
-    readonly styles?: OutputStyles | undefined;
+    contentClassName?: string | undefined;
+    listLevels?: ListLevels | undefined;
+    columns?: ColumnLayout | undefined;
+    styles?: OutputStyles | undefined;
     /** Mention labels as the reader shows them; without it, each mention's stored label. */
-    readonly resolveReference?: ResolveReference | undefined;
+    resolveReference?: ResolveReference | undefined;
 };
 
 const NO_OPTIONS: HtmlWriteOptions = Object.freeze({});
@@ -332,7 +332,7 @@ export const writeHtml = (
     root: TreeNode,
     context: CodecContext,
     { contentClassName, listLevels, columns, styles = NO_STYLES, resolveReference }: HtmlWriteOptions = NO_OPTIONS,
-): { readonly html: string; readonly diagnostics: readonly Diagnostic[] } => {
+): { html: string; diagnostics: readonly Diagnostic[] } => {
     const state: HtmlState = {
         plan,
         context,

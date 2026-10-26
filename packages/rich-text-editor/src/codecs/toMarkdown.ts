@@ -26,7 +26,7 @@ const LISTS = new Set(['bullet_list', 'ordered_list', 'task_list']);
 const renderBlocks = (state: MarkdownState, parent: TreeNode, path: string): string => {
     const children = parent.content ?? [];
     const written: string[] = [];
-    let previous: { readonly family: string; readonly alternate: boolean } | undefined;
+    let previous: { family: string; alternate: boolean } | undefined;
     for (const [index, child] of children.entries()) {
         const childPath = `${path}${pointer('content', index)}`;
         let family = child.type;
@@ -415,9 +415,9 @@ export const writeMarkdown = (
     context: CodecContext,
     parser: Parser,
 ): {
-    readonly markdown: string;
-    readonly losses: readonly CodecLoss[];
-    readonly diagnostics: readonly Diagnostic[];
+    markdown: string;
+    losses: readonly CodecLoss[];
+    diagnostics: readonly Diagnostic[];
 } => {
     const state: MarkdownState = {
         plan,
