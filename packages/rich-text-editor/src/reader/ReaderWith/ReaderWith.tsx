@@ -18,9 +18,10 @@ import {
 } from '#/model';
 import { type ResolveAssetUrl, decodeToTree, canonicalJson, columnLayout, listDepths } from '#/model/internal';
 
-import { readerContext } from './context';
-import { planOf, type ReaderOverrides } from './plan';
-import { message, renderDocument, type RenderState } from './render';
+import { readerContext } from '../helpers/context';
+import { planOf, type ReaderOverrides } from '../helpers/plan';
+
+import { message, renderDocument, type RenderState } from './helpers/render';
 
 /** What the host decides about one reader output: its styles, colours and the resolvers it renders with. */
 export type ReaderPresentation = {

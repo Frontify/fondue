@@ -27,7 +27,7 @@ import {
     type ReplaceResult,
     type ServiceContext,
 } from '#/persistence/types';
-import { type ReaderPresentation } from '#/reader/reader';
+import { type ReaderPresentation } from '#/reader/ReaderWith/ReaderWith';
 import {
     type AuthoringPolicy,
     type CaptureResult,

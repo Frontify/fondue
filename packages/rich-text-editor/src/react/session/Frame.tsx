@@ -11,7 +11,7 @@ import { PortalHost } from '#/bridge/PortalHost';
 import { type PortalStore } from '#/bridge/portals';
 import { SessionContext } from '#/bridge/session';
 import { TurnIntoContext, type TurnIntoEntry } from '#/bridge/turnInto';
-import { type readerContext } from '#/reader/context';
+import { type readerContext } from '#/reader/helpers/context';
 import { type EditorPort, mediaOf } from '#/runtime/port';
 import { VISUALLY_HIDDEN } from '#/styles/visuallyHidden';
 import { ContextMenu } from '#/ui/contextMenu/ContextMenu';

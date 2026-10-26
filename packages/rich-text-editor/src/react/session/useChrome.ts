@@ -9,7 +9,7 @@ import { type MountCoordinator } from '#/bridge/mount';
 import { type EditorHosts } from '#/bridge/plugin';
 import { enUS } from '#/locales/en-US';
 import { codecContext } from '#/model/internal';
-import { readerContext } from '#/reader/context';
+import { readerContext } from '#/reader/helpers/context';
 import { UPLOAD_FEATURE } from '#/runtime/port';
 import { referenceListStrings } from '#/ui/suggestions/referenceStrings';
 

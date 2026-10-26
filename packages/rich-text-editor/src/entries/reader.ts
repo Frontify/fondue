@@ -2,12 +2,12 @@
 
 import { type ReactElement } from 'react';
 
-import { ReaderWith, type RichTextReaderProps } from '#/reader/reader';
+import { ReaderWith, type RichTextReaderProps } from '#/reader/ReaderWith/ReaderWith';
 
 import { READER_OVERRIDES } from './shippedReaders';
 
 export { defineReaderFeature, type ReaderContext, type ReaderNodeProps, type ReaderRenderers } from '#/reader/define';
-export { type ReaderPresentation, type RichTextReaderProps } from '#/reader/reader';
+export { type ReaderPresentation, type RichTextReaderProps } from '#/reader/ReaderWith/ReaderWith';
 
 /** Renders a document as semantic HTML with no engine, hook, context or DOM access, on the server or in the browser. */
 export const RichTextReader = (props: RichTextReaderProps): ReactElement =>

@@ -33,7 +33,7 @@ import { pluginIds, pluginsById } from '#/plugins/plugins';
 import { engineOf, viewsOf } from '#/react/compileEditor';
 import { defineEditor } from '#/react/define';
 import { extensionsOf } from '#/react/engine';
-import { readerContext } from '#/reader/context';
+import { readerContext } from '#/reader/helpers/context';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
 import { SLOT_START_META, uploadSlotsPlugin } from '#/runtime/capabilities/media/uploadSlots';
 import { compileDefinition, type Normalizer, NORMALIZERS } from '#/runtime/definition';

@@ -28,7 +28,7 @@ import {
     limitsOf,
     pointer,
 } from '#/model/internal';
-import { type ReaderOverrides } from '#/reader/plan';
+import { type ReaderOverrides } from '#/reader/helpers/plan';
 import {
     authoringOf,
     clipboardPlugin,

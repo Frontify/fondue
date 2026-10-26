@@ -3,8 +3,8 @@
 import { useRef, useState } from 'react';
 
 import { useClientLayoutEffect } from '#/bridge/clientLayoutEffect';
-import { type readerContext } from '#/reader/context';
-import { type ReaderPresentation } from '#/reader/reader';
+import { type readerContext } from '#/reader/helpers/context';
+import { type ReaderPresentation } from '#/reader/ReaderWith/ReaderWith';
 import { type EditorPort, isComposing } from '#/runtime/port';
 
 import { type ColumnsLayout, showColumns } from '../columns';

@@ -4,7 +4,7 @@ import { enUS } from '#/locales/en-US';
 import { type RichTextLocale } from '#/model';
 import { codecContext, resolvingSafely } from '#/model/internal';
 
-import { type ReaderContext } from './define';
+import { type ReaderContext } from '../define';
 
 export type ReaderResolvers = {
     resolveAssetUrl?: ReaderContext['resolveAssetUrl'];

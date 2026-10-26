@@ -12,9 +12,9 @@ import {
     type RichTextDocument,
     type RichTextLocale,
 } from '#/model';
-import { readerContext } from '#/reader/context';
-import { type ReaderOverrides } from '#/reader/plan';
-import { type ReaderPresentation, ReaderWith } from '#/reader/reader';
+import { readerContext } from '#/reader/helpers/context';
+import { type ReaderOverrides } from '#/reader/helpers/plan';
+import { type ReaderPresentation, ReaderWith } from '#/reader/ReaderWith/ReaderWith';
 
 type Blocked = Extract<DecodeResult, { status: 'blocked' }>;
 

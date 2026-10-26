@@ -5,7 +5,7 @@ import { enUS } from '#/locales/en-US';
 import { type CodecContext } from '#/model';
 import { decodeToTree, columnLayout } from '#/model/internal';
 import { type LoadedDocument } from '#/persistence/types';
-import { type ReaderPresentation } from '#/reader/reader';
+import { type ReaderPresentation } from '#/reader/ReaderWith/ReaderWith';
 import { type ColumnState, type EditorPort, surfaceElement } from '#/runtime/port';
 
 import { engineOf, readersOf } from '../compileEditor';

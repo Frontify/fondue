@@ -633,7 +633,11 @@ const CASES: readonly Case[] = [
     ),
     banned('entries: a client hook', 'src/entries/hook.tsx', "import { useState } from 'react';"),
     allowed('entries: a server safe react export', 'src/entries/server.tsx', "import { Fragment } from 'react';"),
-    allowed('entries: a reader module', 'src/entries/reader-module.ts', "import { render } from '#/reader/render';"),
+    allowed(
+        'entries: a reader module',
+        'src/entries/reader-module.ts',
+        "import { render } from '#/reader/ReaderWith/helpers/render';",
+    ),
     allowed(
         'entries: a feature reader',
         'src/entries/feature-reader.ts',
@@ -878,7 +882,11 @@ const CASES: readonly Case[] = [
         'src/docs/reader-entry.tsx',
         "import { RichTextReader } from '#/entries/reader';",
     ),
-    banned('docs: the reader folder', 'src/docs/reader-folder.tsx', "import { render } from '#/reader/render';"),
+    banned(
+        'docs: the reader folder',
+        'src/docs/reader-folder.tsx',
+        "import { render } from '#/reader/ReaderWith/helpers/render';",
+    ),
     allowed('docs: its own folder', 'src/docs/folder.tsx', "import { example } from './example';"),
 
     // styles

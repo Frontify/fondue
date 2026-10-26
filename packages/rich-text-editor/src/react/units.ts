@@ -3,7 +3,7 @@
 import { type RichTextPlugin } from '#/bridge/definePlugin';
 import { type ContentModel, DefinitionError } from '#/model';
 import { compiledModel, pointer } from '#/model/internal';
-import { type ReaderOverrides } from '#/reader/plan';
+import { type ReaderOverrides } from '#/reader/helpers/plan';
 
 /** Rejects units that do not cover `model`'s features exactly: one unit per feature, of the same ID and version. */
 export const checkCover = (model: ContentModel, units: readonly RichTextPlugin[]) => {

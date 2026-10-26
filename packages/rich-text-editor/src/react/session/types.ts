@@ -7,8 +7,8 @@ import { type TurnIntoEntry } from '#/bridge/turnInto';
 import { type CapabilityRef, type DecodeResult } from '#/model';
 import { type TreeNode } from '#/model/internal';
 import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
-import { type readerContext } from '#/reader/context';
-import { type ReaderPresentation } from '#/reader/reader';
+import { type readerContext } from '#/reader/helpers/context';
+import { type ReaderPresentation } from '#/reader/ReaderWith/ReaderWith';
 import { type RuntimeHandle } from '#/runtime/port';
 import { type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/Toolbar';
 

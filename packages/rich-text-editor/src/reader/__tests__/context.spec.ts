@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 
 import { enUS } from '#/locales/en-US';
 
-import { readerContext } from '../context';
+import { readerContext } from '../helpers/context';
 
 describe('translator', () => {
     const { t } = readerContext(

@@ -33,7 +33,7 @@ import {
 import { core } from '#/plugins/Core/feature';
 import { link as linkFeature } from '#/plugins/Link/feature';
 import { fixturesIn } from '#/reader/__tests__/helpers/helpers';
-import { type ReaderPresentation } from '#/reader/reader';
+import { type ReaderPresentation } from '#/reader/ReaderWith/ReaderWith';
 import { type AsyncOperation } from '#/runtime/async/async';
 import * as schemaModule from '#/runtime/definition/schema';
 import { runtimeOf } from '#/runtime/runtime';

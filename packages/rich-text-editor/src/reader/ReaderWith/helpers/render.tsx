@@ -46,8 +46,8 @@ import {
     writesAttribute,
 } from '#/model/internal';
 
-import { type ReaderContext, type ReaderNodeProps } from './define';
-import { type Plan } from './plan';
+import { type ReaderContext, type ReaderNodeProps } from '../../define';
+import { type Plan } from '../../helpers/plan';
 
 /** The document gets one island notice when `islands` is not zero. */
 export type RenderState = {

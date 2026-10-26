@@ -5,7 +5,7 @@ import { type ComponentType } from 'react';
 import { type ContentModel, type FeatureDeclaration } from '#/model';
 import { buildPlan, type MarkPlan, type NodePlan, type Plan as BasePlan, ownValue } from '#/model/internal';
 
-import { declaredOverrides, type ReaderNodeProps, type ReaderRenderers } from './define';
+import { declaredOverrides, type ReaderNodeProps, type ReaderRenderers } from '../define';
 
 /** What the reader reads about one node or mark type: the shared plan and its override. */
 type Overridden = {
