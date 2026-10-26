@@ -4,9 +4,9 @@ import { createContext, useContext } from 'react';
 
 /** The one open panel; `close` clears it. */
 export type PanelController = {
-    readonly id: string | undefined;
+    id: string | undefined;
     /** Counts the `open` calls for the panel that is already open, which that panel hears to move focus. */
-    readonly requested: number;
+    requested: number;
     close(): void;
 };
 

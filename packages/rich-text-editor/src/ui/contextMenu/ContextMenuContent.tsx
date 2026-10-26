@@ -29,7 +29,7 @@ const labelGroup = (label: string) => (group: HTMLDivElement | null) => {
 };
 
 /** The Turn into group: the conversions the selected node takes, none for a node that takes no other type. */
-const TurnInto = ({ label, runs }: { readonly label: string; readonly runs: ReturnType<typeof useRowRuns> }) => {
+const TurnInto = ({ label, runs }: { label: string; runs: ReturnType<typeof useRowRuns> }) => {
     const runtime = useContext(SessionContext);
     const entries = useContext(TurnIntoContext);
     if (runtime === undefined) {
@@ -77,13 +77,13 @@ export const ContextMenuContent = ({
     turnIntoLabel,
     runs,
 }: {
-    readonly contentRef: Ref<HTMLDivElement>;
-    readonly label: string;
-    readonly container: HTMLElement | null;
-    readonly items: readonly ToolbarItem[];
-    readonly strings: ToolbarStrings;
-    readonly turnIntoLabel: string;
-    readonly runs: ReturnType<typeof useRowRuns>;
+    contentRef: Ref<HTMLDivElement>;
+    label: string;
+    container: HTMLElement | null;
+    items: readonly ToolbarItem[];
+    strings: ToolbarStrings;
+    turnIntoLabel: string;
+    runs: ReturnType<typeof useRowRuns>;
 }) => (
     <Dropdown.Content
         ref={contentRef}

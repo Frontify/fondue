@@ -15,10 +15,7 @@ const ASSETS_SERVICE = 'assets';
 
 /** The host asset picker, as `services.assets` holds it. */
 export type AssetPicker = {
-    pick(
-        request: { readonly purpose: string },
-        context: { readonly signal: AbortSignal; readonly session: SessionToken },
-    ): Promise<unknown>;
+    pick(request: { purpose: string }, context: { signal: AbortSignal; session: SessionToken }): Promise<unknown>;
 };
 
 /**
@@ -30,10 +27,10 @@ export type AssetPicker = {
 export const pickAsset = (
     runtime: EditorPort,
     picker: AssetPicker,
-    options: { readonly nodeId?: string; readonly removed: (kind: 'target' | 'image') => void },
+    options: { nodeId?: string; removed: (kind: 'target' | 'image') => void },
 ): void => {
     const { nodeId, removed } = options;
-    let place: { readonly target: SelectionHandle } | { readonly nodeId: string };
+    let place: { target: SelectionHandle } | { nodeId: string };
     if (nodeId === undefined) {
         const captured = runtime.handle.captureTarget({ purpose: 'insert', onIntersectingEdit: 'map' });
         if (captured.status !== 'captured') {

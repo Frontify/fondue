@@ -28,16 +28,16 @@ export const ContextMenu = ({
     strings,
     disabled,
 }: {
-    readonly items: readonly ToolbarItem[];
-    readonly label: string;
-    readonly turnIntoLabel: string;
-    readonly strings: ToolbarStrings;
-    readonly disabled: boolean;
+    items: readonly ToolbarItem[];
+    label: string;
+    turnIntoLabel: string;
+    strings: ToolbarStrings;
+    disabled: boolean;
 }) => {
     const runtime = useContext(SessionContext);
     const rows = useOfferedRows(items);
     // The pointer the menu opened at, or `undefined` for the selected node.
-    const [opened, setOpened] = useState<{ readonly at: OverlayAnchor | undefined } | undefined>(undefined);
+    const [opened, setOpened] = useState<{ at: OverlayAnchor | undefined } | undefined>(undefined);
     const open = opened !== undefined;
     // Every close request, a press in the editor included, as the browser's menu closes on one.
     const setOpen = useCallback((next: boolean) => {

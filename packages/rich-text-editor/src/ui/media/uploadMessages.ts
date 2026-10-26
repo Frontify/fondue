@@ -44,7 +44,7 @@ type Limits = Pick<ResourceLimits, 'maxAssetBytes' | 'maxImagePixels'>;
 
 /** Why one file was refused, with how to fix it: the accepted types and size, or the pixel limits. */
 const refusalOf = (
-    { name, reason }: { readonly name: string; readonly reason: UploadRejection },
+    { name, reason }: { name: string; reason: UploadRejection },
     t: CodecContext['t'],
     lang: string,
     limits: Limits,

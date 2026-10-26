@@ -44,10 +44,10 @@ export const TextStyle = ({
     keepsFocus,
     outOfTabOrder,
 }: {
-    readonly item: ToolbarItem;
-    readonly disabled: boolean;
-    readonly keepsFocus: boolean;
-    readonly outOfTabOrder: boolean;
+    item: ToolbarItem;
+    disabled: boolean;
+    keepsFocus: boolean;
+    outOfTabOrder: boolean;
 }) => {
     const runtime = useContext(SessionContext);
     const container = useOverlayContainer();

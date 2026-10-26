@@ -181,9 +181,9 @@ const StatusRow = ({
     slow,
     strings,
 }: {
-    readonly active: ActiveSuggestion;
-    readonly slow: boolean;
-    readonly strings: ReferenceListStrings;
+    active: ActiveSuggestion;
+    slow: boolean;
+    strings: ReferenceListStrings;
 }) => {
     if (active.status === 'loading' && slow) {
         return (
@@ -223,9 +223,9 @@ export const SuggestionList = ({
     testId,
 }: {
     /** The list's accessible name from its package string key or its translations. */
-    readonly nameOf: (name: ActiveSuggestion['name']) => string;
-    readonly strings: ReferenceListStrings;
-    readonly testId: string;
+    nameOf: (name: ActiveSuggestion['name']) => string;
+    strings: ReferenceListStrings;
+    testId: string;
 }) => {
     const runtime = useContext(SessionContext);
     const runtimeRef = useRef(runtime);

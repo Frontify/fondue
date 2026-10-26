@@ -55,8 +55,8 @@ const renderKeyOf = (runtime: EditorPort | undefined, closedAt: string | null, s
 
 /** In bubble mode, the commands with no bubble item and the switch back to the fixed toolbar. */
 export type BubbleMore = {
-    readonly items: readonly ToolbarItem[];
-    readonly modeSwitch: ModeSwitch;
+    items: readonly ToolbarItem[];
+    modeSwitch: ModeSwitch;
 };
 
 const holdsText = ({ kind, collapsed }: SelectionSummary) => (kind === 'text' || kind === 'all') && !collapsed;
@@ -76,17 +76,17 @@ export const BubbleToolbar = ({
     toolbarRef,
     showRef,
 }: {
-    readonly items: readonly ToolbarItem[];
-    readonly more: BubbleMore | undefined;
-    readonly label: string;
-    readonly strings: ToolbarStrings;
+    items: readonly ToolbarItem[];
+    more: BubbleMore | undefined;
+    label: string;
+    strings: ToolbarStrings;
     /** The package key binding that moves focus here. */
-    readonly shortcut: string;
-    readonly testId: string;
+    shortcut: string;
+    testId: string;
     /** The toolbar element while it shows, which Alt+F10 focuses. */
-    readonly toolbarRef: MutableRefObject<HTMLDivElement | null>;
+    toolbarRef: MutableRefObject<HTMLDivElement | null>;
     /** In bubble mode, opens the toolbar at any selection and focuses it, as Alt+F10 does when none shows. */
-    readonly showRef: MutableRefObject<(() => void) | null> | undefined;
+    showRef: MutableRefObject<(() => void) | null> | undefined;
 }) => {
     const apple = useApplePlatform();
     const { dir } = useFondueTheme();

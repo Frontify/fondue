@@ -16,8 +16,8 @@ const ARROWS: Readonly<Record<string, readonly [string, string]>> = { ArrowUp: [
 const ARIA_NAMES: Readonly<Record<string, string>> = { Ctrl: 'Control', Alt: 'Alt', Shift: 'Shift' };
 
 type Parsed = {
-    readonly modifiers: readonly string[];
-    readonly key: string;
+    modifiers: readonly string[];
+    key: string;
 };
 
 /** The binding's modifiers and key on this platform, or `undefined` for a binding of the other platform. */

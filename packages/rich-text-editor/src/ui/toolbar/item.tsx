@@ -14,37 +14,37 @@ import { ariaShortcut, bindingHere, shortcutText } from '#/ui/shortcuts';
 /** One command of the presentation's toolbar, with the registry's label and icon unless `controls` replaced them. */
 export type ToolbarItem = {
     /** The command and its payload, unique within one toolbar. */
-    readonly key: string;
-    readonly command: string;
-    readonly payload: JsonValue | undefined;
+    key: string;
+    command: string;
+    payload: JsonValue | undefined;
     /** A mark or block type toggle, which exposes `aria-pressed`. */
-    readonly toggle: boolean;
-    readonly label: string;
+    toggle: boolean;
+    label: string;
     /** A Fondue icon name. */
-    readonly icon: string;
+    icon: string;
     /** The compiled key bindings that run the command, of which the first for the platform shows. */
-    readonly bindings: readonly string[];
+    bindings: readonly string[];
     /** Whether the item opens a presentation group, which a wider gap sets apart. */
-    readonly groupStart: boolean;
+    groupStart: boolean;
     /** Whether its group toggles a mark, which the bubble toolbar shows. */
-    readonly bubble: boolean;
+    bubble: boolean;
     /** The rows of the text style picker, which the item is; a row it does not offer only names the active block type. */
-    readonly options?: readonly (ToolbarItem & { readonly offered: boolean })[];
+    options?: readonly (ToolbarItem & { offered: boolean })[];
     /** Its command opens an overlay, which a More row runs only once the menu has closed. */
-    readonly opensControl?: boolean;
+    opensControl?: boolean;
     /** The id of the panel the item toggles, so it shows pressed while that panel is open. */
-    readonly control?: string;
+    control?: string;
     /** A plugin's own control, which renders in place of the standard button. */
-    readonly component?: ComponentType<ToolbarControlProps>;
+    component?: ComponentType<ToolbarControlProps>;
     /** The heading of the text style picker's brand style rows. */
-    readonly groupLabel?: string;
+    groupLabel?: string;
     /** A brand style row of the text style picker: the block types it applies to and the font it previews. */
-    readonly brand?: {
-        readonly appliesTo: readonly string[];
-        readonly preview: Readonly<Record<string, string>>;
+    brand?: {
+        appliesTo: readonly string[];
+        preview: Readonly<Record<string, string>>;
     };
     /** The node type a menu row acts on, which it shows only while such a node is selected or holds the caret. */
-    readonly node?: string;
+    node?: string;
 };
 
 /** The rows of `items` the selection offers: a node row only while its node type is selected and its command runs. */
@@ -65,17 +65,15 @@ export const useOfferedRows = (items: readonly ToolbarItem[]): readonly ToolbarI
     useSessionValue((session) => offeredRows(items, session), sameRows);
 
 export type ToolbarStrings = {
-    readonly label: string;
-    readonly more: string;
+    label: string;
+    more: string;
     /** Why a command cannot run, from its `disabledReason`. */
-    readonly reason: (code: string) => string;
+    reason: (code: string) => string;
 };
 
-const ICONS = icons as Readonly<
-    Record<string, ComponentType<{ readonly size?: 16 | 20; readonly 'aria-hidden'?: boolean }>>
->;
+const ICONS = icons as Readonly<Record<string, ComponentType<{ size?: 16 | 20; 'aria-hidden'?: boolean }>>>;
 
-export const Icon = ({ name }: { readonly name: string }) => {
+export const Icon = ({ name }: { name: string }) => {
     const Found = ICONS[name];
     if (Found === undefined) {
         return null;
@@ -135,7 +133,7 @@ export const pressItem = async (
 };
 
 /** Radix Toolbar sets each item's roving `tabIndex` unless a prop replaces it, so only an item out of the Tab order passes one. */
-export const tabStop = (outOfTabOrder: boolean): { readonly tabIndex?: number } => {
+export const tabStop = (outOfTabOrder: boolean): { tabIndex?: number } => {
     if (outOfTabOrder) {
         return { tabIndex: -1 };
     }

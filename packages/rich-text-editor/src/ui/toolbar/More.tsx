@@ -70,8 +70,8 @@ export const useRowRuns = (content: RefObject<HTMLDivElement | null>, focusOpene
 
 /** The last More row, which switches between the fixed and the bubble toolbar. */
 export type ModeSwitch = {
-    readonly label: string;
-    readonly onSelect: () => void;
+    label: string;
+    onSelect: () => void;
 };
 
 /** Whether focus sits on an element, not on `body`, in the document or shadow root that holds `trigger`. */
@@ -95,13 +95,13 @@ export const More = ({
     outOfTabOrder,
     modeSwitch,
 }: {
-    readonly items: readonly ToolbarItem[];
-    readonly strings: ToolbarStrings;
-    readonly disabled: boolean;
+    items: readonly ToolbarItem[];
+    strings: ToolbarStrings;
+    disabled: boolean;
     /** A press leaves focus in the surface, as on the docked toolbar. */
-    readonly keepsFocus: boolean;
-    readonly outOfTabOrder: boolean;
-    readonly modeSwitch: ModeSwitch;
+    keepsFocus: boolean;
+    outOfTabOrder: boolean;
+    modeSwitch: ModeSwitch;
 }) => {
     const runtime = useContext(SessionContext);
     const container = useOverlayContainer();

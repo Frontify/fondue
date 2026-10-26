@@ -16,9 +16,9 @@ export const MoreRow = ({
     strings,
     onRun,
 }: {
-    readonly item: ToolbarItem;
-    readonly strings: ToolbarStrings;
-    readonly onRun: (item: ToolbarItem) => Promise<void>;
+    item: ToolbarItem;
+    strings: ToolbarStrings;
+    onRun: (item: ToolbarItem) => Promise<void>;
 }) => {
     const state = useCommandQuery(item.command, item.payload);
     const openPanel = useOpenPanel();
@@ -93,15 +93,15 @@ export const MoreContent = ({
     onCloseAutoFocus,
     onModeSwitch,
 }: {
-    readonly contentRef: RefObject<HTMLDivElement>;
-    readonly container: HTMLElement | null;
-    readonly items: readonly ToolbarItem[];
-    readonly strings: ToolbarStrings;
-    readonly blockType: string;
-    readonly modeLabel: string;
-    readonly onRun: (item: ToolbarItem) => Promise<void>;
-    readonly onCloseAutoFocus: (event: Event) => void;
-    readonly onModeSwitch: () => void;
+    contentRef: RefObject<HTMLDivElement>;
+    container: HTMLElement | null;
+    items: readonly ToolbarItem[];
+    strings: ToolbarStrings;
+    blockType: string;
+    modeLabel: string;
+    onRun: (item: ToolbarItem) => Promise<void>;
+    onCloseAutoFocus: (event: Event) => void;
+    onModeSwitch: () => void;
 }) => (
     <Dropdown.Content ref={contentRef} container={container} onCloseAutoFocus={onCloseAutoFocus}>
         {/* The text style picker that does not fit offers its rows here. */}

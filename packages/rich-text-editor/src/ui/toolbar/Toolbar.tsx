@@ -25,13 +25,13 @@ export { type ToolbarItem, type ToolbarStrings } from './item';
 export { More, type ModeSwitch } from './More';
 
 export type ItemProps = {
-    readonly item: ToolbarItem;
-    readonly disabled: boolean;
-    readonly strings: ToolbarStrings;
+    item: ToolbarItem;
+    disabled: boolean;
+    strings: ToolbarStrings;
     /** A press leaves focus in the surface: in the bubble toolbar and the docked toolbar. */
-    readonly keepsFocus: boolean;
+    keepsFocus: boolean;
     /** The item takes no Tab stop, as in the bubble toolbar. */
-    readonly outOfTabOrder: boolean;
+    outOfTabOrder: boolean;
 };
 
 /** One toolbar item: a plugin's own control, else the standard button. */
@@ -51,7 +51,7 @@ const PluginControl = ({
     keepsFocus,
     outOfTabOrder,
     control: Control,
-}: ItemProps & { readonly control: ComponentType<ToolbarControlProps> }) => {
+}: ItemProps & { control: ComponentType<ToolbarControlProps> }) => {
     const runtime = useContext(SessionContext);
     const elementRef = useRef<HTMLElement | null>(null);
     const controlRef = useCallback((element: HTMLElement | null) => {
@@ -175,22 +175,22 @@ export const FixedToolbar = ({
     modeSwitch,
     docked,
 }: {
-    readonly items: readonly ToolbarItem[];
+    items: readonly ToolbarItem[];
     /** The rows that only More holds, below the items that do not fit. */
-    readonly menu: readonly ToolbarItem[];
-    readonly strings: ToolbarStrings;
+    menu: readonly ToolbarItem[];
+    strings: ToolbarStrings;
     /** The editor is `disabled`: every item is disabled and the toolbar leaves the Tab order. */
-    readonly disabled: boolean;
-    readonly surfaceId: string;
+    disabled: boolean;
+    surfaceId: string;
     /** The package key binding that moves focus here. */
-    readonly shortcut: string;
-    readonly testId: string;
+    shortcut: string;
+    testId: string;
     /** The toolbar element, which Alt+F10 focuses. */
-    readonly toolbarRef: MutableRefObject<HTMLDivElement | null>;
+    toolbarRef: MutableRefObject<HTMLDivElement | null>;
     /** The More row that switches to the bubble toolbar. */
-    readonly modeSwitch: ModeSwitch;
+    modeSwitch: ModeSwitch;
     /** The bottom inset of the on-screen keyboard while the toolbar docks above it, else `undefined`. */
-    readonly docked: number | undefined;
+    docked: number | undefined;
 }) => {
     const { dir } = useFondueTheme();
     const apple = useApplePlatform();

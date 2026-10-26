@@ -31,7 +31,7 @@ declare global {
     // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The suggestion probe's handle. */
-        suggestionRte?: { readonly handle: EditorHandle };
+        suggestionRte?: { handle: EditorHandle };
     }
 }
 
@@ -71,11 +71,11 @@ export const SuggestionProbe = ({
     text = 'Hi',
     scrollHeight,
 }: {
-    readonly lang?: string;
-    readonly toolbar?: boolean;
-    readonly text?: string;
+    lang?: string;
+    toolbar?: boolean;
+    text?: string;
     /** Wraps the editor in a scrolling box of this height, with lines below the first paragraph. */
-    readonly scrollHeight?: number;
+    scrollHeight?: number;
 }) => {
     const ref = useRef<EditorHandle>(null);
     const [locale] = useState(() => localeOf(lang));
