@@ -8,8 +8,8 @@ import { loadConfigFromFile } from 'vite';
 import { beforeAll, expect, it } from 'vitest';
 
 type Timeouts = {
-    readonly hookTimeout?: number;
-    readonly testTimeout?: number;
+    hookTimeout?: number;
+    testTimeout?: number;
 };
 
 let timeouts: Timeouts = {};
@@ -22,7 +22,7 @@ beforeAll(async () => {
         throw new Error('vite.config.ts did not load');
     }
 
-    const { test } = loaded.config as { readonly test?: Timeouts };
+    const { test } = loaded.config as { test?: Timeouts };
     if (test !== undefined) {
         timeouts = test;
     }

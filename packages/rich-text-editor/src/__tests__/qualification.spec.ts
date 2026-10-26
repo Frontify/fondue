@@ -47,7 +47,7 @@ describe('the qualification records', () => {
 
     it('lists each bundle budget row with its size-budgets.json budget', () => {
         for (const { name, record } of RECORDS) {
-            const rows = record.bundle as readonly { readonly build: string; readonly budgetBytes: number }[];
+            const rows = record.bundle as readonly { build: string; budgetBytes: number }[];
 
             expect(Object.fromEntries(rows.map(({ build, budgetBytes }) => [build, budgetBytes])), name).toEqual(
                 budgets,

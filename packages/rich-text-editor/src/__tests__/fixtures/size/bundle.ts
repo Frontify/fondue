@@ -22,34 +22,34 @@ export const brotliBytes = (code: string): number =>
 const HOST_LOADED = /^(?:react|react-dom|@frontify\/fondue-(?:components|icons|tokens))(?:\/|$)/;
 
 export type ChunkInfo = {
-    readonly fileName: string;
-    readonly bytes: number;
-    readonly imports: readonly string[];
-    readonly dynamicImports: readonly string[];
-    readonly modules: readonly string[];
-    readonly isEntry: boolean;
+    fileName: string;
+    bytes: number;
+    imports: readonly string[];
+    dynamicImports: readonly string[];
+    modules: readonly string[];
+    isEntry: boolean;
 };
 
 export type Measured = {
     /** Minified Brotli bytes of every JavaScript chunk. */
-    readonly bytes: number;
-    readonly chunks: readonly ChunkInfo[];
+    bytes: number;
+    chunks: readonly ChunkInfo[];
     /** Minified Brotli bytes of every stylesheet. */
-    readonly cssBytes: number;
-    readonly code: string;
+    cssBytes: number;
+    code: string;
     /** The ID of each module that went into a chunk. */
-    readonly modules: readonly string[];
+    modules: readonly string[];
 };
 
 /** Builds `source`, the lines of an entry module, as a minified library and measures what it emits. */
 export const measure = async (
     source: string,
     options: {
-        readonly external?: (id: string) => boolean;
+        external?: (id: string) => boolean;
         /** Replaces the module a specifier names, as `[{ find: '#/features/marksStrike/feature', replacement: path }]`. */
-        readonly alias?: readonly { readonly find: string; readonly replacement: string }[];
+        alias?: readonly { find: string; replacement: string }[];
         /** Drops a source module no used export reaches, as a host's bundler does under the package's `sideEffects`. */
-        readonly sourceIsPure?: boolean;
+        sourceIsPure?: boolean;
     } = {},
 ): Promise<Measured> => {
     const moduleSideEffects = (id: string) => options.sourceIsPure !== true || !id.startsWith(`${join(root, 'src')}/`);
@@ -110,8 +110,8 @@ export type ProfileName = 'inline' | 'comment' | 'document' | 'brand-document';
  */
 export const profileBytes = async (
     profile: ProfileName,
-    alias: readonly { readonly find: string; readonly replacement: string }[] = [],
-): Promise<{ readonly bytes: number; readonly modules: readonly string[] }> => {
+    alias: readonly { find: string; replacement: string }[] = [],
+): Promise<{ bytes: number; modules: readonly string[] }> => {
     const entry = profile.replaceAll(/-(\w)/g, (_, letter: string) => letter.toUpperCase());
     const { chunks } = await measure(`import '#/features/profiles/__tests__/fixtures/${entry}.entry';`, { alias });
     const byName = new Map(chunks.map((chunk) => [chunk.fileName, chunk]));

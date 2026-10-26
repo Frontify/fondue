@@ -26,12 +26,12 @@ import { pendingResults } from './fixtures/qualification';
 const NAME = '@frontify/fondue-rich-text-editor';
 const REPOSITORY = join(PACKAGE_ROOT, '..', '..');
 
-type Exports = Readonly<Record<string, string | { readonly types?: string; readonly import?: string }>>;
+type Exports = Readonly<Record<string, string | { types?: string; import?: string }>>;
 
 const manifestOf = (root: string) =>
     JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as {
-        readonly version: string;
-        readonly exports?: Exports;
+        version: string;
+        exports?: Exports;
     };
 
 // The dependencies whose resolved versions the release notes record.
@@ -105,9 +105,9 @@ const GROWABLE = [
 ];
 
 type PublicExport = {
-    readonly name: string;
-    readonly declarations: readonly ts.Node[];
-    readonly deprecated: boolean;
+    name: string;
+    declarations: readonly ts.Node[];
+    deprecated: boolean;
 };
 
 /** The exports of each script entry that `root/package.json` publishes types for, by `<entry> <name>`. */
@@ -368,7 +368,7 @@ const npm = (args: readonly string[], run: (args: readonly string[]) => string =
     try {
         return run(args).trim();
     } catch (error) {
-        const { stderr, stdout } = error as { readonly stderr?: unknown; readonly stdout?: unknown };
+        const { stderr, stdout } = error as { stderr?: unknown; stdout?: unknown };
         if (/E404/.test(`${String(stderr)}\n${String(stdout)}`)) {
             return '';
         }
@@ -388,8 +388,8 @@ const baselineVersion = (published: readonly string[], version: string): string 
 };
 
 type Release = {
-    readonly version: string;
-    readonly notes: string;
+    version: string;
+    notes: string;
 };
 
 /** The editor release this run prepares: what the pending changesets naming it make, else the unpublished `package.json` version. */
@@ -810,7 +810,7 @@ describe.runIf(process.env.RTE_RELEASE === 'true')('the release this run prepare
                 cwd: PACKAGE_ROOT,
                 encoding: 'utf8',
             }),
-        ) as readonly { readonly dependencies?: Readonly<Record<string, { readonly version: string }>> }[];
+        ) as readonly { dependencies?: Readonly<Record<string, { version: string }>> }[];
         const resolved = Object.fromEntries(
             Object.entries(listed?.dependencies ?? {}).map(([name, { version }]) => [name, version]),
         );

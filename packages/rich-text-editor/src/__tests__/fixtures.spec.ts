@@ -16,7 +16,7 @@ describe('the fixtures CI runs on a change to src', () => {
         'gives hostile fixture %s an expected result',
         (name) => {
             const fixture = JSON.parse(readFileSync(folder(`../model/__tests__/fixtures/hostile/${name}`), 'utf8')) as {
-                readonly expected?: unknown;
+                expected?: unknown;
             };
 
             expect(typeof fixture.expected).toBe('object');
@@ -26,10 +26,10 @@ describe('the fixtures CI runs on a change to src', () => {
 
     it('gives every urls.json entry an expected verdict: the checked href, or the code that rejects it', () => {
         const entries = JSON.parse(readFileSync(folder('../model/__tests__/fixtures/urls.json'), 'utf8')) as readonly {
-            readonly input?: unknown;
-            readonly ok?: unknown;
-            readonly code?: unknown;
-            readonly href?: unknown;
+            input?: unknown;
+            ok?: unknown;
+            code?: unknown;
+            href?: unknown;
         }[];
 
         expect(entries.length).toBeGreaterThan(0);
