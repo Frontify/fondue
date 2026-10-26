@@ -685,7 +685,7 @@ const CASES: readonly Case[] = [
     allowed(
         'testing: the engine inside conformance',
         'src/testing/conformance/x.ts',
-        "import { editorEngine } from '#/react/engine';",
+        "import { editorEngine } from '#/react/compile/engine';",
     ),
     banned(
         'testing: prosemirror-state inside conformance',
@@ -705,12 +705,12 @@ const CASES: readonly Case[] = [
     banned(
         'testing: the unit cover check inside conformance',
         'src/testing/conformance/shipped.ts',
-        "import { checkCover } from '#/react/units';",
+        "import { checkCover } from '#/react/compile/units';",
     ),
     banned(
         'testing: the engine outside conformance',
         'src/testing/x.ts',
-        "import { editorEngine } from '#/react/engine';",
+        "import { editorEngine } from '#/react/compile/engine';",
     ),
 
     // runtime
@@ -810,7 +810,7 @@ const CASES: readonly Case[] = [
     banned('react: the runtime assembly', 'src/react/foo.ts', "import { createPort } from '#/runtime/assembly';"),
     allowed(
         'react: the runtime assembly in the engine compiler',
-        'src/react/compileEditor.ts',
+        'src/react/compile/compileEditor.ts',
         "import { createPort } from '#/runtime/assembly';",
     ),
     allowed('react: react', 'src/react/react.tsx', "import { memo } from 'react';"),

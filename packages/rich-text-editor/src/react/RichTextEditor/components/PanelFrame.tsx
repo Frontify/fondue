@@ -11,7 +11,7 @@ import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEff
 import { type CodecContext } from '#/model';
 import { passesToBrowser } from '#/runtime/port';
 
-import styles from './styles/panels.module.scss';
+import styles from '../styles/panels.module.scss';
 
 export type BoundaryProps = {
     message: string;

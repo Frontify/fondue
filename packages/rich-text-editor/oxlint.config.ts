@@ -429,7 +429,7 @@ const TESTING_MESSAGE =
     '`testing` may import `model`, `runtime` (but not `runtime/import`), `persistence`, `reader`, `codecs` and `locales`, from `runtime/clipboard` only `runtime/clipboard/plugin`, and from `plugins` only conformance and fixtures.';
 
 const CONFORMANCE_MESSAGE =
-    'The contract suite drives editor parts through the engine, so it also imports `react`, `react-dom/server`, `#/bridge/plugin`, `#/plugins/plugins`, `#/plugins/registry` and `#/react/engine`.';
+    'The contract suite drives editor parts through the engine, so it also imports `react`, `react-dom/server`, `#/bridge/plugin`, `#/plugins/plugins`, `#/plugins/registry` and `#/react/compile/engine`.';
 
 const RUNTIME_MESSAGE = '`runtime` imports `model`, `runtime/definition`, `runtime/import` and ProseMirror.';
 
@@ -437,7 +437,7 @@ const BRIDGE_MESSAGE =
     '`bridge` imports `model`, `runtime` (but not `runtime/clipboard`, `runtime/definition` or `runtime/import`), `persistence` and React, never ProseMirror.';
 
 const REACT_FOLDER_MESSAGE =
-    '`react` imports every folder except `testing`, the runtime only through `#/runtime/port`, `#/runtime/definition` and `#/runtime/import` (only `compileEditor` and `session/useSessionRuntime` also import `#/runtime/assembly`), and neither `react-dom` nor ProseMirror.';
+    '`react` imports every folder except `testing`, the runtime only through `#/runtime/port`, `#/runtime/definition` and `#/runtime/import` (only `compile/compileEditor` and `RichTextEditor/hooks/useSessionRuntime` also import `#/runtime/assembly`), and neither `react-dom` nor ProseMirror.';
 
 const PERSISTENCE_MESSAGE =
     '`persistence` imports `model` and `runtime`, but not `runtime/clipboard`, `runtime/definition` or `runtime/import`.';
@@ -487,7 +487,10 @@ const portOnlyPatterns = [
 ];
 
 // The two react files that build the engine also import the assembly, which holds the engine-typed values.
-const REACT_ASSEMBLY_FILES = ['src/react/compileEditor.ts', 'src/react/session/useSessionRuntime.ts'];
+const REACT_ASSEMBLY_FILES = [
+    'src/react/compile/compileEditor.ts',
+    'src/react/RichTextEditor/hooks/useSessionRuntime.ts',
+];
 
 const portAndAssemblyPatterns = [
     ...aliasPatterns(['runtime']),
@@ -826,7 +829,7 @@ export default defineConfig({
                     ...featurePathPatterns(TESTING_FEATURE_TAILS),
                     ...ENGINE_PATTERNS,
                     ...exceptPatterns(['runtime/clipboard/plugin']),
-                    ...exceptPatterns(['bridge/plugin', 'plugins/plugins', 'plugins/registry', 'react/engine']),
+                    ...exceptPatterns(['bridge/plugin', 'plugins/plugins', 'plugins/registry', 'react/compile/engine']),
                     '!react',
                     '!react-dom/server',
                 ],

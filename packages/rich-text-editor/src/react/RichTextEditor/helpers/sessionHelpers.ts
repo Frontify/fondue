@@ -8,9 +8,8 @@ import { type LoadedDocument } from '#/persistence/types';
 import { type ReaderPresentation } from '#/reader/ReaderWith/ReaderWith';
 import { type ColumnState, type EditorPort, surfaceElement } from '#/runtime/port';
 
-import { engineOf, readersOf } from '../compileEditor';
-import { type EditorServices } from '../types';
-
+import { engineOf, readersOf } from '../../compile/compileEditor';
+import { type EditorServices } from '../../types';
 import {
     DEFAULT_TEST_ID,
     DEFAULT_TOOLBAR_SHORTCUT,
@@ -20,7 +19,7 @@ import {
     type PartProps,
     type Props,
     type SERVICE_MEMBERS,
-} from './types';
+} from '../types';
 
 /** The key that moves focus to the toolbars, Alt+F10 unless the presentation sets another. */
 export const toolbarShortcutOf = ({ presentation }: PartProps) => {

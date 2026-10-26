@@ -27,10 +27,10 @@ import { link } from '#/plugins/Link/feature';
 import { runtimeOf } from '#/runtime/runtime';
 import { pressKey, setSelection, typeText } from '#/testing';
 
-import { defineEditor, defineReactPresentation } from '../define';
-import { RichTextEditor } from '../RichTextEditor';
+import { defineEditor, defineReactPresentation } from '../compile/define';
+import { useEditorHandle } from '../hooks/useEditorHandle';
+import { RichTextEditor } from '../RichTextEditor/RichTextEditor';
 import { type EditorHandle, type RichTextEditorBaseProps } from '../types';
-import { useEditorHandle } from '../useEditorHandle';
 
 import { fixtureLocale, TOOLBAR } from './fixtures/ToolbarProbe';
 

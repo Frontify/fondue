@@ -13,7 +13,7 @@ import { htmlFeatures, htmlModel } from '#/plugins/__tests__/fixtures/html';
 import { spotlight } from '#/plugins/__tests__/fixtures/spotlight/feature';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { core } from '#/plugins/Core/feature';
-import { defineEditor } from '#/react/define';
+import { defineEditor } from '#/react/compile/define';
 
 import { fromHTML } from '../fromHtml';
 

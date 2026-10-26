@@ -8,8 +8,8 @@ import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK, type TreeNode, decodeToTree }
 import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/plugins';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { UNSHIPPED_FEATURES } from '#/plugins/stages';
-import { engineOf, pluginsOf, readersOf } from '#/react/compileEditor';
-import { editorEngine } from '#/react/engine';
+import { engineOf, pluginsOf, readersOf } from '#/react/compile/compileEditor';
+import { editorEngine } from '#/react/compile/engine';
 import { shipped as brandDocument } from '#/react/profiles/brandDocument';
 import { shipped as comment } from '#/react/profiles/comment';
 import { shipped as document } from '#/react/profiles/document';

@@ -4,7 +4,14 @@ import { createContext, type MutableRefObject, useContext, useMemo, useState } f
 
 import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 
-import { type Chrome, type Mounted, PART_KEYS, type PartProps, type Props, type RootContextValue } from './types';
+import {
+    type Chrome,
+    type Mounted,
+    PART_KEYS,
+    type PartProps,
+    type Props,
+    type RootContextValue,
+} from '../RichTextEditor/types';
 
 export const RootContext = createContext<RootContextValue | null>(null);
 RootContext.displayName = 'RichTextEditorRootContext';

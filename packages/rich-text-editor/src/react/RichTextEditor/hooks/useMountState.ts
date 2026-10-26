@@ -9,8 +9,8 @@ import { createMountCoordinator } from '#/bridge/session/helpers/mount';
 import { type RichTextDocument } from '#/model';
 import { type LoadedDocument } from '#/persistence/types';
 
-import { mountOf } from './helpers';
-import { type Defined } from './types';
+import { mountOf } from '../helpers/sessionHelpers';
+import { type Defined } from '../types';
 
 /** What one session creates once and keeps for its whole life, and the snapshot of a session that faulted. */
 export const useMountState = (props: Defined, retried: LoadedDocument | undefined) => {

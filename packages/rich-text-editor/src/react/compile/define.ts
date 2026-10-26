@@ -3,8 +3,9 @@
 import { type RichTextPlugin } from '#/bridge/pluginApi/definePlugin';
 import { type ContentModel } from '#/model';
 
+import { type CommandsOfPlugins, type CompiledEditorDefinition, type EditorDefinitionOptions } from '../types';
+
 import { compileEditor } from './compileEditor';
-import { type CommandsOfPlugins, type CompiledEditorDefinition, type EditorDefinitionOptions } from './types';
 
 export { defineReactPresentation } from './presentation';
 

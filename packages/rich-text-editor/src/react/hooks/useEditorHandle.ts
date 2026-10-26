@@ -5,7 +5,7 @@ import { useContext } from 'react';
 import { SessionContext } from '#/bridge/session';
 import { type ShippedCommands } from '#/runtime/port';
 
-import { type EditorHandle } from './types';
+import { type EditorHandle } from '../types';
 
 /**
  * The handle of the editor around the caller once its session is ready, else `null`. It is the host's: a plugin's

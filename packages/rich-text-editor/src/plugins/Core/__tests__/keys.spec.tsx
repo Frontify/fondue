@@ -7,7 +7,7 @@ import { type ContentNodeJSON } from '#/model';
 import { compiledModel, keyOn, modOn } from '#/model/internal';
 import { pluginIds, pluginsById } from '#/plugins/plugins';
 import { mountText, para, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
-import { engineOf } from '#/react/compileEditor';
+import { engineOf } from '#/react/compile/compileEditor';
 import { shipped as brandDocumentProfile } from '#/react/profiles/brandDocument';
 import { shipped as commentProfile } from '#/react/profiles/comment';
 import { shipped as documentProfile } from '#/react/profiles/document';

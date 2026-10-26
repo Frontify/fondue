@@ -14,15 +14,14 @@ import { UPLOAD_FEATURE } from '#/runtime/port';
 import { referenceListStrings } from '#/ui/LazySuggestionList/helpers/referenceStrings';
 
 import { moveChromeFocus } from '../chromeFocus';
-import { engineOf, pluginsOf } from '../compileEditor';
-import { type PluginOverlay, useRenderedHosts } from '../pluginHosts';
-import { menuItems, toolbarItems } from '../toolbarItems';
-import { turnIntoChoices } from '../turnInto';
+import { engineOf, pluginsOf } from '../compile/compileEditor';
+import { menuItems, toolbarItems } from '../helpers/toolbarItems';
+import { turnIntoChoices } from '../helpers/turnInto';
+import { memberOf, type shellPropsOf, toolbarShortcutOf } from '../RichTextEditor/helpers/sessionHelpers';
+import { type PluginOverlay, useRenderedHosts } from '../RichTextEditor/hooks/usePluginHosts';
+import { type Choosing } from '../RichTextEditor/hooks/useSessionRuntime';
+import { type Mounted, type Props, type SessionRest } from '../RichTextEditor/types';
 import { type EditorHandle, type ToolbarMode } from '../types';
-
-import { memberOf, type shellPropsOf, toolbarShortcutOf } from './helpers';
-import { type Mounted, type Props, type SessionRest } from './types';
-import { type Choosing } from './useSessionRuntime';
 
 /** Why a toolbar item's command cannot run, by its `disabledReason`. */
 const REASON_KEYS: Readonly<Record<string, `RichTextEditor_${string}`>> = {

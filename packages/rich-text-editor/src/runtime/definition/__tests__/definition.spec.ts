@@ -30,7 +30,7 @@ import { core } from '#/plugins/Core/feature';
 import { image } from '#/plugins/Image/feature';
 import { link } from '#/plugins/Link/feature';
 import { mention } from '#/plugins/Mention/feature';
-import { extensionsOf } from '#/react/engine';
+import { extensionsOf } from '#/react/compile/engine';
 
 import { compileDefinition } from '..';
 

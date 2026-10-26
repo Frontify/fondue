@@ -6,23 +6,22 @@ import { useOverlayRoot } from '#/bridge/overlays/hooks/useOverlayRoot';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import { type EditorPort, resyncSelectionOf } from '#/runtime/port';
 
-import { useEscapeToSurface } from '../chromeFocus';
-import { BlockedShell, RecoveryShell } from '../Shells';
-import { type EditorHandle } from '../types';
-import { useKeyboardInset } from '../useKeyboardInset';
-
-import { SessionFrame, SessionProviders } from './Frame';
-import { shellPropsOf } from './helpers';
-import { useRootContext } from './rootContext';
-import { type SessionProps } from './types';
-import { chromeKeyDownOf, useChrome, useOverlayValues, useSessionRefs, useToolbarMode } from './useChrome';
-import { useColumns } from './useColumns';
-import { useMountState } from './useMountState';
-import { usePanels } from './usePanels';
-import { useSessionHosts } from './useSessionHosts';
-import { useSessionRuntime } from './useSessionRuntime';
-import { useChangeWatch, usePresentationSync } from './useSync';
-import { useUnloadGuard } from './useUnloadGuard';
+import { useEscapeToSurface } from '../../chromeFocus';
+import { SessionFrame, SessionProviders } from '../../session/Frame';
+import { useRootContext } from '../../session/rootContext';
+import { chromeKeyDownOf, useChrome, useOverlayValues, useSessionRefs, useToolbarMode } from '../../session/useChrome';
+import { BlockedShell, RecoveryShell } from '../../Shells';
+import { type EditorHandle } from '../../types';
+import { shellPropsOf } from '../helpers/sessionHelpers';
+import { useColumns } from '../hooks/useColumns';
+import { useKeyboardInset } from '../hooks/useKeyboardInset';
+import { useMountState } from '../hooks/useMountState';
+import { usePanels } from '../hooks/usePanels';
+import { useSessionHosts } from '../hooks/useSessionHosts';
+import { useSessionRuntime } from '../hooks/useSessionRuntime';
+import { useChangeWatch, usePresentationSync } from '../hooks/useSync';
+import { useUnloadGuard } from '../hooks/useUnloadGuard';
+import { type SessionProps } from '../types';
 
 const SessionComponent = (
     { children, onSession, onRetry, retried, ...props }: SessionProps,

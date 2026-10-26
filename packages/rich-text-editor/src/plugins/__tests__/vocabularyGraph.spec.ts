@@ -36,7 +36,7 @@ vi.mock('prosemirror-transform', recorded('prosemirror-transform'));
 vi.mock('prosemirror-view', recorded('prosemirror-view'));
 vi.mock('@frontify/fondue-components', recorded('@frontify/fondue-components'));
 vi.mock('#/bridge/plugin', recorded('#/bridge/plugin'));
-vi.mock('#/react/define', recorded('#/react/define'));
+vi.mock('#/react/compile/define', recorded('#/react/compile/define'));
 vi.mock('#/runtime/runtime', recorded('#/runtime/runtime'));
 vi.mock('#/runtime/api/editorApi', recorded('#/runtime/api/editorApi'));
 vi.mock('#/plugins/Bold/editor', recorded('#/plugins/Bold/editor'));

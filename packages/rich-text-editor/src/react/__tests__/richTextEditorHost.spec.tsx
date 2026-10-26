@@ -13,8 +13,8 @@ import { type RuntimeHandle } from '#/runtime/runtime';
 import { type CommandResult } from '#/runtime/types';
 import { setSelection, typeText } from '#/testing';
 
-import { defineEditor } from '../define';
-import { RichTextEditor } from '../RichTextEditor';
+import { defineEditor } from '../compile/define';
+import { RichTextEditor } from '../RichTextEditor/RichTextEditor';
 import { type EditorHandle } from '../types';
 
 import { definition, para, defaultValue, type Props } from './fixtures/editorHarness';

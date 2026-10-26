@@ -25,7 +25,7 @@ import { codeBlock } from '#/plugins/CodeBlock/feature';
 import { corePlugin } from '#/plugins/Core';
 import { core } from '#/plugins/Core/feature';
 import { registry } from '#/plugins/registry';
-import { extensionsOf } from '#/react/engine';
+import { extensionsOf } from '#/react/compile/engine';
 import { runtimeOf } from '#/runtime/runtime';
 import { paste, pressKey, runFeatureContract, setSelection } from '#/testing';
 

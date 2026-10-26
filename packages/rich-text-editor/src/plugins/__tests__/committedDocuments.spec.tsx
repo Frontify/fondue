@@ -14,7 +14,7 @@ import { documentArb, fcSettings, nodeIdsIn, plainTextArb, seeded } from '#/plug
 import { pluginsById } from '#/plugins/plugins';
 import { PROFILE_MODELS } from '#/react/examples/records';
 import { loadProfile } from '#/react/profiles';
-import { RichTextEditor } from '#/react/RichTextEditor';
+import { RichTextEditor } from '#/react/RichTextEditor/RichTextEditor';
 import { type EditorHandle, type RichTextProfile } from '#/react/types';
 import { runtimeOf } from '#/runtime/runtime';
 import { type DocumentChange } from '#/runtime/types';

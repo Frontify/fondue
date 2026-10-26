@@ -52,10 +52,10 @@ export {
     type ServiceContext,
     type Snapshot,
 } from '#/persistence/types';
-export { defineEditor } from '#/react/define';
+export { defineEditor } from '#/react/compile/define';
 export { type RichTextFormField, useRichTextFormField } from '#/react/formField';
-export { useEditorHandle } from '#/react/useEditorHandle';
-export { RichTextEditor } from '#/react/RichTextEditor';
+export { useEditorHandle } from '#/react/hooks/useEditorHandle';
+export { RichTextEditor } from '#/react/RichTextEditor/RichTextEditor';
 export {
     type AssetPickerService,
     type AssetValue,

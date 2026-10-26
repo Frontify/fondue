@@ -3,7 +3,7 @@
 import { type EditorApi, type EditorPartSpec, type PluginToolbarEntry } from '#/bridge/plugin';
 import { type JsonObject, type TranslationStrings } from '#/model';
 
-import { turnIntoEntries } from '../turnInto';
+import { turnIntoEntries } from '../helpers/turnInto';
 
 const INSERTS = /\.insert$/u;
 

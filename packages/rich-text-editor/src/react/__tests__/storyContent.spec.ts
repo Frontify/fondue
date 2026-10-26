@@ -6,7 +6,7 @@ import { type RichTextProfile } from '#/index';
 import { enUS } from '#/locales/en-US';
 import { type ContentModel, createEmptyDocument, findContentIssues, type RichTextDocument } from '#/model';
 import { documentModel } from '#/plugins';
-import { engineOf } from '#/react/compileEditor';
+import { engineOf } from '#/react/compile/compileEditor';
 import { PROFILE_MODELS } from '#/react/examples/records';
 import { type CompiledEditorDefinition, type ReactPresentation } from '#/react/types';
 

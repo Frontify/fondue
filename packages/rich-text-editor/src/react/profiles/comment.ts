@@ -15,8 +15,8 @@ import { commentModel } from '#/plugins/profiles/comment';
 import { quotePlugin } from '#/plugins/Quote';
 import { strikethroughPlugin } from '#/plugins/Strikethrough';
 
-import { compileEditor } from '../compileEditor';
-import { defineReactPresentation } from '../presentation';
+import { compileEditor } from '../compile/compileEditor';
+import { defineReactPresentation } from '../compile/presentation';
 
 import { inlinePlugins } from './inline';
 import { NOT_CREATABLE, type ShippedProfile } from './parts';

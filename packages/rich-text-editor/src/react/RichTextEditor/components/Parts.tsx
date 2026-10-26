@@ -15,14 +15,14 @@ import { shortcutText } from '#/ui/helpers/shortcuts';
 import { usePanelController } from '#/ui/panels/context';
 import { FixedToolbar } from '#/ui/toolbar/Toolbar';
 
-import { panelsOf, profileOf } from '../compileEditor';
-import { PanelFrame } from '../PanelFrame';
-import { SaveStatusText } from '../status';
-import { type CompiledEditorDefinition } from '../types';
+import { panelsOf, profileOf } from '../../compile/compileEditor';
+import { useRoot } from '../../session/rootContext';
+import { SaveStatusText } from '../../status';
+import { type CompiledEditorDefinition } from '../../types';
+import { toolbarShortcutOf } from '../helpers/sessionHelpers';
+import { type Chrome, DEFAULT_TEST_ID } from '../types';
 
-import { toolbarShortcutOf } from './helpers';
-import { useRoot } from './rootContext';
-import { type Chrome, DEFAULT_TEST_ID } from './types';
+import { PanelFrame } from './PanelFrame';
 
 const BubbleToolbar = lazyPart(() => import('#/ui/BubbleToolbar/BubbleToolbar').then((loaded) => loaded.BubbleToolbar));
 

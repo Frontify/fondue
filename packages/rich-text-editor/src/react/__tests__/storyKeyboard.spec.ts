@@ -4,7 +4,7 @@ import { composeStories } from '@storybook/react-vite';
 import { describe, expect, it } from 'vitest';
 
 import { canonicalJson } from '#/model/internal';
-import { engineOf, pluginsOf } from '#/react/compileEditor';
+import { engineOf, pluginsOf } from '#/react/compile/compileEditor';
 import { INPUT_RULE_ROWS, SHORTCUT_ROWS, SURFACE_KEY_ROWS } from '#/react/examples/keyboard';
 import * as profileStories from '#/react/examples/profiles.stories';
 import { shipped as brandDocument } from '#/react/profiles/brandDocument';

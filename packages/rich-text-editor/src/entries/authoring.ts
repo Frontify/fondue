@@ -78,4 +78,4 @@ export {
 export { defineReaderFeature, type ReaderContext, type ReaderNodeProps, type ReaderRenderers } from '#/reader/define';
 export type { BlockDecoration, SuggestionResult } from '#/model';
 export type { BlockDecorationSource, DecoratedBlock, SuggestionPage, SuggestionRules } from '#/model/internal';
-export { defineReactPresentation } from '#/react/define';
+export { defineReactPresentation } from '#/react/compile/define';

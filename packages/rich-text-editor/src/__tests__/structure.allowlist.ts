@@ -147,7 +147,7 @@ export const READONLY_MEMBERS: ReadonlyMembers[] = [
         types: ['src/runtime/async/async.ts#AsyncOperation'],
     },
     {
-        site: 'src/react/compileEditor.ts:388',
+        site: 'src/react/compile/compileEditor.ts:388',
         why: 'compileEditor freezes the definition, so a write throws.',
         types: ['src/react/types.ts#EditorDefinitionInfo', 'src/react/types.ts#CompiledEditorDefinition'],
     },

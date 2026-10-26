@@ -6,7 +6,7 @@ import { createRef } from 'react';
 import { createEmptyDocument } from '#/model';
 import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/plugins';
 import { loadProfile } from '#/react/profiles';
-import { RichTextEditor } from '#/react/RichTextEditor';
+import { RichTextEditor } from '#/react/RichTextEditor/RichTextEditor';
 import { type EditorHandle, type RichTextEditorBaseProps, type RichTextProfile } from '#/react/types';
 import { runtimeOf } from '#/runtime/runtime';
 

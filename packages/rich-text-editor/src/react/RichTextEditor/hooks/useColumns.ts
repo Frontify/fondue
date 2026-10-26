@@ -7,9 +7,8 @@ import { type readerContext } from '#/reader/helpers/context';
 import { type ReaderPresentation } from '#/reader/ReaderWith/ReaderWith';
 import { type EditorPort, isComposing } from '#/runtime/port';
 
-import { type ColumnsLayout, showColumns } from '../columns';
-
-import { layoutOf, surfaceOf } from './helpers';
+import { type ColumnsLayout, showColumns } from '../helpers/columns';
+import { layoutOf, surfaceOf } from '../helpers/sessionHelpers';
 
 // A composition that outlasts this wait is measured again, which waits again while it runs.
 const COMPOSITION_WAIT_MS = 1000;

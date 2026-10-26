@@ -6,15 +6,16 @@ import '#/styles/content.css';
 import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
 import { type ShippedCommands } from '#/runtime/port';
 
-import { LoadingShell } from './LoadingShell';
-import { useEditorLocale } from './locale';
-import { useCoarsePointer, useProfile } from './profiles';
-import { shellPropsOf } from './session/helpers';
-import { BubbleToolbarPart, Panels, Status, Surface, Toolbar } from './session/Parts';
-import { Session } from './session/Session';
-import { DEFAULT_TEST_ID, type Props, type RecoverySession } from './session/types';
-import { RecoveryShell } from './Shells';
-import { type Defined, type EditorHandle, type RichTextEditorProps, type RichTextProfile } from './types';
+import { useEditorLocale } from '../locale';
+import { useCoarsePointer, useProfile } from '../profiles';
+import { RecoveryShell } from '../Shells';
+import { type Defined, type EditorHandle, type RichTextEditorProps, type RichTextProfile } from '../types';
+
+import { LoadingShell } from './components/LoadingShell';
+import { BubbleToolbarPart, Panels, Status, Surface, Toolbar } from './components/Parts';
+import { Session } from './components/Session';
+import { shellPropsOf } from './helpers/sessionHelpers';
+import { DEFAULT_TEST_ID, type Props, type RecoverySession } from './types';
 
 export type RecoveryProps = {
     props: Defined & { children: ReactNode };

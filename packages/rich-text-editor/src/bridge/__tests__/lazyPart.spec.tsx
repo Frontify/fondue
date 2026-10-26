@@ -121,7 +121,7 @@ describe('a lazy part', () => {
         // The cold imports are a hook's work, which has the longer timeout; they share the fresh module graph.
         const loadModules = async () => ({
             ...(await import('../session/helpers/lazyPart')),
-            ...(await import('#/react/RichTextEditor')),
+            ...(await import('#/react/RichTextEditor/RichTextEditor')),
             ...(await import('#/react/profiles')),
             ...(await import('#/plugins')),
             ...(await import('#/model')),

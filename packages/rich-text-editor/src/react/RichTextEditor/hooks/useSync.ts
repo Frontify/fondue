@@ -7,11 +7,11 @@ import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEff
 import { sameDocument, styleSheetOf } from '#/model';
 import { unknownStyle } from '#/model/internal';
 
-import { type EditorHandle } from '../types';
-import { useRecipeSheet } from '../useRecipeSheet';
+import { type EditorHandle } from '../../types';
+import { memberChanged, memberOf, modeOf } from '../helpers/sessionHelpers';
+import { type Defined, type Mounted, SERVICE_MEMBERS } from '../types';
 
-import { memberChanged, memberOf, modeOf } from './helpers';
-import { type Defined, type Mounted, SERVICE_MEMBERS } from './types';
+import { useRecipeSheet } from './useRecipeSheet';
 
 /** Carries the props that change while a session runs into it: mode, disabled, list levels and the style recipes. */
 export const usePresentationSync = (

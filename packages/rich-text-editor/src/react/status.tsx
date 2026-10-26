@@ -9,7 +9,7 @@ import { type CodecContext } from '#/model';
 import { type createSaveCoordinator, type Rejection } from '#/persistence/coordinator';
 import { type SaveStatus } from '#/runtime/port';
 
-import styles from './styles/status.module.scss';
+import styles from './RichTextEditor/styles/status.module.scss';
 
 type Key = `RichTextEditor_${string}`;
 type State = SaveStatus['state'];

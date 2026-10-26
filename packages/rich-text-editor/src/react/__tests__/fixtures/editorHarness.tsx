@@ -13,8 +13,8 @@ import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
 import { liveResources, type RuntimeHandle } from '#/runtime/runtime';
 
-import { defineEditor } from '../../define';
-import { RichTextEditor } from '../../RichTextEditor';
+import { defineEditor } from '../../compile/define';
+import { RichTextEditor } from '../../RichTextEditor/RichTextEditor';
 import { type EditorDefinitionOptions, type EditorHandle, type RichTextEditorBaseProps } from '../../types';
 
 export const features = [core(), bold()];

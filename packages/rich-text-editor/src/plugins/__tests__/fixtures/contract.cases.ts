@@ -30,9 +30,9 @@ import {
 import { compiledModel, decodeToTree } from '#/model/internal';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { pluginIds, pluginsById } from '#/plugins/plugins';
-import { engineOf, viewsOf } from '#/react/compileEditor';
-import { defineEditor } from '#/react/define';
-import { extensionsOf } from '#/react/engine';
+import { engineOf, viewsOf } from '#/react/compile/compileEditor';
+import { defineEditor } from '#/react/compile/define';
+import { extensionsOf } from '#/react/compile/engine';
 import { readerContext } from '#/reader/helpers/context';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
 import { SLOT_START_META, uploadSlotsPlugin } from '#/runtime/capabilities/media/uploadSlots';

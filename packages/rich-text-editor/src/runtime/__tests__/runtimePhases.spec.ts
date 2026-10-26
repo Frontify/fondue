@@ -9,7 +9,7 @@ import { countingIds } from '#/plugins/__tests__/fixtures/notes';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
-import { extensionsOf } from '#/react/engine';
+import { extensionsOf } from '#/react/compile/engine';
 import { compileDefinition } from '#/runtime/definition';
 
 import { RUNTIME_PLUGINS } from '../capabilities';

@@ -4,8 +4,8 @@ import { brandStylesPlugin } from '#/plugins/BrandStyles';
 import { columnsPlugin } from '#/plugins/Columns';
 import { brandDocumentModel } from '#/plugins/profiles/brandDocument';
 
-import { compileEditor } from '../compileEditor';
-import { defineReactPresentation } from '../presentation';
+import { compileEditor } from '../compile/compileEditor';
+import { defineReactPresentation } from '../compile/presentation';
 
 import { documentPlugins, documentToolbar, withSlashMenu } from './document';
 import { NOT_CREATABLE, type ShippedProfile } from './parts';

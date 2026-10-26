@@ -10,7 +10,7 @@ import { type ContentNodeJSON } from '#/model';
 import { fcSettings, seeded } from '#/plugins/__tests__/fixtures/generated';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { type ListKind, listModel } from '#/react/__tests__/fixtures/lists';
-import { extensionsOf } from '#/react/engine';
+import { extensionsOf } from '#/react/compile/engine';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
 import { compileDefinition } from '#/runtime/definition';
 import { canUndo } from '#/runtime/history';

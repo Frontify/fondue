@@ -24,7 +24,7 @@ import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
 import { link } from '#/plugins/Link/feature';
-import { extensionsOf } from '#/react/engine';
+import { extensionsOf } from '#/react/compile/engine';
 import { compileDefinition, type CompiledDefinition, countAppends, type EngineCommand } from '#/runtime/definition';
 import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';
 import { stubStorage } from '#/testing/__tests__/fixtures/storage';

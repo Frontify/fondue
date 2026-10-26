@@ -20,8 +20,8 @@ import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
 import { createFakePersistenceService, typeText } from '#/testing';
 
-import { defineEditor } from '../define';
-import { RichTextEditor } from '../RichTextEditor';
+import { defineEditor } from '../compile/define';
+import { RichTextEditor } from '../RichTextEditor/RichTextEditor';
 import { type CompiledEditorDefinition, type EditorHandle } from '../types';
 
 const model = compileContentModel([core(), bold()], { id: 'test.editor', version: 1 });

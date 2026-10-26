@@ -13,7 +13,7 @@ import { type CompiledDefinition } from '#/runtime/definition';
 import { type AuthoringPolicy } from '#/runtime/port';
 import { type ToolbarItem } from '#/ui/toolbar/Toolbar';
 
-import { type ReactPresentation } from './types';
+import { type ReactPresentation } from '../types';
 
 type ButtonEntry = Omit<PluginToolbarEntry, 'labelKey' | 'label'> & {
     labelKey: string;

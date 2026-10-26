@@ -12,8 +12,8 @@ import { corePlugin } from '#/plugins/Core';
 import { italicPlugin } from '#/plugins/Italic';
 import { italic } from '#/plugins/Italic/feature';
 
-import { pluginsOf, readersOf } from '../compileEditor';
-import { defineEditor } from '../define';
+import { pluginsOf, readersOf } from '../compile/compileEditor';
+import { defineEditor } from '../compile/define';
 import { type CommandsOfPlugins, type CompiledEditorDefinition } from '../types';
 
 const model = compileContentModel([core(), bold(), italic()], { id: 'fixture.cover', version: 1 });

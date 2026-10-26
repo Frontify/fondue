@@ -4,8 +4,8 @@ import { useEffect } from 'react';
 
 import { type EditorPort } from '#/runtime/port';
 
-import { memberOf } from './helpers';
-import { type Defined } from './types';
+import { memberOf } from '../helpers/sessionHelpers';
+import { type Defined } from '../types';
 
 /** While a managed session holds changes the service has not acknowledged, asks the browser to confirm leaving and saves on `pagehide`. */
 export const useUnloadGuard = (live: EditorPort | undefined, props: Defined) => {

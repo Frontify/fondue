@@ -16,7 +16,7 @@ import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 import { type CodecContext } from '#/model';
 import { contentChecksOf, referenceValues, surfaceElement } from '#/runtime/port';
 
-import { type ReferenceService } from './types';
+import { type ReferenceService } from '../../types';
 
 /** The overlay a plugin command opened, with what it renders with; `id` remounts it when it opens again. */
 export type PluginOverlay = {

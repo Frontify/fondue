@@ -7,7 +7,7 @@ import { type Diagnostic } from '#/model';
 import { decodeToTree, limitsOf } from '#/model/internal';
 import { countingIds } from '#/plugins/__tests__/fixtures/notes';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
-import { extensionsOf } from '#/react/engine';
+import { extensionsOf } from '#/react/compile/engine';
 import { compileDefinition, countAppends, NORMALIZE_META } from '#/runtime/definition';
 import { probeRuntimes, setSelection, typeText } from '#/testing';
 

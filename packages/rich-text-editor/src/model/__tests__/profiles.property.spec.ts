@@ -18,7 +18,7 @@ import { compiledModel } from '#/model/compile/compile';
 import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/plugins';
 import { storedIn } from '#/plugins/__tests__/fixtures/documents';
 import { fcSettings, seeded } from '#/plugins/__tests__/fixtures/generated';
-import { longestAttributeValue } from '#/react/compileEditor';
+import { longestAttributeValue } from '#/react/compile/compileEditor';
 
 import { decodeToTree } from '../document/decode';
 import { encodeTree } from '../document/encode';

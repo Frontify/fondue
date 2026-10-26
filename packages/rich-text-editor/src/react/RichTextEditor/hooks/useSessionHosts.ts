@@ -7,10 +7,10 @@ import { type InteractionScope } from '#/bridge/overlays/helpers/interactionScop
 import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 import { type readerContext } from '#/reader/helpers/context';
 
-import { usePluginHosts } from '../pluginHosts';
+import { memberOf, pluginPresentationOf } from '../helpers/sessionHelpers';
+import { DEFAULT_TEST_ID, type SessionRest } from '../types';
 
-import { memberOf, pluginPresentationOf } from './helpers';
-import { DEFAULT_TEST_ID, type SessionRest } from './types';
+import { usePluginHosts } from './usePluginHosts';
 
 type HostWiring = {
     coordinator: MountCoordinator;

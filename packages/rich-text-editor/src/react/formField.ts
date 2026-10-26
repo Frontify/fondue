@@ -6,8 +6,8 @@ import { type RichTextDocument } from '#/model';
 import { type LoadedDocument, type ReplaceResult } from '#/persistence/types';
 import { portOfHandle, type ShippedCommands } from '#/runtime/port';
 
+import { validityOf } from './helpers/validity';
 import { type EditorHandle } from './types';
-import { validityOf } from './validity';
 
 /** A handle for a form to read the editor's document and check that it is valid. */
 export type RichTextFormField = {

@@ -33,7 +33,7 @@ const staticClosure = async (source: string): Promise<readonly string[]> => {
 };
 
 // A bundler leaves the root out of the module list, since it only re-exports, so the modules it re-exports stand in.
-const REACHED_THROUGH_ROOT = ['/src/react/define.ts', '/src/react/RichTextEditor.tsx'];
+const REACHED_THROUGH_ROOT = ['/src/react/compile/define.ts', '/src/react/RichTextEditor/RichTextEditor.tsx'];
 
 const reachesRoot = (modules: readonly string[]): boolean =>
     REACHED_THROUGH_ROOT.every((suffix) => modules.some((id) => id.endsWith(suffix)));

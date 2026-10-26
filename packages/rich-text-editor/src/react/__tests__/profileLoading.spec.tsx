@@ -9,7 +9,7 @@ import { commentModel, inlineModel } from '#/plugins';
 
 import { loadProfile } from '../profiles';
 import * as inlineProfile from '../profiles/inline';
-import { RichTextEditor } from '../RichTextEditor';
+import { RichTextEditor } from '../RichTextEditor/RichTextEditor';
 import { type EditorHandle } from '../types';
 
 vi.mock('../profiles/inline', async (importOriginal) => {

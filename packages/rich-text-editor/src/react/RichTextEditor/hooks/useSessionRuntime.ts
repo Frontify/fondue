@@ -27,16 +27,15 @@ import {
     type UploadPlace,
 } from '#/runtime/port';
 
-import { engineOf, profileOf, viewsOf } from '../compileEditor';
-import { registerFormField } from '../formField';
-import { registerSaveCauses } from '../status';
-import { type EditorHandle } from '../types';
-import { validityOf } from '../validity';
-
-import { backgroundOf, columnsAtMount, memberOf, modeOf, shellPropsOf } from './helpers';
-import { pickAsset } from './helpers/assetPicker';
-import { uploadMessage } from './helpers/uploadMessages';
-import { type Mounted, type RecoverySession, type SessionRest } from './types';
+import { engineOf, profileOf, viewsOf } from '../../compile/compileEditor';
+import { registerFormField } from '../../formField';
+import { validityOf } from '../../helpers/validity';
+import { registerSaveCauses } from '../../status';
+import { type EditorHandle } from '../../types';
+import { pickAsset } from '../helpers/assetPicker';
+import { backgroundOf, columnsAtMount, memberOf, modeOf, shellPropsOf } from '../helpers/sessionHelpers';
+import { uploadMessage } from '../helpers/uploadMessages';
+import { type Mounted, type RecoverySession, type SessionRest } from '../types';
 
 /** Where the file chooser's files go, once the chooser reports them. */
 export type Choosing = {

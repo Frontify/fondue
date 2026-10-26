@@ -17,7 +17,7 @@ import { fixtureHeadingSet } from '#/plugins/__tests__/fixtures/features';
 import { type UnitCommands, unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
-import { extensionsOf } from '#/react/engine';
+import { extensionsOf } from '#/react/compile/engine';
 import { compileDefinition, countAppends, type EngineCommand } from '#/runtime/definition';
 import { pressKey, setSelection, typeText } from '#/testing';
 

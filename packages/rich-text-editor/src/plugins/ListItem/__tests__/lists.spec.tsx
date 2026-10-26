@@ -19,7 +19,7 @@ import {
     outlineOf,
 } from '#/react/__tests__/fixtures/lists';
 import { mountText, para, text } from '#/react/__tests__/fixtures/text';
-import { extensionsOf } from '#/react/engine';
+import { extensionsOf } from '#/react/compile/engine';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
 import { compileDefinition } from '#/runtime/definition';
 import { pressKey } from '#/testing';

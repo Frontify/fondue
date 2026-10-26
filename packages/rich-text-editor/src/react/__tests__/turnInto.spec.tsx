@@ -12,10 +12,10 @@ import { loadProfile } from '#/react/profiles';
 import { type CommandState } from '#/runtime/port';
 import { runtimeOf } from '#/runtime/runtime';
 
-import { pluginsOf } from '../compileEditor';
+import { pluginsOf } from '../compile/compileEditor';
+import { turnIntoChoices as installedChoices } from '../helpers/turnInto';
 import { shipped as comment } from '../profiles/comment';
 import { shipped as document } from '../profiles/document';
-import { turnIntoChoices as installedChoices } from '../turnInto';
 
 const { t } = codecContext(enUS, enUS);
 const labelsOf = (profile: typeof document) =>

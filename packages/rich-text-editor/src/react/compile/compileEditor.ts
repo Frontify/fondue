@@ -54,7 +54,8 @@ import {
     type CompiledEditorDefinition,
     type EditorDefinitionOptions,
     type RichTextProfile,
-} from './types';
+} from '../types';
+
 import { checkCover, readersOfUnits } from './units';
 
 // Kept off the definition, so no engine value is reachable from what a host holds.

@@ -13,8 +13,8 @@ import { subscriptPlugin } from '#/plugins/Subscript';
 import { superscriptPlugin } from '#/plugins/Superscript';
 import { uploadPlugin } from '#/plugins/Upload';
 
-import { compileEditor } from '../compileEditor';
-import { defineReactPresentation } from '../presentation';
+import { compileEditor } from '../compile/compileEditor';
+import { defineReactPresentation } from '../compile/presentation';
 
 import { commentPlugins } from './comment';
 import { NOT_CREATABLE, type ShippedProfile } from './parts';

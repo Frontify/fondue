@@ -17,7 +17,7 @@ import {
 } from '#/model';
 import { compiledModel, type TreeNode, decodeToTree, encodeTree, featureInternals } from '#/model/internal';
 import { registry } from '#/plugins/registry';
-import { editorEngine } from '#/react/engine';
+import { editorEngine } from '#/react/compile/engine';
 import { type ConformanceState, stateFromTree, withWholeDocumentSelected } from '#/runtime/conformanceState';
 import { type CompiledDefinition } from '#/runtime/definition';
 

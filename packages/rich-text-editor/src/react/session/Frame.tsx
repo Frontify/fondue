@@ -19,14 +19,14 @@ import { type referenceListStrings } from '#/ui/LazySuggestionList/helpers/refer
 import { LazySuggestionList } from '#/ui/LazySuggestionList/LazySuggestionList';
 import { PanelContext, type PanelController } from '#/ui/panels/context';
 
-import { type PluginOverlay } from '../pluginHosts';
-import { translatedLabel } from '../toolbarItems';
+import { translatedLabel } from '../helpers/toolbarItems';
+import { Bubble } from '../RichTextEditor/components/Parts';
+import { type PluginOverlay } from '../RichTextEditor/hooks/usePluginHosts';
+import { type Choosing } from '../RichTextEditor/hooks/useSessionRuntime';
+import { type Chrome, type RootContextValue } from '../RichTextEditor/types';
 import { type ToolbarMode } from '../types';
 
-import { Bubble } from './Parts';
 import { RootContext } from './rootContext';
-import { type Chrome, type RootContextValue } from './types';
-import { type Choosing } from './useSessionRuntime';
 
 type ChromeContext = ReturnType<typeof readerContext>;
 

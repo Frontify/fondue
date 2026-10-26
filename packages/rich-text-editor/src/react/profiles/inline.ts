@@ -12,8 +12,8 @@ import { linkPlugin } from '#/plugins/Link';
 import { inlineModel } from '#/plugins/profiles/inline';
 import { underlinePlugin } from '#/plugins/Underline';
 
-import { compileEditor } from '../compileEditor';
-import { defineReactPresentation } from '../presentation';
+import { compileEditor } from '../compile/compileEditor';
+import { defineReactPresentation } from '../compile/presentation';
 
 import { NOT_CREATABLE, type ShippedProfile } from './parts';
 

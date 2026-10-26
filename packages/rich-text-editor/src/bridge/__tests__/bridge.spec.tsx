@@ -35,7 +35,7 @@ import {
 import { fixtureList } from '#/plugins/__tests__/fixtures/features';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { core } from '#/plugins/Core/feature';
-import { viewsOf } from '#/react/compileEditor';
+import { viewsOf } from '#/react/compile/compileEditor';
 import { shipped as brandDocumentProfile } from '#/react/profiles/brandDocument';
 import { shipped as commentProfile } from '#/react/profiles/comment';
 import { shipped as documentProfile } from '#/react/profiles/document';
