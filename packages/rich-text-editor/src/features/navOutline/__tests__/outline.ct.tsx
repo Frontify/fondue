@@ -3,6 +3,8 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
+import { stylesApplied } from '#/react/__tests__/fixtures/overlayHarness';
+
 import { OutlineProbe } from './fixtures/OutlineProbe';
 
 type OutlineRte = NonNullable<Window['outlineRte']>;
@@ -135,6 +137,9 @@ test('scrolls the caret of a heading taller than the frame clear of the sticky t
     const item = page.getByRole('navigation', { name: 'Outline' }).getByRole('button', { name: /Tall/ });
     const heading = page.locator('h2', { hasText: 'Tall' });
     const toolbar = page.getByTestId('fondue-rich-text-editor-toolbar');
+    // The panel loads on first use and moves the content once it and its stylesheet are in.
+    await expect(item).toBeVisible();
+    await stylesApplied(page);
     await heading.evaluate((element) => {
         const frame = element.closest('[data-test-id="frame"]') as HTMLElement;
         frame.scrollTop += element.getBoundingClientRect().top - frame.getBoundingClientRect().top + 100;

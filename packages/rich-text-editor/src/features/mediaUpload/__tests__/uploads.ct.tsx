@@ -5,6 +5,7 @@ import { crc32, deflateSync } from 'node:zlib';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
+import { stylesApplied } from '#/react/__tests__/fixtures/overlayHarness';
 import { decodableImage, sampleImage } from '#/testing/images';
 
 import { UploadProbe } from './fixtures/UploadProbe';
@@ -112,6 +113,9 @@ test('keeps the height of the image box when the uploaded image loads', async ({
     await ready(page);
     await chooseLogo(page, 400, 300);
     const slot = surfaceOf(page).locator('figure [data-rte-upload]');
+    // The slot loads on first use, and WebKit applies its stylesheet once the other sheets have loaded.
+    await expect(slot).toBeVisible();
+    await stylesApplied(page);
     const slotBox = await slot.boundingBox();
 
     await page.evaluate(() => window.uploadRte?.complete(0, 'logo-asset'));
@@ -189,6 +193,8 @@ test('moves the determinate progress bar to each step with no transition under r
         .getByRole('progressbar', { name: 'logo.png' })
         .locator('[data-indeterminate="false"]');
     await expect(indicator).toHaveCount(1);
+    // The upload controls' stylesheet loads with them, and WebKit applies it once the other sheets have loaded.
+    await stylesApplied(page);
 
     expect(await indicator.evaluate((element) => getComputedStyle(element).transitionDuration)).toBe('0s');
 });
