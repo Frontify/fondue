@@ -82,6 +82,7 @@ export type Transport = {
 
 const readFacts = (link: Link): Facts => {
     const summary = link.runtime.handle.getSummary();
+
     return {
         now: Date.now(),
         online: navigator.onLine,
@@ -99,7 +100,9 @@ const refresh = (link: Link): boolean => {
     if (STATUS_KEYS.every((key) => built[key] === link.status[key])) {
         return false;
     }
+
     link.status = Object.freeze(built);
+
     return true;
 };
 
@@ -126,6 +129,7 @@ const save = (link: Link, request: SaveRequest, serial: number) => {
     } catch {
         response = Promise.reject(new Error('PersistenceService.save threw.'));
     }
+
     // A response that cannot be read leaves the outcome unknown, as a transport failure does.
     response
         .then((value) => dispatch(link, { type: 'answered', serial, response: value }))
@@ -142,6 +146,7 @@ const readRemote = (link: Link) => {
     } catch {
         read = Promise.resolve(null);
     }
+
     const handOver = (remote: LoadedDocument | null) => {
         const onConflict = given.options()?.onConflict;
         // A replacement since the read moved the session to another generation and document.
@@ -154,6 +159,7 @@ const readRemote = (link: Link) => {
             onConflict(remote, runtime.handle.getSnapshot());
         }
     };
+
     read.then(
         (remote) => remote,
         () => null,
@@ -265,6 +271,7 @@ const track = (link: Link, options: CommitOptions, facts: Facts, resolve: (resul
         link.finishers.delete(call);
         resolve(result);
     };
+
     link.finishers.set(call, finish);
     const timer = setTimeout(
         () => {
@@ -283,9 +290,11 @@ const track = (link: Link, options: CommitOptions, facts: Facts, resolve: (resul
         ) {
             return;
         }
+
         link.waiting.delete(call);
         dispatch(link, { type: 'pin', call });
     };
+
     link.waiting.set(call, capture);
     // ProseMirror reads a DOM change in a microtask queued before this one, so the capture holds the last keystroke.
     queueMicrotask(() => {
@@ -301,6 +310,7 @@ const commit = (link: Link, options: CommitOptions): Promise<CommitResult> => {
     if (refused !== undefined) {
         return Promise.resolve(refused);
     }
+
     return new Promise<CommitResult>((resolve) => {
         track(link, options, facts, resolve);
     });
@@ -338,6 +348,7 @@ export const createTransport = (runtime: EditorRuntime, given: SaveCoordinatorOp
         dispatch(link, { type: 'ready' });
     });
     dispatch(link, { type: 'mounted' });
+
     return {
         dispatch: (input) => {
             dispatch(link, input);

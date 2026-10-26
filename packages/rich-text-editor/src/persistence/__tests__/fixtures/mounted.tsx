@@ -42,10 +42,12 @@ import { stubStorage } from '#/testing/__tests__/fixtures/storage';
 /** Seeded so backoff delays stay repeatable. */
 export const seededRandom = (seed: number) => {
     let state = seed >>> 0;
+
     return () => {
         state = (state + 0x6d2b79f5) >>> 0;
         let value = Math.imul(state ^ (state >>> 15), state | 1);
         value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+
         return ((value ^ (value >>> 14)) >>> 0) / 4_294_967_296;
     };
 };
@@ -61,6 +63,7 @@ export const installPersistenceHooks = () => {
         if (storage === undefined) {
             return;
         }
+
         const { accessed } = storage;
         storage.restore();
         expect(accessed).toEqual([]);
@@ -72,11 +75,13 @@ export const installPersistenceHooks = () => {
     afterEach(() => {
         vi.useRealTimers();
     });
+
     return {
         storage: () => {
             if (storage === undefined) {
                 throw new Error('storage is not stubbed');
             }
+
             return storage;
         },
     };
@@ -164,8 +169,10 @@ export const serviceOf = (held = false) => {
                         answer: (response) => {
                             if (response === undefined) {
                                 resolve(server.save(request, context));
+
                                 return;
                             }
+
                             resolve(response);
                         },
                         fail: () => reject(new Error('The connection dropped.')),
@@ -178,8 +185,10 @@ export const serviceOf = (held = false) => {
         ),
         read: vi.fn((documentId: string, context: ServiceContext) => server.read(documentId, context)),
     };
+
     return { service, calls, server };
 };
+
 /** Lets every pending promise continuation run, as the browser does between tasks. */
 export const settle = () =>
     act(async () => {
@@ -188,9 +197,11 @@ export const settle = () =>
 /** The promise's value, or `pending` while it has none once the pending continuations ran. */
 export const peek = async <T,>(promise: Promise<T>) => {
     await settle();
+
     // An already settled promise wins the race over the second entry.
     return Promise.race([promise, Promise.resolve('pending' as const)]);
 };
+
 export type MountOptions = {
     readonly service?: PersistenceService;
     readonly recovery?: RecoveryService;
@@ -211,21 +222,26 @@ export const mount = (options: MountOptions = {}) => {
     if (options.persistenceOptions !== undefined) {
         props.persistenceOptions = options.persistenceOptions;
     }
+
     let revision: string | null = null;
     if (options.revision !== undefined) {
         revision = options.revision;
     }
+
     const blocks = options.blocks ?? [para('ab')];
     let generated = 0;
     const generateId = () => {
         generated += 1;
+
         return `id-${generated}`;
     };
+
     const element = (readOnly: boolean, service = options.service) => {
         const managed: Record<string, unknown> = { ...props };
         if (service !== undefined) {
             managed.services = { persistence: service, recovery: options.recovery };
         }
+
         return (
             <RichTextEditor
                 aria-label="Notes"
@@ -239,13 +255,16 @@ export const mount = (options: MountOptions = {}) => {
             />
         );
     };
+
     const view = render(element(false));
     const handle = () => {
         if (ref.current === null) {
             throw new Error('no handle');
         }
+
         return ref.current;
     };
+
     handle().subscribe('operationMetric', (metric) => metrics.push(metric));
     if (options.mounting !== true) {
         act(() => {
@@ -253,6 +272,7 @@ export const mount = (options: MountOptions = {}) => {
             vi.advanceTimersToNextFrame();
         });
     }
+
     return {
         ...view,
         handle,
@@ -271,13 +291,16 @@ export const mount = (options: MountOptions = {}) => {
             }),
     };
 };
+
 export const viewOf = (handle: EditorHandle<object>) => {
     const view = runtimeOf(handle)?.view;
     if (view === undefined) {
         throw new Error('no view');
     }
+
     return view;
 };
+
 /** Starts a composition as the browser does, so ProseMirror's own handler sets `view.composing`, and composes `text`. */
 export const compose = (handle: EditorHandle<object>, text: string) =>
     act(() => {
@@ -323,8 +346,10 @@ export type Step = {
 };
 export const typed = ({ type }: Mounted) => {
     type('x');
+
     return {};
 };
+
 export const steps: readonly Step[] = [
     { step: 0, code: 'not-ready', mounting: true },
     {
@@ -332,6 +357,7 @@ export const steps: readonly Step[] = [
         code: 'wrong-model',
         setup: () => {
             const { document } = loaded('revision-9', para('next'));
+
             return {
                 next: {
                     documentId: 'document-2',
@@ -346,6 +372,7 @@ export const steps: readonly Step[] = [
         code: 'invalid-document',
         setup: () => {
             const { document } = loaded('revision-9', para('next'));
+
             return {
                 next: {
                     documentId: 'document-2',
@@ -361,6 +388,7 @@ export const steps: readonly Step[] = [
         setup: ({ handle, type }) => {
             const expected = handle().getSnapshot().stamp;
             type('x');
+
             return { expected };
         },
     },
@@ -369,6 +397,7 @@ export const steps: readonly Step[] = [
         code: 'composition-active',
         setup: ({ handle }) => {
             compose(handle(), 'x');
+
             return {};
         },
     },
@@ -380,6 +409,7 @@ export const steps: readonly Step[] = [
         saves: true,
         setup: ({ type }) => {
             type('x');
+
             return { unsaved: { action: 'save' } };
         },
         during: async ({ flush }, calls) => {
@@ -394,6 +424,7 @@ export const steps: readonly Step[] = [
         setup: ({ handle, type }) => {
             const { stamp } = handle().getSnapshot();
             type('x');
+
             return { unsaved: { action: 'checkpoint', receipt: { stamp, receiptId: 'receipt-1' } } };
         },
     },
@@ -406,6 +437,7 @@ export const steps: readonly Step[] = [
             advance(500);
             calls[0]?.fail();
             await settle();
+
             return { unsaved: { action: 'discard', confirmed: true } };
         },
     },
@@ -417,6 +449,7 @@ export const steps: readonly Step[] = [
         kept: true,
         setup: ({ type }) => {
             type('x');
+
             return { unsaved: { action: 'save' } };
         },
         during: async ({ handle, flush }, calls) => {

@@ -74,6 +74,7 @@ export const initial = (config: MachineConfig, session: SessionToken): SaveMachi
         longest: false,
     };
     load(m, config.revision, config.unsavedOnMount, session);
+
     return m;
 };
 
@@ -92,10 +93,12 @@ const TRANSITIONS: { readonly [T in SaveEvent['type']]: (d: Draft, event: Of<T>)
         if (m.ended) {
             return;
         }
+
         m.latest = facts.sequence;
         if (m.state === 'clean') {
             m.state = 'dirty';
         }
+
         schedule(d);
         d.fx.push({ type: 'refresh' });
     },
@@ -136,5 +139,6 @@ const apply = <T extends SaveEvent['type']>(d: Draft, event: Of<T>) => {
 export const next = (state: SaveMachine, event: SaveEvent): Step => {
     const d: Draft = { m: { ...state }, fx: [], facts: event.facts };
     apply(d, event);
+
     return { state: d.m, effects: d.fx };
 };

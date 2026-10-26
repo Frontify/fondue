@@ -70,6 +70,7 @@ describe('the runtime with a save coordinator', () => {
         for (const event of ['documentChange', 'selectionChange', 'saveStatusChange', 'operationMetric'] as const) {
             handle().subscribe(event, () => order.push(event));
         }
+
         act(() => setSelection(handle(), { text: 'ab' }));
         order.length = 0;
         type('x');
@@ -120,12 +121,14 @@ describe('the runtime with a save coordinator', () => {
     it('stops autosave once a node view update faults a dirty session', async () => {
         vi.mocked(createPortalStore).mockImplementationOnce(() => {
             const store = actualStore();
+
             return {
                 ...store,
                 set: (entry: PortalEntry) => {
                     if (entry.state.attrs.language === 'boom') {
                         throw new Error('node view failed');
                     }
+
                     store.set(entry);
                 },
             };
@@ -159,12 +162,14 @@ describe('the runtime with a save coordinator', () => {
         async (path) => {
             vi.mocked(createPortalStore).mockImplementationOnce(() => {
                 const store = actualStore();
+
                 return {
                     ...store,
                     set: (entry: PortalEntry) => {
                         if (entry.state.attrs.language === 'boom') {
                             throw new Error('node view failed');
                         }
+
                         store.set(entry);
                     },
                 };
@@ -206,12 +211,14 @@ describe('the runtime with a save coordinator', () => {
     const breakable = async (held: boolean) => {
         vi.mocked(createPortalStore).mockImplementationOnce(() => {
             const store = actualStore();
+
             return {
                 ...store,
                 set: (entry: PortalEntry) => {
                     if (entry.state.attrs.language === 'boom') {
                         throw new Error('node view failed');
                     }
+
                     store.set(entry);
                 },
             };
@@ -230,6 +237,7 @@ describe('the runtime with a save coordinator', () => {
             });
             expect(mounted.handle().getSummary().phase).toBe('faulted');
         };
+
         return { ...mounted, service: services.service, calls: services.calls, fault };
     };
 
@@ -291,8 +299,10 @@ describe('the runtime with a save coordinator', () => {
             if (armed) {
                 throw new Error('render failed');
             }
+
             return null;
         };
+
         const tree = (armed: boolean) => (
             <RichTextEditor.Root
                 aria-label="Notes"
@@ -341,6 +351,7 @@ describe('the runtime with a save coordinator', () => {
         for (let render = 0; render < 3; render += 1) {
             rerender(false, { save: service.save, read: service.read });
         }
+
         expect(service.save).toHaveBeenCalledTimes(1);
         expect(calls[0]?.context.signal.aborted).toBe(false);
         unmount();
@@ -372,6 +383,7 @@ describe('the runtime with a save coordinator', () => {
         const failing = () => {
             throw new Error('A normalizer reached a service.');
         };
+
         const service = { save: vi.fn(failing), read: vi.fn(failing) };
         const { handle, metrics, unmount } = mount({ service });
         metrics.length = 0;

@@ -29,11 +29,13 @@ export const load = (
     if (loaded === null) {
         m.acknowledged = -1;
     }
+
     m.unsavedOnMount = unsavedAtLoad;
     m.state = 'clean';
     if (unsavedAtLoad) {
         m.state = 'dirty';
     }
+
     m.revision = loaded;
     m.accepted = undefined;
     m.committed = false;
@@ -57,8 +59,10 @@ export const parkOffline = (d: Draft) => {
     if (d.facts.online) {
         return false;
     }
+
     d.m.state = 'offline';
     publish(d);
+
     return true;
 };
 
@@ -80,6 +84,7 @@ export const schedule = (d: Draft) => {
     if (timing(facts, 'autosave') === 'off' || paused(m)) {
         return;
     }
+
     d.fx.push({ type: 'clear', timers: ['delay'] }, { type: 'arm', timer: 'delay', ms: timing(facts, 'delayMs') });
     if (!m.longest) {
         m.longest = true;
@@ -105,8 +110,10 @@ export const leave = (m: Mutable<SaveMachine>, call: number) => {
         if (pin === held) {
             return { ...pin, calls: pin.calls.filter((other) => other !== call) };
         }
+
         return pin;
     });
+
     return held;
 };
 
@@ -116,6 +123,7 @@ export const checkpointOf = (m: SaveMachine, request: SaveRequest) => {
     if (pin !== undefined && sameStamp(pin.stamp, request.stamp)) {
         return pin;
     }
+
     return undefined;
 };
 
@@ -124,6 +132,7 @@ export const outcomeOf = (m: SaveMachine, stamp: DocumentStamp | undefined): 'no
     if (stamp !== undefined && m.unresolved !== undefined && sameStamp(m.unresolved.stamp, stamp)) {
         return 'unknown';
     }
+
     return 'not-sent';
 };
 
@@ -146,26 +155,34 @@ export const send = (d: Draft) => {
     if (m.ended || m.unresolved !== undefined || m.state === 'conflict') {
         return;
     }
+
     const [pin] = m.pinned;
     if (pin !== undefined) {
         if (writable(m, facts) && !parkOffline(d)) {
             d.fx.push({ type: 'prepare', source: { stamp: pin.stamp, document: pin.document } });
         }
+
         return;
     }
+
     if (!m.due || paused(m)) {
         return;
     }
+
     if (facts.phase !== 'ready' || facts.composing) {
         return;
     }
+
     if (!unsavedOf(m, facts.sequence)) {
         m.due = false;
+
         return;
     }
+
     if (parkOffline(d)) {
         return;
     }
+
     m.due = false;
     d.fx.push({ type: 'prepare', source: undefined });
 };
@@ -176,9 +193,11 @@ export const replay = (d: Draft) => {
     if (m.unresolved === undefined || m.ended || !writable(m, facts)) {
         return;
     }
+
     if (parkOffline(d)) {
         return;
     }
+
     m.replays += 1;
     write(d, m.unresolved);
 };
@@ -188,13 +207,16 @@ export const online = (d: Draft) => {
     if (m.ended || m.state !== 'offline') {
         return;
     }
+
     // The write whose outcome the network left unknown goes first, unchanged.
     if (m.unresolved !== undefined) {
         if (writable(m, facts)) {
             write(d, m.unresolved);
         }
+
         return;
     }
+
     idle(d);
     publish(d);
     d.fx.push({ type: 'send' });
@@ -205,14 +227,17 @@ export const serviceChanged = (d: Draft) => {
     if (m.flight === undefined || m.unresolved === undefined) {
         return;
     }
+
     // The old service's answer no longer counts; the same operation goes to the new one.
     endFlight(d);
     d.fx.push({ type: 'abort' });
     if (!writable(m, facts)) {
         m.state = 'uncertain';
         publish(d);
+
         return;
     }
+
     write(d, m.unresolved);
 };
 
@@ -227,12 +252,14 @@ export const replaced = (
     for (const held of m.pinned) {
         answer(d, held.calls, NOT_SENT);
     }
+
     m.pinned = [];
     // A call that has not captured yet answers for the old generation, never with the next document.
     let old: CommitResult = NOT_SENT;
     if (m.accepted !== undefined && sameStamp(m.accepted.stamp, previous)) {
         old = { status: 'acknowledged', acknowledgment: m.accepted };
     }
+
     d.fx.push({ type: 'answerWaiting', result: old });
     // The operation that spent its retries in `error` is dropped with the document it carried.
     m.unresolved = undefined;
@@ -247,6 +274,7 @@ export const dispose = (d: Draft) => {
     if (m.ended) {
         return;
     }
+
     m.ended = true;
     m.longest = false;
     d.fx.push({ type: 'end' }, { type: 'clear', timers: ['delay', 'longest', 'retry'] });
@@ -254,9 +282,11 @@ export const dispose = (d: Draft) => {
         endFlight(d);
         d.fx.push({ type: 'abort' }, { type: 'refresh' });
     }
+
     for (const held of m.pinned) {
         answer(d, held.calls, DISPOSED);
     }
+
     m.pinned = [];
     // With the machine ended, each waiting call's capture answers `disposed`.
     d.fx.push({ type: 'captureWaiting' });

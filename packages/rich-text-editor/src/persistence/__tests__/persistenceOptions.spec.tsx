@@ -28,6 +28,7 @@ describe('persistence options', () => {
             type('y');
             advance(50);
         }
+
         expect(calls.map(({ at }) => at - typing).slice(1)).toEqual([300]);
         advance(1999);
         expect(calls[1]?.context.signal.aborted).toBe(false);

@@ -44,6 +44,7 @@ describe('operation metrics', () => {
         if (replay === undefined) {
             throw new Error('no replay');
         }
+
         const replayedFor = Date.now() - replay.at;
         replay.answer();
         await settle();

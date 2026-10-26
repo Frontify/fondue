@@ -47,6 +47,7 @@ const undoSteps = (handle: EditorHandle<object>) => {
             results.push(untyped(handle).execute('history.undo'));
         });
     } while (results.at(-1)?.status === 'applied');
+
     return results.length - 1;
 };
 
@@ -82,6 +83,7 @@ describe('replacement', () => {
             if (setup !== undefined) {
                 overrides = await setup(editor, calls);
             }
+
             const record = () => ({
                 phase: handle().getSummary().phase,
                 document: handle().getSnapshot().document,
@@ -105,9 +107,11 @@ describe('replacement', () => {
                 expect(after.selection).toEqual(before.selection);
                 expect(after.state).toBe(before.state);
             }
+
             if (!saves) {
                 expect(after.status).toEqual(before.status);
             }
+
             editor.unmount();
         },
     );
@@ -238,6 +242,7 @@ describe('replacement', () => {
         if (captured.status !== 'captured') {
             throw new Error('expected a target');
         }
+
         const replaced = handle().replaceDocument(replacing(handle(), { unsaved: { action: 'save' } }));
         await flush();
         const queued = [
@@ -301,12 +306,14 @@ describe('replacement', () => {
     it('resolves faulted and leaves the phase faulted when a node view of the next document throws', async () => {
         vi.mocked(createPortalStore).mockImplementationOnce(() => {
             const store = actualStore();
+
             return {
                 ...store,
                 set: (entry: PortalEntry) => {
                     if (entry.state.attrs.language === 'boom') {
                         throw new Error('node view failed');
                     }
+
                     store.set(entry);
                 },
             };
@@ -336,12 +343,14 @@ describe('replacement', () => {
     it('shows the recovery shell with the old document after an install fault', async () => {
         vi.mocked(createPortalStore).mockImplementationOnce(() => {
             const store = actualStore();
+
             return {
                 ...store,
                 set: (entry: PortalEntry) => {
                     if (entry.state.attrs.language === 'boom') {
                         throw new Error('node view failed');
                     }
+
                     store.set(entry);
                 },
             };
@@ -374,12 +383,14 @@ describe('replacement', () => {
     it('stores no recovery checkpoint when the next document faults the install', async () => {
         vi.mocked(createPortalStore).mockImplementationOnce(() => {
             const store = actualStore();
+
             return {
                 ...store,
                 set: (entry: PortalEntry) => {
                     if (entry.state.attrs.language === 'boom') {
                         throw new Error('node view failed');
                     }
+
                     store.set(entry);
                 },
             };

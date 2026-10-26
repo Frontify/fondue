@@ -15,6 +15,7 @@ describe('save state at load', () => {
                 Reflect.get(Reflect.get(globalThis, name) as object, 'open');
             }).toThrow(name);
         }
+
         // The probe above is the only access this suite may make.
         expect(suite.storage().accessed.splice(0)).toEqual([...STORAGE]);
     });

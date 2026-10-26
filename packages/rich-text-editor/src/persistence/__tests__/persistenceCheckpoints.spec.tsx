@@ -140,6 +140,7 @@ describe('commit checkpoints', () => {
             calls[call]?.answer();
             await settle();
         }
+
         expect(calls.map(({ request }) => textOf(request))).toEqual(['xab', 'xyab', 'xyzab']);
         expect(calls.slice(0, 2).map(({ request }) => [request.stamp, request.document])).toEqual(
             pinned.map(({ stamp, document }) => [stamp, document]),
@@ -573,8 +574,10 @@ describe('commit checkpoints', () => {
                 await flush();
                 const result = await pending;
                 unmount();
+
                 return { requests: calls.map(({ request }) => request), result };
             };
+
             const manual = await trace('manual');
             expect(manual.requests).toHaveLength(1);
             expect(await trace(reason)).toEqual(manual);
@@ -599,8 +602,10 @@ describe('commit checkpoints', () => {
                 await settle();
                 const result = await pending;
                 unmount();
+
                 return { during, requests: calls.map(({ request }) => request), result };
             };
+
             const manual = await trace('manual');
             expect(manual.during).toBe('pending');
             expect(manual.requests).toHaveLength(1);
@@ -634,6 +639,7 @@ describe('commit checkpoints', () => {
                 await settle();
                 expect(calls).toHaveLength(0);
             }
+
             unmount();
         },
     );

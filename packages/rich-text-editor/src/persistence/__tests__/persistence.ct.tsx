@@ -80,6 +80,7 @@ test('saves a character typed in the same task as a manual commit', async ({ mou
 
     const result = await page.evaluate(() => {
         document.execCommand('insertText', false, 'c');
+
         return (window.rte as Rte).handle.requestCommit({ reason: 'manual' });
     });
 
@@ -189,6 +190,7 @@ test('keeps the surface busy and not editable while a replacement waits, with se
     if (box === null) {
         throw new Error('The paragraph is not visible.');
     }
+
     await paragraph.dblclick({ position: { x: 4, y: box.height / 2 } });
     await expect
         .poll(() => page.evaluate(() => (window.rte as Rte).handle.getSummary().selection.collapsed))
@@ -207,6 +209,7 @@ test('keeps the surface busy and not editable while a replacement waits, with se
     await page.evaluate(() => (window.rte as Rte).answerSaves());
     const replaced = await page.evaluate(async () => {
         const result = await window.replacement;
+
         return result?.status;
     });
     expect(replaced).toBe('replaced');

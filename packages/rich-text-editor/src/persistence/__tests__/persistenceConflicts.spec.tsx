@@ -28,6 +28,7 @@ describe('conflicts and rejections', () => {
         mounted.advance(500);
         services.calls[0]?.answer();
         await settle();
+
         return { ...mounted, calls: services.calls, service: services.service };
     };
 

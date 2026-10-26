@@ -31,8 +31,10 @@ describe('replacement of the session state', () => {
     const offline = () => {
         const onLine = vi.spyOn(navigator, 'onLine', 'get');
         onLine.mockReturnValue(false);
+
         return onLine;
     };
+
     /** A record whose first block is a chrome block, so a selection at its start differs from one at its end. */
     const withChromeFirst = () => ({
         ...loaded('revision-9', chromeBlock('b2'), para('next')),
@@ -283,6 +285,7 @@ describe('replacement of the session state', () => {
         if (result.status === 'replaced') {
             expect(sessions).toEqual([result.session]);
         }
+
         unmount();
     });
 
@@ -294,8 +297,10 @@ describe('replacement of the session state', () => {
             if (armed) {
                 throw new Error('render failed');
             }
+
             return null;
         };
+
         const tree = (armed: boolean) => (
             <RichTextEditor.Root
                 aria-label="Notes"

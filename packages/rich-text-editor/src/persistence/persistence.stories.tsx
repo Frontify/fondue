@@ -56,16 +56,19 @@ const SwitchingDocuments = () => {
         const id = counterRef.current;
         setEvents((previous) => [...previous, { id, text }]);
     };
+
     // An in-memory server in place of the host's, which logs each save.
     const [services] = useState(() => {
         const server = createFakePersistenceService();
         const persistence: PersistenceService = {
             save: (request, context) => {
                 log(`save ${request.stamp.documentId}`);
+
                 return server.save(request, context);
             },
             read: server.read,
         };
+
         return { persistence };
     });
     const [mounted, setMounted] = useState<Mounted>(() => ({
@@ -73,6 +76,7 @@ const SwitchingDocuments = () => {
         definition: definitions.note,
         record: recordOf('note-1', 'The first note.'),
     }));
+
     return (
         <div style={{ display: 'grid', gap: '1rem' }}>
             <section aria-label="Actions" style={{ display: 'flex', gap: '0.5rem' }}>
@@ -94,6 +98,7 @@ const SwitchingDocuments = () => {
                         if (handle === null) {
                             return;
                         }
+
                         // The same definition keeps the session, which saves the unsaved edits first.
                         const result = await handle.replaceDocument({
                             expected: handle.getSnapshot().stamp,
@@ -114,12 +119,14 @@ const SwitchingDocuments = () => {
                         if (handle === null) {
                             return;
                         }
+
                         // A new definition needs a new mount, after the edits are saved.
                         const committed = await handle.requestCommit({ reason: 'navigate' });
                         log(`requestCommit ${committed.status}`);
                         if (committed.status !== 'acknowledged') {
                             return;
                         }
+
                         const { stamp, document } = handle.getSnapshot();
                         setMounted({
                             key: mounted.key + 1,
@@ -167,6 +174,7 @@ const logged = (canvasElement: HTMLElement, found: (entries: readonly string[]) 
                 resolve(entries);
             }
         };
+
         const observer = new MutationObserver(check);
         observer.observe(log, { childList: true, subtree: true, characterData: true });
         check();
@@ -176,6 +184,7 @@ const click = (canvasElement: HTMLElement, name: string) => {
     if (button === undefined) {
         throw new Error(`No button named ${name}.`);
     }
+
     button.click();
 };
 
@@ -229,6 +238,7 @@ export const Default: StoryObj<typeof SwitchingDocuments> = {
         if (saves.length !== 1 || entries.indexOf('save note-1') > remount) {
             throw new Error(`Expected one save before the remount, got: ${entries.join(', ')}`);
         }
+
         if (entries.includes('diagnostic persistence.disposed-dirty')) {
             throw new Error(`The remount left unsaved edits behind: ${entries.join(', ')}`);
         }

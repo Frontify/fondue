@@ -25,6 +25,7 @@ export const createSaveCoordinator = (
     readonly committed: () => boolean;
 } => {
     const transport = createTransport(runtime, given);
+
     return {
         status: transport.status,
         changed: () => {

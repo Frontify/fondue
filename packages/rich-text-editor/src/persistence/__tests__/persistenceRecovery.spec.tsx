@@ -24,12 +24,14 @@ describe('recovery', () => {
     it('stores the candidate of a view fault and reports the receipt', async () => {
         vi.mocked(createPortalStore).mockImplementationOnce(() => {
             const store = actualStore();
+
             return {
                 ...store,
                 set: (entry: PortalEntry) => {
                     if (entry.state.attrs.language === 'boom') {
                         throw new Error('node view failed');
                     }
+
                     store.set(entry);
                 },
             };
@@ -72,12 +74,14 @@ describe('recovery', () => {
     it('stores the acknowledged revision of the session with the candidate, in the context of the session', async () => {
         vi.mocked(createPortalStore).mockImplementationOnce(() => {
             const store = actualStore();
+
             return {
                 ...store,
                 set: (entry: PortalEntry) => {
                     if (entry.state.attrs.language === 'boom') {
                         throw new Error('node view failed');
                     }
+
                     store.set(entry);
                 },
             };

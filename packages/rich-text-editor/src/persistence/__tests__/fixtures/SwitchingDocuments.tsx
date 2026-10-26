@@ -49,16 +49,19 @@ export const SwitchingDocuments = () => {
         const id = counterRef.current;
         setEvents((previous) => [...previous, { id, text }]);
     };
+
     // An in-memory server in place of the host's, which logs each save.
     const [services] = useState(() => {
         const server = createFakePersistenceService();
         const persistence: PersistenceService = {
             save: (request, context) => {
                 log(`save ${request.stamp.documentId}`);
+
                 return server.save(request, context);
             },
             read: server.read,
         };
+
         return { persistence };
     });
     const [mounted, setMounted] = useState<Mounted>(() => ({
@@ -66,6 +69,7 @@ export const SwitchingDocuments = () => {
         definition: definitions.note,
         record: recordOf('note-1', 'The first note.'),
     }));
+
     return (
         <div style={{ display: 'grid', gap: '1rem' }}>
             <section aria-label="Actions" style={{ display: 'flex', gap: '0.5rem' }}>
@@ -87,6 +91,7 @@ export const SwitchingDocuments = () => {
                         if (handle === null) {
                             return;
                         }
+
                         // The same definition keeps the session, which saves the unsaved edits first.
                         const result = await handle.replaceDocument({
                             expected: handle.getSnapshot().stamp,
@@ -107,12 +112,14 @@ export const SwitchingDocuments = () => {
                         if (handle === null) {
                             return;
                         }
+
                         // A new definition needs a new mount, after the edits are saved.
                         const committed = await handle.requestCommit({ reason: 'navigate' });
                         log(`requestCommit ${committed.status}`);
                         if (committed.status !== 'acknowledged') {
                             return;
                         }
+
                         const { stamp, document } = handle.getSnapshot();
                         setMounted({
                             key: mounted.key + 1,

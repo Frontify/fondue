@@ -49,6 +49,7 @@ describe('writes', () => {
                                     open -= 1;
                                 }
                             };
+
                             // An aborted request is no longer in flight for the coordinator.
                             context.signal.addEventListener('abort', end);
                             waiting.push({
@@ -82,8 +83,10 @@ describe('writes', () => {
                             first.failed();
                         }
                     }
+
                     await settle();
                 }
+
                 unmount();
                 expect(most).toBeLessThanOrEqual(1);
                 // Dispose resolves every call still pending.
@@ -102,6 +105,7 @@ describe('writes', () => {
             advance(100);
             await settle();
         }
+
         advance(1000);
         await settle();
         expect(calls.map(({ at }) => at - start)).toEqual([5000, 10_000, 12_400]);
@@ -117,6 +121,7 @@ describe('writes', () => {
         for (let move = 0; move < 100; move += 1) {
             act(() => setSelection(handle(), { text: 'abcdef', from: move % 6, to: (move % 6) + 1 }));
         }
+
         expect(encodeTree).not.toHaveBeenCalled();
         advance(10_000);
         await settle();
@@ -188,6 +193,7 @@ describe('writes', () => {
         if (call === undefined) {
             throw new Error('no write');
         }
+
         const other = change(call.request);
         call.answer({
             status: 'saved',
@@ -248,6 +254,7 @@ describe('writes', () => {
             } else {
                 calls[0]?.fail();
             }
+
             await settle();
             expect(handle().getSaveStatus().state).toBe('uncertain');
 
@@ -273,6 +280,7 @@ describe('writes', () => {
             calls.at(-1)?.fail();
             await settle();
         }
+
         const first = calls[0]?.request.operationId;
         expect(calls.map(({ request }) => request.operationId)).toEqual(calls.map(() => first));
 
@@ -281,6 +289,7 @@ describe('writes', () => {
         for (const call of calls) {
             expect(call.request).toEqual(calls[0]?.request);
         }
+
         calls.at(-1)?.answer();
         await settle();
         advance(500);
@@ -327,12 +336,14 @@ describe('writes', () => {
             await settle();
             advance(20_000);
         }
+
         const delays = calls.slice(1).map(({ at }, index) => at - (failedAt[index] ?? 0));
         for (const [index, delay] of delays.entries()) {
             const expected = 1000 * 2 ** index;
             expect(delay).toBeGreaterThanOrEqual(expected * 0.8);
             expect(delay).toBeLessThanOrEqual(expected * 1.2);
         }
+
         expect(delays).toHaveLength(5);
         expect(new Set(calls.map(({ request }) => request.operationId)).size).toBe(1);
         expect(handle().getSaveStatus()).toMatchObject({
@@ -447,10 +458,13 @@ describe('writes', () => {
                 await settle();
                 advance(20_000);
             }
+
             unmount();
             random.mockRestore();
+
             return calls.slice(1).map(({ at }, index) => at - (failedAt[index] ?? 0));
         };
+
         const seven = await delaysFor(7);
         expect(await delaysFor(7)).toEqual(seven);
         expect(await delaysFor(8)).not.toEqual(seven);

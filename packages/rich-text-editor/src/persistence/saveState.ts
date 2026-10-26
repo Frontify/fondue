@@ -161,6 +161,7 @@ export const timing = <K extends keyof Timing>(facts: Facts, name: K): Timing[K]
     if (options === undefined || options[name] === undefined) {
         return DEFAULTS[name];
     }
+
     return options[name] as Timing[K];
 };
 
@@ -177,6 +178,7 @@ export const statusOf = (m: SaveMachine): SaveStatus => {
     if (m.flight !== undefined) {
         inFlightOperationId = m.flight.request.operationId;
     }
+
     return {
         state: m.state,
         latestSequence: m.latest,
@@ -192,9 +194,11 @@ export const refusal = (m: SaveMachine): CommitResult | undefined => {
     if (m.ended) {
         return DISPOSED;
     }
+
     if (m.state === 'conflict') {
         return CONFLICT;
     }
+
     return undefined;
 };
 
@@ -208,13 +212,16 @@ export const gate = (
     if (facts.phase === 'mounting' || facts.phase === 'disposed') {
         return { status: 'blocked', code: 'not-ready' };
     }
+
     // A listener of what `dispose` reported may call this while the phase is still `ready`.
     const refused = refusal(m);
     if (refused !== undefined) {
         return refused;
     }
+
     if (facts.composing && composition === 'reject') {
         return { status: 'blocked', code: 'composition-active' };
     }
+
     return undefined;
 };
