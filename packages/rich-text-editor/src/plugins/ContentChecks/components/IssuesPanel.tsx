@@ -8,7 +8,7 @@ import { type PanelComponentProps } from '#/bridge/define';
 import { type CheckedIssue, useClientLayoutEffect, useEditorApi, useEditorValue } from '#/bridge/plugin';
 import { type ContentIssue, ruleHelpKey, ruleNameKey } from '#/model';
 
-import styles from './styles/checks.module.scss';
+import styles from '../styles/checks.module.scss';
 
 type Severity = ContentIssue['severity'];
 

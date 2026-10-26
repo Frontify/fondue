@@ -5,7 +5,7 @@ import { defineEditorPart } from '#/bridge/plugin';
 
 import { contentChecks } from './feature';
 
-const IssuesPanel = lazyPart(() => import('./IssuesPanel').then((loaded) => loaded.IssuesPanel));
+const IssuesPanel = lazyPart(() => import('./components/IssuesPanel').then((loaded) => loaded.IssuesPanel));
 
 const PANEL = 'checks';
 
