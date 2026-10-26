@@ -3,9 +3,9 @@
 import { type PerfFixtureName } from '#/model/__tests__/fixtures/perf/documents';
 
 export type TimedEvent = {
-    readonly name: string;
-    readonly duration: number;
-    readonly interactionId: number;
+    name: string;
+    duration: number;
+    interactionId: number;
 };
 
 /** What the harness in the page lets a performance test call through `page.evaluate`. */

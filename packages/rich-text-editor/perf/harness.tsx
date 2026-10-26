@@ -20,9 +20,9 @@ declare global {
 }
 
 type Mounted = {
-    readonly root: Root;
-    readonly container: HTMLElement;
-    readonly handles: EditorHandle[];
+    root: Root;
+    container: HTMLElement;
+    handles: EditorHandle[];
 };
 
 const nextPaint = () =>

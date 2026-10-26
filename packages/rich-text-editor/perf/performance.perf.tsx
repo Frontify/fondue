@@ -85,9 +85,9 @@ const measureKeystrokes = async (page: Page) => {
 };
 
 const FIXTURES: readonly {
-    readonly fixture: PerfFixtureName;
-    readonly keystroke: readonly string[];
-    readonly commit: readonly string[];
+    fixture: PerfFixtureName;
+    keystroke: readonly string[];
+    commit: readonly string[];
 }[] = [
     { fixture: 'small', keystroke: ['keystroke-small-p95'], commit: [] },
     {
