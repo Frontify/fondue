@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
 import { DefinitionError, type Feature } from '#/model';
 import { featureInternals } from '#/model/internal';
 import { core } from '#/plugins/Core/feature';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 
 import { declaredOverrides, defineReaderFeature } from '../define';
 
@@ -31,7 +31,7 @@ describe('defineReaderFeature', () => {
     it('rejects an override for a node or mark the feature does not declare', () => {
         let failure: unknown;
         try {
-            defineReaderFeature(links(), { link: renderer, mention: renderer });
+            defineReaderFeature(link(), { link: renderer, mention: renderer });
         } catch (error) {
             failure = error;
         }
@@ -50,7 +50,7 @@ describe('defineReaderFeature', () => {
     ])('rejects %s as an override, since the reader calls overrides as functions', (_, value) => {
         let failure: unknown;
         try {
-            defineReaderFeature(links(), { link: value as never });
+            defineReaderFeature(link(), { link: value as never });
         } catch (error) {
             failure = error;
         }
@@ -63,26 +63,26 @@ describe('defineReaderFeature', () => {
     });
 
     it('attaches overrides for declared nodes and marks and keeps the feature', () => {
-        const link = defineReaderFeature(links(), { link: renderer });
+        const linkWithReader = defineReaderFeature(link(), { link: renderer });
         const doc = defineReaderFeature(core(), { paragraph: renderer });
 
-        expect(link.id).toBe('links');
-        expect(readerOverrides(link)).toEqual({ link: renderer });
+        expect(linkWithReader.id).toBe('links');
+        expect(readerOverrides(linkWithReader)).toEqual({ link: renderer });
         expect(readerOverrides(doc)).toEqual({ paragraph: renderer });
-        expect(readerOverrides(links())).toBeUndefined();
+        expect(readerOverrides(link())).toBeUndefined();
     });
 
     it('keeps the overrides on a spread copy of the feature or of its declaration', () => {
-        const link = defineReaderFeature(links(), { link: renderer });
-        const internals = featureInternals(link);
+        const linkWithReader = defineReaderFeature(link(), { link: renderer });
+        const internals = featureInternals(linkWithReader);
         expect(internals).toBeDefined();
         if (internals === undefined) {
             return;
         }
 
-        expect(readerOverrides({ ...link })).toEqual({ link: renderer });
+        expect(readerOverrides({ ...linkWithReader })).toEqual({ link: renderer });
         expect(declaredOverrides({ ...internals.declaration })).toEqual({ link: renderer });
         expect(Object.isFrozen(internals.declaration)).toBe(true);
-        expect(Object.isFrozen(link)).toBe(true);
+        expect(Object.isFrozen(linkWithReader)).toBe(true);
     });
 });

@@ -23,7 +23,7 @@ import {
 } from '#/plugins/__tests__/fixtures/layout';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { bulletList } from '#/plugins/BulletList/feature';
-import { taskList } from '#/plugins/CheckList/feature';
+import { checkList } from '#/plugins/CheckList/feature';
 import { listItem } from '#/plugins/ListItem/feature';
 import { orderedList } from '#/plugins/OrderedList/feature';
 import { para, storedIn, text } from '#/react/__tests__/fixtures/text';
@@ -364,7 +364,7 @@ describe('layout.columns', () => {
     it.each(['bullet_list', 'ordered_list', 'task_list'] as const)(
         'removes a break with Backspace at the start of the %s item after it, as one undo step, leaving the list',
         (type) => {
-            const model = layoutModel([...layoutFeatures(), listItem(), bulletList(), orderedList(), taskList()]);
+            const model = layoutModel([...layoutFeatures(), listItem(), bulletList(), orderedList(), checkList()]);
             const blocks = [para(text('Before')), columnBreak(), listOf(type, para(text('After')))];
             const mounted = mountLayout({ model, columns: 2, blocks });
             setSelection(mounted.handle, { text: 'After', from: 0, to: 0 });

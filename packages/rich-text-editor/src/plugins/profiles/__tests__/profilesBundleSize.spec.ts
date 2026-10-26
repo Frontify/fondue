@@ -64,7 +64,7 @@ describe('profile bundles', () => {
             // The Document profile without the feature: the vocabulary and editor part of `marks.strike` are empty.
             const feature = join(directory, 'feature.ts');
             const editor = join(directory, 'editor.ts');
-            writeFileSync(feature, 'export const strike = () => ({}) as never;\n');
+            writeFileSync(feature, 'export const strikethrough = () => ({}) as never;\n');
             writeFileSync(editor, 'export const strikeEditor = {} as never;\n');
             const without = await profileBytes('document', [
                 { find: '#/plugins/Strikethrough/feature', replacement: feature },

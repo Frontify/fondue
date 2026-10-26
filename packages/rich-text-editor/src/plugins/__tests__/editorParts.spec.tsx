@@ -19,7 +19,7 @@ import {
 } from '#/entries/authoring';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON, type RichTextDocument, textRule } from '#/model';
-import { codeBlock, core, heading, language, mentions, outline } from '#/plugins';
+import { codeBlock, core, heading, language, mention, outline } from '#/plugins';
 import { spotlight } from '#/plugins/__tests__/fixtures/spotlight/feature';
 import { type UnitCommands, unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { corePlugin } from '#/plugins/Core';
@@ -288,7 +288,7 @@ describe('the node views of an editor part', () => {
 });
 
 describe('a host part over a shipped part', () => {
-    const hostModel = compileContentModel([core(), heading(), mentions(), outline()], {
+    const hostModel = compileContentModel([core(), heading(), mention(), outline()], {
         id: 'fixture.host',
         version: 1,
     });
@@ -320,7 +320,7 @@ describe('a host part over a shipped part', () => {
 
     it('renders its view of the mention in place of the shipped chip', async () => {
         const Chip = () => <span className="fixture-chip">Host chip</span>;
-        const plugin = defineEditorPart(mentions, { views: [{ node: 'mention', component: Chip }] });
+        const plugin = defineEditorPart(mention, { views: [{ node: 'mention', component: Chip }] });
         const { container, unmount } = mountHost([para(text('Hi '), ada)], [plugin]);
 
         await vi.waitFor(() => {

@@ -4,7 +4,7 @@ import { act, fireEvent, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type AssetValue, type SaveResponse, type UploadRequest } from '#/index';
-import { core, mediaImage, mediaUpload } from '#/plugins';
+import { core, image, upload } from '#/plugins';
 import { setSelection, typeText } from '#/testing';
 import { decodableImage } from '#/testing/images';
 
@@ -95,7 +95,7 @@ describe('the checks before an upload, by the content of the file', () => {
     });
 
     it('refuses an SVG with an entity-encoded script in a foreignObject where the host accepts SVG, and uploads a plain one', async () => {
-        const model = uploadModel([core(), mediaImage({ acceptTypes: ['image/png', 'image/svg+xml'] }), mediaUpload()]);
+        const model = uploadModel([core(), image({ acceptTypes: ['image/png', 'image/svg+xml'] }), upload()]);
         const mounted = await mountUploads({ model });
         caretAfterBefore(mounted);
         const svg = (body: string) => `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10">${body}</svg>`;

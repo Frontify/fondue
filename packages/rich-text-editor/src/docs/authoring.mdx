@@ -23,7 +23,7 @@ A custom feature is a folder, as each shipped feature is. It holds these files:
 
 A shipped feature keeps three files, `feature.ts` (server-safe), `editor.ts` and `index.ts`, because server code imports its vocabulary without editor code. A host plugin that no server reads can keep everything in one file, as the callout does.
 
-The folder keeps the vocabulary apart from the editor code, so the reader, the codecs and a server import `feature.ts` and never `editor.ts`. A shipped feature with a reader passes it too, as `definePlugin({ feature: links, editor: linksEditor, reader: linkReader })` does in `src/plugins/Link/index.ts`.
+The folder keeps the vocabulary apart from the editor code, so the reader, the codecs and a server import `feature.ts` and never `editor.ts`. A shipped feature with a reader passes it too, as `definePlugin({ feature: link, editor: linksEditor, reader: linkReader })` does in `src/plugins/Link/index.ts`.
 
 ### One file, for a host with no server reading
 
@@ -44,10 +44,10 @@ Anything that reads the content on a server needs the folder form, because the o
 `defineFeature` comes from `@frontify/fondue-rich-text-editor/model`. It returns a factory. Call the factory, even with no options, and pass the result to `compileContentModel` with `core()` and every feature it requires.
 
 ```ts
-import { core, strike } from '@frontify/fondue-rich-text-editor/features';
+import { core, strikethrough } from '@frontify/fondue-rich-text-editor/features';
 import { compileContentModel, defineFeature } from '@frontify/fondue-rich-text-editor/model';
 
-const model = compileContentModel([core(), strike()], { id: 'acme.notes', version: 1 });
+const model = compileContentModel([core(), strikethrough()], { id: 'acme.notes', version: 1 });
 ```
 
 A feature declares:
@@ -170,9 +170,9 @@ parseRules: [
 `defineEditor` takes one plugin per feature of its model in `plugins`. A plugin holds a feature, its editor part and its reader overrides. Each shipped feature has one, such as `boldPlugin`. `modelOf` compiles the model from the same list, so the model and the plugins cannot differ. `defineEditor` throws `definition.missing-plugin`, `definition.orphan-behavior`, `definition.duplicate-id` or `definition.version-mismatch` when the plugins do not cover the model exactly: one plugin per feature, of the same ID and version.
 
 ```tsx
-import { boldPlugin, corePlugin, defineEditor, linksPlugin, modelOf } from '@frontify/fondue-rich-text-editor';
+import { boldPlugin, corePlugin, defineEditor, linkPlugin, modelOf } from '@frontify/fondue-rich-text-editor';
 
-const plugins = [corePlugin(), boldPlugin(), linksPlugin()] as const;
+const plugins = [corePlugin(), boldPlugin(), linkPlugin()] as const;
 const model = modelOf(plugins, { id: 'acme.notes', version: 1 });
 const definition = defineEditor({ id: 'acme.notes', model, plugins });
 ```
@@ -192,7 +192,7 @@ The `Strike plugin` story mounts this part with `marks.strike`.
 Source: `src/plugins/Strikethrough/editor.ts`
 
 ```ts
-export const strikeEditor = defineEditorPart(strike, {
+export const strikeEditor = defineEditorPart(strikethrough, {
     needs: ['marks'],
     commands: {
         'mark.strike.toggle': {
@@ -580,7 +580,7 @@ export const mentionReader: ReaderRenderers = { mention: Mention };
 ```tsx
 import { defineReaderFeature } from '@frontify/fondue-rich-text-editor/authoring';
 
-const model = compileContentModel([core(), defineReaderFeature(mentions(), mentionReader)], {
+const model = compileContentModel([core(), defineReaderFeature(mention(), mentionReader)], {
     id: 'acme.notes',
     version: 1,
 });

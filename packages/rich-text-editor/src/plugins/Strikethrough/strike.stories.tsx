@@ -3,11 +3,11 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { corePlugin, defineEditor, modelOf, RichTextEditor, strikePlugin } from '#/index';
+import { corePlugin, defineEditor, modelOf, RichTextEditor, strikethroughPlugin } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const plugins = [corePlugin(), strikePlugin()] as const;
+const plugins = [corePlugin(), strikethroughPlugin()] as const;
 const model = modelOf(plugins, { id: 'story.marks-strike', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {

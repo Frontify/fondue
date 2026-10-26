@@ -4,7 +4,7 @@ import { lazyPart } from '#/bridge/define';
 import { defineEditorPart } from '#/bridge/plugin';
 import { type JsonObject } from '#/model';
 
-import { mentions } from './feature';
+import { mention } from './feature';
 import { resultOf } from './results';
 import { mentionView } from './view';
 
@@ -29,7 +29,7 @@ type ReferencePayload = {
  * The list the `trigger` option opens and the Mention button's search dialog, over the host's references of the
  * `resourceTypes` option, which insert a mention and a space after it as one undo step.
  */
-export const mentionsEditor = defineEditorPart(mentions, (options: JsonObject) => {
+export const mentionsEditor = defineEditorPart(mention, (options: JsonObject) => {
     let resourceTypes: readonly string[] = [];
     if (Array.isArray(options.resourceTypes)) {
         resourceTypes = options.resourceTypes.filter((type): type is string => typeof type === 'string');

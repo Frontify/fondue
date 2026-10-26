@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type ContentNodeJSON, defineFeature } from '#/model';
 import { vocabularyLists, vocabularyTables } from '#/plugins/__tests__/fixtures/vocabulary';
-import { mediaImage } from '#/plugins/Image/feature';
+import { image } from '#/plugins/Image/feature';
 import { mountText, para, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
 import { pressKey, setSelection, typeText } from '#/testing';
 
@@ -27,7 +27,7 @@ const acmeBox = defineFeature({
     },
     formats: { html: 'lossless', text: 'lossy', markdown: 'unsupported' },
 });
-const model = textModel([...textFeatures(), acmeBox(), vocabularyLists(), vocabularyTables(), mediaImage()]);
+const model = textModel([...textFeatures(), acmeBox(), vocabularyLists(), vocabularyTables(), image()]);
 
 type Mounted = ReturnType<typeof mountText>;
 

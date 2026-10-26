@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { checkHref, compileContentModel, type ContentNodeJSON, DefinitionError } from '#/model';
 import urls from '#/model/__tests__/fixtures/urls.json';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 import { mountText, para, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
 import { runtimeOf } from '#/runtime/runtime';
 import { pressKey, setSelection, typeText } from '#/testing';
@@ -19,14 +19,14 @@ afterEach(() => {
     vi.unstubAllGlobals();
 });
 
-const model = (options?: Parameters<typeof links>[0]) => textModel([...textFeatures(), links(options)]);
+const model = (options?: Parameters<typeof link>[0]) => textModel([...textFeatures(), link(options)]);
 
-const link = (href: string, extra: Readonly<Record<string, unknown>> = {}) => ({
+const linkMark = (href: string, extra: Readonly<Record<string, unknown>> = {}) => ({
     type: 'link',
     attrs: { href, openInNewWindow: false, styleId: null, ...extra },
 });
 const linked = (value: string, href: string, ...marks: readonly object[]): ContentNodeJSON =>
-    ({ type: 'text', text: value, marks: [link(href), ...marks] }) as ContentNodeJSON;
+    ({ type: 'text', text: value, marks: [linkMark(href), ...marks] }) as ContentNodeJSON;
 
 type Handle = ReturnType<typeof mountText<ReturnType<typeof model>>>['handle'];
 const blockOf = (handle: Handle, index = 0) => handle.getSnapshot().document.content.content?.[index]?.content;
@@ -57,7 +57,7 @@ const URLS = urls as readonly UrlFixture[];
 describe('typing at links', () => {
     it('leaves text typed at the end of a link or of inline code without that mark', () => {
         const { handle } = mountText({
-            model: textModel([...textFeatures(), links()]),
+            model: textModel([...textFeatures(), link()]),
             blocks: [para(linked('go', 'https://frontify.com'), text(' and ')), para(text('x', 'code'))],
         });
         setSelection(handle, { text: 'go', from: 2, to: 2 });
@@ -79,7 +79,7 @@ describe('typing at links', () => {
 
     it('keeps bold and the link when inline code is applied over them', () => {
         const { handle } = mountText({
-            model: textModel([...textFeatures(), links()]),
+            model: textModel([...textFeatures(), link()]),
             blocks: [para(linked('both', 'https://frontify.com', { type: 'bold' }))],
         });
         setSelection(handle, { text: 'both' });
@@ -109,7 +109,7 @@ describe('link.set and link.remove', () => {
         );
         expect(blockOf(handle)).toEqual([
             text('Read '),
-            { type: 'text', text: 'the guide', marks: [link('https://frontify.com/c', { openInNewWindow: true })] },
+            { type: 'text', text: 'the guide', marks: [linkMark('https://frontify.com/c', { openInNewWindow: true })] },
             text(' now'),
         ]);
     });
@@ -219,7 +219,7 @@ describe('link.set and link.remove', () => {
 
         expect(handle.execute('link.set', value('https://frontify.com', { text: 'new' })).status).toBe('applied');
         expect(blockOf(handle)).toEqual([
-            { type: 'text', text: 'new', marks: [link('https://frontify.com'), { type: 'italic' }] },
+            { type: 'text', text: 'new', marks: [linkMark('https://frontify.com'), { type: 'italic' }] },
         ]);
     });
 
@@ -231,7 +231,7 @@ describe('link.set and link.remove', () => {
         expect(handle.execute('link.set', value('https://frontify.com', { text: 'abcd' })).status).toBe('applied');
         expect(blockOf(handle)).toEqual([
             linked('ab', 'https://frontify.com', { type: 'bold' }),
-            { ...breakNode, marks: [link('https://frontify.com')] },
+            { ...breakNode, marks: [linkMark('https://frontify.com')] },
             linked('cd', 'https://frontify.com'),
         ]);
     });
@@ -278,9 +278,9 @@ describe('link policy', () => {
     });
 
     it('rejects allowedSchemes that list a scheme the default check refuses', () => {
-        const unsafe = { allowedSchemes: ['javascript'] } as unknown as Parameters<typeof links>[0];
+        const unsafe = { allowedSchemes: ['javascript'] } as unknown as Parameters<typeof link>[0];
 
-        expect(() => compileContentModel([...textFeatures(), links(unsafe)], { id: 'test', version: 1 })).toThrow(
+        expect(() => compileContentModel([...textFeatures(), link(unsafe)], { id: 'test', version: 1 })).toThrow(
             DefinitionError,
         );
     });

@@ -19,7 +19,7 @@ const folded = (value: string) => value.trim().toLowerCase();
  * its text or `decorative`, and `missing` until the author makes it. A figure is block-level and aligns its image to
  * a side; text never wraps around it.
  */
-export const mediaImage = defineFeature({
+export const image = defineFeature({
     id: 'media.image',
     version: 1,
     requires: [{ id: 'core', version: 1 }],

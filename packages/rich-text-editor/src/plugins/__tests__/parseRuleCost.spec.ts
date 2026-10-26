@@ -9,7 +9,7 @@ import { compileContentModel, defaultLimits, type Feature } from '#/model';
 import { compiledModel } from '#/model/internal';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
-import { strike } from '#/plugins/Strikethrough/feature';
+import { strikethrough } from '#/plugins/Strikethrough/feature';
 import { underline } from '#/plugins/Underline/feature';
 import { buildSchema } from '#/runtime/definition/schema';
 import { NO_COLORS } from '#/runtime/import/colors';
@@ -39,7 +39,7 @@ const readsAt = (feature: Feature, style: string, depth: number) => {
 describe('the function parse rules that read the ancestors of an element', () => {
     it.each([
         ['underline', underline(), 'text-decoration:none'],
-        ['strike', strike(), 'text-decoration:none'],
+        ['strike', strikethrough(), 'text-decoration:none'],
         ['bold', bold(), 'font-weight:inherit'],
     ])('cost no more than twice as much when the nesting of %s doubles', (_name, feature, style) => {
         const shallow = readsAt(feature, style, 100);

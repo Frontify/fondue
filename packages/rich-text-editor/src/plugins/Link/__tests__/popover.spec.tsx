@@ -14,7 +14,7 @@ import {
 } from '#/index';
 import { type ContentNodeJSON } from '#/model';
 import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 import { liveRegionFaults } from '#/react/__tests__/fixtures/liveRegion';
 import { para, storedIn, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
 import { type ReferenceValue } from '#/runtime/types';
@@ -28,12 +28,12 @@ afterEach(() => {
     vi.useRealTimers();
 });
 
-const link = (href: string, extra: Readonly<Record<string, unknown>> = {}) => ({
+const linkMark = (href: string, extra: Readonly<Record<string, unknown>> = {}) => ({
     type: 'link',
     attrs: { href, openInNewWindow: false, styleId: null, ...extra },
 });
 const linked = (value: string, href: string, extra: Readonly<Record<string, unknown>> = {}): ContentNodeJSON =>
-    ({ type: 'text', text: value, marks: [link(href, extra)] }) as ContentNodeJSON;
+    ({ type: 'text', text: value, marks: [linkMark(href, extra)] }) as ContentNodeJSON;
 
 const BUTTON_STYLES = ['primary', 'secondary', 'tertiary'].map(
     (name): PresentationStyle => ({
@@ -47,13 +47,13 @@ const BUTTON_STYLES = ['primary', 'secondary', 'tertiary'].map(
 
 type Mount = {
     blocks: readonly ContentNodeJSON[];
-    options?: Parameters<typeof links>[0];
+    options?: Parameters<typeof link>[0];
     styles?: readonly PresentationStyle[];
     references?: ReferenceService;
 };
 
 const mount = ({ blocks, options, styles = [], references }: Mount) => {
-    const model = textModel([...textFeatures(), links(options)]);
+    const model = textModel([...textFeatures(), link(options)]);
     const ref = createRef<EditorHandle<UnitCommands>>();
     const rendered = render(
         <RichTextEditor

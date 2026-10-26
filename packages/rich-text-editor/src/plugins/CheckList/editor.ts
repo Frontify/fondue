@@ -3,14 +3,14 @@
 import { defineEditorPart } from '#/bridge/plugin';
 import { blockRule } from '#/model';
 
-import { taskList } from './feature';
+import { checkList } from './feature';
 import { taskItemView } from './view';
 
 /**
  * Toggles a task list from Mod+Shift+9, `[ ] ` or `[x] ` at a line start, or the toolbar, and checks an item from its
  * checkbox or Mod+Enter; its items nest, outdent and split as list items do.
  */
-export const taskListEditor = defineEditorPart(taskList, {
+export const taskListEditor = defineEditorPart(checkList, {
     needs: ['attributes', 'commands', 'lists'],
     commands: {
         'list.task.toggle': {

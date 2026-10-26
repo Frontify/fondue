@@ -3,8 +3,8 @@
 import { definePlugin } from '#/bridge/definePlugin';
 
 import { mediaImageEditor } from './editor';
-import { mediaImage } from './feature';
+import { image } from './feature';
 import { imageReader } from './reader';
 
 /** Images from the host asset picker or a file, with alternative text, size and side, and paste and drop uploads. */
-export const mediaImagePlugin = definePlugin({ feature: mediaImage, editor: mediaImageEditor, reader: imageReader });
+export const imagePlugin = definePlugin({ feature: image, editor: mediaImageEditor, reader: imageReader });

@@ -11,7 +11,7 @@ import { node, paragraph, text } from '#/plugins/__tests__/fixtures/documents';
 import { fixtureMediaImage } from '#/plugins/__tests__/fixtures/media/feature';
 import { fixtureTableBlock } from '#/plugins/__tests__/fixtures/table/feature';
 import { core } from '#/plugins/Core/feature';
-import { mediaImage } from '#/plugins/Image/feature';
+import { image } from '#/plugins/Image/feature';
 import { loadMarkdownReader } from '#/runtime/clipboard/markdown';
 
 import { mount, copyFrom, selectAll } from '../../import/__tests__/fixtures/mount';
@@ -31,7 +31,7 @@ afterEach(() => {
 describe('copy', () => {
     it('writes copied HTML with no chrome, contenteditable, nodeId or resource ID from a fixture with every node view', () => {
         const viewsModel = compileContentModel(
-            [core(), fixtureChrome(), fixtureCodeBlock(), fixtureMediaImage(), fixtureTableBlock(), mediaImage()],
+            [core(), fixtureChrome(), fixtureCodeBlock(), fixtureMediaImage(), fixtureTableBlock(), image()],
             { id: 'fixture.vocabulary', version: 1 },
         );
         const plain = (value: string) => ({ type: 'paragraph', attrs: { lang: null }, content: [text(value)] });

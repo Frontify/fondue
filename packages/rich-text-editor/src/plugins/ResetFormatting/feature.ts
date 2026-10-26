@@ -3,7 +3,7 @@
 import { defineFeature } from '#/model';
 
 /** Clears formatting. The toolbar button clears blocks; Mod+\ clears inline marks only. */
-export const formatClear = defineFeature({
+export const resetFormatting = defineFeature({
     id: 'format.clear',
     version: 1,
     requires: [{ id: 'core', version: 1 }],

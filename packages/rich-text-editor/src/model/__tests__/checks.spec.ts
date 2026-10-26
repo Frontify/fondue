@@ -15,7 +15,7 @@ import {
     type RichTextDocument,
 } from '#/model';
 import { GENERIC_IMAGE_WORDS, VAGUE_LINK_TEXTS } from '#/model/checks';
-import { contentChecks, core, fontColor, heading, language, links, mediaImage } from '#/plugins';
+import { contentChecks, core, fontColor, heading, language, link, image } from '#/plugins';
 import { CONTENT_RULE_IDS } from '#/plugins/__tests__/fixtures/contentRules';
 
 const stored = (blocks: readonly ContentNodeJSON[]) =>
@@ -39,7 +39,7 @@ const headingBlock = (nodeId: string, level: number, value = ''): ContentNodeJSO
     attrs: { nodeId, level, lang: null },
     ...(value === '' ? {} : { content: [text(value)] }),
 });
-const image = (nodeId: string, attrs: Record<string, unknown>): ContentNodeJSON => ({
+const imageNode = (nodeId: string, attrs: Record<string, unknown>): ContentNodeJSON => ({
     type: 'figure',
     attrs: { nodeId: `figure-${nodeId}`, align: 'center' },
     content: [
@@ -56,12 +56,12 @@ const image = (nodeId: string, attrs: Record<string, unknown>): ContentNodeJSON 
         },
     ],
 });
-const link = (value: string, href = 'https://example.com/a') => text(value, [{ type: 'link', attrs: { href } }]);
+const linkMark = (value: string, href = 'https://example.com/a') => text(value, [{ type: 'link', attrs: { href } }]);
 const colored = (value: string, attrs: Record<string, unknown>, mark = 'font_color') =>
     text(value, [{ type: mark, attrs: { tokenId: null, value: null, ...attrs } }]);
 
 // Every shipped feature that declares rules, and no language feature, which the language repair needs.
-const shippedModel = compileContentModel([core(), heading(), mediaImage(), links(), fontColor()], {
+const shippedModel = compileContentModel([core(), heading(), image(), link(), fontColor()], {
     id: 'test.checks',
     version: 1,
 });
@@ -89,16 +89,20 @@ const CASES: readonly {
     negative: readonly ContentNodeJSON[];
     options?: ContentCheckOptions;
 }[] = [
-    { ruleId: 'image.alt-missing', positive: [image('a', {})], negative: [image('a', { altIntent: 'decorative' })] },
+    {
+        ruleId: 'image.alt-missing',
+        positive: [imageNode('a', {})],
+        negative: [imageNode('a', { altIntent: 'decorative' })],
+    },
     {
         ruleId: 'image.alt-suspicious',
-        positive: [image('a', { altIntent: 'meaningful', altText: 'IMG_2044.JPG' })],
-        negative: [image('a', { altIntent: 'meaningful', altText: 'Three people at a whiteboard' })],
+        positive: [imageNode('a', { altIntent: 'meaningful', altText: 'IMG_2044.JPG' })],
+        negative: [imageNode('a', { altIntent: 'meaningful', altText: 'Three people at a whiteboard' })],
     },
-    { ruleId: 'image.content-review', positive: [image('a', { altIntent: 'decorative' })], negative: [para()] },
-    { ruleId: 'link.text-empty', positive: [para(link('  '))], negative: [para(link('Pricing'))] },
-    { ruleId: 'link.text-vague', positive: [para(link(' Click Here '))], negative: [para(link('click_here'))] },
-    { ruleId: 'link.purpose-review', positive: [para(link('Pricing'))], negative: [para(text('Pricing'))] },
+    { ruleId: 'image.content-review', positive: [imageNode('a', { altIntent: 'decorative' })], negative: [para()] },
+    { ruleId: 'link.text-empty', positive: [para(linkMark('  '))], negative: [para(linkMark('Pricing'))] },
+    { ruleId: 'link.text-vague', positive: [para(linkMark(' Click Here '))], negative: [para(linkMark('click_here'))] },
+    { ruleId: 'link.purpose-review', positive: [para(linkMark('Pricing'))], negative: [para(text('Pricing'))] },
     { ruleId: 'heading.empty', positive: [headingBlock('h', 2, ' ')], negative: [headingBlock('h', 2, 'Title')] },
     {
         ruleId: 'heading.skipped-level',
@@ -173,8 +177,8 @@ describe('the content check rules', () => {
     });
 
     it('reads snake_case link text as written, so it matches no vague text', () => {
-        expect(idsOf([para(link('read_more'))], 'link.text-vague')).toEqual([]);
-        expect(idsOf([para(link('READ MORE'))], 'link.text-vague')).toEqual(['link.text-vague:0,0']);
+        expect(idsOf([para(linkMark('read_more'))], 'link.text-vague')).toEqual([]);
+        expect(idsOf([para(linkMark('READ MORE'))], 'link.text-vague')).toEqual(['link.text-vague:0,0']);
     });
 
     it('reports a link split over several marks once, at its first text', () => {
@@ -194,23 +198,25 @@ describe('the content check rules', () => {
     it('flags a meaningful alternative text equal to the label, ending in an image extension or a generic word', () => {
         const suspicious = ['team.jpg', 'Photo', 'banner.webp'];
         for (const altText of suspicious) {
-            expect(idsOf([image('a', { altIntent: 'meaningful', altText })], 'image.alt-suspicious')).toEqual([
+            expect(idsOf([imageNode('a', { altIntent: 'meaningful', altText })], 'image.alt-suspicious')).toEqual([
                 'image.alt-suspicious:a',
             ]);
         }
 
-        expect(idsOf([image('a', { altIntent: 'decorative', altText: 'photo' })], 'image.alt-suspicious')).toEqual([]);
+        expect(idsOf([imageNode('a', { altIntent: 'decorative', altText: 'photo' })], 'image.alt-suspicious')).toEqual(
+            [],
+        );
     });
 
     it('adds the locale lists to the en-US lists', () => {
         const german = { ...options, locale: deCH };
 
-        expect(idsOf([para(link('Hier klicken'))], 'link.text-vague', german)).toHaveLength(1);
-        expect(idsOf([para(link('click here'))], 'link.text-vague', german)).toHaveLength(1);
+        expect(idsOf([para(linkMark('Hier klicken'))], 'link.text-vague', german)).toHaveLength(1);
+        expect(idsOf([para(linkMark('click here'))], 'link.text-vague', german)).toHaveLength(1);
         expect(
-            idsOf([image('a', { altIntent: 'meaningful', altText: 'Bild' })], 'image.alt-suspicious', german),
+            idsOf([imageNode('a', { altIntent: 'meaningful', altText: 'Bild' })], 'image.alt-suspicious', german),
         ).toHaveLength(1);
-        expect(idsOf([para(link('Hier klicken'))], 'link.text-vague')).toEqual([]);
+        expect(idsOf([para(linkMark('Hier klicken'))], 'link.text-vague')).toEqual([]);
     });
 
     it('composites a translucent colour over the background and uses 3:1 for large headings', () => {
@@ -252,7 +258,7 @@ describe('the content check rules', () => {
     });
 
     it('reports an image whose alternative text is missing, as the reader writes it with no alt', () => {
-        expect(findContentIssues(stored([image('image-1', { altIntent: 'missing' })]), options)).toContainEqual({
+        expect(findContentIssues(stored([imageNode('image-1', { altIntent: 'missing' })]), options)).toContainEqual({
             id: 'image.alt-missing:image-1',
             ruleId: 'image.alt-missing',
             kind: 'automatic',
@@ -267,7 +273,7 @@ describe('the content check rules', () => {
 
     it('lists issues in document order, document-level rules first, with IDs from nodeIds or paths', () => {
         const issues = findContentIssues(
-            stored([headingBlock('top', 1, 'Top'), para(link('here')), image('pic', {})]),
+            stored([headingBlock('top', 1, 'Top'), para(linkMark('here')), imageNode('pic', {})]),
             { ...options, sequence: 7 },
         );
 
@@ -285,12 +291,12 @@ describe('the content check rules', () => {
     });
 
     it('offers a repair only for a feature the model installs, and the language repair only with a model', () => {
-        const model = compileContentModel([core(), heading(), links(), fontColor()], {
+        const model = compileContentModel([core(), heading(), link(), fontColor()], {
             id: 'test.checks',
             version: 1,
         });
         const withLanguage = compileContentModel([core(), language()], { id: 'test.checks', version: 1 });
-        const document = stored([headingBlock('h', 2), image('a', {})]);
+        const document = stored([headingBlock('h', 2), imageNode('a', {})]);
         const repairOf = (given: ContentCheckOptions, ruleId: ContentRuleId) =>
             findContentIssues(document, given).find((issue) => issue.ruleId === ruleId)?.repairCommand;
 
@@ -306,7 +312,7 @@ describe('the content check rules', () => {
     });
 
     it('skips the content of opaque islands', () => {
-        const island = { type: 'unsupported_block', attrs: { original: {} }, content: [image('lost', {})] };
+        const island = { type: 'unsupported_block', attrs: { original: {} }, content: [imageNode('lost', {})] };
 
         expect(idsOf([island as ContentNodeJSON], 'image.alt-missing')).toEqual([]);
     });
@@ -314,7 +320,7 @@ describe('the content check rules', () => {
     it('reads no browser global', () => {
         expect(typeof window).toBe('undefined');
         expect(typeof document).toBe('undefined');
-        expect(findContentIssues(stored([image('a', {})]), options).length).toBeGreaterThan(0);
+        expect(findContentIssues(stored([imageNode('a', {})]), options).length).toBeGreaterThan(0);
     });
 });
 
@@ -359,11 +365,13 @@ describe('the content check rules after review', () => {
     });
 
     it('finds a meaningful image whose alternative text is blank as missing, not as suspicious', () => {
-        const blank = [image('a', { altIntent: 'meaningful', altText: '   ' })];
+        const blank = [imageNode('a', { altIntent: 'meaningful', altText: '   ' })];
 
         expect(idsOf(blank, 'image.alt-missing')).toEqual(['image.alt-missing:a']);
         expect(idsOf(blank, 'image.alt-suspicious')).toEqual([]);
-        expect(idsOf([image('a', { altIntent: 'meaningful', altText: 'A harbour' })], 'image.alt-missing')).toEqual([]);
+        expect(idsOf([imageNode('a', { altIntent: 'meaningful', altText: 'A harbour' })], 'image.alt-missing')).toEqual(
+            [],
+        );
     });
 });
 

@@ -5,11 +5,11 @@ import { useEffect, useRef } from 'react';
 import { defineReactPresentation } from '#/entries/authoring';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
-import { contentChecks, core, heading, language, links, mediaImage } from '#/plugins';
+import { contentChecks, core, heading, language, link, image } from '#/plugins';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { runtimeOf } from '#/runtime/runtime';
 
-const model = compileContentModel([core(), heading(), links(), language(), mediaImage(), contentChecks()], {
+const model = compileContentModel([core(), heading(), link(), language(), image(), contentChecks()], {
     id: 'test.checks',
     version: 1,
 });

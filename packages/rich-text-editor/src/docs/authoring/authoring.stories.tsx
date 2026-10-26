@@ -3,13 +3,13 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { corePlugin, defineEditor, modelOf, RichTextEditor, strikePlugin } from '#/index';
+import { corePlugin, defineEditor, modelOf, RichTextEditor, strikethroughPlugin } from '#/index';
 import { type ContentModel, type ContentNodeJSON } from '#/model';
 
 import { calloutPlugin } from './callout';
 import { strongPlugin } from './strong';
 
-const strikePlugins = [corePlugin(), strikePlugin()] as const;
+const strikePlugins = [corePlugin(), strikethroughPlugin()] as const;
 const strikeModel = modelOf(strikePlugins, { id: 'story.authoring-strike', version: 1 });
 const calloutPlugins = [corePlugin(), calloutPlugin()] as const;
 const calloutModel = modelOf(calloutPlugins, { id: 'story.authoring-callout', version: 1 });

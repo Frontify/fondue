@@ -6,7 +6,7 @@ import { compileContentModel, migrateDocument } from '#/model';
 import { countingIds, notesModel } from '#/plugins/__tests__/fixtures/notes';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 import { setSelection, typeText } from '#/testing';
 
 import newerNotes from '../../model/__tests__/fixtures/migration/v3-current.json';
@@ -16,15 +16,15 @@ import { stored, para, start, contentOf, installRuntimeHooks } from './fixtures/
 installRuntimeHooks();
 
 describe('stored content the session keeps', () => {
-    const linked = compileContentModel([core(), bold(), links()], { id: 'test.bold', version: 1 });
-    const link = {
+    const linked = compileContentModel([core(), bold(), link()], { id: 'test.bold', version: 1 });
+    const linkMark = {
         type: 'link',
         attrs: { href: 'https://frontify.com', openInNewWindow: false, styleId: null, rel: 'x' },
     };
 
     it('writes undeclared attributes back under their own names after an unrelated edit', () => {
         const plain = { type: 'paragraph', attrs: { lang: null, tone: 'warm', unknownAttributes: 5 }, content: [] };
-        const marked = para({ type: 'text', text: 'a', marks: [link] });
+        const marked = para({ type: 'text', text: 'a', marks: [linkMark] });
         const input = stored(plain, marked);
         const root = { ...input.content, attrs: { lang: null, dir: 'auto', unknownAttributes: { a: 1 } } };
         const { handle, changes } = start({ ...input, content: root }, { model: linked });
@@ -35,7 +35,10 @@ describe('stored content the session keeps', () => {
         const { content: _plainContent, ...withoutContent } = plain;
         expect(contentOf(changes[0])).toEqual({
             ...root,
-            content: [withoutContent, para({ type: 'text', text: 'a', marks: [link] }, { type: 'text', text: 'b' })],
+            content: [
+                withoutContent,
+                para({ type: 'text', text: 'a', marks: [linkMark] }, { type: 'text', text: 'b' }),
+            ],
         });
     });
 

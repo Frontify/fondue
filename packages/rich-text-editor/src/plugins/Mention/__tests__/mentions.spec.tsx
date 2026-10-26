@@ -7,7 +7,7 @@ import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from 'v
 import { defineReactPresentation } from '#/entries/authoring';
 import { type EditorServices } from '#/index';
 import { defaultLimits, type RichTextSlice } from '#/model';
-import { core, mentions } from '#/plugins';
+import { core, mention as mentionFeature } from '#/plugins';
 import { SLICE_TYPE } from '#/runtime/clipboard/slice';
 import { runtimeOf } from '#/runtime/runtime';
 import { paste, pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
@@ -70,7 +70,7 @@ describe('mention suggestions', () => {
     it('asks ReferenceService.search once, 200 ms after the last of five keystrokes 50 ms apart, with the query and resource types', async () => {
         const { service, search } = deferredService();
         const mounted = mountMentions({
-            model: mentionModel([core(), mentions({ resourceTypes: ['user', 'group'] })]),
+            model: mentionModel([core(), mentionFeature({ resourceTypes: ['user', 'group'] })]),
             services: { references: service },
         });
         typeText(mounted.handle, '@');
@@ -129,7 +129,7 @@ describe('mention suggestions', () => {
         ];
         const narrow = deferredService();
         const asked = mountMentions({
-            model: mentionModel([core(), mentions({ resourceTypes: ['user'] })]),
+            model: mentionModel([core(), mentionFeature({ resourceTypes: ['user'] })]),
             services: { references: narrow.service },
         });
         await openWith(asked, narrow.pending, '', hostile);

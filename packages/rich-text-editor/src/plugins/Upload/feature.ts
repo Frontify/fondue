@@ -8,7 +8,7 @@ import { defineFeature } from '#/model';
  * failed or stopped. Cancel removes the slot and restores what it replaced, or gives a replaced image its previous
  * file back, as one undo step; the completion and Retry add none.
  */
-export const mediaUpload = defineFeature({
+export const upload = defineFeature({
     id: 'media.upload',
     version: 1,
     requires: [

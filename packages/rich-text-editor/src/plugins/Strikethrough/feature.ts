@@ -19,7 +19,7 @@ const declaresStrike = (element: Element): boolean | undefined => {
 const readsStrike = (element: Element): boolean => inheritedAnswer(element, answers, declaresStrike);
 
 /** Struck-through text as `s`; its editor part toggles it on the selection or at the caret. */
-export const strike = defineFeature({
+export const strikethrough = defineFeature({
     id: 'marks.strike',
     version: 1,
     requires: [{ id: 'core', version: 1 }],

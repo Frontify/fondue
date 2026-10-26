@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type CommandOutcome, defineReactPresentation, type EditorApi } from '#/entries/authoring';
 import { type SelectionHandle } from '#/index';
 import { type ColorToken, compileContentModel } from '#/model';
-import { align, bold, codeBlock, core, fontColor, heading, links, mediaImage } from '#/plugins';
+import { align, bold, codeBlock, core, fontColor, heading, link, image } from '#/plugins';
 import { spotlight } from '#/plugins/__tests__/fixtures/spotlight/feature';
 import { runtimeOf } from '#/runtime/runtime';
 import { type CommandState } from '#/runtime/types';
@@ -207,7 +207,7 @@ describe('what a plugin command defers', () => {
 describe('the key handlers of a plugin', () => {
     it('scrolls the selection into view when a handler takes its key', () => {
         const aligned = compileContentModel(
-            [core(), bold(), heading(), align(), links(), fontColor(), codeBlock(), mediaImage(), spotlight()],
+            [core(), bold(), heading(), align(), link(), fontColor(), codeBlock(), image(), spotlight()],
             { id: 'fixture.api', version: 1 },
         );
         const { handle } = mount({ model: aligned });

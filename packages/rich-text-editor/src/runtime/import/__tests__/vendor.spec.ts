@@ -13,7 +13,7 @@ import { compileContentModel, type ContentModel, defaultLimits, defineFeature } 
 import { compiledModel } from '#/model/internal';
 import { htmlFeatures, htmlModel } from '#/plugins/__tests__/fixtures/html';
 import { bulletList } from '#/plugins/BulletList/feature';
-import { taskList } from '#/plugins/CheckList/feature';
+import { checkList } from '#/plugins/CheckList/feature';
 import { core } from '#/plugins/Core/feature';
 import { listItem } from '#/plugins/ListItem/feature';
 import { orderedList } from '#/plugins/OrderedList/feature';
@@ -32,7 +32,7 @@ const fixtures = new URL('./fixtures/vendor/', import.meta.url);
 const readFixture = (name: string) => readFileSync(new URL(name, fixtures), 'utf8');
 // Without literal colours, as `marks.font-color` ships, so the colour every Google Docs run sets stays out.
 const vendorModel = compileContentModel(
-    [...htmlFeatures().filter((feature) => feature.id !== 'marks.font-color'), taskList()],
+    [...htmlFeatures().filter((feature) => feature.id !== 'marks.font-color'), checkList()],
     { id: 'fixture.vendor', version: 1 },
 );
 const withoutNodeIds = (value: unknown): unknown =>

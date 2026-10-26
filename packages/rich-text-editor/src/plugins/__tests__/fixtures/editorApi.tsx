@@ -13,7 +13,7 @@ import {
     type ResourceLimits,
     type RichTextDocument,
 } from '#/model';
-import { bold, codeBlock, core, fontColor, heading, links, mediaImage, quote } from '#/plugins';
+import { bold, codeBlock, core, fontColor, heading, link, image, quote } from '#/plugins';
 import { spotlight } from '#/plugins/__tests__/fixtures/spotlight/feature';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { type DocumentChange } from '#/runtime/types';
@@ -27,7 +27,7 @@ export type Handle = EditorHandle<Record<string, unknown>>;
 export const ProbePanel = () => <section aria-label="Probe panel" />;
 
 export const model = compileContentModel(
-    [core(), bold(), heading(), links(), fontColor(), codeBlock(), mediaImage(), quote(), spotlight()],
+    [core(), bold(), heading(), link(), fontColor(), codeBlock(), image(), quote(), spotlight()],
     { id: 'fixture.api', version: 1 },
 );
 

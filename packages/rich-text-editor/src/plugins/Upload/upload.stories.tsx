@@ -7,8 +7,8 @@ import { defineReactPresentation } from '#/entries/authoring';
 import {
     corePlugin,
     defineEditor,
-    mediaImagePlugin,
-    mediaUploadPlugin,
+    imagePlugin,
+    uploadPlugin,
     modelOf,
     RichTextEditor,
     type UploadService,
@@ -16,7 +16,7 @@ import {
 import demoImage from '#/react/examples/demo-image.svg?no-inline';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const plugins = [corePlugin(), mediaImagePlugin(), mediaUploadPlugin()] as const;
+const plugins = [corePlugin(), imagePlugin(), uploadPlugin()] as const;
 const model = modelOf(plugins, { id: 'story.uploads', version: 1 });
 
 // The host's asset library, whose URLs the presentation resolves at render time.

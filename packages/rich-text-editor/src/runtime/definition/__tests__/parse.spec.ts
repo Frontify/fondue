@@ -7,12 +7,12 @@ import { compileContentModel } from '#/model';
 import { fixtureHeading } from '#/plugins/__tests__/fixtures/features';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 
 import { buildSchema } from '../schema';
 
 const schema = buildSchema(
-    compileContentModel([core(), bold(), links(), fixtureHeading()], { id: 'test.parse', version: 1 }),
+    compileContentModel([core(), bold(), link(), fixtureHeading()], { id: 'test.parse', version: 1 }),
 );
 const parse = (html: string) => {
     const host = document.createElement('div');

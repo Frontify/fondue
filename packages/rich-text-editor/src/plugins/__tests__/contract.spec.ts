@@ -22,9 +22,9 @@ import {
     featuresById,
     heading,
     listItem,
-    mentions,
+    mention,
     quote,
-    taskList,
+    checkList,
 } from '#/plugins';
 import { fixtureChrome } from '#/plugins/__tests__/fixtures/chrome/feature';
 import { chromeEditorWith, fixtureChromeEditor } from '#/plugins/__tests__/fixtures/chrome/view';
@@ -36,8 +36,8 @@ import { spotlight } from '#/plugins/__tests__/fixtures/spotlight/feature';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { vocabularyLists } from '#/plugins/__tests__/fixtures/vocabulary';
 import { core } from '#/plugins/Core/feature';
-import { mediaImage } from '#/plugins/Image/feature';
-import { links } from '#/plugins/Link/feature';
+import { image } from '#/plugins/Image/feature';
+import { link } from '#/plugins/Link/feature';
 import { registry } from '#/plugins/registry';
 import { type Normalizer, NORMALIZERS } from '#/runtime/definition';
 import { fromHTML } from '#/runtime/import/fromHtml';
@@ -143,24 +143,24 @@ const chromeDocument = stored(
     ['core', 'fixture.chrome'],
 );
 nodeViewCases([core(), fixtureChrome()], [chromeDocument], [fixtureChromeEditor]);
-nodeViewCases([core(), mediaImage()], [featureFixtures['media.image']?.images as RichTextDocument]);
+nodeViewCases([core(), image()], [featureFixtures['media.image']?.images as RichTextDocument]);
 nodeViewCases([core(), codeBlock()], [featureFixtures['blocks.code']?.code as RichTextDocument]);
-nodeViewCases([core(), mentions()], [featureFixtures.mentions?.mentions as RichTextDocument]);
-nodeViewCases([core(), taskList()], [featureFixtures['lists.task']?.tasks as RichTextDocument]);
-const mention = {
+nodeViewCases([core(), mention()], [featureFixtures.mentions?.mentions as RichTextDocument]);
+nodeViewCases([core(), checkList()], [featureFixtures['lists.task']?.tasks as RichTextDocument]);
+const mentionNode = {
     type: 'mention',
     attrs: { nodeId: 'm-1', resourceType: 'user', resourceId: 'u-1', labelSnapshot: 'Ada' },
 };
 const codeIn = (id: string) => ({ type: 'code_block', attrs: { languageId: null }, content: [text(id)] });
 const nestedDocument = stored(
     [
-        paragraph(mention),
+        paragraph(mentionNode),
         codeIn('top'),
-        { type: 'blockquote', content: [paragraph(mention), codeIn('quoted')] },
+        { type: 'blockquote', content: [paragraph(mentionNode), codeIn('quoted')] },
         {
             type: 'bullet_list',
             attrs: { marker: null },
-            content: [{ type: 'list_item', content: [paragraph(mention), codeIn('item')] }],
+            content: [{ type: 'list_item', content: [paragraph(mentionNode), codeIn('item')] }],
         },
         {
             type: 'task_list',
@@ -168,14 +168,14 @@ const nestedDocument = stored(
                 {
                     type: 'task_item',
                     attrs: { nodeId: 'k-1', checked: false },
-                    content: [paragraph(mention), codeIn('task')],
+                    content: [paragraph(mentionNode), codeIn('task')],
                 },
             ],
         },
     ],
     ['core', 'blocks.quote', 'lists.item', 'lists.bullet', 'lists.task', 'blocks.code', 'mentions'],
 );
-nodeViewCases([core(), quote(), listItem(), bulletList(), taskList(), codeBlock(), mentions()], [nestedDocument]);
+nodeViewCases([core(), quote(), listItem(), bulletList(), checkList(), codeBlock(), mention()], [nestedDocument]);
 nodeViewCases([core(), highlight()], [badgeDocument], [highlightEditor]);
 
 const DECODES = (name: string) => `decodes and encodes ${name} to itself`;
@@ -577,7 +577,7 @@ describe('the feature contract suite', () => {
             ],
             ['core', 'links'],
         );
-        const features = [core(), heading(), blockAlign(), links()];
+        const features = [core(), heading(), blockAlign(), link()];
         const { createCodecs: actual } = await vi.importActual<{ createCodecs: typeof createCodecs }>('#/codecs');
         const breaking = (from: string, to: string) =>
             vi.mocked(createCodecs).mockImplementation((model, options) => {

@@ -22,7 +22,7 @@ import { brandStyles } from '#/plugins/BrandStyles/feature';
 import { core } from '#/plugins/Core/feature';
 import { fontColor } from '#/plugins/FontColor/feature';
 import { heading } from '#/plugins/Heading/feature';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 import { quote } from '#/plugins/Quote/feature';
 
 import { defineReaderFeature } from '../define';
@@ -112,7 +112,7 @@ describe('the reader with brand styles', () => {
                     font_color: ({ children }) => createElement(Fragment, null, children),
                 }),
                 fixtureHighlight(),
-                defineReaderFeature(links(), {
+                defineReaderFeature(link(), {
                     link: ({ attrs, children }) => createElement('a', { href: attrs.href }, children),
                 }),
             ],

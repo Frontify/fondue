@@ -14,7 +14,7 @@ import {
     type RichTextDocument,
 } from '#/model';
 import { decodeToTree, limitsOf } from '#/model/internal';
-import { bold, contentChecks, core, fontColor, heading, language, links, mediaImage } from '#/plugins';
+import { bold, contentChecks, core, fontColor, heading, language, link, image } from '#/plugins';
 import { fixtureHighlight } from '#/plugins/__tests__/fixtures/highlight';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
 import { contentChecksOf } from '#/runtime/capabilities/checks/contentIssues';
@@ -27,11 +27,11 @@ const model = compileContentModel(
         core(),
         bold(),
         heading(),
-        links(),
+        link(),
         language(),
         fontColor(),
         fixtureHighlight(),
-        mediaImage(),
+        image(),
         contentChecks({ enclosingHeadingLevel: 1 }),
     ],
     { id: 'test.checks', version: 1 },

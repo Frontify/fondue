@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { compileContentModel } from '#/model';
 import { bulletList } from '#/plugins/BulletList/feature';
-import { taskList } from '#/plugins/CheckList/feature';
+import { checkList } from '#/plugins/CheckList/feature';
 import { core } from '#/plugins/Core/feature';
 import { listItem } from '#/plugins/ListItem/feature';
 import { orderedList } from '#/plugins/OrderedList/feature';
@@ -17,7 +17,7 @@ import { fromHTML } from '../fromHtml';
 
 const { window } = new JSDOM('');
 const dom = window as unknown as Window;
-const listModel = compileContentModel([core(), listItem(), bulletList(), orderedList(), taskList()], {
+const listModel = compileContentModel([core(), listItem(), bulletList(), orderedList(), checkList()], {
     id: 'test.import-cost',
     version: 1,
 });

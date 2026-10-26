@@ -8,7 +8,7 @@ import { useEditorSelection } from '#/bridge/hooks';
 import { compileContentModel, type Diagnostic } from '#/model';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { core } from '#/plugins/Core/feature';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 import { type RuntimeHandle } from '#/runtime/runtime';
 import { type CommandResult } from '#/runtime/types';
 import { setSelection, typeText } from '#/testing';
@@ -31,7 +31,7 @@ afterEach(() => {
 
 describe('RichTextEditor host surface', () => {
     it('gives a host mount effect the handle on the first commit, with a shipped editor part installed', () => {
-        const linkedModel = compileContentModel([core(), links()], { id: 'test.editor', version: 1 });
+        const linkedModel = compileContentModel([core(), link()], { id: 'test.editor', version: 1 });
         const linked = defineEditor({ id: 'test.linked', model: linkedModel, plugins: unitsOf(linkedModel) });
         const seen: (EditorHandle<object> | null)[] = [];
         const Host = () => {

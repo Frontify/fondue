@@ -10,7 +10,7 @@ import { heading } from '#/plugins/Heading/feature';
 import { italic } from '#/plugins/Italic/feature';
 import { language } from '#/plugins/Language/feature';
 import { quote } from '#/plugins/Quote/feature';
-import { strike } from '#/plugins/Strikethrough/feature';
+import { strikethrough } from '#/plugins/Strikethrough/feature';
 import { subscript } from '#/plugins/Subscript/feature';
 import { superscript } from '#/plugins/Superscript/feature';
 import { underline } from '#/plugins/Underline/feature';
@@ -73,7 +73,7 @@ export const htmlFeatures = () =>
         bold(),
         italic(),
         underline(),
-        strike(),
+        strikethrough(),
         code(),
         subscript(),
         superscript(),

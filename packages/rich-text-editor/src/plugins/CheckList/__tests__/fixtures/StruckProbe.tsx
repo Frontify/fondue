@@ -17,9 +17,9 @@ import {
     styleFeatures,
 } from '#/plugins/__tests__/fixtures/styles';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
-import { taskList } from '#/plugins/CheckList/feature';
+import { checkList } from '#/plugins/CheckList/feature';
 
-const model = compileContentModel([...styleFeatures(true), taskList()], { id: 'test.struck-tasks', version: 1 });
+const model = compileContentModel([...styleFeatures(true), checkList()], { id: 'test.struck-tasks', version: 1 });
 const definition = defineEditor({ id: 'test.struck-tasks', model, plugins: unitsOf(model) });
 
 const task = (nodeId: string, checked: boolean, ...content: readonly ContentNodeJSON[]): ContentNodeJSON =>

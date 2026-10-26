@@ -3,7 +3,7 @@
 import { definePlugin } from '#/bridge/definePlugin';
 
 import { formatClearEditor } from './editor';
-import { formatClear } from './feature';
+import { resetFormatting } from './feature';
 
 /** Clear formatting: Mod+\ clears inline marks, and the toolbar button clears blocks too. */
-export const formatClearPlugin = definePlugin({ feature: formatClear, editor: formatClearEditor });
+export const resetFormattingPlugin = definePlugin({ feature: resetFormatting, editor: formatClearEditor });

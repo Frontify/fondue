@@ -4,7 +4,7 @@ import { EditorState } from 'prosemirror-state';
 import { describe, expect, it, vi } from 'vitest';
 
 import { compileContentModel, type Feature, type ResourceLimits } from '#/model';
-import { core, mediaImage } from '#/plugins';
+import { core, image } from '#/plugins';
 import { compileDefinition } from '#/runtime/definition';
 
 import { DEFAULT_ACCEPT_TYPES, type UploadEvent, type UploadServiceLike } from '../../capabilities/media/uploads';
@@ -28,7 +28,7 @@ const setup = (
         captured?: boolean;
     } = {},
 ) => {
-    const { definition, state } = build(options.features ?? [core(), mediaImage()]);
+    const { definition, state } = build(options.features ?? [core(), image()]);
     const lifecycle = createLifecycle();
     lifecycle.to('ready');
     const events: UploadEvent[] = [];
@@ -83,7 +83,7 @@ describe('createUploadService', () => {
     });
 
     it('takes the media types the feature option lists', () => {
-        const { service } = setup({ features: [core(), mediaImage({ acceptTypes: ['image/png'] })] });
+        const { service } = setup({ features: [core(), image({ acceptTypes: ['image/png'] })] });
         expect(service.accepts).toEqual(['image/png']);
     });
 

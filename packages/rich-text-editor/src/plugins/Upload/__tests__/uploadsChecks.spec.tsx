@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { defineEditorPart } from '#/entries/authoring';
 import { defineFeature } from '#/model';
 import { compiledModel } from '#/model/internal';
-import { core, mediaImage, mediaUpload } from '#/plugins';
+import { core, image, upload } from '#/plugins';
 import { deferredPicker, PALETTE } from '#/plugins/Image/__tests__/fixtures/mount';
 import { paste, probeRuntimes, setSelection } from '#/testing';
 
@@ -86,7 +86,7 @@ describe('the checks before an upload', () => {
     });
 
     it("names the definition's maxAssetBytes and the feature's acceptTypes in the message of a refused file", async () => {
-        const model = uploadModel([core(), mediaImage({ acceptTypes: ['image/png', 'image/svg+xml'] }), mediaUpload()]);
+        const model = uploadModel([core(), image({ acceptTypes: ['image/png', 'image/svg+xml'] }), upload()]);
         const mounted = await mountUploads({ model, limits: { maxAssetBytes: 5 * MIB } });
         caretAfterBefore(mounted);
 
@@ -268,7 +268,7 @@ describe('concurrent uploads', () => {
             },
         });
         const mounted = await mountUploads({
-            model: uploadModel([core(), mediaImage(), mediaUpload(), acmeRetry()]),
+            model: uploadModel([core(), image(), upload(), acmeRetry()]),
             plugins: [acmeRetrier],
         });
         caretAfterBefore(mounted);

@@ -3,9 +3,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { corePlugin, defineEditor, linksPlugin, modelOf, type ReferenceService, RichTextEditor } from '#/index';
+import { corePlugin, defineEditor, linkPlugin, modelOf, type ReferenceService, RichTextEditor } from '#/index';
 
-const plugins = [corePlugin(), linksPlugin({ resourceTypes: ['guideline-page'] })] as const;
+const plugins = [corePlugin(), linkPlugin({ resourceTypes: ['guideline-page'] })] as const;
 const model = modelOf(plugins, {
     id: 'story.links',
     version: 1,

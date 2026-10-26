@@ -6,11 +6,11 @@ import { useEffect, useRef } from 'react';
 import { defineReactPresentation } from '#/entries/authoring';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
-import { bold, core, mentions } from '#/plugins';
+import { bold, core, mention } from '#/plugins';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { createFakeReferenceService, setSelection } from '#/testing';
 
-const model = compileContentModel([core(), bold(), mentions()], { id: 'test.mentions-ct', version: 1 });
+const model = compileContentModel([core(), bold(), mention()], { id: 'test.mentions-ct', version: 1 });
 const definition = defineEditor({ id: 'test.mentions-ct', model, plugins: unitsOf(model) });
 const presentation = defineReactPresentation({ toolbar: [['mention.search.open', 'mark.bold.toggle']] });
 const service = createFakeReferenceService([

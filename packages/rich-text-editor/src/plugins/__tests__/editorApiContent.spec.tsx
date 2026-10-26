@@ -7,7 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type CommandOutcome, type EditorApi, type WriteOutcome } from '#/entries/authoring';
 import { type AuthoringPolicy } from '#/index';
 import { compileContentModel, type ContentNodeJSON, defineFeature, type RichTextDocument } from '#/model';
-import { bold, codeBlock, core, fontColor, heading, links, mediaImage } from '#/plugins';
+import { bold, codeBlock, core, fontColor, heading, link, image } from '#/plugins';
 import { spotlight } from '#/plugins/__tests__/fixtures/spotlight/feature';
 import { bulletList } from '#/plugins/BulletList/feature';
 import { listItem } from '#/plugins/ListItem/feature';
@@ -254,19 +254,19 @@ describe('the writer of the editor API', () => {
                 core(),
                 bold(),
                 heading(),
-                links({ allowedHosts: ['frontify.com'] }),
+                link({ allowedHosts: ['frontify.com'] }),
                 fontColor(),
                 codeBlock(),
-                mediaImage(),
+                image(),
                 spotlight(),
             ],
             { id: 'fixture.api', version: 1 },
         );
         const { handle } = mount({ model: narrowed });
-        const link = [{ type: 'link', attrs: { href: 'https://evil.example/' } }];
+        const linkMark = [{ type: 'link', attrs: { href: 'https://evil.example/' } }];
 
         runIn(handle, 'Plain', (api) => {
-            seen = api.content.insert({ nodeId: 'heading-1' }, [{ type: 'paragraph', content: [text('x', link)] }]);
+            seen = api.content.insert({ nodeId: 'heading-1' }, [{ type: 'paragraph', content: [text('x', linkMark)] }]);
 
             return true;
         });
@@ -284,7 +284,7 @@ describe('the writer of the editor API', () => {
             formats: { html: 'lossless', text: 'lossy', markdown: 'lossy' },
         });
         const identified = compileContentModel(
-            [core(), bold(), heading(), links(), fontColor(), codeBlock(), mediaImage(), spotlight(), paragraphIds()],
+            [core(), bold(), heading(), link(), fontColor(), codeBlock(), image(), spotlight(), paragraphIds()],
             { id: 'fixture.api', version: 1 },
         );
         const content = [{ ...paragraph, attrs: { nodeId: 'paragraph-1', lang: null } }, title];

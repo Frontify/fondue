@@ -2,7 +2,7 @@
 
 import { type ContentNodeJSON, type Feature } from '#/model';
 import { bulletList } from '#/plugins/BulletList/feature';
-import { taskList } from '#/plugins/CheckList/feature';
+import { checkList } from '#/plugins/CheckList/feature';
 import { listItem } from '#/plugins/ListItem/feature';
 import { orderedList } from '#/plugins/OrderedList/feature';
 
@@ -14,7 +14,7 @@ export const LIST_KINDS: readonly ListKind[] = ['bullet', 'ordered', 'task'];
 /** The text pair's features with the four list features, and `extra` after them. */
 export const listModel = <const Extra extends readonly Feature[] = readonly []>(
     extra: Extra = [] as unknown as Extra,
-) => textModel([...textFeatures(), listItem(), bulletList(), orderedList(), taskList(), ...extra] as const);
+) => textModel([...textFeatures(), listItem(), bulletList(), orderedList(), checkList(), ...extra] as const);
 
 /** An item of `kind` whose first paragraph holds `value`; a task item's `nodeId` names its text. */
 export const item = (kind: ListKind, value: string, ...children: readonly ContentNodeJSON[]): ContentNodeJSON => {

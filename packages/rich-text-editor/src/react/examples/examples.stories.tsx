@@ -15,7 +15,7 @@ import {
     type EditorHandle,
     italicPlugin,
     type LoadedDocument,
-    linksPlugin,
+    linkPlugin,
     modelOf,
     type PersistenceService,
     RichTextEditor,
@@ -29,7 +29,7 @@ import { createFakePersistenceService } from '#/testing';
 
 import { recordOf, text, textOf } from './records';
 
-const plugins = [corePlugin(), boldPlugin(), italicPlugin(), linksPlugin()] as const;
+const plugins = [corePlugin(), boldPlugin(), italicPlugin(), linkPlugin()] as const;
 const model = modelOf(plugins, { id: 'story.examples', version: 1 });
 const exampleDefinition = defineEditor({ id: 'story.examples', model, plugins });
 const presentation = defineReactPresentation({ toolbar: [['mark.bold.toggle', 'mark.italic.toggle', 'link.edit']] });

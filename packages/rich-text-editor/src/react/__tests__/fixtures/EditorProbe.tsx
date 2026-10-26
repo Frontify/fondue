@@ -22,18 +22,18 @@ import { fixtureChrome } from '#/plugins/__tests__/fixtures/chrome/feature';
 import { fixtureHeadingSet, fixtureInputRules, fixtureItalic } from '#/plugins/__tests__/fixtures/features';
 import { fixtureProfiles } from '#/plugins/__tests__/fixtures/profiles';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 import { undoDepth } from '#/runtime/history';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
 import { createFakePersistenceService, setSelection } from '#/testing';
 
-const model = compileContentModel([core(), bold(), links(), fixtureHeadingSet(), fixtureChrome()], {
+const model = compileContentModel([core(), bold(), link(), fixtureHeadingSet(), fixtureChrome()], {
     id: 'test.ct',
     version: 1,
 });
 // Adds a `pre` code block and the heading input rule to the component-test model.
 const inputRulesModel = compileContentModel(
-    [core(), bold(), fixtureItalic(), links(), fixtureHeadingSet(), fixtureInputRules(), fixtureChrome()],
+    [core(), bold(), fixtureItalic(), link(), fixtureHeadingSet(), fixtureInputRules(), fixtureChrome()],
     { id: 'test.ct', version: 1 },
 );
 const ALLOW = { create: true, edit: true, remove: true, paste: true };

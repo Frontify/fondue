@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { compileContentModel } from '#/model';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
-import { mediaImage } from '#/plugins/Image/feature';
+import { image } from '#/plugins/Image/feature';
 import { countAppends } from '#/runtime/definition';
 import { setSelection, typeText } from '#/testing';
 import { declaredPng } from '#/testing/uploads';
@@ -164,7 +164,7 @@ describe('history', () => {
         expect(handle.query('history.undo').enabled).toBe(false);
     });
 
-    const imageModel = compileContentModel([core(), bold(), mediaImage()], { id: 'test.bold', version: 1 });
+    const imageModel = compileContentModel([core(), bold(), image()], { id: 'test.bold', version: 1 });
     /** An upload service whose one upload answers when `complete` runs. */
     const oneUpload = () => {
         let answer: (asset: unknown) => void = () => undefined;

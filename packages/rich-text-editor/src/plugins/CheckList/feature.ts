@@ -48,7 +48,7 @@ const checkedOf = (item: Element): boolean | undefined => {
 };
 
 /** Task lists as `task_list` and `task_item`, whose `checked` a native checkbox in the item's chrome shows. */
-export const taskList = defineFeature({
+export const checkList = defineFeature({
     id: 'lists.task',
     version: 1,
     requires: [{ id: 'core', version: 1 }],

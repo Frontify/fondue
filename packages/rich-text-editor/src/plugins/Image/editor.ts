@@ -6,7 +6,7 @@ import { figureAlign } from '#/model';
 
 import { AltTextDialog, WidthDialog } from './dialogs';
 import { altTextStrings, widthStrings } from './dialogStrings';
-import { mediaImage } from './feature';
+import { image } from './feature';
 import { alignOptions, EDIT_WIDTH, SIDES, sizeOptions } from './options';
 import { imageView } from './view';
 
@@ -41,7 +41,7 @@ const targetOf = (api: EditorControlApi, payload: { nodeId?: string } | undefine
  * Inserts an image from the toolbar through the host asset picker, else the file chooser, replaces one the same way,
  * opens its alternative text dialog, and sets its size and side; pasted and dropped files upload as new images.
  */
-export const mediaImageEditor = defineEditorPart(mediaImage, {
+export const mediaImageEditor = defineEditorPart(image, {
     needs: ['attributes', 'content', 'insert', 'overlays', 'uploads'],
     commands: {
         'image.insert': {

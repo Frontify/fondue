@@ -4,12 +4,12 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { corePlugin, defineEditor, mentionsPlugin, modelOf, RichTextEditor } from '#/index';
+import { corePlugin, defineEditor, mentionPlugin, modelOf, RichTextEditor } from '#/index';
 import { type ReferenceResolution } from '#/model';
 import { createFakeReferenceService } from '#/testing';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const plugins = [corePlugin(), mentionsPlugin()] as const;
+const plugins = [corePlugin(), mentionPlugin()] as const;
 const model = modelOf(plugins, { id: 'story.mentions', version: 1 });
 
 const people = createFakeReferenceService([

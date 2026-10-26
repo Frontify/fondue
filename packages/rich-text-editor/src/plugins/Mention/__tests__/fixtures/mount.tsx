@@ -24,13 +24,13 @@ import {
     type RichTextDocument,
     type RichTextLocale,
 } from '#/model';
-import { core, mentions } from '#/plugins';
+import { core, mention as mentionFeature } from '#/plugins';
 import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
 import { activeSuggestion } from '#/runtime/capabilities/suggestions/plugin';
 import { runtimeOf } from '#/runtime/runtime';
 import { type ReferenceValue } from '#/runtime/types';
 
-export const mentionModel = (features: readonly Feature[] = [core(), mentions()]): ContentModel =>
+export const mentionModel = (features: readonly Feature[] = [core(), mentionFeature()]): ContentModel =>
     compileContentModel(features, { id: 'test.mentions', version: 1 });
 
 export const para = (...content: readonly ContentNodeJSON[]): ContentNodeJSON => ({

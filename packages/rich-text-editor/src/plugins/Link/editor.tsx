@@ -4,7 +4,7 @@ import { lazyPart } from '#/bridge/define';
 import { defineEditorPart, type EditorApi, type EditorCommand } from '#/bridge/plugin';
 import { markRule } from '#/model';
 
-import { links } from './feature';
+import { link } from './feature';
 import { EDIT_LINK, REMOVE_LINK } from './linkBubbleModel';
 import { linkInitialOf, SET_LINK } from './linkPopoverModel';
 import { SurfaceLinkClicks } from './SurfaceLinkClicks';
@@ -52,7 +52,7 @@ const editLink = (api: EditorApi<'marks' | 'overlays'>): boolean => {
  * or inserts its visible text at a caret outside one, and `link.remove` removes the whole link and keeps its text. A
  * bubble on the link at the caret opens, edits, copies and removes it.
  */
-export const linksEditor = defineEditorPart(links, {
+export const linksEditor = defineEditorPart(link, {
     needs: ['marks', 'overlays'],
     commands: {
         [EDIT_LINK]: {

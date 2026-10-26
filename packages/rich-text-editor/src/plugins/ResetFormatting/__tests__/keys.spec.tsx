@@ -2,11 +2,11 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { formatClear } from '#/plugins/ResetFormatting/feature';
+import { resetFormatting } from '#/plugins/ResetFormatting/feature';
 import { mountText, para, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
 import { setSelection } from '#/testing';
 
-const model = textModel([...textFeatures(), formatClear()]);
+const model = textModel([...textFeatures(), resetFormatting()]);
 
 const onPlatform = (apple: boolean) => {
     let platform = 'Win32';

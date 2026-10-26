@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
 import { compileContentModel, defaultLimits } from '#/model';
 import { htmlModel } from '#/plugins/__tests__/fixtures/html';
 import { core } from '#/plugins/Core/feature';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 import { buildSchema } from '#/runtime/definition/schema';
 import { NO_COLORS } from '#/runtime/import/colors';
 import { importHtml } from '#/runtime/import/html';
@@ -23,8 +23,8 @@ const textOf = (value: unknown): string => JSON.stringify(value);
 
 describe('the HTML import of untrusted markup', () => {
     it.each([
-        ['allowedHosts', links({ allowedHosts: ['frontify.com'] }), '<a href="https://evil.example">t</a>'],
-        ['allowedSchemes', links({ allowedSchemes: ['https'] }), '<a href="http://frontify.com">t</a>'],
+        ['allowedHosts', link({ allowedHosts: ['frontify.com'] }), '<a href="https://evil.example">t</a>'],
+        ['allowedSchemes', link({ allowedSchemes: ['https'] }), '<a href="http://frontify.com">t</a>'],
     ])('keeps the text and drops the link that %s refuses', (_name, feature, html) => {
         const narrowed = compileContentModel([core(), feature], { id: 'test.links', version: 1 });
 

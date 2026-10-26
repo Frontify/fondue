@@ -23,7 +23,7 @@ import { countingIds } from '#/plugins/__tests__/fixtures/notes';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 import { extensionsOf } from '#/react/engine';
 import { compileDefinition, type CompiledDefinition, countAppends, type EngineCommand } from '#/runtime/definition';
 import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';
@@ -289,7 +289,7 @@ export const chip = defineFeature({
         },
     },
 });
-export const targetModel = compileContentModel([core(), bold(), links(), fixtureMention(), chip()], {
+export const targetModel = compileContentModel([core(), bold(), link(), fixtureMention(), chip()], {
     id: 'test.bold',
     version: 1,
 });

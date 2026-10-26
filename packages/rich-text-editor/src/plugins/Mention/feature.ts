@@ -7,7 +7,7 @@ import { defineFeature } from '#/model';
  * was chosen. The editor part's trigger opens a suggestion list from the host's `ReferenceService`; the chosen result
  * replaces the trigger and query with a mention and a space. The package never notifies anyone about a mention.
  */
-export const mentions = defineFeature({
+export const mention = defineFeature({
     id: 'mentions',
     version: 1,
     requires: [{ id: 'core', version: 1 }],

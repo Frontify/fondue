@@ -9,7 +9,7 @@ import {
     bulletListPlugin,
     corePlugin,
     defineEditor,
-    formatClearPlugin,
+    resetFormattingPlugin,
     headingPlugin,
     listItemPlugin,
     modelOf,
@@ -23,7 +23,7 @@ const plugins = [
     alignPlugin(),
     listItemPlugin(),
     bulletListPlugin(),
-    formatClearPlugin(),
+    resetFormattingPlugin(),
 ] as const;
 const model = modelOf(plugins, {
     id: 'story.clear',

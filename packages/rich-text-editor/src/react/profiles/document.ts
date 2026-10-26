@@ -4,14 +4,14 @@ import { extendPlugin, type RichTextPlugin } from '#/bridge/definePlugin';
 import { type CommandRef } from '#/model';
 import { contentChecksPlugin } from '#/plugins/ContentChecks';
 import { headingPlugin } from '#/plugins/Heading';
-import { mediaImagePlugin } from '#/plugins/Image';
+import { imagePlugin } from '#/plugins/Image';
 import { outlinePlugin } from '#/plugins/Outline';
 import { documentModel } from '#/plugins/profiles/document';
-import { formatClearPlugin } from '#/plugins/ResetFormatting';
+import { resetFormattingPlugin } from '#/plugins/ResetFormatting';
 import { rulePlugin } from '#/plugins/Rule';
 import { subscriptPlugin } from '#/plugins/Subscript';
 import { superscriptPlugin } from '#/plugins/Superscript';
-import { mediaUploadPlugin } from '#/plugins/Upload';
+import { uploadPlugin } from '#/plugins/Upload';
 
 import { compileEditor } from '../compileEditor';
 import { defineReactPresentation } from '../presentation';
@@ -27,10 +27,10 @@ export const documentPlugins: readonly RichTextPlugin[] = [
     superscriptPlugin(),
     headingPlugin(),
     rulePlugin(),
-    mediaImagePlugin(),
-    mediaUploadPlugin(),
+    imagePlugin(),
+    uploadPlugin(),
     outlinePlugin(),
-    formatClearPlugin(),
+    resetFormattingPlugin(),
     contentChecksPlugin(),
 ] as const;
 

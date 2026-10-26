@@ -20,7 +20,7 @@ import {
     storedIn,
     text,
 } from '#/plugins/Image/__tests__/fixtures/mount';
-import { mediaImage } from '#/plugins/Image/feature';
+import { image } from '#/plugins/Image/feature';
 import { setSelection } from '#/testing';
 
 beforeEach(() => {
@@ -126,7 +126,7 @@ describe('the context menu', () => {
 
     /** Mounts images with `media.image`, its toolbar showing the moves or only Image, and selects the image. */
     const mountSelected = async ({ readOnly, shippedParts }: { readOnly: boolean; shippedParts: boolean }) => {
-        const model = imageModel([core(), mediaImage()]);
+        const model = imageModel([core(), image()]);
         // A host core part that shows Move up and Move down in the toolbar leaves More no row of its own.
         const toolbarMoves = defineEditorPart(core(), {
             toolbar: [
@@ -181,8 +181,8 @@ describe('the context menu', () => {
     });
 
     it('names a row of a host node entry by its label, in the UI locale of the editor', async () => {
-        const model = imageModel([core(), mediaImage()]);
-        const hostNote = defineEditorPart(mediaImage(), {
+        const model = imageModel([core(), image()]);
+        const hostNote = defineEditorPart(image(), {
             commands: { 'host.note': { run: () => true } },
             toolbar: [
                 {

@@ -4,7 +4,7 @@ import { TextSelection } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type ContentNodeJSON } from '#/model';
-import { mentions } from '#/plugins';
+import { mention } from '#/plugins';
 import { fixtureMention } from '#/plugins/__tests__/fixtures/features';
 import { done, item, list, LIST_KINDS, type ListKind, listModel, outlineOf } from '#/react/__tests__/fixtures/lists';
 import { mountText, para, text } from '#/react/__tests__/fixtures/text';
@@ -94,7 +94,7 @@ describe('block conversions', () => {
 });
 
 describe('block conversions with the shipped mentions', () => {
-    const shipped = listModel([mentions()]);
+    const shipped = listModel([mention()]);
     const inline: readonly ContentNodeJSON[] = [
         text('Brand', 'bold'),
         {

@@ -27,9 +27,9 @@ import {
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { vocabularyModel } from '#/plugins/__tests__/fixtures/vocabulary';
 import { core } from '#/plugins/Core/feature';
-import { mediaImage } from '#/plugins/Image/feature';
-import { links } from '#/plugins/Link/feature';
-import { mentions } from '#/plugins/Mention/feature';
+import { image } from '#/plugins/Image/feature';
+import { link } from '#/plugins/Link/feature';
+import { mention } from '#/plugins/Mention/feature';
 import { extensionsOf } from '#/react/engine';
 
 import { compileDefinition } from '..';
@@ -88,7 +88,7 @@ describe('compileDefinition', () => {
     });
 
     it('builds schema nodes in declared order and marks by rank, then declared order', () => {
-        const features = [core(), fixtureItalic(), fixtureBold(), fixtureColor(), links(), fixtureHeading()];
+        const features = [core(), fixtureItalic(), fixtureBold(), fixtureColor(), link(), fixtureHeading()];
         const { schema } = compileDefinition(compileContentModel(features, { id: 'test', version: 1 }));
 
         expect(Object.keys(schema.nodes)).toEqual([
@@ -153,7 +153,7 @@ describe('compileDefinition', () => {
     });
 
     it('gives null engine defaults only to the leaf the engine must create, never to a mention', () => {
-        const { schema } = compileDefinition(compileContentModel([core(), mediaImage(), mentions()], options));
+        const { schema } = compileDefinition(compileContentModel([core(), image(), mention()], options));
 
         const imageAttrs = schema.nodes.asset_image?.spec.attrs;
         const mentionAttrs = schema.nodes.mention?.spec.attrs;
@@ -163,11 +163,11 @@ describe('compileDefinition', () => {
     });
 
     it('builds the figure of media.image and of the vocabulary, whose image has required attributes with no default', () => {
-        const shipped = compileDefinition(compileContentModel([core(), mediaImage()], options)).schema;
+        const shipped = compileDefinition(compileContentModel([core(), image()], options)).schema;
         const generated = shipped.nodes.figure?.createAndFill();
 
-        const image = generated?.firstChild;
-        expect(image?.attrs).toMatchObject({
+        const imageNode = generated?.firstChild;
+        expect(imageNode?.attrs).toMatchObject({
             assetId: null,
             labelSnapshot: null,
             altIntent: 'missing',

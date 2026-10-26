@@ -7,7 +7,16 @@ import { vi } from 'vitest';
 import { defineReactPresentation, type EditorPart } from '#/entries/authoring';
 import { type AuthoringPolicy, defineEditor, type EditorHandle, type EditorServices, RichTextEditor } from '#/index';
 import { type ColorToken, compileContentModel, type ContentModel, type ContentNodeJSON, type Feature } from '#/model';
-import { bold, contentChecks, core, fontColor, heading, language, links, mediaImage } from '#/plugins';
+import {
+    bold,
+    contentChecks,
+    core,
+    fontColor,
+    heading,
+    language,
+    link as linkFeature,
+    image as imageFeature,
+} from '#/plugins';
 import { fixtureHighlight } from '#/plugins/__tests__/fixtures/highlight';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { storedIn } from '#/react/__tests__/fixtures/text';
@@ -23,11 +32,11 @@ export const checksFeatures = (options?: Parameters<typeof contentChecks>[0]): r
     core(),
     bold(),
     heading(),
-    links(),
+    linkFeature(),
     language(),
     fontColor(),
     fixtureHighlight(),
-    mediaImage(),
+    imageFeature(),
     contentChecks(options),
 ];
 

@@ -21,7 +21,7 @@ import { bold } from '#/plugins/Bold/feature';
 import { brandStyles } from '#/plugins/BrandStyles/feature';
 import { core } from '#/plugins/Core/feature';
 import { heading } from '#/plugins/Heading/feature';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 import { quote } from '#/plugins/Quote/feature';
 import { mountText, para, storedIn, text } from '#/react/__tests__/fixtures/text';
 import { paste, setSelection } from '#/testing';
@@ -49,14 +49,14 @@ type UrlFixture = {
 };
 const URLS = urls as readonly UrlFixture[];
 
-const model = compileContentModel([core(), bold(), links()], { id: 'test.links', version: 1 });
+const model = compileContentModel([core(), bold(), link()], { id: 'test.links', version: 1 });
 const codecs = createCodecs(model);
-const link = (href: string, extra: Readonly<Record<string, unknown>> = {}) => ({
+const linkMark = (href: string, extra: Readonly<Record<string, unknown>> = {}) => ({
     type: 'link',
     attrs: { href, openInNewWindow: false, styleId: null, ...extra },
 });
 const linked = (value: string, href: string, extra: Readonly<Record<string, unknown>> = {}): ContentNodeJSON =>
-    ({ type: 'text', text: value, marks: [link(href, extra)] }) as ContentNodeJSON;
+    ({ type: 'text', text: value, marks: [linkMark(href, extra)] }) as ContentNodeJSON;
 const documentOf = (...content: readonly ContentNodeJSON[]): RichTextDocument => storedIn(model, [para(...content)]);
 const reader = (document: RichTextDocument, props: Readonly<Record<string, unknown>> = {}) =>
     renderToStaticMarkup(createElement(RichTextReader, { model, document, ...props }));
@@ -99,7 +99,7 @@ describe('link output', () => {
                 recipe: { backgroundColor: '#123456' },
             },
         ];
-        const styled = compileContentModel([core(), heading(), quote(), links(), brandStyles()], {
+        const styled = compileContentModel([core(), heading(), quote(), link(), brandStyles()], {
             id: 'test.links',
             version: 1,
         });
@@ -116,7 +116,7 @@ describe('link output', () => {
         });
 
         expect(marksOf(handle.getSnapshot().document)).toEqual([
-            link('https://frontify.com', { styleId: 'brand.button', openInNewWindow: true }),
+            linkMark('https://frontify.com', { styleId: 'brand.button', openInNewWindow: true }),
         ]);
     });
 });
@@ -159,7 +159,7 @@ describe('the URL check at every boundary', () => {
         });
 
         const marks = marksOf(handle.getSnapshot().document);
-        expect(marks).toEqual(ok ? [link(href ?? '')] : []);
+        expect(marks).toEqual(ok ? [linkMark(href ?? '')] : []);
     });
 
     // A Markdown destination holds no whitespace or control character, so those inputs cannot reach this boundary.
@@ -218,7 +218,7 @@ describe('pasting a URL over a selection', () => {
 });
 
 describe('the links policy where content enters', () => {
-    const narrowed = compileContentModel([core(), bold(), links({ allowedHosts: ['*.frontify.com'] })], {
+    const narrowed = compileContentModel([core(), bold(), link({ allowedHosts: ['*.frontify.com'] })], {
         id: 'test.links',
         version: 1,
     });

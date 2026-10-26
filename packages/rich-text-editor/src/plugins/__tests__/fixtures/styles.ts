@@ -12,7 +12,7 @@ import { brandStyles } from '#/plugins/BrandStyles/feature';
 import { core } from '#/plugins/Core/feature';
 import { fontColor } from '#/plugins/FontColor/feature';
 import { heading } from '#/plugins/Heading/feature';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 import { quote } from '#/plugins/Quote/feature';
 
 import { fixtureHighlight } from './highlight';
@@ -80,7 +80,7 @@ export const styleFeatures = (literalColors = false) =>
         brandStyles(),
         fontColor({ literalColors }),
         fixtureHighlight({ literalColors }),
-        links(),
+        link(),
     ] as const;
 
 export const styleModel = (literalColors = false): ContentModel<ReturnType<typeof styleFeatures>> =>

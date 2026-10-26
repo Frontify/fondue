@@ -9,7 +9,7 @@ import { bold } from '#/plugins/Bold/feature';
 import { corePlugin } from '#/plugins/Core';
 import { core } from '#/plugins/Core/feature';
 import { mediaImageEditor } from '#/plugins/Image/editor';
-import { mediaImage } from '#/plugins/Image/feature';
+import { image } from '#/plugins/Image/feature';
 import { type ReaderRenderers } from '#/reader/define';
 
 import { definePlugin, extendPlugin, modelOf, type ReaderOverrides } from '../definePlugin';
@@ -27,13 +27,13 @@ describe('definePlugin', () => {
     });
 
     it('calls the feature factory with the options it was given', () => {
-        const plugin = definePlugin({ feature: mediaImage, editor: mediaImageEditor })({
+        const plugin = definePlugin({ feature: image, editor: mediaImageEditor })({
             acceptTypes: ['image/png'],
         });
 
         expect(featureInternals(plugin.feature)?.options).toEqual({ acceptTypes: ['image/png'] });
         expect(
-            featureInternals(definePlugin({ feature: mediaImage, editor: mediaImageEditor })().feature)?.options,
+            featureInternals(definePlugin({ feature: image, editor: mediaImageEditor })().feature)?.options,
         ).toBeUndefined();
     });
 

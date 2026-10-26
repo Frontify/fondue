@@ -21,7 +21,7 @@ import { fixtureMediaImage } from '#/plugins/__tests__/fixtures/media/feature';
 import { FixtureLinkPopover, FixtureMenu, FixtureSuggestions } from '#/plugins/__tests__/fixtures/overlays/Overlays';
 import { fixtureTableBlock } from '#/plugins/__tests__/fixtures/table/feature';
 import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
 
@@ -32,7 +32,7 @@ const model = compileContentModel(
         core(),
         bold(),
         fixtureItalic(),
-        links(),
+        link(),
         fixtureToolbar(),
         fixtureCodeBlock(),
         fixtureMediaImage(),

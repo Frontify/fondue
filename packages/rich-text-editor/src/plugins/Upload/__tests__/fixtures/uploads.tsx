@@ -23,7 +23,7 @@ import {
     type JsonObject,
     type ResourceLimits,
 } from '#/model';
-import { core, mediaImage, mediaUpload } from '#/plugins';
+import { core, image, upload } from '#/plugins';
 import { type UnitCommands, unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { flush, imageModel, para, resolving, storedIn, text } from '#/plugins/Image/__tests__/fixtures/mount';
 import { undoDepth } from '#/runtime/history';
@@ -34,7 +34,7 @@ import { declaredPng } from '#/testing/uploads';
 
 export { para, text };
 
-export const uploadModel = (features: readonly Feature[] = [core(), mediaImage(), mediaUpload()]): ContentModel =>
+export const uploadModel = (features: readonly Feature[] = [core(), image(), upload()]): ContentModel =>
     imageModel(features);
 
 /** A PNG file of `width` by `height` pixels as its header declares them, a few bytes long. */

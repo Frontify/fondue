@@ -3,7 +3,7 @@
 import { definePlugin } from '#/bridge/definePlugin';
 
 import { strikeEditor } from './editor';
-import { strike } from './feature';
+import { strikethrough } from './feature';
 
 /** Strikethrough text: the `s` mark, Mod+Shift+X, `~~`, and a toolbar toggle. */
-export const strikePlugin = definePlugin({ feature: strike, editor: strikeEditor });
+export const strikethroughPlugin = definePlugin({ feature: strikethrough, editor: strikeEditor });

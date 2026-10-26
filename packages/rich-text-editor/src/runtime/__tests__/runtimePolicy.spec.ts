@@ -11,7 +11,7 @@ import { fixtureHeadingSet, fixtureMention, fixtureTable } from '#/plugins/__tes
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 import { pressKey, setSelection, typeText } from '#/testing';
 
 import { authoringOf } from '../policy';
@@ -425,12 +425,12 @@ describe('the authoring policy and limits', () => {
 });
 
 describe('occurrences the policy pairs across a batch', () => {
-    const model = compileContentModel([core(), bold(), links(), fixtureMention()], {
+    const model = compileContentModel([core(), bold(), link(), fixtureMention()], {
         id: 'test.bold',
         version: 1,
     });
-    const link = (href: string) => ({ type: 'link', attrs: { href, openInNewWindow: false, styleId: null } });
-    const linked = { type: 'text', text: 'go', marks: [link('https://frontify.com/a')] };
+    const linkMark = (href: string) => ({ type: 'link', attrs: { href, openInNewWindow: false, styleId: null } });
+    const linked = { type: 'text', text: 'go', marks: [linkMark('https://frontify.com/a')] };
     const atoms = stored(para(words('a'), mention('m-1'), words('b')));
     const cases: readonly (readonly [
         string,
@@ -469,14 +469,14 @@ describe('occurrences the policy pairs across a batch', () => {
             'link href',
             stored(para(linked)),
             { features: { links: { ...ALLOW, create: false, remove: false } } },
-            (state) => state.tr.addMark(1, 3, state.schema.mark('link', link('https://frontify.com/b').attrs)),
+            (state) => state.tr.addMark(1, 3, state.schema.mark('link', linkMark('https://frontify.com/b').attrs)),
             true,
         ],
         [
             'link href, edit: false',
             stored(para(linked)),
             forbid('links', 'edit'),
-            (state) => state.tr.addMark(1, 3, state.schema.mark('link', link('https://frontify.com/b').attrs)),
+            (state) => state.tr.addMark(1, 3, state.schema.mark('link', linkMark('https://frontify.com/b').attrs)),
             false,
         ],
         [
@@ -507,7 +507,7 @@ describe('occurrences the policy pairs across a batch', () => {
             (state) =>
                 state.tr.insert(
                     3,
-                    state.schema.text('zz', [state.schema.mark('link', link('https://frontify.com/b').attrs)]),
+                    state.schema.text('zz', [state.schema.mark('link', linkMark('https://frontify.com/b').attrs)]),
                 ),
             false,
         ],

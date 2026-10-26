@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type ContentNodeJSON } from '#/model';
 import { codeBlock } from '#/plugins';
 import { bulletList } from '#/plugins/BulletList/feature';
-import { taskList } from '#/plugins/CheckList/feature';
+import { checkList } from '#/plugins/CheckList/feature';
 import { listItem } from '#/plugins/ListItem/feature';
 import { orderedList } from '#/plugins/OrderedList/feature';
 import { done, item, list, listModel, outlineOf } from '#/react/__tests__/fixtures/lists';
@@ -135,7 +135,7 @@ describe('list input rules', () => {
         ['list.ordered.number', 'lists.ordered', '3. ', { ol: [['']], start: 3 }],
         ['list.task.brackets', 'lists.task', '[x] ', { tasks: [['[x]', '']] }],
     ] as const;
-    const factories = [listItem, bulletList, orderedList, taskList];
+    const factories = [listItem, bulletList, orderedList, checkList];
 
     for (const [id, featureId, typed, fired] of RULES) {
         it(`applies ${id} only while it is on, its feature is installed and the policy allows creation`, () => {

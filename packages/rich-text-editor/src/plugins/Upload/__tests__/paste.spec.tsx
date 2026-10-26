@@ -3,7 +3,7 @@
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { core, mediaImage } from '#/plugins';
+import { core, image } from '#/plugins';
 import { paste, pressKey, setSelection } from '#/testing';
 import { probeUploads } from '#/testing/probeUploads';
 
@@ -163,7 +163,7 @@ describe('a paste with files', () => {
     });
 
     it('starts no upload for a paste that the policy refuses for media.image', async () => {
-        const mounted = await mountUploads({ blocks: [para(text('ab'))], model: uploadModel([core(), mediaImage()]) });
+        const mounted = await mountUploads({ blocks: [para(text('ab'))], model: uploadModel([core(), image()]) });
         const { policy } = mounted.runtime;
         act(() =>
             mounted.handle.updatePolicy({

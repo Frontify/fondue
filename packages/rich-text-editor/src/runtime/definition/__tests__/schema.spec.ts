@@ -6,21 +6,21 @@ import { describe, expect, it } from 'vitest';
 import { compileContentModel } from '#/model';
 import { fixtureBold, fixtureColor } from '#/plugins/__tests__/fixtures/features';
 import { core } from '#/plugins/Core/feature';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 
 import { buildSchema } from '../schema';
 
 describe('buildSchema DOM output', () => {
     it('renders a partly bold, partly coloured link as one a in the editor DOM', () => {
-        const model = compileContentModel([core(), fixtureBold(), fixtureColor(), links()], {
+        const model = compileContentModel([core(), fixtureBold(), fixtureColor(), link()], {
             id: 'test',
             version: 1,
         });
         const schema = buildSchema(model);
-        const link = schema.mark('link', { href: 'https://frontify.com' });
+        const linkMark = schema.mark('link', { href: 'https://frontify.com' });
         const paragraph = schema.node('paragraph', null, [
-            schema.text('bold ', [schema.mark('bold'), link]),
-            schema.text('colour', [link, schema.mark('font_color', { value: '#ff0000' })]),
+            schema.text('bold ', [schema.mark('bold'), linkMark]),
+            schema.text('colour', [linkMark, schema.mark('font_color', { value: '#ff0000' })]),
         ]);
         const host = document.createElement('div');
         host.append(DOMSerializer.fromSchema(schema).serializeNode(paragraph));
@@ -32,7 +32,7 @@ describe('buildSchema DOM output', () => {
     });
 
     it('leaves out a url attribute that fails checkHref in the editor DOM', () => {
-        const model = compileContentModel([core(), links()], { id: 'test', version: 1 });
+        const model = compileContentModel([core(), link()], { id: 'test', version: 1 });
         const schema = buildSchema(model);
         const unsafe = schema.mark('link', { href: 'javascript:alert(1)' });
         const host = document.createElement('div');

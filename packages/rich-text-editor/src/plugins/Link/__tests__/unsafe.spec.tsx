@@ -10,7 +10,7 @@ import { compileContentModel, type ContentNodeJSON } from '#/model';
 import { type decodeToTree as RealDecode } from '#/model/internal';
 import { withInjectedHref } from '#/plugins/__tests__/fixtures/inject';
 import { core } from '#/plugins/Core/feature';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 import { mountText, para, storedIn, text } from '#/react/__tests__/fixtures/text';
 
 const injected = vi.hoisted(() => ({ href: undefined as string | undefined }));
@@ -41,7 +41,7 @@ afterEach(() => {
     injected.href = undefined;
 });
 
-const model = compileContentModel([core(), links()], { id: 'test.links', version: 1 });
+const model = compileContentModel([core(), link()], { id: 'test.links', version: 1 });
 const linked: ContentNodeJSON = {
     type: 'text',
     text: 'guide',

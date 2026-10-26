@@ -7,11 +7,11 @@ import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 import { bold, core } from '#/plugins';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
 
-const model = compileContentModel([core(), bold(), links()], { id: 'test.links-ct', version: 1 });
+const model = compileContentModel([core(), bold(), link()], { id: 'test.links-ct', version: 1 });
 const definition = defineEditor({ id: 'test.links-ct', model, plugins: unitsOf(model) });
 
 const linkMark = (href: string, openInNewWindow: boolean) => ({

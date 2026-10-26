@@ -3,7 +3,7 @@
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { core, mediaImage, mediaUpload, mentions } from '#/plugins';
+import { core, image, upload, mention } from '#/plugins';
 import { ADA, advance, deferredService, page } from '#/plugins/Mention/__tests__/fixtures/mount';
 import { pressKey, setSelection, typeText } from '#/testing';
 import { probeUploads } from '#/testing/probeUploads';
@@ -26,7 +26,7 @@ describe('an upload beside other async work', () => {
         const search = deferredService();
         const uploads = deferredUploads();
         const mounted = await mountUploads({
-            model: uploadModel([core(), mediaImage(), mediaUpload(), mentions()]),
+            model: uploadModel([core(), image(), upload(), mention()]),
             uploads,
             services: { references: search.service, uploads: uploads.service },
         });

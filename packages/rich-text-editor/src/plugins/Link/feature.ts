@@ -10,7 +10,7 @@ const LINK = { marks: ['link'] } as const;
  * Links as the `link` mark, which typing at its end does not extend. `allowedSchemes` and `allowedHosts` narrow the
  * URL check everywhere the feature stores a link; `resourceTypes` names what its editor part's popover searches.
  */
-export const links = defineFeature({
+export const link = defineFeature({
     id: 'links',
     version: 1,
     requires: [{ id: 'core', version: 1 }],

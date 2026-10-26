@@ -12,12 +12,12 @@ import { bold, core } from '#/plugins';
 import { fixtureCodeBlock } from '#/plugins/__tests__/fixtures/code-block/feature';
 import { fixtureItalic, fixtureList, fixtureToolbar } from '#/plugins/__tests__/fixtures/features';
 import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
 
 const model = compileContentModel(
-    [core(), bold(), fixtureItalic(), links(), fixtureList(), fixtureToolbar(), fixtureCodeBlock()],
+    [core(), bold(), fixtureItalic(), link(), fixtureList(), fixtureToolbar(), fixtureCodeBlock()],
     { id: 'test.toolbar', version: 1 },
 );
 const ALLOW = { create: true, edit: true, remove: true, paste: true };

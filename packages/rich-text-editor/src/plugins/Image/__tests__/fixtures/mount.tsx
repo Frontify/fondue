@@ -24,12 +24,12 @@ import {
     type JsonObject,
     type RichTextDocument,
 } from '#/model';
-import { core, mediaImage, mentions } from '#/plugins';
+import { core, image, mention } from '#/plugins';
 import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
 import { type DocumentChange } from '#/runtime/types';
 
-export const imageModel = (features: readonly Feature[] = [core(), mediaImage(), mentions()]): ContentModel =>
+export const imageModel = (features: readonly Feature[] = [core(), image(), mention()]): ContentModel =>
     compileContentModel(features, { id: 'test.images', version: 1 });
 
 export const para = (...content: readonly ContentNodeJSON[]): ContentNodeJSON => ({

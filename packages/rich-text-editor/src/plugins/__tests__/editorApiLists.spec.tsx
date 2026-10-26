@@ -8,7 +8,7 @@ import { compileContentModel, type ContentNodeJSON, type RichTextDocument } from
 import { core } from '#/plugins';
 import { spotlight } from '#/plugins/__tests__/fixtures/spotlight/feature';
 import { bulletList } from '#/plugins/BulletList/feature';
-import { taskList } from '#/plugins/CheckList/feature';
+import { checkList } from '#/plugins/CheckList/feature';
 import { listItem } from '#/plugins/ListItem/feature';
 import { type CommandState } from '#/runtime/types';
 import { setSelection } from '#/testing';
@@ -44,7 +44,7 @@ beforeEach(() => {
 });
 
 describe('the lists of the editor API', () => {
-    const listed = compileContentModel([core(), listItem(), bulletList(), taskList(), spotlight()], {
+    const listed = compileContentModel([core(), listItem(), bulletList(), checkList(), spotlight()], {
         id: 'fixture.api-lists',
         version: 1,
     });

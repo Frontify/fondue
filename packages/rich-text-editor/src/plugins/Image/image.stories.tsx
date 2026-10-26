@@ -3,11 +3,11 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { type AssetPickerService, corePlugin, defineEditor, mediaImagePlugin, modelOf, RichTextEditor } from '#/index';
+import { type AssetPickerService, corePlugin, defineEditor, imagePlugin, modelOf, RichTextEditor } from '#/index';
 import demoImage from '#/react/examples/demo-image.svg?no-inline';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const plugins = [corePlugin(), mediaImagePlugin()] as const;
+const plugins = [corePlugin(), imagePlugin()] as const;
 const model = modelOf(plugins, { id: 'story.images', version: 1 });
 
 // A host's asset library: every asset ID has a URL, which the presentation resolves at render time.

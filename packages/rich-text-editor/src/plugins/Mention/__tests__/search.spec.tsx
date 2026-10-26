@@ -3,7 +3,7 @@
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { core, mentions } from '#/plugins';
+import { core, mention } from '#/plugins';
 import { suggestionOptionId } from '#/runtime/capabilities/suggestions/optionId';
 import { pressKey, setSelection, typeText } from '#/testing';
 
@@ -54,7 +54,7 @@ describe('mention triggers and queries', () => {
     it('takes a 50-character query after a two-character trigger that follows other text', () => {
         const { service } = deferredService();
         const mounted = mountMentions({
-            model: mentionModel([core(), mentions({ trigger: '[[' })]),
+            model: mentionModel([core(), mention({ trigger: '[[' })]),
             blocks: [para(text('See '))],
             services: { references: service },
         });

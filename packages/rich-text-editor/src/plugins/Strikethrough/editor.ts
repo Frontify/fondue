@@ -2,10 +2,10 @@
 
 import { defineEditorPart } from '#/bridge/plugin';
 
-import { strike } from './feature';
+import { strikethrough } from './feature';
 
 /** Toggles strikethrough on the selection or at the caret, from Mod+Shift+X, `~~`, or the toolbar. */
-export const strikeEditor = defineEditorPart(strike, {
+export const strikeEditor = defineEditorPart(strikethrough, {
     needs: ['marks'],
     commands: {
         'mark.strike.toggle': {

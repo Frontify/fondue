@@ -2,7 +2,7 @@
 
 import { defineEditorPart, type EditorControlApi } from '#/bridge/plugin';
 
-import { mediaUpload } from './feature';
+import { upload } from './feature';
 
 const NODE = { fields: { nodeId: { type: 'string', minLength: 1, optional: true } } } as const;
 
@@ -14,7 +14,7 @@ const imageOf = (api: EditorControlApi, payload: { nodeId?: string } | undefined
  * Cancel and Retry of the upload into an image, which its chrome shows while the upload runs or once it failed, and
  * More and the context menu offer for the selected image while they apply.
  */
-export const mediaUploadEditor = defineEditorPart(mediaUpload, {
+export const mediaUploadEditor = defineEditorPart(upload, {
     needs: ['uploads'],
     commands: {
         'media.upload.cancel': {

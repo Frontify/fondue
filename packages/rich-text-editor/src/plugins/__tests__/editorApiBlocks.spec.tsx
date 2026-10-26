@@ -11,7 +11,7 @@ import {
     type JsonObject,
     type RichTextDocument,
 } from '#/model';
-import { align, bold, codeBlock, core, fontColor, heading, links, mediaImage } from '#/plugins';
+import { align, bold, codeBlock, core, fontColor, heading, link, image } from '#/plugins';
 import { fixtureCallout } from '#/plugins/__tests__/fixtures/features';
 import { spotlight } from '#/plugins/__tests__/fixtures/spotlight/feature';
 import { type CommandState } from '#/runtime/types';
@@ -60,13 +60,10 @@ beforeEach(() => {
 });
 
 describe('the blocks a plugin wraps through the editor API', () => {
-    const callouts = compileContentModel(
-        [core(), bold(), heading(), links(), mediaImage(), fixtureCallout(), spotlight()],
-        {
-            id: 'fixture.api',
-            version: 1,
-        },
-    );
+    const callouts = compileContentModel([core(), bold(), heading(), link(), image(), fixtureCallout(), spotlight()], {
+        id: 'fixture.api',
+        version: 1,
+    });
 
     it('wraps in a container whose required attribute it gives', () => {
         const { handle } = mount({ model: callouts });
@@ -80,7 +77,7 @@ describe('the blocks a plugin wraps through the editor API', () => {
 describe('the attributes a plugin writes through the editor API', () => {
     it('sets an attribute only on the listed types that declare it, and refuses one that none declares', () => {
         const aligned = compileContentModel(
-            [core(), bold(), heading(), align(), links(), fontColor(), codeBlock(), mediaImage(), spotlight()],
+            [core(), bold(), heading(), align(), link(), fontColor(), codeBlock(), image(), spotlight()],
             { id: 'fixture.api', version: 1 },
         );
         const { handle } = mount({ model: aligned });
@@ -253,7 +250,7 @@ describe('the active state of the editor API', () => {
 
     it('reads the attributes of the selected nodes of the listed types as all, some or none', () => {
         const aligned = compileContentModel(
-            [core(), bold(), heading(), align(), links(), fontColor(), codeBlock(), mediaImage(), spotlight()],
+            [core(), bold(), heading(), align(), link(), fontColor(), codeBlock(), image(), spotlight()],
             { id: 'fixture.api', version: 1 },
         );
         const { handle } = mount({ model: aligned });

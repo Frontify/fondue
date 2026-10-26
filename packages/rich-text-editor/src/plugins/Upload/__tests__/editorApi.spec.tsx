@@ -4,7 +4,7 @@ import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { defineEditorPart, type EditorApi, useEditorApi } from '#/entries/authoring';
-import { mediaUpload } from '#/plugins';
+import { upload } from '#/plugins';
 import { figure } from '#/plugins/Image/__tests__/fixtures/mount';
 import { paste, setSelection } from '#/testing';
 
@@ -34,7 +34,7 @@ beforeEach(() => {
 });
 
 /** A host part of `media.upload` that keeps the live editor API and takes the files no earlier part took. */
-const grabbing = defineEditorPart(mediaUpload, {
+const grabbing = defineEditorPart(upload, {
     overlays: [Grab],
     files: (api, files, at) => {
         taken.push({ names: files.map(({ name }) => name), origin: at.origin, text: api.selectedText() });

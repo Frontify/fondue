@@ -10,15 +10,18 @@ import { compileContentModel, type RichTextDocument } from '#/model';
 import { bold, core, inputRules } from '#/plugins';
 import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
 import { bulletList } from '#/plugins/BulletList/feature';
-import { taskList } from '#/plugins/CheckList/feature';
+import { checkList } from '#/plugins/CheckList/feature';
 import { listItem } from '#/plugins/ListItem/feature';
 import { orderedList } from '#/plugins/OrderedList/feature';
 import { setSelection } from '#/testing';
 
-const model = compileContentModel([core(), bold(), listItem(), bulletList(), orderedList(), taskList(), inputRules()], {
-    id: 'test.list-ct',
-    version: 1,
-});
+const model = compileContentModel(
+    [core(), bold(), listItem(), bulletList(), orderedList(), checkList(), inputRules()],
+    {
+        id: 'test.list-ct',
+        version: 1,
+    },
+);
 const definition = defineEditor({ id: 'test.list-ct', model, plugins: unitsOf(model) });
 const presentation = defineReactPresentation({
     toolbar: [

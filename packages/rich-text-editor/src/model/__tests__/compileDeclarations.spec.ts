@@ -13,7 +13,7 @@ import {
 } from '#/model';
 import { fixtureHeading } from '#/plugins/__tests__/fixtures/features';
 import { core } from '#/plugins/Core/feature';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 
 import { pointer } from '../errors';
 
@@ -276,7 +276,7 @@ describe('compileContentModel declarations', () => {
             code: 'definition.unsafe-url-binding',
             details: { feature: 'a.image', path: '/nodes/picture/html/1/src' },
         });
-        expect(compile([core(), links()]).manifest.marks).toEqual(['link']);
+        expect(compile([core(), link()]).manifest.marks).toEqual(['link']);
     });
 
     it('checks a namespaced or prefixed URL attribute by its local name', () => {

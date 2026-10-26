@@ -19,12 +19,12 @@ import {
     type RichTextDocument,
     type RichTextSlice,
 } from '#/model';
-import { bold, code, core, featuresById, heading, italic, links, mediaImage, mentions, quote } from '#/plugins';
+import { bold, code, core, featuresById, heading, italic, link, image, mention, quote } from '#/plugins';
 import { doc, envelope, paragraph, text } from '#/plugins/__tests__/fixtures/documents';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { bulletList } from '#/plugins/BulletList/feature';
 import { listItem } from '#/plugins/ListItem/feature';
-import { strike } from '#/plugins/Strikethrough/feature';
+import { strikethrough } from '#/plugins/Strikethrough/feature';
 import { subscript } from '#/plugins/Subscript/feature';
 import { superscript } from '#/plugins/Superscript/feature';
 import { underline } from '#/plugins/Underline/feature';
@@ -103,13 +103,13 @@ const model = compileContentModel(
         bold(),
         italic(),
         underline(),
-        strike(),
+        strikethrough(),
         code(),
         subscript(),
         superscript(),
-        links(),
-        mentions(),
-        mediaImage(),
+        link(),
+        mention(),
+        image(),
         listItem(),
         bulletList(),
     ],

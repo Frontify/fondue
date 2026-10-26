@@ -8,7 +8,7 @@ import { fontColorPlugin } from '#/plugins/FontColor';
 import { inputRulesPlugin } from '#/plugins/InputRules';
 import { italicPlugin } from '#/plugins/Italic';
 import { languagePlugin } from '#/plugins/Language';
-import { linksPlugin } from '#/plugins/Link';
+import { linkPlugin } from '#/plugins/Link';
 import { inlineModel } from '#/plugins/profiles/inline';
 import { underlinePlugin } from '#/plugins/Underline';
 
@@ -28,7 +28,7 @@ export const inlinePlugins: readonly RichTextPlugin[] = [
     boldPlugin(),
     italicPlugin(),
     underlinePlugin(),
-    linksPlugin(),
+    linkPlugin(),
     fontColorPlugin(),
     languagePlugin(),
     alignPlugin(),

@@ -7,14 +7,14 @@ import { vi } from 'vitest';
 import { defineReactPresentation } from '#/entries/authoring';
 import { type AuthoringPolicy, defineEditor, type EditorHandle, type ReactPresentation, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentModel, type ContentNodeJSON, type Feature } from '#/model';
-import { columns, core, inputRules, mediaImage, quote, rule } from '#/plugins';
+import { columns, core, inputRules, image as imageFeature, quote, rule } from '#/plugins';
 import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
 import { storedIn } from '#/react/__tests__/fixtures/text';
 import { runtimeOf } from '#/runtime/runtime';
 import { type DocumentChange } from '#/runtime/types';
 
 /** The layout features, a quote to nest blocks in, and `media.image`, whose figure holds a leaf image. */
-export const layoutFeatures = () => [core(), quote(), rule(), columns(), mediaImage(), inputRules()] as const;
+export const layoutFeatures = () => [core(), quote(), rule(), columns(), imageFeature(), inputRules()] as const;
 
 export const layoutModel = <const Features extends readonly Feature[] = ReturnType<typeof layoutFeatures>>(
     features: Features = layoutFeatures() as unknown as Features,

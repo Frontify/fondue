@@ -10,8 +10,8 @@ import {
     defineEditor,
     fontColorPlugin,
     headingPlugin,
-    linksPlugin,
-    mediaImagePlugin,
+    linkPlugin,
+    imagePlugin,
     modelOf,
     RichTextEditor,
 } from '#/index';
@@ -21,8 +21,8 @@ import demoImage from '#/react/examples/demo-image.svg?no-inline';
 const plugins = [
     corePlugin(),
     headingPlugin(),
-    linksPlugin(),
-    mediaImagePlugin(),
+    linkPlugin(),
+    imagePlugin(),
     fontColorPlugin(),
     contentChecksPlugin(),
 ] as const;

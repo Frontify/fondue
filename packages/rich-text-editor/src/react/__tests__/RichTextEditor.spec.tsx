@@ -31,7 +31,7 @@ import {
     vocabularyTables,
 } from '#/plugins/__tests__/fixtures/vocabulary';
 import { core } from '#/plugins/Core/feature';
-import { links } from '#/plugins/Link/feature';
+import { link as linkFeature } from '#/plugins/Link/feature';
 import { fixturesIn } from '#/reader/__tests__/helpers/helpers';
 import { type ReaderPresentation } from '#/reader/reader';
 import { type AsyncOperation } from '#/runtime/async';
@@ -565,7 +565,10 @@ describe('RichTextEditor documents', () => {
     });
 
     const urls = load('urls.json') as readonly { input: string; ok: boolean }[];
-    const urlModel = compileContentModel([core(), links(), fixtureMedia()], { id: 'fixture.vocabulary', version: 1 });
+    const urlModel = compileContentModel([core(), linkFeature(), fixtureMedia()], {
+        id: 'fixture.vocabulary',
+        version: 1,
+    });
     const linked = defineEditor({ id: 'test.urls', model: urlModel, plugins: unitsOf(urlModel) });
     const withUrl = (url: string) =>
         envelope(doc(para(text('Go', link(url))), node('embed', { nodeId: 'e-1', url })), [

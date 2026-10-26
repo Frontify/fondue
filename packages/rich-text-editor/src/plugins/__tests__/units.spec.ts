@@ -55,6 +55,17 @@ describe('feature units', () => {
         expect((barrel as Record<string, unknown>)[factories[0]?.[0] ?? '']).toBe(factories[0]?.[1]);
     });
 
+    it.each(FOLDERS)('%s names its factory after the folder and its unit after the factory', async (folder) => {
+        const features = (await import(`../${folder}/feature.ts`)) as Record<string, unknown>;
+        const [factory] = Object.entries(features)
+            .filter(([, value]) => typeof value === 'function')
+            .map(([name]) => name);
+        const [unit] = Object.keys((await import(`../${folder}/index.ts`)) as Record<string, unknown>);
+
+        expect(`${factory?.charAt(0).toUpperCase()}${factory?.slice(1)}`).toBe(folder);
+        expect(unit).toBe(`${factory}Plugin`);
+    });
+
     it.each(READER_FOLDERS)('%s names its own feature in its reader', async (folder) => {
         const reader = (await import(`../${folder}/reader.tsx`)) as { readerFeature: string };
         const unit = await unitOf(folder);

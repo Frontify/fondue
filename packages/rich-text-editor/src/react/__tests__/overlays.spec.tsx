@@ -23,7 +23,7 @@ import {
 import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 import { runtimeOf } from '#/runtime/runtime';
 import { pressKey, setSelection, typeText } from '#/testing';
 
@@ -35,7 +35,7 @@ import { useEditorHandle } from '../useEditorHandle';
 import { fixtureLocale, TOOLBAR } from './fixtures/ToolbarProbe';
 
 const model = compileContentModel(
-    [core(), bold(), fixtureItalic(), links(), fixtureToolbar(), fixtureCodeBlock(), fixtureMediaImage()],
+    [core(), bold(), fixtureItalic(), link(), fixtureToolbar(), fixtureCodeBlock(), fixtureMediaImage()],
     { id: 'test.overlays', version: 1 },
 );
 const definition = defineEditor({ id: 'test.overlays', model, plugins: unitsOf(model) });

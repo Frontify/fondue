@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { defineEditorPart } from '#/entries/authoring';
 import { defineFeature } from '#/model';
-import { core, mediaImage, mediaUpload } from '#/plugins';
+import { core, image, upload } from '#/plugins';
 import { deferredPicker, figure, PALETTE } from '#/plugins/Image/__tests__/fixtures/mount';
 
 import { caretAfterBefore, slot, started, cancel } from './fixtures/steps';
@@ -60,7 +60,7 @@ describe('the controls an image insert and an upload start open', () => {
         const picker = deferredPicker();
         const uploads = deferredUploads();
         const mounted = await mountUploads({
-            model: uploadModel([core(), mediaImage(), mediaUpload(), acmePick()]),
+            model: uploadModel([core(), image(), upload(), acmePick()]),
             plugins: [acmePicker],
             blocks: [para(text('Before')), figure('image-1')],
             uploads,

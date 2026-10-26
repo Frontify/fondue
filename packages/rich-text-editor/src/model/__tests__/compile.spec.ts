@@ -14,7 +14,7 @@ import {
 } from '#/plugins/__tests__/fixtures/features';
 import { fixtureProfiles } from '#/plugins/__tests__/fixtures/profiles';
 import { core } from '#/plugins/Core/feature';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 
 import { orderPlugins, type PluginDescriptor } from '../capabilities';
 import { compiledModel } from '../compile';
@@ -317,7 +317,7 @@ describe('compileContentModel order', () => {
     });
 
     it('orders nodes as declared and marks by rank, then as declared', () => {
-        const model = compile([core(), fixtureItalic(), fixtureBold(), fixtureColor(), links(), fixtureHeading()]);
+        const model = compile([core(), fixtureItalic(), fixtureBold(), fixtureColor(), link(), fixtureHeading()]);
         expect(model.manifest.nodes).toEqual(['doc', 'paragraph', 'text', 'hard_break', 'heading', 'rule']);
         expect(model.manifest.marks).toEqual(['link', 'font_color', 'italic', 'bold']);
     });

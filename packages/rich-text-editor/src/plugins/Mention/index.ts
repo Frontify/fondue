@@ -3,8 +3,8 @@
 import { definePlugin } from '#/bridge/definePlugin';
 
 import { mentionsEditor } from './editor';
-import { mentions } from './feature';
+import { mention } from './feature';
 import { mentionReader } from './reader';
 
 /** Mentions of host resources from a trigger suggestion list or the toolbar search dialog. */
-export const mentionsPlugin = definePlugin({ feature: mentions, editor: mentionsEditor, reader: mentionReader });
+export const mentionPlugin = definePlugin({ feature: mention, editor: mentionsEditor, reader: mentionReader });

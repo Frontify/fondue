@@ -3,13 +3,13 @@
 import { compileContentModel } from '#/model';
 import { contentChecks } from '#/plugins/ContentChecks/feature';
 import { heading } from '#/plugins/Heading/feature';
-import { mediaImage } from '#/plugins/Image/feature';
+import { image } from '#/plugins/Image/feature';
 import { outline } from '#/plugins/Outline/feature';
-import { formatClear } from '#/plugins/ResetFormatting/feature';
+import { resetFormatting } from '#/plugins/ResetFormatting/feature';
 import { rule } from '#/plugins/Rule/feature';
 import { subscript } from '#/plugins/Subscript/feature';
 import { superscript } from '#/plugins/Superscript/feature';
-import { mediaUpload } from '#/plugins/Upload/feature';
+import { upload } from '#/plugins/Upload/feature';
 
 import { commentFeatures } from './comment';
 
@@ -20,10 +20,10 @@ export const documentFeatures = [
     superscript(),
     heading(),
     rule(),
-    mediaImage(),
-    mediaUpload(),
+    image(),
+    upload(),
     outline(),
-    formatClear(),
+    resetFormatting(),
     contentChecks(),
 ] as const;
 

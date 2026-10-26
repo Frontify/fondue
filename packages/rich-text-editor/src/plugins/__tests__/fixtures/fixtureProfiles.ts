@@ -2,7 +2,7 @@
 
 import { type Feature } from '#/model';
 import { core } from '#/plugins/Core/feature';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 
 import { fixtureBold, fixtureColor, fixtureHeading, fixtureHistory, fixtureItalic } from './features';
 
@@ -18,7 +18,7 @@ export const fixtureProfiles = (): Readonly<Record<string, readonly Feature[]>> 
         fixtureHistory(),
         fixtureBold(),
         fixtureItalic(),
-        links(),
+        link(),
         fixtureColor(),
         fixtureHeading({ defaultLevel: 3 }),
     ],

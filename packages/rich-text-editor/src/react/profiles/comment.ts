@@ -3,17 +3,17 @@
 import { extendPlugin, type RichTextPlugin } from '#/bridge/definePlugin';
 import { type CommandRef } from '#/model';
 import { bulletListPlugin } from '#/plugins/BulletList';
-import { taskListPlugin } from '#/plugins/CheckList';
+import { checkListPlugin } from '#/plugins/CheckList';
 import { codePlugin } from '#/plugins/Code';
 import { codeBlockPlugin } from '#/plugins/CodeBlock';
 import { corePlugin } from '#/plugins/Core';
 import { emojiPlugin } from '#/plugins/Emoji';
 import { listItemPlugin } from '#/plugins/ListItem';
-import { mentionsPlugin } from '#/plugins/Mention';
+import { mentionPlugin } from '#/plugins/Mention';
 import { orderedListPlugin } from '#/plugins/OrderedList';
 import { commentModel } from '#/plugins/profiles/comment';
 import { quotePlugin } from '#/plugins/Quote';
-import { strikePlugin } from '#/plugins/Strikethrough';
+import { strikethroughPlugin } from '#/plugins/Strikethrough';
 
 import { compileEditor } from '../compileEditor';
 import { defineReactPresentation } from '../presentation';
@@ -37,15 +37,15 @@ const withoutModEnter = (unit: RichTextPlugin): RichTextPlugin => {
 export const commentPlugins: readonly RichTextPlugin[] = [
     corePlugin(),
     ...inlinePlugins.slice(1),
-    strikePlugin(),
+    strikethroughPlugin(),
     codePlugin(),
     quotePlugin(),
     codeBlockPlugin(),
     listItemPlugin(),
     bulletListPlugin(),
     orderedListPlugin(),
-    taskListPlugin(),
-    mentionsPlugin(),
+    checkListPlugin(),
+    mentionPlugin(),
     emojiPlugin(),
 ] as const;
 

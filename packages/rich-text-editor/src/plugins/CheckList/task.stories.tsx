@@ -3,11 +3,11 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { corePlugin, defineEditor, modelOf, RichTextEditor, taskListPlugin } from '#/index';
+import { corePlugin, defineEditor, modelOf, RichTextEditor, checkListPlugin } from '#/index';
 import { FEATURE_TOOLBAR } from '#/react/examples/toolbar';
 
 // A feature story installs only its feature and what it requires, which its `feature:` tags name.
-const plugins = [corePlugin(), taskListPlugin()] as const;
+const plugins = [corePlugin(), checkListPlugin()] as const;
 const model = modelOf(plugins, { id: 'story.lists-task', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {

@@ -6,11 +6,11 @@ import { useEffect, useRef } from 'react';
 import { defineEditorPart, defineReactPresentation } from '#/entries/authoring';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON, defineFeature } from '#/model';
-import { bold, code, core, heading, italic, quote, strike, subscript, superscript, underline } from '#/plugins';
+import { bold, code, core, heading, italic, quote, strikethrough, subscript, superscript, underline } from '#/plugins';
 import { fixtureChrome } from '#/plugins/__tests__/fixtures/chrome/feature';
 import { fixtureChromeEditor } from '#/plugins/__tests__/fixtures/chrome/view';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
-import { links } from '#/plugins/Link/feature';
+import { link } from '#/plugins/Link/feature';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
 
@@ -34,13 +34,13 @@ const model = compileContentModel(
         bold(),
         italic(),
         underline(),
-        strike(),
+        strikethrough(),
         code(),
         subscript(),
         superscript(),
         heading(),
         quote(),
-        links(),
+        link(),
         fixtureChrome(),
         altGraphKeys(),
     ],

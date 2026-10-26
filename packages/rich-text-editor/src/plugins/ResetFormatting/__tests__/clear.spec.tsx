@@ -10,7 +10,7 @@ import { bulletList } from '#/plugins/BulletList/feature';
 import { codeBlock } from '#/plugins/CodeBlock/feature';
 import { language } from '#/plugins/Language/feature';
 import { listItem } from '#/plugins/ListItem/feature';
-import { formatClear } from '#/plugins/ResetFormatting/feature';
+import { resetFormatting } from '#/plugins/ResetFormatting/feature';
 import { mountText, para, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
 import { setSelection, typeText } from '#/testing';
 
@@ -122,7 +122,7 @@ const model = () =>
         align(),
         codeBlock(),
         language(),
-        formatClear(),
+        resetFormatting(),
         listItem(),
         bulletList(),
         ...extras(),
@@ -335,7 +335,7 @@ describe('clear formatting of block attributes', () => {
     })();
 
     it('restores each cleared attribute to its declared default', () => {
-        const indented = textModel([...textFeatures(), align(), formatClear(), indent]);
+        const indented = textModel([...textFeatures(), align(), resetFormatting(), indent]);
         const { handle } = mountText({
             model: indented,
             blocks: [

@@ -3,7 +3,7 @@
 import { definePlugin } from '#/bridge/definePlugin';
 
 import { mediaUploadEditor } from './editor';
-import { mediaUpload } from './feature';
+import { upload } from './feature';
 
 /** Cancel and Retry of an image upload, and the upload slot behind images. */
-export const mediaUploadPlugin = definePlugin({ feature: mediaUpload, editor: mediaUploadEditor });
+export const uploadPlugin = definePlugin({ feature: upload, editor: mediaUploadEditor });

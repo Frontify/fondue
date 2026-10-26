@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { compileContentModel } from '#/model';
 import { core } from '#/plugins/Core/feature';
-import { mediaImage } from '#/plugins/Image/feature';
+import { image } from '#/plugins/Image/feature';
 
 import { mediaOf } from '../session/uploadsWiring';
 
@@ -20,7 +20,7 @@ describe('media session', () => {
     });
 
     it('is present when the model installs media.image, with the media types it takes', () => {
-        const model = compileContentModel([core(), mediaImage()], { id: 'test.bold', version: 1 });
+        const model = compileContentModel([core(), image()], { id: 'test.bold', version: 1 });
         const { runtime } = start(stored(para()), { model });
 
         expect(mediaOf(runtime)?.uploads.accepts).toContain('image/png');
