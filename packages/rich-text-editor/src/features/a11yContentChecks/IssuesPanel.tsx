@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, Checkbox, Label } from '@frontify/fondue-components';
+import { Accordion, Badge, Button, Checkbox, Label } from '@frontify/fondue-components';
 import { IconExclamationMarkCircle, IconExclamationMarkTriangle, IconQuestionMarkCircle } from '@frontify/fondue-icons';
 import { type FocusEvent, useId, useRef, useState } from 'react';
 
@@ -25,6 +25,12 @@ const SEVERITY_ICONS = {
     error: IconExclamationMarkTriangle,
     warning: IconExclamationMarkCircle,
     review: IconQuestionMarkCircle,
+} as const;
+
+const SEVERITY_BADGES = {
+    error: { variant: 'negative', emphasis: 'strong' },
+    warning: { variant: 'warning', emphasis: 'strong' },
+    review: { variant: 'default', emphasis: 'weak' },
 } as const;
 
 const SEVERITIES = ['error', 'warning', 'review'] as const;
@@ -55,6 +61,7 @@ const Issue = ({
     const checks = api?.services.checks();
     const titleId = useId();
     const excerptId = useId();
+    const helpRef = useRef<HTMLHeadingElement>(null);
     const { issue, dismissed } = held;
     const repairable = useEditorValue((read) => {
         if (read === undefined || issue.repairCommand === null) {
@@ -103,6 +110,10 @@ const Issue = ({
         });
     };
     const described = excerpt === '' ? titleId : `${titleId} ${excerptId}`;
+    useClientLayoutEffect(() => {
+        // Accordion.Header passes no props to its trigger button.
+        helpRef.current?.querySelector('button')?.setAttribute('aria-describedby', described);
+    }, [described]);
     return (
         <li
             className={styles.issue}
@@ -117,14 +128,14 @@ const Issue = ({
                 }
             }}
         >
-            <p id={titleId} className={styles.title}>
-                <span className={styles.severity}>
+            <div id={titleId} className={styles.title}>
+                <Badge size="small" {...SEVERITY_BADGES[issue.severity]}>
                     <Icon size={16} aria-hidden="true" />
                     {t(SEVERITY_KEYS[issue.severity])}
-                </span>{' '}
+                </Badge>{' '}
                 <span>{t(ruleNameKey(issue.ruleId))}</span> <span className={styles.rule}>({issue.ruleId})</span>
                 {dismissed && <span className={styles.dismissed}> {t('RichTextEditor_checksDismissed')}</span>}
-            </p>
+            </div>
             {excerpt !== '' && (
                 <p id={excerptId} className={styles.excerpt}>
                     <bdi>{excerpt}</bdi>
@@ -157,10 +168,16 @@ const Issue = ({
                     </Button>
                 )}
             </div>
-            <details className={styles.help}>
-                <summary aria-describedby={described}>{t('RichTextEditor_checksHelp')}</summary>
-                <p>{t(ruleHelpKey(issue.ruleId))}</p>
-            </details>
+            <div className={styles.help}>
+                <Accordion.Root border={false} padding="none">
+                    <Accordion.Item value="help">
+                        <Accordion.Header ref={helpRef}>{t('RichTextEditor_checksHelp')}</Accordion.Header>
+                        <Accordion.Content>
+                            <p>{t(ruleHelpKey(issue.ruleId))}</p>
+                        </Accordion.Content>
+                    </Accordion.Item>
+                </Accordion.Root>
+            </div>
         </li>
     );
 };

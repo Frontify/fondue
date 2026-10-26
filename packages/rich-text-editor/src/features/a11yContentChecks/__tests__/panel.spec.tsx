@@ -149,19 +149,41 @@ describe('the issues panel', () => {
         unmount();
     });
 
-    it('offers an expandable explanation of how to decide for each warning and review', () => {
+    it('offers an expandable explanation of how to decide for each warning and review, as a Fondue Accordion trigger', () => {
         const { unmount } = mountChecks({ blocks: [para(link('click here'))] });
 
         const panel = openPanel();
         for (const id of ['link.text-vague:0,0', 'link.purpose-review:0,0', 'sensory.review']) {
-            const details = itemOf(panel, id).querySelector('details');
-            expect(details?.querySelector('summary')).toHaveTextContent('How to decide');
-            expect(details?.open).toBe(false);
+            const trigger = within(itemOf(panel, id)).getByRole('button', { name: 'How to decide' });
+            expect(trigger.closest('[data-test-id="fondue-accordion"]')).not.toBeNull();
+            expect(trigger).toHaveAttribute('aria-expanded', 'false');
+            expect(itemOf(panel, id).querySelector('details')).toBeNull();
         }
-        const help = itemOf(panel, 'link.text-vague:0,0').querySelector('details');
-        fireEvent.click(help?.querySelector('summary') as HTMLElement);
+        const item = itemOf(panel, 'link.text-vague:0,0');
+        const trigger = within(item).getByRole('button', { name: 'How to decide' });
+        fireEvent.click(trigger);
 
-        expect(help).toHaveTextContent('Read the link text alone, as a list of links shows it.');
+        expect(trigger).toHaveAttribute('aria-expanded', 'true');
+        expect(item).toHaveTextContent('Read the link text alone, as a list of links shows it.');
+        unmount();
+    });
+
+    it('shows each severity as a Fondue Badge with its icon and label', () => {
+        const { unmount } = mountChecks({ blocks: [para(link('here')), image('photo')] });
+
+        const panel = openPanel();
+
+        const shown = [
+            ['image.alt-missing:photo', 'Error', 'negative'],
+            ['link.text-vague:0,0', 'Warning', 'warning'],
+            ['sensory.review', 'To review', 'default'],
+        ] as const;
+        for (const [id, label, variant] of shown) {
+            const badge = itemOf(panel, id).querySelector('[data-component="badge"]');
+            expect(badge).toHaveTextContent(label);
+            expect(badge).toHaveAttribute('data-variant', variant);
+            expect(badge?.querySelector('svg')).not.toBeNull();
+        }
         unmount();
     });
 
@@ -327,7 +349,7 @@ describe('the issues panel', () => {
                 within(item).getByRole('button', { name: 'Go to' }),
                 within(item).getByRole('button', { name: 'Fix' }),
                 within(item).getByRole('button', { name: 'Dismiss' }),
-                item.querySelector('summary') as HTMLElement,
+                within(item).getByRole('button', { name: 'How to decide' }),
             ];
             const [first, ...rest] = controls.map((control) => control.getAttribute('aria-describedby'));
             expect(new Set(rest)).toEqual(new Set([first]));

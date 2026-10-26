@@ -170,6 +170,7 @@ test('shows each issue severity by the shape of its icon, which a grayscale scre
 test('opens on its summary heading, lets Tab move through its controls and out, and returns focus to the surface on Escape', async ({
     mount,
     page,
+    browserName,
 }) => {
     await mount(<ChecksProbe />);
     await ready(page);
@@ -177,12 +178,17 @@ test('opens on its summary heading, lets Tab move through its controls and out, 
 
     await page.getByRole('button', { name: 'Accessibility checks' }).click();
     await expect(panelOf(page).getByRole('heading', { level: 2 })).toBeFocused();
-    const controls = await panelOf(page).locator('button:visible, summary:visible').count();
+    const controls = await panelOf(page).locator('button:visible').count();
     const focusInPanel = () => panelOf(page).evaluate((panel) => panel.contains(panel.ownerDocument.activeElement));
+    // Safari's Tab skips buttons, which Option+Tab reaches.
+    let tab = 'Tab';
+    if (browserName === 'webkit') {
+        tab = 'Alt+Tab';
+    }
     let presses = 0;
     let inside = true;
     while (inside && presses <= controls) {
-        await page.keyboard.press('Tab');
+        await page.keyboard.press(tab);
         presses += 1;
         inside = await focusInPanel();
     }
@@ -195,6 +201,30 @@ test('opens on its summary heading, lets Tab move through its controls and out, 
 
     await expect(panelOf(page)).toHaveCount(0);
     await expect(surface).toBeFocused();
+});
+
+test('expands the help of an issue with Enter and Space on its Accordion trigger, and shows the severity as a Badge', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ChecksProbe />);
+    await ready(page);
+    await page.getByRole('button', { name: 'Accessibility checks' }).click();
+    const issue = issueOf(page, 'link.text-vague:0,1');
+    const trigger = issue.getByRole('button', { name: 'How to decide' });
+    await expect(issue.locator('[data-component="badge"]')).toHaveText('Warning');
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    await expect(trigger).toHaveAttribute('aria-describedby', /\S+ \S+/);
+
+    await trigger.focus();
+    await page.keyboard.press('Enter');
+
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    await expect(issue.getByText('Read the link text alone')).toBeVisible();
+
+    await page.keyboard.press('Space');
+
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 });
 
 test('prints neither the issues panel nor the issue marks', async ({ mount, page }) => {

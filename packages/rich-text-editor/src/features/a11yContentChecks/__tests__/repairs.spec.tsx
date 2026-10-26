@@ -53,7 +53,8 @@ const listed = () =>
         .getAllByRole('listitem')
         .map((item) => item.getAttribute('data-rte-issue-id'));
 
-const summary = () => within(screen.getByRole('region', { name: 'Accessibility checks' })).getByRole('heading');
+const summary = () =>
+    within(screen.getByRole('region', { name: 'Accessibility checks' })).getByRole('heading', { level: 2 });
 
 /** Focuses the issue's Fix button and presses it, as the keyboard does. */
 const fix = (id: string) => {
