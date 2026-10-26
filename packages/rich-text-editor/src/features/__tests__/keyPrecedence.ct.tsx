@@ -3,6 +3,8 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
+import { frames } from '#/react/__tests__/fixtures/overlayHarness';
+
 import { KeyProbe, type KeyProbeProps } from './fixtures/KeyProbe';
 
 type Probe = NonNullable<Window['keyProbe']>;
@@ -30,6 +32,8 @@ const ready = async (page: Page) => {
 /** Focuses the surface with the caret `offset` characters into the first match of `text`. */
 const caretIn = async (page: Page, text: string, offset = text.length) => {
     await surfaceOf(page).focus();
+    // ProseMirror rewrites the DOM selection 20 ms after focus, which would undo a native key like Shift+Home pressed first.
+    await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 20)));
     await page.evaluate(
         ([after, at]) => {
             const probe = window.keyProbe as Probe;
@@ -561,6 +565,8 @@ const OVERLAPS: readonly Case[] = [
             await caretIn(page, 'Hello');
             await page.keyboard.press('Shift+Home');
             await expect(bubbleOf(page)).toBeVisible();
+            // Radix gives the bubble the Escape key a few renders after it shows, so until then the host Dialog gets it.
+            await frames(page);
             await page.keyboard.press('Escape');
 
             await expect(bubbleOf(page)).toBeHidden();

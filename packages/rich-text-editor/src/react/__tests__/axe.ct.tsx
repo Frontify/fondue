@@ -22,6 +22,7 @@ import {
     surfaceOf,
     toolbarOf,
 } from './fixtures/layout';
+import { stylesApplied } from './fixtures/overlayHarness';
 import { ProfileProbe } from './fixtures/ProfileProbe';
 import { StoryProbe } from './fixtures/StoryProbe';
 
@@ -45,6 +46,8 @@ const violations = async (
     page: Page,
     intended: readonly { readonly rule: string; readonly selector: string }[] = [],
 ) => {
+    // WebKit keeps a lazy chunk's stylesheet out of the cascade while others load, so axe reads unstyled markup before.
+    await stylesApplied(page);
     // Overlays fade in, so axe reads them once their finite animations have ended.
     await page.evaluate(() =>
         Promise.allSettled(
