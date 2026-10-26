@@ -10,7 +10,7 @@ const DOM_GLOBALS = ['document', 'window', 'navigator'] as const;
 const saved = DOM_GLOBALS.map((name) => [name, Object.getOwnPropertyDescriptor(globalThis, name)] as const);
 
 const load = async () => ({
-    features: await import('#/features'),
+    features: await import('#/plugins'),
     index: await import('#/index'),
     model: await import('#/model'),
     testing: await import('#/testing'),

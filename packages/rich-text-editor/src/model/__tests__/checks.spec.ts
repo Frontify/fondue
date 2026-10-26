@@ -4,8 +4,6 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { contentChecks, core, fontColor, heading, language, links, mediaImage } from '#/features';
-import { CONTENT_RULE_IDS } from '#/features/__tests__/fixtures/contentRules';
 import { deCH } from '#/locales/de-CH';
 import { enUS } from '#/locales/en-US';
 import {
@@ -17,6 +15,8 @@ import {
     type RichTextDocument,
 } from '#/model';
 import { GENERIC_IMAGE_WORDS, VAGUE_LINK_TEXTS } from '#/model/checks';
+import { contentChecks, core, fontColor, heading, language, links, mediaImage } from '#/plugins';
+import { CONTENT_RULE_IDS } from '#/plugins/__tests__/fixtures/contentRules';
 
 const stored = (blocks: readonly ContentNodeJSON[]) =>
     ({

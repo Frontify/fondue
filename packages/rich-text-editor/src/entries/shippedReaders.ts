@@ -7,7 +7,7 @@ type ViteImportMeta = ImportMeta & {
 };
 
 // Each feature reader exports its `readerFeature` ID and its renderers, whose export name is the feature's own.
-const readerModules = (import.meta as ViteImportMeta).glob('../features/*/reader.tsx', { eager: true });
+const readerModules = (import.meta as ViteImportMeta).glob('../plugins/*/reader.tsx', { eager: true });
 
 /** The reader overrides of the shipped features by feature ID; a feature's own `defineReaderFeature` replaces them. */
 export const READER_OVERRIDES = Object.fromEntries(

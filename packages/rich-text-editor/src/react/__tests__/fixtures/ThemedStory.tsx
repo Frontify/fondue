@@ -2,7 +2,7 @@
 
 import { composeStory } from '@storybook/react-vite';
 
-import * as links from '#/features/links/links.stories';
+import * as links from '#/plugins/Link/links.stories';
 import { ThemeProviderWrapper } from '#storybook/components/StoryWithTheme';
 
 const Links = composeStory(links.Default, links.default);

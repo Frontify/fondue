@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { documentModel } from '#/features';
 import { RichTextEditor } from '#/index';
 import { createEmptyDocument } from '#/model';
+import { documentModel } from '#/plugins';
 
 const defaultValue = { documentId: 'document-1', revision: null, document: createEmptyDocument(documentModel) };
 

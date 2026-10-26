@@ -3,8 +3,8 @@
 import { EditorState } from 'prosemirror-state';
 import { describe, expect, it, vi } from 'vitest';
 
-import { core, mediaImage } from '#/features';
 import { compileContentModel, type Feature, type ResourceLimits } from '#/model';
+import { core, mediaImage } from '#/plugins';
 import { compileDefinition } from '#/runtime/definition';
 
 import { DEFAULT_ACCEPT_TYPES, type UploadEvent, type UploadServiceLike } from '../../capabilities/media/uploads';

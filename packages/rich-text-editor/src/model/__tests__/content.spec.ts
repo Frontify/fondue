@@ -6,6 +6,7 @@ import { readFileSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
+import { type JsonObject } from '#/model';
 import {
     blockquote,
     bulletList,
@@ -27,9 +28,8 @@ import {
     taskItem,
     taskList,
     text,
-} from '#/features/__tests__/fixtures/documents';
-import { vocabularyModel } from '#/features/__tests__/fixtures/vocabulary';
-import { type JsonObject } from '#/model';
+} from '#/plugins/__tests__/fixtures/documents';
+import { vocabularyModel } from '#/plugins/__tests__/fixtures/vocabulary';
 
 import { type TreeNode } from '../content';
 import { decodeToTree } from '../decode';

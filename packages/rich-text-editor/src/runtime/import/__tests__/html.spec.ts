@@ -8,11 +8,11 @@ import { JSDOM } from 'jsdom';
 import { describe, expect, it } from 'vitest';
 
 import { createCodecs } from '#/codecs';
-import { htmlFeatures, htmlModel } from '#/features/__tests__/fixtures/html';
-import { spotlight } from '#/features/__tests__/fixtures/spotlight/feature';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { core } from '#/features/core/feature';
 import { compileContentModel, defineFeature, type RichTextDocument } from '#/model';
+import { htmlFeatures, htmlModel } from '#/plugins/__tests__/fixtures/html';
+import { spotlight } from '#/plugins/__tests__/fixtures/spotlight/feature';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { core } from '#/plugins/Core/feature';
 import { defineEditor } from '#/react/define';
 
 import { fromHTML } from '../fromHtml';

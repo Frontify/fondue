@@ -8,6 +8,16 @@ import fc from 'fast-check';
 import { createElement, type ReactElement } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
+import { deDE } from '#/locales/de-DE';
+import {
+    compileContentModel,
+    decodeDocument,
+    defineFeature,
+    type Diagnostic,
+    type JsonObject,
+    type JsonValue,
+    type RichTextDocument,
+} from '#/model';
 import {
     blockquote,
     bulletList,
@@ -23,24 +33,14 @@ import {
     rule,
     table,
     text,
-} from '#/features/__tests__/fixtures/documents';
+} from '#/plugins/__tests__/fixtures/documents';
 import {
     vocabularyBlocks,
     vocabularyLink,
     vocabularyMarks,
     vocabularyMention,
-} from '#/features/__tests__/fixtures/vocabulary';
-import { core } from '#/features/core/feature';
-import { deDE } from '#/locales/de-DE';
-import {
-    compileContentModel,
-    decodeDocument,
-    defineFeature,
-    type Diagnostic,
-    type JsonObject,
-    type JsonValue,
-    type RichTextDocument,
-} from '#/model';
+} from '#/plugins/__tests__/fixtures/vocabulary';
+import { core } from '#/plugins/Core/feature';
 
 import { defineReaderFeature, type ReaderNodeProps } from '../define';
 

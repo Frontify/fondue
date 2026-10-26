@@ -6,8 +6,8 @@ import { type Page } from '@playwright/test';
 
 import { AXE_TAGS } from '#/testing/conformance/axeTags';
 
-import { ImageProbe } from '../../features/mediaImage/__tests__/fixtures/ImageProbe';
-import { UploadProbe } from '../../features/mediaUpload/__tests__/fixtures/UploadProbe';
+import { ImageProbe } from '../../plugins/Image/__tests__/fixtures/ImageProbe';
+import { UploadProbe } from '../../plugins/Upload/__tests__/fixtures/UploadProbe';
 
 import {
     afterPlay,

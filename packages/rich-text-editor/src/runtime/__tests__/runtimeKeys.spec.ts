@@ -4,10 +4,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { isApplePlatform } from '#/bridge/platform';
 import { defineEditorPart, type EditorApi } from '#/bridge/plugin';
-import { fixtureHeadingSet } from '#/features/__tests__/fixtures/features';
-import { core } from '#/features/core/feature';
-import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, defineFeature, type FeatureDeclaration } from '#/model';
+import { fixtureHeadingSet } from '#/plugins/__tests__/fixtures/features';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
 import { pressKey, setSelection } from '#/testing';
 import { bindingHere } from '#/ui/shortcuts';
 

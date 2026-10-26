@@ -1,19 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { extendPlugin, type RichTextPlugin } from '#/bridge/definePlugin';
-import { codeBlockPlugin } from '#/features/blocksCode';
-import { quotePlugin } from '#/features/blocksQuote';
-import { corePlugin } from '#/features/core';
-import { emojiPlugin } from '#/features/emoji';
-import { bulletListPlugin } from '#/features/listsBullet';
-import { listItemPlugin } from '#/features/listsItem';
-import { orderedListPlugin } from '#/features/listsOrdered';
-import { taskListPlugin } from '#/features/listsTask';
-import { codePlugin } from '#/features/marksCode';
-import { strikePlugin } from '#/features/marksStrike';
-import { mentionsPlugin } from '#/features/mentions';
-import { commentModel } from '#/features/profiles/comment';
 import { type CommandRef } from '#/model';
+import { bulletListPlugin } from '#/plugins/BulletList';
+import { taskListPlugin } from '#/plugins/CheckList';
+import { codePlugin } from '#/plugins/Code';
+import { codeBlockPlugin } from '#/plugins/CodeBlock';
+import { corePlugin } from '#/plugins/Core';
+import { emojiPlugin } from '#/plugins/Emoji';
+import { listItemPlugin } from '#/plugins/ListItem';
+import { mentionsPlugin } from '#/plugins/Mention';
+import { orderedListPlugin } from '#/plugins/OrderedList';
+import { commentModel } from '#/plugins/profiles/comment';
+import { quotePlugin } from '#/plugins/Quote';
+import { strikePlugin } from '#/plugins/Strikethrough';
 
 import { compileEditor } from '../compileEditor';
 import { defineReactPresentation } from '../presentation';

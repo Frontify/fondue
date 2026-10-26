@@ -5,12 +5,12 @@ import { act, render, screen } from '@testing-library/react';
 import { createRef, StrictMode } from 'react';
 import { vi } from 'vitest';
 
-import { fixtureItalic } from '#/features/__tests__/fixtures/features';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { core } from '#/features/core/feature';
-import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, type ContentNodeJSON, type JsonValue } from '#/model';
 import { type LoadedDocument } from '#/persistence/types';
+import { fixtureItalic } from '#/plugins/__tests__/fixtures/features';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
 import { liveResources, type RuntimeHandle } from '#/runtime/runtime';
 
 import { defineEditor } from '../../define';

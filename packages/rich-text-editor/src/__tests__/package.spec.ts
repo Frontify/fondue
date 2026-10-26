@@ -185,8 +185,10 @@ describe('package manifest and built output', () => {
                         .replace(/\.scss$/, '.scss.js'),
                 ),
             'package.json.js',
-            // The `./html` entry keeps its output path while its source lives in runtime/import.
+            // The `./html` and `./features` entries keep their output paths while their sources live in runtime/import
+            // and plugins.
             'html/index.js',
+            'features/index.js',
         ]);
         expect(builtFiles.some((file) => file.endsWith('.cjs'))).toBe(false);
         expect(jsFiles.filter((file) => !sourceModules.has(file))).toEqual([]);
@@ -256,7 +258,7 @@ describe('package manifest and built output', () => {
         './codecs': [ENGINE_PACKAGES, DOM_PACKAGES],
         './html': [HTML_FORBIDDEN],
     };
-    // `./reader` is built from the module that wires the shipped feature readers, outside `reader/` and `features/`.
+    // `./reader` is built from the module that wires the shipped feature readers, outside `reader/` and `plugins/`.
     const HEADLESS_FILES: Record<string, string> = { './reader': 'entries/reader.js' };
     // The `./html` entry always loaded the importer, so `runtime/import` is no editor code.
     const EDITOR_FILES = /^(?:runtime(?!\/(?:definition|import)\/)|bridge|react|ui)\//;

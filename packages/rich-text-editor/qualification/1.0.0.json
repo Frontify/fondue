@@ -66,31 +66,31 @@
         {
             "build": "inline-profile",
             "budgetBytes": 243000,
-            "test": "src/features/profiles/__tests__/profilesBundleSize.spec.ts",
+            "test": "src/plugins/profiles/__tests__/profilesBundleSize.spec.ts",
             "passed": true
         },
         {
             "build": "comment-profile",
             "budgetBytes": 243000,
-            "test": "src/features/profiles/__tests__/profilesBundleSize.spec.ts",
+            "test": "src/plugins/profiles/__tests__/profilesBundleSize.spec.ts",
             "passed": true
         },
         {
             "build": "document-profile",
             "budgetBytes": 245000,
-            "test": "src/features/profiles/__tests__/profilesBundleSize.spec.ts",
+            "test": "src/plugins/profiles/__tests__/profilesBundleSize.spec.ts",
             "passed": true
         },
         {
             "build": "brand-document-profile",
             "budgetBytes": 245000,
-            "test": "src/features/profiles/__tests__/profilesBundleSize.spec.ts",
+            "test": "src/plugins/profiles/__tests__/profilesBundleSize.spec.ts",
             "passed": true
         },
         {
             "build": "./features",
             "budgetBytes": 7000,
-            "test": "src/features/__tests__/bundleSize.spec.ts",
+            "test": "src/plugins/__tests__/bundleSize.spec.ts",
             "passed": true
         },
         {

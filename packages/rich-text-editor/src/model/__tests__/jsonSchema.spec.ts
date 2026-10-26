@@ -8,6 +8,14 @@ import Ajv2020, { type ValidateFunction } from 'ajv/dist/2020';
 import { describe, expect, it } from 'vitest';
 
 import {
+    type AttributeDeclarations,
+    defineFeature,
+    type Feature,
+    type JsonObject,
+    toJsonSchema,
+    type ValueDeclaration,
+} from '#/model';
+import {
     blockquote,
     codeBlock,
     doc,
@@ -19,16 +27,8 @@ import {
     node,
     paragraph,
     text,
-} from '#/features/__tests__/fixtures/documents';
-import { vocabularyFeatures, vocabularyModel } from '#/features/__tests__/fixtures/vocabulary';
-import {
-    type AttributeDeclarations,
-    defineFeature,
-    type Feature,
-    type JsonObject,
-    toJsonSchema,
-    type ValueDeclaration,
-} from '#/model';
+} from '#/plugins/__tests__/fixtures/documents';
+import { vocabularyFeatures, vocabularyModel } from '#/plugins/__tests__/fixtures/vocabulary';
 
 import { attributesOf, compiledModel } from '../compile';
 import { featureInternals } from '../feature';

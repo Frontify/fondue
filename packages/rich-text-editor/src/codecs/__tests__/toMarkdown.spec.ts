@@ -8,6 +8,8 @@ import { micromark } from 'micromark';
 import { gfm, gfmHtml } from 'micromark-extension-gfm';
 import { describe, expect, it } from 'vitest';
 
+import { type JsonValue, type RichTextDocument } from '#/model';
+import { decodeToTree, encodeTree } from '#/model/internal';
 import {
     blockquote,
     bulletList,
@@ -25,10 +27,8 @@ import {
     taskItem,
     taskList,
     text,
-} from '#/features/__tests__/fixtures/documents';
-import { fcSettings, seeded } from '#/features/__tests__/fixtures/generated';
-import { type JsonValue, type RichTextDocument } from '#/model';
-import { decodeToTree, encodeTree } from '#/model/internal';
+} from '#/plugins/__tests__/fixtures/documents';
+import { fcSettings, seeded } from '#/plugins/__tests__/fixtures/generated';
 
 import { semanticModel } from '../../reader/__tests__/fixtures/semantic';
 

@@ -2,9 +2,9 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { core } from '#/features/core/feature';
 import { compileContentModel, type Diagnostic } from '#/model';
 import { decodeToTree, limitsOf } from '#/model/internal';
+import { core } from '#/plugins/Core/feature';
 import { compileDefinition } from '#/runtime/definition';
 import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';
 

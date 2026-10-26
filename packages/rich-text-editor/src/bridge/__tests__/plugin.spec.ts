@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { core } from '#/features/core/feature';
+import { core } from '#/plugins/Core/feature';
 
 import { defineEditorPart, partWithOptions } from '../plugin';
 

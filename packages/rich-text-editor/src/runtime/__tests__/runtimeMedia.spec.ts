@@ -2,9 +2,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { core } from '#/features/core/feature';
-import { mediaImage } from '#/features/mediaImage/feature';
 import { compileContentModel } from '#/model';
+import { core } from '#/plugins/Core/feature';
+import { mediaImage } from '#/plugins/Image/feature';
 
 import { mediaOf } from '../session/uploadsWiring';
 

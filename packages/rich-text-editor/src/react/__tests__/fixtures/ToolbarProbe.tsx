@@ -5,14 +5,14 @@ import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { AnnouncerContext } from '#/bridge/announcer';
 import { defineReactPresentation } from '#/entries/authoring';
-import { bold, core } from '#/features';
-import { fixtureCodeBlock } from '#/features/__tests__/fixtures/code-block/feature';
-import { fixtureItalic, fixtureList, fixtureToolbar } from '#/features/__tests__/fixtures/features';
-import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
-import { links } from '#/features/links/feature';
 import { defineEditor, type EditorHandle, type ReactPresentation, RichTextEditor } from '#/index';
 import { enUS } from '#/locales/en-US';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
+import { bold, core } from '#/plugins';
+import { fixtureCodeBlock } from '#/plugins/__tests__/fixtures/code-block/feature';
+import { fixtureItalic, fixtureList, fixtureToolbar } from '#/plugins/__tests__/fixtures/features';
+import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
+import { links } from '#/plugins/Link/feature';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
 

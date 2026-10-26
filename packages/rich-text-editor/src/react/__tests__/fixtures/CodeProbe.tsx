@@ -3,12 +3,12 @@
 import { ThemeProvider } from '@frontify/fondue-components';
 import { useEffect, useRef } from 'react';
 
-import { codeBlock, core } from '#/features';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { bulletList } from '#/features/listsBullet/feature';
-import { listItem } from '#/features/listsItem/feature';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
+import { codeBlock, core } from '#/plugins';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { bulletList } from '#/plugins/BulletList/feature';
+import { listItem } from '#/plugins/ListItem/feature';
 import { setSelection } from '#/testing';
 
 const model = compileContentModel([core(), listItem(), bulletList(), codeBlock()], {

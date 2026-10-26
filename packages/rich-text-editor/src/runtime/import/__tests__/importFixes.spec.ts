@@ -5,10 +5,10 @@
 import { JSDOM } from 'jsdom';
 import { describe, expect, it } from 'vitest';
 
-import { htmlModel } from '#/features/__tests__/fixtures/html';
-import { core } from '#/features/core/feature';
-import { links } from '#/features/links/feature';
 import { compileContentModel, defaultLimits } from '#/model';
+import { htmlModel } from '#/plugins/__tests__/fixtures/html';
+import { core } from '#/plugins/Core/feature';
+import { links } from '#/plugins/Link/feature';
 import { buildSchema } from '#/runtime/definition/schema';
 import { NO_COLORS } from '#/runtime/import/colors';
 import { importHtml } from '#/runtime/import/html';

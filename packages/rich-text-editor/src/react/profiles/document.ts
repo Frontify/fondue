@@ -1,17 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { extendPlugin, type RichTextPlugin } from '#/bridge/definePlugin';
-import { contentChecksPlugin } from '#/features/a11yContentChecks';
-import { headingPlugin } from '#/features/blocksHeading';
-import { rulePlugin } from '#/features/blocksRule';
-import { formatClearPlugin } from '#/features/formatClear';
-import { subscriptPlugin } from '#/features/marksSubscript';
-import { superscriptPlugin } from '#/features/marksSuperscript';
-import { mediaImagePlugin } from '#/features/mediaImage';
-import { mediaUploadPlugin } from '#/features/mediaUpload';
-import { outlinePlugin } from '#/features/navOutline';
-import { documentModel } from '#/features/profiles/document';
 import { type CommandRef } from '#/model';
+import { contentChecksPlugin } from '#/plugins/ContentChecks';
+import { headingPlugin } from '#/plugins/Heading';
+import { mediaImagePlugin } from '#/plugins/Image';
+import { outlinePlugin } from '#/plugins/Outline';
+import { documentModel } from '#/plugins/profiles/document';
+import { formatClearPlugin } from '#/plugins/ResetFormatting';
+import { rulePlugin } from '#/plugins/Rule';
+import { subscriptPlugin } from '#/plugins/Subscript';
+import { superscriptPlugin } from '#/plugins/Superscript';
+import { mediaUploadPlugin } from '#/plugins/Upload';
 
 import { compileEditor } from '../compileEditor';
 import { defineReactPresentation } from '../presentation';

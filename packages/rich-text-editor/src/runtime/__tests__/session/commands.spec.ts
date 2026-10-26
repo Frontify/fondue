@@ -3,8 +3,8 @@
 import { EditorState, TextSelection, type Transaction } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
-import { core } from '#/features/core/feature';
 import { compileContentModel, type Diagnostic } from '#/model';
+import { core } from '#/plugins/Core/feature';
 import { compileDefinition, type EngineCommand } from '#/runtime/definition';
 
 import { createBusy } from '../../session/busy';

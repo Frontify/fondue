@@ -15,7 +15,7 @@ import {
     styledDocument,
     styledHeading,
     styleModel,
-} from '#/features/__tests__/fixtures/styles';
+} from '#/plugins/__tests__/fixtures/styles';
 import { renderReader } from '#/reader/__tests__/helpers/helpers';
 
 const model = styleModel();

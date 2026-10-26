@@ -5,10 +5,10 @@ import { createRef, Profiler, useEffect, useLayoutEffect, useRef, useState } fro
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useEditorSelection } from '#/bridge/hooks';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { core } from '#/features/core/feature';
-import { links } from '#/features/links/feature';
 import { compileContentModel, type Diagnostic } from '#/model';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { core } from '#/plugins/Core/feature';
+import { links } from '#/plugins/Link/feature';
 import { type RuntimeHandle } from '#/runtime/runtime';
 import { type CommandResult } from '#/runtime/types';
 import { setSelection, typeText } from '#/testing';

@@ -5,10 +5,10 @@ import { createRef, Profiler, useReducer } from 'react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import { useCommandQuery, useEditorSelection } from '#/bridge/hooks';
-import { featuresById } from '#/features';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
+import { featuresById } from '#/plugins';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { runtimeOf } from '#/runtime/runtime';
 
 import { PERF_FEATURES, perfDocument } from '../../model/__tests__/fixtures/perf/documents';

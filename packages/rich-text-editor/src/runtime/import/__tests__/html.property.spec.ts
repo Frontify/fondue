@@ -7,9 +7,6 @@ import { JSDOM } from 'jsdom';
 import { describe, expect, it } from 'vitest';
 
 import { createCodecs } from '#/codecs';
-import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/features';
-import { storedIn } from '#/features/__tests__/fixtures/documents';
-import { fcSettings, seeded } from '#/features/__tests__/fixtures/generated';
 import {
     type ContentNodeJSON,
     createEmptyDocument,
@@ -19,6 +16,9 @@ import {
 } from '#/model';
 import { canonicalize, type JsonNode, modelDocumentArb, TEXT_UNITS } from '#/model/__tests__/helpers/documents';
 import { compiledModel } from '#/model/internal';
+import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/plugins';
+import { storedIn } from '#/plugins/__tests__/fixtures/documents';
+import { fcSettings, seeded } from '#/plugins/__tests__/fixtures/generated';
 import { shipped as brandDocumentProfile } from '#/react/profiles/brandDocument';
 import { shipped as commentProfile } from '#/react/profiles/comment';
 import { shipped as documentProfile } from '#/react/profiles/document';

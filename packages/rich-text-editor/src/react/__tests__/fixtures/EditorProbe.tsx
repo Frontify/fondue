@@ -6,12 +6,6 @@ import { createPortal } from 'react-dom';
 
 import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
-import { bold, core } from '#/features';
-import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
-import { fixtureHeadingSet, fixtureInputRules, fixtureItalic } from '#/features/__tests__/fixtures/features';
-import { fixtureProfiles } from '#/features/__tests__/fixtures/profiles';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { links } from '#/features/links/feature';
 import {
     type CompiledEditorDefinition,
     defineEditor,
@@ -23,6 +17,12 @@ import {
     useRichTextFormField,
 } from '#/index';
 import { compileContentModel, type ContentModel, type ContentNodeJSON } from '#/model';
+import { bold, core } from '#/plugins';
+import { fixtureChrome } from '#/plugins/__tests__/fixtures/chrome/feature';
+import { fixtureHeadingSet, fixtureInputRules, fixtureItalic } from '#/plugins/__tests__/fixtures/features';
+import { fixtureProfiles } from '#/plugins/__tests__/fixtures/profiles';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { links } from '#/plugins/Link/feature';
 import { undoDepth } from '#/runtime/history';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
 import { createFakePersistenceService, setSelection } from '#/testing';

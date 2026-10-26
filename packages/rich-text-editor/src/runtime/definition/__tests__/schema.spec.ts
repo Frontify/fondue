@@ -3,10 +3,10 @@
 import { DOMSerializer } from 'prosemirror-model';
 import { describe, expect, it } from 'vitest';
 
-import { fixtureBold, fixtureColor } from '#/features/__tests__/fixtures/features';
-import { core } from '#/features/core/feature';
-import { links } from '#/features/links/feature';
 import { compileContentModel } from '#/model';
+import { fixtureBold, fixtureColor } from '#/plugins/__tests__/fixtures/features';
+import { core } from '#/plugins/Core/feature';
+import { links } from '#/plugins/Link/feature';
 
 import { buildSchema } from '../schema';
 

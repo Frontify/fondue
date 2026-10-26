@@ -4,10 +4,10 @@ import { ThemeProvider } from '@frontify/fondue-components';
 import { useEffect, useRef, useState } from 'react';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { core, emoji } from '#/features';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextLocale } from '#/model';
+import { core, emoji } from '#/plugins';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 
 const model = compileContentModel([core(), emoji()], { id: 'test.suggestions-ct', version: 1 });
 const definition = defineEditor({ id: 'test.suggestions-ct', model, plugins: unitsOf(model) });

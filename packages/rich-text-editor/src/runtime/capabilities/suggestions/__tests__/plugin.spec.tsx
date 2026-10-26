@@ -5,12 +5,12 @@ import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { defineEditorPart } from '#/entries/authoring';
-import { code, codeBlock, core, emoji } from '#/features';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { type EmojiEntry } from '#/features/emoji/data';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { deDE } from '#/locales/de-DE';
 import { type ContentNodeJSON } from '#/model';
+import { code, codeBlock, core, emoji } from '#/plugins';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { type EmojiEntry } from '#/plugins/Emoji/data';
 import { mountProfile } from '#/react/__tests__/fixtures/profiles';
 import { mountText, para, storedIn, text, textModel } from '#/react/__tests__/fixtures/text';
 import { runtimeOf } from '#/runtime/runtime';
@@ -33,7 +33,7 @@ type EmojiModule = {
     searchEmoji: (entries: readonly EmojiEntry[], query: string, limit: number) => readonly EmojiEntry[];
 };
 
-vi.mock('#/features/emoji/data', async (importOriginal) => {
+vi.mock('#/plugins/Emoji/data', async (importOriginal) => {
     const actual = (await importOriginal()) as EmojiModule;
 
     return {

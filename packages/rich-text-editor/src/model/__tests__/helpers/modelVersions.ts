@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { core } from '#/features/core/feature';
 import {
     compileContentModel,
     type ContentModel,
@@ -11,6 +10,7 @@ import {
     type ModelRef,
     toJsonSchema,
 } from '#/model';
+import { core } from '#/plugins/Core/feature';
 
 import { compiledModel } from '../../compile';
 import { canonicalJson, sha256 } from '../../hash';

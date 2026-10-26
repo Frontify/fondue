@@ -3,14 +3,14 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
 import { definePlugin, modelOf, type RichTextPlugin } from '#/bridge/definePlugin';
-import { core } from '#/features';
-import { corePlugin } from '#/features/core';
-import { boldPlugin } from '#/features/marksBold';
-import { boldEditor } from '#/features/marksBold/editor';
-import { bold } from '#/features/marksBold/feature';
-import { italicPlugin } from '#/features/marksItalic';
-import { italic } from '#/features/marksItalic/feature';
 import { compileContentModel, defineFeature, DefinitionError } from '#/model';
+import { core } from '#/plugins';
+import { boldPlugin } from '#/plugins/Bold';
+import { boldEditor } from '#/plugins/Bold/editor';
+import { bold } from '#/plugins/Bold/feature';
+import { corePlugin } from '#/plugins/Core';
+import { italicPlugin } from '#/plugins/Italic';
+import { italic } from '#/plugins/Italic/feature';
 
 import { pluginsOf, readersOf } from '../compileEditor';
 import { defineEditor } from '../define';

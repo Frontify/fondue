@@ -5,9 +5,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 
-import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/features';
-import { storedIn } from '#/features/__tests__/fixtures/documents';
-import { fcSettings, seeded } from '#/features/__tests__/fixtures/generated';
 import {
     type CapabilityRef,
     type ContentModel,
@@ -18,6 +15,9 @@ import {
     type ResourceLimits,
 } from '#/model';
 import { compiledModel } from '#/model/compile';
+import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/plugins';
+import { storedIn } from '#/plugins/__tests__/fixtures/documents';
+import { fcSettings, seeded } from '#/plugins/__tests__/fixtures/generated';
 import { longestAttributeValue } from '#/react/compileEditor';
 
 import { decodeToTree } from '../decode';

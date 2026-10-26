@@ -5,9 +5,10 @@ import { AllSelection, Selection } from 'prosemirror-state';
 import { createRef } from 'react';
 import { vi } from 'vitest';
 
-import { doc, envelope, paragraph, text } from '#/features/__tests__/fixtures/documents';
-import { fixtureMedia } from '#/features/__tests__/fixtures/features';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
+import { compileContentModel, type ContentModel, type Diagnostic, type JsonValue, type ResourceLimits } from '#/model';
+import { doc, envelope, paragraph, text } from '#/plugins/__tests__/fixtures/documents';
+import { fixtureMedia } from '#/plugins/__tests__/fixtures/features';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import {
     vocabularyAlign,
     vocabularyBlocks,
@@ -18,9 +19,8 @@ import {
     vocabularyMention,
     vocabularyStyles,
     vocabularyTables,
-} from '#/features/__tests__/fixtures/vocabulary';
-import { core } from '#/features/core/feature';
-import { compileContentModel, type ContentModel, type Diagnostic, type JsonValue, type ResourceLimits } from '#/model';
+} from '#/plugins/__tests__/fixtures/vocabulary';
+import { core } from '#/plugins/Core/feature';
 import { defineEditor, defineReactPresentation } from '#/react/define';
 import { RichTextEditor } from '#/react/RichTextEditor';
 import { type EditorHandle } from '#/react/types';

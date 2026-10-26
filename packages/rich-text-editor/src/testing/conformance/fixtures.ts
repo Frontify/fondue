@@ -1,36 +1,36 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import checks from '#/features/a11yContentChecks/fixtures/checks.json';
-import aligned from '#/features/blocksAlign/fixtures/aligned.json';
-import code from '#/features/blocksCode/fixtures/code.json';
-import headings from '#/features/blocksHeading/fixtures/headings.json';
-import quote from '#/features/blocksQuote/fixtures/quote.json';
-import rules from '#/features/blocksRule/fixtures/rules.json';
-import paragraphs from '#/features/core/fixtures/paragraphs.json';
-import emoji from '#/features/emoji/fixtures/emoji.json';
-import clear from '#/features/formatClear/fixtures/clear.json';
-import typography from '#/features/inputRules/fixtures/typography.json';
-import columns from '#/features/layoutColumns/fixtures/columns.json';
-import links from '#/features/links/fixtures/links.json';
-import bullets from '#/features/listsBullet/fixtures/bullets.json';
-import items from '#/features/listsItem/fixtures/items.json';
-import ordered from '#/features/listsOrdered/fixtures/ordered.json';
-import tasks from '#/features/listsTask/fixtures/tasks.json';
-import bold from '#/features/marksBold/fixtures/bold.json';
-import inlineCode from '#/features/marksCode/fixtures/code.json';
-import colors from '#/features/marksFontColor/fixtures/colors.json';
-import italic from '#/features/marksItalic/fixtures/italic.json';
-import language from '#/features/marksLanguage/fixtures/language.json';
-import strike from '#/features/marksStrike/fixtures/strike.json';
-import subscript from '#/features/marksSubscript/fixtures/subscript.json';
-import superscript from '#/features/marksSuperscript/fixtures/superscript.json';
-import underline from '#/features/marksUnderline/fixtures/underline.json';
-import images from '#/features/mediaImage/fixtures/images.json';
-import uploaded from '#/features/mediaUpload/fixtures/uploaded.json';
-import mentions from '#/features/mentions/fixtures/mentions.json';
-import outlineDocument from '#/features/navOutline/fixtures/outline.json';
-import styles from '#/features/stylesBrand/fixtures/styles.json';
 import { type RichTextDocument } from '#/model';
+import aligned from '#/plugins/Align/fixtures/aligned.json';
+import bold from '#/plugins/Bold/fixtures/bold.json';
+import styles from '#/plugins/BrandStyles/fixtures/styles.json';
+import bullets from '#/plugins/BulletList/fixtures/bullets.json';
+import tasks from '#/plugins/CheckList/fixtures/tasks.json';
+import inlineCode from '#/plugins/Code/fixtures/code.json';
+import code from '#/plugins/CodeBlock/fixtures/code.json';
+import columns from '#/plugins/Columns/fixtures/columns.json';
+import checks from '#/plugins/ContentChecks/fixtures/checks.json';
+import paragraphs from '#/plugins/Core/fixtures/paragraphs.json';
+import emoji from '#/plugins/Emoji/fixtures/emoji.json';
+import colors from '#/plugins/FontColor/fixtures/colors.json';
+import headings from '#/plugins/Heading/fixtures/headings.json';
+import images from '#/plugins/Image/fixtures/images.json';
+import typography from '#/plugins/InputRules/fixtures/typography.json';
+import italic from '#/plugins/Italic/fixtures/italic.json';
+import language from '#/plugins/Language/fixtures/language.json';
+import links from '#/plugins/Link/fixtures/links.json';
+import items from '#/plugins/ListItem/fixtures/items.json';
+import mentions from '#/plugins/Mention/fixtures/mentions.json';
+import ordered from '#/plugins/OrderedList/fixtures/ordered.json';
+import outlineDocument from '#/plugins/Outline/fixtures/outline.json';
+import quote from '#/plugins/Quote/fixtures/quote.json';
+import clear from '#/plugins/ResetFormatting/fixtures/clear.json';
+import rules from '#/plugins/Rule/fixtures/rules.json';
+import strike from '#/plugins/Strikethrough/fixtures/strike.json';
+import subscript from '#/plugins/Subscript/fixtures/subscript.json';
+import superscript from '#/plugins/Superscript/fixtures/superscript.json';
+import underline from '#/plugins/Underline/fixtures/underline.json';
+import uploaded from '#/plugins/Upload/fixtures/uploaded.json';
 
 /** The stored documents each shipped feature brings, by feature ID and fixture name. */
 // Per-feature fixture groups are written loosely and read back as documents at this one boundary.

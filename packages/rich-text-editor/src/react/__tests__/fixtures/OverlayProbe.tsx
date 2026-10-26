@@ -5,14 +5,6 @@ import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { bold, core } from '#/features';
-import { fixtureCodeBlock } from '#/features/__tests__/fixtures/code-block/feature';
-import { fixtureItalic, fixtureToolbar } from '#/features/__tests__/fixtures/features';
-import { fixtureMediaImage } from '#/features/__tests__/fixtures/media/feature';
-import { FixtureLinkPopover, FixtureMenu, FixtureSuggestions } from '#/features/__tests__/fixtures/overlays/Overlays';
-import { fixtureTableBlock } from '#/features/__tests__/fixtures/table/feature';
-import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
-import { links } from '#/features/links/feature';
 import {
     defineEditor,
     type EditorHandle,
@@ -22,6 +14,14 @@ import {
     type ToolbarMode,
 } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
+import { bold, core } from '#/plugins';
+import { fixtureCodeBlock } from '#/plugins/__tests__/fixtures/code-block/feature';
+import { fixtureItalic, fixtureToolbar } from '#/plugins/__tests__/fixtures/features';
+import { fixtureMediaImage } from '#/plugins/__tests__/fixtures/media/feature';
+import { FixtureLinkPopover, FixtureMenu, FixtureSuggestions } from '#/plugins/__tests__/fixtures/overlays/Overlays';
+import { fixtureTableBlock } from '#/plugins/__tests__/fixtures/table/feature';
+import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
+import { links } from '#/plugins/Link/feature';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
 

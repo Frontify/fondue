@@ -2,7 +2,6 @@
 
 import { type EditorPart, partWithOptions } from '#/bridge/plugin';
 import { createCodecs } from '#/codecs';
-import { registry } from '#/features/registry';
 import { enUS } from '#/locales/en-US';
 import {
     compileContentModel,
@@ -17,6 +16,7 @@ import {
     isRecord,
 } from '#/model';
 import { compiledModel, type TreeNode, decodeToTree, encodeTree, featureInternals } from '#/model/internal';
+import { registry } from '#/plugins/registry';
 import { editorEngine } from '#/react/engine';
 import { type ConformanceState, stateFromTree, withWholeDocumentSelected } from '#/runtime/conformanceState';
 import { type CompiledDefinition } from '#/runtime/definition';

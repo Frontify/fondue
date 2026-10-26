@@ -5,7 +5,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { expect, within } from 'storybook/test';
 
 import { defineEditorPart, definePlugin, defineReactPresentation, useRichTextNodeView } from '#/entries/authoring';
-import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/features';
 import {
     alignPlugin,
     type AssetPickerService,
@@ -66,6 +65,7 @@ import {
     type JsonValue,
     type RichTextDocument,
 } from '#/model';
+import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/plugins';
 import demoImage from '#/react/examples/demo-image.svg?no-inline';
 import { createFakePersistenceService, createFakeReferenceService } from '#/testing';
 

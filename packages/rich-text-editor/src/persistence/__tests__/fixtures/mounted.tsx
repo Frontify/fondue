@@ -9,10 +9,6 @@ import { createRef } from 'react';
 import { afterAll, afterEach, beforeAll, beforeEach, expect, vi } from 'vitest';
 
 import { defineEditorPart } from '#/entries/authoring';
-import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { core } from '#/features/core/feature';
-import { bold } from '#/features/marksBold/feature';
 import {
     defineEditor,
     type EditorHandle,
@@ -35,6 +31,10 @@ import {
     type JsonValue,
     type RichTextDocument,
 } from '#/model';
+import { fixtureChrome } from '#/plugins/__tests__/fixtures/chrome/feature';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
 import { runtimeOf } from '#/runtime/runtime';
 import { createFakePersistenceService, typeText } from '#/testing';
 import { stubStorage } from '#/testing/__tests__/fixtures/storage';

@@ -5,8 +5,8 @@ import MarkdownIt from 'markdown-it';
 import { DOMParser as SchemaParser } from 'prosemirror-model';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { link, mark, node, paragraph, text } from '#/features/__tests__/fixtures/documents';
 import { type JsonValue } from '#/model';
+import { link, mark, node, paragraph, text } from '#/plugins/__tests__/fixtures/documents';
 import { loadMarkdownReader } from '#/runtime/clipboard/markdown';
 import { SLICE_TYPE } from '#/runtime/clipboard/slice';
 import { pressKey, setSelection } from '#/testing';

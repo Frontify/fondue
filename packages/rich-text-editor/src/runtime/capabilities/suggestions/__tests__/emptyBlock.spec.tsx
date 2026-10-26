@@ -3,7 +3,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { defineEditorPart } from '#/entries/authoring';
-import { core } from '#/features';
+import { core } from '#/plugins';
 import { mountText, para, text } from '#/react/__tests__/fixtures/text';
 import { pressKey, setSelection, typeText } from '#/testing';
 

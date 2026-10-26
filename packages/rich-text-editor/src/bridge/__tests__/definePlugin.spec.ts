@@ -2,14 +2,14 @@
 
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
-import { corePlugin } from '#/features/core';
-import { core } from '#/features/core/feature';
-import { boldEditor } from '#/features/marksBold/editor';
-import { bold } from '#/features/marksBold/feature';
-import { mediaImageEditor } from '#/features/mediaImage/editor';
-import { mediaImage } from '#/features/mediaImage/feature';
 import { compileContentModel, DefinitionError, type Feature } from '#/model';
 import { featureInternals } from '#/model/internal';
+import { boldEditor } from '#/plugins/Bold/editor';
+import { bold } from '#/plugins/Bold/feature';
+import { corePlugin } from '#/plugins/Core';
+import { core } from '#/plugins/Core/feature';
+import { mediaImageEditor } from '#/plugins/Image/editor';
+import { mediaImage } from '#/plugins/Image/feature';
 import { type ReaderRenderers } from '#/reader/define';
 
 import { definePlugin, extendPlugin, modelOf, type ReaderOverrides } from '../definePlugin';

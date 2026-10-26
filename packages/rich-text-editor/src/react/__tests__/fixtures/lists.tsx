@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { bulletList } from '#/features/listsBullet/feature';
-import { listItem } from '#/features/listsItem/feature';
-import { orderedList } from '#/features/listsOrdered/feature';
-import { taskList } from '#/features/listsTask/feature';
 import { type ContentNodeJSON, type Feature } from '#/model';
+import { bulletList } from '#/plugins/BulletList/feature';
+import { taskList } from '#/plugins/CheckList/feature';
+import { listItem } from '#/plugins/ListItem/feature';
+import { orderedList } from '#/plugins/OrderedList/feature';
 
 import { para, text, textFeatures, textModel } from './text';
 

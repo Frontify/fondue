@@ -3,12 +3,12 @@
 import { Plugin } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { countingIds } from '#/features/__tests__/fixtures/notes';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { core } from '#/features/core/feature';
-import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, type Diagnostic, type JsonValue } from '#/model';
 import { decodeToTree, limitsOf } from '#/model/internal';
+import { countingIds } from '#/plugins/__tests__/fixtures/notes';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
 import { extensionsOf } from '#/react/engine';
 import { compileDefinition } from '#/runtime/definition';
 

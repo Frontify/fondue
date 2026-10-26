@@ -4,6 +4,7 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { decodeDocument, defaultLimits, type ResourceLimits } from '#/model';
 import {
     blockquote,
     cell,
@@ -15,9 +16,8 @@ import {
     row,
     table,
     text,
-} from '#/features/__tests__/fixtures/documents';
-import { vocabularyModel } from '#/features/__tests__/fixtures/vocabulary';
-import { decodeDocument, defaultLimits, type ResourceLimits } from '#/model';
+} from '#/plugins/__tests__/fixtures/documents';
+import { vocabularyModel } from '#/plugins/__tests__/fixtures/vocabulary';
 
 import { decodeToTree } from '../decode';
 import { readInput } from '../read';

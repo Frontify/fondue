@@ -4,10 +4,10 @@ import { type Node } from 'prosemirror-model';
 import { describe, expect, it } from 'vitest';
 
 import { defineEditorPart } from '#/bridge/plugin';
-import { fixtureHeadingSet, fixtureInputRules, fixtureItalic } from '#/features/__tests__/fixtures/features';
-import { core } from '#/features/core/feature';
-import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, defineFeature, type JsonValue } from '#/model';
+import { fixtureHeadingSet, fixtureInputRules, fixtureItalic } from '#/plugins/__tests__/fixtures/features';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
 import { pressKey, setSelection, typeText } from '#/testing';
 
 import {

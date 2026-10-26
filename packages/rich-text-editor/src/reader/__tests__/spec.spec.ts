@@ -4,9 +4,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { doc, envelope, node, text } from '#/features/__tests__/fixtures/documents';
-import { core } from '#/features/core/feature';
 import { compileContentModel, defineFeature } from '#/model';
+import { doc, envelope, node, text } from '#/plugins/__tests__/fixtures/documents';
+import { core } from '#/plugins/Core/feature';
 
 import { renderReader } from './helpers/helpers';
 

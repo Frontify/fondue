@@ -8,10 +8,15 @@ import { act, render } from '@testing-library/react';
 import { createRef } from 'react';
 import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 
-import { doc, envelope, link, node, text } from '#/features/__tests__/fixtures/documents';
-import { fixtureMedia } from '#/features/__tests__/fixtures/features';
-import { notesModel } from '#/features/__tests__/fixtures/notes';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
+import { deDE } from '#/locales/de-DE';
+import { enUS } from '#/locales/en-US';
+import { compileContentModel, defaultLimits, DefinitionError, type Diagnostic } from '#/model';
+import * as model from '#/model';
+import { type LoadedDocument, type PersistenceService } from '#/persistence/types';
+import { doc, envelope, link, node, text } from '#/plugins/__tests__/fixtures/documents';
+import { fixtureMedia } from '#/plugins/__tests__/fixtures/features';
+import { notesModel } from '#/plugins/__tests__/fixtures/notes';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import {
     vocabularyAlign,
     vocabularyBlocks,
@@ -24,14 +29,9 @@ import {
     vocabularyMention,
     vocabularyStyles,
     vocabularyTables,
-} from '#/features/__tests__/fixtures/vocabulary';
-import { core } from '#/features/core/feature';
-import { links } from '#/features/links/feature';
-import { deDE } from '#/locales/de-DE';
-import { enUS } from '#/locales/en-US';
-import { compileContentModel, defaultLimits, DefinitionError, type Diagnostic } from '#/model';
-import * as model from '#/model';
-import { type LoadedDocument, type PersistenceService } from '#/persistence/types';
+} from '#/plugins/__tests__/fixtures/vocabulary';
+import { core } from '#/plugins/Core/feature';
+import { links } from '#/plugins/Link/feature';
 import { fixturesIn } from '#/reader/__tests__/helpers/helpers';
 import { type ReaderPresentation } from '#/reader/reader';
 import { type AsyncOperation } from '#/runtime/async';

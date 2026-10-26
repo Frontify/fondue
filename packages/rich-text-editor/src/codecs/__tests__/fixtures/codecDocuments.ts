@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { core } from '#/features/core/feature';
 import {
     compileContentModel,
     defineFeature,
@@ -11,6 +10,7 @@ import {
     type JsonValue,
     type RichTextDocument,
 } from '#/model';
+import { core } from '#/plugins/Core/feature';
 
 export const requires = [{ id: 'core', version: 1 }];
 export const failureOf = (run: () => unknown) => {

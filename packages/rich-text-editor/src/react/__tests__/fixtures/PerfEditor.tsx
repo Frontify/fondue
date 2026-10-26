@@ -5,8 +5,8 @@ import { type ProfilerOnRenderCallback, Profiler, useRef, useState } from 'react
 
 import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, type EditorHandle, RichTextEditor, type RichTextEditorProps } from '#/index';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 
 import { perfDocument, type PerfFixtureName, perfModel } from '../../../model/__tests__/fixtures/perf/documents';
 

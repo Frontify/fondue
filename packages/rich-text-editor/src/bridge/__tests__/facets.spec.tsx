@@ -2,8 +2,8 @@
 
 import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 
-import { probeHarness } from '#/features/__tests__/fixtures/editorApi';
-import { bold } from '#/features/marksBold/feature';
+import { probeHarness } from '#/plugins/__tests__/fixtures/editorApi';
+import { bold } from '#/plugins/Bold/feature';
 
 import { facetsOf } from '../liveApi';
 import { defineEditorPart, type EditorApi } from '../plugin';

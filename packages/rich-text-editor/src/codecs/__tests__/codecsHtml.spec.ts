@@ -4,10 +4,10 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { codeBlock, link, mark, paragraph, text } from '#/features/__tests__/fixtures/documents';
-import { vocabularyModel } from '#/features/__tests__/fixtures/vocabulary';
-import { core } from '#/features/core/feature';
 import { compileContentModel, defineFeature, type JsonValue, type RichTextDocument } from '#/model';
+import { codeBlock, link, mark, paragraph, text } from '#/plugins/__tests__/fixtures/documents';
+import { vocabularyModel } from '#/plugins/__tests__/fixtures/vocabulary';
+import { core } from '#/plugins/Core/feature';
 
 import { fixturesIn, renderReader } from '../../reader/__tests__/helpers/helpers';
 import { createCodecs } from '../codecs';

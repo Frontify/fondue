@@ -4,11 +4,11 @@ import { type Node } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { core } from '#/features/core/feature';
-import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, type JsonValue, type RichTextDocument } from '#/model';
 import { limitsOf } from '#/model/internal';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
 import { extensionsOf } from '#/react/engine';
 import { compileDefinition } from '#/runtime/definition';
 

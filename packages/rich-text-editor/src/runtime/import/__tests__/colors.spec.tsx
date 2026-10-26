@@ -7,12 +7,12 @@ import { fileURLToPath } from 'node:url';
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { deliveredProfiles } from '#/features/__tests__/fixtures/profiles';
-import { mountStyled } from '#/features/__tests__/fixtures/styleEditor';
-import { styleModel } from '#/features/__tests__/fixtures/styles';
-import { fontColor } from '#/features/marksFontColor/feature';
-import { brandStyles } from '#/features/stylesBrand/feature';
 import { compileContentModel, type ContentModel, type ContentNodeJSON, hexColor } from '#/model';
+import { deliveredProfiles } from '#/plugins/__tests__/fixtures/profiles';
+import { mountStyled } from '#/plugins/__tests__/fixtures/styleEditor';
+import { styleModel } from '#/plugins/__tests__/fixtures/styles';
+import { brandStyles } from '#/plugins/BrandStyles/feature';
+import { fontColor } from '#/plugins/FontColor/feature';
 import { paste } from '#/testing';
 
 // A path, not a `URL`: happy-dom replaces the global `URL`, which rejects a `file:` URL.

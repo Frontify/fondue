@@ -8,6 +8,7 @@ import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import { describe, expect, it } from 'vitest';
 
+import { compileContentModel, defineFeature, type JsonValue, type RichTextDocument } from '#/model';
 import {
     bulletList,
     doc,
@@ -17,9 +18,8 @@ import {
     node,
     paragraph,
     text,
-} from '#/features/__tests__/fixtures/documents';
-import { core } from '#/features/core/feature';
-import { compileContentModel, defineFeature, type JsonValue, type RichTextDocument } from '#/model';
+} from '#/plugins/__tests__/fixtures/documents';
+import { core } from '#/plugins/Core/feature';
 
 import { semanticFeatures, semanticModel } from '../../reader/__tests__/fixtures/semantic';
 import { fixturesIn, renderReader } from '../../reader/__tests__/helpers/helpers';

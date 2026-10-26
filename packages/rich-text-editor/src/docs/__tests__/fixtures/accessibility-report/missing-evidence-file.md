@@ -8,7 +8,7 @@ Version 1.0.0 in the Document profile, in Chromium, Firefox and WebKit. No scree
 
 | Criterion                               | Conformance level | Remarks and explanations                                                                                                |
 | --------------------------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| 1.3.1 Info and Relationships (Level A)  | Not Evaluated     | Evidence: `src/features/__tests__/markElements.spec.tsx`, `src/reader/__tests__/reader.spec.ts`. No screen reader ran. |
+| 1.3.1 Info and Relationships (Level A)  | Not Evaluated     | Evidence: `src/plugins/__tests__/markElements.spec.tsx`, `src/reader/__tests__/reader.spec.ts`. No screen reader ran. |
 | 1.3.5 Identify Input Purpose (Level AA) | Not Applicable    | No field collects information about the author.                                                                         |
 | 1.4.5 Images of Text (Level AA)         | Not Evaluated     | Chrome icons and text are not tested. Evidence: no automated test.                                                      |
 | 1.4.4 Resize Text (Level AA)            | Supports          | Evidence: `src/react/__tests__/gone.ct.tsx`.                                                                            |
@@ -26,7 +26,7 @@ Version 1.0.0 in the Document profile, in Chromium, Firefox and WebKit. No scree
 
 | Criterion                                             | Conformance level | Remarks and explanations                                                         |
 | ----------------------------------------------------- | ----------------- | -------------------------------------------------------------------------------- |
-| A.2.2.2 Access to Rendered Text Properties (Level AA) | Not Evaluated     | Evidence: `src/features/__tests__/markElements.spec.tsx`. No screen reader ran. |
+| A.2.2.2 Access to Rendered Text Properties (Level AA) | Not Evaluated     | Evidence: `src/plugins/__tests__/markElements.spec.tsx`. No screen reader ran. |
 
 ## Limitations and host-owned criteria
 

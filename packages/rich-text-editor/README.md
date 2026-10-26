@@ -35,7 +35,7 @@ Each product folder under `src` is one layer; lint keeps the imports between the
 | Folder | Holds |
 | --- | --- |
 | `model` | The stored format: documents, the content model, validation, migrations, limits and content checks |
-| `features` | One folder per feature: its vocabulary part (`feature.ts`), editor part (`editor.ts`), optional reader part and its plugin unit (`index.ts`) |
+| `plugins` | One folder per plugin: its vocabulary part (`feature.ts`), editor part (`editor.ts`), optional reader part and its plugin unit (`index.ts`) |
 | `runtime` | The editing session: state, commands, the editor API, uploads, suggestions and history; the engine definition in `runtime/definition`, which compiles a content model and editor parts into the engine's schema, keymaps and input rules; the HTML and paste import in `runtime/import`; the only layer that holds the engine |
 | `persistence` | The save coordinator |
 | `bridge` | The plugin API and the React adapter for node views, chrome and overlays |

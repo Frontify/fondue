@@ -8,15 +8,6 @@ import fc from 'fast-check';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
-    countingIds,
-    NOTES_ID,
-    notesModel,
-    type NotesVersion,
-    noteV2,
-    toneToLevel,
-} from '#/features/__tests__/fixtures/notes';
-import { core } from '#/features/core/feature';
-import {
     compileContentModel,
     decodeDocument,
     type DecodeResult,
@@ -28,6 +19,15 @@ import {
     type ModelMigration,
     type RichTextDocument,
 } from '#/model';
+import {
+    countingIds,
+    NOTES_ID,
+    notesModel,
+    type NotesVersion,
+    noteV2,
+    toneToLevel,
+} from '#/plugins/__tests__/fixtures/notes';
+import { core } from '#/plugins/Core/feature';
 
 import { type TreeNode } from '../content';
 import { decodeToTree } from '../decode';

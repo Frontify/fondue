@@ -2,10 +2,10 @@
 
 import { useRef, useState } from 'react';
 
-import { core } from '#/features';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, type EditorHandle, type LoadedDocument, type PersistenceService, RichTextEditor } from '#/index';
 import { compileContentModel } from '#/model';
+import { core } from '#/plugins';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { createFakePersistenceService } from '#/testing';
 
 const model = compileContentModel([core()], { id: 'story.switching', version: 1 });

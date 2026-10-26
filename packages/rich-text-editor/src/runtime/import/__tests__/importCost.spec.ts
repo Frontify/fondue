@@ -5,12 +5,12 @@
 import { JSDOM } from 'jsdom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { core } from '#/features/core/feature';
-import { bulletList } from '#/features/listsBullet/feature';
-import { listItem } from '#/features/listsItem/feature';
-import { orderedList } from '#/features/listsOrdered/feature';
-import { taskList } from '#/features/listsTask/feature';
 import { compileContentModel } from '#/model';
+import { bulletList } from '#/plugins/BulletList/feature';
+import { taskList } from '#/plugins/CheckList/feature';
+import { core } from '#/plugins/Core/feature';
+import { listItem } from '#/plugins/ListItem/feature';
+import { orderedList } from '#/plugins/OrderedList/feature';
 import { exceedsMarkupDepth } from '#/runtime/import/limits';
 
 import { fromHTML } from '../fromHtml';

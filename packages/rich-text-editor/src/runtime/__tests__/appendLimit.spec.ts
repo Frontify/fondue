@@ -2,10 +2,10 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { fixtureHistory } from '#/features/__tests__/fixtures/features';
-import { core } from '#/features/core/feature';
 import { compileContentModel, type Diagnostic } from '#/model';
 import { decodeToTree, limitsOf } from '#/model/internal';
+import { fixtureHistory } from '#/plugins/__tests__/fixtures/features';
+import { core } from '#/plugins/Core/feature';
 import { compileDefinition } from '#/runtime/definition';
 import { typeText } from '#/testing';
 import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';

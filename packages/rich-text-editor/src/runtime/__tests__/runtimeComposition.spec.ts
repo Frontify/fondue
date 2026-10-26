@@ -4,10 +4,10 @@ import { Node } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
 import { describe, expect, it, vi } from 'vitest';
 
-import { fixtureHeadingSet } from '#/features/__tests__/fixtures/features';
-import { core } from '#/features/core/feature';
-import { bold } from '#/features/marksBold/feature';
 import { compileContentModel } from '#/model';
+import { fixtureHeadingSet } from '#/plugins/__tests__/fixtures/features';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 
 import { SETTLE_MS } from '../settle';

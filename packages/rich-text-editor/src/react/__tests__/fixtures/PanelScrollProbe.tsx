@@ -4,11 +4,11 @@ import { useEffect, useRef } from 'react';
 
 import { defineEditorPart } from '#/bridge/plugin';
 import { defineReactPresentation } from '#/entries/authoring';
-import { bold, core, heading } from '#/features';
-import { openFind } from '#/features/__tests__/fixtures/panels';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, defineFeature } from '#/model';
+import { bold, core, heading } from '#/plugins';
+import { openFind } from '#/plugins/__tests__/fixtures/panels';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 
 const TallPanel = () => (
     <div role="search" aria-label="Find">

@@ -14,16 +14,6 @@ import {
     useRichTextNodeView,
 } from '#/entries/authoring';
 import { defineReaderFeature, type ReaderNodeProps, RichTextReader } from '#/entries/reader';
-import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
-import {
-    chromeEditorWith,
-    chromeViewsWith,
-    fixtureChromeEditor,
-    popupListeners,
-} from '#/features/__tests__/fixtures/chrome/view';
-import { fixtureList } from '#/features/__tests__/fixtures/features';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { core } from '#/features/core/feature';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { deDE } from '#/locales/de-DE';
 import { enUS } from '#/locales/en-US';
@@ -35,6 +25,16 @@ import {
     type JsonValue,
     type RichTextLocale,
 } from '#/model';
+import { fixtureChrome } from '#/plugins/__tests__/fixtures/chrome/feature';
+import {
+    chromeEditorWith,
+    chromeViewsWith,
+    fixtureChromeEditor,
+    popupListeners,
+} from '#/plugins/__tests__/fixtures/chrome/view';
+import { fixtureList } from '#/plugins/__tests__/fixtures/features';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { core } from '#/plugins/Core/feature';
 import { viewsOf } from '#/react/compileEditor';
 import { shipped as brandDocumentProfile } from '#/react/profiles/brandDocument';
 import { shipped as commentProfile } from '#/react/profiles/comment';

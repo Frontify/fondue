@@ -11,7 +11,7 @@ import {
     styledDocument,
     styledHeading,
     styleModel,
-} from '#/features/__tests__/fixtures/styles';
+} from '#/plugins/__tests__/fixtures/styles';
 
 const model = styleModel();
 const document = styledDocument(model, [

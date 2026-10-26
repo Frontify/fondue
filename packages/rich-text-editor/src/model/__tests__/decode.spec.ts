@@ -7,14 +7,6 @@ import { createHash } from 'node:crypto';
 import { Node } from 'prosemirror-model';
 import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 
-import { doc, envelope, type Json, mention, node, paragraph, text } from '#/features/__tests__/fixtures/documents';
-import {
-    vocabularyLink,
-    vocabularyMarks,
-    vocabularyModel,
-    vocabularyTables,
-} from '#/features/__tests__/fixtures/vocabulary';
-import { core } from '#/features/core/feature';
 import {
     compileContentModel,
     createEmptyDocument,
@@ -27,6 +19,14 @@ import {
     type RichTextDocument,
     sameDocument,
 } from '#/model';
+import { doc, envelope, type Json, mention, node, paragraph, text } from '#/plugins/__tests__/fixtures/documents';
+import {
+    vocabularyLink,
+    vocabularyMarks,
+    vocabularyModel,
+    vocabularyTables,
+} from '#/plugins/__tests__/fixtures/vocabulary';
+import { core } from '#/plugins/Core/feature';
 import { compileDefinition } from '#/runtime/definition';
 
 import { decodeToTree } from '../decode';

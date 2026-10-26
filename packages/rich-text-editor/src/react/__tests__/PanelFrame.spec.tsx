@@ -4,16 +4,16 @@ import { act, fireEvent, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type EditorPart } from '#/bridge/plugin';
+import { type ContentModel, type Feature } from '#/model';
 import {
     fixtureFindPanel,
     fixturePickerPanel,
     fixtureSearchPanel,
     fixtureThrowingFindPanel,
     openFind,
-} from '#/features/__tests__/fixtures/panels';
-import { contentChecks } from '#/features/a11yContentChecks/feature';
-import { core } from '#/features/core/feature';
-import { type ContentModel, type Feature } from '#/model';
+} from '#/plugins/__tests__/fixtures/panels';
+import { contentChecks } from '#/plugins/ContentChecks/feature';
+import { core } from '#/plugins/Core/feature';
 import { liveRegionFaults } from '#/react/__tests__/fixtures/liveRegion';
 import { mountText, para, text, textModel } from '#/react/__tests__/fixtures/text';
 import { typeText } from '#/testing';

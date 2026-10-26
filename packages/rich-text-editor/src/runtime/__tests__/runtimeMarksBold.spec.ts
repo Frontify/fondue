@@ -2,9 +2,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { core } from '#/features/core/feature';
-import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, defineFeature } from '#/model';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
 import { pressKey, setSelection, typeText } from '#/testing';
 
 import { stored, para, strong, start, contentOf, installRuntimeHooks } from './fixtures/start';

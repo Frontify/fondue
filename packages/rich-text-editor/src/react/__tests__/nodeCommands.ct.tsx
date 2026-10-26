@@ -5,8 +5,8 @@ import { type Page } from '@playwright/test';
 
 import { decodableImage } from '#/testing/images';
 
-import { ImageProbe } from '../../features/mediaImage/__tests__/fixtures/ImageProbe';
-import { UploadProbe } from '../../features/mediaUpload/__tests__/fixtures/UploadProbe';
+import { ImageProbe } from '../../plugins/Image/__tests__/fixtures/ImageProbe';
+import { UploadProbe } from '../../plugins/Upload/__tests__/fixtures/UploadProbe';
 
 import { execute, moreOf, ready, select, selectImage, surfaceOf } from './fixtures/layout';
 import { ProfileProbe } from './fixtures/ProfileProbe';

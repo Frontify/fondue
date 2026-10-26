@@ -15,9 +15,6 @@ import {
     type NodePending,
     type NodeViewContext,
 } from '#/entries/authoring';
-import { core } from '#/features';
-import { fixtureItalic } from '#/features/__tests__/fixtures/features';
-import { type spotlightEditor } from '#/features/__tests__/fixtures/spotlight/editor';
 import {
     boldPlugin,
     type CommandsOfPlugins,
@@ -29,6 +26,9 @@ import {
     useCommandState,
 } from '#/index';
 import { createEmptyDocument } from '#/model';
+import { core } from '#/plugins';
+import { fixtureItalic } from '#/plugins/__tests__/fixtures/features';
+import { type spotlightEditor } from '#/plugins/__tests__/fixtures/spotlight/editor';
 
 // A custom model from shipped features and an outside one without commands.
 const italicPlugin = definePlugin({ feature: fixtureItalic, editor: defineEditorPart(fixtureItalic, {}) });

@@ -3,11 +3,11 @@
 import { DOMParser } from 'prosemirror-model';
 import { describe, expect, it } from 'vitest';
 
-import { fixtureHeading } from '#/features/__tests__/fixtures/features';
-import { core } from '#/features/core/feature';
-import { links } from '#/features/links/feature';
-import { bold } from '#/features/marksBold/feature';
 import { compileContentModel } from '#/model';
+import { fixtureHeading } from '#/plugins/__tests__/fixtures/features';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
+import { links } from '#/plugins/Link/feature';
 
 import { buildSchema } from '../schema';
 

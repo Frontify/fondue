@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { featuresById } from '#/features';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, RichTextEditor } from '#/index';
 import { compileContentModel } from '#/model';
+import { featuresById } from '#/plugins';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 
 import { PERF_FEATURES, perfDocument } from '../../../model/__tests__/fixtures/perf/documents';
 

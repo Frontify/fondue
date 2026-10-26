@@ -54,7 +54,8 @@ export default defineConfig({
                 'src/react/examples/**',
                 'src/docs/**',
             ],
-            // The `./html` export keeps its declaration path while the source lives in runtime/import.
+            // The `./html` and `./features` exports keep their declaration paths while the sources live in
+            // runtime/import and plugins.
             afterBuild: (emittedFiles) => {
                 const suffix = '/runtime/import/fromHtml.d.ts';
                 const source = [...emittedFiles.keys()].find((file) => file.endsWith(suffix));
@@ -65,6 +66,16 @@ export default defineConfig({
                 const entry = `${source.slice(0, -suffix.length)}/html/index.d.ts`;
                 mkdirSync(dirname(entry), { recursive: true });
                 writeFileSync(entry, "export * from '../runtime/import/fromHtml';\n");
+
+                const pluginsSuffix = '/plugins/index.d.ts';
+                const plugins = [...emittedFiles.keys()].find((file) => file.endsWith(pluginsSuffix));
+                if (plugins === undefined) {
+                    throw new Error(`The build emitted no ${pluginsSuffix}.`);
+                }
+
+                const features = `${plugins.slice(0, -pluginsSuffix.length)}/features/index.d.ts`;
+                mkdirSync(dirname(features), { recursive: true });
+                writeFileSync(features, "export * from '../plugins/index';\n");
             },
         }),
         externalizeJsDeps(),
@@ -74,7 +85,7 @@ export default defineConfig({
             entry: {
                 index: './src/index.ts',
                 'model/index': './src/model/index.ts',
-                'features/index': './src/features/index.ts',
+                'features/index': './src/plugins/index.ts',
                 'entries/reader': './src/entries/reader.ts',
                 'entries/authoring': './src/entries/authoring.ts',
                 'codecs/index': './src/codecs/index.ts',

@@ -5,9 +5,9 @@ import fc from 'fast-check';
 import { AllSelection, TextSelection } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
-import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/features';
-import { fcSettings, seeded } from '#/features/__tests__/fixtures/generated';
 import { type ContentModel, decodeDocument, type RichTextSlice } from '#/model';
+import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/plugins';
+import { fcSettings, seeded } from '#/plugins/__tests__/fixtures/generated';
 import { mountProfile } from '#/react/__tests__/fixtures/profiles';
 import { loadProfile } from '#/react/profiles';
 import { type RichTextProfile } from '#/react/types';

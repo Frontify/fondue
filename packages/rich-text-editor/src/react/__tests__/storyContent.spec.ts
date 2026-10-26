@@ -2,10 +2,10 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { documentModel } from '#/features';
 import { type RichTextProfile } from '#/index';
 import { enUS } from '#/locales/en-US';
 import { type ContentModel, createEmptyDocument, findContentIssues, type RichTextDocument } from '#/model';
+import { documentModel } from '#/plugins';
 import { engineOf } from '#/react/compileEditor';
 import { PROFILE_MODELS } from '#/react/examples/records';
 import { type CompiledEditorDefinition, type ReactPresentation } from '#/react/types';
@@ -20,7 +20,7 @@ type StoryArgs = {
 };
 
 // Stories that show what the content checks find, whose content has issues on purpose.
-const NAMED_FOR_A_CHECK = /a11yContentChecks\//;
+const NAMED_FOR_A_CHECK = /ContentChecks\//;
 
 const modelOf = (args: StoryArgs): ContentModel | undefined => {
     if (args.definition !== undefined) {

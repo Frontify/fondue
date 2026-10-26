@@ -18,7 +18,7 @@ const FOLDERS = [
     'reader',
     'entries',
     'codecs',
-    'features',
+    'plugins',
     'locales',
     'testing',
     'styles',
@@ -60,7 +60,7 @@ const HTML_MESSAGE =
     '`runtime/import/fromHtml` imports only `model`, `#/runtime/definition/schema`, `runtime/import` and `prosemirror-model`, because `./html` runs on the server without the engine or React.';
 
 const FEATURE_FILE_MESSAGE =
-    "A feature file imports only `#/model`, its own `./migration` and a declared dependency's `#/features/<id>/feature`, as an outside feature must, and never its editor part, which the reader, codecs and server do not load.";
+    "A feature file imports only `#/model`, its own `./migration` and a declared dependency's `#/plugins/<id>/feature`, as an outside feature must, and never its editor part, which the reader, codecs and server do not load.";
 
 // An undeclared package can't be imported, so the declared ones are the whole list.
 const DECLARED_PACKAGES = Object.keys({ ...packageJson.dependencies, ...packageJson.devDependencies });
@@ -84,7 +84,7 @@ const FEATURE_INDEX_MESSAGE =
     "A feature's index builds its unit and imports only its own `./feature`, `./editor` and `./reader`, and `#/bridge/definePlugin`.";
 
 const READER_FILE_MESSAGE =
-    "A feature's reader override imports only `react` (no Node built-ins), `#/model`, `#/reader/define`, its own `./feature` and a declared dependency's `#/features/<id>/feature`, as an outside feature must.";
+    "A feature's reader override imports only `react` (no Node built-ins), `#/model`, `#/reader/define`, its own `./feature` and a declared dependency's `#/plugins/<id>/feature`, as an outside feature must.";
 
 const MODEL_ENTRY_MESSAGE =
     'A feature file imports `model` only through its public entry `#/model`, as an outside feature must, never a subpath.';
@@ -101,13 +101,13 @@ const FEATURE_INTERNALS_MESSAGE =
     'Outside its folder, a feature is imported only through its `feature` and `index`, never its editor, reader, view or dialog files, because those carry editor code and only the glob registries load them.';
 
 const FEATURE_UNIT_MESSAGE =
-    '`./features`, `reader`, `codecs`, `model` and `runtime/import/fromHtml` never import `#/features/*/index`, because a unit carries editor code.';
+    '`./features`, `reader`, `codecs`, `model` and `runtime/import/fromHtml` never import `#/plugins/*/index`, because a unit carries editor code.';
 
 const READER_MESSAGE =
     '`reader` imports `model` and `locales`, never a feature, because a feature reader imports `#/reader/define`.';
 
 const ENTRIES_MESSAGE =
-    '`entries` imports `#/reader/*` and `#/features/*/reader` only, because an entry wires the shipped feature readers and loads no editor code.';
+    '`entries` imports `#/reader/*` and `#/plugins/*/reader` only, because an entry wires the shipped feature readers and loads no editor code.';
 
 const CLIENT_REACT_MESSAGE =
     'The reader renders on the server too, so it uses no client hook, context or class component.';
@@ -124,18 +124,18 @@ const PROSEMIRROR_EXCEPT_MODEL = DECLARED_PACKAGES.filter(
 const FEATURE_SIBLINGS = ['./*', './**', '!./migration'];
 
 // Every file of a feature folder but its vocabulary, migration, reader, index and fixtures is editor side.
-const EDITOR_PART_FILES = ['src/features/*/**/*.{ts,tsx}'];
+const EDITOR_PART_FILES = ['src/plugins/*/**/*.{ts,tsx}'];
 
 const NOT_EDITOR_PART_FILES = [
-    'src/features/*/feature.ts',
-    'src/features/*/migration.ts',
-    'src/features/*/reader.tsx',
-    'src/features/*/index.ts',
-    'src/features/*/fixtures/**',
+    'src/plugins/*/feature.ts',
+    'src/plugins/*/migration.ts',
+    'src/plugins/*/reader.tsx',
+    'src/plugins/*/index.ts',
+    'src/plugins/*/fixtures/**',
 ];
 
 const editorPartFolders = FOLDERS.filter(
-    (folder) => folder !== 'model' && folder !== 'features' && folder !== 'locales',
+    (folder) => folder !== 'model' && folder !== 'plugins' && folder !== 'locales',
 );
 
 // Alias specifiers start with `#` and relative specifiers start with `.`.
@@ -161,7 +161,8 @@ const PUBLIC_ENTRY_MODULES = Object.entries(packageJson.exports)
     .filter(([, target]) => typeof target === 'object')
     .map(([entry]) => (entry === '.' ? 'index' : entry.slice(2)))
     .map((path) => (path === 'reader' || path === 'authoring' ? `entries/${path}` : path))
-    .map((path) => (path === 'html' ? 'runtime/import/fromHtml' : path));
+    .map((path) => (path === 'html' ? 'runtime/import/fromHtml' : path))
+    .map((path) => (path === 'features' ? 'plugins' : path));
 
 // The public entries, the modules they re-export to plugins and the shared story folder, through the alias.
 const STORY_MODULES = [...PUBLIC_ENTRY_MODULES, 'bridge/plugin', 'bridge/define', 'reader/define', 'react/examples/**'];
@@ -173,7 +174,7 @@ const UI_MESSAGE =
 
 const DOCS_MESSAGE = `A docs example imports only the public entries (${PUBLIC_ENTRY_MODULES.map((path) => `\`#/${path}\``).join(', ')}) and files of its own folder, as an outside host must.`;
 
-const readerFileFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'features');
+const readerFileFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'plugins');
 
 const aliasPatterns = (folders: readonly string[]): string[] =>
     folders.flatMap((folder) => [`#/${folder}`, `#/${folder}/**`]);
@@ -189,7 +190,7 @@ const relativePatterns = (folders: readonly string[]): string[] =>
 const exceptPatterns = (paths: readonly string[]): string[] =>
     ['#/', ...PARENT_PREFIXES].flatMap((root) => paths.map((path) => `!${root}${path}`));
 
-const FEATURE_ROOTS = ['#/features', ...PARENT_PREFIXES.map((prefix) => `${prefix}features`)];
+const FEATURE_ROOTS = ['#/plugins', ...PARENT_PREFIXES.map((prefix) => `${prefix}plugins`)];
 
 const featurePathPatterns = (tails: readonly string[]): string[] =>
     FEATURE_ROOTS.flatMap((root) => tails.map((tail) => `${root}${tail}`));
@@ -353,7 +354,7 @@ const layerOverride = (
 
 const nonModelFolders = FOLDERS.filter((folder) => folder !== 'model');
 
-const outsideFeatureFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'features');
+const outsideFeatureFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'plugins');
 
 const readerFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'locales' && folder !== 'reader');
 
@@ -385,10 +386,10 @@ const RUNTIME_PARTS = ['runtime/clipboard', 'runtime/definition', 'runtime/impor
 const DEFINITION_PATHS = ['runtime/definition', 'runtime/definition/**'];
 
 const TESTING_MESSAGE =
-    '`testing` may import `model`, `runtime` (but not `runtime/import`), `persistence`, `reader`, `codecs` and `locales`, from `runtime/clipboard` only `runtime/clipboard/plugin`, and from `features` only conformance and fixtures.';
+    '`testing` may import `model`, `runtime` (but not `runtime/import`), `persistence`, `reader`, `codecs` and `locales`, from `runtime/clipboard` only `runtime/clipboard/plugin`, and from `plugins` only conformance and fixtures.';
 
 const CONFORMANCE_MESSAGE =
-    'The contract suite drives editor parts through the engine, so it also imports `react`, `react-dom/server`, `#/bridge/plugin`, `#/features/plugins`, `#/features/registry` and `#/react/engine`.';
+    'The contract suite drives editor parts through the engine, so it also imports `react`, `react-dom/server`, `#/bridge/plugin`, `#/plugins/plugins`, `#/plugins/registry` and `#/react/engine`.';
 
 const RUNTIME_MESSAGE = '`runtime` imports `model`, `runtime/definition`, `runtime/import` and ProseMirror.';
 
@@ -412,7 +413,7 @@ const testingAllowed = new Set([
     'codecs',
     'locales',
     'testing',
-    'features',
+    'plugins',
 ]);
 
 const testingFolders = [
@@ -599,7 +600,7 @@ export default defineConfig({
         ]),
         layerOverride('src/*.{ts,tsx}', [featureInternalsRestriction]),
         layerOverride(
-            ['src/features/*/feature.ts', 'src/features/*/migration.ts'],
+            ['src/plugins/*/feature.ts', 'src/plugins/*/migration.ts'],
             [
                 {
                     group: [
@@ -623,7 +624,7 @@ export default defineConfig({
                         ...aliasPatterns(editorPartFolders),
                         '#/model/**',
                         ...exceptPatterns(['bridge/plugin', 'bridge/define']),
-                        '#/features/**',
+                        '#/plugins/**',
                         '../**',
                     ],
                     message: EDITOR_PART_MESSAGE,
@@ -633,7 +634,7 @@ export default defineConfig({
             NOT_EDITOR_PART_FILES,
         ),
         layerOverride(
-            ['src/features/*.ts', 'src/features/profiles/**/*.{ts,tsx}'],
+            ['src/plugins/*.ts', 'src/plugins/profiles/**/*.{ts,tsx}'],
             [
                 {
                     group: [
@@ -649,13 +650,13 @@ export default defineConfig({
                 featureUnitRestriction,
             ],
         ),
-        layerOverride('src/features/plugins.ts', [
+        layerOverride('src/plugins/plugins.ts', [
             {
                 group: [
                     ...aliasPatterns(outsideFeatureFolders),
                     '!#/bridge/definePlugin',
                     '#/model/**',
-                    '#/features/**',
+                    '#/plugins/**',
                     '../**',
                     './*',
                     './**',
@@ -665,7 +666,7 @@ export default defineConfig({
                 message: FEATURE_PLUGINS_MESSAGE,
             },
         ]),
-        layerOverride('src/features/*/reader.tsx', [
+        layerOverride('src/plugins/*/reader.tsx', [
             {
                 group: [
                     ...EDITOR_PART_PATTERNS,
@@ -682,7 +683,7 @@ export default defineConfig({
             },
             { group: READER_FILE_EXTERNALS, message: READER_FILE_MESSAGE },
         ]),
-        layerOverride('src/features/*/index.ts', [
+        layerOverride('src/plugins/*/index.ts', [
             {
                 group: [
                     ...aliasPatterns(FOLDERS),
@@ -698,7 +699,7 @@ export default defineConfig({
             },
             { group: [...packagesExcept([]), ...NODE_BUILTINS], message: FEATURE_INDEX_MESSAGE },
         ]),
-        layerOverride('src/features/*/fixtures/**/*.{ts,tsx}', [
+        layerOverride('src/plugins/*/fixtures/**/*.{ts,tsx}', [
             { group: ['#/model/**', ...relativePatterns(['model'])], message: MODEL_ENTRY_MESSAGE },
         ]),
         layerOverride(
@@ -724,7 +725,7 @@ export default defineConfig({
                     group: [
                         ...aliasPatterns(entriesFolders),
                         ...relativePatterns(entriesFolders),
-                        ...exceptPatterns(['features/*/reader']),
+                        ...exceptPatterns(['plugins/*/reader']),
                         ...PROSEMIRROR_PATTERNS,
                     ],
                     message: ENTRIES_MESSAGE,
@@ -778,7 +779,7 @@ export default defineConfig({
                     ...featurePathPatterns(TESTING_FEATURE_TAILS),
                     ...ENGINE_PATTERNS,
                     ...exceptPatterns(['runtime/clipboard/plugin']),
-                    ...exceptPatterns(['bridge/plugin', 'features/plugins', 'features/registry', 'react/engine']),
+                    ...exceptPatterns(['bridge/plugin', 'plugins/plugins', 'plugins/registry', 'react/engine']),
                     '!react',
                     '!react-dom/server',
                 ],

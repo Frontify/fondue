@@ -4,9 +4,6 @@
 
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
-import { fixtureHeading } from '#/features/__tests__/fixtures/features';
-import { core } from '#/features/core/feature';
-import { links } from '#/features/links/feature';
 import {
     defineFeature,
     type FeatureDeclaration,
@@ -14,6 +11,9 @@ import {
     type HtmlSpec,
     type JsonValue,
 } from '#/model';
+import { fixtureHeading } from '#/plugins/__tests__/fixtures/features';
+import { core } from '#/plugins/Core/feature';
+import { links } from '#/plugins/Link/feature';
 
 import { pointer } from '../errors';
 

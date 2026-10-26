@@ -4,8 +4,8 @@ import { act, render } from '@testing-library/react';
 import { Component, createRef, type ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { commentModel, inlineModel } from '#/features';
 import { createEmptyDocument } from '#/model';
+import { commentModel, inlineModel } from '#/plugins';
 
 import { loadProfile } from '../profiles';
 import * as inlineProfile from '../profiles/inline';

@@ -3,8 +3,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { RichTextReader } from '#/entries/reader';
-import { documentModel } from '#/features';
 import { deDE } from '#/locales/de-DE';
+import { documentModel } from '#/plugins';
 import {
     blocksRecord,
     bulletList,

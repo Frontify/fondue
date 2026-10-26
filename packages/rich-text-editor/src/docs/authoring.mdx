@@ -23,7 +23,7 @@ A custom feature is a folder, as each shipped feature is. It holds these files:
 
 A shipped feature keeps three files, `feature.ts` (server-safe), `editor.ts` and `index.ts`, because server code imports its vocabulary without editor code. A host plugin that no server reads can keep everything in one file, as the callout does.
 
-The folder keeps the vocabulary apart from the editor code, so the reader, the codecs and a server import `feature.ts` and never `editor.ts`. A shipped feature with a reader passes it too, as `definePlugin({ feature: links, editor: linksEditor, reader: linkReader })` does in `src/features/links/index.ts`.
+The folder keeps the vocabulary apart from the editor code, so the reader, the codecs and a server import `feature.ts` and never `editor.ts`. A shipped feature with a reader passes it too, as `definePlugin({ feature: links, editor: linksEditor, reader: linkReader })` does in `src/plugins/Link/index.ts`.
 
 ### One file, for a host with no server reading
 
@@ -61,7 +61,7 @@ A feature declares:
 
 A node names its group, its content, its attributes, how it becomes HTML (`html`) and which HTML becomes it (`parse`). `formats` says whether each output is `lossless` or `lossy`, so a codec can report what it drops. A feature also declares its content check rules in `contentRules`. The excerpt stops before them, and `LEVELS` is `[1, 2, 3, 4, 5, 6]`.
 
-Source: `src/features/blocksHeading/feature.ts`
+Source: `src/plugins/Heading/feature.ts`
 
 ```ts
 /** Headings `h1` to `h6`, whose level only the `level` attribute sets. */
@@ -96,7 +96,7 @@ export const heading = defineFeature({
 
 A mark has attributes, an HTML spec and parse rules. `inclusive: false` keeps text typed at the end of the mark outside it. An option is serializable data with a default. A host passes it to the factory, as in `language({ languages: ['en', 'de'] })`, and the editor part reads it from the compiled model.
 
-Source: `src/features/marksLanguage/feature.ts`
+Source: `src/plugins/Language/feature.ts`
 
 ```ts
 const DIRECTIONS = ['ltr', 'rtl', 'auto'] as const;
@@ -128,7 +128,7 @@ export const language = defineFeature({
 
 `attributes` adds an attribute to nodes that other features declare. Its `html` and `parse` entries name the HTML attribute that carries it.
 
-Source: `src/features/stylesBrand/feature.ts`
+Source: `src/plugins/BrandStyles/feature.ts`
 
 ```ts
 attributes: {
@@ -145,7 +145,7 @@ attributes: {
 
 `parse` on a node or mark takes data. `parseRules` takes a function for input the data forms cannot match, such as `text-decoration: underline line-through`, which no single style rule reads.
 
-Source: `src/features/marksStrike/feature.ts`
+Source: `src/plugins/Strikethrough/feature.ts`
 
 ```ts
 parseRules: [
@@ -189,7 +189,7 @@ A command is `run(api, payload)`. One call is one undo step. `active` and `enabl
 
 The `Strike plugin` story mounts this part with `marks.strike`.
 
-Source: `src/features/marksStrike/editor.ts`
+Source: `src/plugins/Strikethrough/editor.ts`
 
 ```ts
 export const strikeEditor = defineEditorPart(strike, {
@@ -226,7 +226,7 @@ label: { 'en-US': 'Strong' },
 
 A command declares its payload as data. The package derives the payload's type and checks every call against it. `refuses` rejects a call that the authoring policy forbids, before applicability, and keeps that payload out of the toolbar.
 
-Source: `src/features/blocksHeading/editor.ts`
+Source: `src/plugins/Heading/editor.ts`
 
 ```ts
 'heading.set': {
@@ -242,7 +242,7 @@ Source: `src/features/blocksHeading/editor.ts`
 
 `blockRule`, `markRule` and `textRule` come from `@frontify/fondue-rich-text-editor/model`. Named capture groups fill same-named payload fields or mark attributes.
 
-Source: `src/features/listsTask/editor.ts`
+Source: `src/plugins/CheckList/editor.ts`
 
 ```ts
 blockRule({ id: 'list.task.brackets', match: /^\[(?:(?<checked>x)| )?\] $/, command: 'list.task.toggle' }),
@@ -252,7 +252,7 @@ blockRule({ id: 'list.task.brackets', match: /^\[(?:(?<checked>x)| )?\] $/, comm
 
 `api.overlays.open` opens a component next to the selection, or next to another anchor, such as a link. A command opens a dialog or popover this way, and the toolbar entry sets `opensOverlay: true`.
 
-Source: `src/features/mentions/editor.ts`
+Source: `src/plugins/Mention/editor.ts`
 
 ```ts
 'mention.search.open': {
@@ -274,7 +274,7 @@ Source: `src/features/mentions/editor.ts`
 
 `overlays` lists components that the editor keeps mounted and that decide for themselves when to show, such as the bubble over a link at the caret.
 
-Source: `src/features/links/editor.tsx`
+Source: `src/plugins/Link/editor.tsx`
 
 ```tsx
 overlays: [SurfaceLinkClicks, LinkBubble],
@@ -284,7 +284,7 @@ overlays: [SurfaceLinkClicks, LinkBubble],
 
 A panel is a component that a toolbar entry opens by its `control` ID. `api.panels.open` opens it. The content checks use one for their issues list.
 
-Source: `src/features/a11yContentChecks/editor.ts`
+Source: `src/plugins/ContentChecks/editor.ts`
 
 ```ts
 const PANEL = 'checks';
@@ -320,7 +320,7 @@ export const contentChecksEditor = defineEditorPart(contentChecks, {
 
 A decoration source draws classes over the text of the blocks of the nodes it names. `derive` returns the ranges of one block, or a promise of them while what it reads still loads. The editor derives again only for a block that a change touched.
 
-Source: `src/features/blocksCode/editor.ts`
+Source: `src/plugins/CodeBlock/editor.ts`
 
 ```ts
 decorations: [
@@ -347,7 +347,7 @@ decorations: [
 
 A suggestion list opens when the author types its `trigger` at the start of a word. `rules` say how long the query may be. `search` returns options, a page at a time, and the list runs `command` with the chosen option's payload.
 
-Source: `src/features/mentions/editor.ts`
+Source: `src/plugins/Mention/editor.ts`
 
 ```ts
 suggestions: [
@@ -380,14 +380,14 @@ With `emptyBlock: true` in `rules`, the list opens only at the start of an empty
 
 A node view is a React component around the editable content of a node. It reads its node through `useRichTextNodeView` and renders `NodeViewContent` where the content goes. The editor renders it again only when its node or the selection changes.
 
-Source: `src/features/listsTask/view.tsx`
+Source: `src/plugins/CheckList/view.tsx`
 
 ```tsx
 const { attrs, nodeId, contentId, context, execute } = useRichTextNodeView<TaskCommands>();
 const checked = attrs.checked === true;
 ```
 
-Source: `src/features/listsTask/view.tsx`
+Source: `src/plugins/CheckList/view.tsx`
 
 ```tsx
 let labelledBy: string | undefined;
@@ -417,7 +417,7 @@ return (
 );
 ```
 
-Source: `src/features/listsTask/view.tsx`
+Source: `src/plugins/CheckList/view.tsx`
 
 ```tsx
 export const taskItemView: NodeViewDeclaration = { node: 'task_item', component: TaskCheckbox };
@@ -425,7 +425,7 @@ export const taskItemView: NodeViewDeclaration = { node: 'task_item', component:
 
 The editor part attaches the view:
 
-Source: `src/features/listsTask/editor.ts`
+Source: `src/plugins/CheckList/editor.ts`
 
 ```ts
 views: [taskItemView],
@@ -546,7 +546,7 @@ export const strongPlugin = extendPlugin(boldPlugin(), {
 
 `files` takes the files of a paste or a drop. Return `true` to take them, or `false` to hand them to the next part.
 
-Source: `src/features/mediaImage/editor.ts`
+Source: `src/plugins/Image/editor.ts`
 
 ```ts
 // Text that keeps white space, as code does, takes no image.
@@ -557,7 +557,7 @@ files: (api, files, at) => !api.selection().verbatim && api.uploads.begin(files,
 
 `defineReaderFeature` comes from `@frontify/fondue-rich-text-editor/authoring`. It attaches a component to a node or mark that the feature declares. The reader calls it as a function, so pass a function component, not a `memo` or `forwardRef` object. A component that throws renders as a labelled fallback, reports `reader.override-failed` and does not stop the rest of the document.
 
-Source: `src/features/mentions/reader.tsx`
+Source: `src/plugins/Mention/reader.tsx`
 
 ```tsx
 const Mention = ({ attrs, context }: ReaderNodeProps) => {

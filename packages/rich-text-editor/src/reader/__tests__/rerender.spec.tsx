@@ -4,11 +4,11 @@ import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { RichTextReader } from '#/entries/reader';
-import { blockquote, doc, envelope, mention, paragraph, text } from '#/features/__tests__/fixtures/documents';
-import { vocabularyMention } from '#/features/__tests__/fixtures/vocabulary';
-import { core } from '#/features/core/feature';
 import { compileContentModel } from '#/model';
 import { decodeToTree } from '#/model/internal';
+import { blockquote, doc, envelope, mention, paragraph, text } from '#/plugins/__tests__/fixtures/documents';
+import { vocabularyMention } from '#/plugins/__tests__/fixtures/vocabulary';
+import { core } from '#/plugins/Core/feature';
 
 import { defineReaderFeature } from '../define';
 

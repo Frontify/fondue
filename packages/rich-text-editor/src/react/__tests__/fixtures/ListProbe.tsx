@@ -5,14 +5,14 @@ import { useEffect, useRef, useState } from 'react';
 
 import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
-import { bold, core, inputRules } from '#/features';
-import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
-import { bulletList } from '#/features/listsBullet/feature';
-import { listItem } from '#/features/listsItem/feature';
-import { orderedList } from '#/features/listsOrdered/feature';
-import { taskList } from '#/features/listsTask/feature';
 import { defineEditor, type EditorHandle, type ListLevels, RichTextEditor, type RichTextEditorProps } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
+import { bold, core, inputRules } from '#/plugins';
+import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
+import { bulletList } from '#/plugins/BulletList/feature';
+import { taskList } from '#/plugins/CheckList/feature';
+import { listItem } from '#/plugins/ListItem/feature';
+import { orderedList } from '#/plugins/OrderedList/feature';
 import { setSelection } from '#/testing';
 
 const model = compileContentModel([core(), bold(), listItem(), bulletList(), orderedList(), taskList(), inputRules()], {

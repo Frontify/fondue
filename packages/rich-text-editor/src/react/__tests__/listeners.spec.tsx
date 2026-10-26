@@ -3,8 +3,8 @@
 import { act, render } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
-import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, RichTextEditor } from '#/index';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 
 import { perfDocument, perfModel } from '../../model/__tests__/fixtures/perf/documents';
 

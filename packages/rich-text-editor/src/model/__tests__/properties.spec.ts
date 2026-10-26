@@ -10,6 +10,7 @@ import { Node, Schema } from 'prosemirror-model';
 import { TableMap, tableNodes } from 'prosemirror-tables';
 import { describe, expect, it } from 'vitest';
 
+import { decodeDocument, type RichTextDocument, toJsonSchema } from '#/model';
 import {
     blockquote,
     bulletList,
@@ -28,9 +29,8 @@ import {
     taskItem,
     taskList,
     text,
-} from '#/features/__tests__/fixtures/documents';
-import { vocabularyModel } from '#/features/__tests__/fixtures/vocabulary';
-import { decodeDocument, type RichTextDocument, toJsonSchema } from '#/model';
+} from '#/plugins/__tests__/fixtures/documents';
+import { vocabularyModel } from '#/plugins/__tests__/fixtures/vocabulary';
 
 import { type TreeNode } from '../content';
 import { decodeToTree } from '../decode';

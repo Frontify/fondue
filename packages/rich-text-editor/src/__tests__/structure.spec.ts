@@ -535,8 +535,8 @@ const specReferenceCounts = () => {
 };
 
 const featureFolders = () =>
-    readdirSync(join(srcRoot, 'features'), { withFileTypes: true })
-        .filter((entry) => entry.isDirectory() && existsSync(join(srcRoot, 'features', entry.name, 'feature.ts')))
+    readdirSync(join(srcRoot, 'plugins'), { withFileTypes: true })
+        .filter((entry) => entry.isDirectory() && existsSync(join(srcRoot, 'plugins', entry.name, 'feature.ts')))
         .map((entry) => entry.name)
         .sort();
 
@@ -695,11 +695,11 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
     it('gives every feature folder an index.ts that exports exactly one definePlugin unit', () => {
         const problems: string[] = [];
         for (const folder of featureFolders()) {
-            const path = join(srcRoot, 'features', folder, 'index.ts');
+            const path = join(srcRoot, 'plugins', folder, 'index.ts');
             if (!existsSync(path)) {
-                problems.push(`missing: features/${folder}/index.ts`);
+                problems.push(`missing: plugins/${folder}/index.ts`);
             } else if (unitExports(path).length !== 1) {
-                problems.push(`not exactly one definePlugin unit: features/${folder}/index.ts`);
+                problems.push(`not exactly one definePlugin unit: plugins/${folder}/index.ts`);
             }
         }
 
@@ -709,9 +709,9 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
     it('gives every feature folder a feature.ts that exports exactly one runtime function', () => {
         const problems: string[] = [];
         for (const folder of featureFolders()) {
-            const names = exportedFunctions(join(srcRoot, 'features', folder, 'feature.ts'));
+            const names = exportedFunctions(join(srcRoot, 'plugins', folder, 'feature.ts'));
             if (names.length !== 1) {
-                problems.push(`features/${folder}/feature.ts exports ${names.length} functions: ${names.join(', ')}`);
+                problems.push(`plugins/${folder}/feature.ts exports ${names.length} functions: ${names.join(', ')}`);
             }
         }
 

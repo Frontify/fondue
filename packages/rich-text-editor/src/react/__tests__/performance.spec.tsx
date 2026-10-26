@@ -6,13 +6,13 @@ import { createRef } from 'react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { featuresById } from '#/features';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { registry } from '#/features/registry';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
 // oxlint-disable-next-line no-restricted-imports -- the spies need the hash module's own namespace, not a re-export.
 import * as hash from '#/model/hash';
+import { featuresById } from '#/plugins';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { registry } from '#/plugins/registry';
 import { runtimeOf } from '#/runtime/runtime';
 import { typeText } from '#/testing';
 

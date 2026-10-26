@@ -5,10 +5,10 @@
 import { forwardRef, memo } from 'react';
 import { describe, expect, it } from 'vitest';
 
-import { core } from '#/features/core/feature';
-import { links } from '#/features/links/feature';
 import { DefinitionError, type Feature } from '#/model';
 import { featureInternals } from '#/model/internal';
+import { core } from '#/plugins/Core/feature';
+import { links } from '#/plugins/Link/feature';
 
 import { declaredOverrides, defineReaderFeature } from '../define';
 

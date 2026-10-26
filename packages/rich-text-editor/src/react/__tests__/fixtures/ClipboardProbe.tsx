@@ -4,12 +4,12 @@ import { NodeSelection } from 'prosemirror-state';
 import { useEffect, useRef, useState } from 'react';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { bold, core } from '#/features';
-import { fixtureLabelledMention } from '#/features/__tests__/fixtures/features';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { taskList as taskListFeature } from '#/features/listsTask/feature';
 import { defineEditor, type DocumentChange, type EditorHandle, RichTextEditor, type UploadService } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
+import { bold, core } from '#/plugins';
+import { fixtureLabelledMention } from '#/plugins/__tests__/fixtures/features';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { taskList as taskListFeature } from '#/plugins/CheckList/feature';
 import { runtimeOf } from '#/runtime/runtime';
 import { type SelectionTarget, setSelection } from '#/testing';
 

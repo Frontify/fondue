@@ -8,8 +8,6 @@ import { act, render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
-import { featuresById } from '#/features';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import {
     compileContentModel,
@@ -19,6 +17,8 @@ import {
     type RichTextDocument,
     type RichTextSlice,
 } from '#/model';
+import { featuresById } from '#/plugins';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { SLICE_TYPE } from '#/runtime/clipboard/slice';
 import { runtimeOf } from '#/runtime/runtime';
 import { paste, typeText } from '#/testing';

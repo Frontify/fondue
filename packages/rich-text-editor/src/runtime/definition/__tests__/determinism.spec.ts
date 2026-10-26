@@ -7,7 +7,7 @@ import { Worker } from 'node:worker_threads';
 
 import { describe, expect, it } from 'vitest';
 
-import { fixtureProfiles } from '#/features/__tests__/fixtures/profiles';
+import { fixtureProfiles } from '#/plugins/__tests__/fixtures/profiles';
 
 const compileInWorker = () =>
     new Promise<unknown>((resolve, reject) => {

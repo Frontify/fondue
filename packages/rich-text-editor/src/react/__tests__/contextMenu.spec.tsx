@@ -6,8 +6,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { defineEditorPart } from '#/bridge/plugin';
 import { defineReactPresentation } from '#/entries/authoring';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { core } from '#/features/core/feature';
+import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
+import { enUS } from '#/locales/en-US';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { core } from '#/plugins/Core/feature';
 import {
     figure,
     flush,
@@ -17,10 +19,8 @@ import {
     resolving,
     storedIn,
     text,
-} from '#/features/mediaImage/__tests__/fixtures/mount';
-import { mediaImage } from '#/features/mediaImage/feature';
-import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
-import { enUS } from '#/locales/en-US';
+} from '#/plugins/Image/__tests__/fixtures/mount';
+import { mediaImage } from '#/plugins/Image/feature';
 import { setSelection } from '#/testing';
 
 beforeEach(() => {

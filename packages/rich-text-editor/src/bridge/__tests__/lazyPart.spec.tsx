@@ -123,7 +123,7 @@ describe('a lazy part', () => {
             ...(await import('../lazyPart')),
             ...(await import('#/react/RichTextEditor')),
             ...(await import('#/react/profiles')),
-            ...(await import('#/features')),
+            ...(await import('#/plugins')),
             ...(await import('#/model')),
         });
         let modules: Awaited<ReturnType<typeof loadModules>>;

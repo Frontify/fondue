@@ -2,7 +2,6 @@
 
 import { Children, type ReactElement } from 'react';
 
-import { core } from '#/features/core/feature';
 import {
     compileContentModel,
     defineFeature,
@@ -12,10 +11,11 @@ import {
     type MarkDeclaration,
     type NodeDeclaration,
 } from '#/model';
+import { core } from '#/plugins/Core/feature';
 import { defineReaderFeature, type ReaderNodeProps } from '#/reader/define';
 
 /**
- * The vocabulary stand-ins of `src/features/__tests__/fixtures/vocabulary.ts` with the semantic `html` specs and the format
+ * The vocabulary stand-ins of `src/plugins/__tests__/fixtures/vocabulary.ts` with the semantic `html` specs and the format
  * support the shipped features will carry, under the same feature IDs, so every document of
  * `src/model/__tests__/fixtures/model/valid` renders as the semantic elements the reader uses. Test-only; never in the
  * registry or a profile.

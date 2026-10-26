@@ -10,12 +10,6 @@ import { Selection } from 'prosemirror-state';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
-import { blockquote, mark, node, paragraph, text } from '#/features/__tests__/fixtures/documents';
-import { htmlFeatures, htmlLink } from '#/features/__tests__/fixtures/html';
-import { quote } from '#/features/blocksQuote/feature';
-import { core } from '#/features/core/feature';
-import { language } from '#/features/marksLanguage/feature';
-import { registry } from '#/features/registry';
 import {
     compileContentModel,
     type ContentModel,
@@ -25,6 +19,12 @@ import {
     type JsonValue,
 } from '#/model';
 import { compiledModel } from '#/model/internal';
+import { blockquote, mark, node, paragraph, text } from '#/plugins/__tests__/fixtures/documents';
+import { htmlFeatures, htmlLink } from '#/plugins/__tests__/fixtures/html';
+import { core } from '#/plugins/Core/feature';
+import { language } from '#/plugins/Language/feature';
+import { quote } from '#/plugins/Quote/feature';
+import { registry } from '#/plugins/registry';
 import { loadMarkdownReader } from '#/runtime/clipboard/markdown';
 import { fromHTML } from '#/runtime/import/fromHtml';
 import { setSelection } from '#/testing';

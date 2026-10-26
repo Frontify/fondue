@@ -4,6 +4,7 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { type JsonValue } from '#/model';
 import {
     blockquote,
     bulletList,
@@ -22,8 +23,7 @@ import {
     taskItem,
     taskList,
     text,
-} from '#/features/__tests__/fixtures/documents';
-import { type JsonValue } from '#/model';
+} from '#/plugins/__tests__/fixtures/documents';
 
 import { semanticCodecs, stored } from './helpers/helpers';
 

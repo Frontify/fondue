@@ -3,8 +3,8 @@
 import { act, render } from '@testing-library/react';
 import { createRef } from 'react';
 
-import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/features';
 import { createEmptyDocument } from '#/model';
+import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/plugins';
 import { loadProfile } from '#/react/profiles';
 import { RichTextEditor } from '#/react/RichTextEditor';
 import { type EditorHandle, type RichTextEditorBaseProps, type RichTextProfile } from '#/react/types';

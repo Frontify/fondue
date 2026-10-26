@@ -6,8 +6,6 @@ import { readFileSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
-import { link, mark, node, paragraph, table, text } from '#/features/__tests__/fixtures/documents';
-import { core } from '#/features/core/feature';
 import {
     compileContentModel,
     createEmptyDocument,
@@ -19,6 +17,8 @@ import {
     type JsonValue,
     type RichTextDocument,
 } from '#/model';
+import { link, mark, node, paragraph, table, text } from '#/plugins/__tests__/fixtures/documents';
+import { core } from '#/plugins/Core/feature';
 
 import { semanticModel } from '../../reader/__tests__/fixtures/semantic';
 import { fixturesIn } from '../../reader/__tests__/helpers/helpers';

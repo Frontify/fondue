@@ -46,7 +46,7 @@ export const measure = async (
     source: string,
     options: {
         external?: (id: string) => boolean;
-        /** Replaces the module a specifier names, as `[{ find: '#/features/marksStrike/feature', replacement: path }]`. */
+        /** Replaces the module a specifier names, as `[{ find: '#/plugins/Strikethrough/feature', replacement: path }]`. */
         alias?: readonly { find: string; replacement: string }[];
         /** Drops a source module no used export reaches, as a host's bundler does under the package's `sideEffects`. */
         sourceIsPure?: boolean;
@@ -113,7 +113,7 @@ export const profileBytes = async (
     alias: readonly { find: string; replacement: string }[] = [],
 ): Promise<{ bytes: number; modules: readonly string[] }> => {
     const entry = profile.replaceAll(/-(\w)/g, (_, letter: string) => letter.toUpperCase());
-    const { chunks } = await measure(`import '#/features/profiles/__tests__/fixtures/${entry}.entry';`, { alias });
+    const { chunks } = await measure(`import '#/plugins/profiles/__tests__/fixtures/${entry}.entry';`, { alias });
     const byName = new Map(chunks.map((chunk) => [chunk.fileName, chunk]));
     const loaded = new Set<ChunkInfo>();
     const visit = (chunk: ChunkInfo | undefined) => {

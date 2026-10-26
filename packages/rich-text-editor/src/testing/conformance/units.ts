@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type EditorPart } from '#/bridge/plugin';
-import { pluginIds, pluginsById } from '#/features/plugins';
 import { type Feature } from '#/model';
+import { pluginIds, pluginsById } from '#/plugins/plugins';
 
 export type ContractUnit = ReturnType<typeof pluginsById>[number];
 

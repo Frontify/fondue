@@ -9,15 +9,6 @@ import { type EditorState, type Selection } from 'prosemirror-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
-import { bold, code, core, featuresById, heading, italic, links, mediaImage, mentions, quote } from '#/features';
-import { doc, envelope, paragraph, text } from '#/features/__tests__/fixtures/documents';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { bulletList } from '#/features/listsBullet/feature';
-import { listItem } from '#/features/listsItem/feature';
-import { strike } from '#/features/marksStrike/feature';
-import { subscript } from '#/features/marksSubscript/feature';
-import { superscript } from '#/features/marksSuperscript/feature';
-import { underline } from '#/features/marksUnderline/feature';
 import {
     compileContentModel,
     DefinitionError,
@@ -28,6 +19,15 @@ import {
     type RichTextDocument,
     type RichTextSlice,
 } from '#/model';
+import { bold, code, core, featuresById, heading, italic, links, mediaImage, mentions, quote } from '#/plugins';
+import { doc, envelope, paragraph, text } from '#/plugins/__tests__/fixtures/documents';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { bulletList } from '#/plugins/BulletList/feature';
+import { listItem } from '#/plugins/ListItem/feature';
+import { strike } from '#/plugins/Strikethrough/feature';
+import { subscript } from '#/plugins/Subscript/feature';
+import { superscript } from '#/plugins/Superscript/feature';
+import { underline } from '#/plugins/Underline/feature';
 import { defineEditor, defineReactPresentation } from '#/react/define';
 import { RichTextEditor } from '#/react/RichTextEditor';
 import { type EditorHandle, type OperationMetric } from '#/react/types';

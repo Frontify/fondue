@@ -4,8 +4,8 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { commentModel } from '#/features';
 import { diffReferences, type RichTextDocument } from '#/model';
+import { commentModel } from '#/plugins';
 
 const mention = (nodeId: string, resourceId: string) => ({
     type: 'mention',

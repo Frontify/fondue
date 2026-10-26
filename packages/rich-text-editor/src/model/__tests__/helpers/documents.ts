@@ -2,7 +2,6 @@
 
 import fc from 'fast-check';
 
-import { storedIn } from '#/features/__tests__/fixtures/documents';
 import {
     type AttributeDeclaration,
     checkHref,
@@ -16,6 +15,7 @@ import { attributesOf, type CompiledMark, compiledModel, type CompiledNode } fro
 import { advanceMatch, type ContentMatch, matchEnds, startMatch } from '#/model/contentExpression';
 import { canonicalJson } from '#/model/hash';
 import { isValidValue } from '#/model/values';
+import { storedIn } from '#/plugins/__tests__/fixtures/documents';
 
 export type JsonNode = { [key: string]: JsonValue };
 

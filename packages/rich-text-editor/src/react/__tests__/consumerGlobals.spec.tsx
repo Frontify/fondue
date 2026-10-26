@@ -47,7 +47,7 @@ describe('a consumer test in jsdom', () => {
         ]);
         vi.resetModules();
         const { RichTextEditor } = await import('#/index');
-        const { commentModel } = await import('#/features');
+        const { commentModel } = await import('#/plugins');
         const { createEmptyDocument } = await import('#/model');
         const { loadProfile } = await import('#/react/profiles');
 

@@ -7,7 +7,6 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
-import { commentModel } from '#/features';
 import {
     boldPlugin,
     type CompiledEditorDefinition,
@@ -25,6 +24,7 @@ import {
     useRichTextFormField,
 } from '#/index';
 import { type ContentModel, createEmptyDocument } from '#/model';
+import { commentModel } from '#/plugins';
 import { createFakePersistenceService } from '#/testing';
 
 import { recordOf, text, textOf } from './records';

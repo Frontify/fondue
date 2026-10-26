@@ -6,22 +6,6 @@ import { EditorState, type Plugin } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
 import { defineEditorPart, type EditorPart, type EditorPartSpec } from '#/bridge/plugin';
-import { fixtureHeadingEditor, fixtureHistoryEditor } from '#/features/__tests__/fixtures/editors';
-import { fixtureExtensionsOf } from '#/features/__tests__/fixtures/extensions';
-import {
-    fixtureBold,
-    fixtureColor,
-    fixtureHeading,
-    fixtureHistory,
-    fixtureItalic,
-    fixtureRedo,
-} from '#/features/__tests__/fixtures/features';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { vocabularyModel } from '#/features/__tests__/fixtures/vocabulary';
-import { core } from '#/features/core/feature';
-import { links } from '#/features/links/feature';
-import { mediaImage } from '#/features/mediaImage/feature';
-import { mentions } from '#/features/mentions/feature';
 import {
     compileContentModel,
     type ContentModel,
@@ -30,6 +14,22 @@ import {
     type Feature,
     type FeatureDeclaration,
 } from '#/model';
+import { fixtureHeadingEditor, fixtureHistoryEditor } from '#/plugins/__tests__/fixtures/editors';
+import { fixtureExtensionsOf } from '#/plugins/__tests__/fixtures/extensions';
+import {
+    fixtureBold,
+    fixtureColor,
+    fixtureHeading,
+    fixtureHistory,
+    fixtureItalic,
+    fixtureRedo,
+} from '#/plugins/__tests__/fixtures/features';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { vocabularyModel } from '#/plugins/__tests__/fixtures/vocabulary';
+import { core } from '#/plugins/Core/feature';
+import { mediaImage } from '#/plugins/Image/feature';
+import { links } from '#/plugins/Link/feature';
+import { mentions } from '#/plugins/Mention/feature';
 import { extensionsOf } from '#/react/engine';
 
 import { compileDefinition } from '..';

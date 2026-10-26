@@ -5,13 +5,13 @@ import { type EditorState, type Transaction } from 'prosemirror-state';
 import { Step, StepResult } from 'prosemirror-transform';
 import { describe, expect, it, vi } from 'vitest';
 
-import { fixtureHeadingSet, fixtureMention, fixtureTable } from '#/features/__tests__/fixtures/features';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { core } from '#/features/core/feature';
-import { links } from '#/features/links/feature';
-import { bold } from '#/features/marksBold/feature';
 import { defineEditor } from '#/index';
 import { compileContentModel, type JsonValue } from '#/model';
+import { fixtureHeadingSet, fixtureMention, fixtureTable } from '#/plugins/__tests__/fixtures/features';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
+import { links } from '#/plugins/Link/feature';
 import { pressKey, setSelection, typeText } from '#/testing';
 
 import { authoringOf } from '../policy';

@@ -3,10 +3,10 @@
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { core } from '#/features';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, RichTextEditor } from '#/index';
 import { compileContentModel, createEmptyDocument } from '#/model';
+import { core } from '#/plugins';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { probeRuntimes } from '#/testing';
 
 describe('probeRuntimes', () => {

@@ -2,11 +2,11 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { countingIds, notesModel } from '#/features/__tests__/fixtures/notes';
-import { core } from '#/features/core/feature';
-import { links } from '#/features/links/feature';
-import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, migrateDocument } from '#/model';
+import { countingIds, notesModel } from '#/plugins/__tests__/fixtures/notes';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
+import { links } from '#/plugins/Link/feature';
 import { setSelection, typeText } from '#/testing';
 
 import newerNotes from '../../model/__tests__/fixtures/migration/v3-current.json';

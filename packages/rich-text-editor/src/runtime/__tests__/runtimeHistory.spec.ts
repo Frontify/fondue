@@ -3,10 +3,10 @@
 import { Plugin } from 'prosemirror-state';
 import { describe, expect, it, vi } from 'vitest';
 
-import { core } from '#/features/core/feature';
-import { bold } from '#/features/marksBold/feature';
-import { mediaImage } from '#/features/mediaImage/feature';
 import { compileContentModel } from '#/model';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
+import { mediaImage } from '#/plugins/Image/feature';
 import { countAppends } from '#/runtime/definition';
 import { setSelection, typeText } from '#/testing';
 import { declaredPng } from '#/testing/uploads';

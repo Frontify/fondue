@@ -2,8 +2,8 @@
 
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { blockquote, link, mark, mention, node, paragraph, text } from '#/features/__tests__/fixtures/documents';
 import { type JsonValue } from '#/model';
+import { blockquote, link, mark, mention, node, paragraph, text } from '#/plugins/__tests__/fixtures/documents';
 import { loadMarkdownReader } from '#/runtime/clipboard/markdown';
 import { SLICE_TYPE } from '#/runtime/clipboard/slice';
 import { setSelection } from '#/testing';

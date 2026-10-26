@@ -4,9 +4,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { featuresById } from '#/features';
-import { brandDocumentModel } from '#/features/profiles/brandDocument';
 import { compileContentModel, type ContentNodeJSON, decodeDocument } from '#/model';
+import { featuresById } from '#/plugins';
+import { brandDocumentModel } from '#/plugins/profiles/brandDocument';
 
 import {
     manyDocuments,

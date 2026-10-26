@@ -7,12 +7,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AnnouncerContext } from '#/bridge/announcer';
 import { defineEditorPart } from '#/bridge/plugin';
-import { fixtureCodeBlock } from '#/features/__tests__/fixtures/code-block/feature';
-import { fixtureCodeBlockEditor } from '#/features/__tests__/fixtures/code-block/view';
-import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
-import { core } from '#/features/core/feature';
-import { boldEditor } from '#/features/marksBold/editor';
-import { bold } from '#/features/marksBold/feature';
 import { deDE } from '#/locales/de-DE';
 import { enUS } from '#/locales/en-US';
 import {
@@ -23,6 +17,12 @@ import {
     type JsonValue,
     type KeyBinding,
 } from '#/model';
+import { fixtureCodeBlock } from '#/plugins/__tests__/fixtures/code-block/feature';
+import { fixtureCodeBlockEditor } from '#/plugins/__tests__/fixtures/code-block/view';
+import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
+import { boldEditor } from '#/plugins/Bold/editor';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
 import { pressKey, setSelection, typeText } from '#/testing';
 
 import { defineEditor, defineReactPresentation } from '../define';

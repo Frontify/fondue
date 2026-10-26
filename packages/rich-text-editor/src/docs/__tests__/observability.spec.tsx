@@ -7,9 +7,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createPortalStore } from '#/bridge/portals';
 import { defineReaderFeature } from '#/entries/reader';
-import { commentModel, documentModel, inlineModel } from '#/features';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { core } from '#/features/core/feature';
 import { defineEditor, type EditorHandle, type EditorServices, type PersistenceService, RichTextEditor } from '#/index';
 import {
     compileContentModel,
@@ -18,6 +15,9 @@ import {
     defineFeature,
     type RichTextDocument,
 } from '#/model';
+import { commentModel, documentModel, inlineModel } from '#/plugins';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { core } from '#/plugins/Core/feature';
 import { typeText } from '#/testing';
 
 import { countImportFailures } from '../observability/importFailures';

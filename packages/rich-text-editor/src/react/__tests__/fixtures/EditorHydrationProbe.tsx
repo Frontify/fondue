@@ -4,10 +4,10 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
 import { hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
 
-import { bold, core } from '#/features';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
 import { defineEditor, RichTextEditor } from '#/index';
 import { compileContentModel } from '#/model';
+import { bold, core } from '#/plugins';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 
 import { storedOf } from './EditorProbe';
 

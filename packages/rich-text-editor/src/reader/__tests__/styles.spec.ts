@@ -5,7 +5,8 @@
 import { createElement, Fragment } from 'react';
 import { describe, expect, it } from 'vitest';
 
-import { fixtureHighlight } from '#/features/__tests__/fixtures/highlight';
+import { compileContentModel, type Diagnostic, resolveStyle } from '#/model';
+import { fixtureHighlight } from '#/plugins/__tests__/fixtures/highlight';
 import {
     COLOR_TOKENS,
     linked,
@@ -16,14 +17,13 @@ import {
     styledDocument,
     styledHeading,
     styleModel,
-} from '#/features/__tests__/fixtures/styles';
-import { heading } from '#/features/blocksHeading/feature';
-import { quote } from '#/features/blocksQuote/feature';
-import { core } from '#/features/core/feature';
-import { links } from '#/features/links/feature';
-import { fontColor } from '#/features/marksFontColor/feature';
-import { brandStyles } from '#/features/stylesBrand/feature';
-import { compileContentModel, type Diagnostic, resolveStyle } from '#/model';
+} from '#/plugins/__tests__/fixtures/styles';
+import { brandStyles } from '#/plugins/BrandStyles/feature';
+import { core } from '#/plugins/Core/feature';
+import { fontColor } from '#/plugins/FontColor/feature';
+import { heading } from '#/plugins/Heading/feature';
+import { links } from '#/plugins/Link/feature';
+import { quote } from '#/plugins/Quote/feature';
 
 import { defineReaderFeature } from '../define';
 

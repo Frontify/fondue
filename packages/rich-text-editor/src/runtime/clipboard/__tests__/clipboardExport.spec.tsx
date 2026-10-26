@@ -4,14 +4,14 @@ import { act } from '@testing-library/react';
 import { NodeSelection } from 'prosemirror-state';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { fixtureChrome } from '#/features/__tests__/fixtures/chrome/feature';
-import { fixtureCodeBlock } from '#/features/__tests__/fixtures/code-block/feature';
-import { node, paragraph, text } from '#/features/__tests__/fixtures/documents';
-import { fixtureMediaImage } from '#/features/__tests__/fixtures/media/feature';
-import { fixtureTableBlock } from '#/features/__tests__/fixtures/table/feature';
-import { core } from '#/features/core/feature';
-import { mediaImage } from '#/features/mediaImage/feature';
 import { compileContentModel, type JsonValue } from '#/model';
+import { fixtureChrome } from '#/plugins/__tests__/fixtures/chrome/feature';
+import { fixtureCodeBlock } from '#/plugins/__tests__/fixtures/code-block/feature';
+import { node, paragraph, text } from '#/plugins/__tests__/fixtures/documents';
+import { fixtureMediaImage } from '#/plugins/__tests__/fixtures/media/feature';
+import { fixtureTableBlock } from '#/plugins/__tests__/fixtures/table/feature';
+import { core } from '#/plugins/Core/feature';
+import { mediaImage } from '#/plugins/Image/feature';
 import { loadMarkdownReader } from '#/runtime/clipboard/markdown';
 
 import { mount, copyFrom, selectAll } from '../../import/__tests__/fixtures/mount';

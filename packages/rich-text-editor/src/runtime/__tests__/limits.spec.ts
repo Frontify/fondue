@@ -4,11 +4,11 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { core } from '#/features/core/feature';
-import { links } from '#/features/links/feature';
-import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, defaultLimits } from '#/model';
 import { type TreeNode, decodeToTree, encodeTree } from '#/model/internal';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
+import { links } from '#/plugins/Link/feature';
 import { compileDefinition } from '#/runtime/definition';
 import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';
 

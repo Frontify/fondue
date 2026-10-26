@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/features';
 import { type ContentModel } from '#/model';
+import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/plugins';
 import { type RichTextProfile } from '#/react/types';
 import { type LoadedDocument } from '#/runtime/port';
 

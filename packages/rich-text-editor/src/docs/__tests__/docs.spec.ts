@@ -8,6 +8,8 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
+import { enUS } from '#/locales/en-US';
+import { toJsonSchema } from '#/model';
 import {
     brandDocumentFeatures,
     brandDocumentModel,
@@ -18,12 +20,10 @@ import {
     featuresById,
     inlineFeatures,
     inlineModel,
-} from '#/features';
-import { CONTENT_RULE_IDS } from '#/features/__tests__/fixtures/contentRules';
-import { registry } from '#/features/registry';
-import { UNSHIPPED_FEATURES } from '#/features/stages';
-import { enUS } from '#/locales/en-US';
-import { toJsonSchema } from '#/model';
+} from '#/plugins';
+import { CONTENT_RULE_IDS } from '#/plugins/__tests__/fixtures/contentRules';
+import { registry } from '#/plugins/registry';
+import { UNSHIPPED_FEATURES } from '#/plugins/stages';
 
 const PACKAGE = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const read = (path: string) => readFileSync(join(PACKAGE, path), 'utf8');
@@ -214,7 +214,7 @@ describe('the authoring guide', () => {
 
     it('takes every excerpt from a feature folder or the authoring examples of the package', () => {
         for (const { path, language } of excerpts) {
-            expect(path).toMatch(/^src\/(?:features\/[A-Za-z0-9]+|docs\/authoring)\/[A-Za-z-]+\.tsx?$/);
+            expect(path).toMatch(/^src\/(?:plugins\/[A-Za-z0-9]+|docs\/authoring)\/[A-Za-z-]+\.tsx?$/);
             expect(language).toBe(path.endsWith('.tsx') ? 'tsx' : 'ts');
         }
     });

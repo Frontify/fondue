@@ -3,8 +3,8 @@
 import { EditorState, NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
-import { core } from '#/features/core/feature';
 import { compileContentModel, type ResourceLimits } from '#/model';
+import { core } from '#/plugins/Core/feature';
 import { compileDefinition, type EngineCommand } from '#/runtime/definition';
 
 import { type AsyncOperation, type AsyncRequest } from '../../async';

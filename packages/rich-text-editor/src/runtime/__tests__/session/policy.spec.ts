@@ -5,9 +5,9 @@
 import { EditorState } from 'prosemirror-state';
 import { describe, expect, it, vi } from 'vitest';
 
-import { core } from '#/features/core/feature';
-import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, defaultLimits } from '#/model';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
 import { compileDefinition } from '#/runtime/definition';
 
 import { authoringOf } from '../../policy';

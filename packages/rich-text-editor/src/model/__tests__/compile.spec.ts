@@ -4,17 +4,17 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { compileContentModel, defineFeature, type FeatureDeclaration } from '#/model';
 import {
     fixtureBold,
     fixtureColor,
     fixtureHeading,
     fixtureHistory,
     fixtureItalic,
-} from '#/features/__tests__/fixtures/features';
-import { fixtureProfiles } from '#/features/__tests__/fixtures/profiles';
-import { core } from '#/features/core/feature';
-import { links } from '#/features/links/feature';
-import { compileContentModel, defineFeature, type FeatureDeclaration } from '#/model';
+} from '#/plugins/__tests__/fixtures/features';
+import { fixtureProfiles } from '#/plugins/__tests__/fixtures/profiles';
+import { core } from '#/plugins/Core/feature';
+import { links } from '#/plugins/Link/feature';
 
 import { orderPlugins, type PluginDescriptor } from '../capabilities';
 import { compiledModel } from '../compile';

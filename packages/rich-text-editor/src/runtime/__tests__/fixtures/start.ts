@@ -6,12 +6,6 @@ import { type EditorView } from 'prosemirror-view';
 import { afterAll, afterEach, beforeAll, beforeEach, expect, vi } from 'vitest';
 
 import { type EditorApi, type EditorPart } from '#/bridge/plugin';
-import { fixtureMention } from '#/features/__tests__/fixtures/features';
-import { countingIds } from '#/features/__tests__/fixtures/notes';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { core } from '#/features/core/feature';
-import { links } from '#/features/links/feature';
-import { bold } from '#/features/marksBold/feature';
 import { type PersistenceService } from '#/index';
 import {
     compileContentModel,
@@ -24,6 +18,12 @@ import {
 } from '#/model';
 import { decodeToTree, limitsOf } from '#/model/internal';
 import { createSaveCoordinator } from '#/persistence/coordinator';
+import { fixtureMention } from '#/plugins/__tests__/fixtures/features';
+import { countingIds } from '#/plugins/__tests__/fixtures/notes';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
+import { links } from '#/plugins/Link/feature';
 import { extensionsOf } from '#/react/engine';
 import { compileDefinition, type CompiledDefinition, countAppends, type EngineCommand } from '#/runtime/definition';
 import { failNetworkInThisFile } from '#/testing/__tests__/fixtures/network';

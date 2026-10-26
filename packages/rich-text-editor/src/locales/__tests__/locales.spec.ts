@@ -6,7 +6,7 @@ import { readdirSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
-import { CODE_LANGUAGES } from '#/features/blocksCode/languages';
+import { CODE_LANGUAGES } from '#/plugins/CodeBlock/languages';
 import { LOADERS } from '#/react/locale';
 
 import { COUNT_PLACEHOLDERS } from '../countPlaceholders';

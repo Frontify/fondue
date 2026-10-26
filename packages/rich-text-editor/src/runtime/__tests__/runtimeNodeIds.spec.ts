@@ -5,13 +5,13 @@ import { Node } from 'prosemirror-model';
 import { Plugin, type Transaction } from 'prosemirror-state';
 import { describe, expect, it, vi } from 'vitest';
 
-import { fixtureHeadingSet, fixtureMedia } from '#/features/__tests__/fixtures/features';
-import { countingIds } from '#/features/__tests__/fixtures/notes';
-import { vocabularyLists, vocabularyMention } from '#/features/__tests__/fixtures/vocabulary';
-import { core } from '#/features/core/feature';
-import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, type JsonValue, type ResourceLimits } from '#/model';
 import { limitsOf } from '#/model/internal';
+import { fixtureHeadingSet, fixtureMedia } from '#/plugins/__tests__/fixtures/features';
+import { countingIds } from '#/plugins/__tests__/fixtures/notes';
+import { vocabularyLists, vocabularyMention } from '#/plugins/__tests__/fixtures/vocabulary';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
 import { type EngineCommand, ORIGIN_META } from '#/runtime/definition';
 import { setSelection, typeText } from '#/testing';
 

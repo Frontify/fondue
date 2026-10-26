@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { createCodecs } from '#/codecs';
-import { doc, envelope } from '#/features/__tests__/fixtures/documents';
 import { type JsonValue, type RichTextDocument } from '#/model';
+import { doc, envelope } from '#/plugins/__tests__/fixtures/documents';
 import { semanticModel } from '#/reader/__tests__/fixtures/semantic';
 
 /** Every stand-in feature, so a test document may use any of them without a capability warning. */

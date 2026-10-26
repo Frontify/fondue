@@ -8,9 +8,10 @@ import { renderToString } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { defineEditorPart } from '#/bridge/plugin';
-import { fixtureCodeBlock } from '#/features/__tests__/fixtures/code-block/feature';
-import { fixtureItalic, fixtureToolbar } from '#/features/__tests__/fixtures/features';
-import { fixtureMediaImage } from '#/features/__tests__/fixtures/media/feature';
+import { compileContentModel, type ContentNodeJSON, type JsonValue } from '#/model';
+import { fixtureCodeBlock } from '#/plugins/__tests__/fixtures/code-block/feature';
+import { fixtureItalic, fixtureToolbar } from '#/plugins/__tests__/fixtures/features';
+import { fixtureMediaImage } from '#/plugins/__tests__/fixtures/media/feature';
 import {
     type FixtureOverlayProps,
     FixtureLinkPopover,
@@ -18,12 +19,11 @@ import {
     FixtureRunAnchored,
     FixtureSuggestions,
     LinkForm,
-} from '#/features/__tests__/fixtures/overlays/Overlays';
-import { unitsOf, type UnitCommands } from '#/features/__tests__/fixtures/units';
-import { core } from '#/features/core/feature';
-import { links } from '#/features/links/feature';
-import { bold } from '#/features/marksBold/feature';
-import { compileContentModel, type ContentNodeJSON, type JsonValue } from '#/model';
+} from '#/plugins/__tests__/fixtures/overlays/Overlays';
+import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
+import { links } from '#/plugins/Link/feature';
 import { runtimeOf } from '#/runtime/runtime';
 import { pressKey, setSelection, typeText } from '#/testing';
 

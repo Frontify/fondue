@@ -4,6 +4,7 @@ import { EditorState } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { compileContentModel, defineFeature, type JsonValue, type ResourceLimits } from '#/model';
 import {
     blockquote,
     bulletList,
@@ -18,8 +19,7 @@ import {
     row,
     table,
     text,
-} from '#/features/__tests__/fixtures/documents';
-import { compileContentModel, defineFeature, type JsonValue, type ResourceLimits } from '#/model';
+} from '#/plugins/__tests__/fixtures/documents';
 import { loadMarkdownReader } from '#/runtime/clipboard/markdown';
 import { SLICE_TYPE } from '#/runtime/clipboard/slice';
 import { setSelection } from '#/testing';

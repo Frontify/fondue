@@ -5,11 +5,6 @@ import { createRef, type FormEvent, type RefObject } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { defineReactPresentation } from '#/entries/authoring';
-import { fixtureMediaImage } from '#/features/__tests__/fixtures/media/feature';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { vocabularyLists, vocabularyMention } from '#/features/__tests__/fixtures/vocabulary';
-import { core } from '#/features/core/feature';
-import { bold } from '#/features/marksBold/feature';
 import {
     type CommitResult,
     defineEditor,
@@ -25,6 +20,11 @@ import {
 } from '#/index';
 import { enUS } from '#/locales/en-US';
 import { compileContentModel, type ContentNodeJSON, type Diagnostic, defineFeature, type JsonValue } from '#/model';
+import { fixtureMediaImage } from '#/plugins/__tests__/fixtures/media/feature';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { vocabularyLists, vocabularyMention } from '#/plugins/__tests__/fixtures/vocabulary';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
 import { type RuntimeHandle, runtimeOf } from '#/runtime/runtime';
 import { createFakePersistenceService, setSelection, typeText } from '#/testing';
 import { probeRuntimes } from '#/testing/probe';

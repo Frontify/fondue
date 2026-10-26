@@ -6,8 +6,8 @@ import { readdirSync, readFileSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
-import { countingIds, notesModel } from '#/features/__tests__/fixtures/notes';
 import { migrateDocument, type RichTextDocument } from '#/model';
+import { countingIds, notesModel } from '#/plugins/__tests__/fixtures/notes';
 
 const root = new URL('./fixtures/migration/', import.meta.url);
 const fixtures = readdirSync(root, { recursive: true, encoding: 'utf8' })

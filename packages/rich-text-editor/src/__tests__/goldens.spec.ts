@@ -5,12 +5,12 @@
 import { describe, expect, it } from 'vitest';
 
 import { type EditorPart } from '#/bridge/plugin';
-import { brandDocumentModel } from '#/features/profiles/brandDocument';
-import { commentModel } from '#/features/profiles/comment';
-import { documentModel } from '#/features/profiles/document';
-import { inlineModel } from '#/features/profiles/inline';
-import { featuresById, registry } from '#/features/registry';
 import { DefinitionError } from '#/model';
+import { brandDocumentModel } from '#/plugins/profiles/brandDocument';
+import { commentModel } from '#/plugins/profiles/comment';
+import { documentModel } from '#/plugins/profiles/document';
+import { inlineModel } from '#/plugins/profiles/inline';
+import { featuresById, registry } from '#/plugins/registry';
 import { engineOf, pluginsOf, readersOf } from '#/react/compileEditor';
 import { shipped as shippedBrandDocument } from '#/react/profiles/brandDocument';
 import { shipped as shippedComment } from '#/react/profiles/comment';

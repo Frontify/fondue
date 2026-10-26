@@ -7,9 +7,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs/codecs';
 import { RichTextReader } from '#/entries/reader';
-import { unitsOf } from '#/features/__tests__/fixtures/units';
-import { core } from '#/features/core/feature';
-import { bold } from '#/features/marksBold/feature';
 import { compileContentModel, type ContentModel, type JsonValue } from '#/model';
 import {
     type LoadedDocument,
@@ -18,6 +15,9 @@ import {
     type SaveResponse,
     type ServiceContext,
 } from '#/persistence/types';
+import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { bold } from '#/plugins/Bold/feature';
+import { core } from '#/plugins/Core/feature';
 import { createFakePersistenceService, typeText } from '#/testing';
 
 import { defineEditor } from '../define';

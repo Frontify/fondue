@@ -7,21 +7,6 @@ import { vi } from 'vitest';
 import { type EditorPart } from '#/bridge/plugin';
 import { defineReactPresentation } from '#/entries/authoring';
 import {
-    bold,
-    code,
-    core,
-    heading,
-    inputRules,
-    italic,
-    quote,
-    strike,
-    subscript,
-    superscript,
-    underline,
-} from '#/features';
-import { storedIn } from '#/features/__tests__/fixtures/documents';
-import { type UnitCommands, unitsOf } from '#/features/__tests__/fixtures/units';
-import {
     type AuthoringPolicy,
     defineEditor,
     type EditorHandle,
@@ -37,6 +22,21 @@ import {
     type RichTextDocument,
     type RichTextLocale,
 } from '#/model';
+import {
+    bold,
+    code,
+    core,
+    heading,
+    inputRules,
+    italic,
+    quote,
+    strike,
+    subscript,
+    superscript,
+    underline,
+} from '#/plugins';
+import { storedIn } from '#/plugins/__tests__/fixtures/documents';
+import { type UnitCommands, unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { runtimeOf } from '#/runtime/runtime';
 import { type DocumentChange } from '#/runtime/types';
 

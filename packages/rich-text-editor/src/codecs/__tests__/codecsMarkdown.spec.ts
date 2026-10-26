@@ -5,6 +5,7 @@
 import MarkdownIt from 'markdown-it';
 import { describe, expect, it } from 'vitest';
 
+import { compileContentModel, defineFeature, type JsonValue } from '#/model';
 import {
     blockquote,
     bulletList,
@@ -14,9 +15,8 @@ import {
     paragraph,
     table,
     text,
-} from '#/features/__tests__/fixtures/documents';
-import { core } from '#/features/core/feature';
-import { compileContentModel, defineFeature, type JsonValue } from '#/model';
+} from '#/plugins/__tests__/fixtures/documents';
+import { core } from '#/plugins/Core/feature';
 
 import { createCodecs } from '../codecs';
 
