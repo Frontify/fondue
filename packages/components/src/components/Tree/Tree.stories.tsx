@@ -723,10 +723,10 @@ export const WithDecorators: Story = {
         docs: {
             description: {
                 story:
-                    'Render passive badges or status icons right after the label by nesting `<Tree.Decorator>` ' +
-                    "inside a `<Tree.Item>` or a folder's `<Tree.FolderHeader>`. Unlike `<Tree.Action>` (right-aligned, " +
-                    'click-isolated), the decorator hugs the label text and clicks inside it activate the row, so it is ' +
-                    'meant for non-interactive content such as a "hidden" badge.',
+                    'Render badges or status icons right after the label by nesting `<Tree.Decorator>` ' +
+                    "inside a `<Tree.Item>` or a folder's `<Tree.FolderHeader>`. Unlike `<Tree.Action>` (right-aligned), " +
+                    'the decorator hugs the label text. Both are click-isolated: clicks inside them, including from ' +
+                    'portaled content such as a flyout opened from a badge, do not select, expand or activate the row.',
             },
         },
     },

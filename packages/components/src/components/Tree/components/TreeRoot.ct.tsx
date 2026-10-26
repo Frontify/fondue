@@ -2,6 +2,7 @@
 
 import { expect, test } from '@playwright/experimental-ct-react';
 
+import { Flyout } from '../../Flyout/Flyout';
 import { Tree } from '../Tree';
 
 import { TestHarness } from './testutils/TestHarness';
@@ -435,7 +436,7 @@ test.describe('TreeRoot item decorators', () => {
         await expect(component.getByTestId('folder-decorator')).toBeVisible();
     });
 
-    test('bubbles clicks from the decorator to the row (unlike actions)', async ({ mount }) => {
+    test('does not bubble clicks from the decorator to the row', async ({ mount }) => {
         let rowClicks = 0;
         const component = await mount(
             <Tree.Root>
@@ -449,7 +450,45 @@ test.describe('TreeRoot item decorators', () => {
         );
 
         await component.getByTestId('row-decorator').click();
-        expect(rowClicks).toBe(1);
+        expect(rowClicks).toBe(0);
+        await expect(component.getByRole('treeitem')).toHaveAttribute('aria-selected', 'false');
+    });
+
+    test('does not select or expand a folder from clicks in portaled decorator content', async ({ mount, page }) => {
+        let rowClicks = 0;
+        let expandChanges = 0;
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Folder id="f" onClick={() => (rowClicks += 1)} onExpandChange={() => (expandChanges += 1)}>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                        <Tree.Decorator>
+                            <Flyout.Root open>
+                                <Flyout.Trigger>
+                                    <button type="button">targets</button>
+                                </Flyout.Trigger>
+                                <Flyout.Content>
+                                    <Flyout.Body>
+                                        <button type="button" data-test-id="flyout-option">
+                                            All viewers
+                                        </button>
+                                    </Flyout.Body>
+                                </Flyout.Content>
+                            </Flyout.Root>
+                        </Tree.Decorator>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="x">
+                        <Tree.Label>X</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        await page.getByTestId('flyout-option').click();
+        await page.getByTestId('flyout-option').click();
+        expect(rowClicks).toBe(0);
+        expect(expandChanges).toBe(0);
+        await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-selected', 'false');
     });
 
     test('hides the decorator while the row is renaming', async ({ mount }) => {

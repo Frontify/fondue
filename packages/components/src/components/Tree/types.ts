@@ -96,8 +96,8 @@ export type TreeActionProps = {
 };
 
 /**
- * Passive decorators (badges, status icons) hugging the label text. Clicks bubble to
- * the row — interactive controls belong in `<Tree.Action>`. Hidden while renaming.
+ * Decorators (badges, status icons) hugging the label text. Clicks inside, including
+ * from portaled content such as flyouts, do not reach the row. Hidden while renaming.
  */
 export type TreeDecoratorProps = {
     children: ReactNode;
