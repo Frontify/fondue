@@ -3,6 +3,8 @@
 import { Selection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
+import { keepScroll } from '../scroll';
+
 import { type Commit } from './commit';
 import { type Lifecycle } from './lifecycle';
 import { type ModeService } from './mode';
@@ -42,7 +44,10 @@ export const createFocus = (a: {
         // A listener of those commits may have ended the session, which leaves no view.
         const view = views.current() as EditorView;
         if (shown.mode() === 'editable') {
+            // WebKit reveals the surface's old DOM selection on focus, before ProseMirror writes the current one.
+            const restore = keepScroll(view.dom);
             view.focus();
+            restore();
             return;
         }
         // ProseMirror's `focus()` does nothing while the view is not editable, and it syncs no DOM selection there.

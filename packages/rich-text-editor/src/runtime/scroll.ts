@@ -64,6 +64,24 @@ const scrollBandIntoView = (view: EditorView, band: Band, from: Element) => {
     }
 };
 
+/** The scroll offsets of `from` and each ancestor now, put back by the returned function. */
+export const keepScroll = (from: Element): (() => void) => {
+    const kept: { readonly element: Element; readonly top: number; readonly left: number }[] = [];
+    for (let parent: Element | null = from; parent !== null; parent = parent.parentElement) {
+        kept.push({ element: parent, top: parent.scrollTop, left: parent.scrollLeft });
+    }
+    return () => {
+        for (const { element, top, left } of kept) {
+            if (element.scrollTop !== top) {
+                element.scrollTop = top;
+            }
+            if (element.scrollLeft !== left) {
+                element.scrollLeft = left;
+            }
+        }
+    };
+};
+
 /** Scrolls `selection` into view, the caret or the start of a selected node, wherever focus is. */
 export const scrollSelectionIntoView = (view: EditorView, selection: Selection): void => {
     if (selection instanceof NodeSelection) {

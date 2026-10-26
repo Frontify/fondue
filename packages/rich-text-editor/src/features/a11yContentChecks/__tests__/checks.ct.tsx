@@ -56,6 +56,45 @@ test('selects the issue node, scrolls it into view and focuses the surface on Go
     await expect(panelOf(page)).toBeVisible();
 });
 
+test('keeps the heading in the frame on Go to when the surface holds a stale DOM selection and focus is outside it', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ChecksProbe />);
+    await ready(page);
+    const frame = page.getByTestId('frame');
+    const surface = page.getByRole('textbox', { name: 'Notes' });
+    await page.getByRole('button', { name: 'Accessibility checks' }).click();
+    await expect(panelOf(page).getByRole('heading', { level: 2 })).toBeFocused();
+    await surface.evaluate((element) => {
+        const text = element.querySelector('p')?.firstChild;
+        const selection = element.ownerDocument.defaultView?.getSelection();
+        if (text === null || text === undefined || selection === null || selection === undefined) {
+            throw new Error('The first paragraph has no text to select.');
+        }
+        selection.setBaseAndExtent(text, 1, text, 3);
+        (element.ownerDocument.activeElement as HTMLElement | null)?.blur();
+    });
+    await expect(surface).not.toBeFocused();
+
+    await issueOf(page, 'heading.empty:empty').getByRole('button', { name: 'Go to' }).click();
+
+    await expect(surface).toBeFocused();
+    const heading = surface.locator('h2');
+    await expect
+        .poll(async () => {
+            const box = await heading.boundingBox();
+            const frameBox = await frame.boundingBox();
+            return (
+                box !== null &&
+                frameBox !== null &&
+                box.y < frameBox.y + frameBox.height &&
+                box.y + box.height > frameBox.y
+            );
+        })
+        .toBe(true);
+});
+
 for (const forcedColors of ['none', 'active'] as const) {
     test(`marks the issues in the surface with an outline and an icon while the panel is open, forced colours ${forcedColors}`, async ({
         mount,
