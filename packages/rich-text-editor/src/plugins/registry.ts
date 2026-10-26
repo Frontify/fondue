@@ -20,13 +20,20 @@ const factoryOf = (path: string, exports: Record<string, unknown>): (() => Featu
     return factory;
 };
 
+const entries = Object.entries(modules).map(([path, exports]) => {
+    const factory = factoryOf(path, exports);
+
+    return [path, factory, factory().id] as const;
+});
+
 /** Every shipped feature factory by feature ID, found in the `feature.ts` of each feature folder. */
 export const registry: Readonly<Record<string, () => Feature>> = Object.fromEntries(
-    Object.entries(modules).map(([path, exports]) => {
-        const factory = factoryOf(path, exports);
+    entries.map(([, factory, id]) => [id, factory]),
+);
 
-        return [factory().id, factory];
-    }),
+/** The feature ID of each feature folder, by folder name. */
+export const featureIdsByFolder: Readonly<Record<string, string>> = Object.fromEntries(
+    entries.map(([path, , id]) => [path.split('/')[1] ?? '', id]),
 );
 
 /**
