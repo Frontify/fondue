@@ -141,8 +141,10 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
         }
     };
 
-    // Keep action clicks from bubbling into the row's select/expand handler.
-    const handleActionsClick = (event: MouseEvent<HTMLDivElement>) => {
+    // Keep decorator and action clicks from bubbling into the row's select/expand handler.
+    // React bubbles through portals, so this also covers flyouts opened from them. A
+    // decorator can opt out via `propagateClicks` for passive content.
+    const stopClickPropagation = (event: MouseEvent<HTMLElement>) => {
         event.stopPropagation();
     };
 
@@ -203,13 +205,19 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
                     <span className={styles.labelGroup}>
                         <span className={styles.label}>{item.getItemName()}</span>
                         {data.decorator !== undefined && data.decorator !== null && (
-                            <span className={styles.decorator}>{data.decorator}</span>
+                            // eslint-disable-next-line jsx-a11y-x/click-events-have-key-events, jsx-a11y-x/no-static-element-interactions
+                            <span
+                                className={styles.decorator}
+                                onClick={data.decoratorPropagatesClicks ? undefined : stopClickPropagation}
+                            >
+                                {data.decorator}
+                            </span>
                         )}
                     </span>
                 )}
                 {data.actions !== undefined && data.actions !== null ? (
                     // eslint-disable-next-line jsx-a11y-x/click-events-have-key-events, jsx-a11y-x/no-static-element-interactions
-                    <div className={styles.actions} onClick={handleActionsClick}>
+                    <div className={styles.actions} onClick={stopClickPropagation}>
                         {data.actions}
                     </div>
                 ) : null}
