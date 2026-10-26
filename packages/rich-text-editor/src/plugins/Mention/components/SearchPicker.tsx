@@ -4,9 +4,9 @@ import { LoadingCircle, TextInput } from '@frontify/fondue-components';
 
 import { Listbox } from '#/bridge/define';
 
-import { resultsOf } from './results';
-import styles from './styles/mention.module.scss';
-import { type useSearchDialogState } from './useSearchDialogState';
+import { resultsOf } from '../helpers/results';
+import { type useSearchDialogState } from '../hooks/useSearchDialogState';
+import styles from '../styles/mention.module.scss';
 
 type SearchDialogState = ReturnType<typeof useSearchDialogState>;
 

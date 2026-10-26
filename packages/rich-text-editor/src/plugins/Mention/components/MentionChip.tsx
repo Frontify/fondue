@@ -6,7 +6,7 @@ import { type NodeViewDeclaration, useRichTextNodeView } from '#/bridge/define';
 import { type EditorApi, useEditorApi } from '#/bridge/plugin';
 import { mentionLabel } from '#/model';
 
-import styles from './styles/mention.module.scss';
+import styles from '../styles/mention.module.scss';
 
 // Reported mentions by session, keyed by its one `nodeState` object, so an undo or a rerender reports none again.
 const reported = new WeakMap<EditorApi['nodeState'], Set<string>>();

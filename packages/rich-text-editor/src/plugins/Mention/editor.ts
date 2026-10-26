@@ -4,12 +4,12 @@ import { lazyPart } from '#/bridge/define';
 import { defineEditorPart } from '#/bridge/plugin';
 import { type JsonObject } from '#/model';
 
+import { mentionView } from './components/MentionChip';
 import { mention } from './feature';
-import { resultOf } from './results';
-import { mentionView } from './view';
+import { resultOf } from './helpers/results';
 
 const MentionSearchDialog = lazyPart(() =>
-    import('./MentionSearchDialog').then((loaded) => loaded.MentionSearchDialog),
+    import('./components/MentionSearchDialog').then((loaded) => loaded.MentionSearchDialog),
 );
 
 // No shown name is longer, as the suggestion list drops longer labels.

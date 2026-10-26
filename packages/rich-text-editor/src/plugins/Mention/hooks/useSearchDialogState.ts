@@ -16,7 +16,7 @@ import {
     type ResultPage,
     resultsOf,
     spokenOption,
-} from './results';
+} from '../helpers/results';
 
 /** The command that inserts the chosen result. */
 const INSERT_MENTION = 'reference.insert';

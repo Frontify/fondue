@@ -3,8 +3,9 @@
 import { EditorDialog } from '#/bridge/define';
 import { type EditorApi, type OverlayProps, useEditorApi } from '#/bridge/plugin';
 
+import { useSearchDialogState } from '../hooks/useSearchDialogState';
+
 import { SearchPicker } from './SearchPicker';
-import { useSearchDialogState } from './useSearchDialogState';
 
 /**
  * The mention search dialog: a search combobox over a listbox of the host's references, as the WAI-ARIA combobox
