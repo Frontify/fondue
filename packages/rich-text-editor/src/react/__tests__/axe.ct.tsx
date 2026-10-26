@@ -105,6 +105,8 @@ const offers = async (page: Page, name: string) => {
         return true;
     }
     await moreOf(page).click();
+    // More loads its rows on first use.
+    await expect(page.getByRole('menu')).toBeVisible();
     const rows = await page.getByRole('menu').locator('[role^="menuitem"]').allInnerTexts();
     await page.keyboard.press('Escape');
     return rows.some((row) => row.split('\n')[0] === name);

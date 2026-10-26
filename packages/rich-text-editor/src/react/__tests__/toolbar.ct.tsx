@@ -46,6 +46,8 @@ test.describe('at 320 CSS pixels', () => {
         }));
 
         await itemOf(page, 'More').click();
+        // More loads its rows on first use.
+        await expect(page.getByRole('menu')).toBeVisible();
         const rows = await menuRows(page).allInnerTexts();
         const reachable = [...visible.filter((name) => name !== 'More'), ...rows.map((row) => row.split('\n')[0])];
 
@@ -69,6 +71,8 @@ test.describe('at 320 CSS pixels', () => {
         await mount(<ToolbarProbe wide />);
         await ready(page);
         await itemOf(page, 'More').click();
+        // More loads its rows on first use.
+        await expect(page.getByRole('menu')).toBeVisible();
         const rows = await menuRows(page).evaluateAll((items) =>
             items.map((item) => {
                 // The shortcut and the hidden reason of an unavailable row follow the label.

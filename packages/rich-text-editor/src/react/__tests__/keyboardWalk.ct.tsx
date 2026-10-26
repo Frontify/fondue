@@ -111,6 +111,8 @@ for (const profile of PROFILES) {
             let component = await mount(<ProfileProbe profile={profile} withServices />);
             await ready(page);
             await toolbarOf(page).getByRole('button', { name: 'More', exact: true }).click();
+            // More loads its rows on first use.
+            await expect(page.getByRole('menu')).toBeVisible();
             const rows = await page.getByRole('menu').locator('[role^="menuitem"]').allInnerTexts();
             const names = rows.map((row) => row.split('\n')[0] ?? '');
             expect(names.length).toBeGreaterThan(0);

@@ -243,6 +243,8 @@ for (const profile of ['document', 'brand-document'] as const) {
                 }
                 expect(shown).not.toContain('Outline');
                 await toolbarOf(page).getByRole('button', { name: 'More', exact: true }).click();
+                // More loads its rows on first use.
+                await expect(page.getByRole('menu')).toBeVisible();
                 // A panel toggle is a checkbox item, so both roles, in menu order.
                 const rows = await page.locator('[role="menuitem"], [role="menuitemcheckbox"]').allInnerTexts();
                 const names = rows.map((row) => row.split('\n')[0]);

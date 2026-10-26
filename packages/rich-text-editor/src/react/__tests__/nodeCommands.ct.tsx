@@ -45,6 +45,8 @@ const closeMenus = async (page: Page) => {
 /** The rows of the More menu, by name. */
 const moreRows = async (page: Page) => {
     await moreOf(page).click();
+    // More loads its rows on first use.
+    await expect(page.getByRole('menu')).toBeVisible();
     const rows = await page.getByRole('menu').locator('[role^="menuitem"]').allInnerTexts();
     await closeMenus(page);
     return rows.map((row) => row.split('\n')[0] ?? '');
