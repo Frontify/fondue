@@ -83,6 +83,7 @@ const listFiles = (root: string, dir = root): string[] =>
         if (entry.isDirectory()) {
             return entry.name === '__tests__' ? [] : listFiles(root, full);
         }
+
         return [slash(relative(root, full))];
     });
 
@@ -98,6 +99,7 @@ const filesOf = (path: string): string[] => {
     if (!path.includes('*')) {
         return [path];
     }
+
     return LOCALES.map((locale) => path.replace('*', locale));
 };
 
@@ -107,6 +109,7 @@ const literalColorsOf = (css: string): string[] => {
     postcss.parse(css).walkDecls((declaration) => {
         colors.push(...literalColorsIn(declaration.value, insideAtRule(declaration, /forced-colors/)));
     });
+
     return colors;
 };
 
@@ -142,6 +145,7 @@ describe('package manifest and built output', () => {
                 expect(built.has('style.css')).toBe(true);
                 continue;
             }
+
             const target: ExportTarget = typeof value === 'object' && value !== null ? value : {};
             expect(typeof value).toBe('object');
             expect(target.require).toBeUndefined();
@@ -200,6 +204,7 @@ describe('package manifest and built output', () => {
                 }
             }
         }
+
         expect(
             bare.filter((specifier) => !declared.has(packageNameOf(specifier)) || STYLE_FILE.test(specifier)),
         ).toEqual([]);
@@ -227,6 +232,7 @@ describe('package manifest and built output', () => {
             if (!name.startsWith('prosemirror-')) {
                 continue;
             }
+
             const match = /^\^(\d+\.\d+\.\d+)$/.exec(range);
             const captured = match?.[1];
             const lower = captured ?? '';
@@ -266,6 +272,7 @@ describe('package manifest and built output', () => {
             if (seen.has(file)) {
                 continue;
             }
+
             seen.add(file);
             const code = readFileSync(join(outDir, file), 'utf8');
             for (const match of code.matchAll(/(?:from|import)\s*\(?\s*['"]([^'"]+)['"]/g)) {
@@ -278,6 +285,7 @@ describe('package manifest and built output', () => {
                 }
             }
         }
+
         return { bare, files: [...seen] };
     };
 
@@ -318,12 +326,14 @@ describe('package manifest and built output', () => {
             if (typeof value !== 'object') {
                 return [];
             }
+
             return filesOf((value.types ?? '').slice('./dist/'.length));
         });
         for (let file = queue.pop(); file !== undefined; file = queue.pop()) {
             if (seen.has(file)) {
                 continue;
             }
+
             seen.add(file);
             const source = ts.createSourceFile(
                 file,
@@ -340,10 +350,12 @@ describe('package manifest and built output', () => {
                     queue.push(found ?? `${base}.d.ts`);
                 }
             };
+
             const visit = (node: ts.Node) => {
                 if (node.kind === ts.SyntaxKind.AnyKeyword) {
                     faults.push(`${file} has any: ${node.parent.getText(source)}`);
                 }
+
                 if (
                     (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
                     node.moduleSpecifier !== undefined &&
@@ -351,6 +363,7 @@ describe('package manifest and built output', () => {
                 ) {
                     follow(node.moduleSpecifier.text);
                 }
+
                 if (
                     ts.isImportTypeNode(node) &&
                     ts.isLiteralTypeNode(node.argument) &&
@@ -358,10 +371,13 @@ describe('package manifest and built output', () => {
                 ) {
                     follow(node.argument.literal.text);
                 }
+
                 ts.forEachChild(node, visit);
             };
+
             visit(source);
         }
+
         return faults;
     };
 
@@ -404,6 +420,7 @@ describe('package manifest and built output', () => {
             const files = ((Array.isArray(result) ? result : [result]) as Rollup.RollupOutput[]).flatMap(
                 ({ output }) => output,
             );
+
             return {
                 modules: files.flatMap((file) => (file.type === 'chunk' ? Object.keys(file.modules) : [])),
                 stylesheets: files.filter(

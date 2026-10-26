@@ -20,6 +20,7 @@ export const packRelease = (destination: string): string[] => {
             stdio: 'inherit',
         });
     }
+
     return readdirSync(destination)
         .filter((name) => name.endsWith('.tgz'))
         .map((name) => join(destination, name));

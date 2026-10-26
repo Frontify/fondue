@@ -67,6 +67,7 @@ describe('the performance budgets', () => {
                 }
             }
         };
+
         for (const folder of folders) {
             visit(folder);
         }

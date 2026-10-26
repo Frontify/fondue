@@ -30,6 +30,7 @@ const RECORDS = readdirSync(QUALIFICATION)
 const changed = (change: (record: Json) => void) => {
     const record = structuredClone(readJson(join(QUALIFICATION, '1.0.0.json')));
     change(record);
+
     return record;
 };
 

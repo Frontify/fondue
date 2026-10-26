@@ -51,6 +51,7 @@ const missingReleasePages = (root: string, version: string, notes: string): stri
     if (patch === 0 || /^[ \t]*#{1,6} Interaction\s*$/m.test(notes)) {
         pages.push(`src/docs/accessibility/${version}.mdx`);
     }
+
     return pages.filter((page) => !existsSync(join(root, page)));
 };
 
@@ -66,12 +67,14 @@ const missingTargets = (root: string, names: readonly string[]): string[] =>
             if (typeof target === 'string') {
                 return [target];
             }
+
             return [target.types, target.import].filter((path) => path !== undefined);
         })
         .flatMap((path) => {
             if (path.includes('*')) {
                 return names.map((name) => path.replace('*', name));
             }
+
             return [path];
         })
         .filter((path) => !existsSync(join(root, path)))
@@ -86,6 +89,7 @@ const qualificationErrors = (record: unknown): string[] => {
     );
     validate(record);
     const errors = (validate.errors ?? []).map(({ instancePath, message }) => `${instancePath} ${String(message)}`);
+
     return [...errors, ...pendingResults(record).map((result) => `${result} is pending`)];
 };
 
@@ -112,10 +116,12 @@ const publicTypes = (root: string): Map<string, PublicExport> => {
         if (typeof target !== 'object' || target.types === undefined) {
             return [];
         }
+
         const [prefix = '', suffix = ''] = target.types.split('*');
         if (!entry.includes('*')) {
             return [[entry, join(root, target.types)] as const];
         }
+
         return readdirSync(join(root, prefix))
             .filter((file) => file.endsWith(suffix))
             .map((file) => [entry.replace('*', file.slice(0, -suffix.length)), join(root, prefix, file)] as const);
@@ -134,6 +140,7 @@ const publicTypes = (root: string): Map<string, PublicExport> => {
             if ((symbol.flags & ts.SymbolFlags.Alias) !== 0) {
                 target = checker.getAliasedSymbol(symbol);
             }
+
             const declarations = target.declarations ?? [];
             report.set(`${entry} ${symbol.name}`, {
                 name: symbol.name,
@@ -144,6 +151,7 @@ const publicTypes = (root: string): Map<string, PublicExport> => {
             });
         }
     }
+
     return report;
 };
 
@@ -154,6 +162,7 @@ const printed = (node: ts.Node | undefined): string => {
     if (node === undefined) {
         return '';
     }
+
     return printer.printNode(ts.EmitHint.Unspecified, node, node.getSourceFile()).replaceAll(/\s+/g, ' ');
 };
 
@@ -163,6 +172,7 @@ const memberKey = (member: ts.TypeElement) => {
     if (member.name === undefined) {
         return printed(member);
     }
+
     return member.name.getText();
 };
 
@@ -174,6 +184,7 @@ const unionMembers = (node: ts.TypeNode): readonly ts.TypeNode[] => {
     if (ts.isUnionTypeNode(node)) {
         return node.types;
     }
+
     return [node];
 };
 
@@ -187,13 +198,17 @@ const compatibleType = (previous: ts.TypeNode, next: ts.TypeNode, growable: bool
             if (other !== undefined) {
                 matched.add(other);
             }
+
             return other !== undefined;
         });
+
         return kept && (growable || candidates.every((member) => matched.has(member)));
     }
+
     if (ts.isTypeLiteralNode(previous) && ts.isTypeLiteralNode(next)) {
         return keepsMembers(previous.members, next.members, growable);
     }
+
     return printed(previous) === printed(next);
 };
 
@@ -210,6 +225,7 @@ const compatibleMember = (previous: ts.TypeElement, next: ts.TypeElement, growab
             compatibleType(previous.type, next.type, growable)
         );
     }
+
     return printed(previous) === printed(next);
 };
 
@@ -222,10 +238,12 @@ const keepsMembers = (
     const byKey = new Map(next.map((member) => [memberKey(member), member]));
     const kept = previous.every((member) => {
         const other = byKey.get(memberKey(member));
+
         return other !== undefined && compatibleMember(member, other, growable);
     });
     const keys = new Set(previous.map(memberKey));
     const added = next.filter((member) => !keys.has(memberKey(member)));
+
     return kept && added.every((member) => ts.isPropertySignature(member) && member.questionToken !== undefined);
 };
 
@@ -236,6 +254,7 @@ const compatibleDeclaration = (previous: ts.Node, next: ts.Node, growable: boole
             compatibleType(previous.type, next.type, growable)
         );
     }
+
     if (ts.isInterfaceDeclaration(previous) && ts.isInterfaceDeclaration(next)) {
         return (
             printedAll(previous.typeParameters) === printedAll(next.typeParameters) &&
@@ -243,6 +262,7 @@ const compatibleDeclaration = (previous: ts.Node, next: ts.Node, growable: boole
             keepsMembers(previous.members, next.members, growable)
         );
     }
+
     return printed(previous) === printed(next);
 };
 
@@ -255,17 +275,21 @@ const growableNames = (report: ReadonlyMap<string, PublicExport>): Set<string> =
         if (names.has(name)) {
             continue;
         }
+
         names.add(name);
         const visit = (node: ts.Node) => {
             if (ts.isTypeReferenceNode(node) && byName.has(node.typeName.getText())) {
                 queue.push(node.typeName.getText());
             }
+
             ts.forEachChild(node, visit);
         };
+
         for (const declaration of byName.get(name)?.declarations ?? []) {
             visit(declaration);
         }
     }
+
     return names;
 };
 
@@ -281,20 +305,24 @@ const incompatibleChanges = (
         if (deprecated) {
             continue;
         }
+
         if (other === undefined) {
             changes.push(`${key} removed`);
             continue;
         }
+
         const kept =
             declarations.length === other.declarations.length &&
             declarations.every((declaration, index) => {
                 const counterpart = other.declarations[index];
+
                 return counterpart !== undefined && compatibleDeclaration(declaration, counterpart, growable.has(name));
             });
         if (!kept) {
             changes.push(`${key} changed`);
         }
     }
+
     return changes;
 };
 
@@ -306,11 +334,14 @@ const sourceFiles = (directory: string, suffix: string): string[] =>
             if (entry.name === '__tests__') {
                 return [];
             }
+
             return sourceFiles(path, suffix);
         }
+
         if (entry.name.endsWith(suffix)) {
             return [path];
         }
+
         return [];
     });
 
@@ -321,9 +352,11 @@ const bumped = (version: string, bump: (typeof BUMPS)[number]) => {
     if (bump === 'major') {
         return `${major + 1}.0.0`;
     }
+
     if (bump === 'minor') {
         return `${major}.${minor + 1}.0`;
     }
+
     return `${major}.${minor}.${patch + 1}`;
 };
 
@@ -339,6 +372,7 @@ const npm = (args: readonly string[], run: (args: readonly string[]) => string =
         if (/E404/.test(`${String(stderr)}\n${String(stdout)}`)) {
             return '';
         }
+
         throw error;
     }
 };
@@ -346,6 +380,7 @@ const npm = (args: readonly string[], run: (args: readonly string[]) => string =
 /** The highest published release below `version`, the compatibility baseline; prereleases never count. */
 const baselineVersion = (published: readonly string[], version: string): string | undefined => {
     const order = (left: string, right: string) => left.localeCompare(right, undefined, { numeric: true });
+
     return published
         .filter((other) => /^\d+\.\d+\.\d+$/.test(other) && order(other, version) < 0)
         .sort(order)
@@ -371,14 +406,17 @@ const releaseUnderCheck = (): Release | undefined => {
             notes.push(body);
         }
     }
+
     const { version } = manifestOf(PACKAGE_ROOT);
     const kind = BUMPS[bump];
     if (kind !== undefined) {
         return { version: bumped(version, kind), notes: notes.join('\n') };
     }
+
     if (npm(['view', `${NAME}@${version}`, 'version']) !== '') {
         return undefined;
     }
+
     const changelog = join(PACKAGE_ROOT, 'CHANGELOG.md');
     let section = '';
     if (existsSync(changelog)) {
@@ -387,6 +425,7 @@ const releaseUnderCheck = (): Release | undefined => {
                 .split(/^## /m)
                 .find((part) => part.startsWith(`${version}\n`)) ?? '';
     }
+
     return { version, notes: section };
 };
 
@@ -469,6 +508,7 @@ describe('the release docs check', () => {
         rmSync(join(root, page));
         const missing = missingReleasePages(root, version, notes);
         writeFileSync(join(root, page), saved);
+
         return [missing, missingReleasePages(root, version, notes)];
     };
 
@@ -556,8 +596,10 @@ describe('the packed tree check', () => {
         for (const file of files) {
             writeFileSync(join(root, 'dist', file), '');
         }
+
         return root;
     };
+
     const COMPLETE = ['index.d.ts', 'index.js', 'style.css', 'locales/en-US.d.ts', 'locales/en-US.js'];
 
     beforeAll(() => {
@@ -595,6 +637,7 @@ describe('the public type check', () => {
         for (const [file, source] of Object.entries(files)) {
             writeFileSync(join(root, 'dist', file), source);
         }
+
         return publicTypes(root);
     };
 
@@ -680,6 +723,7 @@ describe('the docs comments of the unions a minor release may grow', () => {
             const comment = declarations
                 .map((source) => pattern.exec(source)?.[1])
                 .find((found) => found !== undefined);
+
             return !/minor release may add/i.test(comment ?? '');
         });
 
@@ -714,9 +758,11 @@ describe.runIf(process.env.RTE_RELEASE === 'true')('the release this run prepare
             if (typeof target !== 'object') {
                 return [];
             }
+
             if (!entry.includes('*')) {
                 return [`${NAME}${entry.slice(1)}`];
             }
+
             return LOCALES.map((locale) => `${NAME}${entry.slice(1).replace('*', locale)}`);
         });
         const failures = specifiers.flatMap((specifier) => {
@@ -725,6 +771,7 @@ describe.runIf(process.env.RTE_RELEASE === 'true')('the release this run prepare
                     cwd: consumer,
                     stdio: ['ignore', 'ignore', 'pipe'],
                 });
+
                 return [];
             } catch (error) {
                 return [
@@ -782,8 +829,10 @@ describe.runIf(process.env.RTE_RELEASE === 'true')('the release this run prepare
         const earlier = baselineVersion([versions].flat(), release?.version ?? '');
         if (earlier === undefined) {
             context.skip('No earlier minor release is published.');
+
             return;
         }
+
         const folder = join(scratch, 'previous');
         mkdirSync(folder);
         npm(['pack', `${NAME}@${earlier}`, '--pack-destination', folder]);

@@ -40,6 +40,7 @@ const featuresOf = (ids: readonly string[]) => {
         if (error instanceof DefinitionError) {
             return { error: error.code, details: error.details };
         }
+
         throw error;
     }
 };
@@ -91,6 +92,7 @@ describe('goldens', () => {
                 const { definition, presentation, touchPresentation } = shipped();
                 const plugins = pluginsOf(definition);
                 const { commands, keymap } = engineOf(definition);
+
                 return [
                     name,
                     {

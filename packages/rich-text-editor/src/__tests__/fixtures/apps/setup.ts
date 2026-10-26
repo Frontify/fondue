@@ -28,8 +28,10 @@ const serving = async (port: number) => {
         if (answered) {
             return;
         }
+
         await new Promise((resolve) => setTimeout(resolve, 500));
     }
+
     throw new Error(`Nothing serves on port ${port}.`);
 };
 
@@ -47,13 +49,16 @@ export default async function globalSetup() {
         // A process group of its own, so the teardown stops npm and the server it started.
         servers.push(spawn('npm', ['start'], { cwd: directory, env: ENVIRONMENT, stdio: 'inherit', detached: true }));
     }
+
     await Promise.all(APPS.map(({ port }) => serving(port)));
+
     return () => {
         for (const { pid } of servers) {
             if (pid !== undefined) {
                 process.kill(-pid, 'SIGTERM');
             }
         }
+
         rmSync(scratch, { recursive: true, force: true });
     };
 }

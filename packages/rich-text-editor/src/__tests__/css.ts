@@ -41,14 +41,18 @@ export const withoutVars = (value: string): string => {
             if (rest[end] === '(') {
                 depth += 1;
             }
+
             if (rest[end] === ')') {
                 depth -= 1;
             }
+
             end += 1;
         } while (depth > 0 && end < rest.length);
+
         rest = `${rest.slice(0, start)}${rest.slice(end)}`;
         start = rest.indexOf('var(');
     }
+
     return rest;
 };
 
@@ -62,8 +66,10 @@ export const insideAtRule = (node: Node, test: RegExp): boolean => {
                 return true;
             }
         }
+
         parent = parent.parent;
     }
+
     return false;
 };
 
@@ -72,7 +78,9 @@ export const literalColorsIn = (value: string, forcedColors: boolean): string[] 
     const bare = withoutVars(value).replaceAll(/"[^"]*"|'[^']*'/g, '');
     const words = (bare.match(/[a-z-]+/gi) ?? []).filter((word) => {
         const name = word.toLowerCase();
+
         return NAMED_COLORS.has(name) || (!forcedColors && SYSTEM_COLORS.has(name));
     });
+
     return [...(bare.match(/#[\da-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(/gi) ?? []), ...words];
 };

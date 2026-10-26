@@ -21,6 +21,7 @@ beforeAll(async () => {
     if (loaded === null) {
         throw new Error('vite.config.ts did not load');
     }
+
     const { test } = loaded.config as { readonly test?: Timeouts };
     if (test !== undefined) {
         timeouts = test;

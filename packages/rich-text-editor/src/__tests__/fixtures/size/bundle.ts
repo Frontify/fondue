@@ -81,6 +81,7 @@ export const measure = async (
         const styles = output.filter(
             (file): file is Rollup.OutputAsset => file.type === 'asset' && file.fileName.endsWith('.css'),
         );
+
         return {
             bytes: chunks.reduce((total, chunk) => total + brotliBytes(chunk.code), 0),
             chunks: chunks.map((chunk) => ({
@@ -119,10 +120,12 @@ export const profileBytes = async (
         if (chunk === undefined || loaded.has(chunk)) {
             return;
         }
+
         loaded.add(chunk);
         for (const name of chunk.imports) {
             visit(byName.get(name));
         }
+
         for (const name of chunk.dynamicImports) {
             const next = byName.get(name);
             if (next?.modules.some((id) => id.endsWith(`/react/profiles/${entry}.ts`)) === true) {
@@ -130,7 +133,9 @@ export const profileBytes = async (
             }
         }
     };
+
     visit(chunks.find((chunk) => chunk.isEntry));
+
     return {
         bytes: [...loaded].reduce((total, chunk) => total + chunk.bytes, 0),
         modules: [...loaded].flatMap((chunk) => chunk.modules),

@@ -56,6 +56,7 @@ const walk = (directory: string): string[] => {
             files.push(path);
         }
     }
+
     return files.sort();
 };
 
@@ -68,9 +69,11 @@ const isProductPath = (key: string) => {
     if (segments.includes('__tests__') || segments.includes('fixtures')) {
         return false;
     }
+
     if (key.endsWith('.stories.tsx') || key.startsWith('src/locales/')) {
         return false;
     }
+
     return true;
 };
 
@@ -85,6 +88,7 @@ const sourceOf = (path: string) => {
         source = readFileSync(path, 'utf8');
         sources.set(path, source);
     }
+
     return source;
 };
 
@@ -96,6 +100,7 @@ const parse = (path: string) => {
         file = ts.createSourceFile(path, sourceOf(path), ts.ScriptTarget.Latest, true, kind);
         parsed.set(path, file);
     }
+
     return file;
 };
 
@@ -115,11 +120,13 @@ const ratchet = (measured: Map<string, number>, allowed: Record<string, number>)
             problems.push(`grew: ${key} = ${value}, allowed ${entry}`);
         }
     }
+
     for (const key of Object.keys(allowed).sort()) {
         if (!measured.has(key)) {
             problems.push(`stale: ${key}`);
         }
     }
+
     return problems;
 };
 
@@ -131,6 +138,7 @@ const filesOver = (files: string[], limit: number) => {
             measured.set(toKey(path), lines);
         }
     }
+
     return measured;
 };
 
@@ -161,6 +169,7 @@ const nameText = (name: ts.Node, file: ts.SourceFile) => {
     ) {
         return name.text;
     }
+
     return name.getText(file);
 };
 
@@ -168,9 +177,11 @@ const functionName = (node: FunctionLike, file: ts.SourceFile) => {
     if (ts.isConstructorDeclaration(node)) {
         return 'constructor';
     }
+
     if (node.name) {
         return nameText(node.name, file);
     }
+
     let child: ts.Node = node;
     let parent = node.parent;
     while (
@@ -182,12 +193,15 @@ const functionName = (node: FunctionLike, file: ts.SourceFile) => {
         child = parent;
         parent = parent.parent;
     }
+
     if (ts.isVariableDeclaration(parent) && parent.initializer === child) {
         return nameText(parent.name, file);
     }
+
     if ((ts.isPropertyAssignment(parent) || ts.isPropertyDeclaration(parent)) && parent.initializer === child) {
         return nameText(parent.name, file);
     }
+
     if (
         ts.isBinaryExpression(parent) &&
         parent.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
@@ -195,6 +209,7 @@ const functionName = (node: FunctionLike, file: ts.SourceFile) => {
     ) {
         return parent.left.getText(file);
     }
+
     return 'anonymous';
 };
 
@@ -202,12 +217,14 @@ const letDeclarators = (node: FunctionLike) => {
     if (!node.body || !ts.isBlock(node.body)) {
         return 0;
     }
+
     let count = 0;
     for (const statement of node.body.statements) {
         if (ts.isVariableStatement(statement) && (statement.declarationList.flags & ts.NodeFlags.Let) !== 0) {
             count += statement.declarationList.declarations.length;
         }
     }
+
     return count;
 };
 
@@ -227,11 +244,15 @@ const functionMeasures = (path: string) => {
             if (occurrence > 1) {
                 key = `${key}#${occurrence}`;
             }
+
             measures.push({ key, lines: nonBlankLines(node.getText(file)), lets: letDeclarators(node) });
         }
+
         ts.forEachChild(node, visit);
     };
+
     visit(file);
+
     return measures;
 };
 
@@ -245,12 +266,15 @@ const nodeOf = (segments: string[], split: boolean) => {
     if (first === undefined || !folderExists(join(srcRoot, first))) {
         return ROOT_NODE;
     }
+
     if (split && second !== undefined && first === 'clipboard' && second === 'import') {
         return 'clipboard/import';
     }
+
     if (split && second !== undefined && first === 'features' && folderExists(join(srcRoot, first, second))) {
         return `features/${second}`;
     }
+
     return first;
 };
 
@@ -267,6 +291,7 @@ const moduleSpecifiers = (path: string) => {
         ) {
             specifiers.push(node.moduleSpecifier.text);
         }
+
         if (
             ts.isCallExpression(node) &&
             node.expression.kind === ts.SyntaxKind.ImportKeyword &&
@@ -275,9 +300,12 @@ const moduleSpecifiers = (path: string) => {
         ) {
             specifiers.push(node.arguments[0].text);
         }
+
         ts.forEachChild(node, visit);
     };
+
     visit(parse(path));
+
     return specifiers;
 };
 
@@ -291,10 +319,12 @@ const resolveInternal = (from: string, specifier: string) => {
     } else {
         return undefined;
     }
+
     const inside = relative(srcRoot, target);
     if (inside.startsWith('..')) {
         return undefined;
     }
+
     return inside.split('\\').join('/').split('/');
 };
 
@@ -305,17 +335,20 @@ const folderGraph = () => {
         if (!graph.has(from)) {
             graph.set(from, new Set());
         }
+
         for (const specifier of moduleSpecifiers(path)) {
             const segments = resolveInternal(path, specifier);
             if (!segments) {
                 continue;
             }
+
             const to = nodeOf(segments, false);
             if (to !== from) {
                 graph.get(from)?.add(to);
             }
         }
     }
+
     return graph;
 };
 
@@ -341,6 +374,7 @@ const cycles = (graph: Map<string, Set<string>>) => {
                 low.set(node, Math.min(low.get(node) ?? 0, index.get(next) ?? 0));
             }
         }
+
         if (low.get(node) === index.get(node)) {
             const component: string[] = [];
             let member: string | undefined;
@@ -349,19 +383,23 @@ const cycles = (graph: Map<string, Set<string>>) => {
                 if (member === undefined) {
                     break;
                 }
+
                 onStack.delete(member);
                 component.push(member);
             } while (member !== node);
+
             if (component.length > 1) {
                 found.push(component.sort());
             }
         }
     };
+
     for (const node of [...graph.keys()].sort()) {
         if (!index.has(node)) {
             connect(node);
         }
     }
+
     return found.map((component) => component.join(' | ')).sort();
 };
 
@@ -372,6 +410,7 @@ const prosemirrorNodes = () => {
             nodes.add(nodeOfFile(path, true));
         }
     }
+
     return [...nodes].sort();
 };
 
@@ -387,6 +426,7 @@ const walkAll = (directory: string): string[] => {
             files.push(path);
         }
     }
+
     return files.sort();
 };
 
@@ -401,11 +441,13 @@ const specReferenceSource = (path: string) => {
     if (buffer.includes(0)) {
         return '';
     }
+
     const source = buffer.toString('utf8');
     const key = toKey(path);
     if (!key.startsWith('qualification/') && key !== 'src/__tests__/qualification.spec.ts') {
         return source;
     }
+
     return source
         .split('\n')
         .filter((line) => !/(?:^\s*"decision":|\bdecision: 'DR-\d{3}')/.test(line))
@@ -420,10 +462,12 @@ const specReferenceCounts = () => {
         for (const pattern of SPEC_REFERENCE_PATTERNS) {
             count += source.match(pattern)?.length ?? 0;
         }
+
         if (count > 0) {
             counts.set(toKey(path), count);
         }
     }
+
     return counts;
 };
 
@@ -466,6 +510,7 @@ const exportedFunctions = (path: string) => {
             }
         }
     }
+
     return names;
 };
 
@@ -486,6 +531,7 @@ const unitExports = (path: string) => {
             }
         }
     }
+
     return names;
 };
 
@@ -510,6 +556,7 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
                 measured.set(key, lines);
             }
         }
+
         expect(ratchet(measured, FUNCTIONS_OVER_150_LINES)).toEqual([]);
     });
 
@@ -520,6 +567,7 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
                 measured.set(key, lets);
             }
         }
+
         expect(ratchet(measured, FUNCTIONS_OVER_6_LETS)).toEqual([]);
     });
 
@@ -544,6 +592,7 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
         for (const path of productFiles) {
             count += sourceOf(path).match(/as unknown as/g)?.length ?? 0;
         }
+
         expect(count).toBeLessThanOrEqual(AS_UNKNOWN_AS_MAX);
     });
 
@@ -557,6 +606,7 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
                 problems.push(`not exactly one definePlugin unit: features/${folder}/index.ts`);
             }
         }
+
         expect(problems).toEqual([]);
     });
 
@@ -568,6 +618,7 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
                 problems.push(`features/${folder}/feature.ts exports ${names.length} functions: ${names.join(', ')}`);
             }
         }
+
         expect(problems).toEqual([]);
     });
 });
