@@ -16,12 +16,15 @@ export const islandReplacement = (inline: boolean, original: unknown): readonly 
         if (text === '') {
             return [];
         }
+
         return [{ type: 'text', text: text.replaceAll('\n', ' ') }];
     }
+
     return text.split('\n').map((line): ContentNodeJSON => {
         if (line === '') {
             return { type: 'paragraph' };
         }
+
         return { type: 'paragraph', content: [{ type: 'text', text: line }] };
     });
 };
@@ -38,36 +41,44 @@ const IslandFallback = ({ inline }: { readonly inline: boolean }) => {
     if (typeof attrs.feature === 'string') {
         feature = attrs.feature;
     }
+
     const label = islandLabel(context, feature);
     const copy = () => {
         // `navigator.clipboard` is undefined outside a secure context.
         if (navigator.clipboard?.writeText === undefined) {
             api?.announce(context.t('RichTextEditor_copyFailed'));
+
             return;
         }
+
         navigator.clipboard
             .writeText(JSON.stringify(attrs.original))
             .then(() => api?.announce(context.t('RichTextEditor_originalCopied')))
             .catch(() => api?.announce(context.t('RichTextEditor_copyFailed')));
     };
+
     const convert = () => {
         if (api === undefined) {
             return;
         }
+
         // An island carries no `nodeId`, so the write finds it as the selected node.
         select();
         const written = api.content.replace(api.selectedRange(), islandReplacement(inline, attrs.original));
         if (written.status === 'applied') {
             api.announce(context.t('RichTextEditor_convertedToText'));
         }
+
         api.focus();
     };
+
     let Container: 'span' | 'div' = 'div';
     let layout = styles.block;
     if (inline) {
         Container = 'span';
         layout = styles.inline;
     }
+
     return (
         <>
             <span role="group" aria-label={label} data-rte-island="">

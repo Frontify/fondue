@@ -16,6 +16,7 @@ describe('a lazy part', () => {
         vi.stubGlobal('requestIdleCallback', (callback: () => void) => {
             next += 1;
             idle.set(next, callback);
+
             return next;
         });
         vi.stubGlobal('cancelIdleCallback', (id: number) => {
@@ -34,6 +35,7 @@ describe('a lazy part', () => {
             for (const callback of [...idle.values()]) {
                 callback();
             }
+
             await vi.dynamicImportSettled();
         });
     };

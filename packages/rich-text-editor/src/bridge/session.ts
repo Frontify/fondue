@@ -30,6 +30,7 @@ export const useSessionValue = <T>(
             if (runtime === undefined) {
                 return () => undefined;
             }
+
             return runtime.watch(
                 () => latestRef.current.read(runtime),
                 (previous, next) => latestRef.current.isEqual(previous, next),
@@ -45,8 +46,11 @@ export const useSessionValue = <T>(
         if (cacheRef.current !== undefined && isEqual(cacheRef.current.value, next)) {
             return cacheRef.current.value;
         }
+
         cacheRef.current = { value: next };
+
         return next;
     };
+
     return useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 };

@@ -42,6 +42,7 @@ export const turnIntoChoices = (
     if (current === undefined) {
         return [];
     }
+
     return states
         .filter(({ entry, state }) => state.enabled || entry === current.entry)
         .map(({ entry }) => ({ entry, current: entry === current.entry }));
@@ -60,6 +61,7 @@ export type TurnIntoNode = {
 const TurnIntoItems = ({ node, onPick }: { readonly node: TurnIntoNode; readonly onPick: () => void }) => {
     const entries = useContext(TurnIntoContext);
     const choices = turnIntoChoices(entries, (command, payload) => node.query(command, payload));
+
     return choices.map(({ entry, current }) => (
         <OptionItem
             key={entry.key}
@@ -69,6 +71,7 @@ const TurnIntoItems = ({ node, onPick }: { readonly node: TurnIntoNode; readonly
                 if (!current) {
                     node.execute(entry.command, entry.payload);
                 }
+
                 onPick();
             }}
         >
@@ -82,6 +85,7 @@ export const NodeChromeTurnInto = ({ current, node }: { readonly current: string
     const api = useEditorApi();
     // A converted block's chrome unmounts with its menu, so a pick returns focus here and Escape in the close handler.
     const toSurface = () => api?.focus();
+
     return (
         <NodeChromeMenu
             label={node.context.t('RichTextEditor_turnIntoCurrent', { type: current })}
@@ -115,8 +119,10 @@ export const TurnIntoMenu = ({
         if (runtime === undefined) {
             return { enabled: false, active: false, disabledReason: null };
         }
+
         return runtime.handle.query(command, payload);
     };
+
     const options: MenuOption[] = [];
     for (const { entry, current } of turnIntoChoices(entries, query)) {
         options.push({
@@ -129,6 +135,8 @@ export const TurnIntoMenu = ({
             ...(entry.payload === undefined ? {} : { payload: entry.payload }),
         });
     }
+
     return <OptionsMenu label={label} options={options} node={node} {...overlay} />;
 };
+
 TurnIntoMenu.displayName = 'TurnIntoMenu';

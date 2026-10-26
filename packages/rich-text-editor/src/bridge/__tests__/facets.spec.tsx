@@ -24,6 +24,7 @@ const apiOf = (): EditorApi => {
     if (live === undefined) {
         throw new Error('The editor gave no API.');
     }
+
     return live;
 };
 
@@ -45,6 +46,7 @@ describe('the facets a part declares in needs', () => {
                 'fixture.bold': {
                     run: (api) => {
                         expectTypeOf(api.marks).toBeObject();
+
                         return api.marks.toggle('bold');
                     },
                 },

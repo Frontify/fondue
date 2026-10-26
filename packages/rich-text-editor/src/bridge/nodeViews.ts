@@ -31,6 +31,7 @@ const faultOnThrow = <T>(host: NodeViewHost, fallback: () => T, work: () => T): 
     } catch {
         host.portals.close();
         host.runtime.faultView();
+
         return fallback();
     }
 };
@@ -48,6 +49,7 @@ const stateOf = (
         nodeId = node.attrs.nodeId;
         target = nodeId;
     }
+
     return {
         ...host.runtime.nodeActions(target),
         nodeId,
@@ -71,6 +73,7 @@ const createElements = (
     if (!node.isAtom) {
         shown = layersOf(node, document);
     }
+
     // A spec whose outer element is its hole gives its attributes to a content element, outside the chrome.
     let layers: readonly HTMLElement[] = [];
     const shownTag = shown[0]?.tagName.toLowerCase();
@@ -79,6 +82,7 @@ const createElements = (
         layers = layersOf(node, document);
         dom = layers[0] ?? dom;
     }
+
     const chrome = document.createElement(tag);
     chrome.setAttribute('contenteditable', 'false');
     chrome.setAttribute('data-rte-chrome', '');
@@ -94,9 +98,11 @@ const createElements = (
             syncLayers(layers, [], shown);
             dom.append(contentDOM);
         }
+
         for (const [name, value] of Object.entries(contentAttributes)) {
             contentDOM.setAttribute(name, value);
         }
+
         const labeled = labelsFirstBlock(node);
         if (labeled !== undefined) {
             contentId = firstBlockId(view.dom, labeled.nodeId, host.runtime.nextDomId);
@@ -105,6 +111,7 @@ const createElements = (
             contentDOM.id = contentId;
         }
     }
+
     return { dom, chrome, contentDOM, contentId, layers, shown };
 };
 
@@ -135,10 +142,12 @@ const buildNodeView = (
         state = next;
         host.portals.set({ key, slot: chrome, component, state, place });
     };
+
     publish(state);
     liveResources.nodeViews += 1;
     // As ProseMirror's own `selectNode` does, which a custom one replaces.
     const draggable = () => contentDOM !== null || current.type.spec.draggable !== true;
+
     return {
         dom,
         contentDOM,
@@ -151,6 +160,7 @@ const buildNodeView = (
                     if (next.type !== current.type || next.attrs.nodeId !== current.attrs.nodeId) {
                         return false;
                     }
+
                     const changed = next.attrs !== current.attrs;
                     if (changed && layers.length > 0) {
                         const fresh = layersOf(next, document);
@@ -158,14 +168,17 @@ const buildNodeView = (
                         if (!sameTags(fresh, shown)) {
                             return false;
                         }
+
                         syncLayers(layers, shown, fresh);
                         shown = fresh;
                     }
+
                     current = next;
                     // Chrome reads attributes only, so typing inside the node rerenders nothing.
                     if (changed) {
                         publish(stateOf(host, next, state.selected, contentId, getPos));
                     }
+
                     return true;
                 },
             ),
@@ -174,6 +187,7 @@ const buildNodeView = (
             if (draggable()) {
                 dom.draggable = true;
             }
+
             publish({ ...state, selected: true });
         },
         deselectNode: () => {
@@ -181,6 +195,7 @@ const buildNodeView = (
             if (draggable()) {
                 dom.removeAttribute('draggable');
             }
+
             publish({ ...state, selected: false });
         },
         ignoreMutation: (mutation) => ignoresMutation(parts, mutation, movedContent),
@@ -218,9 +233,11 @@ export const createNodeViews = (
                 () => ({ dom: view.dom.ownerDocument.createElement(tagOf(node)) }),
                 () => {
                     created += 1;
+
                     return buildNodeView(host, String(created), declaration, node, view, getPos);
                 },
             );
     }
+
     return constructors;
 };

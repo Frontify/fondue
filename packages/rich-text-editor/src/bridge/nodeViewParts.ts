@@ -13,7 +13,9 @@ const inControl = (chrome: HTMLElement, target: Node) => {
     if (target instanceof Element) {
         element = target;
     }
+
     const control = element?.closest(CONTROLS);
+
     return control !== null && control !== undefined && chrome.contains(control);
 };
 
@@ -27,6 +29,7 @@ const attributesOf = (element: HTMLElement | undefined): readonly Attr[] => {
     if (element === undefined) {
         return [];
     }
+
     return [...element.attributes];
 };
 
@@ -43,6 +46,7 @@ export const syncLayers = (
                 layer.removeAttribute(name);
             }
         }
+
         for (const { name, value } of attributesOf(next)) {
             layer.setAttribute(name, value);
         }
@@ -59,31 +63,40 @@ export const createPlacement = (chrome: HTMLElement, contentDOM: HTMLElement | n
         if (contentDOM === null) {
             return;
         }
+
         if (target === null) {
             chrome.setAttribute('contenteditable', 'false');
             if (home !== null && contentDOM.parentElement !== home) {
                 moves += 1;
                 home.append(contentDOM);
             }
+
             return;
         }
+
         // Content under a non-editable element becomes its own editing host, whose focus the surface never sees.
         chrome.removeAttribute('contenteditable');
         if (contentDOM.parentElement === home) {
             moves += 1;
         }
+
         target.append(contentDOM);
     };
+
     const movedContent = (mutation: ViewMutation) => {
         if (moves === 0 || contentDOM === null || mutation.type !== 'childList') {
             return false;
         }
+
         if (![...mutation.addedNodes, ...mutation.removedNodes].includes(contentDOM)) {
             return false;
         }
+
         moves -= 1;
+
         return true;
     };
+
     return { place, movedContent };
 };
 
@@ -104,12 +117,15 @@ export const ignoresMutation = (
     if (mutation.type === 'selection') {
         return false;
     }
+
     if (contentDOM?.contains(mutation.target) === true) {
         return mutation.type === 'attributes' && mutation.target === contentDOM;
     }
+
     if (mutation.type === 'attributes' && layers.includes(mutation.target as HTMLElement)) {
         return true;
     }
+
     return chrome.contains(mutation.target) || movedContent(mutation);
 };
 
@@ -118,10 +134,12 @@ export const stopsEvent = ({ dom, chrome, contentDOM }: ViewDom, event: Event): 
     if (!(target instanceof Node) || !chrome.contains(target) || contentDOM?.contains(target) === true) {
         return false;
     }
+
     // A selected node's copy comes from the first control the browser finds inside it, such as a task checkbox.
     if (CLIPBOARD_SOURCE_EVENTS.has(event.type) && target instanceof Element && target.matches(TEXTLESS_CONTROLS)) {
         return false;
     }
+
     // A draggable node drags from its chrome, as ProseMirror's default and Tiptap's NodeView let drag events through.
     return !DRAG_SOURCE_EVENTS.has(event.type) || !dom.draggable || inControl(chrome, target);
 };

@@ -19,6 +19,7 @@ export const facetsOf = (api: EditorApi, needs: readonly EditorFacet[] | undefin
         byFeature = new Map();
         views.set(api, byFeature);
     }
+
     let view = byFeature.get(featureId);
     if (view === undefined) {
         view = {} as EditorApi;
@@ -34,6 +35,7 @@ export const facetsOf = (api: EditorApi, needs: readonly EditorFacet[] | undefin
                 });
             }
         }
+
         for (const need of needs ?? []) {
             // `uploads` is the one facet a session may lack, when its model does not install `media.image`.
             if (!(need in api) && process.env.NODE_ENV !== 'production') {
@@ -44,8 +46,10 @@ export const facetsOf = (api: EditorApi, needs: readonly EditorFacet[] | undefin
                 });
             }
         }
+
         byFeature.set(featureId, view);
     }
+
     return view;
 };
 
@@ -60,6 +64,7 @@ export const editorApiOf = (runtime: EditorPort, hosts: EditorHosts): EditorApi 
         byHosts = new WeakMap();
         apis.set(runtime, byHosts);
     }
+
     let api = byHosts.get(hosts);
     if (api === undefined) {
         // One document API per session, so its members keep their identity when the hosts change with the locale.
@@ -68,9 +73,11 @@ export const editorApiOf = (runtime: EditorPort, hosts: EditorHosts): EditorApi 
             document = liveDocumentApi(engineOf(runtime));
             documents.set(runtime, document);
         }
+
         api = withHosts(document, hosts);
         byHosts.set(hosts, api);
     }
+
     return api;
 };
 
@@ -107,6 +114,7 @@ export const commandApiOf = (
     const later = (action: () => void): void => {
         context?.defer(action);
     };
+
     return {
         ...withHosts(document, hosts),
         overlays: {

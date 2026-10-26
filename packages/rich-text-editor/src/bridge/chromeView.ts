@@ -41,10 +41,13 @@ const writeChromeMargin = (view: SurfaceView | undefined, height: number) => {
     if (view === undefined) {
         return;
     }
+
     if (height === 0) {
         view.dom.style.removeProperty(CHROME_SCROLL_MARGIN);
+
         return;
     }
+
     view.dom.style.setProperty(CHROME_SCROLL_MARGIN, `${height + MARGIN}px`);
 };
 
@@ -67,6 +70,7 @@ export const createChromeView = (): ChromeView => {
         threshold.bottom = bottom.keyboard + bottom.docked;
         margin.bottom = threshold.bottom + MARGIN;
     };
+
     let levels: ListLevels | undefined;
     let styles: ChromeStyles | undefined;
     // The stored style IDs this session reported unknown, once each.
@@ -76,16 +80,20 @@ export const createChromeView = (): ChromeView => {
         if (listener === undefined || reported.has(styleId)) {
             return;
         }
+
         reported.add(styleId);
         // Decorations draw inside a view update, which a host listener must not reenter.
         queueMicrotask(() => listener.onUnknown(path));
     };
+
     const content = createContentDecorations(
         () => {
             if (mounted === undefined) {
                 return undefined;
             }
+
             const { surface, domId, nodeViews } = mounted;
+
             return {
                 surface,
                 domId,
@@ -98,11 +106,13 @@ export const createChromeView = (): ChromeView => {
         () => shown,
     );
     const markStyler = createMarkStyler();
+
     return {
         props: (next, views, ids) => {
             mounted = { surface: next, domId: ids, nodeViews: views };
             content.reset();
             reported = new Set();
+
             return { decorations: content.decorations, scrollMargin: margin, scrollThreshold: threshold };
         },
         take: (next) => {
@@ -113,6 +123,7 @@ export const createChromeView = (): ChromeView => {
             if (shown === next) {
                 return;
             }
+
             shown = next;
             redraw(view);
         },
@@ -134,6 +145,7 @@ export const createChromeView = (): ChromeView => {
             if (levels === next) {
                 return;
             }
+
             levels = next;
             content.reset();
             redraw(view);
@@ -142,6 +154,7 @@ export const createChromeView = (): ChromeView => {
             if (styles === next) {
                 return;
             }
+
             styles = next;
             content.reset();
             markStyler.restyle(styles);

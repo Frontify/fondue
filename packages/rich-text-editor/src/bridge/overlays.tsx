@@ -50,6 +50,7 @@ export const useOverlayContainer = (): HTMLElement | null => {
     if (overlays === null) {
         return null;
     }
+
     return overlays.container;
 };
 
@@ -58,6 +59,7 @@ const useOverlays = (): Overlays => {
     if (overlays === null) {
         throw new Error('An editor overlay must be rendered inside RichTextEditor.Root.');
     }
+
     return overlays;
 };
 
@@ -71,8 +73,10 @@ export const useScopedFocus = (): Element | null => {
         if (scope.contains(active)) {
             return active;
         }
+
         return null;
     };
+
     return useSyncExternalStore(scope.subscribe, read, NO_FOCUS);
 };
 
@@ -124,11 +128,13 @@ const leaveOnTab = (event: KeyboardEvent) => {
     if (event.key !== 'Tab') {
         return;
     }
+
     const tabbables = (event.currentTarget as HTMLElement).querySelectorAll(TABBABLE);
     let edge = tabbables[tabbables.length - 1];
     if (event.shiftKey) {
         edge = tabbables[0];
     }
+
     if (edge !== undefined && event.target === edge) {
         event.stopPropagation();
     }
@@ -145,6 +151,7 @@ const refocus = (port: EditorPort, before: Element | null, panelControl: Element
     if (view === undefined) {
         return;
     }
+
     const { activeElement, body } = view.dom.ownerDocument;
     // A control a panel opened, such as from an issues panel repair, hands focus back to it after a change too.
     if (
@@ -153,16 +160,21 @@ const refocus = (port: EditorPort, before: Element | null, panelControl: Element
         (activeElement === body || activeElement === null || activeElement === view.dom)
     ) {
         panelControl.focus();
+
         return;
     }
+
     if (activeElement !== body && activeElement !== null) {
         return;
     }
+
     // An element of an iframe's document is no `HTMLElement` of this window.
     if (before !== null && before !== view.dom && before.isConnected && 'focus' in before) {
         (before as HTMLElement).focus();
+
         return;
     }
+
     runtime.handle.focus();
 };
 
@@ -209,6 +221,7 @@ export const useHeldOverlay = (
                 if (live === undefined) {
                     return undefined;
                 }
+
                 return engineOf(live).view;
             },
             () => targetRef.current,
@@ -220,10 +233,12 @@ export const useHeldOverlay = (
             if (!next && kind !== 'key' && scope.contains(target) && !holds(elementRef.current, target)) {
                 return;
             }
+
             // A host dialog's focus trap may move focus to its container while a press inside this overlay is held.
             if (!next && kind === 'focus' && holds(elementRef.current, scope.pressed())) {
                 return;
             }
+
             setOpenRef.current(next);
         },
         [scope],
@@ -236,6 +251,7 @@ export const useHeldOverlay = (
         if (!open || runtime === undefined) {
             return undefined;
         }
+
         const before = scope.active();
         // The control's own opener, read when it opened, since the overlay may move focus before this effect runs.
         let panelControl: Element | null = null;
@@ -244,9 +260,11 @@ export const useHeldOverlay = (
                 panelControl = candidate;
             }
         }
+
         const unsubscribe = runtime.handle.subscribe('replaced', () => setOpenRef.current(false));
         // An open overlay keeps the scope listening, whether or not focus is inside, so an outside press still closes it.
         const release = scope.hold();
+
         // Runs when the overlay closes and when it unmounts open, as the chrome of a deleted node does.
         return () => {
             unsubscribe();
@@ -255,6 +273,7 @@ export const useHeldOverlay = (
             if (returnRef.current !== undefined) {
                 target = returnRef.current.target;
             }
+
             returnRef.current = undefined;
             queueMicrotask(() => refocus(runtime, target, panelControl));
         };
@@ -267,6 +286,7 @@ export const useHeldOverlay = (
         if (!open) {
             return undefined;
         }
+
         let frame = 0;
         const track = () => {
             const element = elementRef.current;
@@ -276,15 +296,20 @@ export const useHeldOverlay = (
                 transform = 'scale(0)';
                 pointerEvents = 'none';
             }
+
             if (element !== null && element.style.transform !== transform) {
                 element.style.transform = transform;
                 element.style.pointerEvents = pointerEvents;
             }
+
             frame = requestAnimationFrame(track);
         };
+
         frame = requestAnimationFrame(track);
+
         return () => cancelAnimationFrame(frame);
     }, [open, anchor]);
+
     return { container, contentRef, onOpenChange, anchor, returnFocusTo };
 };
 

@@ -17,6 +17,7 @@ const watchDocumentListeners = () => {
         live.set(type, (live.get(type) ?? 0) - 1);
         remove(type, listener, options);
     });
+
     return () => Object.fromEntries([...live].filter(([, count]) => count > 0));
 };
 
@@ -35,6 +36,7 @@ const editor = (): Editor => {
     root.append(inside);
     document.body.append(root);
     const scope = createInteractionScope(() => [root]);
+
     return { root, inside, scope, stop: scope.listen([root]) };
 };
 
@@ -49,6 +51,7 @@ afterEach(() => {
         stop();
         root.remove();
     }
+
     editors = [];
     outside.remove();
     vi.restoreAllMocks();
@@ -57,6 +60,7 @@ afterEach(() => {
 const mount = () => {
     const created = editor();
     editors.push(created);
+
     return created;
 };
 

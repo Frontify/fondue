@@ -29,6 +29,7 @@ const inFixedContainingBlock = (element: Element): boolean => {
             return true;
         }
     }
+
     return false;
 };
 
@@ -51,6 +52,7 @@ export const useOverlayRoot = (coordinator: MountCoordinator, portalContainer: H
             if (runtime !== undefined) {
                 roots.push(...runtime.interactionRoots);
             }
+
             return roots;
         }),
     );
@@ -62,6 +64,7 @@ export const useOverlayRoot = (coordinator: MountCoordinator, portalContainer: H
                 elements.push(element);
             }
         }
+
         return scope.listen(elements);
     }, [scope, overlayRoot]);
     // An ancestor's transform, such as a host dialog's, makes it the overlays' containing block, which clips them; while
@@ -70,32 +73,39 @@ export const useOverlayRoot = (coordinator: MountCoordinator, portalContainer: H
         if (overlayRoot === null || !('showPopover' in overlayRoot)) {
             return undefined;
         }
+
         const hide = () => {
             if (overlayRoot.matches(':popover-open')) {
                 overlayRoot.hidePopover();
             }
         };
+
         // Radix portals an overlay into the root while it is open, so the root's children say which are open.
         const observer = new MutationObserver((records) => {
             if (overlayRoot.childElementCount === 0 || !inFixedContainingBlock(overlayRoot)) {
                 hide();
                 overlayRoot.removeAttribute('popover');
+
                 return;
             }
+
             if (!records.some((record) => record.addedNodes.length > 0)) {
                 return;
             }
+
             // Showing it again puts it above what entered the top layer since, such as a host's modal `dialog`.
             hide();
             overlayRoot.popover = 'manual';
             overlayRoot.showPopover();
         });
         observer.observe(overlayRoot, { childList: true });
+
         return () => observer.disconnect();
     }, [overlayRoot]);
     let element: ReactNode = <div ref={setOverlayElement} className={styles.root} data-rte-overlays="" />;
     if (portalContainer !== undefined && portalContainer !== null) {
         element = createPortal(element, portalContainer);
     }
+
     return { rootRef, overlayRoot, overlayRootRef, scope, element };
 };

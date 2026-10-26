@@ -43,6 +43,7 @@ export const useRenderMark = (): void => {
             work.rendering = false;
         });
     }
+
     useClientLayoutEffect(() => {
         if (work !== undefined) {
             work.rendering = false;
@@ -62,12 +63,14 @@ export const Phase = ({ work, open }: { readonly work: ReactWork; readonly open:
             work.phase = false;
         });
     }
+
     useClientLayoutEffect(() => {
         work.phase = open;
     });
     useEffect(() => {
         work.phase = open;
     });
+
     return null;
 };
 
@@ -77,7 +80,9 @@ const nameOf = (surface: Element): string => {
     if (labelledBy === null) {
         return (surface.getAttribute('aria-label') ?? '').trim();
     }
+
     const document = surface.ownerDocument;
+
     return labelledBy
         .split(/\s+/)
         .map((id) => document.getElementById(id)?.textContent)
@@ -104,5 +109,6 @@ export const sharesName = (surface: Element): boolean => {
     const surfaces = [...surface.ownerDocument.querySelectorAll('[data-rte-surface]')];
     const shared = surfaces.some((other) => other !== surface && READY in other && nameOf(other) === name);
     markReady(surface);
+
     return shared;
 };

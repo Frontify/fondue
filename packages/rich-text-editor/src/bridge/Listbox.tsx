@@ -34,17 +34,21 @@ const Lead = ({ option }: { readonly option: ListboxOption }) => {
             </span>
         );
     }
+
     if (option.imageUrl !== undefined) {
         return <img className={styles.image} src={option.imageUrl} alt="" referrerPolicy="no-referrer" />;
     }
+
     if (option.kind !== undefined) {
         const KindIcon = KIND_ICONS[option.kind];
+
         return (
             <span className={styles.icon} data-kind={option.kind}>
                 <KindIcon size={16} aria-hidden />
             </span>
         );
     }
+
     return null;
 };
 
@@ -115,6 +119,7 @@ export const Listbox = ({
             children.push(render(option, position));
             continue;
         }
+
         // The heading is decoration: the group's own name is what a screen reader hears.
         const run: ReactNode[] = [];
         let end = position;
@@ -122,6 +127,7 @@ export const Listbox = ({
             run.push(render(options[end] as ListboxOption, end));
             end += 1;
         }
+
         children.push(
             <div key={`group-${position}`} role="group" aria-label={group}>
                 <div className={styles.heading} aria-hidden>
@@ -132,6 +138,7 @@ export const Listbox = ({
         );
         position = end - 1;
     }
+
     return (
         <div ref={listRef} id={id} role="listbox" aria-label={label} className={styles.listbox} data-test-id={testId}>
             {children}

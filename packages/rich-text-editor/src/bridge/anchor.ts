@@ -14,10 +14,12 @@ const parentOf = (node: Element): Element | null => {
     if (node.parentElement !== null) {
         return node.parentElement;
     }
+
     const root = node.getRootNode();
     if (root instanceof ShadowRoot) {
         return root.host;
     }
+
     return null;
 };
 
@@ -31,6 +33,7 @@ const clipped = (surface: HTMLElement, rect: DOMRect): boolean => {
     if (view === null) {
         return false;
     }
+
     let position = view.getComputedStyle(surface).position;
     for (
         let node = parentOf(surface);
@@ -42,16 +45,19 @@ const clipped = (surface: HTMLElement, rect: DOMRect): boolean => {
         if (!contains) {
             continue;
         }
+
         position = style.position;
         if (style.overflowX === 'visible' && style.overflowY === 'visible') {
             continue;
         }
+
         const box = node.getBoundingClientRect();
         // A caret has no width, so touching an edge still counts as visible.
         if (rect.bottom < box.top || rect.top > box.bottom || rect.right < box.left || rect.left > box.right) {
             return true;
         }
     }
+
     return false;
 };
 
@@ -71,6 +77,7 @@ export const createRangeAnchor = (
         if (current === undefined || read === undefined) {
             return new DOMRect();
         }
+
         return rangeRect(current, read.from, read.to);
     },
 });
@@ -80,23 +87,28 @@ const targetRect = (current: SurfaceView, target: AnchorTarget | undefined): DOM
     if (target === undefined || target === 'selection') {
         return undefined;
     }
+
     let read: EditorRange | Element | undefined;
     if (typeof target === 'function') {
         read = target();
     } else {
         read = target;
     }
+
     if (read === undefined) {
         return undefined;
     }
+
     const positions = positionsOf(read as EditorRange);
     if (positions === undefined) {
         // An element of an iframe's document is no `Element` of this window.
         return (read as Element).getBoundingClientRect();
     }
+
     if (positions.from === positions.to) {
         return caretRect(current, positions.from);
     }
+
     return rangeRect(current, positions.from, positions.to);
 };
 
@@ -113,37 +125,48 @@ export const createSelectionAnchor = (
     let read = false;
     const anchorRect = (current: SurfaceView): DOMRect => {
         const targeted = targetRect(current, target?.());
+
         return targeted ?? selectionRect(current);
     };
+
     const rectOf = (current: SurfaceView): DOMRect => {
         if (held === undefined) {
             return anchorRect(current);
         }
+
         const surface = current.dom.getBoundingClientRect();
+
         return new DOMRect(surface.left + held.x, surface.top + held.y, held.width, held.height);
     };
+
     return {
         getBoundingClientRect: () => {
             const current = view();
             if (current === undefined) {
                 return new DOMRect();
             }
+
             read = true;
+
             return rectOf(current);
         },
         clipped: () => {
             const current = view();
+
             return read && current !== undefined && clipped(current.dom, rectOf(current));
         },
         hold: (next) => {
             const current = view();
             if (!next || current === undefined) {
                 held = undefined;
+
                 return;
             }
+
             if (held !== undefined) {
                 return;
             }
+
             const rect = anchorRect(current);
             const surface = current.dom.getBoundingClientRect();
             held = { x: rect.left - surface.left, y: rect.top - surface.top, width: rect.width, height: rect.height };
@@ -158,22 +181,29 @@ export const anchorOf = (port: () => EditorPort | undefined, target: AnchorTarge
         if (live === undefined) {
             return undefined;
         }
+
         return engineOf(live).view;
     };
+
     if (target === 'selection') {
         return createSelectionAnchor(view);
     }
+
     if (typeof target === 'function') {
         return createRangeAnchor(view, () => {
             const range = target();
+
             return range === undefined ? undefined : positionsOf(range);
         });
     }
+
     const positions = positionsOf(target as EditorRange);
     if (positions !== undefined) {
         return createRangeAnchor(view, () => positions);
     }
+
     // An element of an iframe's document is no `Element` of this window.
     const element = target as Element;
+
     return { getBoundingClientRect: () => element.getBoundingClientRect() };
 };

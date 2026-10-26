@@ -24,6 +24,7 @@ const selectionType = (page: Page) =>
         if (runtime === undefined) {
             return undefined;
         }
+
         return (runtime.state.selection.toJSON() as { readonly type: string }).type;
     });
 /** The snapshot's top-level blocks as stored, islands as their original JSON. */
@@ -72,6 +73,7 @@ test('shows islands as labelled fallbacks with their text, edits around them, mo
     if (from === null || to === null) {
         throw new Error('The island or the last paragraph has no box.');
     }
+
     await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
     await page.mouse.down();
     await page.mouse.move(from.x + from.width / 2 + 5, from.y + from.height / 2 + 5, { steps: 3 });
@@ -94,8 +96,10 @@ test('lays the island actions out apart, and below the text of a block island', 
         if (copy === null || convert === null) {
             throw new Error('An island action has no box.');
         }
+
         expect(convert.x - (copy.x + copy.width)).toBeGreaterThan(0);
     }
+
     const fallback = await surfaceOf(page)
         .getByRole('group', { name: 'Unsupported content: callout', exact: true })
         .boundingBox();
@@ -105,6 +109,7 @@ test('lays the island actions out apart, and below the text of a block island', 
     if (fallback === null || bar === null) {
         throw new Error('The island text or its actions have no box.');
     }
+
     expect(bar.y).toBeGreaterThanOrEqual(fallback.y + fallback.height);
 });
 
@@ -123,6 +128,7 @@ test('copies an island original as text and converts a block and an inline islan
             value: {
                 writeText: (value: string) => {
                     copied.push(value);
+
                     return Promise.resolve();
                 },
             },

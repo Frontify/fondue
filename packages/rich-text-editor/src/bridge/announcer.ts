@@ -17,6 +17,7 @@ const contentOf = (owner: Document, text: string): Node => {
     if (parts.length === 1) {
         return owner.createTextNode(text);
     }
+
     const content = owner.createElement('span');
     for (const [index, part] of parts.entries()) {
         if (index % 2 === 0) {
@@ -27,6 +28,7 @@ const contentOf = (owner: Document, text: string): Node => {
             content.append(quoted);
         }
     }
+
     return content;
 };
 
@@ -53,12 +55,14 @@ export const createAnnouncer = (): Announcer => {
         if (region === null) {
             return;
         }
+
         // A cleared region and a changed text make a repeat read again, by VoiceOver in Safari too.
         region.textContent = '';
         let text = message;
         if (text === previous) {
             text += NO_BREAK_SPACE;
         }
+
         previous = text;
         region.append(contentOf(region.ownerDocument, text));
     };
@@ -70,12 +74,15 @@ export const createAnnouncer = (): Announcer => {
         announce: (message, key) => {
             if (key === undefined) {
                 speak(message);
+
                 return;
             }
+
             const timer = waiting.get(key);
             if (timer !== undefined) {
                 clearTimeout(timer);
             }
+
             const next = setTimeout(() => {
                 waiting.delete(key);
                 speak(message);
@@ -86,6 +93,7 @@ export const createAnnouncer = (): Announcer => {
             for (const timer of waiting.values()) {
                 clearTimeout(timer);
             }
+
             waiting.clear();
         },
     };
@@ -100,5 +108,6 @@ export const useAnnounce = (): Announcer['announce'] => {
     if (announcer === null) {
         throw new Error('useAnnounce must be called inside RichTextEditor.Root.');
     }
+
     return announcer.announce;
 };

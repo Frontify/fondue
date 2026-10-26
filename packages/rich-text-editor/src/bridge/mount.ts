@@ -28,6 +28,7 @@ export const createMountCoordinator = (): MountCoordinator => {
             chrome.take(runtime.view);
         }
     };
+
     return {
         get runtime() {
             return current;
@@ -38,10 +39,13 @@ export const createMountCoordinator = (): MountCoordinator => {
             if (current === undefined) {
                 return;
             }
+
             if (element === null) {
                 current.detach();
+
                 return;
             }
+
             attach(current, element);
             // A surface remounted in a ready session takes over its mark, which `ready` set on the first one.
             if (process.env.NODE_ENV !== 'production' && current.handle.getSummary().phase === 'ready') {

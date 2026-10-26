@@ -17,6 +17,7 @@ export const lazyPart = <P extends object>(load: () => Promise<ComponentType<P>>
         pending ??= load().then(
             (component) => {
                 loaded = component;
+
                 return component;
             },
             (error: unknown) => {
@@ -25,8 +26,10 @@ export const lazyPart = <P extends object>(load: () => Promise<ComponentType<P>>
                 throw error;
             },
         );
+
         return pending;
     };
+
     loaders.push(start);
     const Part = (props: P) => {
         // A function in state would be called as an updater, so the component sits in an object.
@@ -34,22 +37,26 @@ export const lazyPart = <P extends object>(load: () => Promise<ComponentType<P>>
             if (loaded === undefined) {
                 return undefined;
             }
+
             return { Loaded: loaded };
         });
         useEffect(() => {
             if (part !== undefined) {
                 return undefined;
             }
+
             let mounted = true;
             start()
                 .then((Loaded) => {
                     if (mounted) {
                         setPart({ Loaded });
                     }
+
                     return Loaded;
                 })
                 // A part that cannot load stays hidden, and the next use tries again.
                 .catch(() => undefined);
+
             return () => {
                 mounted = false;
             };
@@ -57,9 +64,12 @@ export const lazyPart = <P extends object>(load: () => Promise<ComponentType<P>>
         if (part === undefined) {
             return null;
         }
+
         return <part.Loaded {...props} />;
     };
+
     Part.displayName = 'RichTextEditor.LazyPart';
+
     return Part;
 };
 

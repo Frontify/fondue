@@ -50,6 +50,7 @@ export class ChromeBoundary extends Component<BoundaryProps, BoundaryState> {
         if (props.attrs !== state.attrs) {
             return { failed: false, attrs: props.attrs };
         }
+
         return null;
     }
 
@@ -57,6 +58,7 @@ export class ChromeBoundary extends Component<BoundaryProps, BoundaryState> {
         if (this.state.failed) {
             return <span>{this.props.message}</span>;
         }
+
         return this.props.children;
     }
 }
@@ -66,11 +68,14 @@ const pendingOf = (runtime: EditorPort | undefined, nodeId: string | null): Node
     if (runtime === undefined || nodeId === null) {
         return null;
     }
+
     const status = mediaOf(runtime)?.uploads.statusOf(nodeId);
     if (status === undefined) {
         return null;
     }
+
     const running = status.state === 'queued' || status.state === 'running';
+
     return { kind: 'upload', state: running ? 'running' : 'failed', progress: status.progress };
 };
 
@@ -98,6 +103,7 @@ const Chrome = memo(
             slot.dir = dir;
             slot.lang = lang;
         }, [slot, dir, lang]);
+
         return createPortal(
             <NodeViewStateContext.Provider value={state}>
                 <NodeViewContentContext.Provider value={place}>
@@ -134,6 +140,7 @@ export const PortalHost = ({
 }) => {
     const entries = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
     useClientLayoutEffect(onFlush, [entries, onFlush]);
+
     return (
         <>
             {entries.map((entry) => (
@@ -142,4 +149,5 @@ export const PortalHost = ({
         </>
     );
 };
+
 PortalHost.displayName = 'RichTextEditor.PortalHost';

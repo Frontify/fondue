@@ -65,8 +65,10 @@ const block = (nodeId: string, value = '', language = 'plain') => {
     if (value !== '') {
         content.push(text(value));
     }
+
     return { type: 'chrome_block', attrs: { nodeId, language, checked: false }, content };
 };
+
 const list = (...items: readonly string[]) => ({
     type: 'bullet_list',
     attrs: {},
@@ -98,11 +100,13 @@ vi.mocked(createPortalStore).mockImplementation(() => {
     const store = actualStore();
     let subscribers = 0;
     stores.push({ store, subscribers: () => subscribers });
+
     return {
         ...store,
         subscribe: (listener) => {
             subscribers += 1;
             const unsubscribe = store.subscribe(listener);
+
             return () => {
                 subscribers -= 1;
                 unsubscribe();
@@ -115,6 +119,7 @@ const lastStore = () => {
     if (last === undefined) {
         throw new Error('no portal store');
     }
+
     return last;
 };
 
@@ -152,26 +157,33 @@ const mount = async (
         if (ref.current === null) {
             throw new Error('no handle');
         }
+
         return ref.current;
     };
+
     const runtime = (): EditorRuntime => {
         const found = runtimeOf(handle());
         if (found === undefined) {
             throw new Error('no runtime');
         }
+
         return found;
     };
+
     const editorView = () => {
         const attached = runtime().view;
         if (attached === undefined) {
             throw new Error('no view');
         }
+
         return attached;
     };
+
     const flush = () =>
         act(async () => {
             await Promise.resolve();
         });
+
     return { ...view, handle, runtime, editorView, flush, onDiagnostic };
 };
 
@@ -251,8 +263,10 @@ describe('the React bridge', () => {
         const Capture = () => {
             const state = useRichTextNodeView<ChromeCommands>();
             captured.set(state.nodeId, state);
+
             return null;
         };
+
         const capturing = defineEditor({
             id: 'test.bridge',
             model: modelOf([fixtureChrome()]),
@@ -339,6 +353,7 @@ describe('the React bridge', () => {
         const Throwing = () => {
             throw new Error('chrome failed');
         };
+
         const throwing = defineEditor({
             id: 'test.bridge',
             model: modelOf([fixtureChrome()]),
@@ -395,8 +410,10 @@ describe('the React bridge', () => {
             if (attrs.label === 'boom') {
                 throw new Error('chrome failed');
             }
+
             return <span data-chrome="boom-mention">mention</span>;
         };
+
         const booming = defineEditor({
             id: 'test.bridge',
             model: modelOf([fixtureChrome()]),
@@ -429,8 +446,10 @@ describe('the React bridge', () => {
             if (attrs.language === 'boom') {
                 throw new Error('chrome failed');
             }
+
             return <span data-test-chrome="" />;
         };
+
         const strict = defineEditor({
             id: 'test.bridge',
             model: modelOf([fixtureChrome()]),
@@ -470,8 +489,10 @@ describe('the React bridge', () => {
             if (attrs.language === 'boom' || attrs.language === 'boom2') {
                 throw new Error('chrome failed');
             }
+
             return <span data-test-chrome="" />;
         };
+
         const strict = defineEditor({
             id: 'test.bridge',
             model: modelOf([fixtureChrome()]),
@@ -510,6 +531,7 @@ describe('the React bridge', () => {
         for (const views of registered) {
             expect(native.filter((name) => views.has(name))).toEqual([]);
         }
+
         // The loop reads registered views, so a view on a native node would show here.
         const chromeViews = registered[registered.length - 1] as ReadonlyMap<string, unknown>;
         expect([...chromeViews.keys()].sort()).toEqual(['chrome_block', 'chrome_image', 'chrome_mention']);
@@ -661,6 +683,7 @@ describe('the React bridge', () => {
             if (cycle % 2 === 1) {
                 wrapped = <StrictMode>{element}</StrictMode>;
             }
+
             const { unmount } = render(wrapped);
             await act(async () => {
                 await Promise.resolve();
@@ -740,12 +763,14 @@ describe('node view faults', () => {
     const throwingStore = (when: (state: PortalEntry['state']) => boolean) => {
         vi.mocked(createPortalStore).mockImplementationOnce(() => {
             const store = actualStore();
+
             return {
                 ...store,
                 set: (entry) => {
                     if (when(entry.state)) {
                         throw new Error('node view failed');
                     }
+
                     store.set(entry);
                 },
             };

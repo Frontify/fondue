@@ -24,12 +24,14 @@ export const NodeChromeToolbar = ({
 }) => {
     // Radix writes `ltr` unless told, so the arrows follow the theme's visual order.
     const { dir } = useFondueTheme();
+
     return (
         <Toolbar.Root aria-label={label} dir={dir} tabIndex={OUT_OF_TAB_ORDER} data-rte-node-chrome="">
             {children}
         </Toolbar.Root>
     );
 };
+
 NodeChromeToolbar.displayName = 'NodeChromeToolbar';
 
 /**
@@ -70,6 +72,7 @@ export const NodeChromeButton = ({
     if (icon === undefined) {
         return button;
     }
+
     return (
         <Tooltip.Root>
             <Tooltip.Trigger asChild>{button}</Tooltip.Trigger>
@@ -79,6 +82,7 @@ export const NodeChromeButton = ({
         </Tooltip.Root>
     );
 };
+
 NodeChromeButton.displayName = 'NodeChromeButton';
 
 /** The Fondue-button item for chrome toolbars with few buttons; `NodeChromeButton` stays plain for node chrome's mount cost. */
@@ -96,6 +100,7 @@ export const ChromeToolbarButton = ({
     readonly onPress: (control: HTMLElement) => void;
 }) => {
     const container = useOverlayContainer();
+
     return (
         <Tooltip.Root>
             <Tooltip.Trigger asChild>
@@ -121,6 +126,7 @@ export const ChromeToolbarButton = ({
         </Tooltip.Root>
     );
 };
+
 ChromeToolbarButton.displayName = 'ChromeToolbarButton';
 
 /**
@@ -153,10 +159,12 @@ export const NodeChromeMenu = ({
         if (content === null) {
             return;
         }
+
         requestAnimationFrame(() =>
             content.querySelector<HTMLElement>('[role="menuitemradio"][aria-checked="true"]')?.focus(),
         );
     }, []);
+
     return (
         <Dropdown.Root
             open={open}
@@ -186,6 +194,7 @@ export const NodeChromeMenu = ({
                         if (!touched) {
                             return;
                         }
+
                         const { left, right, top, bottom } = event.currentTarget.getBoundingClientRect();
                         const { clientX, clientY } = event;
                         if (clientX >= left && clientX <= right && clientY >= top && clientY <= bottom) {
@@ -206,6 +215,7 @@ export const NodeChromeMenu = ({
         </Dropdown.Root>
     );
 };
+
 NodeChromeMenu.displayName = 'NodeChromeMenu';
 
 /** One item of a node chrome menu: a radio item when `checked` is set, else a plain item. */
@@ -222,6 +232,7 @@ export const OptionItem = ({
     if (checked !== undefined) {
         semantics = { role: 'menuitemradio', 'aria-checked': checked };
     }
+
     return (
         // Fondue's `Dropdown.Item` types no menu item role or state, which Radix still takes.
         <Dropdown.Item {...semantics} onSelect={onSelect}>
@@ -229,6 +240,7 @@ export const OptionItem = ({
         </Dropdown.Item>
     );
 };
+
 OptionItem.displayName = 'OptionItem';
 
 /** One choice of an options menu: the command it runs, with its payload, on the node the menu opened for. */
@@ -267,6 +279,7 @@ export const OptionsMenu = ({
             onClose();
         }
     };
+
     const overlay = useEditorOverlay(open, close);
     const { contentRef } = overlay;
     // Radix focuses the content of a menu with no trigger, so the checked item takes focus a frame later.
@@ -276,6 +289,7 @@ export const OptionsMenu = ({
             if (content === null) {
                 return;
             }
+
             requestAnimationFrame(() =>
                 (
                     content.querySelector<HTMLElement>('[role="menuitemradio"][aria-checked="true"]') ??
@@ -285,6 +299,7 @@ export const OptionsMenu = ({
         },
         [contentRef],
     );
+
     return (
         <Dropdown.Root open={open} onOpenChange={overlay.onOpenChange} virtualAnchor={overlay.anchor}>
             <Dropdown.Content ref={focusChecked} aria-label={label} container={overlay.container}>
@@ -297,8 +312,10 @@ export const OptionsMenu = ({
                             close(false);
                             if (option.inert === true) {
                                 api?.focus();
+
                                 return;
                             }
+
                             api?.select(node);
                             api?.commands.execute(option.command, option.payload);
                         }}

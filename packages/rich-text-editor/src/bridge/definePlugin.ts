@@ -45,12 +45,15 @@ export const definePlugin = <Id extends string, Options extends object, Commands
     if (editor.feature !== feature().id) {
         throw new DefinitionError('definition.plugin-mismatch', { feature: feature().id, editor: editor.feature });
     }
+
     const id = editor.feature;
+
     return (options) => {
         const plugin: RichTextPlugin<Id, Commands> = { id, feature: feature(options), editor };
         if (reader === undefined) {
             return Object.freeze(plugin);
         }
+
         return Object.freeze({ ...plugin, reader });
     };
 };
@@ -74,10 +77,13 @@ const extendEditor = <Id extends string, Commands extends object>(
             needs: needsOf(editor, parts),
         });
     }
+
     const extended: SpecOfOptions = Object.freeze((options: JsonObject) => {
         const own = specOfOptions(options);
+
         return { ...own, ...parts, needs: needsOf(own, parts) };
     });
+
     return Object.freeze({ ...editor, [OPTION_PARTS]: extended });
 };
 

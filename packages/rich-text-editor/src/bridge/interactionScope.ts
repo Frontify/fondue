@@ -35,6 +35,7 @@ const deepActive = (owner: Document): Element | null => {
     while (active !== null && active.shadowRoot !== null && active.shadowRoot.activeElement !== null) {
         active = active.shadowRoot.activeElement;
     }
+
     return active;
 };
 
@@ -66,6 +67,7 @@ const hubOf = (owner: Document): Hub => {
         hub = { scopes, listeners };
         hubs.set(owner, hub);
     }
+
     return hub;
 };
 
@@ -78,7 +80,9 @@ const join = (owner: Document, handlers: Handlers): (() => void) => {
             owner.addEventListener(type, listener, true);
         }
     }
+
     hub.scopes.add(handlers);
+
     return () => {
         hub.scopes.delete(handlers);
         if (hub.scopes.size === 0) {
@@ -105,18 +109,21 @@ export const createInteractionScope = (roots: () => readonly (HTMLElement | null
             listener();
         }
     };
+
     return {
         contains,
         active: () => {
             if (listened === undefined) {
                 return null;
             }
+
             return deepActive(listened);
         },
         last: () => last,
         pressed: () => pressed,
         subscribe: (listener) => {
             listeners.add(listener);
+
             return () => {
                 listeners.delete(listener);
             };
@@ -125,10 +132,12 @@ export const createInteractionScope = (roots: () => readonly (HTMLElement | null
             holds += 1;
             startNow?.();
             let released = false;
+
             return () => {
                 if (released) {
                     return;
                 }
+
                 released = true;
                 holds -= 1;
                 stopUnlessInside?.();
@@ -139,6 +148,7 @@ export const createInteractionScope = (roots: () => readonly (HTMLElement | null
             if (first === undefined) {
                 return () => undefined;
             }
+
             const owner = first.ownerDocument;
             listened = owner;
             // The first node of the composed path, since a shadow root retargets events to its host.
@@ -149,8 +159,10 @@ export const createInteractionScope = (roots: () => readonly (HTMLElement | null
                 if (target !== undefined && 'nodeType' in target) {
                     node = target as Node;
                 }
+
                 last = { kind, target: node };
             };
+
             const onPointer = record('pointer');
             const onFocus = record('focus');
             let leave: (() => void) | undefined;
@@ -159,16 +171,19 @@ export const createInteractionScope = (roots: () => readonly (HTMLElement | null
                 if (holds > 0 && !force) {
                     return;
                 }
+
                 leave?.();
                 leave = undefined;
                 pressed = null;
             };
+
             const release = () => {
                 pressed = null;
                 if (!contains(deepActive(owner))) {
                     end();
                 }
             };
+
             const handlers: Handlers = {
                 pointerdown: (event) => {
                     onPointer(event);
@@ -197,37 +212,45 @@ export const createInteractionScope = (roots: () => readonly (HTMLElement | null
                 if (leave !== undefined) {
                     return;
                 }
+
                 leave = join(owner, handlers);
                 handlers[event.type as EventType](event);
             };
+
             startNow = () => {
                 if (leave === undefined) {
                     leave = join(owner, handlers);
                 }
             };
+
             stopUnlessInside = () => {
                 if (!contains(deepActive(owner))) {
                     end();
                 }
             };
+
             if (holds > 0) {
                 startNow();
             }
+
             for (const element of elements) {
                 element.addEventListener('focusin', engage, true);
                 element.addEventListener('pointerdown', engage, true);
             }
+
             // Focus already inside the scope, as with an editor that mounts focused, engages it now.
             const focused = deepActive(owner);
             if (contains(focused)) {
                 last = { kind: 'focus', target: focused };
                 leave = join(owner, handlers);
             }
+
             return () => {
                 for (const element of elements) {
                     element.removeEventListener('focusin', engage, true);
                     element.removeEventListener('pointerdown', engage, true);
                 }
+
                 end(true);
                 startNow = undefined;
                 stopUnlessInside = undefined;

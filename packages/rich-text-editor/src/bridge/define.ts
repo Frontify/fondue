@@ -104,5 +104,6 @@ export const useRichTextNodeView = <C extends object = ShippedCommands>(): NodeV
     if (state === null) {
         throw new Error('useRichTextNodeView must be called inside node view chrome.');
     }
+
     return state as NodeViewState<C>;
 };

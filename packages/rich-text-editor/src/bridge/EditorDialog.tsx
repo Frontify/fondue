@@ -25,6 +25,7 @@ export const useEditorDialog = (opener: Element | null, onClose: () => void): Ed
         setOpen(false);
         onClose();
     };
+
     const overlay = useEditorOverlay(open, (next) => {
         if (!next) {
             close();
@@ -36,15 +37,19 @@ export const useEditorDialog = (opener: Element | null, onClose: () => void): Ed
         } else {
             overlay.returnFocusTo(null);
         }
+
         close();
     };
+
     // Escape and an outside press return focus to the opener, like Cancel.
     const onOpenChange = (next: boolean) => {
         if (!next) {
             overlay.returnFocusTo(opener);
         }
+
         overlay.onOpenChange(next);
     };
+
     return { open, overlay, finish, announce, onOpenChange };
 };
 
@@ -77,6 +82,7 @@ export const EditorDialog = ({
     if (testId !== undefined) {
         testIdProp = { 'data-test-id': testId };
     }
+
     let body = children;
     let submitButton: ReactNode = null;
     if (submit !== undefined) {
@@ -91,6 +97,7 @@ export const EditorDialog = ({
             </Button>
         );
     }
+
     return (
         <Dialog.Root open={dialog.open} onOpenChange={dialog.onOpenChange} modal>
             <Dialog.Content

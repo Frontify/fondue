@@ -31,7 +31,9 @@ const selections = (page: Page) =>
         if (runtime === undefined || runtime.view === undefined || selection === null || selection.focusNode === null) {
             return { dom: -1, editor: -2 };
         }
+
         const { view } = runtime;
+
         return { dom: view.posAtDOM(selection.focusNode, selection.focusOffset), editor: view.state.selection.head };
     });
 
@@ -44,8 +46,10 @@ test('renders the chrome of an inserted code block before the next frame', async
         if (rte === undefined || rte.runtime === undefined) {
             return undefined;
         }
+
         rte.setSelection(rte.handle, { text: 'code' });
         const { status } = rte.runtime.handle.execute('fixture.chrome-block.set');
+
         // Scheduled right after the transaction, so it runs before the next paint (#7438).
         return new Promise<{ status: string; chrome: boolean }>((resolve) => {
             requestAnimationFrame(() =>
@@ -124,13 +128,16 @@ const editorState = (page: Page) =>
         if (view === undefined) {
             return undefined;
         }
+
         const { doc } = view.state;
         const blocksNow: string[] = [];
         for (let index = 0; index < doc.childCount; index += 1) {
             const node = doc.child(index);
             blocksNow.push(`${node.type.name}:${node.textContent}`);
         }
+
         const selection: unknown = view.state.selection.toJSON();
+
         return { blocks: blocksNow, selection, dragging: view.dragging !== null };
     });
 
@@ -153,6 +160,7 @@ test('drags a node-selected atom by its chrome with the mouse while a chrome but
     if (from === null || to === null) {
         throw new Error('The chrome or the last paragraph has no box.');
     }
+
     // Beside the button, so the press lands on the chrome itself.
     await page.mouse.move(from.x + from.width - 4, from.y + from.height / 2);
     await page.mouse.down();
@@ -165,8 +173,10 @@ test('drags a node-selected atom by its chrome with the mouse while a chrome but
     expect(during).toMatchObject({ dragging: true });
     const blocksAfter = async () => {
         const state = await editorState(page);
+
         return state?.blocks;
     };
+
     await expect.poll(blocksAfter).toEqual(['paragraph:ab', 'paragraph:cd', 'chrome_image:']);
 });
 
@@ -181,14 +191,18 @@ test('keeps drop-target events over atom chrome from ProseMirror during a node d
         const drag = (type: string, element: Element | null | undefined) => {
             const event = new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer: new DataTransfer() });
             element?.dispatchEvent(event);
+
             return event.defaultPrevented;
         };
+
         // A browser fires `dragstart` on the draggable `dom`, the chrome slot's parent.
         const slot = chrome?.parentElement;
         if (slot === null || slot === undefined) {
             return undefined;
         }
+
         drag('dragstart', slot.parentElement);
+
         // Over the selected node's own chrome, whose `dom` is draggable, so only the event type keeps them stopped.
         return { dragover: drag('dragover', chrome), drop: drag('drop', chrome) };
     });
@@ -219,6 +233,7 @@ test('keeps the caret where the editor selection is while three mention labels u
                 for (const nodeId of ['m1', 'm2', 'm3']) {
                     runtime?.nodeActions(nodeId).update({ label: next });
                 }
+
                 const end = document.querySelectorAll('[role="textbox"] p')[1]?.firstChild;
                 if (move && end !== undefined && end !== null) {
                     window.getSelection()?.collapse(end, 0);
@@ -234,6 +249,7 @@ test('keeps the caret where the editor selection is while three mention labels u
         await expect(surfaceOf(page).locator('[data-chrome="mention"] button').first()).toHaveText(`Ada ${character}`);
         reached.push(await selections(page));
     }
+
     // A batch that renders while a host control has focus leaves focus there.
     await page.getByRole('button', { name: 'Before' }).focus();
     await relabel('Ada d', false);
@@ -264,6 +280,7 @@ test.describe('on a phone', () => {
             await checkbox.tap();
             await expect(checkbox).toBeChecked({ checked: tap % 2 === 0 });
         }
+
         await page.evaluate(() => {
             const runtime = window.rte?.runtime;
             const view = runtime?.view;
@@ -285,8 +302,10 @@ test.describe('on a phone', () => {
                         if (rte === undefined) {
                             return 0;
                         }
+
                         return rte.handle.getSummary().commitSequence;
                     };
+
                     const before = commits();
                     let mutations = 0;
                     const observer = new MutationObserver((records) => {

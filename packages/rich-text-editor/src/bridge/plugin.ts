@@ -353,9 +353,12 @@ export const defineEditorPart = <
     if (typeof parts === 'function') {
         const specOfOptions: SpecOfOptions = Object.freeze((options: JsonObject) => parts(options));
         const plugin: EditorPart = Object.freeze({ feature: id, [OPTION_PARTS]: specOfOptions });
+
         return plugin as EditorPart<Id, PayloadsOf<NonNullable<Parts['commands']>>>;
     }
+
     const plugin: EditorPartSpec & { readonly feature: string } = { feature: id, ...parts };
+
     return Object.freeze(plugin) as EditorPart<Id, PayloadsOf<NonNullable<Parts['commands']>>>;
 };
 
@@ -365,6 +368,7 @@ export const partWithOptions = (plugin: EditorPart, options: JsonObject): Editor
     if (partsOf === undefined) {
         return plugin;
     }
+
     return Object.freeze({ ...partsOf(options), feature: plugin.feature });
 };
 
@@ -381,6 +385,7 @@ export const useEditorApi = (): EditorApi | undefined => {
     if (runtime === undefined || hosts === null) {
         return undefined;
     }
+
     return editorApiOf(runtime, hosts);
 };
 
@@ -390,10 +395,12 @@ export const useEditorValue = <T>(
     isEqual: (previous: T, next: T) => boolean = Object.is,
 ): T => {
     const hosts = useContext(EditorHostsContext);
+
     return useSessionValue((runtime) => {
         if (runtime === undefined || hosts === null) {
             return read(undefined);
         }
+
         return read(editorApiOf(runtime, hosts));
     }, isEqual);
 };

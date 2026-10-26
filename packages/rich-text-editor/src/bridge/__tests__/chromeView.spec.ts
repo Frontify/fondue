@@ -20,6 +20,7 @@ const attach = () => {
     };
     const view = { dom, setProps: vi.fn() } as unknown as EditorView;
     chrome.take(view);
+
     return { chrome, props };
 };
 

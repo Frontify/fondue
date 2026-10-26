@@ -39,6 +39,7 @@ export const createPortalStore = (): PortalStore => {
         if (scheduled) {
             return;
         }
+
         scheduled = true;
         queueMicrotask(() => {
             scheduled = false;
@@ -48,9 +49,11 @@ export const createPortalStore = (): PortalStore => {
             }
         });
     };
+
     return {
         subscribe: (listener) => {
             listeners.add(listener);
+
             return () => {
                 listeners.delete(listener);
             };
@@ -60,9 +63,11 @@ export const createPortalStore = (): PortalStore => {
             if (closed) {
                 return;
             }
+
             if (!entries.has(entry.key)) {
                 liveResources.portals += 1;
             }
+
             entries.set(entry.key, entry);
             changed();
         },

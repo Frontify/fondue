@@ -18,6 +18,7 @@ const selectionOf = (runtime: EditorPort | undefined): SelectionSummary => {
     if (runtime === undefined) {
         return NO_SELECTION;
     }
+
     return runtime.handle.getSummary().selection;
 };
 
@@ -39,6 +40,7 @@ export const useCommandQuery = (id: string, ...args: readonly unknown[]): Comman
         if (runtime === undefined) {
             return NOT_READY;
         }
+
         return runtime.handle.query(id, ...args);
     }, sameCommandState);
 
