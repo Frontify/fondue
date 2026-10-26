@@ -61,6 +61,8 @@ export const measure = async (
             configFile: false,
             root,
             logLevel: 'silent',
+            // The shipped build compiles JSX for production; the dev transform would count each source file's absolute path.
+            esbuild: { jsxDev: false },
             resolve: { alias: [...(options.alias ?? []), { find: /^#\//, replacement: `${join(root, 'src')}/` }] },
             build: {
                 write: false,
