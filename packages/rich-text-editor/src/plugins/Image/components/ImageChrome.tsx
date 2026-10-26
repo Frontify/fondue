@@ -2,7 +2,8 @@
 
 import { type NodeViewDeclaration } from '#/bridge/define';
 
-import { ImageBody, ImageToolbar } from './ChromeParts';
+import { ImageBody } from './ImageBody';
+import { ImageToolbar } from './ImageToolbar';
 import styles from '../styles/image.module.scss';
 import { useImageChromeState } from '../hooks/useImageChromeState';
 

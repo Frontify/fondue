@@ -4,20 +4,14 @@ import { IconArrowSwap, IconPause, IconPlay } from '@frontify/fondue-icons';
 
 import { NodeChromeButton, NodeChromeMenu, NodeChromeToolbar, OptionItem } from '#/bridge/define';
 import { type EditorApi } from '#/bridge/plugin';
-import { altOf, REPLACED_ASSET, unavailableOf } from '#/model';
+import { REPLACED_ASSET } from '#/model';
 
 import { AltTextDialog } from '../helpers/dialogs';
 import { altTextStrings, SET_SIZE } from '../helpers/dialogStrings';
-import { ContentImage } from './image';
 import { figureOf } from '../helpers/nodes';
 import { alignOptions, EDIT_WIDTH, SIDE_KEYS, sizeOptions } from '../helpers/options';
-import { ImageUnavailable } from '../reader';
-import styles from '../styles/image.module.scss';
-import { UploadControls, UploadSlot } from '../helpers/uploadParts';
+import { UploadControls } from '../helpers/uploadParts';
 import { type ImageChromeState } from '../hooks/useImageChromeState';
-
-/** A stored intrinsic size, or `null` where the image has none. */
-const sizeOf = (value: unknown) => (typeof value === 'number' ? value : null);
 
 /**
  * Removes the figure that holds the image `nodeId`, as one undo step; an empty paragraph takes the place of a figure
@@ -40,70 +34,6 @@ const removeFigure = (api: EditorApi | undefined, nodeId: string) => {
     }
 
     api.focus();
-};
-
-/** The image, its upload slot or its placeholder, whichever the node shows. */
-export const ImageBody = ({ chrome }: { chrome: ImageChromeState }) => {
-    const { attrs, context, t, shown, unavailable, unfinished, status, resize, decided, animated, paused } = chrome;
-    const { frameRef, setFailed, selectImage } = chrome;
-    if (status !== undefined) {
-        return (
-            <UploadSlot
-                status={status}
-                width={sizeOf(attrs.width)}
-                height={sizeOf(attrs.height)}
-                t={t}
-                onMouseDown={selectImage}
-            />
-        );
-    }
-
-    if (unfinished) {
-        return (
-            // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- a press selects the node as on any atom; the keyboard selects it with the arrows.
-            <span className={styles.placeholder} onMouseDown={selectImage}>
-                {t('RichTextEditor_imageUnfinished')}
-            </span>
-        );
-    }
-
-    if (shown.kind === 'image' && !unavailable) {
-        let width = shown.cssWidth;
-        if (resize.shown !== undefined) {
-            width = `${resize.shown}%`;
-        }
-
-        return (
-            <ContentImage
-                src={shown.src}
-                alt={altOf(attrs)}
-                width={shown.width}
-                height={shown.height}
-                shownWidth={width}
-                // Under reduced motion the still shows while the check runs, so nothing moves before it answers.
-                paused={paused && (animated || !decided)}
-                frameRef={frameRef}
-                onFailed={() => setFailed(shown.src)}
-                onMouseDown={selectImage}
-            >
-                <span
-                    className={styles.handle}
-                    aria-hidden="true"
-                    draggable={false}
-                    data-rte-drag={SET_SIZE}
-                    {...resize.handlers}
-                />
-            </ContentImage>
-        );
-    }
-
-    return (
-        <ImageUnavailable
-            unavailable={unavailableOf(attrs, context)}
-            className={styles.placeholder}
-            onMouseDown={selectImage}
-        />
-    );
 };
 
 /** The size menu, whose Edit width choice opens the width dialog once the menu returned focus. */
