@@ -3,10 +3,7 @@
 import { type ReaderRenderers } from '#/reader/define';
 
 type ViteImportMeta = ImportMeta & {
-    readonly glob: (
-        pattern: string,
-        options: { readonly eager: true },
-    ) => Record<string, Readonly<Record<string, unknown>>>;
+    glob: (pattern: string, options: { eager: true }) => Record<string, Readonly<Record<string, unknown>>>;
 };
 
 // Each feature reader exports its `readerFeature` ID and its renderers, whose export name is the feature's own.
