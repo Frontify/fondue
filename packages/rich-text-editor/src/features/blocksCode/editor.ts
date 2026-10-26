@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { OptionsMenu } from '#/bridge/define';
+import { OptionsMenu, TurnIntoMenu } from '#/bridge/define';
 import { defineEditorPart, type EditorApi } from '#/bridge/plugin';
 import { type BlockDecoration, blockRule, type JsonObject } from '#/model';
 
@@ -151,6 +151,17 @@ export const codeBlockEditor = defineEditorPart(codeBlock, {
                 return true;
             },
         },
+        'code-block.turn-into.edit': {
+            enabled: (api) => api.nearest('code_block') !== undefined,
+            run: (api) => {
+                const block = api.nearest('code_block');
+                if (block === undefined) {
+                    return false;
+                }
+                api.overlays.open(TurnIntoMenu, { label: api.t('RichTextEditor_slashTurnInto'), node: block.range });
+                return true;
+            },
+        },
         'code-block.indent': { run: (api) => api.blocks.indentLines('indent') },
         'code-block.outdent': { run: (api) => api.blocks.indentLines('outdent') },
     },
@@ -200,6 +211,15 @@ export const codeBlockEditor = defineEditorPart(codeBlock, {
             command: 'code-block.language.edit',
             labelKey: 'RichTextEditor_codeLanguageMenu',
             icon: 'IconCodeFrame',
+            opensOverlay: true,
+            node: 'code_block',
+        },
+        {
+            id: 'code-turn-into',
+            kind: 'button',
+            command: 'code-block.turn-into.edit',
+            labelKey: 'RichTextEditor_slashTurnInto',
+            icon: 'IconHeading',
             opensOverlay: true,
             node: 'code_block',
         },

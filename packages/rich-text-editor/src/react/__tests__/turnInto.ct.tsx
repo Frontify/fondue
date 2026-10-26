@@ -6,7 +6,7 @@ import { type Page } from '@playwright/test';
 import { type ReactElement } from 'react';
 
 import { HostDialogProfileProbe } from '#/react/__tests__/fixtures/HostDialogProfileProbe';
-import { pressUntil, ready, surfaceOf } from '#/react/__tests__/fixtures/layout';
+import { moreOf, pressUntil, ready, surfaceOf } from '#/react/__tests__/fixtures/layout';
 import { ProfileProbe } from '#/react/__tests__/fixtures/ProfileProbe';
 
 // The tags the accessibility suite checks.
@@ -248,4 +248,44 @@ test.describe('the context menu Turn into row', () => {
         await page.keyboard.press('Enter');
         await expect(surfaceOf(page).locator('blockquote')).toHaveCount(1);
     });
+});
+
+test.describe('the More Turn into row', () => {
+    const openFromMore = async (page: Page) => {
+        await moreOf(page).click();
+        await page.getByRole('menuitem', { name: 'Turn into' }).click();
+        await expect(page.getByRole('menu', { name: 'Turn into' })).toBeVisible();
+        await expect(page.getByRole('menuitemradio', { name: 'Code block' })).toBeFocused();
+    };
+
+    for (const profile of ['comment', 'document'] as const) {
+        test(`converts a ${profile} code block by keyboard and returns focus to the surface`, async ({
+            mount,
+            page,
+        }) => {
+            await withCodeBlock(mount, page, <ProfileProbe profile={profile} />);
+            await openFromMore(page);
+
+            await page.keyboard.press('ArrowUp');
+            await expect(page.getByRole('menuitemradio', { name: 'Quote' })).toBeFocused();
+            await page.keyboard.press('Enter');
+
+            await expect(menuOf(page)).toHaveCount(0);
+            await expect(surfaceOf(page).locator('blockquote')).toHaveCount(1);
+            await expect(surfaceOf(page)).toBeFocused();
+        });
+
+        test(`changes nothing in a ${profile} code block when the current type is picked`, async ({ mount, page }) => {
+            await withCodeBlock(mount, page, <ProfileProbe profile={profile} />);
+            const before = await contentOf(page);
+            await openFromMore(page);
+
+            await page.getByRole('menuitemradio', { name: 'Code block' }).click();
+
+            await expect(menuOf(page)).toHaveCount(0);
+            await expect(surfaceOf(page)).toBeFocused();
+            expect(await contentOf(page)).toEqual(before);
+            await expect(surfaceOf(page).locator('code')).toHaveCount(1);
+        });
+    }
 });

@@ -138,7 +138,7 @@ for (const profile of ['comment', 'document'] as const) {
         const nodeRows = await nodeRowsOf(page, 'code');
 
         expect(chrome.length).toBeGreaterThan(1);
-        expect(nodeRows).toEqual(['Code language']);
+        expect(nodeRows).toEqual(['Code language', 'Turn into']);
         expect(missing(chrome, await moreCommands(page, nodeRows, () => selectNode(page, 'code')))).toEqual([]);
     });
 }

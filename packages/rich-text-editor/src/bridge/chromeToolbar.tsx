@@ -197,6 +197,8 @@ export interface MenuOption {
     readonly payload?: JsonValue;
     /** A radio item, checked or not; a plain item without. */
     readonly checked?: boolean;
+    /** The option runs nothing and keeps the selection: it only closes the menu and returns focus to the surface. */
+    readonly inert?: boolean;
 }
 
 /**
@@ -251,6 +253,10 @@ export const OptionsMenu = ({
                         onSelect={() => {
                             overlay.returnFocusTo(null);
                             close(false);
+                            if (option.inert === true) {
+                                api?.focus();
+                                return;
+                            }
                             api?.select(node);
                             api?.commands.execute(option.command, option.payload);
                         }}
