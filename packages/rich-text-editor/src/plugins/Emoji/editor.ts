@@ -3,10 +3,10 @@
 import { lazyPart } from '#/bridge/define';
 import { defineEditorPart } from '#/bridge/plugin';
 
-import { loadEmoji, searchEmoji } from './data';
+import { loadEmoji, searchEmoji } from './helpers/data';
 import { emoji } from './feature';
 
-const EmojiPicker = lazyPart(() => import('./EmojiPicker').then((loaded) => loaded.EmojiPicker));
+const EmojiPicker = lazyPart(() => import('./components/EmojiPicker').then((loaded) => loaded.EmojiPicker));
 
 // Enough for a list that scrolls, few enough to rank well.
 const LIMIT = 50;

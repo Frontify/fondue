@@ -15,7 +15,7 @@ import { type ListboxOption, suggestionOptionId } from '#/bridge/define';
 import { type EditorApi, passesToBrowser, useEditorOverlay } from '#/bridge/plugin';
 import { type CodecContext } from '#/model';
 
-import { type EmojiEntry, loadEmoji, searchEmoji } from './data';
+import { type EmojiEntry, loadEmoji, searchEmoji } from '../helpers/data';
 
 /** The command the picker runs with `{ text }`, which inserts the emoji at the selection. */
 const INSERT_EMOJI = 'text.insert';

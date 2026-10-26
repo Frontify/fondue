@@ -10,7 +10,7 @@ import { deDE } from '#/locales/de-DE';
 import { type ContentNodeJSON } from '#/model';
 import { code, codeBlock, core, emoji } from '#/plugins';
 import { unitsOf } from '#/plugins/__tests__/fixtures/units';
-import { type EmojiEntry } from '#/plugins/Emoji/data';
+import { type EmojiEntry } from '#/plugins/Emoji/helpers/data';
 import { mountProfile } from '#/react/__tests__/fixtures/profiles';
 import { mountText, para, storedIn, text, textModel } from '#/react/__tests__/fixtures/text';
 import { runtimeOf } from '#/runtime/runtime';
@@ -33,7 +33,7 @@ type EmojiModule = {
     searchEmoji: (entries: readonly EmojiEntry[], query: string, limit: number) => readonly EmojiEntry[];
 };
 
-vi.mock('#/plugins/Emoji/data', async (importOriginal) => {
+vi.mock('#/plugins/Emoji/helpers/data', async (importOriginal) => {
     const actual = (await importOriginal()) as EmojiModule;
 
     return {

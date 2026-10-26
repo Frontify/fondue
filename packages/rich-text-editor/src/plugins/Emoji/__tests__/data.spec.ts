@@ -4,7 +4,7 @@
 
 import { describe, expect, it, vi } from 'vitest';
 
-import { type EmojiEntry, emojiDataLocaleOf, loadEmoji, searchEmoji } from '../data';
+import { type EmojiEntry, emojiDataLocaleOf, loadEmoji, searchEmoji } from '../helpers/data';
 
 /** A hand-built entry whose search fields follow its label, as loading computes them. */
 const entry = (emoji: string, label: string, keywords: readonly string[], order: number): EmojiEntry => ({
