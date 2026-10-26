@@ -14,10 +14,10 @@ import { TurnIntoContext, type TurnIntoEntry } from '#/bridge/turnInto';
 import { type readerContext } from '#/reader/helpers/context';
 import { type EditorPort, mediaOf } from '#/runtime/port';
 import { VISUALLY_HIDDEN } from '#/styles/visuallyHidden';
-import { ContextMenu } from '#/ui/contextMenu/ContextMenu';
+import { ContextMenu } from '#/ui/ContextMenu/ContextMenu';
+import { type referenceListStrings } from '#/ui/LazySuggestionList/helpers/referenceStrings';
+import { LazySuggestionList } from '#/ui/LazySuggestionList/LazySuggestionList';
 import { PanelContext, type PanelController } from '#/ui/panels/context';
-import { LazySuggestionList } from '#/ui/suggestions/LazySuggestionList';
-import { type referenceListStrings } from '#/ui/suggestions/referenceStrings';
 
 import { type PluginOverlay } from '../pluginHosts';
 import { translatedLabel } from '../toolbarItems';

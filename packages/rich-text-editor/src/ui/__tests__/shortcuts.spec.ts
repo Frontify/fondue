@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { ariaShortcut, bindingHere, shortcutText } from '../shortcuts';
+import { ariaShortcut, bindingHere, shortcutText } from '../helpers/shortcuts';
 
 const binding = (value: string): string => value;
 

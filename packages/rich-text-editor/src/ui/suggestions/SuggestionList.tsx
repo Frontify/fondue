@@ -20,7 +20,8 @@ import {
     suggestionAnchorRange,
 } from '#/runtime/port';
 
-import { type ReferenceListStrings } from './referenceStrings';
+import { type ReferenceListStrings } from '../LazySuggestionList/helpers/referenceStrings';
+
 import styles from './styles/suggestions.module.scss';
 
 /** A search shows its spinner once it has waited this long. */

@@ -9,7 +9,7 @@ import { useSessionValue } from '#/bridge/session';
 import { type JsonValue } from '#/model';
 import { keyOn } from '#/model/internal';
 import { type EditorPort, endCompositionOf, selectedNodeNames } from '#/runtime/port';
-import { ariaShortcut, bindingHere, shortcutText } from '#/ui/shortcuts';
+import { ariaShortcut, bindingHere, shortcutText } from '#/ui/helpers/shortcuts';
 
 /** One command of the presentation's toolbar, with the registry's label and icon unless `controls` replaced them. */
 export type ToolbarItem = {

@@ -11,7 +11,7 @@ import { ChromeBoundary, NO_ATTRS } from '#/bridge/PortalHost';
 import { SessionContext, useSessionValue } from '#/bridge/session';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import { type EditorPort, hasSurface, type SelectionSummary, selectionRectOf, selectionSpan } from '#/runtime/port';
-import { ariaShortcut } from '#/ui/shortcuts';
+import { ariaShortcut } from '#/ui/helpers/shortcuts';
 import { TextStyle } from '#/ui/toolbar/TextStyle';
 import { Item, More, type ModeSwitch, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/Toolbar';
 

@@ -6,7 +6,7 @@ import { useSessionValue } from '#/bridge/session';
 import { lazyPart } from '#/bridge/session/helpers/lazyPart';
 import { activeSuggestionOf } from '#/runtime/port';
 
-const SuggestionList = lazyPart(() => import('./SuggestionList').then((loaded) => loaded.SuggestionList));
+const SuggestionList = lazyPart(() => import('../suggestions/SuggestionList').then((loaded) => loaded.SuggestionList));
 
 const hasActive = (runtime: Parameters<typeof activeSuggestionOf>[0] | undefined) =>
     runtime !== undefined && activeSuggestionOf(runtime) !== null;

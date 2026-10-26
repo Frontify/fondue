@@ -10,9 +10,9 @@ import { lazyPart } from '#/bridge/session/helpers/lazyPart';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import { contentClasses } from '#/model/internal';
 import { type EditorPort, isEmptyDocument } from '#/runtime/port';
-import { type BubbleMore } from '#/ui/bubbleToolbar/BubbleToolbar';
+import { type BubbleMore } from '#/ui/BubbleToolbar/BubbleToolbar';
+import { shortcutText } from '#/ui/helpers/shortcuts';
 import { usePanelController } from '#/ui/panels/context';
-import { shortcutText } from '#/ui/shortcuts';
 import { FixedToolbar } from '#/ui/toolbar/Toolbar';
 
 import { panelsOf, profileOf } from '../compileEditor';
@@ -24,7 +24,7 @@ import { toolbarShortcutOf } from './helpers';
 import { useRoot } from './rootContext';
 import { type Chrome, DEFAULT_TEST_ID } from './types';
 
-const BubbleToolbar = lazyPart(() => import('#/ui/bubbleToolbar/BubbleToolbar').then((loaded) => loaded.BubbleToolbar));
+const BubbleToolbar = lazyPart(() => import('#/ui/BubbleToolbar/BubbleToolbar').then((loaded) => loaded.BubbleToolbar));
 
 /** The host's class tokens the surface may add and remove: never the package's root class nor one of ProseMirror's own. */
 const hostClassNames = (contentClassName: string) =>

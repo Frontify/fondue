@@ -12,7 +12,7 @@ import { shipped as comment } from '#/react/profiles/comment';
 import { shipped as document } from '#/react/profiles/document';
 import { shipped as inline } from '#/react/profiles/inline';
 import { type RichTextProfile } from '#/react/types';
-import { shortcutText } from '#/ui/shortcuts';
+import { shortcutText } from '#/ui/helpers/shortcuts';
 
 // A new profile with no entry here, or no story, fails to compile.
 const BY_PROFILE: Readonly<Record<RichTextProfile, { shipped: typeof inline; story: typeof profileStories.Inline }>> = {

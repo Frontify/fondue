@@ -12,8 +12,8 @@ import { type ToolbarControlProps } from '#/bridge/plugin';
 import { ChromeBoundary, NO_ATTRS } from '#/bridge/PortalHost';
 import { SessionContext } from '#/bridge/session';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
+import { ariaShortcut } from '#/ui/helpers/shortcuts';
 import { useOpenPanel } from '#/ui/panels/context';
-import { ariaShortcut } from '#/ui/shortcuts';
 
 import { Icon, pressItem, runItem, tabStop, type ToolbarItem, type ToolbarStrings, useShortcut } from './item';
 import { More, type ModeSwitch } from './More';

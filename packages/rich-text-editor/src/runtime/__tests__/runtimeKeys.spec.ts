@@ -9,7 +9,7 @@ import { fixtureHeadingSet } from '#/plugins/__tests__/fixtures/features';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
 import { pressKey, setSelection } from '#/testing';
-import { bindingHere } from '#/ui/shortcuts';
+import { bindingHere } from '#/ui/helpers/shortcuts';
 
 import { stored, para, words, TEXT_INSERT, start, heading, textOf, installRuntimeHooks } from './fixtures/start';
 
