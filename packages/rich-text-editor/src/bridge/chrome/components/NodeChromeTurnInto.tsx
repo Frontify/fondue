@@ -49,3 +49,5 @@ export const NodeChromeTurnInto = ({ current, node }: { current: string; node: T
         </NodeChromeMenu>
     );
 };
+
+NodeChromeTurnInto.displayName = 'NodeChromeTurnInto';

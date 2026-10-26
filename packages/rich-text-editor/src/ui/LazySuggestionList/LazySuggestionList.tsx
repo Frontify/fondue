@@ -20,3 +20,5 @@ export const LazySuggestionList = (props: ComponentProps<typeof SuggestionList>)
 
     return <SuggestionList {...props} />;
 };
+
+LazySuggestionList.displayName = 'LazySuggestionList';

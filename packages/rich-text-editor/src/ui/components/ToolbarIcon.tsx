@@ -13,3 +13,5 @@ export const ToolbarIcon = ({ name }: { name: string }) => {
 
     return <Found size={20} aria-hidden />;
 };
+
+ToolbarIcon.displayName = 'ToolbarIcon';

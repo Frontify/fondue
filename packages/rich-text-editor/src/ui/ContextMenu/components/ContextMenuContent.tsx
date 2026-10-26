@@ -97,3 +97,4 @@ export const ContextMenuContent = ({
         <TurnInto label={turnIntoLabel} runs={runs} />
     </Dropdown.Content>
 );
+ContextMenuContent.displayName = 'ContextMenuContent';

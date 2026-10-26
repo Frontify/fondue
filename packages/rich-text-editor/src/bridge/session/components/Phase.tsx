@@ -27,3 +27,5 @@ export const Phase = ({ work, open }: { work: ReactWork; open: boolean }) => {
 
     return null;
 };
+
+Phase.displayName = 'Phase';

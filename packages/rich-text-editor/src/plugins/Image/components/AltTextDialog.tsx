@@ -121,3 +121,5 @@ export const AltTextDialog = ({
         </EditorDialog>
     );
 };
+
+AltTextDialog.displayName = 'AltTextDialog';

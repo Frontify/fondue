@@ -53,3 +53,4 @@ export const MoreContent = ({
         <Dropdown.Item onSelect={onModeSwitch}>{modeLabel}</Dropdown.Item>
     </Dropdown.Content>
 );
+MoreContent.displayName = 'MoreContent';

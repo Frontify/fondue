@@ -174,3 +174,4 @@ export const SessionFrame = ({
         </div>
     </>
 );
+SessionFrame.displayName = 'SessionFrame';

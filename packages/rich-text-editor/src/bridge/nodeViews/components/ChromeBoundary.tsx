@@ -43,6 +43,8 @@ export class ChromeBoundary extends Component<BoundaryProps, BoundaryState> {
         return null;
     }
 
+    static displayName = 'ChromeBoundary';
+
     render() {
         if (this.state.failed) {
             return <span>{this.props.message}</span>;

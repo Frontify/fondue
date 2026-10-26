@@ -727,7 +727,13 @@ const extendsReactComponent = (statement: ts.ClassDeclaration) =>
             clause.types.some((type) => /^(React\.)?(Pure)?Component$/.test(type.expression.getText())),
     ) === true;
 
-type FileShape = { declaresComponent: boolean; exportedComponent: boolean; exportedOther: string[]; hooks: string[] };
+type FileShape = {
+    declaresComponent: boolean;
+    exportedComponent: boolean;
+    exportedComponentNames: string[];
+    exportedOther: string[];
+    hooks: string[];
+};
 
 // Runtime exports only: types, interfaces and `export ... from` re-exports do not count.
 const fileShape = (path: string): FileShape => {
@@ -797,6 +803,7 @@ const fileShape = (path: string): FileShape => {
     return {
         declaresComponent: components.size > 0,
         exportedComponent: names.some((name) => components.has(name)),
+        exportedComponentNames: names.filter((name) => components.has(name)),
         exportedOther: names.filter((name) => !components.has(name) && !/^use[A-Z]/.test(name)),
         hooks: names.filter((name) => /^use[A-Z]/.test(name)),
     };
@@ -1121,6 +1128,75 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
                     problems.push(`${toKey(path)} is kind ${fileKindOf} in hooks`);
                 } else if (kind === 'helpers' && fileKindOf !== 'module' && fileKindOf !== 'none') {
                     problems.push(`${toKey(path)} is kind ${fileKindOf} in helpers`);
+                }
+            }
+        }
+
+        expect(problems).toEqual([]);
+    });
+
+    it('sets displayName on every exported component to its exported name', () => {
+        // The root attaches parts named after their key, and `Object.assign(Editor, ...)` shares `Editor`'s name.
+        const expectedNames = new Map<string, string>();
+        const targets = new Map<string, string>();
+        const visit = (node: ts.Node) => {
+            if (ts.isCallExpression(node) && node.expression.getText() === 'Object.assign') {
+                const [target, parts] = node.arguments;
+                let owner = node.parent;
+                while (!ts.isVariableDeclaration(owner) && !ts.isSourceFile(owner)) {
+                    owner = owner.parent;
+                }
+
+                if (
+                    target !== undefined &&
+                    parts !== undefined &&
+                    ts.isIdentifier(target) &&
+                    ts.isObjectLiteralExpression(parts) &&
+                    ts.isVariableDeclaration(owner)
+                ) {
+                    targets.set(owner.name.getText(), target.text);
+                    for (const part of parts.properties) {
+                        const key = part.name?.getText() ?? '';
+                        const local = ts.isPropertyAssignment(part) ? part.initializer.getText() : key;
+                        expectedNames.set(local, `RichTextEditor.${key}`);
+                    }
+                }
+            }
+
+            ts.forEachChild(node, visit);
+        };
+
+        visit(parse(join(srcRoot, 'react/RichTextEditor/RichTextEditor.tsx')));
+
+        const problems: string[] = [];
+        for (const path of productFiles.filter((file) => !toKey(file).startsWith('src/docs/'))) {
+            const assigned = new Map<string, string>();
+            for (const statement of parse(path).statements) {
+                const assignment = ts.isExpressionStatement(statement) ? statement.expression : undefined;
+                if (
+                    assignment !== undefined &&
+                    ts.isBinaryExpression(assignment) &&
+                    assignment.left.getText().endsWith('.displayName') &&
+                    ts.isStringLiteralLike(assignment.right)
+                ) {
+                    assigned.set(assignment.left.getText().replace('.displayName', ''), assignment.right.text);
+                }
+
+                // A class cannot take a `displayName` statement in types, so it sets a static member.
+                if (ts.isClassDeclaration(statement)) {
+                    for (const member of statement.members) {
+                        if (ts.isPropertyDeclaration(member) && member.name.getText() === 'displayName') {
+                            assigned.set(statement.name?.text ?? '', (member.initializer as ts.StringLiteral).text);
+                        }
+                    }
+                }
+            }
+
+            for (const name of fileShape(path).exportedComponentNames) {
+                const expected = expectedNames.get(name) ?? name;
+                const actual = assigned.get(name) ?? assigned.get(targets.get(name) ?? '');
+                if (actual !== expected) {
+                    problems.push(`${toKey(path)}: ${name} expected '${expected}'`);
                 }
             }
         }

@@ -11,3 +11,5 @@ export const NodeViewContent = ({ className }: { className?: string }) => {
 
     return <div ref={ref} className={className} data-rte-content="" />;
 };
+
+NodeViewContent.displayName = 'NodeViewContent';

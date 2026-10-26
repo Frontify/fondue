@@ -53,3 +53,5 @@ export const MentionSearchDialog = ({
 
     return <SearchDialog api={api} resourceTypes={resourceTypes} opener={opener} onClose={close} />;
 };
+
+MentionSearchDialog.displayName = 'MentionSearchDialog';

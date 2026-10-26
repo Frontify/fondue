@@ -75,3 +75,5 @@ export const ContentImage = ({
         </span>
     );
 };
+
+ContentImage.displayName = 'ContentImage';

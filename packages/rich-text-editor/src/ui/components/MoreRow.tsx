@@ -81,3 +81,5 @@ export const MoreRow = ({
         </Dropdown.Item>
     );
 };
+
+MoreRow.displayName = 'MoreRow';

@@ -92,4 +92,4 @@ export const PortalHost = ({
     );
 };
 
-PortalHost.displayName = 'RichTextEditor.PortalHost';
+PortalHost.displayName = 'PortalHost';

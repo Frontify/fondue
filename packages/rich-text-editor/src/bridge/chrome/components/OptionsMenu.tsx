@@ -95,3 +95,5 @@ export const OptionsMenu = ({
         </Dropdown.Root>
     );
 };
+
+OptionsMenu.displayName = 'OptionsMenu';

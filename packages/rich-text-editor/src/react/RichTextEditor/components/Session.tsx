@@ -181,4 +181,4 @@ const SessionComponent = (
 };
 
 export const Session = forwardRef(SessionComponent);
-Session.displayName = 'RichTextEditor.Session';
+Session.displayName = 'Session';

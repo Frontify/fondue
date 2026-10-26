@@ -92,3 +92,5 @@ export const OutlinePanel = ({ t }: PanelComponentProps) => {
         </nav>
     );
 };
+
+OutlinePanel.displayName = 'OutlinePanel';

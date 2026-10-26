@@ -123,3 +123,5 @@ export const LinkBubble = (props: StandingOverlayProps) => {
         </Flyout.Root>
     );
 };
+
+LinkBubble.displayName = 'LinkBubble';

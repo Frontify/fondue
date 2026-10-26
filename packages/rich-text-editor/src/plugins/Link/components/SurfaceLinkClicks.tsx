@@ -43,3 +43,5 @@ export const SurfaceLinkClicks = () => {
 
     return null;
 };
+
+SurfaceLinkClicks.displayName = 'SurfaceLinkClicks';

@@ -31,3 +31,4 @@ export const ImageUnavailable = ({
         {label !== '' && <bdi>{label}</bdi>}
     </span>
 );
+ImageUnavailable.displayName = 'ImageUnavailable';

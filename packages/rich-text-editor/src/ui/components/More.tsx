@@ -170,3 +170,5 @@ export const More = ({
         </Dropdown.Root>
     );
 };
+
+More.displayName = 'More';

@@ -299,7 +299,7 @@ export const Bubble = () => {
     );
 };
 
-Bubble.displayName = 'RichTextEditor.Bubble';
+Bubble.displayName = 'Bubble';
 
 /** The bubble toolbar of a fixed toolbar mode, near a text selection; bubble mode shows its own. */
 export const BubbleToolbarPart = () => {

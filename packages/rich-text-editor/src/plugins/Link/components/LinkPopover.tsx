@@ -230,3 +230,5 @@ export const LinkPopover = (props: OverlayProps & { initial: LinkInitial }) => {
         </Flyout.Root>
     );
 };
+
+LinkPopover.displayName = 'LinkPopover';

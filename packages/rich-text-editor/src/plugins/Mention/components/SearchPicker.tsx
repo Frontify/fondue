@@ -73,3 +73,4 @@ export const SearchPicker = ({ state }: { state: SearchDialogState }) => (
         <OutcomeRow state={state} />
     </div>
 );
+SearchPicker.displayName = 'SearchPicker';

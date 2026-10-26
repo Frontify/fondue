@@ -142,3 +142,5 @@ export const TextStyle = ({
         </Dropdown.Root>
     );
 };
+
+TextStyle.displayName = 'TextStyle';

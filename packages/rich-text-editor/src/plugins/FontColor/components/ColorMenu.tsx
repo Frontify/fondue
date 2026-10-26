@@ -414,3 +414,5 @@ export const ColorMenu = ({
         />
     );
 };
+
+ColorMenu.displayName = 'ColorMenu';

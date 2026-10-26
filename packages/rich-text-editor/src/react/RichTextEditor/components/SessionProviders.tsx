@@ -40,3 +40,4 @@ export const SessionProviders = ({ values, children }: { values: ProviderValues;
         </EditorHostsContext.Provider>
     </RootContext.Provider>
 );
+SessionProviders.displayName = 'SessionProviders';

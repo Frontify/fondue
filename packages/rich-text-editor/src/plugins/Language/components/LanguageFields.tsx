@@ -36,6 +36,8 @@ export const TagField = ({ state }: { state: LanguageState }) => {
     );
 };
 
+TagField.displayName = 'TagField';
+
 /** The radio group of offered languages. */
 export const LanguageRadios = ({ state }: { state: LanguageState }) => {
     const { strings, offered, tag, invalid, ids } = state;
@@ -84,6 +86,8 @@ export const LanguageRadios = ({ state }: { state: LanguageState }) => {
     );
 };
 
+LanguageRadios.displayName = 'LanguageRadios';
+
 /** The text direction control. */
 export const DirectionSelect = ({ state }: { state: LanguageState }) => (
     <>
@@ -106,3 +110,4 @@ export const DirectionSelect = ({ state }: { state: LanguageState }) => (
         </SegmentedControl.Root>
     </>
 );
+DirectionSelect.displayName = 'DirectionSelect';

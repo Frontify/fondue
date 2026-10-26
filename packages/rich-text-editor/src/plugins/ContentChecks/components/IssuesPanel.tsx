@@ -354,3 +354,5 @@ export const IssuesPanel = ({ t, requested, close }: PanelComponentProps) => {
         </div>
     );
 };
+
+IssuesPanel.displayName = 'IssuesPanel';

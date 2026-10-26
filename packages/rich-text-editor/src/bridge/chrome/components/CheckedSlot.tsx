@@ -9,3 +9,4 @@ export const CheckedSlot = () => (
         <IconCheckMark size={16} aria-hidden />
     </Dropdown.Slot>
 );
+CheckedSlot.displayName = 'CheckedSlot';

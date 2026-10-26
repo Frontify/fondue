@@ -93,3 +93,5 @@ export const WidthDialog = ({
         </EditorDialog>
     );
 };
+
+WidthDialog.displayName = 'WidthDialog';

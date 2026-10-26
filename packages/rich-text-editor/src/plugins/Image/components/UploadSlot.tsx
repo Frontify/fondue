@@ -76,3 +76,5 @@ export const UploadSlot = ({
         </span>
     );
 };
+
+UploadSlot.displayName = 'UploadSlot';

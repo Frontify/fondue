@@ -161,3 +161,5 @@ export const PanelFrame = ({
         </div>
     );
 };
+
+PanelFrame.displayName = 'PanelFrame';

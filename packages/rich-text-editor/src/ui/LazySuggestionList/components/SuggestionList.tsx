@@ -223,3 +223,5 @@ export const SuggestionList = ({
         </Flyout.Root>
     );
 };
+
+SuggestionList.displayName = 'SuggestionList';

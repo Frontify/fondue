@@ -47,3 +47,5 @@ export const LoadingShell = ({
         </div>
     );
 };
+
+LoadingShell.displayName = 'LoadingShell';

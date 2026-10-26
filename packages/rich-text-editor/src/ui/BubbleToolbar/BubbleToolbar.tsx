@@ -217,3 +217,5 @@ export const BubbleToolbar = ({
         </Flyout.Root>
     );
 };
+
+BubbleToolbar.displayName = 'BubbleToolbar';

@@ -132,3 +132,5 @@ export const UploadControls = ({
         </span>
     );
 };
+
+UploadControls.displayName = 'UploadControls';

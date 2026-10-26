@@ -36,6 +36,8 @@ export const Item = (props: ItemProps) => {
     return <Button {...props} />;
 };
 
+Item.displayName = 'Item';
+
 /** A plugin's own control, which the toolbar fits, runs and returns focus from as it does the standard button. */
 const PluginControl = ({
     item,

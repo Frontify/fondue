@@ -61,3 +61,5 @@ export const EmojiPicker = ({ close }: OverlayProps) => {
 
     return <Picker api={api} onClose={close} />;
 };
+
+EmojiPicker.displayName = 'EmojiPicker';

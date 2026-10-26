@@ -73,3 +73,5 @@ export const EditorDialog = ({
         </Dialog.Root>
     );
 };
+
+EditorDialog.displayName = 'EditorDialog';

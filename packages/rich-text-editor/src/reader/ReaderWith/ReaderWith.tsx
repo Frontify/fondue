@@ -210,3 +210,5 @@ export const ReaderWith = (props: ReaderProps): ReactElement => {
 
     return output.element;
 };
+
+ReaderWith.displayName = 'ReaderWith';

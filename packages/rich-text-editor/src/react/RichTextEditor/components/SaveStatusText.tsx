@@ -78,3 +78,5 @@ export const SaveStatusText = ({ t, testId }: { t: CodecContext['t']; testId: st
         </div>
     );
 };
+
+SaveStatusText.displayName = 'SaveStatusText';

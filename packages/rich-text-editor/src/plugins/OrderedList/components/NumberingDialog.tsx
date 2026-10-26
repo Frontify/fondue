@@ -103,3 +103,5 @@ export const NumberingDialog = ({
         </EditorDialog>
     );
 };
+
+NumberingDialog.displayName = 'NumberingDialog';

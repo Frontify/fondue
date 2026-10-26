@@ -70,3 +70,5 @@ export const RecoveryShell = ({
         </div>
     );
 };
+
+RecoveryShell.displayName = 'RecoveryShell';

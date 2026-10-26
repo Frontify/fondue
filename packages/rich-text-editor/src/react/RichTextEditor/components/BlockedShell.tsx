@@ -74,3 +74,5 @@ export const BlockedShell = ({
         </div>
     );
 };
+
+BlockedShell.displayName = 'BlockedShell';

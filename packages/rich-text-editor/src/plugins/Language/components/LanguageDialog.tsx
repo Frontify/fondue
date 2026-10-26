@@ -39,3 +39,5 @@ export const LanguageDialog = (props: OverlayProps) => {
         </EditorDialog>
     );
 };
+
+LanguageDialog.displayName = 'LanguageDialog';

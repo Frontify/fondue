@@ -126,3 +126,5 @@ export const FixedToolbar = ({
         </RadixToolbar.Root>
     );
 };
+
+FixedToolbar.displayName = 'FixedToolbar';

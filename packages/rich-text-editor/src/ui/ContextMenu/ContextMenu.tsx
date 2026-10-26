@@ -156,3 +156,5 @@ export const ContextMenu = ({
         </Dropdown.Root>
     );
 };
+
+ContextMenu.displayName = 'ContextMenu';

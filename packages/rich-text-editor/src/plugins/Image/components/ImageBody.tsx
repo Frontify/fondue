@@ -76,3 +76,5 @@ export const ImageBody = ({ chrome }: { chrome: ImageChromeState }) => {
         />
     );
 };
+
+ImageBody.displayName = 'ImageBody';

@@ -145,3 +145,5 @@ export const Listbox = ({
         </div>
     );
 };
+
+Listbox.displayName = 'Listbox';

@@ -136,3 +136,5 @@ export const ImageToolbar = ({ chrome, nodeId }: { chrome: ImageChromeState; nod
         </NodeChromeToolbar>
     );
 };
+
+ImageToolbar.displayName = 'ImageToolbar';
