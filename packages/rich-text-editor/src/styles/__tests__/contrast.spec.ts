@@ -53,11 +53,14 @@ const stylesheetsOf = (dir: string): string[] =>
             if (entry.name === '__tests__') {
                 return [];
             }
+
             return stylesheetsOf(full);
         }
+
         if (/\.s?css$/.test(entry.name) && !entry.name.startsWith('_')) {
             return [full];
         }
+
         return [];
     });
 
@@ -66,6 +69,7 @@ const STYLESHEETS = stylesheetsOf(join(packageRoot, 'src')).map((file) => {
     if (file.endsWith('.scss')) {
         css = compile(file, { style: 'expanded' }).css;
     }
+
     return { file: relative(packageRoot, file), root: postcss.parse(css) };
 });
 
@@ -95,10 +99,12 @@ const assertTokens = (value: string) => {
 /** Every colour token `value` names, through every definition of the package's own properties. */
 const tokensOf = (value: string): string[] => {
     assertTokens(value);
+
     return [...value.matchAll(/var\((--[\w-]+)/g)].flatMap(([, name = '']) => {
         if (name.startsWith('--color-')) {
             return [name];
         }
+
         return (CUSTOM.get(name) ?? []).flatMap(tokensOf);
     });
 };
@@ -117,6 +123,7 @@ const elementsOf = (): Element[] => {
             if (insideAtRule(rule, SKIPPED)) {
                 return;
             }
+
             for (const selector of rule.selectors) {
                 const base = selector.replaceAll(STATE, '');
                 const key = `${file} ${base}`;
@@ -139,6 +146,7 @@ const elementsOf = (): Element[] => {
                     };
                     elements.set(key, element);
                 }
+
                 const isState = base !== selector;
                 const focus = FOCUS.test(selector);
                 const disabled = DISABLED.test(selector);
@@ -146,16 +154,19 @@ const elementsOf = (): Element[] => {
                     if (node.type !== 'decl') {
                         continue;
                     }
+
                     const { prop: property, value } = node;
                     let tokens: string[] = [];
                     if (COLOR_PROPERTY.test(property)) {
                         tokens = tokensOf(value);
                     }
+
                     if (property === 'color' && !disabled) {
                         for (const token of tokens) {
                             element.texts.add(token);
                         }
                     }
+
                     if (property === 'background' || property === 'background-color') {
                         for (const token of tokens) {
                             if (isState) {
@@ -164,8 +175,10 @@ const elementsOf = (): Element[] => {
                                 element.restBackgrounds.add(token);
                             }
                         }
+
                         element.selection ||= value.includes('--rte-content-selection-color');
                     }
+
                     const line = /^(border|outline)(-(block|inline)(-(start|end))?)?(-color)?$/.test(property);
                     if ((line || property === 'box-shadow') && focus) {
                         for (const token of tokens) {
@@ -178,6 +191,7 @@ const elementsOf = (): Element[] => {
                             element.borders.add(token);
                         }
                     }
+
                     element.sized ||= ['inline-size', 'block-size', 'width', 'height'].includes(property);
                     element.control ||= property === 'cursor' && value !== 'default';
                     if (property === 'opacity' && !disabled) {
@@ -185,17 +199,20 @@ const elementsOf = (): Element[] => {
                         if (!/::(before|after)/.test(selector)) {
                             throw new Error(`${selector} sets opacity on a box that may hold others`);
                         }
+
                         const name = /var\((--[\w-]+)/.exec(value)?.[1];
                         let values = [value];
                         if (name !== undefined) {
                             values = CUSTOM.get(name) ?? [];
                         }
+
                         element.opacity = Math.min(element.opacity, ...values.map(Number));
                     }
                 }
             }
         });
     }
+
     return [...elements.values()];
 };
 
@@ -231,6 +248,7 @@ const TEXT_GROUPS = ELEMENTS.map((element): Group => {
         );
         backdrops = [...backdrops, ...surfaces];
     }
+
     return { where: element.where, opacity: element.opacity, foregrounds: element.texts, backdrops };
 });
 
@@ -246,14 +264,17 @@ const NON_TEXT_GROUPS = ELEMENTS.flatMap((element) => {
         const backdrops = [...backdropsOf(element.stateBackgrounds, grounds), ...onSurfaces];
         groups.push({ where: `${element.where} pressed`, opacity: 1, foregrounds: element.texts, backdrops });
     }
+
     // A control's border bounds its own fill, or the surface around it when it has none.
     if (element.control || (element.content && isSurface(element))) {
         let backdrops = backdropsOf(element.restBackgrounds, grounds);
         if (backdrops.length === 0) {
             backdrops = onSurfaces;
         }
+
         groups.push({ where: `${element.where} border`, opacity: 1, foregrounds: element.borders, backdrops });
     }
+
     return groups;
 });
 
@@ -265,6 +286,7 @@ const THEMES = readFileSync(
 const blockOf = (name: string): Map<string, string> => {
     const found = new RegExp(`\\.${name} \\{([^}]*)\\}`).exec(THEMES)?.[1];
     const body = found ?? '';
+
     return new Map(
         [...body.matchAll(/(--[\w-]+):\s*([^;]+);/g)].map(([, property = '', value = '']) => [property, value]),
     );
@@ -272,6 +294,7 @@ const blockOf = (name: string): Map<string, string> => {
 
 const colorsOf = (theme: 'light' | 'dark') => {
     const values = new Map([...blockOf('base'), ...blockOf(theme)]);
+
     return (token: string): Rgba => {
         let value = values.get(token) ?? '';
         let reference = /^var\((--[\w-]+)\)$/.exec(value);
@@ -280,10 +303,12 @@ const colorsOf = (theme: 'light' | 'dark') => {
             value = referenced ?? '';
             reference = /^var\((--[\w-]+)\)$/.exec(value);
         }
+
         const color = parseColor(value);
         if (color === undefined) {
             throw new Error(`${token} has no colour value in the ${theme} theme`);
         }
+
         return color;
     };
 };
@@ -292,6 +317,7 @@ const colorsOf = (theme: 'light' | 'dark') => {
 const belowOf = (groups: readonly Group[], theme: 'light' | 'dark', minimum: number): string[] => {
     const color = colorsOf(theme);
     const page = color('--color-surface-default');
+
     return groups.flatMap(({ where, opacity, foregrounds, backdrops }) =>
         [...foregrounds].flatMap((foreground) =>
             backdrops.flatMap(({ background, grounds }) => {
@@ -299,6 +325,7 @@ const belowOf = (groups: readonly Group[], theme: 'light' | 'dark', minimum: num
                 if (unders.length === 0) {
                     unders = [page];
                 }
+
                 return unders.flatMap((under) => {
                     const behind = composite(color(background), under);
                     const ink = color(foreground);
@@ -306,6 +333,7 @@ const belowOf = (groups: readonly Group[], theme: 'light' | 'dark', minimum: num
                     if (ratio >= minimum) {
                         return [];
                     }
+
                     return [`${foreground} on ${background}, ${where}: ${ratio.toFixed(2)}`];
                 });
             }),

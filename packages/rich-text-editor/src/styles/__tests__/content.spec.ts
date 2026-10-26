@@ -84,6 +84,7 @@ describe('package content stylesheet', () => {
                 }
             }
         }
+
         expect(closedAt).toBe(stripped.length - 1);
     });
 

@@ -20,6 +20,7 @@ const markCheckedChrome = (root: HTMLElement) => {
             item.setAttribute('data-has-checked-chrome', '');
         }
     }
+
     return root;
 };
 
@@ -65,6 +66,7 @@ const editorTree = () => {
                 </li>
             </ul>
         </div>`;
+
     return markCheckedChrome(root);
 };
 
@@ -87,6 +89,7 @@ const readerTree = () => {
                 </li>
             </ul>
         </div>`;
+
     return root;
 };
 
@@ -102,6 +105,7 @@ const styled = (root: HTMLElement, declaration: (text: string) => boolean) => {
             matched.add(named ?? element.tagName);
         }
     }
+
     return [...matched].sort();
 };
 
