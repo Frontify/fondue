@@ -36,7 +36,7 @@ describe('writes', () => {
                 const server = createFakePersistenceService();
                 let open = 0;
                 let most = 0;
-                const waiting: { readonly saved: () => void; readonly failed: () => void }[] = [];
+                const waiting: { saved: () => void; failed: () => void }[] = [];
                 const service: PersistenceService = {
                     save: (request, context) =>
                         new Promise((resolve, reject) => {

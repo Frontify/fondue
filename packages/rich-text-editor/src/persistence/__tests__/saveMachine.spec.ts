@@ -81,10 +81,10 @@ const effectOf = <T extends Effect['type']>(result: Step, type: T) =>
 
 type Outcome = readonly [SaveState, readonly Effect['type'][]];
 type Row = {
-    readonly event: EventInput;
-    readonly setup?: Partial<SaveMachine>;
-    readonly facts?: Partial<Facts>;
-    readonly outcomes: Record<SaveState, Outcome>;
+    event: EventInput;
+    setup?: Partial<SaveMachine>;
+    facts?: Partial<Facts>;
+    outcomes: Record<SaveState, Outcome>;
 };
 
 /** Every state stays as it is and the event gives the same effects. */

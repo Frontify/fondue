@@ -11,7 +11,7 @@ declare global {
     // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
     interface Window {
         /** The replacement a test started, which the page holds while it waits. */
-        replacement?: Promise<{ readonly status: string }>;
+        replacement?: Promise<{ status: string }>;
     }
 }
 

@@ -15,7 +15,7 @@ import { para, chromeBlock, serviceOf, settle, mount, installPersistenceHooks } 
 
 vi.mock('#/bridge/portals', { spy: true });
 const { createPortalStore: actualStore } = await vi.importActual<{
-    readonly createPortalStore: typeof createPortalStore;
+    createPortalStore: typeof createPortalStore;
 }>('#/bridge/portals');
 
 installPersistenceHooks();

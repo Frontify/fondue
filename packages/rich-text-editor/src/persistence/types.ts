@@ -34,20 +34,20 @@ export type SaveRequest = {
     readonly baseRevision: ServerRevision | null;
     readonly document: RichTextDocument;
     readonly writer: {
-        readonly build: string;
-        readonly formatVersion: 1;
-        readonly model: ModelRef;
-        readonly capabilities: readonly CapabilityRef[];
+        build: string;
+        formatVersion: 1;
+        model: ModelRef;
+        capabilities: readonly CapabilityRef[];
     };
 };
 /** The persistence service's answer to a save: saved, conflict, or failed. */
 export type SaveResponse =
-    | { readonly status: 'saved'; readonly acknowledgment: SaveAcknowledgment }
-    | { readonly status: 'conflict'; readonly currentRevision: ServerRevision }
+    | { status: 'saved'; acknowledgment: SaveAcknowledgment }
+    | { status: 'conflict'; currentRevision: ServerRevision }
     | {
-          readonly status: 'rejected';
-          readonly code: 'forbidden' | 'invalid' | 'incompatible-writer';
-          readonly diagnostics: readonly Diagnostic[];
+          status: 'rejected';
+          code: 'forbidden' | 'invalid' | 'incompatible-writer';
+          diagnostics: readonly Diagnostic[];
       };
 /** The host service that saves and reads documents. */
 export type PersistenceService = {
@@ -56,14 +56,14 @@ export type PersistenceService = {
 };
 /** Options for autosave: when it runs and the delays and limits of its retries. */
 export type PersistenceOptions = {
-    readonly autosave?: 'debounced' | 'off';
+    autosave?: 'debounced' | 'off';
     /** Default `true`; a host with its own leave guard sets it to `false`. */
-    readonly unloadGuard?: boolean;
+    unloadGuard?: boolean;
     /** Defaults: 500, 5000, 30000, 5 and 1000. */
-    readonly delayMs?: number;
-    readonly maxWaitMs?: number;
-    readonly timeoutMs?: number;
-    readonly maxRetries?: number;
-    readonly backoffMs?: number;
-    readonly onConflict?: (remote: LoadedDocument | null, local: Snapshot) => void;
+    delayMs?: number;
+    maxWaitMs?: number;
+    timeoutMs?: number;
+    maxRetries?: number;
+    backoffMs?: number;
+    onConflict?: (remote: LoadedDocument | null, local: Snapshot) => void;
 };

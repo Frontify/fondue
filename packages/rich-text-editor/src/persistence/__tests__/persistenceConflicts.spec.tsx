@@ -78,7 +78,7 @@ describe('conflicts and rejections', () => {
         expect(service.read).toHaveBeenCalledTimes(1);
         expect(service.read.mock.calls[0]?.[0]).toBe('document-1');
         expect(onConflict).toHaveBeenCalledTimes(1);
-        const [remote, local] = onConflict.mock.calls[0] as [{ readonly revision: string }, unknown];
+        const [remote, local] = onConflict.mock.calls[0] as [{ revision: string }, unknown];
         expect(remote).toMatchObject({ documentId: 'document-1', revision: 'revision-1' });
         expect(JSON.stringify(remote)).toContain('remote');
         expect(local).toBe(handle().getSnapshot());

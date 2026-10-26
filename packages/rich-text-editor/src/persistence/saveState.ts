@@ -15,7 +15,7 @@ import { type PersistenceOptions, type SaveRequest, type SaveResponse } from './
 
 export type SaveState = Exclude<SaveStatus['state'], 'unmanaged'>;
 /** The code of a rejected write, which `SaveStatus` does not carry. */
-export type Rejection = Extract<SaveResponse, { readonly status: 'rejected' }>['code'];
+export type Rejection = Extract<SaveResponse, { status: 'rejected' }>['code'];
 export type Timer = 'delay' | 'longest' | 'retry' | 'timeout';
 
 type Timing = Required<Omit<PersistenceOptions, 'onConflict' | 'unloadGuard'>>;
@@ -34,88 +34,88 @@ export const NOT_SENT: CommitResult = { status: 'failed', code: 'transport', out
 
 /** What the transport observed when it fed the event. */
 export type Facts = {
-    readonly now: number;
-    readonly online: boolean;
-    readonly phase: EditorSummary['phase'];
-    readonly composing: boolean;
-    readonly sequence: number;
-    readonly session: SessionToken;
+    now: number;
+    online: boolean;
+    phase: EditorSummary['phase'];
+    composing: boolean;
+    sequence: number;
+    session: SessionToken;
     /** Read at each event, so the host's newest options apply. */
-    readonly options: PersistenceOptions | undefined;
+    options: PersistenceOptions | undefined;
 };
 
 /** The one write in flight: the `serial` tells its answer from a late answer of an earlier write. */
 export type Flight = {
-    readonly request: SaveRequest;
-    readonly started: number;
-    readonly serial: number;
+    request: SaveRequest;
+    started: number;
+    serial: number;
 };
 
 /** A snapshot `requestCommit` pinned, which is written as it is, ahead of any later autosave. */
 export type Pin = {
-    readonly stamp: DocumentStamp;
-    readonly document: RichTextDocument;
+    stamp: DocumentStamp;
+    document: RichTextDocument;
     /** The calls that share its next result; a call after that result waits for a later one. */
-    readonly calls: readonly number[];
+    calls: readonly number[];
 };
 
 export type SaveMachine = {
-    readonly state: SaveState;
-    readonly latest: number;
-    readonly acknowledged: number;
+    state: SaveState;
+    latest: number;
+    acknowledged: number;
     /** Cleared by the first accepted acknowledgment, which saves what the session mounted with. */
-    readonly unsavedOnMount: boolean;
-    readonly revision: ServerRevision | null;
+    unsavedOnMount: boolean;
+    revision: ServerRevision | null;
     /** What `requestCommit` answers with while it holds for the current stamp. */
-    readonly accepted: SaveAcknowledgment | undefined;
-    readonly rejection: Rejection | null;
-    readonly committed: boolean;
-    readonly problem: Diagnostic | null;
-    readonly flight: Flight | undefined;
+    accepted: SaveAcknowledgment | undefined;
+    rejection: Rejection | null;
+    committed: boolean;
+    problem: Diagnostic | null;
+    flight: Flight | undefined;
     /** The write whose outcome is not known yet, which every later try replays unchanged. */
-    readonly unresolved: SaveRequest | undefined;
+    unresolved: SaveRequest | undefined;
     /** The write a failed session left behind: its acknowledgment saves none of this session's sequences. */
-    readonly carried: SaveRequest | undefined;
-    readonly replays: number;
+    carried: SaveRequest | undefined;
+    replays: number;
     /** A write came due while a write in flight, a replay, the network or unsettled input held it. */
-    readonly due: boolean;
+    due: boolean;
     /** In call order; the oldest stays until its write is answered. */
-    readonly pinned: readonly Pin[];
-    readonly writes: number;
-    readonly ended: boolean;
+    pinned: readonly Pin[];
+    writes: number;
+    ended: boolean;
     /** A session that never became ready, such as StrictMode's throwaway mount, leaves nothing the author saw unsaved. */
-    readonly shown: boolean;
-    readonly retrying: boolean;
-    readonly longest: boolean;
+    shown: boolean;
+    retrying: boolean;
+    longest: boolean;
 };
 
 export type Pinned = {
-    readonly stamp: DocumentStamp;
-    readonly document: RichTextDocument;
+    stamp: DocumentStamp;
+    document: RichTextDocument;
 };
 
-export type SaveEvent = { readonly facts: Facts } & (
-    | { readonly type: 'mounted' }
-    | { readonly type: 'changed' }
-    | { readonly type: 'flush' }
-    | { readonly type: 'send' }
-    | { readonly type: 'retryDue' }
-    | { readonly type: 'ready' }
-    | { readonly type: 'online' }
-    | { readonly type: 'serviceChanged' }
-    | { readonly type: 'dispose' }
-    | { readonly type: 'failed'; readonly serial: number; readonly code: 'timeout' | 'transport' }
-    | { readonly type: 'answered'; readonly serial: number; readonly response: SaveResponse }
-    | { readonly type: 'prepared'; readonly request: SaveRequest }
-    | { readonly type: 'pin'; readonly call: number }
+export type SaveEvent = { facts: Facts } & (
+    | { type: 'mounted' }
+    | { type: 'changed' }
+    | { type: 'flush' }
+    | { type: 'send' }
+    | { type: 'retryDue' }
+    | { type: 'ready' }
+    | { type: 'online' }
+    | { type: 'serviceChanged' }
+    | { type: 'dispose' }
+    | { type: 'failed'; serial: number; code: 'timeout' | 'transport' }
+    | { type: 'answered'; serial: number; response: SaveResponse }
+    | { type: 'prepared'; request: SaveRequest }
+    | { type: 'pin'; call: number }
     | {
-          readonly type: 'pinned';
-          readonly call: number;
-          readonly stamp: DocumentStamp;
-          readonly document: RichTextDocument;
+          type: 'pinned';
+          call: number;
+          stamp: DocumentStamp;
+          document: RichTextDocument;
       }
-    | { readonly type: 'callTimedOut'; readonly call: number }
-    | { readonly type: 'replaced'; readonly revision: ServerRevision | null; readonly previous: DocumentStamp }
+    | { type: 'callTimedOut'; call: number }
+    | { type: 'replaced'; revision: ServerRevision | null; previous: DocumentStamp }
 );
 
 type Distribute<E> = E extends unknown ? Omit<E, 'facts'> : never;
@@ -123,37 +123,37 @@ type Distribute<E> = E extends unknown ? Omit<E, 'facts'> : never;
 export type EventInput = Distribute<SaveEvent>;
 
 export type Effect =
-    | { readonly type: 'publish' }
-    | { readonly type: 'refresh' }
-    | { readonly type: 'send' }
-    | { readonly type: 'end' }
-    | { readonly type: 'abort' }
-    | { readonly type: 'readRemote' }
-    | { readonly type: 'captureWaiting' }
-    | { readonly type: 'report'; readonly diagnostic: Diagnostic }
-    | { readonly type: 'measure'; readonly started: number; readonly code: string | null }
-    | { readonly type: 'arm'; readonly timer: 'delay' | 'longest'; readonly ms: number }
-    | { readonly type: 'backoff'; readonly ms: number }
-    | { readonly type: 'clear'; readonly timers: readonly Timer[] }
-    | { readonly type: 'open'; readonly serial: number; readonly timeoutMs: number }
-    | { readonly type: 'save'; readonly request: SaveRequest; readonly serial: number }
-    | { readonly type: 'prepare'; readonly source: Pinned | undefined }
-    | { readonly type: 'snapshot'; readonly call: number }
-    | { readonly type: 'answer'; readonly calls: readonly number[]; readonly result: CommitResult }
-    | { readonly type: 'answerWaiting'; readonly result: CommitResult };
+    | { type: 'publish' }
+    | { type: 'refresh' }
+    | { type: 'send' }
+    | { type: 'end' }
+    | { type: 'abort' }
+    | { type: 'readRemote' }
+    | { type: 'captureWaiting' }
+    | { type: 'report'; diagnostic: Diagnostic }
+    | { type: 'measure'; started: number; code: string | null }
+    | { type: 'arm'; timer: 'delay' | 'longest'; ms: number }
+    | { type: 'backoff'; ms: number }
+    | { type: 'clear'; timers: readonly Timer[] }
+    | { type: 'open'; serial: number; timeoutMs: number }
+    | { type: 'save'; request: SaveRequest; serial: number }
+    | { type: 'prepare'; source: Pinned | undefined }
+    | { type: 'snapshot'; call: number }
+    | { type: 'answer'; calls: readonly number[]; result: CommitResult }
+    | { type: 'answerWaiting'; result: CommitResult };
 
 export type Step = {
-    readonly state: SaveMachine;
-    readonly effects: readonly Effect[];
+    state: SaveMachine;
+    effects: readonly Effect[];
 };
 
 export type Mutable<T> = { -readonly [K in keyof T]: T[K] };
 
 /** A copy of the machine and the effects a handler appends, so `next` never changes its input. */
 export type Draft = {
-    readonly m: Mutable<SaveMachine>;
-    readonly fx: Effect[];
-    readonly facts: Facts;
+    m: Mutable<SaveMachine>;
+    fx: Effect[];
+    facts: Facts;
 };
 
 export const timing = <K extends keyof Timing>(facts: Facts, name: K): Timing[K] => {

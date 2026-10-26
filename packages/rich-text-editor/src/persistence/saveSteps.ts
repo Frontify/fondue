@@ -243,7 +243,7 @@ export const serviceChanged = (d: Draft) => {
 
 export const replaced = (
     d: Draft,
-    { revision, previous }: { readonly revision: ServerRevision | null; readonly previous: DocumentStamp },
+    { revision, previous }: { revision: ServerRevision | null; previous: DocumentStamp },
 ) => {
     const { m, facts } = d;
     stopTimers(d);

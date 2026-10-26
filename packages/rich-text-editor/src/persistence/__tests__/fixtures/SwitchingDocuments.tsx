@@ -31,9 +31,9 @@ const recordOf = (documentId: string, text: string): LoadedDocument => ({
 });
 
 type Mounted = {
-    readonly key: number;
-    readonly definition: (typeof definitions)[keyof typeof definitions];
-    readonly record: LoadedDocument;
+    key: number;
+    definition: (typeof definitions)[keyof typeof definitions];
+    record: LoadedDocument;
 };
 
 /**
@@ -43,7 +43,7 @@ type Mounted = {
 export const SwitchingDocuments = () => {
     const handleRef = useRef<EditorHandle>(null);
     const counterRef = useRef(0);
-    const [events, setEvents] = useState<readonly { readonly id: number; readonly text: string }[]>([]);
+    const [events, setEvents] = useState<readonly { id: number; text: string }[]>([]);
     const log = (text: string) => {
         counterRef.current += 1;
         const id = counterRef.current;

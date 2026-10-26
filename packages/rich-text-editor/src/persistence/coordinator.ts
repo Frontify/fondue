@@ -18,11 +18,11 @@ export const createSaveCoordinator = (
     runtime: EditorRuntime,
     given: SaveCoordinatorOptions,
 ): SaveCoordinator & {
-    readonly unresolved: () => SaveRequest | undefined;
+    unresolved: () => SaveRequest | undefined;
     /** Why the state is `error`: the rejection code, or `null` once retries ran out. */
-    readonly rejection: () => Rejection | null;
+    rejection: () => Rejection | null;
     /** Whether the last accepted acknowledgment answered a `requestCommit` call. */
-    readonly committed: () => boolean;
+    committed: () => boolean;
 } => {
     const transport = createTransport(runtime, given);
 

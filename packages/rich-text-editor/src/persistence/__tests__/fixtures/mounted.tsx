@@ -112,7 +112,7 @@ export const model = compileContentModel(features, { id: 'test.persistence', ver
 export const definition = defineEditor({ id: 'test.persistence', model, plugins: unitsOf(model, [stampedEditor]) });
 const packageFile = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..', 'package.json');
 export const { version: PACKAGE_VERSION } = JSON.parse(readFileSync(packageFile, 'utf8')) as {
-    readonly version: string;
+    version: string;
 };
 export const WRITER: SaveRequest['writer'] = {
     build: PACKAGE_VERSION,
@@ -147,9 +147,9 @@ export const loaded = (revision: string | null, ...blocks: readonly JsonValue[])
 export const textOf = (request: SaveRequest) => JSON.stringify(request.document.content).match(/"text":"([^"]*)"/)?.[1];
 /** One `save` call: what it got, when, and how the test answers it. */
 export type Call = {
-    readonly request: SaveRequest;
-    readonly context: ServiceContext;
-    readonly at: number;
+    request: SaveRequest;
+    context: ServiceContext;
+    at: number;
     /** Resolves with `response`, or with the reference fake's answer when none is given. */
     answer(response?: SaveResponse): void;
     fail(): void;
@@ -203,15 +203,15 @@ export const peek = async <T,>(promise: Promise<T>) => {
 };
 
 export type MountOptions = {
-    readonly service?: PersistenceService;
-    readonly recovery?: RecoveryService;
-    readonly revision?: string | null;
-    readonly persistenceOptions?: PersistenceOptions;
-    readonly blocks?: readonly JsonValue[];
+    service?: PersistenceService;
+    recovery?: RecoveryService;
+    revision?: string | null;
+    persistenceOptions?: PersistenceOptions;
+    blocks?: readonly JsonValue[];
     /** Time that passes between the mount and its first frame. */
-    readonly beforeReady?: number;
+    beforeReady?: number;
     /** Leaves the editor `mounting`, before its first frame. */
-    readonly mounting?: boolean;
+    mounting?: boolean;
 };
 /** Mounts an editor on a test then runs its first frame, so it is `ready`. */
 export const mount = (options: MountOptions = {}) => {
@@ -310,7 +310,7 @@ export const compose = (handle: EditorHandle<object>, text: string) =>
         view.dispatch(view.state.tr.insertText(text).setMeta('composition', 1));
     });
 export type Mounted = ReturnType<typeof mount>;
-export type ReplaceCode = Extract<ReplaceResult, { readonly status: 'rejected' }>['code'];
+export type ReplaceCode = Extract<ReplaceResult, { status: 'rejected' }>['code'];
 /** A request that replaces the editor's document by `document-2` at `revision-9`, rejecting unsaved changes unless `overrides` says otherwise. */
 export const replacing = (
     handle: EditorHandle<object>,
@@ -327,22 +327,22 @@ export const textIn = (document: RichTextDocument) => JSON.stringify(document.co
 export const replace = (handle: EditorHandle<object>, overrides: Partial<ReplaceDocumentRequest> = {}) =>
     act(() => handle.replaceDocument(replacing(handle, overrides)));
 export type Step = {
-    readonly step: number;
-    readonly code: ReplaceCode;
+    step: number;
+    code: ReplaceCode;
     /** Holds each save until the case answers it. */
-    readonly held?: boolean;
-    readonly mounting?: boolean;
+    held?: boolean;
+    mounting?: boolean;
     /** Runs before the call and returns what the request changes. */
-    readonly setup?: (
+    setup?: (
         editor: Mounted,
         calls: readonly Call[],
     ) => Partial<ReplaceDocumentRequest> | Promise<Partial<ReplaceDocumentRequest>>;
     /** Runs while the replacement waits at step 5. */
-    readonly during?: (editor: Mounted, calls: readonly Call[]) => Promise<void>;
+    during?: (editor: Mounted, calls: readonly Call[]) => Promise<void>;
     /** The step 5 `save` write may change the save state. */
-    readonly saves?: boolean;
+    saves?: boolean;
     /** The view reads a keystroke while the replacement waits, which the document keeps. */
-    readonly kept?: boolean;
+    kept?: boolean;
 };
 export const typed = ({ type }: Mounted) => {
     type('x');

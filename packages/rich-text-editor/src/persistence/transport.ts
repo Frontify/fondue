@@ -27,18 +27,18 @@ import {
 
 export type SaveCoordinatorOptions = {
     /** Read at each use, so a write after a services change goes to the new service. */
-    readonly service: () => PersistenceService;
+    service: () => PersistenceService;
     /** Read at each use, so the host's newest options and `onConflict` apply. */
-    readonly options: () => PersistenceOptions | undefined;
+    options: () => PersistenceOptions | undefined;
     /** The loaded record's revision, `null` for a new record. */
-    readonly revision: ServerRevision | null;
+    revision: ServerRevision | null;
     /** The document holds changes a failed session never saved, as after Retry. */
-    readonly unsavedOnMount: boolean;
+    unsavedOnMount: boolean;
     /** The write a failed session left with an unknown outcome, which this session replays unchanged before its own. */
-    readonly carried?: SaveRequest | undefined;
-    readonly model: ContentModel;
+    carried?: SaveRequest | undefined;
+    model: ContentModel;
     /** Operation ids, the same source as the session id and new `nodeId`s. */
-    readonly generateId: () => string;
+    generateId: () => string;
 };
 
 // Each retry delay moves by up to this share either way, so editors that failed together do not retry together.
@@ -55,17 +55,17 @@ const STATUS_KEYS = [
 
 /** What the effects act on: the machine, its timers, the write in flight and the `requestCommit` calls. */
 type Link = {
-    readonly runtime: EditorRuntime;
-    readonly given: SaveCoordinatorOptions;
-    readonly writer: SaveRequest['writer'];
+    runtime: EditorRuntime;
+    given: SaveCoordinatorOptions;
+    writer: SaveRequest['writer'];
     /** Aborted by `dispose`, which ends the session's reads and every later step. */
-    readonly ended: AbortController;
-    readonly timers: Map<Timer, ReturnType<typeof setTimeout>>;
+    ended: AbortController;
+    timers: Map<Timer, ReturnType<typeof setTimeout>>;
     /** Each call's way to answer, until it does. */
-    readonly finishers: Map<number, (result: CommitResult) => void>;
+    finishers: Map<number, (result: CommitResult) => void>;
     /** The captures of calls that wait for input to settle. */
-    readonly waiting: Map<number, () => void>;
-    readonly onOnline: () => void;
+    waiting: Map<number, () => void>;
+    onOnline: () => void;
     machine: SaveMachine;
     status: SaveStatus;
     controller: AbortController;
@@ -73,11 +73,11 @@ type Link = {
 };
 
 export type Transport = {
-    readonly dispatch: (input: EventInput) => void;
-    readonly commit: (options: CommitOptions) => Promise<CommitResult>;
-    readonly captureWaiting: () => void;
-    readonly machine: () => SaveMachine;
-    readonly status: () => SaveStatus;
+    dispatch: (input: EventInput) => void;
+    commit: (options: CommitOptions) => Promise<CommitResult>;
+    captureWaiting: () => void;
+    machine: () => SaveMachine;
+    status: () => SaveStatus;
 };
 
 const readFacts = (link: Link): Facts => {
@@ -169,7 +169,7 @@ const readRemote = (link: Link) => {
         .catch(() => runtime.report(diagnostic('runtime.listener-error', undefined, undefined, 'error')));
 };
 
-type Of<T extends Effect['type']> = Extract<Effect, { readonly type: T }>;
+type Of<T extends Effect['type']> = Extract<Effect, { type: T }>;
 
 /** What each effect does outside the machine. */
 const EFFECTS: { readonly [T in Effect['type']]: (link: Link, effect: Of<T>) => void } = {

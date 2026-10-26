@@ -26,7 +26,7 @@ import {
 
 vi.mock('#/bridge/portals', { spy: true });
 const { createPortalStore: actualStore } = await vi.importActual<{
-    readonly createPortalStore: typeof createPortalStore;
+    createPortalStore: typeof createPortalStore;
 }>('#/bridge/portals');
 
 installPersistenceHooks();
@@ -295,7 +295,7 @@ describe('the runtime with a save coordinator', () => {
         const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
         const { service, calls } = serviceOf(true);
         const ref = createRef<EditorHandle<object>>();
-        const Bomb = ({ armed }: { readonly armed: boolean }) => {
+        const Bomb = ({ armed }: { armed: boolean }) => {
             if (armed) {
                 throw new Error('render failed');
             }

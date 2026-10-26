@@ -87,7 +87,7 @@ const conflicted = (d: Draft, current: Flight, currentRevision: ServerRevision) 
     );
 };
 
-const rejected = (d: Draft, current: Flight, response: Extract<SaveResponse, { readonly status: 'rejected' }>) => {
+const rejected = (d: Draft, current: Flight, response: Extract<SaveResponse, { status: 'rejected' }>) => {
     const { m } = d;
     const pin = checkpointOf(m, current.request);
     if (pin !== undefined) {
@@ -112,10 +112,7 @@ const rejected = (d: Draft, current: Flight, response: Extract<SaveResponse, { r
     d.fx.push({ type: 'measure', started: current.started, code: response.code }, { type: 'send' });
 };
 
-export const answered = (
-    d: Draft,
-    { serial, response }: { readonly serial: number; readonly response: SaveResponse },
-) => {
+export const answered = (d: Draft, { serial, response }: { serial: number; response: SaveResponse }) => {
     const { m } = d;
     const current = m.flight;
     if (current === undefined || current.serial !== serial) {
@@ -142,10 +139,7 @@ export const answered = (
 };
 
 /** A write with an unknown outcome: replayed after a backoff while online, after the `online` event while offline. */
-export const failed = (
-    d: Draft,
-    { serial, code }: { readonly serial: number; readonly code: 'timeout' | 'transport' },
-) => {
+export const failed = (d: Draft, { serial, code }: { serial: number; code: 'timeout' | 'transport' }) => {
     const { m, facts } = d;
     const current = m.flight;
     if (current === undefined || current.serial !== serial) {
@@ -183,7 +177,7 @@ export const failed = (
     d.fx.push({ type: 'publish' }, measure, { type: 'backoff', ms: timing(facts, 'backoffMs') * 2 ** m.replays });
 };
 
-export const capture = (d: Draft, { call }: { readonly call: number }) => {
+export const capture = (d: Draft, { call }: { call: number }) => {
     const refused = refusal(d.m);
     if (refused !== undefined) {
         answer(d, [call], refused);
@@ -205,7 +199,7 @@ const join = (m: Mutable<SaveMachine>, call: number, held: Pinned) => {
     m.pinned = [...m.pinned.slice(0, -1), { ...last, calls: [...last.calls, call] }];
 };
 
-export const pinned = (d: Draft, { call, stamp, document }: { readonly call: number } & Pinned) => {
+export const pinned = (d: Draft, { call, stamp, document }: { call: number } & Pinned) => {
     const { m, facts } = d;
     if (m.accepted !== undefined && sameStamp(m.accepted.stamp, stamp)) {
         answer(d, [call], { status: 'acknowledged', acknowledgment: m.accepted });
@@ -227,7 +221,7 @@ export const pinned = (d: Draft, { call, stamp, document }: { readonly call: num
     }
 };
 
-export const callTimedOut = (d: Draft, { call }: { readonly call: number }) => {
+export const callTimedOut = (d: Draft, { call }: { call: number }) => {
     const { m } = d;
     const held = leave(m, call);
     // Past the timeout the call resolves, while its pinned checkpoint stays for the write.

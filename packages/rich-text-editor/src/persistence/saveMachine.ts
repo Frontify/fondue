@@ -45,9 +45,9 @@ export {
  */
 export type MachineConfig = {
     /** The loaded record's revision, `null` for a new record. */
-    readonly revision: ServerRevision | null;
-    readonly unsavedOnMount: boolean;
-    readonly carried: SaveRequest | undefined;
+    revision: ServerRevision | null;
+    unsavedOnMount: boolean;
+    carried: SaveRequest | undefined;
 };
 
 export const initial = (config: MachineConfig, session: SessionToken): SaveMachine => {
@@ -78,7 +78,7 @@ export const initial = (config: MachineConfig, session: SessionToken): SaveMachi
     return m;
 };
 
-type Of<T extends SaveEvent['type']> = Extract<SaveEvent, { readonly type: T }>;
+type Of<T extends SaveEvent['type']> = Extract<SaveEvent, { type: T }>;
 
 /** The transition table: what each event does to a machine in any state. */
 const TRANSITIONS: { readonly [T in SaveEvent['type']]: (d: Draft, event: Of<T>) => void } = {
