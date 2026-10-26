@@ -1,20 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createContext, type MutableRefObject, useContext, useMemo, useState } from 'react';
+import { type MutableRefObject, useContext, useMemo, useState } from 'react';
 
 import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 
-import {
-    type Chrome,
-    type Mounted,
-    PART_KEYS,
-    type PartProps,
-    type Props,
-    type RootContextValue,
-} from '../RichTextEditor/types';
-
-export const RootContext = createContext<RootContextValue | null>(null);
-RootContext.displayName = 'RichTextEditorRootContext';
+import { RootContext } from '../helpers/rootContext';
+import { type Chrome, type Mounted, PART_KEYS, type PartProps, type Props, type RootContextValue } from '../types';
 
 export const useRoot = (part: string): RootContextValue => {
     const context = useContext(RootContext);

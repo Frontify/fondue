@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { enUS } from '#/locales/en-US';
 import { ruleHelpKey, ruleNameKey } from '#/model';
 import { CONTENT_RULE_IDS } from '#/plugins/__tests__/fixtures/contentRules';
-import { LOADERS } from '#/react/locale';
+import { LOADERS } from '#/react/RichTextEditor/helpers/locale';
 
 const locales = async () => [enUS, ...(await Promise.all(Object.values(LOADERS).map((load) => load())))];
 

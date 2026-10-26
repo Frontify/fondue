@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useFondueTheme } from '@frontify/fondue-components';
-import { type KeyboardEvent, type MutableRefObject, useCallback, useId, useMemo, useRef, useState } from 'react';
+import { type MutableRefObject, useCallback, useId, useMemo, useRef, useState } from 'react';
 
 import { type InteractionScope } from '#/bridge/overlays/helpers/interactionScope';
 import { type EditorHosts } from '#/bridge/plugin';
-import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import { enUS } from '#/locales/en-US';
 import { codecContext } from '#/model/internal';
@@ -13,15 +12,15 @@ import { readerContext } from '#/reader/helpers/context';
 import { UPLOAD_FEATURE } from '#/runtime/port';
 import { referenceListStrings } from '#/ui/LazySuggestionList/helpers/referenceStrings';
 
-import { moveChromeFocus } from '../chromeFocus';
-import { engineOf, pluginsOf } from '../compile/compileEditor';
-import { menuItems, toolbarItems } from '../helpers/toolbarItems';
-import { turnIntoChoices } from '../helpers/turnInto';
-import { memberOf, type shellPropsOf, toolbarShortcutOf } from '../RichTextEditor/helpers/sessionHelpers';
-import { type PluginOverlay, useRenderedHosts } from '../RichTextEditor/hooks/usePluginHosts';
-import { type Choosing } from '../RichTextEditor/hooks/useSessionRuntime';
-import { type Mounted, type Props, type SessionRest } from '../RichTextEditor/types';
-import { type EditorHandle, type ToolbarMode } from '../types';
+import { engineOf, pluginsOf } from '../../compile/compileEditor';
+import { menuItems, toolbarItems } from '../../helpers/toolbarItems';
+import { turnIntoChoices } from '../../helpers/turnInto';
+import { type EditorHandle, type ToolbarMode } from '../../types';
+import { memberOf, type shellPropsOf } from '../helpers/sessionHelpers';
+import { type Mounted, type Props, type SessionRest } from '../types';
+
+import { type PluginOverlay, useRenderedHosts } from './usePluginHosts';
+import { type Choosing } from './useSessionRuntime';
 
 /** Why a toolbar item's command cannot run, by its `disabledReason`. */
 const REASON_KEYS: Readonly<Record<string, `RichTextEditor_${string}`>> = {
@@ -168,41 +167,6 @@ export const useChrome = (sources: ChromeSources) => {
 
     return { lang, chromeContext, renderedHosts, standing, chrome };
 };
-
-type KeySources = {
-    props: Props;
-    coordinator: MountCoordinator;
-    toolbarRef: MutableRefObject<HTMLDivElement | null>;
-    bubbleRef: MutableRefObject<HTMLDivElement | null>;
-    showBubbleRef: MutableRefObject<(() => void) | null>;
-    overlayToolbarsRef: MutableRefObject<(HTMLElement | null)[]>;
-    toolbarMode: ToolbarMode;
-};
-
-/** Moves focus between the surface and the chrome on the keys the root hears. */
-export const chromeKeyDownOf =
-    ({ props, coordinator, toolbarRef, bubbleRef, showBubbleRef, overlayToolbarsRef, toolbarMode }: KeySources) =>
-    (event: KeyboardEvent<HTMLDivElement>) => {
-        // A disabled editor's toolbar takes no focus.
-        let toolbar = toolbarRef.current;
-        if (props.disabled === true) {
-            toolbar = null;
-        }
-
-        let showBubble: (() => void) | null = null;
-        if (toolbarMode === 'bubble') {
-            showBubble = showBubbleRef.current;
-        }
-
-        moveChromeFocus(event, {
-            runtime: coordinator.runtime,
-            toolbar,
-            overlayToolbar: overlayToolbarsRef.current.find((element) => element?.isConnected === true) ?? null,
-            bubble: bubbleRef.current,
-            showBubble,
-            shortcut: toolbarShortcutOf(props),
-        });
-    };
 
 type OverlaySources = {
     props: Props;

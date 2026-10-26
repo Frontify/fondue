@@ -29,7 +29,7 @@ import { type RuntimeHandle, runtimeOf } from '#/runtime/runtime';
 import { createFakePersistenceService, setSelection, typeText } from '#/testing';
 import { probeRuntimes } from '#/testing/probe';
 
-import { announcementOf, type Memory, QUIET, type Seen } from '../status';
+import { announcementOf, type Memory, QUIET, type Seen } from '../RichTextEditor/helpers/status';
 import { type RichTextEditorBaseProps } from '../types';
 
 // A custom feature with one inline atom, which a blank check must count as content.

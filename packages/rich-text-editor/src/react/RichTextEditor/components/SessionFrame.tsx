@@ -1,61 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ComponentType, type KeyboardEventHandler, type MutableRefObject, type ReactNode } from 'react';
+import { type MutableRefObject } from 'react';
 
-import { AnnouncerContext, type Announcer } from '#/bridge/announcer';
-import { Phase, ReactWorkContext, type ReactWork } from '#/bridge/devChecks';
-import { type PortalStore } from '#/bridge/nodeViews/helpers/portals';
-import { OverlayBody, OverlayContext, type Overlays } from '#/bridge/overlays';
-import { EditorHostsContext, type EditorHosts } from '#/bridge/plugin';
+import { Phase } from '#/bridge/devChecks';
+import { OverlayBody } from '#/bridge/overlays';
+import { type EditorHosts } from '#/bridge/plugin';
 import { PortalHost } from '#/bridge/PortalHost';
-import { SessionContext } from '#/bridge/session';
 import { type MountCoordinator } from '#/bridge/session/helpers/mount';
-import { TurnIntoContext, type TurnIntoEntry } from '#/bridge/turnInto';
-import { type readerContext } from '#/reader/helpers/context';
-import { type EditorPort, mediaOf } from '#/runtime/port';
+import { mediaOf } from '#/runtime/port';
 import { VISUALLY_HIDDEN } from '#/styles/visuallyHidden';
 import { ContextMenu } from '#/ui/ContextMenu/ContextMenu';
-import { PanelContext, type PanelController } from '#/ui/helpers/panelContext';
-import { type referenceListStrings } from '#/ui/LazySuggestionList/helpers/referenceStrings';
+import { PanelContext } from '#/ui/helpers/panelContext';
 import { LazySuggestionList } from '#/ui/LazySuggestionList/LazySuggestionList';
 
-import { translatedLabel } from '../helpers/toolbarItems';
-import { Bubble } from '../RichTextEditor/components/Parts';
-import { type PluginOverlay } from '../RichTextEditor/hooks/usePluginHosts';
-import { type Choosing } from '../RichTextEditor/hooks/useSessionRuntime';
-import { type Chrome, type RootContextValue } from '../RichTextEditor/types';
-import { type ToolbarMode } from '../types';
+import { translatedLabel } from '../../helpers/toolbarItems';
+import { type PluginOverlay } from '../hooks/usePluginHosts';
+import { type Choosing } from '../hooks/useSessionRuntime';
+import { type FrameProps, type Standing } from '../types';
 
-import { RootContext } from './rootContext';
-
-type ChromeContext = ReturnType<typeof readerContext>;
-
-type ProviderValues = {
-    root: RootContextValue;
-    hosts: EditorHosts;
-    live: EditorPort | undefined;
-    work: ReactWork | undefined;
-    announcer: Announcer;
-    overlays: Overlays;
-    turnInto: readonly TurnIntoEntry[];
-};
-
-/** What the parts, the plugins and the overlays of one session read from context. */
-export const SessionProviders = ({ values, children }: { values: ProviderValues; children: ReactNode }) => (
-    <RootContext.Provider value={values.root}>
-        <EditorHostsContext.Provider value={values.hosts}>
-            <SessionContext.Provider value={values.live}>
-                <ReactWorkContext.Provider value={values.work}>
-                    <AnnouncerContext.Provider value={values.announcer}>
-                        <OverlayContext.Provider value={values.overlays}>
-                            <TurnIntoContext.Provider value={values.turnInto}>{children}</TurnIntoContext.Provider>
-                        </OverlayContext.Provider>
-                    </AnnouncerContext.Provider>
-                </ReactWorkContext.Provider>
-            </SessionContext.Provider>
-        </EditorHostsContext.Provider>
-    </RootContext.Provider>
-);
+import { Bubble } from './Parts';
 
 /** The file chooser exists where `media.image` takes files that `services.uploads` sends. */
 const FileChooser = ({
@@ -98,12 +61,6 @@ const FileChooser = ({
     />
 );
 
-type Standing = {
-    key: string;
-    component: ComponentType<{ toolbarRef: (element: HTMLElement | null) => void; covered: boolean }>;
-    toolbarRef: (element: HTMLElement | null) => void;
-};
-
 /** The plugins' standing overlays, and the plugin overlay a command opened. */
 const PluginOverlays = ({
     standing,
@@ -131,33 +88,6 @@ const PluginOverlays = ({
         )}
     </>
 );
-
-export type FrameProps = {
-    rootRef: MutableRefObject<HTMLDivElement | null>;
-    lang: string;
-    testId: string;
-    live: EditorPort | undefined;
-    coordinator: MountCoordinator;
-    onKeyDown: KeyboardEventHandler<HTMLDivElement>;
-    work: ReactWork | undefined;
-    announcer: Announcer;
-    panelState: PanelController;
-    toolbarMode: ToolbarMode;
-    chrome: Chrome;
-    disabled: boolean;
-    portals: PortalStore;
-    chromeContext: ChromeContext;
-    onFlush: () => void;
-    referenceStrings: ReturnType<typeof referenceListStrings>;
-    standing: readonly Standing[];
-    pluginOverlay: PluginOverlay | undefined;
-    hosts: EditorHosts;
-    choosesFiles: boolean;
-    chooserRef: MutableRefObject<HTMLInputElement | null>;
-    choosingRef: MutableRefObject<Choosing | undefined>;
-    overlayRootElement: ReactNode;
-    children: ReactNode;
-};
 
 /** The root element of a session: the host's parts, then the chrome that every session renders. */
 export const SessionFrame = ({

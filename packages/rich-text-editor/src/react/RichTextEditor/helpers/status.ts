@@ -1,22 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useCallback, useContext, useEffect, useRef, useSyncExternalStore } from 'react';
-
-import { useAnnounce } from '#/bridge/announcer';
-import { SessionContext } from '#/bridge/session';
-import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
-import { type CodecContext } from '#/model';
 import { type createSaveCoordinator, type Rejection } from '#/persistence/coordinator';
 import { type SaveStatus } from '#/runtime/port';
-
-import styles from './RichTextEditor/styles/status.module.scss';
 
 type Key = `RichTextEditor_${string}`;
 type State = SaveStatus['state'];
 type SaveCauses = Pick<ReturnType<typeof createSaveCoordinator>, 'rejection' | 'committed'>;
 
 /** The coordinator readers of each managed session, by its handle, which `SaveStatus` does not carry. */
-const causesByHandle = new WeakMap<object, SaveCauses>();
+export const causesByHandle = new WeakMap<object, SaveCauses>();
 
 /** Lets the status of the session behind `handle` read why its save state is what it is. */
 export const registerSaveCauses = (handle: object, causes: SaveCauses) => {
@@ -45,7 +37,7 @@ const ANNOUNCED: ReadonlySet<State> = new Set(['uncertain', 'offline', 'conflict
 // The `clean` after one of these is announced.
 const RECOVERING: ReadonlySet<State> = new Set(['uncertain', 'offline', 'error']);
 
-const keyOf = (status: SaveStatus, causes: SaveCauses | undefined): Key | null => {
+export const keyOf = (status: SaveStatus, causes: SaveCauses | undefined): Key | null => {
     if (status.state === 'error' && causes !== undefined) {
         const rejection = causes.rejection();
         if (rejection !== null) {
@@ -123,72 +115,4 @@ export const announcementOf = (
     }
 
     return [{ recovering: false, outage }, next.key];
-};
-
-/**
- * The session's save state as text, which changes silently during autosave and is announced through the editor's
- * polite live region only for the states that need the author.
- */
-export const SaveStatusText = ({ t, testId }: { t: CodecContext['t']; testId: string }) => {
-    const runtime = useContext(SessionContext);
-    // The shown key only, so a save status that changes on each keystroke rerenders nothing.
-    const subscribe = useCallback(
-        (changed: () => void) => {
-            if (runtime === undefined) {
-                return () => undefined;
-            }
-
-            return runtime.handle.subscribe('saveStatusChange', changed);
-        },
-        [runtime],
-    );
-    const read = () => {
-        if (runtime === undefined) {
-            return null;
-        }
-
-        return keyOf(runtime.handle.getSaveStatus(), causesByHandle.get(runtime.handle));
-    };
-
-    const key = useSyncExternalStore(subscribe, read, read);
-    const announce = useAnnounce();
-    const tRef = useRef(t);
-    useClientLayoutEffect(() => {
-        tRef.current = t;
-    });
-    // Each change is heard from the event itself, so a render that batches two changes still announces both.
-    useEffect(() => {
-        if (runtime === undefined) {
-            return undefined;
-        }
-
-        const causes = causesByHandle.get(runtime.handle);
-        const seen = (status: SaveStatus): Seen => ({
-            state: status.state,
-            generation: runtime.handle.getSummary().session.generation,
-            key: keyOf(status, causes),
-        });
-        let previous = seen(runtime.handle.getSaveStatus());
-        let memory = QUIET;
-
-        return runtime.handle.subscribe('saveStatusChange', (status: SaveStatus) => {
-            const next = seen(status);
-            const [kept, announced] = announcementOf(memory, previous, next, causes?.committed() === true);
-            memory = kept;
-            previous = next;
-            if (announced !== null) {
-                announce(tRef.current(announced));
-            }
-        });
-    }, [runtime, announce]);
-    let text = '';
-    if (key !== null) {
-        text = t(key);
-    }
-
-    return (
-        <div className={styles.status} data-test-id={`${testId}-status`}>
-            {text}
-        </div>
-    );
 };

@@ -3,7 +3,7 @@
 import { isRecord } from '#/model';
 import { type EditorPort, nodeKindOf } from '#/runtime/port';
 
-import { type RichTextFormField } from '../formField';
+import { type RichTextFormField } from './formField';
 
 const VALID = { valid: true } as const;
 const EMPTY = { valid: false, reason: 'empty' } as const;

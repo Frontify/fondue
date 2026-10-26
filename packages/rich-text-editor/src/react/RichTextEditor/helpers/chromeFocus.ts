@@ -1,11 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type KeyboardEvent, type RefObject } from 'react';
+import { type KeyboardEvent } from 'react';
 
 import { escapePassed } from '#/bridge/overlays';
-import { type MountCoordinator } from '#/bridge/session/helpers/mount';
-import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
-import { type EditorPort, hasSurface, nodeChromeOf, passesToBrowser } from '#/runtime/port';
+import { hasSurface, nodeChromeOf, passesToBrowser, type EditorPort } from '#/runtime/port';
 import { pressesBinding } from '#/ui/helpers/shortcuts';
 
 type ChromeFocus = {
@@ -106,7 +104,11 @@ export const moveChromeFocus = (
 };
 
 /** Whether `target` is in the fixed toolbar or in node chrome of the editor at `root`, which Escape leaves for the surface. */
-const leavesToSurface = (target: EventTarget | null | undefined, toolbar: HTMLElement | null, root: HTMLElement) => {
+export const leavesToSurface = (
+    target: EventTarget | null | undefined,
+    toolbar: HTMLElement | null,
+    root: HTMLElement,
+) => {
     // A node of an iframe's document is no `Element` of this window.
     if (target === null || target === undefined || !('closest' in target)) {
         return false;
@@ -118,47 +120,4 @@ const leavesToSurface = (target: EventTarget | null | undefined, toolbar: HTMLEl
     }
 
     return root.contains(element) && element.closest('[data-rte-node-chrome]') !== null;
-};
-
-/**
- * Returns an Escape in the fixed toolbar or node chrome to the surface ahead of any page layer, such as a host `Dialog`
- * that would close on it, while no editor overlay, a tooltip included, is open to take it first.
- * The window's capture phase runs before Radix's capture listeners on the document.
- */
-export const useEscapeToSurface = (
-    rootRef: RefObject<HTMLElement | null>,
-    toolbarRef: RefObject<HTMLElement | null>,
-    overlayRootRef: RefObject<HTMLElement | null>,
-    coordinator: MountCoordinator,
-): void => {
-    useClientLayoutEffect(() => {
-        const root = rootRef.current;
-        const view = root?.ownerDocument.defaultView;
-        if (root === null || view === null || view === undefined) {
-            return undefined;
-        }
-
-        const onKeyDown = (event: globalThis.KeyboardEvent) => {
-            const overlays = overlayRootRef.current;
-            if (
-                event.key !== 'Escape' ||
-                passesToBrowser(event) ||
-                (overlays !== null && overlays.childElementCount > 0)
-            ) {
-                return;
-            }
-
-            if (!leavesToSurface(event.composedPath()[0], toolbarRef.current, root)) {
-                return;
-            }
-
-            event.stopPropagation();
-            event.preventDefault();
-            coordinator.runtime?.handle.focus();
-        };
-
-        view.addEventListener('keydown', onKeyDown, true);
-
-        return () => view.removeEventListener('keydown', onKeyDown, true);
-    }, [rootRef, toolbarRef, overlayRootRef, coordinator]);
 };

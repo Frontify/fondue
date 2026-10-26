@@ -53,7 +53,8 @@ export {
     type Snapshot,
 } from '#/persistence/types';
 export { defineEditor } from '#/react/compile/define';
-export { type RichTextFormField, useRichTextFormField } from '#/react/formField';
+export { type RichTextFormField } from '#/react/helpers/formField';
+export { useRichTextFormField } from '#/react/hooks/useRichTextFormField';
 export { useEditorHandle } from '#/react/hooks/useEditorHandle';
 export { RichTextEditor } from '#/react/RichTextEditor/RichTextEditor';
 export {

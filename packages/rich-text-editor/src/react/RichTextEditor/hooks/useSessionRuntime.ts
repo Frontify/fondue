@@ -28,12 +28,12 @@ import {
 } from '#/runtime/port';
 
 import { engineOf, profileOf, viewsOf } from '../../compile/compileEditor';
-import { registerFormField } from '../../formField';
+import { registerFormField } from '../../helpers/formField';
 import { validityOf } from '../../helpers/validity';
-import { registerSaveCauses } from '../../status';
 import { type EditorHandle } from '../../types';
 import { pickAsset } from '../helpers/assetPicker';
 import { backgroundOf, columnsAtMount, memberOf, modeOf, shellPropsOf } from '../helpers/sessionHelpers';
+import { registerSaveCauses } from '../helpers/status';
 import { uploadMessage } from '../helpers/uploadMessages';
 import { type Mounted, type RecoverySession, type SessionRest } from '../types';
 

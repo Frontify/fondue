@@ -6,22 +6,26 @@ import { useOverlayRoot } from '#/bridge/overlays/hooks/useOverlayRoot';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import { type EditorPort, resyncSelectionOf } from '#/runtime/port';
 
-import { useEscapeToSurface } from '../../chromeFocus';
-import { SessionFrame, SessionProviders } from '../../session/Frame';
-import { useRootContext } from '../../session/rootContext';
-import { chromeKeyDownOf, useChrome, useOverlayValues, useSessionRefs, useToolbarMode } from '../../session/useChrome';
-import { BlockedShell, RecoveryShell } from '../../Shells';
 import { type EditorHandle } from '../../types';
+import { chromeKeyDownOf } from '../helpers/chromeKeyDownOf';
 import { shellPropsOf } from '../helpers/sessionHelpers';
+import { useChrome, useOverlayValues, useSessionRefs, useToolbarMode } from '../hooks/useChrome';
 import { useColumns } from '../hooks/useColumns';
+import { useEscapeToSurface } from '../hooks/useEscapeToSurface';
 import { useKeyboardInset } from '../hooks/useKeyboardInset';
 import { useMountState } from '../hooks/useMountState';
 import { usePanels } from '../hooks/usePanels';
+import { useRootContext } from '../hooks/useRoot';
 import { useSessionHosts } from '../hooks/useSessionHosts';
 import { useSessionRuntime } from '../hooks/useSessionRuntime';
 import { useChangeWatch, usePresentationSync } from '../hooks/useSync';
 import { useUnloadGuard } from '../hooks/useUnloadGuard';
 import { type SessionProps } from '../types';
+
+import { BlockedShell } from './BlockedShell';
+import { RecoveryShell } from './RecoveryShell';
+import { SessionFrame } from './SessionFrame';
+import { SessionProviders } from './SessionProviders';
 
 const SessionComponent = (
     { children, onSession, onRetry, retried, ...props }: SessionProps,

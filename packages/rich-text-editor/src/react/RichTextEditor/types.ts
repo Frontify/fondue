@@ -1,18 +1,34 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type MutableRefObject, type ReactNode } from 'react';
+import { type ComponentType, type KeyboardEventHandler, type MutableRefObject, type ReactNode } from 'react';
 
+import { type Announcer } from '#/bridge/announcer';
+import { type ReactWork } from '#/bridge/devChecks';
+import { type PortalStore } from '#/bridge/nodeViews/helpers/portals';
+import { type EditorHosts } from '#/bridge/plugin';
 import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 import { type TurnIntoEntry } from '#/bridge/turnInto';
-import { type CapabilityRef, type DecodeResult } from '#/model';
+import {
+    type CapabilityRef,
+    type ContentModel,
+    type DecodeResult,
+    type ResourceLimits,
+    type RichTextLocale,
+} from '#/model';
 import { type TreeNode } from '#/model/internal';
 import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
 import { type readerContext } from '#/reader/helpers/context';
+import { type ReaderOverrides } from '#/reader/helpers/plan';
 import { type ReaderPresentation } from '#/reader/ReaderWith/ReaderWith';
-import { type RuntimeHandle } from '#/runtime/port';
+import { type EditorPort, type RuntimeHandle } from '#/runtime/port';
 import { type ToolbarItem, type ToolbarStrings } from '#/ui/helpers/items';
+import { type PanelController } from '#/ui/helpers/panelContext';
+import { type referenceListStrings } from '#/ui/LazySuggestionList/helpers/referenceStrings';
 
 import { type CompiledEditorDefinition, type Defined, type Props, type ToolbarMode } from '../types';
+
+import { type PluginOverlay } from './hooks/usePluginHosts';
+import { type Choosing } from './hooks/useSessionRuntime';
 
 export type { Defined, Props };
 export const DEFAULT_TEST_ID = 'fondue-rich-text-editor';
@@ -117,3 +133,50 @@ export type SessionProps = Defined & {
 
 /** The session's props that stay when its own parts are taken out: the host's, and what Retry hands on. */
 export type SessionRest = Defined & Pick<SessionProps, 'unsavedOnMount' | 'carried'>;
+
+export type ChromeContext = ReturnType<typeof readerContext>;
+
+export type Standing = {
+    key: string;
+    component: ComponentType<{ toolbarRef: (element: HTMLElement | null) => void; covered: boolean }>;
+    toolbarRef: (element: HTMLElement | null) => void;
+};
+
+export type FrameProps = {
+    rootRef: MutableRefObject<HTMLDivElement | null>;
+    lang: string;
+    testId: string;
+    live: EditorPort | undefined;
+    coordinator: MountCoordinator;
+    onKeyDown: KeyboardEventHandler<HTMLDivElement>;
+    work: ReactWork | undefined;
+    announcer: Announcer;
+    panelState: PanelController;
+    toolbarMode: ToolbarMode;
+    chrome: Chrome;
+    disabled: boolean;
+    portals: PortalStore;
+    chromeContext: ChromeContext;
+    onFlush: () => void;
+    referenceStrings: ReturnType<typeof referenceListStrings>;
+    standing: readonly Standing[];
+    pluginOverlay: PluginOverlay | undefined;
+    hosts: EditorHosts;
+    choosesFiles: boolean;
+    chooserRef: MutableRefObject<HTMLInputElement | null>;
+    choosingRef: MutableRefObject<Choosing | undefined>;
+    overlayRootElement: ReactNode;
+    children: ReactNode;
+};
+
+/** What both shells read the document with, in place of the editor. */
+export type ShellProps = {
+    model: ContentModel;
+    /** The definition's reader overrides, so the shells load no reader of a feature the definition does not install. */
+    readers: ReaderOverrides;
+    /** The definition's limits, which a host may have loosened. */
+    limits: ResourceLimits;
+    presentation: ReaderPresentation;
+    locale: RichTextLocale;
+    testId: string;
+};

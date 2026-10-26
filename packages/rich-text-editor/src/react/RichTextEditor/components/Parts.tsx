@@ -16,13 +16,13 @@ import { usePanelController } from '#/ui/hooks/usePanelController';
 import { FixedToolbar } from '#/ui/Toolbar/Toolbar';
 
 import { panelsOf, profileOf } from '../../compile/compileEditor';
-import { useRoot } from '../../session/rootContext';
-import { SaveStatusText } from '../../status';
 import { type CompiledEditorDefinition } from '../../types';
 import { toolbarShortcutOf } from '../helpers/sessionHelpers';
+import { useRoot } from '../hooks/useRoot';
 import { type Chrome, DEFAULT_TEST_ID } from '../types';
 
 import { PanelFrame } from './PanelFrame';
+import { SaveStatusText } from './SaveStatusText';
 
 const BubbleToolbar = lazyPart(() => import('#/ui/BubbleToolbar/BubbleToolbar').then((loaded) => loaded.BubbleToolbar));
 

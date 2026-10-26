@@ -6,15 +6,15 @@ import '#/styles/content.css';
 import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
 import { type ShippedCommands } from '#/runtime/port';
 
-import { useEditorLocale } from '../locale';
 import { useCoarsePointer, useProfile } from '../profiles';
-import { RecoveryShell } from '../Shells';
 import { type Defined, type EditorHandle, type RichTextEditorProps, type RichTextProfile } from '../types';
 
 import { LoadingShell } from './components/LoadingShell';
 import { BubbleToolbarPart, Panels, Status, Surface, Toolbar } from './components/Parts';
+import { RecoveryShell } from './components/RecoveryShell';
 import { Session } from './components/Session';
 import { shellPropsOf } from './helpers/sessionHelpers';
+import { useEditorLocale } from './hooks/useEditorLocale';
 import { DEFAULT_TEST_ID, type Props, type RecoverySession } from './types';
 
 export type RecoveryProps = {
