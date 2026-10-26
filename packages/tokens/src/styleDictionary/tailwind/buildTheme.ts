@@ -75,10 +75,13 @@ const getTheme = (dictionary: Dictionary) => {
             tokens,
         }),
 
-        lineHeight: getObject({
-            identifier: ['typography', 'line-height'],
-            tokens,
-        }),
+        lineHeight: {
+            ...getObject({
+                identifier: ['typography', 'line-height'],
+                tokens,
+            }),
+            none: '1',
+        },
 
         borderRadius: {
             ...getObject({
@@ -86,19 +89,24 @@ const getTheme = (dictionary: Dictionary) => {
                 tokens,
             }),
             DEFAULT: 'var(--border-radius-medium)',
+            none: '0px',
             full: '9999px',
         },
 
-        borderWidth: getObject({
-            identifier: ['border-width'],
-            tokens,
-        }),
+        borderWidth: {
+            ...getObject({
+                identifier: ['border-width'],
+                tokens,
+            }),
+            0: '0px',
+        },
 
         outlineColor: {
             DEFAULT: 'var(--color-focus-default)',
         },
         outlineWidth: {
             DEFAULT: '4px',
+            0: '0px',
         },
         outlineOffset: { DEFAULT: '2px' },
 
