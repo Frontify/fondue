@@ -48,6 +48,7 @@ export const vocabularyOf = (model: ContentModel): Vocabulary => {
         };
         vocabularies.set(model, vocabulary);
     }
+
     return vocabulary;
 };
 
@@ -67,8 +68,10 @@ export const warn = (context: Context, code: FormatDiagnosticCode, path: string)
 
 export const islandOf = (type: string, original: unknown): TreeNode => {
     const feature = isRecord(original) && typeof original.type === 'string' ? original.type : null;
+
     return { type, attrs: { original, feature, unknownAttributes: null } };
 };
+
 export const markIslandOf = (original: unknown): TreeMark => ({
     type: ISLAND_MARK,
     attrs: { original, unknownAttributes: null },
@@ -79,12 +82,14 @@ const takes = (vocabulary: Vocabulary, term: string, type: string): boolean => {
     if (vocabulary.nodes.has(term)) {
         return term === type;
     }
+
     let group: string | undefined = vocabulary.nodes.get(type)?.declaration.group;
     if (type === ISLAND_BLOCK) {
         group = 'block';
     } else if (type === ISLAND_INLINE) {
         group = 'inline';
     }
+
     return term === 'section' ? group === 'block' || group === 'section' : term === group;
 };
 
@@ -99,5 +104,6 @@ export const placeIsland = (vocabulary: Vocabulary, match: ContentMatch, origina
             return { match: next, node: islandOf(type, original) };
         }
     }
+
     return undefined;
 };

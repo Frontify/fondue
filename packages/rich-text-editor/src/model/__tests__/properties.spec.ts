@@ -78,8 +78,10 @@ const FEATURES: Readonly<Record<string, string>> = {
 
 const marksArb = fc.subarray([...MARKS.keys()]).map((indices) => {
     const chosen = indices.filter((index, position) => !(index === 9 && indices[position - 1] === 8));
+
     return chosen.map((index): Json => {
         const [type, attrs] = MARKS[index] ?? ['bold'];
+
         return attrs === undefined ? { type } : { type, attrs };
     });
 });
@@ -136,11 +138,13 @@ const canonicalize = (root: Json): Json => {
         if (typeof value !== 'object' || value === null || Array.isArray(value)) {
             return value;
         }
+
         const node = { ...(value as Node_) };
         if (typeof node.attrs === 'object' && node.attrs !== null && 'nodeId' in node.attrs) {
             next += 1;
             node.attrs = { ...node.attrs, nodeId: `n${next}` };
         }
+
         if (Array.isArray(node.content)) {
             const joined: Node_[] = [];
             for (const child of node.content.map(visit) as Node_[]) {
@@ -159,12 +163,16 @@ const canonicalize = (root: Json): Json => {
                     joined.push(child);
                 }
             }
+
             node.content = joined;
         }
+
         return node;
     };
+
     return visit(root);
 };
+
 const documentArb = fc.array(blockArb, { minLength: 1, maxLength: 4 }).map((content) => canonicalize(doc(...content)));
 
 /** Omits default attributes, reverses marks and splits texts: the normalizations decode accepts and encoding undoes. */
@@ -172,17 +180,21 @@ const denormalize = (value: Json): Json => {
     if (typeof value !== 'object' || value === null || Array.isArray(value)) {
         return value;
     }
+
     const node = { ...(value as Node_) };
     if (node.type === 'paragraph') {
         delete node.attrs;
     }
+
     if (Array.isArray(node.marks)) {
         node.marks = [...(node.marks as readonly Json[])].reverse();
     }
+
     if (Array.isArray(node.content)) {
         node.content = (node.content as readonly Json[]).flatMap((child) => {
             const copy = denormalize(child) as Node_;
             const chars = typeof copy.text === 'string' ? [...copy.text] : [];
+
             return copy.type === 'text' && chars.length > 1
                 ? [
                       { ...copy, text: chars[0] ?? '' },
@@ -193,12 +205,14 @@ const denormalize = (value: Json): Json => {
     } else if (node.type === 'paragraph') {
         node.content = [];
     }
+
     return node;
 };
 
 const encodedOf = (input: unknown) => {
     const { result, tree } = decodeToTree(input, model);
     const stored = (input as RichTextDocument).requiredCapabilities;
+
     return { result, document: tree === undefined ? undefined : encodeTree(tree, model, stored).document };
 };
 
@@ -250,25 +264,31 @@ describe(seeded('round trips'), () => {
             if (typeof value !== 'object' || value === null) {
                 return used;
             }
+
             for (const item of Array.isArray(value) ? value : [value]) {
                 const node = item as Node_;
                 const feature = typeof node.type === 'string' ? FEATURES[node.type] : undefined;
                 if (feature !== undefined) {
                     used.add(feature);
                 }
+
                 if (node.type === 'heading') {
                     used.add('fixture.align');
                 }
+
                 for (const markJson of (Array.isArray(node.marks) ? node.marks : []) as Node_[]) {
                     const entry = MARKS.find(([type]) => type === markJson.type);
                     used.add(entry === undefined ? '' : entry[2]);
                 }
+
                 if (Array.isArray(node.content)) {
                     usedBy(node.content, used);
                 }
             }
+
             return used;
         };
+
         fc.assert(
             fc.property(documentArb, (content) => {
                 const { document } = encodedOf(envelope(content, ['core', 'fixture.lists']));
@@ -393,6 +413,7 @@ const tableArb = fc
     );
 const engineTable = (node: TreeNode): unknown => {
     const attrs = node.attrs ?? {};
+
     return {
         type: node.type,
         attrs:
@@ -431,16 +452,21 @@ describe(seeded('decode never throws'), () => {
             if (position - 1 === index) {
                 return replacement;
             }
+
             if (Array.isArray(current)) {
                 return current.map(visit);
             }
+
             if (typeof current === 'object' && current !== null) {
                 return Object.fromEntries(Object.entries(current).map(([key, item]) => [key, visit(item)]));
             }
+
             return current;
         };
+
         return visit(value);
     };
+
     const decodes = (input: unknown) => {
         const result = decodeDocument(input, model);
         expect(['editable', 'blocked']).toContain(result.status);

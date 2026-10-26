@@ -14,8 +14,10 @@ export const failureOf = (run: () => unknown) => {
         if (error instanceof DefinitionError) {
             return { code: error.code, details: error.details };
         }
+
         throw error;
     }
+
     throw new Error('expected a DefinitionError');
 };
 

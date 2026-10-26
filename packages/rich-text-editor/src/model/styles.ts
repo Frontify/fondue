@@ -76,10 +76,12 @@ const cssProperty = (name: string): string | undefined => {
     if (!PROPERTY.test(name) || name === 'hover') {
         return undefined;
     }
+
     let property = name.replaceAll(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
     if (name.startsWith('ms')) {
         property = `-${property}`;
     }
+
     return property;
 };
 
@@ -92,8 +94,10 @@ const balanced = (value: string): boolean => {
             if (char === quote) {
                 quote = undefined;
             }
+
             continue;
         }
+
         if (char === '"' || char === "'") {
             quote = char;
         } else if (char === '(') {
@@ -105,15 +109,18 @@ const balanced = (value: string): boolean => {
             }
         }
     }
+
     if (quote !== undefined || depth !== 0) {
         return false;
     }
+
     const unquoted = value.replaceAll(/"[^"]*"|'[^']*'/g, '');
     for (const [, name] of unquoted.matchAll(/([\w-]*)\(/g)) {
         if (name === undefined || !FUNCTIONS.has(name.toLowerCase())) {
             return false;
         }
     }
+
     return !unquoted.includes('!');
 };
 
@@ -123,18 +130,23 @@ export const cssValue = (property: string, value: unknown): string | undefined =
         if (!Number.isFinite(value)) {
             return undefined;
         }
+
         if (value === 0 || UNITLESS.has(property)) {
             return String(value);
         }
+
         return `${value}px`;
     }
+
     if (typeof value !== 'string') {
         return undefined;
     }
+
     const text = value.trim();
     if (text === '' || !VALUE.test(text) || text.includes('/*') || !balanced(text)) {
         return undefined;
     }
+
     return text;
 };
 
@@ -157,6 +169,7 @@ const allowed = (property: string, text: string): boolean => {
     if (PLACING.has(unprefixed)) {
         return false;
     }
+
     return !MARGIN.test(unprefixed) || NON_NEGATIVE.test(text);
 };
 
@@ -170,6 +183,7 @@ const entriesOf = (recipe: object): [string, string, string][] => {
             entries.push([name, property, text]);
         }
     }
+
     return entries;
 };
 
@@ -185,11 +199,14 @@ const resolved = (recipe: StyleRecipe, link: boolean): ResolvedStyle => {
         declarations = declarations.filter(([property]) => property !== 'text-decoration-line');
         declarations.push(['text-decoration-line', 'underline']);
     }
+
     let hover: [string, string][] = [];
     if (typeof recipe.hover === 'object' && recipe.hover !== null) {
         hover = declarationsOf(recipe.hover);
     }
+
     const key = JSON.stringify([declarations, hover]);
+
     return { className: `${CLASS_PREFIX}${sha256(key).slice(0, 12)}`, declarations, hover };
 };
 
@@ -224,16 +241,20 @@ export const resolveStyle = (
         if (found !== undefined) {
             return { style: resolved(found.recipe, link), unknown };
         }
+
         unknown = true;
     }
+
     const defaultId = ownValue(DEFAULT_STYLE_IDS, target);
     let fallback: PresentationStyle | undefined;
     if (defaultId !== undefined) {
         fallback = usable(styles, defaultId);
     }
+
     if (fallback === undefined) {
         return { style: undefined, unknown };
     }
+
     return { style: resolved(fallback.recipe, link), unknown };
 };
 
@@ -250,18 +271,22 @@ export const styleSheetOf = (styles: readonly PresentationStyle[]): string => {
         if (!isPresentationStyle(style) || style.deprecated === true) {
             continue;
         }
+
         for (const link of [false, true]) {
             const { className, declarations, hover } = resolved(style.recipe, link);
             if (rules.has(className)) {
                 continue;
             }
+
             let css = `.${className}{${block(declarations)}}`;
             if (hover.length > 0) {
                 css += `.${className}:hover{${block(hover)}}`;
             }
+
             rules.set(className, css);
         }
     }
+
     return [...rules.values()].join('\n');
 };
 
@@ -273,12 +298,15 @@ export const colorOf = (
     if (typeof attrs.value === 'string') {
         return cssValue('color', attrs.value);
     }
+
     if (typeof attrs.tokenId !== 'string') {
         return undefined;
     }
+
     const token = tokens.find(({ id }) => id === attrs.tokenId);
     if (token === undefined) {
         return undefined;
     }
+
     return cssValue('color', token.value);
 };

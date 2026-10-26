@@ -17,18 +17,23 @@ const quantifierOf = (token: string | undefined) => {
     if (token === '?') {
         return { min: 0, max: 1, copies: 1 };
     }
+
     if (token === '*' || token === '+') {
         return { min: token === '*' ? 0 : 1, max: Infinity, copies: 1 };
     }
+
     const range = token === undefined ? null : RANGE.exec(token);
     if (range === null) {
         return undefined;
     }
+
     const min = Number(range[1]);
     if (range[2] === undefined || range[2] === '') {
         return { min, max: range[2] === undefined ? min : Infinity, copies: min };
     }
+
     const max = Number(range[2]);
+
     return max >= min ? { min, max, copies: max } : undefined;
 };
 
@@ -39,6 +44,7 @@ const parse = (source: string): { readonly expression: Expression; readonly name
     if (tokens === null) {
         return { expression: { kind: 'sequence', items: [] }, names: [] };
     }
+
     const names: string[] = [];
     let index = 0;
     let depth = 0;
@@ -49,6 +55,7 @@ const parse = (source: string): { readonly expression: Expression; readonly name
         if (first === undefined) {
             return undefined;
         }
+
         const options = [first.expression];
         let widest = first.widest;
         while (tokens[index] === '|') {
@@ -57,11 +64,14 @@ const parse = (source: string): { readonly expression: Expression; readonly name
             if (next === undefined) {
                 return undefined;
             }
+
             options.push(next.expression);
             widest = Math.max(widest, next.widest);
         }
+
         return { expression: options.length === 1 ? first.expression : { kind: 'choice', options }, widest };
     };
+
     const parseSequence = (): Parsed | undefined => {
         const items: Expression[] = [];
         let widest = 0;
@@ -80,28 +90,34 @@ const parse = (source: string): { readonly expression: Expression; readonly name
                 if (inner === undefined || tokens[index] !== ')') {
                     return undefined;
                 }
+
                 index += 1;
                 item = inner.expression;
                 repeat = inner.widest;
             } else {
                 names.push(token);
             }
+
             const quantifier = quantifierOf(tokens[index]);
             if (quantifier !== undefined) {
                 index += 1;
                 repeat *= quantifier.copies;
                 item = { kind: 'repeat', item, min: quantifier.min, max: quantifier.max };
             }
+
             if (repeat > MAX_REPEAT) {
                 return undefined;
             }
+
             widest = Math.max(widest, repeat);
             items.push(item);
         }
+
         return items.length > 0 ? { expression: { kind: 'sequence', items }, widest } : undefined;
     };
 
     const parsed = parseChoice();
+
     return parsed !== undefined && index === tokens.length ? { expression: parsed.expression, names } : undefined;
 };
 
@@ -115,6 +131,7 @@ export const contentNames = (expression: string): readonly string[] | undefined 
     if (expression.trim() === '') {
         return undefined;
     }
+
     return parse(expression)?.names;
 };
 
@@ -138,8 +155,10 @@ const build = (expression: Expression): Automaton => {
             case 'name': {
                 const to = state();
                 link(from, to, part.name);
+
                 return to;
             }
+
             case 'sequence':
                 return part.items.reduce((at, item) => add(item, at), from);
             case 'choice': {
@@ -147,29 +166,37 @@ const build = (expression: Expression): Automaton => {
                 for (const option of part.options) {
                     link(add(option, from), end);
                 }
+
                 return end;
             }
+
             case 'repeat': {
                 let at = from;
                 for (let copy = 0; copy < part.min; copy += 1) {
                     at = add(part.item, at);
                 }
+
                 const end = state();
                 if (part.max === Infinity) {
                     link(at, end);
                     link(add(part.item, end), end);
+
                     return end;
                 }
+
                 link(at, end);
                 for (let copy = part.min; copy < part.max; copy += 1) {
                     at = add(part.item, at);
                     link(at, end);
                 }
+
                 return end;
             }
         }
     };
+
     const accept = add(expression, 0);
+
     return { edges, accept };
 };
 
@@ -182,6 +209,7 @@ const automatonOf = (expression: string): Automaton | undefined => {
         automaton = parsed === undefined ? null : build(parsed.expression);
         automata.set(expression, automaton);
     }
+
     return automaton ?? undefined;
 };
 
@@ -196,6 +224,7 @@ const closure = (automaton: Automaton, states: readonly number[]): number[] => {
             }
         }
     }
+
     return [...reached];
 };
 
@@ -205,6 +234,7 @@ export type ContentMatch = { readonly expression: string; readonly states: reado
 /** The match before the first child; a missing expression, a leaf, accepts no child. */
 export const startMatch = (expression = ''): ContentMatch => {
     const automaton = automatonOf(expression);
+
     return { expression, states: automaton === undefined ? [] : closure(automaton, [0]) };
 };
 
@@ -214,6 +244,7 @@ export const advanceMatch = (match: ContentMatch, accepts: (term: string) => boo
     if (automaton === undefined) {
         return { expression: match.expression, states: [] };
     }
+
     const next: number[] = [];
     for (const state of match.states) {
         for (const edge of automaton.edges[state] ?? []) {
@@ -222,11 +253,13 @@ export const advanceMatch = (match: ContentMatch, accepts: (term: string) => boo
             }
         }
     }
+
     return { expression: match.expression, states: closure(automaton, next) };
 };
 
 /** Whether the children so far complete the expression. */
 export const matchEnds = (match: ContentMatch): boolean => {
     const automaton = automatonOf(match.expression);
+
     return automaton !== undefined && match.states.includes(automaton.accept);
 };

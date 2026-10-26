@@ -71,6 +71,7 @@ const merge = (into: Capabilities, from: Capabilities, add = true): Capabilities
             versions.set(id, Math.max(version, known ?? version));
         }
     }
+
     return [...versions.keys()].sort().map((id) => ({ id, version: versions.get(id) ?? 0 }));
 };
 
@@ -92,11 +93,13 @@ export const runMigrations = (
     const queue = (steps: readonly ModelMigration[] = [], from: number, to: number) => {
         plan.push(...steps.filter((step) => step.from >= from && step.from < to).sort((a, b) => a.from - b.from));
     };
+
     for (const { id, version, declaration } of compiled.features) {
         const from = recorded.get(id) ?? version;
         older ||= from < version;
         queue(declaration.migrations, from, version);
     }
+
     queue(compiled.migrations, document.model.version, model.ref.version);
 
     const diagnostics: Diagnostic[] = [];
@@ -117,22 +120,28 @@ export const runMigrations = (
         const block = (cause?: string) => {
             const details: JsonObject = cause === undefined ? { step: step.id } : { step: step.id, cause };
             diagnostics.push(diagnostic('migration.unsupported', undefined, details, 'error'));
+
             return outcome(null);
         };
+
         try {
             const result = step.migrate(current, { generateId });
             if (result.status === 'unsupported') {
                 diagnostics.push(...result.diagnostics);
+
                 return result.diagnostics.length > 0 ? outcome(null) : block();
             }
+
             const read = readInput(result.document, limits);
             if (!read.ok) {
                 return block(read.diagnostic.code);
             }
+
             const { content, requiredCapabilities } = read.value as RichTextDocument;
             if (!isRoot(content)) {
                 return block('format.envelope-invalid');
             }
+
             // A step only adds capabilities, since content of a dropped one may survive as an island.
             const kept = merge(
                 current.requiredCapabilities,
@@ -142,26 +151,32 @@ export const runMigrations = (
             if ([...review].some(([path, json]) => jsonAt(next, path) !== json)) {
                 return block();
             }
+
             if (result.status === 'requires-review') {
                 reviewing = true;
                 for (const { path } of result.diagnostics) {
                     if (path === undefined || !NODE_PATH.test(path) || valueAt(next, path) === undefined) {
                         return block();
                     }
+
                     review.set(path, jsonAt(next, path));
                 }
+
                 diagnostics.push(...result.diagnostics);
             } else if (result.status !== 'migrated') {
                 return block();
             }
+
             current = next;
         } catch {
             return block();
         }
     }
+
     if (!older) {
         return outcome(document);
     }
+
     return outcome({
         ...current,
         model: { ...model.ref },
@@ -180,6 +195,7 @@ type ViteImportMeta = ImportMeta & {
 export const packageVersionOf = (): string => {
     // A static JSON import would move the declaration root out of `src`, so Vite's glob import reads the version.
     const found = (import.meta as ViteImportMeta).glob('../../package.json', { eager: true, import: 'version' });
+
     return Object.values(found)[0] ?? '';
 };
 
@@ -212,11 +228,13 @@ export const migrateDocument = (
     } else if (migrated.reviewing) {
         status = 'requires-review';
     }
+
     const result = status === 'current' ? document : migrated.document;
     const counts: Record<string, number> = {};
     for (const { code } of migrated.diagnostics) {
         counts[code] = (counts[code] ?? 0) + 1;
     }
+
     return {
         status,
         document: result,

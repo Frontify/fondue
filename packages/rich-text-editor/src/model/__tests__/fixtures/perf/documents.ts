@@ -67,7 +67,9 @@ const wordsOf = (seed: number, length: number): string => {
     for (let index = 0; value.length <= length; index += 1) {
         value += `${WORDS[(seed * 7 + index * 13) % WORDS.length]} `;
     }
+
     value = value.slice(0, length);
+
     // Whitespace at a run's edge would merge or trim, so the edge letters stay letters.
     return value.replace(/^ /, 'a').replace(/ $/, 'a');
 };
@@ -87,10 +89,12 @@ const PLAIN: Run = [];
 /** `total` split over `count` parts, the last taking the remainder, so the parts add up to `total`. */
 const shares = (total: number, count: number): number[] => {
     const each = Math.floor(total / count);
+
     return Array.from({ length: count }, (_, index) => {
         if (index === count - 1) {
             return total - each * (count - 1);
         }
+
         return each;
     });
 };
@@ -103,6 +107,7 @@ const runsOf = (seed: number, total: number, marks: readonly Run[]): ContentNode
         if (run.length === 0) {
             return { type: 'text', text: value } as ContentNodeJSON;
         }
+
         return { type: 'text', text: value, marks: [...run] } as ContentNodeJSON;
     });
 
@@ -112,12 +117,14 @@ const alternating = (count: number, mark: MarkJSON): readonly Run[] =>
         if (index % 2 === 0) {
             return PLAIN;
         }
+
         return [mark];
     });
 
 let identity = 0;
 const nextId = (kind: string) => {
     identity += 1;
+
     return `${kind}-${identity}`;
 };
 
@@ -214,6 +221,7 @@ const PATTERNS = {
         const nested = bullet(items(seed + 5, Math.floor(total / 3), 2, 1));
         const first = item([paragraph(runsOf(seed, Math.floor(total / 3), alternating(2, BOLD))), nested]);
         const rest = items(seed + 9, total - 2 * Math.floor(total / 3), 2, 2);
+
         return bullet([first, ...rest]);
     },
     ordered: (seed, total) => ordered(items(seed, total, 3, 2)),
@@ -262,6 +270,7 @@ const LARGE_CYCLE: Cycle = [
 
 const cycled = (cycle: Cycle, times: number): ContentNodeJSON[] => {
     identity = 0;
+
     return Array.from({ length: times }, (_, round) =>
         cycle.map(([name, total, runs], index) => PATTERNS[name](round * 31 + index, total, runs)),
     ).flat();
@@ -270,13 +279,16 @@ const cycled = (cycle: Cycle, times: number): ContentNodeJSON[] => {
 /** `small`: a Comment document of 2,000 graphemes in 20 blocks with marks, links and 5 mentions. */
 const smallBlocks = (): ContentNodeJSON[] => {
     identity = 0;
+
     return Array.from({ length: 20 }, (_, index) => {
         if (index < 5) {
             return PATTERNS.mention(index, 100);
         }
+
         if (index % 4 === 0) {
             return PATTERNS.link(index, 100);
         }
+
         return PATTERNS.marked(index, 100);
     });
 };
@@ -295,12 +307,14 @@ const wordsBlocks = (): ContentNodeJSON[] => {
                 { type: 'text', text: ` ${fifty(30, 20)}` } as ContentNodeJSON,
             ]);
         }
+
         return bullet(
             Array.from({ length: 5 }, (_, entry) =>
                 item([paragraph([{ type: 'text', text: fifty(entry * 10, 10) } as ContentNodeJSON])]),
             ),
         );
     };
+
     return Array.from({ length: 200 }, (_, index) => block(index, index % 4 === 3 ? 'list' : 'paragraph'));
 };
 
@@ -309,12 +323,15 @@ export const perfBlocks = (name: PerfFixtureName): ContentNodeJSON[] => {
     if (name === 'small') {
         return smallBlocks();
     }
+
     if (name === 'typical') {
         return cycled(TYPICAL_CYCLE, 20);
     }
+
     if (name === 'large') {
         return cycled(LARGE_CYCLE, 100);
     }
+
     return wordsBlocks();
 };
 

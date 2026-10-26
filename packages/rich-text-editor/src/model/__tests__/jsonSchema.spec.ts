@@ -57,6 +57,7 @@ const merge = (target: Json, changes: Readonly<Record<string, Json | undefined>>
             next[key] = value;
         }
     }
+
     return next;
 };
 
@@ -80,8 +81,10 @@ const walk = (value: Json, visit: (found: Record_) => void) => {
         }
     }
 };
+
 const objectsIn = (value: Json, found: Record_[] = []) => {
     walk(value, (item) => found.push(item));
+
     return found;
 };
 
@@ -217,12 +220,14 @@ const sample = (declaration: ValueDeclaration): Json => {
             return { a: 1 };
     }
 };
+
 const outside = (declaration: ValueDeclaration): Json | undefined => {
     switch (declaration.type) {
         case 'string':
             if (declaration.maxLength !== undefined) {
                 return 'x'.repeat(declaration.maxLength + 1);
             }
+
             return declaration.minLength ? '' : 5;
         case 'url':
             return 'x'.repeat(2049);
@@ -237,9 +242,11 @@ const outside = (declaration: ValueDeclaration): Json | undefined => {
             if (declaration.min !== undefined) {
                 return declaration.min - 1;
             }
+
             if (declaration.max !== undefined) {
                 return declaration.max + 1;
             }
+
             return declaration.type === 'integer' ? 1.5 : 'x';
         case 'boolean':
             return 'yes';
@@ -249,9 +256,12 @@ const outside = (declaration: ValueDeclaration): Json | undefined => {
             if (declaration.maxItems !== undefined) {
                 return Array.from({ length: declaration.maxItems + 1 }, () => sample(declaration.items));
             }
+
             const item = outside(declaration.items);
+
             return item === undefined ? 'not a list' : [item];
         }
+
         case 'json':
             return declaration.nullable ? undefined : null;
     }
@@ -262,11 +272,14 @@ const declarationOf = (feature: Feature) => {
     if (internals === undefined) {
         throw new Error('not a feature');
     }
+
     return internals.declaration;
 };
+
 /** The nodes, then the marks, that a feature declares. */
 const membersOf = (feature: Feature) => {
     const { nodes = {}, marks = {} } = declarationOf(feature);
+
     return [...Object.entries(nodes), ...Object.entries(marks)];
 };
 
@@ -285,8 +298,10 @@ const faultsOf = (
     const entries = Object.entries(attrs);
     const valueOf = (name: string): Json => {
         const declaration = attrs[name];
+
         return declaration === undefined ? null : sample(declaration);
     };
+
     /** Every attribute valid, and of the `exactlyOne` names only `keep` set. */
     const valid = (keep?: string) =>
         Object.fromEntries(
@@ -304,16 +319,19 @@ const faultsOf = (
         } else {
             expect(run({ ...alone, [name]: bad }), `${type}.${name} = ${JSON.stringify(bad).slice(0, 20)}`).toBe(false);
         }
+
         if (!('default' in declaration)) {
             const rest = Object.fromEntries(Object.entries(alone).filter(([key]) => key !== name));
             expect(run(rest), `${type} without ${name}`).toBe(false);
         }
     }
+
     if (exactlyOne.length > 0) {
         const all = Object.fromEntries(entries.map(([name]) => [name, valueOf(name)]));
         expect(run(valid()), `${type} none set`).toBe(false);
         expect(run(all), `${type} all set`).toBe(false);
     }
+
     return misses;
 };
 
@@ -325,17 +343,21 @@ describe('toJsonSchema of a model, attribute by attribute', () => {
         checker.addSchema(schema, 'model');
         const defOf = (prefix: string) => {
             const key = Object.keys(defs).find((name) => name === prefix || name.startsWith(`${prefix}@`));
+
             return checker.getSchema(`model#/$defs/${encodeURIComponent(key ?? prefix)}`) as ValidateFunction;
         };
+
         let checked = 0;
         for (const entry of compiled.nodes.filter(({ name }) => name !== 'text')) {
             faultsOf(defOf(`n.${entry.name}`), entry.name, attributesOf(entry), entry.declaration.exactlyOne);
             checked += 1;
         }
+
         for (const entry of compiled.marks) {
             faultsOf(defOf(`m.${entry.name}`), entry.name, entry.declaration.attrs, entry.declaration.exactlyOne);
             checked += 1;
         }
+
         expect(checked).toBe(compiled.nodes.length - 1 + compiled.marks.length);
     });
 });
@@ -493,12 +515,14 @@ describe('toJsonSchema of a feature', () => {
                     const kept = Object.entries(given).filter(([key]) => own.includes(key));
                     fixtures.push(merge(found, { attrs: own.length === 0 ? undefined : Object.fromEntries(kept) }));
                 }
+
                 for (const fixture of fixtures) {
                     const shown = `${name} ${JSON.stringify(fixture).slice(0, 80)} ${JSON.stringify(check.errors)}`;
                     expect(check(fixture), shown).toBe(true);
                     validated += 1;
                 }
             }
+
             expect(validated).toBeGreaterThanOrEqual(membersOf(feature).length);
         },
     );
@@ -511,6 +535,7 @@ describe('toJsonSchema of a feature', () => {
             for (const [name, member] of membersOf(feature).filter(([name]) => name !== 'text')) {
                 skipped.push(...faultsOf(check, name, member.attrs, member.exactlyOne));
             }
+
             expect(skipped).toEqual([]);
         },
     );

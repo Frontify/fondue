@@ -42,6 +42,7 @@ export const markHrefPolicy = (model: ContentModel, mark: string): HrefPolicy | 
     const { marks, features } = compiledModel(model);
     const owner = marks.find(({ name }) => name === mark)?.featureId;
     const feature = features.find(({ id }) => id === owner);
+
     return feature === undefined ? undefined : hrefPolicyOf(feature.options);
 };
 
@@ -64,6 +65,7 @@ const freezeModel = <const Features extends readonly Feature[]>(
         fingerprint: sha256(canonicalJson(manifest)),
         [COMPILED]: compiled,
     };
+
     // The brand has no run-time value, so TypeScript cannot see the frozen value as a `ContentModel`.
     return Object.freeze(model) as ContentModel<Features>;
 };
@@ -79,6 +81,7 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
     if (!isVersion(options.version)) {
         throw new DefinitionError('definition.invalid-declaration', { path: pointer('version') });
     }
+
     const list = readFeatures(features);
     checkDependencies(list);
     checkMigrations(options.migrations, options.version);
@@ -99,5 +102,6 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
         migrations: options.migrations ?? [],
         parseRules,
     };
+
     return freezeModel(list, compiled, options);
 };

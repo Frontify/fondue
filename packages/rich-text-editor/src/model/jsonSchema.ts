@@ -62,6 +62,7 @@ const valueSchema = (declaration: ValueDeclaration): JsonObject => {
     if (type === 'json') {
         return nullable ? {} : { not: { type: 'null' } };
     }
+
     const schema: Record<string, JsonValue> = {};
     if (type === 'enum') {
         schema.enum = nullable ? [...declaration.values, null] : declaration.values;
@@ -69,6 +70,7 @@ const valueSchema = (declaration: ValueDeclaration): JsonObject => {
         const kind = KINDS[type] ?? 'string';
         schema.type = nullable ? [kind, 'null'] : kind;
     }
+
     Object.assign(schema, EXTRA[type]);
     const keywords: Keywords = declaration;
     for (const [from, to] of BOUNDS) {
@@ -77,9 +79,11 @@ const valueSchema = (declaration: ValueDeclaration): JsonObject => {
             schema[to] = value;
         }
     }
+
     if (declaration.type === 'list') {
         schema.items = valueSchema(declaration.items);
     }
+
     return schema;
 };
 
@@ -94,6 +98,7 @@ const attrsSchema = (attrs: AttributeDeclarations, exactlyOne: readonly string[]
     if (required.length > 0) {
         schema.required = required;
     }
+
     if (exactlyOne.length > 0) {
         // Exactly one branch holds when exactly one named attribute is non-null.
         schema.oneOf = exactlyOne.map((name) => ({
@@ -101,6 +106,7 @@ const attrsSchema = (attrs: AttributeDeclarations, exactlyOne: readonly string[]
             properties: { [name]: { not: { type: 'null' } } },
         }));
     }
+
     return schema;
 };
 
@@ -135,23 +141,29 @@ const nodeShape = (
             required.push('attrs');
         }
     }
+
     // The root shape: a `doc` holds at least one child.
     if (name === 'doc') {
         required.push('content');
     }
+
     if (content !== undefined || (node && name !== 'text')) {
         properties.content = name === 'doc' ? { ...content, minItems: 1 } : (content ?? NONE);
     }
+
     if (marks !== undefined || (node && name !== 'doc')) {
         properties.marks = marks ?? NONE;
     }
+
     return shape(name, properties, required);
 };
 
 const choice = (options: readonly JsonObject[]): JsonObject => {
     const [only] = options;
+
     return options.length === 1 && only !== undefined ? only : { oneOf: options };
 };
+
 const refTo = (key: string): JsonObject => ({ $ref: `#/$defs/${encodeURIComponent(key)}` });
 const identity = (id: JsonObject, version: JsonObject): JsonObject => ({
     type: 'object',
@@ -165,6 +177,7 @@ const featureSchema = (feature: Feature): JsonObject => {
     if (internals === undefined) {
         throw new DefinitionError('definition.invalid-declaration', { path: '' });
     }
+
     const { id, nodes = {}, marks = {}, attributes = {} } = internals.declaration;
     const defs: Record<string, JsonObject> = {};
     for (const [name, declaration] of Object.entries(nodes)) {
@@ -178,13 +191,17 @@ const featureSchema = (feature: Feature): JsonObject => {
             true,
         );
     }
+
     for (const [name, declaration] of Object.entries(marks)) {
         defs[`m.${name}`] = nodeShape(name, declaration.attrs, declaration.exactlyOne, undefined, undefined);
     }
+
     for (const [name, shared] of Object.entries(attributes)) {
         defs[`a.${name}`] = valueSchema(shared.value);
     }
+
     const members = Object.keys(defs).filter((key) => !key.startsWith('a.'));
+
     return {
         $schema: 'https://json-schema.org/draft/2020-12/schema',
         title: id,
@@ -205,13 +222,16 @@ const modelSchema = (model: ContentModel): JsonObject => {
         if (group === 'block') {
             join('block', name);
         }
+
         if (group !== undefined) {
             join(group === 'block' ? 'section' : group, name);
         }
     }
+
     const members = (term: string) => (nodeBy.has(term) ? [term] : (groups.get(term) ?? []));
     const childrenOf = (content: string | undefined) => {
         const terms = content === undefined ? undefined : contentNames(content);
+
         return [...new Set((terms ?? []).flatMap(members))];
     };
 
@@ -222,14 +242,17 @@ const modelSchema = (model: ContentModel): JsonObject => {
             defs[key] = {};
             defs[key] = build();
         }
+
         return refTo(key);
     };
+
     const markRef = (name: string) =>
         define(`m.${name}`, () => {
             const mark = markBy.get(name);
             if (mark === undefined) {
                 return {};
             }
+
             return nodeShape(name, mark.declaration.attrs, mark.declaration.exactlyOne, undefined, undefined);
         });
     /** `listed` is the mark list of the parent whose content holds the node. */
@@ -238,15 +261,19 @@ const modelSchema = (model: ContentModel): JsonObject => {
         if (node === undefined) {
             return {};
         }
+
         const { declaration } = node;
         const inline = declaration.group === 'inline';
         let names: readonly string[] = [];
         if (inline && !isEmpty(declaration.marks) && !isEmpty(listed)) {
             names = listed ?? markNames;
         }
+
         const variant = inline && names !== markNames ? `@${names.join(',')}` : '';
+
         return define(`n.${name}${variant}`, () => {
             const kids = childrenOf(declaration.content);
+
             return nodeShape(
                 name,
                 attributesOf(node),

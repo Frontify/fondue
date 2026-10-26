@@ -5,6 +5,7 @@ import { type RichTextDocument } from './format';
 
 const codePoint = (characters: readonly string[], index: number) => {
     const character = characters[index];
+
     return character === undefined ? 0 : (character.codePointAt(0) ?? 0);
 };
 
@@ -17,6 +18,7 @@ const compareCodePoints = (a: string, b: string) => {
             return difference;
         }
     }
+
     return left.length - right.length;
 };
 
@@ -25,14 +27,17 @@ export const canonicalJson = (value: JsonValue): string => {
     if (Array.isArray(value)) {
         return `[${value.map((item: JsonValue) => canonicalJson(item)).join(',')}]`;
     }
+
     if (typeof value === 'object' && value !== null) {
         const record = value as Readonly<Record<string, JsonValue | undefined>>;
         const members = Object.keys(record)
             .filter((key) => record[key] !== undefined)
             .sort(compareCodePoints)
             .map((key) => `${JSON.stringify(key)}:${canonicalJson(record[key] as JsonValue)}`);
+
         return `{${members.join(',')}}`;
     }
+
     return JSON.stringify(value);
 };
 
@@ -74,6 +79,7 @@ export const sha256 = (text: string): string => {
                 words[index] = word(words, index - 16) + s0 + word(words, index - 7) + s1;
             }
         }
+
         let [a, b, c, d, e, f, g, h] = [...state] as [number, number, number, number, number, number, number, number];
         for (let index = 0; index < 64; index += 1) {
             const t1 =
@@ -85,10 +91,12 @@ export const sha256 = (text: string): string => {
             const t2 = (rotate(a, 2) ^ rotate(a, 13) ^ rotate(a, 22)) + ((a & b) ^ (a & c) ^ (b & c));
             [h, g, f, e, d, c, b, a] = [g, f, e, (d + t1) | 0, c, b, a, (t1 + t2) | 0];
         }
+
         for (const [index, value] of [a, b, c, d, e, f, g, h].entries()) {
             state[index] = word(state, index) + value;
         }
     }
+
     return [...state].map((value) => value.toString(16).padStart(8, '0')).join('');
 };
 

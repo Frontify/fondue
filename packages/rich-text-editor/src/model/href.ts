@@ -83,7 +83,9 @@ const decodeNamed = (name: string, semicolon: string) => {
     if (semicolon !== '' && Object.hasOwn(NAMED_REFERENCES, name)) {
         return NAMED_REFERENCES[name];
     }
+
     const legacy = LEGACY_REFERENCE.exec(name)?.[0];
+
     return legacy === undefined ? undefined : `${NAMED_REFERENCES[legacy]}${name.slice(legacy.length)}${semicolon}`;
 };
 
@@ -96,8 +98,10 @@ const decodeReferences = (text: string) =>
                     numeric.startsWith('x') || numeric.startsWith('X')
                         ? parseInt(numeric.slice(1), 16)
                         : Number(numeric);
+
                 return code > 0x10ffff ? match : String.fromCodePoint(code);
             }
+
             return decodeNamed(name, semicolon) ?? match;
         },
     );
@@ -119,18 +123,22 @@ const parse = (input: string): URL | HrefFailure => {
     if (SCHEME_WITHOUT_AUTHORITY.test(input)) {
         return { ok: false, code: 'unparsable' };
     }
+
     let url: URL;
     try {
         url = new URL(input, BASE);
     } catch {
         return { ok: false, code: 'unparsable' };
     }
+
     if (!SAFE_SCHEMES.has(url.protocol)) {
         return { ok: false, code: 'unsafe-scheme' };
     }
+
     if (url.username !== '' || url.password !== '') {
         return { ok: false, code: 'credentials' };
     }
+
     return url;
 };
 
@@ -147,8 +155,10 @@ const hostAllowed = (hostname: string, entries: readonly string[]) =>
     entries.some((entry) => {
         if (entry.startsWith('*.')) {
             const suffix = asciiHost(entry.slice(2));
+
             return suffix !== undefined && (hostname === suffix || hostname.endsWith(`.${suffix}`));
         }
+
         return hostname === asciiHost(entry);
     });
 
@@ -159,9 +169,11 @@ const stripEdgeControls = (input: string): string => {
     while (start < end && input.charCodeAt(start) <= LAST_EDGE_CONTROL) {
         start += 1;
     }
+
     while (end > start && input.charCodeAt(end - 1) <= LAST_EDGE_CONTROL) {
         end -= 1;
     }
+
     return input.slice(start, end);
 };
 
@@ -182,10 +194,12 @@ const checkPolicy = (
     if (allowedSchemes !== undefined && !allowedSchemes.some((scheme) => `${scheme}:` === url.protocol)) {
         return { ok: false, code: 'unsafe-scheme' };
     }
+
     const absolute = url.hostname !== '' && namesHost(input, url);
     if (allowedHosts !== undefined && absolute && !hostAllowed(url.hostname, allowedHosts)) {
         return { ok: false, code: 'host-not-allowed' };
     }
+
     return undefined;
 };
 
@@ -195,22 +209,28 @@ export const checkHref = (input: string, policy?: HrefPolicy): HrefResult => {
     if (CONTROL.test(trimmed) || !isWellFormed(trimmed)) {
         return { ok: false, code: 'unparsable' };
     }
+
     if (trimmed.length > MAX_LENGTH) {
         return { ok: false, code: 'too-long' };
     }
+
     const url = parse(trimmed);
     if (!(url instanceof URL)) {
         return url;
     }
+
     const plain = decodePercent(decodeReferences(trimmed));
     const decoded = parse(plain);
     if (!(decoded instanceof URL)) {
         return decoded;
     }
+
     if (policy === undefined) {
         return { ok: true, href: trimmed };
     }
+
     const refused = checkPolicy(trimmed, url, policy) ?? checkPolicy(plain, decoded, policy);
+
     return refused ?? { ok: true, href: trimmed };
 };
 
@@ -220,6 +240,7 @@ const listOf = (value: unknown): readonly string[] | undefined => {
     if (!Array.isArray(value)) {
         return undefined;
     }
+
     return value.filter((item): item is string => typeof item === 'string');
 };
 
@@ -234,6 +255,7 @@ export const hrefPolicyOf = (options: JsonObject): HrefPolicy | undefined => {
     if (schemes === undefined && hosts === undefined) {
         return undefined;
     }
+
     let policy: HrefPolicy = {};
     if (schemes !== undefined) {
         policy = {
@@ -242,8 +264,10 @@ export const hrefPolicyOf = (options: JsonObject): HrefPolicy | undefined => {
             ),
         };
     }
+
     if (hosts !== undefined) {
         policy = { ...policy, allowedHosts: hosts.map((host) => host.toLowerCase()) };
     }
+
     return policy;
 };

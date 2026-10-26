@@ -172,6 +172,7 @@ describe('model versions', () => {
                 ...(required ? { required } : { default: 'left' }),
             } as const;
             const attributes = { align: { on: 'textblocks', value } } as const;
+
             return defineFeature({
                 id: 'test.align',
                 version,
@@ -180,6 +181,7 @@ describe('model versions', () => {
                 attributes,
             })();
         };
+
         const before = candidateOf([base(), align(1, false)], { id: 'test', version: 1 }).snapshot;
         expect(compareModel(before, candidateOf([base(), align(2, true, [step])], { id: 'test', version: 2 }))).toEqual(
             [],

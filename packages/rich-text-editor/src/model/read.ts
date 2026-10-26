@@ -40,6 +40,7 @@ const isDataProperty = (descriptor: PropertyDescriptor | undefined): descriptor 
 /** Arrays and plain objects, whose prototype is `Object.prototype` or `null`; their members are checked as the walk reaches them. */
 const isPlainContainer = (value: object): boolean => {
     const prototype: unknown = Object.getPrototypeOf(value);
+
     return Array.isArray(value) ? prototype === Array.prototype : prototype === Object.prototype || prototype === null;
 };
 
@@ -47,12 +48,15 @@ const scalarBytes = (value: unknown): number | undefined => {
     if (value === null || value === true) {
         return 4;
     }
+
     if (value === false) {
         return 5;
     }
+
     if (typeof value === 'number') {
         return Number.isFinite(value) ? JSON.stringify(value).length : undefined;
     }
+
     return typeof value === 'string' ? stringTokenBytes(value) : undefined;
 };
 
@@ -62,9 +66,11 @@ const placeOf = (role: Role, level: number, depth: number, row?: Counter, cell?:
     if (row !== undefined) {
         place.row = row;
     }
+
     if (cell !== undefined) {
         place.cell = cell;
     }
+
     return place;
 };
 
@@ -76,17 +82,21 @@ const memberPlace = (place: Place, type: unknown, key: string, value: unknown): 
             if (key !== 'content') {
                 return { role: 'other', level: level + 1, depth };
             }
+
             return { role: 'node', level: 0, depth: 1 };
         case 'node':
             if (key === 'content' && Array.isArray(value)) {
                 return placeOf('content', 1, depth, type === 'table' ? { count: 0 } : undefined, row);
             }
+
             if (key === 'marks' && Array.isArray(value)) {
                 return { role: 'marks', level: 1, depth };
             }
+
             if (key === 'attrs' && isObject(value)) {
                 return { role: 'attrs', level: 1, depth };
             }
+
             return { role: key === 'text' && typeof value === 'string' ? 'text' : 'other', level: 1, depth };
         case 'content':
             return placeOf('node', 0, depth + 1, row, cell);
@@ -124,15 +134,18 @@ const countNode = (walk: Walk, place: Place): keyof ResourceLimits | undefined =
     if (walk.nodes > limits.maxDocumentNodes) {
         return 'maxDocumentNodes';
     }
+
     if (place.depth > limits.maxDepth) {
         return 'maxDepth';
     }
+
     if (place.cell !== undefined) {
         place.cell.count += 1;
         if (place.cell.count > limits.maxTableCells) {
             return 'maxTableCells';
         }
     }
+
     return undefined;
 };
 
@@ -145,12 +158,16 @@ const countBytes = (
 ) => {
     if (scalar !== undefined) {
         walk.bytes += scalar;
+
         return;
     }
+
     if (length !== undefined) {
         walk.bytes += 1 + Math.max(length, 1);
+
         return;
     }
+
     walk.bytes += 1 + Math.max(keys.length, 1);
     for (let index = 0; index < keys.length && walk.bytes <= walk.limits.maxDocumentBytes; index += 1) {
         const key = keys[index];
@@ -163,6 +180,7 @@ const stringLimit = (walk: Walk, value: string, place: Place): keyof ResourceLim
     if (place.role === 'text' && value.length > walk.limits.maxTextLength) {
         return 'maxTextLength';
     }
+
     return place.role === 'attribute' && value.length > walk.limits.maxAttributeLength
         ? 'maxAttributeLength'
         : undefined;
@@ -184,6 +202,7 @@ const visitMember = (
             ? failAt(walk, notJson)
             : visit(walk, descriptor.value, memberPlace(place, type, key, descriptor.value));
     walk.keys.pop();
+
     return failure;
 };
 
@@ -209,26 +228,34 @@ const visitMembers = (
             if (failure !== undefined) {
                 return failure;
             }
+
             if (walk.copy) {
                 copy.push(walk.result);
             }
         }
+
         walk.result = walk.copy ? copy : value;
+
         return Reflect.ownKeys(value).length === length + 1 ? undefined : failAt(walk, notJson);
     }
+
     const copy: Record<string, unknown> = {};
     const type = dataOf(descriptors[keys.indexOf('type')]);
     for (const [index, key] of keys.entries()) {
         if (typeof key !== 'string') {
             return failAt(walk, notJson);
         }
+
         const failure = visitMember(walk, key, place, type, descriptors[index]);
         if (failure !== undefined) {
             return failure;
         }
+
         copy[key] = walk.result;
     }
+
     walk.result = walk.copy ? copy : value;
+
     return undefined;
 };
 
@@ -239,17 +266,20 @@ const visit = (walk: Walk, value: unknown, place: Place): ReadFailure | undefine
     if (walk.countBytes && typeof value === 'string' && walk.bytes + value.length + 2 > limits.maxDocumentBytes) {
         return overAt(walk, 'maxDocumentBytes');
     }
+
     const array = Array.isArray(value);
     const length = array ? (dataOf(Object.getOwnPropertyDescriptor(value, 'length')) as number) : 0;
     // Likewise each element of an array writes at least two bytes, so a long array stops before it is read.
     if (walk.countBytes && array && walk.bytes + length * 2 + 1 > limits.maxDocumentBytes) {
         return overAt(walk, 'maxDocumentBytes');
     }
+
     const container = typeof value === 'object' && value !== null;
     const scalar = container ? undefined : scalarBytes(value);
     if (container ? walk.ancestors.has(value) || !isPlainContainer(value) : scalar === undefined) {
         return failAt(walk, notJson);
     }
+
     const keys = container && !array ? Reflect.ownKeys(value) : [];
     const descriptors = keys.map((key) =>
         typeof key === 'string' ? Object.getOwnPropertyDescriptor(value, key) : undefined,
@@ -260,6 +290,7 @@ const visit = (walk: Walk, value: unknown, place: Place): ReadFailure | undefine
             return overAt(walk, 'maxDocumentBytes');
         }
     }
+
     if (place.role === 'node') {
         const limit = countNode(walk, place);
         if (limit !== undefined) {
@@ -268,16 +299,21 @@ const visit = (walk: Walk, value: unknown, place: Place): ReadFailure | undefine
     } else if (container && place.level > limits.maxDepth) {
         return overAt(walk, 'maxDepth');
     }
+
     if (typeof value === 'string') {
         const limit = stringLimit(walk, value, place);
+
         return limit === undefined ? undefined : overAt(walk, limit);
     }
+
     if (!container) {
         return undefined;
     }
+
     walk.ancestors.add(value);
     const failure = visitMembers(walk, value, place, keys, descriptors);
     walk.ancestors.delete(value);
+
     return failure;
 };
 
@@ -292,18 +328,22 @@ export const readInput = (input: unknown, limits: ResourceLimits): ReadResult =>
         if (exceedsBytes(input, limits.maxDocumentBytes)) {
             return { ok: false, ...exceeded('maxDocumentBytes') };
         }
+
         try {
             value = JSON.parse(input) as unknown;
         } catch {
             return { ok: false, ...notJson() };
         }
+
         if (repeatsKey(input)) {
             return { ok: false, ...notJson() };
         }
     }
+
     if (value === null || value === undefined) {
         return { ok: false, ...notJson() };
     }
+
     const parsed = typeof input === 'string';
     const walk: Walk = {
         limits,
@@ -322,5 +362,6 @@ export const readInput = (input: unknown, limits: ResourceLimits): ReadResult =>
         // A host object, such as a Proxy whose traps throw, is not JSON.
         failure = notJson();
     }
+
     return failure === undefined ? { ok: true, value: walk.result } : { ok: false, ...failure };
 };

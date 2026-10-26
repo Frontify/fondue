@@ -353,6 +353,7 @@ describe('a newer reader after an older one saved', () => {
         const tree = decodeToTree(newer, older).tree as TreeNode;
         const appended = { type: 'paragraph', attrs: { lang: null, unknownAttributes: null } };
         const edited = { ...tree, content: [...(tree.content ?? []), appended] };
+
         return encodeTree(edited, older, newer.requiredCapabilities).document;
     };
 
@@ -479,6 +480,7 @@ describe('ambiguous content', () => {
         for (const path of paths) {
             expect(at(step.document, path)).toEqual(at(input, path));
         }
+
         expect(migrateDocument(input, latest, { generateId: countingIds() }).status).toBe('requires-review');
     });
 });
@@ -488,10 +490,13 @@ describe('manifests and diagnostics', () => {
         if (Array.isArray(value)) {
             return value.flatMap(textsOf);
         }
+
         if (typeof value !== 'object' || value === null) {
             return [];
         }
+
         const node = value as Json;
+
         return [...(typeof node.text === 'string' ? [node.text] : []), ...textsOf(node.content)];
     };
 
@@ -510,6 +515,7 @@ describe('manifests and diagnostics', () => {
         for (const text of textsOf(input.content)) {
             expect(written).not.toContain(text);
         }
+
         for (const entry of diagnostics) {
             expect(
                 Object.keys(entry).every((key) =>

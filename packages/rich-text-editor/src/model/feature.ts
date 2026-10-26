@@ -28,6 +28,7 @@ export const createFeature = (declaration: FeatureDeclaration, options: unknown)
         version: declaration.version,
         [FEATURE]: internals,
     });
+
     // The brand has no run-time value, so TypeScript cannot see the frozen value as a `Feature`.
     return value as Feature;
 };
@@ -52,11 +53,13 @@ export const attachToFeature = <F extends Feature>(feature: F, kind: string, val
     if (internals === undefined) {
         return feature;
     }
+
     // A fresh declaration copy keys the attachments to this feature, not to every model built from its factory.
     const declaration = Object.freeze({
         ...internals.declaration,
         [ATTACHED]: Object.freeze({ ...attachmentsOf(internals.declaration), [kind]: value }),
     });
+
     return createFeature(declaration, internals.options) as F;
 };
 
@@ -81,17 +84,23 @@ export const defineFeature = <const D extends FeatureDeclaration>(declaration: D
         if (migrations !== undefined) {
             parts.migrations = Object.freeze(migrations.map((step) => ({ ...step })));
         }
+
         if (codecs !== undefined) {
             parts.codecs = codecs;
         }
+
         if (contentRules !== undefined) {
             parts.contentRules = contentRules;
         }
+
         if (parseRules !== undefined) {
             parts.parseRules = Object.freeze(parseRules.map((rule) => Object.freeze({ ...rule })));
         }
+
         copy = Object.freeze(parts);
     }
+
     const factory = (options?: object) => createFeature(copy, options);
+
     return factory as FactoryOf<D>;
 };

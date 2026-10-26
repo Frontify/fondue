@@ -22,6 +22,7 @@ export const attrsOf = (attrs: TreeNode['attrs']): JsonObject => {
             known[name] = value as JsonValue;
         }
     }
+
     return known;
 };
 
@@ -30,10 +31,12 @@ export const textOf = (node: TreeNode): string => {
     if (isIsland(node)) {
         return islandText(node.attrs?.original);
     }
+
     let text = node.text ?? '';
     for (const child of node.content ?? []) {
         text += textOf(child);
     }
+
     return text;
 };
 
@@ -51,11 +54,13 @@ export const spaced = (state: Spacing, text: string): string => {
     while (trailing < text.length && text[text.length - 1 - trailing] === ' ') {
         trailing += 1;
     }
+
     if (trailing === text.length) {
         state.carried = carried + trailing;
     } else {
         state.carried = trailing;
     }
+
     return renderSpaces(text, carried);
 };
 
@@ -64,6 +69,7 @@ export const islandLabel = ({ t }: CodecContext, feature: string | null): string
     if (feature === null) {
         return t('RichTextEditor_readerIslandGeneric');
     }
+
     return t('RichTextEditor_readerIslandFeature', { feature });
 };
 
@@ -75,12 +81,15 @@ export const islandFallback = (state: Spacing, node: TreeNode) => {
     if (typeof feature === 'string') {
         featureId = feature;
     }
+
     const original = islandText(node.attrs?.original);
     if (node.type === ISLAND_INLINE) {
         // Inline island text sits in the same line, so it continues the run of spaces.
         return { tag: 'span', featureId, text: spaced(state, original) } as const;
     }
+
     state.carried = 0;
+
     return { tag: 'div', featureId, text: renderSpaces(original) } as const;
 };
 
@@ -93,12 +102,15 @@ export const failedFallback = (state: Spacing, node: TreeNode, plan: NodePlan, b
         if (!plan.pre) {
             text = spaced(state, text);
         }
+
         return { tag: 'span', text } as const;
     }
+
     state.carried = 0;
     if (!plan.pre) {
         text = renderSpaces(text);
     }
+
     return { tag: 'div', text } as const;
 };
 
@@ -118,6 +130,7 @@ export const markPath = (items: readonly Item[], index: number): string => {
     if (first === undefined) {
         return '';
     }
+
     return `${first.path}${pointer('marks', index)}`;
 };
 
@@ -128,8 +141,10 @@ export const itemsOf = (node: TreeNode, path: string, keep: (mark: TreeMark) => 
             if (!keep(mark)) {
                 return [];
             }
+
             return [{ mark, index: markIndex }];
         });
+
         return { node: child, path: `${path}${pointer('content', index)}`, marks };
     });
 
@@ -147,22 +162,27 @@ export const groupRun = <T>(
         if (item === undefined) {
             break;
         }
+
         const entry = item.marks[depth];
         if (entry === undefined) {
             out.push(node(item));
             index += 1;
             continue;
         }
+
         let end = index + 1;
         while (end < items.length) {
             const next = items[end]?.marks[depth];
             if (next === undefined || !sameMark(next.mark, entry.mark)) {
                 break;
             }
+
             end += 1;
         }
+
         out.push(mark(items.slice(index, end), entry));
         index = end;
     }
+
     return out;
 };

@@ -21,6 +21,7 @@ export const inheritedAnswer = (
             answer = known;
             break;
         }
+
         unanswered.push(current);
         const own = declared(current);
         if (own !== undefined) {
@@ -28,9 +29,11 @@ export const inheritedAnswer = (
             break;
         }
     }
+
     for (const each of unanswered) {
         cache.set(each, answer);
     }
+
     return answer;
 };
 
@@ -43,9 +46,11 @@ export const decorationLines = (element: Element): string[] => {
     if (style === undefined) {
         return [];
     }
+
     let value = style.getPropertyValue('text-decoration-line');
     if (value.trim() === '') {
         value = style.getPropertyValue('text-decoration');
     }
+
     return value.toLowerCase().split(/\s+/);
 };

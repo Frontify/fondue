@@ -94,6 +94,7 @@ describe('resolveHtmlSpec', () => {
                 resolveHtmlSpec(['iframe', { [name]: { option: 'o' } }], {}, { o: '/brand' }).layers[0]?.attrs,
             ).toEqual({});
         }
+
         expect(resolveHtmlSpec(['iframe', { srcdoc: '/brand' }], {}, {}).layers[0]?.attrs).toEqual({});
         const shared: readonly SharedAttribute[] = [
             {

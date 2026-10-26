@@ -11,6 +11,7 @@ const attributeFault = (declaration: AttributeDeclaration, value: unknown): Form
     if (declaration.type === 'url' && typeof value === 'string' && !checkHref(value).ok) {
         return 'format.unsafe-url';
     }
+
     return isValidValue(declaration, value) ? undefined : 'format.invalid-attribute';
 };
 
@@ -35,6 +36,7 @@ export const checkAttributes = (
             warn(context, 'format.unknown-attribute', `${path}${pointer('attrs', name)}`);
         }
     }
+
     const values: Record<string, unknown> = {};
     for (const [name, declaration] of Object.entries(declared)) {
         const present = Object.hasOwn(attrs, name);
@@ -45,21 +47,28 @@ export const checkAttributes = (
         } else if ('default' in declaration) {
             fault = undefined;
         }
+
         if (fault === undefined) {
             values[name] = present ? attrs[name] : fallback;
             continue;
         }
+
         warn(context, fault, `${path}${pointer('attrs', name)}`);
         if (mode === 'mark' || (mode === 'node' && !('default' in declaration))) {
             return undefined;
         }
+
         unknown[name] = attrs[name];
         values[name] = fallback;
     }
+
     if (exactlyOne !== undefined && exactlyOne.filter((name) => values[name] !== null).length !== 1) {
         warn(context, 'format.invalid-attribute', `${path}/attrs`);
+
         return undefined;
     }
+
     values.unknownAttributes = Object.keys(unknown).length > 0 ? unknown : null;
+
     return values;
 };

@@ -19,6 +19,7 @@ const expected = ({ ok, code, href }: UrlFixture): HrefResult => {
     if (ok) {
         return { ok: true, href: href ?? '' };
     }
+
     return { ok: false, code: code as Extract<HrefResult, { ok: false }>['code'] };
 };
 
@@ -54,9 +55,11 @@ const obfuscatedScheme = (scheme: string) =>
                     const cased = cases[index] === true ? character.toUpperCase() : character;
                     const encoding = encodings[index] ?? 0;
                     const lineBreak = breaks[index] ?? '';
+
                     return `${encodeCharacter(cased, encoding)}${lineBreak}`;
                 })
                 .join('');
+
             return `${String.fromCharCode(...leading)}${body}${colon}alert(1)`;
         });
 
@@ -85,6 +88,7 @@ describe('checkHref', () => {
                 code: 'host-not-allowed',
             });
         }
+
         expect(checkHref('tel&colon;123', { allowedSchemes: ['https'] })).toEqual({ ok: false, code: 'unsafe-scheme' });
         expect(checkHref('https://good.com/x', { allowedHosts: ['good.com'], allowedSchemes: ['https'] })).toEqual({
             ok: true,
@@ -207,6 +211,7 @@ describe('checkHref with a host policy', () => {
             expect(checkHref(input)).toEqual({ ok: false, code: 'unparsable' });
             expect(checkHref(input, { allowedHosts: ['*.frontify.com'] })).toEqual({ ok: false, code: 'unparsable' });
         }
+
         expect(checkHref('https:\\\\evil.com', { allowedHosts: ['*.frontify.com'] })).toEqual({
             ok: false,
             code: 'host-not-allowed',
@@ -217,6 +222,7 @@ describe('checkHref with a host policy', () => {
         for (const input of ['https://base.invalid/phish', '//base.invalid/phish', 'https://BASE.invalid/a']) {
             expect(checkHref(input, { allowedHosts: ['good.com'] })).toEqual({ ok: false, code: 'host-not-allowed' });
         }
+
         for (const input of ['/guides', 'guide.html', '#top', '?q=a']) {
             expect(checkHref(input, { allowedHosts: ['good.com'] })).toEqual({ ok: true, href: input });
         }

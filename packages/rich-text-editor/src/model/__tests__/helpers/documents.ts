@@ -69,8 +69,10 @@ const nonNullValueArb = (declaration: ValueDeclaration): fc.Arbitrary<JsonValue>
         case 'string': {
             const minLength = declaration.minLength ?? 0;
             const maxLength = Math.max(minLength, Math.min(declaration.maxLength ?? 12, 12));
+
             return fc.string({ unit: 'grapheme', minLength, maxLength });
         }
+
         case 'url':
             return urlArb;
         case 'id':
@@ -82,18 +84,23 @@ const nonNullValueArb = (declaration: ValueDeclaration): fc.Arbitrary<JsonValue>
         case 'integer': {
             const min = declaration.min ?? -1000;
             const max = declaration.max ?? 1000;
+
             return fc.integer({ min, max });
         }
+
         case 'number': {
             const min = declaration.min ?? -1e6;
             const max = declaration.max ?? 1e6;
+
             return fc.double({ min, max, noNaN: true }).map((value) => {
                 if (Object.is(value, -0)) {
                     return 0;
                 }
+
                 return value;
             });
         }
+
         case 'boolean':
             return fc.boolean();
         case 'enum':
@@ -111,6 +118,7 @@ const valueArb = (declaration: ValueDeclaration): fc.Arbitrary<JsonValue> => {
     if (declaration.nullable === true) {
         return fc.option(nonNullValueArb(declaration), { nil: null, freq: 3 });
     }
+
     return nonNullValueArb(declaration);
 };
 
@@ -131,20 +139,25 @@ const attrsArb = (
         if (varies(owner, name) || !('default' in declaration)) {
             return valueArb(declaration);
         }
+
         return fc.constant(declaration.default);
     });
+
     return fc.tuple(fc.tuple(...valuesArb), chosenArb, fc.nat()).map(([values, chosen, pick]) => {
         const attrs: JsonNode = {};
         for (const [index, [name]] of entries.entries()) {
             attrs[name] = values[index] ?? null;
         }
+
         if (exactlyOne.length > 0) {
             for (const name of exactlyOne) {
                 attrs[name] = null;
             }
+
             const index = pick % choices.length;
             attrs[choices[index] as string] = chosen[index] ?? null;
         }
+
         return attrs;
     });
 };
@@ -161,6 +174,7 @@ export const canonicalize = (root: JsonValue): JsonValue => {
             next += 1;
             node.attrs = { ...attrs, nodeId: `n${next}` };
         }
+
         if (Array.isArray(node.content)) {
             const joined: JsonNode[] = [];
             for (const child of node.content.map(visit) as JsonNode[]) {
@@ -174,10 +188,13 @@ export const canonicalize = (root: JsonValue): JsonValue => {
                     joined.push(child);
                 }
             }
+
             node.content = joined;
         }
+
         return node;
     };
+
     return visit(root);
 };
 
@@ -198,12 +215,15 @@ export const modelDocumentArb = (
         if (byName.has(term)) {
             return term === node.name;
         }
+
         const { group } = node.declaration;
         if (term === 'section') {
             return group === 'block' || group === 'section';
         }
+
         return term === group;
     };
+
     const advance = (match: ContentMatch, node: CompiledNode) => advanceMatch(match, (term) => takes(term, node));
     const advancing = (match: ContentMatch) => candidates.filter((node) => advance(match, node).states.length > 0);
 
@@ -217,19 +237,24 @@ export const modelDocumentArb = (
             if (lowest === undefined || names.length > 8) {
                 return undefined;
             }
+
             names.push(lowest.name);
             current = advance(current, lowest);
         }
+
         return names;
     };
+
     for (let round = 0; round <= candidates.length; round += 1) {
         for (const node of candidates) {
             if (node.declaration.content === undefined) {
                 height.set(node.name, 0);
             }
+
             if (height.has(node.name)) {
                 continue;
             }
+
             const filled = fill(startMatch(node.declaration.content), []);
             if (filled !== undefined) {
                 height.set(node.name, 1 + Math.max(-1, ...filled.map((name) => height.get(name) ?? 0)));
@@ -246,13 +271,16 @@ export const modelDocumentArb = (
             if (matchEnds(match)) {
                 choices.unshift(undefined);
             }
+
             const picked = choices[choice % choices.length];
             if (picked === undefined) {
                 break;
             }
+
             names.push(picked.name);
             match = advance(match, picked);
         }
+
         return fill(match, names) ?? names;
     };
 
@@ -265,6 +293,7 @@ export const modelDocumentArb = (
         const takenMarks = marks.filter(
             (mark) => allowed(mark.featureId) && (listed === undefined || listed.includes(mark.name)),
         );
+
         return fc
             .tuple(
                 ...takenMarks.map((mark) =>
@@ -283,10 +312,12 @@ export const modelDocumentArb = (
                         kept.push(entry);
                     }
                 }
+
                 return kept.map(({ mark, attrs }) => {
                     if (Object.keys(mark.declaration.attrs).length === 0) {
                         return { type: mark.name };
                     }
+
                     return { type: mark.name, attrs };
                 });
             });
@@ -296,6 +327,7 @@ export const modelDocumentArb = (
         if (parts.length === 0) {
             return node;
         }
+
         return { ...node, [key]: [...parts] };
     };
 
@@ -306,8 +338,10 @@ export const modelDocumentArb = (
         if (cached !== undefined) {
             return cached as A;
         }
+
         const arbitrary = build();
         built.set(key, arbitrary);
+
         return arbitrary;
     };
 
@@ -321,22 +355,27 @@ export const modelDocumentArb = (
             if (!takesMarks) {
                 return anyText.map((value) => ({ type: 'text', text: value }));
             }
+
             return fc
                 .tuple(text, marksArb(parent))
                 .map(([value, nodeMarks]) => withParts({ type: 'text', text: value }, 'marks', nodeMarks));
         }
+
         const declared = attributesOf(node);
         const attrs = attrsArb(node.name, declared, node.declaration.exactlyOne, options.attribute);
         let nodeMarks: fc.Arbitrary<JsonValue[]> = fc.constant([]);
         if (node.declaration.group === 'inline' && takesMarks) {
             nodeMarks = marksArb(parent);
         }
+
         return fc.tuple(attrs, nodeMarks, childrenArb(node, depth)).map(([values, own, content]) => {
             let json: JsonNode = { type: node.name };
             if (Object.keys(declared).length > 0) {
                 json.attrs = values;
             }
+
             json = withParts(json, 'marks', own);
+
             return withParts(json, 'content', content);
         });
     };
@@ -347,21 +386,26 @@ export const modelDocumentArb = (
         if (node.declaration.content === undefined) {
             return fc.constant([]);
         }
+
         let maxLength = 4;
         if (depth >= MAX_DEPTH) {
             maxLength = 0;
         }
+
         return fc.array(fc.nat({ max: 9999 }), { maxLength }).chain((tape) => {
             const names = sequence(node.declaration.content, tape);
+
             return fc.tuple(...names.map((name) => nodeArb(byName.get(name) as CompiledNode, node, depth + 1)));
         });
     };
 
     const doc = byName.get('doc') as CompiledNode;
+
     return fc
         .tuple(attrsArb('doc', attributesOf(doc), doc.declaration.exactlyOne, options.attribute), childrenArb(doc, 1))
         .map(([attrs, content]) => {
             const root = canonicalize({ type: 'doc', attrs, content });
+
             return { ...storedIn(model, []), content: root as unknown as ContentNodeJSON };
         });
 };

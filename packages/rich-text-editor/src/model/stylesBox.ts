@@ -6,14 +6,17 @@ const alphaOf = (color: string): string | undefined => {
     if (inner === undefined) {
         return undefined;
     }
+
     const slashed = inner.split('/');
     if (slashed.length === 2) {
         return slashed[1];
     }
+
     const parts = inner.split(',');
     if (parts.length === 4) {
         return parts[3];
     }
+
     return undefined;
 };
 
@@ -23,10 +26,13 @@ const isTransparent = (color: string): boolean => {
     if (value === 'transparent') {
         return true;
     }
+
     if (/^#(?:[0-9a-f]{3}0|[0-9a-f]{6}00)$/.test(value)) {
         return true;
     }
+
     const alpha = alphaOf(value);
+
     return alpha !== undefined && Number.parseFloat(alpha) === 0;
 };
 
@@ -50,6 +56,7 @@ const lineOf = (shorthand: unknown): Line => {
     if (typeof shorthand !== 'string' && typeof shorthand !== 'number') {
         return line;
     }
+
     // A function, such as `rgb(0 0 0 / 0)`, stays one token.
     const tokens = String(shorthand).match(/[\w#.%-]+\([^)]*\)|[^\s]+/g) ?? [];
     for (const token of tokens) {
@@ -62,6 +69,7 @@ const lineOf = (shorthand: unknown): Line => {
             line.color = lower;
         }
     }
+
     return line;
 };
 
@@ -69,9 +77,11 @@ const textOf = (value: unknown): string | undefined => {
     if (typeof value === 'number') {
         return String(value);
     }
+
     if (typeof value === 'string') {
         return value.trim().toLowerCase();
     }
+
     return undefined;
 };
 
@@ -103,11 +113,13 @@ export const drawsBox = (recipe: Readonly<Record<string, unknown>>): boolean => 
     const clipped = clip.some((value) => value !== undefined && value.split(/[\s,]+/).includes('text'));
     const painted = ['background', 'backgroundColor', 'backgroundImage'].some((name) => {
         const value = textOf(recipe[name]);
+
         return value !== undefined && value !== '' && value !== 'none' && !isTransparent(value);
     });
     if (painted && !clipped) {
         return true;
     }
+
     // A side's shorthand overrides `border`, and the longhands override both.
     const sideLine = (side: string): Line => {
         const line = lineOf(recipe.border);
@@ -123,11 +135,14 @@ export const drawsBox = (recipe: Readonly<Record<string, unknown>>): boolean => 
                 line[key] = general;
             }
         }
+
         return line;
     };
+
     if (SIDES.some((side) => visible(sideLine(side)))) {
         return true;
     }
+
     const outline = lineOf(recipe.outline);
     for (const [key, part] of LINE_PARTS) {
         const longhand = textOf(recipe[`outline${part}`]);
@@ -135,5 +150,6 @@ export const drawsBox = (recipe: Readonly<Record<string, unknown>>): boolean => 
             outline[key] = longhand;
         }
     }
+
     return visible(outline);
 };

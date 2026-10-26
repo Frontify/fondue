@@ -41,6 +41,7 @@ export const addDeclaration = (existing: string | undefined, property: string, v
     if (before !== '' && !before.endsWith(';')) {
         before += ';';
     }
+
     return `${before}${property}: ${value};`;
 };
 
@@ -56,21 +57,26 @@ const isSafeJson = (value: unknown, ancestors: object[]): boolean => {
     if (value === null || typeof value === 'string' || typeof value === 'boolean') {
         return true;
     }
+
     if (typeof value === 'number') {
         return Number.isFinite(value);
     }
+
     const depth = copies.get(value as object);
     if (depth !== undefined) {
         return ancestors.length + depth <= MAX_DEPTH;
     }
+
     if (typeof value !== 'object' || Object.getOwnPropertySymbols(value).length > 0) {
         return false;
     }
+
     const prototype: unknown = Object.getPrototypeOf(value);
     const plain = prototype === Object.prototype || prototype === Array.prototype || prototype === null;
     if (!plain || ancestors.length > MAX_DEPTH || ancestors.includes(value)) {
         return false;
     }
+
     const array = Array.isArray(value);
     ancestors.push(value);
     let safe = true;
@@ -81,7 +87,9 @@ const isSafeJson = (value: unknown, ancestors: object[]): boolean => {
             break;
         }
     }
+
     ancestors.pop();
+
     return safe;
 };
 
@@ -94,6 +102,7 @@ export const findUnsafeJson = (value: unknown, path: string, ancestors: readonly
     if (isSafeJson(value, [...ancestors])) {
         return undefined;
     }
+
     return unsafePath(value, path, ancestors);
 };
 
@@ -101,28 +110,34 @@ const unsafePath = (value: unknown, path: string, ancestors: readonly object[]):
     if (value === null || typeof value === 'string' || typeof value === 'boolean') {
         return undefined;
     }
+
     if (typeof value === 'number') {
         return Number.isFinite(value) ? undefined : path;
     }
+
     if (typeof value !== 'object' || Object.getOwnPropertySymbols(value).length > 0) {
         return path;
     }
+
     const prototype: unknown = Object.getPrototypeOf(value);
     const plain = prototype === Object.prototype || prototype === Array.prototype || prototype === null;
     if (!plain || ancestors.length > MAX_DEPTH || ancestors.includes(value)) {
         return path;
     }
+
     for (const [key, item] of Object.entries(value)) {
         const itemPath = `${path}${pointer(key)}`;
         if (PROTOTYPE_KEYS.has(key)) {
             return itemPath;
         }
+
         const found =
             item === undefined && !Array.isArray(value) ? undefined : unsafePath(item, itemPath, [...ancestors, value]);
         if (found !== undefined) {
             return found;
         }
     }
+
     return undefined;
 };
 
@@ -133,17 +148,22 @@ const frozenCopy = (value: unknown): unknown => {
         if (value === 0) {
             return 0;
         }
+
         return value;
     }
+
     if (copies.has(value)) {
         return value;
     }
+
     let depth = 0;
     const copyOf = (item: unknown) => {
         const copied = frozenCopy(item);
         depth = Math.max(depth, (copies.get(copied as object) ?? -1) + 1);
+
         return copied;
     };
+
     let copy: Record<string, unknown> | unknown[] = {};
     if (Array.isArray(value)) {
         copy = Array.from(value as unknown[], (item) => copyOf(item ?? null));
@@ -154,7 +174,9 @@ const frozenCopy = (value: unknown): unknown => {
             }
         }
     }
+
     copies.set(copy, depth);
+
     return Object.freeze(copy);
 };
 
@@ -163,6 +185,7 @@ export const snapshot = <T>(value: T): T => {
     if (!isSafeJson(value, [])) {
         return value;
     }
+
     return frozenCopy(value) as T;
 };
 
@@ -170,6 +193,7 @@ const within = (value: number, min: number | undefined, max: number | undefined)
     if (min !== undefined && value < min) {
         return false;
     }
+
     return max === undefined || value <= max;
 };
 
@@ -186,6 +210,7 @@ export const isValidValue = (declaration: ValueDeclaration, value: unknown): boo
     if (value === null) {
         return declaration.nullable === true;
     }
+
     switch (declaration.type) {
         case 'string':
             return typeof value === 'string' && within(value.length, declaration.minLength, declaration.maxLength);
@@ -200,6 +225,7 @@ export const isValidValue = (declaration: ValueDeclaration, value: unknown): boo
         case 'integer':
         case 'number': {
             const integral = declaration.type === 'number' || Number.isInteger(value);
+
             return (
                 typeof value === 'number' &&
                 Number.isFinite(value) &&
@@ -207,6 +233,7 @@ export const isValidValue = (declaration: ValueDeclaration, value: unknown): boo
                 within(value, declaration.min, declaration.max)
             );
         }
+
         case 'boolean':
             return typeof value === 'boolean';
         case 'enum':
@@ -241,11 +268,13 @@ export const parsedAttributes = (
             return undefined;
         }
     }
+
     // A rule that fills none of the `exactlyOne` attributes, such as a colour rule on an uncoloured span, does not match.
     const filled = exactlyOne.filter((name) => attrs[name] !== undefined && attrs[name] !== null);
     if (exactlyOne.length > 0 && filled.length !== 1) {
         return undefined;
     }
+
     return attrs;
 };
 
@@ -260,18 +289,22 @@ export const findInvalidPayload = (
     if (declaration === undefined) {
         return payload === undefined ? undefined : '';
     }
+
     if (payload === null) {
         return declaration.nullable === true ? undefined : '';
     }
+
     const record = payload === undefined ? {} : payload;
     if (!isRecord(record)) {
         return '';
     }
+
     for (const [key, value] of Object.entries(record)) {
         if (value !== undefined && !Object.hasOwn(declaration.fields, key)) {
             return pointer(key);
         }
     }
+
     const oneOf = declaration.exactlyOne;
     for (const [name, field] of Object.entries(declaration.fields)) {
         const value = ownValue(record, name);
@@ -280,9 +313,11 @@ export const findInvalidPayload = (
             return pointer(name);
         }
     }
+
     if (oneOf !== undefined && oneOf.filter((name) => ownValue(record, name) !== undefined).length !== 1) {
         return '';
     }
+
     return undefined;
 };
 

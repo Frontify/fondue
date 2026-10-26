@@ -30,23 +30,29 @@ export const codecContext = (
         if (template === undefined) {
             template = fallback.translationStrings[key];
         }
+
         if (template === undefined) {
             template = key;
         }
+
         if (vars === undefined) {
             return template;
         }
+
         return template.replaceAll(/\$\{(\w+)\}/g, (match, name: string) => {
             if (Object.hasOwn(vars, name)) {
                 return String(vars[name]);
             }
+
             return match;
         });
     };
+
     const base = { checkHref: (input: string) => checkHref(input), locale: output, t };
     if (resolveAssetUrl === undefined) {
         return base;
     }
+
     return {
         ...base,
         resolveAssetUrl: (assetId, options) => {
@@ -103,6 +109,7 @@ export const buildPlan = <N extends object, M extends object>(
     // Compilation gives every node and mark a compiled feature.
     const featureOf = (featureId: string) => features.get(featureId) as CompiledFeature;
     const formatsOf = ({ declaration }: CompiledFeature) => declaration.formats ?? UNDECLARED;
+
     return {
         formats: new Map(compiled.features.map((feature) => [feature.id, formatsOf(feature)])),
         nodes: new Map(
@@ -121,6 +128,7 @@ export const buildPlan = <N extends object, M extends object>(
                     form: declaration.markdown,
                     ...node(feature.declaration, name),
                 };
+
                 return [name, plan];
             }),
         ),
@@ -136,6 +144,7 @@ export const buildPlan = <N extends object, M extends object>(
                     form: declaration.markdown,
                     ...mark(feature.declaration, name),
                 };
+
                 return [name, plan];
             }),
         ),
@@ -147,6 +156,7 @@ export const contentClasses = (contentClassName?: string): string => {
     if (contentClassName === undefined) {
         return 'fondue-rte-content';
     }
+
     return `fondue-rte-content ${contentClassName}`;
 };
 
@@ -167,9 +177,11 @@ export const columnLayout = (columns: number | undefined, columnGap: string | un
     if (columns === undefined || !Number.isInteger(columns) || columns < 2) {
         return undefined;
     }
+
     if (columnGap === undefined || !COLUMN_GAP.test(columnGap)) {
         return { count: Math.min(columns, MAX_COLUMNS), gap: 'normal', length: '1em' };
     }
+
     return { count: Math.min(columns, MAX_COLUMNS), gap: columnGap, length: columnGap };
 };
 
@@ -182,14 +194,17 @@ export const withActiveBreak = (template: HtmlTemplate, style?: string): HtmlTem
     if (outer === undefined) {
         return template;
     }
+
     const attrs: Record<string, string> = {};
     for (const [name, value] of Object.entries(outer.attrs)) {
         attrs[name] = value;
     }
+
     attrs['data-rte-column-break'] = 'active';
     if (style !== undefined) {
         attrs.style = style;
     }
+
     return { content: template.content, layers: [{ tag: outer.tag, attrs }, ...inner] };
 };
 
@@ -208,12 +223,14 @@ export type EnteredList = {
 /** Counts nested lists of each kind for one walk and gives each list node its depth while `render` runs. */
 export const listDepths = () => {
     const counts: Record<keyof ListLevels, number> = { ordered: 0, bullet: 0 };
+
     return {
         within<T>(type: string, render: (entered: EnteredList | undefined) => T): T {
             const kind = ownValue(LIST_LEVEL_KINDS, type);
             if (kind === undefined) {
                 return render(undefined);
             }
+
             counts[kind] += 1;
             try {
                 return render({ kind, depth: counts[kind] });
@@ -223,6 +240,7 @@ export const listDepths = () => {
         },
     };
 };
+
 export type ListDepths = ReturnType<typeof listDepths>;
 
 /** Without `listLevels`, the default markers by nesting depth. */
@@ -245,17 +263,21 @@ export const listLevelStyle = (
     if (entry === undefined) {
         return undefined;
     }
+
     const type = entry.counterType ?? entry.shape;
     if (type === undefined) {
         return undefined;
     }
+
     let style = addDeclaration(undefined, 'list-style-type', type);
     if (entry.color !== undefined) {
         style = addDeclaration(style, '--rte-list-marker-color', entry.color);
     }
+
     if (entry.size !== undefined) {
         style = addDeclaration(style, '--rte-list-marker-size', entry.size);
     }
+
     return style;
 };
 
@@ -272,10 +294,12 @@ export const withListLevel = (
     if (outer === undefined || style === undefined || attrs.marker !== null) {
         return template;
     }
+
     let text = style;
     if (outer.attrs.style !== undefined) {
         text = `${outer.attrs.style};${style}`;
     }
+
     return { ...template, layers: [{ ...outer, attrs: { ...outer.attrs, style: text } }, ...inner] };
 };
 

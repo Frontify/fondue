@@ -8,9 +8,11 @@ export const exceedsBytes = (text: string, max: number): boolean => {
     if (text.length > max) {
         return true;
     }
+
     if (text.length * 3 <= max) {
         return false;
     }
+
     let bytes = 0;
     for (let index = 0; index < text.length && bytes <= max; index += 1) {
         const code = text.charCodeAt(index);
@@ -25,6 +27,7 @@ export const exceedsBytes = (text: string, max: number): boolean => {
             bytes += 3;
         }
     }
+
     return bytes > max;
 };
 
@@ -37,6 +40,7 @@ export const stringTokenBytes = (text: string): number => {
     if (!NEEDS_SCAN.test(text)) {
         return text.length + 2;
     }
+
     let bytes = 2;
     for (let index = 0; index < text.length; index += 1) {
         const code = text.charCodeAt(index);
@@ -57,6 +61,7 @@ export const stringTokenBytes = (text: string): number => {
             bytes += 3;
         }
     }
+
     return bytes;
 };
 
@@ -74,14 +79,17 @@ export const repeatsKey = (text: string): boolean => {
                 escaped ||= backslash;
                 end += backslash ? 2 : 1;
             }
+
             const keys = objects.at(-1);
             if (keyNext && keys) {
                 const key = escaped ? (JSON.parse(text.slice(index, end + 1)) as string) : text.slice(index + 1, end);
                 if (keys.has(key)) {
                     return true;
                 }
+
                 keys.add(key);
             }
+
             index = end;
         } else if (code === 0x7b) {
             objects.push(new Set());
@@ -96,5 +104,6 @@ export const repeatsKey = (text: string): boolean => {
             keyNext = false;
         }
     }
+
     return false;
 };

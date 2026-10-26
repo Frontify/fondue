@@ -27,12 +27,15 @@ const textOf = (value: unknown): string | undefined => {
     if (typeof value === 'string') {
         return value;
     }
+
     if (typeof value === 'number' || typeof value === 'boolean') {
         return String(value);
     }
+
     if (value === null || value === undefined) {
         return undefined;
     }
+
     return JSON.stringify(value);
 };
 
@@ -40,9 +43,11 @@ const readValue = (value: HtmlAttributeValue, values: Values, options: JsonObjec
     if (typeof value === 'string') {
         return value;
     }
+
     if ('attr' in value) {
         return textOf(values[value.attr]);
     }
+
     return textOf(options[value.option]);
 };
 
@@ -60,39 +65,47 @@ const resolveLayers = (
     } else {
         tagName = ownValue(tag.tags, textOf(values[tag.attr]) ?? '');
     }
+
     let attributes: Readonly<Record<string, HtmlAttributeValue>> | undefined;
     let bindings: [string, HtmlAttributeValue][] = [];
     if (typeof second === 'object' && second !== null && !Array.isArray(second)) {
         attributes = second as Readonly<Record<string, HtmlAttributeValue>>;
         bindings = Object.entries(attributes);
     }
+
     const written: Record<string, string> = {};
     for (const [name, binding] of bindings) {
         const value = readValue(binding, values, options);
         if (value === undefined) {
             continue;
         }
+
         if (isSrcdocAttribute(name)) {
             continue;
         }
+
         if (isStyleAttribute(name)) {
             written.style = value;
             continue;
         }
+
         if (!isUrlAttribute(name)) {
             written[name] = value;
             continue;
         }
+
         const checked = checkHref(value);
         if (checked.ok) {
             written[name] = checked.href;
         }
     }
+
     for (const { name, declaration } of shared) {
         const value = textOf(values[name]);
         if (value === undefined || declaration.html === undefined) {
             continue;
         }
+
         if ('attr' in declaration.html) {
             if (!isSrcdocAttribute(declaration.html.attr)) {
                 written[declaration.html.attr] = value;
@@ -101,14 +114,17 @@ const resolveLayers = (
             written.style = addDeclaration(written.style, declaration.html.style, value);
         }
     }
+
     layers.push({ tag: tagName ?? 'span', attrs: written });
     let content = third;
     if (attributes === undefined) {
         content = second as typeof third;
     }
+
     if (Array.isArray(content)) {
         return resolveLayers(content as HtmlSpec, values, options, [], layers);
     }
+
     return content === 0;
 };
 
@@ -121,6 +137,7 @@ export const resolveHtmlSpec = (
 ): HtmlTemplate => {
     const layers: HtmlLayer[] = [];
     const content = resolveLayers(spec, values, options, shared, layers);
+
     return { layers, content };
 };
 
@@ -136,6 +153,7 @@ export const withAutoDirection = (
     if (outer === undefined || Object.hasOwn(outer.attrs, 'dir')) {
         return template;
     }
+
     return { ...template, layers: [{ ...outer, attrs: { ...outer.attrs, dir: direction ?? 'auto' } }, ...inner] };
 };
 
@@ -158,6 +176,7 @@ export const passageDirection = (runs: readonly DirectedRun[]): 'ltr' | 'rtl' | 
     if (first !== undefined && (first.dir === 'ltr' || first.dir === 'rtl')) {
         return first.dir;
     }
+
     return undefined;
 };
 
@@ -167,7 +186,9 @@ export const treeRuns = (content: readonly TreeNode[] | undefined): DirectedRun[
         if (child.type !== 'text' || child.text === undefined) {
             return [];
         }
+
         const language = child.marks?.find((mark) => mark.type === 'language');
+
         return [{ text: child.text, dir: language?.attrs.dir }];
     });
 
@@ -178,6 +199,7 @@ export const renderSpaces = (text: string, carried = 0): string =>
         if (at === 0) {
             start = carried;
         }
+
         let spaces = '';
         for (let index = 0; index < run.length; index += 1) {
             if ((start + index) % 2 === 0) {
@@ -186,6 +208,7 @@ export const renderSpaces = (text: string, carried = 0): string =>
                 spaces += '\u00A0';
             }
         }
+
         return spaces;
     });
 
@@ -201,12 +224,15 @@ export const islandText = (original: unknown): string => {
             text += '\n';
             continue;
         }
+
         if (!isRecord(value)) {
             continue;
         }
+
         if (value.type === 'text' && typeof value.text === 'string') {
             text += value.text;
         }
+
         if (Array.isArray(value.content)) {
             const children = value.content as readonly unknown[];
             // The original has no schema, so children are blocks when none is text and one has a content array.
@@ -221,5 +247,6 @@ export const islandText = (original: unknown): string => {
             }
         }
     }
+
     return text;
 };

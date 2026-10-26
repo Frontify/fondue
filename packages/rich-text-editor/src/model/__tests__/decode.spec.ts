@@ -51,6 +51,7 @@ const replace = (input: Json, key: string, value: Json | undefined): Json => {
     } else {
         copy[key] = value;
     }
+
     return copy;
 };
 
@@ -60,8 +61,10 @@ const treeOf = (input: unknown) => {
     if (tree === undefined) {
         throw new Error('expected an island tree');
     }
+
     const stored = (input as RichTextDocument).requiredCapabilities;
     const child = (index: number) => (tree.content === undefined ? undefined : tree.content[index]);
+
     return { result, tree, child, saved: encodeTree(tree, model, stored).document };
 };
 
@@ -116,6 +119,7 @@ describe('the order of decode checks', () => {
         for (const [, input] of twoSteps) {
             decodeDocument(input, model);
         }
+
         decodeDocument(JSON.stringify(valid), model);
         expect(decodeDocument(valid, model).status).toBe('editable');
         expect(fromJSON).not.toHaveBeenCalled();
@@ -284,6 +288,7 @@ describe('text and hashing', () => {
         const forms = ['Caf\u00E9 \u1E9B\u0323', 'Cafe\u0301 \u017F\u0323\u0307'];
         const encoded = forms.map((form) => {
             const { tree } = decodeToTree(envelope(doc(paragraph(text(form)))), model);
+
             return tree === undefined ? '' : JSON.stringify(encodeTree(tree, model).document.content);
         });
         expect(encoded).toEqual(forms.map((form) => JSON.stringify(doc(paragraph(text(form))))));
@@ -296,6 +301,7 @@ describe('text and hashing', () => {
             if (Array.isArray(value)) {
                 return value.map(permute);
             }
+
             if (typeof value === 'object' && value !== null) {
                 return Object.fromEntries(
                     Object.entries(value)
@@ -303,8 +309,10 @@ describe('text and hashing', () => {
                         .map(([key, item]) => [key, permute(item)]),
                 );
             }
+
             return value;
         };
+
         const permuted = permute(document) as RichTextDocument;
         const reversed = {
             ...document,

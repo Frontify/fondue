@@ -79,6 +79,7 @@ describe('diffReferences', () => {
         for (let level = 0; level < 20_000; level += 1) {
             deep = { type: 'blockquote', content: [deep] };
         }
+
         const hostile = stored(deep, { type: 'mention', attrs: { nodeId: 7 } }, 'text', null);
 
         expect(diffReferences(stored(), hostile, commentModel)).toEqual({

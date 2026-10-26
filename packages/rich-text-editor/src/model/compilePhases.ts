@@ -46,27 +46,34 @@ export const collectMembers = (list: readonly CompiledFeature[]) => {
             if (first !== undefined) {
                 throw duplicate('node', name, first.featureId, feature.id);
             }
+
             if ((declaration as Partial<NodeDeclaration>).html === undefined) {
                 throw failure('definition.missing-schema', feature.id, pointer('nodes', name, 'html'));
             }
+
             nodes.set(name, { name, featureId: feature.id, declaration, shared: [] });
         }
+
         for (const [name, declaration] of Object.entries(feature.declaration.marks ?? {})) {
             const first = marks.get(name) ?? nodes.get(name);
             if (first !== undefined) {
                 throw duplicate('mark', name, first.featureId, feature.id);
             }
+
             if ((declaration as Partial<MarkDeclaration>).html === undefined) {
                 throw failure('definition.missing-schema', feature.id, pointer('marks', name, 'html'));
             }
+
             marks.set(name, { name, featureId: feature.id, declaration });
         }
     }
+
     for (const required of ['doc', 'text']) {
         if (!nodes.has(required)) {
             throw new DefinitionError('definition.invalid-declaration', { path: pointer('nodes', required) });
         }
     }
+
     return { nodes, marks };
 };
 
@@ -85,10 +92,12 @@ export const checkMembers = (nodes: ReadonlyMap<string, MutableNode>, marks: Rea
         if (declaration.group === 'block') {
             join('block', name);
         }
+
         if (declaration.group !== undefined) {
             join(declaration.group === 'block' ? 'section' : declaration.group, name);
         }
     }
+
     const membersOf = (name: string) => (nodes.has(name) ? [name] : (groups.get(name) ?? []));
     const textblocks: string[] = [];
     for (const { name, featureId, declaration } of nodes.values()) {
@@ -98,26 +107,31 @@ export const checkMembers = (nodes: ReadonlyMap<string, MutableNode>, marks: Rea
         if (declaration.content === undefined) {
             continue;
         }
+
         const path = pointer('nodes', name, 'content');
         const names = contentNames(declaration.content);
         if (names === undefined || names.some((term) => membersOf(term).length === 0)) {
             throw failure('definition.invalid-declaration', featureId, path);
         }
+
         const inline = new Set(
             names.flatMap(membersOf).map((member) => nodes.get(member)?.declaration.group === 'inline'),
         );
         if (inline.size > 1) {
             throw failure('definition.invalid-declaration', featureId, path);
         }
+
         if (inline.has(true) && declaration.group !== 'inline') {
             textblocks.push(name);
         }
     }
+
     for (const { name, featureId, declaration } of marks.values()) {
         checkAttributes(featureId, declaration.attrs, ['marks', name, 'attrs']);
         checkMarks(featureId, declaration.excludes, ['marks', name, 'excludes']);
         checkMarkMarkdown(featureId, name, declaration.markdown);
     }
+
     return textblocks;
 };
 
@@ -135,9 +149,11 @@ export const attachSharedAttributes = (
             if (isStyleAttribute(boundName)) {
                 throw failure('definition.invalid-declaration', feature.id, pointer('attributes', name, 'html'));
             }
+
             if (isSrcdocAttribute(boundName) || (isUrlAttribute(boundName) && shared.value.type !== 'url')) {
                 throw failure('definition.unsafe-url-binding', feature.id, pointer('attributes', name, 'html'));
             }
+
             let targets = textblocks;
             if (shared.on !== 'textblocks') {
                 // A target the model lacks is skipped, so an attribute is an orphan only when it reaches no node.
@@ -146,17 +162,20 @@ export const attachSharedAttributes = (
                     throw failure('definition.orphan-behavior', feature.id, pointer('attributes', name, 'on'));
                 }
             }
+
             for (const target of targets) {
                 const node = nodes.get(target);
                 if (node === undefined) {
                     continue;
                 }
+
                 const owner = Object.hasOwn(node.declaration.attrs, name)
                     ? node
                     : node.shared.find((attribute) => attribute.name === name);
                 if (owner !== undefined) {
                     throw duplicate('attribute', `${target}.${name}`, owner.featureId, feature.id);
                 }
+
                 node.shared.push({ name, featureId: feature.id, declaration: shared });
             }
         }
@@ -175,6 +194,7 @@ export const checkRootNode = (nodes: ReadonlyMap<string, MutableNode>) => {
                 pointer('nodes', 'doc', 'attrs', rootFault[0]),
             );
         }
+
         if ((doc.declaration.exactlyOne ?? []).length > 0) {
             throw failure('definition.invalid-declaration', doc.featureId, pointer('nodes', 'doc', 'exactlyOne'));
         }
@@ -201,9 +221,11 @@ export const compileParseRules = (
                         OWN_PARSE_MEMBERS,
                     );
                 }
+
                 parseRules.push(checkedRule(rule, mark.declaration.attrs, mark.declaration.exactlyOne));
                 continue;
             }
+
             const node = nodes.get(rule.node);
             if (node?.featureId !== feature.id) {
                 throw failure(
@@ -213,19 +235,23 @@ export const compileParseRules = (
                     OWN_PARSE_MEMBERS,
                 );
             }
+
             parseRules.push(checkedRule(rule, attributesOf(node), node.declaration.exactlyOne));
         }
+
         for (const [name, declaration] of Object.entries(feature.declaration.nodes ?? {})) {
             const node = nodes.get(name);
             const attrs = node === undefined ? declaration.attrs : attributesOf(node);
             checkHtml(feature, declaration.html, attrs, pointer('nodes', name, 'html'));
             checkParse(feature, declaration.parse, attrs, ['nodes', name, 'parse']);
         }
+
         for (const [name, declaration] of Object.entries(feature.declaration.marks ?? {})) {
             checkHtml(feature, declaration.html, declaration.attrs, pointer('marks', name, 'html'));
             checkParse(feature, declaration.parse, declaration.attrs, ['marks', name, 'parse']);
         }
     }
+
     return parseRules;
 };
 
@@ -236,9 +262,11 @@ export const orderedPlugins = (list: readonly CompiledFeature[]) => {
         if (feature.id === CONTENT_CHECKS_FEATURE) {
             contributions.push({ featureId: feature.id, plugin: CONTENT_ISSUES_PLUGIN });
         }
+
         if (declaresNodeIds(feature.declaration)) {
             contributions.push({ featureId: feature.id, plugin: NODE_IDS_PLUGIN });
         }
     }
+
     return orderPlugins(contributions);
 };

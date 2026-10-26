@@ -49,6 +49,7 @@ export const attributesOf = (node: CompiledNode): Readonly<Record<string, Attrib
     for (const shared of node.shared) {
         attributes[shared.name] = shared.declaration.value;
     }
+
     return attributes;
 };
 
@@ -66,25 +67,32 @@ const resolveOptions = (id: string, declaration: FeatureDeclaration, given: unkn
         if (!isValidValue(option, option.default)) {
             throw failure('definition.invalid-declaration', id, pointer('options', name, 'default'));
         }
+
         options[name] = option.default;
     }
+
     if (given === undefined) {
         return options;
     }
+
     const unsafe = findUnsafeJson(given, '/options');
     if (unsafe !== undefined) {
         throw failure('definition.invalid-option', id, unsafe);
     }
+
     if (!isRecord(given)) {
         throw failure('definition.invalid-option', id, '/options');
     }
+
     for (const [name, value] of Object.entries(given)) {
         const option = ownValue(declared, name);
         if (option === undefined || !isValidValue(option, value)) {
             throw failure('definition.invalid-option', id, pointer('options', name));
         }
+
         options[name] = value as JsonValue;
     }
+
     return snapshot(options);
 };
 
@@ -122,6 +130,7 @@ const checkFormats = (declaration: FeatureDeclaration) => {
     if (formats === undefined) {
         return;
     }
+
     for (const format of ['html', 'text', 'markdown'] as const) {
         if (!SUPPORT[format].includes(formats[format])) {
             throw failure('definition.invalid-declaration', declaration.id, pointer('formats', format));
@@ -145,23 +154,28 @@ export const checkMigrations = (steps: readonly ModelMigration[] = [], version: 
 
 export const readFeatures = (features: readonly Feature[]): CompiledFeature[] => {
     const seen = new Set<string>();
+
     return features.map((feature, index) => {
         const internals = featureInternals(feature);
         if (internals === undefined) {
             throw new DefinitionError('definition.invalid-declaration', { path: pointer(index) });
         }
+
         const { declaration } = internals;
         if (!isVersion(declaration.version)) {
             throw failure('definition.invalid-declaration', declaration.id, pointer('version'));
         }
+
         checkNames(declaration);
         checkFormats(declaration);
         checkMigrations(declaration.migrations, declaration.version, declaration.id);
         if (seen.has(declaration.id)) {
             throw duplicate('feature', declaration.id, declaration.id, declaration.id);
         }
+
         seen.add(declaration.id);
         const options = resolveOptions(declaration.id, declaration, internals.options);
+
         return { id: declaration.id, version: declaration.version, declaration, options };
     });
 };
@@ -170,14 +184,17 @@ export const checkDependencies = (features: readonly CompiledFeature[]) => {
     const byId = new Map(features.map((feature) => [feature.id, feature]));
     const requiresOf = (id: string) => {
         const feature = byId.get(id);
+
         return feature === undefined ? [] : (feature.declaration.requires ?? []);
     };
+
     const visited = new Set<string>();
     const visit = (path: readonly string[]) => {
         const id = path.at(-1);
         if (id === undefined || visited.has(id)) {
             return;
         }
+
         visited.add(id);
         for (const required of requiresOf(id)) {
             const target = byId.get(required.id);
@@ -185,6 +202,7 @@ export const checkDependencies = (features: readonly CompiledFeature[]) => {
             if (target === undefined) {
                 throw new DefinitionError('definition.missing-dependency', { path: next });
             }
+
             if (target.version !== required.version) {
                 const details = {
                     feature: id,
@@ -194,12 +212,15 @@ export const checkDependencies = (features: readonly CompiledFeature[]) => {
                 };
                 throw new DefinitionError('definition.version-mismatch', details);
             }
+
             visit(next);
         }
     };
+
     for (const feature of features) {
         visit([feature.id]);
     }
+
     const ids = features.map(({ id }) => id);
     const cycle = findCycle(ids, (id) => requiresOf(id).map((required) => required.id));
     if (cycle !== undefined) {
@@ -230,10 +251,12 @@ export const checkHtml = (
     if (depth > MAX_DEPTH) {
         throw failure('definition.invalid-declaration', feature.id, path);
     }
+
     const [tag, second, third] = spec;
     if (typeof tag === 'object' && !Object.hasOwn(attrs, tag.attr)) {
         throw failure('definition.invalid-declaration', feature.id, `${path}/0`);
     }
+
     const attributes =
         typeof second === 'object' && !Array.isArray(second)
             ? (second as Readonly<Record<string, HtmlAttributeValue>>)
@@ -245,6 +268,7 @@ export const checkHtml = (
         if (isSrcdocAttribute(name)) {
             throw failure('definition.unsafe-url-binding', feature.id, at);
         }
+
         if (typeof value === 'string') {
             if (isUrl && !checkHref(value).ok) {
                 throw failure('definition.unsafe-url-binding', feature.id, at);
@@ -254,6 +278,7 @@ export const checkHtml = (
             if (attribute === undefined || isStyleAttribute(name)) {
                 throw failure('definition.invalid-declaration', feature.id, at);
             }
+
             if (isUrl && attribute.type !== 'url') {
                 throw failure('definition.unsafe-url-binding', feature.id, at);
             }
@@ -263,6 +288,7 @@ export const checkHtml = (
             throw failure('definition.unsafe-url-binding', feature.id, at);
         }
     }
+
     const content = attributes === undefined ? second : third;
     if (Array.isArray(content)) {
         checkHtml(feature, content as HtmlSpec, attrs, `${path}/${attributes === undefined ? 1 : 2}`, depth + 1);
@@ -305,26 +331,32 @@ export const checkedRule = (
     } else {
         name = rule.node;
     }
+
     const read = (element: HTMLElement) => {
         const answer: unknown = rule.value(element);
         if (answer === null) {
             return null;
         }
+
         if (!isRecord(answer)) {
             return undefined;
         }
+
         return parsedAttributes(attrs, exactlyOne, (attribute, declaration) => {
             const value = ownValue(answer, attribute);
             if (declaration.type !== 'url' || typeof value !== 'string') {
                 return value;
             }
+
             const href = checkHref(value);
             if (!href.ok) {
                 return undefined;
             }
+
             return href.href;
         });
     };
+
     return { tag: rule.tag, kind, name, read };
 };
 
@@ -337,18 +369,22 @@ export const checkNodeMarkdown = (featureId: string, name: string, markdown: unk
     if (markdown === undefined) {
         return;
     }
+
     const at = pointer('nodes', name, 'markdown');
     if (!isRecord(markdown)) {
         throw failure('definition.invalid-declaration', featureId, at);
     }
+
     const hasPrefix = Object.hasOwn(markdown, 'prefix');
     const hasFence = Object.hasOwn(markdown, 'fence');
     if (hasPrefix === hasFence) {
         throw failure('definition.invalid-declaration', featureId, at);
     }
+
     if (hasPrefix && !isMarkdownDelimiter(markdown.prefix)) {
         throw failure('definition.invalid-declaration', featureId, `${at}/prefix`);
     }
+
     if (hasFence && !isMarkdownFence(markdown.fence)) {
         throw failure('definition.invalid-declaration', featureId, `${at}/fence`);
     }
@@ -358,13 +394,16 @@ export const checkMarkMarkdown = (featureId: string, name: string, markdown: unk
     if (markdown === undefined) {
         return;
     }
+
     const at = pointer('marks', name, 'markdown');
     if (!isRecord(markdown)) {
         throw failure('definition.invalid-declaration', featureId, at);
     }
+
     if (!isMarkdownDelimiter(markdown.open)) {
         throw failure('definition.invalid-declaration', featureId, `${at}/open`);
     }
+
     if (!isMarkdownDelimiter(markdown.close)) {
         throw failure('definition.invalid-declaration', featureId, `${at}/close`);
     }

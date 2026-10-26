@@ -38,6 +38,7 @@ export const findUnresolvedAssets = (document: RichTextDocument): readonly Unres
         if (!isRecord(node)) {
             continue;
         }
+
         const { attrs } = node;
         if (
             node.type === ASSET_IMAGE &&
@@ -47,6 +48,7 @@ export const findUnresolvedAssets = (document: RichTextDocument): readonly Unres
         ) {
             found.push({ nodeId: attrs.nodeId, type: ASSET_IMAGE });
         }
+
         if (Array.isArray(node.content)) {
             const children = node.content as readonly unknown[];
             for (let index = children.length - 1; index >= 0; index -= 1) {
@@ -54,6 +56,7 @@ export const findUnresolvedAssets = (document: RichTextDocument): readonly Unres
             }
         }
     }
+
     return found;
 };
 
@@ -62,6 +65,7 @@ export const isUnresolvedImage = (node: TreeNode): boolean => {
     if (node.type === ASSET_IMAGE) {
         return node.attrs?.assetId === null;
     }
+
     return node.type === FIGURE && (node.content ?? []).some((child) => isUnresolvedImage(child));
 };
 
@@ -84,7 +88,9 @@ export const leavesOutUnresolved = (
     if (featureId !== IMAGE_FEATURE || !isUnresolvedImage(node)) {
         return false;
     }
+
     state.diagnostics.push(unresolvedAsset(path));
+
     return true;
 };
 
@@ -96,9 +102,11 @@ export const altOf = (attrs: JsonObject): string | undefined => {
     if (attrs.altIntent === 'decorative') {
         return '';
     }
+
     if (attrs.altIntent === 'meaningful' && typeof attrs.altText === 'string') {
         return attrs.altText;
     }
+
     return undefined;
 };
 
@@ -134,6 +142,7 @@ const sizeOf = (value: unknown): number | undefined => {
     if (typeof value === 'number' && Number.isInteger(value) && value > 0) {
         return value;
     }
+
     return undefined;
 };
 
@@ -143,19 +152,23 @@ export const imageSource = (attrs: JsonObject, context: CodecContext): string | 
     if (typeof attrs.assetId !== 'string' || resolveAssetUrl === undefined) {
         return undefined;
     }
+
     const options: { width?: number } = {};
     const width = sizeOf(attrs.width);
     if (width !== undefined) {
         options.width = width;
     }
+
     const url: unknown = resolveAssetUrl(attrs.assetId, options);
     if (typeof url !== 'string') {
         return undefined;
     }
+
     const checked = context.checkHref(url);
     if (!checked.ok) {
         return undefined;
     }
+
     return checked.href;
 };
 
@@ -168,6 +181,7 @@ export const unavailableOf = (attrs: JsonObject, context: CodecContext): Unavail
     if (typeof attrs.labelSnapshot === 'string') {
         label = attrs.labelSnapshot;
     }
+
     return { message: context.t('RichTextEditor_imageUnavailable'), label };
 };
 
@@ -178,6 +192,7 @@ const reservedSize = (attrs: JsonObject): { readonly width?: number; readonly he
     if (width === undefined || height === undefined || Math.max(width, height) > Math.min(width, height) * MAX_ASPECT) {
         return {};
     }
+
     return { width, height };
 };
 
@@ -192,12 +207,15 @@ export const imageOutput = (attrs: JsonObject, context: CodecContext): ImageOutp
     if (src === undefined) {
         return { kind: 'unavailable', ...unavailable };
     }
+
     let cssWidth: string | undefined;
     const display = sizeOf(attrs.displayWidth);
     if (display !== undefined && display <= 100) {
         cssWidth = `${display}%`;
     }
+
     const { width, height } = reservedSize(attrs);
+
     return { kind: 'image', src, alt: altOf(attrs), width, height, cssWidth, unavailable };
 };
 
@@ -209,5 +227,6 @@ export const figureAlign = (attrs: JsonObject): 'left' | 'center' | 'right' => {
     if (attrs.align === 'left' || attrs.align === 'right') {
         return attrs.align;
     }
+
     return 'center';
 };

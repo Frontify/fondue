@@ -198,6 +198,7 @@ describe('the content check rules', () => {
                 'image.alt-suspicious:a',
             ]);
         }
+
         expect(idsOf([image('a', { altIntent: 'decorative', altText: 'photo' })], 'image.alt-suspicious')).toEqual([]);
     });
 

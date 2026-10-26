@@ -10,5 +10,6 @@ export const isWellFormed = (text: string): boolean => {
     if (typeof native === 'function') {
         return native.call(text);
     }
+
     return !LONE_SURROGATE.test(text);
 };

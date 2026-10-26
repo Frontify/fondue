@@ -42,6 +42,7 @@ const representationOf = (model: ContentModel): JsonObject => {
     const properties = schema.properties as JsonObject;
     const envelope = properties.model as JsonObject;
     const fields = envelope.properties as JsonObject;
+
     return {
         ...schema,
         properties: { ...properties, model: { ...envelope, properties: { ...fields, version: { type: 'integer' } } } },
@@ -58,15 +59,18 @@ export const candidateOf = (features: readonly Feature[], options: ContentModelO
             owners[`${key}.${name}`] = featureId;
         }
     };
+
     for (const { name, featureId, declaration, shared } of compiled.nodes) {
         own(`n.${name}`, featureId, Object.keys(declaration.attrs));
         for (const attribute of shared) {
             owners[`n.${name}.${attribute.name}`] = attribute.featureId;
         }
     }
+
     for (const { name, featureId, declaration } of compiled.marks) {
         own(`m.${name}`, featureId, Object.keys(declaration.attrs));
     }
+
     return {
         snapshot: {
             model: model.ref,
@@ -103,19 +107,25 @@ export const onlyAdds = (previous: JsonValue | undefined, next: JsonValue | unde
     if (canonicalJson(before) === canonicalJson(after)) {
         return true;
     }
+
     if (Array.isArray(previous) && Array.isArray(next) && (key === 'oneOf' || key === 'enum')) {
         const items = new Set((next as readonly JsonValue[]).map((item) => canonicalJson(item)));
+
         return (previous as readonly JsonValue[]).every((item) => items.has(canonicalJson(item)));
     }
+
     if (!isObject(previous) || !isObject(next)) {
         return false;
     }
+
     // A single alternative becomes a `oneOf` once a second one is added.
     const alternatives = Array.isArray(next.oneOf) ? (next.oneOf as readonly JsonValue[]) : [];
     if (!('oneOf' in previous) && alternatives.some((item) => onlyAdds(previous, item))) {
         return true;
     }
+
     const open = key === 'properties' || key === '$defs';
+
     return (
         Object.keys(next).every((name) => open || Object.hasOwn(previous, name)) &&
         Object.keys(previous).every((name) => onlyAdds(previous[name], next[name], name))
@@ -124,6 +134,7 @@ export const onlyAdds = (previous: JsonValue | undefined, next: JsonValue | unde
 
 const objectAt = (value: JsonValue | undefined, key: string): JsonObject => {
     const member = isObject(value) ? value[key] : undefined;
+
     return isObject(member) ? member : {};
 };
 
@@ -147,6 +158,7 @@ const split = (definition: JsonValue | undefined) => {
               properties: { ...properties, attrs: { ...attrs, properties: {}, required: [] } },
           }
         : definition;
+
     return { rest, each };
 };
 
@@ -157,23 +169,29 @@ const split = (definition: JsonValue | undefined) => {
 const prune = (value: JsonValue, removed: ReadonlySet<string>, key = ''): JsonValue | undefined => {
     if (Array.isArray(value)) {
         const items = (value as readonly JsonValue[]).map((item) => prune(item, removed));
+
         return items.filter((item): item is JsonValue => item !== undefined);
     }
+
     if (!isObject(value)) {
         return value;
     }
+
     if (typeof value.$ref === 'string' && removed.has(value.$ref)) {
         return undefined;
     }
+
     const entries = Object.entries(value).map(([name, item]) => [name, prune(item, removed, name)] as const);
     if (key !== 'properties' && entries.some(([, item]) => item === undefined)) {
         return undefined;
     }
+
     const pruned: JsonObject = Object.fromEntries(
         entries.filter((entry): entry is readonly [string, JsonValue] => entry[1] !== undefined),
     );
     const alternatives = Array.isArray(pruned.oneOf) ? (pruned.oneOf as readonly JsonValue[]) : [];
     const [only] = alternatives;
+
     return alternatives.length === 1 && only !== undefined && entries.length === 1 ? only : pruned;
 };
 
@@ -200,6 +218,7 @@ const breakingOwners = (previous: ModelSnapshot, next: ModelSnapshot): Set<strin
         if (following(key) === undefined || !onlyAdds(was.rest, now.rest)) {
             owners.add(ownerOf(base));
         }
+
         for (const name of following(key) === undefined ? [] : new Set([...was.each.keys(), ...now.each.keys()])) {
             const old = was.each.get(name);
             const added = now.each.get(name);
@@ -212,6 +231,7 @@ const breakingOwners = (previous: ModelSnapshot, next: ModelSnapshot): Set<strin
             }
         }
     }
+
     return owners;
 };
 
@@ -225,6 +245,7 @@ export const compareModel = (previous: ModelSnapshot, current: ModelCandidate): 
     if (changed && version !== before + 1) {
         problems.push(`${id}: the stored representation changed, so model version ${before} must become ${before + 1}`);
     }
+
     if (
         !changed &&
         version !== before &&
@@ -232,6 +253,7 @@ export const compareModel = (previous: ModelSnapshot, current: ModelCandidate): 
     ) {
         problems.push(`${id}: model version ${before} became ${version} with no change to the stored representation`);
     }
+
     for (const owner of breakingOwners(previous, snapshot)) {
         const earlier = previous.capabilities.find((capability) => capability.id === owner);
         const installed = earlier !== undefined && snapshot.capabilities.some((capability) => capability.id === owner);
@@ -240,12 +262,14 @@ export const compareModel = (previous: ModelSnapshot, current: ModelCandidate): 
                 `${id}: capability ${owner} removed or changed a node, mark or attribute with no migration from its version ${earlier.version}`,
             );
         }
+
         if (!installed && !steps.model.includes(before)) {
             problems.push(
                 `${id}: the feature list removed or changed a node, mark or attribute with no model migration from version ${before}`,
             );
         }
     }
+
     for (const capability of snapshot.capabilities) {
         const earlier = previous.capabilities.find((entry) => entry.id === capability.id);
         if (earlier !== undefined && earlier.version === capability.version && earlier.schema !== capability.schema) {
@@ -254,6 +278,7 @@ export const compareModel = (previous: ModelSnapshot, current: ModelCandidate): 
             );
         }
     }
+
     return problems;
 };
 
@@ -274,6 +299,7 @@ export const findProblems = (
         const previous = committed[name];
         problems.push(...(previous === undefined ? [] : compareModel(previous, candidate)));
     }
+
     return problems;
 };
 

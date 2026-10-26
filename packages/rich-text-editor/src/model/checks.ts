@@ -133,6 +133,7 @@ export type LocatedIssue = {
 
 const listOf = (locale: RichTextLocale, key: `RichTextEditor_${string}`, english: string): ReadonlySet<string> => {
     const own = locale.translationStrings[key];
+
     return new Set(
         [...english.split('|'), ...(typeof own === 'string' ? own.split('|') : [])]
             .map(folded)
@@ -147,13 +148,16 @@ const inlineText = (children: readonly ContentNodeJSON[]): string =>
             if (typeof child.text === 'string') {
                 return child.text;
             }
+
             if (child.type === 'hard_break') {
                 return '\n';
             }
+
             const label = attrsOf(child).labelSnapshot;
             if (typeof label === 'string') {
                 return label;
             }
+
             return inlineText(child.content ?? []);
         })
         .join('');
@@ -164,6 +168,7 @@ const markKey = (mark: MarkJSON | undefined) => (mark === undefined ? '' : canon
 
 const nodeIdOf = (node: ContentNodeJSON) => {
     const { nodeId } = attrsOf(node);
+
     return typeof nodeId === 'string' ? nodeId : null;
 };
 
@@ -180,11 +185,14 @@ const runsOf = (children: readonly ContentNodeJSON[], key: (child: ContentNodeJS
         while (end < children.length && key(children[end] as ContentNodeJSON) === value) {
             end += 1;
         }
+
         if (value !== '') {
             runs.push({ start, end });
         }
+
         start = end;
     }
+
     return runs;
 };
 
@@ -209,6 +217,7 @@ const subjectsOf = (document: RichTextDocument, declared: ReadonlySet<string>, r
             nodeRules.set(subject.node, [...(nodeRules.get(subject.node) ?? []), rule]);
             continue;
         }
+
         const group = markGroups.find(({ marks }) => marks.join(' ') === subject.marks.join(' '));
         if (group === undefined) {
             markGroups.push({ marks: subject.marks, rules: [rule] });
@@ -216,6 +225,7 @@ const subjectsOf = (document: RichTextDocument, declared: ReadonlySet<string>, r
             group.rules.push(rule);
         }
     }
+
     // How often each `nodeId` occurs, since a repeated one names no single node.
     const nodeIds = new Map<string, number>();
     const previous = new Map<string, ContentNodeJSON>();
@@ -224,14 +234,17 @@ const subjectsOf = (document: RichTextDocument, declared: ReadonlySet<string>, r
         if (ISLANDS.has(node.type)) {
             return;
         }
+
         // The editor keeps a node its model lacks as an island, which no repair or Go to can reach.
         if (!declared.has(node.type)) {
             return;
         }
+
         const ownId = nodeIdOf(node);
         if (ownId !== null) {
             nodeIds.set(ownId, (nodeIds.get(ownId) ?? 0) + 1);
         }
+
         const owned = nodeRules
             .get(node.type)
             ?.filter(({ subject }) => !('where' in subject) || subject.where?.(node) !== false);
@@ -248,21 +261,26 @@ const subjectsOf = (document: RichTextDocument, declared: ReadonlySet<string>, r
             found.push(...owned.map((rule) => ({ rule, subject, given })));
             previous.set(node.type, node);
         }
+
         const children = node.content ?? [];
         ancestors.push(node);
         if (!isInline(children) || markGroups.length === 0) {
             for (const [index, child] of children.entries()) {
                 visit(child, [...path, index]);
             }
+
             ancestors.pop();
+
             return;
         }
+
         const runs = markGroups.map(({ marks }) =>
             runsOf(children, (child) => {
                 const held = marks.map((name) => markOf(child, name));
                 if (held.every((mark) => mark === undefined)) {
                     return '';
                 }
+
                 return held.map(markKey).join(' ');
             }),
         );
@@ -272,6 +290,7 @@ const subjectsOf = (document: RichTextDocument, declared: ReadonlySet<string>, r
                     if (start !== index) {
                         continue;
                     }
+
                     const covered = children.slice(start, end);
                     const first = covered[0] as ContentNodeJSON;
                     const subject: Subject = {
@@ -291,11 +310,15 @@ const subjectsOf = (document: RichTextDocument, declared: ReadonlySet<string>, r
                     found.push(...grouped.map((rule) => ({ rule, subject, given })));
                 }
             }
+
             visit(child, [...path, index]);
         }
+
         ancestors.pop();
     };
+
     visit(document.content, []);
+
     return { found, repeated: (nodeId: string) => (nodeIds.get(nodeId) ?? 0) > 1 };
 };
 
@@ -316,6 +339,7 @@ export const locateContentIssues = (
     if (enclosingHeadingLevel === undefined && typeof stored === 'number' && LEVELS.includes(stored as Level)) {
         enclosingHeadingLevel = stored as Level;
     }
+
     const { found, repeated } = subjectsOf(document, nodes, featureRules(model));
     const context: ContentRuleContext = {
         genericWords: listOf(locale, 'RichTextEditor_checkGenericImageWords', GENERIC_IMAGE_WORDS),
@@ -330,6 +354,7 @@ export const locateContentIssues = (
         if (finding === undefined) {
             return;
         }
+
         const { id: ruleId, kind, severity, repair } = rule;
         let repairCommand: string | null = null;
         let repairPayload: JsonValue | null = null;
@@ -337,6 +362,7 @@ export const locateContentIssues = (
             repairCommand = repair.command;
             repairPayload = finding.payload;
         }
+
         const path = subject === undefined ? null : subject.path;
         const nodeId = subject === undefined ? null : subject.nodeId;
         let id: string = ruleId;
@@ -345,18 +371,22 @@ export const locateContentIssues = (
         } else if (path !== null) {
             id = `${ruleId}:${path.join(',')}`;
         }
+
         located.push({
             issue: { id, ruleId, kind, severity, path, nodeId, repairCommand, repairPayload, sequence },
             span: subject === undefined ? 0 : subject.span,
             signature: subject === undefined ? '' : subject.signature,
         });
     };
+
     for (const rule of DOCUMENT_RULES) {
         add(rule, undefined, rule.check(context));
     }
+
     for (const { rule, subject, given } of found) {
         add(rule, subject, rule.check(given, context));
     }
+
     return located;
 };
 
@@ -371,5 +401,6 @@ export const findContentIssues = (
     if (!isRecord(document) || !isRecord(document.content)) {
         return [];
     }
+
     return locateContentIssues(document, options).map(({ issue }) => issue);
 };

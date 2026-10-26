@@ -23,11 +23,13 @@ const compact = (value: unknown, indent = ''): string => {
     if (typeof value !== 'object' || value === null || indent.length + line.length <= 120) {
         return line;
     }
+
     const inner = `${indent}    `;
     const parts = Array.isArray(value)
         ? value.map((item) => compact(item, inner))
         : Object.entries(value).map(([key, item]) => `${JSON.stringify(key)}: ${compact(item, inner)}`);
     const [open, close] = Array.isArray(value) ? ['[', ']'] : ['{', '}'];
+
     return `${open}\n${parts.map((part) => `${inner}${part}`).join(',\n')}\n${indent}${close}`;
 };
 

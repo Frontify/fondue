@@ -34,6 +34,7 @@ const NAMED = new Map(
         .split(' ')
         .map((entry) => {
             const [name = '', hex = ''] = entry.split(':');
+
             return [name, `#${hex}`] as const;
         }),
 );
@@ -54,9 +55,11 @@ const amount = (text: string, full: number): number | undefined => {
     if (text === '' || !Number.isFinite(value)) {
         return undefined;
     }
+
     if (percent) {
         return (value / 100) * full;
     }
+
     return value;
 };
 
@@ -66,13 +69,16 @@ const hueOf = (text: string): number | undefined => {
     if (match === null) {
         return undefined;
     }
+
     const value = Number(match[1]);
     if (match[2] === 'turn') {
         return value * 360;
     }
+
     if (match[2] === 'rad') {
         return (value * 180) / Math.PI;
     }
+
     return value;
 };
 
@@ -91,6 +97,7 @@ const rgbOfHsl = (hue: number, saturation: number, lightness: number): readonly 
     ];
     const sector = sectors[Math.floor(turn) % 6] ?? [0, 0, 0];
     const lift = lightness - chroma / 2;
+
     return sector.map((part) => (part + lift) * 255);
 };
 
@@ -106,6 +113,7 @@ export const hexColor = (text: string): string | undefined => {
     if (named !== undefined) {
         return named;
     }
+
     const short = SHORT_HEX.exec(value);
     if (short !== null) {
         const [, red = '', green = '', blue = '', alpha] = short;
@@ -113,15 +121,19 @@ export const hexColor = (text: string): string | undefined => {
         if (alpha !== undefined && alpha !== 'f') {
             hex += `${alpha}${alpha}`;
         }
+
         return hex;
     }
+
     if (LONG_HEX.test(value)) {
         return value.endsWith('ff') && value.length === 9 ? value.slice(0, 7) : value;
     }
+
     const call = FUNCTION.exec(value);
     if (call === null) {
         return undefined;
     }
+
     const [, name = '', inner = ''] = call;
     const [channels = '', alphaText] = inner.split('/').map((part) => part.trim());
     const parts = channels.split(/[\s,]+/).filter((part) => part !== '');
@@ -129,9 +141,11 @@ export const hexColor = (text: string): string | undefined => {
     if (parts.length === 4 && alphaPart === undefined) {
         alphaPart = parts.pop();
     }
+
     if (parts.length !== 3) {
         return undefined;
     }
+
     let rgb: readonly (number | undefined)[];
     if (name.startsWith('rgb')) {
         rgb = parts.map((part) => amount(part, 255));
@@ -143,20 +157,25 @@ export const hexColor = (text: string): string | undefined => {
         if (hue === undefined || saturation === undefined || lightness === undefined) {
             return undefined;
         }
+
         rgb = rgbOfHsl(hue, saturation, lightness);
     }
+
     if (rgb.some((part) => part === undefined)) {
         return undefined;
     }
+
     let hex = `#${rgb.map((part) => byte(part ?? 0)).join('')}`;
     if (alphaPart !== undefined) {
         const alpha = amount(alphaPart, 1);
         if (alpha === undefined) {
             return undefined;
         }
+
         if (alpha < 1) {
             hex += byte(alpha * 255);
         }
     }
+
     return hex;
 };

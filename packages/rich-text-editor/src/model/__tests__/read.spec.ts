@@ -29,16 +29,20 @@ const bytesOf = (value: unknown) =>
     new TextEncoder().encode(typeof value === 'string' ? value : JSON.stringify(value)).length;
 const limitOf = (input: unknown, overrides: Partial<ResourceLimits> = {}) => {
     const read = readInput(input, limits(overrides));
+
     return read.ok ? undefined : read.diagnostic.details?.limit;
 };
+
 /** A doc whose deepest node, a paragraph, sits at `depth`. */
 const deep = (depth: number): Json => {
     let content: Json = paragraph();
     for (let level = depth - 1; level > 1; level -= 1) {
         content = blockquote(content);
     }
+
     return doc(content);
 };
+
 const nested = (levels: number): Json => (levels === 0 ? 'leaf' : { a: nested(levels - 1) });
 const exceeded = (limit: string) => ({
     status: 'blocked',
@@ -141,8 +145,10 @@ describe('host objects', () => {
     const revoked = () => {
         const { proxy, revoke } = Proxy.revocable({}, {});
         revoke();
+
         return proxy;
     };
+
     const hostile: readonly (readonly [string, () => unknown])[] = [
         ['a Proxy whose ownKeys trap throws', () => throwing('ownKeys')],
         ['a Proxy whose getPrototypeOf trap throws', () => throwing('getPrototypeOf')],
@@ -186,6 +192,7 @@ describe('host objects', () => {
         if (leaf !== undefined) {
             leaf.text = 'changed';
         }
+
         expect(result.status === 'editable' && result.document.content).toEqual(doc(paragraph(text('a'))));
     });
 });

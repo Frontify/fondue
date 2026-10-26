@@ -35,6 +35,7 @@ const withOuterAttribute = (template: HtmlTemplate, attribute: 'class' | 'style'
     if (outer === undefined) {
         return template;
     }
+
     const existing = outer.attrs[attribute];
     let text = value;
     if (existing !== undefined && attribute === 'class') {
@@ -42,6 +43,7 @@ const withOuterAttribute = (template: HtmlTemplate, attribute: 'class' | 'style'
     } else if (existing !== undefined) {
         text = `${existing};${value}`;
     }
+
     return { ...template, layers: [{ ...outer, attrs: { ...outer.attrs, [attribute]: text } }, ...inner] };
 };
 
@@ -51,6 +53,7 @@ export const styleOfNode = (styles: readonly PresentationStyle[], type: string, 
     if (typeof attrs.styleId === 'string') {
         styleId = attrs.styleId;
     }
+
     return resolveStyle(styles, type, styleId);
 };
 
@@ -60,6 +63,7 @@ export const withStyleId = (template: HtmlTemplate, attrs: JsonObject): HtmlTemp
     if (outer === undefined || typeof attrs.styleId !== 'string' || outer.attrs['data-rte-style'] !== undefined) {
         return template;
     }
+
     return {
         ...template,
         layers: [{ ...outer, attrs: { ...outer.attrs, 'data-rte-style': attrs.styleId } }, ...inner],
@@ -71,10 +75,12 @@ export const withStyle = (template: HtmlTemplate, style: ResolvedStyle | undefin
     if (style === undefined) {
         return template;
     }
+
     let styled = withOuterAttribute(template, 'class', style.className);
     if (inline && style.declarations.length > 0) {
         styled = withOuterAttribute(styled, 'style', inlineStyleText(style));
     }
+
     return styled;
 };
 
@@ -89,10 +95,12 @@ export const withColor = (
     if (property === undefined) {
         return template;
     }
+
     const color = colorOf(tokens, attrs);
     if (color === undefined) {
         return template;
     }
+
     return withOuterAttribute(template, 'style', `${property}:${color}`);
 };
 

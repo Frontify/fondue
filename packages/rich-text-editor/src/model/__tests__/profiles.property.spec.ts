@@ -54,16 +54,20 @@ const encoded = (input: unknown, model: ContentModel, limits?: Partial<ResourceL
     if (limits !== undefined) {
         options = { limits };
     }
+
     const { result, tree } = decodeToTree(input, model, options);
     if (tree === undefined) {
         return { result, document: undefined };
     }
+
     let stored = (input as { requiredCapabilities?: unknown }).requiredCapabilities;
     if (!Array.isArray(stored)) {
         stored = [];
     }
+
     return { result, document: encodeTree(tree, model, stored as CapabilityRef[]).document };
 };
+
 const same = (a: unknown, b: unknown) => expect(canonicalJson(a as JsonValue)).toBe(canonicalJson(b as JsonValue));
 /** A stored document of `model` around `root`, which may be any JSON value. */
 const storedAround = (model: ContentModel, root: unknown) => ({
@@ -81,6 +85,7 @@ const denormalize = (model: ContentModel, value: JsonValue): JsonValue => {
         Object.fromEntries(
             Object.entries(attrs).filter(([name, item]) => {
                 const declaration = declared[name];
+
                 return declaration === undefined || !('default' in declaration) || declaration.default !== item;
             }),
         );
@@ -92,24 +97,30 @@ const denormalize = (model: ContentModel, value: JsonValue): JsonValue => {
             for (const shared of declaration.shared) {
                 declared[shared.name] = shared.declaration.value;
             }
+
             node.attrs = defaults(declared, node.attrs as JsonNode);
         }
+
         if (Array.isArray(node.marks)) {
             node.marks = [...(node.marks as JsonNode[])].reverse().map((mark) => {
                 const markDeclaration = marks.find(({ name }) => name === mark.type);
                 if (markDeclaration === undefined || mark.attrs === undefined) {
                     return mark;
                 }
+
                 return { ...mark, attrs: defaults(markDeclaration.declaration.attrs, mark.attrs as JsonNode) };
             });
         }
+
         if (Array.isArray(node.content)) {
             node.content = (node.content as JsonValue[]).flatMap((child) => {
                 const copy = visit(child) as JsonNode;
                 if (typeof copy.text !== 'string' || [...copy.text].length < 2) {
                     return [copy];
                 }
+
                 const chars = [...copy.text];
+
                 return [
                     { ...copy, text: chars[0] ?? '' },
                     { ...copy, text: chars.slice(1).join('') },
@@ -118,8 +129,10 @@ const denormalize = (model: ContentModel, value: JsonValue): JsonValue => {
         } else if (node.type === 'paragraph') {
             node.content = [];
         }
+
         return node;
     };
+
     return visit(value);
 };
 
@@ -151,13 +164,16 @@ describe('the document generator', () => {
                 for (const mark of (node.marks ?? []) as JsonNode[]) {
                     seen.add(mark.type as string);
                 }
+
                 for (const child of (node.content ?? []) as JsonValue[]) {
                     visit(child);
                 }
             };
+
             for (const { content } of fc.sample(modelDocumentArb(model), fcSettings(300))) {
                 visit(content as unknown as JsonValue);
             }
+
             const { nodes, marks } = compiledModel(model);
             expect([...seen].sort()).toEqual([...nodes, ...marks].map(({ name }) => name).sort());
         }
@@ -200,6 +216,7 @@ const checkDecode = (input: unknown, model: ContentModel, limits?: Partial<Resou
         expect(['info', 'warning', 'error']).toContain(severity);
         expect(path ?? '').toMatch(/^(\/.*)?$/s);
     }
+
     if (result.status === 'blocked') {
         expect(['invalid', 'unsupported', 'limit-exceeded']).toContain(result.reason);
         expect(result.diagnostics.some(({ severity }) => severity === 'error')).toBe(true);
@@ -208,13 +225,16 @@ const checkDecode = (input: unknown, model: ContentModel, limits?: Partial<Resou
             const details = exceeded?.details;
             expect(LIMIT_NAMES).toContain(details?.limit);
         }
+
         return result;
     }
+
     expect(result.status).toBe('editable');
     const again = encoded(document, model, limits);
     expect(again.result.status).toBe('editable');
     const againContent = again.document?.content;
     same(againContent, document?.content);
+
     return result;
 };
 
@@ -227,6 +247,7 @@ const hostileArb = (model: ContentModel) => {
             attributeNames.add(name);
         }
     }
+
     const short = fc.string({ unit: fc.constantFrom('a', '😀', ' ', '\u0000', '\uD800', '<'), maxLength: 48 });
     const scalar = fc.oneof(
         fc.constantFrom(null, true, 0, -1, 1.5, '', 'javascript:alert(1)', 'https://frontify.com', '#ff0000', 'en'),
@@ -272,6 +293,7 @@ const hostileArb = (model: ContentModel) => {
             ),
         ),
     }));
+
     return { node, attributes, json };
 };
 
@@ -279,9 +301,11 @@ const positionsOf = (value: unknown): number => {
     if (Array.isArray(value)) {
         return 1 + value.reduce((sum: number, item) => sum + positionsOf(item), 0);
     }
+
     if (isObject(value)) {
         return 1 + Object.values(value).reduce((sum: number, item) => sum + positionsOf(item), 0);
     }
+
     return 1;
 };
 
@@ -294,14 +318,18 @@ const replaceAt = (value: unknown, at: number, replacement: unknown): unknown =>
         if (position - 1 === index) {
             return replacement;
         }
+
         if (Array.isArray(current)) {
             return current.map(visit);
         }
+
         if (isObject(current)) {
             return Object.fromEntries(Object.entries(current).map(([key, item]) => [key, visit(item)]));
         }
+
         return current;
     };
+
     return visit(value);
 };
 
@@ -311,17 +339,22 @@ const inputOf = (model: ContentModel, root: unknown, form: number, header: unkno
     if (form === 0) {
         return JSON.stringify(envelope);
     }
+
     if (form === 1) {
         return JSON.stringify(envelope).slice(0, -1);
     }
+
     if (form === 2) {
         return Object.assign(envelope, header as object);
     }
+
     if (form === 3) {
         return root;
     }
+
     return envelope;
 };
+
 const headerArb = (json: fc.Arbitrary<unknown>) =>
     fc.record(
         {
@@ -380,6 +413,7 @@ describe.each(PROFILES)(seeded('decoding hostile input for the %s profile model'
                         collect(child, current);
                     }
                 };
+
                 collect(copy, undefined);
                 const target = slots[at % slots.length] as (typeof slots)[number];
                 let code = 'format.unknown-node';
@@ -400,12 +434,14 @@ describe.each(PROFILES)(seeded('decoding hostile input for the %s profile model'
                     target.node.attrs = { ...(target.node.attrs as JsonNode | undefined), acmeTone: extra };
                     code = 'format.unknown-attribute';
                 }
+
                 const { result, document } = encoded(storedAround(model, copy), model);
                 expect(result.status).toBe('editable');
                 expect(result.diagnostics.length).toBeGreaterThan(0);
                 if (code !== '') {
                     expect(result.diagnostics.map((diagnostic) => diagnostic.code)).toContain(code);
                 }
+
                 same(document?.content, copy);
             }),
             fcSettings(300),
@@ -422,8 +458,10 @@ describe.each(PROFILES)(seeded('decoding hostile input for the %s profile model'
             for (let level = 0; level < levels; level += 1) {
                 value = [value];
             }
+
             return value;
         };
+
         fc.assert(
             fc.property(
                 fc.option(fc.integer({ min: 1, max: 16 }), { nil: undefined }),
@@ -449,11 +487,13 @@ describe.each(PROFILES)(seeded('decoding hostile input for the %s profile model'
                         const mark = { type: 'acme_glow', attrs: { acme: nested(deepest - 3) } };
                         block = { type: 'paragraph', content: [{ type: 'text', text: 'a', marks: [mark] }] };
                     }
+
                     const input = storedWith(model, [block]);
                     let limits: Partial<ResourceLimits> = {};
                     if (small !== undefined) {
                         limits = { maxDepth: small };
                     }
+
                     const result = checkDecode(input, model, limits);
                     if (deepest <= maxDepth) {
                         expect(result.status).toBe('editable');
@@ -474,12 +514,15 @@ describe.each(PROFILES)(seeded('decoding hostile input for the %s profile model'
             if (!wide) {
                 return 'a'.repeat(length);
             }
+
             let value = '😀'.repeat(Math.floor(length / 2));
             if (length % 2 === 1) {
                 value += 'a';
             }
+
             return value;
         };
+
         const minimum = longestAttributeValue(model);
         fc.assert(
             fc.property(
@@ -517,6 +560,7 @@ describe.each(PROFILES)(seeded('decoding hostile input for the %s profile model'
                         name = 'maxDocumentNodes';
                         blocks = Array.from({ length: size - 1 }, () => ({ type: 'paragraph' }));
                     }
+
                     const result = checkDecode(storedWith(model, blocks), model, limits);
                     if (kind === 'href' || size <= limit) {
                         expect(result.status).toBe('editable');
@@ -548,6 +592,7 @@ describe(seeded('decoding huge strings at the default limits'), () => {
                         attrs: { acme: 'a'.repeat(defaultLimits.maxAttributeLength + Number(over)) },
                     };
                 }
+
                 const result = checkDecode(storedWith(inlineModel, [block]), inlineModel);
                 if (over) {
                     expect(result).toMatchObject({ status: 'blocked', reason: 'limit-exceeded' });

@@ -28,6 +28,7 @@ describe('the style resolver', () => {
         ];
         const fontSizeOf = (styleId: string | null, type = 'paragraph') => {
             const { style, unknown } = resolveStyle(styles, type, styleId);
+
             return [style?.declarations, unknown];
         };
 

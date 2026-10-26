@@ -118,9 +118,11 @@ export const findCycle = (starts: readonly string[], next: (id: string) => reado
         if (onStack >= 0) {
             return [...stack.slice(onStack), id];
         }
+
         if (done.has(id)) {
             return undefined;
         }
+
         stack.push(id);
         for (const target of next(id)) {
             const cycle = visit(target);
@@ -128,16 +130,20 @@ export const findCycle = (starts: readonly string[], next: (id: string) => reado
                 return cycle;
             }
         }
+
         stack.pop();
         done.add(id);
+
         return undefined;
     };
+
     for (const start of starts) {
         const cycle = visit(start);
         if (cycle !== undefined) {
             return cycle;
         }
     }
+
     return undefined;
 };
 
@@ -180,6 +186,7 @@ export const orderPlugins = (
             });
         }
     }
+
     const descriptors = [...plugins.values()].map(({ plugin }) => plugin);
     const successors = new Map<string, string[]>(descriptors.map((plugin) => [plugin.id, []]));
     const phaseOf = (plugin: PluginDescriptor) => PLUGIN_PHASES.indexOf(plugin.phase);
@@ -188,23 +195,28 @@ export const orderPlugins = (
         if (other === undefined && knownKeys.has(target)) {
             return;
         }
+
         const first = before ? plugin : other?.plugin;
         const second = before ? other?.plugin : plugin;
         if (other === undefined || first === undefined || second === undefined || phaseOf(first) > phaseOf(second)) {
             throw new DefinitionError('definition.unsatisfied-order', { plugin: plugin.id, target, before });
         }
+
         if (phaseOf(first) === phaseOf(second)) {
             successors.get(first.id)?.push(second.id);
         }
     };
+
     for (const plugin of descriptors) {
         for (const target of plugin.before ?? []) {
             constrain(plugin, target, true);
         }
+
         for (const target of plugin.after ?? []) {
             constrain(plugin, target, false);
         }
     }
+
     const cycle = findCycle(
         descriptors.map(({ id }) => id),
         (id) => successors.get(id) ?? [],
@@ -212,6 +224,7 @@ export const orderPlugins = (
     if (cycle !== undefined) {
         throw new DefinitionError('definition.dependency-cycle', { kind: 'plugin', path: cycle });
     }
+
     const ordered: PluginDescriptor[] = [];
     const placed = new Set<string>();
     const waiting = (plugin: PluginDescriptor) =>
@@ -227,5 +240,6 @@ export const orderPlugins = (
             }
         }
     }
+
     return ordered;
 };

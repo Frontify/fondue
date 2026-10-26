@@ -25,12 +25,14 @@ const writeAttrs = (attrs: Readonly<Record<string, unknown>>, declared: readonly
     for (const name of declared) {
         written[name] = attrs[name];
     }
+
     const unknown = attrs.unknownAttributes;
     if (isRecord(unknown)) {
         for (const [name, value] of Object.entries(unknown)) {
             written[name] = value;
         }
     }
+
     return Object.keys(written).length > 0 ? written : undefined;
 };
 
@@ -39,8 +41,10 @@ export const writeMark = (vocabulary: Vocabulary, mark: TreeMark): unknown => {
     if (mark.type === ISLAND_MARK) {
         return mark.attrs.original;
     }
+
     const declaration = vocabulary.marks.get(mark.type);
     const attrs = writeAttrs(mark.attrs, Object.keys(declaration === undefined ? {} : declaration.declaration.attrs));
+
     return attrs === undefined ? { type: mark.type } : { type: mark.type, attrs };
 };
 
@@ -58,18 +62,22 @@ export const writeNode = (
     if (node.text !== undefined) {
         written.text = node.text;
     }
+
     if (node.attrs !== undefined && declaration !== undefined) {
         const attrs = writeAttrs(node.attrs, Object.keys(attributesOf(declaration)));
         if (attrs !== undefined) {
             written.attrs = attrs;
         }
     }
+
     if (content !== undefined) {
         written.content = content;
     }
+
     if (node.marks !== undefined && node.marks.length > 0) {
         written.marks = node.marks.map((mark) => writeMark(vocabulary, mark));
     }
+
     return written;
 };
 
@@ -82,6 +90,7 @@ const note = (
     if (featureId !== undefined) {
         encoding.used.add(featureId);
     }
+
     if (attrs !== undefined && isRecord(attrs.unknownAttributes)) {
         encoding.foreign = true;
     }
@@ -101,13 +110,16 @@ const noteSharedAttributes = (encoding: Encoding, node: TreeNode) => {
 const encodeNode = (encoding: Encoding, node: TreeNode): unknown => {
     if (isIsland(node)) {
         encoding.foreign = true;
+
         return node.attrs?.original;
     }
+
     const declaration = encoding.vocabulary.nodes.get(node.type);
     if (declaration !== undefined) {
         note(encoding, declaration.featureId, node.attrs);
         noteSharedAttributes(encoding, node);
     }
+
     for (const mark of node.marks ?? []) {
         const markDeclaration = encoding.vocabulary.marks.get(mark.type);
         if (mark.type === ISLAND_MARK) {
@@ -118,10 +130,12 @@ const encodeNode = (encoding: Encoding, node: TreeNode): unknown => {
             note(encoding, markDeclaration.featureId, mark.attrs);
         }
     }
+
     const content = joinText(encoding, node.content ?? []);
     if (content.length === 0) {
         return writeNode(encoding.vocabulary, node, undefined);
     }
+
     return writeNode(encoding.vocabulary, node, content);
 };
 
@@ -143,10 +157,12 @@ const joinText = (encoding: Encoding, children: readonly TreeNode[]): unknown[] 
             previous = text;
             joined.push(encoded);
         }
+
         if (previous !== undefined) {
             encoding.longestText = Math.max(encoding.longestText, previous.text.length);
         }
     }
+
     return joined;
 };
 
@@ -166,10 +182,12 @@ const capabilitiesOf = (
             versions.set(id, version);
         }
     }
+
     const installed = new Map(model.capabilities.map(({ id, version }) => [id, version]));
     for (const { id, version } of encoding.foreign ? stored : []) {
         versions.set(id, Math.max(version, installed.get(id) ?? version));
     }
+
     return [...versions.keys()].sort().map((id) => ({ id, version: versions.get(id) ?? 0 }));
 };
 
@@ -188,5 +206,6 @@ export const encodeTree = (
         requiredCapabilities: capabilitiesOf(model, encoding, stored),
         content,
     };
+
     return { document, longestText: encoding.longestText };
 };

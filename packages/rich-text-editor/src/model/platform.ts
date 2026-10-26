@@ -16,7 +16,9 @@ export const isApple = (navigator: PlatformNavigator): boolean => {
     if (navigator.platform !== '') {
         return /Mac|iP(hone|[oa]d)/.test(navigator.platform);
     }
+
     const { userAgentData } = navigator;
+
     return userAgentData !== undefined && /^(macOS|iOS)$/.test(userAgentData.platform);
 };
 
@@ -29,9 +31,11 @@ export const keyOn = (binding: string, apple: boolean): string | undefined => {
     if (prefix === null) {
         return binding;
     }
+
     if ((prefix[1] === 'mac') !== apple) {
         return undefined;
     }
+
     return binding.slice(prefix[0].length);
 };
 
@@ -41,5 +45,6 @@ export const modOn = (key: string, apple: boolean): string => {
     if (apple) {
         modifier = 'Meta';
     }
+
     return key.replace(/(^|-)Mod-/, `$1${modifier}-`);
 };

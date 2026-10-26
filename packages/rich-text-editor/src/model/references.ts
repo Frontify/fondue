@@ -33,6 +33,7 @@ export const resolvingSafely =
         if (resolve === undefined) {
             return UNKNOWN;
         }
+
         try {
             return resolve(resourceType, resourceId);
         } catch {
@@ -53,6 +54,7 @@ const stringOf = (value: unknown): string => {
     if (typeof value === 'string') {
         return value;
     }
+
     return '';
 };
 
@@ -73,20 +75,25 @@ export const mentionLabel = (
     if (typeof resolution === 'object' && resolution !== null) {
         status = (resolution as { readonly status?: unknown }).status;
     }
+
     if (status === 'current') {
         const current = shownLabel(stringOf((resolution as { readonly label?: unknown }).label));
         if (current !== '') {
             return { label: current, unavailable: null };
         }
     }
+
     let label = shownLabel(stringOf(attrs.labelSnapshot));
     if (label === '') {
         label = t('RichTextEditor_mentionUnknown', { resourceType });
     }
+
     if (status === 'unavailable') {
         const { code } = resolution as { readonly code?: unknown };
+
         return { label, unavailable: code === 'forbidden' ? 'forbidden' : 'deleted' };
     }
+
     return { label, unavailable: null };
 };
 
@@ -98,6 +105,7 @@ export const unavailableNote = ({ unavailable }: MentionLabel, t: CodecContext['
     if (unavailable === null) {
         return '';
     }
+
     return ` (${t('RichTextEditor_mentionUnavailable')})`;
 };
 
@@ -127,6 +135,7 @@ const mentionsOf = (document: RichTextDocument, model: ContentModel): Map<string
         if (!isRecord(node)) {
             continue;
         }
+
         const { attrs } = node;
         const reference = typeof node.type === 'string' ? declared.get(node.type) : undefined;
         if (reference !== undefined && isRecord(attrs)) {
@@ -142,6 +151,7 @@ const mentionsOf = (document: RichTextDocument, model: ContentModel): Map<string
                 found.set(nodeId, { nodeId, resourceType, resourceId });
             }
         }
+
         if (Array.isArray(node.content)) {
             const children = node.content as readonly unknown[];
             for (let index = children.length - 1; index >= 0; index -= 1) {
@@ -149,6 +159,7 @@ const mentionsOf = (document: RichTextDocument, model: ContentModel): Map<string
             }
         }
     }
+
     return found;
 };
 
@@ -170,11 +181,14 @@ export const diffReferences = (
     const next = mentionsOf(after, model);
     const added = [...next.values()].filter((mention) => {
         const old = previous.get(mention.nodeId);
+
         return old === undefined || !sameReference(old, mention);
     });
     const removed = [...previous.values()].filter((mention) => {
         const kept = next.get(mention.nodeId);
+
         return kept === undefined || !sameReference(kept, mention);
     });
+
     return { added, removed };
 };

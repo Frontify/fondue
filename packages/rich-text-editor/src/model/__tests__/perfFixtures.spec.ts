@@ -36,6 +36,7 @@ const countsOf = (blocks: readonly ContentNodeJSON[]): Counts => {
         if (node.type === 'mention') {
             counts.mentions += 1;
         }
+
         if (node.type === 'text') {
             const { text } = node as unknown as { readonly text: string };
             counts.graphemes += [...segmenter.segment(text)].length;
@@ -45,13 +46,16 @@ const countsOf = (blocks: readonly ContentNodeJSON[]): Counts => {
                 counts.links += 1;
             }
         }
+
         for (const child of node.content ?? []) {
             visit(child);
         }
     };
+
     for (const block of blocks) {
         visit(block);
     }
+
     return counts;
 };
 

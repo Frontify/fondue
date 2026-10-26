@@ -36,13 +36,16 @@ export const findMisshapenCapabilities = (capabilities: unknown): string | undef
     if (!Array.isArray(capabilities)) {
         return '/requiredCapabilities';
     }
+
     const ids = new Set<string>();
     for (const [index, capability] of capabilities.entries()) {
         if (!isRef(capability) || ids.has(capability.id)) {
             return pointer('requiredCapabilities', index);
         }
+
         ids.add(capability.id);
     }
+
     return undefined;
 };
 
@@ -51,10 +54,13 @@ const findMisshapen = (envelope: Readonly<Record<string, unknown>>): string | un
     if (!hasExactly(envelope, ENVELOPE_KEYS)) {
         return '';
     }
+
     if (!isRef(envelope.model)) {
         return '/model';
     }
+
     const root = isRoot(envelope.content) ? undefined : '/content';
+
     return findMisshapenCapabilities(envelope.requiredCapabilities) ?? root;
 };
 
@@ -68,6 +74,7 @@ export const checkEnvelope = (value: unknown, model: ContentModel): EnvelopeResu
     if (!isRecord(value) || value.format !== 'frontify.rich-text' || !Object.hasOwn(value, 'formatVersion')) {
         return invalid('');
     }
+
     if (value.formatVersion !== 1) {
         return {
             ok: false,
@@ -75,10 +82,12 @@ export const checkEnvelope = (value: unknown, model: ContentModel): EnvelopeResu
             diagnostic: diagnostic('format.unknown-format-version', '/formatVersion', undefined, 'error'),
         };
     }
+
     const misshapen = findMisshapen(value);
     if (misshapen !== undefined) {
         return invalid(misshapen);
     }
+
     // `findMisshapen` checked the envelope and root shape; deeper content is checked later, per node.
     const document = value as Readonly<Record<string, unknown>> & RichTextDocument;
     if (document.model.id !== model.ref.id) {
@@ -88,5 +97,6 @@ export const checkEnvelope = (value: unknown, model: ContentModel): EnvelopeResu
             diagnostic: diagnostic('format.wrong-model', '/model/id', undefined, 'error'),
         };
     }
+
     return { ok: true, document };
 };

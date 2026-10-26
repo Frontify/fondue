@@ -47,5 +47,6 @@ export const pointer = (...segments: readonly (string | number)[]): string => {
             path += `/${text}`;
         }
     }
+
     return path;
 };

@@ -45,16 +45,21 @@ const decode = (content: Json) => {
     if (result.status !== 'editable' || tree === undefined) {
         throw new Error(`expected editable, got ${JSON.stringify(result)}`);
     }
+
     const encoded = canonicalJson(encodeTree(tree, model).document.content as unknown as Json);
     const codes = result.diagnostics.map(({ code, path }) => `${code} ${path ?? ''}`);
+
     return { tree, encoded, codes };
 };
+
 /** Decodes `content` inside a doc and expects the round trip to give it back byte for byte in canonical form. */
 const roundTrip = (content: Json) => {
     const decoded = decode(content);
     expect(decoded.encoded).toBe(canonicalJson(content));
+
     return decoded;
 };
+
 const islandAt = (tree: TreeNode, ...indices: readonly number[]): TreeNode => {
     let current = tree;
     for (const index of indices) {
@@ -62,10 +67,13 @@ const islandAt = (tree: TreeNode, ...indices: readonly number[]): TreeNode => {
         if (child === undefined) {
             throw new Error(`no node at ${indices.join('/')}`);
         }
+
         current = child;
     }
+
     return current;
 };
+
 type Shaped = {
     readonly type?: unknown;
     readonly attrs?: Record<string, unknown>;
@@ -75,14 +83,17 @@ const firstOfType = (value: Shaped, type: string): Shaped | undefined => {
     if (value.type === type) {
         return value;
     }
+
     for (const child of value.content ?? []) {
         const found = firstOfType(child, type);
         if (found !== undefined) {
             return found;
         }
     }
+
     return undefined;
 };
+
 const attrsAt = (tree: TreeNode, ...indices: readonly number[]) => islandAt(tree, ...indices).attrs ?? {};
 const marksAt = (tree: TreeNode, ...indices: readonly number[]) => islandAt(tree, ...indices).marks ?? [];
 /** Nodes and marks with the given attributes laid over a valid base, so a case names only the one that is out of range. */
@@ -714,6 +725,7 @@ describe('malformed values', () => {
         if (type === 'text') {
             expect(marksAt(tree, ...at)[0]?.type).toBe('unsupported_mark');
         }
+
         expect(codes).toEqual([expect.stringMatching(/^format\.invalid-structure /)]);
     });
 

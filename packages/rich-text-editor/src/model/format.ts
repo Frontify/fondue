@@ -199,5 +199,6 @@ export const diagnostic = (
 ): Diagnostic => {
     const base = { code, severity, messageKey: code };
     const located = path === undefined ? base : { ...base, path };
+
     return details === undefined ? located : { ...located, details };
 };

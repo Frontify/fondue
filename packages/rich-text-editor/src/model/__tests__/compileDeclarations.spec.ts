@@ -258,6 +258,7 @@ describe('compileContentModel declarations', () => {
         for (let depth = 0; depth < 5000; depth += 1) {
             html = ['div', html];
         }
+
         const deep = feature({ id: 'a.deep', version: 1, nodes: { deep: { ...block('inline*'), html } } });
         expect(failureOf(() => compile([core(), deep]))).toEqual({
             code: 'definition.invalid-declaration',
@@ -299,6 +300,7 @@ describe('compileContentModel declarations', () => {
                     details: { feature: 'a.card', path: `/nodes/card/html/1${pointer(name)}` },
                 });
             }
+
             expect(compile([core(), card(name, { attr: 'href' })]).manifest.nodes).toContain('card');
         }
     });
@@ -388,6 +390,7 @@ describe('compileContentModel declarations', () => {
                 details: { feature: 'a.card', path: `/nodes/card/html/1${pointer(name)}` },
             });
         }
+
         for (const name of ['style', 'STYLE']) {
             const shared = feature({
                 id: 'a.shared',
@@ -528,6 +531,7 @@ describe('compileContentModel declarations', () => {
         for (let depth = 0; depth < 10_000; depth += 1) {
             nested = { nested };
         }
+
         const deep = feature({ id: 'a.deep', version: 1, options: { value: { type: 'json', default: nested } } });
         expect(failureOf(() => compile([core(), deep]))).toEqual({
             code: 'definition.invalid-declaration',

@@ -47,19 +47,26 @@ const checkMark = (context: Context, value: unknown, path: string): CheckedMark 
     const island = { mark: markIslandOf(value), path };
     if (!isRecord(value) || typeof value.type !== 'string') {
         warn(context, 'format.invalid-structure', path);
+
         return island;
     }
+
     const declaration = context.vocabulary.marks.get(value.type);
     if (declaration === undefined) {
         warn(context, 'format.unknown-mark', path);
+
         return island;
     }
+
     if (!hasKeys(value, MARK_KEYS) || !isOptional(value, 'attrs', isRecord)) {
         warn(context, 'format.invalid-structure', path);
+
         return island;
     }
+
     const { attrs, exactlyOne } = declaration.declaration;
     const values = checkAttributes(context, attrs, exactlyOne, value.attrs as Attrs | undefined, path);
+
     return values === undefined ? island : { mark: { type: value.type, attrs: values }, declaration, path };
 };
 
@@ -76,56 +83,71 @@ const checkMarks = (
 ): readonly TreeMark[] | undefined => {
     const fail = () => {
         warn(context, 'format.invalid-structure', path);
+
         return undefined;
     };
+
     if (stored.length === 0) {
         return [];
     }
+
     const listed = parent.declaration.marks;
     const takesNone = (names: readonly string[] | undefined) => names !== undefined && names.length === 0;
     if (node.declaration.group !== 'inline' || takesNone(node.declaration.marks) || takesNone(listed)) {
         return fail();
     }
+
     const isListed = (mark: unknown) => isRecord(mark) && typeof mark.type === 'string' && listed?.includes(mark.type);
     if (listed !== undefined && !stored.every(isListed)) {
         return fail();
     }
+
     const checked = stored.map((mark, index) => checkMark(context, mark, `${path}${pointer('marks', index)}`));
     if (listed !== undefined && checked.some((mark) => mark.declaration === undefined)) {
         return fail();
     }
+
     const kept: CompiledMark[] = [];
     const marks = checked.map((entry, index): CheckedMark => {
         const { declaration } = entry;
         if (declaration === undefined) {
             return entry;
         }
+
         if (kept.some((other) => conflicts(other, declaration))) {
             warn(context, 'format.invalid-structure', entry.path);
+
             return { mark: markIslandOf(stored[index]), path: entry.path };
         }
+
         kept.push(declaration);
+
         return entry;
     });
     if (listed !== undefined && marks.some((mark) => mark.declaration === undefined)) {
         return fail();
     }
+
     const originals = new Set<string>();
     for (const { mark, declaration, path: at } of marks) {
         const original = declaration === undefined ? canonicalJson(mark.attrs.original as JsonValue) : undefined;
         if (original !== undefined && originals.has(original)) {
             warn(context, 'format.invalid-structure', at);
+
             return undefined;
         }
+
         if (original !== undefined) {
             originals.add(original);
         }
     }
+
     const { markOrder } = context.vocabulary;
     const rank = ({ declaration }: CheckedMark) =>
         declaration === undefined ? 0 : (declaration.declaration.rank ?? 0);
     const order = ({ declaration }: CheckedMark) =>
         declaration === undefined ? markOrder.length : markOrder.indexOf(declaration.name);
+
     return [...marks].sort((a, b) => rank(a) - rank(b) || order(a) - order(b)).map(({ mark }) => mark);
 };
 
@@ -153,23 +175,31 @@ const checkChildren = (
                 content.push(result.node);
                 continue;
             }
+
             warn(context, 'format.invalid-structure', `${path}${pointer('content', index)}`);
         }
+
         const placed = placeIsland(vocabulary, match, stored[index]);
         if (placed === undefined) {
             return undefined;
         }
+
         match = placed.match;
         content.push(placed.node);
     }
+
     if (!matchEnds(match)) {
         warn(context, 'format.invalid-structure', path);
+
         return undefined;
     }
+
     if (node.name === 'table' && !isGrid(content)) {
         warn(context, 'format.invalid-structure', path);
+
         return undefined;
     }
+
     return content;
 };
 
@@ -178,15 +208,20 @@ const checkNode = (context: Context, value: unknown, path: string, parent: Compi
     if (context.review.has(path)) {
         return FAILED;
     }
+
     if (!isRecord(value) || typeof value.type !== 'string') {
         warn(context, 'format.invalid-structure', path);
+
         return FAILED;
     }
+
     const node = context.vocabulary.nodes.get(value.type);
     if (node === undefined) {
         warn(context, 'format.unknown-node', path);
+
         return FAILED;
     }
+
     const text = node.name === 'text';
     const shaped = text
         ? hasKeys(value, TEXT_KEYS) && typeof value.text === 'string' && value.text !== ''
@@ -195,22 +230,27 @@ const checkNode = (context: Context, value: unknown, path: string, parent: Compi
           isOptional(value, 'content', Array.isArray);
     if (!shaped || !isOptional(value, 'marks', Array.isArray)) {
         warn(context, 'format.invalid-structure', path);
+
         return FAILED;
     }
+
     const attrs = text
         ? undefined
         : checkAttributes(context, attributesOf(node), node.declaration.exactlyOne, value.attrs as Attrs, path, 'node');
     if (!text && attrs === undefined) {
         return FAILED;
     }
+
     const marks = checkMarks(context, node, parent, (value.marks as readonly unknown[] | undefined) ?? [], path);
     if (marks === undefined) {
         return FAILED;
     }
+
     const content = checkChildren(context, node, (value.content as readonly unknown[] | undefined) ?? [], path);
     if (content === undefined) {
         return FAILED;
     }
+
     const tree = treeNode(
         node.name,
         text ? undefined : attrs,
@@ -219,6 +259,7 @@ const checkNode = (context: Context, value: unknown, path: string, parent: Compi
         text ? (value.text as string) : undefined,
     );
     context.sources.set(tree, value);
+
     return { ok: true, node: tree };
 };
 
@@ -233,15 +274,19 @@ const treeNode = (
     if (text !== undefined) {
         node.text = text;
     }
+
     if (attrs !== undefined) {
         node.attrs = attrs;
     }
+
     if (content.length > 0) {
         node.content = content;
     }
+
     if (marks.length > 0) {
         node.marks = marks;
     }
+
     return node;
 };
 
@@ -251,6 +296,7 @@ const checkRoot = (context: Context, root: Attrs): TreeNode | undefined => {
     if (node === undefined) {
         return undefined;
     }
+
     const attrs = checkAttributes(
         context,
         attributesOf(node),
@@ -263,8 +309,10 @@ const checkRoot = (context: Context, root: Attrs): TreeNode | undefined => {
     if (attrs === undefined || content === undefined) {
         return undefined;
     }
+
     const tree = treeNode('doc', attrs, content, [], undefined);
     context.sources.set(tree, root);
+
     return tree;
 };
 
@@ -279,17 +327,22 @@ const dedupe = (context: Context, tree: TreeNode, path: string, kept: Set<string
     if (node === undefined || isIsland(tree)) {
         return tree;
     }
+
     const nodeId = tree.attrs?.nodeId;
     if (Object.hasOwn(attributesOf(node), 'nodeId') && typeof nodeId === 'string') {
         if (kept.has(nodeId)) {
             warn(context, 'format.duplicate-occurrence-id', path);
+
             return undefined;
         }
+
         kept.add(nodeId);
     }
+
     if (tree.content === undefined) {
         return tree;
     }
+
     let match = startMatch(node.declaration.content);
     let changed = false;
     const content: TreeNode[] = [];
@@ -302,24 +355,31 @@ const dedupe = (context: Context, tree: TreeNode, path: string, kept: Set<string
             if (match.states.length === 0) {
                 return undefined;
             }
+
             continue;
         }
+
         const placed = placeIsland(vocabulary, match, context.sources.get(child));
         if (placed === undefined) {
             return undefined;
         }
+
         changed = true;
         match = placed.match;
         content.push(placed.node);
     }
+
     if (!matchEnds(match)) {
         return undefined;
     }
+
     if (!changed) {
         return tree;
     }
+
     const next = { ...tree, content };
     context.sources.set(next, context.sources.get(tree));
+
     return next;
 };
 
@@ -336,5 +396,6 @@ export const checkContent = (
     const context: Context = { vocabulary: vocabularyOf(model), diagnostics: [], sources: new WeakMap(), review };
     const checked = checkRoot(context, root as Attrs);
     const tree = checked === undefined ? undefined : dedupe(context, checked, '/content', new Set());
+
     return { tree, diagnostics: context.diagnostics };
 };

@@ -35,6 +35,7 @@ export const limitsOf = <Given extends Partial<ResourceLimits>>(
             limits[name] = value;
         }
     }
+
     return limits;
 };
 
@@ -49,12 +50,14 @@ const capabilityWarnings = (document: RichTextDocument, model: ContentModel): Di
             warnings.push(diagnostic('format.unknown-capability', pointer('requiredCapabilities', index), details));
         }
     }
+
     return warnings;
 };
 
 /** A capability the content outside islands uses and `requiredCapabilities` omits warns; the encoder writes the corrected list. */
 const undeclaredWarnings = (document: RichTextDocument, encoded: RichTextDocument): Diagnostic[] => {
     const declared = new Set(document.requiredCapabilities.map(({ id }) => id));
+
     return encoded.requiredCapabilities
         .filter(({ id }) => !declared.has(id))
         .map(({ id }) => diagnostic('format.capability-undeclared', '/requiredCapabilities', { capability: id }));
@@ -76,31 +79,40 @@ export const decodeToTree = (input: unknown, model: ContentModel, options: Decod
     if (!read.ok) {
         return blocked(read.reason, [read.diagnostic]);
     }
+
     const envelope = checkEnvelope(read.value, model);
     if (!envelope.ok) {
         return blocked(envelope.reason, [envelope.diagnostic]);
     }
+
     const warnings = capabilityWarnings(envelope.document, model);
     const migrated = runMigrations(envelope.document, model, options.generateId ?? randomId, limits);
     const document = migrated.document;
     if (document === null) {
         return blocked('unsupported', [...warnings, ...migrated.diagnostics]);
     }
+
     const { tree, diagnostics } = checkContent(document.content, model, migrated.review);
     const found = [...warnings, ...migrated.diagnostics, ...diagnostics];
     if (tree === undefined) {
         return blocked('invalid', found);
     }
+
     const encoded = encodeTree(tree, model, document.requiredCapabilities);
     if (encoded.longestText > limits.maxTextLength) {
         const limit = diagnostic('format.limit-exceeded', '/content', { limit: 'maxTextLength' }, 'error');
+
         return blocked('limit-exceeded', [...found, limit]);
     }
+
     if (exceedsBytes(JSON.stringify(encoded.document), limits.maxDocumentBytes)) {
         const limit = diagnostic('format.limit-exceeded', '', { limit: 'maxDocumentBytes' }, 'error');
+
         return blocked('limit-exceeded', [...found, limit]);
     }
+
     const warned = [...found, ...undeclaredWarnings(document, encoded.document)];
+
     return { result: { status: 'editable', document, diagnostics: warned }, tree };
 };
 
@@ -120,8 +132,11 @@ export const createEmptyDocument = (model: ContentModel): RichTextDocument => {
         for (const [attribute, declaration] of Object.entries(node === undefined ? {} : attributesOf(node))) {
             attrs[attribute] = 'default' in declaration ? declaration.default : null;
         }
+
         return attrs;
     };
+
     const paragraph = { type: 'paragraph', attrs: defaults('paragraph') };
+
     return encodeTree({ type: 'doc', attrs: defaults('doc'), content: [paragraph] }, model).document;
 };
