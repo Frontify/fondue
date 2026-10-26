@@ -506,7 +506,7 @@ export default defineConfig({
     overrides: [
         {
             files: ['**/*.{js,jsx,ts,tsx,mts,cts,cjs}'],
-            jsPlugins: ['@tony.ganchev/eslint-plugin-header'],
+            jsPlugins: ['@tony.ganchev/eslint-plugin-header', '@stylistic/eslint-plugin'],
             rules: {
                 '@tony.ganchev/header/header': [
                     'error',
@@ -519,6 +519,11 @@ export default defineConfig({
                     },
                 ],
                 'typescript/consistent-type-definitions': ['error', 'type'],
+                '@stylistic/padding-line-between-statements': [
+                    'error',
+                    { blankLine: 'always', prev: '*', next: 'return' },
+                    { blankLine: 'always', prev: 'block-like', next: '*' },
+                ],
 
                 // Unlike the other Fondue packages, the type-aware rules keep the shared config's error severity.
             },
