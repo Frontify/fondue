@@ -17,7 +17,6 @@ import {
     FUNCTIONS_OVER_150_LINES,
     FUNCTIONS_OVER_6_LETS,
     KNOWN_CYCLES,
-    PROSEMIRROR_NODES,
     READONLY_MEMBERS,
     SPECS_OVER_1000_LINES,
     SPEC_REFERENCES,
@@ -261,26 +260,17 @@ const allFunctionMeasures = () => productFiles.flatMap((path) => functionMeasure
 
 const folderExists = (path: string) => existsSync(path) && statSync(path).isDirectory();
 
-// Maps a path under src (as segments) to its graph node; `split` gives `runtime/import` and each feature their own node.
-const nodeOf = (segments: string[], split: boolean) => {
-    const [first, second] = segments;
+// Maps a path under src (as segments) to its graph node, the top-level folder.
+const nodeOf = (segments: string[]) => {
+    const [first] = segments;
     if (first === undefined || !folderExists(join(srcRoot, first))) {
         return ROOT_NODE;
-    }
-
-    if (split && second !== undefined && first === 'runtime' && second === 'import') {
-        return 'runtime/import';
-    }
-
-    if (split && second !== undefined && first === 'features' && folderExists(join(srcRoot, first, second))) {
-        return `features/${second}`;
     }
 
     return first;
 };
 
-const nodeOfFile = (path: string, split: boolean) =>
-    nodeOf(relative(srcRoot, path).split('\\').join('/').split('/'), split);
+const nodeOfFile = (path: string) => nodeOf(relative(srcRoot, path).split('\\').join('/').split('/'));
 
 const moduleSpecifiers = (path: string) => {
     const specifiers: string[] = [];
@@ -332,7 +322,7 @@ const resolveInternal = (from: string, specifier: string) => {
 const folderGraph = () => {
     const graph = new Map<string, Set<string>>();
     for (const path of productFiles) {
-        const from = nodeOfFile(path, false);
+        const from = nodeOfFile(path);
         if (!graph.has(from)) {
             graph.set(from, new Set());
         }
@@ -343,7 +333,7 @@ const folderGraph = () => {
                 continue;
             }
 
-            const to = nodeOf(segments, false);
+            const to = nodeOf(segments);
             if (to !== from) {
                 graph.get(from)?.add(to);
             }
@@ -404,16 +394,11 @@ const cycles = (graph: Map<string, Set<string>>) => {
     return found.map((component) => component.join(' | ')).sort();
 };
 
-const prosemirrorNodes = () => {
-    const nodes = new Set<string>();
-    for (const path of productFiles) {
-        if (moduleSpecifiers(path).some((specifier) => specifier.startsWith('prosemirror-'))) {
-            nodes.add(nodeOfFile(path, true));
-        }
-    }
-
-    return [...nodes].sort();
-};
+const prosemirrorImportersOutsideRuntime = () =>
+    productFiles
+        .filter((path) => !toKey(path).startsWith('src/runtime/'))
+        .filter((path) => moduleSpecifiers(path).some((specifier) => specifier.startsWith('prosemirror-')))
+        .map((path) => toKey(path));
 
 const isSignature = (node: ts.Node) =>
     ts.isFunctionTypeNode(node) ||
@@ -657,8 +642,15 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
         expect(cycles(folderGraph())).toEqual([...KNOWN_CYCLES].sort());
     });
 
-    it('only the allowlisted nodes import prosemirror packages', () => {
-        expect(prosemirrorNodes()).toEqual([...PROSEMIRROR_NODES].sort());
+    it('every product file that imports prosemirror packages sits under src/runtime/', () => {
+        expect(prosemirrorImportersOutsideRuntime()).toEqual([]);
+    });
+
+    it('the top-level folders under src number at most 15', () => {
+        const folders = readdirSync(srcRoot, { withFileTypes: true })
+            .filter((entry) => entry.isDirectory())
+            .map((entry) => entry.name);
+        expect(folders.length, folders.join(', ')).toBeLessThanOrEqual(15);
     });
 
     it('no file of the package or its workflow names a spec, decision or plan ID, or a spec section', () => {

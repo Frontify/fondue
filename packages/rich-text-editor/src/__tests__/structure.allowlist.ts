@@ -19,8 +19,6 @@ export const SPECS_OVER_1000_LINES: Record<string, number> = {};
 
 export const KNOWN_CYCLES: string[] = [];
 
-export const PROSEMIRROR_NODES: string[] = ['runtime', 'runtime/import'];
-
 export const SPEC_REFERENCES: Record<string, number> = {};
 
 export const AS_UNKNOWN_AS_MAX = 10;

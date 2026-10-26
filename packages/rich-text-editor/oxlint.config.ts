@@ -10,8 +10,6 @@ import packageJson from './package.json' with { type: 'json' };
 
 const FOLDERS = [
     'model',
-    'runtime/definition',
-    'runtime/import',
     'runtime',
     'persistence',
     'bridge',
@@ -49,12 +47,13 @@ const FRAMEWORK_MESSAGE = 'The package must work in every host framework.';
 const MODEL_MESSAGE =
     '`model` imports nothing else in the package and no engine or React, because the headless entries are built on it.';
 
-const DEFINITION_MESSAGE = '`runtime/definition` builds the engine definition from `model`.';
+const DEFINITION_MESSAGE =
+    '`runtime/definition` imports only `model` and ProseMirror, because it builds the engine definition from `model`.';
 
 const SCHEMA_MESSAGE =
     '`schema` imports only `model` and `prosemirror-model`, because `./html` and `runtime/import` load the schema without the engine.';
 
-const CLIPBOARD_IMPORT_MESSAGE =
+const IMPORT_MESSAGE =
     '`runtime/import` imports only `model` and `prosemirror-model`, because `./html` loads it without the engine.';
 
 const HTML_MESSAGE =
@@ -170,7 +169,7 @@ const STORY_MODULES = [...PUBLIC_ENTRY_MODULES, 'bridge/plugin', 'bridge/define'
 const STORY_MESSAGE = `A story imports only the public entries and the modules they re-export to plugins (${STORY_MODULES.map((path) => `\`#/${path}\``).join(', ')}), files of its own folder, ${UI_PACKAGES_TEXT}, \`storybook/*\` and \`@storybook/*\`, as an outside host must.`;
 
 const UI_MESSAGE =
-    '`ui` imports the runtime only through `#/runtime/port`, and imports neither `react`, `persistence`, `runtime/import` nor the engine.';
+    '`ui` imports the runtime only through `#/runtime/port`, `#/runtime/definition` and `#/runtime/import/fromHtml`, and imports neither `react`, `persistence` nor the engine.';
 
 const DOCS_MESSAGE = `A docs example imports only the public entries (${PUBLIC_ENTRY_MODULES.map((path) => `\`#/${path}\``).join(', ')}) and files of its own folder, as an outside host must.`;
 
@@ -352,9 +351,7 @@ const layerOverride = (
     },
 });
 
-const modelFolders = FOLDERS.filter((folder) => folder !== 'model');
-
-const definitionFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'runtime/definition');
+const nonModelFolders = FOLDERS.filter((folder) => folder !== 'model');
 
 const outsideFeatureFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'features');
 
@@ -366,13 +363,11 @@ const codecsFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !=
 
 const localesFolders = FOLDERS.filter((folder) => folder !== 'locales');
 
-const clipboardAllowed = new Set(['model', 'runtime/definition', 'runtime', 'codecs']);
+const clipboardAllowed = new Set(['model', 'runtime', 'codecs']);
 
 const clipboardFolders = FOLDERS.filter((folder) => !clipboardAllowed.has(folder));
 
-const clipboardImportFolders = FOLDERS.filter((folder) => folder !== 'model');
-
-const CLIPBOARD_IMPORT_PATHS = ['runtime/import', 'runtime/import/**'];
+const IMPORT_PATHS = ['runtime/import', 'runtime/import/**'];
 
 // `fromHtml` sits inside `runtime/import`, so layers that may import the import code but not the `./html` entry ban it again after the re-allow.
 const HTML_PATHS = ['runtime/import/fromHtml'];
@@ -383,28 +378,28 @@ const HTML_BAN_PATTERNS = [
     ...['./', ...PARENT_PREFIXES].map((prefix) => `${prefix}import/fromHtml`),
 ];
 
-// The clipboard engine files sit inside `runtime`, so layers that may import `runtime` still ban them by path.
-const CLIPBOARD_ENGINE_FOLDERS = ['runtime/clipboard'];
+// These folders sit inside `runtime`, so layers that may import `runtime` still ban them by path.
+const RUNTIME_PARTS = ['runtime/clipboard', 'runtime/definition', 'runtime/import'];
 
-// `runtime/definition` sits inside `runtime`, so layers that ban the runtime but keep `definition` re-allow it.
+// Layers that ban the runtime but keep `runtime/definition` re-allow it.
 const DEFINITION_PATHS = ['runtime/definition', 'runtime/definition/**'];
 
-const htmlFolders = FOLDERS.filter((folder) => folder !== 'model');
-
 const TESTING_MESSAGE =
-    '`testing` may import `model`, `runtime`, `persistence`, `runtime/definition`, `reader`, `codecs` and `locales`, from `runtime/clipboard` only `runtime/clipboard/plugin`, and from `features` only conformance and fixtures.';
+    '`testing` may import `model`, `runtime` (but not `runtime/import`), `persistence`, `reader`, `codecs` and `locales`, from `runtime/clipboard` only `runtime/clipboard/plugin`, and from `features` only conformance and fixtures.';
 
 const CONFORMANCE_MESSAGE =
     'The contract suite drives editor parts through the engine, so it also imports `react`, `react-dom/server`, `#/bridge/plugin`, `#/features/plugins`, `#/features/registry` and `#/react/engine`.';
 
 const RUNTIME_MESSAGE = '`runtime` imports `model`, `runtime/definition`, `runtime/import` and ProseMirror.';
 
-const BRIDGE_MESSAGE = '`bridge` imports `model`, `runtime`, `persistence` and React, never ProseMirror.';
+const BRIDGE_MESSAGE =
+    '`bridge` imports `model`, `runtime` (but not `runtime/clipboard`, `runtime/definition` or `runtime/import`), `persistence` and React, never ProseMirror.';
 
 const REACT_FOLDER_MESSAGE =
-    '`react` imports every folder except `testing`, the runtime only through `#/runtime/port` (only `compileEditor` and `session/useSessionRuntime` also import `#/runtime/assembly`), and neither `react-dom` nor ProseMirror.';
+    '`react` imports every folder except `testing`, the runtime only through `#/runtime/port`, `#/runtime/definition` and `#/runtime/import` (only `compileEditor` and `session/useSessionRuntime` also import `#/runtime/assembly`), and neither `react-dom` nor ProseMirror.';
 
-const PERSISTENCE_MESSAGE = '`persistence` imports `model` and `runtime`.';
+const PERSISTENCE_MESSAGE =
+    '`persistence` imports `model` and `runtime`, but not `runtime/clipboard`, `runtime/definition` or `runtime/import`.';
 
 const STYLES_MESSAGE = '`styles` imports nothing in the package and no engine or React.';
 
@@ -412,7 +407,6 @@ const testingAllowed = new Set([
     'model',
     'runtime',
     'persistence',
-    'runtime/definition',
     'reader',
     'entries',
     'codecs',
@@ -421,18 +415,18 @@ const testingAllowed = new Set([
     'features',
 ]);
 
-const testingFolders = FOLDERS.filter((folder) => !testingAllowed.has(folder));
+const testingFolders = [
+    ...FOLDERS.filter((folder) => !testingAllowed.has(folder)),
+    ...RUNTIME_PARTS.filter((folder) => folder !== 'runtime/definition'),
+];
 
-const runtimeAllowed = new Set(['model', 'runtime/definition', 'runtime']);
-
-const runtimeFolders = FOLDERS.filter((folder) => !runtimeAllowed.has(folder));
+const runtimeFolders = FOLDERS.filter((folder) => folder !== 'model' && folder !== 'runtime');
 
 const runtimeRestriction: ImportRestriction = {
     group: [
         ...aliasPatterns(runtimeFolders),
         ...relativePatterns(runtimeFolders),
         ...REACT_PATTERNS,
-        ...exceptPatterns(CLIPBOARD_IMPORT_PATHS),
         ...HTML_BAN_PATTERNS,
     ],
     message: RUNTIME_MESSAGE,
@@ -440,7 +434,7 @@ const runtimeRestriction: ImportRestriction = {
 
 const bridgeAllowed = new Set(['model', 'runtime', 'persistence', 'bridge']);
 
-const bridgeFolders = FOLDERS.filter((folder) => !bridgeAllowed.has(folder));
+const bridgeFolders = [...FOLDERS.filter((folder) => !bridgeAllowed.has(folder)), ...RUNTIME_PARTS];
 
 const reactFolders = FOLDERS.filter((folder) => folder === 'testing');
 
@@ -475,9 +469,10 @@ const reactRestrictions = (runtimePatterns: string[]): ImportRestriction[] => [
     featureInternalsRestriction,
 ];
 
-const persistenceFolders = FOLDERS.filter(
-    (folder) => folder !== 'model' && folder !== 'runtime' && folder !== 'persistence',
-);
+const persistenceFolders = [
+    ...FOLDERS.filter((folder) => folder !== 'model' && folder !== 'runtime' && folder !== 'persistence'),
+    ...RUNTIME_PARTS,
+];
 
 const stylesFolders = FOLDERS.filter((folder) => folder !== 'styles');
 
@@ -497,13 +492,7 @@ const TESTING_FEATURE_TAILS = [
 ] as const;
 
 // `runtime/definition` imports no other runtime file, and `../**` would reach one, so it is banned as well.
-const definitionPatterns = [
-    ...aliasPatterns(definitionFolders),
-    ...relativePatterns(definitionFolders),
-    ...REACT_PATTERNS,
-    ...exceptPatterns(DEFINITION_PATHS),
-    '../**',
-];
+const definitionBans = [...aliasPatterns(nonModelFolders), ...relativePatterns(nonModelFolders), ...REACT_PATTERNS];
 
 export default defineConfig({
     extends: [reactConfig],
@@ -584,7 +573,11 @@ export default defineConfig({
             'src/model/**/*.{ts,tsx}',
             [
                 {
-                    group: [...aliasPatterns(modelFolders), ...relativePatterns(modelFolders), ...ENGINE_PATTERNS],
+                    group: [
+                        ...aliasPatterns(nonModelFolders),
+                        ...relativePatterns(nonModelFolders),
+                        ...ENGINE_PATTERNS,
+                    ],
                     message: MODEL_MESSAGE,
                 },
                 featureUnitRestriction,
@@ -599,7 +592,6 @@ export default defineConfig({
                     ...aliasPatterns(clipboardFolders),
                     ...relativePatterns(clipboardFolders),
                     ...REACT_PATTERNS,
-                    ...exceptPatterns(CLIPBOARD_IMPORT_PATHS),
                     ...HTML_BAN_PATTERNS,
                 ],
                 message: CLIPBOARD_MESSAGE,
@@ -767,8 +759,6 @@ export default defineConfig({
                     group: [
                         ...aliasPatterns(testingFolders),
                         ...relativePatterns(testingFolders),
-                        ...aliasPatterns(CLIPBOARD_ENGINE_FOLDERS),
-                        ...relativePatterns(CLIPBOARD_ENGINE_FOLDERS),
                         ...featurePathPatterns(TESTING_FEATURE_TAILS),
                         ...ENGINE_PATTERNS,
                         // The `paste` helper feeds the paste pipeline through its entry.
@@ -785,8 +775,6 @@ export default defineConfig({
                 group: [
                     ...aliasPatterns(testingFolders),
                     ...relativePatterns(testingFolders),
-                    ...aliasPatterns(CLIPBOARD_ENGINE_FOLDERS),
-                    ...relativePatterns(CLIPBOARD_ENGINE_FOLDERS),
                     ...featurePathPatterns(TESTING_FEATURE_TAILS),
                     ...ENGINE_PATTERNS,
                     ...exceptPatterns(['runtime/clipboard/plugin']),
@@ -821,26 +809,26 @@ export default defineConfig({
         layerOverride('src/runtime/import/**/*.{ts,tsx}', [
             {
                 group: [
-                    ...aliasPatterns(clipboardImportFolders),
-                    ...relativePatterns(clipboardImportFolders),
+                    ...aliasPatterns(nonModelFolders),
+                    ...relativePatterns(nonModelFolders),
                     '../*',
                     ...PROSEMIRROR_EXCEPT_MODEL,
                     ...REACT_PATTERNS,
-                    ...exceptPatterns(CLIPBOARD_IMPORT_PATHS),
+                    ...exceptPatterns(IMPORT_PATHS),
                     ...HTML_BAN_PATTERNS,
                     './fromHtml',
                 ],
-                message: CLIPBOARD_IMPORT_MESSAGE,
+                message: IMPORT_MESSAGE,
             },
         ]),
         layerOverride('src/runtime/import/fromHtml.ts', [
             {
                 group: [
-                    ...aliasPatterns(htmlFolders),
-                    ...relativePatterns(htmlFolders),
+                    ...aliasPatterns(nonModelFolders),
+                    ...relativePatterns(nonModelFolders),
                     ...PROSEMIRROR_EXCEPT_MODEL,
                     ...REACT_PATTERNS,
-                    ...exceptPatterns(['runtime/definition/schema', ...CLIPBOARD_IMPORT_PATHS]),
+                    ...exceptPatterns(['runtime/definition/schema', ...IMPORT_PATHS]),
                 ],
                 message: HTML_MESSAGE,
             },
@@ -848,49 +836,34 @@ export default defineConfig({
         ]),
         // After the `src/runtime/**` overrides, so a later override replaces their rule options for `runtime/definition`.
         layerOverride('src/runtime/definition/**/*.{ts,tsx}', [
-            { group: definitionPatterns, message: DEFINITION_MESSAGE },
+            { group: [...definitionBans, ...exceptPatterns(DEFINITION_PATHS), '../**'], message: DEFINITION_MESSAGE },
         ]),
         layerOverride('src/runtime/definition/schema.ts', [
             {
-                group: [
-                    ...definitionPatterns,
-                    '#/runtime/definition',
-                    '#/runtime/definition/**',
-                    ...relativePatterns(['runtime/definition']),
-                    './**',
-                    ...PROSEMIRROR_EXCEPT_MODEL,
-                ],
+                group: [...definitionBans, '../**', './**', ...PROSEMIRROR_EXCEPT_MODEL],
                 message: SCHEMA_MESSAGE,
             },
         ]),
         layerOverride('src/bridge/**/*.{ts,tsx}', [
             {
-                group: [
-                    ...aliasPatterns(bridgeFolders),
-                    ...relativePatterns(bridgeFolders),
-                    ...aliasPatterns(CLIPBOARD_ENGINE_FOLDERS),
-                    ...relativePatterns(CLIPBOARD_ENGINE_FOLDERS),
-                    ...PROSEMIRROR_PATTERNS,
-                ],
+                group: [...aliasPatterns(bridgeFolders), ...relativePatterns(bridgeFolders), ...PROSEMIRROR_PATTERNS],
                 message: BRIDGE_MESSAGE,
             },
         ]),
         layerOverride(
             'src/react/**/*.{ts,tsx}',
-            reactRestrictions([...portOnlyPatterns, ...exceptPatterns(CLIPBOARD_IMPORT_PATHS)]),
+            reactRestrictions([...portOnlyPatterns, ...exceptPatterns(IMPORT_PATHS)]),
             REACT_ASSEMBLY_FILES,
         ),
         layerOverride(
             REACT_ASSEMBLY_FILES,
-            reactRestrictions([...portAndAssemblyPatterns, ...exceptPatterns(CLIPBOARD_IMPORT_PATHS)]),
+            reactRestrictions([...portAndAssemblyPatterns, ...exceptPatterns(IMPORT_PATHS)]),
         ),
         layerOverride('src/persistence/**/*.{ts,tsx}', [
             {
                 group: [
                     ...aliasPatterns(persistenceFolders),
                     ...relativePatterns(persistenceFolders),
-                    ...aliasPatterns(CLIPBOARD_ENGINE_FOLDERS),
-                    ...relativePatterns(CLIPBOARD_ENGINE_FOLDERS),
                     ...ENGINE_PATTERNS,
                 ],
                 message: PERSISTENCE_MESSAGE,
@@ -920,8 +893,6 @@ export default defineConfig({
                 group: [
                     ...aliasPatterns(['react', 'persistence']),
                     ...relativePatterns(['react', 'persistence']),
-                    ...aliasPatterns(CLIPBOARD_ENGINE_FOLDERS),
-                    ...relativePatterns(CLIPBOARD_ENGINE_FOLDERS),
                     ...PROSEMIRROR_PATTERNS,
                 ],
                 message: UI_MESSAGE,
