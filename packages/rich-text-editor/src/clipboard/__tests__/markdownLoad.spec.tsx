@@ -4,6 +4,7 @@ import { act, cleanup } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type mountProfile } from '#/react/__tests__/fixtures/profiles';
+import { type paste } from '#/testing';
 
 const MARKDOWN = '# Title';
 
@@ -12,19 +13,22 @@ type Mounted = Awaited<ReturnType<typeof mountProfile>>;
 /** The block types of the view's document, which the handle's snapshot lags behind. */
 const typesOf = ({ view }: Mounted) => view.state.doc.children.map(({ type }) => type.name);
 
-/** Mounts a Document editor from a fresh module graph, whose Markdown reader has not loaded, once its surface takes input. */
+// A fresh module graph per test, whose Markdown reader has not loaded; the cold imports are a hook's work, which has the longer timeout.
+let modules: {
+    readonly mountProfile: typeof mountProfile;
+    readonly paste: typeof paste;
+};
+
+/** Mounts a Document editor from the fresh module graph once its surface takes input. */
 const mountFresh = async () => {
-    vi.resetModules();
-    const { mountProfile } = await import('#/react/__tests__/fixtures/profiles');
-    const mounted = await mountProfile('document');
+    const mounted = await modules.mountProfile('document');
     await vi.waitFor(() => expect(mounted.view.dom).toHaveAttribute('contenteditable', 'true'));
     return mounted;
 };
 
-const pasteText = async ({ handle }: Mounted, text: string) => {
-    const { paste } = await import('#/testing');
+const pasteText = ({ handle }: Mounted, text: string) => {
     act(() => {
-        paste(handle, { text });
+        modules.paste(handle, { text });
     });
 };
 
@@ -32,7 +36,11 @@ describe('the Markdown reader of paste', () => {
     const pending = new Map<number, () => void>();
     let cancelled: number[] = [];
 
-    beforeEach(() => {
+    beforeEach(async () => {
+        vi.resetModules();
+        const profiles = await import('#/react/__tests__/fixtures/profiles');
+        const testing = await import('#/testing');
+        modules = { mountProfile: profiles.mountProfile, paste: testing.paste };
         let next = 0;
         pending.clear();
         cancelled = [];
@@ -66,7 +74,7 @@ describe('the Markdown reader of paste', () => {
     it('pastes Markdown as plain text until the reader has loaded, then converts it', async () => {
         const mounted = await mountFresh();
 
-        await pasteText(mounted, MARKDOWN);
+        pasteText(mounted, MARKDOWN);
         const before = [typesOf(mounted), mounted.view.state.doc.textContent];
         await act(async () => {
             for (const start of pending.values()) {
@@ -74,7 +82,7 @@ describe('the Markdown reader of paste', () => {
             }
             await vi.dynamicImportSettled();
         });
-        await pasteText(mounted, MARKDOWN);
+        pasteText(mounted, MARKDOWN);
 
         expect(before).toEqual([['paragraph'], MARKDOWN]);
         expect(typesOf(mounted)).toEqual(['paragraph', 'heading']);
