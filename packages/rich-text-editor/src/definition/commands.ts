@@ -21,6 +21,7 @@ const withCommandId = (
             if (dispatch === undefined) {
                 return run(state, undefined, given, context);
             }
+
             return run(
                 state,
                 (transaction) => {
@@ -28,6 +29,7 @@ const withCommandId = (
                     if (transaction.getMeta(COMMAND_META) === undefined) {
                         transaction.setMeta(COMMAND_META, id);
                     }
+
                     dispatch(transaction);
                 },
                 given,
@@ -38,6 +40,7 @@ const withCommandId = (
     if (payload === undefined) {
         return command;
     }
+
     return { ...command, payload };
 };
 
@@ -54,14 +57,17 @@ export const extensionKeymap = (
             if (command === undefined) {
                 throw new DefinitionError('definition.orphan-behavior', { feature: featureId, path });
             }
+
             const invalid = findInvalidPayload(command.payload, target.payload);
             if (invalid !== undefined) {
                 let at = `${path}/payload${invalid}`;
                 if (typeof ref === 'string') {
                     at = path;
                 }
+
                 throw new DefinitionError('definition.invalid-declaration', { feature: featureId, path: at });
             }
+
             return {
                 plugin: keymapPlugin(featureId).id,
                 key,
@@ -89,9 +95,11 @@ export const compileCommands = (
                     features: [first, extension.featureId],
                 });
             }
+
             owners.set(id, extension.featureId);
             commands.set(id, withCommandId(id, command, command.payload, extension.featureId));
         }
     }
+
     return { commands, lookup };
 };

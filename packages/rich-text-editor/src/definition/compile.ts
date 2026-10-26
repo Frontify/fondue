@@ -43,13 +43,17 @@ export const compileDefinition = (
         if (built !== undefined) {
             return built({ inputRules, suggestions, decorations });
         }
+
         const normalizer = NORMALIZERS[id];
         if (normalizer !== undefined) {
             return normalizerPlugin(normalizer);
         }
+
         return keyPlugin(id, keymap, keyHandlers, commands, implementations);
     };
+
     // Every plugin's appended transactions count against the append limit.
     const built = plugins.map(({ id }) => countAppends(pluginOf(id), originOf(features, id)));
+
     return { model, schema, plugins: built, commands, keymap };
 };

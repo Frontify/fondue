@@ -17,8 +17,10 @@ const schema = buildSchema(
 const parse = (html: string) => {
     const host = document.createElement('div');
     host.innerHTML = html;
+
     return DOMParser.fromSchema(schema).parse(host).toJSON() as unknown;
 };
+
 const paragraph = (attrs: object, ...content: readonly unknown[]) => ({
     type: 'paragraph',
     attrs: { lang: null, unknownAttributes: null, ...attrs },

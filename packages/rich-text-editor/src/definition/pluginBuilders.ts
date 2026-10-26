@@ -41,6 +41,7 @@ export const originOf = (features: ReturnType<typeof withInputRules>, id: string
     if (contributor === undefined) {
         return { featureId: id, capability: id };
     }
+
     return { featureId: contributor.id, capability: id };
 };
 
@@ -56,14 +57,17 @@ export const normalizerPlugin = (normalizer: (typeof NORMALIZERS)[string]): Plug
             if (batch === undefined || timing === 'later') {
                 return null;
             }
+
             // A batch that kept the document has nothing to repair, unless it settles a composition.
             if (timing !== 'now' && !transactions.some(({ docChanged }) => docChanged)) {
                 return null;
             }
+
             const repair = normalizer.normalize(state, batch.generateId);
             if (repair === null) {
                 return null;
             }
+
             return repair.setMeta(ORIGIN_META, 'normalization');
         },
     });
@@ -84,27 +88,33 @@ export const keyPlugin = (
         if (appleKey !== undefined) {
             apple[modOn(appleKey, true)] = run;
         }
+
         const otherKey = keyOn(key, false);
         if (otherKey !== undefined) {
             other[modOn(otherKey, false)] = run;
         }
     };
+
     const bind = (entry: KeymapEntry) => {
         const command = commands.get(entry.command);
         if (entry.plugin !== id || command === undefined) {
             return;
         }
+
         bindKey(entry.key, (state, dispatch, view) => {
             if (command.viaExecute === true && view !== undefined && implementations.execute !== undefined) {
                 return implementations.execute(view, entry.command, entry.payload);
             }
+
             return command.run(state, dispatch, entry.payload);
         });
     };
+
     const bindHandler = ({ plugin, key, handler: given }: KeyHandlerEntry) => {
         if (plugin !== id) {
             return;
         }
+
         // A key that took its key keeps the caret in sight, as the base keys do.
         const handler: EngineCommand = {
             ...given,
@@ -112,6 +122,7 @@ export const keyPlugin = (
                 if (dispatch === undefined) {
                     return given.run(state, undefined, payload, context);
                 }
+
                 return given.run(state, (transaction) => dispatch(transaction.scrollIntoView()), payload, context);
             },
         };
@@ -119,33 +130,40 @@ export const keyPlugin = (
             if (view !== undefined && implementations.handleKey !== undefined) {
                 return implementations.handleKey(view, handler);
             }
+
             return handler.run(state, dispatch);
         });
     };
+
     // Plain bindings first, so on its platform a prefixed one of the same key wins.
     for (const entry of keymap) {
         if (!isPlatformBinding(entry.key)) {
             bind(entry);
         }
     }
+
     for (const binding of keyHandlers) {
         if (!isPlatformBinding(binding.key)) {
             bindHandler(binding);
         }
     }
+
     for (const entry of keymap) {
         if (isPlatformBinding(entry.key)) {
             bind(entry);
         }
     }
+
     for (const binding of keyHandlers) {
         if (isPlatformBinding(binding.key)) {
             bindHandler(binding);
         }
     }
+
     if (Object.keys(other).length === 0 && Object.keys(apple).length === 0) {
         return new Plugin({ key: new PluginKey(id) });
     }
+
     const handlers = { apple: keydownHandler(apple), other: keydownHandler(other) };
     const handleKeyDown = (view: EditorView, event: KeyboardEvent) => {
         // The tooltips name the bindings of the same platform check.
@@ -153,7 +171,9 @@ export const keyPlugin = (
         if (owner !== null && isApple(owner.navigator)) {
             return handlers.apple(view, event);
         }
+
         return handlers.other(view, event);
     };
+
     return new Plugin({ key: new PluginKey(id), props: { handleKeyDown } });
 };

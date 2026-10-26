@@ -47,8 +47,10 @@ const failureOf = (run: () => unknown) => {
         if (error instanceof DefinitionError) {
             return { code: error.code, details: error.details };
         }
+
         throw error;
     }
+
     throw new Error('expected a DefinitionError');
 };
 
@@ -189,6 +191,7 @@ describe('compileDefinition', () => {
         const styleOf = (value: string) => {
             const paragraph = schema.node('paragraph', { tone: value });
             const [, attributes] = paragraph.type.spec.toDOM?.(paragraph) as [string, Record<string, string>];
+
             return attributes.style;
         };
 
@@ -255,6 +258,7 @@ describe('compileDefinition of editor parts', () => {
         );
     const failureOfParts = (features: readonly Feature[], parts: readonly EditorPart[]) => {
         const model = compileContentModel([core(), ...features], options);
+
         return failureOf(() => compileDefinition(model, {}, fixtureExtensionsOf(model, parts)));
     };
 

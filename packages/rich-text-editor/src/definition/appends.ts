@@ -19,6 +19,7 @@ export const rootOf = (transactions: readonly Transaction[]): Transaction | unde
     if (rootOfAppended !== undefined) {
         return rootOfAppended as Transaction;
     }
+
     return root;
 };
 
@@ -35,6 +36,7 @@ export const countAppends = (plugin: Plugin, origin: PluginOrigin): Plugin => {
     if (append === undefined) {
         return plugin;
     }
+
     const counted: Plugin = new Plugin({
         ...plugin.spec,
         appendTransaction: (transactions, oldState, newState) => {
@@ -46,17 +48,22 @@ export const countAppends = (plugin: Plugin, origin: PluginOrigin): Plugin => {
                 if (batch !== undefined) {
                     batch.failed = origin;
                 }
+
                 throw error;
             }
+
             if (appended === null || appended === undefined || batch === undefined) {
                 return appended;
             }
+
             batch.chain.push(origin);
             if (batch.chain.length > batch.limit) {
                 throw new AppendLimitError(batch.chain);
             }
+
             return appended.setTime(batch.now());
         },
     });
+
     return counted;
 };

@@ -48,6 +48,7 @@ export const withInputRules = (
                     path: `${pointer('inputRules', index)}/mark`,
                 });
             }
+
             if ((rule.kind === 'line-start' || rule.kind === 'block-rule') && !commands.has(rule.command)) {
                 throw new DefinitionError('definition.orphan-behavior', {
                     feature: feature.id,
@@ -55,6 +56,7 @@ export const withInputRules = (
                 });
             }
         }
+
         return { ...feature, inputRules };
     });
 
@@ -104,6 +106,7 @@ const checkSuggestion = (
             path: `${path}/trigger`,
         });
     }
+
     const { maxQuery, leadingLetters } = listRules;
     if (!Number.isInteger(maxQuery) || maxQuery < 1) {
         throw new DefinitionError('definition.invalid-declaration', {
@@ -111,18 +114,21 @@ const checkSuggestion = (
             path: `${path}/rules/maxQuery`,
         });
     }
+
     if (!Number.isInteger(leadingLetters) || leadingLetters < 0 || leadingLetters > maxQuery) {
         throw new DefinitionError('definition.invalid-declaration', {
             feature: featureId,
             path: `${path}/rules/leadingLetters`,
         });
     }
+
     if (!commands.has(command)) {
         throw new DefinitionError('definition.orphan-behavior', {
             feature: featureId,
             path: `${path}/command`,
         });
     }
+
     const first = suggestions.find((other) => other.trigger === trigger);
     if (first !== undefined) {
         throw new DefinitionError('definition.duplicate-id', {
@@ -147,22 +153,27 @@ export const collectContributions = (
         if (Object.keys(keys).length > 0) {
             contributions.push({ featureId, plugin: keymapPlugin(featureId) });
         }
+
         const handlersId = keyHandlersPlugin(featureId).id;
         if (keyHandlers.some(({ plugin }) => plugin === handlersId)) {
             contributions.push({ featureId, plugin: keyHandlersPlugin(featureId) });
         }
+
         if (rules.length > 0) {
             contributions.push({ featureId, plugin: INPUT_RULES_PLUGIN });
         }
+
         for (const [index, source] of sources.entries()) {
             checkDecoration(featureId, source, index, schema);
             contributions.push({ featureId, plugin: BLOCK_DECORATIONS_PLUGIN });
         }
+
         for (const [index, list] of lists.entries()) {
             checkSuggestion(featureId, list, index, commands, suggestions);
             suggestions.push({ ...list, featureId });
             contributions.push({ featureId, plugin: SUGGESTIONS_PLUGIN });
         }
     }
+
     return { contributions, suggestions };
 };

@@ -66,18 +66,22 @@ const nodesAt = (doc: Node, positions: readonly number[]): Map<number, Node> => 
     if (positions.length === 0) {
         return found;
     }
+
     let from = Number.POSITIVE_INFINITY;
     let to = Number.NEGATIVE_INFINITY;
     for (const pos of positions) {
         from = Math.min(from, pos);
         to = Math.max(to, pos);
     }
+
     doc.nodesBetween(from, Math.min(to + 1, doc.content.size), (node, pos) => {
         if (wanted.has(pos)) {
             found.set(pos, node);
         }
+
         return true;
     });
+
     return found;
 };
 
@@ -103,33 +107,41 @@ export class NodeIdsStep extends Step {
                 if (pending() < pos) {
                     return undefined;
                 }
+
                 if (pending() >= end || child.isText) {
                     children.push(child);
                     pos = end;
                     continue;
                 }
+
                 let attrs = child.attrs;
                 const id = this.ids[at];
                 if (id !== undefined && id[0] === pos) {
                     attrs = { ...child.attrs, nodeId: id[1] };
                     at += 1;
                 }
+
                 let content: Fragment | undefined = child.content;
                 if (pending() < end) {
                     content = rebuild(child, pos + 1);
                 }
+
                 if (content === undefined) {
                     return undefined;
                 }
+
                 children.push(child.type.create(attrs, content, child.marks));
                 pos = end;
             }
+
             return Fragment.fromArray(children);
         };
+
         const content = rebuild(doc, 0);
         if (content === undefined || at < this.ids.length) {
             return StepResult.fail("No node at a node ID step's position");
         }
+
         return StepResult.ok(doc.copy(content));
     }
 
@@ -142,6 +154,7 @@ export class NodeIdsStep extends Step {
             doc,
             this.ids.map(([pos]) => pos),
         );
+
         return new NodeIdsStep(this.ids.map(([pos]) => [pos, nodes.get(pos)?.attrs.nodeId]));
     }
 
@@ -153,9 +166,11 @@ export class NodeIdsStep extends Step {
                 ids.push([mapped.pos, nodeId]);
             }
         }
+
         if (ids.length === 0) {
             return null;
         }
+
         return new NodeIdsStep(ids);
     }
 
@@ -174,6 +189,7 @@ const startingIn = (doc: Node, from: number, to: number, visit: (node: Node, pos
         if (pos >= from && pos <= to && carriesNodeId(node)) {
             visit(node, pos);
         }
+
         return true;
     });
 };
@@ -187,6 +203,7 @@ const countNodeIds = (doc: Node): Map<string, number> => {
             counts.set(nodeId, (counts.get(nodeId) ?? 0) + 1);
         }
     });
+
     return counts;
 };
 
@@ -194,6 +211,7 @@ const countNodeIds = (doc: Node): Map<string, number> => {
 const touchEveryNode = (doc: Node, later: boolean, mapping: Mapping): NodeIdIndex => {
     const touched: number[] = [];
     startingIn(doc, 0, doc.content.size, (_node, pos) => touched.push(pos));
+
     return { counts: countNodeIds(doc), touched, later, mapping };
 };
 
@@ -202,8 +220,10 @@ const holdsContent = (node: Node): boolean => {
     let found = node.isLeaf;
     node.descendants((child) => {
         found ||= child.isLeaf;
+
         return !found;
     });
+
     return found;
 };
 
@@ -223,6 +243,7 @@ const keeperOf = (holders: readonly Holder[], back: Mapping): Holder => {
     ) {
         keeper = next;
     }
+
     return keeper;
 };
 
@@ -242,19 +263,23 @@ const nodeIdIndex: StateField<NodeIdIndex> = {
             mapping = index.mapping.slice();
             mapping.appendMapping(transaction.mapping);
         }
+
         let { later } = index;
         if (!appended) {
             later = transaction.getMeta(NORMALIZE_META) === 'later';
         }
+
         // Copied on the first change only, since most transactions change no `nodeId`.
         let own: Map<string, number> | undefined;
         const adjust = (nodeId: unknown, by: number) => {
             if (typeof nodeId !== 'string') {
                 return;
             }
+
             if (own === undefined) {
                 own = new Map(index.counts);
             }
+
             const count = (own.get(nodeId) ?? 0) + by;
             if (count === 0) {
                 own.delete(nodeId);
@@ -262,6 +287,7 @@ const nodeIdIndex: StateField<NodeIdIndex> = {
                 own.set(nodeId, count);
             }
         };
+
         for (const [at, step] of transaction.steps.entries()) {
             const before = transaction.docs[at] as Node;
             const after = transaction.docs[at + 1] ?? transaction.doc;
@@ -295,10 +321,12 @@ const nodeIdIndex: StateField<NodeIdIndex> = {
                 return touchEveryNode(transaction.doc, later, mapping);
             }
         }
+
         let counts = index.counts;
         if (own !== undefined) {
             counts = own;
         }
+
         return { counts, touched, later, mapping };
     },
 };
@@ -315,6 +343,7 @@ const fillNodeIds: Normalizer = (state, generateId) => {
     if (index === undefined) {
         index = touchEveryNode(doc, false, new Mapping());
     }
+
     const repairs = new Set<number>();
     const repeated = new Set<string>();
     const nodes = nodesAt(doc, index.touched);
@@ -329,6 +358,7 @@ const fillNodeIds: Normalizer = (state, generateId) => {
             }
         }
     }
+
     if (repeated.size > 0) {
         // Every node that shares a touched ID needs its place in document order, so only a repeated ID walks the document.
         const holders = new Map<string, Holder[]>();
@@ -337,11 +367,13 @@ const fillNodeIds: Normalizer = (state, generateId) => {
             if (typeof nodeId !== 'string' || !repeated.has(nodeId)) {
                 return;
             }
+
             let shared = holders.get(nodeId);
             if (shared === undefined) {
                 shared = [];
                 holders.set(nodeId, shared);
             }
+
             shared.push({ node, pos });
         });
         const back = index.mapping.invert();
@@ -354,9 +386,11 @@ const fillNodeIds: Normalizer = (state, generateId) => {
             }
         }
     }
+
     if (repairs.size === 0) {
         return null;
     }
+
     const drawn = new Set<string>();
     const ids: (readonly [number, string])[] = [];
     for (const pos of [...repairs].sort((a, b) => a - b)) {
@@ -365,9 +399,11 @@ const fillNodeIds: Normalizer = (state, generateId) => {
         while (index.counts.has(nodeId) || drawn.has(nodeId)) {
             nodeId = generateId();
         }
+
         drawn.add(nodeId);
         ids.push([pos, nodeId]);
     }
+
     return state.tr.step(new NodeIdsStep(ids));
 };
 

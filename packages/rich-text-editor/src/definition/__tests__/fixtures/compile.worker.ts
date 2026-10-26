@@ -13,6 +13,7 @@ const results = Object.entries(fixtureProfiles()).map(([name, features]) => {
     const { schema, plugins, keymap } = compileDefinition(model, {}, fixtureExtensionsOf(model));
     const specs = (types: Readonly<Record<string, { readonly spec: object }>>) =>
         Object.entries(types).map(([type, { spec }]) => ({ type, spec: JSON.stringify(spec) }));
+
     return {
         name,
         schema: { nodes: specs(schema.nodes), marks: specs(schema.marks) },

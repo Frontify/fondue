@@ -109,6 +109,7 @@ export const compileInputRules = (
                     features: [owner, featureId],
                 });
             }
+
             owners.set(id, featureId);
             if (rule.kind === 'mark-rule') {
                 // Compilation checked that the model declares the mark.
@@ -125,16 +126,19 @@ export const compileInputRules = (
                     policy: hrefPolicyOf(options),
                 });
             }
+
             if (rule.kind === 'mark-delimiter') {
                 // Compilation checked that the model declares the mark.
                 const mark = schema.marks[rule.mark] as MarkType;
                 marks.push({ id, featureId, kind: rule.kind, open: rule.open, close: rule.close, mark });
             }
+
             if (rule.kind === 'text-replace') {
                 const match = new RegExp(`${escaped(rule.find)}$`, 'u');
                 const boundary = rule.boundary === 'word';
                 texts.push({ id, featureId, kind: rule.kind, match, replace: rule.replace, boundary });
             }
+
             if (rule.kind === 'text-rule') {
                 texts.push({
                     id,
@@ -145,17 +149,21 @@ export const compileInputRules = (
                     boundary: false,
                 });
             }
+
             if (rule.kind === 'quotes') {
                 texts.push({ id, featureId, kind: rule.kind, marker: rule.marker });
             }
+
             if (rule.kind === 'block-rule') {
                 // Compilation checked that a part registers the command.
                 const command = commandOf(rule.command) as RuleCommand;
                 blocks.push({ id, featureId, kind: rule.kind, match: rule.match, command });
             }
+
             if (rule.kind !== 'line-start') {
                 continue;
             }
+
             // Compilation checked that a part registers the command.
             const command = commandOf(rule.command) as RuleCommand;
             for (const marker of rule.markers) {
@@ -168,5 +176,6 @@ export const compileInputRules = (
             }
         }
     }
+
     return [...lines, ...blocks, ...patterns, ...marks.sort((a, b) => b.open.length - a.open.length), ...texts];
 };

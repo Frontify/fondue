@@ -52,9 +52,11 @@ const render = (
     if (content) {
         inner = [0];
     }
+
     for (const { tag, attrs } of [...layers].reverse()) {
         inner = [[tag, attrs, ...inner]];
     }
+
     return inner[0] as DOMOutputSpec;
 };
 
@@ -69,12 +71,15 @@ export const withNodeIds = (fragment: Fragment, next: () => string | null): Frag
             nodes.push(node);
             continue;
         }
+
         let { attrs } = node;
         if (carriesNodeId(node)) {
             attrs = { ...attrs, nodeId: next() };
         }
+
         nodes.push(node.type.create(attrs, withNodeIds(node.content, next), node.marks));
     }
+
     return Fragment.from(nodes);
 };
 
@@ -91,9 +96,12 @@ const attributeSpecs = (declarations: AttributeDeclarations, generated = false) 
             specs[name] = { default: null };
             continue;
         }
+
         specs[name] = 'default' in declaration ? { default: declaration.default } : {};
     }
+
     specs.unknownAttributes = { default: null };
+
     return specs;
 };
 
@@ -108,10 +116,12 @@ const hexOf = (text: string) => {
     if (rgb === null) {
         return text.toLowerCase();
     }
+
     const channels = rgb.slice(1, 4).map(Number);
     if (rgb[4] !== undefined) {
         channels.push(Math.round(Number(rgb[4]) * 255));
     }
+
     return `#${channels.map((channel) => channel.toString(16).padStart(2, '0')).join('')}`;
 };
 
@@ -120,19 +130,24 @@ const valueOf = (text: string, declaration: AttributeDeclaration): unknown => {
     if (declaration.type === 'color') {
         return hexOf(text);
     }
+
     if (declaration.type === 'integer' || declaration.type === 'number') {
         if (text.trim() === '') {
             return undefined;
         }
+
         return Number(text);
     }
+
     if (declaration.type === 'url') {
         const href = checkHref(text);
         if (!href.ok) {
             return undefined;
         }
+
         return href.href;
     }
+
     return text;
 };
 
@@ -140,34 +155,43 @@ const readSource = (element: HTMLElement, source: ParseAttributeSource, declarat
     if ('value' in source) {
         return source.value;
     }
+
     if ('fromStyle' in source) {
         const text = element.style.getPropertyValue(source.fromStyle);
         if (text === '') {
             return undefined;
         }
+
         return valueOf(text, declaration);
     }
+
     let target: Element | null = element;
     if (source.child !== undefined) {
         target = element.querySelector(source.child);
     }
+
     let text: string | null = null;
     if (target !== null) {
         text = target.getAttribute(source.from);
     }
+
     // HTML matches `dir` values in any case, so `RTL` is `rtl`.
     if (text !== null && source.from.toLowerCase() === 'dir') {
         text = text.toLowerCase();
     }
+
     if (source.equals !== undefined) {
         return text === source.equals;
     }
+
     if (declaration.type === 'boolean') {
         return text !== null;
     }
+
     if (text === null) {
         return undefined;
     }
+
     return valueOf(text, declaration);
 };
 
@@ -187,12 +211,14 @@ const tagRule = (
         if (parse === undefined) {
             continue;
         }
+
         if ('style' in parse) {
             sources[name] = { fromStyle: parse.style };
         } else {
             sources[name] = { from: parse.attr };
         }
     }
+
     Object.assign(sources, rule.attrs);
     const getAttrs = (element: HTMLElement) =>
         parsedAttributes(declarations, exactlyOne, (name, declaration) => {
@@ -200,6 +226,7 @@ const tagRule = (
             if (source === undefined) {
                 return undefined;
             }
+
             return readSource(element, source, declaration);
         }) ?? false;
     const engine: TagParseRule = { tag: rule.tag, getAttrs };
@@ -207,6 +234,7 @@ const tagRule = (
     if (/[.[]/.test(rule.tag)) {
         engine.priority = 51;
     }
+
     return engine;
 };
 
@@ -247,6 +275,7 @@ export const buildSchema = (model: ContentModel): Schema => {
         if (node.name !== 'text') {
             specs = attributeSpecs(attributes);
         }
+
         const spec: NodeSpec = {
             attrs: specs,
             toDOM: (instance) => render(declaration.html, instance.attrs, options, shared),
@@ -258,25 +287,32 @@ export const buildSchema = (model: ContentModel): Schema => {
         if (declaration.content !== undefined) {
             spec.content = declaration.content;
         }
+
         if (declaration.group !== undefined) {
             spec.group = GROUPS[declaration.group];
             spec.inline = declaration.group === 'inline';
         }
+
         if (declaration.atom !== undefined) {
             spec.atom = declaration.atom;
         }
+
         if (declaration.marks !== undefined) {
             spec.marks = declaration.marks.join(' ');
         }
+
         if (declaration.whitespace === 'pre') {
             spec.code = true;
             spec.whitespace = 'pre';
         }
+
         nodes[node.name] = spec;
     }
+
     for (const [name, spec] of Object.entries(ISLAND_NODES)) {
         nodes[name] = spec;
     }
+
     const marks: Record<string, MarkSpec> = {};
     for (const { name, featureId, declaration } of compiled.marks) {
         const options = optionsOf.get(featureId) ?? {};
@@ -294,15 +330,19 @@ export const buildSchema = (model: ContentModel): Schema => {
         if (declaration.excludes !== undefined) {
             spec.excludes = declaration.excludes.length === 0 ? '' : [...declaration.excludes, name].join(' ');
         }
+
         if (declaration.inclusive !== undefined) {
             spec.inclusive = declaration.inclusive;
         }
+
         // Input rules never fire inside inline code.
         if (name === 'code') {
             spec.code = true;
         }
+
         marks[name] = spec;
     }
+
     marks[ISLAND_MARK] = ISLAND_MARK_SPEC;
     // The leaves the engine reports it cannot create in a required position get null defaults, and only those.
     const leaves = new Map(
@@ -321,10 +361,12 @@ export const buildSchema = (model: ContentModel): Schema => {
             if (names !== undefined) {
                 named = names.split(', ');
             }
+
             const fixable = named.filter((name) => leaves.has(name) && !generated.has(name));
             if (fixable.length === 0) {
                 throw new DefinitionError('definition.invalid-declaration', { engine });
             }
+
             for (const name of fixable) {
                 generated.add(name);
                 nodes[name] = { ...nodes[name], attrs: attributeSpecs(leaves.get(name) ?? {}, true) };
