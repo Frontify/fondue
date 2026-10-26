@@ -5,7 +5,7 @@ import { useRef, useState } from 'react';
 import { type PanelComponentProps } from '#/bridge/define';
 import { type EditorApi, useClientLayoutEffect, useEditorApi } from '#/bridge/plugin';
 
-import styles from './styles/outline.module.scss';
+import styles from '../styles/outline.module.scss';
 
 const HEADING_KEY = {
     1: 'RichTextEditor_heading1',

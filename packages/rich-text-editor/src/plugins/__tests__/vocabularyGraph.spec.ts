@@ -44,7 +44,7 @@ vi.mock('#/plugins/Link/editor', recorded('#/plugins/Link/editor'));
 vi.mock('#/plugins/Link/LinkPopover', recorded('#/plugins/Link/LinkPopover'));
 vi.mock('#/plugins/Link/LinkBubble', recorded('#/plugins/Link/LinkBubble'));
 vi.mock('#/plugins/Outline/editor', recorded('#/plugins/Outline/editor'));
-vi.mock('#/plugins/Outline/OutlinePanel', recorded('#/plugins/Outline/OutlinePanel'));
+vi.mock('#/plugins/Outline/components/OutlinePanel', recorded('#/plugins/Outline/components/OutlinePanel'));
 
 type Entries = Awaited<ReturnType<typeof loadVocabulary>>;
 

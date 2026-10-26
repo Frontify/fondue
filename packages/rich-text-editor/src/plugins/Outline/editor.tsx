@@ -5,7 +5,7 @@ import { defineEditorPart } from '#/bridge/plugin';
 
 import { outline } from './feature';
 
-const OutlinePanel = lazyPart(() => import('./OutlinePanel').then((loaded) => loaded.OutlinePanel));
+const OutlinePanel = lazyPart(() => import('./components/OutlinePanel').then((loaded) => loaded.OutlinePanel));
 
 const PANEL = 'outline';
 
