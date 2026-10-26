@@ -389,10 +389,7 @@ describe('Card Component', () => {
                 </Card.Action>
             </Card.Root>,
         );
-        expect(screen.getByTestId('action')).toHaveAttribute(
-            'data-intercom-tour-selector',
-            'set-action-button',
-        );
+        expect(screen.getByTestId('action')).toHaveAttribute('data-intercom-tour-selector', 'set-action-button');
     });
 
     it('should merge a forwarded className onto the root element', () => {
@@ -451,5 +448,116 @@ describe('Card Component', () => {
         expect(screen.getByRole('button', { name: 'Select' })).toHaveFocus();
         await userEvent.tab();
         expect(screen.getByRole('button', { name: 'Settings' })).toHaveFocus();
+    });
+
+    describe('Card.BannerDescription', () => {
+        const DESCRIPTION = 'Central home for all campaign creative';
+
+        it('should render the description inside the banner', () => {
+            render(
+                <Card.Root>
+                    <Card.Banner data-test-id="banner">
+                        <Card.BannerDescription>{DESCRIPTION}</Card.BannerDescription>
+                    </Card.Banner>
+                </Card.Root>,
+            );
+            const description = screen.getByTestId('fondue-card-banner-description');
+            expect(screen.getByTestId('banner')).toContainElement(description);
+            expect(description).toHaveTextContent(DESCRIPTION);
+        });
+
+        it('should render nothing when the description is empty', () => {
+            render(
+                <Card.Root>
+                    <Card.Banner>
+                        <Card.BannerDescription>{''}</Card.BannerDescription>
+                    </Card.Banner>
+                </Card.Root>,
+            );
+            expect(screen.queryByTestId('fondue-card-banner-description')).not.toBeInTheDocument();
+        });
+
+        it('should use a custom data-test-id and forward the ref to the container', () => {
+            const ref = { current: null as HTMLDivElement | null };
+            render(
+                <Card.Root>
+                    <Card.Banner>
+                        <Card.BannerDescription ref={ref} data-test-id="custom-description">
+                            {DESCRIPTION}
+                        </Card.BannerDescription>
+                    </Card.Banner>
+                </Card.Root>,
+            );
+            expect(ref.current).toBe(screen.getByTestId('custom-description'));
+        });
+
+        it('should describe the link overlay and hide the duplicate text on interactive cards', () => {
+            renderWithRouter(
+                <Card.Root href="/page">
+                    <Card.Banner>
+                        <Card.BannerDescription>{DESCRIPTION}</Card.BannerDescription>
+                    </Card.Banner>
+                    <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+                </Card.Root>,
+            );
+            const link = screen.getByRole('link', { name: CARD_TITLE_TEXT });
+            expect(link).toHaveAccessibleDescription(DESCRIPTION);
+            expect(screen.getByTestId('fondue-card-banner-description')).toHaveAttribute('aria-hidden', 'true');
+        });
+
+        it('should describe the button overlay when the card is selected', () => {
+            renderWithRouter(
+                <Card.Root href="/page" onSelect={vi.fn()} selected aria-label="Card">
+                    <Card.Banner>
+                        <Card.BannerDescription>{DESCRIPTION}</Card.BannerDescription>
+                    </Card.Banner>
+                </Card.Root>,
+            );
+            expect(screen.getByRole('button', { name: 'Card' })).toHaveAccessibleDescription(DESCRIPTION);
+        });
+
+        it('should append the description to a consumer aria-describedby', () => {
+            renderWithRouter(
+                <>
+                    <span id="subtitle">Updated today</span>
+                    <Card.Root href="/page" aria-label="Card" aria-describedby="subtitle">
+                        <Card.Banner>
+                            <Card.BannerDescription>{DESCRIPTION}</Card.BannerDescription>
+                        </Card.Banner>
+                    </Card.Root>
+                </>,
+            );
+            expect(screen.getByRole('link', { name: 'Card' })).toHaveAccessibleDescription(
+                `Updated today ${DESCRIPTION}`,
+            );
+        });
+
+        it('should drop the description from aria-describedby once it unmounts', () => {
+            const ui = (description: string) => (
+                <RouterProvider navigate={navigateStub} useHref={useHrefStub}>
+                    <Card.Root href="/page" aria-label="Card">
+                        <Card.Banner>
+                            <Card.BannerDescription>{description}</Card.BannerDescription>
+                        </Card.Banner>
+                    </Card.Root>
+                </RouterProvider>
+            );
+            const { rerender } = render(ui(DESCRIPTION));
+            expect(screen.getByRole('link', { name: 'Card' })).toHaveAttribute('aria-describedby');
+
+            rerender(ui(''));
+            expect(screen.getByRole('link', { name: 'Card' })).not.toHaveAttribute('aria-describedby');
+        });
+
+        it('should keep the description readable on non-interactive cards', () => {
+            render(
+                <Card.Root>
+                    <Card.Banner>
+                        <Card.BannerDescription>{DESCRIPTION}</Card.BannerDescription>
+                    </Card.Banner>
+                </Card.Root>,
+            );
+            expect(screen.getByText(DESCRIPTION).closest('[aria-hidden="true"]')).toBeNull();
+        });
     });
 });
