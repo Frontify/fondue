@@ -235,17 +235,23 @@ test('should transition the banner description with a 100ms ease-out', async ({ 
 
 test('should reveal the banner description while the card has keyboard focus', async ({ mount, page }) => {
     const wrapper = await mount(
-        <RouterProvider navigate={() => {}} useHref={(path) => path}>
-            <Card.Root href="/page" aria-label="Card">
-                <Card.Banner>
-                    <Card.BannerDescription data-test-id="banner-description">Description</Card.BannerDescription>
-                </Card.Banner>
-            </Card.Root>
-        </RouterProvider>,
+        <Card.Root>
+            <Card.Banner>
+                <Card.BannerDescription data-test-id="banner-description">Description</Card.BannerDescription>
+            </Card.Banner>
+            <Card.Action>
+                <Card.ActionButton aria-label="Settings">
+                    <svg />
+                </Card.ActionButton>
+            </Card.Action>
+        </Card.Root>,
     );
+    const description = wrapper.getByTestId('banner-description');
+    expect(await readOpacity(description)).toBe('0');
+
     await page.keyboard.press('Tab');
-    await expect(wrapper.getByRole('link', { name: 'Card' })).toBeFocused();
-    await expect.poll(() => readOpacity(wrapper.getByTestId('banner-description'))).toBe('1');
+    await expect(wrapper.getByRole('button', { name: 'Settings' })).toBeFocused();
+    await expect.poll(() => readOpacity(description)).toBe('1');
 });
 
 test('should clamp a long banner description to the lines that fit the banner', async ({ mount }) => {
@@ -267,10 +273,16 @@ test('should clamp a long banner description to the lines that fit the banner', 
         .poll(() => text.evaluate((element) => element.style.getPropertyValue('--card-banner-description-lines')))
         .not.toBe('');
 
+    const { lines, lineHeight } = await text.evaluate((element) => ({
+        lines: Number(element.style.getPropertyValue('--card-banner-description-lines')),
+        lineHeight: Number.parseFloat(getComputedStyle(element).lineHeight),
+    }));
     const bannerBox = await banner.boundingBox();
     const textBox = await text.boundingBox();
     expect(bannerBox).not.toBeNull();
     expect(textBox).not.toBeNull();
+    expect(lines).toBeGreaterThanOrEqual(1);
+    expect(textBox!.height).toBeLessThanOrEqual(lines * lineHeight + 1);
+    expect(textBox!.y).toBeGreaterThanOrEqual(bannerBox!.y);
     expect(textBox!.y + textBox!.height).toBeLessThanOrEqual(bannerBox!.y + bannerBox!.height);
-    expect(await text.evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(true);
 });
