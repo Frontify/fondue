@@ -3,7 +3,7 @@
 // @vitest-environment node
 
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
-import { dirname, join, relative, resolve } from 'node:path';
+import { basename, dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import ts from 'typescript';
@@ -695,6 +695,140 @@ const directionProblems = (folder: string) => {
     return problems;
 };
 
+const isComponentName = (name: string) => /^[A-Z]/.test(name) && /[a-z]/.test(name);
+
+const COMPONENT_CALLS = new Set(['forwardRef', 'memo', 'lazy', 'lazyPart', 'Object.assign']);
+
+const isComponentInitializer = (node: ts.Expression) => {
+    let initializer = node;
+    while (ts.isParenthesizedExpression(initializer) || ts.isAsExpression(initializer)) {
+        initializer = initializer.expression;
+    }
+
+    if (ts.isArrowFunction(initializer) || ts.isFunctionExpression(initializer)) {
+        return true;
+    }
+
+    return ts.isCallExpression(initializer) && COMPONENT_CALLS.has(initializer.expression.getText());
+};
+
+const extendsReactComponent = (statement: ts.ClassDeclaration) =>
+    statement.heritageClauses?.some(
+        (clause) =>
+            clause.token === ts.SyntaxKind.ExtendsKeyword &&
+            clause.types.some((type) => /^(React\.)?(Pure)?Component$/.test(type.expression.getText())),
+    ) === true;
+
+type FileShape = { declaresComponent: boolean; exportedComponent: boolean; exportedOther: string[]; hooks: string[] };
+
+// Runtime exports only: types, interfaces and `export ... from` re-exports do not count.
+const fileShape = (path: string): FileShape => {
+    const file = parse(path);
+    const components = new Set<string>();
+    const runtime = new Set<string>();
+    const exported = new Set<string>();
+    const declare = (name: string, isComponent: boolean, isExportedName: boolean) => {
+        runtime.add(name);
+        if (isComponent) {
+            components.add(name);
+        }
+
+        if (isExportedName) {
+            exported.add(name);
+        }
+    };
+
+    for (const statement of file.statements) {
+        const isExportedStatement =
+            ts.canHaveModifiers(statement) &&
+            ts.getModifiers(statement)?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword) === true;
+        if (ts.isFunctionDeclaration(statement) && statement.name !== undefined) {
+            declare(statement.name.text, isComponentName(statement.name.text), isExportedStatement);
+        } else if (ts.isFunctionDeclaration(statement) && isExportedStatement) {
+            declare('default', false, true);
+        } else if (ts.isVariableStatement(statement)) {
+            for (const { name, initializer } of statement.declarationList.declarations) {
+                if (ts.isIdentifier(name)) {
+                    const isComponent =
+                        isComponentName(name.text) && initializer !== undefined && isComponentInitializer(initializer);
+                    declare(name.text, isComponent, isExportedStatement);
+                }
+            }
+        } else if (ts.isClassDeclaration(statement) && statement.name !== undefined) {
+            declare(
+                statement.name.text,
+                isComponentName(statement.name.text) && extendsReactComponent(statement),
+                isExportedStatement,
+            );
+        } else if (ts.isEnumDeclaration(statement)) {
+            declare(statement.name.text, false, isExportedStatement);
+        } else if (ts.isExportAssignment(statement)) {
+            exported.add('default');
+            runtime.add('default');
+        } else if (
+            ts.isExportDeclaration(statement) &&
+            !statement.isTypeOnly &&
+            statement.moduleSpecifier === undefined &&
+            statement.exportClause !== undefined &&
+            ts.isNamedExports(statement.exportClause)
+        ) {
+            for (const element of statement.exportClause.elements) {
+                const local = (element.propertyName ?? element.name).text;
+                if (!element.isTypeOnly && runtime.has(local)) {
+                    exported.add(element.name.text === local ? local : element.name.text);
+                    if (components.has(local)) {
+                        components.add(element.name.text);
+                    }
+                }
+            }
+        }
+    }
+
+    const names = [...exported];
+
+    return {
+        declaresComponent: components.size > 0,
+        exportedComponent: names.some((name) => components.has(name)),
+        exportedOther: names.filter((name) => !components.has(name) && !/^use[A-Z]/.test(name)),
+        hooks: names.filter((name) => /^use[A-Z]/.test(name)),
+    };
+};
+
+type FileKind = 'component' | 'hook' | 'module' | 'none';
+
+const fileKind = (path: string): FileKind => {
+    const shape = fileShape(path);
+    if (shape.declaresComponent) {
+        return 'component';
+    }
+
+    if (shape.hooks.length > 0 && shape.exportedOther.length === 0) {
+        return 'hook';
+    }
+
+    if (shape.hooks.length > 0 || shape.exportedOther.length > 0) {
+        return 'module';
+    }
+
+    return 'none';
+};
+
+// Plugins follow the plugin folder rules above, and the authoring examples show an outside author's one-file plugin.
+const outsidePlugins = (path: string) =>
+    !toKey(path).startsWith('src/plugins/') && !toKey(path).startsWith('src/docs/');
+
+const filesByFolder = (files: string[]) => {
+    const folders = new Map<string, string[]>();
+    for (const path of files) {
+        const folder = toKey(dirname(path));
+        folders.set(folder, [...(folders.get(folder) ?? []), path]);
+    }
+
+    return folders;
+};
+
+const KIND_NEUTRAL_FILES = new Set(['index.ts', 'types.ts', 'constants.ts']);
+
 // Each measure parses every product file, which outlasts the default timeout on a loaded machine.
 describe('package structure ratchet', { timeout: 60_000 }, () => {
     it('no product file over 600 lines grows, data tables excepted', () => {
@@ -861,5 +995,100 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
 
     it('runs no static import inside a plugin from hooks to components, from helpers to hooks or components, or into a root file', () => {
         expect(pluginFolderNames().flatMap((folder) => directionProblems(folder))).toEqual([]);
+    });
+
+    it('no folder holds more than 15 direct product files', () => {
+        const problems: string[] = [];
+        for (const [folder, files] of filesByFolder(productFiles)) {
+            if (files.length > 15) {
+                problems.push(`${folder} holds ${files.length} product files`);
+            }
+        }
+
+        expect(problems).toEqual([]);
+    });
+
+    it('gives each product file one kind', () => {
+        const problems: string[] = [];
+        for (const path of productFiles.filter(outsidePlugins)) {
+            const shape = fileShape(path);
+            if (shape.hooks.length > 0 && shape.declaresComponent) {
+                problems.push(`${toKey(path)} exports a hook and declares a component`);
+            } else if (shape.hooks.length > 0 && shape.exportedOther.length > 0) {
+                problems.push(`${toKey(path)} exports hooks and ${shape.exportedOther.join(', ')}`);
+            } else if (shape.declaresComponent && shape.exportedComponent && shape.exportedOther.length > 0) {
+                problems.push(`${toKey(path)} exports a component and ${shape.exportedOther.join(', ')}`);
+            }
+        }
+
+        expect(problems).toEqual([]);
+    });
+
+    it('names a file in PascalCase exactly when it declares a component', () => {
+        const problems: string[] = [];
+        for (const path of productFiles.filter(outsidePlugins)) {
+            const kind = fileKind(path);
+            // A role suffix such as `.allowlist` is not part of the name.
+            const name = basename(path).split('.')[0] ?? '';
+            if (kind === 'component' && !PASCAL_CASE.test(name)) {
+                problems.push(`${toKey(path)} declares a component and is not PascalCase`);
+            } else if (kind === 'hook' && !/^use[A-Z][A-Za-z0-9]*$/.test(name)) {
+                problems.push(`${toKey(path)} is a hook file and is not named use*`);
+            } else if (kind === 'module' && !/^[a-z][A-Za-z0-9]*$/.test(name)) {
+                problems.push(`${toKey(path)} is a module file and is not camelCase`);
+            }
+        }
+
+        expect(problems).toEqual([]);
+    });
+
+    it("mixes no kinds in a folder's direct files", () => {
+        const problems: string[] = [];
+        for (const [folder, files] of filesByFolder(productFiles.filter(outsidePlugins))) {
+            const kinds = new Set<FileKind>();
+            for (const path of files.filter((item) => !KIND_NEUTRAL_FILES.has(basename(item)))) {
+                const kind = fileKind(path);
+                if (kind !== 'none') {
+                    kinds.add(kind);
+                }
+            }
+
+            if (kinds.size > 1) {
+                problems.push(`${folder} mixes ${[...kinds].sort().join(', ')}`);
+            }
+        }
+
+        expect(problems).toEqual([]);
+    });
+
+    it('holds only its own kind of file in each components, hooks and helpers folder outside plugins', () => {
+        const problems: string[] = [];
+        for (const [folder, files] of filesByFolder(productFiles.filter(outsidePlugins))) {
+            const kind = basename(folder);
+            if (!SUBFOLDERS.includes(kind as Subfolder)) {
+                continue;
+            }
+
+            for (const path of files) {
+                const name = basename(path);
+                const fileKindOf = fileKind(path);
+                let nameMatches = SUBFOLDER_NAMES[kind as Subfolder].test(name);
+                if (kind === 'helpers' && /^[A-Za-z0-9]+\.tsx$/.test(name) && !fileShape(path).declaresComponent) {
+                    nameMatches = true;
+                }
+
+                if (!nameMatches) {
+                    problems.push(`${toKey(path)} name does not fit ${kind}`);
+                } else if (kind === 'components' && fileKindOf !== 'component') {
+                    problems.push(`${toKey(path)} is kind ${fileKindOf} in components`);
+                } else if (kind === 'hooks' && fileKindOf !== 'hook') {
+                    problems.push(`${toKey(path)} is kind ${fileKindOf} in hooks`);
+                } else if (kind === 'helpers' && fileKindOf !== 'module' && fileKindOf !== 'none') {
+                    problems.push(`${toKey(path)} is kind ${fileKindOf} in helpers`);
+                }
+            }
+        }
+
+        expect(problems).toEqual([]);
     });
 });
