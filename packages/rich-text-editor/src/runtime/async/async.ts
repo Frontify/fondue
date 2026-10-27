@@ -71,10 +71,38 @@ export type AsyncCoordinatorOptions = {
 
 type Of<T extends AsyncEffect['type']> = Extract<AsyncEffect, { type: T }>;
 
+/** The frozen operation that a build effect registers for `request`, aimed at `target`. */
+const buildOperation = (
+    { generateId, session, policyRevision }: AsyncCoordinatorOptions,
+    request: AsyncRequest,
+    target: SelectionHandle | null,
+    sequence: number,
+): AsyncOperation => {
+    const { deliver } = request;
+    let delivered: Pick<AsyncOperation, 'deliver'> = {};
+    if (deliver !== undefined) {
+        delivered = { deliver };
+    }
+
+    return Object.freeze({
+        id: generateId(),
+        session: session(),
+        target,
+        policyRevision: policyRevision(),
+        controller: new AbortController(),
+        key: request.key,
+        request: sequence,
+        service: request.service,
+        featureId: request.featureId,
+        action: request.action,
+        command: request.command,
+        ...delivered,
+    });
+};
+
 /** Registers each async operation, aborts the ones a newer request, a policy, a service or `dispose` ends, and checks each result. */
 export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
-    const { generateId, session, policyRevision, isDisposed, isFaulted, holding, capture, release, apply, report } =
-        options;
+    const { session, isDisposed, isFaulted, holding, capture, release, apply, report } = options;
     let machine = initial();
     // While an abort runs, a pool starts no waiting operation that the same abort may end next.
     let aborting = 0;
@@ -108,26 +136,7 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
                 chosen = capture() ?? null;
             }
 
-            const { deliver } = request;
-            let delivered: Pick<AsyncOperation, 'deliver'> = {};
-            if (deliver !== undefined) {
-                delivered = { deliver };
-            }
-
-            const operation: AsyncOperation = Object.freeze({
-                id: generateId(),
-                session: session(),
-                target: chosen,
-                policyRevision: policyRevision(),
-                controller: new AbortController(),
-                key: request.key,
-                request: sequence,
-                service: request.service,
-                featureId: request.featureId,
-                action: request.action,
-                command: request.command,
-                ...delivered,
-            });
+            const operation = buildOperation(options, request, chosen, sequence);
             reply(operation);
             dispatch({ type: 'built', operation, request, owned: captures && chosen !== null });
         },

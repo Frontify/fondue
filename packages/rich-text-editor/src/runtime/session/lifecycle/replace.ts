@@ -116,6 +116,26 @@ const measured = (
     },
 });
 
+/** The tree and capabilities of a request's document, or the refusal when its model or content is not acceptable. */
+const checkedRequest = (
+    definition: CompiledDefinition,
+    limits: ResourceLimits,
+    request: ReplaceDocumentRequest,
+): ReplaceResult | { tree: TreeNode; requiredCapabilities: readonly CapabilityRef[] } => {
+    const { document } = request.next;
+    // The input is untrusted: only a record names a model, and `decodeToTree` judges any other input.
+    if (isRecord(document) && isRecord(document.model) && document.model.id !== definition.model.ref.id) {
+        return refused('wrong-model');
+    }
+
+    const { result, tree } = decodeToTree(document, definition.model, { limits });
+    if (result.status !== 'editable' || tree === undefined) {
+        return refused('invalid-document');
+    }
+
+    return { tree, requiredCapabilities: result.document.requiredCapabilities };
+};
+
 export const createReplace = (a: {
     definition: CompiledDefinition;
     limits: ResourceLimits;
@@ -222,17 +242,14 @@ export const createReplace = (a: {
             return refused('not-ready');
         }
 
-        const { next } = request;
-        const { document } = next;
-        // The input is untrusted: only a record names a model, and `decodeToTree` judges any other input.
-        if (isRecord(document) && isRecord(document.model) && document.model.id !== definition.model.ref.id) {
-            return refused('wrong-model');
+        const checked = checkedRequest(definition, limits, request);
+        if ('status' in checked) {
+            return checked;
         }
 
-        const { result, tree } = decodeToTree(document, definition.model, { limits });
-        if (result.status !== 'editable' || tree === undefined) {
-            return refused('invalid-document');
-        }
+        const { next } = request;
+        const { document } = next;
+        const { tree, requiredCapabilities } = checked;
 
         // A host that echoes its own save gets the current session back with nothing changed; hashing waits for a checked document.
         if (
@@ -275,7 +292,7 @@ export const createReplace = (a: {
             return resume('changed-since-request', focused);
         }
 
-        return installNext(request, tree, result.document.requiredCapabilities, focused);
+        return installNext(request, tree, requiredCapabilities, focused);
     };
 
     return measured(metrics, replace);

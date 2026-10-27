@@ -28,6 +28,29 @@ export type Actions = {
     searchSuggestions: SuggestionHost['search'];
 };
 
+/** A node change that sets each of `values` as an attribute, and fails unless every one is valid for the node's type. */
+const attributeUpdate =
+    (definition: CompiledDefinition, values: Record<string, unknown>) =>
+    (tr: Transaction, pos: number, node: Node): boolean => {
+        const declared = compiledModel(definition.model).nodes.find(({ name }) => name === node.type.name);
+        if (declared === undefined) {
+            return false;
+        }
+
+        const attributes = attributesOf(declared);
+        for (const [name, value] of Object.entries(values)) {
+            const attribute = attributes[name];
+            // An action never changes the ID it finds its node by.
+            if (name === 'nodeId' || attribute === undefined || !isValidValue(attribute, value)) {
+                return false;
+            }
+
+            tr.setNodeAttribute(pos, name, value);
+        }
+
+        return true;
+    };
+
 export const createActions = (a: {
     definition: CompiledDefinition;
     limits: ResourceLimits;
@@ -115,25 +138,7 @@ export const createActions = (a: {
             }
 
             const values = checked.payload;
-            const update = nodeCommand(target, (tr, pos, node) => {
-                const declared = compiledModel(definition.model).nodes.find(({ name }) => name === node.type.name);
-                if (declared === undefined) {
-                    return false;
-                }
-
-                const attributes = attributesOf(declared);
-                for (const [name, value] of Object.entries(values)) {
-                    const attribute = attributes[name];
-                    // An action never changes the ID it finds its node by.
-                    if (name === 'nodeId' || attribute === undefined || !isValidValue(attribute, value)) {
-                        return false;
-                    }
-
-                    tr.setNodeAttribute(pos, name, value);
-                }
-
-                return true;
-            });
+            const update = nodeCommand(target, attributeUpdate(definition, values));
 
             return commands.runOn(update, { payload: undefined }, () => store.state, 'host');
         },
