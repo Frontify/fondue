@@ -40,6 +40,7 @@ export type MigrationResult = {
     manifest: MigrationManifest;
 };
 
+/** What `runMigrations` hands to decode: the migrated document and the facts the caller reports from it. */
 export type Migrated = {
     /** `null` when a step blocks the document. */
     document: RichTextDocument | null;
@@ -114,6 +115,7 @@ export const runMigrations = (
     const review = new Map<string, string>();
     let reviewing = false;
     let current = document;
+
     const outcome = (result: RichTextDocument | null): Migrated => ({
         document: result,
         diagnostics,
@@ -122,8 +124,10 @@ export const runMigrations = (
         reviewing,
         older,
     });
+
     for (const step of plan) {
         steps.push(step.id);
+
         const block = (cause?: string) => {
             const details: JsonObject = cause === undefined ? { step: step.id } : { step: step.id, cause };
             diagnostics.push(diagnostic('migration.unsupported', undefined, details, 'error'));
@@ -155,6 +159,7 @@ export const runMigrations = (
                 findMisshapenCapabilities(requiredCapabilities) === undefined ? requiredCapabilities : [],
             );
             const next: RichTextDocument = { ...current, requiredCapabilities: kept, content };
+
             if ([...review].some(([path, json]) => jsonAt(next, path) !== json)) {
                 return block();
             }
