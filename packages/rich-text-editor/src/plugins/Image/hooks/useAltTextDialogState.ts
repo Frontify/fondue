@@ -15,7 +15,13 @@ type Stored = {
     suggestion: string | undefined;
 };
 
-const textOf = (value: unknown): string => (typeof value === 'string' ? value : '');
+const textOf = (value: unknown): string => {
+    if (typeof value === 'string') {
+        return value;
+    }
+
+    return '';
+};
 
 /** What the image `nodeId` stores, read when the dialog opens. */
 const storedOf = (api: EditorApi | undefined, nodeId: string): Stored => {

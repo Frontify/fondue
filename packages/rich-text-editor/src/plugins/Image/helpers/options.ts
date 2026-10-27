@@ -5,8 +5,11 @@ import { type CodecContext } from '#/model';
 
 import { SET_SIZE } from './dialogStrings';
 
+/** The size menu's percentages of the content width. */
 export const PRESETS = [25, 50, 75, 100] as const;
+/** The sides a figure aligns its image to. */
 export const SIDES = ['left', 'center', 'right'] as const;
+/** The label key of each side. */
 export const SIDE_KEYS = {
     left: 'RichTextEditor_imageAlignLeft',
     center: 'RichTextEditor_imageAlignCenter',

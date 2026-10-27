@@ -15,6 +15,7 @@ import {
     offeredLanguages,
 } from '../helpers/languageModel';
 
+/** The state and handlers of the language dialog; Apply keeps it open and flags the tag when the command rejects. */
 export const useLanguageState = ({ opener, close }: OverlayProps) => {
     const api = useEditorApi();
     const dialog = useEditorDialog(opener, close);

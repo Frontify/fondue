@@ -24,7 +24,11 @@ export const image = defineFeature({
     version: 1,
     requires: [{ id: 'core', version: 1 }],
     options: {
-        // SVG is left out, since it can hold script.
+        /**
+         * The media types the picker and pasted files accept. SVG is left out, since it can hold script.
+         *
+         * @default ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/avif']
+         */
         acceptTypes: {
             type: 'list',
             items: { type: 'string', minLength: 1 },
@@ -95,7 +99,11 @@ export const image = defineFeature({
                     IMAGE_EXTENSION.test(alt) ||
                     genericWords.has(alt);
 
-                return suspicious ? { payload: null } : undefined;
+                if (!suspicious) {
+                    return undefined;
+                }
+
+                return { payload: null };
             },
         },
         { id: 'image.content-review', kind: 'manual', severity: 'review', subject: IMAGE, check: () => true },

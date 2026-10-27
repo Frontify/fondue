@@ -23,12 +23,11 @@ const clearFailed = (event: SyntheticEvent<HTMLImageElement>) =>
 /** Drops the flag of a URL that failed once the image shows another one, since a new URL may load. */
 const keepFailedFor = (image: HTMLImageElement | null) => {
     const figure = image?.closest('figure');
-    if (
-        image !== null &&
-        figure !== null &&
-        figure !== undefined &&
-        figure.getAttribute(FAILED) !== image.getAttribute('src')
-    ) {
+    if (image === null || figure === null || figure === undefined) {
+        return;
+    }
+
+    if (figure.getAttribute(FAILED) !== image.getAttribute('src')) {
         figure.removeAttribute(FAILED);
     }
 };
@@ -67,6 +66,7 @@ const Image = ({ attrs, context }: ReaderNodeProps) => {
     );
 };
 
+/** The renderers of the `figure` and its `asset_image`. */
 export const imageReader: ReaderRenderers = { figure: Figure, asset_image: Image };
 
 /** The feature these renderers belong to. */

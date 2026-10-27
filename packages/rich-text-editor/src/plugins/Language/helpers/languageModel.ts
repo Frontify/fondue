@@ -21,6 +21,7 @@ export type LanguageStrings = {
     cancel: string;
 };
 
+/** The direction choices of the dialog; `''` is no direction. */
 export const directions = [
     { value: '', label: 'none' },
     { value: 'ltr', label: 'ltr' },
@@ -28,6 +29,7 @@ export const directions = [
     { value: 'auto', label: 'auto' },
 ] as const;
 
+/** The dialog's strings in the editor's UI locale; the keys themselves while there is no editor. */
 export const languageStrings = (api: EditorApi | undefined): LanguageStrings => {
     let t: CodecContext['t'] = (key) => key;
     if (api !== undefined) {
@@ -65,6 +67,7 @@ export const languageOptions = (api: EditorApi | undefined): readonly string[] =
     return languages.filter((tag): tag is string => typeof tag === 'string');
 };
 
+/** The editor's UI locale, `en-US` while there is no editor. */
 export const localeOf = (api: EditorApi | undefined): string => {
     if (api === undefined) {
         return 'en-US';
@@ -73,6 +76,7 @@ export const localeOf = (api: EditorApi | undefined): string => {
     return api.locale();
 };
 
+/** The name of the language `tag` in `locale`, or `tag` itself when the browser has none. */
 export const labelOf = (tag: string, locale: string): string => {
     const name = new Intl.DisplayNames([locale], { type: 'language' }).of(tag);
     if (name === undefined) {
@@ -82,6 +86,7 @@ export const labelOf = (tag: string, locale: string): string => {
     return name;
 };
 
+/** The stored direction of a dialog value, `null` for no direction. */
 export const directionOf = (value: string): 'ltr' | 'rtl' | 'auto' | null => {
     if (value === 'ltr' || value === 'rtl' || value === 'auto') {
         return value;
@@ -119,6 +124,7 @@ export const offeredLanguages = (languages: readonly string[], stored: string): 
     return languages;
 };
 
+/** The label of the direction `value`, as the dialog shows it. */
 export const directionLabel = (value: string, strings: LanguageStrings): string => {
     if (value === 'ltr') {
         return strings.leftToRight;

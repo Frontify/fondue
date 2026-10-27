@@ -4,6 +4,7 @@ import { type CodecContext } from '#/model';
 
 /** The command that sets an image's width, whose payload declares it in percent. */
 export const SET_SIZE = 'image.size.set';
+/** The least and the most a width may be, in percent of the content width. */
 export const MIN_WIDTH = 10;
 export const MAX_WIDTH = 100;
 
@@ -42,6 +43,7 @@ export type AltTextStrings = {
     cancel: string;
 };
 
+/** The alternative text dialog's strings in the UI locale of `t`. */
 export const altTextStrings = (t: CodecContext['t']): AltTextStrings => ({
     title: t('RichTextEditor_imageAltTitle'),
     choice: t('RichTextEditor_imageAltChoice'),

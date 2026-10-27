@@ -36,12 +36,8 @@ export const WidthDialog = ({
     const apply = (event: FormEvent) => {
         event.preventDefault();
         const displayWidth = Number(value);
-        if (
-            value.trim() === '' ||
-            !Number.isInteger(displayWidth) ||
-            displayWidth < MIN_WIDTH ||
-            displayWidth > MAX_WIDTH
-        ) {
+        const outOfRange = !Number.isInteger(displayWidth) || displayWidth < MIN_WIDTH || displayWidth > MAX_WIDTH;
+        if (value.trim() === '' || outOfRange) {
             setInvalid(true);
             const field = fieldRef.current;
             // A field that already has focus hears no focus event, so it would not read its new description.

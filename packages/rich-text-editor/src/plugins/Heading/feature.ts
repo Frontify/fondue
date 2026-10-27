@@ -22,7 +22,11 @@ const levelOf = (node: ContentNodeJSON | undefined): number | undefined => {
 const repairLevel = (previous: number, creatable: readonly number[]) => {
     const fits = creatable.filter((level) => level <= previous + 1);
 
-    return fits.length === 0 ? undefined : Math.max(...fits);
+    if (fits.length === 0) {
+        return undefined;
+    }
+
+    return Math.max(...fits);
 };
 
 /** Headings `h1` to `h6`, whose level only the `level` attribute sets. */

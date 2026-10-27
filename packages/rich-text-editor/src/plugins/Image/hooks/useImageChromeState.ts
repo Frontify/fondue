@@ -51,8 +51,11 @@ const spokenOf = (
 
     if (unavailable) {
         const { message, label } = unavailableOf(attrs, context);
+        if (label === '') {
+            return message;
+        }
 
-        return label === '' ? message : `${message} ${label}`;
+        return `${message} ${label}`;
     }
 
     const alt = altOf(attrs);
@@ -161,7 +164,11 @@ export const useImageChromeState = () => {
     // An undone replacement gives back the old asset, which asks for no review.
     const kept = attrs.altIntent === 'meaningful' || attrs.altIntent === 'decorative';
     const review = isRecord(replaced) && replaced.assetId === attrs.assetId;
-    const mediaType = typeof attrs.mediaType === 'string' ? attrs.mediaType : null;
+    let mediaType: string | null = null;
+    if (typeof attrs.mediaType === 'string') {
+        mediaType = attrs.mediaType;
+    }
+
     const { decided, animated, paused, setPlayed } = useAnimation(src, mediaType);
     const unavailable = shown.kind !== 'image' || failed === shown.src;
     // The upload chrome follows the session's upload of this slot, which no reload keeps.
@@ -171,11 +178,12 @@ export const useImageChromeState = () => {
     // A slot's progress is shown, not spoken: only whether it runs, failed or stopped counts as a change.
     let heard = spoken;
     if (slot && upload !== undefined) {
-        heard = upload.state === 'failed' || upload.state === 'stopped' ? upload.state : 'running';
+        heard = 'running';
+        if (upload.state === 'failed' || upload.state === 'stopped') {
+            heard = upload.state;
+        }
     }
 
-    // A selected image is spoken as it becomes selected, and again when what it says changes, as when it fails to
-    // load; a slot that fills is not, since the upload's completion speaks for it.
     useSelectionAnnouncement(selected, spoken, heard, slot, announce);
     const altLabel = review ? t('RichTextEditor_imageAltReview') : undefined;
     const takesFocus = isRecord(replaced) && replaced.focus === true;
@@ -187,7 +195,11 @@ export const useImageChromeState = () => {
             action?.focus();
         }
     }, [altLabel, takesFocus]);
-    const displayWidth = typeof attrs.displayWidth === 'number' ? attrs.displayWidth : null;
+    let displayWidth: number | null = null;
+    if (typeof attrs.displayWidth === 'number') {
+        displayWidth = attrs.displayWidth;
+    }
+
     const resize = useResize(frameRef, api, (width) => {
         if (width !== displayWidth) {
             execute(SET_SIZE, { displayWidth: width });
