@@ -5,8 +5,11 @@ import { type RichTextDocument } from '../vocabulary/format';
 
 const codePoint = (characters: readonly string[], index: number) => {
     const character = characters[index];
+    if (character === undefined) {
+        return 0;
+    }
 
-    return character === undefined ? 0 : (character.codePointAt(0) ?? 0);
+    return character.codePointAt(0) ?? 0;
 };
 
 const compareCodePoints = (a: string, b: string) => {

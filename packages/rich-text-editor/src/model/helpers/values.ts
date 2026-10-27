@@ -14,6 +14,7 @@ const STORED_ID = /^[a-z0-9][a-z0-9._:-]{0,127}$/;
 /** Whether `value` is a stored ID; the `StoredId` type checks its first character only. */
 export const isStoredId = (value: unknown): value is StoredId => typeof value === 'string' && STORED_ID.test(value);
 const COLOR = /^#[0-9a-f]{6}([0-9a-f]{2})?$/;
+/** Object keys that reach the prototype chain, so a stored value under one is never safe. */
 export const PROTOTYPE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 
 /** How deep an option value or an `html` spec may nest. */

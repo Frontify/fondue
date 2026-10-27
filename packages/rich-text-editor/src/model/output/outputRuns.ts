@@ -115,6 +115,7 @@ export const failedFallback = (state: Spacing, node: TreeNode, plan: NodePlan, b
     return { tag: 'div', text } as const;
 };
 
+/** One child of a node: the node, its path, and the marks a run may share. */
 export type Item = {
     node: TreeNode;
     path: string;

@@ -18,8 +18,12 @@ const quantifierOf = (token: string | undefined) => {
         return { min: 0, max: 1, copies: 1 };
     }
 
-    if (token === '*' || token === '+') {
-        return { min: token === '*' ? 0 : 1, max: Infinity, copies: 1 };
+    if (token === '*') {
+        return { min: 0, max: Infinity, copies: 1 };
+    }
+
+    if (token === '+') {
+        return { min: 1, max: Infinity, copies: 1 };
     }
 
     const range = token === undefined ? null : RANGE.exec(token);
@@ -28,8 +32,12 @@ const quantifierOf = (token: string | undefined) => {
     }
 
     const min = Number(range[1]);
-    if (range[2] === undefined || range[2] === '') {
-        return { min, max: range[2] === undefined ? min : Infinity, copies: min };
+    if (range[2] === undefined) {
+        return { min, max: min, copies: min };
+    }
+
+    if (range[2] === '') {
+        return { min, max: Infinity, copies: min };
     }
 
     const max = Number(range[2]);
@@ -206,7 +214,11 @@ const automatonOf = (expression: string): Automaton | undefined => {
     let automaton = automata.get(expression);
     if (automaton === undefined) {
         const parsed = parse(expression);
-        automaton = parsed === undefined ? null : build(parsed.expression);
+        automaton = null;
+        if (parsed !== undefined) {
+            automaton = build(parsed.expression);
+        }
+
         automata.set(expression, automaton);
     }
 
@@ -234,8 +246,11 @@ export type ContentMatch = { expression: string; states: readonly number[] };
 /** The match before the first child; a missing expression, a leaf, accepts no child. */
 export const startMatch = (expression = ''): ContentMatch => {
     const automaton = automatonOf(expression);
+    if (automaton === undefined) {
+        return { expression, states: [] };
+    }
 
-    return { expression, states: automaton === undefined ? [] : closure(automaton, [0]) };
+    return { expression, states: closure(automaton, [0]) };
 };
 
 /** The match after one more child, which `accepts` says each term takes. */
