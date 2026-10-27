@@ -273,18 +273,18 @@ const modelSchema = (model: ContentModel): JsonObject => {
         const variant = inline && names !== markNames ? `@${names.join(',')}` : '';
 
         return define(`n.${name}${variant}`, () => {
-            const kids = childrenOf(declaration.content);
+            let content: JsonObject | undefined;
+            if (declaration.content !== undefined) {
+                const kids = childrenOf(declaration.content);
+                content = array(choice(kids.map((kid) => nodeRef(kid, declaration.marks))));
+            }
 
-            return nodeShape(
-                name,
-                attributesOf(node),
-                declaration.exactlyOne,
-                declaration.content === undefined
-                    ? undefined
-                    : array(choice(kids.map((kid) => nodeRef(kid, declaration.marks)))),
-                names.length === 0 ? undefined : array(choice(names.map(markRef))),
-                true,
-            );
+            let marks: JsonObject | undefined;
+            if (names.length > 0) {
+                marks = array(choice(names.map(markRef)));
+            }
+
+            return nodeShape(name, attributesOf(node), declaration.exactlyOne, content, marks, true);
         });
     };
 

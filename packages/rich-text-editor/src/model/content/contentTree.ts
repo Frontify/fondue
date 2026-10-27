@@ -6,6 +6,7 @@ import { isRecord } from '../helpers/values';
 import { type ContentModel } from '../vocabulary/declarations';
 import { type Diagnostic, diagnostic, type FormatDiagnosticCode } from '../vocabulary/format';
 
+/** The node types that hold, as `original`, stored content the model does not know or cannot accept. */
 export const ISLAND_BLOCK = 'unsupported_block';
 export const ISLAND_INLINE = 'unsupported_inline';
 export const ISLAND_MARK = 'unsupported_mark';
@@ -37,6 +38,7 @@ export type Vocabulary = {
 
 const vocabularies = new WeakMap<ContentModel, Vocabulary>();
 
+/** The node and mark lookups of `model`, built once per model and then shared. */
 export const vocabularyOf = (model: ContentModel): Vocabulary => {
     let vocabulary = vocabularies.get(model);
     if (vocabulary === undefined) {
@@ -52,8 +54,10 @@ export const vocabularyOf = (model: ContentModel): Vocabulary => {
     return vocabulary;
 };
 
+/** Whether `node` is an `unsupported_block` or `unsupported_inline` island. */
 export const isIsland = (node: TreeNode) => node.type === ISLAND_BLOCK || node.type === ISLAND_INLINE;
 
+/** What one decode pass shares: the model's vocabulary, the diagnostics so far, and the sources of tree nodes. */
 export type Context = {
     vocabulary: Vocabulary;
     diagnostics: Diagnostic[];
@@ -63,9 +67,11 @@ export type Context = {
     review: ReadonlySet<string>;
 };
 
+/** Records a diagnostic of `code` at `path` on `context`. */
 export const warn = (context: Context, code: FormatDiagnosticCode, path: string) =>
     context.diagnostics.push(diagnostic(code, path));
 
+/** An island node of `type` that holds `original` and, when it has a string `type`, the feature that owns it. */
 export const islandOf = (type: string, original: unknown): TreeNode => {
     const feature = isRecord(original) && typeof original.type === 'string' ? original.type : null;
 
@@ -93,6 +99,7 @@ const takes = (vocabulary: Vocabulary, term: string, type: string): boolean => {
     return term === 'section' ? group === 'block' || group === 'section' : term === group;
 };
 
+/** The match after a child of `type`; it has no states when the expression refuses that child. */
 export const advance = (vocabulary: Vocabulary, match: ContentMatch, type: string) =>
     advanceMatch(match, (term) => takes(vocabulary, term, type));
 
