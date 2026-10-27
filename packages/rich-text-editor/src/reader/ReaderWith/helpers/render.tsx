@@ -79,6 +79,7 @@ const PROP_NAMES: Readonly<Record<string, string>> = {
     crossorigin: 'crossOrigin',
     referrerpolicy: 'referrerPolicy',
 };
+
 /** React takes a style object, so the `style` text a spec writes becomes one: `text-align: right;` to `{ textAlign }`. */
 const styleOf = (text: string): Readonly<Record<string, string>> => {
     const style: Record<string, string> = {};
@@ -98,6 +99,7 @@ const styleOf = (text: string): Readonly<Record<string, string>> => {
     return style;
 };
 
+/** The React props of an HTML attribute map, leaving out any name React would read as an event handler. */
 const propsOf = (attrs: Readonly<Record<string, string>>): Record<string, unknown> => {
     const props: Record<string, unknown> = {};
     for (const [name, value] of Object.entries(attrs)) {
@@ -234,6 +236,7 @@ const styled = (state: RenderState, type: string, attrs: JsonObject, path: strin
 
 const textOf = (value: unknown): string => (typeof value === 'string' ? value : '');
 
+/** One mark's elements around its run, or the run alone when the mark has no plan or an invalid link `href`. */
 const renderMark = (
     state: RenderState,
     items: readonly Item[],
@@ -271,6 +274,7 @@ const renderMark = (
     return build(decorate(resolveHtmlSpec(plan.spec, attrs, plan.options)), children);
 };
 
+/** One node's element with its children; a node with no plan, or an unfinished upload, renders nothing. */
 const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): ReactNode => {
     if (node.type === 'text') {
         const text = node.text ?? '';

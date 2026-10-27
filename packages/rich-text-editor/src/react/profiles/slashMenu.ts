@@ -60,10 +60,9 @@ export const slashMenu = (plugins: readonly Unit[]): Omit<EditorPartSpec<'comman
                     const items = groups.flatMap(({ headingKey, entries: listed }) =>
                         listed.flatMap((entry) => {
                             const label = labelOf(api, entry);
-                            if (
-                                !fold(label).includes(wanted) ||
-                                !api.commands.query(entry.command, entry.payload).enabled
-                            ) {
+                            const matches = fold(label).includes(wanted);
+                            const enabled = api.commands.query(entry.command, entry.payload).enabled;
+                            if (!matches || !enabled) {
                                 return [];
                             }
 

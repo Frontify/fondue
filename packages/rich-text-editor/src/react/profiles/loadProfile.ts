@@ -12,6 +12,7 @@ const LOADERS: Readonly<Record<RichTextProfile, () => Promise<{ shipped: () => S
     'brand-document': () => import('./brandDocument'),
 };
 
+/** The profiles that finished loading, which render without waiting again. */
 export const loaded = new Map<RichTextProfile, ShippedProfile>();
 const loading = new Map<RichTextProfile, Promise<ShippedProfile>>();
 

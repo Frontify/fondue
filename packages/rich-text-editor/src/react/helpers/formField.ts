@@ -5,7 +5,9 @@ import { type LoadedDocument, type ReplaceResult } from '#/persistence/types';
 
 /** A handle for a form to read the editor's document and check that it is valid. */
 export type RichTextFormField = {
+    /** The document as it is now. */
     getValue(): RichTextDocument;
+    /** `empty` when the field is required and holds no content; `too-long` when the document is over its limits. */
     validate(): { valid: true } | { valid: false; reason: 'empty' | 'too-long' };
     /**
      * Replaces with the `defaultValue` record, discarding unsaved changes, and empties the history. A host whose session
@@ -22,6 +24,7 @@ export type FieldProps = {
     required?: boolean | undefined;
     defaultValue: LoadedDocument;
 };
+/** The reader of each registered editor's props, by session handle. */
 export const fieldProps = new WeakMap<object, () => FieldProps>();
 
 /** Lets `useRichTextFormField` read the newest props of the editor behind `handle`. */

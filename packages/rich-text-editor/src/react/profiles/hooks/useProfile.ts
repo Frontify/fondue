@@ -10,11 +10,13 @@ import { type RichTextProfile } from '../../types';
 import { forgetProfile, loaded, loadProfile } from '../loadProfile';
 import { type ShippedProfile } from '../parts';
 
+/** What a profile's load has produced so far. */
 export type ProfileState = {
     /** The profile's definition and presentation once its module has loaded; `undefined` while it loads or for none. */
     shipped: ShippedProfile | undefined;
     /** Whether the module failed to load, until `retry` loads it again. */
     failed: boolean;
+    /** Forgets a failed load and loads the module again. */
     retry: () => void;
 };
 

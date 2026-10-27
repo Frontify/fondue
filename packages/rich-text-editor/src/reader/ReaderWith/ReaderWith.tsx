@@ -29,6 +29,7 @@ export type ReaderPresentation = {
     styles: readonly PresentationStyle[];
     /** The colours a `tokenId` of `font_color` or `highlight` names. */
     colorTokens: readonly ColorToken[];
+    /** Turns a stored asset ID into the URL the reader renders. */
     resolveAssetUrl?: ResolveAssetUrl;
     /** Synchronous, so the reader renders on the server in one pass. */
     resolveReference?: (resourceType: string, resourceId: string) => ReferenceResolution;
@@ -36,7 +37,10 @@ export type ReaderPresentation = {
     contentClassName?: string;
     /** List markers by depth. */
     listLevels?: ListLevels;
-    /** Strikethrough and secondary colour on checked task items; default false. */
+    /**
+     * Strikethrough and secondary colour on checked task items.
+     * @default false
+     */
     strikeCheckedTasks?: boolean;
     /** 1 to 6. */
     columns?: number;
@@ -51,11 +55,18 @@ export type ReaderPresentation = {
 export type RichTextReaderProps = {
     /** JSON text or a parsed value; the reader decodes it. */
     document: unknown;
+    /** The content model the document was written with. */
     model: ContentModel;
+    /** The styles, colours and resolvers to render with. */
     presentation?: ReaderPresentation;
+    /** The language of the reader's own messages. */
     locale?: RichTextLocale;
-    /** The limits the writing definition used, when a host loosened them through `limitOverrides`. Omitted means the default limits. */
+    /**
+     * The limits the writing definition used, when a host loosened them through `limitOverrides`.
+     * @default the default limits
+     */
     limits?: Partial<ResourceLimits>;
+    /** Runs once per callback with each problem found while decoding and rendering. */
     onDiagnostic?: (diagnostic: Diagnostic) => void;
 };
 
@@ -80,6 +91,7 @@ const listOf = <T,>(value: readonly T[] | undefined): readonly T[] => {
     return [];
 };
 
+/** Decodes and renders one document, or the message that stands in for a blocked one. */
 const build = ({ document, model, presentation, locale = enUS, limits, overrides }: ReaderProps): Output => {
     let resolvers: ReaderPresentation = NO_PRESENTATION;
     if (presentation !== undefined) {
@@ -110,6 +122,12 @@ const build = ({ document, model, presentation, locale = enUS, limits, overrides
         return { element: message(context, 'invalid'), diagnostics, notified };
     }
 
+    // Without a presentation no style map is given, so no stored style is unknown.
+    let unknownStyles: Set<string> | undefined;
+    if (presentation !== undefined) {
+        unknownStyles = new Set();
+    }
+
     const state: RenderState = {
         plan: planOf(model, overrides),
         context,
@@ -120,8 +138,7 @@ const build = ({ document, model, presentation, locale = enUS, limits, overrides
         depths: listDepths(),
         strikeCheckedTasks: resolvers.strikeCheckedTasks === true,
         styles: { styles, colorTokens: listOf<ColorToken>(resolvers.colorTokens), inline: false },
-        // Without a presentation no style map is given, so no stored style is unknown.
-        unknownStyles: presentation === undefined ? undefined : new Set(),
+        unknownStyles,
         columns: columnLayout(resolvers.columns, resolvers.columnGap),
         breaks: 0,
     };

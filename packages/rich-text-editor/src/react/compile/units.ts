@@ -42,5 +42,14 @@ export const checkCover = (model: ContentModel, units: readonly RichTextPlugin[]
 };
 
 /** The reader overrides of the units that have them, by feature ID. */
-export const readersOfUnits = (units: readonly RichTextPlugin[]): ReaderOverrides =>
-    Object.fromEntries(units.flatMap(({ id, reader }) => (reader === undefined ? [] : [[id, reader] as const])));
+export const readersOfUnits = (units: readonly RichTextPlugin[]): ReaderOverrides => {
+    const withReader = units.flatMap(({ id, reader }) => {
+        if (reader === undefined) {
+            return [];
+        }
+
+        return [[id, reader] as const];
+    });
+
+    return Object.fromEntries(withReader);
+};

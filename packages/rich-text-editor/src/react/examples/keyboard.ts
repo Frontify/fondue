@@ -5,6 +5,7 @@ import { type RichTextProfile } from '#/react/types';
 
 /** The areas the keyboard reference groups its shortcuts by, in the order it shows them. */
 export const AREAS = ['History', 'Text formatting', 'Links', 'Blocks', 'Alignment', 'Lists', 'Code blocks'] as const;
+/** One of the keyboard reference's areas. */
 export type Area = (typeof AREAS)[number];
 
 /**
@@ -44,6 +45,7 @@ const MULTILINE: readonly RichTextProfile[] = ['comment', 'document', 'brand-doc
 const DOCUMENTS: readonly RichTextProfile[] = ['document', 'brand-document'];
 const BRAND: readonly RichTextProfile[] = ['brand-document'];
 
+/** One row of the keyboard reference; `apple` and `other` are the key's text, empty on the platform where it does not apply. */
 const shortcut = (
     area: Area,
     action: string,

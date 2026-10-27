@@ -95,6 +95,7 @@ const applying = (binding: Keymap[number], keymap: Keymap): readonly string[] =>
     return [];
 };
 
+/** A stable text for a payload, so two routes of the same command and payload compare equal. */
 const payloadKey = (payload: JsonValue | null | undefined) => {
     if (payload === undefined) {
         return canonicalJson(null);
@@ -116,6 +117,7 @@ const bindingsOf = (keymap: Keymap, command: string, payload: JsonValue | undefi
         .filter((binding) => binding.command === command && payloadKey(binding.payload) === payloadKey(payload))
         .flatMap((binding) => applying(binding, keymap));
 
+/** The command and payload of a toolbar group's entry, which is a bare command ID or a `{ command, payload }` item. */
 const routeOf = (ref: CommandRef) => {
     if (typeof ref === 'string') {
         return { command: ref, payload: undefined };
@@ -202,12 +204,11 @@ export const toolbarItems = (
         engine.commands.get(command)?.policyRefuses?.(authoring, payload) !== true;
     /** The brand style rows: the default style, then each style that is not deprecated and applies to a styled block type. */
     const brandRows = (defaults: readonly ButtonEntry[]) => {
-        const styles = presentation.styles.filter(
-            (style) =>
-                isPresentationStyle(style) &&
-                style.deprecated !== true &&
-                style.appliesTo.some((type) => STYLED_BLOCKS.has(type)),
-        );
+        const stylesOfBrand = (style: PresentationStyle) =>
+            isPresentationStyle(style) &&
+            style.deprecated !== true &&
+            style.appliesTo.some((type) => STYLED_BLOCKS.has(type));
+        const styles = presentation.styles.filter(stylesOfBrand);
         if (!runnable(SET_STYLE) || styles.length === 0) {
             return [];
         }
