@@ -4,6 +4,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 
 import { Dropdown } from '#/index';
 
+import { Flyout } from '../../Flyout/Flyout';
 import { Tree } from '../Tree';
 
 import { RowDialogHarness } from './testutils/RowDialogHarness';
@@ -728,11 +729,36 @@ test.describe('TreeRoot multi-select', () => {
 });
 
 test.describe('TreeRoot expansion', () => {
-    test('clicks toggle a folder open and fire onExpandChange', async ({ mount }) => {
+    test('clicking an unselected folder selects it without toggling', async ({ mount }) => {
+        const expandCalls: boolean[] = [];
+        const selectCalls: boolean[] = [];
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Folder
+                    id="f"
+                    onExpandChange={(v) => expandCalls.push(v)}
+                    onSelectChange={(v) => selectCalls.push(v)}
+                >
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="child">
+                        <Tree.Label>Child</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Folder/ }).click();
+        expect(selectCalls).toEqual([true]);
+        expect(expandCalls).toEqual([]);
+    });
+
+    test('clicking the selected folder toggles it open and fires onExpandChange', async ({ mount }) => {
         const calls: boolean[] = [];
         const component = await mount(
             <Tree.Root>
-                <Tree.Folder id="f" onExpandChange={(v) => calls.push(v)}>
+                <Tree.Folder id="f" isSelected onExpandChange={(v) => calls.push(v)}>
                     <Tree.FolderHeader>
                         <Tree.Label>Folder</Tree.Label>
                     </Tree.FolderHeader>
@@ -746,6 +772,33 @@ test.describe('TreeRoot expansion', () => {
         await expect(component.getByRole('treeitem', { name: /Child/ })).toHaveCount(0);
         await component.getByRole('treeitem', { name: /Folder/ }).click();
         expect(calls).toEqual([true]);
+    });
+
+    test('clicking the chevron toggles a folder without selecting it', async ({ mount }) => {
+        const expandCalls: boolean[] = [];
+        const selectCalls: boolean[] = [];
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Folder
+                    id="f"
+                    onExpandChange={(v) => expandCalls.push(v)}
+                    onSelectChange={(v) => selectCalls.push(v)}
+                >
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="child">
+                        <Tree.Label>Child</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+        await row.locator('[aria-hidden] svg').first().click();
+        expect(expandCalls).toEqual([true]);
+        expect(selectCalls).toEqual([]);
+        await expect(row).toHaveAttribute('aria-selected', 'false');
     });
 });
 
@@ -883,7 +936,7 @@ test.describe('TreeRoot item decorators', () => {
         await expect(component.getByTestId('folder-decorator')).toBeVisible();
     });
 
-    test('bubbles clicks from the decorator to the row (unlike actions)', async ({ mount }) => {
+    test('does not bubble clicks from the decorator to the row', async ({ mount }) => {
         let rowClicks = 0;
         const component = await mount(
             <Tree.Root>
@@ -897,7 +950,62 @@ test.describe('TreeRoot item decorators', () => {
         );
 
         await component.getByTestId('row-decorator').click();
+        expect(rowClicks).toBe(0);
+        await expect(component.getByRole('treeitem')).toHaveAttribute('aria-selected', 'false');
+    });
+
+    test('bubbles clicks from the decorator to the row with propagateClicks', async ({ mount }) => {
+        let rowClicks = 0;
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1" onClick={() => (rowClicks += 1)}>
+                    <Tree.Label>Row</Tree.Label>
+                    <Tree.Decorator propagateClicks>
+                        <span data-test-id="row-decorator">hidden</span>
+                    </Tree.Decorator>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByTestId('row-decorator').click();
         expect(rowClicks).toBe(1);
+    });
+
+    test('does not select or expand a folder from clicks in portaled decorator content', async ({ mount, page }) => {
+        let rowClicks = 0;
+        let expandChanges = 0;
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Folder id="f" onClick={() => (rowClicks += 1)} onExpandChange={() => (expandChanges += 1)}>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                        <Tree.Decorator>
+                            <Flyout.Root open>
+                                <Flyout.Trigger>
+                                    <button type="button">targets</button>
+                                </Flyout.Trigger>
+                                <Flyout.Content>
+                                    <Flyout.Body>
+                                        <button type="button" data-test-id="flyout-option">
+                                            All viewers
+                                        </button>
+                                    </Flyout.Body>
+                                </Flyout.Content>
+                            </Flyout.Root>
+                        </Tree.Decorator>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="x">
+                        <Tree.Label>X</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        await page.getByTestId('flyout-option').click();
+        await page.getByTestId('flyout-option').click();
+        expect(rowClicks).toBe(0);
+        expect(expandChanges).toBe(0);
+        await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-selected', 'false');
     });
 
     test('hides the decorator while the row is renaming', async ({ mount }) => {

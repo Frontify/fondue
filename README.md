@@ -29,7 +29,7 @@ This Storybook contains all components from all subpackages in the Fondue monore
 
 For the designers, the documentation is available in the [Fondue design system documentation](https://fondue.frontify.com).
 
-To get started, you can refer to the [Getting Started](https://fondue-components.frontify.com/?path=/docs/1-getting-started--documentation) story in the Storybook.
+To get started, you can refer to the [Getting started](https://fondue-components.frontify.com/?path=/docs/documentation-getting-started--documentation) story in the Storybook.
 
 ## Contributing
 

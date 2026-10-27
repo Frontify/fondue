@@ -13,7 +13,7 @@
         "noUnusedParameters": true,
         "paths": {
             "#/*": ["./src/*"],
-            "#storybook/*": ["./.storybook/*"]
+            "#storybook/*": ["../../storybook-docs/.storybook/*"]
         },
         "resolveJsonModule": true,
         "skipLibCheck": true,
@@ -21,6 +21,6 @@
         "target": "ES2021",
         "useDefineForClassFields": true
     },
-    "include": [".storybook/**/*", "src", "tailwind.config.ts", "playwright/**/*"],
+    "include": ["src", "tailwind.config.ts", "playwright/**/*"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

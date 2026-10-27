@@ -1,0 +1,143 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+/** A finished mention chip; link colour is set for every state so a visited one stays in colour. */
+.mention {
+    padding: 0 var(--spacing-xx-small);
+    border-radius: var(--border-radius-small);
+    background: var(--color-container-highlight-default);
+    font-weight: var(--typography-font-weight-medium);
+    text-decoration: none;
+
+    &,
+    &:link,
+    &:visited {
+        color: var(--color-container-highlight-on-highlight-container);
+    }
+}
+
+/** A group's icon before its name, sitting on the text's baseline. */
+.kindIcon {
+    margin-right: var(--spacing-xxx-small);
+    vertical-align: -0.1em;
+}
+
+// A mention being made: the trigger and the query input, sitting in the text,
+// drawn as the chip it is about to become.
+
+.draft {
+    display: inline-flex;
+    align-items: baseline;
+    padding: 0 var(--spacing-xx-small);
+    border-radius: var(--border-radius-small);
+    background: var(--color-container-highlight-default);
+    color: var(--color-container-highlight-on-highlight-container);
+}
+
+/**
+ * The query field, without a box of its own: the chip around it is the field.
+ * Focus is shown on the chip's text instead, an underline in the focus colour.
+ */
+.input {
+    min-width: 1ch;
+    padding: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+
+    &:focus-visible {
+        outline: 2px solid transparent;
+        box-shadow: 0 2px 0 var(--color-focus-default);
+    }
+}
+
+/** Announced, never drawn: how many people match. */
+.visuallyHidden {
+    position: absolute;
+    overflow: hidden;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/**
+ * The list's surface, fixed under the query — the component places it. Drawn
+ * like Fondue's floating surfaces, and above the page's content.
+ */
+.popup {
+    position: fixed;
+    z-index: 1;
+    box-sizing: border-box;
+    padding: var(--spacing-xx-small);
+    border: var(--border-width-default) solid var(--color-line-subtle);
+    border-radius: var(--border-radius-medium);
+    background: var(--color-surface-default);
+    box-shadow: var(--shadow-mid);
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-small);
+}
+
+.list {
+    min-width: 180px;
+    max-height: 240px;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-x-small);
+    box-sizing: border-box;
+    width: 100%;
+    padding: var(--spacing-x-small) var(--spacing-small);
+    border-radius: var(--border-radius-medium);
+    color: var(--color-primary-default);
+    cursor: pointer;
+}
+
+/** The highlighted row, as Fondue highlights a row in its menus. */
+.optionActive,
+.option:hover {
+    background: var(--color-surface-hover);
+}
+
+/** An avatar, or the kind's icon in its place, in a ring as the old editor drew it. */
+.avatar {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 22px;
+    height: 22px;
+    overflow: hidden;
+    border: var(--border-width-default) solid var(--color-line-subtle);
+    border-radius: 50%;
+    background: var(--color-surface-dim);
+    color: var(--color-secondary-default);
+
+    & img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.hint {
+    margin-left: auto;
+    color: var(--color-secondary-default);
+}
+
+/** Said in the list's place when nobody matches. */
+.empty {
+    padding: var(--spacing-x-small) var(--spacing-small);
+    color: var(--color-secondary-default);
+}

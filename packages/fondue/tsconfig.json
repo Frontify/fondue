@@ -29,7 +29,6 @@
         "src/foundation/Icon/IconEnum.ts"
     ],
     "include": [
-        ".storybook",
         "oxlint.config.ts",
         "oxfmt.config.ts",
         "postcss.config.cjs",

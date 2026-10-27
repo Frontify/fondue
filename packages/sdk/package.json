@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue-sdk",
     "type": "module",
-    "version": "0.2.3",
+    "version": "0.3.0",
     "description": "Machine-readable SDK for Frontify Fondue — components, icons, tokens — exposed as a navigable graph. Designed for MCP servers, CLI tools, AI agents, and other integrations.",
     "homepage": "https://github.com/Frontify/fondue",
     "repository": {
@@ -37,6 +37,7 @@
         "node": ">=20"
     },
     "scripts": {
+        "storybook": "pnpm --workspace-root storybook",
         "build": "pnpm build:data && vite build",
         "build:data": "tsx scripts/generateData.ts",
         "lint": "eslint .",
@@ -57,9 +58,9 @@
         "prettier": "^3.9.6",
         "tsx": "^4.23.11",
         "typescript": "^5.9.3",
-        "vite": "^6.4.3",
+        "vite": "^6.4.4",
         "vite-plugin-dts": "^4.5.4",
         "vite-tsconfig-paths": "^5.1.4",
-        "vitest": "^5.0.0"
+        "vitest": "^5.0.5"
     }
 }
