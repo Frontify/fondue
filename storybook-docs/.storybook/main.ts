@@ -1,9 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { type StorybookConfig } from '@storybook/react-vite';
+import autoprefixer from 'autoprefixer';
+import tailwindcss from 'tailwindcss';
+import tsConfigPaths from 'vite-tsconfig-paths';
 
 const getAbsolutePath = (packageName: string): string => {
     return dirname(fileURLToPath(import.meta.resolve(packageName)));
@@ -11,6 +14,9 @@ const getAbsolutePath = (packageName: string): string => {
 
 // Netlify branch subdomains use the branch name lowercased, with anything outside [a-z0-9] replaced by dashes.
 const toBranchSubdomain = (branch: string): string => branch.toLowerCase().replaceAll(/[^a-z0-9]+/g, '-');
+const storybookDir = dirname(fileURLToPath(import.meta.url));
+const packagesRoot = resolve(storybookDir, '../../packages');
+const packagePath = (...segments: string[]): string => join(packagesRoot, ...segments);
 
 const getSubpackageURL = (subpackage: string): string => {
     if (process.env.CONTEXT === 'deploy-preview' && process.env.REVIEW_ID) {
@@ -23,7 +29,15 @@ const getSubpackageURL = (subpackage: string): string => {
 };
 
 const config: StorybookConfig = {
-    stories: ['../stories/**/*.mdx', '../stories/**/*.stories.@(ts|tsx)'],
+    // Story files carry their full sidebar path in `title`; the order lives in `storySort` in preview.tsx.
+    stories: [
+        '../stories/**/*.mdx',
+        '../stories/**/*.stories.@(ts|tsx)',
+        '../../packages/tokens/stories/**/*.stories.@(ts|tsx)',
+        '../../packages/icons/src/**/*.stories.@(ts|tsx)',
+        '../../packages/components/src/**/*.stories.@(ts|tsx)',
+        '../../packages/charts/src/**/*.stories.@(ts|tsx)',
+    ],
     addons: [
         '@storybook/addon-links',
         '@storybook/addon-a11y',
@@ -39,6 +53,7 @@ const config: StorybookConfig = {
         backgrounds: false,
         outline: false,
         measure: false,
+        experimentalCodeExamples: true,
     },
     docs: {
         defaultName: 'Documentation',
@@ -49,30 +64,6 @@ const config: StorybookConfig = {
     refs: (_config, { configType }) => {
         if (configType === 'DEVELOPMENT') {
             return {
-                tokens: {
-                    title: 'Tokens',
-                    url: 'http://localhost:6005',
-                    type: 'auto-inject',
-                    expanded: true,
-                },
-                icons: {
-                    title: 'Icons',
-                    url: 'http://localhost:6007',
-                    type: 'auto-inject',
-                    expanded: true,
-                },
-                current: {
-                    title: 'Components',
-                    url: 'http://localhost:6006/',
-                    type: 'auto-inject',
-                    expanded: true,
-                },
-                charts: {
-                    title: 'Charts',
-                    url: 'http://localhost:6008',
-                    type: 'auto-inject',
-                    expanded: true,
-                },
                 rte: {
                     title: 'Rich Text Editor',
                     url: 'http://localhost:6011',
@@ -83,26 +74,6 @@ const config: StorybookConfig = {
         }
 
         return {
-            tokens: {
-                title: 'Tokens',
-                url: `${getSubpackageURL('tokens')}`,
-                expanded: true,
-            },
-            icons: {
-                title: 'Icons',
-                url: `${getSubpackageURL('icons')}`,
-                expanded: true,
-            },
-            current: {
-                title: 'Components',
-                url: `${getSubpackageURL('components')}`,
-                expanded: true,
-            },
-            charts: {
-                title: 'Charts',
-                url: `${getSubpackageURL('charts')}`,
-                expanded: true,
-            },
             rte: {
                 title: 'Rich Text Editor',
                 url: `${getSubpackageURL('rte')}`,
@@ -115,8 +86,39 @@ const config: StorybookConfig = {
 
         return {
             ...viteConfig,
+            resolve: {
+                ...viteConfig.resolve,
+                alias: [
+                    // Stories that import the published entry render the same copy of the
+                    // components as the ones imported from source, so they share one ThemeProvider.
+                    {
+                        find: /^@frontify\/fondue-components$/,
+                        replacement: packagePath('components/src/index.ts'),
+                    },
+                    {
+                        find: /^@frontify\/fondue-components\/locales$/,
+                        replacement: packagePath('components/src/locales/index.ts'),
+                    },
+                ],
+            },
+            css: {
+                ...viteConfig.css,
+                preprocessorOptions: {
+                    scss: {
+                        api: 'modern-compiler',
+                    },
+                },
+                postcss: {
+                    plugins: [tailwindcss(join(storybookDir, 'tailwind.config.ts')), autoprefixer()],
+                },
+            },
             plugins: [
                 ...(viteConfig.plugins ?? []),
+                // Resolves each package's own aliases (`#/`, `#storybook/`, `@components/`).
+                tsConfigPaths({
+                    root: packagesRoot,
+                    projects: ['components/tsconfig.json', 'charts/tsconfig.json'],
+                }),
                 {
                     name: 'fix-mdx-file-imports',
                     enforce: 'pre',

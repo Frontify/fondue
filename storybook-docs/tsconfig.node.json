@@ -2,13 +2,15 @@
     "compilerOptions": {
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
-        "baseUrl": ".",
         "composite": true,
+        "emitDeclarationOnly": true,
         "lib": ["ESNext"],
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
+        "outDir": "./dist/tsconfig-node",
         "resolveJsonModule": true,
-        "target": "ESNext"
+        "target": "ESNext",
+        "types": ["node"]
     },
-    "include": ["eslint.config.mjs", "scripts/**/*", "package.json"]
+    "include": ["oxlint.config.ts", "oxfmt.config.ts", "scripts/**/*", "package.json"]
 }

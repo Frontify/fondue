@@ -31,7 +31,6 @@ export function handleKeyDown(event: KeyboardEvent<HTMLTableElement>) {
     }
 }
 
-const INTERACTIVE_ELEMENTS_LIST = [HTMLButtonElement, HTMLAnchorElement, HTMLInputElement];
 const INTERACTIVE_ROLES_LIST = ['button', 'link'];
 
 export function shouldIgnoreRowClick(event?: MouseEvent): boolean {
@@ -40,6 +39,8 @@ export function shouldIgnoreRowClick(event?: MouseEvent): boolean {
     }
 
     const { target, currentTarget } = event;
+    // Built per call: DOM globals don't exist at module load during SSR.
+    const interactiveElements = [HTMLButtonElement, HTMLAnchorElement, HTMLInputElement];
 
     let element = target instanceof Element ? target : null;
 
@@ -48,7 +49,7 @@ export function shouldIgnoreRowClick(event?: MouseEvent): boolean {
     }
 
     while (element && !(element instanceof HTMLTableRowElement)) {
-        if (INTERACTIVE_ELEMENTS_LIST.some((interactiveElement) => element instanceof interactiveElement)) {
+        if (interactiveElements.some((interactiveElement) => element instanceof interactiveElement)) {
             return true;
         }
 

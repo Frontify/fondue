@@ -10,12 +10,7 @@ import * as FondueIcons from './icons';
 
 type Story = StoryObj<{ iconName: string }>;
 const meta: Meta = {
-    title: 'Icons',
-    parameters: {
-        status: {
-            type: 'released',
-        },
-    },
+    title: 'Icons/Icons',
     args: {
         iconName: '',
     },
@@ -23,7 +18,7 @@ const meta: Meta = {
 export default meta;
 
 const tooltipStyle =
-    'before:tw-content-[attr(data-tooltip-text)] before:tw-absolute before:tw-opacity-0 before:tw-left-2/4 before:-tw-translate-x-2/4 before:tw-top-full before:-tw-mt-1 before:tw-px-2 before:tw-py-1 before:tw-whitespace-nowrap before:tw-text-xs before:tw-rounded before:tw-text-center hover:before:tw-block focus-within:before:tw-block before:tw-bg-box-neutral-inverse before:tw-z-10 before:tw-text-white hover:before:tw-opacity-100 focus-within:before:tw-opacity-100 before:tw-transition-opacity motion-reduce:before:tw-transition-none';
+    'before:tw-content-[attr(data-tooltip-text)] before:tw-absolute before:tw-opacity-0 before:tw-left-2/4 before:-tw-translate-x-2/4 before:tw-top-full before:-tw-mt-1 before:tw-px-2 before:tw-py-1 before:tw-whitespace-nowrap before:tw-text-x-small before:tw-rounded before:tw-text-center hover:before:tw-block focus-within:before:tw-block before:tw-bg-container-secondary-on-secondary-container before:tw-z-10 before:tw-text-white hover:before:tw-opacity-100 focus-within:before:tw-opacity-100 before:tw-transition-opacity motion-reduce:before:tw-transition-none';
 
 type IconsGalleryProps = {
     iconName: string;
@@ -43,12 +38,12 @@ const IconsGallery = ({ iconName, updateArgs }: IconsGalleryProps) => {
     return (
         <div className="tw-p-8">
             <div className="tw-flex tw-gap-6 tw-items-center">
-                <h1 className="tw-text-2xl tw-font-bold">Fondue Icons</h1>
+                <h1 className="tw-text-xx-large tw-font-bold">Fondue Icons</h1>
 
                 <input
                     type="search"
                     placeholder="Search Icon"
-                    className="tw-p-2 tw-rounded tw-border tw-border-box-neutral tw-w-96 tw-text-sm"
+                    className="tw-p-2 tw-rounded tw-border tw-border-container-secondary tw-w-96 tw-text-medium"
                     defaultValue={iconName}
                     onInput={handleSearchInput}
                 />
@@ -66,7 +61,7 @@ const IconsGallery = ({ iconName, updateArgs }: IconsGalleryProps) => {
                             data-tooltip-text={iconPath}
                             onClick={() => updateArgs({ iconName: icon })}
                             className={[
-                                'tw-relative tw-inline-flex tw-items-center tw-justify-center tw-aspect-square tw-rounded tw-bg-box-neutral hover:tw-bg-box-neutral-hover active:tw-bg-box-neutral-pressed tw-transition-colors motion-reduce:tw-transition-none',
+                                'tw-relative tw-inline-flex tw-items-center tw-justify-center tw-aspect-square tw-rounded tw-bg-container-secondary hover:tw-bg-container-secondary-hover active:tw-bg-container-secondary-active tw-transition-colors motion-reduce:tw-transition-none',
                                 tooltipStyle,
                             ].join(' ')}
                         >

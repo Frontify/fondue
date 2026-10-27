@@ -35,12 +35,23 @@
         border-color: var(--color-line-strong);
     }
 
-    &:has([data-show-focus-ring='false']:focus) {
+    &:has([data-show-focus-ring='false']:focus):not(:has(textarea[readonly])) {
         border-color: var(--color-line-strong);
     }
 
     &:has(textarea[readonly]) {
+        cursor: default;
         border-color: transparent;
+        background-color: transparent;
+
+        .slot {
+            cursor: default;
+            color: var(--color-secondary-default);
+        }
+
+        .slot:not([data-name='right']) {
+            padding-inline-start: 0px;
+        }
     }
 
     &:has(textarea:disabled) {
@@ -108,6 +119,11 @@
     grid-area: stack;
 }
 
+.root[data-autosize='true']:has(textarea[readonly]) .textareaWrapper::after {
+    padding-inline-start: 0;
+    padding-inline-end: 0;
+}
+
 .root[data-autosize='true'] .textarea {
     overflow: hidden;
 }
@@ -159,12 +175,10 @@
 
     // Readonly styles
     &[readonly] {
-        cursor: text;
+        cursor: default;
         color: var(--color-secondary-default);
-    }
-
-    &[readonly]~.slot {
-        color: var(--color-secondary-default);
+        padding-inline-start: 0;
+        padding-inline-end: 0;
     }
 
     &:disabled {

@@ -4,6 +4,9 @@ import { createContext, useContext } from 'react';
 
 type CardContextValue = {
     titleId: string;
+    bannerDescriptionId: string;
+    hasOverlay: boolean;
+    registerBannerDescription: () => () => void;
 };
 
 export const CardContext = createContext<CardContextValue | null>(null);

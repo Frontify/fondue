@@ -97,6 +97,7 @@
         "node": ">=18"
     },
     "scripts": {
+        "storybook": "pnpm --workspace-root storybook",
         "build": "pnpm clean && pnpm build:library && pnpm build:package:components && pnpm build:package:locales && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens && pnpm build:package:rte && pnpm build:package:sdk",
         "build:library": "vite build",
         "build:package:components": "vite build -c components.vite.config.ts",
@@ -164,7 +165,7 @@
         "eslint-plugin-tailwindcss": "^3.18.3",
         "fast-glob": "^3.3.3",
         "knip": "^5.88.1",
-        "oxfmt": "^0.52.0",
+        "oxfmt": "^0.74.0",
         "oxlint": "^1.67.0",
         "oxlint-tsgolint": "^0.23.0",
         "postcss": "^8.5.26",
@@ -174,7 +175,7 @@
         "tailwindcss": "^3.4.19",
         "tsx": "^4.23.11",
         "typescript": "^5.9.3",
-        "vite": "^6.4.3",
+        "vite": "^6.4.4",
         "vite-plugin-dts": "^4.5.4",
         "vite-plugin-static-copy": "^3.4.0",
         "vite-tsconfig-paths": "^5.1.4"

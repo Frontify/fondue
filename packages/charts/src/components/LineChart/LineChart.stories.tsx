@@ -139,13 +139,13 @@ const TemplateWithContentOnTop: StoryFn<LineChartProps> = (args) => (
             description="The temperature of US cities over time"
             icon={<IconRocket />}
         />
-        <div className="tw-h-48 tw-w-screen tw-sticky tw-top-0 tw-p-5 tw-bg-box-neutral tw-flex tw-justify-center tw-items-center">
+        <div className="tw-h-48 tw-w-screen tw-sticky tw-top-0 tw-p-5 tw-bg-container-secondary tw-flex tw-justify-center tw-items-center">
             Content on top of chart
         </div>
         <div className="tw-flex tw-justify-center">
             <LineChart {...args} />
         </div>
-        <div className="tw-h-96 tw-w-screen tw-border tw-border-line tw-flex tw-justify-center tw-items-center">
+        <div className="tw-h-96 tw-w-screen tw-border tw-border-line-mid tw-flex tw-justify-center tw-items-center">
             White space content
         </div>
     </div>
