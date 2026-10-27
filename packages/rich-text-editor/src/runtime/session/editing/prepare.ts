@@ -61,6 +61,7 @@ export type Prepare = {
     installedId(): string;
     /** An id function for one query: it replays the recorded ids, then records what it draws past them. */
     queriedIds(): () => string;
+    /** The limit the batch of `root` would exceed, or `undefined`; keeps that batch for `take`. */
     exceededLimit(root: Transaction, followUp?: boolean): ExceededLimit | undefined;
     /** Marks a typed root with the rules the host's prop and the policy turn off now. */
     markRules(root: Transaction): void;
@@ -236,15 +237,13 @@ export const createPrepare = (a: PrepareArgs): Prepare => {
 
             const query = queriedIds();
             let drawn = 0;
-            const prepared = prepare(
-                root,
-                () => {
-                    drawn += 1;
+            const countedIds = () => {
+                drawn += 1;
 
-                    return query();
-                },
-                true,
-            );
+                return query();
+            };
+
+            const prepared = prepare(root, countedIds, true);
             if ('candidate' in prepared) {
                 checked = { from: store.state, drawn, prepared };
             }

@@ -33,9 +33,12 @@ export type ViewService = {
     call<T>(work: () => T): { threw: boolean; value: T | undefined };
     /** Recomputes `editable`, the surface attributes and the break decorations once input has settled. */
     refresh(): void;
+    /** Redraws the view with its current state, without the settled-input checks of `refresh`. */
     repaint(): void;
+    /** Builds the view in `element`; a view that throws faults the session and leaves none. */
     attach(element: HTMLElement, props?: Partial<DirectEditorProps>): void;
     detach(): void;
+    /** Cancels the frame that moves the session to `ready`. */
     cancelReady(): void;
     faultView(): void;
 };
@@ -194,23 +197,18 @@ export const createView = (a: ViewArgs): ViewService => {
 
         detach();
         built = undefined;
-        const { threw, value: attached } = call(
-            () =>
-                new EditorView(
-                    { mount: element },
-                    {
-                        ...props,
-                        state: a.store.state,
-                        editable: () => a.lifecycle.is('ready') && a.shown.mode() === 'editable',
-                        attributes: (current) => surfaceAttributes(a, current),
-                        nodeViews: registered.nodeViews,
-                        markViews: registered.markViews,
-                        // Returning true reports the scroll as handled, so the view leaves it out.
-                        handleScrollToSelection: () => a.scrollSelectionIntoView() === false,
-                        dispatchTransaction: a.dispatch,
-                    },
-                ),
-        );
+        const viewProps: DirectEditorProps = {
+            ...props,
+            state: a.store.state,
+            editable: () => a.lifecycle.is('ready') && a.shown.mode() === 'editable',
+            attributes: (current) => surfaceAttributes(a, current),
+            nodeViews: registered.nodeViews,
+            markViews: registered.markViews,
+            // Returning true reports the scroll as handled, so the view leaves it out.
+            handleScrollToSelection: () => a.scrollSelectionIntoView() === false,
+            dispatchTransaction: a.dispatch,
+        };
+        const { threw, value: attached } = call(() => new EditorView({ mount: element }, viewProps));
         if (attached === undefined || threw) {
             // ProseMirror starts its DOM observer and input handlers before plugin views, so a plugin view that throws
             // leaves them on the element unless the half-built view is destroyed.

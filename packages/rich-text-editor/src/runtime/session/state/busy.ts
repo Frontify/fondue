@@ -1,9 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export type Busy = {
+    /** Runs `work` as busy, which nests; the hooks run when it ends, even if it throws. */
     run<T>(work: () => T): T;
     isBusy(): boolean;
+    /** Hooks that run when the outermost `run` ends. */
     onIdle(...hooks: (() => void)[]): void;
+    /** Hooks that run when any `run` ends, nested or not. */
     afterEach(...hooks: (() => void)[]): void;
 };
 

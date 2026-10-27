@@ -8,6 +8,7 @@ import { type TreeNode, encodeTree, snapshot } from '#/model/internal';
 export type Encoder = {
     capabilities: readonly CapabilityRef[];
     encode(doc: Node): RichTextDocument;
+    /** The same document as `encode`, reusing the stored form of each top-level block that did not change. */
     encodeByBlock(doc: Node): RichTextDocument;
 };
 

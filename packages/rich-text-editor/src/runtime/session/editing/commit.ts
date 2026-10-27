@@ -40,8 +40,11 @@ export type Commit = {
     guarded<T>(work: () => T): T;
     /** Repairs the provisional batches, then checks them as one change from the published document; `false` on a fault. */
     settleProvisional(mapping: Transaction['mapping']): boolean;
+    /** Commits a selection change, and scrolls it into view when `scroll` is set. */
     select(target: SelectTarget): void;
+    /** Records a `beforeinput`, which the next committed batch takes as typing. */
     markTyping(): void;
+    /** Drops the roots that wait for an install to finish. */
     clearDeferred(): void;
 };
 

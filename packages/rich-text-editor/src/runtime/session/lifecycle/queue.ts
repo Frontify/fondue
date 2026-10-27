@@ -17,6 +17,7 @@ export type Queue = {
     enqueue(id: string, payload?: unknown, options?: unknown): Promise<CommandResult>;
     /** Runs queued intents in call order once no commit or notification is in progress and input has settled. */
     drain(): void;
+    /** Resolves every queued intent as rejected with `code`. */
     settle(code: RejectedCode): void;
 };
 

@@ -23,6 +23,7 @@ export type { NodeActions, NodeTarget };
 
 export type Actions = {
     nodeActions(target: NodeTarget): NodeActions;
+    /** Inserts the picked asset at the target, or refills the node `nodeId` with it; rejects an asset that is not valid. */
     placeAsset(asset: unknown, place: { target: SelectionHandle } | { nodeId: string }): CommandResult;
     acceptSuggestion: SuggestionHost['accept'];
     searchSuggestions: SuggestionHost['search'];
@@ -83,6 +84,7 @@ export const createActions = (a: {
             () => rangeBase(range.from, range.to),
             'host',
         );
+
     /** The position of `target` in `doc` when it holds a node there, read when it is needed. */
     const targetIn = (doc: Node, target: NodeTarget): number | undefined => {
         if (typeof target === 'string') {
@@ -130,6 +132,7 @@ export const createActions = (a: {
         },
         active: () => false,
     });
+
     const nodeActions = (target: NodeTarget): NodeActions => ({
         update: (attrs) => {
             const checked = checkedPayload(attrs);

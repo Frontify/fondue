@@ -42,10 +42,13 @@ export const checkedPayload = (given: unknown): Checked => {
 };
 
 export type Commands = {
+    /** What `execute` would do now, judged by the same checks and without installing anything. */
     query(id: string, given?: unknown, options?: unknown): CommandState;
     queryOn(command: EngineCommand | undefined, checked: Checked, base: Base): CommandState;
     run(id: string, given: unknown, options: unknown, route: Route): CommandResult;
+    /** Runs `command` on the state `base` returns, and rejects as `busy` while a commit or notification is in progress. */
     runOn(command: EngineCommand | undefined, checked: Checked, base: () => Base, route: Route): CommandResult;
+    /** The host's entry to `run`; with `focus: 'editor'` in `options` it then focuses the surface. */
     execute(id: string, given?: unknown, options?: unknown): CommandResult;
     refusal(command: EngineCommand, base: EditorState, payload: unknown): RejectedCode | undefined;
     perform(command: EngineCommand, options?: { target?: SelectionHandle }): CommandResult;

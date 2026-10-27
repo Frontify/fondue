@@ -20,10 +20,14 @@ export type Saving = {
     commit(options: CommitOptions): Promise<CommitResult>;
     /** `EditorHandle.requestCommit`: blocks a managed session while its document is replaced. */
     request(options: CommitOptions): Promise<CommitResult>;
+    /** The document changed; a no-op for an unmanaged session. */
     changed(): void;
+    /** Input settled after a composition; a no-op for an unmanaged session. */
     settled(): void;
     dispose(): void;
+    /** Whether a save was sent and its outcome is not known yet. */
     outcomeUnknown(): boolean;
+    /** The save service changed; a no-op for an unmanaged session. */
     serviceChanged(): void;
     /** The session starts again from a loaded record with `revision`, after the `previous` stamp. */
     replaced(revision: ServerRevision | null, previous: DocumentStamp): void;

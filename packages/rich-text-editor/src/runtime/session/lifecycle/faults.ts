@@ -25,6 +25,7 @@ export type Faults = {
     viewFault(attached: EditorView, candidate: EditorState): void;
     /** The document the view threw on, offered until `dispose`. */
     candidate(): RichTextDocument | null;
+    /** Whether a view fault kept a candidate document. */
     hasRecovery(): boolean;
     /** Runs `work` while a view fault stores no recovery, as the next document of a replacement holds none of this session's work. */
     withoutRecovery<T>(work: () => T): T;
@@ -48,7 +49,7 @@ export const createFaults = (a: {
     // The state the view threw on, which `candidate` offers until `dispose`.
     // ProseMirror runs that throwing update again on `setProps` and `destroy`.
     let recovered: EditorState | undefined;
-    // Set while replacement step 8 installs the next document.
+    // Set while a replacement installs the next document.
     let installingNext = false;
     const fault = (found: Diagnostic) => {
         if (lifecycle.isDisposed()) {

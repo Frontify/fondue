@@ -135,11 +135,10 @@ export const createShown = (a: {
         },
         snapshot: () => {
             const next = { doc: published.doc, composing: a.composing(), revision: a.saveStatus().revision };
-            const moved = changed(
-                key,
-                next,
-                (x, y) => x?.doc === y?.doc && x?.composing === y?.composing && x?.revision === y?.revision,
-            );
+            const sameKey = (x: SnapshotKey | undefined, y: SnapshotKey | undefined) =>
+                x?.doc === y?.doc && x?.composing === y?.composing && x?.revision === y?.revision;
+            const moved = changed(key, next, sameKey);
+
             if (moved || cached === undefined) {
                 // The key is already taken, so an encode that throws must not leave the old value to serve it.
                 cached = undefined;

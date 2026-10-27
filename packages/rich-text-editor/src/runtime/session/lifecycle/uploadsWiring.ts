@@ -33,8 +33,11 @@ export type UploadService = {
     accepts: readonly string[] | undefined;
     /** Whether files upload now at `place`: `media.image` is installed, the host has `services.uploads` and the cache and policy allow it. */
     available(place: UploadPlace): boolean;
+    /** Starts uploading `files` at `place`; resolves when they have all been handled. */
     begin(files: readonly File[], place: UploadPlace): Promise<void>;
+    /** Starts the failed upload of `nodeId` again. */
     retry(nodeId: string): void;
+    /** Asks the host to pick an asset for `nodeId`, or for a new node when it is `undefined`. */
     pick(nodeId: string | undefined): void;
     statusOf(nodeId: string): UploadStatus | undefined;
 };
@@ -65,16 +68,23 @@ export const createUploadService = (a: {
     let acceptTypes: readonly string[] | undefined;
     if (imageFeature !== undefined) {
         const option: unknown = imageFeature.options.acceptTypes;
-        acceptTypes = Array.isArray(option)
-            ? option.filter((type): type is string => typeof type === 'string')
-            : DEFAULT_ACCEPT_TYPES;
+        acceptTypes = DEFAULT_ACCEPT_TYPES;
+        if (Array.isArray(option)) {
+            acceptTypes = option.filter((type): type is string => typeof type === 'string');
+        }
     }
 
     const raw = createUploads({
         state,
         limits,
         acceptTypes: acceptTypes ?? [],
-        service: () => (acceptTypes === undefined ? undefined : host.uploads?.()),
+        service: () => {
+            if (acceptTypes === undefined) {
+                return undefined;
+            }
+
+            return host.uploads?.();
+        },
         session: identity.session,
         generateId: () => generate(),
         allows: (action) => policy.current().features[UPLOAD_FEATURE]?.[action] !== false,
@@ -82,26 +92,37 @@ export const createUploadService = (a: {
         abort: (operations) => a.targets().coordinator.abortWhere((other) => operations.includes(other)),
         capture: (range) => {
             const captured = a.targets().captureRange({ purpose: 'replace-text', onIntersectingEdit: 'map' }, range);
+            if (captured.status === 'captured') {
+                return captured.target;
+            }
 
-            return captured.status === 'captured' ? captured.target : undefined;
+            return undefined;
         },
         release: (target) => a.targets().releaseTarget(target),
-        run: (command, target) =>
-            a
-                .commands()
-                .runOn(
-                    command,
-                    { payload: undefined },
-                    () => (target === undefined ? state() : a.targets().baseOf({ target })),
-                    'host',
-                ).status === 'applied',
+        run: (command, target) => {
+            const baseOf = () => {
+                if (target === undefined) {
+                    return state();
+                }
+
+                return a.targets().baseOf({ target });
+            };
+
+            const result = a.commands().runOn(command, { payload: undefined }, baseOf, 'host');
+
+            return result.status === 'applied';
+        },
         fill: (command) => {
             const result = a.commands().runOn(command, { payload: undefined }, state, 'async');
             if (result.status === 'rejected') {
                 return result.code;
             }
 
-            return result.status === 'applied' ? undefined : 'not-applicable';
+            if (result.status === 'applied') {
+                return undefined;
+            }
+
+            return 'not-applicable';
         },
         // A completed upload's record is session state, no undo step; it completed in the background.
         replaced: (nodeId, assetId) => {
