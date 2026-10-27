@@ -10,7 +10,8 @@ const loaders: (() => Promise<unknown>)[] = [];
 
 /**
  * A component whose code loads on first render and renders nothing until then, so UI that shows only after an author
- * action stays out of the editor's initial load. `prefetchPartsOnIdle` loads it ahead of that first use.
+ * action stays out of the editor's initial load. `prefetchPartsOnIdle` loads it ahead of that first use. A load that
+ * fails is reported to the session, with `options.featureId`, and tried again on the next use.
  */
 export const lazyPart = <P extends object>(
     load: () => Promise<ComponentType<P>>,

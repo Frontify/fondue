@@ -8,7 +8,11 @@ import { type NodeViewState } from '../../pluginApi/define';
 import { useRenderMark } from '../../session/hooks/useRenderMark';
 import { NodeViewStateContext } from '../helpers/nodeViewStateContext';
 
-/** The node of the chrome that calls it, with its node-ID actions. */
+/**
+ * The node of the chrome that calls it, with its node-ID actions.
+ *
+ * @throws Error when called outside node view chrome.
+ */
 export const useRichTextNodeView = <C extends object = ShippedCommands>(): NodeViewState<C> => {
     useRenderMark();
     const state = useContext(NodeViewStateContext);

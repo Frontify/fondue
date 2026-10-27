@@ -20,12 +20,15 @@ export const NodeChromeMenu = ({
     onCloseAutoFocus,
     children,
 }: {
+    /** The button's accessible name. */
     label: string;
+    /** The button's visible text. */
     text: string;
     /** The command its items run, which the button names in `data-rte-command`, as a drag's alternative does. */
     command?: string;
     /** Runs as the closed menu returns focus, which `event.preventDefault()` keeps where an item sent it. */
     onCloseAutoFocus?: (event: Event) => void;
+    /** The menu's items, such as `OptionItem`s. */
     children: ReactNode;
 }) => {
     const container = useOverlayContainer();

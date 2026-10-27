@@ -20,12 +20,16 @@ export const NodeChromeButton = ({
     describedBy,
     onClick,
 }: {
+    /** The accessible name. */
     label: string;
+    /** The content in place of `label`, which then shows as a tooltip. */
     icon?: ReactNode;
+    /** Sets `aria-pressed`, for a toggle. */
     pressed?: boolean;
     disabled?: boolean;
     /** The `id` of the text that describes the button, such as a prompt shown beside the chrome. */
     describedBy?: string;
+    /** Runs on a click, which does not move focus off the button's own target. */
     onClick: () => void;
 }) => {
     const container = useOverlayContainer();

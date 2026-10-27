@@ -4,7 +4,7 @@ import { type CommandArgs, type CommandKey, type CommandState, type ShippedComma
 
 import { useCommandQuery } from './useCommandQuery';
 
-/** The typed `useCommandState` of the public entry. */
+/** A command's state for `args`, which rerenders the caller only when it changes; not ready until the session starts. */
 export const useCommandState = <C extends object = ShippedCommands, K extends CommandKey<C> = CommandKey<C>>(
     id: K,
     ...args: CommandArgs<C, K>

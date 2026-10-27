@@ -119,6 +119,7 @@ const engageOn = (elements: readonly HTMLElement[], engage: (event: Event) => vo
     };
 };
 
+/** A scope over `roots`, read each call; it listens in the document only while `listen` has engaged it or a `hold` is open. */
 export const createInteractionScope = (roots: () => readonly (HTMLElement | null)[]): InteractionScope => {
     let last: Interaction = { kind: 'focus', target: null };
     let pressed: Node | null = null;

@@ -9,8 +9,11 @@ export const OptionItem = ({
     onSelect,
     children,
 }: {
+    /** Whether the radio item is checked; leave out for a plain item. */
     checked?: boolean | undefined;
+    /** Runs when the item is chosen, by click or key. */
     onSelect: () => void;
+    /** The item's visible label. */
     children: ReactNode;
 }) => {
     let semantics = {};

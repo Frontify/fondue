@@ -30,6 +30,7 @@ OverlayContext.displayName = 'RichTextEditorOverlayContext';
 
 /** What an editor overlay passes to its Fondue `Flyout`, `Dropdown` or `Dialog`. */
 export type EditorOverlay = {
+    /** The portal container to render into, `null` before the editor mounts. */
     container: HTMLElement | null;
     /** Takes the content element Fondue forwards, which hides while its anchor is clipped. */
     contentRef: RefCallback<HTMLDivElement>;

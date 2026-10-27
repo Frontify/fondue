@@ -4,7 +4,10 @@ import { useCallback, useContext } from 'react';
 
 import { NodeViewContentContext } from '../helpers/nodeViewContentContext';
 
-/** Holds the node's editable content inside chrome, whose own controls then set `contentEditable={false}`. */
+/**
+ * Holds the node's editable content inside chrome, whose own controls then set `contentEditable={false}`. Render it once
+ * per node view; `className` styles the content element.
+ */
 export const NodeViewContent = ({ className }: { className?: string }) => {
     const place = useContext(NodeViewContentContext);
     const ref = useCallback((element: HTMLDivElement | null) => place?.(element), [place]);

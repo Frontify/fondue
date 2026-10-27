@@ -21,9 +21,13 @@ export type ReaderOverrides = Readonly<
 
 /** One feature's unit: its vocabulary, its editor part and its optional reader overrides, which a profile lists once. */
 export type RichTextPlugin<Id extends string = string, Commands extends object = object> = {
+    /** The feature's ID. */
     readonly id: Id;
+    /** The feature's vocabulary. */
     readonly feature: Feature<object, object, object, Id>;
+    /** What the feature does while it is edited. */
     readonly editor: EditorPart<Id, Commands>;
+    /** Renderers that replace the reader's own for the feature's nodes and marks. */
     readonly reader?: ReaderOverrides;
 };
 
@@ -34,7 +38,11 @@ type PluginSides<Id extends string, Options extends object, Commands extends obj
     reader?: ReaderOverrides;
 };
 
-/** A factory for the unit, which takes the options of the feature's own factory. */
+/**
+ * A factory for the unit, which takes the options of the feature's own factory.
+ *
+ * @throws DefinitionError when the editor part belongs to another feature than `parts.feature`.
+ */
 export const definePlugin = <Id extends string, Options extends object, Commands extends object>(
     parts: PluginSides<Id, Options, Commands>,
 ): ((options?: Options) => RichTextPlugin<Id, Commands>) => {

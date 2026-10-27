@@ -13,9 +13,13 @@ import { OptionItem } from './OptionItem';
 
 /** One choice of an options menu: the command it runs, with its payload, on the node the menu opened for. */
 export type MenuOption = {
+    /** Unique within the menu. */
     key: string;
+    /** The item's visible text. */
     label: string;
+    /** The ID of the command to run. */
     command: string;
+    /** What the command runs with, `undefined` for none. */
     payload?: JsonValue;
     /** A radio item, checked or not; a plain item without. */
     checked?: boolean;
@@ -34,7 +38,9 @@ export const OptionsMenu = ({
     node,
     close: onClose,
 }: OverlayProps & {
+    /** The menu's accessible name. */
     label: string;
+    /** The items, in order. */
     options: readonly MenuOption[];
     /** The node the menu acts on, wherever the selection goes while it is open. */
     node: Parameters<EditorApi['select']>[0];

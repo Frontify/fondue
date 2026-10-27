@@ -11,8 +11,11 @@ import styles from '../styles/listbox.module.scss';
 
 /** What one option shows: its glyph, such as the emoji itself, or an image or icon, then its label and detail. */
 export type ListboxOption = {
+    /** Unique within the list; the option's element ID derives from it. */
     key: string;
+    /** The option's text, isolated for bidirectional text. */
     label: string;
+    /** The glyph shown first, such as an emoji; `null` for an option that shows an image or icon. */
     glyph: string | null;
     /** Text after the label, such as a mention's resource type. */
     detail?: string;
@@ -67,13 +70,18 @@ export const Listbox = ({
     onActivate,
     testId,
 }: {
+    /** The list's element ID, which the element that keeps focus names in `aria-controls`. */
     id: string;
+    /** The list's accessible name. */
     label: string;
     options: readonly ListboxOption[];
     /** The active option. */
     index: number;
+    /** Runs with the index of the option a click picked. */
     onPick: (index: number) => void;
+    /** Runs with the index of the option a pointer moved over, when it is not the active one. */
     onActivate: (index: number) => void;
+    /** The list's `data-test-id`. */
     testId: string;
 }) => {
     const listRef = useRef<HTMLDivElement | null>(null);

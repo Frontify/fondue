@@ -63,7 +63,9 @@ export type AnchorTarget = 'selection' | EditorRange | Element | (() => EditorRa
 
 /** What an overlay that a command opened renders with. */
 export type OverlayProps = {
+    /** Closes the overlay and returns focus to `opener`. */
     close: () => void;
+    /** The rectangle the overlay positions itself against. */
     anchor: OverlayAnchor;
     /** The element that had focus when it opened, such as the toolbar button, which a dismissal returns focus to. */
     opener: Element | null;
@@ -79,6 +81,7 @@ export type StandingOverlayProps = {
 
 /** One page of the host's reference search, of the values the session keeps, and the cursor of the next page. */
 export type ReferenceSearch = {
+    /** Finds the values of `resourceTypes` that match `query`; `cursor` is `null` for the first page; aborts when `signal` does. */
     search(
         query: string,
         resourceTypes: readonly string[],
@@ -89,7 +92,9 @@ export type ReferenceSearch = {
 
 /** The presentation as plugins read it. */
 export type PluginPresentation = {
+    /** The text styles the presentation offers. */
     styles: readonly PresentationStyle[];
+    /** The color tokens the presentation offers. */
     colorTokens: readonly ColorToken[];
     /** How many columns the content flows in, 1 without columns. */
     columns: number;
@@ -99,6 +104,7 @@ export type PluginPresentation = {
 
 /** Host data that only some plugins use, kept in one member so none of it can shadow a document member. */
 export type PluginServices = {
+    /** The presentation the session renders with. */
     presentation: () => PluginPresentation;
     /** The host's reference search, or `undefined` without one. */
     references: () => ReferenceSearch | undefined;
@@ -112,7 +118,9 @@ export type EditorHosts = {
     t: CodecContext['t'];
     /** The language tag of the chrome's strings, such as `de-CH`. */
     locale: () => string;
+    /** Host data that only some plugins use. */
     services: PluginServices;
+    /** The overlay a command opens, of which one shows at a time. */
     overlays: {
         /**
          * Opens `component` with `props`, anchored to `anchor`, in place of any overlay a command opened before. To open
@@ -121,14 +129,20 @@ export type EditorHosts = {
          * `overlays.open(Component, props, run.range)`.
          */
         open<P extends object>(component: ComponentType<P & OverlayProps>, props: P, anchor?: AnchorTarget): void;
+        /** Closes the open overlay, if any. */
         close(): void;
+        /** Whether an overlay that a command opened shows. */
         isOpen(): boolean;
     };
+    /** The panels of the editor part, of which one is open at a time. */
     panels: {
+        /** Opens the panel `id` in place of the open one. */
         open(id: string): void;
         /** Closes `id` when it is the open panel, else opens it. */
         toggle(id: string): void;
+        /** Closes the open panel, if any. */
         close(): void;
+        /** Whether `id` is the open panel. */
         isOpen(id: string): boolean;
     };
     /** Says `message` in the editor's live region, which stays audible under a modal dialog, or with `key` once no other message with that key followed it. A value between U+2068 and U+2069 is written in a `bdi`. */
@@ -153,7 +167,9 @@ export type EditorHosts = {
 type EditorCommandBase<P, N extends EditorFacet> = {
     /** Changes the document only through `api`: a query without `enabled` runs it against a draft, where any other effect would happen. */
     run: (api: EditorApi<N>, payload: P) => boolean;
+    /** Whether `run` would apply now, which the toolbar reads to disable the entry; absent means always. */
     enabled?: (api: EditorApi<N>, payload: P) => boolean;
+    /** Whether the command's effect holds at the selection: `'mixed'` when it holds for part of it. */
     active?: (api: EditorApi<N>, payload: P) => boolean | 'mixed';
     /** Whether `policy` refuses the call, as a heading level it does not offer: rejected as `not-allowed`, and not offered in the toolbar. */
     refuses?(policy: AuthoringPolicy, payload: P): boolean;
@@ -176,8 +192,11 @@ export type KeyHandler<N extends EditorFacet = EditorFacet> = (api: EditorApi<N>
 
 /** What a plugin-owned toolbar control renders with, in place of the standard button. */
 export type ToolbarControlProps = {
+    /** The entry's accessible name in the editor's locale. */
     label: string;
+    /** The entry's icon name. */
     icon: string;
+    /** Whether the command is not enabled now. */
     disabled: boolean;
     /** The control takes no Tab stop, as in the bubble toolbar. */
     outOfTabOrder: boolean;
@@ -222,8 +241,11 @@ type PluginToolbarEntryBase = {
 
 /** What a search reads besides its query: the session's API, a signal that aborts when a newer query or a closed list replaces it, and the page's cursor, `null` for the first. */
 export type SuggestionSearchContext<N extends EditorFacet = EditorFacet> = {
+    /** The session's API, narrowed to the part's `needs`. */
     api: EditorApi<N>;
+    /** Aborts when a newer query or a closed list replaces this search. */
     signal: AbortSignal;
+    /** The cursor of the page to fetch, `null` for the first. */
     cursor: string | null;
 };
 
@@ -233,12 +255,15 @@ export type SuggestionSearchContext<N extends EditorFacet = EditorFacet> = {
  * Its accessible name is `labelKey` or `label`, as a toolbar entry's is.
  */
 export type EditorSuggestion<N extends EditorFacet = EditorFacet> = {
+    /** The one or two characters that open the list. */
     trigger: string;
+    /** Where in the text the trigger opens the list. */
     rules: SuggestionRules;
     /** Whether the list can open now, such as while the host gives a reference search. */
     available?: (api: EditorApi<N>) => boolean;
     /** A page of options. */
     search: (query: string, context: SuggestionSearchContext<N>) => Promise<SuggestionPage>;
+    /** The ID of the command that an accepted option runs, with the option's payload. */
     command: string;
 } & (
     | { labelKey: string; label?: never }
@@ -268,12 +293,17 @@ export type PluginToolbarEntry = PluginToolbarEntryBase &
 export type EditorPartSpec<N extends EditorFacet = EditorFacet> = {
     /** The API facets its functions read; the API they get holds these and the control members only. */
     readonly needs?: readonly N[];
+    /** The part's commands by command ID. */
     readonly commands?: Readonly<Record<string, EditorCommand<never, N>>>;
+    /** Key handlers by binding: a command to run or a handler of its own. */
     readonly keys?: Readonly<Partial<Record<KeyBinding, CommandRef | KeyHandler<N>>>>;
+    /** Rules that rewrite typed text as it matches. */
     readonly inputRules?: readonly InputRule[];
+    /** The entries a presentation's toolbar shows by their command. */
     readonly toolbar?: readonly PluginToolbarEntry[];
     /** Overlays the editor keeps mounted, which decide themselves when to show; `EditorHosts.overlays.open` has the recipe for one a click on a mark opens. */
     readonly overlays?: readonly ComponentType<StandingOverlayProps>[];
+    /** Panels that a toolbar entry's `panel` opens. */
     readonly panels?: readonly PanelDeclaration[];
     /** Decorations over textblocks, which the editor derives again only for a block a change touched. */
     readonly decorations?: readonly BlockDecorationSource[];
@@ -296,6 +326,7 @@ declare const pluginBrand: unique symbol;
 
 /** An editor part for one feature, which `defineEditor` installs when the model installs that feature. */
 export type EditorPart<Id extends string = string, Commands extends object = object> = {
+    /** The ID of the feature this part belongs to. */
     readonly feature: Id;
     /** The payload type of each of its commands, as types only. */
     readonly [pluginBrand]?: Commands;

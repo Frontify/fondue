@@ -42,13 +42,16 @@ export type NodeViewContext = ReaderContext;
 export type NodeViewState<C extends object = ShippedCommands> = {
     /** `null` for a node type that carries no `nodeId`, such as `code_block`, whose actions read its live position instead. */
     nodeId: string | null;
+    /** The node's attributes. */
     attrs: JsonObject;
+    /** Whether the node is selected or holds the caret. */
     selected: boolean;
     /**
      * The `id` of the element that names the node, which chrome takes as its label, as the task checkbox does: the content
      * element, or the first block of a node with a `nodeId` that holds blocks; `null` for a leaf or atom.
      */
     contentId: string | null;
+    /** The reader's context for this node. */
     context: NodeViewContext;
     /**
      * Node view actions keyed by the node's ID, or its live position when it has none; never a position held from
@@ -56,10 +59,13 @@ export type NodeViewState<C extends object = ShippedCommands> = {
      * rejected when one is undeclared, is `nodeId`, or has a value its declaration refuses.
      */
     update: (attrs: JsonObject) => CommandResult;
+    /** Deletes the node. */
     remove: () => CommandResult;
+    /** Selects the node as a whole. */
     select: () => void;
     /** Selects this node at execution time, then runs or queries the command, so a delayed menu action still reaches this node. */
     execute: <K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>) => CommandResult;
+    /** Selects this node at execution time, then reads the state of the command. */
     query: <K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>) => CommandState;
     /** The node's running async operation; never a document attribute. */
     pending: NodePending | null;
@@ -68,13 +74,17 @@ export type NodeViewState<C extends object = ShippedCommands> = {
 /** An upload into the node: running or waiting with its whole percent once known, or failed or stopped. */
 export type NodePending = {
     kind: 'upload';
+    /** `running` while it transfers or waits, `failed` once it stopped or failed. */
     state: 'running' | 'failed';
+    /** The whole percent done, `null` until known. */
     progress: number | null;
 };
 
 /** A React component that draws a node of a block in the editor, with the attributes only the editor gives its content element. */
 export type NodeViewDeclaration = {
+    /** The node type the component draws, such as `asset_image`. */
     node: string;
+    /** The component that draws the node's chrome around its content. */
     component: ComponentType<object>;
     /** Attributes only the editor gives the content element, such as `spellcheck`, which the stored HTML never holds. */
     contentAttributes?: Readonly<Record<string, string>>;
@@ -82,7 +92,9 @@ export type NodeViewDeclaration = {
 
 /** What a panel renders with: close it, read package strings, and hear its command run again while it is open. */
 export type PanelComponentProps = {
+    /** Closes the panel. */
     close: () => void;
+    /** The package's own chrome strings in the editor's locale. */
     t: CodecContext['t'];
     /** Counts the runs of its command while it is open, for a panel that does not toggle; each change asks it to move focus. */
     requested: number;
@@ -92,5 +104,6 @@ export type PanelComponentProps = {
 export type PanelDeclaration = {
     /** The id a plugin opens this panel by, such as `checks`. */
     control: string;
+    /** The component that draws the panel. */
     component: ComponentType<PanelComponentProps>;
 };
