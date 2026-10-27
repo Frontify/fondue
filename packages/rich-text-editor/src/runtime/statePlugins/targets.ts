@@ -128,7 +128,8 @@ export const captureTarget = (
     if (purpose === 'edit-node') {
         const after = state.selection.$from.nodeAfter;
         // A node whose type carries a `nodeId` needs one to be edited through a target.
-        valid = after !== null && !after.isText && (!carriesNodeId(after) || typeof after.attrs.nodeId === 'string');
+        const isEditableNode = after !== null && !after.isText;
+        valid = isEditableNode && (!carriesNodeId(after) || typeof after.attrs.nodeId === 'string');
         if (after !== null && valid) {
             node = { type: after.type.name, nodeId: after.attrs.nodeId };
             to = from + after.nodeSize;

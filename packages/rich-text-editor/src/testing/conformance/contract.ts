@@ -67,6 +67,7 @@ const labelOf = (entry: object): string | undefined => {
     return undefined;
 };
 
+/** What `runFeatureContract` takes beside the features: the stored documents and editor parts of the features under test. */
 export type FeatureContractOptions = {
     /** Stored documents that use the features under test, each run through decode, encode, the reader and every codec. */
     fixtures?: readonly unknown[];

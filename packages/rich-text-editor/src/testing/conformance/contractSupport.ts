@@ -67,6 +67,7 @@ export const setAttributesIn = (
     return found;
 };
 
+/** A shared attribute's default, with the node types it applies to. */
 export type SharedDefault = {
     name: string;
     on: readonly string[] | 'textblocks';
@@ -89,7 +90,13 @@ export const withSharedDefaults = (
 
     let added = false;
     for (const { name, on, fallback } of shared) {
-        const targeted = on === 'textblocks' ? isTextblock(node.type) : on.includes(node.type);
+        let targeted: boolean;
+        if (on === 'textblocks') {
+            targeted = isTextblock(node.type);
+        } else {
+            targeted = on.includes(node.type);
+        }
+
         if (targeted && !Object.hasOwn(attrs, name)) {
             attrs[name] = fallback;
             added = true;

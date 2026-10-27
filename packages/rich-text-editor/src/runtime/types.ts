@@ -31,14 +31,20 @@ export type ReferenceValue = {
 
 /** What a host lets users do with a feature: create, edit, remove and paste it. */
 export type FeaturePolicy = {
+    /** Whether users may add the feature to the content. */
     create: boolean;
+    /** Whether users may change the feature where it already is. */
     edit: boolean;
+    /** Whether users may take the feature out of the content. */
     remove: boolean;
+    /** Whether the feature survives a paste, as opposed to being dropped from the pasted content. */
     paste: boolean;
 };
 /** What a host lets users do in the editor: the policy per feature, the heading levels and the Enter behavior. */
 export type AuthoringPolicy = {
+    /** The policy of each feature, by feature id. */
     features: Readonly<Record<string, FeaturePolicy>>;
+    /** The heading levels users may create. */
     creatableHeadingLevels: readonly HeadingLevel[];
     /** `paragraph` by default in Comment, Document and Brand document, where Comment may use `submit`; Inline defaults to `submit`, which acts as `none` while the host sets no `onSubmit`. */
     enterBehavior: 'paragraph' | 'submit' | 'none';
@@ -73,24 +79,36 @@ declare const selectionHandleBrand: unique symbol;
 export type SelectionHandle = {
     readonly [selectionHandleBrand]: true;
     readonly id: string;
+    /** The session that captured it; a command from another session rejects as `wrong-session`. */
     readonly session: SessionToken;
 };
 /** Options for capturing the selection: what it is for and how an edit that crosses it is handled. */
 export type CaptureTargetOptions = {
+    /** What the target is for: `insert` keeps a point, `edit-node` the node after the selection start, the others the range. */
     purpose: 'format' | 'insert' | 'replace-text' | 'edit-node';
+    /** What an edit that overlaps the target does to it: `invalidate` makes it unusable, `map` moves it with the edit. */
     onIntersectingEdit: 'invalidate' | 'map';
 };
 /** The outcome of capturing the selection: the target, or why it was rejected. */
 export type CaptureResult = { status: 'captured'; target: SelectionHandle } | { status: 'rejected'; code: 'not-ready' };
 /** Options for running a command: the selection it targets and where focus goes. */
 export type CommandOptions = {
+    /** A captured selection to run on, in place of the current one. */
     target?: SelectionHandle;
+    /**
+     * Where focus goes after the command: `editor` moves it into the editor.
+     *
+     * @default 'preserve'
+     */
     focus?: 'preserve' | 'editor';
 };
 /** Whether a command can run now and whether it is active, with the reason if it cannot. */
 export type CommandState = {
+    /** Whether the command can run now. */
     enabled: boolean;
+    /** Whether its effect holds at the selection; `mixed` when it holds for part of a range. */
     active: boolean | 'mixed';
+    /** Why the command cannot run, or `null` when it can. */
     disabledReason: string | null;
 };
 /** A minor release may add rejection codes, so handle a code you do not know. */
@@ -125,8 +143,11 @@ export type DocumentStamp = {
 export type SelectionSummary = {
     /** `gap` is a caret between two blocks where no text can go, such as before a leading image or between two rules. */
     kind: 'text' | 'node' | 'cells' | 'gap' | 'all' | 'none';
+    /** Whether the selection is a caret. */
     collapsed: boolean;
+    /** The type of the block that holds the selection, or `null` when none does. */
     blockType: string | null;
+    /** The `nodeId` of the selected node, or `null` when the selection is no node or the node has none. */
     selectedNodeId: string | null;
 };
 /** A minor release may add origins, so handle an origin you do not know. */
@@ -189,10 +210,19 @@ export type SaveStatus = {
 };
 /** Options for forcing a commit: why it is asked and whether to wait for or reject an open composition. */
 export type CommitOptions = {
+    /** Why the commit is asked. */
     reason: 'submit' | 'navigate' | 'manual';
-    /** Default `wait`. */
+    /**
+     * What to do while a composition is open.
+     *
+     * @default 'wait'
+     */
     composition?: 'wait' | 'reject';
-    /** Default `PersistenceOptions.timeoutMs`. */
+    /**
+     * How long to wait for the acknowledgment, in milliseconds.
+     *
+     * @default PersistenceOptions.timeoutMs
+     */
     timeoutMs?: number;
 };
 /** A minor release may add failure codes, so handle a code you do not know. */
@@ -215,7 +245,9 @@ export type LoadedDocument = {
 };
 /** What every host service call gets: a signal to cancel it and the session that asked. */
 export type ServiceContext = {
+    /** Aborts when the editor no longer needs the answer. */
     signal: AbortSignal;
+    /** The session that made the call. */
     session: SessionToken;
 };
 /** The unsaved document the editor hands to the recovery service, with its stamp and revision. */
@@ -232,6 +264,7 @@ export type RecoveryReceipt = {
 };
 /** The host service that keeps unsaved content safe when saving cannot finish. */
 export type RecoveryService = {
+    /** Keeps the checkpoint and resolves with a receipt once it is safe. */
     store(checkpoint: RecoveryCheckpoint, context: ServiceContext): Promise<RecoveryReceipt>;
 };
 /** A request to replace the open document with another, naming the stamp it expects and what to do with unsaved edits. */
