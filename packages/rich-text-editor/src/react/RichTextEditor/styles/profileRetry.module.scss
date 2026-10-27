@@ -1,0 +1,22 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.root {
+    position: relative;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-small);
+    padding: var(--spacing-x-small);
+    color: var(--color-primary-default);
+    font-family: var(--text-body-medium-default-font-family);
+    font-size: var(--text-body-medium-default-font-size);
+    line-height: var(--text-body-medium-default-line-height);
+}
+
+.overlay p {
+    margin: 0;
+}

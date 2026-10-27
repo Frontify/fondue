@@ -1,15 +1,33 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
+import { type Diagnostic } from '#/model';
+import { diagnostic } from '#/model/internal';
+import { nameOf } from '#/runtime/port';
 
 import { type RichTextProfile } from '../../types';
-import { loaded, loadProfile } from '../loadProfile';
+import { forgetProfile, loaded, loadProfile } from '../loadProfile';
 import { type ShippedProfile } from '../parts';
 
-/** The profile's definition and presentation once its module has loaded; `undefined` while it loads or for none. */
-export const useProfile = (profile: RichTextProfile | undefined): ShippedProfile | undefined => {
-    const [shipped, setShipped] = useState<{ profile: RichTextProfile; value: ShippedProfile }>();
-    const [failure, setFailure] = useState<Error>();
+export type ProfileState = {
+    /** The profile's definition and presentation once its module has loaded; `undefined` while it loads or for none. */
+    shipped: ShippedProfile | undefined;
+    /** Whether the module failed to load, until `retry` loads it again. */
+    failed: boolean;
+    retry: () => void;
+};
+
+/** Loads the profile's module, reports a failed load once through `onDiagnostic` and loads again on `retry`. */
+export const useProfile = (
+    profile: RichTextProfile | undefined,
+    onDiagnostic: ((diagnostic: Diagnostic) => void) | undefined,
+): ProfileState => {
+    const [loadedProfile, setLoadedProfile] = useState<{ profile: RichTextProfile; value: ShippedProfile }>();
+    const [failedProfile, setFailedProfile] = useState<RichTextProfile>();
+    const [attempt, setAttempt] = useState(0);
+    const reportRef = useRef(onDiagnostic);
+    reportRef.current = onDiagnostic;
     useEffect(() => {
         if (profile === undefined || loaded.has(profile)) {
             return undefined;
@@ -19,34 +37,43 @@ export const useProfile = (profile: RichTextProfile | undefined): ShippedProfile
         loadProfile(profile)
             .then((value) => {
                 if (live) {
-                    setShipped({ profile, value });
+                    setLoadedProfile({ profile, value });
                 }
 
                 return value;
             })
             .catch((error: unknown) => {
                 if (live) {
-                    setFailure(error instanceof Error ? error : new Error(String(error)));
+                    setFailedProfile(profile);
+                    reportRef.current?.(
+                        diagnostic('react.profile-load-failed', undefined, { profile, name: nameOf(error) }, 'error'),
+                    );
                 }
             });
 
         return () => {
             live = false;
         };
-    }, [profile]);
-    // A chunk that failed to load is a host error, which an error boundary around the editor shows.
-    if (failure !== undefined) {
-        throw failure;
-    }
+    }, [profile, attempt]);
+    const retry = () => {
+        if (profile !== undefined) {
+            forgetProfile(profile);
+        }
+
+        setFailedProfile(undefined);
+        setAttempt((count) => count + 1);
+    };
 
     if (profile === undefined) {
-        return undefined;
+        return { shipped: undefined, failed: false, retry };
     }
 
-    if (shipped !== undefined && shipped.profile === profile) {
-        return shipped.value;
+    if (loadedProfile !== undefined && loadedProfile.profile === profile) {
+        return { shipped: loadedProfile.value, failed: false, retry };
     }
 
     // A profile that an earlier editor loaded renders at once.
-    return loaded.get(profile);
+    const shipped = loaded.get(profile);
+
+    return { shipped, failed: shipped === undefined && failedProfile === profile, retry };
 };

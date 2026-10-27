@@ -42,3 +42,8 @@ export const loadProfile = (profile: RichTextProfile): Promise<ShippedProfile> =
 
     return started;
 };
+
+/** Drops a profile's loading entry, so the next load imports it again. */
+export const forgetProfile = (profile: RichTextProfile) => {
+    loading.delete(profile);
+};

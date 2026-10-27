@@ -221,6 +221,7 @@ export const nlNL = {
         RichTextEditor_pasteFormattingRemoved: 'Een deel van de opmaak is verwijderd.',
         RichTextEditor_pasteMediaDropped: 'Media niet geplakt: ${count}',
         RichTextEditor_pasteTooLarge: 'De geplakte inhoud is te groot.',
+        RichTextEditor_profileLoadFailed: 'De editor kon niet worden geladen.',
         RichTextEditor_quote: 'Citaat',
         RichTextEditor_readerBlockedInvalid: 'Deze inhoud kan niet worden getoond',
         RichTextEditor_readerBlockedUnsupported: 'Deze inhoud kan hier niet worden getoond',

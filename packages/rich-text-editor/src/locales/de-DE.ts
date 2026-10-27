@@ -223,6 +223,7 @@ export const deDE = {
         RichTextEditor_pasteFormattingRemoved: 'Einige Formatierungen wurden entfernt.',
         RichTextEditor_pasteMediaDropped: 'Medien nicht eingefügt: ${count}',
         RichTextEditor_pasteTooLarge: 'Der eingefügte Inhalt ist zu groß.',
+        RichTextEditor_profileLoadFailed: 'Der Editor konnte nicht geladen werden.',
         RichTextEditor_quote: 'Zitat',
         RichTextEditor_readerBlockedInvalid: 'Dieser Inhalt kann nicht angezeigt werden',
         RichTextEditor_readerBlockedUnsupported: 'Dieser Inhalt kann hier nicht angezeigt werden',

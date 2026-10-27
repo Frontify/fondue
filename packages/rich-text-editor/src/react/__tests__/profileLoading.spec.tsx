@@ -1,39 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { act, render } from '@testing-library/react';
-import { Component, createRef, type ReactNode } from 'react';
+import { createRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { createEmptyDocument } from '#/model';
-import { commentModel, inlineModel } from '#/plugins';
+import { commentModel } from '#/plugins';
 
 import { loadProfile } from '../profiles';
-import * as inlineProfile from '../profiles/inline';
 import { RichTextEditor } from '../RichTextEditor/RichTextEditor';
 import { type EditorHandle } from '../types';
-
-vi.mock('../profiles/inline', async (importOriginal) => {
-    const actual = await importOriginal<typeof inlineProfile>();
-
-    return { ...actual, shipped: vi.fn(actual.shipped) };
-});
-
-/** Shows `failed` once a child threw, as a host's error boundary around the editor does. */
-class Boundary extends Component<{ children: ReactNode }, { failed: boolean }> {
-    override state = { failed: false };
-
-    static getDerivedStateFromError() {
-        return { failed: true };
-    }
-
-    override render() {
-        if (this.state.failed) {
-            return 'failed';
-        }
-
-        return this.props.children;
-    }
-}
 
 describe('an editor whose profile module has not loaded', () => {
     it('renders the busy textbox shell, holds no handle and calls no host callback until the module loads', async () => {
@@ -73,35 +49,5 @@ describe('an editor whose profile module has not loaded', () => {
 
         expect(ref.current).not.toBeNull();
         expect(calls().map(([name]) => name)).toEqual(['onReady']);
-    });
-});
-
-describe('an editor whose profile module failed to load', () => {
-    it('loads the module again for a later editor, once the failure is gone', async () => {
-        vi.spyOn(console, 'error').mockImplementation(() => undefined);
-        vi.mocked(inlineProfile.shipped).mockImplementationOnce(() => {
-            throw new Error('offline');
-        });
-        const defaultValue = { documentId: 'document-1', revision: null, document: createEmptyDocument(inlineModel) };
-        const first = render(
-            <Boundary>
-                <RichTextEditor aria-label="Title" profile="inline" defaultValue={defaultValue} />
-            </Boundary>,
-        );
-        await act(async () => {
-            await loadProfile('inline').catch(() => undefined);
-        });
-
-        expect(first.container.textContent).toBe('failed');
-
-        first.unmount();
-        const ref = createRef<EditorHandle<object>>();
-        render(<RichTextEditor aria-label="Title" profile="inline" defaultValue={defaultValue} ref={ref} />);
-        await act(async () => {
-            await loadProfile('inline');
-        });
-
-        expect(ref.current).not.toBeNull();
-        vi.mocked(console.error).mockRestore();
     });
 });

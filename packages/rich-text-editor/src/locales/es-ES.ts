@@ -219,6 +219,7 @@ export const esES = {
         RichTextEditor_pasteFormattingRemoved: 'Se ha quitado parte del formato.',
         RichTextEditor_pasteMediaDropped: 'Contenido multimedia no pegado: ${count}',
         RichTextEditor_pasteTooLarge: 'El contenido pegado es demasiado grande.',
+        RichTextEditor_profileLoadFailed: 'No se ha podido cargar el editor.',
         RichTextEditor_quote: 'Cita',
         RichTextEditor_readerBlockedInvalid: 'Este contenido no se puede mostrar',
         RichTextEditor_readerBlockedUnsupported: 'Este contenido no se puede mostrar aquí',

@@ -219,6 +219,7 @@ export const ptPT = {
         RichTextEditor_pasteFormattingRemoved: 'Parte da formatação foi removida.',
         RichTextEditor_pasteMediaDropped: 'Multimédia não colado: ${count}',
         RichTextEditor_pasteTooLarge: 'O conteúdo colado é demasiado grande.',
+        RichTextEditor_profileLoadFailed: 'Não foi possível carregar o editor.',
         RichTextEditor_quote: 'Citação',
         RichTextEditor_readerBlockedInvalid: 'Este conteúdo não pode ser apresentado',
         RichTextEditor_readerBlockedUnsupported: 'Este conteúdo não pode ser apresentado aqui',

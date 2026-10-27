@@ -1,6 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Component, type ComponentType, type ForwardedRef, forwardRef, type ReactNode } from 'react';
+import {
+    Component,
+    type ComponentType,
+    type ForwardedRef,
+    forwardRef,
+    type ReactNode,
+    useCallback,
+    useRef,
+} from 'react';
 
 import '#/styles/content.css';
 import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
@@ -11,6 +19,7 @@ import { type Defined, type EditorHandle, type RichTextEditorProps, type RichTex
 
 import { LoadingShell } from './components/LoadingShell';
 import { BubbleToolbarPart, Panels, Status, Surface, Toolbar } from './components/Parts';
+import { ProfileRetryShell } from './components/ProfileRetryShell';
 import { RecoveryShell } from './components/RecoveryShell';
 import { Session } from './components/Session';
 import { shellPropsOf } from './helpers/sessionHelpers';
@@ -117,7 +126,20 @@ const Root = forwardRef((props: Props & { children: ReactNode }, ref: ForwardedR
         profile = props.profile ?? 'document';
     }
 
-    const shipped = useProfile(profile);
+    const { shipped, failed, retry } = useProfile(profile, props.onDiagnostic);
+    const handleRef = useRef<EditorHandle<object> | null>(null);
+    const refocusRef = useRef(false);
+    const mergedHandleRef = useCallback(
+        (handle: EditorHandle<object> | null) => {
+            handleRef.current = handle;
+            if (typeof ref === 'function') {
+                ref(handle);
+            } else if (ref !== null) {
+                ref.current = handle;
+            }
+        },
+        [ref],
+    );
     const coarse = useCoarsePointer();
     if (definition !== undefined) {
         return <Recovery props={{ ...props, definition, locale }} editorRef={ref} />;
@@ -125,20 +147,39 @@ const Root = forwardRef((props: Props & { children: ReactNode }, ref: ForwardedR
 
     // The profile's module loads through `import()`, and the editor renders once it has.
     if (shipped === undefined) {
-        return (
-            <LoadingShell
-                locale={locale}
-                testId={props['data-test-id'] ?? DEFAULT_TEST_ID}
-                contentClassName={props.presentation?.contentClassName}
-                multiline={profile !== 'inline'}
-                label={props['aria-label']}
-                labelledBy={props['aria-labelledby']}
-                spellCheck={props.spellCheck ?? true}
-            />
-        );
+        const shell = {
+            locale,
+            testId: props['data-test-id'] ?? DEFAULT_TEST_ID,
+            contentClassName: props.presentation?.contentClassName,
+            multiline: profile !== 'inline',
+            label: props['aria-label'],
+            labelledBy: props['aria-labelledby'],
+            spellCheck: props.spellCheck ?? true,
+        };
+        if (failed) {
+            return (
+                <ProfileRetryShell
+                    {...shell}
+                    onRetry={(focused) => {
+                        refocusRef.current = focused;
+                        retry();
+                    }}
+                />
+            );
+        }
+
+        return <LoadingShell {...shell} />;
     }
 
-    let resolved: Defined & { children: ReactNode } = { ...props, definition: shipped.definition, locale };
+    const onReady: Props['onReady'] = (session) => {
+        props.onReady?.(session);
+        if (refocusRef.current) {
+            refocusRef.current = false;
+            handleRef.current?.focus();
+        }
+    };
+
+    let resolved: Defined & { children: ReactNode } = { ...props, definition: shipped.definition, locale, onReady };
     if (props.presentation === undefined) {
         let { presentation } = shipped;
         if (coarse && shipped.touchPresentation !== undefined) {
@@ -148,7 +189,7 @@ const Root = forwardRef((props: Props & { children: ReactNode }, ref: ForwardedR
         resolved = { ...resolved, presentation };
     }
 
-    return <Recovery props={resolved} editorRef={ref} />;
+    return <Recovery props={resolved} editorRef={mergedHandleRef} />;
 });
 Root.displayName = 'RichTextEditor.Root';
 

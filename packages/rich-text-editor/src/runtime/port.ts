@@ -31,6 +31,7 @@ import {
     type Unsubscribe,
 } from './types';
 
+export { nameOf } from './reporting/events';
 export {
     INSERT_IMAGE,
     MAX_IMAGE_SIDE,

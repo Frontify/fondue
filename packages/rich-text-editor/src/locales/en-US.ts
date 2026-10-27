@@ -218,6 +218,7 @@ export const enUS = {
         RichTextEditor_pasteFormattingRemoved: 'Some formatting was removed.',
         RichTextEditor_pasteMediaDropped: 'Media not pasted: ${count}',
         RichTextEditor_pasteTooLarge: 'The pasted content is too large.',
+        RichTextEditor_profileLoadFailed: 'The editor could not load.',
         RichTextEditor_quote: 'Quote',
         RichTextEditor_readerBlockedInvalid: 'This content cannot be shown',
         RichTextEditor_readerBlockedUnsupported: 'This content cannot be shown here',

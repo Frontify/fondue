@@ -218,6 +218,7 @@ export const plPL = {
         RichTextEditor_pasteFormattingRemoved: 'Część formatowania została usunięta.',
         RichTextEditor_pasteMediaDropped: 'Niewklejone multimedia: ${count}',
         RichTextEditor_pasteTooLarge: 'Wklejona zawartość jest za duża.',
+        RichTextEditor_profileLoadFailed: 'Nie udało się załadować edytora.',
         RichTextEditor_quote: 'Cytat',
         RichTextEditor_readerBlockedInvalid: 'Ta treść nie może być wyświetlona',
         RichTextEditor_readerBlockedUnsupported: 'Ta treść nie może być tutaj wyświetlona',

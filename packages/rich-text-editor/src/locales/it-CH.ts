@@ -222,6 +222,7 @@ export const itCH = {
         RichTextEditor_pasteFormattingRemoved: 'Parte della formattazione è stata rimossa.',
         RichTextEditor_pasteMediaDropped: 'Contenuti multimediali non incollati: ${count}',
         RichTextEditor_pasteTooLarge: 'Il contenuto incollato è troppo grande.',
+        RichTextEditor_profileLoadFailed: 'Impossibile caricare l’editor.',
         RichTextEditor_quote: 'Citazione',
         RichTextEditor_readerBlockedInvalid: 'Questo contenuto non può essere mostrato',
         RichTextEditor_readerBlockedUnsupported: 'Questo contenuto non può essere mostrato qui',

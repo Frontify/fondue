@@ -116,7 +116,8 @@ export type DiagnosticCode =
     | 'react.default-value-changed'
     | 'react.definition-changed'
     | 'react.duplicate-accessible-name'
-    | 'react.execute-in-render';
+    | 'react.execute-in-render'
+    | 'react.profile-load-failed';
 
 /** A finding the package reports about content or use, with a code, a severity and a translation key for its message. */
 export type Diagnostic = {

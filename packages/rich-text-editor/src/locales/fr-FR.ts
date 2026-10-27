@@ -220,6 +220,7 @@ export const frFR = {
         RichTextEditor_pasteFormattingRemoved: 'Une partie de la mise en forme a été supprimée.',
         RichTextEditor_pasteMediaDropped: 'Médias non collés\u00A0: ${count}',
         RichTextEditor_pasteTooLarge: 'Le contenu collé est trop volumineux.',
+        RichTextEditor_profileLoadFailed: 'Impossible de charger l’éditeur.',
         RichTextEditor_quote: 'Citation',
         RichTextEditor_readerBlockedInvalid: 'Ce contenu ne peut pas être affiché',
         RichTextEditor_readerBlockedUnsupported: 'Ce contenu ne peut pas être affiché ici',
