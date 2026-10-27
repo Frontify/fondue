@@ -34,7 +34,7 @@ type ModelValue = Pick<ContentModel, 'ref' | 'capabilities' | 'manifest' | 'fing
     [COMPILED]?: CompiledModel;
 };
 
-// Only `freezeModel` builds a model, and it always sets the symbol.
+/** The compiled form of a model. Only `freezeModel` builds a model, and it always sets the symbol. */
 export const compiledModel = (model: ContentModel): CompiledModel =>
     (model as ContentModel & { [COMPILED]: CompiledModel })[COMPILED];
 

@@ -149,6 +149,7 @@ export const findCycle = (starts: readonly string[], next: (id: string) => reado
     return undefined;
 };
 
+/** A plugin descriptor with the feature that contributes it, `''` for an engine plugin. */
 export type PluginContribution = {
     featureId: string;
     plugin: PluginDescriptor;

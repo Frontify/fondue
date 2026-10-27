@@ -54,10 +54,14 @@ export const attributesOf = (node: CompiledNode): Readonly<Record<string, Attrib
     return attributes;
 };
 
+/** A `DefinitionError` for `feature`, whose `path` is a JSON pointer into its declaration. */
 export const failure = (code: DefinitionErrorCode, feature: string, path: string, reason?: string) =>
     new DefinitionError(code, reason === undefined ? { feature, path } : { feature, path, reason });
+/** The reason a parse rule that names another feature's member gives. */
 export const OWN_PARSE_MEMBERS = "a parse rule names only its own feature's marks and nodes";
+/** Whether `version` is a positive integer. */
 export const isVersion = (version: unknown) => Number.isInteger(version) && (version as number) > 0;
+/** The `DefinitionError` for an ID that two features declare. */
 export const duplicate = (kind: string, id: string, first: string, second: string) =>
     new DefinitionError('definition.duplicate-id', { kind, id, features: [first, second] });
 
@@ -153,6 +157,7 @@ export const checkMigrations = (steps: readonly ModelMigration[] = [], version: 
     }
 };
 
+/** Reads each feature's declaration and options, and throws `DefinitionError` for one that is not valid or repeats an ID. */
 export const readFeatures = (features: readonly Feature[]): CompiledFeature[] => {
     const seen = new Set<string>();
 
@@ -181,6 +186,7 @@ export const readFeatures = (features: readonly Feature[]): CompiledFeature[] =>
     });
 };
 
+/** Throws when a required feature is missing, at another version, or a requirement cycle exists. */
 export const checkDependencies = (features: readonly CompiledFeature[]) => {
     const byId = new Map(features.map((feature) => [feature.id, feature]));
     const requiresOf = (id: string) => {
@@ -229,6 +235,7 @@ export const checkDependencies = (features: readonly CompiledFeature[]) => {
     }
 };
 
+/** Every attribute needs a valid default or must be required. */
 export const checkAttributes = (feature: string, attrs: AttributeDeclarations, path: readonly string[]) => {
     for (const [name, attribute] of Object.entries(attrs)) {
         const at = pointer(...path, name);
@@ -242,6 +249,7 @@ export const checkAttributes = (feature: string, attrs: AttributeDeclarations, p
     }
 };
 
+/** Checks an HTML spec: attribute bindings name declared attributes or options, and no URL or `srcdoc` binding is unsafe. */
 export const checkHtml = (
     feature: CompiledFeature,
     spec: HtmlSpec,
@@ -304,8 +312,9 @@ export const checkParse = (
     path: readonly string[],
 ) => {
     for (const [index, rule] of rules.entries()) {
-        rejectPrototypeKeys(feature.id, 'attrs' in rule ? rule.attrs : undefined, pointer(...path, index, 'attrs'));
-        for (const [name, source] of Object.entries('attrs' in rule ? (rule.attrs ?? {}) : {})) {
+        const ruleAttrs = 'attrs' in rule ? rule.attrs : undefined;
+        rejectPrototypeKeys(feature.id, ruleAttrs, pointer(...path, index, 'attrs'));
+        for (const [name, source] of Object.entries(ruleAttrs ?? {})) {
             const attribute = ownValue(attrs, name);
             if ('value' in source && (attribute === undefined || !isValidValue(attribute, source.value))) {
                 throw failure(
@@ -366,6 +375,7 @@ const markdownFence = new RegExp(markdownFencePattern);
 const isMarkdownDelimiter = (value: unknown) => typeof value === 'string' && markdownDelimiter.test(value);
 const isMarkdownFence = (value: unknown) => typeof value === 'string' && markdownFence.test(value);
 
+/** A node's markdown declaration has exactly one of a valid `prefix` or `fence`. */
 export const checkNodeMarkdown = (featureId: string, name: string, markdown: unknown) => {
     if (markdown === undefined) {
         return;
@@ -391,6 +401,7 @@ export const checkNodeMarkdown = (featureId: string, name: string, markdown: unk
     }
 };
 
+/** A mark's markdown declaration has a valid `open` and `close` delimiter. */
 export const checkMarkMarkdown = (featureId: string, name: string, markdown: unknown) => {
     if (markdown === undefined) {
         return;

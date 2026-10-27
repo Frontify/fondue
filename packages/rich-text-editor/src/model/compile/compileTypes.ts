@@ -11,6 +11,7 @@ import {
 
 import { type PluginDescriptor } from './capabilities';
 
+/** A feature as installed in a model: its declaration with the option values it runs with. */
 export type CompiledFeature = {
     id: string;
     version: number;
@@ -18,11 +19,13 @@ export type CompiledFeature = {
     /** Every declared option, defaulted. */
     options: JsonObject;
 };
+/** An attribute a feature adds to nodes other features declare. */
 export type SharedAttribute = {
     name: string;
     featureId: string;
     declaration: SharedAttributeDeclaration;
 };
+/** A node with the feature that declares it and the attributes other features add to it. */
 export type CompiledNode = {
     name: string;
     featureId: string;
@@ -30,6 +33,7 @@ export type CompiledNode = {
     /** Attributes other features add, in feature order. */
     shared: readonly SharedAttribute[];
 };
+/** A mark with the feature that declares it. */
 export type CompiledMark = {
     name: string;
     featureId: string;

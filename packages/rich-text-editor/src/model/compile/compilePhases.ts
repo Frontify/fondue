@@ -35,6 +35,7 @@ import {
     type SharedAttribute,
 } from './compileTypes';
 
+/** A compiled node whose `shared` list the phases still fill while compiling. */
 export type MutableNode = CompiledNode & { shared: SharedAttribute[] };
 
 /** Every node and mark the features declare, in feature order, with no name declared twice. */

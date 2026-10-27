@@ -42,13 +42,21 @@ export type ContentCheckOptions = {
     locale: RichTextLocale;
     /** The installed features declare the rules and decide repair availability, such as the language repair, and nodes it does not declare are skipped. */
     model: ContentModel;
-    /** Written to `ContentIssue.sequence`; default 0 outside an editor. */
+    /**
+     * Written to `ContentIssue.sequence`; 0 outside an editor.
+     *
+     * @default 0
+     */
     sequence?: number;
     colorTokens?: readonly ColorToken[];
     background?: string;
     /** The host page's heading level around the editor; `heading.skipped-level` checks the first heading against it. */
     enclosingHeadingLevel?: Level;
-    /** The heading levels the author may create, which the heading level repair stays within; default 1 to 6. */
+    /**
+     * The heading levels the author may create, which the heading level repair stays within.
+     *
+     * @default [1, 2, 3, 4, 5, 6]
+     */
     creatableHeadingLevels?: readonly number[];
 };
 
@@ -324,7 +332,8 @@ const subjectsOf = (document: RichTextDocument, declared: ReadonlySet<string>, r
 };
 
 /**
- * The issues of `document` with what each covers, as the editor holds them.
+ * The issues of `document` with what each covers, as the editor holds them. Unlike `findContentIssues`, it
+ * assumes a well-formed document.
  */
 export const locateContentIssues = (
     document: RichTextDocument,
