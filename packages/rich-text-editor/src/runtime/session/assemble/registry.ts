@@ -17,4 +17,5 @@ export const liveResources = {
     targets: 0,
 };
 
+/** The runtime behind each attached view, set when the view attaches. */
 export const viewRuntimes = new WeakMap<EditorView, EditorRuntime>();

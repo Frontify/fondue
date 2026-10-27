@@ -22,16 +22,29 @@ type HtmlImportDefinition = {
 export type HtmlImportOptions = {
     /** A DOM implementation: the browser window, or one from jsdom or linkedom on a server. */
     window: Window;
-    /** Applies that definition's creation policy, as paste does; without it, everything the model holds is kept. */
+    /**
+     * Applies that definition's creation policy, as paste does; without it, everything the model holds is kept.
+     * @default undefined
+     */
     definition?: HtmlImportDefinition;
+    /**
+     * Overrides single resource limits; each applies over the definition's limits, or over the model defaults when
+     * there is no definition. Invalid values are ignored.
+     */
     limits?: Partial<ResourceLimits>;
-    /** For the `nodeId`s of imported occurrences; `randomId` when omitted. */
+    /**
+     * For the `nodeId`s of imported occurrences.
+     * @default randomId
+     */
     generateId?: () => string;
 };
 
 /**
  * Converts HTML to a document through the paste pipeline, with no editor mounted, so it runs on a server with only a
  * DOM implementation. The result equals pasting `html` into an empty editor of `model` and `options.definition`.
+ *
+ * Returns a `blocked` result, never a throw, when `html` is over the paste byte limit, nests past the depth limit or is
+ * unreadable.
  */
 export const fromHTML = (html: string, model: ContentModel, options: HtmlImportOptions): DecodeResult => {
     const { definition } = options;

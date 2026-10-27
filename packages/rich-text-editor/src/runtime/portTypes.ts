@@ -54,19 +54,25 @@ export type RuntimeHandle = {
     getSummary(): EditorSummary;
     getSnapshot(): Snapshot;
     getSaveStatus(): SaveStatus;
+    /** The document a view fault left for the host's recovery service, `null` when there is none. */
     getRecoveryCandidate(): RichTextDocument | null;
     query(id: string, ...args: readonly unknown[]): CommandState;
     execute(id: string, ...args: readonly unknown[]): CommandResult;
+    /** Runs the command once no commit is in progress and input has settled, in call order, and resolves with its result. */
     enqueue(id: string, ...args: readonly unknown[]): Promise<CommandResult>;
     captureTarget(options: CaptureTargetOptions): CaptureResult;
+    /** Releases a target that `captureTarget` returned. */
     releaseTarget(target: SelectionHandle): void;
     requestCommit(options: CommitOptions): Promise<CommitResult>;
     replaceDocument(request: ReplaceDocumentRequest): Promise<ReplaceResult>;
     setMode(mode: EditorSummary['mode']): void;
     updatePolicy(policy: AuthoringPolicy): void;
+    /** Focuses the surface and puts the caret at the document's start or end, else keeps the selection. */
     focus(where?: 'current' | 'start' | 'end'): void;
+    /** Treats focus and pointer moves inside `element` as inside the editor until the returned function runs. */
     registerInteractionRoot(element: HTMLElement): Unsubscribe;
     subscribe(event: string, listener: Listener): Unsubscribe;
+    /** Ends the session: the view and every subscription go. */
     dispose(): void;
 };
 

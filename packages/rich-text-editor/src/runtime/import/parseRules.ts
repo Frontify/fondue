@@ -4,6 +4,7 @@ import { type Mark, type ParseRule, type Schema } from 'prosemirror-model';
 
 import { type CompiledParseRule } from '#/model/internal';
 
+/** What a function rule reads of an element: its attributes, or `null` when the rule refuses the element. */
 export type Answer = ReturnType<CompiledParseRule['read']>;
 
 /** The answers of function rules, each read once before the parse, and the elements refused per mark or node name. */
@@ -57,12 +58,18 @@ export const functionRules = (schema: Schema, rules: readonly CompiledParseRule[
     rules.flatMap((rule): ParseRule[] => {
         const getAttrs = (element: HTMLElement) => answers.byRule.get(rule)?.get(element) ?? false;
         if (rule.kind === 'mark') {
-            return schema.marks[rule.name] === undefined
-                ? []
-                : [{ tag: rule.tag, mark: rule.name, getAttrs, consuming: false }];
+            if (schema.marks[rule.name] === undefined) {
+                return [];
+            }
+
+            return [{ tag: rule.tag, mark: rule.name, getAttrs, consuming: false }];
         }
 
-        return schema.nodes[rule.name] === undefined ? [] : [{ tag: rule.tag, node: rule.name, getAttrs }];
+        if (schema.nodes[rule.name] === undefined) {
+            return [];
+        }
+
+        return [{ tag: rule.tag, node: rule.name, getAttrs }];
     });
 
 /** A schema tag rule that no longer reads an element that a function rule of its own mark or node refuses. */

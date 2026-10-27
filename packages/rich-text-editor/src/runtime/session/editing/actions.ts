@@ -92,7 +92,8 @@ export const createActions = (a: {
         }
 
         const pos = target();
-        if (pos === undefined || pos < 0 || pos >= doc.content.size || doc.nodeAt(pos) === null) {
+        const outside = pos !== undefined && (pos < 0 || pos >= doc.content.size);
+        if (pos === undefined || outside || doc.nodeAt(pos) === null) {
             return undefined;
         }
 

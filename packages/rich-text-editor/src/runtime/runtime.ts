@@ -138,7 +138,10 @@ export type EditorRuntimeOptions = {
     tree: TreeNode;
     /** The stored document's capabilities, kept while islands keep their content. */
     capabilities: readonly CapabilityRef[];
-    /** For the session id and the `nodeId`s the runtime creates; default `randomId`. */
+    /**
+     * For the session id and the `nodeId`s the runtime creates.
+     * @default randomId
+     */
     generateId?: () => string;
     mode: Mode;
     policy: AuthoringPolicy;
@@ -157,11 +160,17 @@ export type EditorRuntimeOptions = {
     recovery?: () => RecoveryService | undefined;
     /** The host's `inputRules` prop, read on each input. */
     inputRules?: () => false | { exclude: readonly string[] } | undefined;
-    /** The host's `tabMovesFocus` prop, read on each Tab; default false. */
+    /**
+     * The host's `tabMovesFocus` prop, read on each Tab.
+     * @default false
+     */
     tabMovesFocus?: () => boolean | undefined;
     /** The profile's Enter keys and the host's submit; without them Enter, Shift+Enter and Mod+Enter edit. */
     enterKeys?: EnterKeys;
-    /** The host's `scrollSelectionIntoView` prop, read on each scroll to the selection; default true. */
+    /**
+     * The host's `scrollSelectionIntoView` prop, read on each scroll to the selection.
+     * @default true
+     */
     scrollSelectionIntoView?: () => boolean | undefined;
     /** What the editor layer hands the plugin commands it runs, such as its overlay and panel hosts. */
     commandHost?: unknown;
@@ -171,11 +180,20 @@ export type EditorRuntimeOptions = {
     pick?: (nodeId: string | undefined) => void;
     /** Hears each upload start, end, failure and refused file, which the live region announces. */
     uploadEvent?: (event: UploadEvent) => void;
-    /** The presentation's brand styles, read when `block.style.set` runs; default none. */
+    /**
+     * The presentation's brand styles, read when `block.style.set` runs.
+     * @default none
+     */
     styles?: () => readonly PresentationStyle[];
-    /** The presentation's columns and the localized break labels the first paint shows; default one column in English. */
+    /**
+     * The presentation's columns and the localized break labels the first paint shows.
+     * @default one column in English
+     */
     columns?: ColumnState;
-    /** The locale and colour options the content checks read when they run; default no locale strings and no colours. */
+    /**
+     * The locale and colour options the content checks read when they run.
+     * @default no locale strings and no colours
+     */
     contentChecks?: () => Pick<ContentCheckOptions, 'locale' | 'colorTokens' | 'background'>;
 };
 

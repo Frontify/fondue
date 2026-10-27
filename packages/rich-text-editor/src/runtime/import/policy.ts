@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Fragment, type Node, type NodeType, type Schema, Slice } from 'prosemirror-model';
+import { Fragment, type Mark, type Node, type NodeType, type Schema, Slice } from 'prosemirror-model';
 
 import { checkHref, type ContentModel, type HrefPolicy } from '#/model';
 import { compiledModel, shownLabel } from '#/model/internal';
@@ -128,13 +128,15 @@ export const withinLinkPolicy = (fragment: Fragment, policy: HrefPolicy | undefi
 
     const nodes: Node[] = [];
     for (const node of fragment.content) {
-        const marked = node.mark(
-            node.marks.filter(
-                ({ type, attrs }) =>
-                    type.name !== 'link' || (typeof attrs.href === 'string' && checkHref(attrs.href, policy).ok),
-            ),
-        );
-        nodes.push(marked.isText ? marked : marked.copy(withinLinkPolicy(node.content, policy)));
+        const isAllowed = ({ type, attrs }: Mark) =>
+            type.name !== 'link' || (typeof attrs.href === 'string' && checkHref(attrs.href, policy).ok);
+        const marked = node.mark(node.marks.filter(isAllowed));
+        if (marked.isText) {
+            nodes.push(marked);
+            continue;
+        }
+
+        nodes.push(marked.copy(withinLinkPolicy(node.content, policy)));
     }
 
     return Fragment.fromArray(nodes);

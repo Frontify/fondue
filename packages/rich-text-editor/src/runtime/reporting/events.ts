@@ -23,6 +23,7 @@ export type RuntimeEvents = {
     replaced: SessionToken;
     disposed: SessionToken;
 };
+/** A listener of any event, typed `never` so one map holds listeners of every event's value. */
 export type Listener = (value: never) => void;
 
 /** The event and selector subscriptions of every live runtime, which the `src/testing` probe reads. */
@@ -36,7 +37,13 @@ type Thrower = {
 };
 
 /** The error's name, never its message, which may hold document text. */
-export const nameOf = (error: unknown) => (error instanceof Error ? error.name : 'unknown');
+export const nameOf = (error: unknown) => {
+    if (error instanceof Error) {
+        return error.name;
+    }
+
+    return 'unknown';
+};
 
 type Watcher = {
     read: () => unknown;

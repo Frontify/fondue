@@ -8,6 +8,7 @@ import {
     type ServerRevision,
 } from '../types';
 
+/** Whether two stamps name the same document state: the same document, session, generation and sequence. */
 export const sameStamp = (a: DocumentStamp, b: DocumentStamp) =>
     a.documentId === b.documentId &&
     a.sessionId === b.sessionId &&

@@ -79,27 +79,46 @@ export {
 /** The runtime as the React layers hold it: the members that name no engine type. */
 export type EditorPort = {
     handle: RuntimeHandle;
+    /** The `id` of the session's suggestion list, which the surface's `aria-controls` names while the list shows options. */
     suggestionListId: string;
+    /** A DOM `id` part unique to this session and call, for the chrome the views add. */
     nextDomId: () => string;
+    /** The host roots whose focus and pointer moves stay inside the editor. */
     interactionRoots: ReadonlySet<HTMLElement>;
+    /** The authoring policy that the next commit is checked against. */
     policy: AuthoringPolicy;
     limits: ResourceLimits;
+    /** Destroys the view synchronously; the session and its state stay. */
     detach(): void;
     report(diagnostic: Diagnostic): void;
+    /** Reports `runtime.plugin-error` for `error`, with its name and never its message, and the feature it came from. */
     reportPluginError(error: unknown, featureId: string | undefined): void;
+    /** Selects the text between two positions, or the node at one; with `scroll`, scrolls it into view. */
     select(target: { anchor: number; head: number; scroll?: boolean } | { node: number; scroll?: boolean }): void;
+    /** Captures `range` as a target, as `captureTarget` captures the selection. */
     captureRange(range: { from: number; to: number }, options: CaptureTargetOptions): CaptureResult;
+    /** A selector store: `listener` gets each new value of `read` after a commit, unless `isEqual` holds. */
     watch<T>(read: () => T, isEqual: (previous: T, next: T) => boolean, listener: (value: T) => void): Unsubscribe;
+    /** Starts an async operation through the coordinator. */
     startAsync(request: AsyncRequest): AsyncOperation;
+    /** Aborts the operations that the changed `services` members started. */
     changeServices(members: readonly string[]): void;
+    /** The bridge caught a throw from a node view's constructor, `update` or `destroy`. */
     faultView(): void;
+    /** The host's `disabled`, which runs in mode `readonly` and takes the surface out of the Tab order. */
     setDisabled(disabled: boolean): void;
+    /** The presentation's columns as the surface shows them. */
     setColumns(columns: ColumnState): void;
     nodeActions(target: NodeTarget): NodeActions;
+    /** Emits `saveStatusChange` when the coordinator's status changed outside a batch. */
     saveStatusChanged(): void;
+    /** Calls `settled` once input settles after a running composition, or when `timeoutMs` passes or the session is disposed first. */
     afterInput(settled: (outcome: InputOutcome) => void, timeoutMs: number): void;
+    /** Empties the history and keeps the document and selection. */
     clearHistory(): void;
+    /** Emits the `operationMetric` of an operation that started at `started`. */
     measure(kind: OperationMetric['kind'], started: number, failureCode: string | null): void;
+    /** Runs the content checks now; `false` when the editor installs none, or input is composing. */
     runChecks(): boolean;
 };
 

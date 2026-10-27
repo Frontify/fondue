@@ -95,13 +95,9 @@ export const markDelimiter = (
     }
 
     const previous = before.charAt(openAt - 1);
-    if (
-        openAt < 0 ||
-        text === '' ||
-        text.trim() !== text ||
-        WORD.test(previous) ||
-        (previous !== '' && open.includes(previous))
-    ) {
+    const spaced = text === '' || text.trim() !== text;
+    const startsInWord = WORD.test(previous) || (previous !== '' && open.includes(previous));
+    if (openAt < 0 || spaced || startsInWord) {
         return null;
     }
 
