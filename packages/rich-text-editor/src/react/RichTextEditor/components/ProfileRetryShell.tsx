@@ -40,7 +40,7 @@ export const ProfileRetryShell = ({
     return (
         <div lang={lang} data-test-id={testId} data-rte-shell="profile-retry" className={styles.root}>
             <div
-                className={contentClasses(contentClassName)}
+                className={`${contentClasses(contentClassName)} ${styles.surface}`}
                 role="textbox"
                 aria-multiline={multiline}
                 aria-readonly="true"

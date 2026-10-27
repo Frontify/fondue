@@ -4,9 +4,14 @@
     position: relative;
 }
 
-.overlay {
+// The message row sets the box's height, and the empty textbox fills the box behind it.
+.surface {
     position: absolute;
     inset: 0;
+}
+
+.overlay {
+    position: relative;
     display: flex;
     align-items: center;
     gap: var(--spacing-small);
