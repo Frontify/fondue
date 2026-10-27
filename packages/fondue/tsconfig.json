@@ -8,11 +8,6 @@
         "moduleResolution": "Bundler",
         "noEmit": true,
         "noUnusedLocals": true,
-        "paths": {
-            "@components/*": ["./src/components/*"],
-            "@hooks/*": ["./src/hooks/*"],
-            "@utilities/*": ["./src/utilities/*"]
-        },
         "resolveJsonModule": true,
         "skipLibCheck": true,
         "strict": true,
@@ -23,11 +18,8 @@
     "include": [
         "oxlint.config.ts",
         "oxfmt.config.ts",
-        "postcss.config.cjs",
         "src",
         "scripts",
-        "vite.config.ts",
-        "tailwind.config.js",
         "components.vite.config.ts",
         "charts.vite.config.ts",
         "icons.vite.config.ts",

@@ -18,24 +18,14 @@
 npm install @frontify/fondue
 ```
 
-2. Load Fondue Stylesheet
-
-```typescript
-import '@frontify/fondue/style';
-```
-
-3. Use Components
+2. Use Components
 
 ```typescript
 import { Button } from '@frontify/fondue/components';
 ```
 
-Fondue provides two builds: ES modules and UMD modules. Documentation for the provided components and how to use them is available in [Storybook](https://fondue-components.frontify.com/).
+Documentation for the provided components and how to use them is available in [Storybook](https://fondue-components.frontify.com/).
 
 ## Contributing
 
 See [Contribution Guidelines](CONTRIBUTING.md) for contributing and local development help.
-
-## Important Links
-
-- [Tailwind](https://tailwindcss.com/docs) – Utility-first CSS framework used in Fondue

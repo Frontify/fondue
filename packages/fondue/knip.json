@@ -1,16 +1,11 @@
 {
     "$schema": "https://unpkg.com/knip@5/schema.json",
     "entry": ["src/subpackages/*.ts"],
-    "ignoreDependencies": [
-        "@frontify/fondue-icons",
-        "@tony.ganchev/eslint-plugin-header",
-        "eslint-plugin-tailwindcss",
-        "fast-glob"
-    ],
+    "ignoreDependencies": ["@frontify/fondue-icons", "@tony.ganchev/eslint-plugin-header", "fast-glob"],
     "ignoreExportsUsedInFile": {
         "interface": true,
         "type": true
     },
-    "project": ["src/**/*.{ts,tsx,js,jsx}", "!src/**/*.cy.tsx", "!src/**/*.spec.{ts,tsx}"],
+    "project": ["src/**/*.{ts,tsx,js,jsx}"],
     "tags": ["-lintignore"]
 }

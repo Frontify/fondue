@@ -1,9 +1,1 @@
-# Build
-src/foundation/Icon/Generated
-src/foundation/Icon/IconEnum.ts
-!.src/foundation/Icon/Generated/.gitkeep
 dist
-
-# Testing
-cypress/videos
-cypress/screenshots
