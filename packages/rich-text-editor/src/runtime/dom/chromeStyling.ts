@@ -67,7 +67,11 @@ const contentDecorations = (doc: ViewNode, inputs: DecorationInputs): Decoration
     const { surface, domId, hasView, levels, styles, unknown } = inputs;
     const found: Decoration[] = [];
     const depths = listDepths();
-    const recipes = styles === undefined ? [] : styles.styles;
+    let recipes: readonly PresentationStyle[] = [];
+    if (styles !== undefined) {
+        recipes = styles.styles;
+    }
+
     /** The recipe class of a node or mark, reporting a stored style ID the styles do not hold. */
     const classOf = (type: string, attrs: JsonObject, path: string) => {
         const resolution = styleOfNode(recipes, type, attrs);
@@ -147,6 +151,7 @@ export type ContentDecorations = {
     reset(): void;
 };
 
+/** Builds the decoration prop; `read` gives the current inputs, and none draws no content decoration. */
 export const createContentDecorations = (
     read: () => DecorationInputs | undefined,
     shown: () => boolean,
@@ -230,6 +235,7 @@ const unlinked = (mark: Mark): boolean => {
     return mark.type.name === 'link' && typeof href === 'string' && !checkHref(href).ok;
 };
 
+/** The mark views of the styled and coloured marks, and the way to restyle the ones mounted. */
 export type MarkStyler = {
     /** The mark views of `schema`'s styled and coloured marks, which carry the recipe class and colour on the mark's own element. */
     views(schema: ViewSchema, styles: () => ChromeStyles | undefined): ViewMarkViews;
@@ -237,6 +243,7 @@ export type MarkStyler = {
     restyle(styles: ChromeStyles | undefined): void;
 };
 
+/** A mark styler with no mounted mark view yet. */
 export const createMarkStyler = (): MarkStyler => {
     // The elements of the mounted mark views, which a new presentation restyles in place.
     const marks = new Set<MarkElement>();

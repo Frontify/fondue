@@ -136,7 +136,8 @@ export const exceedsMarkupDepth = (html: string): boolean => {
             continue;
         }
 
-        if (VOID_ELEMENTS.has(name) || (foreign > 0 && html.charAt(end - 1) === '/')) {
+        const selfClosing = foreign > 0 && html.charAt(end - 1) === '/';
+        if (VOID_ELEMENTS.has(name) || selfClosing) {
             continue;
         }
 

@@ -26,6 +26,7 @@ import { rebuildOfficeLists, removeOfficeMarkup } from './office';
 import { clearingRules, functionRules, readAnswers, withRefusals } from './parseRules';
 import { withinLinkPolicy } from './policy';
 
+/** What `importHtml` applies besides the schema: resource limits, heading levels, landing depth, colours and parse rules. */
 export type HtmlSettings = {
     limits: ResourceLimits;
     /** The creatable heading levels of the definition, or `undefined` to keep every level. */
@@ -38,6 +39,7 @@ export type HtmlSettings = {
     rules: readonly CompiledParseRule[];
 };
 
+/** The imported content with a count of what the import dropped, which paste announces. */
 export type ImportedHtml = {
     content: Fragment;
     /** Images dropped without fetching, for the announcement. */

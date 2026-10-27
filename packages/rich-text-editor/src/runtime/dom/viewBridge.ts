@@ -141,6 +141,7 @@ export const nodeChromeAt = (view: SurfaceView): HTMLElement | null => {
     return null;
 };
 
+/** The tag of a node's view element: `span` for an inline node, `div` for a block. */
 export const tagOf = (node: ViewNode) => {
     if (node.isInline) {
         return 'span';

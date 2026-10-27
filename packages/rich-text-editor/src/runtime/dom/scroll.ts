@@ -43,7 +43,11 @@ const scrollBandIntoView = (view: EditorView, band: Band, from: Element) => {
             continue;
         }
 
-        const bounds = atPage ? { top: 0, bottom: owner.innerHeight } : parent.getBoundingClientRect();
+        let bounds: { top: number; bottom: number } = parent.getBoundingClientRect();
+        if (atPage) {
+            bounds = { top: 0, bottom: owner.innerHeight };
+        }
+
         let move = 0;
         if (top < bounds.top + margin.top) {
             move = top - bounds.top - margin.top;

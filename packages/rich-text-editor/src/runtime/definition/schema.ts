@@ -151,6 +151,7 @@ const valueOf = (text: string, declaration: AttributeDeclaration): unknown => {
     return text;
 };
 
+/** The value one parse source gives an attribute from `element`, or `undefined` when the element holds none. */
 const readSource = (element: HTMLElement, source: ParseAttributeSource, declaration: AttributeDeclaration) => {
     if ('value' in source) {
         return source.value;
@@ -328,7 +329,10 @@ export const buildSchema = (model: ContentModel): Schema => {
             ),
         };
         if (declaration.excludes !== undefined) {
-            spec.excludes = declaration.excludes.length === 0 ? '' : [...declaration.excludes, name].join(' ');
+            spec.excludes = '';
+            if (declaration.excludes.length > 0) {
+                spec.excludes = [...declaration.excludes, name].join(' ');
+            }
         }
 
         if (declaration.inclusive !== undefined) {

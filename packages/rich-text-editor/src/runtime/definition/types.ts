@@ -94,6 +94,7 @@ export type PluginImplementation = (context: {
     suggestions: readonly EngineSuggestion[];
     decorations: readonly BlockDecorationSource[];
 }) => Plugin;
+/** The runtime-built parts a compile can be given, which stay unset where the editor layer provides none. */
 export type EngineImplementations = {
     /** The package plugins the runtime builds, by plugin ID; any other plugin holds only its key until it is built. */
     plugins?: Readonly<Record<string, PluginImplementation>>;
@@ -116,6 +117,7 @@ export type EngineExtension = {
     suggestions: readonly Omit<EngineSuggestion, 'featureId'>[];
 };
 
+/** What compiling a content model yields: its schema, the plugins in order, and the commands and keys of the editor parts. */
 export type CompiledDefinition = {
     model: ContentModel;
     schema: Schema;

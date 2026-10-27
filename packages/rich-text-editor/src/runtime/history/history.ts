@@ -48,9 +48,9 @@ export const groupsPlugin = new Plugin<boolean>({
     state: {
         init: () => false,
         apply: (transaction, closes) => {
-            const closing =
-                transaction.getMeta(CLOSES_NEXT) === true ||
-                (transaction.docChanged && transaction.getMeta('addToHistory') === false);
+            const asked = transaction.getMeta(CLOSES_NEXT) === true;
+            const outsideHistory = transaction.docChanged && transaction.getMeta('addToHistory') === false;
+            const closing = asked || outsideHistory;
             if (transaction.getMeta('appendedTransaction') === undefined) {
                 return closing;
             }

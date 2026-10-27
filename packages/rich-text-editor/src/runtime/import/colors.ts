@@ -11,6 +11,7 @@ export type ColorReading = {
     background: boolean;
 };
 
+/** A reading that keeps no pasted colour. */
 export const NO_COLORS: ColorReading = { color: false, background: false };
 
 /** The colours the model's colour features keep: only those whose `literalColors` option is on. */
@@ -59,7 +60,9 @@ const UNPAINTED = new Set(['transparent', 'inherit', 'initial', 'unset', 'curren
 const paints = (text: string, hex: string | undefined) => {
     const value = text.trim().toLowerCase();
 
-    return value !== '' && !UNPAINTED.has(value) && (hex === undefined || !isClear(hex));
+    const named = value !== '' && !UNPAINTED.has(value);
+
+    return named && (hex === undefined || !isClear(hex));
 };
 
 /**
