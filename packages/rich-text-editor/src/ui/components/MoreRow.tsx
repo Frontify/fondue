@@ -12,6 +12,7 @@ import styles from '#/ui/styles/toolbar.module.scss';
 
 import { ToolbarIcon } from './ToolbarIcon';
 
+/** One More menu row: a menu item, radio or checkbox that shows the item's state, shortcut and why it is unavailable. */
 export const MoreRow = ({
     item,
     strings,

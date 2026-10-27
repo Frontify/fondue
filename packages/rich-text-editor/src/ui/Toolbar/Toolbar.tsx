@@ -54,8 +54,10 @@ export const FixedToolbar = ({
     const apple = useApplePlatform();
     const itemsKey = items.map(({ key }) => key).join(' ');
     const shown = useFitting(toolbarRef, items.length, itemsKey);
+    // On the docked toolbar a press leaves focus in the surface.
+    const keepsFocus = docked !== undefined;
     let className = styles.root;
-    if (docked !== undefined) {
+    if (keepsFocus) {
         className = `${styles.root} ${styles.docked}`;
     }
 
@@ -93,18 +95,13 @@ export const FixedToolbar = ({
                         item={item}
                         disabled={disabled}
                         strings={strings}
-                        keepsFocus={docked !== undefined}
+                        keepsFocus={keepsFocus}
                         outOfTabOrder={false}
                     />
                 );
                 if (item.options !== undefined) {
                     content = (
-                        <TextStyle
-                            item={item}
-                            disabled={disabled}
-                            keepsFocus={docked !== undefined}
-                            outOfTabOrder={false}
-                        />
+                        <TextStyle item={item} disabled={disabled} keepsFocus={keepsFocus} outOfTabOrder={false} />
                     );
                 }
 
@@ -119,7 +116,7 @@ export const FixedToolbar = ({
                 items={[...items.slice(shown), ...menu]}
                 strings={strings}
                 disabled={disabled}
-                keepsFocus={docked !== undefined}
+                keepsFocus={keepsFocus}
                 outOfTabOrder={false}
                 modeSwitch={modeSwitch}
             />

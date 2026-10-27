@@ -96,7 +96,7 @@ export const ariaShortcut = (binding: string, apple: boolean): string => {
     return [...names, parsed.key].join('+');
 };
 
-/** The key an event names; with Alt or Shift held, from the physical key, since they change the character on many layouts. */
+/** The key an event names; with Alt or Shift held, from the physical key, as they change the character on many layouts. */
 const keyOf = (event: KeyboardEvent): string => {
     const physical = /^(?:Key|Digit)(\w)$/.exec(event.code);
     if (physical !== null && (event.altKey || event.shiftKey)) {

@@ -69,8 +69,8 @@ const holdsText = ({ kind, collapsed }: SelectionSummary) => (kind === 'text' ||
 
 /**
  * The bubble toolbar: Radix Toolbar in a Fondue `Flyout` above the selection, shown for a text selection while focus is
- * in the editor, out of focus until Alt+F10. It closes on Escape and stays while
- * the pointer is over it or focus is in it, holding its place meanwhile.
+ * in the editor, out of the Tab order until Alt+F10. It closes on Escape and stays while the pointer is over it or
+ * focus is in it, holding its place meanwhile.
  */
 export const BubbleToolbar = ({
     items,

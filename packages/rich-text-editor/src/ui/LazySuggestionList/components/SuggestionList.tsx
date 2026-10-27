@@ -105,10 +105,19 @@ const useAnnouncements = (active: ActiveSuggestion | null, strings: ReferenceLis
             let status = strings.failed;
             if (active.status === 'ready') {
                 const count = resultCount(active.items);
-                status = count > 0 ? strings.results(count) : strings.noResults;
+                status = strings.noResults;
+                if (count > 0) {
+                    status = strings.results(count);
+                }
             }
 
-            announce(spoken === undefined ? status : strings.both(status, spoken));
+            if (spoken === undefined) {
+                announce(status);
+
+                return;
+            }
+
+            announce(strings.both(status, spoken));
 
             return;
         }

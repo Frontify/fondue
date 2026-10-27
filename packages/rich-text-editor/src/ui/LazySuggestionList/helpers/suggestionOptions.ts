@@ -5,7 +5,7 @@ import { type SuggestionItem } from '#/runtime/port';
 
 import { type ReferenceListStrings } from './referenceStrings';
 
-/** The options of a list's own results, without Load more and Retry. */
+/** How many of `items` are results of the search, without Load more and Retry. */
 export const resultCount = (items: readonly SuggestionItem[]) =>
     items.filter((item) => item.action === undefined).length;
 

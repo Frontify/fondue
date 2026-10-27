@@ -21,7 +21,10 @@ const aborted = () => new DOMException('The search was aborted.', 'AbortError');
  */
 export const createFakeReferenceService = (
     items: readonly ReferenceValue[],
-    options: { pageSize?: number } = {},
+    options: {
+        /** How many items one search page holds. @default 20 */
+        pageSize?: number;
+    } = {},
 ): FakeReferenceService => {
     const pageSize = options.pageSize ?? PAGE_SIZE;
 

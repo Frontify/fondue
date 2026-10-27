@@ -35,7 +35,9 @@ export type ToolbarItem = {
     groupLabel?: string;
     /** A brand style row of the text style picker: the block types it applies to and the font it previews. */
     brand?: {
+        /** The block types the style applies to. */
         appliesTo: readonly string[];
+        /** The CSS properties that preview the style's font. */
         preview: Readonly<Record<string, string>>;
     };
     /** The node type a menu row acts on, which it shows only while such a node is selected or holds the caret. */
@@ -52,8 +54,11 @@ export const offeredRows = (items: readonly ToolbarItem[], session: EditorPort |
     );
 };
 
+/** The toolbar's own strings in the UI locale. */
 export type ToolbarStrings = {
+    /** The toolbar's accessible name. */
     label: string;
+    /** The name of the More button. */
     more: string;
     /** Why a command cannot run, from its `disabledReason`. */
     reason: (code: string) => string;
@@ -109,7 +114,10 @@ export const pressItem = async (
     returnFocus(runtime, [control.closest('[role="toolbar"]')]);
 };
 
-/** Radix Toolbar sets each item's roving `tabIndex` unless a prop replaces it, so only an item out of the Tab order passes one. */
+/**
+ * Radix Toolbar sets each item's roving `tabIndex` unless a prop replaces it, so only an item out of the Tab order
+ * passes one.
+ */
 export const tabStop = (outOfTabOrder: boolean): { tabIndex?: number } => {
     if (outOfTabOrder) {
         return { tabIndex: -1 };

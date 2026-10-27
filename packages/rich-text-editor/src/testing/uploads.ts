@@ -23,11 +23,17 @@ const refused = (reason: string) => new Error(`The upload was refused: ${reason}
 /**
  * An in-memory `UploadService` that meets every Service obligation: it reads the type from the content, never the
  * name, refuses a file over `maxAssetBytes`, a type outside `acceptTypes`, an image over `maxImagePixels` pixels or
- * 65,535 on a side or whose size it cannot read, and an SVG that holds active content, and answers an asset ID that is no URL. It reports progress once,
- * answers a repeated operation with its first asset, and rejects with an `AbortError` once its signal aborts.
+ * 65,535 on a side or whose size it cannot read, and an SVG that holds active content, and answers an asset ID that
+ * is no URL. It reports progress once, answers a repeated operation with its first asset, and rejects with an
+ * `AbortError` once its signal aborts.
  */
 export const createFakeUploadService = (
-    options: { maxAssetBytes?: number; acceptTypes?: readonly string[] } = {},
+    options: {
+        /** The largest file, in bytes, the service accepts. @default defaultLimits.maxAssetBytes */
+        maxAssetBytes?: number;
+        /** The media types the service accepts. @default DEFAULT_ACCEPT_TYPES */
+        acceptTypes?: readonly string[];
+    } = {},
 ): FakeUploadService => {
     const maxAssetBytes = options.maxAssetBytes ?? defaultLimits.maxAssetBytes;
     const acceptTypes = options.acceptTypes ?? DEFAULT_ACCEPT_TYPES;
@@ -125,8 +131,11 @@ const ACTIVE_SVGS: readonly (readonly [string, string])[] = [
 const svgOf = (body: string) => `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10">${body}</svg>`;
 
 type ConformanceOptions = {
+    /** The `maxAssetBytes` the service under test enforces. */
     maxAssetBytes: number;
+    /** The `acceptTypes` the service under test enforces. */
     acceptTypes: readonly string[];
+    /** The `maxImagePixels` the service under test enforces. @default defaultLimits.maxImagePixels */
     maxImagePixels?: number;
 };
 

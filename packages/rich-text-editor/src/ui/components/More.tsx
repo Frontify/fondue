@@ -59,6 +59,8 @@ export const More = ({
     const offered = useOfferedRows(items);
     const contentRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
+    const pointerRef = useRef(false);
+    const openAtPressRef = useRef(false);
     // Radix opens a menu on pointer down; More opens on the click, so a press dragged away opens nothing.
     const [open, setOpen] = useState(false);
     // Radix can drop the tooltip's close in the frame a hover opened it, which would leave the tooltip over the menu.
@@ -70,8 +72,6 @@ export const More = ({
 
     // Focus is on More when a row's control opens, so the control returns it there.
     const rows = useRowRuns(contentRef, () => triggerRef.current?.focus());
-    const pointerRef = useRef(false);
-    const openAtPressRef = useRef(false);
 
     return (
         <Dropdown.Root

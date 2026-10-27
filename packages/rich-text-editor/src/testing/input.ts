@@ -7,7 +7,18 @@ import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
 import { positionOf } from '#/runtime/transform/positions';
 
 /** Names content, never document positions. */
-export type SelectionTarget = { text: string; occurrence?: number; from?: number; to?: number } | { nodeId: string };
+export type SelectionTarget =
+    | {
+          /** The text to find, in one text block. */
+          text: string;
+          /** Which match to select, counting from 1. @default 1 */
+          occurrence?: number;
+          /** The offset in the match where the selection starts. @default 0 */
+          from?: number;
+          /** The offset in the match where the selection ends. @default text.length */
+          to?: number;
+      }
+    | { nodeId: string };
 
 const attachedOf = (handle: object) => {
     const runtime = runtimeOf(handle);
@@ -34,7 +45,10 @@ export const typeText = (handle: object, text: string): void => {
     }
 };
 
-/** Presses one key binding in the package key syntax, such as `Mod-b`, at the surface. */
+/**
+ * Presses one key binding in the package key syntax, such as `Mod-b`, at the surface. Throws when
+ * the handle has no attached surface.
+ */
 export const pressKey = (handle: object, key: KeyBinding | 'Shift'): void => {
     const view = viewOf(handle);
     const parts = key.split('-');
@@ -56,9 +70,13 @@ export const pressKey = (handle: object, key: KeyBinding | 'Shift'): void => {
 export const paste = (
     handle: object,
     input: {
+        /** The `text/html` flavor. @default '' */
         html?: string;
+        /** The `text/plain` flavor. @default '' */
         text?: string;
+        /** The files the clipboard holds. @default [] */
         files?: readonly File[];
+        /** The package's own slice flavor, as an editor copy writes it. @default none */
         slice?: RichTextSlice;
     },
 ): void => {
@@ -73,7 +91,10 @@ export const paste = (
     pasteInto(view, { text, html, slice }, input.files ?? []);
 };
 
-/** Selects the `occurrence`th match of `text` (from its `from` to its `to` offset), or the node with `nodeId`. */
+/**
+ * Selects the `occurrence`th match of `text` (from its `from` to its `to` offset), or the node with `nodeId`. Throws
+ * when no such match or node exists.
+ */
 export const setSelection = (handle: object, target: SelectionTarget): void => {
     const { runtime, view } = attachedOf(handle);
     const { doc } = view.state;

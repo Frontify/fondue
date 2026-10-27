@@ -10,5 +10,6 @@ export type PanelController = {
     close(): void;
 };
 
+/** The open panel's controller, or `null` outside the editor. */
 export const PanelContext = createContext<PanelController | null>(null);
 PanelContext.displayName = 'RichTextEditorPanelContext';
