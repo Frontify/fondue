@@ -11,6 +11,7 @@ import {
     useCallback,
     useId,
     useMemo,
+    useState,
 } from 'react';
 
 import { type CommonGlobalProps } from '#/helpers/aria';
@@ -137,6 +138,13 @@ export const CardRoot = (
     const showCheckbox = !!(href && onSelect);
     const generatedTitleId = useId();
     const titleId = `${generatedTitleId}-title`;
+    const bannerDescriptionId = `${generatedTitleId}-banner-description`;
+    const [hasBannerDescription, setHasBannerDescription] = useState(false);
+
+    const registerBannerDescription = useCallback(() => {
+        setHasBannerDescription(true);
+        return () => setHasBannerDescription(false);
+    }, []);
 
     const handleLinkClick = useCallback(
         (event: MouseEvent<HTMLAnchorElement>) => {
@@ -160,8 +168,18 @@ export const CardRoot = (
         [href, navigate, onNavigate, target],
     );
 
+    const showLinkOverlay = !!href && !(isSelectable && selected);
+    const showButtonOverlay = isSelectable && selected;
+    const hasOverlay = showLinkOverlay || showButtonOverlay;
+
     const labelledby = ariaLabel ? undefined : titleId;
-    const contextValue = useMemo(() => ({ titleId }), [titleId]);
+    const describedby =
+        [ariaDescribedby, hasBannerDescription ? bannerDescriptionId : undefined].filter(Boolean).join(' ') ||
+        undefined;
+    const contextValue = useMemo(
+        () => ({ titleId, bannerDescriptionId, hasOverlay, registerBannerDescription }),
+        [titleId, bannerDescriptionId, hasOverlay, registerBannerDescription],
+    );
 
     const { actions, otherChildren } = useMemo(() => {
         const actions: ReactNode[] = [];
@@ -177,9 +195,6 @@ export const CardRoot = (
 
         return { actions, otherChildren };
     }, [children]);
-
-    const showLinkOverlay = !!href && !(isSelectable && selected);
-    const showButtonOverlay = isSelectable && selected;
 
     return (
         <div
@@ -203,7 +218,7 @@ export const CardRoot = (
                         onClick={handleLinkClick}
                         aria-label={ariaLabel}
                         aria-labelledby={labelledby}
-                        aria-describedby={ariaDescribedby}
+                        aria-describedby={describedby}
                         aria-current={selected ? 'true' : undefined}
                     />
                 )}
@@ -214,7 +229,7 @@ export const CardRoot = (
                         tabIndex={0}
                         aria-label={ariaLabel}
                         aria-labelledby={labelledby}
-                        aria-describedby={ariaDescribedby}
+                        aria-describedby={describedby}
                         aria-pressed={selected}
                         onClick={onSelect}
                     />
