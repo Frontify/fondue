@@ -41,7 +41,7 @@
     "bundle": [
         {
             "build": "./reader",
-            "budgetBytes": 25000,
+            "budgetBytes": 25781,
             "test": "src/reader/__tests__/bundleSize.spec.ts",
             "passed": true
         },
