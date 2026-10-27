@@ -11,7 +11,7 @@ export const DATA_TABLES: Record<string, string> = {
 
 export const FILES_OVER_400_LINES: Record<string, number> = {};
 
-export const FUNCTIONS_OVER_150_LINES: Record<string, number> = {};
+export const FUNCTIONS_OVER_140_LINES: Record<string, number> = {};
 
 export const FUNCTIONS_OVER_6_LETS: Record<string, number> = {};
 

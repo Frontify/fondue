@@ -26,7 +26,7 @@ import {
     DATA_TABLES,
     FILES_OVER_400_LINES,
     FILES_OVER_600_LINES,
-    FUNCTIONS_OVER_150_LINES,
+    FUNCTIONS_OVER_140_LINES,
     FUNCTIONS_OVER_6_LETS,
     KNOWN_CYCLES,
     READONLY_MEMBERS,
@@ -473,15 +473,15 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
         expect(ratchet(filesOver(productFiles, 400), FILES_OVER_400_LINES)).toEqual([]);
     });
 
-    it('no function body over 150 lines grows', () => {
+    it('no function body over 140 lines grows', () => {
         const measured = new Map<string, number>();
         for (const { key, lines } of allFunctionMeasures()) {
-            if (lines > 150) {
+            if (lines > 140) {
                 measured.set(key, lines);
             }
         }
 
-        expect(ratchet(measured, FUNCTIONS_OVER_150_LINES)).toEqual([]);
+        expect(ratchet(measured, FUNCTIONS_OVER_140_LINES)).toEqual([]);
     });
 
     it('no function body with more than 6 let declarators grows', () => {
