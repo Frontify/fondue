@@ -1304,10 +1304,6 @@
                     "list.task.toggle"
                 ],
                 [
-                    "indent.decrease",
-                    "indent.increase"
-                ],
-                [
                     "image.insert",
                     "rule.insert",
                     "mention.search.open",
@@ -2000,10 +1996,6 @@
                             "align": "justify"
                         }
                     }
-                ],
-                [
-                    "indent.decrease",
-                    "indent.increase"
                 ],
                 [
                     "image.insert",

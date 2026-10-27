@@ -60,7 +60,6 @@ export const documentToolbar = (lists: readonly (readonly CommandRef[])[]): read
     ['link.edit'],
     ['list.bullet.toggle', { command: 'list.ordered.toggle', payload: { start: 1 } }, 'list.task.toggle'],
     ...lists,
-    ['indent.decrease', 'indent.increase'],
     ['image.insert', 'rule.insert', 'mention.search.open', 'emoji.picker.open'],
     ['checks.open', 'outline.toggle'],
 ];
