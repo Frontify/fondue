@@ -34,6 +34,7 @@ const kindOf = (selection: Selection): SelectionSummary['kind'] => {
     return 'none';
 };
 
+/** The kind, collapse state, block type and selected node ID of `selection`, as events and summaries report it. */
 export const summarize = (selection: Selection): SelectionSummary => {
     let selectedNodeId: string | null = null;
     if (selection instanceof NodeSelection && typeof selection.node.attrs.nodeId === 'string') {

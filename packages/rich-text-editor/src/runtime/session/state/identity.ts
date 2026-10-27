@@ -3,12 +3,15 @@
 import { type DocumentStamp, type SessionToken } from '../../types';
 
 export type Identity = {
+    /** The session token, which changes only when a replacement starts a new generation. */
     session(): SessionToken;
     sequence(): number;
     commitSequence(): number;
     /** The session token with the current sequence. */
     stamp(): DocumentStamp;
+    /** Counts a change to the document. */
     bumpSequence(): void;
+    /** Counts an installed state, whether or not the document changed. */
     bumpCommit(): void;
     /** Moves to the next generation and document with the sequence reset; returns the stamp it left. */
     nextGeneration(documentId: string): DocumentStamp;

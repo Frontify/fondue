@@ -16,6 +16,7 @@ export type Metrics = {
     ): void;
     /** Keeps the batch's metric until the next flush emits it. */
     record(batch: BatchMetric): void;
+    /** Emits the kept batch metric, if any, as a `commit` or `paste` operation. */
     flush(): void;
 };
 

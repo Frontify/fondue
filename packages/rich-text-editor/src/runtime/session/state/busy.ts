@@ -3,6 +3,7 @@
 export type Busy = {
     /** Runs `work` as busy, which nests; the hooks run when it ends, even if it throws. */
     run<T>(work: () => T): T;
+    /** Whether a `run` is in progress. */
     isBusy(): boolean;
     /** Hooks that run when the outermost `run` ends. */
     onIdle(...hooks: (() => void)[]): void;

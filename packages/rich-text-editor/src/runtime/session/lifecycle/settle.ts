@@ -9,12 +9,12 @@ import { type Shown } from '../state/shown';
 import { type Saving } from './saving';
 import { type TargetsService } from './targets';
 
+// The targets are built after the commit, so they are read lazily.
 /**
  * Once input has settled, checks the provisional batches as one change from the published document and publishes
- * them, or restores the state from before the composition, then runs the
- * deferred `contenteditable` change, the queued intents and the held async results.
+ * them, or restores the state from before the composition, then runs the deferred `contenteditable` change, the
+ * queued intents and the held async results.
  */
-// The targets are built after the commit, so they are read lazily.
 export const createSettle = (a: {
     busy: Pick<Busy, 'run'>;
     commit: Pick<Commit, 'guarded' | 'settleProvisional'>;

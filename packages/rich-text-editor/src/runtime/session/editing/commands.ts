@@ -30,6 +30,7 @@ export const pluginError = (error: unknown, featureId: string | undefined) => {
     return diagnostic('runtime.plugin-error', undefined, { featureId, name }, 'error');
 };
 
+/** A `rejected` command result with `code`. */
 export const rejected = (code: RejectedCode): CommandResult => ({ status: 'rejected', code });
 
 /** The payload as one frozen JSON copy, which is what is checked and run; `undefined` for one that is not plain JSON. */
@@ -44,13 +45,17 @@ export const checkedPayload = (given: unknown): Checked => {
 export type Commands = {
     /** What `execute` would do now, judged by the same checks and without installing anything. */
     query(id: string, given?: unknown, options?: unknown): CommandState;
+    /** `query` for a resolved command, payload and base state, which `execute` and the editor layer reuse. */
     queryOn(command: EngineCommand | undefined, checked: Checked, base: Base): CommandState;
+    /** Runs the command `id` by `route`, rejecting with `unknown-command` for an unregistered one. */
     run(id: string, given: unknown, options: unknown, route: Route): CommandResult;
     /** Runs `command` on the state `base` returns, and rejects as `busy` while a commit or notification is in progress. */
     runOn(command: EngineCommand | undefined, checked: Checked, base: () => Base, route: Route): CommandResult;
     /** The host's entry to `run`; with `focus: 'editor'` in `options` it then focuses the surface. */
     execute(id: string, given?: unknown, options?: unknown): CommandResult;
+    /** Why the session or policy refuses `command` on `base` before it runs, or `undefined`. */
     refusal(command: EngineCommand, base: EditorState, payload: unknown): RejectedCode | undefined;
+    /** Runs `command` with no payload as a host call, on the state at `options.target` when given. */
     perform(command: EngineCommand, options?: { target?: SelectionHandle }): CommandResult;
 };
 

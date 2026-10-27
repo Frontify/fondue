@@ -24,10 +24,13 @@ export type TargetsService = {
     baseOf(options: unknown): EditorState | RejectedCode;
     /** Captures the selection, or `range`, as a new target, unless a commit or notification runs. */
     captureRange(options: CaptureTargetOptions, range: { from: number; to: number } | undefined): CaptureResult;
+    /** Releases a target this session captured; ignores a foreign one and does nothing once disposed. */
     releaseTarget(target: SelectionHandle): void;
     /** Captures each target deferred during a commit, once none runs. */
     flushCaptures(): void;
+    /** Drops the captures that wait for a commit to end. */
     clearDeferred(): void;
+    /** Aborts the async operations of the changed services, and tells the save coordinator when persistence is one. */
     changeServices(members: readonly string[]): void;
 };
 

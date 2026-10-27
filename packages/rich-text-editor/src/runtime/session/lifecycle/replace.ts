@@ -30,13 +30,13 @@ import { type TargetsService } from './targets';
 import { type UploadService } from './uploadsWiring';
 
 export type Replace = {
-    /** `EditorHandle.replaceDocument`: the Replacement steps in order, stopping at the first that fails. */
+    /** `EditorHandle.replaceDocument`: checks the request, settles unsaved work, then installs the document, stopping at the first step that fails. */
     replaceDocument(request: ReplaceDocumentRequest): Promise<ReplaceResult>;
 };
 
 const refused = (code: ReplaceCode): ReplaceResult => ({ status: 'rejected', code });
 
-/** Replacement step 5 for a session with unsaved changes: `undefined` when the policy lets the replacement go on. */
+/** Applies the request's unsaved-work policy to a session with unsaved changes: `undefined` when the policy lets the replacement go on. */
 const leaveUnsaved = async (
     saving: Pick<Saving, 'commit'>,
     identity: Pick<Identity, 'stamp'>,
@@ -49,7 +49,7 @@ const leaveUnsaved = async (
 
     if (unsaved.action === 'save') {
         const result = await saving.commit({ reason: 'navigate' });
-        // A write whose outcome is unknown goes on to step 6, which refuses it.
+        // A write whose outcome is unknown goes on to the unknown-outcome check, which refuses it.
         if (result.status === 'acknowledged' || (result.status === 'failed' && result.outcome === 'unknown')) {
             return undefined;
         }
@@ -180,7 +180,7 @@ export const createReplace = (a: {
     };
 
     /**
-     * Replacement step 8: the decoded document in a fresh state with empty history, in the next generation of the
+     * The decoded document in a fresh state with empty history, in the next generation of the
      * session; a view that throws while it installs the state faults the session.
      */
     const installNext = (
@@ -273,7 +273,7 @@ export const createReplace = (a: {
         view.refresh();
         if (saving.unsaved()) {
             const code = await leaveUnsaved(saving, identity, request.unsaved);
-            // The session was disposed, or faulted, while the step 5 write ran.
+            // The session was disposed, or faulted, while the unsaved-work write ran.
             if (!lifecycle.is('transitioning')) {
                 return refused('not-ready');
             }
@@ -287,7 +287,7 @@ export const createReplace = (a: {
             return resume('save-unresolved', focused);
         }
 
-        // A keystroke the view read during step 5 is kept, not replaced.
+        // A keystroke the view read while the unsaved-work step ran is kept, not replaced.
         if (!sameStamp(request.expected, identity.stamp())) {
             return resume('changed-since-request', focused);
         }

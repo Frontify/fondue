@@ -13,6 +13,7 @@ import { type Lifecycle } from '../state/lifecycle';
 export type Saving = {
     /** Installs the save coordinator; without one the session stays unmanaged. */
     attach(coordinator: SaveCoordinator | undefined): void;
+    /** The coordinator's status, or the unmanaged one that tracks only the sequence and loaded revision. */
     status(): SaveStatus;
     /** Whether the session has unsaved changes; an unmanaged one acknowledges only what it loaded. */
     unsaved(): boolean;
@@ -24,6 +25,7 @@ export type Saving = {
     changed(): void;
     /** Input settled after a composition; a no-op for an unmanaged session. */
     settled(): void;
+    /** Stops the save coordinator; a no-op for an unmanaged session. */
     dispose(): void;
     /** Whether a save was sent and its outcome is not known yet. */
     outcomeUnknown(): boolean;
