@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ForwardedRef, forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
+import { type ForwardedRef, forwardRef, useCallback, useRef, useState } from 'react';
 
 import { useOverlayRoot } from '#/bridge/overlays/hooks/useOverlayRoot';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
@@ -9,13 +9,21 @@ import { type EditorPort, resyncSelectionOf } from '#/runtime/port';
 import { type EditorHandle } from '../../types';
 import { chromeKeyDownOf } from '../helpers/chromeKeyDownOf';
 import { shellPropsOf } from '../helpers/sessionHelpers';
-import { useChrome, useOverlayValues, useSessionRefs, useToolbarMode } from '../hooks/useChrome';
+import {
+    useChooserRefs,
+    useChrome,
+    useChromeRefs,
+    useLocaleRefs,
+    useOverlayValues,
+    useToolbarMode,
+} from '../hooks/useChrome';
 import { useColumns } from '../hooks/useColumns';
 import { useEscapeToSurface } from '../hooks/useEscapeToSurface';
 import { useKeyboardInset } from '../hooks/useKeyboardInset';
 import { useMountState } from '../hooks/useMountState';
 import { usePanels } from '../hooks/usePanels';
 import { useRootContext } from '../hooks/useRoot';
+import { useSessionHandle } from '../hooks/useSessionHandle';
 import { useSessionHosts } from '../hooks/useSessionHosts';
 import { useSessionRuntime } from '../hooks/useSessionRuntime';
 import { useChangeWatch, usePresentationSync } from '../hooks/useSync';
@@ -35,9 +43,10 @@ const SessionComponent = (
         props,
         retried,
     );
-    const refs = useSessionRefs();
-    const { generatedId, toolbarRef, langRef, handleRef, bubbleRef, showBubbleRef } = refs;
-    const { overlayToolbarsRef, tRef, chooserRef, choosingRef } = refs;
+    const { generatedId, toolbarRef, bubbleRef, showBubbleRef, overlayToolbarsRef } = useChromeRefs();
+    const { langRef, tRef } = useLocaleRefs();
+    const { chooserRef, choosingRef } = useChooserRefs();
+    const handleRef = useRef<EditorHandle<object> | null>(null);
     // The session once it is ready, which the parts and hooks read.
     const [live, setLive] = useState<EditorPort>();
     const latestRef = useRef(props);
@@ -86,12 +95,7 @@ const SessionComponent = (
         onSession,
     });
 
-    // A blocked document gets no session and so no handle. The ref is the fallback because `live` lags the layout effect.
-    useImperativeHandle<EditorHandle<object> | null, EditorHandle<object> | null>(
-        ref,
-        () => live?.handle ?? handleRef.current,
-        [live, handleRef],
-    );
+    useSessionHandle(ref, live, handleRef);
 
     usePresentationSync(props, coordinator, handleRef, rootRef);
     useChangeWatch(props, mounted, coordinator);

@@ -15,7 +15,7 @@ import { referenceListStrings } from '#/ui/LazySuggestionList/helpers/referenceS
 import { engineOf, pluginsOf } from '../../compile/compileEditor';
 import { menuItems, toolbarItems } from '../../helpers/toolbarItems';
 import { turnIntoChoices } from '../../helpers/turnInto';
-import { type EditorHandle, type ToolbarMode } from '../../types';
+import { type ToolbarMode } from '../../types';
 import { memberOf, type shellPropsOf } from '../helpers/sessionHelpers';
 import { type Mounted, type Props, type SessionRest } from '../types';
 
@@ -202,34 +202,32 @@ export const useOverlayValues = ({
     return { overlays, choosesFiles, referenceStrings };
 };
 
-/** The refs a session shares between its hooks and parts. */
-export const useSessionRefs = () => {
+/** The toolbar refs and the generated id the chrome shares with its parts. */
+export const useChromeRefs = () => {
     const generatedId = useId();
     const toolbarRef = useRef<HTMLDivElement | null>(null);
-    // The shown locale's language, which the session's suggestion lists read when they search.
-    const langRef = useRef<string>(enUS.lang);
-    const handleRef = useRef<EditorHandle<object> | null>(null);
     const bubbleRef = useRef<HTMLDivElement | null>(null);
     const showBubbleRef = useRef<(() => void) | null>(null);
-    // The toolbars of the plugins' standing overlays, and the chrome's strings, which plugins read when they run.
+    // The toolbars of the plugins' standing overlays, which the chrome's keys and focus reach.
     const overlayToolbarsRef = useRef<(HTMLElement | null)[]>([]);
+
+    return { generatedId, toolbarRef, bubbleRef, showBubbleRef, overlayToolbarsRef };
+};
+
+/** The shown language and the chrome's strings, which the session's suggestion lists and plugins read when they run. */
+export const useLocaleRefs = () => {
+    const langRef = useRef<string>(enUS.lang);
     const tRef = useRef(codecContext(enUS, enUS).t);
-    // The file chooser of hosts with no asset picker, and where the files it gives go.
+
+    return { langRef, tRef };
+};
+
+/** The file chooser of hosts with no asset picker, and where the files it gives go. */
+export const useChooserRefs = () => {
     const chooserRef = useRef<HTMLInputElement | null>(null);
     const choosingRef = useRef<Choosing | undefined>(undefined);
 
-    return {
-        generatedId,
-        toolbarRef,
-        langRef,
-        handleRef,
-        bubbleRef,
-        showBubbleRef,
-        overlayToolbarsRef,
-        tRef,
-        chooserRef,
-        choosingRef,
-    };
+    return { chooserRef, choosingRef };
 };
 
 /** The toolbar mode, which a switch reports to the host. */

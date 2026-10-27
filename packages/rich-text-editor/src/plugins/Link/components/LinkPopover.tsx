@@ -79,6 +79,44 @@ const StyleSelect = ({
     );
 };
 
+/** The "Open in new window" checkbox with its label. */
+const NewWindowOption = ({
+    id,
+    label,
+    value,
+    onToggle,
+}: {
+    id: string;
+    label: string;
+    value: boolean;
+    onToggle: () => void;
+}) => (
+    <div className={styles.option}>
+        <Checkbox id={id} value={value} onChange={onToggle} />
+        <Label htmlFor={id}>{label}</Label>
+    </div>
+);
+
+/** The notice that the linked text was removed, with the action that inserts the visible text as a new link. */
+const RemovedNotice = ({
+    id,
+    strings,
+    onInsert,
+}: {
+    id: string;
+    strings: LinkPopoverStrings;
+    onInsert: () => void;
+}) => (
+    <div className={styles.removed}>
+        <p id={id} className={styles.error}>
+            {strings.removed}
+        </p>
+        <Button emphasis="default" onPress={onInsert}>
+            {strings.insertNew}
+        </Button>
+    </div>
+);
+
 /**
  * The link popover: a non-modal `Flyout` on the link or the selection with the destination, the visible text, "Open in
  * new window" and, when the presentation has link styles, a Style select, prefilled from the link at the selection.
@@ -191,14 +229,12 @@ export const LinkPopover = (props: OverlayProps & { initial: LinkInitial }) => {
                             value={text}
                             onChange={(event) => setText(event.target.value)}
                         />
-                        <div className={styles.option}>
-                            <Checkbox
-                                id={newWindowId}
-                                value={newWindow}
-                                onChange={() => setNewWindow((previous) => !previous)}
-                            />
-                            <Label htmlFor={newWindowId}>{strings.newWindow}</Label>
-                        </div>
+                        <NewWindowOption
+                            id={newWindowId}
+                            label={strings.newWindow}
+                            value={newWindow}
+                            onToggle={() => setNewWindow((previous) => !previous)}
+                        />
                         {linkStyles.length > 0 && (
                             <StyleSelect
                                 strings={strings}
@@ -209,14 +245,7 @@ export const LinkPopover = (props: OverlayProps & { initial: LinkInitial }) => {
                             />
                         )}
                         {problem === 'removed' && (
-                            <div className={styles.removed}>
-                                <p id={removedId} className={styles.error}>
-                                    {strings.removed}
-                                </p>
-                                <Button emphasis="default" onPress={insertNew}>
-                                    {strings.insertNew}
-                                </Button>
-                            </div>
+                            <RemovedNotice id={removedId} strings={strings} onInsert={insertNew} />
                         )}
                         {problem === 'failed' && <p className={styles.error}>{strings.failed}</p>}
                     </form>

@@ -93,6 +93,32 @@ const join = (owner: Document, handlers: Handlers): (() => void) => {
     };
 };
 
+/** The first node of the event's composed path, since a shadow root retargets events to its host; null for none. */
+const targetOf = (event: Event): Node | null => {
+    const [target] = event.composedPath();
+    // A node of an iframe's document is no `Node` of this window.
+    if (target !== undefined && 'nodeType' in target) {
+        return target as Node;
+    }
+
+    return null;
+};
+
+/** Calls `engage` on the first focus or press in any of `elements`; returns the removal. */
+const engageOn = (elements: readonly HTMLElement[], engage: (event: Event) => void): (() => void) => {
+    for (const element of elements) {
+        element.addEventListener('focusin', engage, true);
+        element.addEventListener('pointerdown', engage, true);
+    }
+
+    return () => {
+        for (const element of elements) {
+            element.removeEventListener('focusin', engage, true);
+            element.removeEventListener('pointerdown', engage, true);
+        }
+    };
+};
+
 export const createInteractionScope = (roots: () => readonly (HTMLElement | null)[]): InteractionScope => {
     let last: Interaction = { kind: 'focus', target: null };
     let pressed: Node | null = null;
@@ -151,16 +177,8 @@ export const createInteractionScope = (roots: () => readonly (HTMLElement | null
 
             const owner = first.ownerDocument;
             listened = owner;
-            // The first node of the composed path, since a shadow root retargets events to its host.
             const record = (kind: Interaction['kind']) => (event: Event) => {
-                const [target] = event.composedPath();
-                // A node of an iframe's document is no `Node` of this window.
-                let node: Node | null = null;
-                if (target !== undefined && 'nodeType' in target) {
-                    node = target as Node;
-                }
-
-                last = { kind, target: node };
+                last = { kind, target: targetOf(event) };
             };
 
             const onPointer = record('pointer');
@@ -233,10 +251,7 @@ export const createInteractionScope = (roots: () => readonly (HTMLElement | null
                 startNow();
             }
 
-            for (const element of elements) {
-                element.addEventListener('focusin', engage, true);
-                element.addEventListener('pointerdown', engage, true);
-            }
+            const disengage = engageOn(elements, engage);
 
             // Focus already inside the scope, as with an editor that mounts focused, engages it now.
             const focused = deepActive(owner);
@@ -246,11 +261,7 @@ export const createInteractionScope = (roots: () => readonly (HTMLElement | null
             }
 
             return () => {
-                for (const element of elements) {
-                    element.removeEventListener('focusin', engage, true);
-                    element.removeEventListener('pointerdown', engage, true);
-                }
-
+                disengage();
                 end(true);
                 startNow = undefined;
                 stopUnlessInside = undefined;
