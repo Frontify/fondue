@@ -51,9 +51,13 @@ const MentionChip = () => {
             reportOnce(api, nodeId, unavailable);
         }
     }, [api, nodeId, unavailable]);
+    let unavailableMarker: string | undefined;
+    if (unavailable !== null) {
+        unavailableMarker = '';
+    }
 
     return (
-        <span className={styles.mention} data-unavailable={unavailable === null ? undefined : ''}>
+        <span className={styles.mention} data-unavailable={unavailableMarker}>
             @<bdi>{shown.label}</bdi>
             {unavailable !== null && (
                 <span className={styles.note}> ({context.t('RichTextEditor_mentionUnavailable')})</span>

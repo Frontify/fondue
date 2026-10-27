@@ -65,13 +65,12 @@ const linkOptions = (
     }
 
     const { resourceTypes } = options;
+    let types: string[] = [];
+    if (Array.isArray(resourceTypes)) {
+        types = resourceTypes.filter((type): type is string => typeof type === 'string');
+    }
 
-    return {
-        policy: hrefPolicyOf(options),
-        resourceTypes: Array.isArray(resourceTypes)
-            ? resourceTypes.filter((type): type is string => typeof type === 'string')
-            : [],
-    };
+    return { policy: hrefPolicyOf(options), resourceTypes: types };
 };
 
 /** The URL policy, and the destination search when the host has a reference service and `links` names resource types. */
@@ -153,6 +152,7 @@ export const linkStylesOf = (styles: readonly PresentationStyle[]): readonly Lin
         .filter((style) => isPresentationStyle(style) && style.deprecated !== true && style.appliesTo.includes('link'))
         .map(({ id, label }) => ({ id, label }));
 
+/** An index moved past either end of a list of `length` items, wrapped around to the other end. */
 export const wrapped = (index: number, length: number): number => ((index % length) + length) % length;
 
 /** Why Apply did not link: a destination the check or the policy refuses, linked text removed meanwhile, or another refusal. */

@@ -61,8 +61,10 @@ const mentionSearchStrings = (t: EditorApi['t']): MentionSearchStrings => ({
     cancel: t('RichTextEditor_cancel'),
 });
 
+/** An index moved past either end of a list of `length` options, wrapped around to the other end. */
 const wrapped = (index: number, length: number): number => ((index % length) + length) % length;
 
+/** What the list says about its answer: the failure, the result count, or that there are none. */
 const statusOf = (found: Found, strings: MentionSearchStrings): string => {
     if (found.status === 'failed') {
         return strings.failed;
@@ -70,7 +72,11 @@ const statusOf = (found: Found, strings: MentionSearchStrings): string => {
 
     const count = resultsOf(found.items).length;
 
-    return count > 0 ? strings.results(count) : strings.noResults;
+    if (count === 0) {
+        return strings.noResults;
+    }
+
+    return strings.results(count);
 };
 
 // The mention goes where the selection was when the dialog opened, mapped through every change since.
@@ -122,8 +128,13 @@ const useSearchResults = (services: EditorApi['services'], resourceTypes: readon
 
             // The first new option, or the last one when the page added none, so Enter takes the option announced.
             setIndex(Math.max(0, Math.min(shown.length, items.length - 1)));
+            let status: Found['status'] = 'ready';
+            if (results === undefined) {
+                status = 'failed';
+            }
+
             setFound((previous) => ({
-                status: results === undefined ? 'failed' : 'ready',
+                status,
                 items,
                 answers: previous.answers + 1,
             }));
@@ -160,6 +171,7 @@ const useSearchResults = (services: EditorApi['services'], resourceTypes: readon
             controller.abort();
         };
     }, [services, resourceTypes, ask]);
+
     /** Asks again for the same query: the page a Load more option names, or the page that failed. */
     const askAgain = (page: string | null) => {
         setFound({ status: 'loading', items: resultsOf(found.items), answers: found.answers });
@@ -210,7 +222,11 @@ const useAnnouncements = (
 
         if (last === null || last.answers !== found.answers) {
             const status = statusOf(found, strings);
-            announce(spoken === undefined ? status : strings.both(status, spoken));
+            if (spoken === undefined) {
+                announce(status);
+            } else {
+                announce(strings.both(status, spoken));
+            }
 
             return;
         }
@@ -306,6 +322,7 @@ export const useSearchDialogState = (
 
     const shownIndex = Math.min(index, Math.max(0, options.length - 1));
     useAnnouncements(found, shownIndex, strings, dialog.announce);
+
     let controls: string | undefined;
     let activeId: string | undefined;
     const active = options[shownIndex];

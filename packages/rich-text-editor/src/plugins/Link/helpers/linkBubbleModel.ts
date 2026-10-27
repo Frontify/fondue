@@ -36,6 +36,7 @@ export const caretLink = (api: EditorApi | undefined): MarkRunValue | undefined 
     return api.marks.run('link', { extendToMarkRange: 'touching' });
 };
 
+/** Whether two reads are the same link: the same range and attributes, or both none. */
 export const sameLink = (a: MarkRunValue | undefined, b: MarkRunValue | undefined) =>
     a === b ||
     (a !== undefined &&

@@ -22,6 +22,7 @@ export const useDestinationField = (
 ) => {
     const composedAtRef = useRef(Number.NEGATIVE_INFINITY);
     const shown = results.length > 0;
+
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         // Chromium confirms a composition with an Enter of its own, so only Safari's later Enter is left to swallow.
         if (event.key === 'Enter' && event.nativeEvent.isComposing) {
@@ -46,7 +47,12 @@ export const useDestinationField = (
 
         if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
             event.preventDefault();
-            setIndex(wrapped(index + (event.key === 'ArrowDown' ? 1 : -1), results.length));
+            let step = -1;
+            if (event.key === 'ArrowDown') {
+                step = 1;
+            }
+
+            setIndex(wrapped(index + step, results.length));
 
             return;
         }
@@ -63,16 +69,25 @@ export const useDestinationField = (
             composedAtRef.current = event.timeStamp;
         },
     };
-    const activeResult = results[index];
     if (search !== undefined) {
+        const activeResult = results[index];
+        let controls: string | undefined;
+        if (shown) {
+            controls = listId;
+        }
+
+        let activeDescendant: string | undefined;
+        if (activeResult !== undefined) {
+            activeDescendant = suggestionOptionId(listId, activeResult.key);
+        }
+
         combobox = {
             ...combobox,
             role: 'combobox',
             'aria-autocomplete': 'list',
             'aria-expanded': shown,
-            'aria-controls': shown ? listId : undefined,
-            'aria-activedescendant':
-                activeResult === undefined ? undefined : suggestionOptionId(listId, activeResult.key),
+            'aria-controls': controls,
+            'aria-activedescendant': activeDescendant,
         };
     }
 

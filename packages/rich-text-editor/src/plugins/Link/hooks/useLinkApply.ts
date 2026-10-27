@@ -80,14 +80,23 @@ export const useLinkApply = (
             return;
         }
 
-        const visible = text === '' ? fallback : text;
+        let visible = text;
+        if (text === '') {
+            visible = fallback;
+        }
+
         // Text the author left as it opened sends none, so what was typed in the link meanwhile stays; a new link inserts it.
         const unchanged = !here && initialText !== '' && visible === initialText;
+        let chosenStyle: string | null = null;
+        if (styleId !== '') {
+            chosenStyle = styleId;
+        }
+
         const value = {
             href: destination,
             ...(unchanged ? {} : { text: visible }),
             openInNewWindow: newWindow,
-            styleId: styleId === '' ? null : styleId,
+            styleId: chosenStyle,
         };
         let options: { target: SelectionHandle } | undefined;
         if (!here && target !== undefined) {

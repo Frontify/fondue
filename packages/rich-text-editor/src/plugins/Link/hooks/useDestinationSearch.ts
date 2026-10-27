@@ -26,7 +26,11 @@ export const useDestinationSearch = (
         items: [],
     });
     const [index, setIndex] = useState(0);
-    const results = typed && found.query === query ? found.items : [];
+    let results: readonly Destination[] = [];
+    if (typed && found.query === query) {
+        results = found.items;
+    }
+
     useEffect(() => {
         if (search === undefined || !typed || query === '') {
             return undefined;
@@ -57,6 +61,7 @@ export const useDestinationSearch = (
             controller.abort();
         };
     }, [search, typed, query, policy]);
+
     // The field names the active destination with `aria-activedescendant`, which a screen reader does not follow to a
     // list outside the field, so the editor's live region says it too.
     let spoken = '';

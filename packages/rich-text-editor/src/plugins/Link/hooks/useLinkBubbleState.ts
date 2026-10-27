@@ -88,7 +88,11 @@ export const useLinkBubbleState = ({ toolbarRef, covered }: StandingOverlayProps
         return undefined;
     }
 
-    const href = typeof shown.attrs.href === 'string' ? shown.attrs.href : '';
+    let href = '';
+    if (typeof shown.attrs.href === 'string') {
+        href = shown.attrs.href;
+    }
+
     const back = (control: Element) => returnFocus(api, control.closest('[role="toolbar"]'));
     const { range } = shown;
     // A held bubble shows the link it kept, so its actions run there, not at the selection that left it.

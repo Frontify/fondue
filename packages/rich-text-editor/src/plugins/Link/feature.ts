@@ -15,13 +15,28 @@ export const link = defineFeature({
     version: 1,
     requires: [{ id: 'core', version: 1 }],
     options: {
+        /**
+         * The URL schemes a link may use; `null` allows all four.
+         *
+         * @default null
+         */
         allowedSchemes: {
             type: 'list',
             items: { type: 'enum', values: SCHEMES },
             nullable: true,
             default: null,
         },
+        /**
+         * The hosts a link may go to; `null` allows any host.
+         *
+         * @default null
+         */
         allowedHosts: { type: 'list', items: { type: 'string', minLength: 1 }, nullable: true, default: null },
+        /**
+         * The resource types the popover's destination search lists; none turns the search off.
+         *
+         * @default []
+         */
         resourceTypes: { type: 'list', items: { type: 'id' }, default: [] },
     },
     marks: {

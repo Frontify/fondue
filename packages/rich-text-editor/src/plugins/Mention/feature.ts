@@ -12,7 +12,17 @@ export const mention = defineFeature({
     version: 1,
     requires: [{ id: 'core', version: 1 }],
     options: {
+        /**
+         * The text that opens the suggestion list.
+         *
+         * @default '@'
+         */
         trigger: { type: 'string', default: '@' },
+        /**
+         * The resource types the suggestion list and the search dialog offer; none leaves them empty.
+         *
+         * @default []
+         */
         resourceTypes: { type: 'list', items: { type: 'id' }, default: [] },
     },
     nodes: {

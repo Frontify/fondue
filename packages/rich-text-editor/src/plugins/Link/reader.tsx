@@ -42,6 +42,7 @@ const Link = ({ attrs, children, context }: ReaderNodeProps) => {
     );
 };
 
+/** The reader's renderer for the `link` mark. */
 export const linkReader: ReaderRenderers = { link: Link };
 
 /** The feature these renderers belong to. */
