@@ -6,7 +6,6 @@ import { checkHref, type Diagnostic, type HrefPolicy, hrefPolicyOf, findInvalidP
 import { compiledModel, diagnostic, findUnsafeJson, snapshot } from '#/model/internal';
 import { type CompiledDefinition, type EngineCommand, ORIGIN_META } from '#/runtime/definition';
 
-import { nameOf } from '../../reporting/events';
 import { type CommandResult, type CommandState, type SelectionHandle } from '../../types';
 import { type Busy } from '../state/busy';
 import { type Composition } from '../state/composition';
@@ -17,18 +16,10 @@ import { type PolicyService } from '../state/policy';
 import { type Store } from '../state/store';
 import { type Attempt, type Candidate, type Prepared, type RejectedCode, type Route } from '../state/types';
 
+import { pluginError } from './prepare';
+
 type Checked = { payload: unknown } | undefined;
 type Base = EditorState | RejectedCode;
-
-/** A plugin-error diagnostic with the failing feature and the error's name, never its message. */
-export const pluginError = (error: unknown, featureId: string | undefined) => {
-    const name = nameOf(error);
-    if (featureId === undefined) {
-        return diagnostic('runtime.plugin-error', undefined, { name }, 'error');
-    }
-
-    return diagnostic('runtime.plugin-error', undefined, { featureId, name }, 'error');
-};
 
 /** A `rejected` command result with `code`. */
 export const rejected = (code: RejectedCode): CommandResult => ({ status: 'rejected', code });
