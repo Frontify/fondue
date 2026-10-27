@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - packages/**
+      - fondue/**
       - .npmrc
       - .nvmrc
       - package.json
@@ -47,10 +48,10 @@ jobs:
         run: pnpm build:sdk
 
       - name: Lint code
-        run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} --filter {packages/sdk} lint
+        run: pnpm --stream --filter {fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} --filter {packages/sdk} lint
 
       - name: Typecheck code
-        run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} --filter {packages/sdk} typecheck
+        run: pnpm --stream --filter {fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} --filter {packages/sdk} typecheck
 
   rte-component-tests:
     name: RTE Component Tests (shard ${{ matrix.shard }}/${{ strategy.job-total }})
