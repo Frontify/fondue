@@ -60,6 +60,7 @@ const renderBlocks = (state: MarkdownState, parent: TreeNode, path: string): str
     return written.join('\n\n');
 };
 
+/** One list item: its marker, then its blocks indented under it; `alternate` switches the marker so adjacent lists stay apart. */
 const renderItem = (
     state: MarkdownState,
     list: TreeNode,
@@ -96,6 +97,7 @@ const renderItem = (
     return prefixLines(renderBlocks(state, item, path), marker, ' '.repeat(indent), true);
 };
 
+/** Whether a GFM table can hold the cell at all: one paragraph, no span. */
 const isGfmCell = (cell: TreeNode) => {
     const attrs = cell.attrs ?? {};
     const [paragraph, ...rest] = cell.content ?? [];
@@ -113,6 +115,7 @@ const isExactCell = (cell: TreeNode, first: boolean): boolean => {
     return cell.attrs?.colwidth === null && !breaks && header === first && (header || cell.type === 'table_cell');
 };
 
+/** A GFM table, or its cells' blocks when a cell is beyond GFM; either way a loss is noted when content cannot be kept exactly. */
 const renderTable = (state: MarkdownState, table: TreeNode, plan: NodePlan, path: string): string => {
     const rows = table.content ?? [];
     const cells = rows.map((row) => row.content ?? []);
@@ -151,6 +154,7 @@ const renderTable = (state: MarkdownState, table: TreeNode, plan: NodePlan, path
 
             return writeInline(state, paragraph, paragraphPath, 'cell');
         });
+
         while (written.length < columns) {
             written.push('');
         }
@@ -200,9 +204,11 @@ const embedOf = (state: MarkdownState, attrs: JsonObject): string | null => {
     return `[${serialize([{ kind: 'text', text: title }], lost)}](${destination(checked.href)})`;
 };
 
+/** The inline Markdown of a textblock. */
 const paragraphOf = (state: MarkdownState, node: TreeNode, path: string): string =>
     writeInline(state, node, path, 'block');
 
+/** Whether the node holds inline content, so it writes as one paragraph rather than as blocks. */
 const isTextblock = (state: MarkdownState, node: TreeNode, plan: NodePlan) => {
     const content = node.content ?? [];
     if (content.length === 0) {
@@ -235,6 +241,7 @@ const dropsOwnAttributes = (node: TreeNode): boolean => {
     return typeof attrs.lang === 'string' || typeof attrs.marker === 'string';
 };
 
+/** The Markdown the package writes for a node it names, or `null` when the node writes nothing. */
 const ruleOf = (
     state: MarkdownState,
     node: TreeNode,

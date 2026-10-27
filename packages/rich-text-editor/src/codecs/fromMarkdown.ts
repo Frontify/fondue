@@ -18,25 +18,30 @@ import { inlineNodes, TASK } from './markdownInline';
 
 export { inlineToken } from './markdownInline';
 
-/** One dialect: CommonMark with GFM tables and strikethrough, raw HTML off, `http`, `https` and email literals linked. */
 // markdown-it's own link check refuses this scheme, so the destination stays literal text.
 const REFUSED_LINK = 'javascript:';
 
 /** The text from a linkify match to the next space, which the URL check judges whole, so a refused URL links no part of it. */
 const candidateAt = (text: string, index: number): string => text.slice(index).split(/\s/, 1)[0] ?? '';
 
-/** `policy` is the `allowedSchemes` and `allowedHosts` of the feature that declares `link`, which links must pass too. */
+/**
+ * One dialect: CommonMark with GFM tables and strikethrough, raw HTML off, `http`, `https` and email literals linked.
+ * `policy` is the `allowedSchemes` and `allowedHosts` of the feature that declares `link`, which links must pass too.
+ */
 export const createParser = (policy?: HrefPolicy): Parser => {
     const parser = new MarkdownIt('default', { html: false, linkify: true });
     parser.linkify.set({ fuzzyLink: true });
     const accepts = (url: string) => checkHref(url, policy).ok;
+
     // Of the links with no scheme, only `www.` ones become links, as GitHub's extended autolinks do; a bare domain stays text.
     const match = parser.linkify.match.bind(parser.linkify);
     parser.linkify.match = (text) =>
-        (match(text) ?? []).filter(
-            ({ schema, raw, index, url }) =>
-                (schema !== '' || /^www\./i.test(raw)) && accepts(url) && accepts(candidateAt(text, index)),
-        );
+        (match(text) ?? []).filter(({ schema, raw, index, url }) => {
+            const isLinkable = schema !== '' || /^www\./i.test(raw);
+
+            return isLinkable && accepts(url) && accepts(candidateAt(text, index));
+        });
+
     const matchAtStart = parser.linkify.matchAtStart.bind(parser.linkify);
     parser.linkify.matchAtStart = (text) => {
         const found = matchAtStart(text);
@@ -78,6 +83,7 @@ const isTaskList = (tokens: readonly MarkdownToken[], index: number): boolean =>
     return items > 0;
 };
 
+/** The fence's language when the model's `code_block` declares it as valid, else null. */
 const codeLanguage = (builder: Builder, info: string): string | null => {
     const node = builder.vocabulary.nodes.get('code_block');
     let declaration: AttributeDeclaration | undefined;
@@ -98,6 +104,7 @@ type Reading = {
     taskItem: boolean;
 };
 
+/** Opens a paragraph, heading or blockquote, or the paragraph or unwrapped stand-in when the model lacks it. */
 const openTextBlock = (builder: Builder, token: MarkdownToken): void => {
     if (token.type === 'paragraph_open') {
         builder.open('paragraph');

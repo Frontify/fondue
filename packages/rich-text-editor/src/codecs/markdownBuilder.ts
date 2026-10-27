@@ -30,6 +30,7 @@ const FEATURE_OF: Readonly<Record<string, string>> = {
     code: 'marks.code',
 };
 
+/** One open structure on the builder's stack; a frame with no `node` is an unwrapped structure the model cannot hold. */
 export type Frame = {
     node: { type: string; attrs: Record<string, unknown>; content: TreeNode[] } | undefined;
     path: string;
@@ -37,6 +38,7 @@ export type Frame = {
     task: boolean;
 };
 
+/** Builds the model's node tree from Markdown tokens, recording a warning for each structure the model lacks. */
 export class Builder {
     readonly diagnostics: Diagnostic[] = [];
     readonly vocabulary: Vocabulary;
@@ -55,10 +57,12 @@ export class Builder {
         this.stack = [{ node: this.root, path: '/content', task: false }];
     }
 
+    /** Whether the model declares the node `name`. */
     has(name: string): boolean {
         return this.vocabulary.nodes.has(name);
     }
 
+    /** Whether the model declares the mark `name`. */
     hasMark(name: string): boolean {
         return this.vocabulary.marks.has(name);
     }
@@ -89,6 +93,7 @@ export class Builder {
         return attrs;
     }
 
+    /** A mark of `name` with each declared attribute at its given value, its default, or null. */
     markOf(name: string, given: Readonly<Record<string, unknown>> = {}): TreeMark {
         const attrs: Record<string, unknown> = { unknownAttributes: null };
         const declared = this.vocabulary.marks.get(name)?.declaration.attrs;
@@ -129,10 +134,12 @@ export class Builder {
         return `${path}${pointer('content', index)}`;
     }
 
+    /** The innermost frame, which may be an unwrapped one. */
     current(): Frame {
         return this.stack.at(-1) as Frame;
     }
 
+    /** Records a warning that the model cannot hold the Markdown `structure`. */
     unsupported(structure: string, path = this.nextPath()): void {
         this.diagnostics.push({
             code: 'codecs.markdown-unsupported',
@@ -144,6 +151,7 @@ export class Builder {
         });
     }
 
+    /** Appends a node of `type` to the current parent and makes it the current frame; `task` marks a list whose items are task items. */
     open(type: string, given: Readonly<Record<string, unknown>> = {}, task = false): void {
         const node = { type, attrs: this.attrsFor(type, given), content: [] as TreeNode[] };
         const path = this.nextPath();
@@ -156,6 +164,7 @@ export class Builder {
         this.stack.push({ node: undefined, path: this.nextPath(), task });
     }
 
+    /** Pops the current frame, giving a list item or an emptied container the paragraph it requires. */
     close(): void {
         const frame = this.stack.pop();
         const node = frame?.node;
@@ -172,6 +181,7 @@ export class Builder {
         }
     }
 
+    /** Adds `node` to the innermost frame that holds nodes. */
     append(node: TreeNode): void {
         this.target().node?.content.push(node);
     }

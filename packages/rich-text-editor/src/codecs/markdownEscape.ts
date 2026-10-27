@@ -45,6 +45,7 @@ type Token =
     | Delimiter
     | { kind: 'break' };
 
+/** The numeric character reference for `char`. */
 const entity = (char: string) => `&#x${(char.codePointAt(0) ?? 0).toString(16).toUpperCase()};`;
 
 /** The class a neighbour of a delimiter run has once written: an entity starts and ends with punctuation. */
@@ -145,27 +146,30 @@ const fixFlanking = (tokens: readonly Token[]): readonly Delimiter[] | undefined
         for (const { run, before, after } of runsOf(tokens)) {
             const opens = run.some((token) => token.open);
             const closes = run.some((token) => !token.open);
-            if (closes && neighbour(before, 'before') === 'space') {
+            const left = neighbour(before, 'before');
+            const right = neighbour(after, 'after');
+            const isUnderscore = run[0]?.text.startsWith('_') === true;
+            if (closes && left === 'space') {
                 changed = encode(before) || changed;
             }
 
-            if (opens && neighbour(after, 'after') === 'space') {
+            if (opens && right === 'space') {
                 changed = encode(after) || changed;
             }
 
-            if (closes && neighbour(before, 'before') === 'punctuation' && neighbour(after, 'after') === 'other') {
+            if (closes && left === 'punctuation' && right === 'other') {
                 changed = encode(after) || changed;
             }
 
-            if (opens && neighbour(after, 'after') === 'punctuation' && neighbour(before, 'before') === 'other') {
+            if (opens && right === 'punctuation' && left === 'other') {
                 changed = encode(before) || changed;
             }
 
-            if (run[0]?.text.startsWith('_') === true && opens && neighbour(before, 'before') === 'other') {
+            if (isUnderscore && opens && left === 'other') {
                 changed = encode(before) || changed;
             }
 
-            if (run[0]?.text.startsWith('_') === true && closes && neighbour(after, 'after') === 'other') {
+            if (isUnderscore && closes && right === 'other') {
                 changed = encode(after) || changed;
             }
         }
@@ -240,6 +244,7 @@ export const serialize = (pieces: readonly Piece[], lost: (featureId: string) =>
     return written;
 };
 
+/** The character at `index` when it is written as itself, not as a reference or other syntax. */
 const charAt = (tokens: readonly Token[], index: number): string | undefined => {
     const token = tokens[index];
     if (token?.kind === 'char' && !token.entity) {

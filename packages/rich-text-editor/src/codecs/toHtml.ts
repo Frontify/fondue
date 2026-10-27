@@ -82,12 +82,14 @@ const NO_OPTIONS: HtmlWriteOptions = Object.freeze({});
 
 export { escapeHtml };
 
+/** The accessible group that stands in for content the writer cannot render, labelled for `feature`. */
 const fallback = (state: HtmlState, tag: 'span' | 'div', feature: string | null, inner: string): string => {
     const label = islandLabel(state.context, feature);
 
     return `<${tag} role="group" aria-label="${escapeHtml(label)}" data-rte-island="">${inner}</${tag}>`;
 };
 
+/** `items` inside the elements of `mark`'s spec, with the style, colour and link rules the reader applies. */
 const renderMark = (state: HtmlState, items: readonly Item[], mark: TreeMark, depth: number, pre: boolean): string => {
     const inner = renderRun(state, items, depth + 1, pre);
     const plan = state.plan.marks.get(mark.type);
@@ -119,6 +121,7 @@ const renderMark = (state: HtmlState, items: readonly Item[], mark: TreeMark, de
     return build(template, inner);
 };
 
+/** One node as markup: text escaped, an island as its fallback, any other node through its spec or override. */
 const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): string => {
     if (node.type === 'text') {
         const text = node.text ?? '';
@@ -200,6 +203,7 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
     }
 
     template = withStyle(template, styleOfNode(state.styles.styles, node.type, attrs).style, state.styles.inline);
+
     if (node.type === COLUMN_BREAK) {
         // Stored HTML has no package styles, so an active break carries its own.
         if (state.columns !== undefined && state.breaks < state.columns.count - 1) {
@@ -237,6 +241,7 @@ const taskItemInner = (state: HtmlState, node: TreeNode, path: string, pre: bool
     return `${checkbox}<div id="${label}">${first}</div>${rest.join('')}`;
 };
 
+/** Whether `node` is a mention of the `mentions` feature, which writes its own label. */
 const isMention = (node: TreeNode, featureId: string) => node.type === 'mention' && featureId === 'mentions';
 
 /**
@@ -283,7 +288,12 @@ const unavailableMarkup = ({ message, label }: Unavailable, hidden: boolean): st
         text += ` <bdi>${escapeHtml(label)}</bdi>`;
     }
 
-    return `<span data-rte-image-unavailable="" data-rte-message="image-unavailable"${hidden ? ' hidden=""' : ''}>${text}</span>`;
+    let hiddenAttribute = '';
+    if (hidden) {
+        hiddenAttribute = ' hidden=""';
+    }
+
+    return `<span data-rte-image-unavailable="" data-rte-message="image-unavailable"${hiddenAttribute}>${text}</span>`;
 };
 
 /**
@@ -296,6 +306,7 @@ const mentionInner = (state: HtmlState, node: TreeNode): string => {
     return `@<bdi>${escapeHtml(shown.label)}</bdi>${escapeHtml(unavailableNote(shown, state.context.t))}`;
 };
 
+/** `items` as markup, with neighbours that share a mark grouped inside one element of it. */
 const renderRun = (state: HtmlState, items: readonly Item[], depth: number, pre: boolean): string =>
     groupRun(
         items,
@@ -305,6 +316,7 @@ const renderRun = (state: HtmlState, items: readonly Item[], depth: number, pre:
         (group, { mark }) => renderMark(state, group, mark, depth, pre),
     ).join('');
 
+/** The children of `node` as markup. */
 const renderChildren = (state: HtmlState, node: TreeNode, path: string, pre: boolean): string =>
     renderRun(state, itemsOf(node, path, keepMark(state, 'html')), 0, pre);
 

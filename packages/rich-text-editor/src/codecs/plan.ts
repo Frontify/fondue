@@ -54,8 +54,10 @@ const derives: Readonly<Record<Format, (node: NodePlan) => boolean>> = {
     text: (node) => !node.leaf || TEXT_LEAVES.has(node.name),
     markdown: (node) => !node.leaf || MARKDOWN_NODES.has(node.name) || node.form !== undefined,
 };
+/** Whether the node has its own override for `format`. */
 const overridden = (node: NodePlan, format: Format) => node[format] !== undefined;
 
+/** The override registered under `name`, ignoring inherited object keys. */
 const overrideOf = <V>(overrides: Readonly<Record<string, V>> | undefined, name: string): V | undefined => {
     if (overrides === undefined) {
         return undefined;
@@ -109,16 +111,19 @@ export const checkCodecs = (plan: CodecPlan): void => {
 export class Losses {
     private readonly counts = new Map<string, number>();
 
+    /** Counts one more loss for `featureId`. */
     add(featureId: string): void {
         this.counts.set(featureId, (this.counts.get(featureId) ?? 0) + 1);
     }
 
+    /** Adds the counts of `other` to these. */
     merge(other: Losses): void {
         for (const { featureId, count } of other.list()) {
             this.counts.set(featureId, (this.counts.get(featureId) ?? 0) + count);
         }
     }
 
+    /** One entry per feature, in the order each was first met. */
     list(): CodecLoss[] {
         return [...this.counts].map(([featureId, count]) => ({ featureId, count }));
     }

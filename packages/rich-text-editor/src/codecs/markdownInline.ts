@@ -8,6 +8,7 @@ import { type TreeMark, type TreeNode } from '#/model/internal';
 import { type Builder } from './markdownBuilder';
 
 const MARKS_OF: Readonly<Record<string, string>> = { em: 'italic', strong: 'bold', s: 'strike' };
+/** A GFM task marker at the start of a list item's text. */
 export const TASK = /^\[([ xX])\](?:[ \t]|$)/;
 
 /** What an inline token holds as both Markdown readers take it, or `undefined` for one each treats on its own. */
@@ -16,6 +17,7 @@ type InlineToken =
     | { kind: 'break' | 'close' }
     | { kind: 'open'; mark: string; href: string };
 
+/** An inline token's text, break, mark open or mark close; a link opens with its destination. */
 export const inlineToken = (token: MarkdownToken): InlineToken | undefined => {
     if (token.type === 'text' || token.type === 'text_special') {
         return { kind: 'text', text: token.content };
@@ -49,6 +51,7 @@ export const inlineToken = (token: MarkdownToken): InlineToken | undefined => {
     return undefined;
 };
 
+/** The model's inline nodes for one `inline` token, with each mark the model lacks reported at `path`; `stripTask` drops a leading task marker. */
 export const inlineNodes = (builder: Builder, token: MarkdownToken, path: string, stripTask: boolean): TreeNode[] => {
     const nodes: TreeNode[] = [];
     const active: TreeMark[] = [];

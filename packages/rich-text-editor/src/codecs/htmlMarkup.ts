@@ -40,6 +40,7 @@ const styleText = (text: string): string => {
     return [...style].map(([property, value]) => `${property}:${value}`).join(';');
 };
 
+/** The attributes as ` name="value"` text, skipping event-handler names and empty styles. */
 const attributes = (attrs: Readonly<Record<string, string>>): string => {
     let written = '';
     for (const [name, value] of Object.entries(attrs)) {

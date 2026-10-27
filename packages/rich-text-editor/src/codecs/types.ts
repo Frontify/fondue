@@ -15,7 +15,9 @@ import { type ResolveAssetUrl } from '#/model/internal';
 
 /** How many nodes or marks of one feature a codec had to drop or flatten when writing a format. */
 export type CodecLoss = {
+    /** The feature whose content was dropped or flattened. */
     featureId: string;
+    /** How many nodes or marks of that feature were affected. */
     count: number;
 };
 /** What the HTML writer needs to write a document: the styles, colour tokens and resolvers of the presentation. */
@@ -24,8 +26,12 @@ export type HtmlOptions = {
     inlineStyles?: readonly PresentationStyle[];
     /** The presentation's `colorTokens`; a token colour is written inline from it. */
     colorTokens?: readonly ColorToken[];
-    /** Localized output text; default `enUS`. */
+    /**
+     * Localized output text.
+     * @default enUS
+     */
     locale?: RichTextLocale;
+    /** Maps a stored asset reference to the URL written in the output. */
     resolveAssetUrl?: ResolveAssetUrl;
     /** Mention labels as the reader shows them: the current label, or the stored one with the unavailable note. */
     resolveReference?: (resourceType: string, resourceId: string) => ReferenceResolution;
@@ -33,15 +39,25 @@ export type HtmlOptions = {
     contentClassName?: string;
     /** The presentation's `listLevels`, which writes each list's marker inline as the reader does. */
     listLevels?: ListLevels;
-    /** Column count `toHTML` writes on the content root, with the narrowest column width. Default 1, which writes none. */
+    /**
+     * Column count `toHTML` writes on the content root, with the narrowest column width. 1 writes none.
+     * @default 1
+     */
     columns?: number;
-    /** Column gap `toHTML` writes on the content root. Default `normal`. */
+    /**
+     * Column gap `toHTML` writes on the content root.
+     * @default 'normal'
+     */
     columnGap?: string;
 };
 /** Options for `toMarkdown`, which writes CommonMark 0.31.2 with GFM tables, strikethrough, task list items and autolinks. */
 export type MarkdownOptions = {
-    /** Localized output text; default `enUS`. */
+    /**
+     * Localized output text.
+     * @default enUS
+     */
     locale?: RichTextLocale;
+    /** Maps a stored asset reference to the URL written in the output. */
     resolveAssetUrl?: ResolveAssetUrl;
 };
 /**
@@ -82,8 +98,14 @@ export type RichTextCodecs = {
 };
 /** Options for the codecs a definition builds: limits and the id source used when reading Markdown. */
 export type CodecsOptions = {
-    /** The limits the writing definition used, when a host loosened them through `limitOverrides`. Omitted means the default limits. */
+    /**
+     * The limits the writing definition used, when a host loosened them through `limitOverrides`.
+     * @default the default limits
+     */
     limits?: Partial<ResourceLimits>;
-    /** Creates the `nodeId`s `fromMarkdown` adds; `crypto.randomUUID` when omitted. */
+    /**
+     * Creates the `nodeId`s `fromMarkdown` adds.
+     * @default crypto.randomUUID
+     */
     generateId?: () => string;
 };

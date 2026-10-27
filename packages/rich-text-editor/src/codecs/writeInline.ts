@@ -20,6 +20,7 @@ import { codeSpan, destination, joinRuns, type Piece, readInline, type Run, seri
 import { Losses, type MarkPlan, type NodePlan, setShared } from './plan';
 import { reportFailure, type WalkState } from './walk';
 
+/** What the Markdown walk shares: the walk state plus the parser and the italic delimiter in use. */
 export type MarkdownState = {
     /** Reads written inline Markdown back, to find emphasis that the delimiters cannot express. */
     parser: Parser;
@@ -37,6 +38,7 @@ type MarkdownItem = {
     code: boolean;
 } & Item;
 
+/** Counts the mark's feature as lost. */
 const markLost = (state: MarkdownState, plan: MarkPlan) => state.losses.add(plan.featureId);
 
 /**
@@ -121,6 +123,7 @@ export const featureOf = (state: MarkdownState, type: string): string => {
     return plan.featureId;
 };
 
+/** Reports that a Markdown override of the node or mark threw, at `path`. */
 export const overrideFailed = (state: MarkdownState, plan: NodePlan | MarkPlan, path: string, name: string) =>
     reportFailure(state, plan.featureId, path, name, 'markdown');
 
@@ -273,6 +276,7 @@ const inlinePieces = (state: MarkdownState, node: TreeNode, path: string, line: 
             return linkPieces(state, plan, mark, inner, line);
         }).flat();
     const pieces = marked(markdownItems(state, node, path), 0);
+
     // A hard break at the end of a block, closing delimiters aside, writes nothing that parses back.
     let last = pieces.length - 1;
     while (last >= 0) {
@@ -291,6 +295,7 @@ const inlinePieces = (state: MarkdownState, node: TreeNode, path: string, line: 
     return pieces;
 };
 
+/** `[inner](target)` for a link with a safe href, else `inner` alone; a link's own losses are counted here, once per run. */
 const linkPieces = (state: MarkdownState, plan: MarkPlan, mark: TreeMark, inner: Piece[], line: Line): Piece[] => {
     const attrs = attrsOf(mark.attrs);
     if (attrs.openInNewWindow === true || (attrs.styleId !== undefined && attrs.styleId !== null)) {
@@ -314,6 +319,7 @@ const linkPieces = (state: MarkdownState, plan: MarkPlan, mark: TreeMark, inner:
     return [{ kind: 'literal', text: '[' }, ...inner, { kind: 'literal', text: `](${target})` }];
 };
 
+/** The pieces of one inline child: text, a code span, a break, a mention or an override's literal. */
 const leafPieces = (state: MarkdownState, { node, path, code }: MarkdownItem, line: Line): Piece[] => {
     if (node.type === 'text') {
         if (code && line === 'cell') {

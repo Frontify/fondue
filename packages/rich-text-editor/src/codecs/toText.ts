@@ -40,6 +40,7 @@ const INDENT = '  ';
 const NO_OPTIONS: { resolveReference?: ResolveReference | undefined } = Object.freeze({});
 const LISTS = new Set(['bullet_list', 'ordered_list', 'task_list']);
 
+/** The text of an inline run: marks with a `text` override write through it, a link also writes its URL after its text. */
 const renderInline = (state: WalkState, node: TreeNode, path: string): string => {
     const renderMarked = (items: readonly Item[], depth: number): string =>
         groupRun(
@@ -76,6 +77,7 @@ const renderInline = (state: WalkState, node: TreeNode, path: string): string =>
     return renderMarked(itemsOf(node, path, keepMark(state, 'text')), 0);
 };
 
+/** One inline item: a text node's text, or the text of an inline node such as a break or mention. */
 const renderLeaf = (state: WalkState, { node, path }: Item): string => {
     if (node.type === 'text') {
         return node.text ?? '';
@@ -84,6 +86,7 @@ const renderLeaf = (state: WalkState, { node, path }: Item): string => {
     return renderBlock(state, node, path, 0) ?? '';
 };
 
+/** A list item under `marker`, its nested lists kept at their own indent. */
 const renderItem = (state: WalkState, item: TreeNode, path: string, marker: string, depth: number): string => {
     noteNode(state, item, 'text');
     const indent = INDENT.repeat(depth);
@@ -139,6 +142,7 @@ const embedText = (attrs: JsonObject): string | null => {
     return `${attrs.title} (${url})`;
 };
 
+/** The written blocks joined by `separator`, or `null` when none wrote anything. */
 const joinBlocks = (blocks: readonly (string | null)[], separator: string): string | null => {
     const written = blocks.filter((block): block is string => block !== null);
     if (written.length === 0) {
@@ -171,6 +175,28 @@ const defaultText = (state: WalkState, node: TreeNode, path: string, depth: numb
     );
 };
 
+/** A table's rows on separate lines, with each row's cells separated by a tab. */
+const tableText = (state: WalkState, table: TreeNode, path: string, depth: number): string | null => {
+    const rows = (table.content ?? []).map((row, rowIndex) => {
+        const rowPath = `${path}${pointer('content', rowIndex)}`;
+        noteNode(state, row, 'text');
+
+        return (row.content ?? [])
+            .map((cell, cellIndex) => {
+                const cellPath = `${rowPath}${pointer('content', cellIndex)}`;
+                noteNode(state, cell, 'text');
+                const blocks = (cell.content ?? []).map((block, index) =>
+                    renderBlock(state, block, `${cellPath}${pointer('content', index)}`, depth),
+                );
+
+                return joinBlocks(blocks, ' ') ?? '';
+            })
+            .join('\t');
+    });
+
+    return joinBlocks(rows, '\n');
+};
+
 /** One block's text, or `null` for a block that writes nothing. */
 const renderBlock = (state: WalkState, node: TreeNode, path: string, depth: number): string | null => {
     if (isIsland(node)) {
@@ -192,6 +218,7 @@ const renderBlock = (state: WalkState, node: TreeNode, path: string, depth: numb
     }
 
     noteNode(state, node, 'text');
+
     const attrs = attrsOf(node.attrs);
     let text: string | null;
     switch (node.type) {
@@ -240,25 +267,7 @@ const renderBlock = (state: WalkState, node: TreeNode, path: string, depth: numb
             );
             break;
         case 'table':
-            text = joinBlocks(
-                (node.content ?? []).map((row, rowIndex) => {
-                    const rowPath = `${path}${pointer('content', rowIndex)}`;
-                    noteNode(state, row, 'text');
-
-                    return (row.content ?? [])
-                        .map((cell, cellIndex) => {
-                            const cellPath = `${rowPath}${pointer('content', cellIndex)}`;
-                            noteNode(state, cell, 'text');
-                            const blocks = (cell.content ?? []).map((block, index) =>
-                                renderBlock(state, block, `${cellPath}${pointer('content', index)}`, depth),
-                            );
-
-                            return joinBlocks(blocks, ' ') ?? '';
-                        })
-                        .join('\t');
-                }),
-                '\n',
-            );
+            text = tableText(state, node, path, depth);
             break;
         default:
             text = defaultText(state, node, path, depth);
