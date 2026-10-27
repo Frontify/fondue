@@ -74,6 +74,29 @@ describe('the package README', () => {
         }
     });
 
+    it('has one layer row per product folder under src, and names runtime as the only layer that holds the engine', () => {
+        const table = source.split(/^## Layers$/m)[1]?.split(/^## /m)[0] ?? '';
+        const rows = [...table.matchAll(/^\| `([^`]+)`\s+\|(.*)\|\s*$/gm)].map(([, folder, holds]) => ({
+            folder: folder ?? '',
+            holds: holds ?? '',
+        }));
+        const noProductCode = new Set(['__tests__', 'docs']);
+        const productFolders = readdirSync(join(PACKAGE, 'src'), { withFileTypes: true })
+            .filter((entry) => entry.isDirectory() && !noProductCode.has(entry.name))
+            .map((entry) => entry.name);
+
+        for (const folder of productFolders) {
+            expect(rows.filter((row) => row.folder === folder).length, folder).toBe(1);
+        }
+
+        for (const { folder } of rows) {
+            expect(existsSync(join(PACKAGE, 'src', folder)), folder).toBe(true);
+        }
+
+        const engineRows = rows.filter((row) => row.holds.includes('the only layer that holds the engine'));
+        expect(engineRows.map((row) => row.folder)).toEqual(['runtime']);
+    });
+
     it('does not call the published package private or unreleased', () => {
         expect(source).not.toMatch(/\b(?:private|unreleased)\b/i);
     });
