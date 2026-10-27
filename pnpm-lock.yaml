@@ -136,8 +136,8 @@ importers:
         specifier: ^10.5.4
         version: 10.5.4(postcss@8.5.26)
       happy-dom:
-        specifier: ^20.11.2
-        version: 20.11.2
+        specifier: ^21.0.4
+        version: 21.0.4
       oxfmt:
         specifier: ^0.74.0
         version: 0.74.0
@@ -173,7 +173,7 @@ importers:
         version: 5.1.4(supports-color@8.1.1)(typescript@5.9.3)(vite@6.4.4(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0))
       vitest:
         specifier: ^5.0.5
-        version: 5.0.5(@types/node@24.13.3)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(happy-dom@20.11.2)(vite@6.4.4(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0))
+        version: 5.0.5(@types/node@24.13.3)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(happy-dom@21.0.4)(vite@6.4.4(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0))
 
   packages/components:
     dependencies:
@@ -332,8 +332,8 @@ importers:
         specifier: ^13.0.6
         version: 13.0.6
       happy-dom:
-        specifier: ^20.11.2
-        version: 20.11.2
+        specifier: ^21.0.4
+        version: 21.0.4
       oxfmt:
         specifier: ^0.74.0
         version: 0.74.0
@@ -384,7 +384,7 @@ importers:
         version: 5.1.4(supports-color@8.1.1)(typescript@5.9.3)(vite@6.4.4(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0))
       vitest:
         specifier: ^5.0.5
-        version: 5.0.5(@types/node@24.13.3)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(happy-dom@20.11.2)(vite@6.4.4(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0))
+        version: 5.0.5(@types/node@24.13.3)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(happy-dom@21.0.4)(vite@6.4.4(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0))
 
   packages/fondue:
     dependencies:
@@ -812,8 +812,8 @@ importers:
         specifier: ^10.5.0
         version: 10.5.4(postcss@8.5.26)
       happy-dom:
-        specifier: ^20.11.2
-        version: 20.11.2
+        specifier: ^21.0.4
+        version: 21.0.4
       oxfmt:
         specifier: ^0.74.0
         version: 0.74.0
@@ -855,7 +855,7 @@ importers:
         version: 5.1.4(supports-color@8.1.1)(typescript@5.9.3)(vite@6.4.4(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0))
       vitest:
         specifier: ^5.0.5
-        version: 5.0.5(@types/node@24.13.3)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(happy-dom@20.11.2)(vite@6.4.4(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0))
+        version: 5.0.5(@types/node@24.13.3)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(happy-dom@21.0.4)(vite@6.4.4(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0))
 
   packages/rte:
     dependencies:
@@ -1298,7 +1298,7 @@ importers:
         version: 5.1.4(supports-color@8.1.1)(typescript@5.9.3)(vite@6.4.4(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0))
       vitest:
         specifier: ^5.0.5
-        version: 5.0.5(@types/node@24.13.3)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(happy-dom@20.11.2)(vite@6.4.4(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0))
+        version: 5.0.5(@types/node@24.13.3)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(happy-dom@21.0.4)(vite@6.4.4(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0))
 
   packages/tokens:
     devDependencies:
@@ -1554,6 +1554,10 @@ packages:
     resolution: {integrity: sha512-brcMGQaVzIeUb+6/bs1Av0f8YuNNjKY2JyvfRCsFuFsdKccEQ5Ges2y74D74NZ1Rz8lKJ9ksJkfqwQFJ/iNEyQ==}
     engines: {node: '>=6.9.0'}
 
+  '@babel/helper-string-parser@7.29.11':
+    resolution: {integrity: sha512-snZbO7MEDOof+hvNa97EjEY7qD7h2kwvQr5AJC3ZhQudKW5dnej6k3kP9NQV88hJwaS8vDqRLFo9rivLEhle2g==}
+    engines: {node: '>=6.9.0'}
+
   '@babel/helper-string-parser@7.29.7':
     resolution: {integrity: sha512-Pb5ijPrZ89GDH8223L4UP8i6QApWxs04RbPQJTeWDV0/keR2E36MeKnyr6LYmUUvqRRI+Iv87SuF1W6ErINzYw==}
     engines: {node: '>=6.9.0'}
@@ -1752,8 +1756,8 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
-  '@babel/plugin-transform-block-scoping@7.29.7':
-    resolution: {integrity: sha512-ONyr4+AZhKh8yKWInVxU9AXA9EbsyeLcL6V0dJy6M2/62vuvpGm29zzuymbTpdc451GEpDIdAyPLP3r+P61yKQ==}
+  '@babel/plugin-transform-block-scoping@7.29.11':
+    resolution: {integrity: sha512-iARF4jjHSM0v8DImCACPXrwEltBP3DgqDpXTvjAMBAVpyEY0LiGss78wvI+KtmW+IJNEvZ5sOhPDCsOsXsIybA==}
     engines: {node: '>=6.9.0'}
     peerDependencies:
       '@babel/core': ^7.0.0-0
@@ -1770,8 +1774,8 @@ packages:
     peerDependencies:
       '@babel/core': ^7.12.0
 
-  '@babel/plugin-transform-classes@7.29.7':
-    resolution: {integrity: sha512-qV0OGGBVacduzQHE649JyCneOFI/maT+YKsO+K4Yi3xv2wTPNjM/W2o2gdzMwEAZz7fXNTHAe0NcSg30bIN69g==}
+  '@babel/plugin-transform-classes@7.29.11':
+    resolution: {integrity: sha512-f8kTDM/nTvpLeafb+TJ4jboFr/Y3BbC+QzgPpPGzSKJqWLnj9LW0WLqv4XKA11LX5sr+EgvLE6Ix3YsCEusodw==}
     engines: {node: '>=6.9.0'}
     peerDependencies:
       '@babel/core': ^7.0.0-0
@@ -1986,8 +1990,8 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
-  '@babel/plugin-transform-spread@7.29.8':
-    resolution: {integrity: sha512-4S9ksMGVWUshvgK0mKfvZky7leuG5/uoFVwMpAomJ8bMoDJiNHRVmc1EglwW/CmGVSqqWpEbXm9FmbRit22qoA==}
+  '@babel/plugin-transform-spread@7.29.11':
+    resolution: {integrity: sha512-5xWGhfuMgbOfIjsk/I2c4uMnoqRwQdKYi4QjvybQrcEVE0G9/p3qmIkp2Sxe8YF8DGNNVs5whfwNqIM5684XoQ==}
     engines: {node: '>=6.9.0'}
     peerDependencies:
       '@babel/core': ^7.0.0-0
@@ -2083,6 +2087,10 @@ packages:
 
   '@babel/traverse@7.29.8':
     resolution: {integrity: sha512-I5z7H3bf/41ktsNVLtpN0wAa336HkqIHQ5BuPLEhTkt1jVSyZpeNKIzTgEWmlxjdg81R0IgUCcaE+Ok3NvrfZg==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/types@7.29.11':
+    resolution: {integrity: sha512-WCsemW40Cpc6gouC1SrY6PBaZ+oLRlEVY9XBvZBI7il/HyUrb2nJ505wE1MHEFyDZNnrWDEuy4jL50WVHfTTSQ==}
     engines: {node: '>=6.9.0'}
 
   '@babel/types@7.29.8':
@@ -7227,8 +7235,8 @@ packages:
   fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
 
-  fast-uri@3.1.8:
-    resolution: {integrity: sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==}
+  fast-uri@3.1.9:
+    resolution: {integrity: sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==}
 
   fastq@1.20.1:
     resolution: {integrity: sha512-GGToxJ/w1x32s/D2EKND7kTil4n8OVk/9mycTc4VDza13lOvpUZTGX3mFSCtV9ksdGBVzvsyAVLM6mHFThxXxw==}
@@ -7483,8 +7491,8 @@ packages:
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
-  happy-dom@20.11.2:
-    resolution: {integrity: sha512-7MB+bJLkxu3SowAfBJbjW+c55kNz5tkR45gu2qzrxznezhLeN5YIlJbwUgSzlGc+qWoZ8Ykg71H5ezz69xixrw==}
+  happy-dom@21.0.4:
+    resolution: {integrity: sha512-tFm+GaLBgo6o0awHnvHaNoraVo27qJ+2tZEtZ+cIa08hXbeitrxAJajLI05hsUy/2/YTKcUjQYzHe5mCcraLBw==}
     engines: {node: '>=20.0.0'}
 
   has-flag@4.0.0:
@@ -10191,18 +10199,6 @@ packages:
       utf-8-validate:
         optional: true
 
-  ws@8.21.1:
-    resolution: {integrity: sha512-+0NTnW77fFN/DjQi6k/Sq/Yvk4Sgajw7urW8V+asjXnRgDs9gyGkdb7EzgfhA4goXsRIZKE28fzIXBHEzhuiWw==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: '>=5.0.2'
-    peerDependenciesMeta:
-      bufferutil:
-        optional: true
-      utf-8-validate:
-        optional: true
-
   ws@8.21.3:
     resolution: {integrity: sha512-201TZ/kPWxoPr/OKWjquZR1SWKXcvxdH+e1xrx89b3YbmzLMFCLfnaG1HFIgWzJOEWZ7MvpK++odZufgYR50Rw==}
     engines: {node: '>=10.0.0'}
@@ -10290,8 +10286,8 @@ packages:
     resolution: {integrity: sha512-CzhO+pFNo8ajLM2d2IW/R93ipy99LWjtwblvC1RsoSUMZgyLbYFr221TnSNT7GjGdYui6P459mw9JH/g/zW2ug==}
     engines: {node: '>=18'}
 
-  zod@4.4.3:
-    resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
+  zod@4.6.7:
+    resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
 
   zustand-x@3.0.4:
     resolution: {integrity: sha512-dVD8WUEpR/0mMdLah9j8i+r6PMAq9Ii2u+BX/9Bn4MHRt8sSnRQ90YMUlTVonZYAHGb2UHZwPpE2gMb8GtYDDw==}
@@ -10474,6 +10470,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@babel/helper-string-parser@7.29.11':
+    optional: true
+
   '@babel/helper-string-parser@7.29.7': {}
 
   '@babel/helper-validator-identifier@7.29.7': {}
@@ -10484,7 +10483,7 @@ snapshots:
     dependencies:
       '@babel/template': 7.29.7
       '@babel/traverse': 7.29.10
-      '@babel/types': 7.29.8
+      '@babel/types': 7.29.11
     transitivePeerDependencies:
       - supports-color
     optional: true
@@ -10697,7 +10696,7 @@ snapshots:
       '@babel/helper-plugin-utils': 7.29.7
     optional: true
 
-  '@babel/plugin-transform-block-scoping@7.29.7(@babel/core@7.29.7)':
+  '@babel/plugin-transform-block-scoping@7.29.11(@babel/core@7.29.7)':
     dependencies:
       '@babel/core': 7.29.7(supports-color@8.1.1)
       '@babel/helper-plugin-utils': 7.29.7
@@ -10720,7 +10719,7 @@ snapshots:
       - supports-color
     optional: true
 
-  '@babel/plugin-transform-classes@7.29.7(@babel/core@7.29.7)':
+  '@babel/plugin-transform-classes@7.29.11(@babel/core@7.29.7)':
     dependencies:
       '@babel/core': 7.29.7(supports-color@8.1.1)
       '@babel/helper-annotate-as-pure': 7.29.7
@@ -10983,7 +10982,7 @@ snapshots:
       '@babel/helper-plugin-utils': 7.29.7
     optional: true
 
-  '@babel/plugin-transform-spread@7.29.8(@babel/core@7.29.7)':
+  '@babel/plugin-transform-spread@7.29.11(@babel/core@7.29.7)':
     dependencies:
       '@babel/core': 7.29.7(supports-color@8.1.1)
       '@babel/helper-plugin-utils': 7.29.7
@@ -11082,10 +11081,10 @@ snapshots:
       '@babel/plugin-transform-async-generator-functions': 7.29.7(@babel/core@7.29.7)
       '@babel/plugin-transform-async-to-generator': 7.29.7(@babel/core@7.29.7)
       '@babel/plugin-transform-block-scoped-functions': 7.29.7(@babel/core@7.29.7)
-      '@babel/plugin-transform-block-scoping': 7.29.7(@babel/core@7.29.7)
+      '@babel/plugin-transform-block-scoping': 7.29.11(@babel/core@7.29.7)
       '@babel/plugin-transform-class-properties': 7.29.7(@babel/core@7.29.7)
       '@babel/plugin-transform-class-static-block': 7.29.7(@babel/core@7.29.7)
-      '@babel/plugin-transform-classes': 7.29.7(@babel/core@7.29.7)
+      '@babel/plugin-transform-classes': 7.29.11(@babel/core@7.29.7)
       '@babel/plugin-transform-computed-properties': 7.29.7(@babel/core@7.29.7)
       '@babel/plugin-transform-destructuring': 7.29.7(@babel/core@7.29.7)
       '@babel/plugin-transform-dotall-regex': 7.29.7(@babel/core@7.29.7)
@@ -11118,7 +11117,7 @@ snapshots:
       '@babel/plugin-transform-regenerator': 7.29.8(@babel/core@7.29.7)
       '@babel/plugin-transform-reserved-words': 7.29.7(@babel/core@7.29.7)
       '@babel/plugin-transform-shorthand-properties': 7.29.7(@babel/core@7.29.7)
-      '@babel/plugin-transform-spread': 7.29.8(@babel/core@7.29.7)
+      '@babel/plugin-transform-spread': 7.29.11(@babel/core@7.29.7)
       '@babel/plugin-transform-sticky-regex': 7.29.7(@babel/core@7.29.7)
       '@babel/plugin-transform-template-literals': 7.29.7(@babel/core@7.29.7)
       '@babel/plugin-transform-typeof-symbol': 7.29.7(@babel/core@7.29.7)
@@ -11147,7 +11146,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.29.7(supports-color@8.1.1)
       '@babel/helper-plugin-utils': 7.29.7
-      '@babel/types': 7.29.8
+      '@babel/types': 7.29.11
       esutils: 2.0.3
     optional: true
 
@@ -11202,6 +11201,12 @@ snapshots:
       debug: 4.4.3(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
+
+  '@babel/types@7.29.11':
+    dependencies:
+      '@babel/helper-string-parser': 7.29.11
+      '@babel/helper-validator-identifier': 7.29.7
+    optional: true
 
   '@babel/types@7.29.8':
     dependencies:
@@ -11914,7 +11919,7 @@ snapshots:
       eslint: 10.8.1(jiti@1.21.7)
       ts-pattern: 5.9.0
       typescript: 5.9.3
-      zod: 4.4.3
+      zod: 4.6.7
     transitivePeerDependencies:
       - supports-color
 
@@ -11925,7 +11930,7 @@ snapshots:
       eslint: 10.8.1(jiti@2.7.0)
       ts-pattern: 5.9.0
       typescript: 5.9.3
-      zod: 4.4.3
+      zod: 4.6.7
     transitivePeerDependencies:
       - supports-color
 
@@ -15218,7 +15223,7 @@ snapshots:
       obug: 3.0.0
       std-env: 4.3.0
       tinyrainbow: 3.2.0
-      vitest: 5.0.5(@types/node@24.13.3)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(happy-dom@20.11.2)(vite@6.4.4(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0))
+      vitest: 5.0.5(@types/node@24.13.3)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(happy-dom@21.0.4)(vite@6.4.4(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0))
 
   '@vitest/expect@3.2.4':
     dependencies:
@@ -15265,7 +15270,7 @@ snapshots:
       pathe: 2.0.3
       sirv: 3.0.2
       tinyrainbow: 3.2.0
-      vitest: 5.0.5(@types/node@24.13.3)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(happy-dom@20.11.2)(vite@6.4.4(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0))
+      vitest: 5.0.5(@types/node@24.13.3)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(happy-dom@21.0.4)(vite@6.4.4(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0))
 
   '@vitest/utils@3.2.4':
     dependencies:
@@ -15364,14 +15369,14 @@ snapshots:
   ajv@8.18.0:
     dependencies:
       fast-deep-equal: 3.1.3
-      fast-uri: 3.1.8
+      fast-uri: 3.1.9
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
   ajv@8.20.0:
     dependencies:
       fast-deep-equal: 3.1.3
-      fast-uri: 3.1.8
+      fast-uri: 3.1.9
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
@@ -16913,7 +16918,7 @@ snapshots:
 
   fast-levenshtein@2.0.6: {}
 
-  fast-uri@3.1.8: {}
+  fast-uri@3.1.9: {}
 
   fastq@1.20.1:
     dependencies:
@@ -17166,7 +17171,7 @@ snapshots:
 
   graceful-fs@4.2.11: {}
 
-  happy-dom@20.11.2:
+  happy-dom@21.0.4:
     dependencies:
       '@types/node': 24.13.3
       '@types/whatwg-mimetype': 3.0.2
@@ -17174,7 +17179,7 @@ snapshots:
       buffer-image-size: 0.6.4
       entities: 7.0.1
       whatwg-mimetype: 3.0.0
-      ws: 8.21.1
+      ws: 8.21.3
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -17559,7 +17564,7 @@ snapshots:
       typescript: 5.9.3
       unbash: 2.2.0
       yaml: 2.9.0
-      zod: 4.4.3
+      zod: 4.6.7
 
   kolorist@1.8.0: {}
 
@@ -20235,7 +20240,7 @@ snapshots:
       tsx: 4.23.11
       yaml: 2.9.0
 
-  vitest@5.0.5(@types/node@24.13.3)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(happy-dom@20.11.2)(vite@6.4.4(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0)):
+  vitest@5.0.5(@types/node@24.13.3)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(happy-dom@21.0.4)(vite@6.4.4(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0)):
     dependencies:
       '@types/chai': 5.2.3
       '@vitest/mocker': 5.0.5(vite@6.4.4(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0))
@@ -20255,7 +20260,7 @@ snapshots:
       '@types/node': 24.13.3
       '@vitest/coverage-v8': 5.0.5(vitest@5.0.5)
       '@vitest/ui': 5.0.5(vitest@5.0.5)
-      happy-dom: 20.11.2
+      happy-dom: 21.0.4
     transitivePeerDependencies:
       - msw
 
@@ -20349,8 +20354,6 @@ snapshots:
 
   ws@7.5.13: {}
 
-  ws@8.21.1: {}
-
   ws@8.21.3: {}
 
   wsl-utils@0.1.0:
@@ -20434,7 +20437,7 @@ snapshots:
 
   yoctocolors@2.1.2: {}
 
-  zod@4.4.3: {}
+  zod@4.6.7: {}
 
   zustand-x@3.0.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(scheduler@0.27.0)(zustand@4.5.7(@types/react@18.3.31)(immer@10.1.1)(react@18.3.1)):
     dependencies:
