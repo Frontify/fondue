@@ -41,6 +41,7 @@ export const useEditorLocale = (locale: RichTextLocale | undefined): RichTextLoc
             current = false;
         };
     }, [load]);
+
     if (locale !== undefined) {
         return locale;
     }

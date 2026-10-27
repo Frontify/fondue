@@ -73,11 +73,8 @@ const pickerOf =
         if (picker === undefined) {
             const chooser = chooserRef.current;
             const accepts = mediaOf(session)?.uploads.accepts;
-            if (
-                chooser === null ||
-                accepts === undefined ||
-                memberOf(latestRef.current.services, 'uploads') === undefined
-            ) {
+            const hasUploads = memberOf(latestRef.current.services, 'uploads') !== undefined;
+            if (chooser === null || accepts === undefined || !hasUploads) {
                 return;
             }
 
@@ -149,6 +146,7 @@ const buildRuntime = (
     const engine = engineOf(definition);
     const profile = profileOf(definition);
     const openPicker = pickerOf(wiring);
+
     const runtime: EditorPort = createPort({
         definition: engine,
         documentId: loaded.documentId,
@@ -194,7 +192,8 @@ const buildRuntime = (
             const { locale, limits } = shellPropsOf(latestRef.current);
             const { t } = codecContext(locale, enUS);
             const lang = locale.lang ?? enUS.lang;
-            announcer.announce(uploadMessage(event, t, lang, limits, mediaOf(runtime)?.uploads.accepts ?? []));
+            const accepts = mediaOf(runtime)?.uploads.accepts ?? [];
+            announcer.announce(uploadMessage(event, t, lang, limits, accepts));
         },
         styles: () => latestRef.current.presentation?.styles ?? [],
         columns: columnsAtMount(latestRef.current.presentation, t),
@@ -229,6 +228,7 @@ const subscribeSession = (
             announcer.announce(codecContext(locale, enUS).t('RichTextEditor_gapCursor'));
         }
     });
+
     runtime.handle.subscribe('ready', (session: SessionToken) => {
         setLive(runtime);
         // Parts that load on first use are fetched while the page is idle, so a first open is instant.
@@ -245,10 +245,12 @@ const subscribeSession = (
 
         latestRef.current.onReady?.(session);
     });
+
     runtime.handle.subscribe('documentChange', (change: DocumentChange) =>
         latestRef.current.onDocumentChange?.(change),
     );
     runtime.handle.subscribe('diagnostic', (diagnostic: Diagnostic) => latestRef.current.onDiagnostic?.(diagnostic));
+
     // A fault reports a diagnostic, so the shell shows once the host heard why. The session stays mounted, so its
     // handle still reads and saves the last snapshot.
     runtime.handle.subscribe('diagnostic', () => {
@@ -266,6 +268,7 @@ const startSession = (wiring: SessionWiring, decoded: Decoded) => {
     const ids = latestRef.current.generateId ?? randomId;
     const saving = savesOf(wiring, engine, ids);
     const runtime = buildRuntime(wiring, decoded, saving.saves, ids);
+
     connectClipboardTo(runtime, {
         singleLine: profileOf(mounted.definition) === 'inline',
         sliceContext: () => {
@@ -281,6 +284,7 @@ const startSession = (wiring: SessionWiring, decoded: Decoded) => {
         resolveReference: () => latestRef.current.presentation?.resolveReference,
         resolveAssetUrl: () => latestRef.current.presentation?.resolveAssetUrl,
     });
+
     const cancelPrefetch = subscribeSession(runtime, wiring);
     handleRef.current = runtime.handle;
     if (saving.created !== undefined) {
@@ -303,6 +307,7 @@ const startSession = (wiring: SessionWiring, decoded: Decoded) => {
 /** Attaches the view in a layout effect, so the first frame painted after hydration shows the content. */
 export const useSessionRuntime = (wiring: SessionWiring) => {
     const { mounted, loaded, coordinator, portals, work, onSession, scope, hosts } = wiring;
+
     useClientLayoutEffect(() => {
         const { decoded } = mounted;
         if (decoded === undefined) {

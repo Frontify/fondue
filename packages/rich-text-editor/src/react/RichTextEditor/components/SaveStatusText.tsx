@@ -42,6 +42,7 @@ export const SaveStatusText = ({ t, testId }: { t: CodecContext['t']; testId: st
     useClientLayoutEffect(() => {
         tRef.current = t;
     });
+
     // Each change is heard from the event itself, so a render that batches two changes still announces both.
     useEffect(() => {
         if (runtime === undefined) {
@@ -67,6 +68,7 @@ export const SaveStatusText = ({ t, testId }: { t: CodecContext['t']; testId: st
             }
         });
     }, [runtime, announce]);
+
     let text = '';
     if (key !== null) {
         text = t(key);

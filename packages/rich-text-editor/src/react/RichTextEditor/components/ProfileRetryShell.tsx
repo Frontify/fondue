@@ -29,6 +29,7 @@ export const ProfileRetryShell = ({
     const { t } = codecContext(locale, enUS);
     const messageRef = useRef<HTMLParagraphElement>(null);
     const overlayRef = useRef<HTMLDivElement>(null);
+
     // The busy shell was announced as loading, so focus carries the failure, unless the author was elsewhere.
     useEffect(() => {
         const { activeElement, body } = window.document;

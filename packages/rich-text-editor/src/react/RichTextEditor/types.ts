@@ -31,9 +31,12 @@ import { type PluginOverlay } from './hooks/usePluginHosts';
 import { type Choosing } from './hooks/useSessionRuntime';
 
 export type { Defined, Props };
+/** The `data-test-id` of the root when the host sets none. */
 export const DEFAULT_TEST_ID = 'fondue-rich-text-editor';
 export const NO_PRESENTATION: ReaderPresentation = { styles: [], colorTokens: [] };
+/** The `services` members whose change aborts what they started. */
 export const SERVICE_MEMBERS = ['persistence', 'recovery', 'references', 'uploads', 'assets'] as const;
+/** The key binding that moves focus to the toolbars unless the presentation sets another. */
 export const DEFAULT_TOOLBAR_SHORTCUT = 'Alt-F10';
 
 /** What one mount keeps for its whole life: a changed `definition` or `profile` needs a new mount. */
@@ -100,6 +103,7 @@ export const PART_KEYS = [
 
 export type PartProps = { readonly [K in (typeof PART_KEYS)[number]]?: Props[K] | undefined };
 
+/** What every part of the editor reads from `RichTextEditor.Root`. */
 export type RootContextValue = {
     props: PartProps;
     /** Stable, and call the host's latest callback. */
@@ -136,6 +140,7 @@ export type SessionRest = Defined & Pick<SessionProps, 'unsavedOnMount' | 'carri
 
 export type ChromeContext = ReturnType<typeof readerContext>;
 
+/** A plugin's standing overlay, with a stable key and the ref its toolbar reports through. */
 export type Standing = {
     key: string;
     component: ComponentType<{ toolbarRef: (element: HTMLElement | null) => void; covered: boolean }>;

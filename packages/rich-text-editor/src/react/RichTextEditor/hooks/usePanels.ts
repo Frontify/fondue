@@ -10,6 +10,7 @@ export const usePanels = (rootRef: RefObject<HTMLElement | null>, coordinator: M
     const [openPanel, setOpenPanel] = useState<string>();
     // The runs of the open panel's own command, which a panel that stays open hears.
     const [panelRequests, setPanelRequests] = useState(0);
+
     const openPanelRef = useRef<string>(undefined);
     const panelActionsRef = useRef({
         open: (id: string) => {
@@ -43,6 +44,7 @@ export const usePanels = (rootRef: RefObject<HTMLElement | null>, coordinator: M
             panelActionsRef.current.open(id);
         },
     });
+
     const panelState = useMemo<PanelController>(
         () => ({
             id: openPanel,

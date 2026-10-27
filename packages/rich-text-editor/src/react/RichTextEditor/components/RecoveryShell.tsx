@@ -40,6 +40,7 @@ export const RecoveryShell = ({
     const { model, readers, limits, presentation, locale, testId } = shell;
     const { t } = readerContext(locale, presentation);
     const messageRef = useRef<HTMLParagraphElement>(null);
+
     // The shell replaces the root and its polite region, so focus carries the crash to a screen reader,
     // unless the author was elsewhere: only the removed surface leaves focus on the body.
     useEffect(() => {

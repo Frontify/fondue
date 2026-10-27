@@ -28,11 +28,8 @@ export const useEscapeToSurface = (
 
         const onKeyDown = (event: globalThis.KeyboardEvent) => {
             const overlays = overlayRootRef.current;
-            if (
-                event.key !== 'Escape' ||
-                passesToBrowser(event) ||
-                (overlays !== null && overlays.childElementCount > 0)
-            ) {
+            const overlayOpen = overlays !== null && overlays.childElementCount > 0;
+            if (event.key !== 'Escape' || passesToBrowser(event) || overlayOpen) {
                 return;
             }
 

@@ -10,6 +10,7 @@ import { type MountCoordinator } from '#/bridge/session/helpers/mount';
  */
 export const useKeyboardInset = (rootRef: RefObject<HTMLElement | null>, coordinator: MountCoordinator): number => {
     const [keyboard, setKeyboard] = useState(0);
+
     useEffect(() => {
         // The window of the editor's own document, also inside an iframe; some test DOMs have no `visualViewport` at all.
         const view = rootRef.current?.ownerDocument.defaultView;

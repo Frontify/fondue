@@ -26,17 +26,21 @@ const STATE_KEYS: Readonly<Record<State, Key | null>> = {
     conflict: 'RichTextEditor_saveConflict',
     error: 'RichTextEditor_saveFailed',
 };
+
 // Each rejection names its recovery.
 const REJECTION_KEYS: Readonly<Record<Rejection, Key>> = {
     forbidden: 'RichTextEditor_saveForbidden',
     invalid: 'RichTextEditor_saveInvalid',
     'incompatible-writer': 'RichTextEditor_saveIncompatible',
 };
+
 // A change to one of these is announced.
 const ANNOUNCED: ReadonlySet<State> = new Set(['uncertain', 'offline', 'conflict', 'error']);
+
 // The `clean` after one of these is announced.
 const RECOVERING: ReadonlySet<State> = new Set(['uncertain', 'offline', 'error']);
 
+/** The text key a save state shows, `null` when it shows none: an unmanaged session or a record no save has reached. */
 export const keyOf = (status: SaveStatus, causes: SaveCauses | undefined): Key | null => {
     if (status.state === 'error' && causes !== undefined) {
         const rejection = causes.rejection();
@@ -90,7 +94,9 @@ export const announcementOf = (
     }
 
     // A settled write, a conflict or a failure ends the outage, so a later one is new.
-    if (next.state === 'clean' || next.state === 'dirty' || next.state === 'conflict' || next.state === 'error') {
+    const endsOutage =
+        next.state === 'clean' || next.state === 'dirty' || next.state === 'conflict' || next.state === 'error';
+    if (endsOutage) {
         outage = null;
     }
 

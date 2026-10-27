@@ -61,11 +61,13 @@ export const useChrome = (sources: ChromeSources) => {
     useClientLayoutEffect(() => {
         langRef.current = shownLang;
     });
+
     // Chrome reads the newest presentation and locale with no view rebuild.
     const chromeContext = useMemo(() => readerContext(locale, presentation), [locale, presentation]);
     useClientLayoutEffect(() => {
         tRef.current = chromeContext.t;
     });
+
     // A host that renders a new presentation object on each change must not hand plugin UI a new API each time.
     const hostsT = useMemo(() => codecContext(locale, enUS).t, [locale]);
     // The session keeps `hosts`, whose identity must hold; plugin UI reads this one, which follows the locale.
@@ -99,6 +101,7 @@ export const useChrome = (sources: ChromeSources) => {
         () => turnIntoChoices(pluginsOf(mounted.definition), chromeContext.t, lang),
         [mounted.definition, chromeContext, lang],
     );
+
     // The plugins' standing overlays, each with a stable key and a stable ref for its toolbar.
     const standing = useMemo(() => {
         const overlays = plugins.flatMap((plugin) =>

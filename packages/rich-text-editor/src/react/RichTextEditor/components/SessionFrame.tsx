@@ -44,6 +44,7 @@ const FileChooser = ({
             const choosing = choosingRef.current;
             choosingRef.current = undefined;
             event.currentTarget.value = '';
+
             const { runtime } = coordinator;
             const current = runtime?.handle.getSummary().session;
             // Files chosen for a document that was replaced since go nowhere.

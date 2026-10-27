@@ -20,8 +20,9 @@ export const pickAsset = (
     options: { nodeId?: string; removed: (kind: 'target' | 'image') => void },
 ): void => {
     const { nodeId, removed } = options;
+    const inserting = nodeId === undefined;
     let place: { target: SelectionHandle } | { nodeId: string };
-    if (nodeId === undefined) {
+    if (inserting) {
         const captured = runtime.handle.captureTarget({ purpose: 'insert', onIntersectingEdit: 'map' });
         if (captured.status !== 'captured') {
             return;
@@ -41,11 +42,11 @@ export const pickAsset = (
     };
 
     const operation = runtime.startAsync({
-        key: nodeId === undefined ? 'media-picker' : 'upload-start',
+        key: inserting ? 'media-picker' : 'upload-start',
         service: ASSETS_SERVICE,
         featureId: IMAGE_FEATURE,
-        action: nodeId === undefined ? 'create' : 'edit',
-        command: nodeId === undefined ? INSERT_IMAGE : REPLACE_IMAGE,
+        action: inserting ? 'create' : 'edit',
+        command: inserting ? INSERT_IMAGE : REPLACE_IMAGE,
         run: ({ signal, session }) => {
             signal.addEventListener('abort', release);
 

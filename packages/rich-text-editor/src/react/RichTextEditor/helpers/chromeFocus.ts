@@ -24,8 +24,8 @@ type ChromeFocus = {
 type Stop = HTMLElement | (() => void);
 
 /**
- * Alt+F10 moves to the most specific toolbar present, a standing overlay's, node chrome, then the bubble toolbar, then the fixed toolbar,
- * and on to the next one, wrapping around; Escape in one returns to the surface with its selection.
+ * Alt+F10 moves to the most specific toolbar present, a standing overlay's, node chrome, then the bubble toolbar, then
+ * the fixed toolbar, and on to the next one, wrapping around; Escape in one returns to the surface with its selection.
  */
 export const moveChromeFocus = (
     event: KeyboardEvent<HTMLElement>,

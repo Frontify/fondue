@@ -141,6 +141,7 @@ const SessionComponent = (
         chromeContext,
     });
     const context = useRootContext(props, latestRef, mounted, coordinator, chrome);
+
     if (mounted.blocked !== undefined) {
         return <BlockedShell result={mounted.blocked} {...shell} />;
     }

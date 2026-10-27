@@ -7,6 +7,7 @@ import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 import { RootContext } from '../helpers/rootContext';
 import { type Chrome, type Mounted, PART_KEYS, type PartProps, type Props, type RootContextValue } from '../types';
 
+/** The root context a part reads, which throws when `part` renders outside `RichTextEditor.Root`. */
 export const useRoot = (part: string): RootContextValue => {
     const context = useContext(RootContext);
     if (context === null) {

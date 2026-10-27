@@ -39,6 +39,7 @@ export const showColumns = (
     let shown: Columns | undefined;
     let waiting = false;
     let disposed = false;
+
     const clear = () => {
         surface.removeAttribute('data-rte-columns');
         surface.removeAttribute('data-rte-columns-fit');
@@ -98,7 +99,11 @@ export const showColumns = (
 
     return {
         update: (count, gap) => {
-            wanted = count === undefined || gap === undefined ? undefined : { count, gap };
+            wanted = undefined;
+            if (count !== undefined && gap !== undefined) {
+                wanted = { count, gap };
+            }
+
             schedule();
         },
         dispose: () => {

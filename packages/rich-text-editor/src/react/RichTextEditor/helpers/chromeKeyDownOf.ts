@@ -35,10 +35,12 @@ export const chromeKeyDownOf =
             showBubble = showBubbleRef.current;
         }
 
+        const overlayToolbar = overlayToolbarsRef.current.find((element) => element?.isConnected === true) ?? null;
+
         moveChromeFocus(event, {
             runtime: coordinator.runtime,
             toolbar,
-            overlayToolbar: overlayToolbarsRef.current.find((element) => element?.isConnected === true) ?? null,
+            overlayToolbar,
             bubble: bubbleRef.current,
             showBubble,
             shortcut: toolbarShortcutOf(props),

@@ -12,6 +12,7 @@ type Attached = {
 // One `style` element per stylesheet text and document, which every editor that shows it shares.
 const sheets = new WeakMap<Document, Map<string, Attached>>();
 
+/** Shows `css` in `owner` and returns the call that stops showing it; the last one out removes the element. */
 const attach = (owner: Document, css: string) => {
     let byText = sheets.get(owner);
     if (byText === undefined) {

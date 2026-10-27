@@ -45,10 +45,13 @@ type HostSources = {
 export const usePluginHosts = (sources: HostSources) => {
     const [pluginOverlay, setPluginOverlay] = useState<PluginOverlay>();
     const pluginOverlayRef = useRef<PluginOverlay>(undefined);
+
     const [hosts] = useState<EditorHosts>(() => {
         const { coordinator, scope, announcer, panels, openPanel } = sources;
+
         const port = () => coordinator.runtime;
         const anchor = (target: AnchorTarget) => anchorOf(port, target);
+
         let opened = 0;
         const showOverlay = (next: PluginOverlay | undefined) => {
             pluginOverlayRef.current = next;
@@ -74,6 +77,7 @@ export const usePluginHosts = (sources: HostSources) => {
                                 { query, resourceTypes: [...resourceTypes], cursor },
                                 { signal, session },
                             );
+
                             // The session checks the host's page as untrusted input.
                             const kept = referenceValues(page, resourceTypes, runtime.limits.maxAttributeLength);
                             if (kept === undefined) {

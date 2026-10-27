@@ -24,14 +24,17 @@ export const usePresentationSync = (
     useClientLayoutEffect(() => {
         handleRef.current?.setMode(mode);
     }, [mode]);
+
     const disabled = props.disabled === true;
     useClientLayoutEffect(() => {
         coordinator.runtime?.setDisabled(disabled);
     }, [coordinator, disabled]);
+
     const listLevels = props.presentation?.listLevels;
     useClientLayoutEffect(() => {
         coordinator.chrome.setListLevels(listLevels);
     }, [coordinator, listLevels]);
+
     // Without a presentation no style map is given, so no stored style is unknown.
     const recipes = props.presentation?.styles;
     const colorTokens = props.presentation?.colorTokens;
@@ -48,15 +51,20 @@ export const usePresentationSync = (
             onUnknown: (path) => coordinator.runtime?.report(unknownStyle(path)),
         });
     }, [coordinator, recipes, colorTokens]);
+
     const styleSheet = useMemo(() => styleSheetOf(recipes ?? []), [recipes]);
     useRecipeSheet(rootRef, styleSheet);
 };
 
-/** Aborts what a changed `services` member started, and says in development builds that a changed `definition`, `profile` or `defaultValue` replaces nothing. */
+/**
+ * Aborts what a changed `services` member started, and says in development builds that a changed `definition`,
+ * `profile` or `defaultValue` replaces nothing.
+ */
 export const useChangeWatch = (props: Defined, mounted: Mounted, coordinator: MountCoordinator) => {
     // A changed `services` member aborts the operations it started, with no rebuild.
     const { services } = props;
     const servicesRef = useRef(services);
+
     useEffect(() => {
         const previous = servicesRef.current;
         servicesRef.current = services;

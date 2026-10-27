@@ -30,6 +30,7 @@ export const useColumns = (
     const [columnsFit, setColumnsFit] = useState(false);
     const breakLabel = t('RichTextEditor_columnBreak');
     const inactiveBreakLabel = t('RichTextEditor_columnBreakInactive');
+
     useClientLayoutEffect(() => {
         live?.setColumns({
             count: columnCount,
@@ -38,6 +39,7 @@ export const useColumns = (
             inactiveLabel: inactiveBreakLabel,
         });
     }, [live, columnCount, columnsFit, breakLabel, inactiveBreakLabel]);
+
     const columnsLayoutRef = useRef<ColumnsLayout | undefined>(undefined);
     useClientLayoutEffect(() => {
         const surface = surfaceOf(live);
@@ -67,6 +69,7 @@ export const useColumns = (
             layout.dispose();
         };
     }, [live]);
+
     useClientLayoutEffect(() => {
         columnsLayoutRef.current?.update(columnCount, columnGap);
     }, [live, columnCount, columnGap]);

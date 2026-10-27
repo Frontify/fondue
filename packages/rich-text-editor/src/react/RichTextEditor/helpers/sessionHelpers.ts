@@ -118,6 +118,7 @@ export const memberChanged = (previous: object | undefined, next: object | undef
     return [...names].some((name) => Reflect.get(previous, name) !== Reflect.get(next, name));
 };
 
+/** What one session mounts: the decoded document, or why it is blocked, and its language and direction. Throws without a `definition`. */
 export const mountOf = (props: Defined, loaded: LoadedDocument): Mounted => {
     const { definition, profile } = props;
     if (definition === undefined) {
@@ -128,6 +129,7 @@ export const mountOf = (props: Defined, loaded: LoadedDocument): Mounted => {
     const { result, tree } = decodeToTree(loaded.document, engine.model, { limits: definition.limits });
     const managed = memberOf(props.services, 'persistence') !== undefined;
     const unset = { lang: undefined, dir: undefined, managed };
+
     if (result.status === 'blocked') {
         return { definition, profile, decoded: undefined, blocked: result, ...unset };
     }
@@ -153,6 +155,7 @@ export const mountOf = (props: Defined, loaded: LoadedDocument): Mounted => {
     return { definition, profile, decoded, blocked: undefined, lang, dir, managed };
 };
 
+/** `readonly` when the editor is read-only or disabled, else `editable`. */
 export const modeOf = ({ readOnly, disabled }: Props) => {
     if (readOnly === true || disabled === true) {
         return 'readonly';

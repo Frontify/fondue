@@ -15,8 +15,16 @@ const TYPE_NAMES: Readonly<Record<string, string>> = {
 };
 
 /** The name of `type`, such as `PNG`, or its subtype in capitals for a type with no known name. */
-const typeName = (type: string) =>
-    TYPE_NAMES[type] ?? (type.split('/')[1] ?? type).split('+')[0]?.toUpperCase() ?? type;
+const typeName = (type: string) => {
+    const known = TYPE_NAMES[type];
+    if (known !== undefined) {
+        return known;
+    }
+
+    const subtype = type.split('/')[1] ?? type;
+
+    return subtype.split('+')[0]?.toUpperCase() ?? type;
+};
 
 const EVENT_KEYS = {
     started: 'RichTextEditor_uploadStarted',
@@ -59,9 +67,8 @@ const refusalOf = (
         });
     }
 
-    const size = new Intl.NumberFormat(lang, { style: 'unit', unit: 'megabyte', maximumFractionDigits: 1 }).format(
-        megabytes(limits.maxAssetBytes),
-    );
+    const megabyteFormat = new Intl.NumberFormat(lang, { style: 'unit', unit: 'megabyte', maximumFractionDigits: 1 });
+    const size = megabyteFormat.format(megabytes(limits.maxAssetBytes));
     const types = alternatives([...new Set(accepts.map(typeName))], lang);
 
     return t(REFUSAL_KEYS[reason], { name: isolate(name), types, size });
