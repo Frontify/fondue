@@ -4,7 +4,13 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { expect, within } from 'storybook/test';
 
-import { defineEditorPart, definePlugin, defineReactPresentation, useRichTextNodeView } from '#/entries/authoring';
+import {
+    defineEditorPart,
+    definePlugin,
+    defineReactPresentation,
+    useEditorSelection,
+    useRichTextNodeView,
+} from '#/entries/authoring';
 import {
     alignPlugin,
     type AssetPickerService,
@@ -52,7 +58,6 @@ import {
     superscriptPlugin,
     checkListPlugin,
     underlinePlugin,
-    useEditorSelection,
     useRichTextFormField,
 } from '#/index';
 import { enUS } from '#/locales/en-US';

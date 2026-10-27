@@ -24,6 +24,8 @@ export {
     useRichTextNodeView,
 } from '#/bridge/pluginApi/define';
 export { definePlugin, extendPlugin } from '#/bridge/pluginApi/definePlugin';
+export { useCommandState } from '#/bridge/pluginApi/hooks/useCommandState';
+export { useEditorSelection } from '#/bridge/pluginApi/hooks/useEditorSelection';
 export {
     type AncestorValue,
     type Announcer,
@@ -76,6 +78,13 @@ export {
     type WriteTarget,
 } from '#/bridge/pluginApi/plugin';
 export { defineReaderFeature, type ReaderContext, type ReaderNodeProps, type ReaderRenderers } from '#/reader/define';
-export type { BlockDecoration, SuggestionResult } from '#/model';
-export type { BlockDecorationSource, DecoratedBlock, SuggestionPage, SuggestionRules } from '#/model/internal';
+export type {
+    BlockDecoration,
+    BlockDecorationSource,
+    SuggestionPage,
+    SuggestionResult,
+    SuggestionRules,
+} from '#/model';
 export { defineReactPresentation } from '#/react/compile/define';
+export type { CommandId, CommandOptions } from '#/runtime/types';
+export type { StyleRecipe } from '#/react/types';

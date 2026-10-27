@@ -26,6 +26,7 @@ export {
     type AttributeDeclarations,
     type AttrsOf,
     type BlockDecoration,
+    type BlockDecorationSource,
     type CapabilityMigration,
     type CapabilityRef,
     type CodecContext,
@@ -66,7 +67,9 @@ export {
     type RichTextLocale,
     type SharedAttributeDeclaration,
     type TranslationStrings,
+    type SuggestionPage,
     type SuggestionResult,
+    type SuggestionRules,
     type ValueDeclaration,
     type ValueOf,
 } from './vocabulary/declarations';

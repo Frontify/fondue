@@ -7,13 +7,13 @@ import {
     type BlockDecoration,
     type BlockDecorationSource,
     type CommandsOfPart,
-    type DecoratedBlock,
     defineEditorPart,
     defineReactPresentation,
     type EditorCommand,
     type EditorOverlay,
     type NodePending,
     type NodeViewContext,
+    useCommandState,
 } from '#/entries/authoring';
 import {
     boldPlugin,
@@ -23,9 +23,9 @@ import {
     type EditorHandle,
     modelOf,
     RichTextEditor,
-    useCommandState,
 } from '#/index';
 import { createEmptyDocument } from '#/model';
+import { type DecoratedBlock } from '#/model/internal';
 import { core } from '#/plugins';
 import { fixtureItalic } from '#/plugins/__tests__/fixtures/features';
 import { type spotlightEditor } from '#/plugins/__tests__/fixtures/spotlight/editor';
