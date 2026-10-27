@@ -85,6 +85,7 @@ export const Listbox = ({
     testId: string;
 }) => {
     const listRef = useRef<HTMLDivElement | null>(null);
+
     useClientLayoutEffect(() => {
         // Groups wrap their options, so the options are not the list's own children.
         const option = listRef.current?.querySelectorAll('[role="option"]')[index];
@@ -92,6 +93,7 @@ export const Listbox = ({
             option.scrollIntoView({ block: 'nearest' });
         }
     }, [index, options]);
+
     const render = (option: ListboxOption, position: number) => (
         // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus -- the element that keeps focus owns the keys and names the active option.
         <div
@@ -119,6 +121,7 @@ export const Listbox = ({
             )}
         </div>
     );
+
     const children: ReactNode[] = [];
     for (let position = 0; position < options.length; position += 1) {
         const option = options[position] as ListboxOption;

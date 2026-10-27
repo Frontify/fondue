@@ -33,6 +33,7 @@ export const NodeChromeMenu = ({
 }) => {
     const container = useOverlayContainer();
     const [open, setOpen] = useState(false);
+
     // A touch toggles the menu on its release over the button, so a press that becomes a scroll changes nothing.
     const touchRef = useRef(false);
     const openAtPressRef = useRef(false);

@@ -28,6 +28,7 @@ export type PortalStore = {
 
 const EMPTY: readonly PortalEntry[] = [];
 
+/** The store of one editor's portals; listeners hear one change per microtask, and `close` ends it for good. */
 export const createPortalStore = (): PortalStore => {
     const entries = new Map<string, PortalEntry>();
     const listeners = new Set<() => void>();

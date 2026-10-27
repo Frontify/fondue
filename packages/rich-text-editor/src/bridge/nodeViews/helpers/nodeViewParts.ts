@@ -22,6 +22,7 @@ const inControl = (chrome: HTMLElement, target: Node) => {
 /** A change the view's mutation observer reports, or a selection change it reports in the same shape. */
 type ViewMutation = MutationRecord | { type: 'selection'; target: Node };
 
+/** Whether both lists have the same element tags in the same order, so a spec's attributes can sync in place. */
 export const sameTags = (a: readonly HTMLElement[], b: readonly HTMLElement[]) =>
     a.length === b.length && a.every((layer, index) => layer.tagName === b[index]?.tagName);
 
@@ -129,6 +130,7 @@ export const ignoresMutation = (
     return chrome.contains(mutation.target) || movedContent(mutation);
 };
 
+/** Whether the view should stop `event`, which came from inside the chrome and not its content, from reaching ProseMirror. */
 export const stopsEvent = ({ dom, chrome, contentDOM }: ViewDom, event: Event): boolean => {
     const { target } = event;
     if (!(target instanceof Node) || !chrome.contains(target) || contentDOM?.contains(target) === true) {

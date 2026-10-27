@@ -47,6 +47,7 @@ export const OptionsMenu = ({
 }) => {
     const api = useEditorApi();
     const [open, setOpen] = useState(true);
+
     const close = (next: boolean) => {
         if (!next) {
             setOpen(false);
@@ -64,12 +65,11 @@ export const OptionsMenu = ({
                 return;
             }
 
-            requestAnimationFrame(() =>
-                (
-                    content.querySelector<HTMLElement>('[role="menuitemradio"][aria-checked="true"]') ??
-                    content.querySelector<HTMLElement>('[role^="menuitem"]')
-                )?.focus(),
-            );
+            requestAnimationFrame(() => {
+                const checked = content.querySelector<HTMLElement>('[role="menuitemradio"][aria-checked="true"]');
+                const first = content.querySelector<HTMLElement>('[role^="menuitem"]');
+                (checked ?? first)?.focus();
+            });
         },
         [contentRef],
     );
