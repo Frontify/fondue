@@ -59,6 +59,7 @@ export type Pin = {
     calls: readonly number[];
 };
 
+/** Everything the save machine knows: its state, the write in flight, the unresolved write and the pinned checkpoints. */
 export type SaveMachine = {
     state: SaveState;
     latest: number;
@@ -122,6 +123,7 @@ type Distribute<E> = E extends unknown ? Omit<E, 'facts'> : never;
 /** An event before the transport adds its facts. */
 export type EventInput = Distribute<SaveEvent>;
 
+/** A side effect the transport runs for a transition, in the order the machine lists it. */
 export type Effect =
     | { type: 'publish' }
     | { type: 'refresh' }
@@ -142,6 +144,7 @@ export type Effect =
     | { type: 'answer'; calls: readonly number[]; result: CommitResult }
     | { type: 'answerWaiting'; result: CommitResult };
 
+/** The result of one transition. */
 export type Step = {
     state: SaveMachine;
     effects: readonly Effect[];
@@ -156,6 +159,7 @@ export type Draft = {
     facts: Facts;
 };
 
+/** The host's option `name` from the newest options, else its default. */
 export const timing = <K extends keyof Timing>(facts: Facts, name: K): Timing[K] => {
     const { options } = facts;
     if (options === undefined || options[name] === undefined) {
@@ -173,6 +177,7 @@ export const unsavedOf = (m: SaveMachine, sequence: number) =>
 export const outcomeUnknown = (m: SaveMachine) =>
     m.flight !== undefined || (m.unresolved !== undefined && (m.state === 'uncertain' || m.state === 'offline'));
 
+/** The `SaveStatus` a host reads, taken from the machine. */
 export const statusOf = (m: SaveMachine): SaveStatus => {
     let inFlightOperationId: string | null = null;
     if (m.flight !== undefined) {

@@ -82,6 +82,7 @@ export type FormatDiagnosticCode =
     | 'format.limit-exceeded'
     | 'format.duplicate-occurrence-id'
     | 'format.unsafe-url';
+/** The codes of the diagnostics the running editor reports. */
 export type RuntimeDiagnosticCode =
     | 'runtime.append-limit'
     | 'runtime.async-discarded'
@@ -186,20 +187,33 @@ export const defaultLimits: ResourceLimits = Object.freeze({
 
 /** Options for reading a stored document: the limits and the id source for migrations. */
 export type DecodeOptions = {
-    /** Defaults to `defaultLimits`; a host passes the limits the writing definition used. */
+    /**
+     * A host passes the limits the writing definition used.
+     * @default defaultLimits
+     */
     limits?: Partial<ResourceLimits>;
-    /** Creates the `nodeId`s that registered migrations add; `crypto.randomUUID` when omitted. */
+    /**
+     * Creates the `nodeId`s that registered migrations add.
+     * @default crypto.randomUUID
+     */
     generateId?: () => string;
 };
 
+/** Builds a `Diagnostic` whose `messageKey` is its code; `path` and `details` are left out when not given. */
 export const diagnostic = (
     code: DiagnosticCode,
     path: string | undefined,
     details?: JsonObject,
     severity: Diagnostic['severity'] = 'warning',
 ): Diagnostic => {
-    const base = { code, severity, messageKey: code };
-    const located = path === undefined ? base : { ...base, path };
+    let found: Diagnostic = { code, severity, messageKey: code };
+    if (path !== undefined) {
+        found = { ...found, path };
+    }
 
-    return details === undefined ? located : { ...located, details };
+    if (details !== undefined) {
+        found = { ...found, details };
+    }
+
+    return found;
 };

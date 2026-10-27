@@ -112,6 +112,7 @@ const rejected = (d: Draft, current: Flight, response: Extract<SaveResponse, { s
     d.fx.push({ type: 'measure', started: current.started, code: response.code }, { type: 'send' });
 };
 
+/** Applies the service's answer to the in-flight write; an answer for any other write is ignored. */
 export const answered = (d: Draft, { serial, response }: { serial: number; response: SaveResponse }) => {
     const { m } = d;
     const current = m.flight;
@@ -177,6 +178,7 @@ export const failed = (d: Draft, { serial, code }: { serial: number; code: 'time
     d.fx.push({ type: 'publish' }, measure, { type: 'backoff', ms: timing(facts, 'backoffMs') * 2 ** m.replays });
 };
 
+/** Answers a checkpoint call at once when saving is refused, else asks the transport to snapshot the document. */
 export const capture = (d: Draft, { call }: { call: number }) => {
     const refused = refusal(d.m);
     if (refused !== undefined) {
@@ -199,6 +201,7 @@ const join = (m: Mutable<SaveMachine>, call: number, held: Pinned) => {
     m.pinned = [...m.pinned.slice(0, -1), { ...last, calls: [...last.calls, call] }];
 };
 
+/** Pins a snapshot to a checkpoint call and sends it; the call answers at once when the session is offline. */
 export const pinned = (d: Draft, { call, stamp, document }: { call: number } & Pinned) => {
     const { m, facts } = d;
     if (m.accepted !== undefined && sameStamp(m.accepted.stamp, stamp)) {
@@ -221,6 +224,7 @@ export const pinned = (d: Draft, { call, stamp, document }: { call: number } & P
     }
 };
 
+/** Resolves a checkpoint call that outlived its timeout, leaving its pinned snapshot for the write. */
 export const callTimedOut = (d: Draft, { call }: { call: number }) => {
     const { m } = d;
     const held = leave(m, call);

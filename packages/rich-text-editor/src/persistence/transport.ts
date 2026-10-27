@@ -25,6 +25,7 @@ import {
     type SaveResponse,
 } from './types';
 
+/** What the save coordinator needs from the host and the session that it cannot read from the runtime. */
 export type SaveCoordinatorOptions = {
     /** Read at each use, so a write after a services change goes to the new service. */
     service: () => PersistenceService;
@@ -36,6 +37,7 @@ export type SaveCoordinatorOptions = {
     unsavedOnMount: boolean;
     /** The write a failed session left with an unknown outcome, which this session replays unchanged before its own. */
     carried?: SaveRequest | undefined;
+    /** Its ref and capabilities are recorded as the writer of each save. */
     model: ContentModel;
     /** Operation ids, the same source as the session id and new `nodeId`s. */
     generateId: () => string;
@@ -72,6 +74,7 @@ type Link = {
     calls: number;
 };
 
+/** The coordinator's handle on the machine: feed it events, call `commit`, and read its state and status. */
 export type Transport = {
     dispatch: (input: EventInput) => void;
     commit: (options: CommitOptions) => Promise<CommitResult>;
@@ -80,6 +83,7 @@ export type Transport = {
     status: () => SaveStatus;
 };
 
+/** What the machine may not read itself: the clock, the network and the runtime's summary. */
 const readFacts = (link: Link): Facts => {
     const summary = link.runtime.handle.getSummary();
 
@@ -106,6 +110,7 @@ const refresh = (link: Link): boolean => {
     return true;
 };
 
+/** Cancels the named timers that are running. */
 const clear = (link: Link, timers: readonly Timer[]) => {
     for (const timer of timers) {
         const handle = link.timers.get(timer);
@@ -304,6 +309,7 @@ const track = (link: Link, options: CommitOptions, facts: Facts, resolve: (resul
     });
 };
 
+/** Answers at once when the machine refuses, else resolves when the call's checkpoint is written or fails. */
 const commit = (link: Link, options: CommitOptions): Promise<CommitResult> => {
     const facts = readFacts(link);
     const refused = gate(link.machine, facts, options.composition);

@@ -22,6 +22,7 @@ export type FeatureInternals = {
 /** A feature as built at run time, before its phantom type brand. */
 type FeatureValue = Pick<Feature, 'id' | 'version'> & { readonly [FEATURE]?: FeatureInternals };
 
+/** Builds the frozen feature value for a declaration, with a snapshot of its options kept for compilation. */
 export const createFeature = (declaration: FeatureDeclaration, options: unknown): Feature => {
     const internals: FeatureInternals = { declaration, options: snapshot(options) };
     const value: FeatureValue = Object.freeze({

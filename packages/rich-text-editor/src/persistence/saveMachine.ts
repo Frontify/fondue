@@ -46,10 +46,13 @@ export {
 export type MachineConfig = {
     /** The loaded record's revision, `null` for a new record. */
     revision: ServerRevision | null;
+    /** Whether the changes a failed session never saved are still unsaved. */
     unsavedOnMount: boolean;
+    /** The write a failed session left with an unknown outcome, replayed first. */
     carried: SaveRequest | undefined;
 };
 
+/** The machine of a new session, `clean` unless a carried write or unsaved changes need saving. */
 export const initial = (config: MachineConfig, session: SessionToken): SaveMachine => {
     const m: Mutable<SaveMachine> = {
         state: 'clean',
@@ -136,6 +139,7 @@ const apply = <T extends SaveEvent['type']>(d: Draft, event: Of<T>) => {
     TRANSITIONS[event.type](d, event);
 };
 
+/** The machine after `event` and the effects to run, in order; `state` is not changed. */
 export const next = (state: SaveMachine, event: SaveEvent): Step => {
     const d: Draft = { m: { ...state }, fx: [], facts: event.facts };
     apply(d, event);

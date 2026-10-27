@@ -50,6 +50,7 @@ const paused = (m: SaveMachine) => m.state === 'conflict' || m.state === 'error'
 const writable = (m: SaveMachine, facts: Facts) =>
     facts.phase === 'ready' || facts.phase === 'transitioning' || (facts.phase === 'faulted' && m.pinned.length > 0);
 
+/** Asks the transport to publish the status. */
 export const publish = (d: Draft) => {
     d.fx.push({ type: 'publish' });
 };
@@ -66,6 +67,7 @@ export const parkOffline = (d: Draft) => {
     return true;
 };
 
+/** Settles to `clean`, or `dirty` when changes remain unsaved. */
 export const idle = (d: Draft) => {
     d.m.state = 'clean';
     if (unsavedOf(d.m, d.facts.sequence)) {
@@ -73,6 +75,7 @@ export const idle = (d: Draft) => {
     }
 };
 
+/** Clears the autosave timers and forgets that the longest wait is running. */
 export const stopTimers = (d: Draft) => {
     d.fx.push({ type: 'clear', timers: ['delay', 'longest'] });
     d.m.longest = false;
@@ -92,11 +95,13 @@ export const schedule = (d: Draft) => {
     }
 };
 
+/** Drops the in-flight write and its timeout; the write stays unresolved until answered. */
 export const endFlight = (d: Draft) => {
     d.fx.push({ type: 'clear', timers: ['timeout'] });
     d.m.flight = undefined;
 };
 
+/** Answers the given checkpoint calls; no effect when there are none. */
 export const answer = (d: Draft, calls: readonly number[], result: CommitResult) => {
     if (calls.length > 0) {
         d.fx.push({ type: 'answer', calls, result });
@@ -136,6 +141,7 @@ export const outcomeOf = (m: SaveMachine, stamp: DocumentStamp | undefined): 'no
     return 'not-sent';
 };
 
+/** Starts a write for `request`: opens its timeout, publishes `saving` and sends it to the service. */
 export const write = (d: Draft, request: SaveRequest) => {
     const { m, facts } = d;
     m.writes += 1;
@@ -187,6 +193,7 @@ export const send = (d: Draft) => {
     d.fx.push({ type: 'prepare', source: undefined });
 };
 
+/** Sends the unresolved write again, unchanged, unless the machine cannot write or is offline. */
 export const replay = (d: Draft) => {
     const { m, facts } = d;
     m.retrying = false;
@@ -202,6 +209,7 @@ export const replay = (d: Draft) => {
     write(d, m.unresolved);
 };
 
+/** Resumes writing once the network is back, replaying an unresolved write first. */
 export const online = (d: Draft) => {
     const { m, facts } = d;
     if (m.ended || m.state !== 'offline') {
@@ -222,6 +230,7 @@ export const online = (d: Draft) => {
     d.fx.push({ type: 'send' });
 };
 
+/** Sends the unresolved in-flight write to the new service, which makes the old service's answer void. */
 export const serviceChanged = (d: Draft) => {
     const { m, facts } = d;
     if (m.flight === undefined || m.unresolved === undefined) {
@@ -241,6 +250,7 @@ export const serviceChanged = (d: Draft) => {
     write(d, m.unresolved);
 };
 
+/** Ends the old generation for a document replacement: answers its calls and loads the next record. */
 export const replaced = (
     d: Draft,
     { revision, previous }: { revision: ServerRevision | null; previous: DocumentStamp },
@@ -269,6 +279,7 @@ export const replaced = (
     d.fx.push({ type: 'refresh' });
 };
 
+/** Ends the machine: answers pinned calls as disposed and reports changes left unsaved. */
 export const dispose = (d: Draft) => {
     const { m } = d;
     if (m.ended) {

@@ -89,23 +89,30 @@ const decodeNamed = (name: string, semicolon: string) => {
     return legacy === undefined ? undefined : `${NAMED_REFERENCES[legacy]}${name.slice(legacy.length)}${semicolon}`;
 };
 
+/** Decodes the numeric and named character references a browser resolves in a URL, so the check sees the final text. */
 const decodeReferences = (text: string) =>
     text.replaceAll(
         /&#(x[\da-f]+|\d+);?|&([a-z\d]+)(;?)/gi,
         (match, numeric: string | undefined, name: string = '', semicolon: string = '') => {
             if (numeric !== undefined) {
-                const code =
-                    numeric.startsWith('x') || numeric.startsWith('X')
-                        ? parseInt(numeric.slice(1), 16)
-                        : Number(numeric);
+                const isHex = numeric.startsWith('x') || numeric.startsWith('X');
+                let code = Number(numeric);
+                if (isHex) {
+                    code = parseInt(numeric.slice(1), 16);
+                }
 
-                return code > 0x10ffff ? match : String.fromCodePoint(code);
+                if (code > 0x10ffff) {
+                    return match;
+                }
+
+                return String.fromCodePoint(code);
             }
 
             return decodeNamed(name, semicolon) ?? match;
         },
     );
 
+/** Decodes each run of percent escapes, keeping a run that is not valid UTF-8 as it was. */
 const decodePercent = (text: string) =>
     text.replaceAll(/(%[\da-f]{2})+/gi, (run) => {
         try {
@@ -186,6 +193,7 @@ const namesHost = (input: string, url: URL): boolean => {
     }
 };
 
+/** The failure a host's `HrefPolicy` gives for the parsed URL, or `undefined` when the policy allows it. */
 const checkPolicy = (
     input: string,
     url: URL,
