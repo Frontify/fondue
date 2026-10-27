@@ -1,5 +1,20 @@
 # @frontify/fondue
 
+## 14.0.0-beta.1
+
+### Major Changes
+
+- [`d4d4b01`](https://github.com/Frontify/fondue/commit/d4d4b011464ec8efe6f5355ae5c11eeb8f9d6fd5) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat!: remove all legacy components, including the root `@frontify/fondue` entry and the `@frontify/fondue/styles` stylesheet. Import from the subpath entries (e.g. `@frontify/fondue/components`) instead.
+
+### Minor Changes
+
+- [`a1e088f`](https://github.com/Frontify/fondue/commit/a1e088f019e10c42b338c45ba1f53d9d703dc023) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: publish `@frontify/fondue-rich-text-editor` and re-export it from `@frontify/fondue/rich-text-editor` (styles: `@frontify/fondue/rich-text-editor/styles`)
+
+### Patch Changes
+
+- Updated dependencies [[`a1e088f`](https://github.com/Frontify/fondue/commit/a1e088f019e10c42b338c45ba1f53d9d703dc023)]:
+  - @frontify/fondue-rich-text-editor@0.1.0-beta.0
+
 ## 14.0.0-beta.0
 
 ### Major Changes
