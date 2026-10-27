@@ -21,9 +21,8 @@ export const blocksApi = (source: ApiSource): Pick<DocumentApi, 'selection' | 'b
                 return true;
             }
 
-            const nodeId = typeof child.attrs.nodeId === 'string' ? child.attrs.nodeId : null;
             found.push({
-                nodeId,
+                nodeId: idOf(child),
                 attrs: valuesOf(child.attrs),
                 text: child.textContent,
                 range: rangeOf(doc, pos, pos + child.nodeSize),
@@ -150,16 +149,18 @@ export const blocksApi = (source: ApiSource): Pick<DocumentApi, 'selection' | 'b
         },
         nearest: (node, within) => {
             const type = schema.nodes[node];
+            if (type === undefined) {
+                return undefined;
+            }
+
             const state = source.state();
-            const found = type === undefined ? undefined : nearestNode(state, type, within);
+            const found = nearestNode(state, type, within);
             if (found === undefined) {
                 return undefined;
             }
 
-            const { nodeId } = found.node.attrs;
-
             return {
-                nodeId: typeof nodeId === 'string' ? nodeId : null,
+                nodeId: idOf(found.node),
                 attrs: valuesOf(found.node.attrs),
                 range: rangeOf(state.doc, found.pos, found.pos + found.node.nodeSize),
             };

@@ -63,7 +63,11 @@ const checkedPayload = (
         return { payload };
     }
 
-    const policy = command.featureId === undefined ? undefined : policyOf(model, command.featureId);
+    let policy: ReturnType<typeof policyOf>;
+    if (command.featureId !== undefined) {
+        policy = policyOf(model, command.featureId);
+    }
+
     const checked: Record<string, unknown> = { ...payload };
     for (const [name, field] of Object.entries(command.payload.fields)) {
         const value = payload[name];
@@ -143,12 +147,13 @@ const commandDocumentApi = (
         refused: () => context?.refuse?.(),
         execute: (id, given) => {
             const command = lookup(id);
-            const checked = command === undefined ? undefined : checkedPayload(command, given, model);
-            if (command === undefined || checked === undefined) {
-                return {
-                    status: 'rejected',
-                    code: command === undefined ? 'unknown-command' : 'invalid-payload',
-                };
+            if (command === undefined) {
+                return { status: 'rejected', code: 'unknown-command' };
+            }
+
+            const checked = checkedPayload(command, given, model);
+            if (checked === undefined) {
+                return { status: 'rejected', code: 'invalid-payload' };
             }
 
             const refused = session?.runtime.refusal(command, compose.state(), checked.payload);
@@ -161,7 +166,11 @@ const commandDocumentApi = (
                 return { status: 'rejected', code: 'not-allowed' };
             }
 
-            return applied ? { status: 'applied' } : NOT_APPLICABLE;
+            if (applied) {
+                return { status: 'applied' };
+            }
+
+            return NOT_APPLICABLE;
         },
         query: (id, given) => {
             const command = lookup(id);
@@ -268,7 +277,11 @@ export const pluginCommand = <A, P = never>(
     return {
         run: (state, dispatch, given, context) => {
             // A key binding passes `null` for no payload; a query straight on the engine may pass one `execute` never checked.
-            const payload = given === null && spec.payload === undefined ? undefined : given;
+            let payload = given;
+            if (given === null && spec.payload === undefined) {
+                payload = undefined;
+            }
+
             if (findInvalidPayload(spec.payload, payload) !== undefined) {
                 return false;
             }

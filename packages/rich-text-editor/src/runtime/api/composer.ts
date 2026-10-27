@@ -47,8 +47,12 @@ export const composer = (base: EditorState) => {
         /** `range` mapped through the steps made since it was read, or `undefined` when it was read before the command. */
         resolve: (range: EditorRange): Positions | undefined => {
             const read = RANGES.get(range);
-            const start = read === undefined ? undefined : seen.get(read.doc);
-            if (read === undefined || start === undefined) {
+            if (read === undefined) {
+                return undefined;
+            }
+
+            const start = seen.get(read.doc);
+            if (start === undefined) {
                 return undefined;
             }
 

@@ -53,7 +53,11 @@ export const uploadsApi = (source: ApiSource): Pick<DocumentApi, 'uploads'> => {
             retry: (nodeId) => {
                 const state = source.state();
                 const pos = positionOf(state.doc, nodeId);
-                const node = pos === undefined ? null : state.doc.nodeAt(pos);
+                if (pos === undefined) {
+                    return false;
+                }
+
+                const node = state.doc.nodeAt(pos);
                 if (node === null || node.attrs.assetId !== null || slotUploadsOf(state)?.retryable(nodeId) !== true) {
                     return false;
                 }

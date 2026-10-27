@@ -43,8 +43,16 @@ const decodingOf = (source: ApiSource) => {
             node.content = value.content.map(withPlaceholderIds);
         }
 
-        const type = typeof value.type === 'string' ? schema.nodes[value.type] : undefined;
-        const attrs = isRecord(value.attrs) ? value.attrs : {};
+        let type: NodeType | undefined;
+        if (typeof value.type === 'string') {
+            type = schema.nodes[value.type];
+        }
+
+        let attrs: Record<string, unknown> = {};
+        if (isRecord(value.attrs)) {
+            attrs = value.attrs;
+        }
+
         if (type !== undefined && hasNodeId(type.spec.attrs ?? {}) && !Object.hasOwn(attrs, 'nodeId')) {
             node.attrs = { ...attrs, nodeId: randomId() };
         }
@@ -152,8 +160,12 @@ export const writesOf = (source: ApiSource) => {
 
         const { doc } = source.state();
         const pos = positionOf(doc, target.nodeId);
-        const node = pos === undefined ? null : doc.nodeAt(pos);
-        if (pos === undefined || node === null) {
+        if (pos === undefined) {
+            return undefined;
+        }
+
+        const node = doc.nodeAt(pos);
+        if (node === null) {
             return undefined;
         }
 
@@ -219,6 +231,7 @@ export const writesOf = (source: ApiSource) => {
         };
     };
 
+    /** Replaces `span` with `nodes` and commits it, or rejects it unless the nodes fit there as given. */
     const write = (span: Positions | undefined, nodes: readonly ContentNodeJSON[]): WriteOutcome => {
         if (span === undefined) {
             return { status: 'rejected', code: 'target-invalid' };

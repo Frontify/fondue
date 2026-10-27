@@ -11,6 +11,7 @@ const forget = (d: Draft, operation: AsyncOperation) => {
     d.fx.push({ type: 'unregister', operation });
 };
 
+/** Unregisters `operation`, releases the target it captured, and leaves its pool, which then starts the next waiting one. */
 const end = (d: Draft, operation: AsyncOperation) => {
     forget(d, operation);
     if (d.m.captured.delete(operation) && operation.target !== null) {
@@ -77,6 +78,7 @@ const pump = (d: Draft, name: string) => {
     d.fx.push({ type: 'pump', name });
 };
 
+/** Decides what a result does: delivered now, held while input is composing, or discarded as stale, superseded or not ready. */
 const arrive = (d: Draft, operation: AsyncOperation, result: unknown) => {
     const { facts, m } = d;
     if (facts.disposed) {

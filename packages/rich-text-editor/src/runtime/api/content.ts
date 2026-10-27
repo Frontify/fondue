@@ -122,8 +122,7 @@ export const contentApi = (
             let transaction: Transaction | undefined;
             if ('nodeId' in target) {
                 const pos = positionOf(doc, target.nodeId);
-                const node = pos === undefined ? null : doc.nodeAt(pos);
-                if (pos === undefined || node === null) {
+                if (pos === undefined || doc.nodeAt(pos) === null) {
                     return false;
                 }
 

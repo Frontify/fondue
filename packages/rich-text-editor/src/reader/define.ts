@@ -9,9 +9,11 @@ export { type ReaderContext };
 
 /** What a reader override renders with: the node or mark's own attributes and rendered children, and the reader's context. */
 export type ReaderNodeProps = {
+    /** The attributes the node or mark carries, as the compiled model decoded them. */
     attrs: JsonObject;
     /** The node's or mark's content, already rendered. */
     children?: ReactNode;
+    /** The reader's context, such as the locale and the resolvers for assets and references. */
     context: ReaderContext;
 };
 /** Reader overrides by the name of a node or mark the feature declares, each a function component, not a `memo` or `forwardRef` object. */

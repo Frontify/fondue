@@ -91,9 +91,16 @@ export const marksApi = (source: ApiSource): Pick<DocumentApi, 'marks'> => {
                 const state = source.state();
                 if (options?.at !== undefined) {
                     const pos = source.positionAt(options.at);
-                    const run = pos === undefined ? undefined : markRunAtPos(state, pos, type);
+                    if (pos === undefined) {
+                        return undefined;
+                    }
 
-                    return run === undefined ? undefined : runValue(state.doc, run);
+                    const atRun = markRunAtPos(state, pos, type);
+                    if (atRun === undefined) {
+                        return undefined;
+                    }
+
+                    return runValue(state.doc, atRun);
                 }
 
                 const run = markRunAt(state, type);
@@ -129,14 +136,16 @@ export const marksApi = (source: ApiSource): Pick<DocumentApi, 'marks'> => {
 
                 const requested = options?.extendToMarkRange;
                 const extendToMarkRange = requested ?? false;
-                const text = options?.text === undefined ? {} : { text: options.text };
+                let text = {};
+                if (options?.text !== undefined) {
+                    text = { text: options.text };
+                }
 
                 return editWith(EDITS.setMark, { mark, extendToMarkRange }, [mark], attrs, true, text);
             },
             remove: (marks, options) => {
-                const installed = (typeof marks === 'string' ? [marks] : [...marks]).filter(
-                    (mark) => markType(mark) !== undefined,
-                );
+                const named = typeof marks === 'string' ? [marks] : [...marks];
+                const installed = named.filter((mark) => markType(mark) !== undefined);
                 if (installed.length === 0) {
                     return false;
                 }
