@@ -52,8 +52,13 @@ export const getFocusFallback = (
     const previousVisibleIds = getVisibleIds(previousItems);
     const focusedIndex = previousVisibleIds.indexOf(focusedId);
     const isVisible = (id: string) => visibleIds.has(id);
-    return (
-        previousVisibleIds.slice(focusedIndex + 1).find(isVisible) ??
-        previousVisibleIds.slice(0, Math.max(focusedIndex, 0)).reverse().find(isVisible)
-    );
+    const nextVisibleId = previousVisibleIds.slice(focusedIndex + 1).find(isVisible);
+    if (nextVisibleId !== undefined) {
+        return nextVisibleId;
+    }
+
+    // `-1` means the focused row was not in the previous list. `slice(0, -1)` would
+    // keep every row except the last and treat it as a neighbour.
+    const rowsBeforeFocused = previousVisibleIds.slice(0, Math.max(focusedIndex, 0));
+    return rowsBeforeFocused.reverse().find(isVisible);
 };
