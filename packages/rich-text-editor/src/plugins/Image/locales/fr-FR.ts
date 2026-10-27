@@ -1,0 +1,46 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { type PluginStrings } from '#/locales/types';
+
+import type en from './en-US';
+
+export default {
+    RichTextEditor_imageAlign: 'Alignement\u00A0: ${side}',
+    RichTextEditor_imageAlignCenter: 'Centre',
+    RichTextEditor_imageAlignLeft: 'Gauche',
+    RichTextEditor_imageAlignRight: 'Droite',
+    RichTextEditor_imageAltAdd: 'Ajouter un texte alternatif',
+    RichTextEditor_imageAltChoice: 'Cette image est',
+    RichTextEditor_imageAltDecorative: 'Décorative',
+    RichTextEditor_imageAltDecorativeHint: 'Elle n’apporte aucune information, les lecteurs d’écran l’ignorent donc.',
+    RichTextEditor_imageAltField: 'Texte alternatif',
+    RichTextEditor_imageAltKeep: 'Conserver le texte alternatif',
+    RichTextEditor_imageAltMeaningful: 'Porteuse de sens',
+    RichTextEditor_imageAltMeaningfulHint:
+        'Elle apporte une information. Décrivez-la pour les personnes qui ne la voient pas.',
+    RichTextEditor_imageAltRequired: 'Saisissez un texte alternatif ou choisissez Décorative.',
+    RichTextEditor_imageAltReview: 'Vérifier le texte alternatif',
+    RichTextEditor_imageAltSave: 'Enregistrer',
+    RichTextEditor_imageAltSuggestion: 'Une autre utilisation de cette image est décrite ainsi\u00A0:',
+    RichTextEditor_imageAltTitle: 'Texte alternatif',
+    RichTextEditor_imageAltUseSuggestion: 'Utiliser ce texte',
+    RichTextEditor_imageChooseAgain: 'Choisir à nouveau un fichier',
+    RichTextEditor_imagePause: 'Mettre l’animation en pause',
+    RichTextEditor_imagePlay: 'Lire l’animation',
+    RichTextEditor_imageSelected: 'Image\u00A0: ${description}',
+    RichTextEditor_imageSelectedDecorative: 'Image décorative',
+    RichTextEditor_imageSelectedMissing: 'Image sans texte alternatif',
+    RichTextEditor_imageSize: 'Taille\u00A0: ${size}',
+    RichTextEditor_imageSizeOriginal: 'Taille d’origine',
+    RichTextEditor_imageSizePercent: '${percent}\u00A0%',
+    RichTextEditor_imageUnfinished: 'Le téléversement n’a pas abouti',
+    RichTextEditor_imageWidthField: 'Largeur en pourcentage de la largeur du contenu',
+    RichTextEditor_imageWidthRange: 'Saisissez un nombre entier de ${min} à ${max}.',
+    RichTextEditor_imageWidthTitle: 'Largeur de l’image',
+    RichTextEditor_uploadError: 'Le téléversement a échoué. Réessayez ou supprimez l’image.',
+    RichTextEditor_uploadPercent: '${percent}\u00A0% téléversés',
+    RichTextEditor_uploadRemove: 'Supprimer l’image',
+    RichTextEditor_uploadRunning: 'Téléversement…',
+    RichTextEditor_uploadStopped: 'Le téléversement s’est arrêté. Réessayez ou supprimez l’image.',
+    RichTextEditor_uploadWaiting: 'En attente de téléversement',
+} satisfies PluginStrings<typeof en>;

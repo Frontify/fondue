@@ -1,0 +1,45 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { type PluginStrings } from '#/locales/types';
+
+import type en from './en-US';
+
+export default {
+    RichTextEditor_imageAlign: 'Alineación: ${side}',
+    RichTextEditor_imageAlignCenter: 'Centro',
+    RichTextEditor_imageAlignLeft: 'Izquierda',
+    RichTextEditor_imageAlignRight: 'Derecha',
+    RichTextEditor_imageAltAdd: 'Añadir texto alternativo',
+    RichTextEditor_imageAltChoice: 'Esta imagen es',
+    RichTextEditor_imageAltDecorative: 'Decorativa',
+    RichTextEditor_imageAltDecorativeHint: 'No aporta información, por lo que los lectores de pantalla la omiten.',
+    RichTextEditor_imageAltField: 'Texto alternativo',
+    RichTextEditor_imageAltKeep: 'Mantener texto alternativo',
+    RichTextEditor_imageAltMeaningful: 'Significativa',
+    RichTextEditor_imageAltMeaningfulHint: 'Aporta información. Descríbela para quienes no pueden verla.',
+    RichTextEditor_imageAltRequired: 'Escribe un texto alternativo o elige Decorativa.',
+    RichTextEditor_imageAltReview: 'Revisar texto alternativo',
+    RichTextEditor_imageAltSave: 'Guardar',
+    RichTextEditor_imageAltSuggestion: 'Otro uso de esta imagen se describe como',
+    RichTextEditor_imageAltTitle: 'Texto alternativo',
+    RichTextEditor_imageAltUseSuggestion: 'Usar este texto',
+    RichTextEditor_imageChooseAgain: 'Elegir el archivo de nuevo',
+    RichTextEditor_imagePause: 'Pausar animación',
+    RichTextEditor_imagePlay: 'Reproducir animación',
+    RichTextEditor_imageSelected: 'Imagen: ${description}',
+    RichTextEditor_imageSelectedDecorative: 'Imagen decorativa',
+    RichTextEditor_imageSelectedMissing: 'Imagen sin texto alternativo',
+    RichTextEditor_imageSize: 'Tamaño: ${size}',
+    RichTextEditor_imageSizeOriginal: 'Tamaño original',
+    RichTextEditor_imageSizePercent: '${percent}\u00A0%',
+    RichTextEditor_imageUnfinished: 'La subida no ha terminado',
+    RichTextEditor_imageWidthField: 'Ancho en porcentaje del ancho del contenido',
+    RichTextEditor_imageWidthRange: 'Escribe un número entero de ${min} a ${max}.',
+    RichTextEditor_imageWidthTitle: 'Ancho de la imagen',
+    RichTextEditor_uploadError: 'La subida ha fallado. Vuelve a intentarlo o quita la imagen.',
+    RichTextEditor_uploadPercent: '${percent}\u00A0% subido',
+    RichTextEditor_uploadRemove: 'Quitar imagen',
+    RichTextEditor_uploadRunning: 'Subiendo…',
+    RichTextEditor_uploadStopped: 'La subida se ha detenido. Vuelve a intentarlo o quita la imagen.',
+    RichTextEditor_uploadWaiting: 'Esperando para subir',
+} satisfies PluginStrings<typeof en>;

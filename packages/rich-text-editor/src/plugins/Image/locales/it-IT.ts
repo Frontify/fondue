@@ -1,0 +1,45 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { type PluginStrings } from '#/locales/types';
+
+import type en from './en-US';
+
+export default {
+    RichTextEditor_imageAlign: 'Allineamento: ${side}',
+    RichTextEditor_imageAlignCenter: 'Centro',
+    RichTextEditor_imageAlignLeft: 'Sinistra',
+    RichTextEditor_imageAlignRight: 'Destra',
+    RichTextEditor_imageAltAdd: 'Aggiungi testo alternativo',
+    RichTextEditor_imageAltChoice: 'Questa immagine è',
+    RichTextEditor_imageAltDecorative: 'Decorativa',
+    RichTextEditor_imageAltDecorativeHint: 'Non aggiunge informazioni, quindi gli screen reader la saltano.',
+    RichTextEditor_imageAltField: 'Testo alternativo',
+    RichTextEditor_imageAltKeep: 'Mantieni testo alternativo',
+    RichTextEditor_imageAltMeaningful: 'Significativa',
+    RichTextEditor_imageAltMeaningfulHint: 'Trasmette informazioni. Descrivila per chi non può vederla.',
+    RichTextEditor_imageAltRequired: 'Inserisci un testo alternativo oppure scegli Decorativa.',
+    RichTextEditor_imageAltReview: 'Rivedi testo alternativo',
+    RichTextEditor_imageAltSave: 'Salva',
+    RichTextEditor_imageAltSuggestion: 'Un altro uso di questa immagine è descritto come',
+    RichTextEditor_imageAltTitle: 'Testo alternativo',
+    RichTextEditor_imageAltUseSuggestion: 'Usa questo testo',
+    RichTextEditor_imageChooseAgain: 'Scegli di nuovo il file',
+    RichTextEditor_imagePause: 'Metti in pausa l’animazione',
+    RichTextEditor_imagePlay: 'Riproduci l’animazione',
+    RichTextEditor_imageSelected: 'Immagine: ${description}',
+    RichTextEditor_imageSelectedDecorative: 'Immagine decorativa',
+    RichTextEditor_imageSelectedMissing: 'Immagine senza testo alternativo',
+    RichTextEditor_imageSize: 'Dimensione: ${size}',
+    RichTextEditor_imageSizeOriginal: 'Dimensione originale',
+    RichTextEditor_imageSizePercent: '${percent}%',
+    RichTextEditor_imageUnfinished: 'Caricamento non completato',
+    RichTextEditor_imageWidthField: 'Larghezza in percentuale della larghezza del contenuto',
+    RichTextEditor_imageWidthRange: 'Inserisci un numero intero da ${min} a ${max}.',
+    RichTextEditor_imageWidthTitle: 'Larghezza immagine',
+    RichTextEditor_uploadError: 'Il caricamento non è riuscito. Riprova oppure rimuovi l’immagine.',
+    RichTextEditor_uploadPercent: '${percent}% caricato',
+    RichTextEditor_uploadRemove: 'Rimuovi immagine',
+    RichTextEditor_uploadRunning: 'Caricamento…',
+    RichTextEditor_uploadStopped: 'Il caricamento si è interrotto. Riprova oppure rimuovi l’immagine.',
+    RichTextEditor_uploadWaiting: 'In attesa di caricamento',
+} satisfies PluginStrings<typeof en>;

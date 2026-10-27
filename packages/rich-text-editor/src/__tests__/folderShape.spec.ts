@@ -109,7 +109,7 @@ const PLUGIN_ROOT_FILES = [
     /^[A-Za-z0-9]+\.stories\.tsx$/,
 ];
 
-const PLUGIN_ROOT_FOLDERS = new Set(['components', 'hooks', 'helpers', 'styles', 'fixtures', '__tests__']);
+const PLUGIN_ROOT_FOLDERS = new Set(['components', 'hooks', 'helpers', 'styles', 'fixtures', '__tests__', 'locales']);
 
 // Each subfolder of a plugin holds files of one kind, by name; `components` files also export a component.
 const SUBFOLDER_NAMES = {

@@ -38,8 +38,13 @@ const REACHED_THROUGH_ROOT = ['/src/react/compile/define.ts', '/src/react/RichTe
 const reachesRoot = (modules: readonly string[]): boolean =>
     REACHED_THROUGH_ROOT.every((suffix) => modules.some((id) => id.endsWith(suffix)));
 
+// A plugin's string tables are data that the en-US table always held, so a module under `locales` names no plugin.
 const featureFolders = (modules: readonly string[]): string[] => [
-    ...new Set(modules.flatMap((id) => /\/src\/plugins\/([^/]+)\//.exec(id)?.[1] ?? [])),
+    ...new Set(
+        modules.flatMap((id) =>
+            /\/src\/plugins\/[^/]+\/locales\//.test(id) ? [] : (/\/src\/plugins\/([^/]+)\//.exec(id)?.[1] ?? []),
+        ),
+    ),
 ];
 
 describe('static closure of an app', () => {

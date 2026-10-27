@@ -1,0 +1,45 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { type PluginStrings } from '#/locales/types';
+
+import type en from './en-US';
+
+export default {
+    RichTextEditor_imageAlign: 'Uitlijning: ${side}',
+    RichTextEditor_imageAlignCenter: 'Midden',
+    RichTextEditor_imageAlignLeft: 'Links',
+    RichTextEditor_imageAlignRight: 'Rechts',
+    RichTextEditor_imageAltAdd: 'Alternatieve tekst toevoegen',
+    RichTextEditor_imageAltChoice: 'Deze afbeelding is',
+    RichTextEditor_imageAltDecorative: 'Decoratief',
+    RichTextEditor_imageAltDecorativeHint: 'Ze voegt geen informatie toe, dus schermlezers slaan haar over.',
+    RichTextEditor_imageAltField: 'Alternatieve tekst',
+    RichTextEditor_imageAltKeep: 'Alternatieve tekst behouden',
+    RichTextEditor_imageAltMeaningful: 'Betekenisvol',
+    RichTextEditor_imageAltMeaningfulHint: 'Ze bevat informatie. Beschrijf haar voor mensen die haar niet kunnen zien.',
+    RichTextEditor_imageAltRequired: 'Voer een alternatieve tekst in of kies Decoratief.',
+    RichTextEditor_imageAltReview: 'Alternatieve tekst controleren',
+    RichTextEditor_imageAltSave: 'Opslaan',
+    RichTextEditor_imageAltSuggestion: 'Een ander gebruik van deze afbeelding wordt beschreven als',
+    RichTextEditor_imageAltTitle: 'Alternatieve tekst',
+    RichTextEditor_imageAltUseSuggestion: 'Deze tekst gebruiken',
+    RichTextEditor_imageChooseAgain: 'Bestand opnieuw kiezen',
+    RichTextEditor_imagePause: 'Animatie pauzeren',
+    RichTextEditor_imagePlay: 'Animatie afspelen',
+    RichTextEditor_imageSelected: 'Afbeelding: ${description}',
+    RichTextEditor_imageSelectedDecorative: 'Decoratieve afbeelding',
+    RichTextEditor_imageSelectedMissing: 'Afbeelding zonder alternatieve tekst',
+    RichTextEditor_imageSize: 'Grootte: ${size}',
+    RichTextEditor_imageSizeOriginal: 'Oorspronkelijke grootte',
+    RichTextEditor_imageSizePercent: '${percent}%',
+    RichTextEditor_imageUnfinished: 'Uploaden is niet voltooid',
+    RichTextEditor_imageWidthField: 'Breedte in procent van de inhoudsbreedte',
+    RichTextEditor_imageWidthRange: 'Voer een geheel getal van ${min} tot ${max} in.',
+    RichTextEditor_imageWidthTitle: 'Breedte van de afbeelding',
+    RichTextEditor_uploadError: 'Het uploaden is mislukt. Probeer het opnieuw of verwijder de afbeelding.',
+    RichTextEditor_uploadPercent: '${percent}% geüpload',
+    RichTextEditor_uploadRemove: 'Afbeelding verwijderen',
+    RichTextEditor_uploadRunning: 'Bezig met uploaden…',
+    RichTextEditor_uploadStopped: 'Het uploaden is gestopt. Probeer het opnieuw of verwijder de afbeelding.',
+    RichTextEditor_uploadWaiting: 'Wacht op uploaden',
+} satisfies PluginStrings<typeof en>;

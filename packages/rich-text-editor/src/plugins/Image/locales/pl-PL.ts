@@ -1,0 +1,45 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { type PluginStrings } from '#/locales/types';
+
+import type en from './en-US';
+
+export default {
+    RichTextEditor_imageAlign: 'Wyrównanie: ${side}',
+    RichTextEditor_imageAlignCenter: 'Do środka',
+    RichTextEditor_imageAlignLeft: 'Do lewej',
+    RichTextEditor_imageAlignRight: 'Do prawej',
+    RichTextEditor_imageAltAdd: 'Dodaj tekst alternatywny',
+    RichTextEditor_imageAltChoice: 'Ten obraz jest',
+    RichTextEditor_imageAltDecorative: 'Dekoracyjny',
+    RichTextEditor_imageAltDecorativeHint: 'Nie wnosi informacji, więc czytniki ekranu go pomijają.',
+    RichTextEditor_imageAltField: 'Tekst alternatywny',
+    RichTextEditor_imageAltKeep: 'Zachowaj tekst alternatywny',
+    RichTextEditor_imageAltMeaningful: 'Znaczący',
+    RichTextEditor_imageAltMeaningfulHint: 'Przekazuje informacje. Opisz go dla osób, które go nie widzą.',
+    RichTextEditor_imageAltRequired: 'Wpisz tekst alternatywny lub wybierz Dekoracyjny.',
+    RichTextEditor_imageAltReview: 'Sprawdź tekst alternatywny',
+    RichTextEditor_imageAltSave: 'Zapisz',
+    RichTextEditor_imageAltSuggestion: 'Inne użycie tego obrazu ma opis',
+    RichTextEditor_imageAltTitle: 'Tekst alternatywny',
+    RichTextEditor_imageAltUseSuggestion: 'Użyj tego tekstu',
+    RichTextEditor_imageChooseAgain: 'Wybierz plik ponownie',
+    RichTextEditor_imagePause: 'Wstrzymaj animację',
+    RichTextEditor_imagePlay: 'Odtwórz animację',
+    RichTextEditor_imageSelected: 'Obraz: ${description}',
+    RichTextEditor_imageSelectedDecorative: 'Obraz dekoracyjny',
+    RichTextEditor_imageSelectedMissing: 'Obraz bez tekstu alternatywnego',
+    RichTextEditor_imageSize: 'Rozmiar: ${size}',
+    RichTextEditor_imageSizeOriginal: 'Oryginalny rozmiar',
+    RichTextEditor_imageSizePercent: '${percent}%',
+    RichTextEditor_imageUnfinished: 'Przesyłanie nie zostało ukończone',
+    RichTextEditor_imageWidthField: 'Szerokość w procentach szerokości treści',
+    RichTextEditor_imageWidthRange: 'Wpisz liczbę całkowitą od ${min} do ${max}.',
+    RichTextEditor_imageWidthTitle: 'Szerokość obrazu',
+    RichTextEditor_uploadError: 'Przesyłanie nie powiodło się. Spróbuj ponownie lub usuń obraz.',
+    RichTextEditor_uploadPercent: 'Przesłano ${percent}%',
+    RichTextEditor_uploadRemove: 'Usuń obraz',
+    RichTextEditor_uploadRunning: 'Przesyłanie…',
+    RichTextEditor_uploadStopped: 'Przesyłanie zostało zatrzymane. Spróbuj ponownie lub usuń obraz.',
+    RichTextEditor_uploadWaiting: 'Oczekiwanie na przesłanie',
+} satisfies PluginStrings<typeof en>;
