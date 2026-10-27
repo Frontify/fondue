@@ -37,6 +37,7 @@ export const connectClipboard = (runtime: EditorRuntime, session: ClipboardSessi
     sessions.set(runtime, session);
 };
 
+/** The runtime and clipboard session of `view`, or `undefined` before the editor connects them. */
 export const connectedOf = (view: EditorView) => {
     const runtime = runtimeOfView(view);
     if (runtime === undefined) {
@@ -69,6 +70,7 @@ export const contextOf = (session: ClipboardSession) => {
     return pageContext;
 };
 
+/** Tells the author, through the session's live region, the message `key` in the session's locale. */
 export const announce = (
     session: ClipboardSession,
     key: keyof TranslationStrings,
@@ -78,6 +80,7 @@ export const announce = (
     session.announce(codecContext(locale, locale).t(key, vars));
 };
 
+/** Reports a refused paste or drop to the runtime's diagnostics with its `reason`. */
 export const reject = ({ runtime }: Connected, reason: string) =>
     runtime.report(diagnostic('clipboard.paste-rejected', undefined, { reason }));
 
@@ -95,6 +98,7 @@ export const rejectsSize = (connected: Connected, payload: Payload) => {
     return true;
 };
 
+/** The paste pipeline's reads of the runtime and session for `view`. */
 export const settingsOf = (
     model: ContentModel,
     view: EditorView,

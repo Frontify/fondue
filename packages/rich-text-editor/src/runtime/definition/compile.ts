@@ -35,7 +35,11 @@ export const compileDefinition = (
         commands,
         keyHandlers,
     );
-    const plugins = extensions.length === 0 ? compiled.plugins : orderPlugins(contributions);
+    let plugins = compiled.plugins;
+    if (extensions.length > 0) {
+        plugins = orderPlugins(contributions);
+    }
+
     const inputRules = compileInputRules(features, schema, (id) => commands.get(id));
     const decorations = extensions.flatMap((extension) => extension.decorations);
     const pluginOf = (id: string) => {

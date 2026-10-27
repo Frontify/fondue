@@ -27,6 +27,7 @@ type RuleOf = {
     /** The feature that declares the rule, whose authoring policy decides whether it fires. */
     featureId: string;
 };
+/** A marker at the block start, such as `-` or `1.`, whose typing runs `command` with the marker's payload. */
 export type LineStartRule = {
     kind: 'line-start';
     marker: string;
@@ -54,6 +55,7 @@ export type MarkRule = {
     /** The declaring feature's `allowedSchemes` and `allowedHosts`, which a `url` group must also pass. */
     policy: HrefPolicy | undefined;
 } & RuleOf;
+/** A pair of delimiters around text, such as `**`, that gives the text `mark` once the closing one is typed. */
 export type MarkDelimiterRule = {
     kind: 'mark-delimiter';
     open: string;
@@ -68,6 +70,7 @@ export type TextReplaceRule = {
     /** Fires on the next typed character when it is no word character, which stays after the replacement. */
     boundary: boolean;
 } & RuleOf;
+/** Typed `"` or `'` that becomes a typographic quote. */
 export type QuotesRule = {
     kind: 'quotes';
     marker: '"' | "'";

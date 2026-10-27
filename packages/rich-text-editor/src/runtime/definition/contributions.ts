@@ -39,10 +39,9 @@ export const withInputRules = (
             .filter(({ featureId }) => featureId === feature.id)
             .flatMap((extension) => extension.inputRules);
         for (const [index, rule] of inputRules.entries()) {
-            if (
-                (rule.kind === 'mark-delimiter' || rule.kind === 'mark-rule') &&
-                schema.marks[rule.mark] === undefined
-            ) {
+            const namesMissingMark =
+                (rule.kind === 'mark-delimiter' || rule.kind === 'mark-rule') && schema.marks[rule.mark] === undefined;
+            if (namesMissingMark) {
                 throw new DefinitionError('definition.orphan-behavior', {
                     feature: feature.id,
                     path: `${pointer('inputRules', index)}/mark`,

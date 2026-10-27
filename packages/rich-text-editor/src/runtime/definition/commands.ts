@@ -7,6 +7,7 @@ import { keymapPlugin, pointer } from '#/model/internal';
 
 import { COMMAND_META, type CommandLookup, type EngineCommand, type EngineExtension, type KeymapEntry } from './types';
 
+/** `inner` under `id` and `featureId`: every transaction it dispatches carries `id` in its meta unless an outer command set one. */
 const withCommandId = (
     id: string,
     inner: EngineCommand,

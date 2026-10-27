@@ -16,6 +16,7 @@ export type SuggestionsState = {
     requests: number;
 };
 
+/** What a transaction tells the plugin: a search's answer, or the author's move, load, retry or close of the list. */
 export type SuggestionsMeta =
     | {
           kind: 'results';
@@ -29,6 +30,7 @@ export type SuggestionsMeta =
     | { kind: 'dismiss' }
     | { kind: 'close' };
 
+/** The trigger the text before the caret opens: its suggestion, the range of trigger and query, and the query. */
 export type Match = {
     suggestion: EngineSuggestion;
     from: number;

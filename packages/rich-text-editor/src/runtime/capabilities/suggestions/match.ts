@@ -71,16 +71,18 @@ export const matchAt = (state: EditorState, suggestions: readonly EngineSuggesti
             }
 
             const preceding = before.slice(0, at);
-            let startsWord =
-                (at === 0 && windowStart === 0) ||
-                (at > 0 &&
-                    (BREAK_BEFORE.test(preceding) || (rules.afterPunctuation && PUNCTUATION_BEFORE.test(preceding))));
+            let startsWord = false;
             if (rules.emptyBlock === true) {
                 startsWord =
                     at === 0 &&
                     windowStart === 0 &&
                     parent.type.name === 'paragraph' &&
                     parent.content.size === $cursor.parentOffset;
+            } else if (at === 0) {
+                startsWord = windowStart === 0;
+            } else {
+                startsWord =
+                    BREAK_BEFORE.test(preceding) || (rules.afterPunctuation && PUNCTUATION_BEFORE.test(preceding));
             }
 
             const query = before.slice(at + trigger.length);

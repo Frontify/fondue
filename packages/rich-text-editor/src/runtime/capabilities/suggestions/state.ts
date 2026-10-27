@@ -159,6 +159,7 @@ const askedAgain = (active: ActiveSuggestion, match: Match, page: string | null,
     return { ...active, from: match.from, to: match.to, status: 'loading', items, index, request, page };
 };
 
+/** The plugin state after `transaction`: the list its text opens, keeps or closes, with a new request number when a list asks the host again. */
 export const nextState = (
     transaction: Transaction,
     value: SuggestionsState,
@@ -250,5 +251,6 @@ export const showsOptions = (state: EditorState): boolean => {
     return active !== null && active.items.length > 0;
 };
 
+/** A transaction that carries `meta` for this plugin and stays out of the undo history. */
 export const withMeta = (state: EditorState, meta: SuggestionsMeta): Transaction =>
     state.tr.setMeta(key, meta).setMeta('addToHistory', false);

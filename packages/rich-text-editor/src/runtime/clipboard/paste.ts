@@ -56,6 +56,7 @@ export type PasteSettings = {
 /** A change that follows the paste as its own undo step: a Markdown conversion or a caret link. */
 export type FollowUp = (state: EditorState) => Transaction | null;
 
+/** What a paste did beyond its own insert: a follow-up step, and what the author is told was dropped or removed. */
 export type Pasted = {
     followUp?: FollowUp;
     /** Media that a slice from another context dropped. */
@@ -325,7 +326,8 @@ export const pastePayload = (
     // A URL links the selected text, or a caret paste with no usable slice inserts it linked as a second step.
     const href = hrefOf(text, markHrefPolicy(model, 'link'));
     const link = schema.marks.link;
-    if (!settings.plain && href !== undefined && link !== undefined && !refusedNames(model, policy).marks.has('link')) {
+    const linksAllowed = !settings.plain && link !== undefined && !refusedNames(model, policy).marks.has('link');
+    if (linksAllowed && href !== undefined) {
         const mark = link.create({ href });
         if (from < to && $from.sameParent(tr.doc.resolve(to)) && $from.parent.inlineContent) {
             tr.addMark(from, to, mark);
@@ -378,7 +380,9 @@ export const pastePayload = (
         );
         insert(prepared(insertable(content)));
 
-        return { droppedMedia: droppedImages, removedFormatting: removedColors > 0 || removedTables > 0 || joined };
+        const removedFormatting = removedColors > 0 || removedTables > 0 || joined;
+
+        return { droppedMedia: droppedImages, removedFormatting };
     }
 
     // Plain text, which Markdown structure converts in a second step.

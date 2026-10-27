@@ -57,6 +57,7 @@ const leadingSpaces = (line: string): number => {
     return 0;
 };
 
+/** Indents the code block lines the selection touches by two spaces, or outdents them by up to two; false outside one code block. */
 export const indentLines: CapabilityImplementation = (args) => ({
     run: (state, dispatch) => {
         const { $from, $to } = state.selection;

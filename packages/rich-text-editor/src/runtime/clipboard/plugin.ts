@@ -240,7 +240,8 @@ const drop = (model: ContentModel, intake: FileIntake, view: EditorView, event: 
     const copying = copies(view, event);
     const payload = payloadOf(data);
     // A move pastes nothing new, so only a copy or a drop from outside is checked against `maxPasteBytes`.
-    if ((dragged === undefined || copying) && rejectsSize(connected, payload)) {
+    const addsContent = dragged === undefined || copying;
+    if (addsContent && rejectsSize(connected, payload)) {
         return true;
     }
 

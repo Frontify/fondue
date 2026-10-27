@@ -189,10 +189,11 @@ export const readSlice = (
     }
 
     // Each carried island must decode as the same island, so a forged wrapper cannot plant known content.
-    if (
-        !islands.paths.every((path) => islandAt(tree, path)) ||
-        !result.diagnostics.every(({ path }) => path !== undefined && islands.paths.includes(path))
-    ) {
+    const decodeAsIslands = islands.paths.every((path) => islandAt(tree, path));
+    const warnsOnlyAtIslands = result.diagnostics.every(
+        ({ path }) => path !== undefined && islands.paths.includes(path),
+    );
+    if (!decodeAsIslands || !warnsOnlyAtIslands) {
         return undefined;
     }
 

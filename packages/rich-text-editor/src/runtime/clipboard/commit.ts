@@ -8,6 +8,7 @@ import { exceededStructure } from '#/runtime/import/limits';
 import { type Pasted } from './paste';
 import { announce, type Connected, reject } from './session';
 
+/** Carries a paste's follow-up step in its transaction meta, and marks the clipboard plugin's state. */
 export const clipboardKey = new PluginKey('rte.clipboard');
 
 /** Dispatches a paste or drop, or reports why it was refused with the document and selection unchanged. */
