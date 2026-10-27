@@ -7,7 +7,7 @@ import { type ContentChecks } from '../../capabilities/checks/contentIssues';
 import { createDomIds } from '../../dom/domIds';
 import { type EditorRuntime, type RuntimeHandle } from '../../runtime';
 import { type Actions } from '../editing/actions';
-import { type Commands } from '../editing/commands';
+import { type Commands, pluginError } from '../editing/commands';
 import { type Commit } from '../editing/commit';
 import { type HistoryService } from '../editing/history';
 import { type Prepare } from '../editing/prepare';
@@ -76,6 +76,7 @@ export const createFacade = (a: {
         attach: view.attach,
         detach: view.detach,
         report,
+        reportPluginError: (error, featureId) => report(pluginError(error, featureId)),
         captureRange: (range, captureOptions) => targets.captureRange(captureOptions, range),
         refusal: commands.refusal,
         perform: commands.perform,

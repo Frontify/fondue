@@ -21,6 +21,7 @@ const setup = () => {
     const wait = vi.fn();
     const clear = vi.fn();
     const handle = {} as never;
+    const report = vi.fn();
     const facade = createFacade({
         handle,
         definition: {} as never,
@@ -39,7 +40,7 @@ const setup = () => {
         },
         commit: { select: vi.fn() },
         prepare: { exceededLimit: vi.fn() },
-        report: vi.fn(),
+        report,
         watch: vi.fn(),
         targets: { captureRange, changeServices: vi.fn(), coordinator: { start: vi.fn() } as never },
         commands: { refusal: vi.fn(), perform: vi.fn() },
@@ -55,6 +56,7 @@ const setup = () => {
 
     return {
         facade,
+        report,
         handle,
         store,
         captureRange,
@@ -85,6 +87,18 @@ describe('createFacade', () => {
         const view = {};
         setView(view);
         expect(facade.view).toBe(view);
+    });
+
+    it('reports a plugin error with its feature and the error name, never its message', () => {
+        const { facade, report } = setup();
+        facade.reportPluginError(new RangeError('secret'), 'fixture.feature');
+        expect(report).toHaveBeenCalledWith(
+            expect.objectContaining({
+                code: 'runtime.plugin-error',
+                details: { featureId: 'fixture.feature', name: 'RangeError' },
+            }),
+        );
+        expect(JSON.stringify(report.mock.calls)).not.toContain('secret');
     });
 
     it('carries the handle and the session values as given', () => {

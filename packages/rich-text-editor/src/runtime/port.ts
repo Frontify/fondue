@@ -86,6 +86,7 @@ export type EditorPort = {
     limits: ResourceLimits;
     detach(): void;
     report(diagnostic: Diagnostic): void;
+    reportPluginError(error: unknown, featureId: string | undefined): void;
     select(target: { anchor: number; head: number; scroll?: boolean } | { node: number; scroll?: boolean }): void;
     captureRange(range: { from: number; to: number }, options: CaptureTargetOptions): CaptureResult;
     watch<T>(read: () => T, isEqual: (previous: T, next: T) => boolean, listener: (value: T) => void): Unsubscribe;

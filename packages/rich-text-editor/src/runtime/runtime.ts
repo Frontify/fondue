@@ -82,6 +82,8 @@ export type EditorRuntime = {
     /** Destroys the view synchronously; the session and its state stay. */
     detach(): void;
     report(diagnostic: Diagnostic): void;
+    /** Reports `runtime.plugin-error` for `error`, with its name and never its message, and the feature it came from. */
+    reportPluginError(error: unknown, featureId: string | undefined): void;
     /**
      * Selects the text between two positions, or the node at one, as the `src/testing` helpers name it.
      * With `scroll`, the view scrolls that selection into view, wherever focus is.
