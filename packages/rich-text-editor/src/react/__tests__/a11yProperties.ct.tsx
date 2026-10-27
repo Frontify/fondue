@@ -29,8 +29,10 @@ const typeAndSelect = async (page: Page, text: string, word: string) => {
     await page.keyboard.insertText(text);
     // An arrow pressed before the editor reads the inserted text moves from a stale caret, so wait for its document.
     await expect.poll(async () => JSON.stringify(await contentOf(page))).toContain(JSON.stringify(text));
-    for (let step = 0; step < word.length; step += 1) {
+    // Each press must extend the selection by one character before the next is sent, so a lost press fails here.
+    for (let step = 1; step <= word.length; step += 1) {
         await press(page, 'Shift+ArrowLeft');
+        await expect.poll(() => page.evaluate(() => window.getSelection()?.toString().length)).toBe(step);
     }
 
     await expect.poll(() => page.evaluate(() => window.getSelection()?.toString())).toBe(word);
