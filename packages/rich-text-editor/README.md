@@ -28,6 +28,20 @@ The editor is uncontrolled: it takes `defaultValue` once, and the host replaces 
 | Observability | Diagnostics and the counters a host can collect |
 | Limitations | Features no shipped profile installs, and defaults that may surprise a host |
 
+## Add a plugin
+
+A new shipped plugin adds these files, all inside `src/plugins/<Name>/`:
+
+- `feature.ts`: the vocabulary part.
+- `editor.ts`: the editor part.
+- `index.ts`: the plugin unit, built with `definePlugin`.
+- `locales/<locale>.ts`: its strings, one table per locale.
+- `<Name>.stories.tsx`: its stories.
+- `__tests__/`: its tests.
+- `fixtures/`: its stored documents.
+
+Then list the plugin in the two public barrels and in the profile lists that ship it. An outside plugin is smaller: the Authoring guide shows a mark in one file.
+
 ## Layers
 
 Each product folder under `src` is one layer; lint keeps the imports between them in this order.

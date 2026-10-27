@@ -4,9 +4,11 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { defineReactPresentation } from '#/entries/authoring';
 import { corePlugin, defineEditor, modelOf, RichTextEditor, strikethroughPlugin } from '#/index';
+import { enUS } from '#/locales/en-US';
 import { type ContentModel, type ContentNodeJSON } from '#/model';
 
 import { calloutPlugin } from './callout';
+import { highlightPlugin } from './highlight';
 import { strongPlugin } from './strong';
 
 const strikePlugins = [corePlugin(), strikethroughPlugin()] as const;
@@ -15,6 +17,12 @@ const calloutPlugins = [corePlugin(), calloutPlugin()] as const;
 const calloutModel = modelOf(calloutPlugins, { id: 'story.authoring-callout', version: 1 });
 const strongPlugins = [corePlugin(), strongPlugin] as const;
 const strongModel = modelOf(strongPlugins, { id: 'story.authoring-strong', version: 1 });
+const highlightPlugins = [corePlugin(), highlightPlugin()] as const;
+const highlightModel = modelOf(highlightPlugins, { id: 'story.authoring-highlight', version: 1 });
+// A host plugin cannot add to the package strings, so the host's locale holds the toolbar entry's key.
+const highlightLocale = {
+    translationStrings: { ...enUS.translationStrings, RichTextEditor_highlight: 'Highlight' },
+};
 
 const paragraph = (text: string): ContentNodeJSON => ({
     type: 'paragraph',
@@ -110,5 +118,22 @@ export const ReplacedToolbarEntry: Story = {
         definition: defineEditor({ id: 'story.authoring-strong', model: strongModel, plugins: strongPlugins }),
         presentation: defineReactPresentation({ toolbar: [['mark.bold.toggle']] }),
         defaultValue: valueOf(strongModel, ['core'], [paragraph('Select this text and press Strong.')]),
+    },
+};
+
+export const HighlightPlugin: Story = {
+    name: 'Highlight plugin in one file',
+    parameters: {
+        docs: {
+            description: {
+                story: 'The one-file mark of the guide: Mod+Shift+H, `==text==` or the Highlight button.',
+            },
+        },
+    },
+    args: {
+        definition: defineEditor({ id: 'story.authoring-highlight', model: highlightModel, plugins: highlightPlugins }),
+        presentation: defineReactPresentation({ toolbar: [['mark.highlight.toggle']] }),
+        locale: highlightLocale,
+        defaultValue: valueOf(highlightModel, ['core'], [paragraph('Select this text and press Mod+Shift+H.')]),
     },
 };

@@ -10,7 +10,47 @@ A feature has up to three parts. The vocabulary part says what a feature stores 
 
 The reader, the codecs and a server load only the vocabulary part. They never load editor code. Keep a feature's vocabulary in its own module, and import editor code only in the module that calls `defineEditorPart`.
 
-Every example on this page is an excerpt of a shipped feature or of an example module under `src/docs/authoring`, and the `Source` line names its file. A test checks that each excerpt is still in that file. The `Rich Text Editor/Authoring` stories mount three of them as a host does: the `marks.strike` plugin, a host block with a node view, and a host plugin that replaces a shipped toolbar entry.
+Every example on this page is an excerpt of a shipped feature or of an example module under `src/docs/authoring`, and the `Source` line names its file. A test checks that each excerpt is still in that file. The `Rich Text Editor/Authoring` stories mount four of them as a host does: the `marks.strike` plugin, the one-file highlight mark, a host block with a node view, and a host plugin that replaces a shipped toolbar entry.
+
+## Your first plugin: a mark in one file
+
+This is a whole plugin, a highlight mark, in one file. It declares the mark, binds a key, adds one input rule and one toolbar toggle, and builds the plugin. It imports `defineFeature` from `@frontify/fondue-rich-text-editor/model` and the other three names from `@frontify/fondue-rich-text-editor/authoring`.
+
+Source: `src/docs/authoring/highlight.ts`
+
+```ts
+/** A host mark, stored as `highlight`: `<mark>` in HTML and `==text==` in Markdown. */
+const highlight = defineFeature({
+    id: 'acme.highlight',
+    version: 1,
+    requires: [{ id: 'core', version: 1 }],
+    marks: {
+        highlight: {
+            attrs: {},
+            html: ['mark', 0],
+            parse: [{ tag: 'mark' }],
+            markdown: { open: '==', close: '==' },
+        },
+    },
+    formats: { html: 'lossless', text: 'lossy', markdown: 'lossless' },
+});
+
+/** The whole plugin: a key, a typed `==text==` and a toolbar toggle, one file because no server reads it. */
+export const highlightPlugin = definePlugin({
+    feature: highlight,
+    editor: defineEditorPart(
+        highlight,
+        toggleMark({
+            mark: 'highlight',
+            keys: ['Mod-Shift-h'],
+            inputRules: [{ id: 'highlight.equals', open: '==', close: '==' }],
+            toolbar: { labelKey: 'RichTextEditor_highlight', icon: 'IconPen' },
+        }),
+    ),
+});
+```
+
+A host adds it to the list it gives `defineEditor`, as in `plugins: [corePlugin(), highlightPlugin()]`, and passes the same list to `modelOf`. The toolbar entry names a string key, `RichTextEditor_highlight`. A host plugin cannot add to the package strings, so the host's `locale` prop holds that key: the `enUS` strings plus `RichTextEditor_highlight: 'Highlight'`. This is all a toggle mark needs. The sections below cover the rest, when a plugin needs it: nodes, attributes, overlays, readers and migrations.
 
 ## A feature folder
 

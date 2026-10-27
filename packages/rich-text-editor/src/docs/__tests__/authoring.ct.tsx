@@ -66,3 +66,25 @@ test('shows the host Strong entry in place of the shipped Bold entry, which bold
 
     await expect(surfaceOf(page).locator('strong')).toHaveText('Select this text and press Strong.');
 });
+
+test('toggles the highlight mark from Mod+Shift+H and the toolbar in the highlight plugin story', async ({
+    mount,
+    page,
+}) => {
+    await mount(<StoryProbe file={FILE} name="HighlightPlugin" />);
+    await ready(page);
+    const surface = surfaceOf(page);
+    await surface.click();
+    await page.keyboard.press('ControlOrMeta+a');
+    await page.keyboard.press('ControlOrMeta+Shift+h');
+
+    await expect(surface.locator('mark')).toHaveText('Select this text and press Mod+Shift+H.');
+
+    await page.getByRole('button', { name: 'Highlight' }).click();
+
+    await expect(surface.locator('mark')).toHaveCount(0);
+
+    await page.getByRole('button', { name: 'Highlight' }).click();
+
+    await expect(surface.locator('mark')).toHaveText('Select this text and press Mod+Shift+H.');
+});
