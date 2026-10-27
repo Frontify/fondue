@@ -13,8 +13,89 @@ import { fresh, isRetryable } from './machine';
 import { type Transport } from './transport';
 import { type Checked, type UploadPlace } from './types';
 
+/** Creates a slot per accepted file, inserts their figures at `target` and starts the uploads; returns the started names. */
+const insertSlots = (
+    { link: { host, cells }, send }: Transport,
+    accepted: readonly Checked[],
+    place: Extract<UploadPlace, { kind: 'insert' }>,
+    target: SelectionHandle,
+): readonly string[] => {
+    const { schema } = host.state();
+    const { figure, asset_image: image } = schema.nodes;
+    if (figure === undefined || image === undefined) {
+        return [];
+    }
+
+    const added = accepted.map((checked) => {
+        const cell = { slot: fresh(host.generateId(), 'insert', checked) };
+        const node = figure.create(
+            { nodeId: host.generateId() },
+            image.create({ nodeId: cell.slot.nodeId, ...slotAttrs(checked) }),
+        );
+
+        return { cell, node };
+    });
+    for (const { cell } of added) {
+        cells.set(cell.slot.nodeId, cell);
+    }
+
+    const start = { kind: 'insert', nodeIds: added.map(({ cell }) => cell.slot.nodeId) } as const;
+    const applied = host.run(
+        insertion(
+            added.map(({ node }) => node),
+            place.origin,
+            start,
+        ),
+        target,
+    );
+    for (const { cell } of added) {
+        if (applied) {
+            send(cell, false);
+        } else {
+            cells.delete(cell.slot.nodeId);
+        }
+    }
+
+    return applied ? added.map(({ cell }) => cell.slot.name) : [];
+};
+
+/** Starts a replacement upload on the image `nodeId`; returns the started names. */
+const replaceSlot = (
+    { link: { host, cells }, send }: Transport,
+    checked: Checked,
+    nodeId: string,
+): readonly string[] => {
+    const { doc } = host.state();
+    const pos = positionOf(doc, nodeId);
+    const node = pos === undefined ? null : doc.nodeAt(pos);
+    if (node === null || node.type.name !== 'asset_image') {
+        return [];
+    }
+
+    const previous: JsonObject = Object.fromEntries(
+        Object.keys(slotAttrs(checked)).map((name) => [name, node.attrs[name] as JsonObject[string]]),
+    );
+    const before = cells.get(nodeId);
+    const cell = { slot: fresh(nodeId, 'replace', checked) };
+    cells.set(nodeId, cell);
+    if (!host.run(replacement(nodeId, checked, previous), undefined)) {
+        if (before === undefined) {
+            cells.delete(nodeId);
+        } else {
+            cells.set(nodeId, before);
+        }
+
+        return [];
+    }
+
+    send(cell, false);
+
+    return [cell.slot.name];
+};
+
 /** Checks the chosen, pasted or dropped files and starts their uploads: the part of an upload before its slot exists. */
-export const createGestures = ({ link, send }: Transport) => {
+export const createGestures = (transport: Transport) => {
+    const { link, send } = transport;
     const { host, cache, cells } = link;
 
     const cacheFull = () => {
@@ -42,79 +123,6 @@ export const createGestures = ({ link, send }: Transport) => {
         }
 
         return host.allows('create') && host.allows('paste');
-    };
-
-    const insert = (
-        accepted: readonly Checked[],
-        place: Extract<UploadPlace, { kind: 'insert' }>,
-        target: SelectionHandle,
-    ): readonly string[] => {
-        const { schema } = host.state();
-        const { figure, asset_image: image } = schema.nodes;
-        if (figure === undefined || image === undefined) {
-            return [];
-        }
-
-        const added = accepted.map((checked) => {
-            const cell = { slot: fresh(host.generateId(), 'insert', checked) };
-            const node = figure.create(
-                { nodeId: host.generateId() },
-                image.create({ nodeId: cell.slot.nodeId, ...slotAttrs(checked) }),
-            );
-
-            return { cell, node };
-        });
-        for (const { cell } of added) {
-            cells.set(cell.slot.nodeId, cell);
-        }
-
-        const start = { kind: 'insert', nodeIds: added.map(({ cell }) => cell.slot.nodeId) } as const;
-        const applied = host.run(
-            insertion(
-                added.map(({ node }) => node),
-                place.origin,
-                start,
-            ),
-            target,
-        );
-        for (const { cell } of added) {
-            if (applied) {
-                send(cell, false);
-            } else {
-                cells.delete(cell.slot.nodeId);
-            }
-        }
-
-        return applied ? added.map(({ cell }) => cell.slot.name) : [];
-    };
-
-    const replace = (checked: Checked, nodeId: string): readonly string[] => {
-        const { doc } = host.state();
-        const pos = positionOf(doc, nodeId);
-        const node = pos === undefined ? null : doc.nodeAt(pos);
-        if (node === null || node.type.name !== 'asset_image') {
-            return [];
-        }
-
-        const previous: JsonObject = Object.fromEntries(
-            Object.keys(slotAttrs(checked)).map((name) => [name, node.attrs[name] as JsonObject[string]]),
-        );
-        const before = cells.get(nodeId);
-        const cell = { slot: fresh(nodeId, 'replace', checked) };
-        cells.set(nodeId, cell);
-        if (!host.run(replacement(nodeId, checked, previous), undefined)) {
-            if (before === undefined) {
-                cells.delete(nodeId);
-            } else {
-                cells.set(nodeId, before);
-            }
-
-            return [];
-        }
-
-        send(cell, false);
-
-        return [cell.slot.name];
     };
 
     /** Checks `files` and starts their uploads at `place`, once their headers are read. */
@@ -147,9 +155,9 @@ export const createGestures = ({ link, send }: Transport) => {
             let started: readonly string[] = [];
             if (accepted.length > 0 && admits(place)) {
                 if (place.kind === 'replace') {
-                    started = replace(accepted[0] as Checked, place.nodeId);
+                    started = replaceSlot(transport, accepted[0] as Checked, place.nodeId);
                 } else if (target !== undefined) {
-                    started = insert(accepted, place, target);
+                    started = insertSlots(transport, accepted, place, target);
                 }
             }
 

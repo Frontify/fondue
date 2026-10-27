@@ -8,12 +8,12 @@ import { type PanelComponentProps } from '#/bridge/pluginApi/define';
 import { type CheckedIssue, useClientLayoutEffect, useEditorApi, useEditorValue } from '#/bridge/pluginApi/plugin';
 import { type ContentIssue, ruleHelpKey, ruleNameKey } from '#/model';
 
+import { useSummaryAnnouncement } from '../hooks/useSummaryAnnouncement';
 import styles from '../styles/checks.module.scss';
 
 type Severity = ContentIssue['severity'];
 
 const EXCERPT_LENGTH = 60;
-const SUMMARY_KEY = 'content-checks-summary';
 
 const SEVERITY_KEYS = {
     error: 'RichTextEditor_checksSeverityError',
@@ -289,21 +289,7 @@ export const IssuesPanel = ({ t, requested, close }: PanelComponentProps) => {
     ].join(' ');
     const reportedRuns = checks?.runs;
     const runs = reportedRuns ?? 0;
-    useClientLayoutEffect(() => {
-        const shown = shownRef.current;
-        shownRef.current = { runs, summary };
-        const spoken = headingSpokeRef.current;
-        headingSpokeRef.current = false;
-        // The counts of the run the panel opened on, or that focus moved to, are read with the focused heading.
-        if (shown === undefined || spoken || runs <= openedRunRef.current || runs === shown.runs) {
-            return;
-        }
-
-        // A key holds the summary back until runs pause, so it never lands in the frame of a message the change set off.
-        if (summary !== shown.summary) {
-            api?.announce(summary, SUMMARY_KEY);
-        }
-    }, [runs, summary, api]);
+    useSummaryAnnouncement({ api, runs, summary, shownRef, openedRunRef, headingSpokeRef });
 
     return (
         <div role="region" aria-label={t('RichTextEditor_checks')} className={styles.panel}>
