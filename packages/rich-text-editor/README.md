@@ -31,7 +31,7 @@ src/
 │   ├── helpers/             Pure logic the components share.
 │   ├── hooks/               State and DOM wiring; useEditorHandle is the only file that loads the engine.
 │   └── engines/prosemirror/ The only code that knows ProseMirror.
-├── stories/         Storybook.
+├── stories/         Storybook stories, shown in the shared Storybook (storybook-docs/).
 ├── __tests__/       Package-level specs: rendering, HTML parity, SSR, type derivation.
 ├── documentFormat.ts  The closed document type for the shipped plugins.
 └── index.ts           The public API.
@@ -41,4 +41,4 @@ Specs for a single module sit next to it (`registry.spec.ts` beside `registry.ts
 
 ## Scripts
 
-`pnpm typecheck` · `pnpm lint` · `pnpm test` · `pnpm storybook` · `pnpm build`
+`pnpm typecheck` · `pnpm lint` · `pnpm test` · `pnpm build` — run `pnpm storybook` from the repo root for the stories.

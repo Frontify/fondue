@@ -37,6 +37,7 @@ const config: StorybookConfig = {
         '../../packages/icons/src/**/*.stories.@(ts|tsx)',
         '../../packages/components/src/**/*.stories.@(ts|tsx)',
         '../../packages/charts/src/**/*.stories.@(ts|tsx)',
+        '../../packages/rich-text-editor/src/**/*.stories.@(ts|tsx)',
     ],
     addons: [
         '@storybook/addon-links',
@@ -65,7 +66,7 @@ const config: StorybookConfig = {
         if (configType === 'DEVELOPMENT') {
             return {
                 rte: {
-                    title: 'Rich Text Editor',
+                    title: 'Legacy Rich Text Editor',
                     url: 'http://localhost:6011',
                     type: 'auto-inject',
                     expanded: true,
@@ -75,7 +76,7 @@ const config: StorybookConfig = {
 
         return {
             rte: {
-                title: 'Rich Text Editor',
+                title: 'Legacy Rich Text Editor',
                 url: `${getSubpackageURL('rte')}`,
                 expanded: true,
             },
@@ -117,7 +118,7 @@ const config: StorybookConfig = {
                 // Resolves each package's own aliases (`#/`, `#storybook/`, `@components/`).
                 tsConfigPaths({
                     root: packagesRoot,
-                    projects: ['components/tsconfig.json', 'charts/tsconfig.json'],
+                    projects: ['components/tsconfig.json', 'charts/tsconfig.json', 'rich-text-editor/tsconfig.json'],
                 }),
                 {
                     name: 'fix-mdx-file-imports',

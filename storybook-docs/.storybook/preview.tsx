@@ -105,6 +105,7 @@ const preview: Preview = {
                     'Layout',
                     'Providers',
                     'Charts',
+                    'Rich Text Editor',
                 ],
                 method: 'alphabetical',
             },

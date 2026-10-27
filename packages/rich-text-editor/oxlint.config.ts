@@ -108,7 +108,7 @@ export default defineConfig({
     options: {
         typeAware: true,
     },
-    ignorePatterns: ['dist/', 'storybook-static/', 'lint-fixtures/src/'],
+    ignorePatterns: ['dist/', 'lint-fixtures/src/'],
     /**
      * A later override's `no-restricted-imports` replaces an earlier one for the
      * same file rather than adding to it. So every override repeats each shared

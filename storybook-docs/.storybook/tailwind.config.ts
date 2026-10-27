@@ -19,6 +19,7 @@ export default {
             '../../packages/icons/src/**/*.stories.tsx',
             '../../packages/icons/.storybook/**/*.mdx',
             '../../packages/charts/src/**/*.stories.tsx',
+            '../../packages/rich-text-editor/src/**/*.stories.tsx',
             './**/*.{ts,tsx,mdx}',
             '../stories/**/*.{ts,tsx,mdx}',
         ],

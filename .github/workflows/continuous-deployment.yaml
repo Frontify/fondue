@@ -5,9 +5,6 @@ on:
     branches:
       - main
       - v14
-    paths-ignore:
-      - packages/rich-text-editor/**
-      - .changeset/rich-text-editor-*.md
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -38,6 +35,9 @@ jobs:
 
       - name: Build Fondue RTE
         run: pnpm build:rte
+
+      - name: Build Fondue Rich Text Editor
+        run: pnpm build:rich-text-editor
 
       - name: Build Fondue SDK
         run: pnpm build:sdk

@@ -55,6 +55,11 @@ const buttonClasses = (active: boolean): string =>
 const meta: Meta<typeof RichTextEditor> = {
     title: 'Rich Text Editor/Editor',
     component: RichTextEditor,
+    parameters: {
+        status: {
+            type: 'beta',
+        },
+    },
 };
 export default meta;
 
