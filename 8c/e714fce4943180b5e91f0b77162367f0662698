@@ -1,0 +1,33 @@
+packages/tokens/package.json
+  s_5b09984eb5dde7::t_99336e348929f7 42
+packages/rte/package.json
+  s_5b09984eb5dde7::t_1e4bbf9fc9d6f9 62-63
+package.json
+  s_5b09984eb5dde7::t_1e4bbf9fc9d6f9 21
+packages/sdk/package.json
+  s_5b09984eb5dde7::t_99336e348929f7 40
+packages/components/package.json
+  s_5b09984eb5dde7::t_99336e348929f7 37
+packages/charts/package.json
+  s_5b09984eb5dde7::t_99336e348929f7 33
+packages/fondue/package.json
+  s_5b09984eb5dde7::t_99336e348929f7 110
+packages/icons/package.json
+  s_5b09984eb5dde7::t_99336e348929f7 39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "8ce714fce4943180b5e91f0b77162367f0662698",
+  "prompts": {},
+  "sessions": {
+    "s_5b09984eb5dde7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "831a60b7-ea42-4d68-b3b3-6a7363ccc824",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
