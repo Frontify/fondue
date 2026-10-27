@@ -85,21 +85,25 @@ export const useHeldOverlay = (
     const runtime = useContext(SessionContext);
     const runtimeRef = useRef(runtime);
     const openerRef = useRef(opener);
+
     // A caller's inline `setOpen` is new on each render, which must not end and restart the open overlay's effect.
     const setOpenRef = useRef(setOpen);
     const targetRef = useRef(target);
+
     useClientLayoutEffect(() => {
         runtimeRef.current = runtime;
         setOpenRef.current = setOpen;
         targetRef.current = target;
         openerRef.current = opener;
     });
+
     const elementRef = useRef<HTMLDivElement | null>(null);
     const contentRef = useCallback((element: HTMLDivElement | null) => {
         elementRef.current?.removeEventListener('keydown', leaveOnTab);
         elementRef.current = element;
         element?.addEventListener('keydown', leaveOnTab);
     }, []);
+
     const [anchor] = useState(() =>
         createSelectionAnchor(
             () => {
@@ -113,6 +117,7 @@ export const useHeldOverlay = (
             () => targetRef.current,
         ),
     );
+
     const onOpenChange = useCallback(
         (next: boolean) => {
             const { kind, target } = scope.last();
@@ -129,10 +134,12 @@ export const useHeldOverlay = (
         },
         [scope],
     );
+
     const returnRef = useRef<{ target: Element | null } | undefined>(undefined);
     const returnFocusTo = useCallback((target: Element | null) => {
         returnRef.current = { target };
     }, []);
+
     useEffect(() => {
         if (!open || runtime === undefined) {
             return undefined;
@@ -164,6 +171,7 @@ export const useHeldOverlay = (
             queueMicrotask(() => refocus(runtime, target, panelControl));
         };
     }, [open, runtime, scope]);
+
     // Hides the content while its anchor is clipped; Floating UI's `hide` middleware would, but Fondue's `Flyout` and
     // `Dropdown` do not expose `hideWhenDetached`. A zero scale with no pointer input, not `visibility: hidden`, which
     // blurs a focused field, keeps focus and state inside and the content in the accessibility tree, since focus may be

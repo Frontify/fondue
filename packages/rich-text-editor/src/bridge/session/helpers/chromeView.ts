@@ -67,6 +67,7 @@ export const createChromeView = (): ChromeView => {
           }
         | undefined;
     let shown = false;
+
     // ProseMirror reads these objects on each scroll, so rewriting their fields needs no new props.
     const margin = { top: MARGIN, bottom: MARGIN, left: MARGIN, right: MARGIN };
     const threshold = { top: 0, bottom: 0, left: 0, right: 0 };

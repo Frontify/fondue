@@ -18,11 +18,14 @@ export const useSessionValue = <T>(
     isEqual: (previous: T, next: T) => boolean,
 ): T => {
     useRenderMark();
+
     const runtime = useContext(SessionContext);
     const latestRef = useRef({ read, isEqual });
+
     useClientLayoutEffect(() => {
         latestRef.current = { read, isEqual };
     });
+
     const subscribe = useCallback(
         (changed: () => void) => {
             if (runtime === undefined) {
@@ -37,6 +40,7 @@ export const useSessionValue = <T>(
         },
         [runtime],
     );
+
     // An equal value keeps the object React last rendered, which `useSyncExternalStore` then compares by identity.
     const cacheRef = useRef<{ value: T } | undefined>(undefined);
     const getSnapshot = () => {

@@ -20,7 +20,7 @@ export const createReactWork = (): ReactWork => ({
     rendering: false,
 });
 
-/** `undefined` in a production build, which runs no check. */
+/** Whether `work` marks a render or effect of the editor's tree now; always false for `undefined`, as in a production build. */
 export const inReactWork = (work: ReactWork | undefined): boolean =>
     work !== undefined && (work.phase || work.rendering);
 

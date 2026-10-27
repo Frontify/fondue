@@ -37,6 +37,7 @@ export const lazyPart = <P extends object>(
     };
 
     loaders.push(start);
+
     const Part = (props: P) => {
         const session = useContext(SessionContext);
         // A function in state would be called as an updater, so the component sits in an object.
@@ -47,6 +48,7 @@ export const lazyPart = <P extends object>(
 
             return { Loaded: loaded };
         });
+
         useEffect(() => {
             if (part !== undefined) {
                 return undefined;
@@ -72,6 +74,7 @@ export const lazyPart = <P extends object>(
                 mounted = false;
             };
         }, [part, session]);
+
         if (part === undefined) {
             return null;
         }

@@ -368,6 +368,7 @@ type CheckedSpec<Parts extends EditorPartSpec<N>, N extends EditorFacet> = Parts
     commands?: PayloadMatched<NoInfer<NonNullable<Parts['commands']>>>;
 };
 
+/** The parts of an editor part as a function of its feature's resolved options. */
 export type SpecOfOptions = (options: JsonObject) => EditorPartSpec;
 
 // An own enumerable symbol property, so a spread copy of the plugin keeps its option-dependent parts.
@@ -385,7 +386,13 @@ export const defineEditorPart = <
     feature: Feature<object, object, object, Id> | ((options?: never) => Feature<object, object, object, Id>),
     parts: CheckedSpec<Parts, N> | ((options: JsonObject) => CheckedSpec<Parts, N>),
 ): EditorPart<Id, PayloadsOf<NonNullable<Parts['commands']>>> => {
-    const { id } = typeof feature === 'function' ? feature() : feature;
+    let resolved = feature;
+    if (typeof resolved === 'function') {
+        resolved = resolved();
+    }
+
+    const { id } = resolved;
+
     if (typeof parts === 'function') {
         const specOfOptions: SpecOfOptions = Object.freeze((options: JsonObject) => parts(options));
         const plugin: EditorPart = Object.freeze({ feature: id, [OPTION_PARTS]: specOfOptions });

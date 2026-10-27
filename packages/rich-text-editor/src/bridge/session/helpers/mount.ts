@@ -20,7 +20,9 @@ export type MountCoordinator = {
 export const createMountCoordinator = (): MountCoordinator => {
     let surface: HTMLElement | null = null;
     let current: EditorPort | undefined;
+
     const chrome = createChromeView();
+
     const attach = (port: EditorPort, element: HTMLElement) => {
         const runtime = engineOf(port);
         runtime.attach(element, chrome.props(element, runtime.nodeViews, runtime.nextDomId));

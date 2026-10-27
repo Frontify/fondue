@@ -124,6 +124,7 @@ export const createSelectionAnchor = (
     // The held rectangle's offset from the surface, which scrolls and resizes with it.
     let held: { x: number; y: number; width: number; height: number } | undefined;
     let read = false;
+
     const anchorRect = (current: SurfaceView): DOMRect => {
         const targeted = targetRect(current, target?.());
 
@@ -193,8 +194,11 @@ export const anchorOf = (port: () => EditorPort | undefined, target: AnchorTarge
     if (typeof target === 'function') {
         return createRangeAnchor(view, () => {
             const range = target();
+            if (range === undefined) {
+                return undefined;
+            }
 
-            return range === undefined ? undefined : positionsOf(range);
+            return positionsOf(range);
         });
     }
 
