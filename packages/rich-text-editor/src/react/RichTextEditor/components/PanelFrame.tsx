@@ -69,6 +69,7 @@ const PanelFallback = ({
 }) => {
     const buttonRef = useRef<HTMLButtonElement>(null);
     const announce = useAnnounce();
+
     useClientLayoutEffect(() => {
         buttonRef.current?.focus();
         announce(message);
@@ -101,6 +102,7 @@ export const PanelFrame = ({
     onClose: () => void;
 }) => {
     const slotRef = useRef<HTMLDivElement>(null);
+
     // Runs after the panel's own layout effects, so a panel that focused itself keeps that focus.
     useClientLayoutEffect(() => {
         const node = slotRef.current;
@@ -110,6 +112,7 @@ export const PanelFrame = ({
 
         node.querySelector<HTMLElement>(TABBABLE)?.focus();
     }, [id]);
+
     useClientLayoutEffect(() => {
         const node = slotRef.current;
         const view = node?.ownerDocument.defaultView;

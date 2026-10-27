@@ -73,6 +73,7 @@ export const Surface = () => {
     const contentClassName = presentation?.contentClassName;
     const strikeCheckedTasks = presentation?.strikeCheckedTasks === true;
     const theme = useFondueTheme();
+
     // The document's language and direction, else the theme's, while the chrome keeps its own.
     let lang = mounted.lang ?? theme.lang;
     if (lang === undefined) {
@@ -85,6 +86,7 @@ export const Surface = () => {
     const describedBy = [props['aria-describedby'], hint === undefined ? undefined : hintId].filter(
         (id) => id !== undefined,
     );
+
     // React writes the first classes only: ProseMirror adds its own to this element with `classList`, which a rewritten attribute would drop.
     const [className] = useState(() => contentClasses(contentClassName));
     const surfaceRef = useRef<HTMLElement | null>(null);
@@ -95,6 +97,7 @@ export const Surface = () => {
         },
         [coordinator],
     );
+
     // A later host class swaps in with `classList`, as ProseMirror's own class changes do.
     useClientLayoutEffect(() => {
         const surface = surfaceRef.current;
@@ -107,6 +110,7 @@ export const Surface = () => {
 
         return () => surface.classList.remove(...names);
     }, [contentClassName]);
+
     // A document that is not empty shows no placeholder; before the session is ready the container is empty, as on the server.
     let shownPlaceholder = placeholder;
     if (useSessionValue(emptiness, Object.is) === false) {
@@ -165,6 +169,7 @@ export const Toolbar = () => {
     const { disabled = false, 'data-test-id': testId = DEFAULT_TEST_ID } = props;
     const { items, menu, strings, labels, surfaceId, toolbarRef, mode, setMode, keyboard } = chrome;
     const focus = useScopedFocus();
+
     // A focused editor on a touch device docks its toolbar above the on-screen keyboard.
     let docked: number | undefined;
     if (keyboard > 0 && focus !== null && !disabled) {
@@ -199,6 +204,7 @@ export const Toolbar = () => {
             coordinator.chrome.setDockedInset(0);
         };
     }, [toolbarRef, coordinator, shown, docked]);
+
     if (!shown || surfaceId === undefined) {
         return null;
     }
@@ -233,6 +239,7 @@ export const Bubble = () => {
                 .map((item, index) => ({ ...item, groupStart: index > 0 && item.groupStart })),
         [items],
     );
+
     // A request to open the toolbar made before its chunk loads waits here and runs once the loaded toolbar registers.
     const loadedShowRef = useRef<(() => void) | null>(null);
     const requestedRef = useRef(false);
@@ -271,6 +278,7 @@ export const Bubble = () => {
             requestedRef.current = false;
         };
     }, [mode, showBubbleRef]);
+
     let more: BubbleMore | undefined;
     let showRef: typeof showBubbleRef | undefined;
     if (mode === 'bubble') {
@@ -335,6 +343,7 @@ export const Panels = () => {
     const declaration = id === undefined ? undefined : panelsOf(mounted.definition).get(id);
     const Panel = declaration?.component;
     const { 'data-test-id': testId = DEFAULT_TEST_ID } = props;
+
     if (panels === null || id === undefined || Panel === undefined) {
         return null;
     }

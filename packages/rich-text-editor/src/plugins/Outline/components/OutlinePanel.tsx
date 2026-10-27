@@ -47,6 +47,7 @@ export const OutlinePanel = ({ t }: PanelComponentProps) => {
     const api = useEditorApi();
     const navRef = useRef<HTMLElement>(null);
     const [entries, setEntries] = useState(() => headingsOf(api));
+
     useClientLayoutEffect(() => {
         const nav = navRef.current;
         const button = nav?.querySelector('button');
