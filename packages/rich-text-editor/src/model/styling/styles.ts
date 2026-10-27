@@ -192,6 +192,7 @@ const entriesOf = (recipe: object): [string, string, string][] => {
 const declarationsOf = (recipe: object): [string, string][] =>
     entriesOf(recipe).map(([, property, text]) => [property, text]);
 
+/** A recipe's class and checked declarations; a link recipe that draws no box gains an underline. */
 const resolved = (recipe: StyleRecipe, link: boolean): ResolvedStyle => {
     const entries = entriesOf(recipe);
     let declarations = entries.map(([, property, text]): [string, string] => [property, text]);
@@ -218,6 +219,7 @@ const resolved = (recipe: StyleRecipe, link: boolean): ResolvedStyle => {
 export const isPresentationStyle = (style: unknown): style is PresentationStyle =>
     isRecord(style) && typeof style.id === 'string' && Array.isArray(style.appliesTo) && isRecord(style.recipe);
 
+/** The style `id` when the styles hold it and it is not deprecated. */
 const usable = (styles: readonly PresentationStyle[], id: string): PresentationStyle | undefined =>
     styles.find((style) => isPresentationStyle(style) && style.id === id && style.deprecated !== true);
 

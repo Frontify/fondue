@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+/** A colour as channels from 0 to 255 and an alpha from 0 to 1. */
 export type Rgba = {
     red: number;
     green: number;
@@ -7,6 +8,7 @@ export type Rgba = {
     alpha: number;
 };
 
+/** A number, or a percentage of `scale`, clamped to 0 through `scale`; `undefined` when it is not a number. */
 const channelOf = (part: string, scale: number): number | undefined => {
     const percent = part.endsWith('%');
     const value = Number.parseFloat(percent ? part.slice(0, -1) : part);
@@ -70,6 +72,7 @@ export const composite = (top: Rgba, bottom: Rgba): Rgba => {
     };
 };
 
+/** The WCAG relative luminance of an opaque colour, from 0 to 1. */
 const luminance = ({ red, green, blue }: Rgba) => {
     const linear = (channel: number) => {
         const value = channel / 255;
@@ -80,6 +83,7 @@ const luminance = ({ red, green, blue }: Rgba) => {
     return 0.2126 * linear(red) + 0.7152 * linear(green) + 0.0722 * linear(blue);
 };
 
+/** The WCAG contrast ratio of two opaque colours, from 1 up, whichever is lighter. */
 export const contrastOf = (a: Rgba, b: Rgba) => {
     const [light, dark] = [luminance(a), luminance(b)].sort((x, y) => y - x) as [number, number];
 

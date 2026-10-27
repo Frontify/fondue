@@ -135,8 +135,10 @@ export const hexColor = (text: string): string | undefined => {
     }
 
     const [, name = '', inner = ''] = call;
+
     const [channels = '', alphaText] = inner.split('/').map((part) => part.trim());
     const parts = channels.split(/[\s,]+/).filter((part) => part !== '');
+
     let alphaPart = alphaText;
     if (parts.length === 4 && alphaPart === undefined) {
         alphaPart = parts.pop();

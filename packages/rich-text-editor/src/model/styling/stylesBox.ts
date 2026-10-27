@@ -73,6 +73,7 @@ const lineOf = (shorthand: unknown): Line => {
     return line;
 };
 
+/** A number or string recipe value as trimmed lowercase text; `undefined` for any other. */
 const textOf = (value: unknown): string | undefined => {
     if (typeof value === 'number') {
         return String(value);
