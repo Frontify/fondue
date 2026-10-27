@@ -41,6 +41,24 @@ const externalizeJsDeps = (): Plugin => ({
     },
 });
 
+const ENTRIES = {
+    index: './src/index.ts',
+    'model/index': './src/model/index.ts',
+    'features/index': './src/plugins/index.ts',
+    'entries/reader': './src/entries/reader.ts',
+    'entries/authoring': './src/entries/authoring.ts',
+    'codecs/index': './src/codecs/index.ts',
+    'html/index': './src/runtime/import/fromHtml.ts',
+    'testing/index': './src/testing/index.ts',
+};
+
+// The `./html` and `./features` exports keep their declaration paths while their sources live in runtime/import and
+// plugins, so each gets a re-export at its published path when its entry is built.
+const DECLARATION_SHIMS = [
+    { entry: 'html/index', source: 'runtime/import/fromHtml' },
+    { entry: 'features/index', source: 'plugins/index' },
+];
+
 export default defineConfig({
     plugins: [
         tsConfigPaths(),
@@ -54,44 +72,29 @@ export default defineConfig({
                 'src/react/examples/**',
                 'src/docs/**',
             ],
-            // The `./html` and `./features` exports keep their declaration paths while the sources live in
-            // runtime/import and plugins.
             afterBuild: (emittedFiles) => {
-                const suffix = '/runtime/import/fromHtml.d.ts';
-                const source = [...emittedFiles.keys()].find((file) => file.endsWith(suffix));
-                if (source === undefined) {
-                    throw new Error(`The build emitted no ${suffix}.`);
+                for (const { entry, source } of DECLARATION_SHIMS) {
+                    if (!Object.hasOwn(ENTRIES, entry)) {
+                        continue;
+                    }
+
+                    const suffix = `/${source}.d.ts`;
+                    const emitted = [...emittedFiles.keys()].find((file) => file.endsWith(suffix));
+                    if (emitted === undefined) {
+                        throw new Error(`The build emitted no ${suffix}.`);
+                    }
+
+                    const target = `${emitted.slice(0, -suffix.length)}/${entry}.d.ts`;
+                    mkdirSync(dirname(target), { recursive: true });
+                    writeFileSync(target, `export * from '../${source}';\n`);
                 }
-
-                const entry = `${source.slice(0, -suffix.length)}/html/index.d.ts`;
-                mkdirSync(dirname(entry), { recursive: true });
-                writeFileSync(entry, "export * from '../runtime/import/fromHtml';\n");
-
-                const pluginsSuffix = '/plugins/index.d.ts';
-                const plugins = [...emittedFiles.keys()].find((file) => file.endsWith(pluginsSuffix));
-                if (plugins === undefined) {
-                    throw new Error(`The build emitted no ${pluginsSuffix}.`);
-                }
-
-                const features = `${plugins.slice(0, -pluginsSuffix.length)}/features/index.d.ts`;
-                mkdirSync(dirname(features), { recursive: true });
-                writeFileSync(features, "export * from '../plugins/index';\n");
             },
         }),
         externalizeJsDeps(),
     ],
     build: {
         lib: {
-            entry: {
-                index: './src/index.ts',
-                'model/index': './src/model/index.ts',
-                'features/index': './src/plugins/index.ts',
-                'entries/reader': './src/entries/reader.ts',
-                'entries/authoring': './src/entries/authoring.ts',
-                'codecs/index': './src/codecs/index.ts',
-                'html/index': './src/runtime/import/fromHtml.ts',
-                'testing/index': './src/testing/index.ts',
-            },
+            entry: ENTRIES,
             cssFileName: 'style',
             formats: ['es'],
         },
