@@ -20,6 +20,7 @@
         "strict": true,
         "exactOptionalPropertyTypes": true,
         "target": "ES2021",
+        "types": ["node"],
         "useDefineForClassFields": true
     },
     "include": ["src", "perf/**/*", "playwright/**/*"],
