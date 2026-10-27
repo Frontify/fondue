@@ -1,5 +1,18 @@
 # @frontify/fondue-charts
 
+## 9.0.0
+
+### Patch Changes
+
+- [#2912](https://github.com/Frontify/fondue/pull/2912) [`696aae0`](https://github.com/Frontify/fondue/commit/696aae089d9734ee119febcc80eb5b21f1caeb62) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: update happy-dom, zod and fast-uri to resolve dependabot vulnerabilities
+
+- [#2911](https://github.com/Frontify/fondue/pull/2911) [`877bd76`](https://github.com/Frontify/fondue/commit/877bd763297a281f6df8b5c01b60b3318c69d8b0) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: update storybook and vitest to resolve dependabot vulnerabilities
+
+- [#2905](https://github.com/Frontify/fondue/pull/2905) [`2605f03`](https://github.com/Frontify/fondue/commit/2605f031b7ce305eda04ed3318c7936f83b5ef3e) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: update dependencies to resolve dependabot vulnerabilities
+
+- Updated dependencies [[`2605f03`](https://github.com/Frontify/fondue/commit/2605f031b7ce305eda04ed3318c7936f83b5ef3e), [`3b8590b`](https://github.com/Frontify/fondue/commit/3b8590bc6767ba3aad5b3284fb0b811c797cd95a)]:
+  - @frontify/fondue-tokens@5.2.0
+
 ## 8.0.2
 
 ### Patch Changes

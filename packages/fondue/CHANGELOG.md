@@ -1,5 +1,31 @@
 # @frontify/fondue
 
+## 13.11.0
+
+### Minor Changes
+
+- [#2910](https://github.com/Frontify/fondue/pull/2910) [`9945481`](https://github.com/Frontify/fondue/commit/9945481e717e55afb7bfb014c676ecc1fd5fce20) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat(Card): add `Card.BannerDescription` to fade the description in over the banner on hover
+
+### Patch Changes
+
+- [#2905](https://github.com/Frontify/fondue/pull/2905) [`2605f03`](https://github.com/Frontify/fondue/commit/2605f031b7ce305eda04ed3318c7936f83b5ef3e) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: update dependencies to resolve dependabot vulnerabilities
+
+- [#2894](https://github.com/Frontify/fondue/pull/2894) [`4ebcdf2`](https://github.com/Frontify/fondue/commit/4ebcdf243182aa7af5a525632a7b72c68f3198a8) Thanks [@syeo66](https://github.com/syeo66)! - fix(TextInput): adjust 'read only' state
+
+- [#2902](https://github.com/Frontify/fondue/pull/2902) [`f36fd76`](https://github.com/Frontify/fondue/commit/f36fd76971a3f8b1c4d787bb9f0147b2778a3c6c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: point the Storybook links in the icon docs and the SDK guides to the new story ids
+
+- [#2908](https://github.com/Frontify/fondue/pull/2908) [`dc39f6e`](https://github.com/Frontify/fondue/commit/dc39f6e1f9435968afa41db4d3f1e70dd34e5fc5) Thanks [@syeo66](https://github.com/syeo66)! - refactor(Tree): stop propagation in decorators
+
+- [#2898](https://github.com/Frontify/fondue/pull/2898) [`24ca3f7`](https://github.com/Frontify/fondue/commit/24ca3f7c5c136ad843114031f41ee7ededc5b908) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix(Tree): in single-select mode, the first click on a folder selects it without toggling; clicking the selected folder or its chevron toggles it
+
+- Updated dependencies [[`9945481`](https://github.com/Frontify/fondue/commit/9945481e717e55afb7bfb014c676ecc1fd5fce20), [`696aae0`](https://github.com/Frontify/fondue/commit/696aae089d9734ee119febcc80eb5b21f1caeb62), [`877bd76`](https://github.com/Frontify/fondue/commit/877bd763297a281f6df8b5c01b60b3318c69d8b0), [`2605f03`](https://github.com/Frontify/fondue/commit/2605f031b7ce305eda04ed3318c7936f83b5ef3e), [`4ebcdf2`](https://github.com/Frontify/fondue/commit/4ebcdf243182aa7af5a525632a7b72c68f3198a8), [`f36fd76`](https://github.com/Frontify/fondue/commit/f36fd76971a3f8b1c4d787bb9f0147b2778a3c6c), [`a92f2c2`](https://github.com/Frontify/fondue/commit/a92f2c21c2507569fa7b3f0ef01fcfc430b3ddaf), [`a92f2c2`](https://github.com/Frontify/fondue/commit/a92f2c21c2507569fa7b3f0ef01fcfc430b3ddaf), [`3b8590b`](https://github.com/Frontify/fondue/commit/3b8590bc6767ba3aad5b3284fb0b811c797cd95a), [`dc39f6e`](https://github.com/Frontify/fondue/commit/dc39f6e1f9435968afa41db4d3f1e70dd34e5fc5), [`24ca3f7`](https://github.com/Frontify/fondue/commit/24ca3f7c5c136ad843114031f41ee7ededc5b908), [`1756b4f`](https://github.com/Frontify/fondue/commit/1756b4f053643139f6ab622a7df52c70ce7677c2), [`4a5ce84`](https://github.com/Frontify/fondue/commit/4a5ce8431289b1886757454db0e10ed9d9b4891e)]:
+  - @frontify/fondue-components@35.0.0
+  - @frontify/fondue-sdk@0.3.0
+  - @frontify/fondue-charts@9.0.0
+  - @frontify/fondue-rte@0.1.13
+  - @frontify/fondue-icons@0.31.0
+  - @frontify/fondue-tokens@5.2.0
+
 ## 13.10.0
 
 ### Minor Changes

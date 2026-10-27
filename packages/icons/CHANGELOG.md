@@ -1,5 +1,22 @@
 # @frontify/fondue-icons
 
+## 0.31.0
+
+### Minor Changes
+
+- [#2893](https://github.com/Frontify/fondue/pull/2893) [`1756b4f`](https://github.com/Frontify/fondue/commit/1756b4f053643139f6ab622a7df52c70ce7677c2) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - feat: update icons
+
+- [#2897](https://github.com/Frontify/fondue/pull/2897) [`4a5ce84`](https://github.com/Frontify/fondue/commit/4a5ce8431289b1886757454db0e10ed9d9b4891e) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - feat: update icons
+
+### Patch Changes
+
+- [#2905](https://github.com/Frontify/fondue/pull/2905) [`2605f03`](https://github.com/Frontify/fondue/commit/2605f031b7ce305eda04ed3318c7936f83b5ef3e) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: update dependencies to resolve dependabot vulnerabilities
+
+- [#2902](https://github.com/Frontify/fondue/pull/2902) [`f36fd76`](https://github.com/Frontify/fondue/commit/f36fd76971a3f8b1c4d787bb9f0147b2778a3c6c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: point the Storybook links in the icon docs and the SDK guides to the new story ids
+
+- Updated dependencies [[`2605f03`](https://github.com/Frontify/fondue/commit/2605f031b7ce305eda04ed3318c7936f83b5ef3e), [`3b8590b`](https://github.com/Frontify/fondue/commit/3b8590bc6767ba3aad5b3284fb0b811c797cd95a)]:
+  - @frontify/fondue-tokens@5.2.0
+
 ## 0.30.0
 
 ### Minor Changes
