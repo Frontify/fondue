@@ -6,7 +6,10 @@ import { type EditorApi, useClientLayoutEffect } from '#/bridge/pluginApi/plugin
 
 const SUMMARY_KEY = 'content-checks-summary';
 
-/** Announces the summary when a later run changes it, unless focus on the heading already read it out. */
+/**
+ * Announces the summary when a later run changes it, unless focus on the heading already read it out. The refs belong
+ * to the caller: this hook writes `shownRef` and clears `headingSpokeRef` after every commit it runs on.
+ */
 export const useSummaryAnnouncement = ({
     api,
     runs,

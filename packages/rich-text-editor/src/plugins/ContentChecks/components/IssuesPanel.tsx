@@ -63,6 +63,7 @@ const Issue = ({
     const titleId = useId();
     const excerptId = useId();
     const helpRef = useRef<HTMLHeadingElement>(null);
+
     const { issue, dismissed } = held;
     const repairable = useEditorValue((read) => {
         if (read === undefined || issue.repairCommand === null) {
@@ -76,10 +77,16 @@ const Issue = ({
 
         return read.commands.query(issue.repairCommand, issue.repairPayload ?? undefined).enabled;
     });
+
     const Icon = SEVERITY_ICONS[issue.severity];
     let excerpt = t('RichTextEditor_checksDocument');
     if (issue.path !== null) {
         excerpt = shortened(held.text);
+    }
+
+    let described = `${titleId} ${excerptId}`;
+    if (excerpt === '') {
+        described = titleId;
     }
 
     const goTo = () => {
@@ -118,7 +125,6 @@ const Issue = ({
         });
     };
 
-    const described = excerpt === '' ? titleId : `${titleId} ${excerptId}`;
     useClientLayoutEffect(() => {
         // Accordion.Header passes no props to its trigger button.
         helpRef.current?.querySelector('button')?.setAttribute('aria-describedby', described);
@@ -203,17 +209,20 @@ export const IssuesPanel = ({ t, requested, close }: PanelComponentProps) => {
     const checks = useEditorValue((read) => read?.services.checks()?.current(), Object.is);
     const [showDismissed, setShowDismissed] = useState(false);
     const [lastActive, setLastActive] = useState<string>();
+
     const headingRef = useRef<HTMLHeadingElement>(null);
     const listRef = useRef<HTMLOListElement>(null);
     const iconsRef = useRef<HTMLSpanElement>(null);
     // The row that holds focus, whose leaving the list moves focus to the summary heading.
     const focusedRef = useRef<string | undefined>(undefined);
     const requestedRef = useRef(requested);
+
     // The run the panel opened on, whose counts focus reads from the heading, and the summary last shown after a run.
     const openedRunRef = useRef(0);
     const shownRef = useRef<{ runs: number; summary: string } | undefined>(undefined);
     // Focus moved to the summary heading in this commit, which reads the counts already.
     const headingSpokeRef = useRef(false);
+
     const headingId = useId();
     const dismissedId = useId();
 
@@ -260,7 +269,11 @@ export const IssuesPanel = ({ t, requested, close }: PanelComponentProps) => {
     const reported = checks?.issues;
     const issues = reported ?? [];
     const counted = issues.filter(({ dismissed }) => !dismissed);
-    const listed = showDismissed ? issues : counted;
+    let listed: readonly CheckedIssue[] = counted;
+    if (showDismissed) {
+        listed = issues;
+    }
+
     const dismissedCount = issues.length - counted.length;
     const count = (severity: Severity) => counted.filter(({ issue }) => issue.severity === severity).length;
 
@@ -273,10 +286,9 @@ export const IssuesPanel = ({ t, requested, close }: PanelComponentProps) => {
         focusedRef.current = undefined;
         const heading = headingRef.current;
         const active = heading?.ownerDocument.activeElement;
-        if (
-            heading !== null &&
-            (active === null || active === undefined || active === heading.ownerDocument.body || !active.isConnected)
-        ) {
+        const focusLost =
+            active === null || active === undefined || active === heading?.ownerDocument.body || !active.isConnected;
+        if (heading !== null && focusLost) {
             heading.focus();
             headingSpokeRef.current = true;
         }
@@ -287,6 +299,7 @@ export const IssuesPanel = ({ t, requested, close }: PanelComponentProps) => {
         t('RichTextEditor_checksWarnings', { warnings: count('warning') }),
         t('RichTextEditor_checksReview', { review: count('review') }),
     ].join(' ');
+
     const reportedRuns = checks?.runs;
     const runs = reportedRuns ?? 0;
     useSummaryAnnouncement({ api, runs, summary, shownRef, openedRunRef, headingSpokeRef });

@@ -37,10 +37,15 @@ const loadHighlighter = (): Promise<Highlighter> => {
     return loading;
 };
 
+/** The element's classes joined by spaces, or `undefined` when it has none. */
 const classNameOf = (properties: HastChild['properties']): string | undefined => {
     const value = properties?.className;
     if (typeof value === 'string') {
-        return value === '' ? undefined : value;
+        if (value === '') {
+            return undefined;
+        }
+
+        return value;
     }
 
     if (value === undefined) {
@@ -159,6 +164,7 @@ export const codeBlockEditor = defineEditorPart(codeBlock, {
                     payload: { languageId: id },
                     checked: id === languageId,
                 }));
+
                 // A code block has no `nodeId`, so the menu keeps the block's range, which a selection change leaves.
                 api.overlays.open(OptionsMenu, {
                     label: api.t('RichTextEditor_codeLanguageMenu'),
@@ -194,8 +200,10 @@ export const codeBlockEditor = defineEditorPart(codeBlock, {
         'Mod-[': 'code-block.outdent',
         'Mod-Enter': (api) => {
             const selection = api.selection();
+            const inCodeBlock = selection.blockType === 'code_block';
             // A selection that spans blocks leaves the key to the base keymap.
-            if (selection.blockType !== 'code_block' || !(selection.collapsed || api.selectedText() !== '')) {
+            const withinBlock = selection.collapsed || api.selectedText() !== '';
+            if (!inCodeBlock || !withinBlock) {
                 return false;
             }
 
@@ -203,12 +211,8 @@ export const codeBlockEditor = defineEditorPart(codeBlock, {
         },
         ArrowDown: (api) => {
             const selection = api.selection();
-            if (
-                !selection.collapsed ||
-                selection.blockType !== 'code_block' ||
-                !selection.atEnd ||
-                selection.ancestors.at(-1)?.last !== true
-            ) {
+            const atBlockEnd = selection.collapsed && selection.blockType === 'code_block' && selection.atEnd;
+            if (!atBlockEnd || selection.ancestors.at(-1)?.last !== true) {
                 return false;
             }
 

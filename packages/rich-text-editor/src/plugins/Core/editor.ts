@@ -5,7 +5,10 @@ import { type JsonValue } from '#/model';
 
 import { core } from './feature';
 
-/** Sets a paragraph, inserts text and hard breaks, undoes and redoes, moves blocks, and runs the slash menu's chosen command. */
+/**
+ * Sets a paragraph, inserts text and hard breaks, undoes and redoes, moves blocks, and runs the slash menu's chosen
+ * command.
+ */
 export const coreEditor = defineEditorPart(core, {
     needs: ['blocks', 'commands', 'history', 'insert'],
     commands: {

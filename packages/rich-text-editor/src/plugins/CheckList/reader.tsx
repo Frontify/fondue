@@ -34,6 +34,7 @@ const TaskItem = ({ attrs, children }: ReaderNodeProps) => {
     );
 };
 
+/** The reader's renderer for `task_item`: a disabled checkbox beside the item's blocks. */
 export const taskReader: ReaderRenderers = { task_item: TaskItem };
 
 /** The feature these renderers belong to. */

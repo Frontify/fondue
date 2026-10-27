@@ -16,7 +16,8 @@ import {
 
 const tokenId = { type: 'id', nullable: true, default: null } as const;
 const value = { type: 'color', nullable: true, default: null } as const;
-// Package output names its token; a literal colour is read only with `literalColors`, already as `#rrggbb` or `#rrggbbaa`.
+// Package output names its token; a literal colour is read only with `literalColors`, already as `#rrggbb` or
+// `#rrggbbaa`.
 const TOKEN_RULES = [{ tag: 'span[data-rte-color]', attrs: { tokenId: { from: 'data-rte-color' } } }] as const;
 const LITERAL_RULES = [
     ...TOKEN_RULES,
@@ -65,7 +66,11 @@ const backgroundOf = ({ marks }: ContentRuleInput, { colorTokens, background }: 
         return highlight;
     }
 
-    return base === undefined ? undefined : composite(highlight, base);
+    if (base === undefined) {
+        return undefined;
+    }
+
+    return composite(highlight, base);
 };
 
 /** The run's text colour and background, both opaque, or `undefined` when either cannot be resolved. */
@@ -76,7 +81,12 @@ const colorsOf = (input: ContentRuleInput, context: ContentRuleContext) => {
         return undefined;
     }
 
-    return { foreground: foreground.alpha === 1 ? foreground : composite(foreground, background), background };
+    let opaqueForeground = foreground;
+    if (foreground.alpha !== 1) {
+        opaqueForeground = composite(foreground, background);
+    }
+
+    return { foreground: opaqueForeground, background };
 };
 
 /** Large text sits in a heading of level 3 or higher and is not subscript or superscript, which is smaller. */
@@ -92,8 +102,14 @@ const isLarge = ({ covered, ancestors }: ContentRuleInput) => {
     return large && covered.every(({ marks }) => !marks?.some(({ type }) => SMALL_MARKS.includes(type)));
 };
 
-const passes = (foreground: Rgba, background: Rgba, large: boolean) =>
-    contrastOf(foreground, background) >= (large ? LARGE_RATIO : NORMAL_RATIO);
+const passes = (foreground: Rgba, background: Rgba, large: boolean) => {
+    let required = NORMAL_RATIO;
+    if (large) {
+        required = LARGE_RATIO;
+    }
+
+    return contrastOf(foreground, background) >= required;
+};
 
 const CONTENT_RULES: readonly ContentRule[] = [
     {
@@ -131,7 +147,13 @@ const CONTENT_RULES: readonly ContentRule[] = [
         severity: 'review',
         subject: COLOR,
         repair: COLOR_REPAIR,
-        check: (input, context) => (colorsOf(input, context) === undefined ? { payload: null } : undefined),
+        check: (input, context) => {
+            if (colorsOf(input, context) === undefined) {
+                return { payload: null };
+            }
+
+            return undefined;
+        },
     },
     { id: 'color.meaning-review', kind: 'manual', severity: 'review', subject: COLOR, check: () => true },
 ];
@@ -167,7 +189,8 @@ const literalColors = defineFeature({
 
 /**
  * Text colour as `font_color`: a presentation colour token, or with `literalColors` any colour, which pasted HTML then
- * keeps too. One "A" menu sets text and highlight colours and Clear removes both; Mod+Shift+H sets the last colour again.
+ * keeps too. One "A" menu sets text and highlight colours and Clear removes both; Mod+Shift+H sets the last colour
+ * again.
  */
 export const fontColor: typeof tokenColors = (options) => {
     if (options?.literalColors === true) {

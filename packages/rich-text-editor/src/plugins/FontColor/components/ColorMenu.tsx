@@ -78,7 +78,10 @@ const rgbaOf = (hex: string): Rgba => {
     return color;
 };
 
-/** The colour of `mark` at the selection's start, its literal or its token's, which the picker's draft starts from, else black. */
+/**
+ * The colour of `mark` at the selection's start, its literal or its token's, which the picker's draft starts from,
+ * else black.
+ */
 const startColor = (api: EditorApi, mark: ColorMark, tokens: readonly ColorToken[]): Rgba => {
     const black = { red: 0, green: 0, blue: 0, alpha: 1 };
     const attrs = api.marks.attrs(mark);
@@ -88,7 +91,9 @@ const startColor = (api: EditorApi, mark: ColorMark, tokens: readonly ColorToken
     } else if (typeof attrs?.tokenId === 'string') {
         const token = tokens.find(({ id }) => id === attrs.tokenId);
         // A token value may be any CSS colour, which the picker takes only as hex.
-        hex = token === undefined ? undefined : hexColor(token.value);
+        if (token !== undefined) {
+            hex = hexColor(token.value);
+        }
     }
 
     if (hex === undefined) {
@@ -108,7 +113,10 @@ const Chip = ({ color }: { color: string }) => (
     />
 );
 
-/** A row of the colour menu, a `menuitemradio` named `label` and described by `description`, with a check mark when checked. */
+/**
+ * A row of the colour menu, a `menuitemradio` named `label` and described by `description`, with a check mark when
+ * checked.
+ */
 const ColorRow = ({
     label,
     description,
@@ -171,6 +179,7 @@ const ColorDraft = ({
 }) => {
     const [open, setOpen] = useState(true);
     const [draft, setDraft] = useState(() => startColor(api, mark, tokens));
+
     const close = (next: boolean) => {
         if (!next) {
             setOpen(false);
@@ -179,6 +188,7 @@ const ColorDraft = ({
     };
 
     const overlay = useEditorOverlay(open, close);
+
     let title = strings.customText;
     if (mark === 'highlight') {
         title = strings.customHighlight;
@@ -255,6 +265,7 @@ const Swatches = ({
 }) => {
     const [open, setOpen] = useState(true);
     const contentRef = useRef<HTMLDivElement | null>(null);
+
     const close = (next: boolean) => {
         if (!next) {
             setOpen(false);
@@ -263,6 +274,7 @@ const Swatches = ({
     };
 
     const overlay = useEditorOverlay(open, close);
+
     useEffect(() => {
         const frame = requestAnimationFrame(() => {
             const content = contentRef.current;
@@ -280,6 +292,7 @@ const Swatches = ({
 
         return () => cancelAnimationFrame(frame);
     }, []);
+
     const run = (command: string, payload?: object) => {
         // The command moves focus to the editor first, which the overlay reads as a move that keeps the menu open.
         close(false);
@@ -308,12 +321,9 @@ const Swatches = ({
                 {groups.map(({ mark, heading, custom }) => {
                     // The literal colour that the whole selection holds, which checks the custom row.
                     let literal: string | undefined;
+                    const takesLiteral = options.literal.includes(mark);
                     const value = api.marks.attrs(mark)?.value;
-                    if (
-                        options.literal.includes(mark) &&
-                        typeof value === 'string' &&
-                        api.marks.active(mark, { value }) === true
-                    ) {
+                    if (takesLiteral && typeof value === 'string' && api.marks.active(mark, { value }) === true) {
                         literal = value;
                     }
 
@@ -331,7 +341,7 @@ const Swatches = ({
                                         onSelect={() => run(SET_COMMANDS[mark], { tokenId: token.id })}
                                     />
                                 ))}
-                            {options.literal.includes(mark) && (
+                            {takesLiteral && (
                                 <ColorRow
                                     label={custom}
                                     description={literal}
@@ -368,6 +378,7 @@ export const ColorMenu = ({
 }) => {
     const api = useEditorApi();
     const [custom, setCustom] = useState<ColorMark>();
+
     if (api === undefined) {
         return null;
     }
@@ -389,6 +400,7 @@ export const ColorMenu = ({
     }
 
     const options = { tokens, highlight: api.marks.installed().includes('highlight'), literal };
+
     if (custom !== undefined) {
         return (
             <ColorDraft

@@ -81,16 +81,19 @@ export const useEmojiPickerState = (api: EditorApi, onClose: () => void) => {
     const lang = api.locale();
     const strings = emojiStrings(api.t);
     const testId = api.testId();
+
     const [open, setOpen] = useState(true);
     const [data, setData] = useState<Data>({ status: 'loading' });
     const [query, setQuery] = useState('');
     const [index, setIndex] = useState(0);
+
     // A live region announces a change of its text, never the text it mounts with, so the status is written after mount.
     const statusRef = useRef<HTMLDivElement | null>(null);
     const fieldRef = useRef<HTMLInputElement | null>(null);
     // When the field's last composition ended, so the Enter that confirmed it inserts nothing.
     const composedAtRef = useRef(Number.NEGATIVE_INFINITY);
     const listId = useId();
+
     const close = (next: boolean) => {
         if (next) {
             return;
@@ -103,6 +106,7 @@ export const useEmojiPickerState = (api: EditorApi, onClose: () => void) => {
     };
 
     const overlay = useEditorOverlay(open, close);
+
     useEffect(() => {
         let current = true;
         const show = (next: Data) => {
@@ -120,13 +124,16 @@ export const useEmojiPickerState = (api: EditorApi, onClose: () => void) => {
             current = false;
         };
     }, [lang]);
+
     const options = useMemo(() => optionsOf(data, query), [data, query]);
     const status = statusOf(data, options.length, strings);
+
     useEffect(() => {
         if (statusRef.current !== null) {
             statusRef.current.textContent = status;
         }
     }, [status]);
+
     const shown = options.length > 0;
     let controls: string | undefined;
     let activeId: string | undefined;
@@ -177,7 +184,8 @@ export const useEmojiPickerState = (api: EditorApi, onClose: () => void) => {
         }
     };
 
-    // Fondue's `TextInput` passes props it does not declare on to its `input`, and declares no `role` or composition events.
+    // Fondue's `TextInput` passes props it does not declare on to its `input`, and declares no `role` or composition
+    // events.
     const field = {
         role: 'combobox',
         type: 'text',
@@ -199,6 +207,7 @@ export const useEmojiPickerState = (api: EditorApi, onClose: () => void) => {
         },
         onKeyDown,
     } as const;
+
     const list = {
         id: listId,
         label: strings.title,
@@ -208,6 +217,10 @@ export const useEmojiPickerState = (api: EditorApi, onClose: () => void) => {
         onActivate: setIndex,
         testId: `${testId}-emoji-options`,
     };
+    let listProps: typeof list | null = null;
+    if (shown) {
+        listProps = list;
+    }
 
-    return { open, overlay, title: strings.title, testId, field, list: shown ? list : null, fieldRef, statusRef };
+    return { open, overlay, title: strings.title, testId, field, list: listProps, fieldRef, statusRef };
 };

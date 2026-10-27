@@ -7,12 +7,15 @@ export type EmojiEntry = {
     label: string;
     /** Lowercased, diacritics-free search words: the localized label and tags, then the English label and tags. */
     keywords: readonly string[];
-    /** The label lowercased and diacritics-free, and its words, computed once at load so a search normalizes only its query. */
+    /** The label lowercased and diacritics-free, computed once at load so a search normalizes only its query. */
     searchLabel: string;
+    /** The words of `searchLabel`, computed once at load. */
     labelWords: readonly string[];
+    /** The entry's position in Emojibase's order, which sorts the list; an entry with none sorts last. */
     order: number;
 };
 
+/** The locales whose emoji data ships; any other locale reads the English data. */
 export type EmojiDataLocale = 'de' | 'en' | 'es' | 'fr' | 'it' | 'nl' | 'pl' | 'pt';
 
 type CompactEmoji = {

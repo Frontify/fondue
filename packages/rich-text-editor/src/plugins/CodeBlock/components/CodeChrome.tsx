@@ -24,6 +24,7 @@ const CodeChrome = () => {
     const { attrs, contentId, context, execute } = useRichTextNodeView<CodeCommands>();
     const turnable = useRichTextNodeView<TurnIntoCommands>();
     const barRef = useRef<HTMLDivElement>(null);
+
     let languageId: string | null = null;
     if (typeof attrs.languageId === 'string') {
         languageId = attrs.languageId;
@@ -38,8 +39,11 @@ const CodeChrome = () => {
 
     // The chrome may render in an iframe, so the content element is read from the chrome's own document.
     const copy = () => {
-        const content = contentId === null ? null : barRef.current?.ownerDocument.getElementById(contentId);
-        const text = content?.textContent;
+        let text: string | null | undefined;
+        if (contentId !== null) {
+            text = barRef.current?.ownerDocument.getElementById(contentId)?.textContent;
+        }
+
         navigator.clipboard.writeText(text ?? '').catch(() => undefined);
     };
 

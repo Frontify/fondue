@@ -11,7 +11,10 @@ const EmojiPicker = lazyPart(() => import('./components/EmojiPicker').then((load
 // Enough for a list that scrolls, few enough to rank well.
 const LIMIT = 50;
 
-/** The `:` list of emoji by their CLDR names in the editor's locale and the Emoji button's picker, which insert the chosen one as text. */
+/**
+ * The `:` list of emoji by their CLDR names in the editor's locale and the Emoji button's picker, which insert the
+ * chosen one as text.
+ */
 export const emojiEditor = defineEditorPart(emoji, {
     needs: ['overlays'],
     commands: {

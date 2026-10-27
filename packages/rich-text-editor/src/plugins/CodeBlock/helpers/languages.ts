@@ -2,7 +2,10 @@
 
 import { type TranslationStrings } from '#/model';
 
-/** Languages lowlight's `common` set registers, except `plaintext`, which a block stores as no `languageId`. A language or product name stays literal; a descriptive label reads through a locale key. */
+/**
+ * Languages lowlight's `common` set registers, except `plaintext`, which a block stores as no `languageId`. A language
+ * or product name stays literal; a descriptive label reads through a locale key.
+ */
 export const CODE_LANGUAGES: readonly (
     | { id: string; label: string }
     | { id: string; labelKey: keyof TranslationStrings }
