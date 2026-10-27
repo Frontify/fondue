@@ -7,7 +7,7 @@ import {
     clipped,
     afterPlay,
     execute,
-    FEATURE_STORIES,
+    PLUGIN_STORIES,
     moreOf,
     populate,
     PROFILES,
@@ -266,8 +266,8 @@ for (const profile of PROFILES) {
     });
 }
 
-for (const { feature, file } of FEATURE_STORIES) {
-    test(`gives every control of the ${feature} story a 24 by 24 target or the spacing WCAG 2.5.8 allows`, async ({
+for (const { plugin, file } of PLUGIN_STORIES) {
+    test(`gives every control of the ${plugin} story a 24 by 24 target or the spacing WCAG 2.5.8 allows`, async ({
         mount,
         page,
     }) => {

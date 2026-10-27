@@ -11,7 +11,7 @@ import { UploadProbe } from '../../plugins/Upload/__tests__/fixtures/UploadProbe
 
 import {
     afterPlay,
-    FEATURE_STORIES,
+    PLUGIN_STORIES,
     storyOf,
     moreOf,
     populate,
@@ -247,8 +247,8 @@ test('reports no violation with the Outline open on a document with no headings'
     expect(await violations(page)).toEqual([]);
 });
 
-for (const { feature, file } of FEATURE_STORIES) {
-    test(`reports no axe violation in the populated ${feature} story`, async ({ mount, page }) => {
+for (const { plugin, file } of PLUGIN_STORIES) {
+    test(`reports no axe violation in the populated ${plugin} story`, async ({ mount, page }) => {
         await mount(<StoryProbe file={file} name="Default" />);
         await ready(page);
         await afterPlay(page);
@@ -259,7 +259,7 @@ for (const { feature, file } of FEATURE_STORIES) {
 }
 
 test('reports no axe violation with the mention list open', async ({ mount, page }) => {
-    await mount(<StoryProbe file={storyOf('mentions')} name="Default" />);
+    await mount(<StoryProbe file={storyOf('Mention')} name="Default" />);
     await ready(page);
     await afterPlay(page);
     await surfaceOf(page).focus();
@@ -271,7 +271,7 @@ test('reports no axe violation with the mention list open', async ({ mount, page
 });
 
 test('reports no axe violation with the code language menu open', async ({ mount, page }) => {
-    await mount(<StoryProbe file={storyOf('blocks.code')} name="Default" />);
+    await mount(<StoryProbe file={storyOf('CodeBlock')} name="Default" />);
     await ready(page);
     await afterPlay(page);
     await surfaceOf(page).focus();

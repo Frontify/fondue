@@ -6,34 +6,32 @@ import { join } from 'node:path';
 import { expect } from '@playwright/experimental-ct-react';
 import { type Page } from '@playwright/test';
 
-import { featureIdsByFolder } from '#/plugins/registry';
 import { type SelectionTarget } from '#/testing';
 
 export const PROFILES = ['inline', 'comment', 'document', 'brand-document'] as const;
 // The package's `src`, whose plugin stories each name their plugin in their title.
 const SRC = join(import.meta.dirname, '..', '..', '..');
 
-/** Each feature story's file under `src` and the feature its title names, so a new feature story is never left out. */
-export const FEATURE_STORIES: readonly { feature: string; file: string }[] = globSync('plugins/*/*.stories.tsx', {
+/** Each plugin story's file under `src` and the plugin its title names, so a new plugin story is never left out. */
+export const PLUGIN_STORIES: readonly { plugin: string; file: string }[] = globSync('plugins/*/*.stories.tsx', {
     cwd: SRC,
 })
     .map((path) => path.replaceAll('\\', '/'))
     .sort()
     .map((file) => {
         const plugin = /title: 'Rich Text Editor\/Plugins\/([^']+)'/.exec(readFileSync(join(SRC, file), 'utf8'))?.[1];
-        const feature = plugin === undefined ? undefined : featureIdsByFolder[plugin];
-        if (feature === undefined) {
-            throw new Error(`${file} names no plugin of a feature in its title.`);
+        if (plugin === undefined) {
+            throw new Error(`${file} names no plugin in its title.`);
         }
 
-        return { feature, file };
+        return { plugin, file };
     });
 
-/** The story file of `feature`. */
-export const storyOf = (feature: string): string => {
-    const story = FEATURE_STORIES.find((candidate) => candidate.feature === feature);
+/** The story file of `plugin`. */
+export const storyOf = (plugin: string): string => {
+    const story = PLUGIN_STORIES.find((candidate) => candidate.plugin === plugin);
     if (story === undefined) {
-        throw new Error(`No feature story for ${feature}.`);
+        throw new Error(`No plugin story for ${plugin}.`);
     }
 
     return story.file;
