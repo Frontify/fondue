@@ -10,10 +10,12 @@ import { type Bytes, decodableImage, pngChunk, SAMPLE_TYPES, sampleImage, SIZED_
 
 /** The `UploadService` shape the fake meets and the kit calls. */
 export type FakeUploadService = {
+    /** Stores the file under `operationId` and answers its asset; it rejects with the refusal's error, or an `AbortError` once the signal aborts. */
     upload(
         request: { operationId: string; blob: Blob; filename: string },
         context: ServiceContext & { reportProgress: (fraction: number) => void },
     ): Promise<{ assetId: string; mediaType: string; labelSnapshot: string }>;
+    /** Forgets the asset stored under `operationId`, so the same operation uploads afresh. */
     releaseUnused(operationId: string, context: ServiceContext): Promise<void>;
 };
 

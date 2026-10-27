@@ -107,6 +107,11 @@ export const language = defineFeature({
     version: 1,
     requires: [{ id: 'core', version: 1 }],
     options: {
+        /**
+         * The language tags the editor offers as choices; with none, the author types a tag.
+         *
+         * @default []
+         */
         languages: { type: 'list', items: { type: 'language' }, default: [] },
     },
     marks: {
@@ -390,11 +395,6 @@ const checked = attrs.checked === true;
 Source: `src/plugins/CheckList/components/TaskCheckbox.tsx`
 
 ```tsx
-let labelledBy: string | undefined;
-if (contentId !== null) {
-    labelledBy = contentId;
-}
-
 return (
     <>
         <input
@@ -572,6 +572,7 @@ const Mention = ({ attrs, context }: ReaderNodeProps) => {
     );
 };
 
+/** Renders each `mention` node; attach it with `defineReaderFeature`. */
 export const mentionReader: ReaderRenderers = { mention: Mention };
 ```
 

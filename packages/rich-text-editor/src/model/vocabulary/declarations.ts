@@ -220,8 +220,15 @@ export type FeatureFactory<
 
 /** The id, version and migrations that name and version a content model when it is compiled. */
 export type ContentModelOptions = {
+    /** Names the model in its manifest and in every document it checks. */
     id: string;
+    /** The model's version, a positive integer; a document written under an older one migrates up to it. */
     version: number;
+    /**
+     * The steps that upgrade a document from an older version; each starts below `version`, and no two start at one version.
+     *
+     * @default []
+     */
     migrations?: readonly ModelMigration[];
 };
 declare const contentModelBrand: unique symbol;

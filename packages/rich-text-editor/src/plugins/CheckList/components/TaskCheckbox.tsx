@@ -23,6 +23,11 @@ const TaskCheckbox = () => {
     const checkboxRef = useRef<HTMLInputElement | null>(null);
     const shownRef = useRef(checked);
 
+    let labelledBy: string | undefined;
+    if (contentId !== null) {
+        labelledBy = contentId;
+    }
+
     // A toggle from the keyboard (Mod+Enter) leaves focus in the text, where the checkbox says nothing, so the live
     // region says the new state; a click focuses the checkbox, which says it itself.
     useEffect(() => {
@@ -49,11 +54,6 @@ const TaskCheckbox = () => {
 
         api?.announce(context.t('RichTextEditor_taskUnchecked'));
     }, [api, checked, context]);
-
-    let labelledBy: string | undefined;
-    if (contentId !== null) {
-        labelledBy = contentId;
-    }
 
     return (
         <>

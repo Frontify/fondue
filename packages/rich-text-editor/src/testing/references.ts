@@ -6,6 +6,7 @@ const PAGE_SIZE = 20;
 
 /** The `ReferenceService` shape the fake meets: one `search` that pages through its items. */
 export type FakeReferenceService = {
+    /** Lists one page of the items that match `query` and `resourceTypes`; `cursor` is `null` for the first page, else the previous page's `nextCursor`. */
     search(
         request: { query: string; resourceTypes: readonly string[]; cursor: string | null },
         context: ServiceContext,

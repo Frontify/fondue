@@ -48,7 +48,13 @@ export type ContentCheckOptions = {
      * @default 0
      */
     sequence?: number;
+    /**
+     * The named colours that a mark's `tokenId` resolves against in the contrast checks.
+     *
+     * @default []
+     */
     colorTokens?: readonly ColorToken[];
+    /** The CSS colour of the page behind the editor, which the contrast check uses under a run with no highlight; a colour it cannot parse, or one that is not opaque, leaves that background unknown. */
     background?: string;
     /** The host page's heading level around the editor; `heading.skipped-level` checks the first heading against it. */
     enclosingHeadingLevel?: Level;

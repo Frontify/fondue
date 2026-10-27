@@ -348,7 +348,20 @@ export type RichTextEditorBaseProps<C extends object = ShippedCommands> = {
 };
 /** Exactly one accessible name source is required. */
 export type RichTextEditorProps<C extends object = ShippedCommands> = RichTextEditorBaseProps<C> &
-    ({ 'aria-label': string; 'aria-labelledby'?: never } | { 'aria-labelledby': string; 'aria-label'?: never });
+    (
+        | {
+              /** The surface's accessible name, as text. */
+              'aria-label': string;
+              /** Not allowed beside `aria-label`. */
+              'aria-labelledby'?: never;
+          }
+        | {
+              /** The ID of the element that names the surface. */
+              'aria-labelledby': string;
+              /** Not allowed beside `aria-labelledby`. */
+              'aria-label'?: never;
+          }
+    );
 
 /** The editor props as the session reads them: the `RichTextEditor` props of any command set. */
 export type Props = RichTextEditorProps<object>;

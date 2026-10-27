@@ -10,6 +10,11 @@ export const language = defineFeature({
     version: 1,
     requires: [{ id: 'core', version: 1 }],
     options: {
+        /**
+         * The language tags the editor offers as choices; with none, the author types a tag.
+         *
+         * @default []
+         */
         languages: { type: 'list', items: { type: 'language' }, default: [] },
     },
     marks: {
