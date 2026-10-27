@@ -69,8 +69,8 @@
         "@frontify/fondue-tokens": "workspace:*",
         "@frontify/oxfmt-config": "^0.0.2",
         "@frontify/oxlint-config-react": "^0.0.2",
-        "@storybook/addon-a11y": "^10.2.0",
-        "@storybook/react-vite": "^10.2.0",
+        "@storybook/addon-a11y": "^10.6.3",
+        "@storybook/react-vite": "^10.6.3",
         "@tony.ganchev/eslint-plugin-header": "^3.4.4",
         "@types/node": "^24.10.9",
         "@types/react": "^18.3.27",
@@ -86,12 +86,12 @@
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "sass": "^1.99.0",
-        "storybook": "^10.2.0",
+        "storybook": "^10.6.3",
         "tailwindcss": "^3.4.19",
         "typescript": "^5.9.3",
         "vite": "^6.4.4",
         "vite-plugin-dts": "^4.5.4",
         "vite-tsconfig-paths": "^5.1.4",
-        "vitest": "^5.0.0"
+        "vitest": "^5.0.5"
     }
 }
