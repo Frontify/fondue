@@ -1,30 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { toggleMark } from '#/bridge/pluginApi/define';
 import { defineEditorPart } from '#/bridge/pluginApi/plugin';
 
 import { italic } from './feature';
 
 /** Toggles italic on the selection or at the caret, from Mod+I, `*` and `_`, or the toolbar. */
-export const italicEditor = defineEditorPart(italic, {
-    needs: ['marks'],
-    commands: {
-        'mark.italic.toggle': {
-            run: (api) => api.marks.toggle('italic'),
-            active: (api) => api.marks.active('italic'),
-        },
-    },
-    keys: { 'Mod-i': 'mark.italic.toggle' },
-    inputRules: [
-        { id: 'italic.star', kind: 'mark-delimiter', open: '*', close: '*', mark: 'italic' },
-        { id: 'italic.underscore', kind: 'mark-delimiter', open: '_', close: '_', mark: 'italic' },
-    ],
-    toolbar: [
-        {
-            id: 'italic',
-            kind: 'toggle',
-            command: 'mark.italic.toggle',
-            labelKey: 'RichTextEditor_italic',
-            icon: 'IconTextFormatItalic',
-        },
-    ],
-});
+export const italicEditor = defineEditorPart(
+    italic,
+    toggleMark({
+        mark: 'italic',
+        keys: ['Mod-i'],
+        inputRules: [
+            { id: 'italic.star', open: '*', close: '*' },
+            { id: 'italic.underscore', open: '_', close: '_' },
+        ],
+        toolbar: { labelKey: 'RichTextEditor_italic', icon: 'IconTextFormatItalic' },
+    }),
+);

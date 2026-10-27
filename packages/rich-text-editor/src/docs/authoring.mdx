@@ -192,31 +192,20 @@ The API has facets, the members that are objects of functions: `marks`, `blocks`
 
 A command is `run(api, payload)`. One call is one undo step. `active` and `enabled` answer queries, so the toolbar shows state. A key names a command or a handler. An input rule is data. A toolbar entry names its command, its label and its icon. A part inside this package gives a `labelKey`, one of the package strings. A host part cannot add to those, so its entry gives `label`: its translations by language tag, which must include `en-US`. An entry with `node`, such as `node: 'asset_image'`, is a command of that node's chrome: it gets no toolbar item, and the More menu, the bubble toolbar's More menu and the context menu offer it only while such a node is selected or holds the caret.
 
-The `Strike plugin` story mounts this part with `marks.strike`.
+`toggleMark` gives the parts of a mark that toggles, for `defineEditorPart`: it installs `mark.<mark>.toggle`, binds `keys` to it, turns each `inputRules` pair into a `mark-delimiter` rule and adds one toggle entry. The `Strike plugin` story mounts this part with `marks.strike`.
 
 Source: `src/plugins/Strikethrough/editor.ts`
 
 ```ts
-export const strikeEditor = defineEditorPart(strikethrough, {
-    needs: ['marks'],
-    commands: {
-        'mark.strike.toggle': {
-            run: (api) => api.marks.toggle('strike'),
-            active: (api) => api.marks.active('strike'),
-        },
-    },
-    keys: { 'Mod-Shift-x': 'mark.strike.toggle' },
-    inputRules: [{ id: 'strike.tildes', kind: 'mark-delimiter', open: '~~', close: '~~', mark: 'strike' }],
-    toolbar: [
-        {
-            id: 'strike',
-            kind: 'toggle',
-            command: 'mark.strike.toggle',
-            labelKey: 'RichTextEditor_strike',
-            icon: 'IconTextFormatStrikethrough',
-        },
-    ],
-});
+export const strikeEditor = defineEditorPart(
+    strikethrough,
+    toggleMark({
+        mark: 'strike',
+        keys: ['Mod-Shift-x'],
+        inputRules: [{ id: 'strike.tildes', open: '~~', close: '~~' }],
+        toolbar: { labelKey: 'RichTextEditor_strike', icon: 'IconTextFormatStrikethrough' },
+    }),
+);
 ```
 
 A host entry gives `label` in place of `labelKey`:

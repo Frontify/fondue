@@ -12,6 +12,13 @@ import {
     type ShippedCommands,
 } from '#/runtime/types';
 
+export {
+    toggleMark,
+    type ToggleMarkInputRule,
+    type ToggleMarkParts,
+    type ToggleMarkOptions,
+    type ToggleMarkToolbar,
+} from './toggleMark';
 export { suggestionOptionId } from '#/runtime/capabilities/suggestions/optionId';
 export { CheckedSlot } from '../chrome/components/CheckedSlot';
 export { ChromeToolbarButton } from '../chrome/components/ChromeToolbarButton';

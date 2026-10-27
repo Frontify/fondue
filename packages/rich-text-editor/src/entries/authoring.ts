@@ -13,6 +13,7 @@ export {
     NodeChromeToolbar,
     type NodePending,
     NodeViewContent,
+    toggleMark,
     type NodeViewContext,
     type NodeViewDeclaration,
     type NodeViewState,
@@ -21,6 +22,10 @@ export {
     OptionsMenu,
     type PanelDeclaration,
     suggestionOptionId,
+    type ToggleMarkInputRule,
+    type ToggleMarkParts,
+    type ToggleMarkOptions,
+    type ToggleMarkToolbar,
     useRichTextNodeView,
 } from '#/bridge/pluginApi/define';
 export { definePlugin, extendPlugin } from '#/bridge/pluginApi/definePlugin';
