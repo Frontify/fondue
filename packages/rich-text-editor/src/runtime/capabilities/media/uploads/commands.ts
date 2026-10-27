@@ -17,8 +17,11 @@ import { type Checked } from './types';
 /** The node that has `nodeId` in `doc`, or `null` when none does. */
 export const nodeIn = (doc: Node, nodeId: string): Node | null => {
     const pos = positionOf(doc, nodeId);
+    if (pos === undefined) {
+        return null;
+    }
 
-    return pos === undefined ? null : doc.nodeAt(pos);
+    return doc.nodeAt(pos);
 };
 
 /** The `asset_image` attributes that every slot's start sets. */
@@ -94,8 +97,12 @@ export const replacement = (nodeId: string, checked: Checked, previous: JsonObje
 export const completion = (nodeId: string, asset: PickedAsset): EngineCommand => ({
     run: (state, dispatch) => {
         const pos = positionOf(state.doc, nodeId);
-        const node = pos === undefined ? null : state.doc.nodeAt(pos);
-        if (pos === undefined || node === null || node.attrs.assetId !== null) {
+        if (pos === undefined) {
+            return false;
+        }
+
+        const node = state.doc.nodeAt(pos);
+        if (node === null || node.attrs.assetId !== null) {
             return false;
         }
 

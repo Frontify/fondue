@@ -43,8 +43,11 @@ export const createUploads = (host: UploadHost) => {
         retry,
         statusOf: (nodeId: string): UploadStatus | undefined => {
             const slot = cells.get(nodeId)?.slot;
+            if (slot === undefined) {
+                return undefined;
+            }
 
-            return slot === undefined ? undefined : statusOf(slot);
+            return statusOf(slot);
         },
         active: flag(isActive),
         kept: flag(isKept),
@@ -57,4 +60,5 @@ export const createUploads = (host: UploadHost) => {
     };
 };
 
+/** The uploads of one session, as `createUploads` returns them. */
 export type Uploads = ReturnType<typeof createUploads>;

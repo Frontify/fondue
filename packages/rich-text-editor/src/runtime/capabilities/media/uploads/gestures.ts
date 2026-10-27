@@ -8,7 +8,7 @@ import { type SelectionHandle } from '../../../types';
 
 import { uploadLimits } from './cache';
 import { checkFiles, nameOf, sortChecked } from './check';
-import { insertion, replacement, slotAttrs } from './commands';
+import { insertion, nodeIn, replacement, slotAttrs } from './commands';
 import { fresh, isRetryable } from './machine';
 import { type Transport } from './transport';
 import { type Checked, type UploadPlace } from './types';
@@ -56,7 +56,11 @@ const insertSlots = (
         }
     }
 
-    return applied ? added.map(({ cell }) => cell.slot.name) : [];
+    if (!applied) {
+        return [];
+    }
+
+    return added.map(({ cell }) => cell.slot.name);
 };
 
 /** Starts a replacement upload on the image `nodeId`; returns the started names. */
@@ -66,8 +70,7 @@ const replaceSlot = (
     nodeId: string,
 ): readonly string[] => {
     const { doc } = host.state();
-    const pos = positionOf(doc, nodeId);
-    const node = pos === undefined ? null : doc.nodeAt(pos);
+    const node = nodeIn(doc, nodeId);
     if (node === null || node.type.name !== 'asset_image') {
         return [];
     }
@@ -184,7 +187,12 @@ export const createGestures = (transport: Transport) => {
             return;
         }
 
-        if (!host.allows(cell.slot.kind === 'insert' ? 'create' : 'edit')) {
+        let action: 'create' | 'edit' = 'edit';
+        if (cell.slot.kind === 'insert') {
+            action = 'create';
+        }
+
+        if (!host.allows(action)) {
             return;
         }
 

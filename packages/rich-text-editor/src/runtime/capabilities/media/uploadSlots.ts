@@ -10,6 +10,7 @@ import { positionOf } from '../../transform/positions';
 /** The transaction meta of a slot's start: the insertion of new slots, or a replacement's previous attributes. */
 export const SLOT_START_META = 'rte.upload-slot';
 
+/** How a slot starts: new slots inserted, or an image replaced with the attributes it had. */
 export type SlotStart =
     | { kind: 'insert'; nodeIds: readonly string[] }
     | { kind: 'replace'; nodeId: string; previous: JsonObject };
@@ -101,8 +102,12 @@ export const slotUploadsOf = (state: EditorState): SlotUploads | undefined => ke
 /** The figure position and node of the slot `nodeId`, an `asset_image` with no asset. */
 const slotAt = (state: EditorState, nodeId: string) => {
     const pos = positionOf(state.doc, nodeId);
-    const node = pos === undefined ? null : state.doc.nodeAt(pos);
-    if (pos === undefined || node === null || node.type.name !== 'asset_image') {
+    if (pos === undefined) {
+        return undefined;
+    }
+
+    const node = state.doc.nodeAt(pos);
+    if (node === null || node.type.name !== 'asset_image') {
         return undefined;
     }
 
@@ -112,8 +117,13 @@ const slotAt = (state: EditorState, nodeId: string) => {
 /** Removes the figure that holds the image at `pos`, and puts the caret where it was. */
 const removeFigure = (state: EditorState, pos: number): Transaction => {
     const $pos = state.doc.resolve(pos);
-    const from = $pos.depth > 0 ? $pos.before() : pos;
-    const to = $pos.depth > 0 ? $pos.after() : pos + 1;
+    let from = pos;
+    let to = pos + 1;
+    if ($pos.depth > 0) {
+        from = $pos.before();
+        to = $pos.after();
+    }
+
     const tr = state.tr.delete(from, to);
 
     return tr.setSelection(Selection.near(tr.doc.resolve(tr.mapping.map(from)))).scrollIntoView();

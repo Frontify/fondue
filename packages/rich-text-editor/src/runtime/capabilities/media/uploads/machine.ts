@@ -67,6 +67,7 @@ export type SlotEvent =
       }
     | { type: 'reset'; keeps: boolean; present: boolean };
 
+/** What the transport does outside the machine, in the order a step lists it. */
 export type Effect =
     | { type: 'changed' }
     | { type: 'release' }
@@ -84,6 +85,7 @@ export type Effect =
     | { type: 'refill' }
     | { type: 'drop' };
 
+/** The result of one event: the slot and the effects to run. */
 export type Step = {
     state: SlotState;
     effects: readonly Effect[];
@@ -145,23 +147,32 @@ const failedWith = (state: SlotState, release: boolean, report: boolean, reply?:
 
 /** The transition table: what each event does to a slot in any phase. */
 const TRANSITIONS: { readonly [T in SlotEvent['type']]: (state: SlotState, event: Of<T>) => Step } = {
-    send: (state, { announce, service }) =>
-        service && state.file !== undefined
-            ? stay({ ...state, phase: 'queued', progress: null, operation: undefined }, { type: 'start', announce })
-            : halt(state),
-    started: (state, { operation, aborted, announce }) =>
-        aborted
-            ? halt(state)
-            : stay(
-                  { ...state, operation, operationId: operation.id },
-                  { type: 'watch', operation },
-                  announce && { type: 'announce', event: { kind: 'started', name: state.name } },
-                  { type: 'changed' },
-              ),
-    running: (state, { own }) =>
-        state.operation === undefined || state.operation === own
-            ? stay({ ...state, phase: 'running' }, { type: 'changed' })
-            : stay(state),
+    send: (state, { announce, service }) => {
+        if (!service || state.file === undefined) {
+            return halt(state);
+        }
+
+        return stay({ ...state, phase: 'queued', progress: null, operation: undefined }, { type: 'start', announce });
+    },
+    started: (state, { operation, aborted, announce }) => {
+        if (aborted) {
+            return halt(state);
+        }
+
+        return stay(
+            { ...state, operation, operationId: operation.id },
+            { type: 'watch', operation },
+            announce && { type: 'announce', event: { kind: 'started', name: state.name } },
+            { type: 'changed' },
+        );
+    },
+    running: (state, { own }) => {
+        if (state.operation !== undefined && state.operation !== own) {
+            return stay(state);
+        }
+
+        return stay({ ...state, phase: 'running' }, { type: 'changed' });
+    },
     progress: (state, { fraction, aborted }) => {
         const percent = Math.round(Math.min(1, Math.max(0, fraction)) * 100);
         if (aborted || state.phase !== 'running' || !Number.isFinite(fraction) || percent === state.progress) {
@@ -182,8 +193,13 @@ const TRANSITIONS: { readonly [T in SlotEvent['type']]: (state: SlotState, event
 
         return stay(state, { type: 'parse', value });
     },
-    parsed: (state, { asset }) =>
-        asset === undefined ? failedWith(state, true, true, 'invalid-payload') : stay(state, { type: 'fill', asset }),
+    parsed: (state, { asset }) => {
+        if (asset === undefined) {
+            return failedWith(state, true, true, 'invalid-payload');
+        }
+
+        return stay(state, { type: 'fill', asset });
+    },
     filled: (state, { asset, code, intent }) => {
         if (code !== undefined) {
             return failedWith(state, true, false, code);
@@ -202,16 +218,25 @@ const TRANSITIONS: { readonly [T in SlotEvent['type']]: (state: SlotState, event
             { type: 'reply', code: undefined },
         );
     },
-    failed: (state, { own }) => (state.operation === own ? failedWith(state, false, true) : stay(state)),
-    aborted: (state, { operation }) =>
-        state.operation === operation
-            ? stay(
-                  stopped(state, 'stopped'),
-                  { type: 'release' },
-                  { type: 'changed' },
-                  { type: 'announce', event: { kind: 'cancelled', name: state.name } },
-              )
-            : stay(state, { type: 'release' }),
+    failed: (state, { own }) => {
+        if (state.operation !== own) {
+            return stay(state);
+        }
+
+        return failedWith(state, false, true);
+    },
+    aborted: (state, { operation }) => {
+        if (state.operation !== operation) {
+            return stay(state, { type: 'release' });
+        }
+
+        return stay(
+            stopped(state, 'stopped'),
+            { type: 'release' },
+            { type: 'changed' },
+            { type: 'announce', event: { kind: 'cancelled', name: state.name } },
+        );
+    },
     committed: (state, { history, node, reset, cached }) => {
         const { operation, operationId } = state;
         // Only a running upload can end here, and only an undo or a redo reads the cache.
@@ -223,19 +248,21 @@ const TRANSITIONS: { readonly [T in SlotEvent['type']]: (state: SlotState, event
             return stay(state, (node === null || reset) && { type: 'end', operation });
         }
 
-        return stay(
-            state,
+        const showsStart =
             operationId !== undefined &&
-                node !== null &&
-                node.assetId === null &&
-                node.labelSnapshot === state.label &&
-                node.width === state.width &&
-                node.height === state.height &&
-                cached && { type: 'refill' },
-        );
+            node !== null &&
+            node.assetId === null &&
+            node.labelSnapshot === state.label &&
+            node.width === state.width &&
+            node.height === state.height;
+
+        return stay(state, showsStart && cached && { type: 'refill' });
     },
-    reset: (state, { keeps, present }) =>
-        stay(state, (!keeps || state.phase === 'done' || !present) && { type: 'drop' }),
+    reset: (state, { keeps, present }) => {
+        const leaves = !keeps || state.phase === 'done' || !present;
+
+        return stay(state, leaves && { type: 'drop' });
+    },
 };
 
 /** The slot after `event` and the effects a transport runs, in order; it reads no clock, file, network or document. */

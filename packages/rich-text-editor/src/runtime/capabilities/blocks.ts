@@ -9,6 +9,10 @@ import { isRecord } from '#/model';
 
 import { type CapabilityImplementation, carried, REJECTED, selectedTextblocks, tristate, typeIn } from './shared';
 
+/**
+ * Turns the selected textblocks into the block `node`, with the payload's fields as its attributes; with `toggle`,
+ * into paragraphs when they all are that block already. `refuses` reports content the new block would drop.
+ */
 export const setBlock: CapabilityImplementation = (args, schema) => {
     const type = typeIn(schema.nodes, args.node);
     const paragraph = typeIn(schema.nodes, 'paragraph');
@@ -87,6 +91,7 @@ export const setBlock: CapabilityImplementation = (args, schema) => {
 const rangeIn = ($from: ResolvedPos, $to: ResolvedPos, type: NodeType): NodeRange | undefined =>
     $from.blockRange($to, (node) => node.type === type) ?? undefined;
 
+/** Wraps the selected blocks in the container `node`, with the payload as its attributes, or lifts them out when inside one. */
 export const wrapIn: CapabilityImplementation = (args, schema) => {
     const type = typeIn(schema.nodes, args.node);
     if (type === undefined) {

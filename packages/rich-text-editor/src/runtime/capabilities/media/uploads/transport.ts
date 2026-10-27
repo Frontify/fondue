@@ -45,6 +45,7 @@ type Context = {
 
 const nothing = () => undefined;
 
+/** Runs the call's cleanup once its service call has settled, so it never races the answer. */
 const releaseOnce = (call: Call) => {
     const { release } = call;
     call.release = undefined;
@@ -55,6 +56,7 @@ const releaseOnce = (call: Call) => {
 
 type Of<T extends Effect['type']> = Extract<Effect, { type: T }>;
 
+/** The transport the slots and gestures use: its shared state, and how a file is sent. */
 export type Transport = {
     link: Link;
     /** Sends the slot's file as a new operation, and announces its start unless its gesture announces it. */
@@ -126,14 +128,21 @@ export const createTransport = (host: UploadHost, cache: UploadCache): Transport
             return;
         }
 
+        let action: 'create' | 'edit' = 'edit';
+        let command: typeof INSERT_IMAGE | typeof REPLACE_IMAGE = REPLACE_IMAGE;
+        if (slot.kind === 'insert') {
+            action = 'create';
+            command = INSERT_IMAGE;
+        }
+
         const call: Call = { own: undefined, release: undefined, settled: Promise.resolve(), reply: undefined };
         const ctx: Context = { ...context, call };
         const started = host.start({
             key: `upload:${slot.nodeId}`,
             service: 'uploads',
             featureId: UPLOAD_FEATURE,
-            action: slot.kind === 'insert' ? 'create' : 'edit',
-            command: slot.kind === 'insert' ? INSERT_IMAGE : REPLACE_IMAGE,
+            action,
+            command,
             pool: { name: POOL, limit: Math.max(1, host.limits.maxConcurrentUploads) },
             run: ({ signal, session, operationId }) => {
                 call.release = () => {

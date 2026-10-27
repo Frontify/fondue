@@ -67,7 +67,11 @@ export const createHistory = ({ link, feed }: Transport) => {
     const flush = () => {
         for (let nodeId = fills.shift(); nodeId !== undefined; nodeId = fills.shift()) {
             const slot = cells.get(nodeId)?.slot;
-            const entry = slot?.operationId === undefined ? undefined : cache.read(slot.operationId);
+            if (slot?.operationId === undefined) {
+                continue;
+            }
+
+            const entry = cache.read(slot.operationId);
             if (entry !== undefined) {
                 host.fill(completion(nodeId, entry.asset));
             }

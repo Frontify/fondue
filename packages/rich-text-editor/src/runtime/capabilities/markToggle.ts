@@ -8,6 +8,7 @@ import { isRecord } from '#/model';
 
 import { type CapabilityImplementation, REJECTED, tristate, typeIn } from './shared';
 
+/** A selected part of one text node, and whether it carries the mark. */
 export type TextRange = {
     from: number;
     to: number;
@@ -46,6 +47,7 @@ const markState = (state: EditorState, type: MarkType): boolean | 'mixed' => {
     return tristate(texts.filter((text) => text.marked).length, texts.length);
 };
 
+/** Adds the mark to the selected text unless all of it has the mark, else removes it; at a caret, toggles the stored mark. */
 export const toggleMark: CapabilityImplementation = (args, schema) => {
     const type = typeIn(schema.marks, args.mark);
     if (type === undefined) {

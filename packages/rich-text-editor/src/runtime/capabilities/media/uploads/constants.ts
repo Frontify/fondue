@@ -14,6 +14,7 @@ export const DEFAULT_ACCEPT_TYPES: readonly string[] = [
 export const MAX_IMAGE_SIDE = 65_535;
 /** The transaction meta of an upload's completion, which ends no upload of its slot. */
 export const FILL_META = 'rte.upload-fill';
+/** The name of the async coordinator pool that runs the upload calls. */
 export const POOL = 'uploads';
 /** The command meta of an image insert and of an image replace. */
 export const INSERT_IMAGE = 'image.insert';

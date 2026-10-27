@@ -65,6 +65,7 @@ const wrapInList = (state: EditorState, list: NodeType, item: NodeType, payload:
 
         return node.type !== item;
     });
+
     // A new list beside a list of its own type joins it, as in other editors, so two toggled paragraphs make one list.
     const before = transaction.mapping.map(start, -1);
     const wrapped = transaction.doc.resolve(before).nodeAfter;
@@ -124,6 +125,7 @@ const convertList = (
     return transaction.setSelection(carrySelection(transaction.doc, state.selection)).scrollIntoView();
 };
 
+/** Wraps the selection in the list `list` of `item`s, converts the list at the selection to it, or lifts its items out when it is that list. */
 export const toggleList: CapabilityImplementation = (args, schema) => {
     const list = typeIn(schema.nodes, args.list);
     const item = typeIn(schema.nodes, args.item);
@@ -158,6 +160,7 @@ export const toggleList: CapabilityImplementation = (args, schema) => {
     };
 };
 
+/** Nests the selected list items under their previous sibling; passes on outside the `item`s of a list and in code. */
 export const indentItem: CapabilityImplementation = (args, schema) => {
     const item = typeIn(schema.nodes, args.item);
     if (item === undefined) {
@@ -173,6 +176,7 @@ export const indentItem: CapabilityImplementation = (args, schema) => {
     };
 };
 
+/** Lifts the selected list items one level out; passes on outside the `item`s of a list and in code. */
 export const outdentItem: CapabilityImplementation = (args, schema) => {
     const item = typeIn(schema.nodes, args.item);
     if (item === undefined) {

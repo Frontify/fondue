@@ -64,6 +64,7 @@ export const carried = (block: Node, target: NodeType, over: Readonly<Record<str
     return attrs;
 };
 
+/** The mark types that `marks`, one name or a list, names in the schema; names it lacks are left out. */
 export const markTypesOf = (marks: unknown, schema: Schema): MarkType[] => {
     const names = Array.isArray(marks) ? (marks as readonly unknown[]) : [marks];
 

@@ -34,6 +34,7 @@ type Dismissal = {
     signature: string;
 };
 
+/** The content checks state: the issues of the last run at their current places, and what the author did with them. */
 export type ContentChecksState = {
     issues: readonly HeldIssue[];
     /** How many times the checks ran in this session. */
@@ -143,11 +144,13 @@ const keyed = (value: ContentChecksState, results: readonly HeldIssue[]): readon
 
     return results.map((result, index) => {
         const place = placeOf(result);
-        const key = place === undefined ? undefined : previous.get(place);
-        if (place !== undefined && key !== undefined) {
-            previous.delete(place);
+        if (place !== undefined) {
+            const key = previous.get(place);
+            if (key !== undefined) {
+                previous.delete(place);
 
-            return { ...result, key };
+                return { ...result, key };
+            }
         }
 
         return { ...result, key: `${value.runs + 1}:${index}` };
@@ -254,7 +257,8 @@ const decorationsOf = (state: EditorState): DecorationSet => {
     const marked = new Map<string, HeldIssue>();
     for (const held of value.issues) {
         const { issue, from, to } = held;
-        if (issue.kind !== 'automatic' || held.gone || from < 0 || to > doc.content.size || isDismissed(value, held)) {
+        const unmarked = held.gone || from < 0 || to > doc.content.size || isDismissed(value, held);
+        if (issue.kind !== 'automatic' || unmarked) {
             continue;
         }
 
@@ -379,6 +383,7 @@ export type ContentChecksHost = {
     options: () => Omit<ContentCheckOptions, 'sequence'>;
 };
 
+/** The running content checks of a session. */
 export type ContentChecks = {
     /** A change was published: the checks run once no change came for the delay. */
     changed(): void;

@@ -127,7 +127,11 @@ const jpeg = async (blob: Blob, head: Uint8Array): Promise<ImageHeader | undefin
             return sized('image/jpeg', uint16BE(marker, 7), uint16BE(marker, 5));
         }
 
-        at += STANDALONE.has(code) ? 2 : 2 + uint16BE(marker, 2);
+        if (STANDALONE.has(code)) {
+            at += 2;
+        } else {
+            at += 2 + uint16BE(marker, 2);
+        }
     }
 
     return { ...UNKNOWN, mediaType: 'image/jpeg' };
@@ -272,9 +276,13 @@ const decodeReferences = (text: string) =>
         }
 
         const digits = hex ?? decimal;
-        const code = Number.parseInt(digits ?? '', hex === undefined ? 10 : 16);
+        const radix = hex === undefined ? 10 : 16;
+        const code = Number.parseInt(digits ?? '', radix);
+        if (Number.isInteger(code) && code >= 0 && code <= 0x10_ff_ff) {
+            return String.fromCodePoint(code);
+        }
 
-        return Number.isInteger(code) && code >= 0 && code <= 0x10_ff_ff ? String.fromCodePoint(code) : whole;
+        return whole;
     });
 
 const ENTITY_DECLARATION = /<!ENTITY\s+([^\s%>"']+)\s+(?:"([^"<&]*)"|'([^'<&]*)')\s*>/gi;

@@ -130,6 +130,13 @@ const styleTargets = (state: EditorState, targets: Located[], attrs: Readonly<Re
 const declaring = (targets: Located[], attrs: Readonly<Record<string, unknown>>): Located[] =>
     targets.filter(({ node }) => Object.keys(attrs).some((name) => node.type.spec.attrs?.[name] !== undefined));
 
+/** The targets of `parts`: its node, or the selection, narrowed to those that take a brand style and declare an attribute. */
+const targetsOf = (
+    state: EditorState,
+    types: readonly NodeType[],
+    parts: { nodeId: unknown; attrs: Readonly<Record<string, unknown>> },
+): Located[] => declaring(styleTargets(state, attributeTargets(state, types, parts.nodeId), parts.attrs), parts.attrs);
+
 /**
  * Sets the payload's other fields on the node its `nodeId` names, else on the selected nodes of the listed types,
  * else on the nearest node of one; with `toggle`, removes the values when every target already has them. A `styleId`
@@ -156,10 +163,7 @@ export const setAttributes: CapabilityImplementation = (args, schema) => {
                 return false;
             }
 
-            const targets = declaring(
-                styleTargets(state, attributeTargets(state, types, parts.nodeId), parts.attrs),
-                parts.attrs,
-            );
+            const targets = targetsOf(state, types, parts);
             const removes =
                 args.toggle === true && targets.length > 0 && targets.every(({ node }) => has(node, parts.attrs));
             const changes = targets.flatMap(({ node, pos }) =>
@@ -195,10 +199,7 @@ export const setAttributes: CapabilityImplementation = (args, schema) => {
                 return false;
             }
 
-            const targets = declaring(
-                styleTargets(state, attributeTargets(state, types, parts.nodeId), parts.attrs),
-                parts.attrs,
-            );
+            const targets = targetsOf(state, types, parts);
 
             return tristate(targets.filter(({ node }) => has(node, parts.attrs)).length, targets.length);
         },

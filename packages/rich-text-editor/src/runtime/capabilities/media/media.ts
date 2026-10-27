@@ -124,8 +124,12 @@ export const insertPicked = (schema: Schema, asset: PickedAsset): EngineCommand 
 export const refillPicked = (nodeId: string, asset: PickedAsset): EngineCommand => ({
     run: (state, dispatch) => {
         const pos = positionOf(state.doc, nodeId);
-        const node = pos === undefined ? null : state.doc.nodeAt(pos);
-        if (pos === undefined || node === null || node.type.name !== 'asset_image') {
+        if (pos === undefined) {
+            return false;
+        }
+
+        const node = state.doc.nodeAt(pos);
+        if (node === null || node.type.name !== 'asset_image') {
             return false;
         }
 

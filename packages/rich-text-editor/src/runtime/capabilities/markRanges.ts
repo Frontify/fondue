@@ -51,6 +51,7 @@ const markRangeAt = (state: EditorState, type: MarkType): { from: number; to: nu
 /** How far a mark command reaches: the selection, the whole run around it, or that run also from its trailing edge. */
 export type Extend = boolean | 'touching';
 
+/** The `extendToMarkRange` argument as an `Extend`: `true` and `'touching'` extend, anything else stays on the selection. */
 export const extendOf = (value: unknown): Extend => {
     if (value === 'touching') {
         return value;
@@ -84,7 +85,11 @@ const sharedMarks = (doc: Node, from: number, to: number, type: MarkType): reado
     doc.nodesBetween(from, to, (node) => {
         if (node.isText) {
             const own = node.marks.filter((mark) => mark.type !== type);
-            shared = shared === undefined ? own : shared.filter((mark) => mark.isInSet(own));
+            if (shared === undefined) {
+                shared = own;
+            } else {
+                shared = shared.filter((mark) => mark.isInSet(own));
+            }
         }
     });
 
