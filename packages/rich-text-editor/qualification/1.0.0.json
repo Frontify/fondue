@@ -96,7 +96,7 @@
         {
             "build": "./locales/*",
             "budgetBytes": 6000,
-            "test": "src/locales/__tests__/bundle-size.spec.ts",
+            "test": "src/locales/__tests__/bundleSize.spec.ts",
             "passed": true
         },
         {

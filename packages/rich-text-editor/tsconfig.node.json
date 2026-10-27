@@ -17,6 +17,7 @@
         "playwright.config.ts",
         "playwright.flaky.config.ts",
         "package.json",
-        "oxlint.config.ts"
+        "oxlint.config.ts",
+        "qualification/stamp.mjs"
     ]
 }

@@ -2,7 +2,7 @@
 
 // @vitest-environment node
 
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, globSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -139,5 +139,112 @@ describe('the qualification record schema', () => {
                 kind,
             ).toBe(false);
         }
+    });
+});
+
+const REPORTS = RECORDS.flatMap(({ record }) => {
+    const path = join(PACKAGE, 'src/docs/accessibility', `${String(record.version)}.mdx`);
+    if (!existsSync(path)) {
+        return [];
+    }
+
+    return [{ name: `${String(record.version)}.mdx`, text: readFileSync(path, 'utf8') }];
+});
+
+const PACKAGE_PATH = /^(?:(?:src|perf|playwright|qualification)\/\S+|size-budgets\.json|package\.json)$/;
+
+const stringsIn = (value: unknown): string[] => {
+    if (typeof value === 'string') {
+        return [value];
+    }
+
+    if (Array.isArray(value)) {
+        return value.flatMap(stringsIn);
+    }
+
+    if (typeof value === 'object' && value !== null) {
+        return Object.values(value).flatMap(stringsIn);
+    }
+
+    return [];
+};
+
+const pathsMissing = (candidates: readonly string[]) =>
+    candidates
+        .filter((path) => PACKAGE_PATH.test(path))
+        .filter((path) => {
+            if (path.includes('*')) {
+                return globSync(path, { cwd: PACKAGE }).length === 0;
+            }
+
+            return !existsSync(join(PACKAGE, path));
+        });
+
+const backticked = (text: string) => [...text.matchAll(/`([^`\n]+)`/g)].map((match) => match[1] ?? '');
+
+const BUMPS = ['patch', 'minor', 'major'];
+
+/** The version package.json releases next: its own raised by the strongest bump a changeset declares. */
+const nextVersion = () => {
+    const { version } = readJson(join(PACKAGE, 'package.json')) as { version: string };
+    const changesets = join(PACKAGE, '../../.changeset');
+    let strongest = -1;
+    for (const name of readdirSync(changesets).filter((file) => file.endsWith('.md'))) {
+        const frontmatter = /^---\n([\s\S]*?)\n---/.exec(readFileSync(join(changesets, name), 'utf8'))?.[1] ?? '';
+        for (const line of frontmatter.split('\n')) {
+            const match = /^["']?([^"':]+)["']?\s*:\s*(\w+)\s*$/.exec(line.trim());
+            if (match?.[1] === '@frontify/fondue-rich-text-editor') {
+                strongest = Math.max(strongest, BUMPS.indexOf(match[2] ?? ''));
+            }
+        }
+    }
+
+    const [major = 0, minor = 0, patch = 0] = version.split('.').map(Number);
+    if (strongest === 2) {
+        return `${major + 1}.0.0`;
+    }
+
+    if (strongest === 1) {
+        return `${major}.${minor + 1}.0`;
+    }
+
+    if (strongest === 0) {
+        return `${major}.${minor}.${patch + 1}`;
+    }
+
+    return version;
+};
+
+describe('the paths the records and reports name', () => {
+    it('exist in the package, and a glob matches at least one file', () => {
+        for (const { name, record } of RECORDS) {
+            expect(pathsMissing(stringsIn(record)), name).toEqual([]);
+        }
+
+        for (const { name, text } of REPORTS) {
+            expect(pathsMissing(backticked(text)), name).toEqual([]);
+        }
+    });
+
+    it('finds a path that does not exist', () => {
+        expect(
+            pathsMissing(['src/nowhere/missing.spec.ts', 'src/nowhere/*.ts', 'package.json', 'src/**/*.ts']),
+        ).toEqual(['src/nowhere/missing.spec.ts', 'src/nowhere/*.ts']);
+    });
+});
+
+describe('the version a record names', () => {
+    it('is the version the package releases next, in the record file name and in the report', () => {
+        const version = nextVersion();
+
+        expect(RECORDS.map(({ record }) => record.version)).toContain(version);
+        const current = RECORDS.find(({ record }) => record.version === version);
+        expect(current?.name).toBe(`${version}.json`);
+
+        const report = REPORTS.find(({ name }) => name === `${version}.mdx`);
+        expect(report, `${version}.mdx`).toBeDefined();
+        expect(report?.text).toContain(`<Meta title="Rich Text Editor/Guides/Accessibility report ${version}" />`);
+        expect(report?.text).toMatch(new RegExp(`^# Accessibility report ${version.replaceAll('.', '\\.')}$`, 'm'));
+        expect(report?.text).toContain(`- **Package**: \`@frontify/fondue-rich-text-editor\` ${version},`);
     });
 });

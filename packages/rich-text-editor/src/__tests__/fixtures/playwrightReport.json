@@ -1,0 +1,29 @@
+{
+    "suites": [
+        {
+            "specs": [
+                {
+                    "tests": [
+                        { "projectName": "chromium", "status": "expected" },
+                        { "projectName": "webkit", "status": "expected" },
+                        { "projectName": "webkit", "status": "flaky" }
+                    ]
+                }
+            ],
+            "suites": [
+                {
+                    "specs": [
+                        {
+                            "tests": [
+                                { "projectName": "chromium", "status": "expected" },
+                                { "projectName": "chromium", "status": "flaky" },
+                                { "projectName": "chromium", "status": "skipped" },
+                                { "projectName": "webkit", "status": "skipped" }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -64,6 +64,7 @@
         "build": "vite build",
         "prepack": "vite build",
         "install:playwright": "playwright install --with-deps",
+        "qualification:stamp": "node qualification/stamp.mjs",
         "format": "oxfmt",
         "format:check": "oxfmt --check",
         "lint": "oxlint",

@@ -70,6 +70,7 @@ Run these from `packages/rich-text-editor`.
 | `pnpm test:watch` | Run unit tests in watch mode |
 | `pnpm test:components` | Run component tests in the Playwright UI |
 | `pnpm test:components:ci` | Run component tests |
+| `pnpm qualification:stamp` | Rewrite a version's qualification record and report commit from a gate run (`--unit`, `--components`, optional `--version`) |
 
 ## Entries
 
