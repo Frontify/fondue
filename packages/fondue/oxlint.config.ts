@@ -14,8 +14,6 @@ export default defineConfig({
         'CHANGELOG.md',
         'dist/',
         'legacyTokens/',
-        '.storybook/',
-        'storybook-static/',
         'cypress/',
         'src/foundation/Icon/Generated/',
         'src/foundation/Icon/IconEnum.ts',

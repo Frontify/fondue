@@ -26,19 +26,37 @@ const toGroupLabel = (dir) => {
 };
 
 /**
+ * @param {import('@frontify/fondue-sdk').Guide} guide
+ */
+const groupOf = (guide) => {
+    const separatorIndex = guide.id.lastIndexOf('/');
+    return separatorIndex === -1 ? undefined : guide.id.slice(0, separatorIndex);
+};
+
+const guidesPerGroup = new Map();
+for (const guide of guides.list()) {
+    const group = groupOf(guide);
+    guidesPerGroup.set(group, (guidesPerGroup.get(group) ?? 0) + 1);
+}
+
+/**
  * Builds the Storybook sidebar title for a guide entirely from its id
- * (e.g. "getting-started/Setup" → "Getting started/Setup"), so both the group
- * and the leaf name are stable regardless of what the SDK puts in `guide.title`.
+ * (e.g. "sdk/Usage" → "Documentation/SDK/Usage"), so both the group and the
+ * leaf name are stable regardless of what the SDK puts in `guide.title`.
+ * A group holding a single guide becomes that guide's leaf
+ * (e.g. "getting-started/Setup" → "Documentation/Getting started").
  * @param {import('@frontify/fondue-sdk').Guide} guide
  */
 const storyTitle = (guide) => {
-    const separatorIndex = guide.id.lastIndexOf('/');
-    if (separatorIndex === -1) {
-        return guide.id;
+    const group = groupOf(guide);
+    if (group === undefined) {
+        return `Documentation/${guide.id}`;
     }
-    const group = toGroupLabel(guide.id.slice(0, separatorIndex));
-    const name = guide.id.slice(separatorIndex + 1);
-    return `${group}/${name}`;
+    if (guidesPerGroup.get(group) === 1) {
+        return `Documentation/${toGroupLabel(group)}`;
+    }
+    const name = guide.id.slice(group.length + 1);
+    return `Documentation/${toGroupLabel(group)}/${name}`;
 };
 
 /**

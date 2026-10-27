@@ -1,7 +1,10 @@
 {
     "compilerOptions": {
         "allowImportingTsExtensions": true,
-        "baseUrl": ".",
+        "paths": {
+            "#/*": ["../packages/components/src/*"],
+            "#storybook/*": ["./.storybook/*"]
+        },
         "isolatedModules": true,
         "jsx": "react-jsx",
         "lib": ["ES2021", "DOM", "DOM.Iterable"],
@@ -17,6 +20,6 @@
         "target": "ES2021",
         "useDefineForClassFields": true
     },
-    "include": [".storybook/**/*", "stories", "netlify-functions"],
+    "include": [".storybook/**/*", "stories", "netlify-functions", "../packages/components/src/vite-env.d.ts"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

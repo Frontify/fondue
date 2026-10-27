@@ -27,6 +27,7 @@ import {
     CardActionButton,
     CardBadges,
     CardBanner,
+    CardBannerDescription,
     CardBannerIcon,
     CardBannerImage,
     CardDescription,
@@ -48,6 +49,7 @@ const meta = {
         'Card.Banner': CardBanner,
         'Card.BannerImage': CardBannerImage,
         'Card.BannerIcon': CardBannerIcon,
+        'Card.BannerDescription': CardBannerDescription,
         'Card.Badges': CardBadges,
         'Card.ThumbnailImage': CardThumbnailImage,
         'Card.ThumbnailIcon': CardThumbnailIcon,
@@ -129,6 +131,61 @@ const BannerToneInvertedDemo = () => {
                 <Card.ActionButton aria-label="More actions">
                     <IconDotsVertical size={20} />
                 </Card.ActionButton>
+            </Card.Action>
+        </Card.Root>
+    );
+};
+
+const LONG_DESCRIPTION =
+    'Central home for all creative produced for the 2026 summer marketing campaign running June through August. ' +
+    'This folder contains channel-ready assets across social, email, paid media, web, and print — including square ' +
+    'and vertical social posts, story templates, email headers, display banners and print-ready flyers.';
+
+const SHORT_DESCRIPTION =
+    'Central home for all creative produced for the 2026 summer marketing campaign running June through August.';
+
+type BannerDescriptionDemoProps = {
+    description: string;
+    title: string;
+    banner: 'icon' | 'image' | 'small';
+};
+
+const BannerDescriptionDemo = ({ description, title, banner }: BannerDescriptionDemoProps) => {
+    const [selected, setSelected] = useState(false);
+
+    return (
+        <Card.Root href="#" selected={selected} onSelect={() => setSelected((s) => !s)}>
+            <Card.Banner size={banner === 'small' ? 'small' : 'large'}>
+                {banner === 'image' ? (
+                    <Card.BannerImage src="https://picsum.photos/seed/card-description/400/200" alt="" fit="cover" />
+                ) : (
+                    <Card.BannerIcon>
+                        <IconFolder size={32} />
+                    </Card.BannerIcon>
+                )}
+                <Card.BannerDescription>{description}</Card.BannerDescription>
+            </Card.Banner>
+
+            <Card.Title>{title}</Card.Title>
+            <Card.Description>No status · 36 assets</Card.Description>
+
+            <Card.Action>
+                <Card.ActionButton aria-label="Settings">
+                    <IconCog size={20} />
+                </Card.ActionButton>
+            </Card.Action>
+            <Card.Action>
+                <Dropdown.Root>
+                    <Dropdown.Trigger>
+                        <Card.ActionButton aria-label="More actions">
+                            <IconDotsVertical size={20} />
+                        </Card.ActionButton>
+                    </Dropdown.Trigger>
+                    <Dropdown.Content>
+                        <Dropdown.Item onSelect={() => {}}>Edit</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Delete</Dropdown.Item>
+                    </Dropdown.Content>
+                </Dropdown.Root>
             </Card.Action>
         </Card.Root>
     );
@@ -384,6 +441,59 @@ export const BannerToneDim: Story = {
         },
     },
     render: () => <BannerToneDimComparison />,
+};
+
+export const BannerDescription: StoryObj<BannerDescriptionDemoProps> = {
+    name: 'BannerDescription (hover to reveal)',
+    decorators: [
+        (Story) => (
+            <div style={{ width: 280 }}>
+                <Story />
+            </div>
+        ),
+    ],
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'Nest `Card.BannerDescription` inside `Card.Banner` to fade the description in over the banner ' +
+                    'while the card is hovered, keyboard-focused or has an open dropdown. The text is clamped with an ' +
+                    'ellipsis to the lines that fit the banner, and on interactive cards it becomes the accessible ' +
+                    "description of the card's link. Render it only when the entity has a description.",
+            },
+        },
+    },
+    argTypes: {
+        banner: { control: 'inline-radio', options: ['icon', 'image', 'small'] },
+    },
+    args: {
+        description: LONG_DESCRIPTION,
+        title: 'Folder',
+        banner: 'icon',
+    },
+    render: (args) => <BannerDescriptionDemo {...args} />,
+};
+
+export const BannerDescriptionVariants: Story = {
+    name: 'BannerDescription variants (hover to compare)',
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'Long text is clamped, short text is centred below the selection checkbox, image banners are ' +
+                    'covered, and small banners offset the text past the checkbox. The last card has no description.',
+            },
+        },
+    },
+    render: () => (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
+            <BannerDescriptionDemo banner="icon" title="Long description" description={LONG_DESCRIPTION} />
+            <BannerDescriptionDemo banner="icon" title="Short description" description={SHORT_DESCRIPTION} />
+            <BannerDescriptionDemo banner="image" title="Over an image" description={SHORT_DESCRIPTION} />
+            <BannerDescriptionDemo banner="small" title="Small banner" description={LONG_DESCRIPTION} />
+            <BannerDescriptionDemo banner="icon" title="Without description" description="" />
+        </div>
+    ),
 };
 
 export const BannerIconWithThumbnail: Story = {

@@ -43,6 +43,7 @@ type RowParts = {
     name: string;
     icon: ReactNode;
     decorator: ReactNode;
+    decoratorPropagatesClicks: boolean;
     action: ReactNode;
     rest: ReactNode[];
 };
@@ -56,6 +57,7 @@ const extractRowParts = (children: ReactNode): RowParts => {
     let name = '';
     let icon: ReactNode = undefined;
     let decorator: ReactNode = undefined;
+    let decoratorPropagatesClicks = false;
     let action: ReactNode = undefined;
     const rest: ReactNode[] = [];
     for (const child of Children.toArray(children)) {
@@ -73,6 +75,7 @@ const extractRowParts = (children: ReactNode): RowParts => {
         }
         if (isTreeDecoratorElement(child)) {
             decorator = child.props.children;
+            decoratorPropagatesClicks = child.props.propagateClicks === true;
             continue;
         }
         if (isTreeActionElement(child)) {
@@ -81,7 +84,7 @@ const extractRowParts = (children: ReactNode): RowParts => {
         }
         rest.push(child);
     }
-    return { name, icon, decorator, action, rest };
+    return { name, icon, decorator, decoratorPropagatesClicks, action, rest };
 };
 
 const sharedRowData = (props: TreeItemProps | TreeFolderProps, parentId: string) => ({
@@ -99,13 +102,14 @@ const sharedRowData = (props: TreeItemProps | TreeFolderProps, parentId: string)
 });
 
 const toItemData = (props: TreeItemProps, parentId: string): TreeItemData => {
-    const { name, icon, decorator, action } = extractRowParts(props.children);
+    const { name, icon, decorator, decoratorPropagatesClicks, action } = extractRowParts(props.children);
     return {
         ...sharedRowData(props, parentId),
         name,
         isFolder: false,
         icon,
         decorator,
+        decoratorPropagatesClicks,
         actions: action,
     };
 };
@@ -118,7 +122,7 @@ type FolderParse = {
 const toFolderData = (props: TreeFolderProps, parentId: string): FolderParse => {
     // Row parts live in `<Tree.FolderHeader>`; everything else is nested rows.
     const headerElement = Children.toArray(props.children).filter(isValidElement).find(isTreeFolderHeaderElement);
-    const { name, icon, decorator, action } = extractRowParts(headerElement?.props.children);
+    const { name, icon, decorator, decoratorPropagatesClicks, action } = extractRowParts(headerElement?.props.children);
     const rows = Children.toArray(props.children).filter(
         (child) => !(isValidElement(child) && isTreeFolderHeaderElement(child)),
     );
@@ -133,6 +137,7 @@ const toFolderData = (props: TreeFolderProps, parentId: string): FolderParse => 
             onExpandChange: props.onExpandChange,
             icon,
             decorator,
+            decoratorPropagatesClicks,
             actions: action,
             isLoading: nested.parentIsLoading,
             accepts: props.accepts,

@@ -1,0 +1,65 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use './underline' as link;
+
+/** A stylesheet rule, not inline, so an explicit font colour (written inline) still wins. */
+.link {
+    cursor: pointer;
+
+    // Spelled out for both states, so a visited link never falls back to the
+    // browser's own purple.
+    &,
+    &:link,
+    &:visited {
+        color: var(--color-highlight-default);
+    }
+
+    @include link.underline;
+
+    /**
+     * A run that sets its own colour (the font-colour mark) draws the line
+     * itself: the anchor's line takes the anchor's colour and nothing inside it
+     * can change that. At the same offset it lands on top of the anchor's,
+     * which is what makes the underline follow the colour of its own text.
+     */
+    [style*='color'] {
+        @include link.underline;
+    }
+}
+
+/** The flyout over a link in the editor: its target, then what can be done to it. */
+.panel {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-x-small);
+    max-width: 360px;
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-small);
+}
+
+.target {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &,
+    &:link,
+    &:visited {
+        color: var(--color-highlight-default);
+    }
+
+    @include link.underline;
+}
+
+/** Read out with the target, never drawn: that it opens a new tab. */
+.visuallyHidden {
+    position: absolute;
+    overflow: hidden;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}

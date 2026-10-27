@@ -98,11 +98,7 @@ describe('computeCheckedStates', () => {
     });
 
     it('derives folder state from selectable descendants only, ignoring disabled leaves', () => {
-        const items = [
-            folder('f', ROOT_ID, ['a', 'b']),
-            leaf('a', 'f', { isDisabled: true }),
-            leaf('b', 'f'),
-        ];
+        const items = [folder('f', ROOT_ID, ['a', 'b']), leaf('a', 'f', { isDisabled: true }), leaf('b', 'f')];
         expect(computeCheckedStates(items, new Set(['b'])).get('f')).toBe(true);
         expect(computeCheckedStates(items, new Set()).get('f')).toBe(false);
     });
@@ -134,11 +130,7 @@ describe('computeCheckedStates', () => {
 
     describe('with countDisabledInFolderState', () => {
         it('counts disabled leaves toward the folder, capping it at indeterminate', () => {
-            const items = [
-                folder('f', ROOT_ID, ['a', 'b']),
-                leaf('a', 'f', { isDisabled: true }),
-                leaf('b', 'f'),
-            ];
+            const items = [folder('f', ROOT_ID, ['a', 'b']), leaf('a', 'f', { isDisabled: true }), leaf('b', 'f')];
             expect(computeCheckedStates(items, new Set(['b']), { countDisabledInFolderState: true }).get('f')).toBe(
                 'indeterminate',
             );
@@ -150,9 +142,9 @@ describe('computeCheckedStates', () => {
                 leaf('a', 'f', { isDisabled: true, isSelected: true }),
                 leaf('b', 'f'),
             ];
-            expect(computeCheckedStates(items, new Set(['a', 'b']), { countDisabledInFolderState: true }).get('f')).toBe(
-                true,
-            );
+            expect(
+                computeCheckedStates(items, new Set(['a', 'b']), { countDisabledInFolderState: true }).get('f'),
+            ).toBe(true);
         });
     });
 

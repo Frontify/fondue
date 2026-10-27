@@ -1,8 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCheckMark } from '@frontify/fondue-icons';
-import { type ForwardedRef, type ReactNode } from 'react';
+import { type ForwardedRef, type ReactNode, useEffect, useRef } from 'react';
 
+import { useSyncRefs } from '#/hooks/useSyncRefs';
+
+import { useCardContext } from './CardContext';
 import styles from './styles/card.module.scss';
 
 export type CardBannerSize = 'small' | 'large';
@@ -145,3 +148,73 @@ export const CardBannerIcon = (
     );
 };
 CardBannerIcon.displayName = 'Card.BannerIcon';
+
+export type CardBannerDescriptionProps = {
+    'data-test-id'?: string;
+    children?: ReactNode;
+};
+
+export const CardBannerDescription = (
+    { 'data-test-id': dataTestId = 'fondue-card-banner-description', children }: CardBannerDescriptionProps,
+    ref: ForwardedRef<HTMLDivElement>,
+) => {
+    const context = useCardContext();
+    const containerRef = useRef<HTMLDivElement>(null);
+    const textRef = useRef<HTMLParagraphElement>(null);
+    const hasContent = children !== null && children !== undefined && children !== false && children !== '';
+    const registerBannerDescription = context?.registerBannerDescription;
+
+    useSyncRefs(containerRef, ref);
+
+    useEffect(() => {
+        if (!hasContent) {
+            return;
+        }
+        return registerBannerDescription?.();
+    }, [hasContent, registerBannerDescription]);
+
+    useEffect(() => {
+        const container = containerRef.current;
+        const text = textRef.current;
+        if (!container || !text) {
+            return;
+        }
+
+        const observer = new ResizeObserver(() => {
+            const containerStyle = getComputedStyle(container);
+            const availableHeight =
+                container.clientHeight -
+                Number.parseFloat(containerStyle.paddingTop) -
+                Number.parseFloat(containerStyle.paddingBottom);
+            const lineHeight = Number.parseFloat(getComputedStyle(text).lineHeight);
+            if (!Number.isFinite(lineHeight) || lineHeight <= 0 || !Number.isFinite(availableHeight)) {
+                return;
+            }
+            text.style.setProperty(
+                '--card-banner-description-lines',
+                String(Math.max(1, Math.floor(availableHeight / lineHeight))),
+            );
+        });
+
+        observer.observe(container);
+        return () => observer.disconnect();
+    }, [hasContent]);
+
+    if (!hasContent) {
+        return null;
+    }
+
+    return (
+        <div
+            ref={containerRef}
+            className={styles.bannerDescription}
+            data-test-id={dataTestId}
+            aria-hidden={context?.hasOverlay ? true : undefined}
+        >
+            <p ref={textRef} id={context?.bannerDescriptionId} className={styles.bannerDescriptionText}>
+                {children}
+            </p>
+        </div>
+    );
+};
+CardBannerDescription.displayName = 'Card.BannerDescription';

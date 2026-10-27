@@ -1,5 +1,15 @@
 # @frontify/fondue-tokens
 
+## 5.2.0
+
+### Minor Changes
+
+- [#2909](https://github.com/Frontify/fondue/pull/2909) [`3b8590b`](https://github.com/Frontify/fondue/commit/3b8590bc6767ba3aad5b3284fb0b811c797cd95a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add `border-0`, `rounded-none`, `leading-none` and `outline-0` to the Tailwind theme
+
+### Patch Changes
+
+- [#2905](https://github.com/Frontify/fondue/pull/2905) [`2605f03`](https://github.com/Frontify/fondue/commit/2605f031b7ce305eda04ed3318c7936f83b5ef3e) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: update dependencies to resolve dependabot vulnerabilities
+
 ## 5.1.2
 
 ### Patch Changes

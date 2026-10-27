@@ -11,5 +11,5 @@
         "resolveJsonModule": true,
         "target": "ESNext"
     },
-    "include": ["tailwind.config.ts", "vite.config.ts", "postcss.config.cjs", "package.json", "oxlint.config.ts"]
+    "include": ["vite.config.ts", "postcss.config.cjs", "package.json", "oxlint.config.ts"]
 }
