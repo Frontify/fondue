@@ -3,7 +3,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator, type Page } from '@playwright/test';
 
-import { press, pressUntil, ready, surfaceOf, toolbarOf } from './fixtures/layout';
+import { press, pressUntil, ready, settled, surfaceOf, toolbarOf } from './fixtures/layout';
 import { ProfileProbe } from './fixtures/ProfileProbe';
 
 /** Presses `key` until `control` has focus. */
@@ -29,6 +29,7 @@ const typeAndSelect = async (page: Page, text: string, word: string) => {
     await page.keyboard.insertText(text);
     // An arrow pressed before the editor reads the inserted text moves from a stale caret, so wait for its document.
     await expect.poll(async () => JSON.stringify(await contentOf(page))).toContain(JSON.stringify(text));
+    await settled(page);
     // Each press must extend the selection by one character before the next is sent, so a lost press fails here.
     for (let step = 1; step <= word.length; step += 1) {
         await press(page, 'Shift+ArrowLeft');

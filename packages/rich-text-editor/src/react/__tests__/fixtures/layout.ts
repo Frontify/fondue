@@ -42,9 +42,19 @@ export const surfaceOf = (page: Page) => page.getByRole('textbox');
 export const toolbarOf = (page: Page) => page.getByRole('toolbar', { name: 'Text formatting' });
 export const moreOf = (page: Page) => toolbarOf(page).getByRole('button', { name: 'More', exact: true });
 
-// Two frames outlast ProseMirror's 20 ms focus timer, which otherwise puts back the caret a key selection extended.
+// ProseMirror's focus handler sets a timer of this delay; run after a key extends the selection and before
+// ProseMirror reads the change, it collapses the selection back to the caret.
+const PROSEMIRROR_FOCUS_DELAY_MS = 20;
+
+// Two frames, then a timer that fires after any focus timer ProseMirror set before the call.
 export const settled = (page: Page) =>
-    page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    page.evaluate(
+        (delayMs) =>
+            new Promise<void>((resolve) =>
+                requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, delayMs))),
+            ),
+        PROSEMIRROR_FOCUS_DELAY_MS,
+    );
 
 /** Fills a profile's empty document with a heading-free paragraph of text, then leaves the caret in it. */
 export const populate = async (page: Page, text = 'The quick brown fox jumps over the lazy dog.') => {
