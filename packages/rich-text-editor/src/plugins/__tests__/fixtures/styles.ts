@@ -54,6 +54,7 @@ export const STYLE_MAP: readonly PresentationStyle[] = [
         appliesTo: ['link'],
         deprecated: false,
         recipe: {
+            display: 'inline-block',
             textDecoration: 'none',
             color: '#ffffff',
             backgroundColor: '#1d4ed8',
