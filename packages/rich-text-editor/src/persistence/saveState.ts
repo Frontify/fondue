@@ -119,7 +119,7 @@ export type SaveEvent = { facts: Facts } & (
     | { type: 'replaced'; revision: ServerRevision | null; previous: DocumentStamp }
 );
 
-type Distribute<E> = E extends unknown ? Omit<E, 'facts'> : never;
+type Distribute<Member> = Member extends unknown ? Omit<Member, 'facts'> : never;
 /** An event before the transport adds its facts. */
 export type EventInput = Distribute<SaveEvent>;
 
@@ -134,8 +134,8 @@ export type Effect =
     | { type: 'captureWaiting' }
     | { type: 'report'; diagnostic: Diagnostic }
     | { type: 'measure'; started: number; code: string | null }
-    | { type: 'arm'; timer: 'delay' | 'longest'; ms: number }
-    | { type: 'backoff'; ms: number }
+    | { type: 'arm'; timer: 'delay' | 'longest'; milliseconds: number }
+    | { type: 'backoff'; milliseconds: number }
     | { type: 'clear'; timers: readonly Timer[] }
     | { type: 'open'; serial: number; timeoutMs: number }
     | { type: 'save'; request: SaveRequest; serial: number }
@@ -150,57 +150,58 @@ export type Step = {
     effects: readonly Effect[];
 };
 
-export type Mutable<T> = { -readonly [K in keyof T]: T[K] };
+export type Mutable<Value> = { -readonly [Key in keyof Value]: Value[Key] };
 
 /** A copy of the machine and the effects a handler appends, so `next` never changes its input. */
 export type Draft = {
-    m: Mutable<SaveMachine>;
-    fx: Effect[];
+    machine: Mutable<SaveMachine>;
+    effects: Effect[];
     facts: Facts;
 };
 
 /** The host's option `name` from the newest options, else its default. */
-export const timing = <K extends keyof Timing>(facts: Facts, name: K): Timing[K] => {
+export const timing = <Key extends keyof Timing>(facts: Facts, name: Key): Timing[Key] => {
     const { options } = facts;
     if (options === undefined || options[name] === undefined) {
         return DEFAULTS[name];
     }
 
-    return options[name] as Timing[K];
+    return options[name] as Timing[Key];
 };
 
 /** A new record that nobody changed has nothing to save. */
-export const unsavedOf = (m: SaveMachine, sequence: number) =>
-    (sequence > m.acknowledged && sequence > 0) || m.unsavedOnMount;
+export const unsavedOf = (machine: SaveMachine, sequence: number) =>
+    (sequence > machine.acknowledged && sequence > 0) || machine.unsavedOnMount;
 
 /** Whether a write's outcome is unknown, in flight or waiting for replay. */
-export const outcomeUnknown = (m: SaveMachine) =>
-    m.flight !== undefined || (m.unresolved !== undefined && (m.state === 'uncertain' || m.state === 'offline'));
+export const outcomeUnknown = (machine: SaveMachine) =>
+    machine.flight !== undefined ||
+    (machine.unresolved !== undefined && (machine.state === 'uncertain' || machine.state === 'offline'));
 
 /** The `SaveStatus` a host reads, taken from the machine. */
-export const statusOf = (m: SaveMachine): SaveStatus => {
+export const statusOf = (machine: SaveMachine): SaveStatus => {
     let inFlightOperationId: string | null = null;
-    if (m.flight !== undefined) {
-        inFlightOperationId = m.flight.request.operationId;
+    if (machine.flight !== undefined) {
+        inFlightOperationId = machine.flight.request.operationId;
     }
 
     return {
-        state: m.state,
-        latestSequence: m.latest,
-        acknowledgedSequence: m.acknowledged,
-        revision: m.revision,
+        state: machine.state,
+        latestSequence: machine.latest,
+        acknowledgedSequence: machine.acknowledged,
+        revision: machine.revision,
         inFlightOperationId,
-        diagnostic: m.problem,
+        diagnostic: machine.problem,
     };
 };
 
 /** Why `requestCommit` answers at once with no capture. */
-export const refusal = (m: SaveMachine): CommitResult | undefined => {
-    if (m.ended) {
+export const refusal = (machine: SaveMachine): CommitResult | undefined => {
+    if (machine.ended) {
         return DISPOSED;
     }
 
-    if (m.state === 'conflict') {
+    if (machine.state === 'conflict') {
         return CONFLICT;
     }
 
@@ -209,7 +210,7 @@ export const refusal = (m: SaveMachine): CommitResult | undefined => {
 
 /** Why `commit` answers before it waits for anything. */
 export const gate = (
-    m: SaveMachine,
+    machine: SaveMachine,
     facts: Facts,
     composition: 'wait' | 'reject' | undefined,
 ): CommitResult | undefined => {
@@ -219,7 +220,7 @@ export const gate = (
     }
 
     // A listener of what `dispose` reported may call this while the phase is still `ready`.
-    const refused = refusal(m);
+    const refused = refusal(machine);
     if (refused !== undefined) {
         return refused;
     }

@@ -24,7 +24,10 @@ export const declaredOverrides = (declaration: FeatureDeclaration): ReaderRender
     attachedTo(declaration, 'reader') as ReaderRenderers | undefined;
 
 /** Attaches reader overrides to a feature; each must name a node or mark the feature declares. */
-export const defineReaderFeature = <F extends Feature>(feature: F, renderers: ReaderRenderers): F => {
+export const defineReaderFeature = <DeclaredFeature extends Feature>(
+    feature: DeclaredFeature,
+    renderers: ReaderRenderers,
+): DeclaredFeature => {
     const internals = featureInternals(feature);
     const declared = new Map<string, string>();
     if (internals !== undefined) {

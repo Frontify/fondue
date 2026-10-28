@@ -54,7 +54,7 @@ export type MachineConfig = {
 
 /** The machine of a new session, `clean` unless a carried write or unsaved changes need saving. */
 export const initial = (config: MachineConfig, session: SessionToken): SaveMachine => {
-    const m: Mutable<SaveMachine> = {
+    const machine: Mutable<SaveMachine> = {
         state: 'clean',
         latest: 0,
         acknowledged: 0,
@@ -76,47 +76,47 @@ export const initial = (config: MachineConfig, session: SessionToken): SaveMachi
         retrying: false,
         longest: false,
     };
-    load(m, config.revision, config.unsavedOnMount, session);
+    load(machine, config.revision, config.unsavedOnMount, session);
 
-    return m;
+    return machine;
 };
 
-type Of<T extends SaveEvent['type']> = Extract<SaveEvent, { type: T }>;
+type EventOf<EventType extends SaveEvent['type']> = Extract<SaveEvent, { type: EventType }>;
 
 /** The transition table: what each event does to a machine in any state. */
-const TRANSITIONS: { readonly [T in SaveEvent['type']]: (d: Draft, event: Of<T>) => void } = {
-    mounted: (d) => {
+const TRANSITIONS: { readonly [EventType in SaveEvent['type']]: (draft: Draft, event: EventOf<EventType>) => void } = {
+    mounted: (draft) => {
         // The write a failed session left, and the changes it never saved, wait for the debounce.
-        if (d.m.unsavedOnMount) {
-            schedule(d);
+        if (draft.machine.unsavedOnMount) {
+            schedule(draft);
         }
     },
-    changed: (d) => {
-        const { m, facts } = d;
-        if (m.ended) {
+    changed: (draft) => {
+        const { machine, facts } = draft;
+        if (machine.ended) {
             return;
         }
 
-        m.latest = facts.sequence;
-        if (m.state === 'clean') {
-            m.state = 'dirty';
+        machine.latest = facts.sequence;
+        if (machine.state === 'clean') {
+            machine.state = 'dirty';
         }
 
-        schedule(d);
-        d.fx.push({ type: 'refresh' });
+        schedule(draft);
+        draft.effects.push({ type: 'refresh' });
     },
-    flush: (d) => {
-        stopTimers(d);
-        d.m.due = true;
-        send(d);
+    flush: (draft) => {
+        stopTimers(draft);
+        draft.machine.due = true;
+        send(draft);
     },
     send,
     retryDue: replay,
-    ready: (d) => {
-        d.m.shown = true;
+    ready: (draft) => {
+        draft.machine.shown = true;
         // A write a failed session left unresolved goes first, unchanged.
-        if (d.m.unresolved !== undefined) {
-            replay(d);
+        if (draft.machine.unresolved !== undefined) {
+            replay(draft);
         }
     },
     online,
@@ -124,10 +124,10 @@ const TRANSITIONS: { readonly [T in SaveEvent['type']]: (d: Draft, event: Of<T>)
     dispose,
     failed,
     answered,
-    prepared: (d, { request }) => {
-        d.m.unresolved = request;
-        d.m.replays = 0;
-        write(d, request);
+    prepared: (draft, { request }) => {
+        draft.machine.unresolved = request;
+        draft.machine.replays = 0;
+        write(draft, request);
     },
     pin: capture,
     pinned,
@@ -135,14 +135,14 @@ const TRANSITIONS: { readonly [T in SaveEvent['type']]: (d: Draft, event: Of<T>)
     replaced,
 };
 
-const apply = <T extends SaveEvent['type']>(d: Draft, event: Of<T>) => {
-    TRANSITIONS[event.type](d, event);
+const apply = <EventType extends SaveEvent['type']>(draft: Draft, event: EventOf<EventType>) => {
+    TRANSITIONS[event.type](draft, event);
 };
 
 /** The machine after `event` and the effects to run, in order; `state` is not changed. */
 export const next = (state: SaveMachine, event: SaveEvent): Step => {
-    const d: Draft = { m: { ...state }, fx: [], facts: event.facts };
-    apply(d, event);
+    const draft: Draft = { machine: { ...state }, effects: [], facts: event.facts };
+    apply(draft, event);
 
-    return { state: d.m, effects: d.fx };
+    return { state: draft.machine, effects: draft.effects };
 };

@@ -24,15 +24,27 @@ const requires = [{ id: 'core', version: 1 }];
 const nodeId = { type: 'string', required: true } as const;
 const lang = { type: 'language', nullable: true, default: null } as const;
 const styleId = { type: 'id', nullable: true, default: null } as const;
-const block = (content?: string) => ({
-    group: 'block' as const,
-    ...(content === undefined ? {} : { content }),
-});
-const mark = (html: HtmlSpec, rank?: number): Pick<MarkDeclaration, 'html' | 'parse' | 'rank'> => ({
-    html,
-    parse: [],
-    ...(rank === undefined ? {} : { rank }),
-});
+const block = (content?: string) => {
+    const declaration: { group: 'block'; content?: string } = { group: 'block' };
+    if (content !== undefined) {
+        declaration.content = content;
+    }
+
+    return declaration;
+};
+
+const mark = (html: HtmlSpec, rank?: number): Pick<MarkDeclaration, 'html' | 'parse' | 'rank'> => {
+    const declaration: { html: HtmlSpec; parse: MarkDeclaration['parse']; rank?: number } = {
+        html,
+        parse: [],
+    };
+    if (rank !== undefined) {
+        declaration.rank = rank;
+    }
+
+    return declaration;
+};
+
 const color = (tag: string): MarkDeclaration => ({
     attrs: { tokenId: styleId, value: { type: 'color', nullable: true, default: null } },
     exactlyOne: ['tokenId', 'value'],

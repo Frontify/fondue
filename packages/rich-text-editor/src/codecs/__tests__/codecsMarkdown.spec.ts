@@ -179,7 +179,7 @@ describe('Markdown forms, mark and inline overrides', () => {
             chip: { group: 'inline', atom: true, attrs: {}, html: ['span'], parse: [] },
         },
         marks: {
-            hl: { attrs: {}, html: ['mark', 0], parse: [], markdown: { open: '==', close: '==' } },
+            highlight: { attrs: {}, html: ['mark', 0], parse: [], markdown: { open: '==', close: '==' } },
             kbd: { attrs: {}, html: ['kbd', 0], parse: [] },
             boom: { attrs: {}, html: ['b', 0], parse: [] },
             plain: { attrs: {}, html: ['span', 0], parse: [] },
@@ -222,7 +222,7 @@ describe('Markdown forms, mark and inline overrides', () => {
             attrs: { lang: null },
             content: [
                 ...words(
-                    marked('a', 'hl'),
+                    marked('a', 'highlight'),
                     marked('k', 'kbd'),
                     marked('x', 'boom'),
                     marked('p', 'plain'),

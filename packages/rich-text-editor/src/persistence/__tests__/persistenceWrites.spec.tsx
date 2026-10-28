@@ -27,7 +27,7 @@ describe('writes', () => {
     it('keeps at most one write in flight across random edits, requestCommit calls and delayed responses', async () => {
         const step = fc.oneof(
             fc.constant({ kind: 'type' as const }),
-            fc.record({ kind: fc.constant('advance' as const), ms: fc.integer({ min: 0, max: 40_000 }) }),
+            fc.record({ kind: fc.constant('advance' as const), milliseconds: fc.integer({ min: 0, max: 40_000 }) }),
             fc.record({ kind: fc.constant('answer' as const), saved: fc.boolean() }),
             fc.constant({ kind: 'commit' as const }),
         );
@@ -74,7 +74,7 @@ describe('writes', () => {
                         commits.push(handle().requestCommit({ reason: 'manual' }));
                         await flush();
                     } else if (next.kind === 'advance') {
-                        advance(next.ms);
+                        advance(next.milliseconds);
                     } else {
                         const first = waiting.shift();
                         if (first !== undefined && next.saved) {

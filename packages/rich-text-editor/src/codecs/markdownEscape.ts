@@ -254,6 +254,16 @@ const charAt = (tokens: readonly Token[], index: number): string | undefined => 
     return undefined;
 };
 
+/** Whether the three characters before `index` spell `www` in any case, so a dot there would start an autolink. */
+const followsWww = (tokens: readonly Token[], index: number): boolean => {
+    let before = '';
+    for (let offset = 3; offset >= 1; offset -= 1) {
+        before += charAt(tokens, index - offset) ?? '';
+    }
+
+    return /www$/i.test(before);
+};
+
 /** One character, escaped where it could start syntax, so `fromMarkdown` reads it back as text. */
 const writeChar = (tokens: readonly Token[], index: number, atLineStart: boolean): string => {
     const token = tokens[index] as Extract<Token, { kind: 'char' }>;
@@ -291,10 +301,7 @@ const writeChar = (tokens: readonly Token[], index: number, atLineStart: boolean
         }
     }
 
-    if (
-        char === '.' &&
-        /www$/i.test(['w', 'w', 'w'].map((_, offset) => charAt(tokens, index - 3 + offset) ?? '').join(''))
-    ) {
+    if (char === '.' && followsWww(tokens, index)) {
         return '\\.';
     }
 

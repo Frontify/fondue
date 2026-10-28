@@ -121,8 +121,8 @@ const clear = (link: Link, timers: readonly Timer[]) => {
     }
 };
 
-const arm = (link: Link, timer: Timer, ms: number, fire: () => void) => {
-    link.timers.set(timer, setTimeout(fire, ms));
+const arm = (link: Link, timer: Timer, milliseconds: number, fire: () => void) => {
+    link.timers.set(timer, setTimeout(fire, milliseconds));
 };
 
 /** Calls the host's save; an answer or a failure comes back as an event. */
@@ -174,10 +174,10 @@ const readRemote = (link: Link) => {
         .catch(() => runtime.report(diagnostic('runtime.listener-error', undefined, undefined, 'error')));
 };
 
-type Of<T extends Effect['type']> = Extract<Effect, { type: T }>;
+type EffectOf<EffectType extends Effect['type']> = Extract<Effect, { type: EffectType }>;
 
 /** What each effect does outside the machine. */
-const EFFECTS: { readonly [T in Effect['type']]: (link: Link, effect: Of<T>) => void } = {
+const EFFECTS: { readonly [EffectType in Effect['type']]: (link: Link, effect: EffectOf<EffectType>) => void } = {
     publish: (link) => {
         if (refresh(link)) {
             link.runtime.saveStatusChanged();
@@ -208,12 +208,12 @@ const EFFECTS: { readonly [T in Effect['type']]: (link: Link, effect: Of<T>) => 
     measure: (link, { started, code }) => {
         link.runtime.measure('save', started, code);
     },
-    arm: (link, { timer, ms }) => {
-        arm(link, timer, ms, () => dispatch(link, { type: 'flush' }));
+    arm: (link, { timer, milliseconds }) => {
+        arm(link, timer, milliseconds, () => dispatch(link, { type: 'flush' }));
     },
-    backoff: (link, { ms }) => {
+    backoff: (link, { milliseconds }) => {
         const jitter = (Math.random() * 2 - 1) * JITTER;
-        arm(link, 'retry', ms * (1 + jitter), () => dispatch(link, { type: 'retryDue' }));
+        arm(link, 'retry', milliseconds * (1 + jitter), () => dispatch(link, { type: 'retryDue' }));
     },
     clear: (link, { timers }) => {
         clear(link, timers);
@@ -254,7 +254,7 @@ const EFFECTS: { readonly [T in Effect['type']]: (link: Link, effect: Of<T>) => 
     },
 };
 
-const run = <T extends Effect['type']>(link: Link, effect: Of<T>) => {
+const run = <EffectType extends Effect['type']>(link: Link, effect: EffectOf<EffectType>) => {
     EFFECTS[effect.type](link, effect);
 };
 

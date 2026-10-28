@@ -58,7 +58,7 @@ const derives: Readonly<Record<Format, (node: CodecNodePlan) => boolean>> = {
 const overridden = (node: CodecNodePlan, format: Format) => node[format] !== undefined;
 
 /** The override registered under `name`, ignoring inherited object keys. */
-const overrideOf = <V>(overrides: Readonly<Record<string, V>> | undefined, name: string): V | undefined => {
+const overrideOf = <Value>(overrides: Readonly<Record<string, Value>> | undefined, name: string): Value | undefined => {
     if (overrides === undefined) {
         return undefined;
     }

@@ -83,9 +83,9 @@ type Output = {
 const NO_PRESENTATION: ReaderPresentation = { styles: [], colorTokens: [] };
 
 /** A list the host passed, or none: plain JavaScript hosts may leave a member out. */
-const listOf = <T,>(value: readonly T[] | undefined): readonly T[] => {
+const listOf = <Item,>(value: readonly Item[] | undefined): readonly Item[] => {
     if (value !== undefined && Array.isArray(value)) {
-        return value as readonly T[];
+        return value as readonly Item[];
     }
 
     return [];

@@ -23,11 +23,18 @@ const models = join(
 );
 
 /** Every JSON document in a model fixture directory, by file name. */
-export const fixturesIn = (directory: string): readonly (readonly [string, unknown])[] =>
-    readdirSync(join(models, directory))
-        .filter((name) => name.endsWith('.json'))
-        .sort()
-        .map((name) => [name, JSON.parse(readFileSync(join(models, directory, name), 'utf8')) as unknown]);
+export const fixturesIn = (directory: string): readonly (readonly [string, unknown])[] => {
+    const directoryPath = join(models, directory);
+    const names = readdirSync(directoryPath).filter((name) => name.endsWith('.json'));
+    names.sort();
+    const fixtures: (readonly [string, unknown])[] = [];
+    for (const name of names) {
+        const contents = readFileSync(join(directoryPath, name), 'utf8');
+        fixtures.push([name, JSON.parse(contents) as unknown]);
+    }
+
+    return fixtures;
+};
 
 /** `RichTextReader` through `renderToString`, as a host renders published content on the server. */
 export const renderReader = (

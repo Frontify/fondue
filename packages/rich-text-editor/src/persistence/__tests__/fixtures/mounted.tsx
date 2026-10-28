@@ -195,7 +195,7 @@ export const settle = () =>
         await vi.advanceTimersByTimeAsync(0);
     });
 /** The promise's value, or `pending` while it has none once the pending continuations ran. */
-export const peek = async <T,>(promise: Promise<T>) => {
+export const peek = async <Value,>(promise: Promise<Value>) => {
     await settle();
 
     // An already settled promise wins the race over the second entry.
@@ -280,9 +280,9 @@ export const mount = (options: MountOptions = {}) => {
         metrics,
         rerender: (readOnly: boolean, service?: PersistenceService) => view.rerender(element(readOnly, service)),
         type: (text: string) => act(() => typeText(handle(), text)),
-        advance: (ms: number) =>
+        advance: (milliseconds: number) =>
             act(() => {
-                vi.advanceTimersByTime(ms);
+                vi.advanceTimersByTime(milliseconds);
             }),
         /** Runs the microtask in which `requestCommit` captures. */
         flush: () =>

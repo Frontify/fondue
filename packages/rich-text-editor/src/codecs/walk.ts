@@ -119,22 +119,27 @@ export const itemMarker = (
  * `text` with `first` before its first line and `rest` before each later one. `trim` drops the end spaces of the
  * first line; a blank first line keeps its prefix without end spaces, and a blank later line becomes `blank`.
  */
-export const prefixLines = (text: string, first: string, rest: string, trim = false, blank = rest.trimEnd()) =>
-    text
-        .split('\n')
-        .map((line, index) => {
-            if (index === 0 && (trim || line === '')) {
-                return `${first}${line}`.trimEnd();
-            }
+export const prefixLines = (text: string, first: string, rest: string, trim = false, blank = rest.trimEnd()) => {
+    const lines = text.split('\n');
+    const prefixed: string[] = [];
+    for (const [index, line] of lines.entries()) {
+        if (index === 0 && (trim || line === '')) {
+            prefixed.push(`${first}${line}`.trimEnd());
+            continue;
+        }
 
-            if (index === 0) {
-                return `${first}${line}`;
-            }
+        if (index === 0) {
+            prefixed.push(`${first}${line}`);
+            continue;
+        }
 
-            if (line === '') {
-                return blank;
-            }
+        if (line === '') {
+            prefixed.push(blank);
+            continue;
+        }
 
-            return `${rest}${line}`;
-        })
-        .join('\n');
+        prefixed.push(`${rest}${line}`);
+    }
+
+    return prefixed.join('\n');
+};

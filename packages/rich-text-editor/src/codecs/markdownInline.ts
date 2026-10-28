@@ -57,7 +57,7 @@ export const inlineNodes = (builder: Builder, token: MarkdownToken, path: string
     const active: TreeMark[] = [];
     const order = builder.vocabulary.markOrder;
     const marksNow = (extra: readonly TreeMark[] = []) =>
-        [...active, ...extra].sort((a, b) => order.indexOf(a.type) - order.indexOf(b.type));
+        [...active, ...extra].sort((left, right) => order.indexOf(left.type) - order.indexOf(right.type));
     const pushText = (text: string, extra: readonly TreeMark[] = []) => {
         if (text === '') {
             return;

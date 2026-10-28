@@ -452,7 +452,7 @@ describe('format attributes', () => {
         (_, fixture) => {
             const clean = fixture as RichTextDocument;
             const dirty = withStyle(fixture) as RichTextDocument;
-            const strip = <T extends { diagnostics: readonly Diagnostic[] }>(output: T) => ({
+            const strip = <Output extends { diagnostics: readonly Diagnostic[] }>(output: Output) => ({
                 ...output,
                 diagnostics: output.diagnostics.filter(({ code }) => code !== 'format.unknown-attribute'),
             });
@@ -515,7 +515,7 @@ describe('codec context translations', () => {
         codecs: {
             text: {
                 nodes: {
-                    label: (_, __, context) =>
+                    label: (_, _attributes, context) =>
                         [
                             context.translate('RichTextEditor_readerIslandFeature', { feature: 'x' }),
                             context.translate('RichTextEditor_readerIslandFeature', {}),

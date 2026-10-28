@@ -373,13 +373,13 @@ const MESSAGE_KEYS = {
 } as const;
 
 /** A localized message, in the locale's own language since the document's `lang` does not apply to it. */
-export const message = ({ locale, translate: t }: ReaderContext, kind: keyof typeof MESSAGE_KEYS): ReactElement => {
+export const message = ({ locale, translate }: ReaderContext, kind: keyof typeof MESSAGE_KEYS): ReactElement => {
     const props: Record<string, unknown> = { role: 'note', 'data-rte-message': kind };
     if (locale.lang !== undefined) {
         props.lang = locale.lang;
     }
 
-    return createElement('div', props, t(MESSAGE_KEYS[kind]));
+    return createElement('div', props, translate(MESSAGE_KEYS[kind]));
 };
 
 /**
