@@ -9,9 +9,12 @@
     "@frontify/fondue-rte": "0.1.11",
     "@frontify/fondue-sdk": "0.2.2",
     "@frontify/fondue-tokens": "5.1.2",
-    "@frontify/fondue-storybook-docs": "0.0.2"
+    "@frontify/fondue-storybook-docs": "0.0.2",
+    "@frontify/fondue-rich-text-editor": "0.0.0"
   },
   "changesets": [
+    "bright-pens-write",
+    "quiet-trees-fall",
     "rude-moose-guess"
   ]
 }
