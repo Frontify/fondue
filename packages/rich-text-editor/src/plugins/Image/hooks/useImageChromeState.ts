@@ -3,15 +3,18 @@
 import { type MouseEvent, useEffect, useId, useMemo, useRef, useState } from 'react';
 
 import { type MenuOption, useRichTextNodeView } from '#/bridge/pluginApi/define';
-import { type EditorApi, type UploadStatus, useEditorApi, useEditorValue } from '#/bridge/pluginApi/plugin';
-import { altOf, figureAlign, imageOutput, isRecord, type JsonObject, REPLACED_ASSET, unavailableOf } from '#/model';
+import { type EditorApi, useEditorApi, useEditorValue } from '#/bridge/pluginApi/plugin';
+import { figureAlign, imageOutput, isRecord, REPLACED_ASSET } from '#/model';
 
 import { mayAnimate } from '../helpers/animation';
+import { altActionLabel, sizeActionLabel } from '../helpers/chromeText';
 import { SET_SIZE } from '../helpers/dialogStrings';
 import { type SIDES } from '../helpers/options';
 
 import { useResize } from './useResize';
-import { surfaceFocused, uploadStatusText, useUploadStatus } from './useUploadStatus';
+import { useReviewFocus } from './useReviewFocus';
+import { useSpokenImage } from './useSpokenImage';
+import { surfaceFocused, useUploadStatus } from './useUploadStatus';
 
 /** The side of the figure that holds the image `nodeId`, which its chrome's alignment menu shows. */
 const sideOf = (api: EditorApi | undefined, nodeId: string | null) => {
@@ -28,46 +31,19 @@ const sideOf = (api: EditorApi | undefined, nodeId: string | null) => {
 const reducedMotion = () => globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
 
 /**
- * What a screen reader hears as the image becomes node-selected, since an image with an empty `alt` says nothing:
- * for a slot, its upload as it stands, with how to fix a failed one.
+ * A press on the image selects it, as on any atom, and keeps the browser from putting the caret in a neighbouring
+ * block. The chrome keeps the mouse event from the editor. On a selected image the press starts the node's drag.
  */
-const spokenOf = (
-    attrs: JsonObject,
-    context: Parameters<typeof imageOutput>[1],
-    unavailable: boolean,
-    upload: UploadStatus | undefined,
-) => {
-    const { t } = context;
-    if (attrs.assetId === null) {
-        if (upload !== undefined) {
-            // The live region writes a value between U+2068 and U+2069 into a `bdi` of its own.
-            const name = `\u2068${upload.name}\u2069`;
-
-            return t('RichTextEditor_announceBoth', { first: name, second: uploadStatusText(upload, t) });
-        }
-
-        return t('RichTextEditor_imageUnfinished');
+const selectImageOnPress = (event: MouseEvent, selected: boolean, select: () => void, api: EditorApi | undefined) => {
+    if (selected && event.button === 0) {
+        return;
     }
 
-    if (unavailable) {
-        const { message, label } = unavailableOf(attrs, context);
-        if (label === '') {
-            return message;
-        }
-
-        return `${message} ${label}`;
+    event.preventDefault();
+    select();
+    if (api?.surface() !== undefined && !surfaceFocused(api.surface)) {
+        api.focus();
     }
-
-    const alt = altOf(attrs);
-    if (alt === undefined) {
-        return t('RichTextEditor_imageSelectedMissing');
-    }
-
-    if (alt === '') {
-        return t('RichTextEditor_imageSelectedDecorative');
-    }
-
-    return t('RichTextEditor_imageSelected', { description: alt });
 };
 
 type ImageCommands = {
@@ -111,34 +87,6 @@ const useAnimation = (src: string | undefined, mediaType: string | null) => {
     return { decided, animated, paused, setPlayed };
 };
 
-/** Speaks a selected image as it becomes selected, and again when what it says changes. */
-const useSelectionAnnouncement = (
-    selected: boolean,
-    spoken: string,
-    heard: string,
-    slot: boolean,
-    announce: EditorApi['announce'] | undefined,
-) => {
-    const heardRef = useRef<{ heard: string; slot: boolean } | undefined>(undefined);
-    // A selected image is spoken as it becomes selected, and again when what it says changes, as when it fails to
-    // load; a slot that fills is not, since the upload's completion speaks for it.
-    useEffect(() => {
-        if (!selected) {
-            heardRef.current = undefined;
-
-            return;
-        }
-
-        const before = heardRef.current;
-        heardRef.current = { heard, slot };
-        if (before !== undefined && (before.heard === heard || (before.slot && !slot))) {
-            return;
-        }
-
-        announce?.(spoken);
-    }, [selected, spoken, heard, slot, announce]);
-};
-
 /** The state, effects and handlers of the image chrome. */
 export const useImageChromeState = () => {
     const { attrs, nodeId, selected, context, execute, select } = useRichTextNodeView<ImageCommands>();
@@ -174,27 +122,10 @@ export const useImageChromeState = () => {
     // The upload chrome follows the session's upload of this slot, which no reload keeps.
     const upload = useUploadStatus(nodeId ?? '');
     const slot = attrs.assetId === null;
-    const spoken = spokenOf(attrs, context, unavailable, slot ? upload : undefined);
-    // A slot's progress is shown, not spoken: only whether it runs, failed or stopped counts as a change.
-    let heard = spoken;
-    if (slot && upload !== undefined) {
-        heard = 'running';
-        if (upload.state === 'failed' || upload.state === 'stopped') {
-            heard = upload.state;
-        }
-    }
-
-    useSelectionAnnouncement(selected, spoken, heard, slot, announce);
+    useSpokenImage(attrs, context, unavailable, slot ? upload : undefined, slot, selected, announce);
     const altLabel = review ? t('RichTextEditor_imageAltReview') : undefined;
     const takesFocus = isRecord(replaced) && replaced.focus === true;
-    // After the author's own pick focus moves to the review action, which the prompt describes; a background
-    // completion leaves focus where the author is, and its announcement carries the prompt.
-    useEffect(() => {
-        if (altLabel !== undefined && takesFocus) {
-            const action = barRef.current?.querySelector<HTMLElement>(`button[aria-label="${CSS.escape(altLabel)}"]`);
-            action?.focus();
-        }
-    }, [altLabel, takesFocus]);
+    useReviewFocus(altLabel, takesFocus, barRef);
     let displayWidth: number | null = null;
     if (typeof attrs.displayWidth === 'number') {
         displayWidth = attrs.displayWidth;
@@ -218,33 +149,11 @@ export const useImageChromeState = () => {
         execute('image.width.edit');
     };
 
-    let altText = t('RichTextEditor_imageAltEdit');
-    if (review) {
-        altText = t('RichTextEditor_imageAltReview');
-    } else if (!kept) {
-        altText = t('RichTextEditor_imageAltAdd');
-    }
-
-    let sizeText = t('RichTextEditor_imageSizeOriginal');
-    if (displayWidth !== null) {
-        sizeText = t('RichTextEditor_imageSizePercent', { percent: displayWidth });
-    }
-
+    const altText = altActionLabel(t, review, kept);
+    const sizeText = sizeActionLabel(t, displayWidth);
     const unfinished = attrs.assetId === null;
     const status = unfinished ? upload : undefined;
-    // The chrome keeps mouse events from the editor, so a press on the image selects it here, as on any atom, and
-    // keeps the browser from putting the caret in a neighbouring block; on a selected image it starts the node's drag.
-    const selectImage = (event: MouseEvent) => {
-        if (selected && event.button === 0) {
-            return;
-        }
-
-        event.preventDefault();
-        select();
-        if (api?.surface() !== undefined && !surfaceFocused(api.surface)) {
-            api.focus();
-        }
-    };
+    const selectImage = (event: MouseEvent) => selectImageOnPress(event, selected, select, api);
 
     return {
         api,

@@ -1,15 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type CompositionEvent, type KeyboardEvent, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { type CompositionEvent, useEffect, useId, useMemo, useRef, useState } from 'react';
 
 import { suggestionOptionId, useEditorDialog } from '#/bridge/pluginApi/define';
-import {
-    type EditorApi,
-    passesToBrowser,
-    type SelectionHandle,
-    useClientLayoutEffect,
-} from '#/bridge/pluginApi/plugin';
+import { type EditorApi, type SelectionHandle, useClientLayoutEffect } from '#/bridge/pluginApi/plugin';
 
+import { mentionActions } from '../helpers/mentionActions';
 import {
     afterFailure,
     afterPage,
@@ -23,14 +19,10 @@ import {
     spokenOption,
 } from '../helpers/results';
 
-/** The command that inserts the chosen result. */
-const INSERT_MENTION = 'reference.insert';
 // As the mention list waits, so one search runs once the author pauses.
 const SEARCH_DELAY_MS = 200;
 // As the mention list shows its spinner.
 const SPINNER_DELAY_MS = 300;
-// Safari sends the Enter that confirms a composition after `compositionend`, as ProseMirror's own guard has it.
-const COMPOSITION_ENTER_MS = 500;
 
 /** The mention search dialog's strings, in the UI locale. */
 type MentionSearchStrings = {
@@ -60,9 +52,6 @@ const mentionSearchStrings = (t: EditorApi['t']): MentionSearchStrings => ({
     search: t('RichTextEditor_mentionSearch'),
     cancel: t('RichTextEditor_cancel'),
 });
-
-/** An index moved past either end of a list of `length` options, wrapped around to the other end. */
-const wrapped = (index: number, length: number): number => ((index % length) + length) % length;
 
 /** What the list says about its answer: the failure, the result count, or that there are none. */
 const statusOf = (found: Found, strings: MentionSearchStrings): string => {
@@ -253,73 +242,18 @@ export const useSearchDialogState = (
     const targetRef = useInsertTarget(targets);
     const { ask, found, slow, index, setIndex, askAgain, searchFor } = useSearchResults(services, resourceTypes);
     const options = useMemo(() => found.items.map((item) => listOption(item, strings)), [found.items, strings]);
-    const choose = (position: number) => {
-        const item = found.items[position];
-        if (item === undefined) {
-            return;
-        }
-
-        if (item.action === 'more' && item.cursor !== undefined) {
-            askAgain(item.cursor);
-
-            return;
-        }
-
-        if (item.action === 'retry') {
-            askAgain(ask.page);
-
-            return;
-        }
-
-        let commandOptions: { focus: 'editor'; target?: SelectionHandle } = { focus: 'editor' };
-        if (targetRef.current !== null) {
-            commandOptions = { focus: 'editor', target: targetRef.current };
-        }
-
-        if (api.commands.execute(INSERT_MENTION, item.payload, commandOptions).status === 'rejected') {
-            return;
-        }
-
-        dialog.finish('surface');
-    };
-
-    const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-        if (passesToBrowser(event.nativeEvent)) {
-            return;
-        }
-
-        // The Enter that confirms a composition is spent here, with options or none, so it never marks a later Enter.
-        if (event.key === 'Enter' && event.timeStamp - composedAtRef.current < COMPOSITION_ENTER_MS) {
-            composedAtRef.current = Number.NEGATIVE_INFINITY;
-            event.preventDefault();
-
-            return;
-        }
-
-        if (options.length === 0) {
-            return;
-        }
-
-        if (event.key === 'ArrowDown') {
-            event.preventDefault();
-            setIndex(wrapped(index + 1, options.length));
-
-            return;
-        }
-
-        if (event.key === 'ArrowUp') {
-            event.preventDefault();
-            setIndex(wrapped(index - 1, options.length));
-
-            return;
-        }
-
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            choose(index);
-        }
-    };
-
+    const { choose, onKeyDown } = mentionActions({
+        api,
+        items: found.items,
+        page: ask.page,
+        askAgain,
+        optionCount: options.length,
+        index,
+        setIndex,
+        targetRef,
+        composedAtRef,
+        finish: () => dialog.finish('surface'),
+    });
     const shownIndex = Math.min(index, Math.max(0, options.length - 1));
     useAnnouncements(found, shownIndex, strings, dialog.announce);
 

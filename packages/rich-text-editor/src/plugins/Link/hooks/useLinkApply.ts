@@ -2,11 +2,13 @@
 
 import { type FormEvent, type RefObject, useEffect, useState } from 'react';
 
-import { type EditorApi, type SelectionHandle, type useEditorOverlay } from '#/bridge/pluginApi/plugin';
-import { checkHref, type HrefPolicy } from '#/model';
+import { type EditorOverlay } from '#/bridge/pluginApi/define';
+import { type EditorApi, type SelectionHandle } from '#/bridge/pluginApi/plugin';
+import { type HrefPolicy } from '#/model';
 
-import { withScheme, type Destination } from '../helpers/destination';
-import { type LinkPopoverStrings, listed, type Problem, SET_LINK } from '../helpers/linkPopoverModel';
+import { type Destination } from '../helpers/destination';
+import { checkedDestination, problemMessage, rejectedLink } from '../helpers/linkCommand';
+import { type LinkPopoverStrings, type Problem } from '../helpers/linkPopoverModel';
 
 /** What Apply does: checks the destination, runs `link.set`, and says why it did not link. */
 export const useLinkApply = (
@@ -15,7 +17,7 @@ export const useLinkApply = (
     policy: HrefPolicy | undefined,
     initialText: string,
     target: SelectionHandle | undefined,
-    overlay: ReturnType<typeof useEditorOverlay>,
+    overlay: EditorOverlay,
     close: (next: boolean) => void,
     destinationRef: RefObject<HTMLInputElement | null>,
     href: string,
@@ -34,32 +36,7 @@ export const useLinkApply = (
             destinationRef.current?.focus();
         }
     }, [destinationRef, rejections]);
-    /** What the field's description says for `next`. */
-    const messageOf = (next: Problem | undefined): string => {
-        if (next === 'scheme') {
-            const schemes = policy?.allowedSchemes;
-
-            return strings.schemesAllowed(
-                listed(
-                    (schemes ?? []).map((scheme) => `${scheme}:`),
-                    lang,
-                ),
-            );
-        }
-
-        if (next === 'host') {
-            const hosts = policy?.allowedHosts;
-
-            return strings.hostsAllowed(listed(hosts ?? [], lang));
-        }
-
-        if (next === 'removed') {
-            return strings.removed;
-        }
-
-        return strings.invalid;
-    };
-
+    const messageOf = (next: Problem | undefined): string => problemMessage(next, strings, policy, lang);
     const reject = (next: Problem) => {
         setProblem(next);
         const field = destinationRef.current;
@@ -80,38 +57,9 @@ export const useLinkApply = (
             return;
         }
 
-        let visible = text;
-        if (text === '') {
-            visible = fallback;
-        }
-
-        // Text the author left as it opened sends none, so what was typed in the link meanwhile stays; a new link inserts it.
-        const unchanged = !here && initialText !== '' && visible === initialText;
-        let chosenStyle: string | null = null;
-        if (styleId !== '') {
-            chosenStyle = styleId;
-        }
-
-        const value = {
-            href: destination,
-            ...(unchanged ? {} : { text: visible }),
-            openInNewWindow: newWindow,
-            styleId: chosenStyle,
-        };
-        let options: { target: SelectionHandle } | undefined;
-        if (!here && target !== undefined) {
-            options = { target };
-        }
-
-        const result = api.commands.execute(SET_LINK, value, options);
-        if (result.status === 'rejected') {
-            if (result.code === 'target-invalid') {
-                reject('removed');
-            } else if (result.code === 'invalid-payload') {
-                reject('invalid');
-            } else {
-                reject('failed');
-            }
+        const rejected = rejectedLink(api, destination, here, fallback, text, initialText, newWindow, styleId, target);
+        if (rejected !== undefined) {
+            reject(rejected);
 
             return;
         }
@@ -120,39 +68,24 @@ export const useLinkApply = (
         close(false);
     };
 
-    const checked = () => {
-        const destination = withScheme(href);
-        const result = checkHref(destination, policy);
-        // An empty destination parses as the page itself, which is no link.
-        if (result.ok && result.href !== '') {
-            return result.href;
+    const applyChecked = (here: boolean) => {
+        const checked = checkedDestination(href, policy);
+        if ('problem' in checked) {
+            reject(checked.problem);
+
+            return;
         }
 
-        const unchecked = checkHref(destination);
-        if (result.ok || !unchecked.ok || unchecked.href === '') {
-            reject('invalid');
-        } else if (result.code === 'host-not-allowed') {
-            reject('host');
-        } else {
-            reject('scheme');
-        }
-
-        return undefined;
+        run(checked.href, here);
     };
 
     const apply = (event: FormEvent) => {
         event.preventDefault();
-        const destination = checked();
-        if (destination !== undefined) {
-            run(destination, false);
-        }
+        applyChecked(false);
     };
 
     const insertNew = () => {
-        const destination = checked();
-        if (destination !== undefined) {
-            run(destination, true);
-        }
+        applyChecked(true);
     };
 
     const pick = (position: number) => {

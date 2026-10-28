@@ -1,22 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ChangeEvent, useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 
 import { type OverlayProps, useEditorApi, useEditorOverlay } from '#/bridge/pluginApi/plugin';
 import { type CodecContext, type PresentationStyle } from '#/model';
 
 import {
     captureLinkTarget,
-    FIELD_PROBLEMS,
     type LinkInitial,
     linkPopoverStrings,
     linkStylesOf,
     searchOf,
 } from '../helpers/linkPopoverModel';
 
-import { useDestinationField } from './useDestinationField';
-import { useDestinationSearch } from './useDestinationSearch';
-import { useLinkApply } from './useLinkApply';
+import { useLinkEditing } from './useLinkEditing';
+import { useLinkFields } from './useLinkFields';
 
 /** The link popover's state, effects and handlers, which `LinkPopover` renders. */
 export const useLinkPopoverState = ({
@@ -40,13 +38,7 @@ export const useLinkPopoverState = ({
     const strings = linkPopoverStrings(translate);
     const [open, setOpen] = useState(true);
     const [target] = useState(() => captureLinkTarget(api, initial.link));
-    const [href, setHref] = useState(initial.href);
-    const [text, setText] = useState(initial.text);
-    const [newWindow, setNewWindow] = useState(initial.openInNewWindow);
-    const [styleId, setStyleId] = useState(initial.styleId);
-    const [typed, setTyped] = useState(false);
-    const destinationRef = useRef<HTMLInputElement | null>(null);
-    const textRef = useRef<HTMLInputElement | null>(null);
+    const fields = useLinkFields(initial);
     const listId = useId();
     const close = (next: boolean) => {
         if (!next) {
@@ -74,32 +66,25 @@ export const useLinkPopoverState = ({
         },
         [targets, target],
     );
-    const [results, index, setIndex] = useDestinationSearch(api, search, policy, href.trim(), typed, strings);
-    const [problem, setProblem, messageOf, apply, insertNew, pick] = useLinkApply(
+    const editing = useLinkEditing({
         api,
-        strings,
+        search,
         policy,
-        initial.text,
+        strings,
+        initialText: initial.text,
         target,
         overlay,
         close,
-        destinationRef,
-        href,
-        text,
-        newWindow,
-        styleId,
-        results,
-    );
-    const invalid = FIELD_PROBLEMS.has(problem);
-    const shown = results.length > 0;
-    const [onKeyDown, combobox] = useDestinationField(search, results, index, setIndex, pick, listId);
-    const onChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setHref(event.target.value);
-        setTyped(true);
-        if (invalid) {
-            setProblem(undefined);
-        }
-    };
+        href: fields.href,
+        setHref: fields.setHref,
+        typed: fields.typed,
+        setTyped: fields.setTyped,
+        text: fields.text,
+        newWindow: fields.newWindow,
+        styleId: fields.styleId,
+        destinationRef: fields.destinationRef,
+        listId,
+    });
 
     return {
         initial,
@@ -110,28 +95,18 @@ export const useLinkPopoverState = ({
         open,
         dismiss,
         anchor,
-        destinationRef,
-        textRef,
-        href,
-        text,
-        setText,
-        newWindow,
-        setNewWindow,
-        styleId,
-        setStyleId,
+        destinationRef: fields.destinationRef,
+        textRef: fields.textRef,
+        href: fields.href,
+        text: fields.text,
+        setText: fields.setText,
+        newWindow: fields.newWindow,
+        setNewWindow: fields.setNewWindow,
+        styleId: fields.styleId,
+        setStyleId: fields.setStyleId,
         linkStyles,
-        problem,
-        invalid,
-        messageOf,
-        apply,
-        insertNew,
-        results,
-        index,
-        setIndex,
-        pick,
-        shown,
-        onKeyDown,
-        combobox,
-        onChange,
+        ...editing,
     };
 };
+
+export type LinkPopoverState = ReturnType<typeof useLinkPopoverState>;

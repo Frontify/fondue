@@ -1,202 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Accordion, Badge, Button, Checkbox, Label } from '@frontify/fondue-components';
-import { IconExclamationMarkCircle, IconExclamationMarkTriangle, IconQuestionMarkCircle } from '@frontify/fondue-icons';
-import { type FocusEvent, useId, useRef, useState } from 'react';
+import { Button } from '@frontify/fondue-components';
+import { useId, useRef, useState } from 'react';
 
 import { type PanelComponentProps } from '#/bridge/pluginApi/define';
-import { type CheckedIssue, useClientLayoutEffect, useEditorApi, useEditorValue } from '#/bridge/pluginApi/plugin';
-import { type ContentIssue, ruleHelpKey, ruleNameKey } from '#/model';
+import { useEditorApi, useEditorValue } from '#/bridge/pluginApi/plugin';
 
+import { checksSummary, visibleIssues } from '../helpers/issueDisplay';
+import { useChecksSession } from '../hooks/useChecksSession';
+import { useDepartedIssueFocus } from '../hooks/useDepartedIssueFocus';
+import { useRequestedIssueFocus } from '../hooks/useRequestedIssueFocus';
 import { useSummaryAnnouncement } from '../hooks/useSummaryAnnouncement';
 import styles from '../styles/checks.module.scss';
 
-type Severity = ContentIssue['severity'];
-
-const EXCERPT_LENGTH = 60;
-
-const SEVERITY_KEYS = {
-    error: 'RichTextEditor_checksSeverityError',
-    warning: 'RichTextEditor_checksSeverityWarning',
-    review: 'RichTextEditor_checksSeverityReview',
-} as const;
-
-const SEVERITY_ICONS = {
-    error: IconExclamationMarkTriangle,
-    warning: IconExclamationMarkCircle,
-    review: IconQuestionMarkCircle,
-} as const;
-
-const SEVERITY_BADGES = {
-    error: { variant: 'negative', emphasis: 'strong' },
-    warning: { variant: 'warning', emphasis: 'strong' },
-    review: { variant: 'default', emphasis: 'weak' },
-} as const;
-
-const SEVERITIES = ['error', 'warning', 'review'] as const;
-
-/** Up to 60 characters of `text`, on one line. */
-const shortened = (text: string) => {
-    const line = text.replaceAll(/\s+/g, ' ').trim();
-    if ([...line].length <= EXCERPT_LENGTH) {
-        return line;
-    }
-
-    return `${[...line].slice(0, EXCERPT_LENGTH - 1).join('')}…`;
-};
-
-const Issue = ({
-    held,
-    rowKey,
-    t,
-    onFocusIssue,
-    onActive,
-}: {
-    held: CheckedIssue;
-    rowKey: string;
-    t: PanelComponentProps['t'];
-    onFocusIssue: (rowKey: string | undefined) => void;
-    onActive: (rowKey: string) => void;
-}) => {
-    const api = useEditorApi();
-    const checks = api?.services.checks();
-    const titleId = useId();
-    const excerptId = useId();
-    const helpRef = useRef<HTMLHeadingElement>(null);
-
-    const { issue, dismissed } = held;
-    const repairable = useEditorValue((read) => {
-        if (read === undefined || issue.repairCommand === null) {
-            return false;
-        }
-
-        // A node's repair runs with that node selected, so the selection now decides only a document-level repair.
-        if (issue.path !== null) {
-            return read.editable();
-        }
-
-        return read.commands.query(issue.repairCommand, issue.repairPayload ?? undefined).enabled;
-    });
-
-    const Icon = SEVERITY_ICONS[issue.severity];
-    let excerpt = t('RichTextEditor_checksDocument');
-    if (issue.path !== null) {
-        excerpt = shortened(held.text);
-    }
-
-    let described = `${titleId} ${excerptId}`;
-    if (excerpt === '') {
-        described = titleId;
-    }
-
-    const goTo = () => {
-        if (api === undefined || checks === undefined) {
-            return;
-        }
-
-        onActive(rowKey);
-        checks.afterInput(() => {
-            if (checks.select(held.key, false) !== undefined) {
-                api.focus();
-            }
-        });
-    };
-
-    const repair = (button: HTMLButtonElement | undefined) => {
-        if (api === undefined || checks === undefined || issue.repairCommand === null) {
-            return;
-        }
-
-        onActive(rowKey);
-        // A dialog, popover or menu the repair opens returns focus to the button that had it.
-        button?.focus();
-        // The repair runs on the live document, checked again first, and not at all when that rule no longer applies.
-        checks.afterInput(() => {
-            const current = checks.select(held.key, true);
-            if (current === undefined || current.repairCommand === null) {
-                return;
-            }
-
-            const outcome = api.commands.execute(current.repairCommand, current.repairPayload ?? undefined);
-            // The policy judges a repair's change only once it has run, so its refusal is said rather than dropped.
-            if (outcome.status === 'rejected' && outcome.code === 'not-allowed') {
-                api.announce(t('RichTextEditor_unavailableNotAllowed'));
-            }
-        });
-    };
-
-    useClientLayoutEffect(() => {
-        // Accordion.Header passes no props to its trigger button.
-        helpRef.current?.querySelector('button')?.setAttribute('aria-describedby', described);
-    }, [described]);
-
-    return (
-        <li
-            className={styles.issue}
-            data-rte-issue-id={issue.id}
-            data-rte-row={rowKey}
-            data-severity={issue.severity}
-            onFocus={() => onFocusIssue(rowKey)}
-            onBlur={(event: FocusEvent<HTMLLIElement>) => {
-                // A button removed with its row blurs with no next element, and the row's leaving then moves focus.
-                if (event.relatedTarget instanceof Node && !event.currentTarget.contains(event.relatedTarget)) {
-                    onFocusIssue(undefined);
-                }
-            }}
-        >
-            <div id={titleId} className={styles.title}>
-                <Badge size="small" {...SEVERITY_BADGES[issue.severity]}>
-                    <Icon size={16} aria-hidden="true" />
-                    {t(SEVERITY_KEYS[issue.severity])}
-                </Badge>{' '}
-                <span>{t(ruleNameKey(issue.ruleId))}</span> <span className={styles.rule}>({issue.ruleId})</span>
-                {dismissed && <span className={styles.dismissed}> {t('RichTextEditor_checksDismissed')}</span>}
-            </div>
-            {excerpt !== '' && (
-                <p id={excerptId} className={styles.excerpt}>
-                    <bdi>{excerpt}</bdi>
-                </p>
-            )}
-            <div className={styles.actions}>
-                {issue.path !== null && (
-                    <Button size="small" emphasis="default" aria-describedby={described} onPress={goTo}>
-                        {t('RichTextEditor_checksGoTo')}
-                    </Button>
-                )}
-                {repairable && (
-                    <Button
-                        size="small"
-                        emphasis="default"
-                        aria-describedby={described}
-                        onPress={(event) => repair(event?.currentTarget)}
-                    >
-                        {t('RichTextEditor_checksRepair')}
-                    </Button>
-                )}
-                {issue.severity !== 'error' && !dismissed && (
-                    <Button
-                        size="small"
-                        emphasis="weak"
-                        aria-describedby={described}
-                        onPress={() => checks?.dismiss(issue.id)}
-                    >
-                        {t('RichTextEditor_checksDismiss')}
-                    </Button>
-                )}
-            </div>
-            <div className={styles.help}>
-                <Accordion.Root border={false} padding="none">
-                    <Accordion.Item value="help">
-                        <Accordion.Header ref={helpRef}>{t('RichTextEditor_checksHelp')}</Accordion.Header>
-                        <Accordion.Content>
-                            <p>{t(ruleHelpKey(issue.ruleId))}</p>
-                        </Accordion.Content>
-                    </Accordion.Item>
-                </Accordion.Root>
-            </div>
-        </li>
-    );
-};
+import { DismissedToggle } from './DismissedToggle';
+import { Issue } from './Issue';
+import { SeverityMarks } from './SeverityMarks';
 
 /**
  * The issues the content checks found, in document order: a summary heading, which takes focus on open, a Close
@@ -226,80 +45,16 @@ export const IssuesPanel = ({ t, requested, close }: PanelComponentProps) => {
     const headingId = useId();
     const dismissedId = useId();
 
-    useClientLayoutEffect(() => {
-        const service = api?.services.checks();
-        if (service === undefined) {
-            return undefined;
-        }
-
-        const shown: Partial<Record<Severity, Element>> = {};
-        for (const severity of SEVERITIES) {
-            const icon = iconsRef.current?.querySelector(`[data-severity="${severity}"] svg`);
-            if (icon !== null && icon !== undefined) {
-                shown[severity] = icon;
-            }
-        }
-
-        const close = service.open(shown, (runs) => {
-            openedRunRef.current = runs;
-        });
-        headingRef.current?.focus();
-
-        return close;
-    }, [api]);
-
-    useClientLayoutEffect(() => {
-        if (requestedRef.current === requested) {
-            return;
-        }
-
-        requestedRef.current = requested;
-        const list = listRef.current;
-        let items: Element[] = [];
-        if (list !== null) {
-            items = [...list.querySelectorAll('[data-rte-row]')];
-        }
-
-        const item = items.find((element) => element.getAttribute('data-rte-row') === lastActive);
-        const button = item?.querySelector('button');
-        const target = button ?? headingRef.current;
-        target?.focus();
-    }, [requested, lastActive]);
+    useChecksSession(api, iconsRef, headingRef, openedRunRef);
+    useRequestedIssueFocus(requestedRef, requested, lastActive, listRef, headingRef);
 
     const reported = checks?.issues;
     const issues = reported ?? [];
-    const counted = issues.filter(({ dismissed }) => !dismissed);
-    let listed: readonly CheckedIssue[] = counted;
-    if (showDismissed) {
-        listed = issues;
-    }
+    const { counted, listed, dismissedCount } = visibleIssues(issues, showDismissed);
 
-    const dismissedCount = issues.length - counted.length;
-    const count = (severity: Severity) => counted.filter(({ issue }) => issue.severity === severity).length;
+    useDepartedIssueFocus(listed, focusedRef, headingRef, headingSpokeRef);
 
-    useClientLayoutEffect(() => {
-        const focused = focusedRef.current;
-        if (focused === undefined || listed.some(({ key }) => key === focused)) {
-            return;
-        }
-
-        focusedRef.current = undefined;
-        const heading = headingRef.current;
-        const active = heading?.ownerDocument.activeElement;
-        const focusLost =
-            active === null || active === undefined || active === heading?.ownerDocument.body || !active.isConnected;
-        if (heading !== null && focusLost) {
-            heading.focus();
-            headingSpokeRef.current = true;
-        }
-    });
-
-    const summary = [
-        t('RichTextEditor_checksErrors', { errors: count('error') }),
-        t('RichTextEditor_checksWarnings', { warnings: count('warning') }),
-        t('RichTextEditor_checksReview', { review: count('review') }),
-    ].join(' ');
-
+    const summary = checksSummary(t, counted);
     const reportedRuns = checks?.runs;
     const runs = reportedRuns ?? 0;
     useSummaryAnnouncement({ api, runs, summary, shownRef, openedRunRef, headingSpokeRef });
@@ -315,14 +70,12 @@ export const IssuesPanel = ({ t, requested, close }: PanelComponentProps) => {
                 </Button>
             </div>
             {dismissedCount > 0 && (
-                <div className={styles.option}>
-                    <Checkbox
-                        id={dismissedId}
-                        value={showDismissed}
-                        onChange={() => setShowDismissed((previous) => !previous)}
-                    />
-                    <Label htmlFor={dismissedId}>{t('RichTextEditor_checksShowDismissed')}</Label>
-                </div>
+                <DismissedToggle
+                    id={dismissedId}
+                    value={showDismissed}
+                    label={t('RichTextEditor_checksShowDismissed')}
+                    onToggle={() => setShowDismissed((previous) => !previous)}
+                />
             )}
             <ol ref={listRef} className={styles.list} aria-labelledby={headingId}>
                 {listed.map((held) => (
@@ -338,18 +91,7 @@ export const IssuesPanel = ({ t, requested, close }: PanelComponentProps) => {
                     />
                 ))}
             </ol>
-            {/* The icons the surface decorations copy. */}
-            <span ref={iconsRef} hidden>
-                {SEVERITIES.map((severity) => {
-                    const Icon = SEVERITY_ICONS[severity];
-
-                    return (
-                        <span key={severity} data-severity={severity}>
-                            <Icon size={16} />
-                        </span>
-                    );
-                })}
-            </span>
+            <SeverityMarks iconsRef={iconsRef} />
         </div>
     );
 };

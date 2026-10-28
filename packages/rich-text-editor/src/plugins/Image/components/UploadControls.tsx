@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type FocusEvent, useRef } from 'react';
+import { useRef } from 'react';
 
 import { NodeChromeButton } from '#/bridge/pluginApi/define';
-import { type UploadStatus, useClientLayoutEffect, useEditorApi } from '#/bridge/pluginApi/plugin';
+import { type UploadStatus, useEditorApi } from '#/bridge/pluginApi/plugin';
 import { type CodecContext } from '#/model';
 
 import { isRunning } from '../helpers/isRunning';
-import { surfaceFocused } from '../hooks/useUploadStatus';
+import { useUploadControlFocus } from '../hooks/useUploadControlFocus';
 import styles from '../styles/upload.module.scss';
 
 const CANCEL = 'media.upload.cancel';
@@ -38,59 +38,7 @@ export const UploadControls = ({
     // Whether one of these buttons had focus last, which a button that left the DOM keeps.
     const focusedRef = useRef(false);
     const running = isRunning(status);
-    useClientLayoutEffect(() => {
-        const wrapper = wrapperRef.current;
-        if (!focusedRef.current || wrapper === null || wrapper.contains(wrapper.ownerDocument.activeElement)) {
-            return;
-        }
-
-        const next = wrapper.querySelector<HTMLElement>('button');
-        if (next === null) {
-            focusedRef.current = false;
-            focus?.();
-
-            return;
-        }
-
-        next.focus();
-    }, [running, focus]);
-    useClientLayoutEffect(() => {
-        const wrapper = wrapperRef.current;
-        let toolbar: HTMLElement | null = null;
-        if (wrapper !== null) {
-            toolbar = wrapper.closest<HTMLElement>('[data-rte-node-chrome]');
-        }
-
-        return () => {
-            if (!focusedRef.current) {
-                return;
-            }
-
-            focus?.();
-            // A completed upload leaves the image and its toolbar, whose first button then takes focus; a removed
-            // image takes its toolbar along, which leaves focus on the surface.
-            queueMicrotask(() => {
-                if (toolbar === null || !toolbar.isConnected || !surfaceFocused(surface)) {
-                    return;
-                }
-
-                const next = toolbar.querySelector<HTMLElement>('button');
-                if (next !== null && !wrapper?.contains(next)) {
-                    next.focus();
-                }
-            });
-        };
-    }, [focus, surface]);
-    const onBlur = (event: FocusEvent<HTMLSpanElement>) => {
-        const { target } = event;
-        // A button that leaves the DOM blurs too, which is no move of the author's.
-        queueMicrotask(() => {
-            if (target.isConnected && !wrapperRef.current?.contains(target.ownerDocument.activeElement)) {
-                focusedRef.current = false;
-            }
-        });
-    };
-
+    const onBlur = useUploadControlFocus(wrapperRef, focusedRef, running, focus, surface);
     const installed = (id: string) => api?.commands.query(id, { nodeId }).disabledReason !== 'unknown-command';
     let buttons;
     if (running) {
