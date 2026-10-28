@@ -262,7 +262,7 @@ test.describe('during a composition', () => {
         test.skip(browserName !== 'chromium', 'CDP drives composition in Chromium only.');
     });
 
-    test('keeps the composition and its text while the host rerenders with new status, required, aria-describedby and placeholder @engine', async ({
+    test('keeps the composition and its text while the host rerenders with new status, required, aria-describedby and placeholder', async ({
         mount,
         page,
     }) => {

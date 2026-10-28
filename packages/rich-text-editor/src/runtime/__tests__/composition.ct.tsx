@@ -110,7 +110,7 @@ test.beforeEach(({ browserName }) => {
     test.skip(browserName !== 'chromium', 'CDP drives composition in Chromium only.');
 });
 
-test('keeps sequence and the snapshot across three composition updates, then publishes once @engine', async ({
+test('keeps sequence and the snapshot across three composition updates, then publishes once', async ({
     mount,
     page,
 }) => {
@@ -153,7 +153,7 @@ test('keeps sequence and the snapshot across three composition updates, then pub
     await expect(surfaceOf(page)).toHaveText('abxyz');
 });
 
-test('runs a queued intent and publishes the snapshot only once compositionend, a microtask and 20 ms passed @engine', async ({
+test('runs a queued intent and publishes the snapshot only once compositionend, a microtask and 20 ms passed', async ({
     mount,
     page,
 }) => {
@@ -206,7 +206,7 @@ test('runs a queued intent and publishes the snapshot only once compositionend, 
     await expect(surfaceOf(page)).toHaveText('abxyz!');
 });
 
-test('answers a host execute with composition-active and runs a queued intent after compositionend @engine', async ({
+test('answers a host execute with composition-active and runs a queued intent after compositionend', async ({
     mount,
     page,
 }) => {
@@ -227,7 +227,7 @@ test('answers a host execute with composition-active and runs a queued intent af
     await expect(surfaceOf(page)).toHaveText('abxy!');
 });
 
-test('keeps the composed text, refuses replaceDocument and changes contenteditable only after compositionend @engine', async ({
+test('keeps the composed text, refuses replaceDocument and changes contenteditable only after compositionend', async ({
     mount,
     page,
 }) => {
@@ -268,10 +268,7 @@ test('keeps the composed text, refuses replaceDocument and changes contenteditab
     expect(await page.evaluate(() => (window.rte as Rte).text())).toBe('abxy');
 });
 
-test('keeps the surface editable when the mode returns to editable within a composition @engine', async ({
-    mount,
-    page,
-}) => {
+test('keeps the surface editable when the mode returns to editable within a composition', async ({ mount, page }) => {
     await mount(<EditorProbe texts={['ab']} />);
     await ready(page);
     await caretAfter(page, 'ab');
@@ -297,7 +294,7 @@ test('keeps the surface editable when the mode returns to editable within a comp
     await expect(surfaceOf(page)).toHaveText('abx');
 });
 
-test('refuses content changes from setMode readonly on and changes contenteditable after compositionend @engine', async ({
+test('refuses content changes from setMode readonly on and changes contenteditable after compositionend', async ({
     mount,
     page,
 }) => {
@@ -322,10 +319,7 @@ test('refuses content changes from setMode readonly on and changes contenteditab
     await expect(surfaceOf(page)).toHaveText('abx');
 });
 
-test('applies an async result that resolves mid-composition only after compositionend @engine', async ({
-    mount,
-    page,
-}) => {
+test('applies an async result that resolves mid-composition only after compositionend', async ({ mount, page }) => {
     await mount(<EditorProbe texts={['ab', 'cd']} />);
     await ready(page);
     await startUpload(page, 'heading.set', 'cd');
@@ -350,7 +344,7 @@ test('applies an async result that resolves mid-composition only after compositi
     await expect(surfaceOf(page).locator('p')).toHaveText('abxyz');
 });
 
-test('keeps a forbidden composition in place while it runs and shows the retained state once input settled @engine', async ({
+test('keeps a forbidden composition in place while it runs and shows the retained state once input settled', async ({
     mount,
     page,
 }) => {
@@ -371,7 +365,7 @@ test('keeps a forbidden composition in place while it runs and shows the retaine
     expect(await page.evaluate(() => (window.rte as Rte).handle.getSummary().sequence)).toBe(0);
 });
 
-test('leaves focus on a host input when an async result applies @engine', async ({ mount, page }) => {
+test('leaves focus on a host input when an async result applies', async ({ mount, page }) => {
     await mount(<EditorProbe texts={['ab']} />);
     await ready(page);
     await caretAfter(page, 'ab');
@@ -389,7 +383,7 @@ test('leaves focus on a host input when an async result applies @engine', async 
     await expect(page.getByRole('textbox', { name: 'Host input' })).toBeFocused();
 });
 
-test('fires no input rule for composed text, which stays one undo step @engine', async ({ mount, page }) => {
+test('fires no input rule for composed text, which stays one undo step', async ({ mount, page }) => {
     await mount(<EditorProbe texts={['ab.']} />);
     await ready(page);
     await caretAfter(page, 'ab.');

@@ -235,7 +235,7 @@ const composeAfter = async (page: Page, text: string) => {
     return cdp;
 };
 
-test('resolves the settled value with the composed text once the composition ends @engine', async ({
+test('resolves the settled value with the composed text once the composition ends', async ({
     mount,
     page,
     browserName,
@@ -255,7 +255,7 @@ test('resolves the settled value with the composed text once the composition end
     expect(await settled).toContain('"text":"abxy"');
 });
 
-test('rejects the settled value with code timeout while the composition goes on @engine', async ({
+test('rejects the settled value with code timeout while the composition goes on', async ({
     mount,
     page,
     browserName,

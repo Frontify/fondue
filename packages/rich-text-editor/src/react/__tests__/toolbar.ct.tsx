@@ -307,11 +307,7 @@ test('prints no toolbar', async ({ mount, page }) => {
     await expect(surfaceOf(page)).toBeVisible();
 });
 
-test('ends a composition and runs Bold when its toolbar item is clicked @engine', async ({
-    mount,
-    page,
-    browserName,
-}) => {
+test('ends a composition and runs Bold when its toolbar item is clicked', async ({ mount, page, browserName }) => {
     test.skip(browserName !== 'chromium', 'CDP drives composition in Chromium only');
     await mount(<ToolbarProbe texts={['one ']} />);
     await ready(page);

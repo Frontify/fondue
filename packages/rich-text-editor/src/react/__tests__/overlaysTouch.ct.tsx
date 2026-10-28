@@ -123,11 +123,7 @@ test.describe('on a touch device', () => {
         expect(await pressPrevented()).toBe(true);
     });
 
-    test('ends a composition and runs Bold once tapped on the docked toolbar @engine', async ({
-        mount,
-        page,
-        browserName,
-    }) => {
+    test('ends a composition and runs Bold once tapped on the docked toolbar', async ({ mount, page, browserName }) => {
         test.skip(browserName !== 'chromium', 'CDP drives composition in Chromium only');
         await mount(<OverlayProbe bubble={false} toolbar={TOUCH_TOOLBAR} texts={['one ']} />);
         await ready(page);

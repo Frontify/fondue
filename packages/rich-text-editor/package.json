@@ -71,7 +71,7 @@
         "lint:fix": "oxlint --fix",
         "perf": "tsx perf/run.ts",
         "typecheck": "tsgo --noEmit",
-        "test": "vitest run --coverage --exclude src/react/__tests__/performance.spec.tsx --exclude src/react/__tests__/hostileCost.spec.tsx && vitest run src/react/__tests__/performance.spec.tsx src/react/__tests__/hostileCost.spec.tsx --coverage.enabled=false --no-file-parallelism",
+        "test": "vitest run --coverage --exclude src/react/__tests__/hostileCost.spec.tsx && vitest run src/react/__tests__/hostileCost.spec.tsx --coverage.enabled=false",
         "test:watch": "vitest",
         "test:components": "playwright test --ui",
         "test:components:ci": "playwright test",

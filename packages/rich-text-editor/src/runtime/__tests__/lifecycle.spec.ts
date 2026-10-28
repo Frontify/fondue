@@ -55,29 +55,21 @@ describe('the session lifecycle machine', () => {
         expect(lifecycle.is('ready', 'mounting')).toBe(false);
     });
 
-    it.each(PAIRS)('moves from %s to %s as the table says in development', (from, to) => {
-        const lifecycle = reach(from);
-
-        if (LEGAL[from].includes(to)) {
-            lifecycle.to(to);
-            expect(lifecycle.phase()).toBe(to);
+    it.each(PAIRS)('moves from %s to %s as the table says in development and in production', (from, to) => {
+        const development = reach(from);
+        const legal = LEGAL[from].includes(to);
+        if (legal) {
+            development.to(to);
+            expect(development.phase()).toBe(to);
         } else {
-            expect(() => lifecycle.to(to)).toThrow(`from ${from} to ${to}`);
-            expect(lifecycle.phase()).toBe(from);
+            expect(() => development.to(to)).toThrow(`from ${from} to ${to}`);
+            expect(development.phase()).toBe(from);
         }
-    });
 
-    it.each(PAIRS)('moves from %s to %s as the table says in production, ignoring an illegal move', (from, to) => {
         vi.stubEnv('NODE_ENV', 'production');
-        const lifecycle = reach(from);
-
-        lifecycle.to(to);
-
-        if (LEGAL[from].includes(to)) {
-            expect(lifecycle.phase()).toBe(to);
-        } else {
-            expect(lifecycle.phase()).toBe(from);
-        }
+        const production = reach(from);
+        production.to(to);
+        expect(production.phase()).toBe(legal ? to : from);
     });
 
     it('aborts ended on disposed, and on no other move', () => {

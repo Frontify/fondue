@@ -275,7 +275,7 @@ const centerOf = async (page: Page, selector: string): Promise<Point> => {
     return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
 };
 
-test('writes text/plain, text/html and the internal slice on copy and dragstart @engine', async ({ mount, page }) => {
+test('writes text/plain, text/html and the internal slice on copy and dragstart', async ({ mount, page }) => {
     await mount(<ClipboardProbe texts={['a   b', 'second']} />);
     await ready(page);
     await surfaceOf(page).focus();
@@ -304,7 +304,7 @@ test('writes text/plain, text/html and the internal slice on copy and dragstart 
     expect(dragged).toEqual(block);
 });
 
-test('writes a disabled checkbox for a checked task item and an unchecked one on copy and dragstart @engine', async ({
+test('writes a disabled checkbox for a checked task item and an unchecked one on copy and dragstart', async ({
     mount,
     page,
 }) => {
@@ -343,7 +343,7 @@ test('writes a disabled checkbox for a checked task item and an unchecked one on
     expect(checkboxStates(dragged.html)).toEqual(boxes);
 });
 
-test('deletes a cut selection once, as one undo step @engine', async ({ mount, page }) => {
+test('deletes a cut selection once, as one undo step', async ({ mount, page }) => {
     await mount(<ClipboardProbe texts={['abc']} />);
     await ready(page);
     await surfaceOf(page).focus();
@@ -365,7 +365,7 @@ for (const [name, copies] of [
     ['moves it with its nodeId', false],
     ['inserts a copy with a new nodeId with the copy modifier held', true],
 ] as const) {
-    test(`drags a mention between paragraphs and ${name}, as one drop @engine`, async ({ mount, page }) => {
+    test(`drags a mention between paragraphs and ${name}, as one drop`, async ({ mount, page }) => {
         await mount(<ClipboardProbe texts={['x@y', 'target']} />);
         await ready(page);
         await select(page, { nodeId: 'm-1' });
@@ -397,7 +397,7 @@ for (const [name, copies] of [
     });
 }
 
-test('still moves a mention dragged with the other platform modifier held @engine', async ({ mount, page }) => {
+test('still moves a mention dragged with the other platform modifier held', async ({ mount, page }) => {
     await mount(<ClipboardProbe texts={['x@y', 'target']} />);
     await ready(page);
     await select(page, { nodeId: 'm-1' });
@@ -411,7 +411,7 @@ test('still moves a mention dragged with the other platform modifier held @engin
     expect(await changesOf(page)).toEqual(['drop']);
 });
 
-test('moves a mention whose feature has paste: false as it is, and drops a copy of it as its label @engine', async ({
+test('moves a mention whose feature has paste: false as it is, and drops a copy of it as its label', async ({
     mount,
     page,
 }) => {
@@ -436,7 +436,7 @@ test('moves a mention whose feature has paste: false as it is, and drops a copy 
     expect(await contentOf(page)).toEqual([block({ type: 'text', text: 'xAday' }), (moved as object[])[1]]);
 });
 
-test('drops a copy of an island holding a nodeId as its plain text, since the island cannot repeat it @engine', async ({
+test('drops a copy of an island holding a nodeId as its plain text, since the island cannot repeat it', async ({
     mount,
     page,
 }) => {
@@ -452,10 +452,7 @@ test('drops a copy of an island holding a nodeId as its plain text, since the is
     expect(await changesOf(page)).toEqual(['drop']);
 });
 
-test('drops a host element through the paste order at the drop cursor, with no input rule @engine', async ({
-    mount,
-    page,
-}) => {
+test('drops a host element through the paste order at the drop cursor, with no input rule', async ({ mount, page }) => {
     await mount(<ClipboardProbe texts={['first', 'second']} dragged="**x**" />);
     await ready(page);
 
@@ -466,7 +463,7 @@ test('drops a host element through the paste order at the drop cursor, with no i
     expect(await changesOf(page)).toEqual(['drop']);
 });
 
-test('shows the drop cursor at the nearest block boundary for a paragraph, a file and a host element, until the drop or the leave @engine', async ({
+test('shows the drop cursor at the nearest block boundary for a paragraph, a file and a host element, until the drop or the leave', async ({
     mount,
     page,
 }) => {
@@ -493,7 +490,7 @@ test('shows the drop cursor at the nearest block boundary for a paragraph, a fil
     expect(await page.evaluate(() => (window.clip as Clip).uploads())).toBe(0);
 });
 
-test('copies the same three flavors in readonly as in editable mode @engine', async ({ mount, page }) => {
+test('copies the same three flavors in readonly as in editable mode', async ({ mount, page }) => {
     const component = await mount(<ClipboardProbe texts={['one', 'two @']} />);
     await ready(page);
     await surfaceOf(page).focus();
@@ -513,7 +510,7 @@ test('copies the same three flavors in readonly as in editable mode @engine', as
     });
 });
 
-test('scrolls a paste in a long document only as far as the caret needs @engine', async ({ mount, page }) => {
+test('scrolls a paste in a long document only as far as the caret needs', async ({ mount, page }) => {
     const texts = Array.from({ length: 200 }, (_, index) => `Paragraph ${index}`);
     await mount(<ClipboardProbe texts={texts} scroll />);
     await ready(page);
@@ -551,7 +548,7 @@ test('scrolls a paste in a long document only as far as the caret needs @engine'
     expect(after.page).toBe(before.page);
 });
 
-test('keeps the document and selection in readonly through paste, cut and drops, and still copies @engine', async ({
+test('keeps the document and selection in readonly through paste, cut and drops, and still copies', async ({
     mount,
     page,
 }) => {
@@ -579,7 +576,7 @@ test('keeps the document and selection in readonly through paste, cut and drops,
     expect(JSON.parse(flavors.slice)).toMatchObject({ content: [paragraph('b')] });
 });
 
-test('pastes text/plain only with Ctrl+Shift+V in Chromium @engine', async ({ mount, page, context, browserName }) => {
+test('pastes text/plain only with Ctrl+Shift+V in Chromium', async ({ mount, page, context, browserName }) => {
     test.skip(browserName !== 'chromium', 'The Verify line names Chromium, whose clipboard Playwright can grant.');
     test.skip(
         process.platform === 'darwin',
@@ -661,7 +658,7 @@ const htmlContentOf = (page: Page) =>
 // A fetch or handler that a live parse would start lands within a few frames, so the absence checks wait that long.
 const quiet = (page: Page) => page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 300)));
 
-test('parses pasted HTML in an inert document, with no request and no script run @engine', async ({ mount, page }) => {
+test('parses pasted HTML in an inert document, with no request and no script run', async ({ mount, page }) => {
     const requests = await mountHtml(page, mount);
 
     await pasteHtml(
@@ -684,7 +681,7 @@ test('parses pasted HTML in an inert document, with no request and no script run
     ]);
 });
 
-test('drops pasted images without a request, keeping their alt text and announcing the count @engine', async ({
+test('drops pasted images without a request, keeping their alt text and announcing the count', async ({
     mount,
     page,
 }) => {
@@ -707,7 +704,7 @@ test('drops pasted images without a request, keeping their alt text and announci
     await expect(page.locator('[aria-live="polite"]')).toHaveText('Media not pasted: 2');
 });
 
-test('keeps the text of a form whose controls shadow DOM properties and of a page whose image shadows the body @engine', async ({
+test('keeps the text of a form whose controls shadow DOM properties and of a page whose image shadows the body', async ({
     mount,
     page,
 }) => {
@@ -724,7 +721,7 @@ test('keeps the text of a form whose controls shadow DOM properties and of a pag
     expect(body).toContain('"text":"t"');
 });
 
-test('pastes an rgba colour as a hex value with its alpha pair @engine', async ({ mount, page }) => {
+test('pastes an rgba colour as a hex value with its alpha pair', async ({ mount, page }) => {
     await mountHtml(page, mount);
 
     await pasteHtml(page, '<p><span style="color: rgba(0, 0, 0, 0.5)">half</span></p>');
@@ -732,7 +729,7 @@ test('pastes an rgba colour as a hex value with its alpha pair @engine', async (
     expect(JSON.stringify(await htmlContentOf(page))).toContain('"attrs":{"tokenId":null,"value":"#00000080"}');
 });
 
-test('announces removed formatting for a pasted oklch() colour, which it cannot keep as hex @engine', async ({
+test('announces removed formatting for a pasted oklch() colour, which it cannot keep as hex', async ({
     mount,
     page,
 }) => {
@@ -745,7 +742,7 @@ test('announces removed formatting for a pasted oklch() colour, which it cannot 
 });
 
 for (const name of ['clobbering-create-element.html', 'clobbering-query-selector.html']) {
-    test(`keeps the text of a form when an image named by the ${name} fixture shadows a document method @engine`, async ({
+    test(`keeps the text of a form when an image named by the ${name} fixture shadows a document method`, async ({
         mount,
         page,
     }) => {
@@ -758,7 +755,7 @@ for (const name of ['clobbering-create-element.html', 'clobbering-query-selector
 }
 
 for (const [name, directory] of pastedFixtures) {
-    test(`pastes the ${name} fixture as its .paste.json @engine`, async ({ mount, page }, testInfo) => {
+    test(`pastes the ${name} fixture as its .paste.json`, async ({ mount, page }, testInfo) => {
         await mountHtml(page, mount);
         const golden = new URL(name.replace(/\.html$/, '.paste.json'), directory);
 

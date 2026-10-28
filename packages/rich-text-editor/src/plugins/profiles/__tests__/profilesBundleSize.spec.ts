@@ -25,34 +25,16 @@ const MARKDOWN_MODULE =
 
 describe('profile bundles', () => {
     it.each(ROWS)(
-        'keeps Markdown parsing out of the %s profile initial load',
-        async (_name, profile) => {
-            const { modules } = await profileBytes(profile);
+        'keeps Markdown parsing and every locale except enUS out of the %s profile, within its Brotli budget',
+        async (_name, profile, row) => {
+            const { bytes, modules } = await profileBytes(profile);
+            const loaded = modules.filter((id) => id.includes('/src/locales/'));
 
             expect(modules.length).toBeGreaterThan(0);
             expect(modules.filter((id) => MARKDOWN_MODULE.test(id))).toEqual([]);
-        },
-        120_000,
-    );
-
-    it.each(ROWS)(
-        'keeps every locale except enUS out of the %s profile initial load',
-        async (_name, profile) => {
-            const { modules } = await profileBytes(profile);
-            const loaded = modules.filter((id) => id.includes('/src/locales/'));
-
             expect(otherLocales.length).toBeGreaterThan(0);
             expect(loaded.some((id) => id.endsWith('/locales/en-US.ts'))).toBe(true);
             expect(loaded.filter((id) => otherLocales.some((name) => id.endsWith(`/locales/${name}`)))).toEqual([]);
-        },
-        120_000,
-    );
-
-    it.each(ROWS)(
-        'keeps the %s profile initial chunk within its Brotli budget',
-        async (_name, profile, row) => {
-            const { bytes } = await profileBytes(profile);
-
             expect(bytes).toBeLessThanOrEqual(budgets[row] ?? 0);
         },
         120_000,
@@ -76,5 +58,5 @@ describe('profile bundles', () => {
         } finally {
             rmSync(directory, { recursive: true, force: true });
         }
-    }, 240_000);
+    }, 120_000);
 });

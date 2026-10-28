@@ -6,7 +6,13 @@ import { createRef } from 'react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
-import { compileContentModel, hashDocument, type hashDocument as RealHash } from '#/model';
+import {
+    compileContentModel,
+    hashDocument,
+    sameDocument,
+    type hashDocument as RealHash,
+    type sameDocument as RealSame,
+} from '#/model';
 import { featuresById } from '#/plugins';
 import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { runtimeOf } from '#/runtime/runtime';
@@ -14,10 +20,11 @@ import { typeText } from '#/testing';
 
 import { PERF_FEATURES, perfDocument } from '../../model/__tests__/fixtures/perf/documents';
 
-// The spy wraps the real function, since the editor still hashes a document where it must, such as a replacement.
+// The spies wrap the real functions, since the editor still hashes or compares a document where it must, such as a replacement.
 const hashes = vi.hoisted(() => ({ calls: 0 }));
+const compares = vi.hoisted(() => ({ calls: 0 }));
 vi.mock('#/model/helpers/hash', async (importOriginal) => {
-    const original = await importOriginal<{ hashDocument: typeof RealHash }>();
+    const original = await importOriginal<{ hashDocument: typeof RealHash; sameDocument: typeof RealSame }>();
 
     return {
         ...original,
@@ -25,6 +32,11 @@ vi.mock('#/model/helpers/hash', async (importOriginal) => {
             hashes.calls += 1;
 
             return original.hashDocument(...args);
+        },
+        sameDocument: (...args: Parameters<typeof RealSame>) => {
+            compares.calls += 1;
+
+            return original.sameDocument(...args);
         },
     };
 });
@@ -37,7 +49,7 @@ afterEach(() => {
     vi.restoreAllMocks();
 });
 
-it('serializes, hashes and calls toJSON on no document over 100 keystrokes in the large fixture', () => {
+it('serializes, hashes, compares and calls toJSON on no document over 100 keystrokes in the large fixture', () => {
     const model = compileContentModel(featuresById([...PERF_FEATURES, 'a11y.content-checks']), {
         id: 'test.keystroke-cost',
         version: 1,
@@ -69,6 +81,7 @@ it('serializes, hashes and calls toJSON on no document over 100 keystrokes in th
     const toJSON = vi.spyOn(Node.prototype, 'toJSON');
     const stringify = vi.spyOn(JSON, 'stringify');
     hashes.calls = 0;
+    compares.calls = 0;
     const before = runtime.state.doc.textContent.length;
 
     for (let index = 0; index < 100; index += 1) {
@@ -80,15 +93,20 @@ it('serializes, hashes and calls toJSON on no document over 100 keystrokes in th
     expect(runtime.state.doc.textContent.length).toBe(before + 100);
     expect(toJSON).not.toHaveBeenCalled();
     expect(hashes.calls).toBe(0);
+    expect(compares.calls).toBe(0);
     // No serializer sees a document: a call with a long result would be one.
     expect(stringify.mock.results.filter(({ value }) => typeof value === 'string' && value.length > 100_000)).toEqual(
         [],
     );
 
-    // The spies see what they guard: a serialization and a hash made now are counted.
-    hashDocument(handle.getSnapshot().document);
+    // The spies see what they guard: a serialization, a hash and a compare made now are counted.
+    const document = handle.getSnapshot().document;
+    hashDocument(document);
     runtime.state.doc.toJSON();
+    const compared = compares.calls;
+    sameDocument(document, document);
     expect(hashes.calls).toBe(1);
+    expect(compares.calls).toBe(compared + 1);
     expect(toJSON).toHaveBeenCalled();
 }, 120_000);
 

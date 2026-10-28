@@ -38,10 +38,7 @@ const select = (page: Page, text: string, from = 0, to = text.length) =>
         [text, from, to] as const,
     );
 
-test('moves, selects and deletes across marks, links and blocks as in the same plain text @engine', async ({
-    mount,
-    page,
-}) => {
+test('moves, selects and deletes across marks, links and blocks as in the same plain text', async ({ mount, page }) => {
     const lines = ['Read *the* whole _guide_ before [you] start.', 'A *second* line with [more] text.'];
     const apple = await isApple(page);
     let word = 'Control';
@@ -126,7 +123,7 @@ test('moves, selects and deletes across marks, links and blocks as in the same p
     expect(results.Marked).toEqual(results.Plain);
 });
 
-test('selects the whole document with Mod+A when it starts with a node view @engine', async ({ mount, page }) => {
+test('selects the whole document with Mod+A when it starts with a node view', async ({ mount, page }) => {
     await mount(<TextProbe texts={['After the code']} nodeViewFirst />);
     await ready(page);
     await focusSurface(page);
@@ -140,7 +137,7 @@ test('selects the whole document with Mod+A when it starts with a node view @eng
     await expect.poll(() => textOf(page)).toBe('x');
 });
 
-test('inserts German and Polish AltGr characters with no command running @engine', async ({ mount, page }) => {
+test('inserts German and Polish AltGr characters with no command running', async ({ mount, page }) => {
     await mount(<TextProbe texts={['ab']} />);
     await ready(page);
     await focusSurface(page);
@@ -219,7 +216,7 @@ const dispatchKey = (
         return event.defaultPrevented;
     }, init);
 
-test('runs the Meta and Alt shortcut of a key that reports AltGraph, as Firefox on macOS does @engine', async ({
+test('runs the Meta and Alt shortcut of a key that reports AltGraph, as Firefox on macOS does', async ({
     mount,
     page,
 }) => {
@@ -244,7 +241,7 @@ test('runs the Meta and Alt shortcut of a key that reports AltGraph, as Firefox 
     await expect(surfaceOf(page).locator('h1')).toHaveText('ab');
 });
 
-test('runs a Ctrl and Alt binding of a digit key that types its own digit @engine', async ({ mount, page }) => {
+test('runs a Ctrl and Alt binding of a digit key that types its own digit', async ({ mount, page }) => {
     await mount(<TextProbe texts={['ab']} />);
     await ready(page);
     await focusSurface(page);
@@ -264,10 +261,7 @@ test('runs a Ctrl and Alt binding of a digit key that types its own digit @engin
     await expect(surfaceOf(page).locator('strong')).toHaveText('ab');
 });
 
-test('leaves the German backslash of AltGr to the browser, with no command running @engine', async ({
-    mount,
-    page,
-}) => {
+test('leaves the German backslash of AltGr to the browser, with no command running', async ({ mount, page }) => {
     await mount(<TextProbe texts={['ab']} />);
     await ready(page);
     await focusSurface(page);
@@ -285,7 +279,7 @@ test('leaves the German backslash of AltGr to the browser, with no command runni
     expect(changes.filter((change) => !change.startsWith('input'))).toEqual([]);
 });
 
-test('runs no key handler, keymap or toolbar shortcut for a keydown of a composition @engine', async ({
+test('runs no key handler, keymap or toolbar shortcut for a keydown of a composition', async ({
     mount,
     page,
     browserName,
@@ -364,7 +358,7 @@ test('runs no key handler, keymap or toolbar shortcut for a keydown of a composi
     expect(changes.filter((change) => !change.startsWith('input'))).toEqual([]);
 });
 
-test('fires no rule for composed **x**, then bold for typed **y** @engine', async ({ mount, page, browserName }) => {
+test('fires no rule for composed **x**, then bold for typed **y**', async ({ mount, page, browserName }) => {
     test.skip(browserName !== 'chromium', 'CDP drives composition in Chromium only.');
     await mount(<TextProbe texts={['ab ']} />);
     await ready(page);
@@ -387,7 +381,7 @@ test('fires no rule for composed **x**, then bold for typed **y** @engine', asyn
 });
 
 for (const { name, text } of graphemes) {
-    test(`removes or selects the whole ${name} grapheme cluster in one step @engine`, async ({ mount, page }) => {
+    test(`removes or selects the whole ${name} grapheme cluster in one step`, async ({ mount, page }) => {
         const line = `a${text}b`;
         await mount(<TextProbe texts={[line]} />);
         await ready(page);

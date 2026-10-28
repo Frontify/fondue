@@ -37,7 +37,7 @@ const inlineOf = (page: Page) =>
         );
     });
 
-test('commits an IME candidate into the mention query on Enter without choosing a result @engine', async ({
+test('commits an IME candidate into the mention query on Enter without choosing a result', async ({
     mount,
     page,
     browserName,

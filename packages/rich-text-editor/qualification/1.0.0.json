@@ -6,7 +6,7 @@
     "suites": {
         "unit": {
             "vitest": "5.0.0",
-            "command": "vitest run --coverage.enabled=false --exclude src/react/__tests__/performance.spec.tsx --exclude src/react/__tests__/hostileCost.spec.tsx",
+            "command": "vitest run --coverage --exclude src/react/__tests__/hostileCost.spec.tsx && vitest run src/react/__tests__/hostileCost.spec.tsx --coverage.enabled=false",
             "passed": 4798,
             "failed": 0,
             "skipped": 6
@@ -23,7 +23,7 @@
         "firefox": {
             "browserVersion": "150.0.2",
             "playwright": "1.60.0",
-            "pendingIn": "rich-text-editor-pull-requests.yaml: Component Tests and Engine Qualification"
+            "pendingIn": "rich-text-editor-pull-requests.yaml: Component Tests"
         },
         "webkit": {
             "browserVersion": "26.4",

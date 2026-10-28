@@ -196,44 +196,49 @@ for (const profile of PROFILES) {
                 expect(await violations(page)).toEqual([]);
             });
         }
+    });
+}
 
-        for (const { name, selects, shown } of OVERLAYS) {
-            test(`reports no violation with ${name} open`, async ({ mount, page }) => {
-                await mount(<ProfileProbe profile={profile} />);
-                await ready(page);
-                await populate(page);
-                if (selects) {
-                    await settled(page);
-                    await page.keyboard.press('Shift+Home');
-                }
+// Brand document offers every one of these overlays; each other profile offers a subset of the same components.
+const OVERLAY_PROFILE = 'brand-document';
 
-                test.skip(!(await offers(page, name)), `The ${profile} profile offers no ${name}.`);
-                // The outline lists headings, so its panel holds one.
-                if (name === 'Outline') {
-                    await runItem(page, 'Normal text');
-                    await page.getByRole('menuitemradio', { name: 'Heading 1' }).click();
-                }
-
-                await runItem(page, name);
-                await expect(shown(page)).toBeVisible();
-
-                expect(await violations(page)).toEqual([]);
-            });
-        }
-
-        test('reports no violation with the numbering dialog open', async ({ mount, page }) => {
-            await mount(<ProfileProbe profile={profile} />);
+test.describe(`axe on a ${OVERLAY_PROFILE} overlay`, () => {
+    for (const { name, selects, shown } of OVERLAYS) {
+        test(`reports no violation with ${name} open`, async ({ mount, page }) => {
+            await mount(<ProfileProbe profile={OVERLAY_PROFILE} />);
             await ready(page);
             await populate(page);
-            test.skip(!(await offers(page, 'Start numbering at')), `The ${profile} profile has no numbered list.`);
-            await runItem(page, 'Numbered list');
-            await runItem(page, 'Start numbering at');
-            await expect(page.getByRole('dialog')).toBeVisible();
+            if (selects) {
+                await settled(page);
+                await page.keyboard.press('Shift+Home');
+            }
+
+            expect(await offers(page, name), `${name} on ${OVERLAY_PROFILE}`).toBe(true);
+            // The outline lists headings, so its panel holds one.
+            if (name === 'Outline') {
+                await runItem(page, 'Normal text');
+                await page.getByRole('menuitemradio', { name: 'Heading 1' }).click();
+            }
+
+            await runItem(page, name);
+            await expect(shown(page)).toBeVisible();
 
             expect(await violations(page)).toEqual([]);
         });
+    }
+
+    test('reports no violation with the numbering dialog open', async ({ mount, page }) => {
+        await mount(<ProfileProbe profile={OVERLAY_PROFILE} />);
+        await ready(page);
+        await populate(page);
+        expect(await offers(page, 'Start numbering at'), `Start numbering at on ${OVERLAY_PROFILE}`).toBe(true);
+        await runItem(page, 'Numbered list');
+        await runItem(page, 'Start numbering at');
+        await expect(page.getByRole('dialog')).toBeVisible();
+
+        expect(await violations(page)).toEqual([]);
     });
-}
+});
 
 test('reports no violation with the Outline open on a document with no headings', async ({ mount, page }) => {
     await mount(<ProfileProbe profile="document" />);

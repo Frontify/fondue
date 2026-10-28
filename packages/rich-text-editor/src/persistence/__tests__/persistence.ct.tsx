@@ -51,7 +51,7 @@ test('holds the write offline and sends it after the online event', async ({ mou
     expect(await savedTexts(page)).toEqual(['abc']);
 });
 
-test('waits past the autosave deadline for a composition to end, then saves the composed text @engine', async ({
+test('waits past the autosave deadline for a composition to end, then saves the composed text', async ({
     mount,
     page,
     browserName,
@@ -88,7 +88,7 @@ test('saves a character typed in the same task as a manual commit', async ({ mou
     expect(await savedTexts(page)).toEqual(['abc']);
 });
 
-test('commits after the composition ends and saves the composed text @engine', async ({ mount, page, browserName }) => {
+test('commits after the composition ends and saves the composed text', async ({ mount, page, browserName }) => {
     test.skip(browserName !== 'chromium', 'CDP drives composition in Chromium only.');
     await mount(<EditorProbe texts={['ab']} persistence />);
     await ready(page);
@@ -104,7 +104,7 @@ test('commits after the composition ends and saves the composed text @engine', a
     expect(await savedTexts(page)).toEqual(['abxy']);
 });
 
-test('fails with a timeout when the composition never ends @engine', async ({ mount, page, browserName }) => {
+test('fails with a timeout when the composition never ends', async ({ mount, page, browserName }) => {
     test.skip(browserName !== 'chromium', 'CDP drives composition in Chromium only.');
     await mount(<EditorProbe texts={['ab']} persistence />);
     await ready(page);
@@ -120,7 +120,7 @@ test('fails with a timeout when the composition never ends @engine', async ({ mo
     expect(await savedTexts(page)).toEqual([]);
 });
 
-test('blocks a rejecting commit during composition and does not save @engine', async ({ mount, page, browserName }) => {
+test('blocks a rejecting commit during composition and does not save', async ({ mount, page, browserName }) => {
     test.skip(browserName !== 'chromium', 'CDP drives composition in Chromium only.');
     await mount(<EditorProbe texts={['ab']} persistence />);
     await ready(page);

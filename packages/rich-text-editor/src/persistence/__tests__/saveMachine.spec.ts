@@ -201,21 +201,20 @@ describe('the save machine transition table', () => {
         expect(CELLS).toHaveLength(16 * 7);
     });
 
-    it.each(CELLS)('%s while %s', (name, state, [after, effects]) => {
-        const row = TABLE[name as SaveEvent['type']];
-        const result = step({ ...IN[state], ...row.setup }, row.event, row.facts);
-        expect(result.state.state).toBe(after);
-        expect(types(result)).toEqual(effects);
-    });
+    it.each(CELLS)(
+        '%s while %s moves as the table says and leaves its input untouched',
+        (name, state, [after, effects]) => {
+            const row = TABLE[name as SaveEvent['type']];
+            const before = Object.freeze({ ...IN[state], ...row.setup, pinned: Object.freeze([]) });
+            const result = step(before, row.event, row.facts);
 
-    it.each(CELLS)('%s while %s leaves its input machine untouched', (name, state) => {
-        const row = TABLE[name as SaveEvent['type']];
-        const before = Object.freeze({ ...IN[state], ...row.setup, pinned: Object.freeze([]) });
-        const result = step(before, row.event, row.facts);
-        expect(result.state).not.toBe(before);
-        expect(before.state).toBe(state);
-        expect(before.pinned).toEqual([]);
-    });
+            expect(result.state.state).toBe(after);
+            expect(types(result)).toEqual(effects);
+            expect(result.state).not.toBe(before);
+            expect(before.state).toBe(state);
+            expect(before.pinned).toEqual([]);
+        },
+    );
 });
 
 describe('the machine at load', () => {

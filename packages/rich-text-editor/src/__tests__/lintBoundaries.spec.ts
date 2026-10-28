@@ -973,16 +973,23 @@ afterAll(async () => {
 const located = CASES.map((entry, index) => ({
     ...entry,
     location: `${entry.file}:${CASES.slice(0, index).filter(({ file }) => file === entry.file).length + 1}`,
-    title: `${entry.name} is ${entry.banned ? 'rejected' : 'accepted'}`,
 }));
 
 describe('the layer rules in oxlint.config.ts', () => {
-    it.each(located.map((entry) => [entry.title, entry] as const))('%s', (_title, { location, banned: isBanned }) => {
-        expect((reported.get(location) ?? 0) > 0).toBe(isBanned);
-    });
+    it('reports the verdict of every import', () => {
+        const verdict = (location: string, isBanned: boolean, name = 'an unlisted import') =>
+            `${name} (${location}) is ${isBanned ? 'rejected' : 'accepted'}`;
+        const known = new Set(located.map(({ location }) => location));
+        const expected = located
+            .map(({ location, banned: isBanned, name }) => verdict(location, isBanned, name))
+            .sort();
+        const actual = [
+            ...located.map(({ location, name }) => verdict(location, (reported.get(location) ?? 0) > 0, name)),
+            ...[...reported.keys()]
+                .filter((location) => !known.has(location))
+                .map((location) => verdict(location, true)),
+        ].sort();
 
-    it('rejects exactly the banned imports', () => {
-        const expected = located.filter(({ banned: isBanned }) => isBanned).map(({ location }) => location);
-        expect([...reported.keys()].sort()).toEqual(expected.sort());
+        expect(actual).toEqual(expected);
     });
 });
