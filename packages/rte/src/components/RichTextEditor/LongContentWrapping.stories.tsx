@@ -59,13 +59,11 @@ const Resizable = ({ label, children }: { label: string; children: ReactNode }) 
     </div>
 );
 
-// Radix ScrollArea's viewport wraps its content in `display: table; min-width: 100%`, which
-// shrink-wraps to the widest token — the context in which the overflow bug appears.
 const SHRINK_WRAP_CONTEXT: CSSProperties = { display: 'table', minWidth: '100%' };
 
 const Template: StoryFn = () => (
     <div style={{ maxWidth: 680 }}>
-        <Resizable label="Shrink-wrapping context (reproduces the bug — mirrors Radix ScrollArea's viewport)">
+        <Resizable label="Shrink-wrapping context (mirrors Radix ScrollArea's viewport)">
             <div style={SHRINK_WRAP_CONTEXT}>
                 <Editor />
             </div>
