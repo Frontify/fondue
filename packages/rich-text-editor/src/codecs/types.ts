@@ -95,6 +95,8 @@ export type RichTextCodecs = {
         blocked: boolean;
     };
     fromMarkdown(markdown: string): DecodeResult;
+    /** Whether the document has no content, by the glossary rule: one textblock with nothing in it. A document that cannot be read is not empty. */
+    isEmpty(document: RichTextDocument): boolean;
 };
 /** Options for the codecs a definition builds: limits and the id source used when reading Markdown. */
 export type CodecsOptions = {

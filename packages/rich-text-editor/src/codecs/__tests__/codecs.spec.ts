@@ -4,6 +4,7 @@
 
 import { readFileSync } from 'node:fs';
 
+import { EditorState } from 'prosemirror-state';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -17,8 +18,11 @@ import {
     type JsonValue,
     type RichTextDocument,
 } from '#/model';
+import { decodeToTree } from '#/model/internal';
 import { link, mark, node, paragraph, table, text } from '#/plugins/__tests__/fixtures/documents';
 import { core } from '#/plugins/Core/feature';
+import { compileDefinition } from '#/runtime/definition';
+import { isEmpty } from '#/runtime/session/editing/view';
 
 import { semanticModel } from '../../reader/__tests__/fixtures/semantic';
 import { fixturesIn } from '../../reader/__tests__/helpers/helpers';
@@ -266,6 +270,7 @@ describe('codecs over blocked and island documents', () => {
             expect(codecs.toHTML(input)).toEqual({ html: '', css: '', diagnostics, blocked: true });
             expect(codecs.toPlainText(input)).toEqual({ text: '', losses: [], diagnostics, blocked: true });
             expect(codecs.toMarkdown(input)).toEqual({ markdown: '', losses: [], diagnostics, blocked: true });
+            expect(codecs.isEmpty(input)).toBe(false);
             expect(unlimited.toHTML(valid).blocked).toBe(false);
             expect(unlimited.toPlainText(valid).blocked).toBe(false);
             expect(unlimited.toMarkdown(valid).blocked).toBe(false);
@@ -318,11 +323,101 @@ describe('codecs over blocked and island documents', () => {
 });
 
 describe('empty documents', () => {
+    const model = semanticModel();
+    const codecs = createCodecs(model);
+    const stateOf = (contentModel: typeof model, document: RichTextDocument) => {
+        const { result, tree } = decodeToTree(document, contentModel);
+        if (result.status !== 'editable' || tree === undefined) {
+            throw new Error('expected an editable document');
+        }
+
+        const doc = compileDefinition(contentModel).schema.nodeFromJSON(tree);
+
+        return EditorState.create({ doc });
+    };
+
+    it.each([
+        ['empty document', createEmptyDocument(model)],
+        ['one empty paragraph', stored(paragraph())],
+        ['paragraph with a space', stored(paragraph(text(' ')))],
+        ['paragraph with text', stored(paragraph(text('a')))],
+        ['two empty paragraphs', stored(paragraph(), paragraph())],
+        ['one leaf block', stored(node('horizontal_rule', {}))],
+    ] as const)('isEmpty matches the editor for %s', (_, document) => {
+        expect(isEmpty(stateOf(model, document))).toBe(codecs.isEmpty(document));
+    });
+
+    const formats = { html: 'lossless', text: 'unsupported', markdown: 'unsupported' } as const;
+    const standalone = (id: string, nodes: NonNullable<FeatureDeclaration['nodes']>) =>
+        compileContentModel([defineFeature({ id, version: 1, nodes, formats })()], { id: 'test.model', version: 1 });
+    const containerModel = compile({
+        id: 'test.container',
+        version: 1,
+        requires,
+        nodes: {
+            container: { group: 'block', content: 'block*', attrs: {}, html: ['div', {}, 0], parse: [] },
+        },
+        formats,
+    });
+    const groupedText = standalone('test.grouped', {
+        doc: { content: 'text*', attrs: {}, html: ['div', 0], parse: [] },
+        text: { group: 'block', content: 'inline*', attrs: {}, html: ['span', 0], parse: [] },
+        word: { group: 'inline', attrs: {}, html: ['span'], parse: [] },
+    });
+    const bareText = standalone('test.bare', {
+        doc: { content: 'paragraph+', attrs: {}, html: ['div', 0], parse: [] },
+        paragraph: { group: 'block', content: 'text*', attrs: {}, html: ['p', 0], parse: [] },
+        text: { attrs: {}, html: ['span', 0], parse: [] },
+    });
+    const gapModel = compile({
+        id: 'test.gap',
+        version: 1,
+        requires,
+        nodes: {
+            gap: { group: 'block', content: 'inline{0}', attrs: {}, html: ['div', {}, 0], parse: [] },
+        },
+        formats,
+    });
+
+    it.each([
+        {
+            title: 'a document whose only block is an empty container',
+            model: containerModel,
+            document: testDocument(containerModel, node('container', {})),
+            expected: false,
+        },
+        {
+            title: 'text grouped as a block and holding hi',
+            model: groupedText,
+            document: testDocument(groupedText, text('hi')),
+            expected: false,
+        },
+        {
+            title: 'an empty paragraph whose text node has no group',
+            model: bareText,
+            document: testDocument(bareText, node('paragraph', {})),
+            expected: true,
+        },
+        {
+            title: 'an empty block that admits no inline child',
+            model: gapModel,
+            document: testDocument(gapModel, node('gap', {})),
+            expected: false,
+        },
+    ])('isEmpty matches the editor for $title', ({ title, model, document, expected }) => {
+        const caseCodecs = createCodecs(model);
+        expect(caseCodecs.isEmpty(document)).toBe(expected);
+        expect(isEmpty(stateOf(model, document))).toBe(expected);
+        if (title === 'a document whose only block is an empty container') {
+            expect(caseCodecs.toHTML(document).html).not.toBe('');
+        }
+    });
+
     it('writes the empty string for an empty document through toHTML and toPlainText', () => {
-        const model = semanticModel();
-        const codecs = createCodecs(model);
         const empty = createEmptyDocument(model);
 
+        expect(codecs.isEmpty(empty)).toBe(true);
+        expect(codecs.isEmpty(stored(paragraph(text(' '))))).toBe(false);
         expect(codecs.toHTML(empty).html).toBe('');
         expect(codecs.toPlainText(empty).text).toBe('');
         expect(codecs.toHTML(stored(paragraph(), paragraph())).html).toBe(

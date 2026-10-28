@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { contentNames } from '../helpers/contentExpression';
+import { contentNames, contentTerms } from '../helpers/contentExpression';
 import { isSrcdocAttribute, isStyleAttribute } from '../helpers/values';
 import { type MarkDeclaration, type NodeDeclaration } from '../vocabulary/declarations';
 import { DefinitionError, pointer } from '../vocabulary/errors';
@@ -79,18 +79,11 @@ export const collectMembers = (list: readonly CompiledFeature[]) => {
     return { nodes, marks };
 };
 
-/** Checks every node's and mark's own declaration and returns the names of the textblocks. */
-export const checkMembers = (nodes: ReadonlyMap<string, MutableNode>, marks: ReadonlyMap<string, CompiledMark>) => {
-    const checkMarks = (featureId: string, names: readonly string[] | undefined, path: readonly string[]) => {
-        const unknown = (names ?? []).findIndex((name) => !marks.has(name));
-        if (unknown >= 0) {
-            throw failure('definition.invalid-declaration', featureId, pointer(...path, unknown));
-        }
-    };
-
+/** Resolves a content term to the node names it admits: the node itself, or the members of its group. */
+const membersIn = (nodes: ReadonlyMap<string, { declaration: NodeDeclaration }>) => {
     const groups = new Map<string, string[]>();
     const join = (group: string, name: string) => groups.set(group, [...(groups.get(group) ?? []), name]);
-    for (const { name, declaration } of nodes.values()) {
+    for (const [name, { declaration }] of nodes) {
         if (declaration.group === 'block') {
             join('block', name);
         }
@@ -100,8 +93,59 @@ export const checkMembers = (nodes: ReadonlyMap<string, MutableNode>, marks: Rea
         }
     }
 
-    const membersOf = (name: string) => (nodes.has(name) ? [name] : (groups.get(name) ?? []));
-    const textblocks: string[] = [];
+    return (term: string) => (nodes.has(term) ? [term] : (groups.get(term) ?? []));
+};
+
+/** A node is inline when its name is `text` or its group is `inline`. */
+const isInlineNode = (name: string, declaration: NodeDeclaration) => name === 'text' || declaration.group === 'inline';
+
+/** Whether the members `names` admit are inline nodes, as the set of answers: one answer unless the content mixes. */
+const inlineAnswers = (
+    names: readonly string[],
+    membersOf: (term: string) => readonly string[],
+    nodes: ReadonlyMap<string, { declaration: NodeDeclaration }>,
+) =>
+    new Set(
+        names.flatMap(membersOf).map((member) => {
+            const declaration = nodes.get(member)?.declaration;
+
+            return declaration !== undefined && isInlineNode(member, declaration);
+        }),
+    );
+
+/** Node names whose content is inline-only and that are not inline nodes themselves. */
+export const textblockNames = (nodes: ReadonlyMap<string, { declaration: NodeDeclaration }>): ReadonlySet<string> => {
+    const membersOf = membersIn(nodes);
+    const textblocks = new Set<string>();
+    for (const [name, { declaration }] of nodes) {
+        if (declaration.content === undefined) {
+            continue;
+        }
+
+        const names = contentTerms(declaration.content);
+        if (names === undefined) {
+            continue;
+        }
+
+        const inline = inlineAnswers(names, membersOf, nodes);
+        if (inline.has(true) && !isInlineNode(name, declaration)) {
+            textblocks.add(name);
+        }
+    }
+
+    return textblocks;
+};
+
+/** Checks every node's and mark's own declaration and returns the names of the textblocks. */
+export const checkMembers = (nodes: ReadonlyMap<string, MutableNode>, marks: ReadonlyMap<string, CompiledMark>) => {
+    const checkMarks = (featureId: string, names: readonly string[] | undefined, path: readonly string[]) => {
+        const unknown = (names ?? []).findIndex((name) => !marks.has(name));
+        if (unknown >= 0) {
+            throw failure('definition.invalid-declaration', featureId, pointer(...path, unknown));
+        }
+    };
+
+    const membersOf = membersIn(nodes);
     for (const { name, featureId, declaration } of nodes.values()) {
         checkAttributeDeclarations(featureId, declaration.attrs, ['nodes', name, 'attrs']);
         checkMarks(featureId, declaration.marks, ['nodes', name, 'marks']);
@@ -116,15 +160,9 @@ export const checkMembers = (nodes: ReadonlyMap<string, MutableNode>, marks: Rea
             throw failure('definition.invalid-declaration', featureId, path);
         }
 
-        const inline = new Set(
-            names.flatMap(membersOf).map((member) => nodes.get(member)?.declaration.group === 'inline'),
-        );
+        const inline = inlineAnswers(names, membersOf, nodes);
         if (inline.size > 1) {
             throw failure('definition.invalid-declaration', featureId, path);
-        }
-
-        if (inline.has(true) && declaration.group !== 'inline') {
-            textblocks.push(name);
         }
     }
 
@@ -134,7 +172,7 @@ export const checkMembers = (nodes: ReadonlyMap<string, MutableNode>, marks: Rea
         checkMarkMarkdown(featureId, name, declaration.markdown);
     }
 
-    return textblocks;
+    return [...textblockNames(nodes)];
 };
 
 /** Adds each feature's shared attributes to the nodes they target. */

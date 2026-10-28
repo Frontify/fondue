@@ -73,6 +73,7 @@ describe('isEmpty', () => {
     it('is true for one empty paragraph only', () => {
         expect(isEmpty(make(''))).toBe(true);
         expect(isEmpty(make('a'))).toBe(false);
+        expect(isEmpty(make(' '))).toBe(false);
     });
 });
 

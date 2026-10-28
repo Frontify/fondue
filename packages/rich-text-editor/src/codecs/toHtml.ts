@@ -330,7 +330,7 @@ export const isEmptyDocument = (plan: CodecPlan, root: TreeNode): boolean => {
 
     const node = plan.nodes.get(only.type);
 
-    return node !== undefined && !node.leaf;
+    return node !== undefined && node.textblock;
 };
 
 /**

@@ -6,12 +6,12 @@ import { markHrefPolicy, type TreeNode, decodeToTree, codecContext, columnLayout
 
 import { createParser, readMarkdown } from './fromMarkdown';
 import { checkCodecs, codecPlanOf } from './plan';
-import { writeHtml } from './toHtml';
+import { isEmptyDocument, writeHtml } from './toHtml';
 import { writeMarkdown } from './toMarkdown';
 import { writeText } from './toText';
 import { type CodecsOptions, type RichTextCodecs } from './types';
 
-/** Checks the model once, then returns `toHTML`, `toPlainText`, `toMarkdown` and `fromMarkdown` bound to it. */
+/** Checks the model once, then returns `toHTML`, `toPlainText`, `toMarkdown`, `fromMarkdown` and `isEmpty` bound to it. */
 export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): RichTextCodecs => {
     const plan = codecPlanOf(model);
     checkCodecs(plan);
@@ -86,5 +86,13 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
             };
         },
         fromMarkdown: (markdown) => readMarkdown(parser, markdown, model, generateId, { ...decodeOptions, generateId }),
+        isEmpty: (document) => {
+            const { tree } = decode(document);
+            if (tree === undefined) {
+                return false;
+            }
+
+            return isEmptyDocument(plan, tree);
+        },
     };
 };

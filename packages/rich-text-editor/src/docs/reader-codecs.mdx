@@ -64,7 +64,7 @@ The reader writes the recipes it is given into a `style` element beside the cont
 
 ## The codecs
 
-`createCodecs(model)` checks the model once and returns four functions bound to it. Pass `{ limits, generateId }` as the second argument to match the writing editor's limits, or to set the IDs that `fromMarkdown` creates.
+`createCodecs(model)` checks the model once and returns five functions bound to it. Pass `{ limits, generateId }` as the second argument to match the writing editor's limits, or to set the IDs that `fromMarkdown` creates.
 
 | Function                        | Returns                                                                           |
 | ------------------------------- | --------------------------------------------------------------------------------- |
@@ -72,6 +72,7 @@ The reader writes the recipes it is given into a `style` element beside the cont
 | `toPlainText(document)`         | `{ text, losses, diagnostics }`                                                   |
 | `toMarkdown(document, options)` | `{ markdown, losses, diagnostics }`                                               |
 | `fromMarkdown(markdown)`        | A `DecodeResult`: an editable document, or a blocked result with its diagnostics. |
+| `isEmpty(document)`             | `true` when the document is one empty textblock; `false` when it cannot be read.  |
 
 ```ts
 import { commentModel } from '@frontify/fondue-rich-text-editor/features';
@@ -79,6 +80,7 @@ import { createCodecs } from '@frontify/fondue-rich-text-editor/codecs';
 
 const codecs = createCodecs(commentModel);
 const { text, losses } = codecs.toPlainText(stored);
+const canSubmit = !codecs.isEmpty(stored);
 ```
 
 No codec throws on input. A document that cannot be read gives empty output and the decode diagnostics. `losses` lists one entry per feature whose content the format cannot keep, with a count. Markdown is CommonMark 0.31.2 with GFM tables, strikethrough, task list items and autolinks.

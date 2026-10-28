@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type CompiledFeature, compiledModel, type SharedAttribute } from '../compile/compile';
+import { textblockNames } from '../compile/compilePhases';
 import { addDeclaration, ownValue } from '../helpers/values';
 import {
     type CodecContext,
@@ -75,6 +76,8 @@ export type NodePlan = {
     pre: boolean;
     /** Declares no content. */
     leaf: boolean;
+    /** Holds inline content: a block the caret can type in. */
+    textblock: boolean;
     spec: HtmlSpec;
     shared: readonly SharedAttribute[];
     options: JsonObject;
@@ -106,6 +109,7 @@ export const buildPlan = <N extends object, M extends object>(
     mark: (feature: FeatureDeclaration, name: string) => M,
 ): Plan<NodePlan & N, MarkPlan & M> => {
     const compiled = compiledModel(model);
+    const textblocks = textblockNames(new Map(compiled.nodes.map(({ name, declaration }) => [name, { declaration }])));
     const features = new Map(compiled.features.map((feature) => [feature.id, feature]));
     // Compilation gives every node and mark a compiled feature.
     const featureOf = (featureId: string) => features.get(featureId) as CompiledFeature;
@@ -122,6 +126,7 @@ export const buildPlan = <N extends object, M extends object>(
                     inline: declaration.group === 'inline',
                     pre: declaration.whitespace === 'pre',
                     leaf: declaration.content === undefined,
+                    textblock: textblocks.has(name),
                     spec: declaration.html,
                     shared,
                     options: feature.options,

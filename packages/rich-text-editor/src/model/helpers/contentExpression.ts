@@ -143,6 +143,28 @@ export const contentNames = (expression: string): readonly string[] | undefined 
     return parse(expression)?.names;
 };
 
+/**
+ * The distinct node and group names a content expression can match, or `undefined` when it fails the grammar; a zero
+ * bound admits none.
+ */
+export const contentTerms = (expression: string): readonly string[] | undefined => {
+    const automaton = automatonOf(expression);
+    if (automaton === undefined) {
+        return undefined;
+    }
+
+    const terms = new Set<string>();
+    for (const edges of automaton.edges) {
+        for (const edge of edges) {
+            if (edge.term !== undefined) {
+                terms.add(edge.term);
+            }
+        }
+    }
+
+    return [...terms];
+};
+
 type Edge = {
     /** A node or group name; none for an empty move. */
     term?: string;
