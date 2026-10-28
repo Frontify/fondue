@@ -381,9 +381,116 @@ const memberOwner = (member: ts.TypeElement, file: ts.SourceFile) => {
     return `${declaration.name.text}${nested ? '>' : ''}`;
 };
 
+const FREEZE_HELPERS = new Set(['snapshot', 'freezeModel']);
+
+const isFreezeCall = (node: ts.Node): boolean => {
+    if (!ts.isCallExpression(node)) {
+        return false;
+    }
+
+    const { expression } = node;
+    if (ts.isPropertyAccessExpression(expression) && expression.name.text === 'freeze') {
+        return ts.isIdentifier(expression.expression) && expression.expression.text === 'Object';
+    }
+
+    return ts.isIdentifier(expression) && FREEZE_HELPERS.has(expression.text);
+};
+
+const bodyFreezes = (body: ts.Node | undefined): boolean => {
+    if (body === undefined) {
+        return false;
+    }
+
+    let found = false;
+    const visit = (node: ts.Node) => {
+        if (isFreezeCall(node)) {
+            found = true;
+
+            return;
+        }
+
+        ts.forEachChild(node, visit);
+    };
+
+    visit(body);
+
+    return found;
+};
+
+const freezeInitializer = (node: ts.VariableDeclaration): boolean =>
+    node.initializer !== undefined && bodyFreezes(node.initializer);
+
+const symbolBody = (file: ts.SourceFile, symbol: string): ts.Node | undefined => {
+    let found: ts.Node | undefined;
+    const visit = (node: ts.Node) => {
+        if (found !== undefined) {
+            return;
+        }
+
+        if (ts.isFunctionDeclaration(node) && node.name?.text === symbol) {
+            found = node;
+
+            return;
+        }
+
+        if (ts.isVariableStatement(node)) {
+            for (const declaration of node.declarationList.declarations) {
+                if (ts.isIdentifier(declaration.name) && declaration.name.text === symbol) {
+                    found = declaration;
+
+                    return;
+                }
+            }
+        }
+
+        if (ts.isPropertyAssignment(node) && ts.isIdentifier(node.name) && node.name.text === symbol) {
+            found = node.initializer;
+
+            return;
+        }
+
+        ts.forEachChild(node, visit);
+    };
+
+    visit(file);
+
+    return found;
+};
+
+const freezeSiteProblems = () => {
+    const problems: string[] = [];
+    for (const { site } of READONLY_MEMBERS) {
+        const split = site.indexOf('#');
+        if (split === -1) {
+            problems.push(`invalid site: ${site}`);
+
+            continue;
+        }
+
+        const path = site.slice(0, split);
+        const symbol = site.slice(split + 1);
+        const declaration = symbolBody(parse(path), symbol);
+        if (declaration === undefined) {
+            problems.push(`missing symbol: ${site}`);
+
+            continue;
+        }
+
+        const freezes =
+            (isFunctionLike(declaration) && bodyFreezes(declaration.body)) ||
+            (ts.isVariableDeclaration(declaration) && freezeInitializer(declaration)) ||
+            bodyFreezes(declaration);
+        if (!freezes) {
+            problems.push(`does not freeze: ${site}`);
+        }
+    }
+
+    return problems;
+};
+
 const readonlyMembers = () => {
     const found = new Map<string, string[]>();
-    for (const path of allFiles) {
+    for (const path of productFiles) {
         const file = parse(path);
         const visit = (node: ts.Node) => {
             if (
@@ -639,6 +746,10 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
 
     it('no file of the package or its workflow names a spec, decision or plan ID, or a spec section', () => {
         expect(ratchet(specReferenceCounts(), SPEC_REFERENCES)).toEqual([]);
+    });
+
+    it('each allowlist freeze site declares a symbol that freezes at run time', () => {
+        expect(freezeSiteProblems()).toEqual([]);
     });
 
     it('no property or index signature is readonly, except the members of types frozen at run time', () => {

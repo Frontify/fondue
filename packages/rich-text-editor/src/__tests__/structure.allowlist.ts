@@ -178,17 +178,17 @@ export type ReadonlyMembers = {
 
 export const READONLY_MEMBERS: ReadonlyMembers[] = [
     {
-        site: 'src/model/vocabulary/feature.ts:26',
+        site: 'src/model/vocabulary/feature.ts#createFeature',
         why: 'createFeature freezes the feature value, so a write throws.',
         types: ['src/model/types.ts#Feature', 'src/model/vocabulary/feature.ts#FeatureValue'],
     },
     {
-        site: 'src/model/vocabulary/feature.ts:58',
+        site: 'src/model/vocabulary/feature.ts#attachToFeature',
         why: 'attachToFeature freezes the declaration copy and its attachments, so a write throws.',
         types: ['src/model/vocabulary/feature.ts#{ [ATTACHED] }'],
     },
     {
-        site: 'src/model/vocabulary/feature.ts:81',
+        site: 'src/model/vocabulary/feature.ts#defineFeature',
         why: 'defineFeature snapshots the declaration, deep-freezing every JSON member it can reach, so a write throws.',
         deep: [
             'src/model/vocabulary/declarations.ts#FeatureDeclaration',
@@ -209,22 +209,22 @@ export const READONLY_MEMBERS: ReadonlyMembers[] = [
         ],
     },
     {
-        site: 'src/model/vocabulary/feature.ts:97',
+        site: 'src/model/vocabulary/feature.ts#defineFeature',
         why: 'defineFeature freezes each function parse rule, so a write throws.',
         types: ['src/model/vocabulary/declarations.ts#FunctionParseRule'],
     },
     {
-        site: 'src/model/compile/compile.ts:70',
+        site: 'src/model/compile/compile.ts#freezeModel',
         why: 'compileContentModel freezes the model, so a write throws.',
         types: ['src/model/vocabulary/declarations.ts#ContentModel'],
     },
     {
-        site: 'src/model/vocabulary/format.ts:172',
+        site: 'src/model/vocabulary/format.ts#defaultLimits',
         why: 'defaultLimits is frozen, so a write throws.',
         types: ['src/model/vocabulary/format.ts#ResourceLimits'],
     },
     {
-        site: 'src/runtime/session/state/shown.ts:146',
+        site: 'src/runtime/session/state/shown.ts#createShown',
         why: 'The snapshot is a deep-frozen copy, and the stored blocks inside it are frozen by src/runtime/session/state/encode.ts:40, so a write throws.',
         deep: [
             'src/runtime/types.ts#Snapshot',
@@ -238,7 +238,7 @@ export const READONLY_MEMBERS: ReadonlyMembers[] = [
         ],
     },
     {
-        site: 'src/runtime/session/state/encode.ts:40',
+        site: 'src/runtime/session/state/encode.ts#encodeByBlock',
         why: 'The typed views of the same stored blocks that the snapshot deep-freezes, so a write throws.',
         deep: [
             'src/model/vocabulary/format.ts#DocumentOf',
@@ -247,12 +247,12 @@ export const READONLY_MEMBERS: ReadonlyMembers[] = [
         ],
     },
     {
-        site: 'src/bridge/nodeViews/nodeViews.ts:56',
+        site: 'src/bridge/nodeViews/nodeViews.ts#stateOf',
         why: 'Node and mark attributes reach plugins, decorations and the manifest as deep-frozen JSON (also src/runtime/statePlugins/decorations.ts:78, src/runtime/api/shared.ts:82, src/model/compile/compile.ts:55), so a write throws.',
         deep: ['src/model/types.ts#JsonObject', 'src/model/types.ts#JsonValue'],
     },
     {
-        site: 'src/bridge/pluginApi/plugin.ts:355',
+        site: 'src/bridge/pluginApi/plugin.ts#defineEditorPart',
         why: 'defineEditorPart freezes the editor part, so a write throws.',
         types: [
             'src/bridge/pluginApi/plugin.ts#EditorPartSpec',
@@ -262,7 +262,7 @@ export const READONLY_MEMBERS: ReadonlyMembers[] = [
         ],
     },
     {
-        site: 'src/bridge/pluginApi/definePlugin.ts:54',
+        site: 'src/bridge/pluginApi/definePlugin.ts#definePlugin',
         why: 'definePlugin and extendPlugin freeze the plugin, and extendEditor freezes its editor part, so a write throws.',
         types: [
             'src/bridge/pluginApi/definePlugin.ts#RichTextPlugin',
@@ -270,43 +270,38 @@ export const READONLY_MEMBERS: ReadonlyMembers[] = [
         ],
     },
     {
-        site: 'src/runtime/reporting/metrics.ts:14',
+        site: 'src/runtime/reporting/metrics.ts#operationMetric',
         why: 'operationMetric freezes each metric, so a write throws.',
         types: ['src/runtime/types.ts#OperationMetric'],
     },
     {
-        site: 'src/runtime/reporting/saves.ts:53',
+        site: 'src/runtime/reporting/saves.ts#createUnmanagedStatus',
         why: 'The save status is frozen (also src/persistence/transport.ts:104 and :342), so a write throws.',
         types: ['src/runtime/types.ts#SaveStatus'],
     },
     {
-        site: 'src/persistence/transport.ts:226',
+        site: 'src/persistence/transport.ts#prepare',
         why: 'The save request is frozen, so a write throws.',
         types: ['src/persistence/types.ts#SaveRequest'],
     },
     {
-        site: 'src/runtime/async/async.ts:120',
+        site: 'src/runtime/async/asyncRun.ts#buildOperation',
         why: 'A registered operation is frozen, so a write throws.',
         types: ['src/runtime/async/async.ts#AsyncOperation'],
     },
     {
-        site: 'src/react/compile/compileEditor.ts:388',
+        site: 'src/react/compile/compileEditor.ts#compileEditor',
         why: 'compileEditor freezes the definition, so a write throws.',
         types: ['src/react/types.ts#EditorDefinitionInfo', 'src/react/types.ts#CompiledEditorDefinition'],
     },
     {
-        site: 'src/runtime/session/lifecycle/targets.ts:98',
+        site: 'src/runtime/session/lifecycle/targets.ts#handleOf',
         why: 'A selection handle is frozen, so a write throws.',
         types: ['src/runtime/types.ts#SelectionHandle'],
     },
     {
-        site: 'src/runtime/api/shared.ts:32',
+        site: 'src/runtime/api/shared.ts#rangeOf',
         why: 'A range is a frozen opaque object, so a write throws.',
         types: ['src/runtime/api/documentApi.ts#EditorRange'],
-    },
-    {
-        site: 'src/model/__tests__/compileDeclarations.spec.ts:488',
-        why: 'The type assertion compares the readonly members that OptionsOf yields.',
-        types: ['src/model/__tests__/compileDeclarations.spec.ts#{ defaultLevel }'],
     },
 ];

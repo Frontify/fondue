@@ -22,6 +22,13 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { installInto, PACKAGE_ROOT, packRelease } from './fixtures/apps/consumer';
 import { pendingResults } from './fixtures/qualification';
+import {
+    bumped,
+    BUMPS,
+    mustHoldQualificationRecord,
+    qualificationRecordVersion,
+    readPreRelease,
+} from './fixtures/releaseVersion';
 
 const NAME = '@frontify/fondue-rich-text-editor';
 const REPOSITORY = join(PACKAGE_ROOT, '..', '..');
@@ -344,21 +351,6 @@ const sourceFiles = (directory: string, suffix: string): string[] =>
 
         return [];
     });
-
-const BUMPS = ['patch', 'minor', 'major'] as const;
-
-const bumped = (version: string, bump: (typeof BUMPS)[number]) => {
-    const [major = 0, minor = 0, patch = 0] = version.split('.').map(Number);
-    if (bump === 'major') {
-        return `${major + 1}.0.0`;
-    }
-
-    if (bump === 'minor') {
-        return `${major}.${minor + 1}.0`;
-    }
-
-    return `${major}.${minor}.${patch + 1}`;
-};
 
 const runNpm = (args: readonly string[]): string =>
     execFileSync('npm', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
@@ -794,8 +786,10 @@ describe.runIf(process.env.RTE_RELEASE === 'true')('the release this run prepare
     it.skipIf(release === undefined)(
         'holds a qualification record that passes its schema with no result pending',
         () => {
-            const path = join(QUALIFICATION, `${release?.version ?? ''}.json`);
-            if (release?.version !== '1.0.0' && !existsSync(path)) {
+            const pre = readPreRelease(join(REPOSITORY, '.changeset'));
+            const recordVersion = qualificationRecordVersion(release?.version ?? '', pre);
+            const path = join(QUALIFICATION, `${recordVersion}.json`);
+            if (!mustHoldQualificationRecord(release?.version ?? '') && !existsSync(path)) {
                 return;
             }
 

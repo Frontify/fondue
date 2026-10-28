@@ -10,10 +10,19 @@ import Ajv2020 from 'ajv/dist/2020';
 import { describe, expect, it } from 'vitest';
 
 import { pendingResults } from './fixtures/qualification';
+import {
+    mustHoldQualificationRecord,
+    nextReleaseVersion,
+    nextReleaseVersionFromChangesets,
+    PACKAGE_NAME,
+    qualificationRecordVersion,
+    readPreRelease,
+} from './fixtures/releaseVersion';
 import { budgets } from './fixtures/size/bundle';
 
 const PACKAGE = fileURLToPath(new URL('../..', import.meta.url));
 const QUALIFICATION = join(PACKAGE, 'qualification');
+const CHANGESET_DIR = join(PACKAGE, '../../.changeset');
 
 type Json = Record<string, unknown>;
 
@@ -67,13 +76,65 @@ describe('the qualification records', () => {
     });
 
     it('leaves no result pending in the record of the version package.json names', () => {
-        const { version } = readJson(join(PACKAGE, 'package.json'));
+        const { version } = readJson(join(PACKAGE, 'package.json')) as { version: string };
+        const pre = readPreRelease(CHANGESET_DIR);
+        const releaseVersion = nextReleaseVersion({ packageVersion: version, changesetDir: CHANGESET_DIR });
+        const recordVersion = qualificationRecordVersion(releaseVersion, pre);
+        const releaseRecord = RECORDS.find(({ record }) => record.version === recordVersion);
+        if (mustHoldQualificationRecord(releaseVersion)) {
+            expect(releaseRecord, `${recordVersion}.json`).toBeDefined();
+        }
+
         const current = RECORDS.find(({ record }) => record.version === version);
         if (current === undefined) {
             return;
         }
 
         expect(pendingResults(current.record)).toEqual([]);
+    });
+});
+
+describe('the release version qualification records need', () => {
+    it('resolves 0.0.0 with a pending 1.0.0 major changeset', () => {
+        expect(nextReleaseVersionFromChangesets('0.0.0', [{ packageName: PACKAGE_NAME, bump: 'major' }])).toBe('1.0.0');
+        expect(mustHoldQualificationRecord('1.0.0')).toBe(true);
+    });
+
+    it('reads pre mode at 1.0.0-beta.0 as needing the 1.0.0 record', () => {
+        const pre = { mode: 'pre' as const };
+        expect(qualificationRecordVersion('1.0.0-beta.0', pre)).toBe('1.0.0');
+        expect(mustHoldQualificationRecord('1.0.0-beta.0')).toBe(true);
+    });
+
+    it('keeps a later minor release optional until its record exists', () => {
+        expect(nextReleaseVersionFromChangesets('1.0.0', [{ packageName: PACKAGE_NAME, bump: 'minor' }])).toBe('1.1.0');
+        expect(mustHoldQualificationRecord('1.1.0')).toBe(false);
+    });
+
+    it('names a pending suite in the record a release resolves to', () => {
+        const record = changed((draft) => {
+            draft.suites = { firefox: { pendingIn: 'ci-job' } };
+            delete draft.performance;
+        });
+        expect(pendingResults(record)).toEqual(['/suites/firefox: ci-job']);
+    });
+
+    it('treats a stamped record as having no pending results', () => {
+        const record = changed((draft) => {
+            Object.assign(suitesOf(draft), {
+                firefox: {
+                    browserVersion: '150.0.2',
+                    playwright: '1.60.0',
+                    command: 'playwright test --project=firefox',
+                    passed: 1,
+                    failed: 0,
+                    flaky: 0,
+                    skipped: 0,
+                },
+            });
+            draft.performance = { passed: true };
+        });
+        expect(pendingResults(record)).toEqual([]);
     });
 });
 
@@ -182,39 +243,6 @@ const pathsMissing = (candidates: readonly string[]) =>
 
 const backticked = (text: string) => [...text.matchAll(/`([^`\n]+)`/g)].map((match) => match[1] ?? '');
 
-const BUMPS = ['patch', 'minor', 'major'];
-
-/** The version package.json releases next: its own raised by the strongest bump a changeset declares. */
-const nextVersion = () => {
-    const { version } = readJson(join(PACKAGE, 'package.json')) as { version: string };
-    const changesets = join(PACKAGE, '../../.changeset');
-    let strongest = -1;
-    for (const name of readdirSync(changesets).filter((file) => file.endsWith('.md'))) {
-        const frontmatter = /^---\n([\s\S]*?)\n---/.exec(readFileSync(join(changesets, name), 'utf8'))?.[1] ?? '';
-        for (const line of frontmatter.split('\n')) {
-            const match = /^["']?([^"':]+)["']?\s*:\s*(\w+)\s*$/.exec(line.trim());
-            if (match?.[1] === '@frontify/fondue-rich-text-editor') {
-                strongest = Math.max(strongest, BUMPS.indexOf(match[2] ?? ''));
-            }
-        }
-    }
-
-    const [major = 0, minor = 0, patch = 0] = version.split('.').map(Number);
-    if (strongest === 2) {
-        return `${major + 1}.0.0`;
-    }
-
-    if (strongest === 1) {
-        return `${major}.${minor + 1}.0`;
-    }
-
-    if (strongest === 0) {
-        return `${major}.${minor}.${patch + 1}`;
-    }
-
-    return version;
-};
-
 describe('the paths the records and reports name', () => {
     it('exist in the package, and a glob matches at least one file', () => {
         for (const { name, record } of RECORDS) {
@@ -235,7 +263,8 @@ describe('the paths the records and reports name', () => {
 
 describe('the version a record names', () => {
     it('is the version the package releases next, in the record file name and in the report', () => {
-        const version = nextVersion();
+        const { version: packageVersion } = readJson(join(PACKAGE, 'package.json')) as { version: string };
+        const version = nextReleaseVersion({ packageVersion, changesetDir: CHANGESET_DIR });
 
         expect(RECORDS.map(({ record }) => record.version)).toContain(version);
         const current = RECORDS.find(({ record }) => record.version === version);
