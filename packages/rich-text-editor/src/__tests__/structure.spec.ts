@@ -27,9 +27,9 @@ import {
     DUPLICATE_BINDINGS,
     FILES_OVER_400_LINES,
     FILES_OVER_600_LINES,
-    FUNCTIONS_OVER_140_LINES,
     FUNCTIONS_OVER_6_LETS,
     KNOWN_CYCLES,
+    LONG_FUNCTIONS,
     READONLY_MEMBERS,
     SPECS_OVER_1000_LINES,
     SPEC_REFERENCES,
@@ -178,6 +178,14 @@ const letDeclarators = (node: FunctionLike) => {
 
 type FunctionMeasure = { key: string; lines: number; lets: number };
 
+// Every line from the node's start line through its end line, blank lines included.
+const rawLines = (node: ts.Node, file: ts.SourceFile) => {
+    const start = file.getLineAndCharacterOfPosition(node.getStart(file)).line;
+    const end = file.getLineAndCharacterOfPosition(node.end).line;
+
+    return end - start + 1;
+};
+
 const functionMeasures = (path: string) => {
     const file = parse(path);
     const base = toKey(path);
@@ -193,7 +201,7 @@ const functionMeasures = (path: string) => {
                 key = `${key}#${occurrence}`;
             }
 
-            measures.push({ key, lines: nonBlankLines(node.getText(file)), lets: letDeclarators(node) });
+            measures.push({ key, lines: rawLines(node, file), lets: letDeclarators(node) });
         }
 
         ts.forEachChild(node, visit);
@@ -703,15 +711,28 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
         expect(ratchet(filesOver(productFiles, 400), FILES_OVER_400_LINES)).toEqual([]);
     });
 
-    it('no function body over 140 lines grows', () => {
+    it('no function spans more than 100 raw lines', () => {
         const measured = new Map<string, number>();
         for (const { key, lines } of allFunctionMeasures()) {
-            if (lines > 140) {
+            if (lines > 100) {
                 measured.set(key, lines);
             }
         }
 
-        expect(ratchet(measured, FUNCTIONS_OVER_140_LINES)).toEqual([]);
+        const problems: string[] = [];
+        for (const [key, lines] of [...measured].sort(([left], [right]) => left.localeCompare(right))) {
+            if (LONG_FUNCTIONS[key] === undefined) {
+                problems.push(`unlisted: ${key} = ${lines}`);
+            }
+        }
+
+        for (const key of Object.keys(LONG_FUNCTIONS).sort()) {
+            if (!measured.has(key)) {
+                problems.push(`stale: ${key}`);
+            }
+        }
+
+        expect(problems).toEqual([]);
     });
 
     it('no function body with more than 6 let declarators grows', () => {

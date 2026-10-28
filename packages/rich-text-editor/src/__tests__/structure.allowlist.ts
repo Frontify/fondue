@@ -11,9 +11,14 @@ export const DATA_TABLES: Record<string, string> = {
 
 export const FILES_OVER_400_LINES: Record<string, number> = {};
 
-export const FUNCTIONS_OVER_140_LINES: Record<string, number> = {};
-
 export const FUNCTIONS_OVER_6_LETS: Record<string, number> = {};
+
+// Functions spanning more than 100 raw lines. Drop the entry when the function is gone or no longer over that.
+export const LONG_FUNCTIONS: Record<string, { why: string }> = {
+    'src/testing/persistence.ts#runPersistenceConformance': {
+        why: 'It registers one test per persistence rule in order, which reads as one list.',
+    },
+};
 
 export const SPECS_OVER_1000_LINES: Record<string, number> = {};
 
