@@ -44,8 +44,7 @@ const Serialized = ({ value, plugins }: { value: string; plugins?: PluginCompose
     <div dangerouslySetInnerHTML={{ __html: serializeRawToHtml(value, plugins) }} />
 );
 
-const paragraphValue = JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text: LONG_UNBREAKABLE_TOKEN }] }]);
-const proseValue = JSON.stringify([{ type: ELEMENT_PARAGRAPH, children: [{ text: NORMAL_PROSE }] }]);
+const singleBlockValue = (type: string, text = LONG_UNBREAKABLE_TOKEN) => JSON.stringify([{ type, children: [{ text }] }]);
 
 const unorderedListValue = JSON.stringify([
     {
@@ -54,24 +53,29 @@ const unorderedListValue = JSON.stringify([
     },
 ]);
 
-const singleBlockValue = (type: string) => JSON.stringify([{ type, children: [{ text: LONG_UNBREAKABLE_TOKEN }] }]);
+type Block = { name: string; value: string; plugins?: PluginComposer };
 
-const editedBlocks = [
-    { name: 'paragraph', value: paragraphValue },
-    { name: 'list item', value: unorderedListValue, plugins: listPlugins },
+const paragraphBlock: Block = { name: 'paragraph', value: singleBlockValue(ELEMENT_PARAGRAPH) };
+const listItemBlock: Block = { name: 'list item', value: unorderedListValue, plugins: listPlugins };
+
+const editedBlocks: Block[] = [
+    paragraphBlock,
+    listItemBlock,
     { name: 'heading', value: singleBlockValue(TextStyles.heading1), plugins: blockPlugins },
     { name: 'quote', value: singleBlockValue(TextStyles.quote), plugins: blockPlugins },
     { name: 'checklist item', value: singleBlockValue(ELEMENT_CHECK_ITEM), plugins: blockPlugins },
 ];
 
+const serializedBlocks = [paragraphBlock, listItemBlock];
+
 const expectNoHorizontalOverflow = () => {
-    cy.get(`[data-test-id=${SCROLL_CONTAINER_TEST_ID}]`).should('contain.text', 'https://example.com/');
+    cy.get(`[data-test-id=${SCROLL_CONTAINER_TEST_ID}]`).should('contain.text', LONG_UNBREAKABLE_TOKEN);
     cy.get(`[data-test-id=${SCROLL_CONTAINER_TEST_ID}]`).should(($container) => {
         const { scrollWidth, clientWidth } = $container[0];
         expect(
             scrollWidth,
             `content width (${scrollWidth}px) stays within its container (${clientWidth}px) — the long token wrapped instead of forcing a horizontal scrollbar`,
-        ).to.be.at.most(clientWidth + 1);
+        ).to.be.at.most(clientWidth);
     });
 };
 
@@ -88,30 +92,22 @@ describe('RichTextEditor wraps long unbreakable content in a shrink-wrapping con
         });
     }
 
-    it('should wrap a long token in a serialized paragraph', () => {
-        cy.mount(
-            <InShrinkWrappingScrollContainer>
-                <Serialized value={paragraphValue} />
-            </InShrinkWrappingScrollContainer>,
-        );
+    for (const { name, value, plugins } of serializedBlocks) {
+        it(`should wrap a long token in a serialized ${name}`, () => {
+            cy.mount(
+                <InShrinkWrappingScrollContainer>
+                    <Serialized value={value} plugins={plugins} />
+                </InShrinkWrappingScrollContainer>,
+            );
 
-        expectNoHorizontalOverflow();
-    });
-
-    it('should wrap a long token in a serialized list item', () => {
-        cy.mount(
-            <InShrinkWrappingScrollContainer>
-                <Serialized value={unorderedListValue} plugins={listPlugins} />
-            </InShrinkWrappingScrollContainer>,
-        );
-
-        expectNoHorizontalOverflow();
-    });
+            expectNoHorizontalOverflow();
+        });
+    }
 
     it('should keep normal words whole while wrapping between them', () => {
         cy.mount(
             <InShrinkWrappingScrollContainer>
-                <RichTextEditor border={false} value={proseValue} />
+                <RichTextEditor border={false} value={singleBlockValue(ELEMENT_PARAGRAPH, NORMAL_PROSE)} />
             </InShrinkWrappingScrollContainer>,
         );
 
