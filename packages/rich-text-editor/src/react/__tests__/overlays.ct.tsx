@@ -156,6 +156,8 @@ test('runs Bold from a mouse click on the bubble toolbar without the surface los
     await surfaceOf(page).focus();
     await select(page, 'two');
     await expect(bubbleOf(page)).toBeVisible();
+    await stylesApplied(page);
+    await frames(page);
     await watchFocusOut(page);
 
     await bubbleOf(page).getByRole('button', { name: 'Bold' }).click();
