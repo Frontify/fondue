@@ -136,7 +136,8 @@ const checkedRequest = (
     return { tree, requiredCapabilities: result.document.requiredCapabilities };
 };
 
-export const createReplace = (a: {
+/** The services a document replacement reads. */
+type ReplaceArgs = {
     definition: CompiledDefinition;
     limits: ResourceLimits;
     lifecycle: Pick<Lifecycle, 'is' | 'to'>;
@@ -158,142 +159,139 @@ export const createReplace = (a: {
     events: { notify: () => void; emit: (event: 'replaced', value: SessionToken) => void };
     metrics: Pick<Metrics, 'measure'>;
     history: Pick<HistoryService, 'fresh'>;
-}): Replace => {
-    const { definition, limits, lifecycle, identity, store, encoder, policy, saving, composition, shown } = a;
-    const { view, commit, focus, targets, queue, uploads, faults, busy, events, metrics, history } = a;
-    const { coordinator } = targets;
+};
 
-    /** Leaves `transitioning` after a failed step, so what waited runs on the unchanged session. */
-    const resume = (code: ReplaceCode, focused: boolean): ReplaceResult => {
-        // A listener may have faulted or disposed the session since the step began.
-        if (lifecycle.is('transitioning')) {
-            lifecycle.to('ready');
+/** Leaves `transitioning` after a failed step, so what waited runs on the unchanged session. */
+const resumeAfter = (a: ReplaceArgs, code: ReplaceCode, focused: boolean): ReplaceResult => {
+    // A listener may have faulted or disposed the session since the step began.
+    if (a.lifecycle.is('transitioning')) {
+        a.lifecycle.to('ready');
+    }
+
+    a.view.refresh();
+    a.targets.coordinator.settle();
+    a.saving.settled();
+    a.queue.drain();
+    a.focus.refocus(focused);
+
+    return refused(code);
+};
+
+/**
+ * The decoded document in a fresh state with empty history, in the next generation of the
+ * session; a view that throws while it installs the state faults the session.
+ */
+const installNext = (
+    a: ReplaceArgs,
+    request: ReplaceDocumentRequest,
+    tree: TreeNode,
+    stored: readonly CapabilityRef[],
+    focused: boolean,
+): ReplaceResult => {
+    const fresh = freshState(a.definition, a.history, request, tree);
+    if (fresh === undefined) {
+        a.faults.fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
+
+        return refused('faulted');
+    }
+
+    const outgoing = a.store.state.doc;
+    // Roots that plugin views dispatch while the state installs commit in the new generation.
+    const installed = a.commit.guarded(() => {
+        const published = a.faults.withoutRecovery(() => a.commit.installState(fresh));
+        if (!published) {
+            return false;
         }
 
-        view.refresh();
-        coordinator.settle();
-        saving.settled();
-        queue.drain();
-        focus.refocus(focused);
-
-        return refused(code);
-    };
-
-    /**
-     * The decoded document in a fresh state with empty history, in the next generation of the
-     * session; a view that throws while it installs the state faults the session.
-     */
-    const installNext = (
-        request: ReplaceDocumentRequest,
-        tree: TreeNode,
-        stored: readonly CapabilityRef[],
-        focused: boolean,
-    ): ReplaceResult => {
-        const fresh = freshState(definition, history, request, tree);
-        if (fresh === undefined) {
-            faults.fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
-
-            return refused('faulted');
+        // Intents of the old generation end before anything can drain them into the next.
+        a.queue.settle('wrong-session');
+        const previous = a.identity.nextGeneration(request.next.documentId);
+        a.shown.setPublished(a.store.state);
+        a.encoder.capabilities = stored;
+        a.policy.setCapabilities(a.encoder.capabilities);
+        a.saving.replaced(request.next.revision, previous);
+        // A plugin view may have faulted or disposed the session while the state installed.
+        if (a.lifecycle.is('transitioning')) {
+            a.lifecycle.to('ready');
         }
 
-        const outgoing = store.state.doc;
-        // Roots that plugin views dispatch while the state installs commit in the new generation.
-        const installed = commit.guarded(() => {
-            const published = faults.withoutRecovery(() => commit.installState(fresh));
-            if (!published) {
-                return false;
-            }
+        a.view.refresh();
 
-            // Intents of the old generation end before anything can drain them into the next.
-            queue.settle('wrong-session');
-            const previous = identity.nextGeneration(request.next.documentId);
-            shown.setPublished(store.state);
-            encoder.capabilities = stored;
-            policy.setCapabilities(encoder.capabilities);
-            saving.replaced(request.next.revision, previous);
-            // A plugin view may have faulted or disposed the session while the state installed.
-            if (lifecycle.is('transitioning')) {
-                lifecycle.to('ready');
-            }
+        return true;
+    });
+    if (!installed) {
+        return refused('faulted');
+    }
 
-            view.refresh();
+    // What the old generation started or queued ends now and changes nothing here.
+    a.targets.coordinator.abortWhere(() => true);
+    a.uploads.reset(outgoing);
+    a.targets.coordinator.settle();
+    a.busy.run(a.events.notify);
+    a.shown.emitSelection();
+    a.shown.emitSaveStatus();
+    a.events.emit('replaced', a.identity.session());
+    a.focus.refocus(focused);
 
-            return true;
-        });
-        if (!installed) {
-            return refused('faulted');
-        }
+    return { status: 'replaced', session: a.identity.session() };
+};
 
-        // What the old generation started or queued ends now and changes nothing here.
-        coordinator.abortWhere(() => true);
-        uploads.reset(outgoing);
-        coordinator.settle();
-        busy.run(events.notify);
-        shown.emitSelection();
-        shown.emitSaveStatus();
-        events.emit('replaced', identity.session());
-        focus.refocus(focused);
+const replaceDocument = async (a: ReplaceArgs, request: ReplaceDocumentRequest): Promise<ReplaceResult> => {
+    if (!a.lifecycle.is('ready')) {
+        return refused('not-ready');
+    }
 
-        return { status: 'replaced', session: identity.session() };
-    };
+    const checked = checkedRequest(a.definition, a.limits, request);
+    if ('status' in checked) {
+        return checked;
+    }
 
-    const replace = async (request: ReplaceDocumentRequest): Promise<ReplaceResult> => {
-        if (!lifecycle.is('ready')) {
+    const { next } = request;
+    const { document } = next;
+    const { tree, requiredCapabilities } = checked;
+
+    // A host that echoes its own save gets the current session back with nothing changed; hashing waits for a checked document.
+    if (
+        next.documentId === a.identity.session().documentId &&
+        next.revision === a.saving.status().revision &&
+        sameDocument(document, a.shown.snapshot().document)
+    ) {
+        return { status: 'replaced', session: a.identity.session() };
+    }
+
+    if (!sameStamp(request.expected, a.identity.stamp())) {
+        return refused('changed-since-request');
+    }
+
+    if (a.composition.active()) {
+        return refused('composition-active');
+    }
+
+    const focused = a.view.current()?.hasFocus() === true;
+    a.lifecycle.to('transitioning');
+    a.view.refresh();
+    if (a.saving.unsaved()) {
+        const code = await leaveUnsaved(a.saving, a.identity, request.unsaved);
+        // The session was disposed, or faulted, while the unsaved-work write ran.
+        if (!a.lifecycle.is('transitioning')) {
             return refused('not-ready');
         }
 
-        const checked = checkedRequest(definition, limits, request);
-        if ('status' in checked) {
-            return checked;
+        if (code !== undefined) {
+            return resumeAfter(a, code, focused);
         }
+    }
 
-        const { next } = request;
-        const { document } = next;
-        const { tree, requiredCapabilities } = checked;
+    if (a.saving.outcomeUnknown()) {
+        return resumeAfter(a, 'save-unresolved', focused);
+    }
 
-        // A host that echoes its own save gets the current session back with nothing changed; hashing waits for a checked document.
-        if (
-            next.documentId === identity.session().documentId &&
-            next.revision === saving.status().revision &&
-            sameDocument(document, shown.snapshot().document)
-        ) {
-            return { status: 'replaced', session: identity.session() };
-        }
+    // A keystroke the view read while the unsaved-work step ran is kept, not replaced.
+    if (!sameStamp(request.expected, a.identity.stamp())) {
+        return resumeAfter(a, 'changed-since-request', focused);
+    }
 
-        if (!sameStamp(request.expected, identity.stamp())) {
-            return refused('changed-since-request');
-        }
-
-        if (composition.active()) {
-            return refused('composition-active');
-        }
-
-        const focused = view.current()?.hasFocus() === true;
-        lifecycle.to('transitioning');
-        view.refresh();
-        if (saving.unsaved()) {
-            const code = await leaveUnsaved(saving, identity, request.unsaved);
-            // The session was disposed, or faulted, while the unsaved-work write ran.
-            if (!lifecycle.is('transitioning')) {
-                return refused('not-ready');
-            }
-
-            if (code !== undefined) {
-                return resume(code, focused);
-            }
-        }
-
-        if (saving.outcomeUnknown()) {
-            return resume('save-unresolved', focused);
-        }
-
-        // A keystroke the view read while the unsaved-work step ran is kept, not replaced.
-        if (!sameStamp(request.expected, identity.stamp())) {
-            return resume('changed-since-request', focused);
-        }
-
-        return installNext(request, tree, requiredCapabilities, focused);
-    };
-
-    return measured(metrics, replace);
+    return installNext(a, request, tree, requiredCapabilities, focused);
 };
+
+export const createReplace = (a: ReplaceArgs): Replace => measured(a.metrics, (request) => replaceDocument(a, request));

@@ -4,8 +4,9 @@ import { type EditorState, type Transaction } from 'prosemirror-state';
 
 import { type Diagnostic, type ResourceLimits, REPLACED_ASSET } from '#/model';
 import { compiledModel } from '#/model/internal';
-import { type CompiledDefinition } from '#/runtime/definition';
+import { type CompiledDefinition, type EngineCommand } from '#/runtime/definition';
 
+import { type AsyncOperation, type AsyncRequest } from '../../async/async';
 import { type MediaSession } from '../../capabilities/media/session';
 import {
     createUploads,
@@ -18,7 +19,7 @@ import {
 } from '../../capabilities/media/uploads';
 import { type EditorRuntime } from '../../runtime';
 import { withNodeState } from '../../statePlugins/nodeState';
-import { type UploadStatus } from '../../types';
+import { type SelectionHandle, type UploadStatus } from '../../types';
 import { type Commands } from '../editing/commands';
 import { type Identity } from '../state/identity';
 import { type Lifecycle } from '../state/lifecycle';
@@ -42,8 +43,8 @@ export type SessionUploads = {
     statusOf(nodeId: string): UploadStatus | undefined;
 };
 
-// The service is built before the store, whose first state holds its plugin, so what is built later is read lazily.
-export const createUploadService = (a: {
+/** The services the upload machine calls back into, built before the store exists. */
+type UploadArgs = {
     definition: CompiledDefinition;
     limits: ResourceLimits;
     identity: Pick<Identity, 'session'>;
@@ -61,96 +62,126 @@ export const createUploadService = (a: {
     targets: () => Pick<TargetsService, 'coordinator' | 'captureRange' | 'releaseTarget' | 'baseOf'>;
     report: (diagnostic: Diagnostic) => void;
     changed: () => void;
-}): SessionUploads => {
-    const { definition, limits, identity, lifecycle, policy, generate, host, state, report, changed } = a;
-    // `media.image` and the media types it accepts, which its `acceptTypes` option sets.
+};
+
+/** An upload machine's arguments plus the media types `media.image` accepts. */
+type UploadContext = UploadArgs & { acceptTypes: readonly string[] | undefined };
+
+// `media.image` and the media types it accepts, which its `acceptTypes` option sets.
+const acceptTypesOf = (definition: CompiledDefinition): readonly string[] | undefined => {
     const imageFeature = compiledModel(definition.model).features.find(({ id }) => id === UPLOAD_FEATURE);
-    let acceptTypes: readonly string[] | undefined;
-    if (imageFeature !== undefined) {
-        const option: unknown = imageFeature.options.acceptTypes;
-        acceptTypes = DEFAULT_ACCEPT_TYPES;
-        if (Array.isArray(option)) {
-            acceptTypes = option.filter((type): type is string => typeof type === 'string');
-        }
+    if (imageFeature === undefined) {
+        return undefined;
     }
 
+    const option: unknown = imageFeature.options.acceptTypes;
+    if (Array.isArray(option)) {
+        return option.filter((type): type is string => typeof type === 'string');
+    }
+
+    return DEFAULT_ACCEPT_TYPES;
+};
+
+const hostedUploads = (context: UploadContext) => {
+    if (context.acceptTypes === undefined) {
+        return undefined;
+    }
+
+    return context.host.uploads?.();
+};
+
+const startUpload = (context: UploadContext, request: AsyncRequest) => context.targets().coordinator.start(request);
+
+const abortUploads = (context: UploadContext, operations: readonly AsyncOperation[]) =>
+    context.targets().coordinator.abortWhere((other) => operations.includes(other));
+
+const captureUpload = (context: UploadContext, range: { from: number; to: number } | undefined) => {
+    const captured = context.targets().captureRange({ purpose: 'replace-text', onIntersectingEdit: 'map' }, range);
+    if (captured.status === 'captured') {
+        return captured.target;
+    }
+
+    return undefined;
+};
+
+const runUpload = (context: UploadContext, command: EngineCommand, target: SelectionHandle | undefined) => {
+    const baseOf = () => {
+        if (target === undefined) {
+            return context.state();
+        }
+
+        return context.targets().baseOf({ target });
+    };
+
+    const result = context.commands().runOn(command, { payload: undefined }, baseOf, 'host');
+
+    return result.status === 'applied';
+};
+
+const fillUpload = (context: UploadContext, command: EngineCommand) => {
+    const result = context.commands().runOn(command, { payload: undefined }, context.state, 'async');
+    if (result.status === 'rejected') {
+        return result.code;
+    }
+
+    if (result.status === 'applied') {
+        return undefined;
+    }
+
+    return 'not-applicable';
+};
+
+// A completed upload's record is session state, no undo step; it completed in the background.
+const replacedAsset = (context: UploadContext, nodeId: string, assetId: string) => {
+    const value = { assetId, focus: false };
+    context.commit()(
+        withNodeState(context.state().tr, [{ nodeId, key: REPLACED_ASSET, value }]).setMeta('addToHistory', false),
+    );
+};
+
+const emitUpload = (context: UploadContext, event: UploadEvent) => {
+    if (!context.lifecycle.is('disposed')) {
+        context.host.uploadEvent?.(event);
+    }
+};
+
+const notifyUpload = (context: UploadContext) => {
+    if (!context.lifecycle.is('disposed')) {
+        context.changed();
+    }
+};
+
+// The service is built before the store, whose first state holds its plugin, so what is built later is read lazily.
+export const createUploadService = (a: UploadArgs): SessionUploads => {
+    const acceptTypes = acceptTypesOf(a.definition);
+    const context: UploadContext = { ...a, acceptTypes };
     const raw = createUploads({
-        state,
-        limits,
+        state: a.state,
+        limits: a.limits,
         acceptTypes: acceptTypes ?? [],
-        service: () => {
-            if (acceptTypes === undefined) {
-                return undefined;
-            }
-
-            return host.uploads?.();
-        },
-        session: identity.session,
-        generateId: () => generate(),
-        allows: (action) => policy.current().features[UPLOAD_FEATURE]?.[action] !== false,
-        start: (request) => a.targets().coordinator.start(request),
-        abort: (operations) => a.targets().coordinator.abortWhere((other) => operations.includes(other)),
-        capture: (range) => {
-            const captured = a.targets().captureRange({ purpose: 'replace-text', onIntersectingEdit: 'map' }, range);
-            if (captured.status === 'captured') {
-                return captured.target;
-            }
-
-            return undefined;
-        },
+        service: () => hostedUploads(context),
+        session: a.identity.session,
+        generateId: () => a.generate(),
+        allows: (action) => a.policy.current().features[UPLOAD_FEATURE]?.[action] !== false,
+        start: (request) => startUpload(context, request),
+        abort: (operations) => abortUploads(context, operations),
+        capture: (range) => captureUpload(context, range),
         release: (target) => a.targets().releaseTarget(target),
-        run: (command, target) => {
-            const baseOf = () => {
-                if (target === undefined) {
-                    return state();
-                }
-
-                return a.targets().baseOf({ target });
-            };
-
-            const result = a.commands().runOn(command, { payload: undefined }, baseOf, 'host');
-
-            return result.status === 'applied';
-        },
-        fill: (command) => {
-            const result = a.commands().runOn(command, { payload: undefined }, state, 'async');
-            if (result.status === 'rejected') {
-                return result.code;
-            }
-
-            if (result.status === 'applied') {
-                return undefined;
-            }
-
-            return 'not-applicable';
-        },
-        // A completed upload's record is session state, no undo step; it completed in the background.
-        replaced: (nodeId, assetId) => {
-            const value = { assetId, focus: false };
-            a.commit()(
-                withNodeState(state().tr, [{ nodeId, key: REPLACED_ASSET, value }]).setMeta('addToHistory', false),
-            );
-        },
-        report: (found) => report(found),
-        event: (event) => {
-            if (!lifecycle.is('disposed')) {
-                host.uploadEvent?.(event);
-            }
-        },
-        changed: () => {
-            if (!lifecycle.is('disposed')) {
-                changed();
-            }
-        },
+        run: (command, target) => runUpload(context, command, target),
+        fill: (command) => fillUpload(context, command),
+        replaced: (nodeId, assetId) => replacedAsset(context, nodeId, assetId),
+        report: (found) => a.report(found),
+        event: (event) => emitUpload(context, event),
+        changed: () => notifyUpload(context),
     });
 
     return {
         raw,
         accepts: acceptTypes,
-        available: (place) => acceptTypes !== undefined && host.uploads?.() !== undefined && raw.admits(place),
+        available: (place) => acceptTypes !== undefined && a.host.uploads?.() !== undefined && raw.admits(place),
         begin: (files, place) => raw.begin(files, place),
         retry: (nodeId) => raw.retry(nodeId),
-        pick: (nodeId) => host.pick?.(nodeId),
+        pick: (nodeId) => a.host.pick?.(nodeId),
         statusOf: (nodeId) => raw.statusOf(nodeId),
     };
 };

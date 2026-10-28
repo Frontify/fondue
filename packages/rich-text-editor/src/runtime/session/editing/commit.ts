@@ -5,12 +5,9 @@ import { type EditorState, NodeSelection, TextSelection, type Transaction } from
 import { type EditorView } from 'prosemirror-view';
 
 import { type Diagnostic, type RichTextDocument } from '#/model';
-import { diagnostic } from '#/model/internal';
-import { COMMAND_META, NORMALIZE_META, ORIGIN_META } from '#/runtime/definition';
+import { COMMAND_META, NORMALIZE_META } from '#/runtime/definition';
 
 import { scrollSelectionIntoView } from '../../dom/scroll';
-import { secondCopyInView } from '../../guards/engines';
-import { ENTER_RULES_META } from '../../inputRules/inputRules';
 import { type RuntimeEvents } from '../../reporting/events';
 import { countTargets, restoreTargets } from '../../statePlugins/targets';
 import { type ChangeOrigin } from '../../types';
@@ -21,10 +18,11 @@ import { type Metrics } from '../state/metrics';
 import { type PolicyService } from '../state/policy';
 import { type Shown } from '../state/shown';
 import { type Store } from '../state/store';
-import { type BatchMetric, type Candidate, type Prepared } from '../state/types';
+import { type BatchMetric, type Candidate } from '../state/types';
 
-import { actionOrigin, originOf } from './history';
-import { DUPLICATE_ENGINE, type Prepare } from './prepare';
+import { createCommitQueue } from './commitQueue';
+import { originOf } from './history';
+import { type Prepare } from './prepare';
 import { type ViewService } from './view';
 
 type SelectTarget = { anchor: number; head: number; scroll?: boolean } | { node: number; scroll?: boolean };
@@ -48,6 +46,7 @@ export type Commit = {
     clearDeferred(): void;
 };
 
+/** The services that install a batch and publish it. */
 type CommitArgs = {
     store: Store;
     identity: Pick<Identity, 'bumpSequence' | 'bumpCommit' | 'commitSequence' | 'stamp'>;
@@ -69,262 +68,201 @@ type CommitArgs = {
     viewFault: (attached: EditorView, candidate: EditorState) => void;
 };
 
-const createInstaller = (a: CommitArgs) => {
-    const { store, identity, shown, views, metrics, policy, prepare, hooks, notify, emit, encode, report, fault } = a;
+/**
+ * Publishes the current state's document: counts an effective change, notifies selector stores, then emits the
+ * change, the selection and the save status in the Event order.
+ */
+const announceChange = (
+    a: CommitArgs,
+    origin: ChangeOrigin,
+    commandId: string | null,
+    batch: BatchMetric,
+    transactions: readonly Transaction[] = [],
+): boolean => {
+    const previous = a.shown.published();
+    const current = a.store.state;
+    a.shown.setPublished(current);
+    // An effective change compares documents by node equality, never by serializing them.
+    const changed = !current.doc.eq(previous.doc);
+    if (changed) {
+        a.identity.bumpSequence();
+    }
 
-    /**
-     * Publishes the current state's document: counts an effective change, notifies selector stores, then emits the
-     * change, the selection and the save status in the Event order.
-     */
-    const announce = (
-        origin: ChangeOrigin,
-        commandId: string | null,
-        batch: BatchMetric,
-        transactions: readonly Transaction[] = [],
-    ): boolean => {
-        const previous = shown.published();
-        const current = store.state;
-        shown.setPublished(current);
-        // An effective change compares documents by node equality, never by serializing them.
-        const changed = !current.doc.eq(previous.doc);
-        if (changed) {
-            identity.bumpSequence();
-        }
+    a.notify();
+    if (changed) {
+        let document: RichTextDocument | undefined;
+        a.emit('documentChange', {
+            stamp: a.identity.stamp(),
+            commitSequence: a.identity.commitSequence(),
+            origin,
+            commandId,
+            readDocument: () => {
+                if (document === undefined) {
+                    document = a.encode(current.doc);
+                }
 
-        notify();
-        if (changed) {
-            let document: RichTextDocument | undefined;
-            emit('documentChange', {
-                stamp: identity.stamp(),
-                commitSequence: identity.commitSequence(),
-                origin,
-                commandId,
-                readDocument: () => {
-                    if (document === undefined) {
-                        document = encode(current.doc);
-                    }
+                return document;
+            },
+        });
+        a.metrics.record(batch);
+        a.hooks.committed(transactions, origin === 'history');
+    }
 
-                    return document;
-                },
-            });
-            metrics.record(batch);
-            hooks.committed(transactions, origin === 'history');
-        }
+    a.shown.emitSelection();
+    if (changed) {
+        a.hooks.changed();
+    }
 
-        shown.emitSelection();
-        if (changed) {
-            hooks.changed();
-        }
+    a.shown.emitSaveStatus();
 
-        shown.emitSaveStatus();
-
-        return changed;
-    };
-
-    const installState = (next: EditorState): boolean => {
-        const previous = store.state;
-        store.set(next);
-        const attached = views.current();
-        if (attached !== undefined && views.call(() => attached.updateState(next)).threw) {
-            store.set(previous);
-            a.viewFault(attached, next);
-
-            return false;
-        }
-
-        identity.bumpCommit();
-        a.resources.targets += countTargets(next) - countTargets(previous);
-
-        return true;
-    };
-
-    /** Installs a batch in the view and counts it, then publishes it, or keeps a provisional batch for input settling. */
-    const publish = ({ candidate, root, transactions, mapping, started, appended }: Candidate): boolean => {
-        if (!installState(candidate)) {
-            return false;
-        }
-
-        if (prepare.isProvisional(root)) {
-            shown.addProvisional(mapping);
-            notify();
-
-            return false;
-        }
-
-        const origin = originOf(root);
-        const command: unknown = root.getMeta(COMMAND_META);
-        let commandId: string | null = null;
-        if (origin === 'command' && typeof command === 'string') {
-            commandId = command;
-        }
-
-        const event: unknown = root.getMeta('uiEvent');
-        let kind: BatchMetric['kind'] = 'commit';
-        if (event === 'paste' || event === 'drop') {
-            kind = 'paste';
-        }
-
-        return announce(origin, commandId, { kind, started, appended }, transactions);
-    };
-
-    const settleProvisional = (mapping: Transaction['mapping']): boolean => {
-        const started = Date.now();
-        let appended = 0;
-        // The repair runs inside the append limit before the settled batch publishes, and the check below judges it.
-        const repaired = prepare.prepare(store.state.tr.setMeta(NORMALIZE_META, 'now'), prepare.installedId, false);
-        if ('fault' in repaired && repaired.fault !== undefined) {
-            fault(repaired.fault);
-
-            return false;
-        }
-
-        if ('diagnostic' in repaired && repaired.diagnostic !== undefined) {
-            report(repaired.diagnostic);
-        }
-
-        if ('candidate' in repaired && repaired.candidate.doc !== store.state.doc) {
-            if (!installState(repaired.candidate)) {
-                return false;
-            }
-
-            mapping.appendMapping(repaired.mapping);
-            appended = repaired.appended;
-        }
-
-        if (
-            !policy.breaks(shown.published().doc, store.state.doc, mapping) &&
-            policy.exceeds(store.state.doc, shown.published().doc) === undefined
-        ) {
-            announce('input', null, { kind: 'commit', started, appended });
-
-            return true;
-        }
-
-        // Targets released during the composition stay released, and those captured during it stay.
-        const restore = restoreTargets(shown.published(), store.state, mapping);
-        let restored = shown.published();
-        if (restore !== undefined) {
-            restored = restored.apply(restore);
-        }
-
-        if (!installState(restored)) {
-            return false;
-        }
-
-        notify();
-
-        return true;
-    };
-
-    return [installState, publish, settleProvisional] as const;
+    return changed;
 };
 
+const installEditorState = (a: CommitArgs, next: EditorState): boolean => {
+    const previous = a.store.state;
+    a.store.set(next);
+    const attached = a.views.current();
+    if (attached !== undefined && a.views.call(() => attached.updateState(next)).threw) {
+        a.store.set(previous);
+        a.viewFault(attached, next);
+
+        return false;
+    }
+
+    a.identity.bumpCommit();
+    a.resources.targets += countTargets(next) - countTargets(previous);
+
+    return true;
+};
+
+/** Installs a batch in the view and counts it, then publishes it, or keeps a provisional batch for input settling. */
+const publishCandidate = (
+    a: CommitArgs,
+    { candidate, root, transactions, mapping, started, appended }: Candidate,
+): boolean => {
+    if (!installEditorState(a, candidate)) {
+        return false;
+    }
+
+    if (a.prepare.isProvisional(root)) {
+        a.shown.addProvisional(mapping);
+        a.notify();
+
+        return false;
+    }
+
+    const origin = originOf(root);
+    const command: unknown = root.getMeta(COMMAND_META);
+    let commandId: string | null = null;
+    if (origin === 'command' && typeof command === 'string') {
+        commandId = command;
+    }
+
+    const event: unknown = root.getMeta('uiEvent');
+    let kind: BatchMetric['kind'] = 'commit';
+    if (event === 'paste' || event === 'drop') {
+        kind = 'paste';
+    }
+
+    return announceChange(a, origin, commandId, { kind, started, appended }, transactions);
+};
+
+const settleInput = (a: CommitArgs, mapping: Transaction['mapping']): boolean => {
+    const started = Date.now();
+    let appended = 0;
+    // The repair runs inside the append limit before the settled batch publishes, and the check below judges it.
+    const repaired = a.prepare.prepare(a.store.state.tr.setMeta(NORMALIZE_META, 'now'), a.prepare.installedId, false);
+    if ('fault' in repaired && repaired.fault !== undefined) {
+        a.fault(repaired.fault);
+
+        return false;
+    }
+
+    if ('diagnostic' in repaired && repaired.diagnostic !== undefined) {
+        a.report(repaired.diagnostic);
+    }
+
+    if ('candidate' in repaired && repaired.candidate.doc !== a.store.state.doc) {
+        if (!installEditorState(a, repaired.candidate)) {
+            return false;
+        }
+
+        mapping.appendMapping(repaired.mapping);
+        appended = repaired.appended;
+    }
+
+    if (
+        !a.policy.breaks(a.shown.published().doc, a.store.state.doc, mapping) &&
+        a.policy.exceeds(a.store.state.doc, a.shown.published().doc) === undefined
+    ) {
+        announceChange(a, 'input', null, { kind: 'commit', started, appended });
+
+        return true;
+    }
+
+    // Targets released during the composition stay released, and those captured during it stay.
+    const restore = restoreTargets(a.shown.published(), a.store.state, mapping);
+    let restored = a.shown.published();
+    if (restore !== undefined) {
+        restored = restored.apply(restore);
+    }
+
+    if (!installEditorState(a, restored)) {
+        return false;
+    }
+
+    a.notify();
+
+    return true;
+};
+
+const selectCommitted = (a: CommitArgs, commit: (root: Transaction) => void, target: SelectTarget) => {
+    const { doc } = a.store.state;
+    let transaction = a.store.state.tr;
+    if ('node' in target) {
+        transaction = transaction.setSelection(NodeSelection.create(doc, target.node));
+    } else {
+        transaction = transaction.setSelection(TextSelection.create(doc, target.anchor, target.head));
+    }
+
+    commit(transaction);
+    const view = a.views.current();
+    if (target.scroll !== true || view === undefined) {
+        return;
+    }
+
+    // ProseMirror scrolls to the selection only while the browser's selection is in the surface, and a
+    // panel that asks for this keeps focus.
+    scrollSelectionIntoView(view, a.store.state.selection);
+};
+
+const createInstaller = (a: CommitArgs) =>
+    [
+        (next: EditorState) => installEditorState(a, next),
+        (candidate: Candidate) => publishCandidate(a, candidate),
+        (mapping: Transaction['mapping']) => settleInput(a, mapping),
+    ] as const;
+
 export const createCommit = (a: CommitArgs): Commit => {
-    const { store, lifecycle, prepare, busy, views, report, fault } = a;
     const [installState, publish, settleProvisional] = createInstaller(a);
-    let typing = false;
-    let installing = false;
-    // Roots that plugin views dispatch while an install runs, committed once its selectors and events are done.
-    const deferred: Transaction[] = [];
-
-    const guarded = <T>(work: () => T): T => {
-        installing = true;
-        let result: T;
-        try {
-            result = work();
-        } finally {
-            installing = false;
-        }
-
-        for (let next = deferred.shift(); next !== undefined; next = deferred.shift()) {
-            // A listener of this install may have faulted or disposed the session, which then commits nothing more.
-            if (!lifecycle.is('ready')) {
-                deferred.length = 0;
-                break;
-            }
-
-            commit(next);
-        }
-
-        return result;
-    };
-
-    const commit = (root: Transaction) => {
-        // A plugin view's `update` may dispatch inside `view.updateState`; its root waits for the install to publish.
-        if (installing) {
-            deferred.push(root);
-
-            return;
-        }
-
-        // A recorded `beforeinput` describes this batch only, accepted or not.
-        const typed = typing;
-        typing = false;
-        // A faulted session installs nothing more, so a broken view never updates again.
-        if (lifecycle.is('faulted', 'disposed')) {
-            return;
-        }
-
-        if (root.before !== store.state.doc) {
-            report(diagnostic('runtime.stale-transaction', undefined, undefined, 'error'));
-
-            return;
-        }
-
-        // Input rules fire only on typed text, never on a paste or a command after a `beforeinput` that changed nothing.
-        if (typed && actionOrigin(root) === undefined) {
-            root.setMeta(ORIGIN_META, 'input');
-            prepare.markRules(root);
-        } else if (root.getMeta(ENTER_RULES_META) === true) {
-            prepare.markRules(root);
-        }
-
-        busy.run(() => {
-            const prepared: Prepared = prepare.take(root);
-            if ('candidate' in prepared) {
-                guarded(() => publish(prepared));
-            } else if (prepared.fault !== undefined) {
-                fault(prepared.fault);
-            } else if (prepared.diagnostic !== undefined) {
-                report(prepared.diagnostic);
-            }
-
-            if (secondCopyInView(store.state.schema)) {
-                report(DUPLICATE_ENGINE);
-            }
-        });
-    };
+    const queue = createCommitQueue({
+        lifecycle: a.lifecycle,
+        store: a.store,
+        prepare: a.prepare,
+        busy: a.busy,
+        report: a.report,
+        fault: a.fault,
+        publish,
+    });
 
     return {
-        commit,
-        install: (candidate) => guarded(() => publish(candidate)),
+        commit: queue.commit,
+        install: (candidate) => queue.guarded(() => publish(candidate)),
         installState,
-        guarded,
+        guarded: queue.guarded,
         settleProvisional,
-        select: (target) => {
-            const { doc } = store.state;
-            let transaction = store.state.tr;
-            if ('node' in target) {
-                transaction = transaction.setSelection(NodeSelection.create(doc, target.node));
-            } else {
-                transaction = transaction.setSelection(TextSelection.create(doc, target.anchor, target.head));
-            }
-
-            commit(transaction);
-            const view = views.current();
-            if (target.scroll !== true || view === undefined) {
-                return;
-            }
-
-            // ProseMirror scrolls to the selection only while the browser's selection is in the surface, and a
-            // panel that asks for this keeps focus.
-            scrollSelectionIntoView(view, store.state.selection);
-        },
-        markTyping: () => {
-            typing = true;
-        },
-        clearDeferred: () => {
-            deferred.length = 0;
-        },
+        select: (target) => selectCommitted(a, queue.commit, target),
+        markTyping: queue.markTyping,
+        clearDeferred: queue.clearDeferred,
     };
 };

@@ -15,7 +15,7 @@ import { type CommandContext, type CommandLookup, type EngineCommand } from '#/r
 
 import { type EditorRuntime } from '../runtime';
 import { mediaOf } from '../session/lifecycle/uploadsWiring';
-import { type AuthoringPolicy } from '../types';
+import { type AuthoringPolicy, type CommandState } from '../types';
 
 import { policyOf } from './checked';
 import { composer } from './composer';
@@ -112,6 +112,103 @@ const runNoting = (
     return applied;
 };
 
+/** The composer and session a command's document API reads. */
+type CommandDocumentContext = {
+    compose: ReturnType<typeof composer>;
+    model: ContentModel;
+    lookup: CommandLookup;
+    context: CommandContext | undefined;
+    session: CommandSession | undefined;
+};
+
+const editComposed = (context: CommandDocumentContext, command: EngineCommand, payload?: unknown): CommandOutcome => {
+    if (context.compose.apply(command, payload)) {
+        return { status: 'applied' };
+    }
+
+    return NOT_APPLICABLE;
+};
+
+const executeNested = (context: CommandDocumentContext, id: string, given: unknown): CommandOutcome => {
+    const command = context.lookup(id);
+    if (command === undefined) {
+        return { status: 'rejected', code: 'unknown-command' };
+    }
+
+    const checked = checkedPayload(command, given, context.model);
+    if (checked === undefined) {
+        return { status: 'rejected', code: 'invalid-payload' };
+    }
+
+    const refused = context.session?.runtime.refusal(command, context.compose.state(), checked.payload);
+    if (refused !== undefined) {
+        return { status: 'rejected', code: refused };
+    }
+
+    const applied = runNoting(context.context, (noted) => context.compose.apply(command, checked.payload, noted));
+    if (applied === 'not-allowed') {
+        return { status: 'rejected', code: 'not-allowed' };
+    }
+
+    if (applied) {
+        return { status: 'applied' };
+    }
+
+    return NOT_APPLICABLE;
+};
+
+const queryNested = (context: CommandDocumentContext, id: string, given: unknown): CommandState => {
+    const command = context.lookup(id);
+    if (command === undefined) {
+        return {
+            enabled: false,
+            active: false,
+            disabledReason: 'unknown-command',
+        };
+    }
+
+    const checked = checkedPayload(command, given, context.model);
+    if (checked === undefined) {
+        return {
+            enabled: false,
+            active: false,
+            disabledReason: 'invalid-payload',
+        };
+    }
+
+    const quiet = quietOf(context.context);
+    const active = command.active(context.compose.state(), checked.payload, quiet);
+    const refused = context.session?.runtime.refusal(command, context.compose.state(), checked.payload);
+    if (refused !== undefined) {
+        return { enabled: false, active, disabledReason: refused };
+    }
+
+    const enabled = runNoting(quiet, (noted) =>
+        command.run(context.compose.state(), undefined, checked.payload, noted),
+    );
+    if (enabled === 'not-allowed') {
+        return {
+            enabled: false,
+            active,
+            disabledReason: 'not-allowed',
+        };
+    }
+
+    return {
+        enabled,
+        active,
+        disabledReason: enabled ? null : 'not-applicable',
+    };
+};
+
+const commandUploads = (session: CommandSession | undefined) => {
+    if (session === undefined) {
+        return undefined;
+    }
+
+    return mediaOf(session.runtime)?.uploads;
+};
+
 /**
  * The document API inside a running command: reads see its edits so far, and its edits compose into one step. A
  * command it runs gets `context` and the checks the session runs before a command.
@@ -129,6 +226,8 @@ const commandDocumentApi = (
         limits = session.runtime.limits;
     }
 
+    const api: CommandDocumentContext = { compose, model, lookup, context, session };
+
     return documentApi({
         model,
         schema,
@@ -136,85 +235,11 @@ const commandDocumentApi = (
         limits,
         state: compose.state,
         resolve: compose.resolve,
-        edit: (command, payload) => {
-            if (compose.apply(command, payload)) {
-                return { status: 'applied' };
-            }
-
-            return NOT_APPLICABLE;
-        },
+        edit: (command, payload) => editComposed(api, command, payload),
         refusal: (before, transaction) => session?.runtime.writeRefusal(before, transaction),
         refused: () => context?.refuse?.(),
-        execute: (id, given) => {
-            const command = lookup(id);
-            if (command === undefined) {
-                return { status: 'rejected', code: 'unknown-command' };
-            }
-
-            const checked = checkedPayload(command, given, model);
-            if (checked === undefined) {
-                return { status: 'rejected', code: 'invalid-payload' };
-            }
-
-            const refused = session?.runtime.refusal(command, compose.state(), checked.payload);
-            if (refused !== undefined) {
-                return { status: 'rejected', code: refused };
-            }
-
-            const applied = runNoting(context, (noted) => compose.apply(command, checked.payload, noted));
-            if (applied === 'not-allowed') {
-                return { status: 'rejected', code: 'not-allowed' };
-            }
-
-            if (applied) {
-                return { status: 'applied' };
-            }
-
-            return NOT_APPLICABLE;
-        },
-        query: (id, given) => {
-            const command = lookup(id);
-            if (command === undefined) {
-                return {
-                    enabled: false,
-                    active: false,
-                    disabledReason: 'unknown-command',
-                };
-            }
-
-            const checked = checkedPayload(command, given, model);
-            if (checked === undefined) {
-                return {
-                    enabled: false,
-                    active: false,
-                    disabledReason: 'invalid-payload',
-                };
-            }
-
-            const quiet = quietOf(context);
-            const active = command.active(compose.state(), checked.payload, quiet);
-            const refused = session?.runtime.refusal(command, compose.state(), checked.payload);
-            if (refused !== undefined) {
-                return { enabled: false, active, disabledReason: refused };
-            }
-
-            const enabled = runNoting(quiet, (noted) =>
-                command.run(compose.state(), undefined, checked.payload, noted),
-            );
-            if (enabled === 'not-allowed') {
-                return {
-                    enabled: false,
-                    active,
-                    disabledReason: 'not-allowed',
-                };
-            }
-
-            return {
-                enabled,
-                active,
-                disabledReason: enabled ? null : 'not-applicable',
-            };
-        },
+        execute: (id, given) => executeNested(api, id, given),
+        query: (id, given) => queryNested(api, id, given),
         // A capture commits on its own, which a running command cannot.
         capture: () => undefined,
         release: (target) => context?.defer(() => session?.runtime.handle.releaseTarget(target)),
@@ -233,13 +258,7 @@ const commandDocumentApi = (
         positionAt: () => undefined,
         document: (state) => encodeTree(state.doc.toJSON() as TreeNode, model).document,
         later: (effect) => context?.defer(effect),
-        uploads: () => {
-            if (session === undefined) {
-                return undefined;
-            }
-
-            return mediaOf(session.runtime)?.uploads;
-        },
+        uploads: () => commandUploads(session),
     });
 };
 

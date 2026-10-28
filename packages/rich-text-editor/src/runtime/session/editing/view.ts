@@ -1,22 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorState, type Transaction } from 'prosemirror-state';
+import { type EditorState } from 'prosemirror-state';
 import {
     type DirectEditorProps,
-    EditorView,
+    type EditorView,
     type MarkViewConstructor,
     type NodeViewConstructor,
 } from 'prosemirror-view';
 
 import { suggestionOptionId } from '../../capabilities/suggestions/optionId';
 import { activeSuggestion } from '../../capabilities/suggestions/plugin';
-import { type SessionToken } from '../../types';
-import { type Columns } from '../state/columns';
-import { type Lifecycle } from '../state/lifecycle';
-import { type Metrics } from '../state/metrics';
-import { type ModeService } from '../state/mode';
-import { type Shown } from '../state/shown';
-import { type Store } from '../state/store';
+
+import { type ViewArgs, createSurfaceHost } from './viewSurface';
 
 /** One empty paragraph is an empty document, which shows the placeholder. */
 export const isEmpty = ({ doc }: EditorState) =>
@@ -76,15 +71,7 @@ const createCalls = () => {
     return { call, caught };
 };
 
-const surfaceAttributes = (
-    a: {
-        shown: Pick<Shown, 'mode'>;
-        mode: Pick<ModeService, 'disabled'>;
-        lifecycle: Lifecycle;
-        suggestionListId: string;
-    },
-    current: EditorState,
-) => {
+const surfaceAttributes = (a: ViewArgs, current: EditorState) => {
     const result: Record<string, string> = {};
     if (a.shown.mode() === 'readonly') {
         // A surface that is not contenteditable takes no focus by itself,
@@ -119,161 +106,30 @@ const surfaceAttributes = (
     return result;
 };
 
-type ViewArgs = {
-    store: Pick<Store, 'state'>;
-    lifecycle: Lifecycle;
-    shown: Pick<Shown, 'mode' | 'sync'>;
-    mode: Pick<ModeService, 'mode' | 'disabled'>;
-    columns: Pick<Columns, 'current'>;
-    metrics: Pick<Metrics, 'measure'>;
-    emit: (event: 'ready', value: SessionToken) => void;
-    session: () => SessionToken;
-    /** The live registries the `src/testing` probe counts. */
-    resources: { views: Set<EditorView>; frames: number };
-    suggestionListId: string;
-    createdAt: number;
-    composing: () => boolean;
-    hasRecovery: () => boolean;
-    dispatch: (transaction: Transaction) => void;
-    fault: () => void;
-    viewFault: (view: EditorView, candidate: EditorState) => void;
-    onAttached: (view: EditorView) => void;
-    scrollSelectionIntoView: () => boolean | undefined;
-};
-
 export const createView = (a: ViewArgs): ViewService => {
-    let view: EditorView | undefined;
-    // The view the last `EditorView` constructor built, which plugin views receive before the constructor returns.
-    let built: EditorView | undefined;
-    let readyFrame: number | undefined;
-    // Node views come from the bridge once the runtime exists, since they act on it.
-    const registered: {
-        nodeViews: Readonly<Record<string, NodeViewConstructor>>;
-        markViews: Readonly<Record<string, MarkViewConstructor>>;
-    } = { nodeViews: {}, markViews: {} };
-
     const { call, caught } = createCalls();
-
-    const refresh = () => {
-        if (a.composing() || a.hasRecovery()) {
-            return;
-        }
-
-        a.shown.sync(a.mode.mode(), a.columns.current());
-        if (view !== undefined) {
-            view.setProps({});
-        }
-    };
-
-    const cancelReady = () => {
-        if (readyFrame !== undefined) {
-            cancelAnimationFrame(readyFrame);
-            readyFrame = undefined;
-            a.resources.frames -= 1;
-        }
-    };
-
-    const detach = () => {
-        cancelReady();
-        if (view !== undefined) {
-            a.resources.views.delete(view);
-            try {
-                view.destroy();
-            } catch (error) {
-                // A view that threw on an update runs it again while it is destroyed, and `dispose` throws nothing.
-                if (!a.hasRecovery()) {
-                    throw error;
-                }
-            }
-
-            view = undefined;
-        }
-    };
-
-    const attach = (element: HTMLElement, props?: Partial<DirectEditorProps>) => {
-        if (a.lifecycle.is('disposed')) {
-            return;
-        }
-
-        detach();
-        built = undefined;
-        const viewProps: DirectEditorProps = {
-            ...props,
-            state: a.store.state,
-            editable: () => a.lifecycle.is('ready') && a.shown.mode() === 'editable',
-            attributes: (current) => surfaceAttributes(a, current),
-            nodeViews: registered.nodeViews,
-            markViews: registered.markViews,
-            // Returning true reports the scroll as handled, so the view leaves it out.
-            handleScrollToSelection: () => a.scrollSelectionIntoView() === false,
-            dispatchTransaction: a.dispatch,
-        };
-        const { threw, value: attached } = call(() => new EditorView({ mount: element }, viewProps));
-        if (attached === undefined || threw) {
-            // ProseMirror starts its DOM observer and input handlers before plugin views, so a plugin view that throws
-            // leaves them on the element unless the half-built view is destroyed.
-            const halfBuilt = attached ?? (built as EditorView | undefined);
-            if (halfBuilt !== undefined) {
-                try {
-                    halfBuilt.destroy();
-                } catch {
-                    // Its node views may throw again while it is destroyed.
-                }
-            }
-
-            // A view or node view constructor that throws keeps the decoded document as the snapshot.
-            a.fault();
-
-            return;
-        }
-
-        view = attached;
-        a.resources.views.add(attached);
-        a.onAttached(attached);
-        if (!a.lifecycle.is('mounting')) {
-            return;
-        }
-
-        // Frames run after microtasks, so the first portal flush of the initial document precedes `ready`.
-        readyFrame = requestAnimationFrame(() => {
-            readyFrame = undefined;
-            a.resources.frames -= 1;
-            a.lifecycle.to('ready');
-            refresh();
-            a.emit('ready', a.session());
-            a.metrics.measure('mount', a.createdAt, null);
-        });
-        a.resources.frames += 1;
-    };
+    const host = createSurfaceHost(a, (current) => surfaceAttributes(a, current), call, caught);
 
     return {
-        current: () => view,
+        current: () => host.surface.view,
         get nodeViews() {
-            return registered.nodeViews;
+            return host.surface.nodeViews;
         },
         setNodeViews: (next) => {
-            registered.nodeViews = next;
+            host.surface.nodeViews = next;
         },
         setMarkViews: (next) => {
-            registered.markViews = next;
+            host.surface.markViews = next;
         },
         capture: (next) => {
-            built = next;
+            host.surface.built = next;
         },
         call,
-        refresh,
-        repaint: () => view?.setProps({}),
-        attach,
-        detach,
-        cancelReady,
-        faultView: () => {
-            if (caught()) {
-                return;
-            }
-
-            if (a.lifecycle.is('mounting', 'ready') && view !== undefined) {
-                a.viewFault(view, a.store.state);
-            }
-        },
+        refresh: host.refresh,
+        repaint: () => host.surface.view?.setProps({}),
+        attach: host.attach,
+        detach: host.detach,
+        cancelReady: host.cancelReady,
+        faultView: host.faultView,
     };
 };

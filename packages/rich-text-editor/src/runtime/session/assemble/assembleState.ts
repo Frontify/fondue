@@ -23,6 +23,26 @@ import { type Late } from './late';
 
 export type State = ReturnType<typeof assembleState>;
 
+// Records typing before any other handler sees the event, so the view itself gets no event handler.
+const createTypingPlugin = (late: Late) =>
+    new Plugin({
+        key: new PluginKey('rte.typing'),
+        view: (editorView) => {
+            late.views.capture(editorView);
+
+            return {};
+        },
+        props: {
+            handleDOMEvents: {
+                beforeinput: () => {
+                    late.commit.markTyping();
+
+                    return false;
+                },
+            },
+        },
+    });
+
 /** The document store, its first plugins and the services that read it. */
 export const assembleState = (core: Core, options: EditorRuntimeOptions, late: Late) => {
     const { definition, limits } = options;
@@ -43,24 +63,7 @@ export const assembleState = (core: Core, options: EditorRuntimeOptions, late: L
         changed: () => busy.run(notify),
     });
 
-    // Records typing before any other handler sees the event, so the view itself gets no event handler.
-    const typingRecorder = new Plugin({
-        key: new PluginKey('rte.typing'),
-        view: (editorView) => {
-            late.views.capture(editorView);
-
-            return {};
-        },
-        props: {
-            handleDOMEvents: {
-                beforeinput: () => {
-                    late.commit.markTyping();
-
-                    return false;
-                },
-            },
-        },
-    });
+    const typingRecorder = createTypingPlugin(late);
     const settling = createComposition({
         composing: () => late.views.current()?.composing === true,
         onSettled: () => late.settleInput(),
