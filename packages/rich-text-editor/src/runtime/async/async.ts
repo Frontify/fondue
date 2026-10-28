@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Diagnostic } from '#/model';
-import { diagnostic } from '#/model/internal';
 
 import { type FeaturePolicy, type SelectionHandle, type SessionToken } from '../types';
 
-import { initial, next, type AsyncEffect, type AsyncEventInput, type AsyncFacts } from './asyncMachine';
+import { createAsyncContext, dispatchAsync, startAsync, sweepAsync } from './asyncRun';
+
+export { liveOperations } from './asyncRun';
 
 /** What a capability hands the coordinator: the service call and the command that applies its result. */
 export type AsyncRequest = {
@@ -49,9 +50,6 @@ export type AsyncOperation = {
     readonly deliver?: (result: unknown) => string | undefined;
 };
 
-/** The registered operations of every live runtime, which the `src/testing` probe reads. */
-export const liveOperations = new Set<AsyncOperation>();
-
 export type AsyncCoordinatorOptions = {
     generateId: () => string;
     session: () => SessionToken;
@@ -69,170 +67,21 @@ export type AsyncCoordinatorOptions = {
     report: (diagnostic: Diagnostic) => void;
 };
 
-type Of<T extends AsyncEffect['type']> = Extract<AsyncEffect, { type: T }>;
-
-/** The frozen operation that a build effect registers for `request`, aimed at `target`. */
-const buildOperation = (
-    { generateId, session, policyRevision }: AsyncCoordinatorOptions,
-    request: AsyncRequest,
-    target: SelectionHandle | null,
-    sequence: number,
-): AsyncOperation => {
-    const { deliver } = request;
-    let delivered: Pick<AsyncOperation, 'deliver'> = {};
-    if (deliver !== undefined) {
-        delivered = { deliver };
-    }
-
-    return Object.freeze({
-        id: generateId(),
-        session: session(),
-        target,
-        policyRevision: policyRevision(),
-        controller: new AbortController(),
-        key: request.key,
-        request: sequence,
-        service: request.service,
-        featureId: request.featureId,
-        action: request.action,
-        command: request.command,
-        ...delivered,
-    });
-};
-
 /** Registers each async operation, aborts the ones a newer request, a policy, a service or `dispose` ends, and checks each result. */
 export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
-    const { session, isDisposed, isFaulted, holding, capture, release, apply, report } = options;
-    let machine = initial();
-    // While an abort runs, a pool starts no waiting operation that the same abort may end next.
-    let aborting = 0;
-
-    const readFacts = (): AsyncFacts => ({
-        disposed: isDisposed(),
-        faulted: isFaulted(),
-        holding: holding(),
-        session: session(),
-        aborting: aborting > 0,
-    });
-
-    /** Applies a result through its `deliver`, or `apply`; a result that throws while it is read fails its check. */
-    const deliverResult = (operation: AsyncOperation, result: unknown): string | undefined => {
-        try {
-            if (operation.deliver === undefined) {
-                return apply(operation, result);
-            }
-
-            return operation.deliver(result);
-        } catch {
-            return 'invalid-payload';
-        }
-    };
-
-    /** What each effect does outside the machine. */
-    const EFFECTS: { readonly [T in AsyncEffect['type']]: (effect: Of<T>) => void } = {
-        build: ({ request, reply, target, capture: captures, sequence }) => {
-            let chosen = target;
-            if (captures) {
-                chosen = capture() ?? null;
-            }
-
-            const operation = buildOperation(options, request, chosen, sequence);
-            reply(operation);
-            dispatch({ type: 'built', operation, request, owned: captures && chosen !== null });
-        },
-        abort: ({ operation }) => {
-            operation.controller.abort();
-        },
-        supersede: ({ operation, request, owned }) => {
-            sweep({ type: 'abortWhere', aborts: (other) => other.key === operation.key });
-            dispatch({ type: 'admit', operation, request, owned });
-        },
-        register: ({ operation }) => {
-            liveOperations.add(operation);
-        },
-        unregister: ({ operation }) => {
-            liveOperations.delete(operation);
-        },
-        release: ({ target }) => {
-            release(target);
-        },
-        pump: ({ name }) => {
-            dispatch({ type: 'pump', name });
-        },
-        call: ({ operation, request }) => {
-            const { signal } = operation.controller;
-            request
-                .run({ signal, session: operation.session, operationId: operation.id })
-                .then((result) => dispatch({ type: 'arrive', operation, result }))
-                // A failed service call leaves the document as it is.
-                .catch((error: unknown) =>
-                    dispatch({ type: 'rejected', operation, request, error, aborted: signal.aborted }),
-                );
-        },
-        deliver: ({ operation, result }) => {
-            dispatch({ type: 'delivered', operation, code: deliverResult(operation, result) });
-        },
-        replay: ({ operation, result }) => {
-            dispatch({ type: 'arrive', operation, result });
-        },
-        fail: ({ request, error }) => {
-            request.fail?.(error);
-        },
-        discard: ({ reason }) => {
-            report(diagnostic('runtime.async-discarded', undefined, { reason }, 'info'));
-        },
-    };
-
-    const run = <T extends AsyncEffect['type']>(effect: Of<T>) => {
-        EFFECTS[effect.type](effect);
-    };
-
-    /** Feeds an event to the machine, keeps its next state and runs the effects in order. */
-    const dispatch = (input: AsyncEventInput) => {
-        const step = next(machine, { ...input, facts: readFacts() });
-        machine = step.state;
-        for (const effect of step.effects) {
-            run(effect);
-        }
-    };
-
-    /** Runs an event that ends operations, then lets every pool start what the abort held back. */
-    const sweep = (input: AsyncEventInput) => {
-        aborting += 1;
-        try {
-            dispatch(input);
-        } finally {
-            aborting -= 1;
-        }
-
-        dispatch({ type: 'resume' });
-    };
-
-    const start = (request: AsyncRequest): AsyncOperation => {
-        let started: AsyncOperation | undefined;
-        dispatch({
-            type: 'start',
-            request,
-            reply: (operation) => {
-                started = operation;
-            },
-        });
-
-        // The build effect always replies before `dispatch` returns.
-        return started as AsyncOperation;
-    };
+    const context = createAsyncContext(options);
 
     return {
-        start,
+        start: (request: AsyncRequest) => startAsync(context, request),
         abortWhere: (aborts: (operation: AsyncOperation) => boolean) => {
-            sweep({ type: 'abortWhere', aborts });
+            sweepAsync(context, { type: 'abortWhere', aborts });
         },
         // Checks and applies the results held during composition again, now that input has settled.
         settle: () => {
-            dispatch({ type: 'settle' });
+            dispatchAsync(context, { type: 'settle' });
         },
         dispose: () => {
-            sweep({ type: 'dispose' });
+            sweepAsync(context, { type: 'dispose' });
         },
     };
 };

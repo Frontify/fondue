@@ -83,18 +83,28 @@ const merge = (into: Capabilities, from: Capabilities, add = true): Capabilities
     return [...versions.keys()].sort().map((id) => ({ id, version: versions.get(id) ?? 0 }));
 };
 
-/**
- * After the capability warnings: each installed feature's steps from its recorded capability
- * version, in model feature order, then the model's steps from the recorded model version. Each output passes the
- * read walk and the envelope checks again; the result records the target model and the installed capability versions.
- */
-export const runMigrations = (
+/** The steps that run for a stored document, and whether it is older than the target model. */
+type MigrationPlan = {
+    plan: (CapabilityMigration | ModelMigration)[];
+    older: boolean;
+};
+
+/** The document a migration run has reached and what it has gathered to report. */
+type MigrationProgress = {
+    diagnostics: Diagnostic[];
+    steps: string[];
+    review: Map<string, string>;
+    reviewing: boolean;
+    current: RichTextDocument;
+    older: boolean;
+};
+
+/** Each installed feature's steps from its recorded capability version, then the model's steps from its recorded version. */
+const migrationPlan = (
     document: RichTextDocument,
     model: ContentModel,
-    generateId: () => string,
-    limits: ResourceLimits,
-): Migrated => {
-    const compiled = compiledModel(model);
+    compiled: ReturnType<typeof compiledModel>,
+): MigrationPlan => {
     const recorded = new Map(document.requiredCapabilities.map(({ id, version }) => [id, version]));
     const plan: (CapabilityMigration | ModelMigration)[] = [];
     let older = document.model.version < model.ref.version;
@@ -110,89 +120,122 @@ export const runMigrations = (
 
     queue(compiled.migrations, document.model.version, model.ref.version);
 
-    const diagnostics: Diagnostic[] = [];
-    const steps: string[] = [];
-    const review = new Map<string, string>();
-    let reviewing = false;
-    let current = document;
+    return { plan, older };
+};
 
-    const outcome = (result: RichTextDocument | null): Migrated => ({
-        document: result,
-        diagnostics,
-        steps,
-        review: new Set(review.keys()),
-        reviewing,
-        older,
-    });
+const outcomeOf = (progress: MigrationProgress, result: RichTextDocument | null): Migrated => ({
+    document: result,
+    diagnostics: progress.diagnostics,
+    steps: progress.steps,
+    review: new Set(progress.review.keys()),
+    reviewing: progress.reviewing,
+    older: progress.older,
+});
 
-    for (const step of plan) {
-        steps.push(step.id);
+const blockMigration = (progress: MigrationProgress, stepId: string, cause?: string): Migrated => {
+    const details: JsonObject = cause === undefined ? { step: stepId } : { step: stepId, cause };
+    progress.diagnostics.push(diagnostic('migration.unsupported', undefined, details, 'error'));
 
-        const block = (cause?: string) => {
-            const details: JsonObject = cause === undefined ? { step: step.id } : { step: step.id, cause };
-            diagnostics.push(diagnostic('migration.unsupported', undefined, details, 'error'));
+    return outcomeOf(progress, null);
+};
 
-            return outcome(null);
-        };
+/** Applies one step to `progress`, or returns the blocked migration. `undefined` means the step advanced the document. */
+const applyMigrationStep = (
+    progress: MigrationProgress,
+    step: CapabilityMigration | ModelMigration,
+    generateId: () => string,
+    limits: ResourceLimits,
+): Migrated | undefined => {
+    try {
+        const result = step.migrate(progress.current, { generateId });
+        if (result.status === 'unsupported') {
+            progress.diagnostics.push(...result.diagnostics);
 
-        try {
-            const result = step.migrate(current, { generateId });
-            if (result.status === 'unsupported') {
-                diagnostics.push(...result.diagnostics);
+            return result.diagnostics.length > 0 ? outcomeOf(progress, null) : blockMigration(progress, step.id);
+        }
 
-                return result.diagnostics.length > 0 ? outcome(null) : block();
-            }
+        const read = readInput(result.document, limits);
+        if (!read.ok) {
+            return blockMigration(progress, step.id, read.diagnostic.code);
+        }
 
-            const read = readInput(result.document, limits);
-            if (!read.ok) {
-                return block(read.diagnostic.code);
-            }
+        const { content, requiredCapabilities } = read.value as RichTextDocument;
+        if (!isRoot(content)) {
+            return blockMigration(progress, step.id, 'format.envelope-invalid');
+        }
 
-            const { content, requiredCapabilities } = read.value as RichTextDocument;
-            if (!isRoot(content)) {
-                return block('format.envelope-invalid');
-            }
+        // A step only adds capabilities, since content of a dropped one may survive as an island.
+        const kept = merge(
+            progress.current.requiredCapabilities,
+            findMisshapenCapabilities(requiredCapabilities) === undefined ? requiredCapabilities : [],
+        );
+        const next: RichTextDocument = { ...progress.current, requiredCapabilities: kept, content };
 
-            // A step only adds capabilities, since content of a dropped one may survive as an island.
-            const kept = merge(
-                current.requiredCapabilities,
-                findMisshapenCapabilities(requiredCapabilities) === undefined ? requiredCapabilities : [],
-            );
-            const next: RichTextDocument = { ...current, requiredCapabilities: kept, content };
+        if ([...progress.review].some(([path, json]) => jsonAt(next, path) !== json)) {
+            return blockMigration(progress, step.id);
+        }
 
-            if ([...review].some(([path, json]) => jsonAt(next, path) !== json)) {
-                return block();
-            }
-
-            if (result.status === 'requires-review') {
-                reviewing = true;
-                for (const { path } of result.diagnostics) {
-                    if (path === undefined || !NODE_PATH.test(path) || valueAt(next, path) === undefined) {
-                        return block();
-                    }
-
-                    review.set(path, jsonAt(next, path));
+        if (result.status === 'requires-review') {
+            progress.reviewing = true;
+            for (const { path } of result.diagnostics) {
+                if (path === undefined || !NODE_PATH.test(path) || valueAt(next, path) === undefined) {
+                    return blockMigration(progress, step.id);
                 }
 
-                diagnostics.push(...result.diagnostics);
-            } else if (result.status !== 'migrated') {
-                return block();
+                progress.review.set(path, jsonAt(next, path));
             }
 
-            current = next;
-        } catch {
-            return block();
+            progress.diagnostics.push(...result.diagnostics);
+        } else if (result.status !== 'migrated') {
+            return blockMigration(progress, step.id);
+        }
+
+        progress.current = next;
+
+        return undefined;
+    } catch {
+        return blockMigration(progress, step.id);
+    }
+};
+
+/**
+ * After the capability warnings: each installed feature's steps from its recorded capability
+ * version, in model feature order, then the model's steps from the recorded model version. Each output passes the
+ * read walk and the envelope checks again; the result records the target model and the installed capability versions.
+ */
+export const runMigrations = (
+    document: RichTextDocument,
+    model: ContentModel,
+    generateId: () => string,
+    limits: ResourceLimits,
+): Migrated => {
+    const compiled = compiledModel(model);
+    const { plan, older } = migrationPlan(document, model, compiled);
+    const progress: MigrationProgress = {
+        diagnostics: [],
+        steps: [],
+        review: new Map(),
+        reviewing: false,
+        current: document,
+        older,
+    };
+
+    for (const step of plan) {
+        progress.steps.push(step.id);
+        const blocked = applyMigrationStep(progress, step, generateId, limits);
+        if (blocked !== undefined) {
+            return blocked;
         }
     }
 
     if (!older) {
-        return outcome(document);
+        return outcomeOf(progress, document);
     }
 
-    return outcome({
-        ...current,
+    return outcomeOf(progress, {
+        ...progress.current,
         model: { ...model.ref },
-        requiredCapabilities: merge(current.requiredCapabilities, model.capabilities, false),
+        requiredCapabilities: merge(progress.current.requiredCapabilities, model.capabilities, false),
     });
 };
 

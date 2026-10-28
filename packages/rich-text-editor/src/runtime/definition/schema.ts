@@ -262,10 +262,10 @@ const ISLAND_MARK_SPEC: MarkSpec = {
     toDOM: () => ['span', 0],
 };
 
-/** Builds the engine schema of a content model: nodes in declared order, marks by rank; an engine error becomes a `DefinitionError`. */
-export const buildSchema = (model: ContentModel): Schema => {
-    const compiled = compiledModel(model);
-    const optionsOf = new Map(compiled.features.map(({ id, options }) => [id, options]));
+type CompiledSchema = ReturnType<typeof compiledModel>;
+
+/** The node specs of the model, in declared order, then the island nodes. */
+const nodeSpecs = (compiled: CompiledSchema, optionsOf: ReadonlyMap<string, JsonObject>): Record<string, NodeSpec> => {
     const nodes: Record<string, NodeSpec> = {};
     for (const node of compiled.nodes) {
         const { declaration, shared } = node;
@@ -314,6 +314,11 @@ export const buildSchema = (model: ContentModel): Schema => {
         nodes[name] = spec;
     }
 
+    return nodes;
+};
+
+/** The mark specs of the model, by rank, then the island mark. */
+const markSpecs = (compiled: CompiledSchema, optionsOf: ReadonlyMap<string, JsonObject>): Record<string, MarkSpec> => {
     const marks: Record<string, MarkSpec> = {};
     for (const { name, featureId, declaration } of compiled.marks) {
         const options = optionsOf.get(featureId) ?? {};
@@ -348,6 +353,16 @@ export const buildSchema = (model: ContentModel): Schema => {
     }
 
     marks[ISLAND_MARK] = ISLAND_MARK_SPEC;
+
+    return marks;
+};
+
+/** Builds the schema, and gives null defaults to leaves the engine cannot create until it can. */
+const schemaOf = (
+    compiled: CompiledSchema,
+    nodes: Record<string, NodeSpec>,
+    marks: Record<string, MarkSpec>,
+): Schema => {
     // The leaves the engine reports it cannot create in a required position get null defaults, and only those.
     const leaves = new Map(
         compiled.nodes
@@ -377,4 +392,12 @@ export const buildSchema = (model: ContentModel): Schema => {
             }
         }
     }
+};
+
+/** Builds the engine schema of a content model: nodes in declared order, marks by rank; an engine error becomes a `DefinitionError`. */
+export const buildSchema = (model: ContentModel): Schema => {
+    const compiled = compiledModel(model);
+    const optionsOf = new Map(compiled.features.map(({ id, options }) => [id, options]));
+
+    return schemaOf(compiled, nodeSpecs(compiled, optionsOf), markSpecs(compiled, optionsOf));
 };
