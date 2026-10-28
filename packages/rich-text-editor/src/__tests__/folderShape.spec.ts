@@ -5,7 +5,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 
-import ts from 'typescript';
+import typescript from 'typescript';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -21,36 +21,40 @@ import {
     walk,
 } from './fixtures/sourceFiles';
 
-const featureFolders = () =>
-    readdirSync(join(srcRoot, 'plugins'), { withFileTypes: true })
-        .filter((entry) => entry.isDirectory() && existsSync(join(srcRoot, 'plugins', entry.name, 'feature.ts')))
-        .map((entry) => entry.name)
-        .sort();
+const featureFolders = () => {
+    const directories = readdirSync(join(srcRoot, 'plugins'), { withFileTypes: true }).filter(
+        (entry) => entry.isDirectory() && existsSync(join(srcRoot, 'plugins', entry.name, 'feature.ts')),
+    );
+    const names = directories.map((entry) => entry.name);
+    names.sort();
+
+    return names;
+};
 
 // The functions a module exports as runtime values, as the registry counts them: types and other values do not count.
 const exportedFunctions = (path: string) => {
     const names: string[] = [];
     for (const statement of parse(path).statements) {
-        if (ts.isFunctionDeclaration(statement) && isExported(statement)) {
+        if (typescript.isFunctionDeclaration(statement) && isExported(statement)) {
             names.push(statement.name?.text ?? 'default');
-        } else if (ts.isVariableStatement(statement) && isExported(statement)) {
+        } else if (typescript.isVariableStatement(statement) && isExported(statement)) {
             for (const { name, initializer } of statement.declarationList.declarations) {
                 // `defineFeature(...)` returns the feature factory.
                 if (
                     initializer !== undefined &&
-                    (ts.isArrowFunction(initializer) ||
-                        ts.isFunctionExpression(initializer) ||
-                        (ts.isCallExpression(initializer) &&
-                            ts.isIdentifier(initializer.expression) &&
+                    (typescript.isArrowFunction(initializer) ||
+                        typescript.isFunctionExpression(initializer) ||
+                        (typescript.isCallExpression(initializer) &&
+                            typescript.isIdentifier(initializer.expression) &&
                             initializer.expression.text === 'defineFeature'))
                 ) {
                     names.push(name.getText());
                 }
             }
-        } else if (ts.isExportDeclaration(statement) && !statement.isTypeOnly) {
+        } else if (typescript.isExportDeclaration(statement) && !statement.isTypeOnly) {
             // A re-export cannot be classified here, so it counts against the one function.
             const { exportClause } = statement;
-            if (exportClause !== undefined && ts.isNamedExports(exportClause)) {
+            if (exportClause !== undefined && typescript.isNamedExports(exportClause)) {
                 names.push(...exportClause.elements.filter((item) => !item.isTypeOnly).map((item) => item.name.text));
             } else {
                 names.push('*');
@@ -65,12 +69,12 @@ const exportedFunctions = (path: string) => {
 const pluginExports = (path: string) => {
     const names: string[] = [];
     for (const statement of parse(path).statements) {
-        if (ts.isVariableStatement(statement) && isExported(statement)) {
+        if (typescript.isVariableStatement(statement) && isExported(statement)) {
             for (const { name, initializer } of statement.declarationList.declarations) {
                 if (
                     initializer !== undefined &&
-                    ts.isCallExpression(initializer) &&
-                    ts.isIdentifier(initializer.expression) &&
+                    typescript.isCallExpression(initializer) &&
+                    typescript.isIdentifier(initializer.expression) &&
                     initializer.expression.text === 'definePlugin'
                 ) {
                     names.push(name.getText());
@@ -89,11 +93,15 @@ const NOT_PLUGIN_FOLDERS = new Set(['__tests__', 'profiles']);
 
 const pluginDirectory = (folder: string) => join(srcRoot, 'plugins', folder);
 
-const pluginFolderNames = () =>
-    readdirSync(join(srcRoot, 'plugins'), { withFileTypes: true })
-        .filter((entry) => entry.isDirectory() && !NOT_PLUGIN_FOLDERS.has(entry.name))
-        .map((entry) => entry.name)
-        .sort();
+const pluginFolderNames = () => {
+    const directories = readdirSync(join(srcRoot, 'plugins'), { withFileTypes: true }).filter(
+        (entry) => entry.isDirectory() && !NOT_PLUGIN_FOLDERS.has(entry.name),
+    );
+    const names = directories.map((entry) => entry.name);
+    names.sort();
+
+    return names;
+};
 
 // The stories of a topic, which name no component.
 const TOPIC_STORIES = new Set([
@@ -127,12 +135,12 @@ const exportsComponent = (path: string) => {
     let declaresComponent = false;
     let exportsValue = false;
     for (const statement of parse(path).statements) {
-        if (ts.isFunctionDeclaration(statement) && statement.name !== undefined) {
+        if (typescript.isFunctionDeclaration(statement) && statement.name !== undefined) {
             declaresComponent ||= PASCAL_CASE.test(statement.name.text);
             exportsValue ||= isExported(statement);
-        } else if (ts.isVariableStatement(statement)) {
+        } else if (typescript.isVariableStatement(statement)) {
             declaresComponent ||= statement.declarationList.declarations.some(
-                ({ name }) => ts.isIdentifier(name) && PASCAL_CASE.test(name.text),
+                ({ name }) => typescript.isIdentifier(name) && PASCAL_CASE.test(name.text),
             );
             exportsValue ||= isExported(statement);
         }
@@ -145,12 +153,12 @@ const exportsComponent = (path: string) => {
 const staticSpecifiers = (path: string) =>
     parse(path)
         .statements.filter(
-            (statement): statement is ts.ImportDeclaration | ts.ExportDeclaration =>
-                (ts.isImportDeclaration(statement) || ts.isExportDeclaration(statement)) &&
+            (statement): statement is typescript.ImportDeclaration | typescript.ExportDeclaration =>
+                (typescript.isImportDeclaration(statement) || typescript.isExportDeclaration(statement)) &&
                 statement.moduleSpecifier !== undefined &&
-                ts.isStringLiteral(statement.moduleSpecifier),
+                typescript.isStringLiteral(statement.moduleSpecifier),
         )
-        .map((statement) => (statement.moduleSpecifier as ts.StringLiteral).text);
+        .map((statement) => (statement.moduleSpecifier as typescript.StringLiteral).text);
 
 // Components import hooks, hooks import helpers, and none of the three imports a root file of its plugin.
 const DIRECTION = { components: 0, hooks: 1, helpers: 2 } as const;
@@ -191,23 +199,23 @@ const isComponentName = (name: string) => /^[A-Z]/.test(name) && /[a-z]/.test(na
 
 const COMPONENT_CALLS = new Set(['forwardRef', 'memo', 'lazy', 'lazyPart', 'Object.assign']);
 
-const isComponentInitializer = (node: ts.Expression) => {
+const isComponentInitializer = (node: typescript.Expression) => {
     let initializer = node;
-    while (ts.isParenthesizedExpression(initializer) || ts.isAsExpression(initializer)) {
+    while (typescript.isParenthesizedExpression(initializer) || typescript.isAsExpression(initializer)) {
         initializer = initializer.expression;
     }
 
-    if (ts.isArrowFunction(initializer) || ts.isFunctionExpression(initializer)) {
+    if (typescript.isArrowFunction(initializer) || typescript.isFunctionExpression(initializer)) {
         return true;
     }
 
-    return ts.isCallExpression(initializer) && COMPONENT_CALLS.has(initializer.expression.getText());
+    return typescript.isCallExpression(initializer) && COMPONENT_CALLS.has(initializer.expression.getText());
 };
 
-const extendsReactComponent = (statement: ts.ClassDeclaration) =>
+const extendsReactComponent = (statement: typescript.ClassDeclaration) =>
     statement.heritageClauses?.some(
         (clause) =>
-            clause.token === ts.SyntaxKind.ExtendsKeyword &&
+            clause.token === typescript.SyntaxKind.ExtendsKeyword &&
             clause.types.some((type) => /^(React\.)?(Pure)?Component$/.test(type.expression.getText())),
     ) === true;
 
@@ -238,37 +246,39 @@ const fileShape = (path: string): FileShape => {
 
     for (const statement of file.statements) {
         const isExportedStatement =
-            ts.canHaveModifiers(statement) &&
-            ts.getModifiers(statement)?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword) === true;
-        if (ts.isFunctionDeclaration(statement) && statement.name !== undefined) {
+            typescript.canHaveModifiers(statement) &&
+            typescript
+                .getModifiers(statement)
+                ?.some((modifier) => modifier.kind === typescript.SyntaxKind.ExportKeyword) === true;
+        if (typescript.isFunctionDeclaration(statement) && statement.name !== undefined) {
             declare(statement.name.text, isComponentName(statement.name.text), isExportedStatement);
-        } else if (ts.isFunctionDeclaration(statement) && isExportedStatement) {
+        } else if (typescript.isFunctionDeclaration(statement) && isExportedStatement) {
             declare('default', false, true);
-        } else if (ts.isVariableStatement(statement)) {
+        } else if (typescript.isVariableStatement(statement)) {
             for (const { name, initializer } of statement.declarationList.declarations) {
-                if (ts.isIdentifier(name)) {
+                if (typescript.isIdentifier(name)) {
                     const isComponent =
                         isComponentName(name.text) && initializer !== undefined && isComponentInitializer(initializer);
                     declare(name.text, isComponent, isExportedStatement);
                 }
             }
-        } else if (ts.isClassDeclaration(statement) && statement.name !== undefined) {
+        } else if (typescript.isClassDeclaration(statement) && statement.name !== undefined) {
             declare(
                 statement.name.text,
                 isComponentName(statement.name.text) && extendsReactComponent(statement),
                 isExportedStatement,
             );
-        } else if (ts.isEnumDeclaration(statement)) {
+        } else if (typescript.isEnumDeclaration(statement)) {
             declare(statement.name.text, false, isExportedStatement);
-        } else if (ts.isExportAssignment(statement)) {
+        } else if (typescript.isExportAssignment(statement)) {
             exported.add('default');
             runtime.add('default');
         } else if (
-            ts.isExportDeclaration(statement) &&
+            typescript.isExportDeclaration(statement) &&
             !statement.isTypeOnly &&
             statement.moduleSpecifier === undefined &&
             statement.exportClause !== undefined &&
-            ts.isNamedExports(statement.exportClause)
+            typescript.isNamedExports(statement.exportClause)
         ) {
             for (const element of statement.exportClause.elements) {
                 const local = (element.propertyName ?? element.name).text;
@@ -531,31 +541,31 @@ describe('folder and file shape', { timeout: 60_000 }, () => {
         // The root attaches parts named after their key, and `Object.assign(Editor, ...)` shares `Editor`'s name.
         const expectedNames = new Map<string, string>();
         const targets = new Map<string, string>();
-        const visit = (node: ts.Node) => {
-            if (ts.isCallExpression(node) && node.expression.getText() === 'Object.assign') {
+        const visit = (node: typescript.Node) => {
+            if (typescript.isCallExpression(node) && node.expression.getText() === 'Object.assign') {
                 const [target, parts] = node.arguments;
                 let owner = node.parent;
-                while (!ts.isVariableDeclaration(owner) && !ts.isSourceFile(owner)) {
+                while (!typescript.isVariableDeclaration(owner) && !typescript.isSourceFile(owner)) {
                     owner = owner.parent;
                 }
 
                 if (
                     target !== undefined &&
                     parts !== undefined &&
-                    ts.isIdentifier(target) &&
-                    ts.isObjectLiteralExpression(parts) &&
-                    ts.isVariableDeclaration(owner)
+                    typescript.isIdentifier(target) &&
+                    typescript.isObjectLiteralExpression(parts) &&
+                    typescript.isVariableDeclaration(owner)
                 ) {
                     targets.set(owner.name.getText(), target.text);
                     for (const part of parts.properties) {
                         const key = part.name?.getText() ?? '';
-                        const local = ts.isPropertyAssignment(part) ? part.initializer.getText() : key;
+                        const local = typescript.isPropertyAssignment(part) ? part.initializer.getText() : key;
                         expectedNames.set(local, `RichTextEditor.${key}`);
                     }
                 }
             }
 
-            ts.forEachChild(node, visit);
+            typescript.forEachChild(node, visit);
         };
 
         visit(parse(join(srcRoot, 'react/RichTextEditor/RichTextEditor.tsx')));
@@ -564,21 +574,24 @@ describe('folder and file shape', { timeout: 60_000 }, () => {
         for (const path of productFiles.filter((file) => !toKey(file).startsWith('src/docs/'))) {
             const assigned = new Map<string, string>();
             for (const statement of parse(path).statements) {
-                const assignment = ts.isExpressionStatement(statement) ? statement.expression : undefined;
+                const assignment = typescript.isExpressionStatement(statement) ? statement.expression : undefined;
                 if (
                     assignment !== undefined &&
-                    ts.isBinaryExpression(assignment) &&
+                    typescript.isBinaryExpression(assignment) &&
                     assignment.left.getText().endsWith('.displayName') &&
-                    ts.isStringLiteralLike(assignment.right)
+                    typescript.isStringLiteralLike(assignment.right)
                 ) {
                     assigned.set(assignment.left.getText().replace('.displayName', ''), assignment.right.text);
                 }
 
                 // A class cannot take a `displayName` statement in types, so it sets a static member.
-                if (ts.isClassDeclaration(statement)) {
+                if (typescript.isClassDeclaration(statement)) {
                     for (const member of statement.members) {
-                        if (ts.isPropertyDeclaration(member) && member.name.getText() === 'displayName') {
-                            assigned.set(statement.name?.text ?? '', (member.initializer as ts.StringLiteral).text);
+                        if (typescript.isPropertyDeclaration(member) && member.name.getText() === 'displayName') {
+                            assigned.set(
+                                statement.name?.text ?? '',
+                                (member.initializer as typescript.StringLiteral).text,
+                            );
                         }
                     }
                 }

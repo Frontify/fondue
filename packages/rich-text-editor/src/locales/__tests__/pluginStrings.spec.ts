@@ -30,7 +30,7 @@ for (const [path, strings] of Object.entries(modules)) {
 }
 
 describe('plugin strings', () => {
-    it.each([...byPlugin])('%s has every locale with the English key set', (_plugin, locales) => {
+    it.each([...byPlugin])('%s has every locale with the English key set', (_, locales) => {
         expect([...locales.keys()].sort()).toEqual([...LOCALES].sort());
         const keys = Object.keys(locales.get('en-US') ?? {}).sort();
         for (const strings of locales.values()) {

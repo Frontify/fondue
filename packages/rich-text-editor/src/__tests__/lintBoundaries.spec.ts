@@ -3,7 +3,7 @@
 // @vitest-environment node
 
 import { execFile } from 'node:child_process';
-import { mkdir, mkdtemp, realpath, rm, symlink, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, realpath, rm as remove, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -967,7 +967,7 @@ beforeAll(async () => {
 }, 60_000);
 
 afterAll(async () => {
-    await rm(join(directory, '../..'), { recursive: true, force: true });
+    await remove(join(directory, '../..'), { recursive: true, force: true });
 });
 
 const located = CASES.map((entry, index) => ({

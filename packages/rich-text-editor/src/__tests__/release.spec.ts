@@ -17,7 +17,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import Ajv2020 from 'ajv/dist/2020';
-import ts from 'typescript';
+import typescript from 'typescript';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { installInto, PACKAGE_ROOT, packRelease } from './fixtures/apps/consumer';
@@ -45,11 +45,22 @@ const manifestOf = (root: string) =>
 const RECORDED = /^(?:prosemirror-[\w-]+|markdown-it|@radix-ui\/react-toolbar|lowlight|emojibase-data)$/;
 
 /** Each recorded dependency of `resolved` whose `name@version` the release notes do not name. */
-const unrecordedVersions = (notes: string, resolved: Readonly<Record<string, string>>): string[] =>
-    Object.entries(resolved)
-        .filter(([name]) => RECORDED.test(name))
-        .map(([name, version]) => `${name}@${version}`)
-        .filter((pin) => !new RegExp(`(?:^|[\\s\`(])${pin.replaceAll('.', '\\.')}(?![\\w.-])`, 'm').test(notes));
+const unrecordedVersions = (notes: string, resolved: Readonly<Record<string, string>>): string[] => {
+    const missing: string[] = [];
+    for (const [name, version] of Object.entries(resolved)) {
+        if (!RECORDED.test(name)) {
+            continue;
+        }
+
+        const pin = `${name}@${version}`;
+        const mentioned = new RegExp(`(?:^|[\\s\`(])${pin.replaceAll('.', '\\.')}(?![\\w.-])`, 'm').test(notes);
+        if (!mentioned) {
+            missing.push(pin);
+        }
+    }
+
+    return missing;
+};
 
 /** The docs pages of `root` that a release of `version` with `notes` needs and lacks (accessibility, Report). */
 const missingReleasePages = (root: string, version: string, notes: string): string[] => {
@@ -68,24 +79,44 @@ const LOCALES = readdirSync(join(PACKAGE_ROOT, 'src', 'locales'))
     .map((file) => file.slice(0, -'.ts'.length));
 
 /** Each file that an `exports` target of `root/package.json` names and `root` lacks, with `*` expanded to each of `names`. */
-const missingTargets = (root: string, names: readonly string[]): string[] =>
-    Object.values(manifestOf(root).exports ?? {})
-        .flatMap((target) => {
-            if (typeof target === 'string') {
-                return [target];
+const missingTargets = (root: string, names: readonly string[]): string[] => {
+    const missing: string[] = [];
+    for (const target of Object.values(manifestOf(root).exports ?? {})) {
+        const paths: string[] = [];
+        if (typeof target === 'string') {
+            paths.push(target);
+        } else {
+            if (target.types !== undefined) {
+                paths.push(target.types);
             }
 
-            return [target.types, target.import].filter((path) => path !== undefined);
-        })
-        .flatMap((path) => {
+            if (target.import !== undefined) {
+                paths.push(target.import);
+            }
+        }
+
+        for (const path of paths) {
+            const expanded: string[] = [];
             if (path.includes('*')) {
-                return names.map((name) => path.replace('*', name));
+                for (const name of names) {
+                    expanded.push(path.replace('*', name));
+                }
+            } else {
+                expanded.push(path);
             }
 
-            return [path];
-        })
-        .filter((path) => !existsSync(join(root, path)))
-        .sort();
+            for (const candidate of expanded) {
+                if (!existsSync(join(root, candidate))) {
+                    missing.push(candidate);
+                }
+            }
+        }
+    }
+
+    missing.sort();
+
+    return missing;
+};
 
 const QUALIFICATION = join(PACKAGE_ROOT, 'qualification');
 
@@ -113,7 +144,7 @@ const GROWABLE = [
 
 type PublicExport = {
     name: string;
-    declarations: readonly ts.Node[];
+    declarations: readonly typescript.Node[];
     deprecated: boolean;
 };
 
@@ -133,9 +164,9 @@ const publicTypes = (root: string): Map<string, PublicExport> => {
             .filter((file) => file.endsWith(suffix))
             .map((file) => [entry.replace('*', file.slice(0, -suffix.length)), join(root, prefix, file)] as const);
     });
-    const program = ts.createProgram(
+    const program = typescript.createProgram(
         entries.map(([, file]) => file),
-        { noEmit: true, skipLibCheck: true, types: [], moduleResolution: ts.ModuleResolutionKind.Bundler },
+        { noEmit: true, skipLibCheck: true, types: [], moduleResolution: typescript.ModuleResolutionKind.Bundler },
     );
     const checker = program.getTypeChecker();
     const report = new Map<string, PublicExport>();
@@ -144,7 +175,7 @@ const publicTypes = (root: string): Map<string, PublicExport> => {
         const module = source === undefined ? undefined : checker.getSymbolAtLocation(source);
         for (const symbol of module === undefined ? [] : checker.getExportsOfModule(module)) {
             let target = symbol;
-            if ((symbol.flags & ts.SymbolFlags.Alias) !== 0) {
+            if ((symbol.flags & typescript.SymbolFlags.Alias) !== 0) {
                 target = checker.getAliasedSymbol(symbol);
             }
 
@@ -153,7 +184,7 @@ const publicTypes = (root: string): Map<string, PublicExport> => {
                 name: symbol.name,
                 declarations,
                 deprecated: declarations.some((node) =>
-                    ts.getJSDocTags(node).some((tag) => tag.tagName.text === 'deprecated'),
+                    typescript.getJSDocTags(node).some((tag) => tag.tagName.text === 'deprecated'),
                 ),
             });
         }
@@ -162,20 +193,20 @@ const publicTypes = (root: string): Map<string, PublicExport> => {
     return report;
 };
 
-const printer = ts.createPrinter({ removeComments: true });
+const printer = typescript.createPrinter({ removeComments: true });
 
 /** A node's text without comments or layout. */
-const printed = (node: ts.Node | undefined): string => {
+const printed = (node: typescript.Node | undefined): string => {
     if (node === undefined) {
         return '';
     }
 
-    return printer.printNode(ts.EmitHint.Unspecified, node, node.getSourceFile()).replaceAll(/\s+/g, ' ');
+    return printer.printNode(typescript.EmitHint.Unspecified, node, node.getSourceFile()).replaceAll(/\s+/g, ' ');
 };
 
-const printedAll = (nodes: readonly ts.Node[] | undefined) => (nodes ?? []).map(printed).join(', ');
+const printedAll = (nodes: readonly typescript.Node[] | undefined) => (nodes ?? []).map(printed).join(', ');
 
-const memberKey = (member: ts.TypeElement) => {
+const memberKey = (member: typescript.TypeElement) => {
     if (member.name === undefined) {
         return printed(member);
     }
@@ -183,12 +214,12 @@ const memberKey = (member: ts.TypeElement) => {
     return member.name.getText();
 };
 
-const isReadonly = (member: ts.TypeElement) =>
-    ts.canHaveModifiers(member) &&
-    (ts.getModifiers(member) ?? []).some(({ kind }) => kind === ts.SyntaxKind.ReadonlyKeyword);
+const isReadonly = (member: typescript.TypeElement) =>
+    typescript.canHaveModifiers(member) &&
+    (typescript.getModifiers(member) ?? []).some(({ kind }) => kind === typescript.SyntaxKind.ReadonlyKeyword);
 
-const unionMembers = (node: ts.TypeNode): readonly ts.TypeNode[] => {
-    if (ts.isUnionTypeNode(node)) {
+const unionMembers = (node: typescript.TypeNode): readonly typescript.TypeNode[] => {
+    if (typescript.isUnionTypeNode(node)) {
         return node.types;
     }
 
@@ -196,10 +227,10 @@ const unionMembers = (node: ts.TypeNode): readonly ts.TypeNode[] => {
 };
 
 /** Whether a host written against `previous` still compiles against `next`: in a growable union, members may be added. */
-const compatibleType = (previous: ts.TypeNode, next: ts.TypeNode, growable: boolean): boolean => {
-    if (ts.isUnionTypeNode(previous) || ts.isUnionTypeNode(next)) {
+const compatibleType = (previous: typescript.TypeNode, next: typescript.TypeNode, growable: boolean): boolean => {
+    if (typescript.isUnionTypeNode(previous) || typescript.isUnionTypeNode(next)) {
         const candidates = unionMembers(next);
-        const matched = new Set<ts.TypeNode>();
+        const matched = new Set<typescript.TypeNode>();
         const kept = unionMembers(previous).every((member) => {
             const other = candidates.find((candidate) => compatibleType(member, candidate, growable));
             if (other !== undefined) {
@@ -212,17 +243,21 @@ const compatibleType = (previous: ts.TypeNode, next: ts.TypeNode, growable: bool
         return kept && (growable || candidates.every((member) => matched.has(member)));
     }
 
-    if (ts.isTypeLiteralNode(previous) && ts.isTypeLiteralNode(next)) {
+    if (typescript.isTypeLiteralNode(previous) && typescript.isTypeLiteralNode(next)) {
         return keepsMembers(previous.members, next.members, growable);
     }
 
     return printed(previous) === printed(next);
 };
 
-const compatibleMember = (previous: ts.TypeElement, next: ts.TypeElement, growable: boolean): boolean => {
+const compatibleMember = (
+    previous: typescript.TypeElement,
+    next: typescript.TypeElement,
+    growable: boolean,
+): boolean => {
     if (
-        ts.isPropertySignature(previous) &&
-        ts.isPropertySignature(next) &&
+        typescript.isPropertySignature(previous) &&
+        typescript.isPropertySignature(next) &&
         previous.type !== undefined &&
         next.type !== undefined
     ) {
@@ -238,8 +273,8 @@ const compatibleMember = (previous: ts.TypeElement, next: ts.TypeElement, growab
 
 /** Whether `next` keeps every member of `previous` compatible and adds only optional properties. */
 const keepsMembers = (
-    previous: readonly ts.TypeElement[],
-    next: readonly ts.TypeElement[],
+    previous: readonly typescript.TypeElement[],
+    next: readonly typescript.TypeElement[],
     growable: boolean,
 ): boolean => {
     const byKey = new Map(next.map((member) => [memberKey(member), member]));
@@ -251,18 +286,20 @@ const keepsMembers = (
     const keys = new Set(previous.map(memberKey));
     const added = next.filter((member) => !keys.has(memberKey(member)));
 
-    return kept && added.every((member) => ts.isPropertySignature(member) && member.questionToken !== undefined);
+    return (
+        kept && added.every((member) => typescript.isPropertySignature(member) && member.questionToken !== undefined)
+    );
 };
 
-const compatibleDeclaration = (previous: ts.Node, next: ts.Node, growable: boolean): boolean => {
-    if (ts.isTypeAliasDeclaration(previous) && ts.isTypeAliasDeclaration(next)) {
+const compatibleDeclaration = (previous: typescript.Node, next: typescript.Node, growable: boolean): boolean => {
+    if (typescript.isTypeAliasDeclaration(previous) && typescript.isTypeAliasDeclaration(next)) {
         return (
             printedAll(previous.typeParameters) === printedAll(next.typeParameters) &&
             compatibleType(previous.type, next.type, growable)
         );
     }
 
-    if (ts.isInterfaceDeclaration(previous) && ts.isInterfaceDeclaration(next)) {
+    if (typescript.isInterfaceDeclaration(previous) && typescript.isInterfaceDeclaration(next)) {
         return (
             printedAll(previous.typeParameters) === printedAll(next.typeParameters) &&
             printedAll(previous.heritageClauses) === printedAll(next.heritageClauses) &&
@@ -284,12 +321,12 @@ const growableNames = (report: ReadonlyMap<string, PublicExport>): Set<string> =
         }
 
         names.add(name);
-        const visit = (node: ts.Node) => {
-            if (ts.isTypeReferenceNode(node) && byName.has(node.typeName.getText())) {
+        const visit = (node: typescript.Node) => {
+            if (typescript.isTypeReferenceNode(node) && byName.has(node.typeName.getText())) {
                 queue.push(node.typeName.getText());
             }
 
-            ts.forEachChild(node, visit);
+            typescript.forEachChild(node, visit);
         };
 
         for (const declaration of byName.get(name)?.declarations ?? []) {

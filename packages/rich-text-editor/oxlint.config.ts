@@ -172,12 +172,29 @@ const READER_FILE_EXTERNALS = [...packagesExcept(['react']), ...NODE_BUILTINS];
 const STORY_EXTERNALS = [...packagesExcept([...UI_PACKAGES, 'storybook', '@storybook/*']), ...NODE_BUILTINS];
 
 // The public entries come from `exports`, the style sheet entry is no module.
-const PUBLIC_ENTRY_MODULES = Object.entries(packageJson.exports)
-    .filter(([, target]) => typeof target === 'object')
-    .map(([entry]) => (entry === '.' ? 'index' : entry.slice(2)))
-    .map((path) => (path === 'reader' || path === 'authoring' ? `entries/${path}` : path))
-    .map((path) => (path === 'html' ? 'runtime/import/fromHtml' : path))
-    .map((path) => (path === 'features' ? 'plugins' : path));
+const publicEntryModule = (entry: string) => {
+    const path = entry === '.' ? 'index' : entry.slice(2);
+    if (path === 'reader' || path === 'authoring') {
+        return `entries/${path}`;
+    }
+
+    if (path === 'html') {
+        return 'runtime/import/fromHtml';
+    }
+
+    if (path === 'features') {
+        return 'plugins';
+    }
+
+    return path;
+};
+
+const PUBLIC_ENTRY_MODULES: string[] = [];
+for (const [entry, target] of Object.entries(packageJson.exports)) {
+    if (typeof target === 'object') {
+        PUBLIC_ENTRY_MODULES.push(publicEntryModule(entry));
+    }
+}
 
 // The public entries, the modules they re-export to plugins and the shared story folder, through the alias.
 const STORY_MODULES = [
@@ -967,5 +984,36 @@ export default defineConfig({
                 message: STYLES_MESSAGE,
             },
         ]),
+        // Last, so a later override cannot replace these options. Every source file, product and test.
+        {
+            files: ['**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}'],
+            rules: {
+                'eslint/id-length': [
+                    'error',
+                    {
+                        min: 3,
+                        properties: 'never',
+                        exceptions: [
+                            '_',
+                            'id',
+                            'en',
+                            'fc',
+                            'it',
+                            'vi',
+                            'to',
+                            'at',
+                            'of',
+                            'on',
+                            'is',
+                            'by',
+                            'up',
+                            'ok',
+                            'no',
+                        ],
+                    },
+                ],
+                'eslint/no-nested-ternary': 'error',
+            },
+        },
     ],
 });

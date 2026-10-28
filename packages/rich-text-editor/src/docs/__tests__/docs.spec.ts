@@ -92,11 +92,12 @@ describe('the package README', () => {
             tables.push(current);
         }
 
-        const cellsOf = (line: string) =>
-            line
-                .split('|')
-                .slice(1, -1)
-                .map((cell) => cell.trim());
+        const cellsOf = (line: string) => {
+            const cells = line.split('|').slice(1, -1);
+
+            return cells.map((cell) => cell.trim());
+        };
+
         const separator = (cells: readonly string[]) => cells.every((cell) => /^:?-+:?$/.test(cell));
         const foldersIn = (cell: string) => [...cell.matchAll(/`([^`]+)`/g)].map((match) => match[1] ?? '');
         const listed = tables.flatMap((table, index) => {
@@ -111,10 +112,11 @@ describe('the package README', () => {
                 return foldersIn(cells[column] ?? '');
             });
         });
-        const folders = readdirSync(join(PACKAGE, 'src'), { withFileTypes: true })
-            .filter((entry) => entry.isDirectory())
-            .map((entry) => entry.name)
-            .sort();
+        const directoryEntries = readdirSync(join(PACKAGE, 'src'), { withFileTypes: true }).filter((entry) =>
+            entry.isDirectory(),
+        );
+        const folders = directoryEntries.map((entry) => entry.name);
+        folders.sort();
 
         expect(tables).toHaveLength(2);
         expect([...listed].sort()).toEqual(folders);

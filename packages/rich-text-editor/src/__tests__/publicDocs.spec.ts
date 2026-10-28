@@ -4,7 +4,7 @@
 
 import { join } from 'node:path';
 
-import ts from 'typescript';
+import typescript from 'typescript';
 import { describe, expect, it } from 'vitest';
 
 import { packageRoot, srcRoot } from './fixtures/sourceFiles';
@@ -23,34 +23,35 @@ const MEMBER_DOCUMENTED_NAME = /(Props|Options|Service|Services)$/;
 
 const buildProgram = () => {
     const configPath = join(packageRoot, 'tsconfig.json');
-    const config = ts.readConfigFile(configPath, ts.sys.readFile);
-    const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys, packageRoot);
+    const config = typescript.readConfigFile(configPath, typescript.sys.readFile);
+    const parsed = typescript.parseJsonConfigFileContent(config.config, typescript.sys, packageRoot);
 
-    return ts.createProgram({
+    return typescript.createProgram({
         rootNames: ENTRIES.map((entry) => join(packageRoot, entry)),
         options: parsed.options,
     });
 };
 
-const hasJsDoc = (declaration: ts.Node) => {
+const hasJsDoc = (declaration: typescript.Node) => {
     let node = declaration;
-    if (ts.isVariableDeclaration(declaration) && ts.isVariableDeclarationList(declaration.parent)) {
+    if (typescript.isVariableDeclaration(declaration) && typescript.isVariableDeclarationList(declaration.parent)) {
         node = declaration.parent.parent;
     }
 
-    return ts.getJSDocCommentsAndTags(node).some((entry) => ts.isJSDoc(entry));
+    return typescript.getJSDocCommentsAndTags(node).some((entry) => typescript.isJSDoc(entry));
 };
 
-const isInSrc = (declaration: ts.Node) => {
+const isInSrc = (declaration: typescript.Node) => {
     const file = declaration.getSourceFile();
 
     return file.fileName.startsWith(srcRoot) && !file.fileName.includes('/node_modules/');
 };
 
-const flatten = (type: ts.Type): ts.Type[] => (type.isIntersection() ? type.types.flatMap(flatten) : [type]);
+const flatten = (type: typescript.Type): typescript.Type[] =>
+    type.isIntersection() ? type.types.flatMap(flatten) : [type];
 
-const needsMemberDocs = (name: string, declaration: ts.Declaration) =>
-    (ts.isTypeAliasDeclaration(declaration) || ts.isInterfaceDeclaration(declaration)) &&
+const needsMemberDocs = (name: string, declaration: typescript.Declaration) =>
+    (typescript.isTypeAliasDeclaration(declaration) || typescript.isInterfaceDeclaration(declaration)) &&
     (MEMBER_DOCUMENTED_NAME.test(name) || name === 'EditorHandle');
 
 const findGaps = () => {
@@ -68,14 +69,18 @@ const findGaps = () => {
 
         for (const exported of checker.getExportsOfModule(moduleSymbol)) {
             let symbol = exported;
-            if (symbol.flags & ts.SymbolFlags.Alias) {
+            if (symbol.flags & typescript.SymbolFlags.Alias) {
                 symbol = checker.getAliasedSymbol(symbol);
             }
 
             const name = exported.getName();
             for (const declaration of symbol.declarations ?? []) {
                 // `X.displayName = ...` adds an expando declaration (an identifier) to the component's symbol, which is no declaration of its own.
-                if (!isInSrc(declaration) || ts.isSourceFile(declaration) || ts.isIdentifier(declaration)) {
+                if (
+                    !isInSrc(declaration) ||
+                    typescript.isSourceFile(declaration) ||
+                    typescript.isIdentifier(declaration)
+                ) {
                     continue;
                 }
 
@@ -93,7 +98,8 @@ const findGaps = () => {
                 for (const member of members) {
                     for (const memberDeclaration of member.declarations ?? []) {
                         const documentable =
-                            ts.isPropertySignature(memberDeclaration) || ts.isMethodSignature(memberDeclaration);
+                            typescript.isPropertySignature(memberDeclaration) ||
+                            typescript.isMethodSignature(memberDeclaration);
                         if (documentable && isInSrc(memberDeclaration) && !hasJsDoc(memberDeclaration)) {
                             gaps.push(`${entry}: ${name}.${member.getName()}`);
                         }

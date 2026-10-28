@@ -24,20 +24,45 @@ const markCheckedChrome = (root: HTMLElement) => {
     return root;
 };
 
+const selectorParts = (selector: string) => {
+    const parts: string[] = [];
+    for (const part of selector.split(/,(?![^()]*\))/)) {
+        const normalized = unwrapped(part.trim().replaceAll(/\s+/g, ' '));
+        if (normalized !== '') {
+            parts.push(normalized);
+        }
+    }
+
+    return parts;
+};
+
+const declarationsOf = (body: string) => {
+    const declarations: string[] = [];
+    for (const part of body.split(';')) {
+        const declaration = part.trim().replaceAll(/\s+/g, ' ');
+        if (declaration !== '') {
+            declarations.push(declaration);
+        }
+    }
+
+    return declarations;
+};
+
 /** The rules of the struck checked-task look: each selector of the list on its own, with its declarations. */
-const struckRules = () =>
-    [...content.replaceAll(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{};]+)\{([^{}]*)\}/g)]
-        .map(([, selector = '', body = '']) => ({
-            selectors: selector
-                .split(/,(?![^()]*\))/)
-                .map((part) => unwrapped(part.trim().replaceAll(/\s+/g, ' ')))
-                .filter((part) => part !== ''),
-            declarations: body
-                .split(';')
-                .map((declaration) => declaration.trim().replaceAll(/\s+/g, ' '))
-                .filter((declaration) => declaration !== ''),
-        }))
-        .filter(({ selectors }) => selectors.some((selector) => selector.includes('data-rte-strike-checked-tasks')));
+const struckRules = () => {
+    const found: { selectors: string[]; declarations: string[] }[] = [];
+    const source = content.replaceAll(/\/\*[\s\S]*?\*\//g, '');
+    for (const match of source.matchAll(/([^{};]+)\{([^{}]*)\}/g)) {
+        const selectors = selectorParts(match[1] ?? '');
+        if (!selectors.some((selector) => selector.includes('data-rte-strike-checked-tasks'))) {
+            continue;
+        }
+
+        found.push({ selectors, declarations: declarationsOf(match[2] ?? '') });
+    }
+
+    return found;
+};
 
 /** The editor's DOM of a checked task of two blocks with an unchecked nested task: chrome around the checkbox and the content. */
 const editorTree = () => {
@@ -113,7 +138,7 @@ describe('the struck checked-task look', () => {
     it.each([
         ['editor', editorTree],
         ['reader', readerTree],
-    ])('strikes and greys every own block of the checked item in the %s, never its nested tasks', (_surface, tree) => {
+    ])('strikes and greys every own block of the checked item in the %s, never its nested tasks', (_, tree) => {
         const root = tree();
 
         expect(styled(root, (text) => text.startsWith('text-decoration-line'))).toEqual(['also-text', 'done-text']);

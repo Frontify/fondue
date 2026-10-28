@@ -4,7 +4,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import ts from 'typescript';
+import typescript from 'typescript';
 
 export const packageRoot = fileURLToPath(new URL('../../..', import.meta.url)).replace(/\/$/, '');
 export const srcRoot = join(packageRoot, 'src');
@@ -57,12 +57,12 @@ export const sourceOf = (path: string) => {
     return source;
 };
 
-export const parsed = new Map<string, ts.SourceFile>();
+export const parsed = new Map<string, typescript.SourceFile>();
 export const parse = (path: string) => {
     let file = parsed.get(path);
     if (file === undefined) {
-        const kind = path.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
-        file = ts.createSourceFile(path, sourceOf(path), ts.ScriptTarget.Latest, true, kind);
+        const kind = path.endsWith('.tsx') ? typescript.ScriptKind.TSX : typescript.ScriptKind.TS;
+        file = typescript.createSourceFile(path, sourceOf(path), typescript.ScriptTarget.Latest, true, kind);
         parsed.set(path, file);
     }
 
@@ -74,8 +74,8 @@ export const nonBlankLines = (text: string) => text.split('\n').filter((line) =>
 
 export const folderExists = (path: string) => existsSync(path) && statSync(path).isDirectory();
 
-export const isExported = (statement: ts.VariableStatement | ts.FunctionDeclaration) =>
-    statement.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword) === true;
+export const isExported = (statement: typescript.VariableStatement | typescript.FunctionDeclaration) =>
+    statement.modifiers?.some((modifier) => modifier.kind === typescript.SyntaxKind.ExportKeyword) === true;
 
 // Resolves '#/x' aliases (tsconfig paths) and relative paths; returns undefined for packages.
 export const resolveInternal = (from: string, specifier: string) => {
@@ -93,5 +93,7 @@ export const resolveInternal = (from: string, specifier: string) => {
         return undefined;
     }
 
-    return inside.split('\\').join('/').split('/');
+    const normalized = inside.split('\\').join('/');
+
+    return normalized.split('/');
 };

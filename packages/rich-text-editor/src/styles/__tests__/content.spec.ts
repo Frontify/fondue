@@ -23,14 +23,24 @@ const installedView = readFileSync(
 /** The stylesheet without comments, so a word in a comment never reads as a rule. */
 const code = (css: string) => css.replaceAll(/\/\*[\s\S]*?\*\//g, '');
 
+/** Declarations of one rule body, trimmed, with empty pieces dropped. */
+const declarationsOf = (body: string) => {
+    const declarations: string[] = [];
+    for (const part of body.split(';')) {
+        const declaration = part.trim().replaceAll(/\s+/g, ' ');
+        if (declaration !== '') {
+            declarations.push(declaration);
+        }
+    }
+
+    return declarations;
+};
+
 /** Each rule's selector and declarations, at any nesting depth. */
 const rules = (css: string) =>
     [...code(css).matchAll(/([^{};]+)\{([^{}]*)\}/g)].map(([, selector = '', body = '']) => ({
         selector: selector.trim(),
-        declarations: body
-            .split(';')
-            .map((declaration) => declaration.trim().replaceAll(/\s+/g, ' '))
-            .filter((declaration) => declaration !== ''),
+        declarations: declarationsOf(body),
     }));
 
 // The installed declarations as the package writes them: logical properties, and the text token for black.
@@ -91,14 +101,15 @@ describe('package content stylesheet', () => {
     it('carries every gap cursor declaration of the installed prosemirror-gapcursor stylesheet, scoped to the surface', () => {
         const ours = rules(content).filter(({ selector }) => selector.includes('.ProseMirror-gapcursor'));
         const declared = new Set(ours.flatMap(({ declarations }) => declarations));
-        const theirs = rules(installed)
-            .filter(({ selector }) => selector.includes('.ProseMirror-gapcursor'))
-            .flatMap(({ declarations }) => declarations)
-            .filter((declaration) => !declaration.startsWith('animation'));
+        const installedRules = rules(installed).filter(({ selector }) => selector.includes('.ProseMirror-gapcursor'));
+        const installedDeclarations = installedRules.flatMap(({ declarations }) => declarations);
+        const theirs = installedDeclarations.filter((declaration) => !declaration.startsWith('animation'));
 
         expect(theirs.length > 0).toBe(true);
         expect(
-            theirs.map((declaration) => AS_WRITTEN[declaration] ?? declaration).filter((d) => !declared.has(d)),
+            theirs
+                .map((declaration) => AS_WRITTEN[declaration] ?? declaration)
+                .filter((written) => !declared.has(written)),
         ).toEqual([]);
         expect(ours.every(({ selector }) => selector.startsWith(':where(.fondue-rte-content[data-rte-surface]'))).toBe(
             true,
@@ -111,17 +122,19 @@ describe('package content stylesheet', () => {
             selector: unscoped(selector),
             declarations: declarations.map(quotesAligned),
         }));
-        const missing = rules(installedView).flatMap(({ selector, declarations }) =>
-            declarations
-                .map((declaration) => quotesAligned(VIEW_AS_WRITTEN[declaration] ?? declaration))
-                .filter(
-                    (written) =>
-                        !ours.some(
-                            (rule) => rule.selector === unscoped(selector) && rule.declarations.includes(written),
-                        ),
-                )
-                .map((written) => `${selector} { ${written} }`),
-        );
+        const missing: string[] = [];
+        for (const { selector, declarations } of rules(installedView)) {
+            for (const declaration of declarations) {
+                const written = quotesAligned(VIEW_AS_WRITTEN[declaration] ?? declaration);
+                const covered = ours.some(
+                    (rule) => rule.selector === unscoped(selector) && rule.declarations.includes(written),
+                );
+                if (!covered) {
+                    missing.push(`${selector} { ${written} }`);
+                }
+            }
+        }
+
         const fromView = new Set(rules(installedView).map(({ selector }) => unscoped(selector)));
         const matching = ours.filter(({ selector }) => fromView.has(selector));
         const written = matching.flatMap(({ declarations }) => declarations);
@@ -172,10 +185,10 @@ describe('package content stylesheet', () => {
 
     it('draws a horizontal rule in the editor and the reader as one top border in the rule colour alias', () => {
         const aliases = rules(content).find(({ selector }) => selector === ':where(.fondue-rte-content)');
-        const hr = rules(content).filter(({ selector }) => /\bhr\b/.test(selector));
+        const horizontalRules = rules(content).filter(({ selector }) => /\bhr\b/.test(selector));
 
         expect(aliases?.declarations).toContain('--rte-content-rule-color: var(--color-line-strong)');
-        expect(hr).toEqual([
+        expect(horizontalRules).toEqual([
             {
                 selector: ':where(.fondue-rte-content hr)',
                 declarations: [

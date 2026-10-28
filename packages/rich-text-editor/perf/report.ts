@@ -29,7 +29,7 @@ const RANKS = { p95: 0.95, p99: 0.99 } as const;
 
 /** The nearest-rank percentile, since no tinybench version reports p95 (CL-1960). */
 export const percentile = (samples: readonly number[], rank: keyof typeof RANKS): number => {
-    const sorted = [...samples].sort((a, b) => a - b);
+    const sorted = [...samples].sort((left, right) => left - right);
     const index = Math.min(sorted.length - 1, Math.ceil(sorted.length * RANKS[rank]) - 1);
 
     return sorted[index] ?? Number.NaN;

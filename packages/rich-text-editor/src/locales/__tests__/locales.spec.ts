@@ -12,10 +12,11 @@ import { LOADERS } from '#/react/RichTextEditor/helpers/locale';
 import { COUNT_PLACEHOLDERS } from '../countPlaceholders';
 import { enUS } from '../en-US';
 
-const files = readdirSync(new URL('..', import.meta.url))
-    .filter((name) => /^[a-z]{2}-[A-Z]{2}\.ts$/.test(name))
-    .map((name) => name.replace('.ts', ''))
-    .sort();
+const localeFileNames = readdirSync(new URL('..', import.meta.url)).filter((name) =>
+    /^[a-z]{2}-[A-Z]{2}\.ts$/.test(name),
+);
+const files = localeFileNames.map((name) => name.replace('.ts', ''));
+files.sort();
 const placeholders = (value: string) => value.match(/\$\{\w+\}/g) ?? [];
 const localeOf = async (file: string) => {
     const module = (await import(`../${file}.ts`)) as Record<string, typeof enUS | undefined>;
@@ -147,10 +148,15 @@ describe('package locales', () => {
             'submit',
             'newLine',
         ];
-        const unnamed = Object.values(enUS.translationStrings)
-            .flatMap(placeholders)
-            .map((placeholder) => placeholder.slice(2, -1))
-            .filter((name) => !COUNT_PLACEHOLDERS.includes(name) && !notCounts.includes(name));
+        const unnamed: string[] = [];
+        for (const value of Object.values(enUS.translationStrings)) {
+            for (const placeholder of placeholders(value)) {
+                const name = placeholder.slice(2, -1);
+                if (!COUNT_PLACEHOLDERS.includes(name) && !notCounts.includes(name)) {
+                    unnamed.push(name);
+                }
+            }
+        }
 
         expect(unnamed).toEqual([]);
     });

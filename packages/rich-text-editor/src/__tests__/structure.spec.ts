@@ -5,9 +5,10 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
-import ts from 'typescript';
+import typescript from 'typescript';
 import { describe, expect, it } from 'vitest';
 
+import { conditionalSpreads, longIteratorChains, shortDestructuredBindings } from './fixtures/readability';
 import {
     allFiles,
     folderExists,
@@ -60,7 +61,7 @@ const lineCount = (path: string) => nonBlankLines(sourceOf(path));
 // A listed item may stay or shrink; an unlisted item over the limit, a listed item no longer over it, or growth fails.
 const ratchet = (measured: Map<string, number>, allowed: Record<string, number>) => {
     const problems: string[] = [];
-    for (const [key, value] of [...measured].sort(([a], [b]) => a.localeCompare(b))) {
+    for (const [key, value] of [...measured].sort(([left], [right]) => left.localeCompare(right))) {
         const entry = allowed[key];
         if (entry === undefined) {
             problems.push(`unlisted: ${key} = ${value}`);
@@ -91,29 +92,29 @@ const filesOver = (files: string[], limit: number) => {
 };
 
 type FunctionLike =
-    | ts.FunctionDeclaration
-    | ts.FunctionExpression
-    | ts.ArrowFunction
-    | ts.MethodDeclaration
-    | ts.ConstructorDeclaration
-    | ts.AccessorDeclaration;
+    | typescript.FunctionDeclaration
+    | typescript.FunctionExpression
+    | typescript.ArrowFunction
+    | typescript.MethodDeclaration
+    | typescript.ConstructorDeclaration
+    | typescript.AccessorDeclaration;
 
-const isFunctionLike = (node: ts.Node): node is FunctionLike =>
-    ts.isFunctionDeclaration(node) ||
-    ts.isFunctionExpression(node) ||
-    ts.isArrowFunction(node) ||
-    ts.isMethodDeclaration(node) ||
-    ts.isConstructorDeclaration(node) ||
-    ts.isGetAccessorDeclaration(node) ||
-    ts.isSetAccessorDeclaration(node);
+const isFunctionLike = (node: typescript.Node): node is FunctionLike =>
+    typescript.isFunctionDeclaration(node) ||
+    typescript.isFunctionExpression(node) ||
+    typescript.isArrowFunction(node) ||
+    typescript.isMethodDeclaration(node) ||
+    typescript.isConstructorDeclaration(node) ||
+    typescript.isGetAccessorDeclaration(node) ||
+    typescript.isSetAccessorDeclaration(node);
 
-const nameText = (name: ts.Node, file: ts.SourceFile) => {
+const nameText = (name: typescript.Node, file: typescript.SourceFile) => {
     if (
-        ts.isIdentifier(name) ||
-        ts.isPrivateIdentifier(name) ||
-        ts.isStringLiteral(name) ||
-        ts.isNumericLiteral(name) ||
-        ts.isNoSubstitutionTemplateLiteral(name)
+        typescript.isIdentifier(name) ||
+        typescript.isPrivateIdentifier(name) ||
+        typescript.isStringLiteral(name) ||
+        typescript.isNumericLiteral(name) ||
+        typescript.isNoSubstitutionTemplateLiteral(name)
     ) {
         return name.text;
     }
@@ -121,8 +122,8 @@ const nameText = (name: ts.Node, file: ts.SourceFile) => {
     return name.getText(file);
 };
 
-const functionName = (node: FunctionLike, file: ts.SourceFile) => {
-    if (ts.isConstructorDeclaration(node)) {
+const functionName = (node: FunctionLike, file: typescript.SourceFile) => {
+    if (typescript.isConstructorDeclaration(node)) {
         return 'constructor';
     }
 
@@ -130,29 +131,32 @@ const functionName = (node: FunctionLike, file: ts.SourceFile) => {
         return nameText(node.name, file);
     }
 
-    let child: ts.Node = node;
+    let child: typescript.Node = node;
     let parent = node.parent;
     while (
-        ts.isParenthesizedExpression(parent) ||
-        ts.isAsExpression(parent) ||
-        ts.isSatisfiesExpression(parent) ||
-        ts.isNonNullExpression(parent)
+        typescript.isParenthesizedExpression(parent) ||
+        typescript.isAsExpression(parent) ||
+        typescript.isSatisfiesExpression(parent) ||
+        typescript.isNonNullExpression(parent)
     ) {
         child = parent;
         parent = parent.parent;
     }
 
-    if (ts.isVariableDeclaration(parent) && parent.initializer === child) {
-        return nameText(parent.name, file);
-    }
-
-    if ((ts.isPropertyAssignment(parent) || ts.isPropertyDeclaration(parent)) && parent.initializer === child) {
+    if (typescript.isVariableDeclaration(parent) && parent.initializer === child) {
         return nameText(parent.name, file);
     }
 
     if (
-        ts.isBinaryExpression(parent) &&
-        parent.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
+        (typescript.isPropertyAssignment(parent) || typescript.isPropertyDeclaration(parent)) &&
+        parent.initializer === child
+    ) {
+        return nameText(parent.name, file);
+    }
+
+    if (
+        typescript.isBinaryExpression(parent) &&
+        parent.operatorToken.kind === typescript.SyntaxKind.EqualsToken &&
         parent.right === child
     ) {
         return parent.left.getText(file);
@@ -162,13 +166,16 @@ const functionName = (node: FunctionLike, file: ts.SourceFile) => {
 };
 
 const letDeclarators = (node: FunctionLike) => {
-    if (!node.body || !ts.isBlock(node.body)) {
+    if (!node.body || !typescript.isBlock(node.body)) {
         return 0;
     }
 
     let count = 0;
     for (const statement of node.body.statements) {
-        if (ts.isVariableStatement(statement) && (statement.declarationList.flags & ts.NodeFlags.Let) !== 0) {
+        if (
+            typescript.isVariableStatement(statement) &&
+            (statement.declarationList.flags & typescript.NodeFlags.Let) !== 0
+        ) {
             count += statement.declarationList.declarations.length;
         }
     }
@@ -179,7 +186,7 @@ const letDeclarators = (node: FunctionLike) => {
 type FunctionMeasure = { key: string; lines: number; lets: number };
 
 // Every line from the node's start line through its end line, blank lines included.
-const rawLines = (node: ts.Node, file: ts.SourceFile) => {
+const rawLines = (node: typescript.Node, file: typescript.SourceFile) => {
     const start = file.getLineAndCharacterOfPosition(node.getStart(file)).line;
     const end = file.getLineAndCharacterOfPosition(node.end).line;
 
@@ -191,7 +198,7 @@ const functionMeasures = (path: string) => {
     const base = toKey(path);
     const seen = new Map<string, number>();
     const measures: FunctionMeasure[] = [];
-    const visit = (node: ts.Node) => {
+    const visit = (node: typescript.Node) => {
         if (isFunctionLike(node) && node.body) {
             const name = functionName(node, file);
             const occurrence = (seen.get(name) ?? 0) + 1;
@@ -204,7 +211,7 @@ const functionMeasures = (path: string) => {
             measures.push({ key, lines: rawLines(node, file), lets: letDeclarators(node) });
         }
 
-        ts.forEachChild(node, visit);
+        typescript.forEachChild(node, visit);
     };
 
     visit(file);
@@ -224,29 +231,33 @@ const nodeOf = (segments: string[]) => {
     return first;
 };
 
-const nodeOfFile = (path: string) => nodeOf(relative(srcRoot, path).split('\\').join('/').split('/'));
+const nodeOfFile = (path: string) => {
+    const normalized = relative(srcRoot, path).split('\\').join('/');
+
+    return nodeOf(normalized.split('/'));
+};
 
 const moduleSpecifiers = (path: string) => {
     const specifiers: string[] = [];
-    const visit = (node: ts.Node) => {
+    const visit = (node: typescript.Node) => {
         if (
-            (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
+            (typescript.isImportDeclaration(node) || typescript.isExportDeclaration(node)) &&
             node.moduleSpecifier &&
-            ts.isStringLiteral(node.moduleSpecifier)
+            typescript.isStringLiteral(node.moduleSpecifier)
         ) {
             specifiers.push(node.moduleSpecifier.text);
         }
 
         if (
-            ts.isCallExpression(node) &&
-            node.expression.kind === ts.SyntaxKind.ImportKeyword &&
+            typescript.isCallExpression(node) &&
+            node.expression.kind === typescript.SyntaxKind.ImportKeyword &&
             node.arguments[0] !== undefined &&
-            ts.isStringLiteral(node.arguments[0])
+            typescript.isStringLiteral(node.arguments[0])
         ) {
             specifiers.push(node.arguments[0].text);
         }
 
-        ts.forEachChild(node, visit);
+        typescript.forEachChild(node, visit);
     };
 
     visit(parse(path));
@@ -329,48 +340,50 @@ const cycles = (graph: Map<string, Set<string>>) => {
     return found.map((component) => component.join(' | ')).sort();
 };
 
-const prosemirrorImportersOutsideRuntime = () =>
-    productFiles
-        .filter((path) => !toKey(path).startsWith('src/runtime/'))
+const prosemirrorImportersOutsideRuntime = () => {
+    const outsideRuntime = productFiles.filter((path) => !toKey(path).startsWith('src/runtime/'));
+
+    return outsideRuntime
         .filter((path) => moduleSpecifiers(path).some((specifier) => specifier.startsWith('prosemirror-')))
         .map((path) => toKey(path));
+};
 
-const isSignature = (node: ts.Node) =>
-    ts.isFunctionTypeNode(node) ||
-    ts.isConstructorTypeNode(node) ||
-    ts.isMethodSignature(node) ||
-    ts.isCallSignatureDeclaration(node) ||
-    ts.isConstructSignatureDeclaration(node);
+const isSignature = (node: typescript.Node) =>
+    typescript.isFunctionTypeNode(node) ||
+    typescript.isConstructorTypeNode(node) ||
+    typescript.isMethodSignature(node) ||
+    typescript.isCallSignatureDeclaration(node) ||
+    typescript.isConstructSignatureDeclaration(node);
 
 // The type that holds a member, with `>` after it when a member's type nests the literal. A literal outside any type
 // declaration is named by its members, and one inside a function type is never an allowed owner.
-const memberOwner = (member: ts.TypeElement, file: ts.SourceFile) => {
-    const literal = member.parent as ts.TypeLiteralNode | ts.InterfaceDeclaration;
-    let declaration: ts.TypeAliasDeclaration | ts.InterfaceDeclaration | undefined;
-    if (ts.isInterfaceDeclaration(literal)) {
+const memberOwner = (member: typescript.TypeElement, file: typescript.SourceFile) => {
+    const literal = member.parent as typescript.TypeLiteralNode | typescript.InterfaceDeclaration;
+    let declaration: typescript.TypeAliasDeclaration | typescript.InterfaceDeclaration | undefined;
+    if (typescript.isInterfaceDeclaration(literal)) {
         declaration = literal;
     }
 
     let nested = false;
     let inSignature = false;
-    let node: ts.Node = literal;
+    let node: typescript.Node = literal;
     while (declaration === undefined && node.parent !== undefined) {
-        const parent: ts.Node = node.parent;
-        if (ts.isTypeAliasDeclaration(parent)) {
+        const parent: typescript.Node = node.parent;
+        if (typescript.isTypeAliasDeclaration(parent)) {
             declaration = parent;
         } else if (
-            ts.isSourceFile(parent) ||
-            ts.isExpression(parent) ||
-            ts.isStatement(parent) ||
-            ts.isParameter(parent)
+            typescript.isSourceFile(parent) ||
+            typescript.isExpression(parent) ||
+            typescript.isStatement(parent) ||
+            typescript.isParameter(parent)
         ) {
             break;
         } else if (isSignature(parent)) {
             inSignature = true;
         } else if (
-            ts.isPropertySignature(parent) ||
-            ts.isIndexSignatureDeclaration(parent) ||
-            ts.isMappedTypeNode(parent)
+            typescript.isPropertySignature(parent) ||
+            typescript.isIndexSignatureDeclaration(parent) ||
+            typescript.isMappedTypeNode(parent)
         ) {
             nested = true;
         }
@@ -391,33 +404,33 @@ const memberOwner = (member: ts.TypeElement, file: ts.SourceFile) => {
 
 const FREEZE_HELPERS = new Set(['snapshot', 'freezeModel']);
 
-const isFreezeCall = (node: ts.Node): boolean => {
-    if (!ts.isCallExpression(node)) {
+const isFreezeCall = (node: typescript.Node): boolean => {
+    if (!typescript.isCallExpression(node)) {
         return false;
     }
 
     const { expression } = node;
-    if (ts.isPropertyAccessExpression(expression) && expression.name.text === 'freeze') {
-        return ts.isIdentifier(expression.expression) && expression.expression.text === 'Object';
+    if (typescript.isPropertyAccessExpression(expression) && expression.name.text === 'freeze') {
+        return typescript.isIdentifier(expression.expression) && expression.expression.text === 'Object';
     }
 
-    return ts.isIdentifier(expression) && FREEZE_HELPERS.has(expression.text);
+    return typescript.isIdentifier(expression) && FREEZE_HELPERS.has(expression.text);
 };
 
-const bodyFreezes = (body: ts.Node | undefined): boolean => {
+const bodyFreezes = (body: typescript.Node | undefined): boolean => {
     if (body === undefined) {
         return false;
     }
 
     let found = false;
-    const visit = (node: ts.Node) => {
+    const visit = (node: typescript.Node) => {
         if (isFreezeCall(node)) {
             found = true;
 
             return;
         }
 
-        ts.forEachChild(node, visit);
+        typescript.forEachChild(node, visit);
     };
 
     visit(body);
@@ -425,25 +438,25 @@ const bodyFreezes = (body: ts.Node | undefined): boolean => {
     return found;
 };
 
-const freezeInitializer = (node: ts.VariableDeclaration): boolean =>
+const freezeInitializer = (node: typescript.VariableDeclaration): boolean =>
     node.initializer !== undefined && bodyFreezes(node.initializer);
 
-const symbolBody = (file: ts.SourceFile, symbol: string): ts.Node | undefined => {
-    let found: ts.Node | undefined;
-    const visit = (node: ts.Node) => {
+const symbolBody = (file: typescript.SourceFile, symbol: string): typescript.Node | undefined => {
+    let found: typescript.Node | undefined;
+    const visit = (node: typescript.Node) => {
         if (found !== undefined) {
             return;
         }
 
-        if (ts.isFunctionDeclaration(node) && node.name?.text === symbol) {
+        if (typescript.isFunctionDeclaration(node) && node.name?.text === symbol) {
             found = node;
 
             return;
         }
 
-        if (ts.isVariableStatement(node)) {
+        if (typescript.isVariableStatement(node)) {
             for (const declaration of node.declarationList.declarations) {
-                if (ts.isIdentifier(declaration.name) && declaration.name.text === symbol) {
+                if (typescript.isIdentifier(declaration.name) && declaration.name.text === symbol) {
                     found = declaration;
 
                     return;
@@ -451,13 +464,13 @@ const symbolBody = (file: ts.SourceFile, symbol: string): ts.Node | undefined =>
             }
         }
 
-        if (ts.isPropertyAssignment(node) && ts.isIdentifier(node.name) && node.name.text === symbol) {
+        if (typescript.isPropertyAssignment(node) && typescript.isIdentifier(node.name) && node.name.text === symbol) {
             found = node.initializer;
 
             return;
         }
 
-        ts.forEachChild(node, visit);
+        typescript.forEachChild(node, visit);
     };
 
     visit(file);
@@ -486,7 +499,7 @@ const freezeSiteProblems = () => {
 
         const freezes =
             (isFunctionLike(declaration) && bodyFreezes(declaration.body)) ||
-            (ts.isVariableDeclaration(declaration) && freezeInitializer(declaration)) ||
+            (typescript.isVariableDeclaration(declaration) && freezeInitializer(declaration)) ||
             bodyFreezes(declaration);
         if (!freezes) {
             problems.push(`does not freeze: ${site}`);
@@ -500,17 +513,17 @@ const readonlyMembers = () => {
     const found = new Map<string, string[]>();
     for (const path of productFiles) {
         const file = parse(path);
-        const visit = (node: ts.Node) => {
+        const visit = (node: typescript.Node) => {
             if (
-                (ts.isPropertySignature(node) || ts.isIndexSignatureDeclaration(node)) &&
-                node.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ReadonlyKeyword)
+                (typescript.isPropertySignature(node) || typescript.isIndexSignatureDeclaration(node)) &&
+                node.modifiers?.some((modifier) => modifier.kind === typescript.SyntaxKind.ReadonlyKeyword)
             ) {
                 const key = `${toKey(path)}#${memberOwner(node, file)}`;
                 const line = file.getLineAndCharacterOfPosition(node.getStart(file)).line + 1;
                 found.set(key, [...(found.get(key) ?? []), `${toKey(path)}:${line}`]);
             }
 
-            ts.forEachChild(node, visit);
+            typescript.forEachChild(node, visit);
         };
 
         visit(file);
@@ -553,10 +566,9 @@ const specReferenceSource = (path: string) => {
         return source;
     }
 
-    return source
-        .split('\n')
-        .filter((line) => !/(?:^\s*"decision":|\bdecision: 'DR-\d{3}')/.test(line))
-        .join('\n');
+    const lines = source.split('\n').filter((line) => !/(?:^\s*"decision":|\bdecision: 'DR-\d{3}')/.test(line));
+
+    return lines.join('\n');
 };
 
 const specReferenceCounts = () => {
@@ -583,34 +595,34 @@ const productModule = (key: string) => {
     return !segments.includes('__tests__') && !segments.includes('fixtures') && !key.endsWith('.stories.tsx');
 };
 
-const bindingNames = (name: ts.BindingName, names: string[]) => {
-    if (ts.isIdentifier(name)) {
+const bindingNames = (name: typescript.BindingName, names: string[]) => {
+    if (typescript.isIdentifier(name)) {
         names.push(name.text);
 
         return;
     }
 
     for (const element of name.elements) {
-        if (ts.isBindingElement(element)) {
+        if (typescript.isBindingElement(element)) {
             bindingNames(element.name, names);
         }
     }
 };
 
-const exportedModifier = (node: ts.Node) =>
-    ts.canHaveModifiers(node) &&
-    ts.getModifiers(node)?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword) === true;
+const exportedModifier = (node: typescript.Node) =>
+    typescript.canHaveModifiers(node) &&
+    typescript.getModifiers(node)?.some((modifier) => modifier.kind === typescript.SyntaxKind.ExportKeyword) === true;
 
-const declarationName = (statement: ts.Statement) => {
+const declarationName = (statement: typescript.Statement) => {
     if (
-        (ts.isFunctionDeclaration(statement) ||
-            ts.isClassDeclaration(statement) ||
-            ts.isInterfaceDeclaration(statement) ||
-            ts.isTypeAliasDeclaration(statement) ||
-            ts.isEnumDeclaration(statement) ||
-            ts.isModuleDeclaration(statement)) &&
+        (typescript.isFunctionDeclaration(statement) ||
+            typescript.isClassDeclaration(statement) ||
+            typescript.isInterfaceDeclaration(statement) ||
+            typescript.isTypeAliasDeclaration(statement) ||
+            typescript.isEnumDeclaration(statement) ||
+            typescript.isModuleDeclaration(statement)) &&
         statement.name !== undefined &&
-        ts.isIdentifier(statement.name)
+        typescript.isIdentifier(statement.name)
     ) {
         return statement.name.text;
     }
@@ -623,7 +635,7 @@ const exportedBindingsOf = (path: string) => {
     const exported = new Set<string>();
     const clause: { local: string; exported: string }[] = [];
     for (const statement of parse(path).statements) {
-        if (ts.isVariableStatement(statement)) {
+        if (typescript.isVariableStatement(statement)) {
             const isExport = exportedModifier(statement);
             for (const declaration of statement.declarationList.declarations) {
                 const names: string[] = [];
@@ -650,10 +662,10 @@ const exportedBindingsOf = (path: string) => {
         }
 
         if (
-            ts.isExportDeclaration(statement) &&
+            typescript.isExportDeclaration(statement) &&
             statement.moduleSpecifier === undefined &&
             statement.exportClause !== undefined &&
-            ts.isNamedExports(statement.exportClause)
+            typescript.isNamedExports(statement.exportClause)
         ) {
             for (const element of statement.exportClause.elements) {
                 clause.push({
@@ -700,13 +712,13 @@ const duplicateBindings = () => {
 
 const isPascalCase = (name: string | undefined): name is string => name !== undefined && /^[A-Z]/.test(name);
 
-const hocName = (call: ts.CallExpression) => {
+const hocName = (call: typescript.CallExpression) => {
     const expression = call.expression;
-    if (ts.isIdentifier(expression)) {
+    if (typescript.isIdentifier(expression)) {
         return expression.text;
     }
 
-    if (ts.isPropertyAccessExpression(expression) && ts.isIdentifier(expression.name)) {
+    if (typescript.isPropertyAccessExpression(expression) && typescript.isIdentifier(expression.name)) {
         return expression.name.text;
     }
 
@@ -715,39 +727,40 @@ const hocName = (call: ts.CallExpression) => {
 
 const isPropsHoc = (name: string | undefined) => name === 'memo' || name === 'forwardRef';
 
-const isNestedFunction = (node: ts.Node) =>
-    ts.isFunctionDeclaration(node) ||
-    ts.isFunctionExpression(node) ||
-    ts.isArrowFunction(node) ||
-    ts.isMethodDeclaration(node) ||
-    ts.isConstructorDeclaration(node) ||
-    ts.isGetAccessorDeclaration(node) ||
-    ts.isSetAccessorDeclaration(node) ||
-    ts.isClassDeclaration(node) ||
-    ts.isClassExpression(node);
+const isNestedFunction = (node: typescript.Node) =>
+    typescript.isFunctionDeclaration(node) ||
+    typescript.isFunctionExpression(node) ||
+    typescript.isArrowFunction(node) ||
+    typescript.isMethodDeclaration(node) ||
+    typescript.isConstructorDeclaration(node) ||
+    typescript.isGetAccessorDeclaration(node) ||
+    typescript.isSetAccessorDeclaration(node) ||
+    typescript.isClassDeclaration(node) ||
+    typescript.isClassExpression(node);
 
-const isJsx = (node: ts.Node) => ts.isJsxElement(node) || ts.isJsxSelfClosingElement(node) || ts.isJsxFragment(node);
+const isJsx = (node: typescript.Node) =>
+    typescript.isJsxElement(node) || typescript.isJsxSelfClosingElement(node) || typescript.isJsxFragment(node);
 
-const isNullOutput = (node: ts.Expression): boolean => {
+const isNullOutput = (node: typescript.Expression): boolean => {
     let current = node;
-    while (ts.isParenthesizedExpression(current)) {
+    while (typescript.isParenthesizedExpression(current)) {
         current = current.expression;
     }
 
-    if (current.kind === ts.SyntaxKind.NullKeyword) {
+    if (current.kind === typescript.SyntaxKind.NullKeyword) {
         return true;
     }
 
-    if (ts.isConditionalExpression(current)) {
+    if (typescript.isConditionalExpression(current)) {
         return isNullOutput(current.whenTrue) && isNullOutput(current.whenFalse);
     }
 
     return false;
 };
 
-const expressionHasJsx = (expression: ts.Expression): boolean => {
+const expressionHasJsx = (expression: typescript.Expression): boolean => {
     let found = false;
-    const visit = (node: ts.Node) => {
+    const visit = (node: typescript.Node) => {
         if (found) {
             return;
         }
@@ -761,7 +774,9 @@ const expressionHasJsx = (expression: ts.Expression): boolean => {
         if (isNestedFunction(node)) {
             if (
                 node !== expression &&
-                (ts.isFunctionDeclaration(node) || ts.isFunctionExpression(node) || ts.isArrowFunction(node)) &&
+                (typescript.isFunctionDeclaration(node) ||
+                    typescript.isFunctionExpression(node) ||
+                    typescript.isArrowFunction(node)) &&
                 returnsJsx(node)
             ) {
                 found = true;
@@ -770,7 +785,7 @@ const expressionHasJsx = (expression: ts.Expression): boolean => {
             return;
         }
 
-        ts.forEachChild(node, visit);
+        typescript.forEachChild(node, visit);
     };
 
     visit(expression);
@@ -778,33 +793,35 @@ const expressionHasJsx = (expression: ts.Expression): boolean => {
     return found;
 };
 
-const returnsJsx = (fn: ts.FunctionDeclaration | ts.FunctionExpression | ts.ArrowFunction): boolean => {
-    const { body } = fn;
+const returnsJsx = (
+    functionNode: typescript.FunctionDeclaration | typescript.FunctionExpression | typescript.ArrowFunction,
+): boolean => {
+    const { body } = functionNode;
     if (body === undefined) {
         return false;
     }
 
-    if (!ts.isBlock(body)) {
+    if (!typescript.isBlock(body)) {
         return expressionHasJsx(body);
     }
 
     let found = false;
-    const visit = (node: ts.Node) => {
+    const visit = (node: typescript.Node) => {
         if (found) {
             return;
         }
 
-        if (node !== fn && isNestedFunction(node)) {
+        if (node !== functionNode && isNestedFunction(node)) {
             return;
         }
 
-        if (ts.isReturnStatement(node) && node.expression !== undefined && expressionHasJsx(node.expression)) {
+        if (typescript.isReturnStatement(node) && node.expression !== undefined && expressionHasJsx(node.expression)) {
             found = true;
 
             return;
         }
 
-        ts.forEachChild(node, visit);
+        typescript.forEachChild(node, visit);
     };
 
     visit(body);
@@ -813,28 +830,30 @@ const returnsJsx = (fn: ts.FunctionDeclaration | ts.FunctionExpression | ts.Arro
 };
 
 // A component may render nothing, so `return null` still names its props.
-const returnsOnlyNull = (fn: ts.FunctionDeclaration | ts.FunctionExpression | ts.ArrowFunction) => {
-    const { body } = fn;
+const returnsOnlyNull = (
+    functionNode: typescript.FunctionDeclaration | typescript.FunctionExpression | typescript.ArrowFunction,
+) => {
+    const { body } = functionNode;
     if (body === undefined) {
         return false;
     }
 
-    if (!ts.isBlock(body)) {
+    if (!typescript.isBlock(body)) {
         return isNullOutput(body);
     }
 
     let sawNull = false;
     let other = false;
-    const visit = (node: ts.Node) => {
+    const visit = (node: typescript.Node) => {
         if (other) {
             return;
         }
 
-        if (node !== fn && isNestedFunction(node)) {
+        if (node !== functionNode && isNestedFunction(node)) {
             return;
         }
 
-        if (ts.isReturnStatement(node)) {
+        if (typescript.isReturnStatement(node)) {
             if (node.expression !== undefined && isNullOutput(node.expression)) {
                 sawNull = true;
             } else {
@@ -844,7 +863,7 @@ const returnsOnlyNull = (fn: ts.FunctionDeclaration | ts.FunctionExpression | ts
             return;
         }
 
-        ts.forEachChild(node, visit);
+        typescript.forEachChild(node, visit);
     };
 
     visit(body);
@@ -852,26 +871,33 @@ const returnsOnlyNull = (fn: ts.FunctionDeclaration | ts.FunctionExpression | ts
     return sawNull && !other;
 };
 
-const locateComponent = (fn: ts.FunctionDeclaration | ts.FunctionExpression | ts.ArrowFunction) => {
-    if (ts.isFunctionDeclaration(fn)) {
-        return { name: fn.name !== undefined && ts.isIdentifier(fn.name) ? fn.name.text : undefined };
+const locateComponent = (
+    functionNode: typescript.FunctionDeclaration | typescript.FunctionExpression | typescript.ArrowFunction,
+) => {
+    if (typescript.isFunctionDeclaration(functionNode)) {
+        return {
+            name:
+                functionNode.name !== undefined && typescript.isIdentifier(functionNode.name)
+                    ? functionNode.name.text
+                    : undefined,
+        };
     }
 
-    let node: ts.Node = fn;
-    let parent = fn.parent;
+    let node: typescript.Node = functionNode;
+    let parent = functionNode.parent;
     while (parent !== undefined) {
         if (
-            ts.isParenthesizedExpression(parent) ||
-            ts.isAsExpression(parent) ||
-            ts.isSatisfiesExpression(parent) ||
-            ts.isNonNullExpression(parent)
+            typescript.isParenthesizedExpression(parent) ||
+            typescript.isAsExpression(parent) ||
+            typescript.isSatisfiesExpression(parent) ||
+            typescript.isNonNullExpression(parent)
         ) {
             node = parent;
             parent = parent.parent;
             continue;
         }
 
-        if (ts.isCallExpression(parent) && parent.arguments[0] === node && isPropsHoc(hocName(parent))) {
+        if (typescript.isCallExpression(parent) && parent.arguments[0] === node && isPropsHoc(hocName(parent))) {
             node = parent;
             parent = parent.parent;
             continue;
@@ -880,27 +906,31 @@ const locateComponent = (fn: ts.FunctionDeclaration | ts.FunctionExpression | ts
         break;
     }
 
-    if (ts.isVariableDeclaration(parent) && parent.initializer === node && ts.isIdentifier(parent.name)) {
+    if (
+        typescript.isVariableDeclaration(parent) &&
+        parent.initializer === node &&
+        typescript.isIdentifier(parent.name)
+    ) {
         return { name: parent.name.text };
     }
 
     return undefined;
 };
 
-const containsTypeLiteral = (node: ts.Node) => {
+const containsTypeLiteral = (node: typescript.Node) => {
     let found = false;
-    const visit = (current: ts.Node) => {
+    const visit = (current: typescript.Node) => {
         if (found) {
             return;
         }
 
-        if (ts.isTypeLiteralNode(current)) {
+        if (typescript.isTypeLiteralNode(current)) {
             found = true;
 
             return;
         }
 
-        ts.forEachChild(current, visit);
+        typescript.forEachChild(current, visit);
     };
 
     visit(node);
@@ -908,10 +938,11 @@ const containsTypeLiteral = (node: ts.Node) => {
     return found;
 };
 
-const isNamedPropType = (type: ts.TypeNode) => ts.isTypeReferenceNode(type) && !containsTypeLiteral(type);
+const isNamedPropType = (type: typescript.TypeNode) =>
+    typescript.isTypeReferenceNode(type) && !containsTypeLiteral(type);
 
 // The props type argument of `forwardRef<Element, Props>` and `memo<Props>`, wherever the component comes from.
-const hocPropType = (call: ts.CallExpression) => {
+const hocPropType = (call: typescript.CallExpression) => {
     const name = hocName(call);
     if (name === 'forwardRef') {
         return call.typeArguments?.[1];
@@ -927,14 +958,14 @@ const hocPropType = (call: ts.CallExpression) => {
 const COMPONENT_CLASSES = new Set(['Component', 'PureComponent']);
 
 // The props type argument of a class that extends `Component<Props>` or `PureComponent<Props>`.
-const classPropType = (node: ts.ClassLikeDeclaration) => {
+const classPropType = (node: typescript.ClassLikeDeclaration) => {
     for (const clause of node.heritageClauses ?? []) {
         for (const base of clause.types) {
             const { expression } = base;
             let name: string | undefined;
-            if (ts.isIdentifier(expression)) {
+            if (typescript.isIdentifier(expression)) {
                 name = expression.text;
-            } else if (ts.isPropertyAccessExpression(expression)) {
+            } else if (typescript.isPropertyAccessExpression(expression)) {
                 name = expression.name.text;
             }
 
@@ -947,13 +978,13 @@ const classPropType = (node: ts.ClassLikeDeclaration) => {
     return undefined;
 };
 
-const declaredName = (node: ts.Node): string => {
-    let current: ts.Node | undefined = node.parent;
-    while (current !== undefined && !ts.isVariableDeclaration(current) && !ts.isSourceFile(current)) {
+const declaredName = (node: typescript.Node): string => {
+    let current: typescript.Node | undefined = node.parent;
+    while (current !== undefined && !typescript.isVariableDeclaration(current) && !typescript.isSourceFile(current)) {
         current = current.parent;
     }
 
-    if (current !== undefined && ts.isVariableDeclaration(current) && ts.isIdentifier(current.name)) {
+    if (current !== undefined && typescript.isVariableDeclaration(current) && typescript.isIdentifier(current.name)) {
         return current.name.text;
     }
 
@@ -968,13 +999,17 @@ const componentsWithInlineProps = () => {
         }
 
         const file = parse(path);
-        const report = (node: ts.Node, name: string) => {
+        const report = (node: typescript.Node, name: string) => {
             const line = file.getLineAndCharacterOfPosition(node.getStart(file)).line + 1;
             found.push(`${toKey(path)}:${line} ${name}`);
         };
 
-        const visit = (node: ts.Node) => {
-            if (ts.isFunctionDeclaration(node) || ts.isFunctionExpression(node) || ts.isArrowFunction(node)) {
+        const visit = (node: typescript.Node) => {
+            if (
+                typescript.isFunctionDeclaration(node) ||
+                typescript.isFunctionExpression(node) ||
+                typescript.isArrowFunction(node)
+            ) {
                 const located = locateComponent(node);
                 const props = node.parameters[0]?.type;
                 if (
@@ -988,21 +1023,21 @@ const componentsWithInlineProps = () => {
                 }
             }
 
-            if (ts.isCallExpression(node)) {
+            if (typescript.isCallExpression(node)) {
                 const props = hocPropType(node);
                 if (props !== undefined && !isNamedPropType(props)) {
                     report(node, declaredName(node));
                 }
             }
 
-            if (ts.isClassDeclaration(node) || ts.isClassExpression(node)) {
+            if (typescript.isClassDeclaration(node) || typescript.isClassExpression(node)) {
                 const props = classPropType(node);
                 if (props !== undefined && !isNamedPropType(props)) {
                     report(node, node.name?.text ?? declaredName(node));
                 }
             }
 
-            ts.forEachChild(node, visit);
+            typescript.forEachChild(node, visit);
         };
 
         visit(file);
@@ -1149,5 +1184,17 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
 
     it('no React component annotates its props with an inline object type', () => {
         expect(componentsWithInlineProps()).toEqual([]);
+    });
+
+    it('no destructured binding is shorter than three characters', () => {
+        expect(shortDestructuredBindings()).toEqual([]);
+    });
+
+    it('no spread takes a conditional', () => {
+        expect(conditionalSpreads()).toEqual([]);
+    });
+
+    it('no chain calls three or more array iterators', () => {
+        expect(longIteratorChains()).toEqual([]);
     });
 });

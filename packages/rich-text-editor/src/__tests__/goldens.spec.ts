@@ -57,11 +57,12 @@ const toolbarOf = (plugins: readonly EditorPart[]) =>
     );
 
 const handlerKeys = (plugins: readonly EditorPart[]) =>
-    plugins.flatMap(({ feature, keys }) =>
-        Object.entries(keys ?? {})
-            .filter(([, binding]) => typeof binding === 'function')
-            .map(([key]) => ({ plugin: feature, key, handler: true })),
-    );
+    plugins.flatMap(({ feature, keys }) => {
+        const entries = Object.entries(keys ?? {});
+        const handlers = entries.filter(([, binding]) => typeof binding === 'function');
+
+        return handlers.map(([key]) => ({ plugin: feature, key, handler: true }));
+    });
 
 describe('goldens', () => {
     it('pins each profile model: reference, capabilities and fingerprint, and the feature registry lookups', async () => {

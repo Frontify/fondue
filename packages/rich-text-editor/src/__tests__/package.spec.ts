@@ -8,7 +8,7 @@ import { dirname, join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import postcss from 'postcss';
-import ts from 'typescript';
+import typescript from 'typescript';
 import { build, type Rollup } from 'vite';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
@@ -87,8 +87,14 @@ const listFiles = (root: string, dir = root): string[] =>
         return [slash(relative(root, full))];
     });
 
-const packageNameOf = (specifier: string): string =>
-    specifier.startsWith('@') ? specifier.split('/').slice(0, 2).join('/') : (specifier.split('/')[0] ?? specifier);
+const packageNameOf = (specifier: string): string => {
+    const segments = specifier.split('/');
+    if (specifier.startsWith('@')) {
+        return segments.slice(0, 2).join('/');
+    }
+
+    return segments[0] ?? specifier;
+};
 
 const LOCALES = readdirSync(join(packageRoot, 'src/locales'))
     .filter((name) => /^[a-z]{2}-[A-Z]{2}\.ts$/.test(name))
@@ -263,11 +269,12 @@ describe('package manifest and built output', () => {
     // The `./html` entry always loaded the importer, so `runtime/import` is no editor code.
     const EDITOR_FILES = /^(?:runtime(?!\/(?:definition|import)\/)|bridge|react|ui)\//;
 
-    const bareName = (id: string): string =>
-        id
-            .split('/')
-            .slice(0, id.startsWith('@') ? 2 : 1)
-            .join('/');
+    const bareName = (id: string): string => {
+        const segments = id.split('/');
+        const scopeLength = id.startsWith('@') ? 2 : 1;
+
+        return segments.slice(0, scopeLength).join('/');
+    };
 
     const reachedImports = (entryFile: string) => {
         const seen = new Set<string>();
@@ -340,10 +347,10 @@ describe('package manifest and built output', () => {
             }
 
             seen.add(file);
-            const source = ts.createSourceFile(
+            const source = typescript.createSourceFile(
                 file,
                 readFileSync(join(outDir, file), 'utf8'),
-                ts.ScriptTarget.Latest,
+                typescript.ScriptTarget.Latest,
                 true,
             );
             const follow = (specifier: string) => {
@@ -356,28 +363,28 @@ describe('package manifest and built output', () => {
                 }
             };
 
-            const visit = (node: ts.Node) => {
-                if (node.kind === ts.SyntaxKind.AnyKeyword) {
+            const visit = (node: typescript.Node) => {
+                if (node.kind === typescript.SyntaxKind.AnyKeyword) {
                     faults.push(`${file} has any: ${node.parent.getText(source)}`);
                 }
 
                 if (
-                    (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
+                    (typescript.isImportDeclaration(node) || typescript.isExportDeclaration(node)) &&
                     node.moduleSpecifier !== undefined &&
-                    ts.isStringLiteral(node.moduleSpecifier)
+                    typescript.isStringLiteral(node.moduleSpecifier)
                 ) {
                     follow(node.moduleSpecifier.text);
                 }
 
                 if (
-                    ts.isImportTypeNode(node) &&
-                    ts.isLiteralTypeNode(node.argument) &&
-                    ts.isStringLiteral(node.argument.literal)
+                    typescript.isImportTypeNode(node) &&
+                    typescript.isLiteralTypeNode(node.argument) &&
+                    typescript.isStringLiteral(node.argument.literal)
                 ) {
                     follow(node.argument.literal.text);
                 }
 
-                ts.forEachChild(node, visit);
+                typescript.forEachChild(node, visit);
             };
 
             visit(source);

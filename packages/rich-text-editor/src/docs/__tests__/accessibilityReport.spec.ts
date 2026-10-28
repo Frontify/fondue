@@ -63,10 +63,8 @@ const rowsOf = (source: string): Row[] => {
             continue;
         }
 
-        const [criterion = '', level = '', remarks = ''] = line
-            .slice(1, -1)
-            .split('|')
-            .map((cell) => cell.trim());
+        const cells = line.slice(1, -1).split('|');
+        const [criterion = '', level = '', remarks = ''] = cells.map((cell) => cell.trim());
         rows.push({ criterion, level, remarks });
     }
 
