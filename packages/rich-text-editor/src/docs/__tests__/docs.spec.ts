@@ -74,27 +74,51 @@ describe('the package README', () => {
         }
     });
 
-    it('has one layer row per product folder under src, and names runtime as the only layer that holds the engine', () => {
-        const table = source.split(/^## Layers$/m)[1]?.split(/^## /m)[0] ?? '';
-        const rows = [...table.matchAll(/^\| `([^`]+)`\s+\|(.*)\|\s*$/gm)].map(([, folder, holds]) => ({
-            folder: folder ?? '',
-            holds: holds ?? '',
-        }));
-        const noProductCode = new Set(['__tests__', 'docs']);
-        const productFolders = readdirSync(join(PACKAGE, 'src'), { withFileTypes: true })
-            .filter((entry) => entry.isDirectory() && !noProductCode.has(entry.name))
-            .map((entry) => entry.name);
-
-        for (const folder of productFolders) {
-            expect(rows.filter((row) => row.folder === folder).length, folder).toBe(1);
+    it('names every top-level folder of src exactly once across the two Layers tables', () => {
+        const section = source.split(/^## Layers$/m)[1]?.split(/^## /m)[0] ?? '';
+        const tables: string[][] = [];
+        let current: string[] | undefined;
+        for (const line of section.split('\n')) {
+            if (line.startsWith('|')) {
+                current ??= [];
+                current.push(line);
+            } else if (current !== undefined) {
+                tables.push(current);
+                current = undefined;
+            }
         }
 
-        for (const { folder } of rows) {
-            expect(existsSync(join(PACKAGE, 'src', folder)), folder).toBe(true);
+        if (current !== undefined) {
+            tables.push(current);
         }
 
-        const engineRows = rows.filter((row) => row.holds.includes('the only layer that holds the engine'));
-        expect(engineRows.map((row) => row.folder)).toEqual(['runtime']);
+        const cellsOf = (line: string) =>
+            line
+                .split('|')
+                .slice(1, -1)
+                .map((cell) => cell.trim());
+        const separator = (cells: readonly string[]) => cells.every((cell) => /^:?-+:?$/.test(cell));
+        const foldersIn = (cell: string) => [...cell.matchAll(/`([^`]+)`/g)].map((match) => match[1] ?? '');
+        const listed = tables.flatMap((table, index) => {
+            const column = index === 0 ? 1 : 0;
+
+            return table.flatMap((line) => {
+                const cells = cellsOf(line);
+                if (separator(cells)) {
+                    return [];
+                }
+
+                return foldersIn(cells[column] ?? '');
+            });
+        });
+        const folders = readdirSync(join(PACKAGE, 'src'), { withFileTypes: true })
+            .filter((entry) => entry.isDirectory())
+            .map((entry) => entry.name)
+            .sort();
+
+        expect(tables).toHaveLength(2);
+        expect([...listed].sort()).toEqual(folders);
+        expect(new Set(listed).size).toBe(listed.length);
     });
 
     it('does not call the published package private or unreleased', () => {
@@ -218,9 +242,52 @@ describe('the observability guide', () => {
 
 describe('the authoring guide', () => {
     const source = page('authoring');
+    // Later sections. The pattern also matches the singular a reader would see.
+    const OPENING_CONCEPTS = [
+        'reader part',
+        'commands',
+        'keys',
+        'input rules',
+        'overlays',
+        'panels',
+        'decorations',
+        'suggestion lists',
+        'node views',
+        'file drops',
+        'facets',
+        'policies',
+        'profiles',
+        'migrations',
+    ] as const;
+
+    const conceptPattern = (concept: string) => {
+        const words = concept.split(' ');
+        const last = words.at(-1) ?? concept;
+        let token = `${last}s?`;
+        if (last.endsWith('ies')) {
+            token = `${last.slice(0, -3)}(?:y|ies)`;
+        } else if (last.endsWith('s')) {
+            token = `${last.slice(0, -1)}s?`;
+        }
+
+        words[words.length - 1] = token;
+
+        return new RegExp(`\\b${words.join(' ')}\\b`, 'i');
+    };
+
     const excerpts = [...source.matchAll(/Source: `([^`]+)`\n\n```(\w+)\n([\s\S]*?)\n```/g)].map(
         ([, path, language, code]) => ({ path: path ?? '', language: language ?? '', code: code ?? '' }),
     );
+
+    it('names none of the later concepts before the first complete plugin example', () => {
+        const example = source.indexOf('Source: `src/docs/authoring/highlight.ts`');
+        const opening = source.slice(0, example);
+
+        expect(example).toBeGreaterThan(0);
+        for (const concept of OPENING_CONCEPTS) {
+            expect(opening, concept).not.toMatch(conceptPattern(concept));
+        }
+    });
 
     it('shows each excerpt as it stands in the shipped feature it names', () => {
         expect(excerpts.length).toBeGreaterThan(0);

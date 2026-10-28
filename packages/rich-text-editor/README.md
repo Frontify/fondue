@@ -17,6 +17,15 @@ export const Notes = () => <RichTextEditor profile="document" aria-label="Notes"
 
 The editor is uncontrolled: it takes `defaultValue` once, and the host replaces the document with the handle's `replaceDocument`, saves through `services.persistence`, or reads the snapshot through the form-field hook. The guides in Storybook, under Rich Text Editor, Guides, cover each of these.
 
+When the host unmounts the editor, or remounts it with a new `key`, while changes are unsaved, the editor writes nothing; if it had already shown its document, it also emits `persistence.disposed-dirty`. Await the handle's `requestCommit` before a route change or a remount:
+
+```tsx
+const committed = await handle.requestCommit({ reason: 'navigate' });
+if (committed.status !== 'acknowledged') {
+    return;
+}
+```
+
 ## Guides
 
 | Guide | What it covers |
@@ -44,23 +53,29 @@ Then list the plugin in the two public barrels and in the profile lists that shi
 
 ## Layers
 
-Each product folder under `src` is one layer; lint keeps the imports between them in this order.
+Lint divides `src` into four rings. `oxlint.config.ts` holds the exact rules, and its messages say why each one exists.
 
-| Folder | Holds |
+| Ring | Folders | Holds | Import rule |
+| --- | --- | --- | --- |
+| content | `model`, `codecs`, `reader` | The stored format, its HTML, Markdown and text output, and static rendering | Server-safe: no editor code and no ProseMirror |
+| plugins | `plugins` | One folder per plugin: its feature, editor part, optional reader part and `index` | A feature imports only `#/model`, its own migration and a declared dependency's feature; an editor part reaches the editor only through the plugin API |
+| engine | `runtime`, `persistence` | The editing session and the save coordinator | `runtime` is the only product code that imports ProseMirror |
+| shell | `bridge`, `ui`, `react` | The plugin API, the toolbar and menus, and `RichTextEditor` with the shipped profiles | Never ProseMirror. `ui` reaches the runtime only through `#/runtime/port`, `#/runtime/definition` and `#/runtime/import/fromHtml`; `react` through `#/runtime/port`, `#/runtime/definition` and `#/runtime/import`, plus `#/runtime/assembly` in the two files that build the engine |
+
+| Folder | Holds and imports |
 | --- | --- |
-| `model` | The stored format: documents, the content model, validation, migrations, limits and content checks |
-| `plugins` | One folder per plugin: its vocabulary part (`feature.ts`), editor part (`editor.ts`), optional reader part and its plugin (`index.ts`) |
-| `runtime` | The editing session: state, commands, the editor API, uploads, suggestions and history; the engine definition in `runtime/definition`, which compiles a content model and editor parts into the engine's schema, keymaps and input rules; the HTML and paste import in `runtime/import`; the only layer that holds the engine |
-| `persistence` | The save coordinator |
-| `bridge` | The plugin API and the React adapter for node views, chrome and overlays |
-| `ui` | Toolbar, menus and suggestion lists |
-| `react` | `RichTextEditor`, its parts, hooks and the shipped profiles |
-| `reader` | Static rendering of stored documents |
-| `codecs` | HTML, Markdown and plain text export, and Markdown import |
-| `entries` | The reader and authoring entry modules and the shipped feature readers |
-| `locales` | One message catalogue per shipped locale |
-| `styles` | The package stylesheet and its shared style helpers |
-| `testing` | The feature contract suite, fake services and input helpers |
+| `entries` | The public entry modules; the reader entries import reader code only |
+| `locales` | One string table per shipped locale, which also loads each plugin's strings for that locale; no other layer's code |
+| `styles` | The stylesheet and its helpers; imports nothing in the package |
+| `testing` | The contract suite, fake services and input helpers; the contract suite also imports React and the engine compile path |
+| `docs` | The Storybook guides; a guide imports the package only through its public entries |
+| `__tests__` | Package-wide tests, which the layer rules above do not cover; they import `#/model` or `#/model/internal`, never a model file |
+
+A shipped plugin splits into `feature.ts`, `editor.ts` (or `editor.tsx`) and `index.ts`, plus an optional reader part, so server code loads its vocabulary without editor code. For the same reason, its feature and its plugin are listed separately: the feature in the features barrel and in each shipping profile's feature list, the plugin in the root entry and in that profile's plugin list.
+
+`#/model` is the public model entry, and `#/model/internal` is the model's barrel for the package's own layers and is never exported.
+
+The root entry exports the command and persistence types beside the component because the handle's signatures name them.
 
 ## Codecs and blocked documents
 

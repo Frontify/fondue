@@ -153,7 +153,7 @@ export type AssetPickerService = {
 };
 /** The services a host gives the editor, such as persistence, recovery, references and uploads. */
 export type EditorServices = {
-    /** Loads and saves the document. */
+    /** Loads and saves the document. Unmounting the editor with unsaved changes writes nothing: await `requestCommit` first. */
     persistence?: PersistenceService;
     /** Stores and offers a draft to recover. */
     recovery?: RecoveryService;
@@ -207,7 +207,11 @@ export type EditorHandle<C extends object = ShippedCommands> = {
     captureTarget(options: CaptureTargetOptions): CaptureResult;
     /** Frees a target from `captureTarget`. */
     releaseTarget(target: SelectionHandle): void;
-    /** Flushes pending changes and resolves once they are committed. */
+    /**
+     * Asks for pending changes to be saved and resolves with the outcome; only `acknowledged` means they were. Await it
+     * before unmounting the editor or remounting it with a new `key`: with changes still unsaved, that writes nothing
+     * and, once the editor has shown its document, emits `persistence.disposed-dirty`.
+     */
     requestCommit(options: CommitOptions): Promise<CommitResult>;
     /** Swaps in a new document, which ends this session and starts another. */
     replaceDocument(request: ReplaceDocumentRequest): Promise<ReplaceResult>;

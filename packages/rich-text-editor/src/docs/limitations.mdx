@@ -25,6 +25,19 @@ The docs, the stories and the locale files mention some features that no shipped
 - The typography input rules, such as smart quotes and the arrow `->`, are off: the `input-rules` feature turns a rule group on only when its `typography` option lists it.
 - The Markdown shortcuts of each feature stay on in every profile that installs the feature, such as `**` for bold and `## ` for a heading.
 
+## Unsaved changes on unmount
+
+When the host unmounts the editor, or remounts it with a new `key`, while changes are unsaved, the editor writes nothing; if it had already shown its document, it also emits `persistence.disposed-dirty`. Await the handle's `requestCommit` before a route change or a remount, and continue only when it is acknowledged:
+
+```tsx
+const committed = await handle.requestCommit({ reason: 'navigate' });
+if (committed.status !== 'acknowledged') {
+    return;
+}
+```
+
+The Switching documents story does this, then mounts the editor again with a new `key`.
+
 ## What this means for a host
 
 - `featuresById` throws `DefinitionError` with the code `definition.unknown-feature` for each of these IDs. No profile list holds them, and the registry has no factory for them.

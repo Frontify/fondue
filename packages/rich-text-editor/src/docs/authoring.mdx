@@ -6,15 +6,11 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Feature authoring
 
-A feature has up to three parts. The vocabulary part says what a feature stores and how that content becomes HTML, Markdown and text. The editor part says what the editor does with it: commands, keys, input rules, toolbar entries, overlays, panels, decorations, suggestion lists, node views and file drops. The reader part renders a node or mark with your own component. A plugin is the whole plugin: the feature, its editor part and its reader part, which a host lists once.
-
-The reader, the codecs and a server load only the vocabulary part. They never load editor code. Keep a feature's vocabulary in its own module, and import editor code only in the module that calls `defineEditorPart`.
-
-Every example on this page is an excerpt of a shipped feature or of an example module under `src/docs/authoring`, and the `Source` line names its file. A test checks that each excerpt is still in that file. The `Rich Text Editor/Authoring` stories mount four of them as a host does: the `marks.strike` plugin, the one-file highlight mark, a host block with a node view, and a host plugin that replaces a shipped toolbar entry.
+A feature says what the content stores. An editor part says what the editor does with it. A plugin joins the two for a host to list.
 
 ## Your first plugin: a mark in one file
 
-This is a whole plugin, a highlight mark, in one file. It declares the mark, binds a key, adds one input rule and one toolbar toggle, and builds the plugin. It imports `defineFeature` from `@frontify/fondue-rich-text-editor/model` and the other three names from `@frontify/fondue-rich-text-editor/authoring`.
+This is a whole plugin, a highlight mark, in one file. It imports `defineFeature` from `@frontify/fondue-rich-text-editor/model` and the other three names from `@frontify/fondue-rich-text-editor/authoring`.
 
 Source: `src/docs/authoring/highlight.ts`
 
@@ -50,9 +46,15 @@ export const highlightPlugin = definePlugin({
 });
 ```
 
+It declares the mark, binds a key, adds one input rule and one toolbar toggle, and builds the plugin.
+
+Every example on this page is an excerpt of a shipped feature or of an example module under `src/docs/authoring`, and the `Source` line names its file. A test checks that each excerpt is still in that file. The `Rich Text Editor/Authoring` stories mount four of them as a host does: the `marks.strike` plugin, the one-file highlight mark, a host block with a node view, and a host plugin that replaces a shipped toolbar entry.
+
 A host adds it to the list it gives `defineEditor`, as in `plugins: [corePlugin(), highlightPlugin()]`, and passes the same list to `modelOf`. The toolbar entry names a string key, `RichTextEditor_highlight`. A host plugin cannot add to the package strings, so the host's `locale` prop holds that key: the `enUS` strings plus `RichTextEditor_highlight: 'Highlight'`. This is all a toggle mark needs. The sections below cover the rest, when a plugin needs it: nodes, attributes, overlays, readers and migrations.
 
 ## A feature folder
+
+When a server reads the content, it loads the vocabulary part and not the editor part. The reader and the codecs do the same. Keep a feature's vocabulary in its own module, and import editor code only in the module that calls `defineEditorPart`.
 
 A custom feature is a folder, as each shipped feature is. It holds these files:
 
@@ -61,7 +63,7 @@ A custom feature is a folder, as each shipped feature is. It holds these files:
 - `reader.tsx`, optional: the renderers of the feature's nodes and marks. Add it only when the feature needs your own components to read.
 - `index.ts`: `definePlugin({ feature, editor, reader? })`, which builds the plugin. A host lists this plugin and nothing else of the folder.
 
-A shipped feature keeps three files, `feature.ts` (server-safe), `editor.ts` and `index.ts`, because server code imports its vocabulary without editor code. A host plugin that no server reads can keep everything in one file, as the callout does.
+A shipped feature keeps three files, `feature.ts` (server-safe), `editor.ts` (or `editor.tsx`) and `index.ts`, because server code imports its vocabulary without editor code. A host plugin that no server reads can keep everything in one file, as the callout does.
 
 The folder keeps the vocabulary apart from the editor code, so the reader, the codecs and a server import `feature.ts` and never `editor.ts`. A shipped feature with a reader passes it too, as `definePlugin({ feature: link, editor: linksEditor, reader: linkReader })` does in `src/plugins/Link/index.ts`.
 
@@ -95,7 +97,6 @@ A feature declares:
 - `id` and `version`. A document records both in `requiredCapabilities`. Raise `version` when the stored shape of the feature's content changes.
 - `requires`: the capabilities that must be installed at exactly these versions. A feature that builds on the document and the paragraph requires `core`.
 - `nodes`, `marks`, `attributes`, `options`, `formats` and `parseRules`, as the examples below show.
-- `codecs` and `migrations`. No shipped feature uses them yet, so this page has no excerpt for them. Their types are `CodecOverrides` and `CapabilityMigration`.
 
 ### Nodes
 
@@ -208,6 +209,10 @@ parseRules: [
 ],
 ```
 
+## When the stored shape of a feature changes
+
+When the stored shape of a feature changes, `migrations` on `defineFeature` describes the step. No shipped feature uses `codecs` or `migrations` yet, so this page has no excerpt for them. Their types are `CodecOverrides` and `CapabilityMigration`.
+
 ## The editor part: `defineEditorPart`
 
 `defineEditorPart` comes from `@frontify/fondue-rich-text-editor/authoring`. It takes a feature, or a factory, and the parts of its editor side. `parts` may also be a function of the feature's resolved options.
@@ -224,9 +229,15 @@ const definition = defineEditor({ id: 'acme.notes', model, plugins });
 
 A host plugin for a feature comes from `definePlugin` for a feature of the host, or from `extendPlugin` for a shipped one: `extendPlugin(plugin, parts)` puts `parts` over the plugin's editor part, and the list you give, such as `toolbar`, replaces the plugin's list whole.
 
+### When a host uses a shipped profile
+
+When a host uses a shipped profile, the editor loads that profile's plugins and the host passes no plugin list. The profiles are `inline`, `comment`, `document` and `brand-document`. A plugin you write is not in those lists: pass it to `defineEditor` with the plugins it requires, as `plugins: [corePlugin(), highlightPlugin()]` does in the first example.
+
 An editor part acts only through `EditorApi`, which its commands, key handlers, suggestion lists and file intake receive. It never touches ProseMirror types.
 
-The API has facets, the members that are objects of functions: `marks`, `blocks`, `attributes`, `insert`, `lists`, `content`, `commands`, `history`, `targets`, `uploads`, `nodeState`, `services`, `overlays` and `panels`. A part names the facets its functions read in `needs`, and the API its functions receive holds those facets and the plain members, such as `selection()` and `select`. A facet missing from `needs` is a type error, and in development it throws an error that names the feature and the facet. Pass `needs` first in the part, and annotate `options` as `JsonObject` when `parts` is a function, so the facets reach the functions below it. Overlay and panel components read the whole API with `useEditorApi`.
+### When a command needs the document API
+
+When a command needs the document API, its editor part names the facets its functions read in `needs`. The facets are the members that are objects of functions: `marks`, `blocks`, `attributes`, `insert`, `lists`, `content`, `commands`, `history`, `targets`, `uploads`, `nodeState`, `services`, `overlays` and `panels`. The API its functions receive holds those facets and the plain members, such as `selection()` and `select`. A facet missing from `needs` is a type error, and in development it throws an error that names the feature and the facet. Pass `needs` first in the part, and annotate `options` as `JsonObject` when `parts` is a function, so the facets reach the functions below it. Overlay and panel components read the whole API with `useEditorApi`.
 
 ### Commands, keys, input rules and toolbar entries
 
@@ -256,9 +267,13 @@ Source: `src/docs/authoring/strong.ts`
 label: { 'en-US': 'Strong' },
 ```
 
+### When your plugin adds a toolbar button
+
+When your plugin adds a toolbar button and the presentation sets no `toolbar`, `group` places the entry. The groups are `history`, `text`, `marks`, `color`, `link`, `lists`, `align`, `insert` and `panels`, in that order. The `text` group becomes the text style control, whose rows are fixed: Normal text, the headings, Quote and Code block, then, when `styles.brand` is installed, the default style and each brand style of the presentation that is not deprecated and fits the block at the selection, a paragraph or a heading; another command in `text` gets no button. In every other group, entries with a `rank` come first, lowest rank first. Ties and unranked entries keep the order of the plugin list, and within one plugin the order of its `toolbar` array. An entry with no `group` stays off that toolbar, and so does the entry of a feature the authoring policy does not let authors create.
+
 ### Commands with a payload
 
-A command declares its payload as data. The package derives the payload's type and checks every call against it. `refuses` rejects a call that the authoring policy forbids, before applicability, and keeps that payload out of the toolbar.
+When a command must follow the authoring policy, `refuses` rejects a call the policy forbids, before applicability, and keeps that payload out of the toolbar. A command declares its payload as data. The package derives the payload's type and checks every call against it.
 
 Source: `src/plugins/Heading/editor.ts`
 
@@ -284,7 +299,7 @@ blockRule({ id: 'list.task.brackets', match: /^\[(?:(?<checked>x)| )?\] $/, comm
 
 ### Opening an overlay
 
-`api.overlays.open` opens a component next to the selection, or next to another anchor, such as a link. A command opens a dialog or popover this way, and the toolbar entry sets `opensOverlay: true`.
+When a command opens a dialog or popover next to the selection, `api.overlays.open` opens a component there, or next to another anchor, such as a link. The toolbar entry sets `opensOverlay: true`.
 
 Source: `src/plugins/Mention/editor.ts`
 
@@ -306,7 +321,7 @@ Source: `src/plugins/Mention/editor.ts`
 
 ### Standing overlays
 
-`overlays` lists components that the editor keeps mounted and that decide for themselves when to show, such as the bubble over a link at the caret.
+When an overlay stays mounted and decides for itself when to show, `overlays` lists it, such as the bubble over a link at the caret.
 
 Source: `src/plugins/Link/editor.tsx`
 
@@ -414,7 +429,7 @@ With `emptyBlock: true` in `rules`, the list opens only at the start of an empty
 
 ### Node views
 
-A node view is a React component around the editable content of a node. It reads its node through `useRichTextNodeView` and renders `NodeViewContent` where the content goes. The editor renders it again only when its node or the selection changes.
+When a node needs its own editing surface, a node view is a React component around its editable content. It reads its node through `useRichTextNodeView` and renders `NodeViewContent` where the content goes. The editor renders it again only when its node or the selection changes.
 
 Source: `src/plugins/CheckList/components/TaskCheckbox.tsx`
 
@@ -586,7 +601,7 @@ files: (api, files, at) => !api.selection().verbatim && api.uploads.begin(files,
 
 ## The reader part: `defineReaderFeature`
 
-`defineReaderFeature` comes from `@frontify/fondue-rich-text-editor/authoring`. It attaches a component to a node or mark that the feature declares. The reader calls it as a function, so pass a function component, not a `memo` or `forwardRef` object. A component that throws renders as a labelled fallback, reports `reader.override-failed` and does not stop the rest of the document.
+When the reader should render a node or mark with your own component, `defineReaderFeature` attaches that component to a node or mark the feature declares; any other name throws `definition.missing-reader`. It comes from `@frontify/fondue-rich-text-editor/authoring`. The reader calls the component as a function, so pass a function component, not a `memo` or `forwardRef` object. A component that throws renders as a labelled fallback, reports `reader.override-failed` and does not stop the rest of the document.
 
 Source: `src/plugins/Mention/reader.tsx`
 
