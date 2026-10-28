@@ -292,13 +292,13 @@ export type DocumentApi = {
 };
 
 /** Whether two ranges, or two absent ones, cover the same stretch. */
-export const sameRange = (a: EditorRange | undefined, b: EditorRange | undefined): boolean => {
-    if (a === undefined || b === undefined) {
-        return a === b;
+export const sameRange = (left: EditorRange | undefined, right: EditorRange | undefined): boolean => {
+    if (left === undefined || right === undefined) {
+        return left === right;
     }
 
-    const first = positionsOf(a);
-    const second = positionsOf(b);
+    const first = positionsOf(left);
+    const second = positionsOf(right);
 
     return first !== undefined && second !== undefined && first.from === second.from && first.to === second.to;
 };

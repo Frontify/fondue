@@ -77,9 +77,13 @@ const webp = (head: Uint8Array): ImageHeader | undefined => {
     }
 
     if (chunk === 'VP8L') {
-        const [b0 = 0, b1 = 0, b2 = 0, b3 = 0] = head.subarray(21, 25);
+        const [firstByte = 0, secondByte = 0, thirdByte = 0, fourthByte = 0] = head.subarray(21, 25);
 
-        return sized('image/webp', 1 + (b0 | ((b1 & 0x3f) << 8)), 1 + ((b1 >> 6) | (b2 << 2) | ((b3 & 0x0f) << 10)));
+        return sized(
+            'image/webp',
+            1 + (firstByte | ((secondByte & 0x3f) << 8)),
+            1 + ((secondByte >> 6) | (thirdByte << 2) | ((fourthByte & 0x0f) << 10)),
+        );
     }
 
     if (chunk === 'VP8X') {
@@ -208,10 +212,11 @@ const avif = async (blob: Blob, head: Uint8Array): Promise<ImageHeader | undefin
             }
 
             const values = await read(box.content, 12);
-            const [w, h] = [uint32BE(values, 4), uint32BE(values, 8)];
-            if (w * h > width * height) {
-                width = w;
-                height = h;
+            const boxWidth = uint32BE(values, 4);
+            const boxHeight = uint32BE(values, 8);
+            if (boxWidth * boxHeight > width * height) {
+                width = boxWidth;
+                height = boxHeight;
             }
         }
     }

@@ -152,7 +152,7 @@ export const start = (input: unknown, options: Start = {}) => {
         commands: new Map([...compiled.commands, ...Object.entries(commands)]),
     };
 
-    const runtime = createEditorRuntime({
+    const runtimeOptions: EditorRuntimeOptions = {
         definition,
         documentId: 'document-1',
         tree,
@@ -163,8 +163,12 @@ export const start = (input: unknown, options: Start = {}) => {
         limits: limitsOf(options.limits),
         uploads: () => options.uploads,
         saves: saves(model, options.persistence),
-        ...(options.pick === undefined ? {} : { pick: options.pick }),
-    });
+    };
+    if (options.pick !== undefined) {
+        runtimeOptions.pick = options.pick;
+    }
+
+    const runtime = createEditorRuntime(runtimeOptions);
     started.push(runtime);
     const changes: DocumentChange[] = [];
     runtime.handle.subscribe('documentChange', (change: DocumentChange) => changes.push(change));

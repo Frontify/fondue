@@ -9,11 +9,11 @@ import {
 } from '../types';
 
 /** Whether two stamps name the same document state: the same document, session, generation and sequence. */
-export const sameStamp = (a: DocumentStamp, b: DocumentStamp) =>
-    a.documentId === b.documentId &&
-    a.sessionId === b.sessionId &&
-    a.generation === b.generation &&
-    a.sequence === b.sequence;
+export const sameStamp = (first: DocumentStamp, second: DocumentStamp) =>
+    first.documentId === second.documentId &&
+    first.sessionId === second.sessionId &&
+    first.generation === second.generation &&
+    first.sequence === second.sequence;
 
 /** The save coordinator of a session whose host sets `services.persistence`, which `src/persistence` builds. */
 export type SaveCoordinator = {

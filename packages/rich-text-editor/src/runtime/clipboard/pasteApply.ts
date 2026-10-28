@@ -113,7 +113,7 @@ const insertable = (content: Fragment) => {
 
 /** One paste being written, and whether a single-line field has joined its blocks. */
 type PasteContext = {
-    tr: Transaction;
+    transaction: Transaction;
     from: number;
     to: number;
     payload: Payload;
@@ -146,7 +146,7 @@ const prepareForField = (context: PasteContext, slice: Slice): Slice => {
 };
 
 const insertPrepared = (context: PasteContext, slice: Slice) =>
-    insertAndSelect(context.tr, context.from, context.to, prepareForField(context, slice));
+    insertAndSelect(context.transaction, context.from, context.to, prepareForField(context, slice));
 
 /** A code block takes the text exactly. */
 const pasteCode = (context: PasteContext): PasteStep => {
@@ -158,7 +158,7 @@ const pasteCode = (context: PasteContext): PasteStep => {
         return { handled: true, pasted: undefined };
     }
 
-    context.tr.insertText(context.text, context.from, context.to);
+    context.transaction.insertText(context.text, context.from, context.to);
 
     return { handled: true, pasted: { droppedMedia: 0 } };
 };
@@ -173,7 +173,7 @@ const readInternal = (context: PasteContext): ReturnType<typeof readSlice> | und
     // An island's original stays unchanged, so one whose IDs or references cannot stay makes the slice fall back.
     if (
         internal === undefined ||
-        islandsCannotStay(internal.slice, context.tr.doc, internal.context !== context.settings.context)
+        islandsCannotStay(internal.slice, context.transaction.doc, internal.context !== context.settings.context)
     ) {
         return undefined;
     }
@@ -183,7 +183,7 @@ const readInternal = (context: PasteContext): ReturnType<typeof readSlice> | und
 
 /** A URL links the selected text, or a caret paste with no usable slice inserts it linked as a second step. */
 const pasteLink = (context: PasteContext): PasteStep => {
-    const { schema, settings, text, $from, tr, from, to, internal } = context;
+    const { schema, settings, text, $from, transaction, from, to, internal } = context;
     const href = hrefOf(text, markHrefPolicy(settings.model, 'link'));
     const link = schema.marks.link;
     const linksAllowed =
@@ -193,8 +193,8 @@ const pasteLink = (context: PasteContext): PasteStep => {
     }
 
     const mark = link.create({ href });
-    if (from < to && $from.sameParent(tr.doc.resolve(to)) && $from.parent.inlineContent) {
-        tr.addMark(from, to, mark);
+    if (from < to && $from.sameParent(transaction.doc.resolve(to)) && $from.parent.inlineContent) {
+        transaction.addMark(from, to, mark);
 
         return { handled: true, pasted: { droppedMedia: 0 } };
     }
@@ -265,13 +265,13 @@ const pasteHtml = (context: PasteContext): PasteStep => {
 
 /** Plain text, which Markdown structure converts in a second step. */
 const pastePlain = (context: PasteContext): Pasted | undefined => {
-    const { text, settings, schema, tr, from, to, $from } = context;
+    const { text, settings, schema, transaction, from, to, $from } = context;
     if (text === '') {
         return undefined;
     }
 
-    const before = tr.doc;
-    const start = tr.steps.length;
+    const before = transaction.doc;
+    const start = transaction.steps.length;
     insertPrepared(context, plainSlice(schema, text, $from.marks()));
     let converted: Slice | undefined;
     if (!settings.plain) {
@@ -289,8 +289,8 @@ const pastePlain = (context: PasteContext): Pasted | undefined => {
     const range = insertSlice(target, from, to, prepareForField(context, converted));
     const followUp: FollowUp = (state) => {
         const next = state.tr;
-        for (let index = tr.steps.length - 1; index >= start; index -= 1) {
-            next.step((tr.steps[index] as Step).invert(tr.docs[index] as Node));
+        for (let index = transaction.steps.length - 1; index >= start; index -= 1) {
+            next.step((transaction.steps[index] as Step).invert(transaction.docs[index] as Node));
         }
 
         for (const step of target.steps) {
@@ -313,7 +313,7 @@ const pastePlain = (context: PasteContext): Pasted | undefined => {
  * bare URL, then HTML, then plain text, which Markdown structure converts in a second step.
  */
 export const pastePayload = (
-    tr: Transaction,
+    transaction: Transaction,
     from: number,
     to: number,
     payload: Payload,
@@ -321,14 +321,14 @@ export const pastePayload = (
 ): Pasted | undefined => {
     // A single-line field joins the pasted blocks into one paragraph, which the announcement reports.
     const context: PasteContext = {
-        tr,
+        transaction,
         from,
         to,
         payload,
         settings,
-        schema: tr.doc.type.schema,
+        schema: transaction.doc.type.schema,
         text: payload.text.replaceAll('\r\n', '\n'),
-        $from: tr.doc.resolve(from),
+        $from: transaction.doc.resolve(from),
         joined: false,
         internal: undefined,
     };

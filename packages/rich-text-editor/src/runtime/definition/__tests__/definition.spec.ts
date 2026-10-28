@@ -334,8 +334,8 @@ describe('compileDefinition of editor parts', () => {
             '/inputRules/0/command',
         ],
     ] as const)('rejects the %s registration for an undeclared mark or command', (_kind, parts, path) => {
-        const x = defineFeature({ id: 'a.x', version: 1 });
-        expect(failureOfParts([x()], [defineEditorPart(x, parts as EditorPartSpec)])).toEqual({
+        const feature = defineFeature({ id: 'a.x', version: 1 });
+        expect(failureOfParts([feature()], [defineEditorPart(feature, parts as EditorPartSpec)])).toEqual({
             code: 'definition.orphan-behavior',
             details: { feature: 'a.x', path },
         });

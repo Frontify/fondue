@@ -91,7 +91,7 @@ export type Step = {
     effects: readonly Effect[];
 };
 
-type Of<T extends SlotEvent['type']> = Extract<SlotEvent, { type: T }>;
+type SlotEventOf<EventType extends SlotEvent['type']> = Extract<SlotEvent, { type: EventType }>;
 
 /** A new slot, before its start is applied to the document. */
 export const fresh = (nodeId: string, kind: SlotState['kind'], checked: Checked): SlotState => ({
@@ -146,7 +146,9 @@ const failedWith = (state: SlotState, release: boolean, report: boolean, reply?:
     );
 
 /** The transition table: what each event does to a slot in any phase. */
-const TRANSITIONS: { readonly [T in SlotEvent['type']]: (state: SlotState, event: Of<T>) => Step } = {
+const TRANSITIONS: {
+    readonly [EventType in SlotEvent['type']]: (state: SlotState, event: SlotEventOf<EventType>) => Step;
+} = {
     send: (state, { announce, service }) => {
         if (!service || state.file === undefined) {
             return halt(state);

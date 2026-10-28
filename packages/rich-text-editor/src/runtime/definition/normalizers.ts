@@ -53,10 +53,10 @@ type Holder = {
 };
 
 /** A normalizer, with the plugin key and state it keeps between transactions. */
-export type NormalizerPlugin<T> = {
+export type NormalizerPlugin<PluginState> = {
     normalize: Normalizer;
-    key: PluginKey<T>;
-    field: StateField<T>;
+    key: PluginKey<PluginState>;
+    field: StateField<PluginState>;
 };
 
 /** The nodes of `doc` that start at `positions`, read in one walk. */
@@ -393,7 +393,7 @@ const fillNodeIds: Normalizer = (state, generateId) => {
 
     const drawn = new Set<string>();
     const ids: (readonly [number, string])[] = [];
-    for (const pos of [...repairs].sort((a, b) => a - b)) {
+    for (const pos of [...repairs].sort((earlier, later) => earlier - later)) {
         let nodeId = generateId();
         // A drawn ID that another node already holds would take that node's ID from it.
         while (index.counts.has(nodeId) || drawn.has(nodeId)) {

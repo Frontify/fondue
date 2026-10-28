@@ -79,7 +79,7 @@ export const createLimitCheck = (model: ContentModel, stored: readonly Capabilit
             content = [];
         }
 
-        const tree: { -readonly [K in keyof TreeNode]: TreeNode[K] } = {
+        const tree: { -readonly [Key in keyof TreeNode]: TreeNode[Key] } = {
             type: name,
             attrs: node.attrs,
             marks: node.marks.map(({ type, attrs }) => ({ type: type.name, attrs })),

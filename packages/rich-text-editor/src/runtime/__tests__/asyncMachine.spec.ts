@@ -45,9 +45,9 @@ const operationOf = (id: string, extra: Partial<AsyncOperation> = {}): AsyncOper
 });
 
 const POOL = { name: 'p', limit: 1 };
-const A = operationOf('a');
-const B = operationOf('b');
-const N = operationOf('n', { key: 'other' });
+const primaryOperation = operationOf('a');
+const secondaryOperation = operationOf('b');
+const otherOperation = operationOf('n', { key: 'other' });
 const LONE = operationOf('lone', { target: null, deliver: () => undefined });
 const UNREADY = operationOf('unready', { target: null });
 const STRANGER = operationOf('stranger');
@@ -61,38 +61,38 @@ const copyOf = (partial: Partial<Record<keyof AsyncMachine, unknown>>): AsyncMac
 });
 
 /** One machine per state, each as the transport would leave it. */
-const IN: Record<string, AsyncMachine> = {
+const machines: Record<string, AsyncMachine> = {
     empty: initial(),
-    running: copyOf({ operations: new Map([['a', A]]), requests: new Map([['k', 1]]) }),
+    running: copyOf({ operations: new Map([['a', primaryOperation]]), requests: new Map([['k', 1]]) }),
     owned: copyOf({
-        operations: new Map([['a', A]]),
+        operations: new Map([['a', primaryOperation]]),
         requests: new Map([['k', 1]]),
-        captured: new Set([A]),
+        captured: new Set([primaryOperation]),
     }),
     pooled: copyOf({
         operations: new Map([
-            ['a', A],
-            ['b', B],
+            ['a', primaryOperation],
+            ['b', secondaryOperation],
         ]),
         requests: new Map([['k', 2]]),
-        running: new Map([['p', new Set([A])]]),
-        waiting: new Map([['p', [{ operation: B, request: REQUEST_B }]]]),
+        running: new Map([['p', new Set([primaryOperation])]]),
+        waiting: new Map([['p', [{ operation: secondaryOperation, request: REQUEST_B }]]]),
         pools: new Map([
-            [A, POOL],
-            [B, POOL],
+            [primaryOperation, POOL],
+            [secondaryOperation, POOL],
         ]),
     }),
     room: copyOf({
-        operations: new Map([['b', B]]),
+        operations: new Map([['b', secondaryOperation]]),
         requests: new Map([['k', 2]]),
         running: new Map([['p', new Set()]]),
-        waiting: new Map([['p', [{ operation: B, request: REQUEST_B }]]]),
-        pools: new Map([[B, POOL]]),
+        waiting: new Map([['p', [{ operation: secondaryOperation, request: REQUEST_B }]]]),
+        pools: new Map([[secondaryOperation, POOL]]),
     }),
     held: copyOf({
-        operations: new Map([['a', A]]),
+        operations: new Map([['a', primaryOperation]]),
         requests: new Map([['k', 1]]),
-        held: [{ operation: A, result: 'late' }],
+        held: [{ operation: primaryOperation, result: 'late' }],
     }),
 };
 
@@ -107,17 +107,17 @@ const EVENTS: Record<string, { event: AsyncEventInput; facts?: Partial<AsyncFact
         event: { type: 'start', request: requestOf('k', { target: HANDLE }), reply },
         facts: { disposed: true },
     },
-    'built ready': { event: { type: 'built', operation: N, request: REQUEST_A, owned: false } },
+    'built ready': { event: { type: 'built', operation: otherOperation, request: REQUEST_A, owned: false } },
     'built delivering': { event: { type: 'built', operation: LONE, request: REQUEST_A, owned: false } },
     'built not ready': { event: { type: 'built', operation: UNREADY, request: REQUEST_A, owned: false } },
     'built disposed': {
-        event: { type: 'built', operation: N, request: REQUEST_A, owned: false },
+        event: { type: 'built', operation: otherOperation, request: REQUEST_A, owned: false },
         facts: { disposed: true },
     },
-    admit: { event: { type: 'admit', operation: N, request: REQUEST_A, owned: false } },
-    'admit owned': { event: { type: 'admit', operation: N, request: REQUEST_A, owned: true } },
+    admit: { event: { type: 'admit', operation: otherOperation, request: REQUEST_A, owned: false } },
+    'admit owned': { event: { type: 'admit', operation: otherOperation, request: REQUEST_A, owned: true } },
     'admit pooled': {
-        event: { type: 'admit', operation: N, request: requestOf('other', { pool: POOL }), owned: false },
+        event: { type: 'admit', operation: otherOperation, request: requestOf('other', { pool: POOL }), owned: false },
     },
     'abortWhere key': { event: { type: 'abortWhere', aborts: (operation) => operation.key === 'k' } },
     'abortWhere none': { event: { type: 'abortWhere', aborts: () => false } },
@@ -126,17 +126,28 @@ const EVENTS: Record<string, { event: AsyncEventInput; facts?: Partial<AsyncFact
     pump: { event: { type: 'pump', name: 'p' } },
     'pump aborting': { event: { type: 'pump', name: 'p' }, facts: { aborting: true } },
     'pump disposed': { event: { type: 'pump', name: 'p' }, facts: { disposed: true } },
-    arrive: { event: { type: 'arrive', operation: A, result: 'ok' } },
-    'arrive disposed': { event: { type: 'arrive', operation: A, result: 'ok' }, facts: { disposed: true } },
+    arrive: { event: { type: 'arrive', operation: primaryOperation, result: 'ok' } },
+    'arrive disposed': {
+        event: { type: 'arrive', operation: primaryOperation, result: 'ok' },
+        facts: { disposed: true },
+    },
     'arrive from another generation': { event: { type: 'arrive', operation: OTHER_SESSION, result: 'ok' } },
-    'arrive faulted': { event: { type: 'arrive', operation: A, result: 'ok' }, facts: { faulted: true } },
-    'arrive holding': { event: { type: 'arrive', operation: A, result: 'ok' }, facts: { holding: true } },
+    'arrive faulted': {
+        event: { type: 'arrive', operation: primaryOperation, result: 'ok' },
+        facts: { faulted: true },
+    },
+    'arrive holding': {
+        event: { type: 'arrive', operation: primaryOperation, result: 'ok' },
+        facts: { holding: true },
+    },
     'arrive unregistered': { event: { type: 'arrive', operation: STRANGER, result: 'ok' } },
-    delivered: { event: { type: 'delivered', operation: A, code: undefined } },
-    'delivered with a code': { event: { type: 'delivered', operation: A, code: 'invalid-payload' } },
-    rejected: { event: { type: 'rejected', operation: A, request: REQUEST_A, error: 'boom', aborted: false } },
+    delivered: { event: { type: 'delivered', operation: primaryOperation, code: undefined } },
+    'delivered with a code': { event: { type: 'delivered', operation: primaryOperation, code: 'invalid-payload' } },
+    rejected: {
+        event: { type: 'rejected', operation: primaryOperation, request: REQUEST_A, error: 'boom', aborted: false },
+    },
     'rejected after abort': {
-        event: { type: 'rejected', operation: A, request: REQUEST_A, error: 'boom', aborted: true },
+        event: { type: 'rejected', operation: primaryOperation, request: REQUEST_A, error: 'boom', aborted: true },
     },
     'rejected unregistered': {
         event: { type: 'rejected', operation: STRANGER, request: REQUEST_A, error: 'boom', aborted: false },
@@ -169,16 +180,37 @@ const effectLabel = (effect: AsyncEffect) => {
 };
 
 const names = (map: ReadonlyMap<string, unknown>) => [...map.keys()].join(',');
-const summary = (state: AsyncMachine) =>
-    [
+const summary = (state: AsyncMachine) => {
+    const running: string[] = [];
+    for (const [name, busy] of state.running) {
+        const ids: string[] = [];
+        for (const operation of busy) {
+            ids.push(operation.id);
+        }
+
+        running.push(`${name}:${ids.join('+')}`);
+    }
+
+    const waiting: string[] = [];
+    for (const [name, queued] of state.waiting) {
+        const ids: string[] = [];
+        for (const entry of queued) {
+            ids.push(entry.operation.id);
+        }
+
+        waiting.push(`${name}:${ids.join('+')}`);
+    }
+
+    return [
         `ops=${names(state.operations)}`,
         `requests=${[...state.requests].map(([key, sequence]) => `${key}${sequence}`).join(',')}`,
         `held=${state.held.map((entry) => entry.operation.id).join(',')}`,
         `owned=${[...state.captured].map((operation) => operation.id).join(',')}`,
-        `running=${[...state.running].map(([name, busy]) => `${name}:${[...busy].map((o) => o.id).join('+')}`).join(',')}`,
-        `waiting=${[...state.waiting].map(([name, queued]) => `${name}:${queued.map((e) => e.operation.id).join('+')}`).join(',')}`,
+        `running=${running.join(',')}`,
+        `waiting=${waiting.join(',')}`,
         `pools=${[...state.pools.keys()].map((operation) => operation.id).join(',')}`,
     ].join(' ');
+};
 
 const run = (machine: AsyncMachine, name: string) => {
     const { event, facts } = EVENTS[name] ?? { event: { type: 'settle' } as const };
@@ -187,9 +219,9 @@ const run = (machine: AsyncMachine, name: string) => {
 };
 
 describe('async machine', () => {
-    describe.each(Object.keys(IN))('from the %s state', (state) => {
+    describe.each(Object.keys(machines))('from the %s state', (state) => {
         it.each(Object.keys(EVENTS))('on %s', (name) => {
-            const machine = IN[state] as AsyncMachine;
+            const machine = machines[state] as AsyncMachine;
             const before = summary(machine);
             const step = run(machine, name);
             const effects = step.effects.map(effectLabel).join(' ');
@@ -199,8 +231,8 @@ describe('async machine', () => {
     });
 
     it('covers every state against every event', () => {
-        expect(Object.keys(EXPECTED)).toEqual(Object.keys(IN));
-        for (const state of Object.keys(IN)) {
+        expect(Object.keys(EXPECTED)).toEqual(Object.keys(machines));
+        for (const state of Object.keys(machines)) {
             expect(Object.keys(EXPECTED[state] ?? {})).toEqual(Object.keys(EVENTS));
         }
     });

@@ -47,15 +47,15 @@ const setup = () => {
 describe('changed', () => {
     it('takes the new value and reports a change only when it differs', () => {
         const slot = { value: 1 };
-        expect(changed(slot, 1, (a, b) => a === b)).toBe(false);
-        expect(changed(slot, 2, (a, b) => a === b)).toBe(true);
+        expect(changed(slot, 1, (left, right) => left === right)).toBe(false);
+        expect(changed(slot, 2, (left, right) => left === right)).toBe(true);
         expect(slot.value).toBe(2);
     });
 
     it('keeps the old value when the comparison finds them equal', () => {
         const slot = { value: { n: 1 } };
         const first = slot.value;
-        expect(changed(slot, { n: 1 }, (a, b) => a.n === b.n)).toBe(false);
+        expect(changed(slot, { n: 1 }, (left, right) => left.n === right.n)).toBe(false);
         expect(slot.value).toBe(first);
     });
 });

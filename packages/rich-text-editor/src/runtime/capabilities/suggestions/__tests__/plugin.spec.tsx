@@ -66,16 +66,28 @@ type Mounted = ReturnType<typeof mountText>;
 const blocksOf = (handle: Mounted['handle']) => handle.getSnapshot().document.content.content ?? [];
 const textOf = (handle: Mounted['handle']) =>
     (blocksOf(handle)[0]?.content ?? []).map((node) => node.text ?? '').join('');
-const codeText = (handle: Mounted['handle']) =>
-    (blocksOf(handle)[0]?.content ?? [])
-        .filter((node) => node.marks?.some((mark) => mark.type === 'code'))
-        .map((node) => node.text ?? '')
-        .join('');
-const codeNode = (value: string): ContentNodeJSON => ({
-    type: 'code_block',
-    attrs: { languageId: null },
-    ...(value === '' ? {} : { content: [{ type: 'text', text: value }] }),
-});
+const codeText = (handle: Mounted['handle']) => {
+    const parts: string[] = [];
+    for (const node of blocksOf(handle)[0]?.content ?? []) {
+        if (node.marks?.some((mark) => mark.type === 'code')) {
+            parts.push(node.text ?? '');
+        }
+    }
+
+    return parts.join('');
+};
+
+const codeNode = (value: string): ContentNodeJSON => {
+    if (value === '') {
+        return { type: 'code_block', attrs: { languageId: null } };
+    }
+
+    return {
+        type: 'code_block',
+        attrs: { languageId: null },
+        content: [{ type: 'text', text: value }],
+    };
+};
 
 /** The list once its source has answered, which a fixed sleep would race. */
 const opened = async (view: Mounted['view']) => {

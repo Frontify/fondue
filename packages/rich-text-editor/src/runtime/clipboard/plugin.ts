@@ -181,8 +181,8 @@ const pasteFrom = (
         return;
     }
 
-    const { tr } = view.state;
-    const { from, to } = tr.selection;
+    const transaction = view.state.tr;
+    const { from, to } = transaction.selection;
     const plain = shiftHeld.get(view) === true;
     // The text flavors that come with files are left unread.
     if (files.length > 0 && offersFiles(model, view, payload, plain) && intake(view, files, 'paste', from, to)) {
@@ -190,9 +190,9 @@ const pasteFrom = (
     }
 
     const settings = settingsOf(model, view, connected, plain);
-    const pasted = attempt(connected, () => pastePayload(tr, from, to, payload, settings));
+    const pasted = attempt(connected, () => pastePayload(transaction, from, to, payload, settings));
     if (pasted !== null) {
-        commit(view, connected, tr.scrollIntoView(), pasted, 'paste');
+        commit(view, connected, transaction.scrollIntoView(), pasted, 'paste');
     }
 };
 
@@ -235,7 +235,7 @@ const drop = (model: ContentModel, intake: FileIntake, view: EditorView, event: 
     }
 
     event.preventDefault();
-    const { tr } = view.state;
+    const transaction = view.state.tr;
     let pasted: Pasted | null | undefined;
     const copying = copies(view, event);
     const payload = payloadOf(data);
@@ -246,12 +246,12 @@ const drop = (model: ContentModel, intake: FileIntake, view: EditorView, event: 
     }
 
     // A copy of an island whose `nodeId` is already here takes the dropped flavors instead, as a paste would.
-    if (dragged === undefined || (copying && islandsCannotStay(dragged, tr.doc, false))) {
+    if (dragged === undefined || (copying && islandsCannotStay(dragged, transaction.doc, false))) {
         // A drop from outside, or an inside copy that falls back, takes the paste order at the drop cursor's block boundary.
         let position = at.pos;
         // A single-line field takes the drop inside its one paragraph, never beside it.
         if (connected.session.singleLine !== true) {
-            position = dropPoint(tr.doc, at.pos, blockSlice(view)) ?? at.pos;
+            position = dropPoint(transaction.doc, at.pos, blockSlice(view)) ?? at.pos;
         }
 
         const files = [...data.files];
@@ -263,20 +263,20 @@ const drop = (model: ContentModel, intake: FileIntake, view: EditorView, event: 
         }
 
         const settings = settingsOf(model, view, connected, false);
-        pasted = attempt(connected, () => pastePayload(tr, position, position, payload, settings));
+        pasted = attempt(connected, () => pastePayload(transaction, position, position, payload, settings));
     } else {
         // A drag inside moves its content with the same `nodeId`s, or with the copy modifier inserts a copy.
         let slice = dragged;
-        const point = dropPoint(tr.doc, at.pos, slice) ?? at.pos;
+        const point = dropPoint(transaction.doc, at.pos, slice) ?? at.pos;
         // A move pastes nothing new, so the paste policy filters only a copy.
         if (copying) {
-            slice = prepareSlice(slice, tr.doc.type.schema, model, connected.runtime.policy.features);
+            slice = prepareSlice(slice, transaction.doc.type.schema, model, connected.runtime.policy.features);
         } else {
-            tr.deleteSelection();
+            transaction.deleteSelection();
         }
 
-        const position = tr.mapping.map(point);
-        insertAndSelect(tr, position, position, slice);
+        const position = transaction.mapping.map(point);
+        insertAndSelect(transaction, position, position, slice);
         pasted = { droppedMedia: 0 };
     }
 
@@ -285,7 +285,7 @@ const drop = (model: ContentModel, intake: FileIntake, view: EditorView, event: 
     }
 
     view.focus();
-    commit(view, connected, tr, pasted, 'drop');
+    commit(view, connected, transaction, pasted, 'drop');
 
     return true;
 };

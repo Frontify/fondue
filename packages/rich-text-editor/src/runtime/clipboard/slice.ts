@@ -37,7 +37,7 @@ const writeSliceNode = (vocabulary: Vocabulary, node: Node): unknown => {
         content = node.children.map((child) => writeSliceNode(vocabulary, child));
     }
 
-    const tree: { -readonly [K in keyof TreeNode]: TreeNode[K] } = { type, attrs: node.attrs };
+    const tree: { -readonly [Key in keyof TreeNode]: TreeNode[Key] } = { type, attrs: node.attrs };
     if (node.text !== undefined) {
         tree.text = node.text;
     }

@@ -7,11 +7,11 @@ import { type JsonObject } from '#/model';
 import { type CommandResult } from '../../types';
 
 /** One search of a suggestion list: the list's key, whose newer search supersedes it, its feature and command, and the call. */
-export type SuggestionSearch<T> = {
+export type SuggestionSearch<Result> = {
     key: string;
     featureId: string;
     command: string;
-    run: (signal: AbortSignal) => Promise<T>;
+    run: (signal: AbortSignal) => Promise<Result>;
 };
 
 /** What the suggestion plugin asks of the session that owns a view, which the runtime registers when it attaches one. */
@@ -23,7 +23,7 @@ export type SuggestionHost = {
     /** What the editor layer hands plugins, which a list's search reads the session's API through. */
     commandHost: unknown;
     /** Runs `search` as one operation of the session's async coordinator and hands `receive` what it resolved; returns what aborts it. */
-    search: <T>(search: SuggestionSearch<T>, receive: (result: T) => void) => () => void;
+    search: <Result>(search: SuggestionSearch<Result>, receive: (result: Result) => void) => () => void;
 };
 
 /** The host of each attached view, read by the plugin, which is built once per definition and shared by sessions. */

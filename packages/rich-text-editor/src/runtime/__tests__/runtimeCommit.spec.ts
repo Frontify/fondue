@@ -58,14 +58,14 @@ describe('the commit path', () => {
     it('compares documents with Node.eq and serializes nothing while no one reads', () => {
         const { handle } = start(stored(para()));
         const toJSON = vi.spyOn(Node.prototype, 'toJSON');
-        const eq = vi.spyOn(Node.prototype, 'eq');
+        const nodeEquals = vi.spyOn(Node.prototype, 'eq');
 
         typeText(handle, 'a'.repeat(100));
 
         expect(toJSON).not.toHaveBeenCalled();
-        expect(eq).toHaveBeenCalled();
+        expect(nodeEquals).toHaveBeenCalled();
         toJSON.mockRestore();
-        eq.mockRestore();
+        nodeEquals.mockRestore();
     });
 
     it('publishes no change for an edit that leaves an equal document', () => {

@@ -67,5 +67,8 @@ export const columnBreaksPlugin = (read: () => ColumnState): Plugin => {
 };
 
 /** Whether two column states show the same, so an equal one draws nothing again. */
-export const sameColumns = (a: ColumnState, b: ColumnState): boolean =>
-    a.count === b.count && a.fits === b.fits && a.label === b.label && a.inactiveLabel === b.inactiveLabel;
+export const sameColumns = (first: ColumnState, second: ColumnState): boolean =>
+    first.count === second.count &&
+    first.fits === second.fits &&
+    first.label === second.label &&
+    first.inactiveLabel === second.inactiveLabel;

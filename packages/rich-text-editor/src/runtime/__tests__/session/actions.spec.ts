@@ -44,8 +44,8 @@ const setup = (commandsById: Record<string, EngineCommand> = {}) => {
         }
 
         let changed = false;
-        const ran = command?.run(state, (tr) => {
-            store.set(store.state.apply(tr));
+        const ran = command?.run(state, (transaction) => {
+            store.set(store.state.apply(transaction));
             changed = true;
         });
         if (ran !== true) {

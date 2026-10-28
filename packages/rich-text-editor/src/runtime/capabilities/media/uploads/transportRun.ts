@@ -38,7 +38,7 @@ const releaseOnce = (call: Call) => {
     }
 };
 
-type Of<T extends Effect['type']> = Extract<Effect, { type: T }>;
+type EffectOf<EffectType extends Effect['type']> = Extract<Effect, { type: EffectType }>;
 
 /** Feeds an event to the slot's machine, keeps its next state and runs the effects in order. */
 const dispatch = (link: Link, context: TransportContext, event: SlotEvent) => {
@@ -116,7 +116,13 @@ const startUpload = (link: Link, context: TransportContext, announce: boolean) =
 };
 
 /** What each effect does outside the machine; the ones that get an answer feed it back as an event. */
-const EFFECTS: { readonly [T in Effect['type']]: (link: Link, context: TransportContext, effect: Of<T>) => void } = {
+const EFFECTS: {
+    readonly [EffectType in Effect['type']]: (
+        link: Link,
+        context: TransportContext,
+        effect: EffectOf<EffectType>,
+    ) => void;
+} = {
     changed: (link) => link.host.changed(),
     release: (_link, { call }) => call && releaseOnce(call),
     reply: (_link, { call }, { code }) => call && (call.reply = code),

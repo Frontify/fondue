@@ -77,10 +77,10 @@ const reportThrows = (context: EventBusContext, throwers: readonly Thrower[]) =>
 };
 
 /** Calls the listeners of `event`, then reports any that threw. */
-export const deliverListeners = <K extends keyof RuntimeEvents>(
+export const deliverListeners = <EventName extends keyof RuntimeEvents>(
     context: EventBusContext,
-    event: K,
-    value: RuntimeEvents[K],
+    event: EventName,
+    value: RuntimeEvents[EventName],
 ) => {
     const throwers: Thrower[] = [];
     for (const listener of [...(context.listeners.get(event) ?? [])]) {
@@ -149,11 +149,11 @@ export const addListener = (context: EventBusContext, event: string, listener: L
     };
 };
 
-export const addSelector = <T>(
+export const addSelector = <Value>(
     context: EventBusContext,
-    read: () => T,
-    isEqual: (previous: T, next: T) => boolean,
-    listener: (value: T) => void,
+    read: () => Value,
+    isEqual: (previous: Value, next: Value) => boolean,
+    listener: (value: Value) => void,
 ) => {
     if (context.isDisposed()) {
         return () => undefined;

@@ -17,21 +17,21 @@ import {
     statusOf,
 } from '#/runtime/capabilities/media/uploads/machine';
 
-const OP = { id: 'op-1' } as AsyncOperation;
+const slotOperation = { id: 'op-1' } as AsyncOperation;
 const OTHER = { id: 'op-2' } as AsyncOperation;
 const ASSET = { assetId: 'asset-1', mediaType: 'image/png', labelSnapshot: 'a.png' };
 const BASE = fresh('slot', 'insert', { file: new File(['x'], 'a.png'), name: 'a.png', width: 10, height: 20 });
 
 /** One slot per phase, as the transport leaves it: a running upload holds its operation, the rest none. */
-const IN: Record<UploadPhase, SlotState> = {
+const slots: Record<UploadPhase, SlotState> = {
     pending: BASE,
-    queued: { ...BASE, phase: 'queued', operation: OP, operationId: 'op-1' },
-    running: { ...BASE, phase: 'running', operation: OP, operationId: 'op-1' },
+    queued: { ...BASE, phase: 'queued', operation: slotOperation, operationId: 'op-1' },
+    running: { ...BASE, phase: 'running', operation: slotOperation, operationId: 'op-1' },
     failed: { ...BASE, phase: 'failed', operationId: 'op-1' },
     stopped: { ...BASE, phase: 'stopped', operationId: 'op-1' },
     done: { ...BASE, phase: 'done', file: undefined, operationId: 'op-1' },
 };
-const PHASES = Object.keys(IN) as UploadPhase[];
+const PHASES = Object.keys(slots) as UploadPhase[];
 
 type Outcome = readonly [UploadPhase, readonly Effect['type'][]];
 type Row = {
@@ -99,7 +99,7 @@ const TABLE: Record<string, Row> = {
         outcomes: into('stopped', ['changed']),
     },
     'running, own operation': {
-        event: { type: 'running', own: OP },
+        event: { type: 'running', own: slotOperation },
         outcomes: into('running', ['changed']),
     },
     'running, another operation': {
@@ -128,7 +128,7 @@ const TABLE: Record<string, Row> = {
         outcomes: each(['reply']),
     },
     'answered, own operation': {
-        event: { type: 'answered', own: OP, value: {} },
+        event: { type: 'answered', own: slotOperation, value: {} },
         outcomes: byOperation(['parse'], ['release', 'reply']),
     },
     'answered, another operation': {
@@ -152,7 +152,7 @@ const TABLE: Record<string, Row> = {
         outcomes: into('failed', ['release', 'changed', 'announce', 'reply']),
     },
     'failed, own operation': {
-        event: { type: 'failed', own: OP },
+        event: { type: 'failed', own: slotOperation },
         outcomes: byOperation(['changed', 'reportFailure', 'announce'], [], 'failed'),
     },
     'failed, no operation': {
@@ -164,7 +164,7 @@ const TABLE: Record<string, Row> = {
         },
     },
     'aborted, own operation': {
-        event: { type: 'aborted', operation: OP },
+        event: { type: 'aborted', operation: slotOperation },
         outcomes: byOperation(['release', 'changed', 'announce'], ['release'], 'stopped'),
     },
     'committed, nothing changed': { event: committed({}), outcomes: each([]) },
@@ -216,7 +216,7 @@ describe('upload machine', () => {
         describe(name, () => {
             it.each(PHASES)('in phase %s', (phase) => {
                 const [expected, effects] = row.outcomes[phase];
-                const result = next({ ...IN[phase], ...row.setup }, row.event);
+                const result = next({ ...slots[phase], ...row.setup }, row.event);
                 expect(result.state.phase).toBe(expected);
                 expect(result.effects.map((effect) => effect.type)).toEqual(effects);
             });
@@ -243,31 +243,31 @@ describe('upload machine', () => {
     });
 
     it('never changes the state it is given', () => {
-        const before = { ...IN.running };
-        next(IN.running, { type: 'aborted', operation: OP });
-        expect(IN.running).toEqual(before);
+        const before = { ...slots.running };
+        next(slots.running, { type: 'aborted', operation: slotOperation });
+        expect(slots.running).toEqual(before);
     });
 
     describe('what a transition sets', () => {
         it('queues a send with no operation and no progress', () => {
-            const { state } = next({ ...IN.failed, progress: 40 }, { type: 'send', announce: true, service: true });
+            const { state } = next({ ...slots.failed, progress: 40 }, { type: 'send', announce: true, service: true });
             expect(state).toMatchObject({ phase: 'queued', progress: null, operation: undefined });
         });
 
         it('keeps the file of a failed or stopped slot, and drops it once done', () => {
-            expect(next(IN.running, { type: 'failed', own: OP }).state.file).toBe(BASE.file);
-            expect(next(IN.running, { type: 'aborted', operation: OP }).state.file).toBe(BASE.file);
-            const done = next(IN.running, { type: 'filled', asset: ASSET, code: undefined, intent: 'decorative' });
+            expect(next(slots.running, { type: 'failed', own: slotOperation }).state.file).toBe(BASE.file);
+            expect(next(slots.running, { type: 'aborted', operation: slotOperation }).state.file).toBe(BASE.file);
+            const done = next(slots.running, { type: 'filled', asset: ASSET, code: undefined, intent: 'decorative' });
             expect(done.state).toMatchObject({ phase: 'done', file: undefined, operation: undefined });
         });
 
         it('records the operation a start returned, which the cache is read with', () => {
-            const { state } = next(IN.queued, { type: 'started', operation: OTHER, aborted: false, announce: true });
+            const { state } = next(slots.queued, { type: 'started', operation: OTHER, aborted: false, announce: true });
             expect(state).toMatchObject({ operation: OTHER, operationId: 'op-2' });
         });
 
         it('keeps the operation ID after a stop', () => {
-            expect(next(IN.running, { type: 'aborted', operation: OP }).state).toMatchObject({
+            expect(next(slots.running, { type: 'aborted', operation: slotOperation }).state).toMatchObject({
                 operation: undefined,
                 operationId: 'op-1',
             });
@@ -275,7 +275,7 @@ describe('upload machine', () => {
 
         it('rounds progress to a whole percent within 0 and 100', () => {
             const percent = (fraction: number) =>
-                next(IN.running, { type: 'progress', fraction, aborted: false }).state.progress;
+                next(slots.running, { type: 'progress', fraction, aborted: false }).state.progress;
             expect([percent(0.499), percent(1.5), percent(-1), percent(0)]).toEqual([50, 100, 0, 0]);
         });
     });
@@ -285,18 +285,22 @@ describe('upload machine', () => {
             next(state, { type: 'filled', asset: ASSET, code: undefined, intent }).effects;
 
         it('caches the completion by the operation ID', () => {
-            expect(filled(IN.running, 'meaningful')[0]).toEqual({ type: 'cache', operationId: 'op-1', asset: ASSET });
+            expect(filled(slots.running, 'meaningful')[0]).toEqual({
+                type: 'cache',
+                operationId: 'op-1',
+                asset: ASSET,
+            });
         });
 
         it('announces an insert that has no alternative text as missing it, with no review', () => {
-            expect(filled(IN.running, undefined)).toContainEqual({
+            expect(filled(slots.running, undefined)).toContainEqual({
                 type: 'announce',
                 event: { kind: 'completed', name: 'a.png', altMissing: true, review: false },
             });
         });
 
         it('asks a replacement that kept its alternative text for a review, and records its asset', () => {
-            const replace = { ...IN.running, kind: 'replace' } as const;
+            const replace = { ...slots.running, kind: 'replace' } as const;
             const effects = filled(replace, 'meaningful');
             expect(effects).toContainEqual({
                 type: 'announce',
@@ -306,38 +310,43 @@ describe('upload machine', () => {
         });
 
         it('asks a replacement with no alternative text for none', () => {
-            const effects = filled({ ...IN.running, kind: 'replace' }, undefined);
+            const effects = filled({ ...slots.running, kind: 'replace' }, undefined);
             expect(effects.map((effect) => effect.type)).not.toContain('replaced');
         });
 
         it('answers a refused completion with the refusal code', () => {
-            const { effects } = next(IN.running, { type: 'filled', asset: ASSET, code: 'rejected', intent: 'x' });
+            const { effects } = next(slots.running, { type: 'filled', asset: ASSET, code: 'rejected', intent: 'x' });
             expect(effects.at(-1)).toEqual({ type: 'reply', code: 'rejected' });
         });
 
         it('answers a payload with no asset as invalid and a stale answer as superseded', () => {
-            const invalid = next(IN.running, { type: 'parsed', asset: undefined }).effects;
+            const invalid = next(slots.running, { type: 'parsed', asset: undefined }).effects;
             expect(invalid.at(-1)).toEqual({ type: 'reply', code: 'invalid-payload' });
-            const stale = next(IN.running, { type: 'answered', own: OTHER, value: {} }).effects;
+            const stale = next(slots.running, { type: 'answered', own: OTHER, value: {} }).effects;
             expect(stale.at(-1)).toEqual({ type: 'reply', code: 'superseded' });
         });
 
         it('hands the value to the parse, the asset to the fill, and the operation to the end', () => {
             const value = { assetId: 'x' };
-            expect(next(IN.running, { type: 'answered', own: OP, value }).effects).toEqual([{ type: 'parse', value }]);
-            expect(next(IN.running, { type: 'parsed', asset: ASSET }).effects).toEqual([
+            expect(next(slots.running, { type: 'answered', own: slotOperation, value }).effects).toEqual([
+                { type: 'parse', value },
+            ]);
+            expect(next(slots.running, { type: 'parsed', asset: ASSET }).effects).toEqual([
                 { type: 'fill', asset: ASSET },
             ]);
-            expect(next(IN.running, committed({ reset: true })).effects).toEqual([{ type: 'end', operation: OP }]);
+            expect(next(slots.running, committed({ reset: true })).effects).toEqual([
+                { type: 'end', operation: slotOperation },
+            ]);
         });
 
         it('announces a cancel and a start by the slot name', () => {
-            expect(next(IN.running, { type: 'aborted', operation: OP }).effects).toContainEqual({
+            expect(next(slots.running, { type: 'aborted', operation: slotOperation }).effects).toContainEqual({
                 type: 'announce',
                 event: { kind: 'cancelled', name: 'a.png' },
             });
             expect(
-                next(IN.pending, { type: 'started', operation: OP, aborted: false, announce: true }).effects,
+                next(slots.pending, { type: 'started', operation: slotOperation, aborted: false, announce: true })
+                    .effects,
             ).toContainEqual({
                 type: 'announce',
                 event: { kind: 'started', name: 'a.png' },
@@ -356,16 +365,16 @@ describe('upload machine', () => {
         };
 
         it.each(PHASES)('reads %s', (phase) => {
-            const slot = IN[phase];
+            const slot = slots[phase];
             expect([isActive(slot), isKept(slot), isRetryable(slot)]).toEqual(FLAGS[phase]);
         });
 
         it('keeps a slot without its file from a retry', () => {
-            expect(isRetryable({ ...IN.failed, file: undefined })).toBe(false);
+            expect(isRetryable({ ...slots.failed, file: undefined })).toBe(false);
         });
 
         it('shows a status once the slot starts and until it completes', () => {
-            expect(PHASES.map((phase) => statusOf({ ...IN[phase], progress: 30 })?.state)).toEqual([
+            expect(PHASES.map((phase) => statusOf({ ...slots[phase], progress: 30 })?.state)).toEqual([
                 undefined,
                 'queued',
                 'running',
@@ -373,7 +382,7 @@ describe('upload machine', () => {
                 'stopped',
                 undefined,
             ]);
-            expect(statusOf({ ...IN.running, progress: 30 })).toEqual({
+            expect(statusOf({ ...slots.running, progress: 30 })).toEqual({
                 state: 'running',
                 progress: 30,
                 name: 'a.png',

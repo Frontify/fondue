@@ -56,16 +56,16 @@ export type Pasted = {
 };
 
 /** Inserts `slice` between `from` and `to` as ProseMirror's paste does, and returns where it landed. */
-export const insertSlice = (tr: Transform, from: number, to: number, slice: Slice) => {
-    const start = tr.steps.length;
+export const insertSlice = (transaction: Transform, from: number, to: number, slice: Slice) => {
+    const start = transaction.steps.length;
     const { firstChild } = slice.content;
     if (slice.openStart === 0 && slice.openEnd === 0 && slice.content.childCount === 1 && firstChild !== null) {
-        tr.replaceRangeWith(from, to, firstChild);
+        transaction.replaceRangeWith(from, to, firstChild);
     } else {
-        tr.replaceRange(from, to, slice);
+        transaction.replaceRange(from, to, slice);
     }
 
-    const mapping = tr.mapping.slice(start);
+    const mapping = transaction.mapping.slice(start);
 
     return { from: mapping.map(from, -1), to: mapping.map(to, 1) };
 };
@@ -78,11 +78,11 @@ export const prepareSlice = (slice: Slice, schema: Schema, model: ContentModel, 
 };
 
 /** Inserts `slice` with `insertSlice` and puts the selection after it. */
-export const insertAndSelect = (tr: Transaction, from: number, to: number, slice: Slice) => {
-    const steps = tr.steps.length;
-    const range = insertSlice(tr, from, to, slice);
-    if (tr.steps.length > steps) {
-        tr.setSelection(Selection.near(tr.doc.resolve(range.to), -1));
+export const insertAndSelect = (transaction: Transaction, from: number, to: number, slice: Slice) => {
+    const steps = transaction.steps.length;
+    const range = insertSlice(transaction, from, to, slice);
+    if (transaction.steps.length > steps) {
+        transaction.setSelection(Selection.near(transaction.doc.resolve(range.to), -1));
     }
 
     return range;

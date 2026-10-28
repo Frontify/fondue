@@ -99,7 +99,11 @@ export type EditorPort = {
     /** Captures `range` as a target, as `captureTarget` captures the selection. */
     captureRange(range: { from: number; to: number }, options: CaptureTargetOptions): CaptureResult;
     /** A selector store: `listener` gets each new value of `read` after a commit, unless `isEqual` holds. */
-    watch<T>(read: () => T, isEqual: (previous: T, next: T) => boolean, listener: (value: T) => void): Unsubscribe;
+    watch<Value>(
+        read: () => Value,
+        isEqual: (previous: Value, next: Value) => boolean,
+        listener: (value: Value) => void,
+    ): Unsubscribe;
     /** Starts an async operation through the coordinator. */
     startAsync(request: AsyncRequest): AsyncOperation;
     /** Aborts the operations that the changed `services` members started. */

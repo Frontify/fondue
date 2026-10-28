@@ -180,5 +180,7 @@ export const compileInputRules = (
         }
     }
 
-    return [...lines, ...blocks, ...patterns, ...marks.sort((a, b) => b.open.length - a.open.length), ...texts];
+    marks.sort((left, right) => right.open.length - left.open.length);
+
+    return [...lines, ...blocks, ...patterns, ...marks, ...texts];
 };

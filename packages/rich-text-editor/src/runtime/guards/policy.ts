@@ -99,7 +99,7 @@ const markRuns = (block: Node, start: number): Run[] => {
     return runs;
 };
 
-const add = <T>(map: Map<string, T[]>, featureId: string | undefined, item: T) => {
+const add = <Item>(map: Map<string, Item[]>, featureId: string | undefined, item: Item) => {
     if (featureId === undefined) {
         return;
     }
@@ -114,10 +114,10 @@ const add = <T>(map: Map<string, T[]>, featureId: string | undefined, item: T) =
     list.push(item);
 };
 
-const listOf = <T>(map: ReadonlyMap<string, T[]>, featureId: string): T[] => map.get(featureId) ?? [];
+const listOf = <Item>(map: ReadonlyMap<string, Item[]>, featureId: string): Item[] => map.get(featureId) ?? [];
 
 /** Removes and returns the first item that `match` accepts. */
-const take = <T>(items: T[], match: (item: T) => boolean): T | undefined => {
+const take = <Item>(items: Item[], match: (item: Item) => boolean): Item | undefined => {
     const index = items.findIndex(match);
     if (index < 0) {
         return undefined;
@@ -127,7 +127,8 @@ const take = <T>(items: T[], match: (item: T) => boolean): T | undefined => {
 };
 
 // A node's own marks belong to the mark's feature, so its markup here is its type and attributes.
-const sameNode = (a: Node, b: Node) => a === b || (a.hasMarkup(b.type, b.attrs, a.marks) && a.content.eq(b.content));
+const sameNode = (first: Node, second: Node) =>
+    first === second || (first.hasMarkup(second.type, second.attrs, first.marks) && first.content.eq(second.content));
 
 /**
  * Pairs a feature's nodes before and after a batch. A node whose type carries a `nodeId` pairs with an identical
@@ -195,7 +196,7 @@ const counterparts = (run: Run, mapping: BatchMapping, others: readonly Run[], i
         });
     });
 
-const sameRun = (a: Run, b: Run) => a.text === b.text && a.mark.eq(b.mark);
+const sameRun = (first: Run, second: Run) => first.text === second.text && first.mark.eq(second.mark);
 
 const headingsOf = ({ nodes }: Occurrences): Node[] =>
     [...nodes.values()].flat().filter((node) => node.type.name === HEADING);
@@ -302,11 +303,15 @@ export const createPolicyCheck = (model: ContentModel) => {
         const start = before.content.findDiffStart(after.content);
         if (start !== null) {
             // Two contents that differ from the start differ from the end too.
-            const end = before.content.findDiffEnd(after.content) as { a: number; b: number };
-            // An ambiguous diff, such as one more `a` in `aa`, can end before it starts.
-            const overlap = Math.max(0, start - Math.min(end.a, end.b));
-            previous = collect(before, start, end.a + overlap);
-            next = collect(after, start, end.b + overlap);
+            const end = before.content.findDiffEnd(after.content);
+            if (end !== null) {
+                const endBefore = end.a;
+                const endAfter = end.b;
+                // An ambiguous diff, such as one more `a` in `aa`, can end before it starts.
+                const overlap = Math.max(0, start - Math.min(endBefore, endAfter));
+                previous = collect(before, start, endBefore + overlap);
+                next = collect(after, start, endAfter + overlap);
+            }
         }
 
         // The document's content belongs to its children, so only its own attributes make it an occurrence.

@@ -207,7 +207,7 @@ describe('createCommands', () => {
             },
         });
         const no = insert({
-            run: (_s, _d, _p, context) => {
+            run: (_state, _dispatch, _payload, context) => {
                 context?.defer(() => effects.push('no'));
 
                 return false;
@@ -225,7 +225,7 @@ describe('createCommands', () => {
     it('reads a command session from the runtime and the host when the command runs', () => {
         const sessions: { runtime: unknown; host: unknown }[] = [];
         const read = insert({
-            run: (_s, _d, _p, context) => {
+            run: (_state, _dispatch, _payload, context) => {
                 sessions.push(context?.session as { runtime: unknown; host: unknown });
 
                 return true;

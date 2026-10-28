@@ -61,8 +61,8 @@ const breaksAsParagraphs = (root: Element) => {
         }
 
         if (isBlock(before) && isBlock(child)) {
-            for (const br of pending) {
-                breaks.push(br);
+            for (const lineBreak of pending) {
+                breaks.push(lineBreak);
             }
         }
 
@@ -70,8 +70,8 @@ const breaksAsParagraphs = (root: Element) => {
         before = child;
     }
 
-    for (const br of breaks) {
-        br.replaceWith(createElementBeside(br, 'p'));
+    for (const lineBreak of breaks) {
+        lineBreak.replaceWith(createElementBeside(lineBreak, 'p'));
     }
 };
 

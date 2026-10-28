@@ -135,11 +135,18 @@ const setNodeAttributes = (
     options?: { nodeId?: string; toggle?: boolean },
 ) => {
     const node = typeof nodes === 'string' ? nodes : [...nodes];
-    let types = typeof nodes === 'string' ? [nodes] : [...nodes];
+    let types: string[];
     if (nodes === 'textblocks') {
-        types = Object.values(context.source.schema.nodes)
-            .filter((type) => type.isTextblock)
-            .map(({ name }) => name);
+        types = [];
+        for (const type of Object.values(context.source.schema.nodes)) {
+            if (type.isTextblock) {
+                types.push(type.name);
+            }
+        }
+    } else if (typeof nodes === 'string') {
+        types = [nodes];
+    } else {
+        types = [...nodes];
     }
 
     const nodeId = options?.nodeId === undefined ? {} : { nodeId: options.nodeId };

@@ -49,9 +49,9 @@ const setup = (service?: RecoveryService) => {
                 abortWhere: (matches: () => boolean) => calls.push(`abort:${String(matches())}`),
             } as never,
         }),
-        report: (d) => {
+        report: (diagnostic) => {
             calls.push('report');
-            reported.push(d);
+            reported.push(diagnostic);
         },
         recovery: () => service,
     });
@@ -106,7 +106,10 @@ describe('createFaults', () => {
         );
         await Promise.resolve();
         await Promise.resolve();
-        expect(reported.map((d) => d.code)).toEqual(['runtime.view-fault', 'runtime.recovery-stored']);
+        expect(reported.map((diagnostic) => diagnostic.code)).toEqual([
+            'runtime.view-fault',
+            'runtime.recovery-stored',
+        ]);
     });
 
     it('offers the candidate only while faulted', () => {

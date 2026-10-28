@@ -14,7 +14,7 @@ import { type CommandOutcome } from '../api/documentApi';
 import { pluginCommand, type PluginCommandSpec } from '../api/editorApi';
 import { type CommandArgs, type CommandOptions, type CommandResult } from '../types';
 
-type Rejected<T extends { status: string }> = Extract<T, { status: 'rejected' }>;
+type Rejected<Outcome extends { status: string }> = Extract<Outcome, { status: 'rejected' }>;
 
 describe('the payload type of a plugin command', () => {
     it('reaches the run, enabled, active and refuses callbacks of the spec', () => {

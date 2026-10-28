@@ -263,12 +263,12 @@ const commandDocumentApi = (
 };
 
 /** A plugin command, written over the API it is handed, which runs only through that API. */
-export type PluginCommandSpec<A, P = never> = {
+export type PluginCommandSpec<Api, Payload = never> = {
     payload?: PayloadDeclaration;
-    run: (api: A, payload: P) => boolean;
-    enabled?: (api: A, payload: P) => boolean;
-    active?: (api: A, payload: P) => boolean | 'mixed';
-    refuses?: (policy: AuthoringPolicy, payload: P) => boolean;
+    run: (api: Api, payload: Payload) => boolean;
+    enabled?: (api: Api, payload: Payload) => boolean;
+    active?: (api: Api, payload: Payload) => boolean | 'mixed';
+    refuses?: (policy: AuthoringPolicy, payload: Payload) => boolean;
     readOnly?: boolean;
 };
 
@@ -276,12 +276,12 @@ export type PluginCommandSpec<A, P = never> = {
  * The engine command of a plugin command. `extend` adds the session's hosts to the document API, holding their
  * effects until the command has run for real.
  */
-export const pluginCommand = <A, P = never>(
-    spec: PluginCommandSpec<A, P>,
+export const pluginCommand = <Api, Payload = never>(
+    spec: PluginCommandSpec<Api, Payload>,
     model: ContentModel,
     schema: Schema,
     lookup: CommandLookup,
-    extend: (api: DocumentApi, context: CommandContext | undefined, session: CommandSession | undefined) => A,
+    extend: (api: DocumentApi, context: CommandContext | undefined, session: CommandSession | undefined) => Api,
 ): EngineCommand => {
     // The spec's payload and read-only fields are set only when it declares them.
     const declared: { payload?: PayloadDeclaration; readOnly?: boolean } = {};
@@ -314,14 +314,14 @@ export const pluginCommand = <A, P = never>(
                     quiet,
                     session,
                 );
-                if (!spec.enabled(probe, payload as P)) {
+                if (!spec.enabled(probe, payload as Payload)) {
                     return false;
                 }
             }
 
             const compose = composer(state);
             const api = extend(commandDocumentApi(compose, model, schema, lookup, context, session), context, session);
-            if (!spec.run(api, payload as P)) {
+            if (!spec.run(api, payload as Payload)) {
                 return false;
             }
 
@@ -341,13 +341,13 @@ export const pluginCommand = <A, P = never>(
 
             return spec.active(
                 extend(commandDocumentApi(composer(state), model, schema, lookup, context, session), context, session),
-                payload as P,
+                payload as Payload,
             );
         },
         policyRefuses: (policy, payload) =>
             spec.refuses !== undefined &&
             findInvalidPayload(spec.payload, payload) === undefined &&
-            spec.refuses(policy as AuthoringPolicy, payload as P),
+            spec.refuses(policy as AuthoringPolicy, payload as Payload),
         ...declared,
         viaExecute: true,
     };

@@ -78,7 +78,7 @@ const selectedOf = (state: EditorState, types: readonly NodeType[]): Located[] =
         });
     }
 
-    return [...found.values()].sort((a, b) => a.pos - b.pos);
+    return [...found.values()].sort((earlier, later) => earlier.pos - later.pos);
 };
 
 /** The nodes a `setAttributes` command changes: the one `nodeId` names, else the selected nodes of `types`, else the nearest node of `types`. */
@@ -166,18 +166,24 @@ export const setAttributes: CapabilityImplementation = (args, schema) => {
             const targets = targetsOf(state, types, parts);
             const removes =
                 args.toggle === true && targets.length > 0 && targets.every(({ node }) => has(node, parts.attrs));
-            const changes = targets.flatMap(({ node, pos }) =>
-                Object.entries(parts.attrs)
-                    .filter(([name]) => node.type.spec.attrs?.[name] !== undefined)
-                    .map(([name, value]) => {
-                        if (removes) {
-                            return { pos, name, value: defaultOf(node.type, name) };
-                        }
+            const changes: { pos: number; name: string; value: unknown }[] = [];
+            for (const { node, pos } of targets) {
+                for (const [name, given] of Object.entries(parts.attrs)) {
+                    if (node.type.spec.attrs?.[name] === undefined) {
+                        continue;
+                    }
 
-                        return { pos, name, value };
-                    })
-                    .filter(({ name, value }) => node.attrs[name] !== value),
-            );
+                    let value = given;
+                    if (removes) {
+                        value = defaultOf(node.type, name);
+                    }
+
+                    if (node.attrs[name] !== value) {
+                        changes.push({ pos, name, value });
+                    }
+                }
+            }
+
             if (changes.length === 0) {
                 return false;
             }

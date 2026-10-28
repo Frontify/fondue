@@ -17,7 +17,7 @@ test.afterEach(async ({ page }) => {
 
 type Clip = NonNullable<Window['clip']>;
 type Flavors = { html: string; text: string; slice: string };
-type Point = { x: number; y: number };
+type Point = { left: number; top: number };
 
 declare global {
     // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.
@@ -132,8 +132,8 @@ const cursorBoundary = (page: Page) =>
             return null;
         }
 
-        const { y, height } = cursor.getBoundingClientRect();
-        const middle = y + height / 2;
+        const { y: top, height } = cursor.getBoundingClientRect();
+        const middle = top + height / 2;
         const paragraphs = [...document.querySelectorAll('[data-rte-surface] p')].map((element) =>
             element.getBoundingClientRect(),
         );
@@ -154,12 +154,18 @@ const cursorBoundary = (page: Page) =>
 const dragFile = async (page: Page, point: Point, end: 'drop' | 'dragleave') => {
     const send = (type: string) =>
         page.evaluate(
-            ({ x, y, eventType }) => {
+            ({ left: pointerX, top: pointerY, eventType }) => {
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(new File(['x'], 'x.png', { type: 'image/png' }));
                 const surface = document.querySelector('[data-rte-surface]') as HTMLElement;
                 surface.dispatchEvent(
-                    new DragEvent(eventType, { dataTransfer, clientX: x, clientY: y, bubbles: true, cancelable: true }),
+                    new DragEvent(eventType, {
+                        dataTransfer,
+                        clientX: pointerX,
+                        clientY: pointerY,
+                        bubbles: true,
+                        cancelable: true,
+                    }),
                 );
             },
             { ...point, eventType: type },
@@ -195,7 +201,7 @@ const overText = async (page: Page, index: number, fraction: number) => {
         });
     const box = await boxOf(page, index);
 
-    return { x: box.x + width * fraction, y: box.y + box.height / 2 };
+    return { left: box.x + width * fraction, top: box.y + box.height / 2 };
 };
 
 /**
@@ -206,7 +212,7 @@ const overText = async (page: Page, index: number, fraction: number) => {
 const dragNode = async (page: Page, to: Point, copy = false, wrong = false) => {
     const send = (type: string, onSource: boolean) =>
         page.evaluate(
-            ({ eventType, source, x, y, held, other }) => {
+            ({ eventType, source, left: pointerX, top: pointerY, held, other }) => {
                 if (eventType === 'dragstart') {
                     window.dragData = new DataTransfer();
                     window.dragSource = document.querySelector('.ProseMirror-selectednode') as Element;
@@ -215,18 +221,18 @@ const dragNode = async (page: Page, to: Point, copy = false, wrong = false) => {
                 const selected = window.dragSource as Element;
                 const box = selected.getBoundingClientRect();
                 let target = selected;
-                let point = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+                let point = { left: box.x + box.width / 2, top: box.y + box.height / 2 };
                 if (!source) {
-                    target = document.elementFromPoint(x, y) as Element;
-                    point = { x, y };
+                    target = document.elementFromPoint(pointerX, pointerY) as Element;
+                    point = { left: pointerX, top: pointerY };
                 }
 
                 const apple = /Mac|iP(hone|[oa]d)/.test(navigator.platform);
                 target.dispatchEvent(
                     new DragEvent(eventType, {
                         dataTransfer: window.dragData as DataTransfer,
-                        clientX: point.x,
-                        clientY: point.y,
+                        clientX: point.left,
+                        clientY: point.top,
                         altKey: (held && apple) || (other && !apple),
                         ctrlKey: (held && !apple) || (other && apple),
                         bubbles: true,
@@ -248,13 +254,13 @@ const dragNode = async (page: Page, to: Point, copy = false, wrong = false) => {
 
 /** Drags with the mouse from `from` to `to`, holding `modifier` at the drop, and reads the drop cursor before it. */
 const drag = async (page: Page, from: Point, to: Point, modifier?: string) => {
-    await page.mouse.move(from.x, from.y);
+    await page.mouse.move(from.left, from.top);
     await page.mouse.down();
-    await page.mouse.move(from.x + 5, from.y + 5, { steps: 3 });
-    await page.mouse.move(to.x, to.y, { steps: 10 });
+    await page.mouse.move(from.left + 5, from.top + 5, { steps: 3 });
+    await page.mouse.move(to.left, to.top, { steps: 10 });
     if (modifier !== undefined) {
         await page.keyboard.down(modifier);
-        await page.mouse.move(to.x + 1, to.y, { steps: 2 });
+        await page.mouse.move(to.left + 1, to.top, { steps: 2 });
     }
 
     const cursor = await cursorBoundary(page);
@@ -272,7 +278,7 @@ const centerOf = async (page: Page, selector: string): Promise<Point> => {
         throw new Error(`no box for ${selector}`);
     }
 
-    return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+    return { left: box.x + box.width / 2, top: box.y + box.height / 2 };
 };
 
 test('writes text/plain, text/html and the internal slice on copy and dragstart', async ({ mount, page }) => {

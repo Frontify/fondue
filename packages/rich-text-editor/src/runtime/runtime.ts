@@ -101,7 +101,11 @@ export type EditorRuntime = {
      * A selector store: `listener` gets each new value of `read` after a commit or a policy update, unless `isEqual`
      * holds between it and the last value.
      */
-    watch<T>(read: () => T, isEqual: (previous: T, next: T) => boolean, listener: (value: T) => void): Unsubscribe;
+    watch<Value>(
+        read: () => Value,
+        isEqual: (previous: Value, next: Value) => boolean,
+        listener: (value: Value) => void,
+    ): Unsubscribe;
     /** Starts an async operation through the coordinator, as an `upload` or mention search capability does. */
     startAsync(request: AsyncRequest): AsyncOperation;
     /** Aborts the operations that the changed `services` members started. */

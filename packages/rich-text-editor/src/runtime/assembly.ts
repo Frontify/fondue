@@ -33,11 +33,11 @@ export const performIn = (port: EditorPort, command: EngineCommand): boolean =>
     engineOf(port).perform(command).status !== 'rejected';
 
 /** The engine command of a plugin command over the session's own schema and commands, which a file intake runs. */
-export const sessionCommand = <A>(
+export const sessionCommand = <Api>(
     port: EditorPort,
-    run: (api: A) => boolean,
+    run: (api: Api) => boolean,
     model: ContentModel,
-    extend: Parameters<typeof pluginCommand<A>>[4],
+    extend: Parameters<typeof pluginCommand<Api>>[4],
 ): EngineCommand => {
     const { schema, commands } = engineOf(port).definition;
 

@@ -126,7 +126,11 @@ const setup = (options: Options = {}) => {
                     return options.fresh();
                 }
 
-                return EditorState.create({ doc: next as Node, ...(selection === undefined ? {} : { selection }) });
+                if (selection === undefined) {
+                    return EditorState.create({ doc: next as Node });
+                }
+
+                return EditorState.create({ doc: next as Node, selection });
             },
         },
     });

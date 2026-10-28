@@ -69,8 +69,8 @@ describe('actionOrigin and originOf', () => {
         let state = EditorState.create({ schema, plugins: [historyPlugin({})] });
         state = state.apply(state.tr.insertText('a', 1));
         let undone: Transaction | undefined;
-        undo(state, (tr) => {
-            undone = tr;
+        undo(state, (transaction) => {
+            undone = transaction;
         });
         expect(undone && originOf(undone)).toBe('history');
     });

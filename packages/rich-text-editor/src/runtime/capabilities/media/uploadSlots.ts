@@ -43,15 +43,15 @@ const key = new PluginKey<SlotState>('rte.upload-slots');
 // The transaction meta that gives a fresh state the entries of the state it replaces, as a history reset does.
 const CARRY_META = 'rte.upload-slots-carry';
 
-/** The entries of the slots that are not done, with the maps of `tr`, then the slots that `tr` starts. */
-const applySlots = (tr: Transaction, value: SlotState): SlotState => {
-    const carried = tr.getMeta(CARRY_META) as SlotState['entries'] | undefined;
+/** The entries of the slots that are not done, with the maps of `transaction`, then the slots that `transaction` starts. */
+const applySlots = (transaction: Transaction, value: SlotState): SlotState => {
+    const carried = transaction.getMeta(CARRY_META) as SlotState['entries'] | undefined;
     if (carried !== undefined) {
         return { uploads: value.uploads, entries: carried };
     }
 
-    const started = tr.getMeta(SLOT_START_META) as SlotStart | undefined;
-    if (!tr.docChanged && started === undefined) {
+    const started = transaction.getMeta(SLOT_START_META) as SlotStart | undefined;
+    if (!transaction.docChanged && started === undefined) {
         return value;
     }
 
@@ -62,7 +62,10 @@ const applySlots = (tr: Transaction, value: SlotState): SlotState => {
         }
 
         if (entry.kind === 'insert') {
-            entries.set(nodeId, { ...entry, mapping: new Mapping([...entry.mapping.maps, ...tr.mapping.maps]) });
+            entries.set(nodeId, {
+                ...entry,
+                mapping: new Mapping([...entry.mapping.maps, ...transaction.mapping.maps]),
+            });
         } else {
             entries.set(nodeId, entry);
         }
@@ -72,7 +75,9 @@ const applySlots = (tr: Transaction, value: SlotState): SlotState => {
         let inverse: Step[] | undefined;
         // Only the one slot of its insertion restores what the insertion replaced.
         if (started.nodeIds.length === 1) {
-            inverse = tr.steps.map((step, index) => step.invert(tr.docs[index] as EditorState['doc'])).reverse();
+            inverse = transaction.steps
+                .map((step, index) => step.invert(transaction.docs[index] as EditorState['doc']))
+                .reverse();
         }
 
         for (const nodeId of started.nodeIds) {
@@ -124,9 +129,11 @@ const removeFigure = (state: EditorState, pos: number): Transaction => {
         to = $pos.after();
     }
 
-    const tr = state.tr.delete(from, to);
+    const transaction = state.tr.delete(from, to);
 
-    return tr.setSelection(Selection.near(tr.doc.resolve(tr.mapping.map(from)))).scrollIntoView();
+    return transaction
+        .setSelection(Selection.near(transaction.doc.resolve(transaction.mapping.map(from))))
+        .scrollIntoView();
 };
 
 /**
@@ -142,27 +149,27 @@ export const cancelSlot = (state: EditorState, nodeId: string): Transaction | un
     }
 
     if (entry.kind === 'replace') {
-        const tr = state.tr;
+        const transaction = state.tr;
         for (const [name, attribute] of Object.entries(entry.previous)) {
             if (name !== 'nodeId') {
-                tr.setNodeAttribute(slot.pos, name, attribute);
+                transaction.setNodeAttribute(slot.pos, name, attribute);
             }
         }
 
-        return tr;
+        return transaction;
     }
 
     if (entry.inverse !== undefined) {
-        const tr = state.tr;
+        const transaction = state.tr;
         const restored = entry.inverse.every((step) => {
             const mapped = step.map(entry.mapping);
 
-            return mapped !== null && tr.maybeStep(mapped).failed === null;
+            return mapped !== null && transaction.maybeStep(mapped).failed === null;
         });
-        if (restored && positionOf(tr.doc, nodeId) === undefined) {
-            const at = Math.min(tr.mapping.map(slot.pos, -1), tr.doc.content.size);
+        if (restored && positionOf(transaction.doc, nodeId) === undefined) {
+            const at = Math.min(transaction.mapping.map(slot.pos, -1), transaction.doc.content.size);
 
-            return tr.setSelection(Selection.near(tr.doc.resolve(at))).scrollIntoView();
+            return transaction.setSelection(Selection.near(transaction.doc.resolve(at))).scrollIntoView();
         }
     }
 

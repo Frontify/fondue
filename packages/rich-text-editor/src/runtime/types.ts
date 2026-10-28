@@ -68,11 +68,11 @@ export type ShippedCommands = {
 /** The id of a command the editor ships. */
 export type CommandId = Extract<keyof ShippedCommands, string>;
 /** The id of a command in a given command map. */
-export type CommandKey<C extends object> = Extract<keyof C, string>;
+export type CommandKey<Commands extends object> = Extract<keyof Commands, string>;
 /** A command whose payload may be `undefined` may be called without the argument. */
-export type CommandArgs<C extends object, K extends CommandKey<C>> = undefined extends C[K]
-    ? [payload?: C[K], options?: CommandOptions]
-    : [payload: C[K], options?: CommandOptions];
+export type CommandArgs<Commands extends object, Key extends CommandKey<Commands>> = undefined extends Commands[Key]
+    ? [payload?: Commands[Key], options?: CommandOptions]
+    : [payload: Commands[Key], options?: CommandOptions];
 
 declare const selectionHandleBrand: unique symbol;
 /** Opaque, session-local and releasable; never persisted or sent to a server. */

@@ -48,12 +48,15 @@ export const createEventBus = ({ isDisposed, around }: EventBusOptions) => {
     const context = createEventBusContext(isDisposed);
 
     return {
-        emit: <K extends keyof RuntimeEvents>(event: K, value: RuntimeEvents[K]) =>
+        emit: <EventName extends keyof RuntimeEvents>(event: EventName, value: RuntimeEvents[EventName]) =>
             around(() => deliverListeners(context, event, value)),
         notify: () => notifySelectors(context),
         subscribe: (event: string, listener: Listener): Unsubscribe => addListener(context, event, listener),
-        watch: <T>(read: () => T, isEqual: (previous: T, next: T) => boolean, listener: (value: T) => void) =>
-            addSelector(context, read, isEqual, listener),
+        watch: <Value>(
+            read: () => Value,
+            isEqual: (previous: Value, next: Value) => boolean,
+            listener: (value: Value) => void,
+        ) => addSelector(context, read, isEqual, listener),
         clear: () => clearBus(context),
     };
 };

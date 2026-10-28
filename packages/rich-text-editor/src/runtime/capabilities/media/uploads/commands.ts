@@ -39,26 +39,28 @@ export const insertion = (
             return false;
         }
 
-        let tr: Transaction | undefined;
+        let transaction: Transaction | undefined;
         if (origin === 'command') {
-            tr = placeBlock(state, Fragment.from(nodes));
+            transaction = placeBlock(state, Fragment.from(nodes));
         } else {
             const { from, to } = state.selection;
-            tr = state.tr.replaceRange(from, to, new Slice(Fragment.from(nodes), 0, 0));
-            const end = tr.mapping.map(to, 1);
-            tr.setSelection(Selection.near(tr.doc.resolve(Math.min(end, tr.doc.content.size)), -1));
-            tr.setMeta('uiEvent', origin).scrollIntoView();
+            transaction = state.tr.replaceRange(from, to, new Slice(Fragment.from(nodes), 0, 0));
+            const end = transaction.mapping.map(to, 1);
+            transaction.setSelection(
+                Selection.near(transaction.doc.resolve(Math.min(end, transaction.doc.content.size)), -1),
+            );
+            transaction.setMeta('uiEvent', origin).scrollIntoView();
         }
 
-        if (tr === undefined) {
+        if (transaction === undefined) {
             return false;
         }
 
         if (origin === 'command') {
-            tr.setMeta(COMMAND_META, INSERT_IMAGE);
+            transaction.setMeta(COMMAND_META, INSERT_IMAGE);
         }
 
-        dispatch?.(tr.setMeta(SLOT_START_META, start));
+        dispatch?.(transaction.setMeta(SLOT_START_META, start));
 
         return true;
     },
@@ -78,15 +80,15 @@ export const replacement = (nodeId: string, checked: Checked, previous: JsonObje
             return false;
         }
 
-        const tr = state.tr;
+        const transaction = state.tr;
         for (const [name, attribute] of Object.entries(slotAttrs(checked))) {
-            tr.setNodeAttribute(pos, name, attribute);
+            transaction.setNodeAttribute(pos, name, attribute);
         }
 
         // The completion sets `mediaType` with no undo step, so this step keeps the value an undo restores.
-        tr.setNodeAttribute(pos, 'mediaType', node.attrs.mediaType);
+        transaction.setNodeAttribute(pos, 'mediaType', node.attrs.mediaType);
         const start: SlotStart = { kind: 'replace', nodeId, previous };
-        dispatch?.(tr.setMeta(COMMAND_META, REPLACE_IMAGE).setMeta(SLOT_START_META, start));
+        dispatch?.(transaction.setMeta(COMMAND_META, REPLACE_IMAGE).setMeta(SLOT_START_META, start));
 
         return true;
     },
@@ -106,12 +108,12 @@ export const completion = (nodeId: string, asset: PickedAsset): EngineCommand =>
             return false;
         }
 
-        const tr = state.tr.setMeta(FILL_META, true);
+        const transaction = state.tr.setMeta(FILL_META, true);
         for (const [name, attribute] of Object.entries(asset)) {
-            tr.setNodeAttribute(pos, name, attribute);
+            transaction.setNodeAttribute(pos, name, attribute);
         }
 
-        dispatch?.(tr);
+        dispatch?.(transaction);
 
         return true;
     },

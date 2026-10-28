@@ -79,18 +79,30 @@ const startUpload = (page: Page, command: string, targetText?: string) =>
             const diagnostics: string[] = [];
             kept.diagnostics = diagnostics;
             rte.handle.subscribe('diagnostic', (diagnostic) => diagnostics.push(diagnostic.code));
-            rte.runtime.startAsync({
-                key: 'upload',
-                service: 'uploads',
-                featureId: 'fixture.heading-set',
-                action: 'create',
-                command: id,
-                ...(target === undefined ? {} : { target }),
-                run: () =>
-                    new Promise((resolve) => {
-                        kept.finish = resolve;
-                    }),
-            });
+            const run = () =>
+                new Promise((resolve) => {
+                    kept.finish = resolve;
+                });
+            if (target === undefined) {
+                rte.runtime.startAsync({
+                    key: 'upload',
+                    service: 'uploads',
+                    featureId: 'fixture.heading-set',
+                    action: 'create',
+                    command: id,
+                    run,
+                });
+            } else {
+                rte.runtime.startAsync({
+                    key: 'upload',
+                    service: 'uploads',
+                    featureId: 'fixture.heading-set',
+                    action: 'create',
+                    command: id,
+                    target,
+                    run,
+                });
+            }
         },
         [command, targetText] as const,
     );

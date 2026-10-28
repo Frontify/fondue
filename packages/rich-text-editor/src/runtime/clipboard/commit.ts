@@ -15,7 +15,7 @@ export const clipboardKey = new PluginKey('rte.clipboard');
 export const commit = (
     view: EditorView,
     connected: Connected,
-    tr: Transaction,
+    transaction: Transaction,
     pasted: Pasted | undefined,
     event: 'paste' | 'drop',
 ) => {
@@ -25,20 +25,20 @@ export const commit = (
 
     const { runtime } = connected;
     // Set before the limit check, whose prepared batch the dispatch installs.
-    tr.setMeta('uiEvent', event);
+    transaction.setMeta('uiEvent', event);
     if (pasted.followUp !== undefined) {
-        tr.setMeta(clipboardKey, pasted.followUp);
+        transaction.setMeta(clipboardKey, pasted.followUp);
     }
 
-    let exceeded: string | undefined = runtime.exceededLimit(tr, pasted.followUp !== undefined);
+    let exceeded: string | undefined = runtime.exceededLimit(transaction, pasted.followUp !== undefined);
     // A follow-up past a limit leaves the paste as it is.
     if (exceeded !== undefined && pasted.followUp !== undefined) {
-        tr.setMeta(clipboardKey, undefined);
-        exceeded = runtime.exceededLimit(tr);
+        transaction.setMeta(clipboardKey, undefined);
+        exceeded = runtime.exceededLimit(transaction);
     }
 
     if (exceeded === undefined) {
-        exceeded = exceededStructure(tr.doc, runtime.limits);
+        exceeded = exceededStructure(transaction.doc, runtime.limits);
     }
 
     if (exceeded !== undefined) {
@@ -48,8 +48,8 @@ export const commit = (
     }
 
     const before = view.state.doc;
-    view.dispatch(tr);
-    if (tr.docChanged && view.state.doc === before) {
+    view.dispatch(transaction);
+    if (transaction.docChanged && view.state.doc === before) {
         reject(connected, 'not-allowed');
 
         return;

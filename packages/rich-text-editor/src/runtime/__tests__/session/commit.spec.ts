@@ -228,7 +228,7 @@ describe('createCommit guarded', () => {
 
     it('commits nothing of the waiting roots once a listener faulted the session', () => {
         let dispatched = false;
-        const ctx = setup({
+        const context = setup({
             onUpdate: (next, commit) => {
                 if (!dispatched) {
                     dispatched = true;
@@ -236,21 +236,21 @@ describe('createCommit guarded', () => {
                 }
             },
         });
-        ctx.service.guarded(() => {
-            ctx.service.installState(ctx.store.state.apply(ctx.store.state.tr.insertText('c', 1)));
-            ctx.lifecycle.to('faulted');
+        context.service.guarded(() => {
+            context.service.installState(context.store.state.apply(context.store.state.tr.insertText('c', 1)));
+            context.lifecycle.to('faulted');
         });
-        expect(ctx.store.state.doc.textContent).toBe('cab');
-        expect(ctx.log).toEqual([]);
+        expect(context.store.state.doc.textContent).toBe('cab');
+        expect(context.log).toEqual([]);
     });
 
     it('forgets waiting roots on clearDeferred', () => {
-        const ctx = setup();
-        ctx.service.guarded(() => {
-            ctx.service.commit(ctx.store.state.tr.insertText('c', 1));
-            ctx.service.clearDeferred();
+        const context = setup();
+        context.service.guarded(() => {
+            context.service.commit(context.store.state.tr.insertText('c', 1));
+            context.service.clearDeferred();
         });
-        expect(ctx.store.state.doc.textContent).toBe('ab');
+        expect(context.store.state.doc.textContent).toBe('ab');
     });
 });
 

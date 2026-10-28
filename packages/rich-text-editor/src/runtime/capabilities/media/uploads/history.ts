@@ -26,13 +26,13 @@ const assetsIn = (doc: Node): Set<string> => {
 /** Whether `transactions` set the asset of slot `nodeId` themselves: an undo, a cancel or another replacement. */
 const resets = (transactions: readonly Transaction[], nodeId: string) =>
     transactions.some(
-        (tr) =>
-            tr.getMeta(FILL_META) !== true &&
-            tr.steps.some(
+        (transaction) =>
+            transaction.getMeta(FILL_META) !== true &&
+            transaction.steps.some(
                 (step, index) =>
                     step instanceof AttrStep &&
                     step.attr === 'assetId' &&
-                    tr.docs[index]?.nodeAt(step.pos)?.attrs.nodeId === nodeId,
+                    transaction.docs[index]?.nodeAt(step.pos)?.attrs.nodeId === nodeId,
             ),
     );
 
