@@ -3,7 +3,7 @@
 import { useMemo, useRef } from 'react';
 
 import { createEmptyDocument } from '#/model';
-import { PROFILE_MODELS } from '#/react/examples/records';
+import { PROFILE_MODELS, recordOf, text as textRun } from '#/react/examples/records';
 import { RichTextEditor } from '#/react/RichTextEditor/RichTextEditor';
 import { type EditorHandle, type RichTextProfile, type ToolbarMode } from '#/react/types';
 import { runtimeOf } from '#/runtime/runtime';
@@ -73,6 +73,12 @@ type ProfileProbeProps = {
     required?: boolean;
     /** Sets `enterBehavior: 'none'` once the editor is ready. */
     enterNone?: boolean;
+    /** The loaded document is one paragraph holding this text. */
+    text?: string;
+    /** Calls `handle.focus(...)` from `onReady`. */
+    focusOnReady?: 'start' | 'end';
+    /** Sets the empty editor's placeholder text. */
+    placeholder?: string;
     defaultToolbarMode?: ToolbarMode;
     disabled?: boolean;
     readOnly?: boolean;
@@ -101,6 +107,9 @@ export const ProfileProbe = ({
     submits = false,
     required = false,
     enterNone = false,
+    text,
+    focusOnReady,
+    placeholder,
     defaultToolbarMode = 'fixed',
     disabled = false,
     readOnly = false,
@@ -111,13 +120,28 @@ export const ProfileProbe = ({
     errormessage,
 }: ProfileProbeProps) => {
     const ref = useRef<EditorHandle<object>>(null);
-    const defaultValue = useMemo(
-        () => ({ documentId: 'document-1', revision: null, document: createEmptyDocument(PROFILE_MODELS[profile]) }),
-        [profile],
-    );
+    const defaultValue = useMemo(() => {
+        if (text !== undefined) {
+            return recordOf(PROFILE_MODELS[profile], 'document-1', textRun(text));
+        }
+
+        return {
+            documentId: 'document-1',
+            revision: null,
+            document: createEmptyDocument(PROFILE_MODELS[profile]),
+        };
+    }, [profile, text]);
     const onReady = () => {
         probe.handle = ref.current;
-        if (!enterNone || ref.current === null) {
+        if (ref.current === null) {
+            return;
+        }
+
+        if (focusOnReady !== undefined) {
+            ref.current.focus(focusOnReady);
+        }
+
+        if (!enterNone) {
             return;
         }
 
@@ -163,6 +187,7 @@ export const ProfileProbe = ({
             onReady={onReady}
             ref={ref}
             {...submitting}
+            {...(placeholder === undefined ? {} : { placeholder })}
             {...services}
             {...labelling}
         />

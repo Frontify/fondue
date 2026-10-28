@@ -175,6 +175,52 @@ describe('the style resolver', () => {
         expect(styleSheetOf(styles)).toMatch(/^\.rte-style-[0-9a-f]{12}\{font-size:20px\}\n/);
     });
 
+    it('keeps a presentation link recipe that draws a button, including inline-block, padding, radius and hover', () => {
+        const recipe: StyleRecipe = {
+            display: 'inline-block',
+            textDecoration: 'none',
+            color: '#ffffff',
+            backgroundColor: '#1d4ed8',
+            padding: '4px 12px',
+            borderRadius: 4,
+            fontWeight: 700,
+            hover: { backgroundColor: '#1e3a8a' },
+        };
+        const { style } = resolveStyle([linkStyle(recipe, 'brand.cta')], 'link', 'brand.cta');
+
+        expect(style?.declarations).toEqual([
+            ['display', 'inline-block'],
+            ['text-decoration', 'none'],
+            ['color', '#ffffff'],
+            ['background-color', '#1d4ed8'],
+            ['padding', '4px 12px'],
+            ['border-radius', '4px'],
+            ['font-weight', '700'],
+        ]);
+        expect(style?.hover).toEqual([['background-color', '#1e3a8a']]);
+    });
+
+    it('keeps theme variable references in style recipe declarations', () => {
+        const { style } = resolveStyle(
+            [
+                {
+                    id: 'brand.theme',
+                    label: 'Themed',
+                    appliesTo: ['paragraph'],
+                    deprecated: false,
+                    recipe: { color: 'var(--host-accent)', fontSize: 'var(--host-body-size)' },
+                },
+            ],
+            'paragraph',
+            'brand.theme',
+        );
+
+        expect(style?.declarations).toEqual([
+            ['color', 'var(--host-accent)'],
+            ['font-size', 'var(--host-body-size)'],
+        ]);
+    });
+
     it('keeps the CSS values a brand recipe uses', () => {
         expect([
             cssValue('fontFamily', '"Inter", Arial, sans-serif'),

@@ -111,6 +111,7 @@ export const ToolbarProbe = ({
     width,
     scrollHeight,
     compose = false,
+    toolbarBelow = false,
     wide = false,
     controls,
     announce,
@@ -129,6 +130,8 @@ export const ToolbarProbe = ({
     scrollHeight?: number;
     /** Composes `RichTextEditor.Root` with the toolbar and the surface in place of `RichTextEditor`. */
     compose?: boolean;
+    /** With `compose`, puts `RichTextEditor.Surface` before `RichTextEditor.Toolbar`. */
+    toolbarBelow?: boolean;
     /** Adds the six heading levels to the toolbar. */
     wide?: boolean;
     controls?: ReactPresentation['controls'];
@@ -216,10 +219,11 @@ export const ToolbarProbe = ({
     } as const;
     let editor = <RichTextEditor {...props} />;
     if (compose || announce !== undefined) {
+        const toolbar = <RichTextEditor.Toolbar key="toolbar" />;
+        const surface = <RichTextEditor.Surface key="surface" />;
         editor = (
             <RichTextEditor.Root {...props}>
-                <RichTextEditor.Toolbar />
-                <RichTextEditor.Surface />
+                {toolbarBelow ? [surface, toolbar] : [toolbar, surface]}
                 {announce !== undefined && <Announce message={announce} coalesce={undefined} />}
             </RichTextEditor.Root>
         );

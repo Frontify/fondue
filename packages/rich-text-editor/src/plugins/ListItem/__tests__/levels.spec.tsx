@@ -58,6 +58,17 @@ describe('list levels', () => {
         expect(pretty(customized)).toMatchSnapshot('custom');
     });
 
+    it('writes listLevels with theme variable colour and size through toHTML', () => {
+        const themed = {
+            bullet: [{ shape: 'disc', color: 'var(--host-accent)', size: 'var(--host-marker-size)' }],
+            ordered: [{ counterType: 'decimal' }],
+        };
+        const html = createCodecs(model).toHTML(document, { listLevels: themed }).html;
+
+        expect(html).toContain('var(--host-accent)');
+        expect(html).toContain('var(--host-marker-size)');
+    });
+
     it('writes the reader markup of a four-level list through toHTML with the default and a custom listLevels', () => {
         const codecs = createCodecs(model);
 
