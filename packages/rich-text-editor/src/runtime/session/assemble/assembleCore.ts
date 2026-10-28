@@ -32,10 +32,11 @@ export const assembleCore = (options: EditorRuntimeOptions, late: Late) => {
     const lifecycle = createLifecycle();
     // Commits and notifications in progress, during which `execute` is busy and `enqueue` waits.
     const busy = createBusy();
-    const { emit, notify, subscribe, watch, clear } = createEventBus({
+    const { emit, notify, notifications, subscribe, watch, clear } = createEventBus({
         isDisposed: lifecycle.isDisposed,
         around: busy.run,
     });
+    const notifyWatchers = () => busy.run(notify);
     const report = (diagnostic: Diagnostic) => emit('diagnostic', diagnostic);
     const metrics = createMetrics({ model: definition.model, session: identity.session, emit });
     const policy = createPolicy({
@@ -50,7 +51,7 @@ export const assembleCore = (options: EditorRuntimeOptions, late: Late) => {
 
                 return rules === undefined || !rules[operation.action];
             });
-            busy.run(notify);
+            notifyWatchers();
         },
     });
     const mode = createMode({
@@ -65,12 +66,16 @@ export const assembleCore = (options: EditorRuntimeOptions, late: Late) => {
             }
 
             late.views.refresh();
+            notifyWatchers();
         },
         onDisabledChange: () => late.views.repaint(),
     });
     const columns = createColumns({
         initial: options.columns ?? ONE_COLUMN,
-        onChange: () => late.views.refresh(),
+        onChange: () => {
+            late.views.refresh();
+            notifyWatchers();
+        },
     });
     const saving = createSaving({ revision: options.revision ?? null, sequence: identity.sequence, lifecycle });
 
@@ -84,6 +89,8 @@ export const assembleCore = (options: EditorRuntimeOptions, late: Late) => {
         busy,
         emit,
         notify,
+        notifications,
+        notifyWatchers,
         subscribe,
         watch,
         clear,

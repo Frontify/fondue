@@ -14,7 +14,6 @@ import { compileDefinition } from '#/runtime/definition';
 
 import { RUNTIME_PLUGINS } from '../../capabilities';
 import { createReplace } from '../../session/lifecycle/replace';
-import { createBusy } from '../../session/state/busy';
 import { createIdentity } from '../../session/state/identity';
 import { createLifecycle } from '../../session/state/lifecycle';
 import { createStore } from '../../session/state/store';
@@ -115,7 +114,6 @@ const setup = (options: Options = {}) => {
                 return work();
             },
         },
-        busy: createBusy(),
         events: { notify: () => calls.push('notify'), emit: (event) => calls.push(`emit:${event}`) },
         metrics: {
             measure: (kind, _started, failureCode) => calls.push(`measure:${kind}:${String(failureCode)}`),
@@ -195,11 +193,13 @@ describe('createReplace', () => {
         expect(lifecycle.phase()).toBe('ready');
         expect(calls).toEqual([
             'view.refresh:transitioning',
+            'notify',
             'view.refresh:ready',
             'coordinator.settle',
             'saving.settled',
             'queue.drain',
             'focus.refocus',
+            'notify',
             'measure:replace:unsaved',
         ]);
     });
@@ -261,6 +261,7 @@ describe('createReplace', () => {
         expect(encoder.capabilities).toEqual([{ id: 'core', version: 1 }]);
         expect(calls).toEqual([
             'view.refresh:transitioning',
+            'notify',
             'faults.withoutRecovery',
             'commit.installState',
             'queue.settle:wrong-session',

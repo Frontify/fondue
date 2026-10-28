@@ -6,7 +6,7 @@ import { type Diagnostic, isRecord } from '#/model';
 import { diagnostic, findUnsafeJson, snapshot } from '#/model/internal';
 import { type CompiledDefinition, type EngineCommand } from '#/runtime/definition';
 
-import { type CommandResult, type CommandState, type SelectionHandle } from '../../types';
+import { type CommandResult, type CommandState, type EditorSummary, type SelectionHandle } from '../../types';
 import { type Busy } from '../state/busy';
 import { type Composition } from '../state/composition';
 import { type Identity } from '../state/identity';
@@ -73,6 +73,33 @@ type CommandArgs = {
     inRender: () => boolean | undefined;
     commandHost: unknown;
     runtime: () => unknown;
+    /** How many times selector stores have been told to read. */
+    notifications: () => number;
+};
+
+type QueryEntry = {
+    id: string;
+    /** The checked payload as JSON, so a payload changed in place reads again. */
+    payload: string;
+    value: CommandState;
+};
+
+/** The answers given since the base state, the phase or the notification count last changed. */
+type QueryMemo = {
+    base: Base;
+    phase: EditorSummary['phase'];
+    notifications: number;
+    entries: QueryEntry[];
+};
+
+const storedQuery = (memo: QueryMemo, id: string, payload: string) => {
+    for (const entry of memo.entries) {
+        if (entry.id === id && entry.payload === payload) {
+            return entry.value;
+        }
+    }
+
+    return undefined;
 };
 
 /** The command arguments, the session a plugin reads, and the shared attempt. */
@@ -187,15 +214,42 @@ export const createCommands = (args: CommandArgs): Commands => {
         host: args.commandHost,
     };
     const context: CommandContext = { ...args, session: commandSession, attempt: createAttempt(args, commandSession) };
+    let memo: QueryMemo | undefined;
     const queryOn: Commands['queryOn'] = (command, checked, base) => queryCommand(context, command, checked, base);
+    // `options` reaches the answer only through the base state it resolves to.
+    const query: Commands['query'] = (id, given, options) => {
+        const command = args.definition.commands.get(id);
+        const checked = checkedPayload(given);
+        const base = args.baseOf(options);
+        if (checked === undefined) {
+            return queryOn(command, checked, base);
+        }
+
+        const phase = args.lifecycle.phase();
+        const notifications = args.notifications();
+        if (memo?.base !== base || memo.phase !== phase || memo.notifications !== notifications) {
+            memo = { base, phase, notifications, entries: [] };
+        }
+
+        const payload = JSON.stringify(checked.payload) ?? '';
+        const stored = storedQuery(memo, id, payload);
+        if (stored !== undefined) {
+            return stored;
+        }
+
+        const value = queryOn(command, checked, base);
+        memo.entries.push({ id, payload, value });
+
+        return value;
+    };
+
     const runOn: Commands['runOn'] = (command, checked, base, route) =>
         runCommand(context, command, checked, base, route);
     const run: Commands['run'] = (id, given, options, route) =>
         runOn(args.definition.commands.get(id), checkedPayload(given), () => args.baseOf(options), route);
 
     return {
-        query: (id, given, options) =>
-            queryOn(args.definition.commands.get(id), checkedPayload(given), args.baseOf(options)),
+        query,
         queryOn,
         run,
         runOn,

@@ -53,9 +53,11 @@ export const usePluginHosts = (sources: HostSources) => {
         const anchor = (target: AnchorTarget) => anchorOf(port, target);
 
         let opened = 0;
+        // A plugin command's `enabled` or `active` may read `overlays.isOpen`, so its query reads again.
         const showOverlay = (next: PluginOverlay | undefined) => {
             pluginOverlayRef.current = next;
             setPluginOverlay(next);
+            coordinator.runtime?.notifyWatchers();
         };
 
         return {

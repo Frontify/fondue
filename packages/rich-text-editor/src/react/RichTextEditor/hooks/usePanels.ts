@@ -22,6 +22,7 @@ export const usePanels = (rootRef: RefObject<HTMLElement | null>, coordinator: M
 
             openPanelRef.current = id;
             setOpenPanel(id);
+            coordinator.runtime?.notifyWatchers();
         },
         // Focus in the editor goes to the surface before the panel that may hold it unmounts; focus the author
         // moved elsewhere stays there.
@@ -33,6 +34,7 @@ export const usePanels = (rootRef: RefObject<HTMLElement | null>, coordinator: M
 
             openPanelRef.current = undefined;
             setOpenPanel(undefined);
+            coordinator.runtime?.notifyWatchers();
         },
         toggle: (id: string) => {
             if (openPanelRef.current === id) {

@@ -26,7 +26,7 @@ import { useRootContext } from '../../hooks/useRoot';
 import { useSessionHandle } from '../../hooks/useSessionHandle';
 import { useSessionHosts } from '../../hooks/useSessionHosts';
 import { useSessionRuntime } from '../../hooks/useSessionRuntime';
-import { useChangeWatch, usePresentationSync } from '../../hooks/useSync';
+import { useChangeWatch, useHostInputWatch, usePresentationSync } from '../../hooks/useSync';
 import { useUnloadGuard } from '../../hooks/useUnloadGuard';
 import { type ChromeContext, type SessionProps, type SessionRest } from '../../types';
 
@@ -183,6 +183,7 @@ export const useSessionView = (
         overlaySourcesOf(props, mount, chromeContext),
     );
     const context = useRootContext(props, mount.latestRef, mount.mounted, mount.coordinator, chrome);
+    useHostInputWatch(props, shell.locale, lang, mount.coordinator);
 
     return {
         shell,

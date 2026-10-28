@@ -37,15 +37,17 @@ export const createFaults = (args: {
     identity: Pick<Identity, 'session' | 'sequence'>;
     encode: Encoder['encode'];
     saving: Pick<Saving, 'status'>;
-    composition: Pick<Composition, 'cancel'>;
+    composition: Pick<Composition, 'reset'>;
     shown: Pick<Shown, 'takeProvisional'>;
     view: Pick<ViewService, 'refresh' | 'cancelReady'>;
     queue: () => Pick<Queue, 'settle'>;
     targets: () => Pick<TargetsService, 'coordinator'>;
     report: (diagnostic: Diagnostic) => void;
+    notify: () => void;
     recovery: () => RecoveryService | undefined;
 }): Faults => {
-    const { lifecycle, identity, encode, saving, composition, shown, view, queue, targets, report, recovery } = args;
+    const { lifecycle, identity, encode, saving, composition, shown, view, queue, targets } = args;
+    const { report, recovery, notify } = args;
     // The state the view threw on, which `candidate` offers until `dispose`.
     // ProseMirror runs that throwing update again on `setProps` and `destroy`.
     let recovered: EditorState | undefined;
@@ -56,11 +58,11 @@ export const createFaults = (args: {
             return;
         }
 
+        // A composition that settles later publishes nothing, so it is cleared before the phase notification.
+        composition.reset();
         lifecycle.to('faulted');
         // A frame still pending would otherwise move the faulted session to ready.
         view.cancelReady();
-        // A composition that settles later publishes nothing.
-        composition.cancel();
         shown.takeProvisional();
         view.refresh();
         queue().settle('not-ready');
@@ -69,6 +71,7 @@ export const createFaults = (args: {
         const { coordinator } = targets();
         coordinator.settle();
         coordinator.abortWhere(() => true);
+        notify();
     };
 
     /** Stores the candidate of a view fault with the host's recovery service. */

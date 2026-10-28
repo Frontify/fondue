@@ -42,6 +42,7 @@ const setup = () => {
         prepare: { exceededLimit: vi.fn() },
         report,
         watch: vi.fn(),
+        notifyWatchers: vi.fn(),
         targets: { captureRange, changeServices: vi.fn(), coordinator: { start: vi.fn() } as never },
         commands: { refusal: vi.fn(), perform: vi.fn() },
         mode: { setDisabled: vi.fn() },

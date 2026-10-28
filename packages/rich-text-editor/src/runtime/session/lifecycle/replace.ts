@@ -12,7 +12,6 @@ import { type Commit } from '../editing/commit';
 import { type Focus } from '../editing/focus';
 import { type HistoryService } from '../editing/history';
 import { type ViewService } from '../editing/view';
-import { type Busy } from '../state/busy';
 import { type Composition } from '../state/composition';
 import { type Encoder } from '../state/encode';
 import { type Identity } from '../state/identity';
@@ -155,7 +154,6 @@ type ReplaceArgs = {
     queue: Pick<Queue, 'drain' | 'settle'>;
     uploads: Pick<SessionUploads['raw'], 'reset'>;
     faults: Pick<Faults, 'fault' | 'withoutRecovery'>;
-    busy: Pick<Busy, 'run'>;
     events: { notify: () => void; emit: (event: 'replaced', value: SessionToken) => void };
     metrics: Pick<Metrics, 'measure'>;
     history: Pick<HistoryService, 'fresh'>;
@@ -173,6 +171,7 @@ const resumeAfter = (args: ReplaceArgs, code: ReplaceCode, focused: boolean): Re
     args.saving.settled();
     args.queue.drain();
     args.focus.refocus(focused);
+    args.events.notify();
 
     return refused(code);
 };
@@ -227,7 +226,7 @@ const installNext = (
     args.targets.coordinator.abortWhere(() => true);
     args.uploads.reset(outgoing);
     args.targets.coordinator.settle();
-    args.busy.run(args.events.notify);
+    args.events.notify();
     args.shown.emitSelection();
     args.shown.emitSaveStatus();
     args.events.emit('replaced', args.identity.session());
@@ -270,6 +269,7 @@ const replaceDocument = async (args: ReplaceArgs, request: ReplaceDocumentReques
     const focused = args.view.current()?.hasFocus() === true;
     args.lifecycle.to('transitioning');
     args.view.refresh();
+    args.events.notify();
     if (args.saving.unsaved()) {
         const code = await leaveUnsaved(args.saving, args.identity, request.unsaved);
         // The session was disposed, or faulted, while the unsaved-work write ran.

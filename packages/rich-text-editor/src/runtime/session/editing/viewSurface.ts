@@ -25,6 +25,8 @@ export type ViewArgs = {
     columns: Pick<Columns, 'current'>;
     metrics: Pick<Metrics, 'measure'>;
     emit: (event: 'ready', value: SessionToken) => void;
+    /** Tells selector stores the session is ready, after the ready listeners. */
+    notify: () => void;
     session: () => SessionToken;
     /** The live registries the `src/testing` probe counts. */
     resources: { views: Set<EditorView>; frames: number };
@@ -138,6 +140,7 @@ const attachSurface = (context: SurfaceContext, element: HTMLElement, props?: Pa
         context.lifecycle.to('ready');
         refreshSurface(context);
         context.emit('ready', context.session());
+        context.notify();
         context.metrics.measure('mount', context.createdAt, null);
     });
     context.resources.frames += 1;

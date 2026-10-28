@@ -1,13 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Node } from 'prosemirror-model';
-import { Plugin } from 'prosemirror-state';
+import { Plugin, TextSelection } from 'prosemirror-state';
 import { describe, expect, it, vi } from 'vitest';
+
+// ProseMirror reads the platform once when it loads. Android ends an idle composition with no `compositionend`.
+vi.hoisted(() => {
+    Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (Linux; Android 14) Chrome/126.0 Mobile',
+        configurable: true,
+    });
+});
 
 import { compileContentModel } from '#/model';
 import { fixtureHeadingSet } from '#/plugins/__tests__/fixtures/features';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
+import { NORMALIZE_META } from '#/runtime/definition';
 import { pressKey, probeRuntimes, setSelection, typeText } from '#/testing';
 
 import { SETTLE_MS } from '../dom/settle';
@@ -132,6 +141,218 @@ describe('the published snapshot and composition', () => {
             compositionActive: true,
             document: before.document,
         });
+    });
+
+    it('does not report the composition ended while the published document is still the old one', async () => {
+        // The settle repair changes the document, so installing it updates the view before publish.
+        const widen = new Plugin({
+            appendTransaction: (transactions, _oldState, state) => {
+                if (!transactions.some((transaction) => transaction.getMeta(NORMALIZE_META) === 'now')) {
+                    return null;
+                }
+
+                if (state.doc.textContent.endsWith('!')) {
+                    return null;
+                }
+
+                return state.tr.insertText('!', state.doc.content.size - 1);
+            },
+        });
+        const session = start(stored(para(words('ab'))), { plugins: [widen] });
+        const before = JSON.stringify(session.handle.getSnapshot().document);
+        const seen: { active: boolean; document: string }[] = [];
+        session.runtime.watch(
+            () => session.handle.getSnapshot(),
+            (previous, next) => previous === next,
+            (snapshot) => {
+                seen.push({ active: snapshot.compositionActive, document: JSON.stringify(snapshot.document) });
+            },
+        );
+
+        compose(session, 'cd');
+        endComposition(session);
+        await settleInput();
+
+        expect(seen.some((snapshot) => !snapshot.active && snapshot.document === before)).toBe(false);
+        expect(session.handle.getSnapshot().compositionActive).toBe(false);
+        expect(JSON.stringify(session.handle.getSnapshot().document)).not.toBe(before);
+    });
+
+    it('publishes a composition restarted in the settle window when Android ends it without compositionend', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, view } = session;
+        const before = JSON.stringify(handle.getSnapshot().document);
+        const seen: { active: boolean; document: string }[] = [];
+        session.runtime.watch(
+            () => handle.getSnapshot(),
+            (previous, next) => previous === next,
+            (snapshot) => {
+                seen.push({ active: snapshot.compositionActive, document: JSON.stringify(snapshot.document) });
+            },
+        );
+        const selectAll = () => {
+            view.dispatch(
+                view.state.tr.setSelection(TextSelection.create(view.state.doc, 1, 3)).setMeta('composition', 1),
+            );
+        };
+
+        view.focus();
+        selectAll();
+        view.dom.dispatchEvent(new CompositionEvent('compositionstart'));
+        endComposition(session);
+        seen.splice(0);
+
+        expect(view.state.selection.empty).toBe(false);
+        view.dom.dispatchEvent(new CompositionEvent('compositionstart'));
+        await vi.advanceTimersByTimeAsync(0);
+        expect(handle.getSnapshot().compositionActive).toBe(true);
+        const text = view.dom.firstChild?.firstChild;
+        if (!(text instanceof Text)) {
+            throw new Error('The view has no text.');
+        }
+
+        const composed = document.createTextNode(`${text.data}cd`);
+        text.parentNode?.replaceChild(composed, text);
+        const range = document.createRange();
+        range.setStart(composed, composed.length);
+        range.collapse(true);
+        const domSelection = document.getSelection();
+        domSelection?.removeAllRanges();
+        domSelection?.addRange(range);
+        await vi.advanceTimersByTimeAsync(0);
+        await vi.advanceTimersByTimeAsync(5000);
+        await settleInput();
+
+        expect(seen.some((snapshot) => !snapshot.active && snapshot.document === before)).toBe(false);
+        expect(seen.some((snapshot) => !snapshot.active && snapshot.document.includes('cd'))).toBe(true);
+        expect(handle.getSnapshot().compositionActive).toBe(false);
+        expect(view.state.doc.textContent).toContain('cd');
+        expect(JSON.stringify(handle.getSnapshot().document)).toContain('cd');
+    });
+
+    it('keeps a queued intent pending when a DOM edit starts a composition in the settle window', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, view } = session;
+        const seen: { active: boolean; document: string }[] = [];
+        const waiting = (promise: Promise<CommandResult>) => Promise.race([promise, Promise.resolve('pending')]);
+        session.runtime.watch(
+            () => {
+                const snapshot = handle.getSnapshot();
+
+                return { active: snapshot.compositionActive, document: JSON.stringify(snapshot.document) };
+            },
+            () => false,
+            (snapshot) => {
+                seen.push(snapshot);
+            },
+        );
+        setSelection(handle, { text: 'ab', from: 0, to: 2 });
+        view.dom.dispatchEvent(new CompositionEvent('compositionstart'));
+        endComposition(session);
+        const queued = handle.enqueue('text.insert', { text: '!' });
+        seen.splice(0);
+        const text = view.dom.firstChild?.firstChild;
+        if (!(text instanceof Text)) {
+            throw new Error('The view has no text.');
+        }
+
+        text.replaceData(0, text.length, 'cd');
+        const range = document.createRange();
+        range.setStart(text, 0);
+        range.setEnd(text, text.length);
+        const domSelection = document.getSelection();
+        domSelection?.removeAllRanges();
+        domSelection?.addRange(range);
+        view.dom.dispatchEvent(new CompositionEvent('compositionstart'));
+
+        expect(view.composing).toBe(true);
+        expect(seen.every((snapshot) => snapshot.active)).toBe(true);
+        expect(await waiting(queued)).toBe('pending');
+        endComposition(session);
+        await settleInput();
+
+        expect(await queued).toMatchObject({ status: 'applied', contentChanged: true });
+        expect(view.state.doc.textContent).toBe('!');
+        expect(handle.getSnapshot().compositionActive).toBe(false);
+    });
+
+    it('publishes once when a compositionstart listener stores a mark', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, view, changes } = session;
+        const waiting = (promise: Promise<CommandResult>) => Promise.race([promise, Promise.resolve('pending')]);
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+        view.dom.addEventListener('compositionstart', () => {
+            handle.execute('mark.bold.toggle');
+        });
+        view.dom.dispatchEvent(new CompositionEvent('compositionstart'));
+        view.dispatch(view.state.tr.insertText('x').setMeta('composition', 1));
+        const queued = handle.enqueue('text.insert', { text: '!' });
+
+        expect(handle.getSummary().compositionActive).toBe(true);
+        expect(await waiting(queued)).toBe('pending');
+        expect(changes).toEqual([]);
+        endComposition(session);
+        await settleInput();
+
+        expect(await queued).toMatchObject({ status: 'applied', contentChanged: true });
+        expect(changes.map(({ origin }) => origin)).toEqual(['input', 'command']);
+        expect(view.state.doc.textContent).toBe('abx!');
+        expect(handle.getSnapshot().compositionActive).toBe(false);
+    });
+
+    it('publishes a composition ProseMirror ended silently when a non-composing key arrives', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, runtime, view, changes } = session;
+        const waiting = (promise: Promise<CommandResult>) => Promise.race([promise, Promise.resolve('pending')]);
+        const outcomes: string[] = [];
+        setSelection(handle, { text: 'ab', from: 0, to: 0 });
+        view.dom.dispatchEvent(new CompositionEvent('compositionstart'));
+        view.dispatch(view.state.tr.insertText('Q').setMeta('composition', 1));
+
+        expect(view.state.doc.textContent).toBe('Qab');
+        expect(JSON.stringify(handle.getSnapshot().document)).toContain('"text":"ab"');
+        expect(changes).toEqual([]);
+        await vi.advanceTimersByTimeAsync(5000);
+
+        expect([view.composing, handle.getSummary().compositionActive, changes.length]).toEqual([false, true, 0]);
+        await vi.advanceTimersByTimeAsync(0);
+        await vi.advanceTimersByTimeAsync(SETTLE_MS);
+        expect([handle.getSummary().compositionActive, changes.length, view.state.doc.textContent]).toEqual([
+            true,
+            0,
+            'Qab',
+        ]);
+        const boldMark = view.state.schema.marks.bold;
+        if (boldMark === undefined) {
+            throw new Error('The schema has no bold mark.');
+        }
+
+        view.dispatch(view.state.tr.addStoredMark(boldMark.create()));
+        const held = pending(session.runtime);
+        await held.resolve({ text: 'Z' });
+        runtime.afterInput((outcome) => {
+            outcomes.push(outcome);
+        }, 10_000);
+        const queued = handle.enqueue('text.insert', { text: '!' });
+        view.dom.dispatchEvent(
+            new KeyboardEvent('keydown', { key: 'Shift', keyCode: 16, bubbles: true, isComposing: false }),
+        );
+
+        expect(handle.getSummary().compositionActive).toBe(true);
+        expect(await waiting(queued)).toBe('pending');
+        expect(outcomes).toEqual([]);
+        expect(view.state.doc.textContent).toBe('Qab');
+        await vi.advanceTimersByTimeAsync(0);
+        await vi.advanceTimersByTimeAsync(19);
+
+        expect(handle.getSummary().compositionActive).toBe(true);
+        expect(await waiting(queued)).toBe('pending');
+        await vi.advanceTimersByTimeAsync(1);
+
+        expect(handle.getSummary().compositionActive).toBe(false);
+        expect(changes.map(({ origin }) => origin)).toEqual(['input', 'command', 'async']);
+        expect(outcomes).toEqual(['settled']);
+        expect(view.state.doc.textContent).toBe('Q!Zab');
     });
 
     it('publishes a composition and runs a queued intent once compositionend, a microtask and 20 ms passed', async () => {

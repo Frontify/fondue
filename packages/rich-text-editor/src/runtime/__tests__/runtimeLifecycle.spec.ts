@@ -13,7 +13,7 @@ import { probeRuntimes, typeText } from '#/testing';
 import { RUNTIME_PLUGINS } from '../capabilities';
 import { authoringOf } from '../guards/policy';
 import { createEditorRuntime } from '../runtime';
-import { type CommandResult } from '../types';
+import { type CommandResult, type DocumentChange } from '../types';
 
 import {
     boldModel,
@@ -95,6 +95,97 @@ describe('the session lifecycle', () => {
         expect(disposed.mock.results[0]?.value).toBeGreaterThan(0);
         expect(probeRuntimes()).toMatchObject({ views: [], installedFeatures: [], subscriptions: 0, frames: 0 });
         expect(handle.getSummary().phase).toBe('disposed');
+    });
+
+    it('replays a held async result before an intent queued during transitioning', async () => {
+        let releaseHeld: ((result: unknown) => void) | undefined;
+        let session: ReturnType<typeof start> | undefined;
+        let queued: Promise<CommandResult> | undefined;
+        let armed = true;
+        const plugin = new Plugin({
+            view: () => ({
+                update: () => {
+                    if (!armed || session?.handle.getSummary().phase !== 'transitioning') {
+                        return;
+                    }
+
+                    armed = false;
+                    queued = session.handle.enqueue('text.insert', { text: 'I' });
+                    releaseHeld?.({ text: 'A' });
+                },
+            }),
+        });
+        session = start(stored(para(words('ab'))), { plugins: [plugin] });
+        const { handle, runtime } = session;
+        typeText(handle, 'x');
+        const held = new Promise<unknown>((resolve) => {
+            releaseHeld = resolve;
+        });
+        runtime.startAsync({
+            key: 'upload',
+            service: 'uploads',
+            featureId: 'core',
+            action: 'create',
+            command: 'text.insert',
+            run: () => held,
+        });
+        const origins: string[] = [];
+        handle.subscribe('documentChange', (change: DocumentChange) => {
+            origins.push(change.origin);
+        });
+
+        const replaced = handle.replaceDocument(replacing(handle, stored(para(words('cd'))), { action: 'reject' }));
+        await replaced;
+        if (queued === undefined) {
+            throw new Error('The intent was not queued.');
+        }
+
+        await queued;
+
+        expect(origins).toEqual(['async', 'command']);
+    });
+
+    it('runs an intent queued during mounting after the surface refresh and the ready listeners', async () => {
+        let runtime: ReturnType<typeof createEditorRuntime> | undefined;
+        const order: string[] = [];
+        const plugin = new Plugin({
+            view: () => ({
+                update: () => {
+                    if (runtime?.handle.getSummary().phase === 'ready') {
+                        order.push('refresh');
+                    }
+                },
+            }),
+        });
+        const { tree } = decodeToTree(stored(para(words('ab'))), boldModel);
+        const compiled = compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel, pluginsFor(boldModel)));
+        runtime = createEditorRuntime({
+            definition: { ...compiled, plugins: [...compiled.plugins, plugin] },
+            documentId: 'document-1',
+            tree: tree as NonNullable<typeof tree>,
+            capabilities: [],
+            generateId: countingIds(),
+            mode: 'editable',
+            policy: authoringOf(boldModel),
+            limits: limitsOf(undefined),
+        });
+        started.push(runtime);
+        runtime.handle.subscribe('ready', () => {
+            order.push('listener');
+        });
+        runtime.handle.subscribe('documentChange', () => {
+            order.push('intent');
+        });
+        runtime.attach(document.body.appendChild(document.createElement('div')));
+        const queued = runtime.handle.enqueue('text.insert', { text: 'Z' });
+
+        vi.runAllTimers();
+
+        expect(order.indexOf('refresh')).toBeGreaterThanOrEqual(0);
+        expect(order.indexOf('listener')).toBeGreaterThan(order.indexOf('refresh'));
+        expect(order.indexOf('intent')).toBeGreaterThan(order.indexOf('listener'));
+        expect(runtime.view?.state.doc.textContent).toContain('Z');
+        await queued;
     });
 });
 

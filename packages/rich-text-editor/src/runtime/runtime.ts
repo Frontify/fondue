@@ -98,14 +98,16 @@ export type EditorRuntime = {
     /** Runs a command that no feature installs, such as one edit of a plugin's UI, as `execute` runs one: one undo step. */
     perform(command: EngineCommand, options?: { target?: SelectionHandle }): CommandResult;
     /**
-     * A selector store: `listener` gets each new value of `read` after a commit or a policy update, unless `isEqual`
-     * holds between it and the last value.
+     * A selector store: `listener` gets each new value of `read` after a commit, a policy update, or `notifyWatchers`,
+     * unless `isEqual` holds between it and the last value.
      */
     watch<Value>(
         read: () => Value,
         isEqual: (previous: Value, next: Value) => boolean,
         listener: (value: Value) => void,
     ): Unsubscribe;
+    /** Tells selector stores to read again after a host input changed with no new editor state. */
+    notifyWatchers(): void;
     /** Starts an async operation through the coordinator, as an `upload` or mention search capability does. */
     startAsync(request: AsyncRequest): AsyncOperation;
     /** Aborts the operations that the changed `services` members started. */

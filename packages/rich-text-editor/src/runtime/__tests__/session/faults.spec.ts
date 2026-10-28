@@ -33,7 +33,9 @@ const setup = (service?: RecoveryService) => {
         identity: { session: () => session, sequence: () => 4 },
         encode: () => ({ type: 'doc' }) as never,
         saving: { status: () => ({ revision: 'r1' }) as never },
-        composition: { cancel: () => calls.push('cancel') },
+        composition: {
+            reset: () => calls.push('reset'),
+        },
         shown: {
             takeProvisional: () => {
                 calls.push('take');
@@ -53,6 +55,7 @@ const setup = (service?: RecoveryService) => {
             calls.push('report');
             reported.push(diagnostic);
         },
+        notify: () => calls.push('notify'),
         recovery: () => service,
     });
     const attached = { dom: document.createElement('div') } as unknown as EditorView;
@@ -62,19 +65,20 @@ const setup = (service?: RecoveryService) => {
 };
 
 describe('createFaults', () => {
-    it('faults in order: phase, ready frame, composition, provisional, view, queue, report, async results', () => {
+    it('cancels composition before the phase, then the ready frame, provisional, view, queue, report and async results', () => {
         const { faults, calls, lifecycle, reported } = setup();
         faults.fault(found);
         expect(lifecycle.phase()).toBe('faulted');
         expect(calls).toEqual([
+            'reset',
             'cancelReady',
-            'cancel',
             'take',
             'refresh',
             'queue:not-ready',
             'report',
             'coordinator.settle',
             'abort:true',
+            'notify',
         ]);
         expect(reported).toEqual([found]);
     });

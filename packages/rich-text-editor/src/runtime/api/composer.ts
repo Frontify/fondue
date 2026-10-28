@@ -13,14 +13,68 @@ import { appendSteps, carrySelection } from '../transform/transactions';
 import { type EditorRange } from './documentApi';
 import { type Positions, RANGES } from './shared';
 
-/** Builds one transaction from the edits of a command, so the command stays one undo step. */
-export const composer = (base: EditorState) => {
+type PendingEdit = {
+    transaction: Transaction;
+    mapIndex: number;
+};
+
+type EditLog = {
+    take: (next: Transaction) => void;
+    /** The document after every edit so far. */
+    document: () => EditorState;
+    /** `range` mapped through the steps made since it was read, or `undefined` when it was read before the command. */
+    resolve: (range: EditorRange) => Positions | undefined;
+    finish: () => Transaction | undefined;
+};
+
+/** Each document the command has seen, with the index of the first step made after it. */
+type SeenDocuments = Map<Node, number>;
+
+const positionsOf = (seen: SeenDocuments, mapping: Mapping, range: EditorRange): Positions | undefined => {
+    const read = RANGES.get(range);
+    if (read === undefined) {
+        return undefined;
+    }
+
+    const start = seen.get(read.doc);
+    if (start === undefined) {
+        return undefined;
+    }
+
+    const since = mapping.slice(start);
+    const from = since.map(read.from, 1);
+
+    return { from, to: Math.max(from, since.map(read.to, -1)) };
+};
+
+// An edit is applied to the composer's state only when something reads that state, so a single-edit command never
+// applies its transaction before the caller does.
+const editLog = (base: EditorState): EditLog => {
     let current = base;
     let first: Transaction | undefined;
     let outer: Transaction | undefined;
+    let pendingEdit: PendingEdit | undefined;
     const mapping = new Mapping();
-    // Each document the command has seen, with the index of the first step made after it.
-    const seen = new Map<Node, number>([[base.doc, 0]]);
+    const seen: SeenDocuments = new Map([[base.doc, 0]]);
+    const applyPending = () => {
+        if (pendingEdit === undefined) {
+            return;
+        }
+
+        const edit = pendingEdit;
+        pendingEdit = undefined;
+        current = current.apply(edit.transaction);
+        if (!seen.has(current.doc)) {
+            seen.set(current.doc, edit.mapIndex);
+        }
+    };
+
+    const document = () => {
+        applyPending();
+
+        return current;
+    };
+
     const take = (next: Transaction) => {
         if (first === undefined) {
             first = next;
@@ -36,35 +90,41 @@ export const composer = (base: EditorState) => {
         }
 
         mapping.appendMapping(next.mapping);
-        current = current.apply(next);
-        if (!seen.has(current.doc)) {
-            seen.set(current.doc, mapping.maps.length);
-        }
+        applyPending();
+        pendingEdit = { transaction: next, mapIndex: mapping.maps.length };
     };
 
+    const resolve = (range: EditorRange) => {
+        // The pending edit's document enters `seen` only once it is applied.
+        applyPending();
+
+        return positionsOf(seen, mapping, range);
+    };
+
+    const finish = () => {
+        if (outer === undefined) {
+            return first;
+        }
+
+        applyPending();
+
+        return outer.setSelection(carrySelection(outer.doc, current.selection));
+    };
+
+    return { take, document, resolve, finish };
+};
+
+/** Builds one transaction from the edits of a command, so the command stays one undo step. */
+export const composer = (base: EditorState) => {
+    const log = editLog(base);
+
     return {
-        state: () => current,
-        /** `range` mapped through the steps made since it was read, or `undefined` when it was read before the command. */
-        resolve: (range: EditorRange): Positions | undefined => {
-            const read = RANGES.get(range);
-            if (read === undefined) {
-                return undefined;
-            }
-
-            const start = seen.get(read.doc);
-            if (start === undefined) {
-                return undefined;
-            }
-
-            const since = mapping.slice(start);
-            const from = since.map(read.from, 1);
-
-            return { from, to: Math.max(from, since.map(read.to, -1)) };
-        },
+        state: log.document,
+        resolve: log.resolve,
         apply: (command: EngineCommand, payload?: unknown, context?: CommandContext) => {
             let built: Transaction | undefined;
             const applied = command.run(
-                current,
+                log.document(),
                 (transaction) => {
                     built = transaction;
                 },
@@ -72,19 +132,13 @@ export const composer = (base: EditorState) => {
                 context,
             );
             if (applied && built !== undefined) {
-                take(built);
+                log.take(built);
             }
 
             return applied;
         },
-        select: (transaction: Transaction) => take(transaction),
-        finish: (): Transaction | undefined => {
-            if (outer === undefined) {
-                return first;
-            }
-
-            return outer.setSelection(carrySelection(outer.doc, current.selection));
-        },
+        select: (transaction: Transaction) => log.take(transaction),
+        finish: log.finish,
     };
 };
 

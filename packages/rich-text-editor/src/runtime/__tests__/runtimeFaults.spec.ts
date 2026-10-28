@@ -75,11 +75,8 @@ describe('faults', () => {
         expect(handle.getSummary().phase).toBe('ready');
         expect(textOf(view.state.doc)).toBe('zab');
         expect(changes).toHaveLength(1);
-        // The command's own feature is named when the throw comes from its write, not from a plugin's append.
-        expect(diagnostics).toEqual([
-            pluginError,
-            { ...pluginError, details: { featureId: 'core', name: 'TypeError' } },
-        ]);
+        // The typed batch and the command's write both name the plugin whose append threw.
+        expect(diagnostics).toEqual([pluginError, pluginError]);
         expect(JSON.stringify(diagnostics)).not.toContain('plugin failure');
     });
 
@@ -144,6 +141,87 @@ describe('faults', () => {
                 },
             },
         },
+    });
+
+    it('ends the composition for watchers when a view fault lands in the settle window', async () => {
+        const session = start(stored(para(words('ab'))), { plugins: [updateFails] });
+        compose(session, 'c');
+        endComposition(session);
+        expect(session.view.composing).toBe(false);
+        expect(session.handle.getSummary().compositionActive).toBe(true);
+        const seen: boolean[] = [];
+        session.runtime.watch(
+            () => session.handle.getSnapshot().compositionActive,
+            Object.is,
+            (active) => {
+                seen.push(active);
+            },
+        );
+
+        typeText(session.handle, '!');
+
+        expect(session.handle.getSummary().phase).toBe('faulted');
+        expect(session.handle.getSnapshot().compositionActive).toBe(false);
+        expect(seen.at(-1)).toBe(false);
+        const afterFault = seen.length;
+
+        session.view.dom.dispatchEvent(new CompositionEvent('compositionstart'));
+        expect(seen.slice(afterFault)).toContain(true);
+        session.view.dom.dispatchEvent(new CompositionEvent('compositionend'));
+        await settleInput();
+        expect(seen.at(-1)).toBe(false);
+    });
+
+    it('settles a queued insert as not-ready when a composition update faults outside a commit', async () => {
+        let session: ReturnType<typeof start> | undefined;
+        let armed = false;
+        const failingUpdate = new Plugin({
+            props: {
+                nodeViews: {
+                    paragraph: (node) => {
+                        const dom = document.createElement('p');
+
+                        return {
+                            dom,
+                            contentDOM: dom,
+                            update: (next) => {
+                                if (armed) {
+                                    session?.runtime.faultView();
+
+                                    return true;
+                                }
+
+                                return next.type === node.type;
+                            },
+                        };
+                    },
+                },
+            },
+        });
+        session = start(stored(para(words('ab'))), { plugins: [failingUpdate] });
+        const { handle, runtime, view } = session;
+        setSelection(handle, { text: 'ab', from: 0, to: 0 });
+        expect(handle.execute('mark.bold.toggle').status).toBe('applied');
+        armed = true;
+        const seen: { active: boolean; phase: string }[] = [];
+        let queued: Promise<CommandResult> | undefined;
+        runtime.watch(
+            () => ({ active: handle.getSnapshot().compositionActive, phase: handle.getSummary().phase }),
+            () => false,
+            (value) => {
+                seen.push(value);
+                if (value.active && queued === undefined) {
+                    queued = handle.enqueue('text.insert', { text: 'Z' });
+                }
+            },
+        );
+
+        view.dom.dispatchEvent(new CompositionEvent('compositionstart'));
+
+        expect(seen.filter((notice) => !notice.active)).toEqual([{ active: false, phase: 'faulted' }]);
+        expect(await queued).toEqual(NOT_READY);
+        expect(view.state.doc.textContent).toBe('ab');
+        expect(handle.getSummary().phase).toBe('faulted');
     });
 
     it('faults once a node view update throws, keeps the snapshot and offers the faulting edit until dispose', () => {

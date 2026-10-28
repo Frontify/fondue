@@ -18,7 +18,7 @@ export type Operations = ReturnType<typeof assembleOperations>;
 export const assembleOperations = (editing: Editing, options: EditorRuntimeOptions, late: Late) => {
     const { definition, limits } = options;
     const { generate, identity, lifecycle, busy, report, policy, mode, saving, store, settling, display } = editing;
-    const { views, faults, batches, commit } = editing;
+    const { views, faults, batches, commit, notifications } = editing;
     const targets = createTargetsService({
         store,
         identity,
@@ -68,6 +68,7 @@ export const assembleOperations = (editing: Editing, options: EditorRuntimeOptio
         inRender: () => options.inRender?.(),
         commandHost: options.commandHost,
         runtime: () => late.runtime,
+        notifications,
     });
     const queue = createQueue({
         lifecycle,

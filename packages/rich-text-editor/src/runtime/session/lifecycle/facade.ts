@@ -38,6 +38,7 @@ export const createFacade = (args: {
     prepare: Pick<Prepare, 'exceededLimit'>;
     report: (diagnostic: Diagnostic) => void;
     watch: EditorRuntime['watch'];
+    notifyWatchers: () => void;
     targets: Pick<TargetsService, 'captureRange' | 'changeServices' | 'coordinator'>;
     commands: Pick<Commands, 'refusal' | 'perform'>;
     mode: Pick<ModeService, 'setDisabled'>;
@@ -50,7 +51,7 @@ export const createFacade = (args: {
     checks: Pick<ContentChecks, 'run'>;
 }): EditorRuntime => {
     const { handle, definition, limits, suggestionListId, interactionRoots, identity, store, policy, view } = args;
-    const { commit, prepare, report, watch, targets, commands, mode, columns, actions, shown } = args;
+    const { commit, prepare, report, watch, notifyWatchers, targets, commands, mode, columns, actions, shown } = args;
     const { history, composition, metrics, checks } = args;
 
     return {
@@ -83,6 +84,7 @@ export const createFacade = (args: {
         select: commit.select,
         writeRefusal: policy.writeRefusal,
         watch,
+        notifyWatchers,
         startAsync: targets.coordinator.start,
         changeServices: targets.changeServices,
         setDisabled: mode.setDisabled,

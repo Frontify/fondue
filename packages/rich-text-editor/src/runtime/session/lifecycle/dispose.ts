@@ -19,7 +19,7 @@ import { type TargetsService } from './targets';
 export const createDispose = (args: {
     lifecycle: Pick<Lifecycle, 'is' | 'to' | 'isDisposed'>;
     saving: Pick<Saving, 'dispose'>;
-    composition: Pick<Composition, 'cancel' | 'resolve'>;
+    composition: Pick<Composition, 'reset' | 'resolve'>;
     checks: Pick<ContentChecks, 'dispose'>;
     targets: Pick<TargetsService, 'coordinator' | 'clearDeferred'>;
     uploads: Pick<Uploads, 'dispose'>;
@@ -48,7 +48,8 @@ export const createDispose = (args: {
 
         // Set first, so `disposed` listeners read the final phase and what they enqueue settles at once.
         lifecycle.to('disposed');
-        composition.cancel();
+        // Watchers are still attached until `events.clear`, so this must not notify them.
+        composition.reset();
         checks.dispose();
         composition.resolve('disposed');
         targets.coordinator.dispose();

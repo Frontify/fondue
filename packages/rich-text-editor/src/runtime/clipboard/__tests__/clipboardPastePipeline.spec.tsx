@@ -22,6 +22,7 @@ import {
 } from '#/plugins/__tests__/fixtures/documents';
 import { loadMarkdownReader } from '#/runtime/clipboard/markdown';
 import { SLICE_TYPE } from '#/runtime/clipboard/slice';
+import { isHistoryTransaction } from '#/runtime/history';
 import { setSelection } from '#/testing';
 
 import {
@@ -396,8 +397,12 @@ describe('the paste pipeline', () => {
 
         pasteInto(mounted, { [SLICE_TYPE]: headings(2) });
 
+        const pasted = apply.mock.calls.filter(([transaction]) => transaction.getMeta('uiEvent') === 'paste');
+        const undoQueries = apply.mock.calls.filter(([transaction]) => isHistoryTransaction(transaction));
         expect(nodeIdsOf(mounted.content())).toHaveLength(2);
-        expect(apply).toHaveBeenCalledTimes(1);
+        expect(pasted).toHaveLength(1);
+        expect(undoQueries).toHaveLength(1);
+        expect(apply).toHaveBeenCalledTimes(2);
         mounted.unmount();
     });
 });

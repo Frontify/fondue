@@ -20,8 +20,8 @@ export type Editing = ReturnType<typeof assembleEditing>;
 /** The view, the faults and the commit path. */
 export const assembleEditing = (state: State, options: EditorRuntimeOptions, late: Late) => {
     const { limits } = options;
-    const { generate, identity, lifecycle, busy, notify, emit, report, metrics, policy, mode, columns, saving } = state;
-    const { encoder, store, settling, display, history, uploads, checks } = state;
+    const { generate, identity, lifecycle, busy, notify, notifyWatchers, emit, report, metrics, policy } = state;
+    const { mode, columns, saving, encoder, store, settling, display, history, uploads, checks } = state;
     const views = createView({
         store,
         lifecycle,
@@ -30,6 +30,7 @@ export const assembleEditing = (state: State, options: EditorRuntimeOptions, lat
         columns,
         metrics,
         emit,
+        notify: notifyWatchers,
         session: identity.session,
         resources: liveResources,
         suggestionListId: state.suggestionListId,
@@ -64,6 +65,7 @@ export const assembleEditing = (state: State, options: EditorRuntimeOptions, lat
         queue: () => late.queue,
         targets: () => late.targets,
         report,
+        notify: notifyWatchers,
         recovery: () => options.recovery?.(),
     });
     const batches = createPrepare({

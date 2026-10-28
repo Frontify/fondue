@@ -46,7 +46,8 @@ const createTypingPlugin = (late: Late) =>
 /** The document store, its first plugins and the services that read it. */
 export const assembleState = (core: Core, options: EditorRuntimeOptions, late: Late) => {
     const { definition, limits } = options;
-    const { generate, identity, lifecycle, busy, notify, emit, report, policy, mode, columns, saving, encoder } = core;
+    const { generate, identity, lifecycle, busy, notifications, notifyWatchers, emit, report } = core;
+    const { policy, mode, columns, saving, encoder } = core;
     const uploads = createUploadService({
         definition,
         limits,
@@ -60,13 +61,15 @@ export const assembleState = (core: Core, options: EditorRuntimeOptions, late: L
         commands: () => late.commands,
         targets: () => late.targets,
         report: (found) => report(found),
-        changed: () => busy.run(notify),
+        changed: notifyWatchers,
     });
 
     const typingRecorder = createTypingPlugin(late);
     const settling = createComposition({
         composing: () => late.views.current()?.composing === true,
         onSettled: () => late.settleInput(),
+        onActiveChange: notifyWatchers,
+        notifications,
     });
     const keyGuard = createKeyGuard(
         () => options.tabMovesFocus?.() === true,
@@ -99,7 +102,7 @@ export const assembleState = (core: Core, options: EditorRuntimeOptions, late: L
         store,
         lifecycle,
         composition: settling,
-        notify: () => busy.run(notify),
+        notify: notifyWatchers,
         install: (next) => late.commit.installState(next),
         publish: () => display.setPublished(store.state),
         uploads: (doc, keep) => uploads.raw.reset(doc, keep),

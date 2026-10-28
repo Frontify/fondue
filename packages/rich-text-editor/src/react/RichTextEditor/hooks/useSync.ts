@@ -4,7 +4,7 @@ import { type MutableRefObject, type RefObject, useEffect, useMemo, useRef } fro
 
 import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
-import { sameDocument, styleSheetOf } from '#/model';
+import { type RichTextLocale, sameDocument, styleSheetOf } from '#/model';
 import { unknownStyle } from '#/model/internal';
 
 import { type EditorHandle } from '../../types';
@@ -117,4 +117,41 @@ export const useChangeWatch = (props: Defined, mounted: Mounted, coordinator: Mo
             messageKey: 'react.default-value-changed',
         });
     }, [defaultValue, coordinator]);
+};
+
+/**
+ * Tells selector stores to read again when a host value a plugin command can read changed with no new editor state:
+ * the language and strings, the presentation, the reference service and the test ID. It must run after every layout
+ * effect that writes those values into the hosts' refs, so a query reads the new value.
+ */
+export const useHostInputWatch = (
+    props: Defined,
+    locale: RichTextLocale,
+    lang: string,
+    coordinator: MountCoordinator,
+) => {
+    const { presentation } = props;
+    const inputs = [
+        lang,
+        locale,
+        presentation?.columnGap,
+        presentation?.styles,
+        presentation?.colorTokens,
+        props['data-test-id'],
+    ];
+    const references = memberOf(props.services, 'references');
+    const inputsRef = useRef(inputs);
+    const referencesRef = useRef(references);
+    useClientLayoutEffect(() => {
+        const previous = inputsRef.current;
+        const previousReferences = referencesRef.current;
+        inputsRef.current = inputs;
+        referencesRef.current = references;
+        // A host that writes the services object inline keeps the same functions, as `useChangeWatch` reads it.
+        const referencesChanged = memberChanged(previousReferences, references);
+        const changed = referencesChanged || inputs.some((input, index) => !Object.is(input, previous[index]));
+        if (changed) {
+            coordinator.runtime?.notifyWatchers();
+        }
+    });
 };

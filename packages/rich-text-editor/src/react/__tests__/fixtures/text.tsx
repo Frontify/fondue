@@ -134,6 +134,7 @@ export const mountText = <Model extends ContentModel = ContentModel<ReturnType<t
     }
 
     let locale: RichTextLocale | undefined;
+    let testId: string | undefined;
     const element = (inputRules: Rules) => {
         let rules: { inputRules?: NonNullable<Rules> } = {};
         if (inputRules !== undefined) {
@@ -143,6 +144,11 @@ export const mountText = <Model extends ContentModel = ContentModel<ReturnType<t
         let localeProps: { locale?: RichTextLocale } = {};
         if (locale !== undefined) {
             localeProps = { locale };
+        }
+
+        let testIdProps: { 'data-test-id'?: string } = {};
+        if (testId !== undefined) {
+            testIdProps = { 'data-test-id': testId };
         }
 
         let readOnlyProps: { readOnly?: boolean } = {};
@@ -155,6 +161,7 @@ export const mountText = <Model extends ContentModel = ContentModel<ReturnType<t
                 {...shown}
                 {...rules}
                 {...localeProps}
+                {...testIdProps}
                 aria-label="Notes"
                 definition={definition}
                 defaultValue={{
@@ -191,6 +198,10 @@ export const mountText = <Model extends ContentModel = ContentModel<ReturnType<t
         rerenderWith: (inputRules: Rules) => rendered.rerender(element(inputRules)),
         rerenderLocale: (next: RichTextLocale) => {
             locale = next;
+            rendered.rerender(element(rules));
+        },
+        rerenderTestId: (next: string) => {
+            testId = next;
             rendered.rerender(element(rules));
         },
     };

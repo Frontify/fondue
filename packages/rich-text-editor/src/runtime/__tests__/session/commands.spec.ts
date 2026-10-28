@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { EditorState, TextSelection, type Transaction } from 'prosemirror-state';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { compileContentModel, type Diagnostic } from '#/model';
 import { core } from '#/plugins/Core/feature';
@@ -34,6 +34,7 @@ const insert = (extra: Partial<EngineCommand> = {}): EngineCommand => ({
 const setup = (commands: Record<string, EngineCommand>, options: { mode?: 'editable' | 'readonly' } = {}) => {
     const calls: string[] = [];
     const reported: Diagnostic[] = [];
+    let notices = 0;
     const state = { inRender: false, installs: 0 };
     let next = 0;
     const identity = createIdentity({ documentId: 'doc', generate: () => `id-${++next}` });
@@ -82,9 +83,22 @@ const setup = (commands: Record<string, EngineCommand>, options: { mode?: 'edita
         inRender: () => state.inRender,
         commandHost: 'host',
         runtime: () => 'runtime',
+        notifications: () => notices,
     });
 
-    return { service, store, lifecycle, busy, mode, calls, reported, state };
+    return {
+        service,
+        store,
+        lifecycle,
+        busy,
+        mode,
+        calls,
+        reported,
+        state,
+        notify: () => {
+            notices += 1;
+        },
+    };
 };
 
 describe('createCommands', () => {
@@ -267,6 +281,33 @@ describe('createCommands', () => {
         expect(service.refusal(command, store.state, undefined)).toBeUndefined();
         mode.set('readonly');
         expect(service.refusal(command, store.state, undefined)).toBe('readonly');
+    });
+
+    it('applies a repeated query once until the state or the notification count changes', () => {
+        const { service, store, notify } = setup({ insert: insert() });
+        const apply = vi.spyOn(EditorState.prototype, 'applyTransaction');
+        const payload = { text: 'q' };
+        service.query('insert', payload);
+        service.query('insert', payload);
+        expect(apply).toHaveBeenCalledTimes(1);
+        notify();
+        service.query('insert', payload);
+        expect(apply).toHaveBeenCalledTimes(2);
+        store.set(EditorState.create({ doc: store.state.doc, selection: TextSelection.create(store.state.doc, 1) }));
+        service.query('insert', payload);
+        expect(apply).toHaveBeenCalledTimes(3);
+        apply.mockRestore();
+    });
+
+    it('answers a repeated query again after a payload changed in place or a phase change, with no notification', () => {
+        const toggle = insert({ active: (_state, payload) => (payload as { text?: string }).text === 'on' });
+        const { service, lifecycle } = setup({ toggle });
+        const payload = { text: 'off' };
+        expect(service.query('toggle', payload).active).toBe(false);
+        payload.text = 'on';
+        expect(service.query('toggle', payload).active).toBe(true);
+        lifecycle.to('disposed');
+        expect(service.query('toggle', payload)).toMatchObject({ enabled: false, disabledReason: 'not-ready' });
     });
 
     it('performs a command no feature installs without a registered id', () => {

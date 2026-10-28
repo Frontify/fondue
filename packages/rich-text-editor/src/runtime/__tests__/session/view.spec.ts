@@ -42,6 +42,7 @@ const setup = (options: { plugins?: Plugin[]; recovery?: boolean; composing?: bo
         columns: { current: () => ({ count: 1 }) as never },
         metrics: { measure: (kind) => calls.push(`measure:${kind}`) },
         emit: (event) => calls.push(`emit:${event}`),
+        notify: () => calls.push('notify'),
         session: () => token,
         resources,
         suggestionListId: 'list',
@@ -94,7 +95,7 @@ describe('createView', () => {
         vi.runAllTimers();
         expect(lifecycle.phase()).toBe('ready');
         expect(resources.frames).toBe(0);
-        expect(calls).toEqual(['attached', 'sync:editable:1', 'emit:ready', 'measure:mount']);
+        expect(calls).toEqual(['attached', 'sync:editable:1', 'emit:ready', 'notify', 'measure:mount']);
     });
 
     it('does nothing once the session is disposed', () => {

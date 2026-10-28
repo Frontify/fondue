@@ -98,12 +98,14 @@ export type EditorPort = {
     select(target: { anchor: number; head: number; scroll?: boolean } | { node: number; scroll?: boolean }): void;
     /** Captures `range` as a target, as `captureTarget` captures the selection. */
     captureRange(range: { from: number; to: number }, options: CaptureTargetOptions): CaptureResult;
-    /** A selector store: `listener` gets each new value of `read` after a commit, unless `isEqual` holds. */
+    /** A selector store: `listener` gets each new value of `read` after a commit, a policy update, or `notifyWatchers`, unless `isEqual` holds. */
     watch<Value>(
         read: () => Value,
         isEqual: (previous: Value, next: Value) => boolean,
         listener: (value: Value) => void,
     ): Unsubscribe;
+    /** Tells selector stores to read again after a host input changed with no new editor state. */
+    notifyWatchers(): void;
     /** Starts an async operation through the coordinator. */
     startAsync(request: AsyncRequest): AsyncOperation;
     /** Aborts the operations that the changed `services` members started. */

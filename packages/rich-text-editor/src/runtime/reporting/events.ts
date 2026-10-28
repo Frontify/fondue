@@ -46,11 +46,16 @@ export type EventBusOptions = {
 /** A runtime's event listeners and selector stores, where a throwing listener or selector never stops the others. */
 export const createEventBus = ({ isDisposed, around }: EventBusOptions) => {
     const context = createEventBusContext(isDisposed);
+    let notifications = 0;
 
     return {
         emit: <EventName extends keyof RuntimeEvents>(event: EventName, value: RuntimeEvents[EventName]) =>
             around(() => deliverListeners(context, event, value)),
-        notify: () => notifySelectors(context),
+        notify: () => {
+            notifications += 1;
+            notifySelectors(context);
+        },
+        notifications: () => notifications,
         subscribe: (event: string, listener: Listener): Unsubscribe => addListener(context, event, listener),
         watch: <Value>(
             read: () => Value,

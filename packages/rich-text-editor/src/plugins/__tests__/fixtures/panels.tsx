@@ -56,6 +56,7 @@ const findPanel = (id: string, component: ComponentType<PanelComponentProps>) =>
 
                     return true;
                 },
+                active: (api) => api.panels.isOpen('find'),
             },
         },
         panels: [{ control: 'find', component }],
@@ -66,6 +67,9 @@ const findPanel = (id: string, component: ComponentType<PanelComponentProps>) =>
 
 /** Runs `find.open`, which only the fixture's editor part installs, so the handle's own commands do not name it. */
 export const openFind = (handle: object) => (handle as EditorHandle<{ 'find.open': undefined }>).execute('find.open');
+
+/** Queries `find.open`, which is active while the `find` panel is open. */
+export const queryFind = (handle: object) => (handle as EditorHandle<{ 'find.open': undefined }>).query('find.open');
 
 /** A find panel that only tests use, standing in for the find feature. */
 export const fixtureFindPanel = findPanel('fixture.find', FindPanel);

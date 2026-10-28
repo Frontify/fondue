@@ -23,7 +23,7 @@ import {
 import { core } from '#/plugins/Core/feature';
 import { defineEditor, defineReactPresentation } from '#/react/compile/define';
 import { RichTextEditor } from '#/react/RichTextEditor/RichTextEditor';
-import { type EditorHandle } from '#/react/types';
+import { type EditorHandle, type ReactPresentation } from '#/react/types';
 import { SLICE_TYPE } from '#/runtime/clipboard/slice';
 import { type RuntimeHandle, runtimeOf } from '#/runtime/runtime';
 import { type AuthoringPolicy, type DocumentChange } from '#/runtime/types';
@@ -57,6 +57,8 @@ export type Options = {
     editorModel?: ContentModel;
     readOnly?: boolean;
     generateId?: () => string;
+    /** Passed through when the case must not use the presentation's default toolbar. */
+    toolbar?: ReactPresentation['toolbar'];
 };
 
 /** Mounts an editor of the vocabulary stand-ins, ready, with its view, diagnostics, changes and live region. */
@@ -74,6 +76,7 @@ export const mount = (options?: Options) => {
         editorModel = model,
         readOnly = false,
         generateId,
+        toolbar,
     } = given;
     const definition = defineEditor({
         id: 'test.clipboard',
@@ -90,6 +93,11 @@ export const mount = (options?: Options) => {
 
     const diagnostics: Diagnostic[] = [];
     const changes: DocumentChange[] = [];
+    const presentationInput: Partial<ReactPresentation> = { sliceContext };
+    if (toolbar !== undefined) {
+        presentationInput.toolbar = toolbar;
+    }
+
     const rendered = render(
         <RichTextEditor
             aria-label="Notes"
@@ -100,7 +108,7 @@ export const mount = (options?: Options) => {
                 revision: null,
                 document: envelope(doc(...blocks)) as never,
             }}
-            presentation={defineReactPresentation({ sliceContext })}
+            presentation={defineReactPresentation(presentationInput)}
             readOnly={readOnly}
             {...ids}
             ref={ref}

@@ -30,7 +30,7 @@ const setup = ({ disposedBySaving = false } = {}) => {
             },
         },
         composition: {
-            cancel: () => calls.push(`composition.cancel:${lifecycle.phase()}`),
+            reset: () => calls.push(`composition.reset:${lifecycle.phase()}`),
             resolve: (outcome) => calls.push(`composition.resolve:${outcome}`),
         },
         checks: { dispose: () => calls.push('checks.dispose') },
@@ -59,7 +59,7 @@ describe('createDispose', () => {
         expect(lifecycle.phase()).toBe('disposed');
         expect(calls).toEqual([
             'saving.dispose',
-            'composition.cancel:disposed',
+            'composition.reset:disposed',
             'checks.dispose',
             'composition.resolve:disposed',
             'coordinator.dispose',

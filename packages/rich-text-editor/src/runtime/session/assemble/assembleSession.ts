@@ -13,7 +13,7 @@ import { liveResources } from './registry';
 /** Replace, dispose, the host's handle and the testing facade over every earlier phase. */
 export const assembleSession = (parts: Operations, options: EditorRuntimeOptions) => {
     const { definition, limits } = options;
-    const { identity, lifecycle, busy, emit, notify, clear, subscribe, watch, report, metrics, policy, mode } = parts;
+    const { identity, lifecycle, emit, notifyWatchers, clear, subscribe, watch, report, metrics, policy, mode } = parts;
     const { columns, saving, encoder, uploads, store, settling, display, history, checks, views, faults } = parts;
     const { batches, commit, targets, focus, commands, queue, actions } = parts;
     const interactionRoots = new Set<HTMLElement>();
@@ -51,8 +51,7 @@ export const assembleSession = (parts: Operations, options: EditorRuntimeOptions
         queue,
         uploads: uploads.raw,
         faults,
-        busy,
-        events: { notify, emit },
+        events: { notify: notifyWatchers, emit },
         metrics,
         history,
     });
@@ -89,6 +88,7 @@ export const assembleSession = (parts: Operations, options: EditorRuntimeOptions
         prepare: batches,
         report,
         watch,
+        notifyWatchers,
         targets,
         commands,
         mode,

@@ -11,6 +11,7 @@ import {
     fixtureSearchPanel,
     fixtureThrowingFindPanel,
     openFind,
+    queryFind,
 } from '#/plugins/__tests__/fixtures/panels';
 import { contentChecks } from '#/plugins/ContentChecks/feature';
 import { core } from '#/plugins/Core/feature';
@@ -48,6 +49,23 @@ describe('editor panels', () => {
         expect(screen.queryByRole('search', { name: 'Find' })).not.toBeInTheDocument();
         expect(screen.getByRole('region', { name: 'Accessibility checks' })).toBeInTheDocument();
         expect(document.querySelectorAll('[data-rte-panel]')).toHaveLength(1);
+        unmount();
+    });
+
+    it('answers a command whose active state reads the open panel again once the panel opens and closes', () => {
+        const model = modelOf([core(), fixtureFindPanel.feature, contentChecks()]);
+        const { handle, unmount } = mountPanels(model, [fixtureFindPanel.plugin]);
+        expect(queryFind(handle).active).toBe(false);
+
+        act(() => {
+            openFind(handle);
+        });
+        expect(queryFind(handle).active).toBe(true);
+
+        act(() => {
+            handle.execute('checks.open');
+        });
+        expect(queryFind(handle).active).toBe(false);
         unmount();
     });
 
