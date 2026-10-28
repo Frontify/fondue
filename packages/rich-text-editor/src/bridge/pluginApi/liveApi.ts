@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type DocumentApi } from '#/runtime/api/documentApi';
-import { type CommandContext, type CommandSession, liveDocumentApi } from '#/runtime/api/editorApi';
-import { type EditorPort } from '#/runtime/port';
-import { engineOf } from '#/runtime/portEngine';
+import { type CommandContext, type CommandSession } from '#/runtime/api/editorApi';
+import { liveDocumentOf, type EditorPort } from '#/runtime/port';
 
 import { type EditorApi, type EditorFacet, type EditorHosts, type EditorPart } from './plugin';
 
@@ -70,7 +69,7 @@ export const editorApiOf = (runtime: EditorPort, hosts: EditorHosts): EditorApi 
         // One document API per session, so its members keep their identity when the hosts change with the locale.
         let document = documents.get(runtime);
         if (document === undefined) {
-            document = liveDocumentApi(engineOf(runtime));
+            document = liveDocumentOf(runtime);
             documents.set(runtime, document);
         }
 

@@ -776,6 +776,11 @@ const CASES: readonly Case[] = [
     banned('bridge: prosemirror-state', 'src/bridge/engine.ts', "import { EditorState } from 'prosemirror-state';"),
     allowed('bridge: runtime', 'src/bridge/runtime.ts', "import { run } from '#/runtime/run';"),
     banned(
+        'bridge: the port engine file',
+        'src/bridge/port-engine.ts',
+        "import { engineOf } from '#/runtime/portEngine';",
+    ),
+    banned(
         'bridge: the clipboard plugin',
         'src/bridge/clipboard.ts',
         "import { plugin } from '#/runtime/clipboard/plugin';",

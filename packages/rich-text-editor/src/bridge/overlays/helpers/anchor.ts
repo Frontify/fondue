@@ -2,9 +2,8 @@
 
 import { type EditorRange } from '#/runtime/api/documentApi';
 import { positionsOf } from '#/runtime/api/editorApi';
-import { caretRect, rangeRect, selectionRect, type SurfaceView } from '#/runtime/dom/viewBridge';
+import { caretRect, rangeRect, selectionRect, type SurfaceView, viewOf } from '#/runtime/dom/viewBridge';
 import { type EditorPort } from '#/runtime/port';
-import { engineOf } from '#/runtime/portEngine';
 
 import { type AnchorTarget, type OverlayAnchor } from '../../pluginApi/plugin';
 
@@ -184,7 +183,7 @@ export const anchorOf = (port: () => EditorPort | undefined, target: AnchorTarge
             return undefined;
         }
 
-        return engineOf(live).view;
+        return viewOf(live);
     };
 
     if (target === 'selection') {

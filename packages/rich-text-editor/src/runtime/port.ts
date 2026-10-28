@@ -2,7 +2,8 @@
 
 import { type Diagnostic, type ResourceLimits } from '#/model';
 
-import { contentChecksApi, rangeOf } from './api/editorApi';
+import { type DocumentApi } from './api/documentApi';
+import { contentChecksApi, liveDocumentApi, rangeOf } from './api/editorApi';
 import { type AsyncOperation, type AsyncRequest } from './async/async';
 import { type MediaSession } from './capabilities/media/session';
 import {
@@ -127,6 +128,9 @@ export const mediaOf = (port: EditorPort): MediaSession | undefined => mediaOfRu
 
 /** The content-checks API of the session behind `port`. */
 export const contentChecksOf = (port: EditorPort) => contentChecksApi(engineOf(port));
+
+/** The document API over the live session behind `port`. */
+export const liveDocumentOf = (port: EditorPort): DocumentApi => liveDocumentApi(engineOf(port));
 
 /** The port of the session behind a handle the runtime made. */
 export const portOfHandle = (handle: object): EditorPort | undefined => runtimeOf(handle);

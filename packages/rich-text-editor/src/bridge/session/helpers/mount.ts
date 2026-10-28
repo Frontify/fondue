@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { mountedOf } from '#/runtime/dom/viewBridge';
 import { type EditorPort } from '#/runtime/port';
-import { engineOf } from '#/runtime/portEngine';
 
 import { type ChromeView, createChromeView } from './chromeView';
 import { markReady } from './devChecks';
@@ -24,7 +24,7 @@ export const createMountCoordinator = (): MountCoordinator => {
     const chrome = createChromeView();
 
     const attach = (port: EditorPort, element: HTMLElement) => {
-        const runtime = engineOf(port);
+        const runtime = mountedOf(port);
         runtime.attach(element, chrome.props(element, runtime.nodeViews, runtime.nextDomId));
         if (runtime.view !== undefined) {
             chrome.take(runtime.view);

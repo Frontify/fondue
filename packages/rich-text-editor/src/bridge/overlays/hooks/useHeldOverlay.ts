@@ -2,8 +2,8 @@
 
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
+import { viewOf } from '#/runtime/dom/viewBridge';
 import { type EditorPort } from '#/runtime/port';
-import { engineOf } from '#/runtime/portEngine';
 
 import { type AnchorTarget } from '../../pluginApi/plugin';
 import { SessionContext } from '../../session/helpers/sessionContext';
@@ -43,8 +43,7 @@ const leaveOnTab = (event: KeyboardEvent) => {
  * at ProseMirror's selection, which it maps through every change made meanwhile.
  */
 const refocus = (port: EditorPort, before: Element | null, panelControl: Element | null) => {
-    const runtime = engineOf(port);
-    const { view } = runtime;
+    const view = viewOf(port);
     if (view === undefined) {
         return;
     }
@@ -72,7 +71,7 @@ const refocus = (port: EditorPort, before: Element | null, panelControl: Element
         return;
     }
 
-    runtime.handle.focus();
+    port.handle.focus();
 };
 
 /** `useEditorOverlay` with the anchor's `hold`, which chrome that stays beside the surface while it is hovered uses. */
@@ -112,7 +111,7 @@ export const useHeldOverlay = (
                     return undefined;
                 }
 
-                return engineOf(live).view;
+                return viewOf(live);
             },
             () => targetRef.current,
         ),

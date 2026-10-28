@@ -426,7 +426,7 @@ const HTML_BAN_PATTERNS = [
 ];
 
 // These folders sit inside `runtime`, so layers that may import `runtime` still ban them by path.
-const RUNTIME_PARTS = ['runtime/clipboard', 'runtime/definition', 'runtime/import'];
+const RUNTIME_PARTS = ['runtime/clipboard', 'runtime/definition', 'runtime/import', 'runtime/portEngine'];
 
 // Layers that ban the runtime but keep `runtime/definition` re-allow it.
 const DEFINITION_PATHS = ['runtime/definition', 'runtime/definition/**'];

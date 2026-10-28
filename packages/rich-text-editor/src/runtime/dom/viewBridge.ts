@@ -9,11 +9,27 @@ import {
     type NodeViewConstructor,
 } from 'prosemirror-view';
 
+import { type EditorPort } from '../port';
+import { engineOf } from '../portEngine';
+
 /** The view on the editing surface, which the bridge holds without reading the engine's API. */
 export type SurfaceView = EditorView;
 
 /** The props a chrome view hands to the view it builds. */
 export type ViewProps = Partial<DirectEditorProps>;
+
+/** The port plus the view a mount coordinator attaches. */
+export type MountedSession = EditorPort & {
+    nodeViews: Readonly<Record<string, unknown>>;
+    view: SurfaceView | undefined;
+    attach(element: HTMLElement, props?: ViewProps): void;
+};
+
+/** The view on the attached surface, or `undefined` while it is detached. */
+export const viewOf = (port: EditorPort): SurfaceView | undefined => engineOf(port).view;
+
+/** The session behind `port` that a mount coordinator attaches. */
+export const mountedOf = (port: EditorPort): MountedSession => engineOf(port);
 
 /** A document node, which the bridge passes to the helpers here. */
 export type ViewNode = ProseMirrorNode;
