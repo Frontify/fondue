@@ -13,20 +13,19 @@ import { UPLOAD_FEATURE } from '#/runtime/port';
 import { referenceListStrings } from '#/ui/LazySuggestionList/helpers/referenceStrings';
 
 import { compiledOf, pluginsOf } from '../../compile/compileEditor';
-import { menuItems, toolbarItems } from '../../helpers/toolbarItems';
-import { turnIntoMenuEntries } from '../../helpers/turnInto';
 import { type ToolbarMode } from '../../types';
+import {
+    chromeBundleOf,
+    chromeItemsOf,
+    chromeMenuOf,
+    chromeTurnIntoOf,
+    standingOverlaysOf,
+} from '../helpers/chromeModel';
 import { memberOf, type shellPropsOf } from '../helpers/sessionHelpers';
 import { type Mounted, type Props, type SessionRest } from '../types';
 
 import { type PluginOverlay, useRenderedHosts } from './usePluginHosts';
 import { type Choosing } from './useSessionRuntime';
-
-/** Why a toolbar item's command cannot run, by its `disabledReason`. */
-const REASON_KEYS: Readonly<Record<string, `RichTextEditor_${string}`>> = {
-    'not-allowed': 'RichTextEditor_unavailableNotAllowed',
-    readonly: 'RichTextEditor_unavailableReadOnly',
-};
 
 type ChromeSources = {
     props: Props;
@@ -74,99 +73,52 @@ export const useChrome = (sources: ChromeSources) => {
     const renderedHosts = useRenderedHosts(hosts, hostsT, shownLang);
     const plugins = pluginsOf(mounted.definition);
     const items = useMemo(
-        () =>
-            toolbarItems(
-                compiledOf(mounted.definition),
-                mounted.definition.authoring,
-                props.presentation,
-                chromeContext.t,
-                lang,
-                pluginsOf(mounted.definition),
-            ),
+        () => chromeItemsOf(mounted.definition, props.presentation, chromeContext, lang),
         [mounted.definition, props.presentation, chromeContext, lang],
     );
     const menu = useMemo(
-        () =>
-            menuItems(
-                compiledOf(mounted.definition),
-                mounted.definition.authoring,
-                items,
-                chromeContext.t,
-                lang,
-                pluginsOf(mounted.definition),
-            ),
+        () => chromeMenuOf(mounted.definition, items, chromeContext, lang),
         [mounted.definition, items, chromeContext, lang],
     );
     const turnInto = useMemo(
-        () => turnIntoMenuEntries(pluginsOf(mounted.definition), chromeContext.t, lang),
+        () => chromeTurnIntoOf(mounted.definition, chromeContext, lang),
         [mounted.definition, chromeContext, lang],
     );
-
     // The plugins' standing overlays, each with a stable key and a stable ref for its toolbar.
-    const standing = useMemo(() => {
-        const overlays = plugins.flatMap((plugin) =>
-            (plugin.overlays ?? []).map((component, index) => ({ key: `${plugin.feature} ${index}`, component })),
-        );
-
-        return overlays.map(({ key, component }, index) => ({
-            key,
-            component,
-            toolbarRef: (element: HTMLElement | null) => {
-                overlayToolbarsRef.current[index] = element;
-            },
-        }));
-    }, [plugins, overlayToolbarsRef]);
-    const chrome = useMemo(() => {
-        const { t } = chromeContext;
-        let surfaceId = props.id;
-        if (surfaceId === undefined && items.length > 0) {
-            surfaceId = generatedId;
-        }
-
-        const strings = {
-            label: t('RichTextEditor_toolbar'),
-            more: t('RichTextEditor_more'),
-            reason: (code: string) => t(REASON_KEYS[code] ?? 'RichTextEditor_unavailable'),
-        };
-        const labels = {
-            bubble: t('RichTextEditor_bubbleToolbar'),
-            toBubble: t('RichTextEditor_toolbarOnSelection'),
-            toFixed: t('RichTextEditor_toolbarAlways'),
-            contextMenu: t('RichTextEditor_contextMenu'),
-            turnInto: t('RichTextEditor_slashTurnInto'),
-        };
-
-        return {
+    const standing = useMemo(() => standingOverlaysOf(plugins, overlayToolbarsRef), [plugins, overlayToolbarsRef]);
+    const chrome = useMemo(
+        () =>
+            chromeBundleOf({
+                items,
+                menu,
+                turnInto,
+                context: chromeContext,
+                id: props.id,
+                generatedId,
+                toolbarRef,
+                bubbleRef,
+                showBubbleRef,
+                toolbarMode,
+                switchToolbar,
+                keyboard,
+                lang,
+            }),
+        [
             items,
             menu,
             turnInto,
-            strings,
-            labels,
-            surfaceId,
+            chromeContext,
+            props.id,
+            generatedId,
             toolbarRef,
             bubbleRef,
             showBubbleRef,
-            mode: toolbarMode,
-            setMode: switchToolbar,
+            toolbarMode,
+            switchToolbar,
             keyboard,
             lang,
-            t,
-        };
-    }, [
-        items,
-        menu,
-        turnInto,
-        chromeContext,
-        props.id,
-        generatedId,
-        toolbarRef,
-        bubbleRef,
-        showBubbleRef,
-        toolbarMode,
-        switchToolbar,
-        keyboard,
-        lang,
-    ]);
+        ],
+    );
 
     return { lang, chromeContext, renderedHosts, standing, chrome };
 };

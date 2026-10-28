@@ -4,7 +4,6 @@ import { Button, Dropdown } from '@frontify/fondue-components';
 import * as RadixToolbar from '@radix-ui/react-toolbar';
 import { useContext, useRef } from 'react';
 
-import { CheckedSlot } from '#/bridge/chrome/components/CheckedSlot';
 import { keepFocus } from '#/bridge/chrome/helpers/keepFocus';
 import { useOverlayContainer } from '#/bridge/overlays/hooks/useOverlayContainer';
 import { SessionContext } from '#/bridge/session/helpers/sessionContext';
@@ -12,10 +11,19 @@ import { useSessionValue } from '#/bridge/session/hooks/useSessionValue';
 import { isRecord } from '#/model';
 import { type EditorPort } from '#/runtime/port';
 import { blockTypeOf } from '#/ui/helpers/blockTypeOf';
-import { returnFocus, runItem, tabStop, type ToolbarItem } from '#/ui/helpers/items';
+import { tabStop, type ToolbarItem } from '#/ui/helpers/items';
 import styles from '#/ui/styles/toolbar.module.scss';
 
+import { TextStyleRow } from './TextStyleRow';
+
 type Row = NonNullable<ToolbarItem['options']>[number];
+
+type TextStyleProps = {
+    item: ToolbarItem;
+    disabled: boolean;
+    keepsFocus: boolean;
+    outOfTabOrder: boolean;
+};
 
 /** The index in `rows` of the row whose command is active, preferring one other than `fallback`, or -1. */
 const activeIn = (session: EditorPort | undefined, rows: readonly Row[], fallback: (row: Row) => boolean) => {
@@ -37,17 +45,7 @@ const activeIn = (session: EditorPort | undefined, rows: readonly Row[], fallbac
  * included, and its rows set the block types the author may create, then the brand styles that apply to the block
  * type at the selection, each previewing its font.
  */
-export const TextStyle = ({
-    item,
-    disabled,
-    keepsFocus,
-    outOfTabOrder,
-}: {
-    item: ToolbarItem;
-    disabled: boolean;
-    keepsFocus: boolean;
-    outOfTabOrder: boolean;
-}) => {
+export const TextStyle = ({ item, disabled, keepsFocus, outOfTabOrder }: TextStyleProps) => {
     const runtime = useContext(SessionContext);
     const container = useOverlayContainer();
     const contentRef = useRef<HTMLDivElement>(null);
@@ -78,33 +76,6 @@ export const TextStyle = ({
         onMouseDown = keepFocus;
     }
 
-    const row = (option: Row, checked: boolean) => (
-        <Dropdown.Item
-            key={option.key}
-            // Fondue's `Dropdown.Item` types no menu item role or state, which Radix still takes.
-            {...{ role: 'menuitemradio', 'aria-checked': checked }}
-            onSelect={async () => {
-                if (runtime === undefined) {
-                    return;
-                }
-
-                ranRef.current = true;
-                await runItem(runtime, option, false);
-                returnFocus(runtime, [contentRef.current]);
-            }}
-        >
-            {/* An element, since Fondue's `Dropdown.Item` wraps text beside another child in an unkeyed span. */}
-            {option.brand === undefined ? (
-                <span>{option.label}</span>
-            ) : (
-                <span style={option.brand.preview} data-rte-style-preview="">
-                    {option.label}
-                </span>
-            )}
-            {checked && <CheckedSlot />}
-        </Dropdown.Item>
-    );
-
     return (
         <Dropdown.Root>
             <Dropdown.Trigger asChild>
@@ -132,10 +103,30 @@ export const TextStyle = ({
                     }
                 }}
             >
-                {types.filter(({ offered }) => offered).map((option) => row(option, option === shown))}
+                {types
+                    .filter(({ offered }) => offered)
+                    .map((option) => (
+                        <TextStyleRow
+                            key={option.key}
+                            option={option}
+                            checked={option === shown}
+                            runtime={runtime}
+                            contentRef={contentRef}
+                            ranRef={ranRef}
+                        />
+                    ))}
                 {brands.length > 0 && (
                     <Dropdown.Group heading={item.groupLabel ?? ''}>
-                        {brands.map((option, index) => row(option, index === brandActive))}
+                        {brands.map((option, index) => (
+                            <TextStyleRow
+                                key={option.key}
+                                option={option}
+                                checked={index === brandActive}
+                                runtime={runtime}
+                                contentRef={contentRef}
+                                ranRef={ranRef}
+                            />
+                        ))}
                     </Dropdown.Group>
                 )}
             </Dropdown.Content>

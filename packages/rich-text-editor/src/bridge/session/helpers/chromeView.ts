@@ -2,16 +2,20 @@
 
 import { type ListLevels } from '#/model';
 import { type ChromeStyles, createContentDecorations, createMarkStyler } from '#/runtime/dom/chromeStyling';
-import {
-    redraw,
-    type SurfaceView,
-    type ViewMarkViews,
-    type ViewProps,
-    type ViewSchema,
-} from '#/runtime/dom/viewBridge';
+import { type SurfaceView, type ViewMarkViews, type ViewProps, type ViewSchema } from '#/runtime/dom/viewBridge';
 
-// ProseMirror's own default margin, kept beyond the space the chrome covers.
-const MARGIN = 5;
+import {
+    bindChromeProps,
+    chromeDecorationInputs,
+    createChromeViewContext,
+    setChromeDockedInset,
+    setChromeKeyboardInset,
+    setChromeListLevels,
+    setChromeStyles,
+    setChromeTopInset,
+    showChromeSelection,
+    takeChromeView,
+} from './chromeViewContext';
 
 /** What editor chrome sets on the view: the selection it keeps visible and the space it covers at the viewport edges. */
 export type ChromeView = {
@@ -39,134 +43,24 @@ export type ChromeView = {
     markViews(schema: ViewSchema): ViewMarkViews;
 };
 
-// Node chrome controls keep the caret's top margin clear of the sticky toolbar when they scroll into view.
-const CHROME_SCROLL_MARGIN = '--rte-chrome-scroll-margin';
-
-/** Writes the chrome scroll margin while a toolbar covers the top, and leaves the surface's attributes alone otherwise. */
-const writeChromeMargin = (view: SurfaceView | undefined, height: number) => {
-    if (view === undefined) {
-        return;
-    }
-
-    if (height === 0) {
-        view.dom.style.removeProperty(CHROME_SCROLL_MARGIN);
-
-        return;
-    }
-
-    view.dom.style.setProperty(CHROME_SCROLL_MARGIN, `${height + MARGIN}px`);
-};
-
+/** A chrome view whose scroll bands and decorations follow the toolbar, the keyboard and the presentation. */
 export const createChromeView = (): ChromeView => {
-    let view: SurfaceView | undefined;
-    let mounted:
-        | {
-              surface: HTMLElement;
-              domId: () => string;
-              nodeViews: Readonly<Record<string, unknown>>;
-          }
-        | undefined;
-    let shown = false;
-
-    // ProseMirror reads these objects on each scroll, so rewriting their fields needs no new props.
-    const margin = { top: MARGIN, bottom: MARGIN, left: MARGIN, right: MARGIN };
-    const threshold = { top: 0, bottom: 0, left: 0, right: 0 };
-    // The bottom band sums both parts, so a new keyboard measure keeps the docked toolbar's.
-    const bottom = { keyboard: 0, docked: 0 };
-    const writeBottom = () => {
-        threshold.bottom = bottom.keyboard + bottom.docked;
-        margin.bottom = threshold.bottom + MARGIN;
-    };
-
-    let levels: ListLevels | undefined;
-    let styles: ChromeStyles | undefined;
-    // The stored style IDs this session reported unknown, once each.
-    let reported = new Set<string>();
-    const unknown = (styleId: string, path: string) => {
-        const listener = styles;
-        if (listener === undefined || reported.has(styleId)) {
-            return;
-        }
-
-        reported.add(styleId);
-        // Decorations draw inside a view update, which a host listener must not reenter.
-        queueMicrotask(() => listener.onUnknown(path));
-    };
-
+    const context = createChromeViewContext();
     const content = createContentDecorations(
-        () => {
-            if (mounted === undefined) {
-                return undefined;
-            }
-
-            const { surface, domId, nodeViews } = mounted;
-
-            return {
-                surface,
-                domId,
-                hasView: (name) => Object.hasOwn(nodeViews, name),
-                levels,
-                styles,
-                unknown,
-            };
-        },
-        () => shown,
+        () => chromeDecorationInputs(context),
+        () => context.shown,
     );
     const markStyler = createMarkStyler();
 
     return {
-        props: (next, views, ids) => {
-            mounted = { surface: next, domId: ids, nodeViews: views };
-            content.reset();
-            reported = new Set();
-
-            return { decorations: content.decorations, scrollMargin: margin, scrollThreshold: threshold };
-        },
-        take: (next) => {
-            view = next;
-            writeChromeMargin(next, threshold.top);
-        },
-        showSelection: (next) => {
-            if (shown === next) {
-                return;
-            }
-
-            shown = next;
-            redraw(view);
-        },
-        // A caret inside the covered band starts a scroll only when the threshold covers it too.
-        setTopInset: (height) => {
-            threshold.top = height;
-            margin.top = height + MARGIN;
-            writeChromeMargin(view, height);
-        },
-        setKeyboardInset: (height) => {
-            bottom.keyboard = height;
-            writeBottom();
-        },
-        setDockedInset: (height) => {
-            bottom.docked = height;
-            writeBottom();
-        },
-        setListLevels: (next) => {
-            if (levels === next) {
-                return;
-            }
-
-            levels = next;
-            content.reset();
-            redraw(view);
-        },
-        setStyles: (next) => {
-            if (styles === next) {
-                return;
-            }
-
-            styles = next;
-            content.reset();
-            markStyler.restyle(styles);
-            redraw(view);
-        },
-        markViews: (schema) => markStyler.views(schema, () => styles),
+        props: (surface, nodeViews, domId) => bindChromeProps(context, content, surface, nodeViews, domId),
+        take: (view) => takeChromeView(context, view),
+        showSelection: (shown) => showChromeSelection(context, shown),
+        setTopInset: (height) => setChromeTopInset(context, height),
+        setKeyboardInset: (height) => setChromeKeyboardInset(context, height),
+        setDockedInset: (height) => setChromeDockedInset(context, height),
+        setListLevels: (levels) => setChromeListLevels(context, content, levels),
+        setStyles: (styles) => setChromeStyles(context, content, markStyler, styles),
+        markViews: (schema) => markStyler.views(schema, () => context.styles),
     };
 };

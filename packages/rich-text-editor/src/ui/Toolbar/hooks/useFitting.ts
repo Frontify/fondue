@@ -4,32 +4,16 @@ import { type RefObject, useRef, useState } from 'react';
 
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 
-/** One slot per item, which an item that failed to render holds empty, so slots and items keep their order. */
-const slotsOf = (root: HTMLElement): Element[] =>
-    [...root.children].filter((child) => !child.hasAttribute('data-rte-toolbar-more'));
-
-/** The inline-end edge of each item, measured from the toolbar's inline-start edge while every item shows. */
-const inlineEnds = (root: HTMLElement, rtl: boolean): number[] => {
-    const box = root.getBoundingClientRect();
-
-    return slotsOf(root).map((item) => {
-        const rect = item.getBoundingClientRect();
-        if (rtl) {
-            return box.right - rect.left;
-        }
-
-        return rect.right - box.left;
-    });
-};
-
-type Fitting = {
-    itemsKey: string;
-    shown: number;
-};
+import {
+    focusFittedControl,
+    measureToolbarFit,
+    toolbarInlineEnds,
+    type ToolbarFitting,
+} from '../helpers/measureToolbarFit';
 
 /** How many of `count` items fit before More, measured whenever the item set changes and fitted again on each resize. */
 export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number, itemsKey: string): number => {
-    const [fitting, setFitting] = useState<Fitting>({ itemsKey, shown: count });
+    const [fitting, setFitting] = useState<ToolbarFitting>({ itemsKey, shown: count });
     const endsRef = useRef<readonly number[]>([]);
     const moreSizeRef = useRef(0);
     // A refit that removes the focused control sends focus to More, or to the first item its menu held, not to the body.
@@ -49,63 +33,14 @@ export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number
         }
 
         const style = getComputedStyle(element);
-        const ends = inlineEnds(element, style.direction === 'rtl');
+        const ends = toolbarInlineEnds(element, style.direction === 'rtl');
         if (ends.length === count) {
             endsRef.current = ends;
         }
 
-        const fit = () => {
-            const measured = endsRef.current;
-            const gap = Number.parseFloat(style.columnGap) || 0;
-            // More always shows, since it holds the toolbar mode switch.
-            const more = element.querySelector('[data-rte-toolbar-more]');
-            if (more !== null) {
-                moreSizeRef.current = gap + more.getBoundingClientRect().width;
-            }
-
-            const limit = element.getBoundingClientRect().width - Number.parseFloat(style.paddingInlineEnd);
-            let next = 0;
-            while (next < measured.length) {
-                const needed = (measured[next] ?? 0) + moreSizeRef.current;
-                // Subpixel layout rounds an exact fit either way.
-                if (needed > limit + 0.5) {
-                    break;
-                }
-
-                next += 1;
-            }
-
-            const { activeElement } = element.ownerDocument;
-            const focused = slotsOf(element).findIndex((slot) => slot.contains(activeElement));
-            if (focused >= next) {
-                refocusRef.current = 'more';
-            }
-
-            // More stays for the mode switch, but its menu loses every command row once all items fit; the menu is a
-            // portal that its trigger names in `aria-controls` while open.
-            const menuId = more?.getAttribute('aria-controls');
-            let menu: Element | null = null;
-            if (menuId !== null && menuId !== undefined) {
-                menu = element.ownerDocument.getElementById(menuId);
-            }
-
-            if (menu !== null && menu.contains(activeElement) && next === measured.length) {
-                refocusRef.current = shownRef.current;
-            }
-
-            // Only the rendered items tell what fits, so the layout effect measures them before paint.
-            // oxlint-disable-next-line @eslint-react/set-state-in-effect -- the state is the measured layout.
-            setFitting((previous) => {
-                if (previous.itemsKey === itemsKey && previous.shown === next) {
-                    return previous;
-                }
-
-                return { itemsKey, shown: next };
-            });
-        };
-
-        fit();
-        const observer = new ResizeObserver(fit);
+        const reading = { element, style, endsRef, moreSizeRef, refocusRef, shownRef, itemsKey, setFitting };
+        measureToolbarFit(reading);
+        const observer = new ResizeObserver(() => measureToolbarFit(reading));
         observer.observe(element);
 
         return () => observer.disconnect();
@@ -119,18 +54,7 @@ export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number
         }
 
         refocusRef.current = undefined;
-        let control = element.querySelector<HTMLElement>('[data-rte-toolbar-more]');
-        if (target !== 'more') {
-            const slot = slotsOf(element)[target];
-            control = slot?.querySelector<HTMLElement>('[data-rte-toolbar-item]') ?? null;
-            if (slot?.matches('[data-rte-toolbar-item]') === true) {
-                control = slot as HTMLElement;
-            }
-        }
-
-        if (control !== null) {
-            control.focus();
-        }
+        focusFittedControl(element, target);
     }, [root, shown]);
 
     return shown;

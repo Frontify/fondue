@@ -1,33 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ForwardedRef, forwardRef, useCallback, useRef, useState } from 'react';
-
-import { useOverlayRoot } from '#/bridge/overlays/hooks/useOverlayRoot';
-import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
-import { type EditorPort, resyncSelectionOf } from '#/runtime/port';
+import { type ForwardedRef, forwardRef } from 'react';
 
 import { type EditorHandle } from '../../types';
-import { chromeKeyDownOf } from '../helpers/chromeKeyDownOf';
-import { shellPropsOf } from '../helpers/sessionHelpers';
-import {
-    useChooserRefs,
-    useChrome,
-    useChromeRefs,
-    useLocaleRefs,
-    useOverlayValues,
-    useToolbarMode,
-} from '../hooks/useChrome';
-import { useColumns } from '../hooks/useColumns';
-import { useEscapeToSurface } from '../hooks/useEscapeToSurface';
-import { useKeyboardInset } from '../hooks/useKeyboardInset';
-import { useMountState } from '../hooks/useMountState';
-import { usePanels } from '../hooks/usePanels';
-import { useRootContext } from '../hooks/useRoot';
-import { useSessionHandle } from '../hooks/useSessionHandle';
-import { useSessionHosts } from '../hooks/useSessionHosts';
-import { useSessionRuntime } from '../hooks/useSessionRuntime';
-import { useChangeWatch, usePresentationSync } from '../hooks/useSync';
-import { useUnloadGuard } from '../hooks/useUnloadGuard';
+import { useSessionMount, useSessionView } from '../session/hooks/useSessionShell';
 import { type SessionProps } from '../types';
 
 import { BlockedShell } from './BlockedShell';
@@ -39,145 +15,53 @@ const SessionComponent = (
     { children, onSession, onRetry, retried, ...props }: SessionProps,
     ref: ForwardedRef<EditorHandle<object> | null>,
 ) => {
-    const { loaded, mounted, faulted, setFaulted, coordinator, portals, work, announcer } = useMountState(
-        props,
-        retried,
-    );
-    const { generatedId, toolbarRef, bubbleRef, showBubbleRef, overlayToolbarsRef } = useChromeRefs();
-    const { langRef, tRef } = useLocaleRefs();
-    const { chooserRef, choosingRef } = useChooserRefs();
-    const handleRef = useRef<EditorHandle<object> | null>(null);
-    // The session once it is ready, which the parts and hooks read.
-    const [live, setLive] = useState<EditorPort>();
-    const latestRef = useRef(props);
-    const {
-        rootRef,
-        overlayRoot,
-        overlayRootRef,
-        scope,
-        element: overlayRootElement,
-    } = useOverlayRoot(coordinator, props.portalContainer);
-    const { toolbarMode, switchToolbar } = useToolbarMode(props.defaultToolbarMode, latestRef);
-    const { openPanelRef, panelActionsRef, panelState } = usePanels(rootRef, coordinator);
-    const { hosts, pluginOverlay } = useSessionHosts({
-        coordinator,
-        scope,
-        announcer,
-        panelActionsRef,
-        openPanelRef,
-        tRef,
-        langRef,
-        latestRef,
-    });
-    const keyboard = useKeyboardInset(rootRef, coordinator);
+    const mount = useSessionMount(props, retried);
+    const view = useSessionView(props, onSession, ref, mount);
 
-    useClientLayoutEffect(() => {
-        latestRef.current = props;
-    });
-
-    useEscapeToSurface(rootRef, toolbarRef, overlayRootRef, coordinator);
-
-    useSessionRuntime({
-        mounted,
-        loaded,
-        coordinator,
-        portals,
-        work,
-        announcer,
-        hosts,
-        scope,
-        latestRef,
-        chooserRef,
-        choosingRef,
-        handleRef,
-        setLive,
-        setFaulted,
-        onSession,
-    });
-
-    useSessionHandle(ref, live, handleRef);
-
-    usePresentationSync(props, coordinator, handleRef, rootRef);
-    useChangeWatch(props, mounted, coordinator);
-    useUnloadGuard(live, props);
-
-    const onFlush = useCallback(() => resyncSelectionOf(coordinator.runtime), [coordinator]);
-
-    const onKeyDown = chromeKeyDownOf({
-        props,
-        coordinator,
-        toolbarRef,
-        bubbleRef,
-        showBubbleRef,
-        overlayToolbarsRef,
-        toolbarMode,
-    });
-
-    const shell = shellPropsOf(props);
-    const { lang, chromeContext, renderedHosts, standing, chrome } = useChrome({
-        props,
-        shell,
-        mounted,
-        hosts,
-        generatedId,
-        langRef,
-        tRef,
-        overlayToolbarsRef,
-        toolbarRef,
-        bubbleRef,
-        showBubbleRef,
-        toolbarMode,
-        switchToolbar,
-        keyboard,
-    });
-    useColumns(live, props.presentation, chromeContext.t);
-
-    const { overlays, choosesFiles, referenceStrings } = useOverlayValues({
-        props,
-        mounted,
-        overlayRoot,
-        scope,
-        pluginOverlay,
-        chromeContext,
-    });
-    const context = useRootContext(props, latestRef, mounted, coordinator, chrome);
-
-    if (mounted.blocked !== undefined) {
-        return <BlockedShell result={mounted.blocked} {...shell} />;
+    if (mount.mounted.blocked !== undefined) {
+        return <BlockedShell result={mount.mounted.blocked} {...view.shell} />;
     }
 
-    if (faulted !== undefined) {
-        return <RecoveryShell document={faulted} {...shell} onRetry={onRetry} />;
+    if (mount.faulted !== undefined) {
+        return <RecoveryShell document={mount.faulted} {...view.shell} onRetry={onRetry} />;
     }
 
     return (
         <SessionProviders
-            values={{ root: context, hosts: renderedHosts, live, work, announcer, overlays, turnInto: chrome.turnInto }}
+            values={{
+                root: view.context,
+                hosts: view.renderedHosts,
+                live: mount.live,
+                work: mount.work,
+                announcer: mount.announcer,
+                overlays: view.overlays,
+                turnInto: view.chrome.turnInto,
+            }}
         >
             <SessionFrame
-                rootRef={rootRef}
-                lang={lang}
-                testId={shell.testId}
-                live={live}
-                coordinator={coordinator}
-                onKeyDown={onKeyDown}
-                work={work}
-                announcer={announcer}
-                panelState={panelState}
-                toolbarMode={toolbarMode}
-                chrome={chrome}
+                rootRef={mount.rootRef}
+                lang={view.lang}
+                testId={view.shell.testId}
+                live={mount.live}
+                coordinator={mount.coordinator}
+                onKeyDown={view.onKeyDown}
+                work={mount.work}
+                announcer={mount.announcer}
+                panelState={mount.panelState}
+                toolbarMode={mount.toolbarMode}
+                chrome={view.chrome}
                 disabled={props.disabled === true}
-                portals={portals}
-                chromeContext={chromeContext}
-                onFlush={onFlush}
-                referenceStrings={referenceStrings}
-                standing={standing}
-                pluginOverlay={pluginOverlay}
-                hosts={hosts}
-                choosesFiles={choosesFiles}
-                chooserRef={chooserRef}
-                choosingRef={choosingRef}
-                overlayRootElement={overlayRootElement}
+                portals={mount.portals}
+                chromeContext={view.chromeContext}
+                onFlush={view.onFlush}
+                referenceStrings={view.referenceStrings}
+                standing={view.standing}
+                pluginOverlay={mount.pluginOverlay}
+                hosts={mount.hosts}
+                choosesFiles={view.choosesFiles}
+                chooserRef={mount.chooserRef}
+                choosingRef={mount.choosingRef}
+                overlayRootElement={mount.overlayRootElement}
             >
                 {children}
             </SessionFrame>

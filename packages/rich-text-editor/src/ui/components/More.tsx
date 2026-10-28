@@ -1,20 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, Dropdown, Tooltip } from '@frontify/fondue-components';
-import { IconDotsHorizontal } from '@frontify/fondue-icons';
-import * as RadixToolbar from '@radix-ui/react-toolbar';
+import { Dropdown } from '@frontify/fondue-components';
 import { useContext, useRef, useState } from 'react';
 
-import { keepFocus } from '#/bridge/chrome/helpers/keepFocus';
 import { useOverlayContainer } from '#/bridge/overlays/hooks/useOverlayContainer';
 import { lazyPart } from '#/bridge/session/helpers/lazyPart';
 import { SessionContext } from '#/bridge/session/helpers/sessionContext';
 import { useSessionValue } from '#/bridge/session/hooks/useSessionValue';
 import { blockTypeOf } from '#/ui/helpers/blockTypeOf';
-import { tabStop, type ToolbarItem, type ToolbarStrings } from '#/ui/helpers/items';
+import { type ToolbarItem, type ToolbarStrings } from '#/ui/helpers/items';
 import { useOfferedRows } from '#/ui/hooks/useOfferedRows';
 import { useRowRuns } from '#/ui/hooks/useRowRuns';
-import styles from '#/ui/styles/toolbar.module.scss';
+
+import { MoreTrigger } from './MoreTrigger';
 
 const MoreContent = lazyPart(() => import('./MoreContent').then((loaded) => loaded.MoreContent));
 
@@ -36,15 +34,7 @@ const focusMoved = (trigger: HTMLElement | null) => {
     return activeElement !== null && activeElement !== trigger.ownerDocument.body;
 };
 
-/** The items that do not fit move into More, from the end, above the toolbar mode switch. */
-export const More = ({
-    items,
-    strings,
-    disabled,
-    keepsFocus,
-    outOfTabOrder,
-    modeSwitch,
-}: {
+type MoreProps = {
     items: readonly ToolbarItem[];
     strings: ToolbarStrings;
     disabled: boolean;
@@ -52,7 +42,10 @@ export const More = ({
     keepsFocus: boolean;
     outOfTabOrder: boolean;
     modeSwitch: ModeSwitch;
-}) => {
+};
+
+/** The items that do not fit move into More, from the end, above the toolbar mode switch. */
+export const More = ({ items, strings, disabled, keepsFocus, outOfTabOrder, modeSwitch }: MoreProps) => {
     const runtime = useContext(SessionContext);
     const container = useOverlayContainer();
     const blockType = useSessionValue(blockTypeOf, Object.is);
@@ -60,7 +53,6 @@ export const More = ({
     const contentRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
     const pointerRef = useRef(false);
-    const openAtPressRef = useRef(false);
     // Radix opens a menu on pointer down; More opens on the click, so a press dragged away opens nothing.
     const [open, setOpen] = useState(false);
     // Radix can drop the tooltip's close in the frame a hover opened it, which would leave the tooltip over the menu.
@@ -82,65 +74,19 @@ export const More = ({
                 }
             }}
         >
-            <Tooltip.Root open={tooltipOpen && !open} onOpenChange={setTooltipOpen}>
-                <Tooltip.Trigger asChild>
-                    <Dropdown.Trigger asChild>
-                        <RadixToolbar.Button
-                            asChild
-                            {...tabStop(outOfTabOrder)}
-                            ref={triggerRef}
-                            className={styles.item}
-                            aria-label={strings.more}
-                            disabled={disabled}
-                            data-rte-toolbar-more=""
-                            onPointerDown={() => {
-                                pointerRef.current = true;
-                                openAtPressRef.current = open;
-                            }}
-                            // WebKit sends no click for a touch whose `pointerdown` Radix prevented, so a touch released
-                            // over More opens it here; one that slid off opens nothing.
-                            onPointerUp={(event) => {
-                                // Only a press that began on More opens it, never in a disabled editor.
-                                const pressed = pointerRef.current;
-                                pointerRef.current = false;
-                                if (disabled || !pressed || event.pointerType === 'mouse' || openAtPressRef.current) {
-                                    return;
-                                }
-
-                                const { left, right, top, bottom } = event.currentTarget.getBoundingClientRect();
-                                const { clientX, clientY } = event;
-                                if (clientX >= left && clientX <= right && clientY >= top && clientY <= bottom) {
-                                    setMenu(true);
-                                }
-                            }}
-                            onMouseDown={(event) => {
-                                if (keepsFocus) {
-                                    keepFocus(event);
-                                }
-                            }}
-                            onKeyDown={() => {
-                                pointerRef.current = false;
-                            }}
-                            // A click with no press before it, as browse mode, voice control and `click()` send, opens too.
-                            onClick={() => {
-                                if (!openAtPressRef.current) {
-                                    setMenu(true);
-                                }
-
-                                pointerRef.current = false;
-                                openAtPressRef.current = false;
-                            }}
-                        >
-                            <Button size="small" aspect="square" emphasis="weak">
-                                <IconDotsHorizontal size={20} aria-hidden />
-                            </Button>
-                        </RadixToolbar.Button>
-                    </Dropdown.Trigger>
-                </Tooltip.Trigger>
-                <Tooltip.Content padding="compact" container={container}>
-                    <span data-rte-tooltip-label="">{strings.more}</span>
-                </Tooltip.Content>
-            </Tooltip.Root>
+            <MoreTrigger
+                strings={strings}
+                disabled={disabled}
+                keepsFocus={keepsFocus}
+                outOfTabOrder={outOfTabOrder}
+                container={container}
+                open={open}
+                tooltipOpen={tooltipOpen}
+                setTooltipOpen={setTooltipOpen}
+                setMenu={setMenu}
+                triggerRef={triggerRef}
+                pointerRef={pointerRef}
+            />
             <MoreContent
                 contentRef={contentRef}
                 container={container}

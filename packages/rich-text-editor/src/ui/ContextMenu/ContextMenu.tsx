@@ -7,11 +7,12 @@ import { useEditorOverlay } from '#/bridge/overlays/hooks/useEditorOverlay';
 import { type OverlayAnchor } from '#/bridge/pluginApi/plugin';
 import { lazyPart } from '#/bridge/session/helpers/lazyPart';
 import { SessionContext } from '#/bridge/session/helpers/sessionContext';
-import { atomPositionAt, selectedNodePosition, surfaceElement } from '#/runtime/port';
-import { offeredRows, type ToolbarItem, type ToolbarStrings } from '#/ui/helpers/items';
-import { pressesBinding } from '#/ui/helpers/shortcuts';
+import { surfaceElement } from '#/runtime/port';
+import { type ToolbarItem, type ToolbarStrings } from '#/ui/helpers/items';
 import { useOfferedRows } from '#/ui/hooks/useOfferedRows';
 import { useRowRuns } from '#/ui/hooks/useRowRuns';
+
+import { bindContextMenu } from './helpers/bindContextMenu';
 
 const ContextMenuContent = lazyPart(() =>
     import('./components/ContextMenuContent').then((loaded) => loaded.ContextMenuContent),
@@ -19,24 +20,20 @@ const ContextMenuContent = lazyPart(() =>
 
 const preventDefault = (event: Event) => event.preventDefault();
 
-/**
- * The package context menu: a Fondue `Dropdown` for a node selection or a right click inside an atom node view, at the
- * pointer, or at the selected node when Shift+F10 or the context-menu key opens it. Its rows are the More rows below
- * the toolbar items. Anywhere else the browser's own menu opens.
- */
-export const ContextMenu = ({
-    items,
-    label,
-    turnIntoLabel,
-    strings,
-    disabled,
-}: {
+type ContextMenuProps = {
     items: readonly ToolbarItem[];
     label: string;
     turnIntoLabel: string;
     strings: ToolbarStrings;
     disabled: boolean;
-}) => {
+};
+
+/**
+ * The package context menu: a Fondue `Dropdown` for a node selection or a right click inside an atom node view, at the
+ * pointer, or at the selected node when Shift+F10 or the context-menu key opens it. Its rows are the More rows below
+ * the toolbar items. Anywhere else the browser's own menu opens.
+ */
+export const ContextMenu = ({ items, label, turnIntoLabel, strings, disabled }: ContextMenuProps) => {
     const runtime = useContext(SessionContext);
     const rows = useOfferedRows(items);
     // The pointer the menu opened at, or `undefined` for the selected node.
@@ -78,59 +75,7 @@ export const ContextMenu = ({
             return undefined;
         }
 
-        const selectedNode = () => selectedNodePosition(runtime);
-        // With no row to run, the browser's own menu is the better one.
-        const runnable = () =>
-            offeredRows(items, runtime).some(({ command, payload }) => runtime.handle.query(command, payload).enabled);
-        const onContextMenu = (event: MouseEvent) => {
-            if (open) {
-                event.preventDefault();
-
-                return;
-            }
-
-            // A node of an iframe's document is no `Node` of this window.
-            const target = event.target as Node | null;
-            let atom: number | undefined;
-            if (target !== null) {
-                atom = atomPositionAt(runtime, target);
-            }
-
-            if (atom === undefined && selectedNode() === undefined) {
-                return;
-            }
-
-            // The rows act on the selection, so a right click on an atom selects it first, as a press on an image does.
-            if (atom !== undefined && selectedNode() !== atom) {
-                runtime.select({ node: atom });
-            }
-
-            if (!runnable()) {
-                return;
-            }
-
-            event.preventDefault();
-            const { clientX, clientY } = event;
-            setOpened({ at: { getBoundingClientRect: () => new DOMRect(clientX, clientY, 0, 0) } });
-        };
-
-        const onKeyDown = (event: KeyboardEvent) => {
-            const key = pressesBinding(event, 'Shift-F10') || pressesBinding(event, 'ContextMenu');
-            if (!key || selectedNode() === undefined || !runnable()) {
-                return;
-            }
-
-            event.preventDefault();
-            setOpened({ at: undefined });
-        };
-
-        surface.addEventListener('contextmenu', onContextMenu);
-        surface.addEventListener('keydown', onKeyDown);
-
-        return () => {
-            surface.removeEventListener('contextmenu', onContextMenu);
-            surface.removeEventListener('keydown', onKeyDown);
-        };
+        return bindContextMenu({ runtime, surface, items, open, setOpened });
     }, [runtime, surface, disabled, open, items]);
     // A closed menu renders nothing, not even Fondue's virtual trigger, so the server and the surface's markup hold none.
     if (!open || rows.length === 0) {
