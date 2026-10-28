@@ -47,7 +47,7 @@ export const addDeclaration = (existing: string | undefined, property: string, v
 };
 
 /** `record[name]` for an own member only, so `constructor` or `toString` never reads the prototype. */
-export const ownValue = <V>(record: Readonly<Record<string, V>>, name: string): V | undefined =>
+export const ownValue = <Value>(record: Readonly<Record<string, Value>>, name: string): Value | undefined =>
     Object.hasOwn(record, name) ? record[name] : undefined;
 
 // The depth of each copy `snapshot` made, which holds only plain JSON, so a later snapshot keeps it as it is.
@@ -182,12 +182,12 @@ const frozenCopy = (value: unknown): unknown => {
 };
 
 /** A frozen deep copy of plain JSON without its `undefined` members; any other value stays as given, for compilation to reject. */
-export const snapshot = <T>(value: T): T => {
+export const snapshot = <Value>(value: Value): Value => {
     if (!isSafeJson(value, [])) {
         return value;
     }
 
-    return frozenCopy(value) as T;
+    return frozenCopy(value) as Value;
 };
 
 const within = (value: number, min: number | undefined, max: number | undefined) => {

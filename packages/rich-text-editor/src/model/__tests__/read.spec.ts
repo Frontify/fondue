@@ -256,10 +256,18 @@ describe('decode limits', () => {
     });
 
     it('counts the cells of each table', () => {
-        const p = paragraph();
-        const square = table('t', row(cell({}, p), cell({}, p)), row(cell({}, p), cell({}, p)));
+        const paragraphNode = paragraph();
+        const square = table(
+            't',
+            row(cell({}, paragraphNode), cell({}, paragraphNode)),
+            row(cell({}, paragraphNode), cell({}, paragraphNode)),
+        );
         expect(limitOf(envelope(doc(square)), { maxTableCells: 4 })).toBeUndefined();
-        const wide = table('t', row(cell({}, p), cell({}, p), cell({}, p)), row(cell({}, p), cell({}, p)));
+        const wide = table(
+            't',
+            row(cell({}, paragraphNode), cell({}, paragraphNode), cell({}, paragraphNode)),
+            row(cell({}, paragraphNode), cell({}, paragraphNode)),
+        );
         expect(limitOf(envelope(doc(wide)), { maxTableCells: 4 })).toBe('maxTableCells');
         expect(limitOf(envelope(doc(square, square)), { maxTableCells: 4 })).toBeUndefined();
     });

@@ -165,7 +165,8 @@ const PACKAGE_PLUGIN_KEYS: ReadonlySet<string> = new Set([
     SUGGESTIONS_PLUGIN.id,
 ]);
 
-const sameDescriptor = (a: PluginDescriptor, b: PluginDescriptor) => JSON.stringify(a) === JSON.stringify(b);
+const sameDescriptor = (left: PluginDescriptor, right: PluginDescriptor) =>
+    JSON.stringify(left) === JSON.stringify(right);
 
 /**
  * Orders contributed plugins by phase, then by `before` and `after`, then by contribution order, which follows

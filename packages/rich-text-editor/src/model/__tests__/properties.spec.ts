@@ -129,7 +129,7 @@ const { block: blockArb } = fc.letrec<{ block: Node_ }>((tie) => ({
 }));
 
 const marksOf = (node: Node_) => canonicalJson(node.marks ?? null);
-const sameMarks = (a: Node_, b: Node_) => marksOf(a) === marksOf(b);
+const sameMarks = (left: Node_, right: Node_) => marksOf(left) === marksOf(right);
 
 /** Unique `nodeId`s in document order, and adjacent texts with equal marks joined, so the document is canonical. */
 const canonicalize = (root: Json): Json => {
@@ -341,7 +341,7 @@ describe(seeded('round trips'), () => {
             { id, version: 1 },
             { id: 'fixture.marks', version: 1 },
         ];
-        expect(capabilitiesOf(input)).toEqual(expected.sort((a, b) => a.id.localeCompare(b.id)));
+        expect(capabilitiesOf(input)).toEqual(expected.sort((left, right) => left.id.localeCompare(right.id)));
     });
 
     it('drops an unused stored capability when no island survives', () => {
@@ -395,18 +395,18 @@ const tableArb = fc
             't',
             ...rows.map((cells) =>
                 row(
-                    ...cells.map(({ colspan, rowspan, widths }) =>
-                        nodeOf(
-                            rowspan === 3 ? 'table_header' : 'table_cell',
-                            {
-                                colspan,
-                                rowspan,
-                                colwidth: widths === undefined ? null : Array.from({ length: colspan }, () => widths),
-                                ...(rowspan === 3 ? { scope: null } : {}),
-                            },
-                            paragraph(),
-                        ),
-                    ),
+                    ...cells.map(({ colspan, rowspan, widths }) => {
+                        const attrs: Record<string, Json> = {
+                            colspan,
+                            rowspan,
+                            colwidth: widths === undefined ? null : Array.from({ length: colspan }, () => widths),
+                        };
+                        if (rowspan === 3) {
+                            attrs.scope = null;
+                        }
+
+                        return nodeOf(rowspan === 3 ? 'table_header' : 'table_cell', attrs, paragraph());
+                    }),
                 ),
             ),
         ),

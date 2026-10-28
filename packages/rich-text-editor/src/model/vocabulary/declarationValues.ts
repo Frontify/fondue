@@ -86,60 +86,70 @@ type IntegerRange<
                   : Next[number]
             : IntegerRange<Min, Max, [...Counter, unknown], Next>
         : never;
-type IntegerOf<D> = D extends { min: infer Min extends number; max: infer Max extends number }
+type IntegerOf<Declaration> = Declaration extends { min: infer Min extends number; max: infer Max extends number }
     ? number extends Min | Max
         ? number
         : IntegerRange<Min, Max>
     : number;
 
 /** The TypeScript type a value declaration stands for. */
-export type ValueOf<D> = D extends { type: 'string' | 'url' | 'id' | 'color' | 'language' }
+export type ValueOf<Declaration> = Declaration extends { type: 'string' | 'url' | 'id' | 'color' | 'language' }
     ? string
-    : D extends { type: 'integer' | 'number' }
+    : Declaration extends { type: 'integer' | 'number' }
       ? number
-      : D extends { type: 'boolean' }
+      : Declaration extends { type: 'boolean' }
         ? boolean
-        : D extends { type: 'enum'; values: readonly (infer V)[] }
-          ? V
-          : D extends { type: 'list'; items: infer I }
-            ? readonly ValueOf<I>[]
+        : Declaration extends { type: 'enum'; values: readonly (infer EnumValue)[] }
+          ? EnumValue
+          : Declaration extends { type: 'list'; items: infer Item }
+            ? readonly ValueOf<Item>[]
             : JsonValue;
-type MaybeNull<D> = D extends { nullable: true } ? ValueOf<D> | null : ValueOf<D>;
+type MaybeNull<Declaration> = Declaration extends { nullable: true }
+    ? ValueOf<Declaration> | null
+    : ValueOf<Declaration>;
 /** An attribute's integer range is a literal union when small, so `level` reads as `1 | 2 | 3 | 4 | 5 | 6`. */
-type AttributeValueOf<D> = D extends { type: 'integer' }
-    ? D extends { nullable: true }
-        ? IntegerOf<D> | null
-        : IntegerOf<D>
-    : MaybeNull<D>;
-type Simplify<T> = { readonly [K in keyof T]: T[K] };
-type RequiredKeys<A> = { [K in keyof A]: A[K] extends { required: true } ? K : never }[keyof A];
+type AttributeValueOf<Declaration> = Declaration extends { type: 'integer' }
+    ? Declaration extends { nullable: true }
+        ? IntegerOf<Declaration> | null
+        : IntegerOf<Declaration>
+    : MaybeNull<Declaration>;
+type Simplify<Value> = { readonly [Key in keyof Value]: Value[Key] };
+type RequiredKeys<Attributes> = {
+    [Key in keyof Attributes]: Attributes[Key] extends { required: true } ? Key : never;
+}[keyof Attributes];
 /** The attribute values a set of attribute declarations allows: `required` ones must be present, the rest may be left out. */
-export type AttrsOf<A> = Simplify<
-    { readonly [K in RequiredKeys<A>]: AttributeValueOf<A[K]> } & {
-        readonly [K in Exclude<keyof A, RequiredKeys<A>>]?: AttributeValueOf<A[K]>;
+export type AttrsOf<Attributes> = Simplify<
+    { readonly [Key in RequiredKeys<Attributes>]: AttributeValueOf<Attributes[Key]> } & {
+        readonly [Key in Exclude<keyof Attributes, RequiredKeys<Attributes>>]?: AttributeValueOf<Attributes[Key]>;
     }
 >;
 /** The option values a set of option declarations allows, all optional. */
-export type OptionsOf<O> = Simplify<{ readonly [K in keyof O]?: MaybeNull<O[K]> }>;
-type FieldsOf<F> = Simplify<
-    { readonly [K in keyof F as F[K] extends { optional: true } ? never : K]: MaybeNull<F[K]> } & {
-        readonly [K in keyof F as F[K] extends { optional: true } ? K : never]?: MaybeNull<F[K]>;
+export type OptionsOf<Options> = Simplify<{ readonly [Key in keyof Options]?: MaybeNull<Options[Key]> }>;
+type FieldsOf<Fields> = Simplify<
+    {
+        readonly [Key in keyof Fields as Fields[Key] extends { optional: true } ? never : Key]: MaybeNull<Fields[Key]>;
+    } & {
+        readonly [Key in keyof Fields as Fields[Key] extends { optional: true } ? Key : never]?: MaybeNull<Fields[Key]>;
     }
 >;
-type ExactlyOneOf<F, K extends string> = {
-    [X in K]: Simplify<{ readonly [P in X & keyof F]: MaybeNull<F[P]> } & FieldsOf<Omit<F, K>>>;
-}[K];
+type ExactlyOneOf<Fields, Key extends string> = {
+    [Chosen in Key]: Simplify<
+        { readonly [Field in Chosen & keyof Fields]: MaybeNull<Fields[Field]> } & FieldsOf<Omit<Fields, Key>>
+    >;
+}[Key];
 /**
  * `exactlyOne` becomes a union of one-field objects, so one payload type exists per command; a payload whose fields are
  * all optional may be left out.
  */
-export type PayloadOf<P> = P extends { fields: infer F }
+export type PayloadOf<Payload> = Payload extends { fields: infer Fields }
     ?
-          | (P extends { exactlyOne: readonly (infer K extends string)[] } ? ExactlyOneOf<F, K> : FieldsOf<F>)
-          | (P extends { nullable: true } ? null : never)
-          | (P extends { exactlyOne: readonly string[] }
+          | (Payload extends { exactlyOne: readonly (infer Key extends string)[] }
+                ? ExactlyOneOf<Fields, Key>
+                : FieldsOf<Fields>)
+          | (Payload extends { nullable: true } ? null : never)
+          | (Payload extends { exactlyOne: readonly string[] }
                 ? never
-                : Partial<FieldsOf<F>> extends FieldsOf<F>
+                : Partial<FieldsOf<Fields>> extends FieldsOf<Fields>
                   ? undefined
                   : never)
     : undefined;

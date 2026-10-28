@@ -73,7 +73,7 @@ const stringOf = (value: unknown): string => {
 export const mentionLabel = (
     attrs: JsonObject,
     {
-        translate: t,
+        translate,
         resolveReference,
     }: Pick<CodecContext, 'translate'> & { resolveReference?: ResolveReference | undefined },
 ): MentionLabel => {
@@ -94,7 +94,7 @@ export const mentionLabel = (
 
     let label = shownLabel(stringOf(attrs.labelSnapshot));
     if (label === '') {
-        label = t('RichTextEditor_mentionUnknown', { resourceType });
+        label = translate('RichTextEditor_mentionUnknown', { resourceType });
     }
 
     if (status === 'unavailable') {
@@ -110,12 +110,12 @@ export const mentionLabel = (
  * The text after a mention's label that says its resource is unavailable, or nothing.
  * Public so the shipped features and the core share it.
  */
-export const unavailableNote = ({ unavailable }: MentionLabel, t: CodecContext['translate']): string => {
+export const unavailableNote = ({ unavailable }: MentionLabel, translate: CodecContext['translate']): string => {
     if (unavailable === null) {
         return '';
     }
 
-    return ` (${t('RichTextEditor_mentionUnavailable')})`;
+    return ` (${translate('RichTextEditor_mentionUnavailable')})`;
 };
 
 /** One mention occurrence: its `nodeId` and the resource it names. */
@@ -172,8 +172,8 @@ const mentionsOf = (document: RichTextDocument, model: ContentModel): Map<string
     return found;
 };
 
-const sameReference = (a: MentionReference, b: MentionReference) =>
-    a.resourceType === b.resourceType && a.resourceId === b.resourceId;
+const sameReference = (left: MentionReference, right: MentionReference) =>
+    left.resourceType === right.resourceType && left.resourceId === right.resourceId;
 
 /**
  * The mentions `after` holds that `before` does not, and the reverse, keyed by `nodeId`: a moved mention keeps its

@@ -34,11 +34,22 @@ const para = (...content: ContentNodeJSON[]): ContentNodeJSON => ({
     attrs: { lang: null },
     content,
 });
-const headingBlock = (nodeId: string, level: number, value = ''): ContentNodeJSON => ({
-    type: 'heading',
-    attrs: { nodeId, level, lang: null },
-    ...(value === '' ? {} : { content: [text(value)] }),
-});
+const headingBlock = (nodeId: string, level: number, value = ''): ContentNodeJSON => {
+    const heading: {
+        type: 'heading';
+        attrs: { nodeId: string; level: number; lang: null };
+        content?: ContentNodeJSON[];
+    } = {
+        type: 'heading',
+        attrs: { nodeId, level, lang: null },
+    };
+    if (value !== '') {
+        heading.content = [text(value)];
+    }
+
+    return heading;
+};
+
 const imageNode = (nodeId: string, attrs: Record<string, unknown>): ContentNodeJSON => ({
     type: 'figure',
     attrs: { nodeId: `figure-${nodeId}`, align: 'center' },

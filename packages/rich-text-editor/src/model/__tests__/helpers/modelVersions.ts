@@ -292,12 +292,18 @@ export const findProblems = (
     committed: Record<string, ModelSnapshot>,
     models: Record<string, ModelCandidate>,
 ): string[] => {
-    const problems = Object.keys(committed)
-        .filter((name) => !Object.hasOwn(models, name))
-        .map((name) => `${name}: a model in the snapshot is no longer shipped`);
+    const problems: string[] = [];
+    for (const name of Object.keys(committed)) {
+        if (!Object.hasOwn(models, name)) {
+            problems.push(`${name}: a model in the snapshot is no longer shipped`);
+        }
+    }
+
     for (const [name, candidate] of Object.entries(models)) {
         const previous = committed[name];
-        problems.push(...(previous === undefined ? [] : compareModel(previous, candidate)));
+        if (previous !== undefined) {
+            problems.push(...compareModel(previous, candidate));
+        }
     }
 
     return problems;

@@ -52,17 +52,17 @@ export const parseColor = (value: unknown): Rgba | undefined => {
     const [, red, green, blue, alpha] = match;
     const channels = [red, green, blue].map((part) => channelOf(part ?? '', 255));
     const opacity = alpha === undefined ? 1 : channelOf(alpha, 1);
-    const [r, g, b] = channels;
-    if (r === undefined || g === undefined || b === undefined || opacity === undefined) {
+    const [redChannel, greenChannel, blueChannel] = channels;
+    if (redChannel === undefined || greenChannel === undefined || blueChannel === undefined || opacity === undefined) {
         return undefined;
     }
 
-    return { red: r, green: g, blue: b, alpha: opacity };
+    return { red: redChannel, green: greenChannel, blue: blueChannel, alpha: opacity };
 };
 
 /** Blends a translucent `top` colour over the opaque `bottom`, as the contrast checks need. */
 export const composite = (top: Rgba, bottom: Rgba): Rgba => {
-    const mix = (a: number, b: number) => top.alpha * a + (1 - top.alpha) * b;
+    const mix = (foreground: number, background: number) => top.alpha * foreground + (1 - top.alpha) * background;
 
     return {
         red: mix(top.red, bottom.red),
@@ -84,8 +84,8 @@ const luminance = ({ red, green, blue }: Rgba) => {
 };
 
 /** The WCAG contrast ratio of two opaque colours, from 1 up, whichever is lighter. */
-export const contrastOf = (a: Rgba, b: Rgba) => {
-    const [light, dark] = [luminance(a), luminance(b)].sort((x, y) => y - x) as [number, number];
+export const contrastOf = (first: Rgba, second: Rgba) => {
+    const [light, dark] = [luminance(first), luminance(second)].sort((left, right) => right - left) as [number, number];
 
     return (light + 0.05) / (dark + 0.05);
 };

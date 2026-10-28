@@ -77,11 +77,14 @@ const ISLANDS = new Set(['unsupported_block', 'unsupported_inline']);
 const LEVELS: readonly Level[] = [1, 2, 3, 4, 5, 6];
 
 /** The issue ID part of a rule ID in locale keys: PascalCase with its dots and hyphens removed. */
-const pascalOf = (ruleId: ContentRuleId) =>
-    ruleId
-        .split(/[.-]/)
-        .map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`)
-        .join('');
+const pascalOf = (ruleId: ContentRuleId) => {
+    let name = '';
+    for (const part of ruleId.split(/[.-]/)) {
+        name += `${part.charAt(0).toUpperCase()}${part.slice(1)}`;
+    }
+
+    return name;
+};
 
 /**
  * The locale key of a rule's name, such as `RichTextEditor_checkImageAltSuspicious`.
@@ -147,13 +150,23 @@ export type LocatedIssue = {
 };
 
 const listOf = (locale: RichTextLocale, key: `RichTextEditor_${string}`, english: string): ReadonlySet<string> => {
-    const own = locale.translationStrings[key];
+    const words = new Set<string>();
+    const addWords = (source: string) => {
+        for (const word of source.split('|')) {
+            const foldedWord = folded(word);
+            if (foldedWord !== '') {
+                words.add(foldedWord);
+            }
+        }
+    };
 
-    return new Set(
-        [...english.split('|'), ...(typeof own === 'string' ? own.split('|') : [])]
-            .map(folded)
-            .filter((word) => word !== ''),
-    );
+    addWords(english);
+    const own = locale.translationStrings[key];
+    if (typeof own === 'string') {
+        addWords(own);
+    }
+
+    return words;
 };
 
 /** The text a reader meets in inline children: text, a mention's label and a line break. */

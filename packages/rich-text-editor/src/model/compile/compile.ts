@@ -98,7 +98,7 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
     const compiled: CompiledModel = {
         features: list,
         nodes: [...nodes.values()],
-        marks: [...marks.values()].sort((a, b) => rankOf(a) - rankOf(b)),
+        marks: [...marks.values()].sort((left, right) => rankOf(left) - rankOf(right)),
         plugins,
         migrations: options.migrations ?? [],
         parseRules,

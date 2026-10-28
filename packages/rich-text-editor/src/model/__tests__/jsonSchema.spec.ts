@@ -487,16 +487,21 @@ const pullQuote = () =>
 describe('toJsonSchema of a feature', () => {
     const features: readonly Feature[] = [...vocabularyFeatures(), pullQuote()];
     const harvested = fixturesIn('valid').flatMap(([, fixture]) => objectsIn(fixture));
-    const sampleOf = (type: string, attrs: AttributeDeclarations, exactlyOne: readonly string[] = []): Json => ({
-        type,
-        ...(type === 'doc' ? { content: [paragraph()] } : {}),
-        attrs: Object.fromEntries(
+    const sampleOf = (type: string, attrs: AttributeDeclarations, exactlyOne: readonly string[] = []): Json => {
+        const sampleNode: Record<string, Json> = { type };
+        if (type === 'doc') {
+            sampleNode.content = [paragraph()];
+        }
+
+        sampleNode.attrs = Object.fromEntries(
             Object.entries(attrs).map(([name, declaration]) => [
                 name,
                 exactlyOne.slice(1).includes(name) ? null : sample(declaration),
             ]),
-        ),
-    });
+        );
+
+        return sampleNode;
+    };
 
     it.each(features.map((feature) => [feature.id, feature] as const))(
         'validates each fixture of %s under its own schema',

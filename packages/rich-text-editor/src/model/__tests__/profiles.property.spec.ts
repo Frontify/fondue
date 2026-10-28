@@ -68,7 +68,8 @@ const encoded = (input: unknown, model: ContentModel, limits?: Partial<ResourceL
     return { result, document: encodeTree(tree, model, stored as CapabilityRef[]).document };
 };
 
-const same = (a: unknown, b: unknown) => expect(canonicalJson(a as JsonValue)).toBe(canonicalJson(b as JsonValue));
+const same = (left: unknown, right: unknown) =>
+    expect(canonicalJson(left as JsonValue)).toBe(canonicalJson(right as JsonValue));
 /** A stored document of `model` around `root`, which may be any JSON value. */
 const storedAround = (model: ContentModel, root: unknown) => ({
     ...storedIn(model, []),

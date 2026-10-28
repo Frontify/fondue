@@ -41,25 +41,27 @@ export type RichTextSlice = {
 export type DocumentOf<Features extends readonly Feature[]> = Omit<RichTextDocument, 'content'> & {
     readonly content: NodeOf<Features>;
 };
-type NodeMapOf<F> = F extends Feature<object, infer N, object> ? N : never;
-type MarkMapOf<F> = F extends Feature<object, object, infer M> ? M : never;
-type UnionToIntersectionOf<U> = (U extends unknown ? (value: U) => void : never) extends (value: infer I) => void
-    ? I
+type NodeMapOf<GivenFeature> = GivenFeature extends Feature<object, infer Nodes, object> ? Nodes : never;
+type MarkMapOf<GivenFeature> = GivenFeature extends Feature<object, object, infer Marks> ? Marks : never;
+type UnionToIntersectionOf<Union> = (Union extends unknown ? (value: Union) => void : never) extends (
+    value: infer Intersection,
+) => void
+    ? Intersection
     : never;
 type NodesIn<Features extends readonly Feature[]> = UnionToIntersectionOf<NodeMapOf<Features[number]>>;
 type MarksIn<Features extends readonly Feature[]> = UnionToIntersectionOf<MarkMapOf<Features[number]>>;
 /** The mark types, with their attributes, that a set of features defines. */
 export type MarkOf<Features extends readonly Feature[]> = {
-    readonly [K in Extract<keyof MarksIn<Features>, string>]: {
-        readonly type: K;
-        readonly attrs?: MarksIn<Features>[K];
+    readonly [Key in Extract<keyof MarksIn<Features>, string>]: {
+        readonly type: Key;
+        readonly attrs?: MarksIn<Features>[Key];
     };
 }[Extract<keyof MarksIn<Features>, string>];
 /** The closed node union of a feature list: only its node types, mark types and attributes. */
 export type NodeOf<Features extends readonly Feature[]> = {
-    readonly [K in Extract<keyof NodesIn<Features>, string>]: {
-        readonly type: K;
-        readonly attrs?: NodesIn<Features>[K];
+    readonly [Key in Extract<keyof NodesIn<Features>, string>]: {
+        readonly type: Key;
+        readonly attrs?: NodesIn<Features>[Key];
         readonly content?: readonly NodeOf<Features>[];
         readonly marks?: readonly MarkOf<Features>[];
         readonly text?: string;

@@ -202,13 +202,17 @@ const featureSchema = (feature: Feature): JsonObject => {
     }
 
     const members = Object.keys(defs).filter((key) => !key.startsWith('a.'));
-
-    return {
+    const schema: Record<string, JsonValue> = {
         $schema: 'https://json-schema.org/draft/2020-12/schema',
         title: id,
-        ...(members.length > 0 ? { oneOf: members.map(refTo) } : {}),
-        $defs: defs,
     };
+    if (members.length > 0) {
+        schema.oneOf = members.map(refTo);
+    }
+
+    schema.$defs = defs;
+
+    return schema;
 };
 
 const modelSchema = (model: ContentModel): JsonObject => {

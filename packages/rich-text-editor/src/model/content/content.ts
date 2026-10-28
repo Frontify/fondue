@@ -72,7 +72,8 @@ const checkMark = (context: Context, value: unknown, path: string): CheckedMark 
 };
 
 const excludes = (mark: CompiledMark, other: string) => (mark.declaration.excludes ?? []).includes(other);
-const conflicts = (a: CompiledMark, b: CompiledMark) => a.name === b.name || excludes(a, b.name) || excludes(b, a.name);
+const conflicts = (left: CompiledMark, right: CompiledMark) =>
+    left.name === right.name || excludes(left, right.name) || excludes(right, left.name);
 
 /** The marks of an inline node, sorted by rank, or `undefined` when they make the node fail. */
 const checkMarks = (
@@ -149,7 +150,9 @@ const checkMarks = (
     const order = ({ declaration }: CheckedMark) =>
         declaration === undefined ? markOrder.length : markOrder.indexOf(declaration.name);
 
-    return [...marks].sort((a, b) => rank(a) - rank(b) || order(a) - order(b)).map(({ mark }) => mark);
+    return [...marks]
+        .sort((left, right) => rank(left) - rank(right) || order(left) - order(right))
+        .map(({ mark }) => mark);
 };
 
 type Checked = { ok: true; node: TreeNode } | { ok: false };
@@ -271,7 +274,7 @@ const treeNode = (
     marks: readonly TreeMark[],
     text: string | undefined,
 ): TreeNode => {
-    const node: { -readonly [K in keyof TreeNode]: TreeNode[K] } = { type };
+    const node: { -readonly [Key in keyof TreeNode]: TreeNode[Key] } = { type };
     if (text !== undefined) {
         node.text = text;
     }

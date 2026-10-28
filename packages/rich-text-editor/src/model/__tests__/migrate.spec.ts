@@ -44,11 +44,15 @@ const latest = notesModel(3);
 const seed = Number(process.env.FC_SEED ?? Math.floor(Math.random() * 2 ** 31));
 const settings = { seed, numRuns: 100 };
 
-const at = (value: unknown, path: string): unknown =>
-    path
-        .slice(1)
-        .split('/')
-        .reduce<unknown>((node, key) => (node as Record<string, unknown>)[key], value);
+const at = (value: unknown, path: string): unknown => {
+    let node = value;
+    for (const key of path.slice(1).split('/')) {
+        node = (node as Record<string, unknown>)[key];
+    }
+
+    return node;
+};
+
 const paragraph = (text: string): Json => ({ type: 'paragraph', content: [{ type: 'text', text }] });
 const notes = (version: number, content: readonly JsonValue[], capabilities: readonly [string, number][]) =>
     ({
@@ -127,12 +131,23 @@ describe('decode runs registered migrations', () => {
     const review = (document: RichTextDocument, ...paths: (string | undefined)[]): MigrationStepResult => ({
         status: 'requires-review',
         document,
-        diagnostics: paths.map((path) => ({
-            code: 'migration.requires-review',
-            severity: 'warning',
-            messageKey: 'migration.requires-review',
-            ...(path === undefined ? {} : { path }),
-        })),
+        diagnostics: paths.map((path) => {
+            const diagnostic: {
+                code: 'migration.requires-review';
+                severity: 'warning';
+                messageKey: 'migration.requires-review';
+                path?: string;
+            } = {
+                code: 'migration.requires-review',
+                severity: 'warning',
+                messageKey: 'migration.requires-review',
+            };
+            if (path !== undefined) {
+                diagnostic.path = path;
+            }
+
+            return diagnostic;
+        }),
     });
     const cyclic: Json = { type: 'paragraph', content: [] };
     (cyclic.content as JsonValue[]).push(cyclic);
@@ -496,8 +511,16 @@ describe('manifests and diagnostics', () => {
         }
 
         const node = value as Json;
+        const texts: string[] = [];
+        if (typeof node.text === 'string') {
+            texts.push(node.text);
+        }
 
-        return [...(typeof node.text === 'string' ? [node.text] : []), ...textsOf(node.content)];
+        for (const text of textsOf(node.content)) {
+            texts.push(text);
+        }
+
+        return texts;
     };
 
     it.each(fixtures)('writes no text of %s into its manifest or diagnostics', (name) => {

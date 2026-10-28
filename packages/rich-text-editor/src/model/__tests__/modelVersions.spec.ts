@@ -41,14 +41,25 @@ const note = (
     attrs: AttributeDeclarations,
     migrations?: readonly CapabilityMigration[],
     content = 'paragraph+',
-) =>
-    defineFeature({
+) => {
+    if (migrations === undefined) {
+        return defineFeature({
+            id: 'test.note',
+            version,
+            requires: [{ id: 'core', version: 1 }],
+            nodes: { note: { group: 'block', content, attrs, html: ['aside', 0], parse: [] } },
+        })();
+    }
+
+    return defineFeature({
         id: 'test.note',
         version,
         requires: [{ id: 'core', version: 1 }],
-        ...(migrations === undefined ? {} : { migrations }),
+        migrations,
         nodes: { note: { group: 'block', content, attrs, html: ['aside', 0], parse: [] } },
     })();
+};
+
 const rules = { horizontal_rule: { group: 'block', attrs: {}, html: ['hr'], parse: [] } } as const;
 const rule = defineFeature({ id: 'test.rule', version: 1, requires: [{ id: 'core', version: 1 }], nodes: rules });
 const ruleStep = { ...step, id: 'test.rule.step' };
@@ -166,19 +177,32 @@ describe('model versions', () => {
 
     it('charges a newly required textblock attribute to its own feature', () => {
         const align = (version: number, required: boolean, migrations: readonly CapabilityMigration[] = []) => {
-            const value = {
-                type: 'enum',
-                values: ['left', 'right'],
-                ...(required ? { required } : { default: 'left' }),
-            } as const;
-            const attributes = { align: { on: 'textblocks', value } } as const;
+            if (required) {
+                return defineFeature({
+                    id: 'test.align',
+                    version,
+                    requires: [{ id: 'core', version: 1 }],
+                    migrations,
+                    attributes: {
+                        align: {
+                            on: 'textblocks',
+                            value: { type: 'enum', values: ['left', 'right'], required: true },
+                        },
+                    },
+                })();
+            }
 
             return defineFeature({
                 id: 'test.align',
                 version,
                 requires: [{ id: 'core', version: 1 }],
                 migrations,
-                attributes,
+                attributes: {
+                    align: {
+                        on: 'textblocks',
+                        value: { type: 'enum', values: ['left', 'right'], default: 'left' },
+                    },
+                },
             })();
         };
 

@@ -50,7 +50,11 @@ const attachmentsOf = (declaration: FeatureDeclaration): Readonly<Record<string,
     (declaration as FeatureDeclaration & { readonly [ATTACHED]?: Readonly<Record<string, unknown>> })[ATTACHED];
 
 /** A copy of `feature` with `value` attached under `kind`, keeping what was attached under other kinds. */
-export const attachToFeature = <F extends Feature>(feature: F, kind: string, value: unknown): F => {
+export const attachToFeature = <GivenFeature extends Feature>(
+    feature: GivenFeature,
+    kind: string,
+    value: unknown,
+): GivenFeature => {
     const internals = featureInternals(feature);
     if (internals === undefined) {
         return feature;
@@ -62,19 +66,21 @@ export const attachToFeature = <F extends Feature>(feature: F, kind: string, val
         [ATTACHED]: Object.freeze({ ...attachmentsOf(internals.declaration), [kind]: value }),
     });
 
-    return createFeature(declaration, internals.options) as F;
+    return createFeature(declaration, internals.options) as GivenFeature;
 };
 
-type FactoryOf<D> = FeatureFactory<
-    D extends { options: infer O } ? OptionsOf<O> : object,
+type FactoryOf<Declaration> = FeatureFactory<
+    Declaration extends { options: infer Options } ? OptionsOf<Options> : object,
     object,
-    NodesOfDeclaration<D>,
-    MarksOfDeclaration<D>,
-    D extends { id: infer I extends string } ? I : string
+    NodesOfDeclaration<Declaration>,
+    MarksOfDeclaration<Declaration>,
+    Declaration extends { id: infer Identifier extends string } ? Identifier : string
 >;
 
 /** Returns the feature's factory; hosts call it, with typed and serializable options or none. */
-export const defineFeature = <const D extends FeatureDeclaration>(declaration: D): FactoryOf<D> => {
+export const defineFeature = <const Declaration extends FeatureDeclaration>(
+    declaration: Declaration,
+): FactoryOf<Declaration> => {
     // Migration steps, codec overrides, function parse rules and content rules hold functions, which a JSON snapshot
     // would reject, so they are copied apart.
     const { migrations, codecs, parseRules, contentRules, ...data }: FeatureDeclaration = declaration;
@@ -82,7 +88,9 @@ export const defineFeature = <const D extends FeatureDeclaration>(declaration: D
     if (migrations === undefined && codecs === undefined && parseRules === undefined && contentRules === undefined) {
         copy = snapshot(declaration);
     } else {
-        const parts: { -readonly [K in keyof FeatureDeclaration]: FeatureDeclaration[K] } = { ...snapshot(data) };
+        const parts: { -readonly [Key in keyof FeatureDeclaration]: FeatureDeclaration[Key] } = {
+            ...snapshot(data),
+        };
         if (migrations !== undefined) {
             parts.migrations = Object.freeze(migrations.map((step) => ({ ...step })));
         }
@@ -104,5 +112,5 @@ export const defineFeature = <const D extends FeatureDeclaration>(declaration: D
 
     const factory = (options?: object) => createFeature(copy, options);
 
-    return factory as FactoryOf<D>;
+    return factory as FactoryOf<Declaration>;
 };

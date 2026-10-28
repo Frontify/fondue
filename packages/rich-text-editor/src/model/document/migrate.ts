@@ -56,15 +56,18 @@ export type Migrated = {
 /** A JSON Pointer to a node position below the root. */
 const NODE_PATH = /^\/content(\/content\/(0|[1-9]\d*))+$/;
 
-const valueAt = (document: RichTextDocument, path: string): unknown =>
-    path
-        .slice(1)
-        .split('/')
-        .reduce<unknown>(
-            (value, key) =>
-                typeof value === 'object' && value !== null ? (value as Record<string, unknown>)[key] : undefined,
-            document,
-        );
+const valueAt = (document: RichTextDocument, path: string): unknown => {
+    let value: unknown = document;
+    for (const key of path.slice(1).split('/')) {
+        if (typeof value !== 'object' || value === null) {
+            return undefined;
+        }
+
+        value = (value as Record<string, unknown>)[key];
+    }
+
+    return value;
+};
 
 const jsonAt = (document: RichTextDocument, path: string) => canonicalJson(valueAt(document, path) as JsonValue);
 
@@ -109,7 +112,9 @@ const migrationPlan = (
     const plan: (CapabilityMigration | ModelMigration)[] = [];
     let older = document.model.version < model.ref.version;
     const queue = (steps: readonly ModelMigration[] = [], from: number, to: number) => {
-        plan.push(...steps.filter((step) => step.from >= from && step.from < to).sort((a, b) => a.from - b.from));
+        const due = steps.filter((step) => step.from >= from && step.from < to);
+        due.sort((earlier, later) => earlier.from - later.from);
+        plan.push(...due);
     };
 
     for (const { id, version, declaration } of compiled.features) {

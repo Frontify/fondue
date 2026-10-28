@@ -66,12 +66,12 @@ export const spaced = (state: Spacing, text: string): string => {
 };
 
 /** The label of an island fallback: the feature it names, else a generic one. */
-export const islandLabel = ({ translate: t }: CodecContext, feature: string | null): string => {
+export const islandLabel = ({ translate }: CodecContext, feature: string | null): string => {
     if (feature === null) {
-        return t('RichTextEditor_readerIslandGeneric');
+        return translate('RichTextEditor_readerIslandGeneric');
     }
 
-    return t('RichTextEditor_readerIslandFeature', { feature });
+    return translate('RichTextEditor_readerIslandFeature', { feature });
 };
 
 /** An opaque island's fallback: a `span` inside inline content, else a `div`, with its feature and its spaced text. */
@@ -123,8 +123,8 @@ export type OutputItem = {
     marks: readonly { mark: TreeMark; index: number }[];
 };
 
-const sameMark = (a: TreeMark, b: TreeMark) =>
-    a.type === b.type && canonicalJson(attrsOf(a.attrs)) === canonicalJson(attrsOf(b.attrs));
+const sameMark = (left: TreeMark, right: TreeMark) =>
+    left.type === right.type && canonicalJson(attrsOf(left.attrs)) === canonicalJson(attrsOf(right.attrs));
 
 /** The path of the mark at `index` on the first node of a run. */
 export const markPath = (items: readonly OutputItem[], index: number): string => {
@@ -151,13 +151,13 @@ export const itemsOf = (node: TreeNode, path: string, keep: (mark: TreeMark) => 
     });
 
 /** Splits children into runs that share a mark at `depth`, so a partly bold link stays one link. */
-export const groupRun = <T>(
+export const groupRun = <Rendered>(
     items: readonly OutputItem[],
     depth: number,
-    node: (item: OutputItem) => T,
-    mark: (items: readonly OutputItem[], entry: OutputItem['marks'][number]) => T,
-): T[] => {
-    const out: T[] = [];
+    node: (item: OutputItem) => Rendered,
+    mark: (items: readonly OutputItem[], entry: OutputItem['marks'][number]) => Rendered,
+): Rendered[] => {
+    const out: Rendered[] = [];
     let index = 0;
     while (index < items.length) {
         const item = items[index];

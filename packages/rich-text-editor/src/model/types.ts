@@ -51,19 +51,19 @@ export type StoredId = `${Letter | Digit}${string}`;
 declare const featureBrand: unique symbol;
 /**
  * A feature carries its ID, its command payloads and its node and mark attributes as types. A bare `Feature` means
- * any feature, so each map defaults to `object`, which every map is assignable to, and `Id` to `string`.
+ * any feature, so each map defaults to `object`, which every map is assignable to, and `FeatureId` to `string`.
  */
 export type Feature<
     Commands extends object = object,
     Nodes extends object = object,
     Marks extends object = object,
-    Id extends string = string,
+    FeatureId extends string = string,
 > = {
     readonly [featureBrand]: {
         commands: Commands;
         nodes: Nodes;
         marks: Marks;
-        id: Id;
+        id: FeatureId;
     };
     readonly id: string;
     readonly version: number;

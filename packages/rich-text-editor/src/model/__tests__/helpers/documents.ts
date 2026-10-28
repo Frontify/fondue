@@ -233,7 +233,7 @@ export const modelDocumentArb = (
         let current = match;
         while (!matchEnds(current)) {
             const known = advancing(current).filter((node) => height.has(node.name));
-            const lowest = known.sort((a, b) => (height.get(a.name) ?? 0) - (height.get(b.name) ?? 0))[0];
+            const lowest = known.sort((left, right) => (height.get(left.name) ?? 0) - (height.get(right.name) ?? 0))[0];
             if (lowest === undefined || names.length > 8) {
                 return undefined;
             }
@@ -284,8 +284,9 @@ export const modelDocumentArb = (
         return fill(match, names) ?? names;
     };
 
-    const conflicts = (a: CompiledMark, b: CompiledMark) =>
-        (a.declaration.excludes ?? []).includes(b.name) || (b.declaration.excludes ?? []).includes(a.name);
+    const conflicts = (left: CompiledMark, right: CompiledMark) =>
+        (left.declaration.excludes ?? []).includes(right.name) ||
+        (right.declaration.excludes ?? []).includes(left.name);
     const marksArb = (parent: CompiledNode): fc.Arbitrary<JsonValue[]> =>
         once(`marks ${parent.name}`, () => buildMarks(parent));
     const buildMarks = (parent: CompiledNode): fc.Arbitrary<JsonValue[]> => {
@@ -333,10 +334,13 @@ export const modelDocumentArb = (
 
     // Arbitraries are built once per place, since building them costs more than drawing from them.
     const built = new Map<string, fc.Arbitrary<JsonValue[]> | fc.Arbitrary<JsonValue>>();
-    const once = <A extends fc.Arbitrary<JsonValue[]> | fc.Arbitrary<JsonValue>>(key: string, build: () => A): A => {
+    const once = <Arbitrary extends fc.Arbitrary<JsonValue[]> | fc.Arbitrary<JsonValue>>(
+        key: string,
+        build: () => Arbitrary,
+    ): Arbitrary => {
         const cached = built.get(key);
         if (cached !== undefined) {
-            return cached as A;
+            return cached as Arbitrary;
         }
 
         const arbitrary = build();

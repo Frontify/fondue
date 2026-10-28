@@ -623,11 +623,11 @@ describe('marks on nodes that take none', () => {
 });
 
 describe('table grids', () => {
-    const p = paragraph();
+    const paragraphNode = paragraph();
 
     it('rejects a wide sparse table within every limit in under 1 s', () => {
-        const wide = row(...Array.from({ length: 1250 }, () => cell({ colspan: 50 }, p)));
-        const narrow = Array.from({ length: 1249 }, () => row(cell({}, p)));
+        const wide = row(...Array.from({ length: 1250 }, () => cell({ colspan: 50 }, paragraphNode)));
+        const narrow = Array.from({ length: 1249 }, () => row(cell({}, paragraphNode)));
         const input = envelope(doc(table('t', wide, ...narrow)));
         const started = performance.now();
         const { result, tree } = decodeToTree(input, model);
@@ -638,15 +638,28 @@ describe('table grids', () => {
         expect(elapsed).toBeLessThan(1000);
     });
     const cases: readonly (readonly [string, Json])[] = [
-        ['rows of different widths', table('t', row(cell({}, p), cell({}, p)), row(cell({}, p)))],
-        ['overlapping spans', table('t', row(cell({ rowspan: 2 }, p), cell({}, p)), row(cell({ colspan: 2 }, p)))],
-        ['a rowspan past the last row', table('t', row(cell({ rowspan: 2 }, p)))],
-        ['a colwidth longer than its colspan', table('t', row(cell({ colwidth: [100, 100] }, p)))],
+        [
+            'rows of different widths',
+            table('t', row(cell({}, paragraphNode), cell({}, paragraphNode)), row(cell({}, paragraphNode))),
+        ],
+        [
+            'overlapping spans',
+            table(
+                't',
+                row(cell({ rowspan: 2 }, paragraphNode), cell({}, paragraphNode)),
+                row(cell({ colspan: 2 }, paragraphNode)),
+            ),
+        ],
+        ['a rowspan past the last row', table('t', row(cell({ rowspan: 2 }, paragraphNode)))],
+        ['a colwidth longer than its colspan', table('t', row(cell({ colwidth: [100, 100] }, paragraphNode)))],
         [
             'one column with two colwidths',
-            table('t', row(cell({ colwidth: [100] }, p)), row(cell({ colwidth: [120] }, p))),
+            table('t', row(cell({ colwidth: [100] }, paragraphNode)), row(cell({ colwidth: [120] }, paragraphNode))),
         ],
-        ['one column with a colwidth and none', table('t', row(cell({ colwidth: [100] }, p)), row(cell({}, p)))],
+        [
+            'one column with a colwidth and none',
+            table('t', row(cell({ colwidth: [100] }, paragraphNode)), row(cell({}, paragraphNode))),
+        ],
     ];
 
     it.each(cases)('islands a table with %s', (_, value) => {
@@ -658,8 +671,11 @@ describe('table grids', () => {
     it('accepts spans that form a grid', () => {
         const value = table(
             't',
-            row(cell({ rowspan: 2, colwidth: [80] }, p), cell({ colspan: 2, colwidth: [40, 50] }, p)),
-            row(cell({ colwidth: [40] }, p), cell({ colwidth: [50] }, p)),
+            row(
+                cell({ rowspan: 2, colwidth: [80] }, paragraphNode),
+                cell({ colspan: 2, colwidth: [40, 50] }, paragraphNode),
+            ),
+            row(cell({ colwidth: [40] }, paragraphNode), cell({ colwidth: [50] }, paragraphNode)),
         );
         expect(roundTrip(doc(value)).codes).toEqual([]);
     });

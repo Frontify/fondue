@@ -202,12 +202,12 @@ export type FeatureDeclaration = {
     readonly parseRules?: readonly FunctionParseRule[];
 } & FeatureContentDeclaration;
 /** The node attribute types a feature declaration defines, keyed by node name. */
-export type NodesOfDeclaration<D> = D extends { nodes: infer N }
-    ? { readonly [K in keyof N]: N[K] extends { attrs: infer A } ? AttrsOf<A> : never }
+export type NodesOfDeclaration<Declaration> = Declaration extends { nodes: infer Nodes }
+    ? { readonly [Key in keyof Nodes]: Nodes[Key] extends { attrs: infer Attributes } ? AttrsOf<Attributes> : never }
     : object;
 /** The mark attribute types a feature declaration defines, keyed by mark name. */
-export type MarksOfDeclaration<D> = D extends { marks: infer M }
-    ? { readonly [K in keyof M]: M[K] extends { attrs: infer A } ? AttrsOf<A> : never }
+export type MarksOfDeclaration<Declaration> = Declaration extends { marks: infer Marks }
+    ? { readonly [Key in keyof Marks]: Marks[Key] extends { attrs: infer Attributes } ? AttrsOf<Attributes> : never }
     : object;
 /** Every feature is a factory, called even with no options. */
 export type FeatureFactory<
@@ -215,8 +215,8 @@ export type FeatureFactory<
     Commands extends object,
     Nodes extends object,
     Marks extends object,
-    Id extends string = string,
-> = (options?: Options) => Feature<Commands, Nodes, Marks, Id>;
+    FeatureId extends string = string,
+> = (options?: Options) => Feature<Commands, Nodes, Marks, FeatureId>;
 
 /** The id, version and migrations that name and version a content model when it is compiled. */
 export type ContentModelOptions = {

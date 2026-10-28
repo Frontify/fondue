@@ -27,7 +27,7 @@ export const codecContext = (
     resolveAssetUrl?: ResolveAssetUrl,
 ): CodecContext => {
     const output = locale ?? fallback;
-    const t: CodecContext['translate'] = (key, vars) => {
+    const translate: CodecContext['translate'] = (key, vars) => {
         let template = output.translationStrings[key];
         if (template === undefined) {
             template = fallback.translationStrings[key];
@@ -50,7 +50,7 @@ export const codecContext = (
         });
     };
 
-    const base = { checkHref: (input: string) => checkHref(input), locale: output, translate: t };
+    const base = { checkHref: (input: string) => checkHref(input), locale: output, translate };
     if (resolveAssetUrl === undefined) {
         return base;
     }
@@ -92,9 +92,9 @@ export type MarkPlan = {
     formats: FeatureFormats;
     form: MarkDeclaration['markdown'];
 };
-export type Plan<N extends NodePlan, M extends MarkPlan> = {
-    nodes: ReadonlyMap<string, N>;
-    marks: ReadonlyMap<string, M>;
+export type Plan<NodeShape extends NodePlan, MarkShape extends MarkPlan> = {
+    nodes: ReadonlyMap<string, NodeShape>;
+    marks: ReadonlyMap<string, MarkShape>;
     /** Every feature's declared support, by feature ID. */
     formats: ReadonlyMap<string, FeatureFormats>;
 };
@@ -103,11 +103,11 @@ export type Plan<N extends NodePlan, M extends MarkPlan> = {
 const UNDECLARED: FeatureFormats = { html: 'lossless', text: 'unsupported', markdown: 'unsupported' };
 
 /** The plan of a compiled model, each node and mark extended with what `node` and `mark` read from its feature's declaration. */
-export const buildPlan = <N extends object, M extends object>(
+export const buildPlan = <NodeExtra extends object, MarkExtra extends object>(
     model: ContentModel,
-    node: (feature: FeatureDeclaration, name: string) => N,
-    mark: (feature: FeatureDeclaration, name: string) => M,
-): Plan<NodePlan & N, MarkPlan & M> => {
+    node: (feature: FeatureDeclaration, name: string) => NodeExtra,
+    mark: (feature: FeatureDeclaration, name: string) => MarkExtra,
+): Plan<NodePlan & NodeExtra, MarkPlan & MarkExtra> => {
     const compiled = compiledModel(model);
     const textblocks = textblockNames(new Map(compiled.nodes.map(({ name, declaration }) => [name, { declaration }])));
     const features = new Map(compiled.features.map((feature) => [feature.id, feature]));
@@ -120,7 +120,7 @@ export const buildPlan = <N extends object, M extends object>(
         nodes: new Map(
             compiled.nodes.map(({ name, featureId, declaration, shared }) => {
                 const feature = featureOf(featureId);
-                const plan: NodePlan & N = {
+                const plan: NodePlan & NodeExtra = {
                     name,
                     featureId,
                     inline: declaration.group === 'inline',
@@ -141,7 +141,7 @@ export const buildPlan = <N extends object, M extends object>(
         marks: new Map(
             compiled.marks.map(({ name, featureId, declaration }) => {
                 const feature = featureOf(featureId);
-                const plan: MarkPlan & M = {
+                const plan: MarkPlan & MarkExtra = {
                     name,
                     featureId,
                     spec: declaration.html,
@@ -231,7 +231,7 @@ export const listDepths = () => {
     const counts: Record<keyof ListLevels, number> = { ordered: 0, bullet: 0 };
 
     return {
-        within<T>(type: string, render: (entered: EnteredList | undefined) => T): T {
+        within<Result>(type: string, render: (entered: EnteredList | undefined) => Result): Result {
             const kind = ownValue(LIST_LEVEL_KINDS, type);
             if (kind === undefined) {
                 return render(undefined);

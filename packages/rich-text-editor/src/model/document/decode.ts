@@ -21,7 +21,7 @@ import { randomId } from './randomId';
 import { exceedsBytes, readInput } from './read';
 
 /** `Given` with every key that is not a limit name turned into `never`, so a misspelt limit fails to compile. */
-type LimitsOnly<Given> = Given & { readonly [K in Exclude<keyof Given, keyof ResourceLimits>]: never };
+type LimitsOnly<Given> = Given & { readonly [Key in Exclude<keyof Given, keyof ResourceLimits>]: never };
 
 const isLimitName = (name: string): name is keyof ResourceLimits => Object.hasOwn(defaultLimits, name);
 
@@ -30,7 +30,7 @@ export const limitsOf = <Given extends Partial<ResourceLimits>>(
     given: LimitsOnly<Given> | undefined,
     base: ResourceLimits = defaultLimits,
 ): ResourceLimits => {
-    const limits: { -readonly [K in keyof ResourceLimits]: number } = { ...base };
+    const limits: { -readonly [Key in keyof ResourceLimits]: number } = { ...base };
     for (const [name, value] of Object.entries(given === undefined ? {} : given)) {
         if (isLimitName(name) && typeof value === 'number' && Number.isFinite(value) && value >= 0) {
             limits[name] = value;
