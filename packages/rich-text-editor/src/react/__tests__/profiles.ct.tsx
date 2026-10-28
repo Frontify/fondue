@@ -89,7 +89,16 @@ test('keeps one paragraph in an Inline field that pastes its own select-all copy
     await page.keyboard.press('ControlOrMeta+c');
     const flavors = await copying;
     await page.keyboard.press('ArrowRight');
-    await settled(page);
+    // The editor adopts a key-moved caret only on `selectionchange`.
+    await expect
+        .poll(() =>
+            page.evaluate(() => {
+                const selection = window.profileProbe?.handle?.getSummary().selection;
+
+                return selection?.kind === 'text' && selection.collapsed;
+            }),
+        )
+        .toBe(true);
     await page.evaluate((entries) => {
         const clipboardData = new DataTransfer();
         for (const [type, value] of entries) {
