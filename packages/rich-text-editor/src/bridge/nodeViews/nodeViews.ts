@@ -26,7 +26,7 @@ export type NodeViewHost = {
 };
 
 // A throw never reaches ProseMirror: the portals close and the session faults, which stops editing.
-const faultOnThrow = <T>(host: NodeViewHost, fallback: () => T, work: () => T): T => {
+const faultOnThrow = <Result>(host: NodeViewHost, fallback: () => Result, work: () => Result): Result => {
     try {
         return work();
     } catch {

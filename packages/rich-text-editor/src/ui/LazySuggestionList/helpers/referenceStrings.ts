@@ -19,21 +19,21 @@ export type ReferenceListStrings = {
     both: (first: string, second: string) => string;
 };
 
-/** The mention list's and the mention search dialog's list strings from the chrome's `t`. */
-export const referenceListStrings = (t: CodecContext['translate']): ReferenceListStrings => ({
-    label: t('RichTextEditor_mentionSuggestions'),
-    loading: t('RichTextEditor_mentionLoading'),
-    noResults: t('RichTextEditor_mentionNoResults'),
-    failed: t('RichTextEditor_mentionFailed'),
-    loadMore: t('RichTextEditor_mentionLoadMore'),
-    retry: t('RichTextEditor_retry'),
-    results: (count) => t('RichTextEditor_mentionResults', { count }),
+/** The mention list's and the mention search dialog's list strings from the chrome's `translate`. */
+export const referenceListStrings = (translate: CodecContext['translate']): ReferenceListStrings => ({
+    label: translate('RichTextEditor_mentionSuggestions'),
+    loading: translate('RichTextEditor_mentionLoading'),
+    noResults: translate('RichTextEditor_mentionNoResults'),
+    failed: translate('RichTextEditor_mentionFailed'),
+    loadMore: translate('RichTextEditor_mentionLoadMore'),
+    retry: translate('RichTextEditor_retry'),
+    results: (count) => translate('RichTextEditor_mentionResults', { count }),
     option: ({ label, detail }, position, total) => {
         if (detail === undefined) {
-            return t('RichTextEditor_suggestionOption', { label: isolate(label), position, total });
+            return translate('RichTextEditor_suggestionOption', { label: isolate(label), position, total });
         }
 
-        return t('RichTextEditor_mentionOption', { label: isolate(label), type: detail, position, total });
+        return translate('RichTextEditor_mentionOption', { label: isolate(label), type: detail, position, total });
     },
-    both: (first, second) => t('RichTextEditor_announceBoth', { first, second }),
+    both: (first, second) => translate('RichTextEditor_announceBoth', { first, second }),
 });

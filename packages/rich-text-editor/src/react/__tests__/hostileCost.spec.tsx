@@ -56,14 +56,13 @@ const expand = (value: unknown): unknown => {
     return Object.fromEntries(entries.map(([key, member]) => [key, expand(member)]));
 };
 
-const fixtures: readonly Fixture[] = readdirSync(HOSTILE)
-    .filter((file) => file.endsWith('.json'))
-    .sort()
-    .map((file) => {
-        const parsed = JSON.parse(readFileSync(join(HOSTILE, file), 'utf8')) as Omit<Fixture, 'name'>;
+const hostileFiles = readdirSync(HOSTILE).filter((file) => file.endsWith('.json'));
+hostileFiles.sort();
+const fixtures: readonly Fixture[] = hostileFiles.map((file) => {
+    const parsed = JSON.parse(readFileSync(join(HOSTILE, file), 'utf8')) as Omit<Fixture, 'name'>;
 
-        return { ...parsed, name: file.replace('.json', ''), input: expand(parsed.input) };
-    });
+    return { ...parsed, name: file.replace('.json', ''), input: expand(parsed.input) };
+});
 const inBoundary = (boundary: string) => fixtures.filter((fixture) => fixture.boundary === boundary);
 
 const model = compileContentModel(featuresById(PERF_FEATURES), { id: 'test.hostile', version: 1 });

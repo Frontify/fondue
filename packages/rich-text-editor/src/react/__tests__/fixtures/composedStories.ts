@@ -31,21 +31,21 @@ const modules = (import.meta as unknown as { glob: Glob }).glob(['../../../**/*.
 });
 
 /** Every story of the package, in the order of its file path. */
-export const COMPOSED_STORIES: readonly ComposedStory[] = Object.entries(modules)
-    .sort(([left], [right]) => left.localeCompare(right))
-    .flatMap(([path, module]) =>
-        Object.entries(composeStories(module)).map(([name, story]) => {
-            const { id, tags, args, parameters, play } = story as Omit<ComposedStory, 'file' | 'name' | 'Story'>;
+const storyModules = Object.entries(modules);
+storyModules.sort(([left], [right]) => left.localeCompare(right));
+export const COMPOSED_STORIES: readonly ComposedStory[] = storyModules.flatMap(([path, module]) =>
+    Object.entries(composeStories(module)).map(([name, story]) => {
+        const { id, tags, args, parameters, play } = story as Omit<ComposedStory, 'file' | 'name' | 'Story'>;
 
-            return {
-                file: new URL(path, FOLDER).pathname.slice(1),
-                name,
-                id,
-                tags,
-                args,
-                parameters,
-                play,
-                Story: story as ComponentType,
-            };
-        }),
-    );
+        return {
+            file: new URL(path, FOLDER).pathname.slice(1),
+            name,
+            id,
+            tags,
+            args,
+            parameters,
+            play,
+            Story: story as ComponentType,
+        };
+    }),
+);

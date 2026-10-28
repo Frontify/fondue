@@ -9,16 +9,16 @@ import { type EditorHosts } from './plugin';
  * each run as one undo step, mapped targets, and the editor's hosts. Inside a command, writes join the command's one
  * undo step and host actions wait until the command has run.
  */
-export type EditorApi<N extends EditorFacet = EditorFacet> = EditorControlApi & Pick<EditorFacets, N>;
+export type EditorApi<Facet extends EditorFacet = EditorFacet> = EditorControlApi & Pick<EditorFacets, Facet>;
 
 // `uploads` is optional in the document API, but a part that declares it reads it as a facet.
 type EveryMember = Required<DocumentApi> & EditorHosts;
 
 type FacetName = {
-    [K in keyof EveryMember]: EveryMember[K] extends (...args: never[]) => unknown
+    [MemberName in keyof EveryMember]: EveryMember[MemberName] extends (...args: never[]) => unknown
         ? never
-        : EveryMember[K] extends object
-          ? K
+        : EveryMember[MemberName] extends object
+          ? MemberName
           : never;
 }[keyof EveryMember];
 

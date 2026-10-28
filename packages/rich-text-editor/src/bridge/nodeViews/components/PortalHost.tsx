@@ -31,8 +31,9 @@ const pendingOf = (runtime: EditorPort | undefined, nodeId: string | null): Node
     return { kind: 'upload', state: running ? 'running' : 'failed', progress: status.progress };
 };
 
-const samePending = (a: NodePending | null, b: NodePending | null) =>
-    a === b || (a !== null && b !== null && a.state === b.state && a.progress === b.progress);
+const samePending = (first: NodePending | null, second: NodePending | null) =>
+    first === second ||
+    (first !== null && second !== null && first.state === second.state && first.progress === second.progress);
 
 type ChromeProps = { entry: PortalEntry; context: NodeViewContext; lang: string };
 

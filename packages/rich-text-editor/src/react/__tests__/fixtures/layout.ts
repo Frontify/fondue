@@ -13,19 +13,16 @@ export const PROFILES = ['inline', 'comment', 'document', 'brand-document'] as c
 const SRC = join(import.meta.dirname, '..', '..', '..');
 
 /** Each plugin story's file under `src` and the plugin its title names, so a new plugin story is never left out. */
-export const PLUGIN_STORIES: readonly { plugin: string; file: string }[] = globSync('plugins/*/*.stories.tsx', {
-    cwd: SRC,
-})
-    .map((path) => path.replaceAll('\\', '/'))
-    .sort()
-    .map((file) => {
-        const plugin = /title: 'Rich Text Editor\/Plugins\/([^']+)'/.exec(readFileSync(join(SRC, file), 'utf8'))?.[1];
-        if (plugin === undefined) {
-            throw new Error(`${file} names no plugin in its title.`);
-        }
+const storyFiles = globSync('plugins/*/*.stories.tsx', { cwd: SRC }).map((path) => path.replaceAll('\\', '/'));
+storyFiles.sort();
+export const PLUGIN_STORIES: readonly { plugin: string; file: string }[] = storyFiles.map((file) => {
+    const plugin = /title: 'Rich Text Editor\/Plugins\/([^']+)'/.exec(readFileSync(join(SRC, file), 'utf8'))?.[1];
+    if (plugin === undefined) {
+        throw new Error(`${file} names no plugin in its title.`);
+    }
 
-        return { plugin, file };
-    });
+    return { plugin, file };
+});
 
 /** The story file of `plugin`. */
 export const storyOf = (plugin: string): string => {

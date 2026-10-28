@@ -128,7 +128,11 @@ export type EditorHosts = {
          * `api.surface()`, then, in the click handler, read `run = api.marks.run(mark, { at: event.target })` and call
          * `overlays.open(Component, props, run.range)`.
          */
-        open<P extends object>(component: ComponentType<P & OverlayProps>, props: P, anchor?: AnchorTarget): void;
+        open<Props extends object>(
+            component: ComponentType<Props & OverlayProps>,
+            props: Props,
+            anchor?: AnchorTarget,
+        ): void;
         /** Closes the open overlay, if any. */
         close(): void;
         /** Whether an overlay that a command opened shows. */
@@ -164,15 +168,15 @@ export type EditorHosts = {
     generation: () => number | undefined;
 };
 
-type EditorCommandBase<P, N extends EditorFacet> = {
+type EditorCommandBase<Payload, Facet extends EditorFacet> = {
     /** Changes the document only through `api`: a query without `enabled` runs it against a draft, where any other effect would happen. */
-    run: (api: EditorApi<N>, payload: P) => boolean;
+    run: (api: EditorApi<Facet>, payload: Payload) => boolean;
     /** Whether `run` would apply now, which the toolbar reads to disable the entry; absent means always. */
-    enabled?: (api: EditorApi<N>, payload: P) => boolean;
+    enabled?: (api: EditorApi<Facet>, payload: Payload) => boolean;
     /** Whether the command's effect holds at the selection: `'mixed'` when it holds for part of it. */
-    active?: (api: EditorApi<N>, payload: P) => boolean | 'mixed';
+    active?: (api: EditorApi<Facet>, payload: Payload) => boolean | 'mixed';
     /** Whether `policy` refuses the call, as a heading level it does not offer: rejected as `not-allowed`, and not offered in the toolbar. */
-    refuses?(policy: AuthoringPolicy, payload: P): boolean;
+    refuses?(policy: AuthoringPolicy, payload: Payload): boolean;
     /** Runs in a read-only editor too, as a command that only opens a panel does. */
     readOnly?: boolean;
 };
@@ -181,14 +185,17 @@ type EditorCommandBase<P, N extends EditorFacet> = {
  * A plugin command: `run` returns whether it applied; `enabled` and `active` answer a query. A command whose `run`
  * takes a payload declares it in `payload`, which `defineEditorPart` checks against `run`'s payload type.
  */
-export type EditorCommand<P = undefined, N extends EditorFacet = EditorFacet> = EditorCommandBase<P, N> &
-    ([P] extends [undefined] ? { payload?: PayloadDeclaration } : { payload: PayloadDeclaration });
+export type EditorCommand<Payload = undefined, Facet extends EditorFacet = EditorFacet> = EditorCommandBase<
+    Payload,
+    Facet
+> &
+    ([Payload] extends [undefined] ? { payload?: PayloadDeclaration } : { payload: PayloadDeclaration });
 
 /**
  * A key's own handler, which runs as the input it replaces: its change reports no command and groups with typing in
  * one undo step; `false` hands the key on.
  */
-export type KeyHandler<N extends EditorFacet = EditorFacet> = (api: EditorApi<N>) => boolean;
+export type KeyHandler<Facet extends EditorFacet = EditorFacet> = (api: EditorApi<Facet>) => boolean;
 
 /** What a plugin-owned toolbar control renders with, in place of the standard button. */
 export type ToolbarControlProps = {
@@ -248,9 +255,9 @@ type PluginToolbarEntryBase = {
 };
 
 /** What a search reads besides its query: the session's API, a signal that aborts when a newer query or a closed list replaces it, and the page's cursor, `null` for the first. */
-export type SuggestionSearchContext<N extends EditorFacet = EditorFacet> = {
+export type SuggestionSearchContext<Facet extends EditorFacet = EditorFacet> = {
     /** The session's API, narrowed to the part's `needs`. */
-    api: EditorApi<N>;
+    api: EditorApi<Facet>;
     /** Aborts when a newer query or a closed list replaces this search. */
     signal: AbortSignal;
     /** The cursor of the page to fetch, `null` for the first. */
@@ -262,15 +269,15 @@ export type SuggestionSearchContext<N extends EditorFacet = EditorFacet> = {
  * options `search` finds; the accepted option replaces the trigger and the query by running `command` with its payload.
  * Its accessible name is `labelKey` or `label`, as a toolbar entry's is.
  */
-export type EditorSuggestion<N extends EditorFacet = EditorFacet> = {
+export type EditorSuggestion<Facet extends EditorFacet = EditorFacet> = {
     /** The one or two characters that open the list. */
     trigger: string;
     /** Where in the text the trigger opens the list. */
     rules: SuggestionRules;
     /** Whether the list can open now, such as while the host gives a reference search. */
-    available?: (api: EditorApi<N>) => boolean;
+    available?: (api: EditorApi<Facet>) => boolean;
     /** A page of options. */
-    search: (query: string, context: SuggestionSearchContext<N>) => Promise<SuggestionPage>;
+    search: (query: string, context: SuggestionSearchContext<Facet>) => Promise<SuggestionPage>;
     /** The ID of the command that an accepted option runs, with the option's payload. */
     command: string;
 } & (
@@ -298,13 +305,13 @@ export type PluginToolbarEntry = PluginToolbarEntryBase &
  * its feature: a command, key, node view or toolbar entry with the same ID replaces the shipped one whole, with no
  * field merged, and the others are added.
  */
-export type EditorPartSpec<N extends EditorFacet = EditorFacet> = {
+export type EditorPartSpec<Facet extends EditorFacet = EditorFacet> = {
     /** The API facets its functions read; the API they get holds these and the control members only. */
-    readonly needs?: readonly N[];
+    readonly needs?: readonly Facet[];
     /** The part's commands by command ID. */
-    readonly commands?: Readonly<Record<string, EditorCommand<never, N>>>;
+    readonly commands?: Readonly<Record<string, EditorCommand<never, Facet>>>;
     /** Key handlers by binding: a command to run or a handler of its own. */
-    readonly keys?: Readonly<Partial<Record<KeyBinding, CommandRef | KeyHandler<N>>>>;
+    readonly keys?: Readonly<Partial<Record<KeyBinding, CommandRef | KeyHandler<Facet>>>>;
     /** Rules that rewrite typed text as it matches. */
     readonly inputRules?: readonly InputRule[];
     /** The entries a presentation's toolbar shows by their command. */
@@ -316,7 +323,7 @@ export type EditorPartSpec<N extends EditorFacet = EditorFacet> = {
     /** Decorations over textblocks, which the editor derives again only for a block a change touched. */
     readonly decorations?: readonly BlockDecorationSource[];
     /** Lists that typing a trigger opens, whose options the part's own search finds. */
-    readonly suggestions?: readonly EditorSuggestion<N>[];
+    readonly suggestions?: readonly EditorSuggestion<Facet>[];
     /** Chrome around the editable content of a node, which renders again only when its node or selection changes. */
     readonly views?: readonly NodeViewDeclaration[];
     /**
@@ -324,7 +331,7 @@ export type EditorPartSpec<N extends EditorFacet = EditorFacet> = {
      * the next part, then to the paste of their text.
      */
     readonly files?: (
-        api: EditorApi<N>,
+        api: EditorApi<Facet>,
         files: readonly File[],
         at: { origin: 'paste' | 'drop'; range: EditorRange },
     ) => boolean;
@@ -333,46 +340,46 @@ export type EditorPartSpec<N extends EditorFacet = EditorFacet> = {
 declare const pluginBrand: unique symbol;
 
 /** An editor part for one feature, which `defineEditor` installs when the model installs that feature. */
-export type EditorPart<Id extends string = string, Commands extends object = object> = {
+export type EditorPart<FeatureId extends string = string, Commands extends object = object> = {
     /** The ID of the feature this part belongs to. */
-    readonly feature: Id;
+    readonly feature: FeatureId;
     /** The payload type of each of its commands, as types only. */
     readonly [pluginBrand]?: Commands;
 } & EditorPartSpec;
 
 /** The payload types of a plugin's commands by command ID; a command whose `run` takes none takes `undefined`. */
-type PayloadsOf<C> = {
-    readonly [K in keyof C]: C[K] extends { run: (api: never, payload: infer P) => boolean }
-        ? unknown extends P
+type PayloadsOf<Commands> = {
+    readonly [Key in keyof Commands]: Commands[Key] extends { run: (api: never, payload: infer Payload) => boolean }
+        ? unknown extends Payload
             ? undefined
-            : P
+            : Payload
         : never;
 };
 
 /** A command whose `run` takes a payload that its `payload` declaration does not give is refused, as it would reject every `execute`. */
-type PayloadMatched<C> = {
-    readonly [K in keyof C]: C[K] extends {
-        payload?: infer D;
-        run: (api: never, payload: infer P) => boolean;
+type PayloadMatched<Commands> = {
+    readonly [Key in keyof Commands]: Commands[Key] extends {
+        payload?: infer DeclaredPayload;
+        run: (api: never, payload: infer RunPayload) => boolean;
     }
-        ? unknown extends D
-            ? [undefined] extends [P]
-                ? C[K]
+        ? unknown extends DeclaredPayload
+            ? [undefined] extends [RunPayload]
+                ? Commands[Key]
                 : EditorCommand<undefined>
-            : // A command typed as `EditorCommand<P>` holds the wide declaration, which `EditorCommand` checks.
-              [PayloadDeclaration] extends [D]
-              ? C[K]
-              : [PayloadOf<D>] extends [P]
-                ? C[K]
-                : EditorCommand<PayloadOf<D>>
-        : C[K];
+            : // A command typed as `EditorCommand<Payload>` holds the wide declaration, which `EditorCommand` checks.
+              [PayloadDeclaration] extends [DeclaredPayload]
+              ? Commands[Key]
+              : [PayloadOf<DeclaredPayload>] extends [RunPayload]
+                ? Commands[Key]
+                : EditorCommand<PayloadOf<DeclaredPayload>>
+        : Commands[Key];
 };
 
 /** The command payloads of a plugin, by command ID. */
-export type CommandsOfPart<P> = P extends EditorPart<string, infer C> ? C : never;
+export type CommandsOfPart<Part> = Part extends EditorPart<string, infer Commands> ? Commands : never;
 
-type CheckedSpec<Parts extends EditorPartSpec<N>, N extends EditorFacet> = Parts & {
-    needs?: readonly N[];
+type CheckedSpec<Parts extends EditorPartSpec<Facet>, Facet extends EditorFacet> = Parts & {
+    needs?: readonly Facet[];
     commands?: PayloadMatched<NoInfer<NonNullable<Parts['commands']>>>;
 };
 
@@ -387,13 +394,15 @@ export const OPTION_PARTS = Symbol('specOfOptions');
  * may be a function of the feature's resolved options, which each editor definition calls once.
  */
 export const defineEditorPart = <
-    Id extends string,
-    const N extends EditorFacet = never,
-    const Parts extends EditorPartSpec<N> = EditorPartSpec<N>,
+    FeatureId extends string,
+    const Facet extends EditorFacet = never,
+    const Parts extends EditorPartSpec<Facet> = EditorPartSpec<Facet>,
 >(
-    feature: Feature<object, object, object, Id> | ((options?: never) => Feature<object, object, object, Id>),
-    parts: CheckedSpec<Parts, N> | ((options: JsonObject) => CheckedSpec<Parts, N>),
-): EditorPart<Id, PayloadsOf<NonNullable<Parts['commands']>>> => {
+    feature:
+        | Feature<object, object, object, FeatureId>
+        | ((options?: never) => Feature<object, object, object, FeatureId>),
+    parts: CheckedSpec<Parts, Facet> | ((options: JsonObject) => CheckedSpec<Parts, Facet>),
+): EditorPart<FeatureId, PayloadsOf<NonNullable<Parts['commands']>>> => {
     let resolved = feature;
     if (typeof resolved === 'function') {
         resolved = resolved();
@@ -405,12 +414,12 @@ export const defineEditorPart = <
         const specOfOptions: SpecOfOptions = Object.freeze((options: JsonObject) => parts(options));
         const plugin: EditorPart = Object.freeze({ feature: id, [OPTION_PARTS]: specOfOptions });
 
-        return plugin as EditorPart<Id, PayloadsOf<NonNullable<Parts['commands']>>>;
+        return plugin as EditorPart<FeatureId, PayloadsOf<NonNullable<Parts['commands']>>>;
     }
 
     const plugin: EditorPartSpec & { readonly feature: string } = { feature: id, ...parts };
 
-    return Object.freeze(plugin) as EditorPart<Id, PayloadsOf<NonNullable<Parts['commands']>>>;
+    return Object.freeze(plugin) as EditorPart<FeatureId, PayloadsOf<NonNullable<Parts['commands']>>>;
 };
 
 /** `plugin` with the parts its function gives for its feature's resolved `options`, else `plugin` itself. */

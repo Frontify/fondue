@@ -183,9 +183,9 @@ const mount = (props: Props = {}) => {
                 setSelection(handle(), { text: 'ab', from: 2, to: 2 });
                 typeText(handle(), typed);
             }),
-        advance: (ms: number) =>
+        advance: (milliseconds: number) =>
             act(() => {
-                vi.advanceTimersByTime(ms);
+                vi.advanceTimersByTime(milliseconds);
             }),
     };
 };

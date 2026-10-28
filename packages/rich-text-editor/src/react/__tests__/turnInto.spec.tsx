@@ -17,9 +17,9 @@ import { turnIntoMenuEntries as installedChoices } from '../helpers/turnInto';
 import { shipped as comment } from '../profiles/comment';
 import { shipped as document } from '../profiles/document';
 
-const { translate: t } = codecContext(enUS, enUS);
+const { translate } = codecContext(enUS, enUS);
 const labelsOf = (profile: typeof document) =>
-    installedChoices(pluginsOf(profile().definition), t, 'en-US').map(({ label }) => label);
+    installedChoices(pluginsOf(profile().definition), translate, 'en-US').map(({ label }) => label);
 
 describe('the Turn into entries a profile installs', () => {
     it('lists the paragraph, heading levels, quote, code block and lists of the Document profile in the slash menu order', () => {
@@ -140,7 +140,7 @@ describe('the entries a selected node of a live editor takes', () => {
     };
 
     const choicesOf = (handle: Handle) =>
-        turnIntoChoices(installedChoices(pluginsOf(document().definition), t, 'en-US'), (command, payload) =>
+        turnIntoChoices(installedChoices(pluginsOf(document().definition), translate, 'en-US'), (command, payload) =>
             (handle.query as (id: string, payload?: JsonValue) => CommandState)(command, payload),
         ).map(({ entry: { label }, current }) => {
             if (current) {

@@ -121,7 +121,7 @@ export const createSelectionAnchor = (
     target?: () => AnchorTarget | undefined,
 ): SelectionAnchor => {
     // The held rectangle's offset from the surface, which scrolls and resizes with it.
-    let held: { x: number; y: number; width: number; height: number } | undefined;
+    let held: { left: number; top: number; width: number; height: number } | undefined;
     let read = false;
 
     const anchorRect = (current: SurfaceView): DOMRect => {
@@ -137,7 +137,7 @@ export const createSelectionAnchor = (
 
         const surface = current.dom.getBoundingClientRect();
 
-        return new DOMRect(surface.left + held.x, surface.top + held.y, held.width, held.height);
+        return new DOMRect(surface.left + held.left, surface.top + held.top, held.width, held.height);
     };
 
     return {
@@ -170,7 +170,12 @@ export const createSelectionAnchor = (
 
             const rect = anchorRect(current);
             const surface = current.dom.getBoundingClientRect();
-            held = { x: rect.left - surface.left, y: rect.top - surface.top, width: rect.width, height: rect.height };
+            held = {
+                left: rect.left - surface.left,
+                top: rect.top - surface.top,
+                width: rect.width,
+                height: rect.height,
+            };
         },
     };
 };

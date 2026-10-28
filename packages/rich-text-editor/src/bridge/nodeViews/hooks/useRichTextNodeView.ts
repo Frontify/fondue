@@ -13,12 +13,12 @@ import { NodeViewStateContext } from '../helpers/nodeViewStateContext';
  *
  * @throws Error when called outside node view chrome.
  */
-export const useRichTextNodeView = <C extends object = ShippedCommands>(): NodeViewState<C> => {
+export const useRichTextNodeView = <Commands extends object = ShippedCommands>(): NodeViewState<Commands> => {
     useRenderMark();
     const state = useContext(NodeViewStateContext);
     if (state === null) {
         throw new Error('useRichTextNodeView must be called inside node view chrome.');
     }
 
-    return state as NodeViewState<C>;
+    return state as NodeViewState<Commands>;
 };

@@ -145,10 +145,13 @@ test('keeps the overlays of an editor outside any fixed containing block in the 
     const bubble = await boxOf(bubbleOf(page));
     // The header covers the viewport's top 120 pixels, which the bubble above the text reaches into.
     expect(bubble.top).toBeLessThan(118);
-    const covering = await page.evaluate(({ x, y }) => Boolean(document.elementFromPoint(x, y)?.closest('header')), {
-        x: (bubble.left + bubble.right) / 2,
-        y: bubble.top + 1,
-    });
+    const covering = await page.evaluate(
+        ({ x: pointerX, y: pointerY }) => Boolean(document.elementFromPoint(pointerX, pointerY)?.closest('header')),
+        {
+            x: (bubble.left + bubble.right) / 2,
+            y: bubble.top + 1,
+        },
+    );
     expect(covering).toBe(true);
     expect(await page.locator('[data-rte-overlays]').getAttribute('popover')).toBeNull();
 });

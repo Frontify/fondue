@@ -5,10 +5,9 @@ import { type MutableRefObject } from 'react';
 import { type InteractionScope } from '#/bridge/overlays/helpers/interactionScope';
 import { type Announcer } from '#/bridge/session/helpers/announcer';
 import { type MountCoordinator } from '#/bridge/session/helpers/mount';
-import { type readerContext } from '#/reader/helpers/context';
 
 import { memberOf, pluginPresentationOf } from '../helpers/sessionHelpers';
-import { DEFAULT_TEST_ID, type SessionRest } from '../types';
+import { type ChromeContext, DEFAULT_TEST_ID, type SessionRest } from '../types';
 
 import { usePluginHosts } from './usePluginHosts';
 
@@ -18,7 +17,7 @@ type HostWiring = {
     announcer: Announcer;
     panelActionsRef: Parameters<typeof usePluginHosts>[0]['panels'];
     openPanelRef: MutableRefObject<string | undefined>;
-    tRef: MutableRefObject<ReturnType<typeof readerContext>['translate']>;
+    translateRef: MutableRefObject<ChromeContext['translate']>;
     langRef: MutableRefObject<string>;
     latestRef: MutableRefObject<SessionRest>;
 };
@@ -30,7 +29,7 @@ export const useSessionHosts = ({
     announcer,
     panelActionsRef,
     openPanelRef,
-    tRef,
+    translateRef,
     langRef,
     latestRef,
 }: HostWiring) =>
@@ -40,7 +39,7 @@ export const useSessionHosts = ({
         announcer,
         panels: panelActionsRef,
         openPanel: openPanelRef,
-        translate: () => tRef.current,
+        translate: () => translateRef.current,
         lang: () => langRef.current,
         presentation: () => pluginPresentationOf(latestRef.current.presentation),
         references: () => memberOf(latestRef.current.services, 'references'),

@@ -17,13 +17,13 @@ import {
 } from '#/model';
 import { type TreeNode } from '#/model/internal';
 import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
-import { type readerContext } from '#/reader/helpers/context';
+import { type ReaderContext } from '#/reader/define';
 import { type ReaderOverrides } from '#/reader/helpers/plan';
 import { type ReaderPresentation } from '#/reader/ReaderWith/ReaderWith';
 import { type EditorPort, type RuntimeHandle } from '#/runtime/port';
 import { type ToolbarItem, type ToolbarStrings } from '#/ui/helpers/items';
 import { type PanelController } from '#/ui/helpers/panelContext';
-import { type referenceListStrings } from '#/ui/LazySuggestionList/helpers/referenceStrings';
+import { type ReferenceListStrings } from '#/ui/LazySuggestionList/helpers/referenceStrings';
 
 import { type CompiledEditorDefinition, type Defined, type Props, type ToolbarMode } from '../types';
 
@@ -83,7 +83,7 @@ export type Chrome = {
     /** The language of the chrome's strings, which the root, node chrome and plugin labels take (WCAG 2.2 SC 3.1.2). */
     lang: string;
     /** The chrome's strings in the shown locale. */
-    translate: ReturnType<typeof readerContext>['translate'];
+    translate: ReaderContext['translate'];
 };
 
 /** The props the parts read, so a host rerender with equal props leaves the context alone. */
@@ -101,7 +101,7 @@ export const PART_KEYS = [
     'disabled',
 ] as const;
 
-export type PartProps = { readonly [K in (typeof PART_KEYS)[number]]?: Props[K] | undefined };
+export type PartProps = { readonly [PartKey in (typeof PART_KEYS)[number]]?: Props[PartKey] | undefined };
 
 /** What every part of the editor reads from `RichTextEditor.Root`. */
 export type RootContextValue = {
@@ -138,7 +138,7 @@ export type SessionProps = Defined & {
 /** The session's props that stay when its own parts are taken out: the host's, and what Retry hands on. */
 export type SessionRest = Defined & Pick<SessionProps, 'unsavedOnMount' | 'carried'>;
 
-export type ChromeContext = ReturnType<typeof readerContext>;
+export type ChromeContext = ReaderContext;
 
 /** A plugin's standing overlay, with a stable key and the ref its toolbar reports through. */
 export type Standing = {
@@ -163,7 +163,7 @@ export type FrameProps = {
     portals: PortalStore;
     chromeContext: ChromeContext;
     onFlush: () => void;
-    referenceStrings: ReturnType<typeof referenceListStrings>;
+    referenceStrings: ReferenceListStrings;
     standing: readonly Standing[];
     pluginOverlay: PluginOverlay | undefined;
     hosts: EditorHosts;

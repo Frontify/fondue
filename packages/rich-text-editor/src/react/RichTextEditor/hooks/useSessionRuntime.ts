@@ -12,11 +12,12 @@ import { prefetchPartsOnIdle } from '#/bridge/session/helpers/lazyPart';
 import { type MountCoordinator } from '#/bridge/session/helpers/mount';
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
 import { enUS } from '#/locales/en-US';
-import { type Diagnostic, type RichTextDocument } from '#/model';
+import { type ContentCheckOptions, type Diagnostic, type RichTextDocument } from '#/model';
 import { codecContext, randomId } from '#/model/internal';
 import { createSaveCoordinator } from '#/persistence/coordinator';
 import { type LoadedDocument } from '#/persistence/types';
 import { connectClipboardTo, createPort, type EditorRuntimeOptions } from '#/runtime/assembly';
+import { type CompiledDefinition } from '#/runtime/definition';
 import {
     type DocumentChange,
     type EditorPort,
@@ -92,21 +93,25 @@ const pickerOf =
             return;
         }
 
-        pickAsset(session, picker, {
-            ...(nodeId === undefined ? {} : { nodeId }),
+        const pickerOptions: { nodeId?: string; removed: (kind: 'target' | 'image') => void } = {
             removed: (kind) => {
                 const { locale } = shellPropsOf(latestRef.current);
                 const key =
                     kind === 'target' ? 'RichTextEditor_imageTargetRemoved' : 'RichTextEditor_imageReplaceRemoved';
                 announcer.announce(codecContext(locale, enUS).translate(key));
             },
-        });
+        };
+        if (nodeId !== undefined) {
+            pickerOptions.nodeId = nodeId;
+        }
+
+        pickAsset(session, picker, pickerOptions);
     };
 
 /** The save coordinator of a session that mounts with `services.persistence`, which a session keeps for its whole life. */
 const savesOf = (
     { latestRef, loaded }: SessionWiring,
-    engine: ReturnType<typeof compiledOf>,
+    engine: CompiledDefinition,
     ids: NonNullable<EditorRuntimeOptions['generateId']>,
 ) => {
     const persistence = memberOf(latestRef.current.services, 'persistence');
@@ -142,7 +147,7 @@ const buildRuntime = (
 ): EditorPort => {
     const { mounted, loaded, coordinator, portals, work, announcer, hosts, latestRef } = wiring;
     const { definition } = mounted;
-    const { translate: t } = codecContext(shellPropsOf(latestRef.current).locale, enUS);
+    const { translate } = codecContext(shellPropsOf(latestRef.current).locale, enUS);
     const engine = compiledOf(definition);
     const profile = profileOf(definition);
     const openPicker = pickerOf(wiring);
@@ -190,22 +195,25 @@ const buildRuntime = (
         pick: (nodeId) => openPicker(runtime, nodeId),
         uploadEvent: (event) => {
             const { locale, limits } = shellPropsOf(latestRef.current);
-            const { translate: t } = codecContext(locale, enUS);
+            const { translate } = codecContext(locale, enUS);
             const lang = locale.lang ?? enUS.lang;
             const accepts = mediaOf(runtime)?.uploads.accepts ?? [];
-            announcer.announce(uploadMessage(event, t, lang, limits, accepts));
+            announcer.announce(uploadMessage(event, translate, lang, limits, accepts));
         },
         styles: () => latestRef.current.presentation?.styles ?? [],
-        columns: columnsAtMount(latestRef.current.presentation, t),
+        columns: columnsAtMount(latestRef.current.presentation, translate),
         contentChecks: () => {
             const background = backgroundOf(runtime);
             const tokens = latestRef.current.presentation?.colorTokens;
-
-            return {
+            const checks: Pick<ContentCheckOptions, 'locale' | 'colorTokens' | 'background'> = {
                 locale: shellPropsOf(latestRef.current).locale,
                 colorTokens: tokens ?? [],
-                ...(background === undefined ? {} : { background }),
             };
+            if (background !== undefined) {
+                checks.background = background;
+            }
+
+            return checks;
         },
     });
 

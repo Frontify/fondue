@@ -30,10 +30,10 @@ export const toolbarShortcutOf = ({ presentation }: PartProps) => {
     return presentation.toolbarShortcut;
 };
 
-export const memberOf = <K extends (typeof SERVICE_MEMBERS)[number]>(
+export const memberOf = <ServiceMember extends (typeof SERVICE_MEMBERS)[number]>(
     services: EditorServices | undefined,
-    member: K,
-): EditorServices[K] | undefined => {
+    member: ServiceMember,
+): EditorServices[ServiceMember] | undefined => {
     if (services === undefined) {
         return undefined;
     }
@@ -50,10 +50,10 @@ export const layoutOf = (presentation: ReaderPresentation | undefined) => {
     return columnLayout(presentation.columns, presentation.columnGap);
 };
 
-/** The presentation's column count and the break labels in `t`'s locale, before the surface measured room for them. */
+/** The presentation's column count and the break labels in `translate`'s locale, before the surface measured room for them. */
 export const columnsAtMount = (
     presentation: ReaderPresentation | undefined,
-    t: CodecContext['translate'],
+    translate: CodecContext['translate'],
 ): ColumnState => {
     let count = 1;
     const layout = layoutOf(presentation);
@@ -64,8 +64,8 @@ export const columnsAtMount = (
     return {
         count,
         fits: false,
-        label: t('RichTextEditor_columnBreak'),
-        inactiveLabel: t('RichTextEditor_columnBreakInactive'),
+        label: translate('RichTextEditor_columnBreak'),
+        inactiveLabel: translate('RichTextEditor_columnBreakInactive'),
     };
 };
 

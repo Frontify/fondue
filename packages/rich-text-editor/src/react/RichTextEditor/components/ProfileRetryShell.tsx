@@ -28,7 +28,7 @@ export const ProfileRetryShell = ({
 }: ProfileRetryShellProps) => {
     const theme = useFondueTheme();
     const lang = locale.lang ?? theme.lang ?? enUS.lang;
-    const { translate: t } = codecContext(locale, enUS);
+    const { translate } = codecContext(locale, enUS);
     const messageRef = useRef<HTMLParagraphElement>(null);
     const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -57,10 +57,10 @@ export const ProfileRetryShell = ({
             />
             <div ref={overlayRef} className={styles.overlay}>
                 <p ref={messageRef} tabIndex={-1}>
-                    {t('RichTextEditor_profileLoadFailed')}
+                    {translate('RichTextEditor_profileLoadFailed')}
                 </p>
                 <Button onPress={() => onRetry(overlayRef.current?.contains(window.document.activeElement) === true)}>
-                    {t('RichTextEditor_retry')}
+                    {translate('RichTextEditor_retry')}
                 </Button>
             </div>
         </div>

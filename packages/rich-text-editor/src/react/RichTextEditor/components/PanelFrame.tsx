@@ -93,7 +93,7 @@ export type PanelFrameProps = {
 };
 
 /** The open panel, with its error boundary. It takes focus when it opens, and Escape closes it. */
-export const PanelFrame = ({ id, panel: Panel, translate: t, requested, testId, onClose }: PanelFrameProps) => {
+export const PanelFrame = ({ id, panel: Panel, translate, requested, testId, onClose }: PanelFrameProps) => {
     const slotRef = useRef<HTMLDivElement>(null);
 
     // Runs after the panel's own layout effects, so a panel that focused itself keeps that focus.
@@ -146,11 +146,11 @@ export const PanelFrame = ({ id, panel: Panel, translate: t, requested, testId, 
                 <div className={styles.content}>
                     <PanelBoundary
                         key={id}
-                        message={t('RichTextEditor_panelError')}
-                        closeLabel={t('RichTextEditor_close')}
+                        message={translate('RichTextEditor_panelError')}
+                        closeLabel={translate('RichTextEditor_close')}
                         onClose={onClose}
                     >
-                        <Panel close={onClose} translate={t} requested={requested} />
+                        <Panel close={onClose} translate={translate} requested={requested} />
                     </PanelBoundary>
                 </div>
             </ScrollArea>

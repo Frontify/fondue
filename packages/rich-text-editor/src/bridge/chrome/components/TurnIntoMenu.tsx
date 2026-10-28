@@ -34,15 +34,19 @@ export const TurnIntoMenu = ({ label, node, ...overlay }: TurnIntoMenuProps) => 
 
     const options: MenuOption[] = [];
     for (const { entry, current } of turnIntoChoices(entries, query)) {
-        options.push({
+        const option: MenuOption = {
             key: entry.key,
             label: entry.label,
             command: entry.command,
             checked: current,
             // The current type changes nothing, as a toggle command would turn it off.
             inert: current,
-            ...(entry.payload === undefined ? {} : { payload: entry.payload }),
-        });
+        };
+        if (entry.payload !== undefined) {
+            option.payload = entry.payload;
+        }
+
+        options.push(option);
     }
 
     return <OptionsMenu label={label} options={options} node={node} {...overlay} />;

@@ -36,7 +36,7 @@ const hostClassNames = (contentClassName: string) =>
 const submitHint = (
     submits: boolean,
     definition: CompiledEditorDefinition<object>,
-    t: Chrome['translate'],
+    translate: Chrome['translate'],
     apple: boolean,
 ) => {
     if (!submits) {
@@ -46,15 +46,15 @@ const submitHint = (
     const profile = profileOf(definition);
     const key = (binding: string) => shortcutText(binding, apple);
     if (definition.authoring.enterBehavior === 'submit' && profile === 'inline') {
-        return t('RichTextEditor_submitHintSingleLine', { submit: key('Enter') });
+        return translate('RichTextEditor_submitHintSingleLine', { submit: key('Enter') });
     }
 
     if (definition.authoring.enterBehavior === 'submit') {
-        return t('RichTextEditor_submitHint', { submit: key('Enter'), newLine: key('Shift-Enter') });
+        return translate('RichTextEditor_submitHint', { submit: key('Enter'), newLine: key('Shift-Enter') });
     }
 
     if (profile === 'comment') {
-        return t('RichTextEditor_submitHint', { submit: key('Mod-Enter'), newLine: key('Enter') });
+        return translate('RichTextEditor_submitHint', { submit: key('Mod-Enter'), newLine: key('Enter') });
     }
 
     return undefined;

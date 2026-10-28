@@ -88,8 +88,10 @@ declare const editorDefinitionBrand: unique symbol;
 export type CompiledEditorDefinition<Commands extends object = ShippedCommands> = {
     readonly [editorDefinitionBrand]: Commands;
 } & EditorDefinitionInfo;
-type UnionToIntersection<U> = (U extends unknown ? (value: U) => void : never) extends (value: infer I) => void
-    ? I
+type UnionToIntersection<Union> = (Union extends unknown ? (value: Union) => void : never) extends (
+    value: infer Intersection,
+) => void
+    ? Intersection
     : never;
 /** The commands of the plugins a host passes `defineEditor`. */
 export type CommandsOfPlugins<Plugins extends readonly RichTextPlugin[]> = UnionToIntersection<
@@ -188,7 +190,7 @@ export type EditorEventMap = {
  * The session of a mounted editor. With `profile`, the ref holds `null` until the profile's module has loaded and the
  * session exists, and no host callback runs before then.
  */
-export type EditorHandle<C extends object = ShippedCommands> = {
+export type EditorHandle<Commands extends object = ShippedCommands> = {
     /** A short description of the session and its document. */
     getSummary(): EditorSummary;
     /** The document as it is now. */
@@ -198,11 +200,20 @@ export type EditorHandle<C extends object = ShippedCommands> = {
     /** The draft that the recovery service offered, or `null` when none. */
     getRecoveryCandidate(): RichTextDocument | null;
     /** Whether the command can run now, with the reason when it cannot. */
-    query<K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>): CommandState;
+    query<CommandId extends CommandKey<Commands>>(
+        id: CommandId,
+        ...args: CommandArgs<Commands, CommandId>
+    ): CommandState;
     /** Synchronous event-handler API. Do not call from React render or effects. */
-    execute<K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>): CommandResult;
+    execute<CommandId extends CommandKey<Commands>>(
+        id: CommandId,
+        ...args: CommandArgs<Commands, CommandId>
+    ): CommandResult;
     /** Queues an intent, not a transaction. Without a target, uses the selection at execution. */
-    enqueue<K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>): Promise<CommandResult>;
+    enqueue<CommandId extends CommandKey<Commands>>(
+        id: CommandId,
+        ...args: CommandArgs<Commands, CommandId>
+    ): Promise<CommandResult>;
     /** Keeps a selection that a later command can target, such as while a host modal is open. */
     captureTarget(options: CaptureTargetOptions): CaptureResult;
     /** Frees a target from `captureTarget`. */
@@ -224,7 +235,10 @@ export type EditorHandle<C extends object = ShippedCommands> = {
     /** Registers a host modal root with the interaction scope. */
     registerInteractionRoot(element: HTMLElement): Unsubscribe;
     /** Adds a listener for an event and returns the function that removes it. */
-    subscribe<K extends keyof EditorEventMap>(event: K, listener: (value: EditorEventMap[K]) => void): Unsubscribe;
+    subscribe<EventName extends keyof EditorEventMap>(
+        event: EventName,
+        listener: (value: EditorEventMap[EventName]) => void,
+    ): Unsubscribe;
     /** Synchronous invalidation. Does not promise that remote saves were cancelled. */
     dispose(): void;
 };
@@ -266,7 +280,7 @@ export type ReactPresentation = {
 /** The name of a shipped profile: inline, comment, document or brand-document. */
 export type RichTextProfile = 'inline' | 'comment' | 'document' | 'brand-document';
 /** The props the editor takes in every profile. */
-export type RichTextEditorBaseProps<C extends object = ShippedCommands> = {
+export type RichTextEditorBaseProps<Commands extends object = ShippedCommands> = {
     /**
      * Ignored when `definition` is set. The profile's module loads on first use. While it loads, the editor renders the
      * server shell (the loading shell with the textbox role and name), `ref` holds `null` and no callback runs. A failed
@@ -275,7 +289,7 @@ export type RichTextEditorBaseProps<C extends object = ShippedCommands> = {
      */
     profile?: RichTextProfile;
     /** A compiled editor definition, which replaces `profile`. */
-    definition?: CompiledEditorDefinition<C>;
+    definition?: CompiledEditorDefinition<Commands>;
     /** How the editor looks, and which toolbar and controls it shows. */
     presentation?: ReactPresentation;
     /** The document the editor starts with. Later changes to it do not reach the editor; use `replaceDocument`. */
@@ -353,10 +367,10 @@ export type RichTextEditorBaseProps<C extends object = ShippedCommands> = {
     /** Runs when the user or the editor changes where the toolbar shows. */
     onToolbarModeChange?: (mode: ToolbarMode) => void;
     /** `null` until the session exists, which with `profile` is once the profile's module has loaded. */
-    ref?: Ref<EditorHandle<C>>;
+    ref?: Ref<EditorHandle<Commands>>;
 };
 /** Exactly one accessible name source is required. */
-export type RichTextEditorProps<C extends object = ShippedCommands> = RichTextEditorBaseProps<C> &
+export type RichTextEditorProps<Commands extends object = ShippedCommands> = RichTextEditorBaseProps<Commands> &
     (
         | {
               /** The surface's accessible name, as text. */

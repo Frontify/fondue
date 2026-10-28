@@ -46,7 +46,7 @@ export { useRichTextNodeView } from '../nodeViews/hooks/useRichTextNodeView';
 export type NodeViewContext = ReaderContext;
 
 /** What `useRichTextNodeView` returns: plain data and actions that find their node, never a position or a ProseMirror value. */
-export type NodeViewState<C extends object = ShippedCommands> = {
+export type NodeViewState<Commands extends object = ShippedCommands> = {
     /** `null` for a node type that carries no `nodeId`, such as `code_block`, whose actions read its live position instead. */
     nodeId: string | null;
     /** The node's attributes. */
@@ -71,9 +71,15 @@ export type NodeViewState<C extends object = ShippedCommands> = {
     /** Selects the node as a whole. */
     select: () => void;
     /** Selects this node at execution time, then runs or queries the command, so a delayed menu action still reaches this node. */
-    execute: <K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>) => CommandResult;
+    execute: <CommandId extends CommandKey<Commands>>(
+        id: CommandId,
+        ...args: CommandArgs<Commands, CommandId>
+    ) => CommandResult;
     /** Selects this node at execution time, then reads the state of the command. */
-    query: <K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>) => CommandState;
+    query: <CommandId extends CommandKey<Commands>>(
+        id: CommandId,
+        ...args: CommandArgs<Commands, CommandId>
+    ) => CommandState;
     /** The node's running async operation; never a document attribute. */
     pending: NodePending | null;
 };

@@ -140,11 +140,21 @@ export const mountText = <Model extends ContentModel = ContentModel<ReturnType<t
             rules = { inputRules };
         }
 
+        let localeProps: { locale?: RichTextLocale } = {};
+        if (locale !== undefined) {
+            localeProps = { locale };
+        }
+
+        let readOnlyProps: { readOnly?: boolean } = {};
+        if (readOnly !== undefined) {
+            readOnlyProps = { readOnly };
+        }
+
         return (
             <RichTextEditor
                 {...shown}
                 {...rules}
-                {...(locale === undefined ? {} : { locale })}
+                {...localeProps}
                 aria-label="Notes"
                 definition={definition}
                 defaultValue={{
@@ -153,7 +163,7 @@ export const mountText = <Model extends ContentModel = ContentModel<ReturnType<t
                     document: document ?? storedIn(model, blocks),
                 }}
                 onDocumentChange={(change) => changes.push(change)}
-                {...(readOnly === undefined ? {} : { readOnly })}
+                {...readOnlyProps}
                 ref={ref}
             />
         );

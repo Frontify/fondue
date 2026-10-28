@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 
 import { useClientLayoutEffect } from '#/bridge/session/hooks/useClientLayoutEffect';
-import { type readerContext } from '#/reader/helpers/context';
+import { type ReaderContext } from '#/reader/define';
 import { type ReaderPresentation } from '#/reader/ReaderWith/ReaderWith';
 import { type EditorPort, isComposing } from '#/runtime/port';
 
@@ -17,7 +17,7 @@ const COMPOSITION_WAIT_MS = 1000;
 export const useColumns = (
     live: EditorPort | undefined,
     presentation: ReaderPresentation | undefined,
-    t: ReturnType<typeof readerContext>['translate'],
+    translate: ReaderContext['translate'],
 ) => {
     const columns = layoutOf(presentation);
     let columnCount = 1;
@@ -28,8 +28,8 @@ export const useColumns = (
     }
 
     const [columnsFit, setColumnsFit] = useState(false);
-    const breakLabel = t('RichTextEditor_columnBreak');
-    const inactiveBreakLabel = t('RichTextEditor_columnBreakInactive');
+    const breakLabel = translate('RichTextEditor_columnBreak');
+    const inactiveBreakLabel = translate('RichTextEditor_columnBreakInactive');
 
     useClientLayoutEffect(() => {
         live?.setColumns({

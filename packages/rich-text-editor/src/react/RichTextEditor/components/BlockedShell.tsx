@@ -46,7 +46,7 @@ export type BlockedShellProps = ShellProps & { result: Blocked };
  * no editable surface, so nothing can save an empty document over it.
  */
 export const BlockedShell = ({ result, model, readers, limits, presentation, locale, testId }: BlockedShellProps) => {
-    const { translate: t } = readerContext(locale, presentation);
+    const { translate } = readerContext(locale, presentation);
 
     return (
         <div data-test-id={testId} data-rte-shell="blocked">
@@ -58,12 +58,12 @@ export const BlockedShell = ({ result, model, readers, limits, presentation, loc
                 presentation={presentation}
                 locale={locale}
             />
-            <p>{t(blockedKey(result))}</p>
+            <p>{translate(blockedKey(result))}</p>
             <CopyButton
                 copy={() => writeClipboard(originalText(result.original))}
-                failure={t('RichTextEditor_copyFailed')}
+                failure={translate('RichTextEditor_copyFailed')}
             >
-                {t('RichTextEditor_copyOriginal')}
+                {translate('RichTextEditor_copyOriginal')}
             </CopyButton>
         </div>
     );

@@ -8,10 +8,10 @@ import { EditorHostsContext } from '../helpers/editorHostsContext';
 import { editorApiOf } from '../liveApi';
 
 /** A value read through the editor API, which rerenders the caller only when `isEqual` finds it changed. */
-export const useEditorValue = <T>(
-    read: (api: EditorApi | undefined) => T,
-    isEqual: (previous: T, next: T) => boolean = Object.is,
-): T => {
+export const useEditorValue = <Value>(
+    read: (api: EditorApi | undefined) => Value,
+    isEqual: (previous: Value, next: Value) => boolean = Object.is,
+): Value => {
     const hosts = useContext(EditorHostsContext);
 
     return useSessionValue((runtime) => {

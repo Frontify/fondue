@@ -136,6 +136,11 @@ const mount = async (
     const onDiagnostic = vi.fn<(diagnostic: Diagnostic) => void>();
     const shownDefinition = props.definition ?? definition;
     const shownLocale = props.locale ?? enUS;
+    let generated: { generateId?: () => string } = {};
+    if (props.generateId !== undefined) {
+        generated = { generateId: props.generateId };
+    }
+
     const view = render(
         <RichTextEditor
             aria-label="Notes"
@@ -144,7 +149,7 @@ const mount = async (
             locale={shownLocale}
             onDiagnostic={onDiagnostic}
             ref={ref}
-            {...(props.generateId === undefined ? {} : { generateId: props.generateId })}
+            {...generated}
         />,
     );
     await act(async () => {

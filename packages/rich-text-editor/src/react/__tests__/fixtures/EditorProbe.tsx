@@ -254,6 +254,21 @@ export const EditorProbe = ({
             };
         }
     }, [saves, held, field, frameBody]);
+    let placeholderProps: { placeholder?: string } = {};
+    if (placeholder !== undefined) {
+        placeholderProps = { placeholder };
+    }
+
+    let presentationProps: { presentation?: NonNullable<typeof presentation> } = {};
+    if (presentation !== undefined) {
+        presentationProps = { presentation };
+    }
+
+    let serviceProps: { services?: NonNullable<typeof services> } = {};
+    if (services !== undefined) {
+        serviceProps = { services };
+    }
+
     const editor = (
         <>
             <button type="button">Before</button>
@@ -262,20 +277,16 @@ export const EditorProbe = ({
                 definition={definition}
                 defaultValue={defaultValue}
                 readOnly={readOnly}
-                {...(placeholder === undefined ? {} : { placeholder })}
-                {...(presentation === undefined ? {} : { presentation })}
-                {...(services === undefined ? {} : { services })}
+                {...placeholderProps}
+                {...presentationProps}
+                {...serviceProps}
                 {...rerendered}
                 ref={ref}
                 onDocumentChange={({ origin, commandId }) => onChange?.({ origin, commandId })}
             />
             {withReader && (
                 <section aria-label="Reader">
-                    <RichTextReader
-                        document={defaultValue.document}
-                        model={readerModel}
-                        {...(presentation === undefined ? {} : { presentation })}
-                    />
+                    <RichTextReader document={defaultValue.document} model={readerModel} {...presentationProps} />
                 </section>
             )}
         </>

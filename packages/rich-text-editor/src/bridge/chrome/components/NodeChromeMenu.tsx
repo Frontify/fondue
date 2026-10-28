@@ -45,6 +45,11 @@ export const NodeChromeMenu = ({ label, text, command, onCloseAutoFocus, childre
         );
     }, []);
 
+    const contentProps: { container: typeof container; onCloseAutoFocus?: (event: Event) => void } = { container };
+    if (onCloseAutoFocus !== undefined) {
+        contentProps.onCloseAutoFocus = onCloseAutoFocus;
+    }
+
     return (
         <Dropdown.Root
             open={open}
@@ -85,11 +90,7 @@ export const NodeChromeMenu = ({ label, text, command, onCloseAutoFocus, childre
                     {text}
                 </Toolbar.Button>
             </Dropdown.Trigger>
-            <Dropdown.Content
-                ref={focusChecked}
-                container={container}
-                {...(onCloseAutoFocus === undefined ? {} : { onCloseAutoFocus })}
-            >
+            <Dropdown.Content ref={focusChecked} {...contentProps}>
                 {children}
             </Dropdown.Content>
         </Dropdown.Root>

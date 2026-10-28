@@ -37,7 +37,7 @@ export const useSessionMount = (props: SessionRest, retried: SessionProps['retri
         retried,
     );
     const { generatedId, toolbarRef, bubbleRef, showBubbleRef, overlayToolbarsRef } = useChromeRefs();
-    const { langRef, tRef } = useLocaleRefs();
+    const { langRef, translateRef } = useLocaleRefs();
     const { chooserRef, choosingRef } = useChooserRefs();
     const handleRef = useRef<EditorHandle<object> | null>(null);
     // The session once it is ready, which the parts and hooks read.
@@ -58,7 +58,7 @@ export const useSessionMount = (props: SessionRest, retried: SessionProps['retri
         announcer,
         panelActionsRef,
         openPanelRef,
-        tRef,
+        translateRef,
         langRef,
         latestRef,
     });
@@ -85,7 +85,7 @@ export const useSessionMount = (props: SessionRest, retried: SessionProps['retri
         showBubbleRef,
         overlayToolbarsRef,
         langRef,
-        tRef,
+        translateRef,
         chooserRef,
         choosingRef,
         handleRef,
@@ -142,7 +142,7 @@ const chromeSourcesOf = (props: SessionRest, shell: ReturnType<typeof shellProps
     hosts: mount.hosts,
     generatedId: mount.generatedId,
     langRef: mount.langRef,
-    tRef: mount.tRef,
+    translateRef: mount.translateRef,
     overlayToolbarsRef: mount.overlayToolbarsRef,
     toolbarRef: mount.toolbarRef,
     bubbleRef: mount.bubbleRef,

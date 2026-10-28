@@ -85,13 +85,11 @@ describe('the keyboard reference of each profile story', () => {
                 canonicalJson(row.payload) === canonicalJson(payload),
         );
 
-        expect(rows.map((row) => row.apple).filter((text) => text !== '')).toEqual(apple);
-        expect(
-            rows
-                .map((row) => row.other)
-                .filter((text) => text !== '')
-                .sort(),
-        ).toEqual([...other].sort());
+        const appleShortcuts = rows.map((row) => row.apple).filter((text) => text !== '');
+        const otherShortcuts = rows.map((row) => row.other).filter((text) => text !== '');
+        otherShortcuts.sort();
+        expect(appleShortcuts).toEqual(apple);
+        expect(otherShortcuts).toEqual([...other].sort());
     });
 
     it.each(PROFILES)('lists each input rule the $profile profile installs and no other', ({ profile, shipped }) => {

@@ -5,7 +5,10 @@ import { type CommandArgs, type CommandKey, type CommandState, type ShippedComma
 import { useCommandQuery } from './useCommandQuery';
 
 /** A command's state for `args`, which rerenders the caller only when it changes; not ready until the session starts. */
-export const useCommandState = <C extends object = ShippedCommands, K extends CommandKey<C> = CommandKey<C>>(
-    id: K,
-    ...args: CommandArgs<C, K>
+export const useCommandState = <
+    Commands extends object = ShippedCommands,
+    CommandId extends CommandKey<Commands> = CommandKey<Commands>,
+>(
+    id: CommandId,
+    ...args: CommandArgs<Commands, CommandId>
 ): CommandState => useCommandQuery(id, ...args);

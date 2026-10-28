@@ -36,7 +36,7 @@ export type RecoveryShellProps = ShellProps & { document: RichTextDocument; onRe
  */
 export const RecoveryShell = ({ document, onRetry, ...shell }: RecoveryShellProps) => {
     const { model, readers, limits, presentation, locale, testId } = shell;
-    const { translate: t } = readerContext(locale, presentation);
+    const { translate } = readerContext(locale, presentation);
     const messageRef = useRef<HTMLParagraphElement>(null);
 
     // The shell replaces the root and its polite region, so focus carries the crash to a screen reader,
@@ -52,7 +52,7 @@ export const RecoveryShell = ({ document, onRetry, ...shell }: RecoveryShellProp
     return (
         <div data-test-id={testId} data-rte-shell="recovery">
             <p ref={messageRef} tabIndex={-1}>
-                {t('RichTextEditor_recoveryMessage')}
+                {translate('RichTextEditor_recoveryMessage')}
             </p>
             <ReaderWith
                 document={document}
@@ -62,9 +62,9 @@ export const RecoveryShell = ({ document, onRetry, ...shell }: RecoveryShellProp
                 presentation={presentation}
                 locale={locale}
             />
-            <Button onPress={onRetry}>{t('RichTextEditor_retry')}</Button>
-            <CopyButton copy={() => copyContent(shell, document)} failure={t('RichTextEditor_copyFailed')}>
-                {t('RichTextEditor_copyContent')}
+            <Button onPress={onRetry}>{translate('RichTextEditor_retry')}</Button>
+            <CopyButton copy={() => copyContent(shell, document)} failure={translate('RichTextEditor_copyFailed')}>
+                {translate('RichTextEditor_copyContent')}
             </CopyButton>
         </div>
     );

@@ -72,13 +72,14 @@ const documentOf = (blocks: readonly ContentNodeJSON[], capabilities: readonly {
 });
 
 /** A paragraph of `text`, with each run inside `*` and `*` italic, `_` and `_` bold and `[` and `]` a link. */
-const markedParagraph = (text: string): ContentNodeJSON => ({
-    type: 'paragraph',
-    attrs: { lang: null },
-    content: text
-        .split(/(\*[^*]*\*|_[^_]*_|\[[^\]]*\])/)
-        .filter((part) => part !== '')
-        .map((part) => {
+const markedParagraph = (text: string): ContentNodeJSON => {
+    const parts = text.split(/(\*[^*]*\*|_[^_]*_|\[[^\]]*\])/);
+    const runs = parts.filter((part) => part !== '');
+
+    return {
+        type: 'paragraph',
+        attrs: { lang: null },
+        content: runs.map((part) => {
             const inner = part.slice(1, -1);
             if (part.startsWith('*')) {
                 return { type: 'text', text: inner, marks: [{ type: 'italic' }] };
@@ -99,7 +100,9 @@ const markedParagraph = (text: string): ContentNodeJSON => ({
 
             return { type: 'text', text: part };
         }),
-});
+    };
+};
+
 const plainParagraph = (text: string): ContentNodeJSON => ({
     type: 'paragraph',
     attrs: { lang: null },

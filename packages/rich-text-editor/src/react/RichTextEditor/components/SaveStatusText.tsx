@@ -17,7 +17,7 @@ export type SaveStatusTextProps = { translate: CodecContext['translate']; testId
  * The session's save state as text, which changes silently during autosave and is announced through the editor's
  * polite live region only for the states that need the author.
  */
-export const SaveStatusText = ({ translate: t, testId }: SaveStatusTextProps) => {
+export const SaveStatusText = ({ translate, testId }: SaveStatusTextProps) => {
     const runtime = useContext(SessionContext);
     // The shown key only, so a save status that changes on each keystroke rerenders nothing.
     const subscribe = useCallback(
@@ -40,9 +40,9 @@ export const SaveStatusText = ({ translate: t, testId }: SaveStatusTextProps) =>
 
     const key = useSyncExternalStore(subscribe, read, read);
     const announce = useAnnounce();
-    const tRef = useRef(t);
+    const translateRef = useRef(translate);
     useClientLayoutEffect(() => {
-        tRef.current = t;
+        translateRef.current = translate;
     });
 
     // Each change is heard from the event itself, so a render that batches two changes still announces both.
@@ -66,14 +66,14 @@ export const SaveStatusText = ({ translate: t, testId }: SaveStatusTextProps) =>
             memory = kept;
             previous = next;
             if (announced !== null) {
-                announce(tRef.current(announced));
+                announce(translateRef.current(announced));
             }
         });
     }, [runtime, announce]);
 
     let text = '';
     if (key !== null) {
-        text = t(key);
+        text = translate(key);
     }
 
     return (

@@ -531,13 +531,16 @@ describe('RichTextEditor documents', () => {
     });
     const notesOf3 = notesModel(3);
     const notes = defineEditor({ id: 'test.notes', model: notesOf3, plugins: pluginsFor(notesOf3) });
+    const migrationNames = readdirSync(join(fixtures, 'migration'), { recursive: true, encoding: 'utf8' }).filter(
+        (name) => name.endsWith('.json'),
+    );
+    migrationNames.sort();
+    const migrations = migrationNames
+        .map((name) => [`migration/${name}`, load('migration', name), notes] as const)
+        .filter(([, document]) => (document as { model: { version: number } }).model.version < 3);
     const opened = [
         ...fixturesIn('valid').map(([name, document]) => [`model/valid/${name}`, document, vocabulary] as const),
-        ...readdirSync(join(fixtures, 'migration'), { recursive: true, encoding: 'utf8' })
-            .filter((name) => name.endsWith('.json'))
-            .sort()
-            .map((name) => [`migration/${name}`, load('migration', name), notes] as const)
-            .filter(([, document]) => (document as { model: { version: number } }).model.version < 3),
+        ...migrations,
     ];
 
     it.each(opened)('opens %s with no document change or save for 2 seconds', (_name, document, used) => {

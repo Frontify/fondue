@@ -46,7 +46,7 @@ const computedColor = (page: Page, value: string) =>
 /** The largest channel difference between two screenshots of one size, and the share of pixels that differ at all. */
 const pixelDifference = (page: Page, first: Buffer, second: Buffer) =>
     page.evaluate(
-        async ({ a, b }) => {
+        async ({ firstImage, secondImage }) => {
             const pixels = async (data: string) => {
                 // A Blob decodes without an image URL, which the CT page CSP would block for `data:`.
                 const bytes = Uint8Array.from(atob(data), (character) => character.charCodeAt(0));
@@ -61,15 +61,15 @@ const pixelDifference = (page: Page, first: Buffer, second: Buffer) =>
                 return pixelData ?? new Uint8ClampedArray();
             };
 
-            const x = await pixels(a);
-            const y = await pixels(b);
+            const firstPixels = await pixels(firstImage);
+            const secondPixels = await pixels(secondImage);
             let largest = 0;
             let differing = 0;
-            for (let index = 0; index < x.length; index += 4) {
+            for (let index = 0; index < firstPixels.length; index += 4) {
                 let pixel = 0;
                 for (let channel = index; channel < index + 4; channel += 1) {
-                    const left = x[channel] ?? 0;
-                    const right = y[channel] ?? 0;
+                    const left = firstPixels[channel] ?? 0;
+                    const right = secondPixels[channel] ?? 0;
                     pixel = Math.max(pixel, Math.abs(left - right));
                 }
 
@@ -79,9 +79,13 @@ const pixelDifference = (page: Page, first: Buffer, second: Buffer) =>
                 }
             }
 
-            return { largest, share: differing / Math.max(1, x.length / 4), sameSize: x.length === y.length };
+            return {
+                largest,
+                share: differing / Math.max(1, firstPixels.length / 4),
+                sameSize: firstPixels.length === secondPixels.length,
+            };
         },
-        { a: first.toString('base64'), b: second.toString('base64') },
+        { firstImage: first.toString('base64'), secondImage: second.toString('base64') },
     );
 
 test('reads the paragraph spacing a host sets on the content root', async ({ mount, page }) => {

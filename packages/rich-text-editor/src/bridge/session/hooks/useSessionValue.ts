@@ -13,10 +13,10 @@ import { useRenderMark } from './useRenderMark';
  * `read` of the session through one selector store, so the component rerenders only when `isEqual` finds a new value;
  * `read` gets `undefined` until the session is ready.
  */
-export const useSessionValue = <T>(
-    read: (runtime: EditorPort | undefined) => T,
-    isEqual: (previous: T, next: T) => boolean,
-): T => {
+export const useSessionValue = <Value>(
+    read: (runtime: EditorPort | undefined) => Value,
+    isEqual: (previous: Value, next: Value) => boolean,
+): Value => {
     useRenderMark();
 
     const runtime = useContext(SessionContext);
@@ -42,7 +42,7 @@ export const useSessionValue = <T>(
     );
 
     // An equal value keeps the object React last rendered, which `useSyncExternalStore` then compares by identity.
-    const cacheRef = useRef<{ value: T } | undefined>(undefined);
+    const cacheRef = useRef<{ value: Value } | undefined>(undefined);
     const getSnapshot = () => {
         const next = read(runtime);
         if (cacheRef.current !== undefined && isEqual(cacheRef.current.value, next)) {

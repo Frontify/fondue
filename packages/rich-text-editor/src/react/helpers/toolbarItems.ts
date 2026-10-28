@@ -183,8 +183,11 @@ const itemOf = (
         groupStart,
         bubble,
         opensControl: entry.opensOverlay === true,
-        ...(entry.panel === undefined ? {} : { control: entry.panel }),
     };
+    if (entry.panel !== undefined) {
+        item.control = entry.panel;
+    }
+
     if (entry.control === undefined) {
         return item;
     }
@@ -240,9 +243,17 @@ const textStyleItem = (
     groupStart: boolean,
     items: readonly ToolbarItem[],
 ): ToolbarItem | undefined => {
-    const options = TEXT_STYLE_COMMANDS.flatMap((id) => context.entries.filter((entry) => entry.command === id))
-        .filter((entry) => runnable(context, entry.command))
-        .map((entry) => ({ ...itemOf(context, entry, false, false), offered: offered(context, entry) }));
+    const options: (ToolbarItem & { offered: boolean })[] = [];
+    for (const commandId of TEXT_STYLE_COMMANDS) {
+        for (const entry of context.entries) {
+            if (entry.command !== commandId || !runnable(context, entry.command)) {
+                continue;
+            }
+
+            options.push({ ...itemOf(context, entry, false, false), offered: offered(context, entry) });
+        }
+    }
+
     options.push(
         ...brandRows(
             context,
@@ -281,7 +292,7 @@ export const toolbarItems = (
     engine: CompiledDefinition,
     authoring: AuthoringPolicy,
     presentation: ReactPresentation | undefined,
-    t: CodecContext['translate'],
+    translate: CodecContext['translate'],
     /** The UI locale's language tag, which picks a plugin's label. */
     lang: string,
     plugins: readonly EditorPart[] = [],
@@ -297,7 +308,7 @@ export const toolbarItems = (
         entries.push(...shown.map((entry) => ({ ...entry, labelKey: entry.labelKey ?? '' })));
     }
 
-    const context: ToolbarItemsContext = { engine, authoring, presentation, translate: t, lang, entries };
+    const context: ToolbarItemsContext = { engine, authoring, presentation, translate, lang, entries };
     const items: ToolbarItem[] = [];
     const groups = presentation.toolbar ?? toolbarGroups(plugins, authoring);
     for (const group of groups) {
@@ -339,7 +350,7 @@ export const menuItems = (
     engine: CompiledDefinition,
     authoring: AuthoringPolicy,
     items: readonly ToolbarItem[],
-    t: CodecContext['translate'],
+    translate: CodecContext['translate'],
     /** The UI locale's language tag, which picks a plugin's label. */
     lang: string,
     plugins: readonly EditorPart[] = [],
@@ -364,7 +375,7 @@ export const menuItems = (
             }
 
             const bindings = bindingsOf(keymap, command, payload);
-            const label = t(ref.labelKey as `RichTextEditor_${string}`);
+            const label = translate(ref.labelKey as `RichTextEditor_${string}`);
             rows.push({
                 key,
                 command,
@@ -399,12 +410,12 @@ export const menuItems = (
 
             let label: string;
             if (entry.label === undefined) {
-                label = t(entry.labelKey as `RichTextEditor_${string}`);
+                label = translate(entry.labelKey as `RichTextEditor_${string}`);
             } else {
                 label = translatedLabel(entry.label, lang);
             }
 
-            rows.push({
+            const row: ToolbarItem = {
                 key,
                 command: entry.command,
                 payload: entry.payload,
@@ -415,8 +426,12 @@ export const menuItems = (
                 groupStart: false,
                 bubble: false,
                 opensControl: entry.opensOverlay === true,
-                ...(entry.node === undefined ? {} : { node: entry.node }),
-            });
+            };
+            if (entry.node !== undefined) {
+                row.node = entry.node;
+            }
+
+            rows.push(row);
         }
     }
 

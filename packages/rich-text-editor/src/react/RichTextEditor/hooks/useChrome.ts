@@ -22,7 +22,7 @@ import {
     standingOverlaysOf,
 } from '../helpers/chromeModel';
 import { memberOf, type shellPropsOf } from '../helpers/sessionHelpers';
-import { type Mounted, type Props, type SessionRest } from '../types';
+import { type ChromeContext, type Mounted, type Props, type SessionRest } from '../types';
 
 import { type PluginOverlay, useRenderedHosts } from './usePluginHosts';
 import { type Choosing } from './useSessionRuntime';
@@ -34,7 +34,7 @@ type ChromeSources = {
     hosts: EditorHosts;
     generatedId: string;
     langRef: MutableRefObject<string>;
-    tRef: MutableRefObject<ReturnType<typeof readerContext>['translate']>;
+    translateRef: MutableRefObject<ChromeContext['translate']>;
     overlayToolbarsRef: MutableRefObject<(HTMLElement | null)[]>;
     toolbarRef: MutableRefObject<HTMLDivElement | null>;
     bubbleRef: MutableRefObject<HTMLDivElement | null>;
@@ -46,7 +46,7 @@ type ChromeSources = {
 
 /** The chrome the parts share: the shown language, the strings, the toolbar items and the plugins' standing overlays. */
 export const useChrome = (sources: ChromeSources) => {
-    const { props, shell, mounted, hosts, generatedId, langRef, tRef, overlayToolbarsRef } = sources;
+    const { props, shell, mounted, hosts, generatedId, langRef, translateRef, overlayToolbarsRef } = sources;
     const { toolbarRef, bubbleRef, showBubbleRef, toolbarMode, switchToolbar, keyboard } = sources;
     const { locale, presentation } = shell;
     const theme = useFondueTheme();
@@ -64,7 +64,7 @@ export const useChrome = (sources: ChromeSources) => {
     // Chrome reads the newest presentation and locale with no view rebuild.
     const chromeContext = useMemo(() => readerContext(locale, presentation), [locale, presentation]);
     useClientLayoutEffect(() => {
-        tRef.current = chromeContext.translate;
+        translateRef.current = chromeContext.translate;
     });
 
     // A host that renders a new presentation object on each change must not hand plugin UI a new API each time.
@@ -129,7 +129,7 @@ type OverlaySources = {
     overlayRoot: HTMLElement | null;
     scope: InteractionScope;
     pluginOverlay: PluginOverlay | undefined;
-    chromeContext: ReturnType<typeof readerContext>;
+    chromeContext: ChromeContext;
 };
 
 /** Where the overlays render, whether the file chooser exists, and the reference list's strings. */
@@ -172,9 +172,9 @@ export const useChromeRefs = () => {
 /** The shown language and the chrome's strings, which the session's suggestion lists and plugins read when they run. */
 export const useLocaleRefs = () => {
     const langRef = useRef<string>(enUS.lang);
-    const tRef = useRef(codecContext(enUS, enUS).translate);
+    const translateRef = useRef(codecContext(enUS, enUS).translate);
 
-    return { langRef, tRef };
+    return { langRef, translateRef };
 };
 
 /** The file chooser of hosts with no asset picker, and where the files it gives go. */

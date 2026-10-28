@@ -51,13 +51,13 @@ const crampedTargets = (page: Page) =>
             })
             .map((element) => ({ element, box: element.getBoundingClientRect() }));
         const small = targets.filter(({ box }) => box.width < 24 || box.height < 24);
-        const centre = (box: DOMRect) => ({ x: box.left + box.width / 2, y: box.top + box.height / 2 });
+        const centre = (box: DOMRect) => ({ centreX: box.left + box.width / 2, centreY: box.top + box.height / 2 });
         const meetsBox = (box: DOMRect, other: DOMRect) => {
-            const { x, y } = centre(box);
-            const nearX = Math.max(other.left, Math.min(x, other.right));
-            const nearY = Math.max(other.top, Math.min(y, other.bottom));
+            const { centreX, centreY } = centre(box);
+            const nearX = Math.max(other.left, Math.min(centreX, other.right));
+            const nearY = Math.max(other.top, Math.min(centreY, other.bottom));
 
-            return Math.hypot(x - nearX, y - nearY) < 12;
+            return Math.hypot(centreX - nearX, centreY - nearY) < 12;
         };
 
         return small
@@ -76,10 +76,16 @@ const crampedTargets = (page: Page) =>
                     }
 
                     const isSmall = small.some((candidate) => candidate.element === other.element);
-                    const a = centre(box);
-                    const b = centre(other.box);
+                    const firstCentre = centre(box);
+                    const secondCentre = centre(other.box);
 
-                    return isSmall && Math.hypot(a.x - b.x, a.y - b.y) < 24;
+                    return (
+                        isSmall &&
+                        Math.hypot(
+                            firstCentre.centreX - secondCentre.centreX,
+                            firstCentre.centreY - secondCentre.centreY,
+                        ) < 24
+                    );
                 }),
             )
             .map(({ element, box }) => {

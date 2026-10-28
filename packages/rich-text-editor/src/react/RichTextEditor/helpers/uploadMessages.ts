@@ -53,14 +53,14 @@ type Limits = Pick<ResourceLimits, 'maxAssetBytes' | 'maxImagePixels'>;
 /** Why one file was refused, with how to fix it: the accepted types and size, or the pixel limits. */
 const refusalOf = (
     { name, reason }: { name: string; reason: UploadRejection },
-    t: CodecContext['translate'],
+    translate: CodecContext['translate'],
     lang: string,
     limits: Limits,
     accepts: readonly string[],
 ) => {
     const numbers = new Intl.NumberFormat(lang, { maximumFractionDigits: 1 });
     if (reason === 'pixels') {
-        return t('RichTextEditor_uploadTooManyPixels', {
+        return translate('RichTextEditor_uploadTooManyPixels', {
             name: isolate(name),
             megapixels: numbers.format(limits.maxImagePixels / 1_000_000),
             side: numbers.format(MAX_IMAGE_SIDE),
@@ -71,7 +71,7 @@ const refusalOf = (
     const size = megabyteFormat.format(megabytes(limits.maxAssetBytes));
     const types = alternatives([...new Set(accepts.map(typeName))], lang);
 
-    return t(REFUSAL_KEYS[reason], { name: isolate(name), types, size });
+    return translate(REFUSAL_KEYS[reason], { name: isolate(name), types, size });
 };
 
 /**
@@ -80,31 +80,34 @@ const refusalOf = (
  */
 export const uploadMessage = (
     event: UploadEvent,
-    t: CodecContext['translate'],
+    translate: CodecContext['translate'],
     lang: string,
     limits: Limits,
     accepts: readonly string[],
 ): string => {
     if (event.kind === 'completed') {
         const key = event.altMissing ? 'RichTextEditor_uploadCompletedNoAlt' : 'RichTextEditor_uploadCompleted';
-        const completed = t(key, { name: isolate(event.name) });
+        const completed = translate(key, { name: isolate(event.name) });
         if (!event.review) {
             return completed;
         }
 
-        return t('RichTextEditor_announceBoth', { first: completed, second: t('RichTextEditor_imageAltReviewPrompt') });
+        return translate('RichTextEditor_announceBoth', {
+            first: completed,
+            second: translate('RichTextEditor_imageAltReviewPrompt'),
+        });
     }
 
     if (event.kind !== 'gesture') {
-        return t(EVENT_KEYS[event.kind], { name: isolate(event.name) });
+        return translate(EVENT_KEYS[event.kind], { name: isolate(event.name) });
     }
 
-    const parts = event.refused.map((refused) => refusalOf(refused, t, lang, limits, accepts));
+    const parts = event.refused.map((refused) => refusalOf(refused, translate, lang, limits, accepts));
     const [first] = event.started;
     if (event.started.length === 1 && first !== undefined) {
-        parts.push(t('RichTextEditor_uploadStarted', { name: isolate(first) }));
+        parts.push(translate('RichTextEditor_uploadStarted', { name: isolate(first) }));
     } else if (event.started.length > 1) {
-        parts.push(t('RichTextEditor_uploadStartedCount', { count: event.started.length }));
+        parts.push(translate('RichTextEditor_uploadStartedCount', { count: event.started.length }));
     }
 
     return parts.join(' ');

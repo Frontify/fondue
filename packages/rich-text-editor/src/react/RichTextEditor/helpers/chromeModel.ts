@@ -2,6 +2,7 @@
 
 import { type MutableRefObject } from 'react';
 
+import { type TurnIntoEntry } from '#/bridge/chrome/helpers/turnInto';
 import { type EditorPart } from '#/bridge/pluginApi/plugin';
 import { type ToolbarItem } from '#/ui/helpers/items';
 
@@ -66,7 +67,7 @@ export const standingOverlaysOf = (
 type ChromeBundle = {
     items: readonly ToolbarItem[];
     menu: readonly ToolbarItem[];
-    turnInto: ReturnType<typeof chromeTurnIntoOf>;
+    turnInto: readonly TurnIntoEntry[];
     context: ChromeContext;
     id: string | undefined;
     generatedId: string;
@@ -95,23 +96,23 @@ export const chromeBundleOf = ({
     keyboard,
     lang,
 }: ChromeBundle) => {
-    const { translate: t } = context;
+    const { translate } = context;
     let surfaceId = id;
     if (surfaceId === undefined && items.length > 0) {
         surfaceId = generatedId;
     }
 
     const strings = {
-        label: t('RichTextEditor_toolbar'),
-        more: t('RichTextEditor_more'),
-        reason: (code: string) => t(REASON_KEYS[code] ?? 'RichTextEditor_unavailable'),
+        label: translate('RichTextEditor_toolbar'),
+        more: translate('RichTextEditor_more'),
+        reason: (code: string) => translate(REASON_KEYS[code] ?? 'RichTextEditor_unavailable'),
     };
     const labels = {
-        bubble: t('RichTextEditor_bubbleToolbar'),
-        toBubble: t('RichTextEditor_toolbarOnSelection'),
-        toFixed: t('RichTextEditor_toolbarAlways'),
-        contextMenu: t('RichTextEditor_contextMenu'),
-        turnInto: t('RichTextEditor_slashTurnInto'),
+        bubble: translate('RichTextEditor_bubbleToolbar'),
+        toBubble: translate('RichTextEditor_toolbarOnSelection'),
+        toFixed: translate('RichTextEditor_toolbarAlways'),
+        contextMenu: translate('RichTextEditor_contextMenu'),
+        turnInto: translate('RichTextEditor_slashTurnInto'),
     };
 
     return {
@@ -128,6 +129,6 @@ export const chromeBundleOf = ({
         setMode: switchToolbar,
         keyboard,
         lang,
-        translate: t,
+        translate,
     };
 };

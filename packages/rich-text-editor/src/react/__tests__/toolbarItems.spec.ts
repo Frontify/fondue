@@ -14,7 +14,7 @@ import { shipped as document } from '../profiles/document';
 import { shipped as inline } from '../profiles/inline';
 import { type ShippedProfile } from '../profiles/parts';
 
-const { translate: t } = codecContext(enUS, enUS);
+const { translate } = codecContext(enUS, enUS);
 
 describe('the toolbar items of a shipped profile', () => {
     it('puts the text style picker of the Document profile in the bubble toolbar', () => {
@@ -23,7 +23,7 @@ describe('the toolbar items of a shipped profile', () => {
             compiledOf(definition),
             definition.authoring,
             presentation,
-            t,
+            translate,
             'en-US',
             pluginsOf(definition),
         );
@@ -98,7 +98,14 @@ const shownOf = (items: readonly ToolbarItem[]) =>
 const itemsOf = (profile: ShippedProfile) => {
     const { definition, presentation } = profile;
 
-    return toolbarItems(compiledOf(definition), definition.authoring, presentation, t, 'en-US', pluginsOf(definition));
+    return toolbarItems(
+        compiledOf(definition),
+        definition.authoring,
+        presentation,
+        translate,
+        'en-US',
+        pluginsOf(definition),
+    );
 };
 
 describe('the toolbars of the shipped profiles', () => {
@@ -121,8 +128,8 @@ describe('the More rows of a node', () => {
             menuItems(
                 engine,
                 authoring,
-                toolbarItems(engine, authoring, presentation, t, 'en-US', plugins),
-                t,
+                toolbarItems(engine, authoring, presentation, translate, 'en-US', plugins),
+                translate,
                 'en-US',
                 plugins,
             )

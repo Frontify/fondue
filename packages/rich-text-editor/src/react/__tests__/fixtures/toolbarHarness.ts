@@ -49,7 +49,7 @@ export const documentHtml = (page: Page) => page.evaluate(() => window.toolbarEd
 
 /** WCAG relative luminance of a computed `rgb()` colour. */
 export const luminance = (color: string) => {
-    const [r = 0, g = 0, b = 0] = (color.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+    const [red = 0, green = 0, blue = 0] = (color.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
     const channel = (value: number) => {
         const scaled = value / 255;
         if (scaled <= 0.040_45) {
@@ -59,12 +59,12 @@ export const luminance = (color: string) => {
         return ((scaled + 0.055) / 1.055) ** 2.4;
     };
 
-    return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+    return 0.2126 * channel(red) + 0.7152 * channel(green) + 0.0722 * channel(blue);
 };
 
-export const contrast = (a: string, b: string) => {
-    const lighter = Math.max(luminance(a), luminance(b));
-    const darker = Math.min(luminance(a), luminance(b));
+export const contrast = (first: string, second: string) => {
+    const lighter = Math.max(luminance(first), luminance(second));
+    const darker = Math.min(luminance(first), luminance(second));
 
     return (lighter + 0.05) / (darker + 0.05);
 };

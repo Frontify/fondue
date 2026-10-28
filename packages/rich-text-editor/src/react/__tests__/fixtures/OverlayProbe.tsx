@@ -166,10 +166,14 @@ export const OverlayProbe = ({
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
     const [modes] = useState<ToolbarMode[]>([]);
     const [renders, setRenders] = useState(0);
-    const presentation = useMemo(
-        () => defineReactPresentation({ toolbar, ...(toolbarShortcut === undefined ? {} : { toolbarShortcut }) }),
-        [toolbar, toolbarShortcut],
-    );
+    const presentation = useMemo(() => {
+        const input: Partial<ReactPresentation> = { toolbar };
+        if (toolbarShortcut !== undefined) {
+            input.toolbarShortcut = toolbarShortcut;
+        }
+
+        return defineReactPresentation(input);
+    }, [toolbar, toolbarShortcut]);
     const [defaultValue] = useState(() => ({
         documentId: 'document-1',
         revision: null,
@@ -249,6 +253,16 @@ export const OverlayProbe = ({
         open: open === kind,
         onOpenChange: (next: boolean) => setOpen(next ? kind : null),
     });
+    let modeProps: Pick<RichTextEditorProps, 'defaultToolbarMode'> = {};
+    if (defaultToolbarMode !== undefined) {
+        modeProps = { defaultToolbarMode };
+    }
+
+    let portalProps: Pick<RichTextEditorProps, 'portalContainer'> = {};
+    if (hostContainer) {
+        portalProps = { portalContainer: container };
+    }
+
     let editor = (
         <RichTextEditor.Root
             aria-label="Notes"
@@ -256,8 +270,8 @@ export const OverlayProbe = ({
             presentation={presentation}
             defaultValue={defaultValue}
             locale={fixtureLocale}
-            {...(defaultToolbarMode === undefined ? {} : { defaultToolbarMode })}
-            {...(hostContainer ? { portalContainer: container } : {})}
+            {...modeProps}
+            {...portalProps}
             onToolbarModeChange={(mode) => modes.push(mode)}
             {...options}
             ref={ref}

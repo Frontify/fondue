@@ -132,5 +132,8 @@ export const usePluginHosts = (sources: HostSources) => {
 };
 
 /** The hosts with the strings and language of this render, so plugin UI follows a locale change in the render it happens. */
-export const useRenderedHosts = (hosts: EditorHosts, t: CodecContext['translate'], lang: string): EditorHosts =>
-    useMemo(() => ({ ...hosts, translate: (key, values) => t(key, values), locale: () => lang }), [hosts, t, lang]);
+export const useRenderedHosts = (hosts: EditorHosts, translate: CodecContext['translate'], lang: string): EditorHosts =>
+    useMemo(
+        () => ({ ...hosts, translate: (key, values) => translate(key, values), locale: () => lang }),
+        [hosts, translate, lang],
+    );

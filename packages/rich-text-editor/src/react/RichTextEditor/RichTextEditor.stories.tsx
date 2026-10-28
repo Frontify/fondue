@@ -376,7 +376,7 @@ const Playground = ({
             context = sliceContext;
         }
 
-        return defineReactPresentation({
+        const presentationInput = {
             contentClassName,
             toolbar: TOOLBAR,
             toolbarShortcut,
@@ -386,8 +386,12 @@ const Playground = ({
             colorTokens: COLOR_TOKENS,
             columns: columnCount,
             columnGap,
-            ...(resolveImages ? { resolveAssetUrl } : {}),
-        });
+        };
+        if (resolveImages) {
+            return defineReactPresentation({ ...presentationInput, resolveAssetUrl });
+        }
+
+        return defineReactPresentation(presentationInput);
     }, [
         contentClassName,
         toolbarShortcut,

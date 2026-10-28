@@ -13,12 +13,12 @@ const loaders: (() => Promise<unknown>)[] = [];
  * action stays out of the editor's initial load. `prefetchPartsOnIdle` loads it ahead of that first use. A load that
  * fails is reported to the session, with `options.featureId`, and tried again on the next use.
  */
-export const lazyPart = <P extends object>(
-    load: () => Promise<ComponentType<P>>,
+export const lazyPart = <Props extends object>(
+    load: () => Promise<ComponentType<Props>>,
     options: { featureId?: string } = {},
-): ComponentType<P> => {
-    let loaded: ComponentType<P> | undefined;
-    let pending: Promise<ComponentType<P>> | undefined;
+): ComponentType<Props> => {
+    let loaded: ComponentType<Props> | undefined;
+    let pending: Promise<ComponentType<Props>> | undefined;
     const start = () => {
         pending ??= load().then(
             (component) => {
@@ -38,7 +38,7 @@ export const lazyPart = <P extends object>(
 
     loaders.push(start);
 
-    const Part = (props: P) => {
+    const Part = (props: Props) => {
         const session = useContext(SessionContext);
         // A function in state would be called as an updater, so the component sits in an object.
         const [part, setPart] = useState(() => {

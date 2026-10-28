@@ -60,7 +60,7 @@ describe('RichTextEditor host surface', () => {
         const ref = createRef<EditorHandle<object>>();
         const seen: { active: boolean }[] = [];
         let renders = 0;
-        const shallow = (a: { active: boolean }, b: { active: boolean }) => a.active === b.active;
+        const shallow = (first: { active: boolean }, second: { active: boolean }) => first.active === second.active;
         const Collapsed = () => {
             seen.push(useEditorSelection((selection) => ({ active: selection.collapsed }), shallow));
 

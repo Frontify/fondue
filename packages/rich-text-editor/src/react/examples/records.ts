@@ -44,11 +44,19 @@ export const recordOf = (model: ContentModel, documentId: string, ...content: re
 export type Block = Record<string, unknown>;
 
 /** A text run with one mark of `type`, and the mark's attributes when given. */
-export const mark = (value: string, type: string, attrs?: Record<string, unknown>): Inline => ({
-    type: 'text',
-    text: value,
-    marks: [{ type, ...(attrs === undefined ? {} : { attrs }) }],
-});
+export const mark = (value: string, type: string, attrs?: Record<string, unknown>): Inline => {
+    const applied: { type: string; attrs?: Record<string, unknown> } = { type };
+    if (attrs !== undefined) {
+        applied.attrs = attrs;
+    }
+
+    return {
+        type: 'text',
+        text: value,
+        marks: [applied],
+    };
+};
+
 /** A stored paragraph of `content`. */
 export const paragraph = (...content: readonly Inline[]): Block => ({
     type: 'paragraph',

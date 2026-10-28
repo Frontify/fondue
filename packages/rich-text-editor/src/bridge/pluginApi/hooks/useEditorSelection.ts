@@ -16,7 +16,7 @@ const selectionOf = (runtime: EditorPort | undefined): SelectionSummary => {
 };
 
 /** A value selected from the editor's selection, which rerenders the caller only when `isEqual` finds it changed. */
-export const useEditorSelection = <T>(
-    select: (selection: SelectionSummary) => T,
-    isEqual: (a: T, b: T) => boolean = Object.is,
-): T => useSessionValue((runtime) => select(selectionOf(runtime)), isEqual);
+export const useEditorSelection = <Value>(
+    select: (selection: SelectionSummary) => Value,
+    isEqual: (previous: Value, next: Value) => boolean = Object.is,
+): Value => useSessionValue((runtime) => select(selectionOf(runtime)), isEqual);

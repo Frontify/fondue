@@ -168,5 +168,7 @@ export const shownWhole = (locator: Locator) =>
             [(left + right) / 2, (top + bottom) / 2],
         ];
 
-        return points.every(([x, y]) => element.contains(document.elementFromPoint(x ?? 0, y ?? 0)));
+        return points.every(([pointerX, pointerY]) =>
+            element.contains(document.elementFromPoint(pointerX ?? 0, pointerY ?? 0)),
+        );
     });

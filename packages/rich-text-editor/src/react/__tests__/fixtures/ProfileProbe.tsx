@@ -174,6 +174,11 @@ export const ProfileProbe = ({
         labelling = { ...labelling, 'aria-errormessage': errormessage };
     }
 
+    let placeholderProps: { placeholder?: string } = {};
+    if (placeholder !== undefined) {
+        placeholderProps = { placeholder };
+    }
+
     return (
         <RichTextEditor
             aria-label="Message"
@@ -187,7 +192,7 @@ export const ProfileProbe = ({
             onReady={onReady}
             ref={ref}
             {...submitting}
-            {...(placeholder === undefined ? {} : { placeholder })}
+            {...placeholderProps}
             {...services}
             {...labelling}
         />

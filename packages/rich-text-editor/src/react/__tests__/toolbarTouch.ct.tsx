@@ -40,7 +40,7 @@ test.describe('with a coarse pointer', () => {
             .newCDPSession(page)
             .catch(() => undefined);
         test.skip(client === undefined, 'CDP dispatches a sliding touch in Chromium only');
-        const point = (x: number, y: number) => [{ x, y }];
+        const point = (pointerX: number, pointerY: number) => [{ x: pointerX, y: pointerY }];
         // A slide that pans the page ends in `pointercancel`, which never reaches the release handler; without panning,
         // the release must reach More's own handler, or the test would pass for any release.
         await itemOf(page, 'More').evaluate((more) => {

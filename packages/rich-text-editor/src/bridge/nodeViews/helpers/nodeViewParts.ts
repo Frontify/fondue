@@ -23,8 +23,8 @@ const inControl = (chrome: HTMLElement, target: Node) => {
 type ViewMutation = MutationRecord | { type: 'selection'; target: Node };
 
 /** Whether both lists have the same element tags in the same order, so a spec's attributes can sync in place. */
-export const sameTags = (a: readonly HTMLElement[], b: readonly HTMLElement[]) =>
-    a.length === b.length && a.every((layer, index) => layer.tagName === b[index]?.tagName);
+export const sameTags = (first: readonly HTMLElement[], second: readonly HTMLElement[]) =>
+    first.length === second.length && first.every((layer, index) => layer.tagName === second[index]?.tagName);
 
 const attributesOf = (element: HTMLElement | undefined): readonly Attr[] => {
     if (element === undefined) {

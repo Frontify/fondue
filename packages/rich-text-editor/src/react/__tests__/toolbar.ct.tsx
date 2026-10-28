@@ -77,14 +77,16 @@ test.describe('at 320 CSS pixels', () => {
         const rows = await menuRows(page).evaluateAll((items) =>
             items.map((item) => {
                 // The shortcut and the hidden reason of an unavailable row follow the label.
-                const label = [...item.childNodes]
-                    .filter(
-                        (node) =>
-                            !(node instanceof HTMLElement && (node.tagName === 'KBD' || node.ariaHidden === 'true')),
-                    )
-                    .map((node) => node.textContent ?? '')
-                    .join('')
-                    .trim();
+                let labelText = '';
+                for (const node of item.childNodes) {
+                    if (node instanceof HTMLElement && (node.tagName === 'KBD' || node.ariaHidden === 'true')) {
+                        continue;
+                    }
+
+                    labelText += node.textContent ?? '';
+                }
+
+                const label = labelText.trim();
 
                 return { label, starts: (item.textContent ?? '').trim().startsWith(label) && label !== '' };
             }),

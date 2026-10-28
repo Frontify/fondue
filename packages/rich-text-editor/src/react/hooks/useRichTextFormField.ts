@@ -11,8 +11,8 @@ import { type EditorHandle } from '../types';
 const NOT_MOUNTED = 'useRichTextFormField needs the ref object of a mounted RichTextEditor.';
 
 /** The editor behind `ref` as a form field: its committed value, `required` check, reset and settled value. */
-export const useRichTextFormField = <C extends object = ShippedCommands>(
-    ref: Ref<EditorHandle<C>>,
+export const useRichTextFormField = <Commands extends object = ShippedCommands>(
+    ref: Ref<EditorHandle<Commands>>,
 ): RichTextFormField =>
     useMemo(() => {
         const sessionOf = () => {
