@@ -35,6 +35,24 @@ const select = async (page: Page, text: string, from?: number, to?: number) => {
 
 const frames = (page: Page) =>
     page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+
+// The bubble is visible before its positioned box sits on the link. A hover before that is left behind when it moves.
+const hoverBubble = async (page: Page) => {
+    await expect
+        .poll(async () => {
+            const bubble = await bubbleOf(page).boundingBox();
+            const link = await linkIn(page, 'guide').boundingBox();
+            if (bubble === null || link === null) {
+                return false;
+            }
+
+            return bubble.y >= link.y - 1 && Math.abs(bubble.x - link.x) < 80;
+        })
+        .toBe(true);
+    await frames(page);
+    await bubbleOf(page).hover();
+};
+
 const blockOf = (page: Page) =>
     page.evaluate(() => (window.linkRte as LinkRte).handle.getSnapshot().document.content.content?.[0]?.content);
 
@@ -215,7 +233,7 @@ test('keeps the link bubble while hovered after the caret leaves the link, until
     await ready(page);
     await select(page, 'guide', 2, 2);
     await expect(bubbleOf(page)).toBeVisible();
-    await bubbleOf(page).hover();
+    await hoverBubble(page);
 
     await select(page, 'Read', 1, 1);
     await frames(page);
@@ -231,7 +249,7 @@ test('removes only the link the hovered bubble shows once the selection grows pa
     await ready(page);
     await select(page, 'guide', 2, 2);
     await expect(bubbleOf(page)).toBeVisible();
-    await bubbleOf(page).hover();
+    await hoverBubble(page);
 
     await page.keyboard.press('ControlOrMeta+a');
     await frames(page);
@@ -249,7 +267,7 @@ test('opens the link popover on the link the hovered bubble shows once the selec
     await ready(page);
     await select(page, 'guide', 2, 2);
     await expect(bubbleOf(page)).toBeVisible();
-    await bubbleOf(page).hover();
+    await hoverBubble(page);
 
     await page.keyboard.press('ControlOrMeta+a');
     await frames(page);
