@@ -1,0 +1,272 @@
+packages/rich-text-edior/src/RichTextEditor/richTextEditor.module.scss
+  s_ef3c45b9bd0ef2::t_43cc8de4cf1b84 10,73,87
+  s_ef3c45b9bd0ef2::t_b711676236a8b3 7-9
+  s_ef3c45b9bd0ef2::t_47440bfc104488 11-13,70-72
+  s_ef3c45b9bd0ef2::t_46cc066d55c442 74-76,84-86
+  s_ef3c45b9bd0ef2::t_77022ecfc94627 88-90
+  s_ef3c45b9bd0ef2::t_e4d359954708b7 1-6,14-69,77-83,91-97
+packages/rich-text-edior/.storybook/main.ts
+  s_ef3c45b9bd0ef2::t_98e393a9c0cf12 44-54
+  s_ef3c45b9bd0ef2::t_33263b2c4ebc0a 7-8
+packages/rich-text-edior/src/plugins/CheckList/CheckList.tsx
+  s_ef3c45b9bd0ef2::t_c3f16022b6d476 53,60,62
+  s_ef3c45b9bd0ef2::t_ba8bc5d90addd1 36-40
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-6,9-35,41-52,54-59,61,63-89
+  s_ef3c45b9bd0ef2::t_2d1f53f4a8c4ef 7
+  s_ef3c45b9bd0ef2::t_19aef847900b67 8
+packages/rich-text-edior/src/plugins/ColumnBreak/columnBreak.module.scss
+  s_ef3c45b9bd0ef2::t_0660108003ca20 1-19
+packages/rich-text-edior/src/plugins/Italic/Italic.tsx
+  s_ef3c45b9bd0ef2::t_2d1f53f4a8c4ef 6
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-5,7-29
+packages/rich-text-edior/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-28
+packages/rich-text-edior/src/plugins/Mention/Mention.tsx
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-4,7-49,51-73
+  s_ef3c45b9bd0ef2::t_337cdfef7b6286 50
+  s_ef3c45b9bd0ef2::t_f83183517524c3 5-6
+packages/rich-text-edior/src/plugins/Link/link.module.scss
+  s_6b102f7339e472::t_ab910001ac870e 3-8,17-28
+  s_6b102f7339e472::t_1d3be9f7b17f90 40-47
+  s_ef3c45b9bd0ef2::t_d5bf8f549f1d1c 1-2,9-16,29-39,48-55
+packages/rich-text-edior/src/plugins/Subscript/Subscript.tsx
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-23
+packages/rich-text-edior/src/plugins/BlurOnBreak/BlurOnBreak.tsx
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-17
+packages/rich-text-edior/src/plugins/Bold/bold.module.scss
+  s_df9a981c1198a3::t_6c64c6272a42f7 3-8
+  s_df9a981c1198a3::t_068d93a028bfd4 1-2
+  s_df9a981c1198a3::t_5f6f6a5df255df 9-10
+packages/rich-text-edior/src/plugins/Quote/quote.module.scss
+  s_ef3c45b9bd0ef2::t_0be70dfc48292a 1-8
+packages/rich-text-edior/src/plugins/SoftBreak/SoftBreak.tsx
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-20
+packages/rich-text-edior/src/plugins/Link/Link.tsx
+  s_ef3c45b9bd0ef2::t_03c850b2d4ad87 10
+  s_6b102f7339e472::t_30ec853b0c3a89 4
+  s_6b102f7339e472::t_c453ae76427b87 62-63,134,144,155
+  s_6b102f7339e472::t_b7025e4395fb5c 42-48,54,56-61,66,72,75-76
+  s_6b102f7339e472::t_7943c281b5f41c 124,128-133,135-136,140-143,145-154,156-163
+  s_ef3c45b9bd0ef2::t_2d1f53f4a8c4ef 9
+  s_ef3c45b9bd0ef2::t_3c372115cd005e 164,170
+  s_6b102f7339e472::t_aa265bac206062 180
+  s_6b102f7339e472::t_b129adb1fe9a45 3
+  s_ef3c45b9bd0ef2::t_7a3b256a128fed 139
+  s_6b102f7339e472::t_2e30e5619d0e1f 111-118
+  s_6b102f7339e472::t_ba7e0538912c24 201-205
+  s_ef3c45b9bd0ef2::t_e0c22bd928c525 209
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-2,5-8,11-41,49-53,55,64-65,67-71,73-74,77-88,90,96-110,119-123,125-127,137-138,165-169,171-179,181-200,206-208,210-219
+  s_6b102f7339e472::t_3538259c9aae54 89,91-95
+packages/rich-text-edior/src/plugins/Image/Image.tsx
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-5,8-29,31-49
+  s_ef3c45b9bd0ef2::t_2115835a2280c1 7
+  s_ef3c45b9bd0ef2::t_2d1f53f4a8c4ef 6
+  s_ef3c45b9bd0ef2::t_ffb3036bff84b0 30
+packages/rich-text-edior/src/plugins/Align/Align.tsx
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-56
+packages/rich-text-edior/src/plugins/List/list.module.scss
+  s_ef3c45b9bd0ef2::t_62f26589bad7b8 1-42
+packages/rich-text-edior/src/RichTextEditor.stories.tsx
+  s_86e3ccfed2daab::t_5cda375def6e89 114,147,174
+  s_45a378383f1b66::t_1c2a076ffd4bda 142,144-146,148-149
+  s_86e3ccfed2daab::t_ce6272368e9578 6-8,37,44,52,54-56,58,75,96,103-104,108,113,121-122,130-134,138,143,157-158,161,164,168,175,203,221,229,237-238,240,242,244,249,256-260,262,267,274-284,291-292,294,298,301-304,307-315
+  s_df9a981c1198a3::t_1c4fea3d4419f2 64-67,127,208,297
+  s_df9a981c1198a3::t_0d9522789f316f 63
+packages/rich-text-edior/src/plugins/FontColor/fontColor.module.scss
+  s_df9a981c1198a3::t_d2a12e6f4a46be 1-10
+packages/rich-text-edior/src/plugins/Image/image.module.scss
+  s_ef3c45b9bd0ef2::t_5a3ae046f6076c 1-6
+packages/rich-text-edior/.storybook/global.d.ts
+  s_ef3c45b9bd0ef2::t_cdce8e0149ed55 7-11
+packages/rich-text-edior/src/plugins/Autoformat/Autoformat.tsx
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-20,25-52
+  s_df9a981c1198a3::t_1ad2fce3a09275 21-24
+packages/rich-text-edior/src/plugins/Code/Code.tsx
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-5,7-29
+  s_ef3c45b9bd0ef2::t_2d1f53f4a8c4ef 6
+packages/rich-text-edior/.storybook/preview.tsx
+  s_ef3c45b9bd0ef2::t_c7bcf6cdf39964 6-10
+packages/rich-text-edior/tailwind.config.ts
+  s_ef3c45b9bd0ef2::t_1bf2264839f06a 7-11,16
+packages/rich-text-edior/.gitignore
+  s_ef3c45b9bd0ef2::t_a6e20e18946cea 2
+packages/rich-text-edior/vite.config.ts
+  s_ef3c45b9bd0ef2::t_eaf869815148dd 49-65
+  s_86e3ccfed2daab::t_5cda375def6e89 4
+packages/rich-text-edior/src/plugins/ColumnBreak/ColumnBreak.tsx
+  s_ef3c45b9bd0ef2::t_94dd9f1ff93c2d 7
+  s_ef3c45b9bd0ef2::t_2d1f53f4a8c4ef 6
+  s_ef3c45b9bd0ef2::t_b91c11baae202e 29
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-5,8-28,30-38,46
+  s_ef3c45b9bd0ef2::t_f82c7e75e7f211 39-45
+packages/rich-text-edior/src/plugins/Quote/Quote.tsx
+  s_ef3c45b9bd0ef2::t_efabe60f109131 21
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-5,8-20,22-34
+  s_ef3c45b9bd0ef2::t_9b675e9c282bec 7
+  s_ef3c45b9bd0ef2::t_2d1f53f4a8c4ef 6
+packages/rich-text-edior/src/plugins/CheckList/checkList.module.scss
+  s_ef3c45b9bd0ef2::t_a2e3652550f319 1-34
+packages/rich-text-edior/package.json
+  s_ef3c45b9bd0ef2::t_760815159d63d6 25-26
+  s_ef3c45b9bd0ef2::t_ddc348e3cd887e 80
+packages/rich-text-edior/src/plugins/List/List.tsx
+  s_ef3c45b9bd0ef2::t_f2ededa35631dc 101,110
+  s_ef3c45b9bd0ef2::t_2d1f53f4a8c4ef 6,64-68
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-5,8-44,46-51,54-62,69-75,77-100,102-109,111
+  s_ef3c45b9bd0ef2::t_945115f1fea305 45,52-53,63,76
+  s_ef3c45b9bd0ef2::t_52a2acbe9a640d 7
+packages/rich-text-edior/src/plugins.stories.tsx
+  s_df9a981c1198a3::t_07d4341ada6aa4 625
+  s_86e3ccfed2daab::t_09633203942f9a 1-23,25-92,99-102,107-112,114-119,127-130,133-137,143-377,379-388,390-491,495-624,627-658,660-677,680-700,702-767,773-832,834-862,875-1059
+  s_ef3c45b9bd0ef2::t_01749bdcc77238 863-874
+  s_df9a981c1198a3::t_3f06e0dca655d9 24,93-98,103-106,113,120-126,131-132,138-142,678-679,701,768-772,833
+  s_6b102f7339e472::t_4af3fc01c970ed 389
+  s_86e3ccfed2daab::t_5cda375def6e89 492-494,659
+  s_6b102f7339e472::t_ed03c749759840 378
+  s_df9a981c1198a3::t_1c4fea3d4419f2 626
+packages/rich-text-edior/src/plugins/Strikethrough/Strikethrough.tsx
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-5,7-35
+  s_ef3c45b9bd0ef2::t_2d1f53f4a8c4ef 6
+packages/rich-text-edior/src/plugins/TextStyle/textStyle.module.scss
+  s_df9a981c1198a3::t_0c9f5509c78d9b 5-6,24-27,30-63
+  s_df9a981c1198a3::t_f6b909b4c408b0 13-23
+  s_ef3c45b9bd0ef2::t_315dc29d80135f 1-2,28-29,64-102
+  s_df9a981c1198a3::t_6fbf4a3ecfd90b 3-4,7-12
+packages/rich-text-edior/src/type-derivation.spec.ts
+  s_df9a981c1198a3::t_34202d82b04b5f 13,23-24,65-66,117,121
+packages/rich-text-edior/src/RichTextEditor/RichTextEditor.tsx
+  s_ef3c45b9bd0ef2::t_8e5d1f867025b2 60
+  s_ef3c45b9bd0ef2::t_30699b07c7419e 107
+  s_ef3c45b9bd0ef2::t_99eb4d692f80cc 15
+  s_ef3c45b9bd0ef2::t_4139d3e2f78a81 3-14
+  s_ef3c45b9bd0ef2::t_1f9078bcbce407 234
+  s_ef3c45b9bd0ef2::t_ccd2ee3860aa2f 56-58
+  s_ef3c45b9bd0ef2::t_913330e21c8ff5 193-195,204-206,209
+  s_ef3c45b9bd0ef2::t_0aed65f324eda2 221-224
+  s_ef3c45b9bd0ef2::t_ecd88dfd047bf2 90-93,106
+  s_ef3c45b9bd0ef2::t_c17832540ff1f3 196-197
+packages/rich-text-edior/src/index.ts
+  s_df9a981c1198a3::t_1c4fea3d4419f2 75
+  s_df9a981c1198a3::t_1ad2fce3a09275 166,178
+  s_ef3c45b9bd0ef2::t_44d0e6b47ea366 5-22,55-74,76
+packages/rich-text-edior/src/RichTextEditor/types.ts
+  s_ef3c45b9bd0ef2::t_bdf24efbce5ca3 84-91
+  s_a8c396b8d7209b::t_0b338ad4251a87 232-243
+  s_df9a981c1198a3::t_18675b237fcb77 157,197
+  s_ef3c45b9bd0ef2::t_8bafd216307da4 120-126,128
+  s_6b102f7339e472::t_14aadde90c2dad 342-349
+packages/rich-text-edior/src/plugins/Emoji/Emoji.tsx
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-159
+packages/rich-text-edior/src/plugins/Superscript/Superscript.tsx
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-23
+packages/rich-text-edior/src/RichTextEditor/prosemirror.ts
+  s_ef3c45b9bd0ef2::t_7cc65d9691de59 1028,1032-1035
+  s_ef3c45b9bd0ef2::t_44d30ae7b2ca39 988-989,1001-1008
+  s_6b102f7339e472::t_48bc9668d522a4 795-812
+  s_ef3c45b9bd0ef2::t_3af547ccfdcfe0 938-942,944,955
+  s_a8c396b8d7209b::t_1a853d7a2da04f 321-332
+packages/rich-text-edior/src/plugins/FontColor/FontColor.tsx
+  s_a8c396b8d7209b::t_4761e55c632033 76-79
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-7,10-49,66-75,80-85
+  s_df9a981c1198a3::t_440e9fbdf99d4b 50-65
+  s_df9a981c1198a3::t_30e3f836126aff 8-9
+packages/rich-text-edior/src/plugins/Bold/Bold.tsx
+  s_ef3c45b9bd0ef2::t_2d1f53f4a8c4ef 6
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-5,7-29
+packages/rich-text-edior/src/plugins/ToolbarButton/ToolbarButton.tsx
+  s_df9a981c1198a3::t_907a07c6c756e7 3-4,27-30,38-52,54-55,59-60,63-66,69
+  s_ef3c45b9bd0ef2::t_684eac4c921414 12-16,24,35
+  h_2139c5e5c94509 58,61
+  s_ef3c45b9bd0ef2::t_1d085222b7eecc 1-2,5-11,17-23,25-26,31-34,36-37,53,56-57,62,67-68,70-71
+packages/rich-text-edior/src/plugins/index.ts
+  s_ef3c45b9bd0ef2::t_44d0e6b47ea366 3-21
+packages/rich-text-edior/src/plugins/Mention/mention.module.scss
+  s_ef3c45b9bd0ef2::t_17b15e15ddc839 1-9
+packages/rich-text-edior/src/plugins/Code/code.module.scss
+  s_df9a981c1198a3::t_0d8225797fab16 13-18
+  s_df9a981c1198a3::t_d69836e646e466 10-12
+  s_df9a981c1198a3::t_dfea7302f664c8 19-20
+  s_df9a981c1198a3::t_9473ba6437fccc 1-9
+packages/rich-text-edior/src/plugins/TextStyle/TextStyle.tsx
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-3,5,9-10,23,42-43,45-46,54-57,74,76-77,90,95-102,104-110,128-129,177
+  s_df9a981c1198a3::t_c66d9e0c5d3e14 116-123
+  s_df9a981c1198a3::t_e3caa89a8801c6 150-174
+  s_ef3c45b9bd0ef2::t_50868835830be5 4,7-8
+  s_df9a981c1198a3::t_ef70b06eac0e56 6
+  s_df9a981c1198a3::t_1c4fea3d4419f2 86-89,94
+  s_df9a981c1198a3::t_d929d75b24e8a8 70
+  s_df9a981c1198a3::t_85cb3621569e7c 111-113,124-127
+  s_df9a981c1198a3::t_1f4d46b8cf4164 11-22,24-41,44,47-53,58-69,71-73,75,78-85,91-93,103,114-115,130-149,175-176,178-180
+packages/rich-text-edior/src/plugins/Underline/Underline.tsx
+  s_ef3c45b9bd0ef2::t_51bff52170e7ea 1-5,7-29
+  s_ef3c45b9bd0ef2::t_2d1f53f4a8c4ef 6
+pnpm-lock.yaml
+  s_86e3ccfed2daab::t_b41e811ffbc391 77,89,92,113,279,586,722,829,867,882,919-921,1168,1478,11070,11079,11108,11132,11138,11145,11158,11165,11180-11181,11194-11195,11208,11211,11217,11226,11238,11247,11250,11256,11265-11266,11316,11324,11329,11338,11346,11354,11360,11369,11373,11378,11383,11388,11393,11398-11399,11403,11408,11413,11418,11423-11424,11428,11433-11434,11438,11443,11448,11453-11454,11458,11463,11468-11469,11473,11479,11484,11493,11502,11507,11512,11520,11528,11540,11546,11554,11560,11565,11570,11575,11580-11581,11586,11594,11603,11608,11613,11618,11623,11631,11639,11647,11657,11665,11671,11676,11681,11686,11697,11705,11710,11718,11723,11731,11740,11745-11746,11750-11751,11755,11760,11765,11770,11778,11783,11788,11793,11796,11804,11809,11815,11821,11828,11914,11921,11928,11939,11962,15215,15237,15259,15281,15342,15346,15350,15354,15358,15362,15366,15370,15374,15386,15401,15511-15512,15519,15523-15524,15528,16522,16534,16546,16860,16865,16873,16881,19028,19050,20648-20650,21675,21888,21898
+packages/rich-text-edior/src/plugins/Italic/italic.module.scss
+  s_ef3c45b9bd0ef2::t_739380f6813b2d 1-6
+packages/rich-text-edior/src/plugins/Strikethrough/strikethrough.module.scss
+  s_ef3c45b9bd0ef2::t_41c6d7e3e702cb 1-6
+packages/rich-text-edior/src/plugins/Underline/underline.module.scss
+  s_ef3c45b9bd0ef2::t_f1e7f22dcb61ef 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "fd35d365ac0cb23f814984e762c411412b4d937a",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_45a378383f1b66": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2d3dcab1-0802-43cb-8b7b-8591078d43e3",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_6b102f7339e472": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ba792b8c-61bd-46ce-a51a-96c5b9244219",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_86e3ccfed2daab": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4843f2f3-abee-47a7-8d77-cf742bd2ed36",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_a8c396b8d7209b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b04690a6-d49f-4c40-ae12-bae735b4d95a",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_df9a981c1198a3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c0fec5dc-e49c-4af9-b0df-b371f0e04b48",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_ef3c45b9bd0ef2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1ad6829d-9105-46a6-b53a-623a2ec35e82",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
