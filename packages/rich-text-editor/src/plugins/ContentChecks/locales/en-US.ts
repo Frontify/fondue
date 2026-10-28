@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export default {
+    RichTextEditor_checks: 'Accessibility checks',
     RichTextEditor_checksDismiss: 'Dismiss',
     RichTextEditor_checksDismissed: 'Dismissed',
     RichTextEditor_checksDocument: 'Whole document',

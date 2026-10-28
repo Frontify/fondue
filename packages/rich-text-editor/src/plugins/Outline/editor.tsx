@@ -29,6 +29,7 @@ export const outlineEditor = defineEditorPart(outline, {
             command: 'outline.toggle',
             labelKey: 'RichTextEditor_outline',
             icon: 'IconListIndented',
+            group: 'panels',
             panel: PANEL,
         },
     ],

@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export default {
+    RichTextEditor_language: 'Language',
     RichTextEditor_languageAutomatic: 'Automatic',
     RichTextEditor_languageDirection: 'Direction',
     RichTextEditor_languageInvalid: 'Enter a valid language tag.',

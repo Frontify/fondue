@@ -64,6 +64,7 @@ export const taskListEditor = defineEditorPart(checkList, {
             command: 'list.task.toggle',
             labelKey: 'RichTextEditor_taskList',
             icon: 'IconListCheck',
+            group: 'lists',
         },
     ],
     views: [taskItemView],

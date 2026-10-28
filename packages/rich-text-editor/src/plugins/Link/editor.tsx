@@ -71,6 +71,7 @@ export const linksEditor = defineEditorPart(link, {
             command: EDIT_LINK,
             labelKey: 'RichTextEditor_link',
             icon: 'IconLink',
+            group: 'link',
             opensOverlay: true,
         },
     ],

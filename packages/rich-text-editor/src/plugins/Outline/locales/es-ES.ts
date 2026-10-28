@@ -11,6 +11,7 @@ export default {
     RichTextEditor_heading4: 'Título 4',
     RichTextEditor_heading5: 'Título 5',
     RichTextEditor_heading6: 'Título 6',
+    RichTextEditor_outline: 'Esquema',
     RichTextEditor_outlineEmpty: 'Aún no hay encabezados. Los encabezados que añada aparecerán aquí.',
     RichTextEditor_outlineHeadingGone:
         'Ese encabezado ya no está en el documento. El esquema muestra los encabezados actuales.',

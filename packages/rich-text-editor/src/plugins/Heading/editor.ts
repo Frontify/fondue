@@ -39,5 +39,6 @@ export const headingEditor = defineEditorPart(heading, {
         payload: { level },
         labelKey: `RichTextEditor_heading${level}`,
         icon: 'IconHeading',
+        group: 'text',
     })),
 });

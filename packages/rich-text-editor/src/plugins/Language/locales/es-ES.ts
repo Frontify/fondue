@@ -5,6 +5,7 @@ import { type PluginStrings } from '#/locales/types';
 import type en from './en-US';
 
 export default {
+    RichTextEditor_language: 'Idioma',
     RichTextEditor_languageAutomatic: 'Automático',
     RichTextEditor_languageDirection: 'Dirección',
     RichTextEditor_languageInvalid: 'Escriba una etiqueta de idioma válida.',

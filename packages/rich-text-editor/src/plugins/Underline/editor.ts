@@ -11,6 +11,6 @@ export const underlineEditor = defineEditorPart(
     toggleMark({
         mark: 'underline',
         keys: ['Mod-u'],
-        toolbar: { labelKey: 'RichTextEditor_underline', icon: 'IconTextFormatUnderline' },
+        toolbar: { labelKey: 'RichTextEditor_underline', icon: 'IconTextFormatUnderline', group: 'marks' },
     }),
 );

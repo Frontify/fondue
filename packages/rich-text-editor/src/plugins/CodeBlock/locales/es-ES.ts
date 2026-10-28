@@ -5,7 +5,9 @@ import { type PluginStrings } from '#/locales/types';
 import type en from './en-US';
 
 export default {
+    RichTextEditor_codeBlock: 'Bloque de código',
     RichTextEditor_codeLanguage: 'Lenguaje: ${language}',
+    RichTextEditor_codeLanguageMenu: 'Lenguaje del código',
     RichTextEditor_codeLanguagePhpTemplate: 'Plantilla PHP',
     RichTextEditor_codeLanguagePythonRepl: 'REPL de Python',
     RichTextEditor_codeLanguageShell: 'Sesión de shell',

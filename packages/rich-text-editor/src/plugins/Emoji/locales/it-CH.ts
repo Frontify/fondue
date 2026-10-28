@@ -5,6 +5,7 @@ import { type PluginStrings } from '#/locales/types';
 import type en from './en-US';
 
 export default {
+    RichTextEditor_emoji: 'Emoji',
     RichTextEditor_emojiFailed: 'Non è stato possibile caricare l’emoji.',
     RichTextEditor_emojiLoading: 'Caricamento degli emoji…',
     RichTextEditor_emojiNoResults: 'Nessuna emoji trovata',

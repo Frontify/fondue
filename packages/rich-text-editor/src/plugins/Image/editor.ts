@@ -166,6 +166,8 @@ export const mediaImageEditor = defineEditorPart(image, {
             command: 'image.insert',
             labelKey: 'RichTextEditor_image',
             icon: 'IconImage',
+            group: 'insert',
+            rank: 0,
             opensOverlay: true,
         },
         // The image chrome's commands, which More and the context menu offer while an image is selected.

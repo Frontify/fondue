@@ -243,7 +243,7 @@ export const strikeEditor = defineEditorPart(
         mark: 'strike',
         keys: ['Mod-Shift-x'],
         inputRules: [{ id: 'strike.tildes', open: '~~', close: '~~' }],
-        toolbar: { labelKey: 'RichTextEditor_strike', icon: 'IconTextFormatStrikethrough' },
+        toolbar: { labelKey: 'RichTextEditor_strike', icon: 'IconTextFormatStrikethrough', group: 'marks' },
     }),
 );
 ```
@@ -343,6 +343,8 @@ export const contentChecksEditor = defineEditorPart(contentChecks, {
             command: 'checks.open',
             labelKey: 'RichTextEditor_checks',
             icon: 'IconListCheck',
+            group: 'panels',
+            rank: 0,
             opensOverlay: true,
         },
     ],

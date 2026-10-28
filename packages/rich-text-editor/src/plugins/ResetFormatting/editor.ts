@@ -44,6 +44,7 @@ export const formatClearEditor = defineEditorPart(resetFormatting, {
             command: 'format.clear',
             labelKey: 'RichTextEditor_clearFormatting',
             icon: 'IconEraser',
+            group: 'marks',
         },
     ],
 });

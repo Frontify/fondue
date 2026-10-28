@@ -237,6 +237,14 @@ type PluginToolbarEntryBase = {
      * menu, the bubble toolbar's More menu and the context menu only while such a node is selected or holds the caret.
      */
     node?: string;
+    /**
+     * The group a presentation with no `toolbar` places this entry in: `history`, `text`, `marks`, `color`, `link`,
+     * `lists`, `align`, `insert`, then `panels`. `text` entries show together as the one text style control. An entry
+     * with none stays off that toolbar.
+     */
+    group?: 'history' | 'text' | 'marks' | 'color' | 'link' | 'lists' | 'align' | 'insert' | 'panels';
+    /** Entries with a rank come first in the group, lowest rank first; the others follow in plugin order. */
+    rank?: number;
 };
 
 /** What a search reads besides its query: the session's API, a signal that aborts when a newer query or a closed list replaces it, and the page's cursor, `null` for the first. */

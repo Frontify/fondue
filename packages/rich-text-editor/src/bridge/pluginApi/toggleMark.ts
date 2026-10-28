@@ -36,6 +36,10 @@ export type ToggleMarkToolbar = {
      * @default false
      */
     bubble?: boolean;
+    /** The group a presentation with no toolbar places this entry in. */
+    group?: PluginToolbarEntry['group'];
+    /** Entries with a rank come first in the group, lowest rank first; the others follow in plugin order. */
+    rank?: number;
 };
 
 /** The command a toggle mark installs: it takes no payload. */
@@ -111,6 +115,14 @@ export const toggleMark = <const Options extends ToggleMarkOptions>(
     };
     if (options.toolbar.bubble !== undefined) {
         entry.bubble = options.toolbar.bubble;
+    }
+
+    if (options.toolbar.group !== undefined) {
+        entry.group = options.toolbar.group;
+    }
+
+    if (options.toolbar.rank !== undefined) {
+        entry.rank = options.toolbar.rank;
     }
 
     const toggle: ToggleCommand = {

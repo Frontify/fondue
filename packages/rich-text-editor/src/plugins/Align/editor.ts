@@ -39,6 +39,7 @@ export const alignEditor = defineEditorPart(align, (options: JsonObject) => {
             payload: { align: value },
             labelKey,
             icon,
+            group: 'align',
         })),
     };
 });

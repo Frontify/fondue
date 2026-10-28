@@ -51,7 +51,7 @@ describe('toggleMark', () => {
             commands: { 'mark.bold.toggle': command },
             keys: { 'Mod-b': 'mark.bold.toggle' },
             inputRules: [delimiter('bold.stars', 'bold', '**'), delimiter('bold.underscores', 'bold', '__')],
-            toolbar: [{ ...entry('bold', 'RichTextEditor_bold', 'IconTextFormatBold'), bubble: true }],
+            toolbar: [{ ...entry('bold', 'RichTextEditor_bold', 'IconTextFormatBold'), bubble: true, group: 'marks' }],
         });
         expect(Object.isFrozen(boldEditor)).toBe(true);
     });

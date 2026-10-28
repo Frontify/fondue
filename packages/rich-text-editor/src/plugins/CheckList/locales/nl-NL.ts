@@ -6,5 +6,6 @@ import type en from './en-US';
 
 export default {
     RichTextEditor_taskChecked: 'Aangevinkt',
+    RichTextEditor_taskList: 'Takenlijst',
     RichTextEditor_taskUnchecked: 'Niet aangevinkt',
 } satisfies PluginStrings<typeof en>;

@@ -6,6 +6,7 @@ import type en from './en-US';
 
 export default {
     RichTextEditor_clearColor: 'Rimuovi colore',
+    RichTextEditor_colorMenu: 'Colore',
     RichTextEditor_colorPickerSave: 'Salva',
     RichTextEditor_customColor: 'Colore del testo personalizzato',
     RichTextEditor_customHighlight: 'Colore di evidenziazione personalizzato',

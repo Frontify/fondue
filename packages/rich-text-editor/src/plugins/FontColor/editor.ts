@@ -67,6 +67,7 @@ export const fontColorEditor = defineEditorPart(fontColor, (options: JsonObject)
             command: 'mark.color.menu.open',
             labelKey: 'RichTextEditor_colorMenu',
             icon: 'IconColorFan',
+            group: 'color',
             opensOverlay: true,
         },
     ],

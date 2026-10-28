@@ -234,6 +234,7 @@ export const codeBlockEditor = defineEditorPart(codeBlock, {
             command: 'code-block.toggle',
             labelKey: 'RichTextEditor_codeBlock',
             icon: 'IconCodeFrame',
+            group: 'text',
         },
         {
             id: 'code-language',

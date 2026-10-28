@@ -21,6 +21,7 @@ export const quoteEditor = defineEditorPart(quote, {
             command: 'quote.toggle',
             labelKey: 'RichTextEditor_quote',
             icon: 'IconSpeechBubbleQuote',
+            group: 'text',
         },
     ],
 });

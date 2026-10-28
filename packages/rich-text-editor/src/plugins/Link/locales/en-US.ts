@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export default {
+    RichTextEditor_link: 'Link',
     RichTextEditor_linkCopied: 'Link copied',
     RichTextEditor_linkCopy: 'Copy link',
     RichTextEditor_linkDestination: 'URL',
@@ -9,6 +10,7 @@ export default {
     RichTextEditor_linkHostsAllowed: 'Use a link to ${hosts}.',
     RichTextEditor_linkInsertNew: 'Insert as new link',
     RichTextEditor_linkInvalid: 'Enter a valid link, such as https://example.com.',
+    RichTextEditor_linkNewWindow: '(opens in a new window)',
     RichTextEditor_linkOpenInNewTab: 'Open link in a new tab',
     RichTextEditor_linkOpenInNewWindow: 'Open in new window',
     RichTextEditor_linkRemove: 'Remove link',

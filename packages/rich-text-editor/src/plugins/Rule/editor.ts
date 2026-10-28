@@ -18,6 +18,8 @@ export const ruleEditor = defineEditorPart(rule, {
             command: 'rule.insert',
             labelKey: 'RichTextEditor_divider',
             icon: 'IconDividerSolid',
+            group: 'insert',
+            rank: 1,
         },
     ],
 });

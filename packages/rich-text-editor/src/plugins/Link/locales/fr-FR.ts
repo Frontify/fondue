@@ -5,6 +5,7 @@ import { type PluginStrings } from '#/locales/types';
 import type en from './en-US';
 
 export default {
+    RichTextEditor_link: 'Lien',
     RichTextEditor_linkCopied: 'Lien copié',
     RichTextEditor_linkCopy: 'Copier le lien',
     RichTextEditor_linkDestination: 'URL',
@@ -13,6 +14,7 @@ export default {
     RichTextEditor_linkHostsAllowed: 'Utilisez un lien vers ${hosts}.',
     RichTextEditor_linkInsertNew: 'Insérer comme nouveau lien',
     RichTextEditor_linkInvalid: 'Saisissez un lien valide, par exemple https://example.com.',
+    RichTextEditor_linkNewWindow: '(s’ouvre dans une nouvelle fenêtre)',
     RichTextEditor_linkOpenInNewTab: 'Ouvrir le lien dans un nouvel onglet',
     RichTextEditor_linkOpenInNewWindow: 'Ouvrir dans une nouvelle fenêtre',
     RichTextEditor_linkRemove: 'Supprimer le lien',

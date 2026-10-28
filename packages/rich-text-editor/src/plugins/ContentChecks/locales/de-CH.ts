@@ -5,6 +5,7 @@ import { type PluginStrings } from '#/locales/types';
 import type en from './en-US';
 
 export default {
+    RichTextEditor_checks: 'Barrierefreiheitsprüfung',
     RichTextEditor_checksDismiss: 'Ausblenden',
     RichTextEditor_checksDismissed: 'Ausgeblendet',
     RichTextEditor_checksDocument: 'Ganzes Dokument',

@@ -24,6 +24,7 @@ export const bulletListEditor = defineEditorPart(bulletList, {
             command: 'list.bullet.toggle',
             labelKey: 'RichTextEditor_bulletList',
             icon: 'IconListBullet',
+            group: 'lists',
         },
     ],
 });

@@ -244,8 +244,13 @@ export type ReactPresentation = {
     columnGap?: string;
     /** A class name for the content surface. */
     contentClassName?: string;
-    /** Groups of command IDs, `{ command, payload }` items and the `text-style` control ID, in order. */
-    toolbar: readonly (readonly CommandRef[])[];
+    /**
+     * Groups of command IDs, `{ command, payload }` items and the `text-style` control ID, in order. When omitted, one
+     * group per name in the order `history`, `text`, `marks`, `color`, `link`, `lists`, `align`, `insert`, `panels`,
+     * from the installed entries that name that group. `text` entries show together as the one text style control.
+     * Entries with a rank come first in the group, lowest rank first; the others follow in plugin order.
+     */
+    toolbar?: readonly (readonly CommandRef[])[] | undefined;
     /** The label key and icon of each toolbar control, by control ID. */
     controls?: Readonly<Record<string, { labelKey?: string; icon?: string }>>;
     /** The slice of the document that the toolbar acts on, or `null` for the whole document. */

@@ -11,6 +11,7 @@ export default {
     RichTextEditor_heading4: 'Titre 4',
     RichTextEditor_heading5: 'Titre 5',
     RichTextEditor_heading6: 'Titre 6',
+    RichTextEditor_outline: 'Plan',
     RichTextEditor_outlineEmpty: 'Aucun titre pour l’instant. Les titres que vous ajoutez apparaissent ici.',
     RichTextEditor_outlineHeadingGone: 'Ce titre n’est plus dans le document. Le plan affiche les titres actuels.',
 } satisfies PluginStrings<typeof en>;

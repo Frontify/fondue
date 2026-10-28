@@ -59,6 +59,7 @@ export const coreEditor = defineEditorPart(core, {
             command: 'paragraph.set',
             labelKey: 'RichTextEditor_normalText',
             icon: 'IconTextBoxStack',
+            group: 'text',
         },
         {
             id: 'undo',
@@ -66,6 +67,7 @@ export const coreEditor = defineEditorPart(core, {
             command: 'history.undo',
             labelKey: 'RichTextEditor_undo',
             icon: 'IconArrowRoundAntiClockwise',
+            group: 'history',
         },
         {
             id: 'redo',
@@ -73,6 +75,7 @@ export const coreEditor = defineEditorPart(core, {
             command: 'history.redo',
             labelKey: 'RichTextEditor_redo',
             icon: 'IconArrowRoundClockwise',
+            group: 'history',
         },
     ],
 });

@@ -79,6 +79,7 @@ export const mentionsEditor = defineEditorPart(mention, (options: JsonObject) =>
                 command: 'mention.search.open',
                 labelKey: 'RichTextEditor_mention',
                 icon: 'IconPerson',
+                group: 'insert',
                 opensOverlay: true,
             },
         ],

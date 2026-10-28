@@ -23,6 +23,7 @@ export const brandEditor = defineEditorPart(brandStyles, {
             payload: { styleId: null },
             labelKey: 'RichTextEditor_defaultStyle',
             icon: 'IconEraser',
+            group: 'text',
         },
     ],
 });

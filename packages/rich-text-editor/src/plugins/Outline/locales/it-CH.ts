@@ -11,6 +11,7 @@ export default {
     RichTextEditor_heading4: 'Titolo 4',
     RichTextEditor_heading5: 'Titolo 5',
     RichTextEditor_heading6: 'Titolo 6',
+    RichTextEditor_outline: 'Struttura',
     RichTextEditor_outlineEmpty: 'Nessun titolo per ora. I titoli che aggiungi compaiono qui.',
     RichTextEditor_outlineHeadingGone: 'Questo titolo non è più nel documento. La struttura mostra i titoli attuali.',
 } satisfies PluginStrings<typeof en>;

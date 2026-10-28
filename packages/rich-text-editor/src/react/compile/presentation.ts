@@ -6,7 +6,6 @@ import { type ReactPresentation } from '../types';
 export const defineReactPresentation = (input: Partial<ReactPresentation>): ReactPresentation => ({
     styles: [],
     colorTokens: [],
-    toolbar: [],
     sliceContext: null,
     ...input,
 });

@@ -2,5 +2,6 @@
 
 export default {
     RichTextEditor_taskChecked: 'Checked',
+    RichTextEditor_taskList: 'Task list',
     RichTextEditor_taskUnchecked: 'Not checked',
 };

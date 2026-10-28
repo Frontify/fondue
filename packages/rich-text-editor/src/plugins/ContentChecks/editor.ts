@@ -29,6 +29,8 @@ export const contentChecksEditor = defineEditorPart(contentChecks, {
             command: 'checks.open',
             labelKey: 'RichTextEditor_checks',
             icon: 'IconListCheck',
+            group: 'panels',
+            rank: 0,
             opensOverlay: true,
         },
     ],

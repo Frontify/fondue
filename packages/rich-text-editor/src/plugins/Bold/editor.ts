@@ -15,6 +15,6 @@ export const boldEditor = defineEditorPart(
             { id: 'bold.stars', open: '**', close: '**' },
             { id: 'bold.underscores', open: '__', close: '__' },
         ],
-        toolbar: { labelKey: 'RichTextEditor_bold', icon: 'IconTextFormatBold', bubble: true },
+        toolbar: { labelKey: 'RichTextEditor_bold', icon: 'IconTextFormatBold', bubble: true, group: 'marks' },
     }),
 );

@@ -5,6 +5,8 @@ import { type PluginStrings } from '#/locales/types';
 import type en from './en-US';
 
 export default {
+    RichTextEditor_numberedList: 'Elenco numerato',
+    RichTextEditor_startNumbering: 'Inizia la numerazione da',
     RichTextEditor_startNumberingField: 'Primo numero',
     RichTextEditor_startNumberingRange: 'Inserisci un numero intero da ${min} a ${max}.',
 } satisfies PluginStrings<typeof en>;

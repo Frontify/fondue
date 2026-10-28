@@ -12,6 +12,6 @@ export const strikeEditor = defineEditorPart(
         mark: 'strike',
         keys: ['Mod-Shift-x'],
         inputRules: [{ id: 'strike.tildes', open: '~~', close: '~~' }],
-        toolbar: { labelKey: 'RichTextEditor_strike', icon: 'IconTextFormatStrikethrough' },
+        toolbar: { labelKey: 'RichTextEditor_strike', icon: 'IconTextFormatStrikethrough', group: 'marks' },
     }),
 );

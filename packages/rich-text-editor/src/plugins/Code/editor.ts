@@ -12,6 +12,6 @@ export const codeEditor = defineEditorPart(
         mark: 'code',
         keys: ['Mod-e'],
         inputRules: [{ id: 'code.backtick', open: '`', close: '`' }],
-        toolbar: { labelKey: 'RichTextEditor_code', icon: 'IconCode' },
+        toolbar: { labelKey: 'RichTextEditor_code', icon: 'IconCode', group: 'marks' },
     }),
 );

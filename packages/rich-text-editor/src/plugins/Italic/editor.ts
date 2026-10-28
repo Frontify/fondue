@@ -15,6 +15,6 @@ export const italicEditor = defineEditorPart(
             { id: 'italic.star', open: '*', close: '*' },
             { id: 'italic.underscore', open: '_', close: '_' },
         ],
-        toolbar: { labelKey: 'RichTextEditor_italic', icon: 'IconTextFormatItalic' },
+        toolbar: { labelKey: 'RichTextEditor_italic', icon: 'IconTextFormatItalic', group: 'marks' },
     }),
 );

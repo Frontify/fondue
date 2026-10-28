@@ -5,6 +5,7 @@ import { type PluginStrings } from '#/locales/types';
 import type en from './en-US';
 
 export default {
+    RichTextEditor_checks: 'Toegankelijkheidscontroles',
     RichTextEditor_checksDismiss: 'Negeren',
     RichTextEditor_checksDismissed: 'Genegeerd',
     RichTextEditor_checksDocument: 'Hele document',

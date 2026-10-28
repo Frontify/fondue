@@ -2,6 +2,7 @@
 
 export default {
     RichTextEditor_clearColor: 'Clear color',
+    RichTextEditor_colorMenu: 'Color',
     RichTextEditor_colorPickerSave: 'Save',
     RichTextEditor_customColor: 'Custom text color',
     RichTextEditor_customHighlight: 'Custom highlight color',

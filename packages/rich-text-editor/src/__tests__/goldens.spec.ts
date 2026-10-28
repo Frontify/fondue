@@ -12,6 +12,7 @@ import { documentModel } from '#/plugins/profiles/document';
 import { inlineModel } from '#/plugins/profiles/inline';
 import { featuresById, registry } from '#/plugins/registry';
 import { compiledOf, pluginsOf, readersOf } from '#/react/compile/compileEditor';
+import { toolbarGroups } from '#/react/helpers/toolbarGroups';
 import { shipped as shippedBrandDocument } from '#/react/profiles/brandDocument';
 import { shipped as shippedComment } from '#/react/profiles/comment';
 import { shipped as shippedDocument } from '#/react/profiles/document';
@@ -105,7 +106,7 @@ describe('goldens', () => {
                         inputRuleIds: inputRuleIds(plugins),
                         toolbars: {
                             partEntryIds: toolbarOf(plugins),
-                            presentation: presentation.toolbar,
+                            presentation: presentation.toolbar ?? toolbarGroups(plugins, definition.authoring),
                             touchPresentation: touchPresentation?.toolbar ?? null,
                         },
                         readerOverrideFeatureIds: Object.keys(readersOf(definition)),

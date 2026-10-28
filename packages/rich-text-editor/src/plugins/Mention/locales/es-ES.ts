@@ -5,5 +5,6 @@ import { type PluginStrings } from '#/locales/types';
 import type en from './en-US';
 
 export default {
+    RichTextEditor_mention: 'Mencionar',
     RichTextEditor_mentionSearch: 'Buscar para mencionar',
 } satisfies PluginStrings<typeof en>;

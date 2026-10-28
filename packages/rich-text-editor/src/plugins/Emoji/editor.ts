@@ -39,6 +39,7 @@ export const emojiEditor = defineEditorPart(emoji, {
             command: 'emoji.picker.open',
             labelKey: 'RichTextEditor_emoji',
             icon: 'IconFaceHappy',
+            group: 'insert',
             opensOverlay: true,
         },
     ],

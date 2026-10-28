@@ -15,6 +15,8 @@ import { type ToolbarItem } from '#/ui/helpers/items';
 
 import { type ReactPresentation } from '../types';
 
+import { toolbarGroups } from './toolbarGroups';
+
 type ButtonEntry = Omit<PluginToolbarEntry, 'labelKey' | 'label'> & {
     labelKey: string;
     label?: Readonly<Record<string, string>>;
@@ -239,7 +241,8 @@ export const toolbarItems = (
     };
 
     const items: ToolbarItem[] = [];
-    for (const group of presentation.toolbar) {
+    const groups = presentation.toolbar ?? toolbarGroups(plugins, authoring);
+    for (const group of groups) {
         let groupStart = items.length > 0;
         const bubble = group.some(marks);
         for (const ref of group) {

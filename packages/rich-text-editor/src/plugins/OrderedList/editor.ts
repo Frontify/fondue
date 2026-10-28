@@ -52,6 +52,7 @@ export const orderedListEditor = defineEditorPart(orderedList, {
             payload: { start: 1 },
             labelKey: 'RichTextEditor_numberedList',
             icon: 'IconListNumbers',
+            group: 'lists',
         },
         {
             id: 'start-numbering',

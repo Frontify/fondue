@@ -11,6 +11,7 @@ export default {
     RichTextEditor_heading4: 'Überschrift 4',
     RichTextEditor_heading5: 'Überschrift 5',
     RichTextEditor_heading6: 'Überschrift 6',
+    RichTextEditor_outline: 'Gliederung',
     RichTextEditor_outlineEmpty: 'Noch keine Überschriften. Überschriften, die Sie hinzufügen, erscheinen hier.',
     RichTextEditor_outlineHeadingGone:
         'Diese Überschrift ist nicht mehr im Dokument. Die Gliederung zeigt die aktuellen Überschriften.',

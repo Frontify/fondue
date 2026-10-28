@@ -6,5 +6,6 @@ import type en from './en-US';
 
 export default {
     RichTextEditor_taskChecked: 'Marcado',
+    RichTextEditor_taskList: 'Lista de tareas',
     RichTextEditor_taskUnchecked: 'No marcado',
 } satisfies PluginStrings<typeof en>;

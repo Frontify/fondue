@@ -59,12 +59,12 @@ export const fixtureLocale = {
 };
 
 /** Bold, italic and link, then the list stand-in, as two presentation groups. */
-export const TOOLBAR: ReactPresentation['toolbar'] = [
+export const TOOLBAR: NonNullable<ReactPresentation['toolbar']> = [
     ['mark.bold.toggle', 'fixture.italic.toggle', 'fixture.link.edit'],
     ['fixture.list.toggle'],
 ];
 /** The same with a group of six heading levels, too wide for 320 CSS pixels. */
-export const WIDE_TOOLBAR: ReactPresentation['toolbar'] = [
+export const WIDE_TOOLBAR: NonNullable<ReactPresentation['toolbar']> = [
     ...TOOLBAR,
     [1, 2, 3, 4, 5, 6].map((level) => ({ command: 'fixture.heading.set', payload: { level } })),
 ];
