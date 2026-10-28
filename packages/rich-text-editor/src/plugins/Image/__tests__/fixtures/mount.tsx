@@ -139,12 +139,17 @@ export const mountImages = async (options?: Mount) => {
     const changes: DocumentChange[] = [];
     const definition = defineEditor({ id: 'test.images', model, policy, plugins: pluginsFor(model) });
     const shown = presentation ?? defineReactPresentation({ toolbar, resolveAssetUrl: resolving });
+    const editorProps: { services?: EditorServices } = {};
+    if (services !== undefined) {
+        editorProps.services = services;
+    }
+
     const rendered = render(
         <RichTextEditor
             aria-label="Notes"
             definition={definition}
             presentation={shown}
-            {...(services === undefined ? {} : { services })}
+            {...editorProps}
             defaultValue={{ documentId: 'document-1', revision: null, document: storedIn(model, blocks) }}
             onDiagnostic={(diagnostic) => diagnostics.push(diagnostic)}
             onDocumentChange={(change) => changes.push(change)}

@@ -39,11 +39,11 @@ type SizeMenuProps = { chrome: ImageChromeState };
 
 /** The size menu, whose Edit width choice opens the width dialog once the menu returned focus. */
 const SizeMenu = ({ chrome }: SizeMenuProps) => {
-    const { translate: t, sizeText, displayWidth, pendingRef, runOption, openWidth } = chrome;
+    const { translate, sizeText, displayWidth, pendingRef, runOption, openWidth } = chrome;
 
     return (
         <NodeChromeMenu
-            label={t('RichTextEditor_imageSize', { size: sizeText })}
+            label={translate('RichTextEditor_imageSize', { size: sizeText })}
             text={sizeText}
             command={SET_SIZE}
             onCloseAutoFocus={(event) => {
@@ -57,7 +57,7 @@ const SizeMenu = ({ chrome }: SizeMenuProps) => {
                 openWidth();
             }}
         >
-            {sizeOptions(t, displayWidth).map((option) => (
+            {sizeOptions(translate, displayWidth).map((option) => (
                 <OptionItem
                     key={option.key}
                     checked={option.checked}
@@ -81,11 +81,14 @@ const SizeMenu = ({ chrome }: SizeMenuProps) => {
 type AlignMenuProps = { chrome: ImageChromeState };
 
 const AlignMenu = ({ chrome }: AlignMenuProps) => {
-    const { translate: t, side, runOption } = chrome;
+    const { translate, side, runOption } = chrome;
 
     return (
-        <NodeChromeMenu label={t('RichTextEditor_imageAlign', { side: t(SIDE_KEYS[side]) })} text={t(SIDE_KEYS[side])}>
-            {alignOptions(t, side).map((option) => (
+        <NodeChromeMenu
+            label={translate('RichTextEditor_imageAlign', { side: translate(SIDE_KEYS[side]) })}
+            text={translate(SIDE_KEYS[side])}
+        >
+            {alignOptions(translate, side).map((option) => (
                 <OptionItem key={option.key} checked={option.checked} onSelect={() => runOption(option)}>
                     {option.label}
                 </OptionItem>
@@ -100,7 +103,7 @@ export type ImageToolbarProps = { chrome: ImageChromeState; nodeId: string };
 export const ImageToolbar = ({ chrome, nodeId }: ImageToolbarProps) => {
     const {
         api,
-        translate: t,
+        translate,
         execute,
         shown,
         unfinished,
@@ -112,31 +115,35 @@ export const ImageToolbar = ({ chrome, nodeId }: ImageToolbarProps) => {
         altText,
         setPlayed,
     } = chrome;
+    const altTextProps: { describedBy?: string } = {};
+    if (review) {
+        altTextProps.describedBy = reviewId;
+    }
 
     return (
-        <NodeChromeToolbar aria-label={t('RichTextEditor_image')}>
+        <NodeChromeToolbar aria-label={translate('RichTextEditor_image')}>
             {status !== undefined && (
                 <UploadControls
                     nodeId={nodeId}
                     status={status}
-                    translate={t}
+                    translate={translate}
                     onRemove={() => removeFigure(api, nodeId)}
                 />
             )}
             {unfinished && status === undefined && (
                 <NodeChromeButton
-                    label={t('RichTextEditor_imageChooseAgain')}
+                    label={translate('RichTextEditor_imageChooseAgain')}
                     onClick={() => execute('image.replace', { nodeId })}
                 />
             )}
             <NodeChromeButton
                 label={altText}
-                {...(review ? { describedBy: reviewId } : {})}
-                onClick={() => api?.overlays.open(AltTextDialog, { nodeId, strings: altTextStrings(t) })}
+                {...altTextProps}
+                onClick={() => api?.overlays.open(AltTextDialog, { nodeId, strings: altTextStrings(translate) })}
             />
             {review && (
                 <NodeChromeButton
-                    label={t('RichTextEditor_imageAltKeep')}
+                    label={translate('RichTextEditor_imageAltKeep')}
                     onClick={() => api?.nodeState.set(nodeId, REPLACED_ASSET, null)}
                 />
             )}
@@ -144,14 +151,14 @@ export const ImageToolbar = ({ chrome, nodeId }: ImageToolbarProps) => {
             <AlignMenu chrome={chrome} />
             {!unfinished && (
                 <NodeChromeButton
-                    label={t('RichTextEditor_imageReplace')}
+                    label={translate('RichTextEditor_imageReplace')}
                     icon={<IconArrowSwap size={16} aria-hidden />}
                     onClick={() => execute('image.replace', { nodeId })}
                 />
             )}
             {animated && shown.kind === 'image' && (
                 <NodeChromeButton
-                    label={paused ? t('RichTextEditor_imagePlay') : t('RichTextEditor_imagePause')}
+                    label={paused ? translate('RichTextEditor_imagePlay') : translate('RichTextEditor_imagePause')}
                     icon={paused ? <IconPlay size={16} aria-hidden /> : <IconPause size={16} aria-hidden />}
                     onClick={() => setPlayed({ src: shown.src, paused: !paused })}
                 />

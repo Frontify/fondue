@@ -89,11 +89,20 @@ export const UploadProbe = ({ texts = ['Before'] }: UploadProbeProps) => {
             },
             fail: (index) => uploads.held[index]?.reject(),
             progress: (index, fraction) => uploads.held[index]?.progress(fraction),
-            images: () =>
-                content()
-                    .flatMap((block) => block.content ?? [])
-                    .filter(({ type }) => type === 'asset_image')
-                    .map(({ attrs }) => attrs ?? {}),
+            images: () => {
+                const images: Readonly<Record<string, unknown>>[] = [];
+                for (const block of content()) {
+                    for (const node of block.content ?? []) {
+                        if (node.type !== 'asset_image') {
+                            continue;
+                        }
+
+                        images.push(node.attrs ?? {});
+                    }
+                }
+
+                return images;
+            },
             blocks: () => content().map(({ type }) => type),
             setSelection,
         };

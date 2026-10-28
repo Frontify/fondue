@@ -53,7 +53,7 @@ export type UploadSlotProps = {
  * whose indeterminate animation stops after 5 seconds and never runs under reduced motion, and its text, or why the
  * upload failed or stopped. The slot keeps the file's aspect ratio, so the image takes its place unmoved.
  */
-export const UploadSlot = ({ status, width, height, translate: t, onMouseDown }: UploadSlotProps) => {
+export const UploadSlot = ({ status, width, height, translate, onMouseDown }: UploadSlotProps) => {
     let shape: CSSProperties | undefined;
     if (width !== null && height !== null) {
         shape = { aspectRatio: `${width} / ${height}`, inlineSize: `min(100%, ${width}px)` };
@@ -70,7 +70,7 @@ export const UploadSlot = ({ status, width, height, translate: t, onMouseDown }:
                     value={status.state === 'queued' ? 0 : status.progress}
                 />
             )}
-            <span className={styles.text}>{uploadStatusText(status, t)}</span>
+            <span className={styles.text}>{uploadStatusText(status, translate)}</span>
         </span>
     );
 };

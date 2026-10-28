@@ -171,8 +171,8 @@ const contractOf = (features: readonly Feature[], options: FeatureContractOption
 };
 
 /** The decode, reader, codec and axe cases of one stored document. */
-const fixtureCases = (c: Contract, name: string, fixture: unknown) => {
-    const { it, expect, compiled, engineOf, storedIn } = c;
+const fixtureCases = (contract: Contract, name: string, fixture: unknown) => {
+    const { it, expect, compiled, engineOf, storedIn } = contract;
     it(`decodes and encodes ${name} to itself`, () => {
         const stored = storedIn(fixture);
         const { result, tree } = decodeToTree(stored, compiled());
@@ -185,7 +185,7 @@ const fixtureCases = (c: Contract, name: string, fixture: unknown) => {
         const node = schema.nodeFromJSON(tree);
         const encoded = encodeTree(node.toJSON() as TreeNode, compiled(), stored.requiredCapabilities);
         const isTextblock = (type: string) => schema.nodes[type]?.isTextblock === true;
-        const content = withSharedDefaults(stored.content, c.sharedDefaults, isTextblock);
+        const content = withSharedDefaults(stored.content, contract.sharedDefaults, isTextblock);
         expect(encoded.document).toEqual({ ...stored, content });
     });
 
@@ -198,9 +198,9 @@ const fixtureCases = (c: Contract, name: string, fixture: unknown) => {
         const markdown = codecs.toMarkdown(stored);
         expect([
             ...reader.diagnostics,
-            ...c.unexpected(html.diagnostics, 'html'),
-            ...c.unexpected(text.diagnostics, 'text'),
-            ...c.unexpected(markdown.diagnostics, 'markdown'),
+            ...contract.unexpected(html.diagnostics, 'html'),
+            ...contract.unexpected(text.diagnostics, 'text'),
+            ...contract.unexpected(markdown.diagnostics, 'markdown'),
         ]).toEqual([]);
         expect(normalized(html.html)).toBe(normalized(withoutHiddenText(reader.markup)));
     });
@@ -240,11 +240,11 @@ const schemaCase = ({ it, expect, engineOf }: Contract, declaration: FeatureDecl
 };
 
 const commandCases = (
-    c: Contract,
+    contract: Contract,
     commands: readonly string[],
     fixtures: Readonly<Record<string, RichTextDocument>>,
 ) => {
-    const { it, expect, compiled, engineOf, stateOf, storedIn, options } = c;
+    const { it, expect, compiled, engineOf, stateOf, storedIn, options } = contract;
     for (const id of commands) {
         it(`queries ${id} without dispatching`, () => {
             const command = engineOf().commands.get(id);
@@ -300,40 +300,40 @@ const fixtureCoverageCase = (
 };
 
 /** The describe block of one feature: its schema, commands and toolbar labels and, when shipped, its fixtures. */
-const featureCases = (c: Contract, feature: Feature) => {
+const featureCases = (contract: Contract, feature: Feature) => {
     const declaration = declarationOf(feature);
     const shipped = Object.hasOwn(registry, feature.id);
     const fixtures: Readonly<Record<string, RichTextDocument>> = featureFixtures[feature.id] ?? {};
-    const part = c.partOf(feature.id);
+    const part = contract.partOf(feature.id);
     let commands: string[] = [];
     if (part?.commands !== undefined) {
         commands = Object.keys(part.commands);
     }
 
-    c.describe(feature.id, () => {
-        schemaCase(c, declaration);
-        commandCases(c, commands, fixtures);
-        toolbarCase(c, part);
+    contract.describe(feature.id, () => {
+        schemaCase(contract, declaration);
+        commandCases(contract, commands, fixtures);
+        toolbarCase(contract, part);
         if (!shipped) {
             return;
         }
 
-        fixtureCoverageCase(c, declaration, fixtures);
+        fixtureCoverageCase(contract, declaration, fixtures);
         for (const [name, fixture] of Object.entries(fixtures)) {
-            fixtureCases(c, name, fixture);
+            fixtureCases(contract, name, fixture);
         }
     });
 };
 
-const givenFixtureCases = (c: Contract) => {
-    const given = c.options.fixtures;
+const givenFixtureCases = (contract: Contract) => {
+    const given = contract.options.fixtures;
     if (given === undefined) {
         return;
     }
 
-    c.describe('the given fixtures', () => {
+    contract.describe('the given fixtures', () => {
         for (const [index, fixture] of given.entries()) {
-            fixtureCases(c, `fixture ${index + 1}`, fixture);
+            fixtureCases(contract, `fixture ${index + 1}`, fixture);
         }
     });
 };

@@ -89,6 +89,10 @@ export const OutlineProbe = ({ heading: place = 'last', defaultToolbarMode }: Ou
             },
         };
     });
+    const toolbarProps: { defaultToolbarMode?: 'fixed' | 'bubble' } = {};
+    if (defaultToolbarMode !== undefined) {
+        toolbarProps.defaultToolbarMode = defaultToolbarMode;
+    }
 
     return (
         <div data-test-id="frame" style={{ blockSize: 220, overflow: 'auto' }}>
@@ -97,7 +101,7 @@ export const OutlineProbe = ({ heading: place = 'last', defaultToolbarMode }: Ou
                 aria-label="Notes"
                 definition={definition}
                 presentation={defineReactPresentation({ toolbar: [['mark.bold.toggle'], ['outline.toggle']] })}
-                {...(defaultToolbarMode === undefined ? {} : { defaultToolbarMode })}
+                {...toolbarProps}
                 defaultValue={{
                     documentId: 'document-1',
                     revision: null,

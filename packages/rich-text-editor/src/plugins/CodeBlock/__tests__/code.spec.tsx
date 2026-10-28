@@ -26,11 +26,22 @@ afterEach(() => {
 });
 
 const model = textModel([...textFeatures(), codeBlock()]);
-const code = (value: string, languageId: string | null = null): ContentNodeJSON => ({
-    type: 'code_block',
-    attrs: { languageId },
-    ...(value === '' ? {} : { content: [{ type: 'text', text: value }] }),
-});
+const code = (value: string, languageId: string | null = null): ContentNodeJSON => {
+    const block: {
+        type: 'code_block';
+        attrs: { languageId: string | null };
+        content?: ContentNodeJSON[];
+    } = {
+        type: 'code_block',
+        attrs: { languageId },
+    };
+    if (value !== '') {
+        block.content = [{ type: 'text', text: value }];
+    }
+
+    return block;
+};
+
 const blocksOf = (handle: ReturnType<typeof mountText>['handle']) =>
     handle.getSnapshot().document.content.content ?? [];
 const blockText = (handle: ReturnType<typeof mountText>['handle'], index = 0) => {
@@ -360,7 +371,10 @@ describe('blocks.code', () => {
         setSelection(handle, { text: lines.join('\n'), from: 3, to: 3 });
         const inline = vi.spyOn(Decoration, 'inline');
         // ProseMirror types omit `eq`, the comparison `DecorationSet.remove` runs per pair.
-        const compared = vi.spyOn(Decoration.prototype as Decoration & { eq: (other: Decoration) => boolean }, 'eq');
+        const compared = vi.spyOn(
+            Decoration.prototype as Decoration & Record<'eq', (other: Decoration) => boolean>,
+            'eq',
+        );
 
         typeText(handle, 'x');
 

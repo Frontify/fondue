@@ -169,7 +169,20 @@ export const mountUploads = async (options?: Mount) => {
         ...definitionOptions,
     });
     const presentation = defineReactPresentation({ toolbar, resolveAssetUrl: resolving });
-    const props = {
+    const props: {
+        'aria-label': 'Notes';
+        definition: typeof definition;
+        presentation: typeof presentation;
+        services: EditorServices;
+        defaultValue: {
+            documentId: 'document-1';
+            revision: null;
+            document: ReturnType<typeof storedIn>;
+        };
+        onDiagnostic: (diagnostic: Diagnostic) => void;
+        onDocumentChange: (change: DocumentChange) => void;
+        generateId?: () => string;
+    } = {
         'aria-label': 'Notes',
         definition,
         presentation,
@@ -177,8 +190,11 @@ export const mountUploads = async (options?: Mount) => {
         defaultValue: { documentId: 'document-1', revision: null, document: storedIn(model, blocks) },
         onDiagnostic: (diagnostic: Diagnostic) => diagnostics.push(diagnostic),
         onDocumentChange: (change: DocumentChange) => changes.push(change),
-        ...(generateId === undefined ? {} : { generateId }),
-    } as const;
+    };
+    if (generateId !== undefined) {
+        props.generateId = generateId;
+    }
+
     const rendered = render(<RichTextEditor {...props} ref={ref} />);
     /** Renders the editor again with other `services`, as a host that changes them does. */
     const rerenderWith = async (next: EditorServices) => {

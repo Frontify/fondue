@@ -37,25 +37,25 @@ export type ReferenceListStrings = {
     both: (first: string, second: string) => string;
 };
 
-/** The list strings from the chrome's `t`, which the mention list says too. */
-export const referenceListStrings = (t: CodecContext['translate']): ReferenceListStrings => ({
-    label: t('RichTextEditor_mentionSuggestions'),
-    loading: t('RichTextEditor_mentionLoading'),
-    noResults: t('RichTextEditor_mentionNoResults'),
-    failed: t('RichTextEditor_mentionFailed'),
-    loadMore: t('RichTextEditor_mentionLoadMore'),
-    retry: t('RichTextEditor_retry'),
-    results: (count) => t('RichTextEditor_mentionResults', { count }),
+/** The list strings from the chrome's `translate`, which the mention list says too. */
+export const referenceListStrings = (translate: CodecContext['translate']): ReferenceListStrings => ({
+    label: translate('RichTextEditor_mentionSuggestions'),
+    loading: translate('RichTextEditor_mentionLoading'),
+    noResults: translate('RichTextEditor_mentionNoResults'),
+    failed: translate('RichTextEditor_mentionFailed'),
+    loadMore: translate('RichTextEditor_mentionLoadMore'),
+    retry: translate('RichTextEditor_retry'),
+    results: (count) => translate('RichTextEditor_mentionResults', { count }),
     option: ({ label, detail }, position, total) => {
         // The live region writes a value between U+2068 and U+2069 into a `bdi` of its own.
         const quoted = `\u2068${label}\u2069`;
         if (detail === undefined) {
-            return t('RichTextEditor_suggestionOption', { label: quoted, position, total });
+            return translate('RichTextEditor_suggestionOption', { label: quoted, position, total });
         }
 
-        return t('RichTextEditor_mentionOption', { label: quoted, type: detail, position, total });
+        return translate('RichTextEditor_mentionOption', { label: quoted, type: detail, position, total });
     },
-    both: (first, second) => t('RichTextEditor_announceBoth', { first, second }),
+    both: (first, second) => translate('RichTextEditor_announceBoth', { first, second }),
 });
 
 /** A reference the session kept as an option, which inserts its type, ID and label, and shows its type after it. */

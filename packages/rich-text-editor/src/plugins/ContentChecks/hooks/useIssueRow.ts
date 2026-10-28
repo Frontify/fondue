@@ -12,7 +12,7 @@ import { issueExcerpt } from '../helpers/issueDisplay';
 export const useIssueRow = (
     held: CheckedIssue,
     rowKey: string,
-    t: PanelComponentProps['translate'],
+    translate: PanelComponentProps['translate'],
     onActive: (rowKey: string) => void,
 ) => {
     const api = useEditorApi();
@@ -33,13 +33,13 @@ export const useIssueRow = (
     const titleId = useId();
     const excerptId = useId();
     const helpRef = useRef<HTMLHeadingElement>(null);
-    const { excerpt, described } = issueExcerpt(issue, held.text, t, titleId, excerptId);
+    const { excerpt, described } = issueExcerpt(issue, held.text, translate, titleId, excerptId);
     const goTo = () => {
         goToIssue(api, checks, held, rowKey, onActive);
     };
 
     const repair = (button: HTMLButtonElement | undefined) => {
-        repairIssue(api, checks, held, rowKey, t, onActive, button);
+        repairIssue(api, checks, held, rowKey, translate, onActive, button);
     };
 
     const dismiss = () => {

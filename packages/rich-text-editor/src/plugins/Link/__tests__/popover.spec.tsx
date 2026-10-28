@@ -55,13 +55,18 @@ type Mount = {
 const mount = ({ blocks, options, styles = [], references }: Mount) => {
     const model = textModel([...textFeatures(), link(options)]);
     const ref = createRef<EditorHandle<PluginCommands>>();
+    const editorProps: { services?: { references: ReferenceService } } = {};
+    if (references !== undefined) {
+        editorProps.services = { references };
+    }
+
     const rendered = render(
         <RichTextEditor
             aria-label="Notes"
             definition={defineEditor({ id: 'test.links', model, plugins: pluginsFor(model) })}
             presentation={defineReactPresentation({ styles: [...styles] })}
             defaultValue={{ documentId: 'document-1', revision: null, document: storedIn(model, blocks) }}
-            {...(references === undefined ? {} : { services: { references } })}
+            {...editorProps}
             ref={ref}
         />,
     );
@@ -361,12 +366,19 @@ describe('link destination search', () => {
         return { search };
     };
 
-    const page = (id: string, label: string, href?: string): ReferenceValue => ({
-        resourceType: 'guideline-page',
-        resourceId: id,
-        labelSnapshot: label,
-        ...(href === undefined ? {} : { href }),
-    });
+    const page = (id: string, label: string, href?: string): ReferenceValue => {
+        const reference: ReferenceValue = {
+            resourceType: 'guideline-page',
+            resourceId: id,
+            labelSnapshot: label,
+        };
+        if (href !== undefined) {
+            reference.href = href;
+        }
+
+        return reference;
+    };
+
     const settle = async () => {
         await act(async () => {
             vi.advanceTimersByTime(200);

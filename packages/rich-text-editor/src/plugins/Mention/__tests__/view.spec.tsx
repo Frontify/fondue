@@ -8,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
 import { defineReactPresentation } from '#/entries/authoring';
-import { RichTextReader } from '#/entries/reader';
+import { RichTextReader, type RichTextReaderProps } from '#/entries/reader';
 import { type ReferenceResolution } from '#/model';
 
 import { mention, mentionModel, mountMentions, para, storedIn, text } from './fixtures/mount';
@@ -39,16 +39,17 @@ const resolving = (resolve: (resourceType: string, resourceId: string) => Refere
 const readerMarkup = (
     blocks: Parameters<typeof storedIn>[1],
     resolve?: (type: string, id: string) => ReferenceResolution,
-) =>
-    renderToStaticMarkup(
-        createElement(RichTextReader, {
-            document: storedIn(model, blocks),
-            model,
-            ...(resolve === undefined
-                ? {}
-                : { presentation: { styles: [], colorTokens: [], resolveReference: resolve } }),
-        }),
-    );
+) => {
+    const props: RichTextReaderProps = {
+        document: storedIn(model, blocks),
+        model,
+    };
+    if (resolve !== undefined) {
+        props.presentation = { styles: [], colorTokens: [], resolveReference: resolve };
+    }
+
+    return renderToStaticMarkup(createElement(RichTextReader, props));
+};
 
 describe('mention display', () => {
     it('isolates an Arabic label with bdi inside English text in the editor, the reader and toHTML', async () => {

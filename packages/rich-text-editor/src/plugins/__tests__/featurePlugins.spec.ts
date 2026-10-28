@@ -16,10 +16,14 @@ type PluginFactory = (options?: object) => RichTextPlugin;
 
 const featuresRoot = fileURLToPath(new URL('..', import.meta.url));
 
-const FOLDERS = readdirSync(featuresRoot, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && existsSync(join(featuresRoot, entry.name, 'feature.ts')))
-    .map((entry) => entry.name)
-    .sort();
+const FOLDERS: string[] = [];
+for (const entry of readdirSync(featuresRoot, { withFileTypes: true })) {
+    if (entry.isDirectory() && existsSync(join(featuresRoot, entry.name, 'feature.ts'))) {
+        FOLDERS.push(entry.name);
+    }
+}
+
+FOLDERS.sort();
 
 const READER_FOLDERS = FOLDERS.filter((folder) => existsSync(join(featuresRoot, folder, 'reader.tsx')));
 
@@ -57,9 +61,14 @@ describe('feature plugins', () => {
 
     it.each(FOLDERS)('%s names its factory after the folder and its plugin after the factory', async (folder) => {
         const features = (await import(`../${folder}/feature.ts`)) as Record<string, unknown>;
-        const [factory] = Object.entries(features)
-            .filter(([, value]) => typeof value === 'function')
-            .map(([name]) => name);
+        let factory: string | undefined;
+        for (const [name, value] of Object.entries(features)) {
+            if (typeof value === 'function') {
+                factory = name;
+                break;
+            }
+        }
+
         const [plugin] = Object.keys((await import(`../${folder}/index.ts`)) as Record<string, unknown>);
 
         expect(`${factory?.charAt(0).toUpperCase()}${factory?.slice(1)}`).toBe(folder);

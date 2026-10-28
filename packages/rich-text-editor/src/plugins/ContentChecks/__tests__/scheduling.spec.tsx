@@ -34,9 +34,9 @@ afterEach(() => {
 
 const ruleCalls = () => spies.reduce((total, spy) => total + spy.mock.calls.length, 0);
 
-const advance = (ms: number) =>
+const advance = (milliseconds: number) =>
     act(() => {
-        vi.advanceTimersByTime(ms);
+        vi.advanceTimersByTime(milliseconds);
     });
 
 describe('when the content checks run', () => {

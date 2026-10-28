@@ -16,11 +16,22 @@ afterEach(() => {
 });
 
 const model = textModel([core(), emoji(), codeBlock()]);
-const code = (value: string): ContentNodeJSON => ({
-    type: 'code_block',
-    attrs: { languageId: null },
-    ...(value === '' ? {} : { content: [{ type: 'text', text: value }] }),
-});
+const code = (value: string): ContentNodeJSON => {
+    const block: {
+        type: 'code_block';
+        attrs: { languageId: null };
+        content?: ContentNodeJSON[];
+    } = {
+        type: 'code_block',
+        attrs: { languageId: null },
+    };
+    if (value !== '') {
+        block.content = [{ type: 'text', text: value }];
+    }
+
+    return block;
+};
+
 const blocksOf = (handle: ReturnType<typeof mountText>['handle']) =>
     handle.getSnapshot().document.content.content ?? [];
 

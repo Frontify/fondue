@@ -178,11 +178,16 @@ describe('the shipped profiles', () => {
         const { definition } = profile();
         const ids = definition.capabilities.map(({ id }) => id);
 
-        expect(Object.keys(readersOf(definition)).sort()).toEqual(
-            Object.keys(READER_OVERRIDES)
-                .filter((id) => ids.includes(id))
-                .sort(),
-        );
+        const overrideIds: string[] = [];
+        for (const featureId of Object.keys(READER_OVERRIDES)) {
+            if (ids.includes(featureId)) {
+                overrideIds.push(featureId);
+            }
+        }
+
+        overrideIds.sort();
+
+        expect(Object.keys(readersOf(definition)).sort()).toEqual(overrideIds);
     });
 
     it('leaves Shift+Enter out of the Inline keymap, which a comment binds to a line break', () => {

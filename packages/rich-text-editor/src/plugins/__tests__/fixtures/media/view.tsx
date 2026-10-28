@@ -25,19 +25,19 @@ const AltTextDialog = ({ open, onOpenChange }: AltTextDialogProps) => {
     const overlay = useEditorOverlay(open, onOpenChange);
     const fieldId = useId();
     const [alt, setAlt] = useState(() => textOf(attrs.alt));
-    const { translate: t } = context;
+    const { translate } = context;
 
     return (
         // A modal dialog holds focus, so every close request it makes is the author's.
         <Dialog.Root modal open={open} onOpenChange={onOpenChange}>
             <Dialog.Content container={overlay.container} minWidth="280px" minHeight="0">
                 <Dialog.Header>
-                    <Dialog.Title>{t('RichTextEditor_fixtureAltText')}</Dialog.Title>
+                    <Dialog.Title>{translate('RichTextEditor_fixtureAltText')}</Dialog.Title>
                 </Dialog.Header>
                 <Dialog.Body>
                     <OverlayBody>
-                        <Dialog.Description>{t('RichTextEditor_fixtureAltTextHint')}</Dialog.Description>
-                        <label htmlFor={fieldId}>{t('RichTextEditor_fixtureDescription')}</label>
+                        <Dialog.Description>{translate('RichTextEditor_fixtureAltTextHint')}</Dialog.Description>
+                        <label htmlFor={fieldId}>{translate('RichTextEditor_fixtureDescription')}</label>
                         <input id={fieldId} value={alt} onChange={(event) => setAlt(event.currentTarget.value)} />
                     </OverlayBody>
                 </Dialog.Body>
@@ -49,7 +49,7 @@ const AltTextDialog = ({ open, onOpenChange }: AltTextDialogProps) => {
                             onOpenChange(false);
                         }}
                     >
-                        {t('RichTextEditor_fixtureSave')}
+                        {translate('RichTextEditor_fixtureSave')}
                     </button>
                 </Dialog.Footer>
             </Dialog.Content>

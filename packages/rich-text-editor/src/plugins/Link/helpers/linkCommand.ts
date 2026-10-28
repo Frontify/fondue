@@ -85,12 +85,20 @@ export const rejectedLink = (
         chosenStyle = styleId;
     }
 
-    const value = {
+    const value: {
+        href: string;
+        text?: string;
+        openInNewWindow: boolean;
+        styleId: string | null;
+    } = {
         href: destination,
-        ...(unchanged ? {} : { text: visible }),
         openInNewWindow: newWindow,
         styleId: chosenStyle,
     };
+    if (!unchanged) {
+        value.text = visible;
+    }
+
     let options: { target: SelectionHandle } | undefined;
     if (!here && target !== undefined) {
         options = { target };

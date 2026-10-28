@@ -12,16 +12,19 @@ import { uploadStatusText } from './useUploadStatus';
  * for a slot, its upload as it stands, with how to fix a failed one.
  */
 const spokenOf = (attrs: JsonObject, context: CodecContext, unavailable: boolean, upload: UploadStatus | undefined) => {
-    const { translate: t } = context;
+    const { translate } = context;
     if (attrs.assetId === null) {
         if (upload !== undefined) {
             // The live region writes a value between U+2068 and U+2069 into a `bdi` of its own.
             const name = `\u2068${upload.name}\u2069`;
 
-            return t('RichTextEditor_announceBoth', { first: name, second: uploadStatusText(upload, t) });
+            return translate('RichTextEditor_announceBoth', {
+                first: name,
+                second: uploadStatusText(upload, translate),
+            });
         }
 
-        return t('RichTextEditor_imageUnfinished');
+        return translate('RichTextEditor_imageUnfinished');
     }
 
     if (unavailable) {
@@ -35,14 +38,14 @@ const spokenOf = (attrs: JsonObject, context: CodecContext, unavailable: boolean
 
     const alt = altOf(attrs);
     if (alt === undefined) {
-        return t('RichTextEditor_imageSelectedMissing');
+        return translate('RichTextEditor_imageSelectedMissing');
     }
 
     if (alt === '') {
-        return t('RichTextEditor_imageSelectedDecorative');
+        return translate('RichTextEditor_imageSelectedDecorative');
     }
 
-    return t('RichTextEditor_imageSelected', { description: alt });
+    return translate('RichTextEditor_imageSelected', { description: alt });
 };
 
 /** Speaks a selected image as it becomes selected, and again when what it says changes. */

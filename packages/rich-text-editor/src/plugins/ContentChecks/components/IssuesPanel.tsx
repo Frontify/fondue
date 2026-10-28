@@ -23,7 +23,7 @@ import { SeverityMarks } from './SeverityMarks';
  * checks run when it opens, and the surface marks each automatic issue while it is open. Its command, run again while
  * it is open, moves focus to the issue last acted on.
  */
-export const IssuesPanel = ({ translate: t, requested, close }: PanelComponentProps) => {
+export const IssuesPanel = ({ translate, requested, close }: PanelComponentProps) => {
     const api = useEditorApi();
     const checks = useEditorValue((read) => read?.services.checks()?.current(), Object.is);
     const [showDismissed, setShowDismissed] = useState(false);
@@ -54,26 +54,26 @@ export const IssuesPanel = ({ translate: t, requested, close }: PanelComponentPr
 
     useDepartedIssueFocus(listed, focusedRef, headingRef, headingSpokeRef);
 
-    const summary = checksSummary(t, counted);
+    const summary = checksSummary(translate, counted);
     const reportedRuns = checks?.runs;
     const runs = reportedRuns ?? 0;
     useSummaryAnnouncement({ api, runs, summary, shownRef, openedRunRef, headingSpokeRef });
 
     return (
-        <div role="region" aria-label={t('RichTextEditor_checks')} className={styles.panel}>
+        <div role="region" aria-label={translate('RichTextEditor_checks')} className={styles.panel}>
             <h2 ref={headingRef} id={headingId} tabIndex={-1} className={styles.summary}>
                 {summary}
             </h2>
             <div className={styles.actions}>
                 <Button size="small" emphasis="default" onPress={close}>
-                    {t('RichTextEditor_close')}
+                    {translate('RichTextEditor_close')}
                 </Button>
             </div>
             {dismissedCount > 0 && (
                 <DismissedToggle
                     id={dismissedId}
                     value={showDismissed}
-                    label={t('RichTextEditor_checksShowDismissed')}
+                    label={translate('RichTextEditor_checksShowDismissed')}
                     onToggle={() => setShowDismissed((previous) => !previous)}
                 />
             )}
@@ -83,7 +83,7 @@ export const IssuesPanel = ({ translate: t, requested, close }: PanelComponentPr
                         key={held.key}
                         rowKey={held.key}
                         held={held}
-                        translate={t}
+                        translate={translate}
                         onFocusIssue={(rowKey) => {
                             focusedRef.current = rowKey;
                         }}

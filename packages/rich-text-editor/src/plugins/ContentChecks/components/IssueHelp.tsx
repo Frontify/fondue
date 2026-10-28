@@ -15,13 +15,13 @@ export type IssueHelpProps = {
 };
 
 /** How to decide the issue, behind the help disclosure. */
-export const IssueHelp = ({ helpRef, ruleId, translate: t }: IssueHelpProps) => (
+export const IssueHelp = ({ helpRef, ruleId, translate }: IssueHelpProps) => (
     <div className={styles.help}>
         <Accordion.Root border={false} padding="none">
             <Accordion.Item value="help">
-                <Accordion.Header ref={helpRef}>{t('RichTextEditor_checksHelp')}</Accordion.Header>
+                <Accordion.Header ref={helpRef}>{translate('RichTextEditor_checksHelp')}</Accordion.Header>
                 <Accordion.Content>
-                    <p>{t(ruleHelpKey(ruleId))}</p>
+                    <p>{translate(ruleHelpKey(ruleId))}</p>
                 </Accordion.Content>
             </Accordion.Item>
         </Accordion.Root>

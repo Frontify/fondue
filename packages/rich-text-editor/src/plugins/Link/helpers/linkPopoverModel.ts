@@ -129,24 +129,24 @@ export const captureLinkTarget = (
 };
 
 /** The link popover's strings, in the UI locale. */
-export const linkPopoverStrings = (t: CodecContext['translate']): LinkPopoverStrings => ({
-    title: t('RichTextEditor_link'),
-    destination: t('RichTextEditor_linkDestination'),
-    text: t('RichTextEditor_linkText'),
-    newWindow: t('RichTextEditor_linkOpenInNewWindow'),
-    style: t('RichTextEditor_linkStyle'),
-    noStyle: t('RichTextEditor_linkStyleNone'),
-    invalid: t('RichTextEditor_linkInvalid'),
-    schemesAllowed: (schemes) => t('RichTextEditor_linkSchemesAllowed', { schemes }),
-    hostsAllowed: (hosts) => t('RichTextEditor_linkHostsAllowed', { hosts }),
-    failed: t('RichTextEditor_linkFailed'),
-    removed: t('RichTextEditor_linkTextRemoved'),
-    insertNew: t('RichTextEditor_linkInsertNew'),
-    results: t('RichTextEditor_linkResults'),
+export const linkPopoverStrings = (translate: CodecContext['translate']): LinkPopoverStrings => ({
+    title: translate('RichTextEditor_link'),
+    destination: translate('RichTextEditor_linkDestination'),
+    text: translate('RichTextEditor_linkText'),
+    newWindow: translate('RichTextEditor_linkOpenInNewWindow'),
+    style: translate('RichTextEditor_linkStyle'),
+    noStyle: translate('RichTextEditor_linkStyleNone'),
+    invalid: translate('RichTextEditor_linkInvalid'),
+    schemesAllowed: (schemes) => translate('RichTextEditor_linkSchemesAllowed', { schemes }),
+    hostsAllowed: (hosts) => translate('RichTextEditor_linkHostsAllowed', { hosts }),
+    failed: translate('RichTextEditor_linkFailed'),
+    removed: translate('RichTextEditor_linkTextRemoved'),
+    insertNew: translate('RichTextEditor_linkInsertNew'),
+    results: translate('RichTextEditor_linkResults'),
     // The live region writes a value between U+2068 and U+2069 into a `bdi` of its own.
     result: (label, position, total) =>
-        t('RichTextEditor_suggestionOption', { label: `\u2068${label}\u2069`, position, total }),
-    apply: t('RichTextEditor_apply'),
+        translate('RichTextEditor_suggestionOption', { label: `\u2068${label}\u2069`, position, total }),
+    apply: translate('RichTextEditor_apply'),
 });
 
 /** The presentation styles the link popover offers: each that applies to links and is not deprecated. */

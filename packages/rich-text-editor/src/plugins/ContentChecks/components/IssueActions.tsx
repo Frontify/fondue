@@ -24,7 +24,7 @@ export const IssueActions = ({
     dismissed,
     repairable,
     described,
-    translate: t,
+    translate,
     onGoTo,
     onRepair,
     onDismiss,
@@ -32,7 +32,7 @@ export const IssueActions = ({
     <div className={styles.actions}>
         {issue.path !== null && (
             <Button size="small" emphasis="default" aria-describedby={described} onPress={onGoTo}>
-                {t('RichTextEditor_checksGoTo')}
+                {translate('RichTextEditor_checksGoTo')}
             </Button>
         )}
         {repairable && (
@@ -42,12 +42,12 @@ export const IssueActions = ({
                 aria-describedby={described}
                 onPress={(event) => onRepair(event?.currentTarget)}
             >
-                {t('RichTextEditor_checksRepair')}
+                {translate('RichTextEditor_checksRepair')}
             </Button>
         )}
         {issue.severity !== 'error' && !dismissed && (
             <Button size="small" emphasis="weak" aria-describedby={described} onPress={onDismiss}>
-                {t('RichTextEditor_checksDismiss')}
+                {translate('RichTextEditor_checksDismiss')}
             </Button>
         )}
     </div>

@@ -11,13 +11,40 @@ const requires = [{ id: 'core', version: 1 }];
 const nodeId = { type: 'string', required: true } as const;
 const lang = { type: 'language', nullable: true, default: null } as const;
 const styleId = { type: 'id', nullable: true, default: null } as const;
-const block = (content?: string) => ({
-    group: 'block' as const,
-    ...(content === undefined ? {} : { content }),
-    html: ['div', 0] as const,
-    parse: [],
-});
-const mark = (rank?: number) => ({ html: ['span', 0] as const, parse: [], ...(rank === undefined ? {} : { rank }) });
+const block = (content?: string) => {
+    const spec: {
+        group: 'block';
+        content?: string;
+        html: readonly ['div', 0];
+        parse: [];
+    } = {
+        group: 'block',
+        html: ['div', 0] as const,
+        parse: [],
+    };
+    if (content !== undefined) {
+        spec.content = content;
+    }
+
+    return spec;
+};
+
+const mark = (rank?: number) => {
+    const spec: {
+        html: readonly ['span', 0];
+        parse: [];
+        rank?: number;
+    } = {
+        html: ['span', 0] as const,
+        parse: [],
+    };
+    if (rank !== undefined) {
+        spec.rank = rank;
+    }
+
+    return spec;
+};
+
 const color = {
     attrs: { tokenId: styleId, value: { type: 'color', nullable: true, default: null } },
     exactlyOne: ['tokenId', 'value'],

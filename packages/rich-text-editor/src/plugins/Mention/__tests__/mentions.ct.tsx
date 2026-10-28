@@ -30,11 +30,16 @@ const inlineOf = (page: Page) =>
         const [first] = rte.handle.getSnapshot().document.content.content ?? [];
         const content = first?.content;
 
-        return (content ?? []).map((node) =>
-            node.type === 'mention'
-                ? `@${typeof node.attrs?.labelSnapshot === 'string' ? node.attrs.labelSnapshot : ''}`
-                : (node.text ?? ''),
-        );
+        return (content ?? []).map((node) => {
+            if (node.type !== 'mention') {
+                return node.text ?? '';
+            }
+
+            const snapshot = node.attrs?.labelSnapshot;
+            const label = typeof snapshot === 'string' ? snapshot : '';
+
+            return `@${label}`;
+        });
     });
 
 test('commits an IME candidate into the mention query on Enter without choosing a result', async ({

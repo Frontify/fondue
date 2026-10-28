@@ -183,13 +183,13 @@ test('writes one undo step at the end of a resize drag, and none when Escape end
         throw new Error('The resize handle has no box.');
     }
 
-    const x = box.x + box.width / 2;
-    const y = box.y + box.height / 2;
+    const pointerX = box.x + box.width / 2;
+    const pointerY = box.y + box.height / 2;
 
-    await page.mouse.move(x, y);
+    await page.mouse.move(pointerX, pointerY);
     await page.mouse.down();
     for (let step = 1; step <= 10; step += 1) {
-        await page.mouse.move(x + step * 20, y);
+        await page.mouse.move(pointerX + step * 20, pointerY);
     }
 
     await page.mouse.up();
@@ -212,10 +212,10 @@ test('writes one undo step at the end of a resize drag, and none when Escape end
     }
 
     const start = moved.x + moved.width / 2;
-    await page.mouse.move(start, y);
+    await page.mouse.move(start, pointerY);
     await page.mouse.down();
     for (let step = 1; step <= 5; step += 1) {
-        await page.mouse.move(start - step * 20, y);
+        await page.mouse.move(start - step * 20, pointerY);
     }
 
     await page.keyboard.press('Escape');

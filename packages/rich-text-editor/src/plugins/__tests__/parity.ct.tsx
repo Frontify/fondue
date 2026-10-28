@@ -10,15 +10,19 @@ const PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAY
  * The tree without its root line, its other lines one level less indented, without states such as the reader's
  * disabled task checkboxes, and with the reader-only annotations left out: the new-window text and the island notice.
  */
-const withoutRoot = (snapshot: string) =>
-    snapshot
-        .split('\n')
-        .slice(1)
-        .map((line) =>
-            line.replace(/^ {2}/, '').replaceAll(' (opens in a new window)', '').replaceAll(' [disabled]', ''),
-        )
-        .filter((line) => !line.startsWith('- note:'))
-        .join('\n');
+const withoutRoot = (snapshot: string) => {
+    const kept: string[] = [];
+    for (const line of snapshot.split('\n').slice(1)) {
+        const text = line.replace(/^ {2}/, '').replaceAll(' (opens in a new window)', '').replaceAll(' [disabled]', '');
+        if (text.startsWith('- note:')) {
+            continue;
+        }
+
+        kept.push(text);
+    }
+
+    return kept.join('\n');
+};
 
 test('gives the editor and the reader of each contract fixture the same text, roles, link targets and alternative texts', async ({
     mount,

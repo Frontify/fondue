@@ -468,31 +468,39 @@ const TABLE_CHILDREN: Readonly<Record<string, readonly string[]>> = {
 };
 const ACTIONABLE = 'a[href], button, input, select, textarea, [tabindex], [role="button"], [contenteditable="true"]';
 
-/** The node types whose content can hold `type` at some point, walking every content match state. */
-const allowedParents = (type: NodeType): string[] =>
-    Object.values(type.schema.nodes)
-        .filter((parent) => {
-            const seen = new Set<ContentMatch>();
-            const queue: ContentMatch[] = [parent.contentMatch];
-            for (let match = queue.shift(); match !== undefined; match = queue.shift()) {
-                if (seen.has(match)) {
-                    continue;
-                }
+const contentAllows = (parent: NodeType, type: NodeType): boolean => {
+    const seen = new Set<ContentMatch>();
+    const queue: ContentMatch[] = [parent.contentMatch];
+    for (let match = queue.shift(); match !== undefined; match = queue.shift()) {
+        if (seen.has(match)) {
+            continue;
+        }
 
-                seen.add(match);
-                for (let index = 0; index < match.edgeCount; index += 1) {
-                    const edge = match.edge(index);
-                    if (edge.type === type) {
-                        return true;
-                    }
-
-                    queue.push(edge.next);
-                }
+        seen.add(match);
+        for (let index = 0; index < match.edgeCount; index += 1) {
+            const edge = match.edge(index);
+            if (edge.type === type) {
+                return true;
             }
 
-            return false;
-        })
-        .map(({ name }) => name);
+            queue.push(edge.next);
+        }
+    }
+
+    return false;
+};
+
+/** The node types whose content can hold `type` at some point, walking every content match state. */
+const allowedParents = (type: NodeType): string[] => {
+    const names: string[] = [];
+    for (const parent of Object.values(type.schema.nodes)) {
+        if (contentAllows(parent, type)) {
+            names.push(parent.name);
+        }
+    }
+
+    return names;
+};
 
 type BuiltView = {
     node: Node;

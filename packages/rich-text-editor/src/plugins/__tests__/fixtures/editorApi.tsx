@@ -90,11 +90,18 @@ export const selectAll = (handle: Handle) => {
 
 export const probePanel = () => screen.queryByRole('region', { name: 'Probe panel' });
 
-export const text = (value: string, marks?: ContentNodeJSON['marks']): ContentNodeJSON => ({
-    type: 'text',
-    text: value,
-    ...(marks === undefined ? {} : { marks }),
-});
+export const text = (value: string, marks?: ContentNodeJSON['marks']): ContentNodeJSON => {
+    const node: { type: 'text'; text: string; marks?: NonNullable<ContentNodeJSON['marks']> } = {
+        type: 'text',
+        text: value,
+    };
+    if (marks !== undefined) {
+        node.marks = marks;
+    }
+
+    return node;
+};
+
 export const heading2 = (value: string): ContentNodeJSON => ({
     type: 'heading',
     attrs: { level: 2 },

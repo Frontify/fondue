@@ -152,7 +152,7 @@ test('renders one column in document order at 320 px, with every break inactive 
         }
 
         expect(new Set(starts).size).toBe(1);
-        expect([...tops].sort((a, b) => a - b)).toEqual(tops);
+        expect([...tops].sort((left, right) => left - right)).toEqual(tops);
     }
 
     await expect(readerOf(page)).toHaveCSS('column-count', 'auto');

@@ -55,6 +55,10 @@ const SpotlightButton = ({
 }: ToolbarControlProps) => {
     const container = useOverlayContainer();
     const active = useEditorValue((current) => current?.marks.active('fixture_spotlight') ?? false);
+    const order: { tabIndex?: -1 } = {};
+    if (outOfTabOrder) {
+        order.tabIndex = -1;
+    }
 
     return (
         <Tooltip.Root>
@@ -66,7 +70,7 @@ const SpotlightButton = ({
                     aria-pressed={active}
                     aria-keyshortcuts={keyshortcuts}
                     disabled={disabled}
-                    {...(outOfTabOrder ? { tabIndex: -1 } : {})}
+                    {...order}
                     data-test-id="fixture-spotlight-control"
                     onClick={() => run()}
                 >
@@ -82,18 +86,25 @@ const SpotlightButton = ({
 };
 
 /** The plugin's own control of a command that opens an overlay. */
-const NoteButton = ({ label, disabled, outOfTabOrder, controlRef, run }: ToolbarControlProps) => (
-    <RadixToolbar.Button
-        ref={controlRef}
-        type="button"
-        disabled={disabled}
-        {...(outOfTabOrder ? { tabIndex: -1 } : {})}
-        data-test-id="fixture-spotlight-note-control"
-        onClick={() => run()}
-    >
-        {label}
-    </RadixToolbar.Button>
-);
+const NoteButton = ({ label, disabled, outOfTabOrder, controlRef, run }: ToolbarControlProps) => {
+    const order: { tabIndex?: -1 } = {};
+    if (outOfTabOrder) {
+        order.tabIndex = -1;
+    }
+
+    return (
+        <RadixToolbar.Button
+            ref={controlRef}
+            type="button"
+            disabled={disabled}
+            {...order}
+            data-test-id="fixture-spotlight-note-control"
+            onClick={() => run()}
+        >
+            {label}
+        </RadixToolbar.Button>
+    );
+};
 
 /** The plugin's own overlay, which returns focus to the control that opened it when it is dismissed. */
 const SpotlightNote = ({ close, anchor, opener }: OverlayProps) => {

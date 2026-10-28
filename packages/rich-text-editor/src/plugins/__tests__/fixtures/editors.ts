@@ -264,7 +264,7 @@ export const FIXTURE_EDITORS = [
 ] as const;
 
 /** The ones of `parts` for the features `model` installs, in feature order, as a host passes `defineEditor` its own. */
-export const installedOf = <P extends EditorPart>(model: ContentModel, parts: readonly P[]): readonly P[] =>
+export const installedOf = <Part extends EditorPart>(model: ContentModel, parts: readonly Part[]): readonly Part[] =>
     model.capabilities.flatMap(({ id }) => parts.filter(({ feature }) => feature === id));
 
 /** The editor parts of the fixture features `model` installs, with no React. */

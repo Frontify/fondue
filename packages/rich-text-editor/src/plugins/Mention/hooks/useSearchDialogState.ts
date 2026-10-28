@@ -46,11 +46,11 @@ type Found = {
 };
 
 /** The dialog's strings from the chrome's `translate`. */
-const mentionSearchStrings = (t: EditorApi['translate']): MentionSearchStrings => ({
-    ...referenceListStrings(t),
-    title: t('RichTextEditor_mention'),
-    search: t('RichTextEditor_mentionSearch'),
-    cancel: t('RichTextEditor_cancel'),
+const mentionSearchStrings = (translate: EditorApi['translate']): MentionSearchStrings => ({
+    ...referenceListStrings(translate),
+    title: translate('RichTextEditor_mention'),
+    search: translate('RichTextEditor_mentionSearch'),
+    cancel: translate('RichTextEditor_cancel'),
 });
 
 /** What the list says about its answer: the failure, the result count, or that there are none. */

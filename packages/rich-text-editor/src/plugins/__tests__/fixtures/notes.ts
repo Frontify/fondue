@@ -103,7 +103,7 @@ export const dividerToRule: ModelMigration = {
             .map((capability) =>
                 capability.id === 'fixture.divider' ? { id: 'fixture.rule', version: 1 } : capability,
             )
-            .sort((a, b) => (a.id < b.id ? -1 : 1));
+            .sort((left, right) => (left.id < right.id ? -1 : 1));
 
         return {
             status: 'migrated',

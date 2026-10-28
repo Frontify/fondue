@@ -18,11 +18,21 @@ afterEach(() => {
 
 const model = textModel([core(), heading(), quote(), outline()]);
 
-const headingBlock = (nodeId: string, level: number, value?: string): ContentNodeJSON => ({
-    type: 'heading',
-    attrs: { nodeId, level, lang: null },
-    ...(value === undefined ? {} : { content: [text(value)] }),
-});
+const headingBlock = (nodeId: string, level: number, value?: string): ContentNodeJSON => {
+    const heading: {
+        type: 'heading';
+        attrs: { nodeId: string; level: number; lang: null };
+        content?: ContentNodeJSON[];
+    } = {
+        type: 'heading',
+        attrs: { nodeId, level, lang: null },
+    };
+    if (value !== undefined) {
+        heading.content = [text(value)];
+    }
+
+    return heading;
+};
 
 const blocks = [
     para(text('Intro')),

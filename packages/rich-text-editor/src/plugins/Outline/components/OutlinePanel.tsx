@@ -43,7 +43,7 @@ const headingsOf = (api: EditorApi | undefined): readonly OutlineHeading[] =>
  * that heading in the current document. A heading that is gone stays listed until the choice, which then moves
  * nothing, reads the headings again and says so, with focus on the outline rather than on another heading.
  */
-export const OutlinePanel = ({ translate: t }: PanelComponentProps) => {
+export const OutlinePanel = ({ translate }: PanelComponentProps) => {
     const api = useEditorApi();
     const navRef = useRef<HTMLElement>(null);
     const [entries, setEntries] = useState(() => headingsOf(api));
@@ -56,8 +56,8 @@ export const OutlinePanel = ({ translate: t }: PanelComponentProps) => {
     }, []);
 
     return (
-        <nav ref={navRef} className={styles.nav} aria-label={t('RichTextEditor_outline')} tabIndex={-1}>
-            {entries.length === 0 && <p className={styles.empty}>{t('RichTextEditor_outlineEmpty')}</p>}
+        <nav ref={navRef} className={styles.nav} aria-label={translate('RichTextEditor_outline')} tabIndex={-1}>
+            {entries.length === 0 && <p className={styles.empty}>{translate('RichTextEditor_outlineEmpty')}</p>}
             {entries.length > 0 && (
                 <ol className={styles.list}>
                     {entries.map((entry) => (
@@ -75,7 +75,7 @@ export const OutlinePanel = ({ translate: t }: PanelComponentProps) => {
                                     if (!api.blocks.list('heading').some(({ nodeId }) => nodeId === entry.nodeId)) {
                                         navRef.current?.focus();
                                         setEntries(headingsOf(api));
-                                        api.announce(t('RichTextEditor_outlineHeadingGone'));
+                                        api.announce(translate('RichTextEditor_outlineHeadingGone'));
 
                                         return;
                                     }
@@ -83,7 +83,7 @@ export const OutlinePanel = ({ translate: t }: PanelComponentProps) => {
                                     api.select({ nodeId: entry.nodeId }, { scroll: true });
                                 }}
                             >
-                                <span className={styles.level}>{t(HEADING_KEY[entry.level])}</span>
+                                <span className={styles.level}>{translate(HEADING_KEY[entry.level])}</span>
                                 {entry.text !== '' && <span className={styles.text}> {entry.text}</span>}
                             </button>
                         </li>

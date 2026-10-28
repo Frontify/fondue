@@ -29,7 +29,7 @@ export const repairIssue = (
     checks: ContentChecksApi | undefined,
     held: CheckedIssue,
     rowKey: string,
-    t: CodecContext['translate'],
+    translate: CodecContext['translate'],
     onActive: (rowKey: string) => void,
     button: HTMLButtonElement | undefined,
 ) => {
@@ -50,7 +50,7 @@ export const repairIssue = (
         const outcome = api.commands.execute(current.repairCommand, current.repairPayload ?? undefined);
         // The policy judges a repair's change only once it has run, so its refusal is said rather than dropped.
         if (outcome.status === 'rejected' && outcome.code === 'not-allowed') {
-            api.announce(t('RichTextEditor_unavailableNotAllowed'));
+            api.announce(translate('RichTextEditor_unavailableNotAllowed'));
         }
     });
 };

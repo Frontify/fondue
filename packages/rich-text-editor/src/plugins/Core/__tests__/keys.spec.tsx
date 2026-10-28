@@ -252,18 +252,20 @@ describe('core keys', () => {
             document: documentProfile,
             'brand-document': brandDocumentProfile,
         };
-        const bare = Object.entries(profiles).flatMap(([name, profile]) =>
-            compiledOf(profile().definition)
-                .keymap.map(({ key }) => key.replace(/^(mac|other):/, ''))
-                .filter((key) => {
-                    const parts = key.split(/-(?!$)/);
-                    const last = parts.at(-1) ?? '';
-                    const printable = Array.from(last).length === 1;
+        const bare: string[] = [];
+        for (const [name, profile] of Object.entries(profiles)) {
+            for (const binding of compiledOf(profile().definition).keymap) {
+                const key = binding.key.replace(/^(mac|other):/, '');
+                const parts = key.split(/-(?!$)/);
+                const last = parts.at(-1) ?? '';
+                const printable = Array.from(last).length === 1;
+                if (!printable || parts.slice(0, -1).some((part) => ['Mod', 'Ctrl', 'Alt'].includes(part))) {
+                    continue;
+                }
 
-                    return printable && !parts.slice(0, -1).some((part) => ['Mod', 'Ctrl', 'Alt'].includes(part));
-                })
-                .map((key) => `${name}: ${key}`),
-        );
+                bare.push(`${name}: ${key}`);
+            }
+        }
 
         expect(bare).toEqual([]);
     });

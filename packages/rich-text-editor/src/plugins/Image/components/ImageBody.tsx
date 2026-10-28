@@ -17,19 +17,8 @@ export type ImageBodyProps = { chrome: ImageChromeState };
 
 /** The image, its upload slot or its placeholder, whichever the node shows. */
 export const ImageBody = ({ chrome }: ImageBodyProps) => {
-    const {
-        attrs,
-        context,
-        translate: t,
-        shown,
-        unavailable,
-        unfinished,
-        status,
-        resize,
-        decided,
-        animated,
-        paused,
-    } = chrome;
+    const { attrs, context, translate, shown, unavailable, unfinished, status, resize, decided, animated, paused } =
+        chrome;
     const { frameRef, setFailed, selectImage } = chrome;
     if (status !== undefined) {
         return (
@@ -37,7 +26,7 @@ export const ImageBody = ({ chrome }: ImageBodyProps) => {
                 status={status}
                 width={sizeOf(attrs.width)}
                 height={sizeOf(attrs.height)}
-                translate={t}
+                translate={translate}
                 onMouseDown={selectImage}
             />
         );
@@ -47,7 +36,7 @@ export const ImageBody = ({ chrome }: ImageBodyProps) => {
         return (
             // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- a press selects the node as on any atom; the keyboard selects it with the arrows.
             <span className={styles.placeholder} onMouseDown={selectImage}>
-                {t('RichTextEditor_imageUnfinished')}
+                {translate('RichTextEditor_imageUnfinished')}
             </span>
         );
     }

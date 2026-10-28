@@ -19,16 +19,16 @@ export type ColorMenuStrings = {
     cancel: string;
 };
 
-/** The colour menu's strings from the chrome's `t`. */
-export const colorMenuStrings = (t: CodecContext['translate']): ColorMenuStrings => ({
-    label: t('RichTextEditor_colorMenu'),
-    textColors: t('RichTextEditor_textColors'),
-    highlightColors: t('RichTextEditor_highlightColors'),
-    clear: t('RichTextEditor_clearColor'),
-    customText: t('RichTextEditor_customColor'),
-    customHighlight: t('RichTextEditor_customHighlight'),
-    save: t('RichTextEditor_colorPickerSave'),
-    cancel: t('RichTextEditor_cancel'),
+/** The colour menu's strings from the chrome's `translate`. */
+export const colorMenuStrings = (translate: CodecContext['translate']): ColorMenuStrings => ({
+    label: translate('RichTextEditor_colorMenu'),
+    textColors: translate('RichTextEditor_textColors'),
+    highlightColors: translate('RichTextEditor_highlightColors'),
+    clear: translate('RichTextEditor_clearColor'),
+    customText: translate('RichTextEditor_customColor'),
+    customHighlight: translate('RichTextEditor_customHighlight'),
+    save: translate('RichTextEditor_colorPickerSave'),
+    cancel: translate('RichTextEditor_cancel'),
 });
 
 /** What the menu offers: the tokens for each mark, and which marks take any colour through the picker. */

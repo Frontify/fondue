@@ -35,9 +35,9 @@ export type NumberingDialogProps = OverlayProps & {
  */
 export const NumberingDialog = ({ payload, initial, opener, close: onClose }: NumberingDialogProps) => {
     const api = useEditorApi();
-    let t: CodecContext['translate'] = (key) => key;
+    let translate: CodecContext['translate'] = (key) => key;
     if (api !== undefined) {
-        t = api.translate;
+        translate = api.translate;
     }
 
     const dialog = useEditorDialog(opener, onClose);
@@ -47,7 +47,7 @@ export const NumberingDialog = ({ payload, initial, opener, close: onClose }: Nu
     const fieldId = useId();
     const errorId = useId();
     const { min, max } = boundsOf(payload);
-    const range = t('RichTextEditor_startNumberingRange', { min, max });
+    const range = translate('RichTextEditor_startNumberingRange', { min, max });
     let status: 'error' | 'neutral' = 'neutral';
     let describedBy: { 'aria-describedby'?: string } = {};
     if (invalid) {
@@ -78,11 +78,11 @@ export const NumberingDialog = ({ payload, initial, opener, close: onClose }: Nu
     return (
         <EditorDialog
             dialog={dialog}
-            title={t('RichTextEditor_startNumbering')}
-            cancel={t('RichTextEditor_cancel')}
-            submit={{ label: t('RichTextEditor_apply'), onSubmit: apply }}
+            title={translate('RichTextEditor_startNumbering')}
+            cancel={translate('RichTextEditor_cancel')}
+            submit={{ label: translate('RichTextEditor_apply'), onSubmit: apply }}
         >
-            <Label htmlFor={fieldId}>{t('RichTextEditor_startNumberingField')}</Label>
+            <Label htmlFor={fieldId}>{translate('RichTextEditor_startNumberingField')}</Label>
             <TextInput
                 ref={fieldRef}
                 id={fieldId}

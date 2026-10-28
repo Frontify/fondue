@@ -55,22 +55,22 @@ export const severityCount = (counted: readonly CheckedIssue[], severity: Severi
     counted.filter(({ issue }) => issue.severity === severity).length;
 
 /** The summary heading: errors, warnings and reviews still showing. */
-export const checksSummary = (t: CodecContext['translate'], counted: readonly CheckedIssue[]) =>
+export const checksSummary = (translate: CodecContext['translate'], counted: readonly CheckedIssue[]) =>
     [
-        t('RichTextEditor_checksErrors', { errors: severityCount(counted, 'error') }),
-        t('RichTextEditor_checksWarnings', { warnings: severityCount(counted, 'warning') }),
-        t('RichTextEditor_checksReview', { review: severityCount(counted, 'review') }),
+        translate('RichTextEditor_checksErrors', { errors: severityCount(counted, 'error') }),
+        translate('RichTextEditor_checksWarnings', { warnings: severityCount(counted, 'warning') }),
+        translate('RichTextEditor_checksReview', { review: severityCount(counted, 'review') }),
     ].join(' ');
 
 /** The text an issue row shows, and the ids that describe its actions. */
 export const issueExcerpt = (
     issue: ContentIssue,
     text: string,
-    t: CodecContext['translate'],
+    translate: CodecContext['translate'],
     titleId: string,
     excerptId: string,
 ) => {
-    let excerpt = t('RichTextEditor_checksDocument');
+    let excerpt = translate('RichTextEditor_checksDocument');
     if (issue.path !== null) {
         excerpt = shortened(text);
     }

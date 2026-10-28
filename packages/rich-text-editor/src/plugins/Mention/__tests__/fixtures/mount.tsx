@@ -176,7 +176,10 @@ export const mountMentions = (options?: Mount) => {
             (blocksOf()[0]?.content ?? [])
                 .map((node) => {
                     if (node.type === 'mention') {
-                        return `@${typeof node.attrs?.labelSnapshot === 'string' ? node.attrs.labelSnapshot : ''}`;
+                        const snapshot = node.attrs?.labelSnapshot;
+                        const label = typeof snapshot === 'string' ? snapshot : '';
+
+                        return `@${label}`;
                     }
 
                     return node.text ?? '';
@@ -187,10 +190,10 @@ export const mountMentions = (options?: Mount) => {
     };
 };
 
-/** Runs the timers `ms` ahead and settles the promises they start, as a search and its answer need. */
-export const advance = async (ms: number) => {
+/** Runs the timers `milliseconds` ahead and settles the promises they start, as a search and its answer need. */
+export const advance = async (milliseconds: number) => {
     await act(async () => {
-        await vi.advanceTimersByTimeAsync(ms);
+        await vi.advanceTimersByTimeAsync(milliseconds);
     });
 };
 

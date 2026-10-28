@@ -258,13 +258,13 @@ const contentTypeCase = ({ it, expect, refuses, accepts, sample, nameOf, sampleT
     );
 };
 
-const pixelCase = (c: Conformance) => {
-    const { it, expect, refuses, accepts, probeType, probing, extension, maxImagePixels } = c;
+const pixelCase = (conformance: Conformance) => {
+    const { it, expect, refuses, accepts, probeType, probing, extension, maxImagePixels } = conformance;
     // The smallest square over the pixel limit, which exists only while its side is within 65,535 pixels.
     const square = Math.ceil(Math.sqrt(maxImagePixels + 1));
     // A host that takes no PNG, GIF or JPEG gets no pixel probe, since the kit builds no larger WebP or AVIF.
     if (probeType !== undefined && square <= MAX_IMAGE_SIDE) {
-        const probeName = c.nameOf(probeType);
+        const probeName = conformance.nameOf(probeType);
         const larger = square < 20_000 && 20_000 * 20_000 > maxImagePixels;
         const also = larger ? ' and a 20,000 by 20,000 one' : '';
         it(

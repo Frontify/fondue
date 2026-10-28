@@ -19,11 +19,14 @@ export const SIDE_KEYS = {
 export const EDIT_WIDTH = 'image.width.edit';
 
 /** The size menu's choices for an image of `displayWidth`: the presets, the original size, then Custom width. */
-export const sizeOptions = (t: CodecContext['translate'], displayWidth: number | null): readonly MenuOption[] => [
+export const sizeOptions = (
+    translate: CodecContext['translate'],
+    displayWidth: number | null,
+): readonly MenuOption[] => [
     ...[...PRESETS, null].map((preset) => {
-        let label = t('RichTextEditor_imageSizeOriginal');
+        let label = translate('RichTextEditor_imageSizeOriginal');
         if (preset !== null) {
-            label = t('RichTextEditor_imageSizePercent', { percent: preset });
+            label = translate('RichTextEditor_imageSizePercent', { percent: preset });
         }
 
         return {
@@ -34,14 +37,17 @@ export const sizeOptions = (t: CodecContext['translate'], displayWidth: number |
             checked: displayWidth === preset,
         };
     }),
-    { key: 'custom', label: t('RichTextEditor_imageSizeCustom'), command: EDIT_WIDTH },
+    { key: 'custom', label: translate('RichTextEditor_imageSizeCustom'), command: EDIT_WIDTH },
 ];
 
 /** The alignment menu's choices for a figure on `side`. */
-export const alignOptions = (t: CodecContext['translate'], side: (typeof SIDES)[number]): readonly MenuOption[] =>
+export const alignOptions = (
+    translate: CodecContext['translate'],
+    side: (typeof SIDES)[number],
+): readonly MenuOption[] =>
     SIDES.map((option) => ({
         key: option,
-        label: t(SIDE_KEYS[option]),
+        label: translate(SIDE_KEYS[option]),
         command: 'image.align.set',
         payload: { align: option },
         checked: side === option,

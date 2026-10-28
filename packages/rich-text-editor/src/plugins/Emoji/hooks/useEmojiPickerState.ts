@@ -19,13 +19,13 @@ type EmojiPickerStrings = {
     failed: string;
 };
 
-/** The picker's strings from the chrome's `t`. */
-const emojiStrings = (t: CodecContext['translate']): EmojiPickerStrings => ({
-    title: t('RichTextEditor_emoji'),
-    search: t('RichTextEditor_emojiSearch'),
-    noResults: t('RichTextEditor_emojiNoResults'),
-    loading: t('RichTextEditor_emojiLoading'),
-    failed: t('RichTextEditor_emojiFailed'),
+/** The picker's strings from the chrome's `translate`. */
+const emojiStrings = (translate: CodecContext['translate']): EmojiPickerStrings => ({
+    title: translate('RichTextEditor_emoji'),
+    search: translate('RichTextEditor_emojiSearch'),
+    noResults: translate('RichTextEditor_emojiNoResults'),
+    loading: translate('RichTextEditor_emojiLoading'),
+    failed: translate('RichTextEditor_emojiFailed'),
 });
 
 const statusOf = (data: EmojiData, shown: number, strings: EmojiPickerStrings): string => {

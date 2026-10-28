@@ -170,7 +170,12 @@ describe('the reference fake upload service', () => {
         const session = { documentId: 'document-1', sessionId: 'session-1', generation: 0 };
         const context = { signal: new AbortController().signal, session, reportProgress };
         const blob = new Blob(
-            [Uint8Array.from(atob('R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='), (c) => c.codePointAt(0) ?? 0)],
+            [
+                Uint8Array.from(
+                    atob('R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='),
+                    (character) => character.codePointAt(0) ?? 0,
+                ),
+            ],
             {
                 type: 'image/gif',
             },

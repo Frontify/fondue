@@ -87,13 +87,13 @@ const walk = (nodes: readonly HastChild[], offset: number, ranges: BlockDecorati
     return at;
 };
 
-const tokensOf = (hl: Highlighter, languageId: string, text: string): readonly BlockDecoration[] => {
-    if (!hl.registered(languageId)) {
+const tokensOf = (highlighter: Highlighter, languageId: string, text: string): readonly BlockDecoration[] => {
+    if (!highlighter.registered(languageId)) {
         return [];
     }
 
     const ranges: BlockDecoration[] = [];
-    walk(hl.highlight(languageId, text).children, 0, ranges);
+    walk(highlighter.highlight(languageId, text).children, 0, ranges);
 
     return ranges;
 };

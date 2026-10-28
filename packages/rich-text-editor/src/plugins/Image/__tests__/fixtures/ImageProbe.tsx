@@ -150,10 +150,14 @@ export const ImageProbe = ({ content = 'still', dir }: ImageProbeProps) => {
         }
     }, []);
     const document = stored(content);
+    const theme: { dir?: 'ltr' | 'rtl' } = {};
+    if (dir !== undefined) {
+        theme.dir = dir;
+    }
 
     return (
         <div dir={dir}>
-            <ThemeProvider {...(dir === undefined ? {} : { dir })}>
+            <ThemeProvider {...theme}>
                 <RichTextEditor
                     aria-label="Notes"
                     definition={definition}

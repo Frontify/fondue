@@ -8,9 +8,9 @@ import { frames } from '#/react/__tests__/fixtures/overlayHarness';
 import { KeyProbe, type KeyProbeProps } from './fixtures/KeyProbe';
 
 type Probe = NonNullable<Window['keyProbe']>;
-type Block = KeyProbeProps['blocks'] extends readonly (infer B)[] | undefined ? B : never;
+type Block = KeyProbeProps['blocks'] extends readonly (infer ProbeBlock)[] | undefined ? ProbeBlock : never;
 
-const p = (text?: string): Block => {
+const paragraph = (text?: string): Block => {
     if (text === undefined) {
         return { type: 'paragraph' };
     }
@@ -20,7 +20,7 @@ const p = (text?: string): Block => {
 
 const bullets = (...items: readonly string[]): Block => ({
     type: 'bullet_list',
-    content: items.map((text) => ({ type: 'list_item', content: [p(text)] })),
+    content: items.map((text) => ({ type: 'list_item', content: [paragraph(text)] })),
 });
 
 const surfaceOf = (page: Page) => page.getByRole('textbox', { name: 'Notes' });
@@ -173,18 +173,18 @@ const ROWS: readonly Case[] = [
     ...['Enter', 'Backspace', 'Tab', 'Escape'].flatMap((key): Case[] => [
         {
             name: `composition active: leaves ${key} with isComposing to the browser`,
-            probe: { ...document, blocks: [p('Hello')] },
+            probe: { ...document, blocks: [paragraph('Hello')] },
             run: leftToComposition(key, 'isComposing'),
         },
         {
             name: `composition active: leaves ${key} with only keyCode 229 to the browser`,
-            probe: { ...document, blocks: [p('Hello')] },
+            probe: { ...document, blocks: [paragraph('Hello')] },
             run: leftToComposition(key, 'keyCode'),
         },
     ]),
     {
         name: 'suggestion list open: Enter accepts the active option',
-        probe: { ...comment, blocks: [p('Hi')] },
+        probe: { ...comment, blocks: [paragraph('Hi')] },
         run: async (page) => {
             await mentionListAfter(page, 'Hi');
             await page.keyboard.press('Enter');
@@ -195,7 +195,7 @@ const ROWS: readonly Case[] = [
     },
     {
         name: 'suggestion list open: Backspace edits the query and keeps the list',
-        probe: { ...comment, blocks: [p('Hi')] },
+        probe: { ...comment, blocks: [paragraph('Hi')] },
         run: async (page) => {
             await mentionListAfter(page, 'Hi');
             await page.keyboard.press('Backspace');
@@ -206,7 +206,7 @@ const ROWS: readonly Case[] = [
     },
     {
         name: 'suggestion list open: Tab accepts the active option',
-        probe: { ...comment, blocks: [p('Hi')] },
+        probe: { ...comment, blocks: [paragraph('Hi')] },
         run: async (page) => {
             await mentionListAfter(page, 'Hi');
             await page.keyboard.press('Tab');
@@ -218,7 +218,7 @@ const ROWS: readonly Case[] = [
     },
     {
         name: 'suggestion list open: Shift+Tab closes the list, keeps the text and moves focus back',
-        probe: { ...comment, blocks: [p('Hi')] },
+        probe: { ...comment, blocks: [paragraph('Hi')] },
         run: async (page) => {
             await mentionListAfter(page, 'Hi');
             await page.keyboard.press('Shift+Tab');
@@ -230,7 +230,7 @@ const ROWS: readonly Case[] = [
     },
     {
         name: 'suggestion list open: Escape closes the list and keeps the text',
-        probe: { ...comment, blocks: [p('Hi')] },
+        probe: { ...comment, blocks: [paragraph('Hi')] },
         run: async (page) => {
             await mentionListAfter(page, 'Hi');
             await page.keyboard.press('Escape');
@@ -284,7 +284,7 @@ const ROWS: readonly Case[] = [
     },
     {
         name: 'a definition whose policy makes Enter submit: Enter submits',
-        probe: { ...comment, enterBehavior: 'submit', blocks: [p('Hello')] },
+        probe: { ...comment, enterBehavior: 'submit', blocks: [paragraph('Hello')] },
         run: async (page) => {
             await caretIn(page, 'Hello');
             await page.keyboard.press('Enter');
@@ -300,17 +300,17 @@ const ROWS: readonly Case[] = [
     },
     {
         name: 'a definition whose policy makes Enter submit: Backspace passes to the next rows',
-        probe: { ...comment, enterBehavior: 'submit', blocks: [p('Hello')] },
+        probe: { ...comment, enterBehavior: 'submit', blocks: [paragraph('Hello')] },
         run: pressTo('Hello', 'Backspace', ['paragraph(Hell)']),
     },
     {
         name: 'a definition whose policy makes Enter submit: Tab passes to the next rows and moves focus out',
-        probe: { ...comment, enterBehavior: 'submit', blocks: [p('Hello')] },
+        probe: { ...comment, enterBehavior: 'submit', blocks: [paragraph('Hello')] },
         run: focusLeavesOn('Hello', 'Tab'),
     },
     {
         name: 'a definition whose policy makes Enter submit: Escape passes to the next rows and reaches the host',
-        probe: { ...comment, enterBehavior: 'submit', blocks: [p('Hello')] },
+        probe: { ...comment, enterBehavior: 'submit', blocks: [paragraph('Hello')] },
         run: escapeLeftToHost('Hello'),
     },
     {
@@ -377,7 +377,7 @@ const ROWS: readonly Case[] = [
     },
     {
         name: 'empty last paragraph of a quote: Enter leaves the quote',
-        probe: { ...document, blocks: [{ type: 'blockquote', content: [p('quoted')] }, p('after')] },
+        probe: { ...document, blocks: [{ type: 'blockquote', content: [paragraph('quoted')] }, paragraph('after')] },
         run: async (page) => {
             await caretIn(page, 'quoted');
             // The first Enter splits as it does anywhere else, leaving the caret in an empty last paragraph of the quote.
@@ -397,7 +397,7 @@ const ROWS: readonly Case[] = [
         probe: {
             ...comment,
             enterBehavior: 'submit',
-            blocks: [{ type: 'blockquote', content: [p('quoted')] }, p('after')],
+            blocks: [{ type: 'blockquote', content: [paragraph('quoted')] }, paragraph('after')],
         },
         run: async (page) => {
             await caretIn(page, 'quoted');
@@ -416,7 +416,10 @@ const ROWS: readonly Case[] = [
     ...(['Backspace', 'Tab', 'Escape'] as const).map(
         (key): Case => ({
             name: `empty last paragraph of a quote: ${key} passes to the next rows`,
-            probe: { ...document, blocks: [{ type: 'blockquote', content: [p('quoted')] }, p('after')] },
+            probe: {
+                ...document,
+                blocks: [{ type: 'blockquote', content: [paragraph('quoted')] }, paragraph('after')],
+            },
             run: async (page) => {
                 await caretIn(page, 'quoted');
                 await page.keyboard.press('Enter');
@@ -440,17 +443,17 @@ const ROWS: readonly Case[] = [
     ),
     {
         name: 'caret right after a column break: Backspace removes the break',
-        probe: { features: 'brand-document', blocks: [p('one'), { type: 'column_break' }, p('two')] },
+        probe: { features: 'brand-document', blocks: [paragraph('one'), { type: 'column_break' }, paragraph('two')] },
         run: pressTo('two', 'Backspace', ['paragraph(one)', 'paragraph(two)'], 0),
     },
     {
         name: 'caret right after a column break: Enter passes to the next rows and adds a paragraph',
-        probe: { features: 'brand-document', blocks: [p('one'), { type: 'column_break' }, p('two')] },
+        probe: { features: 'brand-document', blocks: [paragraph('one'), { type: 'column_break' }, paragraph('two')] },
         run: pressTo('two', 'Enter', ['paragraph(one)', 'column_break', 'paragraph', 'paragraph(two)'], 0),
     },
     {
         name: 'caret right after a column break: Tab passes to the next rows and moves focus out',
-        probe: { features: 'brand-document', blocks: [p('one'), { type: 'column_break' }, p('two')] },
+        probe: { features: 'brand-document', blocks: [paragraph('one'), { type: 'column_break' }, paragraph('two')] },
         run: async (page) => {
             await caretIn(page, 'two', 0);
             await page.keyboard.press('Tab');
@@ -461,7 +464,7 @@ const ROWS: readonly Case[] = [
     },
     {
         name: 'caret right after a column break: Escape passes to the next rows and reaches the host',
-        probe: { features: 'brand-document', blocks: [p('one'), { type: 'column_break' }, p('two')] },
+        probe: { features: 'brand-document', blocks: [paragraph('one'), { type: 'column_break' }, paragraph('two')] },
         run: async (page) => {
             await caretIn(page, 'two', 0);
             await page.keyboard.press('Escape');
@@ -472,27 +475,27 @@ const ROWS: readonly Case[] = [
     },
     {
         name: 'anywhere else: Enter splits the paragraph',
-        probe: { ...document, blocks: [p('Hello')] },
+        probe: { ...document, blocks: [paragraph('Hello')] },
         run: pressTo('Hello', 'Enter', ['paragraph(Hel)', 'paragraph(lo)'], 3),
     },
     {
         name: 'anywhere else: Backspace joins the paragraph to the one before',
-        probe: { ...document, blocks: [p('one'), p('two')] },
+        probe: { ...document, blocks: [paragraph('one'), paragraph('two')] },
         run: pressTo('two', 'Backspace', ['paragraph(onetwo)'], 0),
     },
     {
         name: 'anywhere else: Tab moves focus out of the editor',
-        probe: { ...document, blocks: [p('Hello')] },
+        probe: { ...document, blocks: [paragraph('Hello')] },
         run: focusLeavesOn('Hello', 'Tab'),
     },
     {
         name: 'anywhere else: Shift+Tab moves focus out of the editor',
-        probe: { ...document, blocks: [p('Hello')] },
+        probe: { ...document, blocks: [paragraph('Hello')] },
         run: focusLeavesOn('Hello', 'Shift+Tab'),
     },
     {
         name: 'anywhere else: Escape closes the bubble toolbar and prevents the event',
-        probe: { ...document, bubble: true, blocks: [p('Hello')] },
+        probe: { ...document, bubble: true, blocks: [paragraph('Hello')] },
         run: async (page) => {
             await caretIn(page, 'Hello');
             await page.keyboard.press('Shift+Home');
@@ -505,7 +508,7 @@ const ROWS: readonly Case[] = [
     },
     {
         name: 'anywhere else: Escape with nothing shown reaches the host unprevented',
-        probe: { ...document, blocks: [p('Hello')] },
+        probe: { ...document, blocks: [paragraph('Hello')] },
         run: escapeLeftToHost('Hello'),
     },
 ];
@@ -572,7 +575,7 @@ const OVERLAPS: readonly Case[] = [
     },
     {
         name: 'the bubble toolbar shown inside a host Dialog: Escape closes the bubble and leaves the dialog open',
-        probe: { ...document, bubble: true, inDialog: true, blocks: [p('Hello')] },
+        probe: { ...document, bubble: true, inDialog: true, blocks: [paragraph('Hello')] },
         run: async (page) => {
             await caretIn(page, 'Hello');
             await page.keyboard.press('Shift+Home');

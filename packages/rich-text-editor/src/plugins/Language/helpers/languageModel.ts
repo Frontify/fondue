@@ -31,26 +31,26 @@ export const directions = [
 
 /** The dialog's strings in the editor's UI locale; the keys themselves while there is no editor. */
 export const languageStrings = (api: EditorApi | undefined): LanguageStrings => {
-    let t: CodecContext['translate'] = (key) => key;
+    let translate: CodecContext['translate'] = (key) => key;
     if (api !== undefined) {
-        t = api.translate;
+        translate = api.translate;
     }
 
-    return stringsOf(t);
+    return stringsOf(translate);
 };
 
-const stringsOf = (t: CodecContext['translate']): LanguageStrings => ({
-    title: t('RichTextEditor_languageTitle'),
-    tag: t('RichTextEditor_languageTag'),
-    direction: t('RichTextEditor_languageDirection'),
-    none: t('RichTextEditor_languageNone'),
-    automatic: t('RichTextEditor_languageAutomatic'),
-    leftToRight: t('RichTextEditor_languageLeftToRight'),
-    rightToLeft: t('RichTextEditor_languageRightToLeft'),
-    invalid: t('RichTextEditor_languageInvalid'),
-    remove: t('RichTextEditor_languageRemove'),
-    apply: t('RichTextEditor_apply'),
-    cancel: t('RichTextEditor_cancel'),
+const stringsOf = (translate: CodecContext['translate']): LanguageStrings => ({
+    title: translate('RichTextEditor_languageTitle'),
+    tag: translate('RichTextEditor_languageTag'),
+    direction: translate('RichTextEditor_languageDirection'),
+    none: translate('RichTextEditor_languageNone'),
+    automatic: translate('RichTextEditor_languageAutomatic'),
+    leftToRight: translate('RichTextEditor_languageLeftToRight'),
+    rightToLeft: translate('RichTextEditor_languageRightToLeft'),
+    invalid: translate('RichTextEditor_languageInvalid'),
+    remove: translate('RichTextEditor_languageRemove'),
+    apply: translate('RichTextEditor_apply'),
+    cancel: translate('RichTextEditor_cancel'),
 });
 
 /** The `languages` option of `marks.language`, or none when that feature is not installed. */

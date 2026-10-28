@@ -32,11 +32,16 @@ const setLink: EditorCommand<LinkValue, 'marks'> = {
             styleId: { type: 'id', nullable: true },
         },
     },
-    run: (api, { text, ...attrs }) =>
-        api.marks.set('link', attrs, {
+    run: (api, { text, ...attrs }) => {
+        const options: { extendToMarkRange: 'touching'; text?: string } = {
             extendToMarkRange: 'touching',
-            ...(text === undefined ? {} : { text }),
-        }),
+        };
+        if (text !== undefined) {
+            options.text = text;
+        }
+
+        return api.marks.set('link', attrs, options);
+    },
 };
 
 /** Opens the link popover on the link at the selection, or on the selection for a new link. */

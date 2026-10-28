@@ -50,11 +50,22 @@ export const para = (...content: ContentNodeJSON[]): ContentNodeJSON => ({
     attrs: { lang: null },
     content,
 });
-export const headingBlock = (nodeId: string, level: number, value = ''): ContentNodeJSON => ({
-    type: 'heading',
-    attrs: { nodeId, level, lang: null },
-    ...(value === '' ? {} : { content: [text(value)] }),
-});
+export const headingBlock = (nodeId: string, level: number, value = ''): ContentNodeJSON => {
+    const heading: {
+        type: 'heading';
+        attrs: { nodeId: string; level: number; lang: null };
+        content?: ContentNodeJSON[];
+    } = {
+        type: 'heading',
+        attrs: { nodeId, level, lang: null },
+    };
+    if (value !== '') {
+        heading.content = [text(value)];
+    }
+
+    return heading;
+};
+
 export const link = (value: string, href = 'https://example.com/page') =>
     text(value, [{ type: 'link', attrs: { href, openInNewWindow: false, styleId: null } }]);
 export const colored = (value: string, tokenId: string) =>
@@ -109,6 +120,15 @@ export const mountChecks = ({
         definition = defineEditor({ id: 'test.checks', model, policy, plugins: parts });
     }
 
+    const editorProps: { services?: EditorServices; readOnly?: boolean } = {};
+    if (services !== undefined) {
+        editorProps.services = services;
+    }
+
+    if (readOnly !== undefined) {
+        editorProps.readOnly = readOnly;
+    }
+
     const rendered = render(
         <div style={{ backgroundColor: '#ffffff' }}>
             <RichTextEditor
@@ -116,8 +136,7 @@ export const mountChecks = ({
                 definition={definition}
                 presentation={defineReactPresentation({ toolbar, colorTokens: COLOR_TOKENS })}
                 defaultValue={{ documentId: 'document-1', revision: null, document: storedIn(model, blocks) }}
-                {...(services === undefined ? {} : { services })}
-                {...(readOnly === undefined ? {} : { readOnly })}
+                {...editorProps}
                 onDocumentChange={(change) => changes.push(change)}
                 ref={ref}
             />

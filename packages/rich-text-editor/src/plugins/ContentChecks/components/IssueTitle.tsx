@@ -16,17 +16,17 @@ export type IssueTitleProps = {
 };
 
 /** The issue's severity, rule name and whether the author dismissed it. */
-export const IssueTitle = ({ issue, dismissed, titleId, translate: t }: IssueTitleProps) => {
+export const IssueTitle = ({ issue, dismissed, titleId, translate }: IssueTitleProps) => {
     const Icon = SEVERITY_ICONS[issue.severity];
 
     return (
         <div id={titleId} className={styles.title}>
             <Badge size="small" {...SEVERITY_BADGES[issue.severity]}>
                 <Icon size={16} aria-hidden="true" />
-                {t(SEVERITY_KEYS[issue.severity])}
+                {translate(SEVERITY_KEYS[issue.severity])}
             </Badge>{' '}
-            <span>{t(ruleNameKey(issue.ruleId))}</span> <span className={styles.rule}>({issue.ruleId})</span>
-            {dismissed && <span className={styles.dismissed}> {t('RichTextEditor_checksDismissed')}</span>}
+            <span>{translate(ruleNameKey(issue.ruleId))}</span> <span className={styles.rule}>({issue.ruleId})</span>
+            {dismissed && <span className={styles.dismissed}> {translate('RichTextEditor_checksDismissed')}</span>}
         </div>
     );
 };

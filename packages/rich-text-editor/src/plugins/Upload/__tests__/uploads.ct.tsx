@@ -158,12 +158,18 @@ test('shows the drop cursor at the nearest block boundary for a dropped file and
     const point = { x: box.x + 8, y: box.y + box.height / 2 };
     const send = (type: string) =>
         page.evaluate(
-            ({ x, y, eventType, bytes }) => {
+            ({ x: pointerX, y: pointerY, eventType, bytes }) => {
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(new File([Uint8Array.from(bytes)], 'logo.png', { type: 'image/png' }));
                 const surface = document.querySelector('[data-rte-surface]') as HTMLElement;
                 surface.dispatchEvent(
-                    new DragEvent(eventType, { dataTransfer, clientX: x, clientY: y, bubbles: true, cancelable: true }),
+                    new DragEvent(eventType, {
+                        dataTransfer,
+                        clientX: pointerX,
+                        clientY: pointerY,
+                        bubbles: true,
+                        cancelable: true,
+                    }),
                 );
             },
             { ...point, eventType: type, bytes: [...pngBytes(40, 30)] },

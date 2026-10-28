@@ -51,12 +51,14 @@ export const CODE_LANGUAGES: readonly (
 /** The language menu's choices for a block of `languageId`: plain text, the listed languages, and a stored unlisted one. */
 export const languageChoices = (
     languageId: string | null,
-    t: (key: keyof TranslationStrings) => string,
+    translate: (key: keyof TranslationStrings) => string,
 ): readonly { id: string | null; label: string }[] => {
-    const choices: { id: string | null; label: string }[] = [{ id: null, label: t('RichTextEditor_codePlainText') }];
+    const choices: { id: string | null; label: string }[] = [
+        { id: null, label: translate('RichTextEditor_codePlainText') },
+    ];
     for (const language of CODE_LANGUAGES) {
         if ('labelKey' in language) {
-            choices.push({ id: language.id, label: t(language.labelKey) });
+            choices.push({ id: language.id, label: translate(language.labelKey) });
         } else {
             choices.push(language);
         }

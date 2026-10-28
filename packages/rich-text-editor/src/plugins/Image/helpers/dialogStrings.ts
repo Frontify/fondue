@@ -18,13 +18,13 @@ export type WidthStrings = {
     cancel: string;
 };
 
-/** The width dialog's strings in the UI locale of `t`. */
-export const widthStrings = (t: CodecContext['translate']): WidthStrings => ({
-    title: t('RichTextEditor_imageWidthTitle'),
-    field: t('RichTextEditor_imageWidthField'),
-    range: t('RichTextEditor_imageWidthRange', { min: MIN_WIDTH, max: MAX_WIDTH }),
-    apply: t('RichTextEditor_apply'),
-    cancel: t('RichTextEditor_cancel'),
+/** The width dialog's strings in the UI locale of `translate`. */
+export const widthStrings = (translate: CodecContext['translate']): WidthStrings => ({
+    title: translate('RichTextEditor_imageWidthTitle'),
+    field: translate('RichTextEditor_imageWidthField'),
+    range: translate('RichTextEditor_imageWidthRange', { min: MIN_WIDTH, max: MAX_WIDTH }),
+    apply: translate('RichTextEditor_apply'),
+    cancel: translate('RichTextEditor_cancel'),
 });
 
 /** The alternative text dialog's strings, in the UI locale. */
@@ -43,18 +43,18 @@ export type AltTextStrings = {
     cancel: string;
 };
 
-/** The alternative text dialog's strings in the UI locale of `t`. */
-export const altTextStrings = (t: CodecContext['translate']): AltTextStrings => ({
-    title: t('RichTextEditor_imageAltTitle'),
-    choice: t('RichTextEditor_imageAltChoice'),
-    meaningful: t('RichTextEditor_imageAltMeaningful'),
-    meaningfulHint: t('RichTextEditor_imageAltMeaningfulHint'),
-    decorative: t('RichTextEditor_imageAltDecorative'),
-    decorativeHint: t('RichTextEditor_imageAltDecorativeHint'),
-    field: t('RichTextEditor_imageAltField'),
-    required: t('RichTextEditor_imageAltRequired'),
-    suggestion: t('RichTextEditor_imageAltSuggestion'),
-    useSuggestion: t('RichTextEditor_imageAltUseSuggestion'),
-    save: t('RichTextEditor_imageAltSave'),
-    cancel: t('RichTextEditor_cancel'),
+/** The alternative text dialog's strings in the UI locale of `translate`. */
+export const altTextStrings = (translate: CodecContext['translate']): AltTextStrings => ({
+    title: translate('RichTextEditor_imageAltTitle'),
+    choice: translate('RichTextEditor_imageAltChoice'),
+    meaningful: translate('RichTextEditor_imageAltMeaningful'),
+    meaningfulHint: translate('RichTextEditor_imageAltMeaningfulHint'),
+    decorative: translate('RichTextEditor_imageAltDecorative'),
+    decorativeHint: translate('RichTextEditor_imageAltDecorativeHint'),
+    field: translate('RichTextEditor_imageAltField'),
+    required: translate('RichTextEditor_imageAltRequired'),
+    suggestion: translate('RichTextEditor_imageAltSuggestion'),
+    useSuggestion: translate('RichTextEditor_imageAltUseSuggestion'),
+    save: translate('RichTextEditor_imageAltSave'),
+    cancel: translate('RichTextEditor_cancel'),
 });

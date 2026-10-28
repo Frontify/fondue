@@ -26,7 +26,7 @@ export type UploadControlsProps = {
  * the button that has focus, the button that takes its place gets focus, or once the upload completes the image's
  * first button, else the surface.
  */
-export const UploadControls = ({ nodeId, status, translate: t, onRemove }: UploadControlsProps) => {
+export const UploadControls = ({ nodeId, status, translate, onRemove }: UploadControlsProps) => {
     const api = useEditorApi();
     // These keep their identity when a locale change gives a new API, which reruns no effect.
     const focus = api?.focus;
@@ -41,7 +41,7 @@ export const UploadControls = ({ nodeId, status, translate: t, onRemove }: Uploa
     if (running) {
         buttons = installed(CANCEL) && (
             <NodeChromeButton
-                label={t('RichTextEditor_uploadCancel')}
+                label={translate('RichTextEditor_uploadCancel')}
                 onClick={() => {
                     // The slot and this button leave, so focus goes to the surface where the slot was.
                     focusedRef.current = false;
@@ -55,11 +55,11 @@ export const UploadControls = ({ nodeId, status, translate: t, onRemove }: Uploa
             <>
                 {installed(RETRY) && (
                     <NodeChromeButton
-                        label={t('RichTextEditor_uploadRetry')}
+                        label={translate('RichTextEditor_uploadRetry')}
                         onClick={() => api?.commands.execute(RETRY, { nodeId })}
                     />
                 )}
-                <NodeChromeButton label={t('RichTextEditor_uploadRemove')} onClick={onRemove} />
+                <NodeChromeButton label={translate('RichTextEditor_uploadRemove')} onClick={onRemove} />
             </>
         );
     }

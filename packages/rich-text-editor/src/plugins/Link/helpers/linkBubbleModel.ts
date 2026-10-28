@@ -18,13 +18,13 @@ export type LinkBubbleStrings = {
 };
 
 /** The link bubble's strings, in the UI locale. */
-export const linkBubbleStrings = (t: CodecContext['translate']): LinkBubbleStrings => ({
-    label: t('RichTextEditor_link'),
-    open: t('RichTextEditor_linkOpenInNewTab'),
-    edit: t('RichTextEditor_linkEdit'),
-    copy: t('RichTextEditor_linkCopy'),
-    remove: t('RichTextEditor_linkRemove'),
-    copied: t('RichTextEditor_linkCopied'),
+export const linkBubbleStrings = (translate: CodecContext['translate']): LinkBubbleStrings => ({
+    label: translate('RichTextEditor_link'),
+    open: translate('RichTextEditor_linkOpenInNewTab'),
+    edit: translate('RichTextEditor_linkEdit'),
+    copy: translate('RichTextEditor_linkCopy'),
+    remove: translate('RichTextEditor_linkRemove'),
+    copied: translate('RichTextEditor_linkCopied'),
 });
 
 /** The link at a caret in an editable surface, at either edge of it or inside it; none for a range or a read-only surface. */
@@ -37,12 +37,12 @@ export const caretLink = (api: EditorApi | undefined): MarkRunValue | undefined 
 };
 
 /** Whether two reads are the same link: the same range and attributes, or both none. */
-export const sameLink = (a: MarkRunValue | undefined, b: MarkRunValue | undefined) =>
-    a === b ||
-    (a !== undefined &&
-        b !== undefined &&
-        sameRange(a.range, b.range) &&
-        JSON.stringify(a.attrs) === JSON.stringify(b.attrs));
+export const sameLink = (left: MarkRunValue | undefined, right: MarkRunValue | undefined) =>
+    left === right ||
+    (left !== undefined &&
+        right !== undefined &&
+        sameRange(left.range, right.range) &&
+        JSON.stringify(left.attrs) === JSON.stringify(right.attrs));
 
 // Only a caret at a link is read, so typing elsewhere never renders the bubble.
 export const caretOf = (api: EditorApi | undefined) => {

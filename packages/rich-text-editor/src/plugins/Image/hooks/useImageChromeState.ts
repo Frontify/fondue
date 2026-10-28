@@ -93,7 +93,7 @@ export const useImageChromeState = () => {
     const api = useEditorApi();
     // It keeps its identity when a locale change gives a new API.
     const announce = api?.announce;
-    const { translate: t } = context;
+    const { translate } = context;
     const shown = useMemo(() => imageOutput(attrs, context), [attrs, context]);
     const src = shown.kind === 'image' ? shown.src : undefined;
     const [failed, setFailed] = useState<string>();
@@ -123,7 +123,7 @@ export const useImageChromeState = () => {
     const upload = useUploadStatus(nodeId ?? '');
     const slot = attrs.assetId === null;
     useSpokenImage(attrs, context, unavailable, slot ? upload : undefined, slot, selected, announce);
-    const altLabel = review ? t('RichTextEditor_imageAltReview') : undefined;
+    const altLabel = review ? translate('RichTextEditor_imageAltReview') : undefined;
     const takesFocus = isRecord(replaced) && replaced.focus === true;
     useReviewFocus(altLabel, takesFocus, barRef);
     let displayWidth: number | null = null;
@@ -149,15 +149,15 @@ export const useImageChromeState = () => {
         execute('image.width.edit');
     };
 
-    const altText = altActionLabel(t, review, kept);
-    const sizeText = sizeActionLabel(t, displayWidth);
+    const altText = altActionLabel(translate, review, kept);
+    const sizeText = sizeActionLabel(translate, displayWidth);
     const unfinished = attrs.assetId === null;
     const status = unfinished ? upload : undefined;
     const selectImage = (event: MouseEvent) => selectImageOnPress(event, selected, select, api);
 
     return {
         api,
-        translate: t,
+        translate,
         context,
         attrs,
         nodeId,

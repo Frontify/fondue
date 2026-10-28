@@ -21,8 +21,8 @@ export type IssueProps = {
 };
 
 /** One issue: its name, the text it names, Go to, its repair, help, and Dismiss for a warning or review. */
-export const Issue = ({ held, rowKey, translate: t, onFocusIssue, onActive }: IssueProps) => {
-    const row = useIssueRow(held, rowKey, t, onActive);
+export const Issue = ({ held, rowKey, translate, onFocusIssue, onActive }: IssueProps) => {
+    const row = useIssueRow(held, rowKey, translate, onActive);
     const { issue, dismissed, excerpt, excerptId, titleId, described, helpRef } = row;
 
     return (
@@ -39,7 +39,7 @@ export const Issue = ({ held, rowKey, translate: t, onFocusIssue, onActive }: Is
                 }
             }}
         >
-            <IssueTitle issue={issue} dismissed={dismissed} titleId={titleId} translate={t} />
+            <IssueTitle issue={issue} dismissed={dismissed} titleId={titleId} translate={translate} />
             {excerpt !== '' && (
                 <p id={excerptId} className={styles.excerpt}>
                     <bdi>{excerpt}</bdi>
@@ -50,12 +50,12 @@ export const Issue = ({ held, rowKey, translate: t, onFocusIssue, onActive }: Is
                 dismissed={dismissed}
                 repairable={row.repairable}
                 described={described}
-                translate={t}
+                translate={translate}
                 onGoTo={row.goTo}
                 onRepair={row.repair}
                 onDismiss={row.dismiss}
             />
-            <IssueHelp helpRef={helpRef} ruleId={issue.ruleId} translate={t} />
+            <IssueHelp helpRef={helpRef} ruleId={issue.ruleId} translate={translate} />
         </li>
     );
 };
