@@ -18,10 +18,10 @@ import { caretLink, caretOf, linkBubbleStrings, returnFocus, sameLink } from '..
 /** The link bubble's state, effects and handlers; none while there is no link to show. */
 export const useLinkBubbleState = ({ toolbarRef, covered }: StandingOverlayProps) => {
     const api = useEditorApi();
-    let translate: CodecContext['t'] = (key) => key;
+    let translate: CodecContext['translate'] = (key) => key;
     let testId = '';
     if (api !== undefined) {
-        translate = api.t;
+        translate = api.translate;
         testId = api.testId();
     }
 

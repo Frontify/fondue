@@ -12,7 +12,7 @@ import { uploadStatusText } from './useUploadStatus';
  * for a slot, its upload as it stands, with how to fix a failed one.
  */
 const spokenOf = (attrs: JsonObject, context: CodecContext, unavailable: boolean, upload: UploadStatus | undefined) => {
-    const { t } = context;
+    const { translate: t } = context;
     if (attrs.assetId === null) {
         if (upload !== undefined) {
             // The live region writes a value between U+2068 and U+2069 into a `bdi` of its own.

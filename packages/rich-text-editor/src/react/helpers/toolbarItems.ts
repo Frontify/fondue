@@ -133,7 +133,7 @@ type ToolbarItemsContext = {
     engine: CompiledDefinition;
     authoring: AuthoringPolicy;
     presentation: ReactPresentation;
-    t: CodecContext['t'];
+    translate: CodecContext['translate'];
     lang: string;
     entries: ButtonEntry[];
 };
@@ -155,7 +155,7 @@ const itemOf = (
     const { keymap } = context.engine;
     let label: string;
     if (entry.label === undefined) {
-        label = context.t(entry.labelKey as `RichTextEditor_${string}`);
+        label = context.translate(entry.labelKey as `RichTextEditor_${string}`);
     } else {
         label = translatedLabel(entry.label, context.lang);
     }
@@ -164,7 +164,7 @@ const itemOf = (
     const control = context.presentation.controls?.[command];
     if (control !== undefined) {
         if (control.labelKey !== undefined) {
-            label = context.t(control.labelKey as `RichTextEditor_${string}`);
+            label = context.translate(control.labelKey as `RichTextEditor_${string}`);
         }
 
         icon = control.icon ?? icon;
@@ -250,7 +250,7 @@ const textStyleItem = (
         ),
     );
     if (options.some((option) => option.offered) && !items.some((item) => item.key === TEXT_STYLE)) {
-        const label = context.t('RichTextEditor_textStyle');
+        const label = context.translate('RichTextEditor_textStyle');
 
         return {
             key: TEXT_STYLE,
@@ -263,7 +263,7 @@ const textStyleItem = (
             groupStart,
             bubble: true,
             options,
-            groupLabel: context.t('RichTextEditor_brandStyles'),
+            groupLabel: context.translate('RichTextEditor_brandStyles'),
         };
     }
 
@@ -281,7 +281,7 @@ export const toolbarItems = (
     engine: CompiledDefinition,
     authoring: AuthoringPolicy,
     presentation: ReactPresentation | undefined,
-    t: CodecContext['t'],
+    t: CodecContext['translate'],
     /** The UI locale's language tag, which picks a plugin's label. */
     lang: string,
     plugins: readonly EditorPart[] = [],
@@ -297,7 +297,7 @@ export const toolbarItems = (
         entries.push(...shown.map((entry) => ({ ...entry, labelKey: entry.labelKey ?? '' })));
     }
 
-    const context: ToolbarItemsContext = { engine, authoring, presentation, t, lang, entries };
+    const context: ToolbarItemsContext = { engine, authoring, presentation, translate: t, lang, entries };
     const items: ToolbarItem[] = [];
     const groups = presentation.toolbar ?? toolbarGroups(plugins, authoring);
     for (const group of groups) {
@@ -339,7 +339,7 @@ export const menuItems = (
     engine: CompiledDefinition,
     authoring: AuthoringPolicy,
     items: readonly ToolbarItem[],
-    t: CodecContext['t'],
+    t: CodecContext['translate'],
     /** The UI locale's language tag, which picks a plugin's label. */
     lang: string,
     plugins: readonly EditorPart[] = [],

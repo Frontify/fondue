@@ -86,14 +86,14 @@ const PanelFallback = ({ message, closeLabel, onClose }: PanelFallbackProps) => 
 export type PanelFrameProps = {
     id: string;
     panel: ComponentType<PanelComponentProps>;
-    t: CodecContext['t'];
+    translate: CodecContext['translate'];
     requested: number;
     testId: string;
     onClose: () => void;
 };
 
 /** The open panel, with its error boundary. It takes focus when it opens, and Escape closes it. */
-export const PanelFrame = ({ id, panel: Panel, t, requested, testId, onClose }: PanelFrameProps) => {
+export const PanelFrame = ({ id, panel: Panel, translate: t, requested, testId, onClose }: PanelFrameProps) => {
     const slotRef = useRef<HTMLDivElement>(null);
 
     // Runs after the panel's own layout effects, so a panel that focused itself keeps that focus.
@@ -150,7 +150,7 @@ export const PanelFrame = ({ id, panel: Panel, t, requested, testId, onClose }: 
                         closeLabel={t('RichTextEditor_close')}
                         onClose={onClose}
                     >
-                        <Panel close={onClose} t={t} requested={requested} />
+                        <Panel close={onClose} translate={t} requested={requested} />
                     </PanelBoundary>
                 </div>
             </ScrollArea>

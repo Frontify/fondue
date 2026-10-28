@@ -17,7 +17,19 @@ export type ImageBodyProps = { chrome: ImageChromeState };
 
 /** The image, its upload slot or its placeholder, whichever the node shows. */
 export const ImageBody = ({ chrome }: ImageBodyProps) => {
-    const { attrs, context, t, shown, unavailable, unfinished, status, resize, decided, animated, paused } = chrome;
+    const {
+        attrs,
+        context,
+        translate: t,
+        shown,
+        unavailable,
+        unfinished,
+        status,
+        resize,
+        decided,
+        animated,
+        paused,
+    } = chrome;
     const { frameRef, setFailed, selectImage } = chrome;
     if (status !== undefined) {
         return (
@@ -25,7 +37,7 @@ export const ImageBody = ({ chrome }: ImageBodyProps) => {
                 status={status}
                 width={sizeOf(attrs.width)}
                 height={sizeOf(attrs.height)}
-                t={t}
+                translate={t}
                 onMouseDown={selectImage}
             />
         );

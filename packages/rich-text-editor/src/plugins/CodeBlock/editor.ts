@@ -157,7 +157,7 @@ export const codeBlockEditor = defineEditorPart(codeBlock, {
                     languageId = block.attrs.languageId;
                 }
 
-                const options = languageChoices(languageId, api.t).map(({ id, label }) => ({
+                const options = languageChoices(languageId, api.translate).map(({ id, label }) => ({
                     key: id ?? '',
                     label,
                     command: 'code-block.language.set',
@@ -167,7 +167,7 @@ export const codeBlockEditor = defineEditorPart(codeBlock, {
 
                 // A code block has no `nodeId`, so the menu keeps the block's range, which a selection change leaves.
                 api.overlays.open(OptionsMenu, {
-                    label: api.t('RichTextEditor_codeLanguageMenu'),
+                    label: api.translate('RichTextEditor_codeLanguageMenu'),
                     options,
                     node: block.range,
                 });
@@ -185,7 +185,7 @@ export const codeBlockEditor = defineEditorPart(codeBlock, {
 
                 // The caret the menu opened with, as the block's chrome converts from; a whole-block range stops `paragraph.set`.
                 api.overlays.open(TurnIntoMenu, {
-                    label: api.t('RichTextEditor_slashTurnInto'),
+                    label: api.translate('RichTextEditor_slashTurnInto'),
                     node: api.selectedRange(),
                 });
 

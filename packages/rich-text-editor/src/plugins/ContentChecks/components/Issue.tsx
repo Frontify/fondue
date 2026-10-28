@@ -15,13 +15,13 @@ import { IssueTitle } from './IssueTitle';
 export type IssueProps = {
     held: CheckedIssue;
     rowKey: string;
-    t: PanelComponentProps['t'];
+    translate: PanelComponentProps['translate'];
     onFocusIssue: (rowKey: string | undefined) => void;
     onActive: (rowKey: string) => void;
 };
 
 /** One issue: its name, the text it names, Go to, its repair, help, and Dismiss for a warning or review. */
-export const Issue = ({ held, rowKey, t, onFocusIssue, onActive }: IssueProps) => {
+export const Issue = ({ held, rowKey, translate: t, onFocusIssue, onActive }: IssueProps) => {
     const row = useIssueRow(held, rowKey, t, onActive);
     const { issue, dismissed, excerpt, excerptId, titleId, described, helpRef } = row;
 
@@ -39,7 +39,7 @@ export const Issue = ({ held, rowKey, t, onFocusIssue, onActive }: IssueProps) =
                 }
             }}
         >
-            <IssueTitle issue={issue} dismissed={dismissed} titleId={titleId} t={t} />
+            <IssueTitle issue={issue} dismissed={dismissed} titleId={titleId} translate={t} />
             {excerpt !== '' && (
                 <p id={excerptId} className={styles.excerpt}>
                     <bdi>{excerpt}</bdi>
@@ -50,12 +50,12 @@ export const Issue = ({ held, rowKey, t, onFocusIssue, onActive }: IssueProps) =
                 dismissed={dismissed}
                 repairable={row.repairable}
                 described={described}
-                t={t}
+                translate={t}
                 onGoTo={row.goTo}
                 onRepair={row.repair}
                 onDismiss={row.dismiss}
             />
-            <IssueHelp helpRef={helpRef} ruleId={issue.ruleId} t={t} />
+            <IssueHelp helpRef={helpRef} ruleId={issue.ruleId} translate={t} />
         </li>
     );
 };

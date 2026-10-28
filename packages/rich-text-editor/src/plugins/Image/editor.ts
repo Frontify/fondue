@@ -83,7 +83,7 @@ export const mediaImageEditor = defineEditorPart(image, {
                     return false;
                 }
 
-                api.overlays.open(AltTextDialog, { nodeId: image.nodeId, strings: altTextStrings(api.t) });
+                api.overlays.open(AltTextDialog, { nodeId: image.nodeId, strings: altTextStrings(api.translate) });
 
                 return true;
             },
@@ -101,9 +101,9 @@ export const mediaImageEditor = defineEditorPart(image, {
                     displayWidth = image.attrs.displayWidth;
                 }
 
-                const options = sizeOptions(api.t, displayWidth);
+                const options = sizeOptions(api.translate, displayWidth);
                 api.overlays.open(OptionsMenu, {
-                    label: api.t('RichTextEditor_imageSizeMenu'),
+                    label: api.translate('RichTextEditor_imageSizeMenu'),
                     options,
                     node: { nodeId: image.nodeId, at: 'node' },
                 });
@@ -124,7 +124,7 @@ export const mediaImageEditor = defineEditorPart(image, {
                     width = image.attrs.displayWidth;
                 }
 
-                api.overlays.open(WidthDialog, { width, nodeId: image.nodeId, strings: widthStrings(api.t) });
+                api.overlays.open(WidthDialog, { width, nodeId: image.nodeId, strings: widthStrings(api.translate) });
 
                 return true;
             },
@@ -140,9 +140,9 @@ export const mediaImageEditor = defineEditorPart(image, {
                 const figure = api.nearest('figure', image.nodeId);
                 const attrs = figure?.attrs;
                 const side = figureAlign(attrs ?? {});
-                const options = alignOptions(api.t, side);
+                const options = alignOptions(api.translate, side);
                 api.overlays.open(OptionsMenu, {
-                    label: api.t('RichTextEditor_imageAlignMenu'),
+                    label: api.translate('RichTextEditor_imageAlignMenu'),
                     options,
                     node: { nodeId: image.nodeId, at: 'node' },
                 });

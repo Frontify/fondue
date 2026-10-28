@@ -51,7 +51,10 @@ export const layoutOf = (presentation: ReaderPresentation | undefined) => {
 };
 
 /** The presentation's column count and the break labels in `t`'s locale, before the surface measured room for them. */
-export const columnsAtMount = (presentation: ReaderPresentation | undefined, t: CodecContext['t']): ColumnState => {
+export const columnsAtMount = (
+    presentation: ReaderPresentation | undefined,
+    t: CodecContext['translate'],
+): ColumnState => {
     let count = 1;
     const layout = layoutOf(presentation);
     if (layout !== undefined) {

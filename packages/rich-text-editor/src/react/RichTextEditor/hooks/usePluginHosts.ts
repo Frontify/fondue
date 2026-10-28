@@ -34,7 +34,7 @@ type HostSources = {
     announcer: Announcer;
     panels: MutableRefObject<{ open(id: string): void; close(): void; toggle(id: string): void }>;
     openPanel: MutableRefObject<string | undefined>;
-    t: () => CodecContext['t'];
+    translate: () => CodecContext['translate'];
     lang: () => string;
     presentation: () => PluginPresentation;
     references: () => ReferenceService | undefined;
@@ -59,7 +59,7 @@ export const usePluginHosts = (sources: HostSources) => {
         };
 
         return {
-            t: (key, values) => sources.t()(key, values),
+            translate: (key, values) => sources.translate()(key, values),
             locale: sources.lang,
             services: {
                 presentation: sources.presentation,
@@ -132,5 +132,5 @@ export const usePluginHosts = (sources: HostSources) => {
 };
 
 /** The hosts with the strings and language of this render, so plugin UI follows a locale change in the render it happens. */
-export const useRenderedHosts = (hosts: EditorHosts, t: CodecContext['t'], lang: string): EditorHosts =>
-    useMemo(() => ({ ...hosts, t: (key, values) => t(key, values), locale: () => lang }), [hosts, t, lang]);
+export const useRenderedHosts = (hosts: EditorHosts, t: CodecContext['translate'], lang: string): EditorHosts =>
+    useMemo(() => ({ ...hosts, translate: (key, values) => t(key, values), locale: () => lang }), [hosts, t, lang]);

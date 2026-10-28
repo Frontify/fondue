@@ -17,7 +17,7 @@ const COMPOSITION_WAIT_MS = 1000;
 export const useColumns = (
     live: EditorPort | undefined,
     presentation: ReaderPresentation | undefined,
-    t: ReturnType<typeof readerContext>['t'],
+    t: ReturnType<typeof readerContext>['translate'],
 ) => {
     const columns = layoutOf(presentation);
     let columnCount = 1;

@@ -6,7 +6,7 @@ import { type ReaderNodeProps, type ReaderRenderers } from '#/reader/define';
 /** `@` and the label isolated for bidirectional text, then the unavailable note, with no resource ID in the markup. */
 const Mention = ({ attrs, context }: ReaderNodeProps) => {
     const shown = mentionLabel(attrs, context);
-    const note = unavailableNote(shown, context.t);
+    const note = unavailableNote(shown, context.translate);
 
     return (
         <span data-mention="">

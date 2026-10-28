@@ -20,7 +20,7 @@ type EmojiPickerStrings = {
 };
 
 /** The picker's strings from the chrome's `t`. */
-const emojiStrings = (t: CodecContext['t']): EmojiPickerStrings => ({
+const emojiStrings = (t: CodecContext['translate']): EmojiPickerStrings => ({
     title: t('RichTextEditor_emoji'),
     search: t('RichTextEditor_emojiSearch'),
     noResults: t('RichTextEditor_emojiNoResults'),
@@ -47,7 +47,7 @@ const statusOf = (data: EmojiData, shown: number, strings: EmojiPickerStrings): 
 /** The picker's state, effects and handlers: the view only renders what this returns. */
 export const useEmojiPickerState = (api: EditorApi, onClose: () => void) => {
     const lang = api.locale();
-    const strings = emojiStrings(api.t);
+    const strings = emojiStrings(api.translate);
     const testId = api.testId();
     const [open, setOpen] = useState(true);
     const [data, setData] = useState<EmojiData>({ status: 'loading' });

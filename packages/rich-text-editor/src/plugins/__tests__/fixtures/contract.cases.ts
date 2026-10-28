@@ -54,7 +54,7 @@ const SESSION = {
         handle: { getSummary: () => ({ mode: 'editable' }), releaseTarget: () => undefined },
     },
     host: {
-        t: (key) => key,
+        translate: (key) => key,
         locale: () => 'en-US',
         services: {
             presentation: () => ({ styles: [], colorTokens: [], columns: COLUMNS, columnGap: undefined }),

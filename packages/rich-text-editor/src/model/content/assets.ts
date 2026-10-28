@@ -183,7 +183,7 @@ export const unavailableOf = (attrs: JsonObject, context: CodecContext): Unavail
         label = attrs.labelSnapshot;
     }
 
-    return { message: context.t('RichTextEditor_imageUnavailable'), label };
+    return { message: context.translate('RichTextEditor_imageUnavailable'), label };
 };
 
 /** The intrinsic size an image's box reserves before it loads, or none for a missing or extreme aspect ratio. */

@@ -93,7 +93,7 @@ export const useImageChromeState = () => {
     const api = useEditorApi();
     // It keeps its identity when a locale change gives a new API.
     const announce = api?.announce;
-    const { t } = context;
+    const { translate: t } = context;
     const shown = useMemo(() => imageOutput(attrs, context), [attrs, context]);
     const src = shown.kind === 'image' ? shown.src : undefined;
     const [failed, setFailed] = useState<string>();
@@ -157,7 +157,7 @@ export const useImageChromeState = () => {
 
     return {
         api,
-        t,
+        translate: t,
         context,
         attrs,
         nodeId,

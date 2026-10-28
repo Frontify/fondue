@@ -16,7 +16,7 @@ const RETRY = 'media.upload.retry';
 export type UploadControlsProps = {
     nodeId: string;
     status: UploadStatus;
-    t: CodecContext['t'];
+    translate: CodecContext['translate'];
     onRemove: () => void;
 };
 
@@ -26,7 +26,7 @@ export type UploadControlsProps = {
  * the button that has focus, the button that takes its place gets focus, or once the upload completes the image's
  * first button, else the surface.
  */
-export const UploadControls = ({ nodeId, status, t, onRemove }: UploadControlsProps) => {
+export const UploadControls = ({ nodeId, status, translate: t, onRemove }: UploadControlsProps) => {
     const api = useEditorApi();
     // These keep their identity when a locale change gives a new API, which reruns no effect.
     const focus = api?.focus;

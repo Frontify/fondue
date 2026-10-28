@@ -35,9 +35,9 @@ export type NumberingDialogProps = OverlayProps & {
  */
 export const NumberingDialog = ({ payload, initial, opener, close: onClose }: NumberingDialogProps) => {
     const api = useEditorApi();
-    let t: CodecContext['t'] = (key) => key;
+    let t: CodecContext['translate'] = (key) => key;
     if (api !== undefined) {
-        t = api.t;
+        t = api.translate;
     }
 
     const dialog = useEditorDialog(opener, onClose);

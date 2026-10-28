@@ -12,7 +12,7 @@ export type IssueActionsProps = {
     dismissed: boolean;
     repairable: boolean;
     described: string;
-    t: PanelComponentProps['t'];
+    translate: PanelComponentProps['translate'];
     onGoTo: () => void;
     onRepair: (button: HTMLButtonElement | undefined) => void;
     onDismiss: () => void;
@@ -24,7 +24,7 @@ export const IssueActions = ({
     dismissed,
     repairable,
     described,
-    t,
+    translate: t,
     onGoTo,
     onRepair,
     onDismiss,

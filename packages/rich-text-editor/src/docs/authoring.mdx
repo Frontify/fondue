@@ -608,7 +608,7 @@ Source: `src/plugins/Mention/reader.tsx`
 ```tsx
 const Mention = ({ attrs, context }: ReaderNodeProps) => {
     const shown = mentionLabel(attrs, context);
-    const note = unavailableNote(shown, context.t);
+    const note = unavailableNote(shown, context.translate);
 
     return (
         <span data-mention="">

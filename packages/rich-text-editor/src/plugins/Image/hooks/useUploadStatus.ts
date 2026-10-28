@@ -11,7 +11,7 @@ export const useUploadStatus = (nodeId: string): UploadStatus | undefined =>
     useEditorValue((api) => api?.uploads.status(nodeId), sameStatus);
 
 /** The text that says how the upload of a slot stands, and for one that failed or stopped, how to go on. */
-export const uploadStatusText = (status: UploadStatus, t: CodecContext['t']): string => {
+export const uploadStatusText = (status: UploadStatus, t: CodecContext['translate']): string => {
     if (status.state === 'running') {
         if (status.progress === null) {
             return t('RichTextEditor_uploadRunning');

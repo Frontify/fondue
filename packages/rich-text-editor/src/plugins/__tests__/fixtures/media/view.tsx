@@ -25,7 +25,7 @@ const AltTextDialog = ({ open, onOpenChange }: AltTextDialogProps) => {
     const overlay = useEditorOverlay(open, onOpenChange);
     const fieldId = useId();
     const [alt, setAlt] = useState(() => textOf(attrs.alt));
-    const { t } = context;
+    const { translate: t } = context;
 
     return (
         // A modal dialog holds focus, so every close request it makes is the author's.
@@ -61,11 +61,11 @@ const AltTextDialog = ({ open, onOpenChange }: AltTextDialogProps) => {
 const ImageChrome = () => {
     const { context } = useRichTextNodeView();
     const [open, setOpen] = useState(false);
-    const label = context.t('RichTextEditor_fixtureAltText');
+    const label = context.translate('RichTextEditor_fixtureAltText');
 
     return (
         <>
-            <NodeChromeToolbar aria-label={context.t('RichTextEditor_fixtureImage')}>
+            <NodeChromeToolbar aria-label={context.translate('RichTextEditor_fixtureImage')}>
                 <NodeChromeButton label={label} onClick={() => setOpen(true)} />
             </NodeChromeToolbar>
             <AltTextDialog open={open} onOpenChange={setOpen} />

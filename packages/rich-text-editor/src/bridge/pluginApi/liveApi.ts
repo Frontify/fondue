@@ -81,7 +81,7 @@ export const editorApiOf = (runtime: EditorPort, hosts: EditorHosts): EditorApi 
 };
 
 const INERT: EditorHosts = {
-    t: (key) => key,
+    translate: (key) => key,
     locale: () => 'en-US',
     services: {
         presentation: () => ({ styles: [], colorTokens: [], columns: 1, columnGap: undefined }),

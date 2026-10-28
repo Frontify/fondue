@@ -52,7 +52,7 @@ const Chrome = memo(({ entry, context, lang }: ChromeProps) => {
     return createPortal(
         <NodeViewStateContext.Provider value={state}>
             <NodeViewContentContext.Provider value={place}>
-                <ChromeBoundary message={context.t('RichTextEditor_nodeViewError')} attrs={state.attrs}>
+                <ChromeBoundary message={context.translate('RichTextEditor_nodeViewError')} attrs={state.attrs}>
                     {/* Chrome that loads a dialog lazily suspends here, not as an error, and the surface stays. */}
                     <Suspense fallback={null}>
                         <View />

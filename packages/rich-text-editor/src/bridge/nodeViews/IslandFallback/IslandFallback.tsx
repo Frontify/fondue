@@ -31,15 +31,15 @@ const IslandFallback = ({ inline }: IslandFallbackProps) => {
     const copy = () => {
         // `navigator.clipboard` is undefined outside a secure context.
         if (navigator.clipboard?.writeText === undefined) {
-            api?.announce(context.t('RichTextEditor_copyFailed'));
+            api?.announce(context.translate('RichTextEditor_copyFailed'));
 
             return;
         }
 
         navigator.clipboard
             .writeText(JSON.stringify(attrs.original))
-            .then(() => api?.announce(context.t('RichTextEditor_originalCopied')))
-            .catch(() => api?.announce(context.t('RichTextEditor_copyFailed')));
+            .then(() => api?.announce(context.translate('RichTextEditor_originalCopied')))
+            .catch(() => api?.announce(context.translate('RichTextEditor_copyFailed')));
     };
 
     const convert = () => {
@@ -51,7 +51,7 @@ const IslandFallback = ({ inline }: IslandFallbackProps) => {
         select();
         const written = api.content.replace(api.selectedRange(), islandReplacement(inline, attrs.original));
         if (written.status === 'applied') {
-            api.announce(context.t('RichTextEditor_convertedToText'));
+            api.announce(context.translate('RichTextEditor_convertedToText'));
         }
 
         api.focus();
@@ -72,8 +72,8 @@ const IslandFallback = ({ inline }: IslandFallbackProps) => {
             {editable && (
                 <Container className={`${styles.bar} ${layout}`}>
                     <NodeChromeToolbar aria-label={label}>
-                        <NodeChromeButton label={context.t('RichTextEditor_copyOriginal')} onClick={copy} />
-                        <NodeChromeButton label={context.t('RichTextEditor_convertToText')} onClick={convert} />
+                        <NodeChromeButton label={context.translate('RichTextEditor_copyOriginal')} onClick={copy} />
+                        <NodeChromeButton label={context.translate('RichTextEditor_convertToText')} onClick={convert} />
                     </NodeChromeToolbar>
                 </Container>
             )}

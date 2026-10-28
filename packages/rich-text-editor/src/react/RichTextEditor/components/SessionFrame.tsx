@@ -142,7 +142,7 @@ export const SessionFrame = ({
             <LazySuggestionList
                 nameOf={(name) => {
                     if (typeof name === 'string') {
-                        return chromeContext.t(name as `RichTextEditor_${string}`);
+                        return chromeContext.translate(name as `RichTextEditor_${string}`);
                     }
 
                     return translatedLabel(name, lang);

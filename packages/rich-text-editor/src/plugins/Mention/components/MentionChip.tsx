@@ -60,7 +60,7 @@ const MentionChip = () => {
         <span className={styles.mention} data-unavailable={unavailableMarker}>
             @<bdi>{shown.label}</bdi>
             {unavailable !== null && (
-                <span className={styles.note}> ({context.t('RichTextEditor_mentionUnavailable')})</span>
+                <span className={styles.note}> ({context.translate('RichTextEditor_mentionUnavailable')})</span>
             )}
         </span>
     );

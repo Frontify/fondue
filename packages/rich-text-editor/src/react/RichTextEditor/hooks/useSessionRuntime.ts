@@ -98,7 +98,7 @@ const pickerOf =
                 const { locale } = shellPropsOf(latestRef.current);
                 const key =
                     kind === 'target' ? 'RichTextEditor_imageTargetRemoved' : 'RichTextEditor_imageReplaceRemoved';
-                announcer.announce(codecContext(locale, enUS).t(key));
+                announcer.announce(codecContext(locale, enUS).translate(key));
             },
         });
     };
@@ -142,7 +142,7 @@ const buildRuntime = (
 ): EditorPort => {
     const { mounted, loaded, coordinator, portals, work, announcer, hosts, latestRef } = wiring;
     const { definition } = mounted;
-    const { t } = codecContext(shellPropsOf(latestRef.current).locale, enUS);
+    const { translate: t } = codecContext(shellPropsOf(latestRef.current).locale, enUS);
     const engine = compiledOf(definition);
     const profile = profileOf(definition);
     const openPicker = pickerOf(wiring);
@@ -176,7 +176,7 @@ const buildRuntime = (
 
                 if (!validityOf(runtime, required).valid) {
                     const { locale } = shellPropsOf(latestRef.current);
-                    announcer.announce(codecContext(locale, enUS).t('RichTextEditor_submitEmpty'));
+                    announcer.announce(codecContext(locale, enUS).translate('RichTextEditor_submitEmpty'));
 
                     return;
                 }
@@ -190,7 +190,7 @@ const buildRuntime = (
         pick: (nodeId) => openPicker(runtime, nodeId),
         uploadEvent: (event) => {
             const { locale, limits } = shellPropsOf(latestRef.current);
-            const { t } = codecContext(locale, enUS);
+            const { translate: t } = codecContext(locale, enUS);
             const lang = locale.lang ?? enUS.lang;
             const accepts = mediaOf(runtime)?.uploads.accepts ?? [];
             announcer.announce(uploadMessage(event, t, lang, limits, accepts));
@@ -225,7 +225,7 @@ const subscribeSession = (
         atGap = selection.kind === 'gap';
         if (entered) {
             const { locale } = shellPropsOf(latestRef.current);
-            announcer.announce(codecContext(locale, enUS).t('RichTextEditor_gapCursor'));
+            announcer.announce(codecContext(locale, enUS).translate('RichTextEditor_gapCursor'));
         }
     });
 

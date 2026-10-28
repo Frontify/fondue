@@ -72,7 +72,10 @@ const stringOf = (value: unknown): string => {
  */
 export const mentionLabel = (
     attrs: JsonObject,
-    { t, resolveReference }: Pick<CodecContext, 't'> & { resolveReference?: ResolveReference | undefined },
+    {
+        translate: t,
+        resolveReference,
+    }: Pick<CodecContext, 'translate'> & { resolveReference?: ResolveReference | undefined },
 ): MentionLabel => {
     // IDs resolve as stored, so the chip names the resource `diffReferences` reports.
     const resourceType = stringOf(attrs.resourceType);
@@ -107,7 +110,7 @@ export const mentionLabel = (
  * The text after a mention's label that says its resource is unavailable, or nothing.
  * Public so the shipped features and the core share it.
  */
-export const unavailableNote = ({ unavailable }: MentionLabel, t: CodecContext['t']): string => {
+export const unavailableNote = ({ unavailable }: MentionLabel, t: CodecContext['translate']): string => {
     if (unavailable === null) {
         return '';
     }

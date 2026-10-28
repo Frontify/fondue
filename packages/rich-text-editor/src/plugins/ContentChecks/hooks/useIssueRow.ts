@@ -12,7 +12,7 @@ import { issueExcerpt } from '../helpers/issueDisplay';
 export const useIssueRow = (
     held: CheckedIssue,
     rowKey: string,
-    t: PanelComponentProps['t'],
+    t: PanelComponentProps['translate'],
     onActive: (rowKey: string) => void,
 ) => {
     const api = useEditorApi();

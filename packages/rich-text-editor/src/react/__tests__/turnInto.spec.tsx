@@ -17,7 +17,7 @@ import { turnIntoMenuEntries as installedChoices } from '../helpers/turnInto';
 import { shipped as comment } from '../profiles/comment';
 import { shipped as document } from '../profiles/document';
 
-const { t } = codecContext(enUS, enUS);
+const { translate: t } = codecContext(enUS, enUS);
 const labelsOf = (profile: typeof document) =>
     installedChoices(pluginsOf(profile().definition), t, 'en-US').map(({ label }) => label);
 

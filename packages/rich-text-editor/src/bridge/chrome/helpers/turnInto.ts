@@ -49,7 +49,7 @@ export type TurnIntoCommands = Readonly<Record<string, JsonValue | undefined>>;
 
 /** What the Turn into menu reads of its node: `useRichTextNodeView<TurnIntoCommands>()`. */
 export type TurnIntoNode = {
-    context: { t: CodecContext['t'] };
+    context: { translate: CodecContext['translate'] };
     execute: (command: string, payload?: JsonValue) => unknown;
     query: (command: string, payload?: JsonValue) => CommandState;
 };

@@ -18,7 +18,7 @@ export type LinkBubbleStrings = {
 };
 
 /** The link bubble's strings, in the UI locale. */
-export const linkBubbleStrings = (t: CodecContext['t']): LinkBubbleStrings => ({
+export const linkBubbleStrings = (t: CodecContext['translate']): LinkBubbleStrings => ({
     label: t('RichTextEditor_link'),
     open: t('RichTextEditor_linkOpenInNewTab'),
     edit: t('RichTextEditor_linkEdit'),

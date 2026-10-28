@@ -19,7 +19,7 @@ export const SIDE_KEYS = {
 export const EDIT_WIDTH = 'image.width.edit';
 
 /** The size menu's choices for an image of `displayWidth`: the presets, the original size, then Custom width. */
-export const sizeOptions = (t: CodecContext['t'], displayWidth: number | null): readonly MenuOption[] => [
+export const sizeOptions = (t: CodecContext['translate'], displayWidth: number | null): readonly MenuOption[] => [
     ...[...PRESETS, null].map((preset) => {
         let label = t('RichTextEditor_imageSizeOriginal');
         if (preset !== null) {
@@ -38,7 +38,7 @@ export const sizeOptions = (t: CodecContext['t'], displayWidth: number | null): 
 ];
 
 /** The alignment menu's choices for a figure on `side`. */
-export const alignOptions = (t: CodecContext['t'], side: (typeof SIDES)[number]): readonly MenuOption[] =>
+export const alignOptions = (t: CodecContext['translate'], side: (typeof SIDES)[number]): readonly MenuOption[] =>
     SIDES.map((option) => ({
         key: option,
         label: t(SIDE_KEYS[option]),

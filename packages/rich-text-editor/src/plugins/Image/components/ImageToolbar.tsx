@@ -39,7 +39,7 @@ type SizeMenuProps = { chrome: ImageChromeState };
 
 /** The size menu, whose Edit width choice opens the width dialog once the menu returned focus. */
 const SizeMenu = ({ chrome }: SizeMenuProps) => {
-    const { t, sizeText, displayWidth, pendingRef, runOption, openWidth } = chrome;
+    const { translate: t, sizeText, displayWidth, pendingRef, runOption, openWidth } = chrome;
 
     return (
         <NodeChromeMenu
@@ -81,7 +81,7 @@ const SizeMenu = ({ chrome }: SizeMenuProps) => {
 type AlignMenuProps = { chrome: ImageChromeState };
 
 const AlignMenu = ({ chrome }: AlignMenuProps) => {
-    const { t, side, runOption } = chrome;
+    const { translate: t, side, runOption } = chrome;
 
     return (
         <NodeChromeMenu label={t('RichTextEditor_imageAlign', { side: t(SIDE_KEYS[side]) })} text={t(SIDE_KEYS[side])}>
@@ -98,13 +98,30 @@ export type ImageToolbarProps = { chrome: ImageChromeState; nodeId: string };
 
 /** The chrome's toolbar: upload controls, alternative text, size, alignment, Replace and Pause. */
 export const ImageToolbar = ({ chrome, nodeId }: ImageToolbarProps) => {
-    const { api, t, execute, shown, unfinished, status, review, reviewId, paused, animated, altText, setPlayed } =
-        chrome;
+    const {
+        api,
+        translate: t,
+        execute,
+        shown,
+        unfinished,
+        status,
+        review,
+        reviewId,
+        paused,
+        animated,
+        altText,
+        setPlayed,
+    } = chrome;
 
     return (
         <NodeChromeToolbar aria-label={t('RichTextEditor_image')}>
             {status !== undefined && (
-                <UploadControls nodeId={nodeId} status={status} t={t} onRemove={() => removeFigure(api, nodeId)} />
+                <UploadControls
+                    nodeId={nodeId}
+                    status={status}
+                    translate={t}
+                    onRemove={() => removeFigure(api, nodeId)}
+                />
             )}
             {unfinished && status === undefined && (
                 <NodeChromeButton

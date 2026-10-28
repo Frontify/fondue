@@ -33,7 +33,12 @@ const hostClassNames = (contentClassName: string) =>
         .filter((name) => name !== '' && contentClasses() !== name && !/^ProseMirror(-|$)/.test(name));
 
 /** The surface's instruction that names the submit key and the new line key, when the editor has a submit key. */
-const submitHint = (submits: boolean, definition: CompiledEditorDefinition<object>, t: Chrome['t'], apple: boolean) => {
+const submitHint = (
+    submits: boolean,
+    definition: CompiledEditorDefinition<object>,
+    t: Chrome['translate'],
+    apple: boolean,
+) => {
     if (!submits) {
         return undefined;
     }
@@ -82,7 +87,7 @@ export const Surface = () => {
 
     const dir = mounted.dir ?? theme.dir;
     const hintId = useId();
-    const hint = submitHint(submits, mounted.definition, chrome.t, useApplePlatform());
+    const hint = submitHint(submits, mounted.definition, chrome.translate, useApplePlatform());
     const describedBy = [props['aria-describedby'], hint === undefined ? undefined : hintId].filter(
         (id) => id !== undefined,
     );
@@ -330,7 +335,7 @@ export const Status = () => {
         return null;
     }
 
-    return <SaveStatusText t={chrome.t} testId={testId} />;
+    return <SaveStatusText translate={chrome.translate} testId={testId} />;
 };
 
 Status.displayName = 'RichTextEditor.Status';
@@ -352,7 +357,7 @@ export const Panels = () => {
         <PanelFrame
             id={id}
             panel={Panel}
-            t={chrome.t}
+            translate={chrome.translate}
             requested={panels.requested}
             testId={testId}
             onClose={() => panels.close()}

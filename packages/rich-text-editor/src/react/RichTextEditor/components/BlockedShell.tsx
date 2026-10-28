@@ -46,7 +46,7 @@ export type BlockedShellProps = ShellProps & { result: Blocked };
  * no editable surface, so nothing can save an empty document over it.
  */
 export const BlockedShell = ({ result, model, readers, limits, presentation, locale, testId }: BlockedShellProps) => {
-    const { t } = readerContext(locale, presentation);
+    const { translate: t } = readerContext(locale, presentation);
 
     return (
         <div data-test-id={testId} data-rte-shell="blocked">

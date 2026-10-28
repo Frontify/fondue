@@ -226,8 +226,11 @@ const renderBlock = (state: WalkState, node: TreeNode, path: string, depth: numb
             text = '\n';
             break;
         case 'mention': {
-            const shown = mentionLabel(attrs, { t: state.context.t, resolveReference: state.resolveReference });
-            text = `@${shown.label}${unavailableNote(shown, state.context.t)}`;
+            const shown = mentionLabel(attrs, {
+                translate: state.context.translate,
+                resolveReference: state.resolveReference,
+            });
+            text = `@${shown.label}${unavailableNote(shown, state.context.translate)}`;
             break;
         }
 

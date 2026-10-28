@@ -28,7 +28,7 @@ export const ProfileRetryShell = ({
 }: ProfileRetryShellProps) => {
     const theme = useFondueTheme();
     const lang = locale.lang ?? theme.lang ?? enUS.lang;
-    const { t } = codecContext(locale, enUS);
+    const { translate: t } = codecContext(locale, enUS);
     const messageRef = useRef<HTMLParagraphElement>(null);
     const overlayRef = useRef<HTMLDivElement>(null);
 

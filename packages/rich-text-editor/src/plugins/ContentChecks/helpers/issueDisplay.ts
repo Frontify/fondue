@@ -55,7 +55,7 @@ export const severityCount = (counted: readonly CheckedIssue[], severity: Severi
     counted.filter(({ issue }) => issue.severity === severity).length;
 
 /** The summary heading: errors, warnings and reviews still showing. */
-export const checksSummary = (t: CodecContext['t'], counted: readonly CheckedIssue[]) =>
+export const checksSummary = (t: CodecContext['translate'], counted: readonly CheckedIssue[]) =>
     [
         t('RichTextEditor_checksErrors', { errors: severityCount(counted, 'error') }),
         t('RichTextEditor_checksWarnings', { warnings: severityCount(counted, 'warning') }),
@@ -66,7 +66,7 @@ export const checksSummary = (t: CodecContext['t'], counted: readonly CheckedIss
 export const issueExcerpt = (
     issue: ContentIssue,
     text: string,
-    t: CodecContext['t'],
+    t: CodecContext['translate'],
     titleId: string,
     excerptId: string,
 ) => {

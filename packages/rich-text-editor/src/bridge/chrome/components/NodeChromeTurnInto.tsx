@@ -42,7 +42,7 @@ export const NodeChromeTurnInto = ({ current, node }: NodeChromeTurnIntoProps) =
 
     return (
         <NodeChromeMenu
-            label={node.context.t('RichTextEditor_turnIntoCurrent', { type: current })}
+            label={node.context.translate('RichTextEditor_turnIntoCurrent', { type: current })}
             text={current}
             onCloseAutoFocus={(event) => {
                 event.preventDefault();

@@ -147,7 +147,7 @@ export type CodecContext = {
     checkHref: (input: string) => HrefResult;
     /** The output locale (`enUS` by default) and its `${var}` interpolation, so overrides render localized text with no hook or context. */
     locale: RichTextLocale;
-    t: (key: keyof TranslationStrings, vars?: Readonly<Record<string, string | number>>) => string;
+    translate: (key: keyof TranslationStrings, vars?: Readonly<Record<string, string | number>>) => string;
 };
 /** What a reader override and node chrome read: plain data and functions, never a React context. */
 export type ReaderContext = {

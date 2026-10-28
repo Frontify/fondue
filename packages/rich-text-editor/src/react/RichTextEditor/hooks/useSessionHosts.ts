@@ -18,7 +18,7 @@ type HostWiring = {
     announcer: Announcer;
     panelActionsRef: Parameters<typeof usePluginHosts>[0]['panels'];
     openPanelRef: MutableRefObject<string | undefined>;
-    tRef: MutableRefObject<ReturnType<typeof readerContext>['t']>;
+    tRef: MutableRefObject<ReturnType<typeof readerContext>['translate']>;
     langRef: MutableRefObject<string>;
     latestRef: MutableRefObject<SessionRest>;
 };
@@ -40,7 +40,7 @@ export const useSessionHosts = ({
         announcer,
         panels: panelActionsRef,
         openPanel: openPanelRef,
-        t: () => tRef.current,
+        translate: () => tRef.current,
         lang: () => langRef.current,
         presentation: () => pluginPresentationOf(latestRef.current.presentation),
         references: () => memberOf(latestRef.current.services, 'references'),

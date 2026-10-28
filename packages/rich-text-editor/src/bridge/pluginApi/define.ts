@@ -102,7 +102,7 @@ export type PanelComponentProps = {
     /** Closes the panel. */
     close: () => void;
     /** The package's own chrome strings in the editor's locale. */
-    t: CodecContext['t'];
+    translate: CodecContext['translate'];
     /** Counts the runs of its command while it is open, for a panel that does not toggle; each change asks it to move focus. */
     requested: number;
 };

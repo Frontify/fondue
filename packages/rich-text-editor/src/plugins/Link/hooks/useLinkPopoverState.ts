@@ -26,11 +26,11 @@ export const useLinkPopoverState = ({
     const api = useEditorApi();
     const [{ policy, search }] = useState(() => searchOf(api));
     let presented: readonly PresentationStyle[] = [];
-    let translate: CodecContext['t'] = (key) => key;
+    let translate: CodecContext['translate'] = (key) => key;
     let testId = '';
     if (api !== undefined) {
         presented = api.services.presentation().styles;
-        translate = api.t;
+        translate = api.translate;
         testId = api.testId();
     }
 

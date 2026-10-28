@@ -178,7 +178,7 @@ export const useSessionView = (
     const onKeyDown = chromeKeyDownOf(keySourcesOf(props, mount));
     const shell = shellPropsOf(props);
     const { lang, chromeContext, renderedHosts, standing, chrome } = useChrome(chromeSourcesOf(props, shell, mount));
-    useColumns(mount.live, props.presentation, chromeContext.t);
+    useColumns(mount.live, props.presentation, chromeContext.translate);
     const { overlays, choosesFiles, referenceStrings } = useOverlayValues(
         overlaySourcesOf(props, mount, chromeContext),
     );

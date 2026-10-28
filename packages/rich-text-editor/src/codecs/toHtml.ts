@@ -301,9 +301,12 @@ const unavailableMarkup = ({ message, label }: Unavailable, hidden: boolean): st
  * override renders it, which no `HtmlSpec` can express: the label is text, never a resource ID.
  */
 const mentionInner = (state: HtmlState, node: TreeNode): string => {
-    const shown = mentionLabel(attrsOf(node.attrs), { t: state.context.t, resolveReference: state.resolveReference });
+    const shown = mentionLabel(attrsOf(node.attrs), {
+        translate: state.context.translate,
+        resolveReference: state.resolveReference,
+    });
 
-    return `@<bdi>${escapeHtml(shown.label)}</bdi>${escapeHtml(unavailableNote(shown, state.context.t))}`;
+    return `@<bdi>${escapeHtml(shown.label)}</bdi>${escapeHtml(unavailableNote(shown, state.context.translate))}`;
 };
 
 /** `items` as markup, with neighbours that share a mark grouped inside one element of it. */
@@ -381,7 +384,7 @@ export const writeHtml = (
             langAttribute = ` lang="${escapeHtml(context.locale.lang)}"`;
         }
 
-        html += `<div role="note" data-rte-message="islands"${langAttribute}>${escapeHtml(context.t('RichTextEditor_readerIslandNotice'))}</div>`;
+        html += `<div role="note" data-rte-message="islands"${langAttribute}>${escapeHtml(context.translate('RichTextEditor_readerIslandNotice'))}</div>`;
     }
 
     const lossy = state.losses.list().map(

@@ -11,11 +11,11 @@ import styles from '../styles/checks.module.scss';
 export type IssueHelpProps = {
     helpRef: RefObject<HTMLHeadingElement>;
     ruleId: ContentIssue['ruleId'];
-    t: PanelComponentProps['t'];
+    translate: PanelComponentProps['translate'];
 };
 
 /** How to decide the issue, behind the help disclosure. */
-export const IssueHelp = ({ helpRef, ruleId, t }: IssueHelpProps) => (
+export const IssueHelp = ({ helpRef, ruleId, translate: t }: IssueHelpProps) => (
     <div className={styles.help}>
         <Accordion.Root border={false} padding="none">
             <Accordion.Item value="help">

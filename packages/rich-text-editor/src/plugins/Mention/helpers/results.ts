@@ -38,7 +38,7 @@ export type ReferenceListStrings = {
 };
 
 /** The list strings from the chrome's `t`, which the mention list says too. */
-export const referenceListStrings = (t: CodecContext['t']): ReferenceListStrings => ({
+export const referenceListStrings = (t: CodecContext['translate']): ReferenceListStrings => ({
     label: t('RichTextEditor_mentionSuggestions'),
     loading: t('RichTextEditor_mentionLoading'),
     noResults: t('RichTextEditor_mentionNoResults'),

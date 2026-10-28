@@ -129,7 +129,7 @@ export const captureLinkTarget = (
 };
 
 /** The link popover's strings, in the UI locale. */
-export const linkPopoverStrings = (t: CodecContext['t']): LinkPopoverStrings => ({
+export const linkPopoverStrings = (t: CodecContext['translate']): LinkPopoverStrings => ({
     title: t('RichTextEditor_link'),
     destination: t('RichTextEditor_linkDestination'),
     text: t('RichTextEditor_linkText'),

@@ -29,7 +29,7 @@ export const repairIssue = (
     checks: ContentChecksApi | undefined,
     held: CheckedIssue,
     rowKey: string,
-    t: CodecContext['t'],
+    t: CodecContext['translate'],
     onActive: (rowKey: string) => void,
     button: HTMLButtonElement | undefined,
 ) => {

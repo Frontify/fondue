@@ -36,7 +36,7 @@ export type RecoveryShellProps = ShellProps & { document: RichTextDocument; onRe
  */
 export const RecoveryShell = ({ document, onRetry, ...shell }: RecoveryShellProps) => {
     const { model, readers, limits, presentation, locale, testId } = shell;
-    const { t } = readerContext(locale, presentation);
+    const { translate: t } = readerContext(locale, presentation);
     const messageRef = useRef<HTMLParagraphElement>(null);
 
     // The shell replaces the root and its polite region, so focus carries the crash to a screen reader,

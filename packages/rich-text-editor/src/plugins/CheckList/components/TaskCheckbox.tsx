@@ -47,12 +47,12 @@ const TaskCheckbox = () => {
         }
 
         if (checked) {
-            api?.announce(context.t('RichTextEditor_taskChecked'));
+            api?.announce(context.translate('RichTextEditor_taskChecked'));
 
             return;
         }
 
-        api?.announce(context.t('RichTextEditor_taskUnchecked'));
+        api?.announce(context.translate('RichTextEditor_taskUnchecked'));
     }, [api, checked, context]);
 
     return (

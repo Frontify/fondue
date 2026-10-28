@@ -45,8 +45,8 @@ type Found = {
     answers: number;
 };
 
-/** The dialog's strings from the chrome's `t`. */
-const mentionSearchStrings = (t: EditorApi['t']): MentionSearchStrings => ({
+/** The dialog's strings from the chrome's `translate`. */
+const mentionSearchStrings = (t: EditorApi['translate']): MentionSearchStrings => ({
     ...referenceListStrings(t),
     title: t('RichTextEditor_mention'),
     search: t('RichTextEditor_mentionSearch'),
@@ -233,7 +233,7 @@ export const useSearchDialogState = (
     opener: Element | null,
     onClose: () => void,
 ) => {
-    const strings = mentionSearchStrings(api.t);
+    const strings = mentionSearchStrings(api.translate);
     const { targets, services } = api;
     const dialog = useEditorDialog(opener, onClose);
     const [query, setQuery] = useState('');

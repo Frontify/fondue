@@ -24,7 +24,7 @@ export const turnIntoEntries = (parts: readonly Pick<EditorPartSpec, 'toolbar'>[
         .filter(({ node, command }) => node === undefined && TURN_INTO.includes(command))
         .sort((a, b) => TURN_INTO.indexOf(a.command) - TURN_INTO.indexOf(b.command));
 
-const labelOf = (t: CodecContext['t'], lang: string, entry: PluginToolbarEntry): string => {
+const labelOf = (t: CodecContext['translate'], lang: string, entry: PluginToolbarEntry): string => {
     if (entry.labelKey === undefined) {
         return translatedLabel(entry.label, lang);
     }
@@ -35,7 +35,7 @@ const labelOf = (t: CodecContext['t'], lang: string, entry: PluginToolbarEntry):
 /** The entries as the chrome's menus list them. */
 export const turnIntoMenuEntries = (
     parts: readonly Pick<EditorPartSpec, 'toolbar'>[],
-    t: CodecContext['t'],
+    t: CodecContext['translate'],
     lang: string,
 ): readonly TurnIntoEntry[] =>
     turnIntoEntries(parts).map((entry) => ({

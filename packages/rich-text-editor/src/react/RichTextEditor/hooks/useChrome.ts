@@ -34,7 +34,7 @@ type ChromeSources = {
     hosts: EditorHosts;
     generatedId: string;
     langRef: MutableRefObject<string>;
-    tRef: MutableRefObject<ReturnType<typeof readerContext>['t']>;
+    tRef: MutableRefObject<ReturnType<typeof readerContext>['translate']>;
     overlayToolbarsRef: MutableRefObject<(HTMLElement | null)[]>;
     toolbarRef: MutableRefObject<HTMLDivElement | null>;
     bubbleRef: MutableRefObject<HTMLDivElement | null>;
@@ -64,11 +64,11 @@ export const useChrome = (sources: ChromeSources) => {
     // Chrome reads the newest presentation and locale with no view rebuild.
     const chromeContext = useMemo(() => readerContext(locale, presentation), [locale, presentation]);
     useClientLayoutEffect(() => {
-        tRef.current = chromeContext.t;
+        tRef.current = chromeContext.translate;
     });
 
     // A host that renders a new presentation object on each change must not hand plugin UI a new API each time.
-    const hostsT = useMemo(() => codecContext(locale, enUS).t, [locale]);
+    const hostsT = useMemo(() => codecContext(locale, enUS).translate, [locale]);
     // The session keeps `hosts`, whose identity must hold; plugin UI reads this one, which follows the locale.
     const renderedHosts = useRenderedHosts(hosts, hostsT, shownLang);
     const plugins = pluginsOf(mounted.definition);
@@ -152,7 +152,7 @@ export const useOverlayValues = ({
     const choosesFiles =
         compiledOf(mounted.definition).model.capabilities.some(({ id }) => id === UPLOAD_FEATURE) &&
         memberOf(props.services, 'uploads') !== undefined;
-    const referenceStrings = useMemo(() => referenceListStrings(chromeContext.t), [chromeContext]);
+    const referenceStrings = useMemo(() => referenceListStrings(chromeContext.translate), [chromeContext]);
 
     return { overlays, choosesFiles, referenceStrings };
 };
@@ -172,7 +172,7 @@ export const useChromeRefs = () => {
 /** The shown language and the chrome's strings, which the session's suggestion lists and plugins read when they run. */
 export const useLocaleRefs = () => {
     const langRef = useRef<string>(enUS.lang);
-    const tRef = useRef(codecContext(enUS, enUS).t);
+    const tRef = useRef(codecContext(enUS, enUS).translate);
 
     return { langRef, tRef };
 };

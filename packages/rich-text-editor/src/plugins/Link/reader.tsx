@@ -36,7 +36,7 @@ const Link = ({ attrs, children, context }: ReaderNodeProps) => {
         <a href={checked.href} rel="noopener noreferrer" target="_blank">
             {children}
             <span style={VISUALLY_HIDDEN} data-rte-hidden-text="">
-                {` ${context.t('RichTextEditor_linkNewWindow')}`}
+                {` ${context.translate('RichTextEditor_linkNewWindow')}`}
             </span>
         </a>
     );

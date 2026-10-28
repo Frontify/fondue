@@ -30,7 +30,7 @@ const CodeChrome = () => {
         languageId = attrs.languageId;
     }
 
-    const options = languageChoices(languageId, context.t);
+    const options = languageChoices(languageId, context.translate);
     let current = '';
     const chosen = options.find(({ id }) => id === languageId);
     if (chosen !== undefined) {
@@ -49,8 +49,11 @@ const CodeChrome = () => {
 
     return (
         <div ref={barRef} className={styles.bar}>
-            <NodeChromeToolbar aria-label={context.t('RichTextEditor_codeBlock')}>
-                <NodeChromeMenu label={context.t('RichTextEditor_codeLanguage', { language: current })} text={current}>
+            <NodeChromeToolbar aria-label={context.translate('RichTextEditor_codeBlock')}>
+                <NodeChromeMenu
+                    label={context.translate('RichTextEditor_codeLanguage', { language: current })}
+                    text={current}
+                >
                     {options.map((option) => (
                         <OptionItem
                             key={option.id ?? ''}
@@ -62,11 +65,11 @@ const CodeChrome = () => {
                     ))}
                 </NodeChromeMenu>
                 <NodeChromeButton
-                    label={context.t('RichTextEditor_copyCode')}
+                    label={context.translate('RichTextEditor_copyCode')}
                     icon={<IconClipboard size={16} aria-hidden />}
                     onClick={copy}
                 />
-                <NodeChromeTurnInto current={context.t('RichTextEditor_codeBlock')} node={turnable} />
+                <NodeChromeTurnInto current={context.translate('RichTextEditor_codeBlock')} node={turnable} />
             </NodeChromeToolbar>
         </div>
     );

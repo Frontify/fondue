@@ -12,11 +12,11 @@ export type IssueTitleProps = {
     issue: ContentIssue;
     dismissed: boolean;
     titleId: string;
-    t: PanelComponentProps['t'];
+    translate: PanelComponentProps['translate'];
 };
 
 /** The issue's severity, rule name and whether the author dismissed it. */
-export const IssueTitle = ({ issue, dismissed, titleId, t }: IssueTitleProps) => {
+export const IssueTitle = ({ issue, dismissed, titleId, translate: t }: IssueTitleProps) => {
     const Icon = SEVERITY_ICONS[issue.severity];
 
     return (

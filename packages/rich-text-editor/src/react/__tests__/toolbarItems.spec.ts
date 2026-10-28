@@ -14,7 +14,7 @@ import { shipped as document } from '../profiles/document';
 import { shipped as inline } from '../profiles/inline';
 import { type ShippedProfile } from '../profiles/parts';
 
-const { t } = codecContext(enUS, enUS);
+const { translate: t } = codecContext(enUS, enUS);
 
 describe('the toolbar items of a shipped profile', () => {
     it('puts the text style picker of the Document profile in the bubble toolbar', () => {

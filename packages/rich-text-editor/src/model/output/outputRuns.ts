@@ -66,7 +66,7 @@ export const spaced = (state: Spacing, text: string): string => {
 };
 
 /** The label of an island fallback: the feature it names, else a generic one. */
-export const islandLabel = ({ t }: CodecContext, feature: string | null): string => {
+export const islandLabel = ({ translate: t }: CodecContext, feature: string | null): string => {
     if (feature === null) {
         return t('RichTextEditor_readerIslandGeneric');
     }

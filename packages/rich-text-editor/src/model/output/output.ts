@@ -27,7 +27,7 @@ export const codecContext = (
     resolveAssetUrl?: ResolveAssetUrl,
 ): CodecContext => {
     const output = locale ?? fallback;
-    const t: CodecContext['t'] = (key, vars) => {
+    const t: CodecContext['translate'] = (key, vars) => {
         let template = output.translationStrings[key];
         if (template === undefined) {
             template = fallback.translationStrings[key];
@@ -50,7 +50,7 @@ export const codecContext = (
         });
     };
 
-    const base = { checkHref: (input: string) => checkHref(input), locale: output, t };
+    const base = { checkHref: (input: string) => checkHref(input), locale: output, translate: t };
     if (resolveAssetUrl === undefined) {
         return base;
     }

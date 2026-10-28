@@ -19,7 +19,7 @@ export type WidthStrings = {
 };
 
 /** The width dialog's strings in the UI locale of `t`. */
-export const widthStrings = (t: CodecContext['t']): WidthStrings => ({
+export const widthStrings = (t: CodecContext['translate']): WidthStrings => ({
     title: t('RichTextEditor_imageWidthTitle'),
     field: t('RichTextEditor_imageWidthField'),
     range: t('RichTextEditor_imageWidthRange', { min: MIN_WIDTH, max: MAX_WIDTH }),
@@ -44,7 +44,7 @@ export type AltTextStrings = {
 };
 
 /** The alternative text dialog's strings in the UI locale of `t`. */
-export const altTextStrings = (t: CodecContext['t']): AltTextStrings => ({
+export const altTextStrings = (t: CodecContext['translate']): AltTextStrings => ({
     title: t('RichTextEditor_imageAltTitle'),
     choice: t('RichTextEditor_imageAltChoice'),
     meaningful: t('RichTextEditor_imageAltMeaningful'),

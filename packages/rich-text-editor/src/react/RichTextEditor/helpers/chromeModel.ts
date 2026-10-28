@@ -23,7 +23,15 @@ export const chromeItemsOf = (
     presentation: Props['presentation'],
     context: ChromeContext,
     lang: string,
-) => toolbarItems(compiledOf(definition), definition.authoring, presentation, context.t, lang, pluginsOf(definition));
+) =>
+    toolbarItems(
+        compiledOf(definition),
+        definition.authoring,
+        presentation,
+        context.translate,
+        lang,
+        pluginsOf(definition),
+    );
 
 /** The More rows of a mounted definition, below the toolbar items. */
 export const chromeMenuOf = (
@@ -31,11 +39,11 @@ export const chromeMenuOf = (
     items: readonly ToolbarItem[],
     context: ChromeContext,
     lang: string,
-) => menuItems(compiledOf(definition), definition.authoring, items, context.t, lang, pluginsOf(definition));
+) => menuItems(compiledOf(definition), definition.authoring, items, context.translate, lang, pluginsOf(definition));
 
 /** The block conversions the Turn into menus narrow, in the shown language. */
 export const chromeTurnIntoOf = (definition: Mounted['definition'], context: ChromeContext, lang: string) =>
-    turnIntoMenuEntries(pluginsOf(definition), context.t, lang);
+    turnIntoMenuEntries(pluginsOf(definition), context.translate, lang);
 
 /** The plugins' standing overlays, each with a stable key and a stable ref for its toolbar. */
 export const standingOverlaysOf = (
@@ -87,7 +95,7 @@ export const chromeBundleOf = ({
     keyboard,
     lang,
 }: ChromeBundle) => {
-    const { t } = context;
+    const { translate: t } = context;
     let surfaceId = id;
     if (surfaceId === undefined && items.length > 0) {
         surfaceId = generatedId;
@@ -120,6 +128,6 @@ export const chromeBundleOf = ({
         setMode: switchToolbar,
         keyboard,
         lang,
-        t,
+        translate: t,
     };
 };

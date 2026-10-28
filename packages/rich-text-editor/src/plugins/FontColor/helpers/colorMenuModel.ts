@@ -20,7 +20,7 @@ export type ColorMenuStrings = {
 };
 
 /** The colour menu's strings from the chrome's `t`. */
-export const colorMenuStrings = (t: CodecContext['t']): ColorMenuStrings => ({
+export const colorMenuStrings = (t: CodecContext['translate']): ColorMenuStrings => ({
     label: t('RichTextEditor_colorMenu'),
     textColors: t('RichTextEditor_textColors'),
     highlightColors: t('RichTextEditor_highlightColors'),

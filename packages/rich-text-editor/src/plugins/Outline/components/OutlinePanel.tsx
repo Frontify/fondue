@@ -43,7 +43,7 @@ const headingsOf = (api: EditorApi | undefined): readonly OutlineHeading[] =>
  * that heading in the current document. A heading that is gone stays listed until the choice, which then moves
  * nothing, reads the headings again and says so, with focus on the outline rather than on another heading.
  */
-export const OutlinePanel = ({ t }: PanelComponentProps) => {
+export const OutlinePanel = ({ translate: t }: PanelComponentProps) => {
     const api = useEditorApi();
     const navRef = useRef<HTMLElement>(null);
     const [entries, setEntries] = useState(() => headingsOf(api));

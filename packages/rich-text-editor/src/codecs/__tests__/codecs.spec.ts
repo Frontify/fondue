@@ -517,9 +517,9 @@ describe('codec context translations', () => {
                 nodes: {
                     label: (_, __, context) =>
                         [
-                            context.t('RichTextEditor_readerIslandFeature', { feature: 'x' }),
-                            context.t('RichTextEditor_readerIslandFeature', {}),
-                            context.t('RichTextEditor_notAKey'),
+                            context.translate('RichTextEditor_readerIslandFeature', { feature: 'x' }),
+                            context.translate('RichTextEditor_readerIslandFeature', {}),
+                            context.translate('RichTextEditor_notAKey'),
                         ].join(' / '),
                 },
             },

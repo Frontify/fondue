@@ -16,7 +16,7 @@ import { ImageToolbar } from './ImageToolbar';
  */
 const ImageChrome = () => {
     const chrome = useImageChromeState();
-    const { nodeId, t, review, reviewId, barRef } = chrome;
+    const { nodeId, translate: t, review, reviewId, barRef } = chrome;
     if (nodeId === null) {
         return null;
     }

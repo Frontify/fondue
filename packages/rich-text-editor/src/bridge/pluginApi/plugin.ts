@@ -115,7 +115,7 @@ export type PluginServices = {
 /** What the editor around a plugin hosts for it: strings, services, overlays, panels, the live region and focus. */
 export type EditorHosts = {
     /** The package's own chrome strings in the editor's locale; a plugin brings its own strings, by `locale`. */
-    t: CodecContext['t'];
+    translate: CodecContext['translate'];
     /** The language tag of the chrome's strings, such as `de-CH`. */
     locale: () => string;
     /** Host data that only some plugins use. */

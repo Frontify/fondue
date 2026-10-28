@@ -77,7 +77,7 @@ export const announce = (
     vars?: Readonly<Record<string, number>>,
 ) => {
     const locale = session.locale();
-    session.announce(codecContext(locale, locale).t(key, vars));
+    session.announce(codecContext(locale, locale).translate(key, vars));
 };
 
 /** Reports a refused paste or drop to the runtime's diagnostics with its `reason`. */

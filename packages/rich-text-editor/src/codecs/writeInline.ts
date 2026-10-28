@@ -379,11 +379,11 @@ const leafPieces = (state: MarkdownState, { node, path, code }: MarkdownItem, li
 
     state.losses.add(plan.featureId);
     if (node.type === 'mention') {
-        const shown = mentionLabel(attrs, { t: state.context.t });
+        const shown = mentionLabel(attrs, { translate: state.context.translate });
 
         return [
             { kind: 'literal', text: '@' },
-            { kind: 'text', text: `${shown.label}${unavailableNote(shown, state.context.t)}` },
+            { kind: 'text', text: `${shown.label}${unavailableNote(shown, state.context.translate)}` },
         ];
     }
 

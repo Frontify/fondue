@@ -23,7 +23,7 @@ import { SeverityMarks } from './SeverityMarks';
  * checks run when it opens, and the surface marks each automatic issue while it is open. Its command, run again while
  * it is open, moves focus to the issue last acted on.
  */
-export const IssuesPanel = ({ t, requested, close }: PanelComponentProps) => {
+export const IssuesPanel = ({ translate: t, requested, close }: PanelComponentProps) => {
     const api = useEditorApi();
     const checks = useEditorValue((read) => read?.services.checks()?.current(), Object.is);
     const [showDismissed, setShowDismissed] = useState(false);
@@ -83,7 +83,7 @@ export const IssuesPanel = ({ t, requested, close }: PanelComponentProps) => {
                         key={held.key}
                         rowKey={held.key}
                         held={held}
-                        t={t}
+                        translate={t}
                         onFocusIssue={(rowKey) => {
                             focusedRef.current = rowKey;
                         }}

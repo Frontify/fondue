@@ -151,7 +151,7 @@ export const ColorMenu = ({ tokenIds, literalText, close: onClose }: ColorMenuPr
         return null;
     }
 
-    const strings = colorMenuStrings(api.t);
+    const strings = colorMenuStrings(api.translate);
     const testId = api.testId();
     let tokens = api.services.presentation().colorTokens;
     if (tokenIds !== undefined) {

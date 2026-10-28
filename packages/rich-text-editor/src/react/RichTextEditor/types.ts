@@ -83,7 +83,7 @@ export type Chrome = {
     /** The language of the chrome's strings, which the root, node chrome and plugin labels take (WCAG 2.2 SC 3.1.2). */
     lang: string;
     /** The chrome's strings in the shown locale. */
-    t: ReturnType<typeof readerContext>['t'];
+    translate: ReturnType<typeof readerContext>['translate'];
 };
 
 /** The props the parts read, so a host rerender with equal props leaves the context alone. */

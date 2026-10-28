@@ -9,7 +9,7 @@ import { enUS } from '#/locales/en-US';
 import { readerContext } from '../helpers/context';
 
 describe('translator', () => {
-    const { t } = readerContext(
+    const { translate: t } = readerContext(
         { translationStrings: { RichTextEditor_readerIslandFeature: 'Feature ${feature}' } },
         {},
     );
@@ -37,6 +37,6 @@ describe('readerContext', () => {
         expect(withAssets.resolveAssetUrl?.('a-1', { width: 10 })).toBe('https://assets.test/a-1');
         expect(without.checkHref('javascript:alert(1)')).toEqual({ ok: false, code: 'unsafe-scheme' });
         expect(without.checkHref('https://frontify.com')).toEqual({ ok: true, href: 'https://frontify.com' });
-        expect(without.t('RichTextEditor_readerBlockedInvalid')).toBe('This content cannot be shown');
+        expect(without.translate('RichTextEditor_readerBlockedInvalid')).toBe('This content cannot be shown');
     });
 });

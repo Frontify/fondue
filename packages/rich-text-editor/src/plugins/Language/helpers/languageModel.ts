@@ -31,15 +31,15 @@ export const directions = [
 
 /** The dialog's strings in the editor's UI locale; the keys themselves while there is no editor. */
 export const languageStrings = (api: EditorApi | undefined): LanguageStrings => {
-    let t: CodecContext['t'] = (key) => key;
+    let t: CodecContext['translate'] = (key) => key;
     if (api !== undefined) {
-        t = api.t;
+        t = api.translate;
     }
 
     return stringsOf(t);
 };
 
-const stringsOf = (t: CodecContext['t']): LanguageStrings => ({
+const stringsOf = (t: CodecContext['translate']): LanguageStrings => ({
     title: t('RichTextEditor_languageTitle'),
     tag: t('RichTextEditor_languageTag'),
     direction: t('RichTextEditor_languageDirection'),

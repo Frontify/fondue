@@ -22,7 +22,7 @@ const labelOf = (api: EditorApi<'commands'>, entry: PluginToolbarEntry): string 
         return entry.label['en-US'];
     }
 
-    return api.t(entry.labelKey as keyof TranslationStrings);
+    return api.translate(entry.labelKey as keyof TranslationStrings);
 };
 
 const payloadOf = ({ command, payload }: PluginToolbarEntry): JsonObject => {
@@ -71,7 +71,7 @@ export const slashMenu = (plugins: readonly Plugin[]): Omit<EditorPartSpec<'comm
                                     key: entry.id,
                                     label,
                                     payload: payloadOf(entry),
-                                    group: api.t(headingKey),
+                                    group: api.translate(headingKey),
                                 },
                             ];
                         }),
