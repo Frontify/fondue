@@ -8,19 +8,18 @@ import { type EditorApi, type OverlayProps, useEditorApi } from '#/bridge/plugin
 import { useEmojiPickerState } from '../hooks/useEmojiPickerState';
 import styles from '../styles/emoji.module.scss';
 
+type PickerProps = {
+    api: EditorApi;
+    /** Runs once the picker closes, with or without an insertion. */
+    onClose: () => void;
+};
+
 /**
  * The emoji picker: a dialog at the selection with a search combobox over a listbox, as the WAI-ARIA combobox pattern
  * has it. Focus stays in the field; the arrows move the active option, Enter and a click insert it and return focus to
  * the surface, and Escape closes the picker back to the surface. The data loads when the picker first opens.
  */
-const Picker = ({
-    api,
-    onClose,
-}: {
-    api: EditorApi;
-    /** Runs once the picker closes, with or without an insertion. */
-    onClose: () => void;
-}) => {
+const Picker = ({ api, onClose }: PickerProps) => {
     const { open, overlay, title, testId, field, list, fieldRef, statusRef } = useEmojiPickerState(api, onClose);
 
     return (

@@ -102,15 +102,13 @@ const serviceOf = () => {
 
 type Props = Partial<RichTextEditorBaseProps<object>>;
 
-/** The host of a form: the editor and its field, read through the ref the host passes. */
-const Host = ({
-    editorRef,
-    fieldRef,
-    ...props
-}: Props & {
+type HostProps = Props & {
     editorRef: RefObject<EditorHandle<object>>;
     fieldRef: { current: RichTextFormField | null };
-}) => {
+};
+
+/** The host of a form: the editor and its field, read through the ref the host passes. */
+const Host = ({ editorRef, fieldRef, ...props }: HostProps) => {
     fieldRef.current = useRichTextFormField(editorRef);
 
     return (

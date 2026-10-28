@@ -29,7 +29,9 @@ export type ListboxOption = {
 
 const KIND_ICONS = { user: IconPerson, group: IconPeople, everyone: IconMegaphone } as const;
 
-const Lead = ({ option }: { option: ListboxOption }) => {
+type LeadProps = { option: ListboxOption };
+
+const Lead = ({ option }: LeadProps) => {
     if (option.glyph !== null) {
         return (
             <span className={styles.glyph} aria-hidden>
@@ -55,25 +57,13 @@ const Lead = ({ option }: { option: ListboxOption }) => {
     return null;
 };
 
-/**
- * A listbox whose active option the element that keeps focus names with `aria-activedescendant`, as the WAI-ARIA
- * combobox pattern has it. The options take no focus; a press keeps focus where it is, a click picks the option, and a
- * pointer move over one makes it active. The active option scrolls into the list's own scrolling box. Labels and
- * details are isolated for bidirectional text, since they come from the host or the document.
- */
-export const Listbox = ({
-    id,
-    label,
-    options,
-    index,
-    onPick,
-    onActivate,
-    testId,
-}: {
+/** The props of `Listbox`. */
+export type ListboxProps = {
     /** The list's element ID, which the element that keeps focus names in `aria-controls`. */
     id: string;
     /** The list's accessible name. */
     label: string;
+    /** The options, in order. */
     options: readonly ListboxOption[];
     /** The active option. */
     index: number;
@@ -83,7 +73,15 @@ export const Listbox = ({
     onActivate: (index: number) => void;
     /** The list's `data-test-id`. */
     testId: string;
-}) => {
+};
+
+/**
+ * A listbox whose active option the element that keeps focus names with `aria-activedescendant`, as the WAI-ARIA
+ * combobox pattern has it. The options take no focus; a press keeps focus where it is, a click picks the option, and a
+ * pointer move over one makes it active. The active option scrolls into the list's own scrolling box. Labels and
+ * details are isolated for bidirectional text, since they come from the host or the document.
+ */
+export const Listbox = ({ id, label, options, index, onPick, onActivate, testId }: ListboxProps) => {
     const listRef = useRef<HTMLDivElement | null>(null);
 
     useClientLayoutEffect(() => {

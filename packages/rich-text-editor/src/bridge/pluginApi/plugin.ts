@@ -43,7 +43,7 @@ export { type ReferenceValue, type SelectionHandle, type UploadStatus } from '#/
 export { type Announcer, createAnnouncer } from '../session/helpers/announcer';
 export { type EditorApi, type EditorControlApi, type EditorFacet, type EditorFacets } from './apiFacets';
 export { useClientLayoutEffect } from '../session/hooks/useClientLayoutEffect';
-export { OverlayBody } from '../overlays/components/OverlayBody';
+export { OverlayBody, type OverlayBodyProps } from '../overlays/components/OverlayBody';
 export { passEscape } from '../overlays/helpers/escape';
 export { useEditorOverlay } from '../overlays/hooks/useEditorOverlay';
 export { useOverlayContainer } from '../overlays/hooks/useOverlayContainer';

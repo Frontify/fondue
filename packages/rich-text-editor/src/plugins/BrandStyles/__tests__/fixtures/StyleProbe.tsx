@@ -50,11 +50,13 @@ declare global {
     }
 }
 
+export type StyleProbeProps = { leadSize?: number };
+
 /**
  * Mounts the brand style features through `RichTextEditor` with the shared style map and the text style picker, and
  * below it the reader of the same document with the same presentation. `leadSize` replaces the Lead recipe's font size.
  */
-export const StyleProbe = ({ leadSize }: { leadSize?: number }) => {
+export const StyleProbe = ({ leadSize }: StyleProbeProps) => {
     const presentation = useMemo(() => {
         const styles = STYLE_MAP.map((style) => {
             if (style.id !== 'brand.lead' || leadSize === undefined) {

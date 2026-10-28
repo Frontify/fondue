@@ -12,11 +12,13 @@ import { useRichTextNodeView } from '../hooks/useRichTextNodeView';
 import { islandReplacement } from './helpers/islandReplacement';
 import styles from './styles/island.module.scss';
 
+type IslandFallbackProps = { inline: boolean };
+
 /**
  * An opaque island as the reader shows it: a group named by its feature, or generically, with its text; an editable
  * one adds Copy original and Convert to text.
  */
-const IslandFallback = ({ inline }: { inline: boolean }) => {
+const IslandFallback = ({ inline }: IslandFallbackProps) => {
     const { attrs, context, select } = useRichTextNodeView();
     const api = useEditorApi();
     const editable = useEditorValue((live) => live?.editable() === true);

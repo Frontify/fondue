@@ -118,7 +118,9 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
     }
 }
 
-const Root = forwardRef((props: Props & { children: ReactNode }, ref: ForwardedRef<EditorHandle<object> | null>) => {
+type RootProps = Props & { children: ReactNode };
+
+const Root = forwardRef((props: RootProps, ref: ForwardedRef<EditorHandle<object> | null>) => {
     const { definition } = props;
     const locale = useEditorLocale(props.locale);
     let profile: RichTextProfile | undefined;

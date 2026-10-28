@@ -698,6 +698,319 @@ const duplicateBindings = () => {
     return found;
 };
 
+const isPascalCase = (name: string | undefined): name is string => name !== undefined && /^[A-Z]/.test(name);
+
+const hocName = (call: ts.CallExpression) => {
+    const expression = call.expression;
+    if (ts.isIdentifier(expression)) {
+        return expression.text;
+    }
+
+    if (ts.isPropertyAccessExpression(expression) && ts.isIdentifier(expression.name)) {
+        return expression.name.text;
+    }
+
+    return undefined;
+};
+
+const isPropsHoc = (name: string | undefined) => name === 'memo' || name === 'forwardRef';
+
+const isNestedFunction = (node: ts.Node) =>
+    ts.isFunctionDeclaration(node) ||
+    ts.isFunctionExpression(node) ||
+    ts.isArrowFunction(node) ||
+    ts.isMethodDeclaration(node) ||
+    ts.isConstructorDeclaration(node) ||
+    ts.isGetAccessorDeclaration(node) ||
+    ts.isSetAccessorDeclaration(node) ||
+    ts.isClassDeclaration(node) ||
+    ts.isClassExpression(node);
+
+const isJsx = (node: ts.Node) => ts.isJsxElement(node) || ts.isJsxSelfClosingElement(node) || ts.isJsxFragment(node);
+
+const isNullOutput = (node: ts.Expression): boolean => {
+    let current = node;
+    while (ts.isParenthesizedExpression(current)) {
+        current = current.expression;
+    }
+
+    if (current.kind === ts.SyntaxKind.NullKeyword) {
+        return true;
+    }
+
+    if (ts.isConditionalExpression(current)) {
+        return isNullOutput(current.whenTrue) && isNullOutput(current.whenFalse);
+    }
+
+    return false;
+};
+
+const expressionHasJsx = (expression: ts.Expression): boolean => {
+    let found = false;
+    const visit = (node: ts.Node) => {
+        if (found) {
+            return;
+        }
+
+        if (isJsx(node)) {
+            found = true;
+
+            return;
+        }
+
+        if (isNestedFunction(node)) {
+            if (
+                node !== expression &&
+                (ts.isFunctionDeclaration(node) || ts.isFunctionExpression(node) || ts.isArrowFunction(node)) &&
+                returnsJsx(node)
+            ) {
+                found = true;
+            }
+
+            return;
+        }
+
+        ts.forEachChild(node, visit);
+    };
+
+    visit(expression);
+
+    return found;
+};
+
+const returnsJsx = (fn: ts.FunctionDeclaration | ts.FunctionExpression | ts.ArrowFunction): boolean => {
+    const { body } = fn;
+    if (body === undefined) {
+        return false;
+    }
+
+    if (!ts.isBlock(body)) {
+        return expressionHasJsx(body);
+    }
+
+    let found = false;
+    const visit = (node: ts.Node) => {
+        if (found) {
+            return;
+        }
+
+        if (node !== fn && isNestedFunction(node)) {
+            return;
+        }
+
+        if (ts.isReturnStatement(node) && node.expression !== undefined && expressionHasJsx(node.expression)) {
+            found = true;
+
+            return;
+        }
+
+        ts.forEachChild(node, visit);
+    };
+
+    visit(body);
+
+    return found;
+};
+
+// A component may render nothing, so `return null` still names its props.
+const returnsOnlyNull = (fn: ts.FunctionDeclaration | ts.FunctionExpression | ts.ArrowFunction) => {
+    const { body } = fn;
+    if (body === undefined) {
+        return false;
+    }
+
+    if (!ts.isBlock(body)) {
+        return isNullOutput(body);
+    }
+
+    let sawNull = false;
+    let other = false;
+    const visit = (node: ts.Node) => {
+        if (other) {
+            return;
+        }
+
+        if (node !== fn && isNestedFunction(node)) {
+            return;
+        }
+
+        if (ts.isReturnStatement(node)) {
+            if (node.expression !== undefined && isNullOutput(node.expression)) {
+                sawNull = true;
+            } else {
+                other = true;
+            }
+
+            return;
+        }
+
+        ts.forEachChild(node, visit);
+    };
+
+    visit(body);
+
+    return sawNull && !other;
+};
+
+const locateComponent = (fn: ts.FunctionDeclaration | ts.FunctionExpression | ts.ArrowFunction) => {
+    if (ts.isFunctionDeclaration(fn)) {
+        return { name: fn.name !== undefined && ts.isIdentifier(fn.name) ? fn.name.text : undefined };
+    }
+
+    let node: ts.Node = fn;
+    let parent = fn.parent;
+    while (parent !== undefined) {
+        if (
+            ts.isParenthesizedExpression(parent) ||
+            ts.isAsExpression(parent) ||
+            ts.isSatisfiesExpression(parent) ||
+            ts.isNonNullExpression(parent)
+        ) {
+            node = parent;
+            parent = parent.parent;
+            continue;
+        }
+
+        if (ts.isCallExpression(parent) && parent.arguments[0] === node && isPropsHoc(hocName(parent))) {
+            node = parent;
+            parent = parent.parent;
+            continue;
+        }
+
+        break;
+    }
+
+    if (ts.isVariableDeclaration(parent) && parent.initializer === node && ts.isIdentifier(parent.name)) {
+        return { name: parent.name.text };
+    }
+
+    return undefined;
+};
+
+const containsTypeLiteral = (node: ts.Node) => {
+    let found = false;
+    const visit = (current: ts.Node) => {
+        if (found) {
+            return;
+        }
+
+        if (ts.isTypeLiteralNode(current)) {
+            found = true;
+
+            return;
+        }
+
+        ts.forEachChild(current, visit);
+    };
+
+    visit(node);
+
+    return found;
+};
+
+const isNamedPropType = (type: ts.TypeNode) => ts.isTypeReferenceNode(type) && !containsTypeLiteral(type);
+
+// The props type argument of `forwardRef<Element, Props>` and `memo<Props>`, wherever the component comes from.
+const hocPropType = (call: ts.CallExpression) => {
+    const name = hocName(call);
+    if (name === 'forwardRef') {
+        return call.typeArguments?.[1];
+    }
+
+    if (name === 'memo') {
+        return call.typeArguments?.[0];
+    }
+
+    return undefined;
+};
+
+const COMPONENT_CLASSES = new Set(['Component', 'PureComponent']);
+
+// The props type argument of a class that extends `Component<Props>` or `PureComponent<Props>`.
+const classPropType = (node: ts.ClassLikeDeclaration) => {
+    for (const clause of node.heritageClauses ?? []) {
+        for (const base of clause.types) {
+            const { expression } = base;
+            let name: string | undefined;
+            if (ts.isIdentifier(expression)) {
+                name = expression.text;
+            } else if (ts.isPropertyAccessExpression(expression)) {
+                name = expression.name.text;
+            }
+
+            if (name !== undefined && COMPONENT_CLASSES.has(name)) {
+                return base.typeArguments?.[0];
+            }
+        }
+    }
+
+    return undefined;
+};
+
+const declaredName = (node: ts.Node): string => {
+    let current: ts.Node | undefined = node.parent;
+    while (current !== undefined && !ts.isVariableDeclaration(current) && !ts.isSourceFile(current)) {
+        current = current.parent;
+    }
+
+    if (current !== undefined && ts.isVariableDeclaration(current) && ts.isIdentifier(current.name)) {
+        return current.name.text;
+    }
+
+    return 'anonymous';
+};
+
+const componentsWithInlineProps = () => {
+    const found: string[] = [];
+    for (const path of allFiles) {
+        if (!path.endsWith('.tsx')) {
+            continue;
+        }
+
+        const file = parse(path);
+        const report = (node: ts.Node, name: string) => {
+            const line = file.getLineAndCharacterOfPosition(node.getStart(file)).line + 1;
+            found.push(`${toKey(path)}:${line} ${name}`);
+        };
+
+        const visit = (node: ts.Node) => {
+            if (ts.isFunctionDeclaration(node) || ts.isFunctionExpression(node) || ts.isArrowFunction(node)) {
+                const located = locateComponent(node);
+                const props = node.parameters[0]?.type;
+                if (
+                    located !== undefined &&
+                    isPascalCase(located.name) &&
+                    (returnsJsx(node) || returnsOnlyNull(node)) &&
+                    props !== undefined &&
+                    !isNamedPropType(props)
+                ) {
+                    report(node, located.name);
+                }
+            }
+
+            if (ts.isCallExpression(node)) {
+                const props = hocPropType(node);
+                if (props !== undefined && !isNamedPropType(props)) {
+                    report(node, declaredName(node));
+                }
+            }
+
+            if (ts.isClassDeclaration(node) || ts.isClassExpression(node)) {
+                const props = classPropType(node);
+                if (props !== undefined && !isNamedPropType(props)) {
+                    report(node, node.name?.text ?? declaredName(node));
+                }
+            }
+
+            ts.forEachChild(node, visit);
+        };
+
+        visit(file);
+    }
+
+    return found.sort();
+};
+
 describe('package structure ratchet', { timeout: 60_000 }, () => {
     it('no product file over 600 lines grows, data tables excepted', () => {
         const exempt = Object.keys(DATA_TABLES);
@@ -832,5 +1145,9 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
         }
 
         expect(count).toBeLessThanOrEqual(AS_UNKNOWN_AS_MAX);
+    });
+
+    it('no React component annotates its props with an inline object type', () => {
+        expect(componentsWithInlineProps()).toEqual([]);
     });
 });

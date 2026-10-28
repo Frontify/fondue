@@ -28,15 +28,13 @@ const copyContent = async ({ model, limits, locale }: ShellProps, document: Rich
     return writeClipboard(codecs.toPlainText(document).text, codecs.toHTML(document, { locale }).html);
 };
 
+export type RecoveryShellProps = ShellProps & { document: RichTextDocument; onRetry: () => void };
+
 /**
  * The editor after a render error: the last published snapshot through the reader, never an empty editor, with Retry
  * to mount the editor again from it and Copy content.
  */
-export const RecoveryShell = ({
-    document,
-    onRetry,
-    ...shell
-}: ShellProps & { document: RichTextDocument; onRetry: () => void }) => {
+export const RecoveryShell = ({ document, onRetry, ...shell }: RecoveryShellProps) => {
     const { model, readers, limits, presentation, locale, testId } = shell;
     const { t } = readerContext(locale, presentation);
     const messageRef = useRef<HTMLParagraphElement>(null);

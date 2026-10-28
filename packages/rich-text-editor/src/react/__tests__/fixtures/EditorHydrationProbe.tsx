@@ -26,26 +26,26 @@ export type EditorHydrationResult = {
     frames: readonly string[];
 };
 
-const Committed = ({ onCommit }: { onCommit: () => void }) => {
+type CommittedProps = { onCommit: () => void };
+
+const Committed = ({ onCommit }: CommittedProps) => {
     useLayoutEffect(onCommit, [onCommit]);
 
     return null;
+};
+
+export type EditorHydrationProbeProps = {
+    text: string;
+    /** Stores the text in an unknown format version, which shows the blocked shell. */
+    blocked?: boolean;
+    onDone: (result: EditorHydrationResult) => void;
 };
 
 /**
  * Renders the editor with `renderToString`, puts that markup in the page and hydrates it, then samples the surface
  * text in each frame after the commit.
  */
-export const EditorHydrationProbe = ({
-    text,
-    blocked = false,
-    onDone,
-}: {
-    text: string;
-    /** Stores the text in an unknown format version, which shows the blocked shell. */
-    blocked?: boolean;
-    onDone: (result: EditorHydrationResult) => void;
-}) => {
+export const EditorHydrationProbe = ({ text, blocked = false, onDone }: EditorHydrationProbeProps) => {
     const hostRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         let defaultValue = storedOf(text);

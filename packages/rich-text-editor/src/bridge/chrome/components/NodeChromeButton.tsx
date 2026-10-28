@@ -8,30 +8,27 @@ import { useOverlayContainer } from '../../overlays/hooks/useOverlayContainer';
 import { OUT_OF_TAB_ORDER } from '../helpers/keepFocus';
 import styles from '../styles/chromeToolbar.module.scss';
 
-/**
- * A button of `NodeChromeToolbar`; `label` is its accessible name, and its content when it has no `icon`, else its
- * tooltip.
- */
-export const NodeChromeButton = ({
-    label,
-    icon,
-    pressed,
-    disabled,
-    describedBy,
-    onClick,
-}: {
+/** The props of `NodeChromeButton`. */
+export type NodeChromeButtonProps = {
     /** The accessible name. */
     label: string;
     /** The content in place of `label`, which then shows as a tooltip. */
     icon?: ReactNode;
     /** Sets `aria-pressed`, for a toggle. */
     pressed?: boolean;
+    /** Whether the button is disabled. */
     disabled?: boolean;
     /** The `id` of the text that describes the button, such as a prompt shown beside the chrome. */
     describedBy?: string;
     /** Runs on a click, which does not move focus off the button's own target. */
     onClick: () => void;
-}) => {
+};
+
+/**
+ * A button of `NodeChromeToolbar`; `label` is its accessible name, and its content when it has no `icon`, else its
+ * tooltip.
+ */
+export const NodeChromeButton = ({ label, icon, pressed, disabled, describedBy, onClick }: NodeChromeButtonProps) => {
     const container = useOverlayContainer();
     const button = (
         <Toolbar.Button

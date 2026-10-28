@@ -10,6 +10,11 @@ import styles from '../styles/profileRetry.module.scss';
 
 import { type LoadingShellProps } from './LoadingShell';
 
+export type ProfileRetryShellProps = LoadingShellProps & {
+    /** `focused` is whether the message or Retry held focus, which the editor takes once it mounts. */
+    onRetry: (focused: boolean) => void;
+};
+
 /** The loading shell's box after the profile's module failed to load, with a message and Retry over the empty textbox. */
 export const ProfileRetryShell = ({
     locale,
@@ -20,10 +25,7 @@ export const ProfileRetryShell = ({
     labelledBy,
     spellCheck,
     onRetry,
-}: LoadingShellProps & {
-    /** `focused` is whether the message or Retry held focus, which the editor takes once it mounts. */
-    onRetry: (focused: boolean) => void;
-}) => {
+}: ProfileRetryShellProps) => {
     const theme = useFondueTheme();
     const lang = locale.lang ?? theme.lang ?? enUS.lang;
     const { t } = codecContext(locale, enUS);

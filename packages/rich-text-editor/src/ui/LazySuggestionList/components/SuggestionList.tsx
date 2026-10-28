@@ -128,16 +128,14 @@ const useAnnouncements = (active: ActiveSuggestion | null, strings: ReferenceLis
     }, [active, announce, strings]);
 };
 
-/** The row a list shows below its options: its spinner, no results, or its failure. */
-const StatusRow = ({
-    active,
-    slow,
-    strings,
-}: {
+type StatusRowProps = {
     active: ActiveSuggestion;
     slow: boolean;
     strings: ReferenceListStrings;
-}) => {
+};
+
+/** The row a list shows below its options: its spinner, no results, or its failure. */
+const StatusRow = ({ active, slow, strings }: StatusRowProps) => {
     if (active.status === 'loading' && slow) {
         return (
             <div className={styles.row} data-row="loading">
@@ -166,20 +164,18 @@ const StatusRow = ({
     return null;
 };
 
-/**
- * The open suggestion list below the trigger's line, while it has options or a status to show. The surface keeps focus
- * and the plugin keeps the keys; the surface's `aria-activedescendant` names the active option.
- */
-export const SuggestionList = ({
-    nameOf,
-    strings,
-    testId,
-}: {
+export type SuggestionListProps = {
     /** The list's accessible name from its package string key or its translations. */
     nameOf: (name: ActiveSuggestion['name']) => string;
     strings: ReferenceListStrings;
     testId: string;
-}) => {
+};
+
+/**
+ * The open suggestion list below the trigger's line, while it has options or a status to show. The surface keeps focus
+ * and the plugin keeps the keys; the surface's `aria-activedescendant` names the active option.
+ */
+export const SuggestionList = ({ nameOf, strings, testId }: SuggestionListProps) => {
     const runtime = useContext(SessionContext);
     const runtimeRef = useRef(runtime);
     useClientLayoutEffect(() => {

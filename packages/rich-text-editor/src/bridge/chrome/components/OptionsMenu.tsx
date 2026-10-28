@@ -27,24 +27,22 @@ export type MenuOption = {
     inert?: boolean;
 };
 
-/**
- * A node chrome menu that a command opens at the selection, as a More row does: focus on the checked item, else the
- * first; an item selects the node the menu opened for, then runs its command and returns focus to the surface, and
- * Escape returns focus to the opener.
- */
-export const OptionsMenu = ({
-    label,
-    options,
-    node,
-    close: onClose,
-}: OverlayProps & {
+/** The props of `OptionsMenu`: the overlay's props and the menu's own. */
+export type OptionsMenuProps = OverlayProps & {
     /** The menu's accessible name. */
     label: string;
     /** The items, in order. */
     options: readonly MenuOption[];
     /** The node the menu acts on, wherever the selection goes while it is open. */
     node: Parameters<EditorApi['select']>[0];
-}) => {
+};
+
+/**
+ * A node chrome menu that a command opens at the selection, as a More row does: focus on the checked item, else the
+ * first; an item selects the node the menu opened for, then runs its command and returns focus to the surface, and
+ * Escape returns focus to the opener.
+ */
+export const OptionsMenu = ({ label, options, node, close: onClose }: OptionsMenuProps) => {
     const api = useEditorApi();
     const [open, setOpen] = useState(true);
 

@@ -182,7 +182,9 @@ describe('RichTextEditor', () => {
     });
 
     it('destroys the view of a detached surface at once and attaches a new one', () => {
-        const Layout = ({ surfaceKey }: { surfaceKey: string }) => (
+        type LayoutProps = { surfaceKey: string };
+
+        const Layout = ({ surfaceKey }: LayoutProps) => (
             <RichTextEditor.Root aria-label="Notes" definition={definition} defaultValue={defaultValue()}>
                 <RichTextEditor.Surface key={surfaceKey} />
             </RichTextEditor.Root>

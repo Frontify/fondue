@@ -44,8 +44,10 @@ declare global {
 }
 window.parityNames = Object.keys(PARITY_FIXTURES);
 
+export type ParityProbeProps = { name: string };
+
 /** The fixture `name` in the editor, named Editor, and in the reader, in a region named Reader. */
-export const ParityProbe = ({ name }: { name: string }) => {
+export const ParityProbe = ({ name }: ParityProbeProps) => {
     const document = { ...PARITY_FIXTURES[name], model: model.ref } as RichTextDocument;
 
     return (

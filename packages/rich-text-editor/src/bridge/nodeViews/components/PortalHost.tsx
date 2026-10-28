@@ -34,8 +34,10 @@ const pendingOf = (runtime: EditorPort | undefined, nodeId: string | null): Node
 const samePending = (a: NodePending | null, b: NodePending | null) =>
     a === b || (a !== null && b !== null && a.state === b.state && a.progress === b.progress);
 
+type ChromeProps = { entry: PortalEntry; context: NodeViewContext; lang: string };
+
 // An entry keeps its object until its node view publishes, so the other chrome skips each rerender.
-const Chrome = memo(({ entry, context, lang }: { entry: PortalEntry; context: NodeViewContext; lang: string }) => {
+const Chrome = memo(({ entry, context, lang }: ChromeProps) => {
     const { component: View, slot, place } = entry;
     const { nodeId } = entry.state;
     const pending = useSessionValue((runtime) => pendingOf(runtime, nodeId), samePending);
@@ -63,23 +65,20 @@ const Chrome = memo(({ entry, context, lang }: { entry: PortalEntry; context: No
 });
 Chrome.displayName = 'RichTextEditor.NodeViewChrome';
 
-/**
- * Renders the chrome of every node view of one editor from its portal store. `useSyncExternalStore` renders a store
- * change in a microtask with no `flushSync`, so chrome exists before the next paint.
- * A new `context` from the host's presentation or locale reaches every chrome with no view rebuild.
- */
-export const PortalHost = ({
-    store,
-    context,
-    lang,
-    onFlush,
-}: {
+export type PortalHostProps = {
     store: PortalStore;
     context: NodeViewContext;
     /** The language of the chrome's strings, which each slot takes over the surface's. */
     lang: string;
     onFlush: () => void;
-}) => {
+};
+
+/**
+ * Renders the chrome of every node view of one editor from its portal store. `useSyncExternalStore` renders a store
+ * change in a microtask with no `flushSync`, so chrome exists before the next paint.
+ * A new `context` from the host's presentation or locale reaches every chrome with no view rebuild.
+ */
+export const PortalHost = ({ store, context, lang, onFlush }: PortalHostProps) => {
     const entries = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
     useClientLayoutEffect(onFlush, [entries, onFlush]);
 

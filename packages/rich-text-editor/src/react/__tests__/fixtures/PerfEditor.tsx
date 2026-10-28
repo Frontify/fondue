@@ -28,8 +28,10 @@ export const perfValue = (fixture: PerfFixtureName): RichTextEditorProps['defaul
     document: perfDocument(fixture, perfModel),
 });
 
+export type PerfEditorProps = { fixture: PerfFixtureName };
+
 /** One editor over a perf fixture, which a component test mounts. */
-export const PerfEditor = ({ fixture }: { fixture: PerfFixtureName }) => {
+export const PerfEditor = ({ fixture }: PerfEditorProps) => {
     const [value] = useState(() => perfValue(fixture));
 
     return (
@@ -42,8 +44,10 @@ export const PerfEditor = ({ fixture }: { fixture: PerfFixtureName }) => {
     );
 };
 
+export type PerfEditorWithReaderProps = { fixture: PerfFixtureName };
+
 /** An editor over a perf fixture, then the reader of the same document in a region named Reader. */
-export const PerfEditorWithReader = ({ fixture }: { fixture: PerfFixtureName }) => {
+export const PerfEditorWithReader = ({ fixture }: PerfEditorWithReaderProps) => {
     const [value] = useState(() => perfValue(fixture));
 
     return (
@@ -63,18 +67,15 @@ export const PerfEditorWithReader = ({ fixture }: { fixture: PerfFixtureName }) 
 
 const noop = () => undefined;
 
-/** One editor per value inside the theme a host mounts them in, which calls `onReady` once every editor is ready. */
-export const PerfTree = ({
-    values,
-    onReady,
-    onRender = noop,
-    onHandle = noop,
-}: {
+export type PerfTreeProps = {
     values: readonly RichTextEditorProps['defaultValue'][];
     onReady: (handles: EditorHandle[]) => void;
     onRender?: ProfilerOnRenderCallback;
     onHandle?: (handle: EditorHandle) => void;
-}) => {
+};
+
+/** One editor per value inside the theme a host mounts them in, which calls `onReady` once every editor is ready. */
+export const PerfTree = ({ values, onReady, onRender = noop, onHandle = noop }: PerfTreeProps) => {
     const handlesRef = useRef<EditorHandle[]>([]);
     const readyRef = useRef(0);
     const editors = values.map((value, index) => ({ id: `editor-${index}`, value }));

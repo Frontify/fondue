@@ -9,23 +9,19 @@ import { type OverlayProps, useEditorApi } from '#/bridge/pluginApi/plugin';
 import { MAX_WIDTH, MIN_WIDTH, SET_SIZE, type WidthStrings } from '../helpers/dialogStrings';
 import styles from '../styles/media.module.scss';
 
-/**
- * The image menu's numeric field: a width in percent of the content width, from 10 to 100, whose Apply runs `apply`
- * on the image `nodeId`, and otherwise names the range and changes nothing. Every close returns focus to `opener`.
- */
-export const WidthDialog = ({
-    width,
-    nodeId,
-    opener,
-    strings,
-    close: onClose,
-}: OverlayProps & {
+export type WidthDialogProps = OverlayProps & {
     /** The image's `displayWidth`, or `null` at natural size. */
     width: number | null;
     /** The image whose width Apply sets through `image.size.set`, as one undo step. */
     nodeId: string;
     strings: WidthStrings;
-}) => {
+};
+
+/**
+ * The image menu's numeric field: a width in percent of the content width, from 10 to 100, whose Apply runs `apply`
+ * on the image `nodeId`, and otherwise names the range and changes nothing. Every close returns focus to `opener`.
+ */
+export const WidthDialog = ({ width, nodeId, opener, strings, close: onClose }: WidthDialogProps) => {
     const api = useEditorApi();
     const dialog = useEditorDialog(opener, onClose);
     const [value, setValue] = useState(width === null ? '' : String(width));

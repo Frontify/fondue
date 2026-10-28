@@ -117,14 +117,13 @@ const EMPTY_COMMENT: LoadedDocument = {
     document: createEmptyDocument(commentModel),
 };
 
-/** A comment box: Mod+Enter or Send hands the host the current snapshot. */
-const SubmitSnapshotExample = ({
-    profile,
-    defaultValue,
-}: {
+type SubmitSnapshotExampleProps = {
     profile: RichTextProfile;
     defaultValue: LoadedDocument;
-}) => {
+};
+
+/** A comment box: Mod+Enter or Send hands the host the current snapshot. */
+const SubmitSnapshotExample = ({ profile, defaultValue }: SubmitSnapshotExampleProps) => {
     const handleRef = useRef<EditorHandle>(null);
     const [sent, setSent] = useState<readonly { id: number; text: string }[]>([]);
     const send = (snapshot: Snapshot) =>
@@ -184,12 +183,10 @@ const SaveFailureExample = ({ definition, defaultValue }: EditorArgs) => (
     </RichTextEditor.Root>
 );
 
+type ExternalReplacementExampleProps = EditorArgs & { replacement: LoadedDocument };
+
 /** A newer version from elsewhere replaces the document through `replaceDocument`, which saves unsaved edits first. */
-const ExternalReplacementExample = ({
-    definition,
-    defaultValue,
-    replacement,
-}: EditorArgs & { replacement: LoadedDocument }) => {
+const ExternalReplacementExample = ({ definition, defaultValue, replacement }: ExternalReplacementExampleProps) => {
     const handleRef = useRef<EditorHandle>(null);
     const [services] = useState(() => ({ persistence: createFakePersistenceService() }));
     const [outcome, setOutcome] = useState('');
@@ -243,12 +240,10 @@ const PUBLISHED = recordOf(
     text(' text in both.'),
 );
 
+type ReadonlyAndReaderExampleProps = EditorArgs & { model: ContentModel };
+
 /** The same document in a read-only editor and in `RichTextReader`, which renders it as HTML without an editor. */
-const ReadonlyAndReaderExample = ({
-    definition,
-    defaultValue,
-    model: readerModel,
-}: EditorArgs & { model: ContentModel }) => (
+const ReadonlyAndReaderExample = ({ definition, defaultValue, model: readerModel }: ReadonlyAndReaderExampleProps) => (
     <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
         <section aria-label="Read-only editor">
             <RichTextEditor
@@ -265,16 +260,14 @@ const ReadonlyAndReaderExample = ({
     </div>
 );
 
-/** Two editors of one definition, each with its own document, toolbar, history and selection. */
-const TwoEditorsExample = ({
-    definition,
-    summary,
-    details,
-}: {
+type TwoEditorsExampleProps = {
     definition: CompiledEditorDefinition<object>;
     summary: LoadedDocument;
     details: LoadedDocument;
-}) => (
+};
+
+/** Two editors of one definition, each with its own document, toolbar, history and selection. */
+const TwoEditorsExample = ({ definition, summary, details }: TwoEditorsExampleProps) => (
     <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '1rem' }}>
         <RichTextEditor
             aria-label="Summary"

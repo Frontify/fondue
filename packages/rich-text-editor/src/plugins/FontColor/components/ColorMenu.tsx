@@ -68,22 +68,17 @@ const startColor = (api: EditorApi, mark: ColorMark, tokens: readonly ColorToken
     return rgbaOf(hex);
 };
 
-/** The draft of a literal colour: the Fondue `ColorPicker`, whose Save writes the mark as one undo step. */
-const ColorDraft = ({
-    api,
-    mark,
-    tokens,
-    strings,
-    testId,
-    onClose,
-}: {
+type ColorDraftProps = {
     api: EditorApi;
     mark: ColorMark;
     tokens: readonly ColorToken[];
     strings: ColorMenuStrings;
     testId: string;
     onClose: () => void;
-}) => {
+};
+
+/** The draft of a literal colour: the Fondue `ColorPicker`, whose Save writes the mark as one undo step. */
+const ColorDraft = ({ api, mark, tokens, strings, testId, onClose }: ColorDraftProps) => {
     const [open, setOpen] = useState(true);
     const [draft, setDraft] = useState(() => startColor(api, mark, tokens));
     const close = (next: boolean) => {
@@ -138,20 +133,18 @@ const ColorDraft = ({
     );
 };
 
-/**
- * The "A" colour menu at the selection: text colours, highlight colours when `marks.highlight` is installed, and
- * Clear; with `literalColors`, a custom colour row opens the Fondue `ColorPicker` with a draft that only Save writes.
- */
-export const ColorMenu = ({
-    tokenIds,
-    literalText,
-    close: onClose,
-}: OverlayProps & {
+export type ColorMenuProps = OverlayProps & {
     /** Limits the menu to the tokens it names. */
     tokenIds: readonly string[] | undefined;
     /** `marks.font-color` takes any colour. */
     literalText: boolean;
-}) => {
+};
+
+/**
+ * The "A" colour menu at the selection: text colours, highlight colours when `marks.highlight` is installed, and
+ * Clear; with `literalColors`, a custom colour row opens the Fondue `ColorPicker` with a draft that only Save writes.
+ */
+export const ColorMenu = ({ tokenIds, literalText, close: onClose }: ColorMenuProps) => {
     const api = useEditorApi();
     const [custom, setCustom] = useState<ColorMark>();
     if (api === undefined) {

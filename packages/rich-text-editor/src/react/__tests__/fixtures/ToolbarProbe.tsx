@@ -87,8 +87,10 @@ declare global {
     }
 }
 
+type AnnounceProps = { message: string; coalesce: string | undefined };
+
 /** A button that announces a message through the editor's live region, which the tests press. */
-const Announce = ({ message, coalesce }: { message: string; coalesce: string | undefined }) => {
+const Announce = ({ message, coalesce }: AnnounceProps) => {
     const announcer = useContext(AnnouncerContext);
 
     return (
@@ -98,24 +100,7 @@ const Announce = ({ message, coalesce }: { message: string; coalesce: string | u
     );
 };
 
-/** Mounts the toolbar editor between two host buttons, in a form, with the stand-in commands in the toolbar. */
-export const ToolbarProbe = ({
-    texts = ['one two three'],
-    blocks,
-    disabled = false,
-    readOnly = false,
-    boldBlocked = false,
-    dir = 'ltr',
-    theme = 'light',
-    toolbarShortcut,
-    width,
-    scrollHeight,
-    compose = false,
-    toolbarBelow = false,
-    wide = false,
-    controls,
-    announce,
-}: {
+export type ToolbarProbeProps = {
     texts?: readonly string[];
     blocks?: readonly ContentNodeJSON[];
     disabled?: boolean;
@@ -137,7 +122,26 @@ export const ToolbarProbe = ({
     controls?: ReactPresentation['controls'];
     /** Adds a button that announces this message, which the live region of the composed editor reads. */
     announce?: string;
-}) => {
+};
+
+/** Mounts the toolbar editor between two host buttons, in a form, with the stand-in commands in the toolbar. */
+export const ToolbarProbe = ({
+    texts = ['one two three'],
+    blocks,
+    disabled = false,
+    readOnly = false,
+    boldBlocked = false,
+    dir = 'ltr',
+    theme = 'light',
+    toolbarShortcut,
+    width,
+    scrollHeight,
+    compose = false,
+    toolbarBelow = false,
+    wide = false,
+    controls,
+    announce,
+}: ToolbarProbeProps) => {
     const ref = useRef<EditorHandle<object>>(null);
     const presentation = useMemo(() => {
         let toolbar = TOOLBAR;

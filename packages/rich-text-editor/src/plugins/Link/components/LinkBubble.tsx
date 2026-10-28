@@ -19,18 +19,17 @@ export {
     REMOVE_LINK,
 } from '../helpers/linkBubbleModel';
 
-const BubbleButton = ({
-    label,
-    icon,
-    describedBy,
-    onPress,
-}: {
+type BubbleButtonProps = {
     label: string;
     icon: ReactNode;
     /** The URL, so each control says which destination it acts on. */
     describedBy: string;
     onPress: (control: Element) => void;
-}) => <ChromeToolbarButton label={label} icon={icon} describedBy={describedBy} onPress={onPress} />;
+};
+
+const BubbleButton = ({ label, icon, describedBy, onPress }: BubbleButtonProps) => (
+    <ChromeToolbarButton label={label} icon={icon} describedBy={describedBy} onPress={onPress} />
+);
 
 /**
  * The link bubble: a `Flyout` on the whole link while the caret is at it or inside it, with the link's URL and Open,

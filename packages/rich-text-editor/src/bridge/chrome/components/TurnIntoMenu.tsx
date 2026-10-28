@@ -11,19 +11,17 @@ import { turnIntoChoices, TurnIntoContext } from '../helpers/turnInto';
 
 import { type MenuOption, OptionsMenu } from './OptionsMenu';
 
+export type TurnIntoMenuProps = OverlayProps & {
+    label: string;
+    /** The node the menu acts on, wherever the selection goes while it is open. */
+    node: Parameters<EditorApi['select']>[0];
+};
+
 /**
  * The Turn into menu that a command opens at the selection, as a More row does: it lists what the node takes, marks and
  * focuses the current type, and a pick selects `node` and converts it, or changes nothing for the current type.
  */
-export const TurnIntoMenu = ({
-    label,
-    node,
-    ...overlay
-}: OverlayProps & {
-    label: string;
-    /** The node the menu acts on, wherever the selection goes while it is open. */
-    node: Parameters<EditorApi['select']>[0];
-}) => {
+export const TurnIntoMenu = ({ label, node, ...overlay }: TurnIntoMenuProps) => {
     const entries = useContext(TurnIntoContext);
     const runtime = useContext(SessionContext);
     const query = (command: string, payload: JsonValue | undefined): CommandState => {

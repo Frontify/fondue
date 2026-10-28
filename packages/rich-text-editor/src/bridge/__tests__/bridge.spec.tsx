@@ -650,7 +650,9 @@ describe('the React bridge', () => {
     });
 
     it('keeps the portals of the view a remounted surface attaches', async () => {
-        const Layout = ({ surfaceKey }: { surfaceKey: string }) => (
+        type LayoutProps = { surfaceKey: string };
+
+        const Layout = ({ surfaceKey }: LayoutProps) => (
             <RichTextEditor.Root aria-label="Notes" definition={definition} defaultValue={stored(para(mention('m1')))}>
                 <RichTextEditor.Surface key={surfaceKey} />
             </RichTextEditor.Root>

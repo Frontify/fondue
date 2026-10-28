@@ -10,8 +10,10 @@ import { PERF_FEATURES, perfDocument } from '../../../model/__tests__/fixtures/p
 const model = compileContentModel(featuresById(PERF_FEATURES), { id: 'test.many', version: 1 });
 const definition = defineEditor({ id: 'test.many', model, plugins: pluginsFor(model) });
 
+export type ManyEditorsProps = { count: number };
+
 /** `count` editors on one page, each with the `small` fixture, as a page of comments holds. */
-export const ManyEditors = ({ count }: { count: number }) => (
+export const ManyEditors = ({ count }: ManyEditorsProps) => (
     <>
         {Array.from({ length: count }, (_, index) => (
             <RichTextEditor

@@ -24,8 +24,10 @@ type ProviderValues = {
     turnInto: readonly TurnIntoEntry[];
 };
 
+export type SessionProvidersProps = { values: ProviderValues; children: ReactNode };
+
 /** What the parts, the plugins and the overlays of one session read from context. */
-export const SessionProviders = ({ values, children }: { values: ProviderValues; children: ReactNode }) => (
+export const SessionProviders = ({ values, children }: SessionProvidersProps) => (
     <RootContext.Provider value={values.root}>
         <EditorHostsContext.Provider value={values.hosts}>
             <SessionContext.Provider value={values.live}>

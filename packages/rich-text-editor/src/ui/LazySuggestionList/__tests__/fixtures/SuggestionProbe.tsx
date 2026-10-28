@@ -64,19 +64,21 @@ const documentOf = (text: string, extraLines: number) => {
     };
 };
 
+export type SuggestionProbeProps = {
+    lang?: string;
+    toolbar?: boolean;
+    text?: string;
+    /** Wraps the editor in a scrolling box of this height, with lines below the first paragraph. */
+    scrollHeight?: number;
+};
+
 /** Mounts the emoji feature between two focusable buttons, with its toolbar button when `toolbar` is set. */
 export const SuggestionProbe = ({
     lang = 'en-US',
     toolbar = false,
     text = 'Hi',
     scrollHeight,
-}: {
-    lang?: string;
-    toolbar?: boolean;
-    text?: string;
-    /** Wraps the editor in a scrolling box of this height, with lines below the first paragraph. */
-    scrollHeight?: number;
-}) => {
+}: SuggestionProbeProps) => {
     const ref = useRef<EditorHandle>(null);
     const [locale] = useState(() => localeOf(lang));
     useEffect(() => {

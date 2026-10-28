@@ -41,8 +41,10 @@ const BlockChrome = () => {
 /** The document listeners that open popups hold, which a released node view leaves at 0. */
 export const popupListeners = { count: 0 };
 
+type PopupProps = { label: string };
+
 /** A popup that listens on the document while it is open, as an overlay that closes on Escape does. */
-const Popup = ({ label }: { label: string }) => {
+const Popup = ({ label }: PopupProps) => {
     useEffect(() => {
         const listener = () => undefined;
         document.addEventListener('keydown', listener);

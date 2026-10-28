@@ -13,23 +13,20 @@ import styles from '../styles/upload.module.scss';
 const CANCEL = 'media.upload.cancel';
 const RETRY = 'media.upload.retry';
 
+export type UploadControlsProps = {
+    nodeId: string;
+    status: UploadStatus;
+    t: CodecContext['t'];
+    onRemove: () => void;
+};
+
 /**
  * The upload's buttons in the image chrome toolbar: Cancel while it runs or waits, then Retry and Remove once it
  * failed or stopped. Cancel and Retry show where `media.upload` is installed. When the upload's change takes away
  * the button that has focus, the button that takes its place gets focus, or once the upload completes the image's
  * first button, else the surface.
  */
-export const UploadControls = ({
-    nodeId,
-    status,
-    t,
-    onRemove,
-}: {
-    nodeId: string;
-    status: UploadStatus;
-    t: CodecContext['t'];
-    onRemove: () => void;
-}) => {
+export const UploadControls = ({ nodeId, status, t, onRemove }: UploadControlsProps) => {
     const api = useEditorApi();
     // These keep their identity when a locale change gives a new API, which reruns no effect.
     const focus = api?.focus;

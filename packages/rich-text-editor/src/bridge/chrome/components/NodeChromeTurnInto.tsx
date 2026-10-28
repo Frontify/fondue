@@ -8,7 +8,9 @@ import { turnIntoChoices, TurnIntoContext, type TurnIntoNode } from '../helpers/
 import { NodeChromeMenu } from './NodeChromeMenu';
 import { OptionItem } from './OptionItem';
 
-const TurnIntoItems = ({ node, onPick }: { node: TurnIntoNode; onPick: () => void }) => {
+type TurnIntoItemsProps = { node: TurnIntoNode; onPick: () => void };
+
+const TurnIntoItems = ({ node, onPick }: TurnIntoItemsProps) => {
     const entries = useContext(TurnIntoContext);
     const choices = turnIntoChoices(entries, (command, payload) => node.query(command, payload));
 
@@ -30,8 +32,10 @@ const TurnIntoItems = ({ node, onPick }: { node: TurnIntoNode; onPick: () => voi
     ));
 };
 
+export type NodeChromeTurnIntoProps = { current: string; node: TurnIntoNode };
+
 /** The Turn into menu of node chrome: a button named by the block's `current` type, whose items convert the block. */
-export const NodeChromeTurnInto = ({ current, node }: { current: string; node: TurnIntoNode }) => {
+export const NodeChromeTurnInto = ({ current, node }: NodeChromeTurnIntoProps) => {
     const api = useEditorApi();
     // A converted block's chrome unmounts with its menu, so a pick returns focus here and Escape in the close handler.
     const toSurface = () => api?.focus();

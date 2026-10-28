@@ -124,15 +124,14 @@ const stored = (content: keyof typeof DOCUMENTS) =>
         },
     }) as unknown as RichTextDocument;
 
-/** Mounts `media.image` with a resolver for every asset, and the reader of the same document beside it. */
-export const ImageProbe = ({
-    content = 'still',
-    dir,
-}: {
+export type ImageProbeProps = {
     content?: keyof typeof DOCUMENTS;
     /** The direction of the page around the editor and the reader. */
     dir?: 'ltr' | 'rtl';
-}) => {
+};
+
+/** Mounts `media.image` with a resolver for every asset, and the reader of the same document beside it. */
+export const ImageProbe = ({ content = 'still', dir }: ImageProbeProps) => {
     const ref = useRef<EditorHandle>(null);
     const changesRef = useRef(0);
     useEffect(() => {

@@ -84,8 +84,10 @@ window.storyProbe = {
     },
 };
 
+export type StoryProbeProps = { file?: string; name?: string };
+
 /** The story `name` of the story file at `file` under `src`, composed with the project annotations, and its play function run; no story without them. */
-export const StoryProbe = ({ file, name }: { file?: string; name?: string }) => {
+export const StoryProbe = ({ file, name }: StoryProbeProps) => {
     const canvasRef = useRef<HTMLDivElement>(null);
     const composed = COMPOSED_STORIES.find((story) => story.file === file && story.name === name);
     useEffect(() => {

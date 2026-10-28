@@ -48,8 +48,10 @@ declare global {
 
 const paragraph = (text: string) => ({ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] });
 
+export type UploadProbeProps = { texts?: readonly string[] };
+
 /** The editor of `core`, `media.image` and `media.upload` over `texts`, with an upload service the specs answer. */
-export const UploadProbe = ({ texts = ['Before'] }: { texts?: readonly string[] }) => {
+export const UploadProbe = ({ texts = ['Before'] }: UploadProbeProps) => {
     const ref = useRef<EditorHandle<object>>(null);
     const [changes] = useState<DocumentChange[]>([]);
     const [uploads] = useState(() => {

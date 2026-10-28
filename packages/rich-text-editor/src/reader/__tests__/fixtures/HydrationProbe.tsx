@@ -18,25 +18,25 @@ export type HydrationResult = {
     html: string;
 };
 
-const Done = ({ onDone }: { onDone: () => void }) => {
+type DoneProps = { onDone: () => void };
+
+const Done = ({ onDone }: DoneProps) => {
     useEffect(onDone, [onDone]);
 
     return null;
+};
+
+export type HydrationProbeProps = {
+    document: unknown;
+    html?: string;
+    onDone: (result: HydrationResult) => void;
 };
 
 /**
  * Renders `document` with `renderToString`, puts that markup in the page and hydrates it, then reports what React
  * said. `html` replaces the server markup, so a test can check that a mismatch is seen.
  */
-export const HydrationProbe = ({
-    document,
-    html,
-    onDone,
-}: {
-    document: unknown;
-    html?: string;
-    onDone: (result: HydrationResult) => void;
-}) => {
+export const HydrationProbe = ({ document, html, onDone }: HydrationProbeProps) => {
     const hostRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         const container = window.document.createElement('div');

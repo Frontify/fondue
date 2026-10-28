@@ -58,6 +58,19 @@ const documentOf = (blocks: readonly object[]): RichTextDocument =>
         content: { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: [...blocks] },
     }) as unknown as RichTextDocument;
 
+export type ListProbeProps = {
+    /** Stored blocks, such as `list-blocks.ts` builds. */
+    blocks: readonly object[];
+    /** The theme direction. */
+    dir?: 'ltr' | 'rtl';
+    reader?: boolean;
+    listLevels?: ListLevels;
+    /** Passed to the editor when set, else the editor keeps its default. */
+    tabMovesFocus?: boolean;
+    /** Strikethrough and the secondary text colour on a checked task, in the editor and the reader. */
+    strikeCheckedTasks?: boolean;
+};
+
 /**
  * Mounts the list features through `RichTextEditor` between two focusable buttons, with the list toolbar, and with
  * `reader` the reader's output of each change below it.
@@ -69,18 +82,7 @@ export const ListProbe = ({
     listLevels,
     tabMovesFocus,
     strikeCheckedTasks = false,
-}: {
-    /** Stored blocks, such as `list-blocks.ts` builds. */
-    blocks: readonly object[];
-    /** The theme direction. */
-    dir?: 'ltr' | 'rtl';
-    reader?: boolean;
-    listLevels?: ListLevels;
-    /** Passed to the editor when set, else the editor keeps its default. */
-    tabMovesFocus?: boolean;
-    /** Strikethrough and the secondary text colour on a checked task, in the editor and the reader. */
-    strikeCheckedTasks?: boolean;
-}) => {
+}: ListProbeProps) => {
     let options: Pick<RichTextEditorProps, 'tabMovesFocus'> = {};
     if (tabMovesFocus !== undefined) {
         options = { tabMovesFocus };

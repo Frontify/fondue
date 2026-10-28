@@ -27,11 +27,13 @@ declare global {
     }
 }
 
+export type ColorProbeProps = { literal?: boolean };
+
 /**
  * Mounts `marks.font-color` and the highlight stand-in through `RichTextEditor` with the colour menu in the toolbar,
  * each with `literalColors` when `literal` is set, over one paragraph.
  */
-export const ColorProbe = ({ literal = false }: { literal?: boolean }) => {
+export const ColorProbe = ({ literal = false }: ColorProbeProps) => {
     const [mounted] = useState(() => {
         const model = styleModel(literal);
 

@@ -57,16 +57,14 @@ class PanelBoundary extends Component<PanelBoundaryProps, BoundaryState> {
     }
 }
 
-/** The localized message and Close button that replace a panel whose render threw. */
-const PanelFallback = ({
-    message,
-    closeLabel,
-    onClose,
-}: {
+type PanelFallbackProps = {
     message: string;
     closeLabel: string;
     onClose: () => void;
-}) => {
+};
+
+/** The localized message and Close button that replace a panel whose render threw. */
+const PanelFallback = ({ message, closeLabel, onClose }: PanelFallbackProps) => {
     const buttonRef = useRef<HTMLButtonElement>(null);
     const announce = useAnnounce();
 
@@ -85,22 +83,17 @@ const PanelFallback = ({
     );
 };
 
-/** The open panel, with its error boundary. It takes focus when it opens, and Escape closes it. */
-export const PanelFrame = ({
-    id,
-    panel: Panel,
-    t,
-    requested,
-    testId,
-    onClose,
-}: {
+export type PanelFrameProps = {
     id: string;
     panel: ComponentType<PanelComponentProps>;
     t: CodecContext['t'];
     requested: number;
     testId: string;
     onClose: () => void;
-}) => {
+};
+
+/** The open panel, with its error boundary. It takes focus when it opens, and Escape closes it. */
+export const PanelFrame = ({ id, panel: Panel, t, requested, testId, onClose }: PanelFrameProps) => {
     const slotRef = useRef<HTMLDivElement>(null);
 
     // Runs after the panel's own layout effects, so a panel that focused itself keeps that focus.

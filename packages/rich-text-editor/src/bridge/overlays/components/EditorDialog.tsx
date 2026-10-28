@@ -5,16 +5,7 @@ import { type FormEvent, type ReactNode, useId } from 'react';
 
 import { type EditorDialogControl } from '../hooks/useEditorDialog';
 
-/** A modal editor dialog: title, body and a footer of Cancel, the given actions and a submit button. */
-export const EditorDialog = ({
-    dialog,
-    title,
-    cancel,
-    submit,
-    actions,
-    testId,
-    children,
-}: {
+export type EditorDialogProps = {
     dialog: EditorDialogControl;
     title: string;
     cancel: string;
@@ -28,7 +19,10 @@ export const EditorDialog = ({
     actions?: ReactNode;
     testId?: string;
     children: ReactNode;
-}) => {
+};
+
+/** A modal editor dialog: title, body and a footer of Cancel, the given actions and a submit button. */
+export const EditorDialog = ({ dialog, title, cancel, submit, actions, testId, children }: EditorDialogProps) => {
     const formId = useId();
     let testIdProp: { 'data-test-id'?: string } = {};
     if (testId !== undefined) {

@@ -28,8 +28,10 @@ const labelGroup = (label: string) => (group: HTMLDivElement | null) => {
     group?.querySelector('span[aria-label]')?.setAttribute('aria-hidden', 'true');
 };
 
+type TurnIntoProps = { label: string; runs: ReturnType<typeof useRowRuns> };
+
 /** The Turn into group: the conversions the selected node takes, none for a node that takes no other type. */
-const TurnInto = ({ label, runs }: { label: string; runs: ReturnType<typeof useRowRuns> }) => {
+const TurnInto = ({ label, runs }: TurnIntoProps) => {
     const runtime = useContext(SessionContext);
     const entries = useContext(TurnIntoContext);
     if (runtime === undefined) {
@@ -67,6 +69,16 @@ const TurnInto = ({ label, runs }: { label: string; runs: ReturnType<typeof useR
     );
 };
 
+export type ContextMenuContentProps = {
+    contentRef: Ref<HTMLDivElement>;
+    label: string;
+    container: HTMLElement | null;
+    items: readonly ToolbarItem[];
+    strings: ToolbarStrings;
+    turnIntoLabel: string;
+    runs: ReturnType<typeof useRowRuns>;
+};
+
 /** The context menu's content, which loads when the menu first opens so the editor's initial load holds none of it. */
 export const ContextMenuContent = ({
     contentRef,
@@ -76,15 +88,7 @@ export const ContextMenuContent = ({
     strings,
     turnIntoLabel,
     runs,
-}: {
-    contentRef: Ref<HTMLDivElement>;
-    label: string;
-    container: HTMLElement | null;
-    items: readonly ToolbarItem[];
-    strings: ToolbarStrings;
-    turnIntoLabel: string;
-    runs: ReturnType<typeof useRowRuns>;
-}) => (
+}: ContextMenuContentProps) => (
     <Dropdown.Content
         ref={contentRef}
         aria-label={label}

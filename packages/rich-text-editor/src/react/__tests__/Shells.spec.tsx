@@ -48,8 +48,10 @@ const envelope = (content: readonly JsonValue[], version = 1) => ({
 /** A save spy, which the editor must never call for these documents. */
 const persistence = () => ({ save: vi.fn(), read: vi.fn() });
 
+type BombProps = { armed: boolean };
+
 /** A host part inside `RichTextEditor.Root` that throws in render while `armed`, as a broken part would. */
-const Bomb = ({ armed }: { armed: boolean }) => {
+const Bomb = ({ armed }: BombProps) => {
     if (armed) {
         throw new Error('render failed');
     }

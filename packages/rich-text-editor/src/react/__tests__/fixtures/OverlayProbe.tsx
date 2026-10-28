@@ -76,8 +76,10 @@ declare global {
 const paragraph = (text: string) =>
     ({ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] }) as unknown as ContentNodeJSON;
 
+type EmbeddedProps = { into: 'shadow' | 'iframe'; children: ReactNode };
+
 /** Renders `children` in an open shadow root or an iframe's body, as a host page that embeds the editor does. */
-const Embedded = ({ into, children }: { into: 'shadow' | 'iframe'; children: ReactNode }) => {
+const Embedded = ({ into, children }: EmbeddedProps) => {
     const hostRef = useRef<HTMLDivElement>(null);
     const frameRef = useRef<HTMLIFrameElement>(null);
     const [target, setTarget] = useState<HTMLElement | ShadowRoot | null>(null);
@@ -105,28 +107,7 @@ const Embedded = ({ into, children }: { into: 'shadow' | 'iframe'; children: Rea
     );
 };
 
-/**
- * Mounts `RichTextEditor.Root` with the fixed and bubble toolbars, the surface and the fixture overlay set between two
- * host buttons, optionally inside a host Fondue `Dialog`, a shadow root, an iframe or a scrolling container.
- */
-export const OverlayProbe = ({
-    blocks,
-    texts = ['one two three'],
-    toolbar = TOOLBAR,
-    defaultToolbarMode,
-    toolbarShortcut,
-    bubble = true,
-    within,
-    scrollHeight,
-    spacer = 0,
-    width,
-    hostContainer = false,
-    dir = 'ltr',
-    theme = 'light',
-    hostButtons = true,
-    scrollSelectionIntoView,
-    header = false,
-}: {
+export type OverlayProbeProps = {
     blocks?: readonly ContentNodeJSON[];
     texts?: readonly string[];
     toolbar?: ReactPresentation['toolbar'];
@@ -151,7 +132,30 @@ export const OverlayProbe = ({
     scrollSelectionIntoView?: boolean;
     /** Covers the top of the viewport with a fixed host header of `z-index` 10. */
     header?: boolean;
-}) => {
+};
+
+/**
+ * Mounts `RichTextEditor.Root` with the fixed and bubble toolbars, the surface and the fixture overlay set between two
+ * host buttons, optionally inside a host Fondue `Dialog`, a shadow root, an iframe or a scrolling container.
+ */
+export const OverlayProbe = ({
+    blocks,
+    texts = ['one two three'],
+    toolbar = TOOLBAR,
+    defaultToolbarMode,
+    toolbarShortcut,
+    bubble = true,
+    within,
+    scrollHeight,
+    spacer = 0,
+    width,
+    hostContainer = false,
+    dir = 'ltr',
+    theme = 'light',
+    hostButtons = true,
+    scrollSelectionIntoView,
+    header = false,
+}: OverlayProbeProps) => {
     let options: Pick<RichTextEditorProps, 'scrollSelectionIntoView'> = {};
     if (scrollSelectionIntoView !== undefined) {
         options = { scrollSelectionIntoView };

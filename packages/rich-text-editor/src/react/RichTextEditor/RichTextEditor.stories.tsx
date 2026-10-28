@@ -326,8 +326,10 @@ const SelectionReadout = () => {
     return <p>Selection: {shown}</p>;
 };
 
+type BreakerProps = { armed: boolean };
+
 /** A host part that throws while rendering when `armed`, which shows the recovery shell. */
-const Breaker = ({ armed }: { armed: boolean }) => {
+const Breaker = ({ armed }: BreakerProps) => {
     if (armed) {
         throw new Error('The playground broke the editor on purpose.');
     }
@@ -1182,8 +1184,10 @@ const PROFILE_MODELS = {
     'brand-document': brandDocumentModel,
 } as const;
 
+type ProfileEditorProps = { profile: RichTextProfile; required: boolean };
+
 /** A shipped profile's editor with its own definition and toolbar, which submits with its submit keys. */
-const ProfileEditor = ({ profile, required }: { profile: RichTextProfile; required: boolean }) => {
+const ProfileEditor = ({ profile, required }: ProfileEditorProps) => {
     const [submits, setSubmits] = useState<readonly number[]>([]);
     const defaultValue = useMemo(
         () => ({

@@ -9,6 +9,18 @@ import { type ToolbarItem, type ToolbarStrings } from '#/ui/helpers/items';
 
 import { MoreRow } from './MoreRow';
 
+export type MoreContentProps = {
+    contentRef: RefObject<HTMLDivElement>;
+    container: HTMLElement | null;
+    items: readonly ToolbarItem[];
+    strings: ToolbarStrings;
+    blockType: string;
+    modeLabel: string;
+    onRun: (item: ToolbarItem) => Promise<void>;
+    onCloseAutoFocus: (event: Event) => void;
+    onModeSwitch: () => void;
+};
+
 /** The More menu's content, which loads with the toolbar's More so the editor's initial load holds none of it. */
 export const MoreContent = ({
     contentRef,
@@ -20,17 +32,7 @@ export const MoreContent = ({
     onRun,
     onCloseAutoFocus,
     onModeSwitch,
-}: {
-    contentRef: RefObject<HTMLDivElement>;
-    container: HTMLElement | null;
-    items: readonly ToolbarItem[];
-    strings: ToolbarStrings;
-    blockType: string;
-    modeLabel: string;
-    onRun: (item: ToolbarItem) => Promise<void>;
-    onCloseAutoFocus: (event: Event) => void;
-    onModeSwitch: () => void;
-}) => (
+}: MoreContentProps) => (
     <Dropdown.Content ref={contentRef} container={container} onCloseAutoFocus={onCloseAutoFocus}>
         {/* The text style picker that does not fit offers its rows here. */}
         {items

@@ -51,11 +51,13 @@ declare global {
     }
 }
 
+export type LanguageProbeProps = { inToolbar?: boolean };
+
 /**
  * Mounts `marks.language` with a long `languages` option over a Chinese passage, with Language on the toolbar when
  * `inToolbar` is set and otherwise only in More.
  */
-export const LanguageProbe = ({ inToolbar = false }: { inToolbar?: boolean }) => {
+export const LanguageProbe = ({ inToolbar = false }: LanguageProbeProps) => {
     const [presentation] = useState(() => {
         if (inToolbar) {
             return defineReactPresentation({ toolbar: [['mark.bold.toggle', 'mark.language.edit']] });

@@ -43,8 +43,10 @@ const DOCUMENTS = {
     ],
 };
 
+export type MentionProbeProps = { content?: keyof typeof DOCUMENTS };
+
 /** Mounts `mentions` over a fake `ReferenceService` between two focusable buttons, with the mention toolbar button. */
-export const MentionProbe = ({ content = 'text' }: { content?: keyof typeof DOCUMENTS }) => {
+export const MentionProbe = ({ content = 'text' }: MentionProbeProps) => {
     const ref = useRef<EditorHandle>(null);
     useEffect(() => {
         const handle = ref.current;

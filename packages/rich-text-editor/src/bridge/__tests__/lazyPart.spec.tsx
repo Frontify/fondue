@@ -4,7 +4,9 @@ import { act, cleanup, render, screen } from '@testing-library/react';
 import { type ComponentType } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const Greeting = ({ name }: { name: string }) => <p>Hello {name}</p>;
+type GreetingProps = { name: string };
+
+const Greeting = ({ name }: GreetingProps) => <p>Hello {name}</p>;
 
 describe('a lazy part', () => {
     const idle = new Map<number, () => void>();

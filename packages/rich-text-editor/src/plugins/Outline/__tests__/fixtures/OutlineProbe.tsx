@@ -53,14 +53,13 @@ declare global {
     }
 }
 
-/** A tall document in a short scrolling frame, with its one heading at the end or in the middle. */
-export const OutlineProbe = ({
-    heading: place = 'last',
-    defaultToolbarMode,
-}: {
+export type OutlineProbeProps = {
     heading?: keyof typeof BLOCKS;
     defaultToolbarMode?: 'fixed' | 'bubble';
-}) => {
+};
+
+/** A tall document in a short scrolling frame, with its one heading at the end or in the middle. */
+export const OutlineProbe = ({ heading: place = 'last', defaultToolbarMode }: OutlineProbeProps) => {
     const ref = useRef<EditorHandle>(null);
     useEffect(() => {
         const handle = ref.current;

@@ -118,24 +118,7 @@ type Rerendered = Pick<
     'status' | 'required' | 'aria-describedby' | 'placeholder'
 >;
 
-/** Mounts the component-test editor after a focusable button, and reports each change's origin and command. */
-export const EditorProbe = ({
-    texts = ['ab'],
-    blocks,
-    readOnly = false,
-    guarded = false,
-    inputRules = false,
-    placeholder,
-    contentClassName,
-    profile,
-    withReader = false,
-    inForm = false,
-    inFrame = false,
-    rerendered = {},
-    persistence = false,
-    holdSaves = false,
-    onChange,
-}: {
+export type EditorProbeProps = {
     texts?: readonly string[];
     /** The document's blocks as stored JSON, in place of `texts`, such as the node view stand-ins of `fixture.chrome`. */
     blocks?: readonly ContentNodeJSON[];
@@ -160,7 +143,26 @@ export const EditorProbe = ({
     /** Holds each save of the fake service until `window.rte.answerSaves()`. */
     holdSaves?: boolean;
     onChange?: (change: { origin: string; commandId: string | null }) => void;
-}) => {
+};
+
+/** Mounts the component-test editor after a focusable button, and reports each change's origin and command. */
+export const EditorProbe = ({
+    texts = ['ab'],
+    blocks,
+    readOnly = false,
+    guarded = false,
+    inputRules = false,
+    placeholder,
+    contentClassName,
+    profile,
+    withReader = false,
+    inForm = false,
+    inFrame = false,
+    rerendered = {},
+    persistence = false,
+    holdSaves = false,
+    onChange,
+}: EditorProbeProps) => {
     const ref = useRef<EditorHandle<object>>(null);
     const field = useRichTextFormField(ref);
     const frameRef = useRef<HTMLIFrameElement>(null);

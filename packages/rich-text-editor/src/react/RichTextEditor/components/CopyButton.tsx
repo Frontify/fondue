@@ -3,16 +3,14 @@
 import { Button } from '@frontify/fondue-components';
 import { type ReactNode, useState } from 'react';
 
-/** A copy action that names a failed copy instead of failing silently. */
-export const CopyButton = ({
-    copy,
-    failure,
-    children,
-}: {
+export type CopyButtonProps = {
     copy: () => Promise<boolean>;
     failure: string;
     children: ReactNode;
-}) => {
+};
+
+/** A copy action that names a failed copy instead of failing silently. */
+export const CopyButton = ({ copy, failure, children }: CopyButtonProps) => {
     const [failed, setFailed] = useState(false);
 
     return (

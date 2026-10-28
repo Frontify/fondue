@@ -9,8 +9,10 @@ import styles from '../styles/language.module.scss';
 // The segmented control ignores an empty value, so "no direction" gets a name of its own.
 const NO_DIRECTION = 'none';
 
+export type TagFieldProps = { state: LanguageState };
+
 /** The typed tag field, shown when the option lists no languages. */
-export const TagField = ({ state }: { state: LanguageState }) => {
+export const TagField = ({ state }: TagFieldProps) => {
     const { strings, tag, invalid, ids } = state;
     let status: 'error' | 'neutral' = 'neutral';
     let describedBy: { 'aria-describedby'?: string } = {};
@@ -38,8 +40,10 @@ export const TagField = ({ state }: { state: LanguageState }) => {
 
 TagField.displayName = 'TagField';
 
+export type LanguageRadiosProps = { state: LanguageState };
+
 /** The radio group of offered languages. */
-export const LanguageRadios = ({ state }: { state: LanguageState }) => {
+export const LanguageRadios = ({ state }: LanguageRadiosProps) => {
     const { strings, offered, tag, invalid, ids } = state;
     let errorMessage: string | undefined;
     // The radio a rejected Apply focuses, described by the error: the checked one, else the first. The invalid state stays on
@@ -88,8 +92,10 @@ export const LanguageRadios = ({ state }: { state: LanguageState }) => {
 
 LanguageRadios.displayName = 'LanguageRadios';
 
+export type DirectionSelectProps = { state: LanguageState };
+
 /** The text direction control. */
-export const DirectionSelect = ({ state }: { state: LanguageState }) => (
+export const DirectionSelect = ({ state }: DirectionSelectProps) => (
     <>
         {/* A radio group takes no `label for`, so its name is Fondue's group label text, as in RadioList's stories. */}
         <Text id={state.ids.directionLabel} weight="strong" size="small">

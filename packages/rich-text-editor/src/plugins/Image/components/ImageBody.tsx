@@ -13,8 +13,10 @@ import { ImageUnavailable } from './ImageUnavailable';
 /** A stored intrinsic size, or `null` where the image has none. */
 const sizeOf = (value: unknown) => (typeof value === 'number' ? value : null);
 
+export type ImageBodyProps = { chrome: ImageChromeState };
+
 /** The image, its upload slot or its placeholder, whichever the node shows. */
-export const ImageBody = ({ chrome }: { chrome: ImageChromeState }) => {
+export const ImageBody = ({ chrome }: ImageBodyProps) => {
     const { attrs, context, t, shown, unavailable, unfinished, status, resize, decided, animated, paused } = chrome;
     const { frameRef, setFailed, selectImage } = chrome;
     if (status !== undefined) {

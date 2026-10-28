@@ -11,11 +11,13 @@ import { type SaveStatus } from '#/runtime/port';
 import { causesByHandle, announcementOf, keyOf, QUIET, type Seen } from '../helpers/status';
 import styles from '../styles/status.module.scss';
 
+export type SaveStatusTextProps = { t: CodecContext['t']; testId: string };
+
 /**
  * The session's save state as text, which changes silently during autosave and is announced through the editor's
  * polite live region only for the states that need the author.
  */
-export const SaveStatusText = ({ t, testId }: { t: CodecContext['t']; testId: string }) => {
+export const SaveStatusText = ({ t, testId }: SaveStatusTextProps) => {
     const runtime = useContext(SessionContext);
     // The shown key only, so a save status that changes on each keystroke rerenders nothing.
     const subscribe = useCallback(

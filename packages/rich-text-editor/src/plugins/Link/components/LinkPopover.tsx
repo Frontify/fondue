@@ -20,6 +20,8 @@ export {
     SET_LINK,
 } from '../helpers/linkPopoverModel';
 
+export type LinkPopoverProps = OverlayProps & { initial: LinkInitial };
+
 /**
  * The link popover: a non-modal `Flyout` on the link or the selection with the destination, the visible text, "Open in
  * new window" and, when the presentation has link styles, a Style select, prefilled from the link at the selection.
@@ -28,7 +30,7 @@ export {
  * meanwhile, Insert as new link inserts the visible text as a linked run at the selection. With `search`, typing in the
  * destination lists matching internal destinations that carry a checked `href`; picking one links to it.
  */
-export const LinkPopover = (props: OverlayProps & { initial: LinkInitial }) => {
+export const LinkPopover = (props: LinkPopoverProps) => {
     const state = useLinkPopoverState(props);
     const destinationId = useId();
     const textId = useId();

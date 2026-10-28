@@ -10,7 +10,9 @@ import styles from '../styles/mention.module.scss';
 
 type SearchDialogState = ReturnType<typeof useSearchDialogState>;
 
-const SearchField = ({ state }: { state: SearchDialogState }) => (
+type SearchFieldProps = { state: SearchDialogState };
+
+const SearchField = ({ state }: SearchFieldProps) => (
     <TextInput
         {...state.combobox}
         type="text"
@@ -28,7 +30,9 @@ const SearchField = ({ state }: { state: SearchDialogState }) => (
     />
 );
 
-const LoadingRow = ({ state }: { state: SearchDialogState }) => {
+type LoadingRowProps = { state: SearchDialogState };
+
+const LoadingRow = ({ state }: LoadingRowProps) => {
     if (state.found.status !== 'loading' || !state.slow) {
         return null;
     }
@@ -41,7 +45,9 @@ const LoadingRow = ({ state }: { state: SearchDialogState }) => {
     );
 };
 
-const OutcomeRow = ({ state }: { state: SearchDialogState }) => {
+type OutcomeRowProps = { state: SearchDialogState };
+
+const OutcomeRow = ({ state }: OutcomeRowProps) => {
     const { found, strings } = state;
     if (found.status === 'ready' && resultsOf(found.items).length === 0) {
         return <div className={styles.row}>{strings.noResults}</div>;
@@ -54,8 +60,10 @@ const OutcomeRow = ({ state }: { state: SearchDialogState }) => {
     return null;
 };
 
+export type SearchPickerProps = { state: SearchDialogState };
+
 /** The search field over the loading row, the options and the outcome row. */
-export const SearchPicker = ({ state }: { state: SearchDialogState }) => (
+export const SearchPicker = ({ state }: SearchPickerProps) => (
     <div className={styles.picker}>
         <SearchField state={state} />
         <LoadingRow state={state} />

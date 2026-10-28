@@ -15,7 +15,9 @@ const options = (strings: AltTextStrings) =>
         { value: 'decorative', label: strings.decorative, hint: strings.decorativeHint },
     ] as const;
 
-const IntentChoice = ({ state, strings }: { state: AltTextState; strings: AltTextStrings }) => {
+type IntentChoiceProps = { state: AltTextState; strings: AltTextStrings };
+
+const IntentChoice = ({ state, strings }: IntentChoiceProps) => {
     const { intent, legendId, radioId, focusChecked, chooseIntent } = state;
 
     return (
@@ -50,7 +52,9 @@ const IntentChoice = ({ state, strings }: { state: AltTextState; strings: AltTex
     );
 };
 
-const TextField = ({ state, strings }: { state: AltTextState; strings: AltTextStrings }) => {
+type TextFieldProps = { state: AltTextState; strings: AltTextStrings };
+
+const TextField = ({ state, strings }: TextFieldProps) => {
     const { suggestion, text, invalid, fieldRef, fieldId, errorId, changeText } = state;
     let describedBy: { 'aria-describedby'?: string } = {};
     if (invalid) {
@@ -91,6 +95,11 @@ const TextField = ({ state, strings }: { state: AltTextState; strings: AltTextSt
     );
 };
 
+export type AltTextDialogProps = OverlayProps & {
+    nodeId: string;
+    strings: AltTextStrings;
+};
+
 /**
  * Alternative text of one image: Meaningful, first and selected unless the image is decorative, with a required
  * text field that holds the stored text and nothing else, or Decorative. Save sets `altIntent` and `altText` together
@@ -98,15 +107,7 @@ const TextField = ({ state, strings }: { state: AltTextState; strings: AltTextSt
  * as a suggestion the author can take. Cancel, Escape and Save return focus to `opener`, such as the chrome button or
  * the toolbar's More.
  */
-export const AltTextDialog = ({
-    nodeId,
-    opener,
-    strings,
-    close: onClose,
-}: OverlayProps & {
-    nodeId: string;
-    strings: AltTextStrings;
-}) => {
+export const AltTextDialog = ({ nodeId, opener, strings, close: onClose }: AltTextDialogProps) => {
     const state = useAltTextDialogState(nodeId, opener, onClose);
 
     return (

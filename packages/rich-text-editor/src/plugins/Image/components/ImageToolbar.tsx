@@ -35,8 +35,10 @@ const removeFigure = (api: EditorApi | undefined, nodeId: string) => {
     api.focus();
 };
 
+type SizeMenuProps = { chrome: ImageChromeState };
+
 /** The size menu, whose Edit width choice opens the width dialog once the menu returned focus. */
-const SizeMenu = ({ chrome }: { chrome: ImageChromeState }) => {
+const SizeMenu = ({ chrome }: SizeMenuProps) => {
     const { t, sizeText, displayWidth, pendingRef, runOption, openWidth } = chrome;
 
     return (
@@ -76,7 +78,9 @@ const SizeMenu = ({ chrome }: { chrome: ImageChromeState }) => {
     );
 };
 
-const AlignMenu = ({ chrome }: { chrome: ImageChromeState }) => {
+type AlignMenuProps = { chrome: ImageChromeState };
+
+const AlignMenu = ({ chrome }: AlignMenuProps) => {
     const { t, side, runOption } = chrome;
 
     return (
@@ -90,8 +94,10 @@ const AlignMenu = ({ chrome }: { chrome: ImageChromeState }) => {
     );
 };
 
+export type ImageToolbarProps = { chrome: ImageChromeState; nodeId: string };
+
 /** The chrome's toolbar: upload controls, alternative text, size, alignment, Replace and Pause. */
-export const ImageToolbar = ({ chrome, nodeId }: { chrome: ImageChromeState; nodeId: string }) => {
+export const ImageToolbar = ({ chrome, nodeId }: ImageToolbarProps) => {
     const { api, t, execute, shown, unfinished, status, review, reviewId, paused, animated, altText, setPlayed } =
         chrome;
 

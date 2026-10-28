@@ -4,6 +4,13 @@ import { type MouseEvent } from 'react';
 
 import { type Unavailable } from '#/model';
 
+export type ImageUnavailableProps = {
+    unavailable: Unavailable;
+    hidden?: boolean;
+    className?: string | undefined;
+    onMouseDown?: (event: MouseEvent) => void;
+};
+
 /**
  * The "Image unavailable" placeholder with the label isolated for bidirectional text, as the editor, the reader and
  * `toHTML` show it; `hidden` beside an image until that image fails to load.
@@ -13,12 +20,7 @@ export const ImageUnavailable = ({
     hidden = false,
     className,
     onMouseDown,
-}: {
-    unavailable: Unavailable;
-    hidden?: boolean;
-    className?: string | undefined;
-    onMouseDown?: (event: MouseEvent) => void;
-}) => (
+}: ImageUnavailableProps) => (
     // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- in the editor a press selects the node as on any atom; the keyboard selects it with the arrows.
     <span
         className={className}

@@ -45,8 +45,10 @@ const documentOf = (blocks: readonly object[]): RichTextDocument =>
         content: { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: [...blocks] },
     }) as unknown as RichTextDocument;
 
+export type CodeProbeProps = { blocks: readonly object[] };
+
 /** Mounts a code block, including inside a list, between two focusable buttons. */
-export const CodeProbe = ({ blocks }: { blocks: readonly object[] }) => {
+export const CodeProbe = ({ blocks }: CodeProbeProps) => {
     const ref = useRef<EditorHandle>(null);
     const changesRef = useRef<CodeChange[]>([]);
     useEffect(() => {

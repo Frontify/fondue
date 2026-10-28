@@ -13,6 +13,22 @@ import {
 import { drawStill } from '../helpers/drawStill';
 import styles from '../styles/image.module.scss';
 
+export type ContentImageProps = {
+    src: string;
+    alt: string | undefined;
+    width: number | undefined;
+    height: number | undefined;
+    /** A CSS width of the content width, or `undefined` at natural size. */
+    shownWidth: string | undefined;
+    paused: boolean;
+    frameRef: RefObject<HTMLSpanElement>;
+    onFailed: () => void;
+    /** Selects the image, since node chrome keeps its own mouse events from the editor. */
+    onMouseDown: (event: MouseEvent) => void;
+    /** The resize handle, drawn over the frame's edge. */
+    children?: ReactNode;
+};
+
 /**
  * The image as the author edits it, at its stored width or the width a resize drag shows: the `img` keeps its `alt`
  * and intrinsic size, and while `paused` a still of its current frame covers it, hidden from assistive technology.
@@ -28,21 +44,7 @@ export const ContentImage = ({
     onFailed,
     onMouseDown,
     children,
-}: {
-    src: string;
-    alt: string | undefined;
-    width: number | undefined;
-    height: number | undefined;
-    /** A CSS width of the content width, or `undefined` at natural size. */
-    shownWidth: string | undefined;
-    paused: boolean;
-    frameRef: RefObject<HTMLSpanElement>;
-    onFailed: () => void;
-    /** Selects the image, since node chrome keeps its own mouse events from the editor. */
-    onMouseDown: (event: MouseEvent) => void;
-    /** The resize handle, drawn over the frame's edge. */
-    children?: ReactNode;
-}) => {
+}: ContentImageProps) => {
     const imageRef = useRef<HTMLImageElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const draw = useCallback(() => drawStill(imageRef.current, canvasRef.current), []);

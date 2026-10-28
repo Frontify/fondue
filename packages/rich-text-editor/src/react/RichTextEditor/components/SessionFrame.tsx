@@ -20,18 +20,15 @@ import { type FrameProps, type Standing } from '../types';
 
 import { Bubble } from './Parts';
 
-/** The file chooser exists where `media.image` takes files that `services.uploads` sends. */
-const FileChooser = ({
-    testId,
-    chooserRef,
-    choosingRef,
-    coordinator,
-}: {
+type FileChooserProps = {
     testId: string;
     chooserRef: MutableRefObject<HTMLInputElement | null>;
     choosingRef: MutableRefObject<Choosing | undefined>;
     coordinator: MountCoordinator;
-}) => (
+};
+
+/** The file chooser exists where `media.image` takes files that `services.uploads` sends. */
+const FileChooser = ({ testId, chooserRef, choosingRef, coordinator }: FileChooserProps) => (
     <input
         ref={chooserRef}
         type="file"
@@ -62,16 +59,14 @@ const FileChooser = ({
     />
 );
 
-/** The plugins' standing overlays, and the plugin overlay a command opened. */
-const PluginOverlays = ({
-    standing,
-    pluginOverlay,
-    hosts,
-}: {
+type PluginOverlaysProps = {
     standing: readonly Standing[];
     pluginOverlay: PluginOverlay | undefined;
     hosts: EditorHosts;
-}) => (
+};
+
+/** The plugins' standing overlays, and the plugin overlay a command opened. */
+const PluginOverlays = ({ standing, pluginOverlay, hosts }: PluginOverlaysProps) => (
     <>
         {standing.map(({ key, component: Standing, toolbarRef: ref }) => (
             <Standing key={key} toolbarRef={ref} covered={pluginOverlay !== undefined} />

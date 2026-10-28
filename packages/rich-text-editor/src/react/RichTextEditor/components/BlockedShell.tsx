@@ -39,19 +39,13 @@ const originalText = (original: unknown): string => {
     return JSON.stringify(original) ?? '';
 };
 
+export type BlockedShellProps = ShellProps & { result: Blocked };
+
 /**
  * A document that decodes as `blocked`: the reader output and why it cannot be edited, with its original to copy and
  * no editable surface, so nothing can save an empty document over it.
  */
-export const BlockedShell = ({
-    result,
-    model,
-    readers,
-    limits,
-    presentation,
-    locale,
-    testId,
-}: ShellProps & { result: Blocked }) => {
+export const BlockedShell = ({ result, model, readers, limits, presentation, locale, testId }: BlockedShellProps) => {
     const { t } = readerContext(locale, presentation);
 
     return (

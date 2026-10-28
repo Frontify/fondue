@@ -128,23 +128,20 @@ const nodeView: ContentNodeJSON = {
     content: [{ type: 'text', text: 'const a = 1;' }],
 };
 
-/**
- * Mounts the text features through `RichTextEditor` after a focusable button, with the text toolbar: one paragraph
- * per text, after a node view when `nodeViewFirst`.
- */
-export const TextProbe = ({
-    texts,
-    nodeViewFirst = false,
-    quoted = false,
-    dir = 'ltr',
-}: {
+export type TextProbeProps = {
     texts: readonly string[];
     nodeViewFirst?: boolean;
     /** Puts the paragraphs in a quote. */
     quoted?: boolean;
     /** The theme direction. */
     dir?: 'ltr' | 'rtl';
-}) => {
+};
+
+/**
+ * Mounts the text features through `RichTextEditor` after a focusable button, with the text toolbar: one paragraph
+ * per text, after a node view when `nodeViewFirst`.
+ */
+export const TextProbe = ({ texts, nodeViewFirst = false, quoted = false, dir = 'ltr' }: TextProbeProps) => {
     let blocks = texts.map(plainParagraph);
     if (nodeViewFirst) {
         blocks = [nodeView, ...blocks];
@@ -183,11 +180,13 @@ export const TextProbe = ({
     );
 };
 
+export type MarkedAndPlainProbeProps = { lines: readonly string[] };
+
 /**
  * The same lines twice: with marks and links in the editor named Marked, and as plain text in a bare `contenteditable`
  * named Plain, with the surface's content styles, so the browser alone edits it.
  */
-export const MarkedAndPlainProbe = ({ lines }: { lines: readonly string[] }) => {
+export const MarkedAndPlainProbe = ({ lines }: MarkedAndPlainProbeProps) => {
     const markedRef = useRef<EditorHandle>(null);
     useEffect(() => {
         if (markedRef.current !== null) {

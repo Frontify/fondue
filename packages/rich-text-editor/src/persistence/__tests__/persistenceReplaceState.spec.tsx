@@ -293,7 +293,9 @@ describe('replacement of the session state', () => {
         const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
         const { service } = serviceOf(true);
         const ref = createRef<EditorHandle<object>>();
-        const Bomb = ({ armed }: { armed: boolean }) => {
+        type BombProps = { armed: boolean };
+
+        const Bomb = ({ armed }: BombProps) => {
             if (armed) {
                 throw new Error('render failed');
             }

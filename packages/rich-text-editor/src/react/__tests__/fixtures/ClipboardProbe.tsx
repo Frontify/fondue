@@ -80,6 +80,19 @@ type ProbeTask = {
     checked: boolean;
 };
 
+export type ClipboardProbeProps = {
+    texts?: readonly string[];
+    readOnly?: boolean;
+    /** Mounts the definition whose policy sets `paste: false` for the mention. */
+    unpasted?: boolean;
+    /** Ends the document with an unknown `callout` block of `nodeId` `c-1` and the text Kept, which loads as an island. */
+    island?: boolean;
+    scroll?: boolean;
+    dragged?: string;
+    /** Replaces the paragraphs with one task list of these items, on a model that installs `lists.task`. */
+    tasks?: readonly ProbeTask[];
+};
+
 /**
  * The editor of `core`, bold and a visible mention, or a task list when `tasks` is set, in a scrolling box when
  * `scroll` is set, after a draggable host element whose `text/plain` is `dragged` and whose `text/html` holds it in a
@@ -93,18 +106,7 @@ export const ClipboardProbe = ({
     scroll = false,
     dragged = 'Dropped',
     tasks,
-}: {
-    texts?: readonly string[];
-    readOnly?: boolean;
-    /** Mounts the definition whose policy sets `paste: false` for the mention. */
-    unpasted?: boolean;
-    /** Ends the document with an unknown `callout` block of `nodeId` `c-1` and the text Kept, which loads as an island. */
-    island?: boolean;
-    scroll?: boolean;
-    dragged?: string;
-    /** Replaces the paragraphs with one task list of these items, on a model that installs `lists.task`. */
-    tasks?: readonly ProbeTask[];
-}) => {
+}: ClipboardProbeProps) => {
     const ref = useRef<EditorHandle<object>>(null);
     const [changes] = useState<DocumentChange[]>([]);
     const [uploads] = useState(() => {

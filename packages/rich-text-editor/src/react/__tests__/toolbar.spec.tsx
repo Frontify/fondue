@@ -348,7 +348,9 @@ describe('the fixed toolbar', () => {
 });
 
 describe('the announcer', () => {
-    const Announce = ({ message, coalesce }: { message: string; coalesce?: string }) => {
+    type AnnounceProps = { message: string; coalesce?: string };
+
+    const Announce = ({ message, coalesce }: AnnounceProps) => {
         const announcer = useContext(AnnouncerContext);
 
         return (

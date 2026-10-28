@@ -31,8 +31,10 @@ const shown = (text: string) => {
     return text;
 };
 
+type KeyboardReferenceProps = { profile: RichTextProfile };
+
 /** The profile's shortcuts by area, its surface keys and its input rules, on Apple and other platforms. */
-const KeyboardReference = ({ profile }: { profile: RichTextProfile }) => {
+const KeyboardReference = ({ profile }: KeyboardReferenceProps) => {
     const shortcuts = SHORTCUT_ROWS.filter(({ profiles }) => profiles.includes(profile));
 
     return (

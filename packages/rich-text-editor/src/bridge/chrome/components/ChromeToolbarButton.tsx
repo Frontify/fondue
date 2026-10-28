@@ -8,20 +8,17 @@ import { useOverlayContainer } from '../../overlays/hooks/useOverlayContainer';
 import { keepFocus, OUT_OF_TAB_ORDER } from '../helpers/keepFocus';
 import styles from '../styles/chromeToolbar.module.scss';
 
-/** The Fondue-button item for chrome toolbars with few buttons; `NodeChromeButton` stays plain for node chrome's mount cost. */
-export const ChromeToolbarButton = ({
-    label,
-    icon,
-    describedBy,
-    onPress,
-}: {
+export type ChromeToolbarButtonProps = {
     /** The accessible name and the tooltip. */
     label: string;
     icon: ReactNode;
     /** The `id` of the text that describes the button. */
     describedBy?: string;
     onPress: (control: HTMLElement) => void;
-}) => {
+};
+
+/** The Fondue-button item for chrome toolbars with few buttons; `NodeChromeButton` stays plain for node chrome's mount cost. */
+export const ChromeToolbarButton = ({ label, icon, describedBy, onPress }: ChromeToolbarButtonProps) => {
     const container = useOverlayContainer();
 
     return (

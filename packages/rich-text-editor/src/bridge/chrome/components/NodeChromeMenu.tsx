@@ -8,18 +8,8 @@ import { useOverlayContainer } from '../../overlays/hooks/useOverlayContainer';
 import { OUT_OF_TAB_ORDER } from '../helpers/keepFocus';
 import styles from '../styles/chromeToolbar.module.scss';
 
-/**
- * A node chrome button that opens a Fondue `Dropdown` of `children`, its items, with focus on the checked item, else
- * the first; Radix returns focus to the button when the menu closes. `label` is the button's accessible name and
- * holds its visible `text`.
- */
-export const NodeChromeMenu = ({
-    label,
-    text,
-    command,
-    onCloseAutoFocus,
-    children,
-}: {
+/** The props of `NodeChromeMenu`. */
+export type NodeChromeMenuProps = {
     /** The button's accessible name. */
     label: string;
     /** The button's visible text. */
@@ -30,7 +20,14 @@ export const NodeChromeMenu = ({
     onCloseAutoFocus?: (event: Event) => void;
     /** The menu's items, such as `OptionItem`s. */
     children: ReactNode;
-}) => {
+};
+
+/**
+ * A node chrome button that opens a Fondue `Dropdown` of `children`, its items, with focus on the checked item, else
+ * the first; Radix returns focus to the button when the menu closes. `label` is the button's accessible name and
+ * holds its visible `text`.
+ */
+export const NodeChromeMenu = ({ label, text, command, onCloseAutoFocus, children }: NodeChromeMenuProps) => {
     const container = useOverlayContainer();
     const [open, setOpen] = useState(false);
 

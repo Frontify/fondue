@@ -13,11 +13,13 @@ import styles from '../styles/upload.module.scss';
 // An indeterminate animation stops after this long, leaving its text.
 const MOTION_MS = 5000;
 
+type ProgressBarProps = { name: string; value: number | null };
+
 /**
  * The progress bar, named by the file; an indeterminate one, which mounts anew each time it starts, stops moving after
  * its time.
  */
-const ProgressBar = ({ name, value }: { name: string; value: number | null }) => {
+const ProgressBar = ({ name, value }: ProgressBarProps) => {
     const [still, setStill] = useState(false);
     const indeterminate = value === null;
     useEffect(() => {
@@ -37,25 +39,21 @@ const ProgressBar = ({ name, value }: { name: string; value: number | null }) =>
     );
 };
 
-/**
- * An upload into an image slot as its chrome shows it, never a document attribute: a progress bar named by the file,
- * whose indeterminate animation stops after 5 seconds and never runs under reduced motion, and its text, or why the
- * upload failed or stopped. The slot keeps the file's aspect ratio, so the image takes its place unmoved.
- */
-export const UploadSlot = ({
-    status,
-    width,
-    height,
-    t,
-    onMouseDown,
-}: {
+export type UploadSlotProps = {
     status: UploadStatus;
     width: number | null;
     height: number | null;
     t: CodecContext['t'];
     /** Selects the image, since node chrome keeps its own mouse events from the editor. */
     onMouseDown: (event: MouseEvent) => void;
-}) => {
+};
+
+/**
+ * An upload into an image slot as its chrome shows it, never a document attribute: a progress bar named by the file,
+ * whose indeterminate animation stops after 5 seconds and never runs under reduced motion, and its text, or why the
+ * upload failed or stopped. The slot keeps the file's aspect ratio, so the image takes its place unmoved.
+ */
+export const UploadSlot = ({ status, width, height, t, onMouseDown }: UploadSlotProps) => {
     let shape: CSSProperties | undefined;
     if (width !== null && height !== null) {
         shape = { aspectRatio: `${width} / ${height}`, inlineSize: `min(100%, ${width}px)` };

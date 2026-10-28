@@ -19,8 +19,10 @@ export type FixtureOverlayProps = {
     onOpenChange: (open: boolean) => void;
 };
 
+export type LinkFormProps = { onApply: () => void };
+
 /** The link popover's form: a labelled URL field and Apply, which sets the link on the selection. */
-export const LinkForm = ({ onApply }: { onApply: () => void }) => {
+export const LinkForm = ({ onApply }: LinkFormProps) => {
     const fieldId = useId();
 
     return (
@@ -41,15 +43,13 @@ export const LinkForm = ({ onApply }: { onApply: () => void }) => {
     );
 };
 
+export type FixtureLinkPopoverProps = FixtureOverlayProps & { Body?: ComponentType<{ onApply: () => void }> };
+
 /**
  * Stands in for the link popover until the editor ships one: a non-modal Fondue `Flyout` on the selection,
  * whose form may load lazily as `Body`.
  */
-export const FixtureLinkPopover = ({
-    open,
-    onOpenChange,
-    Body = LinkForm,
-}: FixtureOverlayProps & { Body?: ComponentType<{ onApply: () => void }> }) => {
+export const FixtureLinkPopover = ({ open, onOpenChange, Body = LinkForm }: FixtureLinkPopoverProps) => {
     const overlay = useEditorOverlay(open, onOpenChange);
     const handle = useEditorHandle<FixtureCommands>();
     const apply = () => {
@@ -179,8 +179,10 @@ export const FixtureMenu = ({ open, onOpenChange }: FixtureOverlayProps) => {
     );
 };
 
+export type FixtureRunAnchoredProps = { onRect: (rect: DOMRect) => void };
+
 /** An overlay anchored to the bold run in the surface, which reports the rectangle of its anchor. */
-export const FixtureRunAnchored = ({ onRect }: { onRect: (rect: DOMRect) => void }) => {
+export const FixtureRunAnchored = ({ onRect }: FixtureRunAnchoredProps) => {
     const api = useEditorApi();
     const surface = api?.surface();
     const bold = surface?.querySelector('strong');

@@ -12,16 +12,14 @@ import styles from '#/ui/styles/toolbar.module.scss';
 
 import { ToolbarIcon } from './ToolbarIcon';
 
-/** One More menu row: a menu item, radio or checkbox that shows the item's state, shortcut and why it is unavailable. */
-export const MoreRow = ({
-    item,
-    strings,
-    onRun,
-}: {
+export type MoreRowProps = {
     item: ToolbarItem;
     strings: ToolbarStrings;
     onRun: (item: ToolbarItem) => Promise<void>;
-}) => {
+};
+
+/** One More menu row: a menu item, radio or checkbox that shows the item's state, shortcut and why it is unavailable. */
+export const MoreRow = ({ item, strings, onRun }: MoreRowProps) => {
     const state = useCommandQuery(item.command, item.payload);
     const openPanel = useOpenPanel();
     const { shortcut, keyshortcuts } = useShortcut(item);

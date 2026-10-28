@@ -22,21 +22,18 @@ const boundsOf = ({ fields }: PayloadDeclaration) => {
     return { min: 0, max: Number.MAX_SAFE_INTEGER };
 };
 
-/**
- * Start numbering at: one labelled number field whose Apply runs `SET_START` on the list at the selection as one undo
- * step when `payload` accepts the number, and otherwise shows the declared range and changes nothing.
- */
-export const NumberingDialog = ({
-    payload,
-    initial,
-    opener,
-    close: onClose,
-}: OverlayProps & {
+export type NumberingDialogProps = OverlayProps & {
     /** The payload declaration of `SET_START`. */
     payload: PayloadDeclaration;
     /** The `start` of the list at the selection when the dialog opened. */
     initial: number;
-}) => {
+};
+
+/**
+ * Start numbering at: one labelled number field whose Apply runs `SET_START` on the list at the selection as one undo
+ * step when `payload` accepts the number, and otherwise shows the declared range and changes nothing.
+ */
+export const NumberingDialog = ({ payload, initial, opener, close: onClose }: NumberingDialogProps) => {
     const api = useEditorApi();
     let t: CodecContext['t'] = (key) => key;
     if (api !== undefined) {

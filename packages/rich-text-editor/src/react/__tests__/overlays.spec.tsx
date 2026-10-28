@@ -105,14 +105,13 @@ beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
 });
 
-/** An overlay that starts open and reports each close. */
-const Opened = ({
-    Overlay,
-    onClose = () => undefined,
-}: {
+type OpenedProps = {
     Overlay: ComponentType<FixtureOverlayProps>;
     onClose?: () => void;
-}) => {
+};
+
+/** An overlay that starts open and reports each close. */
+const Opened = ({ Overlay, onClose = () => undefined }: OpenedProps) => {
     const [open, setOpen] = useState(true);
 
     return (
@@ -318,7 +317,9 @@ describe('editor overlays', () => {
     });
 
     it('leaves a second editor unchanged when the first opens an overlay, with every ID unique', () => {
-        const Editor = ({ label, children }: { label: string; children?: ReactNode }) => (
+        type EditorProps = { label: string; children?: ReactNode };
+
+        const Editor = ({ label, children }: EditorProps) => (
             <RichTextEditor.Root
                 aria-label={label}
                 definition={definition}
@@ -331,7 +332,9 @@ describe('editor overlays', () => {
                 {children}
             </RichTextEditor.Root>
         );
-        const Page = ({ open }: { open: boolean }) => (
+        type PageProps = { open: boolean };
+
+        const Page = ({ open }: PageProps) => (
             <>
                 <Editor label="A">{open && <Opened Overlay={FixtureLinkPopover} />}</Editor>
                 <Editor label="B" />
@@ -371,7 +374,9 @@ describe('editor overlays', () => {
             );
         };
 
-        const Editor = ({ label, children }: { label: string; children: ReactNode }) => (
+        type EditorProps = { label: string; children: ReactNode };
+
+        const Editor = ({ label, children }: EditorProps) => (
             <RichTextEditor.Root
                 aria-label={label}
                 definition={definition}

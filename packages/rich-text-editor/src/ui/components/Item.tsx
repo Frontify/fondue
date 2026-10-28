@@ -38,14 +38,10 @@ export const Item = (props: ItemProps) => {
 
 Item.displayName = 'Item';
 
+type PluginControlProps = ItemProps & { control: ComponentType<ToolbarControlProps> };
+
 /** A plugin's own control, which the toolbar fits, runs and returns focus from as it does the standard button. */
-const PluginControl = ({
-    item,
-    disabled,
-    keepsFocus,
-    outOfTabOrder,
-    control: Control,
-}: ItemProps & { control: ComponentType<ToolbarControlProps> }) => {
+const PluginControl = ({ item, disabled, keepsFocus, outOfTabOrder, control: Control }: PluginControlProps) => {
     const runtime = useContext(SessionContext);
     const elementRef = useRef<HTMLElement | null>(null);
     const controlRef = useCallback((element: HTMLElement | null) => {

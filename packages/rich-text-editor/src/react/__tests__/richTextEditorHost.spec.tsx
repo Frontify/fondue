@@ -236,7 +236,9 @@ describe('RichTextEditor host surface', () => {
                 return commands.execute('text.insert', { text: 'x' });
             };
 
-            const Caller = ({ calling }: { calling: boolean }) => {
+            type CallerProps = { calling: boolean };
+
+            const Caller = ({ calling }: CallerProps) => {
                 if (calling && during === 'render') {
                     results.push(insert());
                 }
@@ -337,7 +339,9 @@ describe('RichTextEditor host surface', () => {
         const onDiagnostic = vi.fn<(diagnostic: Diagnostic) => void>(() => {
             inner.push(insert());
         });
-        const Caller = ({ calling }: { calling: boolean }) => {
+        type CallerProps = { calling: boolean };
+
+        const Caller = ({ calling }: CallerProps) => {
             if (calling) {
                 insert();
             }
@@ -374,7 +378,9 @@ describe('RichTextEditor host surface', () => {
         const ref = createRef<EditorHandle<object>>();
         const onDiagnostic = vi.fn<(diagnostic: Diagnostic) => void>();
         const results: CommandResult[] = [];
-        const Caller = ({ calling }: { calling: boolean }) => {
+        type CallerProps = { calling: boolean };
+
+        const Caller = ({ calling }: CallerProps) => {
             if (calling) {
                 results.push(
                     (ref.current as unknown as Pick<RuntimeHandle, 'execute'>).execute('text.insert', { text: 'x' }),

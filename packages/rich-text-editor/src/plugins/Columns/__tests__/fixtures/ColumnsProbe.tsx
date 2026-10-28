@@ -31,6 +31,15 @@ const documentOf = (breaks: number) =>
         },
     }) as unknown as RichTextDocument;
 
+export type ColumnsProbeProps = {
+    columns: number;
+    columnGap?: string;
+    breaks: number;
+    /** The CSS inline size of the box both sit in. */
+    width?: string;
+    contentClassName?: string;
+};
+
 /** The editor, in a region named Editor, and the reader of the same document, in a region named Reader, side by side in width. */
 export const ColumnsProbe = ({
     columns,
@@ -38,14 +47,7 @@ export const ColumnsProbe = ({
     breaks,
     width = '100%',
     contentClassName = 'host-columns',
-}: {
-    columns: number;
-    columnGap?: string;
-    breaks: number;
-    /** The CSS inline size of the box both sit in. */
-    width?: string;
-    contentClassName?: string;
-}) => {
+}: ColumnsProbeProps) => {
     const document = documentOf(breaks);
     const presentation = defineReactPresentation({ columns, columnGap, contentClassName });
 
