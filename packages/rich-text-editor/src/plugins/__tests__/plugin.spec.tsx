@@ -14,25 +14,26 @@ import {
 } from '#/entries/authoring';
 import { type AuthoringPolicy, defineEditor, type EditorHandle, type RichTextPlugin, RichTextEditor } from '#/index';
 import { compileContentModel, defineFeature, DefinitionError, type JsonObject } from '#/model';
-import { featuresById } from '#/plugins';
 import { commandCases } from '#/plugins/__tests__/fixtures/contract.cases';
 import { FIXTURE_PLUGINS } from '#/plugins/__tests__/fixtures/plugins';
 import { type PluginCommands, pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { spotlight, spotlightDocument } from '#/plugins/__tests__/fixtures/spotlight/feature';
+import { align } from '#/plugins/Align/feature';
 import { bold } from '#/plugins/Bold/feature';
 import { codeBlockPlugin } from '#/plugins/CodeBlock';
 import { codeBlock } from '#/plugins/CodeBlock/feature';
 import { corePlugin } from '#/plugins/Core';
 import { core } from '#/plugins/Core/feature';
-import { registry } from '#/plugins/registry';
+import { heading } from '#/plugins/Heading/feature';
 import { extensionsOf } from '#/react/compile/engine';
 import { runtimeOf } from '#/runtime/runtime';
 import { paste, pressKey, runFeatureContract, setSelection } from '#/testing';
 
-// With every shipped feature, whose fixtures the shipped ones need, as an outside feature joins a profile.
-const features = [...featuresById(Object.keys(registry)), spotlight()];
-runFeatureContract(features, { plugins: FIXTURE_PLUGINS, fixtures: [spotlightDocument] });
-commandCases(features, FIXTURE_PLUGINS);
+// An outside feature runs the contract with the features it requires. Core's fixtures carry the Align attribute,
+// and its paragraph.set needs another textblock to turn into a paragraph.
+const hostFeatures = [core(), heading(), align(), spotlight()] as const;
+runFeatureContract(hostFeatures, { plugins: FIXTURE_PLUGINS, fixtures: [spotlightDocument] });
+commandCases(hostFeatures, FIXTURE_PLUGINS);
 
 beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });

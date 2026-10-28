@@ -1,0 +1,552 @@
+{
+    "numTotalTestSuites": 7,
+    "numPassedTestSuites": 5,
+    "numFailedTestSuites": 2,
+    "numPendingTestSuites": 0,
+    "numTotalTests": 46,
+    "numPassedTests": 43,
+    "numFailedTests": 3,
+    "numPendingTests": 0,
+    "numTodoTests": 0,
+    "snapshot": {
+        "added": 0,
+        "failure": false,
+        "filesAdded": 0,
+        "filesRemoved": 0,
+        "filesRemovedList": [],
+        "filesUnmatched": 0,
+        "filesUpdated": 0,
+        "matched": 0,
+        "total": 0,
+        "unchecked": 0,
+        "uncheckedKeysByFile": [],
+        "unmatched": 0,
+        "updated": 0,
+        "didUpdate": false
+    },
+    "startTime": 1793188493679,
+    "success": false,
+    "testResults": [
+        {
+            "assertionResults": [
+                {
+                    "ancestorTitles": [],
+                    "fullName": "compileContentModel accepts the feature set, which it rejects when a node or mark has no html spec",
+                    "status": "passed",
+                    "title": "compileContentModel accepts the feature set, which it rejects when a node or mark has no html spec",
+                    "duration": 4.700875000000451,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["core"],
+                    "fullName": "core builds its nodes and marks into the engine schema",
+                    "status": "passed",
+                    "title": "builds its nodes and marks into the engine schema",
+                    "duration": 3.905416999999943,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["core"],
+                    "fullName": "core queries paragraph.set without dispatching",
+                    "status": "passed",
+                    "title": "queries paragraph.set without dispatching",
+                    "duration": 11.004708999998911,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["core"],
+                    "fullName": "core queries text.insert without dispatching",
+                    "status": "passed",
+                    "title": "queries text.insert without dispatching",
+                    "duration": 2.02141599999959,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["core"],
+                    "fullName": "core queries slash.run without dispatching",
+                    "status": "passed",
+                    "title": "queries slash.run without dispatching",
+                    "duration": 1.8762499999993452,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["core"],
+                    "fullName": "core queries hard-break.insert without dispatching",
+                    "status": "passed",
+                    "title": "queries hard-break.insert without dispatching",
+                    "duration": 5.364417000000685,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["core"],
+                    "fullName": "core queries history.undo without dispatching",
+                    "status": "passed",
+                    "title": "queries history.undo without dispatching",
+                    "duration": 1.7217919999984588,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["core"],
+                    "fullName": "core queries history.redo without dispatching",
+                    "status": "passed",
+                    "title": "queries history.redo without dispatching",
+                    "duration": 1.0980410000011034,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["core"],
+                    "fullName": "core queries block.move.up without dispatching",
+                    "status": "passed",
+                    "title": "queries block.move.up without dispatching",
+                    "duration": 1.7006659999988187,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["core"],
+                    "fullName": "core queries block.move.down without dispatching",
+                    "status": "passed",
+                    "title": "queries block.move.down without dispatching",
+                    "duration": 3.2571250000000873,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["core"],
+                    "fullName": "core resolves the label of each toolbar entry and menu item in enUS",
+                    "status": "passed",
+                    "title": "resolves the label of each toolbar entry and menu item in enUS",
+                    "duration": 0.29591699999946286,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["core"],
+                    "fullName": "core brings fixtures that hold each of its nodes, marks and shared attributes",
+                    "status": "passed",
+                    "title": "brings fixtures that hold each of its nodes, marks and shared attributes",
+                    "duration": 0.2962920000009035,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["core"],
+                    "fullName": "core decodes and encodes paragraphs to itself",
+                    "status": "failed",
+                    "title": "decodes and encodes paragraphs to itself",
+                    "duration": 7.801166999999623,
+                    "failureMessages": [
+                        "AssertionError: expected [ { …(4) }, { …(4) } ] to deeply equal []\n    at /Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/packages/rich-text-editor/src/testing/conformance/contract.ts:179:36\n    at file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:1628:35\n    at file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:2783:26\n    at file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:3319:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:3314:10)\n    at file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:3299:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:3257:10)\n    at file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:3876:64"
+                    ],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["core"],
+                    "fullName": "core renders paragraphs in the reader and writes it through every codec",
+                    "status": "failed",
+                    "title": "renders paragraphs in the reader and writes it through every codec",
+                    "duration": 20.15179200000057,
+                    "failureMessages": [
+                        "AssertionError: expected [ { …(4) }, { …(4) }, { …(4) }, …(5) ] to deeply equal []\n    at /Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/packages/rich-text-editor/src/testing/conformance/contract.ts:204:12\n    at file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:1628:35\n    at file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:2783:26\n    at file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:3319:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:3314:10)\n    at file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:3299:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:3257:10)\n    at file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:3876:64"
+                    ],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["core"],
+                    "fullName": "core passes axe on the reader output of paragraphs",
+                    "status": "passed",
+                    "title": "passes axe on the reader output of paragraphs",
+                    "duration": 146.53595900000073,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["fixture.spotlight"],
+                    "fullName": "fixture.spotlight builds its nodes and marks into the engine schema",
+                    "status": "passed",
+                    "title": "builds its nodes and marks into the engine schema",
+                    "duration": 0.4795830000002752,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["fixture.spotlight"],
+                    "fullName": "fixture.spotlight queries fixture.spotlight.toggle without dispatching",
+                    "status": "passed",
+                    "title": "queries fixture.spotlight.toggle without dispatching",
+                    "duration": 3.656416999998328,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["fixture.spotlight"],
+                    "fullName": "fixture.spotlight queries fixture.spotlight.note without dispatching",
+                    "status": "passed",
+                    "title": "queries fixture.spotlight.note without dispatching",
+                    "duration": 1.763875000000553,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["fixture.spotlight"],
+                    "fullName": "fixture.spotlight queries fixture.spotlight.panel without dispatching",
+                    "status": "passed",
+                    "title": "queries fixture.spotlight.panel without dispatching",
+                    "duration": 1.7980420000003505,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["fixture.spotlight"],
+                    "fullName": "fixture.spotlight resolves the label of each toolbar entry and menu item in enUS",
+                    "status": "passed",
+                    "title": "resolves the label of each toolbar entry and menu item in enUS",
+                    "duration": 0.5360000000000582,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["the given fixtures"],
+                    "fullName": "the given fixtures decodes and encodes fixture 1 to itself",
+                    "status": "passed",
+                    "title": "decodes and encodes fixture 1 to itself",
+                    "duration": 2.213999999999942,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["the given fixtures"],
+                    "fullName": "the given fixtures renders fixture 1 in the reader and writes it through every codec",
+                    "status": "passed",
+                    "title": "renders fixture 1 in the reader and writes it through every codec",
+                    "duration": 5.795583999999508,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["the given fixtures"],
+                    "fullName": "the given fixtures passes axe on the reader output of fixture 1",
+                    "status": "passed",
+                    "title": "passes axe on the reader output of fixture 1",
+                    "duration": 23.47662500000115,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": [],
+                    "fullName": "runs paragraph.set synchronously with no I/O or timer, dispatching at most once",
+                    "status": "failed",
+                    "title": "runs paragraph.set synchronously with no I/O or timer, dispatching at most once",
+                    "duration": 8.566542000000481,
+                    "failureMessages": [
+                        "AssertionError: expected false to be true // Object.is equality\n    at /Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/packages/rich-text-editor/src/plugins/__tests__/fixtures/contract.cases.ts:328:39\n    at file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:1628:35\n    at file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:2783:26\n    at file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:3319:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:3314:10)\n    at file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:3299:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:3257:10)\n    at file:///Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/node_modules/.pnpm/vitest@5.0.0_@types+node@24.13.3_@vitest+coverage-v8@5.0.0_@vitest+ui@5.0.0_happy-dom@2_306cfd13661d88543c7ff886efde50fd/node_modules/vitest/dist/chunks/run.CQOUYP-x.js:3876:64"
+                    ],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": [],
+                    "fullName": "runs text.insert synchronously with no I/O or timer, dispatching at most once",
+                    "status": "passed",
+                    "title": "runs text.insert synchronously with no I/O or timer, dispatching at most once",
+                    "duration": 4.472125000000233,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": [],
+                    "fullName": "runs slash.run synchronously with no I/O or timer, dispatching at most once",
+                    "status": "passed",
+                    "title": "runs slash.run synchronously with no I/O or timer, dispatching at most once",
+                    "duration": 4.579624999998487,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": [],
+                    "fullName": "runs hard-break.insert synchronously with no I/O or timer, dispatching at most once",
+                    "status": "passed",
+                    "title": "runs hard-break.insert synchronously with no I/O or timer, dispatching at most once",
+                    "duration": 5.1117079999985435,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": [],
+                    "fullName": "runs history.undo synchronously with no I/O or timer, dispatching at most once",
+                    "status": "passed",
+                    "title": "runs history.undo synchronously with no I/O or timer, dispatching at most once",
+                    "duration": 3.7657909999998083,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": [],
+                    "fullName": "runs history.redo synchronously with no I/O or timer, dispatching at most once",
+                    "status": "passed",
+                    "title": "runs history.redo synchronously with no I/O or timer, dispatching at most once",
+                    "duration": 2.7148339999985183,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": [],
+                    "fullName": "runs block.move.up synchronously with no I/O or timer, dispatching at most once",
+                    "status": "passed",
+                    "title": "runs block.move.up synchronously with no I/O or timer, dispatching at most once",
+                    "duration": 1.5875840000007884,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": [],
+                    "fullName": "runs block.move.down synchronously with no I/O or timer, dispatching at most once",
+                    "status": "passed",
+                    "title": "runs block.move.down synchronously with no I/O or timer, dispatching at most once",
+                    "duration": 1.4196670000001177,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": [],
+                    "fullName": "runs fixture.spotlight.toggle synchronously with no I/O or timer, dispatching at most once",
+                    "status": "passed",
+                    "title": "runs fixture.spotlight.toggle synchronously with no I/O or timer, dispatching at most once",
+                    "duration": 2.0732499999994616,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": [],
+                    "fullName": "runs fixture.spotlight.note synchronously with no I/O or timer, dispatching at most once",
+                    "status": "passed",
+                    "title": "runs fixture.spotlight.note synchronously with no I/O or timer, dispatching at most once",
+                    "duration": 1.4790000000011787,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": [],
+                    "fullName": "runs fixture.spotlight.panel synchronously with no I/O or timer, dispatching at most once",
+                    "status": "passed",
+                    "title": "runs fixture.spotlight.panel synchronously with no I/O or timer, dispatching at most once",
+                    "duration": 1.1106249999993452,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["a plugin added only in its own files"],
+                    "fullName": "a plugin added only in its own files renders its own toolbar control, whose command toggles its mark as one undo step",
+                    "status": "passed",
+                    "title": "renders its own toolbar control, whose command toggles its mark as one undo step",
+                    "duration": 98.81512499999917,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["a plugin added only in its own files"],
+                    "fullName": "a plugin added only in its own files gives its own control the key binding of its command",
+                    "status": "passed",
+                    "title": "gives its own control the key binding of its command",
+                    "duration": 17.12866600000052,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["a plugin added only in its own files"],
+                    "fullName": "a plugin added only in its own files moves focus into its panel when the panel opens, and closes the panel on Escape",
+                    "status": "passed",
+                    "title": "moves focus into its panel when the panel opens, and closes the panel on Escape",
+                    "duration": 40.74983299999985,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["a plugin added only in its own files"],
+                    "fullName": "a plugin added only in its own files pastes a `mark` as its mark unless another editor’s search left it behind",
+                    "status": "passed",
+                    "title": "pastes a `mark` as its mark unless another editor’s search left it behind",
+                    "duration": 22.765666999999667,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["a plugin added only in its own files"],
+                    "fullName": "a plugin added only in its own files opens and closes its panel from its toolbar toggle, in a read-only editor too",
+                    "status": "passed",
+                    "title": "opens and closes its panel from its toolbar toggle, in a read-only editor too",
+                    "duration": 27.043541000000914,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["a plugin added only in its own files"],
+                    "fullName": "a plugin added only in its own files refuses a plugin for a feature the model does not install",
+                    "status": "passed",
+                    "title": "refuses a plugin for a feature the model does not install",
+                    "duration": 1.2353340000008757,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["a host part for a feature the package ships"],
+                    "fullName": "a host part for a feature the package ships keeps the shipped commands, adds its own, and replaces a toolbar entry of the same id",
+                    "status": "passed",
+                    "title": "keeps the shipped commands, adds its own, and replaces a toolbar entry of the same id",
+                    "duration": 11.797166999998808,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["a host part for a feature the package ships"],
+                    "fullName": "a host part for a feature the package ships shows pressed only the toolbar entry whose payload its command answers active for",
+                    "status": "passed",
+                    "title": "shows pressed only the toolbar entry whose payload its command answers active for",
+                    "duration": 12.464708999999857,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["a host part for a feature the package ships"],
+                    "fullName": "a host part for a feature the package ships refuses two plugins for one feature",
+                    "status": "passed",
+                    "title": "refuses two plugins for one feature",
+                    "duration": 0.32279099999868777,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["a host part for a feature the package ships"],
+                    "fullName": "a host part for a feature the package ships keeps the shipped code highlighting when it adds a decoration source to blocks.code",
+                    "status": "passed",
+                    "title": "keeps the shipped code highlighting when it adds a decoration source to blocks.code",
+                    "duration": 2.52508300000045,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["a plugin part that reads the policy and its options"],
+                    "fullName": "a plugin part that reads the policy and its options rejects a payload the policy refuses as not-allowed before applicability, and does not offer its entry",
+                    "status": "passed",
+                    "title": "rejects a payload the policy refuses as not-allowed before applicability, and does not offer its entry",
+                    "duration": 33.42133300000023,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                },
+                {
+                    "ancestorTitles": ["a plugin part that reads the policy and its options"],
+                    "fullName": "a plugin part that reads the policy and its options takes its keys, toolbar entries and payload values from the options of its feature",
+                    "status": "passed",
+                    "title": "takes its keys, toolbar entries and payload values from the options of its feature",
+                    "duration": 60.8770829999994,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": [],
+                    "benchmarks": []
+                }
+            ],
+            "startTime": 1793188506508,
+            "endTime": 1793188507126.8772,
+            "status": "failed",
+            "message": "",
+            "name": "/Users/jose.costa/dev/fondue/.claude/worktrees/r4-contract/packages/rich-text-editor/src/plugins/__tests__/plugin.spec.tsx"
+        }
+    ]
+}
