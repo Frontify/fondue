@@ -304,6 +304,8 @@ test('keeps the link bubble while focus is in it after the caret leaves the link
     await mount(<LinkProbe />);
     await ready(page);
     await select(page, 'guide', 2, 2);
+    // The link bubble loads after the caret is in the link; Alt+F10 before it shows never reaches it.
+    await expect(bubbleOf(page)).toBeVisible();
     await page.keyboard.press('Alt+F10');
     await expect(bubbleOf(page).getByRole('button', { name: 'Open link in a new tab' })).toBeFocused();
 
