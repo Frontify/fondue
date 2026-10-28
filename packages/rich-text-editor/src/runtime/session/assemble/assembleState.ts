@@ -8,7 +8,7 @@ import { createContentChecks } from '../../capabilities/checks/contentIssues';
 import { uploadSlotsPlugin } from '../../capabilities/media/uploadSlots';
 import { groupsPlugin } from '../../history';
 import { type EditorRuntimeOptions } from '../../runtime';
-import { columnsPlugin } from '../../statePlugins/columns';
+import { columnBreaksPlugin } from '../../statePlugins/columns';
 import { createKeyGuard } from '../../statePlugins/keys';
 import { nodeStatePlugin } from '../../statePlugins/nodeState';
 import { targetsPlugin } from '../../statePlugins/targets';
@@ -79,7 +79,7 @@ export const assembleState = (core: Core, options: EditorRuntimeOptions, late: L
                 settling.plugin,
                 targetsPlugin,
                 groupsPlugin,
-                columnsPlugin(() => display.columns()),
+                columnBreaksPlugin(() => display.columns()),
                 stylesPlugin(() => options.styles?.() ?? []),
                 uploadSlotsPlugin(uploads.raw),
                 nodeStatePlugin(),

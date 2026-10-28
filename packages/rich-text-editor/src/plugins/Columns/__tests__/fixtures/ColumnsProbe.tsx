@@ -6,10 +6,10 @@ import { RichTextReader } from '#/entries/reader';
 import { defineEditor, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 import { columns as layoutColumns, core } from '#/plugins';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 
 const model = compileContentModel([core(), layoutColumns()], { id: 'test.columns', version: 1 });
-const definition = defineEditor({ id: 'test.columns', model, plugins: unitsOf(model) });
+const definition = defineEditor({ id: 'test.columns', model, plugins: pluginsFor(model) });
 const paragraph = (text: string) => ({ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] });
 
 /** `One`, then each further paragraph after a column break: `One`, break, `Two`, break, `Three`, and so on. */

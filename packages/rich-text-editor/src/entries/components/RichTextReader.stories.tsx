@@ -7,13 +7,13 @@ import { deDE } from '#/locales/de-DE';
 import { documentModel } from '#/plugins';
 import {
     blocksRecord,
-    bulletList,
-    codeBlock,
-    heading,
+    storedBulletList,
+    storedCodeBlock,
+    storedHeading,
     mark,
-    orderedList,
+    storedOrderedList,
     paragraph,
-    quote,
+    storedQuote,
     text,
 } from '#/react/examples/records';
 import '#/react/examples/contentStyles';
@@ -21,9 +21,9 @@ import '#/react/examples/contentStyles';
 const model = documentModel;
 const stored = (...blocks: Parameters<typeof blocksRecord>[2][]) =>
     blocksRecord(model, 'story-reader', ...blocks).document;
-/** The content every reader story shows: headings, lists, a quote, code and a link. */
+/** The content every reader story shows: headings, lists, a storedQuote, code and a link. */
 const CONTENT = [
-    heading('heading-1', 1, 'Logo guidelines'),
+    storedHeading('heading-1', 1, 'Logo guidelines'),
     paragraph(
         text('Read the '),
         mark('brand guide', 'link', {
@@ -33,11 +33,11 @@ const CONTENT = [
         }),
         text(' before you use the logo.'),
     ),
-    heading('heading-2', 2, 'Clear space'),
-    bulletList([text('Keep the logo clear of other elements')], [text('Never stretch it')]),
-    orderedList([text('Pick the version')], [text('Place it on the page')]),
-    quote(text('The logo is the face of the brand.')),
-    codeBlock("<img src='logo.svg' alt='Acme logo' />"),
+    storedHeading('heading-2', 2, 'Clear space'),
+    storedBulletList([text('Keep the logo clear of other elements')], [text('Never stretch it')]),
+    storedOrderedList([text('Pick the version')], [text('Place it on the page')]),
+    storedQuote(text('The logo is the face of the brand.')),
+    storedCodeBlock("<img src='logo.svg' alt='Acme logo' />"),
 ];
 
 const meta: Meta<typeof RichTextReader> = {

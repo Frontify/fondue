@@ -6,7 +6,7 @@ import { defineReactPresentation } from '#/entries/authoring';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 import { bold, core } from '#/plugins';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { language } from '#/plugins/Language/feature';
 import { setSelection } from '#/testing';
 
@@ -20,7 +20,7 @@ const model = compileContentModel([core(), bold(), language({ languages: LANGUAG
     id: 'test.language-ct',
     version: 1,
 });
-const definition = defineEditor({ id: 'test.language-ct', model, plugins: unitsOf(model) });
+const definition = defineEditor({ id: 'test.language-ct', model, plugins: pluginsFor(model) });
 
 const document = {
     format: 'frontify.rich-text',

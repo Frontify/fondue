@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 
 import { compileContentModel, type JsonValue, type RichTextDocument } from '#/model';
 import { limitsOf } from '#/model/internal';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
 import { extensionsOf } from '#/react/compile/engine';
@@ -21,7 +21,7 @@ import { createStore } from '../../session/state/store';
 import { type ReplaceDocumentRequest, type SaveStatus } from '../../types';
 
 const model = compileContentModel([core(), bold()], { id: 'test.bold', version: 1 });
-const definition = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, unitsOf(model)));
+const definition = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, pluginsFor(model)));
 const stored = (text: string, id = 'test.bold') => ({
     format: 'frontify.rich-text',
     formatVersion: 1,

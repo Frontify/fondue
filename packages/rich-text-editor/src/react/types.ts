@@ -61,7 +61,7 @@ export type EditorDefinitionOptions<Model extends ContentModel = ContentModel> =
     id: string;
     /** The content model the editor edits. */
     model: Model;
-    /** One unit per feature of the model, of the same ID and version. */
+    /** One plugin per feature of the model, of the same ID and version. */
     plugins: readonly RichTextPlugin[];
     /** Authoring switches that start differently from the model's defaults. */
     policy?: Partial<AuthoringPolicy>;
@@ -91,7 +91,7 @@ export type CompiledEditorDefinition<Commands extends object = ShippedCommands> 
 type UnionToIntersection<U> = (U extends unknown ? (value: U) => void : never) extends (value: infer I) => void
     ? I
     : never;
-/** The commands of the units a host passes `defineEditor`. */
+/** The commands of the plugins a host passes `defineEditor`. */
 export type CommandsOfPlugins<Plugins extends readonly RichTextPlugin[]> = UnionToIntersection<
     CommandsOfPart<Plugins[number]['editor']>
 > &

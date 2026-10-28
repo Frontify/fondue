@@ -9,7 +9,7 @@ import { compileContentModel, type RichTextDocument } from '#/model';
 import { featuresById } from '#/plugins';
 import { highlightEditor } from '#/plugins/__tests__/fixtures/outsideEditor';
 import { badgeDocument, highlight, highlightDocument } from '#/plugins/__tests__/fixtures/outsideFeature';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { registry } from '#/plugins/registry';
 import { featureFixtures } from '#/testing/conformance/fixtures';
 
@@ -18,7 +18,7 @@ const model = compileContentModel([...featuresById(Object.keys(registry)), highl
     id: 'feature-contract',
     version: 1,
 });
-const definition = defineEditor({ id: 'test.parity', model, plugins: unitsOf(model, [highlightEditor]) });
+const definition = defineEditor({ id: 'test.parity', model, plugins: pluginsFor(model, [highlightEditor]) });
 /** Every asset at a same-origin URL, which the CT page CSP allows, answered through `page.route`. */
 const resolveAssetUrl = (assetId: string) => `${window.location.origin}/test-assets/${assetId}`;
 const presentation = defineReactPresentation({ resolveAssetUrl });

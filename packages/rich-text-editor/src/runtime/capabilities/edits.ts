@@ -5,7 +5,7 @@ import { block, setBlock, wrapIn } from './blocks';
 import { indentItem, outdentItem, toggleList } from './lists';
 import { removeMark } from './markClear';
 import { reapplyMark, setMark } from './markSet';
-import { toggleMark } from './markToggle';
+import { markToggle } from './markToggle';
 import { history, indentLines, insertText } from './text';
 
 /** The editor API's edits, each built from its arguments for a model's schema. */
@@ -22,6 +22,6 @@ export const EDITS = {
     setBlock,
     setMark,
     toggleList,
-    toggleMark,
+    toggleMark: markToggle,
     wrapIn,
 } as const;

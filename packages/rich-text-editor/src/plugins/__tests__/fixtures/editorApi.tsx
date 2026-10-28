@@ -14,8 +14,8 @@ import {
     type RichTextDocument,
 } from '#/model';
 import { bold, codeBlock, core, fontColor, heading, link, image, quote } from '#/plugins';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { spotlight } from '#/plugins/__tests__/fixtures/spotlight/feature';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { type DocumentChange } from '#/runtime/types';
 import { pressKey, setSelection } from '#/testing';
 
@@ -181,7 +181,7 @@ export const probeHarness = (hooks: ProbeHooks) => {
         const definition = defineEditor({
             id: 'fixture.api',
             model: own,
-            plugins: unitsOf(own, [probe]),
+            plugins: pluginsFor(own, [probe]),
             policy,
             limits,
         });

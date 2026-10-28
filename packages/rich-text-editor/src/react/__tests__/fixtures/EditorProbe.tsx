@@ -20,8 +20,8 @@ import { compileContentModel, type ContentModel, type ContentNodeJSON } from '#/
 import { bold, core } from '#/plugins';
 import { fixtureChrome } from '#/plugins/__tests__/fixtures/chrome/feature';
 import { fixtureHeadingSet, fixtureInputRules, fixtureItalic } from '#/plugins/__tests__/fixtures/features';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { fixtureProfiles } from '#/plugins/__tests__/fixtures/profiles';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { link } from '#/plugins/Link/feature';
 import { undoDepth } from '#/runtime/history';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
@@ -39,15 +39,15 @@ const inputRulesModel = compileContentModel(
 const ALLOW = { create: true, edit: true, remove: true, paste: true };
 /** The component-test model's definitions: every feature allowed, and paragraphs that may not change. */
 const definitions = {
-    open: defineEditor({ id: 'test.ct', model, plugins: unitsOf(model) }),
+    open: defineEditor({ id: 'test.ct', model, plugins: pluginsFor(model) }),
     guarded: defineEditor({
         id: 'test.ct',
         model,
         policy: { features: { core: { ...ALLOW, edit: false } } },
-        plugins: unitsOf(model),
+        plugins: pluginsFor(model),
     }),
     // The heading input rule turns `## ` into a heading, which needs the typed space kept.
-    inputRules: defineEditor({ id: 'test.ct', model: inputRulesModel, plugins: unitsOf(inputRulesModel) }),
+    inputRules: defineEditor({ id: 'test.ct', model: inputRulesModel, plugins: pluginsFor(inputRulesModel) }),
 };
 
 /** A text, or a link around the text inside `[` and `]`, as `Read the [guide]`. */
@@ -208,7 +208,7 @@ export const EditorProbe = ({
         const features = fixtureProfiles()[profile] ?? [];
         const profileModel = compileContentModel(features, { id: 'test.ct', version: 1 });
 
-        return defineEditor({ id: `test.${profile}`, model: profileModel, plugins: unitsOf(profileModel) });
+        return defineEditor({ id: `test.${profile}`, model: profileModel, plugins: pluginsFor(profileModel) });
     });
     const presentation = useMemo(() => {
         if (contentClassName === undefined) {

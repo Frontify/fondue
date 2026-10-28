@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useEditorSelection } from '#/bridge/pluginApi/hooks/useEditorSelection';
 import { compileContentModel, type Diagnostic } from '#/model';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { core } from '#/plugins/Core/feature';
 import { link } from '#/plugins/Link/feature';
 import { type RuntimeHandle } from '#/runtime/runtime';
@@ -32,7 +32,7 @@ afterEach(() => {
 describe('RichTextEditor host surface', () => {
     it('gives a host mount effect the handle on the first commit, with a shipped editor part installed', () => {
         const linkedModel = compileContentModel([core(), link()], { id: 'test.editor', version: 1 });
-        const linked = defineEditor({ id: 'test.linked', model: linkedModel, plugins: unitsOf(linkedModel) });
+        const linked = defineEditor({ id: 'test.linked', model: linkedModel, plugins: pluginsFor(linkedModel) });
         const seen: (EditorHandle<object> | null)[] = [];
         const Host = () => {
             const ref = useRef<EditorHandle<object>>(null);

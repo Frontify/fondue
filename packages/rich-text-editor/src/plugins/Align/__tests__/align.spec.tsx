@@ -9,7 +9,7 @@ import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { deDE } from '#/locales/de-DE';
 import { compileContentModel, type ContentModel } from '#/model';
 import { brandDocumentModel } from '#/plugins/__tests__/fixtures/brandDocument';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { align } from '#/plugins/Align/feature';
 import { core } from '#/plugins/Core/feature';
 import { heading } from '#/plugins/Heading/feature';
@@ -119,7 +119,7 @@ describe('alignment', () => {
         const model = modelOf(true);
         const stored = storedIn(model, [{ ...para(text('Note')), attrs: { lang: null, align: 'left' } }]);
         const document = { ...stored, content: { ...stored.content, attrs: { lang: 'en', dir: 'rtl' } } };
-        const definition = defineEditor({ id: 'test.align', model, plugins: unitsOf(model) });
+        const definition = defineEditor({ id: 'test.align', model, plugins: pluginsFor(model) });
         const ref = createRef<EditorHandle>();
         const element = (dir: 'ltr' | 'rtl') => {
             const locale = dir === 'rtl' ? { locale: deDE } : {};

@@ -5,7 +5,7 @@ import { type ContentModel, type DecodeOptions, type Diagnostic, styleSheetOf } 
 import { markHrefPolicy, type TreeNode, decodeToTree, codecContext, columnLayout, randomId } from '#/model/internal';
 
 import { createParser, readMarkdown } from './fromMarkdown';
-import { checkCodecs, planOf } from './plan';
+import { checkCodecs, codecPlanOf } from './plan';
 import { writeHtml } from './toHtml';
 import { writeMarkdown } from './toMarkdown';
 import { writeText } from './toText';
@@ -13,7 +13,7 @@ import { type CodecsOptions, type RichTextCodecs } from './types';
 
 /** Checks the model once, then returns `toHTML`, `toPlainText`, `toMarkdown` and `fromMarkdown` bound to it. */
 export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): RichTextCodecs => {
-    const plan = planOf(model);
+    const plan = codecPlanOf(model);
     checkCodecs(plan);
     const generateId = options.generateId ?? randomId;
     let decodeOptions: DecodeOptions = {};

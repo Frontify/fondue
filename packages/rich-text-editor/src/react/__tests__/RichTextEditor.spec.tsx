@@ -16,7 +16,7 @@ import { type LoadedDocument, type PersistenceService } from '#/persistence/type
 import { doc, envelope, link, node, text } from '#/plugins/__tests__/fixtures/documents';
 import { fixtureMedia } from '#/plugins/__tests__/fixtures/features';
 import { notesModel } from '#/plugins/__tests__/fixtures/notes';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import {
     vocabularyAlign,
     vocabularyBlocks,
@@ -373,7 +373,7 @@ describe('RichTextEditor', () => {
         compile.mockClear();
         build.mockClear();
         const onceModel = compileContentModel(features, { id: 'test.editor', version: 1 });
-        const once = defineEditor({ id: 'test.once', model: onceModel, plugins: unitsOf(onceModel) });
+        const once = defineEditor({ id: 'test.once', model: onceModel, plugins: pluginsFor(onceModel) });
 
         const { rerender, unmount } = mount({ definition: once }, true);
         for (let index = 0; index < 10; index += 1) {
@@ -386,7 +386,7 @@ describe('RichTextEditor', () => {
     });
 
     it('runs a custom model with an outside feature in place of a profile', () => {
-        const custom = defineEditor({ id: 'test.custom', model: italicModel, plugins: unitsOf(italicModel) });
+        const custom = defineEditor({ id: 'test.custom', model: italicModel, plugins: pluginsFor(italicModel) });
         const changes: DocumentChange[] = [];
         const italic = { type: 'text', text: 'ab', marks: [{ type: 'italic' }] };
         const { handle, unmount } = mount({
@@ -525,10 +525,10 @@ describe('RichTextEditor documents', () => {
     const vocabulary = defineEditor({
         id: 'test.vocabulary',
         model: vocabularyModel,
-        plugins: unitsOf(vocabularyModel),
+        plugins: pluginsFor(vocabularyModel),
     });
     const notesOf3 = notesModel(3);
-    const notes = defineEditor({ id: 'test.notes', model: notesOf3, plugins: unitsOf(notesOf3) });
+    const notes = defineEditor({ id: 'test.notes', model: notesOf3, plugins: pluginsFor(notesOf3) });
     const opened = [
         ...fixturesIn('valid').map(([name, document]) => [`model/valid/${name}`, document, vocabulary] as const),
         ...readdirSync(join(fixtures, 'migration'), { recursive: true, encoding: 'utf8' })
@@ -569,7 +569,7 @@ describe('RichTextEditor documents', () => {
         id: 'fixture.vocabulary',
         version: 1,
     });
-    const linked = defineEditor({ id: 'test.urls', model: urlModel, plugins: unitsOf(urlModel) });
+    const linked = defineEditor({ id: 'test.urls', model: urlModel, plugins: pluginsFor(urlModel) });
     const withUrl = (url: string) =>
         envelope(doc(para(text('Go', link(url))), node('embed', { nodeId: 'e-1', url })), [
             'core',

@@ -147,7 +147,7 @@ const fire = (
  * appended transaction that closes the undo group before and after it, so the first undo restores the typed text.
  * Text that arrives any other way, such as by paste or a command, fires no rule.
  */
-export const inputRulesPlugin: PluginImplementation = ({ inputRules }) =>
+export const typedRulesPlugin: PluginImplementation = ({ inputRules }) =>
     new Plugin<boolean>({
         key: firedKey,
         state: {

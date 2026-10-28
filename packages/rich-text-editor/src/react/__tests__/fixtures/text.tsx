@@ -36,7 +36,7 @@ import {
     underline,
 } from '#/plugins';
 import { storedIn } from '#/plugins/__tests__/fixtures/documents';
-import { type UnitCommands, unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { type PluginCommands, pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { runtimeOf } from '#/runtime/runtime';
 import { type DocumentChange } from '#/runtime/types';
 
@@ -113,18 +113,18 @@ export const mountText = <Model extends ContentModel = ContentModel<ReturnType<t
         toolbar,
         inputRules: rules,
         readOnly,
-        plugins,
+        plugins: hostParts,
     } = given;
-    const ref = createRef<EditorHandle<UnitCommands>>();
+    const ref = createRef<EditorHandle<PluginCommands>>();
     const changes: DocumentChange[] = [];
-    const units = unitsOf(model, plugins);
-    let definition = defineEditor({ id: 'test.text', model, plugins: units });
+    const plugins = pluginsFor(model, hostParts);
+    let definition = defineEditor({ id: 'test.text', model, plugins });
     if (policy !== undefined) {
         definition = defineEditor({
             id: 'test.text',
             model,
             policy,
-            plugins: units,
+            plugins,
         });
     }
 

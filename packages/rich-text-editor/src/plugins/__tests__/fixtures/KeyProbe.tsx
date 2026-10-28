@@ -7,7 +7,7 @@ import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
 import { brandDocumentFeatures, commentFeatures, documentFeatures } from '#/plugins';
 import { storedIn } from '#/plugins/__tests__/fixtures/documents';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { heard, recordSubmit } from '#/react/__tests__/fixtures/host';
 import { createFakeReferenceService, setSelection } from '#/testing';
 
@@ -66,7 +66,7 @@ export const KeyProbe = ({
         const model = compileContentModel(list, { id: 'test.keys', version: 1 });
 
         return {
-            definition: defineEditor({ id: 'test.keys', model, policy: { enterBehavior }, plugins: unitsOf(model) }),
+            definition: defineEditor({ id: 'test.keys', model, policy: { enterBehavior }, plugins: pluginsFor(model) }),
             document: storedIn(model, blocks),
         };
     }, [features, reversed, blocks, enterBehavior]);

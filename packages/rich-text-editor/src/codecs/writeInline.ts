@@ -17,7 +17,7 @@ import {
 } from '#/model/internal';
 
 import { codeSpan, destination, joinRuns, type Piece, readInline, type Run, serialize } from './markdownEscape';
-import { Losses, type MarkPlan, type NodePlan, setShared } from './plan';
+import { Losses, type CodecMarkPlan, type CodecNodePlan, setShared } from './plan';
 import { reportFailure, type WalkState } from './walk';
 
 /** What the Markdown walk shares: the walk state plus the parser and the italic delimiter in use. */
@@ -39,7 +39,7 @@ type MarkdownItem = {
 } & Item;
 
 /** Counts the mark's feature as lost. */
-const markLost = (state: MarkdownState, plan: MarkPlan) => state.losses.add(plan.featureId);
+const markLost = (state: MarkdownState, plan: CodecMarkPlan) => state.losses.add(plan.featureId);
 
 /**
  * What a mark writes: nothing, a code span, its feature's own syntax, a delimiter pair, or a link to `target`, which
@@ -49,7 +49,7 @@ type MarkSyntax =
     | { kind: 'none' | 'code' | 'custom' | 'delimiter'; lost: boolean }
     | { kind: 'link'; lost: boolean; target: string | undefined };
 
-const markSyntax = (mark: TreeMark, plan: MarkPlan): MarkSyntax => {
+const markSyntax = (mark: TreeMark, plan: CodecMarkPlan): MarkSyntax => {
     if (plan.formats.markdown === 'unsupported') {
         return { kind: 'none', lost: true };
     }
@@ -124,7 +124,7 @@ export const featureOf = (state: MarkdownState, type: string): string => {
 };
 
 /** Reports that a Markdown override of the node or mark threw, at `path`. */
-export const overrideFailed = (state: MarkdownState, plan: NodePlan | MarkPlan, path: string, name: string) =>
+export const overrideFailed = (state: MarkdownState, plan: CodecNodePlan | CodecMarkPlan, path: string, name: string) =>
     reportFailure(state, plan.featureId, path, name, 'markdown');
 
 /** The runs a textblock should read back as, or `undefined` when it holds syntax the check does not cover. */
@@ -237,7 +237,7 @@ const inlinePieces = (state: MarkdownState, node: TreeNode, path: string, line: 
     const marked = (items: readonly Item[], depth: number): Piece[] =>
         groupRun(items, depth, leaf, (group, { mark, index }): Piece[] => {
             const inner = marked(group, depth + 1);
-            const plan = state.plan.marks.get(mark.type) as MarkPlan;
+            const plan = state.plan.marks.get(mark.type) as CodecMarkPlan;
             const attrs = attrsOf(mark.attrs);
             if (plan.markdown !== undefined) {
                 try {
@@ -296,7 +296,7 @@ const inlinePieces = (state: MarkdownState, node: TreeNode, path: string, line: 
 };
 
 /** `[inner](target)` for a link with a safe href, else `inner` alone; a link's own losses are counted here, once per run. */
-const linkPieces = (state: MarkdownState, plan: MarkPlan, mark: TreeMark, inner: Piece[], line: Line): Piece[] => {
+const linkPieces = (state: MarkdownState, plan: CodecMarkPlan, mark: TreeMark, inner: Piece[], line: Line): Piece[] => {
     const attrs = attrsOf(mark.attrs);
     if (attrs.openInNewWindow === true || (attrs.styleId !== undefined && attrs.styleId !== null)) {
         markLost(state, plan);
@@ -391,7 +391,7 @@ const leafPieces = (state: MarkdownState, { node, path, code }: MarkdownItem, li
 };
 
 /** Counts each shared attribute that holds a value, since Markdown writes none (Markdown rules: `align`, `indent`, `styleId`). */
-export const noteShared = (state: MarkdownState, plan: NodePlan, node: TreeNode) => {
+export const noteShared = (state: MarkdownState, plan: CodecNodePlan, node: TreeNode) => {
     for (const shared of setShared(plan, node)) {
         state.losses.add(shared.featureId);
     }

@@ -7,7 +7,7 @@ import { positionOf } from '../../../transform/positions';
 import { type SelectionHandle } from '../../../types';
 
 import { uploadLimits } from './cache';
-import { checkFiles, nameOf, sortChecked } from './check';
+import { checkFiles, fileNameOf, sortChecked } from './check';
 import { insertion, nodeIn, replacement, slotAttrs } from './commands';
 import { fresh, isRetryable } from './machine';
 import { type Transport } from './transport';
@@ -139,7 +139,7 @@ export const createGestures = (transport: Transport) => {
             target = host.capture(place.range);
             if (target === undefined) {
                 for (const file of files) {
-                    host.event({ kind: 'failed', name: nameOf(file) });
+                    host.event({ kind: 'failed', name: fileNameOf(file) });
                 }
 
                 return;

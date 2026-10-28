@@ -11,7 +11,7 @@ import { commentModel } from '#/plugins/profiles/comment';
 import { documentModel } from '#/plugins/profiles/document';
 import { inlineModel } from '#/plugins/profiles/inline';
 import { featuresById, registry } from '#/plugins/registry';
-import { engineOf, pluginsOf, readersOf } from '#/react/compile/compileEditor';
+import { compiledOf, pluginsOf, readersOf } from '#/react/compile/compileEditor';
 import { shipped as shippedBrandDocument } from '#/react/profiles/brandDocument';
 import { shipped as shippedComment } from '#/react/profiles/comment';
 import { shipped as shippedDocument } from '#/react/profiles/document';
@@ -91,7 +91,7 @@ describe('goldens', () => {
             Object.entries(PROFILES).map(([name, shipped]) => {
                 const { definition, presentation, touchPresentation } = shipped();
                 const plugins = pluginsOf(definition);
-                const { commands, keymap } = engineOf(definition);
+                const { commands, keymap } = compiledOf(definition);
 
                 return [
                     name,

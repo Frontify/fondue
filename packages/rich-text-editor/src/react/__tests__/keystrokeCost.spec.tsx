@@ -8,7 +8,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, hashDocument, type hashDocument as RealHash } from '#/model';
 import { featuresById } from '#/plugins';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { runtimeOf } from '#/runtime/runtime';
 import { typeText } from '#/testing';
 
@@ -42,7 +42,7 @@ it('serializes, hashes and calls toJSON on no document over 100 keystrokes in th
         id: 'test.keystroke-cost',
         version: 1,
     });
-    const definition = defineEditor({ id: 'test.keystroke-cost', model, plugins: unitsOf(model) });
+    const definition = defineEditor({ id: 'test.keystroke-cost', model, plugins: pluginsFor(model) });
     const ref = createRef<EditorHandle>();
     render(
         <RichTextEditor
@@ -97,7 +97,7 @@ it('rejects typing from the byte limit on in the large fixture, counting bytes w
     let document = perfDocument('large', model);
     const mountWith = (limits: { maxDocumentBytes?: number }) => {
         const defaultValue = { documentId: 'document-1', revision: null, document };
-        const definition = defineEditor({ id: 'test.keystroke-limit', model, limits, plugins: unitsOf(model) });
+        const definition = defineEditor({ id: 'test.keystroke-limit', model, limits, plugins: pluginsFor(model) });
         const ref = createRef<EditorHandle>();
         const rendered = render(
             <RichTextEditor aria-label="Notes" definition={definition} defaultValue={defaultValue} ref={ref} />,

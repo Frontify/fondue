@@ -19,7 +19,7 @@ import {
 import { type ResolveAssetUrl, decodeToTree, canonicalJson, columnLayout, listDepths } from '#/model/internal';
 
 import { readerContext } from '../helpers/context';
-import { planOf, type ReaderOverrides } from '../helpers/plan';
+import { readerPlanOf, type ReaderOverrides } from '../helpers/plan';
 
 import { message, renderDocument, type RenderState } from './helpers/render';
 
@@ -129,7 +129,7 @@ const build = ({ document, model, presentation, locale = enUS, limits, overrides
     }
 
     const state: RenderState = {
-        plan: planOf(model, overrides),
+        plan: readerPlanOf(model, overrides),
         context,
         diagnostics,
         islands: 0,

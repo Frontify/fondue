@@ -24,7 +24,7 @@ import {
     type ResourceLimits,
 } from '#/model';
 import { core, image, upload } from '#/plugins';
-import { type UnitCommands, unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { type PluginCommands, pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { flush, imageModel, para, resolving, storedIn, text } from '#/plugins/Image/__tests__/fixtures/mount';
 import { undoDepth } from '#/runtime/history';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
@@ -154,7 +154,7 @@ export const mountUploads = async (options?: Mount) => {
         plugins,
         toolbar = [['image.insert']],
     } = given;
-    const ref = createRef<EditorHandle<UnitCommands>>();
+    const ref = createRef<EditorHandle<PluginCommands>>();
     const diagnostics: Diagnostic[] = [];
     const changes: DocumentChange[] = [];
     const definitionOptions: { limits?: NonNullable<Mount['limits']> } = {};
@@ -165,7 +165,7 @@ export const mountUploads = async (options?: Mount) => {
     const definition = defineEditor({
         id: 'test.uploads',
         model,
-        plugins: unitsOf(model, plugins),
+        plugins: pluginsFor(model, plugins),
         ...definitionOptions,
     });
     const presentation = defineReactPresentation({ toolbar, resolveAssetUrl: resolving });

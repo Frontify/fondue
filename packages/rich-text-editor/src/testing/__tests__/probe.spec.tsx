@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { defineEditor, RichTextEditor } from '#/index';
 import { compileContentModel, createEmptyDocument } from '#/model';
 import { core } from '#/plugins';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { probeRuntimes } from '#/testing';
 
 describe('probeRuntimes', () => {
@@ -15,7 +15,7 @@ describe('probeRuntimes', () => {
         const { unmount } = render(
             <RichTextEditor
                 aria-label="Notes"
-                definition={defineEditor({ id: 'story.core', model, plugins: unitsOf(model) })}
+                definition={defineEditor({ id: 'story.core', model, plugins: pluginsFor(model) })}
                 defaultValue={{ documentId: 'document-1', revision: null, document: createEmptyDocument(model) }}
             />,
         );

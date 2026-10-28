@@ -24,7 +24,7 @@ import {
     fixtureItalic,
     fixtureRedo,
 } from '#/plugins/__tests__/fixtures/features';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { vocabularyModel } from '#/plugins/__tests__/fixtures/vocabulary';
 import { core } from '#/plugins/Core/feature';
 import { image } from '#/plugins/Image/feature';
@@ -36,7 +36,7 @@ import { compileDefinition } from '..';
 
 const keyOf = (plugin: Plugin) => (plugin as unknown as { key: string }).key;
 /** The engine of `model` with the fixture features' editor parts and the shipped ones. */
-const engineOf = (model: ContentModel) => compileDefinition(model, {}, extensionsOf(model, unitsOf(model)));
+const engineOf = (model: ContentModel) => compileDefinition(model, {}, extensionsOf(model, pluginsFor(model)));
 const options = { id: 'test', version: 1 };
 const box = { group: 'block', attrs: {}, html: ['div', 0], parse: [] } as const;
 

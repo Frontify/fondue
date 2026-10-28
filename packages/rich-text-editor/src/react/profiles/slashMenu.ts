@@ -7,8 +7,8 @@ import { turnIntoEntries } from '../helpers/turnInto';
 
 const INSERTS = /\.insert$/u;
 
-/** A unit as the list reads it: the toolbar entries of its editor part. */
-type Unit = {
+/** A plugin as the list reads it: the toolbar entries of its editor part. */
+type Plugin = {
     editor: Pick<EditorPartSpec, 'toolbar'>;
 };
 
@@ -37,7 +37,7 @@ const payloadOf = ({ command, payload }: PluginToolbarEntry): JsonObject => {
  * The `/` list of an empty paragraph: Turn into holds the block conversions and Insert the node inserts of the
  * toolbar entries of `plugins`, each only while its command is enabled, which also leaves out what the policy refuses.
  */
-export const slashMenu = (plugins: readonly Unit[]): Omit<EditorPartSpec<'commands'>, 'commands'> => {
+export const slashMenu = (plugins: readonly Plugin[]): Omit<EditorPartSpec<'commands'>, 'commands'> => {
     const entries = plugins.flatMap(({ editor }) => editor.toolbar ?? []).filter(({ node }) => node === undefined);
     const turnInto = turnIntoEntries(plugins.map(({ editor }) => editor));
     const inserts = entries.filter(({ kind, command }) => kind === 'button' && INSERTS.test(command));

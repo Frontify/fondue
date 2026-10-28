@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { compileContentModel, type Diagnostic, type JsonValue } from '#/model';
 import { decodeToTree, limitsOf } from '#/model/internal';
 import { countingIds } from '#/plugins/__tests__/fixtures/notes';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
 import { extensionsOf } from '#/react/compile/engine';
@@ -74,7 +74,7 @@ const create = (...plugins: readonly Plugin[]) => {
         throw new Error('expected an editable document');
     }
 
-    const compiled = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, unitsOf(model)));
+    const compiled = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, pluginsFor(model)));
     const runtime = createEditorRuntime({
         definition: { ...compiled, plugins: [...compiled.plugins, ...plugins] },
         documentId: 'document-1',

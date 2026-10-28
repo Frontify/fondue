@@ -7,7 +7,7 @@ import { COALESCE_MS } from '#/bridge/session/helpers/announcer';
 import { core, emoji, fontColor } from '#/plugins';
 import { fixturePickerPanel, openFind } from '#/plugins/__tests__/fixtures/panels';
 import { mountText, textModel } from '#/react/__tests__/fixtures/text';
-import { CHECK_DELAY_MS, contentChecksOf } from '#/runtime/capabilities/checks/contentIssues';
+import { CHECK_DELAY_MS, contentChecksStateOf } from '#/runtime/capabilities/checks/contentIssues';
 import { SETTLE_MS } from '#/runtime/dom/settle';
 import { positionOf } from '#/runtime/transform/positions';
 import { setSelection } from '#/testing';
@@ -153,7 +153,7 @@ describe('an issues panel repair', () => {
         });
         openPanel();
 
-        const skipped = contentChecksOf(mounted.runtime.state)?.issues.find(
+        const skipped = contentChecksStateOf(mounted.runtime.state)?.issues.find(
             ({ issue }) => issue.id === 'heading.skipped-level:deep',
         );
         expect(skipped?.issue).toMatchObject({
@@ -167,7 +167,7 @@ describe('an issues panel repair', () => {
         const mounted = mountChecks({ blocks: [para(colored('Pale words', 'pale'))] });
         openPanel();
 
-        const issues = contentChecksOf(mounted.runtime.state)?.issues;
+        const issues = contentChecksStateOf(mounted.runtime.state)?.issues;
         const repairs = (issues ?? []).map(({ issue }) => [issue.ruleId, issue.repairCommand]);
 
         expect(repairs).toContainEqual(['contrast.low', 'mark.color.menu.open']);
@@ -405,7 +405,9 @@ describe('an issue from an older sequence', () => {
         const mounted = mountChecks({ blocks: [headingBlock('empty', 2), para(text('After'))] });
         const { view, runtime, handle } = mounted;
         openPanel();
-        const issue = contentChecksOf(runtime.state)?.issues.find(({ issue: { id } }) => id === 'heading.empty:empty');
+        const issue = contentChecksStateOf(runtime.state)?.issues.find(
+            ({ issue: { id } }) => id === 'heading.empty:empty',
+        );
         expect(issue?.issue.sequence).toBe(handle.getSummary().sequence);
 
         insertParagraph(mounted, 'Above');
@@ -629,14 +631,14 @@ describe('a repair or Go to while text is composed', () => {
     it('checks the live document again right before a repair, even when no change was published since the run', () => {
         const mounted = mountChecks({ blocks: [para(text('Intro')), headingBlock('empty', 2)] });
         openPanel();
-        const checked = contentChecksOf(mounted.runtime.state)?.runs;
+        const checked = contentChecksStateOf(mounted.runtime.state)?.runs;
         const runs = checked ?? 0;
         const runChecks = vi.spyOn(mounted.runtime, 'runChecks');
 
         fix('heading.empty:empty');
 
         expect(runChecks).toHaveBeenCalledTimes(1);
-        expect(contentChecksOf(mounted.runtime.state)?.runs).toBe(runs + 1);
+        expect(contentChecksStateOf(mounted.runtime.state)?.runs).toBe(runs + 1);
         expect(blockTypes(mounted)).toEqual(['paragraph', 'paragraph']);
         expect(mounted.changes.map(({ origin, commandId }) => [origin, commandId])).toEqual([
             ['command', 'paragraph.set'],

@@ -4,7 +4,7 @@ import { composeStories } from '@storybook/react-vite';
 import { describe, expect, it } from 'vitest';
 
 import { canonicalJson } from '#/model/internal';
-import { engineOf, pluginsOf } from '#/react/compile/compileEditor';
+import { compiledOf, pluginsOf } from '#/react/compile/compileEditor';
 import { INPUT_RULE_ROWS, SHORTCUT_ROWS, SURFACE_KEY_ROWS } from '#/react/examples/keyboard';
 import * as profileStories from '#/react/examples/profiles.stories';
 import { shipped as brandDocument } from '#/react/profiles/brandDocument';
@@ -41,7 +41,7 @@ describe('the keyboard reference of each profile story', () => {
             const listed = SHORTCUT_ROWS.filter(({ profiles }) => profiles.includes(profile)).map(
                 ({ key, command, payload, apple, other }) => ({ key, command, payload, apple, other }),
             );
-            const bound = engineOf(shipped().definition).keymap.map(({ key, command, payload }) => ({
+            const bound = compiledOf(shipped().definition).keymap.map(({ key, command, payload }) => ({
                 key,
                 command,
                 payload,

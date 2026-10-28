@@ -19,8 +19,8 @@ import { fixtureCodeBlock } from '#/plugins/__tests__/fixtures/code-block/featur
 import { fixtureItalic, fixtureToolbar } from '#/plugins/__tests__/fixtures/features';
 import { fixtureMediaImage } from '#/plugins/__tests__/fixtures/media/feature';
 import { FixtureLinkPopover, FixtureMenu, FixtureSuggestions } from '#/plugins/__tests__/fixtures/overlays/Overlays';
+import { pluginsFor, type PluginCommands } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { fixtureTableBlock } from '#/plugins/__tests__/fixtures/table/feature';
-import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
 import { link } from '#/plugins/Link/feature';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
@@ -40,7 +40,7 @@ const model = compileContentModel(
     ],
     { id: 'test.overlays', version: 1 },
 );
-const definition = defineEditor({ id: 'test.overlays', model, plugins: unitsOf(model) });
+const definition = defineEditor({ id: 'test.overlays', model, plugins: pluginsFor(model) });
 /** Each `onOpenChange` of the host dialog, which no test expects. */
 const hostDialogChanges: boolean[] = [];
 
@@ -51,7 +51,7 @@ declare global {
     interface Window {
         /** The mounted overlay editor, for tests that drive it from the page. */
         overlayProbe?: {
-            handle: EditorHandle<UnitCommands>;
+            handle: EditorHandle<PluginCommands>;
             select: (target: Parameters<typeof setSelection>[1]) => void;
             open: (kind: OverlayKind) => void;
             /** Removes the node with `nodeId`, as another author's change would. */
@@ -184,7 +184,7 @@ export const OverlayProbe = ({
     }));
     useEffect(() => {
         const timer = setInterval(() => {
-            const handle = ref.current as EditorHandle<UnitCommands> | null;
+            const handle = ref.current as EditorHandle<PluginCommands> | null;
             if (handle === null) {
                 return;
             }

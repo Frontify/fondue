@@ -90,7 +90,7 @@ export { RichTextEditor };
         expect(modules.length).toBeGreaterThan(0);
         expect(reachesRoot(modules)).toBe(true);
         expect(featureFolders(modules).sort()).toEqual(['Bold', 'Core']);
-        // No module sits loose in `plugins`, where the registries of every unit live.
+        // No module sits loose in `plugins`, where the registries of every plugin live.
         expect(modules.filter((id) => /\/src\/plugins\/[^/]+\.ts$/.test(id))).toEqual([]);
         expect(modules.filter((id) => /\/node_modules\/(?:lowlight|emojibase-data)\//.test(id))).toEqual([]);
     }, 120_000);

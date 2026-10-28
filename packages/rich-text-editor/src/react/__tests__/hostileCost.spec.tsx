@@ -18,7 +18,7 @@ import {
     type RichTextSlice,
 } from '#/model';
 import { featuresById } from '#/plugins';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { SLICE_TYPE } from '#/runtime/clipboard/slice';
 import { runtimeOf } from '#/runtime/runtime';
 import { paste, typeText } from '#/testing';
@@ -111,7 +111,7 @@ const stored = (document: unknown): RichTextDocument =>
     (typeof document === 'string' ? JSON.parse(document) : document) as RichTextDocument;
 
 const mountWith = async (document: unknown, limits: Partial<ResourceLimits> = {}) => {
-    const limited = defineEditor({ id: 'test.hostile', model, limits, plugins: unitsOf(model) });
+    const limited = defineEditor({ id: 'test.hostile', model, limits, plugins: pluginsFor(model) });
     const ref = { current: null as EditorHandle<object> | null };
     const rendered = render(
         <RichTextEditor

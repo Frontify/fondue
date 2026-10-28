@@ -4,7 +4,7 @@ import { MAX_IMAGE_SIDE } from './constants';
 import { type Checked, type UploadHost, type UploadRejection } from './types';
 
 /** The file name a slot shows, which a pasted image without one takes from its type. */
-export const nameOf = (file: File) => {
+export const fileNameOf = (file: File) => {
     if (file.name !== '') {
         return file.name;
     }
@@ -45,7 +45,7 @@ export const checkFile = async (
 
     const measured = (value: number | null) => (value === null || value < 1 ? null : value);
 
-    return { file, name: nameOf(file), width: measured(width), height: measured(height) };
+    return { file, name: fileNameOf(file), width: measured(width), height: measured(height) };
 };
 
 /** Checks `files`, reading as many headers at a time as uploads run, so a drop of thousands of files holds few reads. */
@@ -73,7 +73,7 @@ export const sortChecked = (files: readonly File[], checked: readonly (Checked |
     const refused: { name: string; reason: UploadRejection }[] = [];
     for (const [index, result] of checked.entries()) {
         if (typeof result === 'string') {
-            refused.push({ name: nameOf(files[index] as File), reason: result });
+            refused.push({ name: fileNameOf(files[index] as File), reason: result });
         } else {
             accepted.push(result);
         }

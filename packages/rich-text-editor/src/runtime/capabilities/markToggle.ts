@@ -48,7 +48,7 @@ const markState = (state: EditorState, type: MarkType): boolean | 'mixed' => {
 };
 
 /** Adds the mark to the selected text unless all of it has the mark, else removes it; at a caret, toggles the stored mark. */
-export const toggleMark: CapabilityImplementation = (args, schema) => {
+export const markToggle: CapabilityImplementation = (args, schema) => {
     const type = typeIn(schema.marks, args.mark);
     if (type === undefined) {
         return REJECTED;

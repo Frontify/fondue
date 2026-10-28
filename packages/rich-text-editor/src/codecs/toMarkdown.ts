@@ -15,7 +15,7 @@ import {
 } from '#/model/internal';
 
 import { destination, longestRun, serialize } from './markdownEscape';
-import { type CodecPlan, Losses, MARKDOWN_NODES, type NodePlan } from './plan';
+import { type CodecPlan, Losses, MARKDOWN_NODES, type CodecNodePlan } from './plan';
 import { type CodecLoss } from './types';
 import { headingIds, itemMarker, prefixLines } from './walk';
 import { featureOf, type MarkdownState, noteShared, overrideFailed, writeInline } from './writeInline';
@@ -116,7 +116,7 @@ const isExactCell = (cell: TreeNode, first: boolean): boolean => {
 };
 
 /** A GFM table, or its cells' blocks when a cell is beyond GFM; either way a loss is noted when content cannot be kept exactly. */
-const renderTable = (state: MarkdownState, table: TreeNode, plan: NodePlan, path: string): string => {
+const renderTable = (state: MarkdownState, table: TreeNode, plan: CodecNodePlan, path: string): string => {
     const rows = table.content ?? [];
     const cells = rows.map((row) => row.content ?? []);
     const columns = Math.max(0, ...cells.map((row) => row.length));
@@ -209,7 +209,7 @@ const paragraphOf = (state: MarkdownState, node: TreeNode, path: string): string
     writeInline(state, node, path, 'block');
 
 /** Whether the node holds inline content, so it writes as one paragraph rather than as blocks. */
-const isTextblock = (state: MarkdownState, node: TreeNode, plan: NodePlan) => {
+const isTextblock = (state: MarkdownState, node: TreeNode, plan: CodecNodePlan) => {
     const content = node.content ?? [];
     if (content.length === 0) {
         return !plan.leaf;
@@ -219,7 +219,7 @@ const isTextblock = (state: MarkdownState, node: TreeNode, plan: NodePlan) => {
 };
 
 /** What a node writes from its content alone, when no rule, form or override names it. */
-const fallbackOf = (state: MarkdownState, node: TreeNode, plan: NodePlan, path: string): string | null => {
+const fallbackOf = (state: MarkdownState, node: TreeNode, plan: CodecNodePlan, path: string): string | null => {
     if (isTextblock(state, node, plan)) {
         return paragraphOf(state, node, path);
     }
@@ -245,7 +245,7 @@ const dropsOwnAttributes = (node: TreeNode): boolean => {
 const ruleOf = (
     state: MarkdownState,
     node: TreeNode,
-    plan: NodePlan,
+    plan: CodecNodePlan,
     path: string,
     alternate: boolean,
 ): string | null => {

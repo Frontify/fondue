@@ -24,6 +24,7 @@ import {
 import {
     AS_UNKNOWN_AS_MAX,
     DATA_TABLES,
+    DUPLICATE_BINDINGS,
     FILES_OVER_400_LINES,
     FILES_OVER_600_LINES,
     FUNCTIONS_OVER_140_LINES,
@@ -460,6 +461,128 @@ const specReferenceCounts = () => {
     return counts;
 };
 
+// Reads every `.ts` and `.tsx` file under `src`, including locales. Tests, fixtures and stories restate product names, so they are out.
+const productModule = (key: string) => {
+    const segments = key.split('/');
+
+    return !segments.includes('__tests__') && !segments.includes('fixtures') && !key.endsWith('.stories.tsx');
+};
+
+const bindingNames = (name: ts.BindingName, names: string[]) => {
+    if (ts.isIdentifier(name)) {
+        names.push(name.text);
+
+        return;
+    }
+
+    for (const element of name.elements) {
+        if (ts.isBindingElement(element)) {
+            bindingNames(element.name, names);
+        }
+    }
+};
+
+const exportedModifier = (node: ts.Node) =>
+    ts.canHaveModifiers(node) &&
+    ts.getModifiers(node)?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword) === true;
+
+const declarationName = (statement: ts.Statement) => {
+    if (
+        (ts.isFunctionDeclaration(statement) ||
+            ts.isClassDeclaration(statement) ||
+            ts.isInterfaceDeclaration(statement) ||
+            ts.isTypeAliasDeclaration(statement) ||
+            ts.isEnumDeclaration(statement) ||
+            ts.isModuleDeclaration(statement)) &&
+        statement.name !== undefined &&
+        ts.isIdentifier(statement.name)
+    ) {
+        return statement.name.text;
+    }
+
+    return undefined;
+};
+
+const exportedBindingsOf = (path: string) => {
+    const declared = new Set<string>();
+    const exported = new Set<string>();
+    const clause: { local: string; exported: string }[] = [];
+    for (const statement of parse(path).statements) {
+        if (ts.isVariableStatement(statement)) {
+            const isExport = exportedModifier(statement);
+            for (const declaration of statement.declarationList.declarations) {
+                const names: string[] = [];
+                bindingNames(declaration.name, names);
+                for (const name of names) {
+                    declared.add(name);
+                    if (isExport) {
+                        exported.add(name);
+                    }
+                }
+            }
+
+            continue;
+        }
+
+        const name = declarationName(statement);
+        if (name !== undefined) {
+            declared.add(name);
+            if (exportedModifier(statement)) {
+                exported.add(name);
+            }
+
+            continue;
+        }
+
+        if (
+            ts.isExportDeclaration(statement) &&
+            statement.moduleSpecifier === undefined &&
+            statement.exportClause !== undefined &&
+            ts.isNamedExports(statement.exportClause)
+        ) {
+            for (const element of statement.exportClause.elements) {
+                clause.push({
+                    local: (element.propertyName ?? element.name).text,
+                    exported: element.name.text,
+                });
+            }
+        }
+    }
+
+    for (const entry of clause) {
+        if (declared.has(entry.local)) {
+            exported.add(entry.exported);
+        }
+    }
+
+    return exported;
+};
+
+const duplicateBindings = () => {
+    const byName = new Map<string, string[]>();
+    for (const path of allFiles) {
+        const key = toKey(path);
+        if (!productModule(key)) {
+            continue;
+        }
+
+        for (const name of exportedBindingsOf(path)) {
+            const files = byName.get(name) ?? [];
+            files.push(key);
+            byName.set(name, files);
+        }
+    }
+
+    const found = new Map<string, string[]>();
+    for (const [name, files] of byName) {
+        if (files.length > 1) {
+            found.set(name, [...files].sort());
+        }
+    }
+
+    return found;
+};
+
 describe('package structure ratchet', { timeout: 60_000 }, () => {
     it('no product file over 600 lines grows, data tables excepted', () => {
         const exempt = Object.keys(DATA_TABLES);
@@ -542,6 +665,32 @@ describe('package structure ratchet', { timeout: 60_000 }, () => {
         const unlisted = [...found].filter(([key]) => !allowed.has(key)).flatMap(([, places]) => places);
         expect(unlisted, 'readonly members outside the allowlist').toEqual([]);
         expect(stale, 'allowlist entries that no longer match').toEqual([]);
+    });
+
+    it('no two product modules export a binding of the same name, except one shared on purpose', () => {
+        const found = duplicateBindings();
+        const listed = new Map<string, string[]>();
+        const repeated: string[] = [];
+        for (const entry of DUPLICATE_BINDINGS) {
+            if (listed.has(entry.name)) {
+                repeated.push(entry.name);
+            }
+
+            listed.set(entry.name, [...entry.files].sort());
+        }
+
+        const unlisted = [...found.keys()].filter((name) => !listed.has(name)).sort();
+        const mismatches = [...listed].flatMap(([name, files]) => {
+            const actual = found.get(name) ?? [];
+            if (files.join('\0') === actual.join('\0')) {
+                return [];
+            }
+
+            return [`${name}: found ${actual.join(', ') || '(none)'}; listed ${files.join(', ')}`];
+        });
+        expect(repeated, 'allowlist names listed twice').toEqual([]);
+        expect(unlisted, 'duplicate bindings outside the allowlist').toEqual([]);
+        expect(mismatches, 'allowlist entries whose modules differ').toEqual([]);
     });
 
     it('as unknown as casts in product files do not grow', () => {

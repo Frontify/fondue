@@ -17,8 +17,8 @@ import { type ContentModel, type ContentNodeJSON, type Diagnostic } from '#/mode
 import { runtimeOf } from '#/runtime/runtime';
 import { type DocumentChange } from '#/runtime/types';
 
+import { pluginsFor, type PluginCommands } from './pluginsFor';
 import { COLOR_TOKENS, STYLE_MAP, styledDocument, styleModel } from './styles';
-import { unitsOf, type UnitCommands } from './units';
 
 type Mount = {
     model?: ContentModel;
@@ -36,12 +36,12 @@ export const mountStyled = ({
     policy,
     toolbarMode = 'fixed',
 }: Mount) => {
-    const ref = createRef<EditorHandle<UnitCommands>>();
+    const ref = createRef<EditorHandle<PluginCommands>>();
     const changes: DocumentChange[] = [];
     const diagnostics: Diagnostic[] = [];
-    let definition = defineEditor({ id: 'test.styles', model, plugins: unitsOf(model) });
+    let definition = defineEditor({ id: 'test.styles', model, plugins: pluginsFor(model) });
     if (policy !== undefined) {
-        definition = defineEditor({ id: 'test.styles', model, policy, plugins: unitsOf(model) });
+        definition = defineEditor({ id: 'test.styles', model, policy, plugins: pluginsFor(model) });
     }
 
     const document = styledDocument(model, blocks);

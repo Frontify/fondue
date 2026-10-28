@@ -7,11 +7,11 @@ import { defineReactPresentation } from '#/entries/authoring';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { createEmptyDocument } from '#/model';
 import { htmlModel } from '#/plugins/__tests__/fixtures/html';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { runtimeOf } from '#/runtime/runtime';
 
 const model = htmlModel();
-const definition = defineEditor({ id: 'test.html-paste', model, plugins: unitsOf(model) });
+const definition = defineEditor({ id: 'test.html-paste', model, plugins: pluginsFor(model) });
 const presentation = defineReactPresentation({});
 
 declare global {

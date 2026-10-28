@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { type Diagnostic } from '#/model';
 import { decodeToTree, limitsOf } from '#/model/internal';
 import { countingIds } from '#/plugins/__tests__/fixtures/notes';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { extensionsOf } from '#/react/compile/engine';
 import { compileDefinition, countAppends, NORMALIZE_META } from '#/runtime/definition';
 import { probeRuntimes, setSelection, typeText } from '#/testing';
@@ -181,7 +181,7 @@ describe('faults', () => {
                 },
             },
         });
-        const compiled = compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel, unitsOf(boldModel)));
+        const compiled = compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel, pluginsFor(boldModel)));
         const runtime = createEditorRuntime({
             definition: { ...compiled, plugins: [...compiled.plugins, constructorFails] },
             documentId: 'document-1',
@@ -361,7 +361,7 @@ describe('faults', () => {
                 throw new Error('plugin view failure');
             },
         });
-        const compiled = compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel, unitsOf(boldModel)));
+        const compiled = compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel, pluginsFor(boldModel)));
         const runtime = createEditorRuntime({
             definition: { ...compiled, plugins: [...compiled.plugins, viewFails] },
             documentId: 'document-1',

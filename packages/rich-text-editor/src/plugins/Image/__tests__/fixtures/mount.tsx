@@ -25,7 +25,7 @@ import {
     type RichTextDocument,
 } from '#/model';
 import { core, image, mention } from '#/plugins';
-import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor, type PluginCommands } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { type EditorRuntime, runtimeOf } from '#/runtime/runtime';
 import { type DocumentChange } from '#/runtime/types';
 
@@ -117,7 +117,7 @@ type Mount = {
 };
 
 /** The commands of the default image model, which a given model keeps. */
-type ImageCommands = UnitCommands;
+type ImageCommands = PluginCommands;
 
 /** Mounts `RichTextEditor` with `media.image`, runs the first frame and renders the node views' chrome. */
 export const mountImages = async (options?: Mount) => {
@@ -137,7 +137,7 @@ export const mountImages = async (options?: Mount) => {
     const ref = createRef<EditorHandle<ImageCommands>>();
     const diagnostics: Diagnostic[] = [];
     const changes: DocumentChange[] = [];
-    const definition = defineEditor({ id: 'test.images', model, policy, plugins: unitsOf(model) });
+    const definition = defineEditor({ id: 'test.images', model, policy, plugins: pluginsFor(model) });
     const shown = presentation ?? defineReactPresentation({ toolbar, resolveAssetUrl: resolving });
     const rendered = render(
         <RichTextEditor

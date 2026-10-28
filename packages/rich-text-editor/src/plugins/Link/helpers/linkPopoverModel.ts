@@ -117,7 +117,10 @@ export const linkInitialOf = (api: EditorApi<'marks'>): LinkInitial => {
  * The target Apply runs at: the whole link the popover edits, which maps through edits inside it and is invalid once
  * its text is removed, else the selection.
  */
-export const capture = (api: EditorApi | undefined, link: LinkInitial['link']): SelectionHandle | undefined => {
+export const captureLinkTarget = (
+    api: EditorApi | undefined,
+    link: LinkInitial['link'],
+): SelectionHandle | undefined => {
     if (link === undefined) {
         return api?.targets.capture(undefined, { purpose: 'format', onIntersectingEdit: 'invalidate' });
     }

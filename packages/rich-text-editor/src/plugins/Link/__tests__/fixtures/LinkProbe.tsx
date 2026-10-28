@@ -6,13 +6,13 @@ import { defineReactPresentation } from '#/entries/authoring';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 import { bold, core } from '#/plugins';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { link } from '#/plugins/Link/feature';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
 
 const model = compileContentModel([core(), bold(), link()], { id: 'test.links-ct', version: 1 });
-const definition = defineEditor({ id: 'test.links-ct', model, plugins: unitsOf(model) });
+const definition = defineEditor({ id: 'test.links-ct', model, plugins: pluginsFor(model) });
 
 const linkMark = (href: string, openInNewWindow: boolean) => ({
     type: 'link',

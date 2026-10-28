@@ -8,7 +8,7 @@ import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, defineFeature } from '#/model';
 import { bold, core, heading } from '#/plugins';
 import { openFind } from '#/plugins/__tests__/fixtures/panels';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 
 const TallPanel = () => (
     <div role="search" aria-label="Find">
@@ -35,7 +35,7 @@ const tallPart = defineEditorPart(tall, {
 });
 
 const model = compileContentModel([core(), heading(), bold(), tall()], { id: 'test.panel-scroll', version: 1 });
-const definition = defineEditor({ id: 'test.panel-scroll', model, plugins: unitsOf(model, [tallPart]) });
+const definition = defineEditor({ id: 'test.panel-scroll', model, plugins: pluginsFor(model, [tallPart]) });
 
 declare global {
     // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.

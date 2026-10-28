@@ -6,9 +6,9 @@ import { READER_OVERRIDES } from '#/entries/shippedReaders';
 import { type ContentModel, type RichTextDocument } from '#/model';
 import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK, type TreeNode, decodeToTree } from '#/model/internal';
 import { brandDocumentModel, commentModel, documentModel, inlineModel } from '#/plugins';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { UNSHIPPED_FEATURES } from '#/plugins/stages';
-import { engineOf, pluginsOf, readersOf } from '#/react/compile/compileEditor';
+import { compiledOf, pluginsOf, readersOf } from '#/react/compile/compileEditor';
 import { editorEngine } from '#/react/compile/engine';
 import { shipped as brandDocument } from '#/react/profiles/brandDocument';
 import { shipped as comment } from '#/react/profiles/comment';
@@ -139,7 +139,7 @@ const hasIsland = (node: TreeNode): boolean =>
 
 /** The commands a profile's compiled keymap binds to `key`. */
 const boundTo = (key: string, row: () => ShippedProfile) =>
-    engineOf(row().definition)
+    compiledOf(row().definition)
         .keymap.filter((binding) => binding.key === key)
         .map(({ command }) => command);
 
@@ -162,8 +162,8 @@ describe('the shipped profiles', () => {
     });
 
     it.each(ROWS)('registers the commands of every $name feature', ({ profile, model }) => {
-        const commands = [...engineOf(profile().definition).commands.keys()].sort();
-        const expected = [...editorEngine(model, unitsOf(model)).engine.commands.keys()];
+        const commands = [...compiledOf(profile().definition).commands.keys()].sort();
+        const expected = [...editorEngine(model, pluginsFor(model)).engine.commands.keys()];
 
         expect(commands).toEqual(expected.sort());
     });

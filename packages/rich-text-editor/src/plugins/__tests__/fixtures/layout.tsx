@@ -8,7 +8,7 @@ import { defineReactPresentation } from '#/entries/authoring';
 import { type AuthoringPolicy, defineEditor, type EditorHandle, type ReactPresentation, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentModel, type ContentNodeJSON, type Feature } from '#/model';
 import { columns, core, inputRules, image as imageFeature, quote, rule } from '#/plugins';
-import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor, type PluginCommands } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { storedIn } from '#/react/__tests__/fixtures/text';
 import { runtimeOf } from '#/runtime/runtime';
 import { type DocumentChange } from '#/runtime/types';
@@ -66,9 +66,9 @@ export const mountLayout = ({
     excludeRules = [],
 }: LayoutMount) => {
     // A given model keeps the layout features, so the handle takes their commands.
-    const ref = createRef<EditorHandle<UnitCommands>>();
+    const ref = createRef<EditorHandle<PluginCommands>>();
     const changes: DocumentChange[] = [];
-    const definition = defineEditor({ id: 'test.layout', model, policy, plugins: unitsOf(model) });
+    const definition = defineEditor({ id: 'test.layout', model, policy, plugins: pluginsFor(model) });
     const document = storedIn(model, blocks);
     const element = (shown: number) => (
         <RichTextEditor

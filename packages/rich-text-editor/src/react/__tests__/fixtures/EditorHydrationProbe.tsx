@@ -7,12 +7,12 @@ import { renderToString } from 'react-dom/server';
 import { defineEditor, RichTextEditor } from '#/index';
 import { compileContentModel } from '#/model';
 import { bold, core } from '#/plugins';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 
 import { storedOf } from './EditorProbe';
 
 const model = compileContentModel([core(), bold()], { id: 'test.ct', version: 1 });
-const definition = defineEditor({ id: 'test.ct', model, plugins: unitsOf(model) });
+const definition = defineEditor({ id: 'test.ct', model, plugins: pluginsFor(model) });
 
 export type EditorHydrationResult = {
     /** `process.env.NODE_ENV` as the bundle was built; `development` keeps React's mismatch warnings. */

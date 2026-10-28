@@ -22,6 +22,7 @@ import { type ConformanceState, stateFromTree, withWholeDocumentSelected } from 
 import { type CompiledDefinition } from '#/runtime/definition';
 
 import { AXE_TAGS } from './axeTags';
+import { contractPlugins } from './contractPlugins';
 import {
     normalized,
     readerOutput,
@@ -32,7 +33,6 @@ import {
     withoutHiddenText,
 } from './contractSupport';
 import { featureFixtures } from './fixtures';
-import { contractUnits } from './units';
 
 /** The ambient `describe`, `it` and `expect` of the host's test runner, which the suite registers its cases with. */
 type TestRunner = {
@@ -100,7 +100,7 @@ const contractOf = (features: readonly Feature[], options: FeatureContractOption
 
     const engineOf = () => {
         if (built === undefined) {
-            built = editorEngine(compiled(), contractUnits(features, options.plugins ?? []));
+            built = editorEngine(compiled(), contractPlugins(features, options.plugins ?? []));
         }
 
         return built.engine;
@@ -117,7 +117,7 @@ const contractOf = (features: readonly Feature[], options: FeatureContractOption
 
     /** The given editor part of a feature, else its shipped one, with the parts it gives for the feature's options. */
     const partOf = (id: string) => {
-        const part = contractUnits(features, options.plugins ?? []).find((unit) => unit.id === id)?.editor;
+        const part = contractPlugins(features, options.plugins ?? []).find((plugin) => plugin.id === id)?.editor;
         const resolved = optionsOf(id);
         if (part === undefined || resolved === undefined) {
             return part;

@@ -40,36 +40,36 @@ import { fixtureMediaImageEditor } from './media/view';
 import { fixtureTable, fixtureTableBlock } from './table/feature';
 import { fixtureTableBlockEditor } from './table/view';
 
-/** The commands of the units `unitsOf` returns, whose payloads their feature list does not type. */
-export type UnitCommands = Readonly<Record<string, unknown>>;
+/** The commands of the plugins `pluginsFor` returns, whose payloads their feature list does not type. */
+export type PluginCommands = Readonly<Record<string, unknown>>;
 
-/** A unit of the feature `factory` makes and its editor part, as `definePlugin` makes one for a shipped feature. */
-const fixtureUnit = (factory: () => Feature, editor: EditorPart): RichTextPlugin => {
+/** A plugin of the feature `factory` makes and its editor part, as `definePlugin` makes one for a shipped feature. */
+const fixturePlugin = (factory: () => Feature, editor: EditorPart): RichTextPlugin => {
     const feature = factory();
 
     return Object.freeze({ id: feature.id, feature, editor });
 };
 
-const FIXTURE_UNITS = [
-    fixtureUnit(fixtureBold, fixtureBoldEditor),
-    fixtureUnit(fixtureHistory, fixtureHistoryEditor),
-    fixtureUnit(fixtureRedo, fixtureRedoEditor),
-    fixtureUnit(fixtureHeading, fixtureHeadingEditor),
-    fixtureUnit(fixtureMention, fixtureMentionEditor),
-    fixtureUnit(fixtureHeadingSet, fixtureHeadingSetEditor),
-    fixtureUnit(fixtureInputRules, fixtureInputRulesEditor),
-    fixtureUnit(fixtureToolbar, fixtureToolbarEditor),
-    fixtureUnit(fixtureHighlight, fixtureHighlightEditor),
-    fixtureUnit(fixtureEmbed, fixtureEmbedEditor),
-    fixtureUnit(fixtureTable, fixtureTableEditor),
-    fixtureUnit(fixtureChrome, fixtureChromeEditor),
-    fixtureUnit(fixtureCodeBlock, fixtureCodeBlockEditor),
-    fixtureUnit(fixtureMediaImage, fixtureMediaImageEditor),
-    fixtureUnit(fixtureTableBlock, fixtureTableBlockEditor),
+const FIXTURE_PLUGINS = [
+    fixturePlugin(fixtureBold, fixtureBoldEditor),
+    fixturePlugin(fixtureHistory, fixtureHistoryEditor),
+    fixturePlugin(fixtureRedo, fixtureRedoEditor),
+    fixturePlugin(fixtureHeading, fixtureHeadingEditor),
+    fixturePlugin(fixtureMention, fixtureMentionEditor),
+    fixturePlugin(fixtureHeadingSet, fixtureHeadingSetEditor),
+    fixturePlugin(fixtureInputRules, fixtureInputRulesEditor),
+    fixturePlugin(fixtureToolbar, fixtureToolbarEditor),
+    fixturePlugin(fixtureHighlight, fixtureHighlightEditor),
+    fixturePlugin(fixtureEmbed, fixtureEmbedEditor),
+    fixturePlugin(fixtureTable, fixtureTableEditor),
+    fixturePlugin(fixtureChrome, fixtureChromeEditor),
+    fixturePlugin(fixtureCodeBlock, fixtureCodeBlockEditor),
+    fixturePlugin(fixtureMediaImage, fixtureMediaImageEditor),
+    fixturePlugin(fixtureTableBlock, fixtureTableBlockEditor),
 ];
 
-const baseUnitOf = (id: string, version: number): RichTextPlugin => {
-    const fixture = FIXTURE_UNITS.find((unit) => unit.id === id);
+const basePluginOf = (id: string, version: number): RichTextPlugin => {
+    const fixture = FIXTURE_PLUGINS.find((plugin) => plugin.id === id);
     if (fixture !== undefined) {
         return fixture;
     }
@@ -77,7 +77,7 @@ const baseUnitOf = (id: string, version: number): RichTextPlugin => {
     try {
         return pluginsById([id])[0] as RichTextPlugin;
     } catch {
-        return fixtureUnit(() => ({ id, version }) as unknown as Feature, { feature: id });
+        return fixturePlugin(() => ({ id, version }) as unknown as Feature, { feature: id });
     }
 };
 
@@ -101,19 +101,19 @@ const layered = (base: RichTextPlugin, host: EditorPart): RichTextPlugin => {
 };
 
 /**
- * One unit per feature `model` installs: the fixture feature's unit, else the shipped one, else one with no editor
- * part; the part of `hosts` for a feature goes over that unit's editor part.
+ * One plugin per feature `model` installs: the fixture feature's plugin, else the shipped one, else one with no editor
+ * part; the part of `hosts` for a feature goes over that plugin's editor part.
  */
-export const unitsOf = (
+export const pluginsFor = (
     model: ContentModel,
     hosts: readonly EditorPart[] = [],
-): readonly RichTextPlugin<string, UnitCommands>[] =>
+): readonly RichTextPlugin<string, PluginCommands>[] =>
     compiledModel(model).features.map(({ id, version }) => {
-        const base = baseUnitOf(id, version);
+        const base = basePluginOf(id, version);
         const host = [...hosts].reverse().find((candidate) => candidate.feature === id);
         if (host === undefined) {
             return base;
         }
 
         return layered(base, host);
-    }) as unknown as readonly RichTextPlugin<string, UnitCommands>[];
+    }) as unknown as readonly RichTextPlugin<string, PluginCommands>[];

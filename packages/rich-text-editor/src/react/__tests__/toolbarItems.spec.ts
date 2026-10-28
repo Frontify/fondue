@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { enUS } from '#/locales/en-US';
 import { codecContext } from '#/model/internal';
 
-import { engineOf, pluginsOf } from '../compile/compileEditor';
+import { compiledOf, pluginsOf } from '../compile/compileEditor';
 import { menuItems, toolbarItems } from '../helpers/toolbarItems';
 import { shipped as document } from '../profiles/document';
 
@@ -15,7 +15,7 @@ describe('the toolbar items of a shipped profile', () => {
     it('puts the text style picker of the Document profile in the bubble toolbar', () => {
         const { definition, presentation } = document();
         const items = toolbarItems(
-            engineOf(definition),
+            compiledOf(definition),
             definition.authoring,
             presentation,
             t,
@@ -30,7 +30,7 @@ describe('the toolbar items of a shipped profile', () => {
 describe('the More rows of a node', () => {
     it('leaves out a node row whose command the policy refuses, as Replace image when images cannot be edited', () => {
         const { definition, presentation } = document();
-        const engine = engineOf(definition);
+        const engine = compiledOf(definition);
         const plugins = pluginsOf(definition);
         const rows = (authoring: typeof definition.authoring) =>
             menuItems(

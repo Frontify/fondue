@@ -8,7 +8,7 @@ import { vi } from 'vitest';
 import { compileContentModel, type ContentNodeJSON, type JsonValue } from '#/model';
 import { type LoadedDocument } from '#/persistence/types';
 import { fixtureItalic } from '#/plugins/__tests__/fixtures/features';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
 import { liveResources, type RuntimeHandle } from '#/runtime/runtime';
@@ -19,12 +19,12 @@ import { type EditorDefinitionOptions, type EditorHandle, type RichTextEditorBas
 
 export const features = [core(), bold()];
 export const boldModel = compileContentModel(features, { id: 'test.editor', version: 1 });
-export const boldPlugins = unitsOf(boldModel);
+export const boldPlugins = pluginsFor(boldModel);
 export const boldWith = (id: string, extra: Omit<EditorDefinitionOptions, 'id' | 'model' | 'plugins'> = {}) =>
     defineEditor({ id, model: boldModel, plugins: boldPlugins, ...extra });
 export const definition = boldWith('test.editor');
 export const italicModel = compileContentModel([core(), bold(), fixtureItalic()], { id: 'test.editor', version: 1 });
-export const otherDefinition = defineEditor({ id: 'test.other', model: italicModel, plugins: unitsOf(italicModel) });
+export const otherDefinition = defineEditor({ id: 'test.other', model: italicModel, plugins: pluginsFor(italicModel) });
 
 export const para = (...content: readonly JsonValue[]) => ({ type: 'paragraph', attrs: { lang: null }, content });
 export const defaultValue = (...blocks: readonly JsonValue[]): LoadedDocument => ({

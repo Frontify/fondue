@@ -90,7 +90,7 @@ const CLIPBOARD_MESSAGE =
     '`runtime/clipboard` imports `model`, `runtime/definition`, `runtime`, `codecs`, `runtime/import` and ProseMirror, never React or the editor layers.';
 
 const FEATURE_INDEX_MESSAGE =
-    "A feature's index builds its unit and imports only its own `./feature`, `./editor` and `./reader`, and `#/bridge/pluginApi/definePlugin`.";
+    "A feature's index builds its plugin and imports only its own `./feature`, `./editor` and `./reader`, and `#/bridge/pluginApi/definePlugin`.";
 
 const READER_FILE_MESSAGE =
     "A feature's reader override imports only `react` (no Node built-ins), `#/model`, `#/reader/define`, its own `./feature`, its own `./components/*` and a declared dependency's `#/plugins/<id>/feature`, as an outside feature must.";
@@ -101,7 +101,7 @@ const MODEL_ENTRY_MESSAGE =
 const MODEL_FILE_MESSAGE = 'Code outside `model` imports `#/model` or `#/model/internal`, never a model file directly.';
 
 const FEATURE_PLUGINS_MESSAGE =
-    "The all-units registry imports only `#/model`, `#/bridge/pluginApi/definePlugin` and each feature's `./*/index` through its glob, because it loads every editor part and only `pluginsById` users and `testing` may load it.";
+    "The all-plugins registry imports only `#/model`, `#/bridge/pluginApi/definePlugin` and each feature's `./*/index` through its glob, because it loads every editor part and only `pluginsById` users and `testing` may load it.";
 
 const FEATURE_WIRING_MESSAGE =
     'The feature index, registry and profiles wire shipped features from `model`, and do not load views, readers or the editor.';
@@ -109,8 +109,8 @@ const FEATURE_WIRING_MESSAGE =
 const FEATURE_INTERNALS_MESSAGE =
     'Outside its folder, a feature is imported only through its `feature` and `index`, never its editor, reader, view or dialog files, because those carry editor code and only the glob registries load them.';
 
-const FEATURE_UNIT_MESSAGE =
-    '`./features`, `reader`, `codecs`, `model` and `runtime/import/fromHtml` never import `#/plugins/*/index`, because a unit carries editor code.';
+const FEATURE_PLUGIN_MESSAGE =
+    '`./features`, `reader`, `codecs`, `model` and `runtime/import/fromHtml` never import `#/plugins/*/index`, because a plugin carries editor code.';
 
 const READER_MESSAGE =
     '`reader` imports `model` and `locales`, never a feature, because a feature reader imports `#/reader/define`.';
@@ -337,9 +337,9 @@ const featureInternalsRestriction: ImportRestriction = {
     message: FEATURE_INTERNALS_MESSAGE,
 };
 
-const featureUnitRestriction: ImportRestriction = {
+const featurePluginRestriction: ImportRestriction = {
     group: FEATURE_UNIT_PATTERNS,
-    message: FEATURE_UNIT_MESSAGE,
+    message: FEATURE_PLUGIN_MESSAGE,
 };
 
 // Model files import each other directly, and the model tests import their helpers by alias.
@@ -630,7 +630,7 @@ export default defineConfig({
                     ],
                     message: MODEL_MESSAGE,
                 },
-                featureUnitRestriction,
+                featurePluginRestriction,
             ],
             [],
             [],
@@ -702,7 +702,7 @@ export default defineConfig({
                     ],
                     message: FEATURE_WIRING_MESSAGE,
                 },
-                featureUnitRestriction,
+                featurePluginRestriction,
             ],
         ),
         layerOverride('src/plugins/plugins.ts', [
@@ -769,7 +769,7 @@ export default defineConfig({
                     ],
                     message: READER_MESSAGE,
                 },
-                featureUnitRestriction,
+                featurePluginRestriction,
             ],
             [],
             [CLIENT_REACT],
@@ -801,7 +801,7 @@ export default defineConfig({
                 ],
                 message: CODECS_MESSAGE,
             },
-            featureUnitRestriction,
+            featurePluginRestriction,
         ]),
         layerOverride('src/locales/**/*.{ts,tsx}', [
             {
@@ -894,7 +894,7 @@ export default defineConfig({
                 ],
                 message: HTML_MESSAGE,
             },
-            featureUnitRestriction,
+            featurePluginRestriction,
         ]),
         // After the `src/runtime/**` overrides, so a later override replaces their rule options for `runtime/definition`.
         layerOverride('src/runtime/definition/**/*.{ts,tsx}', [

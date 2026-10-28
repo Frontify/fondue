@@ -17,7 +17,7 @@ import {
 import { type EngineImplementations } from '#/runtime/definition';
 
 import { historyPlugin } from '../history';
-import { enterRules, inputRulesPlugin, undoInputRule } from '../inputRules/inputRules';
+import { enterRules, typedRulesPlugin, undoInputRule } from '../inputRules/inputRules';
 import { blockDecorationsPlugin } from '../statePlugins/decorations';
 import { baseKeysPlugin, containerKeysPlugin } from '../statePlugins/keys';
 
@@ -32,7 +32,7 @@ export const RUNTIME_PLUGINS: EngineImplementations = {
         // Backspace right after a rule fired undoes it before any list or block key sees it.
         [HISTORY_PLUGIN.id]: ({ inputRules }) =>
             historyPlugin({ Backspace: undoInputRule, Enter: enterRules(inputRules) }),
-        [INPUT_RULES_PLUGIN.id]: inputRulesPlugin,
+        [INPUT_RULES_PLUGIN.id]: typedRulesPlugin,
         [CONTAINER_KEYS_PLUGIN.id]: containerKeysPlugin,
         [BASE_KEYS_PLUGIN.id]: baseKeysPlugin,
         [BLOCK_DECORATIONS_PLUGIN.id]: blockDecorationsPlugin,

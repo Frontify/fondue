@@ -20,7 +20,7 @@ import { commentPlugins } from './comment';
 import { NOT_CREATABLE, type ShippedProfile } from './parts';
 import { slashMenu } from './slashMenu';
 
-/** The units of the Document profile's features. */
+/** The plugins of the Document profile's features. */
 export const documentPlugins: readonly RichTextPlugin[] = [
     ...commentPlugins,
     subscriptPlugin(),
@@ -34,14 +34,14 @@ export const documentPlugins: readonly RichTextPlugin[] = [
     contentChecksPlugin(),
 ] as const;
 
-/** `plugins` with the core unit extended by the `/` list of the block conversions and inserts the other units offer, which the stored model does not see. */
+/** `plugins` with the core plugin extended by the `/` list of the block conversions and inserts the other plugins offer, which the stored model does not see. */
 export const withSlashMenu = (plugins: readonly RichTextPlugin[]): readonly RichTextPlugin[] =>
-    plugins.map((unit) => {
-        if (unit.id !== 'core') {
-            return unit;
+    plugins.map((plugin) => {
+        if (plugin.id !== 'core') {
+            return plugin;
         }
 
-        return extendPlugin(unit, slashMenu(plugins));
+        return extendPlugin(plugin, slashMenu(plugins));
     });
 
 /** The default toolbar groups of the Document profile; a group keeps only the commands the definition installs. */

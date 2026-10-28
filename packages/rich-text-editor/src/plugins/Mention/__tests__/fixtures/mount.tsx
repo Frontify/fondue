@@ -25,7 +25,7 @@ import {
     type RichTextLocale,
 } from '#/model';
 import { core, mention as mentionFeature } from '#/plugins';
-import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor, type PluginCommands } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { activeSuggestion } from '#/runtime/capabilities/suggestions/plugin';
 import { runtimeOf } from '#/runtime/runtime';
 import { type ReferenceValue } from '#/runtime/types';
@@ -130,9 +130,9 @@ export const mountMentions = (options?: Mount) => {
         toolbar,
         id = 'test.mentions',
     } = given;
-    const ref = createRef<EditorHandle<UnitCommands>>();
+    const ref = createRef<EditorHandle<PluginCommands>>();
     const diagnostics: Diagnostic[] = [];
-    const definition = defineEditor({ id, model, plugins: unitsOf(model) });
+    const definition = defineEditor({ id, model, plugins: pluginsFor(model) });
     let shown = presentation;
     if (shown === undefined && toolbar !== undefined) {
         shown = defineReactPresentation({ toolbar });

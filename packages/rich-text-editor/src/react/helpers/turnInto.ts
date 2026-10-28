@@ -33,7 +33,7 @@ const labelOf = (t: CodecContext['t'], lang: string, entry: PluginToolbarEntry):
 };
 
 /** The entries as the chrome's menus list them. */
-export const turnIntoChoices = (
+export const turnIntoMenuEntries = (
     parts: readonly Pick<EditorPartSpec, 'toolbar'>[],
     t: CodecContext['t'],
     lang: string,

@@ -29,7 +29,7 @@ import {
 } from './types';
 
 /** The first feature that contributes a plugin, or the plugin ID for the package's plugins no feature owns. */
-export const originOf = (features: ReturnType<typeof withInputRules>, id: string): PluginOrigin => {
+export const pluginOriginOf = (features: ReturnType<typeof withInputRules>, id: string): PluginOrigin => {
     const contributor = features.find(
         (feature) =>
             id === `keymap:${feature.id}` ||

@@ -26,7 +26,7 @@ import { type PolicyService } from '../state/policy';
 
 import { type TargetsService } from './targets';
 
-export type UploadService = {
+export type SessionUploads = {
     /** The session's upload machine, which the slot plugin, the idle hook and the history read. */
     raw: Uploads;
     /** The media types `media.image` takes, `undefined` without it. */
@@ -61,7 +61,7 @@ export const createUploadService = (a: {
     targets: () => Pick<TargetsService, 'coordinator' | 'captureRange' | 'releaseTarget' | 'baseOf'>;
     report: (diagnostic: Diagnostic) => void;
     changed: () => void;
-}): UploadService => {
+}): SessionUploads => {
     const { definition, limits, identity, lifecycle, policy, generate, host, state, report, changed } = a;
     // `media.image` and the media types it accepts, which its `acceptTypes` option sets.
     const imageFeature = compiledModel(definition.model).features.find(({ id }) => id === UPLOAD_FEATURE);
@@ -160,7 +160,7 @@ const sessions = new WeakMap<EditorRuntime, MediaSession>();
 /** Gives `runtime` its media session when the model installs `media.image`, else nothing. */
 export const installMedia = (
     runtime: EditorRuntime,
-    uploads: UploadService,
+    uploads: SessionUploads,
     placeAsset: MediaSession['placeAsset'],
 ): void => {
     if (uploads.accepts === undefined) {

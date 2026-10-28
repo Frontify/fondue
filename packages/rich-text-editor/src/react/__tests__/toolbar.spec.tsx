@@ -19,7 +19,7 @@ import {
 } from '#/model';
 import { fixtureCodeBlock } from '#/plugins/__tests__/fixtures/code-block/feature';
 import { fixtureCodeBlockEditor } from '#/plugins/__tests__/fixtures/code-block/view';
-import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor, type PluginCommands } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { boldEditor } from '#/plugins/Bold/editor';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
@@ -207,7 +207,7 @@ describe('the fixed toolbar', () => {
 
     it('gives the reason not allowed for a command the policy refuses after mount', async () => {
         const model = compileContentModel([core(), bold()], { id: 'test.toolbar', version: 1 });
-        const definition = defineEditor({ id: 'test.toolbar', model, plugins: unitsOf(model) });
+        const definition = defineEditor({ id: 'test.toolbar', model, plugins: pluginsFor(model) });
         const { handle } = mount({
             definition,
             presentation: defineReactPresentation({ toolbar: [['mark.bold.toggle']] }),
@@ -318,7 +318,7 @@ describe('the fixed toolbar', () => {
     it('leaves the document unchanged by the button, Mod-b and **x** when the policy refuses bold', async () => {
         const model = compileContentModel([core(), bold()], { id: 'test.toolbar', version: 1 });
         const ALLOW = { create: true, edit: true, remove: true, paste: true };
-        const definition = defineEditor({ id: 'test.toolbar', model, plugins: unitsOf(model) });
+        const definition = defineEditor({ id: 'test.toolbar', model, plugins: pluginsFor(model) });
         const { handle } = mount({
             definition,
             presentation: defineReactPresentation({ toolbar: [['mark.bold.toggle']] }),
@@ -333,7 +333,7 @@ describe('the fixed toolbar', () => {
         act(() => setSelection(handle(), { text: 'two' }));
         const before = content();
         // The mount helper takes any definition, so its handle knows none of this model's commands.
-        const executed = (handle() as EditorHandle<UnitCommands>).execute('mark.bold.toggle');
+        const executed = (handle() as EditorHandle<PluginCommands>).execute('mark.bold.toggle');
 
         await act(() => fireEvent.click(button('Bold')));
         act(() => pressKey(handle(), 'Mod-b'));
@@ -548,7 +548,7 @@ describe('a toolbar item that throws while rendering', () => {
     const brokenDefinition = defineEditor({
         id: 'test.toolbar',
         model: compileContentModel([core(), bold(), pullQuote()], { id: 'test.toolbar', version: 1 }),
-        plugins: unitsOf(compileContentModel([core(), bold(), pullQuote()], { id: 'test.toolbar', version: 1 }), [
+        plugins: pluginsFor(compileContentModel([core(), bold(), pullQuote()], { id: 'test.toolbar', version: 1 }), [
             boldEditor,
             defineEditorPart(pullQuote(), {
                 commands: { 'acme.pull-quote.set': { run: () => true } },
@@ -614,7 +614,7 @@ describe('a toolbar item that throws while rendering', () => {
         const definition = defineEditor({
             id: 'test.toolbar',
             model,
-            plugins: unitsOf(model, [
+            plugins: pluginsFor(model, [
                 boldEditor,
                 defineEditorPart(pullQuote(), {
                     commands: {
@@ -658,7 +658,7 @@ describe('toolbar theming and localization', () => {
         const definition = defineEditor({
             id: 'test.toolbar',
             model: compileContentModel([core(), pullQuote()], { id: 'test.toolbar', version: 1 }),
-            plugins: unitsOf(compileContentModel([core(), pullQuote()], { id: 'test.toolbar', version: 1 }), [
+            plugins: pluginsFor(compileContentModel([core(), pullQuote()], { id: 'test.toolbar', version: 1 }), [
                 pullQuotePlugin({
                     'en-US': 'Pull quote',
                     de: 'Zitat',
@@ -825,7 +825,7 @@ describe('toolbar theming and localization', () => {
                 id: 'test.toolbar',
                 version: 1,
             }),
-            plugins: unitsOf(
+            plugins: pluginsFor(
                 compileContentModel([core(), pullQuote(), fixtureCodeBlock()], {
                     id: 'test.toolbar',
                     version: 1,
@@ -863,7 +863,7 @@ describe('toolbar theming and localization', () => {
         const definition = defineEditor({
             id: 'test.toolbar',
             model: compileContentModel([core(), pullQuote()], { id: 'test.toolbar', version: 1 }),
-            plugins: unitsOf(compileContentModel([core(), pullQuote()], { id: 'test.toolbar', version: 1 }), [
+            plugins: pluginsFor(compileContentModel([core(), pullQuote()], { id: 'test.toolbar', version: 1 }), [
                 pullQuotePlugin({ 'en-US': 'Pull quote' }, keys),
             ]),
         });
@@ -886,7 +886,7 @@ describe('toolbar theming and localization', () => {
         const definition = defineEditor({
             id: 'test.toolbar',
             model: compileContentModel([core(), pullQuote()], { id: 'test.toolbar', version: 1 }),
-            plugins: unitsOf(compileContentModel([core(), pullQuote()], { id: 'test.toolbar', version: 1 }), [
+            plugins: pluginsFor(compileContentModel([core(), pullQuote()], { id: 'test.toolbar', version: 1 }), [
                 pullQuotePlugin({ 'en-US': 'Pull quote' }, keys),
             ]),
             policy: { enterBehavior: 'submit' },

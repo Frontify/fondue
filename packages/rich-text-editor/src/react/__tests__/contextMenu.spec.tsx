@@ -8,7 +8,7 @@ import { defineEditorPart } from '#/bridge/pluginApi/plugin';
 import { defineReactPresentation } from '#/entries/authoring';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { enUS } from '#/locales/en-US';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { core } from '#/plugins/Core/feature';
 import {
     figure,
@@ -151,7 +151,7 @@ describe('the context menu', () => {
         const view = render(
             <RichTextEditor
                 aria-label="Notes"
-                definition={defineEditor({ id: 'test.images', model, plugins: unitsOf(model, plugins) })}
+                definition={defineEditor({ id: 'test.images', model, plugins: pluginsFor(model, plugins) })}
                 presentation={defineReactPresentation({ toolbar, resolveAssetUrl: resolving })}
                 readOnly={readOnly}
                 defaultValue={{
@@ -199,7 +199,7 @@ describe('the context menu', () => {
         const view = render(
             <RichTextEditor
                 aria-label="Notes"
-                definition={defineEditor({ id: 'test.images', model, plugins: unitsOf(model, [hostNote]) })}
+                definition={defineEditor({ id: 'test.images', model, plugins: pluginsFor(model, [hostNote]) })}
                 presentation={defineReactPresentation({ toolbar: [['image.insert']], resolveAssetUrl: resolving })}
                 locale={{ ...enUS, lang: 'de-DE' }}
                 defaultValue={{

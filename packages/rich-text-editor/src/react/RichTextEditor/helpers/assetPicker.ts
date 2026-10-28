@@ -1,11 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IMAGE_FEATURE } from '#/model/internal';
 import { type EditorPort, INSERT_IMAGE, mediaOf, REPLACE_IMAGE, type SelectionHandle } from '#/runtime/port';
 
 import { type AssetPickerService } from '../../types';
-
-/** The feature whose images the picker inserts and refills. */
-export const IMAGE_FEATURE = 'media.image';
 const ASSETS_SERVICE = 'assets';
 
 /**

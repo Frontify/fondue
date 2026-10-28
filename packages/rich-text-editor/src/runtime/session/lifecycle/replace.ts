@@ -27,7 +27,7 @@ import { type Faults } from './faults';
 import { type Queue } from './queue';
 import { type Saving } from './saving';
 import { type TargetsService } from './targets';
-import { type UploadService } from './uploadsWiring';
+import { type SessionUploads } from './uploadsWiring';
 
 export type Replace = {
     /** `EditorHandle.replaceDocument`: checks the request, settles unsaved work, then installs the document, stopping at the first step that fails. */
@@ -152,7 +152,7 @@ export const createReplace = (a: {
     focus: Pick<Focus, 'refocus'>;
     targets: Pick<TargetsService, 'coordinator'>;
     queue: Pick<Queue, 'drain' | 'settle'>;
-    uploads: Pick<UploadService['raw'], 'reset'>;
+    uploads: Pick<SessionUploads['raw'], 'reset'>;
     faults: Pick<Faults, 'fault' | 'withoutRecovery'>;
     busy: Pick<Busy, 'run'>;
     events: { notify: () => void; emit: (event: 'replaced', value: SessionToken) => void };

@@ -155,7 +155,11 @@ const CASES: readonly Case[] = [
         "import { run } from '#/runtime/history';",
     ),
     allowed('runtime/clipboard: model', 'src/runtime/clipboard/model.ts', "import { node } from '#/model';"),
-    allowed('runtime/clipboard: codecs', 'src/runtime/clipboard/codecs.ts', "import { planOf } from '#/codecs/plan';"),
+    allowed(
+        'runtime/clipboard: codecs',
+        'src/runtime/clipboard/codecs.ts',
+        "import { codecPlanOf } from '#/codecs/plan';",
+    ),
     allowed(
         'runtime/clipboard: runtime/import',
         'src/runtime/clipboard/import.ts',
@@ -559,9 +563,9 @@ const CASES: readonly Case[] = [
         "import { boldEditor } from '#/plugins/bold/editor';",
     ),
     allowed(
-        'internals: the units registry glob',
+        'internals: the plugins registry glob',
         'src/plugins/plugins.ts',
-        "const unitModules = import.meta.glob('./*/index.ts', { eager: true });",
+        "const pluginModules = import.meta.glob('./*/index.ts', { eager: true });",
     ),
     allowed(
         'internals: the feature registry glob',
@@ -574,24 +578,24 @@ const CASES: readonly Case[] = [
         "const readerModules = import.meta.glob('../plugins/*/reader.tsx', { eager: true });",
     ),
 
-    // feature units in the server side layers
-    banned('units: model', 'src/model/unit.ts', "import { boldPlugin } from '#/plugins/bold/index';"),
-    banned('units: fromHtml', 'src/runtime/import/fromHtml.ts', "import { boldPlugin } from '#/plugins/bold/index';"),
-    banned('units: reader', 'src/reader/unit.ts', "import { boldPlugin } from '#/plugins/bold/index';"),
+    // feature plugins in the server side layers
+    banned('plugins: model', 'src/model/plugin.ts', "import { boldPlugin } from '#/plugins/bold/index';"),
+    banned('plugins: fromHtml', 'src/runtime/import/fromHtml.ts', "import { boldPlugin } from '#/plugins/bold/index';"),
+    banned('plugins: reader', 'src/reader/plugin.ts', "import { boldPlugin } from '#/plugins/bold/index';"),
     banned(
-        'units: reader by relative path',
-        'src/reader/unit-relative.ts',
+        'plugins: reader by relative path',
+        'src/reader/plugin-relative.ts',
         "import { boldPlugin } from '../plugins/bold/index';",
     ),
-    banned('units: codecs', 'src/codecs/unit.ts', "import { boldPlugin } from '#/plugins/bold/index';"),
-    banned('units: the features entry', 'src/plugins/index.ts', "import { boldPlugin } from '#/plugins/bold/index';"),
+    banned('plugins: codecs', 'src/codecs/plugin.ts', "import { boldPlugin } from '#/plugins/bold/index';"),
+    banned('plugins: the features entry', 'src/plugins/index.ts', "import { boldPlugin } from '#/plugins/bold/index';"),
     banned(
-        'units: another features file',
+        'plugins: another features file',
         'src/plugins/stages.ts',
         "import { boldPlugin } from '#/plugins/bold/index';",
     ),
     allowed(
-        'units: a feature file in another features file',
+        'plugins: a feature file in another features file',
         'src/plugins/stages.ts',
         "import { bold } from '#/plugins/bold/feature';",
     ),
@@ -693,19 +697,19 @@ const CASES: readonly Case[] = [
         "import { EditorState } from 'prosemirror-state';",
     ),
     banned(
-        'testing: the units registry outside conformance',
-        'src/testing/units.ts',
+        'testing: the plugins registry outside conformance',
+        'src/testing/plugins.ts',
         "import { pluginsById } from '#/plugins/plugins';",
     ),
     allowed(
-        'testing: the units registry inside conformance',
-        'src/testing/conformance/units.ts',
+        'testing: the plugins registry inside conformance',
+        'src/testing/conformance/contractPlugins.ts',
         "import { pluginsById } from '#/plugins/plugins';",
     ),
     banned(
-        'testing: the unit cover check inside conformance',
+        'testing: the plugin cover check inside conformance',
         'src/testing/conformance/shipped.ts',
-        "import { checkCover } from '#/react/compile/units';",
+        "import { checkCover } from '#/react/compile/pluginCover';",
     ),
     banned(
         'testing: the engine outside conformance',

@@ -324,7 +324,7 @@ export {
     islandLabel,
     islandFallback,
     failedFallback,
-    type Item,
+    type OutputItem as Item,
     markPath,
     itemsOf,
     groupRun,

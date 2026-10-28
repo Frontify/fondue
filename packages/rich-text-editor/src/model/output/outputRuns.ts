@@ -116,7 +116,7 @@ export const failedFallback = (state: Spacing, node: TreeNode, plan: NodePlan, b
 };
 
 /** One child of a node: the node, its path, and the marks a run may share. */
-export type Item = {
+export type OutputItem = {
     node: TreeNode;
     path: string;
     /** The known marks in rank order, each with its index among the node's marks. */
@@ -127,7 +127,7 @@ const sameMark = (a: TreeMark, b: TreeMark) =>
     a.type === b.type && canonicalJson(attrsOf(a.attrs)) === canonicalJson(attrsOf(b.attrs));
 
 /** The path of the mark at `index` on the first node of a run. */
-export const markPath = (items: readonly Item[], index: number): string => {
+export const markPath = (items: readonly OutputItem[], index: number): string => {
     const first = items[0];
     if (first === undefined) {
         return '';
@@ -137,8 +137,8 @@ export const markPath = (items: readonly Item[], index: number): string => {
 };
 
 /** The children of `node` with their paths and the marks `keep` takes, in rank order. */
-export const itemsOf = (node: TreeNode, path: string, keep: (mark: TreeMark) => boolean): Item[] =>
-    (node.content ?? []).map((child, index): Item => {
+export const itemsOf = (node: TreeNode, path: string, keep: (mark: TreeMark) => boolean): OutputItem[] =>
+    (node.content ?? []).map((child, index): OutputItem => {
         const marks = (child.marks ?? []).flatMap((mark, markIndex) => {
             if (!keep(mark)) {
                 return [];
@@ -152,10 +152,10 @@ export const itemsOf = (node: TreeNode, path: string, keep: (mark: TreeMark) => 
 
 /** Splits children into runs that share a mark at `depth`, so a partly bold link stays one link. */
 export const groupRun = <T>(
-    items: readonly Item[],
+    items: readonly OutputItem[],
     depth: number,
-    node: (item: Item) => T,
-    mark: (items: readonly Item[], entry: Item['marks'][number]) => T,
+    node: (item: OutputItem) => T,
+    mark: (items: readonly OutputItem[], entry: OutputItem['marks'][number]) => T,
 ): T[] => {
     const out: T[] = [];
     let index = 0;

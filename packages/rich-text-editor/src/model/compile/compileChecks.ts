@@ -236,7 +236,7 @@ export const checkDependencies = (features: readonly CompiledFeature[]) => {
 };
 
 /** Every attribute needs a valid default or must be required. */
-export const checkAttributes = (feature: string, attrs: AttributeDeclarations, path: readonly string[]) => {
+export const checkAttributeDeclarations = (feature: string, attrs: AttributeDeclarations, path: readonly string[]) => {
     for (const [name, attribute] of Object.entries(attrs)) {
         const at = pointer(...path, name);
         if ('default' in attribute) {

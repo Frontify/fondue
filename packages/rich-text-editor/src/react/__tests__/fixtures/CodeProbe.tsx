@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 import { codeBlock, core } from '#/plugins';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { bulletList } from '#/plugins/BulletList/feature';
 import { listItem } from '#/plugins/ListItem/feature';
 import { setSelection } from '#/testing';
@@ -15,7 +15,7 @@ const model = compileContentModel([core(), listItem(), bulletList(), codeBlock()
     id: 'test.code-ct',
     version: 1,
 });
-const definition = defineEditor({ id: 'test.code-ct', model, plugins: unitsOf(model) });
+const definition = defineEditor({ id: 'test.code-ct', model, plugins: pluginsFor(model) });
 
 /** One change as the probe records it: where it came from and the document content after it. */
 export type CodeChange = {

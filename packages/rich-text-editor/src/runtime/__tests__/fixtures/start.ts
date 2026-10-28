@@ -20,7 +20,7 @@ import { decodeToTree, limitsOf } from '#/model/internal';
 import { createSaveCoordinator } from '#/persistence/coordinator';
 import { fixtureMention } from '#/plugins/__tests__/fixtures/features';
 import { countingIds } from '#/plugins/__tests__/fixtures/notes';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
 import { link } from '#/plugins/Link/feature';
@@ -144,7 +144,7 @@ export const start = (input: unknown, options: Start = {}) => {
         throw new Error('expected an editable document');
     }
 
-    const parts = unitsOf(model, options.parts);
+    const parts = pluginsFor(model, options.parts);
     const compiled = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, parts));
     const definition: CompiledDefinition = {
         ...compiled,

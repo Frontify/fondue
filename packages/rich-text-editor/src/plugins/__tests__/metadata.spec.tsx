@@ -12,7 +12,7 @@ import { type ContentNodeJSON, createEmptyDocument, type RichTextDocument, type 
 import fixture from '#/model/__tests__/fixtures/a11y/metadata.json';
 import { documentModel } from '#/plugins';
 import { canonicalOf } from '#/plugins/__tests__/fixtures/generated';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { resolving } from '#/plugins/Image/__tests__/fixtures/mount';
 import { runtimeOf } from '#/runtime/runtime';
 import { paste } from '#/testing';
@@ -20,7 +20,7 @@ import { paste } from '#/testing';
 const metadata = fixture as unknown as RichTextDocument;
 const SLICE_TYPE = 'application/x-frontify-rich-text+json';
 const model = documentModel;
-const definition = defineEditor({ id: 'test.metadata', model, plugins: unitsOf(model) });
+const definition = defineEditor({ id: 'test.metadata', model, plugins: pluginsFor(model) });
 const presentation = defineReactPresentation({ resolveAssetUrl: resolving });
 
 beforeEach(() => {

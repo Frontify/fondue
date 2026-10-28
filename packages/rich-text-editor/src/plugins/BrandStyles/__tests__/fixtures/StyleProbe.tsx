@@ -6,6 +6,7 @@ import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { type RichTextDocument } from '#/model';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import {
     COLOR_TOKENS,
     linked,
@@ -16,11 +17,10 @@ import {
     styledHeading,
     styleModel,
 } from '#/plugins/__tests__/fixtures/styles';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { setSelection } from '#/testing';
 
 const model = styleModel();
-const definition = defineEditor({ id: 'test.styles', model, plugins: unitsOf(model) });
+const definition = defineEditor({ id: 'test.styles', model, plugins: pluginsFor(model) });
 
 /** One block per style of the shared map, each with its own text, and a deprecated and an unknown style. */
 const document = styledDocument(model, [

@@ -7,11 +7,11 @@ import { defineReactPresentation } from '#/entries/authoring';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 import { bold, core, mention } from '#/plugins';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { createFakeReferenceService, setSelection } from '#/testing';
 
 const model = compileContentModel([core(), bold(), mention()], { id: 'test.mentions-ct', version: 1 });
-const definition = defineEditor({ id: 'test.mentions-ct', model, plugins: unitsOf(model) });
+const definition = defineEditor({ id: 'test.mentions-ct', model, plugins: pluginsFor(model) });
 const presentation = defineReactPresentation({ toolbar: [['mention.search.open', 'mark.bold.toggle']] });
 const service = createFakeReferenceService([
     { resourceType: 'user', resourceId: 'user-1', labelSnapshot: 'Ada Lovelace' },

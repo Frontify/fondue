@@ -8,10 +8,10 @@ import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { createEmptyDocument, type RichTextDocument } from '#/model';
 import metadata from '#/model/__tests__/fixtures/a11y/metadata.json';
 import { documentModel } from '#/plugins';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { runtimeOf } from '#/runtime/runtime';
 
-const definition = defineEditor({ id: 'test.metadata', model: documentModel, plugins: unitsOf(documentModel) });
+const definition = defineEditor({ id: 'test.metadata', model: documentModel, plugins: pluginsFor(documentModel) });
 /** Every asset at a same-origin URL, which the CT page CSP allows, answered through `page.route`. */
 const presentation = defineReactPresentation({
     resolveAssetUrl: (assetId: string) => `${window.location.origin}/test-assets/${assetId}`,

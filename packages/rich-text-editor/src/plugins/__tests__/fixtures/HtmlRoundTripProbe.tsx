@@ -7,13 +7,13 @@ import { useEffect, useRef } from 'react';
 import { createCodecs } from '#/codecs';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { type ContentNodeJSON, createEmptyDocument } from '#/model';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { runtimeOf } from '#/runtime/runtime';
 
 import { documentArb, markupTextArb } from './generated';
 import { losslessModel } from './lossless';
 
-const definition = defineEditor({ id: 'test.lossless', model: losslessModel, plugins: unitsOf(losslessModel) });
+const definition = defineEditor({ id: 'test.lossless', model: losslessModel, plugins: pluginsFor(losslessModel) });
 
 /** One generated document whose pasted `toHTML` output differs from it. */
 type Mismatch = {

@@ -17,8 +17,8 @@ import { compileContentModel, defineFeature, DefinitionError, type JsonObject } 
 import { featuresById } from '#/plugins';
 import { commandCases } from '#/plugins/__tests__/fixtures/contract.cases';
 import { FIXTURE_PLUGINS } from '#/plugins/__tests__/fixtures/plugins';
+import { type PluginCommands, pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { spotlight, spotlightDocument } from '#/plugins/__tests__/fixtures/spotlight/feature';
-import { type UnitCommands, unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { bold } from '#/plugins/Bold/feature';
 import { codeBlockPlugin } from '#/plugins/CodeBlock';
 import { codeBlock } from '#/plugins/CodeBlock/feature';
@@ -45,7 +45,7 @@ afterEach(() => {
 const model = compileContentModel([core(), spotlight()], { id: 'fixture.spotlight', version: 1 });
 
 const mount = (readOnly = false) => {
-    const definition = defineEditor({ id: 'fixture.spotlight', model, plugins: unitsOf(model, FIXTURE_PLUGINS) });
+    const definition = defineEditor({ id: 'fixture.spotlight', model, plugins: pluginsFor(model, FIXTURE_PLUGINS) });
     const ref = createRef<EditorHandle>();
     render(
         <RichTextEditor
@@ -153,7 +153,7 @@ describe('a plugin added only in its own files', () => {
         const [editor] = FIXTURE_PLUGINS;
         const orphan = definePlugin({ feature: spotlight, editor })();
 
-        const plugins: readonly RichTextPlugin[] = [...unitsOf(bare), orphan];
+        const plugins: readonly RichTextPlugin[] = [...pluginsFor(bare), orphan];
 
         expect(() => defineEditor({ id: 'fixture.bare', model: bare, plugins })).toThrow(DefinitionError);
     });
@@ -189,9 +189,9 @@ describe('a host part for a feature the package ships', () => {
         const definition = defineEditor({
             id: 'fixture.bold',
             model: boldModel,
-            plugins: unitsOf(boldModel, [strong]),
+            plugins: pluginsFor(boldModel, [strong]),
         });
-        const ref = createRef<EditorHandle<UnitCommands & CommandsOfPart<typeof strong>>>();
+        const ref = createRef<EditorHandle<PluginCommands & CommandsOfPart<typeof strong>>>();
         render(
             <RichTextEditor
                 aria-label="Notes"
@@ -232,7 +232,7 @@ describe('a host part for a feature the package ships', () => {
         const definition = defineEditor({
             id: 'fixture.bold',
             model: boldModel,
-            plugins: unitsOf(boldModel, [weights]),
+            plugins: pluginsFor(boldModel, [weights]),
         });
         render(
             <RichTextEditor
@@ -253,10 +253,10 @@ describe('a host part for a feature the package ships', () => {
         expect(within(toolbar).getByRole('button', { name: 'Weight 2' })).toHaveAttribute('aria-pressed', 'false');
     });
 
-    it('refuses two units for one feature', () => {
-        const units = unitsOf(boldModel, [strong]);
+    it('refuses two plugins for one feature', () => {
+        const plugins = pluginsFor(boldModel, [strong]);
 
-        expect(() => defineEditor({ id: 'fixture.bold', model: boldModel, plugins: [...units, ...units] })).toThrow(
+        expect(() => defineEditor({ id: 'fixture.bold', model: boldModel, plugins: [...plugins, ...plugins] })).toThrow(
             DefinitionError,
         );
     });
@@ -289,7 +289,7 @@ describe('a plugin part that reads the policy and its options', () => {
         const definition = defineEditor({
             id: 'fixture.parts',
             model: fixtureModel,
-            plugins: unitsOf(fixtureModel, plugins),
+            plugins: pluginsFor(fixtureModel, plugins),
             policy,
         });
         const ref = createRef<EditorHandle<Record<string, unknown>>>();

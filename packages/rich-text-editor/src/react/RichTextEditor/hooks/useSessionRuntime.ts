@@ -27,7 +27,7 @@ import {
     type UploadPlace,
 } from '#/runtime/port';
 
-import { engineOf, profileOf, viewsOf } from '../../compile/compileEditor';
+import { compiledOf, profileOf, viewsOf } from '../../compile/compileEditor';
 import { registerFormField } from '../../helpers/formField';
 import { validityOf } from '../../helpers/validity';
 import { type EditorHandle } from '../../types';
@@ -106,7 +106,7 @@ const pickerOf =
 /** The save coordinator of a session that mounts with `services.persistence`, which a session keeps for its whole life. */
 const savesOf = (
     { latestRef, loaded }: SessionWiring,
-    engine: ReturnType<typeof engineOf>,
+    engine: ReturnType<typeof compiledOf>,
     ids: NonNullable<EditorRuntimeOptions['generateId']>,
 ) => {
     const persistence = memberOf(latestRef.current.services, 'persistence');
@@ -143,7 +143,7 @@ const buildRuntime = (
     const { mounted, loaded, coordinator, portals, work, announcer, hosts, latestRef } = wiring;
     const { definition } = mounted;
     const { t } = codecContext(shellPropsOf(latestRef.current).locale, enUS);
-    const engine = engineOf(definition);
+    const engine = compiledOf(definition);
     const profile = profileOf(definition);
     const openPicker = pickerOf(wiring);
 
@@ -264,7 +264,7 @@ const subscribeSession = (
 
 const startSession = (wiring: SessionWiring, decoded: Decoded) => {
     const { mounted, coordinator, latestRef, announcer, handleRef, onSession } = wiring;
-    const engine = engineOf(mounted.definition);
+    const engine = compiledOf(mounted.definition);
     const ids = latestRef.current.generateId ?? randomId;
     const saving = savesOf(wiring, engine, ids);
     const runtime = buildRuntime(wiring, decoded, saving.saves, ids);

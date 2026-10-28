@@ -37,7 +37,7 @@ const resets = (transactions: readonly Transaction[], nodeId: string) =>
     );
 
 /** What a published change, a history reset or a dispose does to the slots, and to the cache they fill from. */
-export const createHistory = ({ link, feed }: Transport) => {
+export const createSlotHistory = ({ link, feed }: Transport) => {
     const { host, cache, cells, fills, ended } = link;
 
     /**

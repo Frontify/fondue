@@ -11,7 +11,7 @@ import { compileContentModel, type ContentNodeJSON } from '#/model';
 // oxlint-disable-next-line no-restricted-imports -- the spies need the hash module's own namespace, not a re-export.
 import * as hash from '#/model/helpers/hash';
 import { featuresById } from '#/plugins';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { registry } from '#/plugins/registry';
 import { runtimeOf } from '#/runtime/runtime';
 import { typeText } from '#/testing';
@@ -77,7 +77,7 @@ const mountLarge = () => {
         id: 'test.performance',
         version: 1,
     });
-    const definition = defineEditor({ id: 'test.performance', model, plugins: unitsOf(model) });
+    const definition = defineEditor({ id: 'test.performance', model, plugins: pluginsFor(model) });
     const presentation = defineReactPresentation({
         toolbar: [['mark.bold.toggle', 'mark.italic.toggle'], ['link.edit'], ['outline.toggle', 'checks.open']],
     });
@@ -184,7 +184,7 @@ it('types a character in a highlighted 2,000-line code block within the keystrok
         id: 'test.performance',
         version: 1,
     });
-    const definition = defineEditor({ id: 'test.performance', model, plugins: unitsOf(model) });
+    const definition = defineEditor({ id: 'test.performance', model, plugins: pluginsFor(model) });
     const lines = Array.from({ length: 2000 }, (_, index) => `const value${index} = "line ${index}";`);
     const block = {
         type: 'code_block',

@@ -28,16 +28,16 @@ export type Format = keyof FeatureFormats;
 type Write = (inner: string, attrs: JsonObject, context: CodecContext) => string;
 
 /** What every codec reads about one node type: the shared plan and its overrides. */
-export type NodePlan = {
+export type CodecNodePlan = {
     html: ((attrs: JsonObject, context: CodecContext) => HtmlSpec) | undefined;
     markdown: Write | undefined;
     text: Write | undefined;
 } & BaseNodePlan;
-export type MarkPlan = {
+export type CodecMarkPlan = {
     markdown: Write | undefined;
     text: ((inner: string, attrs: JsonObject) => string) | undefined;
 } & BaseMarkPlan;
-export type CodecPlan = Plan<NodePlan, MarkPlan>;
+export type CodecPlan = Plan<CodecNodePlan, CodecMarkPlan>;
 
 /** The vocabulary nodes Markdown writes by name. */
 export const MARKDOWN_NODES = new Set(
@@ -49,13 +49,13 @@ export const MARKDOWN_NODES = new Set(
 export const TEXT_LEAVES = new Set('text hard_break mention asset_image embed horizontal_rule column_break'.split(' '));
 
 /** Whether the package can write `format` for a node without an override. */
-const derives: Readonly<Record<Format, (node: NodePlan) => boolean>> = {
+const derives: Readonly<Record<Format, (node: CodecNodePlan) => boolean>> = {
     html: (node) => node.leaf || resolveHtmlSpec(node.spec, {}, node.options).content,
     text: (node) => !node.leaf || TEXT_LEAVES.has(node.name),
     markdown: (node) => !node.leaf || MARKDOWN_NODES.has(node.name) || node.form !== undefined,
 };
 /** Whether the node has its own override for `format`. */
-const overridden = (node: NodePlan, format: Format) => node[format] !== undefined;
+const overridden = (node: CodecNodePlan, format: Format) => node[format] !== undefined;
 
 /** The override registered under `name`, ignoring inherited object keys. */
 const overrideOf = <V>(overrides: Readonly<Record<string, V>> | undefined, name: string): V | undefined => {
@@ -69,7 +69,7 @@ const overrideOf = <V>(overrides: Readonly<Record<string, V>> | undefined, name:
 const plans = new WeakMap<ContentModel, CodecPlan>();
 
 /** The codec plan of a compiled model, built once per model. */
-export const planOf = (model: ContentModel): CodecPlan => {
+export const codecPlanOf = (model: ContentModel): CodecPlan => {
     let plan = plans.get(model);
     if (plan === undefined) {
         plan = buildPlan(
@@ -130,7 +130,7 @@ export class Losses {
 }
 
 /** The shared attributes of `node` that hold a value other than their default, which no text or Markdown output writes. */
-export const setShared = (plan: NodePlan, node: TreeNode): readonly SharedAttribute[] =>
+export const setShared = (plan: CodecNodePlan, node: TreeNode): readonly SharedAttribute[] =>
     plan.shared.filter(({ name, declaration }) => {
         let value: JsonValue = null;
         const stored = node.attrs?.[name];

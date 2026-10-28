@@ -5,7 +5,7 @@ import { type EditorState } from 'prosemirror-state';
 
 import { type ContentChecksApi, type ContentChecksResult } from '../capabilities/checks/api';
 import {
-    contentChecksOf,
+    contentChecksStateOf,
     type ContentChecksState,
     type HeldIssue,
     isDismissed,
@@ -107,7 +107,7 @@ const selectIssue = (runtime: EditorRuntime, held: HeldIssue) => {
 
 /** The issue `key` names in the current document, checked again first with `recheck` or for an older `sequence`. */
 const currentIssue = (runtime: EditorRuntime, key: string, recheck: boolean): HeldIssue | undefined => {
-    const mapped = contentChecksOf(runtime.state)?.issues.find((held) => held.key === key);
+    const mapped = contentChecksStateOf(runtime.state)?.issues.find((held) => held.key === key);
     // An issue the last run no longer reported names nothing now.
     if (mapped === undefined) {
         return undefined;
@@ -125,7 +125,7 @@ const currentIssue = (runtime: EditorRuntime, key: string, recheck: boolean): He
         return undefined;
     }
 
-    const checks = contentChecksOf(runtime.state);
+    const checks = contentChecksStateOf(runtime.state);
     if (checks === undefined) {
         return undefined;
     }
@@ -135,14 +135,14 @@ const currentIssue = (runtime: EditorRuntime, key: string, recheck: boolean): He
 
 /** The content checks of `runtime`, or `undefined` when its editor does not install them. */
 export const contentChecksApi = (runtime: EditorRuntime): ContentChecksApi | undefined => {
-    if (contentChecksOf(runtime.state) === undefined) {
+    if (contentChecksStateOf(runtime.state) === undefined) {
         return undefined;
     }
 
     return {
         current: () => {
             const { state } = runtime;
-            const checks = contentChecksOf(state);
+            const checks = contentChecksStateOf(state);
             if (checks === undefined) {
                 return NO_RESULTS;
             }
@@ -174,7 +174,7 @@ export const contentChecksApi = (runtime: EditorRuntime): ContentChecksApi | und
             setIssueIcons(view.dom.ownerDocument, icons);
             const show = () => {
                 runtime.runChecks();
-                const runs = contentChecksOf(runtime.state)?.runs;
+                const runs = contentChecksStateOf(runtime.state)?.runs;
                 opened(runs ?? 0);
                 runtime.view?.dispatch(withIssuesOpen(runtime.state.tr, true));
             };

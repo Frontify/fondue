@@ -16,7 +16,7 @@ import {
     type RichTextDocument,
 } from '#/model';
 import { commentModel, documentModel, inlineModel } from '#/plugins';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { core } from '#/plugins/Core/feature';
 import { typeText } from '#/testing';
 
@@ -52,7 +52,7 @@ const mount = async (model: ContentModel, services: EditorServices = {}) => {
     render(
         <RichTextEditor
             aria-label="Notes"
-            definition={defineEditor({ id: 'docs.observability', model, plugins: unitsOf(model) })}
+            definition={defineEditor({ id: 'docs.observability', model, plugins: pluginsFor(model) })}
             defaultValue={{ documentId: 'docs-observability', revision: 'revision-1', document }}
             services={services}
             ref={ref}

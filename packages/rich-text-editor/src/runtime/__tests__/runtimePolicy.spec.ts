@@ -8,7 +8,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { defineEditor } from '#/index';
 import { compileContentModel, type JsonValue } from '#/model';
 import { fixtureHeadingSet, fixtureMention, fixtureTable } from '#/plugins/__tests__/fixtures/features';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
 import { link } from '#/plugins/Link/feature';
@@ -405,7 +405,7 @@ describe('the authoring policy and limits', () => {
         };
 
         expect(
-            codeOf(() => defineEditor({ id: 'x', model: boldModel, policy: unknown, plugins: unitsOf(boldModel) })),
+            codeOf(() => defineEditor({ id: 'x', model: boldModel, policy: unknown, plugins: pluginsFor(boldModel) })),
         ).toMatchObject({
             code: 'definition.unknown-policy-feature',
         });

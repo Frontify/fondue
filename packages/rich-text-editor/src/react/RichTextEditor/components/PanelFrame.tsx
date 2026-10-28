@@ -13,7 +13,7 @@ import { passesToBrowser } from '#/runtime/port';
 
 import styles from '../styles/panels.module.scss';
 
-export type BoundaryProps = {
+export type PanelBoundaryProps = {
     message: string;
     closeLabel: string;
     onClose: () => void;
@@ -25,7 +25,7 @@ type BoundaryState = {
 };
 
 /** Replaces only the panel that threw, and leaves the rest of the editor mounted. */
-class PanelBoundary extends Component<BoundaryProps, BoundaryState> {
+class PanelBoundary extends Component<PanelBoundaryProps, BoundaryState> {
     static contextType = ReactWorkContext;
     declare context: ReactWork | undefined;
     state: BoundaryState = { failed: false };

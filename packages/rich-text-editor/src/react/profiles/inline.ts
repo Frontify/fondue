@@ -22,7 +22,7 @@ const LINE_ONLY = new Set(['Shift-Enter', 'Mod-Alt-ArrowUp', 'Mod-Alt-ArrowDown'
 const core = corePlugin();
 const lineKeys = Object.fromEntries(Object.entries(core.editor.keys ?? {}).filter(([key]) => !LINE_ONLY.has(key)));
 
-/** The units of the Inline profile's features. */
+/** The plugins of the Inline profile's features. */
 export const inlinePlugins: readonly RichTextPlugin[] = [
     extendPlugin(core, { keys: lineKeys }),
     boldPlugin(),

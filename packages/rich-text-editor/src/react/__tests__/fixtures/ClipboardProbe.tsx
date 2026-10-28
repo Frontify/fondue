@@ -8,13 +8,13 @@ import { defineEditor, type DocumentChange, type EditorHandle, RichTextEditor, t
 import { compileContentModel, type ContentNodeJSON } from '#/model';
 import { bold, core } from '#/plugins';
 import { fixtureLabelledMention } from '#/plugins/__tests__/fixtures/features';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { checkList as taskListFeature } from '#/plugins/CheckList/feature';
 import { runtimeOf } from '#/runtime/runtime';
 import { type SelectionTarget, setSelection } from '#/testing';
 
 const model = compileContentModel([core(), bold(), fixtureLabelledMention()], { id: 'test.clipboard', version: 1 });
-const definition = defineEditor({ id: 'test.clipboard', model, plugins: unitsOf(model) });
+const definition = defineEditor({ id: 'test.clipboard', model, plugins: pluginsFor(model) });
 const taskEditorModel = compileContentModel([core(), bold(), fixtureLabelledMention(), taskListFeature()], {
     id: 'test.clipboard',
     version: 1,
@@ -22,7 +22,7 @@ const taskEditorModel = compileContentModel([core(), bold(), fixtureLabelledMent
 const taskDefinition = defineEditor({
     id: 'test.clipboard',
     model: taskEditorModel,
-    plugins: unitsOf(taskEditorModel),
+    plugins: pluginsFor(taskEditorModel),
 });
 const ALLOW = { create: true, edit: true, remove: true };
 // The mentions may move and be created, but no paste or drop brings one in.
@@ -30,7 +30,7 @@ const unpastedMentions = defineEditor({
     id: 'test.clipboard',
     model,
     policy: { features: { 'fixture.labelled-mention': { ...ALLOW, paste: false } } },
-    plugins: unitsOf(model),
+    plugins: pluginsFor(model),
 });
 const presentation = defineReactPresentation({ sliceContext: 'ct' });
 

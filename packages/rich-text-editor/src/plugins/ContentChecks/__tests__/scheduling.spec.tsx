@@ -8,9 +8,9 @@ import { defineReactPresentation } from '#/entries/authoring';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { hashDocument } from '#/model';
 import { CONTENT_RULE_IDS, CONTENT_RULES } from '#/plugins/__tests__/fixtures/contentRules';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { storedIn } from '#/react/__tests__/fixtures/text';
-import { CHECK_DELAY_MS, contentChecksOf } from '#/runtime/capabilities/checks/contentIssues';
+import { CHECK_DELAY_MS, contentChecksStateOf } from '#/runtime/capabilities/checks/contentIssues';
 import { SETTLE_MS } from '#/runtime/dom/settle';
 import { runtimeOf } from '#/runtime/runtime';
 import { createFakePersistenceService, typeText } from '#/testing';
@@ -62,15 +62,15 @@ describe('when the content checks run', () => {
         advance(CHECK_DELAY_MS - 1);
 
         expect(ruleCalls()).toBe(0);
-        expect(contentChecksOf(runtime.state)?.runs).toBe(0);
+        expect(contentChecksStateOf(runtime.state)?.runs).toBe(0);
 
         advance(1);
 
         expect(ruleCalls()).toBeGreaterThan(0);
         expect(dispatched).toBe(2);
         expect(callsInDispatch).toBe(0);
-        expect(contentChecksOf(runtime.state)).toMatchObject({ runs: 1 });
-        const issues = contentChecksOf(runtime.state)?.issues;
+        expect(contentChecksStateOf(runtime.state)).toMatchObject({ runs: 1 });
+        const issues = contentChecksStateOf(runtime.state)?.issues;
         const first = issues?.[0];
         expect(first?.issue.sequence).toBe(handle.getSummary().sequence);
         unmount();
@@ -106,7 +106,7 @@ describe('when the content checks run', () => {
         advance(CHECK_DELAY_MS);
 
         expect(ruleCalls()).toBeGreaterThan(0);
-        expect(contentChecksOf(runtime.state)?.runs).toBe(1);
+        expect(contentChecksStateOf(runtime.state)?.runs).toBe(1);
         unmount();
     });
 
@@ -117,13 +117,15 @@ describe('when the content checks run', () => {
         fireEvent.click(screen.getByRole('button', { name: 'Accessibility checks' }));
 
         expect(ruleCalls()).toBeGreaterThan(0);
-        expect(contentChecksOf(runtime.state)?.issues.map(({ issue }) => issue.id)).toContain('heading.empty:empty');
+        expect(contentChecksStateOf(runtime.state)?.issues.map(({ issue }) => issue.id)).toContain(
+            'heading.empty:empty',
+        );
         unmount();
     });
 
     it('keeps focus in the surface and the delay while the panel is open in a host that renders a new presentation on each change', () => {
         const model = checksModel();
-        const definition = defineEditor({ id: 'test.checks', model, plugins: unitsOf(model) });
+        const definition = defineEditor({ id: 'test.checks', model, plugins: pluginsFor(model) });
         const ref = createRef<EditorHandle>();
         const Host = () => {
             const [changes, setChanges] = useState(0);
@@ -207,7 +209,7 @@ describe('a draft save', () => {
         });
         fireEvent.click(screen.getByRole('button', { name: 'Accessibility checks' }));
         const errors = new Set(
-            contentChecksOf(runtime.state)
+            contentChecksStateOf(runtime.state)
                 ?.issues.filter(({ issue }) => issue.severity === 'error')
                 .map(({ issue }) => issue.ruleId),
         );

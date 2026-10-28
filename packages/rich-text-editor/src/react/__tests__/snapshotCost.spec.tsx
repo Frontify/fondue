@@ -8,7 +8,7 @@ import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel } from '#/model';
 import { type pointer as RealPointer } from '#/model/internal';
 import { featuresById } from '#/plugins';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { typeText } from '#/testing';
 
 import { PERF_FEATURES, perfDocument } from '../../model/__tests__/fixtures/perf/documents';
@@ -34,7 +34,7 @@ let handle: EditorHandle | null = null;
 beforeEach(async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const model = compileContentModel(featuresById(PERF_FEATURES), { id: 'test.snapshot-cost', version: 1 });
-    const definition = defineEditor({ id: 'test.snapshot-cost', model, plugins: unitsOf(model) });
+    const definition = defineEditor({ id: 'test.snapshot-cost', model, plugins: pluginsFor(model) });
     const ref = createRef<EditorHandle>();
     render(
         <RichTextEditor

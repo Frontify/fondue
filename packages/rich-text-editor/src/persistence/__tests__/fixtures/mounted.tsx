@@ -32,7 +32,7 @@ import {
     type RichTextDocument,
 } from '#/model';
 import { fixtureChrome } from '#/plugins/__tests__/fixtures/chrome/feature';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
 import { runtimeOf } from '#/runtime/runtime';
@@ -109,7 +109,7 @@ export const stampedEditor = defineEditorPart(stampedBlock, {
 });
 export const features: readonly Feature[] = [core(), bold(), fixtureChrome(), stampedBlock()];
 export const model = compileContentModel(features, { id: 'test.persistence', version: 1 });
-export const definition = defineEditor({ id: 'test.persistence', model, plugins: unitsOf(model, [stampedEditor]) });
+export const definition = defineEditor({ id: 'test.persistence', model, plugins: pluginsFor(model, [stampedEditor]) });
 const packageFile = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..', 'package.json');
 export const { version: PACKAGE_VERSION } = JSON.parse(readFileSync(packageFile, 'utf8')) as {
     version: string;

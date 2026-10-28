@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 
 import { defineReactPresentation } from '#/entries/authoring';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { COLOR_TOKENS, plain, styled, styledDocument, styleModel } from '#/plugins/__tests__/fixtures/styles';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { setSelection } from '#/testing';
 
 const presentation = defineReactPresentation({ colorTokens: COLOR_TOKENS, toolbar: [['mark.color.menu.open']] });
@@ -36,7 +36,7 @@ export const ColorProbe = ({ literal = false }: { literal?: boolean }) => {
         const model = styleModel(literal);
 
         return {
-            definition: defineEditor({ id: 'test.colors', model, plugins: unitsOf(model) }),
+            definition: defineEditor({ id: 'test.colors', model, plugins: pluginsFor(model) }),
             document: styledDocument(model, [styled(null, plain('one two three'))]),
         };
     });

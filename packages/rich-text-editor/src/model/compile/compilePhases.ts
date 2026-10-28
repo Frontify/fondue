@@ -16,7 +16,7 @@ import {
 } from './capabilities';
 import {
     attributesOf,
-    checkAttributes,
+    checkAttributeDeclarations,
     checkedRule,
     checkHtml,
     checkMarkMarkdown,
@@ -103,7 +103,7 @@ export const checkMembers = (nodes: ReadonlyMap<string, MutableNode>, marks: Rea
     const membersOf = (name: string) => (nodes.has(name) ? [name] : (groups.get(name) ?? []));
     const textblocks: string[] = [];
     for (const { name, featureId, declaration } of nodes.values()) {
-        checkAttributes(featureId, declaration.attrs, ['nodes', name, 'attrs']);
+        checkAttributeDeclarations(featureId, declaration.attrs, ['nodes', name, 'attrs']);
         checkMarks(featureId, declaration.marks, ['nodes', name, 'marks']);
         checkNodeMarkdown(featureId, name, declaration.markdown);
         if (declaration.content === undefined) {
@@ -129,7 +129,7 @@ export const checkMembers = (nodes: ReadonlyMap<string, MutableNode>, marks: Rea
     }
 
     for (const { name, featureId, declaration } of marks.values()) {
-        checkAttributes(featureId, declaration.attrs, ['marks', name, 'attrs']);
+        checkAttributeDeclarations(featureId, declaration.attrs, ['marks', name, 'attrs']);
         checkMarks(featureId, declaration.excludes, ['marks', name, 'excludes']);
         checkMarkMarkdown(featureId, name, declaration.markdown);
     }
@@ -145,7 +145,7 @@ export const attachSharedAttributes = (
 ) => {
     for (const feature of list) {
         for (const [name, shared] of Object.entries(feature.declaration.attributes ?? {})) {
-            checkAttributes(feature.id, { value: shared.value }, ['attributes', name]);
+            checkAttributeDeclarations(feature.id, { value: shared.value }, ['attributes', name]);
             const binding = shared.html;
             const boundName = binding !== undefined && 'attr' in binding ? binding.attr : '';
             if (isStyleAttribute(boundName)) {

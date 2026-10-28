@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 
 import { decodeToTree, limitsOf } from '#/model/internal';
 import { countingIds } from '#/plugins/__tests__/fixtures/notes';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { extensionsOf } from '#/react/compile/engine';
 import { compileDefinition } from '#/runtime/definition';
 import { probeRuntimes, setSelection, typeText } from '#/testing';
@@ -347,7 +347,7 @@ describe('targets on release and dispose', () => {
     it('refuses a capture while mounting, faulted or disposed and creates no target', () => {
         const { tree } = decodeToTree(stored(para(words('ab'))), boldModel);
         const mounting = createEditorRuntime({
-            definition: compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel, unitsOf(boldModel))),
+            definition: compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel, pluginsFor(boldModel))),
             documentId: 'document-1',
             tree: tree as NonNullable<typeof tree>,
             capabilities: [],

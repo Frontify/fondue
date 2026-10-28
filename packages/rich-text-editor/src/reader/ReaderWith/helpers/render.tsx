@@ -47,11 +47,11 @@ import {
 } from '#/model/internal';
 
 import { type ReaderContext, type ReaderNodeProps } from '../../define';
-import { type Plan } from '../../helpers/plan';
+import { type ReaderPlan } from '../../helpers/plan';
 
 /** The document gets one island notice when `islands` is not zero. */
 export type RenderState = {
-    plan: Plan;
+    plan: ReaderPlan;
     context: ReaderContext;
     diagnostics: Diagnostic[];
     listLevels: ListLevels | undefined;

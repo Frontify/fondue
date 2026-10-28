@@ -18,7 +18,7 @@ import {
     image as imageFeature,
 } from '#/plugins';
 import { fixtureHighlight } from '#/plugins/__tests__/fixtures/highlight';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { storedIn } from '#/react/__tests__/fixtures/text';
 import { runtimeOf } from '#/runtime/runtime';
 import { type DocumentChange } from '#/runtime/types';
@@ -103,7 +103,7 @@ export const mountChecks = ({
 }: Mount) => {
     const ref = createRef<EditorHandle>();
     const changes: DocumentChange[] = [];
-    const parts = unitsOf(model, plugins);
+    const parts = pluginsFor(model, plugins);
     let definition = defineEditor({ id: 'test.checks', model, plugins: parts });
     if (policy !== undefined) {
         definition = defineEditor({ id: 'test.checks', model, policy, plugins: parts });

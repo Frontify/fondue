@@ -17,7 +17,7 @@ import { decodeToTree, limitsOf } from '#/model/internal';
 import { bold, contentChecks, core, fontColor, heading, language, link, image } from '#/plugins';
 import { fixtureHighlight } from '#/plugins/__tests__/fixtures/highlight';
 import { RUNTIME_PLUGINS } from '#/runtime/capabilities';
-import { contentChecksOf } from '#/runtime/capabilities/checks/contentIssues';
+import { contentChecksStateOf } from '#/runtime/capabilities/checks/contentIssues';
 import { compileDefinition } from '#/runtime/definition';
 import { authoringOf } from '#/runtime/guards/policy';
 import { createEditorRuntime, type EditorRuntime } from '#/runtime/runtime';
@@ -126,7 +126,7 @@ describe('findContentIssues on a server', () => {
 
         expect(runtime.runChecks()).toBe(true);
 
-        const editor = contentChecksOf(runtime.state)?.issues.map(({ issue }) => issue);
+        const editor = contentChecksStateOf(runtime.state)?.issues.map(({ issue }) => issue);
         const host = findContentIssues(runtime.handle.getSnapshot().document, {
             locale: deCH,
             colorTokens,
@@ -168,7 +168,7 @@ describe('findContentIssues on a server', () => {
 
         expect(runtime.runChecks()).toBe(true);
 
-        const editor = contentChecksOf(runtime.state)?.issues.map(({ issue }) => issue);
+        const editor = contentChecksStateOf(runtime.state)?.issues.map(({ issue }) => issue);
         const host = findContentIssues(stored, { locale: deCH, colorTokens, background: '#ffffff', model: small });
         expect(host.map(({ repairCommand }) => repairCommand).filter((command) => command !== null)).toEqual([
             'mark.language.edit',
@@ -196,7 +196,7 @@ describe('findContentIssues on a server', () => {
 
         expect(runtime.runChecks()).toBe(true);
 
-        const editor = contentChecksOf(runtime.state)?.issues.map(({ issue }) => issue);
+        const editor = contentChecksStateOf(runtime.state)?.issues.map(({ issue }) => issue);
         const host = findContentIssues(stored, { locale: deCH, model: small, creatableHeadingLevels });
         expect(host.find(({ ruleId }) => ruleId === 'heading.skipped-level')).toMatchObject({
             repairCommand: 'heading.set',

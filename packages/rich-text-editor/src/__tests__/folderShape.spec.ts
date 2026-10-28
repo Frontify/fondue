@@ -61,8 +61,8 @@ const exportedFunctions = (path: string) => {
     return names;
 };
 
-// The names a feature's index.ts exports as `definePlugin(...)` units.
-const unitExports = (path: string) => {
+// The names a feature's index.ts exports as `definePlugin(...)` plugins.
+const pluginExports = (path: string) => {
     const names: string[] = [];
     for (const statement of parse(path).statements) {
         if (ts.isVariableStatement(statement) && isExported(statement)) {
@@ -330,14 +330,14 @@ const KIND_NEUTRAL_FILES = new Set(['index.ts', 'types.ts', 'constants.ts']);
 
 // Each measure parses every product file, which outlasts the default timeout on a loaded machine.
 describe('folder and file shape', { timeout: 60_000 }, () => {
-    it('gives every feature folder an index.ts that exports exactly one definePlugin unit', () => {
+    it('gives every feature folder an index.ts that exports exactly one definePlugin plugin', () => {
         const problems: string[] = [];
         for (const folder of featureFolders()) {
             const path = join(srcRoot, 'plugins', folder, 'index.ts');
             if (!existsSync(path)) {
                 problems.push(`missing: plugins/${folder}/index.ts`);
-            } else if (unitExports(path).length !== 1) {
-                problems.push(`not exactly one definePlugin unit: plugins/${folder}/index.ts`);
+            } else if (pluginExports(path).length !== 1) {
+                problems.push(`not exactly one definePlugin plugin: plugins/${folder}/index.ts`);
             }
         }
 

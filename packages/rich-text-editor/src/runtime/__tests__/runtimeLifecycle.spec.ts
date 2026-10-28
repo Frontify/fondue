@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { decodeToTree, limitsOf } from '#/model/internal';
 import { countingIds } from '#/plugins/__tests__/fixtures/notes';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { extensionsOf } from '#/react/compile/engine';
 import { compileDefinition } from '#/runtime/definition';
 import { probeRuntimes, typeText } from '#/testing';
@@ -33,7 +33,7 @@ describe('the session lifecycle', () => {
     it('emits ready once with the session token after the first frame', () => {
         const { tree } = decodeToTree(stored(para()), boldModel);
         const runtime = createEditorRuntime({
-            definition: compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel, unitsOf(boldModel))),
+            definition: compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel, pluginsFor(boldModel))),
             documentId: 'document-1',
             tree: tree as NonNullable<typeof tree>,
             capabilities: [],
@@ -231,7 +231,7 @@ describe('disposal', () => {
             },
         });
         const { tree } = decodeToTree(stored(para()), boldModel);
-        const compiled = compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel, unitsOf(boldModel)));
+        const compiled = compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel, pluginsFor(boldModel)));
         const pending: Promise<CommandResult>[] = [];
         const owned: ReturnType<typeof probeRuntimes>[] = [];
         for (let cycle = 0; cycle < 10; cycle += 1) {

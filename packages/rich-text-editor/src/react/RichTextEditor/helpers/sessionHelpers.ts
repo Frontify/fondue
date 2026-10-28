@@ -8,7 +8,7 @@ import { type LoadedDocument } from '#/persistence/types';
 import { type ReaderPresentation } from '#/reader/ReaderWith/ReaderWith';
 import { type ColumnState, type EditorPort, surfaceElement } from '#/runtime/port';
 
-import { engineOf, readersOf } from '../../compile/compileEditor';
+import { compiledOf, readersOf } from '../../compile/compileEditor';
 import { type EditorServices } from '../../types';
 import {
     DEFAULT_TEST_ID,
@@ -125,7 +125,7 @@ export const mountOf = (props: Defined, loaded: LoadedDocument): Mounted => {
         throw new Error('RichTextEditor needs a `definition`.');
     }
 
-    const engine = engineOf(definition);
+    const engine = compiledOf(definition);
     const { result, tree } = decodeToTree(loaded.document, engine.model, { limits: definition.limits });
     const managed = memberOf(props.services, 'persistence') !== undefined;
     const unset = { lang: undefined, dir: undefined, managed };
@@ -174,7 +174,7 @@ export const shellPropsOf = (props: Defined) => {
     } = props;
 
     return {
-        model: engineOf(definition).model,
+        model: compiledOf(definition).model,
         readers: readersOf(definition),
         limits: definition.limits,
         presentation,

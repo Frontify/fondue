@@ -55,26 +55,26 @@ export const paragraph = (...content: readonly Inline[]): Block => ({
     attrs: { lang: null },
     content,
 });
-/** A stored heading of `level` with a node id. */
-export const heading = (nodeId: string, level: number, value: string): Block => ({
+/** A stored storedHeading of `level` with a node id. */
+export const storedHeading = (nodeId: string, level: number, value: string): Block => ({
     type: 'heading',
     attrs: { nodeId, level, lang: null },
     content: [text(value)],
 });
-/** A stored quote of one paragraph of `content`. */
-export const quote = (...content: readonly Inline[]): Block => ({
+/** A stored storedQuote of one paragraph of `content`. */
+export const storedQuote = (...content: readonly Inline[]): Block => ({
     type: 'blockquote',
     content: [paragraph(...content)],
 });
 /** A stored code block of `value`, in the language `languageId` when given. */
-export const codeBlock = (value: string, languageId: string | null = null): Block => ({
+export const storedCodeBlock = (value: string, languageId: string | null = null): Block => ({
     type: 'code_block',
     attrs: { languageId },
     content: [text(value)],
 });
-// The mention node carries no text field, which the Inline type demands, so the builder mints it past the type.
-/** A stored mention of a user resource. */
-export const mention = (nodeId: string, resourceId: string, labelSnapshot: string): Inline =>
+// The storedMention node carries no text field, which the Inline type demands, so the builder mints it past the type.
+/** A stored storedMention of a user resource. */
+export const storedMention = (nodeId: string, resourceId: string, labelSnapshot: string): Inline =>
     ({
         type: 'mention',
         attrs: { nodeId, resourceType: 'user', resourceId, labelSnapshot },
@@ -84,19 +84,19 @@ const item = (...content: readonly Inline[]): Block => ({
     content: [paragraph(...content)],
 });
 /** A stored bullet list with one item per run list. */
-export const bulletList = (...items: readonly (readonly Inline[])[]): Block => ({
+export const storedBulletList = (...items: readonly (readonly Inline[])[]): Block => ({
     type: 'bullet_list',
     attrs: { marker: null },
     content: items.map((content) => item(...content)),
 });
 /** A stored ordered list, from 1, with one item per run list. */
-export const orderedList = (...items: readonly (readonly Inline[])[]): Block => ({
+export const storedOrderedList = (...items: readonly (readonly Inline[])[]): Block => ({
     type: 'ordered_list',
     attrs: { start: 1, marker: null },
     content: items.map((content) => item(...content)),
 });
-/** A stored horizontal rule. */
-export const rule: Block = { type: 'horizontal_rule' };
+/** A stored horizontal storedRule. */
+export const storedRule: Block = { type: 'horizontal_rule' };
 
 /** A stored record of `blocks` in `model`, which requires every capability the model has. */
 export const blocksRecord = (model: ContentModel, documentId: string, ...blocks: readonly Block[]): LoadedDocument => ({
@@ -112,7 +112,7 @@ export const blocksRecord = (model: ContentModel, documentId: string, ...blocks:
 });
 
 /** The text of stored content, one line per block. */
-export const textOf = (value: unknown): string => {
+export const storedText = (value: unknown): string => {
     if (typeof value !== 'object' || value === null) {
         return '';
     }
@@ -132,5 +132,5 @@ export const textOf = (value: unknown): string => {
         separator = '\n';
     }
 
-    return children.map(textOf).join(separator);
+    return children.map(storedText).join(separator);
 };

@@ -56,7 +56,7 @@ import {
     type RichTextProfile,
 } from '../types';
 
-import { checkCover, readersOfUnits } from './units';
+import { checkCover, readersOfPlugins } from './pluginCover';
 
 // Kept off the definition, so no engine value is reachable from what a host holds.
 const engines = new WeakMap<object, CompiledDefinition>();
@@ -67,7 +67,7 @@ const profiles = new WeakMap<object, RichTextProfile>();
 const readers = new WeakMap<object, ReaderOverrides>();
 
 /** The engine a definition compiled once, which every editor mounted with it shares. */
-export const engineOf = (definition: CompiledEditorDefinition<object>): CompiledDefinition => {
+export const compiledOf = (definition: CompiledEditorDefinition<object>): CompiledDefinition => {
     const engine = engines.get(definition);
     if (engine === undefined) {
         throw new Error('RichTextEditor takes only a definition that defineEditor made.');
@@ -96,18 +96,18 @@ export const readersOf = (definition: CompiledEditorDefinition<object>): ReaderO
 export const profileOf = (definition: CompiledEditorDefinition<object>): RichTextProfile | undefined =>
     profiles.get(definition);
 
-/** The editor part of each installed feature, in feature order, from units that cover the model exactly. */
-const collectPlugins = (model: ContentModel, units: readonly RichTextPlugin[]): readonly EditorPart[] => {
-    checkCover(model, units);
+/** The editor part of each installed feature, in feature order, from plugins that cover the model exactly. */
+const collectPlugins = (model: ContentModel, plugins: readonly RichTextPlugin[]): readonly EditorPart[] => {
+    checkCover(model, plugins);
     const { features } = compiledModel(model);
 
     return features.flatMap(({ id, options }) => {
-        const unit = units.find((candidate) => candidate.id === id);
-        if (unit === undefined) {
+        const plugin = plugins.find((candidate) => candidate.id === id);
+        if (plugin === undefined) {
             return [];
         }
 
-        return [partWithOptions(unit.editor, options)];
+        return [partWithOptions(plugin.editor, options)];
     });
 };
 
@@ -326,27 +326,27 @@ const checkLimits = (model: ContentModel, limits: ResourceLimits, given: Partial
     }
 };
 
-/** The engine of `model` with the editor part of each installed feature, from units that cover the model exactly. */
+/** The engine of `model` with the editor part of each plugin, which must cover the model's features exactly. */
 export const editorEngine = (
     model: ContentModel,
-    units: readonly RichTextPlugin[],
+    plugins: readonly RichTextPlugin[],
 ): {
     engine: CompiledDefinition;
     plugins: readonly EditorPart[];
 } => {
-    const plugins = collectPlugins(model, units);
+    const parts = collectPlugins(model, plugins);
     const built = {
         ...RUNTIME_PLUGINS.plugins,
-        [CLIPBOARD_PLUGIN.id]: clipboardPlugin(model, intakeOf(model, plugins)),
+        [CLIPBOARD_PLUGIN.id]: clipboardPlugin(model, intakeOf(model, parts)),
         [DROP_CURSOR_PLUGIN.id]: dropCursorPlugin,
     };
-    const extensions = plugins.map((plugin) => extensionOf(model, plugin));
+    const extensions = parts.map((plugin) => extensionOf(model, plugin));
     const engine = compileDefinition(
         model,
         { plugins: built, execute: executeFor, handleKey: handleKeyFor },
         extensions,
     );
-    for (const plugin of plugins) {
+    for (const plugin of parts) {
         for (const [index, entry] of (plugin.toolbar ?? []).entries()) {
             if (!engine.commands.has(entry.command)) {
                 throw new DefinitionError('definition.orphan-behavior', {
@@ -368,14 +368,14 @@ export const editorEngine = (
         }
     }
 
-    return { engine, plugins };
+    return { engine, plugins: parts };
 };
 
-/** What the editor parts of `model`'s features add to its engine, for a definition compiled without React. */
-export const extensionsOf = (model: ContentModel, units: readonly RichTextPlugin[]): readonly EngineExtension[] =>
-    collectPlugins(model, units).map((plugin) => extensionOf(model, plugin));
+/** What the editor parts of `plugins` add to the engine of `model`, for a definition compiled without React. */
+export const extensionsOf = (model: ContentModel, plugins: readonly RichTextPlugin[]): readonly EngineExtension[] =>
+    collectPlugins(model, plugins).map((plugin) => extensionOf(model, plugin));
 
-/** Compiles an editor definition once, from units that cover the model exactly. */
+/** Compiles an editor definition once, from plugins that cover the model exactly. */
 export const compileEditor = <Model extends ContentModel, Plugins extends readonly RichTextPlugin[]>(
     options: EditorDefinitionOptions<Model> & { plugins: Plugins },
     profile?: RichTextProfile,
@@ -397,7 +397,7 @@ export const compileEditor = <Model extends ContentModel, Plugins extends readon
     nodeViews.set(definition, views);
     editorPanels.set(definition, panels);
     editorPlugins.set(definition, plugins);
-    readers.set(definition, readersOfUnits(options.plugins));
+    readers.set(definition, readersOfPlugins(options.plugins));
     if (profile !== undefined) {
         profiles.set(definition, profile);
     }

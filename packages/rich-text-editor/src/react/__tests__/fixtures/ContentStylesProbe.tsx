@@ -2,13 +2,13 @@
 
 import {
     blocksRecord,
-    bulletList,
-    codeBlock,
-    heading,
-    orderedList,
+    storedBulletList,
+    storedCodeBlock,
+    storedHeading,
+    storedOrderedList,
     paragraph,
     PROFILE_MODELS,
-    quote,
+    storedQuote,
     text,
 } from '#/react/examples/records';
 import { RichTextEditor } from '#/react/RichTextEditor/RichTextEditor';
@@ -16,14 +16,14 @@ import { RichTextEditor } from '#/react/RichTextEditor/RichTextEditor';
 const document = blocksRecord(
     PROFILE_MODELS.document,
     'content-styles',
-    heading('heading-1', 1, 'One'),
-    heading('heading-2', 2, 'Two'),
-    heading('heading-3', 3, 'Three'),
+    storedHeading('heading-1', 1, 'One'),
+    storedHeading('heading-2', 2, 'Two'),
+    storedHeading('heading-3', 3, 'Three'),
     paragraph(text('A paragraph')),
-    quote(text('A quote')),
-    codeBlock('const gap = 1;'),
-    bulletList([text('Bullet')]),
-    orderedList([text('Ordered')]),
+    storedQuote(text('A quote')),
+    storedCodeBlock('const gap = 1;'),
+    storedBulletList([text('Bullet')]),
+    storedOrderedList([text('Ordered')]),
 );
 
 /** The Document profile's editor over one of each styled block, named Notes. */

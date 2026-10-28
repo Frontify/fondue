@@ -8,7 +8,7 @@ import { vi } from 'vitest';
 import { compileContentModel, type ContentModel, type Diagnostic, type JsonValue, type ResourceLimits } from '#/model';
 import { doc, envelope, paragraph, text } from '#/plugins/__tests__/fixtures/documents';
 import { fixtureMedia } from '#/plugins/__tests__/fixtures/features';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import {
     vocabularyAlign,
     vocabularyBlocks,
@@ -80,7 +80,7 @@ export const mount = (options?: Options) => {
         model: editorModel,
         policy,
         limits,
-        plugins: unitsOf(editorModel),
+        plugins: pluginsFor(editorModel),
     });
     const ref = createRef<EditorHandle<object>>();
     const ids: { generateId?: () => string } = {};

@@ -11,7 +11,7 @@ import { compileContentModel, type ContentNodeJSON } from '#/model';
 import { bold, core } from '#/plugins';
 import { fixtureCodeBlock } from '#/plugins/__tests__/fixtures/code-block/feature';
 import { fixtureItalic, fixtureList, fixtureToolbar } from '#/plugins/__tests__/fixtures/features';
-import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor, type PluginCommands } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { link } from '#/plugins/Link/feature';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
@@ -22,13 +22,13 @@ const model = compileContentModel(
 );
 const ALLOW = { create: true, edit: true, remove: true, paste: true };
 export const toolbarDefinitions = {
-    open: defineEditor({ id: 'test.toolbar', model, plugins: unitsOf(model) }),
+    open: defineEditor({ id: 'test.toolbar', model, plugins: pluginsFor(model) }),
     // Bold may not be added, which the toolbar shows as an unavailable item.
     boldBlocked: defineEditor({
         id: 'test.toolbar',
         model,
         policy: { features: { 'marks.bold': { ...ALLOW, create: false } } },
-        plugins: unitsOf(model),
+        plugins: pluginsFor(model),
     }),
 };
 
@@ -77,7 +77,7 @@ declare global {
     interface Window {
         /** The mounted toolbar editor's handle, for tests that drive it from the page. */
         toolbarEditor?: {
-            handle: EditorHandle<UnitCommands>;
+            handle: EditorHandle<PluginCommands>;
             setSelection: typeof setSelection;
             /** The HTML of the runtime's document, as the surface shows it. */
             html: () => string;
@@ -172,7 +172,7 @@ export const ToolbarProbe = ({
         };
     });
     useEffect(() => {
-        const handle = ref.current as EditorHandle<UnitCommands> | null;
+        const handle = ref.current as EditorHandle<PluginCommands> | null;
         if (handle === null) {
             return;
         }

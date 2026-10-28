@@ -6,6 +6,7 @@ import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
 import { defineEditor, RichTextEditor } from '#/index';
 import { compileContentModel, type ContentNodeJSON } from '#/model';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import {
     COLOR_TOKENS,
     linked,
@@ -16,11 +17,10 @@ import {
     styledDocument,
     styleFeatures,
 } from '#/plugins/__tests__/fixtures/styles';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { checkList } from '#/plugins/CheckList/feature';
 
 const model = compileContentModel([...styleFeatures(true), checkList()], { id: 'test.struck-tasks', version: 1 });
-const definition = defineEditor({ id: 'test.struck-tasks', model, plugins: unitsOf(model) });
+const definition = defineEditor({ id: 'test.struck-tasks', model, plugins: pluginsFor(model) });
 
 const task = (nodeId: string, checked: boolean, ...content: readonly ContentNodeJSON[]): ContentNodeJSON =>
     ({ type: 'task_item', attrs: { nodeId, checked }, content: [...content] }) as ContentNodeJSON;

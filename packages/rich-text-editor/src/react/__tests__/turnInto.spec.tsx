@@ -13,7 +13,7 @@ import { type CommandState } from '#/runtime/port';
 import { runtimeOf } from '#/runtime/runtime';
 
 import { pluginsOf } from '../compile/compileEditor';
-import { turnIntoChoices as installedChoices } from '../helpers/turnInto';
+import { turnIntoMenuEntries as installedChoices } from '../helpers/turnInto';
 import { shipped as comment } from '../profiles/comment';
 import { shipped as document } from '../profiles/document';
 

@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 import { defineReactPresentation } from '#/entries/authoring';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel } from '#/model';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { core } from '#/plugins/Core/feature';
 
 import { FIXTURE_PLUGINS } from '../plugins';
@@ -13,7 +13,7 @@ import { FIXTURE_PLUGINS } from '../plugins';
 import { spotlight, spotlightDocument } from './feature';
 
 const model = compileContentModel([core(), spotlight()], { id: 'fixture.spotlight', version: 1 });
-const definition = defineEditor({ id: 'fixture.spotlight', model, plugins: unitsOf(model, FIXTURE_PLUGINS) });
+const definition = defineEditor({ id: 'fixture.spotlight', model, plugins: pluginsFor(model, FIXTURE_PLUGINS) });
 
 declare global {
     // oxlint-disable-next-line typescript/consistent-type-definitions -- only an interface merges into the global `Window`.

@@ -19,7 +19,7 @@ export type ReaderOverrides = Readonly<
     Record<string, ComponentType<{ attrs: JsonObject; children?: ReactNode; context: ReaderContext }>>
 >;
 
-/** One feature's unit: its vocabulary, its editor part and its optional reader overrides, which a profile lists once. */
+/** One feature's plugin: its vocabulary, its editor part and its optional reader overrides, which a profile lists once. */
 export type RichTextPlugin<Id extends string = string, Commands extends object = object> = {
     /** The feature's ID. */
     readonly id: Id;
@@ -31,7 +31,7 @@ export type RichTextPlugin<Id extends string = string, Commands extends object =
     readonly reader?: ReaderOverrides;
 };
 
-/** The inputs of a unit: the feature's factory, its editor part and the reader overrides of its nodes and marks. */
+/** The inputs of a plugin: the feature's factory, its editor part and the reader overrides of its nodes and marks. */
 type PluginSides<Id extends string, Options extends object, Commands extends object> = {
     feature: (options?: Options) => Feature<object, object, object, Id>;
     editor: EditorPart<NoInfer<Id>, Commands>;
@@ -39,7 +39,7 @@ type PluginSides<Id extends string, Options extends object, Commands extends obj
 };
 
 /**
- * A factory for the unit, which takes the options of the feature's own factory.
+ * A factory for the plugin, which takes the options of the feature's own factory.
  *
  * @throws DefinitionError when the editor part belongs to another feature than `parts.feature`.
  */
@@ -92,17 +92,17 @@ const extendEditor = <Id extends string, Commands extends object>(
     return Object.freeze({ ...editor, [OPTION_PARTS]: extended });
 };
 
-/** `unit` with `parts` merged over its editor part, such as another key set; its feature and readers stay. */
+/** `plugin` with `parts` merged over its editor part, such as another key set; its feature and readers stay. */
 export const extendPlugin = <Id extends string, Commands extends object, const N extends EditorFacet = never>(
-    unit: RichTextPlugin<Id, Commands>,
+    plugin: RichTextPlugin<Id, Commands>,
     parts: Omit<EditorPartSpec<N>, 'commands'>,
-): RichTextPlugin<Id, Commands> => Object.freeze({ ...unit, editor: extendEditor(unit.editor, parts) });
+): RichTextPlugin<Id, Commands> => Object.freeze({ ...plugin, editor: extendEditor(plugin.editor, parts) });
 
 type FeaturesOf<Plugins extends readonly RichTextPlugin[]> = {
     readonly [Index in keyof Plugins]: Plugins[Index]['feature'];
 };
 
-/** The content model that `plugins`' features compile to, which `defineEditor` takes with the same units. */
+/** The content model that `plugins`' features compile to, which `defineEditor` takes with the same plugins. */
 export const modelOf = <const Plugins extends readonly RichTextPlugin[]>(
     plugins: Plugins,
     ref: ContentModelOptions,

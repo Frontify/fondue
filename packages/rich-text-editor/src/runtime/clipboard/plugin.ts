@@ -6,7 +6,7 @@ import { NodeSelection, Plugin, type Selection } from 'prosemirror-state';
 import { dropPoint } from 'prosemirror-transform';
 import { type EditorView } from 'prosemirror-view';
 
-import { planOf } from '#/codecs/plan';
+import { codecPlanOf } from '#/codecs/plan';
 import { writeHtml } from '#/codecs/toHtml';
 import { writeText } from '#/codecs/toText';
 import { type ContentModel } from '#/model';
@@ -98,7 +98,7 @@ const writeFlavors = (
 ) => {
     const locale = session.locale();
     const context = codecContext(locale, locale, session.resolveAssetUrl?.());
-    const plan = planOf(model);
+    const plan = codecPlanOf(model);
     const tree: TreeNode = {
         type: 'doc',
         attrs: view.state.doc.attrs,

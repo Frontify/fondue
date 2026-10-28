@@ -4,7 +4,7 @@ import { act, render } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import { defineEditor, RichTextEditor } from '#/index';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 
 import { perfDocument, perfModel } from '../../model/__tests__/fixtures/perf/documents';
 
@@ -40,7 +40,7 @@ const watchDocumentListeners = () => {
 };
 
 const mountEditors = async () => {
-    const definition = defineEditor({ id: 'test.listeners', model: perfModel, plugins: unitsOf(perfModel) });
+    const definition = defineEditor({ id: 'test.listeners', model: perfModel, plugins: pluginsFor(perfModel) });
     const counts = watchDocumentListeners();
     const { container } = render(
         <>

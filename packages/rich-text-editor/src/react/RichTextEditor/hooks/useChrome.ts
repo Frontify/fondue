@@ -12,9 +12,9 @@ import { readerContext } from '#/reader/helpers/context';
 import { UPLOAD_FEATURE } from '#/runtime/port';
 import { referenceListStrings } from '#/ui/LazySuggestionList/helpers/referenceStrings';
 
-import { engineOf, pluginsOf } from '../../compile/compileEditor';
+import { compiledOf, pluginsOf } from '../../compile/compileEditor';
 import { menuItems, toolbarItems } from '../../helpers/toolbarItems';
-import { turnIntoChoices } from '../../helpers/turnInto';
+import { turnIntoMenuEntries } from '../../helpers/turnInto';
 import { type ToolbarMode } from '../../types';
 import { memberOf, type shellPropsOf } from '../helpers/sessionHelpers';
 import { type Mounted, type Props, type SessionRest } from '../types';
@@ -76,7 +76,7 @@ export const useChrome = (sources: ChromeSources) => {
     const items = useMemo(
         () =>
             toolbarItems(
-                engineOf(mounted.definition),
+                compiledOf(mounted.definition),
                 mounted.definition.authoring,
                 props.presentation,
                 chromeContext.t,
@@ -88,7 +88,7 @@ export const useChrome = (sources: ChromeSources) => {
     const menu = useMemo(
         () =>
             menuItems(
-                engineOf(mounted.definition),
+                compiledOf(mounted.definition),
                 mounted.definition.authoring,
                 items,
                 chromeContext.t,
@@ -98,7 +98,7 @@ export const useChrome = (sources: ChromeSources) => {
         [mounted.definition, items, chromeContext, lang],
     );
     const turnInto = useMemo(
-        () => turnIntoChoices(pluginsOf(mounted.definition), chromeContext.t, lang),
+        () => turnIntoMenuEntries(pluginsOf(mounted.definition), chromeContext.t, lang),
         [mounted.definition, chromeContext, lang],
     );
 
@@ -198,7 +198,7 @@ export const useOverlayValues = ({
     const overlays = useMemo(() => ({ container: overlayRoot, scope, opener }), [overlayRoot, scope, opener]);
     // The file chooser exists where `media.image` takes files that `services.uploads` sends.
     const choosesFiles =
-        engineOf(mounted.definition).model.capabilities.some(({ id }) => id === UPLOAD_FEATURE) &&
+        compiledOf(mounted.definition).model.capabilities.some(({ id }) => id === UPLOAD_FEATURE) &&
         memberOf(props.services, 'uploads') !== undefined;
     const referenceStrings = useMemo(() => referenceListStrings(chromeContext.t), [chromeContext]);
 

@@ -27,7 +27,7 @@ import { type ContentModel, createEmptyDocument } from '#/model';
 import { commentModel } from '#/plugins';
 import { createFakePersistenceService } from '#/testing';
 
-import { recordOf, text, textOf } from './records';
+import { recordOf, text, storedText } from './records';
 
 const plugins = [corePlugin(), boldPlugin(), italicPlugin(), linkPlugin()] as const;
 const model = modelOf(plugins, { id: 'story.examples', version: 1 });
@@ -128,7 +128,7 @@ const SubmitSnapshotExample = ({
     const handleRef = useRef<EditorHandle>(null);
     const [sent, setSent] = useState<readonly { id: number; text: string }[]>([]);
     const send = (snapshot: Snapshot) =>
-        setSent((previous) => [...previous, { id: previous.length, text: textOf(snapshot.document.content) }]);
+        setSent((previous) => [...previous, { id: previous.length, text: storedText(snapshot.document.content) }]);
 
     return (
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '1rem' }}>
@@ -355,7 +355,7 @@ const FormFieldExample = ({ definition, defaultValue }: EditorArgs) => {
 
                 setInvalid(false);
                 const value = await field.getSettledValue({ timeoutMs: 1000 });
-                setMessage(`Sent: ${textOf(value.content)}`);
+                setMessage(`Sent: ${storedText(value.content)}`);
             }}
         >
             <RichTextEditor

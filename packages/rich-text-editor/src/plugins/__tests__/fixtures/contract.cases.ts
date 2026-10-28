@@ -28,9 +28,9 @@ import {
     findInvalidPayload,
 } from '#/model';
 import { compiledModel, decodeToTree } from '#/model/internal';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { pluginIds, pluginsById } from '#/plugins/plugins';
-import { engineOf, viewsOf } from '#/react/compile/compileEditor';
+import { compiledOf, viewsOf } from '#/react/compile/compileEditor';
 import { defineEditor } from '#/react/compile/define';
 import { extensionsOf } from '#/react/compile/engine';
 import { readerContext } from '#/reader/helpers/context';
@@ -235,7 +235,7 @@ export const commandCases = (features: readonly Feature[], plugins?: readonly Ed
 
                 return Object.freeze({ feature, needs, commands: { ...commands, [id]: watched(spec) } });
             });
-            const engine = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, unitsOf(model, watching)));
+            const engine = compileDefinition(model, RUNTIME_PLUGINS, extensionsOf(model, pluginsFor(model, watching)));
             const command = engine.commands.get(id);
             if (command === undefined) {
                 throw new Error(`${id} is not installed.`);
@@ -513,7 +513,7 @@ export const nodeViewCases = (
 ): void => {
     const { it } = globalThis as unknown as { it: typeof runnerIt };
     const model = compileContentModel(features, { id: 'feature-contract', version: 1 });
-    const definition = defineEditor({ id: 'feature-contract', model, plugins: unitsOf(model, plugins) });
+    const definition = defineEditor({ id: 'feature-contract', model, plugins: pluginsFor(model, plugins) });
     const views = viewsOf(definition);
 
     /** Mounts every document with the bridge's views, then runs `check` on the views built, and unmounts. */
@@ -567,7 +567,7 @@ export const nodeViewCases = (
                 render(createElement(PortalHost, { store: portals, context, lang: 'en-US', onFlush: () => undefined })),
             );
             const runtime = createEditorRuntime({
-                definition: engineOf(definition),
+                definition: compiledOf(definition),
                 documentId: 'document-1',
                 tree,
                 capabilities: result.document.requiredCapabilities,
@@ -725,7 +725,7 @@ export const nodeViewCases = (
                     for (const drag of chrome.querySelectorAll('[data-rte-drag]')) {
                         const command = drag.getAttribute('data-rte-drag') ?? '';
                         const control = chrome.querySelector(`button[data-rte-command="${CSS.escape(command)}"]`);
-                        expect(engineOf(definition).commands.has(command)).toBe(true);
+                        expect(compiledOf(definition).commands.has(command)).toBe(true);
                         expect(control?.closest('[data-rte-node-chrome]')).toBeInstanceOf(HTMLElement);
                     }
                 }

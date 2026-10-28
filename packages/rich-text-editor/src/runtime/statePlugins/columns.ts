@@ -48,7 +48,7 @@ const breakDecorations = (doc: ProseMirrorNode, columns: ColumnState): Decoratio
 };
 
 /** The session's columns, which `read` gives, as the column break decorations draw them. */
-export const columnsPlugin = (read: () => ColumnState): Plugin => {
+export const columnBreaksPlugin = (read: () => ColumnState): Plugin => {
     let drawn: { doc: ProseMirrorNode; columns: ColumnState; set: DecorationSet } | undefined;
 
     return new Plugin({

@@ -21,7 +21,7 @@ import {
 import { enUS } from '#/locales/en-US';
 import { compileContentModel, type ContentNodeJSON, type Diagnostic, defineFeature, type JsonValue } from '#/model';
 import { fixtureMediaImage } from '#/plugins/__tests__/fixtures/media/feature';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { vocabularyLists, vocabularyMention } from '#/plugins/__tests__/fixtures/vocabulary';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
@@ -51,7 +51,7 @@ const model = compileContentModel(
     [core(), bold(), vocabularyLists(), vocabularyMention(), fixtureMediaImage(), badge()],
     { id: 'test.forms', version: 1 },
 );
-const definition = defineEditor({ id: 'test.forms', model, plugins: unitsOf(model) });
+const definition = defineEditor({ id: 'test.forms', model, plugins: pluginsFor(model) });
 const CAPABILITIES = ['core', 'fixture.lists', 'fixture.mention', 'fixture.media-image', 'acme.badge'];
 
 const text = (value: string) => ({ type: 'text', text: value });

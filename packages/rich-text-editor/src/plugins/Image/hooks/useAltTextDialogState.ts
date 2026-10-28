@@ -6,10 +6,10 @@ import { useEditorDialog } from '#/bridge/pluginApi/define';
 import { type EditorApi, useEditorApi } from '#/bridge/pluginApi/plugin';
 import { REPLACED_ASSET } from '#/model';
 
-export type Intent = 'meaningful' | 'decorative';
+export type AltTextIntent = 'meaningful' | 'decorative';
 
 type Stored = {
-    intent: Intent;
+    intent: AltTextIntent;
     text: string;
     /** The meaningful text of another image of the same asset, which the dialog offers and never fills in. */
     suggestion: string | undefined;
@@ -49,7 +49,7 @@ const storedOf = (api: EditorApi | undefined, nodeId: string): Stored => {
     }
 
     // A decorative image opens as stored; any other opens with Meaningful, the first option, selected.
-    let intent: Intent = 'meaningful';
+    let intent: AltTextIntent = 'meaningful';
     if (altIntent === 'decorative') {
         intent = 'decorative';
     }
@@ -62,7 +62,7 @@ export const useAltTextDialogState = (nodeId: string, opener: Element | null, on
     const api = useEditorApi();
     const [stored] = useState(() => storedOf(api, nodeId));
     const dialog = useEditorDialog(opener, onClose);
-    const [intent, setIntent] = useState<Intent>(stored.intent);
+    const [intent, setIntent] = useState<AltTextIntent>(stored.intent);
     const [text, setText] = useState(stored.text);
     const [invalid, setInvalid] = useState(false);
     const fieldRef = useRef<HTMLInputElement>(null);
@@ -97,7 +97,7 @@ export const useAltTextDialogState = (nodeId: string, opener: Element | null, on
         dialog.finish('opener');
     };
 
-    const chooseIntent = (next: Intent) => {
+    const chooseIntent = (next: AltTextIntent) => {
         setIntent(next);
         setInvalid(false);
     };

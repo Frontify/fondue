@@ -9,7 +9,7 @@ import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { deDE } from '#/locales/de-DE';
 import { type ContentNodeJSON } from '#/model';
 import { code, codeBlock, core, emoji } from '#/plugins';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { type EmojiEntry } from '#/plugins/Emoji/helpers/data';
 import { mountProfile } from '#/react/__tests__/fixtures/profiles';
 import { mountText, para, storedIn, text, textModel } from '#/react/__tests__/fixtures/text';
@@ -156,7 +156,7 @@ const mountGerman = () => {
     const rendered = render(
         <RichTextEditor
             aria-label="Notes"
-            definition={defineEditor({ id: 'test.emoji-de', model, plugins: unitsOf(model) })}
+            definition={defineEditor({ id: 'test.emoji-de', model, plugins: pluginsFor(model) })}
             locale={deDE}
             defaultValue={{
                 documentId: 'document-1',
@@ -561,7 +561,7 @@ describe('suggestion plugin', () => {
         const { handle, view } = mountText({ model, blocks: [para()] });
         typeText(handle, ':smi');
         await opened(view);
-        const { authoring } = defineEditor({ id: 'test.text', model, plugins: unitsOf(model) });
+        const { authoring } = defineEditor({ id: 'test.text', model, plugins: pluginsFor(model) });
         handle.updatePolicy({
             ...authoring,
             features: {

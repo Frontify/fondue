@@ -6,7 +6,7 @@ import { type RichTextProfile } from '#/index';
 import { enUS } from '#/locales/en-US';
 import { type ContentModel, createEmptyDocument, findContentIssues, type RichTextDocument } from '#/model';
 import { documentModel } from '#/plugins';
-import { engineOf } from '#/react/compile/compileEditor';
+import { compiledOf } from '#/react/compile/compileEditor';
 import { PROFILE_MODELS } from '#/react/examples/records';
 import { type CompiledEditorDefinition, type ReactPresentation } from '#/react/types';
 
@@ -24,7 +24,7 @@ const NAMED_FOR_A_CHECK = /ContentChecks\//;
 
 const modelOf = (args: StoryArgs): ContentModel | undefined => {
     if (args.definition !== undefined) {
-        return engineOf(args.definition).model;
+        return compiledOf(args.definition).model;
     }
 
     if (args.model !== undefined) {

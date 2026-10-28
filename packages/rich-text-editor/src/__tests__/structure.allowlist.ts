@@ -23,6 +23,149 @@ export const SPEC_REFERENCES: Record<string, number> = {};
 
 export const AS_UNKNOWN_AS_MAX = 10;
 
+// One exported name, declared again in exactly these modules, where the copies cannot be one binding.
+export const DUPLICATE_BINDINGS: { name: string; files: string[]; why: string }[] = [
+    {
+        name: 'afterFailure',
+        files: ['src/plugins/Mention/helpers/results.ts', 'src/runtime/capabilities/suggestions/references.ts'],
+        why: 'The plugin imports only the plugin API (`#/bridge/pluginApi/*` and `#/model`), so it keeps its own copy of the suggestion list helpers.',
+    },
+    {
+        name: 'afterPage',
+        files: ['src/plugins/Mention/helpers/results.ts', 'src/runtime/capabilities/suggestions/references.ts'],
+        why: 'The plugin imports only the plugin API (`#/bridge/pluginApi/*` and `#/model`), so it keeps its own copy of the suggestion list helpers.',
+    },
+    {
+        name: 'AltTextDialog',
+        files: ['src/plugins/Image/components/AltTextDialog.tsx', 'src/plugins/Image/helpers/lazyParts.ts'],
+        why: 'The loader is a dynamic import of the component, so the component binding and the loader binding cannot be one.',
+    },
+    {
+        name: 'createTransport',
+        files: ['src/persistence/transport.ts', 'src/runtime/capabilities/media/uploads/transport.ts'],
+        why: 'Each state machine module exports the same interface, and the machines do not import one another.',
+    },
+    {
+        name: 'Draft',
+        files: ['src/persistence/saveState.ts', 'src/runtime/async/asyncState.ts'],
+        why: 'Each state machine module exports the same interface, and the machines do not import one another.',
+    },
+    {
+        name: 'Effect',
+        files: ['src/persistence/saveState.ts', 'src/runtime/capabilities/media/uploads/machine.ts'],
+        why: 'Each state machine module exports the same interface, and the machines do not import one another.',
+    },
+    {
+        name: 'initial',
+        files: ['src/persistence/saveMachine.ts', 'src/runtime/async/asyncState.ts'],
+        why: 'Each state machine module exports the same interface, and the machines do not import one another.',
+    },
+    {
+        name: 'isEmptyDocument',
+        files: ['src/codecs/toHtml.ts', 'src/runtime/port.ts'],
+        why: 'The codec reads a stored tree and the port reads a session, and neither module imports the other.',
+    },
+    {
+        name: 'listOption',
+        files: ['src/plugins/Mention/helpers/results.ts', 'src/ui/LazySuggestionList/helpers/suggestionOptions.ts'],
+        why: 'The plugin imports only the plugin API (`#/bridge/pluginApi/*` and `#/model`), so it keeps its own copy of the suggestion list helpers.',
+    },
+    {
+        name: 'mediaOf',
+        files: ['src/runtime/port.ts', 'src/runtime/session/lifecycle/uploadsWiring.ts'],
+        why: 'The port takes an editor port and the wiring takes the runtime, so the port wraps the wiring instead of sharing its binding.',
+    },
+    {
+        name: 'next',
+        files: [
+            'src/persistence/saveMachine.ts',
+            'src/runtime/async/asyncMachine.ts',
+            'src/runtime/capabilities/media/uploads/machine.ts',
+        ],
+        why: 'Each state machine module exports the same interface, and the machines do not import one another.',
+    },
+    {
+        name: 'readerFeature',
+        files: [
+            'src/plugins/CheckList/reader.tsx',
+            'src/plugins/Image/reader.tsx',
+            'src/plugins/Link/reader.tsx',
+            'src/plugins/Mention/reader.tsx',
+        ],
+        why: 'Each reader module exports its own feature id, so the four constants cannot be one binding.',
+    },
+    {
+        name: 'ReaderOverrides',
+        files: ['src/bridge/pluginApi/definePlugin.ts', 'src/reader/helpers/plan.ts'],
+        why: 'The bridge cannot import the reader, so it declares the override map itself.',
+    },
+    {
+        name: 'referenceListStrings',
+        files: ['src/plugins/Mention/helpers/results.ts', 'src/ui/LazySuggestionList/helpers/referenceStrings.ts'],
+        why: 'The plugin imports only the plugin API (`#/bridge/pluginApi/*` and `#/model`), so it keeps its own copy of the suggestion list helpers.',
+    },
+    {
+        name: 'ReferenceListStrings',
+        files: ['src/plugins/Mention/helpers/results.ts', 'src/ui/LazySuggestionList/helpers/referenceStrings.ts'],
+        why: 'The plugin imports only the plugin API (`#/bridge/pluginApi/*` and `#/model`), so it keeps its own copy of the suggestion list helpers.',
+    },
+    {
+        name: 'resultsOf',
+        files: ['src/plugins/Mention/helpers/results.ts', 'src/runtime/capabilities/suggestions/references.ts'],
+        why: 'The plugin imports only the plugin API (`#/bridge/pluginApi/*` and `#/model`), so it keeps its own copy of the suggestion list helpers.',
+    },
+    {
+        name: 'returnFocus',
+        files: ['src/plugins/Link/helpers/linkBubbleModel.ts', 'src/ui/helpers/items.ts'],
+        why: 'A plugin helper imports only the plugin API, so it cannot call the toolbar focus helper.',
+    },
+    {
+        name: 'shipped',
+        files: [
+            'src/react/profiles/brandDocument.ts',
+            'src/react/profiles/comment.ts',
+            'src/react/profiles/document.ts',
+            'src/react/profiles/inline.ts',
+        ],
+        why: 'Each profile module exports its own compiled bundle, so the four functions cannot be one binding.',
+    },
+    {
+        name: 'spokenOption',
+        files: ['src/plugins/Mention/helpers/results.ts', 'src/ui/LazySuggestionList/helpers/suggestionOptions.ts'],
+        why: 'The plugin imports only the plugin API (`#/bridge/pluginApi/*` and `#/model`), so it keeps its own copy of the suggestion list helpers.',
+    },
+    {
+        name: 'statusOf',
+        files: ['src/persistence/saveState.ts', 'src/runtime/capabilities/media/uploads/machine.ts'],
+        why: 'Each state machine module exports the same interface, and the machines do not import one another.',
+    },
+    {
+        name: 'Step',
+        files: ['src/persistence/saveState.ts', 'src/runtime/capabilities/media/uploads/machine.ts'],
+        why: 'Each state machine module exports the same interface, and the machines do not import one another.',
+    },
+    {
+        name: 'Transport',
+        files: ['src/persistence/transport.ts', 'src/runtime/capabilities/media/uploads/transport.ts'],
+        why: 'Each state machine module exports the same interface, and the machines do not import one another.',
+    },
+    {
+        name: 'UploadControls',
+        files: ['src/plugins/Image/components/UploadControls.tsx', 'src/plugins/Image/helpers/lazyParts.ts'],
+        why: 'The loader is a dynamic import of the component, so the component binding and the loader binding cannot be one.',
+    },
+    {
+        name: 'UploadSlot',
+        files: ['src/plugins/Image/components/UploadSlot.tsx', 'src/plugins/Image/helpers/lazyParts.ts'],
+        why: 'The loader is a dynamic import of the component, so the component binding and the loader binding cannot be one.',
+    },
+    {
+        name: 'WidthDialog',
+        files: ['src/plugins/Image/components/WidthDialog.tsx', 'src/plugins/Image/helpers/lazyParts.ts'],
+        why: 'The loader is a dynamic import of the component, so the component binding and the loader binding cannot be one.',
+    },
+];
+
 // Where `readonly` stays on a property or index signature: each entry names a freeze site, or a type assertion, and
 // the types whose own members keep it. A `types` name is `file#Type` for its direct members, or `file#{ members }` for
 // an inline literal; a `deep` type also covers the members of literals nested in it, as its frozen copy is frozen all through.
@@ -120,7 +263,7 @@ export const READONLY_MEMBERS: ReadonlyMembers[] = [
     },
     {
         site: 'src/bridge/pluginApi/definePlugin.ts:54',
-        why: 'definePlugin and extendPlugin freeze the unit, and extendEditor freezes its editor part, so a write throws.',
+        why: 'definePlugin and extendPlugin freeze the plugin, and extendEditor freezes its editor part, so a write throws.',
         types: [
             'src/bridge/pluginApi/definePlugin.ts#RichTextPlugin',
             'src/bridge/pluginApi/definePlugin.ts#{ [OPTION_PARTS] }',

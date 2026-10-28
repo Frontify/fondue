@@ -21,19 +21,19 @@ import { defineReactPresentation } from '../compile/presentation';
 import { inlinePlugins } from './inline';
 import { NOT_CREATABLE, type ShippedProfile } from './parts';
 
-// Mod+Enter submits in a comment, so no unit binds it.
-const withoutModEnter = (unit: RichTextPlugin): RichTextPlugin => {
-    const { keys } = unit.editor;
+// Mod+Enter submits in a comment, so no plugin binds it.
+const withoutModEnter = (plugin: RichTextPlugin): RichTextPlugin => {
+    const { keys } = plugin.editor;
     if (keys?.['Mod-Enter'] === undefined) {
-        return unit;
+        return plugin;
     }
 
-    return extendPlugin(unit, {
+    return extendPlugin(plugin, {
         keys: Object.fromEntries(Object.entries(keys).filter(([key]) => key !== 'Mod-Enter')),
     });
 };
 
-/** The units of the Comment profile's features, which Document extends; Comment drops their Mod+Enter keys. */
+/** The plugins of the Comment profile's features, which Document extends; Comment drops their Mod+Enter keys. */
 export const commentPlugins: readonly RichTextPlugin[] = [
     corePlugin(),
     ...inlinePlugins.slice(1),

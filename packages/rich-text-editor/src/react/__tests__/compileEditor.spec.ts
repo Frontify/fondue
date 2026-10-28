@@ -18,9 +18,9 @@ import { type CommandsOfPlugins, type CompiledEditorDefinition } from '../types'
 
 const model = compileContentModel([core(), bold(), italic()], { id: 'fixture.cover', version: 1 });
 
-const failureOf = (units: readonly RichTextPlugin[]) => {
+const failureOf = (plugins: readonly RichTextPlugin[]) => {
     try {
-        defineEditor({ id: 'fixture.cover', model, plugins: units });
+        defineEditor({ id: 'fixture.cover', model, plugins });
     } catch (error) {
         if (error instanceof DefinitionError) {
             return { code: error.code, details: error.details };
@@ -32,25 +32,25 @@ const failureOf = (units: readonly RichTextPlugin[]) => {
     return undefined;
 };
 
-describe('defineEditor with units', () => {
-    it('installs the editor part of each unit and the reader overrides of the units that have them', () => {
+describe('defineEditor with plugins', () => {
+    it('installs the editor part of each plugin and the reader overrides of the plugins that have them', () => {
         const reader = { bold: () => null };
-        const units = [corePlugin(), definePlugin({ feature: bold, editor: boldEditor, reader })(), italicPlugin()];
+        const plugins = [corePlugin(), definePlugin({ feature: bold, editor: boldEditor, reader })(), italicPlugin()];
 
-        const definition = defineEditor({ id: 'fixture.cover', model, plugins: units });
+        const definition = defineEditor({ id: 'fixture.cover', model, plugins });
 
         expect(pluginsOf(definition).map(({ feature }) => feature)).toEqual(['core', 'marks.bold', 'marks.italic']);
         expect(readersOf(definition)).toEqual({ 'marks.bold': reader });
     });
 
-    it('throws definition.missing-plugin for a model feature that has no unit', () => {
+    it('throws definition.missing-plugin for a model feature that has no plugin', () => {
         expect(failureOf([corePlugin(), boldPlugin()])).toEqual({
             code: 'definition.missing-plugin',
             details: { feature: 'marks.italic', path: '/plugins' },
         });
     });
 
-    it('throws definition.orphan-behavior for a unit whose feature the model does not install', () => {
+    it('throws definition.orphan-behavior for a plugin whose feature the model does not install', () => {
         const small = compileContentModel([core()], { id: 'fixture.cover', version: 1 });
 
         expect(() =>
@@ -63,14 +63,14 @@ describe('defineEditor with units', () => {
         );
     });
 
-    it('throws definition.duplicate-id for a repeated unit', () => {
+    it('throws definition.duplicate-id for a repeated plugin', () => {
         expect(failureOf([corePlugin(), boldPlugin(), italicPlugin(), boldPlugin()])).toEqual({
             code: 'definition.duplicate-id',
             details: { feature: 'marks.bold', path: '/plugins/3' },
         });
     });
 
-    it('throws definition.version-mismatch, naming both versions, for a unit of another version than the model', () => {
+    it('throws definition.version-mismatch, naming both versions, for a plugin of another version than the model', () => {
         const next = definePlugin({
             feature: defineFeature({ id: 'marks.bold', version: 2, requires: [{ id: 'core', version: 1 }] }),
             editor: boldEditor,
@@ -91,7 +91,7 @@ describe('defineEditor types', () => {
         expect(alone).toThrow();
     });
 
-    it('types the commands from the units alone', () => {
+    it('types the commands from the plugins alone', () => {
         const plugins = [corePlugin(), boldPlugin()] as const;
         const definition = defineEditor({
             id: 'fixture.cover',

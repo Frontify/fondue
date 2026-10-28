@@ -13,7 +13,7 @@ import {
     RichTextEditor,
 } from '#/index';
 import { type ContentNodeJSON } from '#/model';
-import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor, type PluginCommands } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { link } from '#/plugins/Link/feature';
 import { liveRegionFaults } from '#/react/__tests__/fixtures/liveRegion';
 import { para, storedIn, text, textFeatures, textModel } from '#/react/__tests__/fixtures/text';
@@ -54,11 +54,11 @@ type Mount = {
 
 const mount = ({ blocks, options, styles = [], references }: Mount) => {
     const model = textModel([...textFeatures(), link(options)]);
-    const ref = createRef<EditorHandle<UnitCommands>>();
+    const ref = createRef<EditorHandle<PluginCommands>>();
     const rendered = render(
         <RichTextEditor
             aria-label="Notes"
-            definition={defineEditor({ id: 'test.links', model, plugins: unitsOf(model) })}
+            definition={defineEditor({ id: 'test.links', model, plugins: pluginsFor(model) })}
             presentation={defineReactPresentation({ styles: [...styles] })}
             defaultValue={{ documentId: 'document-1', revision: null, document: storedIn(model, blocks) }}
             {...(references === undefined ? {} : { services: { references } })}

@@ -58,7 +58,8 @@ const matches = (dismissal: Dismissal, held: HeldIssue) =>
     dismissal.ruleId === held.issue.ruleId && dismissal.from === held.from && dismissal.signature === held.signature;
 
 /** The content checks state, or `undefined` when the editor does not install them. */
-export const contentChecksOf = (state: EditorState): ContentChecksState | undefined => CONTENT_ISSUES.getState(state);
+export const contentChecksStateOf = (state: EditorState): ContentChecksState | undefined =>
+    CONTENT_ISSUES.getState(state);
 
 /** Whether the author dismissed `held` for this session, until what it names changes. */
 export const isDismissed = (state: ContentChecksState, held: HeldIssue): boolean =>
@@ -395,7 +396,7 @@ export type ContentChecks = {
 /** Runs the content checks outside the input path, on a timer or on request, and commits their results. */
 export const createContentChecks = (host: ContentChecksHost): ContentChecks => {
     let timer: ReturnType<typeof setTimeout> | undefined;
-    const installed = () => contentChecksOf(host.state()) !== undefined;
+    const installed = () => contentChecksStateOf(host.state()) !== undefined;
     const clear = () => {
         if (timer !== undefined) {
             clearTimeout(timer);

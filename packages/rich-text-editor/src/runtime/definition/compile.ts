@@ -8,7 +8,7 @@ import { compileCommands, extensionKeymap } from './commands';
 import { collectContributions, keyHandlersOf, withInputRules } from './contributions';
 import { compileInputRules } from './inputRules';
 import { NORMALIZERS } from './normalizers';
-import { keyPlugin, normalizerPlugin, originOf } from './pluginBuilders';
+import { keyPlugin, normalizerPlugin, pluginOriginOf } from './pluginBuilders';
 import { buildSchema } from './schema';
 import { type CompiledDefinition, type EngineImplementations, type EngineExtension } from './types';
 
@@ -57,7 +57,7 @@ export const compileDefinition = (
     };
 
     // Every plugin's appended transactions count against the append limit.
-    const built = plugins.map(({ id }) => countAppends(pluginOf(id), originOf(features, id)));
+    const built = plugins.map(({ id }) => countAppends(pluginOf(id), pluginOriginOf(features, id)));
 
     return { model, schema, plugins: built, commands, keymap };
 };

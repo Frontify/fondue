@@ -52,7 +52,7 @@ describe('definePlugin', () => {
         expect(mismatched).toThrow(expect.objectContaining({ code: 'definition.plugin-mismatch' }));
     });
 
-    it('freezes the unit and keeps it whole through a spread copy', () => {
+    it('freezes the plugin and keeps it whole through a spread copy', () => {
         const plugin = definePlugin({ feature: bold, editor: boldEditor })();
         const copy = { ...plugin };
 
@@ -84,21 +84,21 @@ describe('definePlugin', () => {
 describe('extendPlugin', () => {
     it('merges the given parts over the editor part and keeps the feature, the reader and the rest of the part', () => {
         const reader = { bold: () => null };
-        const unit = definePlugin({ feature: bold, editor: boldEditor, reader })();
+        const plugin = definePlugin({ feature: bold, editor: boldEditor, reader })();
         const keys = { 'Mod-Alt-b': 'mark.bold.toggle' } as const;
 
-        const extended = extendPlugin(unit, { keys });
+        const extended = extendPlugin(plugin, { keys });
 
         expect(extended.editor.keys).toBe(keys);
         expect(extended.editor.commands).toBe(boldEditor.commands);
         expect(extended.editor.toolbar).toBe(boldEditor.toolbar);
         expect(extended.editor.feature).toBe('marks.bold');
-        expect(extended.feature).toBe(unit.feature);
+        expect(extended.feature).toBe(plugin.feature);
         expect(extended.reader).toBe(reader);
-        expect(unit.editor.keys).toBe(boldEditor.keys);
+        expect(plugin.editor.keys).toBe(boldEditor.keys);
     });
 
-    it('freezes the unit and its editor part', () => {
+    it('freezes the plugin and its editor part', () => {
         const extended = extendPlugin(definePlugin({ feature: bold, editor: boldEditor })(), { keys: {} });
 
         expect(Object.isFrozen(extended)).toBe(true);
@@ -133,7 +133,7 @@ describe('modelOf', () => {
         expect(model.ref).toEqual(ref);
     });
 
-    it('throws what compileContentModel throws for units whose features do not fit', () => {
+    it('throws what compileContentModel throws for plugins whose features do not fit', () => {
         const plugins = [definePlugin({ feature: bold, editor: boldEditor })()];
 
         expect(() => modelOf(plugins, { id: 'fixture.model', version: 1 })).toThrow(DefinitionError);

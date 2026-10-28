@@ -8,7 +8,7 @@ import { RichTextReader } from '#/entries/reader';
 import { defineEditor, type EditorHandle, type ListLevels, RichTextEditor, type RichTextEditorProps } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 import { bold, core, inputRules } from '#/plugins';
-import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor, type PluginCommands } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { bulletList } from '#/plugins/BulletList/feature';
 import { checkList } from '#/plugins/CheckList/feature';
 import { listItem } from '#/plugins/ListItem/feature';
@@ -22,7 +22,7 @@ const model = compileContentModel(
         version: 1,
     },
 );
-const definition = defineEditor({ id: 'test.list-ct', model, plugins: unitsOf(model) });
+const definition = defineEditor({ id: 'test.list-ct', model, plugins: pluginsFor(model) });
 const presentation = defineReactPresentation({
     toolbar: [
         ['mark.bold.toggle'],
@@ -42,7 +42,7 @@ declare global {
     interface Window {
         /** The list probe's handle, the selection helper and each change. */
         listRte?: {
-            handle: EditorHandle<UnitCommands>;
+            handle: EditorHandle<PluginCommands>;
             setSelection: typeof setSelection;
             changes: ListChange[];
         };
@@ -98,7 +98,7 @@ export const ListProbe = ({
 
         return next;
     });
-    const ref = useRef<EditorHandle<UnitCommands>>(null);
+    const ref = useRef<EditorHandle<PluginCommands>>(null);
     const changesRef = useRef<ListChange[]>([]);
     const [shown, setShown] = useState(() => documentOf(blocks));
     useEffect(() => {

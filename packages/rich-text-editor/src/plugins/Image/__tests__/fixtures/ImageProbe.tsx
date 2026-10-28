@@ -8,7 +8,7 @@ import { RichTextReader } from '#/entries/reader';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextDocument } from '#/model';
 import { bold, code, core, italic, image, mention, strikethrough, underline } from '#/plugins';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { setSelection } from '#/testing';
 
 const model = compileContentModel(
@@ -18,7 +18,7 @@ const model = compileContentModel(
         version: 1,
     },
 );
-const definition = defineEditor({ id: 'test.images-ct', model, plugins: unitsOf(model) });
+const definition = defineEditor({ id: 'test.images-ct', model, plugins: pluginsFor(model) });
 /** Every asset at a same-origin URL, which the CT page CSP allows, answered through `page.route`. */
 const resolveAssetUrl = (assetId: string) => `${window.location.origin}/test-assets/${assetId}`;
 const presentation = defineReactPresentation({

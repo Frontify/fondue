@@ -9,7 +9,7 @@ import { compileContentModel, type ContentNodeJSON, defineFeature } from '#/mode
 import { bold, code, core, heading, italic, quote, strikethrough, subscript, superscript, underline } from '#/plugins';
 import { fixtureChrome } from '#/plugins/__tests__/fixtures/chrome/feature';
 import { fixtureChromeEditor } from '#/plugins/__tests__/fixtures/chrome/view';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { link } from '#/plugins/Link/feature';
 import { runtimeOf } from '#/runtime/runtime';
 import { setSelection } from '#/testing';
@@ -49,7 +49,7 @@ const model = compileContentModel(
 const definition = defineEditor({
     id: 'test.text-ct',
     model,
-    plugins: unitsOf(model, [fixtureChromeEditor, altGraphEditor]),
+    plugins: pluginsFor(model, [fixtureChromeEditor, altGraphEditor]),
 });
 const presentation = defineReactPresentation({
     toolbar: [

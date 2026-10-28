@@ -6,7 +6,7 @@ import { type OverlayProps, useEditorApi, useEditorOverlay } from '#/bridge/plug
 import { type CodecContext, type PresentationStyle } from '#/model';
 
 import {
-    capture,
+    captureLinkTarget,
     FIELD_PROBLEMS,
     type LinkInitial,
     linkPopoverStrings,
@@ -39,7 +39,7 @@ export const useLinkPopoverState = ({
     const linkStyles = linkStylesOf(presented);
     const strings = linkPopoverStrings(translate);
     const [open, setOpen] = useState(true);
-    const [target] = useState(() => capture(api, initial.link));
+    const [target] = useState(() => captureLinkTarget(api, initial.link));
     const [href, setHref] = useState(initial.href);
     const [text, setText] = useState(initial.text);
     const [newWindow, setNewWindow] = useState(initial.openInNewWindow);

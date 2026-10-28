@@ -11,7 +11,7 @@ import { declaredOverrides, type ReaderNodeProps, type ReaderRenderers } from '.
 type Overridden = {
     override: ComponentType<ReaderNodeProps> | undefined;
 };
-export type Plan = BasePlan<NodePlan & Overridden, MarkPlan & Overridden>;
+export type ReaderPlan = BasePlan<NodePlan & Overridden, MarkPlan & Overridden>;
 
 /** Reader overrides by feature ID, for the features whose declaration attaches none. */
 export type ReaderOverrides = Readonly<Record<string, ReaderRenderers>>;
@@ -31,10 +31,10 @@ const overrideOf =
         return { override: ownValue(renderers, name) };
     };
 
-const plans = new WeakMap<ReaderOverrides, WeakMap<ContentModel, Plan>>();
+const plans = new WeakMap<ReaderOverrides, WeakMap<ContentModel, ReaderPlan>>();
 
 /** The render plan of a compiled model with the overrides of `shipped`, built once per model and overrides. */
-export const planOf = (model: ContentModel, shipped: ReaderOverrides): Plan => {
+export const readerPlanOf = (model: ContentModel, shipped: ReaderOverrides): ReaderPlan => {
     let byModel = plans.get(shipped);
     if (byModel === undefined) {
         byModel = new WeakMap();

@@ -32,8 +32,8 @@ import { commandCases, nodeViewCases, normalizerCases } from '#/plugins/__tests_
 import { fixtureHeadingSet, fixtureMedia, fixtureMention, fixtureTable } from '#/plugins/__tests__/fixtures/features';
 import { highlightEditor } from '#/plugins/__tests__/fixtures/outsideEditor';
 import { badgeDocument, highlight, highlightDocument } from '#/plugins/__tests__/fixtures/outsideFeature';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { spotlight } from '#/plugins/__tests__/fixtures/spotlight/feature';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { vocabularyLists } from '#/plugins/__tests__/fixtures/vocabulary';
 import { core } from '#/plugins/Core/feature';
 import { image } from '#/plugins/Image/feature';
@@ -790,7 +790,7 @@ describe('the outside fixture feature', () => {
                 definition: defineEditor({
                     id: 'fixture.highlight',
                     model,
-                    plugins: unitsOf(model, [highlightEditor]),
+                    plugins: pluginsFor(model, [highlightEditor]),
                 }),
                 defaultValue: { documentId: 'document-1', revision: null, document: highlightDocument },
             }),
@@ -840,7 +840,7 @@ describe('the outside fixture feature', () => {
                 definition: defineEditor({
                     id: 'fixture.highlight',
                     model,
-                    plugins: unitsOf(model, [highlightEditor]),
+                    plugins: pluginsFor(model, [highlightEditor]),
                 }),
                 presentation: defineReactPresentation({ toolbar: [['fixture.highlight.toggle']] }),
                 defaultValue: { documentId: 'document-1', revision: null, document: highlightDocument },
@@ -894,7 +894,7 @@ describe('the outside fixture feature', () => {
                 definition: defineEditor({
                     id: 'fixture.highlight',
                     model,
-                    plugins: unitsOf(model, [highlightEditor]),
+                    plugins: pluginsFor(model, [highlightEditor]),
                 }),
                 defaultValue: { documentId: 'document-1', revision: null, document: highlightDocument },
                 onDocumentChange: (change: DocumentChange) => changes.push(change),

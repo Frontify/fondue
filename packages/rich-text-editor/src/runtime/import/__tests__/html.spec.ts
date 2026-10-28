@@ -10,8 +10,8 @@ import { describe, expect, it } from 'vitest';
 import { createCodecs } from '#/codecs';
 import { compileContentModel, defineFeature, type RichTextDocument } from '#/model';
 import { htmlFeatures, htmlModel } from '#/plugins/__tests__/fixtures/html';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { spotlight } from '#/plugins/__tests__/fixtures/spotlight/feature';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
 import { core } from '#/plugins/Core/feature';
 import { defineEditor } from '#/react/compile/define';
 
@@ -116,7 +116,7 @@ describe('fromHTML', () => {
                 creatableHeadingLevels: [2, 3, 4],
                 features: { 'fixture.html-link': { create: true, edit: true, remove: true, paste: false } },
             },
-            plugins: unitsOf(model),
+            plugins: pluginsFor(model),
         });
 
         const content = contentOf('<h1>Title</h1><h6>Small</h6><p><a href="https://x.io"><b>linked</b></a></p>', {

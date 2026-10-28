@@ -7,7 +7,7 @@ import { type PickedAsset } from '../media';
 import { type Checked, type UploadEvent } from './types';
 
 /** Where one upload slot stands, from its start in the document to its completion. */
-export type Phase = 'pending' | UploadStatus['state'] | 'done';
+export type UploadPhase = 'pending' | UploadStatus['state'] | 'done';
 
 /** One upload slot: what its start set, and what its upload has done since. */
 export type SlotState = {
@@ -20,7 +20,7 @@ export type SlotState = {
     height: number | null;
     /** Kept until the upload completes, which a retry sends again. */
     file: File | undefined;
-    phase: Phase;
+    phase: UploadPhase;
     progress: number | null;
     operation: AsyncOperation | undefined;
     /** The operation whose completion this slot shows, which the cache is read with. */
@@ -130,7 +130,7 @@ const stay = (state: SlotState, ...effects: (Effect | false | undefined)[]): Ste
     effects: effects.filter(Boolean) as Effect[],
 });
 
-const stopped = (state: SlotState, phase: Phase): SlotState => ({ ...state, phase, operation: undefined });
+const stopped = (state: SlotState, phase: UploadPhase): SlotState => ({ ...state, phase, operation: undefined });
 
 const halt = (state: SlotState): Step => stay(stopped(state, 'stopped'), { type: 'changed' });
 

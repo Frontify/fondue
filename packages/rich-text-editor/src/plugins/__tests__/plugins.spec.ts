@@ -28,16 +28,16 @@ const failureOf = (run: () => unknown) => {
 };
 
 describe('pluginsById', () => {
-    it('resolves shipped unit IDs from remote JSON with their default options', () => {
+    it('resolves shipped plugin IDs from remote JSON with their default options', () => {
         const ids = JSON.parse('["core","marks.bold"]') as string[];
-        const units = pluginsById(ids);
+        const plugins = pluginsById(ids);
 
-        expect(units.map(({ id }) => id)).toEqual(['core', 'marks.bold']);
-        expect(units.map(({ editor }) => editor.feature)).toEqual(['core', 'marks.bold']);
-        expect(units.map(({ feature }) => feature.id)).toEqual(['core', 'marks.bold']);
+        expect(plugins.map(({ id }) => id)).toEqual(['core', 'marks.bold']);
+        expect(plugins.map(({ editor }) => editor.feature)).toEqual(['core', 'marks.bold']);
+        expect(plugins.map(({ feature }) => feature.id)).toEqual(['core', 'marks.bold']);
     });
 
-    it('holds one unit for each shipped feature and each feature folder', () => {
+    it('holds one plugin for each shipped feature and each feature folder', () => {
         const folders = readdirSync(join(dirname(fileURLToPath(import.meta.url)), '..'), { withFileTypes: true })
             .filter((entry) => entry.isDirectory() && !['__tests__', 'profiles'].includes(entry.name))
             .map((entry) => entry.name);
@@ -46,7 +46,7 @@ describe('pluginsById', () => {
         expect(pluginIds).toHaveLength(folders.length);
     });
 
-    it('returns the units in the order of the IDs', () => {
+    it('returns the plugins in the order of the IDs', () => {
         const ids = ['marks.bold', 'core', 'marks.italic'];
 
         expect(pluginsById(ids).map(({ id }) => id)).toEqual(ids);
@@ -54,7 +54,7 @@ describe('pluginsById', () => {
     });
 
     it.each([
-        ['an unshipped unit', 'acme.pull-quote'],
+        ['an unshipped plugin', 'acme.pull-quote'],
         ['a prototype member', 'constructor'],
         ['a prototype key', '__proto__'],
     ])('reports %s as definition.unknown-feature', (_kind, id) => {
@@ -64,7 +64,7 @@ describe('pluginsById', () => {
         });
     });
 
-    it('accepts only unit IDs, never a function, an object or a regular expression', () => {
+    it('accepts only plugin IDs, never a function, an object or a regular expression', () => {
         for (const value of [() => 'core', { id: 'core' }, /core/]) {
             const run = () => pluginsById([value as unknown as string]);
             expect(failureOf(run)).toEqual({ code: 'definition.unknown-feature', details: { id: null, index: 0 } });

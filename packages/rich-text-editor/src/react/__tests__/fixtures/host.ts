@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Snapshot } from '#/persistence/types';
-import { textOf } from '#/react/examples/records';
+import { storedText } from '#/react/examples/records';
 
 /** What the host of a probe hears: each submitted snapshot's text, and each keydown with whether it arrived prevented. */
 export const heard = { submitted: [] as string[], keys: [] as (readonly [string, boolean])[] };
@@ -13,5 +13,5 @@ document.addEventListener('keydown', (event) => {
 
 /** Records the text of a submitted snapshot, one line per block. */
 export const recordSubmit = (snapshot: Snapshot) => {
-    heard.submitted.push(textOf(snapshot.document.content));
+    heard.submitted.push(storedText(snapshot.document.content));
 };

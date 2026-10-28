@@ -7,10 +7,10 @@ import { defineReactPresentation } from '#/entries/authoring';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, type RichTextLocale } from '#/model';
 import { core, emoji } from '#/plugins';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 
 const model = compileContentModel([core(), emoji()], { id: 'test.suggestions-ct', version: 1 });
-const definition = defineEditor({ id: 'test.suggestions-ct', model, plugins: unitsOf(model) });
+const definition = defineEditor({ id: 'test.suggestions-ct', model, plugins: pluginsFor(model) });
 const withToolbar = defineReactPresentation({ toolbar: [['emoji.picker.open']] });
 const withoutToolbar = defineReactPresentation({ toolbar: [] });
 

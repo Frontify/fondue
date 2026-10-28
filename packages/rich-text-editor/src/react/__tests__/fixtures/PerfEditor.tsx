@@ -6,13 +6,13 @@ import { type ProfilerOnRenderCallback, Profiler, useRef, useState } from 'react
 import { defineReactPresentation } from '#/entries/authoring';
 import { RichTextReader } from '#/entries/reader';
 import { defineEditor, type EditorHandle, RichTextEditor, type RichTextEditorProps } from '#/index';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 
 import { perfDocument, type PerfFixtureName, perfModel } from '../../../model/__tests__/fixtures/perf/documents';
 
 import pixel from './pixel.png?no-inline';
 
-export const perfDefinition = defineEditor({ id: 'test.perf', model: perfModel, plugins: unitsOf(perfModel) });
+export const perfDefinition = defineEditor({ id: 'test.perf', model: perfModel, plugins: pluginsFor(perfModel) });
 
 export const perfPresentation = defineReactPresentation({
     // The page's own origin, since `data:` URLs fail the href check and the test page's CSP allows only `self`.

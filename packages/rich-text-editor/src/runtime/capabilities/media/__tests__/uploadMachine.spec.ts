@@ -11,7 +11,7 @@ import {
     isRetryable,
     next,
     type NodeFacts,
-    type Phase,
+    type UploadPhase,
     type SlotEvent,
     type SlotState,
     statusOf,
@@ -23,7 +23,7 @@ const ASSET = { assetId: 'asset-1', mediaType: 'image/png', labelSnapshot: 'a.pn
 const BASE = fresh('slot', 'insert', { file: new File(['x'], 'a.png'), name: 'a.png', width: 10, height: 20 });
 
 /** One slot per phase, as the transport leaves it: a running upload holds its operation, the rest none. */
-const IN: Record<Phase, SlotState> = {
+const IN: Record<UploadPhase, SlotState> = {
     pending: BASE,
     queued: { ...BASE, phase: 'queued', operation: OP, operationId: 'op-1' },
     running: { ...BASE, phase: 'running', operation: OP, operationId: 'op-1' },
@@ -31,17 +31,17 @@ const IN: Record<Phase, SlotState> = {
     stopped: { ...BASE, phase: 'stopped', operationId: 'op-1' },
     done: { ...BASE, phase: 'done', file: undefined, operationId: 'op-1' },
 };
-const PHASES = Object.keys(IN) as Phase[];
+const PHASES = Object.keys(IN) as UploadPhase[];
 
-type Outcome = readonly [Phase, readonly Effect['type'][]];
+type Outcome = readonly [UploadPhase, readonly Effect['type'][]];
 type Row = {
     event: SlotEvent;
     setup?: Partial<SlotState>;
-    outcomes: Record<Phase, Outcome>;
+    outcomes: Record<UploadPhase, Outcome>;
 };
 
 /** Every phase stays as it is and the event gives the same effects. */
-const each = (effects: readonly Effect['type'][]): Record<Phase, Outcome> => ({
+const each = (effects: readonly Effect['type'][]): Record<UploadPhase, Outcome> => ({
     pending: ['pending', effects],
     queued: ['queued', effects],
     running: ['running', effects],
@@ -50,7 +50,7 @@ const each = (effects: readonly Effect['type'][]): Record<Phase, Outcome> => ({
     done: ['done', effects],
 });
 /** Every phase moves to `phase` and the event gives the same effects. */
-const into = (phase: Phase, effects: readonly Effect['type'][]): Record<Phase, Outcome> => ({
+const into = (phase: UploadPhase, effects: readonly Effect['type'][]): Record<UploadPhase, Outcome> => ({
     pending: [phase, effects],
     queued: [phase, effects],
     running: [phase, effects],
@@ -59,7 +59,7 @@ const into = (phase: Phase, effects: readonly Effect['type'][]): Record<Phase, O
     done: [phase, effects],
 });
 /** The slots that hold an operation (queued, running) get `held`; the others get `idle`. */
-const byOperation = (held: Outcome[1], idle: Outcome[1], phase?: Phase): Record<Phase, Outcome> => ({
+const byOperation = (held: Outcome[1], idle: Outcome[1], phase?: UploadPhase): Record<UploadPhase, Outcome> => ({
     ...each(idle),
     queued: [phase ?? 'queued', held],
     running: [phase ?? 'running', held],
@@ -205,7 +205,7 @@ const TABLE: Record<string, Row> = {
 };
 
 /** A completion of a slot that holds an operation writes the cache first. */
-function doneWithCache(): Partial<Record<Phase, Outcome>> {
+function doneWithCache(): Partial<Record<UploadPhase, Outcome>> {
     const effects: Outcome[1] = ['cache', 'announce', 'changed', 'reply'];
 
     return { queued: ['done', effects], running: ['done', effects] };
@@ -346,7 +346,7 @@ describe('upload machine', () => {
     });
 
     describe('what the chrome and the commands read', () => {
-        const FLAGS: Record<Phase, readonly [active: boolean, kept: boolean, retryable: boolean]> = {
+        const FLAGS: Record<UploadPhase, readonly [active: boolean, kept: boolean, retryable: boolean]> = {
             pending: [true, true, false],
             queued: [true, true, false],
             running: [true, true, false],

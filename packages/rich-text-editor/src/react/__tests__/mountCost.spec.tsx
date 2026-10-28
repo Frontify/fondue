@@ -7,7 +7,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel } from '#/model';
 import { featuresById } from '#/plugins';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { runtimeOf } from '#/runtime/runtime';
 
 import { PERF_FEATURES, perfDocument } from '../../model/__tests__/fixtures/perf/documents';
@@ -19,7 +19,7 @@ let decorated: Element | null = null;
 beforeEach(async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const model = compileContentModel(featuresById(PERF_FEATURES), { id: 'test.mount-cost', version: 1 });
-    const definition = defineEditor({ id: 'test.mount-cost', model, plugins: unitsOf(model) });
+    const definition = defineEditor({ id: 'test.mount-cost', model, plugins: pluginsFor(model) });
     const ref = createRef<EditorHandle>();
     const container = document.createElement('div');
     document.body.append(container);

@@ -14,7 +14,7 @@ import { compileContentModel, defineFeature, type Diagnostic } from '#/model';
 import { limitsOf } from '#/model/internal';
 import { type fixtureHeadingSetEditor } from '#/plugins/__tests__/fixtures/editors';
 import { fixtureHeadingSet } from '#/plugins/__tests__/fixtures/features';
-import { type UnitCommands, unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { type PluginCommands, pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
 import { extensionsOf } from '#/react/compile/engine';
@@ -205,7 +205,7 @@ describe('commands, events and the commit path', () => {
             const repair = countAppends(tableEditing(), { featureId: 'fixture.table', capability: 'table' });
             const runtime = createEditorRuntime({
                 definition: {
-                    ...compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel, unitsOf(boldModel))),
+                    ...compileDefinition(boldModel, RUNTIME_PLUGINS, extensionsOf(boldModel, pluginsFor(boldModel))),
                     schema,
                     plugins: [repair, recorder],
                 },
@@ -677,7 +677,9 @@ describe('command payloads', () => {
 
     it('rejects a wrong payload before the command runs, for a typed and an untyped command', async () => {
         const { handle, view } = start(stored(para(words('ab'))), { model, parts });
-        const typed = handle as unknown as EditorHandle<UnitCommands & CommandsOfPart<typeof fixtureHeadingSetEditor>>;
+        const typed = handle as unknown as EditorHandle<
+            PluginCommands & CommandsOfPart<typeof fixtureHeadingSetEditor>
+        >;
         setSelection(handle, { text: 'ab', from: 1, to: 1 });
         const before = view.state;
         const sequence = handle.getSummary().commitSequence;

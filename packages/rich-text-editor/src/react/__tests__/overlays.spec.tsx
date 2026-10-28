@@ -20,7 +20,7 @@ import {
     FixtureSuggestions,
     LinkForm,
 } from '#/plugins/__tests__/fixtures/overlays/Overlays';
-import { unitsOf, type UnitCommands } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor, type PluginCommands } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
 import { link } from '#/plugins/Link/feature';
@@ -38,7 +38,7 @@ const model = compileContentModel(
     [core(), bold(), fixtureItalic(), link(), fixtureToolbar(), fixtureCodeBlock(), fixtureMediaImage()],
     { id: 'test.overlays', version: 1 },
 );
-const definition = defineEditor({ id: 'test.overlays', model, plugins: unitsOf(model) });
+const definition = defineEditor({ id: 'test.overlays', model, plugins: pluginsFor(model) });
 const presentation = defineReactPresentation({ toolbar: TOOLBAR });
 const text = (value: string) => ({ type: 'text', text: value, marks: [] });
 const para = (value: string) => ({ type: 'paragraph', attrs: { lang: null }, content: [text(value)] });
@@ -796,7 +796,7 @@ describe('overlay focus and loading', () => {
                 definition={defineEditor({
                     id: 'test.overlays',
                     model: lazyModel,
-                    plugins: unitsOf(lazyModel, [lazyChrome]),
+                    plugins: pluginsFor(lazyModel, [lazyChrome]),
                 })}
                 defaultValue={loaded(para('one'), image)}
                 locale={fixtureLocale}
@@ -841,7 +841,7 @@ describe('overlay focus and loading', () => {
         expect(bubble()).toBeNull();
 
         act(() => {
-            (handle() as unknown as EditorHandle<UnitCommands>).execute('mark.bold.toggle');
+            (handle() as unknown as EditorHandle<PluginCommands>).execute('mark.bold.toggle');
         });
 
         expect(bubble()).toBeNull();

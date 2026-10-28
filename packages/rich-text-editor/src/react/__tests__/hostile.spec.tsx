@@ -21,7 +21,7 @@ import {
 } from '#/model';
 import { bold, code, core, featuresById, heading, italic, link, image, mention, quote } from '#/plugins';
 import { doc, envelope, paragraph, text } from '#/plugins/__tests__/fixtures/documents';
-import { unitsOf } from '#/plugins/__tests__/fixtures/units';
+import { pluginsFor } from '#/plugins/__tests__/fixtures/pluginsFor';
 import { bulletList } from '#/plugins/BulletList/feature';
 import { listItem } from '#/plugins/ListItem/feature';
 import { strikethrough } from '#/plugins/Strikethrough/feature';
@@ -157,7 +157,7 @@ const mount = async (fixture: Fixture, document: unknown) => {
         id: 'test.hostile',
         model,
         limits: fixture.limits ?? {},
-        plugins: unitsOf(model),
+        plugins: pluginsFor(model),
     });
     const published: Published = { diagnostics: [], metrics: [], statuses: [] };
     let current: EditorHandle<object> | null = null;
@@ -318,7 +318,9 @@ const runRemoteConfiguration = async (fixture: Fixture): Promise<Outcome> => {
     const before = heldBy(mounted);
     const policy = argument as AuthoringPolicy;
     const throws = throwsOf(() => mounted.handle.updatePolicy(policy));
-    expect(throwsOf(() => defineEditor({ id: 'test.hostile', model, policy, plugins: unitsOf(model) }))).toBe(throws);
+    expect(throwsOf(() => defineEditor({ id: 'test.hostile', model, policy, plugins: pluginsFor(model) }))).toBe(
+        throws,
+    );
     const states = { before, after: heldBy(mounted) };
     mounted.unmount();
 

@@ -6,7 +6,7 @@ import { type UploadStatus } from '../../../types';
 
 import { liveUploadCaches, UploadCache } from './cache';
 import { createGestures } from './gestures';
-import { createHistory } from './history';
+import { createSlotHistory } from './history';
 import { isActive, isKept, isRetryable, type SlotState, statusOf } from './machine';
 import { createTransport } from './transport';
 import { type UploadHost } from './types';
@@ -23,7 +23,7 @@ export const createUploads = (host: UploadHost) => {
     const transport = createTransport(host, cache);
     const { cells } = transport.link;
     const { admits, begin, retry } = createGestures(transport);
-    const { committed, flush, reset } = createHistory(transport);
+    const { committed, flush, reset } = createSlotHistory(transport);
 
     const dispose = (left: Node) => {
         reset(left);

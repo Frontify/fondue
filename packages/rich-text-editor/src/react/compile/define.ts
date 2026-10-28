@@ -10,7 +10,7 @@ import { compileEditor } from './compileEditor';
 export { defineReactPresentation } from './presentation';
 
 /**
- * Compiles an editor definition once: the model's engine, the authoring policy and the limits. The units must cover
+ * Compiles an editor definition once: the model's engine, the authoring policy and the limits. The plugins must cover
  * the model's features exactly. A host renders every editor of this definition with it, and remote policy values are
  * checked like option values.
  */

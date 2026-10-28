@@ -6,7 +6,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Feature authoring
 
-A feature has up to three parts. The vocabulary part says what a feature stores and how that content becomes HTML, Markdown and text. The editor part says what the editor does with it: commands, keys, input rules, toolbar entries, overlays, panels, decorations, suggestion lists, node views and file drops. The reader part renders a node or mark with your own component. A plugin is the whole unit: the feature, its editor part and its reader part, which a host lists once.
+A feature has up to three parts. The vocabulary part says what a feature stores and how that content becomes HTML, Markdown and text. The editor part says what the editor does with it: commands, keys, input rules, toolbar entries, overlays, panels, decorations, suggestion lists, node views and file drops. The reader part renders a node or mark with your own component. A plugin is the whole plugin: the feature, its editor part and its reader part, which a host lists once.
 
 The reader, the codecs and a server load only the vocabulary part. They never load editor code. Keep a feature's vocabulary in its own module, and import editor code only in the module that calls `defineEditorPart`.
 
