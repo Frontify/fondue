@@ -6,57 +6,57 @@ import { type AsyncEvent, type AsyncMachine, type AsyncStep, type Draft } from '
 export { initial, type AsyncEffect, type AsyncEvent, type AsyncEventInput, type AsyncFacts } from './asyncState';
 export type { AsyncMachine, AsyncStep } from './asyncState';
 
-const forget = (d: Draft, operation: AsyncOperation) => {
-    d.m.operations.delete(operation.id);
-    d.fx.push({ type: 'unregister', operation });
+const forget = (draft: Draft, operation: AsyncOperation) => {
+    draft.machine.operations.delete(operation.id);
+    draft.effects.push({ type: 'unregister', operation });
 };
 
 /** Unregisters `operation`, releases the target it captured, and leaves its pool, which then starts the next waiting one. */
-const end = (d: Draft, operation: AsyncOperation) => {
-    forget(d, operation);
-    if (d.m.captured.delete(operation) && operation.target !== null) {
-        d.fx.push({ type: 'release', target: operation.target });
+const end = (draft: Draft, operation: AsyncOperation) => {
+    forget(draft, operation);
+    if (draft.machine.captured.delete(operation) && operation.target !== null) {
+        draft.effects.push({ type: 'release', target: operation.target });
     }
 
-    const pool = d.m.pools.get(operation);
+    const pool = draft.machine.pools.get(operation);
     if (pool === undefined) {
         return;
     }
 
-    d.m.pools.delete(operation);
-    const queued = d.m.waiting.get(pool.name) ?? [];
+    draft.machine.pools.delete(operation);
+    const queued = draft.machine.waiting.get(pool.name) ?? [];
     const at = queued.findIndex((entry) => entry.operation === operation);
     if (at >= 0) {
         queued.splice(at, 1);
     }
 
-    if (d.m.running.get(pool.name)?.delete(operation) === true) {
-        d.fx.push({ type: 'pump', name: pool.name });
+    if (draft.machine.running.get(pool.name)?.delete(operation) === true) {
+        draft.effects.push({ type: 'pump', name: pool.name });
     }
 };
 
-const discard = (d: Draft, reason: string) => {
-    d.fx.push({ type: 'discard', reason });
+const discard = (draft: Draft, reason: string) => {
+    draft.effects.push({ type: 'discard', reason });
 };
 
-const abortWhere = (d: Draft, aborts: (operation: AsyncOperation) => boolean) => {
-    for (const operation of [...d.m.operations.values()]) {
+const abortWhere = (draft: Draft, aborts: (operation: AsyncOperation) => boolean) => {
+    for (const operation of [...draft.machine.operations.values()]) {
         if (aborts(operation)) {
-            end(d, operation);
-            d.fx.push({ type: 'abort', operation });
+            end(draft, operation);
+            draft.effects.push({ type: 'abort', operation });
         }
     }
 };
 
 /** Starts one waiting operation of pool `name` if it has room, then asks for the next. */
-const pump = (d: Draft, name: string) => {
-    if (d.facts.aborting || d.facts.disposed) {
+const pump = (draft: Draft, name: string) => {
+    if (draft.facts.aborting || draft.facts.disposed) {
         return;
     }
 
-    const queued = d.m.waiting.get(name) ?? [];
-    const busy = d.m.running.get(name) ?? new Set<AsyncOperation>();
-    d.m.running.set(name, busy);
+    const queued = draft.machine.waiting.get(name) ?? [];
+    const busy = draft.machine.running.get(name) ?? new Set<AsyncOperation>();
+    draft.machine.running.set(name, busy);
     const entry = queued[0];
     if (entry === undefined) {
         return;
@@ -74,13 +74,13 @@ const pump = (d: Draft, name: string) => {
 
     queued.shift();
     busy.add(entry.operation);
-    d.fx.push({ type: 'call', operation: entry.operation, request: entry.request });
-    d.fx.push({ type: 'pump', name });
+    draft.effects.push({ type: 'call', operation: entry.operation, request: entry.request });
+    draft.effects.push({ type: 'pump', name });
 };
 
 /** Decides what a result does: delivered now, held while input is composing, or discarded as stale, superseded or not ready. */
-const arrive = (d: Draft, operation: AsyncOperation, result: unknown) => {
-    const { facts, m } = d;
+const arrive = (draft: Draft, operation: AsyncOperation, result: unknown) => {
+    const { facts, machine } = draft;
     if (facts.disposed) {
         return;
     }
@@ -90,135 +90,135 @@ const arrive = (d: Draft, operation: AsyncOperation, result: unknown) => {
         operation.session.sessionId !== facts.session.sessionId ||
         operation.session.generation !== facts.session.generation
     ) {
-        end(d, operation);
-        discard(d, 'wrong-session');
+        end(draft, operation);
+        discard(draft, 'wrong-session');
 
         return;
     }
 
     // A newer request on its key aborts and unregisters an older one, whose result is then ignored.
-    if (m.operations.get(operation.id) !== operation) {
-        discard(d, 'superseded');
+    if (machine.operations.get(operation.id) !== operation) {
+        discard(draft, 'superseded');
 
         return;
     }
 
     if (facts.faulted) {
-        end(d, operation);
-        d.fx.push({ type: 'abort', operation });
-        discard(d, 'not-ready');
+        end(draft, operation);
+        draft.effects.push({ type: 'abort', operation });
+        discard(draft, 'not-ready');
 
         return;
     }
 
     if (facts.holding) {
-        m.held.push({ operation, result });
+        machine.held.push({ operation, result });
 
         return;
     }
 
-    forget(d, operation);
-    d.fx.push({ type: 'deliver', operation, result });
+    forget(draft, operation);
+    draft.effects.push({ type: 'deliver', operation, result });
 };
 
-type Of<T extends AsyncEvent['type']> = Extract<AsyncEvent, { type: T }>;
+type EventOf<EventName extends AsyncEvent['type']> = Extract<AsyncEvent, { type: EventName }>;
 
 /** The transition table: what each event does to a machine in any state. */
-const TRANSITIONS: { readonly [T in AsyncEvent['type']]: (d: Draft, event: Of<T>) => void } = {
-    start: (d, { request, reply }) => {
+const TRANSITIONS: { readonly [EventName in AsyncEvent['type']]: (draft: Draft, event: EventOf<EventName>) => void } = {
+    start: (draft, { request, reply }) => {
         const { deliver } = request;
         let target = null;
         let capture = false;
-        if (!d.facts.disposed) {
+        if (!draft.facts.disposed) {
             target = request.target ?? null;
             capture = target === null && deliver === undefined;
         }
 
-        d.fx.push({
+        draft.effects.push({
             type: 'build',
             request,
             reply,
             target,
             capture,
-            sequence: (d.m.requests.get(request.key) ?? 0) + 1,
+            sequence: (draft.machine.requests.get(request.key) ?? 0) + 1,
         });
     },
-    built: (d, { operation, request, owned }) => {
+    built: (draft, { operation, request, owned }) => {
         // A session that is not ready starts nothing: the operation is aborted and unregistered.
-        if (d.facts.disposed || (operation.target === null && operation.deliver === undefined)) {
-            d.fx.push({ type: 'abort', operation });
+        if (draft.facts.disposed || (operation.target === null && operation.deliver === undefined)) {
+            draft.effects.push({ type: 'abort', operation });
 
             return;
         }
 
-        d.m.requests.set(operation.key, operation.request);
-        d.fx.push({ type: 'supersede', operation, request, owned });
+        draft.machine.requests.set(operation.key, operation.request);
+        draft.effects.push({ type: 'supersede', operation, request, owned });
     },
-    admit: (d, { operation, request, owned }) => {
+    admit: (draft, { operation, request, owned }) => {
         if (owned) {
-            d.m.captured.add(operation);
+            draft.machine.captured.add(operation);
         }
 
-        d.m.operations.set(operation.id, operation);
-        d.fx.push({ type: 'register', operation });
+        draft.machine.operations.set(operation.id, operation);
+        draft.effects.push({ type: 'register', operation });
         const { pool } = request;
         if (pool === undefined) {
-            d.fx.push({ type: 'call', operation, request });
+            draft.effects.push({ type: 'call', operation, request });
 
             return;
         }
 
-        d.m.pools.set(operation, pool);
-        const queued = d.m.waiting.get(pool.name) ?? [];
+        draft.machine.pools.set(operation, pool);
+        const queued = draft.machine.waiting.get(pool.name) ?? [];
         queued.push({ operation, request });
-        d.m.waiting.set(pool.name, queued);
-        d.fx.push({ type: 'pump', name: pool.name });
+        draft.machine.waiting.set(pool.name, queued);
+        draft.effects.push({ type: 'pump', name: pool.name });
     },
-    abortWhere: (d, { aborts }) => {
-        abortWhere(d, aborts);
+    abortWhere: (draft, { aborts }) => {
+        abortWhere(draft, aborts);
     },
-    dispose: (d) => {
-        d.m.held.length = 0;
-        abortWhere(d, () => true);
+    dispose: (draft) => {
+        draft.machine.held.length = 0;
+        abortWhere(draft, () => true);
     },
-    resume: (d) => {
-        for (const name of d.m.waiting.keys()) {
-            d.fx.push({ type: 'pump', name });
+    resume: (draft) => {
+        for (const name of draft.machine.waiting.keys()) {
+            draft.effects.push({ type: 'pump', name });
         }
     },
-    pump: (d, { name }) => {
-        pump(d, name);
+    pump: (draft, { name }) => {
+        pump(draft, name);
     },
-    arrive: (d, { operation, result }) => {
-        arrive(d, operation, result);
+    arrive: (draft, { operation, result }) => {
+        arrive(draft, operation, result);
     },
-    delivered: (d, { operation, code }) => {
+    delivered: (draft, { operation, code }) => {
         // The captured target stays until the result has applied through it.
-        end(d, operation);
+        end(draft, operation);
         if (code !== undefined) {
-            discard(d, code);
+            discard(draft, code);
         }
     },
-    rejected: (d, { operation, request, error, aborted }) => {
-        const live = d.m.operations.get(operation.id) === operation && !aborted;
-        end(d, operation);
+    rejected: (draft, { operation, request, error, aborted }) => {
+        const live = draft.machine.operations.get(operation.id) === operation && !aborted;
+        end(draft, operation);
         if (live) {
-            d.fx.push({ type: 'fail', request, error });
+            draft.effects.push({ type: 'fail', request, error });
         }
     },
-    settle: (d) => {
-        for (const { operation, result } of d.m.held.splice(0)) {
-            d.fx.push({ type: 'replay', operation, result });
+    settle: (draft) => {
+        for (const { operation, result } of draft.machine.held.splice(0)) {
+            draft.effects.push({ type: 'replay', operation, result });
         }
     },
 };
 
-const apply = <T extends AsyncEvent['type']>(d: Draft, event: Of<T>) => {
-    TRANSITIONS[event.type](d, event);
+const apply = <EventName extends AsyncEvent['type']>(draft: Draft, event: EventOf<EventName>) => {
+    TRANSITIONS[event.type](draft, event);
 };
 
 const thaw = (state: AsyncMachine, event: AsyncEvent): Draft => ({
-    m: {
+    machine: {
         operations: new Map(state.operations),
         requests: new Map(state.requests),
         held: [...state.held],
@@ -227,7 +227,7 @@ const thaw = (state: AsyncMachine, event: AsyncEvent): Draft => ({
         waiting: new Map([...state.waiting].map(([name, queued]) => [name, [...queued]])),
         pools: new Map(state.pools),
     },
-    fx: [],
+    effects: [],
     facts: event.facts,
 });
 
@@ -237,8 +237,8 @@ const thaw = (state: AsyncMachine, event: AsyncEvent): Draft => ({
  * `facts` and feeds every result back as an event.
  */
 export const next = (state: AsyncMachine, event: AsyncEvent): AsyncStep => {
-    const d = thaw(state, event);
-    apply(d, event);
+    const draft = thaw(state, event);
+    apply(draft, event);
 
-    return { state: d.m, effects: d.fx };
+    return { state: draft.machine, effects: draft.effects };
 };

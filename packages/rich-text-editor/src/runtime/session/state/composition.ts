@@ -11,12 +11,12 @@ export type Composition = {
     resolve(outcome: InputOutcome): void;
 } & InputSettling;
 
-export const createComposition = (a: { composing: () => boolean; onSettled: () => void }): Composition => {
+export const createComposition = (args: { composing: () => boolean; onSettled: () => void }): Composition => {
     // What waits for input to settle outside the queue, such as a form's settled value.
     const waiters = new Set<(outcome: InputOutcome) => void>();
 
     return {
-        ...createInputSettling(a.composing, a.onSettled),
+        ...createInputSettling(args.composing, args.onSettled),
         wait: (settled, timeoutMs) => {
             // Whichever comes first, the settle, the timeout or `dispose`, answers; the others find nothing.
             const waiter = (outcome: InputOutcome) => {

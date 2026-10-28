@@ -16,7 +16,7 @@ import { type Saving } from './saving';
 import { type TargetsService } from './targets';
 
 // The handle is built after this service, so it is read lazily.
-export const createDispose = (a: {
+export const createDispose = (args: {
     lifecycle: Pick<Lifecycle, 'is' | 'to' | 'isDisposed'>;
     saving: Pick<Saving, 'dispose'>;
     composition: Pick<Composition, 'cancel' | 'resolve'>;
@@ -32,8 +32,8 @@ export const createDispose = (a: {
     resources: { targets: number; installedFeatures: Map<object, unknown> };
     handle: () => object;
 }): (() => void) => {
-    const { lifecycle, saving, composition, checks, targets, uploads, queue, commit, store, view, events } = a;
-    const { identity, resources, handle } = a;
+    const { lifecycle, saving, composition, checks, targets, uploads, queue, commit, store, view, events } = args;
+    const { identity, resources, handle } = args;
 
     return () => {
         if (lifecycle.is('disposed')) {

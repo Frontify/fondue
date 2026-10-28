@@ -28,11 +28,11 @@ export type Faults = {
     /** Whether a view fault kept a candidate document. */
     hasRecovery(): boolean;
     /** Runs `work` while a view fault stores no recovery, as the next document of a replacement holds none of this session's work. */
-    withoutRecovery<T>(work: () => T): T;
+    withoutRecovery<Result>(work: () => Result): Result;
 };
 
 // The queue and the targets are built after the view that faults, so they are read lazily.
-export const createFaults = (a: {
+export const createFaults = (args: {
     lifecycle: Pick<Lifecycle, 'is' | 'to' | 'isDisposed' | 'ended'>;
     identity: Pick<Identity, 'session' | 'sequence'>;
     encode: Encoder['encode'];
@@ -45,7 +45,7 @@ export const createFaults = (a: {
     report: (diagnostic: Diagnostic) => void;
     recovery: () => RecoveryService | undefined;
 }): Faults => {
-    const { lifecycle, identity, encode, saving, composition, shown, view, queue, targets, report, recovery } = a;
+    const { lifecycle, identity, encode, saving, composition, shown, view, queue, targets, report, recovery } = args;
     // The state the view threw on, which `candidate` offers until `dispose`.
     // ProseMirror runs that throwing update again on `setProps` and `destroy`.
     let recovered: EditorState | undefined;

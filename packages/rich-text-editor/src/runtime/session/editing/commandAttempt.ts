@@ -206,8 +206,8 @@ const attemptCommand = (
 };
 
 /** The attempt a session's commands share, with each feature's URL policy already read. */
-export const createAttempt = (a: AttemptArgs, session: object) => {
-    const context: AttemptContext = { ...a, session, hrefPolicies: hrefPoliciesOf(a.definition) };
+export const createAttempt = (args: AttemptArgs, session: object) => {
+    const context: AttemptContext = { ...args, session, hrefPolicies: hrefPoliciesOf(args.definition) };
 
     return (
         command: EngineCommand | undefined,

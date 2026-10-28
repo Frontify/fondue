@@ -22,7 +22,7 @@ export type Focus = {
     refocus(focused: boolean): void;
 };
 
-export const createFocus = (a: {
+export const createFocus = (args: {
     lifecycle: Pick<Lifecycle, 'is'>;
     view: Pick<ViewService, 'current'>;
     store: Store;
@@ -30,7 +30,7 @@ export const createFocus = (a: {
     shown: Pick<Shown, 'mode'>;
     mode: Pick<ModeService, 'disabled'>;
 }): Focus => {
-    const { lifecycle, view: views, store, commit, shown, mode } = a;
+    const { lifecycle, view: views, store, commit, shown, mode } = args;
     const focus = (where: 'current' | 'start' | 'end' = 'current') => {
         if (!lifecycle.is('ready') || views.current() === undefined) {
             return;

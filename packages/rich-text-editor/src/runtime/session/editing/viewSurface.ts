@@ -46,7 +46,7 @@ type SurfaceContext = ViewArgs & {
     readyFrame: number | undefined;
     nodeViews: Readonly<Record<string, NodeViewConstructor>>;
     markViews: Readonly<Record<string, MarkViewConstructor>>;
-    call: <T>(work: () => T) => { threw: boolean; value: T | undefined };
+    call: <Result>(work: () => Result) => { threw: boolean; value: Result | undefined };
     caught: () => boolean;
     attributes: (current: EditorState) => Record<string, string>;
 };
@@ -155,13 +155,13 @@ const faultSurface = (context: SurfaceContext) => {
 
 /** The view, its registries and the frame that marks the session ready. */
 export const createSurfaceHost = (
-    a: ViewArgs,
+    args: ViewArgs,
     attributes: (current: EditorState) => Record<string, string>,
-    call: <T>(work: () => T) => { threw: boolean; value: T | undefined },
+    call: <Result>(work: () => Result) => { threw: boolean; value: Result | undefined },
     caught: () => boolean,
 ) => {
     const context: SurfaceContext = {
-        ...a,
+        ...args,
         view: undefined,
         built: undefined,
         readyFrame: undefined,

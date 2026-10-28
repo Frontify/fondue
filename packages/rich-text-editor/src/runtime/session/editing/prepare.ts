@@ -17,6 +17,7 @@ import { type ExceededLimit, storedNodeCount } from '../../guards/limits';
 import { isHistoryTransaction } from '../../history';
 import { firedRule, withoutRules, withRuleSetting } from '../../inputRules/inputRules';
 import { nameOf } from '../../reporting/events';
+import { type AuthoringPolicy } from '../../types';
 import { type PolicyService } from '../state/policy';
 import { type Shown } from '../state/shown';
 import { type Store } from '../state/store';
@@ -36,6 +37,17 @@ export const DUPLICATE_ENGINE = diagnostic(
 );
 
 const unique = (values: readonly string[]) => [...new Set(values)];
+
+const featureIdsWithoutCreate = (features: AuthoringPolicy['features']): string[] => {
+    const refused: string[] = [];
+    for (const [id, rules] of Object.entries(features)) {
+        if (!rules.create) {
+            refused.push(id);
+        }
+    }
+
+    return refused;
+};
 
 /** A plugin-error diagnostic with the failing feature and the error's name, never its message. */
 export const pluginError = (error: unknown, featureId: string | undefined) => {
@@ -79,8 +91,8 @@ type PrepareArgs = {
 };
 
 /** The batch half: whether a root is provisional, its preparation and its input rule marks. */
-const createBatches = (a: PrepareArgs) => {
-    const { store, composition, shown, policy, history, limits } = a;
+const createBatches = (args: PrepareArgs) => {
+    const { store, composition, shown, policy, history, limits } = args;
     const isProvisional = (root: Transaction) =>
         composition.active() && (shown.provisional() !== undefined || root.getMeta(COMPOSITION_META) !== undefined);
 
@@ -156,7 +168,7 @@ const createBatches = (a: PrepareArgs) => {
     };
 
     const markRules = (root: Transaction) => {
-        const setting = a.inputRules();
+        const setting = args.inputRules();
         if (setting === false) {
             withoutRules(root);
 
@@ -168,18 +180,15 @@ const createBatches = (a: PrepareArgs) => {
             exclude = setting.exclude;
         }
 
-        const refused = Object.entries(policy.current().features)
-            .filter(([, rules]) => !rules.create)
-            .map(([id]) => id);
-        withRuleSetting(root, { exclude, refused });
+        withRuleSetting(root, { exclude, refused: featureIdsWithoutCreate(policy.current().features) });
     };
 
     return [isProvisional, prepare, markRules] as const;
 };
 
-export const createPrepare = (a: PrepareArgs): Prepare => {
-    const { store, limits } = a;
-    const [isProvisional, prepare, markRules] = createBatches(a);
+export const createPrepare = (args: PrepareArgs): Prepare => {
+    const { store, limits } = args;
+    const [isProvisional, prepare, markRules] = createBatches(args);
     // IDs a query drew, which the next install hands out first, so `execute` installs what `query` judged.
     const recorded: string[] = [];
     // The batch the last limit check prepared, from the state it read and with the recorded IDs it drew.
@@ -190,7 +199,7 @@ export const createPrepare = (a: PrepareArgs): Prepare => {
             return id;
         }
 
-        return a.generate();
+        return args.generate();
     };
 
     const queriedIds = (): (() => string) => {
@@ -198,7 +207,7 @@ export const createPrepare = (a: PrepareArgs): Prepare => {
 
         return () => {
             if (at === recorded.length) {
-                recorded.push(a.generate());
+                recorded.push(args.generate());
             }
 
             const id = recorded[at] as string;

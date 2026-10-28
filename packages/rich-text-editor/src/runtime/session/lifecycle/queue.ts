@@ -21,7 +21,7 @@ export type Queue = {
     settle(code: RejectedCode): void;
 };
 
-export const createQueue = (a: {
+export const createQueue = (args: {
     lifecycle: Pick<Lifecycle, 'is'>;
     busy: Pick<Busy, 'isBusy'>;
     composition: Pick<Composition, 'active'>;
@@ -29,7 +29,7 @@ export const createQueue = (a: {
     report: (diagnostic: Diagnostic) => void;
     resources: { intents: number };
 }): Queue => {
-    const { lifecycle, busy, composition, run, report, resources } = a;
+    const { lifecycle, busy, composition, run, report, resources } = args;
     let draining = false;
     let depth = 0;
     const queue: Intent[] = [];

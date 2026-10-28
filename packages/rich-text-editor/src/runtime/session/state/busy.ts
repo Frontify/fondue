@@ -2,7 +2,7 @@
 
 export type Busy = {
     /** Runs `work` as busy, which nests; the hooks run when it ends, even if it throws. */
-    run<T>(work: () => T): T;
+    run<Result>(work: () => Result): Result;
     /** Whether a `run` is in progress. */
     isBusy(): boolean;
     /** Hooks that run when the outermost `run` ends. */
@@ -15,7 +15,7 @@ export const createBusy = (): Busy => {
     const idle: (() => void)[] = [];
     const after: (() => void)[] = [];
     let depth = 0;
-    const run = <T>(work: () => T): T => {
+    const run = <Result>(work: () => Result): Result => {
         depth += 1;
         try {
             return work();

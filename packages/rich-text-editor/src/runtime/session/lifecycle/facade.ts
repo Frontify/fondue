@@ -24,7 +24,7 @@ import { type Store } from '../state/store';
 import { type TargetsService } from './targets';
 
 /** What the editor layer and the bridge call: each member is the service that owns it, or one line over it. */
-export const createFacade = (a: {
+export const createFacade = (args: {
     handle: RuntimeHandle;
     definition: CompiledDefinition;
     limits: ResourceLimits;
@@ -49,9 +49,9 @@ export const createFacade = (a: {
     metrics: Pick<Metrics, 'measure'>;
     checks: Pick<ContentChecks, 'run'>;
 }): EditorRuntime => {
-    const { handle, definition, limits, suggestionListId, interactionRoots, identity, store, policy, view } = a;
-    const { commit, prepare, report, watch, targets, commands, mode, columns, actions, shown } = a;
-    const { history, composition, metrics, checks } = a;
+    const { handle, definition, limits, suggestionListId, interactionRoots, identity, store, policy, view } = args;
+    const { commit, prepare, report, watch, targets, commands, mode, columns, actions, shown } = args;
+    const { history, composition, metrics, checks } = args;
 
     return {
         handle,

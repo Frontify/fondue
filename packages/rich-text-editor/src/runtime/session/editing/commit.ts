@@ -35,7 +35,7 @@ export type Commit = {
     /** `false` when the view threw and the session faulted. */
     installState(next: EditorState): boolean;
     /** Runs `work`, which installs states, then commits the roots that plugin views dispatched meanwhile. */
-    guarded<T>(work: () => T): T;
+    guarded<Result>(work: () => Result): Result;
     /** Repairs the provisional batches, then checks them as one change from the published document; `false` on a fault. */
     settleProvisional(mapping: Transaction['mapping']): boolean;
     /** Commits a selection change, and scrolls it into view when `scroll` is set. */
@@ -58,7 +58,7 @@ type CommitArgs = {
     metrics: Pick<Metrics, 'record'>;
     prepare: Pick<Prepare, 'prepare' | 'installedId' | 'isProvisional' | 'markRules' | 'take'>;
     encode: (doc: Node) => RichTextDocument;
-    emit: <K extends 'documentChange'>(event: K, value: RuntimeEvents[K]) => void;
+    emit: <EventName extends 'documentChange'>(event: EventName, value: RuntimeEvents[EventName]) => void;
     notify: () => void;
     report: (diagnostic: Diagnostic) => void;
     resources: { targets: number };
@@ -73,80 +73,80 @@ type CommitArgs = {
  * change, the selection and the save status in the Event order.
  */
 const announceChange = (
-    a: CommitArgs,
+    args: CommitArgs,
     origin: ChangeOrigin,
     commandId: string | null,
     batch: BatchMetric,
     transactions: readonly Transaction[] = [],
 ): boolean => {
-    const previous = a.shown.published();
-    const current = a.store.state;
-    a.shown.setPublished(current);
+    const previous = args.shown.published();
+    const current = args.store.state;
+    args.shown.setPublished(current);
     // An effective change compares documents by node equality, never by serializing them.
     const changed = !current.doc.eq(previous.doc);
     if (changed) {
-        a.identity.bumpSequence();
+        args.identity.bumpSequence();
     }
 
-    a.notify();
+    args.notify();
     if (changed) {
         let document: RichTextDocument | undefined;
-        a.emit('documentChange', {
-            stamp: a.identity.stamp(),
-            commitSequence: a.identity.commitSequence(),
+        args.emit('documentChange', {
+            stamp: args.identity.stamp(),
+            commitSequence: args.identity.commitSequence(),
             origin,
             commandId,
             readDocument: () => {
                 if (document === undefined) {
-                    document = a.encode(current.doc);
+                    document = args.encode(current.doc);
                 }
 
                 return document;
             },
         });
-        a.metrics.record(batch);
-        a.hooks.committed(transactions, origin === 'history');
+        args.metrics.record(batch);
+        args.hooks.committed(transactions, origin === 'history');
     }
 
-    a.shown.emitSelection();
+    args.shown.emitSelection();
     if (changed) {
-        a.hooks.changed();
+        args.hooks.changed();
     }
 
-    a.shown.emitSaveStatus();
+    args.shown.emitSaveStatus();
 
     return changed;
 };
 
-const installEditorState = (a: CommitArgs, next: EditorState): boolean => {
-    const previous = a.store.state;
-    a.store.set(next);
-    const attached = a.views.current();
-    if (attached !== undefined && a.views.call(() => attached.updateState(next)).threw) {
-        a.store.set(previous);
-        a.viewFault(attached, next);
+const installEditorState = (args: CommitArgs, next: EditorState): boolean => {
+    const previous = args.store.state;
+    args.store.set(next);
+    const attached = args.views.current();
+    if (attached !== undefined && args.views.call(() => attached.updateState(next)).threw) {
+        args.store.set(previous);
+        args.viewFault(attached, next);
 
         return false;
     }
 
-    a.identity.bumpCommit();
-    a.resources.targets += countTargets(next) - countTargets(previous);
+    args.identity.bumpCommit();
+    args.resources.targets += countTargets(next) - countTargets(previous);
 
     return true;
 };
 
 /** Installs a batch in the view and counts it, then publishes it, or keeps a provisional batch for input settling. */
 const publishCandidate = (
-    a: CommitArgs,
+    args: CommitArgs,
     { candidate, root, transactions, mapping, started, appended }: Candidate,
 ): boolean => {
-    if (!installEditorState(a, candidate)) {
+    if (!installEditorState(args, candidate)) {
         return false;
     }
 
-    if (a.prepare.isProvisional(root)) {
-        a.shown.addProvisional(mapping);
-        a.notify();
+    if (args.prepare.isProvisional(root)) {
+        args.shown.addProvisional(mapping);
+        args.notify();
 
         return false;
     }
@@ -164,26 +164,30 @@ const publishCandidate = (
         kind = 'paste';
     }
 
-    return announceChange(a, origin, commandId, { kind, started, appended }, transactions);
+    return announceChange(args, origin, commandId, { kind, started, appended }, transactions);
 };
 
-const settleInput = (a: CommitArgs, mapping: Transaction['mapping']): boolean => {
+const settleInput = (args: CommitArgs, mapping: Transaction['mapping']): boolean => {
     const started = Date.now();
     let appended = 0;
     // The repair runs inside the append limit before the settled batch publishes, and the check below judges it.
-    const repaired = a.prepare.prepare(a.store.state.tr.setMeta(NORMALIZE_META, 'now'), a.prepare.installedId, false);
+    const repaired = args.prepare.prepare(
+        args.store.state.tr.setMeta(NORMALIZE_META, 'now'),
+        args.prepare.installedId,
+        false,
+    );
     if ('fault' in repaired && repaired.fault !== undefined) {
-        a.fault(repaired.fault);
+        args.fault(repaired.fault);
 
         return false;
     }
 
     if ('diagnostic' in repaired && repaired.diagnostic !== undefined) {
-        a.report(repaired.diagnostic);
+        args.report(repaired.diagnostic);
     }
 
-    if ('candidate' in repaired && repaired.candidate.doc !== a.store.state.doc) {
-        if (!installEditorState(a, repaired.candidate)) {
+    if ('candidate' in repaired && repaired.candidate.doc !== args.store.state.doc) {
+        if (!installEditorState(args, repaired.candidate)) {
             return false;
         }
 
@@ -192,33 +196,33 @@ const settleInput = (a: CommitArgs, mapping: Transaction['mapping']): boolean =>
     }
 
     if (
-        !a.policy.breaks(a.shown.published().doc, a.store.state.doc, mapping) &&
-        a.policy.exceeds(a.store.state.doc, a.shown.published().doc) === undefined
+        !args.policy.breaks(args.shown.published().doc, args.store.state.doc, mapping) &&
+        args.policy.exceeds(args.store.state.doc, args.shown.published().doc) === undefined
     ) {
-        announceChange(a, 'input', null, { kind: 'commit', started, appended });
+        announceChange(args, 'input', null, { kind: 'commit', started, appended });
 
         return true;
     }
 
     // Targets released during the composition stay released, and those captured during it stay.
-    const restore = restoreTargets(a.shown.published(), a.store.state, mapping);
-    let restored = a.shown.published();
+    const restore = restoreTargets(args.shown.published(), args.store.state, mapping);
+    let restored = args.shown.published();
     if (restore !== undefined) {
         restored = restored.apply(restore);
     }
 
-    if (!installEditorState(a, restored)) {
+    if (!installEditorState(args, restored)) {
         return false;
     }
 
-    a.notify();
+    args.notify();
 
     return true;
 };
 
-const selectCommitted = (a: CommitArgs, commit: (root: Transaction) => void, target: SelectTarget) => {
-    const { doc } = a.store.state;
-    let transaction = a.store.state.tr;
+const selectCommitted = (args: CommitArgs, commit: (root: Transaction) => void, target: SelectTarget) => {
+    const { doc } = args.store.state;
+    let transaction = args.store.state.tr;
     if ('node' in target) {
         transaction = transaction.setSelection(NodeSelection.create(doc, target.node));
     } else {
@@ -226,32 +230,32 @@ const selectCommitted = (a: CommitArgs, commit: (root: Transaction) => void, tar
     }
 
     commit(transaction);
-    const view = a.views.current();
+    const view = args.views.current();
     if (target.scroll !== true || view === undefined) {
         return;
     }
 
     // ProseMirror scrolls to the selection only while the browser's selection is in the surface, and a
     // panel that asks for this keeps focus.
-    scrollSelectionIntoView(view, a.store.state.selection);
+    scrollSelectionIntoView(view, args.store.state.selection);
 };
 
-const createInstaller = (a: CommitArgs) =>
+const createInstaller = (args: CommitArgs) =>
     [
-        (next: EditorState) => installEditorState(a, next),
-        (candidate: Candidate) => publishCandidate(a, candidate),
-        (mapping: Transaction['mapping']) => settleInput(a, mapping),
+        (next: EditorState) => installEditorState(args, next),
+        (candidate: Candidate) => publishCandidate(args, candidate),
+        (mapping: Transaction['mapping']) => settleInput(args, mapping),
     ] as const;
 
-export const createCommit = (a: CommitArgs): Commit => {
-    const [installState, publish, settleProvisional] = createInstaller(a);
+export const createCommit = (args: CommitArgs): Commit => {
+    const [installState, publish, settleProvisional] = createInstaller(args);
     const queue = createCommitQueue({
-        lifecycle: a.lifecycle,
-        store: a.store,
-        prepare: a.prepare,
-        busy: a.busy,
-        report: a.report,
-        fault: a.fault,
+        lifecycle: args.lifecycle,
+        store: args.store,
+        prepare: args.prepare,
+        busy: args.busy,
+        report: args.report,
+        fault: args.fault,
         publish,
     });
 
@@ -261,7 +265,7 @@ export const createCommit = (a: CommitArgs): Commit => {
         installState,
         guarded: queue.guarded,
         settleProvisional,
-        select: (target) => selectCommitted(a, queue.commit, target),
+        select: (target) => selectCommitted(args, queue.commit, target),
         markTyping: queue.markTyping,
         clearDeferred: queue.clearDeferred,
     };

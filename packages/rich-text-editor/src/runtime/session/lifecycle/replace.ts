@@ -162,17 +162,17 @@ type ReplaceArgs = {
 };
 
 /** Leaves `transitioning` after a failed step, so what waited runs on the unchanged session. */
-const resumeAfter = (a: ReplaceArgs, code: ReplaceCode, focused: boolean): ReplaceResult => {
+const resumeAfter = (args: ReplaceArgs, code: ReplaceCode, focused: boolean): ReplaceResult => {
     // A listener may have faulted or disposed the session since the step began.
-    if (a.lifecycle.is('transitioning')) {
-        a.lifecycle.to('ready');
+    if (args.lifecycle.is('transitioning')) {
+        args.lifecycle.to('ready');
     }
 
-    a.view.refresh();
-    a.targets.coordinator.settle();
-    a.saving.settled();
-    a.queue.drain();
-    a.focus.refocus(focused);
+    args.view.refresh();
+    args.targets.coordinator.settle();
+    args.saving.settled();
+    args.queue.drain();
+    args.focus.refocus(focused);
 
     return refused(code);
 };
@@ -182,40 +182,40 @@ const resumeAfter = (a: ReplaceArgs, code: ReplaceCode, focused: boolean): Repla
  * session; a view that throws while it installs the state faults the session.
  */
 const installNext = (
-    a: ReplaceArgs,
+    args: ReplaceArgs,
     request: ReplaceDocumentRequest,
     tree: TreeNode,
     stored: readonly CapabilityRef[],
     focused: boolean,
 ): ReplaceResult => {
-    const fresh = freshState(a.definition, a.history, request, tree);
+    const fresh = freshState(args.definition, args.history, request, tree);
     if (fresh === undefined) {
-        a.faults.fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
+        args.faults.fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
 
         return refused('faulted');
     }
 
-    const outgoing = a.store.state.doc;
+    const outgoing = args.store.state.doc;
     // Roots that plugin views dispatch while the state installs commit in the new generation.
-    const installed = a.commit.guarded(() => {
-        const published = a.faults.withoutRecovery(() => a.commit.installState(fresh));
+    const installed = args.commit.guarded(() => {
+        const published = args.faults.withoutRecovery(() => args.commit.installState(fresh));
         if (!published) {
             return false;
         }
 
         // Intents of the old generation end before anything can drain them into the next.
-        a.queue.settle('wrong-session');
-        const previous = a.identity.nextGeneration(request.next.documentId);
-        a.shown.setPublished(a.store.state);
-        a.encoder.capabilities = stored;
-        a.policy.setCapabilities(a.encoder.capabilities);
-        a.saving.replaced(request.next.revision, previous);
+        args.queue.settle('wrong-session');
+        const previous = args.identity.nextGeneration(request.next.documentId);
+        args.shown.setPublished(args.store.state);
+        args.encoder.capabilities = stored;
+        args.policy.setCapabilities(args.encoder.capabilities);
+        args.saving.replaced(request.next.revision, previous);
         // A plugin view may have faulted or disposed the session while the state installed.
-        if (a.lifecycle.is('transitioning')) {
-            a.lifecycle.to('ready');
+        if (args.lifecycle.is('transitioning')) {
+            args.lifecycle.to('ready');
         }
 
-        a.view.refresh();
+        args.view.refresh();
 
         return true;
     });
@@ -224,24 +224,24 @@ const installNext = (
     }
 
     // What the old generation started or queued ends now and changes nothing here.
-    a.targets.coordinator.abortWhere(() => true);
-    a.uploads.reset(outgoing);
-    a.targets.coordinator.settle();
-    a.busy.run(a.events.notify);
-    a.shown.emitSelection();
-    a.shown.emitSaveStatus();
-    a.events.emit('replaced', a.identity.session());
-    a.focus.refocus(focused);
+    args.targets.coordinator.abortWhere(() => true);
+    args.uploads.reset(outgoing);
+    args.targets.coordinator.settle();
+    args.busy.run(args.events.notify);
+    args.shown.emitSelection();
+    args.shown.emitSaveStatus();
+    args.events.emit('replaced', args.identity.session());
+    args.focus.refocus(focused);
 
-    return { status: 'replaced', session: a.identity.session() };
+    return { status: 'replaced', session: args.identity.session() };
 };
 
-const replaceDocument = async (a: ReplaceArgs, request: ReplaceDocumentRequest): Promise<ReplaceResult> => {
-    if (!a.lifecycle.is('ready')) {
+const replaceDocument = async (args: ReplaceArgs, request: ReplaceDocumentRequest): Promise<ReplaceResult> => {
+    if (!args.lifecycle.is('ready')) {
         return refused('not-ready');
     }
 
-    const checked = checkedRequest(a.definition, a.limits, request);
+    const checked = checkedRequest(args.definition, args.limits, request);
     if ('status' in checked) {
         return checked;
     }
@@ -252,46 +252,47 @@ const replaceDocument = async (a: ReplaceArgs, request: ReplaceDocumentRequest):
 
     // A host that echoes its own save gets the current session back with nothing changed; hashing waits for a checked document.
     if (
-        next.documentId === a.identity.session().documentId &&
-        next.revision === a.saving.status().revision &&
-        sameDocument(document, a.shown.snapshot().document)
+        next.documentId === args.identity.session().documentId &&
+        next.revision === args.saving.status().revision &&
+        sameDocument(document, args.shown.snapshot().document)
     ) {
-        return { status: 'replaced', session: a.identity.session() };
+        return { status: 'replaced', session: args.identity.session() };
     }
 
-    if (!sameStamp(request.expected, a.identity.stamp())) {
+    if (!sameStamp(request.expected, args.identity.stamp())) {
         return refused('changed-since-request');
     }
 
-    if (a.composition.active()) {
+    if (args.composition.active()) {
         return refused('composition-active');
     }
 
-    const focused = a.view.current()?.hasFocus() === true;
-    a.lifecycle.to('transitioning');
-    a.view.refresh();
-    if (a.saving.unsaved()) {
-        const code = await leaveUnsaved(a.saving, a.identity, request.unsaved);
+    const focused = args.view.current()?.hasFocus() === true;
+    args.lifecycle.to('transitioning');
+    args.view.refresh();
+    if (args.saving.unsaved()) {
+        const code = await leaveUnsaved(args.saving, args.identity, request.unsaved);
         // The session was disposed, or faulted, while the unsaved-work write ran.
-        if (!a.lifecycle.is('transitioning')) {
+        if (!args.lifecycle.is('transitioning')) {
             return refused('not-ready');
         }
 
         if (code !== undefined) {
-            return resumeAfter(a, code, focused);
+            return resumeAfter(args, code, focused);
         }
     }
 
-    if (a.saving.outcomeUnknown()) {
-        return resumeAfter(a, 'save-unresolved', focused);
+    if (args.saving.outcomeUnknown()) {
+        return resumeAfter(args, 'save-unresolved', focused);
     }
 
     // A keystroke the view read while the unsaved-work step ran is kept, not replaced.
-    if (!sameStamp(request.expected, a.identity.stamp())) {
-        return resumeAfter(a, 'changed-since-request', focused);
+    if (!sameStamp(request.expected, args.identity.stamp())) {
+        return resumeAfter(args, 'changed-since-request', focused);
     }
 
-    return installNext(a, request, tree, requiredCapabilities, focused);
+    return installNext(args, request, tree, requiredCapabilities, focused);
 };
 
-export const createReplace = (a: ReplaceArgs): Replace => measured(a.metrics, (request) => replaceDocument(a, request));
+export const createReplace = (args: ReplaceArgs): Replace =>
+    measured(args.metrics, (request) => replaceDocument(args, request));

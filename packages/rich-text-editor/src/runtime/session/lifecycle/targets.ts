@@ -156,21 +156,21 @@ const captureForAsync = (context: TargetContext) => {
     return handleOf(context, id);
 };
 
-export const createTargetsService = (a: TargetArgs): TargetsService => {
-    const context: TargetContext = { ...a, deferred: createDeferredTargets() };
+export const createTargetsService = (args: TargetArgs): TargetsService => {
+    const context: TargetContext = { ...args, deferred: createDeferredTargets() };
     const releaseTarget = (target: SelectionHandle) => releaseOwned(context, target);
     const coordinator = createAsyncCoordinator({
-        generateId: a.generate,
-        session: a.identity.session,
-        policyRevision: a.policy.revision,
-        isDisposed: a.lifecycle.isDisposed,
-        isFaulted: () => a.lifecycle.is('faulted'),
+        generateId: args.generate,
+        session: args.identity.session,
+        policyRevision: args.policy.revision,
+        isDisposed: args.lifecycle.isDisposed,
+        isFaulted: () => args.lifecycle.is('faulted'),
         // A result waits out a replacement, which applies it if it fails and discards it in the next generation.
-        holding: () => a.composition.active() || a.lifecycle.is('transitioning'),
+        holding: () => args.composition.active() || args.lifecycle.is('transitioning'),
         capture: () => captureForAsync(context),
         release: (target) => releaseTarget(target),
-        apply: a.apply,
-        report: a.report,
+        apply: args.apply,
+        report: args.report,
     });
 
     return {
@@ -185,7 +185,7 @@ export const createTargetsService = (a: TargetArgs): TargetsService => {
         changeServices: (members) => {
             coordinator.abortWhere((operation) => members.includes(operation.service));
             if (members.includes('persistence')) {
-                a.serviceChanged();
+                args.serviceChanged();
             }
         },
     };

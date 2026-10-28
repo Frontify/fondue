@@ -72,7 +72,7 @@ export type AsyncEvent = { facts: AsyncFacts } & (
     | { type: 'settle' }
 );
 
-type Distribute<E> = E extends unknown ? Omit<E, 'facts'> : never;
+type Distribute<Variant> = Variant extends unknown ? Omit<Variant, 'facts'> : never;
 /** An event before the transport adds its facts. */
 export type AsyncEventInput = Distribute<AsyncEvent>;
 
@@ -109,7 +109,7 @@ export type AsyncStep = {
 
 /** A copy of the machine whose collections a handler changes, and the effects it appends, so `next` never changes its input. */
 export type Draft = {
-    m: {
+    machine: {
         operations: Map<string, AsyncOperation>;
         requests: Map<string, number>;
         held: Held[];
@@ -118,7 +118,7 @@ export type Draft = {
         waiting: Map<string, Entry[]>;
         pools: Map<AsyncOperation, Pool>;
     };
-    fx: AsyncEffect[];
+    effects: AsyncEffect[];
     facts: AsyncFacts;
 };
 

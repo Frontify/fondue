@@ -82,7 +82,7 @@ const buildOperation = (
     });
 };
 
-type Of<T extends AsyncEffect['type']> = Extract<AsyncEffect, { type: T }>;
+type EffectOf<EffectName extends AsyncEffect['type']> = Extract<AsyncEffect, { type: EffectName }>;
 
 /** Feeds an event to the machine, keeps its next state and runs the effects in order. */
 export const dispatchAsync = (context: AsyncContext, input: AsyncEventInput) => {
@@ -106,7 +106,9 @@ export const sweepAsync = (context: AsyncContext, input: AsyncEventInput) => {
 };
 
 /** What each effect does outside the machine. */
-const EFFECTS: { readonly [T in AsyncEffect['type']]: (context: AsyncContext, effect: Of<T>) => void } = {
+const EFFECTS: {
+    readonly [EffectName in AsyncEffect['type']]: (context: AsyncContext, effect: EffectOf<EffectName>) => void;
+} = {
     build: (context, { request, reply, target, capture: captures, sequence }) => {
         let chosen = target;
         if (captures) {
@@ -160,7 +162,7 @@ const EFFECTS: { readonly [T in AsyncEffect['type']]: (context: AsyncContext, ef
     },
 };
 
-const runEffect = <T extends AsyncEffect['type']>(context: AsyncContext, effect: Of<T>) => {
+const runEffect = <EffectName extends AsyncEffect['type']>(context: AsyncContext, effect: EffectOf<EffectName>) => {
     EFFECTS[effect.type](context, effect);
 };
 

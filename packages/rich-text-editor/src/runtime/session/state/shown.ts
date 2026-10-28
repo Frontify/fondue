@@ -50,14 +50,18 @@ export const summarize = (selection: Selection): SelectionSummary => {
     return { kind: kindOf(selection), collapsed: selection.empty, blockType, selectedNodeId };
 };
 
-const sameSelection = (a: SelectionSummary, b: SelectionSummary) =>
-    a.kind === b.kind &&
-    a.collapsed === b.collapsed &&
-    a.blockType === b.blockType &&
-    a.selectedNodeId === b.selectedNodeId;
+const sameSelection = (left: SelectionSummary, right: SelectionSummary) =>
+    left.kind === right.kind &&
+    left.collapsed === right.collapsed &&
+    left.blockType === right.blockType &&
+    left.selectedNodeId === right.selectedNodeId;
 
 /** Takes `next` into the slot and returns `true` unless `same` finds it equal to what the slot holds. */
-export const changed = <T>(slot: { value: T }, next: T, same: (a: T, b: T) => boolean): boolean => {
+export const changed = <Value>(
+    slot: { value: Value },
+    next: Value,
+    same: (left: Value, right: Value) => boolean,
+): boolean => {
     if (same(slot.value, next)) {
         return false;
     }
@@ -90,23 +94,26 @@ export type Shown = {
     primeStatus(): void;
 };
 
-export const createShown = (a: {
+export const createShown = (args: {
     store: Store;
     mode: Mode;
     columns: ColumnState;
-    emit: <K extends 'selectionChange' | 'saveStatusChange'>(event: K, value: RuntimeEvents[K]) => void;
+    emit: <EventName extends 'selectionChange' | 'saveStatusChange'>(
+        event: EventName,
+        value: RuntimeEvents[EventName],
+    ) => void;
     saveStatus: () => SaveStatus;
     composing: () => boolean;
     stamp: () => DocumentStamp;
     encodeByBlock: (doc: Node) => RichTextDocument;
 }): Shown => {
-    let mode = a.mode;
-    let columns = a.columns;
-    let published = a.store.state;
+    let mode = args.mode;
+    let columns = args.columns;
+    let published = args.store.state;
     let provisional: Transaction['mapping'] | undefined;
     let cached: Snapshot | undefined;
     const status: { value: SaveStatus | undefined } = { value: undefined };
-    const selection = { value: summarize(a.store.state.selection) };
+    const selection = { value: summarize(args.store.state.selection) };
     const key: { value: SnapshotKey | undefined } = { value: undefined };
 
     return {
@@ -135,17 +142,17 @@ export const createShown = (a: {
             return taken;
         },
         snapshot: () => {
-            const next = { doc: published.doc, composing: a.composing(), revision: a.saveStatus().revision };
-            const sameKey = (x: SnapshotKey | undefined, y: SnapshotKey | undefined) =>
-                x?.doc === y?.doc && x?.composing === y?.composing && x?.revision === y?.revision;
+            const next = { doc: published.doc, composing: args.composing(), revision: args.saveStatus().revision };
+            const sameKey = (left: SnapshotKey | undefined, right: SnapshotKey | undefined) =>
+                left?.doc === right?.doc && left?.composing === right?.composing && left?.revision === right?.revision;
             const moved = changed(key, next, sameKey);
 
             if (moved || cached === undefined) {
                 // The key is already taken, so an encode that throws must not leave the old value to serve it.
                 cached = undefined;
                 cached = snapshot({
-                    stamp: a.stamp(),
-                    document: a.encodeByBlock(published.doc),
+                    stamp: args.stamp(),
+                    document: args.encodeByBlock(published.doc),
                     acknowledgedRevision: next.revision,
                     compositionActive: next.composing,
                 });
@@ -154,19 +161,19 @@ export const createShown = (a: {
             return cached;
         },
         emitSelection: () => {
-            const next = summarize(a.store.state.selection);
+            const next = summarize(args.store.state.selection);
             if (changed(selection, next, sameSelection)) {
-                a.emit('selectionChange', next);
+                args.emit('selectionChange', next);
             }
         },
         emitSaveStatus: () => {
-            const next = a.saveStatus();
+            const next = args.saveStatus();
             if (changed(status, next, Object.is)) {
-                a.emit('saveStatusChange', next);
+                args.emit('saveStatusChange', next);
             }
         },
         primeStatus: () => {
-            status.value = a.saveStatus();
+            status.value = args.saveStatus();
         },
     };
 };

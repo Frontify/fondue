@@ -102,7 +102,7 @@ export const assembleState = (core: Core, options: EditorRuntimeOptions, late: L
         notify: () => busy.run(notify),
         install: (next) => late.commit.installState(next),
         publish: () => display.setPublished(store.state),
-        uploads: (d, k) => uploads.raw.reset(d, k),
+        uploads: (doc, keep) => uploads.raw.reset(doc, keep),
     });
     const display = createShown({
         store,

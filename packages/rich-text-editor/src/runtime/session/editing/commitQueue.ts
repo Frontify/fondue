@@ -34,9 +34,9 @@ type CommitQueueContext = CommitQueueArgs & {
     deferred: Transaction[];
 };
 
-const guardInstall = <T>(context: CommitQueueContext, work: () => T): T => {
+const guardInstall = <Result>(context: CommitQueueContext, work: () => Result): Result => {
     context.installing = true;
-    let result: T;
+    let result: Result;
     try {
         result = work();
     } finally {
@@ -103,16 +103,16 @@ const commitRoot = (context: CommitQueueContext, root: Transaction) => {
 };
 
 /** The typing flag and the roots deferred while an install runs. */
-export const createCommitQueue = (a: CommitQueueArgs) => {
+export const createCommitQueue = (args: CommitQueueArgs) => {
     const context: CommitQueueContext = {
-        ...a,
+        ...args,
         typing: false,
         installing: false,
         deferred: [],
     };
 
     return {
-        guarded: <T>(work: () => T) => guardInstall(context, work),
+        guarded: <Result>(work: () => Result) => guardInstall(context, work),
         commit: (root: Transaction) => commitRoot(context, root),
         markTyping: () => {
             context.typing = true;

@@ -25,7 +25,7 @@ export type ViewService = {
     /** The plugin view hook: the view the constructor is building, before it returns. */
     capture(built: EditorView): void;
     /** Runs a view call; `threw` when it threw or a node view inside it threw, which the bridge reports through `faultView`. */
-    call<T>(work: () => T): { threw: boolean; value: T | undefined };
+    call<Result>(work: () => Result): { threw: boolean; value: Result | undefined };
     /** Recomputes `editable`, the surface attributes and the break decorations once input has settled. */
     refresh(): void;
     /** Redraws the view with its current state, without the settled-input checks of `refresh`. */
@@ -42,8 +42,8 @@ export type ViewService = {
 const createCalls = () => {
     let viewCall = false;
     let viewThrew = false;
-    const call = <T>(work: () => T): { threw: boolean; value: T | undefined } => {
-        let value: T | undefined;
+    const call = <Result>(work: () => Result): { threw: boolean; value: Result | undefined } => {
+        let value: Result | undefined;
         viewCall = true;
         try {
             value = work();
@@ -71,12 +71,12 @@ const createCalls = () => {
     return { call, caught };
 };
 
-const surfaceAttributes = (a: ViewArgs, current: EditorState) => {
+const surfaceAttributes = (args: ViewArgs, current: EditorState) => {
     const result: Record<string, string> = {};
-    if (a.shown.mode() === 'readonly') {
+    if (args.shown.mode() === 'readonly') {
         // A surface that is not contenteditable takes no focus by itself,
         // unless it is disabled, which leaves the Tab order.
-        if (!a.mode.disabled()) {
+        if (!args.mode.disabled()) {
             result.tabindex = '0';
         }
 
@@ -88,7 +88,7 @@ const surfaceAttributes = (a: ViewArgs, current: EditorState) => {
     }
 
     // Selection and copy keep working on a surface that takes no edits.
-    if (a.lifecycle.is('transitioning')) {
+    if (args.lifecycle.is('transitioning')) {
         result['aria-busy'] = 'true';
     }
 
@@ -98,17 +98,17 @@ const surfaceAttributes = (a: ViewArgs, current: EditorState) => {
         const option = suggestion.items[suggestion.index];
         if (option !== undefined) {
             result['aria-autocomplete'] = 'list';
-            result['aria-controls'] = a.suggestionListId;
-            result['aria-activedescendant'] = suggestionOptionId(a.suggestionListId, option.key);
+            result['aria-controls'] = args.suggestionListId;
+            result['aria-activedescendant'] = suggestionOptionId(args.suggestionListId, option.key);
         }
     }
 
     return result;
 };
 
-export const createView = (a: ViewArgs): ViewService => {
+export const createView = (args: ViewArgs): ViewService => {
     const { call, caught } = createCalls();
-    const host = createSurfaceHost(a, (current) => surfaceAttributes(a, current), call, caught);
+    const host = createSurfaceHost(args, (current) => surfaceAttributes(args, current), call, caught);
 
     return {
         current: () => host.surface.view,

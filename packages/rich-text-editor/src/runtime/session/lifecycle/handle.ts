@@ -20,7 +20,7 @@ import { type Saving } from './saving';
 import { type TargetsService } from './targets';
 
 /** What the host calls: each member is the service that owns it, or one line over it. */
-export const createHandle = (a: {
+export const createHandle = (args: {
     identity: Pick<Identity, 'session' | 'commitSequence' | 'sequence'>;
     lifecycle: Pick<Lifecycle, 'phase'>;
     mode: Pick<ModeService, 'mode' | 'set'>;
@@ -39,8 +39,8 @@ export const createHandle = (a: {
     subscribe: (event: string, listener: Listener) => Unsubscribe;
     dispose: () => void;
 }): RuntimeHandle => {
-    const { identity, lifecycle, mode, composition, store, shown, saving, faults, commands, queue } = a;
-    const { targets, replace, policy, focus, interactionRoots } = a;
+    const { identity, lifecycle, mode, composition, store, shown, saving, faults, commands, queue } = args;
+    const { targets, replace, policy, focus, interactionRoots } = args;
 
     return {
         getSummary: () => {
@@ -77,7 +77,7 @@ export const createHandle = (a: {
                 interactionRoots.delete(element);
             };
         },
-        subscribe: a.subscribe,
-        dispose: a.dispose,
+        subscribe: args.subscribe,
+        dispose: args.dispose,
     };
 };

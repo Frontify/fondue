@@ -7,8 +7,8 @@ export type Columns = {
     set(next: ColumnState): void;
 };
 
-export const createColumns = (a: { initial: ColumnState; onChange: () => void }): Columns => {
-    let columns = a.initial;
+export const createColumns = (args: { initial: ColumnState; onChange: () => void }): Columns => {
+    let columns = args.initial;
 
     return {
         current: () => columns,
@@ -18,7 +18,7 @@ export const createColumns = (a: { initial: ColumnState; onChange: () => void })
             }
 
             columns = next;
-            a.onChange();
+            args.onChange();
         },
     };
 };

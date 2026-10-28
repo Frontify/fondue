@@ -178,34 +178,35 @@ const executeCommand = (
     return result;
 };
 
-export const createCommands = (a: CommandArgs): Commands => {
+export const createCommands = (args: CommandArgs): Commands => {
     // What a plugin command reads its session from; `runtime` is read when a command runs, after it exists.
     const commandSession = {
         get runtime() {
-            return a.runtime();
+            return args.runtime();
         },
-        host: a.commandHost,
+        host: args.commandHost,
     };
-    const context: CommandContext = { ...a, session: commandSession, attempt: createAttempt(a, commandSession) };
+    const context: CommandContext = { ...args, session: commandSession, attempt: createAttempt(args, commandSession) };
     const queryOn: Commands['queryOn'] = (command, checked, base) => queryCommand(context, command, checked, base);
     const runOn: Commands['runOn'] = (command, checked, base, route) =>
         runCommand(context, command, checked, base, route);
     const run: Commands['run'] = (id, given, options, route) =>
-        runOn(a.definition.commands.get(id), checkedPayload(given), () => a.baseOf(options), route);
+        runOn(args.definition.commands.get(id), checkedPayload(given), () => args.baseOf(options), route);
 
     return {
-        query: (id, given, options) => queryOn(a.definition.commands.get(id), checkedPayload(given), a.baseOf(options)),
+        query: (id, given, options) =>
+            queryOn(args.definition.commands.get(id), checkedPayload(given), args.baseOf(options)),
         queryOn,
         run,
         runOn,
         execute: (id, given, commandOptions) => executeCommand(context, id, given, commandOptions),
         refusal: (command, base, payload) => {
-            if (a.mode.refusesReadOnly(command)) {
+            if (args.mode.refusesReadOnly(command)) {
                 return 'readonly';
             }
 
-            return a.policy.refusal(command, base, payload);
+            return args.policy.refusal(command, base, payload);
         },
-        perform: (command, options) => runOn(command, { payload: undefined }, () => a.baseOf(options), 'host'),
+        perform: (command, options) => runOn(command, { payload: undefined }, () => args.baseOf(options), 'host'),
     };
 };

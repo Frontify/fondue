@@ -15,7 +15,7 @@ import { type TargetsService } from './targets';
  * them, or restores the state from before the composition, then runs the deferred `contenteditable` change, the
  * queued intents and the held async results.
  */
-export const createSettle = (a: {
+export const createSettle = (args: {
     busy: Pick<Busy, 'run'>;
     commit: Pick<Commit, 'guarded' | 'settleProvisional'>;
     shown: Pick<Shown, 'takeProvisional'>;
@@ -24,7 +24,7 @@ export const createSettle = (a: {
     saving: Pick<Saving, 'settled'>;
     composition: Pick<Composition, 'resolve'>;
 }): (() => void) => {
-    const { busy, commit, shown, view, targets, saving, composition } = a;
+    const { busy, commit, shown, view, targets, saving, composition } = args;
 
     return () => {
         const mapping = shown.takeProvisional();

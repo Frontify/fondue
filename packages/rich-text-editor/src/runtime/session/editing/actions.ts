@@ -32,7 +32,7 @@ export type Actions = {
 /** A node change that sets each of `values` as an attribute, and fails unless every one is valid for the node's type. */
 const attributeUpdate =
     (definition: CompiledDefinition, values: Record<string, unknown>) =>
-    (tr: Transaction, pos: number, node: Node): boolean => {
+    (transaction: Transaction, pos: number, node: Node): boolean => {
         const declared = compiledModel(definition.model).nodes.find(({ name }) => name === node.type.name);
         if (declared === undefined) {
             return false;
@@ -46,7 +46,7 @@ const attributeUpdate =
                 return false;
             }
 
-            tr.setNodeAttribute(pos, name, value);
+            transaction.setNodeAttribute(pos, name, value);
         }
 
         return true;
@@ -63,24 +63,24 @@ type ActionArgs = {
 };
 
 /** The state with exactly `from` to `to` selected as text, which an accepted suggestion replaces. */
-const rangeBase = (a: ActionArgs, from: number, to: number): EditorState | RejectedCode => {
-    if (from < 0 || to > a.store.state.doc.content.size || from > to) {
+const rangeBase = (args: ActionArgs, from: number, to: number): EditorState | RejectedCode => {
+    if (from < 0 || to > args.store.state.doc.content.size || from > to) {
         return 'target-invalid';
     }
 
-    const selection = TextSelection.between(a.store.state.doc.resolve(from), a.store.state.doc.resolve(to));
+    const selection = TextSelection.between(args.store.state.doc.resolve(from), args.store.state.doc.resolve(to));
     if (selection.from !== from || selection.to !== to) {
         return 'target-invalid';
     }
 
-    return a.store.state.apply(a.store.state.tr.setSelection(selection));
+    return args.store.state.apply(args.store.state.tr.setSelection(selection));
 };
 
-const acceptRange = (a: ActionArgs, range: { from: number; to: number }, id: string, payload: JsonObject) =>
-    a.commands.runOn(
-        a.definition.commands.get(id),
+const acceptRange = (args: ActionArgs, range: { from: number; to: number }, id: string, payload: JsonObject) =>
+    args.commands.runOn(
+        args.definition.commands.get(id),
         checkedPayload(payload),
-        () => rangeBase(a, range.from, range.to),
+        () => rangeBase(args, range.from, range.to),
         'host',
     );
 
@@ -100,19 +100,19 @@ const targetIn = (doc: Node, target: NodeTarget): number | undefined => {
 };
 
 /** The state with the node `target` selected, as a node view action runs on it. */
-const nodeBase = (a: ActionArgs, target: NodeTarget): EditorState | RejectedCode => {
-    const pos = targetIn(a.store.state.doc, target);
+const nodeBase = (args: ActionArgs, target: NodeTarget): EditorState | RejectedCode => {
+    const pos = targetIn(args.store.state.doc, target);
     if (pos === undefined) {
         return 'target-invalid';
     }
 
-    return a.store.state.apply(a.store.state.tr.setSelection(NodeSelection.create(a.store.state.doc, pos)));
+    return args.store.state.apply(args.store.state.tr.setSelection(NodeSelection.create(args.store.state.doc, pos)));
 };
 
 /** A command that changes the node `target` wherever it is when it runs. */
 const nodeCommand = (
     target: NodeTarget,
-    change: (tr: Transaction, pos: number, node: Node) => boolean,
+    change: (transaction: Transaction, pos: number, node: Node) => boolean,
 ): EngineCommand => ({
     run: (base, dispatch) => {
         const pos = targetIn(base.doc, target);
@@ -121,90 +121,95 @@ const nodeCommand = (
         }
 
         const node = base.doc.nodeAt(pos);
-        const { tr } = base;
-        if (node === null || !change(tr, pos, node)) {
+        const { tr: transaction } = base;
+        if (node === null || !change(transaction, pos, node)) {
             return false;
         }
 
-        dispatch?.(tr);
+        dispatch?.(transaction);
 
         return true;
     },
     active: () => false,
 });
 
-const updateNode = (a: ActionArgs, target: NodeTarget, attrs: JsonObject) => {
+const updateNode = (args: ActionArgs, target: NodeTarget, attrs: JsonObject) => {
     const checked = checkedPayload(attrs);
     if (checked === undefined || !isRecord(checked.payload)) {
         return rejected('invalid-payload');
     }
 
     const values = checked.payload;
-    const update = nodeCommand(target, attributeUpdate(a.definition, values));
+    const update = nodeCommand(target, attributeUpdate(args.definition, values));
 
-    return a.commands.runOn(update, { payload: undefined }, () => a.store.state, 'host');
+    return args.commands.runOn(update, { payload: undefined }, () => args.store.state, 'host');
 };
 
-const removeNode = (a: ActionArgs, target: NodeTarget) => {
-    const remove = nodeCommand(target, (tr, pos, node) => {
-        tr.delete(pos, pos + node.nodeSize);
+const removeNode = (args: ActionArgs, target: NodeTarget) => {
+    const remove = nodeCommand(target, (transaction, pos, node) => {
+        transaction.delete(pos, pos + node.nodeSize);
 
         return true;
     });
 
-    return a.commands.runOn(remove, { payload: undefined }, () => a.store.state, 'host');
+    return args.commands.runOn(remove, { payload: undefined }, () => args.store.state, 'host');
 };
 
-const selectNode = (a: ActionArgs, target: NodeTarget) => {
-    const pos = targetIn(a.store.state.doc, target);
+const selectNode = (args: ActionArgs, target: NodeTarget) => {
+    const pos = targetIn(args.store.state.doc, target);
     if (pos !== undefined) {
-        a.commit.commit(a.store.state.tr.setSelection(NodeSelection.create(a.store.state.doc, pos)));
+        args.commit.commit(args.store.state.tr.setSelection(NodeSelection.create(args.store.state.doc, pos)));
     }
 };
 
-const nodeActionsOf = (a: ActionArgs, target: NodeTarget): NodeActions => ({
-    update: (attrs) => updateNode(a, target, attrs),
-    remove: () => removeNode(a, target),
-    select: () => selectNode(a, target),
+const nodeActionsOf = (args: ActionArgs, target: NodeTarget): NodeActions => ({
+    update: (attrs) => updateNode(args, target, attrs),
+    remove: () => removeNode(args, target),
+    select: () => selectNode(args, target),
     // The author's selection stays, so typing after a press on chrome, such as a task checkbox, keeps the node.
     execute: (id, payload) =>
-        a.commands.runOn(a.definition.commands.get(id), checkedPayload(payload), () => nodeBase(a, target), 'node'),
+        args.commands.runOn(
+            args.definition.commands.get(id),
+            checkedPayload(payload),
+            () => nodeBase(args, target),
+            'node',
+        ),
     query: (id, payload) =>
-        a.commands.queryOn(a.definition.commands.get(id), checkedPayload(payload), nodeBase(a, target)),
+        args.commands.queryOn(args.definition.commands.get(id), checkedPayload(payload), nodeBase(args, target)),
 });
 
-const placePicked = (a: ActionArgs, value: unknown, place: { target: SelectionHandle } | { nodeId: string }) => {
-    const asset = pickedAsset(value, { maxLength: a.limits.maxAttributeLength });
+const placePicked = (args: ActionArgs, value: unknown, place: { target: SelectionHandle } | { nodeId: string }) => {
+    const asset = pickedAsset(value, { maxLength: args.limits.maxAttributeLength });
     if (asset === undefined) {
         return rejected('invalid-payload');
     }
 
     if ('target' in place) {
-        const insert = insertPicked(a.definition.schema, asset);
+        const insert = insertPicked(args.definition.schema, asset);
 
-        return a.commands.runOn(
+        return args.commands.runOn(
             insert,
             { payload: undefined },
-            () => a.targets.baseOf({ target: place.target }),
+            () => args.targets.baseOf({ target: place.target }),
             'host',
         );
     }
 
     const { nodeId } = place;
-    if (positionOf(a.store.state.doc, nodeId) === undefined) {
+    if (positionOf(args.store.state.doc, nodeId) === undefined) {
         return rejected('target-invalid');
     }
 
-    return a.commands.runOn(refillPicked(nodeId, asset), { payload: undefined }, () => a.store.state, 'host');
+    return args.commands.runOn(refillPicked(nodeId, asset), { payload: undefined }, () => args.store.state, 'host');
 };
 
 /** One search of a suggestion list, as one operation of the coordinator that the list's newer search supersedes. */
-const searchFor = <T>(
-    a: ActionArgs,
-    { key, featureId, command, run }: SuggestionSearch<T>,
-    receive: (result: T) => void,
+const searchFor = <Result>(
+    args: ActionArgs,
+    { key, featureId, command, run }: SuggestionSearch<Result>,
+    receive: (result: Result) => void,
 ) => {
-    const operation = a.targets.coordinator.start({
+    const operation = args.targets.coordinator.start({
         key,
         // The only host service a search reaches through the editor API.
         service: 'references',
@@ -219,12 +224,12 @@ const searchFor = <T>(
         },
     });
 
-    return () => a.targets.coordinator.abortWhere((other) => other === operation);
+    return () => args.targets.coordinator.abortWhere((other) => other === operation);
 };
 
-export const createActions = (a: ActionArgs): Actions => ({
-    nodeActions: (target) => nodeActionsOf(a, target),
-    placeAsset: (value, place) => placePicked(a, value, place),
-    acceptSuggestion: (range, id, payload) => acceptRange(a, range, id, payload),
-    searchSuggestions: (request, receive) => searchFor(a, request, receive),
+export const createActions = (args: ActionArgs): Actions => ({
+    nodeActions: (target) => nodeActionsOf(args, target),
+    placeAsset: (value, place) => placePicked(args, value, place),
+    acceptSuggestion: (range, id, payload) => acceptRange(args, range, id, payload),
+    searchSuggestions: (request, receive) => searchFor(args, request, receive),
 });

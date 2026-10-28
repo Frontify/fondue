@@ -152,25 +152,25 @@ const notifyUpload = (context: UploadContext) => {
 };
 
 // The service is built before the store, whose first state holds its plugin, so what is built later is read lazily.
-export const createUploadService = (a: UploadArgs): SessionUploads => {
-    const acceptTypes = acceptTypesOf(a.definition);
-    const context: UploadContext = { ...a, acceptTypes };
+export const createUploadService = (args: UploadArgs): SessionUploads => {
+    const acceptTypes = acceptTypesOf(args.definition);
+    const context: UploadContext = { ...args, acceptTypes };
     const raw = createUploads({
-        state: a.state,
-        limits: a.limits,
+        state: args.state,
+        limits: args.limits,
         acceptTypes: acceptTypes ?? [],
         service: () => hostedUploads(context),
-        session: a.identity.session,
-        generateId: () => a.generate(),
-        allows: (action) => a.policy.current().features[UPLOAD_FEATURE]?.[action] !== false,
+        session: args.identity.session,
+        generateId: () => args.generate(),
+        allows: (action) => args.policy.current().features[UPLOAD_FEATURE]?.[action] !== false,
         start: (request) => startUpload(context, request),
         abort: (operations) => abortUploads(context, operations),
         capture: (range) => captureUpload(context, range),
-        release: (target) => a.targets().releaseTarget(target),
+        release: (target) => args.targets().releaseTarget(target),
         run: (command, target) => runUpload(context, command, target),
         fill: (command) => fillUpload(context, command),
         replaced: (nodeId, assetId) => replacedAsset(context, nodeId, assetId),
-        report: (found) => a.report(found),
+        report: (found) => args.report(found),
         event: (event) => emitUpload(context, event),
         changed: () => notifyUpload(context),
     });
@@ -178,10 +178,10 @@ export const createUploadService = (a: UploadArgs): SessionUploads => {
     return {
         raw,
         accepts: acceptTypes,
-        available: (place) => acceptTypes !== undefined && a.host.uploads?.() !== undefined && raw.admits(place),
+        available: (place) => acceptTypes !== undefined && args.host.uploads?.() !== undefined && raw.admits(place),
         begin: (files, place) => raw.begin(files, place),
         retry: (nodeId) => raw.retry(nodeId),
-        pick: (nodeId) => a.host.pick?.(nodeId),
+        pick: (nodeId) => args.host.pick?.(nodeId),
         statusOf: (nodeId) => raw.statusOf(nodeId),
     };
 };
