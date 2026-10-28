@@ -128,6 +128,148 @@ const routeOf = (ref: CommandRef) => {
     return { command: ref.command, payload: ref.payload };
 };
 
+/** The engine, policy, presentation and entries `toolbarItems` derives once. */
+type ToolbarItemsContext = {
+    engine: CompiledDefinition;
+    authoring: AuthoringPolicy;
+    presentation: ReactPresentation;
+    t: CodecContext['t'];
+    lang: string;
+    entries: ButtonEntry[];
+};
+
+const marks = (context: ToolbarItemsContext, ref: CommandRef) =>
+    context.entries.some((entry) => entry.command === routeOf(ref).command && entry.bubble === true);
+
+const runnable = (context: ToolbarItemsContext, command: string) =>
+    context.engine.commands.has(command) && !refusedBy(context.authoring, context.engine, command);
+
+/** The item of one entry, with the presentation's label and icon for its command. */
+const itemOf = (
+    context: ToolbarItemsContext,
+    entry: ButtonEntry,
+    groupStart: boolean,
+    bubble: boolean,
+): ToolbarItem => {
+    const { command, payload } = entry;
+    const { keymap } = context.engine;
+    let label: string;
+    if (entry.label === undefined) {
+        label = context.t(entry.labelKey as `RichTextEditor_${string}`);
+    } else {
+        label = translatedLabel(entry.label, context.lang);
+    }
+
+    let { icon } = entry;
+    const control = context.presentation.controls?.[command];
+    if (control !== undefined) {
+        if (control.labelKey !== undefined) {
+            label = context.t(control.labelKey as `RichTextEditor_${string}`);
+        }
+
+        icon = control.icon ?? icon;
+    }
+
+    const bindings = bindingsOf(keymap, command, payload);
+    const key = `${command} ${payloadKey(payload)}`;
+    const item: ToolbarItem = {
+        key,
+        command,
+        payload,
+        toggle: entry.kind === 'toggle',
+        label,
+        icon,
+        bindings,
+        groupStart,
+        bubble,
+        opensControl: entry.opensOverlay === true,
+        ...(entry.panel === undefined ? {} : { control: entry.panel }),
+    };
+    if (entry.control === undefined) {
+        return item;
+    }
+
+    return { ...item, component: entry.control };
+};
+
+// A heading level the policy cannot create only names a stored heading.
+const offered = (context: ToolbarItemsContext, { command, payload }: ButtonEntry) =>
+    context.engine.commands.get(command)?.policyRefuses?.(context.authoring, payload) !== true;
+
+/** The brand style rows: the default style, then each style that is not deprecated and applies to a styled block type. */
+const brandRows = (context: ToolbarItemsContext, defaults: readonly ButtonEntry[]) => {
+    const stylesOfBrand = (style: PresentationStyle) =>
+        isPresentationStyle(style) &&
+        style.deprecated !== true &&
+        style.appliesTo.some((type) => STYLED_BLOCKS.has(type));
+    const styles = context.presentation.styles.filter(stylesOfBrand);
+    if (!runnable(context, SET_STYLE) || styles.length === 0) {
+        return [];
+    }
+
+    const rows: (ToolbarItem & { offered: boolean })[] = defaults.map((entry) => ({
+        ...itemOf(context, entry, false, false),
+        offered: true,
+        brand: { appliesTo: [...STYLED_BLOCKS], preview: {} },
+    }));
+    for (const style of styles) {
+        const payload = { styleId: style.id };
+        rows.push({
+            key: `${SET_STYLE} ${payloadKey(payload)}`,
+            command: SET_STYLE,
+            payload,
+            toggle: true,
+            label: style.label,
+            icon: '',
+            bindings: [],
+            groupStart: false,
+            bubble: false,
+            offered: true,
+            brand: { appliesTo: style.appliesTo, preview: previewOf(style) },
+        });
+    }
+
+    return rows;
+};
+
+/** The text style picker, once, when a row is offered and the toolbar has none yet. */
+const textStyleItem = (
+    context: ToolbarItemsContext,
+    command: string,
+    payload: JsonValue | undefined,
+    groupStart: boolean,
+    items: readonly ToolbarItem[],
+): ToolbarItem | undefined => {
+    const options = TEXT_STYLE_COMMANDS.flatMap((id) => context.entries.filter((entry) => entry.command === id))
+        .filter((entry) => runnable(context, entry.command))
+        .map((entry) => ({ ...itemOf(context, entry, false, false), offered: offered(context, entry) }));
+    options.push(
+        ...brandRows(
+            context,
+            context.entries.filter((entry) => entry.command === SET_STYLE),
+        ),
+    );
+    if (options.some((option) => option.offered) && !items.some((item) => item.key === TEXT_STYLE)) {
+        const label = context.t('RichTextEditor_textStyle');
+
+        return {
+            key: TEXT_STYLE,
+            command,
+            payload,
+            toggle: false,
+            label,
+            icon: '',
+            bindings: [],
+            groupStart,
+            bubble: true,
+            options,
+            groupLabel: context.t('RichTextEditor_brandStyles'),
+        };
+    }
+
+    return undefined;
+};
+
 /**
  * The presentation's toolbar groups as items, in order, each with its feature's one registry label and icon unless
  * the presentation's `controls` replace them.
@@ -148,7 +290,6 @@ export const toolbarItems = (
         return [];
     }
 
-    const { keymap } = engine;
     const entries: ButtonEntry[] = [];
     for (const plugin of plugins) {
         // A node's entry is a menu row only, which `menuItems` lists.
@@ -156,117 +297,18 @@ export const toolbarItems = (
         entries.push(...shown.map((entry) => ({ ...entry, labelKey: entry.labelKey ?? '' })));
     }
 
-    const marks = (ref: CommandRef) =>
-        entries.some((entry) => entry.command === routeOf(ref).command && entry.bubble === true);
-    const runnable = (command: string) => engine.commands.has(command) && !refusedBy(authoring, engine, command);
-    /** The item of one entry, with the presentation's label and icon for its command. */
-    const itemOf = (entry: ButtonEntry, groupStart: boolean, bubble: boolean): ToolbarItem => {
-        const { command, payload } = entry;
-        let label: string;
-        if (entry.label === undefined) {
-            label = t(entry.labelKey as `RichTextEditor_${string}`);
-        } else {
-            label = translatedLabel(entry.label, lang);
-        }
-
-        let { icon } = entry;
-        const control = presentation.controls?.[command];
-        if (control !== undefined) {
-            if (control.labelKey !== undefined) {
-                label = t(control.labelKey as `RichTextEditor_${string}`);
-            }
-
-            icon = control.icon ?? icon;
-        }
-
-        const bindings = bindingsOf(keymap, command, payload);
-        const key = `${command} ${payloadKey(payload)}`;
-        const item: ToolbarItem = {
-            key,
-            command,
-            payload,
-            toggle: entry.kind === 'toggle',
-            label,
-            icon,
-            bindings,
-            groupStart,
-            bubble,
-            opensControl: entry.opensOverlay === true,
-            ...(entry.panel === undefined ? {} : { control: entry.panel }),
-        };
-        if (entry.control === undefined) {
-            return item;
-        }
-
-        return { ...item, component: entry.control };
-    };
-
-    // A heading level the policy cannot create only names a stored heading.
-    const offered = ({ command, payload }: ButtonEntry) =>
-        engine.commands.get(command)?.policyRefuses?.(authoring, payload) !== true;
-    /** The brand style rows: the default style, then each style that is not deprecated and applies to a styled block type. */
-    const brandRows = (defaults: readonly ButtonEntry[]) => {
-        const stylesOfBrand = (style: PresentationStyle) =>
-            isPresentationStyle(style) &&
-            style.deprecated !== true &&
-            style.appliesTo.some((type) => STYLED_BLOCKS.has(type));
-        const styles = presentation.styles.filter(stylesOfBrand);
-        if (!runnable(SET_STYLE) || styles.length === 0) {
-            return [];
-        }
-
-        const rows: (ToolbarItem & { offered: boolean })[] = defaults.map((entry) => ({
-            ...itemOf(entry, false, false),
-            offered: true,
-            brand: { appliesTo: [...STYLED_BLOCKS], preview: {} },
-        }));
-        for (const style of styles) {
-            const payload = { styleId: style.id };
-            rows.push({
-                key: `${SET_STYLE} ${payloadKey(payload)}`,
-                command: SET_STYLE,
-                payload,
-                toggle: true,
-                label: style.label,
-                icon: '',
-                bindings: [],
-                groupStart: false,
-                bubble: false,
-                offered: true,
-                brand: { appliesTo: style.appliesTo, preview: previewOf(style) },
-            });
-        }
-
-        return rows;
-    };
-
+    const context: ToolbarItemsContext = { engine, authoring, presentation, t, lang, entries };
     const items: ToolbarItem[] = [];
     const groups = presentation.toolbar ?? toolbarGroups(plugins, authoring);
     for (const group of groups) {
         let groupStart = items.length > 0;
-        const bubble = group.some(marks);
+        const bubble = group.some((ref) => marks(context, ref));
         for (const ref of group) {
             const { command, payload } = routeOf(ref);
             if (command === TEXT_STYLE) {
-                const options = TEXT_STYLE_COMMANDS.flatMap((id) => entries.filter((entry) => entry.command === id))
-                    .filter((entry) => runnable(entry.command))
-                    .map((entry) => ({ ...itemOf(entry, false, false), offered: offered(entry) }));
-                options.push(...brandRows(entries.filter((entry) => entry.command === SET_STYLE)));
-                if (options.some((option) => option.offered) && !items.some((item) => item.key === TEXT_STYLE)) {
-                    const label = t('RichTextEditor_textStyle');
-                    items.push({
-                        key: TEXT_STYLE,
-                        command,
-                        payload,
-                        toggle: false,
-                        label,
-                        icon: '',
-                        bindings: [],
-                        groupStart,
-                        bubble: true,
-                        options,
-                        groupLabel: t('RichTextEditor_brandStyles'),
-                    });
+                const item = textStyleItem(context, command, payload, groupStart, items);
+                if (item !== undefined) {
+                    items.push(item);
                     groupStart = false;
                 }
 
@@ -274,14 +316,14 @@ export const toolbarItems = (
             }
 
             const key = `${command} ${payloadKey(payload)}`;
-            const entry = entries.find(
+            const entry = context.entries.find(
                 (candidate) => candidate.command === command && payloadKey(candidate.payload) === payloadKey(payload),
             );
-            if (entry === undefined || !runnable(command) || items.some((item) => item.key === key)) {
+            if (entry === undefined || !runnable(context, command) || items.some((item) => item.key === key)) {
                 continue;
             }
 
-            items.push(itemOf(entry, groupStart, bubble));
+            items.push(itemOf(context, entry, groupStart, bubble));
             groupStart = false;
         }
     }
