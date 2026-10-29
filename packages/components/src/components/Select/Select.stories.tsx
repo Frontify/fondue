@@ -40,6 +40,7 @@ const meta: Meta<typeof SelectSingle> = {
         'aria-label': 'Select an item',
         placeholder: 'Select an item',
         onSelect: action('onSelect'),
+        onOpenChange: action('onOpenChange'),
     },
     argTypes: {
         disabled: { control: 'boolean', table: { category: 'State' } },

@@ -163,6 +163,48 @@ describe('SelectMultiple', () => {
         });
     });
 
+    describe('open state', () => {
+        it('calls onOpenChange when the menu opens and closes', async () => {
+            const onOpenChange = vi.fn();
+            const user = userEvent.setup();
+            renderMultiSelect({ onOpenChange });
+
+            await user.click(screen.getByRole('combobox'));
+            expect(onOpenChange).toHaveBeenLastCalledWith(true);
+
+            await user.keyboard('{Escape}');
+            expect(onOpenChange).toHaveBeenLastCalledWith(false);
+            expect(onOpenChange).toHaveBeenCalledTimes(2);
+        });
+
+        it('does not call onOpenChange while selecting items', async () => {
+            const onOpenChange = vi.fn();
+            const onSelect = vi.fn();
+            const user = userEvent.setup();
+            renderMultiSelect({ onOpenChange, onSelect });
+
+            await user.click(screen.getByRole('combobox'));
+            await user.click(getMenuOption('Apple'));
+            await user.click(getMenuOption('Banana'));
+
+            expect(onSelect).toHaveBeenCalledTimes(2);
+            expect(onOpenChange).toHaveBeenCalledTimes(1);
+            expect(onOpenChange).toHaveBeenCalledWith(true);
+        });
+
+        it('calls onOpenChange with false when clicking outside', async () => {
+            const onOpenChange = vi.fn();
+            const user = userEvent.setup();
+            renderMultiSelect({ onOpenChange });
+
+            await user.click(screen.getByRole('combobox'));
+            await user.click(getMenuOption('Apple'));
+            await user.click(document.body);
+
+            expect(onOpenChange).toHaveBeenLastCalledWith(false);
+        });
+    });
+
     describe('indeterminate values', () => {
         const getOptionRow = (name: string): HTMLElement => screen.getByRole('option', { name });
 

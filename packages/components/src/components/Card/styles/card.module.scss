@@ -18,9 +18,15 @@
 }
 
 // Mixin for card state variants (default, hover, selected, hover+selected).
-@mixin card-state($card-shadow: none, $root-bg: null, $banner-shadow: none, $banner-radius: 0) {
+@mixin card-state($card-shadow: none, $root-bg: null, $hovered: false, $banner-shadow: none, $banner-radius: 0) {
     @if $root-bg {
         background-color: var(--color-#{$root-bg});
+    }
+
+    @if $hovered {
+        &::before {
+            opacity: 1;
+        }
     }
 
     &::after {
@@ -79,7 +85,25 @@
     background-color: var(--color-surface-default);
     overflow: hidden;
     outline: none;
-    @include transitions.transition((background-color));
+    // Contains the hover layer's negative z-index so it paints above the card's
+    // background but below its content.
+    isolation: isolate;
+
+    // Hover/pressed tint. Fading this layer's opacity instead of transitioning the
+    // root's background-color avoids a Chrome flicker: it runs background-color
+    // transitions on the compositor and can paint the start color for one frame
+    // when the transition ends.
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        border-radius: inherit;
+        background-color: var(--color-surface-hover);
+        opacity: 0;
+        pointer-events: none;
+        @include transitions.transition-opacity;
+    }
 
     &::after {
         @include border-overlay($z-index: 2);
@@ -106,7 +130,7 @@
         // Hover state (also when a dropdown is open inside the card)
         &:hover,
         &:has([data-state='open']) {
-            @include card-state($card-shadow: inset 0 0 0 1px var(--color-line-subtle), $root-bg: 'surface-hover');
+            @include card-state($card-shadow: inset 0 0 0 1px var(--color-line-subtle), $hovered: true);
         }
 
         // Selected state
@@ -117,12 +141,13 @@
         // Hover + Selected state (also when a dropdown is open inside the card)
         &[data-selected='true']:hover,
         &[data-selected='true']:has([data-state='open']) {
-            @include card-state($card-shadow: inset 0 0 0 1px var(--color-line-strong), $root-bg: 'surface-hover');
+            @include card-state($card-shadow: inset 0 0 0 1px var(--color-line-strong), $hovered: true);
         }
 
         // Pressed state (while actively clicking, via :active)
-        &:active {
+        &:active::before {
             background-color: var(--color-surface-active);
+            opacity: 1;
         }
     }
 }
