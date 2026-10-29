@@ -33,7 +33,7 @@ The versions `pnpm-lock.yaml` resolves for this release:
 - `@radix-ui/react-toolbar@1.1.19`
 - `emojibase-data@17.0.0`
 - `lowlight@3.3.0`
-- `markdown-it@15.0.2`
+- `markdown-it@15.0.3`
 - `prosemirror-commands@1.7.2`
 - `prosemirror-dropcursor@1.8.4`
 - `prosemirror-gapcursor@1.4.1`
