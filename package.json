@@ -31,8 +31,8 @@
         "chokidar-cli": "^3.0.0",
         "concurrently": "^10.0.6",
         "glob": "^13.0.6",
-        "taze": "^20.0.0",
-        "wait-on": "^9.1.0"
+        "taze": "^20.0.2",
+        "wait-on": "^9.5.1"
     },
     "engines": {
         "node": "^24",
