@@ -7,7 +7,6 @@ import { type InteractionScope } from '#/bridge/overlays/helpers/interactionScop
 import {
     type AnchorTarget,
     type EditorHosts,
-    type OverlayAnchor,
     type OverlayProps,
     type PluginPresentation,
 } from '#/bridge/pluginApi/plugin';
@@ -17,15 +16,7 @@ import { type CodecContext } from '#/model';
 import { contentChecksOf, referenceValues, surfaceElement } from '#/runtime/port';
 
 import { type ReferenceService } from '../../types';
-
-/** The overlay a plugin command opened, with what it renders with; `id` remounts it when it opens again. */
-export type PluginOverlay = {
-    id: number;
-    component: ComponentType<OverlayProps>;
-    props: object;
-    anchor: OverlayAnchor;
-    opener: Element | null;
-};
+import { type PluginOverlay } from '../types';
 
 /** What the hosts read when a plugin calls them: the session's parts, and the newest props, strings and language. */
 type HostSources = {

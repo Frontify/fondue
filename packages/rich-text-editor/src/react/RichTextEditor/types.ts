@@ -4,7 +4,7 @@ import { type ComponentType, type KeyboardEventHandler, type MutableRefObject, t
 
 import { type TurnIntoEntry } from '#/bridge/chrome/helpers/turnInto';
 import { type PortalStore } from '#/bridge/nodeViews/helpers/portals';
-import { type EditorHosts } from '#/bridge/pluginApi/plugin';
+import { type EditorHosts, type OverlayAnchor, type OverlayProps } from '#/bridge/pluginApi/plugin';
 import { type Announcer } from '#/bridge/session/helpers/announcer';
 import { type ReactWork } from '#/bridge/session/helpers/devChecks';
 import { type MountCoordinator } from '#/bridge/session/helpers/mount';
@@ -20,15 +20,12 @@ import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
 import { type ReaderContext } from '#/reader/define';
 import { type ReaderOverrides } from '#/reader/helpers/plan';
 import { type ReaderPresentation } from '#/reader/ReaderWith/ReaderWith';
-import { type EditorPort, type RuntimeHandle } from '#/runtime/port';
+import { type EditorPort, type RuntimeHandle, type SessionToken, type UploadPlace } from '#/runtime/port';
 import { type ToolbarItem, type ToolbarStrings } from '#/ui/helpers/items';
 import { type PanelController } from '#/ui/helpers/panelContext';
 import { type ReferenceListStrings } from '#/ui/LazySuggestionList/helpers/referenceStrings';
 
 import { type CompiledEditorDefinition, type Defined, type Props, type ToolbarMode } from '../types';
-
-import { type PluginOverlay } from './hooks/usePluginHosts';
-import { type Choosing } from './hooks/useSessionRuntime';
 
 export type { Defined, Props };
 /** The `data-test-id` of the root when the host sets none. */
@@ -145,6 +142,21 @@ export type Standing = {
     key: string;
     component: ComponentType<{ toolbarRef: (element: HTMLElement | null) => void; covered: boolean }>;
     toolbarRef: (element: HTMLElement | null) => void;
+};
+
+/** The overlay a plugin command opened, with what it renders with; `id` remounts it when it opens again. */
+export type PluginOverlay = {
+    id: number;
+    component: ComponentType<OverlayProps>;
+    props: object;
+    anchor: OverlayAnchor;
+    opener: Element | null;
+};
+
+/** Where the file chooser's files go, once the chooser reports them. */
+export type Choosing = {
+    place: UploadPlace;
+    session: SessionToken;
 };
 
 export type FrameProps = {

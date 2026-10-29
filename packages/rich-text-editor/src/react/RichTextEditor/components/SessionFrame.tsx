@@ -14,9 +14,7 @@ import { PanelContext } from '#/ui/helpers/panelContext';
 import { LazySuggestionList } from '#/ui/LazySuggestionList/LazySuggestionList';
 
 import { translatedLabel } from '../../helpers/toolbarItems';
-import { type PluginOverlay } from '../hooks/usePluginHosts';
-import { type Choosing } from '../hooks/useSessionRuntime';
-import { type FrameProps, type Standing } from '../types';
+import { type Choosing, type FrameProps, type PluginOverlay, type Standing } from '../types';
 
 import { Bubble } from './Parts';
 

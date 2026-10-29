@@ -36,13 +36,7 @@ import { pickAsset } from '../helpers/assetPicker';
 import { backgroundOf, columnsAtMount, memberOf, modeOf, shellPropsOf } from '../helpers/sessionHelpers';
 import { registerSaveCauses } from '../helpers/status';
 import { uploadMessage } from '../helpers/uploadMessages';
-import { type Mounted, type RecoverySession, type SessionRest } from '../types';
-
-/** Where the file chooser's files go, once the chooser reports them. */
-export type Choosing = {
-    place: UploadPlace;
-    session: SessionToken;
-};
+import { type Choosing, type Mounted, type RecoverySession, type SessionRest } from '../types';
 
 type SessionWiring = {
     mounted: Mounted;

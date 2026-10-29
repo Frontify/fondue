@@ -22,10 +22,16 @@ import {
     standingOverlaysOf,
 } from '../helpers/chromeModel';
 import { memberOf, type shellPropsOf } from '../helpers/sessionHelpers';
-import { type ChromeContext, type Mounted, type Props, type SessionRest } from '../types';
+import {
+    type Choosing,
+    type ChromeContext,
+    type Mounted,
+    type PluginOverlay,
+    type Props,
+    type SessionRest,
+} from '../types';
 
-import { type PluginOverlay, useRenderedHosts } from './usePluginHosts';
-import { type Choosing } from './useSessionRuntime';
+import { useRenderedHosts } from './usePluginHosts';
 
 type ChromeSources = {
     props: Props;
