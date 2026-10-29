@@ -12,7 +12,7 @@ import {
     type Updater,
 } from '@headless-tree/core';
 import { useTree } from '@headless-tree/react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { INDENT_STEP_PX, ROOT_ID, ROOT_NAME } from '../constants';
 import { type TreeChangeState, type TreeDropCandidate, type TreeItemData } from '../types';
@@ -112,12 +112,22 @@ export const useTreeController = ({
     // Focus is internal-only (not in `onChange`), seeded to the first item so one row
     // gets `tabIndex=0` — otherwise the roving tabindex leaves the tree unreachable by Tab.
     const [internalFocusedItem, setInternalFocusedItem] = useState<string | undefined>(() => items[0]?.id);
-    const [previousItems, setPreviousItems] = useState(items);
-    // Adjusted during render so the row leaving the screen never renders as the tab stop; `undefined` falls back to the first row.
-    if (previousItems !== items) {
-        setPreviousItems(items);
-        setInternalFocusedItem(getFocusFallback(internalFocusedItem, previousItems, items));
-    }
+    // The ref holds the list from the last render React kept. The id below is what the tree
+    // receives, so a removed row is never handed to it. The effect stores the new list, and
+    // copies the id into state, only after that render is kept.
+    const previousItemsRef = useRef(items);
+    const focusedItem =
+        previousItemsRef.current === items
+            ? internalFocusedItem
+            : getFocusFallback(internalFocusedItem, previousItemsRef.current, items);
+    useLayoutEffect(() => {
+        previousItemsRef.current = items;
+        if (focusedItem !== internalFocusedItem) {
+            // The tree already received this id above. State catches up after the render is kept.
+            // oxlint-disable-next-line @eslint-react/set-state-in-effect
+            setInternalFocusedItem(focusedItem);
+        }
+    }, [items, focusedItem, internalFocusedItem]);
 
     // Renames are started by the `isRenaming` prop but ended by the tree, which must take
     // effect before the consumer clears the prop — so internal state is the source of
@@ -126,8 +136,8 @@ export const useTreeController = ({
     const [renamingValue, setRenamingValue] = useState<string>('');
 
     const treeState = useMemo<FlatTreeState>(
-        () => ({ expandedItems, checkedItems, selectedItems, focusedItem: internalFocusedItem }),
-        [expandedItems, checkedItems, selectedItems, internalFocusedItem],
+        () => ({ expandedItems, checkedItems, selectedItems, focusedItem }),
+        [expandedItems, checkedItems, selectedItems, focusedItem],
     );
 
     // Emits are coalesced: one user event can hit several setters (a folder click sets
@@ -270,7 +280,7 @@ export const useTreeController = ({
             getItem: (itemId) => itemsById.get(itemId) as TreeItemData,
             getChildren: (itemId) => itemsById.get(itemId)?.children ?? [],
         },
-        state: { ...treeState, focusedItem: internalFocusedItem ?? null, renamingItem, renamingValue },
+        state: { ...treeState, focusedItem: focusedItem ?? null, renamingItem, renamingValue },
         setExpandedItems,
         setCheckedItems,
         setSelectedItems: multiSelect ? undefined : setSelectedItems,
