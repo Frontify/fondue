@@ -165,8 +165,12 @@ const EFFECTS: {
     drop: (link, { cell }) => link.cells.delete(cell.slot.nodeId),
 };
 
-const runEffect = (link: Link, context: TransportContext, effect: Effect) => {
-    (EFFECTS[effect.type] as (link: Link, context: TransportContext, effect: Effect) => void)(link, context, effect);
+const runEffect = <EffectType extends Effect['type']>(
+    link: Link,
+    context: TransportContext,
+    effect: EffectOf<EffectType>,
+) => {
+    EFFECTS[effect.type](link, context, effect);
 };
 
 /** Sends the slot's file as a new operation, and announces its start unless its gesture announces it. */

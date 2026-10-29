@@ -5,6 +5,8 @@ import { type EditorState, Plugin, PluginKey, type Transaction } from 'prosemirr
 
 import { isRecord } from '#/model';
 
+import { metaOf } from '../definition/engineJson';
+
 import { clearMarks } from './markClear';
 import { enclosingRange, type Extend, extendOf, markRange } from './markRanges';
 import { markableText } from './markToggle';
@@ -21,7 +23,7 @@ export const lastMarkPlugin = () =>
         state: {
             init: () => [],
             apply: (transaction, marks) => {
-                const mark = transaction.getMeta(LAST_MARK_META) as Mark | undefined;
+                const mark = metaOf<Mark>(transaction, LAST_MARK_META);
                 if (mark === undefined) {
                     return marks;
                 }

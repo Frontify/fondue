@@ -29,7 +29,7 @@ import { assembleEditing } from './session/assemble/assembleEditing';
 import { assembleOperations } from './session/assemble/assembleOperations';
 import { assembleSession } from './session/assemble/assembleSession';
 import { assembleState } from './session/assemble/assembleState';
-import { type Late } from './session/assemble/late';
+import { type Late, type LateSlot } from './session/assemble/late';
 import { liveResources, viewRuntimes } from './session/assemble/registry';
 import { type NodeActions, type NodeTarget } from './session/editing/actions';
 import { isEmpty } from './session/editing/view';
@@ -217,13 +217,13 @@ export { isEmpty, summarize };
 
 /** One editing session: its state, its view while a surface is attached, the commit path and its events. */
 export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntime => {
-    const late = {} as Late;
-    const core = assembleCore(options, late);
-    const state = assembleState(core, options, late);
-    const editing = assembleEditing(state, options, late);
-    const operations = assembleOperations(editing, options, late);
+    const slot: LateSlot = {};
+    const core = assembleCore(options, slot);
+    const state = assembleState(core, options, slot);
+    const editing = assembleEditing(state, options, slot);
+    const operations = assembleOperations(editing, options, slot);
     const { handle, runtime } = assembleSession(operations, options);
-    Object.assign(late, {
+    slot.current = {
         views: editing.views,
         commit: editing.commit,
         settleInput: editing.settleInput,
@@ -232,7 +232,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         queue: operations.queue,
         actions: operations.actions,
         runtime,
-    } satisfies Late);
+    } satisfies Late;
     const { views, saving, display } = operations;
     if (options.nodeViews !== undefined) {
         views.setNodeViews(options.nodeViews(runtime));

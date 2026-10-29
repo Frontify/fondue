@@ -1,8 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Listener } from '../../reporting/events';
 import { type RuntimeHandle } from '../../runtime';
-import { type Unsubscribe } from '../../types';
 import { type Commands } from '../editing/commands';
 import { type Focus } from '../editing/focus';
 import { type Composition } from '../state/composition';
@@ -36,7 +34,7 @@ export const createHandle = (args: {
     policy: Pick<PolicyService, 'update'>;
     focus: Pick<Focus, 'focus'>;
     interactionRoots: Set<HTMLElement>;
-    subscribe: (event: string, listener: Listener) => Unsubscribe;
+    subscribe: RuntimeHandle['subscribe'];
     dispose: () => void;
 }): RuntimeHandle => {
     const { identity, lifecycle, mode, composition, store, shown, saving, faults, commands, queue } = args;

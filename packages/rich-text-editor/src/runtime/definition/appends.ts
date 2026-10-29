@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Plugin, type Transaction } from 'prosemirror-state';
+import { Plugin, Transaction } from 'prosemirror-state';
 
+import { metaOf } from './engineJson';
 import { APPEND_BATCH_META, type AppendBatch, type PluginOrigin } from './types';
 
 /** Thrown past the append limit, so `commit` tells it apart from a plugin error. */
@@ -15,17 +16,27 @@ export class AppendLimitError extends Error {
 /** The root transaction that `transactions` belong to; ProseMirror marks each appended transaction with its root. */
 export const rootOf = (transactions: readonly Transaction[]): Transaction | undefined => {
     const root = transactions[0];
-    const rootOfAppended: unknown = root?.getMeta('appendedTransaction');
-    if (rootOfAppended !== undefined) {
-        return rootOfAppended as Transaction;
+    if (root === undefined) {
+        return undefined;
+    }
+
+    const appended = metaOf<unknown>(root, 'appendedTransaction');
+    if (appended instanceof Transaction) {
+        return appended;
     }
 
     return root;
 };
 
 /** The batch of the root that `transactions` belong to. */
-export const batchOf = (transactions: readonly Transaction[]): AppendBatch | undefined =>
-    rootOf(transactions)?.getMeta(APPEND_BATCH_META) as AppendBatch | undefined;
+export const batchOf = (transactions: readonly Transaction[]): AppendBatch | undefined => {
+    const root = rootOf(transactions);
+    if (root === undefined) {
+        return undefined;
+    }
+
+    return metaOf<AppendBatch>(root, APPEND_BATCH_META);
+};
 
 /**
  * Wraps a plugin's `appendTransaction`, since `state.applyTransaction` loops with no cap: each appended transaction

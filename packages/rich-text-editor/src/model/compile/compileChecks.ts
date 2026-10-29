@@ -95,7 +95,7 @@ const resolveOptions = (id: string, declaration: FeatureDeclaration, given: unkn
             throw failure('definition.invalid-option', id, pointer('options', name));
         }
 
-        options[name] = value as JsonValue;
+        options[name] = value;
     }
 
     return snapshot(options);

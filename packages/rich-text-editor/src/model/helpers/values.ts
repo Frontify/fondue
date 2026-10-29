@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type StoredId } from '../types';
+import { type JsonValue, type StoredId } from '../types';
 import {
     type AttributeDeclaration,
     type AttributeDeclarations,
@@ -26,6 +26,19 @@ export const MAX_DEPTH = 64;
  */
 export const isRecord = (value: unknown): value is Readonly<Record<string, unknown>> =>
     typeof value === 'object' && value !== null && !Array.isArray(value);
+
+/** The element at `index`, which is missing when the index is past the array. */
+export const requiredAt = <Item>(items: readonly Item[], index: number): Item => {
+    const item = items[index];
+    if (item === undefined) {
+        throw new Error(`Missing item at index ${index}`);
+    }
+
+    return item;
+};
+
+/** `Array.isArray` narrows to `any[]`; this predicate reads each element as `unknown`. */
+export const isUnknownArray = (value: unknown): value is readonly unknown[] => Array.isArray(value);
 
 /** A value that cannot end its declaration or reach a URL, comment or markup. */
 export const isPlainCss = (value: string) => !/[;:()'"\\{}<]|\/\*/.test(value);
@@ -207,7 +220,7 @@ const isLanguageTag = (value: string) => {
 };
 
 /** Whether `value` meets its declaration; a `url` value must pass `checkHref`. */
-export const isValidValue = (declaration: ValueDeclaration, value: unknown): boolean => {
+export const isValidValue = (declaration: ValueDeclaration, value: unknown): value is JsonValue => {
     if (value === null) {
         return declaration.nullable === true;
     }
@@ -321,6 +334,12 @@ export const findInvalidPayload = (
 
     return undefined;
 };
+
+/** Whether `payload` meets `declaration`. A generic payload has no runtime witness beyond that check. */
+export const acceptedPayload = <Payload>(
+    declaration: PayloadDeclaration | undefined,
+    payload: unknown,
+): payload is Payload => findInvalidPayload(declaration, payload) === undefined;
 
 /** The character that stands for an inline node other than text in a block's text, U+FFFC. */
 export const OBJECT_REPLACEMENT = '\uFFFC';

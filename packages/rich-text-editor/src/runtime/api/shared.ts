@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Node, type Schema } from 'prosemirror-model';
+import { type Attrs, type Node, type Schema } from 'prosemirror-model';
 import { type EditorState, type Transaction } from 'prosemirror-state';
 
 import {
@@ -87,7 +87,8 @@ export type ApiSource = {
     uploads(): MediaSession['uploads'] | undefined;
 };
 
-export const valuesOf = (attrs: Readonly<Record<string, unknown>>): JsonObject => snapshot({ ...attrs }) as JsonObject;
+/** `Attrs` values are `any`. */
+export const valuesOf = (attrs: Attrs): JsonObject => snapshot({ ...attrs });
 
 export const idOf = (node: Node): string | null => {
     if (typeof node.attrs.nodeId === 'string') {

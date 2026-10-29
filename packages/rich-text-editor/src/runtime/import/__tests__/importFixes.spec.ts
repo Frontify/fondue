@@ -3,16 +3,20 @@
 // @vitest-environment node
 
 import { JSDOM } from 'jsdom';
+import { Fragment } from 'prosemirror-model';
 import { describe, expect, it } from 'vitest';
 
 import { compileContentModel, defaultLimits } from '#/model';
 import { htmlModel } from '#/plugins/__tests__/fixtures/html';
 import { core } from '#/plugins/Core/feature';
+import { heading } from '#/plugins/Heading/feature';
 import { link } from '#/plugins/Link/feature';
 import { buildSchema } from '#/runtime/definition/schema';
 import { NO_COLORS } from '#/runtime/import/colors';
 import { importHtml } from '#/runtime/import/html';
 
+import { withValidAttributes } from '../fragment';
+import { documentFromFragment } from '../fragmentDocument';
 import { fromHTML } from '../fromHtml';
 
 const { window } = new JSDOM('');
@@ -109,5 +113,37 @@ describe('the HTML import of untrusted markup', () => {
 
         expect(textOf(result)).toContain(href);
         expect(JSON.stringify(content.toJSON())).toContain(href);
+    });
+
+    it('returns a blocked invalid-structure result when the fragment cannot fill a document', () => {
+        const schema = buildSchema(model);
+        const nested = schema.node('doc', null, [schema.node('paragraph', null, [schema.text('x')])]);
+        const result = documentFromFragment(
+            '<p>x</p>',
+            model,
+            schema,
+            Fragment.from(nested),
+            defaultLimits,
+            () => 'id',
+        );
+
+        expect(result).toMatchObject({
+            status: 'blocked',
+            reason: 'invalid',
+            diagnostics: [expect.objectContaining({ code: 'format.invalid-structure' })],
+        });
+    });
+
+    it('turns a heading whose level is missing or not a number into a paragraph', () => {
+        const headingModel = compileContentModel([core(), heading()], { id: 'test.heading', version: 1 });
+        const schema = buildSchema(headingModel);
+        const text = schema.text('Hi');
+        const headingOf = (level: unknown) => schema.node('heading', { level }, [text]);
+        const kept = (level: unknown) =>
+            withValidAttributes(schema, Fragment.from(headingOf(level)), defaultLimits, [1, 2, 3]).firstChild?.type
+                .name;
+
+        expect(kept(null)).toBe('paragraph');
+        expect(kept('nope')).toBe('paragraph');
     });
 });

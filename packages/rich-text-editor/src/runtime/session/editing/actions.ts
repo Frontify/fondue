@@ -218,7 +218,7 @@ const searchFor = <Result>(
         command,
         run: ({ signal }) => run(signal),
         deliver: (result) => {
-            receive(result as Awaited<ReturnType<typeof run>>);
+            receive(result);
 
             return undefined;
         },

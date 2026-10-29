@@ -20,7 +20,9 @@ const doc = schema.node('doc', null, [
     schema.node('paragraph', null, [schema.text('two')]),
 ]);
 
-const setup = (options: { mode?: 'editable' | 'readonly'; disabled?: boolean; withView?: boolean } = {}) => {
+const setup = (
+    options: { mode?: 'editable' | 'readonly'; disabled?: boolean; withView?: boolean; disposeOnCommit?: boolean } = {},
+) => {
     const store = createStore(EditorState.create({ doc, selection: Selection.atStart(doc) }));
     const lifecycle = createLifecycle();
     lifecycle.to('ready');
@@ -37,6 +39,9 @@ const setup = (options: { mode?: 'editable' | 'readonly'; disabled?: boolean; wi
             commit: (root) => {
                 roots.push(root);
                 store.set(store.state.apply(root));
+                if (options.disposeOnCommit) {
+                    current.view = undefined;
+                }
             },
         },
         shown: { mode: () => options.mode ?? 'editable' },
@@ -100,6 +105,11 @@ describe('createFocus', () => {
         other.focus();
         service.refocus(true);
         expect(view.focus).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not throw when a commit listener disposes the session during focus at the start', () => {
+        const { service } = setup({ disposeOnCommit: true });
+        expect(() => service.focus('start')).not.toThrow();
     });
 
     it('never refocuses a disabled surface', () => {

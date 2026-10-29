@@ -14,6 +14,9 @@ import { markHrefPolicy, type TreeNode, codecContext, isApple } from '#/model/in
 import { type PluginImplementation } from '#/runtime/definition';
 import { closeGroup } from '#/runtime/history';
 
+import { fragmentJson, metaOf } from '../definition/engineJson';
+import { isNodeTarget } from '../import/dom';
+
 import { clipboardKey, commit } from './commit';
 import { loadMarkdownReaderOnIdle } from './markdown';
 import {
@@ -102,7 +105,7 @@ const writeFlavors = (
     const tree: TreeNode = {
         type: 'doc',
         attrs: view.state.doc.attrs,
-        content: withoutIds(slice.content).toJSON() as TreeNode[],
+        content: fragmentJson(withoutIds(slice.content)),
     };
     data.clearData();
     const resolveReference = session.resolveReference?.();
@@ -359,7 +362,9 @@ export const clipboardPlugin =
                         return false;
                     },
                     dragleave: (view, event) => {
-                        if (!drags.has(view) && !view.dom.contains(event.relatedTarget as Element | null)) {
+                        const related = event.relatedTarget;
+                        const left = !(related !== null && isNodeTarget(related) && view.dom.contains(related));
+                        if (!drags.has(view) && left) {
                             view.dragging = null;
                         }
 
@@ -375,7 +380,7 @@ export const clipboardPlugin =
             },
             appendTransaction: (transactions, _old, state) => {
                 const [root] = transactions;
-                const followUp = root?.getMeta(clipboardKey) as FollowUp | undefined;
+                const followUp = root === undefined ? undefined : metaOf<FollowUp>(root, clipboardKey);
                 if (followUp === undefined || transactions.length !== 1) {
                     return null;
                 }

@@ -6,7 +6,6 @@ import { type ContentModel, type ResourceLimits } from '#/model';
 import { type CompiledParseRule, compiledModel, markHrefPolicy } from '#/model/internal';
 
 import {
-    type DomWindow,
     limitClasses,
     removeNotes,
     removeObjectChildren,
@@ -17,7 +16,7 @@ import {
     restoreSpaces,
 } from './clean';
 import { type ColorReading, colorReadingOf, normalizeColors } from './colors';
-import { descriptorOf } from './dom';
+import { domWindow, prototypeGetter, prototypeMethod } from './dom';
 import { withSpaces, withValidAttributes } from './fragment';
 import { cleanGoogleDocs } from './googleDocs';
 import { exceedsMarkupDepth } from './limits';
@@ -55,7 +54,7 @@ export type ImportedHtml = {
  * which are the only filter, then makes spaces, attributes and heading levels valid.
  */
 export const importHtml = (html: string, schema: Schema, window: Window, settings: HtmlSettings): ImportedHtml => {
-    const dom = window as DomWindow;
+    const dom = domWindow(window);
     // Before the parse, whose cost in jsdom grows with the square of the nesting; `fromHTML` reads a RangeError as a limit.
     if (exceedsMarkupDepth(html)) {
         throw new RangeError('The markup nests deeper than a browser parser reads.');
@@ -63,13 +62,13 @@ export const importHtml = (html: string, schema: Schema, window: Window, setting
 
     const inert = new dom.DOMParser().parseFromString(html, 'text/html');
     // No rule reads a base URL, and jsdom throws resolving URLs against a `base` whose `xlink:href` it misreads.
-    const query = descriptorOf(dom.Document.prototype, 'querySelectorAll').value as Document['querySelectorAll'];
+    const query = prototypeMethod<Document['querySelectorAll']>(dom.Document.prototype, 'querySelectorAll');
     for (const base of Array.from(query.call(inert, 'base'))) {
         base.remove();
     }
 
     // An element named `body` shadows `document.body`.
-    const body = (descriptorOf(dom.Document.prototype, 'body').get as () => HTMLElement | null).call(inert);
+    const body = prototypeGetter<() => HTMLElement | null>(dom.Document.prototype, 'body').call(inert);
     if (body === null) {
         return { content: Fragment.empty, droppedImages: 0, removedColors: 0, removedTables: 0 };
     }

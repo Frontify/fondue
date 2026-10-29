@@ -4,7 +4,9 @@ import { type EditorState, Plugin, PluginKey, Selection, type Transaction } from
 import { Mapping, type Step } from 'prosemirror-transform';
 
 import { type JsonObject } from '#/model';
+import { requiredAt } from '#/model/internal';
 
+import { metaOf } from '../../definition/engineJson';
 import { positionOf } from '../../transform/positions';
 
 /** The transaction meta of a slot's start: the insertion of new slots, or a replacement's previous attributes. */
@@ -45,12 +47,12 @@ const CARRY_META = 'rte.upload-slots-carry';
 
 /** The entries of the slots that are not done, with the maps of `transaction`, then the slots that `transaction` starts. */
 const applySlots = (transaction: Transaction, value: SlotState): SlotState => {
-    const carried = transaction.getMeta(CARRY_META) as SlotState['entries'] | undefined;
+    const carried = metaOf<SlotState['entries']>(transaction, CARRY_META);
     if (carried !== undefined) {
         return { uploads: value.uploads, entries: carried };
     }
 
-    const started = transaction.getMeta(SLOT_START_META) as SlotStart | undefined;
+    const started = metaOf<SlotStart>(transaction, SLOT_START_META);
     if (!transaction.docChanged && started === undefined) {
         return value;
     }
@@ -76,7 +78,7 @@ const applySlots = (transaction: Transaction, value: SlotState): SlotState => {
         // Only the one slot of its insertion restores what the insertion replaced.
         if (started.nodeIds.length === 1) {
             inverse = transaction.steps
-                .map((step, index) => step.invert(transaction.docs[index] as EditorState['doc']))
+                .map((step, index) => step.invert(requiredAt(transaction.docs, index)))
                 .reverse();
         }
 

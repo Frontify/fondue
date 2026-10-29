@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Selection } from 'prosemirror-state';
-import { type EditorView } from 'prosemirror-view';
 
 import { keepScroll } from '../../dom/scroll';
 import { type Lifecycle } from '../state/lifecycle';
@@ -45,7 +44,11 @@ export const createFocus = (args: {
         }
 
         // A listener of those commits may have ended the session, which leaves no view.
-        const view = views.current() as EditorView;
+        const view = views.current();
+        if (view === undefined) {
+            return;
+        }
+
         if (shown.mode() === 'editable') {
             // WebKit reveals the surface's old DOM selection on focus, before ProseMirror writes the current one.
             const restore = keepScroll(view.dom);

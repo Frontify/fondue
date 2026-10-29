@@ -9,13 +9,13 @@ import { createQueue } from '../lifecycle/queue';
 import { createTargetsService } from '../lifecycle/targets';
 
 import { type Editing } from './assembleEditing';
-import { type Late } from './late';
+import { type LateSlot, ready } from './late';
 import { liveResources } from './registry';
 
 export type Operations = ReturnType<typeof assembleOperations>;
 
 /** The targets, commands, queue and node actions that run on the commit path. */
-export const assembleOperations = (editing: Editing, options: EditorRuntimeOptions, late: Late) => {
+export const assembleOperations = (editing: Editing, options: EditorRuntimeOptions, slot: LateSlot) => {
     const { definition, limits } = options;
     const { generate, identity, lifecycle, busy, report, policy, mode, saving, store, settling, display } = editing;
     const { views, faults, batches, commit, notifications } = editing;
@@ -67,7 +67,7 @@ export const assembleOperations = (editing: Editing, options: EditorRuntimeOptio
         fault: (found) => faults.fault(found),
         inRender: () => options.inRender?.(),
         commandHost: options.commandHost,
-        runtime: () => late.runtime,
+        runtime: () => ready(slot).runtime,
         notifications,
     });
     const queue = createQueue({

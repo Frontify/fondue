@@ -7,6 +7,7 @@ import { Mapping } from 'prosemirror-transform';
 import { type CommandContext, type EngineCommand } from '#/runtime/definition';
 
 import { LAST_MARK_META } from '../capabilities';
+import { metaOf } from '../definition/engineJson';
 import { nodeStateChanges, withNodeState } from '../statePlugins/nodeState';
 import { appendSteps, carrySelection } from '../transform/transactions';
 
@@ -152,7 +153,7 @@ const carryState = (outer: Transaction, next: Transaction) => {
         outer.scrollIntoView();
     }
 
-    const mark: unknown = next.getMeta(LAST_MARK_META);
+    const mark = metaOf<unknown>(next, LAST_MARK_META);
     if (mark !== undefined) {
         outer.setMeta(LAST_MARK_META, mark);
     }

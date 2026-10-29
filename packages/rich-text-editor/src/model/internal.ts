@@ -119,10 +119,13 @@ export { appliesToOf, colorOf, cssValue } from './styling/styles';
 export { type LanguageTag, type StoredId } from './types';
 export {
     OBJECT_REPLACEMENT,
+    acceptedPayload,
     findUnsafeJson,
     isStoredId,
     isStyleAttribute,
+    isUnknownArray,
     isValidValue,
+    requiredAt,
     ownValue,
     parsedAttributes,
     snapshot,

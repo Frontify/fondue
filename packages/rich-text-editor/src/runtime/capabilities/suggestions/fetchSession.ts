@@ -7,7 +7,7 @@ import { type EngineSuggestion } from '#/runtime/definition';
 
 import { dismissSuggestion } from './actions';
 import { suggestionHosts } from './host';
-import { isHttpsUrl, KINDS, type ReferenceResults } from './references';
+import { isHttpsUrl, isReferenceKind, type ReferenceResults } from './references';
 import { SEARCH_DELAY_MS } from './search';
 import { activeSuggestion, withMeta } from './state';
 import { type ActiveSuggestion, type SuggestionItem, type SuggestionsMeta } from './types';
@@ -48,7 +48,7 @@ const optionsOf = (page: SuggestionPage): ReferenceResults => {
             item = { ...item, imageUrl };
         }
 
-        if (kind !== undefined && KINDS.has(kind)) {
+        if (isReferenceKind(kind)) {
             item = { ...item, kind };
         }
 

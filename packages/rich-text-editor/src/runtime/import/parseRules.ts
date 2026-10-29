@@ -4,13 +4,15 @@ import { type Mark, type ParseRule, type Schema } from 'prosemirror-model';
 
 import { type CompiledParseRule } from '#/model/internal';
 
+import { styleOf } from './dom';
+
 /** What a function rule reads of an element: its attributes, or `null` when the rule refuses the element. */
 export type Answer = ReturnType<CompiledParseRule['read']>;
 
 /** The answers of function rules, each read once before the parse, and the elements refused per mark or node name. */
 export type Answers = {
     byRule: ReadonlyMap<CompiledParseRule, ReadonlyMap<Element, Answer>>;
-    refused: ReadonlyMap<string, ReadonlySet<Element>>;
+    refused: ReadonlyMap<string, ReadonlySet<HTMLElement | SVGElement>>;
 };
 
 /** The custom property on an element whose rule refuses mark `name`, since the engine clears a mark only by a style rule. */
@@ -22,7 +24,7 @@ const refusalOf = (name: string) => `--rte-refused-${name}`;
  */
 export const readAnswers = (body: HTMLElement, rules: readonly CompiledParseRule[]): Answers => {
     const byRule = new Map<CompiledParseRule, Map<Element, Answer>>();
-    const refused = new Map<string, Set<Element>>();
+    const refused = new Map<string, Set<HTMLElement | SVGElement>>();
     for (const rule of rules) {
         const answers = new Map<Element, Answer>();
         byRule.set(rule, answers);
@@ -33,7 +35,11 @@ export const readAnswers = (body: HTMLElement, rules: readonly CompiledParseRule
                 continue;
             }
 
-            const elements = refused.get(rule.name) ?? new Set<Element>();
+            if (styleOf(element) === undefined) {
+                continue;
+            }
+
+            const elements = refused.get(rule.name) ?? new Set<HTMLElement | SVGElement>();
             elements.add(element);
             refused.set(rule.name, elements);
         }
@@ -46,7 +52,7 @@ export const readAnswers = (body: HTMLElement, rules: readonly CompiledParseRule
         }
 
         for (const element of refused.get(rule.name) ?? []) {
-            (element as HTMLElement).style.setProperty(refusalOf(rule.name), 'refused');
+            element.style.setProperty(refusalOf(rule.name), 'refused');
         }
     }
 

@@ -4,7 +4,7 @@ import { type Node, type NodeType, type Schema } from 'prosemirror-model';
 import { type EditorState } from 'prosemirror-state';
 
 import { isRecord } from '#/model';
-import { appliesToOf } from '#/model/internal';
+import { appliesToOf, isUnknownArray } from '#/model/internal';
 import { stylesOf } from '#/runtime/statePlugins/styles';
 
 import { nearest, positionOf } from '../transform/positions';
@@ -17,7 +17,7 @@ const typesOf = (node: unknown, schema: Schema): readonly NodeType[] => {
         return Object.values(schema.nodes).filter((type) => type.isTextblock);
     }
 
-    const names = Array.isArray(node) ? (node as readonly unknown[]) : [node];
+    const names = isUnknownArray(node) ? node : [node];
 
     return names.flatMap((name) => {
         const type = typeof name === 'string' ? schema.nodes[name] : undefined;

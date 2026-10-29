@@ -1,6 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type AttributeDeclaration, checkHref, type ContentModel, type JsonObject, hrefPolicyOf } from '#/model';
+import {
+    type AttributeDeclaration,
+    checkHref,
+    type ContentModel,
+    type JsonObject,
+    type JsonValue,
+    hrefPolicyOf,
+} from '#/model';
 import { attributesOf, compiledModel, isValidValue } from '#/model/internal';
 
 /** The URL policy of the feature that installs a node or mark. */
@@ -95,9 +102,9 @@ export const checkedAttrs = (
         return undefined;
     }
 
-    const checked: Record<string, unknown> = {};
+    const checked: { [key: string]: JsonValue } = {};
     for (const owner of owners) {
-        const values: Record<string, unknown> = {};
+        const values: Record<string, JsonValue> = {};
         for (const [name, value] of Object.entries(attrs)) {
             const declaration = owner.attrs[name];
             // A type that does not declare an attribute skips it; `checked` below refuses one that none declares.
@@ -110,17 +117,18 @@ export const checkedAttrs = (
                 return undefined;
             }
 
-            values[name] = value;
+            let stored: JsonValue = value;
             const url = checkedUrl(model, owner.featureId, declaration, value);
             if (url !== undefined) {
                 if (!url.ok) {
                     return undefined;
                 }
 
-                values[name] = url.href;
+                stored = url.href;
             }
 
-            checked[name] = values[name];
+            values[name] = stored;
+            checked[name] = stored;
         }
 
         for (const [name, declaration] of Object.entries(owner.attrs)) {
@@ -147,5 +155,5 @@ export const checkedAttrs = (
         return undefined;
     }
 
-    return checked as JsonObject;
+    return checked;
 };

@@ -14,8 +14,15 @@ const HEADING_LEVELS: readonly HeadingLevel[] = [1, 2, 3, 4, 5, 6];
 const HEADING = 'heading';
 
 /** Whether the policy refuses the heading level that a heading's attributes name. */
-const refusesLevel = (policy: AuthoringPolicy, values: unknown): boolean =>
-    isRecord(values) && !policy.creatableHeadingLevels.includes(values.level as HeadingLevel);
+const refusesLevel = (policy: AuthoringPolicy, values: unknown): boolean => {
+    if (!isRecord(values)) {
+        return false;
+    }
+
+    const { level } = values;
+
+    return !policy.creatableHeadingLevels.some((allowed) => allowed === level);
+};
 
 /**
  * Every installed feature fully allowed, with the policy's own values over it. Remote values are checked like option

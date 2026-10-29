@@ -15,6 +15,7 @@ import {
 import { type BlockDecorationSource, type SuggestionPage, type SuggestionRules } from '#/model/internal';
 
 import { type CompiledInputRule } from './inputRules';
+import { type AuthoringPolicy } from './policy';
 
 /** The transaction meta that names the command a transaction runs, so the runtime reports it. */
 export const COMMAND_META = 'rte.command';
@@ -48,7 +49,7 @@ export type EngineCommand = {
     /** Whether running would drop content its target cannot hold, which the runtime rejects as `not-allowed`. */
     refuses?: (state: EditorState, payload?: unknown) => boolean;
     /** Whether the authoring policy the runtime passes refuses `payload`, which it rejects as `not-allowed`. */
-    policyRefuses?: (policy: unknown, payload?: unknown) => boolean;
+    policyRefuses?: (policy: AuthoringPolicy, payload?: unknown) => boolean;
     /** The command's payload declaration; none means it takes no payload. */
     payload?: PayloadDeclaration;
     /** The feature that installs it, whose policy and options apply to it. */

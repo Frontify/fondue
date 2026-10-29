@@ -57,7 +57,7 @@ const IMPORT_MESSAGE =
     '`runtime/import` imports only `model` and `prosemirror-model`, because `./html` loads it without the engine.';
 
 const HTML_MESSAGE =
-    '`runtime/import/fromHtml` imports only `model`, `#/runtime/definition/schema`, `runtime/import` and `prosemirror-model`, because `./html` runs on the server without the engine or React.';
+    '`runtime/import/fromHtml` and `runtime/import/fragmentDocument` import only `model`, `#/runtime/definition/schema`, `#/runtime/definition/engineJson`, `runtime/import` and `prosemirror-model`, because `./html` runs on the server without the engine or React.';
 
 const FEATURE_FILE_MESSAGE =
     "A feature file imports only `#/model`, its own `./migration` and a declared dependency's `#/plugins/<id>/feature`, as an outside feature must, and never its editor part, which the reader, codecs and server do not load.";
@@ -907,7 +907,20 @@ export default defineConfig({
                     ...relativePatterns(nonModelFolders),
                     ...PROSEMIRROR_EXCEPT_MODEL,
                     ...REACT_PATTERNS,
-                    ...exceptPatterns(['runtime/definition/schema', ...IMPORT_PATHS]),
+                    ...exceptPatterns(['runtime/definition/schema', 'runtime/definition/engineJson', ...IMPORT_PATHS]),
+                ],
+                message: HTML_MESSAGE,
+            },
+            featurePluginRestriction,
+        ]),
+        layerOverride('src/runtime/import/fragmentDocument.ts', [
+            {
+                group: [
+                    ...aliasPatterns(nonModelFolders),
+                    ...relativePatterns(nonModelFolders),
+                    ...PROSEMIRROR_EXCEPT_MODEL,
+                    ...REACT_PATTERNS,
+                    ...exceptPatterns(['runtime/definition/schema', 'runtime/definition/engineJson', ...IMPORT_PATHS]),
                 ],
                 message: HTML_MESSAGE,
             },

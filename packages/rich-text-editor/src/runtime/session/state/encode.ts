@@ -2,8 +2,10 @@
 
 import { type Node } from 'prosemirror-model';
 
-import { type CapabilityRef, type ContentModel, type RichTextDocument } from '#/model';
+import { type CapabilityRef, type ContentModel, type ContentNodeJSON, type RichTextDocument } from '#/model';
 import { type TreeNode, encodeTree, snapshot } from '#/model/internal';
+
+import { nodeJson } from '../../definition/engineJson';
 
 export type Encoder = {
     capabilities: readonly CapabilityRef[];
@@ -16,8 +18,7 @@ export const createEncoder = (model: ContentModel, capabilities: readonly Capabi
     // Each top-level node's frozen stored form under this root, so a snapshot after an edit encodes only changed blocks.
     let blocks = new WeakMap<Node, RichTextDocument>();
     let blocksOf: { attrs: Node['attrs']; stored: readonly CapabilityRef[] } | undefined;
-    const encode = (doc: Node): RichTextDocument =>
-        encodeTree(doc.toJSON() as TreeNode, model, encoder.capabilities).document;
+    const encode = (doc: Node): RichTextDocument => encodeTree(nodeJson(doc), model, encoder.capabilities).document;
     const encodeByBlock = (doc: Node): RichTextDocument => {
         const stored = encoder.capabilities;
         if (blocksOf?.attrs !== doc.attrs || blocksOf.stored !== stored) {
@@ -32,12 +33,12 @@ export const createEncoder = (model: ContentModel, capabilities: readonly Capabi
         }
 
         let last: RichTextDocument | undefined;
-        const content: unknown[] = [];
+        const content: ContentNodeJSON[] = [];
         const versions = new Map<string, number>();
         for (const child of doc.children) {
             let block = blocks.get(child);
             if (block === undefined) {
-                const tree: TreeNode = { ...root, content: [child.toJSON() as TreeNode] };
+                const tree: TreeNode = { ...root, content: [nodeJson(child)] };
                 block = snapshot(encodeTree(tree, model, stored).document);
                 // A block that is no plain JSON stays unfrozen, so no later snapshot may share it.
                 if (Object.isFrozen(block)) {
@@ -45,8 +46,13 @@ export const createEncoder = (model: ContentModel, capabilities: readonly Capabi
                 }
             }
 
+            const childContent = block.content.content?.[0];
+            if (childContent === undefined) {
+                return encode(doc);
+            }
+
             last = block;
-            content.push(block.content.content?.[0]);
+            content.push(childContent);
             for (const { id, version } of block.requiredCapabilities) {
                 versions.set(id, Math.max(version, versions.get(id) ?? version));
             }
@@ -59,7 +65,7 @@ export const createEncoder = (model: ContentModel, capabilities: readonly Capabi
         // The union of what each block needs is what the whole document needs, as `encodeTree` sorts it.
         const requiredCapabilities = [...versions.keys()].sort().map((id) => ({ id, version: versions.get(id) ?? 0 }));
 
-        return { ...last, requiredCapabilities, content: { ...last.content, content } } as RichTextDocument;
+        return { ...last, requiredCapabilities, content: { ...last.content, content } };
     };
 
     const encoder: Encoder = { capabilities, encode, encodeByBlock };

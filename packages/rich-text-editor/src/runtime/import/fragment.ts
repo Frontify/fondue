@@ -2,7 +2,7 @@
 
 import { Fragment, type Mark, type Node, type Schema } from 'prosemirror-model';
 
-import { type ResourceLimits } from '#/model';
+import { DefinitionError, type ResourceLimits } from '#/model';
 
 const SPACED = /(?<= )\u00A0/g;
 
@@ -82,7 +82,11 @@ export const withValidAttributes = (
         return result;
     };
 
-    const paragraph = schema.nodes.paragraph as Node['type'];
+    const paragraph = schema.nodes.paragraph;
+    if (paragraph === undefined) {
+        throw new DefinitionError('definition.invalid-declaration', { node: 'paragraph' });
+    }
+
     // Only what the paragraph declares carries over from the node it replaces.
     const asParagraph = (node: Node, content: Fragment, marks: readonly Mark[]) => {
         const declared = Object.fromEntries(
@@ -125,13 +129,19 @@ export const withValidAttributes = (
             continue;
         }
 
-        const level = nearestLevel(node.attrs.level as number, levels);
-        if (level === undefined) {
+        const level: unknown = node.attrs.level;
+        if (typeof level !== 'number') {
             nodes.push(asParagraph(node, content, marks));
             continue;
         }
 
-        nodes.push(node.type.create({ ...attrs, level }, content, marks));
+        const nearest = nearestLevel(level, levels);
+        if (nearest === undefined) {
+            nodes.push(asParagraph(node, content, marks));
+            continue;
+        }
+
+        nodes.push(node.type.create({ ...attrs, level: nearest }, content, marks));
     }
 
     return Fragment.from(nodes);

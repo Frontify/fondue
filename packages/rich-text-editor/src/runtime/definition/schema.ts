@@ -5,8 +5,10 @@ import {
     type DOMOutputSpec,
     Fragment,
     type MarkSpec,
+    type MarkType,
     type Node,
     type NodeSpec,
+    type NodeType,
     type ParseRule as EngineParseRule,
     Schema,
     type TagParseRule,
@@ -41,6 +43,37 @@ type Values = Readonly<Record<string, unknown>>;
 
 const GROUPS = { block: 'block section', section: 'section', inline: 'inline' } as const;
 
+type HtmlLayer = {
+    tag: string;
+    attrs: Readonly<Record<string, string>>;
+};
+
+/** The engine DOM output of resolved layers. No element and no content hole is not a spec. */
+export const domOutputOf = (layers: readonly HtmlLayer[], content: boolean): DOMOutputSpec | 0 => {
+    const pending = [...layers];
+    const innermost = pending.pop();
+    if (innermost === undefined) {
+        if (content) {
+            return 0;
+        }
+
+        throw new Error('HTML spec has no element');
+    }
+
+    let spec: DOMOutputSpec = [innermost.tag, innermost.attrs];
+    if (content) {
+        spec = [innermost.tag, innermost.attrs, 0];
+    }
+
+    let layer = pending.pop();
+    while (layer !== undefined) {
+        spec = [layer.tag, layer.attrs, spec];
+        layer = pending.pop();
+    }
+
+    return spec;
+};
+
 /** The engine's DOM output for one `HtmlSpec`, from the layers the reader and codecs resolve too. */
 const render = (
     spec: HtmlSpec,
@@ -49,16 +82,32 @@ const render = (
     shared: readonly SharedAttribute[],
 ): DOMOutputSpec => {
     const { layers, content } = resolveHtmlSpec(spec, values, options, shared);
-    let inner: readonly unknown[] = [];
-    if (content) {
-        inner = [0];
+    const output = domOutputOf(layers, content);
+    if (output === 0) {
+        throw new Error('HTML spec has no element');
     }
 
-    for (const { tag, attrs } of [...layers].reverse()) {
-        inner = [[tag, attrs, ...inner]];
+    return output;
+};
+
+/** The mark `name`, which compilation already required the model to declare. */
+export const requireMarkType = (schema: Schema, name: string): MarkType => {
+    const mark = schema.marks[name];
+    if (mark === undefined) {
+        throw new DefinitionError('definition.invalid-declaration', { mark: name });
     }
 
-    return inner[0] as DOMOutputSpec;
+    return mark;
+};
+
+/** The node `name`, which compilation already required the model to declare. */
+export const requireNodeType = (schema: Schema, name: string): NodeType => {
+    const node = schema.nodes[name];
+    if (node === undefined) {
+        throw new DefinitionError('definition.invalid-declaration', { node: name });
+    }
+
+    return node;
 };
 
 /** Whether a node's type carries an occurrence `nodeId`, which the schema gives a null default below. */

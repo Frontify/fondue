@@ -3,7 +3,7 @@
 import { DOMSerializer, type Mark } from 'prosemirror-model';
 import { Decoration, DecorationSet, type MarkViewConstructor } from 'prosemirror-view';
 
-import { checkHref, type ColorToken, type JsonObject, type ListLevels, type PresentationStyle } from '#/model';
+import { checkHref, type ColorToken, type ListLevels, type PresentationStyle } from '#/model';
 import {
     type DirectedRun,
     passageDirection,
@@ -73,7 +73,7 @@ const contentDecorations = (doc: ViewNode, inputs: DecorationInputs): Decoration
     }
 
     /** The recipe class of a node or mark, reporting a stored style ID the styles do not hold. */
-    const classOf = (type: string, attrs: JsonObject, path: string) => {
+    const classOf = (type: string, attrs: Readonly<Record<string, unknown>>, path: string) => {
         const resolution = styleOfNode(recipes, type, attrs);
         if (resolution.unknown && typeof attrs.styleId === 'string') {
             unknown(attrs.styleId, path);
@@ -90,7 +90,7 @@ const contentDecorations = (doc: ViewNode, inputs: DecorationInputs): Decoration
     const inline = (block: ViewNode, path: string) => {
         for (let index = 0; index < block.childCount; index += 1) {
             for (const [markIndex, mark] of block.child(index).marks.entries()) {
-                classOf(mark.type.name, mark.attrs as JsonObject, `${path}/content/${index}/marks/${markIndex}`);
+                classOf(mark.type.name, mark.attrs, `${path}/content/${index}/marks/${markIndex}`);
             }
         }
     };
@@ -100,7 +100,7 @@ const contentDecorations = (doc: ViewNode, inputs: DecorationInputs): Decoration
         for (let index = 0; index < parent.childCount; index += 1) {
             const child = parent.child(index);
             const path = `${parentPath}/content/${index}`;
-            const className = classOf(child.type.name, child.attrs as JsonObject, path);
+            const className = classOf(child.type.name, child.attrs, path);
             if (className !== undefined) {
                 found.push(Decoration.node(pos, pos + child.nodeSize, { class: className }));
             }
@@ -199,7 +199,7 @@ type MarkElement = {
 /** Gives a mark's own element its recipe class and inline colour from `styles`, as the reader writes them. */
 const styleMark = (element: MarkElement, styles: ChromeStyles | undefined) => {
     const { dom, mark } = element;
-    const attrs = mark.attrs as JsonObject;
+    const attrs = mark.attrs;
     let className: string | undefined;
     let color: string | undefined;
     if (styles !== undefined) {
@@ -230,7 +230,7 @@ const styleMark = (element: MarkElement, styles: ChromeStyles | undefined) => {
 
 /** Whether `mark` is a link whose `href` fails the URL check. */
 const unlinked = (mark: Mark): boolean => {
-    const { href } = mark.attrs as JsonObject;
+    const href: unknown = mark.attrs.href;
 
     return mark.type.name === 'link' && typeof href === 'string' && !checkHref(href).ok;
 };
@@ -270,7 +270,7 @@ export const createMarkStyler = (): MarkStyler => {
                     }
 
                     const { dom, contentDOM } = DOMSerializer.renderSpec(markView.dom.ownerDocument, spec);
-                    const { styleId } = mark.attrs as JsonObject;
+                    const styleId: unknown = mark.attrs.styleId;
                     if (typeof styleId === 'string' && !dom.hasAttribute('data-rte-style')) {
                         dom.setAttribute('data-rte-style', styleId);
                     }

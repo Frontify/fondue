@@ -161,10 +161,7 @@ const activeNodeAttributes = (
     attrs: JsonObject,
     options?: { nodeId?: string },
 ) => {
-    let node: string | string[] = nodes as string;
-    if (typeof nodes !== 'string') {
-        node = [...nodes];
-    }
+    const node = typeof nodes === 'string' ? nodes : [...nodes];
 
     const payload: Record<string, unknown> = { ...attrs };
     if (options?.nodeId !== undefined) {

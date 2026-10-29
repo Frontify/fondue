@@ -7,11 +7,12 @@ import { type Node } from 'prosemirror-model';
 import { describe, expect, it } from 'vitest';
 
 import { compileContentModel, defaultLimits, defineFeature, type Feature, type ResourceLimits } from '#/model';
-import { compiledModel } from '#/model/internal';
+import { type CompiledParseRule, compiledModel } from '#/model/internal';
 import { core } from '#/plugins/Core/feature';
 import { buildSchema } from '#/runtime/definition/schema';
 import { NO_COLORS } from '#/runtime/import/colors';
 import { importHtml } from '#/runtime/import/html';
+import { readAnswers } from '#/runtime/import/parseRules';
 
 const { window } = new JSDOM('');
 const requires = [{ id: 'core', version: 1 }];
@@ -126,6 +127,15 @@ describe('a function parse rule that answers null', () => {
         requires,
         marks: { ruling_mark: { attrs: {}, html: ['mark', 0], parse: [] } },
         parseRules: [{ tag: 'mark', mark: 'ruling_mark', value: () => ({}) }],
+    });
+
+    it('marks an inline svg a rule refuses, which keeps its style', () => {
+        const { document } = new JSDOM('<p><svg></svg></p>').window;
+        const svg = document.querySelector('svg');
+        const rule: CompiledParseRule = { tag: 'svg', kind: 'mark', name: 'refusing_mark', read: () => null };
+        readAnswers(document.body, [rule]);
+
+        expect(svg?.style.getPropertyValue('--rte-refused-refusing_mark')).toBe('refused');
     });
 
     it('refuses only its own mark, so the data and function rules of other features still read the element', () => {

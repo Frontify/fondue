@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { requiredAt } from '#/model/internal';
+
 import { MAX_IMAGE_SIDE } from './constants';
 import { type Checked, type UploadHost, type UploadRejection } from './types';
 
@@ -73,7 +75,7 @@ export const sortChecked = (files: readonly File[], checked: readonly (Checked |
     const refused: { name: string; reason: UploadRejection }[] = [];
     for (const [index, result] of checked.entries()) {
         if (typeof result === 'string') {
-            refused.push({ name: fileNameOf(files[index] as File), reason: result });
+            refused.push({ name: fileNameOf(requiredAt(files, index)), reason: result });
         } else {
             accepted.push(result);
         }

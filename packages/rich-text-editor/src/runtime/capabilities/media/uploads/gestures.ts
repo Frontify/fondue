@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type JsonObject } from '#/model';
 import { diagnostic } from '#/model/internal';
 
+import { valuesOf } from '../../../api/shared';
 import { positionOf } from '../../../transform/positions';
 import { type SelectionHandle } from '../../../types';
 
@@ -75,9 +75,12 @@ const replaceSlot = (
         return [];
     }
 
-    const previous: JsonObject = Object.fromEntries(
-        Object.keys(slotAttrs(checked)).map((name) => [name, node.attrs[name] as JsonObject[string]]),
-    );
+    const picked: Record<string, unknown> = {};
+    for (const name of Object.keys(slotAttrs(checked))) {
+        picked[name] = node.attrs[name];
+    }
+
+    const previous = valuesOf(picked);
     const before = cells.get(nodeId);
     const cell = { slot: fresh(nodeId, 'replace', checked) };
     cells.set(nodeId, cell);
@@ -156,7 +159,10 @@ const beginUpload = async (transport: Transport, files: readonly File[], place: 
         let started: readonly string[] = [];
         if (accepted.length > 0 && admitsUpload(transport, place)) {
             if (place.kind === 'replace') {
-                started = replaceSlot(transport, accepted[0] as Checked, place.nodeId);
+                const [first] = accepted;
+                if (first !== undefined) {
+                    started = replaceSlot(transport, first, place.nodeId);
+                }
             } else if (target !== undefined) {
                 started = insertSlots(transport, accepted, place, target);
             }

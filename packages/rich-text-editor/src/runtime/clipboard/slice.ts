@@ -18,6 +18,8 @@ import {
 } from '#/model/internal';
 import { openDepth } from '#/runtime/import/policy';
 
+import { fragmentJson } from '../definition/engineJson';
+
 /** The clipboard type of the internal slice. */
 export const SLICE_TYPE = 'application/x-frontify-rich-text+json';
 
@@ -27,7 +29,8 @@ const isIsland = (type: unknown) => type === ISLAND_BLOCK || type === ISLAND_INL
 const writeSliceNode = (vocabulary: Vocabulary, node: Node): unknown => {
     const type = node.type.name;
     if (isIsland(type)) {
-        const { feature, original } = node.attrs as { feature: unknown; original: unknown };
+        const feature: unknown = node.attrs.feature;
+        const original: unknown = node.attrs.original;
 
         return { type, attrs: { feature, original } };
     }
@@ -46,7 +49,9 @@ const writeSliceNode = (vocabulary: Vocabulary, node: Node): unknown => {
     if (node.marks.length > 0) {
         written.marks = node.marks.map(({ type: { name }, attrs }) => {
             if (name === ISLAND_MARK) {
-                return { type: name, attrs: { original: attrs.original as unknown } };
+                const original: unknown = attrs.original;
+
+                return { type: name, attrs: { original } };
             }
 
             return writeMark(vocabulary, { type: name, attrs });
@@ -59,7 +64,7 @@ const writeSliceNode = (vocabulary: Vocabulary, node: Node): unknown => {
 /** The internal slice of `slice`, cut from `doc`. */
 export const writeSlice = (model: ContentModel, doc: Node, slice: Slice, context: string): RichTextSlice => {
     const vocabulary = vocabularyOf(model);
-    const tree: TreeNode = { type: 'doc', attrs: doc.attrs, content: slice.content.toJSON() as TreeNode[] };
+    const tree: TreeNode = { type: 'doc', attrs: doc.attrs, content: fragmentJson(slice.content) };
 
     return {
         format: 'frontify.rich-text-slice',
@@ -145,8 +150,13 @@ const islandAt = (tree: TreeNode, path: string): boolean => {
     return node !== undefined && isIsland(node.type);
 };
 
-const isOpening = (value: unknown, content: Fragment, side: 'start' | 'end'): value is number =>
-    Number.isInteger(value) && (value as number) >= 0 && (value as number) <= openDepth(content, side);
+const isOpening = (value: unknown, content: Fragment, side: 'start' | 'end'): value is number => {
+    if (typeof value !== 'number' || !Number.isInteger(value)) {
+        return false;
+    }
+
+    return value >= 0 && value <= openDepth(content, side);
+};
 
 /** An internal slice that decodes with no new island or warning, else `undefined`, so the paste takes the next flavor. */
 export const readSlice = (

@@ -12,6 +12,7 @@ import {
 
 import { carriesNodeId } from '#/runtime/definition';
 
+import { metaOf } from '../definition/engineJson';
 import { type CaptureTargetOptions } from '../types';
 
 /** A captured target as the keyed plugin state holds it. */
@@ -74,7 +75,7 @@ export const targetsPlugin = new Plugin<Targets>({
     state: {
         init: () => new Map(),
         apply: (transaction, targets) => {
-            const meta = transaction.getMeta(TARGETS) as TargetsMeta | undefined;
+            const meta = metaOf<TargetsMeta>(transaction, TARGETS);
             if (!transaction.docChanged && meta === undefined) {
                 return targets;
             }

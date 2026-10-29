@@ -12,6 +12,7 @@ import {
     type PluginImplementation,
 } from '#/runtime/definition';
 
+import { metaOf } from '../definition/engineJson';
 import { closeGroup, isHistoryTransaction, undo } from '../history';
 
 import { blockStart, lineStart } from './inputRulesBlock';
@@ -194,7 +195,7 @@ export const typedRulesPlugin: PluginImplementation = ({ inputRules }) =>
             }
 
             let rules = inputRules;
-            const setting = root.getMeta(RULES_SETTING) as RuleSetting | undefined;
+            const setting = metaOf<RuleSetting>(root, RULES_SETTING);
             if (setting !== undefined) {
                 rules = rules.filter(
                     ({ id, featureId }) => !setting.exclude.includes(id) && !setting.refused.includes(featureId),

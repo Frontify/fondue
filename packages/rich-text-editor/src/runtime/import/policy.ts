@@ -2,7 +2,7 @@
 
 import { Fragment, type Mark, type Node, type NodeType, type Schema, Slice } from 'prosemirror-model';
 
-import { checkHref, type ContentModel, type HrefPolicy } from '#/model';
+import { checkHref, type ContentModel, DefinitionError, type HrefPolicy } from '#/model';
 import { compiledModel, shownLabel } from '#/model/internal';
 
 /** What the paste filter reads of an `AuthoringPolicy`: whether each feature's content may be pasted. */
@@ -74,7 +74,11 @@ export const withoutRefused = (slice: Slice, schema: Schema, model: ContentModel
         return slice;
     }
 
-    const paragraph = schema.nodes.paragraph as NodeType;
+    const paragraph = schema.nodes.paragraph;
+    if (paragraph === undefined) {
+        throw new DefinitionError('definition.invalid-declaration', { node: 'paragraph' });
+    }
+
     // A prefix match, as an open slice may start inside a node's content.
     const fits = (type: NodeType, content: Fragment) => type.contentMatch.matchFragment(content) !== null;
     // A block child fits where its refused container stood; any other child is unwrapped in turn.

@@ -2,7 +2,7 @@
 
 import { type JsonObject, type RichTextDocument } from '#/model';
 
-import { type Listener } from './reporting/events';
+import { type RuntimeEvents } from './reporting/events';
 import {
     type AuthoringPolicy,
     type CaptureResult,
@@ -71,7 +71,10 @@ export type RuntimeHandle = {
     focus(where?: 'current' | 'start' | 'end'): void;
     /** Treats focus and pointer moves inside `element` as inside the editor until the returned function runs. */
     registerInteractionRoot(element: HTMLElement): Unsubscribe;
-    subscribe(event: string, listener: Listener): Unsubscribe;
+    subscribe<EventName extends keyof RuntimeEvents>(
+        event: EventName,
+        listener: (value: RuntimeEvents[EventName]) => void,
+    ): Unsubscribe;
     /** Ends the session: the view and every subscription go. */
     dispose(): void;
 };

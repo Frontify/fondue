@@ -2,9 +2,9 @@
 
 import { Fragment, type Mark, type Node, type Schema, Slice } from 'prosemirror-model';
 import { Selection, type Transaction } from 'prosemirror-state';
-import { type Step, Transform } from 'prosemirror-transform';
+import { Transform } from 'prosemirror-transform';
 
-import { markHrefPolicy } from '#/model/internal';
+import { requiredAt, markHrefPolicy } from '#/model/internal';
 import { importModelHtml } from '#/runtime/import/html';
 import { exceededStructure } from '#/runtime/import/limits';
 import { labelText, refusedNames, resliced, withinLinkPolicy } from '#/runtime/import/policy';
@@ -290,7 +290,7 @@ const pastePlain = (context: PasteContext): Pasted | undefined => {
     const followUp: FollowUp = (state) => {
         const next = state.tr;
         for (let index = transaction.steps.length - 1; index >= start; index -= 1) {
-            next.step((transaction.steps[index] as Step).invert(transaction.docs[index] as Node));
+            next.step(requiredAt(transaction.steps, index).invert(requiredAt(transaction.docs, index)));
         }
 
         for (const step of target.steps) {

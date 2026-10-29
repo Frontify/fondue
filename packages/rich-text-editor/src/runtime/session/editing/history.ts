@@ -6,23 +6,22 @@ import { type EditorState, type Selection, type Transaction } from 'prosemirror-
 import { COMMAND_META, ORIGIN_META } from '#/runtime/definition';
 
 import { carrySlots } from '../../capabilities/media/uploadSlots';
+import { metaOf } from '../../definition/engineJson';
 import { type InputSettling } from '../../dom/settle';
 import { groupRoot, isHistoryTransaction, reset } from '../../history';
 import { type ChangeOrigin } from '../../types';
 import { type Lifecycle } from '../state/lifecycle';
 import { type Store } from '../state/store';
 
-const UI_ORIGINS: ReadonlySet<string> = new Set(['paste', 'cut', 'drop']);
-
 /** The origin of an action that one undo reverts on its own: a command, paste, cut or drop. */
 export const actionOrigin = (root: Transaction): ChangeOrigin | undefined => {
-    const event: unknown = root.getMeta('uiEvent');
+    const event = metaOf<unknown>(root, 'uiEvent');
     if (root.getMeta(COMMAND_META) !== undefined) {
         return 'command';
     }
 
-    if (typeof event === 'string' && UI_ORIGINS.has(event)) {
-        return event as ChangeOrigin;
+    if (event === 'paste' || event === 'cut' || event === 'drop') {
+        return event;
     }
 
     return undefined;

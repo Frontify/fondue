@@ -19,3 +19,18 @@ export type Late = {
     actions: Actions;
     runtime: EditorRuntime;
 };
+
+/** The slot assembly fills after the phases that close over it have been built. */
+export type LateSlot = {
+    current?: Late;
+};
+
+/** The assembled services, once every phase has finished. */
+export const ready = (slot: LateSlot): Late => {
+    const late = slot.current;
+    if (late === undefined) {
+        throw new Error('session used before assembly finished');
+    }
+
+    return late;
+};

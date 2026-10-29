@@ -125,9 +125,11 @@ export const statusOf = ({ phase, progress, name }: SlotState): UploadStatus | u
 };
 
 /** The slot with its effects in order; a `false` or `undefined` entry is an effect that does not apply. */
+const isEffect = (effect: Effect | false | undefined): effect is Effect => effect !== false && effect !== undefined;
+
 const stay = (state: SlotState, ...effects: (Effect | false | undefined)[]): Step => ({
     state,
-    effects: effects.filter(Boolean) as Effect[],
+    effects: effects.filter(isEffect),
 });
 
 const stopped = (state: SlotState, phase: UploadPhase): SlotState => ({ ...state, phase, operation: undefined });
@@ -268,5 +270,5 @@ const TRANSITIONS: {
 };
 
 /** The slot after `event` and the effects a transport runs, in order; it reads no clock, file, network or document. */
-export const next = (state: SlotState, event: SlotEvent): Step =>
-    (TRANSITIONS[event.type] as (state: SlotState, event: SlotEvent) => Step)(state, event);
+export const next = <EventType extends SlotEvent['type']>(state: SlotState, event: SlotEventOf<EventType>): Step =>
+    TRANSITIONS[event.type](state, event);

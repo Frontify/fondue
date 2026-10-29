@@ -9,6 +9,8 @@ import { type RichTextDocument, type ContentCheckOptions, type ContentIssue } fr
 import { type LocatedIssue, locateContentIssues } from '#/model/internal';
 import { type PluginImplementation } from '#/runtime/definition';
 
+import { metaOf } from '../../definition/engineJson';
+
 /** How long after the last change the checks run. */
 export const CHECK_DELAY_MS = 750;
 
@@ -314,7 +316,7 @@ export const contentIssuesPlugin: PluginImplementation = () =>
                     next = mapState(next, transaction.mapping);
                 }
 
-                const meta = transaction.getMeta(CONTENT_ISSUES) as Meta | undefined;
+                const meta = metaOf<Meta>(transaction, CONTENT_ISSUES);
                 if (meta !== undefined) {
                     next = applyMeta(next, meta);
                 }

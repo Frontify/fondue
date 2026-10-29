@@ -3,7 +3,7 @@
 import { type EditorState, type Transaction } from 'prosemirror-state';
 
 import { type ResourceLimits } from '#/model';
-import { diagnostic } from '#/model/internal';
+import { diagnostic, requiredAt } from '#/model/internal';
 import {
     APPEND_BATCH_META,
     type AppendBatch,
@@ -200,7 +200,7 @@ export const createPrepare = (args: PrepareArgs): Prepare => {
                 recorded.push(args.generate());
             }
 
-            const id = recorded[at] as string;
+            const id = requiredAt(recorded, at);
             at += 1;
 
             return id;

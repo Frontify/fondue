@@ -2,14 +2,14 @@
 
 import { type SelectionHandle, type SessionToken } from '../types';
 
-import { type AsyncOperation, type AsyncRequest } from './async';
+import { type AsyncOperation, type StoredRequest } from './async';
 
-type Pool = NonNullable<AsyncRequest['pool']>;
+type Pool = NonNullable<StoredRequest['pool']>;
 
 /** An operation waiting for room in its pool, with the request that starts it. */
 export type Entry = {
     operation: AsyncOperation;
-    request: AsyncRequest;
+    request: StoredRequest;
 };
 
 /** A result that waits for input to settle. */
@@ -43,17 +43,17 @@ export type AsyncFacts = {
 };
 
 export type AsyncEvent = { facts: AsyncFacts } & (
-    | { type: 'start'; request: AsyncRequest; reply: (operation: AsyncOperation) => void }
+    | { type: 'start'; request: StoredRequest; reply: (operation: AsyncOperation) => void }
     | {
           type: 'built';
           operation: AsyncOperation;
-          request: AsyncRequest;
+          request: StoredRequest;
           owned: boolean;
       }
     | {
           type: 'admit';
           operation: AsyncOperation;
-          request: AsyncRequest;
+          request: StoredRequest;
           owned: boolean;
       }
     | { type: 'abortWhere'; aborts: (operation: AsyncOperation) => boolean }
@@ -65,7 +65,7 @@ export type AsyncEvent = { facts: AsyncFacts } & (
     | {
           type: 'rejected';
           operation: AsyncOperation;
-          request: AsyncRequest;
+          request: StoredRequest;
           error: unknown;
           aborted: boolean;
       }
@@ -79,7 +79,7 @@ export type AsyncEventInput = Distribute<AsyncEvent>;
 export type AsyncEffect =
     | {
           type: 'build';
-          request: AsyncRequest;
+          request: StoredRequest;
           reply: (operation: AsyncOperation) => void;
           target: SelectionHandle | null;
           capture: boolean;
@@ -89,17 +89,17 @@ export type AsyncEffect =
     | {
           type: 'supersede';
           operation: AsyncOperation;
-          request: AsyncRequest;
+          request: StoredRequest;
           owned: boolean;
       }
     | { type: 'register'; operation: AsyncOperation }
     | { type: 'unregister'; operation: AsyncOperation }
     | { type: 'release'; target: SelectionHandle }
     | { type: 'pump'; name: string }
-    | { type: 'call'; operation: AsyncOperation; request: AsyncRequest }
+    | { type: 'call'; operation: AsyncOperation; request: StoredRequest }
     | { type: 'deliver'; operation: AsyncOperation; result: unknown }
     | { type: 'replay'; operation: AsyncOperation; result: unknown }
-    | { type: 'fail'; request: AsyncRequest; error: unknown }
+    | { type: 'fail'; request: StoredRequest; error: unknown }
     | { type: 'discard'; reason: string };
 
 export type AsyncStep = {

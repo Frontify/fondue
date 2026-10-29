@@ -4,7 +4,13 @@ import { diagnostic } from '#/model/internal';
 
 import { type SelectionHandle } from '../types';
 
-import { type AsyncCoordinatorOptions, type AsyncOperation, type AsyncRequest } from './async';
+import {
+    type AsyncCoordinatorOptions,
+    type AsyncOperation,
+    type AsyncRequest,
+    type Delivered,
+    type StoredRequest,
+} from './async';
 import {
     initial,
     next,
@@ -40,14 +46,27 @@ const readFacts = (context: AsyncContext): AsyncFacts => ({
     aborting: context.aborting > 0,
 });
 
+/** Whether `value` is the payload and closed-over deliver a stored run resolves to. */
+const isDelivered = (value: unknown): value is Delivered => {
+    if (typeof value !== 'object' || value === null || !('payload' in value) || !('deliver' in value)) {
+        return false;
+    }
+
+    return value.deliver === undefined || typeof value.deliver === 'function';
+};
+
 /** Applies a result through its `deliver`, or `apply`; a result that throws while it is read fails its check. */
 const deliverResult = (context: AsyncContext, operation: AsyncOperation, result: unknown): string | undefined => {
     try {
-        if (operation.deliver === undefined) {
-            return context.options.apply(operation, result);
+        if (!isDelivered(result)) {
+            return 'invalid-payload';
         }
 
-        return operation.deliver(result);
+        if (result.deliver === undefined) {
+            return context.options.apply(operation, result.payload);
+        }
+
+        return result.deliver();
     } catch {
         return 'invalid-payload';
     }
@@ -56,7 +75,7 @@ const deliverResult = (context: AsyncContext, operation: AsyncOperation, result:
 /** The frozen operation that a build effect registers for `request`, aimed at `target`. */
 const buildOperation = (
     { generateId, session, policyRevision }: AsyncCoordinatorOptions,
-    request: AsyncRequest,
+    request: StoredRequest,
     target: SelectionHandle | null,
     sequence: number,
 ): AsyncOperation => {
@@ -140,13 +159,16 @@ const EFFECTS: {
     },
     call: (context, { operation, request }) => {
         const { signal } = operation.controller;
-        request
-            .run({ signal, session: operation.session, operationId: operation.id })
-            .then((result) => dispatchAsync(context, { type: 'arrive', operation, result }))
-            // A failed service call leaves the document as it is.
-            .catch((error: unknown) =>
-                dispatchAsync(context, { type: 'rejected', operation, request, error, aborted: signal.aborted }),
-            );
+        // `hear` runs inside `run`'s one `then`, so a second reaction cannot pass a command queued on this turn.
+        request.hear = (delivered) => {
+            dispatchAsync(context, { type: 'arrive', operation, result: delivered });
+        };
+
+        request.hearError = (error) => {
+            dispatchAsync(context, { type: 'rejected', operation, request, error, aborted: signal.aborted });
+        };
+
+        request.run({ signal, session: operation.session, operationId: operation.id }).catch(() => undefined);
     },
     deliver: (context, { operation, result }) => {
         dispatchAsync(context, { type: 'delivered', operation, code: deliverResult(context, operation, result) });
@@ -166,17 +188,68 @@ const runEffect = <EffectName extends AsyncEffect['type']>(context: AsyncContext
     EFFECTS[effect.type](context, effect);
 };
 
+/** Closes over `request` so the coordinator stores no `Result`. */
+const closeRequest = <Result>(request: AsyncRequest<Result>): StoredRequest => {
+    const slot: { current?: StoredRequest } = {};
+    const stored: StoredRequest = {
+        key: request.key,
+        service: request.service,
+        featureId: request.featureId,
+        action: request.action,
+        command: request.command,
+        run: (ctx) => {
+            const pending = request.run(ctx).then((result) => {
+                const delivered: Delivered = {
+                    payload: result,
+                    deliver: request.deliver === undefined ? undefined : () => request.deliver?.(result),
+                };
+                slot.current?.hear?.(delivered);
+
+                return delivered;
+            });
+            // A failed service call leaves the document as it is.
+            pending.catch((error: unknown) => {
+                slot.current?.hearError?.(error);
+            });
+
+            return pending;
+        },
+    };
+    slot.current = stored;
+    if (request.target !== undefined) {
+        stored.target = request.target;
+    }
+
+    if (request.fail !== undefined) {
+        stored.fail = request.fail;
+    }
+
+    if (request.pool !== undefined) {
+        stored.pool = request.pool;
+    }
+
+    if (request.deliver !== undefined) {
+        stored.deliver = () => undefined;
+    }
+
+    return stored;
+};
+
 /** Starts `request` and returns the operation the build effect registered. */
-export const startAsync = (context: AsyncContext, request: AsyncRequest): AsyncOperation => {
+export const startAsync = <Result>(context: AsyncContext, request: AsyncRequest<Result>): AsyncOperation => {
     let started: AsyncOperation | undefined;
     dispatchAsync(context, {
         type: 'start',
-        request,
+        request: closeRequest(request),
         reply: (operation) => {
             started = operation;
         },
     });
 
     // The build effect always replies before `dispatch` returns.
-    return started as AsyncOperation;
+    if (started === undefined) {
+        throw new Error('The async build effect registered no operation.');
+    }
+
+    return started;
 };

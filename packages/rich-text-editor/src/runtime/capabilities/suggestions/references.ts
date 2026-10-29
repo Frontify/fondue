@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { checkHref, isRecord } from '#/model';
-import { holdsControls, withoutBidiControls, isStoredId } from '#/model/internal';
+import { holdsControls, isStoredId, isUnknownArray, withoutBidiControls } from '#/model/internal';
 
 import { type SuggestionItem } from '../../portTypes';
 import { type ReferenceValue } from '../../types';
@@ -16,6 +16,9 @@ const MAX_LABEL = 256;
 // C0 and C1 control characters, which no shown label holds.
 const CONTROL = /[\u0000-\u001F\u007F-\u009F]/u;
 export const KINDS: ReadonlySet<string> = new Set(['user', 'group', 'everyone']);
+
+export const isReferenceKind = (value: unknown): value is 'user' | 'group' | 'everyone' =>
+    value === 'user' || value === 'group' || value === 'everyone';
 
 /** One page of a reference search as the list shows it: the items it keeps, and the cursor of the next page. */
 export type ReferenceResults = {
@@ -81,21 +84,21 @@ const valueOf = (
         kept = { ...kept, imageUrl };
     }
 
-    if (typeof kind === 'string' && KINDS.has(kind)) {
-        kept = { ...kept, kind: kind as NonNullable<ReferenceValue['kind']> };
+    if (isReferenceKind(kind)) {
+        kept = { ...kept, kind };
     }
 
     return kept;
 };
 
 const pageOf = (page: unknown, resourceTypes: readonly string[], maxAttributeLength: number) => {
-    if (!isRecord(page) || !Array.isArray(page.items)) {
+    if (!isRecord(page) || !isUnknownArray(page.items)) {
         return undefined;
     }
 
     const items: ReferenceValue[] = [];
     const keys = new Set<string>();
-    for (const value of (page.items as readonly unknown[]).slice(0, MAX_PAGE_ITEMS)) {
+    for (const value of page.items.slice(0, MAX_PAGE_ITEMS)) {
         const kept = valueOf(value, resourceTypes, maxAttributeLength);
         if (kept === undefined) {
             continue;

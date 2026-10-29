@@ -13,6 +13,17 @@ import {
 } from '#/model';
 import { type CompiledFeature } from '#/model/internal';
 
+import { requireMarkType } from './schema';
+
+const ruleCommand = (commandOf: (id: string) => RuleCommand | undefined, id: string): RuleCommand => {
+    const command = commandOf(id);
+    if (command === undefined) {
+        throw new DefinitionError('definition.invalid-declaration', { command: id });
+    }
+
+    return command;
+};
+
 /** A command as a line-start rule runs it, with the payload of its marker, and whether its target is active there. */
 type RuleCommand = {
     run: (state: EditorState, dispatch?: (transaction: Transaction) => void, payload?: unknown) => boolean;
@@ -116,7 +127,7 @@ export const compileInputRules = (
             owners.set(id, featureId);
             if (rule.kind === 'mark-rule') {
                 // Compilation checked that the model declares the mark.
-                const mark = schema.marks[rule.mark] as MarkType;
+                const mark = requireMarkType(schema, rule.mark);
                 patterns.push({
                     id,
                     featureId,
@@ -132,7 +143,7 @@ export const compileInputRules = (
 
             if (rule.kind === 'mark-delimiter') {
                 // Compilation checked that the model declares the mark.
-                const mark = schema.marks[rule.mark] as MarkType;
+                const mark = requireMarkType(schema, rule.mark);
                 marks.push({ id, featureId, kind: rule.kind, open: rule.open, close: rule.close, mark });
             }
 
@@ -159,7 +170,7 @@ export const compileInputRules = (
 
             if (rule.kind === 'block-rule') {
                 // Compilation checked that a part registers the command.
-                const command = commandOf(rule.command) as RuleCommand;
+                const command = ruleCommand(commandOf, rule.command);
                 blocks.push({ id, featureId, kind: rule.kind, match: rule.match, command });
             }
 
@@ -168,7 +179,7 @@ export const compileInputRules = (
             }
 
             // Compilation checked that a part registers the command.
-            const command = commandOf(rule.command) as RuleCommand;
+            const command = ruleCommand(commandOf, rule.command);
             for (const marker of rule.markers) {
                 if (typeof marker === 'string') {
                     lines.push({ id, featureId, kind: rule.kind, marker, command, payload: undefined });

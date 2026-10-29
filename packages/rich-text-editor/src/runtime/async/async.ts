@@ -8,8 +8,10 @@ import { createAsyncContext, dispatchAsync, startAsync, sweepAsync } from './asy
 
 export { liveOperations } from './asyncRun';
 
+type RunContext = { signal: AbortSignal; session: SessionToken; operationId: string };
+
 /** What a capability hands the coordinator: the service call and the command that applies its result. */
-export type AsyncRequest = {
+export type AsyncRequest<Result = unknown> = {
     /** The interaction whose newer request supersedes an older one, such as one mention search. */
     key: string;
     /** The `services` member the call uses, so a changed member aborts it. */
@@ -19,18 +21,42 @@ export type AsyncRequest = {
     action: keyof FeaturePolicy;
     /** Where the result applies; without one, the coordinator captures a `map` target at the selection. */
     target?: SelectionHandle;
-    run: (context: { signal: AbortSignal; session: SessionToken; operationId: string }) => Promise<unknown>;
+    run: (context: RunContext) => Promise<Result>;
     /** The command that takes the result as its payload, whose declaration checks it as untrusted input. */
     command: string;
     /**
      * Takes a result that changes no content, such as the options of a search, in place of `command`, and returns why
      * it cannot, as `apply` does. Such an operation captures no target.
      */
-    deliver?: (result: unknown) => string | undefined;
+    deliver?: (result: Result) => string | undefined;
     /** Hears a service call that rejected while the operation was still registered, which no abort caused. */
     fail?: (error: unknown) => void;
     /** At most `limit` operations of the pool `name` run at once; the others wait registered, in start order. */
     pool?: { name: string; limit: number };
+};
+
+/** What a stored run resolves to: the payload, and the request's `deliver` already closed over it. */
+export type Delivered = {
+    payload: unknown;
+    deliver: (() => string | undefined) | undefined;
+};
+
+/** A request after its result type is closed over, so the coordinator stores no `Result`. */
+export type StoredRequest = {
+    key: string;
+    service: string;
+    featureId: string;
+    action: keyof FeaturePolicy;
+    command: string;
+    target?: SelectionHandle;
+    fail?: (error: unknown) => void;
+    pool?: { name: string; limit: number };
+    /** Present when the request delivers. The coordinator only checks that; `run` calls the real deliver. */
+    deliver?: () => string | undefined;
+    run: (context: RunContext) => Promise<Delivered>;
+    /** Set by the call effect so the result is delivered on the original promise's turn. */
+    hear?: (delivered: Delivered) => void;
+    hearError?: (error: unknown) => void;
 };
 
 /** A registered operation; only one that never started, or one that delivers its result, has no target. */
@@ -47,7 +73,8 @@ export type AsyncOperation = {
     readonly featureId: string;
     readonly action: keyof FeaturePolicy;
     readonly command: string;
-    readonly deliver?: (result: unknown) => string | undefined;
+    /** Present when the operation delivers its result instead of applying `command`. */
+    deliver?: (result: unknown) => string | undefined;
 };
 
 export type AsyncCoordinatorOptions = {
@@ -72,7 +99,7 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
     const context = createAsyncContext(options);
 
     return {
-        start: (request: AsyncRequest) => startAsync(context, request),
+        start: <Result>(request: AsyncRequest<Result>) => startAsync(context, request),
         abortWhere: (aborts: (operation: AsyncOperation) => boolean) => {
             sweepAsync(context, { type: 'abortWhere', aborts });
         },

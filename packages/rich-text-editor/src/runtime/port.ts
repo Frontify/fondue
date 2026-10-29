@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { NodeSelection } from 'prosemirror-state';
+
 import { type Diagnostic, type ResourceLimits } from '#/model';
 
 import { type DocumentApi } from './api/documentApi';
@@ -170,7 +172,7 @@ export const selectionSpan = (port: EditorPort): { anchor: number; head: number;
 /** The position of the selected node, or `undefined` when the selection is not a node selection. */
 export const selectedNodePosition = (port: EditorPort): number | undefined => {
     const { selection } = engineOf(port).state;
-    if ('node' in selection) {
+    if (selection instanceof NodeSelection) {
         return selection.from;
     }
 
@@ -185,8 +187,8 @@ export const selectedNodeNames = (port: EditorPort | undefined): readonly string
     }
 
     const names: string[] = [];
-    if ('node' in selection) {
-        names.push((selection.node as { type: { name: string } }).type.name);
+    if (selection instanceof NodeSelection) {
+        names.push(selection.node.type.name);
     }
 
     for (let depth = selection.$from.depth; depth >= 0; depth -= 1) {

@@ -1,12 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Node, Slice } from 'prosemirror-model';
+import { Slice } from 'prosemirror-model';
 
-import { type ContentModel, type DecodeResult, decodeDocument, type ResourceLimits } from '#/model';
-import { type TreeNode, limitsOf, encodeTree, diagnostic, randomId, exceedsBytes } from '#/model/internal';
-import { buildSchema, withNodeIds } from '#/runtime/definition/schema';
+import { type ContentModel, type DecodeResult, type ResourceLimits } from '#/model';
+import { limitsOf, diagnostic, randomId, exceedsBytes } from '#/model/internal';
+import { buildSchema } from '#/runtime/definition/schema';
 import { type ImportedHtml, importModelHtml } from '#/runtime/import/html';
 import { withoutRefused } from '#/runtime/import/policy';
+
+import { documentFromFragment } from './fragmentDocument';
 
 /** What `fromHTML` reads of a `CompiledEditorDefinition`, which `./html` cannot import from the editor layers. */
 type HtmlImportDefinition = {
@@ -80,9 +82,6 @@ export const fromHTML = (html: string, model: ContentModel, options: HtmlImportO
     }
 
     const generateId = options.generateId ?? randomId;
-    // The parse fits its content to `doc`, and an empty one gets the paragraph `doc` requires.
-    const doc = schema.topNodeType.createAndFill(null, withNodeIds(content, generateId)) as Node;
-    const { document } = encodeTree(doc.toJSON() as TreeNode, model);
 
-    return decodeDocument(document, model, { limits, generateId });
+    return documentFromFragment(html, model, schema, content, limits, generateId);
 };

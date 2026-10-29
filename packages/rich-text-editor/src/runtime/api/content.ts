@@ -4,9 +4,10 @@ import { Fragment, type NodeType } from 'prosemirror-model';
 import { type EditorState, NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
 
 import { type ContentNodeJSON, type JsonObject } from '#/model';
-import { type TreeNode, encodeTree } from '#/model/internal';
+import { encodeTree } from '#/model/internal';
 
 import { EDITS, placeBlock, placesBlock } from '../capabilities';
+import { fragmentJson } from '../definition/engineJson';
 import { positionOf } from '../transform/positions';
 import { type CaptureTargetOptions } from '../types';
 
@@ -115,8 +116,8 @@ const readContent = (context: ContentContext, range: WriteTarget) => {
         return undefined;
     }
 
-    const nodes = source.state().doc.slice(span.from, span.to).content.toJSON() as TreeNode[] | null;
-    const encoded = encodeTree({ type: 'doc', content: nodes ?? [] }, source.model).document.content.content;
+    const nodes = fragmentJson(source.state().doc.slice(span.from, span.to).content);
+    const encoded = encodeTree({ type: 'doc', content: nodes }, source.model).document.content.content;
 
     return encoded ?? [];
 };

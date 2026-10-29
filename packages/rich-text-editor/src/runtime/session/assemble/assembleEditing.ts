@@ -10,13 +10,13 @@ import { createFaults, viewFaultDiagnostic } from '../lifecycle/faults';
 import { createSettle } from '../lifecycle/settle';
 
 import { type State } from './assembleState';
-import { type Late } from './late';
+import { type LateSlot, ready } from './late';
 import { liveResources, viewRuntimes } from './registry';
 
 export type Editing = ReturnType<typeof assembleEditing>;
 
 /** The view, the faults and the commit path. */
-export const assembleEditing = (state: State, options: EditorRuntimeOptions, late: Late) => {
+export const assembleEditing = (state: State, options: EditorRuntimeOptions, slot: LateSlot) => {
     const { limits } = options;
     const { generate, identity, lifecycle, busy, notify, notifyWatchers, emit, report, metrics, policy } = state;
     const { mode, columns, saving, encoder, store, settling, display, history, uploads, checks } = state;
@@ -40,12 +40,12 @@ export const assembleEditing = (state: State, options: EditorRuntimeOptions, lat
         viewFault: (attached, candidate, error) => faults.viewFault(attached, candidate, error),
         report,
         onAttached: (attached) => {
-            viewRuntimes.set(attached, late.runtime);
+            viewRuntimes.set(attached, ready(slot).runtime);
             suggestionHosts.set(attached, {
                 creates: (featureId) => policy.current().features[featureId]?.create !== false,
-                accept: late.actions.acceptSuggestion,
+                accept: ready(slot).actions.acceptSuggestion,
                 commandHost: options.commandHost,
-                search: late.actions.searchSuggestions,
+                search: ready(slot).actions.searchSuggestions,
             });
             if (secondCopyAtMount(store.state)) {
                 report(DUPLICATE_ENGINE);
@@ -61,8 +61,8 @@ export const assembleEditing = (state: State, options: EditorRuntimeOptions, lat
         composition: settling,
         shown: display,
         view: views,
-        queue: () => late.queue,
-        targets: () => late.targets,
+        queue: () => ready(slot).queue,
+        targets: () => ready(slot).targets,
         report,
         notify: notifyWatchers,
         recovery: () => options.recovery?.(),
@@ -107,7 +107,7 @@ export const assembleEditing = (state: State, options: EditorRuntimeOptions, lat
         commit,
         shown: display,
         view: views,
-        targets: () => late.targets,
+        targets: () => ready(slot).targets,
         saving,
         composition: settling,
     });

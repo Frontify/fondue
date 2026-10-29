@@ -35,7 +35,7 @@ export const pluginError = (error: unknown, featureId: string | undefined) => {
     return diagnostic('runtime.plugin-error', undefined, { featureId, name }, 'error');
 };
 
-/** The events a runtime emits; the handle accepts the other `EditorEventMap` names, which later layers emit. */
+/** The events a runtime emits. */
 export type RuntimeEvents = {
     ready: SessionToken;
     documentChange: DocumentChange;
@@ -46,8 +46,6 @@ export type RuntimeEvents = {
     replaced: SessionToken;
     disposed: SessionToken;
 };
-/** A listener of any event, typed `never` so one map holds listeners of every event's value. */
-export type Listener = (value: never) => void;
 
 export type EventBusOptions = {
     /** Whether the session is disposed, which ends a notification. */
@@ -69,7 +67,10 @@ export const createEventBus = ({ isDisposed, around }: EventBusOptions) => {
             notifySelectors(context);
         },
         notifications: () => notifications,
-        subscribe: (event: string, listener: Listener): Unsubscribe => addListener(context, event, listener),
+        subscribe: <EventName extends keyof RuntimeEvents>(
+            event: EventName,
+            listener: (value: RuntimeEvents[EventName]) => void,
+        ): Unsubscribe => addListener(context, event, listener),
         watch: <Value>(
             read: () => Value,
             isEqual: (previous: Value, next: Value) => boolean,

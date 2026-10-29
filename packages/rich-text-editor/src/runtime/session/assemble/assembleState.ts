@@ -19,23 +19,23 @@ import { createShown } from '../state/shown';
 import { createStore } from '../state/store';
 
 import { type Core } from './assembleCore';
-import { type Late } from './late';
+import { type LateSlot, ready } from './late';
 
 export type State = ReturnType<typeof assembleState>;
 
 // Records typing before any other handler sees the event, so the view itself gets no event handler.
-const createTypingPlugin = (late: Late) =>
+const createTypingPlugin = (slot: LateSlot) =>
     new Plugin({
         key: new PluginKey('rte.typing'),
         view: (editorView) => {
-            late.views.capture(editorView);
+            ready(slot).views.capture(editorView);
 
             return {};
         },
         props: {
             handleDOMEvents: {
                 beforeinput: () => {
-                    late.commit.markTyping();
+                    ready(slot).commit.markTyping();
 
                     return false;
                 },
@@ -44,7 +44,7 @@ const createTypingPlugin = (late: Late) =>
     });
 
 /** The document store, its first plugins and the services that read it. */
-export const assembleState = (core: Core, options: EditorRuntimeOptions, late: Late) => {
+export const assembleState = (core: Core, options: EditorRuntimeOptions, slot: LateSlot) => {
     const { definition, limits } = options;
     const { generate, identity, lifecycle, busy, notifications, notifyWatchers, emit, report } = core;
     const { policy, mode, columns, saving, encoder } = core;
@@ -57,17 +57,17 @@ export const assembleState = (core: Core, options: EditorRuntimeOptions, late: L
         generate,
         host: options,
         state: () => store.state,
-        commit: () => late.commit.commit,
-        commands: () => late.commands,
-        targets: () => late.targets,
+        commit: () => ready(slot).commit.commit,
+        commands: () => ready(slot).commands,
+        targets: () => ready(slot).targets,
         report: (found) => report(found),
         changed: notifyWatchers,
     });
 
-    const typingRecorder = createTypingPlugin(late);
+    const typingRecorder = createTypingPlugin(slot);
     const settling = createComposition({
-        composing: () => late.views.current()?.composing === true,
-        onSettled: () => late.settleInput(),
+        composing: () => ready(slot).views.current()?.composing === true,
+        onSettled: () => ready(slot).settleInput(),
         onActiveChange: notifyWatchers,
         notifications,
         report,
@@ -96,7 +96,7 @@ export const assembleState = (core: Core, options: EditorRuntimeOptions, late: L
     );
     busy.onIdle(
         () => core.metrics.flush(),
-        () => late.targets.flushCaptures(),
+        () => ready(slot).targets.flushCaptures(),
         () => uploads.raw.flush(),
     );
     const history = createHistory({
@@ -104,7 +104,7 @@ export const assembleState = (core: Core, options: EditorRuntimeOptions, late: L
         lifecycle,
         composition: settling,
         notify: notifyWatchers,
-        install: (next) => late.commit.installState(next),
+        install: (next) => ready(slot).commit.installState(next),
         publish: () => display.setPublished(store.state),
         uploads: (doc, keep) => uploads.raw.reset(doc, keep),
     });
@@ -125,7 +125,7 @@ export const assembleState = (core: Core, options: EditorRuntimeOptions, late: L
         encode: () => encoder.encode(store.state.doc),
         composing: () => settling.active(),
         ready: () => !lifecycle.is('faulted', 'disposed'),
-        commit: (transaction) => late.commit.commit(transaction),
+        commit: (transaction) => ready(slot).commit.commit(transaction),
         options: () => {
             const given = options.contentChecks?.();
             const shown = given ?? { locale: { translationStrings: {} } };

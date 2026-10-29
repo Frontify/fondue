@@ -17,12 +17,12 @@ import { createMetrics } from '../state/metrics';
 import { createMode } from '../state/mode';
 import { createPolicy } from '../state/policy';
 
-import { type Late } from './late';
+import { type LateSlot, ready } from './late';
 
 export type Core = ReturnType<typeof assembleCore>;
 
-/** The leaf services, which need nothing built later except through `late`. */
-export const assembleCore = (options: EditorRuntimeOptions, late: Late) => {
+/** The leaf services, which need nothing built later except through `slot`. */
+export const assembleCore = (options: EditorRuntimeOptions, slot: LateSlot) => {
     const { definition, limits } = options;
     const generate = options.generateId ?? randomId;
     const identity = createIdentity({ documentId: options.documentId, generate });
@@ -46,7 +46,7 @@ export const assembleCore = (options: EditorRuntimeOptions, late: Late) => {
         capabilities: encoder.capabilities,
         onUpdate: (next) => {
             // An operation whose result the new policy forbids ends now.
-            late.targets.coordinator.abortWhere((operation) => {
+            ready(slot).targets.coordinator.abortWhere((operation) => {
                 const rules = next.features[operation.featureId];
 
                 return rules === undefined || !rules[operation.action];
@@ -60,20 +60,20 @@ export const assembleCore = (options: EditorRuntimeOptions, late: Late) => {
         onModeChange: (next) => {
             // A read-only session takes no upload's result, so none runs or waits.
             if (next === 'readonly') {
-                late.targets.coordinator.abortWhere(
+                ready(slot).targets.coordinator.abortWhere(
                     (operation) => operation.service === 'uploads' && operation.featureId === UPLOAD_FEATURE,
                 );
             }
 
-            late.views.refresh();
+            ready(slot).views.refresh();
             notifyWatchers();
         },
-        onDisabledChange: () => late.views.repaint(),
+        onDisabledChange: () => ready(slot).views.repaint(),
     });
     const columns = createColumns({
         initial: options.columns ?? ONE_COLUMN,
         onChange: () => {
-            late.views.refresh();
+            ready(slot).views.refresh();
             notifyWatchers();
         },
     });

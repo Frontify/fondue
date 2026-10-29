@@ -2,7 +2,7 @@
 
 import { type Node } from 'prosemirror-model';
 
-import { type CapabilityRef, type ContentModel, type JsonValue, type ResourceLimits, isRecord } from '#/model';
+import { type CapabilityRef, type ContentModel, type ResourceLimits, isRecord } from '#/model';
 import { ISLAND_BLOCK, ISLAND_INLINE, type TreeNode, vocabularyOf, writeNode } from '#/model/internal';
 
 type Size = {
@@ -69,9 +69,11 @@ export const createLimitCheck = (model: ContentModel, stored: readonly Capabilit
     const measure = (node: Node): Size => {
         const name = node.type.name;
         if (name === ISLAND_BLOCK || name === ISLAND_INLINE) {
-            const original = node.attrs.original as JsonValue;
+            const original: unknown = node.attrs.original;
+            const text = JSON.stringify(original);
+            const bytes = typeof text === 'string' ? utf8Bytes(text) : 0;
 
-            return { bytes: utf8Bytes(JSON.stringify(original)), nodes: storedNodes(original), longest: 0 };
+            return { bytes, nodes: storedNodes(original), longest: 0 };
         }
 
         let content: unknown[] | undefined;

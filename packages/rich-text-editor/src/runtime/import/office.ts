@@ -2,7 +2,7 @@
 
 import { isTaskListElement } from '#/model';
 
-import { createElementBeside, unwrap } from './dom';
+import { createElementBeside, isElement, styleOf, unwrap } from './dom';
 
 /**
  * The list template, level and list instance that Word and Outlook write on each list paragraph, as in
@@ -139,11 +139,11 @@ const runFrom = (first: ListParagraph) => {
             continue;
         }
 
-        if (next.nodeType !== next.ELEMENT_NODE || next.nodeName === 'LI') {
+        if (!isElement(next) || next.nodeName === 'LI') {
             break;
         }
 
-        const item = readListParagraph(next as Element);
+        const item = readListParagraph(next);
         if (item === undefined) {
             break;
         }
@@ -378,7 +378,7 @@ export const removeOfficeMarkup = (body: HTMLElement) => {
     }
 
     for (const element of Array.from(body.querySelectorAll('[style]'))) {
-        const style = (element as HTMLElement).style as CSSStyleDeclaration | undefined;
+        const style = styleOf(element);
         if (style === undefined || !MSO_PROPERTY.test(element.getAttribute('style') ?? '')) {
             continue;
         }

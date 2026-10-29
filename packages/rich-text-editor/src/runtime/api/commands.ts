@@ -10,9 +10,10 @@ import {
     findInvalidPayload,
     isRecord,
 } from '#/model';
-import { type TreeNode, encodeTree, findUnsafeJson, snapshot } from '#/model/internal';
+import { acceptedPayload, encodeTree, findUnsafeJson, snapshot } from '#/model/internal';
 import { type CommandContext, type CommandLookup, type EngineCommand } from '#/runtime/definition';
 
+import { nodeJson } from '../definition/engineJson';
 import { type EditorRuntime } from '../runtime';
 import { mediaOf } from '../session/lifecycle/uploadsWiring';
 import { type AuthoringPolicy, type CommandState } from '../types';
@@ -256,7 +257,7 @@ const commandDocumentApi = (
             },
         editable: () => session?.runtime.handle.getSummary().mode === 'editable',
         positionAt: () => undefined,
-        document: (state) => encodeTree(state.doc.toJSON() as TreeNode, model).document,
+        document: (state) => encodeTree(nodeJson(state.doc), model).document,
         later: (effect) => context?.defer(effect),
         report: (found) => session?.runtime.report(found),
         uploads: () => commandUploads(session),
@@ -302,7 +303,7 @@ export const pluginCommand = <Api, Payload = never>(
                 payload = undefined;
             }
 
-            if (findInvalidPayload(spec.payload, payload) !== undefined) {
+            if (!acceptedPayload<Payload>(spec.payload, payload)) {
                 return false;
             }
 
@@ -315,14 +316,14 @@ export const pluginCommand = <Api, Payload = never>(
                     quiet,
                     session,
                 );
-                if (!spec.enabled(probe, payload as Payload)) {
+                if (!spec.enabled(probe, payload)) {
                     return false;
                 }
             }
 
             const compose = composer(state);
             const api = extend(commandDocumentApi(compose, model, schema, lookup, context, session), context, session);
-            if (!spec.run(api, payload as Payload)) {
+            if (!spec.run(api, payload)) {
                 return false;
             }
 
@@ -334,7 +335,7 @@ export const pluginCommand = <Api, Payload = never>(
             return true;
         },
         active: (state, payload, context) => {
-            if (spec.active === undefined || findInvalidPayload(spec.payload, payload) !== undefined) {
+            if (spec.active === undefined || !acceptedPayload<Payload>(spec.payload, payload)) {
                 return false;
             }
 
@@ -342,13 +343,13 @@ export const pluginCommand = <Api, Payload = never>(
 
             return spec.active(
                 extend(commandDocumentApi(composer(state), model, schema, lookup, context, session), context, session),
-                payload as Payload,
+                payload,
             );
         },
         policyRefuses: (policy, payload) =>
             spec.refuses !== undefined &&
-            findInvalidPayload(spec.payload, payload) === undefined &&
-            spec.refuses(policy as AuthoringPolicy, payload as Payload),
+            acceptedPayload<Payload>(spec.payload, payload) &&
+            spec.refuses(policy, payload),
         ...declared,
         viaExecute: true,
     };

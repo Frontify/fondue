@@ -49,7 +49,11 @@ const withOuterAttribute = (template: HtmlTemplate, attribute: 'class' | 'style'
 };
 
 /** The style recipe a node or mark of `type` with `attrs` renders with, and whether its stored `styleId` is unknown. */
-export const styleOfNode = (styles: readonly PresentationStyle[], type: string, attrs: JsonObject): StyleResolution => {
+export const styleOfNode = (
+    styles: readonly PresentationStyle[],
+    type: string,
+    attrs: Readonly<Record<string, unknown>>,
+): StyleResolution => {
     let styleId: string | null = null;
     if (typeof attrs.styleId === 'string') {
         styleId = attrs.styleId;

@@ -2,10 +2,7 @@
 
 import { type Schema, DOMParser as SchemaParser } from 'prosemirror-model';
 
-import { descriptorOf } from './dom';
-
-/** The host's DOM implementation, whose constructors and prototypes the import reads. */
-export type DomWindow = Window & typeof globalThis;
+import { type DomWindow, prototypeGetter, prototypeMethod } from './dom';
 
 /**
  * Turns each `form` into a `div`, through prototype accessors only, since a control named `nodeType` or `firstChild`
@@ -13,12 +10,12 @@ export type DomWindow = Window & typeof globalThis;
  */
 export const replaceForms = (dom: DomWindow, inert: Document) => {
     const node = dom.Node.prototype;
-    const query = descriptorOf(dom.Document.prototype, 'querySelectorAll').value as Document['querySelectorAll'];
-    const create = descriptorOf(dom.Document.prototype, 'createElement').value as Document['createElement'];
-    const firstChild = descriptorOf(node, 'firstChild').get as () => ChildNode | null;
-    const parentNode = descriptorOf(node, 'parentNode').get as () => ParentNode | null;
-    const append = descriptorOf(node, 'appendChild').value as globalThis.Node['appendChild'];
-    const replace = descriptorOf(node, 'replaceChild').value as globalThis.Node['replaceChild'];
+    const query = prototypeMethod<Document['querySelectorAll']>(dom.Document.prototype, 'querySelectorAll');
+    const create = prototypeMethod<Document['createElement']>(dom.Document.prototype, 'createElement');
+    const firstChild = prototypeGetter<() => ChildNode | null>(node, 'firstChild');
+    const parentNode = prototypeGetter<() => ParentNode | null>(node, 'parentNode');
+    const append = prototypeMethod<globalThis.Node['appendChild']>(node, 'appendChild');
+    const replace = prototypeMethod<globalThis.Node['replaceChild']>(node, 'replaceChild');
     for (const form of Array.from(query.call(inert, 'form'))) {
         const block = create.call(inert, 'div');
         for (let child = firstChild.call(form); child !== null; child = firstChild.call(form)) {

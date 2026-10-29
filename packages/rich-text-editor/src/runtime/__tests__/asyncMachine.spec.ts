@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type AsyncOperation, type AsyncRequest } from '../async/async';
+import { type AsyncOperation, type StoredRequest } from '../async/async';
 import {
     initial,
     next,
@@ -20,13 +20,13 @@ const SESSION = { documentId: 'doc', sessionId: 'session', generation: 1 };
 const FACTS: AsyncFacts = { disposed: false, faulted: false, holding: false, session: SESSION, aborting: false };
 const HANDLE = { id: 'handle' } as unknown as SelectionHandle;
 
-const requestOf = (key: string, extra: Partial<AsyncRequest> = {}): AsyncRequest => ({
+const requestOf = (key: string, extra: Partial<StoredRequest> = {}): StoredRequest => ({
     key,
     service: 'search',
     featureId: 'feature',
     action: 'create',
     command: 'command',
-    run: () => Promise.resolve(undefined),
+    run: () => Promise.resolve({ payload: undefined, deliver: undefined }),
     ...extra,
 });
 const operationOf = (id: string, extra: Partial<AsyncOperation> = {}): AsyncOperation => ({

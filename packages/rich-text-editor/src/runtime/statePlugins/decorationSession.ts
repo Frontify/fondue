@@ -5,10 +5,11 @@ import { type PluginKey, type Transaction } from 'prosemirror-state';
 import { AttrStep, StepMap } from 'prosemirror-transform';
 import { Decoration, DecorationSet, type EditorView } from 'prosemirror-view';
 
-import { type BlockDecoration, type Diagnostic, type JsonObject } from '#/model';
-import { type BlockDecorationSource, OBJECT_REPLACEMENT, snapshot } from '#/model/internal';
+import { type BlockDecoration, type Diagnostic } from '#/model';
+import { type BlockDecorationSource, OBJECT_REPLACEMENT } from '#/model/internal';
 import { NodeIdsStep } from '#/runtime/definition';
 
+import { valuesOf } from '../api/shared';
 import { pluginError } from '../reporting/events';
 
 const REFRESH = 'refresh';
@@ -96,7 +97,7 @@ const rangesOf = (context: DecorationContext, source: BlockDecorationSource, nod
     }
 
     const text = node.textBetween(0, node.content.size, undefined, OBJECT_REPLACEMENT);
-    const result = source.derive({ nodeId, attrs: snapshot(node.attrs) as JsonObject, text });
+    const result = source.derive({ nodeId, attrs: valuesOf(node.attrs), text });
     if (!('then' in result)) {
         cache?.set(node, result);
 

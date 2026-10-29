@@ -248,14 +248,12 @@ export const containerKeysPlugin = () =>
         props: {
             handleKeyDown: (view, event) => {
                 const { state } = view;
-                const { $cursor } = state.selection as TextSelection;
-                if (
-                    event.key !== 'Enter' ||
-                    !unmodified(event) ||
-                    $cursor === undefined ||
-                    $cursor === null ||
-                    $cursor.depth < 2
-                ) {
+                if (!(state.selection instanceof TextSelection)) {
+                    return false;
+                }
+
+                const { $cursor } = state.selection;
+                if (event.key !== 'Enter' || !unmodified(event) || $cursor === null || $cursor.depth < 2) {
                     return false;
                 }
 

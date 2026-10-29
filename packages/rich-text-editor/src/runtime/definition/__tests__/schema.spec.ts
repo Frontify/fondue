@@ -8,7 +8,7 @@ import { fixtureBold, fixtureColor } from '#/plugins/__tests__/fixtures/features
 import { core } from '#/plugins/Core/feature';
 import { link } from '#/plugins/Link/feature';
 
-import { buildSchema } from '../schema';
+import { buildSchema, domOutputOf } from '../schema';
 
 describe('buildSchema DOM output', () => {
     it('renders a partly bold, partly coloured link as one a in the editor DOM', () => {
@@ -43,5 +43,13 @@ describe('buildSchema DOM output', () => {
         );
 
         expect(host.innerHTML).toBe('<p><a rel="noopener">x</a></p>');
+    });
+
+    it('throws for a spec with no layers and no content hole', () => {
+        expect(() => domOutputOf([], false)).toThrow(/no element/);
+    });
+
+    it('returns the content hole when a spec has no layers', () => {
+        expect(domOutputOf([], true)).toBe(0);
     });
 });

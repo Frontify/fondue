@@ -5,6 +5,7 @@ import { type EditorState, PluginKey, type Transaction } from 'prosemirror-state
 import { SUGGESTIONS_PLUGIN } from '#/model/internal';
 import { COMMAND_META, type EngineSuggestion } from '#/runtime/definition';
 
+import { metaOf } from '../../definition/engineJson';
 import { isHistoryTransaction } from '../../history';
 
 import { matchAt } from './match';
@@ -166,7 +167,7 @@ export const nextState = (
     state: EditorState,
     suggestions: readonly EngineSuggestion[],
 ): SuggestionsState => {
-    const meta = transaction.getMeta(key) as SuggestionsMeta | undefined;
+    const meta = metaOf<SuggestionsMeta>(transaction, key);
     const dismissed = mappedDismissal(transaction, value.dismissed);
     const { requests } = value;
     if (meta?.kind === 'close') {

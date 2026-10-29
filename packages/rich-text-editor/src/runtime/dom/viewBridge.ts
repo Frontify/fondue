@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { DOMSerializer, type Node as ProseMirrorNode, type Schema } from 'prosemirror-model';
+import { NodeSelection } from 'prosemirror-state';
 import {
     type DirectEditorProps,
     type EditorView,
@@ -77,7 +78,7 @@ export const rangeRect = (view: SurfaceView, from: number, to: number): DOMRect 
 /** The selection's rectangle: the selected node's box, the caret, or the box around every line of a text range. */
 export const selectionRect = (view: SurfaceView): DOMRect => {
     const { selection } = view.state;
-    if ('node' in selection) {
+    if (selection instanceof NodeSelection) {
         const dom = view.nodeDOM(selection.from);
         if (dom instanceof Element) {
             return dom.getBoundingClientRect();
@@ -126,7 +127,7 @@ export const redraw = (view: SurfaceView | undefined): void => {
 export const nodeChromeAt = (view: SurfaceView): HTMLElement | null => {
     const { selection } = view.state;
     let node: Node | null = view.domAtPos(selection.head).node;
-    if ('node' in selection) {
+    if (selection instanceof NodeSelection) {
         node = view.nodeDOM(selection.from);
     }
 
@@ -175,7 +176,7 @@ export const layersOf = (node: ViewNode, document: Document): readonly HTMLEleme
 
     const { dom, contentDOM } = DOMSerializer.renderSpec(document, spec);
     const layers: HTMLElement[] = [];
-    let at = contentDOM as HTMLElement | null | undefined;
+    let at: HTMLElement | null | undefined = contentDOM;
     while (at !== null && at !== undefined) {
         layers.unshift(at);
         if (at === dom) {

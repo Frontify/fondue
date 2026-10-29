@@ -8,9 +8,10 @@ import { describe, expect, it, vi } from 'vitest';
 import { compileContentModel, defaultLimits } from '#/model';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
+import { heading } from '#/plugins/Heading/feature';
 import { compileDefinition } from '#/runtime/definition';
 
-import { authoringOf } from '../../guards/policy';
+import { authoringOf, createPolicyCheck } from '../../guards/policy';
 import { createPolicy } from '../../session/state/policy';
 
 const model = compileContentModel([core(), bold()], { id: 'test.policy', version: 1 });
@@ -100,5 +101,27 @@ describe('createPolicy', () => {
         expect(policy.refusal({ policyRefuses: () => true } as never, state, undefined)).toBe('not-allowed');
         expect(policy.refusal(refuses(true), state, undefined)).toBe('not-allowed');
         expect(policy.refusal(refuses(false), state, undefined)).toBeUndefined();
+    });
+
+    it('refuses a heading whose level is missing or not a number', () => {
+        const headingModel = compileContentModel([core(), heading()], { id: 'test.heading', version: 1 });
+        const { schema: headingSchema } = compileDefinition(headingModel);
+        const text = headingSchema.text('Hi');
+        const before = headingSchema.node('doc', null, [headingSchema.node('paragraph', null, [text])]);
+        const refused = (level: unknown) => {
+            const after = headingSchema.node('doc', null, [headingSchema.node('heading', { level }, [text])]);
+            const state = EditorState.create({ doc: before });
+            const transaction = state.tr.replaceWith(0, before.content.size, after.content);
+
+            return createPolicyCheck(headingModel)(
+                authoringOf(headingModel),
+                transaction.before,
+                transaction.doc,
+                transaction.mapping,
+            );
+        };
+
+        expect(refused(null)).toBe(true);
+        expect(refused('nope')).toBe(true);
     });
 });

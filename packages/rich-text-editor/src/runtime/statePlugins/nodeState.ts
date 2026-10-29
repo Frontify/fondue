@@ -4,6 +4,8 @@ import { type EditorState, Plugin, PluginKey, type Transaction } from 'prosemirr
 
 import { type JsonValue } from '#/model';
 
+import { metaOf } from '../definition/engineJson';
+
 /** One flag a transaction sets on a node, or removes with `null`. */
 export type NodeStateChange = {
     nodeId: string;
@@ -17,7 +19,7 @@ const NODE_STATE = new PluginKey<NodeStates>('node-state');
 
 /** The flag changes `transaction` carries. */
 export const nodeStateChanges = (transaction: Transaction): readonly NodeStateChange[] =>
-    (transaction.getMeta(NODE_STATE) as readonly NodeStateChange[] | undefined) ?? [];
+    metaOf<readonly NodeStateChange[]>(transaction, NODE_STATE) ?? [];
 
 /** Adds `changes` to the flag changes of `transaction`, after those it carries already. */
 export const withNodeState = (transaction: Transaction, changes: readonly NodeStateChange[]): Transaction =>

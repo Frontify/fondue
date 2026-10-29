@@ -18,7 +18,7 @@ import {
     StepResult,
 } from 'prosemirror-transform';
 
-import { NODE_IDS_PLUGIN } from '#/model/internal';
+import { requiredAt, NODE_IDS_PLUGIN } from '#/model/internal';
 
 import { carriesNodeId } from './schema';
 
@@ -233,7 +233,7 @@ const holdsContent = (node: Node): boolean => {
  * node directly before one with content, as a split at its very start leaves, hands the ID on.
  */
 const keeperOf = (holders: readonly Holder[], back: Mapping): Holder => {
-    let keeper = holders.find(({ pos }) => !back.mapResult(pos).deleted) ?? (holders[0] as Holder);
+    let keeper = holders.find(({ pos }) => !back.mapResult(pos).deleted) ?? requiredAt(holders, 0);
     const next = holders[holders.indexOf(keeper) + 1];
     if (
         next !== undefined &&
@@ -289,7 +289,7 @@ const nodeIdIndex: StateField<NodeIdIndex> = {
         };
 
         for (const [at, step] of transaction.steps.entries()) {
-            const before = transaction.docs[at] as Node;
+            const before = requiredAt(transaction.docs, at);
             const after = transaction.docs[at + 1] ?? transaction.doc;
             const rest = transaction.mapping.slice(at + 1);
             if (step instanceof AttrStep) {
