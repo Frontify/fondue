@@ -364,6 +364,17 @@ describe('replays', () => {
         expect(types(result)).toEqual(WRITE);
     });
 
+    it('sends a flush that landed before the session was ready', () => {
+        const started = initial({ revision: 'r1', unsavedOnMount: true, carried: undefined }, SESSION);
+        const mounted = step(started, { type: 'mounted' }, { phase: 'mounting' });
+        const flushed = step(mounted.state, { type: 'flush' }, { phase: 'mounting' });
+        const ready = step(flushed.state, { type: 'ready' }, { phase: 'ready' });
+        const flushedWhenReady = step(mounted.state, { type: 'flush' }, { phase: 'ready' });
+
+        expect(types(ready)).toEqual(types(flushedWhenReady).filter((type) => type !== 'clear'));
+        expect(ready.state.due).toBe(false);
+    });
+
     it('resumes from the network: replays an unresolved write, else sends on', () => {
         const offline = { ...MACHINE_BY_STATE.offline, unresolved: REQUEST };
         const result = step(offline, { type: 'online' });
@@ -397,6 +408,32 @@ describe('failed', () => {
         expect(result.state).toMatchObject({ state: 'error', rejection: null });
         expect(result.state.problem).toMatchObject({ code: 'persistence.retries-exhausted', details: { retries: 5 } });
         expect(types(result)).toEqual(['clear', 'abort', 'publish', 'report', 'measure']);
+    });
+
+    it('answers a commit pinned after the retries were spent when its write fails', () => {
+        const exhausted = step(
+            { ...MACHINE_BY_STATE.saving, replays: 1 },
+            { type: 'failed', serial: 1, code: 'transport' },
+            { options: { maxRetries: 1 } },
+        );
+        const replayed = step(exhausted.state, {
+            type: 'pinned',
+            call: 7,
+            stamp: stampAt(2),
+            document: DOCUMENT,
+        });
+        const result = step(
+            replayed.state,
+            { type: 'failed', serial: 2, code: 'transport' },
+            { options: { maxRetries: 1 } },
+        );
+
+        expect(effectOf(result, 'answer')).toEqual({
+            type: 'answer',
+            calls: [7],
+            result: { status: 'failed', code: 'transport', outcome: 'not-sent' },
+        });
+        expect(result.state.pinned).toEqual([{ stamp: stampAt(2), document: DOCUMENT, calls: [] }]);
     });
 
     it('takes the retry limit from the host options', () => {

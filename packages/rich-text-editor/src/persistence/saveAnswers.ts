@@ -172,6 +172,11 @@ export const failed = (draft: Draft, { serial, code }: { serial: number; code: '
         machine.rejection = null;
         const problem = diagnostic('persistence.retries-exhausted', undefined, { retries: machine.replays }, 'error');
         machine.problem = problem;
+        for (const pin of machine.pinned) {
+            answer(draft, pin.calls, { status: 'failed', code, outcome: outcomeOf(machine, pin.stamp) });
+        }
+
+        machine.pinned = machine.pinned.map((pin) => ({ ...pin, calls: [] }));
         draft.effects.push({ type: 'publish' }, { type: 'report', diagnostic: problem }, measure);
 
         return;

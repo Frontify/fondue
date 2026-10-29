@@ -118,6 +118,11 @@ const TRANSITIONS: { readonly [EventType in SaveEvent['type']]: (draft: Draft, e
         if (draft.machine.unresolved !== undefined) {
             replay(draft);
         }
+
+        // A flush can land before the session is ready.
+        if (draft.machine.due) {
+            send(draft);
+        }
     },
     online,
     serviceChanged,

@@ -412,7 +412,7 @@ describe('writes', () => {
         unmount();
     });
 
-    it('replays the kept operation for a requestCommit that joins a checkpoint an earlier call timed out on', async () => {
+    it('replays the kept operation for a requestCommit that joins a checkpoint an earlier call left when retries were spent', async () => {
         const { service, calls } = serviceOf(true);
         const { handle, flush, type, advance, unmount } = mount({
             service,
@@ -426,7 +426,7 @@ describe('writes', () => {
         calls[0]?.fail();
         await settle();
         advance(30_000);
-        expect(await first).toEqual({ status: 'failed', code: 'timeout', outcome: 'not-sent' });
+        expect(await first).toEqual({ status: 'failed', code: 'transport', outcome: 'not-sent' });
 
         const second = handle().requestCommit({ reason: 'manual' });
         await flush();
