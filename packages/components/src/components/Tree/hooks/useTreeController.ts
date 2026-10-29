@@ -12,7 +12,7 @@ import {
     type Updater,
 } from '@headless-tree/core';
 import { useTree } from '@headless-tree/react';
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { INDENT_STEP_PX, ROOT_ID, ROOT_NAME } from '../constants';
 import { type TreeChangeState, type TreeDropCandidate, type TreeItemData } from '../types';
@@ -116,27 +116,17 @@ export const useTreeController = ({
     // Focus is internal-only (not in `onChange`), seeded to the first item so one row
     // gets `tabIndex=0` — otherwise the roving tabindex leaves the tree unreachable by Tab.
     const [internalFocusedItem, setInternalFocusedItem] = useState<string | undefined>(() => items[0]?.id);
-    // The ref holds the list from the last render React kept. A removed row is replaced here,
-    // before the tab stop below is chosen, so the tree never receives it. The effect stores
-    // the new list, and copies the id into state, only after that render is kept.
-    const previousItemsRef = useRef(items);
-    const prunedFocusedItem =
-        previousItemsRef.current === items
-            ? internalFocusedItem
-            : getFocusFallback(internalFocusedItem, previousItemsRef.current, items);
-    useLayoutEffect(() => {
-        previousItemsRef.current = items;
-        if (prunedFocusedItem !== internalFocusedItem) {
-            // Remember the neighbour once this render is kept. The tab stop above may still be the selected row.
-            // oxlint-disable-next-line @eslint-react/set-state-in-effect
-            setInternalFocusedItem(prunedFocusedItem);
-        }
-    }, [items, prunedFocusedItem, internalFocusedItem]);
+    const [previousItems, setPreviousItems] = useState(items);
+    // Adjusted during render so the row leaving the screen never renders as the tab stop; `undefined` falls back to the first row.
+    if (previousItems !== items) {
+        setPreviousItems(items);
+        setInternalFocusedItem(getFocusFallback(internalFocusedItem, previousItems, items));
+    }
 
     // Derived, not stored: once focus moves inside, the tab stop is again the row the user moved to.
     const focusedItem = useMemo(() => {
         if (hasFocusWithin) {
-            return prunedFocusedItem;
+            return internalFocusedItem;
         }
         const selectedIds = new Set(selectedItems);
         // Folder rows count too: a collapsed folder whose descendants are all checked renders as checked.
@@ -148,10 +138,10 @@ export const useTreeController = ({
                 }
             }
         }
-        return getVisibleIds(items).find((id) => selectedIds.has(id)) ?? prunedFocusedItem;
+        return getVisibleIds(items).find((id) => selectedIds.has(id)) ?? internalFocusedItem;
     }, [
         hasFocusWithin,
-        prunedFocusedItem,
+        internalFocusedItem,
         items,
         selectedItems,
         checkedItems,
