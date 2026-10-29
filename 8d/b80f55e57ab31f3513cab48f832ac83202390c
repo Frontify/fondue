@@ -1,0 +1,24 @@
+packages/components/src/components/Select/__tests__/Select.ct.tsx
+  s_fa7cbb2ff9ff6d::t_8a458cd935655a 355
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "8db80f55e57ab31f3513cab48f832ac83202390c",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_fa7cbb2ff9ff6d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "50b7e354-ddd4-475a-9cde-6b3ca4026f47",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

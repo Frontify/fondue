@@ -1,0 +1,26 @@
+packages/rich-text-editor/oxlint.config.ts
+  s_f767e914a6261c::t_d96360b85256a8 47-50,52
+  s_f767e914a6261c::t_15d99cad91b3e9 99-109,112
+.changeset/config.json
+  s_f767e914a6261c::t_04e71073c4ba7d 11
+packages/rich-text-editor/README.md
+  s_f767e914a6261c::t_6c5a0467a7b8aa 1
+packages/rich-text-editor/package.json
+  s_f767e914a6261c::t_ab3411a696ad22 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "c60d54e860e1a57a25b8b0738d1476426e38fdf3",
+  "prompts": {},
+  "sessions": {
+    "s_f767e914a6261c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f5fcdb94-013a-4bc4-9411-ee8215c60e12",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
