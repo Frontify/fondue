@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AssistiveTreeDescription } from '@headless-tree/react';
-import { Fragment, useId, useMemo, type ReactNode } from 'react';
+import { Fragment, useCallback, useId, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -74,6 +74,22 @@ export const TreeRoot = ({
         rootAccepts: accepts,
     });
 
+    // A row removed while it held focus takes focus with it and fires no blur, so it asks for the fallback row to take it.
+    const shouldRestoreFocusRef = useRef(false);
+    useLayoutEffect(() => {
+        if (!shouldRestoreFocusRef.current) {
+            return;
+        }
+        shouldRestoreFocusRef.current = false;
+        // An emptied tree has no row to take focus.
+        if (tree.getItems().length > 0) {
+            tree.getFocusedItem().getElement()?.focus();
+        }
+    });
+    const handleFocusLost = useCallback(() => {
+        shouldRestoreFocusRef.current = true;
+    }, []);
+
     const visibleItems = tree.getItems();
     const loadingInsertions = useMemo(
         () => computeLoadingInsertions(visibleItems, rootIsLoading),
@@ -111,6 +127,7 @@ export const TreeRoot = ({
                             multiSelect={multiSelect}
                             reorderable={reorderable}
                             hintId={rowHint ? rowHintId : undefined}
+                            onFocusLost={handleFocusLost}
                             checkedState={checkedStates?.get(item.getId()) ?? false}
                         />
                         {loadingPlaceholder && (
