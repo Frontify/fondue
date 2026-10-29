@@ -116,27 +116,27 @@ export const useTreeController = ({
     // Focus is internal-only (not in `onChange`), seeded to the first item so one row
     // gets `tabIndex=0` — otherwise the roving tabindex leaves the tree unreachable by Tab.
     const [internalFocusedItem, setInternalFocusedItem] = useState<string | undefined>(() => items[0]?.id);
-    // The ref holds the list from the last render React kept. The id below is what the tree
-    // receives, so a removed row is never handed to it. The effect stores the new list, and
-    // copies the id into state, only after that render is kept.
+    // The ref holds the list from the last render React kept. A removed row is replaced here,
+    // before the tab stop below is chosen, so the tree never receives it. The effect stores
+    // the new list, and copies the id into state, only after that render is kept.
     const previousItemsRef = useRef(items);
-    const focusedItem =
+    const prunedFocusedItem =
         previousItemsRef.current === items
             ? internalFocusedItem
             : getFocusFallback(internalFocusedItem, previousItemsRef.current, items);
     useLayoutEffect(() => {
         previousItemsRef.current = items;
-        if (focusedItem !== internalFocusedItem) {
-            // The tree already received this id above. State catches up after the render is kept.
+        if (prunedFocusedItem !== internalFocusedItem) {
+            // Remember the neighbour once this render is kept. The tab stop above may still be the selected row.
             // oxlint-disable-next-line @eslint-react/set-state-in-effect
-            setInternalFocusedItem(focusedItem);
+            setInternalFocusedItem(prunedFocusedItem);
         }
-    }, [items, focusedItem, internalFocusedItem]);
+    }, [items, prunedFocusedItem, internalFocusedItem]);
 
     // Derived, not stored: once focus moves inside, the tab stop is again the row the user moved to.
     const focusedItem = useMemo(() => {
         if (hasFocusWithin) {
-            return internalFocusedItem;
+            return prunedFocusedItem;
         }
         const selectedIds = new Set(selectedItems);
         // Folder rows count too: a collapsed folder whose descendants are all checked renders as checked.
@@ -148,10 +148,10 @@ export const useTreeController = ({
                 }
             }
         }
-        return getVisibleIds(items).find((id) => selectedIds.has(id)) ?? internalFocusedItem;
+        return getVisibleIds(items).find((id) => selectedIds.has(id)) ?? prunedFocusedItem;
     }, [
         hasFocusWithin,
-        internalFocusedItem,
+        prunedFocusedItem,
         items,
         selectedItems,
         checkedItems,
