@@ -1,0 +1,19 @@
+packages/components/src/components/Tree/components/TreeRoot.ct.tsx
+  s_f4bd8cfbf36733::t_127ee99589fda1 305
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a4cca45bc801ac0cbf203889d5bddaaa2d5e06c5",
+  "prompts": {},
+  "sessions": {
+    "s_f4bd8cfbf36733": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "957f9406-1dc3-4ef8-8f4e-f3f47b88741e",
+        "model": "grok-4.7"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
