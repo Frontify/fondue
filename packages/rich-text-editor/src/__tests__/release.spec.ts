@@ -75,7 +75,7 @@ const missingReleasePages = (root: string, version: string, notes: string): stri
 
 /** The locales that `./locales/*` publishes, one source module each. */
 const LOCALES = readdirSync(join(PACKAGE_ROOT, 'src', 'locales'))
-    .filter((file) => file.endsWith('.ts') && !file.endsWith('.d.ts') && file !== 'countPlaceholders.ts')
+    .filter((file) => /^[a-z]{2}-[A-Z]{2}\.ts$/.test(file))
     .map((file) => file.slice(0, -'.ts'.length));
 
 /** Each file that an `exports` target of `root/package.json` names and `root` lacks, with `*` expanded to each of `names`. */
@@ -406,12 +406,12 @@ const npm = (args: readonly string[], run: (args: readonly string[]) => string =
     }
 };
 
-/** The highest published release below `version`, the compatibility baseline; prereleases never count. */
+/** The highest published release below `version`, the compatibility baseline; prereleases and `0.x` releases, which promise no compatibility, never count. */
 const baselineVersion = (published: readonly string[], version: string): string | undefined => {
     const order = (left: string, right: string) => left.localeCompare(right, undefined, { numeric: true });
 
     return published
-        .filter((other) => /^\d+\.\d+\.\d+$/.test(other) && order(other, version) < 0)
+        .filter((other) => /^[1-9]\d*\.\d+\.\d+$/.test(other) && order(other, version) < 0)
         .sort(order)
         .at(-1);
 };
@@ -466,11 +466,13 @@ describe('the compatibility baseline', () => {
         expect(baselineVersion(['1.0.9', '1.0.10'], '1.1.0')).toBe('1.0.10');
     });
 
-    it('is none when nothing lower is published, and skips prereleases', () => {
+    it('is none when nothing lower is published, and skips prereleases and 0.x releases', () => {
         expect(baselineVersion([], '1.0.0')).toBeUndefined();
         expect(baselineVersion(['1.0.0'], '1.0.0')).toBeUndefined();
         expect(baselineVersion(['1.0.0-rc.1', '1.0.0'], '1.0.1')).toBe('1.0.0');
         expect(baselineVersion(['1.0.0-rc.1'], '1.0.0')).toBeUndefined();
+        expect(baselineVersion(['0.0.0-stage', '0.0.0'], '1.0.0')).toBeUndefined();
+        expect(baselineVersion(['0.0.0', '1.0.0'], '1.0.1')).toBe('1.0.0');
     });
 });
 
@@ -770,7 +772,7 @@ describe.runIf(process.env.RTE_RELEASE === 'true')('the release this run prepare
     beforeAll(() => {
         scratch = mkdtempSync(join(tmpdir(), 'fondue-rte-release-'));
         const tarballs = packRelease(join(scratch, 'packs'));
-        const editor = tarballs.find((file) => file.includes('frontify-rich-text-editor-')) ?? '';
+        const editor = tarballs.find((file) => file.includes('frontify-fondue-rich-text-editor-')) ?? '';
         mkdirSync(join(scratch, 'editor'));
         execFileSync('tar', ['xzf', editor, '-C', join(scratch, 'editor')]);
         packed = join(scratch, 'editor', 'package');
