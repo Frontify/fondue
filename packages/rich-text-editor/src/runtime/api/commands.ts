@@ -258,6 +258,7 @@ const commandDocumentApi = (
         positionAt: () => undefined,
         document: (state) => encodeTree(state.doc.toJSON() as TreeNode, model).document,
         later: (effect) => context?.defer(effect),
+        report: (found) => session?.runtime.report(found),
         uploads: () => commandUploads(session),
     });
 };

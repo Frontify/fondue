@@ -434,6 +434,7 @@ export const writeMarkdown = (
         headings: headingIds(root),
         parser,
         italic: '*',
+        lostMarks: new Set(),
     };
     const rootPlan = plan.nodes.get(root.type);
     if (rootPlan !== undefined && dropsOwnAttributes(root)) {

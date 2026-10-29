@@ -96,7 +96,7 @@ describe('createFaults', () => {
         const { faults, attached, candidate, reported, lifecycle } = setup({ store } as unknown as RecoveryService);
         expect(faults.hasRecovery()).toBe(false);
         expect(faults.candidate()).toBeNull();
-        faults.viewFault(attached, candidate);
+        faults.viewFault(attached, candidate, undefined);
         expect(attached.dom.getAttribute('contenteditable')).toBe('false');
         expect(faults.hasRecovery()).toBe(true);
         expect(faults.candidate()).toEqual({ type: 'doc' });
@@ -118,7 +118,7 @@ describe('createFaults', () => {
 
     it('offers the candidate only while faulted', () => {
         const { faults, attached, candidate, lifecycle } = setup();
-        faults.viewFault(attached, candidate);
+        faults.viewFault(attached, candidate, undefined);
         expect(faults.candidate()).not.toBeNull();
         lifecycle.to('disposed');
         expect(faults.candidate()).toBeNull();
@@ -128,7 +128,7 @@ describe('createFaults', () => {
         const store = vi.fn(() => Promise.resolve({ receiptId: 'rc' }));
         const { faults, attached, candidate } = setup({ store } as unknown as RecoveryService);
         const result = faults.withoutRecovery(() => {
-            faults.viewFault(attached, candidate);
+            faults.viewFault(attached, candidate, undefined);
 
             return 7;
         });
@@ -143,9 +143,9 @@ describe('createFaults', () => {
                 throw new Error('x');
             },
         } as unknown as RecoveryService);
-        expect(() => faults.viewFault(attached, candidate)).not.toThrow();
+        expect(() => faults.viewFault(attached, candidate, undefined)).not.toThrow();
         const rejecting = setup({ store: () => Promise.reject(new Error('x')) } as unknown as RecoveryService);
-        rejecting.faults.viewFault(rejecting.attached, rejecting.candidate);
+        rejecting.faults.viewFault(rejecting.attached, rejecting.candidate, undefined);
         await Promise.resolve();
         await Promise.resolve();
         expect(rejecting.reported).toHaveLength(1);

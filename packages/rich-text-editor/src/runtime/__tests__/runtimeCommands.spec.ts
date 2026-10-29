@@ -702,4 +702,49 @@ describe('command payloads', () => {
         expect(handle.execute('acme.pull-quote.set').status).toBe('applied');
         expect(view.state.doc.firstChild?.type.name).toBe('paragraph');
     });
+
+    it('reports a deferred effect that throws and still runs the next queued intent', async () => {
+        let enqueueNext: (() => void) | undefined;
+        const boom: EngineCommand = {
+            featureId: 'fixture.effect',
+            active: () => false,
+            run: (_state, _dispatch, _payload, context) => {
+                context?.defer(() => {
+                    throw new TypeError('overlay');
+                });
+                enqueueNext?.();
+
+                return true;
+            },
+        };
+        const next: EngineCommand = {
+            featureId: 'fixture.next',
+            active: () => false,
+            run: (state, dispatch) => {
+                dispatch?.(state.tr.insertText('Z'));
+
+                return true;
+            },
+        };
+        const session = start(stored(para(words('ab'))), { commands: { boom, next } });
+        let second: Promise<CommandResult> | undefined;
+        enqueueNext = () => {
+            second = session.handle.enqueue('next');
+        };
+
+        const first = session.handle.enqueue('boom');
+
+        await expect(first).resolves.toMatchObject({ status: 'no-op' });
+        await expect(second).resolves.toMatchObject({ status: 'applied' });
+        expect(session.view.state.doc.textContent).toBe('Zab');
+        expect(session.diagnostics).toEqual([
+            {
+                code: 'runtime.plugin-error',
+                severity: 'error',
+                messageKey: 'runtime.plugin-error',
+                details: { featureId: 'fixture.effect', name: 'TypeError' },
+            },
+        ]);
+        expect(JSON.stringify(session.diagnostics)).not.toContain('overlay');
+    });
 });

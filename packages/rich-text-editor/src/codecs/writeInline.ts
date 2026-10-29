@@ -26,6 +26,8 @@ export type MarkdownState = {
     parser: Parser;
     /** `*`, or `_` where `*` runs of italic and bold would meet and parse as other emphasis. */
     italic: '*' | '_';
+    /** Marks this attempt already counted lost, so a failed read-back does not count them again. */
+    lostMarks: Set<TreeMark>;
 } & WalkState;
 
 /** Where inline content sits: a heading or a table cell holds one line, so a hard break there cannot be written. */
@@ -38,8 +40,11 @@ type MarkdownItem = {
     code: boolean;
 } & Item;
 
-/** Counts the mark's feature as lost. */
-const markLost = (state: MarkdownState, plan: CodecMarkPlan) => state.losses.add(plan.featureId);
+/** Counts the mark's feature as lost, and remembers the mark so a failed read-back does not count it again. */
+const markLost = (state: MarkdownState, plan: CodecMarkPlan, mark: TreeMark) => {
+    state.losses.add(plan.featureId);
+    state.lostMarks.add(mark);
+};
 
 /**
  * What a mark writes: nothing, a code span, its feature's own syntax, a delimiter pair, or a link to `target`, which
@@ -96,7 +101,7 @@ const markdownItems = (state: MarkdownState, node: TreeNode, path: string): Mark
             const { kind, lost } = markSyntax(mark, plan);
             // A link's losses depend on its whole run, so `linkPieces` counts them once per run.
             if (lost && kind !== 'link') {
-                markLost(state, plan);
+                markLost(state, plan, mark);
             }
 
             if (kind === 'code') {
@@ -175,7 +180,13 @@ const expectedRuns = (state: MarkdownState, node: TreeNode, line: Line): Run[] |
  */
 export const writeInline = (state: MarkdownState, node: TreeNode, path: string, line: Line): string => {
     const attempt = (italic: '*' | '_') => {
-        const scratch: MarkdownState = { ...state, italic, losses: new Losses(), diagnostics: [] };
+        const scratch: MarkdownState = {
+            ...state,
+            italic,
+            losses: new Losses(),
+            diagnostics: [],
+            lostMarks: new Set(),
+        };
         const text = serialize(inlinePieces(scratch, node, path, line), (featureId) => scratch.losses.add(featureId));
 
         return { scratch, text };
@@ -206,18 +217,24 @@ export const writeInline = (state: MarkdownState, node: TreeNode, path: string, 
         if (underscore !== undefined && readsBack(underscore.text)) {
             chosen = underscore;
         } else {
-            let marked = false;
+            let held = false;
             for (const child of node.content ?? []) {
                 for (const mark of child.marks ?? []) {
                     const plan = state.plan.marks.get(mark.type);
-                    if (plan !== undefined) {
-                        chosen.scratch.losses.add(plan.featureId);
-                        marked = true;
+                    if (plan === undefined) {
+                        continue;
                     }
+
+                    held = true;
+                    if (chosen.scratch.lostMarks.has(mark)) {
+                        continue;
+                    }
+
+                    chosen.scratch.losses.add(plan.featureId);
                 }
             }
 
-            if (!marked) {
+            if (!held) {
                 chosen.scratch.losses.add(featureOf(state, node.type));
             }
         }
@@ -299,12 +316,12 @@ const inlinePieces = (state: MarkdownState, node: TreeNode, path: string, line: 
 const linkPieces = (state: MarkdownState, plan: CodecMarkPlan, mark: TreeMark, inner: Piece[], line: Line): Piece[] => {
     const attrs = attrsOf(mark.attrs);
     if (attrs.openInNewWindow === true || (attrs.styleId !== undefined && attrs.styleId !== null)) {
-        markLost(state, plan);
+        markLost(state, plan, mark);
     }
 
     const syntax = markSyntax(mark, plan);
     if (syntax.lost) {
-        markLost(state, plan);
+        markLost(state, plan, mark);
     }
 
     if (syntax.kind !== 'link' || syntax.target === undefined) {

@@ -70,6 +70,7 @@ export const assembleState = (core: Core, options: EditorRuntimeOptions, late: L
         onSettled: () => late.settleInput(),
         onActiveChange: notifyWatchers,
         notifications,
+        report,
     });
     const keyGuard = createKeyGuard(
         () => options.tabMovesFocus?.() === true,

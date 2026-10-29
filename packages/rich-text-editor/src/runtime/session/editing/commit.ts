@@ -53,7 +53,7 @@ type CommitArgs = {
     lifecycle: Pick<Lifecycle, 'is'>;
     policy: Pick<PolicyService, 'breaks' | 'exceeds'>;
     shown: Pick<Shown, 'published' | 'setPublished' | 'addProvisional' | 'emitSelection' | 'emitSaveStatus'>;
-    views: Pick<ViewService, 'current' | 'call'>;
+    views: Pick<ViewService, 'current' | 'call' | 'thrown'>;
     busy: Pick<Busy, 'run'>;
     metrics: Pick<Metrics, 'record'>;
     prepare: Pick<Prepare, 'prepare' | 'installedId' | 'isProvisional' | 'markRules' | 'take'>;
@@ -65,7 +65,7 @@ type CommitArgs = {
     /** What an effective change tells the capabilities, in the Event order, which `announce` calls. */
     hooks: { committed(transactions: readonly Transaction[], fromHistory: boolean): void; changed(): void };
     fault: (diagnostic: Diagnostic) => void;
-    viewFault: (attached: EditorView, candidate: EditorState) => void;
+    viewFault: (attached: EditorView, candidate: EditorState, error: unknown) => void;
 };
 
 /**
@@ -124,7 +124,7 @@ const installEditorState = (args: CommitArgs, next: EditorState): boolean => {
     const attached = args.views.current();
     if (attached !== undefined && args.views.call(() => attached.updateState(next)).threw) {
         args.store.set(previous);
-        args.viewFault(attached, next);
+        args.viewFault(attached, next, args.views.thrown());
 
         return false;
     }

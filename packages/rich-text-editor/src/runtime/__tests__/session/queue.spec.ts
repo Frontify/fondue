@@ -93,6 +93,31 @@ describe('createQueue', () => {
         expect(calls).toEqual([]);
     });
 
+    it('settles an intent whose run throws and still runs the intent it queued', async () => {
+        let queued: Promise<CommandResult> | undefined;
+        const { service, calls, reported } = setup((id, _payload, _options, route) => {
+            calls.push(`${id}:${route}`);
+            if (id === 'boom') {
+                queued = service.enqueue('next');
+                throw new Error('drain');
+            }
+
+            return applied;
+        });
+
+        await expect(service.enqueue('boom')).resolves.toEqual({ status: 'rejected', code: 'not-ready' });
+        await expect(queued).resolves.toBe(applied);
+        expect(calls).toEqual(['boom:queue', 'next:queue']);
+        expect(reported).toEqual([
+            {
+                code: 'runtime.plugin-error',
+                severity: 'error',
+                messageKey: 'runtime.plugin-error',
+                details: { name: 'Error' },
+            },
+        ]);
+    });
+
     it('runs what an intent enqueues after it, never inside it', async () => {
         const order: string[] = [];
         let queued: Promise<CommandResult> | undefined;

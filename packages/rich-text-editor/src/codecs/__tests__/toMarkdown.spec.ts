@@ -625,4 +625,10 @@ describe('toMarkdown reads back what it reports as lossless', () => {
 
         expect(output.losses).toEqual([{ featureId: 'core', count: 1 }]);
     });
+
+    it('counts an underline on text that does not read back once', () => {
+        const output = codecs.toMarkdown(stored(paragraph(text('a\u0000b', mark('underline')))));
+
+        expect(output.losses).toEqual([{ featureId: 'fixture.marks', count: 1 }]);
+    });
 });

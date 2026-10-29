@@ -6,6 +6,8 @@ import { DecorationSet } from 'prosemirror-view';
 import { BLOCK_DECORATIONS_PLUGIN } from '#/model/internal';
 import { type PluginImplementation } from '#/runtime/definition';
 
+import { viewRuntimes } from '../session/assemble/registry';
+
 import {
     applyBlockDecorations,
     buildBlockDecorations,
@@ -19,7 +21,11 @@ const decorationsOfState = (state: EditorState) => key.getState(state) ?? Decora
 
 /** The decorations of every block decoration source, which derives a block again only once a change replaced it. */
 export const blockDecorationsPlugin: PluginImplementation = ({ decorations: sources }) => {
-    const context = createDecorationContext(sources, key);
+    const context = createDecorationContext(sources, key, (found) => {
+        for (const view of context.views) {
+            viewRuntimes.get(view)?.report(found);
+        }
+    });
 
     return new Plugin<DecorationSet>({
         key,

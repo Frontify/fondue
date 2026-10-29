@@ -7,7 +7,8 @@ import { describe, expect, it } from 'vitest';
 import { type ResourceLimits } from '#/model';
 import { APPEND_BATCH_META, NORMALIZE_META } from '#/runtime/definition';
 
-import { createPrepare, DUPLICATE_ENGINE, pluginError } from '../../session/editing/prepare';
+import { pluginError } from '../../reporting/events';
+import { createPrepare, DUPLICATE_ENGINE } from '../../session/editing/prepare';
 import { createStore } from '../../session/state/store';
 
 const schema = new Schema({

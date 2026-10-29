@@ -97,6 +97,7 @@ const setup = ({
                     return { threw: true, value: undefined };
                 }
             },
+            thrown: () => undefined,
         },
         busy: { run: (work) => work() },
         metrics: { record: () => log.push('record') },

@@ -18,7 +18,7 @@ import { core } from '#/plugins/Core/feature';
 import { listItem } from '#/plugins/ListItem/feature';
 import { orderedList } from '#/plugins/OrderedList/feature';
 import { buildSchema } from '#/runtime/definition/schema';
-import { NO_COLORS } from '#/runtime/import/colors';
+import { NO_COLORS, normalizeColors } from '#/runtime/import/colors';
 import { cleanGoogleDocs } from '#/runtime/import/googleDocs';
 import { importHtml } from '#/runtime/import/html';
 import { removeEmptySpans, removeItemBreaks, removeMarkup } from '#/runtime/import/markup';
@@ -413,10 +413,11 @@ describe('vendor cleanups on HTML from other sources', () => {
                     colors: NO_COLORS,
                     rules: [],
                 });
+                // `NO_COLORS` removes every colour on import, so the plain parse removes them too.
+                const plain = bodyOf(value);
+                normalizeColors(plain, NO_COLORS);
 
-                expect(runsOf(schema.topNodeType.create(null, imported.content))).toEqual(
-                    runsOf(parser.parse(bodyOf(value))),
-                );
+                expect(runsOf(schema.topNodeType.create(null, imported.content))).toEqual(runsOf(parser.parse(plain)));
             }),
             { numRuns: 150 },
         );

@@ -5,6 +5,8 @@ import { EditorState, Plugin } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { type Diagnostic } from '#/model';
+
 import { createView, isEmpty } from '../../session/editing/view';
 import { createLifecycle } from '../../session/state/lifecycle';
 import { createStore } from '../../session/state/store';
@@ -28,6 +30,7 @@ const setup = (options: { plugins?: Plugin[]; recovery?: boolean; composing?: bo
     const store = createStore(make('ab', options.plugins));
     const lifecycle = createLifecycle();
     const calls: string[] = [];
+    const reported: Diagnostic[] = [];
     const flags = {
         recovery: options.recovery === true,
         composing: options.composing === true,
@@ -52,11 +55,12 @@ const setup = (options: { plugins?: Plugin[]; recovery?: boolean; composing?: bo
         dispatch: (transaction) => store.set(store.state.apply(transaction)),
         fault: () => calls.push('fault'),
         viewFault: (_view, candidate) => calls.push(`viewFault:${candidate === store.state}`),
+        report: (found) => reported.push(found),
         onAttached: () => calls.push('attached'),
         scrollSelectionIntoView: () => undefined,
     });
 
-    return { service, store, lifecycle, calls, flags, resources };
+    return { service, store, lifecycle, calls, flags, resources, reported };
 };
 
 const surface = () => document.body.appendChild(document.createElement('div'));
@@ -166,7 +170,7 @@ describe('createView', () => {
             }),
         ).toEqual({ threw: true, value: undefined });
         const nested = service.call(() => {
-            service.faultView();
+            service.faultView(undefined);
 
             return 2;
         });
@@ -176,14 +180,14 @@ describe('createView', () => {
 
     it('faultView outside a call faults the shown view with the stored state, only while mounting or ready', () => {
         const { service, calls, lifecycle } = setup();
-        service.faultView();
+        service.faultView(undefined);
         expect(calls).toEqual([]);
         service.attach(surface());
         calls.length = 0;
-        service.faultView();
+        service.faultView(undefined);
         expect(calls).toEqual(['viewFault:true']);
         lifecycle.to('faulted');
-        service.faultView();
+        service.faultView(undefined);
         expect(calls).toEqual(['viewFault:true']);
     });
 
@@ -217,6 +221,31 @@ describe('createView', () => {
         second.service.attach(surface());
         expect(() => second.service.detach()).not.toThrow();
         expect(second.service.current()).toBeUndefined();
+    });
+
+    it('reports a destroy error once disposed and still drops the view', () => {
+        const failing = new Plugin({
+            view: () => ({
+                destroy: () => {
+                    throw new Error('destroy');
+                },
+            }),
+        });
+        const { service, lifecycle, reported } = setup({ plugins: [failing] });
+        service.attach(surface());
+        lifecycle.to('disposed');
+
+        expect(() => service.detach()).not.toThrow();
+        expect(service.current()).toBeUndefined();
+        expect(reported).toEqual([
+            {
+                code: 'runtime.plugin-error',
+                severity: 'error',
+                messageKey: 'runtime.plugin-error',
+                details: { name: 'Error' },
+            },
+        ]);
+        expect(JSON.stringify(reported)).not.toContain('destroy');
     });
 
     it('marks the surface from the mode, the document and the phase', () => {

@@ -6,6 +6,7 @@ import { type Diagnostic, isRecord } from '#/model';
 import { diagnostic, findUnsafeJson, snapshot } from '#/model/internal';
 import { type CompiledDefinition, type EngineCommand } from '#/runtime/definition';
 
+import { pluginError } from '../../reporting/events';
 import { type CommandResult, type CommandState, type EditorSummary, type SelectionHandle } from '../../types';
 import { type Busy } from '../state/busy';
 import { type Composition } from '../state/composition';
@@ -170,7 +171,11 @@ const runCommand = (
     // Deferred effects, such as an overlay a plugin command opens, run once the command has run and its commit ended.
     if (result.status !== 'rejected') {
         for (const effect of effects) {
-            effect();
+            try {
+                effect();
+            } catch (error) {
+                context.report(pluginError(error, command?.featureId));
+            }
         }
     }
 

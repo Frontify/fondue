@@ -6,6 +6,7 @@ import { type EditorView } from 'prosemirror-view';
 import { type Diagnostic, type RichTextDocument } from '#/model';
 import { diagnostic } from '#/model/internal';
 
+import { nameOf } from '../../reporting/events';
 import { type RecoveryReceipt, type RecoveryService } from '../../types';
 import { type ViewService } from '../editing/view';
 import { type Composition } from '../state/composition';
@@ -22,7 +23,7 @@ export type Faults = {
     /** Ends editing for the session; after `dispose` it does nothing. */
     fault(found: Diagnostic): void;
     /** The view threw while it installed `candidate`: editing stops and the snapshot stays. */
-    viewFault(attached: EditorView, candidate: EditorState): void;
+    viewFault(attached: EditorView, candidate: EditorState, error: unknown): void;
     /** The document the view threw on, offered until `dispose`. */
     candidate(): RichTextDocument | null;
     /** Whether a view fault kept a candidate document. */
@@ -30,6 +31,10 @@ export type Faults = {
     /** Runs `work` while a view fault stores no recovery, as the next document of a replacement holds none of this session's work. */
     withoutRecovery<Result>(work: () => Result): Result;
 };
+
+/** A view-fault that names the error and leaves its message out, which may hold document text. */
+export const viewFaultDiagnostic = (error: unknown) =>
+    diagnostic('runtime.view-fault', undefined, { name: nameOf(error) }, 'error');
 
 // The queue and the targets are built after the view that faults, so they are read lazily.
 export const createFaults = (args: {
@@ -101,10 +106,10 @@ export const createFaults = (args: {
 
     return {
         fault,
-        viewFault: (attached, candidate) => {
+        viewFault: (attached, candidate, error) => {
             recovered = candidate;
             attached.dom.setAttribute('contenteditable', 'false');
-            fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
+            fault(viewFaultDiagnostic(error));
             if (!installingNext) {
                 storeRecovery(candidate);
             }

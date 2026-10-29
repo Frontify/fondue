@@ -118,6 +118,7 @@ describe('history', () => {
         expect(result).toEqual({ status: 'rejected', code: 'faulted' });
         expect(handle.getSummary().phase).toBe('faulted');
         expect(diagnostics.map(({ code }) => code)).toEqual(['runtime.view-fault']);
+        expect(diagnostics[0]?.details).toEqual({ name: 'Error' });
         expect(replaced).not.toHaveBeenCalled();
     });
 

@@ -3,7 +3,13 @@
 import { type Node, type Schema } from 'prosemirror-model';
 import { type EditorState, type Transaction } from 'prosemirror-state';
 
-import { type ContentModel, type JsonObject, type ResourceLimits, type RichTextDocument } from '#/model';
+import {
+    type ContentModel,
+    type Diagnostic,
+    type JsonObject,
+    type ResourceLimits,
+    type RichTextDocument,
+} from '#/model';
 import { snapshot } from '#/model/internal';
 import { type CommandLookup, type EngineCommand } from '#/runtime/definition';
 
@@ -76,6 +82,8 @@ export type ApiSource = {
     document(state: EditorState): RichTextDocument;
     /** Runs `effect` now, or inside a command once it has run, never for a query. */
     later(effect: () => void): void;
+    /** Reports a diagnostic of work this API started after it returned. */
+    report(found: Diagnostic): void;
     uploads(): MediaSession['uploads'] | undefined;
 };
 

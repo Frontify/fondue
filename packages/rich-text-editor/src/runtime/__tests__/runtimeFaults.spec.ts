@@ -43,7 +43,12 @@ describe('faults', () => {
         messageKey: 'runtime.plugin-error',
         details: { featureId: 'fixture.failing', name: 'TypeError' },
     };
-    const viewFault = { code: 'runtime.view-fault', severity: 'error', messageKey: 'runtime.view-fault' };
+    const viewFault = {
+        code: 'runtime.view-fault',
+        severity: 'error',
+        messageKey: 'runtime.view-fault',
+        details: { name: 'Error' },
+    };
     const NOT_READY: CommandResult = { status: 'rejected', code: 'not-ready' };
 
     it('drops a batch whose plugin throws with a plugin-error diagnostic and stays ready, so typing still works', () => {
@@ -186,7 +191,7 @@ describe('faults', () => {
                             contentDOM: dom,
                             update: (next) => {
                                 if (armed) {
-                                    session?.runtime.faultView();
+                                    session?.runtime.faultView(undefined);
 
                                     return true;
                                 }

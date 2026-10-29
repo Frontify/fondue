@@ -113,7 +113,7 @@ export type EditorRuntime = {
     /** Aborts the operations that the changed `services` members started. */
     changeServices(members: readonly string[]): void;
     /** The bridge caught a throw from a node view's constructor, `update` or `destroy`. */
-    faultView(): void;
+    faultView(error: unknown): void;
     /** The host's `disabled`, which runs in mode `readonly` and takes the surface out of the Tab order. */
     setDisabled(disabled: boolean): void;
     /** The presentation's columns as the surface shows them, which `column.break.insert` and the break decorations read. */

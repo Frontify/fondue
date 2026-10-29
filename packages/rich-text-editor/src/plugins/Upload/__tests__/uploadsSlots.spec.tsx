@@ -278,7 +278,7 @@ describe('the upload slot', () => {
         [
             'a node view fault',
             async (mounted: MountedUploads) => {
-                act(() => mounted.runtime.faultView());
+                act(() => mounted.runtime.faultView(undefined));
                 await settle();
             },
         ],

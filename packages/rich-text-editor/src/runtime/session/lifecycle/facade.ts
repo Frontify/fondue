@@ -5,12 +5,13 @@ import { type CompiledDefinition } from '#/runtime/definition';
 
 import { type ContentChecks } from '../../capabilities/checks/contentIssues';
 import { createDomIds } from '../../dom/domIds';
+import { pluginError } from '../../reporting/events';
 import { type EditorRuntime, type RuntimeHandle } from '../../runtime';
 import { type Actions } from '../editing/actions';
 import { type Commands } from '../editing/commands';
 import { type Commit } from '../editing/commit';
 import { type HistoryService } from '../editing/history';
-import { pluginError, type Prepare } from '../editing/prepare';
+import { type Prepare } from '../editing/prepare';
 import { type ViewService } from '../editing/view';
 import { type Columns } from '../state/columns';
 import { type Composition } from '../state/composition';

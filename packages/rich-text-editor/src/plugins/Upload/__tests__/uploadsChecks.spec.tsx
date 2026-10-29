@@ -206,7 +206,7 @@ describe('concurrent uploads', () => {
     });
 
     it.each([
-        ['a node view fault', (mounted: MountedUploads) => mounted.runtime.faultView()],
+        ['a node view fault', (mounted: MountedUploads) => mounted.runtime.faultView(undefined)],
         ['a switch to read-only', (mounted: MountedUploads) => mounted.handle.setMode('readonly')],
     ] as const)(
         'aborts the running and the queued uploads on %s, starting none and leaving no failed slot',

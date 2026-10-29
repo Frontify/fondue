@@ -101,6 +101,7 @@ export const liveDocumentApi = (runtime: EditorRuntime): DocumentApi => {
         },
         document: () => runtime.handle.getSnapshot().document,
         later: (effect) => effect(),
+        report: (found) => runtime.report(found),
         uploads: () => mediaOf(runtime)?.uploads,
     });
 };

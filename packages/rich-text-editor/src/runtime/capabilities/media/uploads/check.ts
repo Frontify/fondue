@@ -59,7 +59,7 @@ export const checkFiles = async (
         const batch = files.slice(at, at + limit);
         checked.push(
             ...(await Promise.all(
-                batch.map(async (file) => checkFile(host, file).catch((): UploadRejection => 'type')),
+                batch.map(async (file) => checkFile(host, file).catch((): UploadRejection => 'unreadable')),
             )),
         );
     }

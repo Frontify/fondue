@@ -6,14 +6,13 @@ import { checkHref, type HrefPolicy, hrefPolicyOf, findInvalidPayload, isRecord 
 import { compiledModel, diagnostic } from '#/model/internal';
 import { type CompiledDefinition, type EngineCommand, ORIGIN_META } from '#/runtime/definition';
 
+import { pluginError } from '../../reporting/events';
 import { type Composition } from '../state/composition';
 import { type Lifecycle } from '../state/lifecycle';
 import { type ModeService } from '../state/mode';
 import { type PolicyService } from '../state/policy';
 import { type Store } from '../state/store';
 import { type Attempt, type Prepared, type RejectedCode, type Route } from '../state/types';
-
-import { pluginError } from './prepare';
 
 type Checked = { payload: unknown } | undefined;
 type Base = EditorState | RejectedCode;

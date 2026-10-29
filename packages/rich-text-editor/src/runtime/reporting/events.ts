@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Diagnostic } from '#/model';
+import { diagnostic } from '#/model/internal';
 
 import {
     type DocumentChange,
@@ -14,13 +15,25 @@ import {
 import {
     addListener,
     addSelector,
+    busResources,
     clearBus,
     createEventBusContext,
     deliverListeners,
+    nameOf,
     notifySelectors,
 } from './eventListeners';
 
-export { busResources, nameOf } from './eventListeners';
+export { busResources, nameOf };
+
+/** A plugin-error diagnostic with the failing feature and the error's name, never its message. */
+export const pluginError = (error: unknown, featureId: string | undefined) => {
+    const name = nameOf(error);
+    if (featureId === undefined) {
+        return diagnostic('runtime.plugin-error', undefined, { name }, 'error');
+    }
+
+    return diagnostic('runtime.plugin-error', undefined, { featureId, name }, 'error');
+};
 
 /** The events a runtime emits; the handle accepts the other `EditorEventMap` names, which later layers emit. */
 export type RuntimeEvents = {

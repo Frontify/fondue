@@ -5,9 +5,11 @@ import { type PluginKey, type Transaction } from 'prosemirror-state';
 import { AttrStep, StepMap } from 'prosemirror-transform';
 import { Decoration, DecorationSet, type EditorView } from 'prosemirror-view';
 
-import { type BlockDecoration, type JsonObject } from '#/model';
+import { type BlockDecoration, type Diagnostic, type JsonObject } from '#/model';
 import { type BlockDecorationSource, OBJECT_REPLACEMENT, snapshot } from '#/model/internal';
 import { NodeIdsStep } from '#/runtime/definition';
+
+import { pluginError } from '../reporting/events';
 
 const REFRESH = 'refresh';
 
@@ -22,12 +24,14 @@ type DecorationContext = {
     views: Set<EditorView>;
     scheduled: boolean;
     key: PluginKey<DecorationSet>;
+    report: (found: Diagnostic) => void;
 };
 
 /** The sources of one definition, sharing the plugin key every editor of that definition uses. */
 export const createDecorationContext = (
     sources: readonly BlockDecorationSource[],
     key: PluginKey<DecorationSet>,
+    report: (found: Diagnostic) => void,
 ): DecorationContext => ({
     sources,
     names: new Set(sources.flatMap((source) => source.nodes)),
@@ -35,6 +39,7 @@ export const createDecorationContext = (
     views: new Set(),
     scheduled: false,
     key,
+    report,
 });
 
 /** The stretches of the final document that `transaction`'s steps wrote, and the node an attribute step set. */
@@ -106,7 +111,11 @@ const rangesOf = (context: DecorationContext, source: BlockDecorationSource, nod
 
             return undefined;
         })
-        .catch(() => undefined);
+        .catch((error: unknown) => {
+            context.report(pluginError(error, undefined));
+
+            return undefined;
+        });
 
     return [];
 };

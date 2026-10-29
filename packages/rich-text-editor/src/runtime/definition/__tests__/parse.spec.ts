@@ -3,10 +3,11 @@
 import { DOMParser } from 'prosemirror-model';
 import { describe, expect, it } from 'vitest';
 
-import { compileContentModel } from '#/model';
+import { compileContentModel, hexColor } from '#/model';
 import { fixtureHeading } from '#/plugins/__tests__/fixtures/features';
 import { bold } from '#/plugins/Bold/feature';
 import { core } from '#/plugins/Core/feature';
+import { fontColor } from '#/plugins/FontColor/feature';
 import { link } from '#/plugins/Link/feature';
 
 import { buildSchema } from '../schema';
@@ -50,5 +51,27 @@ describe('compiled parse rules', () => {
         expect(parse('<p lang="en_US">a</p><p><a href="javascript:alert(1)">b</a></p>')).toEqual(
             doc(paragraph({}, { type: 'text', text: 'a' }), paragraph({}, { type: 'text', text: 'b' })),
         );
+    });
+
+    it('stores a literal colour as hexColor does', () => {
+        const colored = buildSchema(
+            compileContentModel([core(), fontColor({ literalColors: true })], { id: 'test.parse.color', version: 1 }),
+        );
+        const colorValue = (html: string) => {
+            const host = document.createElement('div');
+            host.innerHTML = html;
+            const parsed = DOMParser.fromSchema(colored).parse(host);
+            const mark = parsed.firstChild?.firstChild?.marks.find((item) => item.type.name === 'font_color');
+            const attrs: { readonly [key: string]: unknown } | undefined = mark?.attrs;
+            const value = attrs?.value;
+            if (typeof value !== 'string') {
+                return undefined;
+            }
+
+            return value;
+        };
+
+        expect(colorValue('<font color="rgba(255, 0, 0, 1)">a</font>')).toBe('#ff0000');
+        expect(colorValue('<font color="red">a</font>')).toBe(hexColor('red'));
     });
 });

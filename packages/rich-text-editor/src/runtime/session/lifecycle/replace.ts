@@ -3,7 +3,7 @@
 import { type EditorState, Selection } from 'prosemirror-state';
 
 import { type CapabilityRef, type ResourceLimits, sameDocument, isRecord } from '#/model';
-import { type TreeNode, decodeToTree, diagnostic } from '#/model/internal';
+import { type TreeNode, decodeToTree } from '#/model/internal';
 import { type CompiledDefinition } from '#/runtime/definition';
 
 import { sameStamp } from '../../reporting/saves';
@@ -22,7 +22,7 @@ import { type Shown } from '../state/shown';
 import { type Store } from '../state/store';
 import { type ReplaceCode } from '../state/types';
 
-import { type Faults } from './faults';
+import { type Faults, viewFaultDiagnostic } from './faults';
 import { type Queue } from './queue';
 import { type Saving } from './saving';
 import { type TargetsService } from './targets';
@@ -76,13 +76,13 @@ const leaveUnsaved = async (
     return 'unsaved';
 };
 
-/** The decoded document in a state with empty history; `undefined` when the schema refuses the tree. */
+/** The decoded document in a state with empty history, or the error when the schema or a plugin state refuses it. */
 const freshState = (
     definition: CompiledDefinition,
     history: Pick<HistoryService, 'fresh'>,
     request: ReplaceDocumentRequest,
     tree: TreeNode,
-): EditorState | undefined => {
+): { state: EditorState } | { error: unknown } => {
     try {
         const doc = definition.schema.nodeFromJSON(tree);
         let selection = Selection.atStart(doc);
@@ -90,9 +90,9 @@ const freshState = (
             selection = Selection.atEnd(doc);
         }
 
-        return history.fresh(doc, selection);
-    } catch {
-        return undefined;
+        return { state: history.fresh(doc, selection) };
+    } catch (error) {
+        return { error };
     }
 };
 
@@ -188,16 +188,18 @@ const installNext = (
     focused: boolean,
 ): ReplaceResult => {
     const fresh = freshState(args.definition, args.history, request, tree);
-    if (fresh === undefined) {
-        args.faults.fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
+    if ('error' in fresh) {
+        args.faults.fault(viewFaultDiagnostic(fresh.error));
 
         return refused('faulted');
     }
 
+    const next = fresh.state;
+
     const outgoing = args.store.state.doc;
     // Roots that plugin views dispatch while the state installs commit in the new generation.
     const installed = args.commit.guarded(() => {
-        const published = args.faults.withoutRecovery(() => args.commit.installState(fresh));
+        const published = args.faults.withoutRecovery(() => args.commit.installState(next));
         if (!published) {
             return false;
         }

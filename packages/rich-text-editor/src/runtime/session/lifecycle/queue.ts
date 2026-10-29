@@ -3,6 +3,7 @@
 import { type Diagnostic } from '#/model';
 import { diagnostic } from '#/model/internal';
 
+import { pluginError } from '../../reporting/events';
 import { type CommandResult } from '../../types';
 import { type Commands, rejected } from '../editing/commands';
 import { type Busy } from '../state/busy';
@@ -53,18 +54,24 @@ export const createQueue = (args: {
                 resources.intents -= 1;
                 // The intent's depth holds while it runs or is reported, so what its listeners enqueue sits deeper.
                 depth = intent.depth;
-                if (intent.depth <= MAX_ENQUEUE_DEPTH) {
-                    intent.resolve(run(intent.id, intent.payload, intent.options, 'queue'));
-                } else {
-                    if (!warned) {
-                        warned = true;
-                        report(diagnostic('runtime.enqueue-loop', undefined, undefined, 'warning'));
-                    }
+                try {
+                    if (intent.depth <= MAX_ENQUEUE_DEPTH) {
+                        intent.resolve(run(intent.id, intent.payload, intent.options, 'queue'));
+                    } else {
+                        if (!warned) {
+                            warned = true;
+                            report(diagnostic('runtime.enqueue-loop', undefined, undefined, 'warning'));
+                        }
 
-                    intent.resolve(rejected('busy'));
+                        intent.resolve(rejected('busy'));
+                    }
+                } catch (error) {
+                    report(pluginError(error, undefined));
+                    intent.resolve(rejected('not-ready'));
+                } finally {
+                    depth = 0;
                 }
 
-                depth = 0;
                 intent = queue.shift();
             }
         } finally {

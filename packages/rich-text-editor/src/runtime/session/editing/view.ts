@@ -26,6 +26,8 @@ export type ViewService = {
     capture(built: EditorView): void;
     /** Runs a view call; `threw` when it threw or a node view inside it threw, which the bridge reports through `faultView`. */
     call<Result>(work: () => Result): { threw: boolean; value: Result | undefined };
+    /** The error the latest `call` caught, when that call threw. */
+    thrown(): unknown;
     /** Recomputes `editable`, the surface attributes and the break decorations once input has settled. */
     refresh(): void;
     /** Redraws the view with its current state, without the settled-input checks of `refresh`. */
@@ -35,20 +37,23 @@ export type ViewService = {
     detach(): void;
     /** Cancels the frame that moves the session to `ready`. */
     cancelReady(): void;
-    faultView(): void;
+    faultView(error: unknown): void;
 };
 
 /** Tracks the view call in progress, so a node view throw the bridge caught faults that call. */
 const createCalls = () => {
     let viewCall = false;
     let viewThrew = false;
+    let thrownError: unknown;
     const call = <Result>(work: () => Result): { threw: boolean; value: Result | undefined } => {
         let value: Result | undefined;
+        thrownError = undefined;
         viewCall = true;
         try {
             value = work();
-        } catch {
+        } catch (error) {
             viewThrew = true;
+            thrownError = error;
         } finally {
             viewCall = false;
         }
@@ -60,15 +65,18 @@ const createCalls = () => {
     };
 
     /** `true` when a call is running, which then reports the throw itself. */
-    const caught = () => {
-        if (viewCall) {
-            viewThrew = true;
+    const caught = (error: unknown) => {
+        if (!viewCall) {
+            return false;
         }
 
-        return viewCall;
+        viewThrew = true;
+        thrownError = error;
+
+        return true;
     };
 
-    return { call, caught };
+    return { call, caught, thrown: () => thrownError };
 };
 
 const surfaceAttributes = (args: ViewArgs, current: EditorState) => {
@@ -107,8 +115,8 @@ const surfaceAttributes = (args: ViewArgs, current: EditorState) => {
 };
 
 export const createView = (args: ViewArgs): ViewService => {
-    const { call, caught } = createCalls();
-    const host = createSurfaceHost(args, (current) => surfaceAttributes(args, current), call, caught);
+    const { call, caught, thrown } = createCalls();
+    const host = createSurfaceHost(args, (current) => surfaceAttributes(args, current), call, caught, thrown);
 
     return {
         current: () => host.surface.view,
@@ -125,6 +133,7 @@ export const createView = (args: ViewArgs): ViewService => {
             host.surface.built = next;
         },
         call,
+        thrown,
         refresh: host.refresh,
         repaint: () => host.surface.view?.setProps({}),
         attach: host.attach,

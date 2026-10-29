@@ -29,9 +29,9 @@ export type NodeViewHost = {
 const faultOnThrow = <Result>(host: NodeViewHost, fallback: () => Result, work: () => Result): Result => {
     try {
         return work();
-    } catch {
+    } catch (error) {
         host.portals.close();
-        host.runtime.faultView();
+        host.runtime.faultView(error);
 
         return fallback();
     }

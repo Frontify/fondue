@@ -18,6 +18,7 @@ import {
     checkHref,
     type ContentModel,
     DefinitionError,
+    hexColor,
     type HtmlSpec,
     type JsonObject,
     type ParseAttributeSource,
@@ -108,27 +109,10 @@ const attributeSpecs = (declarations: AttributeDeclarations, generated = false) 
 // The engine's message for a required position that only nodes with required attributes can fill.
 const NON_GENERATABLE = /Only non-generatable nodes \(([^)]*)\) in a required position/;
 
-const RGB = /^rgba?\((\d+), ?(\d+), ?(\d+)(?:, ?([\d.]+))?\)$/;
-
-/** A CSS colour as the `#rrggbb` or `#rrggbbaa` of a `color` value, since DOM implementations report `rgb()`. */
-const hexOf = (text: string) => {
-    const rgb = RGB.exec(text);
-    if (rgb === null) {
-        return text.toLowerCase();
-    }
-
-    const channels = rgb.slice(1, 4).map(Number);
-    if (rgb[4] !== undefined) {
-        channels.push(Math.round(Number(rgb[4]) * 255));
-    }
-
-    return `#${channels.map((channel) => channel.toString(16).padStart(2, '0')).join('')}`;
-};
-
 /** An HTML attribute or CSS value as its declaration types it, or `undefined` when it holds none. */
 const valueOf = (text: string, declaration: AttributeDeclaration): unknown => {
     if (declaration.type === 'color') {
-        return hexOf(text);
+        return hexColor(text);
     }
 
     if (declaration.type === 'integer' || declaration.type === 'number') {

@@ -16,7 +16,7 @@ import { type InputSettling } from '../../dom/settle';
 import { type ExceededLimit, storedNodeCount } from '../../guards/limits';
 import { isHistoryTransaction } from '../../history';
 import { firedRule, withoutRules, withRuleSetting } from '../../inputRules/inputRules';
-import { nameOf } from '../../reporting/events';
+import { pluginError } from '../../reporting/events';
 import { type AuthoringPolicy } from '../../types';
 import { type PolicyService } from '../state/policy';
 import { type Shown } from '../state/shown';
@@ -47,16 +47,6 @@ const featureIdsWithoutCreate = (features: AuthoringPolicy['features']): string[
     }
 
     return refused;
-};
-
-/** A plugin-error diagnostic with the failing feature and the error's name, never its message. */
-export const pluginError = (error: unknown, featureId: string | undefined) => {
-    const name = nameOf(error);
-    if (featureId === undefined) {
-        return diagnostic('runtime.plugin-error', undefined, { name }, 'error');
-    }
-
-    return diagnostic('runtime.plugin-error', undefined, { featureId, name }, 'error');
 };
 
 export type Prepare = {

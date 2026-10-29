@@ -1,14 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { diagnostic } from '#/model/internal';
-
 import { suggestionHosts } from '../../capabilities/suggestions/host';
 import { secondCopyAtMount } from '../../guards/engines';
 import { type EditorRuntimeOptions } from '../../runtime';
 import { createCommit } from '../editing/commit';
 import { createPrepare, DUPLICATE_ENGINE } from '../editing/prepare';
 import { createView } from '../editing/view';
-import { createFaults } from '../lifecycle/faults';
+import { createFaults, viewFaultDiagnostic } from '../lifecycle/faults';
 import { createSettle } from '../lifecycle/settle';
 
 import { type State } from './assembleState';
@@ -38,8 +36,9 @@ export const assembleEditing = (state: State, options: EditorRuntimeOptions, lat
         composing: () => settling.active(),
         hasRecovery: () => faults.hasRecovery(),
         dispatch: (transaction) => commit.commit(transaction),
-        fault: () => faults.fault(diagnostic('runtime.view-fault', undefined, undefined, 'error')),
-        viewFault: (attached, candidate) => faults.viewFault(attached, candidate),
+        fault: (error) => faults.fault(viewFaultDiagnostic(error)),
+        viewFault: (attached, candidate, error) => faults.viewFault(attached, candidate, error),
+        report,
         onAttached: (attached) => {
             viewRuntimes.set(attached, late.runtime);
             suggestionHosts.set(attached, {

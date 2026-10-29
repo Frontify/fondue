@@ -1,6 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Diagnostic } from '#/model';
+
 import { createInputSettling, type InputSettling } from '../../dom/settle';
+import { pluginError } from '../../reporting/events';
 
 import { type InputOutcome } from './types';
 
@@ -17,6 +20,7 @@ export const createComposition = (args: {
     onActiveChange: () => void;
     /** How many times selector stores have been told to read. */
     notifications: () => number;
+    report: (found: Diagnostic) => void;
 }): Composition => {
     // What waits for input to settle outside the queue, such as a form's settled value.
     const waiters = new Set<(outcome: InputOutcome) => void>();
@@ -26,9 +30,15 @@ export const createComposition = (args: {
         wait: (settled, timeoutMs) => {
             // Whichever comes first, the settle, the timeout or `dispose`, answers; the others find nothing.
             const waiter = (outcome: InputOutcome) => {
-                if (waiters.delete(waiter)) {
-                    clearTimeout(timer);
+                if (!waiters.delete(waiter)) {
+                    return;
+                }
+
+                clearTimeout(timer);
+                try {
                     settled(outcome);
+                } catch (error) {
+                    args.report(pluginError(error, undefined));
                 }
             };
 

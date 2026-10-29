@@ -84,8 +84,9 @@ export const deliverListeners = <EventName extends keyof RuntimeEvents>(
 ) => {
     const throwers: Thrower[] = [];
     for (const listener of [...(context.listeners.get(event) ?? [])]) {
-        // A listener that disposed the session ends every notification but the `disposed` one itself.
-        if (context.isDisposed() && event !== 'disposed') {
+        // A listener that disposed the session ends every notification but `disposed` and a diagnostic,
+        // which dispose itself reports after the phase has changed.
+        if (context.isDisposed() && event !== 'disposed' && event !== 'diagnostic') {
             break;
         }
 

@@ -371,4 +371,29 @@ describe('disposal', () => {
             Array.from({ length: 5 }).flatMap(() => ['rejected', 'applied']),
         );
     });
+
+    it('reports a composition waiter that throws and still finishes dispose', () => {
+        const { handle, runtime, diagnostics } = start(stored(para()));
+        const outcomes: string[] = [];
+        runtime.afterInput(() => {
+            throw new TypeError('waiter');
+        }, 10_000);
+        runtime.afterInput((outcome) => {
+            outcomes.push(outcome);
+        }, 10_000);
+
+        expect(() => handle.dispose()).not.toThrow();
+        expect(handle.getSummary().phase).toBe('disposed');
+        expect(runtime.view).toBeUndefined();
+        expect(outcomes).toEqual(['disposed']);
+        expect(diagnostics).toEqual([
+            {
+                code: 'runtime.plugin-error',
+                severity: 'error',
+                messageKey: 'runtime.plugin-error',
+                details: { name: 'TypeError' },
+            },
+        ]);
+        expect(JSON.stringify(diagnostics)).not.toContain('waiter');
+    });
 });

@@ -8,6 +8,9 @@ import {
     type NodeViewConstructor,
 } from 'prosemirror-view';
 
+import { type Diagnostic } from '#/model';
+
+import { pluginError } from '../../reporting/events';
 import { type SessionToken } from '../../types';
 import { type Columns } from '../state/columns';
 import { type Lifecycle } from '../state/lifecycle';
@@ -35,8 +38,9 @@ export type ViewArgs = {
     composing: () => boolean;
     hasRecovery: () => boolean;
     dispatch: (transaction: Transaction) => void;
-    fault: () => void;
-    viewFault: (view: EditorView, candidate: EditorState) => void;
+    fault: (error: unknown) => void;
+    viewFault: (view: EditorView, candidate: EditorState, error: unknown) => void;
+    report: (found: Diagnostic) => void;
     onAttached: (view: EditorView) => void;
     scrollSelectionIntoView: () => boolean | undefined;
 };
@@ -49,7 +53,8 @@ type SurfaceContext = ViewArgs & {
     nodeViews: Readonly<Record<string, NodeViewConstructor>>;
     markViews: Readonly<Record<string, MarkViewConstructor>>;
     call: <Result>(work: () => Result) => { threw: boolean; value: Result | undefined };
-    caught: () => boolean;
+    caught: (error: unknown) => boolean;
+    thrown: () => unknown;
     attributes: (current: EditorState) => Record<string, string>;
 };
 
@@ -74,17 +79,24 @@ const cancelReadyFrame = (context: SurfaceContext) => {
 
 const detachSurface = (context: SurfaceContext) => {
     cancelReadyFrame(context);
-    if (context.view !== undefined) {
-        context.resources.views.delete(context.view);
-        try {
-            context.view.destroy();
-        } catch (error) {
-            // A view that threw on an update runs it again while it is destroyed, and `dispose` throws nothing.
-            if (!context.hasRecovery()) {
+    const attached = context.view;
+    if (attached === undefined) {
+        return;
+    }
+
+    context.resources.views.delete(attached);
+    try {
+        attached.destroy();
+    } catch (error) {
+        // A view that threw on an update runs it again while it is destroyed, and `dispose` throws nothing.
+        if (!context.hasRecovery()) {
+            if (context.lifecycle.is('disposed')) {
+                context.report(pluginError(error, undefined));
+            } else {
                 throw error;
             }
         }
-
+    } finally {
         context.view = undefined;
     }
 };
@@ -121,7 +133,7 @@ const attachSurface = (context: SurfaceContext, element: HTMLElement, props?: Pa
         }
 
         // A view or node view constructor that throws keeps the decoded document as the snapshot.
-        context.fault();
+        context.fault(context.thrown());
 
         return;
     }
@@ -146,13 +158,13 @@ const attachSurface = (context: SurfaceContext, element: HTMLElement, props?: Pa
     context.resources.frames += 1;
 };
 
-const faultSurface = (context: SurfaceContext) => {
-    if (context.caught()) {
+const faultSurface = (context: SurfaceContext, error: unknown) => {
+    if (context.caught(error)) {
         return;
     }
 
     if (context.lifecycle.is('mounting', 'ready') && context.view !== undefined) {
-        context.viewFault(context.view, context.store.state);
+        context.viewFault(context.view, context.store.state, error);
     }
 };
 
@@ -161,7 +173,8 @@ export const createSurfaceHost = (
     args: ViewArgs,
     attributes: (current: EditorState) => Record<string, string>,
     call: <Result>(work: () => Result) => { threw: boolean; value: Result | undefined },
-    caught: () => boolean,
+    caught: (error: unknown) => boolean,
+    thrown: () => unknown,
 ) => {
     const context: SurfaceContext = {
         ...args,
@@ -172,6 +185,7 @@ export const createSurfaceHost = (
         markViews: {},
         call,
         caught,
+        thrown,
         attributes,
     };
 
@@ -183,6 +197,6 @@ export const createSurfaceHost = (
         cancelReady: () => cancelReadyFrame(context),
         detach: () => detachSurface(context),
         attach: (element: HTMLElement, props?: Partial<DirectEditorProps>) => attachSurface(context, element, props),
-        faultView: () => faultSurface(context),
+        faultView: (error: unknown) => faultSurface(context, error),
     };
 };

@@ -19,6 +19,7 @@ describe('createComposition', () => {
             onSettled,
             onActiveChange: () => undefined,
             notifications: () => 0,
+            report: () => undefined,
         });
 
         return { composition, onSettled };

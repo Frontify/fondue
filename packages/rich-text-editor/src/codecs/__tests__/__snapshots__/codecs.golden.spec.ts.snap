@@ -300,15 +300,15 @@ exports[`codec golden files > writes the valid fixture marks.json as its golden 
       "featureId": "core",
     },
     {
-      "count": 4,
+      "count": 2,
       "featureId": "fixture.colors",
     },
     {
-      "count": 7,
+      "count": 5,
       "featureId": "fixture.marks",
     },
     {
-      "count": 2,
+      "count": 1,
       "featureId": "fixture.link",
     },
   ],

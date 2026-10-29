@@ -2,6 +2,7 @@
 
 import { type UploadPlace } from '../capabilities/media/uploads';
 import { cancelSlot, slotUploadsOf } from '../capabilities/media/uploadSlots';
+import { pluginError } from '../reporting/events';
 import { positionOf } from '../transform/positions';
 
 import { type DocumentApi, type UploadTarget } from './documentApi';
@@ -31,7 +32,9 @@ export const uploadsApi = (source: ApiSource): Pick<DocumentApi, 'uploads'> => {
                 }
 
                 source.later(() => {
-                    uploads.begin(files, place).catch(() => undefined);
+                    uploads.begin(files, place).catch((error: unknown) => {
+                        source.report(pluginError(error, undefined));
+                    });
                 });
 
                 return true;
