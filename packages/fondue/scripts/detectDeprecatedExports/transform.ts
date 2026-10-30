@@ -132,7 +132,14 @@ export default function transformer(file: FileInfo, api: API, options: { basePat
         // Case 2: `export { Button, Input, type ButtonProps }`
         if (path.node.specifiers && path.node.specifiers.length > 0 && !path.node.source) {
             for (const specifier of path.node.specifiers) {
-                const exportedName = specifier.exported.name;
+                if (
+                    !j.ExportSpecifier.check(specifier) &&
+                    !j.ExportDefaultSpecifier.check(specifier) &&
+                    !j.ExportNamespaceSpecifier.check(specifier)
+                ) {
+                    continue;
+                }
+                const exportedName = specifier.exported.type === 'Identifier' ? specifier.exported.name : undefined;
                 if (typeof exportedName === 'string') {
                     checkDeclaration(exportedName);
                 }
@@ -142,18 +149,19 @@ export default function transformer(file: FileInfo, api: API, options: { basePat
         // Case 3: `default re-exports with deprecation comment`
         if (path.node.specifiers && path.node.specifiers.length > 0 && path.node.source) {
             for (const specifier of path.node.specifiers) {
-                if (specifier.local?.name === 'default') {
-                    const exportedName = specifier.exported.name;
-                    if (
-                        typeof exportedName === 'string' &&
-                        !['IconSize', 'IconSizeMap', 'IconEnum'].includes(exportedName) &&
-                        !exportedName.includes('Icon')
-                    ) {
-                        if (isDeprecated(path)) {
-                            deprecatedExports.add({ name: exportedName, path: file.path });
-                        } else {
-                            activeExports.add({ name: exportedName, path: file.path });
-                        }
+                if (!j.ExportSpecifier.check(specifier) || specifier.local?.name !== 'default') {
+                    continue;
+                }
+                const exportedName = specifier.exported.name;
+                if (
+                    typeof exportedName === 'string' &&
+                    !['IconSize', 'IconSizeMap', 'IconEnum'].includes(exportedName) &&
+                    !exportedName.includes('Icon')
+                ) {
+                    if (isDeprecated(path)) {
+                        deprecatedExports.add({ name: exportedName, path: file.path });
+                    } else {
+                        activeExports.add({ name: exportedName, path: file.path });
                     }
                 }
             }
