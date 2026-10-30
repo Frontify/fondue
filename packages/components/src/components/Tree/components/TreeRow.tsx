@@ -112,13 +112,13 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
         return () => window.clearTimeout(timer);
     }, [isRenaming, item]);
 
-    // Tracks focus on the row or any control portalled out of it. A blur with no `relatedTarget` (a window
-    // switch, or focus falling to the page body) is not a move, so it leaves the flag for the cleanup to check.
-    const isFocusWithinRef = useRef(false);
+    // The last element that took focus on the row or in a control portalled out of it. Checked against the
+    // live active element at removal, so focus that has since moved anywhere else is never pulled back.
+    const lastFocusTargetRef = useRef<Element | null>(null);
     // Cleanup runs before the DOM node is removed, so a focused control is still the active element.
     useLayoutEffect(
         () => () => {
-            if (isFocusWithinRef.current && document.activeElement !== document.body) {
+            if (lastFocusTargetRef.current?.contains(document.activeElement)) {
                 onFocusLost();
             }
         },
@@ -128,9 +128,6 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
     const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
         if (event.target === event.currentTarget) {
             event.currentTarget.removeAttribute('data-show-focus-ring');
-        }
-        if (event.relatedTarget !== null) {
-            isFocusWithinRef.current = false;
         }
         headlessProps.onBlur?.(event);
     };
@@ -177,8 +174,8 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
             onClick={handleClick}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
-            onFocus={() => {
-                isFocusWithinRef.current = true;
+            onFocus={(event) => {
+                lastFocusTargetRef.current = event.target;
                 item.setFocused();
             }}
             className={styles.row}
