@@ -1,0 +1,23 @@
+packages/components/src/components/Dialog/__tests__/Dialog.ct.tsx
+  s_43b2f82cd48b47::t_a7170a4c8f1575 316-334
+packages/components/src/components/Dialog/Dialog.tsx
+  s_43b2f82cd48b47::t_1d93bfaa0710fd 344
+.changeset/dialog-close-single-tab-stop.md
+  s_43b2f82cd48b47::t_a7170a4c8f1575 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "227b6453675ab80f3acef1d10b3ecb12e42cba9b",
+  "prompts": {},
+  "sessions": {
+    "s_43b2f82cd48b47": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b219c7f6-d60c-494c-ab0d-ff34c5942323",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

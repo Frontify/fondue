@@ -1,0 +1,35 @@
+packages/components/src/components/Tree/components/TreeRow.tsx
+  s_68254d0d83d78c::t_38fa4c85f8732f 141
+packages/components/src/components/Tree/hooks/useTreeController.ts
+  s_68254d0d83d78c::t_df1e4e67ee5456 302
+  s_68254d0d83d78c::t_764580466c2db6 33
+  s_68254d0d83d78c::t_bf571adef3e46c 314-321
+  s_68254d0d83d78c::t_49384535fb33d2 72
+  s_68254d0d83d78c::t_92601ca571bb47 52-53
+packages/components/src/components/Tree/components/TreeRoot.tsx
+  s_68254d0d83d78c::t_fec45311861512 119,121,123-126
+  s_68254d0d83d78c::t_45529861feb63d 4
+  s_68254d0d83d78c::t_374b5622cddefd 68,76
+.changeset/tree-focus-follows-selection.md
+  s_68254d0d83d78c::t_e04ab12d0a04a7 1-5
+packages/components/src/components/Tree/components/TreeRoot.ct.tsx
+  s_68254d0d83d78c::t_bd0f5d03d7ca75 5-6,194-503,909-932
+packages/components/src/components/Tree/hooks/useTreeController.spec.tsx
+  s_68254d0d83d78c::t_937e8beb29b078 552-618
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "47ec977d25cfa01deb77304d6d9be208c488053f",
+  "prompts": {},
+  "sessions": {
+    "s_68254d0d83d78c": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "df3dcb80-010b-40ab-bde9-b5db35224c1d",
+        "model": "grok-4.7"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

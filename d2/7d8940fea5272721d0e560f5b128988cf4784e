@@ -1,0 +1,23 @@
+packages/components/src/components/Tree/components/TreeRoot.tsx
+  s_a6ebadd0cba102::t_97340554080911 80,83-85
+  s_a6ebadd0cba102::t_3d9aa2c3d27bcb 4,77-79,89-91,114,130
+packages/components/src/components/Tree/components/TreeRow.tsx
+  s_a6ebadd0cba102::t_3d9aa2c3d27bcb 7,33-34,42,112-113,115-120,162-163
+  s_a6ebadd0cba102::t_33038792040aa0 108-111,114,125-127,160-161
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d27d8940fea5272721d0e560f5b128988cf4784e",
+  "prompts": {},
+  "sessions": {
+    "s_a6ebadd0cba102": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "24724b61-4048-46da-9990-44feb6652921",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
