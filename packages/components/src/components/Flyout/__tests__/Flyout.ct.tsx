@@ -9,6 +9,8 @@ import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
 
 import { Flyout } from '../Flyout';
 
+import { FlyoutWithFocusRedirect } from './FlyoutWithFocusRedirect';
+
 const FLYOUT_TRIGGER_TEST_ID = 'fondue-flyout-trigger';
 const FLYOUT_CONTENT_TEST_ID = 'fondue-flyout-content';
 const FLYOUT_TRIGGER_TEXT = 'Flyout Trigger';
@@ -548,4 +550,41 @@ test('should prevent flyout close when onEscapeKeyDown calls preventDefault', as
     expect(onEscapeKeyDown.callCount).toBe(1);
     // Flyout should still be visible because we prevented the default behavior
     await expect(contentElement).toBeVisible();
+});
+
+test('should call onCloseAutoFocus when the flyout closes', async ({ mount, page }) => {
+    const onCloseAutoFocus = sinon.spy();
+    await mount(
+        <Flyout.Root>
+            <Flyout.Trigger>
+                <Button>{FLYOUT_TRIGGER_TEXT}</Button>
+            </Flyout.Trigger>
+            <Flyout.Content onCloseAutoFocus={onCloseAutoFocus}>
+                <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
+            </Flyout.Content>
+        </Flyout.Root>,
+    );
+
+    const flyoutTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await flyoutTrigger.click();
+    await expect(flyoutContent).toBeVisible();
+    expect(onCloseAutoFocus.callCount).toBe(0);
+    await page.keyboard.press('Escape');
+    await expect(flyoutContent).not.toBeVisible();
+    await expect.poll(() => onCloseAutoFocus.callCount).toBe(1);
+    await expect(flyoutTrigger).toBeFocused();
+});
+
+test('should allow redirecting focus when onCloseAutoFocus calls preventDefault', async ({ mount, page }) => {
+    await mount(<FlyoutWithFocusRedirect focusTargetTestId="focus-target" />);
+
+    const flyoutTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await flyoutTrigger.click();
+    await expect(flyoutContent).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(flyoutContent).not.toBeVisible();
+    await expect(page.getByTestId('focus-target')).toBeFocused();
+    await expect(flyoutTrigger).not.toBeFocused();
 });
