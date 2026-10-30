@@ -25,34 +25,6 @@ import { TreeRowCheckbox } from './TreeRowCheckbox';
 import { TreeRowChevron } from './TreeRowChevron';
 import { TreeRowRenameInput } from './TreeRowRenameInput';
 
-const rowFocusFlagClears = new Set<() => void>();
-let rowFocusFlagListener = false;
-
-const clearRowFocusFlagsWhenOnBody = () => {
-    if (document.activeElement !== document.body) {
-        return;
-    }
-    for (const clear of rowFocusFlagClears) {
-        clear();
-    }
-};
-
-const ensureRowFocusFlagListener = () => {
-    if (rowFocusFlagListener) {
-        return;
-    }
-    document.addEventListener('pointerup', clearRowFocusFlagsWhenOnBody);
-    rowFocusFlagListener = true;
-};
-
-const stopRowFocusFlagListener = () => {
-    if (!rowFocusFlagListener || rowFocusFlagClears.size > 0) {
-        return;
-    }
-    document.removeEventListener('pointerup', clearRowFocusFlagsWhenOnBody);
-    rowFocusFlagListener = false;
-};
-
 type TreeRowProps = {
     item: ItemInstance<TreeItemData>;
     multiSelect: boolean;
@@ -140,27 +112,13 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
         return () => window.clearTimeout(timer);
     }, [isRenaming, item]);
 
-    // Tracks focus on the row or any control portalled out of it. A blur with no `relatedTarget`
-    // keeps the flag only while this row stays the active element (a window switch). Focus falling
-    // to the page body — a dismissed menu — is a real departure, and a later removal must not pull
-    // focus back into the tree. The menu often unmounts without a row blur, so the pointerup does
-    // the same check once focus has landed on the body.
-    const isFocusWithinRef = useRef(false);
-    useEffect(() => {
-        const clear = () => {
-            isFocusWithinRef.current = false;
-        };
-        rowFocusFlagClears.add(clear);
-        ensureRowFocusFlagListener();
-        return () => {
-            rowFocusFlagClears.delete(clear);
-            stopRowFocusFlagListener();
-        };
-    }, []);
+    // The last element that took focus on the row or in a control portalled out of it. Checked against the
+    // live active element at removal, so focus that has since moved anywhere else is never pulled back.
+    const lastFocusTargetRef = useRef<Element | null>(null);
     // Cleanup runs before the DOM node is removed, so a focused control is still the active element.
     useLayoutEffect(
         () => () => {
-            if (isFocusWithinRef.current && document.activeElement !== document.body) {
+            if (lastFocusTargetRef.current?.contains(document.activeElement)) {
                 onFocusLost();
             }
         },
@@ -170,9 +128,6 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
     const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
         if (event.target === event.currentTarget) {
             event.currentTarget.removeAttribute('data-show-focus-ring');
-        }
-        if (event.relatedTarget !== null || document.activeElement === document.body) {
-            isFocusWithinRef.current = false;
         }
         headlessProps.onBlur?.(event);
     };
@@ -219,8 +174,8 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
             onClick={handleClick}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
-            onFocus={() => {
-                isFocusWithinRef.current = true;
+            onFocus={(event) => {
+                lastFocusTargetRef.current = event.target;
                 item.setFocused();
             }}
             className={styles.row}
@@ -269,16 +224,15 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
                     // whole group, getting the full width up to the actions slot.
                     <span className={styles.labelGroup}>
                         <span className={styles.label}>{item.getItemName()}</span>
-                        {data.decorator !== undefined &&
-                            data.decorator !== null && (
-                                // eslint-disable-next-line jsx-a11y-x/click-events-have-key-events, jsx-a11y-x/no-static-element-interactions
-                                <span
-                                    className={styles.decorator}
-                                    onClick={data.decoratorPropagatesClicks ? undefined : stopClickPropagation}
-                                >
-                                    {data.decorator}
-                                </span>
-                            )}
+                        {data.decorator !== undefined && data.decorator !== null && (
+                            // eslint-disable-next-line jsx-a11y-x/click-events-have-key-events, jsx-a11y-x/no-static-element-interactions
+                            <span
+                                className={styles.decorator}
+                                onClick={data.decoratorPropagatesClicks ? undefined : stopClickPropagation}
+                            >
+                                {data.decorator}
+                            </span>
+                        )}
                     </span>
                 )}
                 {data.actions !== undefined && data.actions !== null ? (

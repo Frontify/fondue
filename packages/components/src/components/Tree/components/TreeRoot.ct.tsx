@@ -319,6 +319,48 @@ test.describe('TreeRoot rendering', () => {
         await expect(component.getByRole('button', { name: 'Outside' })).toBeFocused();
     });
 
+    test('a row removed after its focused action vanished and focus moved outside by keyboard does not pull focus into the tree', async ({
+        mount,
+        page,
+    }) => {
+        const rows = (withActionsRow: boolean, withAction: boolean) => (
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="1">
+                        <Tree.Label>Row1</Tree.Label>
+                    </Tree.Item>
+                    {withActionsRow && (
+                        <Tree.Item id="2">
+                            <Tree.Label>Row2</Tree.Label>
+                            {withAction && (
+                                <Tree.Action>
+                                    <button type="button">Row2 action</button>
+                                </Tree.Action>
+                            )}
+                        </Tree.Item>
+                    )}
+                    <Tree.Item id="3">
+                        <Tree.Label>Row3</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>
+        );
+        const component = await mount(rows(true, true));
+
+        await component.getByRole('button', { name: 'Row2 action' }).focus();
+        await component.update(rows(true, false));
+        await expect(page.locator('body')).toBeFocused();
+
+        await component.getByRole('button', { name: 'Outside' }).focus();
+        await component.update(rows(false, false));
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
+
+        await expect(component.getByRole('button', { name: 'Outside' })).toBeFocused();
+    });
+
     test('moves DOM focus into the tree when a row is removed while one of its actions has focus', async ({
         mount,
     }) => {
