@@ -2,9 +2,12 @@
 
 import { expect, test } from '@playwright/experimental-ct-react';
 
+import { Dropdown } from '#/index';
+
 import { Flyout } from '../../Flyout/Flyout';
 import { Tree } from '../Tree';
 
+import { RowDialogHarness } from './testutils/RowDialogHarness';
 import { TestHarness } from './testutils/TestHarness';
 
 test.describe('TreeRoot rendering', () => {
@@ -80,6 +83,782 @@ test.describe('TreeRoot rendering', () => {
         await expect(first).toHaveAttribute('aria-selected', 'false');
         await expect(second).toHaveAttribute('aria-selected', 'true');
     });
+
+    test('moves DOM focus and the tab stop to the next row when the focused row is removed', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>First</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Second</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Third</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Second/ }).click();
+        await component.update(
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>First</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Third</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await expect(component.getByRole('treeitem', { name: /Third/ })).toHaveAttribute('tabindex', '0');
+        await expect(component.getByRole('treeitem', { name: /Third/ })).toBeFocused();
+    });
+
+    test('removing the last focused row leaves the page without errors', async ({ mount, page }) => {
+        const errors: Error[] = [];
+        page.on('pageerror', (error) => errors.push(error));
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>Only</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Only/ }).click();
+        await component.update(<Tree.Root>{[]}</Tree.Root>);
+
+        await expect(component.getByRole('treeitem')).toHaveCount(0);
+        expect(errors).toEqual([]);
+    });
+
+    test('moves DOM focus to the previous row when the focused last row is removed', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>First</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Second</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Second/ }).click();
+        await component.update(
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>First</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await expect(component.getByRole('treeitem', { name: /First/ })).toHaveAttribute('tabindex', '0');
+        await expect(component.getByRole('treeitem', { name: /First/ })).toBeFocused();
+    });
+
+    test('keeps DOM focus on the focused row when another row is removed', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>First</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Second</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Third</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /First/ }).click();
+        await component.getByRole('treeitem', { name: /Third/ }).click();
+        await component.update(
+            <Tree.Root>
+                <Tree.Item id="2">
+                    <Tree.Label>Second</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Third</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await expect(component.getByRole('treeitem', { name: /Third/ })).toBeFocused();
+        await expect(component.getByRole('treeitem', { name: /Third/ })).toHaveAttribute('tabindex', '0');
+    });
+
+    test('moves DOM focus to the collapsed folder when a collapse hides the focused row', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Folder id="f" isExpanded>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="child">
+                        <Tree.Label>Child</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Child/ }).click();
+        await component.update(
+            <Tree.Root>
+                <Tree.Folder id="f" isExpanded={false}>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="child">
+                        <Tree.Label>Child</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        await expect(component.getByRole('treeitem', { name: /Folder/ })).toBeFocused();
+        await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('tabindex', '0');
+    });
+
+    test('a row removed after its portalled menu was dismissed by an outside press does not pull focus into the tree', async ({
+        mount,
+        page,
+    }) => {
+        const rows = (withActionsRow: boolean) => (
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>Row1</Tree.Label>
+                </Tree.Item>
+                {withActionsRow && (
+                    <Tree.Item id="2">
+                        <Tree.Label>Row2</Tree.Label>
+                        <Tree.Action>
+                            <Dropdown.Root>
+                                <Dropdown.Trigger>
+                                    <button type="button">Row2 actions</button>
+                                </Dropdown.Trigger>
+                                <Dropdown.Content>
+                                    <Dropdown.Item onSelect={() => {}}>Do thing</Dropdown.Item>
+                                </Dropdown.Content>
+                            </Dropdown.Root>
+                        </Tree.Action>
+                    </Tree.Item>
+                )}
+            </Tree.Root>
+        );
+        const component = await mount(rows(true));
+
+        await component.getByRole('button', { name: 'Row2 actions' }).click();
+        await expect(page.getByRole('menuitem', { name: 'Do thing' })).toBeVisible();
+        // Radix arms its outside-press dismissal a task after opening.
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
+        await page.mouse.click(5, 400);
+        await expect(page.getByRole('menuitem', { name: 'Do thing' })).toHaveCount(0);
+
+        await component.update(rows(false));
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
+
+        await expect(page.locator('body')).toBeFocused();
+    });
+
+    test('moves DOM focus into the tree when a row is removed while one of its actions has focus', async ({
+        mount,
+    }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>First</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Second</Tree.Label>
+                    <Tree.Action>
+                        <button type="button">Delete Second</button>
+                    </Tree.Action>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Third</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('button', { name: 'Delete Second' }).focus();
+        await component.update(
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>First</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Third</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await expect(component.getByRole('treeitem', { name: /Third/ })).toBeFocused();
+    });
+
+    test('removing the tab-stop row while focus is outside leaves focus outside', async ({ mount }) => {
+        const component = await mount(
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="1">
+                        <Tree.Label>First</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="2">
+                        <Tree.Label>Second</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>,
+        );
+
+        const outside = component.getByRole('button', { name: 'Outside' });
+        await outside.focus();
+        await component.update(
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="2">
+                        <Tree.Label>Second</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>,
+        );
+
+        await expect(component.getByRole('treeitem', { name: /Second/ })).toHaveAttribute('tabindex', '0');
+        await expect(outside).toBeFocused();
+    });
+
+    test('Tab lands on the selected row, then arrows navigate from there', async ({ mount, page }) => {
+        const component = await mount(
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="1">
+                        <Tree.Label>First</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="2">
+                        <Tree.Label>Second</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="3" isSelected>
+                        <Tree.Label>Third</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="4">
+                        <Tree.Label>Fourth</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="5">
+                        <Tree.Label>Fifth</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>,
+        );
+
+        await component.getByRole('button', { name: 'Outside' }).focus();
+        await page.keyboard.press('Tab');
+        await expect(component.getByRole('treeitem', { name: /Third/ })).toBeFocused();
+
+        await page.keyboard.press('ArrowDown');
+        await expect(component.getByRole('treeitem', { name: /Fourth/ })).toBeFocused();
+    });
+
+    test('a prop-driven selection change moves the tab stop while focus is outside the tree', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="1">
+                        <Tree.Label>First</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="2">
+                        <Tree.Label>Second</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="3">
+                        <Tree.Label>Third</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="4">
+                        <Tree.Label>Fourth</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>,
+        );
+
+        await component.getByRole('treeitem', { name: /First/ }).click();
+        await component.getByRole('button', { name: 'Outside' }).focus();
+        await component.update(
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="1">
+                        <Tree.Label>First</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="2">
+                        <Tree.Label>Second</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="3">
+                        <Tree.Label>Third</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="4" isSelected>
+                        <Tree.Label>Fourth</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>,
+        );
+
+        await page.keyboard.press('Tab');
+        await expect(component.getByRole('treeitem', { name: /Fourth/ })).toBeFocused();
+    });
+
+    test('a prop-driven selection change does not move DOM focus while focus is inside the tree', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>First</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2" isSelected>
+                    <Tree.Label>Second</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Third</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="4">
+                    <Tree.Label>Fourth</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Second/ }).click();
+        await expect(component.getByRole('treeitem', { name: /Second/ })).toBeFocused();
+
+        await component.update(
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>First</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Second</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Third</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="4" isSelected>
+                    <Tree.Label>Fourth</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await expect(component.getByRole('treeitem', { name: /Second/ })).toBeFocused();
+        await expect(component.getByRole('treeitem', { name: /Second/ })).toHaveAttribute('tabindex', '0');
+        await expect(component.getByRole('treeitem', { name: /Fourth/ })).toHaveAttribute('tabindex', '-1');
+    });
+
+    test('a selected row hidden in a collapsed folder does not take the tab stop', async ({ mount, page }) => {
+        const component = await mount(
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="1">
+                        <Tree.Label>First</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Folder id="f">
+                        <Tree.FolderHeader>
+                            <Tree.Label>Folder</Tree.Label>
+                        </Tree.FolderHeader>
+                        <Tree.Item id="hidden" isSelected>
+                            <Tree.Label>HiddenChild</Tree.Label>
+                        </Tree.Item>
+                    </Tree.Folder>
+                </Tree.Root>
+            </div>,
+        );
+
+        await component.getByRole('button', { name: 'Outside' }).focus();
+        await page.keyboard.press('Tab');
+        await expect(component.getByRole('treeitem', { name: /First/ })).toBeFocused();
+    });
+
+    test('Tabbing back in after the focused row is removed returns to the selected row', async ({ mount, page }) => {
+        const component = await mount(
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="1" isSelected>
+                        <Tree.Label>First</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="2">
+                        <Tree.Label>Second</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="3">
+                        <Tree.Label>Third</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+                <button type="button">After</button>
+            </div>,
+        );
+
+        await component.getByRole('button', { name: 'Outside' }).focus();
+        await page.keyboard.press('Tab');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await expect(component.getByRole('treeitem', { name: /Third/ })).toBeFocused();
+
+        await component.update(
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="1" isSelected>
+                        <Tree.Label>First</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="2">
+                        <Tree.Label>Second</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+                <button type="button">After</button>
+            </div>,
+        );
+        await expect(component.getByRole('treeitem', { name: /Second/ })).toBeFocused();
+
+        await page.keyboard.press('Tab');
+        await expect(component.getByRole('button', { name: 'After' })).toBeFocused();
+        await page.keyboard.press('Shift+Tab');
+        await expect(component.getByRole('treeitem', { name: /First/ })).toBeFocused();
+    });
+
+    test('Tabbing back in after leaving the tree returns to the selected row, not the last-focused one', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(
+            <div>
+                <Tree.Root>
+                    <Tree.Item id="a">
+                        <Tree.Label>A</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="b" isSelected>
+                        <Tree.Label>B</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="c">
+                        <Tree.Label>C</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+                <button type="button">After</button>
+            </div>,
+        );
+
+        await component.getByRole('treeitem', { name: /C/ }).click();
+        await expect(component.getByRole('treeitem', { name: /C/ })).toBeFocused();
+
+        await page.keyboard.press('Tab');
+        await expect(component.getByRole('button', { name: 'After' })).toBeFocused();
+
+        await page.keyboard.press('Shift+Tab');
+        await expect(component.getByRole('treeitem', { name: /B/ })).toBeFocused();
+    });
+
+    test('clicking empty page space after focusing a row returns the tab stop to the selected row', async ({
+        mount,
+    }) => {
+        const component = await mount(
+            <div>
+                <div data-testid="pad" style={{ height: 40 }} />
+                <Tree.Root>
+                    <Tree.Item id="a">
+                        <Tree.Label>A</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="b" isSelected>
+                        <Tree.Label>B</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="c">
+                        <Tree.Label>C</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>,
+        );
+
+        await component.getByRole('treeitem', { name: /C/ }).click();
+        await expect(component.getByRole('treeitem', { name: /C/ })).toHaveAttribute('tabindex', '0');
+        await component.locator('[data-testid="pad"]').click();
+
+        await expect(component.getByRole('treeitem', { name: /B/ })).toHaveAttribute('tabindex', '0');
+        await expect(component.getByRole('treeitem', { name: /C/ })).toHaveAttribute('tabindex', '-1');
+    });
+
+    test('a same-row DOM blur/focus round trip does not desync ArrowDown from the visibly focused row', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="0" isSelected>
+                    <Tree.Label>Row0</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="1">
+                    <Tree.Label>Row1</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Row2</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Row3</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Row0/ }).click();
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await expect(component.getByRole('treeitem', { name: /Row2/ })).toBeFocused();
+
+        // No Tab in between: the window losing and regaining focus (or a browser
+        // extension stealing focus) fires this same blur/focus pair on the same row.
+        await page.evaluate(() => {
+            const element = document.activeElement as HTMLElement | null;
+            element?.blur();
+            element?.focus();
+        });
+
+        await page.keyboard.press('ArrowDown');
+        await expect(component.getByRole('treeitem', { name: /Row3/ })).toBeFocused();
+    });
+
+    test('Escape closing a portalled Dropdown does not desync ArrowDown from the row that regains focus', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1" isSelected>
+                    <Tree.Label>Row1</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Row2</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Row3</Tree.Label>
+                    <Tree.Action>
+                        <Dropdown.Root>
+                            <Dropdown.Trigger>
+                                <button type="button">Row3 actions</button>
+                            </Dropdown.Trigger>
+                            <Dropdown.Content>
+                                <Dropdown.Item onSelect={() => {}}>Do thing</Dropdown.Item>
+                            </Dropdown.Content>
+                        </Dropdown.Root>
+                    </Tree.Action>
+                </Tree.Item>
+                <Tree.Item id="4">
+                    <Tree.Label>Row4</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="5">
+                    <Tree.Label>Row5</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('button', { name: 'Row3 actions' }).click();
+        // The menu portals to `document.body`, outside `component`'s scoped locator.
+        await expect(page.getByRole('menuitem', { name: 'Do thing' })).toBeVisible();
+
+        // Default Radix behaviour: Escape returns focus to the trigger, i.e. row 3.
+        await page.keyboard.press('Escape');
+        await expect(component.getByRole('button', { name: 'Row3 actions' })).toBeFocused();
+
+        await page.keyboard.press('ArrowDown');
+        await expect(component.getByRole('treeitem', { name: /Row4/ })).toBeFocused();
+    });
+
+    test('Tab lands on the selected row after the tree empties with focus inside and rows return', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="1">
+                        <Tree.Label>Only</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>,
+        );
+
+        await component.getByRole('treeitem', { name: /Only/ }).click();
+        await component.update(
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>{[]}</Tree.Root>
+            </div>,
+        );
+        await component.update(
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="a">
+                        <Tree.Label>First</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="b" isSelected>
+                        <Tree.Label>Second</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>,
+        );
+
+        await component.getByRole('button', { name: 'Outside' }).focus();
+        await page.keyboard.press('Tab');
+        await expect(component.getByRole('treeitem', { name: /Second/ })).toBeFocused();
+    });
+
+    test('clicking away from an open portalled Dropdown does not pull focus back into the tree', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1" isSelected>
+                    <Tree.Label>Row1</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Row2</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Row3</Tree.Label>
+                    <Tree.Action>
+                        <Dropdown.Root>
+                            <Dropdown.Trigger>
+                                <button type="button">Row3 actions</button>
+                            </Dropdown.Trigger>
+                            <Dropdown.Content>
+                                <Dropdown.Item onSelect={() => {}}>Do thing</Dropdown.Item>
+                            </Dropdown.Content>
+                        </Dropdown.Root>
+                    </Tree.Action>
+                </Tree.Item>
+                <Tree.Item id="4">
+                    <Tree.Label>Row4</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="5">
+                    <Tree.Label>Row5</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('button', { name: 'Row3 actions' }).click();
+        await expect(page.getByRole('menuitem', { name: 'Do thing' })).toBeVisible();
+        // Radix arms its outside-press dismissal a task after opening.
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
+
+        await page.mouse.click(5, 400);
+        await expect(page.getByRole('menuitem', { name: 'Do thing' })).toHaveCount(0);
+        await component.update(
+            <Tree.Root>
+                <Tree.Item id="1" isSelected>
+                    <Tree.Label>Row1</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Row2</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Row3</Tree.Label>
+                    <Tree.Action>
+                        <Dropdown.Root>
+                            <Dropdown.Trigger>
+                                <button type="button">Row3 actions</button>
+                            </Dropdown.Trigger>
+                            <Dropdown.Content>
+                                <Dropdown.Item onSelect={() => {}}>Do thing</Dropdown.Item>
+                            </Dropdown.Content>
+                        </Dropdown.Root>
+                    </Tree.Action>
+                </Tree.Item>
+                <Tree.Item id="4">
+                    <Tree.Label>Row4</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="5">
+                    <Tree.Label>Row5</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        // Let the commit's passive effects run before asserting that nothing pulled focus.
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
+        await expect(page.locator('body')).toBeFocused();
+        await expect(component.getByRole('treeitem', { name: /Row1/ })).toHaveAttribute('tabindex', '0');
+    });
+
+    test('moves DOM focus to the next row when a row is removed while its portalled menu has focus', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>First</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Second</Tree.Label>
+                    <Tree.Action>
+                        <Dropdown.Root>
+                            <Dropdown.Trigger>
+                                <button type="button">Second actions</button>
+                            </Dropdown.Trigger>
+                            <Dropdown.Content>
+                                <Dropdown.Item onSelect={() => {}}>Delete</Dropdown.Item>
+                            </Dropdown.Content>
+                        </Dropdown.Root>
+                    </Tree.Action>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Third</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('button', { name: 'Second actions' }).press('Enter');
+        await expect(page.getByRole('menuitem', { name: 'Delete' })).toBeFocused();
+        await component.update(
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>First</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Third</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await expect(component.getByRole('treeitem', { name: /Third/ })).toBeFocused();
+    });
+
+    for (const modal of [false, true]) {
+        test(`a row's ${modal ? 'modal' : 'non-modal'} Dialog keeps focus when its focused control unmounts`, async ({
+            mount,
+            page,
+        }) => {
+            const component = await mount(<RowDialogHarness modal={modal} />);
+
+            await component.getByRole('button', { name: 'Row2 settings' }).click();
+            await page.getByRole('button', { name: 'Save' }).click();
+            await expect(page.getByText('Saving')).toBeVisible();
+            // Let the commit's passive effects run before asserting that nothing pulled focus.
+            await page.evaluate(
+                () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+            );
+
+            await expect(component.locator(':focus')).toHaveCount(0);
+            await expect(page.getByRole('dialog')).toBeVisible();
+        });
+    }
 });
 
 test.describe('TreeRoot row click', () => {
@@ -590,6 +1369,30 @@ test.describe('TreeRoot renaming', () => {
         // focus was not pulled back into the tree.
         await page.waitForTimeout(600);
         await expect(component.getByRole('treeitem', { name: /Outside/ })).not.toBeFocused();
+    });
+
+    test('clicking outside while renaming a non-selected row does not pull focus to the selected row', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(
+            <TestHarness
+                renameable
+                initial={[
+                    { id: '1', name: 'First', isFolder: false, isSelected: true },
+                    { id: '2', name: 'Second', isFolder: false },
+                ]}
+                onRename={() => {}}
+            />,
+        );
+
+        await component.getByRole('button', { name: 'Rename Second' }).click();
+        await component.getByRole('textbox').fill('Renamed');
+        await page.mouse.click(5, 400);
+
+        await expect(component.getByRole('textbox')).toHaveCount(0);
+        await page.waitForTimeout(600);
+        await expect(component.getByRole('treeitem', { name: /First/ })).not.toBeFocused();
     });
 
     test('onChange carries the new name on commit', async ({ mount }) => {

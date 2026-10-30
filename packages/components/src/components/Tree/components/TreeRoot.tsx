@@ -1,7 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AssistiveTreeDescription } from '@headless-tree/react';
-import { Fragment, useId, useMemo, type ReactNode } from 'react';
+import {
+    Fragment,
+    useCallback,
+    useEffect,
+    useId,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState,
+    type ReactNode,
+} from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -65,6 +75,25 @@ export const TreeRoot = ({
     const { t } = useTranslation();
     const rowHintId = useId();
     const { items, parentIsLoading: rootIsLoading } = useMemo(() => parseChildren(children), [children]);
+    // React drops the blur fired while it removes the focused row, so this stays true through a removal.
+    const [hasFocusWithin, setHasFocusWithin] = useState(false);
+    // An empty tree has nowhere to keep focus, and no blur will arrive to clear the flag.
+    if (hasFocusWithin && items.length === 0) {
+        setHasFocusWithin(false);
+    }
+    // A focused control removed by an outside press (a portalled menu dismissed) fires no blur, and focus falls to the page body.
+    useEffect(() => {
+        if (!hasFocusWithin) {
+            return;
+        }
+        const handlePointerUp = () => {
+            if (document.activeElement === document.body) {
+                setHasFocusWithin(false);
+            }
+        };
+        document.addEventListener('pointerup', handlePointerUp);
+        return () => document.removeEventListener('pointerup', handlePointerUp);
+    }, [hasFocusWithin]);
     const tree = useTreeController({
         items,
         onChange,
@@ -72,7 +101,24 @@ export const TreeRoot = ({
         reorderable,
         countDisabledInFolderState,
         rootAccepts: accepts,
+        hasFocusWithin,
     });
+
+    // A row removed while it held focus takes focus with it and fires no blur, so it asks for the fallback row to take it.
+    const shouldRestoreFocusRef = useRef(false);
+    useLayoutEffect(() => {
+        if (!shouldRestoreFocusRef.current) {
+            return;
+        }
+        shouldRestoreFocusRef.current = false;
+        // An emptied tree has no row to take focus.
+        if (tree.getItems().length > 0) {
+            tree.getFocusedItem().getElement()?.focus();
+        }
+    });
+    const handleFocusLost = useCallback(() => {
+        shouldRestoreFocusRef.current = true;
+    }, []);
 
     const visibleItems = tree.getItems();
     const loadingInsertions = useMemo(
@@ -95,7 +141,13 @@ export const TreeRoot = ({
         .join(' ');
 
     return (
-        <div {...tree.getContainerProps()} className={styles.tree}>
+        <div
+            {...tree.getContainerProps()}
+            className={styles.tree}
+            onFocus={() => setHasFocusWithin(true)}
+            // Checks where focus went: a render between a row's blur and the next row's focus must not move the tab stop.
+            onBlur={(event) => setHasFocusWithin(event.currentTarget.contains(event.relatedTarget))}
+        >
             {rowHint && (
                 <span id={rowHintId} className={styles.srOnly}>
                     {rowHint}
@@ -111,6 +163,7 @@ export const TreeRoot = ({
                             multiSelect={multiSelect}
                             reorderable={reorderable}
                             hintId={rowHint ? rowHintId : undefined}
+                            onFocusLost={handleFocusLost}
                             checkedState={checkedStates?.get(item.getId()) ?? false}
                         />
                         {loadingPlaceholder && (

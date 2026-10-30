@@ -41,7 +41,10 @@ export const FloatingToolbar = forwardRef<
                     ...rootProps.style,
                     zIndex: zIndexLayers.floatingToolbar,
                 }}
-                className={merge([className, 'tw-relative tw-flex tw-select-none tw-items-center tw-gap-1'])}
+                className={merge([
+                    className,
+                    'tw-relative tw-flex tw-select-none tw-items-center tw-gap-1 tw-box-border',
+                ])}
                 {...props}
             >
                 {children}

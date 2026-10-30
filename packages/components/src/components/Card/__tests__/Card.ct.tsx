@@ -178,6 +178,87 @@ test('should still shift an un-toned banner background on hover', async ({ mount
         .toBe(expectedHover);
 });
 
+const readHoverLayer = (card: Locator) =>
+    card.evaluate((element) => {
+        const layer = getComputedStyle(element, '::before');
+        return { opacity: layer.opacity, backgroundColor: layer.backgroundColor };
+    });
+
+const readHoverOpacity = (card: Locator) => card.evaluate((element) => getComputedStyle(element, '::before').opacity);
+
+test('should not transition the root background color', async ({ mount }) => {
+    const wrapper = await mount(
+        <RouterProvider navigate={() => {}} useHref={(path) => path}>
+            <Card.Root data-test-id={CARD_TEST_ID} href="/page" aria-label="Card">
+                <Card.Title>Card title</Card.Title>
+            </Card.Root>
+        </RouterProvider>,
+    );
+
+    // Chrome runs background-color transitions on the compositor and can paint the
+    // start color for one frame when it hands back to the main thread, which reads
+    // as a flicker on hover. The hover tint fades via the ::before layer's opacity.
+    const transitionDuration = await wrapper
+        .getByTestId(CARD_TEST_ID)
+        .evaluate((element) => getComputedStyle(element).transitionDuration);
+    expect(transitionDuration).toBe('0s');
+});
+
+test('should fade the hover tint in on hover and out on leave', async ({ mount, page }) => {
+    const wrapper = await mount(
+        <RouterProvider navigate={() => {}} useHref={(path) => path}>
+            <Card.Root data-test-id={CARD_TEST_ID} href="/page" aria-label="Card">
+                <Card.Banner>
+                    <Card.BannerImage src={TRANSPARENT_GIF} />
+                </Card.Banner>
+                <Card.Title>Card title</Card.Title>
+            </Card.Root>
+        </RouterProvider>,
+    );
+    const card = wrapper.getByTestId(CARD_TEST_ID);
+    const expectedHover = await resolveToken(card, 'color', '--color-surface-hover');
+    const expectedDefault = await resolveToken(card, 'color', '--color-surface-default');
+    expect(await readHoverOpacity(card)).toBe('0');
+
+    await card.hover();
+    await expect.poll(() => readHoverLayer(card)).toEqual({ opacity: '1', backgroundColor: expectedHover });
+    expect(await card.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe(expectedDefault);
+
+    await page.mouse.move(0, 0);
+    await expect.poll(() => readHoverOpacity(card)).toBe('0');
+});
+
+test('should show the pressed tint while the card is pressed', async ({ mount, page }) => {
+    const wrapper = await mount(
+        <RouterProvider navigate={() => {}} useHref={(path) => path}>
+            <Card.Root data-test-id={CARD_TEST_ID} href="/page" aria-label="Card">
+                <Card.Title>Card title</Card.Title>
+            </Card.Root>
+        </RouterProvider>,
+    );
+    const card = wrapper.getByTestId(CARD_TEST_ID);
+    const expectedActive = await resolveToken(card, 'color', '--color-surface-active');
+
+    await card.hover();
+    await page.mouse.down();
+
+    await expect.poll(() => readHoverLayer(card)).toEqual({ opacity: '1', backgroundColor: expectedActive });
+    await page.mouse.up();
+});
+
+test('should not show the hover tint on a non-interactive card', async ({ mount }) => {
+    const wrapper = await mount(
+        <Card.Root data-test-id={CARD_TEST_ID}>
+            <Card.Title>Card title</Card.Title>
+        </Card.Root>,
+    );
+    const card = wrapper.getByTestId(CARD_TEST_ID);
+
+    await card.hover();
+
+    expect(await readHoverOpacity(card)).toBe('0');
+});
+
 test('should render lang on the card root', async ({ mount }) => {
     const wrapper = await mount(
         <Card.Root data-test-id={CARD_TEST_ID} lang="fr-CH">
