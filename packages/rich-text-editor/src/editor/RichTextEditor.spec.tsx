@@ -279,6 +279,69 @@ describe('a readonly editor', () => {
     });
 });
 
+describe('a document from a newer format version', () => {
+    const newer = { ...paragraph('from the future'), version: 2 } as unknown as RteDocument;
+
+    it('is shown read-only, never edited, and warns once', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container, onChange } = mount((handler) => (
+            <RichTextEditor value={newer} onChange={handler} plugins={defaultPlugins} />
+        ));
+
+        expect(container.textContent).toContain('from the future');
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+        expect(container.querySelector('[role="toolbar"]')).toBeNull();
+        expect(warn).toHaveBeenCalledTimes(1);
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining('version 2'));
+
+        act(() => {
+            const data = new DataTransfer();
+            data.setData('text/html', '<p>pasted</p>');
+            container.firstElementChild?.dispatchEvent(
+                new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }),
+            );
+        });
+
+        expect(container.textContent).not.toContain('pasted');
+        expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it('does not repeat the warning on re-render', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { rerender } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} />);
+
+        rerender(<RichTextEditor value={newer} plugins={defaultPlugins} placeholder="again" />);
+
+        expect(warn).toHaveBeenCalledTimes(1);
+    });
+
+    it('becomes editable once given a document of the current version', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container, rerender, ready } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} />);
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+
+        rerender(<RichTextEditor value={paragraph('now current')} plugins={defaultPlugins} />);
+        ready();
+
+        expect(container.textContent).toContain('now current');
+    });
+
+    it.each([
+        ['the current version', paragraph('current')],
+        ['no version', { blocks: paragraph('missing').blocks } as unknown as RteDocument],
+    ])('stays editable, without a warning, with %s', (_name, value) => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { ready } = mount(() => <RichTextEditor value={value} plugins={defaultPlugins} />);
+        ready();
+
+        expect(warn).not.toHaveBeenCalled();
+    });
+});
+
 describe('a page of editors', () => {
     const COUNT = 30;
     const KEYS = Array.from({ length: COUNT }, (_, index) => `editor-${index}`);

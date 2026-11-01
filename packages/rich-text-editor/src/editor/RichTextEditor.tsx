@@ -12,7 +12,14 @@ import {
     useRef,
 } from 'react';
 
-import { buildPluginRegistry, emptyDocument, type RteBlockNode, type RteDocumentOf, type RtePlugin } from '#/core';
+import {
+    buildPluginRegistry,
+    DOCUMENT_VERSION,
+    emptyDocument,
+    type RteBlockNode,
+    type RteDocumentOf,
+    type RtePlugin,
+} from '#/core';
 import { RegistryRenderer } from '#/renderer';
 import documentStyles from '#/renderer/document.module.scss';
 
@@ -25,6 +32,7 @@ import { useFocusWithin } from './hooks/useFocusWithin';
 import { useMouseDrag } from './hooks/useMouseDrag';
 import { DEFAULT_LABELS, type RichTextEditorLabels } from './labels';
 import styles from './richTextEditor.module.scss';
+import { warnNewerVersion } from './warnings';
 
 /**
  * `TBlock` is the document's block union. It defaults to the structural
@@ -108,7 +116,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     onChange,
     plugins = [],
     toolbarPlacement = 'top',
-    readonly: readOnly = false,
+    readonly: readonlyProp = false,
     showEditor = true,
     placeholder = '',
     'aria-label': ariaLabel,
@@ -123,6 +131,15 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     const ownDocumentRef = useRef<RteDocumentOf | null>(null);
     ownDocumentRef.current ??= value ?? emptyDocument();
     const document = value ?? ownDocumentRef.current;
+
+    // A document from a newer format may hold what this editor would drop on save, so it is only shown.
+    const newerVersion = newerVersionOf(document);
+    const readOnly = readonlyProp || newerVersion !== null;
+    useEffect(() => {
+        if (newerVersion !== null) {
+            warnNewerVersion(newerVersion);
+        }
+    }, [newerVersion]);
 
     // Hosts usually pass an inline object; what it says is what matters.
     const labels = useLabels(hostLabelOverrides);
@@ -292,6 +309,15 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
 };
 
 // Helpers
+
+/** The document's version when it is newer than this editor writes; a missing or non-numeric one is not. */
+const newerVersionOf = (document: RteDocumentOf): number | null => {
+    const { version } = document as { version?: unknown };
+    if (typeof version === 'number' && version > DOCUMENT_VERSION) {
+        return version;
+    }
+    return null;
+};
 
 /** The key that moves focus from the text to the toolbar, the usual one for rich text editors. */
 const isToolbarHotkey = (event: KeyboardEvent): boolean => event.altKey && event.key === 'F10';
