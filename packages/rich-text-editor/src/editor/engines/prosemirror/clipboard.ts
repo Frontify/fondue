@@ -11,6 +11,8 @@ import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PasteHandler } from '#/core';
 
+import { EXTRA_ATTR } from './documentConversion';
+
 // Copy and paste fixes beyond what the engine does on its own.
 
 // Copy
@@ -146,7 +148,11 @@ export const handlePasteIntoEmptyBlock = (view: EditorView, _event: ClipboardEve
         $at.parent.canReplaceWith($at.index(), $at.index() + 1, first.type) &&
         first.type.validContent(merged.content)
     ) {
-        transaction.setNodeMarkup(at, first.type, first.attrs);
+        // The block stays the one it was: its undeclared stored keys are not the pasted block's to replace.
+        transaction.setNodeMarkup(at, first.type, {
+            ...first.attrs,
+            [EXTRA_ATTR]: merged.attrs[EXTRA_ATTR] as unknown,
+        });
     }
     view.dispatch(transaction.scrollIntoView().setMeta('paste', true).setMeta('uiEvent', 'paste'));
     return true;

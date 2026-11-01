@@ -7,7 +7,7 @@ import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry } from '#/core';
 
-import { mapChildren } from './documentConversion';
+import { EXTRA_ATTR, mapChildren } from './documentConversion';
 import { warnUnknownType } from './warnings';
 
 /**
@@ -36,6 +36,27 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
     const itemName = list ? itemTypeByList.get(list.node.type.name) : undefined;
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
 };
+
+/** The engine's split, except that the item a split at the end of one starts is clean: it copies the old item's attributes. */
+const splitListItem =
+    (itemType: PmNodeType): Command =>
+    (state, dispatch, view) => {
+        const { $from, $to } = state.selection;
+        const atEnd = $to.pos === $from.end();
+        return pmSplitListItem(itemType)(
+            state,
+            dispatch &&
+                ((transaction) => {
+                    const { $from: caret } = transaction.selection;
+                    const item = caret.depth >= 2 ? caret.node(-1) : null;
+                    if (atEnd && item?.type === itemType && item.attrs[EXTRA_ATTR] !== null) {
+                        transaction.setNodeMarkup(caret.before(-1), undefined, { ...item.attrs, [EXTRA_ATTR]: null });
+                    }
+                    dispatch(transaction);
+                }),
+            view,
+        );
+    };
 
 // The list half of the control API
 
@@ -86,7 +107,7 @@ export const createListApi = (
         },
         indent: () => runListCommand(sinkListItem),
         outdent: () => runListCommand(liftListItem),
-        split: () => runListCommand(pmSplitListItem),
+        split: () => runListCommand(splitListItem),
         unwrapAll() {
             const view = getView();
             const { from, to } = view.state.selection;

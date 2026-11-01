@@ -12,7 +12,15 @@ import {
     type PluginRegistry,
 } from '#/core';
 
-import { plainTextOf, RAW_ATTR, UNKNOWN_BLOCK, UNKNOWN_INLINE, UNKNOWN_MARKS, VALUE_ATTR } from './documentConversion';
+import {
+    EXTRA_ATTR,
+    plainTextOf,
+    RAW_ATTR,
+    UNKNOWN_BLOCK,
+    UNKNOWN_INLINE,
+    UNKNOWN_MARKS,
+    VALUE_ATTR,
+} from './documentConversion';
 import { htmlSpecToDom } from './htmlSpecToDom';
 import { blockParseRules, INLINE_PRIORITY, MARK_PRIORITY, valueParseRules } from './pasteRules';
 
@@ -91,6 +99,7 @@ const blockNodeSpec = (
         // invariant (4)
         ...(isListItem ? {} : { group: 'block' }),
         attrs: {
+            [EXTRA_ATTR]: { default: null },
             ...Object.fromEntries(
                 Object.entries(definition.defaults ?? {}).map(([name, value]) => [name, { default: value ?? null }]),
             ),
@@ -158,7 +167,10 @@ export const buildSchema = (registry: PluginRegistry): Schema => {
     const lists = new Set(itemTypeByList.keys());
     const known = new Set(registry.blocks.keys());
 
-    const nodes: Record<string, PmNodeSpec> = { doc: { content: 'block+' }, text: { group: 'inline' } };
+    const nodes: Record<string, PmNodeSpec> = {
+        doc: { content: 'block+', attrs: { [EXTRA_ATTR]: { default: null } } },
+        text: { group: 'inline' },
+    };
 
     // invariant (1): the registry puts the paragraph first.
     for (const [type, block] of registry.blocks) {
