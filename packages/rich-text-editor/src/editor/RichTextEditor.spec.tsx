@@ -317,6 +317,24 @@ describe('a document from a newer format version', () => {
         expect(warn).toHaveBeenCalledTimes(1);
     });
 
+    it('stops reporting once the host switches to a newer document mid-edit', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const onChange = vi.fn<(doc: RteDocument) => void>();
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} onChange={onChange} plugins={defaultPlugins} />
+        ));
+        ready();
+        paste(container, '<p>typed</p>');
+        expect(onChange).toHaveBeenCalledTimes(1);
+
+        rerender(<RichTextEditor value={newer} onChange={onChange} plugins={defaultPlugins} />);
+
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+        expect(container.textContent).toContain('from the future');
+        expect(onChange).toHaveBeenCalledTimes(1);
+    });
+
     it('becomes editable once given a document of the current version', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         teardown.push(() => warn.mockRestore());
