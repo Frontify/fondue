@@ -207,6 +207,28 @@ describe('undo and redo', () => {
     });
 });
 
+describe('undo after a paste', () => {
+    it('takes the typing before, the paste and the typing after back as three steps', () => {
+        const { view, stored } = mount({ version: 1, blocks: [{ type: PARAGRAPH, children: [] }] });
+        const typeText = (value: string): void => {
+            view.dispatch(view.state.tr.insertText(value));
+        };
+        const clipboard = { getData: () => '', preventDefault: () => {} } as unknown as ClipboardEvent;
+        typeText('one');
+        view.pasteText(' pasted', clipboard);
+        typeText(' two');
+
+        undo(view.state, view.dispatch);
+        expect(stored()).toEqual(paragraph('one pasted'));
+
+        undo(view.state, view.dispatch);
+        expect(stored()).toEqual(paragraph('one'));
+
+        undo(view.state, view.dispatch);
+        expect(stored()).toEqual({ version: 1, blocks: [{ type: PARAGRAPH, children: [] }] });
+    });
+});
+
 describe('the placeholder', () => {
     const placeholderText = (container: HTMLElement): string | null =>
         container.querySelector('.placeholder')?.getAttribute('data-placeholder') ?? null;

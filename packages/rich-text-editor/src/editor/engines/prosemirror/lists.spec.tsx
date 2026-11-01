@@ -2,6 +2,7 @@
 
 // @vitest-environment happy-dom
 
+import { undo } from 'prosemirror-history';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { type RteBlockNode } from '#/core';
@@ -102,6 +103,56 @@ describe('toggling a list', () => {
         editor.api.lists.toggle('bulletList');
 
         expect(editor.stored()).toEqual([list('bulletList', item(paragraph(text('outer')), bullets('inner')))]);
+    });
+
+    it('joins the list with the numbered lists on both sides when a paragraph between is wrapped', () => {
+        const numbered = (value: string) => list('numberedList', item(paragraph(text(value))));
+        const editor = editorWith(plugins, [numbered('one'), paragraph(text('two')), numbered('three')]);
+        editor.caretAfter('tw');
+
+        editor.api.lists.toggle('numberedList');
+
+        expect(editor.stored()).toEqual([
+            list(
+                'numberedList',
+                item(paragraph(text('one'))),
+                item(paragraph(text('two'))),
+                item(paragraph(text('three'))),
+            ),
+        ]);
+    });
+
+    it('joins a converted list with a neighbour of the new type', () => {
+        const editor = editorWith(plugins, [list('numberedList', item(paragraph(text('one')))), bullets('two')]);
+        editor.caretAfter('tw');
+
+        editor.api.lists.toggle('numberedList');
+
+        expect(editor.stored()).toEqual([
+            list('numberedList', item(paragraph(text('one'))), item(paragraph(text('two')))),
+        ]);
+    });
+
+    it('does not join a list with a neighbour of another type', () => {
+        const editor = editorWith(plugins, [bullets('one'), paragraph(text('two'))]);
+        editor.caretAfter('tw');
+
+        editor.api.lists.toggle('numberedList');
+
+        expect(editor.stored()).toEqual([bullets('one'), list('numberedList', item(paragraph(text('two'))))]);
+    });
+
+    it('is one undo step when it joins', () => {
+        const editor = editorWith(plugins, [
+            list('numberedList', item(paragraph(text('one')))),
+            paragraph(text('two')),
+        ]);
+        editor.caretAfter('tw');
+
+        editor.api.lists.toggle('numberedList');
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual([list('numberedList', item(paragraph(text('one')))), paragraph(text('two'))]);
     });
 
     it('ignores a type that is not a list', () => {

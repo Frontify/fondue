@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { closeHistory } from 'prosemirror-history';
 import { EditorState, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
@@ -69,6 +70,8 @@ const mount = ({
     // Every document reported to the host: one arriving back, even late and
     // behind newer edits, is the editor's own and never replaces what it holds.
     const emittedDocs = new WeakSet<typeof initialDoc>();
+    // A paste, cut or drop just happened: the next edit starts an undo step of its own.
+    let closeBeforeNextEdit = false;
 
     // 1. Views with editing UI (blocks, inline elements, link-like marks) follow
     //    the selection, since `isFocused` does. Each state change is offered to
@@ -126,6 +129,17 @@ const mount = ({
             return false;
         },
         dispatchTransaction(transaction) {
+            // Typing groups into one undo step; a paste, cut or drop, and the first edit after it, stand apart.
+            const uiEvent: unknown = transaction.getMeta('uiEvent');
+            const isTransfer = uiEvent === 'paste' || uiEvent === 'cut' || uiEvent === 'drop';
+            if (isTransfer || (closeBeforeNextEdit && transaction.docChanged)) {
+                closeHistory(transaction);
+            }
+            if (isTransfer) {
+                closeBeforeNextEdit = true;
+            } else if (transaction.docChanged) {
+                closeBeforeNextEdit = false;
+            }
             editorView.updateState(editorView.state.apply(transaction));
             repaintViews();
             // Host-originated changes are not reported back to the host.

@@ -1,6 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { baseKeymap, chainCommands, setBlockType } from 'prosemirror-commands';
+import {
+    baseKeymap,
+    chainCommands,
+    createParagraphNear,
+    liftEmptyBlock,
+    newlineInCode,
+    setBlockType,
+    splitBlockAs,
+} from 'prosemirror-commands';
 import { history, redo, undo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
@@ -23,7 +31,8 @@ import { listKeys } from './lists';
  *    key lists would claim (`blurOnBreak` takes Enter).
  * 3. List keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
  * 4. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`).
- * 5. Baseline keymap, plus Backspace resetting an emptied first heading.
+ * 5. Enter keeping the attributes every text block carries, then the baseline
+ *    keymap, plus Backspace resetting an emptied first heading.
  *
  * Mark input rules build their own transaction instead of calling
  * `api.marks.toggle`, because the input-rule machinery owns undo grouping.
@@ -49,7 +58,7 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         // 4
         ...typingRewrites(registry, schema),
         // 5
-        keymap({ Backspace: resetEmptyFirstBlock }),
+        keymap({ Backspace: resetEmptyFirstBlock, Enter: splitKeepingCarriedAttrs(registry) }),
         keymap(baseKeymap),
     ];
 };
@@ -300,6 +309,29 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
 };
 
 // Baseline
+
+/**
+ * The baseline keymap's Enter, except the new block after the caret carries the
+ * attributes every text block carries (alignment), which a split at the end of
+ * a block would otherwise drop with the block's type.
+ */
+const splitKeepingCarriedAttrs = (registry: PluginRegistry): Command =>
+    chainCommands(
+        newlineInCode,
+        createParagraphNear,
+        liftEmptyBlock,
+        splitBlockAs((node, atEnd, $from) => {
+            // Mid-block the split copies every attribute of the block already.
+            if (!atEnd) {
+                return null;
+            }
+            const type = $from.node(-1).contentMatchAt($from.indexAfter(-1)).defaultType;
+            if (!type) {
+                return null;
+            }
+            return { type, attrs: keepCarriedAttrs(registry, type, undefined)(node) };
+        }),
+    );
 
 /**
  * Backspace in an emptied block at the very top that is not the default block

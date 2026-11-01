@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Node as PmNode, type NodeType as PmNodeType, type Schema } from 'prosemirror-model';
+import { type Node as PmNode, type NodeType as PmNodeType, type ResolvedPos, type Schema } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem as pmSplitListItem, wrapInList } from 'prosemirror-schema-list';
 import { type Command, type EditorState, type Transaction } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry } from '#/core';
 
+import { keepCarriedAttrs } from './controlApi';
 import { mapChildren } from './documentConversion';
 import { warnUnknownType } from './warnings';
 
@@ -18,9 +19,8 @@ import { warnUnknownType } from './warnings';
 
 // Where the caret is
 
-/** The innermost ancestor that is a list of items, with the position it sits at. */
-const findList = (state: EditorState, itemTypeByList: Map<string, string>): { node: PmNode; pos: number } | null => {
-    const { $from } = state.selection;
+/** The innermost ancestor of a position that is a list of items, with the position it sits at. */
+const findList = ($from: ResolvedPos, itemTypeByList: Map<string, string>): { node: PmNode; pos: number } | null => {
     for (let depth = $from.depth; depth > 0; depth--) {
         const node = $from.node(depth);
         if (itemTypeByList.has(node.type.name)) {
@@ -32,9 +32,71 @@ const findList = (state: EditorState, itemTypeByList: Map<string, string>): { no
 
 /** The item type of the innermost list the selection sits in — what the list commands need. */
 const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, schema: Schema): PmNodeType | null => {
-    const list = findList(state, itemTypeByList);
+    const list = findList(state.selection.$from, itemTypeByList);
     const itemName = list ? itemTypeByList.get(list.node.type.name) : undefined;
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
+};
+
+// Splitting
+
+const sameAttrs = (current: PmNode['attrs'], wanted: PmNode['attrs']): boolean =>
+    Object.keys(wanted).every((name) => current[name] === wanted[name]);
+
+/**
+ * `splitListItem`, except the new item starts from its type's default
+ * attributes (an unchecked to-do, not a copy of the checked one) and its first
+ * text block keeps the attributes every text block carries (alignment).
+ */
+const splitListItem =
+    (registry: PluginRegistry, itemType: PmNodeType): Command =>
+    (state, dispatch) => {
+        const source = state.selection.$from.parent;
+        return pmSplitListItem(itemType)(
+            state,
+            dispatch &&
+                ((transaction) => {
+                    const { $from } = transaction.selection;
+                    for (let depth = $from.depth; depth > 0; depth--) {
+                        const item = $from.node(depth);
+                        if (item.type !== itemType) {
+                            continue;
+                        }
+                        const itemPos = $from.before(depth);
+                        const defaults = itemType.create().attrs;
+                        if (!sameAttrs(item.attrs, defaults)) {
+                            transaction.setNodeMarkup(itemPos, undefined, defaults);
+                        }
+                        const block = item.firstChild;
+                        if (block?.isTextblock) {
+                            const carried = {
+                                ...block.attrs,
+                                ...keepCarriedAttrs(registry, block.type, undefined)(source),
+                            };
+                            if (!sameAttrs(block.attrs, carried)) {
+                                transaction.setNodeMarkup(itemPos + 1, undefined, carried);
+                            }
+                        }
+                        break;
+                    }
+                    dispatch(transaction);
+                }),
+        );
+    };
+
+// Toggling
+
+/** Join the list with the lists of its own type right before and after it, so numbering carries on. */
+const joinNeighbours = (transaction: Transaction, { node, pos }: { node: PmNode; pos: number }): void => {
+    // The one after first: joining the one before moves nothing that follows.
+    const end = pos + node.nodeSize;
+    const after = transaction.doc.resolve(end).nodeAfter;
+    if (after?.type === node.type && node.canAppend(after)) {
+        transaction.join(end);
+    }
+    const before = transaction.doc.resolve(pos).nodeBefore;
+    if (before?.type === node.type && before.canAppend(node)) {
+        transaction.join(pos);
+    }
 };
 
 // The list half of the control API
@@ -43,8 +105,9 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
 export const createListApi = (
     getView: () => EditorView,
     schema: Schema,
-    { itemTypeByList }: PluginRegistry,
+    registry: PluginRegistry,
 ): EditorControlApi['lists'] => {
+    const { itemTypeByList } = registry;
     /** Run one of the engine's list commands against the item type in scope. */
     const runListCommand = (command: (itemType: PmNodeType) => Command): boolean => {
         const view = getView();
@@ -65,10 +128,17 @@ export const createListApi = (
                 return;
             }
             const view = getView();
-            const current = findList(view.state, itemTypeByList);
+            const current = findList(view.state.selection.$from, itemTypeByList);
 
             if (!current) {
-                wrapInList(listType)(view.state, view.dispatch);
+                wrapInList(listType)(view.state, (transaction) => {
+                    // One transaction, so joining is part of the same undo step.
+                    const wrapped = findList(transaction.selection.$from, itemTypeByList);
+                    if (wrapped) {
+                        joinNeighbours(transaction, wrapped);
+                    }
+                    view.dispatch(transaction);
+                });
             } else if (current.node.type === listType) {
                 runListCommand(liftListItem);
             } else {
@@ -80,13 +150,19 @@ export const createListApi = (
                         item.type === itemType ? item : itemType.create(item.attrs, item.content),
                     ),
                 );
-                view.dispatch(view.state.tr.replaceWith(current.pos, current.pos + current.node.nodeSize, converted));
+                const transaction = view.state.tr.replaceWith(
+                    current.pos,
+                    current.pos + current.node.nodeSize,
+                    converted,
+                );
+                joinNeighbours(transaction, { node: converted, pos: current.pos });
+                view.dispatch(transaction);
             }
             view.focus();
         },
         indent: () => runListCommand(sinkListItem),
         outdent: () => runListCommand(liftListItem),
-        split: () => runListCommand(pmSplitListItem),
+        split: () => runListCommand((itemType) => splitListItem(registry, itemType)),
         unwrapAll() {
             const view = getView();
             const { from, to } = view.state.selection;
