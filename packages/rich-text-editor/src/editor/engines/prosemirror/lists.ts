@@ -2,7 +2,7 @@
 
 import { type Node as PmNode, type NodeType as PmNodeType, type Schema } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem as pmSplitListItem, wrapInList } from 'prosemirror-schema-list';
-import { type Command, type EditorState, NodeSelection, type Transaction } from 'prosemirror-state';
+import { type Command, type EditorState, type Transaction } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry } from '#/core';
@@ -37,9 +37,18 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
 };
 
-/** A block no plugin knows is selected as a node: lifting would take it for an item and delete it. */
-const unknownBlockSelected = (state: EditorState): boolean =>
-    state.selection instanceof NodeSelection && state.selection.node.type.name === UNKNOWN_BLOCK;
+/** A block no plugin knows lies within the selection: lifting would take it for an item, or drop it between item boundaries. */
+const selectionHoldsUnknownBlock = (state: EditorState): boolean => {
+    const { from, to } = state.selection;
+    let found = false;
+    state.doc.nodesBetween(from, to, (node) => {
+        if (node.type.name === UNKNOWN_BLOCK) {
+            found = true;
+        }
+        return !found;
+    });
+    return found;
+};
 
 // The list half of the control API
 
@@ -74,7 +83,7 @@ export const createListApi = (
             if (!current) {
                 wrapInList(listType)(view.state, view.dispatch);
             } else if (current.node.type === listType) {
-                if (!unknownBlockSelected(view.state)) {
+                if (!selectionHoldsUnknownBlock(view.state)) {
                     runListCommand(liftListItem);
                 }
             } else {
@@ -95,7 +104,7 @@ export const createListApi = (
         },
         indent: () => runListCommand(sinkListItem),
         outdent() {
-            if (unknownBlockSelected(getView().state)) {
+            if (selectionHoldsUnknownBlock(getView().state)) {
                 return false;
             }
             return runListCommand(liftListItem);
@@ -155,7 +164,7 @@ export const liftOutOfLists = (
     { itemTypeByList }: PluginRegistry,
     schema: Schema,
 ): Transaction[] => {
-    if (unknownBlockSelected(state)) {
+    if (selectionHoldsUnknownBlock(state)) {
         return [];
     }
     const itemTypes = [...new Set(itemTypeByList.values())].flatMap((name) => schema.nodes[name] ?? []);

@@ -361,7 +361,7 @@ describe('blocks.setType inside a list', () => {
     describe.each([
         ['in the middle', (block: RteBlockNode) => [item(paragraph(text('one'))), block, item(paragraph(text('two')))]],
         ['last', (block: RteBlockNode) => [item(paragraph(text('one'))), item(paragraph(text('two'))), block]],
-    ] as const)('with a block no plugin knows selected as a node, %s', (_where, items) => {
+    ] as const)('with a block no plugin knows selected or spanned, %s', (_where, items) => {
         it('keeps it', () => {
             const block = { type: 'unknownSelected', children: [paragraph(text('kept'))] } as unknown as RteBlockNode;
             const editor = editorWith(plugins, [bullets(...items(block))]);
@@ -372,6 +372,22 @@ describe('blocks.setType inside a list', () => {
                 }
             });
             editor.view.dispatch(editor.view.state.tr.setSelection(NodeSelection.create(editor.view.state.doc, at)));
+
+            editor.api.blocks.setType('paragraph');
+
+            const raws: unknown[] = [];
+            editor.view.state.doc.descendants((node) => {
+                if (node.type.name === UNKNOWN_BLOCK) {
+                    raws.push(node.attrs[RAW_ATTR]);
+                }
+            });
+            expect(raws).toEqual([block]);
+        });
+
+        it('keeps it when a text selection spans it', () => {
+            const block = { type: 'unknownSpanned', children: [paragraph(text('kept'))] } as unknown as RteBlockNode;
+            const editor = editorWith(plugins, [bullets(...items(block))]);
+            editor.selectBetween('one', 'two');
 
             editor.api.blocks.setType('paragraph');
 

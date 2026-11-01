@@ -369,7 +369,7 @@ describe('a list holding a block no plugin knows among its items', () => {
         ]);
     });
 
-    describe('selected as a node', () => {
+    describe('inside the selection', () => {
         const layouts = [
             [
                 'in the middle',
@@ -415,6 +415,29 @@ describe('a list holding a block no plugin knows among its items', () => {
 
                 expect(unknownRaws(editor.view)).toEqual([block]);
             });
+        });
+
+        describe.each(layouts)('spanned by a text selection, %s', (_where, items) => {
+            it.each(commands)('keeps it on %s', (_name, run) => {
+                const block = unknown('unknownSpanned');
+                const editor = editorWith(plugins, [list('bulletList', ...items(block))]);
+                editor.selectBetween('one', 'two');
+
+                run(editor);
+
+                expect(unknownRaws(editor.view)).toEqual([block]);
+            });
+        });
+
+        it('keeps it when Delete at the end of the item before it joins it forward, inside that item', () => {
+            const block = unknown('unknownOnDelete');
+            const editor = editorWith(plugins, [around(block)]);
+            editor.caretAfter('one');
+
+            expect(press(editor.view, 'Delete')).toBe(true);
+
+            expect(unknownRaws(editor.view)).toEqual([block]);
+            expect(editor.stored()?.[0]?.children?.[0]?.children).toContainEqual(block);
         });
 
         it('leaves a list that starts with it alone: lifting and nesting find no item range there', () => {
