@@ -1,0 +1,114 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "before"
+                }
+            ]
+        },
+        {
+            "type": "bulletList",
+            "children": [
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "one"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "bulletList",
+                            "children": [
+                                {
+                                    "type": "listItem",
+                                    "children": [
+                                        {
+                                            "type": "paragraph",
+                                            "children": [
+                                                {
+                                                    "text": "one one"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "bulletList",
+                                            "children": [
+                                                {
+                                                    "type": "listItem",
+                                                    "children": [
+                                                        {
+                                                            "type": "paragraph",
+                                                            "children": [
+                                                                {
+                                                                    "text": "one one one"
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "listItem",
+                                                    "children": [
+                                                        {
+                                                            "type": "paragraph",
+                                                            "children": [
+                                                                {
+                                                                    "text": "one one two"
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "listItem",
+                                    "children": [
+                                        {
+                                            "type": "paragraph",
+                                            "children": [
+                                                {
+                                                    "text": "one two"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "two"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "after"
+                }
+            ]
+        }
+    ]
+}
