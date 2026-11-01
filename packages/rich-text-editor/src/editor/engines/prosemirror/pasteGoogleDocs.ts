@@ -1,0 +1,58 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// Google Docs wraps what it copies in a `<b>` that is bold in name only, and
+// writes an empty line as a lone `<br>` between blocks.
+
+/** The id Docs writes on the wrapper, or in Firefox on the first block. */
+const MARKED = '[id^="docs-internal-guid-"]';
+
+/** Elements that are blocks to the parse, between which a `<br>` stands for an empty line. */
+const BLOCKS = [
+    'address, article, aside, blockquote, dd, div, dl, dt, figure, footer, header, hr, li, ol, p, pre, section, ul',
+    'h1, h2, h3, h4, h5, h6, table',
+].join(', ');
+
+/** Each `<br>` of a run between two blocks of `root` becomes one empty paragraph, the line it stands for. */
+const breaksAsParagraphs = (root: Element): void => {
+    let before: Element | undefined;
+    let breaks: Element[] = [];
+    for (const child of [...root.children]) {
+        if (child.localName === 'br') {
+            breaks.push(child);
+            continue;
+        }
+        if (before?.matches(BLOCKS) && child.matches(BLOCKS)) {
+            for (const lineBreak of breaks) {
+                lineBreak.replaceWith(root.ownerDocument.createElement('p'));
+            }
+        }
+        breaks = [];
+        before = child;
+    }
+};
+
+/**
+ * Cleans a Google Docs copy, found by its id: breaks between blocks become
+ * empty paragraphs, the wrapper goes, and so does the break WebKit adds after
+ * the copy. Does nothing to a paste from elsewhere.
+ */
+export const tidyGoogleDocs = (dom: HTMLElement): void => {
+    const marked = dom.querySelector(MARKED);
+    if (marked === null) {
+        return;
+    }
+    const wrapped = marked.localName === 'b';
+    // Anywhere but the wrapper or the first block, the id says nothing about the paste.
+    if (!wrapped && marked !== dom.firstElementChild) {
+        return;
+    }
+    for (const lineBreak of dom.querySelectorAll('br.Apple-interchange-newline')) {
+        lineBreak.remove();
+    }
+    if (!wrapped) {
+        breaksAsParagraphs(dom);
+        return;
+    }
+    breaksAsParagraphs(marked);
+    marked.replaceWith(...marked.childNodes);
+};

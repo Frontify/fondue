@@ -1,0 +1,1 @@
+Vendor clipboard HTML (Word, Outlook, Google Docs, LibreOffice) copied byte-identical from packages/rich-text-editor/src/runtime/import/__tests__/fixtures/vendor on feat/rich-text-editor.
