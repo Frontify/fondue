@@ -8,8 +8,8 @@
 const LIST_STYLE = /(?:^|;)\s*(?:--)?mso-list:\s*(l\d+)\s+level(\d+)(?:\s+(lfo\d+))?/i;
 /** The style of the span that holds a list paragraph's marker. */
 const MARKER_STYLE = /(?:^|;)\s*(?:--)?mso-list:\s*ignore/i;
-/** A number or letters with a delimiter (`1.`, `iv)`, `a.`) is a numbered marker; a glyph (`·`, `o`, `§`) is a bullet. */
-const NUMBERED_MARKER = /^\(?(?:\d+|[a-z]+)[.)]$/i;
+/** Dot-separated numbers (`1.`, `1.1.`, `1.1`) or letters with a delimiter (`iv)`, `a.`) are numbered markers; a glyph (`·`, `o`, `§`) is a bullet. */
+const NUMBERED_MARKER = /^\(?(?:\d+(?:\.\d+)*[.)]?|[a-z]+[.)])$/i;
 /** Word has nine list levels, which also keeps hostile input from nesting without end. */
 const MAX_LEVEL = 9;
 

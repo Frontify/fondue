@@ -366,6 +366,27 @@ describe('pasting from other applications', () => {
         });
     });
 
+    describe('multi-level numbering', () => {
+        it('keeps `1.`, `1.1.` and `2.` items in one nested numbered list', () => {
+            const item = (level: number, marker: string, text: string): string =>
+                `<p class="MsoListParagraph" style="mso-list: l0 level${level} lfo1">` +
+                `<span style="mso-list: Ignore">${marker}</span>${text}<o:p></o:p></p>`;
+            const doc = pasted(
+                item(1, '1.', 'Scope') +
+                    item(2, '1.1.', 'Logos') +
+                    item(2, '1.2.', 'Colours') +
+                    item(1, '2.', 'Timeline'),
+            );
+
+            expect(outline(nodesOf(doc))).toEqual([
+                'number: Scope',
+                '  number: Logos',
+                '  number: Colours',
+                'number: Timeline',
+            ]);
+        });
+    });
+
     describe('text that mentions Office styles', () => {
         it('keeps `mso-list: l0` verbatim in a paste from elsewhere', () => {
             const doc = pasted("<p>the style mso-list: l0 level1 lfo1 is Word's</p>");
