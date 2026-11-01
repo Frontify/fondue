@@ -10,6 +10,7 @@ import {
     clipboardSerializer,
     handlePasteByFeatures,
     handlePasteIntoEmptyBlock,
+    sliceForPaste,
     sliceWithoutExtras,
 } from './clipboard';
 import { createControlApi, type OpenEditors } from './controlApi';
@@ -110,6 +111,7 @@ const mount = ({
         clipboardSerializer: clipboardSerializer(schema),
         clipboardParser: clipboardParser(schema),
         transformCopied: sliceWithoutExtras,
+        transformPasted: sliceForPaste,
         handlePaste: (pasteView, event, slice) =>
             handlePasteByFeatures(registry.pasteHandlers, api)(pasteView, event) ||
             handlePasteIntoEmptyBlock(pasteView, event, slice),

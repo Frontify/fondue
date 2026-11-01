@@ -64,9 +64,21 @@ const withoutExtras = (node: PmNode): PmNode => {
     return node.type.create(attrs, Fragment.from(children), node.marks);
 };
 
-/** A copied slice without the undeclared stored keys: `data-pm-slice` writes its open wrappers' attributes onto the clipboard. */
-export const sliceWithoutExtras = (slice: Slice): Slice =>
+/** Each stripped slice to the one it was made from, so this editor's own drag gets its keys back on drop. */
+const originalOf = new WeakMap<Slice, Slice>();
+
+const stripExtras = (slice: Slice): Slice =>
     new Slice(Fragment.fromArray(slice.content.content.map(withoutExtras)), slice.openStart, slice.openEnd);
+
+/** A copied slice without the undeclared stored keys: `data-pm-slice` writes its open wrappers' attributes onto the clipboard. */
+export const sliceWithoutExtras = (slice: Slice): Slice => {
+    const stripped = stripExtras(slice);
+    originalOf.set(stripped, slice);
+    return stripped;
+};
+
+/** What a paste or drop brings in: its own drag as it was, anything else (clipboard HTML, other editors) stripped. */
+export const sliceForPaste = (slice: Slice): Slice => originalOf.get(slice) ?? stripExtras(slice);
 
 export const clipboardSerializer = (schema: Schema): DOMSerializer => {
     const nodes = DOMSerializer.nodesFromSchema(schema);

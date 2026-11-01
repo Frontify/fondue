@@ -2,6 +2,7 @@
 
 // @vitest-environment happy-dom
 
+import { NodeSelection } from 'prosemirror-state';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { type RteBlockNode } from '#/core';
@@ -71,6 +72,60 @@ describe('copying', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('a'), { type: 'break' }, text('b'))]);
 
         expect(copied(editor)).toBe('<p>a<br>b</p>');
+    });
+});
+
+describe('pasting a payload that names undeclared keys', () => {
+    const crafted =
+        '<p data-pm-slice="1 1 [&quot;bulletList&quot;,{&quot;__rteExtra&quot;:{&quot;anyKey&quot;:1}},&quot;listItem&quot;,{&quot;__rteExtra&quot;:{&quot;anyKey&quot;:1}}]">x</p>';
+
+    it('writes none of them into an empty paragraph', () => {
+        const editor = editorWith(defaultPlugins, [paragraph()]);
+        editor.view.focus();
+
+        editor.pasteHTML(crafted);
+
+        expect(JSON.stringify(editor.stored())).not.toContain('anyKey');
+    });
+
+    it('writes none of them into a list item', () => {
+        const editor = editorWith(defaultPlugins, [
+            {
+                type: 'bulletList',
+                children: [{ type: 'listItem', children: [paragraph(text('item'))] }],
+            } as RteBlockNode,
+        ]);
+        editor.caretAfter('item');
+
+        editor.pasteHTML(crafted);
+
+        expect(JSON.stringify(editor.stored())).not.toContain('anyKey');
+        expect(JSON.stringify(editor.stored())).toContain('x');
+    });
+});
+
+describe('dragging a block inside the editor', () => {
+    it('moves it with the undeclared keys it has', () => {
+        const editor = editorWith(defaultPlugins, [
+            { ...paragraph(text('drag')), id: 'x' } as RteBlockNode,
+            paragraph(text('stay')),
+        ]);
+        const { view } = editor;
+        view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, 0)));
+        // No layout in the test DOM: coordinates map to the positions the drag starts and ends at.
+        let at = 1;
+        view.posAtCoords = () => ({ pos: at, inside: -1 });
+        const fire = (type: string): void => {
+            const event = new Event(type, { bubbles: true, cancelable: true });
+            Object.defineProperty(event, 'dataTransfer', { value: new DataTransfer() });
+            view.dom.dispatchEvent(event);
+        };
+
+        fire('dragstart');
+        at = view.state.doc.content.size;
+        fire('drop');
+
+        expect(editor.stored()).toEqual([paragraph(text('stay')), { ...paragraph(text('drag')), id: 'x' }]);
     });
 });
 
