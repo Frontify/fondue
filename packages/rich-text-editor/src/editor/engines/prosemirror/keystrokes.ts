@@ -5,8 +5,8 @@ import { history, redo, undo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { type Mark as PmMark, type MarkType as PmMarkType, type Schema } from 'prosemirror-model';
-import { wrapInList } from 'prosemirror-schema-list';
 import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, type Transaction } from 'prosemirror-state';
+import { canJoin, findWrapping } from 'prosemirror-transform';
 
 import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
 
@@ -314,6 +314,11 @@ const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] =
         if (isInExcludedMark(state, context.excludedMarks, $from.pos)) {
             return false;
         }
+        // Mid-token, the caret does not end an address: Enter only splits.
+        const after = $from.parent.textBetween($from.parentOffset, $from.parent.content.size, undefined, '\uFFFC');
+        if (after !== '' && !/^\s/.test(after)) {
+            return false;
+        }
         const textBefore = $from.parent.textBetween(0, $from.parentOffset, undefined, '\uFFFC');
         for (const { pattern, find } of matchers) {
             const match = pattern.exec(`${textBefore} `);
@@ -361,29 +366,24 @@ const listRule = (rule: RuleOfKind<'list'>, { schema, registry }: RuleContext): 
     if (!itemAttributes) {
         return wrappingInputRule(pattern, listType);
     }
-    // The engine's `wrappingInputRule` cannot set attributes on the item, so it is done by hand.
+    // The engine's `wrappingInputRule` cannot set attributes on the item, so
+    // it is repeated here with them; `wrapInList` treats a paragraph in an
+    // item differently, which would make `[x] ` and `[ ] ` nest differently.
     return new InputRule(pattern, (state, _match, start, end) => {
         const transaction = state.tr.delete(start, end);
-        const wrapping: Transaction[] = [];
-        if (!wrapInList(listType)(state.apply(transaction), (wrap) => wrapping.push(wrap))) {
+        const range = transaction.doc.resolve(start).blockRange();
+        const wrapping = range && findWrapping(range, listType);
+        if (!range || !wrapping) {
             return null;
         }
-        for (const step of wrapping.flatMap((wrap) => wrap.steps)) {
-            transaction.step(step);
-        }
-        // The caret is inside the new item, so the innermost item above it is the one.
-        const { $from } = transaction.selection;
-        for (let depth = $from.depth; depth > 0; depth--) {
-            const item = $from.node(depth);
-            if (item.type.name === itemName) {
-                transaction.setNodeMarkup($from.before(depth), undefined, { ...item.attrs, ...itemAttributes });
-                break;
-            }
-        }
-        // Like the engine's rule, join a list of the same type right above.
+        transaction.wrap(
+            range,
+            wrapping.map((wrapper) =>
+                wrapper.type.name === itemName ? { ...wrapper, attrs: itemAttributes } : wrapper,
+            ),
+        );
         const before = transaction.doc.resolve(start - 1).nodeBefore;
-        const after = transaction.doc.resolve(start - 1).nodeAfter;
-        if (before?.type === listType && after && before.canAppend(after)) {
+        if (before?.type === listType && canJoin(transaction.doc, start - 1)) {
             transaction.join(start - 1);
         }
         return transaction;

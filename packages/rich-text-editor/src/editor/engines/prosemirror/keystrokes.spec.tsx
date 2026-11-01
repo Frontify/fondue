@@ -110,6 +110,24 @@ describe('typing a list shortcut at the start of a line', () => {
     });
 });
 
+describe('a check list shortcut inside a check list', () => {
+    const checkItem = (label: string): RteBlockNode =>
+        ({ type: 'checkItem', checked: false, children: [paragraph(text(label))] }) as RteBlockNode;
+    const twoItems = (): RteBlockNode[] => [{ type: 'checkList', children: [checkItem('one'), checkItem('two')] }];
+
+    /** The document with `checked` left out, so `[x] ` and `[ ] ` can be compared on structure alone. */
+    const shapeAfterTyping = (prefix: string, before: string): string => {
+        const editor = editorWith(defaultPlugins, twoItems());
+        editor.caretBefore(before);
+        editor.type(prefix);
+        return JSON.stringify(editor.stored(), (key, value: unknown) => (key === 'checked' ? undefined : value));
+    };
+
+    it.each(['one', 'two'])('gives "[x] " and "[ ] " the same structure at the start of the item "%s"', (before) => {
+        expect(shapeAfterTyping('[x] ', before)).toBe(shapeAfterTyping('[ ] ', before));
+    });
+});
+
 describe('a mark that opts out of typing rules', () => {
     it('keeps the delimiters typed inside it — inline code keeps `**`', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);

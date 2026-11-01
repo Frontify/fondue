@@ -127,6 +127,24 @@ describe('pressing Enter after a web address', () => {
         expect(editor.stored()).toEqual([paragraph(text('https://example.com', { code: true })), paragraph()]);
     });
 
+    it('leaves an address alone when the caret is inside it', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('see https://example.com/page'))]);
+        editor.caretAfter('https://exa');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([paragraph(text('see https://exa')), paragraph(text('mple.com/page'))]);
+    });
+
+    it('links an address when only a space follows the caret', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com next'))]);
+        editor.caretAfter('https://example.com');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([paragraph(link('https://example.com')), paragraph(text(' next'))]);
+    });
+
     it('only splits after a word that is not an address', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('hello'))]);
         editor.caretAfter('hello');
