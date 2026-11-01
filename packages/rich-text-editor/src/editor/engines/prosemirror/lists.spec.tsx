@@ -440,6 +440,32 @@ describe('a list holding a block no plugin knows among its items', () => {
             expect(editor.stored()?.[0]?.children?.[0]?.children).toContainEqual(block);
         });
 
+        it('refuses to nest it, node selected or spanned by a range, leaving the document alone', () => {
+            const block = unknown('unknownOnIndent');
+            const editor = editorWith(plugins, [around(block)]);
+            selectUnknown(editor.view);
+
+            expect(editor.api.lists.indent()).toBe(false);
+
+            editor.selectBetween('one', 'two');
+
+            expect(editor.api.lists.indent()).toBe(false);
+            expect(editor.onDocChange).not.toHaveBeenCalled();
+            expect(unknownRaws(editor.view)).toEqual([block]);
+        });
+
+        it('does not stop a lift when it sits inside an item rather than among them', () => {
+            const block = unknown('unknownInsideItem');
+            const editor = editorWith(plugins, [
+                list('checkList', checkItem(paragraph(text('a')), block), checkItem(paragraph(text('b')))),
+            ]);
+            editor.selectBetween('a', 'b');
+
+            expect(editor.api.lists.outdent()).toBe(true);
+
+            expect(editor.stored()).toEqual([paragraph(text('a')), block, paragraph(text('b'))]);
+        });
+
         it('leaves a list that starts with it alone: lifting and nesting find no item range there', () => {
             const block = unknown('unknownSelectedFirst');
             const editor = editorWith(plugins, [list('bulletList', block, item(paragraph(text('one'))))]);

@@ -37,12 +37,12 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
 };
 
-/** A block no plugin knows lies within the selection: lifting would take it for an item, or drop it between item boundaries. */
-const selectionHoldsUnknownBlock = (state: EditorState): boolean => {
+/** A block no plugin knows stands among a list's items within the selection: lifting would take it for an item, or drop it between item boundaries. */
+const selectionHoldsUnknownListChild = (state: EditorState, itemTypeByList: Map<string, string>): boolean => {
     const { from, to } = state.selection;
     let found = false;
-    state.doc.nodesBetween(from, to, (node) => {
-        if (node.type.name === UNKNOWN_BLOCK) {
+    state.doc.nodesBetween(from, to, (node, _pos, parent) => {
+        if (node.type.name === UNKNOWN_BLOCK && parent !== null && itemTypeByList.has(parent.type.name)) {
             found = true;
         }
         return !found;
@@ -83,7 +83,7 @@ export const createListApi = (
             if (!current) {
                 wrapInList(listType)(view.state, view.dispatch);
             } else if (current.node.type === listType) {
-                if (!selectionHoldsUnknownBlock(view.state)) {
+                if (!selectionHoldsUnknownListChild(view.state, itemTypeByList)) {
                     runListCommand(liftListItem);
                 }
             } else {
@@ -102,9 +102,15 @@ export const createListApi = (
             }
             view.focus();
         },
-        indent: () => runListCommand(sinkListItem),
+        indent() {
+            // Nested, it would sit first in its list, where nothing can lift it back out.
+            if (selectionHoldsUnknownListChild(getView().state, itemTypeByList)) {
+                return false;
+            }
+            return runListCommand(sinkListItem);
+        },
         outdent() {
-            if (selectionHoldsUnknownBlock(getView().state)) {
+            if (selectionHoldsUnknownListChild(getView().state, itemTypeByList)) {
                 return false;
             }
             return runListCommand(liftListItem);
@@ -164,7 +170,7 @@ export const liftOutOfLists = (
     { itemTypeByList }: PluginRegistry,
     schema: Schema,
 ): Transaction[] => {
-    if (selectionHoldsUnknownBlock(state)) {
+    if (selectionHoldsUnknownListChild(state, itemTypeByList)) {
         return [];
     }
     const itemTypes = [...new Set(itemTypeByList.values())].flatMap((name) => schema.nodes[name] ?? []);
