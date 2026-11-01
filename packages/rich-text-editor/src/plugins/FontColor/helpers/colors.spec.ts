@@ -5,10 +5,14 @@ import { describe, expect, it } from 'vitest';
 import { isCssColor } from './colors';
 
 describe('isCssColor', () => {
-    it('accepts a keyword, a hex value, or one colour function of plain numbers', () => {
+    it('accepts a colour keyword, a hex value, or one colour function of plain numbers', () => {
         for (const color of [
             'red',
             'Transparent',
+            'CurrentColor',
+            'RebeccaPurple',
+            'DarkSlateGrey',
+            'lightgray',
             '#abc',
             '#abcd',
             '#aabbcc',
@@ -34,6 +38,12 @@ describe('isCssColor', () => {
             '\\72 ed',
             'var(--x)',
             '#abcde',
+            'banana',
+            'inherit',
+            'initial',
+            'unset',
+            'revert',
+            'revert-layer',
             '',
         ]) {
             expect(isCssColor(color)).toBe(false);

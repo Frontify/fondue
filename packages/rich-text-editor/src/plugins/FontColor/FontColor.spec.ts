@@ -25,6 +25,10 @@ describe('the font colour mark', () => {
         }
     });
 
+    it('leaves out a stored keyword that is not a colour', () => {
+        expect(fontColor?.toHtml({ color: 'banana' }).attrs).toEqual({});
+    });
+
     it('reads a pasted colour, and ignores one that is not', () => {
         expect(parse('<span style="color: hsl(0, 50%, 50%)">x</span>')).toEqual({ color: 'hsl(0, 50%, 50%)' });
         expect(parse('<span style="color: rgb(1, 2, 3) url(x)">x</span>')).toBeNull();
