@@ -116,6 +116,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     value,
     plugins = [],
     labels: hostLabelOverrides,
+    onBlur,
     ...shellProps
 }: EditorShellProps<TBlock>): ReactNode => {
     // What the editor last reported, so an uncontrolled editor keeps its
@@ -130,12 +131,26 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     const labels = useLabels(hostLabelOverrides);
     const registry = useMemo(() => buildPluginRegistry(plugins), [plugins]);
 
+    // The document the host last heard through `onBlur`; a crash is a blur the
+    // shell never got to report, so the edits since then are owed to the host.
+    const reportedRef = useRef<RteDocumentOf | null>(ownDocumentRef.current);
+    const reportBlur = (doc: RteDocumentOf<TBlock>): void => {
+        reportedRef.current = ownDocumentRef.current;
+        onBlur?.(doc);
+    };
+    const onCatch = (): void => {
+        if (ownDocumentRef.current !== reportedRef.current) {
+            reportBlur(ownDocumentRef.current as RteDocumentOf<TBlock>);
+        }
+    };
+
     // A new key mounts the boundary and the shell afresh, from `document`.
     const [attempt, retry] = useReducer((count: number) => count + 1, 0);
 
     return (
         <EditorErrorBoundary
             key={attempt}
+            onCatch={onCatch}
             fallback={
                 <EditorFallback
                     value={value}
@@ -148,6 +163,9 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         >
             <EditorShell
                 {...shellProps}
+                onBlur={reportBlur}
+                // The Retry button that had focus is gone with the fallback.
+                focusOnMount={attempt > 0}
                 document={document}
                 ownDocumentRef={ownDocumentRef}
                 registry={registry}
@@ -163,6 +181,8 @@ type ShellProps<TBlock extends RteBlockNode> = Omit<EditorShellProps<TBlock>, 'v
     ownDocumentRef: MutableRefObject<RteDocumentOf | null>;
     registry: PluginRegistry;
     labels: RichTextEditorLabels;
+    /** Take focus once the editor has mounted, as after Retry. */
+    focusOnMount: boolean;
 };
 
 const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
@@ -170,6 +190,7 @@ const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
     ownDocumentRef,
     registry,
     labels,
+    focusOnMount,
     onChange,
     toolbarPlacement = 'top',
     readonly: readOnly = false,
@@ -216,6 +237,14 @@ const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
         },
         enabled: !readOnly,
     });
+
+    const focusPendingRef = useRef(focusOnMount);
+    useEffect(() => {
+        if (focusPendingRef.current && handle !== null) {
+            focusPendingRef.current = false;
+            handle.api.focus();
+        }
+    }, [handle]);
 
     const { focusWithin, focusProps } = useFocusWithin();
     // Blur as the host hears it: focus leaving the whole editor — text,

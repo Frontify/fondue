@@ -866,6 +866,59 @@ describe('an editor that crashes', () => {
         expect(container.textContent).toContain('typed');
     });
 
+    it('hands a host that saves on blur the edits made before the crash, once', () => {
+        silenceReact();
+        let crash = false;
+        const late: RtePlugin = {
+            id: 'late',
+            toolbarItem: ({ selection }) => {
+                if (crash && selection) {
+                    throw new Error('after the edit');
+                }
+                return <span>fine</span>;
+            },
+        };
+        const onBlur = vi.fn<(doc: RteDocument) => void>();
+        const { container, onChange, ready } = mount((change) => (
+            <RichTextEditor plugins={[late, ...defaultPlugins]} onChange={change} onBlur={onBlur} />
+        ));
+        ready();
+        crash = true;
+        paste(container, '<p>typed</p>');
+        onChange.mockClear();
+
+        expect(onBlur).toHaveBeenCalledOnce();
+        expect(JSON.stringify(onBlur.mock.calls[0]?.[0])).toContain('typed');
+
+        retry(container);
+
+        expect(onBlur).toHaveBeenCalledOnce();
+        expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it('puts the keyboard back in the text after Retry', () => {
+        silenceReact();
+        let broken = true;
+        const flaky: RtePlugin = {
+            id: 'flaky',
+            toolbarItem: () => {
+                if (broken) {
+                    throw new Error('until fixed');
+                }
+                return <span>fine</span>;
+            },
+        };
+        const { container, ready } = mount(() => <RichTextEditor value={paragraph('text')} plugins={[flaky]} />);
+        retryButton(container).focus();
+        expect(window.document.activeElement).toBe(retryButton(container));
+
+        broken = false;
+        retry(container);
+        ready();
+
+        expect(editableIn(container).contains(window.document.activeElement)).toBe(true);
+    });
+
     it('catches a node view that throws inside the view portals', () => {
         silenceReact();
         const Broken = (): ReactNode => {

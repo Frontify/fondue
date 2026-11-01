@@ -13,6 +13,8 @@ type EditorErrorBoundaryProps = {
     children: ReactNode;
     /** Shown in place of `children` once one of them throws while rendering or mounting. */
     fallback: ReactNode;
+    /** Called once when a child throws, after the fallback is chosen. */
+    onCatch?: () => void;
 };
 
 /**
@@ -28,10 +30,10 @@ export class EditorErrorBoundary extends Component<EditorErrorBoundaryProps, { f
     }
 
     override componentDidCatch(error: Error, _info: ErrorInfo): void {
-        if (process.env.NODE_ENV === 'production') {
-            return;
+        if (process.env.NODE_ENV !== 'production') {
+            console.error('[RichTextEditor] The editor crashed and was replaced by a read-only view.', error);
         }
-        console.error('[RichTextEditor] The editor crashed and was replaced by a read-only view.', error);
+        this.props.onCatch?.();
     }
 
     override render(): ReactNode {
