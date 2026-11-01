@@ -23,6 +23,10 @@ const schemeOf = (href: string): string | null => {
     return /^([a-z][a-z\d+.-]*:)/i.exec(compact)?.[1]?.toLowerCase() ?? null;
 };
 
+/** A web link with a user or password in it reads like one host and goes to another: `https://bank.com@evil.com`. */
+const hasCredentials = (url: URL): boolean =>
+    (url.protocol === 'http:' || url.protocol === 'https:') && (url.username !== '' || url.password !== '');
+
 /**
  * Whether an href may reach markup: a web, mail or phone link, or a relative
  * one. Applied to pasted and stored links alike, so `javascript:` is never
@@ -34,7 +38,15 @@ export const isSafeHref = (href: unknown): href is string => {
         return false;
     }
     const scheme = schemeOf(href);
-    return scheme === null || SAFE_SCHEMES.has(scheme);
+    if (scheme !== null && !SAFE_SCHEMES.has(scheme)) {
+        return false;
+    }
+    try {
+        // The base makes relative and protocol-relative (`//user@evil.com`) hrefs parse.
+        return !hasCredentials(new URL(href, 'https://base.invalid/'));
+    } catch {
+        return true;
+    }
 };
 
 /** Paths and fragments within the site the document is shown on, kept as typed. */
@@ -50,7 +62,7 @@ const isHost = (hostname: string): boolean =>
  * What to store for what was typed, or null when it cannot be a link.
  * `example.com` and `localhost:3000` become https, `ana@example.com` becomes
  * `mailto:`, relative paths and fragments are kept; whitespace or a scheme other
- * than web, mail and phone is rejected.
+ * than web, mail and phone is rejected, as is a web link with credentials.
  */
 export const toHref = (typed: string): string | null => {
     const trimmed = typed.trim();
@@ -72,6 +84,9 @@ export const toHref = (typed: string): string | null => {
     try {
         url = new URL(candidate);
     } catch {
+        return null;
+    }
+    if (hasCredentials(url)) {
         return null;
     }
     if (url.protocol === 'http:' || url.protocol === 'https:') {

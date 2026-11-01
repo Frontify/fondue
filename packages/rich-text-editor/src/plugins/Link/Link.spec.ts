@@ -12,7 +12,14 @@ describe('the link mark', () => {
     });
 
     it('writes no target for an unsafe or malformed one, without failing', () => {
-        for (const value of [{ href: 'javascript:0/alert(1)' }, { href: 1 }, {}, true, null]) {
+        for (const value of [
+            { href: 'javascript:0/alert(1)' },
+            { href: 'https://user:pass@example.com' },
+            { href: 1 },
+            {},
+            true,
+            null,
+        ]) {
             const html = link?.toHtml(value as never);
             expect(html?.tag).toBe('a');
             expect(html?.attrs).not.toHaveProperty('href');

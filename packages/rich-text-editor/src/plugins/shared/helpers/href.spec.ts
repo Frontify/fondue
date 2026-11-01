@@ -37,6 +37,14 @@ describe('toHref', () => {
         expect(toHref('javascript:0/alert(1)')).toBeNull();
         expect(toHref('javascript:1')).toBeNull();
     });
+
+    it('rejects a web link with credentials, and keeps an email address', () => {
+        expect(toHref('https://user:pass@example.com')).toBeNull();
+        expect(toHref('http://user@example.com')).toBeNull();
+        expect(toHref('user:pass@example.com')).toBeNull();
+        expect(toHref('jane@example.com')).toBe('mailto:jane@example.com');
+        expect(toHref('https://example.com/a@b')).toBe('https://example.com/a@b');
+    });
 });
 
 describe('isSafeHref', () => {
@@ -69,6 +77,29 @@ describe('isSafeHref', () => {
             'JAVASCRIPT:0#x',
         ]) {
             expect(isSafeHref(href)).toBe(false);
+        }
+    });
+
+    it('refuses a web link with credentials, however it is written', () => {
+        for (const href of [
+            'https://user:pass@example.com',
+            'https://user@example.com',
+            '//user@evil.com/x',
+            'HTTPS://user:pass@example.com',
+            'https://user%40x:p@example.com',
+        ]) {
+            expect(isSafeHref(href)).toBe(false);
+        }
+    });
+
+    it('allows an @ that is not credentials', () => {
+        for (const href of [
+            'https://example.com/a@b',
+            'https://example.com/?u=a@b',
+            'mailto:jane@example.com',
+            'a/b@c',
+        ]) {
+            expect(isSafeHref(href)).toBe(true);
         }
     });
 
