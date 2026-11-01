@@ -286,6 +286,10 @@ const generateDocument = (seed: number): RteBlock[] => {
         const itemType = type === 'checkList' ? 'checkItem' : 'listItem';
         const items: Json[] = [];
         for (let count = 1 + integer(3); count > 0; count--) {
+            // An unknown block may stand among the items themselves, not only inside one.
+            if (chance(0.1)) {
+                items.push(unknownBlock());
+            }
             const item: Json = { type: itemType };
             if (itemType === 'checkItem') {
                 item.checked = chance(0.5);

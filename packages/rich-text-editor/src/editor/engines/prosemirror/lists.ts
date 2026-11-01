@@ -7,7 +7,7 @@ import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry } from '#/core';
 
-import { mapChildren } from './documentConversion';
+import { mapChildren, UNKNOWN_BLOCK } from './documentConversion';
 import { warnUnknownType } from './warnings';
 
 /**
@@ -76,9 +76,12 @@ export const createListApi = (
                 // is invalid content, so converting in two steps would throw.
                 const converted = listType.create(
                     current.node.attrs,
-                    mapChildren(current.node, (item) =>
-                        item.type === itemType ? item : itemType.create(item.attrs, item.content),
-                    ),
+                    mapChildren(current.node, (item) => {
+                        if (item.type === itemType || item.type.name === UNKNOWN_BLOCK) {
+                            return item;
+                        }
+                        return itemType.create(item.attrs, item.content);
+                    }),
                 );
                 view.dispatch(view.state.tr.replaceWith(current.pos, current.pos + current.node.nodeSize, converted));
             }
@@ -105,9 +108,15 @@ export const createListApi = (
 
             const transaction = view.state.tr;
             const contentOf = (list: PmNode): PmNode[] =>
-                mapChildren(list, (item) =>
-                    mapChildren(item, (child) => (itemTypeByList.has(child.type.name) ? contentOf(child) : [child])),
-                ).flat(2);
+                mapChildren(list, (item) => {
+                    // An unknown block among the items is not an item: it stands as a sibling.
+                    if (item.type.name === UNKNOWN_BLOCK) {
+                        return [[item]];
+                    }
+                    return mapChildren(item, (child) =>
+                        itemTypeByList.has(child.type.name) ? contentOf(child) : [child],
+                    );
+                }).flat(2);
             // From the end backwards, so the earlier positions stay valid.
             for (const { node, pos } of [...lists].reverse()) {
                 transaction.replaceWith(pos, pos + node.nodeSize, contentOf(node));

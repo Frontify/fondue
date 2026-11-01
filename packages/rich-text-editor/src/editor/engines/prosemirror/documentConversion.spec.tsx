@@ -179,6 +179,26 @@ describe('the document boundary', () => {
                 warn.mockRestore();
             }
         });
+
+        it("keeps a block no plugin knows standing among a list's items, warning once", () => {
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            try {
+                const item = (value: string) => ({
+                    type: 'listItem',
+                    children: [{ type: PARAGRAPH, children: [{ text: value }] }],
+                });
+                const sidebar = { type: 'sidebar', children: [{ type: PARAGRAPH, children: [{ text: 'in' }] }] };
+                const amongItems = {
+                    version: 1,
+                    blocks: [{ type: 'bulletList', children: [item('one'), sidebar, item('two'), sidebar] }],
+                } as unknown as RteDocumentOf;
+
+                expect(toRteDocument(toEngineDocument(amongItems, schema))).toEqual(amongItems);
+                expect(warn.mock.calls.filter(([message]) => String(message).includes('"sidebar"'))).toHaveLength(1);
+            } finally {
+                warn.mockRestore();
+            }
+        });
     });
 
     it('drops the empty text run an empty document is written with', () => {

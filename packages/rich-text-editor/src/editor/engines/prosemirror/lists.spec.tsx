@@ -2,7 +2,8 @@
 
 // @vitest-environment happy-dom
 
-import { afterEach, describe, expect, it } from 'vitest';
+import { type EditorView } from 'prosemirror-view';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { type RteBlockNode } from '#/core';
 
@@ -219,5 +220,150 @@ describe('unwrapping every list', () => {
 
         expect(editor.api.lists.unwrapAll()).toBe(false);
         expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+});
+
+describe('a list holding a block no plugin knows among its items', () => {
+    const checkItem = (...children: RteBlockNode[]): RteBlockNode =>
+        ({
+            type: 'checkItem',
+            checked: false,
+            children,
+        }) as unknown as RteBlockNode;
+    const unknown = (type: string): RteBlockNode =>
+        ({
+            type,
+            tone: 'info',
+            children: [paragraph(text('kept'))],
+        }) as unknown as RteBlockNode;
+    const press = (view: EditorView, key: string, init: KeyboardEventInit = {}): boolean =>
+        view.someProp('handleKeyDown', (handle) => handle(view, new KeyboardEvent('keydown', { key, ...init }))) ===
+        true;
+    // Items on both sides of the unknown block, which stands among them.
+    const around = (block: RteBlockNode): RteBlockNode =>
+        list('bulletList', item(paragraph(text('one'))), block, item(paragraph(text('two'))));
+
+    it.each([
+        ['bullet', 'bulletList', item, 'unknownInBullets'],
+        ['numbered', 'numberedList', item, 'unknownInNumbers'],
+        ['check', 'checkList', checkItem, 'unknownInChecks'],
+    ])('loads and saves a %s list with it unchanged, warning once', (_name, type, makeItem, unknownType) => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const doc = list(
+            type,
+            makeItem(paragraph(text('one'))),
+            unknown(unknownType),
+            makeItem(paragraph(text('two'))),
+        );
+        const editor = editorWith(plugins, [paragraph(text('before')), doc]);
+        editor.caretAfter('bef');
+        editor.type('!');
+
+        expect(editor.stored()).toEqual([paragraph(text('bef!ore')), doc]);
+        expect(warn.mock.calls.filter(([message]) => String(message).includes(`"${unknownType}"`))).toHaveLength(1);
+        warn.mockRestore();
+    });
+
+    it('keeps it when the list is converted to another type', () => {
+        const block = unknown('unknownOnConvert');
+        const editor = editorWith(plugins, [around(block)]);
+        editor.caretAfter('tw');
+
+        editor.api.lists.toggle('numberedList');
+
+        expect(editor.stored()).toEqual([
+            list('numberedList', item(paragraph(text('one'))), block, item(paragraph(text('two')))),
+        ]);
+    });
+
+    it('keeps it when the list is converted to check items', () => {
+        const block = unknown('unknownOnConvertToChecks');
+        const editor = editorWith(plugins, [around(block)]);
+        editor.caretAfter('on');
+
+        editor.api.lists.toggle('checkList');
+
+        expect(editor.stored()).toEqual([
+            list('checkList', checkItem(paragraph(text('one'))), block, checkItem(paragraph(text('two')))),
+        ]);
+    });
+
+    it('keeps it when the item beside it is taken out of the list', () => {
+        const block = unknown('unknownOnToggleOff');
+        const editor = editorWith(plugins, [around(block)]);
+        editor.caretAfter('on');
+
+        editor.api.lists.toggle('bulletList');
+
+        expect(editor.stored()).toEqual([
+            paragraph(text('one')),
+            list('bulletList', block, item(paragraph(text('two')))),
+        ]);
+    });
+
+    it('keeps it, as a block of its own, when every list is unwrapped', () => {
+        const block = unknown('unknownOnUnwrap');
+        const editor = editorWith(plugins, [around(block)]);
+        editor.caretAfter('on');
+
+        expect(editor.api.lists.unwrapAll()).toBe(true);
+
+        expect(editor.stored()).toEqual([paragraph(text('one')), block, paragraph(text('two'))]);
+    });
+
+    it('keeps it when Enter splits the item beside it', () => {
+        const block = unknown('unknownOnEnter');
+        const editor = editorWith(plugins, [around(block)]);
+        editor.caretAfter('on');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            list(
+                'bulletList',
+                item(paragraph(text('on'))),
+                item(paragraph(text('e'))),
+                block,
+                item(paragraph(text('two'))),
+            ),
+        ]);
+    });
+
+    it('keeps it when the item before it is nested with Tab and lifted back with Shift-Tab', () => {
+        const block = unknown('unknownOnTab');
+        const editor = editorWith(plugins, [
+            list('bulletList', item(paragraph(text('one'))), item(paragraph(text('two'))), block),
+        ]);
+        editor.caretAfter('tw');
+
+        expect(press(editor.view, 'Tab')).toBe(true);
+        expect(editor.stored()).toEqual([list('bulletList', item(paragraph(text('one')), bullets('two')), block)]);
+
+        expect(press(editor.view, 'Tab', { shiftKey: true })).toBe(true);
+        expect(editor.stored()).toEqual([
+            list('bulletList', item(paragraph(text('one'))), item(paragraph(text('two'))), block),
+        ]);
+    });
+
+    it('leaves the item after it where it is on Tab, with nothing to nest under', () => {
+        const block = unknown('unknownOnTabAfter');
+        const editor = editorWith(plugins, [around(block)]);
+        editor.caretAfter('tw');
+
+        expect(press(editor.view, 'Tab')).toBe(false);
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('keeps it when Backspace takes the item after it out of the list', () => {
+        const block = unknown('unknownOnBackspace');
+        const editor = editorWith(plugins, [around(block)]);
+        editor.caretBefore('two');
+
+        expect(press(editor.view, 'Backspace')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            list('bulletList', item(paragraph(text('one'))), block),
+            paragraph(text('two')),
+        ]);
     });
 });

@@ -228,3 +228,34 @@ describe('a node no plugin defines', () => {
         warn.mockRestore();
     });
 });
+
+describe('a list holding a node no plugin defines among its items', () => {
+    const doc = {
+        version: 1,
+        blocks: [
+            {
+                type: 'bulletList',
+                children: [
+                    { type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'one' }] }] },
+                    { type: 'sidebar', children: [{ type: 'paragraph', children: [{ text: 'aside' }] }] },
+                    { type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'two' }] }] },
+                ],
+            },
+        ],
+    } as unknown as RteDocument;
+
+    it('is drawn as at the top level: its text in a plain div, the items around it kept', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        for (const container of [
+            rendered(<RichTextRenderer value={doc} />),
+            exported(serializeToHtml(doc, { plugins: defaultPlugins, wrap: false })),
+        ]) {
+            expect(container.querySelectorAll('li')).toHaveLength(2);
+            expect(container.querySelector('ul > div > p')?.textContent).toBe('aside');
+            expect(container.textContent).toBe('oneasidetwo');
+        }
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining('Unknown block type "sidebar"'));
+        warn.mockRestore();
+    });
+});
