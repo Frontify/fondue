@@ -269,6 +269,13 @@ const generateDocument = (seed: number): RteBlock[] => {
         return block;
     };
 
+    // Wherever blocks go, one no plugin knows may stand in for one.
+    const unknownBlock = (): Json => ({
+        type: 'sidebar',
+        children: [{ text: `unknown ${integer(10)}` }],
+        tone: pick(WORDS),
+    });
+
     const list = (depth: number): Json => {
         const type = pick(['bulletList', 'numberedList', 'checkList']);
         const itemType = type === 'checkList' ? 'checkItem' : 'listItem';
@@ -283,6 +290,8 @@ const generateDocument = (seed: number): RteBlock[] => {
             for (let length = 1 + integer(3); length > 0; length--) {
                 if (depth < 3 && chance(0.4)) {
                     children.push(list(depth + 1));
+                } else if (chance(0.1)) {
+                    children.push(unknownBlock());
                 } else {
                     children.push(textBlock('paragraph'));
                 }
@@ -307,7 +316,7 @@ const generateDocument = (seed: number): RteBlock[] => {
         } else if (roll < 0.95) {
             blocks.push({ type: 'columnBreak' });
         } else {
-            blocks.push({ type: 'sidebar', children: [{ text: `unknown ${integer(10)}` }], tone: pick(WORDS) });
+            blocks.push(unknownBlock());
         }
     }
     return blocks as unknown as RteBlock[];
