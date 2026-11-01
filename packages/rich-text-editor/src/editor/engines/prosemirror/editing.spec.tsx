@@ -17,7 +17,9 @@ import {
     type RtePlugin,
 } from '#/core';
 
+import { toEngineDocument } from './documentConversion';
 import { mountEditorForTests } from './editing';
+import { destroyEditors, editorWith, shipped } from './testEditor';
 
 /**
  * The controlled-`value` protocol: a host hands back the document it was given,
@@ -84,6 +86,7 @@ afterEach(() => {
     for (const live of mounted.splice(0)) {
         live.destroy();
     }
+    destroyEditors();
     window.document.body.replaceChildren();
 });
 
@@ -366,5 +369,164 @@ describe('the editable element', () => {
         expect(editable?.getAttribute('aria-describedby')).toBe('hint');
         expect(editable?.classList.contains('three')).toBe(true);
         expect(editable?.classList.contains('two')).toBe(false);
+    });
+});
+
+describe('a document set by the host, over generated documents', () => {
+    type Json = Record<string, unknown>;
+    type Random = () => number;
+
+    /** mulberry32: a small seeded generator, so a failing seed reproduces. */
+    const seeded = (seed: number): Random => {
+        let state = seed;
+        return () => {
+            state = (state + 0x6d2b79f5) | 0;
+            let t = Math.imul(state ^ (state >>> 15), 1 | state);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+    };
+    const below = (random: Random, count: number): number => Math.floor(random() * count);
+    const pick = <T,>(random: Random, items: readonly T[]): T => items[below(random, items.length)] as T;
+
+    const TEXTS = ['a', 'ab', 'cde', 'hello ', 'foo bar', '\u{1F600}', 'a\u{1F600}b', 'x\u{1F468}\u200D\u{1F469}y'];
+    const MARKS: readonly [string, unknown][] = [
+        ['bold', true],
+        ['italic', true],
+        ['underline', true],
+        ['link', { href: 'https://example.com' }],
+    ];
+
+    const run = (random: Random): Json => {
+        const result: Json = { text: pick(random, TEXTS) };
+        for (const [name, value] of MARKS) {
+            if (random() < 0.25) {
+                result[name] = value;
+            }
+        }
+        return result;
+    };
+    const runs = (random: Random): Json[] => Array.from({ length: below(random, 4) }, () => run(random));
+    const textBlock = (random: Random): Json => {
+        if (random() < 0.3) {
+            return {
+                type: 'textStyle',
+                style: pick(random, ['heading1', 'heading2']),
+                children: runs(random),
+            };
+        }
+        return { type: PARAGRAPH, children: runs(random) };
+    };
+    const item = (random: Random, type: string, depth: number): Json => {
+        const children: Json[] = [{ type: PARAGRAPH, children: runs(random) }];
+        if (depth < 3 && random() < 0.4) {
+            children.push(list(random, depth + 1));
+        }
+        return {
+            type,
+            ...(type === 'checkItem' ? { checked: random() < 0.5 } : {}),
+            children,
+        };
+    };
+    const list = (random: Random, depth: number): Json => {
+        const type = pick(random, ['bulletList', 'numberedList', 'checkList']);
+        const itemType = type === 'checkList' ? 'checkItem' : 'listItem';
+        return {
+            type,
+            children: Array.from({ length: 1 + below(random, 3) }, () => item(random, itemType, depth)),
+        };
+    };
+    const block = (random: Random): Json => {
+        if (random() < 0.4) {
+            return list(random, 1);
+        }
+        return textBlock(random);
+    };
+    const generate = (random: Random): RteDocumentOf => ({
+        version: 1,
+        blocks: Array.from({ length: 1 + below(random, 4) }, () => block(random)) as RteDocumentOf['blocks'],
+    });
+
+    const textBlocks = (blocks: Json[]): Json[] =>
+        blocks.flatMap((member) => {
+            const children = (member.children ?? []) as Json[];
+            if (member.type === PARAGRAPH || member.type === 'textStyle') {
+                return [member];
+            }
+            return textBlocks(children);
+        });
+
+    /** A small change: one run's text or mark, or one block inserted or removed. */
+    const mutate = (random: Random, doc: RteDocumentOf): RteDocumentOf => {
+        const copy = structuredClone(doc);
+        const roots = copy.blocks as unknown as Json[];
+        const operation = below(random, 3);
+        const withRuns = textBlocks(roots).filter((member) => (member.children as Json[]).length > 0);
+        if (operation === 0 && withRuns.length > 0) {
+            const target = pick(random, pick(random, withRuns).children as Json[]);
+            if (random() < 0.5) {
+                target.text = pick(random, TEXTS);
+            } else {
+                target.bold = random() < 0.5 ? true : undefined;
+            }
+            return copy;
+        }
+        const lists = [{ blocks: roots, make: block }];
+        const collect = (members: Json[]) => {
+            for (const member of members) {
+                const children = (member.children ?? []) as Json[];
+                if (member.type === 'bulletList' || member.type === 'numberedList' || member.type === 'checkList') {
+                    const itemType = member.type === 'checkList' ? 'checkItem' : 'listItem';
+                    lists.push({
+                        blocks: children,
+                        make: (r: Random) => item(r, itemType, 3),
+                    });
+                }
+                if (children.some((child) => 'children' in child)) {
+                    collect(children);
+                }
+            }
+        };
+        collect(roots);
+        const target = pick(random, lists);
+        if (operation === 1 && target.blocks.length > 1) {
+            target.blocks.splice(below(random, target.blocks.length), 1);
+        } else {
+            target.blocks.splice(below(random, target.blocks.length + 1), 0, target.make(random));
+        }
+        return copy;
+    };
+
+    /** A random place for the caret inside some text block. */
+    const caretPosition = (random: Random, view: EditorView): number => {
+        const places: number[] = [];
+        view.state.doc.descendants((node, position) => {
+            if (node.isTextblock) {
+                for (let offset = 0; offset <= node.content.size; offset += 1) {
+                    places.push(position + 1 + offset);
+                }
+            }
+            return true;
+        });
+        return pick(random, places);
+    };
+
+    const seeds = Array.from({ length: 200 }, (_, index) => index + 1);
+
+    it.each(seeds)('lands on exactly the new document (seed %i)', (seed) => {
+        const random = seeded(seed);
+        const before = generate(random);
+        const after = seed % 5 === 0 ? generate(random) : mutate(random, before);
+        const editor = editorWith(
+            shipped('text-style', 'bold', 'italic', 'underline', 'link', 'bullet-list', 'numbered-list', 'check-list'),
+            before.blocks as never,
+        );
+        const { view, onDocChange } = editor;
+        view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, caretPosition(random, view))));
+
+        editor.editor.setDoc(after);
+
+        expect(view.state.doc.eq(toEngineDocument(after, view.state.schema))).toBe(true);
+        expect(onDocChange).not.toHaveBeenCalled();
     });
 });
