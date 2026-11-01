@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { chainCommands, joinBackward, selectNodeBackward } from 'prosemirror-commands';
 import { type Node as PmNode, type NodeType as PmNodeType, type Schema } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem as pmSplitListItem, wrapInList } from 'prosemirror-schema-list';
 import { type Command, type EditorState, type Transaction } from 'prosemirror-state';
@@ -38,22 +37,30 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
 };
 
-/** Every unknown block standing directly in a list, by its raw block, and whether that list also holds an item. */
+/**
+ * Every unknown block standing directly in a list, by its raw block, and
+ * whether that list also holds an item. Those within `spared` are left out.
+ */
 const unknownListChildren = (
     doc: PmNode,
     itemTypeByList: Map<string, string>,
+    spared?: { from: number; to: number },
 ): { raw: unknown; withItem: boolean }[] => {
     const found: { raw: unknown; withItem: boolean }[] = [];
-    doc.descendants((node) => {
+    doc.descendants((node, pos) => {
         if (!itemTypeByList.has(node.type.name)) {
             return true;
         }
         const children = mapChildren(node, (child) => child);
         const withItem = children.some((child) => child.type.name !== UNKNOWN_BLOCK);
+        let start = pos + 1;
         for (const child of children) {
-            if (child.type.name === UNKNOWN_BLOCK) {
+            const end = start + child.nodeSize;
+            const inSpared = spared !== undefined && start < spared.to && end > spared.from;
+            if (child.type.name === UNKNOWN_BLOCK && !inSpared) {
                 found.push({ raw: child.attrs[RAW_ATTR], withItem });
             }
+            start = end;
         }
         return true;
     });
@@ -61,14 +68,22 @@ const unknownListChildren = (
 };
 
 /** Each unknown block that stood in a list still does, and in a list that still holds an item if it had one. */
-const keepsUnknownListChildren = (before: PmNode, after: PmNode, itemTypeByList: Map<string, string>): boolean => {
-    const previous = unknownListChildren(before, itemTypeByList);
+const keepsUnknownListChildren = (
+    before: PmNode,
+    after: PmNode,
+    itemTypeByList: Map<string, string>,
+    spared?: { from: number; to: number },
+): boolean => {
+    const previous = unknownListChildren(before, itemTypeByList, spared);
     // The usual document has none, and then the result need not be walked.
     if (previous.length === 0) {
         return true;
     }
     const standing = unknownListChildren(after, itemTypeByList);
-    for (const { raw, withItem } of previous) {
+    // Those that need an item first, so one sharing its raw block with another cannot take its place.
+    const needy = previous.filter((child) => child.withItem);
+    const rest = previous.filter((child) => !child.withItem);
+    for (const { raw, withItem } of [...needy, ...rest]) {
         const index = standing.findIndex((child) => child.raw === raw && (child.withItem || !withItem));
         if (index === -1) {
             return false;
@@ -83,10 +98,15 @@ const keepsUnknownListChildren = (before: PmNode, after: PmNode, itemTypeByList:
  * unknown block among them they can drop it, strand it in a list of its own, or
  * throw. Runs the command aside and applies it only if no such block is lost.
  * A refused command reports false, or true with `handleRefusal`, for a key whose
- * fallback to the baseline keymap would run the same change unguarded.
+ * fallback to the baseline keymap would run the same change unguarded. With
+ * `spareSelected`, blocks inside the selection are not tracked: the user is deleting them.
  */
-const keepingUnknownListChildren =
-    (command: Command, itemTypeByList: Map<string, string>, handleRefusal = false): Command =>
+export const keepingUnknownListChildren =
+    (
+        command: Command,
+        itemTypeByList: Map<string, string>,
+        { handleRefusal = false, spareSelected = false }: { handleRefusal?: boolean; spareSelected?: boolean } = {},
+    ): Command =>
     (state, dispatch, view) => {
         const captured: Transaction[] = [];
         try {
@@ -100,7 +120,8 @@ const keepingUnknownListChildren =
         if (transaction === undefined) {
             return true;
         }
-        if (!keepsUnknownListChildren(state.doc, transaction.doc, itemTypeByList)) {
+        const spared = spareSelected ? state.selection : undefined;
+        if (!keepsUnknownListChildren(state.doc, transaction.doc, itemTypeByList, spared)) {
             return handleRefusal;
         }
         dispatch?.(transaction);
@@ -278,14 +299,5 @@ export const listKeys = (api: EditorControlApi, itemTypeByList: Map<string, stri
     // At the start of an item, lift it out one level (out of the list at the
     // top) — the engine's own Backspace would join it into the item above as a
     // bare paragraph.
-    // When the lift is refused to keep an unknown block, the baseline's own
-    // item-start behaviour must not run the same lift unguarded.
-    Backspace: (state, dispatch, view) =>
-        atItemStart(state, itemTypeByList) &&
-        (api.lists.outdent() ||
-            keepingUnknownListChildren(chainCommands(joinBackward, selectNodeBackward), itemTypeByList, true)(
-                state,
-                dispatch,
-                view,
-            )),
+    Backspace: (state) => atItemStart(state, itemTypeByList) && api.lists.outdent(),
 });

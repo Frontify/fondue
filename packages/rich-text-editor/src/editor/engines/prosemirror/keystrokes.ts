@@ -11,7 +11,7 @@ import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type Rt
 
 import { keepCarriedAttrs } from './controlApi';
 import { valueAttrsFor } from './documentConversion';
-import { listKeys } from './lists';
+import { keepingUnknownListChildren, listKeys } from './lists';
 
 /**
  * What happens when a key is pressed, as one ordered list of ProseMirror plugins.
@@ -31,6 +31,19 @@ import { listKeys } from './lists';
 
 export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api: EditorControlApi): PmPlugin[] => {
     const hasLists = registry.itemTypeByList.size > 0;
+    let baseline: Record<string, Command> = baseKeymap;
+    if (hasLists) {
+        // Its joins and lifts take a list's children for items, so an unknown block among them can be lost; a refused key still counts as handled.
+        baseline = Object.fromEntries(
+            Object.entries(baseKeymap).map(([key, command]) => [
+                key,
+                keepingUnknownListChildren(command, registry.itemTypeByList, {
+                    handleRefusal: true,
+                    spareSelected: true,
+                }),
+            ]),
+        );
+    }
 
     return [
         // 1
@@ -50,7 +63,7 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         ...typingRewrites(registry, schema),
         // 5
         keymap({ Backspace: resetEmptyFirstBlock }),
-        keymap(baseKeymap),
+        keymap(baseline),
     ];
 };
 

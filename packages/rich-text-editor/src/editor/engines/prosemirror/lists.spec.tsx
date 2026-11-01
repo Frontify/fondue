@@ -2,13 +2,14 @@
 
 // @vitest-environment happy-dom
 
-import { NodeSelection } from 'prosemirror-state';
+import { type EditorState, NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { type RteBlockNode } from '#/core';
 
 import { RAW_ATTR, UNKNOWN_BLOCK } from './documentConversion';
+import { keepingUnknownListChildren } from './lists';
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
 
 /**
@@ -440,15 +441,79 @@ describe('a list holding a block no plugin knows among its items', () => {
             });
         });
 
-        it('keeps it when Delete at the end of the item before it joins it forward, inside that item', () => {
+        it('refuses Delete at the end of the item before it, which would pull it into that item', () => {
             const block = unknown('unknownOnDelete');
             const editor = editorWith(plugins, [around(block)]);
             editor.caretAfter('one');
 
             expect(press(editor.view, 'Delete')).toBe(true);
 
+            expect(editor.onDocChange).not.toHaveBeenCalled();
             expect(unknownRaws(editor.view)).toEqual([block]);
-            expect(editor.stored()?.[0]?.children?.[0]?.children).toContainEqual(block);
+        });
+
+        /** The caret in the one empty paragraph, which holds no text to find it by. */
+        const caretInEmptyParagraph = (view: EditorView): void => {
+            let at = -1;
+            view.state.doc.descendants((node, pos) => {
+                if (node.isTextblock && node.content.size === 0) {
+                    at = pos + 1;
+                }
+            });
+            view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, at)));
+        };
+
+        it('refuses Enter in an empty item beside it, which would strand it in a list of its own', () => {
+            const block = unknown('unknownOnEmptyEnter');
+            const editor = editorWith(plugins, [list('bulletList', item(paragraph()), block)]);
+            caretInEmptyParagraph(editor.view);
+
+            expect(press(editor.view, 'Enter')).toBe(true);
+
+            expect(editor.onDocChange).not.toHaveBeenCalled();
+            expect(unknownRaws(editor.view)).toEqual([block]);
+        });
+
+        it('refuses Mod-Backspace in an empty last item, which would leave a list of nothing but it', () => {
+            const block = unknown('unknownOnWordBackspace');
+            const editor = editorWith(plugins, [list('bulletList', block, item(paragraph()))]);
+            caretInEmptyParagraph(editor.view);
+
+            expect(press(editor.view, 'Backspace', { ctrlKey: true })).toBe(true);
+
+            expect(editor.onDocChange).not.toHaveBeenCalled();
+            expect(unknownRaws(editor.view)).toEqual([block]);
+        });
+
+        it.each(['Backspace', 'Delete'])('still deletes it on %s when the selection covers it', (key) => {
+            const block = unknown('unknownDeleted');
+            const editor = editorWith(plugins, [around(block)]);
+            editor.selectBetween('one', 'two');
+
+            expect(press(editor.view, key)).toBe(true);
+
+            expect(unknownRaws(editor.view)).toEqual([]);
+        });
+
+        it('matches two blocks sharing one raw block by the list each stands in', () => {
+            const block = unknown('unknownShared');
+            const editor = editorWith(plugins, [
+                list('bulletList', block),
+                list('bulletList', item(paragraph()), block),
+            ]);
+            const swap = (state: EditorState, dispatch?: (transaction: Transaction) => void): boolean => {
+                dispatch?.(state.tr.replaceWith(0, state.doc.content.size, [state.doc.child(1), state.doc.child(0)]));
+                return true;
+            };
+            const dispatch = vi.fn();
+
+            const kept = keepingUnknownListChildren(swap, new Map([['bulletList', 'listItem']]))(
+                editor.view.state,
+                dispatch,
+            );
+
+            expect(kept).toBe(true);
+            expect(dispatch).toHaveBeenCalledTimes(1);
         });
 
         it('refuses to nest it, node selected or spanned by a range, leaving the document alone', () => {
