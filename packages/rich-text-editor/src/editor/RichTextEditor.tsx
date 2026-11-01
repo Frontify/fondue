@@ -33,6 +33,11 @@ import styles from './richTextEditor.module.scss';
  * `RichTextEditor<RteBlock | CalloutBlock>`.
  */
 export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
+    /**
+     * The document to show. The editor keeps references into it, so pass a
+     * new object to change it, never mutate one already passed (in
+     * development its values are frozen once edited).
+     */
     value?: RteDocumentOf<TBlock>;
     /**
      * Called with the new document after each edit. Emitted documents share
