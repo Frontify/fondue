@@ -2,7 +2,7 @@
 
 import { type Node as PmNode, type NodeType as PmNodeType, type Schema } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem as pmSplitListItem, wrapInList } from 'prosemirror-schema-list';
-import { type Command, type EditorState, type Transaction } from 'prosemirror-state';
+import { type Command, type EditorState, NodeSelection, type Transaction } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry } from '#/core';
@@ -37,6 +37,10 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
 };
 
+/** A block no plugin knows is selected as a node: lifting would take it for an item and delete it. */
+const unknownBlockSelected = (state: EditorState): boolean =>
+    state.selection instanceof NodeSelection && state.selection.node.type.name === UNKNOWN_BLOCK;
+
 // The list half of the control API
 
 /** Implements `EditorControlApi['lists']` against the live view. */
@@ -70,7 +74,9 @@ export const createListApi = (
             if (!current) {
                 wrapInList(listType)(view.state, view.dispatch);
             } else if (current.node.type === listType) {
-                runListCommand(liftListItem);
+                if (!unknownBlockSelected(view.state)) {
+                    runListCommand(liftListItem);
+                }
             } else {
                 // One step: a check list holding bullet items (or the reverse)
                 // is invalid content, so converting in two steps would throw.
@@ -88,7 +94,12 @@ export const createListApi = (
             view.focus();
         },
         indent: () => runListCommand(sinkListItem),
-        outdent: () => runListCommand(liftListItem),
+        outdent() {
+            if (unknownBlockSelected(getView().state)) {
+                return false;
+            }
+            return runListCommand(liftListItem);
+        },
         split: () => runListCommand(pmSplitListItem),
         unwrapAll() {
             const view = getView();
@@ -144,6 +155,9 @@ export const liftOutOfLists = (
     { itemTypeByList }: PluginRegistry,
     schema: Schema,
 ): Transaction[] => {
+    if (unknownBlockSelected(state)) {
+        return [];
+    }
     const itemTypes = [...new Set(itemTypeByList.values())].flatMap((name) => schema.nodes[name] ?? []);
     const transactions: Transaction[] = [];
     let current = state;

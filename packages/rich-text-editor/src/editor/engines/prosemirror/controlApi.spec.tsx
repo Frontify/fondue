@@ -9,7 +9,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { defineBlock, defineInline, defineMark, type RteBlockNode, type RtePlugin } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
-import { toEngineDocument } from './documentConversion';
+import { RAW_ATTR, toEngineDocument, UNKNOWN_BLOCK } from './documentConversion';
 import { destroyEditors, editorWith, paragraph, text } from './testEditor';
 
 /**
@@ -356,6 +356,33 @@ describe('blocks.setType inside a list', () => {
         editor.api.blocks.setType('textStyle', { style: 'heading1' });
 
         expect(editor.stored()).toEqual([heading]);
+    });
+
+    describe.each([
+        ['in the middle', (block: RteBlockNode) => [item(paragraph(text('one'))), block, item(paragraph(text('two')))]],
+        ['last', (block: RteBlockNode) => [item(paragraph(text('one'))), item(paragraph(text('two'))), block]],
+    ] as const)('with a block no plugin knows selected as a node, %s', (_where, items) => {
+        it('keeps it', () => {
+            const block = { type: 'unknownSelected', children: [paragraph(text('kept'))] } as unknown as RteBlockNode;
+            const editor = editorWith(plugins, [bullets(...items(block))]);
+            let at = -1;
+            editor.view.state.doc.descendants((node, pos) => {
+                if (node.type.name === UNKNOWN_BLOCK) {
+                    at = pos;
+                }
+            });
+            editor.view.dispatch(editor.view.state.tr.setSelection(NodeSelection.create(editor.view.state.doc, at)));
+
+            editor.api.blocks.setType('paragraph');
+
+            const raws: unknown[] = [];
+            editor.view.state.doc.descendants((node) => {
+                if (node.type.name === UNKNOWN_BLOCK) {
+                    raws.push(node.attrs[RAW_ATTR]);
+                }
+            });
+            expect(raws).toEqual([block]);
+        });
     });
 
     it('works for a check list', () => {

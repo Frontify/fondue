@@ -2,11 +2,13 @@
 
 // @vitest-environment happy-dom
 
+import { NodeSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { type RteBlockNode } from '#/core';
 
+import { RAW_ATTR, UNKNOWN_BLOCK } from './documentConversion';
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
 
 /**
@@ -365,5 +367,67 @@ describe('a list holding a block no plugin knows among its items', () => {
             list('bulletList', item(paragraph(text('one'))), block),
             paragraph(text('two')),
         ]);
+    });
+
+    describe('selected as a node', () => {
+        const layouts = [
+            [
+                'in the middle',
+                (block: RteBlockNode) => [item(paragraph(text('one'))), block, item(paragraph(text('two')))],
+            ],
+            ['last', (block: RteBlockNode) => [item(paragraph(text('one'))), item(paragraph(text('two'))), block]],
+        ] as const;
+        const commands = [
+            [
+                'toggling the same list type',
+                (editor: ReturnType<typeof editorWith>) => editor.api.lists.toggle('bulletList'),
+            ],
+            ['outdenting', (editor: ReturnType<typeof editorWith>) => editor.api.lists.outdent()],
+        ] as const;
+
+        /** The raw of every unknown block in the engine's document. */
+        const unknownRaws = (view: EditorView): unknown[] => {
+            const raws: unknown[] = [];
+            view.state.doc.descendants((node) => {
+                if (node.type.name === UNKNOWN_BLOCK) {
+                    raws.push(node.attrs[RAW_ATTR]);
+                }
+            });
+            return raws;
+        };
+        const selectUnknown = (view: EditorView): void => {
+            let at = -1;
+            view.state.doc.descendants((node, pos) => {
+                if (node.type.name === UNKNOWN_BLOCK) {
+                    at = pos;
+                }
+            });
+            view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, at)));
+        };
+
+        describe.each(layouts)('%s', (_where, items) => {
+            it.each(commands)('keeps it on %s', (_name, run) => {
+                const block = unknown('unknownSelected');
+                const editor = editorWith(plugins, [list('bulletList', ...items(block))]);
+                selectUnknown(editor.view);
+
+                run(editor);
+
+                expect(unknownRaws(editor.view)).toEqual([block]);
+            });
+        });
+
+        it('leaves a list that starts with it alone: lifting and nesting find no item range there', () => {
+            const block = unknown('unknownSelectedFirst');
+            const editor = editorWith(plugins, [list('bulletList', block, item(paragraph(text('one'))))]);
+            selectUnknown(editor.view);
+
+            expect(editor.api.lists.outdent()).toBe(false);
+            expect(editor.api.lists.indent()).toBe(false);
+            editor.api.lists.toggle('bulletList');
+
+            expect(editor.onDocChange).not.toHaveBeenCalled();
+            expect(unknownRaws(editor.view)).toEqual([block]);
+        });
     });
 });
