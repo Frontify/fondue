@@ -444,6 +444,23 @@ describe('Enter in a to-do list', () => {
         expect(editor.stored()).toEqual([checkList({ checked: true, text: 'one' }, { checked: false, text: 'two' })]);
     });
 
+    it('at the very start of a checked item puts an unchecked empty item above and keeps the text checked', () => {
+        const editor = editorWith(defaultPlugins, [checkList({ checked: true, text: 'text' })]);
+        editor.caretBefore('text');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'checkList',
+                children: [
+                    { type: 'checkItem', checked: false, children: [paragraph()] },
+                    { type: 'checkItem', checked: true, children: [paragraph(text('text'))] },
+                ],
+            },
+        ]);
+    });
+
     it('leaves a bullet list as it was', () => {
         const editor = editorWith(defaultPlugins, [
             { type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('one'))] }] },
@@ -488,6 +505,18 @@ describe('Enter in a block with attributes every text block carries', () => {
         press(editor.view, 'Enter');
 
         expect(editor.stored()).toEqual([aligned('one'), aligned('two')]);
+    });
+
+    it('over a range across two blocks takes the alignment of the block it starts in', () => {
+        const editor = editorWith(defaultPlugins, [
+            { type: 'paragraph', align: 'left', children: [text('abc')] },
+            { type: 'paragraph', align: 'center', children: [text('def')] },
+        ]);
+        editor.selectBetween('abc', 'd');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()?.map((block) => (block as { align?: string }).align)).toEqual(['center', 'left']);
     });
 
     it('at the end of a heading gives an aligned paragraph', () => {

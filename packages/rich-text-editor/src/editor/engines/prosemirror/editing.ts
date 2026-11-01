@@ -72,6 +72,8 @@ const mount = ({
     const emittedDocs = new WeakSet<typeof initialDoc>();
     // A paste, cut or drop just happened: the next edit starts an undo step of its own.
     let closeBeforeNextEdit = false;
+    // A feature's paste handler is running: what it dispatches is a paste too, though it carries no `uiEvent`.
+    let inFeaturePaste = false;
 
     // 1. Views with editing UI (blocks, inline elements, link-like marks) follow
     //    the selection, since `isFocused` does. Each state change is offered to
@@ -106,9 +108,17 @@ const mount = ({
         markViews: createMarkViews(registry, api, liveViews, openEditors),
         clipboardSerializer: clipboardSerializer(schema),
         clipboardParser: clipboardParser(schema),
-        handlePaste: (pasteView, event, slice) =>
-            handlePasteByFeatures(registry.pasteHandlers, api)(pasteView, event) ||
-            handlePasteIntoEmptyBlock(pasteView, event, slice),
+        handlePaste: (pasteView, event, slice) => {
+            inFeaturePaste = true;
+            try {
+                if (handlePasteByFeatures(registry.pasteHandlers, api)(pasteView, event)) {
+                    return true;
+                }
+            } finally {
+                inFeaturePaste = false;
+            }
+            return handlePasteIntoEmptyBlock(pasteView, event, slice);
+        },
         state: EditorState.create({
             doc: toEngineDocument(initialDoc, schema),
             plugins: [
@@ -131,7 +141,7 @@ const mount = ({
         dispatchTransaction(transaction) {
             // Typing groups into one undo step; a paste, cut or drop, and the first edit after it, stand apart.
             const uiEvent: unknown = transaction.getMeta('uiEvent');
-            const isTransfer = uiEvent === 'paste' || uiEvent === 'cut' || uiEvent === 'drop';
+            const isTransfer = inFeaturePaste || uiEvent === 'paste' || uiEvent === 'cut' || uiEvent === 'drop';
             if (isTransfer || (closeBeforeNextEdit && transaction.docChanged)) {
                 closeHistory(transaction);
             }

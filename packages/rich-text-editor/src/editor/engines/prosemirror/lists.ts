@@ -51,6 +51,7 @@ const splitListItem =
     (registry: PluginRegistry, itemType: PmNodeType): Command =>
     (state, dispatch) => {
         const source = state.selection.$from.parent;
+        const atBlockStart = state.selection.$from.parentOffset === 0;
         return pmSplitListItem(itemType)(
             state,
             dispatch &&
@@ -61,19 +62,24 @@ const splitListItem =
                         if (item.type !== itemType) {
                             continue;
                         }
-                        const itemPos = $from.before(depth);
-                        const defaults = itemType.create().attrs;
-                        if (!sameAttrs(item.attrs, defaults)) {
-                            transaction.setNodeMarkup(itemPos, undefined, defaults);
-                        }
                         const block = item.firstChild;
-                        if (block?.isTextblock) {
+                        const caretItemPos = $from.before(depth);
+                        // Split at the very start, the text stays in the caret's item and the empty one above is new.
+                        const previous = transaction.doc.resolve(caretItemPos).nodeBefore;
+                        const newAbove = atBlockStart && block !== null && block.content.size > 0 && previous !== null;
+                        const newPos = newAbove ? caretItemPos - previous.nodeSize : caretItemPos;
+                        const newItem = transaction.doc.nodeAt(newPos);
+                        const defaults = itemType.create().attrs;
+                        if (newItem && !sameAttrs(newItem.attrs, defaults)) {
+                            transaction.setNodeMarkup(newPos, undefined, defaults);
+                        }
+                        if (!newAbove && block?.isTextblock) {
                             const carried = {
                                 ...block.attrs,
                                 ...keepCarriedAttrs(registry, block.type, undefined)(source),
                             };
                             if (!sameAttrs(block.attrs, carried)) {
-                                transaction.setNodeMarkup(itemPos + 1, undefined, carried);
+                                transaction.setNodeMarkup(caretItemPos + 1, undefined, carried);
                             }
                         }
                         break;

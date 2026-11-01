@@ -315,23 +315,26 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
  * attributes every text block carries (alignment), which a split at the end of
  * a block would otherwise drop with the block's type.
  */
-const splitKeepingCarriedAttrs = (registry: PluginRegistry): Command =>
-    chainCommands(
-        newlineInCode,
-        createParagraphNear,
-        liftEmptyBlock,
-        splitBlockAs((node, atEnd, $from) => {
-            // Mid-block the split copies every attribute of the block already.
-            if (!atEnd) {
-                return null;
-            }
-            const type = $from.node(-1).contentMatchAt($from.indexAfter(-1)).defaultType;
-            if (!type) {
-                return null;
-            }
-            return { type, attrs: keepCarriedAttrs(registry, type, undefined)(node) };
-        }),
-    );
+const splitKeepingCarriedAttrs =
+    (registry: PluginRegistry): Command =>
+    (state, dispatch) => {
+        // Read before any selected range is deleted: that can leave the block the range ended in.
+        const source = state.selection.$from.parent;
+        return chainCommands(
+            newlineInCode,
+            createParagraphNear,
+            liftEmptyBlock,
+            splitBlockAs((node, atEnd, $from) => {
+                const type = atEnd ? $from.node(-1).contentMatchAt($from.indexAfter(-1)).defaultType : node.type;
+                if (!type) {
+                    return null;
+                }
+                const carried = keepCarriedAttrs(registry, type, undefined)(source);
+                // Mid-block the new block is the same kind, so it keeps all of its attributes.
+                return { type, attrs: atEnd ? carried : { ...node.attrs, ...carried } };
+            }),
+        )(state, dispatch);
+    };
 
 /**
  * Backspace in an emptied block at the very top that is not the default block

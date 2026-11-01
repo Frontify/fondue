@@ -18,6 +18,7 @@ import {
 } from '#/core';
 
 import { mountEditorForTests } from './editing';
+import { destroyEditors, editorWith, paragraph as paragraphBlock, shipped, text } from './testEditor';
 
 /**
  * The controlled-`value` protocol: a host hands back the document it was given,
@@ -81,6 +82,7 @@ const mount = (
 };
 
 afterEach(() => {
+    destroyEditors();
     for (const live of mounted.splice(0)) {
         live.destroy();
     }
@@ -226,6 +228,34 @@ describe('undo after a paste', () => {
 
         undo(view.state, view.dispatch);
         expect(stored()).toEqual({ version: 1, blocks: [{ type: PARAGRAPH, children: [] }] });
+    });
+});
+
+describe('undo after a paste a feature handles', () => {
+    it('takes the typing before, the paste and the typing after back as three steps', () => {
+        const insertsText: RtePlugin = {
+            id: 'inserts',
+            onPaste: ({ text: pasted }, api) => {
+                api.insertText(pasted);
+                return true;
+            },
+        };
+        const editor = editorWith([...shipped(), insertsText], [paragraphBlock()]);
+        const undoOnce = (): void => {
+            undo(editor.view.state, editor.view.dispatch);
+        };
+        editor.type('one');
+        editor.paste(' pasted');
+        editor.type(' two');
+
+        undoOnce();
+        expect(editor.stored()).toEqual([paragraphBlock(text('one pasted'))]);
+
+        undoOnce();
+        expect(editor.stored()).toEqual([paragraphBlock(text('one'))]);
+
+        undoOnce();
+        expect(editor.stored()).toEqual([paragraphBlock()]);
     });
 });
 
