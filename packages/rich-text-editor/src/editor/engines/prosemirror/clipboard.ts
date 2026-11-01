@@ -3,15 +3,16 @@
 import {
     DOMParser as PmDOMParser,
     DOMSerializer,
+    Fragment,
     type Node as PmNode,
     type Schema,
-    type Slice,
+    Slice,
 } from 'prosemirror-model';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PasteHandler } from '#/core';
 
-import { EXTRA_ATTR } from './documentConversion';
+import { EXTRA_ATTR, mapChildren } from './documentConversion';
 
 // Copy and paste fixes beyond what the engine does on its own.
 
@@ -44,6 +45,28 @@ class ClipboardSerializer extends DOMSerializer {
         return written;
     }
 }
+
+const withoutExtras = (node: PmNode): PmNode => {
+    let changed = false;
+    const children = mapChildren(node, (child) => {
+        const kept = withoutExtras(child);
+        changed ||= kept !== child;
+        return kept;
+    });
+    const hasExtras = node.attrs[EXTRA_ATTR] !== null && node.attrs[EXTRA_ATTR] !== undefined;
+    if (!changed && !hasExtras) {
+        return node;
+    }
+    let attrs = node.attrs;
+    if (hasExtras) {
+        attrs = { ...node.attrs, [EXTRA_ATTR]: null };
+    }
+    return node.type.create(attrs, Fragment.from(children), node.marks);
+};
+
+/** A copied slice without the undeclared stored keys: `data-pm-slice` writes its open wrappers' attributes onto the clipboard. */
+export const sliceWithoutExtras = (slice: Slice): Slice =>
+    new Slice(Fragment.fromArray(slice.content.content.map(withoutExtras)), slice.openStart, slice.openEnd);
 
 export const clipboardSerializer = (schema: Schema): DOMSerializer => {
     const nodes = DOMSerializer.nodesFromSchema(schema);

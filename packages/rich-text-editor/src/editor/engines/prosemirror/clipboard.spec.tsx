@@ -4,6 +4,7 @@
 
 import { afterEach, describe, expect, it } from 'vitest';
 
+import { type RteBlockNode } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { clipboardSerializer } from './clipboard';
@@ -25,6 +26,35 @@ const copied = (editor: ReturnType<typeof editorWith>): string => {
 };
 
 describe('copying', () => {
+    const copiedFromList = (): string => {
+        const source = editorWith(defaultPlugins, [
+            {
+                type: 'bulletList',
+                k: 1,
+                children: [{ type: 'listItem', k: 1, children: [paragraph(text('one'), text('two'))] }],
+            } as RteBlockNode,
+        ]);
+        source.select('net');
+        return source.view.serializeForClipboard(source.view.state.selection.content()).dom.innerHTML;
+    };
+
+    it('puts no undeclared key on the clipboard', () => {
+        const html = copiedFromList();
+
+        expect(html).toContain('data-pm-slice');
+        // The attribute's name still shows in `data-pm-slice`, but empty.
+        expect(html).not.toContain('"k"');
+    });
+
+    it('brings no undeclared keys along when pasted back', () => {
+        const target = editorWith(defaultPlugins, [paragraph()]);
+        target.view.focus();
+
+        target.pasteHTML(copiedFromList());
+
+        expect(JSON.stringify(target.stored())).not.toContain('"k"');
+    });
+
     it('keeps a line break at the end of a block, which a single <br> would lose', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('line'), { type: 'break' })]);
 
