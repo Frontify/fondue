@@ -24,8 +24,13 @@ const typed = (value: string, plugins: readonly RtePlugin[] = defaultPlugins): R
     return editor.stored();
 };
 
-const press = (view: EditorView, key: string, init: KeyboardEventInit = {}): boolean =>
-    view.someProp('handleKeyDown', (handle) => handle(view, new KeyboardEvent('keydown', { key, ...init }))) === true;
+const press = (view: EditorView, key: string, init: KeyboardEventInit = {}): boolean => {
+    const event = new KeyboardEvent('keydown', { key, ...init });
+    // happy-dom answers `getModifierState('AltGraph')` with `altKey`, so every Alt key reads as AltGr.
+    const getModifierState = event.getModifierState.bind(event);
+    event.getModifierState = (modifier) => modifier !== 'AltGraph' && getModifierState(modifier);
+    return view.someProp('handleKeyDown', (handle) => handle(view, event)) === true;
+};
 
 afterEach(destroyEditors);
 

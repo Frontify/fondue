@@ -18,11 +18,13 @@ import { listKeys } from './lists';
  * Order is precedence: the first plugin to handle a key wins, so keep the list
  * in `keystrokePipeline` matching the numbers used below.
  *
+ * 0. Every handler below steps aside for keys that enter text rather than
+ *    command the editor (an input method's, AltGr combinations).
  * 1. Undo / redo, and Backspace right after a typing rewrite (takes the rewrite back).
  * 2. Feature hotkeys (Mod-b, ...). Before the list keys so a feature can take a
  *    key lists would claim (`blurOnBreak` takes Enter).
  * 3. List keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
- * 4. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`).
+ * 4. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`); never on composed text.
  * 5. Baseline keymap, plus Backspace resetting an emptied first heading.
  *
  * Mark input rules build their own transaction instead of calling
@@ -51,7 +53,37 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         // 5
         keymap({ Backspace: resetEmptyFirstBlock }),
         keymap(baseKeymap),
-    ];
+    ].map(ignoringTextEntryKeys);
+};
+
+// Text entry keys
+
+/**
+ * A key an input method or an AltGr combination sends is text, not a command:
+ * Enter that commits a composition must not split the block, and AltGr+q (`@` on
+ * a German layout, Ctrl+Alt on Windows) must not run a Mod-Alt hotkey.
+ */
+const isTextEntryKey = (event: KeyboardEvent): boolean =>
+    event.isComposing || event.keyCode === 229 || (event.getModifierState?.('AltGraph') ?? false);
+
+/**
+ * The plugin with its key handler skipping those keys. It declines them rather
+ * than claiming them: a claimed keydown is `preventDefault`ed, which would stop
+ * the browser from typing the character.
+ */
+const ignoringTextEntryKeys = (plugin: PmPlugin): PmPlugin => {
+    const { handleKeyDown } = plugin.props;
+    if (!handleKeyDown) {
+        return plugin;
+    }
+    return new Plugin({
+        ...plugin.spec,
+        props: {
+            ...plugin.props,
+            // ProseMirror itself calls this with plain `Event`s for Android's Enter and Backspace.
+            handleKeyDown: (view, event) => !isTextEntryKey(event) && handleKeyDown.call(plugin, view, event),
+        },
+    });
 };
 
 // Feature hotkeys
@@ -125,7 +157,18 @@ const typingRewrites = (registry: PluginRegistry, schema: Schema): PmPlugin[] =>
     // reads as an italic `*` wrapping `*bold*`.
     const rules = registry.inputRules.flatMap((rule) => toEngineRule(rule, context) ?? []);
 
-    return rules.length > 0 ? [inputRules({ rules })] : [];
+    return rules.length > 0 ? [withoutRewriteOnCompositionEnd(inputRules({ rules }))] : [];
+};
+
+/**
+ * The engine runs its rules again when a composition ends, which would rewrite
+ * text the input method just committed (`- ` into a list, an address into a
+ * link). Only its typed-character handler stays; that one skips composing text itself.
+ * The plugin is edited in place: its undo bookkeeping is keyed by the instance.
+ */
+const withoutRewriteOnCompositionEnd = (plugin: PmPlugin): PmPlugin => {
+    delete plugin.props.handleDOMEvents;
+    return plugin;
 };
 
 const toEngineRule = (rule: RteInputRule, context: RuleContext): InputRule | null => {
