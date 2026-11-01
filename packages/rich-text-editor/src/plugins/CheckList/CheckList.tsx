@@ -146,10 +146,12 @@ export const checkListPlugin = (): RtePlugin => ({
             <IconListCheck size={16} />
         </ToolbarButton>
     ),
-    // `[] ` and `[ ] ` both start one, the two ways a to-do is written in markdown.
+    // `[] ` and `[ ] ` both start one, the two ways a to-do is written in markdown; `[x] ` starts it done.
     inputRules: [
         { kind: 'list', match: '[] ', list: 'checkList' },
         { kind: 'list', match: '[ ] ', list: 'checkList' },
+        { kind: 'list', match: '[x] ', list: 'checkList', itemAttributes: { checked: true } },
+        { kind: 'list', match: '[X] ', list: 'checkList', itemAttributes: { checked: true } },
     ],
     commands: [
         {

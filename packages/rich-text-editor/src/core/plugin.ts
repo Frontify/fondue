@@ -295,8 +295,8 @@ export type RteInputRule =
     | { kind: 'mark'; key: string; delimiter: string }
     /** A prefix turns the block into another type: `## ` becomes a level-2 heading. */
     | { kind: 'block'; match: string; block: string; attributes?: Record<string, unknown> }
-    /** A prefix wraps the block in a list: `- `, `1. `. */
-    | { kind: 'list'; match: string; list: string }
+    /** A prefix wraps the block in a list: `- `, `1. `. `itemAttributes` set attributes on the new item: `[x] ` starts it checked. */
+    | { kind: 'list'; match: string; list: string; itemAttributes?: Record<string, unknown> }
     /**
      * A token ended by a space (or punctuation then a space) becomes text
      * carrying the mark — an autolink. `pattern` matches the token only; the

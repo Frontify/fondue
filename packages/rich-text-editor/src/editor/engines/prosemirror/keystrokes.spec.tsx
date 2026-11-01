@@ -96,6 +96,15 @@ describe('typing a list shortcut at the start of a line', () => {
         ]);
     });
 
+    it.each(['[x] ', '[X] '])('turns "%s" into a checked item', (prefix) => {
+        expect(typed(`${prefix}task`)).toEqual([
+            {
+                type: 'checkList',
+                children: [{ type: 'checkItem', checked: true, children: [paragraph(text('task'))] }],
+            },
+        ]);
+    });
+
     it('stays plain text when no list is mounted', () => {
         expect(typed('- item', shipped('quote'))).toEqual([paragraph(text('- item'))]);
     });

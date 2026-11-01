@@ -2,6 +2,8 @@
 
 // @vitest-environment happy-dom
 
+import { undo as pmUndo } from 'prosemirror-history';
+import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { defaultPlugins } from '#/plugins';
@@ -96,5 +98,53 @@ describe('typing a web address', () => {
 
         expect(handled).toBe(true);
         expect(editor.stored()).toEqual([paragraph(text('https://example.com '))]);
+    });
+});
+
+const press = (view: EditorView, key: string): boolean =>
+    view.someProp('handleKeyDown', (handle) => handle(view, new KeyboardEvent('keydown', { key }))) === true;
+
+const undo = (view: EditorView): boolean => pmUndo(view.state, view.dispatch);
+
+// An address followed by Enter becomes a link just as one followed by a space does.
+
+describe('pressing Enter after a web address', () => {
+    it('links the address and splits the block', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('see https://example.com'))]);
+        editor.caretAfter('https://example.com');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([paragraph(text('see '), link('https://example.com')), paragraph()]);
+    });
+
+    it('does nothing inside inline code, only splitting', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com', { code: true }))]);
+        editor.caretAfter('https://example.com');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([paragraph(text('https://example.com', { code: true })), paragraph()]);
+    });
+
+    it('only splits after a word that is not an address', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('hello'))]);
+        editor.caretAfter('hello');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([paragraph(text('hello')), paragraph()]);
+    });
+
+    it('is undone in two steps: the split first, then the link', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com'))]);
+        editor.caretAfter('https://example.com');
+        press(editor.view, 'Enter');
+
+        undo(editor.view);
+        expect(editor.stored()).toEqual([paragraph(link('https://example.com'))]);
+
+        undo(editor.view);
+        expect(editor.stored()).toEqual([paragraph(text('https://example.com'))]);
     });
 });
