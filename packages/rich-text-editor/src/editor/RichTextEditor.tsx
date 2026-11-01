@@ -11,6 +11,7 @@ import {
     useMemo,
     useReducer,
     useRef,
+    useState,
 } from 'react';
 
 import {
@@ -131,13 +132,15 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     // shell never got to report, so the edits since then are owed to the host.
     const reportedRef = useRef<RteDocumentOf | null>(ownDocumentRef.current);
     // A value the host pushes is already in its hands; only edits after it are owed.
-    // The editor's own edit coming back as `value` is not a push: it was never reported.
+    // One of the editor's own edits coming back as `value`, however late, is an
+    // echo: the host holds that one, but not the edits made since.
+    const [emittedDocs] = useState(() => new WeakSet<RteDocumentOf>());
     const seenValueRef = useRef(value);
     if (value !== undefined && value !== seenValueRef.current) {
         seenValueRef.current = value;
-        if (value !== ownDocumentRef.current) {
+        reportedRef.current = value;
+        if (!emittedDocs.has(value)) {
             ownDocumentRef.current = value;
-            reportedRef.current = value;
         }
     }
 
@@ -146,6 +149,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     const registry = useMemo(() => buildPluginRegistry(plugins), [plugins]);
 
     const reportBlur = (doc: RteDocumentOf<TBlock>): void => {
+        // The shell blurs with a fresh copy of what `ownDocumentRef` holds, so the ref is what the host now has.
         reportedRef.current = ownDocumentRef.current;
         onBlur?.(doc);
     };
@@ -179,6 +183,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                 focusOnMount={attempt > 0}
                 document={document}
                 ownDocumentRef={ownDocumentRef}
+                emittedDocs={emittedDocs}
                 registry={registry}
                 labels={labels}
             />
@@ -190,6 +195,8 @@ type ShellProps<TBlock extends RteBlockNode> = Omit<EditorShellProps<TBlock>, 'v
     /** The document to show: the host's `value`, else what the editor last reported. */
     document: RteDocumentOf;
     ownDocumentRef: MutableRefObject<RteDocumentOf | null>;
+    /** Every document the editor emitted, so the outer component can tell an echo from a push. */
+    emittedDocs: WeakSet<RteDocumentOf>;
     registry: PluginRegistry;
     labels: RichTextEditorLabels;
     /** Take focus once the editor has mounted, as after Retry. */
@@ -199,6 +206,7 @@ type ShellProps<TBlock extends RteBlockNode> = Omit<EditorShellProps<TBlock>, 'v
 const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
     document,
     ownDocumentRef,
+    emittedDocs,
     registry,
     labels,
     focusOnMount,
@@ -244,6 +252,7 @@ const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
         attributes,
         onDocChange: (doc) => {
             ownDocumentRef.current = doc;
+            emittedDocs.add(doc);
             onChange?.(doc as RteDocumentOf<TBlock>);
         },
         enabled: !readOnly,
