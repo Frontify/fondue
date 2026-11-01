@@ -109,6 +109,112 @@
                     "text": "after"
                 }
             ]
+        },
+        {
+            "type": "bulletList",
+            "children": [
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "two"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "paragraphs"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "then"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "bulletList",
+                            "children": [
+                                {
+                                    "type": "listItem",
+                                    "children": [
+                                        {
+                                            "type": "paragraph",
+                                            "children": [
+                                                {
+                                                    "text": "list a"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "bulletList",
+                            "children": [
+                                {
+                                    "type": "listItem",
+                                    "children": [
+                                        {
+                                            "type": "paragraph",
+                                            "children": [
+                                                {
+                                                    "text": "list b"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "bulletList",
+                            "children": [
+                                {
+                                    "type": "listItem",
+                                    "children": [
+                                        {
+                                            "type": "paragraph",
+                                            "children": [
+                                                {
+                                                    "text": "list first"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "after"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }

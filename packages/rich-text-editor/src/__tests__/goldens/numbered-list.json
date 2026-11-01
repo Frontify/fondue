@@ -109,6 +109,112 @@
                     "text": "after"
                 }
             ]
+        },
+        {
+            "type": "numberedList",
+            "children": [
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "two"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "paragraphs"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "then"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "numberedList",
+                            "children": [
+                                {
+                                    "type": "listItem",
+                                    "children": [
+                                        {
+                                            "type": "paragraph",
+                                            "children": [
+                                                {
+                                                    "text": "list a"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "numberedList",
+                            "children": [
+                                {
+                                    "type": "listItem",
+                                    "children": [
+                                        {
+                                            "type": "paragraph",
+                                            "children": [
+                                                {
+                                                    "text": "list b"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "numberedList",
+                            "children": [
+                                {
+                                    "type": "listItem",
+                                    "children": [
+                                        {
+                                            "type": "paragraph",
+                                            "children": [
+                                                {
+                                                    "text": "list first"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "after"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }

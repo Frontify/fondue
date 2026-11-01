@@ -278,9 +278,14 @@ const generateDocument = (seed: number): RteBlock[] => {
             if (itemType === 'checkItem') {
                 item.checked = chance(0.5);
             }
-            const children = [textBlock('paragraph')];
-            if (depth < 3 && chance(0.5)) {
-                children.push(list(depth + 1));
+            // Any mix of paragraphs and nested lists, a list first included: the item's content allows it.
+            const children: Json[] = [];
+            for (let length = 1 + integer(3); length > 0; length--) {
+                if (depth < 3 && chance(0.4)) {
+                    children.push(list(depth + 1));
+                } else {
+                    children.push(textBlock('paragraph'));
+                }
             }
             item.children = children;
             items.push(item);
