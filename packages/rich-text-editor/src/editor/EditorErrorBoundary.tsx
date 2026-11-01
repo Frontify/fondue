@@ -33,7 +33,18 @@ export class EditorErrorBoundary extends Component<EditorErrorBoundaryProps, { f
         if (process.env.NODE_ENV !== 'production') {
             console.error('[RichTextEditor] The editor crashed and was replaced by a read-only view.', error);
         }
-        this.props.onCatch?.();
+        // A host callback that throws here would escape the boundary and unmount the page section.
+        try {
+            this.props.onCatch?.();
+        } catch (callbackError) {
+            if (typeof globalThis.reportError === 'function') {
+                globalThis.reportError(callbackError);
+            } else {
+                setTimeout(() => {
+                    throw callbackError;
+                });
+            }
+        }
     }
 
     override render(): ReactNode {

@@ -127,13 +127,24 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     ownDocumentRef.current ??= value ?? emptyDocument();
     const document = value ?? ownDocumentRef.current;
 
+    // The document the host last heard through `onBlur`; a crash is a blur the
+    // shell never got to report, so the edits since then are owed to the host.
+    const reportedRef = useRef<RteDocumentOf | null>(ownDocumentRef.current);
+    // A value the host pushes is already in its hands; only edits after it are owed.
+    // The editor's own edit coming back as `value` is not a push: it was never reported.
+    const seenValueRef = useRef(value);
+    if (value !== undefined && value !== seenValueRef.current) {
+        seenValueRef.current = value;
+        if (value !== ownDocumentRef.current) {
+            ownDocumentRef.current = value;
+            reportedRef.current = value;
+        }
+    }
+
     // Hosts usually pass an inline object; what it says is what matters.
     const labels = useLabels(hostLabelOverrides);
     const registry = useMemo(() => buildPluginRegistry(plugins), [plugins]);
 
-    // The document the host last heard through `onBlur`; a crash is a blur the
-    // shell never got to report, so the edits since then are owed to the host.
-    const reportedRef = useRef<RteDocumentOf | null>(ownDocumentRef.current);
     const reportBlur = (doc: RteDocumentOf<TBlock>): void => {
         reportedRef.current = ownDocumentRef.current;
         onBlur?.(doc);
@@ -238,7 +249,8 @@ const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
         enabled: !readOnly,
     });
 
-    const focusPendingRef = useRef(focusOnMount);
+    // A readonly retry has nothing to focus, and must not claim focus when editing is turned on later.
+    const focusPendingRef = useRef(focusOnMount && !readOnly);
     useEffect(() => {
         if (focusPendingRef.current && handle !== null) {
             focusPendingRef.current = false;
