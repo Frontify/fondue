@@ -168,6 +168,52 @@ const COLOR_KEYWORDS: ReadonlySet<string> = new Set([
     'currentcolor',
 ]);
 
+/** The CSS Color Module Level 4 system colours, deprecated ones included: browsers still render them all. */
+const SYSTEM_COLOR_KEYWORDS: ReadonlySet<string> = new Set([
+    'accentcolor',
+    'accentcolortext',
+    'activetext',
+    'buttonborder',
+    'buttonface',
+    'buttontext',
+    'canvas',
+    'canvastext',
+    'field',
+    'fieldtext',
+    'graytext',
+    'highlight',
+    'highlighttext',
+    'linktext',
+    'mark',
+    'marktext',
+    'selecteditem',
+    'selecteditemtext',
+    'visitedtext',
+    'activeborder',
+    'activecaption',
+    'appworkspace',
+    'background',
+    'buttonhighlight',
+    'buttonshadow',
+    'captiontext',
+    'inactiveborder',
+    'inactivecaption',
+    'inactivecaptiontext',
+    'infobackground',
+    'infotext',
+    'menu',
+    'menutext',
+    'scrollbar',
+    'threeddarkshadow',
+    'threedface',
+    'threedhighlight',
+    'threedlightshadow',
+    'threedshadow',
+    'window',
+    'windowframe',
+    'windowtext',
+]);
+
 /** `#abc`, `#aabbccdd`, or one `rgb()`/`rgba()`/`hsl()`/`hsla()` holding nothing but numbers. */
 const CSS_COLOR = /^(#([\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})|(rgba?|hsla?)\([\d.%,\s/]*\))$/i;
 
@@ -182,7 +228,8 @@ export const isCssColor = (value: unknown): value is string => {
     if (typeof value !== 'string') {
         return false;
     }
-    return COLOR_KEYWORDS.has(value.toLowerCase()) || CSS_COLOR.test(value);
+    const keyword = value.toLowerCase();
+    return COLOR_KEYWORDS.has(keyword) || SYSTEM_COLOR_KEYWORDS.has(keyword) || CSS_COLOR.test(value);
 };
 
 /**

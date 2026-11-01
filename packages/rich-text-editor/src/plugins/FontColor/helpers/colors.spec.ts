@@ -13,6 +13,8 @@ describe('isCssColor', () => {
             'RebeccaPurple',
             'DarkSlateGrey',
             'lightgray',
+            'GrayText',
+            'WindowText',
             '#abc',
             '#abcd',
             '#aabbcc',
