@@ -42,6 +42,15 @@ describe('toHref', () => {
         expect(toHref('https://user:pass@example.com')).toBeNull();
         expect(toHref('http://user@example.com')).toBeNull();
         expect(toHref('user:pass@example.com')).toBeNull();
+        for (const typed of [
+            '//user@evil.com',
+            '/\\user@evil.com',
+            'https:user@evil.com',
+            'https:/user@evil.com',
+            'https:\\user@evil.com',
+        ]) {
+            expect(toHref(typed)).toBeNull();
+        }
         expect(toHref('jane@example.com')).toBe('mailto:jane@example.com');
         expect(toHref('https://example.com/a@b')).toBe('https://example.com/a@b');
     });
@@ -87,6 +96,11 @@ describe('isSafeHref', () => {
             '//user@evil.com/x',
             'HTTPS://user:pass@example.com',
             'https://user%40x:p@example.com',
+            // Against an http base these resolve to https://user@evil.com/.
+            'https:user@evil.com',
+            'https:/user@evil.com',
+            'https:\\user@evil.com',
+            '/\\user@evil.com',
         ]) {
             expect(isSafeHref(href)).toBe(false);
         }

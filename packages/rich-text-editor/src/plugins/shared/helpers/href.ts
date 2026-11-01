@@ -28,6 +28,20 @@ const hasCredentials = (url: URL): boolean =>
     (url.protocol === 'http:' || url.protocol === 'https:') && (url.username !== '' || url.password !== '');
 
 /**
+ * Whether an href carries credentials once resolved. Read against both web
+ * bases: `https:user@evil.com` is a path under an https page but a link with
+ * credentials under an http one, and the page it lands on is not known here.
+ */
+const carriesCredentials = (href: string): boolean =>
+    ['http://base.invalid/', 'https://base.invalid/'].some((base) => {
+        try {
+            return hasCredentials(new URL(href, base));
+        } catch {
+            return false;
+        }
+    });
+
+/**
  * Whether an href may reach markup: a web, mail or phone link, or a relative
  * one. Applied to pasted and stored links alike, so `javascript:` is never
  * clickable — and to anything a stored document holds, so a value that is not
@@ -41,12 +55,7 @@ export const isSafeHref = (href: unknown): href is string => {
     if (scheme !== null && !SAFE_SCHEMES.has(scheme)) {
         return false;
     }
-    try {
-        // The base makes relative and protocol-relative (`//user@evil.com`) hrefs parse.
-        return !hasCredentials(new URL(href, 'https://base.invalid/'));
-    } catch {
-        return true;
-    }
+    return !carriesCredentials(href);
 };
 
 /** Paths and fragments within the site the document is shown on, kept as typed. */
@@ -67,6 +76,9 @@ const isHost = (hostname: string): boolean =>
 export const toHref = (typed: string): string | null => {
     const trimmed = typed.trim();
     if (trimmed === '' || /\s/.test(trimmed) || trimmed.length > MAX_HREF_LENGTH || CONTROL_CHARACTER.test(trimmed)) {
+        return null;
+    }
+    if (carriesCredentials(trimmed)) {
         return null;
     }
     if (isRelative(trimmed)) {
