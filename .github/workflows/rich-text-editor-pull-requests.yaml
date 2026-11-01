@@ -4,7 +4,17 @@ on:
   pull_request:
     paths:
       - packages/rich-text-editor/**
+      # Workspace packages the editor builds against, and the install it runs on.
+      - packages/components/**
+      - packages/icons/**
+      - packages/tokens/**
+      - .github/actions/setup/**
       - .github/workflows/rich-text-editor-pull-requests.yaml
+      - .npmrc
+      - .nvmrc
+      - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
 
 # Ensures that only one workflow per branch will run at a time.
 concurrency:
