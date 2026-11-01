@@ -77,8 +77,24 @@ export const sliceWithoutExtras = (slice: Slice): Slice => {
     return stripped;
 };
 
-/** What a paste or drop brings in: its own drag as it was, anything else (clipboard HTML, other editors) stripped. */
-export const sliceForPaste = (slice: Slice): Slice => originalOf.get(slice) ?? stripExtras(slice);
+/** What a paste or drop brings in: a move of its own drag as it was, anything else (a copy, clipboard HTML, other editors) stripped. */
+export const sliceForPaste = (slice: Slice, { ownDrag }: { ownDrag: boolean }): Slice => {
+    const original = originalOf.get(slice);
+    if (ownDrag && original !== undefined) {
+        return original;
+    }
+    return stripExtras(slice);
+};
+
+/** Whether a drop copies rather than moves: the modifier the engine uses, Alt on a Mac and Ctrl elsewhere. */
+export const isCopyDrag = (event: DragEvent): boolean => {
+    // The engine's own test for Apple platforms, so its move/copy decision and this one agree.
+    const isMac = typeof navigator !== 'undefined' && /Mac|iP(hone|[oa]d)/.test(navigator.platform);
+    if (isMac) {
+        return event.altKey;
+    }
+    return event.ctrlKey;
+};
 
 export const clipboardSerializer = (schema: Schema): DOMSerializer => {
     const nodes = DOMSerializer.nodesFromSchema(schema);

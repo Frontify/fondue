@@ -10,6 +10,7 @@ import {
     clipboardSerializer,
     handlePasteByFeatures,
     handlePasteIntoEmptyBlock,
+    isCopyDrag,
     sliceForPaste,
     sliceWithoutExtras,
 } from './clipboard';
@@ -102,6 +103,8 @@ const mount = ({
     };
     const api = createControlApi(getView, schema, registry, openEditors);
 
+    let dropCopies = false;
+
     // 3. The view: node/mark views, clipboard, the initial state, and the
     //    transaction loop that feeds the host.
     const editorView: EditorView = new EditorView(container, {
@@ -111,7 +114,15 @@ const mount = ({
         clipboardSerializer: clipboardSerializer(schema),
         clipboardParser: clipboardParser(schema),
         transformCopied: sliceWithoutExtras,
-        transformPasted: sliceForPaste,
+        dragCopies: isCopyDrag,
+        // The engine reads `transformPasted` before it decides move or copy, so the drop is noted here.
+        transformPasted: (slice) => sliceForPaste(slice, { ownDrag: !dropCopies }),
+        handleDOMEvents: {
+            drop: (_view, event) => {
+                dropCopies = isCopyDrag(event);
+                return false;
+            },
+        },
         handlePaste: (pasteView, event, slice) =>
             handlePasteByFeatures(registry.pasteHandlers, api)(pasteView, event) ||
             handlePasteIntoEmptyBlock(pasteView, event, slice),

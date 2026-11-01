@@ -105,7 +105,8 @@ describe('pasting a payload that names undeclared keys', () => {
 });
 
 describe('dragging a block inside the editor', () => {
-    it('moves it with the undeclared keys it has', () => {
+    /** Drags the first of two blocks to the end of the document, with the copy modifier held at the drop or not. */
+    const dragged = (copy: boolean) => {
         const editor = editorWith(defaultPlugins, [
             { ...paragraph(text('drag')), id: 'x' } as RteBlockNode,
             paragraph(text('stay')),
@@ -115,17 +116,33 @@ describe('dragging a block inside the editor', () => {
         // No layout in the test DOM: coordinates map to the positions the drag starts and ends at.
         let at = 1;
         view.posAtCoords = () => ({ pos: at, inside: -1 });
-        const fire = (type: string): void => {
+        const fire = (type: string, modifiers: Record<string, boolean> = {}): void => {
             const event = new Event(type, { bubbles: true, cancelable: true });
-            Object.defineProperty(event, 'dataTransfer', { value: new DataTransfer() });
+            Object.defineProperties(event, {
+                dataTransfer: { value: new DataTransfer() },
+                // Alt on a Mac, Ctrl elsewhere: both, so the spec does not depend on the platform.
+                altKey: { value: modifiers.copy === true },
+                ctrlKey: { value: modifiers.copy === true },
+            });
             view.dom.dispatchEvent(event);
         };
 
         fire('dragstart');
         at = view.state.doc.content.size;
-        fire('drop');
+        fire('drop', { copy });
+        return editor.stored();
+    };
 
-        expect(editor.stored()).toEqual([paragraph(text('stay')), { ...paragraph(text('drag')), id: 'x' }]);
+    it('moves it with the undeclared keys it has', () => {
+        expect(dragged(false)).toEqual([paragraph(text('stay')), { ...paragraph(text('drag')), id: 'x' }]);
+    });
+
+    it('copies it without them, leaving the original its own', () => {
+        expect(dragged(true)).toEqual([
+            { ...paragraph(text('drag')), id: 'x' },
+            paragraph(text('stay')),
+            paragraph(text('drag')),
+        ]);
     });
 });
 
