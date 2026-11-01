@@ -25,6 +25,9 @@ const bullets = (...texts: string[]): RteBlockNode =>
 
 afterEach(destroyEditors);
 
+const press = (view: EditorView, key: string, init: KeyboardEventInit = {}): boolean =>
+    view.someProp('handleKeyDown', (handle) => handle(view, new KeyboardEvent('keydown', { key, ...init }))) === true;
+
 describe('toggling a list', () => {
     it('wraps the paragraph at the caret', () => {
         const editor = editorWith(plugins, [paragraph(text('one'))]);
@@ -225,6 +228,17 @@ describe('unwrapping every list', () => {
     });
 });
 
+describe('Backspace at the start of an item', () => {
+    it('still takes the second item out of its list', () => {
+        const editor = editorWith(plugins, [bullets('A', 'B')]);
+        editor.caretBefore('B');
+
+        expect(press(editor.view, 'Backspace')).toBe(true);
+
+        expect(editor.stored()).toEqual([bullets('A'), paragraph(text('B'))]);
+    });
+});
+
 describe('a list holding a block no plugin knows among its items', () => {
     const checkItem = (...children: RteBlockNode[]): RteBlockNode =>
         ({
@@ -238,9 +252,6 @@ describe('a list holding a block no plugin knows among its items', () => {
             tone: 'info',
             children: [paragraph(text('kept'))],
         }) as unknown as RteBlockNode;
-    const press = (view: EditorView, key: string, init: KeyboardEventInit = {}): boolean =>
-        view.someProp('handleKeyDown', (handle) => handle(view, new KeyboardEvent('keydown', { key, ...init }))) ===
-        true;
     // Items on both sides of the unknown block, which stands among them.
     const around = (block: RteBlockNode): RteBlockNode =>
         list('bulletList', item(paragraph(text('one'))), block, item(paragraph(text('two'))));
@@ -464,6 +475,52 @@ describe('a list holding a block no plugin knows among its items', () => {
             expect(editor.api.lists.outdent()).toBe(true);
 
             expect(editor.stored()).toEqual([paragraph(text('a')), block, paragraph(text('b'))]);
+        });
+
+        it('refuses Tab in an item whose nesting target ends in it, without throwing', () => {
+            const block = unknown('unknownEndsNested');
+            const editor = editorWith(plugins, [
+                list(
+                    'bulletList',
+                    item(paragraph(text('A')), list('bulletList', item(paragraph(text('X'))), block)),
+                    item(paragraph(text('B'))),
+                ),
+            ]);
+            editor.caretAfter('B');
+
+            expect(() => editor.api.lists.indent()).not.toThrow();
+            expect(editor.api.lists.indent()).toBe(false);
+            expect(editor.onDocChange).not.toHaveBeenCalled();
+            expect(unknownRaws(editor.view)).toEqual([block]);
+        });
+
+        it('refuses to lift the only item beside it, which would leave a list of nothing but it', () => {
+            const block = unknown('unknownStranded');
+            const editor = editorWith(plugins, [list('bulletList', item(paragraph(text('A'))), block)]);
+            editor.caretAfter('A');
+
+            expect(editor.api.lists.outdent()).toBe(false);
+            expect(press(editor.view, 'Tab', { shiftKey: true })).toBe(false);
+            editor.caretBefore('A');
+            press(editor.view, 'Backspace');
+
+            expect(editor.onDocChange).not.toHaveBeenCalled();
+            expect(unknownRaws(editor.view)).toEqual([block]);
+        });
+
+        it('lifts the first of two items normally when it stays beside a list that still holds an item', () => {
+            const block = unknown('unknownBesideItem');
+            const editor = editorWith(plugins, [
+                list('bulletList', item(paragraph(text('A'))), item(paragraph(text('B'))), block),
+            ]);
+            editor.caretAfter('A');
+
+            expect(press(editor.view, 'Tab', { shiftKey: true })).toBe(true);
+
+            expect(editor.stored()).toEqual([
+                paragraph(text('A')),
+                list('bulletList', item(paragraph(text('B'))), block),
+            ]);
         });
 
         it('leaves a list that starts with it alone: lifting and nesting find no item range there', () => {

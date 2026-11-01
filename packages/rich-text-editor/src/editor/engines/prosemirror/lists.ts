@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { chainCommands, joinBackward, selectNodeBackward } from 'prosemirror-commands';
 import { type Node as PmNode, type NodeType as PmNodeType, type Schema } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem as pmSplitListItem, wrapInList } from 'prosemirror-schema-list';
 import { type Command, type EditorState, type Transaction } from 'prosemirror-state';
@@ -7,7 +8,7 @@ import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry } from '#/core';
 
-import { mapChildren, UNKNOWN_BLOCK } from './documentConversion';
+import { mapChildren, RAW_ATTR, UNKNOWN_BLOCK } from './documentConversion';
 import { warnUnknownType } from './warnings';
 
 /**
@@ -37,18 +38,74 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
 };
 
-/** A block no plugin knows stands among a list's items within the selection: lifting would take it for an item, or drop it between item boundaries. */
-const selectionHoldsUnknownListChild = (state: EditorState, itemTypeByList: Map<string, string>): boolean => {
-    const { from, to } = state.selection;
-    let found = false;
-    state.doc.nodesBetween(from, to, (node, _pos, parent) => {
-        if (node.type.name === UNKNOWN_BLOCK && parent !== null && itemTypeByList.has(parent.type.name)) {
-            found = true;
+/** Every unknown block standing directly in a list, by its raw block, and whether that list also holds an item. */
+const unknownListChildren = (
+    doc: PmNode,
+    itemTypeByList: Map<string, string>,
+): { raw: unknown; withItem: boolean }[] => {
+    const found: { raw: unknown; withItem: boolean }[] = [];
+    doc.descendants((node) => {
+        if (!itemTypeByList.has(node.type.name)) {
+            return true;
         }
-        return !found;
+        const children = mapChildren(node, (child) => child);
+        const withItem = children.some((child) => child.type.name !== UNKNOWN_BLOCK);
+        for (const child of children) {
+            if (child.type.name === UNKNOWN_BLOCK) {
+                found.push({ raw: child.attrs[RAW_ATTR], withItem });
+            }
+        }
+        return true;
     });
     return found;
 };
+
+/** Each unknown block that stood in a list still does, and in a list that still holds an item if it had one. */
+const keepsUnknownListChildren = (before: PmNode, after: PmNode, itemTypeByList: Map<string, string>): boolean => {
+    const previous = unknownListChildren(before, itemTypeByList);
+    // The usual document has none, and then the result need not be walked.
+    if (previous.length === 0) {
+        return true;
+    }
+    const standing = unknownListChildren(after, itemTypeByList);
+    for (const { raw, withItem } of previous) {
+        const index = standing.findIndex((child) => child.raw === raw && (child.withItem || !withItem));
+        if (index === -1) {
+            return false;
+        }
+        standing.splice(index, 1);
+    }
+    return true;
+};
+
+/**
+ * The list commands assume every child of a list is an item, so with an
+ * unknown block among them they can drop it, strand it in a list of its own, or
+ * throw. Runs the command aside and applies it only if no such block is lost.
+ * A refused command reports false, or true with `handleRefusal`, for a key whose
+ * fallback to the baseline keymap would run the same change unguarded.
+ */
+const keepingUnknownListChildren =
+    (command: Command, itemTypeByList: Map<string, string>, handleRefusal = false): Command =>
+    (state, dispatch, view) => {
+        const captured: Transaction[] = [];
+        try {
+            if (!command(state, (transaction) => captured.push(transaction), view)) {
+                return false;
+            }
+        } catch {
+            return false;
+        }
+        const [transaction] = captured;
+        if (transaction === undefined) {
+            return true;
+        }
+        if (!keepsUnknownListChildren(state.doc, transaction.doc, itemTypeByList)) {
+            return handleRefusal;
+        }
+        dispatch?.(transaction);
+        return true;
+    };
 
 // The list half of the control API
 
@@ -65,7 +122,7 @@ export const createListApi = (
         if (!itemType) {
             return false;
         }
-        return command(itemType)(view.state, view.dispatch, view);
+        return keepingUnknownListChildren(command(itemType), itemTypeByList)(view.state, view.dispatch, view);
     };
 
     return {
@@ -83,9 +140,7 @@ export const createListApi = (
             if (!current) {
                 wrapInList(listType)(view.state, view.dispatch);
             } else if (current.node.type === listType) {
-                if (!selectionHoldsUnknownListChild(view.state, itemTypeByList)) {
-                    runListCommand(liftListItem);
-                }
+                runListCommand(liftListItem);
             } else {
                 // One step: a check list holding bullet items (or the reverse)
                 // is invalid content, so converting in two steps would throw.
@@ -102,19 +157,8 @@ export const createListApi = (
             }
             view.focus();
         },
-        indent() {
-            // Nested, it would sit first in its list, where nothing can lift it back out.
-            if (selectionHoldsUnknownListChild(getView().state, itemTypeByList)) {
-                return false;
-            }
-            return runListCommand(sinkListItem);
-        },
-        outdent() {
-            if (selectionHoldsUnknownListChild(getView().state, itemTypeByList)) {
-                return false;
-            }
-            return runListCommand(liftListItem);
-        },
+        indent: () => runListCommand(sinkListItem),
+        outdent: () => runListCommand(liftListItem),
         split: () => runListCommand(pmSplitListItem),
         unwrapAll() {
             const view = getView();
@@ -170,24 +214,29 @@ export const liftOutOfLists = (
     { itemTypeByList }: PluginRegistry,
     schema: Schema,
 ): Transaction[] => {
-    if (selectionHoldsUnknownListChild(state, itemTypeByList)) {
-        return [];
-    }
     const itemTypes = [...new Set(itemTypeByList.values())].flatMap((name) => schema.nodes[name] ?? []);
     const transactions: Transaction[] = [];
     let current = state;
-    for (let round = 0; round < MAX_NESTING; round++) {
-        let lifted: Transaction | null = null;
-        for (const itemType of itemTypes) {
-            if (liftListItem(itemType)(current, (transaction) => (lifted = transaction))) {
+    try {
+        for (let round = 0; round < MAX_NESTING; round++) {
+            let lifted: Transaction | null = null;
+            for (const itemType of itemTypes) {
+                if (liftListItem(itemType)(current, (transaction) => (lifted = transaction))) {
+                    break;
+                }
+            }
+            if (lifted === null) {
                 break;
             }
+            transactions.push(lifted);
+            current = current.apply(lifted);
         }
-        if (lifted === null) {
-            break;
-        }
-        transactions.push(lifted);
-        current = current.apply(lifted);
+    } catch {
+        return [];
+    }
+    // The composed result decides, as for a single command.
+    if (!keepsUnknownListChildren(state.doc, current.doc, itemTypeByList)) {
+        return [];
     }
     return transactions;
 };
@@ -229,5 +278,14 @@ export const listKeys = (api: EditorControlApi, itemTypeByList: Map<string, stri
     // At the start of an item, lift it out one level (out of the list at the
     // top) — the engine's own Backspace would join it into the item above as a
     // bare paragraph.
-    Backspace: (state) => atItemStart(state, itemTypeByList) && api.lists.outdent(),
+    // When the lift is refused to keep an unknown block, the baseline's own
+    // item-start behaviour must not run the same lift unguarded.
+    Backspace: (state, dispatch, view) =>
+        atItemStart(state, itemTypeByList) &&
+        (api.lists.outdent() ||
+            keepingUnknownListChildren(chainCommands(joinBackward, selectNodeBackward), itemTypeByList, true)(
+                state,
+                dispatch,
+                view,
+            )),
 });
