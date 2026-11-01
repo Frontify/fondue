@@ -461,6 +461,63 @@ describe('Enter in a to-do list', () => {
         ]);
     });
 
+    it('at the start of a later paragraph of a checked item keeps the first item checked', () => {
+        const editor = editorWith(defaultPlugins, [
+            {
+                type: 'checkList',
+                children: [
+                    { type: 'checkItem', checked: true, children: [paragraph(text('a')), paragraph(text('b'))] },
+                ],
+            },
+        ]);
+        editor.caretBefore('b');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'checkList',
+                children: [
+                    { type: 'checkItem', checked: true, children: [paragraph(text('a')), paragraph()] },
+                    { type: 'checkItem', checked: false, children: [paragraph(text('b'))] },
+                ],
+            },
+        ]);
+    });
+
+    it('at the start of a paragraph after a nested list keeps the first item checked', () => {
+        const nested = { type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('n'))] }] };
+        const editor = editorWith(defaultPlugins, [
+            {
+                type: 'checkList',
+                children: [
+                    {
+                        type: 'checkItem',
+                        checked: true,
+                        children: [paragraph(text('a')), nested, paragraph(text('t'))],
+                    },
+                ],
+            },
+        ]);
+        editor.caretBefore('t');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'checkList',
+                children: [
+                    {
+                        type: 'checkItem',
+                        checked: true,
+                        children: [paragraph(text('a')), nested, paragraph()],
+                    },
+                    { type: 'checkItem', checked: false, children: [paragraph(text('t'))] },
+                ],
+            },
+        ]);
+    });
+
     it('leaves a bullet list as it was', () => {
         const editor = editorWith(defaultPlugins, [
             { type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('one'))] }] },

@@ -51,7 +51,9 @@ const splitListItem =
     (registry: PluginRegistry, itemType: PmNodeType): Command =>
     (state, dispatch) => {
         const source = state.selection.$from.parent;
-        const atBlockStart = state.selection.$from.parentOffset === 0;
+        const { $from: caret } = state.selection;
+        // The first child only: at a later child's start the item above still holds earlier content.
+        const atItemStart = caret.depth >= 2 && caret.parentOffset === 0 && caret.index(-1) === 0;
         return pmSplitListItem(itemType)(
             state,
             dispatch &&
@@ -66,7 +68,7 @@ const splitListItem =
                         const caretItemPos = $from.before(depth);
                         // Split at the very start, the text stays in the caret's item and the empty one above is new.
                         const previous = transaction.doc.resolve(caretItemPos).nodeBefore;
-                        const newAbove = atBlockStart && block !== null && block.content.size > 0 && previous !== null;
+                        const newAbove = atItemStart && block !== null && block.content.size > 0 && previous !== null;
                         const newPos = newAbove ? caretItemPos - previous.nodeSize : caretItemPos;
                         const newItem = transaction.doc.nodeAt(newPos);
                         const defaults = itemType.create().attrs;

@@ -12,7 +12,12 @@ import {
 import { history, redo, undo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
-import { type MarkType as PmMarkType, type Schema } from 'prosemirror-model';
+import {
+    type ContentMatch,
+    type MarkType as PmMarkType,
+    type NodeType as PmNodeType,
+    type Schema,
+} from 'prosemirror-model';
 import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, type Transaction } from 'prosemirror-state';
 
 import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
@@ -310,6 +315,17 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
 
 // Baseline
 
+/** The block the baseline's split falls back to: the first allowed text block that needs no attributes. */
+const defaultBlockAt = (match: ContentMatch): PmNodeType | null => {
+    for (let index = 0; index < match.edgeCount; index++) {
+        const { type } = match.edge(index);
+        if (type.isTextblock && !type.hasRequiredAttrs()) {
+            return type;
+        }
+    }
+    return null;
+};
+
 /**
  * The baseline keymap's Enter, except the new block after the caret carries the
  * attributes every text block carries (alignment), which a split at the end of
@@ -325,7 +341,7 @@ const splitKeepingCarriedAttrs =
             createParagraphNear,
             liftEmptyBlock,
             splitBlockAs((node, atEnd, $from) => {
-                const type = atEnd ? $from.node(-1).contentMatchAt($from.indexAfter(-1)).defaultType : node.type;
+                const type = atEnd ? defaultBlockAt($from.node(-1).contentMatchAt($from.indexAfter(-1))) : node.type;
                 if (!type) {
                     return null;
                 }
