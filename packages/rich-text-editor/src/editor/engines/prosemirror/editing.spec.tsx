@@ -118,16 +118,56 @@ describe('a document set by the host', () => {
         expect(onDocChange).not.toHaveBeenCalled();
     });
 
-    it('puts the caret at the end of the new content, not at the old offset mid-word', () => {
-        const { handle, onDocChange, stored } = mount(paragraph('abcdef'));
-        handle.api.insertText('XY');
+    describe('that changes one block', () => {
+        const paragraphs = (...texts: string[]): RteDocumentOf => ({
+            version: 1,
+            blocks: texts.map((text) => ({ type: PARAGRAPH, children: [{ text }] })),
+        });
+        /** The caret as the block it is in and its offset there. */
+        const caretAt = (view: EditorView) => ({
+            block: view.state.selection.$from.parent.textContent,
+            offset: view.state.selection.$from.parentOffset,
+        });
+        const placeCaret = (view: EditorView, position: number) => {
+            view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, position)));
+        };
 
-        handle.setDoc(paragraph('123456'));
-        onDocChange.mockClear();
-        handle.api.insertText('|');
+        it('keeps the caret in its text when the block before it changes', () => {
+            const { handle, view } = mount(paragraphs('one', 'two'));
+            placeCaret(view, 8);
 
-        expect(stored()).toEqual(paragraph('123456|'));
-        expect(onDocChange).toHaveBeenCalledTimes(1);
+            handle.setDoc(paragraphs('ONE!', 'two'));
+
+            expect(view.state.doc.textContent).toBe('ONE!two');
+            expect(caretAt(view)).toEqual({ block: 'two', offset: 2 });
+        });
+
+        it('leaves the caret where it is when a block after it changes', () => {
+            const { handle, view } = mount(paragraphs('one', 'two'));
+            placeCaret(view, 3);
+
+            handle.setDoc(paragraphs('one', 'TWO!'));
+
+            expect(view.state.doc.textContent).toBe('oneTWO!');
+            expect(view.state.selection.from).toBe(3);
+        });
+
+        it('shifts the caret by what was inserted before it in its own block', () => {
+            const { handle, view } = mount(paragraphs('abcdef'));
+            placeCaret(view, 5);
+
+            handle.setDoc(paragraphs('XYabcdef'));
+
+            expect(caretAt(view)).toEqual({ block: 'XYabcdef', offset: 6 });
+        });
+
+        it('still applies a change that repeats its neighbours', () => {
+            const { handle, view } = mount(paragraphs('aa'));
+
+            handle.setDoc(paragraphs('aaa'));
+
+            expect(view.state.doc.textContent).toBe('aaa');
+        });
     });
 
     it('still reports the edits the user makes after it', () => {
@@ -147,7 +187,62 @@ describe('a document set by the host', () => {
         undo(view.state, view.dispatch);
 
         expect(view.state.doc.textContent).toBe('from the host');
-        expect(stored()).toEqual(paragraph('typed mine'));
+        expect(stored()).toEqual(paragraph('from the host'));
+    });
+
+    it('leaves the host change in place when the user undoes an edit in another block', () => {
+        const { handle, view } = mount({
+            version: 1,
+            blocks: [
+                { type: PARAGRAPH, children: [{ text: 'one' }] },
+                { type: PARAGRAPH, children: [{ text: 'two' }] },
+            ],
+        });
+        view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, 4)));
+        handle.api.insertText('X');
+
+        handle.setDoc({
+            version: 1,
+            blocks: [
+                { type: PARAGRAPH, children: [{ text: 'oneX' }] },
+                { type: PARAGRAPH, children: [{ text: 'TWO' }] },
+            ],
+        });
+        undo(view.state, view.dispatch);
+
+        expect(view.state.doc.child(0).textContent).toBe('one');
+        expect(view.state.doc.child(1).textContent).toBe('TWO');
+    });
+
+    it('applies a reset to a document the editor reported before, and edits that after', () => {
+        const { handle, view, stored } = mount(emptyDocument());
+        handle.api.insertText('a');
+        const docA = stored() as RteDocumentOf;
+        handle.api.insertText('b');
+        const docB = stored() as RteDocumentOf;
+
+        handle.setDoc(docB);
+        handle.setDoc(docA);
+        expect(view.state.doc.textContent).toBe('a');
+        handle.api.insertText('c');
+
+        expect(stored()).toEqual(paragraph('ac'));
+    });
+
+    it('treats what the editor reports after a reset as newer than it', () => {
+        const { handle, view, stored } = mount(emptyDocument());
+        handle.api.insertText('a');
+        const docA = stored() as RteDocumentOf;
+        handle.api.insertText('b');
+        handle.setDoc(stored() as RteDocumentOf);
+        handle.setDoc(docA);
+        handle.api.insertText('c');
+        const docC = stored() as RteDocumentOf;
+        handle.api.insertText('d');
+
+        handle.setDoc(docC);
+
+        expect(view.state.doc.textContent).toBe('acd');
     });
 });
 
@@ -182,15 +277,36 @@ describe('a document set by the host while the editor holds more than it reporte
         expect(view.state.selection.from).toBe(caret);
     });
 
-    it('is ignored when it is one the editor reported before, arriving late', () => {
+    it('is ignored when it is one the editor reported before, arriving late and in order', () => {
+        const { handle, view, stored, onDocChange } = mount(emptyDocument());
+        const reported: RteDocumentOf[] = [];
+        for (const letter of ['a', 'b', 'c']) {
+            handle.api.insertText(letter);
+            reported.push(stored() as RteDocumentOf);
+        }
+        const caret = view.state.selection.from;
+        onDocChange.mockClear();
+
+        for (const doc of reported) {
+            handle.setDoc(doc);
+        }
+
+        expect(view.state.doc.textContent).toBe('abc');
+        expect(view.state.selection.from).toBe(caret);
+        expect(onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('lets typing continue after a late echo', () => {
         const { handle, view, stored } = mount(emptyDocument());
         handle.api.insertText('a');
-        const older = stored() as RteDocumentOf;
+        const docA = stored() as RteDocumentOf;
         handle.api.insertText('b');
 
-        handle.setDoc(older);
+        handle.setDoc(docA);
+        handle.api.insertText('c');
 
-        expect(view.state.doc.textContent).toBe('ab');
+        expect(view.state.doc.textContent).toBe('abc');
+        expect(stored()).toEqual(paragraph('abc'));
     });
 });
 

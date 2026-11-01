@@ -243,6 +243,23 @@ describe('the document boundary', () => {
         expect(echoed.child(1)).toBe(doc.child(1));
         expect(echoed.eq(doc)).toBe(true);
     });
+
+    it('hands out blocks that throw when mutated in development, as they are shared', () => {
+        const handedOut = toRteDocument(toEngineDocument(document, schema));
+        const block = handedOut.blocks[0] as { align?: string; children: { text?: string }[] };
+
+        expect(() => {
+            block.align = 'right';
+        }).toThrow(TypeError);
+        expect(() => block.children.push({ text: 'x' })).toThrow(TypeError);
+        expect(() => {
+            (block.children[0] as { text: string }).text = 'x';
+        }).toThrow(TypeError);
+        const linked = block.children.find((child) => 'link' in child) as { link: { href: string } };
+        expect(() => {
+            linked.link.href = 'https://example.org';
+        }).toThrow(TypeError);
+    });
 });
 
 describe('a mark switched off in the document', () => {

@@ -34,6 +34,11 @@ import styles from './richTextEditor.module.scss';
  */
 export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     value?: RteDocumentOf<TBlock>;
+    /**
+     * Called with the new document after each edit. Emitted documents share
+     * their unchanged blocks, so replace a block to change it, never mutate
+     * it (in development a mutation throws).
+     */
     onChange?: (value: RteDocumentOf<TBlock>) => void;
     /**
      * The plugins to mount, in toolbar order (e.g. `defaultPlugins`, extended

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { EditorState, Selection, TextSelection } from 'prosemirror-state';
+import { EditorState, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { type MountedDocument, type MountDocument, type MountOptions } from '#/editor/port';
@@ -64,11 +64,13 @@ const mount = ({
 }: MountOptions): { mounted: MountedDocument; view: EditorView } => {
     const schema = buildSchema(registry);
     let currentPlaceholder = placeholder;
-    // The last document the host handed over that the editor holds; lets `setDoc` ignore it again.
-    let agreedDoc = initialDoc;
-    // Every document reported to the host: one arriving back, even late and
-    // behind newer edits, is the editor's own and never replaces what it holds.
-    const emittedDocs = new WeakSet<typeof initialDoc>();
+    // The last document the host handed over that the editor still holds unedited; lets `setDoc` ignore it again.
+    let agreedDoc: typeof initialDoc | null = initialDoc;
+    // Reported documents are numbered, and `hostSeq` is the newest the host has handed back: a
+    // higher one is the host catching up (an echo, however late), a lower or equal one is a reset.
+    const emittedSeq = new WeakMap<typeof initialDoc, number>();
+    let emitCount = 0;
+    let hostSeq = 0;
 
     // 1. Views with editing UI (blocks, inline elements, link-like marks) follow
     //    the selection, since `isFocused` does. Each state change is offered to
@@ -131,7 +133,9 @@ const mount = ({
             // Host-originated changes are not reported back to the host.
             if (transaction.docChanged && transaction.getMeta(HOST_DOC) !== true) {
                 const emitted = toRteDocument(editorView.state.doc);
-                emittedDocs.add(emitted);
+                emitCount += 1;
+                emittedSeq.set(emitted, emitCount);
+                agreedDoc = null;
                 onDocChange(emitted);
             }
             onStateChange();
@@ -141,7 +145,12 @@ const mount = ({
 
     // 4. What the host gets back.
     const setDoc = (doc: typeof initialDoc): void => {
-        if (doc === agreedDoc || emittedDocs.has(doc)) {
+        if (doc === agreedDoc) {
+            return;
+        }
+        const seq = emittedSeq.get(doc);
+        if (seq !== undefined && seq > hostSeq) {
+            hostSeq = seq;
             return;
         }
         const next = toEngineDocument(doc, schema);
@@ -152,10 +161,22 @@ const mount = ({
             agreedDoc = doc;
             return;
         }
-        // Different content: the old caret position means nothing in it, so the
-        // caret goes to the end rather than mid-word somewhere.
-        const transaction = editorView.state.tr.replaceWith(0, editorView.state.doc.content.size, next.content);
-        transaction.setSelection(Selection.atEnd(transaction.doc));
+        // Replace only what differs, so the caret maps through the step and stays put.
+        const current = editorView.state.doc;
+        const start = current.content.findDiffStart(next.content);
+        const end = current.content.findDiffEnd(next.content);
+        if (start === null || end === null) {
+            agreedDoc = doc;
+            return;
+        }
+        let { a: endA, b: endB } = end;
+        // The ends can cross when the change is a repeat of its neighbours.
+        const overlap = start - Math.min(endA, endB);
+        if (overlap > 0) {
+            endA += overlap;
+            endB += overlap;
+        }
+        const transaction = editorView.state.tr.replace(start, endA, next.slice(start, endB));
         transaction.setMeta(HOST_DOC, true);
         transaction.setMeta('addToHistory', false);
         editorView.dispatch(transaction);
