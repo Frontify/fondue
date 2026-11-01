@@ -70,8 +70,9 @@ export const EditorFallback = ({
     labels: RichTextEditorLabels;
     onRetry: () => void;
 }): ReactNode => {
-    const document = value ?? ownDocumentRef.current;
-    if (document === null) {
+    // What the editor showed, which is what a crash reports: an echoed `value` can be older.
+    const document = ownDocumentRef.current ?? value;
+    if (document === undefined) {
         return null;
     }
     return (
