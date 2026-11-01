@@ -37,54 +37,31 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
 };
 
-/**
- * Every unknown block standing directly in a list, by its raw block, and
- * whether that list also holds an item. Those within `spared` are left out.
- */
-const unknownListChildren = (
-    doc: PmNode,
-    itemTypeByList: Map<string, string>,
-    spared?: { from: number; to: number },
-): { raw: unknown; withItem: boolean }[] => {
-    const found: { raw: unknown; withItem: boolean }[] = [];
+/** The raw block of every unknown block in the document, those within `spared` left out. */
+const unknownBlocks = (doc: PmNode, spared?: { from: number; to: number }): unknown[] => {
+    const found: unknown[] = [];
     doc.descendants((node, pos) => {
-        if (!itemTypeByList.has(node.type.name)) {
+        if (node.type.name !== UNKNOWN_BLOCK) {
             return true;
         }
-        const children = mapChildren(node, (child) => child);
-        const withItem = children.some((child) => child.type.name !== UNKNOWN_BLOCK);
-        let start = pos + 1;
-        for (const child of children) {
-            const end = start + child.nodeSize;
-            const inSpared = spared !== undefined && start < spared.to && end > spared.from;
-            if (child.type.name === UNKNOWN_BLOCK && !inSpared) {
-                found.push({ raw: child.attrs[RAW_ATTR], withItem });
-            }
-            start = end;
+        if (spared === undefined || pos >= spared.to || pos + node.nodeSize <= spared.from) {
+            found.push(node.attrs[RAW_ATTR]);
         }
-        return true;
+        return false;
     });
     return found;
 };
 
-/** Each unknown block that stood in a list still does, and in a list that still holds an item if it had one. */
-const keepsUnknownListChildren = (
-    before: PmNode,
-    after: PmNode,
-    itemTypeByList: Map<string, string>,
-    spared?: { from: number; to: number },
-): boolean => {
-    const previous = unknownListChildren(before, itemTypeByList, spared);
+/** Each unknown block in `before` is still in `after`, unchanged, wherever it now stands. */
+const keepsUnknownBlocks = (before: PmNode, after: PmNode, spared?: { from: number; to: number }): boolean => {
+    const previous = unknownBlocks(before, spared);
     // The usual document has none, and then the result need not be walked.
     if (previous.length === 0) {
         return true;
     }
-    const standing = unknownListChildren(after, itemTypeByList);
-    // Those that need an item first, so one sharing its raw block with another cannot take its place.
-    const needy = previous.filter((child) => child.withItem);
-    const rest = previous.filter((child) => !child.withItem);
-    for (const { raw, withItem } of [...needy, ...rest]) {
-        const index = standing.findIndex((child) => child.raw === raw && (child.withItem || !withItem));
+    const standing = unknownBlocks(after);
+    for (const raw of previous) {
+        const index = standing.indexOf(raw);
         if (index === -1) {
             return false;
         }
@@ -94,17 +71,16 @@ const keepsUnknownListChildren = (
 };
 
 /**
- * The list commands assume every child of a list is an item, so with an
- * unknown block among them they can drop it, strand it in a list of its own, or
- * throw. Runs the command aside and applies it only if no such block is lost.
- * A refused command reports false, or true with `handleRefusal`, for a key whose
- * fallback to the baseline keymap would run the same change unguarded. With
- * `spareSelected`, blocks inside the selection are not tracked: the user is deleting them.
+ * Block commands take every child of a list for an item, so with an unknown
+ * block among them they can drop it or throw. Runs the command aside and
+ * applies it only if no such block is lost. A refused command reports false, or
+ * true with `handleRefusal`, for a key whose fallback to the baseline keymap
+ * would run the same change unguarded. With `spareSelected`, blocks inside the
+ * selection are not tracked: the user is deleting them.
  */
-export const keepingUnknownListChildren =
+export const keepingUnknownBlocks =
     (
         command: Command,
-        itemTypeByList: Map<string, string>,
         { handleRefusal = false, spareSelected = false }: { handleRefusal?: boolean; spareSelected?: boolean } = {},
     ): Command =>
     (state, dispatch, view) => {
@@ -121,7 +97,7 @@ export const keepingUnknownListChildren =
             return true;
         }
         const spared = spareSelected ? state.selection : undefined;
-        if (!keepsUnknownListChildren(state.doc, transaction.doc, itemTypeByList, spared)) {
+        if (!keepsUnknownBlocks(state.doc, transaction.doc, spared)) {
             return handleRefusal;
         }
         dispatch?.(transaction);
@@ -143,7 +119,7 @@ export const createListApi = (
         if (!itemType) {
             return false;
         }
-        return keepingUnknownListChildren(command(itemType), itemTypeByList)(view.state, view.dispatch, view);
+        return keepingUnknownBlocks(command(itemType))(view.state, view.dispatch, view);
     };
 
     return {
@@ -256,7 +232,7 @@ export const liftOutOfLists = (
         return [];
     }
     // The composed result decides, as for a single command.
-    if (!keepsUnknownListChildren(state.doc, current.doc, itemTypeByList)) {
+    if (!keepsUnknownBlocks(state.doc, current.doc)) {
         return [];
     }
     return transactions;

@@ -9,7 +9,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { type RteBlockNode } from '#/core';
 
 import { RAW_ATTR, UNKNOWN_BLOCK } from './documentConversion';
-import { keepingUnknownListChildren } from './lists';
+import { keepingUnknownBlocks } from './lists';
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
 
 /**
@@ -441,14 +441,13 @@ describe('a list holding a block no plugin knows among its items', () => {
             });
         });
 
-        it('refuses Delete at the end of the item before it, which would pull it into that item', () => {
+        it('keeps it when Delete at the end of the item before it pulls it into that item', () => {
             const block = unknown('unknownOnDelete');
             const editor = editorWith(plugins, [around(block)]);
             editor.caretAfter('one');
 
             expect(press(editor.view, 'Delete')).toBe(true);
 
-            expect(editor.onDocChange).not.toHaveBeenCalled();
             expect(unknownRaws(editor.view)).toEqual([block]);
         });
 
@@ -463,25 +462,34 @@ describe('a list holding a block no plugin knows among its items', () => {
             view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, at)));
         };
 
-        it('refuses Enter in an empty item beside it, which would strand it in a list of its own', () => {
-            const block = unknown('unknownOnEmptyEnter');
+        it('lets Enter on the only empty item beside it leave the list, which keeps it', () => {
+            const block = unknown('unknownOnLeave');
             const editor = editorWith(plugins, [list('bulletList', item(paragraph()), block)]);
             caretInEmptyParagraph(editor.view);
 
             expect(press(editor.view, 'Enter')).toBe(true);
 
-            expect(editor.onDocChange).not.toHaveBeenCalled();
+            expect(editor.stored()?.[0]?.type).toBe('paragraph');
             expect(unknownRaws(editor.view)).toEqual([block]);
         });
 
-        it('refuses Mod-Backspace in an empty last item, which would leave a list of nothing but it', () => {
+        it('keeps it when a column break is inserted in the item beside it', () => {
+            const block = unknown('unknownOnInsert');
+            const editor = editorWith([...plugins, ...shipped('column-break')], [around(block)]);
+            editor.caretAfter('one');
+
+            editor.api.insert('columnBreak');
+
+            expect(unknownRaws(editor.view)).toEqual([block]);
+        });
+
+        it('keeps it when Mod-Backspace deletes the empty last item, leaving a list of it alone', () => {
             const block = unknown('unknownOnWordBackspace');
             const editor = editorWith(plugins, [list('bulletList', block, item(paragraph()))]);
             caretInEmptyParagraph(editor.view);
 
             expect(press(editor.view, 'Backspace', { ctrlKey: true })).toBe(true);
 
-            expect(editor.onDocChange).not.toHaveBeenCalled();
             expect(unknownRaws(editor.view)).toEqual([block]);
         });
 
@@ -495,38 +503,35 @@ describe('a list holding a block no plugin knows among its items', () => {
             expect(unknownRaws(editor.view)).toEqual([]);
         });
 
-        it('matches two blocks sharing one raw block by the list each stands in', () => {
+        it('counts blocks sharing one raw block separately, refusing a change that drops one', () => {
             const block = unknown('unknownShared');
             const editor = editorWith(plugins, [
                 list('bulletList', block),
                 list('bulletList', item(paragraph()), block),
             ]);
-            const swap = (state: EditorState, dispatch?: (transaction: Transaction) => void): boolean => {
-                dispatch?.(state.tr.replaceWith(0, state.doc.content.size, [state.doc.child(1), state.doc.child(0)]));
+            const dropSecond = (state: EditorState, dispatch?: (transaction: Transaction) => void): boolean => {
+                const second = state.doc.child(1);
+                dispatch?.(state.tr.delete(state.doc.child(0).nodeSize, state.doc.child(0).nodeSize + second.nodeSize));
                 return true;
             };
             const dispatch = vi.fn();
 
-            const kept = keepingUnknownListChildren(swap, new Map([['bulletList', 'listItem']]))(
-                editor.view.state,
-                dispatch,
-            );
-
-            expect(kept).toBe(true);
-            expect(dispatch).toHaveBeenCalledTimes(1);
+            expect(keepingUnknownBlocks(dropSecond)(editor.view.state, dispatch)).toBe(false);
+            expect(dispatch).not.toHaveBeenCalled();
         });
 
-        it('refuses to nest it, node selected or spanned by a range, leaving the document alone', () => {
+        it('keeps it when Tab nests it, node selected or spanned by a range', () => {
             const block = unknown('unknownOnIndent');
             const editor = editorWith(plugins, [around(block)]);
             selectUnknown(editor.view);
 
-            expect(editor.api.lists.indent()).toBe(false);
+            editor.api.lists.indent();
+
+            expect(unknownRaws(editor.view)).toEqual([block]);
 
             editor.selectBetween('one', 'two');
+            editor.api.lists.indent();
 
-            expect(editor.api.lists.indent()).toBe(false);
-            expect(editor.onDocChange).not.toHaveBeenCalled();
             expect(unknownRaws(editor.view)).toEqual([block]);
         });
 
@@ -559,18 +564,14 @@ describe('a list holding a block no plugin knows among its items', () => {
             expect(unknownRaws(editor.view)).toEqual([block]);
         });
 
-        it('refuses to lift the only item beside it, which would leave a list of nothing but it', () => {
+        it('lifts the only item beside it, leaving a list of it alone', () => {
             const block = unknown('unknownStranded');
             const editor = editorWith(plugins, [list('bulletList', item(paragraph(text('A'))), block)]);
             editor.caretAfter('A');
 
-            expect(editor.api.lists.outdent()).toBe(false);
-            expect(press(editor.view, 'Tab', { shiftKey: true })).toBe(false);
-            editor.caretBefore('A');
-            press(editor.view, 'Backspace');
+            expect(editor.api.lists.outdent()).toBe(true);
 
-            expect(editor.onDocChange).not.toHaveBeenCalled();
-            expect(unknownRaws(editor.view)).toEqual([block]);
+            expect(editor.stored()).toEqual([paragraph(text('A')), list('bulletList', block)]);
         });
 
         it('lifts the first of two items normally when it stays beside a list that still holds an item', () => {

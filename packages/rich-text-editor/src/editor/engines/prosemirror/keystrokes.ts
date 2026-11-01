@@ -11,7 +11,7 @@ import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type Rt
 
 import { keepCarriedAttrs } from './controlApi';
 import { valueAttrsFor } from './documentConversion';
-import { keepingUnknownListChildren, listKeys } from './lists';
+import { keepingUnknownBlocks, listKeys } from './lists';
 
 /**
  * What happens when a key is pressed, as one ordered list of ProseMirror plugins.
@@ -37,7 +37,7 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         baseline = Object.fromEntries(
             Object.entries(baseKeymap).map(([key, command]) => [
                 key,
-                keepingUnknownListChildren(command, registry.itemTypeByList, {
+                keepingUnknownBlocks(command, {
                     handleRefusal: true,
                     spareSelected: true,
                 }),
