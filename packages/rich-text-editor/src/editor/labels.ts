@@ -26,6 +26,10 @@ export type RichTextEditorLabels = {
     noResults: string;
     /** Announced as the `/` menu narrows, when something matches. */
     commandCount: (count: number) => string;
+    /** Shown in place of the editor, over its read-only content, when it crashed. */
+    editorFailed: string;
+    /** The button that mounts the editor again after it crashed. */
+    retry: string;
 };
 
 export const DEFAULT_LABELS: RichTextEditorLabels = {
@@ -39,4 +43,6 @@ export const DEFAULT_LABELS: RichTextEditorLabels = {
     commands: 'Commands',
     noResults: 'No results',
     commandCount: (count) => `${count} ${count === 1 ? 'command' : 'commands'}`,
+    editorFailed: 'The editor ran into a problem. Your content is safe.',
+    retry: 'Try again',
 };

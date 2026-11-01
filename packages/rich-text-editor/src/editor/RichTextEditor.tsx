@@ -5,6 +5,7 @@ import {
     type KeyboardEvent,
     type MouseEvent,
     type ReactNode,
+    type MutableRefObject,
     useEffect,
     useId,
     useMemo,
@@ -12,13 +13,21 @@ import {
     useRef,
 } from 'react';
 
-import { buildPluginRegistry, emptyDocument, type RteBlockNode, type RteDocumentOf, type RtePlugin } from '#/core';
+import {
+    buildPluginRegistry,
+    emptyDocument,
+    type PluginRegistry,
+    type RteBlockNode,
+    type RteDocumentOf,
+    type RtePlugin,
+} from '#/core';
 import { RegistryRenderer } from '#/renderer';
 import documentStyles from '#/renderer/document.module.scss';
 
 import { FloatingToolbar } from './components/FloatingToolbar';
 import { SlashMenu } from './components/SlashMenu';
 import { Toolbar, type ToolbarPlacement } from './components/Toolbar';
+import { EditorErrorBoundary, EditorFallback } from './EditorErrorBoundary';
 import { commandsOf, turnIntoCommands } from './helpers/blockCommands';
 import { useEditorHandle } from './hooks/useEditorHandle';
 import { useFocusWithin } from './hooks/useFocusWithin';
@@ -105,21 +114,14 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
 
 export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     value,
-    onChange,
     plugins = [],
-    toolbarPlacement = 'top',
-    readonly: readOnly = false,
-    showEditor = true,
-    placeholder = '',
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledBy,
-    'aria-describedby': ariaDescribedBy,
     labels: hostLabelOverrides,
-    onBlur,
+    ...shellProps
 }: EditorShellProps<TBlock>): ReactNode => {
     // What the editor last reported, so an uncontrolled editor keeps its
     // content across readonly toggles and remounts. A `value` always wins.
     // A ref, not state: keeping it must not re-render on every keystroke.
+    // It lives out here so it outlasts a crashed shell.
     const ownDocumentRef = useRef<RteDocumentOf | null>(null);
     ownDocumentRef.current ??= value ?? emptyDocument();
     const document = value ?? ownDocumentRef.current;
@@ -127,10 +129,65 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     // Hosts usually pass an inline object; what it says is what matters.
     const labels = useLabels(hostLabelOverrides);
     const registry = useMemo(() => buildPluginRegistry(plugins), [plugins]);
+
+    // A new key mounts the boundary and the shell afresh, from `document`.
+    const [attempt, retry] = useReducer((count: number) => count + 1, 0);
+
+    return (
+        <EditorErrorBoundary
+            key={attempt}
+            fallback={
+                <EditorFallback
+                    value={value}
+                    ownDocumentRef={ownDocumentRef}
+                    registry={registry}
+                    labels={labels}
+                    onRetry={retry}
+                />
+            }
+        >
+            <EditorShell
+                {...shellProps}
+                document={document}
+                ownDocumentRef={ownDocumentRef}
+                registry={registry}
+                labels={labels}
+            />
+        </EditorErrorBoundary>
+    );
+};
+
+type ShellProps<TBlock extends RteBlockNode> = Omit<EditorShellProps<TBlock>, 'value' | 'plugins' | 'labels'> & {
+    /** The document to show: the host's `value`, else what the editor last reported. */
+    document: RteDocumentOf;
+    ownDocumentRef: MutableRefObject<RteDocumentOf | null>;
+    registry: PluginRegistry;
+    labels: RichTextEditorLabels;
+};
+
+const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
+    document,
+    ownDocumentRef,
+    registry,
+    labels,
+    onChange,
+    toolbarPlacement = 'top',
+    readonly: readOnly = false,
+    showEditor = true,
+    placeholder = '',
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledBy,
+    'aria-describedby': ariaDescribedBy,
+    onBlur,
+}: ShellProps<TBlock>): ReactNode => {
     const commands = useMemo(() => commandsOf(registry, labels.text), [registry, labels.text]);
 
     const editableId = useId();
-    const { hostLabels, isNamed } = hostLabelsOf({ ariaLabel, ariaLabelledBy, ariaDescribedBy });
+    const { hostLabels, isNamed } = hostLabelsOf({
+        ariaLabel,
+        ariaLabelledBy,
+        ariaDescribedBy,
+    });
     const className = [documentStyles.document, styles.content, ...registry.contentClassNames].join(' ');
     const attributes = useMemo(
         () =>

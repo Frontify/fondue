@@ -98,7 +98,13 @@ const paste = (container: HTMLElement, html: string): void => {
     const data = new DataTransfer();
     data.setData('text/html', html);
     act(() => {
-        editable.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }));
+        editable.dispatchEvent(
+            new ClipboardEvent('paste', {
+                clipboardData: data,
+                bubbles: true,
+                cancelable: true,
+            }),
+        );
     });
 };
 
@@ -113,7 +119,14 @@ const editableIn = (container: HTMLElement): HTMLElement => {
 
 const press = (target: Element, key: string, init: KeyboardEventInit = {}): void => {
     act(() => {
-        target.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }));
+        target.dispatchEvent(
+            new KeyboardEvent('keydown', {
+                key,
+                bubbles: true,
+                cancelable: true,
+                ...init,
+            }),
+        );
     });
 };
 
@@ -134,7 +147,12 @@ const toDo: RteDocument = {
                 {
                     type: 'checkItem',
                     checked: true,
-                    children: [{ type: 'paragraph', children: [{ text: 'Done this' }] }],
+                    children: [
+                        {
+                            type: 'paragraph',
+                            children: [{ text: 'Done this' }],
+                        },
+                    ],
                 },
                 {
                     type: 'checkItem',
@@ -405,7 +423,11 @@ describe('the editable element', () => {
         data.setData('text/plain', '/');
         act(() => {
             editable.dispatchEvent(
-                new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }),
+                new ClipboardEvent('paste', {
+                    clipboardData: data,
+                    bubbles: true,
+                    cancelable: true,
+                }),
             );
         });
         expect(window.document.querySelector('[role="listbox"]')).not.toBeNull();
@@ -446,7 +468,10 @@ describe('the toolbar', () => {
             </button>
         );
     };
-    const statefulPlugin: RtePlugin = { id: 'stateful', toolbarItem: ClickCounter };
+    const statefulPlugin: RtePlugin = {
+        id: 'stateful',
+        toolbarItem: ClickCounter,
+    };
 
     /** A control using hooks of other kinds, so a shifted hook order would show. */
     const OtherHooks = (): ReactNode => {
@@ -577,7 +602,10 @@ describe('the toolbar from the keyboard', () => {
     };
 
     describe.each(['top', 'floating'] as const)('with the %s toolbar, asked for again', (placement) => {
-        const start = (): { editable: HTMLElement; rerender: () => void } => {
+        const start = (): {
+            editable: HTMLElement;
+            rerender: () => void;
+        } => {
             const element = (label: string): ReactNode => (
                 <RichTextEditor
                     value={paragraph('text')}
@@ -717,7 +745,10 @@ describe('content no mounted plugin knows', () => {
     it('is shown, not editable, and handed back unchanged after an edit elsewhere', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         teardown.push(() => warn.mockRestore());
-        const callout = { type: 'callout', children: [{ type: 'paragraph', children: [{ text: 'kept' }] }] };
+        const callout = {
+            type: 'callout',
+            children: [{ type: 'paragraph', children: [{ text: 'kept' }] }],
+        };
         const value = {
             version: 1,
             blocks: [{ type: 'paragraph', children: [{ text: 'text' }] }, callout],
@@ -734,6 +765,132 @@ describe('content no mounted plugin knows', () => {
         paste(container, '<p>typed</p>');
 
         expect(stored()?.blocks.find((block) => (block.type as string) === 'callout')).toBe(callout);
+    });
+});
+
+describe('an editor that crashes', () => {
+    /** React logs every caught render error; the tests expect it and keep the output clean. */
+    const silenceReact = (): void => {
+        const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+        teardown.push(() => error.mockRestore());
+    };
+    const throwingPlugin = (): RtePlugin => ({
+        id: 'throws',
+        toolbarItem: () => {
+            throw new Error('toolbar broke');
+        },
+    });
+    const retryButton = (container: HTMLElement): HTMLButtonElement => {
+        const button = [...container.querySelectorAll('button')].find(
+            (candidate) => candidate.textContent === 'Try again',
+        );
+        if (!button) {
+            throw new Error('no Retry button');
+        }
+        return button;
+    };
+    const retry = (container: HTMLElement): void => {
+        act(() => {
+            retryButton(container).click();
+        });
+    };
+
+    it('shows the document read-only with a message and Retry, and reports nothing', () => {
+        silenceReact();
+        const { container, onChange } = mount((change) => (
+            <RichTextEditor value={paragraph('still here')} onChange={change} plugins={[throwingPlugin()]} />
+        ));
+
+        expect(container.textContent).toContain('still here');
+        expect(container.textContent).toContain('The editor ran into a problem. Your content is safe.');
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+        expect(retryButton(container)).toBeDefined();
+        expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it('shows the fallback again when Retry meets the same failure', () => {
+        silenceReact();
+        const { container } = mount(() => (
+            <RichTextEditor value={paragraph('still here')} plugins={[throwingPlugin()]} />
+        ));
+
+        retry(container);
+
+        expect(container.textContent).toContain('still here');
+        expect(retryButton(container)).toBeDefined();
+    });
+
+    it('is editable again when Retry finds the cause gone', () => {
+        silenceReact();
+        let broken = true;
+        const flaky: RtePlugin = {
+            id: 'flaky',
+            toolbarItem: () => {
+                if (broken) {
+                    throw new Error('until fixed');
+                }
+                return <span>fine</span>;
+            },
+        };
+        const { container, ready } = mount(() => <RichTextEditor value={paragraph('back again')} plugins={[flaky]} />);
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+
+        broken = false;
+        retry(container);
+        ready();
+
+        expect(editableIn(container).textContent).toBe('back again');
+        expect(container.textContent).not.toContain('Try again');
+    });
+
+    it('keeps what was typed into an uncontrolled editor', () => {
+        silenceReact();
+        let crash = false;
+        const late: RtePlugin = {
+            id: 'late',
+            toolbarItem: ({ selection }) => {
+                // Read so the item re-renders with the selection, which the edit changes.
+                if (crash && selection) {
+                    throw new Error('after the edit');
+                }
+                return <span>fine</span>;
+            },
+        };
+        const { container, ready } = mount(() => <RichTextEditor plugins={[late, ...defaultPlugins]} />);
+        ready();
+        crash = true;
+
+        paste(container, '<p>typed</p>');
+
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+        expect(container.textContent).toContain('typed');
+    });
+
+    it('catches a node view that throws inside the view portals', () => {
+        silenceReact();
+        const Broken = (): ReactNode => {
+            throw new Error('view broke');
+        };
+        const broken: RtePlugin = {
+            id: 'broken',
+            blocks: {
+                broken: {
+                    content: 'text',
+                    toHtml: () => ['div', { 'data-broken': '' }, { children: true }],
+                    parse: [{ tag: 'div[data-broken]' }],
+                    render: { edit: Broken },
+                },
+            } as unknown as NonNullable<RtePlugin['blocks']>,
+        };
+        const value = {
+            version: 1,
+            blocks: [{ type: 'broken', children: [{ text: 'in a view' }] }],
+        } as unknown as RteDocument;
+
+        const { container } = mount(() => <RichTextEditor value={value} plugins={[broken]} />);
+
+        expect(container.textContent).toContain('The editor ran into a problem.');
+        expect(retryButton(container)).toBeDefined();
     });
 });
 
@@ -788,9 +945,26 @@ describe('pasting', () => {
                             type: 'paragraph',
                             children: [
                                 { text: 'Ask ' },
-                                { type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' },
-                                { type: 'mention', id: 'design', username: 'design', name: 'Design', kind: 'group' },
-                                { type: 'mention', id: 'all', username: 'all', name: 'Everyone', kind: 'all' },
+                                {
+                                    type: 'mention',
+                                    id: 'jane',
+                                    username: 'jane',
+                                    name: 'Jane Doe',
+                                },
+                                {
+                                    type: 'mention',
+                                    id: 'design',
+                                    username: 'design',
+                                    name: 'Design',
+                                    kind: 'group',
+                                },
+                                {
+                                    type: 'mention',
+                                    id: 'all',
+                                    username: 'all',
+                                    name: 'Everyone',
+                                    kind: 'all',
+                                },
                             ],
                         },
                     ],
@@ -806,7 +980,12 @@ describe('pasting', () => {
 
             const block = stored()?.blocks[0];
             const children = block && 'children' in block ? block.children : [];
-            expect(children).toContainEqual({ type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' });
+            expect(children).toContainEqual({
+                type: 'mention',
+                id: 'jane',
+                username: 'jane',
+                name: 'Jane Doe',
+            });
             expect(children).toContainEqual({
                 type: 'mention',
                 id: 'design',
@@ -853,7 +1032,10 @@ describe('pasting', () => {
             const block = stored()?.blocks[0];
             const children = block && 'children' in block ? block.children : [];
             expect(children).toContainEqual({ text: 'plain ' });
-            expect(children).toContainEqual({ text: 'red', fontColor: { color: 'red' } });
+            expect(children).toContainEqual({
+                text: 'red',
+                fontColor: { color: 'red' },
+            });
         });
 
         it('shows what was pasted', () => {
@@ -932,8 +1114,24 @@ describe('exported links', () => {
             {
                 version: 1,
                 blocks: [
-                    { type: 'paragraph', children: [{ text: 'bad', link: { href: 'javascript:alert(1)' } }] },
-                    { type: 'paragraph', children: [{ text: 'good', link: { href: 'https://example.com' } }] },
+                    {
+                        type: 'paragraph',
+                        children: [
+                            {
+                                text: 'bad',
+                                link: { href: 'javascript:alert(1)' },
+                            },
+                        ],
+                    },
+                    {
+                        type: 'paragraph',
+                        children: [
+                            {
+                                text: 'good',
+                                link: { href: 'https://example.com' },
+                            },
+                        ],
+                    },
                 ],
             },
             { plugins: [linkPlugin()] },
