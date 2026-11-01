@@ -67,6 +67,7 @@ const mount = (render: (onChange: (doc: RteDocument) => void) => ReactNode) => {
         stored: (): RteDocument | null => onChange.mock.lastCall?.[0] ?? null,
         /** The document the host was handed by the nth change. */
         storedAt: (index: number): RteDocument | null => onChange.mock.calls[index]?.[0] ?? null,
+        changes: (): number => onChange.mock.calls.length,
     };
 };
 
@@ -77,14 +78,15 @@ afterEach(() => {
     vi.restoreAllMocks();
 });
 
-/** A paste, dispatched on the editable element the way a browser does. */
-const paste = (container: HTMLElement, html: string): void => {
+/** A paste of one paragraph, dispatched on the editable element with both flavours a browser sends. */
+const paste = (container: HTMLElement, text: string): void => {
     const editable = container.querySelector('[contenteditable]');
     if (!editable) {
         throw new Error('the editor has no editable element');
     }
     const data = new DataTransfer();
-    data.setData('text/html', html);
+    data.setData('text/html', `<p>${text}</p>`);
+    data.setData('text/plain', text);
     act(() => {
         editable.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }));
     });
@@ -99,7 +101,10 @@ const editedCopyOf = (blocks: RteBlock[]) => {
             plugins={plugins}
         />
     ));
-    paste(editor.container, '<p>typed</p>');
+    paste(editor.container, 'typed');
+    // Proves the edit landed in the sacrificial paragraph, so a diff after it is a format change.
+    expect(editor.changes()).toBe(1);
+    expect(editor.stored()?.blocks[0]).toStrictEqual({ type: 'paragraph', children: [{ text: 'typededit here' }] });
     return editor;
 };
 
@@ -136,7 +141,7 @@ describe('the stored document format: golden fixtures', () => {
     it('hands out the same block objects for blocks an edit did not touch', () => {
         const blocks = fixtures.flatMap(({ doc }) => doc.blocks);
         const { container, stored, storedAt } = editedCopyOf(blocks);
-        paste(container, '<p>typed again</p>');
+        paste(container, 'typed again');
 
         const first = storedAt(0);
         const second = stored();
