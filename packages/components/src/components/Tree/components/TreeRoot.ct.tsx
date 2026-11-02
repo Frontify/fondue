@@ -969,6 +969,69 @@ test.describe('TreeRoot row click', () => {
         await component.getByRole('treeitem', { name: /Row/ }).click();
         expect(clickCount).toBe(1);
     });
+
+    test('a double-click fires onDoubleClick once and onClick only for the first click', async ({ mount }) => {
+        const calls: string[] = [];
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1" onClick={() => calls.push('click')} onDoubleClick={() => calls.push('double')}>
+                    <Tree.Label>Row</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2" onClick={() => calls.push('sentinel')}>
+                    <Tree.Label>Other</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Row/ }).dblclick();
+        // Callbacks report back in order, so the sentinel landing proves no later click from the double-click is pending.
+        await component.getByRole('treeitem', { name: /Other/ }).click();
+        await expect.poll(() => calls).toEqual(['click', 'double', 'sentinel']);
+    });
+
+    test('a double-click on an unselected folder with onDoubleClick does not expand it', async ({ mount }) => {
+        const doubleClicked: string[] = [];
+        const component = await mount(
+            <TestHarness
+                initial={[
+                    {
+                        id: 'f',
+                        name: 'Folder',
+                        isFolder: true,
+                        isExpanded: false,
+                        children: [{ id: 'c', name: 'Child', isFolder: false }],
+                    },
+                ]}
+                onDoubleClick={(id) => doubleClicked.push(id)}
+            />,
+        );
+
+        await component.getByRole('treeitem', { name: /Folder/ }).dblclick();
+
+        await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-expanded', 'false');
+        await expect(component.getByRole('treeitem', { name: /Child/ })).toHaveCount(0);
+        await expect.poll(() => doubleClicked).toEqual(['f']);
+    });
+
+    test('a disabled row does not fire onDoubleClick', async ({ mount }) => {
+        const doubleClicked: string[] = [];
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="off" isDisabled onDoubleClick={() => doubleClicked.push('off')}>
+                    <Tree.Label>Off</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="on" onDoubleClick={() => doubleClicked.push('on')}>
+                    <Tree.Label>On</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        // `aria-disabled` makes Playwright refuse the click, though the row still receives real clicks.
+        await component.getByRole('treeitem', { name: /Off/ }).dblclick({ force: true });
+        // Callbacks report back in order, so once the enabled row's call lands, any call from the disabled row has too.
+        await component.getByRole('treeitem', { name: /On/ }).dblclick();
+        await expect.poll(() => doubleClicked).toEqual(['on']);
+    });
 });
 
 test.describe('TreeRoot multi-select', () => {

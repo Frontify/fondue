@@ -77,6 +77,11 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
     // In single-select, the first click on a folder only selects it — headless-tree would
     // also toggle it — and clicking the already-selected folder toggles it.
     const handleClick = (event: MouseEvent<HTMLDivElement>) => {
+        // The second click of a double-click belongs to `onDoubleClick`, so it neither re-selects nor toggles the row.
+        if (event.detail === 2 && data.onDoubleClick && !data.isDisabled) {
+            data.onDoubleClick(event);
+            return;
+        }
         if (!multiSelect && isFolder && !data.isDisabled && !item.isSelected()) {
             item.setFocused();
             item.getTree().setSelectedItems([item.getId()]);
