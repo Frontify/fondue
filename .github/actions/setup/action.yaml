@@ -33,13 +33,20 @@ runs:
         key: cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
         restore-keys: cypress-${{ runner.os }}-
 
+    # Playwright reuses one browser folder name across OS releases, so a cache from another release skips the install.
+    - name: Get OS release
+      id: os-release
+      if: inputs.playwright-cache == 'true'
+      shell: bash
+      run: echo "id=$(. /etc/os-release && echo "$ID$VERSION_ID")" >> "$GITHUB_OUTPUT"
+
     - name: Cache Playwright browsers
       if: inputs.playwright-cache == 'true'
       uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         path: ~/.cache/ms-playwright
-        key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-        restore-keys: playwright-${{ runner.os }}-
+        key: playwright-${{ runner.os }}-${{ steps.os-release.outputs.id }}-${{ hashFiles('pnpm-lock.yaml') }}
+        restore-keys: playwright-${{ runner.os }}-${{ steps.os-release.outputs.id }}-
 
     - name: Install dependencies
       shell: bash

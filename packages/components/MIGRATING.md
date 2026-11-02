@@ -1878,6 +1878,7 @@ Changes:
     - Inline renaming via `isRenaming` / `onRenamingChange` / `onRename` on rows
     - `isDisabled` on rows to freeze them at their prop-driven state
     - `onClick` on rows, fired on click or keyboard activation (Enter / Space)
+    - `onDoubleClick` on rows; while set, the second click of a double-click does not select or toggle the row
     - `countDisabledInFolderState` on `Tree.Root` to control whether disabled descendants count toward a folder's checkbox state
     - Built-in keyboard navigation and screen reader announcements
 
