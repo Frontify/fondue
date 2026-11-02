@@ -971,19 +971,22 @@ test.describe('TreeRoot row click', () => {
     });
 
     test('a double-click fires onDoubleClick once and onClick only for the first click', async ({ mount }) => {
-        let clickCount = 0;
-        let doubleClickCount = 0;
+        const calls: string[] = [];
         const component = await mount(
             <Tree.Root>
-                <Tree.Item id="1" onClick={() => (clickCount += 1)} onDoubleClick={() => (doubleClickCount += 1)}>
+                <Tree.Item id="1" onClick={() => calls.push('click')} onDoubleClick={() => calls.push('double')}>
                     <Tree.Label>Row</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2" onClick={() => calls.push('sentinel')}>
+                    <Tree.Label>Other</Tree.Label>
                 </Tree.Item>
             </Tree.Root>,
         );
 
         await component.getByRole('treeitem', { name: /Row/ }).dblclick();
-        await expect.poll(() => doubleClickCount).toBe(1);
-        expect(clickCount).toBe(1);
+        // Callbacks report back in order, so the sentinel landing proves no later click from the double-click is pending.
+        await component.getByRole('treeitem', { name: /Other/ }).click();
+        await expect.poll(() => calls).toEqual(['click', 'double', 'sentinel']);
     });
 
     test('a double-click on an unselected folder with onDoubleClick does not expand it', async ({ mount }) => {
