@@ -17,11 +17,12 @@ const NUMBERED_MARKER = /^\(?(?:\d+(?:\.\d+)*[.)]?|[a-z]+[.)])$/i;
 /** Word has nine list levels, which also keeps hostile input from nesting without end. */
 const MAX_LEVEL = 9;
 
-/** Word's namespace, a `Mso` class or an `mso-` style in the HTML string, found without parsing it. */
-const OFFICE_MARKUP = /urn:schemas-microsoft-com:office|\sclass\s*=\s*["']?[^"'>]*Mso|\sstyle\s*=\s*["'][^"']*mso-/i;
-const TAG = /<[a-z][^>]*>/gi;
+/** Word's list data in the HTML string, found without parsing it. */
+const OFFICE_LIST_MARKUP = /mso-list/i;
+// Each pattern stops at the next tag, so an unclosed tag or `<style>` costs one scan, not one per start.
+const TAG = /<[a-z][^<>]*>/gi;
 const STYLE_ATTRIBUTE = /(\sstyle\s*=\s*)("[^"]*"|'[^']*')/gi;
-const STYLE_ELEMENT = /(<style\b[^>]*>)([\s\S]*?)(<\/style\s*>)/gi;
+const STYLE_ELEMENT = /(<style\b[^<>]*>)((?:(?!<\/?style\b)[\s\S])*)(<\/style\s*>)/gi;
 const MSO_LIST_PROPERTY = /(?<![\w-])mso-list(?=\s*:)/gi;
 
 /**
@@ -29,12 +30,12 @@ const MSO_LIST_PROPERTY = /(?<![\w-])mso-list(?=\s*:)/gi;
  * rules into each element with the CSSOM and so drops every `mso-` property
  * the rules touch. A custom property survives that merge. The merge appends
  * each rule after the element's own style, so the rules get a name of their
- * own to keep a paragraph's own level and list. Only an Office paste, and only
- * where CSS lives (style attributes and `<style>` bodies), so text that
- * mentions `mso-list` stays as written.
+ * own to keep a paragraph's own level and list. Only HTML that holds
+ * `mso-list`, and only where CSS lives (style attributes and `<style>` bodies),
+ * so text that mentions `mso-list` stays as written.
  */
 export const keepOfficeListStyles = (html: string): string => {
-    if (!OFFICE_MARKUP.test(html)) {
+    if (!OFFICE_LIST_MARKUP.test(html)) {
         return html;
     }
     return html
@@ -79,6 +80,10 @@ const markerSpans = (root: ParentNode): HTMLElement[] =>
 /** `element` as a list paragraph, or `undefined` when it is not one. */
 const readListParagraph = (element: Node): ListParagraph | undefined => {
     if (!(element instanceof HTMLElement) || element.localName !== 'p') {
+        return undefined;
+    }
+    // Word never puts a paragraph inside another; only parser tricks do, and lists rebuilt there would nest without bound.
+    if (element.parentElement?.closest('p')) {
         return undefined;
     }
     const style = element.getAttribute('style') ?? '';
