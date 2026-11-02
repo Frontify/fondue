@@ -75,12 +75,14 @@ export const EditorFallback = ({
 }): ReactNode => {
     const retryRef = useRef<HTMLButtonElement | null>(null);
     useEffect(() => {
+        const button = retryRef.current;
+        if (!focusOnMount || button === null) {
+            return;
+        }
         // Only when focus was lost with the button that held it, never taken from where the user moved it.
-        const lost =
-            globalThis.document.activeElement === null ||
-            globalThis.document.activeElement === globalThis.document.body;
-        if (focusOnMount && lost) {
-            retryRef.current?.focus();
+        const { activeElement, body } = button.ownerDocument;
+        if (activeElement === null || activeElement === body) {
+            button.focus();
         }
     }, [focusOnMount]);
     // What the editor showed, which is what a crash reports: an echoed `value` can be older.
