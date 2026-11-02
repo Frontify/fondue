@@ -66,21 +66,20 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
     ];
 };
 
-/** The engine's split, except that the block it starts carries none of the undeclared keys it copies. */
+/** The engine's split, except that an empty block it opens above the text carries none of the undeclared keys it copies. */
 const splitWithoutExtras: Command = (state, dispatch, view) => {
-    const side = newBlockSide(state);
+    // A new block after the caret is the later holder, which `copiedExtrasPlugin` clears.
+    if (newBlockSide(state) === 'after') {
+        return splitBlock(state, dispatch, view);
+    }
     return splitBlock(
         state,
         dispatch &&
             ((transaction) => {
                 const { $from: caret } = transaction.selection;
-                if (side === 'before') {
-                    const above = transaction.doc.resolve(caret.before()).nodeBefore;
-                    if (above !== null) {
-                        clearExtrasAt(transaction, caret.before() - above.nodeSize);
-                    }
-                } else {
-                    clearExtrasAt(transaction, caret.before());
+                const above = transaction.doc.resolve(caret.before()).nodeBefore;
+                if (above !== null) {
+                    clearExtrasAt(transaction, caret.before() - above.nodeSize);
                 }
                 dispatch(transaction);
             }),

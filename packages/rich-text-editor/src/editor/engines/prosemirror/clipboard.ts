@@ -64,37 +64,13 @@ const withoutExtras = (node: PmNode): PmNode => {
     return node.type.create(attrs, Fragment.from(children), node.marks);
 };
 
-/** Each stripped slice to the one it was made from, so this editor's own drag gets its keys back on drop. */
-const originalOf = new WeakMap<Slice, Slice>();
-
-const stripExtras = (slice: Slice): Slice =>
+/**
+ * A slice without the undeclared stored keys. Copied, `data-pm-slice` would write
+ * its open wrappers' attributes onto the clipboard; pasted or dropped, every
+ * block it brings is new, as with cut and paste, a drag that moves included.
+ */
+export const sliceWithoutExtras = (slice: Slice): Slice =>
     new Slice(Fragment.fromArray(slice.content.content.map(withoutExtras)), slice.openStart, slice.openEnd);
-
-/** A copied slice without the undeclared stored keys: `data-pm-slice` writes its open wrappers' attributes onto the clipboard. */
-export const sliceWithoutExtras = (slice: Slice): Slice => {
-    const stripped = stripExtras(slice);
-    originalOf.set(stripped, slice);
-    return stripped;
-};
-
-/** What a paste or drop brings in: a move of its own drag as it was, anything else (a copy, clipboard HTML, other editors) stripped. */
-export const sliceForPaste = (slice: Slice, { ownDrag }: { ownDrag: boolean }): Slice => {
-    const original = originalOf.get(slice);
-    if (ownDrag && original !== undefined) {
-        return original;
-    }
-    return stripExtras(slice);
-};
-
-/** Whether a drop copies rather than moves: the modifier the engine uses, Alt on a Mac and Ctrl elsewhere. */
-export const isCopyDrag = (event: DragEvent): boolean => {
-    // The engine's own test for Apple platforms, so its move/copy decision and this one agree.
-    const isMac = typeof navigator !== 'undefined' && /Mac|iP(hone|[oa]d)/.test(navigator.platform);
-    if (isMac) {
-        return event.altKey;
-    }
-    return event.ctrlKey;
-};
 
 export const clipboardSerializer = (schema: Schema): DOMSerializer => {
     const nodes = DOMSerializer.nodesFromSchema(schema);

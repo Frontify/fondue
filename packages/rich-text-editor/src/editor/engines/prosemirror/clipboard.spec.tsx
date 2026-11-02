@@ -133,8 +133,8 @@ describe('dragging a block inside the editor', () => {
         return editor.stored();
     };
 
-    it('moves it with the undeclared keys it has', () => {
-        expect(dragged(false)).toEqual([paragraph(text('stay')), { ...paragraph(text('drag')), id: 'x' }]);
+    it('moves it without its undeclared keys, as cut and paste does', () => {
+        expect(dragged(false)).toEqual([paragraph(text('stay')), paragraph(text('drag'))]);
     });
 
     it('copies it without them, leaving the original its own', () => {

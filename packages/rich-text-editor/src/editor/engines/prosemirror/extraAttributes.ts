@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Node as PmNode } from 'prosemirror-model';
-import { type Command, type EditorState, type Transaction } from 'prosemirror-state';
+import { type EditorState, Plugin, type Transaction } from 'prosemirror-state';
 
 import { EXTRA_ATTR } from './documentConversion';
 
@@ -29,7 +29,7 @@ export const newBlockSide = (state: EditorState): 'before' | 'after' => {
     return 'after';
 };
 
-/** How many nodes hold each extras object. */
+/** How many blocks hold each extras object. Only blocks hold one, so the walk stops at blocks of text. */
 const extrasCounts = (doc: PmNode): Map<unknown, number> => {
     const counts = new Map<unknown, number>();
     doc.descendants((node) => {
@@ -37,43 +37,49 @@ const extrasCounts = (doc: PmNode): Map<unknown, number> => {
         if (extras !== null && extras !== undefined) {
             counts.set(extras, (counts.get(extras) ?? 0) + 1);
         }
-        return true;
+        return !node.isTextblock;
     });
     return counts;
 };
 
 /**
- * Clears the keys a command copied: a copy shares its original's extras
- * object, so one held by more nodes than before the command is a copy, and
- * the first holders keep it. Blocks a host repeats were shared before, and stay.
+ * Clears the keys an edit copied: a copy shares its original's extras object,
+ * so one held by more blocks than in `before` is a copy, and the first holders
+ * keep it.
  */
-export const dropCopiedExtras = (transaction: Transaction): void => {
-    const before = extrasCounts(transaction.before);
+const dropCopiedExtras = (before: PmNode, transaction: Transaction): void => {
+    const counts = extrasCounts(before);
     const seen = new Map<unknown, number>();
     transaction.doc.descendants((node, pos) => {
         const extras: unknown = node.attrs[EXTRA_ATTR];
-        if (extras === null || extras === undefined) {
-            return true;
+        if (extras !== null && extras !== undefined) {
+            const count = (seen.get(extras) ?? 0) + 1;
+            seen.set(extras, count);
+            if (count > (counts.get(extras) ?? 0)) {
+                transaction.setNodeMarkup(pos, undefined, { ...node.attrs, [EXTRA_ATTR]: null });
+            }
         }
-        const count = (seen.get(extras) ?? 0) + 1;
-        seen.set(extras, count);
-        if (count > (before.get(extras) ?? 0)) {
-            transaction.setNodeMarkup(pos, undefined, { ...node.attrs, [EXTRA_ATTR]: null });
-        }
-        return true;
+        return !node.isTextblock;
     });
 };
 
-/** A command whose copies of a node leave the undeclared keys on the first one only. */
-export const withoutCopiedExtras =
-    (command: Command): Command =>
-    (state, dispatch, view) =>
-        command(
-            state,
-            dispatch &&
-                ((transaction) => {
-                    dropCopiedExtras(transaction);
-                    dispatch(transaction);
-                }),
-            view,
-        );
+/**
+ * After every edit, the undeclared keys it copied stay on the first block
+ * only: a split, a lift out of the middle of a list, a block inserted
+ * mid-paragraph and a paste all copy the attributes of the block they cut in
+ * two. A host's own document is left as it is, repeated blocks included.
+ */
+export const copiedExtrasPlugin = (isHostChange: (transaction: Transaction) => boolean): Plugin =>
+    new Plugin({
+        appendTransaction(transactions, oldState, newState) {
+            if (!transactions.some((transaction) => transaction.docChanged) || transactions.some(isHostChange)) {
+                return null;
+            }
+            const transaction = newState.tr;
+            dropCopiedExtras(oldState.doc, transaction);
+            if (!transaction.docChanged) {
+                return null;
+            }
+            return transaction;
+        },
+    });

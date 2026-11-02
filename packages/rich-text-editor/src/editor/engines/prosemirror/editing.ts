@@ -10,12 +10,11 @@ import {
     clipboardSerializer,
     handlePasteByFeatures,
     handlePasteIntoEmptyBlock,
-    isCopyDrag,
-    sliceForPaste,
     sliceWithoutExtras,
 } from './clipboard';
 import { createControlApi, type OpenEditors } from './controlApi';
 import { EXTRA_ATTR, toEngineDocument, toRteDocument, withoutDrafts } from './documentConversion';
+import { copiedExtrasPlugin } from './extraAttributes';
 import { keystrokePipeline } from './keystrokes';
 import { createMarkViews, createNodeViews, LiveViews } from './nodeViews';
 import { placeholderPlugin } from './placeholder';
@@ -103,8 +102,6 @@ const mount = ({
     };
     const api = createControlApi(getView, schema, registry, openEditors);
 
-    let dropCopies = false;
-
     // 3. The view: node/mark views, clipboard, the initial state, and the
     //    transaction loop that feeds the host.
     const editorView: EditorView = new EditorView(container, {
@@ -114,15 +111,7 @@ const mount = ({
         clipboardSerializer: clipboardSerializer(schema),
         clipboardParser: clipboardParser(schema),
         transformCopied: sliceWithoutExtras,
-        dragCopies: isCopyDrag,
-        // The engine reads `transformPasted` before it decides move or copy, so the drop is noted here.
-        transformPasted: (slice) => sliceForPaste(slice, { ownDrag: !dropCopies }),
-        handleDOMEvents: {
-            drop: (_view, event) => {
-                dropCopies = isCopyDrag(event);
-                return false;
-            },
-        },
+        transformPasted: sliceWithoutExtras,
         handlePaste: (pasteView, event, slice) =>
             handlePasteByFeatures(registry.pasteHandlers, api)(pasteView, event) ||
             handlePasteIntoEmptyBlock(pasteView, event, slice),
@@ -130,6 +119,7 @@ const mount = ({
             doc: toEngineDocument(initialDoc, schema),
             plugins: [
                 ...keystrokePipeline(registry, schema, api),
+                copiedExtrasPlugin((transaction) => transaction.getMeta(HOST_DOC) === true),
                 placeholderPlugin(() => currentPlaceholder, placeholderClassName),
             ],
         }),

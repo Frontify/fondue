@@ -4,7 +4,7 @@
 
 import { TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { type RteBlockNode, type RteDocumentOf } from '#/core';
 import { defaultPlugins } from '#/plugins';
@@ -32,6 +32,18 @@ const bullets = (extras: Record<string, unknown>, ...children: RteBlockNode[]): 
     ({ type: 'bulletList', ...extras, children }) as RteBlockNode;
 
 describe('a block with undeclared keys', () => {
+    it('warns once in development that a key no plugin declares is kept', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        try {
+            editorWith(defaultPlugins, [marked({ onlyHere: 1 }, text('a')), marked({ onlyHere: 2 }, text('b'))]);
+
+            expect(warn).toHaveBeenCalledTimes(1);
+            expect(warn).toHaveBeenCalledWith(expect.stringContaining('Key "onlyHere" on block "paragraph"'));
+        } finally {
+            warn.mockRestore();
+        }
+    });
+
     it('keeps the keys on the first half when Enter splits it in the middle', () => {
         const editor = editorWith(defaultPlugins, [marked({ foo: 1 }, text('onetwo'))]);
         editor.caretAfter('one');
