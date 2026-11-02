@@ -5,7 +5,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { Dropdown } from '#/index';
 
 import { Flyout } from '../../Flyout/Flyout';
-import { Tree } from '../Tree';
+import { Tree, type TreeChangeState } from '../Tree';
 
 import { RowDialogHarness } from './testutils/RowDialogHarness';
 import { TestHarness } from './testutils/TestHarness';
@@ -1673,21 +1673,23 @@ test.describe('TreeRoot accepts predicate', () => {
 });
 
 test.describe('TreeRoot drop level by text direction', () => {
-    const initial = [
-        { id: 'x', name: 'X' },
+    const initial: TreeChangeState = [
+        { id: 'x', name: 'X', isFolder: false },
         {
             id: 'a',
             name: 'A',
             isFolder: true,
             isExpanded: true,
             children: [
-                { id: 'a1', name: 'a1' },
-                { id: 'a2', name: 'a2' },
+                { id: 'a1', name: 'a1', isFolder: false },
+                { id: 'a2', name: 'a2', isFolder: false },
             ],
         },
     ];
     const topology = (state: { id: string; children?: { id: string }[] }[]) =>
-        state.map((node) => (node.children ? `${node.id}[${node.children.map((child) => child.id).join(',')}]` : node.id));
+        state.map((node) =>
+            node.children ? `${node.id}[${node.children.map((child) => child.id).join(',')}]` : node.id,
+        );
 
     // Dropping on the lower half of the last child in a group: the strip one indent wide at the
     // row's inline start outdents to the parent level, the rest of the row keeps the child level.
@@ -1702,11 +1704,7 @@ test.describe('TreeRoot drop level by text direction', () => {
                 const states: string[][] = [];
                 const component = await mount(
                     <div dir={dir} style={{ width: 400 }}>
-                        <TestHarness
-                            reorderable
-                            initial={initial}
-                            onChange={(state) => states.push(topology(state))}
-                        />
+                        <TestHarness reorderable initial={initial} onChange={(state) => states.push(topology(state))} />
                     </div>,
                 );
                 const source = component.getByRole('treeitem', { name: 'X' });
@@ -1718,7 +1716,7 @@ test.describe('TreeRoot drop level by text direction', () => {
                 const atPhysicalLeft = (dir === 'ltr') === (edge === 'start');
                 const x = atPhysicalLeft ? 4 : box.width - 4;
                 await source.dragTo(target, { targetPosition: { x, y: box.height * 0.75 } });
-                await expect.poll(() => states.at(-1)).toEqual(expected);
+                await expect.poll(() => states[states.length - 1]).toEqual(expected);
             });
         }
     }
