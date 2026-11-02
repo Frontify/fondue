@@ -26,13 +26,15 @@ const typed = (value: string, plugins: readonly RtePlugin[] = defaultPlugins): R
 
 const press = (view: EditorView, key: string, init: KeyboardEventInit = {}): boolean => {
     const event = new KeyboardEvent('keydown', { key, ...init });
-    // happy-dom answers `getModifierState('AltGraph')` with `altKey`, so every Alt key reads as AltGr.
+    // happy-dom answers `getModifierState('AltGraph')` with `altKey`; browsers answer with `modifierAltGraph`.
     const getModifierState = event.getModifierState.bind(event);
-    event.getModifierState = (modifier) => modifier !== 'AltGraph' && getModifierState(modifier);
+    event.getModifierState = (modifier) =>
+        modifier === 'AltGraph' ? init.modifierAltGraph === true : getModifierState(modifier);
     return view.someProp('handleKeyDown', (handle) => handle(view, event)) === true;
 };
 
 afterEach(destroyEditors);
+afterEach(() => vi.restoreAllMocks());
 
 describe('typing a mark shortcut', () => {
     it('turns **text** bold', () => {
@@ -204,6 +206,34 @@ describe('a feature hotkey', () => {
         expect(first).toHaveBeenCalledTimes(1);
         expect(second).toHaveBeenCalledTimes(1);
         expect(editor.stored()).toEqual([paragraph(text('a!'))]);
+    });
+
+    // Firefox on macOS reports Option as AltGraph, though a Mac has no AltGr key.
+    for (const [keys, init] of [
+        ['Meta-Alt-x', { metaKey: true, altKey: true }],
+        ['Alt-x', { altKey: true }],
+    ] as const) {
+        it(`runs ${keys} on a Mac when Option reports AltGraph`, () => {
+            vi.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
+            const run = vi.fn<(api: EditorControlApi) => void>((api) => api.insertText('!'));
+            const editor = editorWith([{ id: 'option', hotkeys: { [keys]: run } }], [paragraph(text('a'))]);
+            editor.caretAfter('a');
+
+            expect(press(editor.view, 'x', { ...init, modifierAltGraph: true })).toBe(true);
+
+            expect(run).toHaveBeenCalledTimes(1);
+        });
+    }
+
+    it('leaves Ctrl-Alt-x to AltGr off a Mac', () => {
+        vi.spyOn(navigator, 'platform', 'get').mockReturnValue('Win32');
+        const run = vi.fn();
+        const editor = editorWith([{ id: 'ctrl-alt', hotkeys: { 'Ctrl-Alt-x': run } }], [paragraph(text('a'))]);
+        editor.caretAfter('a');
+
+        expect(press(editor.view, 'x', { ctrlKey: true, altKey: true, modifierAltGraph: true })).toBe(false);
+
+        expect(run).not.toHaveBeenCalled();
     });
 
     it('takes a key the list keys would otherwise claim', () => {
