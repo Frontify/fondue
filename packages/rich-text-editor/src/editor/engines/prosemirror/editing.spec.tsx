@@ -327,6 +327,21 @@ describe('a document set by the host while text is being composed', () => {
         expect(view.state.doc.textContent).toBe('!typing');
     });
 
+    it('applies a reported document the host restores after one it handed over mid-composition', async () => {
+        const { handle, view, stored } = mount(paragraph('typing'));
+        handle.api.insertText('a');
+        const restored = stored() as RteDocumentOf;
+        composing(view, true);
+        handle.api.insertText('b');
+
+        handle.setDoc(paragraph('reset'));
+        handle.setDoc(restored);
+        composing(view, false);
+        await nextFrame();
+
+        expect(view.state.doc.textContent).toBe('atyping');
+    });
+
     it('drops a waiting one once the editor is destroyed', async () => {
         const { handle, view, live } = mount(paragraph('typing'));
         composing(view, true);

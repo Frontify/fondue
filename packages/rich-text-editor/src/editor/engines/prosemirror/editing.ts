@@ -179,6 +179,8 @@ const mount = ({
         }
         // Replacing text mid-composition breaks the word being composed, so the change waits for it to end, as in Slate.
         if (editorView.composing) {
+            // Held or not, the host now holds a document of its own, so what it hands back after this is a reset.
+            hostSeq = emitCount;
             waitingDoc = doc;
             if (retryFrame === 0) {
                 retryFrame = requestAnimationFrame(applyWaitingDoc);
