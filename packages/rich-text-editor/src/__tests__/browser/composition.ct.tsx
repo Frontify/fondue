@@ -43,45 +43,40 @@ const keydown = (editable: Locator, init: KeyInit): Promise<boolean> =>
 const modifier = (page: Page): Promise<'metaKey' | 'ctrlKey'> =>
     page.evaluate(() => (/Mac|iP(hone|[oa]d)/.test(navigator.platform) ? 'metaKey' : 'ctrlKey'));
 
+// Mobile keyboards compose ordinary typing, so the rewrites wait for the
+// composition to end rather than skipping composed text.
 test.describe('composed text', () => {
-    test('is not turned into a list by "- "', async ({ mount, page }) => {
-        const component = await mount(<RichTextEditor />);
-        const editable = component.getByRole('textbox');
-
-        await editable.click();
-        await compose(page, '- ');
-        await commit(page, '- ');
-        await settle(page);
-
-        await expect(editable).toHaveText('- ');
-        await expect(editable.locator('ul')).toHaveCount(0);
-    });
-
-    test('is not made bold by **bold**', async ({ mount, page }) => {
+    test('is not rewritten while the composition is open', async ({ mount, page }) => {
         const component = await mount(<RichTextEditor />);
         const editable = component.getByRole('textbox');
 
         await editable.click();
         await compose(page, '**bold**');
-        await commit(page, '**bold**');
         await settle(page);
 
         await expect(editable).toHaveText('**bold**');
         await expect(editable.locator('strong')).toHaveCount(0);
     });
 
-    test('is not made a link by a trailing space after an address', async ({ mount, page }) => {
-        const component = await mount(<RichTextEditor />);
-        const editable = component.getByRole('textbox');
+    // After a composition the last character is in the document already; typed, it is still to come.
+    for (const [composed, element, marked, text] of [
+        ['**bold**', 'strong', 'bold', 'bold'],
+        ['https://example.com ', 'a', 'https://example.com', 'https://example.com '],
+        ['- ', 'ul > li', '', ''],
+    ] as const) {
+        test(`"${composed}" is rewritten once the composition ends`, async ({ mount, page }) => {
+            const component = await mount(<RichTextEditor />);
+            const editable = component.getByRole('textbox');
 
-        await editable.click();
-        await compose(page, 'https://example.com ');
-        await commit(page, 'https://example.com ');
-        await settle(page);
+            await editable.click();
+            await compose(page, composed);
+            await commit(page, composed);
+            await settle(page);
 
-        await expect(editable).toContainText('https://example.com');
-        await expect(editable.locator('a')).toHaveCount(0);
-    });
+            await expect(editable.locator(element)).toHaveText(marked);
+            expect(await editable.textContent()).toBe(text);
+        });
+    }
 
     test('still gets rewritten when typed with the keyboard', async ({ mount, page }) => {
         const component = await mount(<RichTextEditor />);

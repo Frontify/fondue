@@ -24,7 +24,7 @@ import { listKeys } from './lists';
  * 2. Feature hotkeys (Mod-b, ...). Before the list keys so a feature can take a
  *    key lists would claim (`blurOnBreak` takes Enter).
  * 3. List keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
- * 4. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`); never on composed text.
+ * 4. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`); held until a composition ends.
  * 5. Baseline keymap, plus Backspace resetting an emptied first heading.
  *
  * Mark input rules build their own transaction instead of calling
@@ -161,18 +161,7 @@ const typingRewrites = (registry: PluginRegistry, schema: Schema): PmPlugin[] =>
     // reads as an italic `*` wrapping `*bold*`.
     const rules = registry.inputRules.flatMap((rule) => toEngineRule(rule, context) ?? []);
 
-    return rules.length > 0 ? [withoutRewriteOnCompositionEnd(inputRules({ rules }))] : [];
-};
-
-/**
- * The engine runs its rules again when a composition ends, which would rewrite
- * text the input method just committed (`- ` into a list, an address into a
- * link). Only its typed-character handler stays; that one skips composing text itself.
- * The plugin is edited in place: its undo bookkeeping is keyed by the instance.
- */
-const withoutRewriteOnCompositionEnd = (plugin: PmPlugin): PmPlugin => {
-    delete plugin.props.handleDOMEvents;
-    return plugin;
+    return rules.length > 0 ? [inputRules({ rules })] : [];
 };
 
 const toEngineRule = (rule: RteInputRule, context: RuleContext): InputRule | null => {
@@ -230,13 +219,13 @@ const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | n
         if (!content) {
             return null;
         }
-        // The match may include that preceding character. Derive the opening
-        // delimiter from `start`: `end` is where the just-typed character will
-        // land, so the closing delimiter is still one character short.
+        // The match may include that preceding character. Derive every position
+        // from `start`: the closing delimiter's last character is still to come
+        // while typing, but already in the document after a composition.
         const leading = match[0].length - (delimiter.length * 2 + content.length);
         const from = start + leading;
         const contentFrom = from + delimiter.length;
-        const contentTo = end - (delimiter.length - 1);
+        const contentTo = contentFrom + content.length;
         // Only the delimiters go, closing first so the opening one's position
         // holds: the content stays as it is, inline elements and marks included.
         return state.tr
@@ -289,17 +278,19 @@ const markPatternRule = (rule: RuleOfKind<'markPattern'>, context: RuleContext):
         if (!token.test(linked)) {
             return null;
         }
-        // The match is the token plus the space being typed (not in the
-        // document yet), and maybe the whitespace before the token.
+        // The match is the token plus the space, and maybe the whitespace before
+        // the token. The space is still to come while typing, but already in
+        // the document after a composition.
         const from = start + (match[0].length - 1 - typed.length);
         const to = from + linked.length;
         if ([markType, ...context.excludedMarks].some((type) => state.doc.rangeHasMark(from, to, type))) {
             return null;
         }
-        return state.tr
-            .addMark(from, to, markType.create(valueAttrsFor(rule.value(linked))))
-            .insert(end, state.schema.text(' '))
-            .removeStoredMark(markType);
+        const tr = state.tr.addMark(from, to, markType.create(valueAttrsFor(rule.value(linked))));
+        if (end - start < match[0].length) {
+            tr.insert(end, state.schema.text(' '));
+        }
+        return tr.removeStoredMark(markType);
     };
     return toInputRule({ pattern, handler }, context);
 };
@@ -340,8 +331,8 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
         typeof match === 'string'
             ? new RegExp(`${escapeForRegExp(match)}$`)
             : new RegExp(`(?:${match.source})$`, withoutStateFlags(match));
-    // `end` is where the just-typed character will land: it is in the match
-    // but not the document yet, so replacing up to `end` swaps all of it.
+    // `start` to `end` is the part of the match in the document: replacing it
+    // swaps all of it, whether a typed character is still to come or not.
     const handler: RuleHandler = (state, _match, start, end) => state.tr.insertText(replace, start, end);
     return toInputRule({ pattern, handler }, context);
 };
