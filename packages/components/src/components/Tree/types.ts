@@ -87,6 +87,7 @@ export type TreeItemProps = TreeRowSharedProps & {
 export type TreeFolderProps = TreeRowSharedProps & {
     /** A `<Tree.FolderHeader>` for the folder's own row, followed by its nested rows. */
     children: ReactNode;
+    /** A double-click on the folder's row opens or closes it once, whether or not it was selected. */
     isExpanded?: boolean;
     onExpandChange?: (isExpanded: boolean) => void;
     /**

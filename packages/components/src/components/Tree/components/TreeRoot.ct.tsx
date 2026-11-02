@@ -1237,6 +1237,42 @@ test.describe('TreeRoot expansion', () => {
         expect(selectCalls).toEqual([]);
         await expect(row).toHaveAttribute('aria-selected', 'false');
     });
+
+    const doubleClickFolder = [
+        {
+            id: 'f',
+            name: 'Folder',
+            isFolder: true,
+            isExpanded: false,
+            children: [{ id: 'c', name: 'Child', isFolder: false }],
+        },
+    ];
+
+    test('double-clicking an unselected folder opens it once', async ({ mount }) => {
+        const component = await mount(<TestHarness initial={doubleClickFolder} />);
+
+        await component.getByRole('treeitem', { name: /Folder/ }).dblclick();
+
+        await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    test('double-clicking the selected folder opens it once', async ({ mount }) => {
+        const component = await mount(
+            <TestHarness initial={doubleClickFolder.map((node) => ({ ...node, isSelected: true }))} />,
+        );
+
+        await component.getByRole('treeitem', { name: /Folder/ }).dblclick();
+
+        await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    test('double-clicking a folder in multi-select opens it once', async ({ mount }) => {
+        const component = await mount(<TestHarness multiSelect initial={doubleClickFolder} />);
+
+        await component.getByRole('treeitem', { name: /Folder/ }).dblclick();
+
+        await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-expanded', 'true');
+    });
 });
 
 test.describe('TreeRoot loading rows', () => {

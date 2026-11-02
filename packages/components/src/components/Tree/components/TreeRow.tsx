@@ -76,13 +76,20 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
     // available) but drop the consumer's `onClick`; selection is blocked in the setters.
     // In single-select, the first click on a folder only selects it — headless-tree would
     // also toggle it — and clicking the already-selected folder toggles it.
+    const firstClickToggledRef = useRef(false);
     const handleClick = (event: MouseEvent<HTMLDivElement>) => {
         // The second click of a double-click belongs to `onDoubleClick`, so it neither re-selects nor toggles the row.
         if (event.detail === 2 && data.onDoubleClick && !data.isDisabled) {
             data.onDoubleClick(event);
             return;
         }
-        if (!multiSelect && isFolder && !data.isDisabled && !item.isSelected()) {
+        // A double-click toggles a folder once, so its second click is dropped when the first already toggled.
+        if (event.detail === 2 && firstClickToggledRef.current) {
+            return;
+        }
+        const selectsOnly = !multiSelect && isFolder && !data.isDisabled && !item.isSelected();
+        firstClickToggledRef.current = isFolder && !selectsOnly;
+        if (selectsOnly) {
             item.setFocused();
             item.getTree().setSelectedItems([item.getId()]);
         } else {
