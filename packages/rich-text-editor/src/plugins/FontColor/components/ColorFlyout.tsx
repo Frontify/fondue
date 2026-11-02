@@ -22,6 +22,9 @@ const PRESETS: readonly { name: string; color: string }[] = [
     { name: 'Purple', color: '#8430ce' },
 ];
 
+/** What the picker shows when it is given no colour. */
+const PICKER_DEFAULT: RgbaColor = { red: 255, green: 255, blue: 255, alpha: 1 };
+
 /** The colour typed in the picker's hex field. The field reports only on blur, so Enter and Save read it directly. */
 const typedHex = (container: HTMLElement | null, alpha: number | undefined): RgbaColor | undefined => {
     const field = container?.querySelector<HTMLInputElement>('input[type="text"]');
@@ -171,9 +174,8 @@ export const ColorFlyout = ({
                             defaultFormat="HEX"
                             currentColor={draft}
                             onColorChange={(color) => {
-                                // The hex field reports what it shows again on blur, which is no choice.
-                                const shown = typedHex(pickerRef.current, draft?.alpha);
-                                if (shown === undefined || toCssColor(color) !== toCssColor(shown)) {
+                                // A format switch or the hex field's blur re-reports the shown colour, which is no choice.
+                                if (toCssColor(color) !== toCssColor(draft ?? PICKER_DEFAULT)) {
                                     choseRef.current = true;
                                 }
                                 setDraft(color);

@@ -83,6 +83,25 @@ describe('the colour flyout', () => {
         }
     });
 
+    it('changes nothing on Save after only switching the value format', () => {
+        const { toggle, set } = mount({});
+        for (const format of ['RGBA', 'HEX']) {
+            act(() => document.querySelector<HTMLElement>('[data-test-id="color-picker-select-format"]')?.click());
+            const option = [...document.querySelectorAll<HTMLElement>('[role="option"]')].find(
+                (candidate) => candidate.textContent === format,
+            );
+            if (option === undefined) {
+                throw new Error(`no ${format} option`);
+            }
+            act(() => option.click());
+        }
+        expect(document.querySelector('input[type="text"]')).not.toBeNull();
+        press('Save');
+
+        expect(toggle).not.toHaveBeenCalled();
+        expect(set).not.toHaveBeenCalled();
+    });
+
     it('changes nothing when the text keeps its own colour', () => {
         const { toggle, set } = mount({ fontColor: { color: '#c5221f' } });
         typeHexAndPressEnter('c5221f');
