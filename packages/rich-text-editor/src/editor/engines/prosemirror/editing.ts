@@ -60,39 +60,60 @@ const MATCH_LIMIT = 250_000;
 
 /** Index pairs of equal children, in order: a longest common subsequence. */
 const equalChildren = (before: readonly PmNode[], after: readonly PmNode[]): [number, number][] => {
-    if (before.length * after.length > MATCH_LIMIT) {
-        return [];
-    }
-    const lengths = Array.from({ length: before.length + 1 }, () => Array.from({ length: after.length + 1 }, () => 0));
-    const lengthAt = (i: number, j: number): number => lengths[i]?.[j] ?? 0;
     const same = (i: number, j: number): boolean => {
         const a = before[i];
         const b = after[j];
         return a !== undefined && b !== undefined && a.eq(b);
     };
-    for (let i = before.length - 1; i >= 0; i--) {
-        const row = lengths[i] ?? [];
-        for (let j = after.length - 1; j >= 0; j--) {
+    // The shared start and end are matched directly (cheap, as reused nodes compare by identity), so only the
+    // changed stretch between them pays for, and counts against, the full comparison.
+    let head = 0;
+    while (head < before.length && head < after.length && same(head, head)) {
+        head += 1;
+    }
+    let tail = 0;
+    while (
+        tail < before.length - head &&
+        tail < after.length - head &&
+        same(before.length - 1 - tail, after.length - 1 - tail)
+    ) {
+        tail += 1;
+    }
+    const pairs: [number, number][] = [];
+    for (let index = 0; index < head; index++) {
+        pairs.push([index, index]);
+    }
+    const endA = before.length - tail;
+    const endB = after.length - tail;
+    if ((endA - head) * (endB - head) <= MATCH_LIMIT) {
+        const width = endB - head + 1;
+        const lengths = Array.from({ length: (endA - head + 1) * width }, () => 0);
+        const lengthAt = (i: number, j: number): number => lengths[(i - head) * width + (j - head)] ?? 0;
+        for (let i = endA - 1; i >= head; i--) {
+            for (let j = endB - 1; j >= head; j--) {
+                if (same(i, j)) {
+                    lengths[(i - head) * width + (j - head)] = lengthAt(i + 1, j + 1) + 1;
+                } else {
+                    lengths[(i - head) * width + (j - head)] = Math.max(lengthAt(i + 1, j), lengthAt(i, j + 1));
+                }
+            }
+        }
+        let i = head;
+        let j = head;
+        while (i < endA && j < endB) {
             if (same(i, j)) {
-                row[j] = lengthAt(i + 1, j + 1) + 1;
+                pairs.push([i, j]);
+                i += 1;
+                j += 1;
+            } else if (lengthAt(i + 1, j) >= lengthAt(i, j + 1)) {
+                i += 1;
             } else {
-                row[j] = Math.max(lengthAt(i + 1, j), lengthAt(i, j + 1));
+                j += 1;
             }
         }
     }
-    const pairs: [number, number][] = [];
-    let i = 0;
-    let j = 0;
-    while (i < before.length && j < after.length) {
-        if (same(i, j)) {
-            pairs.push([i, j]);
-            i += 1;
-            j += 1;
-        } else if (lengthAt(i + 1, j) >= lengthAt(i, j + 1)) {
-            i += 1;
-        } else {
-            j += 1;
-        }
+    for (let offset = tail; offset > 0; offset--) {
+        pairs.push([before.length - offset, after.length - offset]);
     }
     return pairs;
 };

@@ -367,6 +367,17 @@ describe('a document set by the host that changes the blocks around the caret', 
         expect(view.state.doc.textContent).toBe('AbC');
     });
 
+    it('leaves the caret alone in a long document when the host inserts a block far from it', () => {
+        const texts = Array.from({ length: 600 }, (_, index) => `block ${index}`);
+        const { view, editor } = editorWith([], texts.map(text) as never);
+        caretIn(view, 'block 599', 1);
+
+        editor.setDoc(blocksOf(...texts.slice(0, 300).map(text), text('new'), ...texts.slice(300).map(text)));
+
+        expect(view.state.doc.childCount).toBe(601);
+        expect(caretAt(view)).toEqual({ block: 'block 599', offset: 1 });
+    });
+
     it('keeps a host restyle when the user undoes their own change to the same block', () => {
         const { view, editor, api } = editorWith(shipped('text-style', 'align'), [text('one'), text('two')] as never);
         caretIn(view, 'one', 1);
