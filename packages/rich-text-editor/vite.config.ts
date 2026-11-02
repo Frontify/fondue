@@ -72,7 +72,7 @@ export default defineConfig({
             rollupTypes: true,
             // Only the package source: not `.storybook/`, which the tsconfig also covers.
             include: ['src'],
-            exclude: ['**/*.stories.tsx', '**/*.spec.ts', '**/*.spec.tsx', '**/*.ct.tsx'],
+            exclude: ['**/*.stories.tsx', '**/*.spec.ts', '**/*.spec.tsx', '**/*.ct.ts', '**/*.ct.tsx'],
         }),
         externalizeJsDeps(),
     ],
