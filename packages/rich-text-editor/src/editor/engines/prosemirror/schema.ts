@@ -62,8 +62,7 @@ const contentExpression = (
         if (!known.has(content.items)) {
             throw new Error(`Block "${type}" declares items of type "${content.items}", which is not registered.`);
         }
-        // Wherever blocks go, one no plugin knows may stand in for one.
-        return `(${content.items} | ${UNKNOWN_BLOCK})+`;
+        return `${content.items}+`;
     }
     const expanded = content.blocks.flatMap((name) => (name === ANY_LIST ? [...lists] : [name]));
     const contains = [...new Set(expanded)].filter((name) => known.has(name));

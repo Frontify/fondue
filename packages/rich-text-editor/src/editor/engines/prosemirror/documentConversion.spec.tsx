@@ -15,7 +15,7 @@ import {
     type RtePlugin,
 } from '#/core';
 
-import { EXTRA_ATTR, toEngineDocument, toRteDocument } from './documentConversion';
+import { EXTRA_ATTR, mapChildren, toEngineDocument, toRteDocument, UNKNOWN_BLOCK } from './documentConversion';
 import { buildSchema } from './schema';
 
 /**
@@ -184,24 +184,57 @@ describe('the document boundary', () => {
             }
         });
 
-        it("keeps a block no plugin knows standing among a list's items, warning once", () => {
-            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-            try {
-                const item = (value: string) => ({
-                    type: 'listItem',
-                    children: [{ type: PARAGRAPH, children: [{ text: value }] }],
-                });
-                const sidebar = { type: 'sidebar', children: [{ type: PARAGRAPH, children: [{ text: 'in' }] }] };
-                const amongItems = {
-                    version: 1,
-                    blocks: [{ type: 'bulletList', children: [item('one'), sidebar, item('two'), sidebar] }],
-                } as unknown as RteDocumentOf;
+        describe("with a block no plugin knows standing among a list's items", () => {
+            const item = (...children: unknown[]) => ({ type: 'listItem', children });
+            const words = (value: string) => ({ type: PARAGRAPH, children: [{ text: value }] });
+            const sidebar = { type: 'sidebar', children: [words('in')] };
 
-                expect(toRteDocument(toEngineDocument(amongItems, schema))).toEqual(amongItems);
-                expect(warn.mock.calls.filter(([message]) => String(message).includes('"sidebar"'))).toHaveLength(1);
-            } finally {
-                warn.mockRestore();
-            }
+            it('keeps the list whole as one unknown block, warning once', () => {
+                const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+                try {
+                    const amongItems = {
+                        version: 1,
+                        blocks: [
+                            {
+                                type: 'bulletList',
+                                children: [item(words('one')), sidebar, item(words('two')), sidebar],
+                            },
+                            words('after'),
+                        ],
+                    } as unknown as RteDocumentOf;
+                    const engineDoc = toEngineDocument(amongItems, schema);
+
+                    expect(mapChildren(engineDoc, (node) => node.type.name)).toEqual([UNKNOWN_BLOCK, PARAGRAPH]);
+                    expect(toRteDocument(engineDoc)).toEqual(amongItems);
+                    expect(warn.mock.calls.filter(([message]) => String(message).includes('"sidebar"'))).toHaveLength(
+                        1,
+                    );
+                } finally {
+                    warn.mockRestore();
+                }
+            });
+
+            it('keeps only the innermost list that holds it whole, the lists around it editable', () => {
+                const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+                try {
+                    const nested = { type: 'bulletList', children: [item(words('inner')), sidebar] };
+                    const outer = {
+                        version: 1,
+                        blocks: [{ type: 'bulletList', children: [item(words('outer'), nested)] }],
+                    } as unknown as RteDocumentOf;
+                    const engineDoc = toEngineDocument(outer, schema);
+                    const outerItem = engineDoc.firstChild?.firstChild;
+
+                    expect(engineDoc.firstChild?.type.name).toBe('bulletList');
+                    expect(outerItem && mapChildren(outerItem, (node) => node.type.name)).toEqual([
+                        PARAGRAPH,
+                        UNKNOWN_BLOCK,
+                    ]);
+                    expect(toRteDocument(engineDoc)).toEqual(outer);
+                } finally {
+                    warn.mockRestore();
+                }
+            });
         });
     });
 

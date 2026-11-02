@@ -4,13 +4,8 @@ import {
     baseKeymap,
     chainCommands,
     createParagraphNear,
-    deleteSelection,
-    joinBackward,
-    joinForward,
     liftEmptyBlock,
     newlineInCode,
-    selectNodeBackward,
-    selectNodeForward,
     setBlockType,
     splitBlock,
 } from 'prosemirror-commands';
@@ -25,7 +20,7 @@ import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type Rt
 import { keepCarriedAttrs } from './controlApi';
 import { valueAttrsFor } from './documentConversion';
 import { clearExtrasAt, newBlockSide } from './extraAttributes';
-import { keepingUnknownBlocks, listKeys } from './lists';
+import { listKeys } from './lists';
 
 /**
  * What happens when a key is pressed, as one ordered list of ProseMirror plugins.
@@ -45,40 +40,6 @@ import { keepingUnknownBlocks, listKeys } from './lists';
 
 export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api: EditorControlApi): PmPlugin[] => {
     const hasLists = registry.itemTypeByList.size > 0;
-    let baseline: Record<string, Command> = {
-        ...baseKeymap,
-        Enter: chainCommands(newlineInCode, createParagraphNear, liftEmptyBlock, splitWithoutExtras),
-    };
-    if (hasLists) {
-        // Its joins and lifts take a list's children for items, so an unknown block among them can be lost; a refused key still counts as handled.
-        const guarded = (command: Command): Command =>
-            keepingUnknownBlocks(command, { handleRefusal: true, spareSelected: true });
-        // A refused join falls through to selecting the block, as the engine's chain does before deleting one; the
-        // last step only claims the key, so the browser does not make the refused change itself.
-        const backspace = chainCommands(
-            guarded(deleteSelection),
-            keepingUnknownBlocks(joinBackward, { spareSelected: true }),
-            selectNodeBackward,
-            (state) => joinBackward(state),
-        );
-        const del = chainCommands(
-            guarded(deleteSelection),
-            keepingUnknownBlocks(joinForward, { spareSelected: true }),
-            selectNodeForward,
-            (state) => joinForward(state),
-        );
-        baseline = Object.fromEntries(
-            Object.entries(baseline).map(([key, command]) => {
-                if (command === baseKeymap.Backspace) {
-                    return [key, backspace];
-                }
-                if (command === baseKeymap.Delete) {
-                    return [key, del];
-                }
-                return [key, guarded(command)];
-            }),
-        );
-    }
 
     return [
         // 1
@@ -98,7 +59,10 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         ...typingRewrites(registry, schema),
         // 5
         keymap({ Backspace: resetEmptyFirstBlock(registry) }),
-        keymap(baseline),
+        keymap({
+            ...baseKeymap,
+            Enter: chainCommands(newlineInCode, createParagraphNear, liftEmptyBlock, splitWithoutExtras),
+        }),
     ];
 };
 

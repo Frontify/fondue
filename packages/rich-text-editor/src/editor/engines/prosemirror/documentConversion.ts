@@ -227,7 +227,16 @@ const blockToEngine = (block: RteBlockNode, schema: Schema): PmNode => {
     // A stored key named like the extras attribute is just another undeclared key.
     reserved.delete(EXTRA_ATTR);
     const attrs = { ...declaredAttrs(stored, nodeType.spec.attrs), [EXTRA_ATTR]: extrasOf(stored, reserved) };
-    return createFilled(nodeType, attrs, block.children ? childrenToEngine(nodeType, block.children, schema) : []);
+    const content = block.children ? childrenToEngine(nodeType, block.children, schema) : [];
+    const node = nodeType.createAndFill(attrs, content);
+    if (node !== null) {
+        return node;
+    }
+    // A list cannot hold an unknown block among its items, so the whole list is kept as one instead.
+    if (content.some((child) => child.type.name === UNKNOWN_BLOCK)) {
+        return schema.node(UNKNOWN_BLOCK, { [RAW_ATTR]: block });
+    }
+    throw invalidDocument(nodeType, content);
 };
 
 export const toEngineDocument = (doc: RteDocumentOf, schema: Schema): PmNode => {

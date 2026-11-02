@@ -7,7 +7,7 @@ import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry } from '#/core';
 
-import { mapChildren, RAW_ATTR, UNKNOWN_BLOCK } from './documentConversion';
+import { mapChildren } from './documentConversion';
 import { clearExtrasAt, dropCopiedExtras, newBlockSide, withoutCopiedExtras } from './extraAttributes';
 import { warnUnknownType } from './warnings';
 
@@ -37,76 +37,6 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
     const itemName = list ? itemTypeByList.get(list.node.type.name) : undefined;
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
 };
-
-/** The raw block of every unknown block in the document, those within `spared` left out. */
-const unknownBlocks = (doc: PmNode, spared?: { from: number; to: number }): unknown[] => {
-    const found: unknown[] = [];
-    doc.descendants((node, pos) => {
-        if (node.type.name !== UNKNOWN_BLOCK) {
-            return true;
-        }
-        if (spared === undefined || pos >= spared.to || pos + node.nodeSize <= spared.from) {
-            found.push(node.attrs[RAW_ATTR]);
-        }
-        return false;
-    });
-    return found;
-};
-
-/** Each unknown block in `before` is still in `after`, unchanged, wherever it now stands. */
-const keepsUnknownBlocks = (before: PmNode, after: PmNode, spared?: { from: number; to: number }): boolean => {
-    const previous = unknownBlocks(before, spared);
-    // The usual document has none, and then the result need not be walked.
-    if (previous.length === 0) {
-        return true;
-    }
-    const standing = unknownBlocks(after);
-    for (const raw of previous) {
-        const index = standing.indexOf(raw);
-        if (index === -1) {
-            return false;
-        }
-        standing.splice(index, 1);
-    }
-    return true;
-};
-
-/**
- * Block commands take every child of a list for an item, so with an unknown
- * block among them they can drop it or throw. Runs the command aside and
- * applies it only if no such block is lost. A refused command reports false, or
- * true with `handleRefusal`, for a key whose fallback to the baseline keymap
- * would run the same change unguarded. With `spareSelected`, blocks inside the
- * selection are not tracked: the user is deleting them.
- */
-export const keepingUnknownBlocks =
-    (
-        command: Command,
-        { handleRefusal = false, spareSelected = false }: { handleRefusal?: boolean; spareSelected?: boolean } = {},
-    ): Command =>
-    (state, dispatch, view) => {
-        const captured: Transaction[] = [];
-        try {
-            if (!command(state, (transaction) => captured.push(transaction), view)) {
-                return false;
-            }
-        } catch {
-            return handleRefusal;
-        }
-        const [transaction] = captured;
-        if (transaction === undefined) {
-            return true;
-        }
-        let spared: { from: number; to: number } | undefined;
-        if (spareSelected) {
-            spared = state.selection;
-        }
-        if (!keepsUnknownBlocks(state.doc, transaction.doc, spared)) {
-            return handleRefusal;
-        }
-        dispatch?.(transaction);
-        return true;
-    };
 
 /** The engine's split, except that the item it starts, and the block in it, carry none of the undeclared keys it copies. */
 const splitListItem =
@@ -157,7 +87,7 @@ export const createListApi = (
             return false;
         }
         // Lifting an item out of the middle closes the list and opens a copy of it after.
-        return keepingUnknownBlocks(withoutCopiedExtras(command(itemType)))(view.state, view.dispatch, view);
+        return withoutCopiedExtras(command(itemType))(view.state, view.dispatch, view);
     };
 
     return {
@@ -181,12 +111,9 @@ export const createListApi = (
                 // is invalid content, so converting in two steps would throw.
                 const converted = listType.create(
                     current.node.attrs,
-                    mapChildren(current.node, (item) => {
-                        if (item.type === itemType || item.type.name === UNKNOWN_BLOCK) {
-                            return item;
-                        }
-                        return itemType.create(item.attrs, item.content);
-                    }),
+                    mapChildren(current.node, (item) =>
+                        item.type === itemType ? item : itemType.create(item.attrs, item.content),
+                    ),
                 );
                 view.dispatch(view.state.tr.replaceWith(current.pos, current.pos + current.node.nodeSize, converted));
             }
@@ -213,15 +140,9 @@ export const createListApi = (
 
             const transaction = view.state.tr;
             const contentOf = (list: PmNode): PmNode[] =>
-                mapChildren(list, (item) => {
-                    // An unknown block among the items is not an item: it stands as a sibling.
-                    if (item.type.name === UNKNOWN_BLOCK) {
-                        return [[item]];
-                    }
-                    return mapChildren(item, (child) =>
-                        itemTypeByList.has(child.type.name) ? contentOf(child) : [child],
-                    );
-                }).flat(2);
+                mapChildren(list, (item) =>
+                    mapChildren(item, (child) => (itemTypeByList.has(child.type.name) ? contentOf(child) : [child])),
+                ).flat(2);
             // From the end backwards, so the earlier positions stay valid.
             for (const { node, pos } of [...lists].reverse()) {
                 transaction.replaceWith(pos, pos + node.nodeSize, contentOf(node));
@@ -252,27 +173,19 @@ export const liftOutOfLists = (
     const itemTypes = [...new Set(itemTypeByList.values())].flatMap((name) => schema.nodes[name] ?? []);
     const transactions: Transaction[] = [];
     let current = state;
-    try {
-        for (let round = 0; round < MAX_NESTING; round++) {
-            let lifted: Transaction | null = null;
-            for (const itemType of itemTypes) {
-                if (liftListItem(itemType)(current, (transaction) => (lifted = transaction))) {
-                    break;
-                }
-            }
-            if (lifted === null) {
+    for (let round = 0; round < MAX_NESTING; round++) {
+        let lifted: Transaction | null = null;
+        for (const itemType of itemTypes) {
+            if (liftListItem(itemType)(current, (transaction) => (lifted = transaction))) {
                 break;
             }
-            dropCopiedExtras(lifted);
-            transactions.push(lifted);
-            current = current.apply(lifted);
         }
-    } catch {
-        return [];
-    }
-    // The composed result decides, as for a single command.
-    if (!keepsUnknownBlocks(state.doc, current.doc)) {
-        return [];
+        if (lifted === null) {
+            break;
+        }
+        dropCopiedExtras(lifted);
+        transactions.push(lifted);
+        current = current.apply(lifted);
     }
     return transactions;
 };
