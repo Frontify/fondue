@@ -8,7 +8,7 @@ import { type EditorControlApi, type RteSelectionSnapshot } from '#/core';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
 import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
-import { type FontColorValue, isCssColor, parseCssColor, type RgbaColor, toCssColor } from '../helpers/colors';
+import { type FontColorValue, isStoredColor, parseCssColor, type RgbaColor, toCssColor } from '../helpers/colors';
 
 import styles from './colorFlyout.module.scss';
 
@@ -24,8 +24,12 @@ const PRESETS: readonly { name: string; color: string }[] = [
 
 /** The colour typed in the picker's hex field. The field reports only on blur, so Enter and Save read it directly. */
 const typedHex = (container: HTMLElement | null, alpha: number | undefined): RgbaColor | undefined => {
-    const field = container?.querySelector<HTMLInputElement>('input[type="text"]');
-    const parsed = parseCssColor(field ? `#${field.value.replace(/^#/, '')}` : undefined);
+    const typed = container?.querySelector<HTMLInputElement>('input[type="text"]')?.value.replace(/^#/, '');
+    // The field takes three or six digits; anything else is its error state, not a colour.
+    if (typed === undefined || !/^([\dA-Fa-f]{3}){1,2}$/.test(typed)) {
+        return undefined;
+    }
+    const parsed = parseCssColor(`#${typed}`);
     return parsed === undefined ? undefined : { ...parsed, alpha: alpha ?? 1 };
 };
 
@@ -42,10 +46,22 @@ export const ColorFlyout = ({
     api: EditorControlApi;
 }): ReactNode => {
     const value = selection.marks.fontColor as Partial<FontColorValue> | undefined;
-    // Coloured text may carry a colour the picker cannot read (`red`, `hsl()`
-    // pasted in): it is still coloured, and still removable.
+    // Coloured text may carry a stored value that is no colour: it shows no
+    // colour, and is still removable.
     const hasColor = 'fontColor' in selection.marks;
-    const current = parseCssColor(value?.color);
+    let currentCss: string | undefined;
+    if (isStoredColor(value?.color)) {
+        currentCss = value.color;
+    }
+    const current = parseCssColor(currentCss);
+    // Named as hex, then the opacity while translucent, as the picker's fields read.
+    let colorName: string | undefined;
+    if (current !== undefined) {
+        colorName = toCssColor({ ...current, alpha: 1 }).toUpperCase();
+        if (current.alpha !== undefined && current.alpha < 1) {
+            colorName += ` ${Math.round(current.alpha * 100)}%`;
+        }
+    }
     const [open, setOpen] = useState(false);
     const [draft, setDraft] = useState<RgbaColor | undefined>(undefined);
     const titleId = useId();
@@ -82,10 +98,6 @@ export const ColorFlyout = ({
         apply(picked);
     };
 
-    // One the picker cannot read still shows as written, when it is a colour at all.
-    const currentCss =
-        current === undefined ? (isCssColor(value?.color) ? value.color : undefined) : toCssColor(current);
-
     return (
         <Flyout.Root
             open={open}
@@ -103,7 +115,7 @@ export const ColorFlyout = ({
                 <ToolbarButton
                     active={hasColor}
                     // The swatch is visual only, so the colour goes in the name.
-                    title={currentCss === undefined ? 'Text colour' : `Text colour: ${currentCss.toUpperCase()}`}
+                    title={colorName === undefined ? 'Text colour' : `Text colour: ${colorName}`}
                 >
                     <span className={styles.trigger}>
                         <IconDroplet size={16} />
