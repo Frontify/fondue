@@ -294,6 +294,9 @@ describe('a document from a newer format version', () => {
         expect(container.querySelector('[role="toolbar"]')).toBeNull();
         expect(warn).toHaveBeenCalledTimes(1);
         expect(warn).toHaveBeenCalledWith(expect.stringContaining('version 2'));
+        expect(container.querySelector('[role="status"]')?.textContent).toBe(
+            'This content was saved by a newer version of the editor and can only be viewed here.',
+        );
 
         act(() => {
             const data = new DataTransfer();
@@ -305,6 +308,16 @@ describe('a document from a newer format version', () => {
 
         expect(container.textContent).not.toContain('pasted');
         expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it('says so in the words the host gives', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container } = mount(() => (
+            <RichTextEditor value={newer} plugins={defaultPlugins} labels={{ newerVersion: 'Nur lesbar' }} />
+        ));
+
+        expect(container.querySelector('[role="status"]')?.textContent).toBe('Nur lesbar');
     });
 
     it('does not repeat the warning on re-render', () => {
@@ -353,10 +366,11 @@ describe('a document from a newer format version', () => {
     ])('stays editable, without a warning, with %s', (_name, value) => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         teardown.push(() => warn.mockRestore());
-        const { ready } = mount(() => <RichTextEditor value={value} plugins={defaultPlugins} />);
+        const { container, ready } = mount(() => <RichTextEditor value={value} plugins={defaultPlugins} />);
         ready();
 
         expect(warn).not.toHaveBeenCalled();
+        expect(container.querySelector('[role="status"]')).toBeNull();
     });
 });
 

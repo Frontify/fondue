@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Notice } from '@frontify/fondue-components';
 import {
     type CSSProperties,
     type KeyboardEvent,
@@ -280,6 +281,11 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                 {...(readOnly && isNamed ? { role: 'group', ...hostLabels } : {})}
             >
                 {toolbarFloats ? null : toolbar}
+                {newerVersion === null ? null : (
+                    <Notice variant="warning" emphasis="weak" className={styles.notice}>
+                        {labels.newerVersion}
+                    </Notice>
+                )}
                 {readOnly ? (
                     // The renderer adds the document and plugin classes itself.
                     <RegistryRenderer value={document} registry={registry} className={styles.content} />

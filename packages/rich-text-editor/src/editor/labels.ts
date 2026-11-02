@@ -26,6 +26,8 @@ export type RichTextEditorLabels = {
     noResults: string;
     /** Announced as the `/` menu narrows, when something matches. */
     commandCount: (count: number) => string;
+    /** Shown over a document a newer version of the editor saved, which is shown read-only. */
+    newerVersion: string;
 };
 
 export const DEFAULT_LABELS: RichTextEditorLabels = {
@@ -39,4 +41,5 @@ export const DEFAULT_LABELS: RichTextEditorLabels = {
     commands: 'Commands',
     noResults: 'No results',
     commandCount: (count) => `${count} ${count === 1 ? 'command' : 'commands'}`,
+    newerVersion: 'This content was saved by a newer version of the editor and can only be viewed here.',
 };
