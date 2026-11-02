@@ -173,14 +173,13 @@ test.describe('AltGr', () => {
     test('AltGr plus a key does not run a Mod-Alt hotkey', async ({ mount, page }) => {
         const component = await mount(<RichTextEditor />);
         const editable = component.getByRole('textbox');
-        test.skip(
-            (await modifier(page)) === 'metaKey',
-            'A Mac has no AltGr key, so the engine leaves Option to its hotkeys',
-        );
+        const mod = await modifier(page);
+        // A Mac has no AltGr key, so the engine heeds AltGraph only elsewhere; it reads the platform per key.
+        await page.evaluate(() => Object.defineProperty(navigator, 'platform', { get: () => 'Win32' }));
 
         await editable.click();
         await page.keyboard.type('title');
-        const claimed = await keydown(editable, { ...altGrKey, ctrlKey: true, modifierAltGraph: true });
+        const claimed = await keydown(editable, { ...altGrKey, [mod]: true, modifierAltGraph: true });
 
         expect(claimed).toBe(false);
         await expect(editable.locator('h1')).toHaveCount(0);
