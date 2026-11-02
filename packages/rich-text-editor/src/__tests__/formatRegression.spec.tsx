@@ -96,7 +96,14 @@ const paste = (container: HTMLElement, text: string): void => {
 const editedCopyOf = (blocks: RteBlock[], root: Record<string, unknown> = {}) => {
     const editor = mount((onChange) => (
         <RichTextEditor
-            value={{ ...root, version: 1, blocks: [sacrificial, ...blocks] } as RteDocument}
+            // A copy, so an unknown node handed back as the object it came in as is still compared against the original.
+            value={
+                {
+                    ...structuredClone(root),
+                    version: 1,
+                    blocks: [sacrificial, ...structuredClone(blocks)],
+                } as RteDocument
+            }
             onChange={onChange}
             plugins={plugins}
         />
@@ -134,8 +141,7 @@ describe('the stored document format: golden fixtures', () => {
         expectEditable(container);
         expect(container.querySelector('[data-rte-unknown]')).toBeNull();
         expect(warn).not.toHaveBeenCalled();
-        expect(stored()?.version).toBe(1);
-        expect(stored()?.blocks.slice(1)).toStrictEqual(doc.blocks);
+        expect(stored()).toStrictEqual({ version: 1, blocks: [expect.anything(), ...doc.blocks] });
     });
 
     it('hands out the same block objects for blocks an edit did not touch', () => {
@@ -372,9 +378,6 @@ describe('the stored document format: seeded random round trip', () => {
         const { container, stored } = editedCopyOf(blocks, root);
 
         expectEditable(container);
-        expect(stored()?.version).toBe(1);
-        expect(stored()?.blocks.slice(1)).toStrictEqual(blocks);
-        const { version: _version, blocks: _blocks, ...storedRoot } = stored() ?? {};
-        expect(storedRoot).toStrictEqual(root);
+        expect(stored()).toStrictEqual({ ...root, version: 1, blocks: [expect.anything(), ...blocks] });
     });
 });
