@@ -1699,7 +1699,11 @@ test.describe('TreeRoot reorderable mode', () => {
 });
 
 test.describe('TreeRoot indentation', () => {
-    test('indents each level by the step headless-tree uses for drop hit-testing', async ({ mount }) => {
+    test('indents each level by the step headless-tree uses for drop hit-testing', async ({ mount, page }) => {
+        // A non-default root font size separates the pixel step from a `rem` one.
+        await page.evaluate(() => {
+            document.documentElement.style.fontSize = '24px';
+        });
         const component = await mount(
             <Tree.Root>
                 <Tree.Folder id="f" isExpanded>
