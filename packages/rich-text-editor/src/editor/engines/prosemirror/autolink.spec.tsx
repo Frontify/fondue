@@ -212,6 +212,29 @@ describe('pressing Enter after a web address', () => {
         expect(editor.stored()).toEqual([paragraph(link('https://example.com')), paragraph()]);
     });
 
+    it('keeps the link when Backspace follows a mark toggled at the caret', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com'))]);
+        editor.caretAfter('https://example.com');
+        press(editor.view, 'Enter');
+        const { state } = editor.view;
+        editor.view.dispatch(state.tr.addStoredMark(state.schema.mark('bold')));
+
+        press(editor.view, 'Backspace');
+
+        expect(editor.stored()?.[0]).toEqual(paragraph(link('https://example.com')));
+    });
+
+    it('keeps the link when Backspace follows leaving the editor and coming back', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com'))]);
+        editor.caretAfter('https://example.com');
+        press(editor.view, 'Enter');
+        editor.view.dom.dispatchEvent(new FocusEvent('blur'));
+
+        press(editor.view, 'Backspace');
+
+        expect(editor.stored()?.[0]).toEqual(paragraph(link('https://example.com')));
+    });
+
     it('leaves Backspace to join the lines once something else happened', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com'))]);
         editor.caretAfter('https://example.com');
@@ -242,6 +265,9 @@ describe('pressing Enter after a web address', () => {
         press(editor.view, 'Enter');
         await Promise.resolve();
 
+        expect(editor.stored()).toEqual([paragraph(link('https://example.com'))]);
+        // The editor has lost focus: a later Backspace edits the text as usual.
+        press(editor.view, 'Backspace');
         expect(editor.stored()).toEqual([paragraph(link('https://example.com'))]);
     });
 });

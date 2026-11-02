@@ -366,11 +366,12 @@ const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] =
     let pending: { link: PendingLink; doc: PmNode } | null = null;
 
     /** The link as its own history step, so the first undo takes back the link and keeps the new line. */
-    const linkTransaction = (state: EditorState, link: PendingLink): Transaction | null => {
+    const linkTransaction = (state: EditorState, link: PendingLink, focused: boolean): Transaction | null => {
         if (link.to > state.doc.content.size || state.doc.textBetween(link.from, link.to) !== link.text) {
             return null;
         }
-        return closeHistory(state.tr.addMark(link.from, link.to, link.mark)).setMeta(autolinkKey, true);
+        // Backspace takes the link back only while the author is still in the editor.
+        return closeHistory(state.tr.addMark(link.from, link.to, link.mark)).setMeta(autolinkKey, focused);
     };
 
     const plugin = new Plugin<boolean>({
@@ -379,16 +380,25 @@ const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] =
             init: () => false,
             // True while nothing has happened since the link was added.
             apply: (transaction, justLinked) => {
-                if (transaction.getMeta(autolinkKey) === true) {
-                    return true;
+                const meta: unknown = transaction.getMeta(autolinkKey);
+                if (typeof meta === 'boolean') {
+                    return meta;
                 }
-                if (transaction.docChanged || transaction.selectionSet) {
+                if (transaction.docChanged || transaction.selectionSet || transaction.storedMarksSet) {
                     return false;
                 }
                 return justLinked;
             },
         },
         props: {
+            handleDOMEvents: {
+                blur: (view) => {
+                    if (autolinkKey.getState(view.state) === true) {
+                        view.dispatch(view.state.tr.setMeta(autolinkKey, false));
+                    }
+                    return false;
+                },
+            },
             handleKeyDown: (view, event) => {
                 const modified = event.altKey || event.ctrlKey || event.metaKey;
                 if (
@@ -417,7 +427,7 @@ const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] =
                     if (view.isDestroyed || view.state.doc !== doc) {
                         return;
                     }
-                    const transaction = linkTransaction(view.state, link);
+                    const transaction = linkTransaction(view.state, link, view.hasFocus());
                     if (transaction) {
                         view.dispatch(transaction);
                     }
@@ -439,7 +449,7 @@ const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] =
                 from = transaction.mapping.map(from, 1);
                 to = transaction.mapping.map(to, -1);
             }
-            return linkTransaction(newState, { ...link, from, to });
+            return linkTransaction(newState, { ...link, from, to }, true);
         },
     });
     return [plugin];
