@@ -520,6 +520,35 @@ describe('a list holding a block no plugin knows among its items', () => {
             expect(dispatch).not.toHaveBeenCalled();
         });
 
+        it('reports a command that throws as handled when told to, so the browser does not run the key', () => {
+            const editor = editorWith(plugins, [around(unknown('unknownThrows'))]);
+            const throws = (): boolean => {
+                throw new Error('engine');
+            };
+
+            expect(keepingUnknownBlocks(throws, { handleRefusal: true })(editor.view.state, vi.fn())).toBe(true);
+            expect(keepingUnknownBlocks(throws)(editor.view.state, vi.fn())).toBe(false);
+        });
+
+        it.each([
+            ['Backspace at the start of the paragraph after it', 'Backspace', 'after'],
+            ['Delete at the end of the paragraph before it', 'Delete', 'before'],
+        ])('selects it on %s, as the engine does before deleting a block', (_name, key, side) => {
+            const block = unknown('unknownNextTo');
+            const editor = editorWith(plugins, [paragraph(text('before')), block, paragraph(text('after'))]);
+            if (side === 'after') {
+                editor.caretBefore('after');
+            } else {
+                editor.caretAfter('before');
+            }
+
+            expect(press(editor.view, key)).toBe(true);
+
+            const { selection } = editor.view.state;
+            expect(selection instanceof NodeSelection && selection.node.type.name).toBe(UNKNOWN_BLOCK);
+            expect(unknownRaws(editor.view)).toEqual([block]);
+        });
+
         it('keeps it when Tab nests it, node selected or spanned by a range', () => {
             const block = unknown('unknownOnIndent');
             const editor = editorWith(plugins, [around(block)]);

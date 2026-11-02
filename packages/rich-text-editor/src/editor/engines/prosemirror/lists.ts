@@ -90,7 +90,7 @@ export const keepingUnknownBlocks =
                 return false;
             }
         } catch {
-            return false;
+            return handleRefusal;
         }
         const [transaction] = captured;
         if (transaction === undefined) {

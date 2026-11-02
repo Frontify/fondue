@@ -4,8 +4,13 @@ import {
     baseKeymap,
     chainCommands,
     createParagraphNear,
+    deleteSelection,
+    joinBackward,
+    joinForward,
     liftEmptyBlock,
     newlineInCode,
+    selectNodeBackward,
+    selectNodeForward,
     setBlockType,
     splitBlock,
 } from 'prosemirror-commands';
@@ -45,14 +50,32 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
     };
     if (hasLists) {
         // Its joins and lifts take a list's children for items, so an unknown block among them can be lost; a refused key still counts as handled.
+        const guarded = (command: Command): Command =>
+            keepingUnknownBlocks(command, { handleRefusal: true, spareSelected: true });
+        // A refused join falls through to selecting the block, as the engine's chain does before deleting one; the
+        // last step only claims the key, so the browser does not make the refused change itself.
+        const backspace = chainCommands(
+            guarded(deleteSelection),
+            keepingUnknownBlocks(joinBackward, { spareSelected: true }),
+            selectNodeBackward,
+            (state) => joinBackward(state),
+        );
+        const del = chainCommands(
+            guarded(deleteSelection),
+            keepingUnknownBlocks(joinForward, { spareSelected: true }),
+            selectNodeForward,
+            (state) => joinForward(state),
+        );
         baseline = Object.fromEntries(
-            Object.entries(baseline).map(([key, command]) => [
-                key,
-                keepingUnknownBlocks(command, {
-                    handleRefusal: true,
-                    spareSelected: true,
-                }),
-            ]),
+            Object.entries(baseline).map(([key, command]) => {
+                if (command === baseKeymap.Backspace) {
+                    return [key, backspace];
+                }
+                if (command === baseKeymap.Delete) {
+                    return [key, del];
+                }
+                return [key, guarded(command)];
+            }),
         );
     }
 
