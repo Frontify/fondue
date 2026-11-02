@@ -115,11 +115,12 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * The editor crashed: something in it threw while rendering or mounting (a
      * toolbar item, a plugin's view, the engine). It now shows a message, a
      * way to try again and, when it can, its content read-only. Handed the
-     * error and the document the editor was holding: the latest `value` the
-     * host passed, else its latest edit. It can be the document that crashed
-     * it, so nothing is saved for the host; report the error or keep the
-     * document for review. Readonly and a change of plugins show `value`
-     * again, so edits never passed back as `value` are not in it after them.
+     * error and the document the editor was holding: whichever came last of
+     * a new `value` from the host and the editor's own edits. It can be the
+     * document that crashed it, so nothing is saved for the host; report the
+     * error or keep the document for review. Until Try again is used,
+     * readonly and new plugin ids show `value` again, dropping edits never
+     * passed back as `value`; after it, the editor keeps its own document.
      * Fires for every crash, including one after Try again and one of the
      * read-only view shown after a crash; not for errors in event handlers,
      * such as a key press or a paste, which React does not route here.
