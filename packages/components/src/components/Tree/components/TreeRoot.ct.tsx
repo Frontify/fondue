@@ -1266,15 +1266,35 @@ test.describe('TreeRoot expansion', () => {
         await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-expanded', 'true');
     });
 
-    test('triple-clicking the selected folder opens it once', async ({ mount }) => {
-        const component = await mount(
-            <TestHarness initial={doubleClickFolder.map((node) => ({ ...node, isSelected: true }))} />,
-        );
+    for (const clickCount of [2, 3]) {
+        test(`a ${clickCount}-click burst on the selected folder toggles it and fires onClick once`, async ({
+            mount,
+        }) => {
+            const calls: string[] = [];
+            const component = await mount(
+                <Tree.Root>
+                    <Tree.Folder
+                        id="f"
+                        isSelected
+                        onClick={() => calls.push('click')}
+                        onExpandChange={() => calls.push('toggle')}
+                    >
+                        <Tree.FolderHeader>
+                            <Tree.Label>Folder</Tree.Label>
+                        </Tree.FolderHeader>
+                    </Tree.Folder>
+                    <Tree.Item id="other" onClick={() => calls.push('sentinel')}>
+                        <Tree.Label>Other</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>,
+            );
 
-        await component.getByRole('treeitem', { name: /Folder/ }).click({ clickCount: 3 });
-
-        await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-expanded', 'true');
-    });
+            await component.getByRole('treeitem', { name: /Folder/ }).click({ clickCount });
+            // Callbacks report back in order, so the sentinel landing proves no later call from the burst is pending.
+            await component.getByRole('treeitem', { name: /Other/ }).click();
+            await expect.poll(() => calls).toEqual(['toggle', 'click', 'sentinel']);
+        });
+    }
 
     test('double-clicking a folder in multi-select opens it once', async ({ mount }) => {
         const component = await mount(<TestHarness multiSelect initial={doubleClickFolder} />);
