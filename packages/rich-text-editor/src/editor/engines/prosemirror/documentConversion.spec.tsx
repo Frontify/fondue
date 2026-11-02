@@ -15,7 +15,7 @@ import {
     type RtePlugin,
 } from '#/core';
 
-import { toEngineDocument, toRteDocument } from './documentConversion';
+import { toEngineDocument, toRteDocument, UNKNOWN_ATTRS } from './documentConversion';
 import { buildSchema } from './schema';
 
 /**
@@ -178,6 +178,15 @@ describe('the document boundary', () => {
             } finally {
                 warn.mockRestore();
             }
+        });
+
+        it('keeps a block attribute named like the one the engine carries undeclared attributes in', () => {
+            const doc = {
+                version: 1,
+                blocks: [{ type: PARAGRAPH, [UNKNOWN_ATTRS]: 'host', children: [{ text: 'text' }] }],
+            } as unknown as RteDocumentOf;
+
+            expect(toRteDocument(toEngineDocument(doc, schema))).toEqual(doc);
         });
     });
 

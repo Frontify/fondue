@@ -325,7 +325,7 @@ const blockFromEngine = (node: PmNode): RteBlockNode => {
     // A block whose type changed may have been handed undeclared attributes its new type declares; those it owns now.
     const declared = node.type.spec.attrs ?? {};
     const unknown = Object.entries((node.attrs[UNKNOWN_ATTRS] as Record<string, unknown> | null) ?? {}).filter(
-        ([name]) => !(name in declared),
+        ([name]) => name === UNKNOWN_ATTRS || !(name in declared),
     );
     const block: Record<string, unknown> = {
         type: node.type.name,
