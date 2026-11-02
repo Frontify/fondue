@@ -2,4 +2,4 @@
 "@frontify/fondue-components": patch
 ---
 
-fix(Tree): a double-click on a folder opens or closes it once, whether or not it was selected; the extra clicks no longer fire the row's `onClick`
+fix(Tree): in single-select, a click on a folder only selects it, even when it is already selected; a double-click opens or closes it once

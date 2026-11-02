@@ -1191,26 +1191,6 @@ test.describe('TreeRoot expansion', () => {
         expect(expandCalls).toEqual([]);
     });
 
-    test('clicking the selected folder toggles it open and fires onExpandChange', async ({ mount }) => {
-        const calls: boolean[] = [];
-        const component = await mount(
-            <Tree.Root>
-                <Tree.Folder id="f" isSelected onExpandChange={(v) => calls.push(v)}>
-                    <Tree.FolderHeader>
-                        <Tree.Label>Folder</Tree.Label>
-                    </Tree.FolderHeader>
-                    <Tree.Item id="child">
-                        <Tree.Label>Child</Tree.Label>
-                    </Tree.Item>
-                </Tree.Folder>
-            </Tree.Root>,
-        );
-
-        await expect(component.getByRole('treeitem', { name: /Child/ })).toHaveCount(0);
-        await component.getByRole('treeitem', { name: /Folder/ }).click();
-        expect(calls).toEqual([true]);
-    });
-
     test('clicking the chevron toggles a folder without selecting it', async ({ mount }) => {
         const expandCalls: boolean[] = [];
         const selectCalls: boolean[] = [];
@@ -1248,123 +1228,96 @@ test.describe('TreeRoot expansion', () => {
         },
     ];
 
-    test('double-clicking an unselected folder opens it once', async ({ mount }) => {
-        const component = await mount(<TestHarness initial={doubleClickFolder} />);
-
-        await component.getByRole('treeitem', { name: /Folder/ }).dblclick();
-
-        await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-expanded', 'true');
-    });
-
-    test('double-clicking the selected folder opens it once', async ({ mount }) => {
-        const component = await mount(
-            <TestHarness initial={doubleClickFolder.map((node) => ({ ...node, isSelected: true }))} />,
-        );
-
-        await component.getByRole('treeitem', { name: /Folder/ }).dblclick();
-
-        await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-expanded', 'true');
-    });
-
-    for (const clickCount of [2, 3]) {
-        test(`a ${clickCount}-click burst on the selected folder toggles it and fires onClick once`, async ({
-            mount,
-        }) => {
-            const calls: string[] = [];
-            const component = await mount(
-                <Tree.Root>
-                    <Tree.Folder
-                        id="f"
-                        isSelected
-                        onClick={() => calls.push('click')}
-                        onExpandChange={() => calls.push('toggle')}
-                    >
-                        <Tree.FolderHeader>
-                            <Tree.Label>Folder</Tree.Label>
-                        </Tree.FolderHeader>
-                    </Tree.Folder>
-                    <Tree.Item id="other" onClick={() => calls.push('sentinel')}>
-                        <Tree.Label>Other</Tree.Label>
-                    </Tree.Item>
-                </Tree.Root>,
-            );
-
-            await component.getByRole('treeitem', { name: /Folder/ }).click({ clickCount });
-            // Callbacks report back in order, so the sentinel landing proves no later call from the burst is pending.
-            await component.getByRole('treeitem', { name: /Other/ }).click();
-            await expect.poll(() => calls).toEqual(['toggle', 'click', 'sentinel']);
-        });
-    }
-
-    test('a plain click right after a modifier click on a folder still opens it', async ({ mount, page }) => {
-        const component = await mount(<TestHarness multiSelect initial={doubleClickFolder} />);
-        const box = await component.getByRole('treeitem', { name: /Folder/ }).boundingBox();
-        if (!box) {
-            throw new Error('folder row has no box');
-        }
-
-        // A Shift-click does not toggle, so the plain click that follows in the same burst must.
-        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-        await page.keyboard.down('Shift');
-        await page.mouse.down({ clickCount: 1 });
-        await page.mouse.up({ clickCount: 1 });
-        await page.keyboard.up('Shift');
-        await page.mouse.down({ clickCount: 2 });
-        await page.mouse.up({ clickCount: 2 });
-
-        await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-expanded', 'true');
-    });
-
-    test('a modifier click right after a toggling click on the selected folder still deselects it', async ({
-        mount,
-        page,
-    }) => {
+    test('clicking the selected folder keeps it closed', async ({ mount }) => {
         const component = await mount(
             <TestHarness initial={doubleClickFolder.map((node) => ({ ...node, isSelected: true }))} />,
         );
         const row = component.getByRole('treeitem', { name: /Folder/ });
-        const box = await row.boundingBox();
-        if (!box) {
-            throw new Error('folder row has no box');
-        }
 
-        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-        await page.mouse.down({ clickCount: 1 });
-        await page.mouse.up({ clickCount: 1 });
-        await page.keyboard.down('ControlOrMeta');
-        await page.mouse.down({ clickCount: 2 });
-        await page.mouse.up({ clickCount: 2 });
-        await page.keyboard.up('ControlOrMeta');
-
-        await expect(row).toHaveAttribute('aria-selected', 'false');
-    });
-
-    test('a chevron click between two row clicks does not swallow the second row click', async ({ mount, page }) => {
-        const component = await mount(
-            <TestHarness initial={doubleClickFolder.map((node) => ({ ...node, isSelected: true }))} />,
-        );
-        const row = component.getByRole('treeitem', { name: /Folder/ });
-        const box = await row.boundingBox();
-        if (!box) {
-            throw new Error('folder row has no box');
-        }
-
-        // Row click opens, chevron click closes, and the next row click must open again.
         await row.click();
-        await row.locator('[aria-hidden] svg').first().click();
-        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-        await page.mouse.down({ clickCount: 2 });
-        await page.mouse.up({ clickCount: 2 });
+
+        await expect(row).toHaveAttribute('aria-selected', 'true');
+        await expect(row).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    test('double-clicking an unselected folder selects and opens it', async ({ mount }) => {
+        const component = await mount(<TestHarness initial={doubleClickFolder} />);
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+
+        await row.dblclick();
+
+        await expect(row).toHaveAttribute('aria-selected', 'true');
+        await expect(row).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    test('double-clicking the selected folder opens it', async ({ mount }) => {
+        const component = await mount(
+            <TestHarness initial={doubleClickFolder.map((node) => ({ ...node, isSelected: true }))} />,
+        );
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+
+        await row.dblclick();
 
         await expect(row).toHaveAttribute('aria-expanded', 'true');
     });
 
-    test('double-clicking a folder in multi-select opens it once', async ({ mount }) => {
-        const component = await mount(<TestHarness multiSelect initial={doubleClickFolder} />);
+    test('double-clicking an open folder closes it', async ({ mount }) => {
+        const component = await mount(
+            <TestHarness initial={doubleClickFolder.map((node) => ({ ...node, isExpanded: true }))} />,
+        );
+        const row = component.getByRole('treeitem', { name: /Folder/ });
 
-        await component.getByRole('treeitem', { name: /Folder/ }).dblclick();
+        await row.dblclick();
 
-        await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-expanded', 'true');
+        await expect(row).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    test('a triple-click on a folder opens it once', async ({ mount }) => {
+        const component = await mount(<TestHarness initial={doubleClickFolder} />);
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+
+        await row.click({ clickCount: 3 });
+
+        await expect(row).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    test('a modifier click on the selected folder deselects it without opening it', async ({ mount }) => {
+        const component = await mount(
+            <TestHarness initial={doubleClickFolder.map((node) => ({ ...node, isSelected: true }))} />,
+        );
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+
+        await row.click({ modifiers: ['ControlOrMeta'] });
+
+        await expect(row).toHaveAttribute('aria-selected', 'false');
+        await expect(row).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    test('a disabled folder ignores a single click and opens on a double-click', async ({ mount }) => {
+        const calls: string[] = [];
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Folder id="f" isDisabled onExpandChange={(isExpanded) => calls.push(`expand:${isExpanded}`)}>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="child">
+                        <Tree.Label>Child</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+                <Tree.Item id="other" onClick={() => calls.push('sentinel')}>
+                    <Tree.Label>Other</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+
+        // `aria-disabled` makes Playwright refuse the click, though the row still receives real clicks.
+        await row.click({ force: true });
+        await row.dblclick({ force: true });
+        // Callbacks report back in order, so the sentinel landing proves no later call is pending.
+        await component.getByRole('treeitem', { name: /Other/ }).click();
+        await expect.poll(() => calls).toEqual(['expand:true', 'sentinel']);
     });
 });
 

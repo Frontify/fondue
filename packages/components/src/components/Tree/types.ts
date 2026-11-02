@@ -59,10 +59,7 @@ type TreeRowSharedProps = {
      * names — re-render with the updated `<Tree.Label>` to apply it.
      */
     onRename?: (newName: string) => void;
-    /**
-     * Fires when the row is activated by click or keyboard (Enter / Space). Extra clicks of a
-     * double-click that would toggle a folder a second time do not fire it.
-     */
+    /** Fires when the row is activated by click or keyboard (Enter / Space). */
     onClick?: MouseEventHandler<HTMLDivElement>;
     /**
      * Fires when the row is double-clicked. While set, the second click of a double-click
@@ -90,7 +87,10 @@ export type TreeItemProps = TreeRowSharedProps & {
 export type TreeFolderProps = TreeRowSharedProps & {
     /** A `<Tree.FolderHeader>` for the folder's own row, followed by its nested rows. */
     children: ReactNode;
-    /** Without `onDoubleClick`, a double-click on the folder's row opens or closes it once, whether or not it was selected. */
+    /**
+     * In single-select, a click on the folder's row only selects it; the chevron, the arrow keys,
+     * or a double-click without `onDoubleClick` open or close it.
+     */
     isExpanded?: boolean;
     onExpandChange?: (isExpanded: boolean) => void;
     /**

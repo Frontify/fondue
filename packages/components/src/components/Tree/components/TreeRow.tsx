@@ -72,28 +72,31 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
         [key: string]: unknown;
     };
 
-    // Disabled rows keep the headless click handler (focus and folder expansion stay
-    // available) but drop the consumer's `onClick`; selection is blocked in the setters.
-    // In single-select, the first click on a folder only selects it — headless-tree would
-    // also toggle it — and clicking the already-selected folder toggles it.
-    const firstClickToggledRef = useRef(false);
+    const toggleExpanded = () => {
+        if (isExpanded) {
+            item.collapse();
+        } else {
+            item.expand();
+        }
+    };
+
+    // Disabled rows drop the consumer's `onClick`; selection is blocked in the setters.
+    // In single-select, a plain click on a folder only selects it (headless-tree would also
+    // toggle it); the chevron, the arrow keys, and a double-click open or close it.
     const handleClick = (event: MouseEvent<HTMLDivElement>) => {
         // The second click of a double-click belongs to `onDoubleClick`, so it neither re-selects nor toggles the row.
         if (event.detail === 2 && data.onDoubleClick && !data.isDisabled) {
             data.onDoubleClick(event);
             return;
         }
-        // headless-tree never toggles on modifier clicks, so they neither mark a burst as toggled nor get dropped from one.
+        // Modifier clicks keep headless-tree's selection rules, which never toggle.
         const isModifierClick = event.ctrlKey || event.shiftKey || event.metaKey;
-        // A double-click toggles a folder once, so later clicks in the burst are dropped when the first already toggled.
-        if (event.detail >= 2 && firstClickToggledRef.current && !isModifierClick) {
-            return;
-        }
-        const selectsOnly = !multiSelect && isFolder && !data.isDisabled && !item.isSelected();
-        firstClickToggledRef.current = isFolder && !selectsOnly && !isModifierClick;
-        if (selectsOnly) {
+        if (!multiSelect && isFolder && !isModifierClick) {
             item.setFocused();
             item.getTree().setSelectedItems([item.getId()]);
+            if (event.detail === 2) {
+                toggleExpanded();
+            }
         } else {
             headlessProps.onClick?.(event);
         }
@@ -163,14 +166,8 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
     // The chevron toggles without touching selection, so it must not reach the row handler.
     const handleChevronClick = (event: MouseEvent<HTMLSpanElement>) => {
         event.stopPropagation();
-        // The chevron starts its own toggle, so a row click right after it is not the second click of a row burst.
-        firstClickToggledRef.current = false;
         item.setFocused();
-        if (isExpanded) {
-            item.collapse();
-        } else {
-            item.expand();
-        }
+        toggleExpanded();
     };
 
     // Keep decorator and action clicks from bubbling into the row's select/expand handler.
