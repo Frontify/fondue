@@ -11,7 +11,6 @@ import {
     useMemo,
     useReducer,
     useRef,
-    useState,
 } from 'react';
 
 import {
@@ -135,21 +134,28 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     ownDocumentRef.current ??= value ?? emptyDocument();
     const document = value ?? ownDocumentRef.current;
 
-    // A value the host pushes is what the editor now shows. One of the editor's
-    // own edits coming back as `value`, however late, is an echo, and never
-    // replaces a newer edit in what a crash shows and hands over.
-    const [emittedDocs] = useState(() => new WeakSet<RteDocumentOf>());
-    const seenValueRef = useRef(value);
-    if (value !== undefined && value !== seenValueRef.current) {
-        seenValueRef.current = value;
-        if (!emittedDocs.has(value)) {
-            ownDocumentRef.current = value;
-        }
-    }
-
     // Hosts usually pass an inline object; what it says is what matters.
     const labels = useLabels(hostLabelOverrides);
     const registry = useMemo(() => buildPluginRegistry(plugins), [plugins]);
+
+    // A value the host pushes is what the editor now shows. One of the editor's
+    // own edits coming back as `value`, however late, is an echo, and never
+    // replaces a newer edit in what a crash shows and hands over.
+    const emittedDocsRef = useRef(new WeakSet<RteDocumentOf>());
+    // The engine forgets what it emitted when it remounts, readonly or with other plugins, and then shows such a value.
+    const pluginsKey = registry.ids.join('|');
+    const pluginsKeyRef = useRef(pluginsKey);
+    if (shellProps.readonly === true || pluginsKey !== pluginsKeyRef.current) {
+        pluginsKeyRef.current = pluginsKey;
+        emittedDocsRef.current = new WeakSet();
+    }
+    const seenValueRef = useRef(value);
+    if (value !== undefined && value !== seenValueRef.current) {
+        seenValueRef.current = value;
+        if (!emittedDocsRef.current.has(value)) {
+            ownDocumentRef.current = value;
+        }
+    }
 
     const onCatch = (error: Error): void => {
         onError?.(error, { document: ownDocumentRef.current as RteDocumentOf<TBlock> });
@@ -193,7 +199,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                 focusWithinRef={focusWithinRef}
                 document={shellDocument}
                 ownDocumentRef={ownDocumentRef}
-                emittedDocs={emittedDocs}
+                emittedDocs={emittedDocsRef.current}
                 registry={registry}
                 labels={labels}
             />

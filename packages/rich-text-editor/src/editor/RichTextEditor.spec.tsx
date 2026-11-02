@@ -1187,6 +1187,65 @@ describe('an editor that crashes', () => {
         expect(JSON.stringify(onError.mock.calls[0]?.[1].document)).toContain('three');
     });
 
+    /** A block whose readonly view throws while `state.broken` is set. */
+    const calloutPlugin = (state: { broken: boolean }): RtePlugin => {
+        const Callout = ({ children }: { children?: ReactNode }): ReactNode => {
+            if (state.broken) {
+                throw new Error('readonly view broke');
+            }
+            return <p>{children}</p>;
+        };
+        return {
+            id: 'callout',
+            blocks: {
+                callout: {
+                    content: 'text',
+                    toHtml: () => ({ tag: 'p', attrs: { 'data-callout': '' }, children: true }),
+                    parse: [{ tag: 'p[data-callout]' }],
+                    render: { component: Callout },
+                },
+            } as unknown as NonNullable<RtePlugin['blocks']>,
+        };
+    };
+    const callout = (text: string): RteDocument =>
+        ({ version: 1, blocks: [{ type: 'callout', children: [{ text }] }] }) as unknown as RteDocument;
+
+    it('hands onError an earlier edit the host restores while readonly', () => {
+        silenceReact();
+        const state = { broken: false };
+        const plugins = [...defaultPlugins, calloutPlugin(state)];
+        const onError = errorSpy();
+        const { container, onChange, rerender, ready } = mount((change) => (
+            <RichTextEditor value={callout('start')} onChange={change} plugins={plugins} onError={onError} />
+        ));
+        ready();
+        paste(container, '<p>one</p>');
+        paste(container, '<p>two</p>');
+        const first = onChange.mock.calls[0]?.[0];
+        const last = onChange.mock.calls[onChange.mock.calls.length - 1]?.[0];
+        rerender(<RichTextEditor value={last} onChange={onChange} plugins={plugins} onError={onError} />);
+
+        // An undo in the host, made while the editor is readonly: the readonly view shows it.
+        state.broken = true;
+        rerender(<RichTextEditor value={first} onChange={onChange} plugins={plugins} onError={onError} readonly />);
+
+        expect(onError).toHaveBeenCalledOnce();
+        expect(onError.mock.calls[0]?.[1].document).toBe(first);
+    });
+
+    it('shows a document the host pushes after the fallback could not show the last one', () => {
+        silenceReact();
+        const state = { broken: true };
+        const plugins = [throwingPlugin(), calloutPlugin(state)];
+        const { container, rerender } = mount(() => <RichTextEditor value={callout('unshowable')} plugins={plugins} />);
+        expect(retryButton(container)).toBeDefined();
+        expect(container.textContent).not.toContain('unshowable');
+
+        rerender(<RichTextEditor value={paragraph('replacement')} plugins={plugins} />);
+
+        expect(container.textContent).toContain('replacement');
+    });
+
     it('does not fire onBlur when it crashes while it has focus', () => {
         silenceReact();
         vi.useFakeTimers();
