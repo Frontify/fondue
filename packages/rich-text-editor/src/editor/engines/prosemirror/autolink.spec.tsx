@@ -102,8 +102,9 @@ describe('typing a web address', () => {
     });
 });
 
-const press = (view: EditorView, key: string, shiftKey = false): boolean =>
-    view.someProp('handleKeyDown', (handle) => handle(view, new KeyboardEvent('keydown', { key, shiftKey }))) === true;
+const press = (view: EditorView, key: string, modifiers: KeyboardEventInit = {}): boolean =>
+    view.someProp('handleKeyDown', (handle) => handle(view, new KeyboardEvent('keydown', { key, ...modifiers }))) ===
+    true;
 
 const undo = (view: EditorView): boolean => pmUndo(view.state, view.dispatch);
 
@@ -178,6 +179,39 @@ describe('pressing Enter after a web address', () => {
         expect(editor.stored()).toEqual([paragraph(text('https://example.com')), paragraph()]);
     });
 
+    it.each(['altKey', 'ctrlKey', 'metaKey', 'shiftKey'])(
+        'keeps the link when Backspace is pressed with %s',
+        (modifier) => {
+            const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com'))]);
+            editor.caretAfter('https://example.com');
+            press(editor.view, 'Enter');
+
+            press(editor.view, 'Backspace', { [modifier]: true });
+
+            expect(editor.stored()?.[0]).toEqual(paragraph(link('https://example.com')));
+        },
+    );
+
+    it('still links when a state is applied and thrown away while Enter is handled', () => {
+        let editor: ReturnType<typeof editorWith> | undefined;
+        const peek: RtePlugin = {
+            id: 'peek-on-enter',
+            hotkeys: {
+                Enter: () => {
+                    const state = editor?.view.state;
+                    state?.apply(state.tr.insertText('x'));
+                    return false;
+                },
+            },
+        };
+        editor = editorWith([...defaultPlugins, peek], [paragraph(text('https://example.com'))]);
+        editor.caretAfter('https://example.com');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([paragraph(link('https://example.com')), paragraph()]);
+    });
+
     it('leaves Backspace to join the lines once something else happened', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com'))]);
         editor.caretAfter('https://example.com');
@@ -248,7 +282,7 @@ describe('a web address next to a line break', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com'))]);
         editor.caretAfter('https://example.com');
 
-        press(editor.view, 'Enter', true);
+        press(editor.view, 'Enter', { shiftKey: true });
 
         expect(editor.stored()).toEqual([paragraph(link('https://example.com'), lineBreak)]);
     });

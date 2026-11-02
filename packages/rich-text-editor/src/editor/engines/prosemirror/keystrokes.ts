@@ -4,7 +4,7 @@ import { baseKeymap, chainCommands, setBlockType } from 'prosemirror-commands';
 import { closeHistory, history, redo, undo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
-import { type Mark as PmMark, type MarkType as PmMarkType, type Schema } from 'prosemirror-model';
+import { type Mark as PmMark, type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
 import {
     type Command,
     type EditorState,
@@ -361,7 +361,9 @@ const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] =
     };
 
     // The address found when the key went down, linked once the key's own change is in.
-    let pending: PendingLink | null = null;
+    // The address found when the key went down, and the document it was found in. Only the
+    // key handler and its fallback change it: a state can be applied and thrown away (`blocks.setType`).
+    let pending: { link: PendingLink; doc: PmNode } | null = null;
 
     /** The link as its own history step, so the first undo takes back the link and keeps the new line. */
     const linkTransaction = (state: EditorState, link: PendingLink): Transaction | null => {
@@ -388,23 +390,33 @@ const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] =
         },
         props: {
             handleKeyDown: (view, event) => {
-                if (event.key === 'Backspace' && autolinkKey.getState(view.state) === true) {
+                const modified = event.altKey || event.ctrlKey || event.metaKey;
+                if (
+                    event.key === 'Backspace' &&
+                    !modified &&
+                    !event.shiftKey &&
+                    autolinkKey.getState(view.state) === true
+                ) {
                     return undo(view.state, view.dispatch);
                 }
-                if (event.key !== 'Enter' || event.altKey || event.ctrlKey || event.metaKey) {
+                if (event.key !== 'Enter' || modified) {
                     return false;
                 }
                 const link = addressBeforeCaret(view.state, view.composing);
                 if (!link) {
                     return false;
                 }
-                pending = link;
+                const { doc } = view.state;
+                pending = { link, doc };
                 // A key that changes nothing (Enter that blurs a single-line editor) still links.
                 queueMicrotask(() => {
-                    if (pending !== link || view.isDestroyed) {
+                    if (pending?.link !== link) {
                         return;
                     }
                     pending = null;
+                    if (view.isDestroyed || view.state.doc !== doc) {
+                        return;
+                    }
                     const transaction = linkTransaction(view.state, link);
                     if (transaction) {
                         view.dispatch(transaction);
@@ -413,12 +425,15 @@ const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] =
                 return false;
             },
         },
-        appendTransaction: (transactions, _oldState, newState) => {
-            const link = pending;
-            if (!link || !transactions.some((transaction) => transaction.docChanged)) {
+        appendTransaction: (transactions, oldState, newState) => {
+            // Only the key's own change: later ones start from another document.
+            if (pending === null || pending.doc !== oldState.doc) {
                 return null;
             }
-            pending = null;
+            if (!transactions.some((transaction) => transaction.docChanged)) {
+                return null;
+            }
+            const { link } = pending;
             let { from, to } = link;
             for (const transaction of transactions) {
                 from = transaction.mapping.map(from, 1);
