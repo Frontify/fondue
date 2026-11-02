@@ -147,20 +147,27 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     // replaces a newer edit in what a crash shows and hands over.
     const emittedDocsRef = useRef<WeakSet<RteDocumentOf> | null>(null);
     emittedDocsRef.current ??= new WeakSet();
+
+    // A new key mounts the boundary and the shell afresh, from `document`.
+    const [attempt, retry] = useReducer((count: number) => count + 1, 0);
+
     // The engine forgets what it emitted when it remounts, readonly or with other plugins, and then shows such a value.
     const pluginsKey = registry.ids.join('|');
     const pluginsKeyRef = useRef(pluginsKey);
     if (shellProps.readonly === true || pluginsKey !== pluginsKeyRef.current) {
         pluginsKeyRef.current = pluginsKey;
         emittedDocsRef.current = new WeakSet();
-    }
-    const seenValueRef = useRef(value);
-    if (value !== undefined && value !== seenValueRef.current) {
-        seenValueRef.current = value;
-        if (!emittedDocsRef.current.has(value)) {
-            ownDocumentRef.current = value;
+        // Before any Retry, the remounted engine and the readonly view show `document`, where a `value` wins.
+        if (attempt === 0) {
+            ownDocumentRef.current = document;
         }
     }
+    // Updated while `value` is left out too, so the same value passed again counts as a push.
+    const seenValueRef = useRef(value);
+    if (value !== undefined && value !== seenValueRef.current && !emittedDocsRef.current.has(value)) {
+        ownDocumentRef.current = value;
+    }
+    seenValueRef.current = value;
 
     const onCatch = (error: Error): void => {
         onError?.(error, { document: ownDocumentRef.current as RteDocumentOf<TBlock> });
@@ -169,8 +176,6 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     // Whether focus is in the editor's UI, so a fallback takes it only when the crash took it away.
     const focusWithinRef = useRef(false);
 
-    // A new key mounts the boundary and the shell afresh, from `document`.
-    const [attempt, retry] = useReducer((count: number) => count + 1, 0);
     const onRetry = (hadFocus: boolean): void => {
         // The Retry button goes with the fallback; what replaces it inherits the focus it held.
         focusWithinRef.current = hadFocus;

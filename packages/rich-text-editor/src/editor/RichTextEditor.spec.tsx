@@ -1301,6 +1301,54 @@ describe('an editor that crashes', () => {
         expect(() => vi.runAllTimers()).toThrow(failure);
     });
 
+    it('hands onError a value the host passes again after leaving it out', () => {
+        silenceReact();
+        const named = (id: string, crash = false): RtePlugin => ({
+            id,
+            toolbarItem: () => {
+                if (crash) {
+                    throw new Error('after the value came back');
+                }
+                return <span>fine</span>;
+            },
+        });
+        const saved = paragraph('saved');
+        const onError = errorSpy();
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={saved} plugins={[named('a'), ...defaultPlugins]} onError={onError} />
+        ));
+        ready();
+        rerender(<RichTextEditor plugins={[named('a'), ...defaultPlugins]} onError={onError} />);
+        paste(container, '<p>draft</p>');
+        // New plugin ids remount the engine from the draft, so the saved value no longer matches what it holds.
+        rerender(<RichTextEditor plugins={[named('b'), ...defaultPlugins]} onError={onError} />);
+
+        rerender(<RichTextEditor value={saved} plugins={[named('b', true), ...defaultPlugins]} onError={onError} />);
+
+        expect(onError).toHaveBeenCalledOnce();
+        expect(onError.mock.calls[0]?.[1].document).toBe(saved);
+    });
+
+    it('hands onError the value a readonly view shows, though newer edits never reached the host', () => {
+        silenceReact();
+        const state = { broken: false };
+        const plugins = [...defaultPlugins, calloutPlugin(state)];
+        const saved = callout('saved');
+        const onError = errorSpy();
+        // A host that commits on blur and never passes edits back as `value`.
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={saved} plugins={plugins} onError={onError} />
+        ));
+        ready();
+        paste(container, '<p>draft</p>');
+
+        state.broken = true;
+        rerender(<RichTextEditor value={saved} plugins={plugins} onError={onError} readonly />);
+
+        expect(onError).toHaveBeenCalledOnce();
+        expect(onError.mock.calls[0]?.[1].document).toBe(saved);
+    });
+
     it('hands onError an earlier edit the host restores along with other plugins', () => {
         silenceReact();
         const fine: RtePlugin = { id: 'late', toolbarItem: () => <span>fine</span> };
