@@ -341,7 +341,8 @@ const blockFromEngine = (node: PmNode): RteBlockNode => {
  * The document itself is built fresh every time, unlike the blocks in it: a new
  * object is what tells a host its `value` changed.
  */
-export const toRteDocument = (doc: PmNode): RteDocumentOf => ({
-    version: DOCUMENT_VERSION,
-    blocks: mapChildren(doc, blockFromEngine),
-});
+export const toRteDocument = (doc: PmNode): RteDocumentOf =>
+    frozenInDevelopment({
+        version: DOCUMENT_VERSION,
+        blocks: mapChildren(doc, blockFromEngine),
+    });

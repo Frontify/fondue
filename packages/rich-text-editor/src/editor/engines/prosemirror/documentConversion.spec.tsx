@@ -269,6 +269,15 @@ describe('the document boundary', () => {
         expect(echoed.eq(doc)).toBe(true);
     });
 
+    it('hands out a document that throws when mutated in development, as handing it back counts as an echo', () => {
+        const handedOut = toRteDocument(toEngineDocument(document, schema));
+
+        expect(() => handedOut.blocks.push({ type: PARAGRAPH, children: [] })).toThrow(TypeError);
+        expect(() => {
+            (handedOut as { version: number }).version = 2;
+        }).toThrow(TypeError);
+    });
+
     it('hands out blocks that throw when mutated in development, as they are shared', () => {
         const handedOut = toRteDocument(toEngineDocument(document, schema));
         const block = handedOut.blocks[0] as { align?: string; children: { text?: string }[] };
