@@ -105,11 +105,10 @@
 }
 
 .handle {
-    /* Overlays the row's leading space so reorderable and static roots align. */
+    /* Overlays the row's leading space so reorderable and static roots align; `.item`'s
+       `align-items` centres it vertically through its static position. */
     position: absolute;
-    top: 50%;
     inset-inline-start: 3px;
-    transform: translateY(-50%);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -123,7 +122,6 @@
 /* The checkbox occupies the leading space in multi-select, so the handle takes its own column. */
 [data-multi-select='true'] > .handle {
     position: static;
-    transform: none;
 }
 
 .row:hover .handle,
