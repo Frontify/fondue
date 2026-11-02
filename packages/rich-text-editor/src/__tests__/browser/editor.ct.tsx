@@ -70,6 +70,20 @@ test.describe('editor', () => {
         await expect(editable.locator('strong')).toHaveText('strong');
     });
 
+    test('links an address when a typed space replaces a selection', async ({ mount, page }) => {
+        const component = await mount(<RichTextEditor />);
+        const editable = component.getByRole('textbox');
+
+        await editable.click();
+        await page.keyboard.type('https://example.comxy');
+        await page.keyboard.press('Shift+ArrowLeft');
+        await page.keyboard.press('Shift+ArrowLeft');
+        await page.keyboard.type(' ');
+
+        await expect(editable.locator('a')).toHaveText('https://example.com');
+        await expect(editable).toHaveText('https://example.com ');
+    });
+
     test('makes a list of a typed "- "', async ({ mount, page }) => {
         const component = await mount(<RichTextEditor />);
         const editable = component.getByRole('textbox');

@@ -4,7 +4,7 @@ import { baseKeymap, chainCommands, setBlockType } from 'prosemirror-commands';
 import { history, redo, undo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
-import { type MarkType as PmMarkType, type Schema } from 'prosemirror-model';
+import { type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
 import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, type Transaction } from 'prosemirror-state';
 
 import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
@@ -161,7 +161,38 @@ const typingRewrites = (registry: PluginRegistry, schema: Schema): PmPlugin[] =>
     // reads as an italic `*` wrapping `*bold*`.
     const rules = registry.inputRules.flatMap((rule) => toEngineRule(rule, context) ?? []);
 
-    return rules.length > 0 ? [inputRules({ rules })] : [];
+    return rules.length > 0 ? [rewritingOnlyComposedText(inputRules({ rules }))] : [];
+};
+
+/**
+ * The engine runs its rules again when a composition ends, so mobile keyboards,
+ * which compose ordinary typing, still get them. That run is skipped when the
+ * composition left the document as it was: a keyboard recomposing the word
+ * before the caret would otherwise redo a rewrite Backspace just took back.
+ * The plugin is edited in place: its undo bookkeeping is keyed by the instance.
+ */
+const rewritingOnlyComposedText = (plugin: PmPlugin): PmPlugin => {
+    const rerun = plugin.props.handleDOMEvents?.compositionend;
+    if (!rerun) {
+        return plugin;
+    }
+    let docAtStart: PmNode | null = null;
+    plugin.props.handleDOMEvents = {
+        compositionstart: (view) => {
+            docAtStart = view.state.doc;
+            return false;
+        },
+        compositionend: (view, event) => {
+            // The last composed characters can land after `compositionend`.
+            setTimeout(() => {
+                if (!docAtStart || !view.state.doc.eq(docAtStart)) {
+                    rerun.call(plugin, view, event);
+                }
+            });
+            return false;
+        },
+    };
+    return plugin;
 };
 
 const toEngineRule = (rule: RteInputRule, context: RuleContext): InputRule | null => {
@@ -278,19 +309,18 @@ const markPatternRule = (rule: RuleOfKind<'markPattern'>, context: RuleContext):
         if (!token.test(linked)) {
             return null;
         }
-        // The match is the token plus the space, and maybe the whitespace before
-        // the token. The space is still to come while typing, but already in
-        // the document after a composition.
+        // The match is the token plus the space, and maybe the whitespace before the token.
         const from = start + (match[0].length - 1 - typed.length);
         const to = from + linked.length;
         if ([markType, ...context.excludedMarks].some((type) => state.doc.rangeHasMark(from, to, type))) {
             return null;
         }
-        const tr = state.tr.addMark(from, to, markType.create(valueAttrsFor(rule.value(linked))));
-        if (end - start < match[0].length) {
-            tr.insert(end, state.schema.text(' '));
-        }
-        return tr.removeStoredMark(markType);
+        // One space follows the token, whatever sits there now: nothing, the
+        // composed space, or the selection the typed space replaces.
+        return state.tr
+            .addMark(from, to, markType.create(valueAttrsFor(rule.value(linked))))
+            .replaceWith(from + typed.length, end, state.schema.text(' '))
+            .removeStoredMark(markType);
     };
     return toInputRule({ pattern, handler }, context);
 };
