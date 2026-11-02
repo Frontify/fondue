@@ -180,9 +180,9 @@ const getTextStyleHtml = (
 ) => `<${htmlTag} dir="auto" class="${classNames}" style="${reactCssPropsToCss(styles[tag])}">${children}</${htmlTag}>`;
 
 const getClassNames = (breakAfterColumn?: string, align?: string) => {
-    const breakWordsClass = 'tw-break-words';
+    const overflowWrapClass = '[overflow-wrap:anywhere]';
     const columnBreakClasses =
         breakAfterColumn === 'active' ? 'tw-break-after-column tw-break-inside-avoid-column' : '';
     const alignClass = align ? alignmentClassnames[align] : '';
-    return merge([alignClass, breakWordsClass, columnBreakClasses]);
+    return merge([alignClass, overflowWrapClass, columnBreakClasses]);
 };
