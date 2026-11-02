@@ -1301,6 +1301,18 @@ describe('an editor that crashes', () => {
         expect(() => vi.runAllTimers()).toThrow(failure);
     });
 
+    it('settles on the message and Retry when every document it gets cannot be shown', () => {
+        silenceReact();
+        const state = { broken: true };
+        const plugins = [throwingPlugin(), calloutPlugin(state)];
+        const { container, rerender } = mount(() => <RichTextEditor value={callout('first')} plugins={plugins} />);
+
+        rerender(<RichTextEditor value={callout('second')} plugins={plugins} />);
+        rerender(<RichTextEditor value={callout('third')} plugins={plugins} />);
+
+        expect(container.textContent).toBe('The editor stopped working. Try again to load it.Try again');
+    });
+
     it('hands onError a value the host passes again after leaving it out', () => {
         silenceReact();
         const named = (id: string, crash = false): RtePlugin => ({
