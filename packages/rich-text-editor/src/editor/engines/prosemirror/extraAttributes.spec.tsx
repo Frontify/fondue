@@ -194,6 +194,15 @@ describe('a block with undeclared keys', () => {
         expect(editor.stored()).toEqual([marked({ foo: 1 }, text('ab'))]);
     });
 
+    it('keeps its keys on the block they were on, as declared attributes stay, when blocks are pasted at its start', () => {
+        const editor = editorWith(defaultPlugins, [marked({ foo: 1, align: 'center' }, text('ab'))]);
+        editor.caretBefore('ab');
+
+        editor.pasteHTML('<p>x</p><p>y</p>');
+
+        expect(editor.stored()).toEqual([marked({ foo: 1, align: 'center' }, text('x')), paragraph(text('yab'))]);
+    });
+
     it('keeps its keys when text is pasted into it, and gives pasted blocks none', () => {
         const editor = editorWith(defaultPlugins, [marked({ foo: 1 }, text('ab'))]);
         editor.caretAfter('a');
@@ -269,6 +278,19 @@ describe('a list and its items with undeclared keys', () => {
 
         expect(editor.stored()).toEqual([
             bullets({ marker: 'dash' }, item({}, paragraph()), item({ ref: 'i1' }, paragraph(text('onetwo')))),
+        ]);
+    });
+
+    it('keeps the keys on the paragraph with the text when Enter at the start of the second paragraph of an item starts a new item', () => {
+        const editor = editorWith(defaultPlugins, [
+            bullets({}, item({}, paragraph(text('first')), marked({ foo: 1 }, text('second')))),
+        ]);
+        editor.caretBefore('second');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            bullets({}, item({}, paragraph(text('first')), paragraph()), item({}, marked({ foo: 1 }, text('second')))),
         ]);
     });
 

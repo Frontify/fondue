@@ -8,7 +8,6 @@ import { type EditorView } from 'prosemirror-view';
 import { type EditorControlApi, type PluginRegistry } from '#/core';
 
 import { mapChildren } from './documentConversion';
-import { clearExtrasAt, newBlockSide } from './extraAttributes';
 import { warnUnknownType } from './warnings';
 
 /**
@@ -37,34 +36,6 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
     const itemName = list ? itemTypeByList.get(list.node.type.name) : undefined;
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
 };
-
-/** The engine's split, except that an empty item it opens above the text, and the block in it, carry none of the undeclared keys it copies. */
-const splitListItem =
-    (itemType: PmNodeType): Command =>
-    (state, dispatch, view) => {
-        // A new item after the caret is the later holder, which `copiedExtrasPlugin` clears. Past the
-        // item's first block the engine always splits after it.
-        if (newBlockSide(state) === 'after' || state.selection.$from.index(-1) > 0) {
-            return pmSplitListItem(itemType)(state, dispatch, view);
-        }
-        return pmSplitListItem(itemType)(
-            state,
-            dispatch &&
-                ((transaction) => {
-                    const { $from: caret } = transaction.selection;
-                    if (caret.depth >= 2 && caret.node(-1).type === itemType) {
-                        const item = transaction.doc.resolve(caret.before(-1)).nodeBefore;
-                        if (item !== null) {
-                            const itemPos = caret.before(-1) - item.nodeSize;
-                            clearExtrasAt(transaction, itemPos);
-                            clearExtrasAt(transaction, itemPos + 1);
-                        }
-                    }
-                    dispatch(transaction);
-                }),
-            view,
-        );
-    };
 
 // The list half of the control API
 
@@ -115,7 +86,7 @@ export const createListApi = (
         },
         indent: () => runListCommand(sinkListItem),
         outdent: () => runListCommand(liftListItem),
-        split: () => runListCommand(splitListItem),
+        split: () => runListCommand(pmSplitListItem),
         unwrapAll() {
             const view = getView();
             const { from, to } = view.state.selection;

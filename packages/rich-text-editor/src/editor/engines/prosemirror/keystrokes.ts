@@ -1,14 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    baseKeymap,
-    chainCommands,
-    createParagraphNear,
-    liftEmptyBlock,
-    newlineInCode,
-    setBlockType,
-    splitBlock,
-} from 'prosemirror-commands';
+import { baseKeymap, chainCommands, setBlockType } from 'prosemirror-commands';
 import { history, redo, undo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
@@ -19,7 +11,6 @@ import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type Rt
 
 import { keepCarriedAttrs } from './controlApi';
 import { EXTRA_ATTR, valueAttrsFor } from './documentConversion';
-import { clearExtrasAt, newBlockSide } from './extraAttributes';
 import { listKeys } from './lists';
 
 /**
@@ -59,32 +50,8 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         ...typingRewrites(registry, schema),
         // 5
         keymap({ Backspace: resetEmptyFirstBlock }),
-        keymap({
-            ...baseKeymap,
-            Enter: chainCommands(newlineInCode, createParagraphNear, liftEmptyBlock, splitWithoutExtras),
-        }),
+        keymap(baseKeymap),
     ];
-};
-
-/** The engine's split, except that an empty block it opens above the text carries none of the undeclared keys it copies. */
-const splitWithoutExtras: Command = (state, dispatch, view) => {
-    // A new block after the caret is the later holder, which `copiedExtrasPlugin` clears.
-    if (newBlockSide(state) === 'after') {
-        return splitBlock(state, dispatch, view);
-    }
-    return splitBlock(
-        state,
-        dispatch &&
-            ((transaction) => {
-                const { $from: caret } = transaction.selection;
-                const above = transaction.doc.resolve(caret.before()).nodeBefore;
-                if (above !== null) {
-                    clearExtrasAt(transaction, caret.before() - above.nodeSize);
-                }
-                dispatch(transaction);
-            }),
-        view,
-    );
 };
 
 // Feature hotkeys
