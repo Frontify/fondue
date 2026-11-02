@@ -3,6 +3,8 @@ name: Fondue CI
 on:
   pull_request:
     paths:
+      - .github/actions/**
+      - .github/workflows/fondue-pull-requests.yaml
       - packages/**
       - .npmrc
       - .nvmrc

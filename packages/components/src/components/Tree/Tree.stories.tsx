@@ -808,6 +808,7 @@ export const Renaming: Story = {
                     'away commits: the row fires `onRename` with the new name and the root fires `onChange` ' +
                     'with the updated `name`, so re-rendering from either source applies the rename. Escape ' +
                     'cancels. Either way `onRenamingChange(false)` fires so the consumer can clear its flag. ' +
+                    "Double-clicking a row also starts a rename here: the story sets `isRenaming` from the row's `onDoubleClick`. " +
                     'A `<Tree.Decorator>` (here on Logo.svg) is hidden while its row renames, so the input ' +
                     'spans the full width up to the actions slot.',
             },
@@ -832,6 +833,7 @@ export const Renaming: Story = {
         const renameProps = (n: TreeNodeState) => ({
             isRenaming: renamingId === n.id,
             onRenamingChange: (isRenaming: boolean) => setRenamingId(isRenaming ? n.id : null),
+            onDoubleClick: () => setRenamingId(n.id),
             onRename: (newName: string) => {
                 action('onRename')(n.id, newName);
             },
