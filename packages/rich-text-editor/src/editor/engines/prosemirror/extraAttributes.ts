@@ -16,23 +16,31 @@ const clearExtrasAt = (transaction: Transaction, pos: number): void => {
     }
 };
 
+type Anchor = { point: number; assoc: -1 | 1 };
+
 /**
- * Where a block's first text starts, or a void block's own position. An edit
- * that cuts a block in two leaves its keys on the part holding this point, so
- * Enter at the very start of a block leaves them with its text.
+ * Right after a block's first character, mapped to the left: an edit that cuts
+ * a block in two leaves its keys on the part holding this point, so Enter at the
+ * very start leaves them with the text, and text deleted with the cut leaves
+ * them on the first part. With no text, the content start, or a void block's
+ * own position, mapped to the right.
  */
-const anchorOf = (node: PmNode, pos: number): number => {
+const anchorOf = (node: PmNode, pos: number): Anchor => {
     if (node.isAtom) {
-        return pos;
+        return { point: pos, assoc: 1 };
     }
-    let anchor = pos + 1;
+    let anchor: Anchor = { point: pos + 1, assoc: 1 };
     let found = false;
     node.descendants((child, offset) => {
         if (found) {
             return false;
         }
         if (child.isTextblock) {
-            anchor = pos + 1 + offset + 1;
+            const start = pos + 1 + offset + 1;
+            anchor = { point: start, assoc: 1 };
+            if (child.content.size > 0) {
+                anchor = { point: start + 1, assoc: -1 };
+            }
             found = true;
             return false;
         }
@@ -64,7 +72,8 @@ const dropCopiedExtras = (before: PmNode, edits: readonly Transaction[], transac
         const extras: unknown = node.attrs[EXTRA_ATTR];
         if (extras !== null && extras !== undefined) {
             counts.set(extras, (counts.get(extras) ?? 0) + 1);
-            const anchor = edits.reduce((mapped, edit) => edit.mapping.map(mapped), anchorOf(node, pos));
+            const { point, assoc } = anchorOf(node, pos);
+            const anchor = edits.reduce((mapped, edit) => edit.mapping.map(mapped, assoc), point);
             anchors.set(extras, [...(anchors.get(extras) ?? []), anchor]);
         }
         return !node.isTextblock;

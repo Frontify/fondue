@@ -294,6 +294,15 @@ describe('a list and its items with undeclared keys', () => {
         ]);
     });
 
+    it('keeps the keys on the first item when Enter replaces all of its text', () => {
+        const editor = editorWith(defaultPlugins, [bullets({}, item({ ref: 'i1' }, paragraph(text('abc'))))]);
+        editor.select('abc');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([bullets({}, item({ ref: 'i1' }, paragraph()), item({}, paragraph()))]);
+    });
+
     it('keeps the keys on the item when Enter at the start of its second paragraph starts a new item', () => {
         const editor = editorWith(defaultPlugins, [
             bullets({}, item({ ref: 'i1' }, marked({ foo: 1 }, text('first')), paragraph(text('second')))),
