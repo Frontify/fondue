@@ -197,10 +197,11 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         // Only the change of focus is the event; the callback is read when it happens.
         // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [focusWithin]);
-    // The text being edited gives way to the read-only view; the notice takes the focus it held and says why.
+    // The notice takes the focus the removed text dropped onto the page, and says why; `focusWithin` lags a blur.
     const noticeRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
-        if (newerVersion !== null && focusWithin) {
+        const { activeElement, body } = window.document;
+        if (newerVersion !== null && focusWithin && (activeElement === null || activeElement === body)) {
             noticeRef.current?.focus();
         }
         // Only the switch is the event; focus is read when it happens.

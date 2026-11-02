@@ -418,6 +418,29 @@ describe('a document from a newer format version', () => {
         expect(focused?.firstElementChild).toBe(container.querySelector('[role="status"]'));
     });
 
+    it('leaves focus where the user just moved it when a newer document arrives', () => {
+        vi.useFakeTimers();
+        teardown.push(() => vi.useRealTimers());
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const outside = window.document.createElement('input');
+        window.document.body.append(outside);
+        teardown.push(() => outside.remove());
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} />
+        ));
+        ready();
+        act(() => editableIn(container).focus());
+
+        // The host updates in the same task as the blur, before the editor hears that focus left.
+        act(() => {
+            outside.focus();
+            rerender(<RichTextEditor value={newer} plugins={defaultPlugins} />);
+        });
+
+        expect(window.document.activeElement).toBe(outside);
+    });
+
     it('leaves focus alone when a newer document arrives in an editor nobody is in', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         teardown.push(() => warn.mockRestore());
