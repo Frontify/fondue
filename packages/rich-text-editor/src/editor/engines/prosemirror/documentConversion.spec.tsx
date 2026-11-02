@@ -243,6 +243,22 @@ describe('the document boundary', () => {
                 }
             });
 
+            it('keeps a list holding nothing but it whole as well', () => {
+                const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+                try {
+                    const only = {
+                        version: 1,
+                        blocks: [{ type: 'bulletList', children: [sidebar] }],
+                    } as unknown as RteDocumentOf;
+                    const engineDoc = toEngineDocument(only, schema);
+
+                    expect(mapChildren(engineDoc, (node) => node.type.name)).toEqual([UNKNOWN_BLOCK]);
+                    expect(toRteDocument(engineDoc)).toEqual(only);
+                } finally {
+                    warn.mockRestore();
+                }
+            });
+
             it('still refuses a known block that does not fit beside it', () => {
                 const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
                 try {
