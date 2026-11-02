@@ -124,7 +124,7 @@ test.describe('keys that belong to an input method', () => {
 
     for (const [name, init] of [
         ['marked as composing', { isComposing: true }],
-        ['reported as keyCode 229', {}],
+        ['reported as keyCode 229', { keyCode: 229 }],
     ] as const) {
         test(`a hotkey is not run by a key ${name}`, async ({ mount, page }) => {
             const component = await mount(<RichTextEditor />);
@@ -133,7 +133,7 @@ test.describe('keys that belong to an input method', () => {
 
             await editable.click();
             await page.keyboard.type('text');
-            await keydown(editable, { ...keyInit, key: 'b', keyCode: 229, ...init, [mod]: true });
+            await keydown(editable, { ...keyInit, key: 'b', ...init, [mod]: true });
             await page.keyboard.type('more');
 
             await expect(editable.locator('strong')).toHaveCount(0);
@@ -161,11 +161,14 @@ test.describe('AltGr', () => {
     test('AltGr plus a key does not run a Mod-Alt hotkey', async ({ mount, page }) => {
         const component = await mount(<RichTextEditor />);
         const editable = component.getByRole('textbox');
-        const mod = await modifier(page);
+        test.skip(
+            (await modifier(page)) === 'metaKey',
+            'A Mac has no AltGr key, so the engine leaves Option to its hotkeys',
+        );
 
         await editable.click();
         await page.keyboard.type('title');
-        const claimed = await keydown(editable, { ...altGrKey, [mod]: true, modifierAltGraph: true });
+        const claimed = await keydown(editable, { ...altGrKey, ctrlKey: true, modifierAltGraph: true });
 
         expect(claimed).toBe(false);
         await expect(editable.locator('h1')).toHaveCount(0);

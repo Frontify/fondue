@@ -58,6 +58,9 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
 
 // Text entry keys
 
+// A Mac has no AltGr key, yet Firefox on macOS reports Option as AltGraph.
+const isApple = (): boolean => typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
+
 /**
  * A key an input method or an AltGr combination sends is text, not a command:
  * Enter that commits a composition must not split the block, and AltGr+q (`@` on
@@ -65,7 +68,7 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
  */
 const isTextEntryKey = (event: KeyboardEvent): boolean =>
     // `keyCode` 229 marks the input method's keydowns that `isComposing` misses, just before and after a composition.
-    event.isComposing || event.keyCode === 229 || (event.getModifierState?.('AltGraph') ?? false); // NOSONAR
+    event.isComposing || event.keyCode === 229 || (!isApple() && (event.getModifierState?.('AltGraph') ?? false)); // NOSONAR
 
 /**
  * The plugin with its key handler skipping those keys. It declines them rather
