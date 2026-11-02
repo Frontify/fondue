@@ -1698,9 +1698,7 @@ test.describe('TreeRoot drop level by text direction', () => {
             const expected = edge === 'start' ? ['a[a1,a2]', 'x'] : ['a[a1,a2,x]'];
             test(`${dir}: dropping near the inline ${edge} of the last child gives ${expected.join(' ')}`, async ({
                 mount,
-                browserName,
             }) => {
-                test.skip(browserName !== 'chromium', 'native drag events are reliable only in Chromium');
                 const states: string[][] = [];
                 const component = await mount(
                     <div dir={dir} style={{ width: 400 }}>
