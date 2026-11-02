@@ -1201,6 +1201,23 @@ describe('an editor that crashes', () => {
         expect(message?.getAttribute('role')).toBe('alert');
     });
 
+    it('says what the host translated its crash texts to', () => {
+        silenceReact();
+        const { container } = mount(() => (
+            <RichTextEditor
+                value={paragraph('still here')}
+                plugins={[throwingPlugin()]}
+                labels={{ editorFailed: 'Der Editor ist ausgefallen.', retry: 'Erneut versuchen' }}
+            />
+        ));
+
+        const button = [...container.querySelectorAll('button')].find(
+            (candidate) => candidate.textContent === 'Erneut versuchen',
+        );
+        const messageId = button?.getAttribute('aria-describedby') ?? '';
+        expect(window.document.getElementById(messageId)?.textContent).toBe('Der Editor ist ausgefallen.');
+    });
+
     it('names the fallback by a visible label, and only when the host named the editor', () => {
         silenceReact();
         const { container, rerender } = mount(() => (
