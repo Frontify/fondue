@@ -2,6 +2,7 @@
 
 // @vitest-environment happy-dom
 
+import { TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it } from 'vitest';
 
@@ -40,13 +41,28 @@ describe('a block with undeclared keys', () => {
         expect(editor.stored()).toEqual([marked({ foo: 1 }, text('one')), paragraph(text('two'))]);
     });
 
-    it('keeps the keys on the first half when Enter splits it at the start', () => {
+    it('keeps the keys on the block with the text when Enter at its start opens an empty one above', () => {
         const editor = editorWith(defaultPlugins, [marked({ foo: 1 }, text('one'))]);
         editor.caretBefore('one');
 
         expect(press(editor.view, 'Enter')).toBe(true);
 
-        expect(editor.stored()).toEqual([marked({ foo: 1 }), paragraph(text('one'))]);
+        expect(editor.stored()).toEqual([paragraph(), marked({ foo: 1 }, text('one'))]);
+    });
+
+    it('keeps the keys on a heading when Enter at its start opens a paragraph above', () => {
+        const heading = {
+            type: 'textStyle',
+            style: 'heading1',
+            note: 'x',
+            children: [text('Title')],
+        } as unknown as RteBlockNode;
+        const editor = editorWith(defaultPlugins, [heading]);
+        editor.caretBefore('Title');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([paragraph(), heading]);
     });
 
     it('starts the new block clean when Enter splits it at the end', () => {
@@ -152,6 +168,78 @@ describe('a list and its items with undeclared keys', () => {
         expect(editor.stored()).toEqual([
             bullets({ marker: 'dash' }, item({ ref: 'i1' }, paragraph(text('onetwo'))), item({}, paragraph())),
         ]);
+    });
+
+    it('keeps the keys on the item with the text when Enter at its start opens an empty item above', () => {
+        const editor = inList();
+        editor.caretBefore('onetwo');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            bullets({ marker: 'dash' }, item({}, paragraph()), item({ ref: 'i1' }, paragraph(text('onetwo')))),
+        ]);
+    });
+
+    it('keeps the keys on the first list when Enter in an empty item splits the list in two', () => {
+        const editor = editorWith(defaultPlugins, [
+            bullets(
+                { marker: 'dash' },
+                item({}, paragraph(text('a'))),
+                item({}, paragraph()),
+                item({}, paragraph(text('c'))),
+            ),
+        ]);
+        let empty = 0;
+        editor.view.state.doc.descendants((node, pos) => {
+            if (empty === 0 && node.isTextblock && node.content.size === 0) {
+                empty = pos + 1;
+            }
+        });
+        editor.view.dispatch(editor.view.state.tr.setSelection(TextSelection.create(editor.view.state.doc, empty)));
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            bullets({ marker: 'dash' }, item({}, paragraph(text('a')))),
+            paragraph(),
+            bullets({}, item({}, paragraph(text('c')))),
+        ]);
+    });
+
+    it('keeps the keys on the outer list when Shift-Tab lifts a nested item out of the middle', () => {
+        const nested = bullets(
+            { marker: 'dot' },
+            item({}, paragraph(text('x'))),
+            item({}, paragraph(text('y'))),
+            item({}, paragraph(text('z'))),
+        );
+        const editor = editorWith(defaultPlugins, [
+            bullets({ marker: 'dash' }, item({}, paragraph(text('a')), nested)),
+        ]);
+        editor.caretAfter('y');
+
+        expect(press(editor.view, 'Shift-Tab') || editor.api.lists.outdent()).toBe(true);
+
+        const stored = JSON.stringify(editor.stored());
+        expect(stored.match(/"marker":"dot"/g)).toHaveLength(1);
+        expect(stored.match(/"marker":"dash"/g)).toHaveLength(1);
+    });
+
+    it('keeps the keys on the first list when a middle item is turned into a heading', () => {
+        const editor = editorWith(defaultPlugins, [
+            bullets(
+                { marker: 'dash' },
+                item({}, paragraph(text('a'))),
+                item({}, paragraph(text('b'))),
+                item({}, paragraph(text('c'))),
+            ),
+        ]);
+        editor.caretAfter('b');
+
+        editor.api.blocks.setType('textStyle', { style: 'heading1' });
+
+        expect(JSON.stringify(editor.stored()).match(/"marker":"dash"/g)).toHaveLength(1);
     });
 
     it('keeps the keys of the list and its items when the list type changes', () => {
