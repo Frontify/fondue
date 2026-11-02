@@ -2,7 +2,7 @@
 
 import { type Node as PmNode, type NodeType as PmNodeType, type ResolvedPos, type Schema } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem as pmSplitListItem, wrapInList } from 'prosemirror-schema-list';
-import { type Command, type EditorState, TextSelection, type Transaction } from 'prosemirror-state';
+import { type Command, type EditorState, Selection, type Transaction } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry } from '#/core';
@@ -69,7 +69,10 @@ const splitListItem =
                         // Split at the very start, the text stays in the caret's item and the empty one above is new.
                         const previous = transaction.doc.resolve(caretItemPos).nodeBefore;
                         const newAbove = atItemStart && block !== null && block.content.size > 0 && previous !== null;
-                        const newPos = newAbove ? caretItemPos - previous.nodeSize : caretItemPos;
+                        let newPos = caretItemPos;
+                        if (newAbove) {
+                            newPos = caretItemPos - previous.nodeSize;
+                        }
                         const newItem = transaction.doc.nodeAt(newPos);
                         const defaults = itemType.create().attrs;
                         if (newItem && !sameAttrs(newItem.attrs, defaults)) {
@@ -163,11 +166,8 @@ export const createListApi = (
                     current.pos + current.node.nodeSize,
                     converted,
                 );
-                // Same structure and size, so the caret's positions still hold; mapped, it would leave the replaced list.
-                const { anchor, head } = view.state.selection;
-                transaction.setSelection(
-                    TextSelection.between(transaction.doc.resolve(anchor), transaction.doc.resolve(head)),
-                );
+                // Same structure and size, so the selection's positions still hold; mapped, it would leave the replaced list.
+                transaction.setSelection(Selection.fromJSON(transaction.doc, view.state.selection.toJSON()));
                 joinNeighbours(transaction, { node: converted, pos: current.pos });
                 view.dispatch(transaction);
             }

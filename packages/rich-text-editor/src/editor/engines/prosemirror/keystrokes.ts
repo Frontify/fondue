@@ -339,7 +339,10 @@ const splitKeepingCarriedAttrs =
             createParagraphNear,
             liftEmptyBlock,
             splitBlockAs((node, atEnd, $from) => {
-                const type = atEnd ? defaultBlockAt($from.node(-1).contentMatchAt($from.indexAfter(-1))) : node.type;
+                let type: PmNodeType | null = node.type;
+                if (atEnd) {
+                    type = defaultBlockAt($from.node(-1).contentMatchAt($from.indexAfter(-1)));
+                }
                 if (!type) {
                     return null;
                 }

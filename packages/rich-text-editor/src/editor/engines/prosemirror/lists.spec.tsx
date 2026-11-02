@@ -3,6 +3,7 @@
 // @vitest-environment happy-dom
 
 import { undo } from 'prosemirror-history';
+import { NodeSelection } from 'prosemirror-state';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { type RteBlockNode } from '#/core';
@@ -113,6 +114,23 @@ describe('toggling a list', () => {
 
         const { $from } = editor.view.state.selection;
         expect([$from.parent.textContent, $from.parentOffset]).toEqual(['one', 2]);
+    });
+
+    it('keeps a selected block selected when its list is converted', () => {
+        const editor = editorWith(plugins, [bullets('one')]);
+        let paragraphAt = -1;
+        editor.view.state.doc.descendants((node, pos) => {
+            if (node.type.name === 'paragraph' && paragraphAt === -1) {
+                paragraphAt = pos;
+            }
+        });
+        editor.view.dispatch(
+            editor.view.state.tr.setSelection(NodeSelection.create(editor.view.state.doc, paragraphAt)),
+        );
+
+        editor.api.lists.toggle('numberedList');
+
+        expect(editor.view.state.selection instanceof NodeSelection).toBe(true);
     });
 
     it('joins the list with the numbered lists on both sides when a paragraph between is wrapped', () => {
