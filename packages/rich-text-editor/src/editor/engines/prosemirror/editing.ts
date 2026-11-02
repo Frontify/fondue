@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Node as PmNode } from 'prosemirror-model';
+import { Mark, type Node as PmNode } from 'prosemirror-model';
 import { EditorState, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
@@ -234,7 +234,16 @@ const mount = ({
             ) {
                 break;
             }
-            transaction.setNodeMarkup(start, after.type, after.attrs, after.marks);
+            if (before.type === after.type && Mark.sameSet(before.marks, after.marks)) {
+                // One step per attribute, so a user's undo of another attribute leaves the host's alone.
+                for (const [name, value] of Object.entries(after.attrs)) {
+                    if (before.attrs[name] !== value) {
+                        transaction.setNodeAttribute(start, name, value);
+                    }
+                }
+            } else {
+                transaction.setNodeMarkup(start, after.type, after.attrs, after.marks);
+            }
             start = transaction.doc.content.findDiffStart(next.content);
         }
         const end = transaction.doc.content.findDiffEnd(next.content);

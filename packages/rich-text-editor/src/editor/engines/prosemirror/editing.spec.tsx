@@ -355,6 +355,40 @@ describe('a document set by the host that changes the blocks around the caret', 
         expect(view.state.selection.$from.parent.type.name).toBe('textStyle');
     });
 
+    it('keeps a host restyle when the user undoes their own change to the same block', () => {
+        const { view, editor, api } = editorWith(shipped('text-style', 'align'), [text('one'), text('two')] as never);
+        caretIn(view, 'one', 1);
+        api.blocks.updateAttributes({ align: 'center' });
+
+        editor.setDoc(
+            blocksOf(
+                { type: 'textStyle', style: 'heading1', align: 'center', children: [{ text: 'one' }] },
+                text('two'),
+            ),
+        );
+        undo(view.state, view.dispatch);
+
+        expect(view.state.doc.child(0).type.name).toBe('textStyle');
+    });
+
+    it('undoes only the attribute the user changed when the host changed another on the same block', () => {
+        const heading = (style: string, align?: string) => ({
+            type: 'textStyle',
+            style,
+            ...(align === undefined ? {} : { align }),
+            children: [{ text: 'one' }],
+        });
+        const { view, editor, api } = editorWith(shipped('text-style', 'align'), [heading('heading1')] as never);
+        caretIn(view, 'one', 1);
+        api.blocks.updateAttributes({ align: 'center' });
+
+        editor.setDoc(blocksOf(heading('heading2', 'center')));
+        undo(view.state, view.dispatch);
+
+        expect(view.state.doc.child(0).attrs.style).toBe('heading2');
+        expect(view.state.doc.child(0).attrs.align ?? null).toBeNull();
+    });
+
     it('keeps the caret in a to-do the host ticks', () => {
         const todo = (checked: boolean) => ({
             type: 'checkList',
