@@ -969,6 +969,66 @@ test.describe('TreeRoot row click', () => {
         await component.getByRole('treeitem', { name: /Row/ }).click();
         expect(clickCount).toBe(1);
     });
+
+    test('a double-click fires onDoubleClick once and onClick only for the first click', async ({ mount }) => {
+        let clickCount = 0;
+        let doubleClickCount = 0;
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1" onClick={() => (clickCount += 1)} onDoubleClick={() => (doubleClickCount += 1)}>
+                    <Tree.Label>Row</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Row/ }).dblclick();
+        await expect.poll(() => doubleClickCount).toBe(1);
+        expect(clickCount).toBe(1);
+    });
+
+    test('a double-click on an unselected folder with onDoubleClick does not expand it', async ({ mount }) => {
+        const doubleClicked: string[] = [];
+        const component = await mount(
+            <TestHarness
+                initial={[
+                    {
+                        id: 'f',
+                        name: 'Folder',
+                        isFolder: true,
+                        isExpanded: false,
+                        children: [{ id: 'c', name: 'Child', isFolder: false }],
+                    },
+                ]}
+                onDoubleClick={(id) => doubleClicked.push(id)}
+            />,
+        );
+
+        await component.getByRole('treeitem', { name: /Folder/ }).dblclick();
+
+        await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-expanded', 'false');
+        await expect(component.getByRole('treeitem', { name: /Child/ })).toHaveCount(0);
+        await expect.poll(() => doubleClicked).toEqual(['f']);
+    });
+
+    test('a disabled row does not fire onDoubleClick', async ({ mount }) => {
+        const doubleClicked: string[] = [];
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="off" isDisabled onDoubleClick={() => doubleClicked.push('off')}>
+                    <Tree.Label>Off</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="on" onDoubleClick={() => doubleClicked.push('on')}>
+                    <Tree.Label>On</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        // `aria-disabled` makes Playwright refuse the click, though the row still receives real clicks.
+        await component.getByRole('treeitem', { name: /Off/ }).dblclick({ force: true });
+        // Callbacks report back in order, so once the enabled row's call lands, any call from the disabled row has too.
+        await component.getByRole('treeitem', { name: /On/ }).dblclick();
+        await expect.poll(() => doubleClicked).toEqual(['on']);
+    });
 });
 
 test.describe('TreeRoot multi-select', () => {
@@ -1546,63 +1606,6 @@ test.describe('TreeRoot renaming', () => {
 
         await expect(component.getByRole('textbox')).toHaveCount(0);
         expect(renames).toEqual([]);
-    });
-
-    test('double-clicking a renameable row starts a rename', async ({ mount }) => {
-        const renamingChanges: Array<[string, boolean]> = [];
-        const component = await mount(
-            <TestHarness
-                renameable
-                initial={initial}
-                onRenamingChange={(id, isRenaming) => renamingChanges.push([id, isRenaming])}
-            />,
-        );
-
-        await component.getByRole('treeitem', { name: /First/ }).dblclick();
-
-        const input = component.getByRole('textbox');
-        await expect(input).toBeFocused();
-        await expect(input).toHaveValue('First');
-        expect(renamingChanges).toEqual([['1', true]]);
-    });
-
-    test('double-clicking an unselected renameable folder starts a rename without expanding it', async ({ mount }) => {
-        const component = await mount(
-            <TestHarness
-                renameable
-                initial={[
-                    {
-                        id: 'f',
-                        name: 'Folder',
-                        isFolder: true,
-                        isExpanded: false,
-                        children: [{ id: 'c', name: 'Child', isFolder: false }],
-                    },
-                ]}
-            />,
-        );
-
-        await component.getByRole('treeitem', { name: /Folder/ }).dblclick();
-
-        await expect(component.getByRole('textbox')).toBeVisible();
-        await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-expanded', 'false');
-        await expect(component.getByRole('treeitem', { name: /Child/ })).toHaveCount(0);
-    });
-
-    test('double-clicking a row without onRename does not request a rename', async ({ mount }) => {
-        const renamingChanges: boolean[] = [];
-        const component = await mount(
-            <Tree.Root>
-                <Tree.Item id="1" onRenamingChange={(isRenaming) => renamingChanges.push(isRenaming)}>
-                    <Tree.Label>Row</Tree.Label>
-                </Tree.Item>
-            </Tree.Root>,
-        );
-
-        await component.getByRole('treeitem', { name: /Row/ }).dblclick();
-
-        await expect(component.getByRole('textbox')).toHaveCount(0);
-        expect(renamingChanges).toEqual([]);
     });
 });
 

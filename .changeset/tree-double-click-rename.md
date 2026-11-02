@@ -2,4 +2,4 @@
 "@frontify/fondue-components": patch
 ---
 
-feat(Tree): double-clicking a renameable row requests a rename through `onRenamingChange(true)`
+feat(Tree): add `onDoubleClick` to rows; the second click of a double-click no longer selects or toggles a row that has one
