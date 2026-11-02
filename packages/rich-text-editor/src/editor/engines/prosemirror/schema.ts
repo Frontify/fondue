@@ -12,7 +12,15 @@ import {
     type PluginRegistry,
 } from '#/core';
 
-import { plainTextOf, RAW_ATTR, UNKNOWN_BLOCK, UNKNOWN_INLINE, UNKNOWN_MARKS, VALUE_ATTR } from './documentConversion';
+import {
+    plainTextOf,
+    RAW_ATTR,
+    UNKNOWN_ATTRS,
+    UNKNOWN_BLOCK,
+    UNKNOWN_INLINE,
+    UNKNOWN_MARKS,
+    VALUE_ATTR,
+} from './documentConversion';
 import { htmlSpecToDom } from './htmlSpecToDom';
 import { blockParseRules, INLINE_PRIORITY, MARK_PRIORITY, valueParseRules } from './pasteRules';
 
@@ -95,6 +103,7 @@ const blockNodeSpec = (
                 Object.entries(definition.defaults ?? {}).map(([name, value]) => [name, { default: value ?? null }]),
             ),
             ...Object.fromEntries(carried.map(([name, attribute]) => [name, { default: attribute.default ?? null }])),
+            [UNKNOWN_ATTRS]: { default: null },
         },
         parseDOM: blockParseRules(definition, carried),
         toDOM: (node) => htmlSpecToDom(blockHtml(registry, definition, node.attrs)),

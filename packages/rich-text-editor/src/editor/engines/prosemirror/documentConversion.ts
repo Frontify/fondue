@@ -45,6 +45,8 @@ export const UNKNOWN_BLOCK = '__rteUnknownBlock';
 export const UNKNOWN_INLINE = '__rteUnknownInline';
 /** The unknown marks of a run of text, together: `{ glow: true, … }`. */
 export const UNKNOWN_MARKS = '__rteUnknownMarks';
+/** The attributes of a known block that its type does not declare, together: `{ anchorId: 'x', … }`. */
+export const UNKNOWN_ATTRS = '__rteUnknownAttrs';
 /** The attribute an unknown block or inline keeps its document node in, and the unknown marks their values. */
 export const RAW_ATTR = 'raw';
 
@@ -71,9 +73,16 @@ export const mapChildren = <TResult>(node: PmNode, map: (child: PmNode) => TResu
     return results;
 };
 
-/** Attributes with a value; unset ones are absent from the document, not null. */
+/**
+ * Attributes with a value; unset ones are absent from the document, not null.
+ * Undeclared ones are left out: only the document gets those back (see `blockFromEngine`).
+ */
 const definedAttrs = (attrs: Record<string, unknown>): Record<string, unknown> =>
-    Object.fromEntries(Object.entries(attrs).filter(([, value]) => value !== null && value !== undefined));
+    Object.fromEntries(
+        Object.entries(attrs).filter(
+            ([name, value]) => name !== UNKNOWN_ATTRS && value !== null && value !== undefined,
+        ),
+    );
 
 /** A mark's value as the document and the control API see it: the one engine attribute it lives in. */
 export const markValueOf = (mark: PmMark): Record<string, unknown> =>
@@ -94,16 +103,31 @@ export const shallowBlock = (node: PmNode): { type: string; [attribute: string]:
     type: node.type.name,
 });
 
-/** The attributes a node type declared, picked off a document node (they live flat on it). */
-const declaredAttrs = (
-    node: Record<string, unknown>,
+/**
+ * A document block's attributes (they live flat on it) as engine attributes:
+ * the ones its type declared by name, the rest together in `UNKNOWN_ATTRS`.
+ */
+const engineAttrs = (
+    { type: _type, children: _children, ...attributes }: RteBlockNode,
     declared: Record<string, unknown> = {},
-): Record<string, unknown> =>
-    Object.fromEntries(
-        Object.keys(declared)
-            .filter((name) => node[name] !== undefined)
-            .map((name) => [name, node[name]]),
-    );
+): Record<string, unknown> => {
+    const attrs: Record<string, unknown> = {};
+    const unknown: Record<string, unknown> = {};
+    for (const [name, value] of Object.entries(attributes)) {
+        if (value === undefined) {
+            continue;
+        }
+        if (name in declared && name !== UNKNOWN_ATTRS) {
+            attrs[name] = value;
+        } else {
+            unknown[name] = value;
+        }
+    }
+    if (Object.keys(unknown).length > 0) {
+        attrs[UNKNOWN_ATTRS] = unknown;
+    }
+    return attrs;
+};
 
 // --- RTE format -> engine ---
 
@@ -202,7 +226,7 @@ const blockToEngine = (block: RteBlockNode, schema: Schema): PmNode => {
         warnUnknownContent('block', block.type);
         return schema.node(UNKNOWN_BLOCK, { [RAW_ATTR]: block });
     }
-    const attrs = declaredAttrs(block as Record<string, unknown>, nodeType.spec.attrs);
+    const attrs = engineAttrs(block, nodeType.spec.attrs);
     return createFilled(nodeType, attrs, block.children ? childrenToEngine(nodeType, block.children, schema) : []);
 };
 
@@ -298,7 +322,11 @@ const blockFromEngine = (node: PmNode): RteBlockNode => {
         return node.attrs[RAW_ATTR] as RteBlockNode;
     }
 
-    const block: Record<string, unknown> = { type: node.type.name, ...definedAttrs(node.attrs) };
+    const block: Record<string, unknown> = {
+        type: node.type.name,
+        ...(node.attrs[UNKNOWN_ATTRS] as Record<string, unknown> | null),
+        ...definedAttrs(node.attrs),
+    };
     if (node.isTextblock) {
         block.children = mapChildren(node, inlineFromEngine).filter((child) => child !== null);
     } else if (!node.isAtom) {

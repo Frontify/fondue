@@ -735,6 +735,41 @@ describe('content no mounted plugin knows', () => {
 
         expect(stored()?.blocks.find((block) => (block.type as string) === 'callout')).toBe(callout);
     });
+
+    it('keeps block attributes no plugin declares, on the edited block and the untouched ones', () => {
+        const kept = { futureAttr: 'kept' };
+        const value = {
+            version: 1,
+            blocks: [
+                { type: 'paragraph', ...kept, children: [{ text: 'text' }] },
+                { type: 'paragraph', ...kept, children: [{ text: 'untouched' }] },
+                {
+                    type: 'bulletList',
+                    ...kept,
+                    children: [
+                        {
+                            type: 'listItem',
+                            ...kept,
+                            children: [{ type: 'paragraph', ...kept, children: [{ text: 'item' }] }],
+                        },
+                    ],
+                },
+            ],
+        } as unknown as RteDocument;
+
+        const { ready, stored, container } = mount((onChange) => (
+            <RichTextEditor value={value} onChange={onChange} plugins={defaultPlugins} />
+        ));
+        ready();
+
+        paste(container, '<p>typed</p>');
+
+        expect(stored()?.blocks).toEqual([
+            { type: 'paragraph', ...kept, children: [{ text: 'typedtext' }] },
+            value.blocks[1],
+            value.blocks[2],
+        ]);
+    });
 });
 
 describe('onBlur', () => {
