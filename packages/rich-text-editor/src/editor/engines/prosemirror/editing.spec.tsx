@@ -249,6 +249,56 @@ describe('a document set by the host', () => {
     });
 });
 
+describe('a document set by the host while text is being composed', () => {
+    const composing = (view: EditorView, value: boolean): void => {
+        Object.defineProperty(view, 'composing', { configurable: true, get: () => value });
+    };
+    const nextFrame = (): Promise<void> => new Promise((resolve) => requestAnimationFrame(() => resolve()));
+
+    it('waits for the composition to end, then applies the latest one', async () => {
+        const { handle, view } = mount(paragraph('typing'));
+        composing(view, true);
+
+        handle.setDoc(paragraph('first'));
+        handle.setDoc(paragraph('latest'));
+        await nextFrame();
+
+        expect(view.state.doc.textContent).toBe('typing');
+
+        composing(view, false);
+        await nextFrame();
+
+        expect(view.state.doc.textContent).toBe('latest');
+    });
+
+    it('drops a waiting one when the host hands back what the editor reported', async () => {
+        const { handle, view, stored } = mount(paragraph('typing'));
+        handle.api.insertText('!');
+        const reported = stored() as RteDocumentOf;
+        composing(view, true);
+
+        handle.setDoc(paragraph('reset'));
+        handle.setDoc(reported);
+        composing(view, false);
+        await nextFrame();
+
+        expect(view.state.doc.textContent).toBe('!typing');
+    });
+
+    it('drops a waiting one once the editor is destroyed', async () => {
+        const { handle, view, live } = mount(paragraph('typing'));
+        composing(view, true);
+        handle.setDoc(paragraph('late'));
+
+        live.destroy();
+        const dispatch = vi.spyOn(view, 'dispatch');
+        composing(view, false);
+        await nextFrame();
+
+        expect(dispatch).not.toHaveBeenCalled();
+    });
+});
+
 describe('a document set by the host while the editor holds more than it reported', () => {
     /** An inline still being made (a draft) at the caret: never part of what the host is handed. */
     const withDraft = () => {

@@ -144,7 +144,13 @@ const mount = ({
     view = editorView;
 
     // 4. What the host gets back.
+    // A host document that came while text was being composed, and the frame that tries it again.
+    let waitingDoc: typeof initialDoc | null = null;
+    let retryFrame = 0;
+
     const setDoc = (doc: typeof initialDoc): void => {
+        // The newest document the host hands over wins, so one still waiting is dropped whatever this one is.
+        waitingDoc = null;
         if (doc === agreedDoc) {
             return;
         }
@@ -153,6 +159,32 @@ const mount = ({
             hostSeq = seq;
             return;
         }
+        // Replacing text mid-composition breaks the word being composed, so the change waits for it to end, as in Slate.
+        if (editorView.composing) {
+            waitingDoc = doc;
+            if (retryFrame === 0) {
+                retryFrame = requestAnimationFrame(applyWaitingDoc);
+            }
+            return;
+        }
+        applyDoc(doc);
+    };
+
+    const applyWaitingDoc = (): void => {
+        retryFrame = 0;
+        if (waitingDoc === null) {
+            return;
+        }
+        if (editorView.composing) {
+            retryFrame = requestAnimationFrame(applyWaitingDoc);
+            return;
+        }
+        const doc = waitingDoc;
+        waitingDoc = null;
+        applyDoc(doc);
+    };
+
+    const applyDoc = (doc: typeof initialDoc): void => {
         const next = toEngineDocument(doc, schema);
         // Drafts (an inline still being made) are in no document the host holds,
         // though a block reused from one handed out may bring one along; an
@@ -199,6 +231,8 @@ const mount = ({
             editorView.setProps({ attributes: editableAttributes(next) });
         },
         destroy() {
+            cancelAnimationFrame(retryFrame);
+            waitingDoc = null;
             editorView.destroy();
         },
     };
