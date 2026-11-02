@@ -19,6 +19,15 @@ export const paragraphBlock: BlockDefinition = defineBlock({
 /** The document format's version, carried on every document. */
 export const DOCUMENT_VERSION = 1;
 
+/** The document's version when it is newer than this editor writes; a missing or non-numeric one is not. */
+export const newerVersionOf = (document: RteDocumentOf): number | null => {
+    const { version } = document;
+    if (typeof version === 'number' && version > DOCUMENT_VERSION) {
+        return version;
+    }
+    return null;
+};
+
 /**
  * Inside a block's `content.blocks`, stands for every mounted list (a block with
  * `content: { items }`), so a list item can allow nesting without naming lists.

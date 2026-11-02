@@ -14,8 +14,8 @@ import {
 
 import {
     buildPluginRegistry,
-    DOCUMENT_VERSION,
     emptyDocument,
+    newerVersionOf,
     type RteBlockNode,
     type RteDocumentOf,
     type RtePlugin,
@@ -309,15 +309,6 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
 };
 
 // Helpers
-
-/** The document's version when it is newer than this editor writes; a missing or non-numeric one is not. */
-const newerVersionOf = (document: RteDocumentOf): number | null => {
-    const { version } = document as { version?: unknown };
-    if (typeof version === 'number' && version > DOCUMENT_VERSION) {
-        return version;
-    }
-    return null;
-};
 
 /** The key that moves focus from the text to the toolbar, the usual one for rich text editors. */
 const isToolbarHotkey = (event: KeyboardEvent): boolean => event.altKey && event.key === 'F10';
