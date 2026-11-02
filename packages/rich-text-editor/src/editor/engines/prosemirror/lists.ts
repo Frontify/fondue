@@ -45,23 +45,78 @@ export const clearExtrasAt = (transaction: Transaction, pos: number): void => {
     }
 };
 
+/**
+ * Where a split put the new block, as the engine does it: Enter at the start
+ * of a block with text opens an empty one above, which is the new one;
+ * anywhere else the half after the caret is.
+ */
+export const newBlockSide = (state: EditorState): 'before' | 'after' => {
+    const { $from, empty } = state.selection;
+    if (empty && $from.parentOffset === 0 && $from.parent.content.size > 0) {
+        return 'before';
+    }
+    return 'after';
+};
+
+/** Clears the keys a command copied: a node holding the very same extras as one before it is a copy, and the first keeps them. */
+const dropCopiedExtras = (transaction: Transaction): void => {
+    const seen = new Set<unknown>();
+    transaction.doc.descendants((node, pos) => {
+        const extras: unknown = node.attrs[EXTRA_ATTR];
+        if (extras === null || extras === undefined) {
+            return true;
+        }
+        if (seen.has(extras)) {
+            transaction.setNodeMarkup(pos, undefined, { ...node.attrs, [EXTRA_ATTR]: null });
+        } else {
+            seen.add(extras);
+        }
+        return true;
+    });
+};
+
+/** A command whose copies of a node leave the undeclared keys on the first one only. */
+const withoutCopiedExtras =
+    (command: Command): Command =>
+    (state, dispatch, view) =>
+        command(
+            state,
+            dispatch &&
+                ((transaction) => {
+                    dropCopiedExtras(transaction);
+                    dispatch(transaction);
+                }),
+            view,
+        );
+
 /** The engine's split, except that the item it starts, and the block in it, carry none of the undeclared keys it copies. */
 const splitListItem =
     (itemType: PmNodeType): Command =>
-    (state, dispatch, view) =>
-        pmSplitListItem(itemType)(
+    (state, dispatch, view) => {
+        const side = newBlockSide(state);
+        return pmSplitListItem(itemType)(
             state,
             dispatch &&
                 ((transaction) => {
                     const { $from: caret } = transaction.selection;
                     if (caret.depth >= 2 && caret.node(-1).type === itemType) {
-                        clearExtrasAt(transaction, caret.before(-1));
-                        clearExtrasAt(transaction, caret.before());
+                        if (side === 'before') {
+                            const item = transaction.doc.resolve(caret.before(-1)).nodeBefore;
+                            if (item !== null) {
+                                const itemPos = caret.before(-1) - item.nodeSize;
+                                clearExtrasAt(transaction, itemPos);
+                                clearExtrasAt(transaction, itemPos + 1);
+                            }
+                        } else {
+                            clearExtrasAt(transaction, caret.before(-1));
+                            clearExtrasAt(transaction, caret.before());
+                        }
                     }
                     dispatch(transaction);
                 }),
             view,
         );
+    };
 
 // The list half of the control API
 
@@ -78,7 +133,8 @@ export const createListApi = (
         if (!itemType) {
             return false;
         }
-        return command(itemType)(view.state, view.dispatch, view);
+        // Lifting an item out of the middle closes the list and opens a copy of it after.
+        return withoutCopiedExtras(command(itemType))(view.state, view.dispatch, view);
     };
 
     return {
@@ -174,6 +230,7 @@ export const liftOutOfLists = (
         if (lifted === null) {
             break;
         }
+        dropCopiedExtras(lifted);
         transactions.push(lifted);
         current = current.apply(lifted);
     }

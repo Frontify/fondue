@@ -19,7 +19,7 @@ import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type Rt
 
 import { keepCarriedAttrs } from './controlApi';
 import { valueAttrsFor } from './documentConversion';
-import { clearExtrasAt, listKeys } from './lists';
+import { clearExtrasAt, listKeys, newBlockSide } from './lists';
 
 /**
  * What happens when a key is pressed, as one ordered list of ProseMirror plugins.
@@ -66,16 +66,26 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
 };
 
 /** The engine's split, except that the block it starts carries none of the undeclared keys it copies. */
-const splitWithoutExtras: Command = (state, dispatch, view) =>
-    splitBlock(
+const splitWithoutExtras: Command = (state, dispatch, view) => {
+    const side = newBlockSide(state);
+    return splitBlock(
         state,
         dispatch &&
             ((transaction) => {
-                clearExtrasAt(transaction, transaction.selection.$from.before());
+                const { $from: caret } = transaction.selection;
+                if (side === 'before') {
+                    const above = transaction.doc.resolve(caret.before()).nodeBefore;
+                    if (above !== null) {
+                        clearExtrasAt(transaction, caret.before() - above.nodeSize);
+                    }
+                } else {
+                    clearExtrasAt(transaction, caret.before());
+                }
                 dispatch(transaction);
             }),
         view,
     );
+};
 
 // Feature hotkeys
 
