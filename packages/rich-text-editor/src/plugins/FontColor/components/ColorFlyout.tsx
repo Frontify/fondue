@@ -73,7 +73,13 @@ export const ColorFlyout = ({
     };
 
     const save = (): void => {
-        const picked = typedHex(pickerRef.current, draft?.alpha) ?? draft;
+        const typed = typedHex(pickerRef.current, draft?.alpha);
+        // An invalid hex field is in its error state: the draft behind it is no longer what the user sees.
+        if (typed === undefined && pickerRef.current?.querySelector('input[type="text"]')) {
+            close();
+            return;
+        }
+        const picked = typed ?? draft;
         // Nothing picked or typed: an unreadable colour would otherwise be
         // overwritten with whatever the picker fell back to showing.
         if (!choseRef.current || picked === undefined) {

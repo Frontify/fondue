@@ -33,7 +33,7 @@ const mount = (
     return { toggle, set };
 };
 
-const typeHexAndPressEnter = (hex: string): void => {
+const typeHex = (hex: string): HTMLInputElement => {
     const field = document.querySelector<HTMLInputElement>('input[type="text"]');
     if (field === null) {
         throw new Error('no hex field');
@@ -41,6 +41,13 @@ const typeHexAndPressEnter = (hex: string): void => {
     act(() => {
         Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set?.call(field, hex);
         field.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    return field;
+};
+
+const typeHexAndPressEnter = (hex: string): void => {
+    const field = typeHex(hex);
+    act(() => {
         field.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
     });
 };
@@ -97,6 +104,15 @@ describe('the colour flyout', () => {
         }
         expect(document.querySelector('input[type="text"]')).not.toBeNull();
         press('Save');
+
+        expect(toggle).not.toHaveBeenCalled();
+        expect(set).not.toHaveBeenCalled();
+    });
+
+    it('changes nothing for a hex value left invalid after a valid one', () => {
+        const { toggle, set } = mount({});
+        typeHex('00ff00');
+        typeHexAndPressEnter('00ff0');
 
         expect(toggle).not.toHaveBeenCalled();
         expect(set).not.toHaveBeenCalled();
