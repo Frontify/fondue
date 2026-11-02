@@ -112,7 +112,8 @@ const mount = ({
             plugins: [
                 ...keystrokePipeline(registry, schema, api),
                 placeholderPlugin(() => currentPlaceholder, placeholderClassName),
-                dropCursor({ color: 'currentColor', width: 2 }),
+                // Drawn in the view's offset parent, outside the text, so `currentColor` would be the host's colour.
+                dropCursor({ color: 'var(--color-primary-default)', width: 2 }),
             ],
         }),
         // Clicking an inline atom (mention, ...) puts the caret after it rather than selecting it.

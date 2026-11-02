@@ -254,7 +254,7 @@ describe('the editable element', () => {
 });
 
 describe('the drop cursor', () => {
-    it('shows a line in the current text colour while something is dragged over the editor', () => {
+    it('shows a line in the text colour of the document while something is dragged over the editor', () => {
         const { view } = mount(paragraph('text'));
         // happy-dom has no layout: the pointer position, its rectangle and the offset parent are given.
         Object.defineProperty(view.dom, 'offsetParent', { value: window.document.body });
@@ -264,6 +264,6 @@ describe('the drop cursor', () => {
         view.dom.dispatchEvent(new Event('dragover', { bubbles: true }));
 
         const cursor = window.document.querySelector<HTMLElement>('.prosemirror-dropcursor-inline');
-        expect(cursor?.style.backgroundColor).toBe('currentcolor');
+        expect(cursor?.style.backgroundColor).toBe('var(--color-primary-default)');
     });
 });
