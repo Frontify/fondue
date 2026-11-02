@@ -322,9 +322,14 @@ const blockFromEngine = (node: PmNode): RteBlockNode => {
         return node.attrs[RAW_ATTR] as RteBlockNode;
     }
 
+    // A block whose type changed may have been handed undeclared attributes its new type declares; those it owns now.
+    const declared = node.type.spec.attrs ?? {};
+    const unknown = Object.entries((node.attrs[UNKNOWN_ATTRS] as Record<string, unknown> | null) ?? {}).filter(
+        ([name]) => !(name in declared),
+    );
     const block: Record<string, unknown> = {
         type: node.type.name,
-        ...(node.attrs[UNKNOWN_ATTRS] as Record<string, unknown> | null),
+        ...Object.fromEntries(unknown),
         ...definedAttrs(node.attrs),
     };
     if (node.isTextblock) {

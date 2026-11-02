@@ -13,7 +13,7 @@ import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry, type RteSelectionSnapshot } from '#/core';
 
-import { markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
+import { markValueOf, shallowBlock, UNKNOWN_ATTRS, valueAttrsFor } from './documentConversion';
 import { createListApi, liftOutOfLists } from './lists';
 import { warnUnknownType } from './warnings';
 
@@ -222,6 +222,8 @@ export const keepCarriedAttrs =
                 .filter((name) => name in node.attrs && name in (nodeType.spec.attrs ?? {}))
                 .map((name) => [name, node.attrs[name]]),
         ),
+        // Kept whole: the block's type changed, the host's data on it did not.
+        [UNKNOWN_ATTRS]: node.attrs[UNKNOWN_ATTRS] as unknown,
         ...attributes,
     });
 

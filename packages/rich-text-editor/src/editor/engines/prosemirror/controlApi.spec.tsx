@@ -333,6 +333,38 @@ describe('blocks.setType', () => {
             { type: 'quote', children: [{ text: 'two' }] },
         ]);
     });
+
+    it('keeps the attributes no plugin declares', () => {
+        const editor = editorWith(plugins, [{ ...paragraph(text('one')), futureAttr: 'kept' } as RteBlockNode]);
+        editor.caretAfter('on');
+
+        editor.api.blocks.setType('quote');
+
+        expect(editor.stored()).toEqual([{ type: 'quote', futureAttr: 'kept', children: [{ text: 'one' }] }]);
+    });
+
+    it('lets a kept attribute the new type declares take the value the new type gives it', () => {
+        const notePlugin: RtePlugin = {
+            id: 'note',
+            blocks: {
+                note: defineBlock({
+                    content: 'text',
+                    defaults: { tone: undefined },
+                    toHtml: () => ({ tag: 'aside', children: true }),
+                    parse: [{ tag: 'aside' }],
+                }),
+            },
+        };
+        const editor = editorWith(
+            [...plugins, notePlugin],
+            [{ ...paragraph(text('one')), tone: 'loud' } as RteBlockNode],
+        );
+        editor.caretAfter('on');
+
+        editor.api.blocks.setType('note');
+
+        expect(editor.stored()).toEqual([{ type: 'note', children: [{ text: 'one' }] }]);
+    });
 });
 
 describe('blocks.setType inside a list', () => {
