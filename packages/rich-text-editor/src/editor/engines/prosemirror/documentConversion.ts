@@ -219,14 +219,23 @@ const childrenToEngine = (
         ? inlinesToEngine(children as RteInlineNode[], schema)
         : (children as RteBlockNode[]).map((child) => blockToEngine(child, schema));
 
+/** The node type a stored block names, or undefined when no mounted plugin defines it as a block. */
+const knownBlockType = (type: string, schema: Schema): PmNodeType | undefined => {
+    const nodeType = schema.nodes[type];
+    if (!nodeType || nodeType.isInline || nodeType === schema.topNodeType || type === UNKNOWN_BLOCK) {
+        return undefined;
+    }
+    return nodeType;
+};
+
 const blockToEngine = (block: RteBlockNode, schema: Schema): PmNode => {
     // A block this editor handed out: reuse the node it came from (see `engineNodeOf`).
     const known = engineNodeOf.get(block);
     if (known !== undefined && known.type.schema === schema) {
         return known;
     }
-    const nodeType = schema.nodes[block.type];
-    if (!nodeType || nodeType.isInline || nodeType === schema.topNodeType || block.type === UNKNOWN_BLOCK) {
+    const nodeType = knownBlockType(block.type, schema);
+    if (!nodeType) {
         warnUnknownContent('block', block.type);
         return schema.node(UNKNOWN_BLOCK, { [RAW_ATTR]: block });
     }
@@ -240,8 +249,13 @@ const blockToEngine = (block: RteBlockNode, schema: Schema): PmNode => {
     if (node !== null) {
         return node;
     }
-    // A list cannot hold an unknown block among its items, so the whole list is kept as one instead; a known misfit still throws.
-    const knownContent = content.filter((child) => child.type.name !== UNKNOWN_BLOCK);
+    // A list cannot hold an unknown block among its items, so the whole list is kept as one instead; a known
+    // misfit still throws, a known list kept whole this way included.
+    const knownContent = content.filter(
+        (child) =>
+            child.type.name !== UNKNOWN_BLOCK ||
+            knownBlockType((child.attrs[RAW_ATTR] as RteBlockNode).type, schema) !== undefined,
+    );
     if (knownContent.length < content.length && nodeType.createAndFill(attrs, knownContent) !== null) {
         return schema.node(UNKNOWN_BLOCK, { [RAW_ATTR]: block });
     }

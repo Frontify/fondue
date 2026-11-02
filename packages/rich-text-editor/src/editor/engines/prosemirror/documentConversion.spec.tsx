@@ -275,6 +275,30 @@ describe('the document boundary', () => {
                 }
             });
 
+            it('still refuses a list holding a list directly when the inner one is kept whole for it', () => {
+                const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+                try {
+                    const misfit = {
+                        version: 1,
+                        blocks: [
+                            {
+                                type: 'bulletList',
+                                children: [
+                                    item(words('a')),
+                                    { type: 'bulletList', children: [item(words('b')), sidebar] },
+                                ],
+                            },
+                        ],
+                    } as unknown as RteDocumentOf;
+
+                    expect(() => toEngineDocument(misfit, schema)).toThrow(
+                        'Invalid document: a "bulletList" cannot hold',
+                    );
+                } finally {
+                    warn.mockRestore();
+                }
+            });
+
             it('shows each block of the list it keeps on a line of its own, the text of one block run together', () => {
                 const list = {
                     type: 'bulletList',
