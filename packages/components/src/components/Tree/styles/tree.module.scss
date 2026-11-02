@@ -4,6 +4,17 @@
 
 .tree {
     --tree-accent: var(--color-highlight-default);
+    /* Row geometry: the indent, handle, drag line and loading row all derive from these.
+       `--tree-indent-step` comes inline from `INDENT_STEP_PX`, which headless-tree also uses. */
+    --tree-item-border: var(--border-width-large);
+    --tree-item-padding: #{sizeToken.get(2)};
+    --tree-gap: #{sizeToken.get(1)};
+    --tree-indent-base: 6px;
+    --tree-handle-size: 16px;
+    /* Inline start of a level-0 row's chevron. */
+    --tree-chevron-start: calc(
+        var(--tree-item-border) + var(--tree-item-padding) + var(--tree-indent-base) + var(--tree-gap)
+    );
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -54,11 +65,11 @@
     flex: 1;
     display: flex;
     align-items: center;
-    column-gap: sizeToken.get(1);
-    padding: 0 sizeToken.get(2) 0 sizeToken.get(2);
+    column-gap: var(--tree-gap);
+    padding: 0 var(--tree-item-padding);
     height: sizeToken.get(8);
     border-radius: var(--border-radius-medium);
-    border-width: var(--border-width-large);
+    border-width: var(--tree-item-border);
     border-style: solid;
     border-color: transparent;
     transition:
@@ -101,19 +112,20 @@
 
 .indent {
     /* Depth is provided as a CSS custom property on `.item` so the math stays in CSS. */
-    width: calc(var(--tree-row-level) * 1rem + 6px);
+    width: calc(var(--tree-row-level) * var(--tree-indent-step) + var(--tree-indent-base));
 }
 
 .handle {
     /* Overlays the row's leading space so reorderable and static roots align; `.item`'s
-       `align-items` centres it vertically through its static position. */
+       `align-items` centres it vertically through its static position, and the offset
+       centres it horizontally between the item border and the chevron. */
     position: absolute;
-    inset-inline-start: 3px;
+    inset-inline-start: calc((var(--tree-item-border) + var(--tree-chevron-start) - var(--tree-handle-size)) / 2);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 16px;
-    height: 16px;
+    width: var(--tree-handle-size);
+    height: var(--tree-handle-size);
     color: var(--color-secondary-default);
     cursor: grab;
     visibility: hidden;
@@ -211,13 +223,16 @@
 }
 
 .dragline {
+    /* Width of the leading columns before the indent; none outside multi-select. */
+    --tree-drag-line-columns: 0px;
     position: absolute;
-    /* Starts under the chevron of the folder being dropped into. A level-L row's chevron
-       sits at 20px + L × 16px (item border 2 + padding 8 + indent base 6 + gap 4),
-       and the target folder is one level above the drop level carried by
-       `--tree-drag-line-indent` (drop level × 16px) → 4px + drop level × 16px. */
-    left: calc(var(--tree-drag-line-indent, 0px) + 4px);
-    right: 0;
+    /* Starts under the chevron of the folder being dropped into, which sits one indent
+       step above the drop level carried by `--tree-drag-line-indent` (drop level × step). */
+    inset-inline-start: calc(
+        var(--tree-drag-line-indent, 0px) - var(--tree-indent-step) + var(--tree-chevron-start) +
+            var(--tree-drag-line-columns)
+    );
+    inset-inline-end: 0;
     height: 2px;
     margin-top: -1px;
     background-color: var(--tree-accent);
@@ -225,23 +240,23 @@
     pointer-events: none;
     z-index: 1;
 
-    /* The checkbox and handle columns (16px + 4px gap each) shift the chevron right in multi-select. */
+    /* In multi-select the handle and the checkbox (same size) each take a column. */
     &[data-multi-select='true'] {
-        left: calc(var(--tree-drag-line-indent, 0px) + 44px);
+        --tree-drag-line-columns: calc(2 * (var(--tree-handle-size) + var(--tree-gap)));
     }
 
     /* Root-level drops have no target folder to align with — span the full tree width.
        Declared last so it also overrides the multi-select shift. */
     &[data-root-drop='true'] {
-        left: 0;
+        inset-inline-start: 0;
     }
     /* Smooths sub-pixel jitter and brief gaps between drag-target updates so the
        line doesn't visibly flicker as it tracks the cursor. */
     transition:
         top 0.08s ease-out,
-        left 0.08s ease-out,
+        inset-inline-start 0.08s ease-out,
         width 0.08s ease-out;
-    will-change: top, left, width;
+    will-change: top, inset-inline-start, width;
 }
 
 .loadingRow {
@@ -258,10 +273,10 @@
     flex: 1;
     display: flex;
     align-items: center;
-    column-gap: sizeToken.get(1);
-    padding: 0 sizeToken.get(2) 0 sizeToken.get(2);
+    column-gap: var(--tree-gap);
+    padding: 0 var(--tree-item-padding);
     height: sizeToken.get(8);
-    border-width: var(--border-width-large);
+    border-width: var(--tree-item-border);
     border-style: solid;
     border-color: transparent;
 }
