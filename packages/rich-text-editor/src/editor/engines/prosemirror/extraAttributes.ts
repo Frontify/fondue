@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { isHistoryTransaction } from 'prosemirror-history';
 import { type Node as PmNode } from 'prosemirror-model';
 import { type EditorState, Plugin, type Transaction } from 'prosemirror-state';
 
@@ -29,56 +30,63 @@ export const newBlockSide = (state: EditorState): 'before' | 'after' => {
     return 'after';
 };
 
-/** How many blocks hold each extras object. Only blocks hold one, so the walk stops at blocks of text. */
-const extrasCounts = (doc: PmNode): Map<unknown, number> => {
+/**
+ * Clears the keys an edit copied. A copy shares its original's extras object,
+ * so an object held by more blocks than in `before` has copies: the blocks no
+ * holder in `before` maps to are those, and past them the last holders are.
+ * An object `before` lacks is never a copy: pasted and dropped blocks come in
+ * without one. Only blocks hold one, so the walks stop at blocks of text.
+ */
+const dropCopiedExtras = (before: PmNode, edits: readonly Transaction[], transaction: Transaction): void => {
     const counts = new Map<unknown, number>();
-    doc.descendants((node) => {
+    const originals = new Set<number>();
+    before.descendants((node, pos) => {
         const extras: unknown = node.attrs[EXTRA_ATTR];
         if (extras !== null && extras !== undefined) {
             counts.set(extras, (counts.get(extras) ?? 0) + 1);
+            originals.add(edits.reduce((mapped, edit) => edit.mapping.map(mapped), pos));
         }
         return !node.isTextblock;
     });
-    return counts;
-};
-
-/**
- * Clears the keys an edit copied: a copy shares its original's extras object,
- * so one held by more blocks than in `before` is a copy, and the first holders
- * keep it. An object `before` lacks is a block an undo brings back, never a
- * copy: pasted and dropped blocks come in without one.
- */
-const dropCopiedExtras = (before: PmNode, transaction: Transaction): void => {
-    const counts = extrasCounts(before);
-    const seen = new Map<unknown, number>();
+    const holders = new Map<unknown, number[]>();
     transaction.doc.descendants((node, pos) => {
         const extras: unknown = node.attrs[EXTRA_ATTR];
-        const held = counts.get(extras);
-        if (held !== undefined) {
-            const count = (seen.get(extras) ?? 0) + 1;
-            seen.set(extras, count);
-            if (count > held) {
-                transaction.setNodeMarkup(pos, undefined, { ...node.attrs, [EXTRA_ATTR]: null });
-            }
+        if (counts.has(extras)) {
+            holders.set(extras, [...(holders.get(extras) ?? []), pos]);
         }
         return !node.isTextblock;
     });
+    for (const [extras, positions] of holders) {
+        const copies = positions.length - (counts.get(extras) ?? 0);
+        if (copies <= 0) {
+            continue;
+        }
+        const unmatched = positions.filter((pos) => !originals.has(pos)).reverse();
+        const matched = positions.filter((pos) => originals.has(pos)).reverse();
+        for (const pos of [...unmatched, ...matched].slice(0, copies)) {
+            clearExtrasAt(transaction, pos);
+        }
+    }
 };
 
 /**
- * After every edit, the undeclared keys it copied stay on the first block
+ * After every edit, the undeclared keys it copied stay on the original block
  * only: a split, a lift out of the middle of a list, a block inserted
  * mid-paragraph and a paste all copy the attributes of the block they cut in
- * two. A host's own document is left as it is, repeated blocks included.
+ * two. A host's own document is left as it is, repeated blocks included, and so
+ * is an undo or redo, which brings back a document that already held to this.
  */
 export const copiedExtrasPlugin = (isHostChange: (transaction: Transaction) => boolean): Plugin =>
     new Plugin({
         appendTransaction(transactions, oldState, newState) {
-            if (!transactions.some((transaction) => transaction.docChanged) || transactions.some(isHostChange)) {
+            if (!transactions.some((transaction) => transaction.docChanged)) {
+                return null;
+            }
+            if (transactions.some(isHostChange) || transactions.some(isHistoryTransaction)) {
                 return null;
             }
             const transaction = newState.tr;
-            dropCopiedExtras(oldState.doc, transaction);
+            dropCopiedExtras(oldState.doc, transactions, transaction);
             if (!transaction.docChanged) {
                 return null;
             }

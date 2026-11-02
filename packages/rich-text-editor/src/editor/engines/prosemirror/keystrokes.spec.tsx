@@ -135,6 +135,18 @@ describe('undoing a typing rewrite', () => {
 });
 
 describe('Backspace', () => {
+    it('turns an emptied, centred heading back into a plain paragraph', () => {
+        const editor = editorWith(defaultPlugins, [
+            { type: 'textStyle', style: 'heading1', align: 'center', children: [] },
+            paragraph(text('body')),
+        ]);
+        editor.view.dispatch(editor.view.state.tr.setSelection(TextSelection.create(editor.view.state.doc, 1)));
+
+        expect(press(editor.view, 'Backspace')).toBe(true);
+
+        expect(editor.stored()).toEqual([paragraph(), paragraph(text('body'))]);
+    });
+
     it('keeps the undeclared keys of an emptied heading it turns back into a paragraph', () => {
         const editor = editorWith(defaultPlugins, [
             { type: 'textStyle', style: 'heading1', note: 'x', children: [] },

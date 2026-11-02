@@ -233,7 +233,10 @@ const blockToEngine = (block: RteBlockNode, schema: Schema): PmNode => {
     const reserved = new Set(['type', 'children', ...Object.keys(nodeType.spec.attrs ?? {})]);
     // A stored key named like the extras attribute is just another undeclared key.
     reserved.delete(EXTRA_ATTR);
-    const attrs = { ...declaredAttrs(stored, nodeType.spec.attrs), [EXTRA_ATTR]: extrasOf(stored, reserved, `block "${block.type}"`) };
+    const attrs = {
+        ...declaredAttrs(stored, nodeType.spec.attrs),
+        [EXTRA_ATTR]: extrasOf(stored, reserved, `block "${block.type}"`),
+    };
     return createFilled(nodeType, attrs, block.children ? childrenToEngine(nodeType, block.children, schema) : []);
 };
 

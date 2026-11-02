@@ -121,6 +121,34 @@ describe('a block with undeclared keys', () => {
         expect(editor.stored()).toEqual([marked({ foo: 1 }, text('onetwo'))]);
     });
 
+    it('leaves the keys on both copies of a block the host repeats when Enter splits the first', () => {
+        const editor = editorWith(defaultPlugins, [marked({ foo: 1 }, text('one'))]);
+        editor.type('!');
+        const [repeated] = editor.stored() ?? [];
+        editor.editor.setDoc({ version: 1, blocks: [repeated, repeated] } as RteDocumentOf);
+        editor.caretAfter('on');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([marked({ foo: 1 }, text('!on')), paragraph(text('e')), repeated]);
+    });
+
+    it('gets the keys back on a repeated block when its deletion is undone', () => {
+        const editor = editorWith(defaultPlugins, [marked({ foo: 1 }, text('one'))]);
+        editor.type('!');
+        const [repeated] = editor.stored() ?? [];
+        editor.editor.setDoc({ version: 1, blocks: [repeated, repeated] } as RteDocumentOf);
+        const { view } = editor;
+        view.dispatch(
+            view.state.tr.setSelection(TextSelection.create(view.state.doc, view.state.doc.child(0).nodeSize + 1)),
+        );
+        press(view, 'Backspace');
+
+        expect(undo(view.state, view.dispatch)).toBe(true);
+
+        expect(editor.stored()).toEqual([repeated, repeated]);
+    });
+
     it('gets the second block keys back when that join is undone', () => {
         const editor = editorWith(defaultPlugins, [marked({ foo: 1 }, text('one')), marked({ foo: 2 }, text('two'))]);
         editor.caretBefore('two');
