@@ -6,7 +6,7 @@ import { TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { type RteBlockNode } from '#/core';
+import { type RteBlockNode, type RteDocumentOf } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { EXTRA_ATTR } from './documentConversion';
@@ -72,6 +72,31 @@ describe('a block with undeclared keys', () => {
         expect(press(editor.view, 'Enter')).toBe(true);
 
         expect(editor.stored()).toEqual([marked({ foo: 1 }, text('one')), paragraph()]);
+    });
+
+    it('keeps the keys on the block with the text when Enter replaces a range from its start', () => {
+        const editor = editorWith(defaultPlugins, [marked({ foo: 1 }, text('Hello'))]);
+        editor.select('Hel');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([paragraph(), marked({ foo: 1 }, text('lo'))]);
+    });
+
+    it('keeps the keys of a block the host repeats when a list command runs elsewhere', () => {
+        const editor = editorWith(defaultPlugins, [
+            marked({ foo: 1 }, text('one')),
+            bullets({}, item({}, paragraph(text('a'))), item({}, paragraph(text('b')))),
+        ]);
+        editor.caretAfter('b');
+        editor.type('!');
+        const [repeated, list] = editor.stored() ?? [];
+        editor.editor.setDoc({ version: 1, blocks: [repeated, repeated, list] } as RteDocumentOf);
+        editor.caretAfter('b!');
+
+        expect(press(editor.view, 'Tab')).toBe(true);
+
+        expect(JSON.stringify(editor.stored()).match(/"foo":1/g)).toHaveLength(2);
     });
 
     it('keeps the first block keys when Backspace joins two', () => {
@@ -178,6 +203,23 @@ describe('a list and its items with undeclared keys', () => {
 
         expect(editor.stored()).toEqual([
             bullets({ marker: 'dash' }, item({}, paragraph()), item({ ref: 'i1' }, paragraph(text('onetwo')))),
+        ]);
+    });
+
+    it('keeps the keys on the item when Enter at the start of its second paragraph starts a new item', () => {
+        const editor = editorWith(defaultPlugins, [
+            bullets({}, item({ ref: 'i1' }, marked({ foo: 1 }, text('first')), paragraph(text('second')))),
+        ]);
+        editor.caretBefore('second');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            bullets(
+                {},
+                item({ ref: 'i1' }, marked({ foo: 1 }, text('first')), paragraph()),
+                item({}, paragraph(text('second'))),
+            ),
         ]);
     });
 
