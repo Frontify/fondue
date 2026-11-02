@@ -339,16 +339,6 @@ const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] =
         if (isInExcludedMark(state, context.excludedMarks, $from.pos)) {
             return null;
         }
-        // Mid-token, the caret does not end an address: Enter only splits.
-        const after = $from.parent.textBetween(
-            $from.parentOffset,
-            $from.parent.content.size,
-            undefined,
-            INLINE_ELEMENT,
-        );
-        if (after !== '' && !/^\s/.test(after) && !after.startsWith(INLINE_ELEMENT)) {
-            return null;
-        }
         const textBefore = $from.parent.textBetween(
             Math.max(0, $from.parentOffset - MAX_MATCH),
             $from.parentOffset,

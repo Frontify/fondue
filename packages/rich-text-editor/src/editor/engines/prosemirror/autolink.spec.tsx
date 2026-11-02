@@ -129,13 +129,28 @@ describe('pressing Enter after a web address', () => {
         expect(editor.stored()).toEqual([paragraph(text('https://example.com', { code: true })), paragraph()]);
     });
 
-    it('leaves an address alone when the caret is inside it', () => {
-        const editor = editorWith(defaultPlugins, [paragraph(text('see https://example.com/page'))]);
-        editor.caretAfter('https://exa');
+    it.each([
+        ['inside an address', 'see https://example.com/page', 'https://exa', 'https://exa', 'mple.com/page'],
+        [
+            'before a closing parenthesis',
+            '(see https://example.com)',
+            'https://example.com',
+            'https://example.com',
+            ')',
+        ],
+    ])('links what a typed space would when the caret is %s', (_where, value, caretAfter, linked, rest) => {
+        const prefix = value.slice(0, value.indexOf(linked));
+        const spaced = editorWith(defaultPlugins, [paragraph(text(value))]);
+        spaced.caretAfter(caretAfter);
+        spaced.type(' ');
+        expect(spaced.stored()).toEqual([paragraph(text(prefix), link(linked), text(` ${rest}`))]);
+
+        const editor = editorWith(defaultPlugins, [paragraph(text(value))]);
+        editor.caretAfter(caretAfter);
 
         press(editor.view, 'Enter');
 
-        expect(editor.stored()).toEqual([paragraph(text('see https://exa')), paragraph(text('mple.com/page'))]);
+        expect(editor.stored()).toEqual([paragraph(text(prefix), link(linked)), paragraph(text(rest))]);
     });
 
     it('links an address when only a space follows the caret', () => {
