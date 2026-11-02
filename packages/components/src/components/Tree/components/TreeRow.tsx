@@ -188,6 +188,7 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
                 className={styles.item}
                 style={{ '--tree-row-level': Math.max(0, level) } as CSSProperties}
                 data-folder={isFolder}
+                data-multi-select={multiSelect ? 'true' : undefined}
                 data-selected={!multiSelect && data.isSelected === true ? 'true' : undefined}
                 data-drop={reorderable && item.isDragTarget()}
                 data-disabled={data.isDisabled ? 'true' : undefined}

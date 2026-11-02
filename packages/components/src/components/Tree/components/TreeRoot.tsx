@@ -43,9 +43,7 @@ export type TreeRootProps = {
     multiSelect?: boolean;
     /**
      * Enables drag-and-drop reordering of items. When false, items are static and
-     * no drag handle is rendered. The handle renders in a 16px gutter before the rows (left in LTR),
-     * outside the tree's box, so leave that space (for example padding on the container) and
-     * avoid clipping it with `overflow: hidden`.
+     * no drag handle is rendered.
      * @default false
      */
     reorderable?: boolean;
@@ -169,13 +167,21 @@ export const TreeRoot = ({
                             checkedState={checkedStates?.get(item.getId()) ?? false}
                         />
                         {loadingPlaceholder && (
-                            <TreeLoadingRow level={loadingPlaceholder.level} multiSelect={multiSelect} />
+                            <TreeLoadingRow
+                                level={loadingPlaceholder.level}
+                                multiSelect={multiSelect}
+                                reorderable={reorderable}
+                            />
                         )}
                     </Fragment>
                 );
             })}
             {loadingInsertions.rootLoading && (
-                <TreeLoadingRow level={loadingInsertions.rootLoading.level} multiSelect={multiSelect} />
+                <TreeLoadingRow
+                    level={loadingInsertions.rootLoading.level}
+                    multiSelect={multiSelect}
+                    reorderable={reorderable}
+                />
             )}
             {reorderable && (
                 <TreeDragLine data={isNoopDrop(tree) ? null : tree.getDragLineData()} multiSelect={multiSelect} />

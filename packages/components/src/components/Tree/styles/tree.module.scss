@@ -101,14 +101,14 @@
 
 .indent {
     /* Depth is provided as a CSS custom property on `.item` so the math stays in CSS. */
-    width: calc(var(--tree-row-level) * 1rem + 4px);
+    width: calc(var(--tree-row-level) * 1rem + 6px);
 }
 
 .handle {
-    /* Sits outside the row so reorderable and static roots align; consumers leave a 16px gutter. */
+    /* Overlays the row's leading space so reorderable and static roots align. */
     position: absolute;
     top: 50%;
-    inset-inline-start: -16px;
+    inset-inline-start: 3px;
     transform: translateY(-50%);
     display: inline-flex;
     align-items: center;
@@ -118,6 +118,12 @@
     color: var(--color-secondary-default);
     cursor: grab;
     visibility: hidden;
+}
+
+/* The checkbox occupies the leading space in multi-select, so the handle takes its own column. */
+[data-multi-select='true'] > .handle {
+    position: static;
+    transform: none;
 }
 
 .row:hover .handle,
@@ -209,10 +215,10 @@
 .dragline {
     position: absolute;
     /* Starts under the chevron of the folder being dropped into. A level-L row's chevron
-       sits at 18px + L × 16px (item border 2 + padding 8 + indent base 4 + gap 4),
+       sits at 20px + L × 16px (item border 2 + padding 8 + indent base 6 + gap 4),
        and the target folder is one level above the drop level carried by
-       `--tree-drag-line-indent` (drop level × 16px) → 2px + drop level × 16px. */
-    left: calc(var(--tree-drag-line-indent, 0px) + 2px);
+       `--tree-drag-line-indent` (drop level × 16px) → 4px + drop level × 16px. */
+    left: calc(var(--tree-drag-line-indent, 0px) + 4px);
     right: 0;
     height: 2px;
     margin-top: -1px;
@@ -221,9 +227,9 @@
     pointer-events: none;
     z-index: 1;
 
-    /* The checkbox column (16px + 4px gap) shifts the chevron right in multi-select. */
+    /* The checkbox and handle columns (16px + 4px gap each) shift the chevron right in multi-select. */
     &[data-multi-select='true'] {
-        left: calc(var(--tree-drag-line-indent, 0px) + 22px);
+        left: calc(var(--tree-drag-line-indent, 0px) + 44px);
     }
 
     /* Root-level drops have no target folder to align with — span the full tree width.
@@ -250,7 +256,7 @@
 
 .loadingItem {
     /* Mirrors `.item`'s flex layout so the label aligns with real row labels regardless
-       of whether multiSelect columns are active. */
+       of whether multiSelect or reorderable columns are active. */
     flex: 1;
     display: flex;
     align-items: center;
