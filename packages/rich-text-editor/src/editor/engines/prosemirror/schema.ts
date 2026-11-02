@@ -168,7 +168,7 @@ export const buildSchema = (registry: PluginRegistry): Schema => {
     const known = new Set(registry.blocks.keys());
 
     const nodes: Record<string, PmNodeSpec> = {
-        doc: { content: 'block+', attrs: { [EXTRA_ATTR]: { default: null } } },
+        doc: { content: 'block+' },
         text: { group: 'inline' },
     };
 

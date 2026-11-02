@@ -13,7 +13,7 @@ import {
     sliceWithoutExtras,
 } from './clipboard';
 import { createControlApi, type OpenEditors } from './controlApi';
-import { EXTRA_ATTR, toEngineDocument, toRteDocument, withoutDrafts } from './documentConversion';
+import { rootExtrasOf, toEngineDocument, toRteDocument, withoutDrafts } from './documentConversion';
 import { copiedExtrasPlugin } from './extraAttributes';
 import { keystrokePipeline } from './keystrokes';
 import { createMarkViews, createNodeViews, LiveViews } from './nodeViews';
@@ -76,6 +76,8 @@ const mount = ({
     // Every document reported to the host: one arriving back, even late and
     // behind newer edits, is the editor's own and never replaces what it holds.
     const emittedDocs = new WeakSet<typeof initialDoc>();
+    // The document's own undeclared keys: only the host changes them, so they live here, not in the engine document.
+    let rootExtras = rootExtrasOf(initialDoc);
 
     // 1. Views with editing UI (blocks, inline elements, link-like marks) follow
     //    the selection, since `isFocused` does. Each state change is offered to
@@ -140,7 +142,7 @@ const mount = ({
             repaintViews();
             // Host-originated changes are not reported back to the host.
             if (transaction.docChanged && transaction.getMeta(HOST_DOC) !== true) {
-                const emitted = toRteDocument(editorView.state.doc);
+                const emitted = toRteDocument(editorView.state.doc, rootExtras);
                 emittedDocs.add(emitted);
                 onDocChange(emitted);
             }
@@ -158,23 +160,14 @@ const mount = ({
         // Drafts (an inline still being made) are in no document the host holds,
         // though a block reused from one handed out may bring one along; an
         // echo of what is there must leave them, and the caret, alone.
-        const current = withoutDrafts(editorView.state.doc);
-        const held = withoutDrafts(next);
-        if (held.content.eq(current.content)) {
+        rootExtras = rootExtrasOf(doc);
+        if (withoutDrafts(next).eq(withoutDrafts(editorView.state.doc))) {
             agreedDoc = doc;
-            // Same blocks, other keys on the document itself: only those change, and the caret stays.
-            if (!held.sameMarkup(current)) {
-                const transaction = editorView.state.tr.setDocAttribute(EXTRA_ATTR, next.attrs[EXTRA_ATTR]);
-                transaction.setMeta(HOST_DOC, true);
-                transaction.setMeta('addToHistory', false);
-                editorView.dispatch(transaction);
-            }
             return;
         }
         // Different content: the old caret position means nothing in it, so the
         // caret goes to the end rather than mid-word somewhere.
         const transaction = editorView.state.tr.replaceWith(0, editorView.state.doc.content.size, next.content);
-        transaction.setDocAttribute(EXTRA_ATTR, next.attrs[EXTRA_ATTR]);
         transaction.setSelection(Selection.atEnd(transaction.doc));
         transaction.setMeta(HOST_DOC, true);
         transaction.setMeta('addToHistory', false);
@@ -186,7 +179,7 @@ const mount = ({
         handle: {
             api,
             selectionRect: createSelectionRectReader(editorView),
-            document: () => toRteDocument(editorView.state.doc),
+            document: () => toRteDocument(editorView.state.doc, rootExtras),
         },
         setDoc,
         setPlaceholder(next) {

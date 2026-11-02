@@ -240,6 +240,13 @@ const blockToEngine = (block: RteBlockNode, schema: Schema): PmNode => {
     return createFilled(nodeType, attrs, block.children ? childrenToEngine(nodeType, block.children, schema) : []);
 };
 
+/**
+ * The document's own undeclared keys. No edit changes them, so they stay out of
+ * the engine document: a host changing only them redraws nothing.
+ */
+export const rootExtrasOf = (doc: RteDocumentOf): Record<string, unknown> | null =>
+    extrasOf(doc as Record<string, unknown>, new Set(['version', 'blocks']), 'the document');
+
 export const toEngineDocument = (doc: RteDocumentOf, schema: Schema): PmNode => {
     const docType = schema.nodes.doc;
     if (!docType) {
@@ -247,7 +254,7 @@ export const toEngineDocument = (doc: RteDocumentOf, schema: Schema): PmNode => 
     }
     return createFilled(
         docType,
-        { [EXTRA_ATTR]: extrasOf(doc as Record<string, unknown>, new Set(['version', 'blocks']), 'the document') },
+        null,
         doc.blocks.map((block) => blockToEngine(block, schema)),
     );
 };
@@ -347,10 +354,11 @@ const blockFromEngine = (node: PmNode): RteBlockNode => {
 
 /**
  * The document itself is built fresh every time, unlike the blocks in it: a new
- * object is what tells a host its `value` changed.
+ * object is what tells a host its `value` changed. `rootExtras` are the
+ * document's own undeclared keys, from `rootExtrasOf`.
  */
-export const toRteDocument = (doc: PmNode): RteDocumentOf => ({
-    ...extrasFrom(doc),
+export const toRteDocument = (doc: PmNode, rootExtras: Record<string, unknown> | null = null): RteDocumentOf => ({
+    ...rootExtras,
     version: DOCUMENT_VERSION,
     blocks: mapChildren(doc, blockFromEngine),
 });
