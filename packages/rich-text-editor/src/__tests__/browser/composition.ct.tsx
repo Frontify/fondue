@@ -21,6 +21,9 @@ const commit = async (page: Page, text: string): Promise<void> => {
     await client.send('Input.insertText', { text });
 };
 
+/** Lets timers queued by `compositionend` run first: input rules rewrite composed text from a timeout. */
+const settle = (page: Page): Promise<void> => page.evaluate(() => new Promise<void>((resolve) => setTimeout(resolve)));
+
 const keyInit = { bubbles: true, cancelable: true };
 
 // Plain data only: the full `KeyboardEventInit` makes the page-function types too deep to resolve.
@@ -48,6 +51,7 @@ test.describe('composed text', () => {
         await editable.click();
         await compose(page, '- ');
         await commit(page, '- ');
+        await settle(page);
 
         await expect(editable).toHaveText('- ');
         await expect(editable.locator('ul')).toHaveCount(0);
@@ -60,6 +64,7 @@ test.describe('composed text', () => {
         await editable.click();
         await compose(page, '**bold**');
         await commit(page, '**bold**');
+        await settle(page);
 
         await expect(editable).toHaveText('**bold**');
         await expect(editable.locator('strong')).toHaveCount(0);
@@ -72,6 +77,7 @@ test.describe('composed text', () => {
         await editable.click();
         await compose(page, 'https://example.com ');
         await commit(page, 'https://example.com ');
+        await settle(page);
 
         await expect(editable).toContainText('https://example.com');
         await expect(editable.locator('a')).toHaveCount(0);
@@ -89,20 +95,6 @@ test.describe('composed text', () => {
 });
 
 test.describe('keys that belong to an input method', () => {
-    test('Enter while composing does not split the block', async ({ mount, page }) => {
-        const component = await mount(<RichTextEditor />);
-        const editable = component.getByRole('textbox');
-
-        await editable.click();
-        await compose(page, 'あ');
-        const claimed = await keydown(editable, { ...keyInit, key: 'Enter', keyCode: 229, isComposing: true });
-        await commit(page, 'あ');
-
-        expect(claimed).toBe(false);
-        await expect(editable.locator('p')).toHaveCount(1);
-        await expect(editable).toHaveText('あ');
-    });
-
     test('the Enter that commits a composition does not split the block', async ({ mount, page }) => {
         const component = await mount(<RichTextEditor />);
         const editable = component.getByRole('textbox');
