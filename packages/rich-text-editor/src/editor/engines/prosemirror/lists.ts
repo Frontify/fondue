@@ -2,7 +2,7 @@
 
 import { type Node as PmNode, type NodeType as PmNodeType, type ResolvedPos, type Schema } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem as pmSplitListItem, wrapInList } from 'prosemirror-schema-list';
-import { type Command, type EditorState, type Transaction } from 'prosemirror-state';
+import { type Command, type EditorState, TextSelection, type Transaction } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry } from '#/core';
@@ -162,6 +162,11 @@ export const createListApi = (
                     current.pos,
                     current.pos + current.node.nodeSize,
                     converted,
+                );
+                // Same structure and size, so the caret's positions still hold; mapped, it would leave the replaced list.
+                const { anchor, head } = view.state.selection;
+                transaction.setSelection(
+                    TextSelection.between(transaction.doc.resolve(anchor), transaction.doc.resolve(head)),
                 );
                 joinNeighbours(transaction, { node: converted, pos: current.pos });
                 view.dispatch(transaction);

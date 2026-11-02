@@ -105,6 +105,16 @@ describe('toggling a list', () => {
         expect(editor.stored()).toEqual([list('bulletList', item(paragraph(text('outer')), bullets('inner')))]);
     });
 
+    it('keeps the caret where it was when a converted list joins the one after it', () => {
+        const editor = editorWith(plugins, [bullets('one'), list('numberedList', item(paragraph(text('two'))))]);
+        editor.caretAfter('on');
+
+        editor.api.lists.toggle('numberedList');
+
+        const { $from } = editor.view.state.selection;
+        expect([$from.parent.textContent, $from.parentOffset]).toEqual(['one', 2]);
+    });
+
     it('joins the list with the numbered lists on both sides when a paragraph between is wrapped', () => {
         const numbered = (value: string) => list('numberedList', item(paragraph(text(value))));
         const editor = editorWith(plugins, [numbered('one'), paragraph(text('two')), numbered('three')]);

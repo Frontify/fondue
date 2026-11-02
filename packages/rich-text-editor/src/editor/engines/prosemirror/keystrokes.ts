@@ -333,10 +333,8 @@ const defaultBlockAt = (match: ContentMatch): PmNodeType | null => {
  */
 const splitKeepingCarriedAttrs =
     (registry: PluginRegistry): Command =>
-    (state, dispatch) => {
-        // Read before any selected range is deleted: that can leave the block the range ended in.
-        const source = state.selection.$from.parent;
-        return chainCommands(
+    (state, dispatch) =>
+        chainCommands(
             newlineInCode,
             createParagraphNear,
             liftEmptyBlock,
@@ -345,12 +343,13 @@ const splitKeepingCarriedAttrs =
                 if (!type) {
                     return null;
                 }
-                const carried = keepCarriedAttrs(registry, type, undefined)(source);
-                // Mid-block the new block is the same kind, so it keeps all of its attributes.
-                return { type, attrs: atEnd ? carried : { ...node.attrs, ...carried } };
+                // `node` is the block left after any selected range is deleted; mid-block the new half is the same kind.
+                if (!atEnd) {
+                    return { type, attrs: node.attrs };
+                }
+                return { type, attrs: keepCarriedAttrs(registry, type, undefined)(node) };
             }),
         )(state, dispatch);
-    };
 
 /**
  * Backspace in an emptied block at the very top that is not the default block

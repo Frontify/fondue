@@ -259,6 +259,29 @@ describe('undo after a paste a feature handles', () => {
     });
 });
 
+describe('undo after a paste a feature makes in several edits', () => {
+    it('takes the whole paste back in one step', () => {
+        const insertsTwice: RtePlugin = {
+            id: 'inserts-twice',
+            onPaste: (_paste, api) => {
+                api.insertText('a');
+                api.insertText('b');
+                return true;
+            },
+        };
+        const editor = editorWith([...shipped(), insertsTwice], [paragraphBlock()]);
+        editor.type('one');
+        editor.paste('ignored');
+        editor.type('two');
+
+        undo(editor.view.state, editor.view.dispatch);
+        expect(JSON.stringify(editor.stored())).not.toContain('two');
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual([paragraphBlock(text('one'))]);
+    });
+});
+
 describe('the placeholder', () => {
     const placeholderText = (container: HTMLElement): string | null =>
         container.querySelector('.placeholder')?.getAttribute('data-placeholder') ?? null;

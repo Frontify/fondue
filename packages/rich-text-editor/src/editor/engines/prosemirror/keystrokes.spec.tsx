@@ -564,7 +564,7 @@ describe('Enter in a block with attributes every text block carries', () => {
         expect(editor.stored()).toEqual([aligned('one'), aligned('two')]);
     });
 
-    it('over a range across two blocks takes the alignment of the block it starts in', () => {
+    it('over a range across two blocks gives both halves the alignment of the block the text stays in', () => {
         const editor = editorWith(defaultPlugins, [
             { type: 'paragraph', align: 'left', children: [text('abc')] },
             { type: 'paragraph', align: 'center', children: [text('def')] },
@@ -573,7 +573,7 @@ describe('Enter in a block with attributes every text block carries', () => {
 
         press(editor.view, 'Enter');
 
-        expect(editor.stored()?.map((block) => (block as { align?: string }).align)).toEqual(['center', 'left']);
+        expect(editor.stored()?.map((block) => (block as { align?: string }).align)).toEqual(['center', 'center']);
     });
 
     it('at the end of a heading gives an aligned paragraph', () => {

@@ -74,6 +74,8 @@ const mount = ({
     let closeBeforeNextEdit = false;
     // A feature's paste handler is running: what it dispatches is a paste too, though it carries no `uiEvent`.
     let inFeaturePaste = false;
+    // Whether the feature paste under way has made its first edit.
+    let featurePasteStarted = false;
 
     // 1. Views with editing UI (blocks, inline elements, link-like marks) follow
     //    the selection, since `isFocused` does. Each state change is offered to
@@ -110,6 +112,7 @@ const mount = ({
         clipboardParser: clipboardParser(schema),
         handlePaste: (pasteView, event, slice) => {
             inFeaturePaste = true;
+            featurePasteStarted = false;
             try {
                 if (handlePasteByFeatures(registry.pasteHandlers, api)(pasteView, event)) {
                     return true;
@@ -141,13 +144,18 @@ const mount = ({
         dispatchTransaction(transaction) {
             // Typing groups into one undo step; a paste, cut or drop, and the first edit after it, stand apart.
             const uiEvent: unknown = transaction.getMeta('uiEvent');
-            const isTransfer = inFeaturePaste || uiEvent === 'paste' || uiEvent === 'cut' || uiEvent === 'drop';
-            if (isTransfer || (closeBeforeNextEdit && transaction.docChanged)) {
+            // A feature's paste can take several edits: only its first starts the step, the rest join it.
+            const startsFeaturePaste = inFeaturePaste && transaction.docChanged && !featurePasteStarted;
+            const isTransfer = startsFeaturePaste || uiEvent === 'paste' || uiEvent === 'cut' || uiEvent === 'drop';
+            if (isTransfer || (closeBeforeNextEdit && transaction.docChanged && !inFeaturePaste)) {
                 closeHistory(transaction);
+            }
+            if (startsFeaturePaste) {
+                featurePasteStarted = true;
             }
             if (isTransfer) {
                 closeBeforeNextEdit = true;
-            } else if (transaction.docChanged) {
+            } else if (transaction.docChanged && !inFeaturePaste) {
                 closeBeforeNextEdit = false;
             }
             editorView.updateState(editorView.state.apply(transaction));
