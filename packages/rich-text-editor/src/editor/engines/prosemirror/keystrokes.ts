@@ -333,12 +333,15 @@ const defaultBlockAt = (match: ContentMatch): PmNodeType | null => {
  */
 const splitKeepingCarriedAttrs =
     (registry: PluginRegistry): Command =>
-    (state, dispatch) =>
-        chainCommands(
+    (state, dispatch) => {
+        // At the very start of a non-default block the engine retypes the empty block above to the default, dropping its attributes.
+        let splitAtStart = false;
+        return chainCommands(
             newlineInCode,
             createParagraphNear,
             liftEmptyBlock,
             splitBlockAs((node, atEnd, $from) => {
+                splitAtStart = !atEnd && $from.parentOffset === 0;
                 let type: PmNodeType | null = node.type;
                 if (atEnd) {
                     type = defaultBlockAt($from.node(-1).contentMatchAt($from.indexAfter(-1)));
@@ -352,7 +355,25 @@ const splitKeepingCarriedAttrs =
                 }
                 return { type, attrs: keepCarriedAttrs(registry, type, undefined)(node) };
             }),
-        )(state, dispatch);
+        )(
+            state,
+            dispatch &&
+                ((transaction) => {
+                    const { $from } = transaction.selection;
+                    const above = transaction.doc.resolve($from.before()).nodeBefore;
+                    if (splitAtStart && above?.isTextblock) {
+                        const carried = keepCarriedAttrs(registry, above.type, undefined)($from.parent);
+                        if (Object.entries(carried).some(([name, value]) => above.attrs[name] !== value)) {
+                            transaction.setNodeMarkup($from.before() - above.nodeSize, undefined, {
+                                ...above.attrs,
+                                ...carried,
+                            });
+                        }
+                    }
+                    dispatch(transaction);
+                }),
+        );
+    };
 
 /**
  * Backspace in an emptied block at the very top that is not the default block

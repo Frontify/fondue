@@ -590,6 +590,20 @@ describe('Enter in a block with attributes every text block carries', () => {
         ]);
     });
 
+    it('at the start of a heading gives the empty paragraph above the same alignment', () => {
+        const editor = editorWith(defaultPlugins, [
+            { type: 'textStyle', style: 'heading2', align: 'right', children: [text('Title')] },
+        ]);
+        editor.caretBefore('Title');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([
+            { type: 'paragraph', align: 'right', children: [] },
+            { type: 'textStyle', style: 'heading2', align: 'right', children: [text('Title')] },
+        ]);
+    });
+
     it('at the end of a list item gives the new item an aligned paragraph', () => {
         const editor = editorWith(defaultPlugins, [
             {
