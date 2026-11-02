@@ -430,6 +430,23 @@ describe('pasting from other applications', () => {
             expect(starts(doc)).toEqual(['numberedList', 'paragraph', 'numberedList']);
         });
 
+        it('restarts under each numbered heading of the same list', () => {
+            const heading = (marker: string, text: string): string =>
+                `<h1 style="mso-list: l0 level1 lfo1"><span style="mso-list: Ignore">${marker}</span>${text}</h1>`;
+            const point = (marker: string, text: string): string =>
+                `<p class="MsoListParagraph" style="mso-list: l0 level2 lfo1">` +
+                `<span style="mso-list: Ignore">${marker}</span>${text}<o:p></o:p></p>`;
+            const doc = pasted(
+                heading('1', 'Scope') +
+                    point('1.1.', 'Logos') +
+                    point('1.2.', 'Colours') +
+                    heading('2', 'Terms') +
+                    point('2.1.', 'Payment'),
+            );
+
+            expect(starts(doc)).toEqual(['textStyle', 'numberedList', 'textStyle', 'numberedList']);
+        });
+
         it('leaves a bulleted list as it is', () => {
             const doc = pasted(
                 item('l0', 'lfo1', '·', 'One') +

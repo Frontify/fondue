@@ -76,11 +76,8 @@ const markerSpans = (root: ParentNode): HTMLElement[] =>
         MARKER_STYLE.test(span.getAttribute('style') ?? ''),
     );
 
-/** `element` as a list paragraph, or `undefined` when it is not one. */
-const readListParagraph = (element: Node): ListParagraph | undefined => {
-    if (!(element instanceof HTMLElement) || element.localName !== 'p') {
-        return undefined;
-    }
+/** The list and level `element` declares, or `undefined` when it declares none. */
+const readListData = (element: HTMLElement): { list: string; level: number } | undefined => {
     const style = element.getAttribute('style') ?? '';
     let declared = RULE_LIST_STYLE.exec(style);
     if (OWN_LIST_STYLE.test(style)) {
@@ -89,13 +86,20 @@ const readListParagraph = (element: Node): ListParagraph | undefined => {
     if (declared === null || Number(declared[2]) < 1) {
         return undefined;
     }
+    return { list: `${declared[1] ?? ''} ${declared[3] ?? ''}`, level: Math.min(Number(declared[2]), MAX_LEVEL) };
+};
+
+/** `element` as a list paragraph, or `undefined` when it is not one. */
+const readListParagraph = (element: Node): ListParagraph | undefined => {
+    if (!(element instanceof HTMLElement) || element.localName !== 'p') {
+        return undefined;
+    }
+    const data = readListData(element);
+    if (data === undefined) {
+        return undefined;
+    }
     const marker = (markerSpans(element)[0]?.textContent ?? '').trim();
-    return {
-        paragraph: element,
-        list: `${declared[1] ?? ''} ${declared[3] ?? ''}`,
-        level: Math.min(Number(declared[2]), MAX_LEVEL),
-        ordered: NUMBERED_MARKER.test(marker),
-    };
+    return { paragraph: element, ...data, ordered: NUMBERED_MARKER.test(marker) };
 };
 
 /** The list paragraphs that follow `first` as siblings, with only layout between them. */
@@ -121,6 +125,21 @@ const runFrom = (first: ListParagraph): ListParagraph[] => {
  */
 type Numbering = Map<string, number[]>;
 
+const countsOf = (numbering: Numbering, list: string): number[] => {
+    let counts = numbering.get(list);
+    if (counts === undefined) {
+        counts = [];
+        numbering.set(list, counts);
+    }
+    return counts;
+};
+
+/** Counts one item at `level`, which restarts the numbering of the levels below it. */
+const countItem = (counts: number[], level: number): void => {
+    counts[level] = (counts[level] ?? 0) + 1;
+    counts.length = level + 1;
+};
+
 /**
  * Rebuilds one run of list paragraphs as nested lists where it stood. A level
  * below the one before opens one list inside the last item, so no empty item
@@ -144,11 +163,7 @@ const rebuildRun = (run: readonly ListParagraph[], numbering: Numbering): void =
         if (current?.level === level && (current.ordered !== ordered || (ordered && current.list !== list))) {
             open.pop();
         }
-        let counts = numbering.get(list);
-        if (counts === undefined) {
-            counts = [];
-            numbering.set(list, counts);
-        }
+        const counts = countsOf(numbering, list);
         let parent = open[open.length - 1];
         if (parent === undefined || parent.level < level) {
             let tag = 'ul';
@@ -173,9 +188,7 @@ const rebuildRun = (run: readonly ListParagraph[], numbering: Numbering): void =
             parent = { element, level, ordered, list };
             open.push(parent);
         }
-        counts[level] = (counts[level] ?? 0) + 1;
-        // An item restarts the numbering of the levels below it.
-        counts.length = level + 1;
+        countItem(counts, level);
         const item = document.createElement('li');
         item.append(paragraph);
         parent.element.append(item);
@@ -185,8 +198,16 @@ const rebuildRun = (run: readonly ListParagraph[], numbering: Numbering): void =
 const rebuildLists = (dom: HTMLElement): void => {
     const done = new Set<Element>();
     const numbering: Numbering = new Map();
-    for (const paragraph of dom.querySelectorAll('p')) {
+    for (const paragraph of dom.querySelectorAll<HTMLElement>('p, h1, h2, h3, h4, h5, h6')) {
         if (done.has(paragraph)) {
+            continue;
+        }
+        // A heading Word numbers with a list stays a heading, but counts as that list's item.
+        if (paragraph.localName !== 'p') {
+            const heading = readListData(paragraph);
+            if (heading !== undefined) {
+                countItem(countsOf(numbering, heading.list), heading.level);
+            }
             continue;
         }
         const first = readListParagraph(paragraph);
