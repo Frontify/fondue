@@ -434,10 +434,10 @@ class ReactBlockView extends ReactNodeView<Record<string, unknown>> {
     protected store(value: Record<string, unknown>): void {
         const pos = this.pos();
         if (pos !== undefined) {
-            // One step per attribute, so undo reverts only what this view changed.
+            // One step per changed attribute, so undo reverts only what this view changed.
             const transaction = this.view.state.tr;
             for (const [name, attribute] of Object.entries(value)) {
-                if (name in this.node.attrs) {
+                if (name in this.node.attrs && this.node.attrs[name] !== attribute) {
                     transaction.setNodeAttribute(pos, name, attribute);
                 }
             }

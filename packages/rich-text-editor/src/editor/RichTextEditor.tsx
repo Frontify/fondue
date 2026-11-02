@@ -34,10 +34,10 @@ import styles from './richTextEditor.module.scss';
  */
 export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     /**
-     * The document to show. Handing back a document from `onChange` changes
-     * nothing; any other new object replaces only what differs, keeps the
-     * caret and stays out of undo history, so undo reverts only the user's
-     * own edits. Keeping the same object does not reject an edit: pass a copy
+     * The document to show. Handing back the latest document from `onChange`
+     * changes nothing; an older one, or any other new object, replaces only
+     * the blocks and text that differ, keeps the caret and stays out of undo
+     * history, so undo reverts only the user's own edits. Keeping the same object does not reject an edit: pass a copy
      * of the last accepted document instead. Never mutate a document already
      * passed: the editor keeps references into it, and in development freezes
      * in place the values it hands back (mark values, unknown content).

@@ -355,6 +355,18 @@ describe('a document set by the host that changes the blocks around the caret', 
         expect(view.state.selection.$from.parent.type.name).toBe('textStyle');
     });
 
+    it('leaves the caret and undo in a block between two the host changes', () => {
+        const { view, editor } = editorWith([], [text('a'), text('b'), text('c')] as never);
+        caretIn(view, 'b', 1);
+        view.dispatch(view.state.tr.insertText('X'));
+
+        editor.setDoc(blocksOf(text('A'), text('bX'), text('C')));
+
+        expect(caretAt(view)).toEqual({ block: 'bX', offset: 2 });
+        undo(view.state, view.dispatch);
+        expect(view.state.doc.textContent).toBe('AbC');
+    });
+
     it('keeps a host restyle when the user undoes their own change to the same block', () => {
         const { view, editor, api } = editorWith(shipped('text-style', 'align'), [text('one'), text('two')] as never);
         caretIn(view, 'one', 1);
@@ -768,7 +780,11 @@ describe('a document set by the host, over generated documents', () => {
     it.each(seeds)('lands on exactly the new document, the caret on a character boundary (seed %i)', (seed) => {
         const random = seeded(seed);
         const before = generate(random);
-        const after = seed % 5 === 0 ? generate(random) : mutate(random, before);
+        let after = seed % 5 === 0 ? generate(random) : mutate(random, before);
+        // Some documents change in two places, so unchanged blocks can sit between changes.
+        if (seed % 3 === 0) {
+            after = mutate(random, after);
+        }
         const editor = editorWith(
             shipped(
                 'text-style',

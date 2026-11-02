@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Mark, type Node as PmNode } from 'prosemirror-model';
-import { EditorState, TextSelection } from 'prosemirror-state';
+import { EditorState, TextSelection, type Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { type MountedDocument, type MountDocument, type MountOptions } from '#/editor/port';
@@ -36,19 +36,147 @@ const HOST_DOC = 'rte-host-doc';
 
 const graphemes = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
 
-/** How far `pos` sits from the end of the character it splits in its text block (an emoji sequence, a letter and its accent), 0 when it splits none. */
-const graphemeRemainder = (doc: PmNode, pos: number): number => {
-    const $pos = doc.resolve(pos);
-    if (!$pos.parent.isTextblock) {
-        return 0;
-    }
+/** How far `offset` sits from the end of the character it splits in `textblock` (an emoji sequence, a letter and its accent), 0 when it splits none. */
+const graphemeRemainder = (textblock: PmNode, offset: number): number => {
     // One stand-in character per inline atom keeps text offsets equal to positions.
-    const text = $pos.parent.textBetween(0, $pos.parent.content.size, undefined, '￼');
-    const containing = graphemes.segment(text).containing($pos.parentOffset);
-    if (containing === undefined || containing.index === $pos.parentOffset) {
+    const text = textblock.textBetween(0, textblock.content.size, undefined, '￼');
+    const containing = graphemes.segment(text).containing(offset);
+    if (containing === undefined || containing.index === offset) {
         return 0;
     }
-    return containing.index + containing.segment.length - $pos.parentOffset;
+    return containing.index + containing.segment.length - offset;
+};
+
+const childrenOf = (node: PmNode): PmNode[] => {
+    const children: PmNode[] = [];
+    for (let index = 0; index < node.childCount; index++) {
+        children.push(node.child(index));
+    }
+    return children;
+};
+
+/** Past this many comparisons, a changed stretch of children is replaced whole rather than matched up. */
+const MATCH_LIMIT = 250_000;
+
+/** Index pairs of equal children, in order: a longest common subsequence. */
+const equalChildren = (before: readonly PmNode[], after: readonly PmNode[]): [number, number][] => {
+    if (before.length * after.length > MATCH_LIMIT) {
+        return [];
+    }
+    const lengths = Array.from({ length: before.length + 1 }, () => Array.from({ length: after.length + 1 }, () => 0));
+    const lengthAt = (i: number, j: number): number => lengths[i]?.[j] ?? 0;
+    const same = (i: number, j: number): boolean => {
+        const a = before[i];
+        const b = after[j];
+        return a !== undefined && b !== undefined && a.eq(b);
+    };
+    for (let i = before.length - 1; i >= 0; i--) {
+        const row = lengths[i] ?? [];
+        for (let j = after.length - 1; j >= 0; j--) {
+            if (same(i, j)) {
+                row[j] = lengthAt(i + 1, j + 1) + 1;
+            } else {
+                row[j] = Math.max(lengthAt(i + 1, j), lengthAt(i, j + 1));
+            }
+        }
+    }
+    const pairs: [number, number][] = [];
+    let i = 0;
+    let j = 0;
+    while (i < before.length && j < after.length) {
+        if (same(i, j)) {
+            pairs.push([i, j]);
+            i += 1;
+            j += 1;
+        } else if (lengthAt(i + 1, j) >= lengthAt(i, j + 1)) {
+            i += 1;
+        } else {
+            j += 1;
+        }
+    }
+    return pairs;
+};
+
+/** Text block content: one replace over what differs, so a caret outside it, or before it in the block, stays put. */
+const syncInline = (transaction: Transaction, from: number, current: PmNode, target: PmNode): void => {
+    const start = current.content.findDiffStart(target.content, from);
+    const end = current.content.findDiffEnd(target.content, from + current.content.size, from + target.content.size);
+    if (start === null || end === null) {
+        return;
+    }
+    let { a: endA, b: endB } = end;
+    // The ends can cross when the change is a repeat of its neighbours.
+    const overlap = start - Math.min(endA, endB);
+    if (overlap > 0) {
+        endA += overlap;
+        endB += overlap;
+    }
+    // A caret inside the change maps to its end, so the end must not split a character the user sees.
+    const remainder = graphemeRemainder(target, endB - from);
+    endA += remainder;
+    endB += remainder;
+    transaction.replace(start, endA, target.slice(start - from, endB - from));
+};
+
+/** One child into another: restyled in place when its content still fits, so a caret inside stays, then its content synced. */
+const syncChild = (transaction: Transaction, pos: number, current: PmNode, target: PmNode): void => {
+    if (current.eq(target)) {
+        return;
+    }
+    if (current.type !== target.type || !Mark.sameSet(current.marks, target.marks)) {
+        if (current.isText || target.isText || !target.type.validContent(current.content)) {
+            transaction.replaceWith(pos, pos + current.nodeSize, target);
+            return;
+        }
+        transaction.setNodeMarkup(pos, target.type, target.attrs, target.marks);
+    } else {
+        // One step per attribute, so a user's undo of another attribute leaves the host's alone.
+        for (const [name, value] of Object.entries(target.attrs)) {
+            if (current.attrs[name] !== value) {
+                transaction.setNodeAttribute(pos, name, value);
+            }
+        }
+    }
+    if (!current.content.eq(target.content)) {
+        syncContent(transaction, pos + 1, current, target);
+    }
+};
+
+/** The content of `current`, starting at `from`, into that of `target`, touching only the children that differ. */
+const syncContent = (transaction: Transaction, from: number, current: PmNode, target: PmNode): void => {
+    if (current.inlineContent) {
+        syncInline(transaction, from, current, target);
+        return;
+    }
+    const before = childrenOf(current);
+    const after = childrenOf(target);
+    const starts = [from];
+    for (const child of before) {
+        starts.push((starts[starts.length - 1] ?? from) + child.nodeSize);
+    }
+    const startOf = (index: number): number => starts[index] ?? from;
+    // Unchanged children anchor the change, so a block between two changes is left alone; last to first keeps
+    // earlier positions valid.
+    const bounds: [number, number][] = [...equalChildren(before, after).reverse(), [-1, -1]];
+    let endA = before.length;
+    let endB = after.length;
+    for (const [anchorA, anchorB] of bounds) {
+        const startA = anchorA + 1;
+        const startB = anchorB + 1;
+        if (endA - startA === endB - startB) {
+            for (let offset = endA - startA - 1; offset >= 0; offset--) {
+                const child = before[startA + offset];
+                const replacement = after[startB + offset];
+                if (child !== undefined && replacement !== undefined) {
+                    syncChild(transaction, startOf(startA + offset), child, replacement);
+                }
+            }
+        } else {
+            transaction.replaceWith(startOf(startA), startOf(endA), after.slice(startB, endB));
+        }
+        endA = anchorA;
+        endB = anchorB;
+    }
 };
 
 /**
@@ -214,53 +342,9 @@ const mount = ({
             agreedDoc = doc;
             return;
         }
-        // Replace only what differs, so the caret maps through the step and stays put.
+        // Change only what differs, so the caret and the user's undo history map through and stay put.
         const transaction = editorView.state.tr;
-        let start = transaction.doc.content.findDiffStart(next.content);
-        // A node differing only in type or attributes changes in place, since replacing it would push the caret out.
-        while (start !== null) {
-            const before = transaction.doc.nodeAt(start);
-            const after = next.nodeAt(start);
-            // A different child count means a node was inserted or removed here, not restyled.
-            if (
-                before === null ||
-                after === null ||
-                before.isText ||
-                after.isText ||
-                transaction.doc.resolve(start).parent.childCount !== next.resolve(start).parent.childCount ||
-                before.sameMarkup(after) ||
-                !before.content.eq(after.content) ||
-                !after.type.validContent(before.content)
-            ) {
-                break;
-            }
-            if (before.type === after.type && Mark.sameSet(before.marks, after.marks)) {
-                // One step per attribute, so a user's undo of another attribute leaves the host's alone.
-                for (const [name, value] of Object.entries(after.attrs)) {
-                    if (before.attrs[name] !== value) {
-                        transaction.setNodeAttribute(start, name, value);
-                    }
-                }
-            } else {
-                transaction.setNodeMarkup(start, after.type, after.attrs, after.marks);
-            }
-            start = transaction.doc.content.findDiffStart(next.content);
-        }
-        const end = transaction.doc.content.findDiffEnd(next.content);
-        if (start !== null && end !== null) {
-            let { a: endA, b: endB } = end;
-            // The ends can cross when the change is a repeat of its neighbours.
-            const overlap = start - Math.min(endA, endB);
-            if (overlap > 0) {
-                endA += overlap;
-                endB += overlap;
-            }
-            // A caret inside the change maps to its end, so the end must not split a character the user sees.
-            const remainder = graphemeRemainder(next, endB);
-            endA += remainder;
-            endB += remainder;
-            transaction.replace(start, endA, next.slice(start, endB));
-        }
+        syncContent(transaction, 0, editorView.state.doc, next);
         if (transaction.docChanged) {
             transaction.setMeta(HOST_DOC, true);
             transaction.setMeta('addToHistory', false);
