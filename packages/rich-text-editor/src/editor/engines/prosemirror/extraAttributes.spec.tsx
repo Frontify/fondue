@@ -31,13 +31,22 @@ const bullets = (extras: Record<string, unknown>, ...children: RteBlockNode[]): 
     ({ type: 'bulletList', ...extras, children }) as RteBlockNode;
 
 describe('a block with undeclared keys', () => {
-    it('hands both halves the keys when Enter splits it in the middle', () => {
+    it('keeps the keys on the first half when Enter splits it in the middle', () => {
         const editor = editorWith(defaultPlugins, [marked({ foo: 1 }, text('onetwo'))]);
         editor.caretAfter('one');
 
         expect(press(editor.view, 'Enter')).toBe(true);
 
-        expect(editor.stored()).toEqual([marked({ foo: 1 }, text('one')), marked({ foo: 1 }, text('two'))]);
+        expect(editor.stored()).toEqual([marked({ foo: 1 }, text('one')), paragraph(text('two'))]);
+    });
+
+    it('keeps the keys on the first half when Enter splits it at the start', () => {
+        const editor = editorWith(defaultPlugins, [marked({ foo: 1 }, text('one'))]);
+        editor.caretBefore('one');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([marked({ foo: 1 }), paragraph(text('one'))]);
     });
 
     it('starts the new block clean when Enter splits it at the end', () => {
@@ -123,18 +132,14 @@ describe('a list and its items with undeclared keys', () => {
     const inList = () =>
         editorWith(defaultPlugins, [bullets({ marker: 'dash' }, item({ ref: 'i1' }, paragraph(text('onetwo'))))]);
 
-    it('hands both items the keys when Enter splits an item in the middle', () => {
+    it('keeps the keys on the first item when Enter splits an item in the middle', () => {
         const editor = inList();
         editor.caretAfter('one');
 
         expect(press(editor.view, 'Enter')).toBe(true);
 
         expect(editor.stored()).toEqual([
-            bullets(
-                { marker: 'dash' },
-                item({ ref: 'i1' }, paragraph(text('one'))),
-                item({ ref: 'i1' }, paragraph(text('two'))),
-            ),
+            bullets({ marker: 'dash' }, item({ ref: 'i1' }, paragraph(text('one'))), item({}, paragraph(text('two')))),
         ]);
     });
 

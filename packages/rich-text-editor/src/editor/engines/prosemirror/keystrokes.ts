@@ -1,6 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { baseKeymap, chainCommands, setBlockType } from 'prosemirror-commands';
+import {
+    baseKeymap,
+    chainCommands,
+    createParagraphNear,
+    liftEmptyBlock,
+    newlineInCode,
+    setBlockType,
+    splitBlock,
+} from 'prosemirror-commands';
 import { history, redo, undo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
@@ -11,7 +19,7 @@ import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type Rt
 
 import { keepCarriedAttrs } from './controlApi';
 import { valueAttrsFor } from './documentConversion';
-import { listKeys } from './lists';
+import { clearExtrasAt, listKeys } from './lists';
 
 /**
  * What happens when a key is pressed, as one ordered list of ProseMirror plugins.
@@ -50,9 +58,24 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         ...typingRewrites(registry, schema),
         // 5
         keymap({ Backspace: resetEmptyFirstBlock(registry) }),
-        keymap(baseKeymap),
+        keymap({
+            ...baseKeymap,
+            Enter: chainCommands(newlineInCode, createParagraphNear, liftEmptyBlock, splitWithoutExtras),
+        }),
     ];
 };
+
+/** The engine's split, except that the block it starts carries none of the undeclared keys it copies. */
+const splitWithoutExtras: Command = (state, dispatch, view) =>
+    splitBlock(
+        state,
+        dispatch &&
+            ((transaction) => {
+                clearExtrasAt(transaction, transaction.selection.$from.before());
+                dispatch(transaction);
+            }),
+        view,
+    );
 
 // Feature hotkeys
 
