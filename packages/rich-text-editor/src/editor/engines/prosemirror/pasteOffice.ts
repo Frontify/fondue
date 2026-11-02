@@ -108,7 +108,8 @@ const runFrom = (first: ListParagraph): ListParagraph[] => {
  * Rebuilds one run of list paragraphs as nested lists where it stood. A level
  * below the one before opens one list inside the last item, so no empty item
  * holds it. A bullet run continues across Word's list instances, a numbered
- * one restarts with each, as Word numbers them.
+ * one restarts with each, as Word numbers them. A numbered list that another
+ * paragraph interrupts starts again at 1: the format stores no start number.
  */
 const rebuildRun = (run: readonly ListParagraph[]): void => {
     const first = run[0];
