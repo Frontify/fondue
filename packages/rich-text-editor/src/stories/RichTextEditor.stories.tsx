@@ -352,7 +352,8 @@ export const NewerVersion: Story = {
                 <RichTextEditor
                     value={
                         {
-                            version: 2,
+                            // Far above any real version, so the story keeps showing the notice.
+                            version: 1000,
                             blocks: [{ type: 'paragraph', children: [{ text: 'Saved by a newer editor.' }] }],
                         } as unknown as RteDocument
                     }

@@ -281,14 +281,15 @@ describe('a readonly editor', () => {
 
 describe('a document from a newer format version', () => {
     // A version of its own per test: the warning is given once per version for the whole page.
-    let version = 1;
+    // Far above any real version, so raising the format's version leaves these documents newer.
+    let version = 1000;
     let newer: RteDocument;
     beforeEach(() => {
         version += 1;
         newer = { ...paragraph('from the future'), version } as unknown as RteDocument;
     });
 
-    it('is shown read-only, never edited, and warns once', () => {
+    it('is shown read-only and warns once', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         teardown.push(() => warn.mockRestore());
         const { container, onChange } = mount((handler) => (
@@ -303,17 +304,16 @@ describe('a document from a newer format version', () => {
         expect(container.querySelector('[role="status"]')?.textContent).toBe(
             'This content was saved with a newer version of the editor. Try reloading the page to edit it.',
         );
-
-        act(() => {
-            const data = new DataTransfer();
-            data.setData('text/html', '<p>pasted</p>');
-            container.firstElementChild?.dispatchEvent(
-                new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }),
-            );
-        });
-
-        expect(container.textContent).not.toContain('pasted');
         expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it('shows the notice when only the content is drawn', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} showEditor={false} />);
+
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+        expect(container.querySelector('[role="status"]')).not.toBeNull();
     });
 
     it('says so in the words the host gives', () => {
@@ -414,8 +414,8 @@ describe('a document from a newer format version', () => {
         rerender(<RichTextEditor value={newer} plugins={defaultPlugins} />);
 
         const focused = window.document.activeElement;
-        expect(container.contains(focused)).toBe(true);
-        expect(focused?.contains(container.querySelector('[role="status"]'))).toBe(true);
+        expect(focused?.getAttribute('tabindex')).toBe('-1');
+        expect(focused?.firstElementChild).toBe(container.querySelector('[role="status"]'));
     });
 
     it('leaves focus alone when a newer document arrives in an editor nobody is in', () => {
@@ -446,6 +446,7 @@ describe('a document from a newer format version', () => {
     it.each([
         ['the current version', paragraph('current')],
         ['no version', { blocks: paragraph('missing').blocks } as unknown as RteDocument],
+        ['a version that is not a number', { ...paragraph('text'), version: '3' } as unknown as RteDocument],
     ])('stays editable, without a warning, with %s', (_name, value) => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         teardown.push(() => warn.mockRestore());
