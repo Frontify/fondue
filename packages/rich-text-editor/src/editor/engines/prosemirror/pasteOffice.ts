@@ -115,13 +115,20 @@ const runFrom = (first: ListParagraph): ListParagraph[] => {
 };
 
 /**
+ * The items each of Word's lists already holds at each level, so a numbered
+ * list that other blocks interrupt continues its numbering, as Word keeps
+ * counting a list it resumes.
+ */
+type Numbering = Map<string, number[]>;
+
+/**
  * Rebuilds one run of list paragraphs as nested lists where it stood. A level
  * below the one before opens one list inside the last item, so no empty item
  * holds it. A bullet run continues across Word's list instances, a numbered
- * one restarts with each, as Word numbers them. A numbered list that another
- * paragraph interrupts starts again at 1: the format stores no start number.
+ * one restarts with each, as Word numbers them. A numbered list that resumes
+ * after another block starts after the items `numbering` counted for it.
  */
-const rebuildRun = (run: readonly ListParagraph[]): void => {
+const rebuildRun = (run: readonly ListParagraph[], numbering: Numbering): void => {
     const first = run[0];
     if (first === undefined) {
         return;
@@ -137,6 +144,11 @@ const rebuildRun = (run: readonly ListParagraph[]): void => {
         if (current?.level === level && (current.ordered !== ordered || (ordered && current.list !== list))) {
             open.pop();
         }
+        let counts = numbering.get(list);
+        if (counts === undefined) {
+            counts = [];
+            numbering.set(list, counts);
+        }
         let parent = open[open.length - 1];
         if (parent === undefined || parent.level < level) {
             let tag = 'ul';
@@ -144,6 +156,10 @@ const rebuildRun = (run: readonly ListParagraph[]): void => {
                 tag = 'ol';
             }
             const element = document.createElement(tag);
+            const numbered = counts[level] ?? 0;
+            if (ordered && numbered > 0) {
+                element.setAttribute('start', String(numbered + 1));
+            }
             if (parent !== undefined) {
                 parent.element.lastElementChild?.append(element);
             } else if (lastTop === undefined) {
@@ -157,6 +173,9 @@ const rebuildRun = (run: readonly ListParagraph[]): void => {
             parent = { element, level, ordered, list };
             open.push(parent);
         }
+        counts[level] = (counts[level] ?? 0) + 1;
+        // An item restarts the numbering of the levels below it.
+        counts.length = level + 1;
         const item = document.createElement('li');
         item.append(paragraph);
         parent.element.append(item);
@@ -165,6 +184,7 @@ const rebuildRun = (run: readonly ListParagraph[]): void => {
 
 const rebuildLists = (dom: HTMLElement): void => {
     const done = new Set<Element>();
+    const numbering: Numbering = new Map();
     for (const paragraph of dom.querySelectorAll('p')) {
         if (done.has(paragraph)) {
             continue;
@@ -177,7 +197,7 @@ const rebuildLists = (dom: HTMLElement): void => {
         for (const item of run) {
             done.add(item.paragraph);
         }
-        rebuildRun(run);
+        rebuildRun(run, numbering);
     }
 };
 
