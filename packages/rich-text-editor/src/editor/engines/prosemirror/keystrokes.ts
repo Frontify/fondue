@@ -183,9 +183,14 @@ const rewritingOnlyComposedText = (plugin: PmPlugin): PmPlugin => {
             return false;
         },
         compositionend: (view, event) => {
+            // Taken now: the next composition can start before the timeout runs.
+            const started = docAtStart;
             // The last composed characters can land after `compositionend`.
             setTimeout(() => {
-                if (!docAtStart || !view.state.doc.eq(docAtStart)) {
+                if (view.isDestroyed) {
+                    return;
+                }
+                if (!started || !view.state.doc.eq(started)) {
                     rerun.call(plugin, view, event);
                 }
             });

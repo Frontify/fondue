@@ -363,6 +363,43 @@ describe('the list keys', () => {
     });
 });
 
+describe('typing rewrites when a composition ends', () => {
+    const composition = (view: EditorView, type: 'compositionstart' | 'compositionend'): void => {
+        view.dom.dispatchEvent(new CompositionEvent(type, { bubbles: true }));
+    };
+
+    /** A composition that leaves `text` at the caret. */
+    const compose = (view: EditorView, text: string): void => {
+        composition(view, 'compositionstart');
+        view.dispatch(view.state.tr.insertText(text));
+        composition(view, 'compositionend');
+    };
+
+    afterEach(() => vi.useRealTimers());
+
+    it('rewrites the composed text even when the next composition starts at once', () => {
+        vi.useFakeTimers();
+        const editor = editorWith(defaultPlugins, empty());
+
+        compose(editor.view, '**bold**');
+        composition(editor.view, 'compositionstart');
+        composition(editor.view, 'compositionend');
+        vi.runAllTimers();
+
+        expect(editor.stored()).toEqual([paragraph(text('bold', { bold: true }))]);
+    });
+
+    it('does nothing once the editor is gone', () => {
+        vi.useFakeTimers();
+        const editor = editorWith(defaultPlugins, empty());
+
+        compose(editor.view, '**bold**');
+        editor.view.destroy();
+
+        expect(() => vi.runAllTimers()).not.toThrow();
+    });
+});
+
 describe('a character hotkey during IME composition', () => {
     it('does not fire: the composition owns the character', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>();
