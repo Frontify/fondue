@@ -213,6 +213,8 @@ const mount = ({
         transaction.setMeta('addToHistory', false);
         editorView.dispatch(transaction);
         agreedDoc = doc;
+        // The host now holds a document of its own, newer than everything reported so far.
+        hostSeq = emitCount;
     };
 
     const mounted: MountedDocument = {

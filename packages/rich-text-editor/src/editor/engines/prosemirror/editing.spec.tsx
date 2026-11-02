@@ -232,6 +232,20 @@ describe('a document set by the host', () => {
         expect(stored()).toEqual(paragraph('ac'));
     });
 
+    it('applies a document the editor reported before when the host restores it after its own reset', () => {
+        const { handle, view, stored } = mount(emptyDocument());
+        handle.api.insertText('a');
+        const docA = stored() as RteDocumentOf;
+        handle.setDoc(docA);
+        handle.api.insertText('b');
+        const docB = stored() as RteDocumentOf;
+
+        handle.setDoc(paragraph('from the host'));
+        handle.setDoc(docB);
+
+        expect(view.state.doc.textContent).toBe('ab');
+    });
+
     it('treats what the editor reports after a reset as newer than it', () => {
         const { handle, view, stored } = mount(emptyDocument());
         handle.api.insertText('a');
