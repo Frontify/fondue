@@ -5,6 +5,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { Dropdown } from '#/index';
 
 import { Flyout } from '../../Flyout/Flyout';
+import { INDENT_STEP_PX } from '../constants';
 import { Tree } from '../Tree';
 
 import { RowDialogHarness } from './testutils/RowDialogHarness';
@@ -1694,6 +1695,37 @@ test.describe('TreeRoot reorderable mode', () => {
         expect(hintId).toBeTruthy();
         const hint = component.locator(`[id="${hintId ?? ''}"]`);
         await expect(hint).toBeAttached();
+    });
+});
+
+test.describe('TreeRoot indentation', () => {
+    test('indents each level by the step headless-tree uses for drop hit-testing', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Folder id="f" isExpanded>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="1">
+                        <Tree.Label>Child</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        const folderChevronBox = await component
+            .getByRole('treeitem', { name: /Folder/ })
+            .locator('span[class*="chevron"]')
+            .boundingBox();
+        const childChevronBox = await component
+            .getByRole('treeitem', { name: /Child/ })
+            .locator('span[class*="chevron"]')
+            .boundingBox();
+        if (folderChevronBox === null || childChevronBox === null) {
+            throw new Error('the rows did not render their chevron boxes');
+        }
+
+        expect(childChevronBox.x - folderChevronBox.x).toBeCloseTo(INDENT_STEP_PX);
     });
 });
 

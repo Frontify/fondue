@@ -58,4 +58,17 @@ test.describe('TreeDragLine', () => {
         await expect(line).toHaveCSS('right', '36px');
         await expect(line).toHaveCSS('left', '0px');
     });
+
+    test('shifts the line by the leading columns from the inline start in RTL multi-select', async ({ mount }) => {
+        const component = await mount(<DragLineHarness dir="rtl" data={{ top: 42, left: 32 }} multiSelect={true} />);
+        const line = component.locator('[aria-hidden="true"]');
+        await expect(line).toHaveCSS('right', '76px');
+    });
+
+    test('keeps root-level drops full-width in RTL', async ({ mount }) => {
+        const component = await mount(<DragLineHarness dir="rtl" data={{ top: 42, left: 0 }} multiSelect={false} />);
+        const line = component.locator('[aria-hidden="true"]');
+        await expect(line).toHaveCSS('right', '0px');
+        await expect(line).toHaveCSS('left', '0px');
+    });
 });
