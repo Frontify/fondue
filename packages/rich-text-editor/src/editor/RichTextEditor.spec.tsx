@@ -817,7 +817,8 @@ describe('an editor that crashes', () => {
         retry(container);
 
         expect(container.textContent).toContain('still here');
-        expect(retryButton(container)).toBeDefined();
+        // The button that had focus was replaced: its successor takes the keyboard back.
+        expect(window.document.activeElement).toBe(retryButton(container));
     });
 
     it('is editable again when Retry finds the cause gone', () => {

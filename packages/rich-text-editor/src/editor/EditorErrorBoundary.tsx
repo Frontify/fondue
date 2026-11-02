@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button } from '@frontify/fondue-components';
-import { Component, type ErrorInfo, type ReactNode, type RefObject } from 'react';
+import { Component, type ErrorInfo, type ReactNode, type RefObject, useEffect, useRef } from 'react';
 
 import { type PluginRegistry, type RteDocumentOf } from '#/core';
 import { RegistryRenderer } from '#/renderer';
@@ -62,6 +62,7 @@ export const EditorFallback = ({
     registry,
     labels,
     onRetry,
+    focusOnMount,
 }: {
     value: RteDocumentOf | undefined;
     /** Read now, not when the fallback was built: the editor reported edits after that. */
@@ -69,7 +70,15 @@ export const EditorFallback = ({
     registry: PluginRegistry;
     labels: RichTextEditorLabels;
     onRetry: () => void;
+    /** Take focus on mount, as when Retry failed again and the button that had focus is gone. */
+    focusOnMount: boolean;
 }): ReactNode => {
+    const retryRef = useRef<HTMLButtonElement | null>(null);
+    useEffect(() => {
+        if (focusOnMount) {
+            retryRef.current?.focus();
+        }
+    }, [focusOnMount]);
     // What the editor showed, which is what a crash reports: an echoed `value` can be older.
     const document = ownDocumentRef.current ?? value;
     if (document === undefined) {
@@ -82,7 +91,7 @@ export const EditorFallback = ({
                 <RegistryRenderer value={document} registry={registry} className={styles.content} />
             </EditorErrorBoundary>
             <p role="alert">{labels.editorFailed}</p>
-            <Button type="button" size="medium" emphasis="weak" onPress={onRetry}>
+            <Button ref={retryRef} type="button" size="medium" emphasis="weak" onPress={onRetry}>
                 {labels.retry}
             </Button>
         </div>

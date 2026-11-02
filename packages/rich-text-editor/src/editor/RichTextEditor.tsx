@@ -178,6 +178,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                     registry={registry}
                     labels={labels}
                     onRetry={retry}
+                    focusOnMount={attempt > 0}
                 />
             }
         >
