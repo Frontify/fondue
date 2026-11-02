@@ -14,7 +14,7 @@ type EditorErrorBoundaryProps = {
     /** Shown in place of `children` once one of them throws while rendering or mounting. */
     fallback: ReactNode;
     /** Called once when a child throws, after the fallback is chosen. */
-    onCatch?: () => void;
+    onCatch?: (error: Error) => void;
 };
 
 /**
@@ -35,7 +35,7 @@ export class EditorErrorBoundary extends Component<EditorErrorBoundaryProps, { f
         }
         // A host callback that throws here would escape the boundary and unmount the page section.
         try {
-            this.props.onCatch?.();
+            this.props.onCatch?.(error);
         } catch (callbackError) {
             if (typeof globalThis.reportError === 'function') {
                 globalThis.reportError(callbackError);

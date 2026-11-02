@@ -111,13 +111,20 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * fields, a mention being typed) is still inside.
      */
     onBlur?: (value: RteDocumentOf<TBlock>) => void;
+    /**
+     * The editor crashed and now shows its content read-only, with a way to
+     * try again. Handed the error and the document the editor last showed,
+     * to report the error or keep that document for review. Nothing is saved
+     * for the host: content from a crashed editor may be what crashed it.
+     */
+    onError?: (error: Error, details: { document: RteDocumentOf<TBlock> }) => void;
 };
 
 export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     value,
     plugins = [],
     labels: hostLabelOverrides,
-    onBlur,
+    onError,
     ...shellProps
 }: EditorShellProps<TBlock>): ReactNode => {
     // What the editor last reported, so an uncontrolled editor keeps its
@@ -128,18 +135,14 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     ownDocumentRef.current ??= value ?? emptyDocument();
     const document = value ?? ownDocumentRef.current;
 
-    // The document the host last heard through `onBlur`; a crash is a blur the
-    // shell never got to report, so the edits since then are owed to the host.
-    const reportedRef = useRef<RteDocumentOf | null>(ownDocumentRef.current);
-    // A value the host pushes is already in its hands; only edits after it are owed.
-    // One of the editor's own edits coming back as `value`, however late, is an
-    // echo: holding it in state is not having saved it, so it is still owed.
+    // A value the host pushes is what the editor now shows. One of the editor's
+    // own edits coming back as `value`, however late, is an echo, and never
+    // replaces a newer edit in what a crash shows and hands over.
     const [emittedDocs] = useState(() => new WeakSet<RteDocumentOf>());
     const seenValueRef = useRef(value);
     if (value !== undefined && value !== seenValueRef.current) {
         seenValueRef.current = value;
         if (!emittedDocs.has(value)) {
-            reportedRef.current = value;
             ownDocumentRef.current = value;
         }
     }
@@ -148,15 +151,8 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     const labels = useLabels(hostLabelOverrides);
     const registry = useMemo(() => buildPluginRegistry(plugins), [plugins]);
 
-    const reportBlur = (doc: RteDocumentOf<TBlock>): void => {
-        // The shell blurs with a fresh copy of what `ownDocumentRef` holds, so the ref is what the host now has.
-        reportedRef.current = ownDocumentRef.current;
-        onBlur?.(doc);
-    };
-    const onCatch = (): void => {
-        if (ownDocumentRef.current !== reportedRef.current) {
-            reportBlur(ownDocumentRef.current as RteDocumentOf<TBlock>);
-        }
+    const onCatch = (error: Error): void => {
+        onError?.(error, { document: ownDocumentRef.current as RteDocumentOf<TBlock> });
     };
 
     // Whether focus is in the editor's UI, so a fallback takes it only when the crash took it away.
@@ -192,7 +188,6 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         >
             <EditorShell
                 {...shellProps}
-                onBlur={reportBlur}
                 // The Retry button that had focus is gone with the fallback.
                 focusOnMount={attempt > 0}
                 focusWithinRef={focusWithinRef}

@@ -794,6 +794,7 @@ describe('an editor that crashes', () => {
             retryButton(container).click();
         });
     };
+    const errorSpy = () => vi.fn<(error: Error, details: { document: RteDocument }) => void>();
 
     it('shows the document read-only with a message and Retry, and reports nothing', () => {
         silenceReact();
@@ -802,7 +803,7 @@ describe('an editor that crashes', () => {
         ));
 
         expect(container.textContent).toContain('still here');
-        expect(container.textContent).toContain('The editor ran into a problem. Your content is safe.');
+        expect(container.textContent).toContain('The editor stopped working. Try again to keep editing.');
         expect(container.querySelector('[contenteditable]')).toBeNull();
         expect(retryButton(container)).toBeDefined();
         expect(onChange).not.toHaveBeenCalled();
@@ -867,7 +868,7 @@ describe('an editor that crashes', () => {
         expect(container.textContent).toContain('typed');
     });
 
-    it('hands a host that saves on blur the edits made before the crash, once', () => {
+    it('hands onError the error and the edits made before the crash, and saves nothing through onBlur', () => {
         silenceReact();
         let crash = false;
         const late: RtePlugin = {
@@ -880,24 +881,21 @@ describe('an editor that crashes', () => {
             },
         };
         const onBlur = vi.fn<(doc: RteDocument) => void>();
-        const { container, onChange, ready } = mount((change) => (
-            <RichTextEditor plugins={[late, ...defaultPlugins]} onChange={change} onBlur={onBlur} />
+        const onError = errorSpy();
+        const { container, ready } = mount(() => (
+            <RichTextEditor plugins={[late, ...defaultPlugins]} onBlur={onBlur} onError={onError} />
         ));
         ready();
         crash = true;
         paste(container, '<p>typed</p>');
-        onChange.mockClear();
 
-        expect(onBlur).toHaveBeenCalledOnce();
-        expect(JSON.stringify(onBlur.mock.calls[0]?.[0])).toContain('typed');
-
-        retry(container);
-
-        expect(onBlur).toHaveBeenCalledOnce();
-        expect(onChange).not.toHaveBeenCalled();
+        expect(onError).toHaveBeenCalledOnce();
+        expect(onError.mock.calls[0]?.[0].message).toBe('after the edit');
+        expect(JSON.stringify(onError.mock.calls[0]?.[1].document)).toContain('typed');
+        expect(onBlur).not.toHaveBeenCalled();
     });
 
-    it('hands a controlled host that saves on blur the edits made before the crash', () => {
+    it('hands onError the edits a controlled host holds', () => {
         silenceReact();
         let crash = false;
         const late: RtePlugin = {
@@ -909,11 +907,16 @@ describe('an editor that crashes', () => {
                 return <span>fine</span>;
             },
         };
-        const onBlur = vi.fn<(doc: RteDocument) => void>();
+        const onError = errorSpy();
         const Host = (): ReactNode => {
             const [value, setValue] = useState<RteDocument>(() => paragraph('saved'));
             return (
-                <RichTextEditor value={value} onChange={setValue} onBlur={onBlur} plugins={[late, ...defaultPlugins]} />
+                <RichTextEditor
+                    value={value}
+                    onChange={setValue}
+                    onError={onError}
+                    plugins={[late, ...defaultPlugins]}
+                />
             );
         };
         const { container, ready } = mount(() => <Host />);
@@ -921,8 +924,8 @@ describe('an editor that crashes', () => {
         crash = true;
         paste(container, '<p>typed</p>');
 
-        expect(onBlur).toHaveBeenCalledOnce();
-        expect(JSON.stringify(onBlur.mock.calls[0]?.[0])).toContain('typed');
+        expect(onError).toHaveBeenCalledOnce();
+        expect(JSON.stringify(onError.mock.calls[0]?.[1].document)).toContain('typed');
     });
 
     it('mounts on Retry what the fallback showed, though the host value is older', () => {
@@ -1104,7 +1107,7 @@ describe('an editor that crashes', () => {
         expect(editableIn(container).contains(window.document.activeElement)).toBe(false);
     });
 
-    it('leaves a value the host pushed after the last edit alone', () => {
+    it('hands onError a value the host pushed after the last edit', () => {
         silenceReact();
         const fine: RtePlugin = { id: 'late', toolbarItem: () => <span>fine</span> };
         const bad: RtePlugin = {
@@ -1113,20 +1116,22 @@ describe('an editor that crashes', () => {
                 throw new Error('after the push');
             },
         };
-        const onBlur = vi.fn<(doc: RteDocument) => void>();
+        const onError = errorSpy();
         const { container, rerender, ready } = mount(() => (
-            <RichTextEditor value={paragraph('A')} plugins={[fine, ...defaultPlugins]} onBlur={onBlur} />
+            <RichTextEditor value={paragraph('A')} plugins={[fine, ...defaultPlugins]} onError={onError} />
         ));
         ready();
         paste(container, '<p>B</p>');
 
-        rerender(<RichTextEditor value={paragraph('C')} plugins={[bad, ...defaultPlugins]} onBlur={onBlur} />);
+        rerender(<RichTextEditor value={paragraph('C')} plugins={[bad, ...defaultPlugins]} onError={onError} />);
 
-        expect(container.textContent).toContain('The editor ran into a problem.');
-        expect(onBlur).not.toHaveBeenCalled();
+        expect(container.textContent).toContain('The editor stopped working.');
+        const handedOver = JSON.stringify(onError.mock.calls[0]?.[1].document);
+        expect(handedOver).toContain('C');
+        expect(handedOver).not.toContain('B');
     });
 
-    it('still reports an edit made after a pushed value', () => {
+    it('hands onError an edit made after a pushed value', () => {
         silenceReact();
         let crash = false;
         const late: RtePlugin = {
@@ -1138,20 +1143,20 @@ describe('an editor that crashes', () => {
                 return <span>fine</span>;
             },
         };
-        const onBlur = vi.fn<(doc: RteDocument) => void>();
+        const onError = errorSpy();
         const { container, rerender, ready } = mount(() => (
-            <RichTextEditor value={paragraph('A')} plugins={[late, ...defaultPlugins]} onBlur={onBlur} />
+            <RichTextEditor value={paragraph('A')} plugins={[late, ...defaultPlugins]} onError={onError} />
         ));
         ready();
-        rerender(<RichTextEditor value={paragraph('C')} plugins={[late, ...defaultPlugins]} onBlur={onBlur} />);
+        rerender(<RichTextEditor value={paragraph('C')} plugins={[late, ...defaultPlugins]} onError={onError} />);
         crash = true;
         paste(container, '<p>D</p>');
 
-        expect(onBlur).toHaveBeenCalledOnce();
-        expect(JSON.stringify(onBlur.mock.calls[0]?.[0])).toContain('D');
+        expect(onError).toHaveBeenCalledOnce();
+        expect(JSON.stringify(onError.mock.calls[0]?.[1].document)).toContain('D');
     });
 
-    it('hands over every edit when the host echoes an older one late', () => {
+    it('hands onError every edit when the host echoes an older one late', () => {
         silenceReact();
         const fine: RtePlugin = { id: 'late', toolbarItem: () => <span>fine</span> };
         const bad: RtePlugin = {
@@ -1160,13 +1165,13 @@ describe('an editor that crashes', () => {
                 throw new Error('after the echo');
             },
         };
-        const onBlur = vi.fn<(doc: RteDocument) => void>();
+        const onError = errorSpy();
         const { container, onChange, rerender, ready } = mount((change) => (
             <RichTextEditor
                 value={paragraph('V0')}
                 onChange={change}
                 plugins={[fine, ...defaultPlugins]}
-                onBlur={onBlur}
+                onError={onError}
             />
         ));
         ready();
@@ -1176,53 +1181,16 @@ describe('an editor that crashes', () => {
         const [first] = onChange.mock.calls[0] ?? [];
 
         // The host (a debounce, an async normaliser) hands back the first edit, long after the third.
-        rerender(<RichTextEditor value={first} plugins={[bad, ...defaultPlugins]} onBlur={onBlur} />);
+        rerender(<RichTextEditor value={first} plugins={[bad, ...defaultPlugins]} onError={onError} />);
 
-        expect(onBlur).toHaveBeenCalledOnce();
-        expect(JSON.stringify(onBlur.mock.calls[0]?.[0])).toContain('three');
+        expect(onError).toHaveBeenCalledOnce();
+        expect(JSON.stringify(onError.mock.calls[0]?.[1].document)).toContain('three');
     });
 
-    it('does not report again a blur the host already heard', () => {
+    it('does not fire onBlur when it crashes while it has focus', () => {
         silenceReact();
         vi.useFakeTimers();
         teardown.push(() => vi.useRealTimers());
-        const outside = window.document.createElement('input');
-        window.document.body.append(outside);
-        teardown.push(() => outside.remove());
-        const fine: RtePlugin = { id: 'late', toolbarItem: () => <span>fine</span> };
-        const bad: RtePlugin = {
-            id: 'late',
-            toolbarItem: () => {
-                throw new Error('after the blur');
-            },
-        };
-        const onBlur = vi.fn<(doc: RteDocument) => void>();
-        const { container, rerender, ready } = mount(() => (
-            <RichTextEditor plugins={[fine, ...defaultPlugins]} onBlur={onBlur} />
-        ));
-        ready();
-        act(() => {
-            editableIn(container).focus();
-            vi.runAllTimers();
-        });
-        paste(container, '<p>typed</p>');
-        act(() => {
-            outside.focus();
-            vi.runAllTimers();
-        });
-        expect(onBlur).toHaveBeenCalledOnce();
-
-        rerender(<RichTextEditor plugins={[bad, ...defaultPlugins]} onBlur={onBlur} />);
-
-        expect(container.textContent).toContain('The editor ran into a problem.');
-        expect(onBlur).toHaveBeenCalledOnce();
-    });
-
-    it('still shows the fallback when the host onBlur throws', () => {
-        silenceReact();
-        const reportError = vi.fn();
-        vi.stubGlobal('reportError', reportError);
-        teardown.push(() => vi.unstubAllGlobals());
         let crash = false;
         const late: RtePlugin = {
             id: 'late',
@@ -1233,20 +1201,42 @@ describe('an editor that crashes', () => {
                 return <span>fine</span>;
             },
         };
-        const failure = new Error('host onBlur broke');
+        const onBlur = vi.fn<(doc: RteDocument) => void>();
         const { container, ready } = mount(() => (
+            <RichTextEditor plugins={[late, ...defaultPlugins]} onBlur={onBlur} />
+        ));
+        ready();
+        act(() => {
+            editableIn(container).focus();
+            vi.runAllTimers();
+        });
+        crash = true;
+        paste(container, '<p>typed</p>');
+        act(() => {
+            vi.runAllTimers();
+        });
+
+        expect(container.textContent).toContain('The editor stopped working.');
+        expect(onBlur).not.toHaveBeenCalled();
+    });
+
+    it('still shows the fallback when the host onError throws', () => {
+        silenceReact();
+        const reportError = vi.fn();
+        vi.stubGlobal('reportError', reportError);
+        teardown.push(() => vi.unstubAllGlobals());
+        const failure = new Error('host onError broke');
+        const { container } = mount(() => (
             <RichTextEditor
-                plugins={[late, ...defaultPlugins]}
-                onBlur={() => {
+                value={paragraph('still here')}
+                plugins={[throwingPlugin()]}
+                onError={() => {
                     throw failure;
                 }}
             />
         ));
-        ready();
-        crash = true;
-        paste(container, '<p>typed</p>');
 
-        expect(container.textContent).toContain('The editor ran into a problem.');
+        expect(container.textContent).toContain('The editor stopped working.');
         expect(reportError).toHaveBeenCalledWith(failure);
     });
 
@@ -1273,7 +1263,7 @@ describe('an editor that crashes', () => {
 
         const { container } = mount(() => <RichTextEditor value={value} plugins={[broken]} />);
 
-        expect(container.textContent).toContain('The editor ran into a problem.');
+        expect(container.textContent).toContain('The editor stopped working.');
         expect(retryButton(container)).toBeDefined();
     });
 });

@@ -43,6 +43,6 @@ export const DEFAULT_LABELS: RichTextEditorLabels = {
     commands: 'Commands',
     noResults: 'No results',
     commandCount: (count) => `${count} ${count === 1 ? 'command' : 'commands'}`,
-    editorFailed: 'The editor ran into a problem. Your content is safe.',
+    editorFailed: 'The editor stopped working. Try again to keep editing.',
     retry: 'Try again',
 };
