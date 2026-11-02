@@ -301,7 +301,7 @@ const mount = ({
     let currentPlaceholder = placeholder;
     // The last document the host handed over that the editor still holds unedited; lets `setDoc` ignore it again.
     let agreedDoc: typeof initialDoc | null = initialDoc;
-    // `hostSeq` is the newest reported document the host handed back: a higher one is an echo, a lower or equal one a reset.
+    // Reports at or below `hostSeq` are older than what the host holds; one above it handed back is an echo.
     const emittedSeq = new WeakMap<typeof initialDoc, number>();
     let emitCount = 0;
     let hostSeq = 0;

@@ -278,7 +278,7 @@ describe('the document boundary', () => {
         }).toThrow(TypeError);
     });
 
-    it('freezes nothing in production', () => {
+    it('does not freeze the document or its blocks in production', () => {
         vi.stubEnv('NODE_ENV', 'production');
         try {
             const handedOut = toRteDocument(toEngineDocument(document, schema));
