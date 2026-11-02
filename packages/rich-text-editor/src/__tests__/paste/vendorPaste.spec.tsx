@@ -407,6 +407,7 @@ describe('pasting from other applications', () => {
         const styled = (style: string, text: string): string =>
             `<p class="MsoListNumber"${style}><span style="mso-list: Ignore">1.</span>${text}<o:p></o:p></p>`;
         const withRule = (body: string): string =>
+            // No `<!-- -->` around the rule as Word writes it: Chrome skips those, happy-dom reads them into the selector.
             `<style>p.MsoListNumber { mso-list: l0 level1 lfo1; }</style>${body}`;
 
         it('lists a paragraph that has only the rule', () => {
@@ -440,6 +441,22 @@ describe('pasting from other applications', () => {
             const doc = pasted('<p>a <b id="docs-internal-guid-1">bold</b></p>');
 
             expect(JSON.stringify(doc.blocks)).toContain('"bold":true');
+        });
+
+        it('leaves the breaks of the paste alone when the id is on neither the wrapper nor the first block', () => {
+            const html = '<p>a</p><br><p>b <span id="docs-internal-guid-1">c</span></p>';
+
+            expect(pasted(html)).toEqual(pasted(html.replace(' id="docs-internal-guid-1"', '')));
+        });
+    });
+
+    describe('a soft break inside the Google Docs wrapper', () => {
+        it('stays a line break when no block is beside it', () => {
+            const doc = pasted(
+                '<b style="font-weight:normal;" id="docs-internal-guid-1"><span>a</span><br><span>b</span></b>',
+            );
+
+            expect(outline(nodesOf(doc))).toEqual(['paragraph: a\nb']);
         });
     });
 
