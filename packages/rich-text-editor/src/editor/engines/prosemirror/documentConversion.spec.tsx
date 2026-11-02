@@ -235,6 +235,22 @@ describe('the document boundary', () => {
                     warn.mockRestore();
                 }
             });
+
+            it('still refuses a known block that does not fit beside it', () => {
+                const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+                try {
+                    const misfit = {
+                        version: 1,
+                        blocks: [{ type: 'bulletList', children: [item(words('one')), sidebar, words('loose')] }],
+                    } as unknown as RteDocumentOf;
+
+                    expect(() => toEngineDocument(misfit, schema)).toThrow(
+                        'Invalid document: a "bulletList" cannot hold',
+                    );
+                } finally {
+                    warn.mockRestore();
+                }
+            });
         });
     });
 

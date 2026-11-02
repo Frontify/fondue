@@ -232,8 +232,9 @@ const blockToEngine = (block: RteBlockNode, schema: Schema): PmNode => {
     if (node !== null) {
         return node;
     }
-    // A list cannot hold an unknown block among its items, so the whole list is kept as one instead.
-    if (content.some((child) => child.type.name === UNKNOWN_BLOCK)) {
+    // A list cannot hold an unknown block among its items, so the whole list is kept as one instead; a known misfit still throws.
+    const knownContent = content.filter((child) => child.type.name !== UNKNOWN_BLOCK);
+    if (knownContent.length < content.length && nodeType.createAndFill(attrs, knownContent) !== null) {
         return schema.node(UNKNOWN_BLOCK, { [RAW_ATTR]: block });
     }
     throw invalidDocument(nodeType, content);
