@@ -166,11 +166,21 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
 
     // A new key mounts the boundary and the shell afresh, from `document`.
     const [attempt, retry] = useReducer((count: number) => count + 1, 0);
-    const onRetry = (): void => {
-        // The Retry button goes with the fallback; a fallback that replaces the shell again inherits its focus.
-        focusWithinRef.current = true;
+    const onRetry = (hadFocus: boolean): void => {
+        // The Retry button goes with the fallback; what replaces it inherits the focus it held.
+        focusWithinRef.current = hadFocus;
         retry();
     };
+    // The fallback keeps the host's name, as the readonly view does.
+    const { hostLabels, isNamed } = hostLabelsOf({
+        ariaLabel: shellProps['aria-label'],
+        ariaLabelledBy: shellProps['aria-labelledby'],
+        ariaDescribedBy: shellProps['aria-describedby'],
+    });
+    let fallbackGroupAttributes: Record<string, string> = {};
+    if (isNamed) {
+        fallbackGroupAttributes = { role: 'group', ...hostLabels };
+    }
     // After a crash it mounts what the fallback showed, which can be newer than a `value` the host never updated.
     let shellDocument = document;
     if (attempt > 0 && ownDocumentRef.current !== null) {
@@ -189,6 +199,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                     labels={labels}
                     onRetry={onRetry}
                     focusWithinRef={focusWithinRef}
+                    groupAttributes={fallbackGroupAttributes}
                 />
             }
         >
@@ -277,8 +288,18 @@ const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
         enabled: !readOnly,
     });
 
-    // A readonly retry has nothing to focus, and must not claim focus when editing is turned on later.
+    // A readonly retry has no text to focus: the view takes the focus the pressed Retry held, so it is not lost to
+    // the page. Either way the request is spent at once, and never claims focus when editing is turned on later.
     const focusPendingRef = useRef(focusOnMount && !readOnly);
+    const readonlyViewRef = useRef<HTMLDivElement | null>(null);
+    const focusReadonlyView = focusOnMount && readOnly;
+    useEffect(() => {
+        if (focusReadonlyView && focusWithinRef.current) {
+            readonlyViewRef.current?.focus();
+        }
+        // Only on mount: the request belongs to the Retry that mounted this shell.
+        // eslint-disable-next-line @eslint-react/exhaustive-deps
+    }, []);
     useEffect(() => {
         if (focusPendingRef.current && handle !== null) {
             focusPendingRef.current = false;
@@ -391,6 +412,9 @@ const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
                 // editor still applies, so a labelled editor keeps its name
                 // when it turns readonly. No default: it reads as text.
                 {...(readOnly && isNamed ? { role: 'group', ...hostLabels } : {})}
+                ref={readonlyViewRef}
+                // Focusable by script only, to take a pressed Retry's focus.
+                tabIndex={focusReadonlyView ? -1 : undefined}
             >
                 {toolbarFloats ? null : toolbar}
                 {readOnly ? (

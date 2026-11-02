@@ -789,9 +789,12 @@ describe('an editor that crashes', () => {
         }
         return button;
     };
+    /** Presses Retry as a keyboard, or a browser that focuses buttons on click, does. */
     const retry = (container: HTMLElement): void => {
         act(() => {
-            retryButton(container).click();
+            const button = retryButton(container);
+            button.focus();
+            button.click();
         });
     };
     const errorSpy = () => vi.fn<(error: Error, details: { document: RteDocument }) => void>();
@@ -1244,6 +1247,66 @@ describe('an editor that crashes', () => {
         rerender(<RichTextEditor value={paragraph('replacement')} plugins={plugins} />);
 
         expect(container.textContent).toContain('replacement');
+    });
+
+    it('keeps the name the host gave the editor, and ties Retry to the message', () => {
+        silenceReact();
+        const { container } = mount(() => (
+            <RichTextEditor
+                value={paragraph('still here')}
+                plugins={[throwingPlugin()]}
+                aria-label="Comment"
+                aria-describedby="comment-help"
+            />
+        ));
+
+        const group = container.querySelector('[role="group"]');
+        expect(group?.getAttribute('aria-label')).toBe('Comment');
+        expect(group?.getAttribute('aria-describedby')).toBe('comment-help');
+        expect(group?.contains(retryButton(container))).toBe(true);
+        const messageId = retryButton(container).getAttribute('aria-describedby') ?? '';
+        expect(window.document.getElementById(messageId)?.textContent).toBe(
+            'The editor stopped working. Try again to keep editing.',
+        );
+    });
+
+    it('hands the focus of a pressed Retry to a readonly view', () => {
+        silenceReact();
+        const state = { broken: true };
+        const { container } = mount(() => (
+            <RichTextEditor value={callout('read me')} plugins={[calloutPlugin(state)]} readonly />
+        ));
+        state.broken = false;
+
+        retry(container);
+
+        expect(container.textContent).toContain('read me');
+        expect(window.document.activeElement).not.toBe(window.document.body);
+        expect(container.contains(window.document.activeElement)).toBe(true);
+    });
+
+    it('does not take focus when a readonly view retried earlier crashes with focus gone', () => {
+        silenceReact();
+        vi.useFakeTimers();
+        teardown.push(() => vi.useRealTimers());
+        const state = { broken: true };
+        const plugins = [calloutPlugin(state)];
+        const { container, rerender } = mount(() => (
+            <RichTextEditor value={callout('one')} plugins={plugins} readonly />
+        ));
+        state.broken = false;
+        retry(container);
+        act(() => {
+            (window.document.activeElement as HTMLElement).blur();
+            vi.runAllTimers();
+        });
+        expect(window.document.activeElement).toBe(window.document.body);
+
+        state.broken = true;
+        rerender(<RichTextEditor value={callout('two')} plugins={plugins} readonly />);
+
+        expect(retryButton(container)).toBeDefined();
+        expect(window.document.activeElement).toBe(window.document.body);
     });
 
     it('does not fire onBlur when it crashes while it has focus', () => {

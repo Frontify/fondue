@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button } from '@frontify/fondue-components';
-import { Component, type ErrorInfo, type ReactNode, type RefObject, useEffect, useRef } from 'react';
+import { Component, type ErrorInfo, type ReactNode, type RefObject, useEffect, useId, useRef } from 'react';
 
 import { type PluginRegistry, type RteDocumentOf } from '#/core';
 import { RegistryRenderer } from '#/renderer';
@@ -77,17 +77,26 @@ export const EditorFallback = ({
     labels,
     onRetry,
     focusWithinRef,
+    groupAttributes,
 }: {
     value: RteDocumentOf | undefined;
     /** Read now, not when the fallback was built: the editor reported edits after that. */
     ownDocumentRef: RefObject<RteDocumentOf | null>;
     registry: PluginRegistry;
     labels: RichTextEditorLabels;
-    onRetry: () => void;
+    /** Told whether the pressed button had focus, which goes with it. */
+    onRetry: (hadFocus: boolean) => void;
     /** Whether focus was in what this replaces: the editor, or a fallback whose Retry was pressed. */
     focusWithinRef: RefObject<boolean>;
+    /** The host's name for the editor as a group, so the message and Retry say which editor failed. */
+    groupAttributes: Record<string, string>;
 }): ReactNode => {
     const retryRef = useRef<HTMLButtonElement | null>(null);
+    const messageId = useId();
+    const onPress = (): void => {
+        const button = retryRef.current;
+        onRetry(button !== null && button.ownerDocument.activeElement === button);
+    };
     useEffect(() => {
         const button = retryRef.current;
         if (!focusWithinRef.current || button === null) {
@@ -105,13 +114,22 @@ export const EditorFallback = ({
         return null;
     }
     return (
-        <div className={styles.root}>
+        <div className={styles.root} {...groupAttributes}>
             {/* A plugin whose readonly view throws too leaves just the message and Retry. */}
             <EditorErrorBoundary fallback={null} resetKey={document}>
                 <RegistryRenderer value={document} registry={registry} className={styles.content} />
             </EditorErrorBoundary>
-            <p role="alert">{labels.editorFailed}</p>
-            <Button ref={retryRef} type="button" size="medium" emphasis="weak" onPress={onRetry}>
+            <p id={messageId} role="alert">
+                {labels.editorFailed}
+            </p>
+            <Button
+                ref={retryRef}
+                type="button"
+                size="medium"
+                emphasis="weak"
+                aria-describedby={messageId}
+                onPress={onPress}
+            >
                 {labels.retry}
             </Button>
         </div>
