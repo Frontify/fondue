@@ -34,9 +34,13 @@ import styles from './richTextEditor.module.scss';
  */
 export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     /**
-     * The document to show. The editor keeps references into it, so pass a
-     * new object to change it, never mutate one already passed (in
-     * development its values are frozen once edited).
+     * The document to show. Handing back a document from `onChange` changes
+     * nothing; any other new object replaces only what differs, keeps the
+     * caret and stays out of undo history, so undo reverts only the user's
+     * own edits. Keeping the same object does not reject an edit: pass a copy
+     * of the last accepted document instead. Never mutate a document already
+     * passed: the editor keeps references into it, and in development freezes
+     * in place the values it hands back (mark values, unknown content).
      */
     value?: RteDocumentOf<TBlock>;
     /**
@@ -108,7 +112,8 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * The editor lost focus, handed the document as it stands: the hook to
      * commit on instead of every keystroke. Fires once focus has left the
      * editor: moving into its toolbar or a plugin's UI (the link flyout's
-     * fields, a mention being typed) is still inside.
+     * fields, a mention being typed) is still inside. The document is shared
+     * and frozen like `onChange`'s.
      */
     onBlur?: (value: RteDocumentOf<TBlock>) => void;
 };

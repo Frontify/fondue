@@ -84,8 +84,7 @@ const mount = ({
     let currentPlaceholder = placeholder;
     // The last document the host handed over that the editor still holds unedited; lets `setDoc` ignore it again.
     let agreedDoc: typeof initialDoc | null = initialDoc;
-    // Reported documents are numbered, and `hostSeq` is the newest the host has handed back: a
-    // higher one is the host catching up (an echo, however late), a lower or equal one is a reset.
+    // `hostSeq` is the newest reported document the host handed back: a higher one is an echo, a lower or equal one a reset.
     const emittedSeq = new WeakMap<typeof initialDoc, number>();
     let emitCount = 0;
     let hostSeq = 0;
@@ -218,8 +217,7 @@ const mount = ({
         // Replace only what differs, so the caret maps through the step and stays put.
         const transaction = editorView.state.tr;
         let start = transaction.doc.content.findDiffStart(next.content);
-        // A node that differs only in type or attributes (a paragraph made a heading, a to-do ticked) changes in
-        // place, since replacing it would push the caret out of it.
+        // A node differing only in type or attributes changes in place, since replacing it would push the caret out.
         while (start !== null) {
             const before = transaction.doc.nodeAt(start);
             const after = next.nodeAt(start);
