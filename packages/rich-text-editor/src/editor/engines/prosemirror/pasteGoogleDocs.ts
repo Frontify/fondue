@@ -41,7 +41,8 @@ export const tidyGoogleDocs = (dom: HTMLElement): void => {
     if (marked === null) {
         return;
     }
-    const wrapped = marked.localName === 'b';
+    // Docs' wrapper is a `<b>` that says it is not bold; a bold `<b>` with the id is formatting.
+    const wrapped = marked.localName === 'b' && (marked as HTMLElement).style.fontWeight === 'normal';
     // Anywhere but the wrapper or the first block, the id says nothing about the paste.
     if (!wrapped && marked !== dom.firstElementChild) {
         return;

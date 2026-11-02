@@ -387,6 +387,14 @@ describe('pasting from other applications', () => {
         });
     });
 
+    describe('a bold element that only carries the Google Docs id', () => {
+        it('stays bold, as it is no Docs wrapper', () => {
+            const doc = pasted('<p>a <b id="docs-internal-guid-1">bold</b></p>');
+
+            expect(JSON.stringify(doc.blocks)).toContain('"bold":true');
+        });
+    });
+
     describe('text that mentions Office styles', () => {
         it('keeps `mso-list: l0` verbatim in a paste from elsewhere', () => {
             const doc = pasted("<p>the style mso-list: l0 level1 lfo1 is Word's</p>");
