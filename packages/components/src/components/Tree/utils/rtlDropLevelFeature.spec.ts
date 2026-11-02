@@ -26,7 +26,7 @@ const makeRow = (direction: 'rtl' | 'ltr'): HTMLElement => {
 const getWrappedProps = (direction: 'rtl' | 'ltr') => {
     const onDragOver = vi.fn();
     const onDrop = vi.fn();
-    const row = makeRow(direction);
+    let row: HTMLElement | undefined;
     const item = {
         getElement: () => row,
     } as unknown as ItemInstance<TreeItemData>;
@@ -38,12 +38,16 @@ const getWrappedProps = (direction: 'rtl' | 'ltr') => {
         item,
         prev: () => ({ onDragOver, onDrop, draggable: true }),
     });
+    // The row ref attaches after render, so the element must be read when the event fires.
+    row = makeRow(direction);
     return { props, onDragOver, onDrop };
 };
 
 const makeEvent = (clientX: number) =>
     ({
         clientX,
+        clientY: 7,
+        dataTransfer: {},
         stopPropagation: vi.fn(),
         preventDefault: vi.fn(),
     }) as unknown as DragEvent<HTMLElement>;
@@ -51,8 +55,12 @@ const makeEvent = (clientX: number) =>
 describe('rtlDropLevelFeature', () => {
     it('mirrors clientX across the row in RTL on dragover', () => {
         const { props, onDragOver } = getWrappedProps('rtl');
-        props.onDragOver(makeEvent(480));
-        expect(onDragOver).toHaveBeenCalledWith(expect.objectContaining({ clientX: 120 }));
+        const event = makeEvent(480);
+        props.onDragOver(event);
+        const [received] = onDragOver.mock.calls[0] as [DragEvent<HTMLElement>];
+        expect(received.clientX).toBe(120);
+        expect(received.clientY).toBe(event.clientY);
+        expect(received.dataTransfer).toBe(event.dataTransfer);
     });
 
     it('mirrors clientX across the row in RTL on drop', () => {
