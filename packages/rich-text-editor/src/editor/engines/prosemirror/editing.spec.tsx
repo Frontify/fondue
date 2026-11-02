@@ -164,6 +164,22 @@ describe('a document set by the host', () => {
             expect(caretAt(view)).toEqual({ block: 'XYabcdef', offset: 6 });
         });
 
+        it('never leaves the caret inside a character the change ends in', () => {
+            const changes: [string, string][] = [
+                ['xyb́', 'zć'],
+                ['hi \u{1F469}‍\u{1F467}', 'yo \u{1F468}‍\u{1F467}'],
+            ];
+            for (const [before, after] of changes) {
+                const { handle, view } = mount(paragraphs(before));
+                placeCaret(view, 2);
+
+                handle.setDoc(paragraphs(after));
+
+                expect(view.state.doc.textContent).toBe(after);
+                expect(caretAt(view)).toEqual({ block: after, offset: after.length });
+            }
+        });
+
         it('still applies a change that repeats its neighbours', () => {
             const { handle, view } = mount(paragraphs('aa'));
 

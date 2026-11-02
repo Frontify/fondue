@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Node as PmNode } from 'prosemirror-model';
 import { EditorState, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
@@ -32,6 +33,23 @@ export const mountEditorForTests = (options: MountOptions): { mounted: MountedDo
 
 /** Transaction meta marking a change that came from the host, not the user. */
 const HOST_DOC = 'rte-host-doc';
+
+const graphemes = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+
+/** How far `pos` sits from the end of the character it splits in its text block (an emoji sequence, a letter and its accent), 0 when it splits none. */
+const graphemeRemainder = (doc: PmNode, pos: number): number => {
+    const $pos = doc.resolve(pos);
+    if (!$pos.parent.isTextblock) {
+        return 0;
+    }
+    // One stand-in character per inline atom keeps text offsets equal to positions.
+    const text = $pos.parent.textBetween(0, $pos.parent.content.size, undefined, '￼');
+    const containing = graphemes.segment(text).containing($pos.parentOffset);
+    if (containing === undefined || containing.index === $pos.parentOffset) {
+        return 0;
+    }
+    return containing.index + containing.segment.length - $pos.parentOffset;
+};
 
 /**
  * Set on the editable element, so engine.scss can scope the engine's own
@@ -210,6 +228,10 @@ const mount = ({
             endA += overlap;
             endB += overlap;
         }
+        // A caret inside the change maps to its end, so the end must not split a character the user sees.
+        const remainder = graphemeRemainder(next, endB);
+        endA += remainder;
+        endB += remainder;
         const transaction = editorView.state.tr.replace(start, endA, next.slice(start, endB));
         transaction.setMeta(HOST_DOC, true);
         transaction.setMeta('addToHistory', false);
