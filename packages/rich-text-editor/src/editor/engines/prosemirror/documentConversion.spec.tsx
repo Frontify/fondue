@@ -188,6 +188,15 @@ describe('the document boundary', () => {
 
             expect(toRteDocument(toEngineDocument(doc, schema))).toEqual(doc);
         });
+
+        it('keeps a block attribute named like a member every object has', () => {
+            const doc = {
+                version: 1,
+                blocks: [{ type: PARAGRAPH, constructor: 'host', children: [{ text: 'text' }] }],
+            } as unknown as RteDocumentOf;
+
+            expect(toRteDocument(toEngineDocument(doc, schema))).toEqual(doc);
+        });
     });
 
     it('drops the empty text run an empty document is written with', () => {

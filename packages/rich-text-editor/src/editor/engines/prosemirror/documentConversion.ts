@@ -111,13 +111,15 @@ const engineAttrs = (
     { type: _type, children: _children, ...attributes }: RteBlockNode,
     declared: Record<string, unknown> = {},
 ): Record<string, unknown> => {
+    // Own names only: `in` would count `constructor` and the like as declared.
+    const declaredNames = new Set(Object.keys(declared));
     const attrs: Record<string, unknown> = {};
     const unknown: Record<string, unknown> = {};
     for (const [name, value] of Object.entries(attributes)) {
         if (value === undefined) {
             continue;
         }
-        if (name in declared && name !== UNKNOWN_ATTRS) {
+        if (declaredNames.has(name) && name !== UNKNOWN_ATTRS) {
             attrs[name] = value;
         } else {
             unknown[name] = value;
@@ -323,9 +325,9 @@ const blockFromEngine = (node: PmNode): RteBlockNode => {
     }
 
     // A block whose type changed may have been handed undeclared attributes its new type declares; those it owns now.
-    const declared = node.type.spec.attrs ?? {};
+    const declared = new Set(Object.keys(node.type.spec.attrs ?? {}));
     const unknown = Object.entries((node.attrs[UNKNOWN_ATTRS] as Record<string, unknown> | null) ?? {}).filter(
-        ([name]) => name === UNKNOWN_ATTRS || !(name in declared),
+        ([name]) => name === UNKNOWN_ATTRS || !declared.has(name),
     );
     const block: Record<string, unknown> = {
         type: node.type.name,
