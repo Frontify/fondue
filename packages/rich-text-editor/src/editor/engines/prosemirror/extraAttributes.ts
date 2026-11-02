@@ -45,17 +45,19 @@ const extrasCounts = (doc: PmNode): Map<unknown, number> => {
 /**
  * Clears the keys an edit copied: a copy shares its original's extras object,
  * so one held by more blocks than in `before` is a copy, and the first holders
- * keep it.
+ * keep it. An object `before` lacks is a block an undo brings back, never a
+ * copy: pasted and dropped blocks come in without one.
  */
 const dropCopiedExtras = (before: PmNode, transaction: Transaction): void => {
     const counts = extrasCounts(before);
     const seen = new Map<unknown, number>();
     transaction.doc.descendants((node, pos) => {
         const extras: unknown = node.attrs[EXTRA_ATTR];
-        if (extras !== null && extras !== undefined) {
+        const held = counts.get(extras);
+        if (held !== undefined) {
             const count = (seen.get(extras) ?? 0) + 1;
             seen.set(extras, count);
-            if (count > (counts.get(extras) ?? 0)) {
+            if (count > held) {
                 transaction.setNodeMarkup(pos, undefined, { ...node.attrs, [EXTRA_ATTR]: null });
             }
         }

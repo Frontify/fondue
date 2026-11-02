@@ -2,6 +2,7 @@
 
 // @vitest-environment happy-dom
 
+import { undo } from 'prosemirror-history';
 import { TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -118,6 +119,16 @@ describe('a block with undeclared keys', () => {
         expect(press(editor.view, 'Backspace')).toBe(true);
 
         expect(editor.stored()).toEqual([marked({ foo: 1 }, text('onetwo'))]);
+    });
+
+    it('gets the second block keys back when that join is undone', () => {
+        const editor = editorWith(defaultPlugins, [marked({ foo: 1 }, text('one')), marked({ foo: 2 }, text('two'))]);
+        editor.caretBefore('two');
+        press(editor.view, 'Backspace');
+
+        expect(undo(editor.view.state, editor.view.dispatch)).toBe(true);
+
+        expect(editor.stored()).toEqual([marked({ foo: 1 }, text('one')), marked({ foo: 2 }, text('two'))]);
     });
 
     it('keeps its keys when turned into another type', () => {
