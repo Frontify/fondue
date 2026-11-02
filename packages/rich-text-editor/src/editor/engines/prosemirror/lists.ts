@@ -49,15 +49,27 @@ const restartSplitLists = (transaction: Transaction, itemTypeByList: Map<string,
     const isList = (node: PmNode): boolean => itemTypeByList.has(node.type.name);
     // Each item that was not first in its list, with the item that was.
     const firstBefore = new Map<PmNode, PmNode>();
+    // Items that sit in more than one list (a copy-drag reuses the nodes) say nothing of which list split.
+    const seen = new Set<PmNode>();
+    const shared = new Set<PmNode>();
     transaction.before.descendants((node) => {
         if (isList(node) && node.firstChild !== null) {
             const first = node.firstChild;
-            for (const item of mapChildren(node, (child) => child).slice(1)) {
-                firstBefore.set(item, first);
+            for (const [index, item] of mapChildren(node, (child) => child).entries()) {
+                if (seen.has(item)) {
+                    shared.add(item);
+                }
+                seen.add(item);
+                if (index > 0) {
+                    firstBefore.set(item, first);
+                }
             }
         }
         return !node.isTextblock;
     });
+    for (const item of shared) {
+        firstBefore.delete(item);
+    }
     if (firstBefore.size === 0) {
         return transaction;
     }
@@ -70,8 +82,11 @@ const restartSplitLists = (transaction: Transaction, itemTypeByList: Map<string,
     });
     const firsts = new Set(lists.map(({ node }) => node.firstChild));
     for (const { node, pos } of lists) {
-        const head = node.firstChild === null ? undefined : firstBefore.get(node.firstChild);
-        if (head !== undefined && firsts.has(head) && !node.hasMarkup(node.type)) {
+        if (node.firstChild === null) {
+            continue;
+        }
+        const head = firstBefore.get(node.firstChild);
+        if (head !== undefined && !shared.has(head) && firsts.has(head) && !node.hasMarkup(node.type)) {
             // The same size, so the other positions stay valid.
             transaction.setNodeMarkup(pos, undefined, null);
         }

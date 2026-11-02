@@ -19,6 +19,8 @@ const item = (...children: RteBlockNode[]): RteBlockNode => ({ type: 'listItem',
 const list = (type: string, ...items: RteBlockNode[]): RteBlockNode => ({ type, children: items }) as RteBlockNode;
 const bullets = (...texts: string[]): RteBlockNode =>
     list('bulletList', ...texts.map((value) => item(paragraph(text(value)))));
+const numbered = (start: number | undefined, ...texts: string[]): RteBlockNode =>
+    ({ ...list('numberedList', ...texts.map((value) => item(paragraph(text(value))))), start }) as RteBlockNode;
 
 afterEach(destroyEditors);
 
@@ -157,9 +159,20 @@ describe('outdenting a list item', () => {
         expect(editor.stored()).toEqual([bullets('one'), paragraph(text('two'))]);
     });
 
+    it('keeps the start of a list whose first item is taken out, when another list holds the same items', () => {
+        const editor = editorWith(plugins, [numbered(3, 'first'), numbered(undefined, 'one', 'two', 'three')]);
+        const { state } = editor.view;
+        const [target, source] = [state.doc.child(0), state.doc.child(1)];
+        // As a copy-drag leaves them: the very item nodes the other list holds.
+        editor.view.dispatch(state.tr.insert(target.nodeSize - 1, [source.child(1), source.child(2)]));
+        editor.caretAfter('fir');
+
+        expect(editor.api.lists.outdent()).toBe(true);
+
+        expect(editor.stored()?.slice(0, 2)).toEqual([paragraph(text('first')), numbered(3, 'two', 'three')]);
+    });
+
     it('takes a middle item out of a list that starts later, the rest restarting at 1', () => {
-        const numbered = (start: number | undefined, ...texts: string[]): RteBlockNode =>
-            ({ ...list('numberedList', ...texts.map((value) => item(paragraph(text(value))))), start }) as RteBlockNode;
         const editor = editorWith(plugins, [numbered(3, 'one', 'two', 'three', 'four')]);
         editor.caretAfter('thr');
 
