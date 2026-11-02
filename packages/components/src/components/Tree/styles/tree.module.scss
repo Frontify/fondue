@@ -108,7 +108,7 @@
     /* Sits outside the row so reorderable and static roots align; consumers leave a 16px gutter. */
     position: absolute;
     top: 50%;
-    left: -16px;
+    inset-inline-start: -16px;
     transform: translateY(-50%);
     display: inline-flex;
     align-items: center;

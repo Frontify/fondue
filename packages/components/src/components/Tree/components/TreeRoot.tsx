@@ -43,7 +43,7 @@ export type TreeRootProps = {
     multiSelect?: boolean;
     /**
      * Enables drag-and-drop reordering of items. When false, items are static and
-     * no drag handle is rendered. The handle renders in a 16px gutter to the left of the rows,
+     * no drag handle is rendered. The handle renders in a 16px gutter before the rows (left in LTR),
      * outside the tree's box, so leave that space (for example padding on the container) and
      * avoid clipping it with `overflow: hidden`.
      * @default false
