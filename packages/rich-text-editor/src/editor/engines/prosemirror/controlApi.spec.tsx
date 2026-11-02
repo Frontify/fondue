@@ -548,6 +548,19 @@ describe('insert', () => {
         expect(editor.stored()).toEqual([paragraph(text('keep this')), { type: 'divider' }, paragraph(text(' text'))]);
     });
 
+    it('keeps the undeclared keys of a block split by a void block on its first half', () => {
+        const editor = editorWith(plugins, [{ ...paragraph(text('onetwo')), foo: 1 }]);
+        editor.caretAfter('one');
+
+        editor.api.insert('divider');
+
+        expect(editor.stored()).toEqual([
+            { ...paragraph(text('one')), foo: 1 },
+            { type: 'divider' },
+            paragraph(text('two')),
+        ]);
+    });
+
     it('stores the declared defaults of an inline without editing UI inserted without a value', () => {
         const editor = editorWith(
             [
