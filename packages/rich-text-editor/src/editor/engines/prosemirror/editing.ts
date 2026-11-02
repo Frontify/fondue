@@ -221,10 +221,13 @@ const mount = ({
         while (start !== null) {
             const before = transaction.doc.nodeAt(start);
             const after = next.nodeAt(start);
+            // A different child count means a node was inserted or removed here, not restyled.
             if (
                 before === null ||
                 after === null ||
                 before.isText ||
+                after.isText ||
+                transaction.doc.resolve(start).parent.childCount !== next.resolve(start).parent.childCount ||
                 before.sameMarkup(after) ||
                 !before.content.eq(after.content) ||
                 !after.type.validContent(before.content)

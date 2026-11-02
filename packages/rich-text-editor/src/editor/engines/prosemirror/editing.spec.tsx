@@ -193,6 +193,17 @@ describe('a document set by the host', () => {
             expect(view.state.selection.$from.parentOffset).toBe(5);
         });
 
+        it('applies a change that turns an inline element into text', () => {
+            const { handle, view } = mount({
+                version: 1,
+                blocks: [{ type: PARAGRAPH, children: [{ text: 'a' }, { type: 'tag', name: 't' }, { text: 'b' }] }],
+            });
+
+            handle.setDoc(paragraphs('ab'));
+
+            expect(view.state.doc.eq(toEngineDocument(paragraphs('ab'), view.state.schema))).toBe(true);
+        });
+
         it('still applies a change that repeats its neighbours', () => {
             const { handle, view } = mount(paragraphs('aa'));
 
@@ -331,6 +342,17 @@ describe('a document set by the host that changes the blocks around the caret', 
 
         expect(view.state.doc.child(0).type.name).toBe('textStyle');
         expect(caretAt(view)).toEqual({ block: 'one', offset: 2 });
+    });
+
+    it('keeps the caret in its block when the host inserts a block with the same text before it', () => {
+        const heading = { type: 'textStyle', style: 'heading1', children: [{ text: 'T' }] };
+        const { view, editor } = editorWith(shipped('text-style'), [heading, text('x')] as never);
+        caretIn(view, 'T', 1);
+
+        editor.setDoc(blocksOf(text('T'), heading, text('x')));
+
+        expect(view.state.selection.$from.index(0)).toBe(1);
+        expect(view.state.selection.$from.parent.type.name).toBe('textStyle');
     });
 
     it('keeps the caret in a to-do the host ticks', () => {
@@ -583,7 +605,9 @@ describe('a document set by the host, over generated documents', () => {
         }
         return result;
     };
-    const runs = (random: Random): Json[] => Array.from({ length: below(random, 4) }, () => run(random));
+    // A soft break now and then, so inline elements sit between runs.
+    const runs = (random: Random): Json[] =>
+        Array.from({ length: below(random, 4) }, () => (random() < 0.15 ? { type: 'break' } : run(random)));
     const textBlock = (random: Random): Json => {
         if (random() < 0.3) {
             return {
@@ -712,7 +736,17 @@ describe('a document set by the host, over generated documents', () => {
         const before = generate(random);
         const after = seed % 5 === 0 ? generate(random) : mutate(random, before);
         const editor = editorWith(
-            shipped('text-style', 'bold', 'italic', 'underline', 'link', 'bullet-list', 'numbered-list', 'check-list'),
+            shipped(
+                'text-style',
+                'bold',
+                'italic',
+                'underline',
+                'link',
+                'soft-break',
+                'bullet-list',
+                'numbered-list',
+                'check-list',
+            ),
             before.blocks as never,
         );
         const { view, onDocChange } = editor;
