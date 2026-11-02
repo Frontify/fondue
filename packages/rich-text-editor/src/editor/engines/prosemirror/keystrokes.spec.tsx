@@ -126,6 +126,52 @@ describe('a check list shortcut inside a check list', () => {
     it.each(['one', 'two'])('gives "[x] " and "[ ] " the same structure at the start of the item "%s"', (before) => {
         expect(shapeAfterTyping('[x] ', before)).toBe(shapeAfterTyping('[ ] ', before));
     });
+
+    it.each([
+        ['[x] ', true],
+        ['[ ] ', false],
+    ])('nests "%s" in the item it is typed in, checked: %s', (prefix, checked) => {
+        const editor = editorWith(defaultPlugins, twoItems());
+        editor.caretBefore('two');
+
+        editor.type(prefix);
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'checkList',
+                children: [
+                    checkItem('one'),
+                    {
+                        type: 'checkItem',
+                        checked: false,
+                        children: [
+                            {
+                                type: 'checkList',
+                                children: [{ type: 'checkItem', checked, children: [paragraph(text('two'))] }],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ]);
+    });
+
+    it('joins "[x] " typed below a check list into that list', () => {
+        const editor = editorWith(defaultPlugins, [
+            { type: 'checkList', children: [checkItem('one')] } as RteBlockNode,
+            paragraph(text('task')),
+        ]);
+        editor.caretBefore('task');
+
+        editor.type('[x] ');
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'checkList',
+                children: [checkItem('one'), { type: 'checkItem', checked: true, children: [paragraph(text('task'))] }],
+            },
+        ]);
+    });
 });
 
 describe('a mark that opts out of typing rules', () => {

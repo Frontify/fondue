@@ -4,7 +4,7 @@
 
 import { undo as pmUndo } from 'prosemirror-history';
 import { type EditorView } from 'prosemirror-view';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { type RtePlugin } from '#/core';
 import { defaultPlugins } from '#/plugins';
@@ -224,7 +224,7 @@ describe('pressing Enter after a web address', () => {
         expect(editor.stored()?.[0]).toEqual(paragraph(link('https://example.com')));
     });
 
-    it('keeps the link when Backspace follows leaving the editor and coming back', () => {
+    it('keeps the link when Backspace follows focus leaving the editor', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com'))]);
         editor.caretAfter('https://example.com');
         press(editor.view, 'Enter');
@@ -233,6 +233,53 @@ describe('pressing Enter after a web address', () => {
         press(editor.view, 'Backspace');
 
         expect(editor.stored()?.[0]).toEqual(paragraph(link('https://example.com')));
+    });
+
+    it('keeps the link when Backspace follows a caret move', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com'))]);
+        editor.caretAfter('https://example.com');
+        press(editor.view, 'Enter');
+        editor.caretBefore('https');
+
+        press(editor.view, 'Backspace');
+
+        expect(editor.stored()?.[0]).toEqual(paragraph(link('https://example.com')));
+    });
+
+    it('does nothing when inline code is switched on at the caret, only splitting', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com'))]);
+        editor.caretAfter('https://example.com');
+        const { state } = editor.view;
+        editor.view.dispatch(state.tr.addStoredMark(state.schema.mark('code')));
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([paragraph(text('https://example.com')), paragraph()]);
+    });
+
+    it('reads no further back than a typed space does', () => {
+        const address = `https://${'a'.repeat(600)}`;
+        const editor = editorWith(defaultPlugins, [paragraph(text(address))]);
+        editor.caretAfter(address);
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([paragraph(text(address)), paragraph()]);
+        expect(typedIntoEmptyParagraph(`${address} `)).toEqual([paragraph(text(`${address} `))]);
+    });
+
+    it('is taken back by Backspace after a key that changed nothing, while the editor has focus', async () => {
+        const keepEnter: RtePlugin = { id: 'keep-enter', hotkeys: { Enter: () => true } };
+        const editor = editorWith([...defaultPlugins, keepEnter], [paragraph(text('https://example.com'))]);
+        editor.caretAfter('https://example.com');
+        vi.spyOn(editor.view, 'hasFocus').mockReturnValue(true);
+
+        press(editor.view, 'Enter');
+        await Promise.resolve();
+        expect(editor.stored()).toEqual([paragraph(link('https://example.com'))]);
+
+        expect(press(editor.view, 'Backspace')).toBe(true);
+        expect(editor.stored()).toEqual([paragraph(text('https://example.com'))]);
     });
 
     it('leaves Backspace to join the lines once something else happened', () => {
