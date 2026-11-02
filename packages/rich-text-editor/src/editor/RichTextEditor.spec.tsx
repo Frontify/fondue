@@ -5,7 +5,7 @@
 import { act, Profiler, type ReactNode, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Driven through the package's public API, the way a host does: the props are
 // the whole conversation between a host and a mounted editor.
@@ -280,7 +280,13 @@ describe('a readonly editor', () => {
 });
 
 describe('a document from a newer format version', () => {
-    const newer = { ...paragraph('from the future'), version: 2 } as unknown as RteDocument;
+    // A version of its own per test: the warning is given once per version for the whole page.
+    let version = 1;
+    let newer: RteDocument;
+    beforeEach(() => {
+        version += 1;
+        newer = { ...paragraph('from the future'), version } as unknown as RteDocument;
+    });
 
     it('is shown read-only, never edited, and warns once', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -293,7 +299,7 @@ describe('a document from a newer format version', () => {
         expect(container.querySelector('[contenteditable]')).toBeNull();
         expect(container.querySelector('[role="toolbar"]')).toBeNull();
         expect(warn).toHaveBeenCalledTimes(1);
-        expect(warn).toHaveBeenCalledWith(expect.stringContaining('version 2'));
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining(`version ${version}`));
         expect(container.querySelector('[role="status"]')?.textContent).toBe(
             'This content was saved by a newer version of the editor and can only be viewed here.',
         );
@@ -318,6 +324,19 @@ describe('a document from a newer format version', () => {
         ));
 
         expect(container.querySelector('[role="status"]')?.textContent).toBe('Nur lesbar');
+    });
+
+    it('warns once for several editors showing the same version', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        mount(() => (
+            <>
+                <RichTextEditor value={newer} plugins={defaultPlugins} />
+                <RichTextEditor value={newer} plugins={defaultPlugins} />
+            </>
+        ));
+
+        expect(warn).toHaveBeenCalledTimes(1);
     });
 
     it('does not repeat the warning on re-render', () => {
