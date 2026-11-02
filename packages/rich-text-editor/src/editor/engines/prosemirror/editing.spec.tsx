@@ -164,10 +164,12 @@ describe('a document set by the host', () => {
 
         it('redraws nothing when only they changed', () => {
             const { handle, view } = mount(withMeta('a'));
+            const { state } = view;
             const drawn = view.dom.firstChild;
 
             handle.setDoc(withMeta('b'));
 
+            expect(view.state).toBe(state);
             expect(view.dom.firstChild).toBe(drawn);
         });
 

@@ -2,7 +2,7 @@
 
 // @vitest-environment happy-dom
 
-import { undo } from 'prosemirror-history';
+import { redo, undo } from 'prosemirror-history';
 import { TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -33,13 +33,17 @@ const bullets = (extras: Record<string, unknown>, ...children: RteBlockNode[]): 
     ({ type: 'bulletList', ...extras, children }) as RteBlockNode;
 
 describe('a block with undeclared keys', () => {
-    it('warns once in development that a key no plugin declares is kept', () => {
+    it('warns once in development for each key no plugin declares, and never for a declared one', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         try {
-            editorWith(defaultPlugins, [marked({ onlyHere: 1 }, text('a')), marked({ onlyHere: 2 }, text('b'))]);
+            editorWith(defaultPlugins, [
+                marked({ onlyHere: 1, alsoHere: 1, align: 'center' }, text('a')),
+                marked({ onlyHere: 2 }, text('b')),
+            ]);
 
-            expect(warn).toHaveBeenCalledTimes(1);
+            expect(warn).toHaveBeenCalledTimes(2);
             expect(warn).toHaveBeenCalledWith(expect.stringContaining('Key "onlyHere" on block "paragraph"'));
+            expect(warn).toHaveBeenCalledWith(expect.stringContaining('Key "alsoHere" on block "paragraph"'));
         } finally {
             warn.mockRestore();
         }
@@ -147,6 +151,17 @@ describe('a block with undeclared keys', () => {
         expect(undo(view.state, view.dispatch)).toBe(true);
 
         expect(editor.stored()).toEqual([repeated, repeated]);
+    });
+
+    it('leaves the keys on the first half again when an undone split is redone', () => {
+        const editor = editorWith(defaultPlugins, [marked({ foo: 1 }, text('onetwo'))]);
+        editor.caretAfter('one');
+        press(editor.view, 'Enter');
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(redo(editor.view.state, editor.view.dispatch)).toBe(true);
+
+        expect(editor.stored()).toEqual([marked({ foo: 1 }, text('one')), paragraph(text('two'))]);
     });
 
     it('gets the second block keys back when that join is undone', () => {
@@ -314,9 +329,13 @@ describe('a list and its items with undeclared keys', () => {
 
         expect(press(editor.view, 'Shift-Tab') || editor.api.lists.outdent()).toBe(true);
 
-        const stored = JSON.stringify(editor.stored());
-        expect(stored.match(/"marker":"dot"/g)).toHaveLength(1);
-        expect(stored.match(/"marker":"dash"/g)).toHaveLength(1);
+        expect(editor.stored()).toEqual([
+            bullets(
+                { marker: 'dash' },
+                item({}, paragraph(text('a')), bullets({ marker: 'dot' }, item({}, paragraph(text('x'))))),
+                item({}, paragraph(text('y')), bullets({}, item({}, paragraph(text('z'))))),
+            ),
+        ]);
     });
 
     it('keeps the keys on the first list when a middle item is turned into a heading', () => {
@@ -332,7 +351,11 @@ describe('a list and its items with undeclared keys', () => {
 
         editor.api.blocks.setType('textStyle', { style: 'heading1' });
 
-        expect(JSON.stringify(editor.stored()).match(/"marker":"dash"/g)).toHaveLength(1);
+        expect(editor.stored()).toEqual([
+            bullets({ marker: 'dash' }, item({}, paragraph(text('a')))),
+            { type: 'textStyle', style: 'heading1', children: [text('b')] },
+            bullets({}, item({}, paragraph(text('c')))),
+        ]);
     });
 
     it('keeps the keys of the list and its items when the list type changes', () => {

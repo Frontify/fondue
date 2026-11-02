@@ -327,6 +327,17 @@ describe('keys no mounted plugin declares', () => {
         ]);
     });
 
+    it('are each named in a development warning, on the document too', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        try {
+            rootExtrasOf({ version: 1, rootOnly: 1, blocks: [] } as unknown as RteDocumentOf);
+
+            expect(warn).toHaveBeenCalledWith(expect.stringContaining('Key "rootOnly" on the document'));
+        } finally {
+            warn.mockRestore();
+        }
+    });
+
     it('leave no trace on a block or a document that has none', () => {
         const doc = toEngineDocument(document, schema);
 
