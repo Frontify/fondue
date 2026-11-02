@@ -145,7 +145,8 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     // A value the host pushes is what the editor now shows. One of the editor's
     // own edits coming back as `value`, however late, is an echo, and never
     // replaces a newer edit in what a crash shows and hands over.
-    const emittedDocsRef = useRef(new WeakSet<RteDocumentOf>());
+    const emittedDocsRef = useRef<WeakSet<RteDocumentOf> | null>(null);
+    emittedDocsRef.current ??= new WeakSet();
     // The engine forgets what it emitted when it remounts, readonly or with other plugins, and then shows such a value.
     const pluginsKey = registry.ids.join('|');
     const pluginsKeyRef = useRef(pluginsKey);
