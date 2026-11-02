@@ -93,11 +93,17 @@ const paste = (container: HTMLElement, text: string): void => {
 };
 
 /** Mounts the blocks behind the sacrificial paragraph and edits that paragraph once. */
-const editedCopyOf = (blocks: RteBlock[]) => {
+const editedCopyOf = (blocks: RteBlock[], root: Record<string, unknown> = {}) => {
     const editor = mount((onChange) => (
         <RichTextEditor
             // A copy, so an unknown node handed back as the object it came in as is still compared against the original.
-            value={{ version: 1, blocks: [sacrificial, ...structuredClone(blocks)] }}
+            value={
+                {
+                    ...structuredClone(root),
+                    version: 1,
+                    blocks: [sacrificial, ...structuredClone(blocks)],
+                } as RteDocument
+            }
             onChange={onChange}
             plugins={plugins}
         />
@@ -187,14 +193,49 @@ const STYLES = [
 ];
 const ALIGNS = ['left', 'center', 'right', 'justify'];
 const KINDS = ['user', 'group', 'all'];
+// Keys no plugin declares on most blocks, but `align`, `style` and `checked` are declared on some: those are left out there.
+const EXTRA_KEYS = ['foo', 'meta', 'note', 'align', 'style', 'checked', '__rteExtra'];
+const DECLARED_KEYS: Record<string, string[]> = {
+    paragraph: ['align'],
+    quote: ['align'],
+    textStyle: ['style', 'align'],
+    checkItem: ['checked'],
+};
+const ROOT_EXTRA_KEYS = ['site', 'meta', 'note', '__rteExtra'];
 
 // Mark exclusions: the plugin definitions declare none that touch stored marks
 // (`excludesInputRules` on code only affects typing), so any subset is valid.
-const generateDocument = (seed: number): RteBlock[] => {
+const generateDocument = (seed: number): { blocks: RteBlock[]; root: Json } => {
     const random = mulberry32(seed);
     const chance = (probability: number): boolean => random() < probability;
     const integer = (limit: number): number => Math.floor(random() * limit);
     const pick = <TItem,>(items: readonly TItem[]): TItem => items[integer(items.length)] as TItem;
+
+    const extraValue = (): unknown => {
+        const roll = random();
+        if (roll < 0.4) {
+            return pick([1, 'text', true, false, 2.5]);
+        }
+        if (roll < 0.6) {
+            return null;
+        }
+        return { inner: null, list: [integer(5), { deep: pick(WORDS) }], flag: chance(0.5) };
+    };
+
+    /** Undeclared keys on a known block, now and then; never a name its type declares. */
+    const withExtras = (block: Json, keys: string[], declared: string[]): Json => {
+        if (chance(0.25)) {
+            for (let count = 1 + integer(3); count > 0; count--) {
+                const key = pick(keys);
+                if (!declared.includes(key)) {
+                    block[key] = extraValue();
+                }
+            }
+        }
+        return block;
+    };
+    const withBlockExtras = (block: Json): Json =>
+        withExtras(block, EXTRA_KEYS, DECLARED_KEYS[block.type as string] ?? []);
 
     const run = (): Json => {
         const text: Json = { text: pick(WORDS) };
@@ -271,7 +312,7 @@ const generateDocument = (seed: number): RteBlock[] => {
             block.align = pick(ALIGNS);
         }
         block.children = inlines();
-        return block;
+        return withBlockExtras(block);
     };
 
     // Wherever blocks go, one no plugin knows may stand in for one.
@@ -306,9 +347,9 @@ const generateDocument = (seed: number): RteBlock[] => {
                 }
             }
             item.children = children;
-            items.push(item);
+            items.push(withBlockExtras(item));
         }
-        return { type, children: items };
+        return withBlockExtras({ type, children: items });
     };
 
     const blocks: Json[] = [];
@@ -323,12 +364,12 @@ const generateDocument = (seed: number): RteBlock[] => {
         } else if (roll < 0.85) {
             blocks.push(list(1));
         } else if (roll < 0.95) {
-            blocks.push({ type: 'columnBreak' });
+            blocks.push(withBlockExtras({ type: 'columnBreak' }));
         } else {
             blocks.push(unknownBlock());
         }
     }
-    return blocks as unknown as RteBlock[];
+    return { blocks: blocks as unknown as RteBlock[], root: withExtras({}, ROOT_EXTRA_KEYS, []) };
 };
 
 const SEED_COUNT = 500;
@@ -337,10 +378,10 @@ const seeds = Array.from({ length: SEED_COUNT }, (_, index) => ({ seed: index + 
 describe('the stored document format: seeded random round trip', () => {
     it.each(seeds)('round-trips the document of seed $seed unchanged', ({ seed }) => {
         vi.spyOn(console, 'warn').mockImplementation(() => {});
-        const blocks = generateDocument(seed);
-        const { container, stored } = editedCopyOf(blocks);
+        const { blocks, root } = generateDocument(seed);
+        const { container, stored } = editedCopyOf(blocks, root);
 
         expectEditable(container);
-        expect(stored()).toStrictEqual({ version: 1, blocks: [expect.anything(), ...blocks] });
+        expect(stored()).toStrictEqual({ ...root, version: 1, blocks: [expect.anything(), ...blocks] });
     });
 });

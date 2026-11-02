@@ -62,7 +62,7 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         // 4
         ...typingRewrites(registry, schema),
         // 5
-        keymap({ Backspace: resetEmptyFirstBlock }),
+        keymap({ Backspace: resetEmptyFirstBlock(registry) }),
         keymap(baseline),
     ];
 };
@@ -318,15 +318,18 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
  * Backspace in an emptied block at the very top that is not the default block
  * (a heading): nothing before it to join, so it turns back into a paragraph.
  */
-const resetEmptyFirstBlock: Command = (state, dispatch) => {
-    const { $from, empty } = state.selection;
-    const paragraph = state.schema.topNodeType.contentMatch.defaultType;
-    const block = $from.parent;
-    if (!empty || !paragraph || $from.depth !== 1 || $from.index(0) !== 0) {
-        return false;
-    }
-    if (!block.isTextblock || block.content.size > 0 || block.type === paragraph) {
-        return false;
-    }
-    return setBlockType(paragraph)(state, dispatch);
-};
+const resetEmptyFirstBlock =
+    (registry: PluginRegistry): Command =>
+    (state, dispatch) => {
+        const { $from, empty } = state.selection;
+        const paragraph = state.schema.topNodeType.contentMatch.defaultType;
+        const block = $from.parent;
+        if (!empty || !paragraph || $from.depth !== 1 || $from.index(0) !== 0) {
+            return false;
+        }
+        if (!block.isTextblock || block.content.size > 0 || block.type === paragraph) {
+            return false;
+        }
+        // Attributes carried over, as with every other turn-into: the block is still there.
+        return setBlockType(paragraph, keepCarriedAttrs(registry, paragraph, undefined)(block))(state, dispatch);
+    };

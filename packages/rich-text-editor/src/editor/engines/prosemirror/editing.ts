@@ -5,9 +5,17 @@ import { EditorView } from 'prosemirror-view';
 
 import { type MountedDocument, type MountDocument, type MountOptions } from '#/editor/port';
 
-import { clipboardParser, clipboardSerializer, handlePasteByFeatures, handlePasteIntoEmptyBlock } from './clipboard';
+import {
+    clipboardParser,
+    clipboardSerializer,
+    handlePasteByFeatures,
+    handlePasteIntoEmptyBlock,
+    isCopyDrag,
+    sliceForPaste,
+    sliceWithoutExtras,
+} from './clipboard';
 import { createControlApi, type OpenEditors } from './controlApi';
-import { toEngineDocument, toRteDocument, withoutDrafts } from './documentConversion';
+import { EXTRA_ATTR, toEngineDocument, toRteDocument, withoutDrafts } from './documentConversion';
 import { keystrokePipeline } from './keystrokes';
 import { createMarkViews, createNodeViews, LiveViews } from './nodeViews';
 import { placeholderPlugin } from './placeholder';
@@ -95,6 +103,8 @@ const mount = ({
     };
     const api = createControlApi(getView, schema, registry, openEditors);
 
+    let dropCopies = false;
+
     // 3. The view: node/mark views, clipboard, the initial state, and the
     //    transaction loop that feeds the host.
     const editorView: EditorView = new EditorView(container, {
@@ -103,6 +113,16 @@ const mount = ({
         markViews: createMarkViews(registry, api, liveViews, openEditors),
         clipboardSerializer: clipboardSerializer(schema),
         clipboardParser: clipboardParser(schema),
+        transformCopied: sliceWithoutExtras,
+        dragCopies: isCopyDrag,
+        // The engine reads `transformPasted` before it decides move or copy, so the drop is noted here.
+        transformPasted: (slice) => sliceForPaste(slice, { ownDrag: !dropCopies }),
+        handleDOMEvents: {
+            drop: (_view, event) => {
+                dropCopies = isCopyDrag(event);
+                return false;
+            },
+        },
         handlePaste: (pasteView, event, slice) =>
             handlePasteByFeatures(registry.pasteHandlers, api)(pasteView, event) ||
             handlePasteIntoEmptyBlock(pasteView, event, slice),
@@ -148,13 +168,23 @@ const mount = ({
         // Drafts (an inline still being made) are in no document the host holds,
         // though a block reused from one handed out may bring one along; an
         // echo of what is there must leave them, and the caret, alone.
-        if (withoutDrafts(next).eq(withoutDrafts(editorView.state.doc))) {
+        const current = withoutDrafts(editorView.state.doc);
+        const held = withoutDrafts(next);
+        if (held.content.eq(current.content)) {
             agreedDoc = doc;
+            // Same blocks, other keys on the document itself: only those change, and the caret stays.
+            if (!held.sameMarkup(current)) {
+                const transaction = editorView.state.tr.setDocAttribute(EXTRA_ATTR, next.attrs[EXTRA_ATTR]);
+                transaction.setMeta(HOST_DOC, true);
+                transaction.setMeta('addToHistory', false);
+                editorView.dispatch(transaction);
+            }
             return;
         }
         // Different content: the old caret position means nothing in it, so the
         // caret goes to the end rather than mid-word somewhere.
         const transaction = editorView.state.tr.replaceWith(0, editorView.state.doc.content.size, next.content);
+        transaction.setDocAttribute(EXTRA_ATTR, next.attrs[EXTRA_ATTR]);
         transaction.setSelection(Selection.atEnd(transaction.doc));
         transaction.setMeta(HOST_DOC, true);
         transaction.setMeta('addToHistory', false);

@@ -47,6 +47,8 @@ export const UNKNOWN_INLINE = '__rteUnknownInline';
 export const UNKNOWN_MARKS = '__rteUnknownMarks';
 /** The attribute an unknown block or inline keeps its document node in, and the unknown marks their values. */
 export const RAW_ATTR = 'raw';
+/** The attribute a document node or known block keeps its undeclared stored keys in, as one object (or null). */
+export const EXTRA_ATTR = '__rteExtra';
 
 /** The words in a piece of unknown content, for its placeholder to show. */
 export const plainTextOf = (raw: unknown): string => {
@@ -71,9 +73,11 @@ export const mapChildren = <TResult>(node: PmNode, map: (child: PmNode) => TResu
     return results;
 };
 
-/** Attributes with a value; unset ones are absent from the document, not null. */
+/** Attributes with a value; unset ones are absent from the document, not null. The extras object is not one. */
 const definedAttrs = (attrs: Record<string, unknown>): Record<string, unknown> =>
-    Object.fromEntries(Object.entries(attrs).filter(([, value]) => value !== null && value !== undefined));
+    Object.fromEntries(
+        Object.entries(attrs).filter(([name, value]) => name !== EXTRA_ATTR && value !== null && value !== undefined),
+    );
 
 /** A mark's value as the document and the control API see it: the one engine attribute it lives in. */
 export const markValueOf = (mark: PmMark): Record<string, unknown> =>
@@ -104,6 +108,22 @@ const declaredAttrs = (
             .filter((name) => node[name] !== undefined)
             .map((name) => [name, node[name]]),
     );
+
+/** The stored keys outside `reserved`, or null when there are none. Values stay exactly as stored, nulls included. */
+const extrasOf = (stored: Record<string, unknown>, reserved: ReadonlySet<string>): Record<string, unknown> | null => {
+    const extras = Object.fromEntries(Object.entries(stored).filter(([key]) => !reserved.has(key)));
+    if (Object.keys(extras).length === 0) {
+        return null;
+    }
+    return extras;
+};
+
+/** A node's extras as stored keys; a name its type declares belongs to the declared attribute, which wins. */
+const extrasFrom = (node: PmNode): Record<string, unknown> => {
+    const declared = new Set(Object.keys(node.type.spec.attrs ?? {}));
+    const extras = (node.attrs[EXTRA_ATTR] ?? {}) as Record<string, unknown>;
+    return Object.fromEntries(Object.entries(extras).filter(([key]) => key === EXTRA_ATTR || !declared.has(key)));
+};
 
 // --- RTE format -> engine ---
 
@@ -202,7 +222,11 @@ const blockToEngine = (block: RteBlockNode, schema: Schema): PmNode => {
         warnUnknownContent('block', block.type);
         return schema.node(UNKNOWN_BLOCK, { [RAW_ATTR]: block });
     }
-    const attrs = declaredAttrs(block as Record<string, unknown>, nodeType.spec.attrs);
+    const stored = block as Record<string, unknown>;
+    const reserved = new Set(['type', 'children', ...Object.keys(nodeType.spec.attrs ?? {})]);
+    // A stored key named like the extras attribute is just another undeclared key.
+    reserved.delete(EXTRA_ATTR);
+    const attrs = { ...declaredAttrs(stored, nodeType.spec.attrs), [EXTRA_ATTR]: extrasOf(stored, reserved) };
     return createFilled(nodeType, attrs, block.children ? childrenToEngine(nodeType, block.children, schema) : []);
 };
 
@@ -213,7 +237,7 @@ export const toEngineDocument = (doc: RteDocumentOf, schema: Schema): PmNode => 
     }
     return createFilled(
         docType,
-        null,
+        { [EXTRA_ATTR]: extrasOf(doc as Record<string, unknown>, new Set(['version', 'blocks'])) },
         doc.blocks.map((block) => blockToEngine(block, schema)),
     );
 };
@@ -298,7 +322,7 @@ const blockFromEngine = (node: PmNode): RteBlockNode => {
         return node.attrs[RAW_ATTR] as RteBlockNode;
     }
 
-    const block: Record<string, unknown> = { type: node.type.name, ...definedAttrs(node.attrs) };
+    const block: Record<string, unknown> = { ...extrasFrom(node), type: node.type.name, ...definedAttrs(node.attrs) };
     if (node.isTextblock) {
         block.children = mapChildren(node, inlineFromEngine).filter((child) => child !== null);
     } else if (!node.isAtom) {
@@ -316,6 +340,7 @@ const blockFromEngine = (node: PmNode): RteBlockNode => {
  * object is what tells a host its `value` changed.
  */
 export const toRteDocument = (doc: PmNode): RteDocumentOf => ({
+    ...extrasFrom(doc),
     version: DOCUMENT_VERSION,
     blocks: mapChildren(doc, blockFromEngine),
 });

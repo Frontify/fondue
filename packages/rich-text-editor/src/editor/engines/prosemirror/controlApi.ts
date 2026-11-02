@@ -13,7 +13,7 @@ import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry, type RteSelectionSnapshot } from '#/core';
 
-import { markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
+import { EXTRA_ATTR, markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
 import { createListApi, liftOutOfLists } from './lists';
 import { warnUnknownType } from './warnings';
 
@@ -218,7 +218,8 @@ export const keepCarriedAttrs =
     ): ((node: PmNode) => Record<string, unknown>) =>
     (node) => ({
         ...Object.fromEntries(
-            [...blockAttributes.keys()]
+            // The extras ride along: they are the block's stored keys no plugin declares.
+            [...blockAttributes.keys(), EXTRA_ATTR]
                 .filter((name) => name in node.attrs && name in (nodeType.spec.attrs ?? {}))
                 .map((name) => [name, node.attrs[name]]),
         ),

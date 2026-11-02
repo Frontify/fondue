@@ -3,13 +3,16 @@
 import {
     DOMParser as PmDOMParser,
     DOMSerializer,
+    Fragment,
     type Node as PmNode,
     type Schema,
-    type Slice,
+    Slice,
 } from 'prosemirror-model';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PasteHandler } from '#/core';
+
+import { EXTRA_ATTR, mapChildren } from './documentConversion';
 
 // Copy and paste fixes beyond what the engine does on its own.
 
@@ -42,6 +45,56 @@ class ClipboardSerializer extends DOMSerializer {
         return written;
     }
 }
+
+const withoutExtras = (node: PmNode): PmNode => {
+    let changed = false;
+    const children = mapChildren(node, (child) => {
+        const kept = withoutExtras(child);
+        changed ||= kept !== child;
+        return kept;
+    });
+    const hasExtras = node.attrs[EXTRA_ATTR] !== null && node.attrs[EXTRA_ATTR] !== undefined;
+    if (!changed && !hasExtras) {
+        return node;
+    }
+    let attrs = node.attrs;
+    if (hasExtras) {
+        attrs = { ...node.attrs, [EXTRA_ATTR]: null };
+    }
+    return node.type.create(attrs, Fragment.from(children), node.marks);
+};
+
+/** Each stripped slice to the one it was made from, so this editor's own drag gets its keys back on drop. */
+const originalOf = new WeakMap<Slice, Slice>();
+
+const stripExtras = (slice: Slice): Slice =>
+    new Slice(Fragment.fromArray(slice.content.content.map(withoutExtras)), slice.openStart, slice.openEnd);
+
+/** A copied slice without the undeclared stored keys: `data-pm-slice` writes its open wrappers' attributes onto the clipboard. */
+export const sliceWithoutExtras = (slice: Slice): Slice => {
+    const stripped = stripExtras(slice);
+    originalOf.set(stripped, slice);
+    return stripped;
+};
+
+/** What a paste or drop brings in: a move of its own drag as it was, anything else (a copy, clipboard HTML, other editors) stripped. */
+export const sliceForPaste = (slice: Slice, { ownDrag }: { ownDrag: boolean }): Slice => {
+    const original = originalOf.get(slice);
+    if (ownDrag && original !== undefined) {
+        return original;
+    }
+    return stripExtras(slice);
+};
+
+/** Whether a drop copies rather than moves: the modifier the engine uses, Alt on a Mac and Ctrl elsewhere. */
+export const isCopyDrag = (event: DragEvent): boolean => {
+    // The engine's own test for Apple platforms, so its move/copy decision and this one agree.
+    const isMac = typeof navigator !== 'undefined' && /Mac|iP(hone|[oa]d)/.test(navigator.platform);
+    if (isMac) {
+        return event.altKey;
+    }
+    return event.ctrlKey;
+};
 
 export const clipboardSerializer = (schema: Schema): DOMSerializer => {
     const nodes = DOMSerializer.nodesFromSchema(schema);
@@ -146,7 +199,11 @@ export const handlePasteIntoEmptyBlock = (view: EditorView, _event: ClipboardEve
         $at.parent.canReplaceWith($at.index(), $at.index() + 1, first.type) &&
         first.type.validContent(merged.content)
     ) {
-        transaction.setNodeMarkup(at, first.type, first.attrs);
+        // The block stays the one it was: its undeclared stored keys are not the pasted block's to replace.
+        transaction.setNodeMarkup(at, first.type, {
+            ...first.attrs,
+            [EXTRA_ATTR]: merged.attrs[EXTRA_ATTR] as unknown,
+        });
     }
     view.dispatch(transaction.scrollIntoView().setMeta('paste', true).setMeta('uiEvent', 'paste'));
     return true;
