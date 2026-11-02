@@ -192,6 +192,15 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         // Only the change of focus is the event; the callback is read when it happens.
         // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [focusWithin]);
+    // The text being edited gives way to the read-only view; the notice takes the focus it held and says why.
+    const noticeRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        if (newerVersion !== null && focusWithin) {
+            noticeRef.current?.focus();
+        }
+        // Only the switch is the event; focus is read when it happens.
+        // eslint-disable-next-line @eslint-react/exhaustive-deps
+    }, [newerVersion]);
     // Alt+F10 asks the toolbar to take focus; it reads and clears the request
     // once it has rendered, which for a floating bar may be its first render.
     const focusRequestRef = useRef(false);
@@ -285,9 +294,11 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                 {toolbarFloats ? null : toolbar}
                 {/* A host that shows it read-only anyway offered no editing to explain. */}
                 {newerVersion === null || readonlyProp ? null : (
-                    <Notice variant="warning" emphasis="weak" className={styles.notice}>
-                        {labels.newerVersion}
-                    </Notice>
+                    <div ref={noticeRef} tabIndex={-1} className={styles.notice}>
+                        <Notice variant="warning" emphasis="weak">
+                            {labels.newerVersion}
+                        </Notice>
+                    </div>
                 )}
                 {readOnly ? (
                     // The renderer adds the document and plugin classes itself.

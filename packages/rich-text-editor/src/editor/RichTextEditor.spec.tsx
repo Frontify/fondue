@@ -402,6 +402,35 @@ describe('a document from a newer format version', () => {
         expect(onBlur).not.toHaveBeenCalled();
     });
 
+    it('moves focus to the notice when the text being edited goes away', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} />
+        ));
+        ready();
+        act(() => editableIn(container).focus());
+
+        rerender(<RichTextEditor value={newer} plugins={defaultPlugins} />);
+
+        const focused = window.document.activeElement;
+        expect(container.contains(focused)).toBe(true);
+        expect(focused?.contains(container.querySelector('[role="status"]'))).toBe(true);
+    });
+
+    it('leaves focus alone when a newer document arrives in an editor nobody is in', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} />
+        ));
+        ready();
+
+        rerender(<RichTextEditor value={newer} plugins={defaultPlugins} />);
+
+        expect(container.contains(window.document.activeElement)).toBe(false);
+    });
+
     it('becomes editable once given a document of the current version', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         teardown.push(() => warn.mockRestore());
