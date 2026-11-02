@@ -15,7 +15,14 @@ import {
     type RtePlugin,
 } from '#/core';
 
-import { EXTRA_ATTR, mapChildren, toEngineDocument, toRteDocument, UNKNOWN_BLOCK } from './documentConversion';
+import {
+    EXTRA_ATTR,
+    mapChildren,
+    plainTextOf,
+    toEngineDocument,
+    toRteDocument,
+    UNKNOWN_BLOCK,
+} from './documentConversion';
 import { buildSchema } from './schema';
 
 /**
@@ -250,6 +257,19 @@ describe('the document boundary', () => {
                 } finally {
                     warn.mockRestore();
                 }
+            });
+
+            it('shows each block of the list it keeps on a line of its own, the text of one block run together', () => {
+                const list = {
+                    type: 'bulletList',
+                    children: [
+                        item(words('one')),
+                        sidebar,
+                        item({ type: PARAGRAPH, children: [{ text: 't' }, { text: 'wo' }] }),
+                    ],
+                };
+
+                expect(plainTextOf(list)).toBe('one\nin\ntwo');
             });
         });
     });

@@ -59,7 +59,15 @@ export const plainTextOf = (raw: unknown): string => {
     if (typeof text === 'string') {
         return text;
     }
-    return Array.isArray(children) ? children.map(plainTextOf).join('') : '';
+    if (!Array.isArray(children)) {
+        return '';
+    }
+    // Blocks hold children of their own; a line between them keeps a list's items apart.
+    let separator = '';
+    if (children.some((child) => Array.isArray((child as { children?: unknown } | null)?.children))) {
+        separator = '\n';
+    }
+    return children.map(plainTextOf).join(separator);
 };
 
 // --- Reading engine nodes: shared by both directions and the control API ---
