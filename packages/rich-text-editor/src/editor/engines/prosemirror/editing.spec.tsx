@@ -3,7 +3,7 @@
 // @vitest-environment happy-dom
 
 import { redo, undo } from 'prosemirror-history';
-import { TextSelection } from 'prosemirror-state';
+import { NodeSelection, TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -193,6 +193,20 @@ describe('a document set by the host', () => {
             expect(view.state.selection.$from.parentOffset).toBe(5);
         });
 
+        it('keeps an inline element selected when the host changes only its value', () => {
+            const withTag = (name: string): RteDocumentOf => ({
+                version: 1,
+                blocks: [{ type: PARAGRAPH, children: [{ text: 'a' }, { type: 'tag', name }, { text: 'b' }] }],
+            });
+            const { handle, view } = mount(withTag('t'));
+            view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, 2)));
+
+            handle.setDoc(withTag('u'));
+
+            const { selection } = view.state;
+            expect(selection instanceof NodeSelection && selection.node.attrs.value).toEqual({ name: 'u' });
+        });
+
         it('applies a change that turns an inline element into text', () => {
             const { handle, view } = mount({
                 version: 1,
@@ -378,6 +392,27 @@ describe('a document set by the host that changes the blocks around the caret', 
         expect(caretAt(view)).toEqual({ block: 'block 599', offset: 1 });
     });
 
+    it('leaves the caret and undo alone mid-document when the host changes both ends of a long one', () => {
+        const texts = Array.from({ length: 600 }, (_, index) => `block ${index}`);
+        const { view, editor } = editorWith([], texts.map(text) as never);
+        caretIn(view, 'block 300', 1);
+        view.dispatch(view.state.tr.insertText('X'));
+
+        editor.setDoc(
+            blocksOf(
+                text('new'),
+                ...texts.slice(0, 300).map(text),
+                text('bXlock 300'),
+                ...texts.slice(301, 599).map(text),
+                text('last'),
+            ),
+        );
+
+        expect(caretAt(view)).toEqual({ block: 'bXlock 300', offset: 2 });
+        undo(view.state, view.dispatch);
+        expect(view.state.doc.child(301).textContent).toBe('block 300');
+    });
+
     it('keeps a host restyle when the user undoes their own change to the same block', () => {
         const { view, editor, api } = editorWith(shipped('text-style', 'align'), [text('one'), text('two')] as never);
         caretIn(view, 'one', 1);
@@ -525,6 +560,28 @@ describe('a document set by the host while the editor holds more than it reporte
         });
         return count;
     };
+
+    it('leaves an open draft alone in a block the host did not change, even handed back as a copy', () => {
+        const blocks = (second: string): RteDocumentOf => ({
+            version: 1,
+            blocks: [
+                { type: PARAGRAPH, children: [{ text: 'ab' }] },
+                { type: PARAGRAPH, children: [{ text: second }] },
+            ],
+        });
+        const { handle, view } = mount(blocks('cd'));
+        const tag = view.state.schema.nodes.tag;
+        if (!tag) {
+            throw new Error('no tag node');
+        }
+        view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, 2)));
+        view.dispatch(view.state.tr.replaceSelectionWith(tag.create({ value: null }), false));
+
+        handle.setDoc(blocks('CD'));
+
+        expect(drafts(view)).toBe(1);
+        expect(view.state.doc.child(1).textContent).toBe('CD');
+    });
 
     it('leaves an open draft, and the caret, alone when it is an echo of what is there', () => {
         const { handle, view, stored } = withDraft();

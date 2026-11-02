@@ -55,18 +55,96 @@ const childrenOf = (node: PmNode): PmNode[] => {
     return children;
 };
 
-/** Past this many comparisons, a changed stretch of children is replaced whole rather than matched up. */
-const MATCH_LIMIT = 250_000;
+/** Past this many inserted and removed children, a changed stretch is replaced whole rather than matched up. */
+const MATCH_LIMIT = 1000;
 
-/** Index pairs of equal children, in order: a longest common subsequence. */
+/**
+ * Adds to `pairs` the equal children of `before[head, endA)` and `after[head, endB)` in order, by Myers' diff:
+ * its cost grows with the number of changes rather than the length, so a few changes in a long document stay cheap.
+ */
+const matchStretch = (
+    pairs: [number, number][],
+    head: number,
+    endA: number,
+    endB: number,
+    same: (i: number, j: number) => boolean,
+): void => {
+    const lengthA = endA - head;
+    const lengthB = endB - head;
+    if (lengthA === 0 || lengthB === 0) {
+        return;
+    }
+    const limit = Math.min(lengthA + lengthB, MATCH_LIMIT);
+    const offset = limit + 1;
+    // The furthest index into `before` reached on each diagonal, one row per number of changes.
+    const frontier = Array.from({ length: 2 * limit + 3 }, () => 0);
+    const at = (row: readonly number[], diagonal: number): number => row[offset + diagonal] ?? 0;
+    const rows: number[][] = [];
+    let changes = -1;
+    for (let count = 0; count <= limit && changes === -1; count++) {
+        rows.push([...frontier]);
+        for (let diagonal = -count; diagonal <= count && changes === -1; diagonal += 2) {
+            let x = 0;
+            if (
+                diagonal === -count ||
+                (diagonal !== count && at(frontier, diagonal - 1) < at(frontier, diagonal + 1))
+            ) {
+                x = at(frontier, diagonal + 1);
+            } else {
+                x = at(frontier, diagonal - 1) + 1;
+            }
+            let y = x - diagonal;
+            while (x < lengthA && y < lengthB && same(head + x, head + y)) {
+                x += 1;
+                y += 1;
+            }
+            frontier[offset + diagonal] = x;
+            if (x >= lengthA && y >= lengthB) {
+                changes = count;
+            }
+        }
+    }
+    if (changes === -1) {
+        return;
+    }
+    const matched: [number, number][] = [];
+    let x = lengthA;
+    let y = lengthB;
+    for (let count = changes; count > 0; count--) {
+        const row = rows[count] ?? [];
+        const diagonal = x - y;
+        let previous = diagonal - 1;
+        if (diagonal === -count || (diagonal !== count && at(row, diagonal - 1) < at(row, diagonal + 1))) {
+            previous = diagonal + 1;
+        }
+        const previousX = at(row, previous);
+        const previousY = previousX - previous;
+        while (x > previousX && y > previousY) {
+            matched.push([head + x - 1, head + y - 1]);
+            x -= 1;
+            y -= 1;
+        }
+        x = previousX;
+        y = previousY;
+    }
+    while (x > 0 && y > 0) {
+        matched.push([head + x - 1, head + y - 1]);
+        x -= 1;
+        y -= 1;
+    }
+    pairs.push(...matched.reverse());
+};
+
+/** Index pairs of equal children, in order. A draft (an inline still being made) does not make a child differ. */
 const equalChildren = (before: readonly PmNode[], after: readonly PmNode[]): [number, number][] => {
+    const comparable = before.map(withoutDrafts);
     const same = (i: number, j: number): boolean => {
-        const a = before[i];
+        const a = comparable[i];
         const b = after[j];
         return a !== undefined && b !== undefined && a.eq(b);
     };
     // The shared start and end are matched directly (cheap, as reused nodes compare by identity), so only the
-    // changed stretch between them pays for, and counts against, the full comparison.
+    // changed stretch between them goes through the diff.
     let head = 0;
     while (head < before.length && head < after.length && same(head, head)) {
         head += 1;
@@ -83,35 +161,7 @@ const equalChildren = (before: readonly PmNode[], after: readonly PmNode[]): [nu
     for (let index = 0; index < head; index++) {
         pairs.push([index, index]);
     }
-    const endA = before.length - tail;
-    const endB = after.length - tail;
-    if ((endA - head) * (endB - head) <= MATCH_LIMIT) {
-        const width = endB - head + 1;
-        const lengths = Array.from({ length: (endA - head + 1) * width }, () => 0);
-        const lengthAt = (i: number, j: number): number => lengths[(i - head) * width + (j - head)] ?? 0;
-        for (let i = endA - 1; i >= head; i--) {
-            for (let j = endB - 1; j >= head; j--) {
-                if (same(i, j)) {
-                    lengths[(i - head) * width + (j - head)] = lengthAt(i + 1, j + 1) + 1;
-                } else {
-                    lengths[(i - head) * width + (j - head)] = Math.max(lengthAt(i + 1, j), lengthAt(i, j + 1));
-                }
-            }
-        }
-        let i = head;
-        let j = head;
-        while (i < endA && j < endB) {
-            if (same(i, j)) {
-                pairs.push([i, j]);
-                i += 1;
-                j += 1;
-            } else if (lengthAt(i + 1, j) >= lengthAt(i, j + 1)) {
-                i += 1;
-            } else {
-                j += 1;
-            }
-        }
-    }
+    matchStretch(pairs, head, before.length - tail, after.length - tail, same);
     for (let offset = tail; offset > 0; offset--) {
         pairs.push([before.length - offset, after.length - offset]);
     }
@@ -126,6 +176,23 @@ const syncInline = (transaction: Transaction, from: number, current: PmNode, tar
         return;
     }
     let { a: endA, b: endB } = end;
+    const node = transaction.doc.nodeAt(start);
+    const replacement = target.nodeAt(start - from);
+    if (
+        endA - start === 1 &&
+        endB - start === 1 &&
+        node !== null &&
+        replacement !== null &&
+        !node.isText &&
+        node.type === replacement.type &&
+        Mark.sameSet(node.marks, replacement.marks)
+    ) {
+        // An inline element whose value alone changed keeps its view and any selection on it.
+        for (const [name, value] of Object.entries(replacement.attrs)) {
+            transaction.setNodeAttribute(start, name, value);
+        }
+        return;
+    }
     // The ends can cross when the change is a repeat of its neighbours.
     const overlap = start - Math.min(endA, endB);
     if (overlap > 0) {
@@ -141,7 +208,8 @@ const syncInline = (transaction: Transaction, from: number, current: PmNode, tar
 
 /** One child into another: restyled in place when its content still fits, so a caret inside stays, then its content synced. */
 const syncChild = (transaction: Transaction, pos: number, current: PmNode, target: PmNode): void => {
-    if (current.eq(target)) {
+    // A draft (an inline still being made) is in no document the host holds, so it alone is no change.
+    if (current.eq(target) || withoutDrafts(current).eq(target)) {
         return;
     }
     if (current.type !== target.type || !Mark.sameSet(current.marks, target.marks)) {
