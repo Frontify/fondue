@@ -267,6 +267,100 @@ test.describe('TreeRoot rendering', () => {
         await expect(page.locator('body')).toBeFocused();
     });
 
+    test('a row removed after its dismissed menu, once focus has moved outside, does not pull focus into the tree', async ({
+        mount,
+        page,
+    }) => {
+        const rows = (withActionsRow: boolean) => (
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="1">
+                        <Tree.Label>Row1</Tree.Label>
+                    </Tree.Item>
+                    {withActionsRow && (
+                        <Tree.Item id="2">
+                            <Tree.Label>Row2</Tree.Label>
+                            <Tree.Action>
+                                <Dropdown.Root>
+                                    <Dropdown.Trigger>
+                                        <button type="button">Row2 actions</button>
+                                    </Dropdown.Trigger>
+                                    <Dropdown.Content>
+                                        <Dropdown.Item onSelect={() => {}}>Do thing</Dropdown.Item>
+                                    </Dropdown.Content>
+                                </Dropdown.Root>
+                            </Tree.Action>
+                        </Tree.Item>
+                    )}
+                    <Tree.Item id="3">
+                        <Tree.Label>Row3</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>
+        );
+        const component = await mount(rows(true));
+
+        await component.getByRole('button', { name: 'Row2 actions' }).click();
+        await expect(page.getByRole('menuitem', { name: 'Do thing' })).toBeVisible();
+        // Radix arms its outside-press dismissal a task after opening.
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
+        await page.mouse.click(5, 400);
+        await expect(page.getByRole('menuitem', { name: 'Do thing' })).toHaveCount(0);
+
+        await component.getByRole('button', { name: 'Outside' }).focus();
+        await component.update(rows(false));
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
+
+        await expect(component.getByRole('button', { name: 'Outside' })).toBeFocused();
+    });
+
+    test('a row removed after its focused action vanished and focus moved outside by keyboard does not pull focus into the tree', async ({
+        mount,
+        page,
+    }) => {
+        const rows = (withActionsRow: boolean, withAction: boolean) => (
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="1">
+                        <Tree.Label>Row1</Tree.Label>
+                    </Tree.Item>
+                    {withActionsRow && (
+                        <Tree.Item id="2">
+                            <Tree.Label>Row2</Tree.Label>
+                            {withAction && (
+                                <Tree.Action>
+                                    <button type="button">Row2 action</button>
+                                </Tree.Action>
+                            )}
+                        </Tree.Item>
+                    )}
+                    <Tree.Item id="3">
+                        <Tree.Label>Row3</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>
+        );
+        const component = await mount(rows(true, true));
+
+        await component.getByRole('button', { name: 'Row2 action' }).focus();
+        await component.update(rows(true, false));
+        await expect(page.locator('body')).toBeFocused();
+
+        await component.getByRole('button', { name: 'Outside' }).focus();
+        await component.update(rows(false, false));
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
+
+        await expect(component.getByRole('button', { name: 'Outside' })).toBeFocused();
+    });
+
     test('moves DOM focus into the tree when a row is removed while one of its actions has focus', async ({
         mount,
     }) => {
