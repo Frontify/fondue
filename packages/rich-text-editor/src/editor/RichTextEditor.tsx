@@ -78,7 +78,8 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     readonly?: boolean;
     /**
      * Draw the editor's own UI: the toolbar and the `/` menu. Off, only the
-     * content is rendered, still editable unless `readonly`.
+     * content is rendered, still editable unless `readonly`, along with the
+     * notice for a document from a newer version, which cannot be edited.
      *
      * The editor draws no box either way — no border, background or inset;
      * a host that wants a field wraps the editor in one.
@@ -281,7 +282,8 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                 {...(readOnly && isNamed ? { role: 'group', ...hostLabels } : {})}
             >
                 {toolbarFloats ? null : toolbar}
-                {newerVersion === null ? null : (
+                {/* A host that shows it read-only anyway offered no editing to explain. */}
+                {newerVersion === null || readonlyProp ? null : (
                     <Notice variant="warning" emphasis="weak" className={styles.notice}>
                         {labels.newerVersion}
                     </Notice>

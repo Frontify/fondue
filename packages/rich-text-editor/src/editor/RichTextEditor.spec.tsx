@@ -326,6 +326,15 @@ describe('a document from a newer format version', () => {
         expect(container.querySelector('[role="status"]')?.textContent).toBe('Nur lesbar');
     });
 
+    it('shows no notice when the host already shows it read-only', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} readonly />);
+
+        expect(container.textContent).toContain('from the future');
+        expect(container.querySelector('[role="status"]')).toBeNull();
+    });
+
     it('warns once for several editors showing the same version', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         teardown.push(() => warn.mockRestore());
