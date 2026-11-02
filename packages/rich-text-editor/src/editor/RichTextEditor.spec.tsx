@@ -855,6 +855,8 @@ describe('an editor that crashes', () => {
 
         expect(container.textContent).toContain('read me');
         expect(window.document.activeElement).toBe(window.document.body);
+        // Nothing to hand on, so the readonly view stays out of focus.
+        expect(container.querySelector('[tabindex="-1"]')).toBeNull();
     });
 
     it('is editable again when Retry finds the cause gone', () => {

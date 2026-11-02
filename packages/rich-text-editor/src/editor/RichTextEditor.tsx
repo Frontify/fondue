@@ -297,9 +297,10 @@ const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
     // the page. Either way the request is spent at once, and never claims focus when editing is turned on later.
     const focusPendingRef = useRef(focusOnMount && !readOnly);
     const readonlyViewRef = useRef<HTMLDivElement | null>(null);
-    const focusReadonlyView = focusOnMount && readOnly;
+    // Decided when this shell mounts, so the view is focusable only when it has a pressed Retry's focus to take.
+    const focusReadonlyView = useRef(focusOnMount && readOnly && focusWithinRef.current).current;
     useEffect(() => {
-        if (focusReadonlyView && focusWithinRef.current) {
+        if (focusReadonlyView) {
             readonlyViewRef.current?.focus();
         }
         // Only on mount: the request belongs to the Retry that mounted this shell.
