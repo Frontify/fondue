@@ -6,6 +6,10 @@
 
 /** Word's list data on a paragraph, as in `mso-list: l0 level2 lfo1`: list template, level and list instance. */
 const LIST_STYLE = /(?:^|;)\s*(?:--)?mso-list:\s*(l\d+)\s+level(\d+)(?:\s+(lfo\d+))?/i;
+/** A paragraph's own `mso-list`, which can also say `none`. */
+const OWN_LIST_STYLE = /(?:^|;)\s*(?:--)?mso-list:/i;
+/** The list data a `<style>` rule gave a paragraph, under its own name so the paragraph's own wins. */
+const RULE_LIST_STYLE = /(?:^|;)\s*--mso-list-rule:\s*(l\d+)\s+level(\d+)(?:\s+(lfo\d+))?/i;
 /** The style of the span that holds a list paragraph's marker. */
 const MARKER_STYLE = /(?:^|;)\s*(?:--)?mso-list:\s*ignore/i;
 /** Dot-separated numbers (`1.`, `1.1.`, `1.1`) or letters with a delimiter (`iv)`, `a.`) are numbered markers; a glyph (`·`, `o`, `§`) is a bullet. */
@@ -23,9 +27,11 @@ const MSO_LIST_PROPERTY = /(?<![\w-])mso-list(?=\s*:)/gi;
 /**
  * Keeps Word's list data past the engine, which merges the pasted `<style>`
  * rules into each element with the CSSOM and so drops every `mso-` property
- * the rules touch. A custom property survives that merge. Only an Office
- * paste, and only where CSS lives (style attributes and `<style>` bodies), so
- * text that mentions `mso-list` stays as written.
+ * the rules touch. A custom property survives that merge. The merge appends
+ * each rule after the element's own style, so the rules get a name of their
+ * own to keep a paragraph's own level and list. Only an Office paste, and only
+ * where CSS lives (style attributes and `<style>` bodies), so text that
+ * mentions `mso-list` stays as written.
  */
 export const keepOfficeListStyles = (html: string): string => {
     if (!OFFICE_MARKUP.test(html)) {
@@ -41,7 +47,7 @@ export const keepOfficeListStyles = (html: string): string => {
         .replaceAll(
             STYLE_ELEMENT,
             (_match, open: string, css: string, close: string) =>
-                open + css.replaceAll(MSO_LIST_PROPERTY, '--mso-list') + close,
+                open + css.replaceAll(MSO_LIST_PROPERTY, '--mso-list-rule') + close,
         );
 };
 
@@ -75,7 +81,11 @@ const readListParagraph = (element: Node): ListParagraph | undefined => {
     if (!(element instanceof HTMLElement) || element.localName !== 'p') {
         return undefined;
     }
-    const declared = LIST_STYLE.exec(element.getAttribute('style') ?? '');
+    const style = element.getAttribute('style') ?? '';
+    let declared = RULE_LIST_STYLE.exec(style);
+    if (OWN_LIST_STYLE.test(style)) {
+        declared = LIST_STYLE.exec(style);
+    }
     if (declared === null || Number(declared[2]) < 1) {
         return undefined;
     }

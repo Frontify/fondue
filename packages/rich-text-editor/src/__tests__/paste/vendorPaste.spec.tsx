@@ -387,6 +387,38 @@ describe('pasting from other applications', () => {
         });
     });
 
+    describe('list data in the class rule of a Word list style', () => {
+        const styled = (style: string, text: string): string =>
+            `<p class="MsoListNumber"${style}><span style="mso-list: Ignore">1.</span>${text}<o:p></o:p></p>`;
+        const withRule = (body: string): string =>
+            `<style>p.MsoListNumber { mso-list: l0 level1 lfo1; }</style>${body}`;
+
+        it('lists a paragraph that has only the rule', () => {
+            const doc = pasted(withRule(styled('', 'Scope')));
+
+            expect(outline(nodesOf(doc))).toEqual(['number: Scope']);
+        });
+
+        it('takes the level and list a paragraph writes itself over the rule', () => {
+            const doc = pasted(
+                withRule(
+                    styled('', 'Scope') +
+                        styled(' style="mso-list: l0 level2 lfo1"', 'Logos') +
+                        styled(' style="mso-list: l0 level1 lfo3"', 'Timeline'),
+                ),
+            );
+
+            expect(outline(nodesOf(doc))).toEqual(['number: Scope', '  number: Logos', 'number: Timeline']);
+            expect(nodesOf(doc).length).toBe(2);
+        });
+
+        it('keeps a paragraph that writes `mso-list: none` out of the list', () => {
+            const doc = pasted(withRule(styled(' style="mso-list: none"', 'Note')));
+
+            expect(outline(nodesOf(doc))).toEqual(['paragraph: Note']);
+        });
+    });
+
     describe('a bold element that only carries the Google Docs id', () => {
         it('stays bold, as it is no Docs wrapper', () => {
             const doc = pasted('<p>a <b id="docs-internal-guid-1">bold</b></p>');
