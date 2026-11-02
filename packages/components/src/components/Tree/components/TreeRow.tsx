@@ -83,8 +83,8 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
             data.onDoubleClick(event);
             return;
         }
-        // A double-click toggles a folder once, so its second click is dropped when the first already toggled.
-        if (event.detail === 2 && firstClickToggledRef.current) {
+        // A double-click toggles a folder once, so later clicks in the burst are dropped when the first already toggled.
+        if (event.detail >= 2 && firstClickToggledRef.current) {
             return;
         }
         const selectsOnly = !multiSelect && isFolder && !data.isDisabled && !item.isSelected();
