@@ -180,6 +180,19 @@ describe('a document set by the host', () => {
             }
         });
 
+        it('counts an inline element as one character when keeping the caret out of one', () => {
+            const withTag = (text: string): RteDocumentOf => ({
+                version: 1,
+                blocks: [{ type: PARAGRAPH, children: [{ text: 'x' }, { type: 'tag', name: 't' }, { text }] }],
+            });
+            const { handle, view } = mount(withTag('yb́'));
+            placeCaret(view, 4);
+
+            handle.setDoc(withTag('zć'));
+
+            expect(view.state.selection.$from.parentOffset).toBe(5);
+        });
+
         it('still applies a change that repeats its neighbours', () => {
             const { handle, view } = mount(paragraphs('aa'));
 
@@ -288,6 +301,63 @@ describe('a document set by the host', () => {
         handle.setDoc(docC);
 
         expect(view.state.doc.textContent).toBe('acd');
+    });
+});
+
+describe('a document set by the host that changes the blocks around the caret', () => {
+    const blocksOf = (...blocks: Record<string, unknown>[]): RteDocumentOf =>
+        ({ version: 1, blocks }) as unknown as RteDocumentOf;
+    const text = (value: string) => ({ type: PARAGRAPH, children: [{ text: value }] });
+    const caretAt = (view: EditorView) => ({
+        block: view.state.selection.$from.parent.textContent,
+        offset: view.state.selection.$from.parentOffset,
+    });
+    const caretIn = (view: EditorView, needle: string, offset: number) => {
+        let position = -1;
+        view.state.doc.descendants((node, at) => {
+            if (node.isTextblock && node.textContent === needle) {
+                position = at + 1 + offset;
+            }
+            return position === -1;
+        });
+        view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, position)));
+    };
+
+    it('keeps the caret in its block when the host only restyles it', () => {
+        const { view, editor } = editorWith(shipped('text-style'), [text('one'), text('two')] as never);
+        caretIn(view, 'one', 2);
+
+        editor.setDoc(blocksOf({ type: 'textStyle', style: 'heading1', children: [{ text: 'one' }] }, text('two')));
+
+        expect(view.state.doc.child(0).type.name).toBe('textStyle');
+        expect(caretAt(view)).toEqual({ block: 'one', offset: 2 });
+    });
+
+    it('keeps the caret in a to-do the host ticks', () => {
+        const todo = (checked: boolean) => ({
+            type: 'checkList',
+            children: [{ type: 'checkItem', checked, children: [text('task')] }],
+        });
+        const { view, editor } = editorWith(shipped('check-list'), [todo(false), text('after')] as never);
+        caretIn(view, 'task', 2);
+
+        editor.setDoc(blocksOf(todo(true), text('after')));
+
+        expect(view.state.doc.child(0).child(0).attrs.checked).toBe(true);
+        expect(caretAt(view)).toEqual({ block: 'task', offset: 2 });
+    });
+
+    it('keeps the caret in its list item when the host removes an item before it', () => {
+        const list = (...items: string[]) => ({
+            type: 'bulletList',
+            children: items.map((item) => ({ type: 'listItem', children: [text(item)] })),
+        });
+        const { view, editor } = editorWith(shipped('bullet-list'), [list('a', 'b', 'c')] as never);
+        caretIn(view, 'c', 1);
+
+        editor.setDoc(blocksOf(list('b', 'c')));
+
+        expect(caretAt(view)).toEqual({ block: 'c', offset: 1 });
     });
 });
 
@@ -563,11 +633,24 @@ describe('a document set by the host, over generated documents', () => {
             return textBlocks(children);
         });
 
-    /** A small change: one run's text or mark, or one block inserted or removed. */
+    /** A small change: one run's text or mark, one block inserted or removed, or one text block restyled. */
     const mutate = (random: Random, doc: RteDocumentOf): RteDocumentOf => {
         const copy = structuredClone(doc);
         const roots = copy.blocks as unknown as Json[];
-        const operation = below(random, 3);
+        const operation = below(random, 4);
+        // Only top-level text blocks: a list item holds paragraphs, never headings.
+        const restylable = roots.filter((member) => member.type === PARAGRAPH || member.type === 'textStyle');
+        if (operation === 3 && restylable.length > 0) {
+            const target = pick(random, restylable);
+            if (target.type === PARAGRAPH) {
+                target.type = 'textStyle';
+                target.style = 'heading2';
+            } else {
+                target.type = PARAGRAPH;
+                delete target.style;
+            }
+            return copy;
+        }
         const withRuns = textBlocks(roots).filter((member) => (member.children as Json[]).length > 0);
         if (operation === 0 && withRuns.length > 0) {
             const target = pick(random, pick(random, withRuns).children as Json[]);
@@ -604,14 +687,18 @@ describe('a document set by the host, over generated documents', () => {
         return copy;
     };
 
-    /** A random place for the caret inside some text block. */
+    const graphemes = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+
+    /** A random place for the caret inside some text block, between characters as a user's caret always is. */
     const caretPosition = (random: Random, view: EditorView): number => {
         const places: number[] = [];
         view.state.doc.descendants((node, position) => {
             if (node.isTextblock) {
-                for (let offset = 0; offset <= node.content.size; offset += 1) {
-                    places.push(position + 1 + offset);
+                const text = node.textBetween(0, node.content.size, undefined, '￼');
+                for (const { index } of graphemes.segment(text)) {
+                    places.push(position + 1 + index);
                 }
+                places.push(position + 1 + node.content.size);
             }
             return true;
         });
@@ -620,7 +707,7 @@ describe('a document set by the host, over generated documents', () => {
 
     const seeds = Array.from({ length: 200 }, (_, index) => index + 1);
 
-    it.each(seeds)('lands on exactly the new document (seed %i)', (seed) => {
+    it.each(seeds)('lands on exactly the new document, the caret on a character boundary (seed %i)', (seed) => {
         const random = seeded(seed);
         const before = generate(random);
         const after = seed % 5 === 0 ? generate(random) : mutate(random, before);
@@ -635,5 +722,10 @@ describe('a document set by the host, over generated documents', () => {
 
         expect(view.state.doc.eq(toEngineDocument(after, view.state.schema))).toBe(true);
         expect(onDocChange).not.toHaveBeenCalled();
+        const { $head } = view.state.selection;
+        expect($head.parent.isTextblock).toBe(true);
+        const text = $head.parent.textBetween(0, $head.parent.content.size, undefined, '￼');
+        const character = graphemes.segment(text).containing($head.parentOffset);
+        expect(character?.index ?? text.length).toBe($head.parentOffset);
     });
 });

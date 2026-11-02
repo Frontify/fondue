@@ -216,28 +216,46 @@ const mount = ({
             return;
         }
         // Replace only what differs, so the caret maps through the step and stays put.
-        const current = editorView.state.doc;
-        const start = current.content.findDiffStart(next.content);
-        const end = current.content.findDiffEnd(next.content);
-        if (start === null || end === null) {
-            agreedDoc = doc;
-            return;
+        const transaction = editorView.state.tr;
+        let start = transaction.doc.content.findDiffStart(next.content);
+        // A node that differs only in type or attributes (a paragraph made a heading, a to-do ticked) changes in
+        // place, since replacing it would push the caret out of it.
+        while (start !== null) {
+            const before = transaction.doc.nodeAt(start);
+            const after = next.nodeAt(start);
+            if (
+                before === null ||
+                after === null ||
+                before.isText ||
+                before.sameMarkup(after) ||
+                !before.content.eq(after.content) ||
+                !after.type.validContent(before.content)
+            ) {
+                break;
+            }
+            transaction.setNodeMarkup(start, after.type, after.attrs, after.marks);
+            start = transaction.doc.content.findDiffStart(next.content);
         }
-        let { a: endA, b: endB } = end;
-        // The ends can cross when the change is a repeat of its neighbours.
-        const overlap = start - Math.min(endA, endB);
-        if (overlap > 0) {
-            endA += overlap;
-            endB += overlap;
+        const end = transaction.doc.content.findDiffEnd(next.content);
+        if (start !== null && end !== null) {
+            let { a: endA, b: endB } = end;
+            // The ends can cross when the change is a repeat of its neighbours.
+            const overlap = start - Math.min(endA, endB);
+            if (overlap > 0) {
+                endA += overlap;
+                endB += overlap;
+            }
+            // A caret inside the change maps to its end, so the end must not split a character the user sees.
+            const remainder = graphemeRemainder(next, endB);
+            endA += remainder;
+            endB += remainder;
+            transaction.replace(start, endA, next.slice(start, endB));
         }
-        // A caret inside the change maps to its end, so the end must not split a character the user sees.
-        const remainder = graphemeRemainder(next, endB);
-        endA += remainder;
-        endB += remainder;
-        const transaction = editorView.state.tr.replace(start, endA, next.slice(start, endB));
-        transaction.setMeta(HOST_DOC, true);
-        transaction.setMeta('addToHistory', false);
-        editorView.dispatch(transaction);
+        if (transaction.docChanged) {
+            transaction.setMeta(HOST_DOC, true);
+            transaction.setMeta('addToHistory', false);
+            editorView.dispatch(transaction);
+        }
         agreedDoc = doc;
     };
 
