@@ -6,7 +6,7 @@ import { undo } from 'prosemirror-history';
 import { NodeSelection } from 'prosemirror-state';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { type RteBlockNode } from '#/core';
+import { defineBlock, PARAGRAPH, type RteBlockNode, type RtePlugin } from '#/core';
 
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
 
@@ -168,6 +168,40 @@ describe('toggling a list', () => {
         editor.api.lists.toggle('numberedList');
 
         expect(editor.stored()).toEqual([bullets('one'), list('numberedList', item(paragraph(text('two'))))]);
+    });
+
+    it('does not join a list with a neighbour of the same type whose attributes differ', () => {
+        const markedList: RtePlugin = {
+            id: 'marked-list',
+            blocks: {
+                markedList: defineBlock<{ marker: string }>({
+                    content: { items: 'markedItem' },
+                    defaults: { marker: 'dots' },
+                    toHtml: () => ({ tag: 'ol', children: true }),
+                    parse: [{ tag: 'ol.marked' }],
+                }),
+                markedItem: defineBlock({
+                    content: { blocks: [PARAGRAPH] },
+                    toHtml: () => ({ tag: 'li', children: true }),
+                    parse: [{ tag: 'li.marked' }],
+                }),
+            },
+        };
+        const marked = (marker: string, ...values: string[]): RteBlockNode =>
+            ({
+                type: 'markedList',
+                marker,
+                children: values.map((value) => ({ type: 'markedItem', children: [paragraph(text(value))] })),
+            }) as RteBlockNode;
+        const editor = editorWith(
+            [...plugins, markedList],
+            [marked('roman', 'one'), paragraph(text('two')), marked('dots', 'three')],
+        );
+        editor.caretAfter('tw');
+
+        editor.api.lists.toggle('markedList');
+
+        expect(editor.stored()).toEqual([marked('roman', 'one'), marked('dots', 'two', 'three')]);
     });
 
     it('is one undo step when it joins', () => {

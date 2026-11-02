@@ -101,11 +101,12 @@ const joinNeighbours = (transaction: Transaction, { node, pos }: { node: PmNode;
     // The one after first: joining the one before moves nothing that follows.
     const end = pos + node.nodeSize;
     const after = transaction.doc.resolve(end).nodeAfter;
-    if (after?.type === node.type && node.canAppend(after)) {
+    // A join keeps only the first list's attributes, so lists that differ in them stay apart.
+    if (after?.type === node.type && sameAttrs(after.attrs, node.attrs) && node.canAppend(after)) {
         transaction.join(end);
     }
     const before = transaction.doc.resolve(pos).nodeBefore;
-    if (before?.type === node.type && before.canAppend(node)) {
+    if (before?.type === node.type && sameAttrs(before.attrs, node.attrs) && before.canAppend(node)) {
         transaction.join(pos);
     }
 };
