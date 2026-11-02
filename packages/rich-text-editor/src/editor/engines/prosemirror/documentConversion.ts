@@ -120,9 +120,9 @@ const extrasOf = (stored: Record<string, unknown>, reserved: ReadonlySet<string>
 
 /** A node's extras as stored keys; a name its type declares belongs to the declared attribute, which wins. */
 const extrasFrom = (node: PmNode): Record<string, unknown> => {
-    const declared = node.type.spec.attrs ?? {};
+    const declared = new Set(Object.keys(node.type.spec.attrs ?? {}));
     const extras = (node.attrs[EXTRA_ATTR] ?? {}) as Record<string, unknown>;
-    return Object.fromEntries(Object.entries(extras).filter(([key]) => key === EXTRA_ATTR || !(key in declared)));
+    return Object.fromEntries(Object.entries(extras).filter(([key]) => key === EXTRA_ATTR || !declared.has(key)));
 };
 
 // --- RTE format -> engine ---

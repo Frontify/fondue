@@ -296,6 +296,16 @@ describe('keys no mounted plugin declares', () => {
         expect(roundTrip(stored)).toEqual(stored);
     });
 
+    it('include keys named like built-in object properties', () => {
+        const stored = {
+            version: 1,
+            constructor: 'on the document',
+            blocks: [{ type: PARAGRAPH, valueOf: 1, toString: 'x', hasOwnProperty: true, children: [] }],
+        };
+
+        expect(roundTrip(stored)).toEqual(stored);
+    });
+
     it('include alignment where no plugin mounted declares it, on any block', () => {
         const stored = {
             version: 1,
