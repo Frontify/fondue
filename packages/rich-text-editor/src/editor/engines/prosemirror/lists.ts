@@ -96,7 +96,10 @@ export const keepingUnknownBlocks =
         if (transaction === undefined) {
             return true;
         }
-        const spared = spareSelected ? state.selection : undefined;
+        let spared: { from: number; to: number } | undefined;
+        if (spareSelected) {
+            spared = state.selection;
+        }
         if (!keepsUnknownBlocks(state.doc, transaction.doc, spared)) {
             return handleRefusal;
         }
