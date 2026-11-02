@@ -26,7 +26,7 @@ export type RichTextEditorLabels = {
     noResults: string;
     /** Announced as the `/` menu narrows, when something matches. */
     commandCount: (count: number) => string;
-    /** Shown over a document a newer version of the editor saved, which is shown read-only. */
+    /** Shown above a document a newer version of the editor saved, which is shown read-only; left out when the host sets `readonly`. */
     newerVersion: string;
 };
 

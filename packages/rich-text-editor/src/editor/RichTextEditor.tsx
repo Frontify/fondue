@@ -74,12 +74,17 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * @default 'top'
      */
     toolbarPlacement?: ToolbarPlacement;
-    /** Show the content without allowing edits. The toolbar goes away with it. */
+    /**
+     * Show the content without allowing edits. The toolbar goes away with it.
+     * A document from a newer format version is always shown this way, with no
+     * `onChange` or `onBlur`, and with a notice saying why (`labels.newerVersion`)
+     * unless this is set.
+     */
     readonly?: boolean;
     /**
      * Draw the editor's own UI: the toolbar and the `/` menu. Off, only the
-     * content is rendered, still editable unless `readonly`, along with the
-     * notice for a document from a newer version, which cannot be edited.
+     * content is rendered, still editable unless `readonly` or the document is
+     * from a newer format version.
      *
      * The editor draws no box either way — no border, background or inset;
      * a host that wants a field wraps the editor in one.
