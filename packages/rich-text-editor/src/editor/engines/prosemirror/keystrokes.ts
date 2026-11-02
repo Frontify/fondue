@@ -64,7 +64,8 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
  * a German layout, Ctrl+Alt on Windows) must not run a Mod-Alt hotkey.
  */
 const isTextEntryKey = (event: KeyboardEvent): boolean =>
-    event.isComposing || event.keyCode === 229 || (event.getModifierState?.('AltGraph') ?? false);
+    // `keyCode` 229 marks the input method's keydowns that `isComposing` misses, just before and after a composition.
+    event.isComposing || event.keyCode === 229 || (event.getModifierState?.('AltGraph') ?? false); // NOSONAR
 
 /**
  * The plugin with its key handler skipping those keys. It declines them rather
