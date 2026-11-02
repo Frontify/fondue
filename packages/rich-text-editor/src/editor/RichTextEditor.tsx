@@ -133,13 +133,13 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     const reportedRef = useRef<RteDocumentOf | null>(ownDocumentRef.current);
     // A value the host pushes is already in its hands; only edits after it are owed.
     // One of the editor's own edits coming back as `value`, however late, is an
-    // echo: the host holds that one, but not the edits made since.
+    // echo: holding it in state is not having saved it, so it is still owed.
     const [emittedDocs] = useState(() => new WeakSet<RteDocumentOf>());
     const seenValueRef = useRef(value);
     if (value !== undefined && value !== seenValueRef.current) {
         seenValueRef.current = value;
-        reportedRef.current = value;
         if (!emittedDocs.has(value)) {
+            reportedRef.current = value;
             ownDocumentRef.current = value;
         }
     }
@@ -161,6 +161,11 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
 
     // A new key mounts the boundary and the shell afresh, from `document`.
     const [attempt, retry] = useReducer((count: number) => count + 1, 0);
+    // After a crash it mounts what the fallback showed, which can be newer than a `value` the host never updated.
+    let shellDocument = document;
+    if (attempt > 0 && ownDocumentRef.current !== null) {
+        shellDocument = ownDocumentRef.current;
+    }
 
     return (
         <EditorErrorBoundary
@@ -181,7 +186,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                 onBlur={reportBlur}
                 // The Retry button that had focus is gone with the fallback.
                 focusOnMount={attempt > 0}
-                document={document}
+                document={shellDocument}
                 ownDocumentRef={ownDocumentRef}
                 emittedDocs={emittedDocs}
                 registry={registry}

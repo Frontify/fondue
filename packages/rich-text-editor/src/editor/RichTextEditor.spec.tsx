@@ -896,6 +896,60 @@ describe('an editor that crashes', () => {
         expect(onChange).not.toHaveBeenCalled();
     });
 
+    it('hands a controlled host that saves on blur the edits made before the crash', () => {
+        silenceReact();
+        let crash = false;
+        const late: RtePlugin = {
+            id: 'late',
+            toolbarItem: ({ selection }) => {
+                if (crash && selection) {
+                    throw new Error('after the edit');
+                }
+                return <span>fine</span>;
+            },
+        };
+        const onBlur = vi.fn<(doc: RteDocument) => void>();
+        const Host = (): ReactNode => {
+            const [value, setValue] = useState<RteDocument>(() => paragraph('saved'));
+            return (
+                <RichTextEditor value={value} onChange={setValue} onBlur={onBlur} plugins={[late, ...defaultPlugins]} />
+            );
+        };
+        const { container, ready } = mount(() => <Host />);
+        ready();
+        crash = true;
+        paste(container, '<p>typed</p>');
+
+        expect(onBlur).toHaveBeenCalledOnce();
+        expect(JSON.stringify(onBlur.mock.calls[0]?.[0])).toContain('typed');
+    });
+
+    it('mounts on Retry what the fallback showed, though the host value is older', () => {
+        silenceReact();
+        let crash = false;
+        const late: RtePlugin = {
+            id: 'late',
+            toolbarItem: ({ selection }) => {
+                if (crash && selection) {
+                    throw new Error('after the edit');
+                }
+                return <span>fine</span>;
+            },
+        };
+        const { container, ready } = mount((change) => (
+            <RichTextEditor value={paragraph('saved')} onChange={change} plugins={[late, ...defaultPlugins]} />
+        ));
+        ready();
+        crash = true;
+        paste(container, '<p>typed</p>');
+        expect(container.textContent).toContain('typed');
+
+        crash = false;
+        retry(container);
+
+        expect(container.querySelector('[contenteditable]')?.textContent).toContain('typed');
+    });
+
     it('puts the keyboard back in the text after Retry', () => {
         silenceReact();
         let broken = true;
