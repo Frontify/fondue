@@ -304,6 +304,15 @@ describe('a web address next to a line break', () => {
         expect(editor.stored()).toEqual([paragraph(text('see'), lineBreak, link('https://example.com'), text(' x'))]);
     });
 
+    it('is linked by Enter when a break follows the caret', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com'), lineBreak, text('x'))]);
+        editor.caretAfter('https://example.com');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([paragraph(link('https://example.com')), paragraph(lineBreak, text('x'))]);
+    });
+
     it('is linked by Shift-Enter, which then breaks the line', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com'))]);
         editor.caretAfter('https://example.com');

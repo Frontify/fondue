@@ -241,6 +241,9 @@ const trimTrailingPunctuation = (address: string): string => {
 /** What reading a block as text gives for an inline element (a line break, a mention). */
 const INLINE_ELEMENT = '\uFFFC';
 
+/** How much text before the caret a rule reads, as the engine's input rules do. */
+const MAX_MATCH = 500;
+
 /**
  * What typing a space and pressing Enter share: the pattern that finds a token
  * before the caret, and where it sits once found. The pattern ends in the
@@ -343,10 +346,15 @@ const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] =
             undefined,
             INLINE_ELEMENT,
         );
-        if (after !== '' && !/^\s/.test(after)) {
+        if (after !== '' && !/^\s/.test(after) && !after.startsWith(INLINE_ELEMENT)) {
             return null;
         }
-        const textBefore = $from.parent.textBetween(0, $from.parentOffset, undefined, INLINE_ELEMENT);
+        const textBefore = $from.parent.textBetween(
+            Math.max(0, $from.parentOffset - MAX_MATCH),
+            $from.parentOffset,
+            undefined,
+            INLINE_ELEMENT,
+        );
         for (const { pattern, find } of matchers) {
             const match = pattern.exec(`${textBefore} `);
             if (!match) {
