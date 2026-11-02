@@ -85,6 +85,8 @@ test.describe('accessibility', () => {
     test('the editor has no axe violations', async ({ mount, page }) => {
         await mount(<RichTextEditor value={document} aria-label="Description" />);
         await expect(page.getByRole('textbox')).toBeVisible();
+        // The toolbar renders a frame after the text: scanning before it would leave it out.
+        await expect(page.getByRole('toolbar')).toBeVisible();
 
         expect(await violationsOf(page)).toEqual([]);
     });
