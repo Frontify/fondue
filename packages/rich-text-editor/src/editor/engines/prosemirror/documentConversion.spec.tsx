@@ -278,6 +278,18 @@ describe('the document boundary', () => {
         }).toThrow(TypeError);
     });
 
+    it('freezes nothing in production', () => {
+        vi.stubEnv('NODE_ENV', 'production');
+        try {
+            const handedOut = toRteDocument(toEngineDocument(document, schema));
+
+            expect(Object.isFrozen(handedOut)).toBe(false);
+            expect(Object.isFrozen(handedOut.blocks[0])).toBe(false);
+        } finally {
+            vi.unstubAllEnvs();
+        }
+    });
+
     it('hands out blocks that throw when mutated in development, as they are shared', () => {
         const handedOut = toRteDocument(toEngineDocument(document, schema));
         const block = handedOut.blocks[0] as { align?: string; children: { text?: string }[] };
