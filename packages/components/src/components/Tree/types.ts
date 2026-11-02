@@ -50,7 +50,8 @@ type TreeRowSharedProps = {
     onSelectChange?: (isSelected: boolean) => void;
     /**
      * Shows an inline rename input for the row (fully controlled). Enter/blur commits,
-     * Escape cancels; both fire `onRenamingChange(false)`.
+     * Escape cancels; both fire `onRenamingChange(false)`. Double-clicking a row that has
+     * `onRename` fires `onRenamingChange(true)` to request a rename.
      */
     isRenaming?: boolean;
     onRenamingChange?: (isRenaming: boolean) => void;

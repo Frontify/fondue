@@ -1547,6 +1547,63 @@ test.describe('TreeRoot renaming', () => {
         await expect(component.getByRole('textbox')).toHaveCount(0);
         expect(renames).toEqual([]);
     });
+
+    test('double-clicking a renameable row starts a rename', async ({ mount }) => {
+        const renamingChanges: Array<[string, boolean]> = [];
+        const component = await mount(
+            <TestHarness
+                renameable
+                initial={initial}
+                onRenamingChange={(id, isRenaming) => renamingChanges.push([id, isRenaming])}
+            />,
+        );
+
+        await component.getByRole('treeitem', { name: /First/ }).dblclick();
+
+        const input = component.getByRole('textbox');
+        await expect(input).toBeFocused();
+        await expect(input).toHaveValue('First');
+        expect(renamingChanges).toEqual([['1', true]]);
+    });
+
+    test('double-clicking a renameable folder starts a rename without expanding it', async ({ mount }) => {
+        const component = await mount(
+            <TestHarness
+                renameable
+                initial={[
+                    {
+                        id: 'f',
+                        name: 'Folder',
+                        isFolder: true,
+                        isExpanded: false,
+                        children: [{ id: 'c', name: 'Child', isFolder: false }],
+                    },
+                ]}
+            />,
+        );
+
+        await component.getByRole('treeitem', { name: /Folder/ }).dblclick();
+
+        await expect(component.getByRole('textbox')).toBeVisible();
+        await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-expanded', 'false');
+        await expect(component.getByRole('treeitem', { name: /Child/ })).toHaveCount(0);
+    });
+
+    test('double-clicking a row without onRename does not request a rename', async ({ mount }) => {
+        const renamingChanges: boolean[] = [];
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1" onRenamingChange={(isRenaming) => renamingChanges.push(isRenaming)}>
+                    <Tree.Label>Row</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Row/ }).dblclick();
+
+        await expect(component.getByRole('textbox')).toHaveCount(0);
+        expect(renamingChanges).toEqual([]);
+    });
 });
 
 test.describe('TreeRoot reorderable mode', () => {

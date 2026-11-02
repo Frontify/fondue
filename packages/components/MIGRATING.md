@@ -1875,7 +1875,7 @@ Changes:
     - `ignoreItemDoubleClick`, `expandOnSelect`, `levelConstraint`
 
 - **New features**:
-    - Inline renaming via `isRenaming` / `onRenamingChange` / `onRename` on rows
+    - Inline renaming via `isRenaming` / `onRenamingChange` / `onRename` on rows; double-clicking a renameable row requests a rename via `onRenamingChange(true)`
     - `isDisabled` on rows to freeze them at their prop-driven state
     - `onClick` on rows, fired on click or keyboard activation (Enter / Space)
     - `countDisabledInFolderState` on `Tree.Root` to control whether disabled descendants count toward a folder's checkbox state

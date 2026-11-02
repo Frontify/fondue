@@ -77,6 +77,11 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
     // In single-select, the first click on a folder only selects it — headless-tree would
     // also toggle it — and clicking the already-selected folder toggles it.
     const handleClick = (event: MouseEvent<HTMLDivElement>) => {
+        // A double-click requests a rename instead of re-selecting or toggling the row.
+        if (event.detail === 2 && item.canRename() && data.onRenamingChange) {
+            data.onRenamingChange(true);
+            return;
+        }
         if (!multiSelect && isFolder && !data.isDisabled && !item.isSelected()) {
             item.setFocused();
             item.getTree().setSelectedItems([item.getId()]);
