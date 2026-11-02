@@ -157,6 +157,21 @@ describe('outdenting a list item', () => {
         expect(editor.stored()).toEqual([bullets('one'), paragraph(text('two'))]);
     });
 
+    it('takes a middle item out of a list that starts later, the rest restarting at 1', () => {
+        const numbered = (start: number | undefined, ...texts: string[]): RteBlockNode =>
+            ({ ...list('numberedList', ...texts.map((value) => item(paragraph(text(value))))), start }) as RteBlockNode;
+        const editor = editorWith(plugins, [numbered(3, 'one', 'two', 'three', 'four')]);
+        editor.caretAfter('thr');
+
+        expect(editor.api.lists.outdent()).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            numbered(3, 'one', 'two'),
+            paragraph(text('three')),
+            numbered(undefined, 'four'),
+        ]);
+    });
+
     it('does nothing outside a list', () => {
         const editor = editorWith(plugins, [paragraph(text('one'))]);
 

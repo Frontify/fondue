@@ -44,6 +44,37 @@ describe('copying', () => {
     });
 });
 
+describe('copying part of a numbered list that starts later', () => {
+    /** The HTML a copy of the current selection puts on the clipboard. */
+    const copiedSelection = (editor: ReturnType<typeof editorWith>): string => {
+        const data = new DataTransfer();
+        editor.view.dom.dispatchEvent(
+            new ClipboardEvent('copy', { clipboardData: data, bubbles: true, cancelable: true }),
+        );
+        return data.getData('text/html');
+    };
+    const numbered = (...texts: string[]) =>
+        ({
+            type: 'numberedList',
+            start: 3,
+            children: texts.map((value) => ({ type: 'listItem', children: [paragraph(text(value))] })),
+        }) as unknown as Parameters<typeof editorWith>[1][number];
+
+    it('writes the list without its start when the copy begins past the first item', () => {
+        const editor = editorWith(defaultPlugins, [numbered('one', 'two', 'three')]);
+        editor.selectBetween('two', 'three');
+
+        expect(copiedSelection(editor)).not.toContain('start=');
+    });
+
+    it('keeps the start when the copy begins in the first item', () => {
+        const editor = editorWith(defaultPlugins, [numbered('one', 'two', 'three')]);
+        editor.selectBetween('one', 'two');
+
+        expect(copiedSelection(editor)).toContain('start="3"');
+    });
+});
+
 describe('pasting', () => {
     it('into an empty block keeps the first pasted block’s attributes', () => {
         const editor = editorWith(defaultPlugins, [paragraph()]);

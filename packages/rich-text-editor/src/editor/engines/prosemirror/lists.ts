@@ -37,6 +37,48 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
 };
 
+// Splitting a list
+
+/**
+ * Gives the second half of each list `transaction` split its type's default
+ * attributes: it is a new list, and the engine's split copies the first
+ * half's (a numbered list's start) onto it. A list whose first item was
+ * taken out keeps its own, as that list did not split.
+ */
+const restartSplitLists = (transaction: Transaction, itemTypeByList: Map<string, string>): Transaction => {
+    const isList = (node: PmNode): boolean => itemTypeByList.has(node.type.name);
+    // Each item that was not first in its list, with the item that was.
+    const firstBefore = new Map<PmNode, PmNode>();
+    transaction.before.descendants((node) => {
+        if (isList(node) && node.firstChild !== null) {
+            const first = node.firstChild;
+            for (const item of mapChildren(node, (child) => child).slice(1)) {
+                firstBefore.set(item, first);
+            }
+        }
+        return !node.isTextblock;
+    });
+    if (firstBefore.size === 0) {
+        return transaction;
+    }
+    const lists: { node: PmNode; pos: number }[] = [];
+    transaction.doc.descendants((node, pos) => {
+        if (isList(node) && node.firstChild !== null) {
+            lists.push({ node, pos });
+        }
+        return !node.isTextblock;
+    });
+    const firsts = new Set(lists.map(({ node }) => node.firstChild));
+    for (const { node, pos } of lists) {
+        const head = node.firstChild === null ? undefined : firstBefore.get(node.firstChild);
+        if (head !== undefined && firsts.has(head) && !node.hasMarkup(node.type)) {
+            // The same size, so the other positions stay valid.
+            transaction.setNodeMarkup(pos, undefined, null);
+        }
+    }
+    return transaction;
+};
+
 // The list half of the control API
 
 /** Implements `EditorControlApi['lists']` against the live view. */
@@ -52,7 +94,11 @@ export const createListApi = (
         if (!itemType) {
             return false;
         }
-        return command(itemType)(view.state, view.dispatch, view);
+        return command(itemType)(
+            view.state,
+            (transaction) => view.dispatch(restartSplitLists(transaction, itemTypeByList)),
+            view,
+        );
     };
 
     return {
@@ -141,7 +187,12 @@ export const liftOutOfLists = (
     for (let round = 0; round < MAX_NESTING; round++) {
         let lifted: Transaction | null = null;
         for (const itemType of itemTypes) {
-            if (liftListItem(itemType)(current, (transaction) => (lifted = transaction))) {
+            if (
+                liftListItem(itemType)(
+                    current,
+                    (transaction) => (lifted = restartSplitLists(transaction, itemTypeByList)),
+                )
+            ) {
                 break;
             }
         }

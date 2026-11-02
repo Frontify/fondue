@@ -5,7 +5,13 @@ import { EditorView } from 'prosemirror-view';
 
 import { type MountedDocument, type MountDocument, type MountOptions } from '#/editor/port';
 
-import { clipboardParser, clipboardSerializer, handlePasteByFeatures, handlePasteIntoEmptyBlock } from './clipboard';
+import {
+    clipboardParser,
+    clipboardSerializer,
+    handlePasteByFeatures,
+    handlePasteIntoEmptyBlock,
+    restartCopiedLists,
+} from './clipboard';
 import { createControlApi, type OpenEditors } from './controlApi';
 import { toEngineDocument, toRteDocument, withoutDrafts } from './documentConversion';
 import { keystrokePipeline } from './keystrokes';
@@ -104,6 +110,7 @@ const mount = ({
         markViews: createMarkViews(registry, api, liveViews, openEditors),
         clipboardSerializer: clipboardSerializer(schema),
         clipboardParser: clipboardParser(schema),
+        transformCopied: restartCopiedLists(registry.itemTypeByList),
         transformPastedHTML: keepOfficeListStyles,
         handlePaste: (pasteView, event, slice) =>
             handlePasteByFeatures(registry.pasteHandlers, api)(pasteView, event) ||

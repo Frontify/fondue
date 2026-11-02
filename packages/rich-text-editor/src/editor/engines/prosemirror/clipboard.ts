@@ -3,9 +3,10 @@
 import {
     DOMParser as PmDOMParser,
     DOMSerializer,
+    type Fragment,
     type Node as PmNode,
     type Schema,
-    type Slice,
+    Slice,
 } from 'prosemirror-model';
 import { type EditorView } from 'prosemirror-view';
 
@@ -45,6 +46,29 @@ class ClipboardSerializer extends DOMSerializer {
         return written;
     }
 }
+
+/**
+ * A list copied from past its first item loses its attributes (a numbered
+ * list's start), so it pastes as a new list, as the second half of a split one
+ * does. The slice opens on the selection's ancestors, one per level.
+ */
+export const restartCopiedLists =
+    (itemTypeByList: Map<string, string>) =>
+    (slice: Slice, view: EditorView): Slice => {
+        const { $from } = view.state.selection;
+        const restart = (fragment: Fragment, depth: number): Fragment => {
+            const first = fragment.firstChild;
+            if (first === null || depth > slice.openStart || depth > $from.depth) {
+                return fragment;
+            }
+            let node = first.copy(restart(first.content, depth + 1));
+            if (itemTypeByList.has(first.type.name) && $from.index(depth) > 0) {
+                node = first.type.create(null, node.content, first.marks);
+            }
+            return fragment.replaceChild(0, node);
+        };
+        return new Slice(restart(slice.content, 1), slice.openStart, slice.openEnd);
+    };
 
 export const clipboardSerializer = (schema: Schema): DOMSerializer => {
     const nodes = DOMSerializer.nodesFromSchema(schema);
