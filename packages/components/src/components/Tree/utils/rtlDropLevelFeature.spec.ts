@@ -1,7 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// @vitest-environment happy-dom
-
 import { type ItemInstance } from '@headless-tree/core';
 import { type DragEvent } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -70,8 +68,8 @@ describe('rtlDropLevelFeature', () => {
         const [received] = onDragOver.mock.calls[0] as [DragEvent<HTMLElement>];
         received.stopPropagation();
         received.preventDefault();
-        expect(event.stopPropagation).toHaveBeenCalledTimes(1);
-        expect(event.preventDefault).toHaveBeenCalledTimes(1);
+        expect(vi.mocked(event.stopPropagation).mock.contexts).toEqual([event]);
+        expect(vi.mocked(event.preventDefault).mock.contexts).toEqual([event]);
     });
 
     it('passes the same event object through in LTR', () => {
