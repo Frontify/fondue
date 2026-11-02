@@ -1296,6 +1296,25 @@ test.describe('TreeRoot expansion', () => {
         });
     }
 
+    test('a plain click right after a modifier click on a folder still opens it', async ({ mount, page }) => {
+        const component = await mount(<TestHarness multiSelect initial={doubleClickFolder} />);
+        const box = await component.getByRole('treeitem', { name: /Folder/ }).boundingBox();
+        if (!box) {
+            throw new Error('folder row has no box');
+        }
+
+        // A Shift-click does not toggle, so the plain click that follows in the same burst must.
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+        await page.keyboard.down('Shift');
+        await page.mouse.down({ clickCount: 1 });
+        await page.mouse.up({ clickCount: 1 });
+        await page.keyboard.up('Shift');
+        await page.mouse.down({ clickCount: 2 });
+        await page.mouse.up({ clickCount: 2 });
+
+        await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-expanded', 'true');
+    });
+
     test('double-clicking a folder in multi-select opens it once', async ({ mount }) => {
         const component = await mount(<TestHarness multiSelect initial={doubleClickFolder} />);
 

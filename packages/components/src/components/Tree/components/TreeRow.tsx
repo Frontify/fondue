@@ -88,7 +88,8 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
             return;
         }
         const selectsOnly = !multiSelect && isFolder && !data.isDisabled && !item.isSelected();
-        firstClickToggledRef.current = isFolder && !selectsOnly;
+        // headless-tree skips the toggle on modifier clicks, so those must not mark the burst as toggled.
+        firstClickToggledRef.current = isFolder && !selectsOnly && !(event.ctrlKey || event.shiftKey || event.metaKey);
         if (selectsOnly) {
             item.setFocused();
             item.getTree().setSelectedItems([item.getId()]);
