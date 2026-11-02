@@ -62,12 +62,12 @@ export const plainTextOf = (raw: unknown): string => {
     if (!Array.isArray(children)) {
         return '';
     }
-    // Blocks hold children of their own; a line between them keeps a list's items apart.
-    let separator = '';
+    const parts = children.map(plainTextOf);
+    // Blocks hold children of their own; a line between them keeps a list's items apart, a block with no words adds none.
     if (children.some((child) => Array.isArray((child as { children?: unknown } | null)?.children))) {
-        separator = '\n';
+        return parts.filter((part) => part !== '').join('\n');
     }
-    return children.map(plainTextOf).join(separator);
+    return parts.join('');
 };
 
 // --- Reading engine nodes: shared by both directions and the control API ---

@@ -287,6 +287,12 @@ describe('the document boundary', () => {
 
                 expect(plainTextOf(list)).toBe('one\nin\ntwo');
             });
+
+            it('adds no empty line for a block with no words', () => {
+                const blocks = { type: 'callout', children: [{ type: 'divider' }, words('a'), words(''), words('b')] };
+
+                expect(plainTextOf(blocks)).toBe('a\nb');
+            });
         });
     });
 
