@@ -237,7 +237,7 @@ export const SingleSelectNestedFolders: Story = {
             description: {
                 story:
                     'Single-select across nested folders: any row — item or folder, at any depth — can be the ' +
-                    'one selected row. A click on a folder only selects it; a double-click or any chevron ' +
+                    'one selected row. A click on a folder only selects it; a double-click, Enter, or any chevron ' +
                     'expands or collapses it. The `isSelected` and `isExpanded` flags ' +
                     'emitted via `onChange` are fed straight back into the tree.',
             },

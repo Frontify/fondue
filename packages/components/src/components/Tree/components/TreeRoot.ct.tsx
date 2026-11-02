@@ -1272,6 +1272,19 @@ test.describe('TreeRoot expansion', () => {
         await expect(row).toHaveAttribute('aria-expanded', 'false');
     });
 
+    test('Enter on a folder selects and opens it, and Space closes it', async ({ mount }) => {
+        const component = await mount(<TestHarness initial={doubleClickFolder} />);
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+
+        await row.focus();
+        await row.press('Enter');
+        await expect(row).toHaveAttribute('aria-selected', 'true');
+        await expect(row).toHaveAttribute('aria-expanded', 'true');
+
+        await row.press(' ');
+        await expect(row).toHaveAttribute('aria-expanded', 'false');
+    });
+
     test('a triple-click on a folder opens it once', async ({ mount }) => {
         const component = await mount(<TestHarness initial={doubleClickFolder} />);
         const row = component.getByRole('treeitem', { name: /Folder/ });
