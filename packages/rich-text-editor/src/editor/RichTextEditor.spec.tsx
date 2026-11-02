@@ -810,12 +810,15 @@ describe('an editor that crashes', () => {
         expect(container.querySelector('[contenteditable]')).toBeNull();
         expect(retryButton(container)).toBeDefined();
         expect(onChange).not.toHaveBeenCalled();
+        // Unnamed by the host, it reads as text, as the readonly view does.
+        expect(container.querySelector('[role="group"]')).toBeNull();
     });
 
-    it('shows the fallback again when Retry meets the same failure', () => {
+    it('shows the fallback again when Retry meets the same failure, and reports it again', () => {
         silenceReact();
+        const onError = errorSpy();
         const { container } = mount(() => (
-            <RichTextEditor value={paragraph('still here')} plugins={[throwingPlugin()]} />
+            <RichTextEditor value={paragraph('still here')} plugins={[throwingPlugin()]} onError={onError} />
         ));
 
         retry(container);
@@ -823,6 +826,23 @@ describe('an editor that crashes', () => {
         expect(container.textContent).toContain('still here');
         // The button that had focus was replaced: its successor takes the keyboard back.
         expect(window.document.activeElement).toBe(retryButton(container));
+        expect(onError).toHaveBeenCalledTimes(2);
+    });
+
+    it('leaves focus alone after a Retry pressed without taking focus, as a mouse press may', () => {
+        silenceReact();
+        const state = { broken: true };
+        const { container } = mount(() => (
+            <RichTextEditor value={callout('read me')} plugins={[calloutPlugin(state)]} readonly />
+        ));
+        state.broken = false;
+
+        act(() => {
+            retryButton(container).click();
+        });
+
+        expect(container.textContent).toContain('read me');
+        expect(window.document.activeElement).toBe(window.document.body);
     });
 
     it('is editable again when Retry finds the cause gone', () => {
@@ -1377,6 +1397,57 @@ describe('an editor that crashes', () => {
 
         expect(container.textContent).toContain('The editor stopped working.');
         expect(reportError).toHaveBeenCalledWith(failure);
+    });
+
+    it('rethrows a throwing host onError on its own task where reportError is missing', () => {
+        silenceReact();
+        vi.useFakeTimers();
+        teardown.push(() => vi.useRealTimers());
+        vi.stubGlobal('reportError', undefined);
+        teardown.push(() => vi.unstubAllGlobals());
+        const failure = new Error('host onError broke');
+        const { container } = mount(() => (
+            <RichTextEditor
+                value={paragraph('still here')}
+                plugins={[throwingPlugin()]}
+                onError={() => {
+                    throw failure;
+                }}
+            />
+        ));
+
+        expect(container.textContent).toContain('The editor stopped working.');
+        expect(() => vi.runAllTimers()).toThrow(failure);
+    });
+
+    it('hands onError an earlier edit the host restores along with other plugins', () => {
+        silenceReact();
+        const fine: RtePlugin = { id: 'late', toolbarItem: () => <span>fine</span> };
+        const bad: RtePlugin = {
+            id: 'other',
+            toolbarItem: () => {
+                throw new Error('with other plugins');
+            },
+        };
+        const onError = errorSpy();
+        const { container, onChange, rerender, ready } = mount((change) => (
+            <RichTextEditor
+                value={paragraph('V0')}
+                onChange={change}
+                plugins={[fine, ...defaultPlugins]}
+                onError={onError}
+            />
+        ));
+        ready();
+        paste(container, '<p>one</p>');
+        paste(container, '<p>two</p>');
+        const first = onChange.mock.calls[0]?.[0];
+
+        // New plugin ids remount the engine, which then shows `first` instead of ignoring it as an echo.
+        rerender(<RichTextEditor value={first} plugins={[bad, ...defaultPlugins]} onError={onError} />);
+
+        expect(onError).toHaveBeenCalledOnce();
+        expect(onError.mock.calls[0]?.[1].document).toBe(first);
     });
 
     it('catches a node view that throws inside the view portals', () => {
