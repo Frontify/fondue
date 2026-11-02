@@ -301,7 +301,7 @@ describe('a document from a newer format version', () => {
         expect(warn).toHaveBeenCalledTimes(1);
         expect(warn).toHaveBeenCalledWith(expect.stringContaining(`version ${version}`));
         expect(container.querySelector('[role="status"]')?.textContent).toBe(
-            'This content was saved by a newer version of the editor and can only be viewed here.',
+            'This content was saved with a newer version of the editor. Try reloading the page to edit it.',
         );
 
         act(() => {
