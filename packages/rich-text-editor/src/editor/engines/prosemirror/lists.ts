@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Node as PmNode, type NodeType as PmNodeType, type Schema, type Slice } from 'prosemirror-model';
+import { type Node as PmNode, type NodeType as PmNodeType, type Schema } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem as pmSplitListItem, wrapInList } from 'prosemirror-schema-list';
-import { type Command, type EditorState, Plugin, type Transaction } from 'prosemirror-state';
+import { type Command, type EditorState, type Transaction } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry } from '#/core';
@@ -40,68 +40,59 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
 // Splitting a list
 
 /**
- * Gives the second half of each list that `transactions` split its type's
- * default attributes: it is a new list, and the engine's split copies the
- * first half's (a numbered list's start) onto it. Of the lists a list with
- * attributes became, the first keeps them, even when its first item was
- * taken out.
+ * Gives the second half of each list `transaction` split its type's default
+ * attributes: it is a new list, and the engine's split copies the first
+ * half's (a numbered list's start) onto it. A list whose first item was
+ * taken out keeps its own, as that list did not split.
  */
-const restartSplitLists = (
-    before: PmNode,
-    transactions: readonly Transaction[],
-    transaction: Transaction,
-    itemTypeByList: Map<string, string>,
-): Transaction | null => {
-    const attributed: { list: PmNode; pos: number }[] = [];
-    before.descendants((node, pos) => {
-        if (itemTypeByList.has(node.type.name) && !node.hasMarkup(node.type)) {
-            attributed.push({ list: node, pos });
+const restartSplitLists = (transaction: Transaction, itemTypeByList: Map<string, string>): Transaction => {
+    const isList = (node: PmNode): boolean => itemTypeByList.has(node.type.name);
+    // Each item that was not first in its list, with the item that was.
+    const firstBefore = new Map<PmNode, PmNode>();
+    // Items that sit in more than one list (a copy-drag reuses the nodes) say nothing of which list split.
+    const seen = new Set<PmNode>();
+    const shared = new Set<PmNode>();
+    transaction.before.descendants((node) => {
+        if (isList(node) && node.firstChild !== null) {
+            const first = node.firstChild;
+            for (const [index, item] of mapChildren(node, (child) => child).entries()) {
+                if (seen.has(item)) {
+                    shared.add(item);
+                }
+                seen.add(item);
+                if (index > 0) {
+                    firstBefore.set(item, first);
+                }
+            }
         }
         return !node.isTextblock;
     });
-    const map = (pos: number, assoc: number): number =>
-        transactions.reduce((mapped, each) => each.mapping.map(mapped, assoc), pos);
-    const { doc } = transaction;
-    for (const { list, pos } of attributed) {
-        // A split leaves the halves where the list stood, at its depth.
-        const depth = before.resolve(pos).depth;
-        let first = true;
-        doc.nodesBetween(map(pos, 1), map(pos + list.nodeSize, -1), (node, at) => {
-            if (!node.hasMarkup(list.type, list.attrs) || doc.resolve(at).depth !== depth) {
-                return !node.isTextblock;
-            }
-            if (!first) {
-                // The same size, so the other positions stay valid.
-                transaction.setNodeMarkup(at, undefined, null);
-            }
-            first = false;
-            return false;
-        });
+    for (const item of shared) {
+        firstBefore.delete(item);
     }
-    if (!transaction.docChanged) {
-        return null;
+    if (firstBefore.size === 0) {
+        return transaction;
+    }
+    const lists: { node: PmNode; pos: number }[] = [];
+    transaction.doc.descendants((node, pos) => {
+        if (isList(node) && node.firstChild !== null) {
+            lists.push({ node, pos });
+        }
+        return !node.isTextblock;
+    });
+    const firsts = new Set(lists.map(({ node }) => node.firstChild));
+    for (const { node, pos } of lists) {
+        if (node.firstChild === null) {
+            continue;
+        }
+        const head = firstBefore.get(node.firstChild);
+        if (head !== undefined && !shared.has(head) && firsts.has(head) && !node.hasMarkup(node.type)) {
+            // The same size, so the other positions stay valid.
+            transaction.setNodeMarkup(pos, undefined, null);
+        }
     }
     return transaction;
 };
-
-/** Only a replace whose slice opens or closes a node can split one; typing never does. */
-const mightSplit = (transaction: Transaction): boolean =>
-    transaction.steps.some((step) => {
-        // The replace steps are the ones with a slice; the step classes live in a package this one does not depend on.
-        const { slice } = step as { slice?: Slice };
-        return slice !== undefined && (slice.openStart > 0 || slice.openEnd > 0);
-    });
-
-/** Restarts the lists any change splits: list commands, a block inserted or pasted inside a list. */
-export const restartSplitListsPlugin = (itemTypeByList: Map<string, string>): Plugin =>
-    new Plugin({
-        appendTransaction: (transactions, oldState, newState) => {
-            if (!transactions.some(mightSplit)) {
-                return null;
-            }
-            return restartSplitLists(oldState.doc, transactions, newState.tr, itemTypeByList);
-        },
-    });
 
 // The list half of the control API
 
@@ -118,7 +109,11 @@ export const createListApi = (
         if (!itemType) {
             return false;
         }
-        return command(itemType)(view.state, view.dispatch, view);
+        return command(itemType)(
+            view.state,
+            (transaction) => view.dispatch(restartSplitLists(transaction, itemTypeByList)),
+            view,
+        );
     };
 
     return {
@@ -207,7 +202,12 @@ export const liftOutOfLists = (
     for (let round = 0; round < MAX_NESTING; round++) {
         let lifted: Transaction | null = null;
         for (const itemType of itemTypes) {
-            if (liftListItem(itemType)(current, (transaction) => (lifted = transaction))) {
+            if (
+                liftListItem(itemType)(
+                    current,
+                    (transaction) => (lifted = restartSplitLists(transaction, itemTypeByList)),
+                )
+            ) {
                 break;
             }
         }

@@ -172,16 +172,6 @@ describe('outdenting a list item', () => {
         expect(editor.stored()?.slice(0, 2)).toEqual([paragraph(text('first')), numbered(3, 'two', 'three')]);
     });
 
-    it('restarts the second half of a list that a block inserted in it splits', () => {
-        const editor = editorWith(shipped('numbered-list', 'quote'), [numbered(3, 'one', 'two', 'three')]);
-        editor.caretAfter('two');
-
-        editor.view.dispatch(editor.view.state.tr.replaceSelectionWith(editor.view.state.schema.nodes.quote!.create()));
-
-        const lists = editor.stored()?.filter((block) => block.type === 'numberedList');
-        expect(lists?.map((block) => (block as { start?: number }).start)).toEqual([3, undefined]);
-    });
-
     it('takes a middle item out of a list that starts later, the rest restarting at 1', () => {
         const editor = editorWith(plugins, [numbered(3, 'one', 'two', 'three', 'four')]);
         editor.caretAfter('thr');
