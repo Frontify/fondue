@@ -159,8 +159,16 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         }
     };
 
+    // Whether focus is in the editor's UI, so a fallback takes it only when the crash took it away.
+    const focusWithinRef = useRef(false);
+
     // A new key mounts the boundary and the shell afresh, from `document`.
     const [attempt, retry] = useReducer((count: number) => count + 1, 0);
+    const onRetry = (): void => {
+        // The Retry button goes with the fallback; a fallback that replaces the shell again inherits its focus.
+        focusWithinRef.current = true;
+        retry();
+    };
     // After a crash it mounts what the fallback showed, which can be newer than a `value` the host never updated.
     let shellDocument = document;
     if (attempt > 0 && ownDocumentRef.current !== null) {
@@ -177,8 +185,8 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                     ownDocumentRef={ownDocumentRef}
                     registry={registry}
                     labels={labels}
-                    onRetry={retry}
-                    focusOnMount={attempt > 0}
+                    onRetry={onRetry}
+                    focusWithinRef={focusWithinRef}
                 />
             }
         >
@@ -187,6 +195,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                 onBlur={reportBlur}
                 // The Retry button that had focus is gone with the fallback.
                 focusOnMount={attempt > 0}
+                focusWithinRef={focusWithinRef}
                 document={shellDocument}
                 ownDocumentRef={ownDocumentRef}
                 emittedDocs={emittedDocs}
@@ -207,6 +216,8 @@ type ShellProps<TBlock extends RteBlockNode> = Omit<EditorShellProps<TBlock>, 'v
     labels: RichTextEditorLabels;
     /** Take focus once the editor has mounted, as after Retry. */
     focusOnMount: boolean;
+    /** Kept up to date with whether focus is in the editor, for the fallback a crash puts in its place. */
+    focusWithinRef: MutableRefObject<boolean>;
 };
 
 const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
@@ -216,6 +227,7 @@ const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
     registry,
     labels,
     focusOnMount,
+    focusWithinRef,
     onChange,
     toolbarPlacement = 'top',
     readonly: readOnly = false,
@@ -280,6 +292,10 @@ const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
     useEffect(() => {
         if (hadFocusRef.current && !focusWithin && handle !== null) {
             onBlur?.(handle.document() as RteDocumentOf<TBlock>);
+        }
+        // Changes only: the mount is not one, and keeps the focus a pressed Retry handed over for a toolbar that throws on mount.
+        if (hadFocusRef.current !== focusWithin) {
+            focusWithinRef.current = focusWithin;
         }
         hadFocusRef.current = focusWithin;
         // Only the change of focus is the event; the callback is read when it happens.

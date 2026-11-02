@@ -62,7 +62,7 @@ export const EditorFallback = ({
     registry,
     labels,
     onRetry,
-    focusOnMount,
+    focusWithinRef,
 }: {
     value: RteDocumentOf | undefined;
     /** Read now, not when the fallback was built: the editor reported edits after that. */
@@ -70,21 +70,21 @@ export const EditorFallback = ({
     registry: PluginRegistry;
     labels: RichTextEditorLabels;
     onRetry: () => void;
-    /** Take focus on mount, as when Retry failed again and the button that had focus is gone. */
-    focusOnMount: boolean;
+    /** Whether focus was in what this replaces: the editor, or a fallback whose Retry was pressed. */
+    focusWithinRef: RefObject<boolean>;
 }): ReactNode => {
     const retryRef = useRef<HTMLButtonElement | null>(null);
     useEffect(() => {
         const button = retryRef.current;
-        if (!focusOnMount || button === null) {
+        if (!focusWithinRef.current || button === null) {
             return;
         }
-        // Only when focus was lost with the button that held it, never taken from where the user moved it.
+        // Only when focus was lost with the element that held it, never taken from where the user moved it.
         const { activeElement, body } = button.ownerDocument;
         if (activeElement === null || activeElement === body) {
             button.focus();
         }
-    }, [focusOnMount]);
+    }, [focusWithinRef]);
     // What the editor showed, which is what a crash reports: an echoed `value` can be older.
     const document = ownDocumentRef.current ?? value;
     if (document === undefined) {

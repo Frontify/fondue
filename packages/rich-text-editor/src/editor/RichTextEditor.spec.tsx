@@ -986,6 +986,64 @@ describe('an editor that crashes', () => {
         expect(window.document.activeElement).toBe(elsewhere);
     });
 
+    it('hands the keyboard to Retry when the editor crashes while it has focus', () => {
+        silenceReact();
+        let broken = false;
+        const flaky: RtePlugin = {
+            id: 'flaky',
+            toolbarItem: () => {
+                if (broken) {
+                    throw new Error('while typing');
+                }
+                return <span>fine</span>;
+            },
+        };
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('one')} plugins={[flaky]} />
+        ));
+        ready();
+        act(() => editableIn(container).focus());
+
+        broken = true;
+        rerender(<RichTextEditor value={paragraph('two')} plugins={[flaky]} />);
+
+        expect(window.document.activeElement).toBe(retryButton(container));
+    });
+
+    it('does not take focus when it crashes after a Retry with focus already gone', () => {
+        silenceReact();
+        vi.useFakeTimers();
+        teardown.push(() => vi.useRealTimers());
+        let broken = true;
+        const flaky: RtePlugin = {
+            id: 'flaky',
+            toolbarItem: () => {
+                if (broken) {
+                    throw new Error('until fixed');
+                }
+                return <span>fine</span>;
+            },
+        };
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('one')} plugins={[flaky]} />
+        ));
+        broken = false;
+        retry(container);
+        ready();
+        expect(editableIn(container).contains(window.document.activeElement)).toBe(true);
+        act(() => {
+            (window.document.activeElement as HTMLElement).blur();
+            vi.runAllTimers();
+        });
+        expect(window.document.activeElement).toBe(window.document.body);
+
+        broken = true;
+        rerender(<RichTextEditor value={paragraph('two')} plugins={[flaky]} />);
+
+        expect(retryButton(container)).toBeDefined();
+        expect(window.document.activeElement).toBe(window.document.body);
+    });
+
     it('puts the keyboard back in the text after Retry', () => {
         silenceReact();
         let broken = true;
