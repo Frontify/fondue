@@ -52,6 +52,17 @@ const typeHexAndPressEnter = (hex: string): void => {
     });
 };
 
+const switchFormat = (format: 'HEX' | 'RGBA'): void => {
+    act(() => document.querySelector<HTMLElement>('[data-test-id="color-picker-select-format"]')?.click());
+    const option = [...document.querySelectorAll<HTMLElement>('[role="option"]')].find(
+        (candidate) => candidate.textContent === format,
+    );
+    if (option === undefined) {
+        throw new Error(`no ${format} option`);
+    }
+    act(() => option.click());
+};
+
 const press = (label: string): void => {
     const button = [...document.querySelectorAll('button')].find((candidate) => candidate.textContent === label);
     if (button === undefined) {
@@ -92,16 +103,8 @@ describe('the colour flyout', () => {
 
     it('changes nothing on Save after only switching the value format', () => {
         const { toggle, set } = mount({});
-        for (const format of ['RGBA', 'HEX']) {
-            act(() => document.querySelector<HTMLElement>('[data-test-id="color-picker-select-format"]')?.click());
-            const option = [...document.querySelectorAll<HTMLElement>('[role="option"]')].find(
-                (candidate) => candidate.textContent === format,
-            );
-            if (option === undefined) {
-                throw new Error(`no ${format} option`);
-            }
-            act(() => option.click());
-        }
+        switchFormat('RGBA');
+        switchFormat('HEX');
         expect(document.querySelector('input[type="text"]')).not.toBeNull();
         press('Save');
 
@@ -113,6 +116,16 @@ describe('the colour flyout', () => {
         const { toggle, set } = mount({});
         typeHex('00ff00');
         typeHexAndPressEnter('00ff0');
+
+        expect(toggle).not.toHaveBeenCalled();
+        expect(set).not.toHaveBeenCalled();
+    });
+
+    it('changes nothing for an invalid hex value left behind by a switch to RGBA', () => {
+        const { toggle, set } = mount({});
+        typeHex('zz');
+        switchFormat('RGBA');
+        press('Save');
 
         expect(toggle).not.toHaveBeenCalled();
         expect(set).not.toHaveBeenCalled();

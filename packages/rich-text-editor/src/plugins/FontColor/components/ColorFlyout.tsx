@@ -170,7 +170,13 @@ export const ColorFlyout = ({
                         onInput={(event) => {
                             // A complete hex value updates the picker at once; a partial one waits.
                             const target = event.target as HTMLInputElement;
-                            choseRef.current = true;
+                            // A partial hex value is no choice yet.
+                            if (
+                                !target.matches('input[type="text"]') ||
+                                typedHex(pickerRef.current, draft?.alpha) !== undefined
+                            ) {
+                                choseRef.current = true;
+                            }
                             if (target.matches('input[type="text"]') && /^#?[\dA-Fa-f]{6}$/.test(target.value)) {
                                 setDraft(typedHex(pickerRef.current, draft?.alpha));
                             }
