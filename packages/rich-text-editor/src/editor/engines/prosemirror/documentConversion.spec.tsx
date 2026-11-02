@@ -179,6 +179,31 @@ describe('the document boundary', () => {
                 warn.mockRestore();
             }
         });
+
+        it('is handed out frozen in development, however deep, as the engine holds the same objects', () => {
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            try {
+                const handedOut = toRteDocument(toEngineDocument(structuredClone(withUnknown), schema));
+                const [paragraph, callout, list] = handedOut.blocks as unknown as [
+                    { children: [{ highlight: { color: string } }, { name: string }] },
+                    { children: [{ children: [{ text: string }] }] },
+                    { children: [{ children: [{ rows: unknown[] }] }] },
+                ];
+
+                expect(() => {
+                    paragraph.children[0].highlight.color = 'red';
+                }).toThrow(TypeError);
+                expect(() => {
+                    paragraph.children[1].name = 'smile';
+                }).toThrow(TypeError);
+                expect(() => {
+                    callout.children[0].children[0].text = 'x';
+                }).toThrow(TypeError);
+                expect(() => list.children[0].children[0].rows.push([])).toThrow(TypeError);
+            } finally {
+                warn.mockRestore();
+            }
+        });
     });
 
     it('drops the empty text run an empty document is written with', () => {

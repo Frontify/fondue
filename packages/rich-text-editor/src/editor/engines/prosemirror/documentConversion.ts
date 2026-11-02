@@ -238,24 +238,23 @@ const convertedBlocks = new WeakMap<PmNode, RteBlockNode>();
  */
 const engineNodeOf = new WeakMap<RteBlockNode, PmNode>();
 
-/** Shared between documents, so a host mutation would leak into others: it throws in development instead. */
-const frozenInDevelopment = <T extends object>(value: T): T => {
-    if (process.env.NODE_ENV !== 'production') {
-        Object.freeze(value);
+const freezeDeep = (value: unknown): void => {
+    // Frozen means walked already: converted nodes are cached, so a parent stops at children it reuses.
+    if (typeof value !== 'object' || value === null || Object.isFrozen(value)) {
+        return;
     }
-    return value;
+    Object.freeze(value);
+    for (const nested of Object.values(value)) {
+        freezeDeep(nested);
+    }
 };
 
-/** A value that is the engine's own attribute object (and one level of what it holds), so a host write would corrupt engine state. */
-const frozenValueInDevelopment = <T extends Record<string, unknown>>(value: T): T => {
+/** Shared between documents and with the engine's attributes, so a host mutation would leak or corrupt: it throws in development instead. */
+const frozenInDevelopment = <T>(value: T): T => {
     if (process.env.NODE_ENV !== 'production') {
-        for (const nested of Object.values(value)) {
-            if (typeof nested === 'object' && nested !== null) {
-                Object.freeze(nested);
-            }
-        }
+        freezeDeep(value);
     }
-    return frozenInDevelopment(value);
+    return value;
 };
 
 /** An inline still being made: not part of the document yet. */
@@ -287,7 +286,7 @@ const inlineFromEngine = (child: PmNode): RteInlineNode | null => {
 
     let converted: RteInlineNode;
     if (child.type.name === UNKNOWN_INLINE) {
-        converted = child.attrs[RAW_ATTR] as RteInlineNode;
+        converted = frozenInDevelopment(child.attrs[RAW_ATTR] as RteInlineNode);
     } else if (child.isText) {
         const text: Record<string, unknown> = { text: child.text ?? '' };
         for (const mark of child.marks) {
@@ -298,14 +297,14 @@ const inlineFromEngine = (child: PmNode): RteInlineNode | null => {
             // A mark that carries nothing is stored as `true` — see `StoredMarkValue`.
             const value = markValueOf(mark);
             if (Object.keys(value).length > 0) {
-                text[mark.type.name] = frozenValueInDevelopment(value);
+                text[mark.type.name] = value;
             } else {
                 text[mark.type.name] = true;
             }
         }
         converted = frozenInDevelopment(text) as RteInlineNode;
     } else {
-        converted = frozenValueInDevelopment({
+        converted = frozenInDevelopment({
             type: child.type.name,
             ...(child.attrs[VALUE_ATTR] as Record<string, unknown>),
         }) as RteInlineNode;
@@ -322,14 +321,14 @@ const blockFromEngine = (node: PmNode): RteBlockNode => {
     }
 
     if (node.type.name === UNKNOWN_BLOCK) {
-        return node.attrs[RAW_ATTR] as RteBlockNode;
+        return frozenInDevelopment(node.attrs[RAW_ATTR] as RteBlockNode);
     }
 
     const block: Record<string, unknown> = { type: node.type.name, ...definedAttrs(node.attrs) };
     if (node.isTextblock) {
-        block.children = frozenInDevelopment(mapChildren(node, inlineFromEngine).filter((child) => child !== null));
+        block.children = mapChildren(node, inlineFromEngine).filter((child) => child !== null);
     } else if (!node.isAtom) {
-        block.children = frozenInDevelopment(mapChildren(node, blockFromEngine));
+        block.children = mapChildren(node, blockFromEngine);
     }
 
     const converted = frozenInDevelopment(block) as unknown as RteBlockNode;
