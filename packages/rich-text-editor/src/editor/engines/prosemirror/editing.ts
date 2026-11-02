@@ -76,6 +76,8 @@ const mount = ({
     let inFeaturePaste = false;
     // Whether the feature paste under way has made its first edit.
     let featurePasteStarted = false;
+    // Counts feature pastes, so each one's edits share a history group id of their own.
+    let featurePasteCount = 0;
 
     // 1. Views with editing UI (blocks, inline elements, link-like marks) follow
     //    the selection, since `isFocused` does. Each state change is offered to
@@ -113,6 +115,7 @@ const mount = ({
         handlePaste: (pasteView, event, slice) => {
             inFeaturePaste = true;
             featurePasteStarted = false;
+            featurePasteCount++;
             try {
                 if (handlePasteByFeatures(registry.pasteHandlers, api)(pasteView, event)) {
                     return true;
@@ -152,6 +155,10 @@ const mount = ({
             }
             if (startsFeaturePaste) {
                 featurePasteStarted = true;
+            }
+            // History joins only edits it finds adjacent, and a mark change has no range: a shared composition id joins them all.
+            if (inFeaturePaste) {
+                transaction.setMeta('composition', `paste-${featurePasteCount}`);
             }
             if (isTransfer) {
                 closeBeforeNextEdit = true;

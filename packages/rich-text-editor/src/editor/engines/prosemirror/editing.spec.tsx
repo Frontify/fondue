@@ -280,6 +280,18 @@ describe('undo after a paste a feature makes in several edits', () => {
 
         expect(editor.stored()).toEqual([paragraphBlock(text('one'))]);
     });
+
+    it('takes back a paste made of mark changes only in one step', () => {
+        const before = [paragraphBlock(text('docs', { link: { href: 'https://old.example' } }))];
+        const editor = editorWith(shipped('link'), before);
+        editor.select('docs');
+
+        editor.paste('https://new.example');
+        expect(JSON.stringify(editor.stored())).toContain('https://new.example');
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual(before);
+    });
 });
 
 describe('the placeholder', () => {
