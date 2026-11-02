@@ -98,9 +98,9 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     /** The id of an element describing the editor further — help text, an error. */
     'aria-describedby'?: string;
     /**
-     * The words the editor's own UI says — its default name, the toolbar's
-     * name, the "Turn into" and `/` menus — for a host that translates them.
-     * Each one left out stays English.
+     * The words the editor's own UI says (its default name, the toolbar's
+     * name, the "Turn into" and `/` menus, the message and button shown when
+     * it crashes) for a host that translates them. Each one left out stays English.
      */
     labels?: Partial<RichTextEditorLabels>;
     /**
@@ -111,10 +111,14 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      */
     onBlur?: (value: RteDocumentOf<TBlock>) => void;
     /**
-     * The editor crashed and now shows its content read-only, with a way to
-     * try again. Handed the error and the document the editor last showed,
-     * to report the error or keep that document for review. Nothing is saved
-     * for the host: content from a crashed editor may be what crashed it.
+     * The editor crashed: something in it threw while rendering or mounting (a
+     * toolbar item, a plugin's view, the engine). It now shows a message, a
+     * way to try again and, when it can, its content read-only. Handed the
+     * error and the document the editor last showed, to report the error or
+     * keep that document for review. Nothing is saved for the host: content
+     * from a crashed editor may be what crashed it. Fires for every crash,
+     * including one after Try again; not for errors in event handlers, such
+     * as a key press or a paste, which React does not route here.
      */
     onError?: (error: Error, details: { document: RteDocumentOf<TBlock> }) => void;
 };

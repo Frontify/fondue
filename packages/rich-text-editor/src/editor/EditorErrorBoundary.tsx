@@ -43,9 +43,16 @@ export class EditorErrorBoundary extends Component<EditorErrorBoundaryProps, Edi
         return null;
     }
 
-    override componentDidCatch(error: Error, _info: ErrorInfo): void {
+    override componentDidCatch(thrown: unknown, _info: ErrorInfo): void {
         if (process.env.NODE_ENV !== 'production') {
-            console.error('[RichTextEditor] The editor crashed and was replaced by a read-only view.', error);
+            console.error('[RichTextEditor] The editor crashed and was replaced by a read-only view.', thrown);
+        }
+        // React hands over whatever was thrown, which a plugin need not have made an Error.
+        let error: Error;
+        if (thrown instanceof Error) {
+            error = thrown;
+        } else {
+            error = new Error(String(thrown));
         }
         // A host callback that throws here would escape the boundary and unmount the page section.
         try {

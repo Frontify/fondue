@@ -806,7 +806,7 @@ describe('an editor that crashes', () => {
         ));
 
         expect(container.textContent).toContain('still here');
-        expect(container.textContent).toContain('The editor stopped working. Try again to keep editing.');
+        expect(container.textContent).toContain('The editor stopped working. Try again to load it.');
         expect(container.querySelector('[contenteditable]')).toBeNull();
         expect(retryButton(container)).toBeDefined();
         expect(onChange).not.toHaveBeenCalled();
@@ -1249,6 +1249,23 @@ describe('an editor that crashes', () => {
         expect(container.textContent).toContain('replacement');
     });
 
+    it('hands onError an Error when a plugin throws something else', () => {
+        silenceReact();
+        const throwsString: RtePlugin = {
+            id: 'throws',
+            toolbarItem: () => {
+                // oxlint-disable-next-line typescript/only-throw-error -- what a careless plugin throws
+                throw 'not an error';
+            },
+        };
+        const onError = errorSpy();
+        mount(() => <RichTextEditor value={paragraph('still here')} plugins={[throwsString]} onError={onError} />);
+
+        const [error] = onError.mock.calls[0] ?? [];
+        expect(error).toBeInstanceOf(Error);
+        expect(error?.message).toBe('not an error');
+    });
+
     it('keeps the name the host gave the editor, and ties Retry to the message', () => {
         silenceReact();
         const { container } = mount(() => (
@@ -1266,7 +1283,7 @@ describe('an editor that crashes', () => {
         expect(group?.contains(retryButton(container))).toBe(true);
         const messageId = retryButton(container).getAttribute('aria-describedby') ?? '';
         expect(window.document.getElementById(messageId)?.textContent).toBe(
-            'The editor stopped working. Try again to keep editing.',
+            'The editor stopped working. Try again to load it.',
         );
     });
 

@@ -15,6 +15,7 @@ import {
     type MentionItem,
     mentionPlugin,
     type RteDocument,
+    type RtePlugin,
     RichTextEditor,
     RichTextRenderer,
 } from '../index';
@@ -450,6 +451,65 @@ export const CommitOnBlur: Story = {
                         ? 'Nothing committed yet — type, then click outside the editor.'
                         : JSON.stringify(committed, null, 2)}
                 </pre>
+            </div>
+        );
+    },
+};
+
+/** A toolbar item that throws when told to, standing in for any bug in a plugin's UI. */
+const toolbarItemPlugin = (crash: boolean): RtePlugin => ({
+    id: 'crashing',
+    toolbarItem: () => {
+        if (crash) {
+            throw new Error('A toolbar item threw while rendering.');
+        }
+        return null;
+    },
+});
+const WORKING_PLUGINS = [...defaultPlugins, toolbarItemPlugin(false)];
+const CRASHING_PLUGINS = [...defaultPlugins, toolbarItemPlugin(true)];
+
+/**
+ * When something in the editor throws while rendering, the editor shows its
+ * content read-only with a message and Try again, and hands the error and the
+ * document to `onError`; the rest of the page stays. Try again while the bug
+ * is still there shows the same view again.
+ */
+export const CrashFallback: Story = {
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'Type something, then break the editor.' }] }],
+        });
+        const [crash, setCrash] = useState(false);
+        const [report, setReport] = useState<string | null>(null);
+        let plugins = WORKING_PLUGINS;
+        if (crash) {
+            plugins = CRASHING_PLUGINS;
+        }
+
+        return (
+            <div className={LAYOUT}>
+                <div className="tw-col-span-full tw-flex tw-gap-2">
+                    <button type="button" className={buttonClasses(crash)} onClick={() => setCrash(true)}>
+                        Break the editor
+                    </button>
+                    <button type="button" className={buttonClasses(!crash)} onClick={() => setCrash(false)}>
+                        Fix the bug
+                    </button>
+                </div>
+                <div className={FRAME}>
+                    <RichTextEditor
+                        value={doc}
+                        onChange={setDoc}
+                        plugins={plugins}
+                        aria-label="Description"
+                        onError={(error, { document }) =>
+                            setReport(`${error.message}\n\n${JSON.stringify(document, null, 2)}`)
+                        }
+                    />
+                </div>
+                <pre className={JSON_PANEL}>{report ?? 'No crash yet: break the editor to see onError here.'}</pre>
             </div>
         );
     },
