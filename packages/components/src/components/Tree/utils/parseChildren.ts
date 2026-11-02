@@ -96,6 +96,7 @@ const sharedRowData = (props: TreeItemProps | TreeFolderProps, parentId: string)
     onRenamingChange: props.onRenamingChange,
     onRename: props.onRename,
     onClick: props.onClick,
+    onDoubleClick: props.onDoubleClick,
     onMove: props.onMove,
     tags: props.tags,
     isDisabled: props.isDisabled,
