@@ -50,8 +50,8 @@ export const ColorFlyout = ({
     const [draft, setDraft] = useState<RgbaColor | undefined>(undefined);
     const titleId = useId();
     const pickerRef = useRef<HTMLDivElement | null>(null);
-    // What the picker showed when it opened, so Save without a choice changes nothing.
-    const openedWithRef = useRef<string | undefined>(undefined);
+    // Whether a colour was picked or typed since opening: the picker shows white for uncoloured text, which is no choice.
+    const choseRef = useRef(false);
 
     const { returnToText, contentProps } = useFocusAfterClose(api);
     // Closing from inside the flyout returns focus to the text.
@@ -61,12 +61,10 @@ export const ColorFlyout = ({
     };
 
     const apply = (color: RgbaColor | undefined): void => {
-        // Toggling over an existing colour would only remove it, so clear first.
-        if ('fontColor' in selection.marks) {
+        if (color === undefined) {
             api.marks.toggle('fontColor');
-        }
-        if (color !== undefined) {
-            api.marks.toggle('fontColor', { color: toCssColor(color) });
+        } else {
+            api.marks.set('fontColor', { color: toCssColor(color) });
         }
         close();
     };
@@ -75,7 +73,12 @@ export const ColorFlyout = ({
         const picked = typedHex(pickerRef.current, draft?.alpha) ?? draft;
         // Nothing picked or typed: an unreadable colour would otherwise be
         // overwritten with whatever the picker fell back to showing.
-        if (picked === undefined || toCssColor(picked) === openedWithRef.current) {
+        if (!choseRef.current || picked === undefined) {
+            close();
+            return;
+        }
+        // The text's own colour chosen again changes nothing.
+        if (current !== undefined && toCssColor(picked) === toCssColor(current)) {
             close();
             return;
         }
@@ -92,6 +95,7 @@ export const ColorFlyout = ({
             // The draft starts at the text's colour, so cancelling changes nothing.
             onOpenChange={(next) => {
                 if (next) {
+                    choseRef.current = false;
                     setDraft(current);
                     setOpen(true);
                 } else {
@@ -123,8 +127,6 @@ export const ColorFlyout = ({
                 // The hex field is the one input a keyboard can pick a colour with.
                 onOpenAutoFocus={(event) => {
                     event.preventDefault();
-                    const shown = typedHex(pickerRef.current, current?.alpha);
-                    openedWithRef.current = shown === undefined ? undefined : toCssColor(shown);
                     pickerRef.current?.querySelector<HTMLInputElement>('input[type="text"]')?.focus();
                 }}
             >
@@ -159,12 +161,24 @@ export const ColorFlyout = ({
                         onInput={(event) => {
                             // A complete hex value updates the picker at once; a partial one waits.
                             const target = event.target as HTMLInputElement;
+                            choseRef.current = true;
                             if (target.matches('input[type="text"]') && /^#?[\dA-Fa-f]{6}$/.test(target.value)) {
                                 setDraft(typedHex(pickerRef.current, draft?.alpha));
                             }
                         }}
                     >
-                        <ColorPicker.Root defaultFormat="HEX" currentColor={draft} onColorChange={setDraft}>
+                        <ColorPicker.Root
+                            defaultFormat="HEX"
+                            currentColor={draft}
+                            onColorChange={(color) => {
+                                // The hex field reports what it shows again on blur, which is no choice.
+                                const shown = typedHex(pickerRef.current, draft?.alpha);
+                                if (shown === undefined || toCssColor(color) !== toCssColor(shown)) {
+                                    choseRef.current = true;
+                                }
+                                setDraft(color);
+                            }}
+                        >
                             <ColorPicker.Values />
                             <ColorPicker.Gradient />
                         </ColorPicker.Root>
