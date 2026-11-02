@@ -19,7 +19,8 @@ import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type Rt
 
 import { keepCarriedAttrs } from './controlApi';
 import { valueAttrsFor } from './documentConversion';
-import { clearExtrasAt, listKeys, newBlockSide } from './lists';
+import { clearExtrasAt, newBlockSide } from './extraAttributes';
+import { listKeys } from './lists';
 
 /**
  * What happens when a key is pressed, as one ordered list of ProseMirror plugins.
