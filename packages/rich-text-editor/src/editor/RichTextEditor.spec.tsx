@@ -951,6 +951,41 @@ describe('an editor that crashes', () => {
         expect(container.querySelector('[contenteditable]')?.textContent).toContain('typed');
     });
 
+    it('leaves focus where the user put it when the editor crashes again after a Retry', () => {
+        silenceReact();
+        let broken = true;
+        const flaky: RtePlugin = {
+            id: 'flaky',
+            toolbarItem: () => {
+                if (broken) {
+                    throw new Error('until fixed');
+                }
+                return <span>fine</span>;
+            },
+        };
+        const { container, rerender } = mount(() => (
+            <>
+                <input aria-label="elsewhere" />
+                <RichTextEditor value={paragraph('one')} plugins={[flaky]} />
+            </>
+        ));
+        broken = false;
+        retry(container);
+        const elsewhere = container.querySelector('input') as HTMLInputElement;
+        act(() => elsewhere.focus());
+
+        broken = true;
+        rerender(
+            <>
+                <input aria-label="elsewhere" />
+                <RichTextEditor value={paragraph('two')} plugins={[flaky]} />
+            </>,
+        );
+
+        expect(retryButton(container)).toBeDefined();
+        expect(window.document.activeElement).toBe(elsewhere);
+    });
+
     it('puts the keyboard back in the text after Retry', () => {
         silenceReact();
         let broken = true;

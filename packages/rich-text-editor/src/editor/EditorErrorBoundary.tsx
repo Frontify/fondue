@@ -75,7 +75,11 @@ export const EditorFallback = ({
 }): ReactNode => {
     const retryRef = useRef<HTMLButtonElement | null>(null);
     useEffect(() => {
-        if (focusOnMount) {
+        // Only when focus was lost with the button that held it, never taken from where the user moved it.
+        const lost =
+            globalThis.document.activeElement === null ||
+            globalThis.document.activeElement === globalThis.document.body;
+        if (focusOnMount && lost) {
             retryRef.current?.focus();
         }
     }, [focusOnMount]);
