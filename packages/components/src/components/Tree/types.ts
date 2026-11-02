@@ -61,13 +61,18 @@ type TreeRowSharedProps = {
     onRename?: (newName: string) => void;
     /** Fires when the row is activated by click or keyboard (Enter / Space). */
     onClick?: MouseEventHandler<HTMLDivElement>;
+    /**
+     * Fires when the row is double-clicked. While set, the second click of a double-click
+     * does not select or toggle the row, or fire `onClick`.
+     */
+    onDoubleClick?: MouseEventHandler<HTMLDivElement>;
     /** Fires after this item is repositioned via drag-and-drop. */
     onMove?: (info: TreeMoveInfo) => void;
     /** Consumer-defined labels passed to `accepts` drop predicates. No visual effect. */
     tags?: string[];
     /**
      * Freezes the row at its prop-driven state: no selecting/checking (not even via a
-     * folder cascade), dragging, renaming, dropping into, or `onClick`. Folders stay
+     * folder cascade), dragging, renaming, dropping into, `onClick`, or `onDoubleClick`. Folders stay
      * expandable and their descendants remain interactive. The frozen state still counts
      * toward ancestors' checkbox state.
      */
@@ -142,6 +147,7 @@ export type TreeItemData = {
     onRenamingChange?: (isRenaming: boolean) => void;
     onRename?: (newName: string) => void;
     onClick?: MouseEventHandler<HTMLDivElement>;
+    onDoubleClick?: MouseEventHandler<HTMLDivElement>;
     onMove?: (info: TreeMoveInfo) => void;
     icon?: ReactNode;
     decorator?: ReactNode;
