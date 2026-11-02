@@ -11,6 +11,7 @@ import {
     useMemo,
     useReducer,
     useRef,
+    useState,
 } from 'react';
 
 import {
@@ -145,9 +146,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     const labels = useLabels(hostLabelOverrides);
     const registry = useMemo(() => buildPluginRegistry(plugins), [plugins]);
 
-    // A value the host pushes is what the editor now shows. One of the editor's
-    // own edits coming back as `value`, however late, is an echo, and never
-    // replaces a newer edit in what a crash shows and hands over.
+    // An echo of the editor's own edit, however late, never replaces a newer one in what a crash hands over.
     const emittedDocsRef = useRef<WeakSet<RteDocumentOf> | null>(null);
     emittedDocsRef.current ??= new WeakSet();
 
@@ -297,19 +296,16 @@ const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
         enabled: !readOnly,
     });
 
-    // A readonly retry has no text to focus: the view takes the focus the pressed Retry held, so it is not lost to
-    // the page. Either way the request is spent at once, and never claims focus when editing is turned on later.
+    // A pending focus request is spent once, never claiming focus when editing is turned on later.
     const focusPendingRef = useRef(focusOnMount && !readOnly);
     const readonlyViewRef = useRef<HTMLDivElement | null>(null);
-    // Decided when this shell mounts, so the view is focusable only when it has a pressed Retry's focus to take.
-    const focusReadonlyView = useRef(focusOnMount && readOnly && focusWithinRef.current).current;
+    // A readonly retry has no text to focus, so the view takes the focus the pressed Retry held.
+    const [focusReadonlyView] = useState(() => focusOnMount && readOnly && focusWithinRef.current);
     useEffect(() => {
         if (focusReadonlyView) {
             readonlyViewRef.current?.focus();
         }
-        // Only on mount: the request belongs to the Retry that mounted this shell.
-        // eslint-disable-next-line @eslint-react/exhaustive-deps
-    }, []);
+    }, [focusReadonlyView]);
     useEffect(() => {
         if (focusPendingRef.current && handle !== null) {
             focusPendingRef.current = false;
@@ -325,7 +321,7 @@ const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
         if (hadFocusRef.current && !focusWithin && handle !== null) {
             onBlur?.(handle.document() as RteDocumentOf<TBlock>);
         }
-        // Changes only: the mount is not one, and keeps the focus a pressed Retry handed over for a toolbar that throws on mount.
+        // Changes only: the mount must not overwrite the focus a pressed Retry handed over.
         if (hadFocusRef.current !== focusWithin) {
             focusWithinRef.current = focusWithin;
         }

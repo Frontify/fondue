@@ -76,16 +76,7 @@ export class EditorErrorBoundary extends Component<EditorErrorBoundaryProps, Edi
     }
 }
 
-/** The document read-only, what went wrong, and the way to try again. */
-export const EditorFallback = ({
-    ownDocumentRef,
-    registry,
-    labels,
-    onRetry,
-    focusWithinRef,
-    groupAttributes,
-    onCatch,
-}: {
+type EditorFallbackProps = {
     /** Read now, not when the fallback was built: the editor reported edits after that. */
     ownDocumentRef: RefObject<RteDocumentOf | null>;
     registry: PluginRegistry;
@@ -98,7 +89,18 @@ export const EditorFallback = ({
     groupAttributes: Record<string, string>;
     /** Told when the read-only view throws too, as a crash of its own. */
     onCatch?: (error: Error) => void;
-}): ReactNode => {
+};
+
+/** The document read-only, what went wrong, and the way to try again. */
+export const EditorFallback = ({
+    ownDocumentRef,
+    registry,
+    labels,
+    onRetry,
+    focusWithinRef,
+    groupAttributes,
+    onCatch,
+}: EditorFallbackProps): ReactNode => {
     const retryRef = useRef<HTMLButtonElement | null>(null);
     const messageId = useId();
     const onPress = (): void => {

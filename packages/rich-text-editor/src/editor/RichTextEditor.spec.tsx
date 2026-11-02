@@ -759,7 +759,6 @@ describe('an editor that crashes', () => {
             return <span>fine</span>;
         },
     });
-    /** A toolbar item that throws while `state.broken` is set. */
     /** A toolbar item under its own id, which throws when `crash` is set; new ids remount the engine. */
     const idPlugin = (id: string, crash = false): RtePlugin => ({
         id,
@@ -770,6 +769,7 @@ describe('an editor that crashes', () => {
             return <span>fine</span>;
         },
     });
+    /** A toolbar item that throws while `state.broken` is set. */
     const flakyPlugin = (state: { broken: boolean }): RtePlugin => ({
         id: 'flaky',
         toolbarItem: () => {
@@ -1066,13 +1066,8 @@ describe('an editor that crashes', () => {
 
     it('hands onError a value the host pushed after the last edit', () => {
         silenceReact();
-        const fine: RtePlugin = { id: 'late', toolbarItem: () => <span>fine</span> };
-        const bad: RtePlugin = {
-            id: 'late',
-            toolbarItem: () => {
-                throw new Error('after the push');
-            },
-        };
+        const fine = idPlugin('late');
+        const bad = idPlugin('late', true);
         const onError = errorSpy();
         const { container, rerender, ready } = mount(() => (
             <RichTextEditor value={paragraph('A')} plugins={[fine, ...defaultPlugins]} onError={onError} />
@@ -1107,13 +1102,8 @@ describe('an editor that crashes', () => {
 
     it('hands onError every edit when the host echoes an older one late', () => {
         silenceReact();
-        const fine: RtePlugin = { id: 'late', toolbarItem: () => <span>fine</span> };
-        const bad: RtePlugin = {
-            id: 'late',
-            toolbarItem: () => {
-                throw new Error('after the echo');
-            },
-        };
+        const fine = idPlugin('late');
+        const bad = idPlugin('late', true);
         const onError = errorSpy();
         const { container, onChange, rerender, ready } = mount((change) => (
             <RichTextEditor
@@ -1452,13 +1442,8 @@ describe('an editor that crashes', () => {
 
     it('hands onError an earlier edit the host restores along with other plugins', () => {
         silenceReact();
-        const fine: RtePlugin = { id: 'late', toolbarItem: () => <span>fine</span> };
-        const bad: RtePlugin = {
-            id: 'other',
-            toolbarItem: () => {
-                throw new Error('with other plugins');
-            },
-        };
+        const fine = idPlugin('late');
+        const bad = idPlugin('other', true);
         const onError = errorSpy();
         const { container, onChange, rerender, ready } = mount((change) => (
             <RichTextEditor
