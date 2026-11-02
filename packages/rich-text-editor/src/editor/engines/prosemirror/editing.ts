@@ -15,6 +15,7 @@ import {
 import { createControlApi, type OpenEditors } from './controlApi';
 import { toEngineDocument, toRteDocument, withoutDrafts } from './documentConversion';
 import { keystrokePipeline } from './keystrokes';
+import { restartSplitListsPlugin } from './lists';
 import { createMarkViews, createNodeViews, LiveViews } from './nodeViews';
 import { keepOfficeListStyles } from './pasteOffice';
 import { placeholderPlugin } from './placeholder';
@@ -120,6 +121,7 @@ const mount = ({
             plugins: [
                 ...keystrokePipeline(registry, schema, api),
                 placeholderPlugin(() => currentPlaceholder, placeholderClassName),
+                restartSplitListsPlugin(registry.itemTypeByList),
             ],
         }),
         // Clicking an inline atom (mention, ...) puts the caret after it rather than selecting it.

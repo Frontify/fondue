@@ -60,7 +60,7 @@ const numberedList = defineBlock<NumberedListValue>({
     defaults: { start: null },
     toHtml: ({ start }) => {
         let first: string | undefined;
-        if (typeof start === 'number' && start !== 1) {
+        if (Number.isInteger(start) && start !== 1) {
             first = String(start);
         }
         return { tag: 'ol', attrs: { class: styles.numberedList, start: first }, children: true };
