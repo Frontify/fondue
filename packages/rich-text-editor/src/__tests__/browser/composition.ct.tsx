@@ -78,6 +78,22 @@ test.describe('composed text', () => {
         });
     }
 
+    test('stays as typed after Backspace took a rewrite back and a composition ends empty', async ({ mount, page }) => {
+        const component = await mount(<RichTextEditor />);
+        const editable = component.getByRole('textbox');
+
+        await editable.click();
+        await page.keyboard.type('**bold**');
+        await page.keyboard.press('Backspace');
+        await expect(editable).toHaveText('**bold**');
+        await compose(page, 'x');
+        await compose(page, '');
+        await settle(page);
+
+        await expect(editable).toHaveText('**bold**');
+        await expect(editable.locator('strong')).toHaveCount(0);
+    });
+
     test('still gets rewritten when typed with the keyboard', async ({ mount, page }) => {
         const component = await mount(<RichTextEditor />);
         const editable = component.getByRole('textbox');
