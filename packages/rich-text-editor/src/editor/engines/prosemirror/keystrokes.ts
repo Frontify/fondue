@@ -300,9 +300,12 @@ const markPatternRule = (rule: RuleOfKind<'markPattern'>, context: RuleContext):
  */
 const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] => {
     const context = ruleContext(registry, schema);
-    const matchers = registry.inputRules.flatMap((rule) =>
-        rule.kind === 'markPattern' ? (markPatternMatcher(rule, context) ?? []) : [],
-    );
+    const matchers = registry.inputRules.flatMap((rule) => {
+        if (rule.kind !== 'markPattern') {
+            return [];
+        }
+        return markPatternMatcher(rule, context) ?? [];
+    });
     if (matchers.length === 0) {
         return [];
     }
@@ -322,7 +325,10 @@ const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] =
         const textBefore = $from.parent.textBetween(0, $from.parentOffset, undefined, '\uFFFC');
         for (const { pattern, find } of matchers) {
             const match = pattern.exec(`${textBefore} `);
-            const found = match ? find(state, match, $from.pos - (match[0].length - 1)) : null;
+            if (!match) {
+                continue;
+            }
+            const found = find(state, match, $from.pos - (match[0].length - 1));
             if (found) {
                 dispatch?.(state.tr.addMark(found.from, found.to, found.mark));
                 break;
