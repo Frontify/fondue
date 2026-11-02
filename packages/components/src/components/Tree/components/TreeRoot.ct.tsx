@@ -1566,7 +1566,7 @@ test.describe('TreeRoot renaming', () => {
         expect(renamingChanges).toEqual([['1', true]]);
     });
 
-    test('double-clicking a renameable folder starts a rename without expanding it', async ({ mount }) => {
+    test('double-clicking an unselected renameable folder starts a rename without expanding it', async ({ mount }) => {
         const component = await mount(
             <TestHarness
                 renameable

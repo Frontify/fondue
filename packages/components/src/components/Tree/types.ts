@@ -51,7 +51,8 @@ type TreeRowSharedProps = {
     /**
      * Shows an inline rename input for the row (fully controlled). Enter/blur commits,
      * Escape cancels; both fire `onRenamingChange(false)`. Double-clicking a row that has
-     * `onRename` fires `onRenamingChange(true)` to request a rename.
+     * `onRename` fires `onRenamingChange(true)` to request a rename; the first click still
+     * acts as a normal click, so a folder that toggles on click toggles once.
      */
     isRenaming?: boolean;
     onRenamingChange?: (isRenaming: boolean) => void;
