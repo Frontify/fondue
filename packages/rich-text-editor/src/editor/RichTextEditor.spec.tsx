@@ -760,6 +760,16 @@ describe('an editor that crashes', () => {
         },
     });
     /** A toolbar item that throws while `state.broken` is set. */
+    /** A toolbar item under its own id, which throws when `crash` is set; new ids remount the engine. */
+    const idPlugin = (id: string, crash = false): RtePlugin => ({
+        id,
+        toolbarItem: () => {
+            if (crash) {
+                throw new Error(`plugin ${id} broke`);
+            }
+            return <span>fine</span>;
+        },
+    });
     const flakyPlugin = (state: { broken: boolean }): RtePlugin => ({
         id: 'flaky',
         toolbarItem: () => {
@@ -1032,6 +1042,8 @@ describe('an editor that crashes', () => {
         ready();
 
         expect(editableIn(container).contains(window.document.activeElement)).toBe(true);
+        // The text has the focus: nothing around it is made focusable for a Retry.
+        expect(editableIn(container).parentElement?.closest('[tabindex]')).toBeNull();
     });
 
     it('does not take focus later when it was retried readonly', () => {
@@ -1194,9 +1206,23 @@ describe('an editor that crashes', () => {
         expect(group?.getAttribute('aria-describedby')).toBe('comment-help');
         expect(group?.contains(retryButton(container))).toBe(true);
         const messageId = retryButton(container).getAttribute('aria-describedby') ?? '';
-        expect(window.document.getElementById(messageId)?.textContent).toBe(
-            'The editor stopped working. Try again to load it.',
+        const message = window.document.getElementById(messageId);
+        expect(message?.textContent).toBe('The editor stopped working. Try again to load it.');
+        expect(message?.getAttribute('role')).toBe('alert');
+    });
+
+    it('names the fallback by a visible label, and only when the host named the editor', () => {
+        silenceReact();
+        const { container, rerender } = mount(() => (
+            <RichTextEditor value={paragraph('still here')} plugins={[throwingPlugin()]} aria-labelledby="label" />
+        ));
+        expect(container.querySelector('[role="group"]')?.getAttribute('aria-labelledby')).toBe('label');
+
+        rerender(
+            <RichTextEditor value={paragraph('still here')} plugins={[throwingPlugin()]} aria-describedby="help" />,
         );
+
+        expect(container.querySelector('[role="group"]')).toBeNull();
     });
 
     it('hands the focus of a pressed Retry to a readonly view', () => {
@@ -1212,6 +1238,8 @@ describe('an editor that crashes', () => {
         expect(container.textContent).toContain('read me');
         expect(window.document.activeElement).not.toBe(window.document.body);
         expect(container.contains(window.document.activeElement)).toBe(true);
+        // Focusable by script only, never a tab stop.
+        expect(window.document.activeElement?.getAttribute('tabindex')).toBe('-1');
     });
 
     it('does not take focus when a readonly view retried earlier crashes with focus gone', () => {
@@ -1335,30 +1363,70 @@ describe('an editor that crashes', () => {
 
     it('hands onError a value the host passes again after leaving it out', () => {
         silenceReact();
-        const named = (id: string, crash = false): RtePlugin => ({
-            id,
-            toolbarItem: () => {
-                if (crash) {
-                    throw new Error('after the value came back');
-                }
-                return <span>fine</span>;
-            },
-        });
         const saved = paragraph('saved');
         const onError = errorSpy();
         const { container, rerender, ready } = mount(() => (
-            <RichTextEditor value={saved} plugins={[named('a'), ...defaultPlugins]} onError={onError} />
+            <RichTextEditor value={saved} plugins={[idPlugin('a'), ...defaultPlugins]} onError={onError} />
         ));
         ready();
-        rerender(<RichTextEditor plugins={[named('a'), ...defaultPlugins]} onError={onError} />);
+        rerender(<RichTextEditor plugins={[idPlugin('a'), ...defaultPlugins]} onError={onError} />);
         paste(container, '<p>draft</p>');
         // New plugin ids remount the engine from the draft, so the saved value no longer matches what it holds.
-        rerender(<RichTextEditor plugins={[named('b'), ...defaultPlugins]} onError={onError} />);
+        rerender(<RichTextEditor plugins={[idPlugin('b'), ...defaultPlugins]} onError={onError} />);
 
-        rerender(<RichTextEditor value={saved} plugins={[named('b', true), ...defaultPlugins]} onError={onError} />);
+        rerender(<RichTextEditor value={saved} plugins={[idPlugin('b', true), ...defaultPlugins]} onError={onError} />);
 
         expect(onError).toHaveBeenCalledOnce();
         expect(onError.mock.calls[0]?.[1].document).toBe(saved);
+    });
+
+    it('hands onError edits made after a Retry, though the plugins change', () => {
+        silenceReact();
+        const state = { broken: true };
+        const saved = paragraph('saved');
+        const onError = errorSpy();
+        // A host that commits on blur and never passes edits back as `value`.
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={saved} plugins={[flakyPlugin(state), ...defaultPlugins]} onError={onError} />
+        ));
+        state.broken = false;
+        retry(container);
+        ready();
+        paste(container, '<p>typed</p>');
+
+        // After a Retry the shell gets what the editor holds, not `value`, whatever the plugins.
+        rerender(
+            <RichTextEditor value={saved} plugins={[idPlugin('other', true), ...defaultPlugins]} onError={onError} />,
+        );
+
+        const last = onError.mock.calls[onError.mock.calls.length - 1];
+        expect(JSON.stringify(last?.[1].document)).toContain('typed');
+    });
+
+    it('hands onError an earlier edit the host restores after the plugins changed', () => {
+        silenceReact();
+        const onError = errorSpy();
+        const { container, onChange, rerender, ready } = mount((change) => (
+            <RichTextEditor
+                value={paragraph('V0')}
+                onChange={change}
+                plugins={[idPlugin('a'), ...defaultPlugins]}
+                onError={onError}
+            />
+        ));
+        ready();
+        paste(container, '<p>one</p>');
+        paste(container, '<p>two</p>');
+        const first = onChange.mock.calls[0]?.[0];
+        // The remounted engine forgets it emitted `first`, and shows it when it comes back.
+        rerender(
+            <RichTextEditor value={paragraph('V0')} plugins={[idPlugin('b'), ...defaultPlugins]} onError={onError} />,
+        );
+
+        rerender(<RichTextEditor value={first} plugins={[idPlugin('b', true), ...defaultPlugins]} onError={onError} />);
+
+        expect(onError).toHaveBeenCalledOnce();
+        expect(onError.mock.calls[0]?.[1].document).toBe(first);
     });
 
     it('hands onError the value a readonly view shows, though newer edits never reached the host', () => {
