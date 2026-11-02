@@ -1143,7 +1143,8 @@ describe('an editor that crashes', () => {
         state.broken = true;
         rerender(<RichTextEditor value={first} onChange={onChange} plugins={plugins} onError={onError} readonly />);
 
-        expect(onError).toHaveBeenCalledOnce();
+        // The fallback's read-only view of the same document throws too, and is reported as well.
+        expect(onError).toHaveBeenCalledTimes(2);
         expect(onError.mock.calls[0]?.[1].document).toBe(first);
     });
 
@@ -1303,6 +1304,23 @@ describe('an editor that crashes', () => {
         expect(() => vi.runAllTimers()).toThrow(failure);
     });
 
+    it('reports a read-only view that cannot show the document after a crash', () => {
+        silenceReact();
+        const state = { broken: true };
+        const unshowable = callout('unshowable');
+        const onError = errorSpy();
+        mount(() => (
+            <RichTextEditor value={unshowable} plugins={[throwingPlugin(), calloutPlugin(state)]} onError={onError} />
+        ));
+
+        const messages = onError.mock.calls.map(([error]) => error.message);
+        expect(messages).toHaveLength(2);
+        expect(messages).toEqual(expect.arrayContaining(['toolbar broke', 'readonly view broke']));
+        for (const [, details] of onError.mock.calls) {
+            expect(details.document).toBe(unshowable);
+        }
+    });
+
     it('settles on the message and Retry when every document it gets cannot be shown', () => {
         silenceReact();
         const state = { broken: true };
@@ -1359,7 +1377,8 @@ describe('an editor that crashes', () => {
         state.broken = true;
         rerender(<RichTextEditor value={saved} plugins={plugins} onError={onError} readonly />);
 
-        expect(onError).toHaveBeenCalledOnce();
+        // The fallback's read-only view of the same document throws too, and is reported as well.
+        expect(onError).toHaveBeenCalledTimes(2);
         expect(onError.mock.calls[0]?.[1].document).toBe(saved);
     });
 

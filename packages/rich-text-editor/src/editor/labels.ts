@@ -26,7 +26,10 @@ export type RichTextEditorLabels = {
     noResults: string;
     /** Announced as the `/` menu narrows, when something matches. */
     commandCount: (count: number) => string;
-    /** Shown in place of the editor when it crashed, below its read-only content when that can be shown. */
+    /**
+     * Shown in place of the editor when it crashed, below its read-only content when that can be shown.
+     * It names the `retry` button, so translate the two together.
+     */
     editorFailed: string;
     /** The button that mounts the editor again after it crashed. */
     retry: string;

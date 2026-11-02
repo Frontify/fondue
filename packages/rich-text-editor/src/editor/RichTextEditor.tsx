@@ -114,11 +114,14 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * The editor crashed: something in it threw while rendering or mounting (a
      * toolbar item, a plugin's view, the engine). It now shows a message, a
      * way to try again and, when it can, its content read-only. Handed the
-     * error and the document the editor last showed, to report the error or
-     * keep that document for review. Nothing is saved for the host: content
-     * from a crashed editor may be what crashed it. Fires for every crash,
-     * including one after Try again; not for errors in event handlers, such
-     * as a key press or a paste, which React does not route here.
+     * error and the document the editor was holding: the latest `value` the
+     * host passed, else its latest edit. It can be the document that crashed
+     * it, so nothing is saved for the host; report the error or keep the
+     * document for review. Readonly and a change of plugins show `value`
+     * again, so edits never passed back as `value` are not in it after them.
+     * Fires for every crash, including one after Try again and one of the
+     * read-only view shown after a crash; not for errors in event handlers,
+     * such as a key press or a paste, which React does not route here.
      */
     onError?: (error: Error, details: { document: RteDocumentOf<TBlock> }) => void;
 };
@@ -209,6 +212,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                     onRetry={onRetry}
                     focusWithinRef={focusWithinRef}
                     groupAttributes={fallbackGroupAttributes}
+                    onCatch={onCatch}
                 />
             }
         >

@@ -84,6 +84,7 @@ export const EditorFallback = ({
     onRetry,
     focusWithinRef,
     groupAttributes,
+    onCatch,
 }: {
     /** Read now, not when the fallback was built: the editor reported edits after that. */
     ownDocumentRef: RefObject<RteDocumentOf | null>;
@@ -95,6 +96,8 @@ export const EditorFallback = ({
     focusWithinRef: RefObject<boolean>;
     /** The host's name for the editor as a group, so the message and Retry say which editor failed. */
     groupAttributes: Record<string, string>;
+    /** Told when the read-only view throws too, as a crash of its own. */
+    onCatch?: (error: Error) => void;
 }): ReactNode => {
     const retryRef = useRef<HTMLButtonElement | null>(null);
     const messageId = useId();
@@ -121,7 +124,7 @@ export const EditorFallback = ({
     return (
         <div className={styles.root} {...groupAttributes}>
             {/* A plugin whose readonly view throws too leaves just the message and Retry. */}
-            <EditorErrorBoundary fallback={null} resetKey={document}>
+            <EditorErrorBoundary fallback={null} resetKey={document} onCatch={onCatch}>
                 <RegistryRenderer value={document} registry={registry} className={styles.content} />
             </EditorErrorBoundary>
             <p id={messageId} role="alert">
