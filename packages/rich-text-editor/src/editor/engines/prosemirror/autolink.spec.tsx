@@ -6,6 +6,7 @@ import { undo as pmUndo } from 'prosemirror-history';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it } from 'vitest';
 
+import { type RtePlugin } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { destroyEditors, editorWith, paragraph, text } from './testEditor';
@@ -154,16 +155,60 @@ describe('pressing Enter after a web address', () => {
         expect(editor.stored()).toEqual([paragraph(text('hello')), paragraph()]);
     });
 
-    it('is undone in two steps: the split first, then the link', () => {
+    it('is undone in two steps: the link first, keeping the new line, then the split', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com'))]);
         editor.caretAfter('https://example.com');
         press(editor.view, 'Enter');
 
         undo(editor.view);
-        expect(editor.stored()).toEqual([paragraph(link('https://example.com'))]);
+        expect(editor.stored()).toEqual([paragraph(text('https://example.com')), paragraph()]);
 
         undo(editor.view);
         expect(editor.stored()).toEqual([paragraph(text('https://example.com'))]);
+    });
+
+    it('is taken back by Backspace right after, keeping the new line', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com'))]);
+        editor.caretAfter('https://example.com');
+        press(editor.view, 'Enter');
+
+        const handled = press(editor.view, 'Backspace');
+
+        expect(handled).toBe(true);
+        expect(editor.stored()).toEqual([paragraph(text('https://example.com')), paragraph()]);
+    });
+
+    it('leaves Backspace to join the lines once something else happened', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com'))]);
+        editor.caretAfter('https://example.com');
+        press(editor.view, 'Enter');
+        editor.type('x');
+        const { state } = editor.view;
+        editor.view.dispatch(state.tr.delete(state.selection.from - 1, state.selection.from));
+
+        press(editor.view, 'Backspace');
+
+        expect(editor.stored()).toEqual([paragraph(link('https://example.com'))]);
+    });
+
+    it('links the address in an editor where Enter blurs instead of splitting', async () => {
+        // What `blurOnBreakPlugin` does outside a list.
+        const blurOnEnter: RtePlugin = {
+            id: 'blur-on-enter',
+            hotkeys: {
+                Enter: (api) => {
+                    api.blur();
+                    return true;
+                },
+            },
+        };
+        const editor = editorWith([...defaultPlugins, blurOnEnter], [paragraph(text('https://example.com'))]);
+        editor.caretAfter('https://example.com');
+
+        press(editor.view, 'Enter');
+        await Promise.resolve();
+
+        expect(editor.stored()).toEqual([paragraph(link('https://example.com'))]);
     });
 });
 

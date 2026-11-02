@@ -1,11 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { baseKeymap, chainCommands, setBlockType } from 'prosemirror-commands';
-import { history, redo, undo } from 'prosemirror-history';
+import { closeHistory, history, redo, undo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { type Mark as PmMark, type MarkType as PmMarkType, type Schema } from 'prosemirror-model';
-import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, type Transaction } from 'prosemirror-state';
+import {
+    type Command,
+    type EditorState,
+    Plugin,
+    PluginKey,
+    type Plugin as PmPlugin,
+    type Transaction,
+} from 'prosemirror-state';
 import { canJoin, findWrapping } from 'prosemirror-transform';
 
 import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
@@ -20,7 +27,8 @@ import { listKeys } from './lists';
  * in `keystrokePipeline` matching the numbers used below.
  *
  * 1. Undo / redo, and Backspace right after a typing rewrite (takes the rewrite back).
- * 2. Enter and Shift-Enter link the address before the caret, then let the key carry on.
+ * 2. Enter and Shift-Enter link the address before the caret once the key has acted;
+ *    Backspace right after takes the link back.
  * 3. Feature hotkeys (Mod-b, ...). Before the list keys so a feature can take a
  *    key lists would claim (`blurOnBreak` takes Enter).
  * 4. List keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
@@ -299,10 +307,15 @@ const markPatternRule = (rule: RuleOfKind<'markPattern'>, context: RuleContext):
     return toInputRule({ pattern, handler }, context);
 };
 
+type PendingLink = { from: number; to: number; mark: PmMark; text: string };
+
+const autolinkKey = new PluginKey<boolean>('autolinkOnEnter');
+
 /**
- * Enter and Shift-Enter end a token as a space does: the address before the
- * caret is linked, then the keypress carries on (always "not handled") to
- * split the block or break the line.
+ * Enter and Shift-Enter end a token as a space does: the keypress carries on
+ * (always "not handled") to split the block or break the line, and the address
+ * before the caret is linked right after, as its own history step. Backspace
+ * right after takes the link back and keeps the text.
  */
 const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] => {
     const context = ruleContext(registry, schema);
@@ -315,7 +328,7 @@ const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] =
     if (matchers.length === 0) {
         return [];
     }
-    const addressBeforeCaret = (state: EditorState, composing: boolean): Transaction | null => {
+    const addressBeforeCaret = (state: EditorState, composing: boolean): PendingLink | null => {
         const { $from, empty } = state.selection;
         if (!empty || !$from.parent.isTextblock || composing) {
             return null;
@@ -341,19 +354,80 @@ const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] =
             }
             const found = find(state, match, $from.pos - (match[0].length - 1));
             if (found) {
-                return state.tr.addMark(found.from, found.to, found.mark);
+                return { ...found, text: state.doc.textBetween(found.from, found.to) };
             }
         }
         return null;
     };
-    const link: Command = (state, dispatch, view) => {
-        const transaction = addressBeforeCaret(state, view?.composing === true);
-        if (transaction) {
-            dispatch?.(transaction);
+
+    // The address found when the key went down, linked once the key's own change is in.
+    let pending: PendingLink | null = null;
+
+    /** The link as its own history step, so the first undo takes back the link and keeps the new line. */
+    const linkTransaction = (state: EditorState, link: PendingLink): Transaction | null => {
+        if (link.to > state.doc.content.size || state.doc.textBetween(link.from, link.to) !== link.text) {
+            return null;
         }
-        return false;
+        return closeHistory(state.tr.addMark(link.from, link.to, link.mark)).setMeta(autolinkKey, true);
     };
-    return [keymap({ Enter: link, 'Shift-Enter': link })];
+
+    const plugin = new Plugin<boolean>({
+        key: autolinkKey,
+        state: {
+            init: () => false,
+            // True while nothing has happened since the link was added.
+            apply: (transaction, justLinked) => {
+                if (transaction.getMeta(autolinkKey) === true) {
+                    return true;
+                }
+                if (transaction.docChanged || transaction.selectionSet) {
+                    return false;
+                }
+                return justLinked;
+            },
+        },
+        props: {
+            handleKeyDown: (view, event) => {
+                if (event.key === 'Backspace' && autolinkKey.getState(view.state) === true) {
+                    return undo(view.state, view.dispatch);
+                }
+                if (event.key !== 'Enter' || event.altKey || event.ctrlKey || event.metaKey) {
+                    return false;
+                }
+                const link = addressBeforeCaret(view.state, view.composing);
+                if (!link) {
+                    return false;
+                }
+                pending = link;
+                // A key that changes nothing (Enter that blurs a single-line editor) still links.
+                queueMicrotask(() => {
+                    if (pending !== link || view.isDestroyed) {
+                        return;
+                    }
+                    pending = null;
+                    const transaction = linkTransaction(view.state, link);
+                    if (transaction) {
+                        view.dispatch(transaction);
+                    }
+                });
+                return false;
+            },
+        },
+        appendTransaction: (transactions, _oldState, newState) => {
+            const link = pending;
+            if (!link || !transactions.some((transaction) => transaction.docChanged)) {
+                return null;
+            }
+            pending = null;
+            let { from, to } = link;
+            for (const transaction of transactions) {
+                from = transaction.mapping.map(from, 1);
+                to = transaction.mapping.map(to, -1);
+            }
+            return linkTransaction(newState, { ...link, from, to });
+        },
+    });
+    return [plugin];
 };
 
 /**
