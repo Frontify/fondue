@@ -101,8 +101,8 @@ describe('typing a web address', () => {
     });
 });
 
-const press = (view: EditorView, key: string): boolean =>
-    view.someProp('handleKeyDown', (handle) => handle(view, new KeyboardEvent('keydown', { key }))) === true;
+const press = (view: EditorView, key: string, shiftKey = false): boolean =>
+    view.someProp('handleKeyDown', (handle) => handle(view, new KeyboardEvent('keydown', { key, shiftKey }))) === true;
 
 const undo = (view: EditorView): boolean => pmUndo(view.state, view.dispatch);
 
@@ -164,5 +164,47 @@ describe('pressing Enter after a web address', () => {
 
         undo(editor.view);
         expect(editor.stored()).toEqual([paragraph(text('https://example.com'))]);
+    });
+});
+
+const lineBreak = { type: 'break' };
+
+// A line break or other inline element ends an address as whitespace does.
+
+describe('a web address next to a line break', () => {
+    it('is not joined to the word after the break when a space follows that word', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com'), lineBreak, text('next'))]);
+        editor.caretAfter('next');
+
+        editor.type(' ');
+
+        expect(editor.stored()).toEqual([paragraph(text('https://example.com'), lineBreak, text('next '))]);
+    });
+
+    it('is not joined to the word after the break when Enter follows that word', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com'), lineBreak, text('next'))]);
+        editor.caretAfter('next');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([paragraph(text('https://example.com'), lineBreak, text('next')), paragraph()]);
+    });
+
+    it('is linked when typed right after a break', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('see'), lineBreak, text('x'))]);
+        editor.caretBefore('x');
+
+        editor.type('https://example.com ');
+
+        expect(editor.stored()).toEqual([paragraph(text('see'), lineBreak, link('https://example.com'), text(' x'))]);
+    });
+
+    it('is linked by Shift-Enter, which then breaks the line', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('https://example.com'))]);
+        editor.caretAfter('https://example.com');
+
+        press(editor.view, 'Enter', true);
+
+        expect(editor.stored()).toEqual([paragraph(link('https://example.com'), lineBreak)]);
     });
 });

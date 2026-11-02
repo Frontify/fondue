@@ -20,7 +20,7 @@ import { listKeys } from './lists';
  * in `keystrokePipeline` matching the numbers used below.
  *
  * 1. Undo / redo, and Backspace right after a typing rewrite (takes the rewrite back).
- * 2. Enter links the address before the caret, then lets Enter carry on.
+ * 2. Enter and Shift-Enter link the address before the caret, then let the key carry on.
  * 3. Feature hotkeys (Mod-b, ...). Before the list keys so a feature can take a
  *    key lists would claim (`blurOnBreak` takes Enter).
  * 4. List keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
@@ -230,10 +230,14 @@ const trimTrailingPunctuation = (address: string): string => {
     }
 };
 
+/** What reading a block as text gives for an inline element (a line break, a mention). */
+const INLINE_ELEMENT = '\uFFFC';
+
 /**
  * What typing a space and pressing Enter share: the pattern that finds a token
  * before the caret, and where it sits once found. The pattern ends in the
- * terminator being typed, which is not in the document yet.
+ * terminator being typed, which is not in the document yet. An inline element
+ * ends a token as whitespace does.
  */
 const markPatternMatcher = (rule: RuleOfKind<'markPattern'>, context: RuleContext) => {
     const markType = context.schema.marks[rule.mark];
@@ -242,7 +246,7 @@ const markPatternMatcher = (rule: RuleOfKind<'markPattern'>, context: RuleContex
     }
     const flags = withoutStateFlags(rule.pattern);
     const token = new RegExp(`^(?:${rule.pattern.source})$`, flags);
-    const pattern = new RegExp(`(?:^|\\s)((?:${rule.pattern.source}))\\s$`, flags);
+    const pattern = new RegExp(`(?:^|[\\s${INLINE_ELEMENT}])((?:${rule.pattern.source}))\\s$`, flags);
 
     /** The range to mark and the mark, or null when the token is no match or already carries a mark. */
     const find = (
@@ -250,7 +254,8 @@ const markPatternMatcher = (rule: RuleOfKind<'markPattern'>, context: RuleContex
         match: RegExpMatchArray,
         start: number,
     ): { from: number; to: number; mark: PmMark } | null => {
-        const typed = match[1];
+        // A token pattern may match across an inline element: only what follows the last one counts.
+        const typed = match[1]?.split(INLINE_ELEMENT).pop();
         if (!typed) {
             return null;
         }
@@ -295,8 +300,9 @@ const markPatternRule = (rule: RuleOfKind<'markPattern'>, context: RuleContext):
 };
 
 /**
- * Enter ends a token as a space does: the address before the caret is linked,
- * then the keypress carries on (always "not handled") to split the block.
+ * Enter and Shift-Enter end a token as a space does: the address before the
+ * caret is linked, then the keypress carries on (always "not handled") to
+ * split the block or break the line.
  */
 const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] => {
     const context = ruleContext(registry, schema);
@@ -309,20 +315,25 @@ const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] =
     if (matchers.length === 0) {
         return [];
     }
-    const link: Command = (state, dispatch, view) => {
+    const addressBeforeCaret = (state: EditorState, composing: boolean): Transaction | null => {
         const { $from, empty } = state.selection;
-        if (!empty || !$from.parent.isTextblock || view?.composing === true) {
-            return false;
+        if (!empty || !$from.parent.isTextblock || composing) {
+            return null;
         }
         if (isInExcludedMark(state, context.excludedMarks, $from.pos)) {
-            return false;
+            return null;
         }
         // Mid-token, the caret does not end an address: Enter only splits.
-        const after = $from.parent.textBetween($from.parentOffset, $from.parent.content.size, undefined, '\uFFFC');
+        const after = $from.parent.textBetween(
+            $from.parentOffset,
+            $from.parent.content.size,
+            undefined,
+            INLINE_ELEMENT,
+        );
         if (after !== '' && !/^\s/.test(after)) {
-            return false;
+            return null;
         }
-        const textBefore = $from.parent.textBetween(0, $from.parentOffset, undefined, '\uFFFC');
+        const textBefore = $from.parent.textBetween(0, $from.parentOffset, undefined, INLINE_ELEMENT);
         for (const { pattern, find } of matchers) {
             const match = pattern.exec(`${textBefore} `);
             if (!match) {
@@ -330,13 +341,19 @@ const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] =
             }
             const found = find(state, match, $from.pos - (match[0].length - 1));
             if (found) {
-                dispatch?.(state.tr.addMark(found.from, found.to, found.mark));
-                break;
+                return state.tr.addMark(found.from, found.to, found.mark);
             }
+        }
+        return null;
+    };
+    const link: Command = (state, dispatch, view) => {
+        const transaction = addressBeforeCaret(state, view?.composing === true);
+        if (transaction) {
+            dispatch?.(transaction);
         }
         return false;
     };
-    return [keymap({ Enter: link })];
+    return [keymap({ Enter: link, 'Shift-Enter': link })];
 };
 
 /**
