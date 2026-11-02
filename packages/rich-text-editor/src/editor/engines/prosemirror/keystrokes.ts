@@ -1,6 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { baseKeymap, chainCommands, setBlockType } from 'prosemirror-commands';
+import {
+    baseKeymap,
+    chainCommands,
+    createParagraphNear,
+    liftEmptyBlock,
+    newlineInCode,
+    setBlockType,
+    splitBlock,
+} from 'prosemirror-commands';
 import { history, redo, undo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
@@ -11,7 +19,7 @@ import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type Rt
 
 import { keepCarriedAttrs } from './controlApi';
 import { valueAttrsFor } from './documentConversion';
-import { keepingUnknownBlocks, listKeys } from './lists';
+import { clearExtrasAt, keepingUnknownBlocks, listKeys } from './lists';
 
 /**
  * What happens when a key is pressed, as one ordered list of ProseMirror plugins.
@@ -31,11 +39,14 @@ import { keepingUnknownBlocks, listKeys } from './lists';
 
 export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api: EditorControlApi): PmPlugin[] => {
     const hasLists = registry.itemTypeByList.size > 0;
-    let baseline: Record<string, Command> = baseKeymap;
+    let baseline: Record<string, Command> = {
+        ...baseKeymap,
+        Enter: chainCommands(newlineInCode, createParagraphNear, liftEmptyBlock, splitWithoutExtras),
+    };
     if (hasLists) {
         // Its joins and lifts take a list's children for items, so an unknown block among them can be lost; a refused key still counts as handled.
         baseline = Object.fromEntries(
-            Object.entries(baseKeymap).map(([key, command]) => [
+            Object.entries(baseline).map(([key, command]) => [
                 key,
                 keepingUnknownBlocks(command, {
                     handleRefusal: true,
@@ -66,6 +77,18 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         keymap(baseline),
     ];
 };
+
+/** The engine's split, except that the block it starts carries none of the undeclared keys it copies. */
+const splitWithoutExtras: Command = (state, dispatch, view) =>
+    splitBlock(
+        state,
+        dispatch &&
+            ((transaction) => {
+                clearExtrasAt(transaction, transaction.selection.$from.before());
+                dispatch(transaction);
+            }),
+        view,
+    );
 
 // Feature hotkeys
 

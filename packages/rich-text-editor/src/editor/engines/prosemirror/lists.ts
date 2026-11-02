@@ -104,26 +104,31 @@ export const keepingUnknownBlocks =
         return true;
     };
 
-/** The engine's split, except that the item a split at the end of one starts is clean: it copies the old item's attributes. */
+/** Drops the undeclared stored keys of the block at `pos`: a block a split makes is new, and those keys stay with the one it came from. */
+export const clearExtrasAt = (transaction: Transaction, pos: number): void => {
+    const node = transaction.doc.nodeAt(pos);
+    if (node !== null && node.attrs[EXTRA_ATTR] !== null && node.attrs[EXTRA_ATTR] !== undefined) {
+        transaction.setNodeMarkup(pos, undefined, { ...node.attrs, [EXTRA_ATTR]: null });
+    }
+};
+
+/** The engine's split, except that the item it starts, and the block in it, carry none of the undeclared keys it copies. */
 const splitListItem =
     (itemType: PmNodeType): Command =>
-    (state, dispatch, view) => {
-        const { $from, $to } = state.selection;
-        const atEnd = $to.pos === $from.end();
-        return pmSplitListItem(itemType)(
+    (state, dispatch, view) =>
+        pmSplitListItem(itemType)(
             state,
             dispatch &&
                 ((transaction) => {
                     const { $from: caret } = transaction.selection;
-                    const item = caret.depth >= 2 ? caret.node(-1) : null;
-                    if (atEnd && item?.type === itemType && item.attrs[EXTRA_ATTR] !== null) {
-                        transaction.setNodeMarkup(caret.before(-1), undefined, { ...item.attrs, [EXTRA_ATTR]: null });
+                    if (caret.depth >= 2 && caret.node(-1).type === itemType) {
+                        clearExtrasAt(transaction, caret.before(-1));
+                        clearExtrasAt(transaction, caret.before());
                     }
                     dispatch(transaction);
                 }),
             view,
         );
-    };
 
 // The list half of the control API
 
