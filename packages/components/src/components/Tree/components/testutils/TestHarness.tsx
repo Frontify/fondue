@@ -26,6 +26,7 @@ export type TestHarnessProps = {
     onChange?: (state: TreeChangeState) => void;
     onRename?: (id: string, newName: string) => void;
     onRenamingChange?: (id: string, isRenaming: boolean) => void;
+    onDoubleClick?: (id: string) => void;
 };
 
 export const TestHarness = ({
@@ -37,6 +38,7 @@ export const TestHarness = ({
     onChange,
     onRename,
     onRenamingChange,
+    onDoubleClick,
 }: TestHarnessProps) => {
     const [nodes, setNodes] = useState(initial);
     const [renamingId, setRenamingId] = useState<string | null>(null);
@@ -68,6 +70,7 @@ export const TestHarness = ({
                     id={node.id}
                     isExpanded={node.isExpanded}
                     isSelected={node.isSelected}
+                    onDoubleClick={onDoubleClick ? () => onDoubleClick(node.id) : undefined}
                     {...renameProps(node)}
                 >
                     <Tree.FolderHeader>
@@ -77,7 +80,13 @@ export const TestHarness = ({
                     {renderNodes(node.children ?? [])}
                 </Tree.Folder>
             ) : (
-                <Tree.Item key={node.id} id={node.id} isSelected={node.isSelected} {...renameProps(node)}>
+                <Tree.Item
+                    key={node.id}
+                    id={node.id}
+                    isSelected={node.isSelected}
+                    onDoubleClick={onDoubleClick ? () => onDoubleClick(node.id) : undefined}
+                    {...renameProps(node)}
+                >
                     <Tree.Label>{node.name}</Tree.Label>
                     {renameAction(node)}
                 </Tree.Item>
