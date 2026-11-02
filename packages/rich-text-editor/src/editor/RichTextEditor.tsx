@@ -184,7 +184,8 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     // toolbar and the flyouts they portal out — not just the editable element.
     const hadFocusRef = useRef(false);
     useEffect(() => {
-        if (hadFocusRef.current && !focusWithin && handle !== null) {
+        // The handle can outlive a switch to a newer document by one render; its document would overwrite that one.
+        if (hadFocusRef.current && !focusWithin && handle !== null && newerVersion === null) {
             onBlur?.(handle.document() as RteDocumentOf<TBlock>);
         }
         hadFocusRef.current = focusWithin;

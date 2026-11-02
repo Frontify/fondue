@@ -376,6 +376,32 @@ describe('a document from a newer format version', () => {
         expect(onChange).toHaveBeenCalledTimes(1);
     });
 
+    it('does not hand the older document to onBlur when focus leaves as a newer one arrives', () => {
+        vi.useFakeTimers();
+        teardown.push(() => vi.useRealTimers());
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const outside = window.document.createElement('input');
+        window.document.body.append(outside);
+        teardown.push(() => outside.remove());
+        const onBlur = vi.fn<(doc: RteDocument) => void>();
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} onBlur={onBlur} plugins={defaultPlugins} />
+        ));
+        ready();
+        act(() => editableIn(container).focus());
+
+        // Focus leaving and the newer document land in one render.
+        act(() => {
+            outside.focus();
+            rerender(<RichTextEditor value={newer} onBlur={onBlur} plugins={defaultPlugins} />);
+            vi.runAllTimers();
+        });
+
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+        expect(onBlur).not.toHaveBeenCalled();
+    });
+
     it('becomes editable once given a document of the current version', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         teardown.push(() => warn.mockRestore());
