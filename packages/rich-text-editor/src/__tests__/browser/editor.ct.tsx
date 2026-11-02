@@ -34,10 +34,21 @@ const document: RteDocument = {
 // Page-level rules about the bare test page (no main landmark, no h1), not about the component.
 const PAGE_LEVEL_RULES = ['landmark-one-main', 'page-has-heading-one', 'region'];
 
-/** The rule id and node of each axe violation, so a failure says what to fix. */
+// WCAG 2.2 AA, the editor's bar: axe's defaults leave out its rules, `target-size` among them.
+const WCAG_22_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
+
+/**
+ * The rule id and node of each axe violation, so a failure says what to fix.
+ * Contrast axe could not decide counts too: overlaid text is where that happens.
+ */
 const violationsOf = async (page: Page): Promise<string[]> => {
-    const { violations } = await new AxeBuilder({ page }).disableRules(PAGE_LEVEL_RULES).analyze();
-    return violations.flatMap(({ id, nodes }) => nodes.map((node) => `${id}: ${node.target.join(' ')}`));
+    const { violations, incomplete } = await new AxeBuilder({ page })
+        .withTags(WCAG_22_AA)
+        .disableRules(PAGE_LEVEL_RULES)
+        .analyze();
+    return [...violations, ...incomplete.filter(({ id }) => id === 'color-contrast')].flatMap(({ id, nodes }) =>
+        nodes.map((node) => `${id}: ${node.target.join(' ')}`),
+    );
 };
 
 test.describe('editor', () => {
@@ -97,7 +108,8 @@ test.describe('editor', () => {
 
 test.describe('accessibility', () => {
     test('the editor has no axe violations', async ({ mount, page }) => {
-        await mount(<RichTextEditor value={document} aria-label="Description" />);
+        // No label from the host: the editor names itself.
+        await mount(<RichTextEditor value={document} />);
         await expect(page.getByRole('textbox')).toBeVisible();
         // The toolbar renders a frame after the text: scanning before it would leave it out.
         await expect(page.getByRole('toolbar')).toBeVisible();
