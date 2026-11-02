@@ -457,7 +457,7 @@ export const CommitOnBlur: Story = {
 };
 
 /** A toolbar item that throws when told to, standing in for any bug in a plugin's UI. */
-const toolbarItemPlugin = (crash: boolean): RtePlugin => ({
+const crashingPlugin = (crash: boolean): RtePlugin => ({
     id: 'crashing',
     toolbarItem: () => {
         if (crash) {
@@ -466,8 +466,8 @@ const toolbarItemPlugin = (crash: boolean): RtePlugin => ({
         return null;
     },
 });
-const WORKING_PLUGINS = [...defaultPlugins, toolbarItemPlugin(false)];
-const CRASHING_PLUGINS = [...defaultPlugins, toolbarItemPlugin(true)];
+const WORKING_PLUGINS = [...defaultPlugins, crashingPlugin(false)];
+const CRASHING_PLUGINS = [...defaultPlugins, crashingPlugin(true)];
 
 /**
  * When something in the editor throws while rendering, the editor shows its

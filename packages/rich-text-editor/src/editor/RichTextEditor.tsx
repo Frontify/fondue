@@ -4,8 +4,8 @@ import {
     type CSSProperties,
     type KeyboardEvent,
     type MouseEvent,
-    type ReactNode,
     type MutableRefObject,
+    type ReactNode,
     useEffect,
     useId,
     useMemo,
@@ -198,7 +198,6 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
             onCatch={onCatch}
             fallback={
                 <EditorFallback
-                    value={value}
                     ownDocumentRef={ownDocumentRef}
                     registry={registry}
                     labels={labels}
@@ -258,11 +257,7 @@ const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
     const commands = useMemo(() => commandsOf(registry, labels.text), [registry, labels.text]);
 
     const editableId = useId();
-    const { hostLabels, isNamed } = hostLabelsOf({
-        ariaLabel,
-        ariaLabelledBy,
-        ariaDescribedBy,
-    });
+    const { hostLabels, isNamed } = hostLabelsOf({ ariaLabel, ariaLabelledBy, ariaDescribedBy });
     const className = [documentStyles.document, styles.content, ...registry.contentClassNames].join(' ');
     const attributes = useMemo(
         () =>

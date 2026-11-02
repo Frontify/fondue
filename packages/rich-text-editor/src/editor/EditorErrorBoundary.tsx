@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button } from '@frontify/fondue-components';
-import { Component, type ErrorInfo, type ReactNode, type RefObject, useEffect, useId, useRef } from 'react';
+import { Component, type ReactNode, type RefObject, useEffect, useId, useRef } from 'react';
 
 import { type PluginRegistry, type RteDocumentOf } from '#/core';
 import { RegistryRenderer } from '#/renderer';
@@ -43,7 +43,7 @@ export class EditorErrorBoundary extends Component<EditorErrorBoundaryProps, Edi
         return null;
     }
 
-    override componentDidCatch(thrown: unknown, _info: ErrorInfo): void {
+    override componentDidCatch(thrown: unknown): void {
         if (process.env.NODE_ENV !== 'production') {
             console.error('[RichTextEditor] The editor crashed and was replaced by a read-only view.', thrown);
         }
@@ -78,7 +78,6 @@ export class EditorErrorBoundary extends Component<EditorErrorBoundaryProps, Edi
 
 /** The document read-only, what went wrong, and the way to try again. */
 export const EditorFallback = ({
-    value,
     ownDocumentRef,
     registry,
     labels,
@@ -86,7 +85,6 @@ export const EditorFallback = ({
     focusWithinRef,
     groupAttributes,
 }: {
-    value: RteDocumentOf | undefined;
     /** Read now, not when the fallback was built: the editor reported edits after that. */
     ownDocumentRef: RefObject<RteDocumentOf | null>;
     registry: PluginRegistry;
@@ -116,8 +114,8 @@ export const EditorFallback = ({
         }
     }, [focusWithinRef]);
     // What the editor showed, which is what a crash reports: an echoed `value` can be older.
-    const document = ownDocumentRef.current ?? value;
-    if (document === undefined) {
+    const document = ownDocumentRef.current;
+    if (document === null) {
         return null;
     }
     return (

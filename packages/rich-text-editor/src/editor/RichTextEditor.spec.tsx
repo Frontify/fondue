@@ -98,13 +98,7 @@ const paste = (container: HTMLElement, html: string): void => {
     const data = new DataTransfer();
     data.setData('text/html', html);
     act(() => {
-        editable.dispatchEvent(
-            new ClipboardEvent('paste', {
-                clipboardData: data,
-                bubbles: true,
-                cancelable: true,
-            }),
-        );
+        editable.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }));
     });
 };
 
@@ -119,14 +113,7 @@ const editableIn = (container: HTMLElement): HTMLElement => {
 
 const press = (target: Element, key: string, init: KeyboardEventInit = {}): void => {
     act(() => {
-        target.dispatchEvent(
-            new KeyboardEvent('keydown', {
-                key,
-                bubbles: true,
-                cancelable: true,
-                ...init,
-            }),
-        );
+        target.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }));
     });
 };
 
@@ -147,12 +134,7 @@ const toDo: RteDocument = {
                 {
                     type: 'checkItem',
                     checked: true,
-                    children: [
-                        {
-                            type: 'paragraph',
-                            children: [{ text: 'Done this' }],
-                        },
-                    ],
+                    children: [{ type: 'paragraph', children: [{ text: 'Done this' }] }],
                 },
                 {
                     type: 'checkItem',
@@ -423,11 +405,7 @@ describe('the editable element', () => {
         data.setData('text/plain', '/');
         act(() => {
             editable.dispatchEvent(
-                new ClipboardEvent('paste', {
-                    clipboardData: data,
-                    bubbles: true,
-                    cancelable: true,
-                }),
+                new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }),
             );
         });
         expect(window.document.querySelector('[role="listbox"]')).not.toBeNull();
@@ -468,10 +446,7 @@ describe('the toolbar', () => {
             </button>
         );
     };
-    const statefulPlugin: RtePlugin = {
-        id: 'stateful',
-        toolbarItem: ClickCounter,
-    };
+    const statefulPlugin: RtePlugin = { id: 'stateful', toolbarItem: ClickCounter };
 
     /** A control using hooks of other kinds, so a shifted hook order would show. */
     const OtherHooks = (): ReactNode => {
@@ -602,10 +577,7 @@ describe('the toolbar from the keyboard', () => {
     };
 
     describe.each(['top', 'floating'] as const)('with the %s toolbar, asked for again', (placement) => {
-        const start = (): {
-            editable: HTMLElement;
-            rerender: () => void;
-        } => {
+        const start = (): { editable: HTMLElement; rerender: () => void } => {
             const element = (label: string): ReactNode => (
                 <RichTextEditor
                     value={paragraph('text')}
@@ -745,10 +717,7 @@ describe('content no mounted plugin knows', () => {
     it('is shown, not editable, and handed back unchanged after an edit elsewhere', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         teardown.push(() => warn.mockRestore());
-        const callout = {
-            type: 'callout',
-            children: [{ type: 'paragraph', children: [{ text: 'kept' }] }],
-        };
+        const callout = { type: 'callout', children: [{ type: 'paragraph', children: [{ text: 'kept' }] }] };
         const value = {
             version: 1,
             blocks: [{ type: 'paragraph', children: [{ text: 'text' }] }, callout],
@@ -780,6 +749,49 @@ describe('an editor that crashes', () => {
             throw new Error('toolbar broke');
         },
     });
+    /** A toolbar item that throws once `state.crash` is set and the selection moves, as an edit makes it. */
+    const lateCrashPlugin = (state: { crash: boolean }): RtePlugin => ({
+        id: 'late',
+        toolbarItem: ({ selection }) => {
+            if (state.crash && selection) {
+                throw new Error('after the edit');
+            }
+            return <span>fine</span>;
+        },
+    });
+    /** A toolbar item that throws while `state.broken` is set. */
+    const flakyPlugin = (state: { broken: boolean }): RtePlugin => ({
+        id: 'flaky',
+        toolbarItem: () => {
+            if (state.broken) {
+                throw new Error('until fixed');
+            }
+            return <span>fine</span>;
+        },
+    });
+    /** A block whose readonly view throws while `state.broken` is set. */
+    const calloutPlugin = (state: { broken: boolean }): RtePlugin => {
+        const Callout = ({ children }: { children?: ReactNode }): ReactNode => {
+            if (state.broken) {
+                throw new Error('readonly view broke');
+            }
+            return <p>{children}</p>;
+        };
+        return {
+            id: 'callout',
+            blocks: {
+                callout: {
+                    content: 'text',
+                    toHtml: () => ({ tag: 'p', attrs: { 'data-callout': '' }, children: true }),
+                    parse: [{ tag: 'p[data-callout]' }],
+                    render: { component: Callout },
+                },
+            } as unknown as NonNullable<RtePlugin['blocks']>,
+        };
+    };
+    const callout = (text: string): RteDocument =>
+        ({ version: 1, blocks: [{ type: 'callout', children: [{ text }] }] }) as unknown as RteDocument;
+
     const retryButton = (container: HTMLElement): HTMLButtonElement => {
         const button = [...container.querySelectorAll('button')].find(
             (candidate) => candidate.textContent === 'Try again',
@@ -847,20 +859,12 @@ describe('an editor that crashes', () => {
 
     it('is editable again when Retry finds the cause gone', () => {
         silenceReact();
-        let broken = true;
-        const flaky: RtePlugin = {
-            id: 'flaky',
-            toolbarItem: () => {
-                if (broken) {
-                    throw new Error('until fixed');
-                }
-                return <span>fine</span>;
-            },
-        };
+        const state = { broken: true };
+        const flaky = flakyPlugin(state);
         const { container, ready } = mount(() => <RichTextEditor value={paragraph('back again')} plugins={[flaky]} />);
         expect(container.querySelector('[contenteditable]')).toBeNull();
 
-        broken = false;
+        state.broken = false;
         retry(container);
         ready();
 
@@ -870,20 +874,11 @@ describe('an editor that crashes', () => {
 
     it('keeps what was typed into an uncontrolled editor', () => {
         silenceReact();
-        let crash = false;
-        const late: RtePlugin = {
-            id: 'late',
-            toolbarItem: ({ selection }) => {
-                // Read so the item re-renders with the selection, which the edit changes.
-                if (crash && selection) {
-                    throw new Error('after the edit');
-                }
-                return <span>fine</span>;
-            },
-        };
+        const state = { crash: false };
+        const late = lateCrashPlugin(state);
         const { container, ready } = mount(() => <RichTextEditor plugins={[late, ...defaultPlugins]} />);
         ready();
-        crash = true;
+        state.crash = true;
 
         paste(container, '<p>typed</p>');
 
@@ -893,23 +888,15 @@ describe('an editor that crashes', () => {
 
     it('hands onError the error and the edits made before the crash, and saves nothing through onBlur', () => {
         silenceReact();
-        let crash = false;
-        const late: RtePlugin = {
-            id: 'late',
-            toolbarItem: ({ selection }) => {
-                if (crash && selection) {
-                    throw new Error('after the edit');
-                }
-                return <span>fine</span>;
-            },
-        };
+        const state = { crash: false };
+        const late = lateCrashPlugin(state);
         const onBlur = vi.fn<(doc: RteDocument) => void>();
         const onError = errorSpy();
         const { container, ready } = mount(() => (
             <RichTextEditor plugins={[late, ...defaultPlugins]} onBlur={onBlur} onError={onError} />
         ));
         ready();
-        crash = true;
+        state.crash = true;
         paste(container, '<p>typed</p>');
 
         expect(onError).toHaveBeenCalledOnce();
@@ -920,16 +907,8 @@ describe('an editor that crashes', () => {
 
     it('hands onError the edits a controlled host holds', () => {
         silenceReact();
-        let crash = false;
-        const late: RtePlugin = {
-            id: 'late',
-            toolbarItem: ({ selection }) => {
-                if (crash && selection) {
-                    throw new Error('after the edit');
-                }
-                return <span>fine</span>;
-            },
-        };
+        const state = { crash: false };
+        const late = lateCrashPlugin(state);
         const onError = errorSpy();
         const Host = (): ReactNode => {
             const [value, setValue] = useState<RteDocument>(() => paragraph('saved'));
@@ -944,7 +923,7 @@ describe('an editor that crashes', () => {
         };
         const { container, ready } = mount(() => <Host />);
         ready();
-        crash = true;
+        state.crash = true;
         paste(container, '<p>typed</p>');
 
         expect(onError).toHaveBeenCalledOnce();
@@ -953,25 +932,17 @@ describe('an editor that crashes', () => {
 
     it('mounts on Retry what the fallback showed, though the host value is older', () => {
         silenceReact();
-        let crash = false;
-        const late: RtePlugin = {
-            id: 'late',
-            toolbarItem: ({ selection }) => {
-                if (crash && selection) {
-                    throw new Error('after the edit');
-                }
-                return <span>fine</span>;
-            },
-        };
+        const state = { crash: false };
+        const late = lateCrashPlugin(state);
         const { container, ready } = mount((change) => (
             <RichTextEditor value={paragraph('saved')} onChange={change} plugins={[late, ...defaultPlugins]} />
         ));
         ready();
-        crash = true;
+        state.crash = true;
         paste(container, '<p>typed</p>');
         expect(container.textContent).toContain('typed');
 
-        crash = false;
+        state.crash = false;
         retry(container);
 
         expect(container.querySelector('[contenteditable]')?.textContent).toContain('typed');
@@ -979,28 +950,20 @@ describe('an editor that crashes', () => {
 
     it('leaves focus where the user put it when the editor crashes again after a Retry', () => {
         silenceReact();
-        let broken = true;
-        const flaky: RtePlugin = {
-            id: 'flaky',
-            toolbarItem: () => {
-                if (broken) {
-                    throw new Error('until fixed');
-                }
-                return <span>fine</span>;
-            },
-        };
+        const state = { broken: true };
+        const flaky = flakyPlugin(state);
         const { container, rerender } = mount(() => (
             <>
                 <input aria-label="elsewhere" />
                 <RichTextEditor value={paragraph('one')} plugins={[flaky]} />
             </>
         ));
-        broken = false;
+        state.broken = false;
         retry(container);
         const elsewhere = container.querySelector('input') as HTMLInputElement;
         act(() => elsewhere.focus());
 
-        broken = true;
+        state.broken = true;
         rerender(
             <>
                 <input aria-label="elsewhere" />
@@ -1014,23 +977,15 @@ describe('an editor that crashes', () => {
 
     it('hands the keyboard to Retry when the editor crashes while it has focus', () => {
         silenceReact();
-        let broken = false;
-        const flaky: RtePlugin = {
-            id: 'flaky',
-            toolbarItem: () => {
-                if (broken) {
-                    throw new Error('while typing');
-                }
-                return <span>fine</span>;
-            },
-        };
+        const state = { broken: false };
+        const flaky = flakyPlugin(state);
         const { container, rerender, ready } = mount(() => (
             <RichTextEditor value={paragraph('one')} plugins={[flaky]} />
         ));
         ready();
         act(() => editableIn(container).focus());
 
-        broken = true;
+        state.broken = true;
         rerender(<RichTextEditor value={paragraph('two')} plugins={[flaky]} />);
 
         expect(window.document.activeElement).toBe(retryButton(container));
@@ -1040,20 +995,12 @@ describe('an editor that crashes', () => {
         silenceReact();
         vi.useFakeTimers();
         teardown.push(() => vi.useRealTimers());
-        let broken = true;
-        const flaky: RtePlugin = {
-            id: 'flaky',
-            toolbarItem: () => {
-                if (broken) {
-                    throw new Error('until fixed');
-                }
-                return <span>fine</span>;
-            },
-        };
+        const state = { broken: true };
+        const flaky = flakyPlugin(state);
         const { container, rerender, ready } = mount(() => (
             <RichTextEditor value={paragraph('one')} plugins={[flaky]} />
         ));
-        broken = false;
+        state.broken = false;
         retry(container);
         ready();
         expect(editableIn(container).contains(window.document.activeElement)).toBe(true);
@@ -1063,7 +1010,7 @@ describe('an editor that crashes', () => {
         });
         expect(window.document.activeElement).toBe(window.document.body);
 
-        broken = true;
+        state.broken = true;
         rerender(<RichTextEditor value={paragraph('two')} plugins={[flaky]} />);
 
         expect(retryButton(container)).toBeDefined();
@@ -1072,21 +1019,13 @@ describe('an editor that crashes', () => {
 
     it('puts the keyboard back in the text after Retry', () => {
         silenceReact();
-        let broken = true;
-        const flaky: RtePlugin = {
-            id: 'flaky',
-            toolbarItem: () => {
-                if (broken) {
-                    throw new Error('until fixed');
-                }
-                return <span>fine</span>;
-            },
-        };
+        const state = { broken: true };
+        const flaky = flakyPlugin(state);
         const { container, ready } = mount(() => <RichTextEditor value={paragraph('text')} plugins={[flaky]} />);
         retryButton(container).focus();
         expect(window.document.activeElement).toBe(retryButton(container));
 
-        broken = false;
+        state.broken = false;
         retry(container);
         ready();
 
@@ -1095,33 +1034,14 @@ describe('an editor that crashes', () => {
 
     it('does not take focus later when it was retried readonly', () => {
         silenceReact();
-        let broken = true;
-        const Callout = ({ children }: { children?: ReactNode }): ReactNode => {
-            if (broken) {
-                throw new Error('readonly view broke');
-            }
-            return <p>{children}</p>;
-        };
-        const plugin: RtePlugin = {
-            id: 'callout',
-            blocks: {
-                callout: {
-                    content: 'text',
-                    toHtml: () => ({ tag: 'p', attrs: { 'data-callout': '' }, children: true }),
-                    parse: [{ tag: 'p[data-callout]' }],
-                    render: { component: Callout },
-                },
-            } as unknown as NonNullable<RtePlugin['blocks']>,
-        };
-        const value = {
-            version: 1,
-            blocks: [{ type: 'callout', children: [{ text: 'read me' }] }],
-        } as unknown as RteDocument;
+        const state = { broken: true };
+        const plugin = calloutPlugin(state);
+        const value = callout('read me');
         const { container, rerender, ready } = mount(() => (
             <RichTextEditor value={value} plugins={[plugin]} readonly />
         ));
 
-        broken = false;
+        state.broken = false;
         retry(container);
         expect(container.textContent).toContain('read me');
         rerender(<RichTextEditor value={value} plugins={[plugin]} />);
@@ -1156,23 +1076,15 @@ describe('an editor that crashes', () => {
 
     it('hands onError an edit made after a pushed value', () => {
         silenceReact();
-        let crash = false;
-        const late: RtePlugin = {
-            id: 'late',
-            toolbarItem: ({ selection }) => {
-                if (crash && selection) {
-                    throw new Error('after the edit');
-                }
-                return <span>fine</span>;
-            },
-        };
+        const state = { crash: false };
+        const late = lateCrashPlugin(state);
         const onError = errorSpy();
         const { container, rerender, ready } = mount(() => (
             <RichTextEditor value={paragraph('A')} plugins={[late, ...defaultPlugins]} onError={onError} />
         ));
         ready();
         rerender(<RichTextEditor value={paragraph('C')} plugins={[late, ...defaultPlugins]} onError={onError} />);
-        crash = true;
+        state.crash = true;
         paste(container, '<p>D</p>');
 
         expect(onError).toHaveBeenCalledOnce();
@@ -1201,7 +1113,7 @@ describe('an editor that crashes', () => {
         paste(container, '<p>one</p>');
         paste(container, '<p>two</p>');
         paste(container, '<p>three</p>');
-        const [first] = onChange.mock.calls[0] ?? [];
+        const first = onChange.mock.calls[0]?.[0];
 
         // The host (a debounce, an async normaliser) hands back the first edit, long after the third.
         rerender(<RichTextEditor value={first} plugins={[bad, ...defaultPlugins]} onError={onError} />);
@@ -1209,29 +1121,6 @@ describe('an editor that crashes', () => {
         expect(onError).toHaveBeenCalledOnce();
         expect(JSON.stringify(onError.mock.calls[0]?.[1].document)).toContain('three');
     });
-
-    /** A block whose readonly view throws while `state.broken` is set. */
-    const calloutPlugin = (state: { broken: boolean }): RtePlugin => {
-        const Callout = ({ children }: { children?: ReactNode }): ReactNode => {
-            if (state.broken) {
-                throw new Error('readonly view broke');
-            }
-            return <p>{children}</p>;
-        };
-        return {
-            id: 'callout',
-            blocks: {
-                callout: {
-                    content: 'text',
-                    toHtml: () => ({ tag: 'p', attrs: { 'data-callout': '' }, children: true }),
-                    parse: [{ tag: 'p[data-callout]' }],
-                    render: { component: Callout },
-                },
-            } as unknown as NonNullable<RtePlugin['blocks']>,
-        };
-    };
-    const callout = (text: string): RteDocument =>
-        ({ version: 1, blocks: [{ type: 'callout', children: [{ text }] }] }) as unknown as RteDocument;
 
     it('hands onError an earlier edit the host restores while readonly', () => {
         silenceReact();
@@ -1281,7 +1170,7 @@ describe('an editor that crashes', () => {
         const onError = errorSpy();
         mount(() => <RichTextEditor value={paragraph('still here')} plugins={[throwsString]} onError={onError} />);
 
-        const [error] = onError.mock.calls[0] ?? [];
+        const error = onError.mock.calls[0]?.[0];
         expect(error).toBeInstanceOf(Error);
         expect(error?.message).toBe('not an error');
     });
@@ -1350,16 +1239,8 @@ describe('an editor that crashes', () => {
         silenceReact();
         vi.useFakeTimers();
         teardown.push(() => vi.useRealTimers());
-        let crash = false;
-        const late: RtePlugin = {
-            id: 'late',
-            toolbarItem: ({ selection }) => {
-                if (crash && selection) {
-                    throw new Error('after the edit');
-                }
-                return <span>fine</span>;
-            },
-        };
+        const state = { crash: false };
+        const late = lateCrashPlugin(state);
         const onBlur = vi.fn<(doc: RteDocument) => void>();
         const { container, ready } = mount(() => (
             <RichTextEditor plugins={[late, ...defaultPlugins]} onBlur={onBlur} />
@@ -1369,7 +1250,7 @@ describe('an editor that crashes', () => {
             editableIn(container).focus();
             vi.runAllTimers();
         });
-        crash = true;
+        state.crash = true;
         paste(container, '<p>typed</p>');
         act(() => {
             vi.runAllTimers();
@@ -1529,26 +1410,9 @@ describe('pasting', () => {
                             type: 'paragraph',
                             children: [
                                 { text: 'Ask ' },
-                                {
-                                    type: 'mention',
-                                    id: 'jane',
-                                    username: 'jane',
-                                    name: 'Jane Doe',
-                                },
-                                {
-                                    type: 'mention',
-                                    id: 'design',
-                                    username: 'design',
-                                    name: 'Design',
-                                    kind: 'group',
-                                },
-                                {
-                                    type: 'mention',
-                                    id: 'all',
-                                    username: 'all',
-                                    name: 'Everyone',
-                                    kind: 'all',
-                                },
+                                { type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' },
+                                { type: 'mention', id: 'design', username: 'design', name: 'Design', kind: 'group' },
+                                { type: 'mention', id: 'all', username: 'all', name: 'Everyone', kind: 'all' },
                             ],
                         },
                     ],
@@ -1564,12 +1428,7 @@ describe('pasting', () => {
 
             const block = stored()?.blocks[0];
             const children = block && 'children' in block ? block.children : [];
-            expect(children).toContainEqual({
-                type: 'mention',
-                id: 'jane',
-                username: 'jane',
-                name: 'Jane Doe',
-            });
+            expect(children).toContainEqual({ type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' });
             expect(children).toContainEqual({
                 type: 'mention',
                 id: 'design',
@@ -1616,10 +1475,7 @@ describe('pasting', () => {
             const block = stored()?.blocks[0];
             const children = block && 'children' in block ? block.children : [];
             expect(children).toContainEqual({ text: 'plain ' });
-            expect(children).toContainEqual({
-                text: 'red',
-                fontColor: { color: 'red' },
-            });
+            expect(children).toContainEqual({ text: 'red', fontColor: { color: 'red' } });
         });
 
         it('shows what was pasted', () => {
@@ -1698,24 +1554,8 @@ describe('exported links', () => {
             {
                 version: 1,
                 blocks: [
-                    {
-                        type: 'paragraph',
-                        children: [
-                            {
-                                text: 'bad',
-                                link: { href: 'javascript:alert(1)' },
-                            },
-                        ],
-                    },
-                    {
-                        type: 'paragraph',
-                        children: [
-                            {
-                                text: 'good',
-                                link: { href: 'https://example.com' },
-                            },
-                        ],
-                    },
+                    { type: 'paragraph', children: [{ text: 'bad', link: { href: 'javascript:alert(1)' } }] },
+                    { type: 'paragraph', children: [{ text: 'good', link: { href: 'https://example.com' } }] },
                 ],
             },
             { plugins: [linkPlugin()] },
