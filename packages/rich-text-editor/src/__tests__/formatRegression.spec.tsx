@@ -170,7 +170,20 @@ const mulberry32 = (seed: number): (() => number) => {
 
 type Json = Record<string, unknown>;
 
-const WORDS = ['alpha', 'beta', 'gamma', 'delta ', ' epsilon', 'zeta eta', 'x'];
+// Non-ASCII and unusual whitespace too: the stored text must come back byte for byte.
+const WORDS = [
+    'alpha',
+    'beta',
+    'gamma',
+    'delta ',
+    ' epsilon',
+    'zeta eta',
+    'x',
+    'naïve',
+    '👩‍💻 🇨🇭',
+    'a\u00A0b',
+    'two  spaces',
+];
 const FLAG_MARKS = ['bold', 'italic', 'underline', 'strikethrough', 'code', 'subscript', 'superscript'];
 const COLORS = ['#ff0000', '#f00', 'rgb(1, 2, 3)', 'red'];
 const HREFS = ['https://example.com', 'mailto:a@example.com', '/relative'];
