@@ -12,23 +12,33 @@ const BLOCKS = [
     'h1, h2, h3, h4, h5, h6, table',
 ].join(', ');
 
-/** Each `<br>` of a run between two blocks of `root` becomes one empty paragraph, the line it stands for. */
+/** Whether `element` is a block, or the start or end of `root` when there is none. */
+const isBlockEdge = (element: Element | undefined): boolean => element === undefined || element.matches(BLOCKS);
+
+/**
+ * Each `<br>` of a run between two blocks of `root`, or between a block and
+ * the start or end of `root`, becomes one empty paragraph, the line it stands for.
+ */
 const breaksAsParagraphs = (root: Element): void => {
     let before: Element | undefined;
     let breaks: Element[] = [];
-    for (const child of [...root.children]) {
-        if (child.localName === 'br') {
-            breaks.push(child);
-            continue;
-        }
-        if (before?.matches(BLOCKS) && child.matches(BLOCKS)) {
+    const replaceBreaks = (after: Element | undefined): void => {
+        if (isBlockEdge(before) && isBlockEdge(after) && (before !== undefined || after !== undefined)) {
             for (const lineBreak of breaks) {
                 lineBreak.replaceWith(root.ownerDocument.createElement('p'));
             }
         }
         breaks = [];
+    };
+    for (const child of [...root.children]) {
+        if (child.localName === 'br') {
+            breaks.push(child);
+            continue;
+        }
+        replaceBreaks(child);
         before = child;
     }
+    replaceBreaks(undefined);
 };
 
 /**

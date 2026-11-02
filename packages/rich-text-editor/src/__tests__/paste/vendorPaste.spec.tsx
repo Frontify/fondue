@@ -311,6 +311,22 @@ describe('pasting from other applications', () => {
             );
         });
 
+        it('turns an empty line at the start or end of the copy into one empty paragraph', () => {
+            const doc = pasted(
+                '<meta charset="utf-8"><b style="font-weight:normal;" id="docs-internal-guid-1">' +
+                    '<br><h1>Title</h1><br><p>Text</p><br></b>',
+            );
+
+            expect(outline(nodesOf(doc))).toEqual([
+                'paragraph:',
+                'heading1: Title',
+                'paragraph:',
+                'paragraph: Text',
+                'paragraph:',
+            ]);
+            expect(soleBreaks(doc)).toEqual([]);
+        });
+
         it('reads a Firefox copy, where the id is on the first block', async () => {
             const doc = pasted(fixture('google-docs-firefox'));
 
