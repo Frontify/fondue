@@ -246,6 +246,18 @@ describe('a document set by the host', () => {
         expect(view.state.doc.textContent).toBe('ab');
     });
 
+    it('applies an earlier reported document after the host hands back a copy of the latest', () => {
+        const { handle, view, stored } = mount(emptyDocument());
+        handle.api.insertText('a');
+        const docA = stored() as RteDocumentOf;
+        handle.api.insertText('b');
+
+        handle.setDoc(structuredClone(stored()) as RteDocumentOf);
+        handle.setDoc(docA);
+
+        expect(view.state.doc.textContent).toBe('a');
+    });
+
     it('treats what the editor reports after a reset as newer than it', () => {
         const { handle, view, stored } = mount(emptyDocument());
         handle.api.insertText('a');

@@ -185,6 +185,8 @@ const mount = ({
     };
 
     const applyDoc = (doc: typeof initialDoc): void => {
+        // The host now holds a document of its own, newer than everything reported so far.
+        hostSeq = emitCount;
         const next = toEngineDocument(doc, schema);
         // Drafts (an inline still being made) are in no document the host holds,
         // though a block reused from one handed out may bring one along; an
@@ -213,8 +215,6 @@ const mount = ({
         transaction.setMeta('addToHistory', false);
         editorView.dispatch(transaction);
         agreedDoc = doc;
-        // The host now holds a document of its own, newer than everything reported so far.
-        hostSeq = emitCount;
     };
 
     const mounted: MountedDocument = {
