@@ -83,13 +83,14 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
             data.onDoubleClick(event);
             return;
         }
+        // headless-tree never toggles on modifier clicks, so they neither mark a burst as toggled nor get dropped from one.
+        const isModifierClick = event.ctrlKey || event.shiftKey || event.metaKey;
         // A double-click toggles a folder once, so later clicks in the burst are dropped when the first already toggled.
-        if (event.detail >= 2 && firstClickToggledRef.current) {
+        if (event.detail >= 2 && firstClickToggledRef.current && !isModifierClick) {
             return;
         }
         const selectsOnly = !multiSelect && isFolder && !data.isDisabled && !item.isSelected();
-        // headless-tree skips the toggle on modifier clicks, so those must not mark the burst as toggled.
-        firstClickToggledRef.current = isFolder && !selectsOnly && !(event.ctrlKey || event.shiftKey || event.metaKey);
+        firstClickToggledRef.current = isFolder && !selectsOnly && !isModifierClick;
         if (selectsOnly) {
             item.setFocused();
             item.getTree().setSelectedItems([item.getId()]);
@@ -162,6 +163,8 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
     // The chevron toggles without touching selection, so it must not reach the row handler.
     const handleChevronClick = (event: MouseEvent<HTMLSpanElement>) => {
         event.stopPropagation();
+        // The chevron starts its own toggle, so a row click right after it is not the second click of a row burst.
+        firstClickToggledRef.current = false;
         item.setFocused();
         if (isExpanded) {
             item.collapse();

@@ -1315,6 +1315,50 @@ test.describe('TreeRoot expansion', () => {
         await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-expanded', 'true');
     });
 
+    test('a modifier click right after a toggling click on the selected folder still deselects it', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(
+            <TestHarness initial={doubleClickFolder.map((node) => ({ ...node, isSelected: true }))} />,
+        );
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+        const box = await row.boundingBox();
+        if (!box) {
+            throw new Error('folder row has no box');
+        }
+
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+        await page.mouse.down({ clickCount: 1 });
+        await page.mouse.up({ clickCount: 1 });
+        await page.keyboard.down('ControlOrMeta');
+        await page.mouse.down({ clickCount: 2 });
+        await page.mouse.up({ clickCount: 2 });
+        await page.keyboard.up('ControlOrMeta');
+
+        await expect(row).toHaveAttribute('aria-selected', 'false');
+    });
+
+    test('a chevron click between two row clicks does not swallow the second row click', async ({ mount, page }) => {
+        const component = await mount(
+            <TestHarness initial={doubleClickFolder.map((node) => ({ ...node, isSelected: true }))} />,
+        );
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+        const box = await row.boundingBox();
+        if (!box) {
+            throw new Error('folder row has no box');
+        }
+
+        // Row click opens, chevron click closes, and the next row click must open again.
+        await row.click();
+        await row.locator('[aria-hidden] svg').first().click();
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+        await page.mouse.down({ clickCount: 2 });
+        await page.mouse.up({ clickCount: 2 });
+
+        await expect(row).toHaveAttribute('aria-expanded', 'true');
+    });
+
     test('double-clicking a folder in multi-select opens it once', async ({ mount }) => {
         const component = await mount(<TestHarness multiSelect initial={doubleClickFolder} />);
 
