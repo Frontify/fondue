@@ -1508,6 +1508,16 @@ test.describe('TreeRoot renaming', () => {
         await expect(row).toHaveAttribute('data-show-focus-ring', 'false');
     });
 
+    test('focus returns to the renamed row on Escape', async ({ mount }) => {
+        const component = await mount(<TestHarness renameable initial={initial} onRename={() => {}} />);
+
+        await component.getByRole('button', { name: 'Rename Second' }).click();
+        await component.getByRole('textbox').press('Escape');
+
+        await expect(component.getByRole('textbox')).toHaveCount(0);
+        await expect(component.getByRole('treeitem', { name: /Second/ })).toBeFocused();
+    });
+
     test('clicking outside the tree commits without stealing focus back', async ({ mount, page }) => {
         const renames: Array<[string, string]> = [];
         const component = await mount(
@@ -1597,6 +1607,17 @@ test.describe('TreeRoot renaming', () => {
 
         await expect(component.getByRole('textbox')).toHaveCount(0);
         expect(renames).toEqual([['1', 'Blurred']]);
+    });
+
+    test('clicking another row while renaming leaves focus on the clicked row', async ({ mount, page }) => {
+        const component = await mount(<TestHarness renameable initial={initial} onRename={() => {}} />);
+
+        await component.getByRole('button', { name: 'Rename First' }).click();
+        await component.getByRole('treeitem', { name: /Second/ }).click();
+
+        await expect(component.getByRole('textbox')).toHaveCount(0);
+        await page.waitForTimeout(600);
+        await expect(component.getByRole('treeitem', { name: /Second/ })).toBeFocused();
     });
 
     test('committing an unchanged name fires no onRename', async ({ mount }) => {

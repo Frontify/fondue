@@ -4,6 +4,8 @@ import { expect, test } from '@playwright/experimental-ct-react';
 
 import { Tree } from '../Tree';
 
+import { RenameMenuHarness } from './testutils/RenameMenuHarness';
+
 /**
  * TreeRowRenameInput is internal — exercised through `<Tree.Root>` with a row whose
  * controlled `isRenaming` is set. Commit/cancel flows that need the consumer round-trip
@@ -82,6 +84,21 @@ test.describe('TreeRowRenameInput', () => {
 
         await component.getByRole('textbox').click();
         expect(rowClicks).toBe(0);
+    });
+
+    test("opening another row's action menu commits without closing the menu", async ({ mount, page }) => {
+        const renames: string[] = [];
+        const component = await mount(<RenameMenuHarness onRename={(newName) => renames.push(newName)} />);
+
+        await component.getByRole('textbox').fill('Renamed');
+        await component.getByRole('button', { name: 'Other actions' }).click();
+        await expect(page.getByRole('menuitem', { name: 'Edit' })).toBeVisible();
+
+        // Outlast the tree's focus restore, which polls for up to 500ms.
+        await page.waitForTimeout(600);
+        await expect(page.getByRole('menuitem', { name: 'Edit' })).toBeVisible();
+        expect(await page.evaluate(() => Boolean(document.activeElement?.closest('[role="menu"]')))).toBe(true);
+        expect(renames).toEqual(['Renamed']);
     });
 
     test('the row is not draggable while renaming', async ({ mount }) => {
