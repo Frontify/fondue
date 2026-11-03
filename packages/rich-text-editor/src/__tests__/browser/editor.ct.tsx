@@ -289,24 +289,31 @@ test.describe('accessibility', () => {
         expect(await violationsOf(page)).toEqual([]);
     });
 
-    const quotedCode: RteDocument = {
+    // The muted styles: their text sits on the code's grey background too.
+    const mutedCode: RteDocument = {
         version: 1,
-        blocks: [{ type: 'quote', children: [{ text: 'code', code: true }] }],
+        blocks: [
+            { type: 'quote', children: [{ text: 'quoted code', code: true }] },
+            ...(['custom2', 'imageCaption'] as const).map((style) => ({
+                type: 'textStyle' as const,
+                style,
+                children: [{ text: `${style} code`, code: true as const }],
+            })),
+        ],
     };
 
     for (const view of ['renderer', 'editor'] as const) {
-        test(`inline code in a quote in the ${view} has no axe violations`, async ({ mount, page }) => {
+        test(`inline code in muted text in the ${view} has no axe violations`, async ({ mount, page }) => {
             if (view === 'renderer') {
-                await mount(<RichTextRenderer value={quotedCode} />);
-                await expect(page.getByText('code')).toBeVisible();
+                await mount(<RichTextRenderer value={mutedCode} />);
+                await expect(page.getByText('imageCaption code')).toBeVisible();
             } else {
-                await mount(<RichTextEditor value={quotedCode} />);
-                await expect(page.getByRole('textbox').getByText('code')).toBeVisible();
+                await mount(<RichTextEditor value={mutedCode} />);
+                await expect(page.getByRole('textbox').getByText('imageCaption code')).toBeVisible();
                 await expect(page.getByRole('toolbar')).toBeVisible();
             }
 
-            // Known: the quote's grey text on the code's grey background is 4.32:1.
-            expect(countsOf(await violationsOf(page))).toEqual({ 'color-contrast': 1 });
+            expect(await violationsOf(page)).toEqual([]);
         });
     }
 
@@ -331,21 +338,20 @@ test.describe('accessibility', () => {
         await typeAndSelect(page, 'Hello');
         await expect(page.getByRole('toolbar')).toBeVisible();
 
-        // Known: the floating bar is a dialog without a name.
-        expect(countsOf(await violationsOf(page))).toEqual({ 'aria-dialog-name': 1 });
+        expect(await violationsOf(page)).toEqual([]);
     });
 
-    test('the floating Turn into menu has no axe violations', async ({ mount, page }) => {
+    test('the floating Turn into menu has only its symbolic heading icons flagged by axe', async ({ mount, page }) => {
         await mount(<RichTextEditor toolbarPlacement="floating" />);
         await typeAndSelect(page, 'Hello');
         await page.getByRole('button', { name: 'Turn into: Text' }).click();
         await expect(page.getByRole('menu')).toBeVisible();
 
-        // Known: the floating bar has no name, and the shortcut beside each heading (1 to 4) is not in its name.
-        expect(countsOf(await violationsOf(page))).toEqual({ 'aria-dialog-name': 1, 'label-content-name-mismatch': 4 });
+        // The "H1" to "H4" icons are symbolic text, which WCAG 2.5.3 lets a name leave out ("B" for Bold); axe cannot tell.
+        expect(countsOf(await violationsOf(page))).toEqual({ 'label-content-name-mismatch': 4 });
     });
 
-    test('the text style menu has no axe violations', async ({ mount, page }) => {
+    test("the text style menu has only Fondue Select's known axe violation", async ({ mount, page }) => {
         await mount(<RichTextEditor />);
         await page.getByRole('textbox').click();
         await page.getByRole('combobox', { name: 'Text style' }).click();
@@ -389,8 +395,7 @@ test.describe('accessibility', () => {
         await page.keyboard.type('/');
         await expect(page.getByRole('listbox', { name: 'Commands' })).toBeVisible();
 
-        // Known: the slash menu is a dialog without a name.
-        expect(countsOf(await violationsOf(page))).toEqual({ 'aria-dialog-name': 1 });
+        expect(await violationsOf(page)).toEqual([]);
     });
 
     test('the mention picker has no axe violations', async ({ mount, page }) => {
@@ -408,9 +413,7 @@ test.describe('accessibility', () => {
         await page.keyboard.type(':smi');
         await expect(page.getByRole('listbox', { name: 'Emoji' })).toBeVisible();
 
-        // Known: the shortcode each option shows is not in its name.
-        const options = await page.getByRole('option').count();
-        expect(countsOf(await violationsOf(page))).toEqual({ 'label-content-name-mismatch': options });
+        expect(await violationsOf(page)).toEqual([]);
     });
 
     test('the emoji flyout has no axe violations', async ({ mount, page }) => {
