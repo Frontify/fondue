@@ -9,6 +9,9 @@ import { RichTextEditor } from '../../index';
 // thing to a real input method a test has: the browser fires the composition
 // events itself.
 
+// The DevTools protocol is Chromium's: the other engines run only the synthetic-key tests.
+const CHROMIUM_ONLY = 'composition goes through the DevTools protocol, which only Chromium has';
+
 /** Starts a composition showing `text`, as an IME does while the user is still choosing. */
 const compose = async (page: Page, text: string): Promise<void> => {
     const client = await page.context().newCDPSession(page);
@@ -25,7 +28,8 @@ const modifier = (page: Page): Promise<'metaKey' | 'ctrlKey'> =>
 // Mobile keyboards compose ordinary typing, so the rewrites wait for the
 // composition to end rather than skipping composed text.
 test.describe('composed text', () => {
-    test('is not rewritten while the composition is open', async ({ mount, page }) => {
+    test('is not rewritten while the composition is open', async ({ mount, page, browserName }) => {
+        test.skip(browserName !== 'chromium', CHROMIUM_ONLY);
         const component = await mount(<RichTextEditor />);
         const editable = component.getByRole('textbox');
 
@@ -43,7 +47,8 @@ test.describe('composed text', () => {
         ['https://example.com ', 'a', 'https://example.com', 'https://example.com '],
         ['- ', 'ul > li', '', ''],
     ] as const) {
-        test(`"${composed}" is rewritten once the composition ends`, async ({ mount, page }) => {
+        test(`"${composed}" is rewritten once the composition ends`, async ({ mount, page, browserName }) => {
+            test.skip(browserName !== 'chromium', CHROMIUM_ONLY);
             const component = await mount(<RichTextEditor />);
             const editable = component.getByRole('textbox');
 
@@ -56,7 +61,12 @@ test.describe('composed text', () => {
         });
     }
 
-    test('stays as typed after Backspace took a rewrite back and a composition ends empty', async ({ mount, page }) => {
+    test('stays as typed after Backspace took a rewrite back and a composition ends empty', async ({
+        mount,
+        page,
+        browserName,
+    }) => {
+        test.skip(browserName !== 'chromium', CHROMIUM_ONLY);
         const component = await mount(<RichTextEditor />);
         const editable = component.getByRole('textbox');
 
@@ -84,7 +94,8 @@ test.describe('composed text', () => {
 });
 
 test.describe('keys that belong to an input method', () => {
-    test('the Enter that commits a composition does not split the block', async ({ mount, page }) => {
+    test('the Enter that commits a composition does not split the block', async ({ mount, page, browserName }) => {
+        test.skip(browserName !== 'chromium', CHROMIUM_ONLY);
         const component = await mount(<RichTextEditor />);
         const editable = component.getByRole('textbox');
 
@@ -98,7 +109,8 @@ test.describe('keys that belong to an input method', () => {
         await expect(editable.locator('p')).toHaveCount(1);
     });
 
-    test('Enter that commits a composition does not split a list item', async ({ mount, page }) => {
+    test('Enter that commits a composition does not split a list item', async ({ mount, page, browserName }) => {
+        test.skip(browserName !== 'chromium', CHROMIUM_ONLY);
         const component = await mount(<RichTextEditor />);
         const editable = component.getByRole('textbox');
 
@@ -147,7 +159,9 @@ test.describe('AltGr', () => {
         await expect(editable.locator('h1')).toHaveCount(1);
     });
 
-    test('AltGr plus a key does not run a Mod-Alt hotkey', async ({ mount, page }) => {
+    test('AltGr plus a key does not run a Mod-Alt hotkey', async ({ mount, page, browserName }) => {
+        // Safari runs only on Apple systems, which have no AltGr key.
+        test.skip(browserName === 'webkit', "WebKit's KeyboardEvent drops modifierAltGraph, so AltGr cannot be sent");
         const component = await mount(<RichTextEditor />);
         const editable = component.getByRole('textbox');
         const mod = await modifier(page);
