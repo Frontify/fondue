@@ -170,7 +170,24 @@ describe('toggling a list', () => {
         expect(editor.stored()).toEqual([bullets('one'), list('numberedList', item(paragraph(text('two'))))]);
     });
 
-    it('does not join a list with a neighbour of the same type whose attributes differ', () => {
+    it('joins a converted list with neighbours of the new type on both sides', () => {
+        const numbered = (value: string) => list('numberedList', item(paragraph(text(value))));
+        const editor = editorWith(plugins, [numbered('one'), bullets('two'), numbered('three')]);
+        editor.caretAfter('tw');
+
+        editor.api.lists.toggle('numberedList');
+
+        expect(editor.stored()).toEqual([
+            list(
+                'numberedList',
+                item(paragraph(text('one'))),
+                item(paragraph(text('two'))),
+                item(paragraph(text('three'))),
+            ),
+        ]);
+    });
+
+    describe('with a list type whose attributes differ', () => {
         const markedList: RtePlugin = {
             id: 'marked-list',
             blocks: {
@@ -193,15 +210,30 @@ describe('toggling a list', () => {
                 marker,
                 children: values.map((value) => ({ type: 'markedItem', children: [paragraph(text(value))] })),
             }) as RteBlockNode;
-        const editor = editorWith(
-            [...plugins, markedList],
-            [marked('roman', 'one'), paragraph(text('two')), marked('dots', 'three')],
-        );
-        editor.caretAfter('tw');
 
-        editor.api.lists.toggle('markedList');
+        it('does not join the list before when its attributes differ', () => {
+            const editor = editorWith(
+                [...plugins, markedList],
+                [marked('roman', 'one'), paragraph(text('two')), marked('dots', 'three')],
+            );
+            editor.caretAfter('tw');
 
-        expect(editor.stored()).toEqual([marked('roman', 'one'), marked('dots', 'two', 'three')]);
+            editor.api.lists.toggle('markedList');
+
+            expect(editor.stored()).toEqual([marked('roman', 'one'), marked('dots', 'two', 'three')]);
+        });
+
+        it('does not join the list after when its attributes differ', () => {
+            const editor = editorWith(
+                [...plugins, markedList],
+                [marked('dots', 'one'), paragraph(text('two')), marked('roman', 'three')],
+            );
+            editor.caretAfter('tw');
+
+            editor.api.lists.toggle('markedList');
+
+            expect(editor.stored()).toEqual([marked('dots', 'one', 'two'), marked('roman', 'three')]);
+        });
     });
 
     it('is one undo step when it joins', () => {

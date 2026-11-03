@@ -229,6 +229,47 @@ describe('undo after a paste', () => {
         undo(view.state, view.dispatch);
         expect(stored()).toEqual({ version: 1, blocks: [{ type: PARAGRAPH, children: [] }] });
     });
+
+    it('keeps typing after the paste apart even when the caret moves in between', () => {
+        const { view, stored } = mount({ version: 1, blocks: [{ type: PARAGRAPH, children: [] }] });
+        const clipboard = { getData: () => '', preventDefault: () => {} } as unknown as ClipboardEvent;
+        view.dispatch(view.state.tr.insertText('one'));
+        view.pasteText(' pasted', clipboard);
+        view.dispatch(view.state.tr.setSelection(TextSelection.atEnd(view.state.doc)));
+        view.dispatch(view.state.tr.insertText(' two'));
+
+        undo(view.state, view.dispatch);
+
+        expect(stored()).toEqual(paragraph('one pasted'));
+    });
+});
+
+describe('undo after a cut or a drop', () => {
+    it('takes a cut back as a step of its own', () => {
+        const { view, stored } = mount({ version: 1, blocks: [{ type: PARAGRAPH, children: [] }] });
+        view.dispatch(view.state.tr.insertText('one two'));
+        view.dispatch(view.state.tr.delete(4, 8).setMeta('uiEvent', 'cut'));
+        view.dispatch(view.state.tr.insertText('!'));
+
+        undo(view.state, view.dispatch);
+        expect(stored()).toEqual(paragraph('one'));
+
+        undo(view.state, view.dispatch);
+        expect(stored()).toEqual(paragraph('one two'));
+    });
+
+    it('takes a drop back as a step of its own', () => {
+        const { view, stored } = mount({ version: 1, blocks: [{ type: PARAGRAPH, children: [] }] });
+        view.dispatch(view.state.tr.insertText('one'));
+        view.dispatch(view.state.tr.insertText(' dropped').setMeta('uiEvent', 'drop'));
+        view.dispatch(view.state.tr.insertText(' two'));
+
+        undo(view.state, view.dispatch);
+        expect(stored()).toEqual(paragraph('one dropped'));
+
+        undo(view.state, view.dispatch);
+        expect(stored()).toEqual(paragraph('one'));
+    });
 });
 
 describe('undo after a paste a feature handles', () => {

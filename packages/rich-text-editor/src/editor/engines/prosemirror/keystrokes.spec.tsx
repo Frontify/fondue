@@ -435,6 +435,37 @@ describe('Enter in a to-do list', () => {
         ]);
     });
 
+    it('in a nested checked item leaves the checked item around it as it was', () => {
+        const nestedItem = (checked: boolean, ...children: RteBlockNode[]) => ({
+            type: 'checkItem',
+            checked,
+            children,
+        });
+        const editor = editorWith(defaultPlugins, [
+            {
+                type: 'checkList',
+                children: [
+                    nestedItem(true, paragraph(text('outer')), checkList({ checked: true, text: 'inner' })),
+                ],
+            } as RteBlockNode,
+        ]);
+        editor.caretAfter('inner');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'checkList',
+                children: [
+                    nestedItem(true, paragraph(text('outer')), {
+                        type: 'checkList',
+                        children: [nestedItem(true, paragraph(text('inner'))), nestedItem(false, paragraph())],
+                    } as RteBlockNode),
+                ],
+            },
+        ]);
+    });
+
     it('in the middle of a checked item leaves the second half unchecked', () => {
         const editor = editorWith(defaultPlugins, [checkList({ checked: true, text: 'onetwo' })]);
         editor.caretAfter('one');
@@ -588,6 +619,21 @@ describe('Enter in a block with attributes every text block carries', () => {
             { type: 'textStyle', style: 'heading2', align: 'right', children: [text('Title')] },
             { type: 'paragraph', align: 'right', children: [] },
         ]);
+    });
+
+    it('in the middle of a heading gives two headings with the same alignment', () => {
+        const heading = (value: string) => ({
+            type: 'textStyle',
+            style: 'heading2',
+            align: 'right',
+            children: [text(value)],
+        });
+        const editor = editorWith(defaultPlugins, [heading('TitleText')]);
+        editor.caretAfter('Title');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([heading('Title'), heading('Text')]);
     });
 
     it('at the start of a heading gives the empty paragraph above the same alignment', () => {
