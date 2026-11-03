@@ -65,25 +65,39 @@ type ListParagraph = { paragraph: HTMLElement; list: string; level: number; orde
 
 type OpenList = { element: HTMLElement; level: number; ordered: boolean; list: string };
 
-/** The `<o:p>` marker ends a paragraph and usually holds at most a space: a blank one goes, one with text gives way to its text. */
-const removeParagraphMarkers = (dom: HTMLElement): void => {
-    // By tag name, since not every DOM parses the escaped `o\:p` selector.
-    for (const marker of [...dom.getElementsByTagName('o:p')]) {
-        // A nested marker counts as content, so its text is not read again for each marker around it.
-        const blank = [...marker.childNodes].every(
-            (child) =>
-                child.nodeType === Node.COMMENT_NODE ||
-                (child.nodeName.toLowerCase() !== 'o:p' && (child.textContent ?? '').trim() === ''),
-        );
-        if (blank) {
-            marker.remove();
+/** The elements of `dom` that hold text other than whitespace, each ancestor added once. */
+const elementsWithText = (dom: HTMLElement): Set<Node> => {
+    const holding = new Set<Node>();
+    const walker = dom.ownerDocument.createTreeWalker(dom, NodeFilter.SHOW_TEXT);
+    for (let text = walker.nextNode(); text !== null; text = walker.nextNode()) {
+        if ((text.textContent ?? '').trim() === '') {
             continue;
         }
-        // One child at a time: spread as arguments, 100,000 children overflow the stack.
-        while (marker.firstChild) {
-            marker.before(marker.firstChild);
+        for (let parent = text.parentNode; parent !== null && !holding.has(parent); parent = parent.parentNode) {
+            holding.add(parent);
         }
-        marker.remove();
+    }
+    return holding;
+};
+
+/**
+ * The `<o:p>` marker ends a paragraph and usually holds at most a space. A blank
+ * one goes; one with text stays, since the parse reads an unknown element's
+ * content as it is, and moving a large subtree out costs its size per marker.
+ */
+const removeParagraphMarkers = (dom: HTMLElement): void => {
+    // By tag name, since not every DOM parses the escaped `o\:p` selector.
+    const markers = [...dom.getElementsByTagName('o:p')];
+    if (markers.length === 0) {
+        return;
+    }
+    // Read once for the whole paste: each marker reading its own text reads nested markers' text again.
+    const holding = elementsWithText(dom);
+    for (const marker of markers) {
+        // A marker inside a blank one went with it.
+        if (!holding.has(marker) && dom.contains(marker)) {
+            marker.remove();
+        }
     }
 };
 

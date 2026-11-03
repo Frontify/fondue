@@ -466,6 +466,16 @@ describe('pasting from other applications', () => {
         });
     });
 
+    describe('an `<o:p>` marker that holds text', () => {
+        it('pastes the text in place, with no trace of the marker', () => {
+            const doc = pasted('<p class="MsoNormal">a<o:p>kept <b>bold</b></o:p> end</p>');
+
+            expect(outline(nodesOf(doc))).toEqual(['paragraph: akept bold end']);
+            expect(marksOn(doc, 'bold')).toEqual({ bold: true });
+            expectNoJunk(doc);
+        });
+    });
+
     describe('text that mentions Office styles', () => {
         it('keeps `mso-list: l0` verbatim in a paste from elsewhere', () => {
             const doc = pasted("<p>the style mso-list: l0 level1 lfo1 is Word's</p>");

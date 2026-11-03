@@ -47,10 +47,11 @@ describe('keepOfficeListStyles on hostile HTML', () => {
 });
 
 describe('tidyOffice on nested `<o:p>` markers', () => {
-    it('keeps the text and order inside them, and drops the blank ones', () => {
+    it('keeps the ones with text, and drops the blank ones', () => {
         const body = tidied('<p class="MsoNormal"><o:p>a<o:p>b<i>c</i></o:p><o:p> </o:p>d</o:p></p>');
 
-        expect(body.innerHTML).toBe('<p class="MsoNormal">ab<i>c</i>d</p>');
+        expect(body.textContent).toBe('abcd');
+        expect(body.getElementsByTagName('o:p')).toHaveLength(2);
     });
 
     it.each([
@@ -126,7 +127,7 @@ describe('tidyOffice', () => {
     it('keeps the text an `<o:p>` holds', () => {
         const body = tidied('<p class="MsoNormal">a<o:p>kept</o:p></p>');
 
-        expect(body.innerHTML).toBe('<p class="MsoNormal">akept</p>');
+        expect(body.textContent).toBe('akept');
     });
 
     it('keeps a span with list data that holds no marker', () => {
