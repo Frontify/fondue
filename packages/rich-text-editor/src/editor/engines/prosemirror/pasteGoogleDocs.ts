@@ -12,23 +12,33 @@ const BLOCKS = [
     'h1, h2, h3, h4, h5, h6, table',
 ].join(', ');
 
-/** Each `<br>` of a run between two blocks of `root` becomes one empty paragraph, the line it stands for. */
+/** Whether `element` is a block, or the start or end of `root` when there is none. */
+const isBlockEdge = (element: Element | undefined): boolean => element === undefined || element.matches(BLOCKS);
+
+/**
+ * Each `<br>` of a run between two blocks of `root`, or between a block and
+ * the start or end of `root`, becomes one empty paragraph, the line it stands for.
+ */
 const breaksAsParagraphs = (root: Element): void => {
     let before: Element | undefined;
     let breaks: Element[] = [];
-    for (const child of [...root.children]) {
-        if (child.localName === 'br') {
-            breaks.push(child);
-            continue;
-        }
-        if (before?.matches(BLOCKS) && child.matches(BLOCKS)) {
+    const replaceBreaks = (after: Element | undefined): void => {
+        if (isBlockEdge(before) && isBlockEdge(after) && (before !== undefined || after !== undefined)) {
             for (const lineBreak of breaks) {
                 lineBreak.replaceWith(root.ownerDocument.createElement('p'));
             }
         }
         breaks = [];
+    };
+    for (const child of [...root.children]) {
+        if (child.localName === 'br') {
+            breaks.push(child);
+            continue;
+        }
+        replaceBreaks(child);
         before = child;
     }
+    replaceBreaks(undefined);
 };
 
 /**
@@ -43,8 +53,8 @@ export const tidyGoogleDocs = (dom: HTMLElement): void => {
     }
     // Docs' wrapper is a `<b>` that says it is not bold; a bold `<b>` with the id is formatting.
     const wrapped = marked.localName === 'b' && (marked as HTMLElement).style.fontWeight === 'normal';
-    // Anywhere but the wrapper or the first block, the id says nothing about the paste.
-    if (!wrapped && marked !== dom.firstElementChild) {
+    // Anywhere but the wrapper or a first block, the id says nothing about the paste.
+    if (!wrapped && (marked !== dom.firstElementChild || !marked.matches(BLOCKS))) {
         return;
     }
     for (const lineBreak of dom.querySelectorAll('br.Apple-interchange-newline')) {
@@ -55,5 +65,9 @@ export const tidyGoogleDocs = (dom: HTMLElement): void => {
         return;
     }
     breaksAsParagraphs(marked);
-    marked.replaceWith(...marked.childNodes);
+    // One child at a time: spread as arguments, 100,000 blocks overflow the stack.
+    while (marked.firstChild) {
+        marked.before(marked.firstChild);
+    }
+    marked.remove();
 };

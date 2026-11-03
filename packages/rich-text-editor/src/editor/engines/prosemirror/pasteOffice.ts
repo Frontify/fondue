@@ -17,11 +17,13 @@ const NUMBERED_MARKER = /^\(?(?:\d+(?:\.\d+)*[.)]?|[a-z]+[.)])$/i;
 /** Word has nine list levels, which also keeps hostile input from nesting without end. */
 const MAX_LEVEL = 9;
 
-/** Word's namespace, a `Mso` class or an `mso-` style in the HTML string, found without parsing it. */
-const OFFICE_MARKUP = /urn:schemas-microsoft-com:office|\sclass\s*=\s*["']?[^"'>]*Mso|\sstyle\s*=\s*["'][^"']*mso-/i;
-const TAG = /<[a-z][^>]*>/gi;
+/** Word's list data in the HTML string, found without parsing it. */
+const OFFICE_LIST_MARKUP = /mso-list/i;
+// Stops at the next tag, so an unclosed one costs one scan, not one per start.
+const TAG = /<[a-z][^<>]*>/gi;
 const STYLE_ATTRIBUTE = /(\sstyle\s*=\s*)("[^"]*"|'[^']*')/gi;
-const STYLE_ELEMENT = /(<style\b[^>]*>)([\s\S]*?)(<\/style\s*>)/gi;
+// Split on, not matched around: a pattern holding a whole `<style>` body overflows the regexp stack past a few megabytes.
+const STYLE_TAGS = /(<\/?style(?![\w-])[^<>]*>)/gi;
 const MSO_LIST_PROPERTY = /(?<![\w-])mso-list(?=\s*:)/gi;
 
 /**
@@ -29,26 +31,30 @@ const MSO_LIST_PROPERTY = /(?<![\w-])mso-list(?=\s*:)/gi;
  * rules into each element with the CSSOM and so drops every `mso-` property
  * the rules touch. A custom property survives that merge. The merge appends
  * each rule after the element's own style, so the rules get a name of their
- * own to keep a paragraph's own level and list. Only an Office paste, and only
- * where CSS lives (style attributes and `<style>` bodies), so text that
- * mentions `mso-list` stays as written.
+ * own to keep a paragraph's own level and list. Only HTML that holds
+ * `mso-list`, and only where CSS lives (style attributes and `<style>` bodies),
+ * so text that mentions `mso-list` stays as written.
  */
 export const keepOfficeListStyles = (html: string): string => {
-    if (!OFFICE_MARKUP.test(html)) {
+    if (!OFFICE_LIST_MARKUP.test(html)) {
         return html;
     }
-    return html
-        .replaceAll(TAG, (tag) =>
-            tag.replaceAll(
-                STYLE_ATTRIBUTE,
-                (_match, name: string, value: string) => name + value.replaceAll(MSO_LIST_PROPERTY, '--mso-list'),
-            ),
-        )
-        .replaceAll(
-            STYLE_ELEMENT,
-            (_match, open: string, css: string, close: string) =>
-                open + css.replaceAll(MSO_LIST_PROPERTY, '--mso-list-rule') + close,
-        );
+    const withAttributes = html.replaceAll(TAG, (tag) =>
+        tag.replaceAll(
+            STYLE_ATTRIBUTE,
+            (_match, name: string, value: string) => name + value.replaceAll(MSO_LIST_PROPERTY, '--mso-list'),
+        ),
+    );
+    // The split puts each style tag at an odd index; a body is the text between an opening tag and a closing one.
+    const parts = withAttributes.split(STYLE_TAGS);
+    for (let index = 2; index < parts.length - 1; index += 2) {
+        const opening = parts[index - 1] ?? '';
+        const closing = parts[index + 1] ?? '';
+        if (!opening.startsWith('</') && closing.startsWith('</')) {
+            parts[index] = (parts[index] ?? '').replaceAll(MSO_LIST_PROPERTY, '--mso-list-rule');
+        }
+    }
+    return parts.join('');
 };
 
 /** Whether the paste carries Word or Outlook markup, found without reading every element's style. */
@@ -59,14 +65,38 @@ type ListParagraph = { paragraph: HTMLElement; list: string; level: number; orde
 
 type OpenList = { element: HTMLElement; level: number; ordered: boolean; list: string };
 
-/** The `<o:p>` marker ends a paragraph and holds at most a space, so it goes and keeps only text it holds. */
+/** The elements of `dom` that hold text other than whitespace, each ancestor added once. */
+const elementsWithText = (dom: HTMLElement): Set<Node> => {
+    const holding = new Set<Node>();
+    const walker = dom.ownerDocument.createTreeWalker(dom, NodeFilter.SHOW_TEXT);
+    for (let text = walker.nextNode(); text !== null; text = walker.nextNode()) {
+        if ((text.textContent ?? '').trim() === '') {
+            continue;
+        }
+        for (let parent = text.parentNode; parent !== null && !holding.has(parent); parent = parent.parentNode) {
+            holding.add(parent);
+        }
+    }
+    return holding;
+};
+
+/**
+ * The `<o:p>` marker ends a paragraph and usually holds at most a space. A blank
+ * one goes; one with text stays, since the parse reads an unknown element's
+ * content as it is, and moving a large subtree out costs its size per marker.
+ */
 const removeParagraphMarkers = (dom: HTMLElement): void => {
     // By tag name, since not every DOM parses the escaped `o\:p` selector.
-    for (const marker of [...dom.getElementsByTagName('o:p')]) {
-        if ((marker.textContent ?? '').trim() === '') {
+    const markers = [...dom.getElementsByTagName('o:p')];
+    if (markers.length === 0) {
+        return;
+    }
+    // Read once for the whole paste: each marker reading its own text reads nested markers' text again.
+    const holding = elementsWithText(dom);
+    for (const marker of markers) {
+        // A marker inside a blank one went with it.
+        if (!holding.has(marker) && dom.contains(marker)) {
             marker.remove();
-        } else {
-            marker.replaceWith(...marker.childNodes);
         }
     }
 };
@@ -92,6 +122,10 @@ const readListData = (element: HTMLElement): { list: string; level: number } | u
 /** `element` as a list paragraph, or `undefined` when it is not one. */
 const readListParagraph = (element: Node): ListParagraph | undefined => {
     if (!(element instanceof HTMLElement) || element.localName !== 'p') {
+        return undefined;
+    }
+    // Word never puts a paragraph inside another; only parser tricks do, and lists rebuilt there would nest without bound.
+    if (element.parentElement?.closest('p')) {
         return undefined;
     }
     const data = readListData(element);
