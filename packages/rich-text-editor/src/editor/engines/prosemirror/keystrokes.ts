@@ -1,16 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { baseKeymap, chainCommands, setBlockType } from 'prosemirror-commands';
+import { baseKeymap, chainCommands, selectNodeBackward, selectNodeForward, setBlockType } from 'prosemirror-commands';
 import { history, redo, undo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { type MarkType as PmMarkType, type Schema } from 'prosemirror-model';
-import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, type Transaction } from 'prosemirror-state';
+import {
+    type Command,
+    type EditorState,
+    NodeSelection,
+    Plugin,
+    type Plugin as PmPlugin,
+    type Transaction,
+} from 'prosemirror-state';
 
 import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
 
 import { keepCarriedAttrs } from './controlApi';
-import { EXTRA_ATTR, valueAttrsFor } from './documentConversion';
+import { EXTRA_ATTR, UNKNOWN_BLOCK, valueAttrsFor } from './documentConversion';
 import { listKeys } from './lists';
 
 /**
@@ -23,7 +30,8 @@ import { listKeys } from './lists';
  *    key lists would claim (`blurOnBreak` takes Enter).
  * 3. List keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
  * 4. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`).
- * 5. Baseline keymap, plus Backspace resetting an emptied first heading.
+ * 5. Baseline keymap, plus Backspace resetting an emptied first heading, and
+ *    Backspace and Delete selecting an unknown block before removing it.
  *
  * Mark input rules build their own transaction instead of calling
  * `api.marks.toggle`, because the input-rule machinery owns undo grouping.
@@ -50,7 +58,7 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         ...typingRewrites(registry, schema),
         // 5
         keymap({ Backspace: resetEmptyFirstBlock }),
-        keymap(baseKeymap),
+        keymap(selectingUnknownBlocksFirst(baseKeymap)),
     ];
 };
 
@@ -318,3 +326,41 @@ const resetEmptyFirstBlock: Command = (state, dispatch) => {
     // A plain paragraph, but its undeclared stored keys stay: the block is still there.
     return setBlockType(paragraph, { [EXTRA_ATTR]: block.attrs[EXTRA_ATTR] as unknown })(state, dispatch);
 };
+
+/**
+ * `select`, only where it lands on an unknown block. From an empty block the
+ * baseline keys already remove that block and select the unknown one instead.
+ */
+const selectingUnknownBlock =
+    (select: Command): Command =>
+    (state, dispatch, view) => {
+        if (state.selection.$from.parent.content.size === 0) {
+            return false;
+        }
+        const selected: Transaction[] = [];
+        select(state, (tr) => selected.push(tr), view);
+        const [tr] = selected;
+        if (!(tr?.selection instanceof NodeSelection) || tr.selection.node.type.name !== UNKNOWN_BLOCK) {
+            return false;
+        }
+        dispatch?.(tr.scrollIntoView());
+        return true;
+    };
+
+/**
+ * Backspace and Delete next to an unknown block select it first, so one key
+ * never removes content the editor cannot show (a whole list, kept as one), as
+ * with a block widget in other editors. The next press removes the selection.
+ */
+const selectingUnknownBlocksFirst = (keys: Record<string, Command>): Record<string, Command> =>
+    Object.fromEntries(
+        Object.entries(keys).map(([key, command]): [string, Command] => {
+            if (command === baseKeymap.Backspace) {
+                return [key, chainCommands(selectingUnknownBlock(selectNodeBackward), command)];
+            }
+            if (command === baseKeymap.Delete) {
+                return [key, chainCommands(selectingUnknownBlock(selectNodeForward), command)];
+            }
+            return [key, command];
+        }),
+    );

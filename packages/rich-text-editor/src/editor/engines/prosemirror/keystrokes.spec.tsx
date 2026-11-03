@@ -2,7 +2,7 @@
 
 // @vitest-environment happy-dom
 
-import { TextSelection } from 'prosemirror-state';
+import { NodeSelection, TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -169,6 +169,53 @@ describe('Backspace', () => {
         expect(press(editor.view, 'Backspace')).toBe(true);
 
         expect(editor.stored()).toEqual([paragraph(), paragraph(text('body'))]);
+    });
+});
+
+describe('Backspace and Delete next to an unknown block', () => {
+    // A list holding a block no plugin knows is kept whole, as one unknown block.
+    const keptList = {
+        type: 'bulletList',
+        children: [
+            { type: 'listItem', children: [paragraph(text('one'))] },
+            { type: 'sidebar', children: [paragraph(text('in'))] },
+        ],
+    };
+
+    it('select it on Backspace, and remove it on the next', () => {
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const editor = editorWith(defaultPlugins, [keptList, paragraph(text('after'))]);
+        editor.caretBefore('after');
+
+        expect(press(editor.view, 'Backspace')).toBe(true);
+        expect(editor.stored()).toBeNull();
+        expect(editor.view.state.selection).toBeInstanceOf(NodeSelection);
+
+        expect(press(editor.view, 'Backspace')).toBe(true);
+        expect(editor.stored()).toEqual([paragraph(text('after'))]);
+    });
+
+    it('select it on Delete, and remove it on the next', () => {
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const editor = editorWith(defaultPlugins, [paragraph(text('before')), keptList]);
+        editor.caretAfter('before');
+
+        expect(press(editor.view, 'Delete')).toBe(true);
+        expect(editor.stored()).toBeNull();
+        expect(editor.view.state.selection).toBeInstanceOf(NodeSelection);
+
+        expect(press(editor.view, 'Delete')).toBe(true);
+        expect(editor.stored()).toEqual([paragraph(text('before'))]);
+    });
+
+    it('remove an empty block beside it, as with any selectable block', () => {
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const editor = editorWith(defaultPlugins, [keptList, paragraph()]);
+        editor.view.dispatch(editor.view.state.tr.setSelection(TextSelection.atEnd(editor.view.state.doc)));
+
+        expect(press(editor.view, 'Backspace')).toBe(true);
+
+        expect(editor.stored()).toEqual([keptList]);
     });
 });
 
