@@ -82,7 +82,7 @@ jobs:
         run: pnpm --stream --filter {packages/rich-text-editor} test
 
   component-tests:
-    name: Component Tests
+    name: Rich Text Editor Browser Tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
