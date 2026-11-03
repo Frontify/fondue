@@ -65,5 +65,9 @@ export const tidyGoogleDocs = (dom: HTMLElement): void => {
         return;
     }
     breaksAsParagraphs(marked);
-    marked.replaceWith(...marked.childNodes);
+    // One child at a time: spread as arguments, 100,000 blocks overflow the stack.
+    while (marked.firstChild) {
+        marked.before(marked.firstChild);
+    }
+    marked.remove();
 };

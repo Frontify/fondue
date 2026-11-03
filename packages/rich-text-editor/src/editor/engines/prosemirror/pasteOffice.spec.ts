@@ -38,12 +38,32 @@ describe('keepOfficeListStyles on hostile HTML', () => {
     ])('reads %s in one pass', (_name, html) => {
         expect(timed(() => keepOfficeListStyles(html))).toBeLessThan(1000);
     });
+
+    it('reads a 16 MB `<style>` body without overflowing the stack', () => {
+        const html = `<style>p{mso-list:x;}${'a'.repeat(16_000_000)}</style>`;
+
+        expect(keepOfficeListStyles(html).startsWith('<style>p{--mso-list-rule:x;}')).toBe(true);
+    });
+});
+
+describe('tidyOffice on nested `<o:p>` markers', () => {
+    it('keeps the text and order inside them, and drops the blank ones', () => {
+        const body = tidied('<p class="MsoNormal"><o:p>a<o:p>b<i>c</i></o:p><o:p> </o:p>d</o:p></p>');
+
+        expect(body.innerHTML).toBe('<p class="MsoNormal">ab<i>c</i>d</p>');
+    });
 });
 
 describe('keepOfficeListStyles', () => {
     it('renames the list data of a single-quoted style', () => {
         expect(keepOfficeListStyles("<p style='mso-list:l0 level1 lfo1'>a</p>")).toBe(
             "<p style='--mso-list:l0 level1 lfo1'>a</p>",
+        );
+    });
+
+    it('renames the list data of every `<style>` body and of no text between them', () => {
+        expect(keepOfficeListStyles('<style>p{mso-list:a}</style>mso-list:b<style>q{mso-list:c}</style>')).toBe(
+            '<style>p{--mso-list-rule:a}</style>mso-list:b<style>q{--mso-list-rule:c}</style>',
         );
     });
 

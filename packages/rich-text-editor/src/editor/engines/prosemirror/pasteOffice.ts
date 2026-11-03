@@ -19,10 +19,11 @@ const MAX_LEVEL = 9;
 
 /** Word's list data in the HTML string, found without parsing it. */
 const OFFICE_LIST_MARKUP = /mso-list/i;
-// Each pattern stops at the next tag (a `<style>` body at the next style tag), so an unclosed one costs one scan, not one per start.
+// Stops at the next tag, so an unclosed one costs one scan, not one per start.
 const TAG = /<[a-z][^<>]*>/gi;
 const STYLE_ATTRIBUTE = /(\sstyle\s*=\s*)("[^"]*"|'[^']*')/gi;
-const STYLE_ELEMENT = /(<style\b[^<>]*>)((?:(?!<\/?style\b)[\s\S])*)(<\/style\s*>)/gi;
+// Split on, not matched around: a pattern holding a whole `<style>` body overflows the regexp stack past a few megabytes.
+const STYLE_TAGS = /(<\/?style\b[^<>]*>)/gi;
 const MSO_LIST_PROPERTY = /(?<![\w-])mso-list(?=\s*:)/gi;
 
 /**
@@ -38,18 +39,27 @@ export const keepOfficeListStyles = (html: string): string => {
     if (!OFFICE_LIST_MARKUP.test(html)) {
         return html;
     }
-    return html
-        .replaceAll(TAG, (tag) =>
-            tag.replaceAll(
-                STYLE_ATTRIBUTE,
-                (_match, name: string, value: string) => name + value.replaceAll(MSO_LIST_PROPERTY, '--mso-list'),
-            ),
-        )
-        .replaceAll(
-            STYLE_ELEMENT,
-            (_match, open: string, css: string, close: string) =>
-                open + css.replaceAll(MSO_LIST_PROPERTY, '--mso-list-rule') + close,
-        );
+    const withAttributes = html.replaceAll(TAG, (tag) =>
+        tag.replaceAll(
+            STYLE_ATTRIBUTE,
+            (_match, name: string, value: string) => name + value.replaceAll(MSO_LIST_PROPERTY, '--mso-list'),
+        ),
+    );
+    // The split keeps each style tag at an odd index, with the text after it next.
+    let inStyle = false;
+    return withAttributes
+        .split(STYLE_TAGS)
+        .map((part, index) => {
+            if (index % 2 === 1) {
+                inStyle = part[1] !== '/';
+                return part;
+            }
+            if (inStyle) {
+                return part.replaceAll(MSO_LIST_PROPERTY, '--mso-list-rule');
+            }
+            return part;
+        })
+        .join('');
 };
 
 /** Whether the paste carries Word or Outlook markup, found without reading every element's style. */
@@ -64,11 +74,19 @@ type OpenList = { element: HTMLElement; level: number; ordered: boolean; list: s
 const removeParagraphMarkers = (dom: HTMLElement): void => {
     // By tag name, since not every DOM parses the escaped `o\:p` selector.
     for (const marker of [...dom.getElementsByTagName('o:p')]) {
-        if ((marker.textContent ?? '').trim() === '') {
+        // Its own children only, so a marker nested in markers is not read again for each of them.
+        const blank = [...marker.childNodes].every(
+            (child) => child.nodeType === Node.TEXT_NODE && (child.textContent ?? '').trim() === '',
+        );
+        if (blank) {
             marker.remove();
-        } else {
-            marker.replaceWith(...marker.childNodes);
+            continue;
         }
+        // One child at a time: spread as arguments, 100,000 children overflow the stack.
+        while (marker.firstChild) {
+            marker.before(marker.firstChild);
+        }
+        marker.remove();
     }
 };
 
