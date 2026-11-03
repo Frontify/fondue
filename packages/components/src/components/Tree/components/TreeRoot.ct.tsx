@@ -1285,6 +1285,14 @@ test.describe('TreeRoot expansion', () => {
         await expect(row).toHaveAttribute('aria-expanded', 'false');
     });
 
+    test('double-clicking a folder label does not highlight its text', async ({ mount, page }) => {
+        const component = await mount(<TestHarness initial={doubleClickFolder} />);
+
+        await component.getByText('Folder').dblclick();
+
+        expect(await page.evaluate(() => window.getSelection()?.toString())).toBe('');
+    });
+
     test('a triple-click on a folder opens it once', async ({ mount }) => {
         const component = await mount(<TestHarness initial={doubleClickFolder} />);
         const row = component.getByRole('treeitem', { name: /Folder/ });

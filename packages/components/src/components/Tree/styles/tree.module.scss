@@ -169,6 +169,8 @@
     display: flex;
     align-items: center;
     column-gap: sizeToken.get(2);
+    /* A double-click opens folders or starts a rename, so it must not highlight the label text. */
+    user-select: none;
 }
 
 .label {
