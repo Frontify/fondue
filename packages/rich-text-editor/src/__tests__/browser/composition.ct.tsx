@@ -24,9 +24,8 @@ const commit = async (page: Page, text: string): Promise<void> => {
     await client.send('Input.insertText', { text });
 };
 
-/** Lets the rewrite `compositionend` queues run first: it sits behind two nested timeouts. */
-const settle = (page: Page): Promise<void> =>
-    page.evaluate(() => new Promise<void>((resolve) => setTimeout(() => setTimeout(resolve))));
+/** Lets the rewrite `compositionend` queues run first. */
+const settle = (page: Page): Promise<void> => page.evaluate(() => new Promise<void>((resolve) => setTimeout(resolve)));
 
 const keyInit = { bubbles: true, cancelable: true };
 
