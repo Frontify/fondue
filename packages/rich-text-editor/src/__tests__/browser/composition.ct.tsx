@@ -146,6 +146,19 @@ test.describe('keys that belong to an input method', () => {
         await expect(editable.locator('li')).toHaveCount(1);
     });
 
+    // Without the DevTools protocol there is no composition, but the Enter keydowns are the same.
+    test("an Enter marked as the input method's does not split the block", async ({ mount, page }) => {
+        const component = await mount(<RichTextEditor />);
+        const editable = component.getByRole('textbox');
+
+        await editable.click();
+        await page.keyboard.insertText('あ');
+        await keydown(editable, { ...keyInit, key: 'Enter', keyCode: 229, isComposing: true });
+        await keydown(editable, { ...keyInit, key: 'Enter', keyCode: 229, isComposing: false });
+
+        await expect(editable.locator('p')).toHaveCount(1);
+    });
+
     for (const [name, init] of [
         ['marked as composing', { isComposing: true }],
         ['reported as keyCode 229', { keyCode: 229 }],
