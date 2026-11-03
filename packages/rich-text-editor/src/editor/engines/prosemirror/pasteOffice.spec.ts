@@ -52,6 +52,14 @@ describe('tidyOffice on nested `<o:p>` markers', () => {
 
         expect(body.innerHTML).toBe('<p class="MsoNormal">ab<i>c</i>d</p>');
     });
+
+    it.each([
+        ['a span holding a space', '<u><o:p><span style="text-decoration:none">&nbsp;</span></o:p></u>', '<u></u>'],
+        ['a space and a comment', '<o:p>&nbsp;<!-- c --></o:p>', ''],
+        ['a break', '<o:p><br></o:p>', ''],
+    ])('drops a marker holding %s', (_name, inner, left) => {
+        expect(tidied(`<p class="MsoNormal">${inner}</p>`).innerHTML).toBe(`<p class="MsoNormal">${left}</p>`);
+    });
 });
 
 describe('keepOfficeListStyles', () => {
@@ -65,6 +73,13 @@ describe('keepOfficeListStyles', () => {
         expect(keepOfficeListStyles('<style>p{mso-list:a}</style>mso-list:b<style>q{mso-list:c}</style>')).toBe(
             '<style>p{--mso-list-rule:a}</style>mso-list:b<style>q{--mso-list-rule:c}</style>',
         );
+    });
+
+    it.each([
+        ['a `<style>` tag no closing tag follows', '<p title="<style>">mso-list: x</p>'],
+        ['a custom element named like a style tag', '<style-guide>p{mso-list:a}</style-guide>'],
+    ])('leaves the text after %s as it is', (_name, html) => {
+        expect(keepOfficeListStyles(html)).toBe(html);
     });
 
     it('leaves the other list properties of a `<style>` as they are', () => {

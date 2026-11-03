@@ -23,7 +23,7 @@ const OFFICE_LIST_MARKUP = /mso-list/i;
 const TAG = /<[a-z][^<>]*>/gi;
 const STYLE_ATTRIBUTE = /(\sstyle\s*=\s*)("[^"]*"|'[^']*')/gi;
 // Split on, not matched around: a pattern holding a whole `<style>` body overflows the regexp stack past a few megabytes.
-const STYLE_TAGS = /(<\/?style\b[^<>]*>)/gi;
+const STYLE_TAGS = /(<\/?style(?![\w-])[^<>]*>)/gi;
 const MSO_LIST_PROPERTY = /(?<![\w-])mso-list(?=\s*:)/gi;
 
 /**
@@ -45,21 +45,16 @@ export const keepOfficeListStyles = (html: string): string => {
             (_match, name: string, value: string) => name + value.replaceAll(MSO_LIST_PROPERTY, '--mso-list'),
         ),
     );
-    // The split keeps each style tag at an odd index, with the text after it next.
-    let inStyle = false;
-    return withAttributes
-        .split(STYLE_TAGS)
-        .map((part, index) => {
-            if (index % 2 === 1) {
-                inStyle = part[1] !== '/';
-                return part;
-            }
-            if (inStyle) {
-                return part.replaceAll(MSO_LIST_PROPERTY, '--mso-list-rule');
-            }
-            return part;
-        })
-        .join('');
+    // The split puts each style tag at an odd index; a body is the text between an opening tag and a closing one.
+    const parts = withAttributes.split(STYLE_TAGS);
+    for (let index = 2; index < parts.length - 1; index += 2) {
+        const opening = parts[index - 1] ?? '';
+        const closing = parts[index + 1] ?? '';
+        if (!opening.startsWith('</') && closing.startsWith('</')) {
+            parts[index] = (parts[index] ?? '').replaceAll(MSO_LIST_PROPERTY, '--mso-list-rule');
+        }
+    }
+    return parts.join('');
 };
 
 /** Whether the paste carries Word or Outlook markup, found without reading every element's style. */
@@ -74,9 +69,11 @@ type OpenList = { element: HTMLElement; level: number; ordered: boolean; list: s
 const removeParagraphMarkers = (dom: HTMLElement): void => {
     // By tag name, since not every DOM parses the escaped `o\:p` selector.
     for (const marker of [...dom.getElementsByTagName('o:p')]) {
-        // Its own children only, so a marker nested in markers is not read again for each of them.
+        // A nested marker counts as content, so its text is not read again for each marker around it.
         const blank = [...marker.childNodes].every(
-            (child) => child.nodeType === Node.TEXT_NODE && (child.textContent ?? '').trim() === '',
+            (child) =>
+                child.nodeType === Node.COMMENT_NODE ||
+                (child.nodeName.toLowerCase() !== 'o:p' && (child.textContent ?? '').trim() === ''),
         );
         if (blank) {
             marker.remove();
