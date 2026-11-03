@@ -118,7 +118,7 @@ export const EditorFallback = ({
             button.focus();
         }
     }, [focusWithinRef]);
-    // What the editor showed, which is what a crash reports: an echoed `value` can be older.
+    // What the editor showed: an echoed `value` can be older.
     const document = ownDocumentRef.current;
     return (
         <div className={styles.root} {...groupAttributes}>

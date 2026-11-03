@@ -471,9 +471,9 @@ const CRASHING_PLUGINS = [...defaultPlugins, crashingPlugin(true)];
 
 /**
  * When something in the editor throws while rendering, the editor shows its
- * content read-only with a message and Try again, and hands the error and the
- * document to `onError`; the rest of the page stays. Try again while the bug
- * is still there shows the same view again.
+ * content read-only with a message and Try again, and hands the error to
+ * `onError`; the rest of the page stays. Try again while the bug is still
+ * there shows the same view again.
  */
 export const CrashFallback: Story = {
     render: () => {
@@ -504,9 +504,7 @@ export const CrashFallback: Story = {
                         onChange={setDoc}
                         plugins={plugins}
                         aria-label="Description"
-                        onError={(error, { document }) =>
-                            setReport(`${error.message}\n\n${JSON.stringify(document, null, 2)}`)
-                        }
+                        onError={(error) => setReport(error.message)}
                     />
                 </div>
                 <pre className={JSON_PANEL}>{report ?? 'No crash yet: break the editor to see onError here.'}</pre>

@@ -819,7 +819,7 @@ describe('an editor that crashes', () => {
             button.click();
         });
     };
-    const errorSpy = () => vi.fn<(error: Error, details: { document: RteDocument }) => void>();
+    const errorSpy = () => vi.fn<(error: Error) => void>();
 
     it('shows the document read-only with a message and Retry, and reports nothing', () => {
         silenceReact();
@@ -898,7 +898,7 @@ describe('an editor that crashes', () => {
         expect(container.textContent).toContain('typed');
     });
 
-    it('hands onError the error and the edits made before the crash, and saves nothing through onBlur', () => {
+    it('hands onError the error, shows the edits made before the crash, and saves nothing through onBlur', () => {
         silenceReact();
         const state = { crash: false };
         const late = lateCrashPlugin(state);
@@ -913,11 +913,11 @@ describe('an editor that crashes', () => {
 
         expect(onError).toHaveBeenCalledOnce();
         expect(onError.mock.calls[0]?.[0].message).toBe('after the edit');
-        expect(JSON.stringify(onError.mock.calls[0]?.[1].document)).toContain('typed');
+        expect(container.textContent).toContain('typed');
         expect(onBlur).not.toHaveBeenCalled();
     });
 
-    it('hands onError the edits a controlled host holds', () => {
+    it('shows the edits a controlled host holds', () => {
         silenceReact();
         const state = { crash: false };
         const late = lateCrashPlugin(state);
@@ -939,7 +939,7 @@ describe('an editor that crashes', () => {
         paste(container, '<p>typed</p>');
 
         expect(onError).toHaveBeenCalledOnce();
-        expect(JSON.stringify(onError.mock.calls[0]?.[1].document)).toContain('typed');
+        expect(container.textContent).toContain('typed');
     });
 
     it('mounts on Retry what the fallback showed, though the host value is older', () => {
@@ -1064,7 +1064,7 @@ describe('an editor that crashes', () => {
         expect(editableIn(container).contains(window.document.activeElement)).toBe(false);
     });
 
-    it('hands onError a value the host pushed after the last edit', () => {
+    it('shows a value the host pushed after the last edit', () => {
         silenceReact();
         const fine = idPlugin('late');
         const bad = idPlugin('late', true);
@@ -1078,12 +1078,11 @@ describe('an editor that crashes', () => {
         rerender(<RichTextEditor value={paragraph('C')} plugins={[bad, ...defaultPlugins]} onError={onError} />);
 
         expect(container.textContent).toContain('The editor stopped working.');
-        const handedOver = JSON.stringify(onError.mock.calls[0]?.[1].document);
-        expect(handedOver).toContain('C');
-        expect(handedOver).not.toContain('B');
+        expect(container.textContent).toContain('C');
+        expect(container.textContent).not.toContain('B');
     });
 
-    it('hands onError an edit made after a pushed value', () => {
+    it('shows an edit made after a pushed value', () => {
         silenceReact();
         const state = { crash: false };
         const late = lateCrashPlugin(state);
@@ -1097,10 +1096,10 @@ describe('an editor that crashes', () => {
         paste(container, '<p>D</p>');
 
         expect(onError).toHaveBeenCalledOnce();
-        expect(JSON.stringify(onError.mock.calls[0]?.[1].document)).toContain('D');
+        expect(container.textContent).toContain('D');
     });
 
-    it('hands onError every edit when the host echoes an older one late', () => {
+    it('shows every edit when the host echoes an older one late', () => {
         silenceReact();
         const fine = idPlugin('late');
         const bad = idPlugin('late', true);
@@ -1123,10 +1122,10 @@ describe('an editor that crashes', () => {
         rerender(<RichTextEditor value={first} plugins={[bad, ...defaultPlugins]} onError={onError} />);
 
         expect(onError).toHaveBeenCalledOnce();
-        expect(JSON.stringify(onError.mock.calls[0]?.[1].document)).toContain('three');
+        expect(container.textContent).toContain('three');
     });
 
-    it('hands onError an earlier edit the host restores while readonly', () => {
+    it('keeps an earlier edit the host restores while readonly', () => {
         silenceReact();
         const state = { broken: false };
         const plugins = [...defaultPlugins, calloutPlugin(state)];
@@ -1147,7 +1146,12 @@ describe('an editor that crashes', () => {
 
         // The fallback's read-only view is the one that crashed, so it is not reported twice.
         expect(onError).toHaveBeenCalledOnce();
-        expect(onError.mock.calls[0]?.[1].document).toBe(first);
+
+        // The fallback cannot show it, so Retry with the cause gone does.
+        state.broken = false;
+        retry(container);
+        expect(container.textContent).toContain('one');
+        expect(container.textContent).not.toContain('two');
     });
 
     it('shows a document the host pushes after the fallback could not show the last one', () => {
@@ -1342,18 +1346,18 @@ describe('an editor that crashes', () => {
     it('reports a read-only view that cannot show the document after a crash', () => {
         silenceReact();
         const state = { broken: true };
-        const unshowable = callout('unshowable');
         const onError = errorSpy();
         mount(() => (
-            <RichTextEditor value={unshowable} plugins={[throwingPlugin(), calloutPlugin(state)]} onError={onError} />
+            <RichTextEditor
+                value={callout('unshowable')}
+                plugins={[throwingPlugin(), calloutPlugin(state)]}
+                onError={onError}
+            />
         ));
 
         const messages = onError.mock.calls.map(([error]) => error.message);
         expect(messages).toHaveLength(2);
         expect(messages).toEqual(expect.arrayContaining(['toolbar broke', 'readonly view broke']));
-        for (const [, details] of onError.mock.calls) {
-            expect(details.document).toBe(unshowable);
-        }
     });
 
     it('reports a read-only view that cannot show the document once per crash, however often the host passes it', () => {
@@ -1408,7 +1412,7 @@ describe('an editor that crashes', () => {
         expect(container.textContent).toBe('The editor stopped working. Try again to load it.Try again');
     });
 
-    it('hands onError a value the host passes again after leaving it out', () => {
+    it('shows a value the host passes again after leaving it out', () => {
         silenceReact();
         const saved = paragraph('saved');
         const onError = errorSpy();
@@ -1424,10 +1428,11 @@ describe('an editor that crashes', () => {
         rerender(<RichTextEditor value={saved} plugins={[idPlugin('b', true), ...defaultPlugins]} onError={onError} />);
 
         expect(onError).toHaveBeenCalledOnce();
-        expect(onError.mock.calls[0]?.[1].document).toBe(saved);
+        expect(container.textContent).toContain('saved');
+        expect(container.textContent).not.toContain('draft');
     });
 
-    it('hands onError edits made after a Retry, though the plugins change', () => {
+    it('shows edits made after a Retry, though the plugins change', () => {
         silenceReact();
         const state = { broken: true };
         const saved = paragraph('saved');
@@ -1446,11 +1451,11 @@ describe('an editor that crashes', () => {
             <RichTextEditor value={saved} plugins={[idPlugin('other', true), ...defaultPlugins]} onError={onError} />,
         );
 
-        const last = onError.mock.calls[onError.mock.calls.length - 1];
-        expect(JSON.stringify(last?.[1].document)).toContain('typed');
+        expect(container.textContent).toContain('The editor stopped working.');
+        expect(container.textContent).toContain('typed');
     });
 
-    it('hands onError an earlier edit the host restores after the plugins changed', () => {
+    it('shows an earlier edit the host restores after the plugins changed', () => {
         silenceReact();
         const onError = errorSpy();
         const { container, onChange, rerender, ready } = mount((change) => (
@@ -1473,10 +1478,11 @@ describe('an editor that crashes', () => {
         rerender(<RichTextEditor value={first} plugins={[idPlugin('b', true), ...defaultPlugins]} onError={onError} />);
 
         expect(onError).toHaveBeenCalledOnce();
-        expect(onError.mock.calls[0]?.[1].document).toBe(first);
+        expect(container.textContent).toContain('one');
+        expect(container.textContent).not.toContain('two');
     });
 
-    it('hands onError the value a readonly view shows, though newer edits never reached the host', () => {
+    it('keeps the value a readonly view shows, though newer edits never reached the host', () => {
         silenceReact();
         const state = { broken: false };
         const plugins = [...defaultPlugins, calloutPlugin(state)];
@@ -1494,10 +1500,15 @@ describe('an editor that crashes', () => {
 
         // The fallback's read-only view is the one that crashed, so it is not reported twice.
         expect(onError).toHaveBeenCalledOnce();
-        expect(onError.mock.calls[0]?.[1].document).toBe(saved);
+
+        // The fallback cannot show it, so Retry with the cause gone does.
+        state.broken = false;
+        retry(container);
+        expect(container.textContent).toContain('saved');
+        expect(container.textContent).not.toContain('draft');
     });
 
-    it('hands onError an earlier edit the host restores along with other plugins', () => {
+    it('shows an earlier edit the host restores along with other plugins', () => {
         silenceReact();
         const fine = idPlugin('late');
         const bad = idPlugin('other', true);
@@ -1519,7 +1530,8 @@ describe('an editor that crashes', () => {
         rerender(<RichTextEditor value={first} plugins={[bad, ...defaultPlugins]} onError={onError} />);
 
         expect(onError).toHaveBeenCalledOnce();
-        expect(onError.mock.calls[0]?.[1].document).toBe(first);
+        expect(container.textContent).toContain('one');
+        expect(container.textContent).not.toContain('two');
     });
 
     it('catches a node view that throws inside the view portals', () => {
