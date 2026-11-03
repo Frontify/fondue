@@ -117,6 +117,11 @@ const violationsOf = async (page: Page): Promise<string[]> => {
     ];
 };
 
+/** The rules broken, once each: what a scan with a known violation pins, so fixing it turns the test red. */
+const rulesOf = (violations: string[]): string[] => [
+    ...new Set(violations.map((violation) => violation.slice(0, violation.indexOf(':')))),
+];
+
 test.describe('editor', () => {
     test('mounts editable', async ({ mount }) => {
         const component = await mount(<RichTextEditor />);
@@ -213,35 +218,32 @@ test.describe('accessibility', () => {
     });
 
     test('the floating toolbar has no axe violations', async ({ mount, page }) => {
-        test.fail(true, 'aria-dialog-name: the floating bar is a dialog without a name');
         await mount(<RichTextEditor toolbarPlacement="floating" />);
         await typeAndSelect(page, 'Hello');
         await expect(page.getByRole('toolbar')).toBeVisible();
 
-        expect(await violationsOf(page)).toEqual([]);
+        // Known: the floating bar is a dialog without a name.
+        expect(rulesOf(await violationsOf(page))).toEqual(['aria-dialog-name']);
     });
 
     test('the floating Turn into menu has no axe violations', async ({ mount, page }) => {
-        test.fail(
-            true,
-            'aria-dialog-name as above; label-content-name-mismatch: the shortcut beside each heading is not in its name',
-        );
         await mount(<RichTextEditor toolbarPlacement="floating" />);
         await typeAndSelect(page, 'Hello');
         await page.getByRole('button', { name: 'Turn into: Text' }).click();
         await expect(page.getByRole('menu')).toBeVisible();
 
-        expect(await violationsOf(page)).toEqual([]);
+        // Known: the floating bar has no name, and the shortcut beside each heading is not in its name.
+        expect(rulesOf(await violationsOf(page))).toEqual(['aria-dialog-name', 'label-content-name-mismatch']);
     });
 
     test('the text style menu has no axe violations', async ({ mount, page }) => {
-        test.fail(true, "aria-dialog-name: Fondue's Select opens its list in a dialog without a name");
         await mount(<RichTextEditor />);
         await page.getByRole('textbox').click();
         await page.getByRole('combobox', { name: 'Text style' }).click();
         await expect(page.getByRole('listbox')).toBeVisible();
 
-        expect(await violationsOf(page)).toEqual([]);
+        // Known: Fondue's Select opens its list in a dialog without a name.
+        expect(rulesOf(await violationsOf(page))).toEqual(['aria-dialog-name']);
     });
 
     test('the text colour flyout has no axe violations', async ({ mount, page }) => {
@@ -273,13 +275,13 @@ test.describe('accessibility', () => {
     });
 
     test('the slash menu has no axe violations', async ({ mount, page }) => {
-        test.fail(true, 'aria-dialog-name: the slash menu is a dialog without a name');
         await mount(<RichTextEditor />);
         await page.getByRole('textbox').click();
         await page.keyboard.type('/');
         await expect(page.getByRole('listbox', { name: 'Commands' })).toBeVisible();
 
-        expect(await violationsOf(page)).toEqual([]);
+        // Known: the slash menu is a dialog without a name.
+        expect(rulesOf(await violationsOf(page))).toEqual(['aria-dialog-name']);
     });
 
     test('the mention picker has no axe violations', async ({ mount, page }) => {
@@ -292,13 +294,13 @@ test.describe('accessibility', () => {
     });
 
     test('the emoji shortcode picker has no axe violations', async ({ mount, page }) => {
-        test.fail(true, 'label-content-name-mismatch: the shortcode each option shows is not in its name');
         await mount(<RichTextEditor />);
         await page.getByRole('textbox').click();
         await page.keyboard.type(':smi');
         await expect(page.getByRole('listbox', { name: 'Emoji' })).toBeVisible();
 
-        expect(await violationsOf(page)).toEqual([]);
+        // Known: the shortcode each option shows is not in its name.
+        expect(rulesOf(await violationsOf(page))).toEqual(['label-content-name-mismatch']);
     });
 
     test('the emoji flyout has no axe violations', async ({ mount, page }) => {
