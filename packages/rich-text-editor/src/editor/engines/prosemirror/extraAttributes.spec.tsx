@@ -2,9 +2,10 @@
 
 // @vitest-environment happy-dom
 
+import { redo, undo } from 'prosemirror-history';
 import { TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { type RteBlockNode, type RteDocumentOf } from '#/core';
 import { defaultPlugins } from '#/plugins';
@@ -32,6 +33,22 @@ const bullets = (extras: Record<string, unknown>, ...children: RteBlockNode[]): 
     ({ type: 'bulletList', ...extras, children }) as RteBlockNode;
 
 describe('a block with undeclared keys', () => {
+    it('warns once in development for each key no plugin declares, and never for a declared one', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        try {
+            editorWith(defaultPlugins, [
+                marked({ onlyHere: 1, alsoHere: 1, align: 'center' }, text('a')),
+                marked({ onlyHere: 2 }, text('b')),
+            ]);
+
+            expect(warn).toHaveBeenCalledTimes(2);
+            expect(warn).toHaveBeenCalledWith(expect.stringContaining('Key "onlyHere" on block "paragraph"'));
+            expect(warn).toHaveBeenCalledWith(expect.stringContaining('Key "alsoHere" on block "paragraph"'));
+        } finally {
+            warn.mockRestore();
+        }
+    });
+
     it('keeps the keys on the first half when Enter splits it in the middle', () => {
         const editor = editorWith(defaultPlugins, [marked({ foo: 1 }, text('onetwo'))]);
         editor.caretAfter('one');
@@ -108,6 +125,55 @@ describe('a block with undeclared keys', () => {
         expect(editor.stored()).toEqual([marked({ foo: 1 }, text('onetwo'))]);
     });
 
+    it('leaves the keys on both copies of a block the host repeats when Enter splits the first', () => {
+        const editor = editorWith(defaultPlugins, [marked({ foo: 1 }, text('one'))]);
+        editor.type('!');
+        const [repeated] = editor.stored() ?? [];
+        editor.editor.setDoc({ version: 1, blocks: [repeated, repeated] } as RteDocumentOf);
+        editor.caretAfter('on');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([marked({ foo: 1 }, text('!on')), paragraph(text('e')), repeated]);
+    });
+
+    it('gets the keys back on a repeated block when its deletion is undone', () => {
+        const editor = editorWith(defaultPlugins, [marked({ foo: 1 }, text('one'))]);
+        editor.type('!');
+        const [repeated] = editor.stored() ?? [];
+        editor.editor.setDoc({ version: 1, blocks: [repeated, repeated] } as RteDocumentOf);
+        const { view } = editor;
+        view.dispatch(
+            view.state.tr.setSelection(TextSelection.create(view.state.doc, view.state.doc.child(0).nodeSize + 1)),
+        );
+        press(view, 'Backspace');
+
+        expect(undo(view.state, view.dispatch)).toBe(true);
+
+        expect(editor.stored()).toEqual([repeated, repeated]);
+    });
+
+    it('leaves the keys on the first half again when an undone split is redone', () => {
+        const editor = editorWith(defaultPlugins, [marked({ foo: 1 }, text('onetwo'))]);
+        editor.caretAfter('one');
+        press(editor.view, 'Enter');
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(redo(editor.view.state, editor.view.dispatch)).toBe(true);
+
+        expect(editor.stored()).toEqual([marked({ foo: 1 }, text('one')), paragraph(text('two'))]);
+    });
+
+    it('gets the second block keys back when that join is undone', () => {
+        const editor = editorWith(defaultPlugins, [marked({ foo: 1 }, text('one')), marked({ foo: 2 }, text('two'))]);
+        editor.caretBefore('two');
+        press(editor.view, 'Backspace');
+
+        expect(undo(editor.view.state, editor.view.dispatch)).toBe(true);
+
+        expect(editor.stored()).toEqual([marked({ foo: 1 }, text('one')), marked({ foo: 2 }, text('two'))]);
+    });
+
     it('keeps its keys when turned into another type', () => {
         const editor = editorWith(defaultPlugins, [marked({ foo: 1, deep: { a: null } }, text('Title'))]);
         editor.caretAfter('Ti');
@@ -126,6 +192,15 @@ describe('a block with undeclared keys', () => {
         editor.type('b');
 
         expect(editor.stored()).toEqual([marked({ foo: 1 }, text('ab'))]);
+    });
+
+    it('keeps its keys on the block they were on, as declared attributes stay, when blocks are pasted at its start', () => {
+        const editor = editorWith(defaultPlugins, [marked({ foo: 1, align: 'center' }, text('ab'))]);
+        editor.caretBefore('ab');
+
+        editor.pasteHTML('<p>x</p><p>y</p>');
+
+        expect(editor.stored()).toEqual([marked({ foo: 1, align: 'center' }, text('x')), paragraph(text('yab'))]);
     });
 
     it('keeps its keys when text is pasted into it, and gives pasted blocks none', () => {
@@ -206,6 +281,28 @@ describe('a list and its items with undeclared keys', () => {
         ]);
     });
 
+    it('keeps the keys on the paragraph with the text when Enter at the start of the second paragraph of an item starts a new item', () => {
+        const editor = editorWith(defaultPlugins, [
+            bullets({}, item({}, paragraph(text('first')), marked({ foo: 1 }, text('second')))),
+        ]);
+        editor.caretBefore('second');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            bullets({}, item({}, paragraph(text('first')), paragraph()), item({}, marked({ foo: 1 }, text('second')))),
+        ]);
+    });
+
+    it('keeps the keys on the first item when Enter replaces all of its text', () => {
+        const editor = editorWith(defaultPlugins, [bullets({}, item({ ref: 'i1' }, paragraph(text('abc'))))]);
+        editor.select('abc');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([bullets({}, item({ ref: 'i1' }, paragraph()), item({}, paragraph()))]);
+    });
+
     it('keeps the keys on the item when Enter at the start of its second paragraph starts a new item', () => {
         const editor = editorWith(defaultPlugins, [
             bullets({}, item({ ref: 'i1' }, marked({ foo: 1 }, text('first')), paragraph(text('second')))),
@@ -263,9 +360,13 @@ describe('a list and its items with undeclared keys', () => {
 
         expect(press(editor.view, 'Shift-Tab') || editor.api.lists.outdent()).toBe(true);
 
-        const stored = JSON.stringify(editor.stored());
-        expect(stored.match(/"marker":"dot"/g)).toHaveLength(1);
-        expect(stored.match(/"marker":"dash"/g)).toHaveLength(1);
+        expect(editor.stored()).toEqual([
+            bullets(
+                { marker: 'dash' },
+                item({}, paragraph(text('a')), bullets({ marker: 'dot' }, item({}, paragraph(text('x'))))),
+                item({}, paragraph(text('y')), bullets({}, item({}, paragraph(text('z'))))),
+            ),
+        ]);
     });
 
     it('keeps the keys on the first list when a middle item is turned into a heading', () => {
@@ -281,7 +382,11 @@ describe('a list and its items with undeclared keys', () => {
 
         editor.api.blocks.setType('textStyle', { style: 'heading1' });
 
-        expect(JSON.stringify(editor.stored()).match(/"marker":"dash"/g)).toHaveLength(1);
+        expect(editor.stored()).toEqual([
+            bullets({ marker: 'dash' }, item({}, paragraph(text('a')))),
+            { type: 'textStyle', style: 'heading1', children: [text('b')] },
+            bullets({}, item({}, paragraph(text('c')))),
+        ]);
     });
 
     it('keeps the keys of the list and its items when the list type changes', () => {

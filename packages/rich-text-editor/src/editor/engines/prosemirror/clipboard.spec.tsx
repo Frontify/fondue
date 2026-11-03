@@ -40,11 +40,13 @@ describe('copying', () => {
     };
 
     it('puts no undeclared key on the clipboard', () => {
-        const html = copiedFromList();
+        const container = window.document.createElement('div');
+        container.innerHTML = copiedFromList();
+        const slice = container.querySelector('[data-pm-slice]')?.getAttribute('data-pm-slice');
 
-        expect(html).toContain('data-pm-slice');
         // The attribute's name still shows in `data-pm-slice`, but empty.
-        expect(html).not.toContain('"k"');
+        expect(slice).toContain('"listItem"');
+        expect(slice).not.toContain('"k"');
     });
 
     it('brings no undeclared keys along when pasted back', () => {
@@ -133,8 +135,8 @@ describe('dragging a block inside the editor', () => {
         return editor.stored();
     };
 
-    it('moves it with the undeclared keys it has', () => {
-        expect(dragged(false)).toEqual([paragraph(text('stay')), { ...paragraph(text('drag')), id: 'x' }]);
+    it('moves it without its undeclared keys, as cut and paste does', () => {
+        expect(dragged(false)).toEqual([paragraph(text('stay')), paragraph(text('drag'))]);
     });
 
     it('copies it without them, leaving the original its own', () => {

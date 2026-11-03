@@ -1,14 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    baseKeymap,
-    chainCommands,
-    createParagraphNear,
-    liftEmptyBlock,
-    newlineInCode,
-    setBlockType,
-    splitBlock,
-} from 'prosemirror-commands';
+import { baseKeymap, chainCommands, setBlockType } from 'prosemirror-commands';
 import { history, redo, undo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
@@ -18,8 +10,7 @@ import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, type T
 import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
 
 import { keepCarriedAttrs } from './controlApi';
-import { valueAttrsFor } from './documentConversion';
-import { clearExtrasAt, newBlockSide } from './extraAttributes';
+import { EXTRA_ATTR, valueAttrsFor } from './documentConversion';
 import { listKeys } from './lists';
 
 /**
@@ -58,34 +49,9 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         // 4
         ...typingRewrites(registry, schema),
         // 5
-        keymap({ Backspace: resetEmptyFirstBlock(registry) }),
-        keymap({
-            ...baseKeymap,
-            Enter: chainCommands(newlineInCode, createParagraphNear, liftEmptyBlock, splitWithoutExtras),
-        }),
+        keymap({ Backspace: resetEmptyFirstBlock }),
+        keymap(baseKeymap),
     ];
-};
-
-/** The engine's split, except that the block it starts carries none of the undeclared keys it copies. */
-const splitWithoutExtras: Command = (state, dispatch, view) => {
-    const side = newBlockSide(state);
-    return splitBlock(
-        state,
-        dispatch &&
-            ((transaction) => {
-                const { $from: caret } = transaction.selection;
-                if (side === 'before') {
-                    const above = transaction.doc.resolve(caret.before()).nodeBefore;
-                    if (above !== null) {
-                        clearExtrasAt(transaction, caret.before() - above.nodeSize);
-                    }
-                } else {
-                    clearExtrasAt(transaction, caret.before());
-                }
-                dispatch(transaction);
-            }),
-        view,
-    );
 };
 
 // Feature hotkeys
@@ -339,18 +305,16 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
  * Backspace in an emptied block at the very top that is not the default block
  * (a heading): nothing before it to join, so it turns back into a paragraph.
  */
-const resetEmptyFirstBlock =
-    (registry: PluginRegistry): Command =>
-    (state, dispatch) => {
-        const { $from, empty } = state.selection;
-        const paragraph = state.schema.topNodeType.contentMatch.defaultType;
-        const block = $from.parent;
-        if (!empty || !paragraph || $from.depth !== 1 || $from.index(0) !== 0) {
-            return false;
-        }
-        if (!block.isTextblock || block.content.size > 0 || block.type === paragraph) {
-            return false;
-        }
-        // Attributes carried over, as with every other turn-into: the block is still there.
-        return setBlockType(paragraph, keepCarriedAttrs(registry, paragraph, undefined)(block))(state, dispatch);
-    };
+const resetEmptyFirstBlock: Command = (state, dispatch) => {
+    const { $from, empty } = state.selection;
+    const paragraph = state.schema.topNodeType.contentMatch.defaultType;
+    const block = $from.parent;
+    if (!empty || !paragraph || $from.depth !== 1 || $from.index(0) !== 0) {
+        return false;
+    }
+    if (!block.isTextblock || block.content.size > 0 || block.type === paragraph) {
+        return false;
+    }
+    // A plain paragraph, but its undeclared stored keys stay: the block is still there.
+    return setBlockType(paragraph, { [EXTRA_ATTR]: block.attrs[EXTRA_ATTR] as unknown })(state, dispatch);
+};

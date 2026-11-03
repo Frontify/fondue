@@ -19,6 +19,7 @@ import {
     EXTRA_ATTR,
     mapChildren,
     plainTextOf,
+    rootExtrasOf,
     toEngineDocument,
     toRteDocument,
     UNKNOWN_BLOCK,
@@ -386,7 +387,10 @@ describe('the document boundary', () => {
 
 describe('keys no mounted plugin declares', () => {
     const roundTrip = (doc: unknown, mounted: RtePlugin[] = plugins): RteDocumentOf =>
-        toRteDocument(toEngineDocument(doc as RteDocumentOf, buildSchema(buildPluginRegistry(mounted))));
+        toRteDocument(
+            toEngineDocument(doc as RteDocumentOf, buildSchema(buildPluginRegistry(mounted))),
+            rootExtrasOf(doc as RteDocumentOf),
+        );
 
     it('are kept on a paragraph, a list, a list item, a void block and the document', () => {
         const stored = {
@@ -459,16 +463,27 @@ describe('keys no mounted plugin declares', () => {
         ]);
     });
 
+    it('are each named in a development warning, on the document too', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        try {
+            rootExtrasOf({ version: 1, rootOnly: 1, blocks: [] } as unknown as RteDocumentOf);
+
+            expect(warn).toHaveBeenCalledWith(expect.stringContaining('Key "rootOnly" on the document'));
+        } finally {
+            warn.mockRestore();
+        }
+    });
+
     it('leave no trace on a block or a document that has none', () => {
         const doc = toEngineDocument(document, schema);
 
-        expect(doc.attrs[EXTRA_ATTR]).toBeNull();
+        expect(rootExtrasOf(document)).toBeNull();
         expect(doc.firstChild?.attrs[EXTRA_ATTR]).toBeNull();
         expect(Object.keys(toRteDocument(doc))).toEqual(['version', 'blocks']);
     });
 
     it('lose to an attribute the block type declares, set or unset', () => {
-        const doc = schema.node('doc', { [EXTRA_ATTR]: null }, [
+        const doc = schema.node('doc', null, [
             schema.node('heading', { level: 3, [EXTRA_ATTR]: { level: 9, foo: 1 } }),
             schema.node(PARAGRAPH, { [EXTRA_ATTR]: { align: 'right', foo: 1 } }),
         ]);

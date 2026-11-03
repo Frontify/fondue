@@ -162,6 +162,17 @@ describe('a document set by the host', () => {
             expect(view.state.selection.from).toBe(2);
         });
 
+        it('redraws nothing when only they changed', () => {
+            const { handle, view } = mount(withMeta('a'));
+            const { state } = view;
+            const drawn = view.dom.firstChild;
+
+            handle.setDoc(withMeta('b'));
+
+            expect(view.state).toBe(state);
+            expect(view.dom.firstChild).toBe(drawn);
+        });
+
         it('takes them along with new content', () => {
             const { handle } = mount(withMeta('a'));
 

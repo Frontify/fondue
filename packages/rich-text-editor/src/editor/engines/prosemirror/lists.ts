@@ -8,7 +8,6 @@ import { type EditorView } from 'prosemirror-view';
 import { type EditorControlApi, type PluginRegistry } from '#/core';
 
 import { mapChildren } from './documentConversion';
-import { clearExtrasAt, dropCopiedExtras, newBlockSide, withoutCopiedExtras } from './extraAttributes';
 import { warnUnknownType } from './warnings';
 
 /**
@@ -38,39 +37,6 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
 };
 
-/** The engine's split, except that the item it starts, and the block in it, carry none of the undeclared keys it copies. */
-const splitListItem =
-    (itemType: PmNodeType): Command =>
-    (state, dispatch, view) => {
-        let side = newBlockSide(state);
-        // Past the item's first block the engine splits after it: the item before is the original.
-        if (state.selection.$from.index(-1) > 0) {
-            side = 'after';
-        }
-        return pmSplitListItem(itemType)(
-            state,
-            dispatch &&
-                ((transaction) => {
-                    const { $from: caret } = transaction.selection;
-                    if (caret.depth >= 2 && caret.node(-1).type === itemType) {
-                        if (side === 'before') {
-                            const item = transaction.doc.resolve(caret.before(-1)).nodeBefore;
-                            if (item !== null) {
-                                const itemPos = caret.before(-1) - item.nodeSize;
-                                clearExtrasAt(transaction, itemPos);
-                                clearExtrasAt(transaction, itemPos + 1);
-                            }
-                        } else {
-                            clearExtrasAt(transaction, caret.before(-1));
-                            clearExtrasAt(transaction, caret.before());
-                        }
-                    }
-                    dispatch(transaction);
-                }),
-            view,
-        );
-    };
-
 // The list half of the control API
 
 /** Implements `EditorControlApi['lists']` against the live view. */
@@ -86,8 +52,7 @@ export const createListApi = (
         if (!itemType) {
             return false;
         }
-        // Lifting an item out of the middle closes the list and opens a copy of it after.
-        return withoutCopiedExtras(command(itemType))(view.state, view.dispatch, view);
+        return command(itemType)(view.state, view.dispatch, view);
     };
 
     return {
@@ -121,7 +86,7 @@ export const createListApi = (
         },
         indent: () => runListCommand(sinkListItem),
         outdent: () => runListCommand(liftListItem),
-        split: () => runListCommand(splitListItem),
+        split: () => runListCommand(pmSplitListItem),
         unwrapAll() {
             const view = getView();
             const { from, to } = view.state.selection;
@@ -183,7 +148,6 @@ export const liftOutOfLists = (
         if (lifted === null) {
             break;
         }
-        dropCopiedExtras(lifted);
         transactions.push(lifted);
         current = current.apply(lifted);
     }

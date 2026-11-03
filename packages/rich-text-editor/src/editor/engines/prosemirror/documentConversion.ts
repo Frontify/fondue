@@ -16,7 +16,7 @@ import {
     type StoredMarkValue,
 } from '#/core';
 
-import { warnUnknownContent } from './warnings';
+import { warnUndeclaredKey, warnUnknownContent } from './warnings';
 
 /**
  * The document boundary: RTE format <-> engine format. The only place either
@@ -118,10 +118,17 @@ const declaredAttrs = (
     );
 
 /** The stored keys outside `reserved`, or null when there are none. Values stay exactly as stored, nulls included. */
-const extrasOf = (stored: Record<string, unknown>, reserved: ReadonlySet<string>): Record<string, unknown> | null => {
+const extrasOf = (
+    stored: Record<string, unknown>,
+    reserved: ReadonlySet<string>,
+    owner: string,
+): Record<string, unknown> | null => {
     const extras = Object.fromEntries(Object.entries(stored).filter(([key]) => !reserved.has(key)));
     if (Object.keys(extras).length === 0) {
         return null;
+    }
+    for (const key of Object.keys(extras)) {
+        warnUndeclaredKey(owner, key);
     }
     return extras;
 };
@@ -243,7 +250,10 @@ const blockToEngine = (block: RteBlockNode, schema: Schema): PmNode => {
     const reserved = new Set(['type', 'children', ...Object.keys(nodeType.spec.attrs ?? {})]);
     // A stored key named like the extras attribute is just another undeclared key.
     reserved.delete(EXTRA_ATTR);
-    const attrs = { ...declaredAttrs(stored, nodeType.spec.attrs), [EXTRA_ATTR]: extrasOf(stored, reserved) };
+    const attrs = {
+        ...declaredAttrs(stored, nodeType.spec.attrs),
+        [EXTRA_ATTR]: extrasOf(stored, reserved, `block "${block.type}"`),
+    };
     const content = block.children ? childrenToEngine(nodeType, block.children, schema) : [];
     const node = nodeType.createAndFill(attrs, content);
     if (node !== null) {
@@ -262,6 +272,13 @@ const blockToEngine = (block: RteBlockNode, schema: Schema): PmNode => {
     throw invalidDocument(nodeType, content);
 };
 
+/**
+ * The document's own undeclared keys. No edit changes them, so they stay out of
+ * the engine document: a host changing only them redraws nothing.
+ */
+export const rootExtrasOf = (doc: RteDocumentOf): Record<string, unknown> | null =>
+    extrasOf(doc as Record<string, unknown>, new Set(['version', 'blocks']), 'the document');
+
 export const toEngineDocument = (doc: RteDocumentOf, schema: Schema): PmNode => {
     const docType = schema.nodes.doc;
     if (!docType) {
@@ -269,7 +286,7 @@ export const toEngineDocument = (doc: RteDocumentOf, schema: Schema): PmNode => 
     }
     return createFilled(
         docType,
-        { [EXTRA_ATTR]: extrasOf(doc as Record<string, unknown>, new Set(['version', 'blocks'])) },
+        null,
         doc.blocks.map((block) => blockToEngine(block, schema)),
     );
 };
@@ -369,10 +386,11 @@ const blockFromEngine = (node: PmNode): RteBlockNode => {
 
 /**
  * The document itself is built fresh every time, unlike the blocks in it: a new
- * object is what tells a host its `value` changed.
+ * object is what tells a host its `value` changed. `rootExtras` are the
+ * document's own undeclared keys, from `rootExtrasOf`.
  */
-export const toRteDocument = (doc: PmNode): RteDocumentOf => ({
-    ...extrasFrom(doc),
+export const toRteDocument = (doc: PmNode, rootExtras: Record<string, unknown> | null = null): RteDocumentOf => ({
+    ...rootExtras,
     version: DOCUMENT_VERSION,
     blocks: mapChildren(doc, blockFromEngine),
 });

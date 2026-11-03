@@ -14,7 +14,6 @@ import { type EditorView } from 'prosemirror-view';
 import { type EditorControlApi, type PluginRegistry, type RteSelectionSnapshot } from '#/core';
 
 import { EXTRA_ATTR, markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
-import { dropCopiedExtras } from './extraAttributes';
 import { createListApi, liftOutOfLists } from './lists';
 import { warnUnknownType } from './warnings';
 
@@ -341,10 +340,7 @@ export const createControlApi = (
         // Inline elements keep their value in one attribute; blocks keep theirs flat.
         const engineAttrs = nodeType.isInline ? valueAttrsFor(value) : value;
         // Inline elements carry no marks, so they must not inherit the caret's.
-        transaction.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline);
-        // A block put mid-paragraph splits it, and the half after is a copy.
-        dropCopiedExtras(transaction);
-        view.dispatch(transaction);
+        view.dispatch(transaction.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline));
         view.focus();
     },
     insertText(text) {
