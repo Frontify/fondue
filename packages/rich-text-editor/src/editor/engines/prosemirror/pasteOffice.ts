@@ -19,7 +19,7 @@ const MAX_LEVEL = 9;
 
 /** Word's list data in the HTML string, found without parsing it. */
 const OFFICE_LIST_MARKUP = /mso-list/i;
-// Each pattern stops at the next tag, so an unclosed tag or `<style>` costs one scan, not one per start.
+// Each pattern stops at the next tag (a `<style>` body at the next style tag), so an unclosed one costs one scan, not one per start.
 const TAG = /<[a-z][^<>]*>/gi;
 const STYLE_ATTRIBUTE = /(\sstyle\s*=\s*)("[^"]*"|'[^']*')/gi;
 const STYLE_ELEMENT = /(<style\b[^<>]*>)((?:(?!<\/?style\b)[\s\S])*)(<\/style\s*>)/gi;
@@ -60,7 +60,7 @@ type ListParagraph = { paragraph: HTMLElement; list: string; level: number; orde
 
 type OpenList = { element: HTMLElement; level: number; ordered: boolean; list: string };
 
-/** The `<o:p>` marker ends a paragraph and holds at most a space, so it goes and keeps only text it holds. */
+/** The `<o:p>` marker ends a paragraph and usually holds at most a space: a blank one goes, one with text gives way to its text. */
 const removeParagraphMarkers = (dom: HTMLElement): void => {
     // By tag name, since not every DOM parses the escaped `o\:p` selector.
     for (const marker of [...dom.getElementsByTagName('o:p')]) {

@@ -53,8 +53,8 @@ export const tidyGoogleDocs = (dom: HTMLElement): void => {
     }
     // Docs' wrapper is a `<b>` that says it is not bold; a bold `<b>` with the id is formatting.
     const wrapped = marked.localName === 'b' && (marked as HTMLElement).style.fontWeight === 'normal';
-    // Anywhere but the wrapper or the first block, the id says nothing about the paste.
-    if (!wrapped && marked !== dom.firstElementChild) {
+    // Anywhere but the wrapper or a first block, the id says nothing about the paste.
+    if (!wrapped && (marked !== dom.firstElementChild || !marked.matches(BLOCKS))) {
         return;
     }
     for (const lineBreak of dom.querySelectorAll('br.Apple-interchange-newline')) {

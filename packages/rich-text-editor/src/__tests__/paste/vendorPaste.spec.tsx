@@ -344,7 +344,7 @@ describe('pasting from other applications', () => {
             );
         });
 
-        it('reads formatting from the styles of each run', async () => {
+        it('reads bold, underline and strikethrough from the styles of each run', async () => {
             const doc = pasted(fixture('google-docs-runs'));
 
             expect(outline(nodesOf(doc))).toEqual([
@@ -362,7 +362,7 @@ describe('pasting from other applications', () => {
     });
 
     describe('LibreOffice', () => {
-        it('keeps the heading, marks and list, and drops the script and empty spans', async () => {
+        it('keeps the heading, marks and list, and drops the script', async () => {
             const doc = pasted(fixture('libreoffice'));
 
             expect(outline(nodesOf(doc))).toEqual([
@@ -445,6 +445,12 @@ describe('pasting from other applications', () => {
 
         it('leaves the breaks of the paste alone when the id is on neither the wrapper nor the first block', () => {
             const html = '<p>a</p><br><p>b <span id="docs-internal-guid-1">c</span></p>';
+
+            expect(pasted(html)).toEqual(pasted(html.replace(' id="docs-internal-guid-1"', '')));
+        });
+
+        it('leaves the breaks of the paste alone when the bold element comes first', () => {
+            const html = '<b id="docs-internal-guid-1">x</b><p>a</p><br><p>b</p>';
 
             expect(pasted(html)).toEqual(pasted(html.replace(' id="docs-internal-guid-1"', '')));
         });
