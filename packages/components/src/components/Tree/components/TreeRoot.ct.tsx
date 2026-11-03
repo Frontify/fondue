@@ -1062,6 +1062,31 @@ test.describe('TreeRoot multi-select', () => {
         await expect(on.getByRole('checkbox')).toHaveCount(2);
     });
 
+    test('selects a clicked row when multiSelect is turned off after mount', async ({ mount }) => {
+        const changes: Array<Array<{ id: string; isSelected?: boolean | 'indeterminate' }>> = [];
+        const handleChange = (state: Array<{ id: string; isSelected?: boolean | 'indeterminate' }>) => {
+            changes.push(state.map((node) => ({ id: node.id, isSelected: node.isSelected })));
+        };
+        const rows = (
+            <Tree.Item id="1">
+                <Tree.Label>One</Tree.Label>
+            </Tree.Item>
+        );
+        const component = await mount(
+            <Tree.Root multiSelect onChange={handleChange}>
+                {rows}
+            </Tree.Root>,
+        );
+        await expect(component.getByRole('checkbox')).toHaveCount(1);
+
+        await component.update(<Tree.Root onChange={handleChange}>{rows}</Tree.Root>);
+        await expect(component.getByRole('checkbox')).toHaveCount(0);
+        await component.getByRole('treeitem', { name: /One/ }).click();
+
+        const last = changes[changes.length - 1] ?? [];
+        expect(last.find((node) => node.id === '1')?.isSelected).toBe(true);
+    });
+
     test('toggles aria-checked when a checkbox is clicked', async ({ mount }) => {
         const component = await mount(
             <TestHarness
@@ -1640,6 +1665,25 @@ test.describe('TreeRoot reorderable mode', () => {
         await expect(handle).toHaveCSS('visibility', 'hidden');
         await reorderable.getByRole('treeitem', { name: /Row/ }).focus();
         await expect(handle).toHaveCSS('visibility', 'visible');
+    });
+
+    test('adds and removes drag behavior when reorderable changes after mount', async ({ mount, page }) => {
+        const errors: string[] = [];
+        page.on('pageerror', (error) => errors.push(error.message));
+        const rows = (
+            <Tree.Item id="1">
+                <Tree.Label>Row</Tree.Label>
+            </Tree.Item>
+        );
+        const component = await mount(<Tree.Root>{rows}</Tree.Root>);
+        await expect(component.locator('[draggable="true"]')).toHaveCount(0);
+
+        await component.update(<Tree.Root reorderable>{rows}</Tree.Root>);
+        await expect(component.locator('[draggable="true"]')).toHaveCount(1);
+
+        await component.update(<Tree.Root>{rows}</Tree.Root>);
+        await expect(component.locator('[draggable="true"]')).toHaveCount(0);
+        expect(errors).toEqual([]);
     });
 
     test('exposes a screen-reader hint announcing checkbox / reorder shortcuts', async ({ mount }) => {

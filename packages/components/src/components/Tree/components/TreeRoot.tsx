@@ -64,7 +64,7 @@ export type TreeRootProps = {
     accepts?: (items: TreeDropCandidate[]) => boolean;
 };
 
-export const TreeRoot = ({
+const TreeRootContent = ({
     children,
     onChange,
     multiSelect = false,
@@ -189,4 +189,9 @@ export const TreeRoot = ({
         </div>
     );
 };
+
+// headless-tree fixes its features when the tree is created, so a different feature set needs a new tree.
+export const TreeRoot = (props: TreeRootProps) => (
+    <TreeRootContent key={`${Boolean(props.multiSelect)}-${Boolean(props.reorderable)}`} {...props} />
+);
 TreeRoot.displayName = 'TreeRoot';
