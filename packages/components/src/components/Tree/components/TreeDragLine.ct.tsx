@@ -38,17 +38,17 @@ test.describe('TreeDragLine', () => {
         await expect(line).toHaveCSS('left', '0px');
     });
 
-    test('aligns the line with the target chevron: 32px drop level plus the 22px chevron offset', async ({ mount }) => {
+    test('aligns the line with the target chevron: 32px drop level plus the 4px chevron offset', async ({ mount }) => {
         const component = await mount(<TreeDragLine data={{ top: 42, left: 32 }} multiSelect={false} />);
         const line = component.locator('[aria-hidden="true"]');
-        await expect(line).toHaveCSS('left', '54px');
+        await expect(line).toHaveCSS('left', '36px');
         // The line still stretches to the tree's right edge.
         await expect(line).toHaveCSS('right', '0px');
     });
 
-    test('shifts the line by the checkbox column in multi-select mode', async ({ mount }) => {
+    test('shifts the line by the checkbox and handle columns in multi-select mode', async ({ mount }) => {
         const component = await mount(<TreeDragLine data={{ top: 42, left: 32 }} multiSelect={true} />);
         const line = component.locator('[aria-hidden="true"]');
-        await expect(line).toHaveCSS('left', '74px');
+        await expect(line).toHaveCSS('left', '76px');
     });
 });

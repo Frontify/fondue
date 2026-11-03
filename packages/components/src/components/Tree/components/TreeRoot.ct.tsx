@@ -1642,6 +1642,44 @@ test.describe('TreeRoot reorderable mode', () => {
         await expect(handle).toHaveCSS('visibility', 'visible');
     });
 
+    test('aligns reorderable and static rows, with the handle inside the row before the chevron', async ({ mount }) => {
+        const component = await mount(
+            <div>
+                <Tree.Root>
+                    <Tree.Item id="static-1">
+                        <Tree.Label>Static row</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+                <Tree.Root reorderable>
+                    <Tree.Item id="reorderable-1">
+                        <Tree.Label>Reorderable row</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>,
+        );
+
+        const row = component.getByRole('treeitem', { name: /Reorderable row/ });
+        await row.hover();
+        const staticLabelBox = await component.getByText('Static row').boundingBox();
+        const reorderableLabelBox = await component.getByText('Reorderable row').boundingBox();
+        const handleBox = await component.locator('span[class*="handle"]').boundingBox();
+        const rowBox = await row.boundingBox();
+        const chevronBox = await row.locator('span[class*="chevron"]').boundingBox();
+        if (
+            staticLabelBox === null ||
+            reorderableLabelBox === null ||
+            handleBox === null ||
+            rowBox === null ||
+            chevronBox === null
+        ) {
+            throw new Error('the rows did not render their label, handle and chevron boxes');
+        }
+
+        expect(Math.abs(staticLabelBox.x - reorderableLabelBox.x)).toBeLessThan(0.5);
+        expect(handleBox.x).toBeGreaterThanOrEqual(rowBox.x);
+        expect(handleBox.x + handleBox.width).toBeLessThanOrEqual(chevronBox.x + 0.5);
+    });
+
     test('exposes a screen-reader hint announcing checkbox / reorder shortcuts', async ({ mount }) => {
         const component = await mount(
             <Tree.Root multiSelect reorderable>
