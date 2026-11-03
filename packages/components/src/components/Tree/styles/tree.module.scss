@@ -108,7 +108,7 @@
     /* Overlays the row's leading space so reorderable and static roots align; `.item`'s
        `align-items` centres it vertically through its static position. */
     position: absolute;
-    inset-inline-start: 3px;
+    inset-inline-start: calc(var(--border-width-large) + 1px);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -216,7 +216,7 @@
        sits at 20px + L × 16px (item border 2 + padding 8 + indent base 6 + gap 4),
        and the target folder is one level above the drop level carried by
        `--tree-drag-line-indent` (drop level × 16px) → 4px + drop level × 16px. */
-    left: calc(var(--tree-drag-line-indent, 0px) + 4px);
+    left: calc(var(--tree-drag-line-indent, 0px) + #{sizeToken.get(1)});
     right: 0;
     height: 2px;
     margin-top: -1px;
@@ -227,7 +227,7 @@
 
     /* The checkbox and handle columns (16px + 4px gap each) shift the chevron right in multi-select. */
     &[data-multi-select='true'] {
-        left: calc(var(--tree-drag-line-indent, 0px) + 44px);
+        left: calc(var(--tree-drag-line-indent, 0px) + #{sizeToken.get(11)});
     }
 
     /* Root-level drops have no target folder to align with — span the full tree width.
