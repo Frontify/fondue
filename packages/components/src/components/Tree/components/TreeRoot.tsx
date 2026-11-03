@@ -170,6 +170,7 @@ export const TreeRoot = ({
                             hintId={rowHint ? rowHintId : undefined}
                             onFocusLost={handleFocusLost}
                             checkedState={checkedStates?.get(item.getId()) ?? false}
+                            hasOnChange={onChange !== undefined}
                         />
                         {loadingPlaceholder && (
                             <TreeLoadingRow

@@ -37,9 +37,19 @@ type TreeRowProps = {
      * `getCheckedState`, which would render leafless folders and their ancestors unchecked.
      */
     checkedState: RowCheckedState;
+    /** Whether `Tree.Root` has an `onChange`, through which a click can select the row. */
+    hasOnChange: boolean;
 };
 
-export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, checkedState }: TreeRowProps) => {
+export const TreeRow = ({
+    item,
+    multiSelect,
+    reorderable,
+    hintId,
+    onFocusLost,
+    checkedState,
+    hasOnChange,
+}: TreeRowProps) => {
     const level = item.getItemMeta().level;
     const isFolder = item.isFolder();
     const isExpanded = item.isExpanded();
@@ -75,14 +85,16 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
     // Disabled rows keep the headless click handler (focus and folder expansion stay
     // available) but drop the consumer's `onClick`; selection is blocked in the setters.
     // In single-select, the first click on a folder only selects it — headless-tree would
-    // also toggle it — and clicking the already-selected folder toggles it.
+    // also toggle it — and clicking the already-selected folder toggles it. A folder whose
+    // selection no callback reports can never become selected, so its click toggles at once.
+    const canSelectOnClick = data.onSelectChange !== undefined || hasOnChange;
     const handleClick = (event: MouseEvent<HTMLDivElement>) => {
         // The second click of a double-click belongs to `onDoubleClick`, so it neither re-selects nor toggles the row.
         if (event.detail === 2 && data.onDoubleClick && !data.isDisabled) {
             data.onDoubleClick(event);
             return;
         }
-        if (!multiSelect && isFolder && !data.isDisabled && !item.isSelected()) {
+        if (!multiSelect && isFolder && canSelectOnClick && !data.isDisabled && !item.isSelected()) {
             item.setFocused();
             item.getTree().setSelectedItems([item.getId()]);
         } else {

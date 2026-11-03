@@ -8,6 +8,7 @@ import { Flyout } from '../../Flyout/Flyout';
 import { INDENT_STEP_PX } from '../constants';
 import { Tree } from '../Tree';
 
+import { ControlledExpansionHarness } from './testutils/ControlledExpansionHarness';
 import { RowDialogHarness } from './testutils/RowDialogHarness';
 import { TestHarness } from './testutils/TestHarness';
 
@@ -1209,6 +1210,17 @@ test.describe('TreeRoot expansion', () => {
         await expect(component.getByRole('treeitem', { name: /Child/ })).toHaveCount(0);
         await component.getByRole('treeitem', { name: /Folder/ }).click();
         expect(calls).toEqual([true]);
+    });
+
+    test('clicking a folder whose selection the consumer does not take toggles it', async ({ mount }) => {
+        const component = await mount(<ControlledExpansionHarness />);
+
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+        await row.click();
+        await expect(row).toHaveAttribute('aria-expanded', 'true');
+        await row.click();
+        await expect(row).toHaveAttribute('aria-expanded', 'false');
+        await expect(row).toHaveAttribute('aria-selected', 'false');
     });
 
     test('clicking the chevron toggles a folder without selecting it', async ({ mount }) => {
