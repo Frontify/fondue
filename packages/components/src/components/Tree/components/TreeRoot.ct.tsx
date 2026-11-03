@@ -1223,6 +1223,19 @@ test.describe('TreeRoot expansion', () => {
         await expect(row).toHaveAttribute('aria-selected', 'false');
     });
 
+    test('clicking an unselected folder that selects through onClick selects it without toggling', async ({
+        mount,
+    }) => {
+        const component = await mount(<ControlledExpansionHarness selectsOnClick />);
+
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+        await row.click();
+        await expect(row).toHaveAttribute('aria-selected', 'true');
+        await expect(row).toHaveAttribute('aria-expanded', 'false');
+        await row.click();
+        await expect(row).toHaveAttribute('aria-expanded', 'true');
+    });
+
     test('clicking the chevron toggles a folder without selecting it', async ({ mount }) => {
         const expandCalls: boolean[] = [];
         const selectCalls: boolean[] = [];

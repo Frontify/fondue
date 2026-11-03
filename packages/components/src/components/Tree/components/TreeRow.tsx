@@ -85,9 +85,9 @@ export const TreeRow = ({
     // Disabled rows keep the headless click handler (focus and folder expansion stay
     // available) but drop the consumer's `onClick`; selection is blocked in the setters.
     // In single-select, the first click on a folder only selects it — headless-tree would
-    // also toggle it — and clicking the already-selected folder toggles it. A folder whose
-    // selection no callback reports can never become selected, so its click toggles at once.
-    const canSelectOnClick = data.onSelectChange !== undefined || hasOnChange;
+    // also toggle it — and clicking the already-selected folder toggles it. A folder with no
+    // callback that could turn the click into a selection never becomes selected, so its click toggles at once.
+    const canSelectOnClick = data.onSelectChange !== undefined || data.onClick !== undefined || hasOnChange;
     const handleClick = (event: MouseEvent<HTMLDivElement>) => {
         // The second click of a double-click belongs to `onDoubleClick`, so it neither re-selects nor toggles the row.
         if (event.detail === 2 && data.onDoubleClick && !data.isDisabled) {
