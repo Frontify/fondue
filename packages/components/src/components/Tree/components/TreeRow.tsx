@@ -77,6 +77,11 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
     // In single-select, the first click on a folder only selects it — headless-tree would
     // also toggle it — and clicking the already-selected folder toggles it.
     const handleClick = (event: MouseEvent<HTMLDivElement>) => {
+        // The second click of a double-click belongs to `onDoubleClick`, so it neither re-selects nor toggles the row.
+        if (event.detail === 2 && data.onDoubleClick && !data.isDisabled) {
+            data.onDoubleClick(event);
+            return;
+        }
         if (!multiSelect && isFolder && !data.isDisabled && !item.isSelected()) {
             item.setFocused();
             item.getTree().setSelectedItems([item.getId()]);
@@ -112,13 +117,13 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
         return () => window.clearTimeout(timer);
     }, [isRenaming, item]);
 
-    // Tracks focus on the row or any control portalled out of it. A blur with no `relatedTarget` (a window
-    // switch, or focus falling to the page body) is not a move, so it leaves the flag for the cleanup to check.
-    const isFocusWithinRef = useRef(false);
+    // The last element that took focus on the row or in a control portalled out of it. Checked against the
+    // live active element at removal, so focus that has since moved anywhere else is never pulled back.
+    const lastFocusTargetRef = useRef<Element | null>(null);
     // Cleanup runs before the DOM node is removed, so a focused control is still the active element.
     useLayoutEffect(
         () => () => {
-            if (isFocusWithinRef.current && document.activeElement !== document.body) {
+            if (lastFocusTargetRef.current?.contains(document.activeElement)) {
                 onFocusLost();
             }
         },
@@ -128,9 +133,6 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
     const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
         if (event.target === event.currentTarget) {
             event.currentTarget.removeAttribute('data-show-focus-ring');
-        }
-        if (event.relatedTarget !== null) {
-            isFocusWithinRef.current = false;
         }
         headlessProps.onBlur?.(event);
     };
@@ -177,8 +179,8 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
             onClick={handleClick}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
-            onFocus={() => {
-                isFocusWithinRef.current = true;
+            onFocus={(event) => {
+                lastFocusTargetRef.current = event.target;
                 item.setFocused();
             }}
             className={styles.row}
@@ -191,6 +193,7 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
                 className={styles.item}
                 style={{ '--tree-row-level': Math.max(0, level) } as CSSProperties}
                 data-folder={isFolder}
+                data-multi-select={multiSelect ? 'true' : undefined}
                 data-selected={!multiSelect && data.isSelected === true ? 'true' : undefined}
                 data-drop={reorderable && item.isDragTarget()}
                 data-disabled={data.isDisabled ? 'true' : undefined}

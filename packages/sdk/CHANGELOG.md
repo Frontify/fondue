@@ -1,5 +1,20 @@
 # @frontify/fondue-sdk
 
+## 0.3.1
+
+### Patch Changes
+
+- [#2919](https://github.com/Frontify/fondue/pull/2919) [`a6eec2b`](https://github.com/Frontify/fondue/commit/a6eec2b98efd41dada738fcbe9aec1a67f090a60) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(Card): stop the hover background from flickering in Chrome
+
+- [#2920](https://github.com/Frontify/fondue/pull/2920) [`d0d8cba`](https://github.com/Frontify/fondue/commit/d0d8cba2e2ddf05c7d3d5149a23e750cbf45756d) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat(Flyout): expose `onCloseAutoFocus` on `Flyout.Content`
+
+- [#2915](https://github.com/Frontify/fondue/pull/2915) [`5c9ad21`](https://github.com/Frontify/fondue/commit/5c9ad2104dfb30cbac659e7fe72b57dd17a89771) Thanks [@syeo66](https://github.com/syeo66)! - feat(Select): add onOpenChange prop to signal state change
+
+- Updated dependencies [[`a6eec2b`](https://github.com/Frontify/fondue/commit/a6eec2b98efd41dada738fcbe9aec1a67f090a60), [`d0d8cba`](https://github.com/Frontify/fondue/commit/d0d8cba2e2ddf05c7d3d5149a23e750cbf45756d), [`5c9ad21`](https://github.com/Frontify/fondue/commit/5c9ad2104dfb30cbac659e7fe72b57dd17a89771), [`5a7b8cb`](https://github.com/Frontify/fondue/commit/5a7b8cbbce4a53eeb0a55f386dd55ce5ba802ef4), [`d55e0e0`](https://github.com/Frontify/fondue/commit/d55e0e0f297a416193f3142ec04f82cf6b00933c), [`381b6dd`](https://github.com/Frontify/fondue/commit/381b6dd482a79e3092e179f5fbae180eb903db73)]:
+    - @frontify/fondue-components@36.0.0
+    - @frontify/fondue-icons@0.32.0
+    - @frontify/fondue-tokens@5.2.0
+
 ## 0.3.0
 
 ### Minor Changes
