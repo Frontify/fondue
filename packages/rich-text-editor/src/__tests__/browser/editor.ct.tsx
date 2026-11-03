@@ -357,7 +357,7 @@ test.describe('accessibility', () => {
         await page.getByRole('combobox', { name: 'Text style' }).click();
         await expect(page.getByRole('listbox')).toBeVisible();
 
-        // Known: Fondue's Select opens its list in a dialog without a name.
+        // Known (FP-792): Fondue's Select opens its list in a dialog without a name.
         expect(countsOf(await violationsOf(page))).toEqual({ 'aria-dialog-name': 1 });
     });
 
