@@ -344,6 +344,12 @@ describe('pasting from other applications', () => {
             );
         });
 
+        it('reads a Firefox copy that the clipboard delivers inside a page, as Windows does', () => {
+            const html = fixture('google-docs-firefox');
+
+            expect(pasted(`<html><body>\n<!--StartFragment-->${html}`)).toEqual(pasted(html));
+        });
+
         it('reads bold, underline and strikethrough from the styles of each run', async () => {
             const doc = pasted(fixture('google-docs-runs'));
 
