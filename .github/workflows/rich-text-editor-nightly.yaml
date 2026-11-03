@@ -1,0 +1,37 @@
+name: Fondue Rich Text Editor Nightly
+
+# Firefox is advisory: a red run here blocks no pull request.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2 * * *" # Run every day at 02:00 UTC
+
+permissions:
+  contents: read
+
+jobs:
+  firefox-component-tests:
+    name: Firefox Component Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          playwright-cache: "true"
+
+      - name: Build Fondue Icons
+        run: pnpm build:icons
+
+      - name: Build Fondue Components
+        run: pnpm build:components
+
+      - name: Install Playwright Firefox
+        run: pnpm --stream --filter {packages/rich-text-editor} exec playwright install --with-deps firefox
+
+      - name: Component tests
+        run: pnpm --stream --filter {packages/rich-text-editor} exec playwright test --project=firefox
