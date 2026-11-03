@@ -298,10 +298,12 @@ test.describe('accessibility', () => {
         test(`inline code in a quote in the ${view} has no axe violations`, async ({ mount, page }) => {
             if (view === 'renderer') {
                 await mount(<RichTextRenderer value={quotedCode} />);
+                await expect(page.getByText('code')).toBeVisible();
             } else {
                 await mount(<RichTextEditor value={quotedCode} />);
+                await expect(page.getByRole('textbox').getByText('code')).toBeVisible();
+                await expect(page.getByRole('toolbar')).toBeVisible();
             }
-            await expect(page.getByText('code')).toBeVisible();
 
             // Known: the quote's grey text on the code's grey background is 4.32:1.
             expect(countsOf(await violationsOf(page))).toEqual({ 'color-contrast': 1 });
@@ -339,7 +341,7 @@ test.describe('accessibility', () => {
         await page.getByRole('button', { name: 'Turn into: Text' }).click();
         await expect(page.getByRole('menu')).toBeVisible();
 
-        // Known: the floating bar has no name, and the shortcut beside each heading is not in its name.
+        // Known: the floating bar has no name, and the shortcut beside each heading (1 to 4) is not in its name.
         expect(countsOf(await violationsOf(page))).toEqual({ 'aria-dialog-name': 1, 'label-content-name-mismatch': 4 });
     });
 
@@ -407,7 +409,8 @@ test.describe('accessibility', () => {
         await expect(page.getByRole('listbox', { name: 'Emoji' })).toBeVisible();
 
         // Known: the shortcode each option shows is not in its name.
-        expect(countsOf(await violationsOf(page))).toEqual({ 'label-content-name-mismatch': 8 });
+        const options = await page.getByRole('option').count();
+        expect(countsOf(await violationsOf(page))).toEqual({ 'label-content-name-mismatch': options });
     });
 
     test('the emoji flyout has no axe violations', async ({ mount, page }) => {
