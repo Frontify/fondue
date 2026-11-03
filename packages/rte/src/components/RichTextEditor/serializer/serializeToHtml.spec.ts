@@ -108,7 +108,7 @@ describe('serializeNodesToHtml()', () => {
 
             const result = serializeNodesToHtml(node);
             expect(result).to.equal(
-                '<p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;">&#xFEFF;</p>',
+                '<p dir="auto" class="[overflow-wrap:anywhere]" style="font-size: 14px; font-style: normal; font-weight: normal;">&#xFEFF;</p>',
             );
         });
 
@@ -130,7 +130,7 @@ describe('serializeNodesToHtml()', () => {
 
             const result = serializeNodesToHtml(node);
             expect(result).to.equal(
-                '<p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;">First paragraph</p><p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;">&#xFEFF;</p><p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;">Third paragraph</p>',
+                '<p dir="auto" class="[overflow-wrap:anywhere]" style="font-size: 14px; font-style: normal; font-weight: normal;">First paragraph</p><p dir="auto" class="[overflow-wrap:anywhere]" style="font-size: 14px; font-style: normal; font-weight: normal;">&#xFEFF;</p><p dir="auto" class="[overflow-wrap:anywhere]" style="font-size: 14px; font-style: normal; font-weight: normal;">Third paragraph</p>',
             );
         });
     });
