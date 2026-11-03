@@ -426,7 +426,7 @@ describe('pasting from other applications', () => {
             );
 
             expect(outline(nodesOf(doc))).toEqual(['number: Scope', '  number: Logos', 'number: Timeline']);
-            expect(nodesOf(doc).length).toBe(2);
+            expect(nodesOf(doc)).toHaveLength(2);
         });
 
         it('keeps a paragraph that writes `mso-list: none` out of the list', () => {
