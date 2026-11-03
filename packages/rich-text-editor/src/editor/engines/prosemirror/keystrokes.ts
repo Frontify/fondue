@@ -176,8 +176,12 @@ const isInExcludedMark = (state: EditorState, excluded: readonly PmMarkType[], p
 
 const unlessInExcludedMark =
     (excluded: readonly PmMarkType[], handler: RuleHandler): RuleHandler =>
-    (state, match, start, end) =>
-        isInExcludedMark(state, excluded, end) ? null : handler(state, match, start, end);
+    (state, match, start, end) => {
+        if (isInExcludedMark(state, excluded, end)) {
+            return null;
+        }
+        return handler(state, match, start, end);
+    };
 
 const withoutStateFlags = (pattern: RegExp): string => pattern.flags.replaceAll(/[gy]/g, '');
 
@@ -358,7 +362,6 @@ const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] =
         return null;
     };
 
-    // The address found when the key went down, linked once the key's own change is in.
     // The address found when the key went down, and the document it was found in. Only the
     // key handler and its fallback change it: a state can be applied and thrown away (`blocks.setType`).
     let pending: { link: PendingLink; doc: PmNode } | null = null;

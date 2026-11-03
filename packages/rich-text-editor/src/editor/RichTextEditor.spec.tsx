@@ -360,6 +360,15 @@ describe('the editable element', () => {
         expect(editableIn(container).hasAttribute('aria-placeholder')).toBe(false);
     });
 
+    // The drop cursor is drawn in the editable's offset parent: positioned, that is the editor's own element.
+    it('mounts in a positioned element, so the drop cursor stays inside the host', () => {
+        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
+        ready();
+
+        const mountPoint = editableIn(container).parentElement as HTMLElement;
+        expect(window.getComputedStyle(mountPoint).position).toBe('relative');
+    });
+
     it('follows a changed name without being rebuilt', () => {
         const { container, rerender, ready } = mount(() => (
             <RichTextEditor plugins={defaultPlugins} aria-label="One" />
