@@ -167,10 +167,7 @@ export const buildSchema = (registry: PluginRegistry): Schema => {
     const lists = new Set(itemTypeByList.keys());
     const known = new Set(registry.blocks.keys());
 
-    const nodes: Record<string, PmNodeSpec> = {
-        doc: { content: 'block+' },
-        text: { group: 'inline' },
-    };
+    const nodes: Record<string, PmNodeSpec> = { doc: { content: 'block+' }, text: { group: 'inline' } };
 
     // invariant (1): the registry puts the paragraph first.
     for (const [type, block] of registry.blocks) {

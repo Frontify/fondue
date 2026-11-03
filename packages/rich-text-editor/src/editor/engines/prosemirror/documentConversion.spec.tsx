@@ -274,6 +274,18 @@ describe('keys no mounted plugin declares', () => {
         expect(roundTrip(stored)).toEqual(stored);
     });
 
+    it('come after the type of a block and after the version and blocks of the document', () => {
+        const stored = { site: 'a', version: 1, blocks: [{ id: 'x', type: PARAGRAPH, children: [{ text: 'x' }] }] };
+
+        expect(JSON.stringify(roundTrip(stored))).toBe(
+            JSON.stringify({
+                version: 1,
+                blocks: [{ type: PARAGRAPH, id: 'x', children: [{ text: 'x' }] }],
+                site: 'a',
+            }),
+        );
+    });
+
     it('keep null and nested values exactly as stored', () => {
         const stored = {
             version: 1,

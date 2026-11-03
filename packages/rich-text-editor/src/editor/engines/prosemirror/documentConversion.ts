@@ -339,7 +339,7 @@ const blockFromEngine = (node: PmNode): RteBlockNode => {
         return node.attrs[RAW_ATTR] as RteBlockNode;
     }
 
-    const block: Record<string, unknown> = { ...extrasFrom(node), type: node.type.name, ...definedAttrs(node.attrs) };
+    const block: Record<string, unknown> = { type: node.type.name, ...extrasFrom(node), ...definedAttrs(node.attrs) };
     if (node.isTextblock) {
         block.children = mapChildren(node, inlineFromEngine).filter((child) => child !== null);
     } else if (!node.isAtom) {
@@ -358,7 +358,7 @@ const blockFromEngine = (node: PmNode): RteBlockNode => {
  * document's own undeclared keys, from `rootExtrasOf`.
  */
 export const toRteDocument = (doc: PmNode, rootExtras: Record<string, unknown> | null = null): RteDocumentOf => ({
-    ...rootExtras,
     version: DOCUMENT_VERSION,
     blocks: mapChildren(doc, blockFromEngine),
+    ...rootExtras,
 });
