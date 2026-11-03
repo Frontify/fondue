@@ -2,7 +2,7 @@
 
 import { expect, test } from '@playwright/experimental-ct-react';
 
-import { TreeDragLine } from './TreeDragLine';
+import { DragLineHarness } from './testutils/DragLineHarness';
 
 /**
  * `TreeDragLine` is a pure presentational component fed by `tree.getDragLineData()`.
@@ -17,14 +17,14 @@ import { TreeDragLine } from './TreeDragLine';
 
 test.describe('TreeDragLine', () => {
     test('renders nothing when given null data', async ({ mount }) => {
-        const component = await mount(<TreeDragLine data={null} multiSelect={false} />);
+        const component = await mount(<DragLineHarness data={null} multiSelect={false} />);
         // The component returns null, so no element with `aria-hidden` (the dragline's
         // only static attribute) exists.
         await expect(component.locator('[aria-hidden="true"]')).toHaveCount(0);
     });
 
     test('renders a positioned line when given top and left offsets', async ({ mount }) => {
-        const component = await mount(<TreeDragLine data={{ top: 42, left: 0 }} multiSelect={false} />);
+        const component = await mount(<DragLineHarness data={{ top: 42, left: 0 }} multiSelect={false} />);
         const line = component.locator('[aria-hidden="true"]');
         await expect(line).toHaveCount(1);
         await expect(line).toHaveCSS('top', '42px');
@@ -33,13 +33,13 @@ test.describe('TreeDragLine', () => {
     });
 
     test('keeps root-level drops full-width in multi-select mode', async ({ mount }) => {
-        const component = await mount(<TreeDragLine data={{ top: 42, left: 0 }} multiSelect={true} />);
+        const component = await mount(<DragLineHarness data={{ top: 42, left: 0 }} multiSelect={true} />);
         const line = component.locator('[aria-hidden="true"]');
         await expect(line).toHaveCSS('left', '0px');
     });
 
     test('aligns the line with the target chevron: 32px drop level plus the 4px chevron offset', async ({ mount }) => {
-        const component = await mount(<TreeDragLine data={{ top: 42, left: 32 }} multiSelect={false} />);
+        const component = await mount(<DragLineHarness data={{ top: 42, left: 32 }} multiSelect={false} />);
         const line = component.locator('[aria-hidden="true"]');
         await expect(line).toHaveCSS('left', '36px');
         // The line still stretches to the tree's right edge.
@@ -47,8 +47,28 @@ test.describe('TreeDragLine', () => {
     });
 
     test('shifts the line by the checkbox and handle columns in multi-select mode', async ({ mount }) => {
-        const component = await mount(<TreeDragLine data={{ top: 42, left: 32 }} multiSelect={true} />);
+        const component = await mount(<DragLineHarness data={{ top: 42, left: 32 }} multiSelect={true} />);
         const line = component.locator('[aria-hidden="true"]');
         await expect(line).toHaveCSS('left', '76px');
+    });
+
+    test('aligns the line from the inline start in RTL', async ({ mount }) => {
+        const component = await mount(<DragLineHarness dir="rtl" data={{ top: 42, left: 32 }} multiSelect={false} />);
+        const line = component.locator('[aria-hidden="true"]');
+        await expect(line).toHaveCSS('right', '36px');
+        await expect(line).toHaveCSS('left', '0px');
+    });
+
+    test('shifts the line by the leading columns from the inline start in RTL multi-select', async ({ mount }) => {
+        const component = await mount(<DragLineHarness dir="rtl" data={{ top: 42, left: 32 }} multiSelect={true} />);
+        const line = component.locator('[aria-hidden="true"]');
+        await expect(line).toHaveCSS('right', '76px');
+    });
+
+    test('keeps root-level drops full-width in RTL', async ({ mount }) => {
+        const component = await mount(<DragLineHarness dir="rtl" data={{ top: 42, left: 0 }} multiSelect={false} />);
+        const line = component.locator('[aria-hidden="true"]');
+        await expect(line).toHaveCSS('right', '0px');
+        await expect(line).toHaveCSS('left', '0px');
     });
 });
