@@ -4,7 +4,7 @@
 
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { type RteBlockNode } from '#/core';
+import { defineBlock, type RteBlockNode, type RtePlugin } from '#/core';
 
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
 
@@ -21,6 +21,24 @@ const bullets = (...texts: string[]): RteBlockNode =>
     list('bulletList', ...texts.map((value) => item(paragraph(text(value)))));
 const numbered = (start: number | undefined, ...texts: string[]): RteBlockNode =>
     ({ ...list('numberedList', ...texts.map((value) => item(paragraph(text(value))))), start }) as RteBlockNode;
+
+/** A list a host declares, with an attribute of its own that has nothing to do with numbering. */
+const markerListPlugin: RtePlugin = {
+    id: 'marker-list',
+    blocks: {
+        markerList: defineBlock<{ marker: string | null }>({
+            content: { items: 'listItem' },
+            defaults: { marker: null },
+            toHtml: ({ marker }) => ({ tag: 'ul', attrs: { 'data-marker': marker ?? undefined }, children: true }),
+            parse: [{ tag: 'ul[data-marker]', value: (element) => ({ marker: element.dataset.marker }) }],
+        }),
+    },
+};
+const markers = (...texts: string[]): RteBlockNode =>
+    ({
+        ...list('markerList', ...texts.map((value) => item(paragraph(text(value))))),
+        marker: 'square',
+    }) as RteBlockNode;
 
 afterEach(destroyEditors);
 
@@ -183,6 +201,15 @@ describe('outdenting a list item', () => {
             paragraph(text('three')),
             numbered(undefined, 'four'),
         ]);
+    });
+
+    it('keeps a host list’s own attributes on both halves of the split', () => {
+        const editor = editorWith([...plugins, markerListPlugin], [markers('one', 'two', 'three')]);
+        editor.caretAfter('tw');
+
+        expect(editor.api.lists.outdent()).toBe(true);
+
+        expect(editor.stored()).toEqual([markers('one'), paragraph(text('two')), markers('three')]);
     });
 
     it('does nothing outside a list', () => {

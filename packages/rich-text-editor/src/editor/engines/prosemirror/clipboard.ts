@@ -12,6 +12,7 @@ import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PasteHandler } from '#/core';
 
+import { restartedAttrs } from './lists';
 import { tidyGoogleDocs } from './pasteGoogleDocs';
 import { tidyOffice } from './pasteOffice';
 
@@ -48,9 +49,9 @@ class ClipboardSerializer extends DOMSerializer {
 }
 
 /**
- * A list copied from past its first item loses its attributes (a numbered
- * list's start), so it pastes as a new list, as the second half of a split one
- * does. The slice opens on the selection's ancestors, one per level.
+ * A list copied from past its first item starts its numbering over, so it
+ * pastes as a new list, as the second half of a split one does. The slice
+ * opens on the selection's ancestors, one per level.
  */
 export const restartCopiedLists =
     (itemTypeByList: Map<string, string>) =>
@@ -62,8 +63,9 @@ export const restartCopiedLists =
                 return fragment;
             }
             let node = first.copy(restart(first.content, depth + 1));
-            if (itemTypeByList.has(first.type.name) && $from.index(depth) > 0) {
-                node = first.type.create(null, node.content, first.marks);
+            const restarted = restartedAttrs(first);
+            if (itemTypeByList.has(first.type.name) && $from.index(depth) > 0 && restarted !== null) {
+                node = first.type.create(restarted, node.content, first.marks);
             }
             return fragment.replaceChild(0, node);
         };

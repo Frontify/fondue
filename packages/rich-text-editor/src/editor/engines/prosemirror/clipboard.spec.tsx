@@ -4,6 +4,7 @@
 
 import { afterEach, describe, expect, it } from 'vitest';
 
+import { defineBlock, type RtePlugin } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { clipboardSerializer } from './clipboard';
@@ -72,6 +73,40 @@ describe('copying part of a numbered list that starts later', () => {
         editor.selectBetween('one', 'two');
 
         expect(copiedSelection(editor)).toContain('start="3"');
+    });
+
+    it('keeps a host list’s own attributes when the copy begins past the first item', () => {
+        const markerList: RtePlugin = {
+            id: 'marker-list',
+            blocks: {
+                markerList: defineBlock<{ marker: string | null }>({
+                    content: { items: 'listItem' },
+                    defaults: { marker: null },
+                    toHtml: ({ marker }) => ({
+                        tag: 'ul',
+                        attrs: { 'data-marker': marker ?? undefined },
+                        children: true,
+                    }),
+                    parse: [{ tag: 'ul[data-marker]', value: (element) => ({ marker: element.dataset.marker }) }],
+                }),
+            },
+        };
+        const editor = editorWith(
+            [...defaultPlugins, markerList],
+            [
+                {
+                    type: 'markerList',
+                    marker: 'square',
+                    children: ['one', 'two', 'three'].map((value) => ({
+                        type: 'listItem',
+                        children: [paragraph(text(value))],
+                    })),
+                } as unknown as Parameters<typeof editorWith>[1][number],
+            ],
+        );
+        editor.selectBetween('two', 'three');
+
+        expect(copiedSelection(editor)).toContain('data-marker="square"');
     });
 });
 
