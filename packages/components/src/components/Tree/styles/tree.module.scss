@@ -145,8 +145,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 16px;
-    height: 16px;
+    /* A 24x24 click target (WCAG 2.5.8) that reaches into the 4px gaps, so it lays out like a 16px box. */
+    width: 24px;
+    height: 24px;
+    margin: -4px;
     color: var(--color-primary-default);
 }
 

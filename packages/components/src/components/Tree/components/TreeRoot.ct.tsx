@@ -1272,7 +1272,28 @@ test.describe('TreeRoot expansion', () => {
         await expect(row).toHaveAttribute('aria-expanded', 'false');
     });
 
-    test('Enter on a folder selects and opens it, and Space closes it', async ({ mount }) => {
+    test('Space on a folder selects it without opening it', async ({ mount }) => {
+        const component = await mount(<TestHarness initial={doubleClickFolder} />);
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+
+        await row.focus();
+        await row.press(' ');
+        await expect(row).toHaveAttribute('aria-selected', 'true');
+        await expect(row).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    test('an assistive-tech activation after Space still opens the folder', async ({ mount }) => {
+        const component = await mount(<TestHarness initial={doubleClickFolder} />);
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+
+        await row.focus();
+        await row.press(' ');
+        // Screen readers activate with a synthetic click whose `detail` is 0, like `element.click()`.
+        await row.evaluate((element: HTMLElement) => element.click());
+        await expect(row).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    test('Enter on a folder selects and opens it, and Enter again closes it', async ({ mount }) => {
         const component = await mount(<TestHarness initial={doubleClickFolder} />);
         const row = component.getByRole('treeitem', { name: /Folder/ });
 
@@ -1281,8 +1302,43 @@ test.describe('TreeRoot expansion', () => {
         await expect(row).toHaveAttribute('aria-selected', 'true');
         await expect(row).toHaveAttribute('aria-expanded', 'true');
 
-        await row.press(' ');
+        await row.press('Enter');
         await expect(row).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    test('a click just outside the chevron glyph still toggles the folder', async ({ mount, page }) => {
+        const expandCalls: boolean[] = [];
+        const selectCalls: boolean[] = [];
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Folder
+                    id="f"
+                    onExpandChange={(v) => expandCalls.push(v)}
+                    onSelectChange={(v) => selectCalls.push(v)}
+                >
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="child">
+                        <Tree.Label>Child</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+        const glyph = await component
+            .getByRole('treeitem', { name: /Folder/ })
+            .locator('[aria-hidden] svg')
+            .first()
+            .boundingBox();
+        if (!glyph) {
+            throw new Error('chevron has no bounding box');
+        }
+
+        // 11px from the glyph's center lands inside the 24x24 target but outside the 16px box.
+        await page.mouse.click(glyph.x + glyph.width / 2 - 11, glyph.y + glyph.height / 2);
+
+        expect(expandCalls).toEqual([true]);
+        expect(selectCalls).toEqual([]);
     });
 
     test('double-clicking a folder label does not highlight its text', async ({ mount, page }) => {

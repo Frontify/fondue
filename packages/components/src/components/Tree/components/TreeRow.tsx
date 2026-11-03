@@ -82,8 +82,9 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
 
     // Disabled rows drop the consumer's `onClick`; selection is blocked in the setters.
     // A plain click on a folder only selects it in single-select, or only focuses it in
-    // multi-select (headless-tree would also toggle it); the chevron, the arrow keys, Enter,
-    // Space, and a double-click open or close it.
+    // multi-select (headless-tree would also toggle it), and so does Space; the chevron, the
+    // arrow keys, Enter, and a double-click open or close it.
+    const isSpaceActivationRef = useRef(false);
     const handleClick = (event: MouseEvent<HTMLDivElement>) => {
         // The second click of a double-click belongs to `onDoubleClick`, so it neither re-selects nor toggles the row.
         if (event.detail === 2 && data.onDoubleClick && !data.isDisabled) {
@@ -98,8 +99,9 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
             if (!multiSelect) {
                 item.getTree().setSelectedItems([item.getId()]);
             }
-            // Enter, Space and assistive-tech activation click with `detail` 0, so they open or close it like a double-click.
-            if (event.detail === 0 || event.detail === 2) {
+            // Enter and assistive-tech activation click with `detail` 0, so they open or close it like a double-click.
+            // Space only selects, so keyboard users can select a folder without toggling it.
+            if ((event.detail === 0 && !isSpaceActivationRef.current) || event.detail === 2) {
                 toggleExpanded();
             }
         } else {
@@ -172,7 +174,10 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
             return;
         }
         event.preventDefault();
+        // `click()` dispatches synchronously, so the flag is only set for this activation.
+        isSpaceActivationRef.current = event.key === ' ';
         event.currentTarget.click();
+        isSpaceActivationRef.current = false;
     };
 
     // The chevron toggles without touching selection, so it must not reach the row handler.

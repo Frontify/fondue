@@ -88,8 +88,8 @@ export type TreeFolderProps = TreeRowSharedProps & {
     /** A `<Tree.FolderHeader>` for the folder's own row, followed by its nested rows. */
     children: ReactNode;
     /**
-     * A click on the folder's row only selects it (single-select) or focuses it (`multiSelect`). The chevron,
-     * the arrow keys, Enter, Space, or a double-click open or close it, unless `onDoubleClick` handles the double-click.
+     * A click or Space on the folder's row only selects it (single-select) or focuses it (`multiSelect`). The
+     * chevron, the arrow keys, Enter, or a double-click open or close it, unless `onDoubleClick` handles the double-click.
      */
     isExpanded?: boolean;
     onExpandChange?: (isExpanded: boolean) => void;
