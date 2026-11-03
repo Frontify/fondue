@@ -87,18 +87,17 @@ describe('the colour flyout', () => {
         expect(toggle).not.toHaveBeenCalled();
     });
 
-    it('changes nothing on Save without a choice', () => {
-        const cases: Record<string, Record<string, unknown>>[] = [{ fontColor: { color: '#ff0000' } }, {}];
-        for (const marks of cases) {
-            const { toggle, set } = mount(marks);
-            // Clicking Save moves focus off the hex field first, and the picker reports its value again on blur.
-            act(() => document.querySelector<HTMLInputElement>('input[type="text"]')?.blur());
-            press('Save');
+    it.each<[string, Record<string, Record<string, unknown>>]>([
+        ['coloured', { fontColor: { color: '#ff0000' } }],
+        ['uncoloured', {}],
+    ])('changes nothing on Save without a choice on %s text', (_, marks) => {
+        const { toggle, set } = mount(marks);
+        // Clicking Save moves focus off the hex field first, and the picker reports its value again on blur.
+        act(() => document.querySelector<HTMLInputElement>('input[type="text"]')?.blur());
+        press('Save');
 
-            expect(toggle).not.toHaveBeenCalled();
-            expect(set).not.toHaveBeenCalled();
-            act(() => root?.unmount());
-        }
+        expect(toggle).not.toHaveBeenCalled();
+        expect(set).not.toHaveBeenCalled();
     });
 
     it('changes nothing on Save after only switching the value format', () => {
@@ -112,13 +111,14 @@ describe('the colour flyout', () => {
         expect(set).not.toHaveBeenCalled();
     });
 
-    it('changes nothing for a hex value left invalid after a valid one', () => {
+    it('changes nothing and stays open for a hex value left invalid after a valid one', () => {
         const { toggle, set } = mount({});
         typeHex('00ff00');
         typeHexAndPressEnter('00ff0');
 
         expect(toggle).not.toHaveBeenCalled();
         expect(set).not.toHaveBeenCalled();
+        expect(document.querySelector<HTMLInputElement>('input[type="text"]')?.value).toBe('00ff0');
     });
 
     it('changes nothing for an invalid hex value left behind by a switch to RGBA', () => {

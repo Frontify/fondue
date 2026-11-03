@@ -22,7 +22,7 @@ const PRESETS: readonly { name: string; color: string }[] = [
     { name: 'Purple', color: '#8430ce' },
 ];
 
-/** What the picker shows when it is given no colour. */
+/** What the picker shows for text with no colour it can read. */
 const PICKER_DEFAULT: RgbaColor = { red: 255, green: 255, blue: 255, alpha: 1 };
 
 /** The colour typed in the picker's hex field. The field reports only on blur, so Enter and Save read it directly. */
@@ -74,9 +74,8 @@ export const ColorFlyout = ({
 
     const save = (): void => {
         const typed = typedHex(pickerRef.current, draft?.alpha);
-        // An invalid hex field is in its error state: the draft behind it is no longer what the user sees.
+        // An invalid hex field is in its error state: stay open so the user can correct it.
         if (typed === undefined && pickerRef.current?.querySelector('input[type="text"]')) {
-            close();
             return;
         }
         const picked = typed ?? draft;
@@ -184,7 +183,7 @@ export const ColorFlyout = ({
                     >
                         <ColorPicker.Root
                             defaultFormat="HEX"
-                            currentColor={draft}
+                            currentColor={draft ?? PICKER_DEFAULT}
                             onColorChange={(color) => {
                                 // A format switch or the hex field's blur re-reports the shown colour, which is no choice.
                                 if (toCssColor(color) !== toCssColor(draft ?? PICKER_DEFAULT)) {
