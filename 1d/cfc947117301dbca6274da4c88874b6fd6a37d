@@ -1,0 +1,69 @@
+packages/rich-text-edior/src/RichTextEditor/prosemirror/nodeSpecs.ts
+  s_935f2ee3f678c2::t_13c115d1859095 6,9,44-50,56,85-86,98,100
+packages/rich-text-edior/src/ports/index.ts
+  s_935f2ee3f678c2::t_d7b24791a238db 1-21
+packages/rich-text-edior/src/RichTextEditor/prosemirror/domSpec.ts
+  s_935f2ee3f678c2::t_c9ae7aa79aa067 6-16,23
+  s_935f2ee3f678c2::t_2f6a1930ff700d 3-4
+  s_935f2ee3f678c2::t_5ec746a051736f 17
+packages/rich-text-edior/src/RichTextEditor/hooks/useSelectionRect.ts
+  s_935f2ee3f678c2::t_ca56715a0413d3 5
+packages/rich-text-edior/src/RichTextEditor/prosemirror/editor.ts
+  s_935f2ee3f678c2::t_53145cb6e96513 6-7,12,19-20,23,31,35-36
+packages/rich-text-edior/src/ports/editorEngine.ts
+  s_935f2ee3f678c2::t_47a71aceeb5bbf 1-85
+packages/rich-text-edior/src/ports/renderProbe.ts
+  s_935f2ee3f678c2::t_9c2aaa3e215c64 1-33,35-40
+  s_935f2ee3f678c2::t_55465ca18b2f90 34
+packages/rich-text-edior/src/RichTextEditor/hooks/useEditorHandle.ts
+  s_935f2ee3f678c2::t_ca56715a0413d3 7-8
+  s_935f2ee3f678c2::t_06e5e35eb9600b 5,10,17-20
+  s_935f2ee3f678c2::t_88f0ac19ad605c 80
+  s_935f2ee3f678c2::t_da5a9762178bd4 6
+packages/rich-text-edior/src/RichTextEditor/prosemirror/index.ts
+  s_935f2ee3f678c2::t_09ae351dfc8ca1 4-8,12,21-22,25
+packages/rich-text-edior/src/adapters/reactProbe/probe.ts
+  s_935f2ee3f678c2::t_86d3efa3ff81d8 24
+  s_935f2ee3f678c2::t_961df6f78e7e4a 1-23,25-55
+packages/rich-text-edior/src/RichTextEditor/prosemirror/floating.ts
+  s_935f2ee3f678c2::t_577277926579b6 7
+packages/rich-text-edior/src/RichTextEditor/prosemirror/schema.ts
+  s_935f2ee3f678c2::t_21dbb77447074c 6,9,38,63-68,71,85
+packages/rich-text-edior/src/RichTextEditor/RichTextEditor.tsx
+  s_935f2ee3f678c2::t_99693c0977f48e 5-6
+packages/rich-text-edior/src/RichTextEditor/components/FloatingToolbar.tsx
+  s_935f2ee3f678c2::t_89a2e6aad0e768 5-6
+packages/rich-text-edior/src/RichTextEditor/components/Toolbar.tsx
+  s_935f2ee3f678c2::t_570b216562c733 5-6
+packages/rich-text-edior/src/RichTextEditor/hooks/useFloating.ts
+  s_935f2ee3f678c2::t_4c0b7d124ca32b 6
+packages/rich-text-edior/src/RichTextEditor/prosemirror/api/index.ts
+  s_935f2ee3f678c2::t_c04fcfc441d96c 6
+packages/rich-text-edior/src/RichTextEditor/prosemirror/api/lists.ts
+  s_935f2ee3f678c2::t_0fc71a53007bea 9
+packages/rich-text-edior/src/RichTextEditor/prosemirror/api/marks.ts
+  s_935f2ee3f678c2::t_011dbb5309a1fc 9
+packages/rich-text-edior/src/RichTextEditor/prosemirror/api/selection.ts
+  s_935f2ee3f678c2::t_1af1428ae43720 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "1dcfc947117301dbca6274da4c88874b6fd6a37d",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_935f2ee3f678c2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e91df161-b427-4aab-9538-43b52a6f0323",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
