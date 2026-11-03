@@ -55,8 +55,11 @@ const childrenOf = (node: PmNode): PmNode[] => {
     return children;
 };
 
-/** Past this many inserted and removed children, a changed stretch is replaced whole rather than matched up. */
-const MATCH_LIMIT = 1000;
+/** Past this many inserted and removed children, a changed stretch is replaced whole rather than matched up: matching costs the square of it. */
+const MATCH_LIMIT = 100;
+
+/** Past this many children, a changed stretch is replaced whole but for the child holding the caret: each child synced is a step over the whole document. */
+const PAIR_LIMIT = 100;
 
 /**
  * Adds to `pairs` the equal children of `before[head, endA)` and `after[head, endB)` in order, by Myers' diff:
@@ -253,13 +256,33 @@ const syncContent = (transaction: Transaction, from: number, current: PmNode, ta
         const startA = anchorA + 1;
         const startB = anchorB + 1;
         if (endA - startA === endB - startB) {
-            for (let offset = endA - startA - 1; offset >= 0; offset--) {
-                const child = before[startA + offset];
-                const replacement = after[startB + offset];
-                if (child !== undefined && replacement !== undefined) {
-                    syncChild(transaction, startOf(startA + offset), child, replacement);
+            // The children synced one by one: all of them, or past the limit only the one holding the caret.
+            let keepFrom = startA;
+            let keepTo = endA;
+            if (endA - startA > PAIR_LIMIT) {
+                const { head } = transaction.selection;
+                keepFrom = endA;
+                keepTo = endA;
+                for (let index = startA; index < endA; index++) {
+                    if (startOf(index) < head && head < startOf(index + 1)) {
+                        keepFrom = index;
+                        keepTo = index + 1;
+                    }
                 }
             }
+            transaction.replaceWith(startOf(keepTo), startOf(endA), after.slice(startB + keepTo - startA, endB));
+            for (let index = keepTo - 1; index >= keepFrom; index--) {
+                const child = before[index];
+                const replacement = after[startB + index - startA];
+                if (child !== undefined && replacement !== undefined) {
+                    syncChild(transaction, startOf(index), child, replacement);
+                }
+            }
+            transaction.replaceWith(
+                startOf(startA),
+                startOf(keepFrom),
+                after.slice(startB, startB + keepFrom - startA),
+            );
         } else {
             transaction.replaceWith(startOf(startA), startOf(endA), after.slice(startB, endB));
         }

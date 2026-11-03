@@ -3,6 +3,7 @@
 // @vitest-environment happy-dom
 
 import { redo, undo } from 'prosemirror-history';
+import { Node as PmNode } from 'prosemirror-model';
 import { NodeSelection, TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -411,6 +412,35 @@ describe('a document set by the host that changes the blocks around the caret', 
         expect(caretAt(view)).toEqual({ block: 'bXlock 300', offset: 2 });
         undo(view.state, view.dispatch);
         expect(view.state.doc.child(301).textContent).toBe('block 300');
+    });
+
+    it('keeps the caret in its block when the host changes every block of a long document, in a few steps', () => {
+        const texts = Array.from({ length: 600 }, (_, index) => `block ${index}`);
+        const { view, editor } = editorWith([], texts.map(text) as never);
+        caretIn(view, 'block 300', 3);
+        const dispatch = vi.spyOn(view, 'dispatch');
+
+        editor.setDoc(blocksOf(...texts.map((value) => text(value.toUpperCase()))));
+
+        expect(view.state.doc.child(599).textContent).toBe('BLOCK 599');
+        expect(caretAt(view)).toEqual({ block: 'BLOCK 300', offset: 5 });
+        expect(dispatch.mock.calls[0]?.[0].steps.length).toBeLessThanOrEqual(3);
+    });
+
+    it('replaces a long document with a longer one without comparing every block with every other', () => {
+        const { view, editor } = editorWith(
+            [],
+            Array.from({ length: 600 }, (_, index) => text(`old ${index}`)) as never,
+        );
+        const compare = vi.spyOn(PmNode.prototype, 'eq');
+
+        editor.setDoc(blocksOf(...Array.from({ length: 601 }, (_, index) => text(`new ${index}`))));
+
+        const compared = compare.mock.calls.length;
+        compare.mockRestore();
+
+        expect(view.state.doc.childCount).toBe(601);
+        expect(compared).toBeLessThan(50_000);
     });
 
     it('keeps a host restyle when the user undoes their own change to the same block', () => {
