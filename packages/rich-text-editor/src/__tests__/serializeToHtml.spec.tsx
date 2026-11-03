@@ -77,4 +77,10 @@ describe('a numbered list serialized to HTML', () => {
         expect(serializeToHtml(numbered(1), { wrap: false })).not.toContain('start=');
         expect(serializeToHtml(numbered(2.5), { wrap: false })).not.toContain('start=');
     });
+
+    it('makes room for the digits a first number adds past two', () => {
+        expect(serializeToHtml(numbered(99), { wrap: false })).not.toContain('--rte-list-extra-digits');
+        expect(serializeToHtml(numbered(250), { wrap: false })).toContain('style="--rte-list-extra-digits: 1;"');
+        expect(serializeToHtml(numbered(10_000), { wrap: false })).toContain('--rte-list-extra-digits: 3;');
+    });
 });

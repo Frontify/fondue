@@ -2,7 +2,15 @@
 
 import { IconListBullet, IconListNumbers, type FondueIcon } from '@frontify/fondue-icons';
 
-import { ANY_LIST, type BlockDefinition, PARAGRAPH, type RteBlockNode, defineBlock, type RtePlugin } from '#/core';
+import {
+    ANY_LIST,
+    type BlockDefinition,
+    PARAGRAPH,
+    type RteBlockNode,
+    defineBlock,
+    type RtePlugin,
+    type StyleMap,
+} from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -60,10 +68,15 @@ const numberedList = defineBlock<NumberedListValue>({
     defaults: { start: null },
     toHtml: ({ start }) => {
         let first: string | undefined;
+        let style: StyleMap | undefined;
         if (Number.isInteger(start) && start !== 1) {
             first = String(start);
         }
-        return { tag: 'ol', attrs: { class: styles.numberedList, start: first }, children: true };
+        // The stylesheet leaves room for two digits; a list that starts past them widens for its first number.
+        if (first !== undefined && first.length > 2) {
+            style = { '--rte-list-extra-digits': String(first.length - 2) };
+        }
+        return { tag: 'ol', attrs: { class: styles.numberedList, start: first, style }, children: true };
     },
     parse: [
         {
