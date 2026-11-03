@@ -5,7 +5,14 @@ import { history, redo, undo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
-import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, type Transaction } from 'prosemirror-state';
+import {
+    type Command,
+    type EditorState,
+    Plugin,
+    type Plugin as PmPlugin,
+    TextSelection,
+    type Transaction,
+} from 'prosemirror-state';
 
 import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
 
@@ -165,15 +172,17 @@ const typingRewrites = (registry: PluginRegistry, schema: Schema): PmPlugin[] =>
 };
 
 /**
- * The engine runs its rules again when a composition ends, so mobile keyboards,
- * which compose ordinary typing, still get them. That run is skipped when the
+ * The rules run again when a composition ends, so mobile keyboards, which
+ * compose ordinary typing, still get them. That run is skipped when the
  * composition left the document as it was: a keyboard recomposing the word
  * before the caret would otherwise redo a rewrite Backspace just took back.
- * The plugin is edited in place: its undo bookkeeping is keyed by the instance.
+ * This replaces the engine's own run, which waits a second timeout an unmount
+ * can fall between. The plugin is edited in place: its undo bookkeeping is
+ * keyed by the instance.
  */
 const rewritingOnlyComposedText = (plugin: PmPlugin): PmPlugin => {
-    const rerun = plugin.props.handleDOMEvents?.compositionend;
-    if (!rerun) {
+    const runRules = plugin.props.handleTextInput;
+    if (!runRules) {
         return plugin;
     }
     let docAtStart: PmNode | null = null;
@@ -182,16 +191,18 @@ const rewritingOnlyComposedText = (plugin: PmPlugin): PmPlugin => {
             docAtStart = view.state.doc;
             return false;
         },
-        compositionend: (view, event) => {
+        compositionend: (view) => {
             // Taken now: the next composition can start before the timeout runs.
             const started = docAtStart;
             // The last composed characters can land after `compositionend`.
             setTimeout(() => {
-                if (view.isDestroyed) {
+                if (view.isDestroyed || (started && view.state.doc.eq(started))) {
                     return;
                 }
-                if (!started || !view.state.doc.eq(started)) {
-                    rerun.call(plugin, view, event);
+                const { selection } = view.state;
+                if (selection instanceof TextSelection && selection.$cursor) {
+                    const { pos } = selection.$cursor;
+                    runRules.call(plugin, view, pos, pos, '', () => view.state.tr);
                 }
             });
             return false;
