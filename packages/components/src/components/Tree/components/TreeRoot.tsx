@@ -10,11 +10,13 @@ import {
     useMemo,
     useRef,
     useState,
+    type CSSProperties,
     type ReactNode,
 } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
+import { INDENT_STEP_PX } from '../constants';
 import { useTreeController } from '../hooks/useTreeController';
 import styles from '../styles/tree.module.scss';
 import { type TreeChangeState, type TreeDropCandidate } from '../types';
@@ -140,10 +142,13 @@ const TreeRootContent = ({
         .filter(Boolean)
         .join(' ');
 
+    const containerProps = tree.getContainerProps();
+
     return (
         <div
-            {...tree.getContainerProps()}
+            {...containerProps}
             className={styles.tree}
+            style={{ ...containerProps.style, '--tree-indent-step': `${INDENT_STEP_PX}px` } as CSSProperties}
             onFocus={() => setHasFocusWithin(true)}
             // Checks where focus went: a render between a row's blur and the next row's focus must not move the tab stop.
             onBlur={(event) => setHasFocusWithin(event.currentTarget.contains(event.relatedTarget))}

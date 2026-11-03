@@ -11,6 +11,6 @@ export const ROOT_NAME = 'Root';
 
 /**
  * Pixels per indent level, used by headless-tree for drag-line offsets and reparent
- * hit-testing. Must match the `1rem` step of `.indent` in `tree.module.scss`.
+ * hit-testing. `TreeRoot` hands it to `tree.module.scss` as `--tree-indent-step`.
  */
 export const INDENT_STEP_PX = 16;
