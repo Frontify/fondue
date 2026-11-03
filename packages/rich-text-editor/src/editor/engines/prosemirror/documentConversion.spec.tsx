@@ -293,7 +293,7 @@ describe('the document boundary', () => {
                     } as unknown as RteDocumentOf;
 
                     expect(() => toEngineDocument(misfit, schema)).toThrow(
-                        'Invalid document: a "bulletList" cannot hold',
+                        'Invalid document: a "bulletList" cannot hold "listItem", "bulletList".',
                     );
                 } finally {
                     warn.mockRestore();

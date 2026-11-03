@@ -151,9 +151,17 @@ const extrasFrom = (node: PmNode): Record<string, unknown> => {
 const invalidDocument = (nodeType: PmNodeType, content: readonly PmNode[]): Error =>
     new Error(
         `Invalid document: a "${nodeType.name}" cannot hold ${
-            content.length === 0 ? 'nothing' : content.map((node) => `"${node.type.name}"`).join(', ')
+            content.length === 0 ? 'nothing' : content.map((node) => `"${storedTypeOf(node)}"`).join(', ')
         }.`,
     );
+
+/** The type a node was stored with: an unknown block keeps its own. */
+const storedTypeOf = (node: PmNode): string => {
+    if (node.type.name === UNKNOWN_BLOCK) {
+        return (node.attrs[RAW_ATTR] as RteBlockNode).type;
+    }
+    return node.type.name;
+};
 
 /**
  * `create`, refusing content the type does not allow there. Content that is
