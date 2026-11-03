@@ -142,14 +142,25 @@
 }
 
 .chevron {
+    /* A 24x24 click target (WCAG 2.5.8) that reaches into the gaps, so it lays out like a 16px box. */
+    --tree-chevron-reach-start: var(--tree-gap);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    /* A 24x24 click target (WCAG 2.5.8) that reaches into the 4px gaps, so it lays out like a 16px box. */
-    width: 24px;
+    width: calc(16px + var(--tree-chevron-reach-start) + var(--tree-gap));
     height: 24px;
-    margin: -4px;
+    margin-block: -4px;
+    margin-inline: calc(-1 * var(--tree-chevron-reach-start)) calc(-1 * var(--tree-gap));
     color: var(--color-primary-default);
+}
+
+/* The drag handle overlays the row's leading space, so the target stops where the handle ends. */
+.handle ~ .chevron {
+    --tree-chevron-reach-start: min(
+        var(--tree-gap),
+        (var(--tree-chevron-start) - var(--tree-item-border) - var(--tree-handle-size)) / 2 + var(--tree-row-level) *
+            var(--tree-indent-step)
+    );
 }
 
 .icon {
