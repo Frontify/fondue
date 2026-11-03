@@ -81,5 +81,6 @@
 [data-rte-editable] [data-rte-unknown] {
     color: var(--color-secondary-default);
     border: var(--border-width-default) dashed var(--color-line-mid);
-    white-space: pre-line;
+    // The lines of a kept list stay apart, its spaces too, even where a host styles every div.
+    white-space: inherit;
 }
