@@ -1,5 +1,17 @@
 # @frontify/fondue
 
+## 13.11.2
+
+### Patch Changes
+
+- [#2923](https://github.com/Frontify/fondue/pull/2923) [`ed52d6e`](https://github.com/Frontify/fondue/commit/ed52d6e458a8c03be92559fc00fc43d648106608) Thanks [@jcosta33](https://github.com/jcosta33)! - Update runtime dependencies to the latest versions already allowed by the current majors. Radix primitives move to their current 1.x minors, except `@radix-ui/react-scroll-area`, which stays on the patched 1.2.18. `@headless-tree/*` moves to 1.8, `@react-types/shared` to 3.37, and `@ctrl/tinycolor`, `react-colorful`, and `unist-util-visit` move to their latest patches.
+
+- Updated dependencies [[`7311deb`](https://github.com/Frontify/fondue/commit/7311deb88a2dfdc4f5820b89883c574ecb4d4bee), [`ed52d6e`](https://github.com/Frontify/fondue/commit/ed52d6e458a8c03be92559fc00fc43d648106608), [`cbec3e4`](https://github.com/Frontify/fondue/commit/cbec3e41f01ac497b59816bae2b771c3f10e7315), [`90552fe`](https://github.com/Frontify/fondue/commit/90552fe1a71ccf86b58d87b792dd711794965608), [`35390a0`](https://github.com/Frontify/fondue/commit/35390a03b88f30045d5b8b738564fb33e43031ad), [`2c9db91`](https://github.com/Frontify/fondue/commit/2c9db91df4d604b5c1ee6518b64f2f8368b4753b)]:
+  - @frontify/fondue-rte@0.1.15
+  - @frontify/fondue-components@36.0.1
+  - @frontify/fondue-sdk@0.3.2
+  - @frontify/fondue-tokens@5.2.0
+
 ## 13.11.1
 
 ### Patch Changes
