@@ -1,0 +1,31 @@
+packages/components/src/components/Accordion/styles/accordion.module.scss
+  h_2139c5e5c94509 4,24,115
+  s_143c2653caf72c::t_8f5cdfde167f00 57-58
+  s_143c2653caf72c::t_97a5ee8c6a76d0 59-60
+packages/components/src/components/Accordion/__tests__/Accordion.ct.tsx
+  s_143c2653caf72c::t_8263941c49b583 409-410
+  s_143c2653caf72c::t_01655181da727d 396-408,411
+.changeset/twelve-seas-rhyme.md
+  h_2139c5e5c94509 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "c6466a33ab0c05340ec8929703be02904bc23f80",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_143c2653caf72c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "863d8de2-7f28-4e97-875f-123592a68b72",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
