@@ -20,15 +20,15 @@ describe('the font colour mark', () => {
         expect(fontColor?.toHtml({ color: '#c5221f80' }).attrs).toEqual({ style: { color: 'rgba(197, 34, 31, 0.5)' } });
     });
 
-    it('leaves out a stored value that is not a stored colour', () => {
-        for (const value of [
-            { color: 'red; background: url(x)' },
-            { color: 'banana' },
-            { color: 'red' },
-            { color: 'rgb(255, 0, 0)' },
-            { color: 1 },
-            {},
-        ]) {
+    it('writes a stored value in another CSS form as the colour it stands for', () => {
+        expect(fontColor?.toHtml({ color: 'red' }).attrs).toEqual({ style: { color: '#ff0000' } });
+        expect(fontColor?.toHtml({ color: 'rgba(255, 20, 73, 0.5)' }).attrs).toEqual({
+            style: { color: 'rgba(255, 20, 73, 0.5)' },
+        });
+    });
+
+    it('leaves out a stored value that is no colour', () => {
+        for (const value of [{ color: 'red; background: url(x)' }, { color: 'banana' }, { color: 1 }, {}]) {
             expect(fontColor?.toHtml(value as never).attrs).toEqual({});
         }
     });

@@ -5,7 +5,7 @@ import { type ComponentProps } from 'react';
 
 import { NAMED_COLORS } from './namedColors';
 
-/** What a colour carries in the document: lowercase `#rrggbb`, or `#rrggbbaa` when translucent. */
+/** What a colour carries in the document: lowercase `#rrggbb`, or `#rrggbbaa` when translucent. Any other CSS colour reads as its hex. */
 export type FontColorValue = {
     color: string;
 };
@@ -13,16 +13,9 @@ export type FontColorValue = {
 /** The picker's colour type, derived from the component because Fondue does not export it. */
 export type RgbaColor = NonNullable<ComponentProps<typeof ColorPicker.Root>['currentColor']>;
 
-const STORED_COLOR = /^#[\da-f]{6}([\da-f]{2})?$/;
 const HEX_COLOR = /^#([\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/;
 const COLOR_FUNCTION = /^(rgba?|hsla?)\(([^()]*)\)$/;
 const NUMBER = /^[+-]?(\d+(\.\d+)?|\.\d+)(e[+-]?\d+)?%?$/;
-
-/**
- * Whether a value is a colour as the document stores it. Only such a value is
- * written into a `style`, so a stored colour never becomes a second declaration.
- */
-export const isStoredColor = (value: unknown): value is string => typeof value === 'string' && STORED_COLOR.test(value);
 
 const clamp = (value: number, max: number): number => Math.min(Math.max(value, 0), max);
 
@@ -162,6 +155,18 @@ export const toStoredColor = (css: string): string | undefined => {
         return undefined;
     }
     return toCssColor(color);
+};
+
+/**
+ * A stored value as a stored colour, or `undefined` when it is no colour. Any
+ * colour `toStoredColor` reads counts, so one another tool wrote, such as the
+ * legacy editor's `rgba()`, still shows, and nothing else reaches a `style`.
+ */
+export const readStoredColor = (value: unknown): string | undefined => {
+    if (typeof value !== 'string') {
+        return undefined;
+    }
+    return toStoredColor(value);
 };
 
 /** A stored colour's channels, alpha to two decimals, so an alpha the picker wrote reads back unchanged. */

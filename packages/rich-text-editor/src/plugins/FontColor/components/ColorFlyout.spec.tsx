@@ -62,8 +62,12 @@ describe('the colour flyout', () => {
         expect(mount({ fontColor: { color: '#c5221f' } }).trigger.getAttribute('title')).toBe('Text colour: #C5221F');
     });
 
-    it('names a stored value that is no colour as no colour', () => {
-        expect(mount({ fontColor: { color: 'red' } }).trigger.getAttribute('title')).toBe('Text colour');
+    it('names a stored value in another CSS form by its hex, and one that is no colour as no colour', () => {
+        expect(mount({ fontColor: { color: 'rgba(255, 0, 0, 0.5)' } }).trigger.getAttribute('title')).toBe(
+            'Text colour: #FF0000 50%',
+        );
+        act(() => root?.unmount());
+        expect(mount({ fontColor: { color: 'banana' } }).trigger.getAttribute('title')).toBe('Text colour');
     });
 
     it('applies a typed six digit hex value on Enter', () => {

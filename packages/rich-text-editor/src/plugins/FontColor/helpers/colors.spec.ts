@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { isStoredColor, parseCssColor, toCssColor, toExportedColor, toStoredColor } from './colors';
+import { parseCssColor, readStoredColor, toCssColor, toExportedColor, toStoredColor } from './colors';
 
 describe('toStoredColor', () => {
     it('stores a named colour, a hex value, or one colour function of plain numbers as lowercase hex', () => {
@@ -100,25 +100,23 @@ describe('toStoredColor', () => {
     });
 });
 
-describe('isStoredColor', () => {
-    it('accepts only lowercase six or eight digit hex', () => {
-        expect(isStoredColor('#aabbcc')).toBe(true);
-        expect(isStoredColor('#aabbcc80')).toBe(true);
-        for (const value of [
-            '#AABBCC',
-            '#abc',
-            'red',
-            'rgb(1, 2, 3)',
-            '#aabbcc; x',
-            'x;y#aabbcc',
-            '#aabbcc8',
-            '#aabbccdde',
-            undefined,
-            null,
-            1,
-            {},
+describe('readStoredColor', () => {
+    it('reads a stored value written in another CSS form, such as the legacy editor wrote, as hex', () => {
+        for (const [value, stored] of [
+            ['#aabbcc', '#aabbcc'],
+            ['#aabbcc80', '#aabbcc80'],
+            ['#AABBCC', '#aabbcc'],
+            ['red', '#ff0000'],
+            ['rgb(0 0 255)', '#0000ff'],
+            ['rgba(255, 20, 73, 0.5)', '#ff144980'],
         ]) {
-            expect(isStoredColor(value)).toBe(false);
+            expect(readStoredColor(value)).toBe(stored);
+        }
+    });
+
+    it('reads anything else as no colour', () => {
+        for (const value of ['#aabbcc; x', 'x;y#aabbcc', '#aabbcc8', 'banana', undefined, null, 1, {}]) {
+            expect(readStoredColor(value)).toBeUndefined();
         }
     });
 });
