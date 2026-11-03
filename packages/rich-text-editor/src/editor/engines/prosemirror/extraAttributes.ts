@@ -78,6 +78,9 @@ const dropCopiedExtras = (before: PmNode, edits: readonly Transaction[], transac
         }
         return !node.isTextblock;
     });
+    if (counts.size === 0) {
+        return;
+    }
     const holders = new Map<unknown, Holder[]>();
     transaction.doc.descendants((node, pos) => {
         const extras: unknown = node.attrs[EXTRA_ATTR];

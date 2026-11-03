@@ -93,7 +93,8 @@ export const RichTextEditor = ({
         readOnly,
         onBlur: onBlurHandler,
         className: merge([padding, customClass]),
-        style,
+        // Overrides Slate's inline `word-wrap: break-word`, which lets long tokens overflow shrink-wrapping containers.
+        style: { overflowWrap: 'anywhere', ...style },
         onKeyDown: onKeyDownHandler,
         scrollSelectionIntoView: noop,
     };

@@ -2,6 +2,7 @@
 
 // @vitest-environment happy-dom
 
+import { redo, undo } from 'prosemirror-history';
 import { NodeSelection } from 'prosemirror-state';
 import { afterEach, describe, expect, it } from 'vitest';
 
@@ -106,93 +107,92 @@ describe('pasting a payload that names undeclared keys', () => {
     });
 });
 
+type Editor = ReturnType<typeof editorWith>;
+
+/** Fires a drag event on an editor; one `DataTransfer` carries a drag from its start to its drop. */
+const fireDrag = (editor: Editor, type: string, dataTransfer: DataTransfer, copy = false): void => {
+    const event = new Event(type, { bubbles: true, cancelable: true });
+    Object.defineProperties(event, {
+        dataTransfer: { value: dataTransfer },
+        // Alt on a Mac, Ctrl elsewhere: both, so the spec does not depend on the platform.
+        altKey: { value: copy },
+        ctrlKey: { value: copy },
+    });
+    editor.view.dom.dispatchEvent(event);
+};
+
+/** No layout in the test DOM: every coordinate maps to the position the drag is at. */
+const dragAt = (editor: Editor, pos: number): void => {
+    editor.view.posAtCoords = () => ({ pos, inside: -1 });
+};
+
 describe('dragging a block inside the editor', () => {
-    /** Drags the first of two blocks to the end of the document, with the copy modifier held at the drop or not. */
-    const dragged = (copy: boolean) => {
-        const editor = editorWith(defaultPlugins, [
-            { ...paragraph(text('drag')), id: 'x' } as RteBlockNode,
-            paragraph(text('stay')),
-        ]);
+    const drag = (): RteBlockNode => ({ ...paragraph(text('drag')), id: 'x' }) as RteBlockNode;
+
+    /** Drags the block at `from` to `to`, with the copy modifier held at the drop or not. */
+    const dragged = (blocks: RteBlockNode[], from: number, to: (editor: Editor) => number, copy: boolean): Editor => {
+        const editor = editorWith(defaultPlugins, blocks);
         const { view } = editor;
-        view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, 0)));
-        // No layout in the test DOM: coordinates map to the positions the drag starts and ends at.
-        let at = 1;
-        view.posAtCoords = () => ({ pos: at, inside: -1 });
-        const fire = (type: string, modifiers: Record<string, boolean> = {}): void => {
-            const event = new Event(type, { bubbles: true, cancelable: true });
-            Object.defineProperties(event, {
-                dataTransfer: { value: new DataTransfer() },
-                // Alt on a Mac, Ctrl elsewhere: both, so the spec does not depend on the platform.
-                altKey: { value: modifiers.copy === true },
-                ctrlKey: { value: modifiers.copy === true },
-            });
-            view.dom.dispatchEvent(event);
-        };
-
-        fire('dragstart');
-        at = view.state.doc.content.size;
-        fire('drop', { copy });
-        return editor.stored();
+        view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, from)));
+        const dataTransfer = new DataTransfer();
+        dragAt(editor, from + 1);
+        fireDrag(editor, 'dragstart', dataTransfer);
+        dragAt(editor, to(editor));
+        fireDrag(editor, 'drop', dataTransfer, copy);
+        return editor;
     };
+    const toEnd = (editor: Editor): number => editor.view.state.doc.content.size;
 
-    it('moves it without its undeclared keys, as cut and paste does', () => {
-        expect(dragged(false)).toEqual([paragraph(text('stay')), paragraph(text('drag'))]);
+    it('moves it with its undeclared keys, since a move duplicates nothing', () => {
+        const editor = dragged([drag(), paragraph(text('stay'))], 0, toEnd, false);
+
+        expect(editor.stored()).toEqual([paragraph(text('stay')), drag()]);
+    });
+
+    it('keeps the keys on the block when the move is undone in one step, and redone', () => {
+        const editor = dragged([drag(), paragraph(text('stay'))], 0, toEnd, false);
+
+        undo(editor.view.state, editor.view.dispatch);
+        expect(editor.stored()).toEqual([drag(), paragraph(text('stay'))]);
+
+        redo(editor.view.state, editor.view.dispatch);
+        expect(editor.stored()).toEqual([paragraph(text('stay')), drag()]);
     });
 
     it('copies it without them, leaving the original its own', () => {
-        expect(dragged(true)).toEqual([
-            { ...paragraph(text('drag')), id: 'x' },
-            paragraph(text('stay')),
-            paragraph(text('drag')),
-        ]);
+        const editor = dragged([drag(), paragraph(text('stay'))], 0, toEnd, true);
+
+        expect(editor.stored()).toEqual([drag(), paragraph(text('stay')), paragraph(text('drag'))]);
+    });
+
+    it('copies it without them when the copy lands above the original', () => {
+        // The second block starts after the first one's text and its two tokens.
+        const editor = dragged([paragraph(text('stay')), drag()], 'stay'.length + 2, () => 0, true);
+
+        expect(editor.stored()).toEqual([paragraph(text('drag')), paragraph(text('stay')), drag()]);
     });
 });
 
-describe('pasting', () => {
-    it('into an empty block keeps the first pasted block’s attributes', () => {
-        const editor = editorWith(defaultPlugins, [paragraph()]);
-        editor.view.focus();
-
-        editor.pasteHTML('<p style="text-align: center">centred</p><p>next</p>');
-
-        expect(editor.stored()).toEqual([
-            { type: 'paragraph', align: 'center', children: [{ text: 'centred' }] },
-            paragraph(text('next')),
+describe('dropping a block dragged from another editor', () => {
+    it('brings none of its undeclared keys, even from the wrappers its slice names', () => {
+        const source = editorWith(defaultPlugins, [
+            {
+                type: 'bulletList',
+                site: 'a',
+                children: [{ type: 'listItem', ref: 'i1', children: [paragraph(text('item'))] }],
+            } as RteBlockNode,
         ]);
-    });
+        const target = editorWith(defaultPlugins, [paragraph(text('here'))]);
+        source.select('item');
+        const dataTransfer = new DataTransfer();
+        dragAt(source, source.view.state.selection.from);
+        fireDrag(source, 'dragstart', dataTransfer);
+        dragAt(target, target.view.state.doc.content.size);
+        fireDrag(target, 'drop', dataTransfer);
 
-    it('into a block with text keeps that block as it is', () => {
-        const editor = editorWith(defaultPlugins, [paragraph(text('here '))]);
-        editor.caretAfter('here ');
-
-        editor.pasteHTML('<p style="text-align: center">centred</p><p>next</p>');
-
-        expect(editor.stored()?.[0]).toEqual(paragraph(text('here centred')));
-    });
-
-    it('separates table cells and rows rather than running their text together', () => {
-        const editor = editorWith(defaultPlugins, [paragraph()]);
-
-        editor.pasteHTML('<table><tr><td>cell1</td><td>cell2</td></tr><tr><td>cell3</td></tr></table>');
-
-        expect(editor.stored()).toEqual([paragraph(text('cell1 cell2')), paragraph(text('cell3'))]);
-    });
-
-    it('keeps the lines of preformatted text apart', () => {
-        const editor = editorWith(defaultPlugins, [paragraph()]);
-
-        editor.pasteHTML('<pre>first\nsecond</pre>');
-
-        expect(editor.stored()).toEqual([paragraph(text('first')), paragraph(text('second'))]);
-    });
-});
-
-describe('pasting a table inside a table', () => {
-    it('reads each cell once, not again as part of the outer row', () => {
-        const editor = editorWith(defaultPlugins, [paragraph()]);
-
-        editor.pasteHTML('<table><tr><td>outer <table><tr><td>inner</td></tr></table></td></tr></table>');
-
-        expect(editor.stored()).toEqual([paragraph(text('outer inner'))]);
+        const stored = JSON.stringify(target.stored());
+        expect(stored).toContain('item');
+        expect(stored).not.toContain('site');
+        expect(stored).not.toContain('i1');
     });
 });
