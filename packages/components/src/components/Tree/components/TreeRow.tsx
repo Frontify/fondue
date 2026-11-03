@@ -81,8 +81,9 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
     };
 
     // Disabled rows drop the consumer's `onClick`; selection is blocked in the setters.
-    // In single-select, a plain click on a folder only selects it (headless-tree would also
-    // toggle it); the chevron, the arrow keys, Enter, Space, and a double-click open or close it.
+    // A plain click on a folder only selects it in single-select, or only focuses it in
+    // multi-select (headless-tree would also toggle it); the chevron, the arrow keys, Enter,
+    // Space, and a double-click open or close it.
     const handleClick = (event: MouseEvent<HTMLDivElement>) => {
         // The second click of a double-click belongs to `onDoubleClick`, so it neither re-selects nor toggles the row.
         if (event.detail === 2 && data.onDoubleClick && !data.isDisabled) {
@@ -91,9 +92,12 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
         }
         // Modifier clicks keep headless-tree's selection rules, which never toggle.
         const isModifierClick = event.ctrlKey || event.shiftKey || event.metaKey;
-        if (!multiSelect && isFolder && !isModifierClick) {
+        if (isFolder && !isModifierClick) {
             item.setFocused();
-            item.getTree().setSelectedItems([item.getId()]);
+            // Multi-select has no selection feature: the checkbox selects.
+            if (!multiSelect) {
+                item.getTree().setSelectedItems([item.getId()]);
+            }
             // Enter, Space and assistive-tech activation click with `detail` 0, so they open or close it like a double-click.
             if (event.detail === 0 || event.detail === 2) {
                 toggleExpanded();
@@ -103,6 +107,13 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
         }
         if (!data.isDisabled) {
             data.onClick?.(event);
+        }
+    };
+
+    // A double or triple click would highlight the label text; cancelling only those presses keeps it selectable for copying.
+    const handleMouseDown = (event: MouseEvent<HTMLDivElement>) => {
+        if (event.detail > 1 && !(event.target instanceof HTMLInputElement)) {
+            event.preventDefault();
         }
     };
 
@@ -186,6 +197,7 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, onFocusLost, c
         <div
             {...headlessProps}
             onClick={handleClick}
+            onMouseDown={handleMouseDown}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
             onFocus={(event) => {

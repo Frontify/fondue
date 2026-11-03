@@ -84,6 +84,23 @@ test.describe('TreeRowRenameInput', () => {
         expect(rowClicks).toBe(0);
     });
 
+    test('double-clicking a word in the input selects it', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1" isRenaming onRename={() => {}}>
+                    <Tree.Label>Annual report</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        const input = component.getByRole('textbox');
+        await input.dblclick({ position: { x: 12, y: 8 } });
+        const selected = await input.evaluate((element: HTMLInputElement) =>
+            element.value.slice(element.selectionStart ?? 0, element.selectionEnd ?? 0),
+        );
+        expect(selected.trim()).toBe('Annual');
+    });
+
     test('the row is not draggable while renaming', async ({ mount }) => {
         const component = await mount(
             <Tree.Root reorderable>

@@ -1293,6 +1293,44 @@ test.describe('TreeRoot expansion', () => {
         expect(await page.evaluate(() => window.getSelection()?.toString())).toBe('');
     });
 
+    test('a folder label can be selected by dragging across it', async ({ mount, page }) => {
+        const component = await mount(<TestHarness initial={doubleClickFolder} />);
+        const box = await component.getByText('Folder').boundingBox();
+        if (!box) {
+            throw new Error('label has no bounding box');
+        }
+
+        await page.mouse.move(box.x - 1, box.y + box.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(box.x + box.width + 1, box.y + box.height / 2, { steps: 5 });
+        await page.mouse.up();
+
+        expect(await page.evaluate(() => window.getSelection()?.toString())).toBe('Folder');
+    });
+
+    test('in multi-select, clicking a folder keeps it closed and unchecked', async ({ mount }) => {
+        const component = await mount(<TestHarness initial={doubleClickFolder} multiSelect />);
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+
+        await row.click();
+
+        await expect(row).toBeFocused();
+        await expect(row).toHaveAttribute('aria-expanded', 'false');
+        await expect(row).toHaveAttribute('aria-checked', 'false');
+    });
+
+    test('in multi-select, double-clicking a folder opens it and Enter closes it', async ({ mount }) => {
+        const component = await mount(<TestHarness initial={doubleClickFolder} multiSelect />);
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+
+        await row.dblclick();
+        await expect(row).toHaveAttribute('aria-expanded', 'true');
+
+        await row.press('Enter');
+        await expect(row).toHaveAttribute('aria-expanded', 'false');
+        await expect(row).toHaveAttribute('aria-checked', 'false');
+    });
+
     test('a triple-click on a folder opens it once', async ({ mount }) => {
         const component = await mount(<TestHarness initial={doubleClickFolder} />);
         const row = component.getByRole('treeitem', { name: /Folder/ });
