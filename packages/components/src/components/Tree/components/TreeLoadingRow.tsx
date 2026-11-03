@@ -17,7 +17,11 @@ export const TreeLoadingRow = ({ level, multiSelect, reorderable }: TreeLoadingR
     const { t } = useTranslation();
     return (
         <div className={styles.loadingRow} aria-live="polite" aria-busy="true">
-            <div className={styles.loadingItem} style={{ '--tree-row-level': Math.max(0, level) } as CSSProperties}>
+            <div
+                className={styles.loadingItem}
+                style={{ '--tree-row-level': Math.max(0, level) } as CSSProperties}
+                data-multi-select={multiSelect ? 'true' : undefined}
+            >
                 {/* Empty slots mirror `.item`'s grid columns so the label lines up with real rows. */}
                 {reorderable && <span className={styles.handle} aria-hidden />}
                 {multiSelect && <span className={styles.spinner} aria-hidden />}
