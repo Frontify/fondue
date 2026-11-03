@@ -121,9 +121,11 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * error or keep the document for review. Until Try again is used,
      * readonly and new plugin ids show `value` again, dropping edits never
      * passed back as `value`; after it, the editor keeps its own document.
-     * Fires for every crash, including one after Try again and one of the
-     * read-only view shown after a crash; not for errors in event handlers,
-     * such as a key press or a paste, which React does not route here.
+     * Fires for every crash, including one after Try again, and once until
+     * Try again for the read-only view shown after a crash when that throws
+     * too (never in a readonly editor, whose own view was the one that threw);
+     * not for errors in event handlers, such as a key press or a paste, which
+     * React does not route here.
      */
     onError?: (error: Error, details: { document: RteDocumentOf<TBlock> }) => void;
 };
@@ -139,8 +141,8 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     // content across readonly toggles and remounts. A `value` always wins.
     // A ref, not state: keeping it must not re-render on every keystroke.
     // It lives out here so it outlasts a crashed shell.
-    const ownDocumentRef = useRef<RteDocumentOf | null>(null);
-    ownDocumentRef.current ??= value ?? emptyDocument();
+    const [firstDocument] = useState(() => value ?? emptyDocument());
+    const ownDocumentRef = useRef<RteDocumentOf>(firstDocument);
     const document = value ?? ownDocumentRef.current;
 
     // Hosts usually pass an inline object; what it says is what matters.
@@ -175,6 +177,16 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     const onCatch = (error: Error): void => {
         onError?.(error, { document: ownDocumentRef.current as RteDocumentOf<TBlock> });
     };
+    // The fallback retries its view on every new document, which a host may pass on every render.
+    const fallbackReportedRef = useRef(false);
+    const onFallbackCatch = (error: Error): void => {
+        // A readonly editor's view is the one that crashed, already reported.
+        if (shellProps.readonly === true || fallbackReportedRef.current) {
+            return;
+        }
+        fallbackReportedRef.current = true;
+        onCatch(error);
+    };
 
     // Whether focus is in the editor's UI, so a fallback takes it only when the crash took it away.
     const focusWithinRef = useRef(false);
@@ -182,6 +194,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     const onRetry = (hadFocus: boolean): void => {
         // The Retry button goes with the fallback; what replaces it inherits the focus it held.
         focusWithinRef.current = hadFocus;
+        fallbackReportedRef.current = false;
         retry();
     };
     // The fallback keeps the host's name, as the readonly view does.
@@ -196,7 +209,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     }
     // After a crash it mounts what the fallback showed, which can be newer than a `value` the host never updated.
     let shellDocument = document;
-    if (attempt > 0 && ownDocumentRef.current !== null) {
+    if (attempt > 0) {
         shellDocument = ownDocumentRef.current;
     }
 
@@ -212,7 +225,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                     onRetry={onRetry}
                     focusWithinRef={focusWithinRef}
                     groupAttributes={fallbackGroupAttributes}
-                    onCatch={onCatch}
+                    onCatch={onFallbackCatch}
                 />
             }
         >
@@ -234,7 +247,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
 type ShellProps<TBlock extends RteBlockNode> = Omit<EditorShellProps<TBlock>, 'value' | 'plugins' | 'labels'> & {
     /** The document to show: the host's `value`, else what the editor last reported. */
     document: RteDocumentOf;
-    ownDocumentRef: MutableRefObject<RteDocumentOf | null>;
+    ownDocumentRef: MutableRefObject<RteDocumentOf>;
     /** Every document the editor emitted, so the outer component can tell an echo from a push. */
     emittedDocs: WeakSet<RteDocumentOf>;
     registry: PluginRegistry;

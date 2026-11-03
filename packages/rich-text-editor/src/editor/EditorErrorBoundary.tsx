@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button } from '@frontify/fondue-components';
-import { Component, type ReactNode, type RefObject, useEffect, useId, useRef } from 'react';
+import { Component, type MutableRefObject, type ReactNode, type RefObject, useEffect, useId, useRef } from 'react';
 
 import { type PluginRegistry, type RteDocumentOf } from '#/core';
 import { RegistryRenderer } from '#/renderer';
@@ -78,7 +78,7 @@ export class EditorErrorBoundary extends Component<EditorErrorBoundaryProps, Edi
 
 type EditorFallbackProps = {
     /** Read now, not when the fallback was built: the editor reported edits after that. */
-    ownDocumentRef: RefObject<RteDocumentOf | null>;
+    ownDocumentRef: MutableRefObject<RteDocumentOf>;
     registry: PluginRegistry;
     labels: RichTextEditorLabels;
     /** Told whether the pressed button had focus, which goes with it. */
@@ -120,9 +120,6 @@ export const EditorFallback = ({
     }, [focusWithinRef]);
     // What the editor showed, which is what a crash reports: an echoed `value` can be older.
     const document = ownDocumentRef.current;
-    if (document === null) {
-        return null;
-    }
     return (
         <div className={styles.root} {...groupAttributes}>
             {/* A plugin whose readonly view throws too leaves just the message and Retry. */}
