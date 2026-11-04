@@ -5,8 +5,8 @@ import { type Margin } from '@visx/xychart';
 import { useEffect, useState } from 'react';
 
 import { truncateTextLabel } from '@components/BarChart/helpers';
-import { getSVGTextDimensions } from '@components/LineChart/helpers';
 import { type ValueFormatter } from '@components/common/types';
+import { getSVGTextDimensions } from '@components/LineChart/helpers';
 
 type TickType<T> = T extends undefined ? string | number : number;
 type UseMarginProps = {
@@ -16,15 +16,16 @@ type UseMarginProps = {
     tickLength: number;
     maxLabelHeight?: number;
     firstLabelOverflowsBy?: number;
+    maxLabelLength?: number;
 };
 
 const DEFAULT_MARGIN = { bottom: 24, left: 52.265625, right: 20, top: 10 };
 
-const findLongestFormattedTickValue = ({ ticks, tickLabelStyle, valueFormatter }: UseMarginProps) => {
+const findLongestFormattedTickValue = ({ ticks, tickLabelStyle, valueFormatter, maxLabelLength }: UseMarginProps) => {
     return ticks.reduce((longestTickLength: number, tick) => {
         const formattedTick = valueFormatter
-            ? truncateTextLabel(valueFormatter(tick as TickType<typeof valueFormatter>))
-            : truncateTextLabel(String(tick));
+            ? truncateTextLabel(valueFormatter(tick as TickType<typeof valueFormatter>), maxLabelLength)
+            : truncateTextLabel(String(tick), maxLabelLength);
         const tickLength = getSVGTextDimensions(formattedTick, tickLabelStyle).width ?? 0;
         return Math.max(longestTickLength, tickLength);
     }, 0);
@@ -37,7 +38,15 @@ const getTickLabelOffset = ({ tickLabelStyle, tickLength }: Pick<UseMarginProps,
 };
 
 export const useMargin = (props: UseMarginProps) => {
-    const { tickLabelStyle, ticks, valueFormatter, tickLength, maxLabelHeight = 6, firstLabelOverflowsBy = 0 } = props;
+    const {
+        tickLabelStyle,
+        ticks,
+        valueFormatter,
+        tickLength,
+        maxLabelHeight = 6,
+        firstLabelOverflowsBy = 0,
+        maxLabelLength,
+    } = props;
     const [margin, setMargin] = useState<Margin>(DEFAULT_MARGIN);
 
     const tickLabelOffset = getTickLabelOffset({ tickLabelStyle, tickLength });
@@ -53,6 +62,7 @@ export const useMargin = (props: UseMarginProps) => {
             tickLabelStyle: style as TextProps,
             tickLength: ticks.length,
             valueFormatter,
+            maxLabelLength,
         });
         let marginLeft = longestFormattedValue + tickLabelOffset;
         if (firstLabelOverflowsBy > marginLeft) {
@@ -65,7 +75,7 @@ export const useMargin = (props: UseMarginProps) => {
             bottom: maxLabelHeight + 18,
             left: marginLeft,
         });
-    }, [ticksJSON, styleJSON, valueFormatter, maxLabelHeight, firstLabelOverflowsBy, tickLabelOffset]);
+    }, [ticksJSON, styleJSON, valueFormatter, maxLabelHeight, firstLabelOverflowsBy, tickLabelOffset, maxLabelLength]);
 
     return margin;
 };
