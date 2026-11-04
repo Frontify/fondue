@@ -102,8 +102,18 @@ export const TabsRoot = (
         onChange: onActiveTabChange,
     });
 
+    const pendingTabRef = useRef<string | undefined>(undefined);
+
     const handleSetActiveTab = useCallback(
         (value: string) => {
+            // Radix focuses the trigger before switching, so automatic activation requests the same tab twice in one event
+            if (pendingTabRef.current === value) {
+                return;
+            }
+            pendingTabRef.current = value;
+            queueMicrotask(() => {
+                pendingTabRef.current = undefined;
+            });
             setActiveTab(value);
         },
         [setActiveTab],
