@@ -4,4 +4,4 @@
 "@frontify/fondue-sdk": patch
 ---
 
-fix(Tree): the first click on a single-select folder now fires `onExpandChange` instead of being swallowed when the folder has no `onSelectChange` or `onClick` and `Tree.Root` has no `onChange`, since such a folder can never become selected by a click.
+feat(Tree): add `folderClick` to `Tree.Root`. The default `'select'` keeps the current single-select behavior (the first click on a folder only selects it). `'toggle'` expands or collapses a folder on every click, for trees whose folders are only containers.

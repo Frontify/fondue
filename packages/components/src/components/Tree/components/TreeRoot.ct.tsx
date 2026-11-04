@@ -1212,8 +1212,10 @@ test.describe('TreeRoot expansion', () => {
         expect(calls).toEqual([true]);
     });
 
-    test('clicking a folder whose selection the consumer does not take toggles it', async ({ mount }) => {
-        const component = await mount(<ControlledExpansionHarness />);
+    test('with folderClick="toggle", every click on a folder toggles it, even when it never becomes selected', async ({
+        mount,
+    }) => {
+        const component = await mount(<ControlledExpansionHarness folderClick="toggle" />);
 
         const row = component.getByRole('treeitem', { name: /Folder/ });
         await row.click();
@@ -1223,17 +1225,58 @@ test.describe('TreeRoot expansion', () => {
         await expect(row).toHaveAttribute('aria-selected', 'false');
     });
 
-    test('clicking an unselected folder that selects through onClick selects it without toggling', async ({
+    test('with folderClick="toggle", the first click on an unselected folder selects and toggles it', async ({
         mount,
     }) => {
-        const component = await mount(<ControlledExpansionHarness selectsOnClick />);
+        const expandCalls: boolean[] = [];
+        const selectCalls: boolean[] = [];
+        const component = await mount(
+            <Tree.Root folderClick="toggle">
+                <Tree.Folder
+                    id="f"
+                    onExpandChange={(v) => expandCalls.push(v)}
+                    onSelectChange={(v) => selectCalls.push(v)}
+                >
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="child">
+                        <Tree.Label>Child</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Folder/ }).click();
+        expect(expandCalls).toEqual([true]);
+        expect(selectCalls).toEqual([true]);
+    });
+
+    test('with folderClick="toggle", clicking the chevron toggles a folder without selecting it', async ({ mount }) => {
+        const expandCalls: boolean[] = [];
+        const selectCalls: boolean[] = [];
+        const component = await mount(
+            <Tree.Root folderClick="toggle">
+                <Tree.Folder
+                    id="f"
+                    onExpandChange={(v) => expandCalls.push(v)}
+                    onSelectChange={(v) => selectCalls.push(v)}
+                >
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="child">
+                        <Tree.Label>Child</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
 
         const row = component.getByRole('treeitem', { name: /Folder/ });
-        await row.click();
-        await expect(row).toHaveAttribute('aria-selected', 'true');
-        await expect(row).toHaveAttribute('aria-expanded', 'false');
-        await row.click();
-        await expect(row).toHaveAttribute('aria-expanded', 'true');
+        await row.locator('[aria-hidden] svg').first().click();
+        expect(expandCalls).toEqual([true]);
+        expect(selectCalls).toEqual([]);
+        await expect(row).toHaveAttribute('aria-selected', 'false');
     });
 
     test('clicking the chevron toggles a folder without selecting it', async ({ mount }) => {
