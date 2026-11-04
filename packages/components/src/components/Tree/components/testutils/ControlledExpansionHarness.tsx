@@ -5,10 +5,10 @@ import { useState } from 'react';
 import { Tree } from '../../Tree';
 
 /** Single-select folder with controlled expansion and a selection the consumer derives elsewhere and never takes from a click. */
-export const ControlledExpansionHarness = ({ folderClick }: { folderClick?: 'select' | 'toggle' }) => {
+export const ControlledExpansionHarness = ({ folderClickType }: { folderClickType?: 'select' | 'toggle' }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     return (
-        <Tree.Root folderClick={folderClick}>
+        <Tree.Root folderClickType={folderClickType}>
             <Tree.Folder id="f" isSelected={false} isExpanded={isExpanded} onExpandChange={setIsExpanded}>
                 <Tree.FolderHeader>
                     <Tree.Label>Folder</Tree.Label>

@@ -1212,10 +1212,10 @@ test.describe('TreeRoot expansion', () => {
         expect(calls).toEqual([true]);
     });
 
-    test('with folderClick="toggle", every click on a folder toggles it, even when it never becomes selected', async ({
+    test('with folderClickType="toggle", every click on a folder toggles it, even when it never becomes selected', async ({
         mount,
     }) => {
-        const component = await mount(<ControlledExpansionHarness folderClick="toggle" />);
+        const component = await mount(<ControlledExpansionHarness folderClickType="toggle" />);
 
         const row = component.getByRole('treeitem', { name: /Folder/ });
         await row.click();
@@ -1225,13 +1225,13 @@ test.describe('TreeRoot expansion', () => {
         await expect(row).toHaveAttribute('aria-selected', 'false');
     });
 
-    test('with folderClick="toggle", the first click on an unselected folder selects and toggles it', async ({
+    test('with folderClickType="toggle", the first click on an unselected folder selects and toggles it', async ({
         mount,
     }) => {
         const expandCalls: boolean[] = [];
         const selectCalls: boolean[] = [];
         const component = await mount(
-            <Tree.Root folderClick="toggle">
+            <Tree.Root folderClickType="toggle">
                 <Tree.Folder
                     id="f"
                     onExpandChange={(v) => expandCalls.push(v)}
@@ -1252,11 +1252,13 @@ test.describe('TreeRoot expansion', () => {
         expect(selectCalls).toEqual([true]);
     });
 
-    test('with folderClick="toggle", clicking the chevron toggles a folder without selecting it', async ({ mount }) => {
+    test('with folderClickType="toggle", clicking the chevron toggles a folder without selecting it', async ({
+        mount,
+    }) => {
         const expandCalls: boolean[] = [];
         const selectCalls: boolean[] = [];
         const component = await mount(
-            <Tree.Root folderClick="toggle">
+            <Tree.Root folderClickType="toggle">
                 <Tree.Folder
                     id="f"
                     onExpandChange={(v) => expandCalls.push(v)}

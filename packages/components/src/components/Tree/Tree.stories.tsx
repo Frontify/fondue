@@ -239,7 +239,7 @@ export const SingleSelectNestedFolders: Story = {
                     'Single-select across nested folders: any row — item or folder, at any depth — can be the ' +
                     'one selected row. The first click on a folder only selects it; clicking the selected ' +
                     'folder, or any chevron, expands or collapses it. The `isSelected` and `isExpanded` flags ' +
-                    'emitted via `onChange` are fed straight back into the tree. Set `folderClick="toggle"` to ' +
+                    'emitted via `onChange` are fed straight back into the tree. Set `folderClickType="toggle"` to ' +
                     'expand or collapse a folder on every click instead.',
             },
         },
@@ -335,12 +335,12 @@ export const FolderClickToggle: Story = {
         docs: {
             description: {
                 story:
-                    'With `folderClick="toggle"`, every click on a folder expands or collapses it, as well as ' +
+                    'With `folderClickType="toggle"`, every click on a folder expands or collapses it, as well as ' +
                     'selecting it. Use it for trees whose folders are only containers, not answers.',
             },
         },
     },
-    args: { folderClick: 'toggle' },
+    args: { folderClickType: 'toggle' },
 };
 
 export const MultiSelect: Story = {

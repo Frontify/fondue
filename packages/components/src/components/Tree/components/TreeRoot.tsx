@@ -71,7 +71,7 @@ export type TreeRootProps = {
      * click, for trees whose folders are only containers. The chevron always toggles without selecting.
      * @default 'select'
      */
-    folderClick?: 'select' | 'toggle';
+    folderClickType?: 'select' | 'toggle';
 };
 
 export const TreeRoot = ({
@@ -81,7 +81,7 @@ export const TreeRoot = ({
     reorderable = false,
     countDisabledInFolderState = false,
     accepts,
-    folderClick = 'select',
+    folderClickType = 'select',
 }: TreeRootProps) => {
     const { t } = useTranslation();
     const rowHintId = useId();
@@ -179,7 +179,7 @@ export const TreeRoot = ({
                             hintId={rowHint ? rowHintId : undefined}
                             onFocusLost={handleFocusLost}
                             checkedState={checkedStates?.get(item.getId()) ?? false}
-                            folderClick={folderClick}
+                            folderClickType={folderClickType}
                         />
                         {loadingPlaceholder && (
                             <TreeLoadingRow
