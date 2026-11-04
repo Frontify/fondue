@@ -5,6 +5,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { Dropdown } from '#/index';
 
 import { Flyout } from '../../Flyout/Flyout';
+import { INDENT_STEP_PX } from '../constants';
 import { Tree } from '../Tree';
 
 import { RowDialogHarness } from './testutils/RowDialogHarness';
@@ -265,6 +266,100 @@ test.describe('TreeRoot rendering', () => {
         );
 
         await expect(page.locator('body')).toBeFocused();
+    });
+
+    test('a row removed after its dismissed menu, once focus has moved outside, does not pull focus into the tree', async ({
+        mount,
+        page,
+    }) => {
+        const rows = (withActionsRow: boolean) => (
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="1">
+                        <Tree.Label>Row1</Tree.Label>
+                    </Tree.Item>
+                    {withActionsRow && (
+                        <Tree.Item id="2">
+                            <Tree.Label>Row2</Tree.Label>
+                            <Tree.Action>
+                                <Dropdown.Root>
+                                    <Dropdown.Trigger>
+                                        <button type="button">Row2 actions</button>
+                                    </Dropdown.Trigger>
+                                    <Dropdown.Content>
+                                        <Dropdown.Item onSelect={() => {}}>Do thing</Dropdown.Item>
+                                    </Dropdown.Content>
+                                </Dropdown.Root>
+                            </Tree.Action>
+                        </Tree.Item>
+                    )}
+                    <Tree.Item id="3">
+                        <Tree.Label>Row3</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>
+        );
+        const component = await mount(rows(true));
+
+        await component.getByRole('button', { name: 'Row2 actions' }).click();
+        await expect(page.getByRole('menuitem', { name: 'Do thing' })).toBeVisible();
+        // Radix arms its outside-press dismissal a task after opening.
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
+        await page.mouse.click(5, 400);
+        await expect(page.getByRole('menuitem', { name: 'Do thing' })).toHaveCount(0);
+
+        await component.getByRole('button', { name: 'Outside' }).focus();
+        await component.update(rows(false));
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
+
+        await expect(component.getByRole('button', { name: 'Outside' })).toBeFocused();
+    });
+
+    test('a row removed after its focused action vanished and focus moved outside by keyboard does not pull focus into the tree', async ({
+        mount,
+        page,
+    }) => {
+        const rows = (withActionsRow: boolean, withAction: boolean) => (
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="1">
+                        <Tree.Label>Row1</Tree.Label>
+                    </Tree.Item>
+                    {withActionsRow && (
+                        <Tree.Item id="2">
+                            <Tree.Label>Row2</Tree.Label>
+                            {withAction && (
+                                <Tree.Action>
+                                    <button type="button">Row2 action</button>
+                                </Tree.Action>
+                            )}
+                        </Tree.Item>
+                    )}
+                    <Tree.Item id="3">
+                        <Tree.Label>Row3</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>
+        );
+        const component = await mount(rows(true, true));
+
+        await component.getByRole('button', { name: 'Row2 action' }).focus();
+        await component.update(rows(true, false));
+        await expect(page.locator('body')).toBeFocused();
+
+        await component.getByRole('button', { name: 'Outside' }).focus();
+        await component.update(rows(false, false));
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
+
+        await expect(component.getByRole('button', { name: 'Outside' })).toBeFocused();
     });
 
     test('moves DOM focus into the tree when a row is removed while one of its actions has focus', async ({
@@ -874,6 +969,69 @@ test.describe('TreeRoot row click', () => {
 
         await component.getByRole('treeitem', { name: /Row/ }).click();
         expect(clickCount).toBe(1);
+    });
+
+    test('a double-click fires onDoubleClick once and onClick only for the first click', async ({ mount }) => {
+        const calls: string[] = [];
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1" onClick={() => calls.push('click')} onDoubleClick={() => calls.push('double')}>
+                    <Tree.Label>Row</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2" onClick={() => calls.push('sentinel')}>
+                    <Tree.Label>Other</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Row/ }).dblclick();
+        // Callbacks report back in order, so the sentinel landing proves no later click from the double-click is pending.
+        await component.getByRole('treeitem', { name: /Other/ }).click();
+        await expect.poll(() => calls).toEqual(['click', 'double', 'sentinel']);
+    });
+
+    test('a double-click on an unselected folder with onDoubleClick does not expand it', async ({ mount }) => {
+        const doubleClicked: string[] = [];
+        const component = await mount(
+            <TestHarness
+                initial={[
+                    {
+                        id: 'f',
+                        name: 'Folder',
+                        isFolder: true,
+                        isExpanded: false,
+                        children: [{ id: 'c', name: 'Child', isFolder: false }],
+                    },
+                ]}
+                onDoubleClick={(id) => doubleClicked.push(id)}
+            />,
+        );
+
+        await component.getByRole('treeitem', { name: /Folder/ }).dblclick();
+
+        await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-expanded', 'false');
+        await expect(component.getByRole('treeitem', { name: /Child/ })).toHaveCount(0);
+        await expect.poll(() => doubleClicked).toEqual(['f']);
+    });
+
+    test('a disabled row does not fire onDoubleClick', async ({ mount }) => {
+        const doubleClicked: string[] = [];
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="off" isDisabled onDoubleClick={() => doubleClicked.push('off')}>
+                    <Tree.Label>Off</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="on" onDoubleClick={() => doubleClicked.push('on')}>
+                    <Tree.Label>On</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        // `aria-disabled` makes Playwright refuse the click, though the row still receives real clicks.
+        await component.getByRole('treeitem', { name: /Off/ }).dblclick({ force: true });
+        // Callbacks report back in order, so once the enabled row's call lands, any call from the disabled row has too.
+        await component.getByRole('treeitem', { name: /On/ }).dblclick();
+        await expect.poll(() => doubleClicked).toEqual(['on']);
     });
 });
 
@@ -1485,6 +1643,44 @@ test.describe('TreeRoot reorderable mode', () => {
         await expect(handle).toHaveCSS('visibility', 'visible');
     });
 
+    test('aligns reorderable and static rows, with the handle inside the row before the chevron', async ({ mount }) => {
+        const component = await mount(
+            <div>
+                <Tree.Root>
+                    <Tree.Item id="static-1">
+                        <Tree.Label>Static row</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+                <Tree.Root reorderable>
+                    <Tree.Item id="reorderable-1">
+                        <Tree.Label>Reorderable row</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>,
+        );
+
+        const row = component.getByRole('treeitem', { name: /Reorderable row/ });
+        await row.hover();
+        const staticLabelBox = await component.getByText('Static row').boundingBox();
+        const reorderableLabelBox = await component.getByText('Reorderable row').boundingBox();
+        const handleBox = await component.locator('span[class*="handle"]').boundingBox();
+        const rowBox = await row.boundingBox();
+        const chevronBox = await row.locator('span[class*="chevron"]').boundingBox();
+        if (
+            staticLabelBox === null ||
+            reorderableLabelBox === null ||
+            handleBox === null ||
+            rowBox === null ||
+            chevronBox === null
+        ) {
+            throw new Error('the rows did not render their label, handle and chevron boxes');
+        }
+
+        expect(Math.abs(staticLabelBox.x - reorderableLabelBox.x)).toBeLessThan(0.5);
+        expect(handleBox.x).toBeGreaterThanOrEqual(rowBox.x);
+        expect(handleBox.x + handleBox.width).toBeLessThanOrEqual(chevronBox.x + 0.5);
+    });
+
     test('exposes a screen-reader hint announcing checkbox / reorder shortcuts', async ({ mount }) => {
         const component = await mount(
             <Tree.Root multiSelect reorderable>
@@ -1499,6 +1695,41 @@ test.describe('TreeRoot reorderable mode', () => {
         expect(hintId).toBeTruthy();
         const hint = component.locator(`[id="${hintId ?? ''}"]`);
         await expect(hint).toBeAttached();
+    });
+});
+
+test.describe('TreeRoot indentation', () => {
+    test('indents each level by the step headless-tree uses for drop hit-testing', async ({ mount, page }) => {
+        // A non-default root font size separates the pixel step from a `rem` one.
+        await page.evaluate(() => {
+            document.documentElement.style.fontSize = '24px';
+        });
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Folder id="f" isExpanded>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="1">
+                        <Tree.Label>Child</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        const folderChevronBox = await component
+            .getByRole('treeitem', { name: /Folder/ })
+            .locator('span[class*="chevron"]')
+            .boundingBox();
+        const childChevronBox = await component
+            .getByRole('treeitem', { name: /Child/ })
+            .locator('span[class*="chevron"]')
+            .boundingBox();
+        if (folderChevronBox === null || childChevronBox === null) {
+            throw new Error('the rows did not render their chevron boxes');
+        }
+
+        expect(childChevronBox.x - folderChevronBox.x).toBeCloseTo(INDENT_STEP_PX);
     });
 });
 
