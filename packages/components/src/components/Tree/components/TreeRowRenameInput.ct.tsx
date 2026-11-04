@@ -101,6 +101,26 @@ test.describe('TreeRowRenameInput', () => {
         expect(renames).toEqual(['Renamed']);
     });
 
+    test("Tab from the input leaves focus on the row's action", async ({ mount, page, browserName }) => {
+        test.skip(browserName === 'webkit', 'WebKit does not move Tab focus to buttons by default');
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1" isRenaming onRename={() => {}}>
+                    <Tree.Label>Document</Tree.Label>
+                    <Tree.Action>
+                        <button type="button">Document actions</button>
+                    </Tree.Action>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('textbox').press('Tab');
+
+        // Outlast the tree's focus restore, which polls for up to 500ms.
+        await page.waitForTimeout(600);
+        await expect(component.getByRole('button', { name: 'Document actions' })).toBeFocused();
+    });
+
     test('the row is not draggable while renaming', async ({ mount }) => {
         const component = await mount(
             <Tree.Root reorderable>
