@@ -8,6 +8,7 @@ import { Flyout } from '../../Flyout/Flyout';
 import { INDENT_STEP_PX } from '../constants';
 import { Tree, type TreeChangeState } from '../Tree';
 
+import { ControlledExpansionHarness } from './testutils/ControlledExpansionHarness';
 import { RowDialogHarness } from './testutils/RowDialogHarness';
 import { TestHarness } from './testutils/TestHarness';
 
@@ -1211,6 +1212,75 @@ test.describe('TreeRoot expansion', () => {
         expect(calls).toEqual([true]);
     });
 
+    test('with folderClickType="toggle", every click on a folder toggles it, even when it never becomes selected', async ({
+        mount,
+    }) => {
+        const component = await mount(<ControlledExpansionHarness folderClickType="toggle" />);
+
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+        await row.click();
+        await expect(row).toHaveAttribute('aria-expanded', 'true');
+        await row.click();
+        await expect(row).toHaveAttribute('aria-expanded', 'false');
+        await expect(row).toHaveAttribute('aria-selected', 'false');
+    });
+
+    test('with folderClickType="toggle", the first click on an unselected folder selects and toggles it', async ({
+        mount,
+    }) => {
+        const expandCalls: boolean[] = [];
+        const selectCalls: boolean[] = [];
+        const component = await mount(
+            <Tree.Root folderClickType="toggle">
+                <Tree.Folder
+                    id="f"
+                    onExpandChange={(v) => expandCalls.push(v)}
+                    onSelectChange={(v) => selectCalls.push(v)}
+                >
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="child">
+                        <Tree.Label>Child</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Folder/ }).click();
+        expect(expandCalls).toEqual([true]);
+        expect(selectCalls).toEqual([true]);
+    });
+
+    test('with folderClickType="toggle", clicking the chevron toggles a folder without selecting it', async ({
+        mount,
+    }) => {
+        const expandCalls: boolean[] = [];
+        const selectCalls: boolean[] = [];
+        const component = await mount(
+            <Tree.Root folderClickType="toggle">
+                <Tree.Folder
+                    id="f"
+                    onExpandChange={(v) => expandCalls.push(v)}
+                    onSelectChange={(v) => selectCalls.push(v)}
+                >
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="child">
+                        <Tree.Label>Child</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+        await row.locator('[aria-hidden] svg').first().click();
+        expect(expandCalls).toEqual([true]);
+        expect(selectCalls).toEqual([]);
+        await expect(row).toHaveAttribute('aria-selected', 'false');
+    });
+
     test('clicking the chevron toggles a folder without selecting it', async ({ mount }) => {
         const expandCalls: boolean[] = [];
         const selectCalls: boolean[] = [];
@@ -1508,6 +1578,16 @@ test.describe('TreeRoot renaming', () => {
         await expect(row).toHaveAttribute('data-show-focus-ring', 'false');
     });
 
+    test('focus returns to the renamed row on Escape', async ({ mount }) => {
+        const component = await mount(<TestHarness renameable initial={initial} onRename={() => {}} />);
+
+        await component.getByRole('button', { name: 'Rename Second' }).click();
+        await component.getByRole('textbox').press('Escape');
+
+        await expect(component.getByRole('textbox')).toHaveCount(0);
+        await expect(component.getByRole('treeitem', { name: /Second/ })).toBeFocused();
+    });
+
     test('clicking outside the tree commits without stealing focus back', async ({ mount, page }) => {
         const renames: Array<[string, string]> = [];
         const component = await mount(
@@ -1597,6 +1677,17 @@ test.describe('TreeRoot renaming', () => {
 
         await expect(component.getByRole('textbox')).toHaveCount(0);
         expect(renames).toEqual([['1', 'Blurred']]);
+    });
+
+    test('clicking another row while renaming leaves focus on the clicked row', async ({ mount, page }) => {
+        const component = await mount(<TestHarness renameable initial={initial} onRename={() => {}} />);
+
+        await component.getByRole('button', { name: 'Rename First' }).click();
+        await component.getByRole('treeitem', { name: /Second/ }).click();
+
+        await expect(component.getByRole('textbox')).toHaveCount(0);
+        await page.waitForTimeout(600);
+        await expect(component.getByRole('treeitem', { name: /Second/ })).toBeFocused();
     });
 
     test('committing an unchanged name fires no onRename', async ({ mount }) => {

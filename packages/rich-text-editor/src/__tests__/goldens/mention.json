@@ -1,0 +1,77 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "plain"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "Hi "
+                },
+                {
+                    "type": "mention",
+                    "id": "jane",
+                    "username": "jane",
+                    "name": "Jane Doe"
+                },
+                {
+                    "text": " and "
+                },
+                {
+                    "type": "mention",
+                    "id": "jane2",
+                    "username": "jane2",
+                    "name": "Jane Two",
+                    "kind": "user"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "type": "mention",
+                    "id": "design",
+                    "username": "design",
+                    "name": "Design team",
+                    "kind": "group"
+                },
+                {
+                    "text": " "
+                },
+                {
+                    "type": "mention",
+                    "id": "all",
+                    "username": "all",
+                    "name": "Everyone",
+                    "kind": "all"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "type": "mention",
+                    "id": "jane",
+                    "username": "jane",
+                    "name": "Jane Doe"
+                },
+                {
+                    "type": "mention",
+                    "id": "all",
+                    "username": "all",
+                    "name": "Everyone",
+                    "kind": "all"
+                }
+            ]
+        }
+    ]
+}
