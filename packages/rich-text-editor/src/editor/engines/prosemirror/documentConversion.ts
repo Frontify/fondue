@@ -132,6 +132,40 @@ const extrasFrom = (node: PmNode): Record<string, unknown> => {
     return Object.fromEntries(Object.entries(extras).filter(([key]) => key === EXTRA_ATTR || !declared.has(key)));
 };
 
+/**
+ * `node` with each block's extras replaced by what `map` returns for them,
+ * sharing every part `map` leaves as it is. Only blocks hold extras.
+ */
+export const mapExtras = (
+    node: PmNode,
+    map: (extras: Record<string, unknown>) => Record<string, unknown> | null,
+): PmNode => {
+    let content = node.content;
+    if (!node.isTextblock) {
+        let changed = false;
+        const children = mapChildren(node, (child) => {
+            const mapped = mapExtras(child, map);
+            changed ||= mapped !== child;
+            return mapped;
+        });
+        if (changed) {
+            content = Fragment.from(children);
+        }
+    }
+    let attrs = node.attrs;
+    const extras = node.attrs[EXTRA_ATTR] as Record<string, unknown> | null | undefined;
+    if (extras !== null && extras !== undefined) {
+        const mapped = map(extras);
+        if (mapped !== extras) {
+            attrs = { ...node.attrs, [EXTRA_ATTR]: mapped };
+        }
+    }
+    if (content === node.content && attrs === node.attrs) {
+        return node;
+    }
+    return node.type.create(attrs, content, node.marks);
+};
+
 // --- RTE format -> engine ---
 
 /**
@@ -252,10 +286,22 @@ export const toEngineDocument = (doc: RteDocumentOf, schema: Schema): PmNode => 
     if (!docType) {
         throw new Error('Schema is missing the "doc" node type.');
     }
-    return createFilled(
-        docType,
-        null,
-        doc.blocks.map((block) => blockToEngine(block, schema)),
+    // A block the host repeats comes in as one engine node: each place gets its own
+    // extras, so an edit never takes one for a copy of the other.
+    const seen = new Set<Record<string, unknown>>();
+    return mapExtras(
+        createFilled(
+            docType,
+            null,
+            doc.blocks.map((block) => blockToEngine(block, schema)),
+        ),
+        (extras) => {
+            if (seen.has(extras)) {
+                return { ...extras };
+            }
+            seen.add(extras);
+            return extras;
+        },
     );
 };
 

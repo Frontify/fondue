@@ -12,7 +12,7 @@ import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PasteHandler } from '#/core';
 
-import { EXTRA_ATTR, mapChildren } from './documentConversion';
+import { EXTRA_ATTR, mapExtras } from './documentConversion';
 
 // Copy and paste fixes beyond what the engine does on its own.
 
@@ -46,24 +46,6 @@ class ClipboardSerializer extends DOMSerializer {
     }
 }
 
-const withoutExtras = (node: PmNode): PmNode => {
-    let changed = false;
-    const children = mapChildren(node, (child) => {
-        const kept = withoutExtras(child);
-        changed ||= kept !== child;
-        return kept;
-    });
-    const hasExtras = node.attrs[EXTRA_ATTR] !== null && node.attrs[EXTRA_ATTR] !== undefined;
-    if (!changed && !hasExtras) {
-        return node;
-    }
-    let attrs = node.attrs;
-    if (hasExtras) {
-        attrs = { ...node.attrs, [EXTRA_ATTR]: null };
-    }
-    return node.type.create(attrs, Fragment.from(children), node.marks);
-};
-
 /**
  * A pasted or dropped slice without the undeclared stored keys: every block it
  * brings is new, as with cut and paste. A drag within the editor moves its
@@ -73,7 +55,11 @@ export const pastedWithoutExtras = (slice: Slice, view: EditorView): Slice => {
     if (view.dragging !== null) {
         return slice;
     }
-    return new Slice(Fragment.fromArray(slice.content.content.map(withoutExtras)), slice.openStart, slice.openEnd);
+    return new Slice(
+        Fragment.fromArray(slice.content.content.map((node) => mapExtras(node, () => null))),
+        slice.openStart,
+        slice.openEnd,
+    );
 };
 
 export const clipboardSerializer = (schema: Schema): DOMSerializer => {
