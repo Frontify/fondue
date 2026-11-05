@@ -120,7 +120,7 @@ const mount = ({
             doc: toEngineDocument(initialDoc, schema),
             plugins: [
                 ...keystrokePipeline(registry, schema, api),
-                copiedExtrasPlugin((transaction) => transaction.getMeta(HOST_DOC) === true),
+                copiedExtrasPlugin(),
                 placeholderPlugin(() => currentPlaceholder, placeholderClassName),
             ],
         }),

@@ -2,7 +2,7 @@
 
 import { isHistoryTransaction } from 'prosemirror-history';
 import { type Node as PmNode } from 'prosemirror-model';
-import { Plugin, type Transaction } from 'prosemirror-state';
+import { Plugin } from 'prosemirror-state';
 
 import { EXTRA_ATTR } from './documentConversion';
 
@@ -54,17 +54,16 @@ const keeperOf = (holders: Holder[], isDropped: (holder: Holder) => boolean): Ho
 /**
  * After every edit, the undeclared keys it copied stay on one block only: a
  * split, a lift out of the middle of a list, a block inserted mid-paragraph and
- * a copy-drag all give the blocks they make the same attributes. A host's own
- * document is left as it is, and so is an undo or redo, which brings back a
- * document that already held to this.
+ * a copy-drag all give the blocks they make the same attributes. An undo or redo
+ * is left as it is: it brings back a document that already held to this.
  */
-export const copiedExtrasPlugin = (isHostChange: (transaction: Transaction) => boolean): Plugin =>
+export const copiedExtrasPlugin = (): Plugin =>
     new Plugin({
         appendTransaction(transactions, _oldState, newState) {
             if (!transactions.some((transaction) => transaction.docChanged)) {
                 return null;
             }
-            if (transactions.some(isHostChange) || transactions.some(isHistoryTransaction)) {
+            if (transactions.some(isHistoryTransaction)) {
                 return null;
             }
             // A drop leaves what it brought selected.
