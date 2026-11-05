@@ -1,0 +1,23 @@
+.changeset/link-target-blank.md
+  s_cde664d3a3c364::t_e725b99ce571b3 1-5
+packages/components/src/components/Link/__tests__/Link.spec.tsx
+  s_cde664d3a3c364::t_74f314532f4111 3-4,23-65
+packages/components/src/components/Link/Link.tsx
+  s_cde664d3a3c364::t_284bf0cd7fb46c 119,134-136,138-146,151,175
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "89ffac24f9ee6d702220591205ac585c49704fda",
+  "prompts": {},
+  "sessions": {
+    "s_cde664d3a3c364": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "32de7b6e-110e-4484-9274-8a85d61b54bf",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
