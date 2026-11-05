@@ -4,7 +4,6 @@
 
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { defineBlock, type RtePlugin } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { clipboardSerializer } from './clipboard';
@@ -42,71 +41,6 @@ describe('copying', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('a'), { type: 'break' }, text('b'))]);
 
         expect(copied(editor)).toBe('<p>a<br>b</p>');
-    });
-});
-
-describe('copying part of a numbered list that starts later', () => {
-    /** The HTML a copy of the current selection puts on the clipboard. */
-    const copiedSelection = (editor: ReturnType<typeof editorWith>): string => {
-        const data = new DataTransfer();
-        editor.view.dom.dispatchEvent(
-            new ClipboardEvent('copy', { clipboardData: data, bubbles: true, cancelable: true }),
-        );
-        return data.getData('text/html');
-    };
-    const numbered = (...texts: string[]) =>
-        ({
-            type: 'numberedList',
-            start: 3,
-            children: texts.map((value) => ({ type: 'listItem', children: [paragraph(text(value))] })),
-        }) as unknown as Parameters<typeof editorWith>[1][number];
-
-    it('writes the list without its start when the copy begins past the first item', () => {
-        const editor = editorWith(defaultPlugins, [numbered('one', 'two', 'three')]);
-        editor.selectBetween('two', 'three');
-
-        expect(copiedSelection(editor)).not.toContain('start=');
-    });
-
-    it('keeps the start when the copy begins in the first item', () => {
-        const editor = editorWith(defaultPlugins, [numbered('one', 'two', 'three')]);
-        editor.selectBetween('one', 'two');
-
-        expect(copiedSelection(editor)).toContain('start="3"');
-    });
-
-    it('keeps a host list’s own attributes when the copy begins past the first item', () => {
-        const markerList: RtePlugin = {
-            id: 'marker-list',
-            blocks: {
-                markerList: defineBlock<{ marker: string | null }>({
-                    content: { items: 'listItem' },
-                    defaults: { marker: null },
-                    toHtml: ({ marker }) => ({
-                        tag: 'ul',
-                        attrs: { 'data-marker': marker ?? undefined },
-                        children: true,
-                    }),
-                    parse: [{ tag: 'ul[data-marker]', value: (element) => ({ marker: element.dataset.marker }) }],
-                }),
-            },
-        };
-        const editor = editorWith(
-            [...defaultPlugins, markerList],
-            [
-                {
-                    type: 'markerList',
-                    marker: 'square',
-                    children: ['one', 'two', 'three'].map((value) => ({
-                        type: 'listItem',
-                        children: [paragraph(text(value))],
-                    })),
-                } as unknown as Parameters<typeof editorWith>[1][number],
-            ],
-        );
-        editor.selectBetween('two', 'three');
-
-        expect(copiedSelection(editor)).toContain('data-marker="square"');
     });
 });
 

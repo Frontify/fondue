@@ -4,7 +4,7 @@
 
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { defineBlock, type RteBlockNode, type RtePlugin } from '#/core';
+import { type RteBlockNode } from '#/core';
 
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
 
@@ -17,28 +17,10 @@ const plugins = shipped('bullet-list', 'numbered-list', 'check-list');
 
 const item = (...children: RteBlockNode[]): RteBlockNode => ({ type: 'listItem', children }) as RteBlockNode;
 const list = (type: string, ...items: RteBlockNode[]): RteBlockNode => ({ type, children: items }) as RteBlockNode;
+const numbered = (start: number, ...texts: string[]): RteBlockNode =>
+    ({ ...list('numberedList', ...texts.map((value) => item(paragraph(text(value))))), start }) as RteBlockNode;
 const bullets = (...texts: string[]): RteBlockNode =>
     list('bulletList', ...texts.map((value) => item(paragraph(text(value)))));
-const numbered = (start: number | undefined, ...texts: string[]): RteBlockNode =>
-    ({ ...list('numberedList', ...texts.map((value) => item(paragraph(text(value))))), start }) as RteBlockNode;
-
-/** A list a host declares, with an attribute of its own that has nothing to do with numbering. */
-const markerListPlugin: RtePlugin = {
-    id: 'marker-list',
-    blocks: {
-        markerList: defineBlock<{ marker: string | null }>({
-            content: { items: 'listItem' },
-            defaults: { marker: null },
-            toHtml: ({ marker }) => ({ tag: 'ul', attrs: { 'data-marker': marker ?? undefined }, children: true }),
-            parse: [{ tag: 'ul[data-marker]', value: (element) => ({ marker: element.dataset.marker }) }],
-        }),
-    },
-};
-const markers = (...texts: string[]): RteBlockNode =>
-    ({
-        ...list('markerList', ...texts.map((value) => item(paragraph(text(value))))),
-        marker: 'square',
-    }) as RteBlockNode;
 
 afterEach(destroyEditors);
 
@@ -177,39 +159,13 @@ describe('outdenting a list item', () => {
         expect(editor.stored()).toEqual([bullets('one'), paragraph(text('two'))]);
     });
 
-    it('keeps the start of a list whose first item is taken out, when another list holds the same items', () => {
-        const editor = editorWith(plugins, [numbered(3, 'first'), numbered(undefined, 'one', 'two', 'three')]);
-        const { state } = editor.view;
-        const [target, source] = [state.doc.child(0), state.doc.child(1)];
-        // As a copy-drag leaves them: the very item nodes the other list holds.
-        editor.view.dispatch(state.tr.insert(target.nodeSize - 1, [source.child(1), source.child(2)]));
-        editor.caretAfter('fir');
-
-        expect(editor.api.lists.outdent()).toBe(true);
-
-        expect(editor.stored()?.slice(0, 2)).toEqual([paragraph(text('first')), numbered(3, 'two', 'three')]);
-    });
-
-    it('takes a middle item out of a list that starts later, the rest restarting at 1', () => {
-        const editor = editorWith(plugins, [numbered(3, 'one', 'two', 'three', 'four')]);
-        editor.caretAfter('thr');
-
-        expect(editor.api.lists.outdent()).toBe(true);
-
-        expect(editor.stored()).toEqual([
-            numbered(3, 'one', 'two'),
-            paragraph(text('three')),
-            numbered(undefined, 'four'),
-        ]);
-    });
-
-    it('keeps a host list’s own attributes on both halves of the split', () => {
-        const editor = editorWith([...plugins, markerListPlugin], [markers('one', 'two', 'three')]);
+    it('keeps the start on both halves of a list it splits, as ProseMirror and Tiptap do', () => {
+        const editor = editorWith(plugins, [numbered(3, 'one', 'two', 'three')]);
         editor.caretAfter('tw');
 
         expect(editor.api.lists.outdent()).toBe(true);
 
-        expect(editor.stored()).toEqual([markers('one'), paragraph(text('two')), markers('three')]);
+        expect(editor.stored()).toEqual([numbered(3, 'one'), paragraph(text('two')), numbered(3, 'three')]);
     });
 
     it('does nothing outside a list', () => {

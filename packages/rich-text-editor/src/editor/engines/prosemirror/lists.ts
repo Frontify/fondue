@@ -37,109 +37,6 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
 };
 
-// Splitting a list
-
-/** The attribute a list counts its items from, as HTML's `<ol start>`. */
-const START_ATTR = 'start';
-
-/**
- * `list`'s attributes with its numbering started over, or `null` when it has
- * none to start over. Its other attributes, a host list's own included, stay.
- */
-export const restartedAttrs = (list: PmNode): Record<string, unknown> | null => {
-    const declared = list.type.spec.attrs?.[START_ATTR];
-    if (declared === undefined) {
-        return null;
-    }
-    const fallback: unknown = declared.default ?? null;
-    if (list.attrs[START_ATTR] === fallback) {
-        return null;
-    }
-    return { ...list.attrs, [START_ATTR]: fallback };
-};
-
-/** The span `transaction`'s steps replaced, in the document before them and after them. */
-const changedSpan = (transaction: Transaction): { before: [number, number]; after: [number, number] } | null => {
-    const { mapping } = transaction;
-    let from = Number.POSITIVE_INFINITY;
-    let to = Number.NEGATIVE_INFINITY;
-    for (const [index, map] of mapping.maps.entries()) {
-        const later = mapping.slice(index + 1);
-        // A step map's own iterator, not an array's.
-        // oxlint-disable-next-line unicorn/no-array-for-each
-        map.forEach((_oldStart, _oldEnd, newStart, newEnd) => {
-            from = Math.min(from, later.map(newStart, -1));
-            to = Math.max(to, later.map(newEnd, 1));
-        });
-    }
-    if (from > to) {
-        return null;
-    }
-    const back = mapping.invert();
-    return { before: [back.map(from, -1), back.map(to, 1)], after: [from, to] };
-};
-
-/**
- * Starts the numbering of the second half of each list `transaction` split
- * over: it is a new list, and the engine's split copies the first half's start
- * onto it. A list whose first item was taken out keeps its own, as that list
- * did not split. Only the lists around the steps are read, so a long
- * document costs no more than a short one.
- */
-const restartSplitLists = (transaction: Transaction, itemTypeByList: Map<string, string>): Transaction => {
-    const span = changedSpan(transaction);
-    if (span === null) {
-        return transaction;
-    }
-    const isList = (node: PmNode): boolean => itemTypeByList.has(node.type.name);
-    // Each item that was not first in its list, with the item that was.
-    const firstBefore = new Map<PmNode, PmNode>();
-    // Items that sit in more than one list (a copy-drag reuses the nodes) say nothing of which list split.
-    const seen = new Set<PmNode>();
-    const shared = new Set<PmNode>();
-    transaction.before.nodesBetween(span.before[0], span.before[1], (node) => {
-        if (isList(node) && node.firstChild !== null) {
-            const first = node.firstChild;
-            for (const [index, item] of mapChildren(node, (child) => child).entries()) {
-                if (seen.has(item)) {
-                    shared.add(item);
-                }
-                seen.add(item);
-                if (index > 0) {
-                    firstBefore.set(item, first);
-                }
-            }
-        }
-        return !node.isTextblock;
-    });
-    for (const item of shared) {
-        firstBefore.delete(item);
-    }
-    if (firstBefore.size === 0) {
-        return transaction;
-    }
-    const lists: { node: PmNode; pos: number }[] = [];
-    transaction.doc.nodesBetween(span.after[0], span.after[1], (node, pos) => {
-        if (isList(node) && node.firstChild !== null) {
-            lists.push({ node, pos });
-        }
-        return !node.isTextblock;
-    });
-    const firsts = new Set(lists.map(({ node }) => node.firstChild));
-    for (const { node, pos } of lists) {
-        if (node.firstChild === null) {
-            continue;
-        }
-        const head = firstBefore.get(node.firstChild);
-        const restarted = restartedAttrs(node);
-        if (head !== undefined && !shared.has(head) && firsts.has(head) && restarted !== null) {
-            // The same size, so the other positions stay valid.
-            transaction.setNodeMarkup(pos, undefined, restarted);
-        }
-    }
-    return transaction;
-};
-
 // The list half of the control API
 
 /** Implements `EditorControlApi['lists']` against the live view. */
@@ -155,11 +52,7 @@ export const createListApi = (
         if (!itemType) {
             return false;
         }
-        return command(itemType)(
-            view.state,
-            (transaction) => view.dispatch(restartSplitLists(transaction, itemTypeByList)),
-            view,
-        );
+        return command(itemType)(view.state, view.dispatch, view);
     };
 
     return {
@@ -248,12 +141,7 @@ export const liftOutOfLists = (
     for (let round = 0; round < MAX_NESTING; round++) {
         let lifted: Transaction | null = null;
         for (const itemType of itemTypes) {
-            if (
-                liftListItem(itemType)(
-                    current,
-                    (transaction) => (lifted = restartSplitLists(transaction, itemTypeByList)),
-                )
-            ) {
+            if (liftListItem(itemType)(current, (transaction) => (lifted = transaction))) {
                 break;
             }
         }
