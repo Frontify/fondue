@@ -367,3 +367,66 @@ test('should clamp a long banner description to the lines that fit the banner', 
     expect(textBox!.y).toBeGreaterThanOrEqual(bannerBox!.y);
     expect(textBox!.y + textBox!.height).toBeLessThanOrEqual(bannerBox!.y + bannerBox!.height);
 });
+
+test('should center the banner description in the banner when the card is not selectable', async ({ mount }) => {
+    const wrapper = await mount(
+        <div style={{ width: 280 }}>
+            <Card.Root>
+                <Card.Banner data-test-id="banner">
+                    <Card.BannerDescription data-test-id="banner-description">Description</Card.BannerDescription>
+                </Card.Banner>
+            </Card.Root>
+        </div>,
+    );
+    const bannerBox = await wrapper.getByTestId('banner').boundingBox();
+    const textBox = await wrapper.getByTestId('banner-description').locator('p').boundingBox();
+    expect(bannerBox).not.toBeNull();
+    expect(textBox).not.toBeNull();
+
+    const bannerCenter = bannerBox!.y + bannerBox!.height / 2;
+    const textCenter = textBox!.y + textBox!.height / 2;
+    expect(Math.abs(textCenter - bannerCenter)).toBeLessThanOrEqual(1);
+});
+
+test('should center the banner description below the checkbox when the card is selectable', async ({ mount }) => {
+    const wrapper = await mount(
+        <RouterProvider navigate={() => {}} useHref={(path) => path}>
+            <div style={{ width: 280 }}>
+                <Card.Root href="/page" onSelect={() => {}} selected={false} aria-label="Card">
+                    <Card.Banner data-test-id="banner">
+                        <Card.BannerDescription data-test-id="banner-description">Description</Card.BannerDescription>
+                    </Card.Banner>
+                </Card.Root>
+            </div>
+        </RouterProvider>,
+    );
+    const checkboxBox = await wrapper.getByRole('button', { name: 'Select' }).boundingBox();
+    const bannerBox = await wrapper.getByTestId('banner').boundingBox();
+    const textBox = await wrapper.getByTestId('banner-description').locator('p').boundingBox();
+    expect(checkboxBox).not.toBeNull();
+    expect(bannerBox).not.toBeNull();
+    expect(textBox).not.toBeNull();
+
+    const spacingSmall = Number.parseFloat(await resolveToken(wrapper, 'width', '--spacing-small'));
+    const spacingMedium = Number.parseFloat(await resolveToken(wrapper, 'width', '--spacing-medium'));
+    const areaTop = checkboxBox!.y + checkboxBox!.height + spacingSmall;
+    const areaBottom = bannerBox!.y + bannerBox!.height - spacingMedium;
+    const textCenter = textBox!.y + textBox!.height / 2;
+    expect(textBox!.y).toBeGreaterThanOrEqual(areaTop);
+    expect(Math.abs(textCenter - (areaTop + areaBottom) / 2)).toBeLessThanOrEqual(1);
+});
+
+test('should draw a bottom border under the banner description', async ({ mount }) => {
+    const wrapper = await mount(
+        <Card.Root>
+            <Card.Banner>
+                <Card.BannerDescription data-test-id="banner-description">Description</Card.BannerDescription>
+            </Card.Banner>
+        </Card.Root>,
+    );
+    const description = wrapper.getByTestId('banner-description');
+    const lineColor = await resolveToken(description, 'color', '--color-line-subtle');
+    const boxShadow = await description.evaluate((element) => getComputedStyle(element).boxShadow);
+
+    expect(boxShadow).toBe(`${lineColor} 0px -1px 0px 0px inset`);
+});
