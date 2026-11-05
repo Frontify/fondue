@@ -136,8 +136,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     // content across readonly toggles and remounts. A `value` always wins.
     // A ref, not state: keeping it must not re-render on every keystroke.
     // It lives out here so it outlasts a crashed shell.
-    const [firstDocument] = useState(() => value ?? emptyDocument());
-    const ownDocumentRef = useRef<RteDocumentOf>(firstDocument);
+    const ownDocumentRef = useRef<RteDocumentOf>(value ?? emptyDocument());
     const document = value ?? ownDocumentRef.current;
 
     // Hosts usually pass an inline object; what it says is what matters.
@@ -169,9 +168,6 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     }
     seenValueRef.current = value;
 
-    const onCatch = (error: Error): void => {
-        onError?.(error);
-    };
     // The fallback retries its view on every new document, which a host may pass on every render.
     const fallbackReportedRef = useRef(false);
     const onFallbackCatch = (error: Error): void => {
@@ -180,7 +176,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
             return;
         }
         fallbackReportedRef.current = true;
-        onCatch(error);
+        onError?.(error);
     };
 
     // Whether focus is in the editor's UI, so a fallback takes it only when the crash took it away.
@@ -211,7 +207,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     return (
         <EditorErrorBoundary
             key={attempt}
-            onCatch={onCatch}
+            onCatch={onError}
             fallback={
                 <EditorFallback
                     ownDocumentRef={ownDocumentRef}
