@@ -9,9 +9,6 @@ import { RichTextEditor } from '../../index';
 // thing to a real input method a test has: the browser fires the composition
 // events itself.
 
-// The DevTools protocol is Chromium's: the other engines run only the synthetic-key tests.
-const CHROMIUM_ONLY = 'composition goes through the DevTools protocol, which only Chromium has';
-
 /** Starts a composition showing `text`, as an IME does while the user is still choosing. */
 const compose = async (page: Page, text: string): Promise<void> => {
     const client = await page.context().newCDPSession(page);
@@ -50,7 +47,10 @@ const modifier = (page: Page): Promise<'metaKey' | 'ctrlKey'> =>
 // composition to end rather than skipping composed text.
 test.describe('composed text', () => {
     test('is not rewritten while the composition is open', async ({ mount, page, browserName }) => {
-        test.skip(browserName !== 'chromium', CHROMIUM_ONLY);
+        test.skip(
+            browserName !== 'chromium',
+            'Composition goes through the DevTools protocol, which only Chromium has',
+        );
         const component = await mount(<RichTextEditor />);
         const editable = component.getByRole('textbox');
 
@@ -69,7 +69,10 @@ test.describe('composed text', () => {
         ['- ', 'ul > li', '', ''],
     ] as const) {
         test(`"${composed}" is rewritten once the composition ends`, async ({ mount, page, browserName }) => {
-            test.skip(browserName !== 'chromium', CHROMIUM_ONLY);
+            test.skip(
+                browserName !== 'chromium',
+                'Composition goes through the DevTools protocol, which only Chromium has',
+            );
             const component = await mount(<RichTextEditor />);
             const editable = component.getByRole('textbox');
 
@@ -88,7 +91,10 @@ test.describe('composed text', () => {
         page,
         browserName,
     }) => {
-        test.skip(browserName !== 'chromium', CHROMIUM_ONLY);
+        test.skip(
+            browserName !== 'chromium',
+            'Composition goes through the DevTools protocol, which only Chromium has',
+        );
         const component = await mount(<RichTextEditor />);
         const editable = component.getByRole('textbox');
 
@@ -117,7 +123,10 @@ test.describe('composed text', () => {
 
 test.describe('keys that belong to an input method', () => {
     test('the Enter that commits a composition does not split the block', async ({ mount, page, browserName }) => {
-        test.skip(browserName !== 'chromium', CHROMIUM_ONLY);
+        test.skip(
+            browserName !== 'chromium',
+            'Composition goes through the DevTools protocol, which only Chromium has',
+        );
         const component = await mount(<RichTextEditor />);
         const editable = component.getByRole('textbox');
 
@@ -132,7 +141,10 @@ test.describe('keys that belong to an input method', () => {
     });
 
     test('Enter that commits a composition does not split a list item', async ({ mount, page, browserName }) => {
-        test.skip(browserName !== 'chromium', CHROMIUM_ONLY);
+        test.skip(
+            browserName !== 'chromium',
+            'Composition goes through the DevTools protocol, which only Chromium has',
+        );
         const component = await mount(<RichTextEditor />);
         const editable = component.getByRole('textbox');
 
