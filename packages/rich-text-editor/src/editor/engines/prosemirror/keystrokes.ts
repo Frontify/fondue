@@ -342,16 +342,13 @@ const splitKeepingCarriedAttrs =
             liftEmptyBlock,
             splitBlockAs((node, atEnd, $from) => {
                 splitAtStart = !atEnd && $from.parentOffset === 0;
-                let type: PmNodeType | null = node.type;
-                if (atEnd) {
-                    type = defaultBlockAt($from.node(-1).contentMatchAt($from.indexAfter(-1)));
-                }
-                if (!type) {
+                // Mid-block, the engine's own split copies the block, attributes included.
+                if (!atEnd) {
                     return null;
                 }
-                // `node` is the block left after any selected range is deleted; mid-block the new half is the same kind.
-                if (!atEnd) {
-                    return { type, attrs: node.attrs };
+                const type = defaultBlockAt($from.node(-1).contentMatchAt($from.indexAfter(-1)));
+                if (!type) {
+                    return null;
                 }
                 return { type, attrs: keepCarriedAttrs(registry, type, undefined)(node) };
             }),
@@ -363,11 +360,9 @@ const splitKeepingCarriedAttrs =
                     const above = transaction.doc.resolve($from.before()).nodeBefore;
                     if (splitAtStart && above?.isTextblock) {
                         const carried = keepCarriedAttrs(registry, above.type, undefined)($from.parent);
-                        if (Object.entries(carried).some(([name, value]) => above.attrs[name] !== value)) {
-                            transaction.setNodeMarkup($from.before() - above.nodeSize, undefined, {
-                                ...above.attrs,
-                                ...carried,
-                            });
+                        const attrs = { ...above.attrs, ...carried };
+                        if (!above.hasMarkup(above.type, attrs, above.marks)) {
+                            transaction.setNodeMarkup($from.before() - above.nodeSize, undefined, attrs);
                         }
                     }
                     dispatch(transaction);

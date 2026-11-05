@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { autoJoin } from 'prosemirror-commands';
 import { type Node as PmNode, type NodeType as PmNodeType, type ResolvedPos, type Schema } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem as pmSplitListItem, wrapInList } from 'prosemirror-schema-list';
 import { type Command, type EditorState, Selection, type Transaction } from 'prosemirror-state';
@@ -39,9 +40,6 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
 
 // Splitting
 
-const sameAttrs = (current: PmNode['attrs'], wanted: PmNode['attrs']): boolean =>
-    Object.keys(wanted).every((name) => current[name] === wanted[name]);
-
 /**
  * `splitListItem`, except the new item starts from its type's default
  * attributes (an unchecked to-do, not a copy of the checked one) and its first
@@ -75,7 +73,7 @@ const splitListItem =
                         }
                         const newItem = transaction.doc.nodeAt(newPos);
                         const defaults = itemType.create().attrs;
-                        if (newItem && !sameAttrs(newItem.attrs, defaults)) {
+                        if (newItem && !newItem.hasMarkup(itemType, defaults, newItem.marks)) {
                             transaction.setNodeMarkup(newPos, undefined, defaults);
                         }
                         if (!newAbove && block?.isTextblock) {
@@ -83,7 +81,7 @@ const splitListItem =
                                 ...block.attrs,
                                 ...keepCarriedAttrs(registry, block.type, undefined)(source),
                             };
-                            if (!sameAttrs(block.attrs, carried)) {
+                            if (!block.hasMarkup(block.type, carried, block.marks)) {
                                 transaction.setNodeMarkup(caretItemPos + 1, undefined, carried);
                             }
                         }
@@ -93,23 +91,6 @@ const splitListItem =
                 }),
         );
     };
-
-// Toggling
-
-/** Join the list with the lists of its own type right before and after it, so numbering carries on. */
-const joinNeighbours = (transaction: Transaction, { node, pos }: { node: PmNode; pos: number }): void => {
-    // The one after first: joining the one before moves nothing that follows.
-    const end = pos + node.nodeSize;
-    const after = transaction.doc.resolve(end).nodeAfter;
-    // A join keeps only the first list's attributes, so lists that differ in them stay apart.
-    if (after?.type === node.type && sameAttrs(after.attrs, node.attrs) && node.canAppend(after)) {
-        transaction.join(end);
-    }
-    const before = transaction.doc.resolve(pos).nodeBefore;
-    if (before?.type === node.type && sameAttrs(before.attrs, node.attrs) && before.canAppend(node)) {
-        transaction.join(pos);
-    }
-};
 
 // The list half of the control API
 
@@ -129,6 +110,9 @@ export const createListApi = (
         }
         return command(itemType)(view.state, view.dispatch, view);
     };
+    // Same-type lists left side by side join, so numbering carries on; a join keeps only the first list's attributes.
+    const joiningLists = (command: Command): Command =>
+        autoJoin(command, (before, after) => itemTypeByList.has(before.type.name) && before.sameMarkup(after));
 
     return {
         toggle(type) {
@@ -143,34 +127,29 @@ export const createListApi = (
             const current = findList(view.state.selection.$from, itemTypeByList);
 
             if (!current) {
-                wrapInList(listType)(view.state, (transaction) => {
-                    // One transaction, so joining is part of the same undo step.
-                    const wrapped = findList(transaction.selection.$from, itemTypeByList);
-                    if (wrapped) {
-                        joinNeighbours(transaction, wrapped);
-                    }
-                    view.dispatch(transaction);
-                });
+                joiningLists(wrapInList(listType))(view.state, view.dispatch);
             } else if (current.node.type === listType) {
                 runListCommand(liftListItem);
             } else {
-                // One step: a check list holding bullet items (or the reverse)
-                // is invalid content, so converting in two steps would throw.
-                const converted = listType.create(
-                    current.node.attrs,
-                    mapChildren(current.node, (item) =>
-                        item.type === itemType ? item : itemType.create(item.attrs, item.content),
-                    ),
-                );
-                const transaction = view.state.tr.replaceWith(
-                    current.pos,
-                    current.pos + current.node.nodeSize,
-                    converted,
-                );
-                // Same structure and size, so the selection's positions still hold; mapped, it would leave the replaced list.
-                transaction.setSelection(Selection.fromJSON(transaction.doc, view.state.selection.toJSON()));
-                joinNeighbours(transaction, { node: converted, pos: current.pos });
-                view.dispatch(transaction);
+                joiningLists((state, dispatch) => {
+                    // One step: a check list holding bullet items (or the reverse)
+                    // is invalid content, so converting in two steps would throw.
+                    const converted = listType.create(
+                        current.node.attrs,
+                        mapChildren(current.node, (item) =>
+                            item.type === itemType ? item : itemType.create(item.attrs, item.content),
+                        ),
+                    );
+                    const transaction = state.tr.replaceWith(
+                        current.pos,
+                        current.pos + current.node.nodeSize,
+                        converted,
+                    );
+                    // Same structure and size, so the selection's positions still hold; mapped, it would leave the replaced list.
+                    transaction.setSelection(Selection.fromJSON(transaction.doc, state.selection.toJSON()));
+                    dispatch?.(transaction);
+                    return true;
+                })(view.state, view.dispatch);
             }
             view.focus();
         },
