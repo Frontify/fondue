@@ -105,6 +105,15 @@ describe('typing a list shortcut at the start of a line', () => {
         ]);
     });
 
+    it('turns "[~] " into an item in progress', () => {
+        expect(typed('[~] task')).toEqual([
+            {
+                type: 'checkList',
+                children: [{ type: 'checkItem', checked: 'inProgress', children: [paragraph(text('task'))] }],
+            },
+        ]);
+    });
+
     it('stays plain text when no list is mounted', () => {
         expect(typed('- item', shipped('quote'))).toEqual([paragraph(text('- item'))]);
     });

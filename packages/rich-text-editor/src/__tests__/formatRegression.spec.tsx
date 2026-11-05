@@ -301,7 +301,7 @@ const generateDocument = (seed: number): RteBlock[] => {
         for (let count = 1 + integer(3); count > 0; count--) {
             const item: Json = { type: itemType };
             if (itemType === 'checkItem') {
-                item.checked = chance(0.5);
+                item.checked = pick([true, false, 'inProgress']);
             }
             // Any mix of paragraphs and nested lists, a list first included: the item's content allows it.
             const children: Json[] = [];

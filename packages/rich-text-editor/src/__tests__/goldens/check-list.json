@@ -105,6 +105,20 @@
                             ]
                         }
                     ]
+                },
+                {
+                    "type": "checkItem",
+                    "checked": "inProgress",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "in progress"
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         },
