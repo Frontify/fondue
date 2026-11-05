@@ -3,7 +3,7 @@ description: Checkout, install pnpm + Node, restore caches, and install workspac
 
 inputs:
   cypress-cache:
-    description: When 'true', also restore the Cypress binary cache.
+    description: When 'true', restore the Cypress binary cache and install the binary. Otherwise the binary download is skipped.
     required: false
     default: "false"
   playwright-cache:
@@ -47,6 +47,12 @@ runs:
         path: ~/.cache/ms-playwright
         key: playwright-${{ runner.os }}-${{ steps.os-release.outputs.id }}-${{ hashFiles('pnpm-lock.yaml') }}
         restore-keys: playwright-${{ runner.os }}-${{ steps.os-release.outputs.id }}-
+
+    # Cypress's postinstall downloads its binary (~8s). Only jobs that run Cypress need it.
+    - name: Skip Cypress binary download
+      if: inputs.cypress-cache != 'true'
+      shell: bash
+      run: echo "CYPRESS_INSTALL_BINARY=0" >> "$GITHUB_ENV"
 
     - name: Install dependencies
       shell: bash
