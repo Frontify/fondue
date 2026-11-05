@@ -132,8 +132,9 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     onError,
     ...shellProps
 }: EditorShellProps<TBlock>): ReactNode => {
-    // What the editor last reported, so an uncontrolled editor keeps its
-    // content across readonly toggles and remounts. A `value` always wins.
+    // What the editor last showed: its own edits and the host documents it
+    // applied, so an uncontrolled editor keeps its content across readonly
+    // toggles and remounts, and a crash can show it. A `value` always wins.
     // A ref, not state: keeping it must not re-render on every keystroke.
     // It lives out here so it outlasts a crashed shell.
     const ownDocumentRef = useRef<RteDocumentOf>(value ?? emptyDocument());
@@ -143,30 +144,15 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     const labels = useLabels(hostLabelOverrides);
     const registry = useMemo(() => buildPluginRegistry(plugins), [plugins]);
 
-    // An echo of the editor's own edit, however late, never replaces a newer one in what the fallback shows and Try again mounts.
-    const emittedDocsRef = useRef<WeakSet<RteDocumentOf> | null>(null);
-    emittedDocsRef.current ??= new WeakSet();
-
-    // A new key mounts the boundary and the shell afresh, from `document`.
+    // A new key mounts the boundary and the shell afresh.
     const [attempt, retry] = useReducer((count: number) => count + 1, 0);
-
-    // The engine forgets what it emitted when it remounts, readonly or with other plugins, and then shows such a value.
-    const pluginsKey = registry.ids.join('|');
-    const pluginsKeyRef = useRef(pluginsKey);
-    if (shellProps.readonly === true || pluginsKey !== pluginsKeyRef.current) {
-        pluginsKeyRef.current = pluginsKey;
-        emittedDocsRef.current = new WeakSet();
-        // Before any Retry, the remounted engine and the readonly view show `document`, where a `value` wins.
-        if (attempt === 0) {
-            ownDocumentRef.current = document;
-        }
+    // The host's `value` when Try again was pressed: until it passes another, the editor mounts what the fallback showed.
+    const [retriedValue, setRetriedValue] = useState<{ value: RteDocumentOf | undefined } | null>(null);
+    let keepsOwnDocument = retriedValue !== null;
+    if (retriedValue !== null && retriedValue.value !== value) {
+        setRetriedValue(null);
+        keepsOwnDocument = false;
     }
-    // Updated while `value` is left out too, so the same value passed again counts as a push.
-    const seenValueRef = useRef(value);
-    if (value !== undefined && value !== seenValueRef.current && !emittedDocsRef.current.has(value)) {
-        ownDocumentRef.current = value;
-    }
-    seenValueRef.current = value;
 
     // The fallback retries its view on every new document, which a host may pass on every render.
     const fallbackReportedRef = useRef(false);
@@ -186,6 +172,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         // The Retry button goes with the fallback; what replaces it inherits the focus it held.
         focusWithinRef.current = hadFocus;
         fallbackReportedRef.current = false;
+        setRetriedValue({ value });
         retry();
     };
     // The fallback keeps the host's name, as the readonly view does.
@@ -198,9 +185,8 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     if (isNamed) {
         fallbackGroupAttributes = { role: 'group', ...hostLabels };
     }
-    // After a crash it mounts what the fallback showed, which can be newer than a `value` the host never updated.
     let shellDocument = document;
-    if (attempt > 0) {
+    if (keepsOwnDocument) {
         shellDocument = ownDocumentRef.current;
     }
 
@@ -210,6 +196,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
             onCatch={onError}
             fallback={
                 <EditorFallback
+                    value={value}
                     ownDocumentRef={ownDocumentRef}
                     registry={registry}
                     labels={labels}
@@ -227,7 +214,6 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                 focusWithinRef={focusWithinRef}
                 document={shellDocument}
                 ownDocumentRef={ownDocumentRef}
-                emittedDocs={emittedDocsRef.current}
                 registry={registry}
                 labels={labels}
             />
@@ -238,9 +224,8 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
 type ShellProps<TBlock extends RteBlockNode> = Omit<EditorShellProps<TBlock>, 'value' | 'plugins' | 'labels'> & {
     /** The document to show: the host's `value`, else what the editor last reported. */
     document: RteDocumentOf;
+    /** Kept up to date with what the editor shows, for the fallback a crash puts in its place. */
     ownDocumentRef: MutableRefObject<RteDocumentOf>;
-    /** Every document the editor emitted, so the outer component can tell an echo from a push. */
-    emittedDocs: WeakSet<RteDocumentOf>;
     registry: PluginRegistry;
     labels: RichTextEditorLabels;
     /** Take focus once the editor has mounted, as after Retry. */
@@ -252,7 +237,6 @@ type ShellProps<TBlock extends RteBlockNode> = Omit<EditorShellProps<TBlock>, 'v
 const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
     document,
     ownDocumentRef,
-    emittedDocs,
     registry,
     labels,
     focusOnMount,
@@ -295,11 +279,19 @@ const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
         attributes,
         onDocChange: (doc) => {
             ownDocumentRef.current = doc;
-            emittedDocs.add(doc);
             onChange?.(doc as RteDocumentOf<TBlock>);
+        },
+        onDocApplied: (doc) => {
+            ownDocumentRef.current = doc;
         },
         enabled: !readOnly,
     });
+    // The readonly view has no engine to report what it shows.
+    useEffect(() => {
+        if (readOnly) {
+            ownDocumentRef.current = document;
+        }
+    }, [readOnly, document, ownDocumentRef]);
 
     // A pending focus request is spent once, never claiming focus when editing is turned on later.
     const focusPendingRef = useRef(focusOnMount && !readOnly);

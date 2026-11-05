@@ -884,6 +884,22 @@ describe('an editor that crashes', () => {
         expect(container.textContent).not.toContain('Try again');
     });
 
+    it('takes a value the host passes after Retry', () => {
+        silenceReact();
+        const state = { broken: true };
+        const flaky = flakyPlugin(state);
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('before')} plugins={[flaky]} />
+        ));
+        state.broken = false;
+        retry(container);
+        ready();
+
+        rerender(<RichTextEditor value={paragraph('after')} plugins={[flaky]} />);
+
+        expect(editableIn(container).textContent).toBe('after');
+    });
+
     it('keeps what was typed into an uncontrolled editor', () => {
         silenceReact();
         const state = { crash: false };
@@ -1064,7 +1080,7 @@ describe('an editor that crashes', () => {
         expect(editableIn(container).contains(window.document.activeElement)).toBe(false);
     });
 
-    it('shows a value the host pushed after the last edit', () => {
+    it('shows the last edit when the host pushes a value in the render that crashes, and a value it passes after', () => {
         silenceReact();
         const fine = idPlugin('late');
         const bad = idPlugin('late', true);
@@ -1075,7 +1091,31 @@ describe('an editor that crashes', () => {
         ready();
         paste(container, '<p>B</p>');
 
-        rerender(<RichTextEditor value={paragraph('C')} plugins={[bad, ...defaultPlugins]} onError={onError} />);
+        // The editor never applied C: it crashed in the render that brought it.
+        const pushed = paragraph('C');
+        rerender(<RichTextEditor value={pushed} plugins={[bad, ...defaultPlugins]} onError={onError} />);
+        expect(container.textContent).toContain('The editor stopped working.');
+        expect(container.textContent).toContain('B');
+        expect(container.textContent).not.toContain('C');
+
+        rerender(<RichTextEditor value={paragraph('D')} plugins={[bad, ...defaultPlugins]} onError={onError} />);
+        expect(container.textContent).toContain('D');
+    });
+
+    it('shows a value the host pushed after the last edit', () => {
+        silenceReact();
+        const fine = idPlugin('late');
+        const bad = idPlugin('late', true);
+        const onError = errorSpy();
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('A')} plugins={[fine, ...defaultPlugins]} onError={onError} />
+        ));
+        ready();
+        paste(container, '<p>B</p>');
+        const pushed = paragraph('C');
+        rerender(<RichTextEditor value={pushed} plugins={[fine, ...defaultPlugins]} onError={onError} />);
+
+        rerender(<RichTextEditor value={pushed} plugins={[bad, ...defaultPlugins]} onError={onError} />);
 
         expect(container.textContent).toContain('The editor stopped working.');
         expect(container.textContent).toContain('C');
@@ -1141,8 +1181,12 @@ describe('an editor that crashes', () => {
         rerender(<RichTextEditor value={last} onChange={onChange} plugins={plugins} onError={onError} />);
 
         // An undo in the host, made while the editor is readonly: the readonly view shows it.
-        state.broken = true;
         rerender(<RichTextEditor value={first} onChange={onChange} plugins={plugins} onError={onError} readonly />);
+        state.broken = true;
+        // A new plugin list draws the readonly view again.
+        rerender(
+            <RichTextEditor value={first} onChange={onChange} plugins={[...plugins]} onError={onError} readonly />,
+        );
 
         // The fallback's read-only view is the one that crashed, so it is not reported twice.
         expect(onError).toHaveBeenCalledOnce();
@@ -1424,6 +1468,7 @@ describe('an editor that crashes', () => {
         paste(container, '<p>draft</p>');
         // New plugin ids remount the engine from the draft, so the saved value no longer matches what it holds.
         rerender(<RichTextEditor plugins={[idPlugin('b'), ...defaultPlugins]} onError={onError} />);
+        rerender(<RichTextEditor value={saved} plugins={[idPlugin('b'), ...defaultPlugins]} onError={onError} />);
 
         rerender(<RichTextEditor value={saved} plugins={[idPlugin('b', true), ...defaultPlugins]} onError={onError} />);
 
@@ -1475,6 +1520,8 @@ describe('an editor that crashes', () => {
             <RichTextEditor value={paragraph('V0')} plugins={[idPlugin('b'), ...defaultPlugins]} onError={onError} />,
         );
 
+        rerender(<RichTextEditor value={first} plugins={[idPlugin('b'), ...defaultPlugins]} onError={onError} />);
+
         rerender(<RichTextEditor value={first} plugins={[idPlugin('b', true), ...defaultPlugins]} onError={onError} />);
 
         expect(onError).toHaveBeenCalledOnce();
@@ -1494,9 +1541,11 @@ describe('an editor that crashes', () => {
         ));
         ready();
         paste(container, '<p>draft</p>');
+        rerender(<RichTextEditor value={saved} plugins={plugins} onError={onError} readonly />);
 
         state.broken = true;
-        rerender(<RichTextEditor value={saved} plugins={plugins} onError={onError} readonly />);
+        // A new plugin list draws the readonly view again.
+        rerender(<RichTextEditor value={saved} plugins={[...plugins]} onError={onError} readonly />);
 
         // The fallback's read-only view is the one that crashed, so it is not reported twice.
         expect(onError).toHaveBeenCalledOnce();
@@ -1527,6 +1576,8 @@ describe('an editor that crashes', () => {
         const first = onChange.mock.calls[0]?.[0];
 
         // New plugin ids remount the engine, which then shows `first` instead of ignoring it as an echo.
+        rerender(<RichTextEditor value={first} plugins={[idPlugin('other'), ...defaultPlugins]} onError={onError} />);
+
         rerender(<RichTextEditor value={first} plugins={[bad, ...defaultPlugins]} onError={onError} />);
 
         expect(onError).toHaveBeenCalledOnce();

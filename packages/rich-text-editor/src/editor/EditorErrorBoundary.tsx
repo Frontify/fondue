@@ -1,7 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button } from '@frontify/fondue-components';
-import { Component, type MutableRefObject, type ReactNode, type RefObject, useEffect, useId, useRef } from 'react';
+import {
+    Component,
+    type MutableRefObject,
+    type ReactNode,
+    type RefObject,
+    useEffect,
+    useId,
+    useRef,
+    useState,
+} from 'react';
 
 import { type PluginRegistry, type RteDocumentOf } from '#/core';
 import { RegistryRenderer } from '#/renderer';
@@ -77,7 +86,9 @@ export class EditorErrorBoundary extends Component<EditorErrorBoundaryProps, Edi
 }
 
 type EditorFallbackProps = {
-    /** Read now, not when the fallback was built: the editor reported edits after that. */
+    /** The host's document; one it passes after the crash is shown instead. */
+    value: RteDocumentOf | undefined;
+    /** What the editor showed, read now: it reported edits after the fallback was built. Set to what this shows, for Try again. */
     ownDocumentRef: MutableRefObject<RteDocumentOf>;
     registry: PluginRegistry;
     labels: RichTextEditorLabels;
@@ -91,8 +102,14 @@ type EditorFallbackProps = {
     onCatch?: (error: Error) => void;
 };
 
-/** The document read-only, what went wrong, and the way to try again. */
+/**
+ * The document read-only, what went wrong, and the way to try again. It shows
+ * the last document the editor showed, its own edit or a host's `value` it
+ * applied. A `value` passed in the same render that crashed was never applied,
+ * so it shows only once the host passes another.
+ */
 export const EditorFallback = ({
+    value,
     ownDocumentRef,
     registry,
     labels,
@@ -118,8 +135,14 @@ export const EditorFallback = ({
             button.focus();
         }
     }, [focusWithinRef]);
-    // What the editor showed: an echoed `value` can be older.
-    const document = ownDocumentRef.current;
+    const [crashValue] = useState(value);
+    let document = ownDocumentRef.current;
+    if (value !== undefined && value !== crashValue) {
+        document = value;
+    }
+    useEffect(() => {
+        ownDocumentRef.current = document;
+    }, [ownDocumentRef, document]);
     return (
         <div className={styles.root} {...groupAttributes}>
             {/* A plugin whose readonly view throws too leaves just the message and Retry. */}

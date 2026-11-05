@@ -59,6 +59,7 @@ const mount = ({
     attributes,
     placeholderClassName,
     onDocChange,
+    onDocApplied,
     onStateChange,
     viewPortals,
 }: MountOptions): { mounted: MountedDocument; view: EditorView } => {
@@ -138,6 +139,7 @@ const mount = ({
         },
     });
     view = editorView;
+    onDocApplied(initialDoc);
 
     // 4. What the host gets back.
     const setDoc = (doc: typeof initialDoc): void => {
@@ -150,6 +152,7 @@ const mount = ({
         // echo of what is there must leave them, and the caret, alone.
         if (withoutDrafts(next).eq(withoutDrafts(editorView.state.doc))) {
             agreedDoc = doc;
+            onDocApplied(doc);
             return;
         }
         // Different content: the old caret position means nothing in it, so the
@@ -160,6 +163,7 @@ const mount = ({
         transaction.setMeta('addToHistory', false);
         editorView.dispatch(transaction);
         agreedDoc = doc;
+        onDocApplied(doc);
     };
 
     const mounted: MountedDocument = {
