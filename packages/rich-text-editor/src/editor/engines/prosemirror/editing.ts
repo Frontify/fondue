@@ -61,6 +61,76 @@ const MATCH_LIMIT = 100;
 /** Past this many children, a changed stretch is replaced whole but for the child holding the caret: each child synced is a step over the whole document. */
 const PAIR_LIMIT = 100;
 
+/** The furthest index into `before` reached on `diagonal`, in a frontier row centred on `limit + 1`. */
+const reach = (row: readonly number[], limit: number, diagonal: number): number => row[limit + 1 + diagonal] ?? 0;
+
+/** Whether the edit path reaching `diagonal` with `count` changes comes from `diagonal + 1` rather than `diagonal - 1`. */
+const fromHigherDiagonal = (row: readonly number[], limit: number, count: number, diagonal: number): boolean =>
+    diagonal === -count || (diagonal !== count && reach(row, limit, diagonal - 1) < reach(row, limit, diagonal + 1));
+
+/**
+ * Myers' forward pass over `lengthA` and `lengthB` children: the frontier before each number of changes, the last
+ * one reaching both ends, or none when that takes more than `limit` changes.
+ */
+const frontierRows = (
+    lengthA: number,
+    lengthB: number,
+    limit: number,
+    same: (x: number, y: number) => boolean,
+): number[][] => {
+    const frontier = Array.from({ length: 2 * limit + 3 }, () => 0);
+    const rows: number[][] = [];
+    for (let count = 0; count <= limit; count++) {
+        rows.push([...frontier]);
+        for (let diagonal = -count; diagonal <= count; diagonal += 2) {
+            let x = reach(frontier, limit, diagonal - 1) + 1;
+            if (fromHigherDiagonal(frontier, limit, count, diagonal)) {
+                x = reach(frontier, limit, diagonal + 1);
+            }
+            let y = x - diagonal;
+            while (x < lengthA && y < lengthB && same(x, y)) {
+                x += 1;
+                y += 1;
+            }
+            frontier[limit + 1 + diagonal] = x;
+            if (x >= lengthA && y >= lengthB) {
+                return rows;
+            }
+        }
+    }
+    return [];
+};
+
+/** Myers' backward pass: the equal pairs on the edit path the rows describe, from the ends back to the start. */
+const pathPairs = (rows: readonly number[][], limit: number, lengthA: number, lengthB: number): [number, number][] => {
+    const matched: [number, number][] = [];
+    let x = lengthA;
+    let y = lengthB;
+    for (let count = rows.length - 1; count > 0; count--) {
+        const row = rows[count] ?? [];
+        const diagonal = x - y;
+        let previous = diagonal - 1;
+        if (fromHigherDiagonal(row, limit, count, diagonal)) {
+            previous = diagonal + 1;
+        }
+        const previousX = reach(row, limit, previous);
+        const previousY = previousX - previous;
+        while (x > previousX && y > previousY) {
+            matched.push([x - 1, y - 1]);
+            x -= 1;
+            y -= 1;
+        }
+        x = previousX;
+        y = previousY;
+    }
+    while (x > 0 && y > 0) {
+        matched.push([x - 1, y - 1]);
+        x -= 1;
+        y -= 1;
+    }
+    return matched;
+};
+
 /**
  * Adds to `pairs` the equal children of `before[head, endA)` and `after[head, endB)` in order, by Myers' diff:
  * its cost grows with the number of changes rather than the length, so a few changes in a long document stay cheap.
@@ -78,64 +148,15 @@ const matchStretch = (
         return;
     }
     const limit = Math.min(lengthA + lengthB, MATCH_LIMIT);
-    const offset = limit + 1;
-    // The furthest index into `before` reached on each diagonal, one row per number of changes.
-    const frontier = Array.from({ length: 2 * limit + 3 }, () => 0);
-    const at = (row: readonly number[], diagonal: number): number => row[offset + diagonal] ?? 0;
-    const rows: number[][] = [];
-    let changes = -1;
-    for (let count = 0; count <= limit && changes === -1; count++) {
-        rows.push([...frontier]);
-        for (let diagonal = -count; diagonal <= count && changes === -1; diagonal += 2) {
-            let x = 0;
-            if (
-                diagonal === -count ||
-                (diagonal !== count && at(frontier, diagonal - 1) < at(frontier, diagonal + 1))
-            ) {
-                x = at(frontier, diagonal + 1);
-            } else {
-                x = at(frontier, diagonal - 1) + 1;
-            }
-            let y = x - diagonal;
-            while (x < lengthA && y < lengthB && same(head + x, head + y)) {
-                x += 1;
-                y += 1;
-            }
-            frontier[offset + diagonal] = x;
-            if (x >= lengthA && y >= lengthB) {
-                changes = count;
-            }
-        }
-    }
-    if (changes === -1) {
+    const rows = frontierRows(lengthA, lengthB, limit, (x, y) => same(head + x, head + y));
+    if (rows.length === 0) {
         return;
     }
-    const matched: [number, number][] = [];
-    let x = lengthA;
-    let y = lengthB;
-    for (let count = changes; count > 0; count--) {
-        const row = rows[count] ?? [];
-        const diagonal = x - y;
-        let previous = diagonal - 1;
-        if (diagonal === -count || (diagonal !== count && at(row, diagonal - 1) < at(row, diagonal + 1))) {
-            previous = diagonal + 1;
-        }
-        const previousX = at(row, previous);
-        const previousY = previousX - previous;
-        while (x > previousX && y > previousY) {
-            matched.push([head + x - 1, head + y - 1]);
-            x -= 1;
-            y -= 1;
-        }
-        x = previousX;
-        y = previousY;
+    const matched = pathPairs(rows, limit, lengthA, lengthB);
+    matched.reverse();
+    for (const [x, y] of matched) {
+        pairs.push([head + x, head + y]);
     }
-    while (x > 0 && y > 0) {
-        matched.push([head + x - 1, head + y - 1]);
-        x -= 1;
-        y -= 1;
-    }
-    pairs.push(...matched.reverse());
 };
 
 /** Index pairs of equal children, in order. A draft (an inline still being made) does not make a child differ. */
@@ -234,6 +255,47 @@ const syncChild = (transaction: Transaction, pos: number, current: PmNode, targe
     }
 };
 
+/** The index in `[startA, endA)` of the child holding `head`, or `endA` when none does. */
+const childHolding = (head: number, startOf: (index: number) => number, startA: number, endA: number): number => {
+    for (let index = startA; index < endA; index++) {
+        if (startOf(index) < head && head < startOf(index + 1)) {
+            return index;
+        }
+    }
+    return endA;
+};
+
+/**
+ * `before[startA, endA)` into as many children of `after` from `startB`, one by one so the caret and undo stay in
+ * each; past the limit only the child holding the caret, the rest replaced whole around it.
+ */
+const syncStretch = (
+    transaction: Transaction,
+    before: readonly PmNode[],
+    after: readonly PmNode[],
+    startOf: (index: number) => number,
+    startA: number,
+    endA: number,
+    startB: number,
+): void => {
+    let keepFrom = startA;
+    let keepTo = endA;
+    if (endA - startA > PAIR_LIMIT) {
+        keepFrom = childHolding(transaction.selection.head, startOf, startA, endA);
+        keepTo = Math.min(keepFrom + 1, endA);
+    }
+    const endB = startB + endA - startA;
+    transaction.replaceWith(startOf(keepTo), startOf(endA), after.slice(startB + keepTo - startA, endB));
+    for (let index = keepTo - 1; index >= keepFrom; index--) {
+        const child = before[index];
+        const replacement = after[startB + index - startA];
+        if (child !== undefined && replacement !== undefined) {
+            syncChild(transaction, startOf(index), child, replacement);
+        }
+    }
+    transaction.replaceWith(startOf(startA), startOf(keepFrom), after.slice(startB, startB + keepFrom - startA));
+};
+
 /** The content of `current`, starting at `from`, into that of `target`, touching only the children that differ. */
 const syncContent = (transaction: Transaction, from: number, current: PmNode, target: PmNode): void => {
     if (current.inlineContent) {
@@ -249,40 +311,16 @@ const syncContent = (transaction: Transaction, from: number, current: PmNode, ta
     const startOf = (index: number): number => starts[index] ?? from;
     // Unchanged children anchor the change, so a block between two changes is left alone; last to first keeps
     // earlier positions valid.
-    const bounds: [number, number][] = [...equalChildren(before, after).reverse(), [-1, -1]];
+    const bounds = equalChildren(before, after);
+    bounds.reverse();
+    bounds.push([-1, -1]);
     let endA = before.length;
     let endB = after.length;
     for (const [anchorA, anchorB] of bounds) {
         const startA = anchorA + 1;
         const startB = anchorB + 1;
         if (endA - startA === endB - startB) {
-            // The children synced one by one: all of them, or past the limit only the one holding the caret.
-            let keepFrom = startA;
-            let keepTo = endA;
-            if (endA - startA > PAIR_LIMIT) {
-                const { head } = transaction.selection;
-                keepFrom = endA;
-                keepTo = endA;
-                for (let index = startA; index < endA; index++) {
-                    if (startOf(index) < head && head < startOf(index + 1)) {
-                        keepFrom = index;
-                        keepTo = index + 1;
-                    }
-                }
-            }
-            transaction.replaceWith(startOf(keepTo), startOf(endA), after.slice(startB + keepTo - startA, endB));
-            for (let index = keepTo - 1; index >= keepFrom; index--) {
-                const child = before[index];
-                const replacement = after[startB + index - startA];
-                if (child !== undefined && replacement !== undefined) {
-                    syncChild(transaction, startOf(index), child, replacement);
-                }
-            }
-            transaction.replaceWith(
-                startOf(startA),
-                startOf(keepFrom),
-                after.slice(startB, startB + keepFrom - startA),
-            );
+            syncStretch(transaction, before, after, startOf, startA, endA, startB);
         } else {
             transaction.replaceWith(startOf(startA), startOf(endA), after.slice(startB, endB));
         }
