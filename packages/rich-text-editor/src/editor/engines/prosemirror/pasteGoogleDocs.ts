@@ -44,8 +44,8 @@ const breaksAsParagraphs = (root: Element): void => {
 
 /**
  * Cleans a Google Docs copy, found by its id: breaks between blocks become
- * empty paragraphs, the wrapper goes, and so does the break WebKit adds after
- * the copy. Does nothing to a paste from elsewhere.
+ * empty paragraphs, and the break WebKit adds after the copy goes. The bold
+ * mark's own rule reads the wrapper as not bold. Does nothing to a paste from elsewhere.
  */
 export const tidyGoogleDocs = (dom: HTMLElement): void => {
     const marked = dom.querySelector(MARKED);
@@ -71,9 +71,4 @@ export const tidyGoogleDocs = (dom: HTMLElement): void => {
         return;
     }
     breaksAsParagraphs(marked);
-    // One child at a time: spread as arguments, 100,000 blocks overflow the stack.
-    while (marked.firstChild) {
-        marked.before(marked.firstChild);
-    }
-    marked.remove();
 };
