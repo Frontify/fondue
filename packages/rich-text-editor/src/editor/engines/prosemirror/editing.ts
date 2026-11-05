@@ -47,14 +47,6 @@ const graphemeRemainder = (textblock: PmNode, offset: number): number => {
     return containing.index + containing.segment.length - offset;
 };
 
-const childrenOf = (node: PmNode): PmNode[] => {
-    const children: PmNode[] = [];
-    for (let index = 0; index < node.childCount; index++) {
-        children.push(node.child(index));
-    }
-    return children;
-};
-
 /** Past this many inserted and removed children, a changed stretch is replaced whole rather than matched up: matching costs the square of it. */
 const MATCH_LIMIT = 100;
 
@@ -302,8 +294,8 @@ const syncContent = (transaction: Transaction, from: number, current: PmNode, ta
         syncInline(transaction, from, current, target);
         return;
     }
-    const before = childrenOf(current);
-    const after = childrenOf(target);
+    const before = current.children;
+    const after = target.children;
     const starts = [from];
     for (const child of before) {
         starts.push((starts[starts.length - 1] ?? from) + child.nodeSize);

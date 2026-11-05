@@ -238,11 +238,15 @@ const convertedBlocks = new WeakMap<PmNode, RteBlockNode>();
  */
 const engineNodeOf = new WeakMap<RteBlockNode, PmNode>();
 
+/** Objects `freezeDeep` has walked: converted nodes are cached, so a parent stops at children it reuses. */
+const walked = new WeakSet<object>();
+
 const freezeDeep = (value: unknown): void => {
-    // Frozen means walked already: converted nodes are cached, so a parent stops at children it reuses.
-    if (typeof value !== 'object' || value === null || Object.isFrozen(value)) {
+    // Not `Object.isFrozen`: a host object frozen only at its top would stop the walk above what it holds.
+    if (typeof value !== 'object' || value === null || walked.has(value)) {
         return;
     }
+    walked.add(value);
     Object.freeze(value);
     for (const nested of Object.values(value)) {
         freezeDeep(nested);

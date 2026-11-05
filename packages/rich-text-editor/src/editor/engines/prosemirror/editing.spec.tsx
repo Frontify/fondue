@@ -507,7 +507,11 @@ describe('a document set by the host that changes the blocks around the caret', 
 
 describe('a document set by the host while text is being composed', () => {
     const composing = (view: EditorView, value: boolean): void => {
-        Object.defineProperty(view, 'composing', { configurable: true, get: () => value });
+        let phase = 'compositionend';
+        if (value) {
+            phase = 'compositionstart';
+        }
+        view.dom.dispatchEvent(new CompositionEvent(phase, { bubbles: true }));
     };
     const nextFrame = (): Promise<void> => new Promise((resolve) => requestAnimationFrame(() => resolve()));
 
@@ -563,7 +567,8 @@ describe('a document set by the host while text is being composed', () => {
 
         live.destroy();
         const dispatch = vi.spyOn(view, 'dispatch');
-        composing(view, false);
+        // A destroyed view handles no events, so the composition is ended directly.
+        Object.defineProperty(view, 'composing', { configurable: true, get: () => false });
         await nextFrame();
 
         expect(dispatch).not.toHaveBeenCalled();

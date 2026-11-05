@@ -204,6 +204,23 @@ describe('the document boundary', () => {
                 warn.mockRestore();
             }
         });
+
+        it('is frozen in development under a host object frozen only at its top', () => {
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            try {
+                const video = Object.freeze({ type: 'video', data: { src: 'a.mp4' } });
+                const handedOut = toRteDocument(
+                    toEngineDocument({ version: 1, blocks: [video] } as unknown as RteDocumentOf, schema),
+                );
+                const [block] = handedOut.blocks as unknown as [{ data: { src: string } }];
+
+                expect(() => {
+                    block.data.src = 'b.mp4';
+                }).toThrow(TypeError);
+            } finally {
+                warn.mockRestore();
+            }
+        });
     });
 
     it('drops the empty text run an empty document is written with', () => {
