@@ -8,6 +8,7 @@ on:
       - packages/components/**
       - packages/icons/**
       - packages/tokens/**
+      - .github/actions/build-packages/**
       - .github/actions/setup/**
       - .github/workflows/rich-text-editor-pull-requests.yaml
       - .npmrc
