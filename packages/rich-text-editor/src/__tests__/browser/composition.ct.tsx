@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { expect, test } from '@playwright/experimental-ct-react';
-import { type Locator, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
 
 import { RichTextEditor } from '../../index';
 
@@ -15,29 +15,8 @@ const compose = async (page: Page, text: string): Promise<void> => {
     await client.send('Input.imeSetComposition', { text, selectionStart: text.length, selectionEnd: text.length });
 };
 
-/** Commits `text`: the composition ends and the text is in the document. */
-const commit = async (page: Page, text: string): Promise<void> => {
-    const client = await page.context().newCDPSession(page);
-    await client.send('Input.insertText', { text });
-};
-
-/** Lets the rewrite `compositionend` queues run first. */
+/** Lets the rewrite `compositionend` queues run first, so a test can see that nothing changed. */
 const settle = (page: Page): Promise<void> => page.evaluate(() => new Promise<void>((resolve) => setTimeout(resolve)));
-
-const keyInit = { bubbles: true, cancelable: true };
-
-// Plain data only: the full `KeyboardEventInit` makes the page-function types too deep to resolve.
-type KeyInit = Record<string, boolean | number | string>;
-
-/** Runs in the page: a keydown on the element, and whether anything claimed it (called `preventDefault`). */
-const dispatchKeydown = (element: Element, init: KeyInit): boolean => {
-    const event = new KeyboardEvent('keydown', init);
-    element.dispatchEvent(event);
-    return event.defaultPrevented;
-};
-
-const keydown = (editable: Locator, init: KeyInit): Promise<boolean> =>
-    editable.evaluate<boolean, KeyInit>(dispatchKeydown, init);
 
 /** `Mod` as the engine reads it: Command on a Mac, Control elsewhere. */
 const modifier = (page: Page): Promise<'metaKey' | 'ctrlKey'> =>
@@ -70,8 +49,7 @@ test.describe('composed text', () => {
 
             await editable.click();
             await compose(page, composed);
-            await commit(page, composed);
-            await settle(page);
+            await page.keyboard.insertText(composed);
 
             await expect(editable.locator(element)).toHaveText(marked);
             expect(await editable.textContent()).toBe(text);
@@ -112,10 +90,10 @@ test.describe('keys that belong to an input method', () => {
 
         await editable.click();
         await compose(page, 'あ');
-        await commit(page, 'あ');
+        await page.keyboard.insertText('あ');
         // Safari and Firefox send the Enter after `compositionend`, still marked as the input method's.
-        await keydown(editable, { ...keyInit, key: 'Enter', keyCode: 229, isComposing: true });
-        await keydown(editable, { ...keyInit, key: 'Enter', keyCode: 229, isComposing: false });
+        await editable.dispatchEvent('keydown', { key: 'Enter', keyCode: 229, isComposing: true });
+        await editable.dispatchEvent('keydown', { key: 'Enter', keyCode: 229, isComposing: false });
 
         await expect(editable.locator('p')).toHaveCount(1);
     });
@@ -127,8 +105,8 @@ test.describe('keys that belong to an input method', () => {
         await editable.click();
         await page.keyboard.type('- ');
         await compose(page, 'あ');
-        await commit(page, 'あ');
-        await keydown(editable, { ...keyInit, key: 'Enter', keyCode: 229, isComposing: true });
+        await page.keyboard.insertText('あ');
+        await editable.dispatchEvent('keydown', { key: 'Enter', keyCode: 229, isComposing: true });
 
         await expect(editable.locator('li')).toHaveCount(1);
     });
@@ -144,7 +122,7 @@ test.describe('keys that belong to an input method', () => {
 
             await editable.click();
             await page.keyboard.type('text');
-            await keydown(editable, { ...keyInit, key: 'b', ...init, [mod]: true });
+            await editable.dispatchEvent('keydown', { key: 'b', ...init, [mod]: true });
             await page.keyboard.type('more');
 
             await expect(editable.locator('strong')).toHaveCount(0);
@@ -155,7 +133,7 @@ test.describe('keys that belong to an input method', () => {
 test.describe('AltGr', () => {
     // AltGr arrives as Ctrl+Alt on Windows, so `AltGr+1` ("¡") looks like the
     // Mod-Alt-1 heading hotkey; `modifierAltGraph` is what tells them apart.
-    const altGrKey = { ...keyInit, key: '¡', code: 'Digit1', keyCode: 49, altKey: true };
+    const altGrKey = { key: '¡', code: 'Digit1', keyCode: 49, altKey: true };
 
     test('a Mod-Alt hotkey still runs (control for the AltGr case)', async ({ mount, page }) => {
         const component = await mount(<RichTextEditor />);
@@ -164,7 +142,7 @@ test.describe('AltGr', () => {
 
         await editable.click();
         await page.keyboard.type('title');
-        await keydown(editable, { ...altGrKey, [mod]: true });
+        await editable.dispatchEvent('keydown', { ...altGrKey, [mod]: true });
 
         await expect(editable.locator('h1')).toHaveCount(1);
     });
@@ -178,7 +156,11 @@ test.describe('AltGr', () => {
 
         await editable.click();
         await page.keyboard.type('title');
-        const claimed = await keydown(editable, { ...altGrKey, [mod]: true, modifierAltGraph: true });
+        // `dispatchEvent` returns false once a handler called `preventDefault`, which would stop the character.
+        const claimed = await editable.evaluate(
+            (element, init) => !element.dispatchEvent(new KeyboardEvent('keydown', { ...init, cancelable: true })),
+            { ...altGrKey, [mod]: true, modifierAltGraph: true },
+        );
 
         expect(claimed).toBe(false);
         await expect(editable.locator('h1')).toHaveCount(0);

@@ -187,6 +187,7 @@ const rewritingOnlyComposedText = (plugin: PmPlugin): PmPlugin => {
     }
     let docAtStart: PmNode | null = null;
     plugin.props.handleDOMEvents = {
+        ...plugin.props.handleDOMEvents,
         compositionstart: (view) => {
             docAtStart = view.state.doc;
             return false;
