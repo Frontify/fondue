@@ -1,5 +1,25 @@
 # @frontify/fondue-sdk
 
+## 0.3.3
+
+### Patch Changes
+
+- [#2966](https://github.com/Frontify/fondue/pull/2966) [`04ee335`](https://github.com/Frontify/fondue/commit/04ee335b4f5071262315ac1df2d6297fb82fc602) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(Card): center `Card.BannerDescription` in the banner and only leave room for the selection checkbox when the card is selectable, so the description shows more lines. The revealed description now has a bottom border that separates it from the card content.
+
+- [#2962](https://github.com/Frontify/fondue/pull/2962) [`eddd1cc`](https://github.com/Frontify/fondue/commit/eddd1cc0a496ba20e3f8926d893b0bc2ee25dfe2) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(Tree): add `folderClickType` to `Tree.Root`. The default `'select'` keeps the current single-select behavior (the first click on a folder only selects it). `'toggle'` expands or collapses a folder on every click, for trees whose folders are only containers.
+
+- Updated dependencies [[`04ee335`](https://github.com/Frontify/fondue/commit/04ee335b4f5071262315ac1df2d6297fb82fc602), [`eddd1cc`](https://github.com/Frontify/fondue/commit/eddd1cc0a496ba20e3f8926d893b0bc2ee25dfe2), [`f9f8c9f`](https://github.com/Frontify/fondue/commit/f9f8c9f39efab944a8163cb912ca31f0e17f6a7b)]:
+    - @frontify/fondue-components@36.0.2
+    - @frontify/fondue-tokens@5.2.0
+
+## 0.3.2
+
+### Patch Changes
+
+- Updated dependencies [[`ed52d6e`](https://github.com/Frontify/fondue/commit/ed52d6e458a8c03be92559fc00fc43d648106608), [`cbec3e4`](https://github.com/Frontify/fondue/commit/cbec3e41f01ac497b59816bae2b771c3f10e7315), [`90552fe`](https://github.com/Frontify/fondue/commit/90552fe1a71ccf86b58d87b792dd711794965608), [`35390a0`](https://github.com/Frontify/fondue/commit/35390a03b88f30045d5b8b738564fb33e43031ad), [`2c9db91`](https://github.com/Frontify/fondue/commit/2c9db91df4d604b5c1ee6518b64f2f8368b4753b)]:
+    - @frontify/fondue-components@36.0.1
+    - @frontify/fondue-tokens@5.2.0
+
 ## 0.3.1
 
 ### Patch Changes

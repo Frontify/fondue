@@ -86,6 +86,15 @@ export default {
             description:
                 'An optional function to format the displayed labels both on the axis and in the tooltip. BarChart data requires unique labels to work well, which can lead to the necessity of enriching the labels so that they are unique, for example appending an id. This prop can be used to format the labels back to its original form.',
         },
+        maxLabelLength: {
+            name: 'maxLabelLength',
+            type: { name: 'number', required: false },
+            description:
+                'Maximum number of characters of an axis label (ellipsis included) before it is truncated. Use Infinity to disable truncation. Tooltips always show the full label.',
+            table: {
+                defaultValue: { summary: '12' },
+            },
+        },
     },
 } as Meta<BarChartProps>;
 
@@ -252,6 +261,24 @@ SingleDataSetWithRotatedLabels.args = {
     series: [brandData],
     width: 1000,
     height: 500,
+};
+
+export const HorizontalWithFullLabels = Template.bind({});
+HorizontalWithFullLabels.args = {
+    series: [
+        {
+            name: 'Usage',
+            dataPoints: [
+                { label: 'Brand assistant', value: 120 },
+                { label: 'Guideline search', value: 90 },
+                { label: 'Asset generation', value: 60 },
+            ],
+        },
+    ],
+    horizontal: true,
+    maxLabelLength: Infinity,
+    width: 1000,
+    height: 300,
 };
 
 export const SingleDataSetWithOnClick = TemplateWithUrl.bind({});
