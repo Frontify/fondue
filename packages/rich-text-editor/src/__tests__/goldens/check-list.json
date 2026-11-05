@@ -1,0 +1,232 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "before"
+                }
+            ]
+        },
+        {
+            "type": "checkList",
+            "children": [
+                {
+                    "type": "checkItem",
+                    "checked": false,
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "todo"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "checkList",
+                            "children": [
+                                {
+                                    "type": "checkItem",
+                                    "checked": true,
+                                    "children": [
+                                        {
+                                            "type": "paragraph",
+                                            "children": [
+                                                {
+                                                    "text": "nested done"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "checkList",
+                                            "children": [
+                                                {
+                                                    "type": "checkItem",
+                                                    "checked": false,
+                                                    "children": [
+                                                        {
+                                                            "type": "paragraph",
+                                                            "children": [
+                                                                {
+                                                                    "text": "deep todo"
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "checkItem",
+                                                    "checked": true,
+                                                    "children": [
+                                                        {
+                                                            "type": "paragraph",
+                                                            "children": [
+                                                                {
+                                                                    "text": "deep done"
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "checkItem",
+                                    "checked": false,
+                                    "children": [
+                                        {
+                                            "type": "paragraph",
+                                            "children": [
+                                                {
+                                                    "text": "nested todo"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "checkItem",
+                    "checked": true,
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "done"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "after"
+                }
+            ]
+        },
+        {
+            "type": "checkList",
+            "children": [
+                {
+                    "type": "checkItem",
+                    "checked": false,
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "two"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "paragraphs"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "checkItem",
+                    "checked": false,
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "then"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "checkList",
+                            "children": [
+                                {
+                                    "type": "checkItem",
+                                    "checked": false,
+                                    "children": [
+                                        {
+                                            "type": "paragraph",
+                                            "children": [
+                                                {
+                                                    "text": "list a"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "checkList",
+                            "children": [
+                                {
+                                    "type": "checkItem",
+                                    "checked": false,
+                                    "children": [
+                                        {
+                                            "type": "paragraph",
+                                            "children": [
+                                                {
+                                                    "text": "list b"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "checkItem",
+                    "checked": false,
+                    "children": [
+                        {
+                            "type": "checkList",
+                            "children": [
+                                {
+                                    "type": "checkItem",
+                                    "checked": false,
+                                    "children": [
+                                        {
+                                            "type": "paragraph",
+                                            "children": [
+                                                {
+                                                    "text": "list first"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "after"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
