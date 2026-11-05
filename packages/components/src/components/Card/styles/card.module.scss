@@ -335,12 +335,21 @@ $selection-mark-clearance: calc(var(--spacing-medium) + #{sizeToken.get(5)} + va
     display: flex;
     align-items: center;
     box-sizing: border-box;
-    padding: $selection-mark-clearance var(--spacing-medium) var(--spacing-medium);
+    padding: var(--spacing-medium);
     background-color: var(--color-surface-dim);
+    box-shadow: inset 0 -1px 0 var(--color-line-subtle);
     opacity: 0;
     @include transitions.transition(opacity, $duration: 100ms, $timing-function: ease-out);
 
     .banner[data-size='small'] & {
+        padding: var(--spacing-small) var(--spacing-medium);
+    }
+
+    .root[data-selectable='true'] & {
+        padding: $selection-mark-clearance var(--spacing-medium) var(--spacing-medium);
+    }
+
+    .root[data-selectable='true'] .banner[data-size='small'] & {
         padding: var(--spacing-small) var(--spacing-medium) var(--spacing-small) $selection-mark-clearance;
     }
 
