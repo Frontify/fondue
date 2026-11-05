@@ -2,6 +2,19 @@ name: Fondue Rich Text Editor CI
 
 on:
   pull_request:
+    paths:
+      - packages/rich-text-editor/**
+      # Workspace packages the editor builds against, and the install it runs on.
+      - packages/components/**
+      - packages/icons/**
+      - packages/tokens/**
+      - .github/actions/setup/**
+      - .github/workflows/rich-text-editor-pull-requests.yaml
+      - .npmrc
+      - .nvmrc
+      - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
 
 # Ensures that only one workflow per branch will run at a time.
 concurrency:
@@ -12,43 +25,7 @@ permissions:
   contents: read
 
 jobs:
-  # Runs on every pull request so required checks report; the other jobs skip when nothing the editor depends on changed.
-  changes:
-    name: Changes
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    outputs:
-      editor: ${{ steps.filter.outputs.editor }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          fetch-depth: 2
-
-      - name: Detect editor changes
-        id: filter
-        # Checkout puts the pull request's merge commit at HEAD, so HEAD^1 is the base branch tip.
-        # The paths are the editor, the workspace packages it builds against, and the install it runs on.
-        run: |
-          if ! git diff --quiet HEAD^1 HEAD -- \
-            packages/rich-text-editor \
-            packages/components \
-            packages/icons \
-            packages/tokens \
-            .github/actions/setup \
-            .github/workflows/rich-text-editor-pull-requests.yaml \
-            .npmrc \
-            .nvmrc \
-            package.json \
-            pnpm-lock.yaml \
-            pnpm-workspace.yaml; then
-            echo "editor=true" >> "$GITHUB_OUTPUT"
-          fi
-
   lint:
-    needs: changes
-    if: needs.changes.outputs.editor == 'true'
     name: Lint
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -70,8 +47,6 @@ jobs:
         run: pnpm --stream --filter {packages/rich-text-editor} lint
 
   typecheck:
-    needs: changes
-    if: needs.changes.outputs.editor == 'true'
     name: Typecheck
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -96,8 +71,6 @@ jobs:
         run: pnpm --stream --filter {packages/rich-text-editor} build
 
   unit-tests:
-    needs: changes
-    if: needs.changes.outputs.editor == 'true'
     name: Unit Tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
