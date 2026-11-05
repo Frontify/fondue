@@ -3,7 +3,7 @@ description: Checkout, install pnpm + Node, restore caches, and install workspac
 
 inputs:
   cypress-cache:
-    description: When 'true', also restore the Cypress binary cache.
+    description: When 'true', restore the Cypress binary cache and install the binary. Otherwise the binary download is skipped.
     required: false
     default: "false"
   playwright-cache:
@@ -27,19 +27,32 @@ runs:
 
     - name: Cache Cypress binary
       if: inputs.cypress-cache == 'true'
-      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
       with:
         path: ~/.cache/Cypress
         key: cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
         restore-keys: cypress-${{ runner.os }}-
 
+    # Playwright reuses one browser folder name across OS releases, so a cache from another release skips the install.
+    - name: Get OS release
+      id: os-release
+      if: inputs.playwright-cache == 'true'
+      shell: bash
+      run: echo "id=$(. /etc/os-release && echo "$ID$VERSION_ID")" >> "$GITHUB_OUTPUT"
+
     - name: Cache Playwright browsers
       if: inputs.playwright-cache == 'true'
-      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
       with:
         path: ~/.cache/ms-playwright
-        key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-        restore-keys: playwright-${{ runner.os }}-
+        key: playwright-${{ runner.os }}-${{ steps.os-release.outputs.id }}-${{ hashFiles('pnpm-lock.yaml') }}
+        restore-keys: playwright-${{ runner.os }}-${{ steps.os-release.outputs.id }}-
+
+    # Cypress's postinstall downloads its binary (~8s). Only jobs that run Cypress need it.
+    - name: Skip Cypress binary download
+      if: inputs.cypress-cache != 'true'
+      shell: bash
+      run: echo "CYPRESS_INSTALL_BINARY=0" >> "$GITHUB_ENV"
 
     - name: Install dependencies
       shell: bash

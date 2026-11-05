@@ -5,8 +5,10 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { Dropdown } from '#/index';
 
 import { Flyout } from '../../Flyout/Flyout';
+import { INDENT_STEP_PX } from '../constants';
 import { Tree } from '../Tree';
 
+import { ControlledExpansionHarness } from './testutils/ControlledExpansionHarness';
 import { RowDialogHarness } from './testutils/RowDialogHarness';
 import { TestHarness } from './testutils/TestHarness';
 
@@ -969,6 +971,69 @@ test.describe('TreeRoot row click', () => {
         await component.getByRole('treeitem', { name: /Row/ }).click();
         expect(clickCount).toBe(1);
     });
+
+    test('a double-click fires onDoubleClick once and onClick only for the first click', async ({ mount }) => {
+        const calls: string[] = [];
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1" onClick={() => calls.push('click')} onDoubleClick={() => calls.push('double')}>
+                    <Tree.Label>Row</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2" onClick={() => calls.push('sentinel')}>
+                    <Tree.Label>Other</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Row/ }).dblclick();
+        // Callbacks report back in order, so the sentinel landing proves no later click from the double-click is pending.
+        await component.getByRole('treeitem', { name: /Other/ }).click();
+        await expect.poll(() => calls).toEqual(['click', 'double', 'sentinel']);
+    });
+
+    test('a double-click on an unselected folder with onDoubleClick does not expand it', async ({ mount }) => {
+        const doubleClicked: string[] = [];
+        const component = await mount(
+            <TestHarness
+                initial={[
+                    {
+                        id: 'f',
+                        name: 'Folder',
+                        isFolder: true,
+                        isExpanded: false,
+                        children: [{ id: 'c', name: 'Child', isFolder: false }],
+                    },
+                ]}
+                onDoubleClick={(id) => doubleClicked.push(id)}
+            />,
+        );
+
+        await component.getByRole('treeitem', { name: /Folder/ }).dblclick();
+
+        await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-expanded', 'false');
+        await expect(component.getByRole('treeitem', { name: /Child/ })).toHaveCount(0);
+        await expect.poll(() => doubleClicked).toEqual(['f']);
+    });
+
+    test('a disabled row does not fire onDoubleClick', async ({ mount }) => {
+        const doubleClicked: string[] = [];
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="off" isDisabled onDoubleClick={() => doubleClicked.push('off')}>
+                    <Tree.Label>Off</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="on" onDoubleClick={() => doubleClicked.push('on')}>
+                    <Tree.Label>On</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        // `aria-disabled` makes Playwright refuse the click, though the row still receives real clicks.
+        await component.getByRole('treeitem', { name: /Off/ }).dblclick({ force: true });
+        // Callbacks report back in order, so once the enabled row's call lands, any call from the disabled row has too.
+        await component.getByRole('treeitem', { name: /On/ }).dblclick();
+        await expect.poll(() => doubleClicked).toEqual(['on']);
+    });
 });
 
 test.describe('TreeRoot multi-select', () => {
@@ -1145,6 +1210,75 @@ test.describe('TreeRoot expansion', () => {
         await expect(component.getByRole('treeitem', { name: /Child/ })).toHaveCount(0);
         await component.getByRole('treeitem', { name: /Folder/ }).click();
         expect(calls).toEqual([true]);
+    });
+
+    test('with folderClickType="toggle", every click on a folder toggles it, even when it never becomes selected', async ({
+        mount,
+    }) => {
+        const component = await mount(<ControlledExpansionHarness folderClickType="toggle" />);
+
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+        await row.click();
+        await expect(row).toHaveAttribute('aria-expanded', 'true');
+        await row.click();
+        await expect(row).toHaveAttribute('aria-expanded', 'false');
+        await expect(row).toHaveAttribute('aria-selected', 'false');
+    });
+
+    test('with folderClickType="toggle", the first click on an unselected folder selects and toggles it', async ({
+        mount,
+    }) => {
+        const expandCalls: boolean[] = [];
+        const selectCalls: boolean[] = [];
+        const component = await mount(
+            <Tree.Root folderClickType="toggle">
+                <Tree.Folder
+                    id="f"
+                    onExpandChange={(v) => expandCalls.push(v)}
+                    onSelectChange={(v) => selectCalls.push(v)}
+                >
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="child">
+                        <Tree.Label>Child</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Folder/ }).click();
+        expect(expandCalls).toEqual([true]);
+        expect(selectCalls).toEqual([true]);
+    });
+
+    test('with folderClickType="toggle", clicking the chevron toggles a folder without selecting it', async ({
+        mount,
+    }) => {
+        const expandCalls: boolean[] = [];
+        const selectCalls: boolean[] = [];
+        const component = await mount(
+            <Tree.Root folderClickType="toggle">
+                <Tree.Folder
+                    id="f"
+                    onExpandChange={(v) => expandCalls.push(v)}
+                    onSelectChange={(v) => selectCalls.push(v)}
+                >
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="child">
+                        <Tree.Label>Child</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        const row = component.getByRole('treeitem', { name: /Folder/ });
+        await row.locator('[aria-hidden] svg').first().click();
+        expect(expandCalls).toEqual([true]);
+        expect(selectCalls).toEqual([]);
+        await expect(row).toHaveAttribute('aria-selected', 'false');
     });
 
     test('clicking the chevron toggles a folder without selecting it', async ({ mount }) => {
@@ -1444,6 +1578,16 @@ test.describe('TreeRoot renaming', () => {
         await expect(row).toHaveAttribute('data-show-focus-ring', 'false');
     });
 
+    test('focus returns to the renamed row on Escape', async ({ mount }) => {
+        const component = await mount(<TestHarness renameable initial={initial} onRename={() => {}} />);
+
+        await component.getByRole('button', { name: 'Rename Second' }).click();
+        await component.getByRole('textbox').press('Escape');
+
+        await expect(component.getByRole('textbox')).toHaveCount(0);
+        await expect(component.getByRole('treeitem', { name: /Second/ })).toBeFocused();
+    });
+
     test('clicking outside the tree commits without stealing focus back', async ({ mount, page }) => {
         const renames: Array<[string, string]> = [];
         const component = await mount(
@@ -1535,6 +1679,17 @@ test.describe('TreeRoot renaming', () => {
         expect(renames).toEqual([['1', 'Blurred']]);
     });
 
+    test('clicking another row while renaming leaves focus on the clicked row', async ({ mount, page }) => {
+        const component = await mount(<TestHarness renameable initial={initial} onRename={() => {}} />);
+
+        await component.getByRole('button', { name: 'Rename First' }).click();
+        await component.getByRole('treeitem', { name: /Second/ }).click();
+
+        await expect(component.getByRole('textbox')).toHaveCount(0);
+        await page.waitForTimeout(600);
+        await expect(component.getByRole('treeitem', { name: /Second/ })).toBeFocused();
+    });
+
     test('committing an unchanged name fires no onRename', async ({ mount }) => {
         const renames: Array<[string, string]> = [];
         const component = await mount(
@@ -1579,6 +1734,44 @@ test.describe('TreeRoot reorderable mode', () => {
         await expect(handle).toHaveCSS('visibility', 'visible');
     });
 
+    test('aligns reorderable and static rows, with the handle inside the row before the chevron', async ({ mount }) => {
+        const component = await mount(
+            <div>
+                <Tree.Root>
+                    <Tree.Item id="static-1">
+                        <Tree.Label>Static row</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+                <Tree.Root reorderable>
+                    <Tree.Item id="reorderable-1">
+                        <Tree.Label>Reorderable row</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>,
+        );
+
+        const row = component.getByRole('treeitem', { name: /Reorderable row/ });
+        await row.hover();
+        const staticLabelBox = await component.getByText('Static row').boundingBox();
+        const reorderableLabelBox = await component.getByText('Reorderable row').boundingBox();
+        const handleBox = await component.locator('span[class*="handle"]').boundingBox();
+        const rowBox = await row.boundingBox();
+        const chevronBox = await row.locator('span[class*="chevron"]').boundingBox();
+        if (
+            staticLabelBox === null ||
+            reorderableLabelBox === null ||
+            handleBox === null ||
+            rowBox === null ||
+            chevronBox === null
+        ) {
+            throw new Error('the rows did not render their label, handle and chevron boxes');
+        }
+
+        expect(Math.abs(staticLabelBox.x - reorderableLabelBox.x)).toBeLessThan(0.5);
+        expect(handleBox.x).toBeGreaterThanOrEqual(rowBox.x);
+        expect(handleBox.x + handleBox.width).toBeLessThanOrEqual(chevronBox.x + 0.5);
+    });
+
     test('exposes a screen-reader hint announcing checkbox / reorder shortcuts', async ({ mount }) => {
         const component = await mount(
             <Tree.Root multiSelect reorderable>
@@ -1593,6 +1786,41 @@ test.describe('TreeRoot reorderable mode', () => {
         expect(hintId).toBeTruthy();
         const hint = component.locator(`[id="${hintId ?? ''}"]`);
         await expect(hint).toBeAttached();
+    });
+});
+
+test.describe('TreeRoot indentation', () => {
+    test('indents each level by the step headless-tree uses for drop hit-testing', async ({ mount, page }) => {
+        // A non-default root font size separates the pixel step from a `rem` one.
+        await page.evaluate(() => {
+            document.documentElement.style.fontSize = '24px';
+        });
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Folder id="f" isExpanded>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="1">
+                        <Tree.Label>Child</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        const folderChevronBox = await component
+            .getByRole('treeitem', { name: /Folder/ })
+            .locator('span[class*="chevron"]')
+            .boundingBox();
+        const childChevronBox = await component
+            .getByRole('treeitem', { name: /Child/ })
+            .locator('span[class*="chevron"]')
+            .boundingBox();
+        if (folderChevronBox === null || childChevronBox === null) {
+            throw new Error('the rows did not render their chevron boxes');
+        }
+
+        expect(childChevronBox.x - folderChevronBox.x).toBeCloseTo(INDENT_STEP_PX);
     });
 });
 

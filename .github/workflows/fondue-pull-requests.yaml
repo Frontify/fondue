@@ -3,6 +3,8 @@ name: Fondue CI
 on:
   pull_request:
     paths:
+      - .github/actions/**
+      - .github/workflows/fondue-pull-requests.yaml
       - packages/**
       - .npmrc
       - .nvmrc
@@ -31,14 +33,14 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Build Fondue Icons
-        run: pnpm build:icons
+      - name: Build Fondue Icons & Components
+        uses: ./.github/actions/build-packages
+        with:
+          icons: "true"
+          components: "true"
 
       - name: Build Fondue Charts
         run: pnpm build:charts
-
-      - name: Build Fondue Components
-        run: pnpm build:components
 
       - name: Build Fondue RTE
         run: pnpm build:rte
@@ -51,6 +53,10 @@ jobs:
 
       - name: Typecheck code
         run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} --filter {packages/sdk} typecheck
+
+      # Runs here rather than in its own job: the tests take ~1s, a separate job spent ~30s on setup.
+      - name: SDK unit tests
+        run: pnpm --stream --filter {packages/sdk} test
 
   rte-component-tests:
     name: RTE Component Tests (shard ${{ matrix.shard }}/${{ strategy.job-total }})
@@ -71,11 +77,11 @@ jobs:
         with:
           cypress-cache: "true"
 
-      - name: Build Fondue Icons
-        run: pnpm build:icons
-
-      - name: Build Fondue Components
-        run: pnpm build:components
+      - name: Build Fondue Icons & Components
+        uses: ./.github/actions/build-packages
+        with:
+          icons: "true"
+          components: "true"
 
       - name: Component Tests
         uses: ./.github/actions/cypress-shard
@@ -96,8 +102,10 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Build Fondue icons
-        run: pnpm build:icons
+      - name: Build Fondue Icons
+        uses: ./.github/actions/build-packages
+        with:
+          icons: "true"
 
       - name: Unit test
         run: pnpm --stream --filter {packages/components} test
@@ -121,26 +129,13 @@ jobs:
         with:
           playwright-cache: "true"
 
-      - name: Build Fondue icons
-        run: pnpm build:icons
+      - name: Build Fondue Icons
+        uses: ./.github/actions/build-packages
+        with:
+          icons: "true"
 
       - name: Install Playwright browsers
         run: pnpm --stream --filter {packages/components} install:playwright
 
       - name: Playwright tests
         run: pnpm --filter {packages/components} exec playwright test --shard=${{ matrix.shard }}/${{ strategy.job-total }}
-
-  sdk-tests:
-    name: SDK Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-
-      - name: Setup
-        uses: ./.github/actions/setup
-
-      - name: Unit test
-        run: pnpm --stream --filter {packages/sdk} test

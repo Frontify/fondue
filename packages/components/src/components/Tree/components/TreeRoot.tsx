@@ -10,11 +10,13 @@ import {
     useMemo,
     useRef,
     useState,
+    type CSSProperties,
     type ReactNode,
 } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
+import { INDENT_STEP_PX } from '../constants';
 import { useTreeController } from '../hooks/useTreeController';
 import styles from '../styles/tree.module.scss';
 import { type TreeChangeState, type TreeDropCandidate } from '../types';
@@ -62,6 +64,14 @@ export type TreeRootProps = {
      * Omitted = the root accepts anything.
      */
     accepts?: (items: TreeDropCandidate[]) => boolean;
+    /**
+     * What a click on a folder row does without `multiSelect`. `'select'` makes the first
+     * click on an unselected folder only select it; a click on the selected folder expands
+     * or collapses it. `'toggle'` selects the folder and expands or collapses it on every
+     * click, for trees whose folders are only containers. The chevron always toggles without selecting.
+     * @default 'select'
+     */
+    folderClickType?: 'select' | 'toggle';
 };
 
 export const TreeRoot = ({
@@ -71,6 +81,7 @@ export const TreeRoot = ({
     reorderable = false,
     countDisabledInFolderState = false,
     accepts,
+    folderClickType = 'select',
 }: TreeRootProps) => {
     const { t } = useTranslation();
     const rowHintId = useId();
@@ -140,10 +151,13 @@ export const TreeRoot = ({
         .filter(Boolean)
         .join(' ');
 
+    const containerProps = tree.getContainerProps();
+
     return (
         <div
-            {...tree.getContainerProps()}
+            {...containerProps}
             className={styles.tree}
+            style={{ ...containerProps.style, '--tree-indent-step': `${INDENT_STEP_PX}px` } as CSSProperties}
             onFocus={() => setHasFocusWithin(true)}
             // Checks where focus went: a render between a row's blur and the next row's focus must not move the tab stop.
             onBlur={(event) => setHasFocusWithin(event.currentTarget.contains(event.relatedTarget))}
@@ -165,6 +179,7 @@ export const TreeRoot = ({
                             hintId={rowHint ? rowHintId : undefined}
                             onFocusLost={handleFocusLost}
                             checkedState={checkedStates?.get(item.getId()) ?? false}
+                            folderClickType={folderClickType}
                         />
                         {loadingPlaceholder && (
                             <TreeLoadingRow
