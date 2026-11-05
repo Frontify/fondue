@@ -142,8 +142,8 @@ test.describe('keys that belong to an input method', () => {
 
         await editable.click();
         await page.keyboard.insertText('あ');
-        await keydown(editable, { ...keyInit, key: 'Enter', keyCode: 229, isComposing: true });
-        await keydown(editable, { ...keyInit, key: 'Enter', keyCode: 229, isComposing: false });
+        await editable.dispatchEvent('keydown', { key: 'Enter', keyCode: 229, isComposing: true });
+        await editable.dispatchEvent('keydown', { key: 'Enter', keyCode: 229, isComposing: false });
 
         await expect(editable.locator('p')).toHaveCount(1);
     });
