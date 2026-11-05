@@ -50,7 +50,7 @@ export const ColorFlyout = ({
     const hasColor = 'fontColor' in selection.marks;
     const current = parseCssColor(value?.color);
     const [open, setOpen] = useState(false);
-    const [draft, setDraft] = useState<RgbaColor | undefined>(undefined);
+    const [draft, setDraft] = useState<RgbaColor>(PICKER_DEFAULT);
     const titleId = useId();
     const pickerRef = useRef<HTMLDivElement | null>(null);
     // Whether a colour was picked or typed since opening: the picker shows white for uncoloured text, which is no choice.
@@ -73,7 +73,7 @@ export const ColorFlyout = ({
     };
 
     const save = (): void => {
-        const typed = typedHex(pickerRef.current, draft?.alpha);
+        const typed = typedHex(pickerRef.current, draft.alpha);
         // An invalid hex field is in its error state: stay open so the user can correct it.
         if (typed === undefined && pickerRef.current?.querySelector('input[type="text"]')) {
             return;
@@ -81,7 +81,7 @@ export const ColorFlyout = ({
         const picked = typed ?? draft;
         // Nothing picked or typed: an unreadable colour would otherwise be
         // overwritten with whatever the picker fell back to showing.
-        if (!choseRef.current || picked === undefined) {
+        if (!choseRef.current) {
             close();
             return;
         }
@@ -104,7 +104,7 @@ export const ColorFlyout = ({
             onOpenChange={(next) => {
                 if (next) {
                     choseRef.current = false;
-                    setDraft(current);
+                    setDraft(current ?? PICKER_DEFAULT);
                     setOpen(true);
                 } else {
                     setOpen(false);
@@ -172,21 +172,21 @@ export const ColorFlyout = ({
                             // A partial hex value is no choice yet.
                             if (
                                 !target.matches('input[type="text"]') ||
-                                typedHex(pickerRef.current, draft?.alpha) !== undefined
+                                typedHex(pickerRef.current, draft.alpha) !== undefined
                             ) {
                                 choseRef.current = true;
                             }
                             if (target.matches('input[type="text"]') && /^#?[\dA-Fa-f]{6}$/.test(target.value)) {
-                                setDraft(typedHex(pickerRef.current, draft?.alpha));
+                                setDraft(typedHex(pickerRef.current, draft.alpha) ?? draft);
                             }
                         }}
                     >
                         <ColorPicker.Root
                             defaultFormat="HEX"
-                            currentColor={draft ?? PICKER_DEFAULT}
+                            currentColor={draft}
                             onColorChange={(color) => {
                                 // A format switch or the hex field's blur re-reports the shown colour, which is no choice.
-                                if (toCssColor(color) !== toCssColor(draft ?? PICKER_DEFAULT)) {
+                                if (toCssColor(color) !== toCssColor(draft)) {
                                     choseRef.current = true;
                                 }
                                 setDraft(color);
