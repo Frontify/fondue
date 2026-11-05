@@ -469,6 +469,12 @@ describe('pasting from other applications', () => {
             expect(starts(doc)).toEqual(['textStyle', 'numberedList', 'textStyle', 'numberedList']);
         });
 
+        it('starts at the number Word wrote when the copy begins partway through the list', () => {
+            const doc = pasted(item('l0', 'lfo1', '3.', 'Three') + item('l0', 'lfo1', '4.', 'Four'));
+
+            expect(starts(doc)).toEqual(['numberedList from 3']);
+        });
+
         it('leaves a bulleted list as it is', () => {
             const doc = pasted(
                 item('l0', 'lfo1', '·', 'One') +
