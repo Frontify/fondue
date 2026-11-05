@@ -160,7 +160,7 @@ const PAGE_LEVEL_RULES = ['landmark-one-main', 'page-has-heading-one', 'region']
 const WCAG_22_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
 
 // Fondue's text field draws its placeholder under a transparent input, which axe cannot see through (5.7:1, measured by hand).
-const FIELD_PLACEHOLDER = '[aria-hidden="true"][class*="placeholder"]';
+const FIELD_PLACEHOLDER = '[data-test-id="fondue-text-input"] div[aria-hidden="true"]';
 
 const scan = (page: Page): AxeBuilder =>
     new AxeBuilder({ page }).withTags(WCAG_22_AA).disableRules(PAGE_LEVEL_RULES).exclude(FIELD_PLACEHOLDER);
