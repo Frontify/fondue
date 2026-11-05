@@ -26,14 +26,14 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Build Fondue Icons
-        run: pnpm build:icons
+      - name: Build Fondue Icons & Components
+        uses: ./.github/actions/build-packages
+        with:
+          icons: "true"
+          components: "true"
 
       - name: Build Fondue Charts
         run: pnpm build:charts
-
-      - name: Build Fondue Components
-        run: pnpm build:components
 
       - name: Build Fondue RTE
         run: pnpm build:rte
@@ -66,11 +66,11 @@ jobs:
         with:
           cypress-cache: "true"
 
-      - name: Build Fondue Icons
-        run: pnpm build:icons
-
-      - name: Build Fondue Components
-        run: pnpm build:components
+      - name: Build Fondue Icons & Components
+        uses: ./.github/actions/build-packages
+        with:
+          icons: "true"
+          components: "true"
 
       - name: Component Tests
         uses: ./.github/actions/cypress-shard
@@ -91,8 +91,10 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Build Fondue icons
-        run: pnpm build:icons
+      - name: Build Fondue Icons
+        uses: ./.github/actions/build-packages
+        with:
+          icons: "true"
 
       - name: Unit test
         run: pnpm --stream --filter {packages/components} test
@@ -116,8 +118,10 @@ jobs:
         with:
           playwright-cache: "true"
 
-      - name: Build Fondue icons
-        run: pnpm build:icons
+      - name: Build Fondue Icons
+        uses: ./.github/actions/build-packages
+        with:
+          icons: "true"
 
       - name: Install Playwright browsers
         run: pnpm --stream --filter {packages/components} install:playwright
@@ -140,7 +144,7 @@ jobs:
     steps:
       - name: Generate app token
         id: app-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
           app-id: ${{ secrets.FONDUE_RELEASE_BOT_CLIENT_ID }}
           private-key: ${{ secrets.FONDUE_RELEASE_BOT_PRIVATE_KEY }}

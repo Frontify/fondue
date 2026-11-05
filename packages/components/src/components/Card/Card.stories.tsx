@@ -148,13 +148,15 @@ type BannerDescriptionDemoProps = {
     description: string;
     title: string;
     banner: 'icon' | 'image' | 'small';
+    selectable?: boolean;
 };
 
-const BannerDescriptionDemo = ({ description, title, banner }: BannerDescriptionDemoProps) => {
+const BannerDescriptionDemo = ({ description, title, banner, selectable = true }: BannerDescriptionDemoProps) => {
     const [selected, setSelected] = useState(false);
+    const selectionProps = selectable ? { selected, onSelect: () => setSelected((s) => !s) } : {};
 
     return (
-        <Card.Root href="#" selected={selected} onSelect={() => setSelected((s) => !s)}>
+        <Card.Root href="#" {...selectionProps}>
             <Card.Banner size={banner === 'small' ? 'small' : 'large'}>
                 {banner === 'image' ? (
                     <Card.BannerImage src="https://picsum.photos/seed/card-description/400/200" alt="" fit="cover" />
@@ -465,11 +467,13 @@ export const BannerDescription: StoryObj<BannerDescriptionDemoProps> = {
     },
     argTypes: {
         banner: { control: 'inline-radio', options: ['icon', 'image', 'small'] },
+        selectable: { control: 'boolean' },
     },
     args: {
         description: LONG_DESCRIPTION,
         title: 'Folder',
         banner: 'icon',
+        selectable: true,
     },
     render: (args) => <BannerDescriptionDemo {...args} />,
 };
@@ -481,7 +485,8 @@ export const BannerDescriptionVariants: Story = {
             description: {
                 story:
                     'Long text is clamped, short text is centred below the selection checkbox, image banners are ' +
-                    'covered, and small banners offset the text past the checkbox. The last card has no description.',
+                    'covered, and small banners offset the text past the checkbox. Cards without selection centre ' +
+                    'the text in the whole banner. The last card has no description.',
             },
         },
     },
@@ -491,6 +496,18 @@ export const BannerDescriptionVariants: Story = {
             <BannerDescriptionDemo banner="icon" title="Short description" description={SHORT_DESCRIPTION} />
             <BannerDescriptionDemo banner="image" title="Over an image" description={SHORT_DESCRIPTION} />
             <BannerDescriptionDemo banner="small" title="Small banner" description={LONG_DESCRIPTION} />
+            <BannerDescriptionDemo
+                banner="icon"
+                title="Long, without selection"
+                description={LONG_DESCRIPTION}
+                selectable={false}
+            />
+            <BannerDescriptionDemo
+                banner="icon"
+                title="Short, without selection"
+                description={SHORT_DESCRIPTION}
+                selectable={false}
+            />
             <BannerDescriptionDemo banner="icon" title="Without description" description="" />
         </div>
     ),
