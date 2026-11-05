@@ -28,13 +28,22 @@ jobs:
 
       - name: Detect editor changes
         id: filter
-        # The editor, the workspace packages it builds against, and the install it runs on.
+        # Checkout puts the pull request's merge commit at HEAD, so HEAD^1 is the base branch tip.
+        # The paths are the editor, the workspace packages it builds against, and the install it runs on.
         run: |
-          changed=$(git diff --name-only HEAD^1 HEAD)
-          if grep -qE '^(packages/(rich-text-editor|components|icons|tokens)/|\.github/actions/setup/|\.github/workflows/rich-text-editor-pull-requests\.yaml$|\.npmrc$|\.nvmrc$|package\.json$|pnpm-lock\.yaml$|pnpm-workspace\.yaml$)' <<< "$changed"; then
+          if ! git diff --quiet HEAD^1 HEAD -- \
+            packages/rich-text-editor \
+            packages/components \
+            packages/icons \
+            packages/tokens \
+            .github/actions/setup \
+            .github/workflows/rich-text-editor-pull-requests.yaml \
+            .npmrc \
+            .nvmrc \
+            package.json \
+            pnpm-lock.yaml \
+            pnpm-workspace.yaml; then
             echo "editor=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "editor=false" >> "$GITHUB_OUTPUT"
           fi
 
   lint:
