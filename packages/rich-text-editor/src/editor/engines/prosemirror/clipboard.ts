@@ -8,7 +8,7 @@ import {
     type Schema,
     Slice,
 } from 'prosemirror-model';
-import { type EditorProps, type EditorView } from 'prosemirror-view';
+import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PasteHandler } from '#/core';
 
@@ -65,44 +65,15 @@ const withoutExtras = (node: PmNode): PmNode => {
 };
 
 /**
- * A slice without the undeclared stored keys. Copied, `data-pm-slice` would write
- * its open wrappers' attributes onto the clipboard; pasted or dropped from
- * elsewhere, every block it brings is new, as with cut and paste.
+ * A pasted or dropped slice without the undeclared stored keys: every block it
+ * brings is new, as with cut and paste. A drag within the editor moves its
+ * blocks, so they keep them, and `copiedExtrasPlugin` clears a copy-drag's copy.
  */
-const sliceWithoutExtras = (slice: Slice): Slice =>
-    new Slice(Fragment.fromArray(slice.content.content.map(withoutExtras)), slice.openStart, slice.openEnd);
-
-/**
- * Undeclared stored keys through the clipboard and drops: a block dragged within
- * the editor keeps them, since a move duplicates nothing and `copiedExtrasPlugin`
- * clears them off a copy-drag's copy; everything else comes in without them.
- */
-export const extrasOnTransfer = (): Pick<EditorProps, 'handleDOMEvents' | 'transformCopied' | 'transformPasted'> => {
-    // The engine serializes a drag's slice right after `dragstart`, and drops that slice back in.
-    let dragStarting = false;
-    return {
-        handleDOMEvents: {
-            dragstart: () => {
-                dragStarting = true;
-                queueMicrotask(() => {
-                    dragStarting = false;
-                });
-                return false;
-            },
-        },
-        transformCopied: (slice) => {
-            if (dragStarting) {
-                return slice;
-            }
-            return sliceWithoutExtras(slice);
-        },
-        transformPasted: (slice, view) => {
-            if (view.dragging !== null) {
-                return slice;
-            }
-            return sliceWithoutExtras(slice);
-        },
-    };
+export const pastedWithoutExtras = (slice: Slice, view: EditorView): Slice => {
+    if (view.dragging !== null) {
+        return slice;
+    }
+    return new Slice(Fragment.fromArray(slice.content.content.map(withoutExtras)), slice.openStart, slice.openEnd);
 };
 
 export const clipboardSerializer = (schema: Schema): DOMSerializer => {

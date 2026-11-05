@@ -40,14 +40,24 @@ describe('copying', () => {
         return source.view.serializeForClipboard(source.view.state.selection.content()).dom.innerHTML;
     };
 
-    it('puts no undeclared key on the clipboard', () => {
+    it('puts undeclared keys on the clipboard only in the context of the wrappers a copy leaves open', () => {
         const container = window.document.createElement('div');
         container.innerHTML = copiedFromList();
-        const slice = container.querySelector('[data-pm-slice]')?.getAttribute('data-pm-slice');
+        const sliced = container.querySelector('[data-pm-slice]');
 
-        // The attribute's name still shows in `data-pm-slice`, but empty.
-        expect(slice).toContain('"listItem"');
-        expect(slice).not.toContain('"k"');
+        expect(sliced?.getAttribute('data-pm-slice')).toContain('"k"');
+        sliced?.removeAttribute('data-pm-slice');
+        expect(container.innerHTML).not.toContain('k');
+    });
+
+    it('puts none on the clipboard for whole blocks copied', () => {
+        const source = editorWith(defaultPlugins, [{ ...paragraph(text('whole')), k: 1 } as RteBlockNode]);
+        source.select('whole');
+
+        const html = source.view.serializeForClipboard(source.view.state.selection.content()).dom.innerHTML;
+
+        expect(html).toContain('whole');
+        expect(html).not.toContain('"k"');
     });
 
     it('brings no undeclared keys along when pasted back', () => {
