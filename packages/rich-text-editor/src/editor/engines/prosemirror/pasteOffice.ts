@@ -106,19 +106,6 @@ const markerSpans = (root: ParentNode): HTMLElement[] =>
         MARKER_STYLE.test(span.getAttribute('style') ?? ''),
     );
 
-/** The list and level `element` declares, or `undefined` when it declares none. */
-const readListData = (element: HTMLElement): { list: string; level: number } | undefined => {
-    const style = element.getAttribute('style') ?? '';
-    let declared = RULE_LIST_STYLE.exec(style);
-    if (OWN_LIST_STYLE.test(style)) {
-        declared = LIST_STYLE.exec(style);
-    }
-    if (declared === null || Number(declared[2]) < 1) {
-        return undefined;
-    }
-    return { list: `${declared[1] ?? ''} ${declared[3] ?? ''}`, level: Math.min(Number(declared[2]), MAX_LEVEL) };
-};
-
 /** `element` as a list paragraph, or `undefined` when it is not one. */
 const readListParagraph = (element: Node): ListParagraph | undefined => {
     if (!(element instanceof HTMLElement) || element.localName !== 'p') {
@@ -128,12 +115,21 @@ const readListParagraph = (element: Node): ListParagraph | undefined => {
     if (element.parentElement?.closest('p')) {
         return undefined;
     }
-    const data = readListData(element);
-    if (data === undefined) {
+    const style = element.getAttribute('style') ?? '';
+    let declared = RULE_LIST_STYLE.exec(style);
+    if (OWN_LIST_STYLE.test(style)) {
+        declared = LIST_STYLE.exec(style);
+    }
+    if (declared === null || Number(declared[2]) < 1) {
         return undefined;
     }
     const marker = (markerSpans(element)[0]?.textContent ?? '').trim();
-    return { paragraph: element, ...data, ordered: NUMBERED_MARKER.test(marker) };
+    return {
+        paragraph: element,
+        list: `${declared[1] ?? ''} ${declared[3] ?? ''}`,
+        level: Math.min(Number(declared[2]), MAX_LEVEL),
+        ordered: NUMBERED_MARKER.test(marker),
+    };
 };
 
 /** The list paragraphs that follow `first` as siblings, with only layout between them. */
@@ -152,28 +148,6 @@ const runFrom = (first: ListParagraph): ListParagraph[] => {
     return run;
 };
 
-/**
- * The items each of Word's lists already holds at each level, so a numbered
- * list that other blocks interrupt continues its numbering, as Word keeps
- * counting a list it resumes.
- */
-type Numbering = Map<string, number[]>;
-
-const countsOf = (numbering: Numbering, list: string): number[] => {
-    let counts = numbering.get(list);
-    if (counts === undefined) {
-        counts = [];
-        numbering.set(list, counts);
-    }
-    return counts;
-};
-
-/** Counts one item at `level`, which restarts the numbering of the levels below it. */
-const countItem = (counts: number[], level: number): void => {
-    counts[level] = (counts[level] ?? 0) + 1;
-    counts.length = level + 1;
-};
-
 /** Closes the open lists deeper than `item`, and the one at its level when `item` cannot join it. */
 const closeListsFor = (open: OpenList[], { list, level, ordered }: ListParagraph): void => {
     while ((open[open.length - 1]?.level ?? 0) > level) {
@@ -185,38 +159,22 @@ const closeListsFor = (open: OpenList[], { list, level, ordered }: ListParagraph
     }
 };
 
-/** A numbered list starts after the items its Word list already has at that level. */
-const continueNumbering = (element: HTMLElement, counts: readonly number[], level: number): void => {
-    const numbered = counts[level] ?? 0;
-    if (numbered > 0) {
-        element.setAttribute('start', String(numbered + 1));
-    }
-};
-
-const createList = (
-    document: Document,
-    { list, level, ordered }: ListParagraph,
-    counts: readonly number[],
-): OpenList => {
+const createList = (document: Document, { list, level, ordered }: ListParagraph): OpenList => {
     let tag = 'ul';
     if (ordered) {
         tag = 'ol';
     }
-    const element = document.createElement(tag);
-    if (ordered) {
-        continueNumbering(element, counts, level);
-    }
-    return { element, level, ordered, list };
+    return { element: document.createElement(tag), level, ordered, list };
 };
 
 /**
  * Rebuilds one run of list paragraphs as nested lists where it stood. A level
  * below the one before opens one list inside the last item, so no empty item
  * holds it. A bullet run continues across Word's list instances, a numbered
- * one restarts with each, as Word numbers them. A numbered list that resumes
- * after another block starts after the items `numbering` counted for it.
+ * one restarts with each, as Word numbers them. A numbered list that another
+ * paragraph interrupts starts again at 1: the format stores no start number.
  */
-const rebuildRun = (run: readonly ListParagraph[], numbering: Numbering): void => {
+const rebuildRun = (run: readonly ListParagraph[]): void => {
     const first = run[0];
     if (first === undefined) {
         return;
@@ -228,10 +186,9 @@ const rebuildRun = (run: readonly ListParagraph[], numbering: Numbering): void =
     const open: OpenList[] = [];
     for (const item of run) {
         closeListsFor(open, item);
-        const counts = countsOf(numbering, item.list);
         let parent = open[open.length - 1];
         if (parent === undefined || parent.level < item.level) {
-            const created = createList(document, item, counts);
+            const created = createList(document, item);
             if (parent === undefined) {
                 anchor.before(created.element);
             } else {
@@ -240,7 +197,6 @@ const rebuildRun = (run: readonly ListParagraph[], numbering: Numbering): void =
             parent = created;
             open.push(created);
         }
-        countItem(counts, item.level);
         const element = document.createElement('li');
         element.append(item.paragraph);
         parent.element.append(element);
@@ -250,17 +206,8 @@ const rebuildRun = (run: readonly ListParagraph[], numbering: Numbering): void =
 
 const rebuildLists = (dom: HTMLElement): void => {
     const done = new Set<Element>();
-    const numbering: Numbering = new Map();
-    for (const paragraph of dom.querySelectorAll<HTMLElement>('p, h1, h2, h3, h4, h5, h6')) {
+    for (const paragraph of dom.querySelectorAll('p')) {
         if (done.has(paragraph)) {
-            continue;
-        }
-        // A heading Word numbers with a list stays a heading, but counts as that list's item.
-        if (paragraph.localName !== 'p') {
-            const heading = readListData(paragraph);
-            if (heading !== undefined) {
-                countItem(countsOf(numbering, heading.list), heading.level);
-            }
             continue;
         }
         const first = readListParagraph(paragraph);
@@ -271,7 +218,7 @@ const rebuildLists = (dom: HTMLElement): void => {
         for (const item of run) {
             done.add(item.paragraph);
         }
-        rebuildRun(run, numbering);
+        rebuildRun(run);
     }
 };
 

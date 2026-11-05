@@ -51,7 +51,7 @@ export const restartedAttrs = (list: PmNode): Record<string, unknown> | null => 
     if (declared === undefined) {
         return null;
     }
-    const fallback = declared.default ?? null;
+    const fallback: unknown = declared.default ?? null;
     if (list.attrs[START_ATTR] === fallback) {
         return null;
     }
@@ -60,29 +60,23 @@ export const restartedAttrs = (list: PmNode): Record<string, unknown> | null => 
 
 /** The span `transaction`'s steps replaced, in the document before them and after them. */
 const changedSpan = (transaction: Transaction): { before: [number, number]; after: [number, number] } | null => {
-    const { maps } = transaction.mapping;
-    // A position in the document before step `index`, mapped back to the one before the first.
-    const back = (pos: number, index: number, assoc: number): number => {
-        let mapped = pos;
-        for (let earlier = index - 1; earlier >= 0; earlier--) {
-            mapped = maps[earlier]?.invert().map(mapped, assoc) ?? mapped;
-        }
-        return mapped;
-    };
+    const { mapping } = transaction;
     let from = Number.POSITIVE_INFINITY;
     let to = Number.NEGATIVE_INFINITY;
-    for (const [index, map] of maps.entries()) {
+    for (const [index, map] of mapping.maps.entries()) {
+        const later = mapping.slice(index + 1);
         // A step map's own iterator, not an array's.
         // oxlint-disable-next-line unicorn/no-array-for-each
-        map.forEach((oldStart, oldEnd) => {
-            from = Math.min(from, back(oldStart, index, -1));
-            to = Math.max(to, back(oldEnd, index, 1));
+        map.forEach((_oldStart, _oldEnd, newStart, newEnd) => {
+            from = Math.min(from, later.map(newStart, -1));
+            to = Math.max(to, later.map(newEnd, 1));
         });
     }
     if (from > to) {
         return null;
     }
-    return { before: [from, to], after: [transaction.mapping.map(from, -1), transaction.mapping.map(to, 1)] };
+    const back = mapping.invert();
+    return { before: [back.map(from, -1), back.map(to, 1)], after: [from, to] };
 };
 
 /**
