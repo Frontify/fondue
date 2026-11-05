@@ -1,0 +1,49 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "plain"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "plain then "
+                },
+                {
+                    "text": "marked",
+                    "bold": true
+                },
+                {
+                    "text": " then plain"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "all marked",
+                    "bold": true
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "start",
+                    "bold": true
+                },
+                {
+                    "text": " end"
+                }
+            ]
+        }
+    ]
+}

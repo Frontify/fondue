@@ -64,6 +64,14 @@ export type TreeRootProps = {
      * Omitted = the root accepts anything.
      */
     accepts?: (items: TreeDropCandidate[]) => boolean;
+    /**
+     * What a click on a folder row does without `multiSelect`. `'select'` makes the first
+     * click on an unselected folder only select it; a click on the selected folder expands
+     * or collapses it. `'toggle'` selects the folder and expands or collapses it on every
+     * click, for trees whose folders are only containers. The chevron always toggles without selecting.
+     * @default 'select'
+     */
+    folderClickType?: 'select' | 'toggle';
 };
 
 export const TreeRoot = ({
@@ -73,6 +81,7 @@ export const TreeRoot = ({
     reorderable = false,
     countDisabledInFolderState = false,
     accepts,
+    folderClickType = 'select',
 }: TreeRootProps) => {
     const { t } = useTranslation();
     const rowHintId = useId();
@@ -170,6 +179,7 @@ export const TreeRoot = ({
                             hintId={rowHint ? rowHintId : undefined}
                             onFocusLost={handleFocusLost}
                             checkedState={checkedStates?.get(item.getId()) ?? false}
+                            folderClickType={folderClickType}
                         />
                         {loadingPlaceholder && (
                             <TreeLoadingRow
