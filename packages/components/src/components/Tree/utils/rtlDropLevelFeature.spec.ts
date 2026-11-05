@@ -76,8 +76,8 @@ describe('rtlDropLevelFeature', () => {
         const [received] = onDragOver.mock.calls[0] as [DragEvent<HTMLElement>];
         received.stopPropagation();
         received.preventDefault();
-        expect(vi.mocked(event.stopPropagation).mock.contexts).toEqual([event]);
-        expect(vi.mocked(event.preventDefault).mock.contexts).toEqual([event]);
+        expect(vi.mocked(event.stopPropagation).mock.contexts[0]).toBe(event);
+        expect(vi.mocked(event.preventDefault).mock.contexts[0]).toBe(event);
     });
 
     it('passes the same event object through in LTR', () => {
