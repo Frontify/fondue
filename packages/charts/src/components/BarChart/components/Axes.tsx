@@ -7,7 +7,7 @@ import { useBandTicks } from '@components/BarChart/components/hooks/useBandTicks
 import { useRotatedLabel } from '@components/BarChart/components/hooks/useRotatedLabel';
 import { type LabelFormatter, type ValueFormatter } from '@components/common/types';
 
-import { truncateTextLabel } from '../helpers';
+import { DEFAULT_MAX_LABEL_LENGTH, truncateTextLabel } from '../helpers';
 
 type AxesProps = {
     linearAxesTicks: number[];
@@ -17,6 +17,7 @@ type AxesProps = {
     updateBandScaleTicks: Dispatch<SetStateAction<string[]>>;
     valueFormatter: ValueFormatter;
     labelFormatter: LabelFormatter;
+    maxLabelLength?: number;
 };
 
 const getTextAnchorProp = (horizontal: boolean, angle: number) => {
@@ -37,8 +38,9 @@ export const Axes = ({
     updateBandScaleTicks,
     valueFormatter,
     labelFormatter,
+    maxLabelLength = DEFAULT_MAX_LABEL_LENGTH,
 }: AxesProps) => {
-    const formatLabel = (label: string | number) => truncateTextLabel(labelFormatter(label.toString()));
+    const formatLabel = (label: string | number) => truncateTextLabel(labelFormatter(label.toString()), maxLabelLength);
     const angle = useRotatedLabel(horizontal, updateMaxLabelHeight, updateFirstLabelOverflowsBy, formatLabel);
     const filteredTicks = useBandTicks(horizontal, updateBandScaleTicks);
     const textAnchor = getTextAnchorProp(horizontal, angle);
