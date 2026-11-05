@@ -148,6 +148,25 @@ const runFrom = (first: ListParagraph): ListParagraph[] => {
     return run;
 };
 
+/** Closes the open lists deeper than `item`, and the one at its level when `item` cannot join it. */
+const closeListsFor = (open: OpenList[], { list, level, ordered }: ListParagraph): void => {
+    while ((open[open.length - 1]?.level ?? 0) > level) {
+        open.pop();
+    }
+    const current = open[open.length - 1];
+    if (current?.level === level && (current.ordered !== ordered || (ordered && current.list !== list))) {
+        open.pop();
+    }
+};
+
+const createList = (document: Document, { list, level, ordered }: ListParagraph): OpenList => {
+    let tag = 'ul';
+    if (ordered) {
+        tag = 'ol';
+    }
+    return { element: document.createElement(tag), level, ordered, list };
+};
+
 /**
  * Rebuilds one run of list paragraphs as nested lists where it stood. A level
  * below the one before opens one list inside the last item, so no empty item
@@ -161,40 +180,28 @@ const rebuildRun = (run: readonly ListParagraph[]): void => {
         return;
     }
     const document = first.paragraph.ownerDocument;
+    // Top-level lists go in order before this mark, which holds the run's place as its paragraphs move.
+    const anchor = document.createTextNode('');
+    first.paragraph.before(anchor);
     const open: OpenList[] = [];
-    let lastTop: HTMLElement | undefined;
-    for (const { paragraph, list, level, ordered } of run) {
-        while ((open[open.length - 1]?.level ?? 0) > level) {
-            open.pop();
-        }
-        const current = open[open.length - 1];
-        if (current?.level === level && (current.ordered !== ordered || (ordered && current.list !== list))) {
-            open.pop();
-        }
+    for (const item of run) {
+        closeListsFor(open, item);
         let parent = open[open.length - 1];
-        if (parent === undefined || parent.level < level) {
-            let tag = 'ul';
-            if (ordered) {
-                tag = 'ol';
-            }
-            const element = document.createElement(tag);
-            if (parent !== undefined) {
-                parent.element.lastElementChild?.append(element);
-            } else if (lastTop === undefined) {
-                first.paragraph.before(element);
-            } else {
-                lastTop.after(element);
-            }
+        if (parent === undefined || parent.level < item.level) {
+            const created = createList(document, item);
             if (parent === undefined) {
-                lastTop = element;
+                anchor.before(created.element);
+            } else {
+                parent.element.lastElementChild?.append(created.element);
             }
-            parent = { element, level, ordered, list };
-            open.push(parent);
+            parent = created;
+            open.push(created);
         }
-        const item = document.createElement('li');
-        item.append(paragraph);
-        parent.element.append(item);
+        const element = document.createElement('li');
+        element.append(item.paragraph);
+        parent.element.append(element);
     }
+    anchor.remove();
 };
 
 const rebuildLists = (dom: HTMLElement): void => {

@@ -30,7 +30,8 @@ const breaksAsParagraphs = (root: Element): void => {
         }
         breaks = [];
     };
-    for (const child of [...root.children]) {
+    // Live, but safe: a break turns into a paragraph in its own place, so no later child moves.
+    for (const child of root.children) {
         if (child.localName === 'br') {
             breaks.push(child);
             continue;
