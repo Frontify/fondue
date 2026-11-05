@@ -14,8 +14,8 @@ const RULE_LIST_STYLE = /(?:^|;)\s*--mso-list-rule:\s*(l\d+)\s+level(\d+)(?:\s+(
 const MARKER_STYLE = /(?:^|;)\s*(?:--)?mso-list:\s*ignore/i;
 /** Dot-separated numbers (`1.`, `1.1.`, `1.1`) or letters with a delimiter (`iv)`, `a.`) are numbered markers; a glyph (`·`, `o`, `§`) is a bullet. */
 const NUMBERED_MARKER = /^\(?(?:\d+(?:\.\d+)*[.)]?|[a-z]+[.)])$/i;
-/** The number Word wrote for an item: the 3 of `3.`, `1.3.` or `(3)`. */
-const MARKER_NUMBER = /(\d+)\D*$/;
+/** The numbers in a marker; the last is the item's own, the 3 of `3.`, `1.3.` or `(3)`. */
+const MARKER_NUMBERS = /\d+/g;
 /** Word has nine list levels, which also keeps hostile input from nesting without end. */
 const MAX_LEVEL = 9;
 
@@ -136,7 +136,8 @@ const readListParagraph = (element: Node): ListParagraph | undefined => {
     const ordered = NUMBERED_MARKER.test(marker);
     let number: string | undefined;
     if (ordered) {
-        number = MARKER_NUMBER.exec(marker)?.[1];
+        const numbers = marker.match(MARKER_NUMBERS);
+        number = numbers?.[numbers.length - 1];
     }
     return {
         paragraph: element,
