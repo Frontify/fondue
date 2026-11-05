@@ -1,5 +1,16 @@
 # @frontify/fondue-charts
 
+## 9.1.0
+
+### Minor Changes
+
+- [#2960](https://github.com/Frontify/fondue/pull/2960) [`1fc4e6e`](https://github.com/Frontify/fondue/commit/1fc4e6e5859082edc24fc3bde97491fccae907e0) Thanks [@joewoodson](https://github.com/joewoodson)! - feat(BarChart): add `maxLabelLength` prop to configure or disable (`Infinity`) axis label truncation
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @frontify/fondue-tokens@5.2.0
+
 ## 9.0.0
 
 ### Patch Changes
