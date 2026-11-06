@@ -192,7 +192,7 @@ const register = <TDefinition>(
 };
 
 /** What an entry without its own `render` is drawn as: a button toggling one of these. */
-const BUTTON_KINDS: readonly OwnType['kind'][] = ['mark', 'list', 'textBlock', 'voidBlock', 'inline'];
+const BUTTON_KINDS: ReadonlySet<OwnType['kind']> = new Set(['mark', 'list', 'textBlock', 'voidBlock', 'inline']);
 
 const toolbarEntryOf = (plugin: RtePlugin, entry: RteToolbarEntry, key: string): ToolbarEntry => {
     const type = entry.toggles ?? onlyTypeOf(plugin.content);
@@ -200,15 +200,13 @@ const toolbarEntryOf = (plugin: RtePlugin, entry: RteToolbarEntry, key: string):
     if (entry.toggles !== undefined && own.kind === 'none') {
         throw new Error(`Plugin "${plugin.id}" toggles "${entry.toggles}", which its content does not declare.`);
     }
-    if (entry.render === undefined && (entry.icon === undefined || !BUTTON_KINDS.includes(own.kind))) {
+    if (entry.render === undefined && (entry.icon === undefined || !BUTTON_KINDS.has(own.kind))) {
         throw new Error(
             `Plugin "${plugin.id}" has a toolbar entry with no \`render\`: it needs an \`icon\` and a mark, list, text block, void block or inline to toggle.`,
         );
     }
     let label = entry.label;
-    if (label === undefined) {
-        label = type === undefined ? plugin.id : capitalised(type);
-    }
+    label ??= type === undefined ? plugin.id : capitalised(type);
     return {
         id: plugin.id,
         key,
@@ -285,123 +283,173 @@ const forMatching = (rules: readonly RteInputRule[]): RteInputRule[] => [
 const byNesting = (marks: Map<string, MarkDefinition>): Map<string, MarkDefinition> =>
     new Map([...marks].sort(([, left], [, right]) => (left.nesting ?? 0) - (right.nesting ?? 0)));
 
-export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]): PluginRegistry => {
-    const blocks = new Map<string, BlockDefinition>([[PARAGRAPH, paragraphBlock]]);
-    const inlines = new Map<string, InlineDefinition>();
-    const marks = new Map<string, MarkDefinition>();
-    const blockAttributes = new Map<string, BlockAttributeDefinition>();
-    const itemTypeByList = new Map<string, string>();
-    const edits = new Map<string, RteEditView>();
-    const hotkeys = new Map<string, HotkeyHandler[]>();
-    const inputRules: RteInputRule[] = [];
-    const pasteHandlers: PasteHandler[] = [];
-    const toolbarItems: ToolbarEntry[] = [];
-    const commands: RteBlockCommand[] = [];
-    const commandOwners = new Map<string, string>();
-    const contentClassNames: string[] = [];
-    const contentProperties: Record<string, string> = {};
+/** What `buildPluginRegistry` fills while it walks the entries. */
+type Draft = {
+    blocks: Map<string, BlockDefinition>;
+    inlines: Map<string, InlineDefinition>;
+    marks: Map<string, MarkDefinition>;
+    blockAttributes: Map<string, BlockAttributeDefinition>;
+    itemTypeByList: Map<string, string>;
+    edits: Map<string, RteEditView>;
+    hotkeys: Map<string, HotkeyHandler[]>;
+    inputRules: RteInputRule[];
+    pasteHandlers: PasteHandler[];
+    toolbarItems: ToolbarEntry[];
+    commands: RteBlockCommand[];
+    commandOwners: Map<string, string>;
+    contentClassNames: string[];
+    contentProperties: Record<string, string>;
     /** How often each id has come up so far, for unique toolbar keys. */
-    const seenIds = new Map<string, number>();
-    const duplicateIds = new Set<string>();
-    const blockOwners = new Map<string, string>();
-    const inlineOwners = new Map<string, string>();
-    const markOwners = new Map<string, string>();
-    const attributeOwners = new Map<string, string>();
-    const editOwners = new Map<string, string>();
+    seenIds: Map<string, number>;
+    duplicateIds: Set<string>;
+    blockOwners: Map<string, string>;
+    inlineOwners: Map<string, string>;
+    markOwners: Map<string, string>;
+    attributeOwners: Map<string, string>;
+    editOwners: Map<string, string>;
+};
 
-    const addHotkey = (keys: string, handler: HotkeyHandler): void => {
-        hotkeys.set(keys, [...(hotkeys.get(keys) ?? []), handler]);
-    };
+const addHotkey = (draft: Draft, keys: string, handler: HotkeyHandler): void => {
+    draft.hotkeys.set(keys, [...(draft.hotkeys.get(keys) ?? []), handler]);
+};
 
-    const addCommand = (owner: string, command: RteBlockCommand): void => {
-        const first = commandOwners.get(command.id);
-        if (first !== undefined) {
+const addCommand = (draft: Draft, owner: string, command: RteBlockCommand): void => {
+    const first = draft.commandOwners.get(command.id);
+    if (first !== undefined) {
+        throw new Error(`Duplicate command id "${command.id}": declared by plugin "${first}" and plugin "${owner}".`);
+    }
+    draft.commandOwners.set(command.id, owner);
+    draft.commands.push(command);
+};
+
+/** The hotkey a toolbar entry's `shortcut` binds, unless the plugin binds that key itself. */
+const addShortcut = (draft: Draft, plugin: RtePlugin, entry: RteToolbarEntry, item: ToolbarEntry): void => {
+    const { shortcut } = entry;
+    if (shortcut === undefined || shortcut in (plugin.hotkeys ?? {})) {
+        return;
+    }
+    if (!BUTTON_KINDS.has(item.own.kind)) {
+        throw new Error(`Plugin "${plugin.id}" names shortcut "${shortcut}" with nothing to toggle.`);
+    }
+    addHotkey(draft, shortcut, (api) => toggleOwn(item.own, api, api.selection.get()));
+};
+
+const addToolbarEntries = (draft: Draft, plugin: RtePlugin, pluginKey: string): void => {
+    for (const [index, entry] of (plugin.toolbar ?? []).entries()) {
+        const item = toolbarEntryOf(plugin, entry, index === 0 ? pluginKey : `${pluginKey}/${index}`);
+        draft.toolbarItems.push(item);
+        addShortcut(draft, plugin, entry, item);
+        if (entry.menu !== undefined) {
+            addCommand(draft, plugin.id, menuCommandOf(plugin, item, entry.menu.keywords));
+        }
+    }
+};
+
+const addEditViews = (draft: Draft, plugin: RtePlugin): void => {
+    for (const type of Object.keys(plugin.edit ?? {})) {
+        if (ownTypeOf(plugin.content, type).kind === 'none') {
             throw new Error(
-                `Duplicate command id "${command.id}": declared by plugin "${first}" and plugin "${owner}".`,
+                `Plugin "${plugin.id}" has an edit view for "${type}", which its content does not declare.`,
             );
         }
-        commandOwners.set(command.id, owner);
-        commands.push(command);
+    }
+    register('edit view', draft.edits, draft.editOwners, plugin.id, plugin.edit);
+};
+
+/** What a plugin adds beyond its content: hotkeys, toolbar, input rules, paste, commands, edit views. */
+const addEditing = (draft: Draft, plugin: RtePlugin): void => {
+    const occurrence = draft.seenIds.get(plugin.id) ?? 0;
+    if (occurrence > 0) {
+        draft.duplicateIds.add(plugin.id);
+    }
+    draft.seenIds.set(plugin.id, occurrence + 1);
+    for (const [keys, handler] of Object.entries(plugin.hotkeys ?? {})) {
+        addHotkey(draft, keys, handler);
+    }
+    // A shared id is a mistake the editor warns about; the toolbar still keys each control apart.
+    addToolbarEntries(draft, plugin, occurrence === 0 ? plugin.id : `${plugin.id}#${occurrence}`);
+    draft.inputRules.push(...(plugin.inputRules ?? []).map((rule) => inputRuleOf(plugin, rule)));
+    if (plugin.onPaste) {
+        draft.pasteHandlers.push(plugin.onPaste);
+    }
+    for (const command of plugin.commands ?? []) {
+        addCommand(draft, plugin.id, command);
+    }
+    addEditViews(draft, plugin);
+};
+
+const addItemTypes = (draft: Draft, blocks: RteContent['blocks']): void => {
+    for (const [type, definition] of Object.entries(blocks ?? {})) {
+        if (typeof definition.content === 'object' && 'items' in definition.content) {
+            draft.itemTypeByList.set(type, definition.content.items);
+        }
+    }
+};
+
+/** What a content declares: styling hooks, block, inline and mark types, block attributes. */
+const addContent = (draft: Draft, content: RteContent | undefined, owner: string): void => {
+    if (content?.contentClassName) {
+        draft.contentClassNames.push(content.contentClassName);
+    }
+    Object.assign(draft.contentProperties, content?.contentProperties);
+
+    register('block type', draft.blocks, draft.blockOwners, owner, content?.blocks);
+    register('inline type', draft.inlines, draft.inlineOwners, owner, content?.inlines);
+    register('mark type', draft.marks, draft.markOwners, owner, content?.marks);
+    register('block attribute', draft.blockAttributes, draft.attributeOwners, owner, content?.blockAttributes);
+    addItemTypes(draft, content?.blocks);
+};
+
+export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]): PluginRegistry => {
+    const draft: Draft = {
+        blocks: new Map<string, BlockDefinition>([[PARAGRAPH, paragraphBlock]]),
+        inlines: new Map(),
+        marks: new Map(),
+        blockAttributes: new Map(),
+        itemTypeByList: new Map(),
+        edits: new Map(),
+        hotkeys: new Map(),
+        inputRules: [],
+        pasteHandlers: [],
+        toolbarItems: [],
+        commands: [],
+        commandOwners: new Map(),
+        contentClassNames: [],
+        contentProperties: {},
+        seenIds: new Map(),
+        duplicateIds: new Set(),
+        blockOwners: new Map(),
+        inlineOwners: new Map(),
+        markOwners: new Map(),
+        attributeOwners: new Map(),
+        editOwners: new Map(),
     };
 
     for (const entry of entries) {
-        const content = isPlugin(entry) ? entry.content : entry;
-        const owner = isPlugin(entry) ? entry.id : firstTypeOf(entry);
-
         if (isPlugin(entry)) {
-            const occurrence = seenIds.get(entry.id) ?? 0;
-            if (occurrence > 0) {
-                duplicateIds.add(entry.id);
-            }
-            seenIds.set(entry.id, occurrence + 1);
-            for (const [keys, handler] of Object.entries(entry.hotkeys ?? {})) {
-                addHotkey(keys, handler);
-            }
-            // A shared id is a mistake the editor warns about; the toolbar still keys each control apart.
-            const pluginKey = occurrence === 0 ? entry.id : `${entry.id}#${occurrence}`;
-            for (const [index, toolbarEntry] of (entry.toolbar ?? []).entries()) {
-                const item = toolbarEntryOf(entry, toolbarEntry, index === 0 ? pluginKey : `${pluginKey}/${index}`);
-                toolbarItems.push(item);
-                if (toolbarEntry.shortcut !== undefined && !(toolbarEntry.shortcut in (entry.hotkeys ?? {}))) {
-                    if (!BUTTON_KINDS.includes(item.own.kind)) {
-                        throw new Error(
-                            `Plugin "${entry.id}" names shortcut "${toolbarEntry.shortcut}" with nothing to toggle.`,
-                        );
-                    }
-                    addHotkey(toolbarEntry.shortcut, (api) => toggleOwn(item.own, api, api.selection.get()));
-                }
-                if (toolbarEntry.menu !== undefined) {
-                    addCommand(entry.id, menuCommandOf(entry, item, toolbarEntry.menu.keywords));
-                }
-            }
-            inputRules.push(...(entry.inputRules ?? []).map((rule) => inputRuleOf(entry, rule)));
-            if (entry.onPaste) {
-                pasteHandlers.push(entry.onPaste);
-            }
-            for (const command of entry.commands ?? []) {
-                addCommand(entry.id, command);
-            }
-            for (const type of Object.keys(entry.edit ?? {})) {
-                if (ownTypeOf(content, type).kind === 'none') {
-                    throw new Error(
-                        `Plugin "${entry.id}" has an edit view for "${type}", which its content does not declare.`,
-                    );
-                }
-            }
-            register('edit view', edits, editOwners, entry.id, entry.edit);
-        }
-        if (content?.contentClassName) {
-            contentClassNames.push(content.contentClassName);
-        }
-        Object.assign(contentProperties, content?.contentProperties);
-
-        register('block type', blocks, blockOwners, owner, content?.blocks);
-        register('inline type', inlines, inlineOwners, owner, content?.inlines);
-        register('mark type', marks, markOwners, owner, content?.marks);
-        register('block attribute', blockAttributes, attributeOwners, owner, content?.blockAttributes);
-        for (const [type, definition] of Object.entries(content?.blocks ?? {})) {
-            if (typeof definition.content === 'object' && 'items' in definition.content) {
-                itemTypeByList.set(type, definition.content.items);
-            }
+            addEditing(draft, entry);
+            addContent(draft, entry.content, entry.id);
+        } else {
+            addContent(draft, entry, firstTypeOf(entry));
         }
     }
 
     return {
-        blocks,
-        inlines,
-        marks: byNesting(marks),
-        blockAttributes,
-        itemTypeByList,
-        edits,
+        blocks: draft.blocks,
+        inlines: draft.inlines,
+        marks: byNesting(draft.marks),
+        blockAttributes: draft.blockAttributes,
+        itemTypeByList: draft.itemTypeByList,
+        edits: draft.edits,
         ids: entries.filter(isPlugin).map((plugin) => plugin.id),
-        duplicateIds: [...duplicateIds],
-        hotkeys,
-        inputRules: forMatching(inputRules),
-        pasteHandlers,
-        toolbarItems,
-        commands,
-        contentClassNames,
-        contentProperties,
+        duplicateIds: [...draft.duplicateIds],
+        hotkeys: draft.hotkeys,
+        inputRules: forMatching(draft.inputRules),
+        pasteHandlers: draft.pasteHandlers,
+        toolbarItems: draft.toolbarItems,
+        commands: draft.commands,
+        contentClassNames: draft.contentClassNames,
+        contentProperties: draft.contentProperties,
     };
 };
 

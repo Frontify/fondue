@@ -140,11 +140,6 @@ type InlineDef<TValue> = InlineDefinition<TValue>;
 type EditComponentProps<TValue, TCurrent> = EditProps<TValue, TCurrent>;
 type Parse<TValue> = ParseRule<TValue>;
 type Html = HtmlSpec;
-type PluginContent = RteContent;
-type ToolbarEntryData = RteToolbarEntry;
-type EditViewComponent = RteEditView;
-type IconComponent = RteIcon;
-type PluginDefinition = RtePluginDefinition;
 
 // oxlint-disable-next-line typescript/no-namespace -- types only; groups the authoring types under `RtePlugin`.
 export declare namespace RtePlugin {
@@ -159,11 +154,11 @@ export declare namespace RtePlugin {
     export type EditProps<TValue, TCurrent = TValue> = EditComponentProps<TValue, TCurrent>;
     export type ParseRule<TValue> = Parse<TValue>;
     export type HtmlSpec = Html;
-    export type Content = PluginContent;
-    export type ToolbarEntry = ToolbarEntryData;
-    export type EditView = EditViewComponent;
-    export type Icon = IconComponent;
-    export type Definition = PluginDefinition;
+    export type Content = RteContent;
+    export type ToolbarEntry = RteToolbarEntry;
+    export type EditView = RteEditView;
+    export type Icon = RteIcon;
+    export type Definition = RtePluginDefinition;
     export type BlockNode = RteBlockNode;
     export type InlineNode = RteInlineNode;
 }
