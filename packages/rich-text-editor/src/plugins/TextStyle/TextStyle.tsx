@@ -1,19 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineBlock, type HotkeyHandler, PARAGRAPH, type RteBlockCommand, type RtePlugin } from '#/core';
+import {
+    definePlugin,
+    type HotkeyHandler,
+    PARAGRAPH,
+    type RteBlockCommand,
+    type RtePlugin,
+    type ToolbarItemProps,
+} from '#/core';
 
 import { HeadingLevelIcon } from './components/HeadingLevelIcon';
 import { TextStyleSelect } from './components/TextStyleSelect';
-import {
-    ALL_TEXT_STYLES,
-    findPreset,
-    FIRST_PRESET,
-    isTextStyle,
-    markdownRuleFor,
-    parseRuleFor,
-    presetsFor,
-    type TextStyleOption,
-} from './helpers/presets';
+import { textStyleContent, type TextStylePluginOptions } from './content';
+import { ALL_TEXT_STYLES, isTextStyle, markdownRuleFor, presetsFor } from './helpers/presets';
 
 const HEADING_LEVEL: Partial<Record<string, number>> = { h1: 1, h2: 2, h3: 3, h4: 4 };
 
@@ -23,15 +22,6 @@ const HEADING_KEYWORDS: Partial<Record<number, readonly string[]>> = {
     2: ['h2', 'subtitle'],
     3: ['h3'],
     4: ['h4'],
-};
-
-// The block this plugin contributes; the package root assembles it into the
-// official document union.
-export type { TextStyleBlock } from './helpers/presets';
-
-export type TextStylePluginOptions = {
-    /** The styles the dropdown offers, in order. Include `'paragraph'` for the option that clears one. */
-    styles?: readonly TextStyleOption[];
 };
 
 /**
@@ -73,36 +63,18 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
         };
     });
 
-    return {
+    // Made here, not at module level: the dropdown needs this editor's `styles`.
+    const TextStyleToolbar = ({ api, selection }: ToolbarItemProps) => (
+        <TextStyleSelect selection={selection} api={api} options={options} />
+    );
+
+    return definePlugin({
         id: 'text-style',
-        blocks: {
-            textStyle: defineBlock<{ style: string }>({
-                content: 'text',
-                // Only reached by a node that arrives without one; every
-                // path that sets the attribute names a style.
-                defaults: { style: offered[0]?.name ?? FIRST_PRESET },
-                toHtml: ({ style }) => {
-                    const preset = findPreset(style);
-                    if (preset === undefined) {
-                        return { tag: 'p', children: true };
-                    }
-                    return {
-                        tag: preset.tag,
-                        attrs: {
-                            class: preset.className,
-                            ...(preset.tag === 'p' ? { 'data-text-style': preset.name } : {}),
-                        },
-                        children: true,
-                    };
-                },
-                parse: offered.map(parseRuleFor),
-            }),
-        },
-        toolbarItem: ({ api, selection }) => <TextStyleSelect selection={selection} api={api} options={options} />,
+        content: textStyleContent({ styles: options }),
+        toolbar: [{ render: TextStyleToolbar }],
         hotkeys,
         // `# ` through `#### `, for the headings this editor offers.
         inputRules: offered.flatMap(markdownRuleFor),
         commands,
-        floatingToolbar: 'hidden',
-    };
+    });
 };
