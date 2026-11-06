@@ -1,3 +1,4 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { alignPlugin, type AlignAttribute } from './Align';
+export { alignPlugin } from './Align';
+export { type AlignAttribute, alignContent } from './content';
