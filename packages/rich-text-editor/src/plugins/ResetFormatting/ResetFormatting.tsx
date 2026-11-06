@@ -2,7 +2,7 @@
 
 import { IconEraser } from '@frontify/fondue-icons';
 
-import { type EditorControlApi, PARAGRAPH, type RtePlugin } from '#/core';
+import { definePlugin, type EditorControlApi, PARAGRAPH, type ToolbarItemProps } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -22,13 +22,14 @@ const reset = (api: EditorControlApi): void => {
     api.blocks.resetAttributes();
 };
 
+const ResetFormattingButton = ({ api }: ToolbarItemProps) => (
+    <ToolbarButton title="Reset formatting" onClick={() => reset(api)}>
+        <IconEraser size={16} />
+    </ToolbarButton>
+);
+
 /** A toolbar button that strips the selection back to plain text. */
-export const resetFormattingPlugin = (): RtePlugin => ({
+export const resetFormattingPlugin = definePlugin({
     id: 'reset-formatting',
-    toolbarItem: ({ api }) => (
-        <ToolbarButton title="Reset formatting" onClick={() => reset(api)}>
-            <IconEraser size={16} />
-        </ToolbarButton>
-    ),
-    floatingToolbar: 'inline',
+    toolbar: [{ render: ResetFormattingButton, floating: 'inline' }],
 });
