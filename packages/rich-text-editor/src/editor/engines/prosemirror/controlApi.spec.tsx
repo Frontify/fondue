@@ -94,6 +94,22 @@ describe('the selection snapshot', () => {
         expect(blocks).toEqual([{ type: 'divider' }]);
     });
 
+    it('reports a selected unknown block by its type alone, never the stored data it keeps', () => {
+        const editor = editorWith(plugins, [
+            paragraph(text('a')),
+            { type: 'mystery', secret: 'tok', children: [] },
+            paragraph(text('b')),
+        ]);
+        const { view } = editor;
+        view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, 3)));
+
+        const { block, blocks } = editor.api.selection.get();
+
+        expect(block).toEqual({ type: '__rteUnknownBlock' });
+        expect(blocks).toEqual([{ type: '__rteUnknownBlock' }]);
+        expect(JSON.stringify([block, blocks])).not.toContain('tok');
+    });
+
     it('reports the marks typing at a caret would carry', () => {
         const editor = editorWith(plugins, [paragraph(text('plain '), text('bold', { bold: true }))]);
         editor.caretAfter('bo');
