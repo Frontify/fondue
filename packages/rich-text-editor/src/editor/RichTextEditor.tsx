@@ -267,7 +267,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                     // The renderer adds the document and plugin classes itself.
                     <RegistryRenderer value={document} registry={registry} className={styles.content} />
                 ) : (
-                    <div ref={containerRef} />
+                    <div ref={containerRef} className={styles.mount} />
                 )}
             </div>
             {toolbarFloats && toolbar !== null && handle !== null && focusWithin && !isDragging ? (
