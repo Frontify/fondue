@@ -6,7 +6,7 @@ import { undo } from 'prosemirror-history';
 import { NodeSelection } from 'prosemirror-state';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { defineBlock, defineInline, defineMark, type RteBlockNode, type RtePlugin } from '#/core';
+import { defineBlock, defineInline, defineMark, definePlugin, type RteBlockNode, type RtePlugin } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { toEngineDocument } from './documentConversion';
@@ -17,23 +17,27 @@ import { destroyEditors, editorWith, paragraph, text } from './testEditor';
  * method is checked by what it does to the document the host is handed.
  */
 
-const tagPlugin: RtePlugin = {
+const tagPlugin: RtePlugin = definePlugin({
     id: 'tag',
-    inlines: {
-        tag: defineInline<{ name: string }>({
-            toHtml: ({ name }) => ({ tag: 'span', children: name }),
-            parse: [],
-        }),
+    content: {
+        inlines: {
+            tag: defineInline<{ name: string }>({
+                toHtml: ({ name }) => ({ tag: 'span', children: name }),
+                parse: [],
+            }),
+        },
     },
-};
+});
 
 /** A void block of the spec's own: the shipped ones need options or are not in `defaultPlugins`. */
-const dividerPlugin: RtePlugin = {
+const dividerPlugin: RtePlugin = definePlugin({
     id: 'divider',
-    blocks: {
-        divider: defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [{ tag: 'hr' }] }),
+    content: {
+        blocks: {
+            divider: defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [{ tag: 'hr' }] }),
+        },
     },
-};
+});
 
 const plugins: RtePlugin[] = [...defaultPlugins, dividerPlugin, tagPlugin];
 
@@ -216,16 +220,18 @@ describe('marks.toggle', () => {
         const editor = editorWith(
             [
                 ...plugins,
-                {
+                definePlugin({
                     id: 'highlight',
-                    marks: {
-                        highlight: defineMark<{ color: string }>({
-                            defaults: { color: 'yellow' },
-                            toHtml: () => ({ tag: 'mark', children: true }),
-                            parse: [],
-                        }),
+                    content: {
+                        marks: {
+                            highlight: defineMark<{ color: string }>({
+                                defaults: { color: 'yellow' },
+                                toHtml: () => ({ tag: 'mark', children: true }),
+                                parse: [],
+                            }),
+                        },
                     },
-                },
+                }),
             ],
             [paragraph(text('note'))],
         );
@@ -509,16 +515,18 @@ describe('insert', () => {
         const editor = editorWith(
             [
                 ...plugins,
-                {
+                definePlugin({
                     id: 'chip',
-                    inlines: {
-                        chip: defineInline<{ label: string }>({
-                            defaults: { label: 'new' },
-                            toHtml: ({ label }) => ({ tag: 'span', children: label }),
-                            parse: [],
-                        }),
+                    content: {
+                        inlines: {
+                            chip: defineInline<{ label: string }>({
+                                defaults: { label: 'new' },
+                                toHtml: ({ label }) => ({ tag: 'span', children: label }),
+                                parse: [],
+                            }),
+                        },
                     },
-                },
+                }),
             ],
             [paragraph(text('ab'))],
         );

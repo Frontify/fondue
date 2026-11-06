@@ -614,9 +614,9 @@ export const CommentBox: Story = {
                         value={doc}
                         onChange={setDoc}
                         plugins={[
-                            boldPlugin(),
-                            italicPlugin(),
-                            linkPlugin(),
+                            boldPlugin,
+                            italicPlugin,
+                            linkPlugin,
                             mentionPlugin({
                                 items: MENTIONABLE,
                                 href: profileHref,
@@ -734,7 +734,7 @@ export const TwoEditors: Story = {
                 </div>
                 <div className={LAYOUT}>
                     <div className={FRAME}>
-                        <RichTextEditor value={boldDoc} onChange={setBoldDoc} plugins={[boldPlugin()]} />
+                        <RichTextEditor value={boldDoc} onChange={setBoldDoc} plugins={[boldPlugin]} />
                     </div>
                     <pre className={JSON_PANEL}>{JSON.stringify(boldDoc, null, 2)}</pre>
                 </div>

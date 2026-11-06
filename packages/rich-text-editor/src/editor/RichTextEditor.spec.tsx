@@ -14,6 +14,7 @@ import {
     boldPlugin,
     checkListPlugin,
     defaultPlugins,
+    definePlugin,
     linkPlugin,
     mentionPlugin,
     RichTextEditor,
@@ -123,7 +124,7 @@ const childrenOf = (doc: RteDocument | null, index = 0): unknown[] => {
     return block && 'children' in block ? block.children : [];
 };
 
-const checkListPlugins = [checkListPlugin()];
+const checkListPlugins = [checkListPlugin];
 
 const toDo: RteDocument = {
     version: 1,
@@ -514,7 +515,10 @@ describe('a page of editors', () => {
 
 describe('the editable element', () => {
     it("follows a plugin's content class when the plugins change", () => {
-        const columns = (className: string) => [...defaultPlugins, { id: 'columns', contentClassName: className }];
+        const columns = (className: string) => [
+            ...defaultPlugins,
+            definePlugin({ id: 'columns', content: { contentClassName: className } }),
+        ];
         const { container, rerender, ready } = mount(() => <RichTextEditor plugins={columns('two')} />);
         ready();
         expect(editableIn(container).classList.contains('two')).toBe(true);
@@ -648,14 +652,14 @@ describe('the toolbar', () => {
             </button>
         );
     };
-    const statefulPlugin: RtePlugin = { id: 'stateful', toolbarItem: ClickCounter };
+    const statefulPlugin: RtePlugin = definePlugin({ id: 'stateful', toolbar: [{ render: ClickCounter }] });
 
     /** A control using hooks of other kinds, so a shifted hook order would show. */
     const OtherHooks = (): ReactNode => {
         const [label] = useState(() => 'other');
         return <span>{label}</span>;
     };
-    const otherPlugin: RtePlugin = { id: 'other', toolbarItem: OtherHooks };
+    const otherPlugin: RtePlugin = definePlugin({ id: 'other', toolbar: [{ render: OtherHooks }] });
 
     const clickCount = (container: HTMLElement): string | null | undefined =>
         container.querySelector('[data-testid="clicks"]')?.textContent;
@@ -713,7 +717,7 @@ describe('the toolbar', () => {
 });
 
 describe('the toolbar from the keyboard', () => {
-    const plugins = [boldPlugin(), alignPlugin(), linkPlugin()];
+    const plugins = [boldPlugin, alignPlugin, linkPlugin];
 
     const toolbarIn = (container: HTMLElement): HTMLElement => {
         const toolbar = container.querySelector<HTMLElement>('[role="toolbar"]');
@@ -926,7 +930,7 @@ describe('content no mounted plugin knows', () => {
         } as unknown as RteDocument;
 
         const { container, ready, stored } = mount((onChange) => (
-            <RichTextEditor value={value} onChange={onChange} plugins={[boldPlugin()]} />
+            <RichTextEditor value={value} onChange={onChange} plugins={[boldPlugin]} />
         ));
         ready();
         const placeholder = container.querySelector('[data-rte-unknown]');
@@ -949,7 +953,7 @@ describe('onBlur', () => {
         const onBlur = vi.fn<(doc: RteDocument) => void>();
 
         const { container, ready } = mount(() => (
-            <RichTextEditor value={paragraph('text')} onBlur={onBlur} plugins={[boldPlugin()]} />
+            <RichTextEditor value={paragraph('text')} onBlur={onBlur} plugins={[boldPlugin]} />
         ));
         ready();
         const focus = (element: Element | null): void => {
@@ -1138,7 +1142,7 @@ describe('exported links', () => {
                     { type: 'paragraph', children: [{ text: 'good', link: { href: 'https://example.com' } }] },
                 ],
             },
-            { plugins: [linkPlugin()] },
+            { plugins: [linkPlugin] },
         );
 
         expect(html).not.toContain('javascript:');

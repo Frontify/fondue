@@ -6,7 +6,7 @@ import { TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { defineInline, type EditorControlApi, type RteBlockNode, type RtePlugin } from '#/core';
+import { defineInline, definePlugin, type EditorControlApi, type RteBlockNode, type RtePlugin } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
@@ -341,15 +341,17 @@ describe('a character hotkey during IME composition', () => {
 });
 
 describe('a mark shortcut around content that is more than plain text', () => {
-    const tagPlugin: RtePlugin = {
+    const tagPlugin: RtePlugin = definePlugin({
         id: 'tag',
-        inlines: {
-            tag: defineInline<{ name: string }>({
-                toHtml: ({ name }) => ({ tag: 'span', children: name }),
-                parse: [],
-            }),
+        content: {
+            inlines: {
+                tag: defineInline<{ name: string }>({
+                    toHtml: ({ name }) => ({ tag: 'span', children: name }),
+                    parse: [],
+                }),
+            },
         },
-    };
+    });
 
     it('keeps an inline element inside it', () => {
         const editor = editorWith(

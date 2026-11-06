@@ -8,7 +8,7 @@ import { typographyPlugin } from './Typography';
 
 describe('typographyPlugin', () => {
     it('adds typing rules and nothing else: no document types, no toolbar', () => {
-        const registry = buildPluginRegistry([typographyPlugin()]);
+        const registry = buildPluginRegistry([typographyPlugin]);
 
         expect(registry.inputRules.length).toBeGreaterThan(0);
         expect(registry.inputRules.every((rule) => rule.kind === 'text')).toBe(true);
@@ -17,8 +17,8 @@ describe('typographyPlugin', () => {
     });
 
     it('declares each shortcut once', () => {
-        const matches = (typographyPlugin().inputRules ?? []).map((rule) =>
-            rule.kind === 'text' ? String(rule.match) : rule.kind,
+        const matches = (typographyPlugin.inputRules ?? []).map((rule) =>
+            'kind' in rule && rule.kind === 'text' ? String(rule.match) : 'kind' in rule ? rule.kind : 'delimiter',
         );
 
         expect(new Set(matches).size).toBe(matches.length);

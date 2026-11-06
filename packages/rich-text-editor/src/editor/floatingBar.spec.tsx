@@ -6,7 +6,7 @@ import { act, type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { columnBreakPlugin, defaultPlugins, RichTextEditor, type RteDocument } from '../index';
+import { columnBreakPlugin, defaultPlugins, definePlugin, RichTextEditor, type RteDocument } from '../index';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -167,7 +167,7 @@ describe('the floating bar', () => {
     it('draws no bar when there is nothing to put in it', () => {
         const editor = mount((onChange) => (
             <RichTextEditor
-                plugins={[{ id: 'quiet', toolbarItem: () => null, floatingToolbar: 'hidden' }]}
+                plugins={[definePlugin({ id: 'quiet', toolbar: [{ render: () => null, floating: 'hidden' }] })]}
                 toolbarPlacement="floating"
                 onChange={onChange}
             />

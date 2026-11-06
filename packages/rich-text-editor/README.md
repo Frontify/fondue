@@ -8,8 +8,35 @@ import { defaultPlugins, RichTextEditor, RichTextRenderer } from '@frontify/fond
 import '@frontify/fondue-rich-text-editor/styles';
 
 <RichTextEditor plugins={defaultPlugins} value={doc} onChange={setDoc} />
-<RichTextRenderer plugins={defaultPlugins} value={doc} />
+<RichTextRenderer value={doc} />
 ```
+
+The renderer needs no editing code, so it reads only each feature's content, not its plugin.
+With no `plugins` it uses `defaultContent`. Pass your own content, or your plugins, when the
+document holds more than the defaults.
+
+## Writing a plugin
+
+A feature has two parts. Its content (`defineContent`) says what exists: blocks, marks and
+inlines, and how each one is written as HTML and read back. Its plugin (`definePlugin`) adds
+the editing on top: toolbar buttons, editing views, keys and typing rules. Keep the content in a
+file of its own so a page that only shows documents never loads the editing code.
+
+```tsx
+export const highlightContent = defineContent({
+    marks: { highlight: defineMark({ tag: 'mark' }) },
+});
+
+export const highlightPlugin = definePlugin({
+    content: highlightContent,
+    toolbar: [{ icon: IconHighlight, shortcut: 'Mod-h' }],
+});
+
+<RichTextEditor plugins={[...defaultPlugins, highlightPlugin]} />
+<RichTextRenderer plugins={[...defaultContent, highlightContent]} value={doc} />
+```
+
+A plugin with options is a function that returns `definePlugin(...)`, like `mentionPlugin({ items })`.
 
 `@frontify/fondue-components`, `@frontify/fondue-icons` and `@frontify/fondue-tokens` are peer dependencies:
 the host installs them beside this package and loads `@frontify/fondue-tokens/styles` and
@@ -23,7 +50,7 @@ Layers import inward only; `oxlint.config.ts` enforces it.
 src/
 ├── core/            The contract: document types, RtePlugin, the registry. Imports nothing else.
 ├── plugins/         One folder per feature (Bold, Link, List, …). Each imports only core and plugins/shared.
-├── renderer/        Readonly view and HTML export, both from each plugin's `toHtml`.
+├── renderer/        Readonly view and HTML export, both from each feature's content (`toHtml`).
 ├── editor/          The editing shell.
 │   ├── RichTextEditor.tsx   The component a host mounts.
 │   ├── port.ts              The seam between the shell and an engine.

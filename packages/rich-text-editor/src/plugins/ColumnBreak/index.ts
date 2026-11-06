@@ -1,3 +1,4 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { columnBreakPlugin, type ColumnBreakBlock, type ColumnBreakPluginOptions } from './ColumnBreak';
+export { columnBreakPlugin } from './ColumnBreak';
+export { type ColumnBreakBlock, type ColumnBreakPluginOptions, columnBreakContent } from './content';

@@ -1,17 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// What a plugin's `toolbarItem` is handed, composed from the control API so it holds for any engine.
+// What a toolbar entry's `render` is handed, composed from the control API so it holds for any engine.
 
 import {
     type EditorControlApi,
     type OwnType,
-    PARAGRAPH,
     type RteSelectionSnapshot,
     type SelectedNode,
     type ToolbarItemProps,
+    toggleOwn,
 } from '#/core';
 
-/** `own` is what the plugin acts on, resolved by the registry (`ownTypeOf`). */
+/** `own` is what the entry acts on, resolved by the registry (`ownTypeOf`). */
 export const toolbarItemProps = (
     own: OwnType,
     api: EditorControlApi,
@@ -20,28 +20,7 @@ export const toolbarItemProps = (
     const selectedNode = selectedNodeOf(own, api, selection);
     const isActive = own.kind === 'mark' ? own.type in selection.marks : selectedNode !== null;
 
-    const toggle = (value?: Record<string, unknown>): void => {
-        switch (own.kind) {
-            case 'mark':
-                api.marks.toggle(own.type, value);
-                break;
-            case 'list':
-                api.lists.toggle(own.type);
-                break;
-            case 'textBlock':
-                api.blocks.setType(isActive ? PARAGRAPH : own.type, value);
-                break;
-            case 'voidBlock':
-            case 'inline':
-                api.insert(own.type, value);
-                break;
-            // A block holding other blocks is not something a selection turns
-            // into, so there is nothing to toggle.
-            case 'container':
-            case 'none':
-                break;
-        }
-    };
+    const toggle = (value?: Record<string, unknown>): void => toggleOwn(own, api, selection, value);
 
     return {
         api,

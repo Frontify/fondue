@@ -7,19 +7,20 @@ import {
     defineInline,
     defineMark,
     type EditorControlApi,
+    onlyTypeOf,
     ownTypeOf,
     PARAGRAPH,
-    type RtePlugin,
+    type RteContent,
     type RteSelectionSnapshot,
 } from '#/core';
 
 import { toolbarItemProps } from './toolbarItem';
 
 /**
- * What a plugin's toolbar item is handed, composed from the control API alone.
+ * What a toolbar entry's `render` is handed, composed from the control API alone.
  * A small fake editor stands in for the real one: it keeps a selection snapshot
  * and changes it the way the commands would, so each test presses a control and
- * then reads what the control shows afterwards — the outcome, not which
+ * then reads what the control shows afterwards: the outcome, not which
  * command ran.
  */
 
@@ -33,6 +34,9 @@ const snapshot = (overrides: Partial<RteSelectionSnapshot> = {}): RteSelectionSn
     marks: {},
     ...overrides,
 });
+
+/** A content, and the type its toolbar entry toggles when the content declares several. */
+type Subject = { content: RteContent; type?: string };
 
 const LIST_ITEM = 'listItem';
 
@@ -103,87 +107,96 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
 
     return {
         api,
-        /** What the plugin's toolbar item is handed right now. */
-        props: (plugin: RtePlugin) => toolbarItemProps(ownTypeOf(plugin), api, api.selection.get()),
+        /** What the entry toggling `type` (default: the content's only type) is handed right now. */
+        props: ({ content, type }: Subject) =>
+            toolbarItemProps(ownTypeOf(content, type ?? onlyTypeOf(content)), api, api.selection.get()),
         inserted,
         openEditor: () => openEditor,
     };
 };
 
-const markPlugin: RtePlugin = {
-    id: 'link',
-    marks: {
-        link: defineMark<{ href: string }>({
-            toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
-            parse: [],
-        }),
+const markPlugin: Subject = {
+    content: {
+        marks: {
+            link: defineMark<{ href: string }>({
+                toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
+                parse: [],
+            }),
+        },
     },
 };
 
-const listPlugin: RtePlugin = {
-    id: 'bullets',
-    blocks: {
-        bulletList: defineBlock({ content: { items: LIST_ITEM }, toHtml: () => ({ tag: 'ul' }), parse: [] }),
-        [LIST_ITEM]: defineBlock({ content: { blocks: [PARAGRAPH] }, toHtml: () => ({ tag: 'li' }), parse: [] }),
+const listPlugin: Subject = {
+    content: {
+        blocks: {
+            bulletList: defineBlock({ content: { items: LIST_ITEM }, toHtml: () => ({ tag: 'ul' }), parse: [] }),
+            [LIST_ITEM]: defineBlock({ content: { blocks: [PARAGRAPH] }, toHtml: () => ({ tag: 'li' }), parse: [] }),
+        },
+    },
+    type: 'bulletList',
+};
+
+const containerPlugin: Subject = {
+    content: {
+        blocks: {
+            callout: defineBlock({ content: { blocks: [PARAGRAPH] }, toHtml: () => ({ tag: 'aside' }), parse: [] }),
+        },
     },
 };
 
-const containerPlugin: RtePlugin = {
-    id: 'callout',
-    blocks: {
-        callout: defineBlock({ content: { blocks: [PARAGRAPH] }, toHtml: () => ({ tag: 'aside' }), parse: [] }),
+const textBlockPlugin: Subject = {
+    content: {
+        blocks: {
+            quote: defineBlock({ content: 'text', toHtml: () => ({ tag: 'blockquote' }), parse: [] }),
+        },
     },
 };
 
-const textBlockPlugin: RtePlugin = {
-    id: 'quote',
-    blocks: {
-        quote: defineBlock({ content: 'text', toHtml: () => ({ tag: 'blockquote' }), parse: [] }),
+const voidBlockPlugin: Subject = {
+    content: {
+        blocks: {
+            divider: defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [] }),
+        },
     },
 };
 
-const voidBlockPlugin: RtePlugin = {
-    id: 'divider',
-    blocks: {
-        divider: defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [] }),
+const inlinePlugin: Subject = {
+    content: {
+        inlines: {
+            mention: defineInline<{ id: string }>({ toHtml: ({ id }) => ({ tag: 'span', children: id }), parse: [] }),
+        },
     },
 };
 
-const inlinePlugin: RtePlugin = {
-    id: 'mention',
-    inlines: {
-        mention: defineInline<{ id: string }>({ toHtml: ({ id }) => ({ tag: 'span', children: id }), parse: [] }),
-    },
-};
-
-const attributePlugin: RtePlugin = {
-    id: 'align',
-    blockAttributes: { align: { style: (value) => ({ 'text-align': value }) } },
+const attributePlugin: Subject = {
+    content: { blockAttributes: { align: { style: (value) => ({ 'text-align': value }) } } },
 };
 
 const LINK = { href: 'https://example.com' };
 
-describe('what a plugin acts on', () => {
-    it('is its first mark, ahead of any block or inline it declares', () => {
-        expect(ownTypeOf({ ...inlinePlugin, ...textBlockPlugin, ...markPlugin })).toEqual({
-            kind: 'mark',
-            type: 'link',
-        });
+describe('what a toolbar entry acts on', () => {
+    it('is the type it names, whichever kind of node that is', () => {
+        const content: RteContent = {
+            ...inlinePlugin.content,
+            blocks: { ...textBlockPlugin.content.blocks, ...voidBlockPlugin.content.blocks },
+            marks: markPlugin.content.marks,
+        };
+
+        expect(ownTypeOf(content, 'link')).toEqual({ kind: 'mark', type: 'link' });
+        expect(ownTypeOf(content, 'quote')).toEqual({ kind: 'textBlock', type: 'quote' });
+        expect(ownTypeOf(content, 'divider')).toEqual({ kind: 'voidBlock', type: 'divider' });
+        expect(ownTypeOf(content, 'mention')).toEqual({ kind: 'inline', type: 'mention' });
     });
 
-    it('is its first block when it declares no mark, by what that block holds', () => {
-        expect(ownTypeOf(listPlugin)).toEqual({ kind: 'list', type: 'bulletList' });
-        expect(ownTypeOf(containerPlugin)).toEqual({ kind: 'container', type: 'callout' });
-        expect(ownTypeOf(textBlockPlugin)).toEqual({ kind: 'textBlock', type: 'quote' });
-        expect(ownTypeOf(voidBlockPlugin)).toEqual({ kind: 'voidBlock', type: 'divider' });
+    it('is a block by what that block holds', () => {
+        expect(ownTypeOf(listPlugin.content, 'bulletList')).toEqual({ kind: 'list', type: 'bulletList' });
+        expect(ownTypeOf(containerPlugin.content, 'callout')).toEqual({ kind: 'container', type: 'callout' });
     });
 
-    it('is its first inline when it declares neither', () => {
-        expect(ownTypeOf(inlinePlugin)).toEqual({ kind: 'inline', type: 'mention' });
-    });
-
-    it('is nothing for a plugin with no type of its own', () => {
-        expect(ownTypeOf(attributePlugin)).toEqual({ kind: 'none' });
+    it('is nothing when it names no type, or one the content does not declare', () => {
+        expect(ownTypeOf(attributePlugin.content, undefined)).toEqual({ kind: 'none' });
+        expect(ownTypeOf(markPlugin.content, 'bold')).toEqual({ kind: 'none' });
+        expect(ownTypeOf(undefined, 'bold')).toEqual({ kind: 'none' });
     });
 });
 
@@ -309,7 +322,7 @@ describe('an inline plugin', () => {
         expect(editor.inserted).toEqual([{ type: 'mention', value: undefined }]);
     });
 
-    it('opens its editor — how a toolbar button hands over to a mention picker', () => {
+    it('opens its editor, how a toolbar button hands over to a mention picker', () => {
         const editor = fakeEditor();
 
         editor.props(inlinePlugin).openEditor();
@@ -325,7 +338,7 @@ describe('an inline plugin', () => {
     });
 });
 
-describe('a plugin with no type of its own', () => {
+describe('an entry with no type of its own', () => {
     it('is never active, has no selected node, and does nothing on toggle or openEditor', () => {
         const editor = fakeEditor();
         const before = editor.api.selection.get();
@@ -345,7 +358,7 @@ describe('a plugin with no type of its own', () => {
         const editor = fakeEditor();
         const selection = editor.api.selection.get();
 
-        const props = toolbarItemProps(ownTypeOf(attributePlugin), editor.api, selection);
+        const props = toolbarItemProps({ kind: 'none' }, editor.api, selection);
 
         expect(props.api).toBe(editor.api);
         expect(props.selection).toBe(selection);

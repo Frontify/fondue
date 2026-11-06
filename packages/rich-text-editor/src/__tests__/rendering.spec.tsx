@@ -10,6 +10,7 @@ import {
     columnBreakPlugin,
     defaultPlugins,
     defineMark,
+    definePlugin,
     type RteDocument,
     type RteDocumentWith,
     RichTextRenderer,
@@ -57,18 +58,20 @@ const paragraph = (
 
 /** A highlight whose readonly view is a component of its own. */
 type HighlightMark = { highlight?: true };
-const highlightPlugin: RtePlugin = {
+const highlightPlugin: RtePlugin = definePlugin({
     id: 'highlight',
-    marks: {
-        highlight: defineMark({
-            toHtml: () => ({ tag: 'mark', children: true }),
-            parse: [{ tag: 'mark' }],
-            render: {
-                component: ({ children }) => <span data-highlight-component="">{children}</span>,
-            },
-        }),
+    content: {
+        marks: {
+            highlight: defineMark({
+                toHtml: () => ({ tag: 'mark', children: true }),
+                parse: [{ tag: 'mark' }],
+                render: {
+                    component: ({ children }) => <span data-highlight-component="">{children}</span>,
+                },
+            }),
+        },
     },
-};
+});
 const highlighted: RteDocumentWith<{ mark: HighlightMark }> = {
     version: 1,
     blocks: [{ type: 'paragraph', children: [{ text: 'bright', highlight: true }] }],

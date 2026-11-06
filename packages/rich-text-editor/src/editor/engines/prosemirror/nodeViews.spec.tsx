@@ -13,9 +13,11 @@ import {
     defineBlock,
     defineInline,
     defineMark,
+    definePlugin,
     PARAGRAPH,
     type RteDocumentOf,
     type EditorControlApi,
+    type EditProps,
     type RtePlugin,
 } from '#/core';
 import { type ViewPortals } from '#/editor/port';
@@ -36,71 +38,77 @@ declare global {
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 /** A mirror of the shipped check list: the engine adapter may not import plugins. */
-const checkList: RtePlugin = {
+const checkList: RtePlugin = definePlugin({
     id: 'check-list',
-    blocks: {
-        checkList: defineBlock({
-            content: { items: 'checkItem' },
-            toHtml: () => ({ tag: 'ul', attrs: { 'data-check-list': '' }, children: true }),
-            parse: [{ tag: 'ul[data-check-list]' }],
-        }),
-        checkItem: defineBlock<{ checked: boolean }>({
-            content: { blocks: [PARAGRAPH, ANY_LIST] },
-            defaults: { checked: false },
-            toHtml: ({ checked }) => ({
-                tag: 'li',
-                attrs: {
-                    'data-checked': String(checked),
-                    class: checked ? 'item done' : 'item',
-                    // Only there while checked, to prove it goes away again.
-                    ...(checked ? { 'data-done': '' } : {}),
-                },
-                children: true,
+    content: {
+        blocks: {
+            checkList: defineBlock({
+                content: { items: 'checkItem' },
+                toHtml: () => ({ tag: 'ul', attrs: { 'data-check-list': '' }, children: true }),
+                parse: [{ tag: 'ul[data-check-list]' }],
             }),
-            parse: [{ tag: 'li[data-checked]' }],
-            render: {
-                edit: ({ value, setValue, children }) => (
-                    <>
-                        <input
-                            type="checkbox"
-                            checked={value.checked}
-                            contentEditable={false}
-                            onChange={() => setValue({ checked: !value.checked })}
-                        />
-                        <span className="label">{children}</span>
-                    </>
-                ),
-            },
-        }),
+            checkItem: defineBlock<{ checked: boolean }>({
+                content: { blocks: [PARAGRAPH, ANY_LIST] },
+                defaults: { checked: false },
+                toHtml: ({ checked }) => ({
+                    tag: 'li',
+                    attrs: {
+                        'data-checked': String(checked),
+                        class: checked ? 'item done' : 'item',
+                        // Only there while checked, to prove it goes away again.
+                        ...(checked ? { 'data-done': '' } : {}),
+                    },
+                    children: true,
+                }),
+                parse: [{ tag: 'li[data-checked]' }],
+            }),
+        },
     },
-};
+    edit: {
+        checkItem: ({ value, setValue, children }: EditProps<{ checked: boolean }>) => (
+            <>
+                <input
+                    type="checkbox"
+                    checked={value.checked}
+                    contentEditable={false}
+                    onChange={() => setValue({ checked: !value.checked })}
+                />
+                <span className="label">{children}</span>
+            </>
+        ),
+    },
+});
 
-const bold: RtePlugin = {
+const bold: RtePlugin = definePlugin({
     id: 'bold',
-    marks: {
-        bold: defineMark({
-            toHtml: () => ({ tag: 'strong', children: true }),
-            parse: [{ tag: 'strong' }],
-        }),
+    content: {
+        marks: {
+            bold: defineMark({
+                toHtml: () => ({ tag: 'strong', children: true }),
+                parse: [{ tag: 'strong' }],
+            }),
+        },
     },
-};
+});
 
 const tagRenders = vi.fn<() => void>();
-const tag: RtePlugin = {
+const tag: RtePlugin = definePlugin({
     id: 'tag',
-    inlines: {
-        tag: defineInline<{ label: string }>({
-            toHtml: ({ label }) => ({ tag: 'span', attrs: { 'data-tag': '' }, children: label }),
-            parse: [{ tag: 'span[data-tag]', value: (element) => ({ label: element.textContent ?? '' }) }],
-            render: {
-                edit: ({ value, isFocused }) => {
-                    tagRenders();
-                    return <span data-focused={String(isFocused)}>{value?.label}</span>;
-                },
-            },
-        }),
+    content: {
+        inlines: {
+            tag: defineInline<{ label: string }>({
+                toHtml: ({ label }) => ({ tag: 'span', attrs: { 'data-tag': '' }, children: label }),
+                parse: [{ tag: 'span[data-tag]', value: (element) => ({ label: element.textContent ?? '' }) }],
+            }),
+        },
     },
-};
+    edit: {
+        tag: ({ value, isFocused }: EditProps<{ label: string }>) => {
+            tagRenders();
+            return <span data-focused={String(isFocused)}>{value?.label}</span>;
+        },
+    },
+});
 
 const plugins = [bold, checkList, tag];
 
@@ -403,22 +411,26 @@ describe('an inline element with editing UI', () => {
 describe('every view with editing UI', () => {
     it('is handed a working api on its very first render', () => {
         const seen: (EditorControlApi | undefined)[] = [];
-        plugins.push({
-            id: 'probe',
-            blocks: {
-                probe: defineBlock({
-                    content: 'text',
-                    toHtml: () => ({ tag: 'div', children: true }),
-                    parse: [],
-                    render: {
-                        edit: ({ api, children }) => {
-                            seen.push(api);
-                            return <>{children}</>;
-                        },
+        plugins.push(
+            definePlugin({
+                id: 'probe',
+                content: {
+                    blocks: {
+                        probe: defineBlock({
+                            content: 'text',
+                            toHtml: () => ({ tag: 'div', children: true }),
+                            parse: [],
+                        }),
                     },
-                }),
-            },
-        });
+                },
+                edit: {
+                    probe: ({ api, children }) => {
+                        seen.push(api);
+                        return <>{children}</>;
+                    },
+                },
+            }),
+        );
         try {
             mount({ version: 1, blocks: [{ type: 'probe', children: [{ text: 'x' }] }] });
         } finally {
@@ -435,16 +447,20 @@ describe('every view with editing UI', () => {
             contexts.push(useContext(ShellContext));
             return null;
         };
-        plugins.push({
-            id: 'probe',
-            inlines: {
-                probe: defineInline({
-                    toHtml: () => ({ tag: 'span' }),
-                    parse: [],
-                    render: { edit: ContextProbe },
-                }),
-            },
-        });
+        plugins.push(
+            definePlugin({
+                id: 'probe',
+                content: {
+                    inlines: {
+                        probe: defineInline({
+                            toHtml: () => ({ tag: 'span' }),
+                            parse: [],
+                        }),
+                    },
+                },
+                edit: { probe: ContextProbe },
+            }),
+        );
         try {
             mount({ version: 1, blocks: [{ type: PARAGRAPH, children: [{ type: 'probe' }] }] });
         } finally {
@@ -467,19 +483,19 @@ describe('every view with editing UI', () => {
 });
 
 describe('a mark with editing UI', () => {
-    const linkLike: RtePlugin = {
+    const linkLike: RtePlugin = definePlugin({
         id: 'anchor',
-        marks: {
-            anchor: defineMark<{ href: string }>({
-                inclusive: false,
-                toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
-                parse: [{ tag: 'a[href]', value: (element) => ({ href: element.getAttribute('href') ?? '' }) }],
-                render: {
-                    edit: ({ value, children }) => <a href={value.href}>{children}</a>,
-                },
-            }),
+        content: {
+            marks: {
+                anchor: defineMark<{ href: string }>({
+                    inclusive: false,
+                    toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
+                    parse: [{ tag: 'a[href]', value: (element) => ({ href: element.getAttribute('href') ?? '' }) }],
+                }),
+            },
         },
-    };
+        edit: { anchor: ({ value, children }: EditProps<{ href: string }>) => <a href={value.href}>{children}</a> },
+    });
 
     it('takes in text the browser typed beside its content rather than dropping it', async () => {
         plugins.push(linkLike);

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin, type RteInputRule } from '#/core';
+import { definePlugin, type RteInputRule } from '#/core';
 
 type Replacement = readonly [match: string | RegExp, replace: string];
 
@@ -75,7 +75,7 @@ const toRule = ([match, replace]: Replacement): RteInputRule => ({ kind: 'text',
  * becomes `©`, `1/2` becomes `½`. Backspace right after takes one back. Text in
  * inline code is left alone. No toolbar and no document types: only typing rules.
  */
-export const typographyPlugin = (): RtePlugin => ({
+export const typographyPlugin = definePlugin({
     id: 'typography',
     inputRules: [...PUNCTUATION, ...ARROWS, ...LEGAL, ...SUBSCRIPTS, ...SUPERSCRIPTS, ...FRACTIONS].map(toRule),
 });

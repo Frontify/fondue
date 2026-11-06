@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { linkPlugin } from './Link';
 
-const link = linkPlugin().marks?.link;
+const link = linkPlugin.content?.marks?.link;
 
 describe('the link mark', () => {
     it('writes a safe target', () => {

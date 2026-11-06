@@ -27,9 +27,10 @@ import { underlinePlugin } from './Underline';
 // picker, Link's flyout).
 
 /**
- * The built-in plugins that need no configuration, in toolbar order — what
- * `RichTextEditor` and `RichTextRenderer` mount when given no `plugins`. Pass a
- * subset, or spread it into a list of your own to add more.
+ * The built-in plugins that need no configuration, in toolbar order. What
+ * `RichTextEditor` mounts when given no `plugins` (the renderer reads
+ * `defaultContent`, their content, instead). Pass a subset, or spread it into
+ * a list of your own to add more.
  *
  * Left out on purpose, because they need arguments or change how the editor
  * behaves: `mentionPlugin` (needs the people to mention), `columnBreakPlugin`
@@ -39,25 +40,25 @@ import { underlinePlugin } from './Underline';
  */
 export const defaultPlugins: readonly RtePlugin[] = Object.freeze([
     textStylePlugin(),
-    boldPlugin(),
-    italicPlugin(),
-    underlinePlugin(),
-    strikethroughPlugin(),
-    codePlugin(),
-    subscriptPlugin(),
-    superscriptPlugin(),
-    fontColorPlugin(),
-    linkPlugin(),
-    alignPlugin(),
-    bulletListPlugin(),
-    numberedListPlugin(),
-    checkListPlugin(),
-    quotePlugin(),
-    resetFormattingPlugin(),
+    boldPlugin,
+    italicPlugin,
+    underlinePlugin,
+    strikethroughPlugin,
+    codePlugin,
+    subscriptPlugin,
+    superscriptPlugin,
+    fontColorPlugin,
+    linkPlugin,
+    alignPlugin,
+    bulletListPlugin,
+    numberedListPlugin,
+    checkListPlugin,
+    quotePlugin,
+    resetFormattingPlugin,
     // Default in the old editor too; it adds no node, only text.
     emojiPlugin(),
     // No toolbar of its own: a keybinding.
-    softBreakPlugin(),
+    softBreakPlugin,
 ]);
 
 export { emojiPlugin } from './Emoji';

@@ -26,7 +26,7 @@ const typed = (value: string, plugins: readonly RtePlugin[]): RteBlockNode[] | n
 const press = (view: EditorView, key: string): boolean =>
     view.someProp('handleKeyDown', (handle) => handle(view, new KeyboardEvent('keydown', { key }))) === true;
 
-const withTypography = [...defaultPlugins, typographyPlugin()];
+const withTypography = [...defaultPlugins, typographyPlugin];
 
 afterEach(destroyEditors);
 
