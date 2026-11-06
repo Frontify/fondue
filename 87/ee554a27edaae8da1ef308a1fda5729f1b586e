@@ -1,0 +1,19 @@
+.changeset/dependabot-vulnerabilities.md
+  s_cbd792e58dc90b::t_00c5ac75039c6d 1-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "87ee554a27edaae8da1ef308a1fda5729f1b586e",
+  "prompts": {},
+  "sessions": {
+    "s_cbd792e58dc90b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8e3eff00-4f5a-497f-ada2-2a2f7dab1adb",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

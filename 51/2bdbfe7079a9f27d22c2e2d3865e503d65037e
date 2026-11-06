@@ -1,0 +1,23 @@
+packages/components/src/components/Button/Button.stories.tsx
+  f146f7f56c5896d6 79-85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.19",
+  "base_commit_sha": "512bdbfe7079a9f27d22c2e2d3865e503d65037e",
+  "prompts": {
+    "f146f7f56c5896d6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "db0de262-404e-432f-9972-934fe3c73b5d",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>",
+      "messages": [],
+      "total_additions": 13,
+      "total_deletions": 6,
+      "accepted_lines": 7,
+      "overriden_lines": 0
+    }
+  }
+}
