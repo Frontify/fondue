@@ -245,7 +245,7 @@ const createBlockApi = (
                 // Unchanged attributes are skipped so a no-op adds no undo step, and
                 // one step per attribute lets undo leave a host's other changes alone.
                 for (const [name, value] of Object.entries(attributes)) {
-                    if (name in node.attrs && (node.attrs[name] ?? null) !== (value ?? null)) {
+                    if (name in node.attrs && node.attrs[name] !== value) {
                         transaction.setNodeAttribute(pos, name, value);
                     }
                 }
