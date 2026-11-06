@@ -4,21 +4,31 @@ import {
     type CSSProperties,
     type KeyboardEvent,
     type MouseEvent,
+    type MutableRefObject,
     type ReactNode,
     useEffect,
     useId,
     useMemo,
     useReducer,
     useRef,
+    useState,
 } from 'react';
 
-import { buildPluginRegistry, emptyDocument, type RteBlockNode, type RteDocumentOf, type RtePlugin } from '#/core';
+import {
+    buildPluginRegistry,
+    emptyDocument,
+    type PluginRegistry,
+    type RteBlockNode,
+    type RteDocumentOf,
+    type RtePlugin,
+} from '#/core';
 import { RegistryRenderer } from '#/renderer';
 import documentStyles from '#/renderer/document.module.scss';
 
 import { FloatingToolbar } from './components/FloatingToolbar';
 import { SlashMenu } from './components/SlashMenu';
 import { Toolbar, type ToolbarPlacement } from './components/Toolbar';
+import { EditorErrorBoundary, EditorFallback } from './EditorErrorBoundary';
 import { commandsOf, turnIntoCommands } from './helpers/blockCommands';
 import { useEditorHandle } from './hooks/useEditorHandle';
 import { useFocusWithin } from './hooks/useFocusWithin';
@@ -89,9 +99,9 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     /** The id of an element describing the editor further — help text, an error. */
     'aria-describedby'?: string;
     /**
-     * The words the editor's own UI says — its default name, the toolbar's
-     * name, the "Turn into" and `/` menus — for a host that translates them.
-     * Each one left out stays English.
+     * The words the editor's own UI says (its default name, the toolbar's
+     * name, the "Turn into" and `/` menus, the message and button shown when
+     * it crashes) for a host that translates them. Each one left out stays English.
      */
     labels?: Partial<RichTextEditorLabels>;
     /**
@@ -101,12 +111,137 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * fields, a mention being typed) is still inside.
      */
     onBlur?: (value: RteDocumentOf<TBlock>) => void;
+    /**
+     * The editor crashed: something in it threw while rendering or mounting (a
+     * toolbar item, a plugin's view, the engine). It now shows a message, a
+     * way to try again and, when it can, its content read-only. Handed the
+     * error, for the host to report; `onBlur` does not fire for a crash.
+     * Fires for every crash, including one after Try again, and once until
+     * Try again for the read-only view shown after a crash when that throws
+     * too (never in a readonly editor, whose own view was the one that threw);
+     * not for errors in event handlers, such as a key press or a paste, which
+     * React does not route here.
+     */
+    onError?: (error: Error) => void;
 };
 
 export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     value,
-    onChange,
     plugins = [],
+    labels: hostLabelOverrides,
+    onError,
+    ...shellProps
+}: EditorShellProps<TBlock>): ReactNode => {
+    // What the editor last showed: its own edits and the host documents it
+    // applied, so an uncontrolled editor keeps its content across readonly
+    // toggles and remounts, and a crash can show it. A `value` always wins.
+    // A ref, not state: keeping it must not re-render on every keystroke.
+    // It lives out here so it outlasts a crashed shell.
+    const ownDocumentRef = useRef<RteDocumentOf>(value ?? emptyDocument());
+    const document = value ?? ownDocumentRef.current;
+
+    // Hosts usually pass an inline object; what it says is what matters.
+    const labels = useLabels(hostLabelOverrides);
+    const registry = useMemo(() => buildPluginRegistry(plugins), [plugins]);
+
+    // A new key mounts the boundary and the shell afresh.
+    const [attempt, retry] = useReducer((count: number) => count + 1, 0);
+    // The host's `value` when Try again was pressed: until it passes another, the editor mounts what the fallback showed.
+    const [retriedValue, setRetriedValue] = useState<{ value: RteDocumentOf | undefined } | null>(null);
+    let keepsOwnDocument = retriedValue !== null;
+    if (retriedValue !== null && retriedValue.value !== value) {
+        setRetriedValue(null);
+        keepsOwnDocument = false;
+    }
+
+    // The fallback retries its view on every new document, which a host may pass on every render.
+    const fallbackReportedRef = useRef(false);
+    const onFallbackCatch = (error: Error): void => {
+        // A readonly editor's view is the one that crashed, already reported.
+        if (shellProps.readonly === true || fallbackReportedRef.current) {
+            return;
+        }
+        fallbackReportedRef.current = true;
+        onError?.(error);
+    };
+
+    // Whether focus is in the editor's UI, so a fallback takes it only when the crash took it away.
+    const focusWithinRef = useRef(false);
+
+    const onRetry = (hadFocus: boolean): void => {
+        // The Retry button goes with the fallback; what replaces it inherits the focus it held.
+        focusWithinRef.current = hadFocus;
+        fallbackReportedRef.current = false;
+        setRetriedValue({ value });
+        retry();
+    };
+    // The fallback keeps the host's name, as the readonly view does.
+    const { hostLabels, isNamed } = hostLabelsOf({
+        ariaLabel: shellProps['aria-label'],
+        ariaLabelledBy: shellProps['aria-labelledby'],
+        ariaDescribedBy: shellProps['aria-describedby'],
+    });
+    let fallbackGroupAttributes: Record<string, string> = {};
+    if (isNamed) {
+        fallbackGroupAttributes = { role: 'group', ...hostLabels };
+    }
+    let shellDocument = document;
+    if (keepsOwnDocument) {
+        shellDocument = ownDocumentRef.current;
+    }
+
+    return (
+        <EditorErrorBoundary
+            key={attempt}
+            onCatch={onError}
+            fallback={
+                <EditorFallback
+                    value={value}
+                    ownDocumentRef={ownDocumentRef}
+                    registry={registry}
+                    labels={labels}
+                    onRetry={onRetry}
+                    focusWithinRef={focusWithinRef}
+                    groupAttributes={fallbackGroupAttributes}
+                    onCatch={onFallbackCatch}
+                />
+            }
+        >
+            <EditorShell
+                {...shellProps}
+                // The Retry button that had focus is gone with the fallback.
+                focusOnMount={attempt > 0}
+                focusWithinRef={focusWithinRef}
+                document={shellDocument}
+                ownDocumentRef={ownDocumentRef}
+                registry={registry}
+                labels={labels}
+            />
+        </EditorErrorBoundary>
+    );
+};
+
+type ShellProps<TBlock extends RteBlockNode> = Omit<EditorShellProps<TBlock>, 'value' | 'plugins' | 'labels'> & {
+    /** The document to show: the host's `value`, else what the editor last reported. */
+    document: RteDocumentOf;
+    /** Kept up to date with what the editor shows, for the fallback a crash puts in its place. */
+    ownDocumentRef: MutableRefObject<RteDocumentOf>;
+    registry: PluginRegistry;
+    labels: RichTextEditorLabels;
+    /** Take focus once the editor has mounted, as after Retry. */
+    focusOnMount: boolean;
+    /** Kept up to date with whether focus is in the editor, for the fallback a crash puts in its place. */
+    focusWithinRef: MutableRefObject<boolean>;
+};
+
+const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
+    document,
+    ownDocumentRef,
+    registry,
+    labels,
+    focusOnMount,
+    focusWithinRef,
+    onChange,
     toolbarPlacement = 'top',
     readonly: readOnly = false,
     showEditor = true,
@@ -114,19 +249,8 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,
     'aria-describedby': ariaDescribedBy,
-    labels: hostLabelOverrides,
     onBlur,
-}: EditorShellProps<TBlock>): ReactNode => {
-    // What the editor last reported, so an uncontrolled editor keeps its
-    // content across readonly toggles and remounts. A `value` always wins.
-    // A ref, not state: keeping it must not re-render on every keystroke.
-    const ownDocumentRef = useRef<RteDocumentOf | null>(null);
-    ownDocumentRef.current ??= value ?? emptyDocument();
-    const document = value ?? ownDocumentRef.current;
-
-    // Hosts usually pass an inline object; what it says is what matters.
-    const labels = useLabels(hostLabelOverrides);
-    const registry = useMemo(() => buildPluginRegistry(plugins), [plugins]);
+}: ShellProps<TBlock>): ReactNode => {
     const commands = useMemo(() => commandsOf(registry, labels.text), [registry, labels.text]);
 
     const editableId = useId();
@@ -157,8 +281,34 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
             ownDocumentRef.current = doc;
             onChange?.(doc as RteDocumentOf<TBlock>);
         },
+        onDocApplied: (doc) => {
+            ownDocumentRef.current = doc;
+        },
         enabled: !readOnly,
     });
+    // The readonly view has no engine to report what it shows.
+    useEffect(() => {
+        if (readOnly) {
+            ownDocumentRef.current = document;
+        }
+    }, [readOnly, document, ownDocumentRef]);
+
+    // A pending focus request is spent once, never claiming focus when editing is turned on later.
+    const focusPendingRef = useRef(focusOnMount && !readOnly);
+    const readonlyViewRef = useRef<HTMLDivElement | null>(null);
+    // A readonly retry has no text to focus, so the view takes the focus the pressed Retry held.
+    const [focusReadonlyView] = useState(() => focusOnMount && readOnly && focusWithinRef.current);
+    useEffect(() => {
+        if (focusReadonlyView) {
+            readonlyViewRef.current?.focus();
+        }
+    }, [focusReadonlyView]);
+    useEffect(() => {
+        if (focusPendingRef.current && handle !== null) {
+            focusPendingRef.current = false;
+            handle.api.focus();
+        }
+    }, [handle]);
 
     const { focusWithin, focusProps } = useFocusWithin();
     // Blur as the host hears it: focus leaving the whole editor — text,
@@ -167,6 +317,10 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     useEffect(() => {
         if (hadFocusRef.current && !focusWithin && handle !== null) {
             onBlur?.(handle.document() as RteDocumentOf<TBlock>);
+        }
+        // Changes only: the mount must not overwrite the focus a pressed Retry handed over.
+        if (hadFocusRef.current !== focusWithin) {
+            focusWithinRef.current = focusWithin;
         }
         hadFocusRef.current = focusWithin;
         // Only the change of focus is the event; the callback is read when it happens.
@@ -261,6 +415,9 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                 // editor still applies, so a labelled editor keeps its name
                 // when it turns readonly. No default: it reads as text.
                 {...(readOnly && isNamed ? { role: 'group', ...hostLabels } : {})}
+                ref={readonlyViewRef}
+                // Focusable by script only, to take a pressed Retry's focus.
+                tabIndex={focusReadonlyView ? -1 : undefined}
             >
                 {toolbarFloats ? null : toolbar}
                 {readOnly ? (

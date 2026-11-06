@@ -27,6 +27,8 @@ export type MountOptions = {
     attributes: Readonly<Record<string, string>>;
     /** The document changed through editing. */
     onDocChange: (doc: RteDocumentOf) => void;
+    /** The editor now shows this document from the host: the initial one, or one `setDoc` took rather than ignored as its own. */
+    onDocApplied: (doc: RteDocumentOf) => void;
     /** The editor state moved: any transaction, including a caret move. */
     onStateChange: () => void;
     viewPortals: ViewPortals;
