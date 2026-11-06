@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export {
-    bulletListPlugin,
-    numberedListPlugin,
+    bulletListContent,
+    numberedListContent,
     type BulletListBlock,
     type ListItemBlock,
     type NumberedListBlock,
-} from './List';
+} from './content';
+export { bulletListPlugin, numberedListPlugin } from './List';
