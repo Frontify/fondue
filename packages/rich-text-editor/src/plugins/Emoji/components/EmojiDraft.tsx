@@ -177,7 +177,8 @@ export const EmojiDraft = ({
                                           id={optionId(index)}
                                           role="option"
                                           aria-selected={index === activeIndex}
-                                          aria-label={item.name}
+                                          // The shortcode too: it is what the option shows, so what a voice user says.
+                                          aria-label={`${item.name} ${TRIGGER}${item.shortcodes[0]}${TRIGGER}`}
                                           // Keep focus in the input: blurring would cancel before the click lands.
                                           onMouseDown={(event) => event.preventDefault()}
                                           onClick={() => finish(() => onChoose(item))}

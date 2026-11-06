@@ -20,11 +20,14 @@ export const FloatingToolbar = ({
     handle,
     editorState,
     editableRef,
+    label,
     children,
 }: {
     handle: EditorHandle;
     editorState: EditorStateStore;
     editableRef: RefObject<HTMLElement | null>;
+    /** The bar's accessible name: the Flyout makes it a dialog, which needs one. */
+    label: string;
     children: ReactNode;
 }): ReactNode => {
     const anchor = useSelectionAnchor({ handle, editorState, editableRef });
@@ -38,6 +41,7 @@ export const FloatingToolbar = ({
             <FlyoutAnchor virtualRef={anchor} />
             <Flyout.Content
                 ref={contentRef}
+                aria-label={label}
                 side="top"
                 align="center"
                 padding="none"

@@ -53,7 +53,8 @@
 .custom2 {
     @include preset;
 
-    color: var(--color-secondary-default);
+    // The muted tone that still reaches 4.5:1 on inline code's background.
+    color: var(--color-container-secondary-on-secondary-container-variant);
     font-size: var(--typography-font-size-medium);
     font-style: italic;
 }
@@ -76,6 +77,7 @@
 .imageCaption {
     @include preset;
 
-    color: var(--color-secondary-default);
+    // The muted tone that still reaches 4.5:1 on inline code's background.
+    color: var(--color-container-secondary-on-secondary-container-variant);
     font-size: var(--typography-font-size-x-small);
 }
