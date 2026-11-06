@@ -74,20 +74,27 @@ describe('dropLevelFeature', () => {
         expect(received.dataTransfer).toBe(event.dataTransfer);
     });
 
+    it('clamps a cursor over the leading space to the row edge', () => {
+        const { props, onDragOver } = getWrappedProps('ltr', ltrChevron);
+        props.onDragOver(makeEvent(110));
+        const [received] = onDragOver.mock.calls[0] as [DragEvent<HTMLElement>];
+        expect(received.clientX).toBe(100);
+    });
+
     it('measures from the inline start and subtracts the leading space in RTL on dragover', () => {
         const { props, onDragOver } = getWrappedProps('rtl', rtlChevron);
-        const event = makeEvent(480);
+        const event = makeEvent(440);
         props.onDragOver(event);
         const [received] = onDragOver.mock.calls[0] as [DragEvent<HTMLElement>];
-        expect(received.clientX).toBe(92);
+        expect(received.clientX).toBe(132);
         expect(received.clientY).toBe(event.clientY);
         expect(received.dataTransfer).toBe(event.dataTransfer);
     });
 
     it('measures from the inline start and subtracts the leading space in RTL on drop', () => {
         const { props, onDrop } = getWrappedProps('rtl', rtlChevron);
-        props.onDrop(makeEvent(480));
-        expect(onDrop).toHaveBeenCalledWith(expect.objectContaining({ clientX: 92 }));
+        props.onDrop(makeEvent(440));
+        expect(onDrop).toHaveBeenCalledWith(expect.objectContaining({ clientX: 132 }));
     });
 
     it('forwards stopPropagation and preventDefault to the original event', () => {

@@ -41,7 +41,8 @@ const toIndentClientX = (
         distance = rowRect.right - event.clientX;
     }
     const prefix = getLeadingSpace(row, rowRect, isRtl, level);
-    const indentClientX = rowRect.left + distance - prefix;
+    // Below zero, headless-tree would outdent a top-level row and refuse drops into a last top-level folder
+    const indentClientX = rowRect.left + Math.max(0, distance - prefix);
     if (indentClientX === event.clientX) {
         return event;
     }
