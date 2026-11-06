@@ -61,12 +61,10 @@ export const ColorFlyout = ({
     };
 
     const apply = (color: RgbaColor | undefined): void => {
-        // Toggling over an existing colour would only remove it, so clear first.
-        if ('fontColor' in selection.marks) {
+        if (color === undefined) {
             api.marks.toggle('fontColor');
-        }
-        if (color !== undefined) {
-            api.marks.toggle('fontColor', { color: toCssColor(color) });
+        } else {
+            api.marks.set('fontColor', { color: toCssColor(color) });
         }
         close();
     };

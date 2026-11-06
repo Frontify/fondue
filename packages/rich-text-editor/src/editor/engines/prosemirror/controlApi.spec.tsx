@@ -249,6 +249,52 @@ describe('marks.toggle', () => {
     });
 });
 
+describe('marks.set', () => {
+    const RED = { fontColor: { color: '#c5221f' } };
+    const BLUE = { fontColor: { color: '#1a73e8' } };
+
+    it('replaces the value the selected text carries', () => {
+        const editor = editorWith(plugins, [paragraph(text('red', RED), text(' plain'))]);
+        editor.selectBetween('red', 'plain');
+
+        editor.api.marks.set('fontColor', BLUE.fontColor);
+
+        expect(editor.stored()).toEqual([paragraph(text('red plain', BLUE))]);
+    });
+
+    it('is one undo step', () => {
+        const editor = editorWith(plugins, [paragraph(text('red', RED))]);
+        editor.select('red');
+
+        editor.api.marks.set('fontColor', BLUE.fontColor);
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual([paragraph(text('red', RED))]);
+    });
+
+    it('makes what is typed next at a caret carry the value', () => {
+        const editor = editorWith(plugins, [paragraph(text('ab'))]);
+        editor.caretAfter('a');
+
+        editor.api.marks.set('fontColor', BLUE.fontColor);
+        editor.api.insertText('X');
+
+        expect(editor.stored()).toEqual([paragraph(text('a'), text('X', BLUE), text('b'))]);
+    });
+
+    it('ignores a mark no plugin provides, and says so while developing', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const editor = editorWith(plugins, [paragraph(text('text'))]);
+        editor.select('text');
+
+        editor.api.marks.set('unknown');
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining('marks.set("unknown")'));
+        warn.mockRestore();
+    });
+});
+
 describe('marks.removeAll', () => {
     it('strips every mark from the selected text', () => {
         const editor = editorWith(plugins, [
