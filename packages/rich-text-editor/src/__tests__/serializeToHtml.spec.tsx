@@ -59,3 +59,28 @@ describe('a document serialized to HTML', () => {
         warn.mockRestore();
     });
 });
+
+describe('a numbered list serialized to HTML', () => {
+    const numbered = (start: number): RteDocument => ({
+        version: 1,
+        blocks: [
+            {
+                type: 'numberedList',
+                start,
+                children: [{ type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'An item.' }] }] }],
+            },
+        ],
+    });
+
+    it('writes where it starts, unless that is 1 or no whole number', () => {
+        expect(serializeToHtml(numbered(3), { wrap: false })).toContain('start="3"');
+        expect(serializeToHtml(numbered(1), { wrap: false })).not.toContain('start=');
+        expect(serializeToHtml(numbered(2.5), { wrap: false })).not.toContain('start=');
+    });
+
+    it('makes room for the digits a first number adds past two', () => {
+        expect(serializeToHtml(numbered(99), { wrap: false })).not.toContain('--rte-list-extra-digits');
+        expect(serializeToHtml(numbered(250), { wrap: false })).toContain('style="--rte-list-extra-digits: 1;"');
+        expect(serializeToHtml(numbered(10_000), { wrap: false })).toContain('--rte-list-extra-digits: 3;');
+    });
+});

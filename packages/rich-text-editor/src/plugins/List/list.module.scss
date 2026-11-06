@@ -25,9 +25,13 @@
     }
 }
 
-// Two digits and a full stop (`10.`) need more room than a bullet.
+// Two digits and a full stop (`10.`) need more room than a bullet. A list
+// that starts at 100 or more sets how many digits its first number adds; it
+// is reset here so a list nested inside does not inherit it.
 .numberedList {
-    @include list(2em);
+    --rte-list-extra-digits: 0;
+
+    @include list(calc(2em + var(--rte-list-extra-digits) * 1ch));
 
     list-style-type: decimal;
 

@@ -2,7 +2,15 @@
 
 import { IconListBullet, IconListNumbers, type FondueIcon } from '@frontify/fondue-icons';
 
-import { ANY_LIST, PARAGRAPH, type RteBlockNode, defineBlock, type RtePlugin } from '#/core';
+import {
+    ANY_LIST,
+    type BlockDefinition,
+    PARAGRAPH,
+    type RteBlockNode,
+    defineBlock,
+    type RtePlugin,
+    type StyleMap,
+} from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -28,8 +36,12 @@ export type BulletListBlock<TItem extends RteBlockNode = RteBlockNode> = {
 
 export type NumberedListBlock<TItem extends RteBlockNode = RteBlockNode> = {
     type: 'numberedList';
+    /** The first item's number, absent when it is 1. */
+    start?: number;
     children: TItem[];
 };
+
+type NumberedListValue = { start: number | null };
 
 /**
  * The item both list plugins declare. One object rather than one each: two
@@ -43,27 +55,61 @@ const listItem = defineBlock({
     parse: [{ tag: 'li' }],
 });
 
-/** Shared declaration of the two list plugins, which differ only in type, tag, icon, marker style and shortcut. */
+/** The bulleted list, its marker per nesting level hanging off its class. */
+const bulletList = defineBlock({
+    content: { items: 'listItem' },
+    toHtml: () => ({ tag: 'ul', attrs: { class: styles.bulletList }, children: true }),
+    parse: [{ tag: 'ul' }],
+});
+
+/** The numbered list, which stores where its numbering starts only when that is not 1. */
+const numberedList = defineBlock<NumberedListValue>({
+    content: { items: 'listItem' },
+    defaults: { start: null },
+    toHtml: ({ start }) => {
+        let first: string | undefined;
+        let style: StyleMap | undefined;
+        if (Number.isInteger(start) && start !== 1) {
+            first = String(start);
+        }
+        // The stylesheet leaves room for two digits; a list that starts past them widens for its first number.
+        if (first !== undefined && first.length > 2) {
+            style = { '--rte-list-extra-digits': String(first.length - 2) };
+        }
+        return { tag: 'ol', attrs: { class: styles.numberedList, start: first, style }, children: true };
+    },
+    parse: [
+        {
+            tag: 'ol',
+            value: (element) => {
+                const start = Number.parseInt(element.getAttribute('start') ?? '', 10);
+                if (Number.isNaN(start) || start === 1) {
+                    return {};
+                }
+                return { start };
+            },
+        },
+    ],
+});
+
+/** Shared declaration of the two list plugins, which differ only in type, block, icon and shortcut. */
 const listPlugin = ({
     id,
     type,
-    tag,
+    block,
     icon: Icon,
     title,
     keywords,
-    className,
     markdown,
     hotkey,
 }: {
     id: string;
     type: 'bulletList' | 'numberedList';
-    tag: 'ul' | 'ol';
+    block: BlockDefinition;
     icon: FondueIcon;
     title: string;
     /** Words the `/` menu also finds it by. */
     keywords: readonly string[];
-    /** The list's own class; the marker per nesting level hangs off it. */
-    className: string | undefined;
     /** What starts this list when typed at the beginning of a line. */
     markdown: readonly string[];
     /** The keyboard shortcut that toggles it, as other editors bind it. */
@@ -71,11 +117,7 @@ const listPlugin = ({
 }): RtePlugin => ({
     id,
     blocks: {
-        [type]: defineBlock({
-            content: { items: 'listItem' },
-            toHtml: () => ({ tag, attrs: { class: className }, children: true }),
-            parse: [{ tag }],
-        }),
+        [type]: block,
         listItem,
     },
     // Active anywhere inside the list (the caret sits in a paragraph inside an
@@ -105,11 +147,10 @@ export const bulletListPlugin = (): RtePlugin =>
     listPlugin({
         id: 'bullet-list',
         type: 'bulletList',
-        tag: 'ul',
+        block: bulletList,
         icon: IconListBullet,
         title: 'Bulleted list',
         keywords: ['ul', 'unordered', 'bullets'],
-        className: styles.bulletList,
         markdown: ['- ', '* '],
         hotkey: 'Mod-Shift-8',
     });
@@ -119,11 +160,10 @@ export const numberedListPlugin = (): RtePlugin =>
     listPlugin({
         id: 'numbered-list',
         type: 'numberedList',
-        tag: 'ol',
+        block: numberedList,
         icon: IconListNumbers,
         title: 'Numbered list',
         keywords: ['ol', 'ordered', 'numbers'],
-        className: styles.numberedList,
         markdown: ['1. ', '1) '],
         hotkey: 'Mod-Shift-7',
     });

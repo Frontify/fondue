@@ -14,6 +14,8 @@ const RULE_LIST_STYLE = /(?:^|;)\s*--mso-list-rule:\s*(l\d+)\s+level(\d+)(?:\s+(
 const MARKER_STYLE = /(?:^|;)\s*(?:--)?mso-list:\s*ignore/i;
 /** Dot-separated numbers (`1.`, `1.1.`, `1.1`) or letters with a delimiter (`iv)`, `a.`) are numbered markers; a glyph (`·`, `o`, `§`) is a bullet. */
 const NUMBERED_MARKER = /^\(?(?:\d+(?:\.\d+)*[.)]?|[a-z]+[.)])$/i;
+/** The numbers in a marker; the last is the item's own, the 3 of `3.`, `1.3.` or `(3)`. */
+const MARKER_NUMBERS = /\d+/g;
 /** Word has nine list levels, which also keeps hostile input from nesting without end. */
 const MAX_LEVEL = 9;
 
@@ -61,7 +63,14 @@ export const keepOfficeListStyles = (html: string): string => {
 const isOffice = (dom: HTMLElement): boolean =>
     dom.getElementsByTagName('o:p').length > 0 || dom.querySelector('[class*="Mso"], [style*="mso-"]') !== null;
 
-type ListParagraph = { paragraph: HTMLElement; list: string; level: number; ordered: boolean };
+type ListParagraph = {
+    paragraph: HTMLElement;
+    list: string;
+    level: number;
+    ordered: boolean;
+    /** The item's number as Word wrote it, when its marker has one. */
+    number: string | undefined;
+};
 
 type OpenList = { element: HTMLElement; level: number; ordered: boolean; list: string };
 
@@ -124,11 +133,18 @@ const readListParagraph = (element: Node): ListParagraph | undefined => {
         return undefined;
     }
     const marker = (markerSpans(element)[0]?.textContent ?? '').trim();
+    const ordered = NUMBERED_MARKER.test(marker);
+    let number: string | undefined;
+    if (ordered) {
+        const numbers = marker.match(MARKER_NUMBERS);
+        number = numbers?.[numbers.length - 1];
+    }
     return {
         paragraph: element,
         list: `${declared[1] ?? ''} ${declared[3] ?? ''}`,
         level: Math.min(Number(declared[2]), MAX_LEVEL),
-        ordered: NUMBERED_MARKER.test(marker),
+        ordered,
+        number,
     };
 };
 
@@ -159,20 +175,25 @@ const closeListsFor = (open: OpenList[], { list, level, ordered }: ListParagraph
     }
 };
 
-const createList = (document: Document, { list, level, ordered }: ListParagraph): OpenList => {
+const createList = (document: Document, { list, level, ordered, number }: ListParagraph): OpenList => {
     let tag = 'ul';
     if (ordered) {
         tag = 'ol';
     }
-    return { element: document.createElement(tag), level, ordered, list };
+    const element = document.createElement(tag);
+    if (number !== undefined) {
+        element.setAttribute('start', number);
+    }
+    return { element, level, ordered, list };
 };
 
 /**
  * Rebuilds one run of list paragraphs as nested lists where it stood. A level
  * below the one before opens one list inside the last item, so no empty item
  * holds it. A bullet run continues across Word's list instances, a numbered
- * one restarts with each, as Word numbers them. A numbered list that another
- * paragraph interrupts starts again at 1: the format stores no start number.
+ * one restarts with each, as Word numbers them. A numbered list starts at the
+ * number Word wrote for its first item, so one that resumes after another
+ * block, or a copy that begins partway through, keeps Word's numbering.
  */
 const rebuildRun = (run: readonly ListParagraph[]): void => {
     const first = run[0];
