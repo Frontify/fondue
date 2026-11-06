@@ -44,4 +44,4 @@ export {
     type PluginRegistry,
     type ToolbarEntry,
 } from './registry';
-export { ANY_LIST, DOCUMENT_VERSION, emptyDocument, PARAGRAPH } from './vocabulary';
+export { ANY_LIST, DOCUMENT_VERSION, emptyDocument, newerVersionOf, PARAGRAPH } from './vocabulary';
