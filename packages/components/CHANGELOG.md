@@ -1,5 +1,16 @@
 # @frontify/fondue-components
 
+## 36.0.3
+
+### Patch Changes
+
+- [#2965](https://github.com/Frontify/fondue/pull/2965) [`e610067`](https://github.com/Frontify/fondue/commit/e610067b4878e90f675aabb4a61333002bd99105) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tabs): call `onActiveTabChange` once per tab change. `@radix-ui/react-tabs` 1.2.1 focuses the trigger on mouse down, which with automatic activation requested the tab twice, so controlled Tabs called the handler twice per click. See https://github.com/radix-ui/primitives/pull/4060 and https://github.com/Frontify/web-app/pull/18284.
+
+- [#2975](https://github.com/Frontify/fondue/pull/2975) [`66a5800`](https://github.com/Frontify/fondue/commit/66a5800ac077b4bf23f943e845b68cec8b7a7c3a) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(TextInput, Textarea): remove the browser's default border from the inner `<input>` and `<textarea>`. Hosts without a CSS reset showed a native border inside the component frame, for example in the ColorPicker hex and opacity fields.
+
+- Updated dependencies []:
+  - @frontify/fondue-tokens@5.2.0
+
 ## 36.0.2
 
 ### Patch Changes
