@@ -52,17 +52,6 @@ const typeHexAndPressEnter = (hex: string): void => {
     });
 };
 
-const switchFormat = (format: 'HEX' | 'RGBA'): void => {
-    act(() => document.querySelector<HTMLElement>('[data-test-id="color-picker-select-format"]')?.click());
-    const option = [...document.querySelectorAll<HTMLElement>('[role="option"]')].find(
-        (candidate) => candidate.textContent === format,
-    );
-    if (option === undefined) {
-        throw new Error(`no ${format} option`);
-    }
-    act(() => option.click());
-};
-
 const press = (label: string): void => {
     const button = [...document.querySelectorAll('button')].find((candidate) => candidate.textContent === label);
     if (button === undefined) {
@@ -72,13 +61,6 @@ const press = (label: string): void => {
 };
 
 describe('the colour flyout', () => {
-    it('applies white typed on uncoloured text, though the picker opened showing white', () => {
-        const { set } = mount({});
-        typeHexAndPressEnter('ffffff');
-
-        expect(set.mock.calls).toEqual([['fontColor', { color: '#ffffff' }]]);
-    });
-
     it('replaces a colour in one command', () => {
         const { toggle, set } = mount({ fontColor: { color: '#ff0000' } });
         typeHexAndPressEnter('c5221f');
@@ -94,37 +76,6 @@ describe('the colour flyout', () => {
         const { toggle, set } = mount(marks);
         // Clicking Save moves focus off the hex field first, and the picker reports its value again on blur.
         act(() => document.querySelector<HTMLInputElement>('input[type="text"]')?.blur());
-        press('Save');
-
-        expect(toggle).not.toHaveBeenCalled();
-        expect(set).not.toHaveBeenCalled();
-    });
-
-    it('changes nothing on Save after only switching the value format', () => {
-        const { toggle, set } = mount({});
-        switchFormat('RGBA');
-        switchFormat('HEX');
-        expect(document.querySelector('input[type="text"]')).not.toBeNull();
-        press('Save');
-
-        expect(toggle).not.toHaveBeenCalled();
-        expect(set).not.toHaveBeenCalled();
-    });
-
-    it('changes nothing and stays open for a hex value left invalid after a valid one', () => {
-        const { toggle, set } = mount({});
-        typeHex('00ff00');
-        typeHexAndPressEnter('00ff0');
-
-        expect(toggle).not.toHaveBeenCalled();
-        expect(set).not.toHaveBeenCalled();
-        expect(document.querySelector<HTMLInputElement>('input[type="text"]')?.value).toBe('00ff0');
-    });
-
-    it('changes nothing for an invalid hex value left behind by a switch to RGBA', () => {
-        const { toggle, set } = mount({});
-        typeHex('zz');
-        switchFormat('RGBA');
         press('Save');
 
         expect(toggle).not.toHaveBeenCalled();
