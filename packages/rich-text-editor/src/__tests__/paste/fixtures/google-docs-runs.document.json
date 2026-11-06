@@ -1,0 +1,55 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "Normal "
+                },
+                {
+                    "text": "bold semibold ",
+                    "bold": true
+                },
+                {
+                    "text": "medium "
+                },
+                {
+                    "text": "extrabold italic",
+                    "bold": true
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "under",
+                    "underline": true
+                },
+                {
+                    "text": " "
+                },
+                {
+                    "text": "struck",
+                    "strikethrough": true
+                },
+                {
+                    "text": " "
+                },
+                {
+                    "text": "both",
+                    "underline": true
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "H2O and E=mc2"
+                }
+            ]
+        }
+    ]
+}
