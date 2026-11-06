@@ -434,7 +434,14 @@ class ReactBlockView extends ReactNodeView<Record<string, unknown>> {
     protected store(value: Record<string, unknown>): void {
         const pos = this.pos();
         if (pos !== undefined) {
-            this.view.dispatch(this.view.state.tr.setNodeMarkup(pos, undefined, { ...this.node.attrs, ...value }));
+            // One step per changed attribute, so undo reverts only what this view changed.
+            const transaction = this.view.state.tr;
+            for (const [name, attribute] of Object.entries(value)) {
+                if (name in this.node.attrs && this.node.attrs[name] !== attribute) {
+                    transaction.setNodeAttribute(pos, name, attribute);
+                }
+            }
+            this.view.dispatch(transaction);
         }
     }
 
@@ -528,7 +535,7 @@ class ReactInlineView extends ReactNodeView<Record<string, unknown> | null> {
     protected store(value: Record<string, unknown>): void {
         const pos = this.pos();
         if (pos !== undefined) {
-            this.view.dispatch(this.view.state.tr.setNodeMarkup(pos, undefined, { [VALUE_ATTR]: value }));
+            this.view.dispatch(this.view.state.tr.setNodeAttribute(pos, VALUE_ATTR, value));
         }
     }
 

@@ -242,12 +242,12 @@ const createBlockApi = (
         view.state.doc.nodesBetween(from, to, (node, pos) => {
             if (node.isTextblock) {
                 // Undeclared attributes are ignored, so mixed selections are safe.
-                // Unchanged blocks are skipped so a no-op adds no undo step.
-                const changes = Object.entries(attributes).some(
-                    ([name, value]) => name in node.attrs && (node.attrs[name] ?? null) !== (value ?? null),
-                );
-                if (changes) {
-                    transaction.setNodeMarkup(pos, undefined, { ...node.attrs, ...attributes });
+                // Unchanged attributes are skipped so a no-op adds no undo step, and
+                // one step per attribute lets undo leave a host's other changes alone.
+                for (const [name, value] of Object.entries(attributes)) {
+                    if (name in node.attrs && node.attrs[name] !== value) {
+                        transaction.setNodeAttribute(pos, name, value);
+                    }
                 }
             }
         });

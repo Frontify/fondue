@@ -179,6 +179,48 @@ describe('the document boundary', () => {
                 warn.mockRestore();
             }
         });
+
+        it('is handed out frozen in development, however deep, as the engine holds the same objects', () => {
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            try {
+                const handedOut = toRteDocument(toEngineDocument(structuredClone(withUnknown), schema));
+                const [paragraph, callout, list] = handedOut.blocks as unknown as [
+                    { children: [{ highlight: { color: string } }, { name: string }] },
+                    { children: [{ children: [{ text: string }] }] },
+                    { children: [{ children: [{ rows: unknown[] }] }] },
+                ];
+
+                expect(() => {
+                    paragraph.children[0].highlight.color = 'red';
+                }).toThrow(TypeError);
+                expect(() => {
+                    paragraph.children[1].name = 'smile';
+                }).toThrow(TypeError);
+                expect(() => {
+                    callout.children[0].children[0].text = 'x';
+                }).toThrow(TypeError);
+                expect(() => list.children[0].children[0].rows.push([])).toThrow(TypeError);
+            } finally {
+                warn.mockRestore();
+            }
+        });
+
+        it('is frozen in development under a host object frozen only at its top', () => {
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            try {
+                const video = Object.freeze({ type: 'video', data: { src: 'a.mp4' } });
+                const handedOut = toRteDocument(
+                    toEngineDocument({ version: 1, blocks: [video] } as unknown as RteDocumentOf, schema),
+                );
+                const [block] = handedOut.blocks as unknown as [{ data: { src: string } }];
+
+                expect(() => {
+                    block.data.src = 'b.mp4';
+                }).toThrow(TypeError);
+            } finally {
+                warn.mockRestore();
+            }
+        });
     });
 
     it('drops the empty text run an empty document is written with', () => {
@@ -242,6 +284,44 @@ describe('the document boundary', () => {
 
         expect(echoed.child(1)).toBe(doc.child(1));
         expect(echoed.eq(doc)).toBe(true);
+    });
+
+    it('hands out a document that throws when mutated in development, as handing it back counts as an echo', () => {
+        const handedOut = toRteDocument(toEngineDocument(document, schema));
+
+        expect(() => handedOut.blocks.push({ type: PARAGRAPH, children: [] })).toThrow(TypeError);
+        expect(() => {
+            (handedOut as { version: number }).version = 2;
+        }).toThrow(TypeError);
+    });
+
+    it('does not freeze the document or its blocks in production', () => {
+        vi.stubEnv('NODE_ENV', 'production');
+        try {
+            const handedOut = toRteDocument(toEngineDocument(document, schema));
+
+            expect(Object.isFrozen(handedOut)).toBe(false);
+            expect(Object.isFrozen(handedOut.blocks[0])).toBe(false);
+        } finally {
+            vi.unstubAllEnvs();
+        }
+    });
+
+    it('hands out blocks that throw when mutated in development, as they are shared', () => {
+        const handedOut = toRteDocument(toEngineDocument(document, schema));
+        const block = handedOut.blocks[0] as { align?: string; children: { text?: string }[] };
+
+        expect(() => {
+            block.align = 'right';
+        }).toThrow(TypeError);
+        expect(() => block.children.push({ text: 'x' })).toThrow(TypeError);
+        expect(() => {
+            (block.children[0] as { text: string }).text = 'x';
+        }).toThrow(TypeError);
+        const linked = block.children.find((child) => 'link' in child) as { link: { href: string } };
+        expect(() => {
+            linked.link.href = 'https://example.org';
+        }).toThrow(TypeError);
     });
 });
 
