@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { closeHistory } from 'prosemirror-history';
 import { EditorState, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
@@ -69,6 +70,10 @@ const mount = ({
     // Every document reported to the host: one arriving back, even late and
     // behind newer edits, is the editor's own and never replaces what it holds.
     const emittedDocs = new WeakSet<typeof initialDoc>();
+    // A paste, cut or drop just happened: the next edit starts an undo step of its own.
+    let closeBeforeNextEdit = false;
+    // A feature's paste handler is running: what it dispatches is a paste too, though it carries no `uiEvent`.
+    let inFeaturePaste = false;
 
     // 1. Views with editing UI (blocks, inline elements, link-like marks) follow
     //    the selection, since `isFocused` does. Each state change is offered to
@@ -103,9 +108,20 @@ const mount = ({
         markViews: createMarkViews(registry, api, liveViews, openEditors),
         clipboardSerializer: clipboardSerializer(schema),
         clipboardParser: clipboardParser(schema),
-        handlePaste: (pasteView, event, slice) =>
-            handlePasteByFeatures(registry.pasteHandlers, api)(pasteView, event) ||
-            handlePasteIntoEmptyBlock(pasteView, event, slice),
+        handlePaste: (pasteView, event, slice) => {
+            // The feature's first edit starts the paste's undo step, and the edit after the paste starts another.
+            closeBeforeNextEdit = true;
+            inFeaturePaste = true;
+            try {
+                if (handlePasteByFeatures(registry.pasteHandlers, api)(pasteView, event)) {
+                    closeBeforeNextEdit = true;
+                    return true;
+                }
+            } finally {
+                inFeaturePaste = false;
+            }
+            return handlePasteIntoEmptyBlock(pasteView, event, slice);
+        },
         state: EditorState.create({
             doc: toEngineDocument(initialDoc, schema),
             plugins: [
@@ -126,6 +142,21 @@ const mount = ({
             return false;
         },
         dispatchTransaction(transaction) {
+            // Typing groups into one undo step; a paste, cut or drop, and the first edit after it, stand apart.
+            const uiEvent: unknown = transaction.getMeta('uiEvent');
+            const isTransfer = uiEvent === 'paste' || uiEvent === 'cut' || uiEvent === 'drop';
+            if (isTransfer || (closeBeforeNextEdit && transaction.docChanged)) {
+                closeHistory(transaction);
+            }
+            // History joins only edits it finds adjacent, and a mark change has no range: a shared composition id joins a feature paste's edits.
+            if (inFeaturePaste) {
+                transaction.setMeta('composition', 'rte-paste');
+            }
+            if (isTransfer) {
+                closeBeforeNextEdit = true;
+            } else if (transaction.docChanged) {
+                closeBeforeNextEdit = false;
+            }
             editorView.updateState(editorView.state.apply(transaction));
             repaintViews();
             // Host-originated changes are not reported back to the host.

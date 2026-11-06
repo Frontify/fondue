@@ -1,12 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Node as PmNode, type NodeType as PmNodeType, type Schema } from 'prosemirror-model';
+import { autoJoin } from 'prosemirror-commands';
+import { type Node as PmNode, type NodeType as PmNodeType, type ResolvedPos, type Schema } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem as pmSplitListItem, wrapInList } from 'prosemirror-schema-list';
-import { type Command, type EditorState, type Transaction } from 'prosemirror-state';
+import { type Command, type EditorState, Selection, type Transaction } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry } from '#/core';
 
+import { keepCarriedAttrs } from './controlApi';
 import { mapChildren } from './documentConversion';
 import { warnUnknownType } from './warnings';
 
@@ -18,9 +20,8 @@ import { warnUnknownType } from './warnings';
 
 // Where the caret is
 
-/** The innermost ancestor that is a list of items, with the position it sits at. */
-const findList = (state: EditorState, itemTypeByList: Map<string, string>): { node: PmNode; pos: number } | null => {
-    const { $from } = state.selection;
+/** The innermost ancestor of a position that is a list of items, with the position it sits at. */
+const findList = ($from: ResolvedPos, itemTypeByList: Map<string, string>): { node: PmNode; pos: number } | null => {
     for (let depth = $from.depth; depth > 0; depth--) {
         const node = $from.node(depth);
         if (itemTypeByList.has(node.type.name)) {
@@ -32,10 +33,64 @@ const findList = (state: EditorState, itemTypeByList: Map<string, string>): { no
 
 /** The item type of the innermost list the selection sits in — what the list commands need. */
 const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, schema: Schema): PmNodeType | null => {
-    const list = findList(state, itemTypeByList);
+    const list = findList(state.selection.$from, itemTypeByList);
     const itemName = list ? itemTypeByList.get(list.node.type.name) : undefined;
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
 };
+
+// Splitting
+
+/**
+ * `splitListItem`, except the new item starts from its type's default
+ * attributes (an unchecked to-do, not a copy of the checked one) and its first
+ * text block keeps the attributes every text block carries (alignment).
+ */
+const splitListItem =
+    (registry: PluginRegistry, itemType: PmNodeType): Command =>
+    (state, dispatch) => {
+        const source = state.selection.$from.parent;
+        const { $from: caret } = state.selection;
+        // The first child only: at a later child's start the item above still holds earlier content.
+        const atItemStart = caret.depth >= 2 && caret.parentOffset === 0 && caret.index(-1) === 0;
+        return pmSplitListItem(itemType)(
+            state,
+            dispatch &&
+                ((transaction) => {
+                    const { $from } = transaction.selection;
+                    for (let depth = $from.depth; depth > 0; depth--) {
+                        const item = $from.node(depth);
+                        if (item.type !== itemType) {
+                            continue;
+                        }
+                        const block = item.firstChild;
+                        const caretItemPos = $from.before(depth);
+                        // Split at the very start, the text stays in the caret's item and the empty one above is new.
+                        const previous = transaction.doc.resolve(caretItemPos).nodeBefore;
+                        const newAbove = atItemStart && block !== null && block.content.size > 0 && previous !== null;
+                        let newPos = caretItemPos;
+                        if (newAbove) {
+                            newPos = caretItemPos - previous.nodeSize;
+                        }
+                        const newItem = transaction.doc.nodeAt(newPos);
+                        const defaults = itemType.create().attrs;
+                        if (newItem && !newItem.hasMarkup(itemType, defaults, newItem.marks)) {
+                            transaction.setNodeMarkup(newPos, undefined, defaults);
+                        }
+                        if (!newAbove && block?.isTextblock) {
+                            const carried = {
+                                ...block.attrs,
+                                ...keepCarriedAttrs(registry, block.type, undefined)(source),
+                            };
+                            if (!block.hasMarkup(block.type, carried, block.marks)) {
+                                transaction.setNodeMarkup(caretItemPos + 1, undefined, carried);
+                            }
+                        }
+                        break;
+                    }
+                    dispatch(transaction);
+                }),
+        );
+    };
 
 // The list half of the control API
 
@@ -43,8 +98,9 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
 export const createListApi = (
     getView: () => EditorView,
     schema: Schema,
-    { itemTypeByList }: PluginRegistry,
+    registry: PluginRegistry,
 ): EditorControlApi['lists'] => {
+    const { itemTypeByList } = registry;
     /** Run one of the engine's list commands against the item type in scope. */
     const runListCommand = (command: (itemType: PmNodeType) => Command): boolean => {
         const view = getView();
@@ -54,6 +110,9 @@ export const createListApi = (
         }
         return command(itemType)(view.state, view.dispatch, view);
     };
+    // Same-type lists left side by side join, so numbering carries on; a join keeps only the first list's attributes.
+    const joiningLists = (command: Command): Command =>
+        autoJoin(command, (before, after) => itemTypeByList.has(before.type.name) && before.sameMarkup(after));
 
     return {
         toggle(type) {
@@ -65,28 +124,38 @@ export const createListApi = (
                 return;
             }
             const view = getView();
-            const current = findList(view.state, itemTypeByList);
+            const current = findList(view.state.selection.$from, itemTypeByList);
 
             if (!current) {
-                wrapInList(listType)(view.state, view.dispatch);
+                joiningLists(wrapInList(listType))(view.state, view.dispatch);
             } else if (current.node.type === listType) {
                 runListCommand(liftListItem);
             } else {
-                // One step: a check list holding bullet items (or the reverse)
-                // is invalid content, so converting in two steps would throw.
-                const converted = listType.create(
-                    current.node.attrs,
-                    mapChildren(current.node, (item) =>
-                        item.type === itemType ? item : itemType.create(item.attrs, item.content),
-                    ),
-                );
-                view.dispatch(view.state.tr.replaceWith(current.pos, current.pos + current.node.nodeSize, converted));
+                joiningLists((state, dispatch) => {
+                    // One step: a check list holding bullet items (or the reverse)
+                    // is invalid content, so converting in two steps would throw.
+                    const converted = listType.create(
+                        current.node.attrs,
+                        mapChildren(current.node, (item) =>
+                            item.type === itemType ? item : itemType.create(item.attrs, item.content),
+                        ),
+                    );
+                    const transaction = state.tr.replaceWith(
+                        current.pos,
+                        current.pos + current.node.nodeSize,
+                        converted,
+                    );
+                    // Same structure and size, so the selection's positions still hold; mapped, it would leave the replaced list.
+                    transaction.setSelection(Selection.fromJSON(transaction.doc, state.selection.toJSON()));
+                    dispatch?.(transaction);
+                    return true;
+                })(view.state, view.dispatch);
             }
             view.focus();
         },
         indent: () => runListCommand(sinkListItem),
         outdent: () => runListCommand(liftListItem),
-        split: () => runListCommand(pmSplitListItem),
+        split: () => runListCommand((itemType) => splitListItem(registry, itemType)),
         unwrapAll() {
             const view = getView();
             const { from, to } = view.state.selection;

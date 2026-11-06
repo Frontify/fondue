@@ -1,10 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { baseKeymap, chainCommands, setBlockType } from 'prosemirror-commands';
+import {
+    baseKeymap,
+    chainCommands,
+    createParagraphNear,
+    liftEmptyBlock,
+    newlineInCode,
+    setBlockType,
+    splitBlockAs,
+} from 'prosemirror-commands';
 import { history, redo, undo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
-import { type MarkType as PmMarkType, type Schema } from 'prosemirror-model';
+import {
+    type ContentMatch,
+    type MarkType as PmMarkType,
+    type NodeType as PmNodeType,
+    type Schema,
+} from 'prosemirror-model';
 import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, type Transaction } from 'prosemirror-state';
 
 import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
@@ -23,7 +36,8 @@ import { listKeys } from './lists';
  *    key lists would claim (`blurOnBreak` takes Enter).
  * 3. List keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
  * 4. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`).
- * 5. Baseline keymap, plus Backspace resetting an emptied first heading.
+ * 5. Enter keeping the attributes every text block carries, then the baseline
+ *    keymap, plus Backspace resetting an emptied first heading.
  *
  * Mark input rules build their own transaction instead of calling
  * `api.marks.toggle`, because the input-rule machinery owns undo grouping.
@@ -49,7 +63,7 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         // 4
         ...typingRewrites(registry, schema),
         // 5
-        keymap({ Backspace: resetEmptyFirstBlock }),
+        keymap({ Backspace: resetEmptyFirstBlock, Enter: splitKeepingCarriedAttrs(registry) }),
         keymap(baseKeymap),
     ];
 };
@@ -300,6 +314,61 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
 };
 
 // Baseline
+
+/** The block the baseline's split falls back to: the first allowed text block that needs no attributes. */
+const defaultBlockAt = (match: ContentMatch): PmNodeType | null => {
+    for (let index = 0; index < match.edgeCount; index++) {
+        const { type } = match.edge(index);
+        if (type.isTextblock && !type.hasRequiredAttrs()) {
+            return type;
+        }
+    }
+    return null;
+};
+
+/**
+ * The baseline keymap's Enter, except the new block after the caret carries the
+ * attributes every text block carries (alignment), which a split at the end of
+ * a block would otherwise drop with the block's type.
+ */
+const splitKeepingCarriedAttrs =
+    (registry: PluginRegistry): Command =>
+    (state, dispatch) => {
+        // At the very start of a non-default block the engine retypes the empty block above to the default, dropping its attributes.
+        let splitAtStart = false;
+        return chainCommands(
+            newlineInCode,
+            createParagraphNear,
+            liftEmptyBlock,
+            splitBlockAs((node, atEnd, $from) => {
+                splitAtStart = !atEnd && $from.parentOffset === 0;
+                // Mid-block, the engine's own split copies the block, attributes included.
+                if (!atEnd) {
+                    return null;
+                }
+                const type = defaultBlockAt($from.node(-1).contentMatchAt($from.indexAfter(-1)));
+                if (!type) {
+                    return null;
+                }
+                return { type, attrs: keepCarriedAttrs(registry, type, undefined)(node) };
+            }),
+        )(
+            state,
+            dispatch &&
+                ((transaction) => {
+                    const { $from } = transaction.selection;
+                    const above = transaction.doc.resolve($from.before()).nodeBefore;
+                    if (splitAtStart && above?.isTextblock) {
+                        const carried = keepCarriedAttrs(registry, above.type, undefined)($from.parent);
+                        const attrs = { ...above.attrs, ...carried };
+                        if (!above.hasMarkup(above.type, attrs, above.marks)) {
+                            transaction.setNodeMarkup($from.before() - above.nodeSize, undefined, attrs);
+                        }
+                    }
+                    dispatch(transaction);
+                }),
+        );
+    };
 
 /**
  * Backspace in an emptied block at the very top that is not the default block

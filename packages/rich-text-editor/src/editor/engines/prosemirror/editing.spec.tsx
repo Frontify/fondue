@@ -18,6 +18,7 @@ import {
 } from '#/core';
 
 import { mountEditorForTests } from './editing';
+import { destroyEditors, editorWith, paragraph as paragraphBlock, shipped, text } from './testEditor';
 
 /**
  * The controlled-`value` protocol: a host hands back the document it was given,
@@ -81,6 +82,7 @@ const mount = (
 };
 
 afterEach(() => {
+    destroyEditors();
     for (const live of mounted.splice(0)) {
         live.destroy();
     }
@@ -204,6 +206,132 @@ describe('undo and redo', () => {
 
         redo(view.state, view.dispatch);
         expect(stored()).toEqual(paragraph('more text'));
+    });
+});
+
+describe('undo after a paste', () => {
+    it('takes the typing before, the paste and the typing after back as three steps', () => {
+        const { view, stored } = mount({ version: 1, blocks: [{ type: PARAGRAPH, children: [] }] });
+        const typeText = (value: string): void => {
+            view.dispatch(view.state.tr.insertText(value));
+        };
+        const clipboard = { getData: () => '', preventDefault: () => {} } as unknown as ClipboardEvent;
+        typeText('one');
+        view.pasteText(' pasted', clipboard);
+        typeText(' two');
+
+        undo(view.state, view.dispatch);
+        expect(stored()).toEqual(paragraph('one pasted'));
+
+        undo(view.state, view.dispatch);
+        expect(stored()).toEqual(paragraph('one'));
+
+        undo(view.state, view.dispatch);
+        expect(stored()).toEqual({ version: 1, blocks: [{ type: PARAGRAPH, children: [] }] });
+    });
+
+    it('keeps typing after the paste apart even when the caret moves in between', () => {
+        const { view, stored } = mount({ version: 1, blocks: [{ type: PARAGRAPH, children: [] }] });
+        const clipboard = { getData: () => '', preventDefault: () => {} } as unknown as ClipboardEvent;
+        view.dispatch(view.state.tr.insertText('one'));
+        view.pasteText(' pasted', clipboard);
+        view.dispatch(view.state.tr.setSelection(TextSelection.atEnd(view.state.doc)));
+        view.dispatch(view.state.tr.insertText(' two'));
+
+        undo(view.state, view.dispatch);
+
+        expect(stored()).toEqual(paragraph('one pasted'));
+    });
+});
+
+describe('undo after a cut or a drop', () => {
+    it('takes a cut back as a step of its own', () => {
+        const { view, stored } = mount({ version: 1, blocks: [{ type: PARAGRAPH, children: [] }] });
+        view.dispatch(view.state.tr.insertText('one two'));
+        view.dispatch(view.state.tr.delete(4, 8).setMeta('uiEvent', 'cut'));
+        view.dispatch(view.state.tr.insertText('!'));
+
+        undo(view.state, view.dispatch);
+        expect(stored()).toEqual(paragraph('one'));
+
+        undo(view.state, view.dispatch);
+        expect(stored()).toEqual(paragraph('one two'));
+    });
+
+    it('takes a drop back as a step of its own', () => {
+        const { view, stored } = mount({ version: 1, blocks: [{ type: PARAGRAPH, children: [] }] });
+        view.dispatch(view.state.tr.insertText('one'));
+        view.dispatch(view.state.tr.insertText(' dropped').setMeta('uiEvent', 'drop'));
+        view.dispatch(view.state.tr.insertText(' two'));
+
+        undo(view.state, view.dispatch);
+        expect(stored()).toEqual(paragraph('one dropped'));
+
+        undo(view.state, view.dispatch);
+        expect(stored()).toEqual(paragraph('one'));
+    });
+});
+
+describe('undo after a paste a feature handles', () => {
+    it('takes the typing before, the paste and the typing after back as three steps', () => {
+        const insertsText: RtePlugin = {
+            id: 'inserts',
+            onPaste: ({ text: pasted }, api) => {
+                api.insertText(pasted);
+                return true;
+            },
+        };
+        const editor = editorWith([...shipped(), insertsText], [paragraphBlock()]);
+        const undoOnce = (): void => {
+            undo(editor.view.state, editor.view.dispatch);
+        };
+        editor.type('one');
+        editor.paste(' pasted');
+        editor.type(' two');
+
+        undoOnce();
+        expect(editor.stored()).toEqual([paragraphBlock(text('one pasted'))]);
+
+        undoOnce();
+        expect(editor.stored()).toEqual([paragraphBlock(text('one'))]);
+
+        undoOnce();
+        expect(editor.stored()).toEqual([paragraphBlock()]);
+    });
+});
+
+describe('undo after a paste a feature makes in several edits', () => {
+    it('takes the whole paste back in one step', () => {
+        const insertsTwice: RtePlugin = {
+            id: 'inserts-twice',
+            onPaste: (_paste, api) => {
+                api.insertText('a');
+                api.insertText('b');
+                return true;
+            },
+        };
+        const editor = editorWith([...shipped(), insertsTwice], [paragraphBlock()]);
+        editor.type('one');
+        editor.paste('ignored');
+        editor.type('two');
+
+        undo(editor.view.state, editor.view.dispatch);
+        expect(JSON.stringify(editor.stored())).not.toContain('two');
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual([paragraphBlock(text('one'))]);
+    });
+
+    it('takes back a paste made of mark changes only in one step', () => {
+        const before = [paragraphBlock(text('docs', { link: { href: 'https://old.example' } }))];
+        const editor = editorWith(shipped('link'), before);
+        editor.select('docs');
+
+        editor.paste('https://new.example');
+        expect(JSON.stringify(editor.stored())).toContain('https://new.example');
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual(before);
     });
 });
 

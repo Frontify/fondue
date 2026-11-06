@@ -407,3 +407,268 @@ describe('Enter in a list over a range across items', () => {
         expect(editor.stored()?.[0]?.type).toBe('bulletList');
     });
 });
+
+describe('Enter in a to-do list', () => {
+    const checkList = (...items: { checked: boolean; text: string }[]): RteBlockNode => ({
+        type: 'checkList',
+        children: items.map(({ checked, text: value }) => ({
+            type: 'checkItem',
+            checked,
+            children: [paragraph(text(value))],
+        })),
+    });
+
+    it('at the end of a checked item adds an unchecked one and keeps the first checked', () => {
+        const editor = editorWith(defaultPlugins, [checkList({ checked: true, text: 'done' })]);
+        editor.caretAfter('done');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'checkList',
+                children: [
+                    { type: 'checkItem', checked: true, children: [paragraph(text('done'))] },
+                    { type: 'checkItem', checked: false, children: [paragraph()] },
+                ],
+            },
+        ]);
+    });
+
+    it('in a nested checked item leaves the checked item around it as it was', () => {
+        const nestedItem = (checked: boolean, ...children: RteBlockNode[]) => ({
+            type: 'checkItem',
+            checked,
+            children,
+        });
+        const editor = editorWith(defaultPlugins, [
+            {
+                type: 'checkList',
+                children: [
+                    nestedItem(true, paragraph(text('outer')), checkList({ checked: true, text: 'inner' })),
+                ],
+            } as RteBlockNode,
+        ]);
+        editor.caretAfter('inner');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'checkList',
+                children: [
+                    nestedItem(true, paragraph(text('outer')), {
+                        type: 'checkList',
+                        children: [nestedItem(true, paragraph(text('inner'))), nestedItem(false, paragraph())],
+                    } as RteBlockNode),
+                ],
+            },
+        ]);
+    });
+
+    it('in the middle of a checked item leaves the second half unchecked', () => {
+        const editor = editorWith(defaultPlugins, [checkList({ checked: true, text: 'onetwo' })]);
+        editor.caretAfter('one');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([checkList({ checked: true, text: 'one' }, { checked: false, text: 'two' })]);
+    });
+
+    it('at the very start of a checked item puts an unchecked empty item above and keeps the text checked', () => {
+        const editor = editorWith(defaultPlugins, [checkList({ checked: true, text: 'text' })]);
+        editor.caretBefore('text');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'checkList',
+                children: [
+                    { type: 'checkItem', checked: false, children: [paragraph()] },
+                    { type: 'checkItem', checked: true, children: [paragraph(text('text'))] },
+                ],
+            },
+        ]);
+    });
+
+    it('at the start of a later paragraph of a checked item keeps the first item checked', () => {
+        const editor = editorWith(defaultPlugins, [
+            {
+                type: 'checkList',
+                children: [
+                    { type: 'checkItem', checked: true, children: [paragraph(text('a')), paragraph(text('b'))] },
+                ],
+            },
+        ]);
+        editor.caretBefore('b');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'checkList',
+                children: [
+                    { type: 'checkItem', checked: true, children: [paragraph(text('a')), paragraph()] },
+                    { type: 'checkItem', checked: false, children: [paragraph(text('b'))] },
+                ],
+            },
+        ]);
+    });
+
+    it('at the start of a paragraph after a nested list keeps the first item checked', () => {
+        const nested = { type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('n'))] }] };
+        const editor = editorWith(defaultPlugins, [
+            {
+                type: 'checkList',
+                children: [
+                    {
+                        type: 'checkItem',
+                        checked: true,
+                        children: [paragraph(text('a')), nested, paragraph(text('t'))],
+                    },
+                ],
+            },
+        ]);
+        editor.caretBefore('t');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'checkList',
+                children: [
+                    {
+                        type: 'checkItem',
+                        checked: true,
+                        children: [paragraph(text('a')), nested, paragraph()],
+                    },
+                    { type: 'checkItem', checked: false, children: [paragraph(text('t'))] },
+                ],
+            },
+        ]);
+    });
+
+    it('leaves a bullet list as it was', () => {
+        const editor = editorWith(defaultPlugins, [
+            { type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('one'))] }] },
+        ]);
+        editor.caretAfter('one');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'bulletList',
+                children: [
+                    { type: 'listItem', children: [paragraph(text('one'))] },
+                    { type: 'listItem', children: [paragraph()] },
+                ],
+            },
+        ]);
+    });
+});
+
+describe('Enter in a block with attributes every text block carries', () => {
+    const aligned = (value: string, extra: Record<string, unknown> = {}) => ({
+        type: 'paragraph',
+        align: 'center',
+        children: value === '' ? [] : [text(value)],
+        ...extra,
+    });
+
+    it('at the end of a paragraph gives the new paragraph the same alignment', () => {
+        const editor = editorWith(defaultPlugins, [aligned('one')]);
+        editor.caretAfter('one');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([aligned('one'), aligned('')]);
+    });
+
+    it('in the middle of a paragraph keeps the alignment on both halves', () => {
+        const editor = editorWith(defaultPlugins, [aligned('onetwo')]);
+        editor.caretAfter('one');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([aligned('one'), aligned('two')]);
+    });
+
+    it('over a range across two blocks gives both halves the alignment of the block the text stays in', () => {
+        const editor = editorWith(defaultPlugins, [
+            { type: 'paragraph', align: 'left', children: [text('abc')] },
+            { type: 'paragraph', align: 'center', children: [text('def')] },
+        ]);
+        editor.selectBetween('abc', 'd');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()?.map((block) => (block as { align?: string }).align)).toEqual(['center', 'center']);
+    });
+
+    it('at the end of a heading gives an aligned paragraph', () => {
+        const editor = editorWith(defaultPlugins, [
+            { type: 'textStyle', style: 'heading2', align: 'right', children: [text('Title')] },
+        ]);
+        editor.caretAfter('Title');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([
+            { type: 'textStyle', style: 'heading2', align: 'right', children: [text('Title')] },
+            { type: 'paragraph', align: 'right', children: [] },
+        ]);
+    });
+
+    it('in the middle of a heading gives two headings with the same alignment', () => {
+        const heading = (value: string) => ({
+            type: 'textStyle',
+            style: 'heading2',
+            align: 'right',
+            children: [text(value)],
+        });
+        const editor = editorWith(defaultPlugins, [heading('TitleText')]);
+        editor.caretAfter('Title');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([heading('Title'), heading('Text')]);
+    });
+
+    it('at the start of a heading gives the empty paragraph above the same alignment', () => {
+        const editor = editorWith(defaultPlugins, [
+            { type: 'textStyle', style: 'heading2', align: 'right', children: [text('Title')] },
+        ]);
+        editor.caretBefore('Title');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([
+            { type: 'paragraph', align: 'right', children: [] },
+            { type: 'textStyle', style: 'heading2', align: 'right', children: [text('Title')] },
+        ]);
+    });
+
+    it('at the end of a list item gives the new item an aligned paragraph', () => {
+        const editor = editorWith(defaultPlugins, [
+            {
+                type: 'bulletList',
+                children: [{ type: 'listItem', children: [aligned('one')] }],
+            },
+        ]);
+        editor.caretAfter('one');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'bulletList',
+                children: [
+                    { type: 'listItem', children: [aligned('one')] },
+                    { type: 'listItem', children: [aligned('')] },
+                ],
+            },
+        ]);
+    });
+});
