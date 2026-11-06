@@ -1,88 +1,29 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineMark, type RtePlugin } from '#/core';
+import { definePlugin, type ToolbarItemProps } from '#/core';
 
 import { isSafeHref, toHref } from '../shared/helpers/href';
 
 import { LinkEditor } from './components/LinkEditor';
 import { LinkToolbarButton } from './components/LinkToolbarButton';
+import { linkContent } from './content';
 import { openNewLinkForm } from './helpers/newLinkForms';
-import { type LinkValue } from './helpers/value';
-import styles from './link.module.scss';
 
 /** Add or edit a link, as in most editors. */
 const HOTKEY = 'Mod-k';
 
-/** The value this plugin sets on text nodes. */
-export type LinkMark = {
-    link?: LinkValue;
-};
-
-const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string, string> =>
-    link?.openInNewTab === true ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+const LinkToolbar = (props: ToolbarItemProps) => <LinkToolbarButton {...props} shortcut={HOTKEY} />;
 
 /**
- * A link is a mark: the text stays text, and the target rides along on it.
- *
- * In the editor, `render.edit` draws the anchor around the text and the
- * flyout that hangs off it while the caret is inside — showing the target,
- * editing it, removing the link. The toolbar button (`toolbarItem`) is how a
- * link is made, and Mod-k does what it does.
- *
- * Only web, mail and phone links (and relative ones) are links: anything else
- * pasted in stays plain text, and a stored one is written out without its
- * target, so a `javascript:` URL is never clickable.
+ * Editing a link: the `edit` view draws the anchor around the text and the
+ * flyout that hangs off it while the caret is inside, showing the target,
+ * editing it, removing the link. The toolbar button is how a link is made, and
+ * Mod-k does what it does.
  */
-export const linkPlugin = (): RtePlugin => ({
-    id: 'link',
-    marks: {
-        link: defineMark<LinkValue>({
-            // Outside every other mark, so a partly styled link still renders
-            // as ONE anchor: an element stays open across text runs only while
-            // the marks around it are the same, and a colour or an emphasis
-            // inside would otherwise cut it up.
-            nesting: -2,
-            // Typing at the end of a link does not extend it.
-            inclusive: false,
-
-            /** The link everywhere but while editing: readonly, export, copy. */
-            toHtml: (value) => {
-                // A stored document may hold anything here — `{}`, `true` — so
-                // nothing about its shape is taken on trust.
-                const link = typeof value === 'object' ? (value as Partial<LinkValue> | null) : null;
-                const href = link?.href;
-                return {
-                    tag: 'a',
-                    attrs: {
-                        ...(isSafeHref(href) ? { href } : {}),
-                        class: styles.link,
-                        ...newTabAttrs(link),
-                    },
-                    children: true,
-                };
-            },
-
-            parse: [
-                {
-                    tag: 'a[href]',
-                    value: (element) => {
-                        const href = element.getAttribute('href') ?? '';
-                        return isSafeHref(href)
-                            ? {
-                                  href,
-                                  ...(element.getAttribute('target') === '_blank'
-                                      ? { openInNewTab: true as const }
-                                      : {}),
-                              }
-                            : null;
-                    },
-                },
-            ],
-
-            render: { edit: LinkEditor },
-        }),
-    },
-    toolbarItem: (props) => <LinkToolbarButton {...props} shortcut={HOTKEY} />,
+export const linkPlugin = definePlugin({
+    content: linkContent,
+    toolbar: [{ render: LinkToolbar }],
+    edit: { link: LinkEditor },
     hotkeys: {
         [HOTKEY]: (api) => {
             if (api.marks.getRun('link') !== null) {
@@ -90,7 +31,7 @@ export const linkPlugin = (): RtePlugin => ({
                 return true;
             }
             // Nothing selected is nothing to link, but the key is still the
-            // editor's — not the browser's search bar.
+            // editor's, not the browser's search bar.
             return api.selection.get().isCollapsed || openNewLinkForm(api);
         },
     },
