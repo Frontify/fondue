@@ -29,6 +29,26 @@ const doc: RteDocument = {
 };
 
 describe('a document serialized to HTML', () => {
+    it('leaves out keys no plugin declares', () => {
+        const withExtras = {
+            version: 1,
+            secret: 'root-extra',
+            blocks: [
+                { type: 'paragraph', secret: 'block-extra', align: 'center', children: [{ text: 'Text' }] },
+                {
+                    type: 'bulletList',
+                    secret: 'list-extra',
+                    children: [{ type: 'listItem', secret: 'item-extra', children: [] }],
+                },
+            ],
+        } as unknown as RteDocument;
+
+        const html = serializeToHtml(withExtras, { plugins: defaultPlugins });
+
+        expect(html).toContain('Text');
+        expect(html).not.toMatch(/extra|secret|__rteExtra/);
+    });
+
     it('carries what the plugins drew, classes and all', () => {
         const html = serializeToHtml(doc, { plugins: defaultPlugins });
 
