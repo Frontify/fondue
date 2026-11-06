@@ -1,3 +1,4 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { subscriptPlugin, type SubscriptMark } from './Subscript';
+export { type SubscriptMark, subscriptContent } from './content';
+export { subscriptPlugin } from './Subscript';
