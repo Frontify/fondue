@@ -9,6 +9,7 @@ import {
     defineBlock,
     defineInline,
     defineMark,
+    definePlugin,
     emptyDocument,
     PARAGRAPH,
     type RteDocumentOf,
@@ -25,63 +26,73 @@ import { buildSchema } from './schema';
  * list that nests.
  */
 const plugins: RtePlugin[] = [
-    {
+    definePlugin({
         id: 'bold',
-        marks: {
-            bold: defineMark({
-                toHtml: () => ({ tag: 'strong', children: true }),
-                parse: [{ tag: 'strong' }],
-            }),
+        content: {
+            marks: {
+                bold: defineMark({
+                    toHtml: () => ({ tag: 'strong', children: true }),
+                    parse: [{ tag: 'strong' }],
+                }),
+            },
         },
-    },
-    {
+    }),
+    definePlugin({
         id: 'link',
-        marks: {
-            link: defineMark<{ href: string }>({
-                toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
-                parse: [{ tag: 'a', value: (element) => ({ href: element.getAttribute('href') ?? '' }) }],
-            }),
+        content: {
+            marks: {
+                link: defineMark<{ href: string }>({
+                    toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
+                    parse: [{ tag: 'a', value: (element) => ({ href: element.getAttribute('href') ?? '' }) }],
+                }),
+            },
         },
-    },
-    {
+    }),
+    definePlugin({
         id: 'heading',
-        blocks: {
-            heading: defineBlock({
-                content: 'text',
-                defaults: { level: 1 },
-                toHtml: () => ({ tag: 'h1', children: true }),
-                parse: [{ tag: 'h1' }],
-            }),
+        content: {
+            blocks: {
+                heading: defineBlock({
+                    content: 'text',
+                    defaults: { level: 1 },
+                    toHtml: () => ({ tag: 'h1', children: true }),
+                    parse: [{ tag: 'h1' }],
+                }),
+            },
         },
-    },
-    {
+    }),
+    definePlugin({
         id: 'mention',
-        inlines: {
-            mention: defineInline<{ id: string }>({
-                toHtml: ({ id }) => ({ tag: 'span', children: id }),
-                parse: [{ tag: 'span', value: (element) => ({ id: element.textContent ?? '' }) }],
-            }),
+        content: {
+            inlines: {
+                mention: defineInline<{ id: string }>({
+                    toHtml: ({ id }) => ({ tag: 'span', children: id }),
+                    parse: [{ tag: 'span', value: (element) => ({ id: element.textContent ?? '' }) }],
+                }),
+            },
         },
-    },
-    {
+    }),
+    definePlugin({
         id: 'list',
-        blocks: {
-            bulletList: defineBlock({
-                content: { items: 'listItem' },
-                toHtml: () => ({ tag: 'ul', children: true }),
-                parse: [{ tag: 'ul' }],
-            }),
-            listItem: defineBlock({
-                content: { blocks: [PARAGRAPH, ANY_LIST] },
-                toHtml: () => ({ tag: 'li', children: true }),
-                parse: [{ tag: 'li' }],
-            }),
+        content: {
+            blocks: {
+                bulletList: defineBlock({
+                    content: { items: 'listItem' },
+                    toHtml: () => ({ tag: 'ul', children: true }),
+                    parse: [{ tag: 'ul' }],
+                }),
+                listItem: defineBlock({
+                    content: { blocks: [PARAGRAPH, ANY_LIST] },
+                    toHtml: () => ({ tag: 'li', children: true }),
+                    parse: [{ tag: 'li' }],
+                }),
+            },
         },
-    },
-    {
+    }),
+    definePlugin({
         id: 'align',
-        blockAttributes: { align: { style: (value) => ({ 'text-align': value }) } },
-    },
+        content: { blockAttributes: { align: { style: (value) => ({ 'text-align': value }) } } },
+    }),
 ];
 
 const schema = buildSchema(buildPluginRegistry(plugins));

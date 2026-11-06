@@ -72,8 +72,14 @@ const noEngineFromShell = (up: string) => ({
 });
 
 const SHELL_OUTER_LAYERS = {
-    group: ['#/plugins', '#/plugins/**', '#/index', '#/documentFormat'],
-    message: 'The editor shell may import core, the renderer, and the port.',
+    group: [
+        '#/plugins',
+        '#/plugins/**',
+        '!#/plugins/shared/ToolbarButton/ToolbarButton',
+        '#/index',
+        '#/documentFormat',
+    ],
+    message: 'The editor shell may import core, the renderer, the port, and the toolbar button.',
 };
 
 const SHELL_ESCAPE_MESSAGE = 'The editor shell reaches other layers through their #/… alias, never a relative path.';

@@ -13,6 +13,7 @@ import {
 } from 'react';
 
 import { type EditorControlApi, type RteBlockCommand, type ToolbarEntry, type ToolbarItemProps } from '#/core';
+import { ToolbarButton } from '#/plugins/shared/ToolbarButton/ToolbarButton';
 
 import { turnIntoCommands } from '../helpers/blockCommands';
 import { toolbarItemProps } from '../helpers/toolbarItem';
@@ -172,11 +173,7 @@ export const Toolbar = ({
         >
             {showTurnInto ? <TurnInto api={api} commands={turnInto} selection={selection} labels={labels} /> : null}
             {items.map((item) => (
-                <ToolbarItemSlot
-                    key={item.key}
-                    render={item.render}
-                    itemProps={toolbarItemProps(item.own, api, selection)}
-                />
+                <ToolbarItemSlot key={item.key} item={item} itemProps={toolbarItemProps(item.own, api, selection)} />
             ))}
         </div>
     );
@@ -195,15 +192,36 @@ const keepSelection = (event: MouseEvent<HTMLDivElement>): void => {
 };
 
 type ToolbarItemSlotProps = {
-    render: ToolbarEntry['render'];
+    item: ToolbarEntry;
     itemProps: ToolbarItemProps;
 };
 
 /**
- * One plugin's control as a component of its own, so the hooks it calls keep
- * their state when another plugin is added or removed.
+ * One plugin's control: its own `render` as a component, so the hooks it calls
+ * keep their state when another plugin is added or removed, else a button
+ * drawn from the entry's data.
  */
-const ToolbarItemSlot = ({ render, itemProps }: ToolbarItemSlotProps): ReactNode => render(itemProps);
+const ToolbarItemSlot = ({ item, itemProps }: ToolbarItemSlotProps): ReactNode => {
+    const { render: Render, icon: Icon } = item;
+    if (Render) {
+        return <Render {...itemProps} />;
+    }
+    if (!Icon) {
+        return null;
+    }
+    // A void block or an inline is inserted, not switched on and off.
+    const toggles = item.own.kind === 'mark' || item.own.kind === 'list' || item.own.kind === 'textBlock';
+    return (
+        <ToolbarButton
+            title={item.label}
+            shortcut={item.shortcut}
+            active={toggles ? itemProps.isActive : undefined}
+            onClick={() => itemProps.toggle()}
+        >
+            <Icon size={16} />
+        </ToolbarButton>
+    );
+};
 
 /** Every element in the toolbar a keyboard can land on. Disabled controls are passed over. */
 const CONTROLS = 'button, input, select, textarea, a[href], [role="combobox"]';

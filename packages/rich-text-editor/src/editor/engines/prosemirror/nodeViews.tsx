@@ -28,7 +28,7 @@ import { type OpenEditors } from './controlApi';
 import { markValueOf, VALUE_ATTR } from './documentConversion';
 
 /**
- * The React-hosted views: the editing UI a plugin draws with `render.edit`.
+ * The React-hosted views: the editing UI a plugin draws with its `edit` views.
  * Anything without one is drawn by the engine from `toHtml`, without React.
  *
  * Lifecycle of a view (`ReactEditView` and its subclasses):
@@ -64,8 +64,8 @@ export const createMarkViews = (
     openEditors: OpenEditors,
 ): Record<string, MarkViewConstructor> => {
     const views: Record<string, MarkViewConstructor> = {};
-    for (const [type, { render }] of registry.marks) {
-        const edit = render?.edit;
+    for (const type of registry.marks.keys()) {
+        const edit = registry.edits.get(type);
         if (edit) {
             views[type] = (mark, view) => new ReactMarkView(mark, view, edit, api, live, openEditors);
         }
@@ -81,14 +81,14 @@ export const createNodeViews = (
 ): Record<string, NodeViewConstructor> => {
     const views: Record<string, NodeViewConstructor> = {};
     for (const [type, definition] of registry.blocks) {
-        const edit = definition.render?.edit;
+        const edit = registry.edits.get(type);
         if (edit) {
             views[type] = (node, view, getPos) =>
                 new ReactBlockView(node, view, getPos, registry, definition, edit, api, live, openEditors);
         }
     }
-    for (const [type, { render }] of registry.inlines) {
-        const edit = render?.edit;
+    for (const type of registry.inlines.keys()) {
+        const edit = registry.edits.get(type);
         if (edit) {
             views[type] = (node, view, getPos) => new ReactInlineView(node, view, getPos, edit, api, live, openEditors);
         }
@@ -98,7 +98,7 @@ export const createNodeViews = (
 
 // --- LiveViews: which views a state change can concern ---
 
-/** A plugin's `render.edit`, for any kind of node; `TCurrent` is what its value can be right now. */
+/** A plugin's `edit` view, for any kind of node; `TCurrent` is what its value can be right now. */
 type EditComponent<TCurrent = Record<string, unknown>> = ComponentType<EditProps<Record<string, unknown>, TCurrent>>;
 
 /** What a live view last handed its component; the callbacks are stable, so this is all that changes. */
@@ -347,7 +347,7 @@ const outerElement = (
 const classTokens = (value: string | undefined): string[] => (value ?? '').split(/\s+/).filter(Boolean);
 
 /**
- * Hosts a block's `render.edit`. The outer element comes from the block's
+ * Hosts a block's `edit` view. The outer element comes from the block's
  * `toHtml` (alignment applied); React draws what is inside, and the block's
  * content sits in the hole the component places via `{children}`.
  *
@@ -478,7 +478,7 @@ const IN_SELECTION_CLASS = 'rte-in-selection';
 /** Class on an inline node view's element; engine.scss keeps host styles off it. */
 const INLINE_VIEW_CLASS = 'rte-inline-view';
 
-/** Hosts an inline element's `render.edit`. Events from inside it belong to it: an input there types into the input, not the document. */
+/** Hosts an inline element's `edit` view. Events from inside it belong to it: an input there types into the input, not the document. */
 class ReactInlineView extends ReactNodeView<Record<string, unknown> | null> {
     dom: HTMLElement;
 
@@ -563,7 +563,7 @@ class ReactInlineView extends ReactNodeView<Record<string, unknown> | null> {
 // --- Mark views ---
 
 /**
- * Hosts a mark's `render.edit` around the marked text, which stays editable in
+ * Hosts a mark's `edit` view around the marked text, which stays editable in
  * the hole the component places via `{children}`. The engine builds a new view
  * whenever the mark's value changes, so only focus and openness repaint it.
  */

@@ -11,7 +11,7 @@
  * selection off it, the floating bar the box around it), so typing does not
  * re-render the component holding the editor.
  *
- * The React a plugin's `render.edit` draws is handed over by the engine as
+ * The React a plugin's `edit` view draws is handed over by the engine as
  * portals and rendered by `viewPortals` from inside the shell's tree.
  */
 
@@ -153,7 +153,7 @@ export const useEditorHandle = ({
     /** Subscribe here to re-render with the editor state. */
     editorState: EditorStateStore;
     /**
-     * The React the editor's views draw (a plugin's `render.edit`), as portals
+     * The React the editor's views draw (a plugin's `edit` view), as portals
      * into the content. Render it anywhere inside the editor's tree: the views
      * then share its context providers.
      */

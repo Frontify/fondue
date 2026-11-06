@@ -58,7 +58,7 @@ export type EditorHandle = {
 
 /**
  * Where the engine hands over the React its views draw (a plugin's
- * `render.edit`), one portal per view and keyed by the owning view. The shell
+ * `edit` view), one portal per view and keyed by the owning view. The shell
  * renders them all from one place inside its own tree, so they commit together
  * and see the host's context providers.
  */

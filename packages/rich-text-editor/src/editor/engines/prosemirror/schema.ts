@@ -85,7 +85,7 @@ const blockNodeSpec = (
         atom: isVoid,
         // Mod-click selects the innermost selectable node whole; for a block of
         // text that would only draw a ring around it.
-        selectable: isVoid || definition.render?.edit !== undefined,
+        selectable: isVoid || registry.edits.has(type),
         // invariant (3)
         ...(isVoid || isList || type === PARAGRAPH ? {} : { defining: true }),
         // invariant (4)
@@ -101,13 +101,13 @@ const blockNodeSpec = (
     };
 };
 
-const inlineNodeSpec = (definition: InlineDefinition): PmNodeSpec => ({
+const inlineNodeSpec = (definition: InlineDefinition, hasEditView: boolean): PmNodeSpec => ({
     group: 'inline',
     inline: true,
     atom: true,
     // With editing UI, a node inserted without a value is a draft (null) the UI
     // completes; without it, it stores the declared defaults.
-    attrs: { [VALUE_ATTR]: { default: definition.render?.edit ? null : (definition.defaults ?? {}) } },
+    attrs: { [VALUE_ATTR]: { default: hasEditView ? null : (definition.defaults ?? {}) } },
     parseDOM: valueParseRules(definition.parse, INLINE_PRIORITY),
     toDOM: (node) => {
         const value = node.attrs[VALUE_ATTR] as Record<string, unknown> | null;
@@ -165,7 +165,7 @@ export const buildSchema = (registry: PluginRegistry): Schema => {
         nodes[type] = blockNodeSpec(type, block, { registry, isListItem: itemTypes.has(type), known, lists });
     }
     for (const [type, inline] of registry.inlines) {
-        nodes[type] = inlineNodeSpec(inline);
+        nodes[type] = inlineNodeSpec(inline, registry.edits.has(type));
     }
     nodes[UNKNOWN_BLOCK] = unknownBlockSpec;
     nodes[UNKNOWN_INLINE] = unknownInlineSpec;
