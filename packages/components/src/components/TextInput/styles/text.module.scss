@@ -107,6 +107,8 @@
     box-sizing: border-box;
     width: 100%;
     background-color: transparent;
+    // The frame border lives on .root; without a host reset the browser draws its own 2px inset border here.
+    border: none;
     display: flex;
     align-items: center;
     text-align: inherit;
