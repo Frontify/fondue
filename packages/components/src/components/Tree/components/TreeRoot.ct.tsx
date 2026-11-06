@@ -1837,27 +1837,25 @@ test.describe('TreeRoot accepts predicate', () => {
     });
 });
 
-test.describe('TreeRoot drop level by text direction', () => {
-    const initial: TreeChangeState = [
-        { id: 'x', name: 'X', isFolder: false },
-        {
-            id: 'a',
-            name: 'A',
-            isFolder: true,
-            isExpanded: true,
-            children: [
-                { id: 'a1', name: 'a1', isFolder: false },
-                { id: 'a2', name: 'a2', isFolder: false },
-            ],
-        },
-    ];
-    const topology = (state: { id: string; children?: { id: string }[] }[]) =>
-        state.map((node) =>
-            node.children ? `${node.id}[${node.children.map((child) => child.id).join(',')}]` : node.id,
-        );
+const dropTree: TreeChangeState = [
+    { id: 'x', name: 'X', isFolder: false },
+    {
+        id: 'a',
+        name: 'A',
+        isFolder: true,
+        isExpanded: true,
+        children: [
+            { id: 'a1', name: 'a1', isFolder: false },
+            { id: 'a2', name: 'a2', isFolder: false },
+        ],
+    },
+];
+const dropTopology = (state: { id: string; children?: { id: string }[] }[]) =>
+    state.map((node) => (node.children ? `${node.id}[${node.children.map((child) => child.id).join(',')}]` : node.id));
 
-    // Dropping on the lower half of the last child in a group: the strip one indent wide at the
-    // row's inline start outdents to the parent level, the rest of the row keeps the child level.
+test.describe('TreeRoot drop level by text direction', () => {
+    // Dropping on the lower half of the last child in a group: near the row's inline start outdents
+    // to the parent level, near its inline end keeps the child level.
     for (const dir of ['ltr', 'rtl'] as const) {
         for (const edge of ['start', 'end'] as const) {
             const expected = edge === 'start' ? ['a[a1,a2]', 'x'] : ['a[a1,a2,x]'];
@@ -1867,7 +1865,11 @@ test.describe('TreeRoot drop level by text direction', () => {
                 const states: string[][] = [];
                 const component = await mount(
                     <div dir={dir} style={{ width: 400 }}>
-                        <TestHarness reorderable initial={initial} onChange={(state) => states.push(topology(state))} />
+                        <TestHarness
+                            reorderable
+                            initial={dropTree}
+                            onChange={(state) => states.push(dropTopology(state))}
+                        />
                     </div>,
                 );
                 const source = component.getByRole('treeitem', { name: 'X' });
@@ -1881,6 +1883,50 @@ test.describe('TreeRoot drop level by text direction', () => {
                 await source.dragTo(target, { targetPosition: { x, y: box.height * 0.75 } });
                 await expect.poll(() => states[states.length - 1]).toEqual(expected);
             });
+        }
+    }
+});
+
+test.describe('TreeRoot drop level follows the indent columns', () => {
+    // The cursor sits over a chevron centre: A's chevron is the outdent target, a2's own keeps the child level.
+    for (const dir of ['ltr', 'rtl'] as const) {
+        for (const multiSelect of [false, true]) {
+            for (const over of ['A', 'a2'] as const) {
+                let expected = ['a[a1,a2,x]'];
+                if (over === 'A') {
+                    expected = ['a[a1,a2]', 'x'];
+                }
+                const mode = multiSelect ? 'multi-select' : 'single-select';
+                test(`${dir} ${mode}: dropping over the chevron of ${over} gives ${expected.join(' ')}`, async ({
+                    mount,
+                }) => {
+                    const states: string[][] = [];
+                    const component = await mount(
+                        <div dir={dir} style={{ width: 400 }}>
+                            <TestHarness
+                                reorderable
+                                multiSelect={multiSelect}
+                                initial={dropTree}
+                                onChange={(state) => states.push(dropTopology(state))}
+                            />
+                        </div>,
+                    );
+                    const source = component.getByRole('treeitem', { name: 'X' });
+                    const target = component.getByRole('treeitem', { name: 'a2', exact: true });
+                    const chevron = component
+                        .getByRole('treeitem', { name: over, exact: true })
+                        .locator('[class*="chevron"]')
+                        .first();
+                    const targetBox = await target.boundingBox();
+                    const chevronBox = await chevron.boundingBox();
+                    if (!targetBox || !chevronBox) {
+                        throw new Error('missing row or chevron box');
+                    }
+                    const x = chevronBox.x + chevronBox.width / 2 - targetBox.x;
+                    await source.dragTo(target, { targetPosition: { x, y: targetBox.height * 0.75 } });
+                    await expect.poll(() => states[states.length - 1]).toEqual(expected);
+                });
+            }
         }
     }
 });
