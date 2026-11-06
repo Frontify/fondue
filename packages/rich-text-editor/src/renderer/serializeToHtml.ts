@@ -9,7 +9,7 @@ export type SerializeToHtmlOptions = {
     /**
      * The editor's plugins, or only their content, whose markup to draw with. A
      * node whose plugin is missing is skipped (a block keeps its content), with
-     * a warning in development. The package root defaults it to `defaultPlugins`.
+     * a warning in development. The package root defaults it to `defaultContent`.
      */
     plugins?: readonly (RtePlugin | RteContent)[];
     /**

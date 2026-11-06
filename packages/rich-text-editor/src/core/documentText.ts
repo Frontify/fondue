@@ -87,7 +87,7 @@ export type ToPlainTextOptions = {
     /**
      * The plugins whose inlines to read, or only their content: the editor's
      * list. An inline whose plugin is missing contributes nothing. The package
-     * root defaults it to `defaultPlugins`.
+     * root defaults it to `defaultContent`.
      */
     plugins?: readonly (RtePlugin | RteContent)[];
 };
