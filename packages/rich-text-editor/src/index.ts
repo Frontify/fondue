@@ -120,7 +120,12 @@ export { underlineContent, underlinePlugin } from './plugins/Underline';
 
 export { type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './plugins/Emoji';
-export { type MentionItem, type MentionPluginOptions, type MentionValue } from './plugins/Mention';
+export {
+    type MentionContentOptions,
+    type MentionItem,
+    type MentionPluginOptions,
+    type MentionValue,
+} from './plugins/Mention';
 export { type TextStylePluginOptions } from './plugins/TextStyle';
 
 // --- Plugin authoring ---
