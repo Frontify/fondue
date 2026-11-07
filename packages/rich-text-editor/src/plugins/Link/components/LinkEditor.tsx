@@ -14,7 +14,7 @@ import styles from '../link.module.scss';
 import { LinkTargetForm } from './LinkTargetForm';
 
 /** The controls Tab can reach in the panel. */
-const FIRST_CONTROL = 'a[href], button:not([disabled])';
+const PANEL_CONTROLS = 'a[href], button:not([disabled])';
 
 /** Copies the target and says whether it worked, in a live region that is always in the panel. */
 const CopyLink = ({ href }: { href: string }): ReactNode => {
@@ -105,7 +105,7 @@ export const LinkEditor = ({
             if (!active?.contains(anchor)) {
                 return;
             }
-            const first = contentRef.current?.querySelector<HTMLElement>(FIRST_CONTROL);
+            const first = contentRef.current?.querySelector<HTMLElement>(PANEL_CONTROLS);
             if (first) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -121,7 +121,7 @@ export const LinkEditor = ({
         if (event.key !== 'Tab' || !event.shiftKey) {
             return;
         }
-        if (event.target === event.currentTarget.querySelector(FIRST_CONTROL)) {
+        if (event.target === event.currentTarget.querySelector(PANEL_CONTROLS)) {
             event.preventDefault();
             api.focus();
         }

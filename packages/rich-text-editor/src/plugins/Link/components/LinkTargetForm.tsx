@@ -4,6 +4,7 @@ import { Button, Checkbox, Label, TextInput } from '@frontify/fondue-components'
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
 import { toHref } from '../../shared/helpers/href';
+import { isCompositionKey } from '../../shared/helpers/keys';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
 import { allowsHref, describeAllowed, type LinkPolicy } from '../helpers/policy';
 import { type LinkValue } from '../helpers/value';
@@ -34,8 +35,8 @@ export const LinkTargetForm = ({
     policy: LinkPolicy;
     /** Turns the "Link to" field into a search over the app's pages. */
     search?: LinkSearch;
-    /** The text comes with the value only when the form has a Text field. */
-    onSave: (value: LinkValue, text?: string) => void;
+    /** The text is the Text field's, or empty when the form has none. */
+    onSave: (value: LinkValue, text: string) => void;
     onCancel: () => void;
     /** Offered for a link that exists: take it away, keeping its text. */
     onRemove?: () => void;
@@ -74,16 +75,11 @@ export const LinkTargetForm = ({
             return;
         }
         const value: LinkValue = openInNewTab ? { href, openInNewTab: true } : { href };
-        if (initialText === undefined) {
-            onSave(value);
-        } else {
-            onSave(value, text);
-        }
+        onSave(value, text);
     };
 
     const saveOnEnter = (event: KeyboardEvent<HTMLInputElement>): void => {
-        // The Enter that confirms an input-method composition is not a submit; 229 is what browsers report for it.
-        if (event.nativeEvent.isComposing || event.keyCode === 229) {
+        if (isCompositionKey(event)) {
             return;
         }
         if (event.key === 'Enter') {
@@ -118,39 +114,21 @@ export const LinkTargetForm = ({
             )}
             <div className={styles.field}>
                 <Label htmlFor={urlId}>Link to</Label>
-                {search === undefined ? (
-                    <TextInput
-                        id={urlId}
-                        ref={urlFieldRef}
-                        type="url"
-                        placeholder="example.com"
-                        value={typed}
-                        status={error === null ? 'neutral' : 'error'}
-                        aria-describedby={error === null ? undefined : errorId}
-                        aria-errormessage={errorId}
-                        onChange={(event) => {
-                            setTyped(event.target.value);
-                            setError(null);
-                        }}
-                        onKeyDown={saveOnEnter}
-                    />
-                ) : (
-                    <DestinationField
-                        id={urlId}
-                        inputRef={urlFieldRef}
-                        value={typed}
-                        status={error === null ? 'neutral' : 'error'}
-                        errorId={errorId}
-                        search={search}
-                        policy={policy}
-                        onChange={(next) => {
-                            setTyped(next);
-                            setError(null);
-                        }}
-                        onPick={pick}
-                        onEnter={saveOnEnter}
-                    />
-                )}
+                <DestinationField
+                    id={urlId}
+                    inputRef={urlFieldRef}
+                    value={typed}
+                    status={error === null ? 'neutral' : 'error'}
+                    errorId={errorId}
+                    search={search}
+                    policy={policy}
+                    onChange={(next) => {
+                        setTyped(next);
+                        setError(null);
+                    }}
+                    onPick={pick}
+                    onEnter={saveOnEnter}
+                />
                 {/* Always in the page, so the message is announced as it appears. */}
                 <span id={errorId} role="alert" className={styles.error}>
                     {error}

@@ -160,7 +160,7 @@ describe('the destination field', () => {
 
         press('Enter');
 
-        expect(onSave).toHaveBeenCalledWith({ href: 'https://frontify.com/typed' });
+        expect(onSave).toHaveBeenCalledWith({ href: 'https://frontify.com/typed' }, '');
     });
 
     it('does not pick on the Enter that confirms a composition', async () => {

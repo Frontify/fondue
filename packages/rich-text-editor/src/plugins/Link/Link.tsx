@@ -22,6 +22,11 @@ export type LinkPluginOptions = LinkPolicy & {
     search?: LinkSearch;
 };
 
+/** The address prefixes that mark typed or pasted text as a link. */
+const LINKABLE_SCHEMES = 'https?://|mailto:|tel:';
+const AUTOLINK_PATTERN = new RegExp(`(?:${LINKABLE_SCHEMES})[^\\s]+`);
+const LINKABLE_START = new RegExp(`^(?:${LINKABLE_SCHEMES})`, 'i');
+
 const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string, string> =>
     link?.openInNewTab === true ? { target: '_blank', rel: 'noopener noreferrer' } : {};
 
@@ -131,7 +136,7 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) => {
         inputRules: [
             {
                 kind: 'markPattern',
-                pattern: /(?:https?:\/\/|mailto:|tel:)[^\s]+/,
+                pattern: AUTOLINK_PATTERN,
                 mark: 'link',
                 value: (href) => (allowsHref(policy, href) ? { href } : null),
             },
@@ -142,7 +147,7 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) => {
         onPaste: ({ text }, api) => {
             const typed = text.trim();
             const { isCollapsed, marks } = api.selection.get();
-            const href = /^(https?:\/\/|mailto:|tel:)/i.test(typed) ? toHref(typed) : null;
+            const href = LINKABLE_START.test(typed) ? toHref(typed) : null;
             if (href === null || !allowsHref(policy, href)) {
                 return false;
             }

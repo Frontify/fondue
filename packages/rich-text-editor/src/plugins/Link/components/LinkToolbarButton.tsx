@@ -77,7 +77,7 @@ export const LinkToolbarButton = ({
                         initialText={selection.text}
                         policy={policy}
                         search={search}
-                        onSave={(value, text = '') => {
+                        onSave={(value, text) => {
                             if (text === selection.text && !selection.isCollapsed) {
                                 // Formatting inside the selection survives.
                                 toggle(value);

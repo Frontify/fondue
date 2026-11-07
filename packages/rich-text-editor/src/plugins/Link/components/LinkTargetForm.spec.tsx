@@ -98,7 +98,7 @@ describe('the link target form', () => {
         save();
 
         expect(alert()).toBe('');
-        expect(onSave).toHaveBeenCalledWith({ href: 'https://app.frontify.com' });
+        expect(onSave).toHaveBeenCalledWith({ href: 'https://app.frontify.com' }, '');
     });
 
     it('keeps the generic messages for empty and unreadable input', () => {
@@ -119,7 +119,7 @@ describe('the link target form', () => {
         save();
 
         expect(container.querySelector('input[type="text"]')).toBeNull();
-        expect(onSave.mock.calls).toEqual([[{ href: 'https://example.com' }]]);
+        expect(onSave.mock.calls).toEqual([[{ href: 'https://example.com' }, '']]);
     });
 
     describe('with a Text field', () => {

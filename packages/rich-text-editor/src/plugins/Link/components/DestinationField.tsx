@@ -3,6 +3,7 @@
 import { TextInput } from '@frontify/fondue-components';
 import { type KeyboardEvent, type ReactNode, type Ref, useEffect, useId, useState } from 'react';
 
+import { isCompositionKey } from '../../shared/helpers/keys';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
 import { type LinkPolicy } from '../helpers/policy';
 import { type DestinationSearch, useDestinationSearch } from '../hooks/useDestinationSearch';
@@ -50,7 +51,8 @@ export const DestinationField = ({
     status: 'neutral' | 'error';
     /** The message shown under the field while `status` is an error. */
     errorId: string | undefined;
-    search: LinkSearch;
+    /** Without it the field is a plain address input. */
+    search?: LinkSearch;
     policy: LinkPolicy;
     onChange: (value: string) => void;
     onPick: (destination: LinkDestination) => void;
@@ -94,11 +96,10 @@ export const DestinationField = ({
     }, [listOpen, value]);
 
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
-        // The Enter that confirms an input-method composition is not a submit; 229 is what browsers report for it.
-        if (event.nativeEvent.isComposing || event.keyCode === 229) {
+        if (isCompositionKey(event)) {
             return;
         }
-        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        if (search !== undefined && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
             if (results.length === 0 && !dormant) {
                 return;
             }
@@ -115,7 +116,10 @@ export const DestinationField = ({
             }
             return;
         }
-        if (event.key === 'Enter' && listOpen && active !== undefined) {
+        if (event.key !== 'Enter') {
+            return;
+        }
+        if (listOpen && active !== undefined) {
             event.preventDefault();
             pick(active);
             return;
@@ -124,14 +128,16 @@ export const DestinationField = ({
     };
 
     // A spread: the field's props do not list the combobox attributes, but pass them on to the input.
-    const comboboxProps = {
-        role: 'combobox',
-        'aria-expanded': listOpen,
-        'aria-controls': listOpen ? listId : undefined,
-        'aria-autocomplete': 'list',
-        'aria-activedescendant': listOpen && active !== undefined ? optionId(activeIndex) : undefined,
-        'aria-describedby': status === 'error' ? errorId : undefined,
-    };
+    const comboboxProps =
+        search === undefined
+            ? {}
+            : {
+                  role: 'combobox',
+                  'aria-expanded': listOpen,
+                  'aria-controls': listOpen ? listId : undefined,
+                  'aria-autocomplete': 'list',
+                  'aria-activedescendant': listOpen && active !== undefined ? optionId(activeIndex) : undefined,
+              };
 
     return (
         <>
@@ -143,6 +149,7 @@ export const DestinationField = ({
                 placeholder="example.com"
                 value={value}
                 status={status}
+                aria-describedby={status === 'error' ? errorId : undefined}
                 aria-errormessage={errorId}
                 onChange={(event) => {
                     setDormant(false);
@@ -174,9 +181,11 @@ export const DestinationField = ({
                     ))}
                 </ul>
             ) : null}
-            <span role="status" className={linkStyles.visuallyHidden}>
-                {shown ? describeStatus(searchStatus, results.length) : ''}
-            </span>
+            {search === undefined ? null : (
+                <span role="status" className={linkStyles.visuallyHidden}>
+                    {shown ? describeStatus(searchStatus, results.length) : ''}
+                </span>
+            )}
         </>
     );
 };

@@ -124,7 +124,13 @@ export { underlineContent, underlinePlugin } from './plugins/Underline';
 
 export { type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './plugins/Emoji';
-export { type LinkDestination, type LinkPluginOptions, type LinkPolicy, type LinkScheme } from './plugins/Link';
+export {
+    type LinkDestination,
+    type LinkPluginOptions,
+    type LinkPolicy,
+    type LinkScheme,
+    type LinkSearch,
+} from './plugins/Link';
 export {
     type MentionContentOptions,
     type MentionItem,
