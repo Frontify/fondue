@@ -746,7 +746,14 @@ describe('the toolbar', () => {
 });
 
 describe('the toolbar from the keyboard', () => {
-    const plugins = [boldPlugin, alignPlugin, linkPlugin()];
+    /** A control that is off on a caret, last in the bar, so the arrow keys have one to pass over. */
+    const NeedsText = ({ selection }: RtePlugin.ToolbarItemProps): ReactNode => (
+        <button type="button" aria-label="Needs text" disabled={selection.isCollapsed}>
+            N
+        </button>
+    );
+    const needsTextPlugin: RtePlugin = definePlugin({ id: 'needs-text', toolbar: [{ render: NeedsText }] });
+    const plugins = [boldPlugin, alignPlugin, linkPlugin(), needsTextPlugin];
 
     const toolbarIn = (container: HTMLElement): HTMLElement => {
         const toolbar = container.querySelector<HTMLElement>('[role="toolbar"]');
@@ -781,14 +788,14 @@ describe('the toolbar from the keyboard', () => {
         press(window.document.activeElement as Element, 'ArrowLeft');
         expect(active()).toBe('Bold');
         press(window.document.activeElement as Element, 'ArrowLeft');
-        // Wraps round — and "Add link" is disabled on a caret, so Justify is last.
-        expect(active()).toBe('Justify');
+        // Wraps round, passing over the disabled control at the end.
+        expect(active()).toBe('Add link');
         press(window.document.activeElement as Element, 'Home');
         expect(active()).toBe('Bold');
         press(window.document.activeElement as Element, 'End');
-        expect(active()).toBe('Justify');
+        expect(active()).toBe('Add link');
         // The stop moved with focus, so Tab comes back to where it was left.
-        expect(tabStops(toolbar)).toEqual(['Justify']);
+        expect(tabStops(toolbar)).toEqual(['Add link']);
     });
 
     it('is reached from the text with Alt+F10, and left with Escape', () => {

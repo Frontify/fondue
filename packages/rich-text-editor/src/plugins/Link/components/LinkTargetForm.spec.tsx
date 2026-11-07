@@ -23,13 +23,21 @@ afterEach(() => {
     }
 });
 
-const mountForm = (policy: LinkPolicy) => {
+const mountForm = (policy: LinkPolicy, initialText?: string) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
     const root = createRoot(container);
     const onSave = vi.fn();
     act(() => {
-        root.render(<LinkTargetForm initial={{ href: '' }} policy={policy} onSave={onSave} onCancel={vi.fn()} />);
+        root.render(
+            <LinkTargetForm
+                initial={{ href: '' }}
+                initialText={initialText}
+                policy={policy}
+                onSave={onSave}
+                onCancel={vi.fn()}
+            />,
+        );
     });
     teardown.push(() => {
         act(() => root.unmount());
@@ -47,8 +55,19 @@ const mountForm = (policy: LinkPolicy) => {
         });
     };
     const alert = (): string => container.querySelector('[role="alert"]')?.textContent ?? '';
-    return { field, save: () => act(() => save.click()), type, alert, onSave };
+    const press = (init: KeyboardEventInit & { keyCode?: number }): void => {
+        act(() => {
+            field.dispatchEvent(
+                new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true, ...init }),
+            );
+        });
+    };
+    return { container, field, save: () => act(() => save.click()), type, press, alert, onSave };
 };
+
+/** The label text a person reads: Fondue's label repeats it in a hidden copy that only sizes the box. */
+const labelOf = (container: HTMLElement, control: HTMLElement): string | undefined =>
+    container.querySelector(`label[for="${control.id}"] span:not([aria-hidden])`)?.textContent ?? undefined;
 
 describe('the link target form', () => {
     it('names what the policy allows when a typed link is refused, and keeps focus on the field', () => {
@@ -91,5 +110,85 @@ describe('the link target form', () => {
         type('not a link');
         save();
         expect(alert()).toBe('Enter a web address (example.com), an email address, or a phone number (tel:…).');
+    });
+
+    it('saves with the address typed and no text when it has no Text field', () => {
+        const { container, type, save, onSave } = mountForm({});
+        type('example.com');
+
+        save();
+
+        expect(container.querySelector('input[type="text"]')).toBeNull();
+        expect(onSave.mock.calls).toEqual([[{ href: 'https://example.com' }]]);
+    });
+
+    describe('with a Text field', () => {
+        const textField = (container: HTMLElement): HTMLInputElement => {
+            const field = container.querySelector<HTMLInputElement>('input[type="text"]');
+            if (!field) {
+                throw new Error('no Text field');
+            }
+            return field;
+        };
+
+        it('labels it Text, prefilled, and saves the text with the address', () => {
+            const { container, type, save, onSave } = mountForm({}, 'the docs');
+            type('example.com');
+
+            save();
+
+            const field = textField(container);
+            expect(labelOf(container, field)).toBe('Text');
+            expect(field.value).toBe('the docs');
+            expect(onSave.mock.calls).toEqual([[{ href: 'https://example.com' }, 'the docs']]);
+        });
+
+        it('reads Text, Link to, Open in new tab, then the buttons', () => {
+            const { container } = mountForm({}, 'the docs');
+
+            const stops = [...container.querySelectorAll<HTMLElement>('input, button')].map(
+                (control) => labelOf(container, control) ?? control.textContent,
+            );
+
+            expect(stops).toEqual(['Text', 'Link to', 'Open in new tab', 'Cancel', 'Save']);
+        });
+
+        it('focuses Text when it is empty, and the address when there is text to keep', () => {
+            const empty = mountForm({}, '');
+            expect(window.document.activeElement).toBe(textField(empty.container));
+
+            const filled = mountForm({}, 'the docs');
+            expect(window.document.activeElement).toBe(filled.field);
+        });
+    });
+
+    describe('Enter', () => {
+        it('saves', () => {
+            const { type, press, onSave } = mountForm({});
+            type('example.com');
+
+            press({});
+
+            expect(onSave).toHaveBeenCalledTimes(1);
+        });
+
+        it('does not save when it confirms an input-method composition', () => {
+            const { type, press, alert, onSave } = mountForm({});
+            type('example.com');
+
+            press({ isComposing: true });
+
+            expect(onSave).not.toHaveBeenCalled();
+            expect(alert()).toBe('');
+        });
+
+        it('does not save when the browser reports it as key code 229', () => {
+            const { type, press, onSave } = mountForm({});
+            type('example.com');
+
+            press({ keyCode: 229 });
+
+            expect(onSave).not.toHaveBeenCalled();
+        });
     });
 });

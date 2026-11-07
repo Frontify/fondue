@@ -53,13 +53,7 @@ export const LinkToolbarButton = ({
             }}
         >
             <Flyout.Trigger>
-                <ToolbarButton
-                    title={inLink ? 'Edit link' : 'Add link'}
-                    shortcut={shortcut}
-                    active={inLink}
-                    // A link needs text to sit on.
-                    disabled={!inLink && selection.isCollapsed}
-                >
+                <ToolbarButton title={inLink ? 'Edit link' : 'Add link'} shortcut={shortcut} active={inLink}>
                     <IconLink size={16} />
                 </ToolbarButton>
             </Flyout.Trigger>
@@ -78,9 +72,15 @@ export const LinkToolbarButton = ({
                 <Flyout.Body>
                     <LinkTargetForm
                         initial={{ href: '' }}
+                        initialText={selection.text}
                         policy={policy}
-                        onSave={(value) => {
-                            toggle(value);
+                        onSave={(value, text = '') => {
+                            if (text === selection.text && !selection.isCollapsed) {
+                                // Formatting inside the selection survives.
+                                toggle(value);
+                            } else {
+                                api.insertText(text === '' ? value.href : text, { link: value });
+                            }
                             finish();
                         }}
                         onCancel={finish}

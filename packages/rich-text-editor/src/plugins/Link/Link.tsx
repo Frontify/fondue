@@ -110,9 +110,7 @@ export const linkPlugin = (policy: LinkPluginOptions = {}) => {
                     api.editors.open('link');
                     return true;
                 }
-                // Nothing selected is nothing to link, but the key is still the
-                // editor's, not the browser's search bar.
-                return api.selection.get().isCollapsed || openNewLinkForm(api);
+                return openNewLinkForm(api);
             },
         },
         // A web address typed and followed by a space becomes a link, when the

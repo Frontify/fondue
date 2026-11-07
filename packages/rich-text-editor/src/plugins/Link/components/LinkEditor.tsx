@@ -5,11 +5,39 @@ import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from 
 
 import { type EditProps } from '#/core';
 
+import { isApple } from '../../shared/helpers/platform';
 import { allowsHref, type LinkPolicy } from '../helpers/policy';
 import { type LinkValue } from '../helpers/value';
 import styles from '../link.module.scss';
 
 import { LinkTargetForm } from './LinkTargetForm';
+
+/** Copies the target and says whether it worked, in a live region that is always in the panel. */
+const CopyLink = ({ href }: { href: string }): ReactNode => {
+    const [status, setStatus] = useState('');
+    const copy = (): void => {
+        const failed = (): void => setStatus('Could not copy the link');
+        // A browser without the clipboard API throws before any promise exists.
+        try {
+            navigator.clipboard
+                .writeText(href)
+                .then(() => setStatus('Link copied'))
+                .catch(failed);
+        } catch {
+            failed();
+        }
+    };
+    return (
+        <>
+            <Button size="small" emphasis="weak" onPress={copy}>
+                Copy link
+            </Button>
+            <span role="status" className={styles.visuallyHidden}>
+                {status}
+            </span>
+        </>
+    );
+};
 
 /**
  * A link while editing: the anchor around the editable text, with a flyout.
@@ -114,8 +142,14 @@ export const LinkEditor = ({
                     // ARIA 1.3 global attribute that the lint rule's table does not know yet.
                     // oxlint-disable-next-line jsx-a11y/role-supports-aria-props
                     aria-description={value.openInNewTab === true ? 'Opens in a new tab' : undefined}
-                    // A click places the caret; it must neither follow the link nor toggle the flyout.
-                    onClick={(event) => event.preventDefault()}
+                    // A click places the caret; it must neither follow the link nor toggle the flyout. Mod+click opens it.
+                    onClick={(event) => {
+                        event.preventDefault();
+                        const modified = isApple() ? event.metaKey : event.ctrlKey;
+                        if (modified && href !== undefined) {
+                            window.open(href, '_blank', 'noopener,noreferrer');
+                        }
+                    }}
                 >
                     {children}
                 </a>
@@ -165,6 +199,7 @@ export const LinkEditor = ({
                                 {value.href}
                                 <span className={styles.visuallyHidden}> (opens in new tab)</span>
                             </a>
+                            <CopyLink href={value.href} />
                             <Button size="small" emphasis="weak" onPress={() => setOpen(true)}>
                                 Edit
                             </Button>

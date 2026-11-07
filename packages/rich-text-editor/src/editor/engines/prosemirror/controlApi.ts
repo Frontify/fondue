@@ -342,9 +342,21 @@ export const createControlApi = (
         view.dispatch(transaction.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline));
         view.focus();
     },
-    insertText(text) {
+    insertText(text, marks = {}) {
         const view = getView();
-        view.dispatch(view.state.tr.insertText(text));
+        const transaction = view.state.tr;
+        const from = transaction.selection.from;
+        transaction.insertText(text);
+        for (const [type, value] of Object.entries(marks)) {
+            const markType = schema.marks[type];
+            if (markType) {
+                // Adding replaces a mark of the same type the caret carried.
+                transaction.addMark(from, from + text.length, markType.create(valueAttrsFor(value)));
+            } else {
+                warnUnknownType('insertText', type);
+            }
+        }
+        view.dispatch(transaction);
         view.focus();
     },
     text: {

@@ -595,6 +595,58 @@ describe('insertText', () => {
 
         expect(editor.stored()).toEqual([paragraph(text('one 2 three'))]);
     });
+
+    it('carries the given marks at a caret, beside the ones typing there would', () => {
+        const editor = editorWith(plugins, [paragraph(text('bold', { bold: true }))]);
+        editor.caretAfter('bo');
+
+        editor.api.insertText('XY', { link: LINK });
+
+        expect(editor.stored()).toEqual([
+            paragraph(text('bo', { bold: true }), text('XY', { bold: true, link: LINK }), text('ld', { bold: true })),
+        ]);
+    });
+
+    it('replaces the selected text with text that carries the given marks', () => {
+        const editor = editorWith(plugins, [paragraph(text('one two three'))]);
+        editor.select('two');
+
+        editor.api.insertText('2', { link: LINK });
+
+        expect(editor.stored()).toEqual([paragraph(text('one '), text('2', { link: LINK }), text(' three'))]);
+    });
+
+    it('takes the place of the link the text went over', () => {
+        const OTHER = { href: 'https://example.org' };
+        const editor = editorWith(plugins, [paragraph(text('docs', { link: LINK }))]);
+        editor.select('ocs');
+
+        editor.api.insertText('ocs', { link: OTHER });
+
+        expect(editor.stored()).toEqual([paragraph(text('d', { link: LINK }), text('ocs', { link: OTHER }))]);
+    });
+
+    it('is one undo step, text and marks together', () => {
+        const editor = editorWith(plugins, [paragraph(text('one two three'))]);
+        editor.select('two');
+
+        editor.api.insertText('2', { link: LINK });
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual([paragraph(text('one two three'))]);
+    });
+
+    it('ignores a mark type no plugin provides, and says so', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const editor = editorWith(plugins, [paragraph(text('one'))]);
+        editor.caretAfter('one');
+
+        editor.api.insertText('!', { nothing: {}, link: LINK });
+
+        expect(editor.stored()).toEqual([paragraph(text('one'), text('!', { link: LINK }))]);
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining('insertText("nothing")'));
+        warn.mockRestore();
+    });
 });
 
 describe('the run of a mark next to another of different value', () => {

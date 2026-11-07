@@ -3,6 +3,8 @@
 import { Button } from '@frontify/fondue-components';
 import { type ButtonHTMLAttributes, type ComponentProps, forwardRef, type MouseEvent, type ReactNode } from 'react';
 
+import { isApple } from '../helpers/platform';
+
 import styles from './toolbarButton.module.scss';
 
 type ToolbarButtonProps = {
@@ -17,8 +19,6 @@ type ToolbarButtonProps = {
     shortcut?: string;
     // Other props reach the button so it works as a `Flyout.Trigger`, whose injected handlers and `aria-expanded` must hit the DOM.
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'title' | 'children'>;
-
-const isApple = (): boolean => typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
 
 /** `Mod-Shift-x` as `aria-keyshortcuts` spells it: `Meta+Shift+X` on Apple systems, `Control+Shift+X` elsewhere. */
 export const ariaKeyShortcut = (shortcut: string, apple = isApple()): string =>

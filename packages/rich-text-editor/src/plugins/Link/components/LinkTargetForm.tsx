@@ -12,37 +12,47 @@ import styles from './linkForm.module.scss';
 const UNREADABLE = 'Enter a web address (example.com), an email address, or a phone number (tel:…).';
 
 /**
- * Where a link points, and whether it opens a new tab. The text is edited in
- * place, not here. Input is validated on save, with the reason announced under
- * the field.
+ * Where a link points, and whether it opens a new tab. An existing link's text
+ * is edited in place; a new link gets a Text field, shown when `initialText`
+ * is given. Input is validated on save, with the reason announced under the
+ * field.
  */
 export const LinkTargetForm = ({
     initial,
+    initialText,
     policy,
     onSave,
     onCancel,
     onRemove,
 }: {
     initial: LinkValue;
+    /** The text the link shows, for a link not made yet. Without it the form has no Text field. */
+    initialText?: string;
     policy: LinkPolicy;
-    onSave: (value: LinkValue) => void;
+    /** The text comes with the value only when the form has a Text field. */
+    onSave: (value: LinkValue, text?: string) => void;
     onCancel: () => void;
     /** Offered for a link that exists: take it away, keeping its text. */
     onRemove?: () => void;
 }): ReactNode => {
     // A stored link without a string target opens the form empty rather than uncontrolled.
     const [typed, setTyped] = useState(typeof initial.href === 'string' ? initial.href : '');
+    const [text, setText] = useState(initialText ?? '');
     const [openInNewTab, setOpenInNewTab] = useState(initial.openInNewTab === true);
     // Set by a failed save, cleared when the field changes.
     const [error, setError] = useState<string | null>(null);
+    const textId = useId();
     const urlId = useId();
     const newTabId = useId();
     const errorId = useId();
     const urlFieldRef = useRef<HTMLInputElement>(null);
+    const textFieldRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        urlFieldRef.current?.focus();
-    }, []);
+        // Selected text is already there to keep, so the address is what is left to type.
+        const first = initialText === '' ? textFieldRef.current : urlFieldRef.current;
+        first?.focus();
+    }, [initialText]);
 
     const save = (): void => {
         const href = toHref(typed);
@@ -58,10 +68,19 @@ export const LinkTargetForm = ({
             urlFieldRef.current?.focus();
             return;
         }
-        onSave(openInNewTab ? { href, openInNewTab: true } : { href });
+        const value: LinkValue = openInNewTab ? { href, openInNewTab: true } : { href };
+        if (initialText === undefined) {
+            onSave(value);
+        } else {
+            onSave(value, text);
+        }
     };
 
     const saveOnEnter = (event: KeyboardEvent<HTMLInputElement>): void => {
+        // The Enter that confirms an input-method composition is not a submit; 229 is what browsers report for it.
+        if (event.nativeEvent.isComposing || event.keyCode === 229) {
+            return;
+        }
         if (event.key === 'Enter') {
             event.preventDefault();
             save();
@@ -70,6 +89,19 @@ export const LinkTargetForm = ({
 
     return (
         <div className={styles.fields}>
+            {initialText === undefined ? null : (
+                <div className={styles.field}>
+                    <Label htmlFor={textId}>Text</Label>
+                    <TextInput
+                        id={textId}
+                        ref={textFieldRef}
+                        type="text"
+                        value={text}
+                        onChange={(event) => setText(event.target.value)}
+                        onKeyDown={saveOnEnter}
+                    />
+                </div>
+            )}
             <div className={styles.field}>
                 <Label htmlFor={urlId}>Link to</Label>
                 <TextInput

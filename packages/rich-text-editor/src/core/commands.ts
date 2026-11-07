@@ -89,8 +89,11 @@ export type EditorControlApi = {
      * The caret ends up after what was inserted.
      */
     insert(type: string, value?: Record<string, unknown>): void;
-    /** Insert plain text at the selection, carrying the marks typing there would. */
-    insertText(text: string): void;
+    /**
+     * Insert plain text at the selection, replacing what is selected, carrying the marks typing there would plus
+     * `marks` (type to value, as in `marks.toggle`), in one undo step. Unknown mark types are ignored.
+     */
+    insertText(text: string, marks?: Record<string, Record<string, unknown>>): void;
 
     /** The text around the caret, within its block. */
     text: {
