@@ -345,4 +345,16 @@ describe('a stored mention that is missing a field', () => {
         expect(() => rendered(<RichTextRenderer value={doc} plugins={plugins} />)).not.toThrow();
         expect(() => serializeToHtml(doc, { plugins })).not.toThrow();
     });
+
+    it('renders a kind this version does not know without a data-mention-kind attribute', () => {
+        const doc = mentioning({ type: 'mention', id: 'x', username: 'x', name: 'X', kind: 7 });
+
+        for (const container of [
+            rendered(<RichTextRenderer value={doc} plugins={plugins} />),
+            exported(serializeToHtml(doc, { plugins })),
+        ]) {
+            expect(container.querySelector('[data-mention-id]')).not.toBeNull();
+            expect(container.querySelector('[data-mention-kind]')).toBeNull();
+        }
+    });
 });

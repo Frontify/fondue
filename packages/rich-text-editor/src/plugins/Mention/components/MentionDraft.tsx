@@ -12,8 +12,9 @@ import { type MentionItem, type MentionItems } from '../types';
 /** How many people the picker offers at once. */
 const SUGGESTION_LIMIT = 8;
 
-/** What a failed lookup says, to a screen reader and in the list. */
-const FAILED_TEXT = 'Could not load people. Press Enter to retry.';
+/** What a failed lookup says, to a screen reader and in the list: the message, then how to retry from the keyboard. */
+const FAILED_MESSAGE = 'Could not load people.';
+const FAILED_HINT = 'Press Enter to retry';
 
 /** The gap between the query and the list under it. */
 const LIST_OFFSET = 4;
@@ -79,6 +80,30 @@ const usePeople = (
         failed: answer?.query === query && answer.failed,
         retry,
     };
+};
+
+type PeoplePhase = 'searching' | 'failed' | 'empty' | 'list';
+
+/** Where a lookup stands: people to show, else still searching, else failed, else nobody matches. */
+const phaseOf = ({
+    people,
+    pending,
+    failed,
+}: {
+    people: readonly MentionItem[];
+    pending: boolean;
+    failed: boolean;
+}): PeoplePhase => {
+    if (people.length > 0) {
+        return 'list';
+    }
+    if (pending) {
+        return 'searching';
+    }
+    if (failed) {
+        return 'failed';
+    }
+    return 'empty';
 };
 
 /** Viewport position under the query, kept in step with scrolling and resizing. */
@@ -157,10 +182,10 @@ export const MentionDraft = ({
     };
     const [query, setQuery] = useState('');
     const { people, pending, failed, retry } = usePeople(items, query);
-    const noMatches = people.length === 0 && !pending && !failed;
-    const open = people.length > 0 || pending || failed || (noMatches && query !== '');
+    const phase = phaseOf({ people, pending, failed });
+    const open = phase !== 'empty' || query !== '';
     const position = useListPosition(draftRef, open);
-    const listShown = open && position !== null && people.length > 0;
+    const listShown = open && position !== null && phase === 'list';
 
     // Tagged with its query so a new query resets the highlight to the top without an effect.
     const [highlighted, setHighlighted] = useState({ query, index: 0 });
@@ -195,7 +220,7 @@ export const MentionDraft = ({
             case 'Enter':
             case 'Tab':
                 // Tab retries too: leaving the query would cancel the mention.
-                if (failed) {
+                if (phase === 'failed') {
                     retry();
                     break;
                 }
@@ -206,7 +231,7 @@ export const MentionDraft = ({
                 break;
             case ' ':
                 // Nobody by that name: the text was just text after all.
-                if (!noMatches) {
+                if (phase !== 'empty') {
                     return;
                 }
                 finish(() => onCancel(`${trigger}${query} `));
@@ -230,12 +255,18 @@ export const MentionDraft = ({
 
     let status = `${people.length} ${people.length === 1 ? 'person' : 'people'}`;
     // Searching is announced only with no earlier list to count, so the count is not interrupted on every key.
-    if (pending && people.length === 0) {
-        status = 'Searching';
-    } else if (!pending && failed) {
-        status = FAILED_TEXT;
-    } else if (noMatches) {
-        status = 'No matches';
+    switch (phase) {
+        case 'searching':
+            status = 'Searching';
+            break;
+        case 'failed':
+            status = `${FAILED_MESSAGE} ${FAILED_HINT}.`;
+            break;
+        case 'empty':
+            status = 'No matches';
+            break;
+        case 'list':
+            break;
     }
 
     return (
@@ -263,12 +294,12 @@ export const MentionDraft = ({
             {open && position !== null
                 ? createPortal(
                       <div className={styles.popup} style={{ left: position.left, top: position.top }}>
-                          {people.length === 0 ? (
+                          {phase !== 'list' ? (
                               <div className={styles.empty}>
-                                  {pending ? 'Searching' : null}
-                                  {failed ? (
+                                  {phase === 'searching' ? 'Searching' : null}
+                                  {phase === 'failed' ? (
                                       <>
-                                          Could not load people.{' '}
+                                          {FAILED_MESSAGE}{' '}
                                           <button
                                               type="button"
                                               // Out of the Tab order and off the mouse's focus: the query keeps the caret.
@@ -279,10 +310,10 @@ export const MentionDraft = ({
                                           >
                                               Retry
                                           </button>{' '}
-                                          <span className={styles.hint}>Press Enter to retry</span>
+                                          <span className={styles.hint}>{FAILED_HINT}</span>
                                       </>
                                   ) : null}
-                                  {noMatches ? 'No matches' : null}
+                                  {phase === 'empty' ? 'No matches' : null}
                               </div>
                           ) : (
                               <ul id={listId} role="listbox" aria-label="People" className={styles.list}>

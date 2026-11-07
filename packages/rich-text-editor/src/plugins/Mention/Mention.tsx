@@ -4,15 +4,9 @@ import { defineContent, defineInline, definePlugin, type EditProps, type RtePlug
 
 import { MentionDraft } from './components/MentionDraft';
 import { MentionLink } from './components/MentionLink';
-import { mentionDisplay } from './helpers/display';
+import { mentionDisplay, storedKind, storedString } from './helpers/display';
 import styles from './mention.module.scss';
-import {
-    type MentionItem,
-    type MentionItems,
-    type MentionKind,
-    type MentionResolution,
-    type MentionValue,
-} from './types';
+import { MENTION_KINDS, type MentionItem, type MentionItems, type MentionResolution, type MentionValue } from './types';
 
 /** What the content of a mention depends on: how it reads and where it links. */
 export type MentionContentOptions = {
@@ -31,16 +25,6 @@ export type MentionContentOptions = {
     resolve?: (mention: MentionValue) => MentionResolution;
     /** The one character that starts a mention. `@` unless the app needs something else. */
     trigger?: string;
-};
-
-const KINDS: readonly MentionKind[] = ['user', 'group', 'all'];
-
-/** Stored documents are not validated, and an attribute that is not a string cannot be written. */
-const attributeText = (field: unknown): string | undefined => {
-    if (typeof field !== 'string') {
-        return undefined;
-    }
-    return field;
 };
 
 /** What the document keeps of a chosen item: no avatar, and no `kind` for a person, as before kinds existed. */
@@ -69,11 +53,11 @@ export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentO
                         attrs: {
                             href: shown.href,
                             title: shown.title,
-                            'data-mention-id': attributeText(mention.id),
-                            'data-mention-username': attributeText(mention.username),
+                            'data-mention-id': storedString(mention.id),
+                            'data-mention-username': storedString(mention.username),
                             // The stored name, so the shown one never flows back into the document on paste.
-                            'data-mention-name': attributeText(mention.name),
-                            'data-mention-kind': mention.kind,
+                            'data-mention-name': storedString(mention.name),
+                            'data-mention-kind': storedKind(mention.kind),
                             class: styles.mention ?? '',
                         },
                         // Isolated so a right-to-left name cannot reorder the text around it.
@@ -93,7 +77,7 @@ export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentO
                             const username = element.dataset.mentionUsername ?? '';
                             // Copies from before `data-mention-name` carry the name in the title.
                             const name = element.dataset.mentionName ?? element.title;
-                            const kind = KINDS.find((known) => known === element.dataset.mentionKind);
+                            const kind = MENTION_KINDS.find((known) => known === element.dataset.mentionKind);
                             return id === '' || username === '' ? null : mentionValueOf({ id, username, name, kind });
                         },
                     },

@@ -3,6 +3,8 @@
 /** Who a mention names: one person, a group of people, or everyone. */
 export type MentionKind = 'user' | 'group' | 'all';
 
+export const MENTION_KINDS: readonly MentionKind[] = ['user', 'group', 'all'];
+
 /** What a mention stores on its inline node. */
 export type MentionValue = {
     id: string;

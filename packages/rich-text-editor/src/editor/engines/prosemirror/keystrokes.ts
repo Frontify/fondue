@@ -31,6 +31,7 @@ import { listKeys } from './lists';
 
 export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api: EditorControlApi): PmPlugin[] => {
     const hasLists = registry.itemTypeByList.size > 0;
+    const excludedMarks = marksExcludingInputRules(registry, schema);
 
     return [
         // 1
@@ -43,11 +44,11 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         }),
         // 2
         keymap(featureHotkeys(registry.hotkeys, api)),
-        characterHotkeys(registry, schema, api),
+        characterHotkeys(registry.hotkeys, excludedMarks, api),
         // 3
         ...(hasLists ? [keymap(listKeys(api, registry.itemTypeByList))] : []),
         // 4
-        ...typingRewrites(registry, schema),
+        ...typingRewrites(registry, schema, excludedMarks),
         // 5
         keymap({ Backspace: resetEmptyFirstBlock }),
         keymap(baseKeymap),
@@ -88,9 +89,11 @@ const isAtWordStart = (state: EditorState, from: number): boolean => {
  * only fire at a word start: `@` in `noah@frontify.com` is not a mention.
  * Text carrying a mark that opts out of rules (inline code) is typed as is.
  */
-const characterHotkeys = (registry: PluginRegistry, schema: Schema, api: EditorControlApi): PmPlugin => {
-    const { hotkeys } = registry;
-    const excludedMarks = marksExcludingInputRules(registry, schema);
+const characterHotkeys = (
+    hotkeys: PluginRegistry['hotkeys'],
+    excludedMarks: readonly PmMarkType[],
+    api: EditorControlApi,
+): PmPlugin => {
     return new Plugin({
         props: {
             handleTextInput: (view, from, _to, text) => {
@@ -133,8 +136,7 @@ const marksExcludingInputRules = (registry: PluginRegistry, schema: Schema): PmM
         .filter(([, definition]) => definition.excludesInputRules === true)
         .flatMap(([type]) => schema.marks[type] ?? []);
 
-const typingRewrites = (registry: PluginRegistry, schema: Schema): PmPlugin[] => {
-    const excludedMarks = marksExcludingInputRules(registry, schema);
+const typingRewrites = (registry: PluginRegistry, schema: Schema, excludedMarks: readonly PmMarkType[]): PmPlugin[] => {
     const context: RuleContext = { schema, registry, excludedMarks };
     // The registry orders rules longest delimiter first; otherwise `**bold**`
     // reads as an italic `*` wrapping `*bold*`.

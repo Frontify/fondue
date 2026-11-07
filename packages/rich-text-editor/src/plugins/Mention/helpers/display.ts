@@ -2,7 +2,7 @@
 
 import { isSafeHref } from '../../shared/helpers/href';
 import { withoutControlCharacters } from '../../shared/helpers/text';
-import { type MentionResolution, type MentionValue } from '../types';
+import { MENTION_KINDS, type MentionKind, type MentionResolution, type MentionValue } from '../types';
 
 /** What a mention shows. Every view draws this and nothing else, so they cannot disagree. */
 export type MentionDisplay = {
@@ -12,7 +12,6 @@ export type MentionDisplay = {
     title: string;
     /** Where it links to; absent when unavailable, without a target, or not a safe link. */
     href: string | undefined;
-    unavailable: boolean;
 };
 
 type MentionDisplayOptions = {
@@ -34,12 +33,18 @@ const resolutionOf = (
 };
 
 /** Stored documents are not validated: a field that is not a string reads as empty. */
-const storedText = (field: unknown): string => {
+export const storedString = (field: unknown): string => {
     if (typeof field !== 'string') {
         return '';
     }
-    return withoutControlCharacters(field);
+    return field;
 };
+
+/** A stored kind this version does not know, or a non-string, writes no attribute. */
+export const storedKind = (value: unknown): MentionKind | undefined => MENTION_KINDS.find((known) => known === value);
+
+/** A stored field as shown: control and bidirectional characters removed. */
+const storedText = (field: unknown): string => withoutControlCharacters(storedString(field));
 
 /**
  * What a mention shows, from the stored value and what the app knows now: the
@@ -63,13 +68,12 @@ export const mentionDisplay = (
         }
     }
     if (resolution?.status === 'unavailable') {
-        return { label: `${trigger}${username} (unavailable)`, title: name, href: undefined, unavailable: true };
+        return { label: `${trigger}${username} (unavailable)`, title: name, href: undefined };
     }
     const target = href?.(mention);
     return {
         label: `${trigger}${username}`,
         title: name,
         href: target !== undefined && isSafeHref(target) ? target : undefined,
-        unavailable: false,
     };
 };

@@ -4,7 +4,7 @@ import { Tooltip } from '@frontify/fondue-components';
 import { IconPeople } from '@frontify/fondue-icons';
 import { type MouseEvent, type ReactNode } from 'react';
 
-import { type MentionDisplay } from '../helpers/display';
+import { type MentionDisplay, storedKind, storedString } from '../helpers/display';
 import styles from '../mention.module.scss';
 import { type MentionValue } from '../types';
 
@@ -33,10 +33,10 @@ export const MentionLink = ({
 }): ReactNode => {
     const attributes = {
         title: display.title,
-        'data-mention-id': value.id,
-        'data-mention-username': value.username,
-        'data-mention-name': value.name,
-        'data-mention-kind': value.kind,
+        'data-mention-id': storedString(value.id),
+        'data-mention-username': storedString(value.username),
+        'data-mention-name': storedString(value.name),
+        'data-mention-kind': storedKind(value.kind),
         className: styles.mention,
     };
     const content = (

@@ -11,7 +11,7 @@ const href = (mention: MentionValue): string => `/u/${mention.id}`;
 
 describe('mentionDisplay', () => {
     it('shows the stored value with no resolver, or one that does not know', () => {
-        const stored = { label: '@jane', title: 'Jane Doe', href: '/u/jane', unavailable: false };
+        const stored = { label: '@jane', title: 'Jane Doe', href: '/u/jane' };
 
         expect(mentionDisplay(JANE, { href, trigger: '@' })).toEqual(stored);
         expect(mentionDisplay(JANE, { href, trigger: '@', resolve: () => ({ status: 'unknown' }) })).toEqual(stored);
@@ -24,7 +24,6 @@ describe('mentionDisplay', () => {
             label: '#jane.s',
             title: 'Jane Smith',
             href: '/u/jane',
-            unavailable: false,
         });
     });
 
@@ -32,7 +31,7 @@ describe('mentionDisplay', () => {
         for (const reason of ['deleted', 'forbidden'] as const) {
             expect(
                 mentionDisplay(JANE, { href, trigger: '@', resolve: () => ({ status: 'unavailable', reason }) }),
-            ).toEqual({ label: '@jane (unavailable)', title: 'Jane Doe', href: undefined, unavailable: true });
+            ).toEqual({ label: '@jane (unavailable)', title: 'Jane Doe', href: undefined });
         }
     });
 
@@ -65,9 +64,6 @@ describe('mentionDisplay', () => {
             throw new Error('offline');
         };
 
-        expect(mentionDisplay(JANE, { href, trigger: '@', resolve })).toMatchObject({
-            label: '@jane',
-            unavailable: false,
-        });
+        expect(mentionDisplay(JANE, { href, trigger: '@', resolve })).toMatchObject({ label: '@jane' });
     });
 });
