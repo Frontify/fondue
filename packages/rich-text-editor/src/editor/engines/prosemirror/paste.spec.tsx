@@ -2,6 +2,7 @@
 
 // @vitest-environment happy-dom
 
+import { undo } from 'prosemirror-history';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { type PasteHandler, type RtePlugin } from '#/core';
@@ -165,13 +166,60 @@ describe('pasting over selected text with the link plugin', () => {
         expect(editor.stored()).toEqual([paragraph(text('not a url'))]);
     });
 
-    it('pastes as usual with nothing selected', () => {
+    it('inserts a web address linked at a caret', () => {
         const editor = editorWith(shipped('link'), [paragraph(text('a'))]);
         editor.caretAfter('a');
 
         editor.paste('https://example.com');
 
-        expect(editor.stored()).toEqual([paragraph(text('ahttps://example.com'))]);
+        expect(editor.stored()).toEqual([
+            paragraph(text('a'), text('https://example.com', link('https://example.com'))),
+        ]);
+    });
+
+    it('inserts a mail or phone address linked at a caret', () => {
+        const editor = editorWith(shipped('link'), [paragraph()]);
+
+        editor.paste('mailto:ana@example.com');
+        editor.paste(' tel:+41791234567 ');
+
+        expect(editor.stored()).toEqual([
+            paragraph(
+                text('mailto:ana@example.com', link('mailto:ana@example.com')),
+                text('tel:+41791234567', link('tel:+41791234567')),
+            ),
+        ]);
+    });
+
+    it('pastes an address as plain text inside a link', () => {
+        const editor = editorWith(shipped('link'), [paragraph(text('frontify', link('https://old.example')))]);
+        editor.caretAfter('fron');
+
+        editor.paste('https://example.com');
+
+        expect(editor.stored()).toEqual([paragraph(text('fronhttps://example.comtify', link('https://old.example')))]);
+    });
+
+    it('pastes text that is not an address as plain text at a caret', () => {
+        const editor = editorWith(shipped('link'), [paragraph(text('a'))]);
+        editor.caretAfter('a');
+
+        editor.paste('example.com');
+
+        expect(editor.stored()).toEqual([paragraph(text('aexample.com'))]);
+    });
+
+    it('is its own undo step once the history pauses after the typing before it', () => {
+        vi.useFakeTimers();
+        const editor = editorWith(shipped('link'), [paragraph()]);
+        editor.type('ab');
+        vi.advanceTimersByTime(1000);
+
+        editor.paste('https://example.com');
+        undo(editor.view.state, editor.view.dispatch);
+        vi.useRealTimers();
+
+        expect(editor.stored()).toEqual([paragraph(text('ab'))]);
     });
 
     it('does not link a javascript: address', () => {
@@ -203,6 +251,15 @@ describe('pasting a link the policy refuses', () => {
         editor.paste('https://frontify.com/x');
 
         expect(editor.stored()).toEqual([paragraph(text('frontify', { link: { href: 'https://frontify.com/x' } }))]);
+    });
+
+    it('at a caret pastes the address as plain text', () => {
+        const editor = editorWith(plugins, [paragraph(text('a'))]);
+        editor.caretAfter('a');
+
+        editor.paste('https://example.com');
+
+        expect(editor.stored()).toEqual([paragraph(text('ahttps://example.com'))]);
     });
 
     it('as HTML keeps the text without the link', () => {

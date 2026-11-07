@@ -209,8 +209,8 @@ const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | n
     return toInputRule({ pattern, handler }, context);
 };
 
-/** Punctuation that ends a sentence rather than a link, though a link may contain it. */
-const TRAILING_PUNCTUATION = /[.,;:!?]+$/;
+/** Punctuation and closing quotes that end a sentence or quotation rather than a link, though a link may contain them. */
+const TRAILING_PUNCTUATION = /[.,;:!?"'”’]+$/;
 
 const count = (text: string, character: string): number => text.split(character).length - 1;
 
@@ -229,7 +229,8 @@ const trimTrailingPunctuation = (address: string): string => {
 
 /**
  * `https://example.com ` -> the address carries the mark, the space does not.
- * Punctuation right before the space is left out of the mark. A token that
+ * Punctuation right before the space is left out of the mark, and the address
+ * may follow an opening bracket or quote. A token that
  * already carries the mark, or one that opts out of rules, stays as typed.
  */
 const markPatternRule = (rule: RuleOfKind<'markPattern'>, context: RuleContext): InputRule | null => {
@@ -239,7 +240,7 @@ const markPatternRule = (rule: RuleOfKind<'markPattern'>, context: RuleContext):
     }
     const flags = withoutStateFlags(rule.pattern);
     const token = new RegExp(`^(?:${rule.pattern.source})$`, flags);
-    const pattern = new RegExp(`(?:^|\\s)((?:${rule.pattern.source}))\\s$`, flags);
+    const pattern = new RegExp(`(?:^|${WORD_BOUNDARY_BEFORE.source})((?:${rule.pattern.source}))\\s$`, flags);
 
     const handler: RuleHandler = (state, match, start, end) => {
         const typed = match[1];

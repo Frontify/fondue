@@ -119,24 +119,33 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) => {
                 return openNewLinkForm(api);
             },
         },
-        // A web address typed and followed by a space becomes a link, when the
-        // policy allows it. The pattern names only web schemes.
+        // A web, mail or phone address typed and followed by a space becomes a
+        // link, when the policy allows it. The pattern names only typed schemes.
         inputRules: [
             {
                 kind: 'markPattern',
-                pattern: /https?:\/\/[^\s]+/,
+                pattern: /(?:https?:\/\/|mailto:|tel:)[^\s]+/,
                 mark: 'link',
                 value: (href) => (allowsHref(policy, href) ? { href } : null),
             },
         ],
-        // A web or mail address pasted over selected text links that text, as
-        // in most editors; anything else pastes as usual.
+        // A web, mail or phone address pasted over selected text links that
+        // text, and at a caret outside a link it goes in linked, as in most
+        // editors; anything else pastes as usual.
         onPaste: ({ text }, api) => {
             const typed = text.trim();
             const { isCollapsed, marks } = api.selection.get();
-            const href = /^(https?:\/\/|mailto:)/i.test(typed) ? toHref(typed) : null;
-            if (isCollapsed || href === null || !allowsHref(policy, href)) {
+            const href = /^(https?:\/\/|mailto:|tel:)/i.test(typed) ? toHref(typed) : null;
+            if (href === null || !allowsHref(policy, href)) {
                 return false;
+            }
+            if (isCollapsed) {
+                // Inside a link the address stays plain text rather than nesting a link.
+                if ('link' in marks) {
+                    return false;
+                }
+                api.insertText(href, { link: { href } });
+                return true;
             }
             // A toggle over text that is all linked already would take the link
             // off, so it goes first and the new target is set after.

@@ -99,6 +99,92 @@ describe('typing a web address', () => {
     });
 });
 
+describe('typing a mail or phone address', () => {
+    it('links a mailto: address once a space follows', () => {
+        const stored = typedIntoEmptyParagraph('write mailto:ana@example.com ');
+
+        expect(stored).toEqual([paragraph(text('write '), link('mailto:ana@example.com'), text(' '))]);
+    });
+
+    it('links a tel: number and leaves the full stop out', () => {
+        const stored = typedIntoEmptyParagraph('call tel:+41791234567. ');
+
+        expect(stored).toEqual([paragraph(text('call '), link('tel:+41791234567'), text('. '))]);
+    });
+
+    it('does not link a bare mail address', () => {
+        const stored = typedIntoEmptyParagraph('ana@example.com ');
+
+        expect(stored).toEqual([paragraph(text('ana@example.com '))]);
+    });
+
+    it('does not link a scheme with nothing after it', () => {
+        const stored = typedIntoEmptyParagraph('mailto: tel:. ');
+
+        expect(stored).toEqual([paragraph(text('mailto: tel:. '))]);
+    });
+
+    it('does not link inside an existing link', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('xy', { link: { href: 'https://a.com' } }))]);
+        editor.caretAfter('x');
+
+        editor.type(' mailto:ana@example.com ');
+
+        expect(editor.stored()).toEqual([
+            paragraph(text('x mailto:ana@example.com y', { link: { href: 'https://a.com' } })),
+        ]);
+    });
+
+    it('does nothing inside inline code', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('xy', { code: true }))]);
+        editor.caretAfter('x');
+
+        editor.type(' tel:+41791234567 ');
+
+        expect(editor.stored()).toEqual([paragraph(text('x tel:+41791234567 y', { code: true }))]);
+    });
+});
+
+describe('typing a web address right after an opening bracket or quote', () => {
+    it('links an address in parentheses and leaves the closing one out', () => {
+        const stored = typedIntoEmptyParagraph('(https://frontify.com) ');
+
+        expect(stored).toEqual([paragraph(text('('), link('https://frontify.com'), text(') '))]);
+    });
+
+    it('links an address in straight double quotes', () => {
+        const stored = typedIntoEmptyParagraph('see "https://frontify.com" ');
+
+        expect(stored).toEqual([paragraph(text('see "'), link('https://frontify.com'), text('" '))]);
+    });
+
+    it('links an address in straight single quotes', () => {
+        const stored = typedIntoEmptyParagraph("'https://frontify.com' ");
+
+        expect(stored).toEqual([paragraph(text("'"), link('https://frontify.com'), text("' "))]);
+    });
+
+    it('links an address in curly quotes', () => {
+        const stored = typedIntoEmptyParagraph('“https://frontify.com” ‘https://frontify.com’ ');
+
+        expect(stored).toEqual([
+            paragraph(text('“'), link('https://frontify.com'), text('” ‘'), link('https://frontify.com'), text('’ ')),
+        ]);
+    });
+
+    it('links a mail address in parentheses', () => {
+        const stored = typedIntoEmptyParagraph('(mailto:ana@example.com) ');
+
+        expect(stored).toEqual([paragraph(text('('), link('mailto:ana@example.com'), text(') '))]);
+    });
+
+    it('does not link an address that continues a word', () => {
+        const stored = typedIntoEmptyParagraph('xhttps://frontify.com ');
+
+        expect(stored).toEqual([paragraph(text('xhttps://frontify.com '))]);
+    });
+});
+
 describe('typing a web address the policy refuses', () => {
     const plugins = [linkPlugin({ allowedHosts: ['frontify.com'] })];
 
