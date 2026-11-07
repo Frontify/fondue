@@ -9,7 +9,7 @@ import {
     type HtmlSpec,
     type InlineDefinition,
     isEmpty,
-    type MarkClearRule,
+    type MarkClearRule as ClearRule,
     type MarkDefinition,
     type MarkParseRule,
     type ParseRule,
@@ -150,7 +150,6 @@ type EditComponentProps<TValue, TCurrent> = EditProps<TValue, TCurrent>;
 type Parse<TValue> = ParseRule<TValue>;
 type MarkParse<TValue> = MarkParseRule<TValue>;
 type StyleParse<TValue> = StyleParseRule<TValue>;
-type ClearRule = MarkClearRule;
 type Html = HtmlSpec;
 
 // oxlint-disable-next-line typescript/no-namespace -- types only; groups the authoring types under `RtePlugin`.
