@@ -93,6 +93,11 @@ const toggleAlign = (
     return value;
 };
 
+const alignFromKeyboard = (api: EditorControlApi, value: NonNullable<AlignAttribute['align']>) => {
+    const announcement = ALIGNMENTS.find((alignment) => alignment.value === value)?.announcement ?? '';
+    api.announce(toggleAlign(api, value) === null ? 'Alignment cleared' : announcement);
+};
+
 const AlignToolbar = ({ api, selection }: ToolbarItemProps) => {
     // The block the selection is in carries the attribute this plugin
     // added, which the structural node type does not know about.
@@ -127,12 +132,19 @@ export const alignPlugin = /* @__PURE__ */ definePlugin({
     id: 'align',
     content: alignContent,
     toolbar: [{ render: AlignToolbar, floating: 'inline' }],
-    hotkeys: Object.fromEntries(
-        ALIGNMENTS.map(({ value, shortcut, announcement }) => [
-            shortcut,
-            (api: EditorControlApi) => {
-                api.announce(toggleAlign(api, value) === null ? 'Alignment cleared' : announcement);
-            },
-        ]),
-    ),
+    hotkeys: {
+        // HOTKEYS spelled out: a computed key makes esbuild keep this call, and the UI with it, in the renderer.
+        'Mod-Shift-l': (api) => {
+            alignFromKeyboard(api, 'left');
+        },
+        'Mod-Shift-e': (api) => {
+            alignFromKeyboard(api, 'center');
+        },
+        'Mod-Shift-r': (api) => {
+            alignFromKeyboard(api, 'right');
+        },
+        'Mod-Shift-j': (api) => {
+            alignFromKeyboard(api, 'justify');
+        },
+    },
 });

@@ -39,7 +39,8 @@ export const resetFormattingPlugin = /* @__PURE__ */ definePlugin({
     id: 'reset-formatting',
     toolbar: [{ render: ResetFormattingButton, floating: 'inline' }],
     hotkeys: {
-        [SHORTCUT]: (api) => {
+        // Same as SHORTCUT, spelled out: a computed key makes esbuild keep this call, and the UI with it, in the renderer.
+        'Mod-\\': (api) => {
             reset(api);
             api.announce('Formatting reset');
         },
