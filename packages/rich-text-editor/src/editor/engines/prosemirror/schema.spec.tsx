@@ -4,8 +4,17 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { buildPluginRegistry, defineBlock, defineInline, defineMark, definePlugin, type RtePlugin } from '#/core';
+import {
+    buildPluginRegistry,
+    defineBlock,
+    defineInline,
+    defineMark,
+    definePlugin,
+    type RteDocumentOf,
+    type RtePlugin,
+} from '#/core';
 
+import { toEngineDocument, toRteDocument } from './documentConversion';
 import { buildSchema as buildSchemaFromRegistry } from './schema';
 import { shipped } from './testEditor';
 
@@ -127,6 +136,16 @@ describe('buildSchema', () => {
         expect(both.marks.superscript?.spec.excludes).toBe('superscript subscript');
         expect(subscriptOnly.marks.subscript?.spec.excludes).toBe('subscript');
         expect(superscriptOnly.marks.superscript?.spec.excludes).toBe('superscript');
+    });
+
+    it('keeps a stored run that carries both until it is edited', () => {
+        const schema = buildSchema(shipped('subscript', 'superscript'));
+        const stored: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'both', subscript: true, superscript: true }] }],
+        };
+
+        expect(toRteDocument(toEngineDocument(stored, schema))).toEqual(stored);
     });
 
     it('gives a mark turned on without a value its declared defaults', () => {
