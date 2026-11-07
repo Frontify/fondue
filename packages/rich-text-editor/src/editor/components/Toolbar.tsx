@@ -197,7 +197,7 @@ type ToolbarItemSlotProps = {
 };
 
 /**
- * One plugin's control: its own `render` as a component, so the hooks it calls
+ * One plugin's control: its own `render` called in this component, so the hooks it calls
  * keep their state when another plugin is added or removed, else a button
  * drawn from the entry's data.
  */

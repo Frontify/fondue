@@ -95,11 +95,11 @@ const CONTENT_ONLY = {
         'A content module imports only its styles, types, helpers and read views: never its plugin, its editing components or the toolbar button.',
 };
 
-// A path, not a pattern: a `!` re-allow in any pattern group (the sibling ring's `shared`) wins over every group.
-const NO_TOOLBAR_BUTTON = ['../shared/ToolbarButton', '../shared/ToolbarButton/ToolbarButton'].map((name) => ({
-    name,
-    message: CONTENT_ONLY.message,
-}));
+// In place of the sibling ring: oxlint lets a `!` re-allow in any group win over every group, so `!../shared/**` would admit the toolbar button.
+const CONTENT_SHARED_HELPERS_ONLY = {
+    group: ['../**', '!../shared/helpers', '!../shared/helpers/**'],
+    message: 'Out of its own folder, a content module imports only #/core and src/plugins/shared/helpers.',
+};
 
 const SHELL_OUTER_LAYERS = {
     group: [
@@ -282,12 +282,11 @@ export default defineConfig({
                 'no-restricted-imports': [
                     'error',
                     {
-                        paths: NO_TOOLBAR_BUTTON,
                         patterns: [
                             NO_ENGINE,
                             NO_SERVER_RENDER,
                             CORE_ONLY,
-                            noSiblingPlugin('..'),
+                            CONTENT_SHARED_HELPERS_ONLY,
                             NO_UI_KIT,
                             CONTENT_ONLY,
                         ],

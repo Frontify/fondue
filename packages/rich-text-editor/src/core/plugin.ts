@@ -138,9 +138,9 @@ export type RteToolbarEntry = {
      */
     floating?: 'inline' | 'hidden';
     /**
-     * Custom UI in place of the button. Rendered as a component of its own,
-     * keyed by the plugin's `id`, so it may use hooks and keeps its state
-     * across edits. It re-renders only when its props change (selection
+     * Custom UI in place of the button: a plain function, called inside a
+     * component of its own keyed by the plugin's `id`, so it may use hooks
+     * (always the same ones) and keeps its state across edits and rebuilt plugins. It re-renders only when its props change (selection
      * snapshot, selected node, `isActive`), so derive what it shows from them.
      */
     render?: (props: ToolbarItemProps) => ReactNode;
