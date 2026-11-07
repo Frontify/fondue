@@ -281,11 +281,18 @@ export type MarkClearRule = {
     clears: (cssValue: string) => boolean;
 };
 
-/** The rules a mark reads pasted HTML with: by tag, by declared style, or to clear it. The `style?: undefined` lets TypeScript type a style rule's `value`. */
+/** An element the mark's own markup adds, such as a hidden note, skipped with its content when pasted back. */
+export type MarkIgnoreRule = {
+    tag: string;
+    ignore: true;
+};
+
+/** The rules a mark reads pasted HTML with: by tag, by declared style, to clear it, or to skip an element. The `style?: undefined` lets TypeScript type a style rule's `value`. */
 export type MarkParseRule<TValue> =
-    | (ParseRule<TValue> & { style?: undefined })
+    | (ParseRule<TValue> & { style?: undefined; ignore?: undefined })
     | StyleParseRule<TValue>
-    | MarkClearRule;
+    | MarkClearRule
+    | MarkIgnoreRule;
 
 /**
  * What the editor hands a node's `edit` view: the same for blocks, marks

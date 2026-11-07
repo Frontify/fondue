@@ -202,7 +202,7 @@ export const LinkEditor = ({
                                 {value.href}
                                 <span className={styles.visuallyHidden}> (opens in new tab)</span>
                             </a>
-                            <CopyLink href={value.href} />
+                            {href !== undefined && <CopyLink href={href} />}
                             <Button size="small" emphasis="weak" onPress={() => setOpen(true)}>
                                 Edit
                             </Button>

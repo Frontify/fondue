@@ -11,6 +11,7 @@ import {
     isEmpty,
     type MarkClearRule,
     type MarkDefinition,
+    type MarkIgnoreRule,
     type MarkParseRule,
     type ParseRule,
     type StyleParseRule,
@@ -68,8 +69,8 @@ export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlock>(
     });
 
 /**
- * The document as an HTML string, the same markup the editor copies to the
- * clipboard. No React or browser needed. Uses `defaultContent` when given no
+ * The document as an HTML string: the reading markup, what `RichTextRenderer`
+ * draws, as static HTML. No React or browser needed. Uses `defaultContent` when given no
  * `plugins`; `wrap: false` leaves out the root element. Style it with this
  * package's stylesheet (emails need the styles inlined).
  */
@@ -152,6 +153,7 @@ type Parse<TValue> = ParseRule<TValue>;
 type MarkParse<TValue> = MarkParseRule<TValue>;
 type StyleParse<TValue> = StyleParseRule<TValue>;
 type ClearRule = MarkClearRule;
+type IgnoreRule = MarkIgnoreRule;
 type Html = HtmlSpec;
 
 // oxlint-disable-next-line typescript/no-namespace -- types only; groups the authoring types under `RtePlugin`.
@@ -169,6 +171,7 @@ export declare namespace RtePlugin {
     export type MarkParseRule<TValue> = MarkParse<TValue>;
     export type StyleParseRule<TValue> = StyleParse<TValue>;
     export type MarkClearRule = ClearRule;
+    export type MarkIgnoreRule = IgnoreRule;
     export type HtmlSpec = Html;
     export type Content = RteContent;
     export type ToolbarEntry = RteToolbarEntry;

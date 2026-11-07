@@ -51,26 +51,32 @@ export const linkContent = (policy: LinkPolicy = {}) =>
                     // nothing about its shape is taken on trust.
                     const link = typeof value === 'object' ? (value as Partial<LinkValue> | null) : null;
                     const href = link?.href;
+                    const allowed = allowsHref(policy, href);
                     const spec: HtmlSpec = {
                         tag: 'a',
                         attrs: {
-                            ...(allowsHref(policy, href) ? { href } : {}),
+                            ...(allowed ? { href, ...newTabAttrs(link) } : {}),
                             class: styles.link,
-                            ...newTabAttrs(link),
                         },
                         children: true,
                     };
-                    if (link?.openInNewTab === true) {
+                    if (allowed && link?.openInNewTab === true) {
                         // Same wording as the editing panel.
                         spec.children = [
                             true,
-                            { tag: 'span', attrs: { class: styles.visuallyHidden }, children: ' (opens in new tab)' },
+                            {
+                                tag: 'span',
+                                attrs: { class: styles.visuallyHidden, 'data-rte-link-note': '' },
+                                children: ' (opens in new tab)',
+                            },
                         ];
                     }
                     return spec;
                 },
 
                 parse: [
+                    // The hidden note toHtml adds is not text of the link.
+                    { tag: 'span[data-rte-link-note]', ignore: true },
                     {
                         tag: 'a[href]',
                         value: (element) => {

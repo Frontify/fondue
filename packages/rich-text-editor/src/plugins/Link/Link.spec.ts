@@ -27,6 +27,16 @@ describe('the link mark', () => {
         expect(link?.toHtml({ href: 'https://example.com' }).children).toBe(true);
     });
 
+    it('writes no new-tab attributes and no note for a target the policy refuses', () => {
+        const restricted = linkPlugin({ allowedHosts: ['frontify.com'] }).content?.marks?.link;
+        const html = restricted?.toHtml({ href: 'https://example.com', openInNewTab: true });
+
+        expect(html?.attrs).not.toHaveProperty('href');
+        expect(html?.attrs).not.toHaveProperty('target');
+        expect(html?.attrs).not.toHaveProperty('rel');
+        expect(html?.children).toBe(true);
+    });
+
     it('puts a hidden note after the text of a link that opens a new tab', () => {
         const html = link?.toHtml({ href: 'https://example.com', openInNewTab: true });
 

@@ -64,11 +64,14 @@ const markClearRule = (type: string, rule: MarkClearRule): PmStyleParseRule => (
     getAttrs: (cssValue: string) => (rule.clears(cssValue) ? null : false),
 });
 
-/** A mark's rules: tag and style rules put it on with its value, clear rules take it off the element's content. */
+/** A mark's rules: tag and style rules put it on with its value, clear rules take it off the element's content, ignore rules drop the element. */
 export const markParseRules = (type: string, rules: readonly MarkParseRule<unknown>[]): PmParseRule[] =>
     rules.map((rule) => {
         if ('clears' in rule) {
             return markClearRule(type, rule);
+        }
+        if ('ignore' in rule && rule.ignore === true) {
+            return { tag: rule.tag, priority: MARK_PRIORITY, ignore: true };
         }
         if (rule.style === undefined) {
             return valueParseRule(rule, MARK_PRIORITY);

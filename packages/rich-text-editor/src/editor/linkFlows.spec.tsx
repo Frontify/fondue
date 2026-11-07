@@ -6,7 +6,7 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { boldPlugin, linkPlugin, RichTextEditor, type RteDocument } from '../index';
+import { boldPlugin, linkPlugin, RichTextEditor, type RteDocument, serializeToHtml } from '../index';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -271,6 +271,21 @@ describe('the panel of a link', () => {
         expect(open).toHaveBeenCalledWith(HREF, '_blank', 'noopener,noreferrer');
     });
 
+    it('offers no Copy link for a stored link the policy refuses', () => {
+        for (const [href, policy] of [
+            [HREF, { allowedHosts: ['frontify.com'] }],
+            ['javascript:alert(1)', {}],
+        ] as const) {
+            const editor = mount(doc({ text: 'see ' }, { text: 'docs', link: { href } }), policy);
+            select(editor.editable, 'docs', 2);
+
+            expect([...window.document.querySelectorAll('button')].map((button) => button.textContent)).not.toContain(
+                'Copy link',
+            );
+            expect(window.document.querySelector('[role="status"]')).toBeNull();
+        }
+    });
+
     it('does not open a link the policy refuses', () => {
         const open = vi.spyOn(window, 'open').mockReturnValue(null);
         const { editable } = linked({ allowedHosts: ['frontify.com'] });
@@ -278,5 +293,36 @@ describe('the panel of a link', () => {
         click(editable.querySelector('a'), MOD);
 
         expect(open).not.toHaveBeenCalled();
+    });
+});
+
+describe('pasting the reading markup of a link', () => {
+    const pasteHtml = (editable: HTMLElement, html: string): void => {
+        const data = new DataTransfer();
+        data.setData('text/html', html);
+        act(() => {
+            editable.dispatchEvent(
+                new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }),
+            );
+        });
+    };
+
+    it('keeps the new-tab note out of the text, round trip after round trip', () => {
+        const link = { text: 'docs', link: { href: HREF, openInNewTab: true as const } };
+        const html = serializeToHtml(doc(link), { plugins: [linkPlugin()] });
+        expect(html).toContain('opens in new tab');
+
+        const { editable, stored } = mount(doc({ text: 'x' }));
+        select(editable, 'x', 1);
+        pasteHtml(editable, html);
+        const first = stored();
+        expect(first?.blocks[0]).toMatchObject({ children: [{ text: 'x' }, link] });
+        expect(JSON.stringify(first)).not.toContain('opens in new tab');
+
+        // The text of the second paste lands next to the first link, so what is compared is the link run alone.
+        pasteHtml(editable, serializeToHtml(first as RteDocument, { plugins: [linkPlugin()] }));
+        const second = JSON.stringify(stored());
+        expect(second).not.toContain('opens in new tab');
+        expect(second.split('"docs"')).toHaveLength(3);
     });
 });
