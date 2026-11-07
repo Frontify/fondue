@@ -194,16 +194,19 @@ const register = <TDefinition>(
 /** What an entry without its own `render` is drawn as: a button toggling one of these. */
 const BUTTON_KINDS: ReadonlySet<OwnType['kind']> = new Set(['mark', 'list', 'textBlock', 'voidBlock', 'inline']);
 
+const NOTHING_TO_TOGGLE = 'nothing to toggle: name a mark, list, text block, void block or inline with `toggles`.';
+
 const toolbarEntryOf = (plugin: RtePlugin, entry: RteToolbarEntry, key: string): ToolbarEntry => {
     const type = entry.toggles ?? onlyTypeOf(plugin.content);
     const own = ownTypeOf(plugin.content, type);
     if (entry.toggles !== undefined && own.kind === 'none') {
         throw new Error(`Plugin "${plugin.id}" toggles "${entry.toggles}", which its content does not declare.`);
     }
-    if (entry.render === undefined && (entry.icon === undefined || !BUTTON_KINDS.has(own.kind))) {
-        throw new Error(
-            `Plugin "${plugin.id}" has a toolbar entry with no \`render\`: it needs an \`icon\` and a mark, list, text block, void block or inline to toggle.`,
-        );
+    if (entry.render === undefined && entry.icon === undefined) {
+        throw new Error(`Plugin "${plugin.id}" has a toolbar entry with no \`render\` and no \`icon\`.`);
+    }
+    if (entry.render === undefined && !BUTTON_KINDS.has(own.kind)) {
+        throw new Error(`Plugin "${plugin.id}" has a toolbar entry with ${NOTHING_TO_TOGGLE}`);
     }
     let label = entry.label;
     label ??= type === undefined ? plugin.id : capitalised(type);
@@ -329,7 +332,7 @@ const addShortcut = (draft: Draft, plugin: RtePlugin, entry: RteToolbarEntry, it
         return;
     }
     if (!BUTTON_KINDS.has(item.own.kind)) {
-        throw new Error(`Plugin "${plugin.id}" names shortcut "${shortcut}" with nothing to toggle.`);
+        throw new Error(`Plugin "${plugin.id}" names shortcut "${shortcut}" with ${NOTHING_TO_TOGGLE}`);
     }
     addHotkey(draft, shortcut, (api) => toggleOwn(item.own, api, api.selection.get()));
 };

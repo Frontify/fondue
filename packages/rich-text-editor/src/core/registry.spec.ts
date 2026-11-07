@@ -259,12 +259,12 @@ describe('a plugin id', () => {
         expect(definePlugin({ id: 'strong', content: { marks: { bold: mark() } } }).id).toBe('strong');
     });
 
-    it('is required when the content declares no type, or several', () => {
-        const message = 'A plugin that declares no type, or several, needs an `id`.';
+    it('is required when the content declares no type, or several, and lists them', () => {
+        const several = 'A plugin that declares several types (a, b) needs an `id`.';
 
-        expect(() => definePlugin({})).toThrow(message);
-        expect(() => definePlugin({ content: { marks: { a: mark(), b: mark() } } })).toThrow(message);
-        expect(() => definePlugin({ content: { marks: { a: mark() }, blocks: { b: textBlock() } } })).toThrow(message);
+        expect(() => definePlugin({})).toThrow('A plugin that declares no type needs an `id`.');
+        expect(() => definePlugin({ content: { marks: { a: mark(), b: mark() } } })).toThrow(several);
+        expect(() => definePlugin({ content: { marks: { a: mark() }, blocks: { b: textBlock() } } })).toThrow(several);
     });
 });
 
@@ -319,12 +319,15 @@ describe('the type a toolbar entry toggles', () => {
         );
     });
 
-    it('needs an icon and a toggleable type when the entry has no `render`', () => {
+    it('needs an icon when the entry has no `render`', () => {
         expect(() =>
             buildPluginRegistry([{ id: 'bold', content: { marks: { bold: mark() } }, toolbar: [{}] }]),
-        ).toThrow('Plugin "bold" has a toolbar entry with no `render`');
+        ).toThrow('Plugin "bold" has a toolbar entry with no `render` and no `icon`.');
+    });
+
+    it('needs a toggleable type when the entry has an icon but no `render`', () => {
         expect(() => buildPluginRegistry([{ id: 'nothing', toolbar: [{ icon }] }])).toThrow(
-            'Plugin "nothing" has a toolbar entry with no `render`',
+            'Plugin "nothing" has a toolbar entry with nothing to toggle: name a mark, list, text block, void block or inline with `toggles`.',
         );
     });
 });
@@ -346,7 +349,9 @@ describe('the hotkeys of a registry', () => {
     it('are an error for a shortcut on an entry with nothing to toggle', () => {
         expect(() =>
             buildPluginRegistry([{ id: 'custom', toolbar: [{ render: () => null, shortcut: 'Mod-b' }] }]),
-        ).toThrow('Plugin "custom" names shortcut "Mod-b" with nothing to toggle.');
+        ).toThrow(
+            'Plugin "custom" names shortcut "Mod-b" with nothing to toggle: name a mark, list, text block, void block or inline with `toggles`.',
+        );
     });
 
     it('leave a key the plugin binds itself to the plugin, the entry only showing it', () => {

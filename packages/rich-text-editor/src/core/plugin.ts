@@ -37,13 +37,15 @@ export type RteContent = {
 /** Types an `RteContent` with no wider type. */
 export const defineContent = (content: RteContent): RteContent => content;
 
+const typesOf = (content: RteContent | undefined): string[] => [
+    ...Object.keys(content?.marks ?? {}),
+    ...Object.keys(content?.blocks ?? {}),
+    ...Object.keys(content?.inlines ?? {}),
+];
+
 /** The only type a content declares (a mark, block or inline name), or undefined when it declares none or several. */
 export const onlyTypeOf = (content: RteContent | undefined): string | undefined => {
-    const types = [
-        ...Object.keys(content?.marks ?? {}),
-        ...Object.keys(content?.blocks ?? {}),
-        ...Object.keys(content?.inlines ?? {}),
-    ];
+    const types = typesOf(content);
     return types.length === 1 ? types[0] : undefined;
 };
 
@@ -99,7 +101,11 @@ export type RtePluginDefinition = Omit<RtePlugin, 'id'> & { id?: string };
 export const definePlugin = ({ id, ...plugin }: RtePluginDefinition): RtePlugin => {
     const resolved = id ?? onlyTypeOf(plugin.content);
     if (resolved === undefined) {
-        throw new Error('A plugin that declares no type, or several, needs an `id`.');
+        const types = typesOf(plugin.content);
+        if (types.length === 0) {
+            throw new Error('A plugin that declares no type needs an `id`.');
+        }
+        throw new Error(`A plugin that declares several types (${types.join(', ')}) needs an \`id\`.`);
     }
     return { id: resolved, ...plugin };
 };
