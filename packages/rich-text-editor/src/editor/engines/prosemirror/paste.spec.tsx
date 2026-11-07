@@ -70,6 +70,60 @@ describe('a plugin paste handler', () => {
     });
 });
 
+describe('pasting formatted text', () => {
+    const pasted = (html: string) => {
+        const editor = editorWith(defaultPlugins, [paragraph()]);
+        editor.pasteHTML(html);
+        return editor.stored();
+    };
+
+    it.each([
+        ['<p style="font-weight: 700">x</p>', { bold: true }],
+        ['<p><font style="font-style: italic">x</font></p>', { italic: true }],
+        ['<p style="font-style: oblique 10deg">x</p>', { italic: true }],
+        ['<p><font style="text-decoration: underline">x</font></p>', { underline: true }],
+        ['<div style="text-decoration-line: line-through"><p>x</p></div>', { strikethrough: true }],
+        ['<p><span style="vertical-align: sub">x</span></p>', { subscript: true }],
+        ['<p><span style="vertical-align: super">x</span></p>', { superscript: true }],
+    ])('reads the mark off any element whose style declares it: %s', (html, marks) => {
+        expect(pasted(html)).toEqual([paragraph(text('x', marks))]);
+    });
+
+    it('reads every mark one element declares', () => {
+        expect(
+            pasted(
+                '<p><span style="font-weight:700;font-style:italic;text-decoration:underline line-through">x</span></p>',
+            ),
+        ).toEqual([paragraph(text('x', { bold: true, italic: true, underline: true, strikethrough: true }))]);
+    });
+
+    it('takes bold off text under a span that sets the weight back to normal', () => {
+        expect(pasted('<p><strong>a<span style="font-weight:normal">b</span></strong></p>')).toEqual([
+            paragraph(text('a', { bold: true }), text('b')),
+        ]);
+    });
+
+    it('takes italic off text under a span that sets the style back to normal', () => {
+        expect(pasted('<p><em>a<span style="font-style:normal">b</span></em></p>')).toEqual([
+            paragraph(text('a', { italic: true }), text('b')),
+        ]);
+    });
+
+    it('does not read a <b> that sets the weight back to normal as bold', () => {
+        expect(pasted('<b style="font-weight:normal"><p>x</p></b>')).toEqual([paragraph(text('x'))]);
+    });
+
+    it('keeps a line drawn by an ancestor under text-decoration: none, as a browser does', () => {
+        expect(pasted('<p><u>a<span style="text-decoration: none">b</span></u></p>')).toEqual([
+            paragraph(text('ab', { underline: true })),
+        ]);
+    });
+
+    it('keeps only the inner of subscript and superscript', () => {
+        expect(pasted('<p><sub><sup>x</sup></sub></p>')).toEqual([paragraph(text('x', { superscript: true }))]);
+    });
+});
+
 describe('pasting over selected text with the link plugin', () => {
     const link = (href: string) => ({ link: { href } });
 

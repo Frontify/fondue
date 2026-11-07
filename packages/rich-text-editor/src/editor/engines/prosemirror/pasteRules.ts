@@ -1,8 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type TagParseRule } from 'prosemirror-model';
+import {
+    type ParseRule as PmParseRule,
+    type StyleParseRule as PmStyleParseRule,
+    type TagParseRule as PmTagParseRule,
+} from 'prosemirror-model';
 
-import { type BlockAttributeDefinition, type BlockDefinition, type ParseRule } from '#/core';
+import {
+    type BlockAttributeDefinition,
+    type BlockDefinition,
+    type MarkClearRule,
+    type ParseRule,
+    type StyleParseRule,
+    type TagParseRule,
+} from '#/core';
 
 import { VALUE_ATTR } from './documentConversion';
 
@@ -25,15 +36,48 @@ export const INLINE_PRIORITY = 70;
 const qualifiedPriority = (tag: string): number | undefined => (/[[.#:]/.test(tag) ? MARK_PRIORITY : undefined);
 
 /** Mark and inline rules keep their whole value in one attribute; a null value means "not this node". */
-export const valueParseRules = (rules: readonly ParseRule<unknown>[], priority: number): TagParseRule[] =>
-    rules.map((rule) => ({
-        tag: rule.tag,
-        priority,
-        getAttrs: (element: HTMLElement) => {
-            const value = rule.value ? rule.value(element) : {};
-            return value === null ? false : { [VALUE_ATTR]: value };
-        },
-    }));
+const valueParseRule = (rule: TagParseRule<unknown>, priority: number): PmTagParseRule => ({
+    tag: rule.tag,
+    priority,
+    getAttrs: (element: HTMLElement) => {
+        const value = rule.value ? rule.value(element) : {};
+        return value === null ? false : { [VALUE_ATTR]: value };
+    },
+});
+
+export const valueParseRules = (rules: readonly TagParseRule<unknown>[], priority: number): PmTagParseRule[] =>
+    rules.map((rule) => valueParseRule(rule, priority));
+
+const markStyleRule = (rule: StyleParseRule<unknown>): PmStyleParseRule => ({
+    style: rule.style,
+    priority: MARK_PRIORITY,
+    // One declaration, such as `text-decoration: underline line-through`, can set two marks.
+    consuming: false,
+    getAttrs: (cssValue: string) => {
+        const value = rule.value ? rule.value(cssValue) : {};
+        return value === null ? false : { [VALUE_ATTR]: value };
+    },
+});
+
+const markClearRule = (type: string, rule: MarkClearRule): PmStyleParseRule => ({
+    style: rule.style,
+    priority: MARK_PRIORITY,
+    consuming: false,
+    clearMark: (mark) => mark.type.name === type,
+    getAttrs: (cssValue: string) => (rule.clears(cssValue) ? null : false),
+});
+
+/** A mark's rules: tag and style rules put it on with its value, clear rules take it off the element's content. */
+export const markParseRules = (type: string, rules: readonly (ParseRule<unknown> | MarkClearRule)[]): PmParseRule[] =>
+    rules.map((rule) => {
+        if ('clears' in rule) {
+            return markClearRule(type, rule);
+        }
+        if (rule.tag !== undefined) {
+            return valueParseRule(rule, MARK_PRIORITY);
+        }
+        return markStyleRule(rule);
+    });
 
 /**
  * Block rules: the value the element carries becomes the block's attributes,
@@ -42,7 +86,7 @@ export const valueParseRules = (rules: readonly ParseRule<unknown>[], priority: 
 export const blockParseRules = (
     definition: BlockDefinition,
     carried: readonly (readonly [string, BlockAttributeDefinition])[],
-): TagParseRule[] =>
+): PmTagParseRule[] =>
     definition.parse.map((rule) => ({
         tag: rule.tag,
         priority: qualifiedPriority(rule.tag),

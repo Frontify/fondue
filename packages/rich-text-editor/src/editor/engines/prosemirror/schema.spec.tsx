@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { buildPluginRegistry, defineBlock, defineInline, defineMark, definePlugin, type RtePlugin } from '#/core';
 
 import { buildSchema as buildSchemaFromRegistry } from './schema';
+import { shipped } from './testEditor';
 
 const buildSchema = (plugins: RtePlugin[]) => buildSchemaFromRegistry(buildPluginRegistry(plugins));
 
@@ -115,6 +116,17 @@ describe('buildSchema', () => {
                 }),
             ]),
         ).toThrow('Block "bulletList" declares items of type "nope", which is not registered.');
+    });
+
+    it('lets a mark take off the marks it excludes, ignoring a type no mounted plugin registers', () => {
+        const both = buildSchema(shipped('subscript', 'superscript'));
+        const subscriptOnly = buildSchema(shipped('subscript'));
+        const superscriptOnly = buildSchema(shipped('superscript'));
+
+        expect(both.marks.subscript?.spec.excludes).toBe('subscript superscript');
+        expect(both.marks.superscript?.spec.excludes).toBe('superscript subscript');
+        expect(subscriptOnly.marks.subscript?.spec.excludes).toBe('subscript');
+        expect(superscriptOnly.marks.superscript?.spec.excludes).toBe('superscript');
     });
 
     it('gives a mark turned on without a value its declared defaults', () => {

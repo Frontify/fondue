@@ -12,7 +12,15 @@ export type SubscriptMark = {
 /** Subscript text: `<sub>`. */
 export const subscriptContent = /* @__PURE__ */ defineContent({
     marks: {
-        subscript: /* @__PURE__ */ defineMark({ tag: 'sub' }),
+        subscript: /* @__PURE__ */ defineMark({
+            tag: 'sub',
+            excludes: ['superscript'],
+            // An element with the alignment is subscript too: how Google Docs writes it.
+            parse: [
+                { tag: 'sub' },
+                { style: 'vertical-align', value: (value) => (value.trim().toLowerCase() === 'sub' ? {} : null) },
+            ],
+        }),
     },
 });
 

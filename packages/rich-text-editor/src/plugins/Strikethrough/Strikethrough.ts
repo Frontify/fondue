@@ -4,7 +4,7 @@ import { IconTextFormatStrikethrough } from '@frontify/fondue-icons';
 
 import { defineContent, defineMark, definePlugin } from '#/core';
 
-import { declaresDecoration } from '../shared/helpers/declaredStyle';
+import { hasDecorationLine } from '../shared/helpers/declaredStyle';
 
 /** The flag this plugin sets on text nodes: present means on, and `true` is the only value it takes. */
 export type StrikethroughMark = {
@@ -16,12 +16,20 @@ export const strikethroughContent = /* @__PURE__ */ defineContent({
     marks: {
         strikethrough: /* @__PURE__ */ defineMark({
             tag: 's',
-            // A span with the decoration is struck through too: how Google Docs writes it.
+            // An element with the decoration is struck through too: how Google Docs writes it.
+            // No rule reads `text-decoration: none` as a removal: a browser cannot take an ancestor's line off.
             parse: [
                 { tag: 's' },
                 { tag: 'del' },
                 { tag: 'strike' },
-                { tag: 'span', value: (element) => (declaresDecoration(element, 'line-through') ? {} : null) },
+                {
+                    style: 'text-decoration',
+                    value: (value) => (hasDecorationLine(value, 'line-through') ? {} : null),
+                },
+                {
+                    style: 'text-decoration-line',
+                    value: (value) => (hasDecorationLine(value, 'line-through') ? {} : null),
+                },
             ],
         }),
     },

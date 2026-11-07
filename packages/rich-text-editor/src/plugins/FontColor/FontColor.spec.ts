@@ -11,7 +11,8 @@ const fontColor = fontColorPlugin.content?.marks?.fontColor;
 const parse = (html: string): unknown => {
     const element = document.createElement('div');
     element.innerHTML = html;
-    return fontColor?.parse[0]?.value?.(element.firstElementChild as HTMLElement);
+    const rule = fontColor?.parse[0] as { value?: (element: HTMLElement) => unknown } | undefined;
+    return rule?.value?.(element.firstElementChild as HTMLElement);
 };
 
 describe('the font colour mark', () => {

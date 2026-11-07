@@ -48,6 +48,12 @@ describe('typing a mark shortcut', () => {
         expect(typed('an *aside*')).toEqual([paragraph(text('an '), text('aside', { italic: true }))]);
     });
 
+    it('turns __text__ bold and _text_ italic', () => {
+        expect(typed('__bold__ and _aside_')).toEqual([
+            paragraph(text('bold', { bold: true }), text(' and '), text('aside', { italic: true })),
+        ]);
+    });
+
     it('does not carry the mark on into what is typed after it', () => {
         expect(typed('**bold**x')).toEqual([paragraph(text('bold', { bold: true }), text('x'))]);
     });
@@ -103,12 +109,60 @@ describe('typing a list shortcut at the start of a line', () => {
 
 describe('a mark that opts out of typing rules', () => {
     it('keeps the delimiters typed inside it — inline code keeps `**`', () => {
-        const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
+        const editor = editorWith(defaultPlugins, [paragraph(text('xy', { code: true }))]);
         editor.caretAfter('x');
 
         editor.type(' **c**');
 
-        expect(editor.stored()).toEqual([paragraph(text('x **c**', { code: true }))]);
+        expect(editor.stored()).toEqual([paragraph(text('x **c**y', { code: true }))]);
+    });
+});
+
+describe('inline code', () => {
+    const mod = /Mac|iP(hone|[oa]d)/.test(navigator.platform) ? { metaKey: true } : { ctrlKey: true };
+
+    it('does not carry on into what is typed at its end', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
+        editor.caretAfter('x');
+
+        editor.type('y');
+
+        expect(editor.stored()).toEqual([paragraph(text('x', { code: true }), text('y'))]);
+    });
+
+    it('carries on at its end once Mod-e turns it back on', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
+        editor.caretAfter('x');
+
+        expect(press(editor.view, 'e', mod)).toBe(true);
+        editor.type('y');
+
+        expect(editor.stored()).toEqual([paragraph(text('xy', { code: true }))]);
+    });
+});
+
+describe('subscript and superscript', () => {
+    const mod = /Mac|iP(hone|[oa]d)/.test(navigator.platform) ? { metaKey: true } : { ctrlKey: true };
+
+    it('turning one on over text takes the other off', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { subscript: true }))]);
+        editor.select('x');
+
+        expect(press(editor.view, '.', mod)).toBe(true);
+        expect(editor.stored()).toEqual([paragraph(text('x', { superscript: true }))]);
+
+        editor.api.marks.toggle('subscript');
+        expect(editor.stored()).toEqual([paragraph(text('x', { subscript: true }))]);
+    });
+
+    it('turning one on at a caret types only that one', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { subscript: true }))]);
+        editor.caretAfter('x');
+
+        expect(press(editor.view, '.', mod)).toBe(true);
+        editor.type('y');
+
+        expect(editor.stored()).toEqual([paragraph(text('x', { subscript: true }), text('y', { superscript: true }))]);
     });
 });
 

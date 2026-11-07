@@ -20,16 +20,16 @@ export const declaredStyle = (element: HTMLElement, property: string): string | 
     return found === '' ? null : found;
 };
 
+/** Whether a `font-weight` value is not bold. */
+export const isNormalWeight = (value: string): boolean => /^(normal|lighter|[1-4]00)$/i.test(value.trim());
+
+/** Whether a `font-weight` value is bold, such as `700`. */
+export const isBoldWeight = (value: string): boolean => /^(bold|bolder|[6-9]00)$/i.test(value.trim());
+
+/** Whether a `text-decoration` or `text-decoration-line` value draws this line (`underline`, `line-through`). */
+export const hasDecorationLine = (value: string, line: string): boolean =>
+    value.toLowerCase().split(/\s+/).includes(line);
+
 /** Whether the element's own style resets the weight: Google Docs wraps copies in `<b style="font-weight: normal">`. */
 export const declaresNormalWeight = (element: HTMLElement): boolean =>
-    /^(normal|lighter|[1-4]00)$/i.test(declaredStyle(element, 'font-weight') ?? '');
-
-/** Whether the element's own style makes it bold, such as `font-weight: 700` on a span. */
-export const declaresBoldWeight = (element: HTMLElement): boolean =>
-    /^(bold|bolder|[6-9]00)$/i.test(declaredStyle(element, 'font-weight') ?? '');
-
-/** Whether the element's own `text-decoration` draws this line (`underline`, `line-through`). */
-export const declaresDecoration = (element: HTMLElement, line: string): boolean =>
-    [declaredStyle(element, 'text-decoration'), declaredStyle(element, 'text-decoration-line')].some(
-        (value) => value?.toLowerCase().split(/\s+/).includes(line) === true,
-    );
+    isNormalWeight(declaredStyle(element, 'font-weight') ?? '');

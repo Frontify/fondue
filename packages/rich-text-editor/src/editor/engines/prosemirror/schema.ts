@@ -14,7 +14,7 @@ import {
 
 import { plainTextOf, RAW_ATTR, UNKNOWN_BLOCK, UNKNOWN_INLINE, UNKNOWN_MARKS, VALUE_ATTR } from './documentConversion';
 import { htmlSpecToDom } from './htmlSpecToDom';
-import { blockParseRules, INLINE_PRIORITY, MARK_PRIORITY, valueParseRules } from './pasteRules';
+import { blockParseRules, INLINE_PRIORITY, markParseRules, valueParseRules } from './pasteRules';
 
 /**
  * The mounted features -> one engine schema (`buildSchema`, at the bottom, with
@@ -116,11 +116,24 @@ const inlineNodeSpec = (definition: InlineDefinition, hasEditView: boolean): PmN
     },
 });
 
-const markSpec = (definition: MarkDefinition): PmMarkSpec => ({
+/** The engine's list replaces its default of the mark itself, and throws on a type it does not know. */
+const excludedMarks = (
+    type: string,
+    definition: MarkDefinition,
+    registered: PluginRegistry['marks'],
+): string | undefined => {
+    if (!definition.excludes) {
+        return undefined;
+    }
+    return [type, ...definition.excludes.filter((name) => registered.has(name))].join(' ');
+};
+
+const markSpec = (type: string, definition: MarkDefinition, registered: PluginRegistry['marks']): PmMarkSpec => ({
     // A mark turned on without a value carries its declared defaults.
     attrs: { [VALUE_ATTR]: { default: definition.defaults ?? {} } },
     inclusive: definition.inclusive ?? true,
-    parseDOM: valueParseRules(definition.parse, MARK_PRIORITY),
+    excludes: excludedMarks(type, definition, registered),
+    parseDOM: markParseRules(type, definition.parse),
     toDOM: (mark) => htmlSpecToDom(definition.toHtml(mark.attrs[VALUE_ATTR] as Record<string, unknown>)),
 });
 
@@ -173,7 +186,7 @@ export const buildSchema = (registry: PluginRegistry): Schema => {
     // invariant (2): the registry already holds marks in nesting order.
     const marks: Record<string, PmMarkSpec> = {};
     for (const [type, mark] of registry.marks) {
-        marks[type] = markSpec(mark);
+        marks[type] = markSpec(type, mark, registry.marks);
     }
     // Last, so it wraps nothing a plugin's mark would.
     marks[UNKNOWN_MARKS] = unknownMarksSpec;

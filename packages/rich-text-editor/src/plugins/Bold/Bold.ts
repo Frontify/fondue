@@ -4,7 +4,7 @@ import { IconTextFormatBold } from '@frontify/fondue-icons';
 
 import { defineContent, defineMark, definePlugin } from '#/core';
 
-import { declaresBoldWeight, declaresNormalWeight } from '../shared/helpers/declaredStyle';
+import { declaresNormalWeight, isBoldWeight, isNormalWeight } from '../shared/helpers/declaredStyle';
 
 /** The flag this plugin sets on text nodes: present means on, and `true` is the only value it takes. */
 export type BoldMark = {
@@ -22,15 +22,16 @@ export const boldContent = /* @__PURE__ */ defineContent({
             parse: [
                 { tag: 'strong', value: (element) => (declaresNormalWeight(element) ? null : {}) },
                 { tag: 'b', value: (element) => (declaresNormalWeight(element) ? null : {}) },
-                { tag: 'span', value: (element) => (declaresBoldWeight(element) ? {} : null) },
+                { style: 'font-weight', value: (value) => (isBoldWeight(value) ? {} : null) },
+                { style: 'font-weight', clears: isNormalWeight },
             ],
         }),
     },
 });
 
-/** Bold text: `Mod-b`, and `**text**` while typing. */
+/** Bold text: `Mod-b`, and `**text**` or `__text__` while typing. */
 export const boldPlugin = /* @__PURE__ */ definePlugin({
     content: boldContent,
     toolbar: [{ icon: IconTextFormatBold, shortcut: 'Mod-b' }],
-    inputRules: [{ delimiter: '**' }],
+    inputRules: [{ delimiter: '**' }, { delimiter: '__' }],
 });

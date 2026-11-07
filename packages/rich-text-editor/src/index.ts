@@ -9,8 +9,11 @@ import {
     type HtmlSpec,
     type InlineDefinition,
     isEmpty,
+    type MarkClearRule,
     type MarkDefinition,
     type ParseRule,
+    type StyleParseRule,
+    type TagParseRule,
     type PasteHandler,
     type RteBlockCommand,
     type RteBlockNode,
@@ -144,6 +147,9 @@ type MarkDef<TValue> = MarkDefinition<TValue>;
 type InlineDef<TValue> = InlineDefinition<TValue>;
 type EditComponentProps<TValue, TCurrent> = EditProps<TValue, TCurrent>;
 type Parse<TValue> = ParseRule<TValue>;
+type TagParse<TValue> = TagParseRule<TValue>;
+type StyleParse<TValue> = StyleParseRule<TValue>;
+type ClearRule = MarkClearRule;
 type Html = HtmlSpec;
 
 // oxlint-disable-next-line typescript/no-namespace -- types only; groups the authoring types under `RtePlugin`.
@@ -158,6 +164,9 @@ export declare namespace RtePlugin {
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
     export type EditProps<TValue, TCurrent = TValue> = EditComponentProps<TValue, TCurrent>;
     export type ParseRule<TValue> = Parse<TValue>;
+    export type TagParseRule<TValue> = TagParse<TValue>;
+    export type StyleParseRule<TValue> = StyleParse<TValue>;
+    export type MarkClearRule = ClearRule;
     export type HtmlSpec = Html;
     export type Content = RteContent;
     export type ToolbarEntry = RteToolbarEntry;

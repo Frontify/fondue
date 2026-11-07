@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PARAGRAPH, type ParseRule, type RteInlineNode, type RteInputRule } from '#/core';
+import { PARAGRAPH, type TagParseRule, type RteInlineNode, type RteInputRule } from '#/core';
 
 import styles from '../textStyle.module.scss';
 
@@ -89,7 +89,7 @@ export const markdownRuleFor = ({ name, tag }: Preset): RteInputRule[] => {
 };
 
 /** How pasted HTML maps to a preset: headings by bare tag, paragraph presets by their `data-text-style` attribute. */
-export const parseRuleFor = ({ name, tag }: Preset): ParseRule<{ style: string }> => ({
+export const parseRuleFor = ({ name, tag }: Preset): TagParseRule<{ style: string }> => ({
     tag: tag === 'p' ? `p[data-text-style=${name}]` : tag,
     value: () => ({ style: name }),
 });

@@ -178,7 +178,7 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
     defaults?: TValue;
     /** The block's markup. `children: true` is where its content goes. */
     toHtml: (value: TValue) => HtmlSpec;
-    parse: readonly ParseRule<Partial<TValue>>[];
+    parse: readonly TagParseRule<Partial<TValue>>[];
     render?: {
         /**
          * Readonly view in place of `toHtml`. `style` carries what every text
@@ -204,7 +204,10 @@ export type ContentModel = 'text' | { items: string } | { blocks: readonly strin
 export const defineMark = <TValue extends object = Record<string, never>>(
     definition:
         | MarkDefinition<TValue>
-        | ({ tag: string; parse?: readonly ParseRule<TValue>[] } & Omit<MarkDefinition<TValue>, 'toHtml' | 'parse'>),
+        | ({ tag: string; parse?: readonly (ParseRule<TValue> | MarkClearRule)[] } & Omit<
+              MarkDefinition<TValue>,
+              'toHtml' | 'parse'
+          >),
 ): MarkDefinition => {
     if (!('tag' in definition)) {
         return definition as unknown as MarkDefinition;
@@ -219,13 +222,15 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
     nesting?: number;
     /** Text typed at the end of the mark carries it on. Defaults to true; a link says false. */
     inclusive?: boolean;
+    /** Mark types that cannot sit on the same text as this one: putting this mark on takes them off. A type no mounted plugin registers is ignored. */
+    excludes?: readonly string[];
     /** Typing rules do not rewrite text carrying this mark — inline code keeps `--` and `**` as typed. Defaults to false. */
     excludesInputRules?: boolean;
     /** What the mark carries when put on without a value (a toggle, a parse rule). Defaults to `{}`. */
     defaults?: TValue;
     /** The mark's markup around its text, which goes where `children: true` is. */
     toHtml: (value: TValue) => HtmlSpec;
-    parse: readonly ParseRule<TValue>[];
+    parse: readonly (ParseRule<TValue> | MarkClearRule)[];
     render?: {
         /** Readonly view in place of `toHtml`. */
         component?: ComponentType<{ value: TValue; children: ReactNode }>;
@@ -242,7 +247,7 @@ export type InlineDefinition<TValue = Record<string, unknown>> = {
     /** What the inline stores when inserted or parsed without a value; unused when the plugin has an `edit` view for it. Defaults to `{}`. */
     defaults?: TValue;
     toHtml: (value: TValue) => HtmlSpec;
-    parse: readonly ParseRule<TValue>[];
+    parse: readonly TagParseRule<TValue>[];
     render?: {
         /** Readonly view in place of `toHtml`. */
         component?: ComponentType<{ value: TValue }>;
@@ -254,10 +259,31 @@ export type InlineDefinition<TValue = Record<string, unknown>> = {
  * element carries none (`<strong>`); return null from it when the element is
  * not this node after all (a `span` without a colour is no font colour).
  */
-export type ParseRule<TValue> = {
+export type ParseRule<TValue> = TagParseRule<TValue> | StyleParseRule<TValue>;
+
+/** A rule that matches elements by selector. */
+export type TagParseRule<TValue> = {
     /** A CSS selector: `strong`, `a[href]`, `li[data-checked]`. */
     tag: string;
+    /** Never set: lets TypeScript tell a tag rule from a style rule. */
+    style?: undefined;
     value?: (element: HTMLElement) => TValue | null;
+};
+
+/** A rule that matches any element whose own `style` attribute declares the CSS property, handed the declared value. */
+export type StyleParseRule<TValue> = {
+    /** A CSS property name: `font-weight`. */
+    style: string;
+    /** Never set: lets TypeScript tell a style rule from a tag rule. */
+    tag?: undefined;
+    value?: (cssValue: string) => TValue | null;
+};
+
+/** When `clears` is true for the declared value, the element's content does not carry the mark even if an ancestor set it (`<strong><span style="font-weight:normal">`). */
+export type MarkClearRule = {
+    /** A CSS property name: `font-weight`. */
+    style: string;
+    clears: (cssValue: string) => boolean;
 };
 
 /**
