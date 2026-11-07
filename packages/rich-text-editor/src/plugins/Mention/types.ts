@@ -20,6 +20,15 @@ export type MentionItem = MentionValue & {
     image?: string;
 };
 
+/**
+ * What the app knows now about a stored mention, by its id. The stored value
+ * never changes: this only decides what is shown.
+ */
+export type MentionResolution =
+    | { status: 'current'; username: string; name: string }
+    | { status: 'unavailable'; reason: 'deleted' | 'forbidden' }
+    | { status: 'unknown' };
+
 /** The void inline this plugin adds to the document. */
 export type MentionInline = { type: 'mention' } & MentionValue;
 

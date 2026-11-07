@@ -37,6 +37,21 @@ export const isSafeHref = (href: unknown): href is string => {
     return scheme === null || SAFE_SCHEMES.has(scheme);
 };
 
+/** What an `<img>` may load: a web or relative URL, or a `data:` image; an image cannot run script, but a `javascript:` or other scheme is still refused. */
+export const isSafeImageSrc = (src: unknown): src is string => {
+    if (typeof src !== 'string') {
+        return false;
+    }
+    if (/^data:image\//i.test(src)) {
+        return true;
+    }
+    if (!isSafeHref(src)) {
+        return false;
+    }
+    const scheme = schemeOf(src);
+    return scheme === null || scheme === 'http:' || scheme === 'https:';
+};
+
 /** Paths and fragments within the site the document is shown on, kept as typed. */
 const isRelative = (typed: string): boolean => /^(#|\/|\.\.?\/|\?)/.test(typed);
 

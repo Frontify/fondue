@@ -32,7 +32,7 @@ describe('the mention inline', () => {
         const spec = mentionFor()?.toHtml(ALL);
         expect(spec?.tag).toBe('span');
         expect(spec?.attrs?.href).toBeUndefined();
-        expect(spec?.children).toBe('@all');
+        expect(spec?.children).toEqual([{ tag: 'bdi', children: '@all' }]);
         const noProfile = mentionPlugin({ items: [], href: (m) => (m.kind === 'all' ? undefined : `/u/${m.id}`) });
         expect(noProfile.content?.inlines?.mention?.toHtml(ALL).tag).toBe('span');
         expect(noProfile.content?.inlines?.mention?.toHtml(JANE).tag).toBe('a');
@@ -50,6 +50,43 @@ describe('the mention inline', () => {
 
     it('refuses a trigger that is not one character, in the content too', () => {
         expect(() => mentionContent({ trigger: '@@' })).toThrow(/exactly one character/);
+    });
+
+    it('isolates the label so a right-to-left name cannot reorder the text around it', () => {
+        expect(mentionFor('/u')?.toHtml(JANE).children).toEqual([{ tag: 'bdi', children: '@jane' }]);
+    });
+
+    it('shows the current username and name where the app resolves one, and stores the old ones in the data', () => {
+        const content = mentionContent({
+            href: (mention) => `/u/${mention.id}`,
+            resolve: () => ({ status: 'current', username: 'jane.s', name: 'Jane Smith' }),
+        });
+        const spec = content.inlines?.mention?.toHtml(JANE);
+
+        expect(spec).toMatchObject({
+            tag: 'a',
+            attrs: { href: '/u/jane', title: 'Jane Smith', 'data-mention-username': 'jane' },
+            children: [{ tag: 'bdi', children: '@jane.s' }],
+        });
+    });
+
+    it('marks a deleted or forbidden person unavailable, with the stored name and no link', () => {
+        const content = mentionContent({
+            href: (mention) => `/u/${mention.id}`,
+            resolve: () => ({ status: 'unavailable', reason: 'deleted' }),
+        });
+        const spec = content.inlines?.mention?.toHtml(JANE);
+
+        expect(spec?.tag).toBe('span');
+        expect(spec?.attrs).toMatchObject({ href: undefined, title: 'Jane Doe', 'data-mention-id': 'jane' });
+        expect(spec?.children).toEqual([{ tag: 'bdi', children: '@jane (unavailable)' }]);
+    });
+
+    it('shows the stored value where the app does not know the person', () => {
+        const unknown = mentionContent({ href: () => '/u', resolve: () => ({ status: 'unknown' }) });
+        const none = mentionContent({ href: () => '/u' });
+
+        expect(unknown.inlines?.mention?.toHtml(JANE)).toEqual(none.inlines?.mention?.toHtml(JANE));
     });
 
     it('reads a pasted mention back', () => {

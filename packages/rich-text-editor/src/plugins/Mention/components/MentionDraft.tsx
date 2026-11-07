@@ -4,6 +4,8 @@ import { IconPeople, IconPerson, IconTarget } from '@frontify/fondue-icons';
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { isSafeImageSrc } from '../../shared/helpers/href';
+import { isCompositionKey } from '../../shared/helpers/keys';
 import styles from '../mention.module.scss';
 import { type MentionItem, type MentionItems } from '../types';
 
@@ -19,7 +21,7 @@ const LIST_OFFSET = 4;
  */
 const Avatar = ({ person }: { person: MentionItem }): ReactNode => (
     <span className={styles.avatar} aria-hidden>
-        {person.image ? (
+        {isSafeImageSrc(person.image) ? (
             <img src={person.image} alt="" />
         ) : person.kind === 'group' ? (
             <IconPeople size={12} />
@@ -34,28 +36,46 @@ const Avatar = ({ person }: { person: MentionItem }): ReactNode => (
 /**
  * The people for a query. Answers are tagged with their query so a slow one
  * never overwrites a newer one; the last answer stays up while `pending`, so a
- * server-backed list does not flicker on every key.
+ * server-backed list does not flicker on every key. A failed lookup offers
+ * nobody rather than leaving the last list up, and `retry` asks again.
  */
-const usePeople = (items: MentionItems, query: string): { people: readonly MentionItem[]; pending: boolean } => {
-    const [answer, setAnswer] = useState<{ query: string; people: readonly MentionItem[] } | null>(null);
+const usePeople = (
+    items: MentionItems,
+    query: string,
+): { people: readonly MentionItem[]; pending: boolean; failed: boolean; retry: () => void } => {
+    const [answer, setAnswer] = useState<{
+        query: string;
+        people: readonly MentionItem[];
+        failed: boolean;
+    } | null>(null);
+    const [attempt, setAttempt] = useState(0);
 
     useEffect(() => {
         let current = true;
-        const settle = (people: readonly MentionItem[]): void => {
+        const settle = (people: readonly MentionItem[], failed: boolean): void => {
             if (current) {
-                setAnswer({ query, people: people.slice(0, SUGGESTION_LIMIT) });
+                setAnswer({ query, people: people.slice(0, SUGGESTION_LIMIT), failed });
             }
         };
-        // A failed lookup offers nobody rather than leaving the last list up.
         Promise.resolve(items(query))
-            .then(settle)
-            .catch(() => settle([]));
+            .then((people) => settle(people, false))
+            .catch(() => settle([], true));
         return () => {
             current = false;
         };
-    }, [items, query]);
+    }, [items, query, attempt]);
 
-    return { people: answer?.people ?? [], pending: answer?.query !== query };
+    const retry = (): void => {
+        setAnswer(null);
+        setAttempt((previous) => previous + 1);
+    };
+
+    return {
+        people: answer?.people ?? [],
+        pending: answer?.query !== query,
+        failed: answer?.query === query && answer.failed,
+        retry,
+    };
 };
 
 /** Viewport position under the query, kept in step with scrolling and resizing. */
@@ -133,9 +153,9 @@ export const MentionDraft = ({
         leave();
     };
     const [query, setQuery] = useState('');
-    const { people, pending } = usePeople(items, query);
-    const noMatches = people.length === 0 && !pending;
-    const open = people.length > 0 || (noMatches && query !== '');
+    const { people, pending, failed, retry } = usePeople(items, query);
+    const noMatches = people.length === 0 && !pending && !failed;
+    const open = people.length > 0 || pending || failed || (noMatches && query !== '');
     const position = useListPosition(draftRef, open);
 
     // Tagged with its query so a new query resets the highlight to the top without an effect.
@@ -166,6 +186,14 @@ export const MentionDraft = ({
                 break;
             case 'Enter':
             case 'Tab':
+                // The key that confirms an input-method composition is not a command.
+                if (isCompositionKey(event)) {
+                    return;
+                }
+                if (failed && event.key === 'Enter') {
+                    retry();
+                    break;
+                }
                 if (!active) {
                     return;
                 }
@@ -195,11 +223,14 @@ export const MentionDraft = ({
         event.preventDefault();
     };
 
-    const status = pending
-        ? ''
-        : noMatches
-          ? 'No matches'
-          : `${people.length} ${people.length === 1 ? 'person' : 'people'}`;
+    let status = `${people.length} ${people.length === 1 ? 'person' : 'people'}`;
+    if (pending) {
+        status = 'Searching';
+    } else if (failed) {
+        status = 'Could not load people';
+    } else if (noMatches) {
+        status = 'No matches';
+    }
 
     return (
         <span ref={draftRef} className={styles.draft}>
@@ -209,7 +240,7 @@ export const MentionDraft = ({
                 role="combobox"
                 aria-expanded={open}
                 // Only while the listbox is in the page: an id pointing at nothing is an error.
-                aria-controls={open && position !== null && !noMatches ? listId : undefined}
+                aria-controls={open && position !== null && people.length > 0 ? listId : undefined}
                 aria-autocomplete="list"
                 aria-activedescendant={open && active ? optionId(activeIndex) : undefined}
                 aria-label="Mention someone"
@@ -226,8 +257,26 @@ export const MentionDraft = ({
             {open && position !== null
                 ? createPortal(
                       <div className={styles.popup} style={{ left: position.left, top: position.top }}>
-                          {noMatches ? (
-                              <div className={styles.empty}>No matches</div>
+                          {people.length === 0 ? (
+                              <div className={styles.empty}>
+                                  {pending ? 'Searching' : null}
+                                  {failed ? (
+                                      <>
+                                          Could not load people{' '}
+                                          <button
+                                              type="button"
+                                              // Out of the Tab order and off the mouse's focus: the query keeps the caret.
+                                              tabIndex={-1}
+                                              onMouseDown={(event) => event.preventDefault()}
+                                              onClick={retry}
+                                              className={styles.retry}
+                                          >
+                                              Retry
+                                          </button>
+                                      </>
+                                  ) : null}
+                                  {noMatches ? 'No matches' : null}
+                              </div>
                           ) : (
                               <ul id={listId} role="listbox" aria-label="People" className={styles.list}>
                                   {people.map((person, index) => (

@@ -261,6 +261,25 @@ describe('a feature hotkey', () => {
         expect(mention).toHaveBeenCalledTimes(1);
         expect(editor.stored()).toEqual([paragraph(text('hi [mention]'))]);
     });
+
+    it('naming a character is typed as it is inside inline code, and fires outside it', () => {
+        const mention = vi.fn<(api: EditorControlApi) => void>();
+        const editor = editorWith(
+            [...defaultPlugins, { id: 'mention', hotkeys: { '@': mention } }],
+            [paragraph(text('a b', { code: true }), text(' c'))],
+        );
+
+        editor.caretAfter('a ');
+        editor.type('@');
+
+        expect(mention).not.toHaveBeenCalled();
+        expect(editor.stored()).toEqual([paragraph(text('a @b', { code: true }), text(' c'))]);
+
+        editor.caretAfter(' c');
+        editor.type(' @');
+
+        expect(mention).toHaveBeenCalledTimes(1);
+    });
 });
 
 describe('the list keys', () => {

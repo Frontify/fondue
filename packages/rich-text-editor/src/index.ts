@@ -135,6 +135,7 @@ export {
     type MentionContentOptions,
     type MentionItem,
     type MentionPluginOptions,
+    type MentionResolution,
     type MentionValue,
 } from './plugins/Mention';
 export { type TextStylePluginOptions } from './plugins/TextStyle';

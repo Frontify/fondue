@@ -13,6 +13,7 @@ import {
     columnBreakPlugin,
     defaultPlugins,
     mentionPlugin,
+    type MentionPluginOptions,
     numberedListPlugin,
     RichTextRenderer,
     serializeToHtml,
@@ -114,6 +115,77 @@ describe('mentionPlugin', () => {
         expect(mentions.map((mention) => mention.textContent)).toEqual(['@ana', '@design', '@all']);
         // Only the group carries an icon.
         expect(mentions.map((mention) => mention.querySelector('svg') !== null)).toEqual([false, true, false]);
+        act(() => root.unmount());
+    });
+
+    it('writes what the app resolves into the exported HTML, and the same as no resolver for unknown', () => {
+        const doc = {
+            version: 1 as const,
+            blocks: [
+                { type: 'paragraph', children: [{ type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' }] },
+            ],
+        };
+        const written = (options: Omit<MentionPluginOptions, 'items'>): string =>
+            serializeToHtml(doc, {
+                plugins: [...defaultPlugins, mentionPlugin({ ...options, items: [] })],
+                wrap: false,
+            });
+
+        expect(written({ href: () => '/u' })).toContain('<bdi>@jane</bdi>');
+        expect(
+            written({ href: () => '/u', resolve: () => ({ status: 'current', username: 'j', name: 'J' }) }),
+        ).toContain('<bdi>@j</bdi>');
+        expect(
+            written({ href: () => '/u', resolve: () => ({ status: 'unavailable', reason: 'forbidden' }) }),
+        ).toContain('<bdi>@jane (unavailable)</bdi>');
+        expect(written({ href: () => '/u', resolve: () => ({ status: 'unknown' }) })).toBe(
+            written({ href: () => '/u' }),
+        );
+    });
+
+    it('draws what the app resolves, isolated, and leaves the stored value as it was', () => {
+        const resolutions = {
+            ana: { status: 'current', username: 'ana.m', name: 'Ana Meier' },
+            bob: { status: 'unavailable', reason: 'deleted' },
+            cy: { status: 'unknown' },
+        } as const;
+        const plugins = [
+            mentionPlugin({
+                items: [],
+                href: (mention) => `/u/${mention.id}`,
+                resolve: (mention) => resolutions[mention.id as keyof typeof resolutions],
+            }),
+        ];
+        const doc = {
+            version: 1 as const,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: ['ana', 'bob', 'cy'].map((id) => ({
+                        type: 'mention',
+                        id,
+                        username: id,
+                        name: `Name ${id}`,
+                    })),
+                },
+            ],
+        };
+        const container = window.document.createElement('div');
+        const root = createRoot(container);
+
+        act(() => root.render(<RichTextRenderer value={doc} plugins={plugins} />));
+        const mentions = [...container.querySelectorAll('[data-mention-id]')];
+
+        expect(mentions.map((mention) => mention.tagName)).toEqual(['A', 'SPAN', 'A']);
+        expect(mentions.map((mention) => mention.textContent)).toEqual(['@ana.m', '@bob (unavailable)', '@cy']);
+        expect(mentions.map((mention) => mention.getAttribute('title'))).toEqual(['Ana Meier', 'Name bob', 'Name cy']);
+        expect(mentions.map((mention) => mention.querySelector('bdi')?.textContent)).toEqual([
+            '@ana.m',
+            '@bob (unavailable)',
+            '@cy',
+        ]);
+        // The stored username stays in the data, whatever is shown.
+        expect(mentions.map((mention) => mention.getAttribute('data-mention-username'))).toEqual(['ana', 'bob', 'cy']);
         act(() => root.unmount());
     });
 });

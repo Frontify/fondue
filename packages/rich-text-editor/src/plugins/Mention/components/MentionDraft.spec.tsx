@@ -6,7 +6,7 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { type MentionItem } from '../types';
+import { type MentionItem, type MentionItems } from '../types';
 
 import { MentionDraft } from './MentionDraft';
 
@@ -38,7 +38,7 @@ const settle = async (): Promise<void> => {
     });
 };
 
-const mountDraft = async () => {
+const mountDraft = async (items: MentionItems = search) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
     const root = createRoot(container);
@@ -48,7 +48,7 @@ const mountDraft = async () => {
         root.render(
             <MentionDraft
                 trigger="@"
-                items={search}
+                items={items}
                 focused
                 onChoose={onChoose}
                 onCancel={onCancel}
@@ -73,13 +73,13 @@ const mountDraft = async () => {
         });
         await settle();
     };
-    const press = (key: string): void => {
+    const press = (key: string, init: KeyboardEventInit = {}): void => {
         act(() => {
-            input.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }));
+            input.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }));
         });
     };
     const status = (): string | null | undefined => container.querySelector('[role="status"]')?.textContent;
-    return { input, type, press, status, onChoose, onCancel };
+    return { input, type, press, status, onChoose, onCancel, container };
 };
 
 describe('a mention being made', () => {
@@ -139,5 +139,108 @@ describe('a mention being made', () => {
         press('Enter');
 
         expect(onChoose).toHaveBeenCalledWith(PEOPLE[1]);
+    });
+});
+
+describe('a mention being searched for', () => {
+    const popup = (): string => window.document.querySelector('[class*="popup"]')?.textContent ?? '';
+
+    it('says Searching while the answer is pending, in the list and to a screen reader', async () => {
+        const { status } = await mountDraft(() => new Promise<MentionItem[]>(() => {}));
+        await act(async () => {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+        });
+
+        expect(status()).toBe('Searching');
+        expect(popup()).toContain('Searching');
+        expect(popup()).not.toContain('No matches');
+    });
+
+    it('says No matches only for an empty answer that arrived', async () => {
+        const { status, type } = await mountDraft((query) => (query === '' ? PEOPLE : []));
+        await type('zz');
+        await act(async () => {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+        });
+
+        expect(status()).toBe('No matches');
+        expect(popup()).toContain('No matches');
+    });
+
+    it('says the search failed, and asks again from the Retry button or Enter, keeping focus in the query', async () => {
+        const lookup = vi.fn<MentionItems>((query) =>
+            query === 'fail' ? Promise.reject(new Error('offline')) : Promise.resolve(PEOPLE),
+        );
+        const { input, type, press, status, container } = await mountDraft(lookup);
+        await type('fail');
+        await act(async () => {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+        });
+
+        expect(status()).toBe('Could not load people');
+        expect(popup()).toContain('Could not load people');
+        expect(popup()).not.toContain('No matches');
+        const retry = [...window.document.querySelectorAll('button')].find((button) => button.textContent === 'Retry');
+        expect(retry).toBeDefined();
+        expect(container.contains(retry ?? null)).toBe(false);
+
+        // The mouse press must not move focus out of the query.
+        const press0 = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+        retry?.dispatchEvent(press0);
+        expect(press0.defaultPrevented).toBe(true);
+        const callsBefore = lookup.mock.calls.length;
+        act(() => retry?.click());
+        await settle();
+        expect(lookup.mock.calls.length).toBe(callsBefore + 1);
+        expect(status()).toBe('Could not load people');
+
+        press('Enter');
+        await settle();
+        expect(lookup.mock.calls.length).toBe(callsBefore + 2);
+        expect(window.document.activeElement).toBe(input);
+    });
+
+    it('drops the answer of a query that has moved on', async () => {
+        const answers = new Map<string, (people: MentionItem[]) => void>();
+        const { type, status } = await mountDraft(
+            (query) => new Promise<MentionItem[]>((resolve) => answers.set(query, resolve)),
+        );
+        await type('j');
+        act(() => answers.get('')?.([PEOPLE[2] as MentionItem]));
+        await settle();
+
+        expect(status()).toBe('Searching');
+        act(() => answers.get('j')?.([PEOPLE[0] as MentionItem]));
+        await settle();
+        expect(status()).toBe('1 person');
+    });
+});
+
+describe('a picker that takes what the app gives', () => {
+    it('shows an avatar only from a safe link, and the icon otherwise', async () => {
+        const unsafe: MentionItem[] = [
+            { id: 'a', username: 'a', name: 'A', image: 'javascript:alert(1)' },
+            { id: 'b', username: 'b', name: 'B', image: 'data:text/html,x' },
+            { id: 'c', username: 'c', name: 'C', image: 'https://example.com/c.png' },
+        ];
+        const { input } = await mountDraft(() => unsafe);
+
+        const listbox = window.document.getElementById(input.getAttribute('aria-controls') ?? '');
+        const [a, b, c] = [...(listbox?.querySelectorAll('[role="option"]') ?? [])];
+        expect([a, b].map((option) => option?.querySelector('img'))).toEqual([null, null]);
+        expect([a, b].map((option) => option?.querySelector('svg') !== null)).toEqual([true, true]);
+        expect(c?.querySelector('img')?.getAttribute('src')).toBe('https://example.com/c.png');
+    });
+
+    it('leaves Enter and Tab to the input method while it composes', async () => {
+        const { press, onChoose } = await mountDraft();
+
+        press('Enter', { isComposing: true });
+        press('Tab', { isComposing: true });
+        press('Enter', { keyCode: 229 });
+
+        expect(onChoose).not.toHaveBeenCalled();
+        press('Enter');
+        expect(onChoose).toHaveBeenCalledTimes(1);
     });
 });

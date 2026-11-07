@@ -2,12 +2,17 @@
 
 import { defineContent, defineInline, definePlugin, type EditProps, type RtePlugin } from '#/core';
 
-import { isSafeHref } from '../shared/helpers/href';
-
 import { MentionDraft } from './components/MentionDraft';
 import { MentionLink } from './components/MentionLink';
+import { mentionDisplay } from './helpers/display';
 import styles from './mention.module.scss';
-import { type MentionItem, type MentionItems, type MentionKind, type MentionValue } from './types';
+import {
+    type MentionItem,
+    type MentionItems,
+    type MentionKind,
+    type MentionResolution,
+    type MentionValue,
+} from './types';
 
 /** What the content of a mention depends on: how it reads and where it links. */
 export type MentionContentOptions = {
@@ -17,6 +22,13 @@ export type MentionContentOptions = {
      * text, not a link.
      */
     href?: (mention: MentionValue) => string | undefined;
+    /**
+     * What the app knows now about a stored mention: a renamed person shows
+     * their current username and name, a deleted or forbidden one shows the
+     * stored username marked unavailable, with no link. Without it, or for
+     * `unknown`, the stored value shows. The document is never changed.
+     */
+    resolve?: (mention: MentionValue) => MentionResolution;
     /** The one character that starts a mention. `@` unless the app needs something else. */
     trigger?: string;
 };
@@ -34,14 +46,8 @@ export const assertMentionTrigger = (trigger: string, factory: string): void => 
     }
 };
 
-/** The app's `href` is held to what a link is: a `javascript:` profile URL is left off. */
-export const safeMentionHref = (href: MentionContentOptions['href'], mention: MentionValue): string | undefined => {
-    const target = href?.(mention);
-    return target !== undefined && isSafeHref(target) ? target : undefined;
-};
-
 /** A mention: the username as a link to the person (or group), full name on hover. */
-export const mentionContent = ({ href, trigger = '@' }: MentionContentOptions = {}) => {
+export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentOptions = {}) => {
     assertMentionTrigger(trigger, 'mentionContent');
     return defineContent({
         inlines: {
@@ -49,18 +55,19 @@ export const mentionContent = ({ href, trigger = '@' }: MentionContentOptions = 
                 // Portable markup for the clipboard: a plain link (or text, with
                 // nowhere to link to), no tooltip.
                 toHtml: (mention) => {
-                    const target = safeMentionHref(href, mention);
+                    const shown = mentionDisplay(mention, { resolve, href, trigger });
                     return {
-                        tag: target === undefined ? 'span' : 'a',
+                        tag: shown.href === undefined ? 'span' : 'a',
                         attrs: {
-                            href: target,
-                            title: mention.name,
+                            href: shown.href,
+                            title: shown.title,
                             'data-mention-id': mention.id,
                             'data-mention-username': mention.username,
                             'data-mention-kind': mention.kind,
                             class: styles.mention ?? '',
                         },
-                        children: `${trigger}${mention.username}`,
+                        // Isolated so a right-to-left name cannot reorder the text around it.
+                        children: [{ tag: 'bdi', children: shown.label }],
                     };
                 },
 
@@ -84,7 +91,7 @@ export const mentionContent = ({ href, trigger = '@' }: MentionContentOptions = 
 
                 render: {
                     component: ({ value }) => (
-                        <MentionLink value={value} href={safeMentionHref(href, value)} trigger={trigger} />
+                        <MentionLink value={value} display={mentionDisplay(value, { resolve, href, trigger })} />
                     ),
                 },
             }),
@@ -119,7 +126,7 @@ export const searchIn =
  * through an ordinary hotkey, and the `edit` view draws the query, list and choice.
  */
 export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
-    const { href, trigger = '@' } = options;
+    const { href, resolve, trigger = '@' } = options;
     assertMentionTrigger(trigger, 'mentionPlugin');
     const items = typeof options.items === 'function' ? options.items : searchIn(options.items);
 
@@ -155,11 +162,11 @@ export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
                 />
             );
         }
-        return <MentionLink value={value} href={safeMentionHref(href, value)} trigger={trigger} />;
+        return <MentionLink value={value} display={mentionDisplay(value, { resolve, href, trigger })} />;
     };
 
     return definePlugin({
-        content: mentionContent({ href, trigger }),
+        content: mentionContent({ href, resolve, trigger }),
         edit: { mention: MentionEditor },
         hotkeys: {
             // Inserts an empty mention that the `edit` view takes over.

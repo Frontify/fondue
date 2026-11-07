@@ -43,7 +43,7 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         }),
         // 2
         keymap(featureHotkeys(registry.hotkeys, api)),
-        characterHotkeys(registry.hotkeys, api),
+        characterHotkeys(registry, schema, api),
         // 3
         ...(hasLists ? [keymap(listKeys(api, registry.itemTypeByList))] : []),
         // 4
@@ -86,9 +86,12 @@ const isAtWordStart = (state: EditorState, from: number): boolean => {
  * Character hotkeys fire on the character being TYPED, not on the keys pressed
  * (on a Swiss Mac `@` is Option-G, which a keymap would read as `Alt-@`). They
  * only fire at a word start: `@` in `noah@frontify.com` is not a mention.
+ * Text carrying a mark that opts out of rules (inline code) is typed as is.
  */
-const characterHotkeys = (hotkeys: PluginRegistry['hotkeys'], api: EditorControlApi): PmPlugin =>
-    new Plugin({
+const characterHotkeys = (registry: PluginRegistry, schema: Schema, api: EditorControlApi): PmPlugin => {
+    const { hotkeys } = registry;
+    const excludedMarks = marksExcludingInputRules(registry, schema);
+    return new Plugin({
         props: {
             handleTextInput: (view, from, _to, text) => {
                 // Mid-composition the character is not typed yet: the IME owns it.
@@ -96,10 +99,18 @@ const characterHotkeys = (hotkeys: PluginRegistry['hotkeys'], api: EditorControl
                     return false;
                 }
                 const handlers = isCharacterHotkey(text) ? hotkeys.get(text) : undefined;
-                return handlers && isAtWordStart(view.state, from) ? runUntilHandled(handlers, api) : false;
+                if (!handlers || !isAtWordStart(view.state, from)) {
+                    return false;
+                }
+                const marks = view.state.storedMarks ?? view.state.doc.resolve(from).marks();
+                if (excludedMarks.some((markType) => markType.isInSet(marks))) {
+                    return false;
+                }
+                return runUntilHandled(handlers, api);
             },
         },
     });
+};
 
 // Typing rewrites: one function per `RteInputRule` kind
 //
@@ -116,10 +127,14 @@ type RuleContext = {
     excludedMarks: readonly PmMarkType[];
 };
 
-const typingRewrites = (registry: PluginRegistry, schema: Schema): PmPlugin[] => {
-    const excludedMarks = [...registry.marks]
+/** The marks that opt out of typing rules (inline code). */
+const marksExcludingInputRules = (registry: PluginRegistry, schema: Schema): PmMarkType[] =>
+    [...registry.marks]
         .filter(([, definition]) => definition.excludesInputRules === true)
         .flatMap(([type]) => schema.marks[type] ?? []);
+
+const typingRewrites = (registry: PluginRegistry, schema: Schema): PmPlugin[] => {
+    const excludedMarks = marksExcludingInputRules(registry, schema);
     const context: RuleContext = { schema, registry, excludedMarks };
     // The registry orders rules longest delimiter first; otherwise `**bold**`
     // reads as an italic `*` wrapping `*bold*`.
