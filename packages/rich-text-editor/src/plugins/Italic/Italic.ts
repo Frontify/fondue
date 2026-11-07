@@ -2,12 +2,32 @@
 
 import { IconTextFormatItalic } from '@frontify/fondue-icons';
 
-import { definePlugin } from '#/core';
+import { defineContent, defineMark, definePlugin } from '#/core';
 
-import { italicContent } from './content';
+import { declaredStyle } from '../shared/helpers/declaredStyle';
+
+/** The flag this plugin sets on text nodes: present means on, and `true` is the only value it takes. */
+export type ItalicMark = {
+    italic?: true;
+};
+
+/** Italic text: `<em>`. */
+export const italicContent = /* @__PURE__ */ defineContent({
+    marks: {
+        italic: /* @__PURE__ */ defineMark({
+            tag: 'em',
+            // A span with the style is italic too: how Google Docs writes it.
+            parse: [
+                { tag: 'em' },
+                { tag: 'i' },
+                { tag: 'span', value: (element) => (declaredStyle(element, 'font-style') === 'italic' ? {} : null) },
+            ],
+        }),
+    },
+});
 
 /** Italic text: `Mod-i`, and `*text*` or `_text_` while typing. */
-export const italicPlugin = definePlugin({
+export const italicPlugin = /* @__PURE__ */ definePlugin({
     content: italicContent,
     toolbar: [{ icon: IconTextFormatItalic, shortcut: 'Mod-i' }],
     // `_text_` is emphasis in markdown, as `*text*` is.

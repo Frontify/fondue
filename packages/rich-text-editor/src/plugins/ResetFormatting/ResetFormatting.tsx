@@ -29,7 +29,7 @@ const ResetFormattingButton = ({ api }: ToolbarItemProps) => (
 );
 
 /** A toolbar button that strips the selection back to plain text. */
-export const resetFormattingPlugin = definePlugin({
+export const resetFormattingPlugin = /* @__PURE__ */ definePlugin({
     id: 'reset-formatting',
     toolbar: [{ render: ResetFormattingButton, floating: 'inline' }],
 });

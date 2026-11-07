@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 /** The schemes a link may use. Everything else — `javascript:`, `data:` — never becomes one. */
-const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']);
+const SAFE_SCHEMES = /* @__PURE__ */ new Set(['http:', 'https:', 'mailto:', 'tel:']);
 
 /**
  * `localhost:3000`, `example.com:8080/x`: a host and a port, which reads like a

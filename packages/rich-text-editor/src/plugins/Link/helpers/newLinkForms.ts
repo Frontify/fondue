@@ -3,7 +3,7 @@
 import { type EditorControlApi } from '#/core';
 
 /** Lets the hotkey open the toolbar button's new-link form: a hotkey only gets the api, so each button registers its opener under it. */
-const openers = new WeakMap<EditorControlApi, () => void>();
+const openers = /* @__PURE__ */ new WeakMap<EditorControlApi, () => void>();
 
 /** Registers a button's opener for its editor; the returned function unregisters it. */
 export const registerNewLinkForm = (api: EditorControlApi, open: () => void): (() => void) => {

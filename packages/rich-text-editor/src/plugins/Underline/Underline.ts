@@ -2,12 +2,31 @@
 
 import { IconTextFormatUnderline } from '@frontify/fondue-icons';
 
-import { definePlugin } from '#/core';
+import { defineContent, defineMark, definePlugin } from '#/core';
 
-import { underlineContent } from './content';
+import { declaresDecoration } from '../shared/helpers/declaredStyle';
+
+/** The flag this plugin sets on text nodes: present means on, and `true` is the only value it takes. */
+export type UnderlineMark = {
+    underline?: true;
+};
+
+/** Underlined text: `<u>`. */
+export const underlineContent = /* @__PURE__ */ defineContent({
+    marks: {
+        underline: /* @__PURE__ */ defineMark({
+            tag: 'u',
+            // A span with the decoration is underlined too: how Google Docs writes it.
+            parse: [
+                { tag: 'u' },
+                { tag: 'span', value: (element) => (declaresDecoration(element, 'underline') ? {} : null) },
+            ],
+        }),
+    },
+});
 
 /** Underlined text: `<u>` and `Mod-u`. */
-export const underlinePlugin = definePlugin({
+export const underlinePlugin = /* @__PURE__ */ definePlugin({
     content: underlineContent,
     toolbar: [{ icon: IconTextFormatUnderline, shortcut: 'Mod-u' }],
 });

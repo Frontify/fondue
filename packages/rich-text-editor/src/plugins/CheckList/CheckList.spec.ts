@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { type HtmlSpec } from '#/core';
 
-import { checkListContent } from './content';
+import { checkListContent } from './CheckList';
 
 const checkItem = checkListContent.blocks?.checkItem;
 

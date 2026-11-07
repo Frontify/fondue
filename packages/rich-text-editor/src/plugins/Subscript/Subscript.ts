@@ -2,12 +2,22 @@
 
 import { IconSubscript } from '@frontify/fondue-icons';
 
-import { definePlugin } from '#/core';
+import { defineContent, defineMark, definePlugin } from '#/core';
 
-import { subscriptContent } from './content';
+/** The flag this plugin sets on text nodes: present means on, and `true` is the only value it takes. */
+export type SubscriptMark = {
+    subscript?: true;
+};
+
+/** Subscript text: `<sub>`. */
+export const subscriptContent = /* @__PURE__ */ defineContent({
+    marks: {
+        subscript: /* @__PURE__ */ defineMark({ tag: 'sub' }),
+    },
+});
 
 /** Subscript text: `<sub>` and `Mod-,`. */
-export const subscriptPlugin = definePlugin({
+export const subscriptPlugin = /* @__PURE__ */ definePlugin({
     content: subscriptContent,
     toolbar: [{ icon: IconSubscript, shortcut: 'Mod-,' }],
 });

@@ -30,13 +30,12 @@ const LEGAL: readonly Replacement[] = [
 ];
 
 /** `^2` for `²`, `^o` for a degree sign. */
-const SUPERSCRIPTS: readonly Replacement[] = [...'0123456789o+-'].map((character, index): Replacement => [
-    `^${character}`,
-    '⁰¹²³⁴⁵⁶⁷⁸⁹°⁺⁻'.charAt(index),
-]);
+const SUPERSCRIPTS: readonly Replacement[] = /* @__PURE__ */ [...'0123456789o+-'].map(
+    (character, index): Replacement => [`^${character}`, '⁰¹²³⁴⁵⁶⁷⁸⁹°⁺⁻'.charAt(index)],
+);
 
 /** `~2` for `₂`. Never right after a `~`, so a strikethrough's `~~` can open on a digit: `~~2~~`. */
-const SUBSCRIPTS: readonly Replacement[] = [...'0123456789+-'].map((character, index): Replacement => [
+const SUBSCRIPTS: readonly Replacement[] = /* @__PURE__ */ [...'0123456789+-'].map((character, index): Replacement => [
     new RegExp(`(?<!~)~[${character}]`),
     '₀₁₂₃₄₅₆₇₈₉₊₋'.charAt(index),
 ]);
@@ -45,7 +44,7 @@ const SUBSCRIPTS: readonly Replacement[] = [...'0123456789+-'].map((character, i
  * `1/2` for `½`. Not right after a digit or a slash, so dates (`11/2`) and
  * paths (`/1/2`) stay as typed.
  */
-const FRACTIONS: readonly Replacement[] = (
+const FRACTIONS: readonly Replacement[] = /* @__PURE__ */ (
     [
         ['1/2', '½'],
         ['1/3', '⅓'],
@@ -75,7 +74,9 @@ const toRule = ([match, replace]: Replacement): RteInputRule => ({ kind: 'text',
  * becomes `©`, `1/2` becomes `½`. Backspace right after takes one back. Text in
  * inline code is left alone. No toolbar and no document types: only typing rules.
  */
-export const typographyPlugin = definePlugin({
+export const typographyPlugin = /* @__PURE__ */ definePlugin({
     id: 'typography',
-    inputRules: [...PUNCTUATION, ...ARROWS, ...LEGAL, ...SUBSCRIPTS, ...SUPERSCRIPTS, ...FRACTIONS].map(toRule),
+    inputRules: /* @__PURE__ */ [...PUNCTUATION, ...ARROWS, ...LEGAL, ...SUBSCRIPTS, ...SUPERSCRIPTS, ...FRACTIONS].map(
+        toRule,
+    ),
 });

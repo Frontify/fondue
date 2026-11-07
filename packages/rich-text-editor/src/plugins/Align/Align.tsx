@@ -8,12 +8,39 @@ import {
     IconTextAlignmentRight,
 } from '@frontify/fondue-icons';
 
-import { definePlugin, type ToolbarItemProps } from '#/core';
+import { defineContent, definePlugin, type StyleMap, type ToolbarItemProps } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
 import styles from './align.module.scss';
-import { type AlignAttribute, alignContent } from './content';
+
+/**
+ * Alignment is an attribute on every text block rather than a block type of its
+ * own, so it applies to paragraphs, headings, quotes and list items alike,
+ * block types this plugin knows nothing about included.
+ */
+export type AlignAttribute = {
+    align?: 'left' | 'center' | 'right' | 'justify';
+};
+
+const ALIGN_VALUES: readonly NonNullable<AlignAttribute['align']>[] = ['left', 'center', 'right', 'justify'];
+
+const isAlignment = (value: unknown): value is NonNullable<AlignAttribute['align']> =>
+    ALIGN_VALUES.some((alignment) => alignment === value);
+
+/** Text alignment as a block attribute. */
+export const alignContent = /* @__PURE__ */ defineContent({
+    blockAttributes: {
+        align: {
+            // Only the four this plugin offers reach a style: a stored value is
+            // not trusted to be one, and anything else could carry more CSS.
+            style: (value): StyleMap => (isAlignment(value) ? { 'text-align': value } : {}),
+            // Only the four this plugin offers: `start`, `end` or `-webkit-center`
+            // pasted from elsewhere would be values no control can show.
+            parse: (element) => (isAlignment(element.style.textAlign) ? element.style.textAlign : null),
+        },
+    },
+});
 
 const ALIGNMENTS: readonly { value: NonNullable<AlignAttribute['align']>; icon: FondueIcon; title: string }[] = [
     { value: 'left', icon: IconTextAlignmentLeft, title: 'Align left' },
@@ -52,7 +79,7 @@ const AlignToolbar = ({ api, selection }: ToolbarItemProps) => {
 };
 
 /** Text alignment as a block attribute, with a four-way radio group in the toolbar. */
-export const alignPlugin = definePlugin({
+export const alignPlugin = /* @__PURE__ */ definePlugin({
     id: 'align',
     content: alignContent,
     toolbar: [{ render: AlignToolbar, floating: 'inline' }],

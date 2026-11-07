@@ -2,9 +2,10 @@
 
 export {
     bulletListContent,
+    bulletListPlugin,
     numberedListContent,
+    numberedListPlugin,
     type BulletListBlock,
     type ListItemBlock,
     type NumberedListBlock,
-} from './content';
-export { bulletListPlugin, numberedListPlugin } from './List';
+} from './List';
