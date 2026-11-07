@@ -37,7 +37,7 @@ import { warnUnknownType } from './warnings';
  */
 
 /** The one way a command changes the editor, so a group can see every transaction. */
-type Dispatch = (transaction: Transaction) => void;
+export type Dispatch = (transaction: Transaction) => void;
 
 // --- Selection snapshot: what all feature UI renders from ---
 
@@ -184,9 +184,7 @@ const createMarkApi = (getView: () => EditorView, schema: Schema, dispatch: Disp
         }
         const view = getView();
         // On unless ALL of the selection carries it, matching the snapshot.
-        pmToggleMark(markType, valueAttrsFor(value), {
-            removeWhenPresent: false,
-        })(view.state, dispatch);
+        pmToggleMark(markType, valueAttrsFor(value), { removeWhenPresent: false })(view.state, dispatch);
         view.focus();
     },
     removeAll({ except = [] } = {}) {
@@ -275,10 +273,7 @@ const createBlockApi = (
                     ([name, value]) => name in node.attrs && (node.attrs[name] ?? null) !== (value ?? null),
                 );
                 if (changes) {
-                    transaction.setNodeMarkup(pos, undefined, {
-                        ...node.attrs,
-                        ...attributes,
-                    });
+                    transaction.setNodeMarkup(pos, undefined, { ...node.attrs, ...attributes });
                 }
             }
         });
@@ -351,10 +346,10 @@ export const createControlApi = (
     announce: EditorControlApi['announce'],
 ): EditorControlApi => {
     // Inside a group, the document changes after the first join that one's undo step.
-    let groupDepth = 0;
+    let grouping = false;
     let firstChange: Transaction | null = null;
     const dispatch: Dispatch = (transaction) => {
-        if (groupDepth > 0) {
+        if (grouping) {
             if (firstChange !== null) {
                 // prosemirror-history merges a transaction appended to an earlier one into that one's event.
                 transaction.setMeta('appendedTransaction', firstChange);
@@ -438,15 +433,15 @@ export const createControlApi = (
         },
         isEmpty: () => isEmpty(toRteDocument(getView().state.doc)),
         group(run) {
-            if (groupDepth > 0) {
+            if (grouping) {
                 run();
                 return;
             }
-            groupDepth++;
+            grouping = true;
             try {
                 run();
             } finally {
-                groupDepth--;
+                grouping = false;
                 firstChange = null;
             }
         },

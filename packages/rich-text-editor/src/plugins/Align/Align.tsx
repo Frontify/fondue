@@ -80,10 +80,17 @@ const ALIGNMENTS: readonly {
 ];
 
 /** What a button or its shortcut does: choosing the alignment already set clears it, so the block inherits the editor's direction again. */
-const choose = (api: EditorControlApi, value: NonNullable<AlignAttribute['align']>): boolean => {
+const toggleAlign = (
+    api: EditorControlApi,
+    value: NonNullable<AlignAttribute['align']>,
+): AlignAttribute['align'] | null => {
     const current = (api.selection.get().block as AlignAttribute | null)?.align;
-    api.blocks.updateAttributes({ align: current === value ? null : value });
-    return current !== value;
+    if (current === value) {
+        api.blocks.updateAttributes({ align: null });
+        return null;
+    }
+    api.blocks.updateAttributes({ align: value });
+    return value;
 };
 
 const AlignToolbar = ({ api, selection }: ToolbarItemProps) => {
@@ -104,7 +111,9 @@ const AlignToolbar = ({ api, selection }: ToolbarItemProps) => {
                     aria-checked={current === value}
                     title={title}
                     shortcut={shortcut}
-                    onClick={() => choose(api, value)}
+                    onClick={() => {
+                        toggleAlign(api, value);
+                    }}
                 >
                     <Icon size={16} />
                 </ToolbarButton>
@@ -122,7 +131,7 @@ export const alignPlugin = /* @__PURE__ */ definePlugin({
         ALIGNMENTS.map(({ value, shortcut, announcement }) => [
             shortcut,
             (api: EditorControlApi) => {
-                api.announce(choose(api, value) ? announcement : 'Alignment cleared');
+                api.announce(toggleAlign(api, value) === null ? 'Alignment cleared' : announcement);
             },
         ]),
     ),

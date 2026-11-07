@@ -7,6 +7,7 @@ import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry } from '#/core';
 
+import { type Dispatch } from './controlApi';
 import { mapChildren } from './documentConversion';
 import { warnUnknownType } from './warnings';
 
@@ -44,7 +45,7 @@ export const createListApi = (
     getView: () => EditorView,
     schema: Schema,
     { itemTypeByList }: PluginRegistry,
-    dispatch: (transaction: Transaction) => void,
+    dispatch: Dispatch,
 ): EditorControlApi['lists'] => {
     /** Run one of the engine's list commands against the item type in scope. */
     const runListCommand = (command: (itemType: PmNodeType) => Command): boolean => {

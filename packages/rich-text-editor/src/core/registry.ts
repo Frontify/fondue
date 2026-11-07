@@ -375,7 +375,7 @@ const addEditViews = (draft: Draft, plugin: RtePlugin): void => {
     register('edit view', draft.edits, draft.editOwners, plugin.id, plugin.edit);
 };
 
-/** What a plugin adds beyond its content: hotkeys, toolbar, input rules, paste, commands, edit views. */
+/** What a plugin adds beyond its content: hotkeys, toolbar, input rules, paste, commands, edit views, descriptions. */
 const addEditing = (draft: Draft, plugin: RtePlugin): void => {
     const occurrence = draft.seenIds.get(plugin.id) ?? 0;
     if (occurrence > 0) {
