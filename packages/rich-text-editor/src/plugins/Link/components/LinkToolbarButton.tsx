@@ -8,6 +8,7 @@ import { type ToolbarItemProps } from '#/core';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
 import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
+import { type LinkSearch } from '../helpers/destination';
 import { registerNewLinkForm } from '../helpers/newLinkForms';
 import { type LinkPolicy } from '../helpers/policy';
 
@@ -26,7 +27,8 @@ export const LinkToolbarButton = ({
     openEditor,
     shortcut,
     policy,
-}: ToolbarItemProps & { shortcut: string; policy: LinkPolicy }): ReactNode => {
+    search,
+}: ToolbarItemProps & { shortcut: string; policy: LinkPolicy; search?: LinkSearch }): ReactNode => {
     const inLink = selectedNode !== null;
     const [creating, setCreating] = useState(false);
     const titleId = useId();
@@ -74,6 +76,7 @@ export const LinkToolbarButton = ({
                         initial={{ href: '' }}
                         initialText={selection.text}
                         policy={policy}
+                        search={search}
                         onSave={(value, text = '') => {
                             if (text === selection.text && !selection.isCollapsed) {
                                 // Formatting inside the selection survives.

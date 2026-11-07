@@ -6,6 +6,7 @@ import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from 
 import { type EditProps } from '#/core';
 
 import { isApple } from '../../shared/helpers/platform';
+import { type LinkSearch } from '../helpers/destination';
 import { allowsHref, type LinkPolicy } from '../helpers/policy';
 import { type LinkValue } from '../helpers/value';
 import styles from '../link.module.scss';
@@ -57,7 +58,8 @@ export const LinkEditor = ({
     remove,
     api,
     policy,
-}: EditProps<LinkValue> & { policy: LinkPolicy }): ReactNode => {
+    search,
+}: EditProps<LinkValue> & { policy: LinkPolicy; search?: LinkSearch }): ReactNode => {
     // A flyout closed by hand stays closed until the caret leaves the link and returns.
     const [dismissed, setDismissed] = useState(false);
     const [wasFocused, setWasFocused] = useState(isFocused);
@@ -171,6 +173,7 @@ export const LinkEditor = ({
                         <LinkTargetForm
                             initial={value}
                             policy={policy}
+                            search={search}
                             onSave={(next) => {
                                 // Close first: the link is rebuilt with its new value and would reopen.
                                 setOpen(false);

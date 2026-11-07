@@ -6,6 +6,7 @@ import { toHref } from '../shared/helpers/href';
 
 import { LinkEditor } from './components/LinkEditor';
 import { LinkToolbarButton } from './components/LinkToolbarButton';
+import { type LinkSearch } from './helpers/destination';
 import { openNewLinkForm } from './helpers/newLinkForms';
 import { allowsHref, type LinkPolicy } from './helpers/policy';
 import { type LinkValue } from './helpers/value';
@@ -16,7 +17,10 @@ export type LinkMark = {
     link?: LinkValue;
 };
 
-export type LinkPluginOptions = LinkPolicy;
+export type LinkPluginOptions = LinkPolicy & {
+    /** Offers the app's own pages as link targets while the author types. Editing only: the content never needs it. */
+    search?: LinkSearch;
+};
 
 const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string, string> =>
     link?.openInNewTab === true ? { target: '_blank', rel: 'noopener noreferrer' } : {};
@@ -95,9 +99,11 @@ const HOTKEY = 'Mod-k';
  * editing it, removing the link. The toolbar button is how a link is made, and
  * Mod-k does what it does.
  */
-export const linkPlugin = (policy: LinkPluginOptions = {}) => {
-    const LinkToolbar = (props: ToolbarItemProps) => <LinkToolbarButton {...props} shortcut={HOTKEY} policy={policy} />;
-    const LinkEdit = (props: EditProps<LinkValue>) => <LinkEditor {...props} policy={policy} />;
+export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) => {
+    const LinkToolbar = (props: ToolbarItemProps) => (
+        <LinkToolbarButton {...props} shortcut={HOTKEY} policy={policy} search={search} />
+    );
+    const LinkEdit = (props: EditProps<LinkValue>) => <LinkEditor {...props} policy={policy} search={search} />;
 
     return /* @__PURE__ */ definePlugin({
         content: /* @__PURE__ */ linkContent(policy),

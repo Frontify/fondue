@@ -4,9 +4,11 @@ import { Button, Checkbox, Label, TextInput } from '@frontify/fondue-components'
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
 import { toHref } from '../../shared/helpers/href';
+import { type LinkDestination, type LinkSearch } from '../helpers/destination';
 import { allowsHref, describeAllowed, type LinkPolicy } from '../helpers/policy';
 import { type LinkValue } from '../helpers/value';
 
+import { DestinationField } from './DestinationField';
 import styles from './linkForm.module.scss';
 
 const UNREADABLE = 'Enter a web address (example.com), an email address, or a phone number (tel:…).';
@@ -21,6 +23,7 @@ export const LinkTargetForm = ({
     initial,
     initialText,
     policy,
+    search,
     onSave,
     onCancel,
     onRemove,
@@ -29,6 +32,8 @@ export const LinkTargetForm = ({
     /** The text the link shows, for a link not made yet. Without it the form has no Text field. */
     initialText?: string;
     policy: LinkPolicy;
+    /** Turns the "Link to" field into a search over the app's pages. */
+    search?: LinkSearch;
     /** The text comes with the value only when the form has a Text field. */
     onSave: (value: LinkValue, text?: string) => void;
     onCancel: () => void;
@@ -87,6 +92,15 @@ export const LinkTargetForm = ({
         }
     };
 
+    const pick = (destination: LinkDestination): void => {
+        setTyped(destination.href);
+        setError(null);
+        // An empty Text field takes the page's name; text already there is the author's.
+        if (initialText !== undefined && text === '') {
+            setText(destination.label);
+        }
+    };
+
     return (
         <div className={styles.fields}>
             {initialText === undefined ? null : (
@@ -104,21 +118,39 @@ export const LinkTargetForm = ({
             )}
             <div className={styles.field}>
                 <Label htmlFor={urlId}>Link to</Label>
-                <TextInput
-                    id={urlId}
-                    ref={urlFieldRef}
-                    type="url"
-                    placeholder="example.com"
-                    value={typed}
-                    status={error === null ? 'neutral' : 'error'}
-                    aria-describedby={error === null ? undefined : errorId}
-                    aria-errormessage={errorId}
-                    onChange={(event) => {
-                        setTyped(event.target.value);
-                        setError(null);
-                    }}
-                    onKeyDown={saveOnEnter}
-                />
+                {search === undefined ? (
+                    <TextInput
+                        id={urlId}
+                        ref={urlFieldRef}
+                        type="url"
+                        placeholder="example.com"
+                        value={typed}
+                        status={error === null ? 'neutral' : 'error'}
+                        aria-describedby={error === null ? undefined : errorId}
+                        aria-errormessage={errorId}
+                        onChange={(event) => {
+                            setTyped(event.target.value);
+                            setError(null);
+                        }}
+                        onKeyDown={saveOnEnter}
+                    />
+                ) : (
+                    <DestinationField
+                        id={urlId}
+                        inputRef={urlFieldRef}
+                        value={typed}
+                        status={error === null ? 'neutral' : 'error'}
+                        errorId={errorId}
+                        search={search}
+                        policy={policy}
+                        onChange={(next) => {
+                            setTyped(next);
+                            setError(null);
+                        }}
+                        onPick={pick}
+                        onEnter={saveOnEnter}
+                    />
+                )}
                 {/* Always in the page, so the message is announced as it appears. */}
                 <span id={errorId} role="alert" className={styles.error}>
                     {error}
