@@ -522,6 +522,17 @@ describe('the alignment shortcuts', () => {
         expect(editor.stored()).toEqual(plain());
     });
 
+    it('announces the alignment, and that it was cleared when pressed again', () => {
+        const announce = vi.fn<(message: string) => void>();
+        const editor = editorWith(defaultPlugins, plain(), { announce });
+        editor.caretAfter('on');
+
+        press(editor.view, 'E', modShift(69));
+        expect(announce).toHaveBeenLastCalledWith('Centered');
+        press(editor.view, 'E', modShift(69));
+        expect(announce).toHaveBeenLastCalledWith('Alignment cleared');
+    });
+
     it('aligns every block a range touches', () => {
         const editor = editorWith(defaultPlugins, plain());
         editor.selectBetween('one', 'two');
@@ -577,6 +588,16 @@ describe('the reset formatting shortcut', () => {
             paragraph(text('big '), text('link', { link: LINK }), { type: 'tag', name: 'Ada' }),
             formatted()[1],
         ]);
+    });
+
+    it('announces the reset', () => {
+        const announce = vi.fn<(message: string) => void>();
+        const editor = editorWith(plugins, formatted(), { announce });
+        editor.caretAfter('big');
+
+        resetKeys(editor.view);
+
+        expect(announce).toHaveBeenCalledWith('Formatting reset');
     });
 
     it('is one undo step, however many commands it takes', () => {

@@ -47,17 +47,43 @@ const ALIGNMENTS: readonly {
     icon: FondueIcon;
     title: string;
     shortcut: string;
+    announcement: string;
 }[] = [
-    { value: 'left', icon: IconTextAlignmentLeft, title: 'Align left', shortcut: 'Mod-Shift-l' },
-    { value: 'center', icon: IconTextAlignmentCentre, title: 'Align center', shortcut: 'Mod-Shift-e' },
-    { value: 'right', icon: IconTextAlignmentRight, title: 'Align right', shortcut: 'Mod-Shift-r' },
-    { value: 'justify', icon: IconTextAlignmentJustify, title: 'Justify', shortcut: 'Mod-Shift-j' },
+    {
+        value: 'left',
+        icon: IconTextAlignmentLeft,
+        title: 'Align left',
+        shortcut: 'Mod-Shift-l',
+        announcement: 'Aligned left',
+    },
+    {
+        value: 'center',
+        icon: IconTextAlignmentCentre,
+        title: 'Align center',
+        shortcut: 'Mod-Shift-e',
+        announcement: 'Centered',
+    },
+    {
+        value: 'right',
+        icon: IconTextAlignmentRight,
+        title: 'Align right',
+        shortcut: 'Mod-Shift-r',
+        announcement: 'Aligned right',
+    },
+    {
+        value: 'justify',
+        icon: IconTextAlignmentJustify,
+        title: 'Justify',
+        shortcut: 'Mod-Shift-j',
+        announcement: 'Justified',
+    },
 ];
 
 /** What a button or its shortcut does: choosing the alignment already set clears it, so the block inherits the editor's direction again. */
-const choose = (api: EditorControlApi, value: NonNullable<AlignAttribute['align']>): void => {
+const choose = (api: EditorControlApi, value: NonNullable<AlignAttribute['align']>): boolean => {
     const current = (api.selection.get().block as AlignAttribute | null)?.align;
     api.blocks.updateAttributes({ align: current === value ? null : value });
+    return current !== value;
 };
 
 const AlignToolbar = ({ api, selection }: ToolbarItemProps) => {
@@ -93,10 +119,10 @@ export const alignPlugin = /* @__PURE__ */ definePlugin({
     content: alignContent,
     toolbar: [{ render: AlignToolbar, floating: 'inline' }],
     hotkeys: Object.fromEntries(
-        ALIGNMENTS.map(({ value, shortcut }) => [
+        ALIGNMENTS.map(({ value, shortcut, announcement }) => [
             shortcut,
             (api: EditorControlApi) => {
-                choose(api, value);
+                api.announce(choose(api, value) ? announcement : 'Alignment cleared');
             },
         ]),
     ),

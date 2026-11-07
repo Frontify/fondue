@@ -633,7 +633,7 @@ describe('the editable element', () => {
             announce(container);
             expect(statusIn(container).textContent).toBe('');
             act(() => {
-                vi.runAllTimers();
+                vi.advanceTimersByTime(100);
             });
 
             expect(statusIn(container).textContent).toBe('Saved');
@@ -646,17 +646,46 @@ describe('the editable element', () => {
             ready();
             announce(container);
             act(() => {
-                vi.runAllTimers();
+                vi.advanceTimersByTime(100);
             });
             expect(statusIn(container).textContent).toBe('Saved');
 
             announce(container);
             expect(statusIn(container).textContent).toBe('');
             act(() => {
-                vi.runAllTimers();
+                vi.advanceTimersByTime(100);
             });
 
             expect(statusIn(container).textContent).toBe('Saved');
+        });
+
+        it('clears a message after five seconds, and a newer one restarts the wait', () => {
+            vi.useFakeTimers();
+            teardown.push(() => vi.useRealTimers());
+            const { container, ready } = mount(() => <RichTextEditor plugins={[announcer]} />);
+            ready();
+            announce(container);
+            act(() => {
+                vi.advanceTimersByTime(100);
+            });
+            expect(statusIn(container).textContent).toBe('Saved');
+
+            act(() => {
+                vi.advanceTimersByTime(4000);
+            });
+            announce(container);
+            act(() => {
+                vi.advanceTimersByTime(100);
+            });
+            act(() => {
+                vi.advanceTimersByTime(4000);
+            });
+            expect(statusIn(container).textContent).toBe('Saved');
+
+            act(() => {
+                vi.advanceTimersByTime(1000);
+            });
+            expect(statusIn(container).textContent).toBe('');
         });
 
         it('has one live region per editor', () => {

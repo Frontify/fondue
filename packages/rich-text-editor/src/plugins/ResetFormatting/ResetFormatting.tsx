@@ -41,6 +41,7 @@ export const resetFormattingPlugin = /* @__PURE__ */ definePlugin({
     hotkeys: {
         [SHORTCUT]: (api) => {
             reset(api);
+            api.announce('Formatting reset');
         },
     },
 });
