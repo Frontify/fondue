@@ -95,25 +95,29 @@ export const DestinationField = ({
         return () => window.removeEventListener('keydown', closeList, true);
     }, [listOpen, value]);
 
+    const moveHighlight = (event: KeyboardEvent<HTMLInputElement>): void => {
+        if (results.length === 0 && !dormant) {
+            return;
+        }
+        event.preventDefault();
+        setDormant(false);
+        setClosedFor(null);
+        if (results.length === 0) {
+            return;
+        }
+        if (event.key === 'ArrowDown') {
+            highlight((activeIndex + 1) % results.length);
+            return;
+        }
+        highlight(activeIndex <= 0 ? results.length - 1 : activeIndex - 1);
+    };
+
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
         if (isCompositionKey(event)) {
             return;
         }
         if (search !== undefined && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
-            if (results.length === 0 && !dormant) {
-                return;
-            }
-            event.preventDefault();
-            setDormant(false);
-            setClosedFor(null);
-            if (results.length === 0) {
-                return;
-            }
-            if (event.key === 'ArrowDown') {
-                highlight((activeIndex + 1) % results.length);
-            } else {
-                highlight(activeIndex <= 0 ? results.length - 1 : activeIndex - 1);
-            }
+            moveHighlight(event);
             return;
         }
         if (event.key !== 'Enter') {
@@ -182,9 +186,9 @@ export const DestinationField = ({
                 </ul>
             ) : null}
             {search === undefined ? null : (
-                <span role="status" className={linkStyles.visuallyHidden}>
+                <output className={linkStyles.visuallyHidden}>
                     {shown ? describeStatus(searchStatus, results.length) : ''}
-                </span>
+                </output>
             )}
         </>
     );

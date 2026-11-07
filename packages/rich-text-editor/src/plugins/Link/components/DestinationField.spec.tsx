@@ -94,7 +94,7 @@ const mountSearchForm = (
             setValue(input, value);
         },
         options: () => [...container.querySelectorAll('[role="option"]')],
-        status: () => container.querySelector('[role="status"]')?.textContent ?? '',
+        status: () => container.querySelector('output')?.textContent ?? '',
         listbox: () => container.querySelector('[role="listbox"]'),
     };
 };
@@ -109,7 +109,7 @@ describe('the destination field', () => {
         const { field, container } = mountSearchForm(undefined);
 
         expect(field.getAttribute('role')).toBeNull();
-        expect(container.querySelector('[role="status"]')).toBeNull();
+        expect(container.querySelector('output')).toBeNull();
     });
 
     it('is a combobox named "Link to" that opens a listbox of results while typing', async () => {
