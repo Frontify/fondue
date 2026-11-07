@@ -58,9 +58,11 @@ export const DestinationField = ({
     onEnter: (event: KeyboardEvent<HTMLInputElement>) => void;
 }): ReactNode => {
     const listId = useId();
-    const { results, status: searchStatus } = useDestinationSearch(search, value, policy);
+    // An unedited stored value is not searched until the author types or presses an arrow key.
+    const [dormant, setDormant] = useState(true);
+    const { results, status: searchStatus } = useDestinationSearch(search, dormant ? '' : value, policy);
     // The value the list was closed for: typing again opens it, so no extra "open" state exists.
-    const [closedFor, setClosedFor] = useState<string | null>(null);
+    const [closedFor, setClosedFor] = useState<string | null>(value);
     // Tagged with its value so typing drops the highlight without an effect.
     const [highlighted, setHighlighted] = useState({ value, index: -1 });
     const activeIndex = highlighted.value === value ? Math.min(highlighted.index, results.length - 1) : -1;
@@ -97,11 +99,15 @@ export const DestinationField = ({
             return;
         }
         if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-            if (results.length === 0) {
+            if (results.length === 0 && !dormant) {
                 return;
             }
             event.preventDefault();
+            setDormant(false);
             setClosedFor(null);
+            if (results.length === 0) {
+                return;
+            }
             if (event.key === 'ArrowDown') {
                 highlight((activeIndex + 1) % results.length);
             } else {
@@ -138,7 +144,10 @@ export const DestinationField = ({
                 value={value}
                 status={status}
                 aria-errormessage={errorId}
-                onChange={(event) => onChange(event.target.value)}
+                onChange={(event) => {
+                    setDormant(false);
+                    onChange(event.target.value);
+                }}
                 onKeyDown={onKeyDown}
                 onBlur={() => setClosedFor(value)}
             />

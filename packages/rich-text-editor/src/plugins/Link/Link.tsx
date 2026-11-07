@@ -122,7 +122,8 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) => {
                     api.editors.open('link');
                     return true;
                 }
-                return openNewLinkForm(api);
+                // At a caret the key stays the editor's even with no form to open (floating toolbar), never the browser's.
+                return openNewLinkForm(api) || api.selection.get().isCollapsed;
             },
         },
         // A web, mail or phone address typed and followed by a space becomes a

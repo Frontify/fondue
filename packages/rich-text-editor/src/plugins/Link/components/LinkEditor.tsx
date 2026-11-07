@@ -13,20 +13,20 @@ import styles from '../link.module.scss';
 
 import { LinkTargetForm } from './LinkTargetForm';
 
+/** The controls Tab can reach in the panel. */
+const FIRST_CONTROL = 'a[href], button:not([disabled])';
+
 /** Copies the target and says whether it worked, in a live region that is always in the panel. */
 const CopyLink = ({ href }: { href: string }): ReactNode => {
     const [status, setStatus] = useState('');
     const copy = (): void => {
-        const failed = (): void => setStatus('Could not copy the link');
-        // A browser without the clipboard API throws before any promise exists.
-        try {
-            navigator.clipboard
-                .writeText(href)
-                .then(() => setStatus('Link copied'))
-                .catch(failed);
-        } catch {
-            failed();
-        }
+        // Emptied first, so the same outcome twice is announced twice.
+        setStatus('');
+        // Inside a promise: a browser without the clipboard API throws before any promise exists.
+        Promise.resolve()
+            .then(() => navigator.clipboard.writeText(href))
+            .then(() => setStatus('Link copied'))
+            .catch(() => setStatus('Could not copy the link'));
     };
     return (
         <>
@@ -105,7 +105,7 @@ export const LinkEditor = ({
             if (!active?.contains(anchor)) {
                 return;
             }
-            const first = contentRef.current?.querySelector<HTMLElement>('a[href], button:not([disabled])');
+            const first = contentRef.current?.querySelector<HTMLElement>(FIRST_CONTROL);
             if (first) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -117,8 +117,11 @@ export const LinkEditor = ({
     }, [open, isOpen]);
 
     // Shift-Tab from the panel's first control goes back where Tab came from.
-    const backToText = (event: KeyboardEvent<HTMLAnchorElement>): void => {
-        if (event.key === 'Tab' && event.shiftKey) {
+    const backToText = (event: KeyboardEvent<HTMLDivElement>): void => {
+        if (event.key !== 'Tab' || !event.shiftKey) {
+            return;
+        }
+        if (event.target === event.currentTarget.querySelector(FIRST_CONTROL)) {
             event.preventDefault();
             api.focus();
         }
@@ -191,14 +194,9 @@ export const LinkEditor = ({
                             }
                         />
                     ) : (
-                        <div className={styles.panel}>
-                            <a
-                                href={href}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={styles.target}
-                                onKeyDown={backToText}
-                            >
+                        // oxlint-disable-next-line jsx-a11y/no-static-element-interactions
+                        <div className={styles.panel} onKeyDown={backToText}>
+                            <a href={href} target="_blank" rel="noopener noreferrer" className={styles.target}>
                                 {value.href}
                                 <span className={styles.visuallyHidden}> (opens in new tab)</span>
                             </a>

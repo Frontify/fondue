@@ -32,7 +32,7 @@ const HREF = 'https://example.com';
 const apple = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform);
 const MOD: KeyboardEventInit & MouseEventInit = apple ? { metaKey: true } : { ctrlKey: true };
 
-const mount = (value: RteDocument, policy = {}) => {
+const mount = (value: RteDocument, policy = {}, toolbarPlacement: 'top' | 'floating' = 'top') => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
     const root = createRoot(container);
@@ -42,7 +42,7 @@ const mount = (value: RteDocument, policy = {}) => {
             <RichTextEditor
                 value={value}
                 plugins={[boldPlugin, linkPlugin(policy)]}
-                toolbarPlacement="top"
+                toolbarPlacement={toolbarPlacement}
                 onChange={onChange}
             />,
         );
@@ -138,6 +138,18 @@ describe('adding a link', () => {
         press(editable, 'k', MOD);
 
         expect(window.document.activeElement).toBe(fieldLabelled('Text'));
+    });
+
+    it("keeps Mod-k the editor's at a caret when no toolbar can open the form", () => {
+        const { editable } = mount(doc({ text: 'hello' }), {}, 'floating');
+        select(editable, 'hello', 2);
+        const event = new KeyboardEvent('keydown', { key: 'k', bubbles: true, cancelable: true, ...MOD });
+
+        act(() => {
+            editable.dispatchEvent(event);
+        });
+
+        expect(event.defaultPrevented).toBe(true);
     });
 
     it('takes focus back to the text on Escape', async () => {
@@ -259,6 +271,34 @@ describe('the panel of a link', () => {
         expect(status().textContent).toBe('Could not copy the link');
     });
 
+    it('announces a second copy with the same outcome again', async () => {
+        clipboard(vi.fn<(text: string) => Promise<void>>().mockResolvedValue());
+        linked();
+        const texts: string[] = [];
+        const watch = new MutationObserver(() => texts.push(status().textContent ?? ''));
+        watch.observe(status(), { childList: true, characterData: true, subtree: true });
+
+        await copy();
+        await copy();
+        watch.disconnect();
+
+        expect(texts).toEqual(['Link copied', '', 'Link copied']);
+    });
+
+    it('returns focus to the text on Shift-Tab from the first control, which is Edit when the link is refused', () => {
+        const { editable } = linked({ allowedHosts: ['frontify.com'] });
+
+        press(editable, 'Tab');
+        expect(window.document.activeElement).toBe(buttonNamed('Edit'));
+        const event = new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, cancelable: true });
+        act(() => {
+            buttonNamed('Edit').dispatchEvent(event);
+        });
+
+        expect(event.defaultPrevented).toBe(true);
+        expect(editable.contains(window.document.activeElement)).toBe(true);
+    });
+
     it('opens the link in a new tab on a Mod+click, and a plain click only places the caret', () => {
         const open = vi.spyOn(window, 'open').mockReturnValue(null);
         const { editable } = linked();
@@ -293,6 +333,30 @@ describe('the panel of a link', () => {
         click(editable.querySelector('a'), MOD);
 
         expect(open).not.toHaveBeenCalled();
+    });
+});
+
+describe('the destination search of a stored link', () => {
+    it('stays quiet until the value is edited, and Escape closes the form rather than a list', async () => {
+        const search = vi.fn<(query: string, signal: AbortSignal) => Promise<never[]>>().mockResolvedValue([]);
+        const { editable } = mount(doc({ text: 'see ' }, { text: 'docs', link: { href: HREF } }), { search });
+        select(editable, 'docs', 2);
+        click(buttonNamed('Edit'), {});
+
+        await act(async () => {
+            await new Promise((resolve) => setTimeout(resolve, 300));
+        });
+
+        expect(fieldLabelled('Link to').value).toBe(HREF);
+        expect(search).not.toHaveBeenCalled();
+        expect(window.document.querySelector('[role="status"]')?.textContent).toBe('');
+
+        press(fieldLabelled('Link to'), 'Escape');
+        await act(async () => {
+            await new Promise((resolve) => setTimeout(resolve, 50));
+        });
+
+        expect(window.document.querySelector('input[type="url"]')).toBeNull();
     });
 });
 
