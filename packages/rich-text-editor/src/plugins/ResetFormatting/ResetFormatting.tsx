@@ -17,8 +17,11 @@ const SHORTCUT = 'Mod-\\';
 const reset = (api: EditorControlApi): void => {
     api.group(() => {
         api.marks.removeAll({ except: ['link'] });
-        // Taking the block out of its list is part of `setType`, and only for the blocks the selection touches.
         api.blocks.setType(PARAGRAPH);
+        // After `setType`, since unwrapping first moves the selection off the blocks before it; a range may span lists `setType` cannot lift.
+        if (!api.selection.get().isCollapsed) {
+            api.lists.unwrapAll();
+        }
         // Whatever attributes plugins add to every block (alignment today) go
         // back to their defaults, without this plugin having to name another's.
         api.blocks.resetAttributes();

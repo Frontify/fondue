@@ -623,6 +623,46 @@ describe('the reset formatting shortcut in a list', () => {
             { type: 'bulletList', children: [item('three')] },
         ]);
     });
+
+    const item = (value: string): RteBlockNode => ({ type: 'listItem', children: [paragraph(text(value))] });
+
+    it('unwraps a list the range reaches from a paragraph above it', () => {
+        const editor = editorWith(defaultPlugins, [
+            paragraph(text('intro')),
+            { type: 'bulletList', children: [item('one')] },
+        ]);
+        editor.selectBetween('intro', 'one');
+
+        press(editor.view, '\\', mod);
+
+        expect(editor.stored()).toEqual([paragraph(text('intro')), paragraph(text('one'))]);
+    });
+
+    it('turns a heading and a list under a select-all into paragraphs', () => {
+        const heading = {
+            type: 'textStyle',
+            style: 'heading2',
+            children: [text('title')],
+        } as unknown as RteBlockNode;
+        const editor = editorWith(defaultPlugins, [heading, { type: 'bulletList', children: [item('one')] }]);
+        editor.selectBetween('title', 'one');
+
+        press(editor.view, '\\', mod);
+
+        expect(editor.stored()).toEqual([paragraph(text('title')), paragraph(text('one'))]);
+    });
+
+    it('unwraps both lists of a range across two lists', () => {
+        const editor = editorWith(defaultPlugins, [
+            { type: 'bulletList', children: [item('one')] },
+            { type: 'numberedList', children: [item('two')] },
+        ]);
+        editor.selectBetween('one', 'two');
+
+        press(editor.view, '\\', mod);
+
+        expect(editor.stored()).toEqual([paragraph(text('one')), paragraph(text('two'))]);
+    });
 });
 
 describe('Enter in an editor with blurOnBreakPlugin', () => {
