@@ -4,7 +4,7 @@
 // reads `RtePlugin` and `RteContent`: the editor shell, engine and renderer read
 // the registry, so each declaration is gathered, ordered and checked once.
 
-import { type ComponentType, createElement } from 'react';
+import { createElement, type ReactNode } from 'react';
 
 import { type EditorControlApi, type RteSelectionSnapshot } from './commands';
 import { type HtmlSpec, type StyleMap, withRootStyle } from './htmlSpec';
@@ -53,7 +53,7 @@ export type ToolbarEntry = {
     icon?: RteIcon;
     shortcut?: string;
     /** Custom UI in place of the button. */
-    render?: ComponentType<ToolbarItemProps>;
+    render?: (props: ToolbarItemProps) => ReactNode;
 };
 
 export type PluginRegistry = {

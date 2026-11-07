@@ -686,6 +686,35 @@ describe('the toolbar', () => {
         expect(clickCount(container)).toBe('2');
     });
 
+    it("keeps a control's own state when the host rebuilds a plugin that builds its control in the factory", () => {
+        const buildPlugin = (): RtePlugin => {
+            const Built = (): ReactNode => {
+                const [clicks, setClicks] = useState(0);
+                return (
+                    <button type="button" data-testid="clicks" onClick={() => setClicks((count) => count + 1)}>
+                        {clicks}
+                    </button>
+                );
+            };
+            return definePlugin({ id: 'built', toolbar: [{ render: Built }] });
+        };
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor plugins={[...defaultPlugins, buildPlugin()]} toolbarPlacement="top" />
+        ));
+        ready();
+
+        const button = container.querySelector<HTMLButtonElement>('[data-testid="clicks"]');
+        act(() => {
+            button?.click();
+            button?.click();
+        });
+        expect(clickCount(container)).toBe('2');
+
+        rerender(<RichTextEditor plugins={[...defaultPlugins, buildPlugin()]} toolbarPlacement="top" />);
+        ready();
+        expect(clickCount(container)).toBe('2');
+    });
+
     it('warns in development when two plugins share an id', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         // The duplicate toolbar key gets React's own complaint too.

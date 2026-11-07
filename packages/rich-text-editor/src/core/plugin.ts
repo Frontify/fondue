@@ -137,7 +137,7 @@ export type RteToolbarEntry = {
      * across edits. It re-renders only when its props change (selection
      * snapshot, selected node, `isActive`), so derive what it shows from them.
      */
-    render?: ComponentType<ToolbarItemProps>;
+    render?: (props: ToolbarItemProps) => ReactNode;
     /** Also offered in the `/` menu, and in Turn into for a text block or list, found by these extra words. */
     menu?: { keywords?: readonly string[] };
 };

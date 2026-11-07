@@ -202,9 +202,10 @@ type ToolbarItemSlotProps = {
  * drawn from the entry's data.
  */
 const ToolbarItemSlot = ({ item, itemProps }: ToolbarItemSlotProps): ReactNode => {
-    const { render: Render, icon: Icon } = item;
-    if (Render) {
-        return <Render {...itemProps} />;
+    const { render, icon: Icon } = item;
+    if (render) {
+        // Called, not mounted as an element: a factory-built control changes identity on every host render.
+        return render(itemProps);
     }
     if (!Icon) {
         return null;
