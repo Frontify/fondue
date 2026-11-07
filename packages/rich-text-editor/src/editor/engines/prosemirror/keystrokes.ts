@@ -286,16 +286,46 @@ const listRule = (rule: RuleOfKind<'list'>, { schema, registry }: RuleContext): 
         : null;
 };
 
+/** A rule's `match` as a pattern anchored to the end of the text before the caret, then `suffix`. */
+const textPattern = (match: string | RegExp, suffix: string): RegExp => {
+    if (typeof match === 'string') {
+        return new RegExp(`${escapeForRegExp(match)}${suffix}`);
+    }
+    return new RegExp(`(?:${match.source})${suffix}`, withoutStateFlags(match));
+};
+
+/** `$1` in a rule's `replace` stands for the first group of its pattern. */
+const withGroups = (replace: string, found: RegExpMatchArray): string =>
+    replace.replaceAll(/\$(\d)/g, (_, group: string) => found[Number(group)] ?? '');
+
 /** `->` -> `→`. The replacement carries the marks the matched text did. */
 const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
+    if (rule.boundary) {
+        return boundaryTextRule(rule, context);
+    }
     const { match, replace } = rule;
-    const pattern =
-        typeof match === 'string'
-            ? new RegExp(`${escapeForRegExp(match)}$`)
-            : new RegExp(`(?:${match.source})$`, withoutStateFlags(match));
+    const pattern = textPattern(match, '$');
     // `end` is where the just-typed character will land: it is in the match
     // but not the document yet, so replacing up to `end` swaps all of it.
-    const handler: RuleHandler = (state, _match, start, end) => state.tr.insertText(replace, start, end);
+    const handler: RuleHandler = (state, found, start, end) =>
+        state.tr.insertText(withGroups(replace, found), start, end);
+    return toInputRule({ pattern, handler }, context);
+};
+
+/** The characters that end a run: whitespace and sentence punctuation. */
+const ENDS_A_RUN = /[\s.,;:!?)\]}"'”’…]/;
+
+/** `--` -> `—` once a character that ends the run is typed, which stays. */
+const boundaryTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
+    const { match, replace } = rule;
+    const pattern = textPattern(match, '([\\s\\S])$');
+    const handler: RuleHandler = (state, found, start, end) => {
+        const typed = found[found.length - 1] ?? '';
+        if (!ENDS_A_RUN.test(typed)) {
+            return null;
+        }
+        return state.tr.insertText(withGroups(replace, found) + typed, start, end);
+    };
     return toInputRule({ pattern, handler }, context);
 };
 

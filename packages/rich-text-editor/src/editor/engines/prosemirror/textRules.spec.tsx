@@ -26,7 +26,7 @@ const typed = (value: string, plugins: readonly RtePlugin[]): RteBlockNode[] | n
 const press = (view: EditorView, key: string): boolean =>
     view.someProp('handleKeyDown', (handle) => handle(view, new KeyboardEvent('keydown', { key }))) === true;
 
-const withTypography = [...defaultPlugins, typographyPlugin];
+const withTypography = [...defaultPlugins, typographyPlugin()];
 
 afterEach(destroyEditors);
 
@@ -78,28 +78,155 @@ describe('a text rule', () => {
     });
 });
 
+describe('a text rule with a word boundary', () => {
+    const plugins = [rulesPlugin({ kind: 'text', match: /(?<![-<!])--/, replace: '—', boundary: 'word' })];
+
+    it('waits for the next character and keeps it', () => {
+        expect(typed('a -- b', plugins)).toEqual([paragraph(text('a — b'))]);
+        expect(typed('a --.', plugins)).toEqual([paragraph(text('a —.'))]);
+        expect(typed('(a --)', plugins)).toEqual([paragraph(text('(a —)'))]);
+    });
+
+    it('fires only before whitespace or sentence punctuation', () => {
+        expect(typed('--flag', plugins)).toEqual([paragraph(text('--flag'))]);
+        expect(typed('--brand-color', plugins)).toEqual([paragraph(text('--brand-color'))]);
+        expect(typed('a -->', plugins)).toEqual([paragraph(text('a -->'))]);
+        expect(typed('--_x', plugins)).toEqual([paragraph(text('--_x'))]);
+        expect(typed('a --/ b', plugins)).toEqual([paragraph(text('a --/ b'))]);
+    });
+
+    it('is cancelled by what the match says may not come before it', () => {
+        expect(typed('a --- b', plugins)).toEqual([paragraph(text('a --- b'))]);
+        expect(typed('<!-- ', plugins)).toEqual([paragraph(text('<!-- '))]);
+        expect(typed('<-- ', plugins)).toEqual([paragraph(text('<-- '))]);
+    });
+
+    it('steps aside inside a mark that opts out of typing rules', () => {
+        const editor = editorWith([...shipped('code'), ...plugins], [paragraph(text('xy', { code: true }))]);
+        editor.caretAfter('x');
+
+        editor.type('-- ');
+
+        expect(editor.stored()).toEqual([paragraph(text('x-- y', { code: true }))]);
+    });
+
+    it('is taken back on Backspace, leaving what was typed', () => {
+        const editor = editorWith(plugins, [paragraph()]);
+        editor.type('a -- ');
+
+        expect(press(editor.view, 'Backspace')).toBe(true);
+
+        expect(editor.stored()).toEqual([paragraph(text('a -- '))]);
+    });
+});
+
 describe('typographyPlugin', () => {
     it.each([
-        ['--', '—'],
         ['...', '…'],
         ['>>', '»'],
         ['<<', '«'],
         ['->', '→'],
-        ['<-', '←'],
-        ['=>', '⇒'],
-        ['<=', '⇐'],
+        ['<->', '↔'],
         ['(c)', '©'],
         ['(R)', '®'],
         ['(tm)', '™'],
-        ['~2', '₂'],
+        ['(sm)', '℠'],
+        ['+/-', '±'],
         ['~-', '₋'],
-        ['^2', '²'],
         ['^o', '°'],
+        ['^+', '⁺'],
+        ['^-', '⁻'],
+    ])('turns "%s" into "%s"', (shortcut, glyph) => {
+        expect(typed(`a ${shortcut}`, withTypography)).toEqual([paragraph(text(`a ${glyph}`))]);
+    });
+
+    it.each([
+        ['--', '—'],
+        ['<-', '←'],
+        ['!=', '≠'],
+        ['~2', '₂'],
+        ['2^2', '2²'],
         ['1/2', '½'],
         ['1/10', '⅒'],
         ['7/8', '⅞'],
-    ])('turns "%s" into "%s"', (shortcut, glyph) => {
-        expect(typed(`a ${shortcut}`, withTypography)).toEqual([paragraph(text(`a ${glyph}`))]);
+        ['3x4', '3×4'],
+        ['1920x1080', '1920×1080'],
+    ])('turns "%s" into "%s" once the run ends', (shortcut, glyph) => {
+        expect(typed(`a ${shortcut} b`, withTypography)).toEqual([paragraph(text(`a ${glyph} b`))]);
+        expect(typed(`a ${shortcut}.`, withTypography)).toEqual([paragraph(text(`a ${glyph}.`))]);
+        expect(typed(`a ${shortcut}`, withTypography)).toEqual([paragraph(text(`a ${shortcut}`))]);
+    });
+
+    it('keeps dashes and arrows in technical text as typed', () => {
+        expect(typed('--flag', withTypography)).toEqual([paragraph(text('--flag'))]);
+        expect(typed('--brand-color', withTypography)).toEqual([paragraph(text('--brand-color'))]);
+        expect(typed('a --> b', withTypography)).toEqual([paragraph(text('a --> b'))]);
+        expect(typed('a --- b', withTypography)).toEqual([paragraph(text('a --- b'))]);
+        expect(typed('<!-- x', withTypography)).toEqual([paragraph(text('<!-- x'))]);
+        expect(typed('<-- x', withTypography)).toEqual([paragraph(text('<-- x'))]);
+    });
+
+    it('keeps a longer run as typed: !==, 0x1F, 10^23, 1/25, ~25', () => {
+        expect(typed('a !== b', withTypography)).toEqual([paragraph(text('a !== b'))]);
+        expect(typed('0x1F ', withTypography)).toEqual([paragraph(text('0x1F '))]);
+        expect(typed('0x10 ', withTypography)).toEqual([paragraph(text('0x10 '))]);
+        expect(typed('10^23 ', withTypography)).toEqual([paragraph(text('10^23 '))]);
+        expect(typed('1/25 ', withTypography)).toEqual([paragraph(text('1/25 '))]);
+        expect(typed('a ~25 ', withTypography)).toEqual([paragraph(text('a ~25 '))]);
+    });
+
+    it('leaves comparison operators and arrow functions alone', () => {
+        expect(typed('x <= 5', withTypography)).toEqual([paragraph(text('x <= 5'))]);
+        expect(typed('a => b', withTypography)).toEqual([paragraph(text('a => b'))]);
+    });
+
+    it('turns a caret into a superscript digit only right after a digit', () => {
+        expect(typed('x^2 ', withTypography)).toEqual([paragraph(text('x^2 '))]);
+        expect(typed('^2 ', withTypography)).toEqual([paragraph(text('^2 '))]);
+    });
+
+    it('leaves a digit and x inside a word as typed', () => {
+        expect(typed('v3x4 ', withTypography)).toEqual([paragraph(text('v3x4 '))]);
+    });
+
+    describe('quotes', () => {
+        it('opens a double quote at the start of the block, after a space and after an opener', () => {
+            expect(typed('"hi"', withTypography)).toEqual([paragraph(text('“hi”'))]);
+            expect(typed('say "hi"', withTypography)).toEqual([paragraph(text('say “hi”'))]);
+            expect(typed('("hi")', withTypography)).toEqual([paragraph(text('(“hi”)'))]);
+        });
+
+        it('turns a single quote after a letter into an apostrophe and opens one after a space', () => {
+            expect(typed("don't", withTypography)).toEqual([paragraph(text('don’t'))]);
+            expect(typed("say 'hi'", withTypography)).toEqual([paragraph(text('say ‘hi’'))]);
+        });
+
+        it('leaves a quote in inline code as typed', () => {
+            const editor = editorWith(
+                [...shipped('code'), typographyPlugin()],
+                [paragraph(text('xy', { code: true }))],
+            );
+            editor.caretAfter('x');
+
+            editor.type('"');
+
+            expect(editor.stored()).toEqual([paragraph(text('x"y', { code: true }))]);
+        });
+
+        it('is taken back on Backspace', () => {
+            const editor = editorWith([typographyPlugin()], [paragraph()]);
+            editor.type('a "');
+
+            expect(press(editor.view, 'Backspace')).toBe(true);
+
+            expect(editor.stored()).toEqual([paragraph(text('a "'))]);
+        });
+    });
+
+    it('turns on only the groups asked for', () => {
+        const plugins = [...defaultPlugins, typographyPlugin({ groups: ['symbols'] })];
+
+        expect(typed('a -> "b" 1/2 ... --', plugins)).toEqual([paragraph(text('a → "b" 1/2 ... --'))]);
     });
 
     it('leaves a fraction after a digit or a slash as typed: dates and paths', () => {

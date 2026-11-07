@@ -31,7 +31,7 @@ const plugins: readonly RtePlugin[] = [
     mentionPlugin({ items: [] }),
     columnBreakPlugin(),
     blurOnBreakPlugin,
-    typographyPlugin,
+    typographyPlugin(),
 ];
 
 /** Added by the harness, so a paste has somewhere to land and the fixtures stay pure. */
