@@ -42,20 +42,23 @@ describe('mentionDisplay', () => {
     });
 
     it('removes control and bidirectional characters from what it shows, stored or resolved', () => {
-        const dirty = { id: 'x', username: 'a‮b\u001B', name: 'N⁦ame‏' };
+        const dirty = { id: 'x', username: 'a\u202Eb\u001B', name: 'N\u2066ame\u200F' };
 
         expect(mentionDisplay(dirty, { trigger: '@' })).toMatchObject({ label: '@ab', title: 'Name' });
         expect(
             mentionDisplay(dirty, {
                 trigger: '@',
-                resolve: () => ({ status: 'current', username: 'c؜d', name: 'E\u0007f' }),
+                resolve: () => ({ status: 'current', username: 'c\u061Cd', name: 'E\u0007f' }),
             }),
         ).toMatchObject({ label: '@cd', title: 'Ef' });
     });
 
     it('keeps the stored value when the current username is empty once cleaned', () => {
         expect(
-            mentionDisplay(JANE, { trigger: '@', resolve: () => ({ status: 'current', username: '‮', name: 'X' }) }),
+            mentionDisplay(JANE, {
+                trigger: '@',
+                resolve: () => ({ status: 'current', username: '\u202E', name: 'X' }),
+            }),
         ).toMatchObject({ label: '@jane', title: 'Jane Doe' });
     });
 
