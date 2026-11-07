@@ -12,6 +12,9 @@ import { type MentionItem, type MentionItems } from '../types';
 /** How many people the picker offers at once. */
 const SUGGESTION_LIMIT = 8;
 
+/** What a failed lookup says, to a screen reader and in the list. */
+const FAILED_TEXT = 'Could not load people. Press Enter to retry.';
+
 /** The gap between the query and the list under it. */
 const LIST_OFFSET = 4;
 
@@ -157,6 +160,7 @@ export const MentionDraft = ({
     const noMatches = people.length === 0 && !pending && !failed;
     const open = people.length > 0 || pending || failed || (noMatches && query !== '');
     const position = useListPosition(draftRef, open);
+    const listShown = open && position !== null && people.length > 0;
 
     // Tagged with its query so a new query resets the highlight to the top without an effect.
     const [highlighted, setHighlighted] = useState({ query, index: 0 });
@@ -172,6 +176,10 @@ export const MentionDraft = ({
     }, [focused]);
 
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
+        // While an input method composes, no key is a command, not even Space or Escape.
+        if (isCompositionKey(event)) {
+            return;
+        }
         switch (event.key) {
             case 'ArrowDown':
             case 'ArrowUp':
@@ -186,11 +194,8 @@ export const MentionDraft = ({
                 break;
             case 'Enter':
             case 'Tab':
-                // The key that confirms an input-method composition is not a command.
-                if (isCompositionKey(event)) {
-                    return;
-                }
-                if (failed && event.key === 'Enter') {
+                // Tab retries too: leaving the query would cancel the mention.
+                if (failed) {
                     retry();
                     break;
                 }
@@ -224,10 +229,11 @@ export const MentionDraft = ({
     };
 
     let status = `${people.length} ${people.length === 1 ? 'person' : 'people'}`;
-    if (pending) {
+    // Searching is announced only with no earlier list to count, so the count is not interrupted on every key.
+    if (pending && people.length === 0) {
         status = 'Searching';
-    } else if (failed) {
-        status = 'Could not load people';
+    } else if (!pending && failed) {
+        status = FAILED_TEXT;
     } else if (noMatches) {
         status = 'No matches';
     }
@@ -238,9 +244,9 @@ export const MentionDraft = ({
             <input
                 ref={inputRef}
                 role="combobox"
-                aria-expanded={open}
+                aria-expanded={listShown}
                 // Only while the listbox is in the page: an id pointing at nothing is an error.
-                aria-controls={open && position !== null && people.length > 0 ? listId : undefined}
+                aria-controls={listShown ? listId : undefined}
                 aria-autocomplete="list"
                 aria-activedescendant={open && active ? optionId(activeIndex) : undefined}
                 aria-label="Mention someone"
@@ -262,7 +268,7 @@ export const MentionDraft = ({
                                   {pending ? 'Searching' : null}
                                   {failed ? (
                                       <>
-                                          Could not load people{' '}
+                                          Could not load people.{' '}
                                           <button
                                               type="button"
                                               // Out of the Tab order and off the mouse's focus: the query keeps the caret.
@@ -272,7 +278,8 @@ export const MentionDraft = ({
                                               className={styles.retry}
                                           >
                                               Retry
-                                          </button>
+                                          </button>{' '}
+                                          <span className={styles.hint}>Press Enter to retry</span>
                                       </>
                                   ) : null}
                                   {noMatches ? 'No matches' : null}

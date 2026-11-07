@@ -21,7 +21,16 @@ const placeCaretInEditor = (event: MouseEvent<HTMLAnchorElement>): void => {
  * mention. A group is marked with its icon, as the old editor did; with nowhere
  * to link to (`@all`), the mention is text.
  */
-export const MentionLink = ({ value, display }: { value: MentionValue; display: MentionDisplay }): ReactNode => {
+export const MentionLink = ({
+    value,
+    display,
+    focusableWhenUnlinked = false,
+}: {
+    value: MentionValue;
+    display: MentionDisplay;
+    /** Reading view: a mention with no link takes focus so its tooltip opens from the keyboard. */
+    focusableWhenUnlinked?: boolean;
+}): ReactNode => {
     const attributes = {
         title: display.title,
         'data-mention-id': value.id,
@@ -40,7 +49,11 @@ export const MentionLink = ({ value, display }: { value: MentionValue; display: 
         <Tooltip.Root>
             <Tooltip.Trigger asChild>
                 {display.href === undefined ? (
-                    <span {...attributes}>{content}</span>
+                    // Focus is the only way a keyboard user reaches the tooltip.
+                    // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+                    <span {...attributes} tabIndex={focusableWhenUnlinked ? 0 : undefined}>
+                        {content}
+                    </span>
                 ) : (
                     <a href={display.href} {...attributes} onClick={placeCaretInEditor}>
                         {content}

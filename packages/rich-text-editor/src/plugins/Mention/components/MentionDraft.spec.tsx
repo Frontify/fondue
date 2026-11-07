@@ -106,8 +106,17 @@ describe('a mention being made', () => {
 
         expect(status()).toBe('No matches');
         expect(window.document.body.textContent).toContain('No matches');
-        expect(input.getAttribute('aria-expanded')).toBe('true');
+        // Expanded means the listbox of options is in the page, which it is not with no matches.
+        expect(input.getAttribute('aria-expanded')).toBe('false');
+        expect(input.hasAttribute('aria-controls')).toBe(false);
         expect(input.hasAttribute('aria-activedescendant')).toBe(false);
+    });
+
+    it('is expanded only with a listbox in the page for aria-controls to point at', async () => {
+        const { input } = await mountDraft();
+
+        expect(input.getAttribute('aria-expanded')).toBe('true');
+        expect(window.document.getElementById(input.getAttribute('aria-controls') ?? '')).not.toBeNull();
     });
 
     it('turns back into text on a space when nobody matches', async () => {
@@ -177,8 +186,9 @@ describe('a mention being searched for', () => {
             await new Promise((resolve) => requestAnimationFrame(resolve));
         });
 
-        expect(status()).toBe('Could not load people');
-        expect(popup()).toContain('Could not load people');
+        expect(status()).toBe('Could not load people. Press Enter to retry.');
+        expect(popup()).toContain('Could not load people.');
+        expect(popup()).toContain('Press Enter to retry');
         expect(popup()).not.toContain('No matches');
         const retry = [...window.document.querySelectorAll('button')].find((button) => button.textContent === 'Retry');
         expect(retry).toBeDefined();
@@ -192,12 +202,49 @@ describe('a mention being searched for', () => {
         act(() => retry?.click());
         await settle();
         expect(lookup.mock.calls.length).toBe(callsBefore + 1);
-        expect(status()).toBe('Could not load people');
+        expect(status()).toBe('Could not load people. Press Enter to retry.');
 
         press('Enter');
         await settle();
         expect(lookup.mock.calls.length).toBe(callsBefore + 2);
         expect(window.document.activeElement).toBe(input);
+    });
+
+    it('retries on Tab like Enter instead of leaving the query', async () => {
+        const lookup = vi.fn<MentionItems>(() => Promise.reject(new Error('offline')));
+        const { input, onCancel } = await mountDraft(lookup);
+        await act(async () => {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+        });
+        const callsBefore = lookup.mock.calls.length;
+
+        const event = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
+        act(() => {
+            input.dispatchEvent(event);
+        });
+        await settle();
+
+        expect(event.defaultPrevented).toBe(true);
+        expect(lookup.mock.calls.length).toBe(callsBefore + 1);
+        expect(onCancel).not.toHaveBeenCalled();
+    });
+
+    it('keeps the last count while a newer query is pending, and never says Searching for a static list', async () => {
+        const { input, status } = await mountDraft(() => PEOPLE);
+        const seen: (string | null | undefined)[] = [];
+        for (const text of ['j', 'jo']) {
+            act(() => {
+                const setValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
+                setValue?.call(input, text);
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+            });
+            // Read before the answer settles: this is when the query is pending.
+            seen.push(status());
+            await settle();
+            seen.push(status());
+        }
+
+        expect(seen).toEqual(['3 people', '3 people', '3 people', '3 people']);
     });
 
     it('drops the answer of a query that has moved on', async () => {
@@ -209,6 +256,7 @@ describe('a mention being searched for', () => {
         act(() => answers.get('')?.([PEOPLE[2] as MentionItem]));
         await settle();
 
+        // The dropped answer is no earlier answer to keep showing.
         expect(status()).toBe('Searching');
         act(() => answers.get('j')?.([PEOPLE[0] as MentionItem]));
         await settle();
@@ -242,5 +290,17 @@ describe('a picker that takes what the app gives', () => {
         expect(onChoose).not.toHaveBeenCalled();
         press('Enter');
         expect(onChoose).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not cancel on Space or Escape while the input method composes', async () => {
+        const { type, press, onCancel } = await mountDraft();
+
+        await type('zz');
+        press(' ', { isComposing: true });
+        press('Escape', { isComposing: true });
+
+        expect(onCancel).not.toHaveBeenCalled();
+        press(' ');
+        expect(onCancel).toHaveBeenCalledWith('@zz ');
     });
 });
