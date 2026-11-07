@@ -341,9 +341,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                 </div>
             )}
             {/* What `api.announce` says. */}
-            <div role="status" className={styles.visuallyHidden}>
-                {announcement}
-            </div>
+            <output className={styles.visuallyHidden}>{announcement}</output>
             {/* The plugins' editing UI, portalled into the text but part of this tree, so it shares the host's context. */}
             {viewPortals}
             {/* Only worth having when a plugin offers something beyond the built-in Text. */}

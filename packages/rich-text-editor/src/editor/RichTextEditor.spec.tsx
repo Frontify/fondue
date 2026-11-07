@@ -334,7 +334,7 @@ describe('a document from a newer format version', () => {
 
         expect(container.textContent).toContain('from the future');
         // The editor's own live region is always there; it is empty until something is announced.
-        expect(container.querySelector('[role="status"]:not(:empty)')).toBeNull();
+        expect(container.querySelector('[role="status"]')).toBeNull();
     });
 
     it('warns once for several editors showing the same version', () => {
@@ -480,7 +480,7 @@ describe('a document from a newer format version', () => {
 
         expect(warn).not.toHaveBeenCalled();
         // The editor's own live region is always there; it is empty until something is announced.
-        expect(container.querySelector('[role="status"]:not(:empty)')).toBeNull();
+        expect(container.querySelector('[role="status"]')).toBeNull();
     });
 });
 
@@ -615,7 +615,7 @@ describe('the editable element', () => {
             },
         });
         const statusIn = (container: HTMLElement): HTMLElement => {
-            const status = container.querySelector<HTMLElement>('[role="status"]');
+            const status = container.querySelector<HTMLElement>('output');
             if (!status) {
                 throw new Error('the editor has no live region');
             }
@@ -697,7 +697,7 @@ describe('the editable element', () => {
             ));
             ready();
 
-            expect(container.querySelectorAll('[role="status"]')).toHaveLength(2);
+            expect(container.querySelectorAll('output')).toHaveLength(2);
         });
     });
 

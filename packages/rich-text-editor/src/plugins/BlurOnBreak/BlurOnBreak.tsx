@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { definePlugin } from '#/core';
+import { definePlugin, type EditorControlApi } from '#/core';
 
 export type BlurOnBreakPluginOptions = {
     /** Called when Enter commits, just before the editor gives up focus. Never called for a click away: that is the host's `onBlur`. */
@@ -19,22 +19,27 @@ const REQUIRED_MESSAGE = 'Type something before submitting.';
  * keys, so this handler splits the item itself rather than leaving Enter to
  * the list.
  */
-export const blurOnBreakPlugin = ({ onBreak, required }: BlurOnBreakPluginOptions = {}) =>
-    definePlugin({
+export const blurOnBreakPlugin = ({ onBreak, required }: BlurOnBreakPluginOptions = {}) => {
+    const breakLine = (api: EditorControlApi): void => {
+        if (api.lists.split()) {
+            return;
+        }
+        if (required && api.isEmpty()) {
+            api.announce(typeof required === 'string' ? required : REQUIRED_MESSAGE);
+            return;
+        }
+        onBreak?.();
+        api.blur();
+    };
+    return definePlugin({
         id: 'blur-on-break',
         description: 'Press Enter to submit.',
         hotkeys: {
+            // Enter is always this plugin's: it splits an item, refuses, or submits.
             Enter: (api) => {
-                if (api.lists.split()) {
-                    return true;
-                }
-                if (required && api.isEmpty()) {
-                    api.announce(typeof required === 'string' ? required : REQUIRED_MESSAGE);
-                    return true;
-                }
-                onBreak?.();
-                api.blur();
+                breakLine(api);
                 return true;
             },
         },
     });
+};
