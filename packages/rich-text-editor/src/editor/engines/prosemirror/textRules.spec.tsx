@@ -256,6 +256,11 @@ describe('typographyPlugin', () => {
             expect(typed("say 'hi'", withTypography)).toEqual([paragraph(text('say ‘hi’'))]);
         });
 
+        it('curls a closing quote typed right after a dash run, which stays undashed', () => {
+            expect(typed('"wait --"', withTypography)).toEqual([paragraph(text('“wait --”'))]);
+            expect(typed("'wait --'", withTypography)).toEqual([paragraph(text('‘wait --’'))]);
+        });
+
         it('leaves a quote in inline code as typed', () => {
             const editor = editorWith(
                 [...shipped('code'), typographyPlugin()],

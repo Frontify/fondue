@@ -413,7 +413,7 @@ export type RteInputRule =
      *
      * With `boundary: 'word'` the rule waits for the NEXT typed character: it
      * fires only when that character is whitespace or one of
-     * `, ; : ! ? ) ] } " ' ” ’ …` (not `.`, which may be a decimal point or a
+     * `, ; : ! ? ) ] } …` (not `.`, which may be a decimal point or a
      * file extension), and the character stays after the replacement. Any
      * other character leaves the text as typed.
      */

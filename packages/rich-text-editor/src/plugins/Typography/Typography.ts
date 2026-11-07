@@ -69,7 +69,8 @@ const RULES: Record<TypographyGroup, readonly Replacement[]> = {
         [/* @__PURE__ */ new RegExp(`${OPENERS}"`), '“'],
         ['"', '”'],
         [/* @__PURE__ */ new RegExp(`${OPENERS}'`), '‘'],
-        [/(?<=[\p{L}\p{N}])'/u, '’'],
+        // A closing single quote and an apostrophe are the same character.
+        ["'", '’'],
     ],
     ellipsis: [['...', '…']],
     dashes: [[/(?<![-<!])--/, '—', true]],

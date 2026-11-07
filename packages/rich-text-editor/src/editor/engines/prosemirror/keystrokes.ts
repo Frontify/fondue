@@ -327,8 +327,8 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
     return toTextInputRule(pattern, handler, context);
 };
 
-/** The characters that end a run: whitespace and sentence punctuation. */
-const ENDS_A_RUN = /[\s,;:!?)\]}"'”’…]/;
+/** The characters that end a run: whitespace and sentence punctuation, not quotes (the quote rules claim those). */
+const ENDS_A_RUN = /[\s,;:!?)\]}…]/;
 
 /** `--` becomes a dash once a character that ends the run is typed, which stays. */
 const boundaryTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
