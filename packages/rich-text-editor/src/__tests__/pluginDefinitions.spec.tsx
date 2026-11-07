@@ -33,9 +33,13 @@ declare global {
 }
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
-const recordingApi = ({ inList = false } = {}) => {
+const recordingApi = ({ inList = false, empty = false } = {}) => {
     const calls: string[] = [];
     const api = {
+        isEmpty: () => empty,
+        announce: (message: string) => {
+            calls.push(`announce ${message}`);
+        },
         lists: {
             split: () => {
                 calls.push('split');
@@ -191,20 +195,51 @@ describe('mentionPlugin', () => {
 });
 
 describe('blurOnBreakPlugin', () => {
-    const enter = blurOnBreakPlugin.hotkeys?.Enter;
+    const enterOf = (options?: Parameters<typeof blurOnBreakPlugin>[0]) => blurOnBreakPlugin(options).hotkeys?.Enter;
 
     it('splits the list item when Enter is pressed inside a list, and keeps focus', () => {
         const { api, calls } = recordingApi({ inList: true });
 
-        expect(enter?.(api)).toBe(true);
+        expect(enterOf({ onBreak: () => calls.push('onBreak') })?.(api)).toBe(true);
         expect(calls).toEqual(['split']);
     });
 
     it('gives up focus when Enter is pressed anywhere else, adding no paragraph', () => {
         const { api, calls } = recordingApi();
 
-        expect(enter?.(api)).toBe(true);
+        expect(enterOf()?.(api)).toBe(true);
         expect(calls).toEqual(['split', 'blur']);
+    });
+
+    it('calls onBreak before it gives up focus', () => {
+        const { api, calls } = recordingApi();
+
+        enterOf({ onBreak: () => calls.push('onBreak') })?.(api);
+
+        expect(calls).toEqual(['split', 'onBreak', 'blur']);
+    });
+
+    it("refuses an empty editor when required, with default words or the host's own", () => {
+        const first = recordingApi({ empty: true });
+        const second = recordingApi({ empty: true });
+
+        enterOf({ required: true, onBreak: () => first.calls.push('onBreak') })?.(first.api);
+        enterOf({ required: 'Write first.' })?.(second.api);
+
+        expect(first.calls).toEqual(['split', 'announce Type something before submitting.']);
+        expect(second.calls).toEqual(['split', 'announce Write first.']);
+    });
+
+    it('commits a required editor that has something in it', () => {
+        const { api, calls } = recordingApi();
+
+        enterOf({ required: true })?.(api);
+
+        expect(calls).toEqual(['split', 'blur']);
+    });
+
+    it('describes its key for screen readers', () => {
+        expect(blurOnBreakPlugin().description).toBe('Press Enter to submit.');
     });
 });
 

@@ -8,7 +8,7 @@ import {
     IconTextAlignmentRight,
 } from '@frontify/fondue-icons';
 
-import { defineContent, definePlugin, type StyleMap, type ToolbarItemProps } from '#/core';
+import { defineContent, definePlugin, type EditorControlApi, type StyleMap, type ToolbarItemProps } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -42,24 +42,34 @@ export const alignContent = /* @__PURE__ */ defineContent({
     },
 });
 
-const ALIGNMENTS: readonly { value: NonNullable<AlignAttribute['align']>; icon: FondueIcon; title: string }[] = [
-    { value: 'left', icon: IconTextAlignmentLeft, title: 'Align left' },
-    { value: 'center', icon: IconTextAlignmentCentre, title: 'Align center' },
-    { value: 'right', icon: IconTextAlignmentRight, title: 'Align right' },
-    { value: 'justify', icon: IconTextAlignmentJustify, title: 'Justify' },
+const ALIGNMENTS: readonly {
+    value: NonNullable<AlignAttribute['align']>;
+    icon: FondueIcon;
+    title: string;
+    shortcut: string;
+}[] = [
+    { value: 'left', icon: IconTextAlignmentLeft, title: 'Align left', shortcut: 'Mod-Shift-l' },
+    { value: 'center', icon: IconTextAlignmentCentre, title: 'Align center', shortcut: 'Mod-Shift-e' },
+    { value: 'right', icon: IconTextAlignmentRight, title: 'Align right', shortcut: 'Mod-Shift-r' },
+    { value: 'justify', icon: IconTextAlignmentJustify, title: 'Justify', shortcut: 'Mod-Shift-j' },
 ];
+
+/** What a button or its shortcut does: choosing the alignment already set clears it, so the block inherits the editor's direction again. */
+const choose = (api: EditorControlApi, value: NonNullable<AlignAttribute['align']>): void => {
+    const current = (api.selection.get().block as AlignAttribute | null)?.align;
+    api.blocks.updateAttributes({ align: current === value ? null : value });
+};
 
 const AlignToolbar = ({ api, selection }: ToolbarItemProps) => {
     // The block the selection is in carries the attribute this plugin
     // added, which the structural node type does not know about.
-    const align = (selection.block as AlignAttribute | null)?.align;
     // A block without one reads left to right, so left is what it shows.
-    const current = align ?? 'left';
+    const current = (selection.block as AlignAttribute | null)?.align ?? 'left';
     return (
         // One choice of four, so a radio group: the checked one is the
         // block's alignment.
         <div role="radiogroup" aria-label="Alignment" className={styles.group}>
-            {ALIGNMENTS.map(({ value, icon: Icon, title }) => (
+            {ALIGNMENTS.map(({ value, icon: Icon, title, shortcut }) => (
                 // A <button> underneath, which the toolbar gives its tabIndex.
                 // oxlint-disable-next-line jsx-a11y/interactive-supports-focus
                 <ToolbarButton
@@ -67,9 +77,8 @@ const AlignToolbar = ({ api, selection }: ToolbarItemProps) => {
                     role="radio"
                     aria-checked={current === value}
                     title={title}
-                    // Choosing the alignment already set clears it, so the
-                    // block inherits the editor's direction again.
-                    onClick={() => api.blocks.updateAttributes({ align: align === value ? null : value })}
+                    shortcut={shortcut}
+                    onClick={() => choose(api, value)}
                 >
                     <Icon size={16} />
                 </ToolbarButton>
@@ -83,4 +92,12 @@ export const alignPlugin = /* @__PURE__ */ definePlugin({
     id: 'align',
     content: alignContent,
     toolbar: [{ render: AlignToolbar, floating: 'inline' }],
+    hotkeys: Object.fromEntries(
+        ALIGNMENTS.map(({ value, shortcut }) => [
+            shortcut,
+            (api: EditorControlApi) => {
+                choose(api, value);
+            },
+        ]),
+    ),
 });

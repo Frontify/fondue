@@ -333,7 +333,8 @@ describe('a document from a newer format version', () => {
         const { container } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} readonly />);
 
         expect(container.textContent).toContain('from the future');
-        expect(container.querySelector('[role="status"]')).toBeNull();
+        // The editor's own live region is always there; it is empty until something is announced.
+        expect(container.querySelector('[role="status"]:not(:empty)')).toBeNull();
     });
 
     it('warns once for several editors showing the same version', () => {
@@ -478,7 +479,8 @@ describe('a document from a newer format version', () => {
         ready();
 
         expect(warn).not.toHaveBeenCalled();
-        expect(container.querySelector('[role="status"]')).toBeNull();
+        // The editor's own live region is always there; it is empty until something is announced.
+        expect(container.querySelector('[role="status"]:not(:empty)')).toBeNull();
     });
 });
 
@@ -547,6 +549,127 @@ describe('the editable element', () => {
         expect(editable.getAttribute('aria-label')).toBe('Comment');
         expect(editable.getAttribute('aria-describedby')).toBe('help');
         expect(editable.getAttribute('aria-placeholder')).toBe('Say something');
+    });
+
+    describe('described by its plugins', () => {
+        const submitHint = definePlugin({ id: 'submit-hint', description: 'Press Enter to submit.' });
+        const resetHint = definePlugin({ id: 'reset-hint', description: 'Press Mod-backslash to reset.' });
+
+        it("points at one hidden element holding every description, after the host's own", () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor plugins={[submitHint, resetHint]} aria-describedby="help" />
+            ));
+            ready();
+
+            const ids = (editableIn(container).getAttribute('aria-describedby') ?? '').split(' ');
+            const description = window.document.getElementById(ids[1] ?? '');
+            expect(ids[0]).toBe('help');
+            expect(ids).toHaveLength(2);
+            expect(description?.textContent).toBe('Press Enter to submit. Press Mod-backslash to reset.');
+        });
+
+        it('points at it alone when the host described nothing', () => {
+            const { container, ready } = mount(() => <RichTextEditor plugins={[submitHint]} />);
+            ready();
+
+            const id = editableIn(container).getAttribute('aria-describedby') ?? '';
+            expect(window.document.getElementById(id)?.textContent).toBe('Press Enter to submit.');
+        });
+
+        it('adds nothing when no plugin describes itself', () => {
+            const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
+            ready();
+
+            expect(editableIn(container).hasAttribute('aria-describedby')).toBe(false);
+        });
+
+        it('follows the plugins without a rebuild', () => {
+            const { container, rerender, ready } = mount(() => (
+                <RichTextEditor plugins={[submitHint]} aria-describedby="help" />
+            ));
+            ready();
+            const editable = editableIn(container);
+
+            rerender(<RichTextEditor plugins={[submitHint]} aria-describedby="other" />);
+
+            expect(editableIn(container)).toBe(editable);
+            expect(editable.getAttribute('aria-describedby')).toMatch(/^other /);
+        });
+
+        it('is not read in a readonly view, which has no field to describe', () => {
+            const { container } = mount(() => (
+                <RichTextEditor value={paragraph('read me')} plugins={[submitHint]} readonly />
+            ));
+
+            expect(container.textContent).not.toContain('Press Enter to submit.');
+        });
+    });
+
+    describe('announcing', () => {
+        const announcer = definePlugin({
+            id: 'announcer',
+            hotkeys: {
+                'Alt-a': (api) => {
+                    api.announce('Saved');
+                },
+            },
+        });
+        const statusIn = (container: HTMLElement): HTMLElement => {
+            const status = container.querySelector<HTMLElement>('[role="status"]');
+            if (!status) {
+                throw new Error('the editor has no live region');
+            }
+            return status;
+        };
+        const announce = (container: HTMLElement): void => press(editableIn(container), 'a', { altKey: true });
+
+        it('says a message in the polite live region on the next frame', () => {
+            vi.useFakeTimers();
+            teardown.push(() => vi.useRealTimers());
+            const { container, ready } = mount(() => <RichTextEditor plugins={[announcer]} />);
+            ready();
+            expect(statusIn(container).textContent).toBe('');
+
+            announce(container);
+            expect(statusIn(container).textContent).toBe('');
+            act(() => {
+                vi.runAllTimers();
+            });
+
+            expect(statusIn(container).textContent).toBe('Saved');
+        });
+
+        it('says the same message twice by clearing the region in between', () => {
+            vi.useFakeTimers();
+            teardown.push(() => vi.useRealTimers());
+            const { container, ready } = mount(() => <RichTextEditor plugins={[announcer]} />);
+            ready();
+            announce(container);
+            act(() => {
+                vi.runAllTimers();
+            });
+            expect(statusIn(container).textContent).toBe('Saved');
+
+            announce(container);
+            expect(statusIn(container).textContent).toBe('');
+            act(() => {
+                vi.runAllTimers();
+            });
+
+            expect(statusIn(container).textContent).toBe('Saved');
+        });
+
+        it('has one live region per editor', () => {
+            const { container, ready } = mount(() => (
+                <>
+                    <RichTextEditor plugins={[announcer]} />
+                    <RichTextEditor plugins={[announcer]} />
+                </>
+            ));
+            ready();
+
+            expect(container.querySelectorAll('[role="status"]')).toHaveLength(2);
+        });
     });
 
     it('takes its name from a visible label when one is pointed at', () => {

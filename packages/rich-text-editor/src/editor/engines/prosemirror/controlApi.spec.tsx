@@ -267,14 +267,51 @@ describe('marks.removeAll', () => {
         expect(editor.stored()).toEqual([paragraph(text('bold link'))]);
     });
 
-    it('makes what is typed next at a caret carry no marks', () => {
-        const editor = editorWith(plugins, [paragraph(text('bold', { bold: true }))]);
+    it('clears the whole text block around a caret, and only that block', () => {
+        const editor = editorWith(plugins, [
+            paragraph(text('bo', { bold: true }), text('ld', { italic: true })),
+            paragraph(text('next', { bold: true })),
+        ]);
         editor.caretAfter('bo');
+
+        editor.api.marks.removeAll();
+
+        expect(editor.stored()).toEqual([paragraph(text('bold')), paragraph(text('next', { bold: true }))]);
+    });
+
+    it('makes what is typed next at a caret carry no marks', () => {
+        const editor = editorWith(plugins, [paragraph(text('plain'))]);
+        editor.caretAfter('plain');
+        editor.api.marks.toggle('bold');
 
         editor.api.marks.removeAll();
         editor.api.insertText('X');
 
-        expect(editor.stored()).toEqual([paragraph(text('bo', { bold: true }), text('X'), text('ld', { bold: true }))]);
+        expect(editor.stored()).toEqual([paragraph(text('plainX'))]);
+    });
+
+    it('keeps the mark types named in `except`, over a range and at a caret', () => {
+        const blocks = [paragraph(text('bold', { bold: true, link: LINK }), text(' '), text('it', { italic: true }))];
+        const range = editorWith(plugins, blocks);
+        range.selectBetween('bold', 'it');
+        range.api.marks.removeAll({ except: ['link'] });
+        const caret = editorWith(plugins, blocks);
+        caret.caretAfter('bo');
+        caret.api.marks.removeAll({ except: ['link'] });
+
+        const expected = [paragraph(text('bold', { link: LINK }), text(' it'))];
+        expect(range.stored()).toEqual(expected);
+        expect(caret.stored()).toEqual(expected);
+    });
+
+    it('keeps a mention', () => {
+        const mention = { type: 'tag', name: 'Ada' };
+        const editor = editorWith(plugins, [paragraph(text('hi ', { bold: true }), mention)]);
+        editor.caretAfter('hi');
+
+        editor.api.marks.removeAll();
+
+        expect(editor.stored()).toEqual([paragraph(text('hi '), mention)]);
     });
 });
 
@@ -688,5 +725,126 @@ describe('blocks.setType with attributes every text block carries', () => {
             { type: 'quote', align: 'center', children: [{ text: 'one' }] },
             { type: 'quote', align: 'right', children: [{ text: 'two' }] },
         ]);
+    });
+});
+
+describe('group', () => {
+    const original = [paragraph(text('one')), paragraph(text('two')), paragraph(text('three'))];
+
+    /** Three commands in three blocks, so history has no reason to merge them by itself. */
+    const formatEach = (editor: ReturnType<typeof editorWith>): void => {
+        editor.select('one');
+        editor.api.marks.toggle('bold');
+        editor.select('two');
+        editor.api.marks.toggle('italic');
+        editor.select('three');
+        editor.api.marks.toggle('underline');
+    };
+
+    /** How many undos it takes to get back to the start. */
+    const undoAll = (editor: ReturnType<typeof editorWith>): number => {
+        let steps = 0;
+        while (undo(editor.view.state, editor.view.dispatch)) {
+            steps++;
+        }
+        return steps;
+    };
+
+    it('makes the commands it runs one undo step', () => {
+        const editor = editorWith(plugins, original);
+
+        editor.api.group(() => formatEach(editor));
+
+        expect(editor.stored()).not.toEqual(original);
+        expect(undoAll(editor)).toBe(1);
+        expect(editor.stored()).toEqual(original);
+    });
+
+    it('leaves the same commands separate steps outside a group', () => {
+        const editor = editorWith(plugins, original);
+
+        formatEach(editor);
+
+        expect(undoAll(editor)).toBe(3);
+    });
+
+    it('lets a group inside a group join the outer step', () => {
+        const editor = editorWith(plugins, original);
+
+        editor.api.group(() => {
+            editor.select('one');
+            editor.api.marks.toggle('bold');
+            editor.api.group(() => {
+                editor.select('two');
+                editor.api.marks.toggle('italic');
+            });
+            editor.select('three');
+            editor.api.marks.toggle('underline');
+        });
+
+        expect(undoAll(editor)).toBe(1);
+        expect(editor.stored()).toEqual(original);
+    });
+
+    it('starts its step apart from the edit before it, and ends it when it returns', () => {
+        const editor = editorWith(plugins, original);
+        editor.select('one');
+        editor.api.marks.toggle('bold');
+
+        editor.api.group(() => {
+            editor.select('two');
+            editor.api.marks.toggle('italic');
+            editor.select('three');
+            editor.api.marks.toggle('underline');
+        });
+        editor.select('one');
+        editor.api.marks.toggle('code');
+
+        expect(undoAll(editor)).toBe(3);
+    });
+
+    it('stops grouping when the commands it runs throw', () => {
+        const editor = editorWith(plugins, original);
+
+        expect(() =>
+            editor.api.group(() => {
+                throw new Error('boom');
+            }),
+        ).toThrow('boom');
+        formatEach(editor);
+
+        expect(undoAll(editor)).toBe(3);
+    });
+});
+
+describe('isEmpty', () => {
+    it('is true for a document of one empty paragraph, or only blank text', () => {
+        expect(editorWith(plugins, [paragraph()]).api.isEmpty()).toBe(true);
+        expect(editorWith(plugins, [paragraph(text('  '))]).api.isEmpty()).toBe(true);
+    });
+
+    it('is false once there is text, a mention or a void block', () => {
+        expect(editorWith(plugins, [paragraph(text('a'))]).api.isEmpty()).toBe(false);
+        expect(editorWith(plugins, [paragraph({ type: 'tag', name: 'Ada' })]).api.isEmpty()).toBe(false);
+        expect(editorWith(plugins, [paragraph(), { type: 'divider' }]).api.isEmpty()).toBe(false);
+    });
+
+    it('follows what is typed', () => {
+        const editor = editorWith(plugins, [paragraph()]);
+
+        editor.type('a');
+
+        expect(editor.api.isEmpty()).toBe(false);
+    });
+});
+
+describe('announce', () => {
+    it('hands the message to the shell it is mounted in', () => {
+        const announce = vi.fn<(message: string) => void>();
+        const editor = editorWith(plugins, [paragraph()], { announce });
+
+        editor.api.announce('Saved');
+
+        expect(announce).toHaveBeenCalledWith('Saved');
     });
 });

@@ -93,6 +93,9 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
             inserted.push({ type, value });
         },
         insertText: () => {},
+        isEmpty: () => false,
+        group: (run) => run(),
+        announce: () => {},
         focus: () => {},
         blur: () => {},
         editors: {

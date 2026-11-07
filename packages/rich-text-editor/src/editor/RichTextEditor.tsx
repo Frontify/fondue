@@ -28,6 +28,7 @@ import { FloatingToolbar } from './components/FloatingToolbar';
 import { SlashMenu } from './components/SlashMenu';
 import { Toolbar, type ToolbarPlacement } from './components/Toolbar';
 import { commandsOf, turnIntoCommands } from './helpers/blockCommands';
+import { useAnnouncer } from './hooks/useAnnouncer';
 import { useEditorHandle } from './hooks/useEditorHandle';
 import { useFocusWithin } from './hooks/useFocusWithin';
 import { useMouseDrag } from './hooks/useMouseDrag';
@@ -154,6 +155,9 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     const commands = useMemo(() => commandsOf(registry, labels.text), [registry, labels.text]);
 
     const editableId = useId();
+    const descriptionId = useId();
+    const { message: announcement, announce } = useAnnouncer();
+    const hasDescriptions = registry.descriptions.length > 0;
     const { hostLabels, isNamed } = hostLabelsOf({ ariaLabel, ariaLabelledBy, ariaDescribedBy });
     const className = [documentStyles.document, styles.content, ...registry.contentClassNames].join(' ');
     const attributes = useMemo(
@@ -165,10 +169,21 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                 isNamed,
                 placeholder,
                 defaultLabel: labels.editor,
+                descriptionId: hasDescriptions ? descriptionId : undefined,
             }),
         // `hostLabels` is rebuilt every render; the props it is built from are the deps.
         // eslint-disable-next-line @eslint-react/exhaustive-deps
-        [editableId, className, ariaLabel, ariaLabelledBy, ariaDescribedBy, placeholder, labels.editor],
+        [
+            editableId,
+            className,
+            ariaLabel,
+            ariaLabelledBy,
+            ariaDescribedBy,
+            placeholder,
+            labels.editor,
+            hasDescriptions,
+            descriptionId,
+        ],
     );
 
     const { containerRef, handle, editorState, viewPortals } = useEditorHandle({
@@ -181,6 +196,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
             ownDocumentRef.current = doc;
             onChange?.(doc as RteDocumentOf<TBlock>);
         },
+        announce,
         enabled: !readOnly,
     });
 
@@ -318,6 +334,16 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                     {toolbar}
                 </FloatingToolbar>
             ) : null}
+            {/* Read with the editor through its `aria-describedby`: what each plugin says about its keys. */}
+            {readOnly || !hasDescriptions ? null : (
+                <div id={descriptionId} className={styles.visuallyHidden}>
+                    {registry.descriptions.join(' ')}
+                </div>
+            )}
+            {/* What `api.announce` says. */}
+            <div role="status" className={styles.visuallyHidden}>
+                {announcement}
+            </div>
             {/* The plugins' editing UI, portalled into the text but part of this tree, so it shares the host's context. */}
             {viewPortals}
             {/* Only worth having when a plugin offers something beyond the built-in Text. */}
@@ -365,6 +391,7 @@ const editableAttributes = ({
     isNamed,
     placeholder,
     defaultLabel,
+    descriptionId,
 }: {
     id: string;
     className: string;
@@ -372,15 +399,21 @@ const editableAttributes = ({
     isNamed: boolean;
     placeholder: string;
     defaultLabel: string;
-}): Record<string, string> => ({
-    id,
-    class: className,
-    role: 'textbox',
-    'aria-multiline': 'true',
-    ...(isNamed ? {} : { 'aria-label': defaultLabel }),
-    ...hostLabels,
-    ...(placeholder === '' ? {} : { 'aria-placeholder': placeholder }),
-});
+    /** The element holding the plugins' descriptions, when there are any: read after the host's own description. */
+    descriptionId: string | undefined;
+}): Record<string, string> => {
+    const describedBy = [hostLabels['aria-describedby'], descriptionId].filter(Boolean).join(' ');
+    return {
+        id,
+        class: className,
+        role: 'textbox',
+        'aria-multiline': 'true',
+        ...(isNamed ? {} : { 'aria-label': defaultLabel }),
+        ...hostLabels,
+        ...(describedBy === '' ? {} : { 'aria-describedby': describedBy }),
+        ...(placeholder === '' ? {} : { 'aria-placeholder': placeholder }),
+    };
+};
 
 /**
  * The host's labels over the English defaults, kept the same object while the

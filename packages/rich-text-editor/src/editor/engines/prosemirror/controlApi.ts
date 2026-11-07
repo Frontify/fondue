@@ -8,12 +8,18 @@ import {
     type NodeType as PmNodeType,
     type Schema,
 } from 'prosemirror-model';
-import { type EditorState, NodeSelection, TextSelection } from 'prosemirror-state';
+import { type EditorState, NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
-import { type EditorControlApi, INLINE_PLACEHOLDER, type PluginRegistry, type RteSelectionSnapshot } from '#/core';
+import {
+    type EditorControlApi,
+    INLINE_PLACEHOLDER,
+    isEmpty,
+    type PluginRegistry,
+    type RteSelectionSnapshot,
+} from '#/core';
 
-import { markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
+import { markValueOf, shallowBlock, toRteDocument, valueAttrsFor } from './documentConversion';
 import { createListApi, liftOutOfLists } from './lists';
 import { warnUnknownType } from './warnings';
 
@@ -29,6 +35,9 @@ import { warnUnknownType } from './warnings';
  * Layout: `createControlApi` (the whole api) is at the bottom, assembled from
  * the selection snapshot, then marks, then blocks. Lists live in `./lists.ts`.
  */
+
+/** The one way a command changes the editor, so a group can see every transaction. */
+type Dispatch = (transaction: Transaction) => void;
 
 // --- Selection snapshot: what all feature UI renders from ---
 
@@ -166,7 +175,7 @@ const findMarkRange = (state: EditorState, markType: PmMarkType): { from: number
 };
 
 /** Whether a mark is *on* is not here: that is a field of the selection snapshot. */
-const createMarkApi = (getView: () => EditorView, schema: Schema): EditorControlApi['marks'] => ({
+const createMarkApi = (getView: () => EditorView, schema: Schema, dispatch: Dispatch): EditorControlApi['marks'] => ({
     toggle(type, value) {
         const markType = schema.marks[type];
         if (!markType) {
@@ -175,14 +184,32 @@ const createMarkApi = (getView: () => EditorView, schema: Schema): EditorControl
         }
         const view = getView();
         // On unless ALL of the selection carries it, matching the snapshot.
-        pmToggleMark(markType, valueAttrsFor(value), { removeWhenPresent: false })(view.state, view.dispatch);
+        pmToggleMark(markType, valueAttrsFor(value), {
+            removeWhenPresent: false,
+        })(view.state, dispatch);
         view.focus();
     },
-    removeAll() {
+    removeAll({ except = [] } = {}) {
         const view = getView();
-        const { from, to, empty } = view.state.selection;
-        const transaction = empty ? view.state.tr.setStoredMarks([]) : view.state.tr.removeMark(from, to, null);
-        view.dispatch(transaction);
+        const { state } = view;
+        const { from, to, empty, $from } = state.selection;
+        let range = { from, to };
+        if (empty && $from.parent.isTextblock) {
+            // A caret clears its whole text block, so a reset leaves no half-formatted paragraph.
+            range = { from: $from.start(), to: $from.end() };
+        }
+        const transaction = state.tr;
+        for (const markType of Object.values(schema.marks)) {
+            if (!except.includes(markType.name)) {
+                transaction.removeMark(range.from, range.to, markType);
+            }
+        }
+        if (empty) {
+            // What typing here would carry, as far as it is kept.
+            const kept = (state.storedMarks ?? $from.marks()).filter((mark) => except.includes(mark.type.name));
+            transaction.setStoredMarks(kept);
+        }
+        dispatch(transaction);
         view.focus();
     },
     getRun(type) {
@@ -233,6 +260,7 @@ const createBlockApi = (
     getView: () => EditorView,
     schema: Schema,
     registry: PluginRegistry,
+    dispatch: Dispatch,
 ): EditorControlApi['blocks'] => {
     /** Every text block the selection touches, with the given attributes applied. */
     const applyToTextBlocks = (attributes: Record<string, unknown>): void => {
@@ -247,12 +275,15 @@ const createBlockApi = (
                     ([name, value]) => name in node.attrs && (node.attrs[name] ?? null) !== (value ?? null),
                 );
                 if (changes) {
-                    transaction.setNodeMarkup(pos, undefined, { ...node.attrs, ...attributes });
+                    transaction.setNodeMarkup(pos, undefined, {
+                        ...node.attrs,
+                        ...attributes,
+                    });
                 }
             }
         });
         if (transaction.docChanged) {
-            view.dispatch(transaction);
+            dispatch(transaction);
         }
         view.focus();
     };
@@ -290,7 +321,7 @@ const createBlockApi = (
             }
             // Lifting alone is not enough: if the type cannot be set, nothing changes.
             if (applied && combined.docChanged) {
-                view.dispatch(combined.scrollIntoView());
+                dispatch(combined.scrollIntoView());
             }
             view.focus();
         },
@@ -317,86 +348,124 @@ export const createControlApi = (
     schema: Schema,
     registry: PluginRegistry,
     openEditors: OpenEditors,
-): EditorControlApi => ({
-    selection: createSelectionApi(getView),
-    marks: createMarkApi(getView, schema),
-    blocks: createBlockApi(getView, schema, registry),
-    lists: createListApi(getView, schema, registry),
+    announce: EditorControlApi['announce'],
+): EditorControlApi => {
+    // Inside a group, the document changes after the first join that one's undo step.
+    let groupDepth = 0;
+    let firstChange: Transaction | null = null;
+    const dispatch: Dispatch = (transaction) => {
+        if (groupDepth > 0) {
+            if (firstChange !== null) {
+                // prosemirror-history merges a transaction appended to an earlier one into that one's event.
+                transaction.setMeta('appendedTransaction', firstChange);
+            } else if (transaction.docChanged) {
+                firstChange = transaction;
+            }
+        }
+        getView().dispatch(transaction);
+    };
 
-    insert(type, value) {
-        const nodeType = schema.nodes[type];
-        if (!nodeType) {
-            warnUnknownType('insert', type);
-            return;
-        }
-        const view = getView();
-        const transaction = view.state.tr;
-        const { selection } = view.state;
-        // A block goes in AFTER selected text rather than over it; a selected node is replaced.
-        if (!nodeType.isInline && !(selection instanceof NodeSelection) && !selection.empty) {
-            transaction.setSelection(TextSelection.create(transaction.doc, selection.to));
-        }
-        // Inline elements keep their value in one attribute; blocks keep theirs flat.
-        const engineAttrs = nodeType.isInline ? valueAttrsFor(value) : value;
-        // Inline elements carry no marks, so they must not inherit the caret's.
-        view.dispatch(transaction.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline));
-        view.focus();
-    },
-    insertText(text, marks = {}) {
-        const view = getView();
-        const transaction = view.state.tr;
-        const from = transaction.selection.from;
-        transaction.insertText(text);
-        for (const [type, value] of Object.entries(marks)) {
-            const markType = schema.marks[type];
-            if (markType) {
-                // Adding replaces a mark of the same type the caret carried.
-                transaction.addMark(from, from + text.length, markType.create(valueAttrsFor(value)));
-            } else {
-                warnUnknownType('insertText', type);
+    return {
+        selection: createSelectionApi(getView),
+        marks: createMarkApi(getView, schema, dispatch),
+        blocks: createBlockApi(getView, schema, registry, dispatch),
+        lists: createListApi(getView, schema, registry, dispatch),
+
+        insert(type, value) {
+            const nodeType = schema.nodes[type];
+            if (!nodeType) {
+                warnUnknownType('insert', type);
+                return;
             }
-        }
-        view.dispatch(transaction);
-        view.focus();
-    },
-    text: {
-        beforeCaret() {
-            const { selection } = getView().state;
-            const { $from, empty } = selection;
-            return empty && $from.parent.isTextblock
-                ? $from.parent.textBetween(0, $from.parentOffset, undefined, INLINE_PLACEHOLDER)
-                : '';
-        },
-        afterCaret() {
-            const { selection } = getView().state;
-            const { $from, empty } = selection;
-            return empty && $from.parent.isTextblock
-                ? $from.parent.textBetween($from.parentOffset, $from.parent.content.size, undefined, INLINE_PLACEHOLDER)
-                : '';
-        },
-        deleteBefore(count) {
             const view = getView();
-            const { $from, empty } = view.state.selection;
-            const length = Math.min(count, $from.parentOffset);
-            if (empty && $from.parent.isTextblock && length > 0) {
-                view.dispatch(view.state.tr.delete($from.pos - length, $from.pos));
+            const transaction = view.state.tr;
+            const { selection } = view.state;
+            // A block goes in AFTER selected text rather than over it; a selected node is replaced.
+            if (!nodeType.isInline && !(selection instanceof NodeSelection) && !selection.empty) {
+                transaction.setSelection(TextSelection.create(transaction.doc, selection.to));
+            }
+            // Inline elements keep their value in one attribute; blocks keep theirs flat.
+            const engineAttrs = nodeType.isInline ? valueAttrsFor(value) : value;
+            // Inline elements carry no marks, so they must not inherit the caret's.
+            dispatch(transaction.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline));
+            view.focus();
+        },
+        insertText(text, marks = {}) {
+            const view = getView();
+            const transaction = view.state.tr;
+            const from = transaction.selection.from;
+            transaction.insertText(text);
+            for (const [type, value] of Object.entries(marks)) {
+                const markType = schema.marks[type];
+                if (markType) {
+                    // Adding replaces a mark of the same type the caret carried.
+                    transaction.addMark(from, from + text.length, markType.create(valueAttrsFor(value)));
+                } else {
+                    warnUnknownType('insertText', type);
+                }
+            }
+            dispatch(transaction);
+            view.focus();
+        },
+        text: {
+            beforeCaret() {
+                const { selection } = getView().state;
+                const { $from, empty } = selection;
+                return empty && $from.parent.isTextblock
+                    ? $from.parent.textBetween(0, $from.parentOffset, undefined, INLINE_PLACEHOLDER)
+                    : '';
+            },
+            afterCaret() {
+                const { selection } = getView().state;
+                const { $from, empty } = selection;
+                return empty && $from.parent.isTextblock
+                    ? $from.parent.textBetween(
+                          $from.parentOffset,
+                          $from.parent.content.size,
+                          undefined,
+                          INLINE_PLACEHOLDER,
+                      )
+                    : '';
+            },
+            deleteBefore(count) {
+                const view = getView();
+                const { $from, empty } = view.state.selection;
+                const length = Math.min(count, $from.parentOffset);
+                if (empty && $from.parent.isTextblock && length > 0) {
+                    dispatch(view.state.tr.delete($from.pos - length, $from.pos));
+                }
+            },
+        },
+        isEmpty: () => isEmpty(toRteDocument(getView().state.doc)),
+        group(run) {
+            if (groupDepth > 0) {
+                run();
+                return;
+            }
+            groupDepth++;
+            try {
+                run();
+            } finally {
+                groupDepth--;
+                firstChange = null;
             }
         },
-    },
-    focus() {
-        getView().focus();
-    },
-    editors: {
-        open(type) {
-            openEditors.type = type;
-            openEditors.repaint();
+        announce,
+        focus() {
+            getView().focus();
         },
-        close() {
-            openEditors.type = null;
-            openEditors.repaint();
+        editors: {
+            open(type) {
+                openEditors.type = type;
+                openEditors.repaint();
+            },
+            close() {
+                openEditors.type = null;
+                openEditors.repaint();
+            },
         },
-    },
-    blur() {
-        getView().dom.blur();
-    },
-});
+        blur() {
+            getView().dom.blur();
+        },
+    };
+};

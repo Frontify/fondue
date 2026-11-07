@@ -44,6 +44,7 @@ export const createListApi = (
     getView: () => EditorView,
     schema: Schema,
     { itemTypeByList }: PluginRegistry,
+    dispatch: (transaction: Transaction) => void,
 ): EditorControlApi['lists'] => {
     /** Run one of the engine's list commands against the item type in scope. */
     const runListCommand = (command: (itemType: PmNodeType) => Command): boolean => {
@@ -52,7 +53,7 @@ export const createListApi = (
         if (!itemType) {
             return false;
         }
-        return command(itemType)(view.state, view.dispatch, view);
+        return command(itemType)(view.state, dispatch, view);
     };
 
     return {
@@ -68,7 +69,7 @@ export const createListApi = (
             const current = findList(view.state, itemTypeByList);
 
             if (!current) {
-                wrapInList(listType)(view.state, view.dispatch);
+                wrapInList(listType)(view.state, dispatch);
             } else if (current.node.type === listType) {
                 runListCommand(liftListItem);
             } else {
@@ -80,7 +81,7 @@ export const createListApi = (
                         item.type === itemType ? item : itemType.create(item.attrs, item.content),
                     ),
                 );
-                view.dispatch(view.state.tr.replaceWith(current.pos, current.pos + current.node.nodeSize, converted));
+                dispatch(view.state.tr.replaceWith(current.pos, current.pos + current.node.nodeSize, converted));
             }
             view.focus();
         },
@@ -112,7 +113,7 @@ export const createListApi = (
             for (const { node, pos } of [...lists].reverse()) {
                 transaction.replaceWith(pos, pos + node.nodeSize, contentOf(node));
             }
-            view.dispatch(transaction);
+            dispatch(transaction);
             view.focus();
             return true;
         },

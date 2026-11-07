@@ -74,6 +74,7 @@ const mount = (
         onDocChange,
         onStateChange: () => {},
         viewPortals: { set: () => {}, delete: () => {} },
+        announce: () => {},
     });
     mounted.push(live);
     const handle = { ...live.handle, setDoc: live.setDoc };

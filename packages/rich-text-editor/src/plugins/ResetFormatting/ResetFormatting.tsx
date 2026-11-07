@@ -6,30 +6,38 @@ import { definePlugin, type EditorControlApi, PARAGRAPH, type ToolbarItemProps }
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
+const SHORTCUT = 'Mod-\\';
+
 /**
- * Puts the selection back to plain text: marks gone, block type back to
- * paragraph, alignment cleared, lists unwrapped. No schema of its own — it only
- * drives the control API.
+ * Puts the selection back to plain text: marks gone (links stay, and so do
+ * mentions, which are no marks), block type back to paragraph, alignment
+ * cleared, lists unwrapped, all as one undo step. At a caret it acts on the
+ * whole text block. No schema of its own: it only drives the control API.
  */
 const reset = (api: EditorControlApi): void => {
-    api.marks.removeAll();
-    // Lists first: a block type change inside a list item would leave the item
-    // (and its bullet) behind.
-    api.lists.unwrapAll();
-    api.blocks.setType(PARAGRAPH);
-    // Whatever attributes plugins add to every block — alignment today — go
-    // back to their defaults, without this plugin having to name another's.
-    api.blocks.resetAttributes();
+    api.group(() => {
+        api.marks.removeAll({ except: ['link'] });
+        // Taking the block out of its list is part of `setType`, and only for the blocks the selection touches.
+        api.blocks.setType(PARAGRAPH);
+        // Whatever attributes plugins add to every block (alignment today) go
+        // back to their defaults, without this plugin having to name another's.
+        api.blocks.resetAttributes();
+    });
 };
 
 const ResetFormattingButton = ({ api }: ToolbarItemProps) => (
-    <ToolbarButton title="Reset formatting" onClick={() => reset(api)}>
+    <ToolbarButton title="Reset formatting" shortcut={SHORTCUT} onClick={() => reset(api)}>
         <IconEraser size={16} />
     </ToolbarButton>
 );
 
-/** A toolbar button that strips the selection back to plain text. */
+/** A toolbar button, and Mod-\, that strips the selection back to plain text. */
 export const resetFormattingPlugin = /* @__PURE__ */ definePlugin({
     id: 'reset-formatting',
     toolbar: [{ render: ResetFormattingButton, floating: 'inline' }],
+    hotkeys: {
+        [SHORTCUT]: (api) => {
+            reset(api);
+        },
+    },
 });

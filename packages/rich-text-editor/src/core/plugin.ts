@@ -67,6 +67,8 @@ export const onlyTypeOf = (content: RteContent | undefined): string | undefined 
 export type RtePlugin = {
     id: string;
     content?: RteContent;
+    /** One sentence for screen readers, read with the editor: a keyboard hint ("Press Enter to submit."). */
+    description?: string;
     /** The toolbar controls this feature offers, in the order given. */
     toolbar?: readonly RteToolbarEntry[];
     /**

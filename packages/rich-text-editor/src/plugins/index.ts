@@ -61,6 +61,7 @@ export const defaultPlugins: readonly RtePlugin[] = Object.freeze([
     softBreakPlugin,
 ]);
 
+export { blurOnBreakPlugin } from './BlurOnBreak';
 export { emojiPlugin } from './Emoji';
 export { linkPlugin } from './Link';
 export { typographyPlugin } from './Typography';

@@ -45,8 +45,11 @@ export type EditorControlApi = {
          * (`{ href }` for links).
          */
         toggle(type: string, value?: Record<string, unknown>): void;
-        /** Strip every mark from the selection — the formatting half of "reset formatting". */
-        removeAll(): void;
+        /**
+         * Strip every mark from the selection, except the types named in `except`: the formatting half of
+         * "reset formatting". At a caret it clears the whole text block around it, not just what is typed next.
+         */
+        removeAll(options?: { except?: readonly string[] }): void;
         /**
          * The whole run of a mark around the selection (its value and text), or
          * null. Unlike the snapshot's `marks` it is about the run, not the
@@ -104,6 +107,15 @@ export type EditorControlApi = {
         /** Delete this many characters before the caret, without leaving the block. */
         deleteBefore(count: number): void;
     };
+
+    /** Whether the document holds nothing to submit: no text, only empty blocks (the exported `isEmpty`). */
+    isEmpty(): boolean;
+
+    /** Run `run` so every command it performs is one undo step. Groups nested in `run` join it. */
+    group(run: () => void): void;
+
+    /** Say `message` to screen readers through the editor's polite live region. Saying the same message twice is heard twice. */
+    announce(message: string): void;
 
     /** Return focus to the editor, e.g. after closing plugin UI. */
     focus(): void;

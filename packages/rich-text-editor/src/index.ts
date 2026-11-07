@@ -122,6 +122,7 @@ export { underlineContent, underlinePlugin } from './plugins/Underline';
 
 // --- Plugin options ---
 
+export { type BlurOnBreakPluginOptions } from './plugins/BlurOnBreak';
 export { type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './plugins/Emoji';
 export {

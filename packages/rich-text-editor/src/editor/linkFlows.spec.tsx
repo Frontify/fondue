@@ -224,6 +224,9 @@ describe('adding a link', () => {
     });
 });
 
+/** The panel's own status, not the editor's live region, which is always there. */
+const PANEL_STATUS = '[role="dialog"] [role="status"]';
+
 describe('the panel of a link', () => {
     const linked = (policy = {}) => {
         const editor = mount(doc({ text: 'see ' }, { text: 'docs', link: { href: HREF } }), policy);
@@ -232,7 +235,7 @@ describe('the panel of a link', () => {
     };
 
     const status = (): HTMLElement => {
-        const element = window.document.querySelector<HTMLElement>('[role="status"]');
+        const element = window.document.querySelector<HTMLElement>(PANEL_STATUS);
         if (!element) {
             throw new Error('the panel has no status');
         }
@@ -322,7 +325,7 @@ describe('the panel of a link', () => {
             expect([...window.document.querySelectorAll('button')].map((button) => button.textContent)).not.toContain(
                 'Copy link',
             );
-            expect(window.document.querySelector('[role="status"]')).toBeNull();
+            expect(window.document.querySelector(PANEL_STATUS)).toBeNull();
         }
     });
 
@@ -349,7 +352,7 @@ describe('the destination search of a stored link', () => {
 
         expect(fieldLabelled('Link to').value).toBe(HREF);
         expect(search).not.toHaveBeenCalled();
-        expect(window.document.querySelector('[role="status"]')?.textContent).toBe('');
+        expect(window.document.querySelector(PANEL_STATUS)?.textContent).toBe('');
 
         press(fieldLabelled('Link to'), 'Escape');
         await act(async () => {

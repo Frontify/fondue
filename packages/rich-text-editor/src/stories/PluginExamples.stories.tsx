@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useRef, useState } from 'react';
 
 // Stories import only the package public API. The consumer-plugin stories at
 // the bottom double as proof that the plugin contract is open: they define a
@@ -45,6 +45,7 @@ import {
     subscriptPlugin,
     superscriptPlugin,
     textStylePlugin,
+    toPlainText,
     typographyPlugin,
     underlinePlugin,
 } from '../index';
@@ -518,6 +519,9 @@ export const Align: Story = {
 
         return (
             <div className={LAYOUT}>
+                <p className={HINT}>
+                    Mod-Shift-L aligns left, Mod-Shift-E centres, Mod-Shift-R aligns right and Mod-Shift-J justifies.
+                </p>
                 <div className={FRAME}>
                     <RichTextEditor value={doc} onChange={setDoc} plugins={[alignPlugin]} />
                 </div>
@@ -845,7 +849,10 @@ export const ResetFormatting: Story = {
 
         return (
             <div className={LAYOUT}>
-                <p className={HINT}>Select something, then hit the eraser button.</p>
+                <p className={HINT}>
+                    Put the caret in a block (or select some text), then hit the eraser button or press Mod-\ . One undo
+                    brings everything back.
+                </p>
                 <div className={FRAME}>
                     <RichTextEditor
                         value={doc}
@@ -859,24 +866,53 @@ export const ResetFormatting: Story = {
     },
 };
 
-/** Enter commits (blurs) instead of adding a paragraph — a single-line editor. */
+/**
+ * Enter commits instead of adding a paragraph, what a single-line editor wants.
+ * `onBreak` hears the commit (here it files the text below and clears the
+ * field) and `required` refuses an empty Enter, saying so to screen readers.
+ */
 export const BlurOnBreak: Story = {
     render: () => {
-        const [doc, setDoc] = useState<RteDocument>({
-            version: 1,
-            blocks: [{ type: 'paragraph', children: [{ text: 'A title field. Press Enter to commit.' }] }],
-        });
+        const [doc, setDoc] = useState<RteDocument>({ version: 1, blocks: [{ type: 'paragraph', children: [] }] });
+        const [submitted, setSubmitted] = useState<{ id: number; text: string }[]>([]);
+        // The plugin is built once, so its `onBreak` reads the document through a ref.
+        const docRef = useRef(doc);
+        docRef.current = doc;
+        const [plugins] = useState<RtePlugin[]>(() => [
+            boldPlugin,
+            italicPlugin,
+            blurOnBreakPlugin({
+                required: true,
+                onBreak: () => {
+                    setSubmitted((previous) => [
+                        ...previous,
+                        { id: previous.length, text: toPlainText(docRef.current) },
+                    ]);
+                    setDoc({ version: 1, blocks: [{ type: 'paragraph', children: [] }] });
+                },
+            }),
+        ]);
 
         return (
             <div className={LAYOUT}>
+                <p className={HINT}>
+                    Press Enter to submit: the text moves to the list below and the field clears. Enter on an empty
+                    field submits nothing and says so to screen readers.
+                </p>
                 <div className={FRAME}>
                     <RichTextEditor
                         value={doc}
                         onChange={setDoc}
-                        plugins={[boldPlugin, italicPlugin, blurOnBreakPlugin]}
+                        plugins={plugins}
+                        placeholder="Type a comment"
+                        aria-label="Comment"
                     />
                 </div>
-                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+                <ul className="tw-m-0 tw-body-small">
+                    {submitted.map(({ id, text }) => (
+                        <li key={id}>{text}</li>
+                    ))}
+                </ul>
             </div>
         );
     },

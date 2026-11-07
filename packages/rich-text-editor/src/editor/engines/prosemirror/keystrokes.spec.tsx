@@ -7,7 +7,7 @@ import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { defineInline, definePlugin, type EditorControlApi, type RteBlockNode, type RtePlugin } from '#/core';
-import { defaultPlugins } from '#/plugins';
+import { blurOnBreakPlugin, defaultPlugins } from '#/plugins';
 
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
 
@@ -477,5 +477,229 @@ describe('Enter in a list over a range across items', () => {
         press(editor.view, 'Enter');
 
         expect(editor.stored()?.[0]?.type).toBe('bulletList');
+    });
+});
+
+/** Presses Mod-z until there is nothing left to undo, and says how many presses took something back. */
+const undoAllByKeyboard = (view: EditorView): number => {
+    let presses = 0;
+    while (press(view, 'z', mod)) {
+        presses++;
+    }
+    return presses;
+};
+
+/** The `keyCode` is what the keymap reads to match a shifted letter. */
+const modShift = (keyCode: number): KeyboardEventInit => ({ ...mod, shiftKey: true, keyCode });
+
+describe('the alignment shortcuts', () => {
+    const plain = (): RteBlockNode[] => [paragraph(text('one')), paragraph(text('two'))];
+
+    it.each([
+        ['l', 76, 'left'],
+        ['e', 69, 'center'],
+        ['r', 82, 'right'],
+        ['j', 74, 'justify'],
+    ])('Mod-Shift-%s aligns the block %s', (key, keyCode, align) => {
+        const editor = editorWith(defaultPlugins, plain());
+        editor.caretAfter('on');
+
+        expect(press(editor.view, key.toUpperCase(), modShift(keyCode))).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            { type: 'paragraph', align, children: [{ text: 'one' }] },
+            paragraph(text('two')),
+        ]);
+    });
+
+    it('clears the alignment it is pressed on again, as the button does', () => {
+        const editor = editorWith(defaultPlugins, plain());
+        editor.caretAfter('on');
+
+        press(editor.view, 'E', modShift(69));
+        press(editor.view, 'E', modShift(69));
+
+        expect(editor.stored()).toEqual(plain());
+    });
+
+    it('aligns every block a range touches', () => {
+        const editor = editorWith(defaultPlugins, plain());
+        editor.selectBetween('one', 'two');
+
+        press(editor.view, 'R', modShift(82));
+
+        expect(editor.stored()).toEqual([
+            { type: 'paragraph', align: 'right', children: [{ text: 'one' }] },
+            { type: 'paragraph', align: 'right', children: [{ text: 'two' }] },
+        ]);
+    });
+});
+
+describe('the reset formatting shortcut', () => {
+    const tagPlugin = definePlugin({
+        id: 'tag',
+        content: {
+            inlines: {
+                tag: defineInline<{ name: string }>({
+                    toHtml: ({ name }) => ({ tag: 'span', children: name }),
+                    parse: [],
+                }),
+            },
+        },
+    });
+    const plugins = [...defaultPlugins, tagPlugin];
+    const LINK = { href: 'https://example.com' };
+    const resetKeys = (view: EditorView): boolean => press(view, '\\', mod);
+
+    // The block attributes sit flat on the node, which the open `RteBlockNode` cannot name.
+    const formatted = (): RteBlockNode[] =>
+        [
+            {
+                type: 'textStyle',
+                style: 'heading2',
+                align: 'center',
+                children: [
+                    text('big ', { bold: true }),
+                    text('link', { link: LINK, italic: true }),
+                    { type: 'tag', name: 'Ada' },
+                ],
+            },
+            { type: 'textStyle', style: 'heading2', align: 'right', children: [text('next', { bold: true })] },
+        ] as unknown as RteBlockNode[];
+
+    it('puts the block the caret is in back to plain text, links and mentions kept, neighbours alone', () => {
+        const editor = editorWith(plugins, formatted());
+        editor.caretAfter('big');
+
+        expect(resetKeys(editor.view)).toBe(true);
+
+        expect(editor.stored()).toEqual([
+            paragraph(text('big '), text('link', { link: LINK }), { type: 'tag', name: 'Ada' }),
+            formatted()[1],
+        ]);
+    });
+
+    it('is one undo step, however many commands it takes', () => {
+        const editor = editorWith(plugins, formatted());
+        editor.caretAfter('big');
+
+        resetKeys(editor.view);
+
+        expect(undoAllByKeyboard(editor.view)).toBe(1);
+        expect(editor.stored()).toEqual(formatted());
+    });
+
+    it('takes a list item out of its list and clears its marks, in one step', () => {
+        const list = (): RteBlockNode[] => [
+            {
+                type: 'bulletList',
+                children: [{ type: 'listItem', children: [paragraph(text('item', { bold: true }))] }],
+            },
+        ];
+        const editor = editorWith(plugins, list());
+        editor.caretAfter('it');
+
+        resetKeys(editor.view);
+
+        expect(editor.stored()).toEqual([paragraph(text('item'))]);
+        expect(undoAllByKeyboard(editor.view)).toBe(1);
+        expect(editor.stored()).toEqual(list());
+    });
+});
+
+describe('the reset formatting shortcut in a list', () => {
+    it('takes only the caret item out, leaving its neighbours in the list', () => {
+        const item = (value: string): RteBlockNode => ({ type: 'listItem', children: [paragraph(text(value))] });
+        const editor = editorWith(defaultPlugins, [
+            { type: 'bulletList', children: [item('one'), item('two'), item('three')] },
+        ]);
+        editor.caretAfter('tw');
+
+        press(editor.view, '\\', mod);
+
+        expect(editor.stored()).toEqual([
+            { type: 'bulletList', children: [item('one')] },
+            paragraph(text('two')),
+            { type: 'bulletList', children: [item('three')] },
+        ]);
+    });
+});
+
+describe('Enter in an editor with blurOnBreakPlugin', () => {
+    const inList = (): RteBlockNode[] => [
+        { type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('item'))] }] },
+    ];
+
+    it('calls onBreak and then gives up focus, adding no paragraph', () => {
+        const calls: string[] = [];
+        const onBreak = vi.fn(() => calls.push('onBreak'));
+        const editor = editorWith([blurOnBreakPlugin({ onBreak })], [paragraph(text('hi'))]);
+        vi.spyOn(editor.view.dom, 'blur').mockImplementation(() => {
+            calls.push('blur');
+        });
+        editor.caretAfter('hi');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(calls).toEqual(['onBreak', 'blur']);
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('splits a list item instead, and does not call onBreak', () => {
+        const onBreak = vi.fn();
+        const editor = editorWith([...defaultPlugins, blurOnBreakPlugin({ onBreak })], inList());
+        editor.caretAfter('it');
+
+        press(editor.view, 'Enter');
+
+        expect(onBreak).not.toHaveBeenCalled();
+        expect(editor.stored()?.[0]).toMatchObject({ type: 'bulletList' });
+        expect((editor.stored()?.[0] as { children: unknown[] }).children).toHaveLength(2);
+    });
+
+    it('refuses an empty editor when required, says why and keeps focus', () => {
+        const onBreak = vi.fn();
+        const announce = vi.fn<(message: string) => void>();
+        const editor = editorWith([blurOnBreakPlugin({ onBreak, required: true })], empty(), { announce });
+        const blur = vi.spyOn(editor.view.dom, 'blur');
+
+        expect(press(editor.view, 'Enter')).toBe(true);
+
+        expect(announce).toHaveBeenCalledWith('Type something before submitting.');
+        expect(onBreak).not.toHaveBeenCalled();
+        expect(blur).not.toHaveBeenCalled();
+    });
+
+    it('says the words the host gave when required is a string', () => {
+        const announce = vi.fn<(message: string) => void>();
+        const editor = editorWith([blurOnBreakPlugin({ required: 'Write a comment first.' })], empty(), { announce });
+
+        press(editor.view, 'Enter');
+
+        expect(announce).toHaveBeenCalledWith('Write a comment first.');
+    });
+
+    it('commits a required editor that has text', () => {
+        const onBreak = vi.fn();
+        const announce = vi.fn<(message: string) => void>();
+        const editor = editorWith([blurOnBreakPlugin({ onBreak, required: true })], [paragraph(text('hi'))], {
+            announce,
+        });
+
+        press(editor.view, 'Enter');
+
+        expect(onBreak).toHaveBeenCalledTimes(1);
+        expect(announce).not.toHaveBeenCalled();
+    });
+
+    it('leaves Shift-Enter to the soft break', () => {
+        const onBreak = vi.fn();
+        const editor = editorWith([...defaultPlugins, blurOnBreakPlugin({ onBreak })], [paragraph(text('ab'))]);
+        editor.caretAfter('a');
+
+        press(editor.view, 'Enter', { shiftKey: true });
+
+        expect(onBreak).not.toHaveBeenCalled();
+        expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'break' }, text('b'))]);
     });
 });

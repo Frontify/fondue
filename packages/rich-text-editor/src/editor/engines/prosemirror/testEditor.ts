@@ -75,7 +75,7 @@ export const shipped = (...ids: string[]): RtePlugin[] => defaultPlugins.filter(
 export const editorWith = (
     plugins: readonly RtePlugin[],
     blocks: BlockInput[],
-    options: Partial<Pick<MountOptions, 'placeholder' | 'attributes'>> = {},
+    options: Partial<Pick<MountOptions, 'placeholder' | 'attributes' | 'announce'>> = {},
 ) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
@@ -91,6 +91,7 @@ export const editorWith = (
         onDocChange,
         onStateChange: () => {},
         viewPortals: { set: () => {}, delete: () => {} },
+        announce: options.announce ?? (() => {}),
     });
     mounted.push(editor);
     const { api } = editor.handle;

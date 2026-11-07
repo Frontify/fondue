@@ -95,6 +95,8 @@ export type PluginRegistry = {
     contentClassNames: readonly string[];
     /** Custom properties set alongside them, later plugins winning. */
     contentProperties: Readonly<Record<string, string>>;
+    /** Every plugin's `description`, in mount order. */
+    descriptions: readonly string[];
 };
 
 /** A mark sits in the floating bar; a block is reached through its commands instead. */
@@ -311,6 +313,7 @@ type Draft = {
     commandOwners: Map<string, string>;
     contentClassNames: string[];
     contentProperties: Record<string, string>;
+    descriptions: string[];
     /** How often each id has come up so far, for unique toolbar keys. */
     seenIds: Map<string, number>;
     duplicateIds: Set<string>;
@@ -396,6 +399,9 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
         addCommand(draft, plugin.id, command);
     }
     addEditViews(draft, plugin);
+    if (plugin.description !== undefined) {
+        draft.descriptions.push(plugin.description);
+    }
 };
 
 const addItemTypes = (draft: Draft, blocks: RteContent['blocks']): void => {
@@ -436,6 +442,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         commandOwners: new Map(),
         contentClassNames: [],
         contentProperties: {},
+        descriptions: [],
         seenIds: new Map(),
         duplicateIds: new Set(),
         blockOwners: new Map(),
@@ -470,6 +477,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         commands: draft.commands,
         contentClassNames: draft.contentClassNames,
         contentProperties: draft.contentProperties,
+        descriptions: draft.descriptions,
     };
 };
 
