@@ -10,7 +10,7 @@ describe('withoutControlCharacters', () => {
     });
 
     it('removes bidirectional marks, embeddings, overrides and isolates', () => {
-        expect(withoutControlCharacters('a؜b‎c‏d‪e‮f⁦g⁩h')).toBe('abcdefgh');
+        expect(withoutControlCharacters('a\u061Cb\u200Ec\u200Fd\u202Ae\u202Ef\u2066g\u2069h')).toBe('abcdefgh');
     });
 
     it('keeps the letters of every script', () => {

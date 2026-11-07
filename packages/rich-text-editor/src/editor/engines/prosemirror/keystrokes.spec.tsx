@@ -9,6 +9,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { defineInline, definePlugin, type EditorControlApi, type RteBlockNode, type RtePlugin } from '#/core';
 import { blurOnBreakPlugin, defaultPlugins } from '#/plugins';
 
+import { trimTrailingPunctuation } from './keystrokes';
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
 
 /**
@@ -762,5 +763,21 @@ describe('Enter in an editor with blurOnBreakPlugin', () => {
 
         expect(onBreak).not.toHaveBeenCalled();
         expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'break' }, text('b'))]);
+    });
+});
+
+describe('trimming punctuation off a typed address', () => {
+    it('strips closing quotes, brackets and stops one by one', () => {
+        expect(trimTrailingPunctuation('https://a.com/x"),.')).toBe('https://a.com/x');
+        expect(trimTrailingPunctuation('https://a.com/Foo_(bar)).')).toBe('https://a.com/Foo_(bar)');
+    });
+
+    it('finishes quickly on a long run of full stops', () => {
+        const run = '.'.repeat(5000);
+        const started = performance.now();
+
+        expect(trimTrailingPunctuation(`https://a.com/x${run}a`)).toBe(`https://a.com/x${run}a`);
+        expect(trimTrailingPunctuation(`https://a.com/x${run}`)).toBe('https://a.com/x');
+        expect(performance.now() - started).toBeLessThan(1000);
     });
 });

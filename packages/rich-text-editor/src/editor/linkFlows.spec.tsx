@@ -225,7 +225,7 @@ describe('adding a link', () => {
 });
 
 /** The panel's own status, not the editor's live region, which is always there. */
-const PANEL_STATUS = '[role="dialog"] [role="status"]';
+const PANEL_STATUS = '[role="dialog"] output';
 
 describe('the panel of a link', () => {
     const linked = (policy = {}) => {

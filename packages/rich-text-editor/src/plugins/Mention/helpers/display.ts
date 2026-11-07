@@ -15,8 +15,8 @@ export type MentionDisplay = {
 };
 
 type MentionDisplayOptions = {
-    resolve?: ((mention: MentionValue) => MentionResolution) | undefined;
-    href?: ((mention: MentionValue) => string | undefined) | undefined;
+    resolve?: (mention: MentionValue) => MentionResolution;
+    href?: (mention: MentionValue) => string | undefined;
     trigger: string;
 };
 
