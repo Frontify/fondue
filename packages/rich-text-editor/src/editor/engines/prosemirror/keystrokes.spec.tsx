@@ -27,6 +27,8 @@ const typed = (value: string, plugins: readonly RtePlugin[] = defaultPlugins): R
 const press = (view: EditorView, key: string, init: KeyboardEventInit = {}): boolean =>
     view.someProp('handleKeyDown', (handle) => handle(view, new KeyboardEvent('keydown', { key, ...init }))) === true;
 
+const mod = /Mac|iP(hone|[oa]d)/.test(navigator.platform) ? { metaKey: true } : { ctrlKey: true };
+
 afterEach(destroyEditors);
 
 describe('typing a mark shortcut', () => {
@@ -119,8 +121,6 @@ describe('a mark that opts out of typing rules', () => {
 });
 
 describe('inline code', () => {
-    const mod = /Mac|iP(hone|[oa]d)/.test(navigator.platform) ? { metaKey: true } : { ctrlKey: true };
-
     it('does not carry on into what is typed at its end', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
         editor.caretAfter('x');
@@ -142,8 +142,6 @@ describe('inline code', () => {
 });
 
 describe('subscript and superscript', () => {
-    const mod = /Mac|iP(hone|[oa]d)/.test(navigator.platform) ? { metaKey: true } : { ctrlKey: true };
-
     it('turning one on over text takes the other off', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('x', { subscript: true }))]);
         editor.select('x');
@@ -181,7 +179,6 @@ describe('undoing a typing rewrite', () => {
         const editor = editorWith(defaultPlugins, empty());
         editor.type('## ');
 
-        const mod = /Mac|iP(hone|[oa]d)/.test(navigator.platform) ? { metaKey: true } : { ctrlKey: true };
         expect(press(editor.view, 'z', mod)).toBe(true);
 
         expect(editor.stored()).toEqual([paragraph(text('## '))]);

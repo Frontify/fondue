@@ -178,7 +178,7 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
     defaults?: TValue;
     /** The block's markup. `children: true` is where its content goes. */
     toHtml: (value: TValue) => HtmlSpec;
-    parse: readonly TagParseRule<Partial<TValue>>[];
+    parse: readonly ParseRule<Partial<TValue>>[];
     render?: {
         /**
          * Readonly view in place of `toHtml`. `style` carries what every text
@@ -204,7 +204,7 @@ export type ContentModel = 'text' | { items: string } | { blocks: readonly strin
 export const defineMark = <TValue extends object = Record<string, never>>(
     definition:
         | MarkDefinition<TValue>
-        | ({ tag: string; parse?: readonly (ParseRule<TValue> | MarkClearRule)[] } & Omit<
+        | ({ tag: string; parse?: readonly MarkParseRule<TValue>[] } & Omit<
               MarkDefinition<TValue>,
               'toHtml' | 'parse'
           >),
@@ -230,7 +230,7 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
     defaults?: TValue;
     /** The mark's markup around its text, which goes where `children: true` is. */
     toHtml: (value: TValue) => HtmlSpec;
-    parse: readonly (ParseRule<TValue> | MarkClearRule)[];
+    parse: readonly MarkParseRule<TValue>[];
     render?: {
         /** Readonly view in place of `toHtml`. */
         component?: ComponentType<{ value: TValue; children: ReactNode }>;
@@ -247,7 +247,7 @@ export type InlineDefinition<TValue = Record<string, unknown>> = {
     /** What the inline stores when inserted or parsed without a value; unused when the plugin has an `edit` view for it. Defaults to `{}`. */
     defaults?: TValue;
     toHtml: (value: TValue) => HtmlSpec;
-    parse: readonly TagParseRule<TValue>[];
+    parse: readonly ParseRule<TValue>[];
     render?: {
         /** Readonly view in place of `toHtml`. */
         component?: ComponentType<{ value: TValue }>;
@@ -259,14 +259,9 @@ export type InlineDefinition<TValue = Record<string, unknown>> = {
  * element carries none (`<strong>`); return null from it when the element is
  * not this node after all (a `span` without a colour is no font colour).
  */
-export type ParseRule<TValue> = TagParseRule<TValue> | StyleParseRule<TValue>;
-
-/** A rule that matches elements by selector. */
-export type TagParseRule<TValue> = {
+export type ParseRule<TValue> = {
     /** A CSS selector: `strong`, `a[href]`, `li[data-checked]`. */
     tag: string;
-    /** Never set: lets TypeScript tell a tag rule from a style rule. */
-    style?: undefined;
     value?: (element: HTMLElement) => TValue | null;
 };
 
@@ -285,6 +280,12 @@ export type MarkClearRule = {
     style: string;
     clears: (cssValue: string) => boolean;
 };
+
+/** The rules a mark reads pasted HTML with: by tag, by declared style, or to clear it. The `style?: undefined` lets TypeScript type a style rule's `value`. */
+export type MarkParseRule<TValue> =
+    | (ParseRule<TValue> & { style?: undefined })
+    | StyleParseRule<TValue>
+    | MarkClearRule;
 
 /**
  * What the editor hands a node's `edit` view: the same for blocks, marks
