@@ -229,6 +229,10 @@ describe('where a toolbar entry goes in the floating bar', () => {
     it('is what the entry says, over the default', () => {
         expect(placementOf({ id: 'bold', content: { marks: { bold: mark() } } }, 'hidden')).toBe('hidden');
         expect(placementOf({ id: 'quote', content: { blocks: { quote: textBlock() } } }, 'inline')).toBe('inline');
+        expect(
+            buildPluginRegistry([{ id: 'align', toolbar: [{ render: button, floating: 'inline' }] }]).toolbarItems[0]
+                ?.floating,
+        ).toBe('inline');
     });
 });
 
