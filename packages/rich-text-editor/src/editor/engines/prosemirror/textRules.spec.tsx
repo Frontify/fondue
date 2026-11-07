@@ -78,8 +78,8 @@ describe('a text rule', () => {
     });
 });
 
-describe('a text rule with a word boundary', () => {
-    const plugins = [rulesPlugin({ kind: 'text', match: /(?<![-<!])--/, replace: '—', boundary: 'word' })];
+describe('a text rule that waits for the run to end', () => {
+    const plugins = [rulesPlugin({ kind: 'text', match: /(?<![-<!])--/, replace: '—', waitForRunEnd: true })];
 
     it('waits for the next character and keeps it', () => {
         expect(typed('a -- b', plugins)).toEqual([paragraph(text('a — b'))]);

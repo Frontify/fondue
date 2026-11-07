@@ -411,10 +411,10 @@ export type RteInputRule =
      * Only the matched text is replaced, so match a character only to look at
      * it with a lookbehind.
      *
-     * With `boundary: 'word'` the rule waits for the NEXT typed character: it
-     * fires only when that character is whitespace or one of
+     * With `waitForRunEnd` the rule fires only once the NEXT typed character
+     * ends the run, and that character stays after the replacement. A
+     * character ends the run when it is whitespace or one of
      * `, ; : ! ? ) ] } …` (not `.`, which may be a decimal point or a
-     * file extension), and the character stays after the replacement. Any
-     * other character leaves the text as typed.
+     * file extension). Any other character leaves the text as typed.
      */
-    | { kind: 'text'; match: string | RegExp; replace: string; boundary?: 'word' };
+    | { kind: 'text'; match: string | RegExp; replace: string; waitForRunEnd?: boolean };

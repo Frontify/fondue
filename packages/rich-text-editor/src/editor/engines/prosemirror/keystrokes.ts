@@ -160,6 +160,14 @@ const unlessInExcludedMark =
         return excluded.some((markType) => markType.isInSet(marks)) ? null : handler(state, match, start, end);
     };
 
+/** A text rule leaves text alone when any of it carries a mark that opts out of rules (inline code). */
+const unlessRangeHasExcludedMark =
+    (excluded: readonly PmMarkType[], handler: RuleHandler): RuleHandler =>
+    (state, match, start, end) =>
+        excluded.some((markType) => state.doc.rangeHasMark(start, end, markType))
+            ? null
+            : handler(state, match, start, end);
+
 const withoutStateFlags = (pattern: RegExp): string => pattern.flags.replaceAll(/[gy]/g, '');
 
 const toInputRule = ({ pattern, handler }: RulePattern, { excludedMarks }: RuleContext): InputRule =>
@@ -298,25 +306,10 @@ const textPattern = (match: string | RegExp, suffix: string): RegExp => {
 const withGroups = (replace: string, found: RegExpMatchArray): string =>
     replace.replaceAll(/\$(\d)/g, (_, group: string) => found[Number(group)] ?? '');
 
-/** A text rule leaves text alone when any of it carries a mark that opts out of rules (inline code). */
-const toTextInputRule = (pattern: RegExp, handler: RuleHandler, context: RuleContext): InputRule =>
-    toInputRule(
-        {
-            pattern,
-            handler: (state, found, start, end) => {
-                if (context.excludedMarks.some((markType) => state.doc.rangeHasMark(start, end, markType))) {
-                    return null;
-                }
-                return handler(state, found, start, end);
-            },
-        },
-        context,
-    );
-
 /** `->` -> `→`. The replacement carries the marks the matched text did. */
 const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
-    if (rule.boundary) {
-        return boundaryTextRule(rule, context);
+    if (rule.waitForRunEnd) {
+        return runEndTextRule(rule, context);
     }
     const { match, replace } = rule;
     const pattern = textPattern(match, '$');
@@ -324,19 +317,19 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
     // but not the document yet, so replacing up to `end` swaps all of it.
     const handler: RuleHandler = (state, found, start, end) =>
         state.tr.insertText(withGroups(replace, found), start, end);
-    return toTextInputRule(pattern, handler, context);
+    return toInputRule({ pattern, handler: unlessRangeHasExcludedMark(context.excludedMarks, handler) }, context);
 };
 
-/** The characters that end a run: whitespace and sentence punctuation, not quotes (the quote rules claim those). */
-const ENDS_A_RUN = /[\s,;:!?)\]}…]/;
+/** The characters that end a run: whitespace and sentence punctuation. Not quotes: one may close the quotation the run sits in, as in `"wait --"`. */
+const RUN_END = /[\s,;:!?)\]}…]/;
 
 /** `--` becomes a dash once a character that ends the run is typed, which stays. */
-const boundaryTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
+const runEndTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
     const { match, replace } = rule;
-    const pattern = textPattern(match, '([\\s\\S])$');
+    const pattern = textPattern(match, '[\\s\\S]$');
     const handler: RuleHandler = (state, found, start, end) => {
-        const typed = found[found.length - 1] ?? '';
-        if (!ENDS_A_RUN.test(typed)) {
+        const typed = found[0].slice(-1);
+        if (!RUN_END.test(typed)) {
             return null;
         }
         // An IME's compositionend runs rules with nothing typed: the character is already in the document.
@@ -351,7 +344,7 @@ const boundaryTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): Input
             state.schema.text(typed, typedMarks),
         ]);
     };
-    return toTextInputRule(pattern, handler, context);
+    return toInputRule({ pattern, handler: unlessRangeHasExcludedMark(context.excludedMarks, handler) }, context);
 };
 
 // Baseline

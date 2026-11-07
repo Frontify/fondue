@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { definePlugin, type RteInputRule } from '#/core';
+import { definePlugin, INLINE_PLACEHOLDER, type RteInputRule } from '#/core';
 
 const TYPOGRAPHY_GROUPS = ['quotes', 'ellipsis', 'dashes', 'symbols', 'numeric'] as const;
 
@@ -12,14 +12,11 @@ export type TypographyPluginOptions = {
     groups?: readonly TypographyGroup[];
 };
 
-/** `boundary` waits for the run to end (a space or punctuation is typed), so `--flag`, `-->` and `10^23` stay as typed. */
-type Replacement = readonly [match: string | RegExp, replace: string, boundary?: true];
-
-/** How an inline element (a soft break, a mention) reads in the text a rule matches. */
-const OBJECT_REPLACEMENT = '￼';
+/** `waitForRunEnd` waits for the run to end (a space or punctuation is typed), so `--flag`, `-->` and `10^23` stay as typed. */
+type Replacement = readonly [match: string | RegExp, replace: string, waitForRunEnd?: true];
 
 /** Where a quote opens: the start of a block, whitespace, an inline element, or an opening bracket or quote. */
-const OPENERS = String.raw`(?<=^|[\s([{<'"“‘${OBJECT_REPLACEMENT}])`;
+const OPENERS = String.raw`(?<=^|[\s([{<'"“‘${INLINE_PLACEHOLDER}])`;
 
 /** `^2` for `²`, only right after a digit and at the end of a run (`2^2`, not `x^2` or `10^23`). `^o` for a degree sign. */
 const SUPERSCRIPTS: readonly Replacement[] = /* @__PURE__ */ [...'0123456789o+-'].map(
@@ -93,12 +90,12 @@ const RULES: Record<TypographyGroup, readonly Replacement[]> = {
     numeric: [...SUPERSCRIPTS, ...FRACTIONS, [/(?<![\p{L}\p{N}_])(?!0x)(\d+)x(\d+)/u, '$1×$2', true]],
 };
 
-const toRule = ([match, replace, boundary]: Replacement): RteInputRule => {
-    if (boundary === true) {
-        return { kind: 'text', match, replace, boundary: 'word' };
-    }
-    return { kind: 'text', match, replace };
-};
+const toRule = ([match, replace, waitForRunEnd]: Replacement): RteInputRule => ({
+    kind: 'text',
+    match,
+    replace,
+    waitForRunEnd,
+});
 
 /**
  * Typographic shortcuts, rewritten as they are typed: `->` becomes `→`, `(c)`

@@ -11,7 +11,7 @@ import {
 import { type EditorState, NodeSelection, TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
-import { type EditorControlApi, type PluginRegistry, type RteSelectionSnapshot } from '#/core';
+import { type EditorControlApi, INLINE_PLACEHOLDER, type PluginRegistry, type RteSelectionSnapshot } from '#/core';
 
 import { markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
 import { createListApi, liftOutOfLists } from './lists';
@@ -352,14 +352,14 @@ export const createControlApi = (
             const { selection } = getView().state;
             const { $from, empty } = selection;
             return empty && $from.parent.isTextblock
-                ? $from.parent.textBetween(0, $from.parentOffset, undefined, '￼')
+                ? $from.parent.textBetween(0, $from.parentOffset, undefined, INLINE_PLACEHOLDER)
                 : '';
         },
         afterCaret() {
             const { selection } = getView().state;
             const { $from, empty } = selection;
             return empty && $from.parent.isTextblock
-                ? $from.parent.textBetween($from.parentOffset, $from.parent.content.size, undefined, '￼')
+                ? $from.parent.textBetween($from.parentOffset, $from.parent.content.size, undefined, INLINE_PLACEHOLDER)
                 : '';
         },
         deleteBefore(count) {

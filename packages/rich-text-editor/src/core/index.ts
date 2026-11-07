@@ -57,4 +57,4 @@ export {
     type ToolbarEntry,
     toggleOwn,
 } from './registry';
-export { ANY_LIST, DOCUMENT_VERSION, emptyDocument, newerVersionOf, PARAGRAPH } from './vocabulary';
+export { ANY_LIST, DOCUMENT_VERSION, emptyDocument, INLINE_PLACEHOLDER, newerVersionOf, PARAGRAPH } from './vocabulary';

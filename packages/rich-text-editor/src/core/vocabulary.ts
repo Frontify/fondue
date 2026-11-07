@@ -32,6 +32,9 @@ export const newerVersionOf = (document: RteDocumentOf): number | null => {
     return null;
 };
 
+/** What an inline element (a soft break, a mention) reads as in the text a typing rule matches. */
+export const INLINE_PLACEHOLDER = '\uFFFC';
+
 /**
  * Inside a block's `content.blocks`, stands for every mounted list (a block with
  * `content: { items }`), so a list item can allow nesting without naming lists.
