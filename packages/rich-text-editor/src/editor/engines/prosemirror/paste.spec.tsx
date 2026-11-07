@@ -5,7 +5,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { type PasteHandler, type RtePlugin } from '#/core';
-import { defaultPlugins } from '#/plugins';
+import { defaultPlugins, linkPlugin } from '#/plugins';
 
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
 
@@ -181,5 +181,36 @@ describe('pasting over selected text with the link plugin', () => {
         editor.paste('javascript:alert(1)');
 
         expect(editor.stored()).toEqual([paragraph(text('javascript:alert(1)'))]);
+    });
+});
+
+describe('pasting a link the policy refuses', () => {
+    const plugins = [linkPlugin({ allowedHosts: ['frontify.com'] })];
+
+    it('over selected text pastes the address as plain text', () => {
+        const editor = editorWith(plugins, [paragraph(text('frontify'))]);
+        editor.select('frontify');
+
+        editor.paste('https://example.com');
+
+        expect(editor.stored()).toEqual([paragraph(text('https://example.com'))]);
+    });
+
+    it('still links an address the policy allows', () => {
+        const editor = editorWith(plugins, [paragraph(text('frontify'))]);
+        editor.select('frontify');
+
+        editor.paste('https://frontify.com/x');
+
+        expect(editor.stored()).toEqual([paragraph(text('frontify', { link: { href: 'https://frontify.com/x' } }))]);
+    });
+
+    it('as HTML keeps the text without the link', () => {
+        const editor = editorWith(plugins, [paragraph(text('a'))]);
+        editor.caretAfter('a');
+
+        editor.paste('see here', '<p>see <a href="https://example.com">here</a></p>');
+
+        expect(editor.stored()).toEqual([paragraph(text('asee here'))]);
     });
 });

@@ -4,7 +4,7 @@
 
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { defaultPlugins } from '#/plugins';
+import { defaultPlugins, linkPlugin } from '#/plugins';
 
 import { destroyEditors, editorWith, paragraph, text } from './testEditor';
 
@@ -96,5 +96,25 @@ describe('typing a web address', () => {
 
         expect(handled).toBe(true);
         expect(editor.stored()).toEqual([paragraph(text('https://example.com '))]);
+    });
+});
+
+describe('typing a web address the policy refuses', () => {
+    const plugins = [linkPlugin({ allowedHosts: ['frontify.com'] })];
+
+    it('leaves it as typed', () => {
+        const editor = editorWith(plugins, [paragraph()]);
+
+        editor.type('https://example.com ');
+
+        expect(editor.stored()).toEqual([paragraph(text('https://example.com '))]);
+    });
+
+    it('links an address the policy allows', () => {
+        const editor = editorWith(plugins, [paragraph()]);
+
+        editor.type('https://frontify.com ');
+
+        expect(editor.stored()).toEqual([paragraph(link('https://frontify.com'), text(' '))]);
     });
 });

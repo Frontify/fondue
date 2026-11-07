@@ -123,6 +123,7 @@ export { underlineContent, underlinePlugin } from './plugins/Underline';
 
 export { type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './plugins/Emoji';
+export { type LinkPluginOptions, type LinkPolicy, type LinkScheme } from './plugins/Link';
 export {
     type MentionContentOptions,
     type MentionItem,

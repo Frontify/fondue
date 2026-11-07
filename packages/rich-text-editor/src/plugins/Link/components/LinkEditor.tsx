@@ -5,7 +5,7 @@ import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from 
 
 import { type EditProps } from '#/core';
 
-import { isSafeHref } from '../../shared/helpers/href';
+import { allowsHref, type LinkPolicy } from '../helpers/policy';
 import { type LinkValue } from '../helpers/value';
 import styles from '../link.module.scss';
 
@@ -28,7 +28,8 @@ export const LinkEditor = ({
     setOpen,
     remove,
     api,
-}: EditProps<LinkValue>): ReactNode => {
+    policy,
+}: EditProps<LinkValue> & { policy: LinkPolicy }): ReactNode => {
     // A flyout closed by hand stays closed until the caret leaves the link and returns.
     const [dismissed, setDismissed] = useState(false);
     const [wasFocused, setWasFocused] = useState(isFocused);
@@ -93,7 +94,7 @@ export const LinkEditor = ({
         }
     };
 
-    const href = isSafeHref(value.href) ? value.href : undefined;
+    const href = allowsHref(policy, value.href) ? value.href : undefined;
 
     return (
         <Flyout.Root
@@ -135,6 +136,7 @@ export const LinkEditor = ({
                     {isOpen ? (
                         <LinkTargetForm
                             initial={value}
+                            policy={policy}
                             onSave={(next) => {
                                 // Close first: the link is rebuilt with its new value and would reopen.
                                 setOpen(false);

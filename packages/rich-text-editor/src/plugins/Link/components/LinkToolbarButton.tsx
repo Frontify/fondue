@@ -9,6 +9,7 @@ import { type ToolbarItemProps } from '#/core';
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
 import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
 import { registerNewLinkForm } from '../helpers/newLinkForms';
+import { type LinkPolicy } from '../helpers/policy';
 
 import { LinkTargetForm } from './LinkTargetForm';
 
@@ -24,7 +25,8 @@ export const LinkToolbarButton = ({
     toggle,
     openEditor,
     shortcut,
-}: ToolbarItemProps & { shortcut: string }): ReactNode => {
+    policy,
+}: ToolbarItemProps & { shortcut: string; policy: LinkPolicy }): ReactNode => {
     const inLink = selectedNode !== null;
     const [creating, setCreating] = useState(false);
     const titleId = useId();
@@ -76,6 +78,7 @@ export const LinkToolbarButton = ({
                 <Flyout.Body>
                     <LinkTargetForm
                         initial={{ href: '' }}
+                        policy={policy}
                         onSave={(value) => {
                             toggle(value);
                             finish();

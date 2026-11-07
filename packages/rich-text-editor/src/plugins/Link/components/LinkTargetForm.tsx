@@ -4,9 +4,12 @@ import { Button, Checkbox, Label, TextInput } from '@frontify/fondue-components'
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
 import { toHref } from '../../shared/helpers/href';
+import { allowsHref, describeAllowed, type LinkPolicy } from '../helpers/policy';
 import { type LinkValue } from '../helpers/value';
 
 import styles from './linkForm.module.scss';
+
+const UNREADABLE = 'Enter a web address (example.com), an email address, or a phone number (tel:…).';
 
 /**
  * Where a link points, and whether it opens a new tab. The text is edited in
@@ -15,11 +18,13 @@ import styles from './linkForm.module.scss';
  */
 export const LinkTargetForm = ({
     initial,
+    policy,
     onSave,
     onCancel,
     onRemove,
 }: {
     initial: LinkValue;
+    policy: LinkPolicy;
     onSave: (value: LinkValue) => void;
     onCancel: () => void;
     /** Offered for a link that exists: take it away, keeping its text. */
@@ -41,12 +46,15 @@ export const LinkTargetForm = ({
 
     const save = (): void => {
         const href = toHref(typed);
-        if (href === null) {
-            setError(
-                typed.trim() === ''
-                    ? 'Enter where the link goes.'
-                    : 'Enter a web address (example.com), an email address, or a phone number (tel:…).',
-            );
+        if (href === null || !allowsHref(policy, href)) {
+            if (typed.trim() === '') {
+                setError('Enter where the link goes.');
+            } else if (href === null) {
+                setError(UNREADABLE);
+            } else {
+                // A policy with nothing to name cannot be what refused it.
+                setError(describeAllowed(policy) || UNREADABLE);
+            }
             urlFieldRef.current?.focus();
             return;
         }

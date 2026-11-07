@@ -398,9 +398,15 @@ export type RteInputRule =
     /**
      * A token ended by a space (or punctuation then a space) becomes text
      * carrying the mark — an autolink. `pattern` matches the token only; the
-     * engine anchors it to the end of the text before the terminator.
+     * engine anchors it to the end of the text before the terminator. A
+     * `value` that returns null leaves the token as typed.
      */
-    | { kind: 'markPattern'; pattern: RegExp; mark: string; value: (match: string) => Record<string, unknown> }
+    | {
+          kind: 'markPattern';
+          pattern: RegExp;
+          mark: string;
+          value: (match: string) => Record<string, unknown> | null;
+      }
     /**
      * Text swapped for other text the moment its last character is typed, no
      * space needed: `->` becomes `→`. A string matches as written; a pattern

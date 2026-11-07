@@ -11,6 +11,7 @@ import {
     defaultPlugins,
     defineMark,
     definePlugin,
+    linkPlugin,
     type RteDocument,
     type RteDocumentWith,
     RichTextRenderer,
@@ -264,5 +265,55 @@ describe('a list holding a block no plugin defines among its items', () => {
             expect(container.querySelector('ol > li a')?.getAttribute('href')).toBe('https://example.com');
         }
         warn.mockRestore();
+    });
+});
+
+describe('a link in a reading view and in export', () => {
+    const NEW_TAB_NOTE = ' (opens in new tab)';
+    const both = (doc: RteDocument, plugins: readonly RtePlugin[] = defaultPlugins): HTMLElement[] => [
+        rendered(<RichTextRenderer value={doc} plugins={plugins} />),
+        exported(serializeToHtml(doc, { plugins })),
+    ];
+
+    it('is written without its target when the policy refuses it', () => {
+        const doc = paragraph([
+            { text: 'out', link: { href: 'https://example.com' } },
+            { text: 'in', link: { href: 'https://frontify.com' } },
+        ]);
+
+        for (const container of both(doc, [linkPlugin({ allowedHosts: ['frontify.com'] })])) {
+            const [refused, allowed] = [...container.querySelectorAll('a')];
+            expect(refused?.hasAttribute('href')).toBe(false);
+            expect(allowed?.getAttribute('href')).toBe('https://frontify.com');
+        }
+    });
+
+    it('says it opens in a new tab, after its text and inside the anchor, only when it does', () => {
+        const doc = paragraph([
+            { text: 'new', link: { href: 'https://example.com', openInNewTab: true } },
+            { text: 'same', link: { href: 'https://example.com/b' } },
+        ]);
+
+        for (const container of both(doc)) {
+            const [newTab, sameTab] = [...container.querySelectorAll('a')];
+            expect(newTab?.textContent).toBe(`new${NEW_TAB_NOTE}`);
+            expect(newTab?.querySelector('span')?.textContent).toBe(NEW_TAB_NOTE);
+            expect(newTab?.lastElementChild?.tagName).toBe('SPAN');
+            expect(sameTab?.textContent).toBe('same');
+            expect(sameTab?.querySelector('span')).toBeNull();
+        }
+    });
+
+    it('keeps one note for a link split across styled runs', () => {
+        const link = { href: 'https://example.com', openInNewTab: true as const };
+        const doc = paragraph([
+            { text: 'a ', link },
+            { text: 'bold', link, bold: true },
+        ]);
+
+        for (const container of both(doc)) {
+            expect(container.querySelectorAll('a')).toHaveLength(1);
+            expect(container.textContent).toBe(`a bold${NEW_TAB_NOTE}`);
+        }
     });
 });

@@ -410,7 +410,7 @@ export const Link: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[linkPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[linkPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>

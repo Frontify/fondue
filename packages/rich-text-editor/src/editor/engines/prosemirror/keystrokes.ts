@@ -257,8 +257,12 @@ const markPatternRule = (rule: RuleOfKind<'markPattern'>, context: RuleContext):
         if ([markType, ...context.excludedMarks].some((type) => state.doc.rangeHasMark(from, to, type))) {
             return null;
         }
+        const value = rule.value(linked);
+        if (value === null) {
+            return null;
+        }
         return state.tr
-            .addMark(from, to, markType.create(valueAttrsFor(rule.value(linked))))
+            .addMark(from, to, markType.create(valueAttrsFor(value)))
             .insert(end, state.schema.text(' '))
             .removeStoredMark(markType);
     };
