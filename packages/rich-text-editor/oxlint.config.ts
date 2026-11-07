@@ -71,6 +71,36 @@ const noEngineFromShell = (up: string) => ({
     message: 'Only useEditorHandle wires an adapter in. Everything else uses the editor port.',
 });
 
+const NO_UI_KIT = {
+    group: [
+        '@frontify/fondue-icons',
+        '@frontify/fondue-icons/**',
+        '@frontify/fondue-components',
+        '@frontify/fondue-components/**',
+    ],
+    message: 'Content modules reach the renderer and export, so they import no editing UI kit.',
+};
+
+/** A plugin's content module stays free of its editing code, which keeps the renderer bundle small. */
+const CONTENT_ONLY = {
+    group: [
+        './**',
+        '!./*.module.scss',
+        '!./types',
+        '!./helpers/**',
+        // A read view the renderer draws for every mention.
+        '!./components/MentionLink',
+    ],
+    message:
+        'A content module imports only its styles, types, helpers and read views: never its plugin, its editing components or the toolbar button.',
+};
+
+// A path, not a pattern: a `!` re-allow in any pattern group (the sibling ring's `shared`) wins over every group.
+const NO_TOOLBAR_BUTTON = ['../shared/ToolbarButton', '../shared/ToolbarButton/ToolbarButton'].map((name) => ({
+    name,
+    message: CONTENT_ONLY.message,
+}));
+
 const SHELL_OUTER_LAYERS = {
     group: [
         '#/plugins',
@@ -243,6 +273,47 @@ export default defineConfig({
                 'no-restricted-imports': [
                     'error',
                     { patterns: [NO_ENGINE, NO_SERVER_RENDER, CORE_ONLY, noSiblingPlugin('..')] },
+                ],
+            },
+        },
+        {
+            files: ['src/plugins/*/content.{ts,tsx}'],
+            rules: {
+                'no-restricted-imports': [
+                    'error',
+                    {
+                        paths: NO_TOOLBAR_BUTTON,
+                        patterns: [
+                            NO_ENGINE,
+                            NO_SERVER_RENDER,
+                            CORE_ONLY,
+                            noSiblingPlugin('..'),
+                            NO_UI_KIT,
+                            CONTENT_ONLY,
+                        ],
+                    },
+                ],
+            },
+        },
+        {
+            // What the renderer and export default to, so it gathers content modules only.
+            files: ['src/plugins/defaultContent.ts'],
+            rules: {
+                'no-restricted-imports': [
+                    'error',
+                    {
+                        patterns: [
+                            NO_ENGINE,
+                            NO_SERVER_RENDER,
+                            CORE_ONLY,
+                            noRelativeEscape('..', 'Plugins reach the core through #/core, never a relative path.'),
+                            NO_UI_KIT,
+                            {
+                                group: ['./**', '!./*/content'],
+                                message: 'defaultContent gathers content modules only, never a plugin.',
+                            },
+                        ],
+                    },
                 ],
             },
         },
