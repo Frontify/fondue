@@ -210,20 +210,19 @@ const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | n
 };
 
 /** Punctuation and closing quotes that end a sentence or quotation rather than a link, though a link may contain them. */
-const TRAILING_PUNCTUATION = /[.,;:!?"'”’]+$/;
+const TRAILING_PUNCTUATION = /[.,;:!?"'”’]$/;
 
 const count = (text: string, character: string): number => text.split(character).length - 1;
 
 /** Drops trailing punctuation, and a trailing `)` only while it has no `(` to close. */
-const trimTrailingPunctuation = (address: string): string => {
+export const trimTrailingPunctuation = (address: string): string => {
     let trimmed = address;
     for (;;) {
-        const next = trimmed.replace(TRAILING_PUNCTUATION, '');
-        const unbalanced = next.endsWith(')') && count(next, ')') > count(next, '(');
-        if (!unbalanced && next === trimmed) {
+        const unbalanced = trimmed.endsWith(')') && count(trimmed, ')') > count(trimmed, '(');
+        if (!unbalanced && !TRAILING_PUNCTUATION.test(trimmed)) {
             return trimmed;
         }
-        trimmed = unbalanced ? next.slice(0, -1) : next;
+        trimmed = trimmed.slice(0, -1);
     }
 };
 

@@ -33,9 +33,7 @@ const CopyLink = ({ href }: { href: string }): ReactNode => {
             <Button size="small" emphasis="weak" onPress={copy}>
                 Copy link
             </Button>
-            <span role="status" className={styles.visuallyHidden}>
-                {status}
-            </span>
+            <output className={styles.visuallyHidden}>{status}</output>
         </>
     );
 };

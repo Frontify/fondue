@@ -63,6 +63,12 @@ describe('typing a web address', () => {
         expect(stored).toEqual([paragraph(text('(see '), link('https://a.com/x'), text('). '))]);
     });
 
+    it('leaves a run of closing punctuation and brackets out of the link', () => {
+        const stored = typedIntoEmptyParagraph('(see https://a.com/x"),. ');
+
+        expect(stored).toEqual([paragraph(text('(see '), link('https://a.com/x'), text('"),. '))]);
+    });
+
     it('does not carry the link on into what is typed next', () => {
         const stored = typedIntoEmptyParagraph('https://example.com next');
 
