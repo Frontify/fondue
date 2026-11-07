@@ -166,15 +166,16 @@ export const DestinationField = ({
                 <ul id={listId} role="listbox" aria-label="Pages" className={styles.results}>
                     {results.map((destination, index) => (
                         // The keyboard drives the list from the input; the mouse picks here.
-                        // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
                         <li
                             key={destination.id}
                             id={optionId(index)}
                             role="option"
                             aria-selected={index === activeIndex}
-                            // Keep focus in the input: blurring would close the list before the click lands.
-                            onMouseDown={(event) => event.preventDefault()}
-                            onClick={() => pick(destination)}
+                            // Picked on press, with focus kept in the input: a blur would close the list before a click landed.
+                            onMouseDown={(event) => {
+                                event.preventDefault();
+                                pick(destination);
+                            }}
                             className={
                                 index === activeIndex ? `${styles.option} ${styles.optionActive}` : styles.option
                             }

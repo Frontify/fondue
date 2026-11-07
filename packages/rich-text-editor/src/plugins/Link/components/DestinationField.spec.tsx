@@ -154,6 +154,23 @@ describe('the destination field', () => {
         expect(field.getAttribute('aria-expanded')).toBe('false');
     });
 
+    it('picks an option on a mouse press and keeps focus in the field', async () => {
+        const { field, type, options, onSave } = mountSearchForm(fixed(BRAND, LOGOS));
+        await type('br');
+        field.focus();
+
+        const press = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+        act(() => {
+            options()[1]?.dispatchEvent(press);
+        });
+
+        expect(press.defaultPrevented).toBe(true);
+        expect(field.value).toBe(LOGOS.href);
+        expect(window.document.activeElement).toBe(field);
+        expect(onSave).not.toHaveBeenCalled();
+        expect(field.getAttribute('aria-expanded')).toBe('false');
+    });
+
     it('saves a typed address on Enter when no option is active', async () => {
         const { type, press, onSave } = mountSearchForm(fixed(BRAND));
         await type('https://frontify.com/typed');
