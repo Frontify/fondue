@@ -18,12 +18,14 @@ import {
     type PasteHandler,
     type RteBlockCommand,
     type RteContent,
+    type RteDelimiterRule,
     type RteEditView,
     type RteIcon,
     type RteInputRule,
     type RtePlugin,
     type RteToolbarEntry,
     type ToolbarItemProps,
+    typesOf,
 } from './plugin';
 import { PARAGRAPH, paragraphBlock } from './vocabulary';
 
@@ -157,10 +159,19 @@ export const toggleOwn = (
 const isPlugin = (entry: RtePlugin | RteContent): entry is RtePlugin => 'id' in entry && typeof entry.id === 'string';
 
 /** Names a bare content in errors: the first type it declares. */
-const firstTypeOf = (content: RteContent): string =>
-    Object.keys({ ...content.marks, ...content.blocks, ...content.inlines })[0] ?? 'content';
+const firstTypeOf = (content: RteContent): string => typesOf(content)[0] ?? 'content';
 
 const capitalised = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
+
+const labelOf = (plugin: RtePlugin, entry: RteToolbarEntry, type: string | undefined): string => {
+    if (entry.label !== undefined) {
+        return entry.label;
+    }
+    if (type === undefined) {
+        return plugin.id;
+    }
+    return capitalised(type);
+};
 
 /**
  * Adds a plugin's declared types to `target`. Two plugins declaring the same
@@ -208,14 +219,12 @@ const toolbarEntryOf = (plugin: RtePlugin, entry: RteToolbarEntry, key: string):
     if (entry.render === undefined && !BUTTON_KINDS.has(own.kind)) {
         throw new Error(`Plugin "${plugin.id}" has a toolbar entry with ${NOTHING_TO_TOGGLE}`);
     }
-    let label = entry.label;
-    label ??= type === undefined ? plugin.id : capitalised(type);
     return {
         id: plugin.id,
         key,
         own,
         floating: entry.floating ?? defaultFloatingPlacement(own),
-        label,
+        label: labelOf(plugin, entry, type),
         icon: entry.icon,
         shortcut: entry.shortcut,
         render: entry.render,
@@ -262,7 +271,7 @@ const menuCommandOf = (
 };
 
 /** A delimiter rule is a mark rule on the plugin's only mark. */
-const inputRuleOf = (plugin: RtePlugin, rule: NonNullable<RtePlugin['inputRules']>[number]): RteInputRule => {
+const inputRuleOf = (plugin: RtePlugin, rule: RteInputRule | RteDelimiterRule): RteInputRule => {
     if ('kind' in rule) {
         return rule;
     }
@@ -339,7 +348,11 @@ const addShortcut = (draft: Draft, plugin: RtePlugin, entry: RteToolbarEntry, it
 
 const addToolbarEntries = (draft: Draft, plugin: RtePlugin, pluginKey: string): void => {
     for (const [index, entry] of (plugin.toolbar ?? []).entries()) {
-        const item = toolbarEntryOf(plugin, entry, index === 0 ? pluginKey : `${pluginKey}/${index}`);
+        let key = pluginKey;
+        if (index > 0) {
+            key = `${pluginKey}/${index}`;
+        }
+        const item = toolbarEntryOf(plugin, entry, key);
         draft.toolbarItems.push(item);
         addShortcut(draft, plugin, entry, item);
         if (entry.menu !== undefined) {
@@ -370,7 +383,11 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
         addHotkey(draft, keys, handler);
     }
     // A shared id is a mistake the editor warns about; the toolbar still keys each control apart.
-    addToolbarEntries(draft, plugin, occurrence === 0 ? plugin.id : `${plugin.id}#${occurrence}`);
+    let pluginKey = plugin.id;
+    if (occurrence > 0) {
+        pluginKey = `${plugin.id}#${occurrence}`;
+    }
+    addToolbarEntries(draft, plugin, pluginKey);
     draft.inputRules.push(...(plugin.inputRules ?? []).map((rule) => inputRuleOf(plugin, rule)));
     if (plugin.onPaste) {
         draft.pasteHandlers.push(plugin.onPaste);

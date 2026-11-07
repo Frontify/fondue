@@ -37,7 +37,7 @@ export type RteContent = {
 /** Types an `RteContent` with no wider type. */
 export const defineContent = (content: RteContent): RteContent => content;
 
-const typesOf = (content: RteContent | undefined): string[] => [
+export const typesOf = (content: RteContent | undefined): string[] => [
     ...Object.keys(content?.marks ?? {}),
     ...Object.keys(content?.blocks ?? {}),
     ...Object.keys(content?.inlines ?? {}),
