@@ -70,6 +70,21 @@ describe('the mention inline', () => {
         });
     });
 
+    it('pastes back the stored name, never the one shown', () => {
+        const content = mentionContent({
+            href: (mention) => `/u/${mention.id}`,
+            resolve: () => ({ status: 'current', username: 'jane', name: 'Jane Smith' }),
+        });
+        const attrs = content.inlines?.mention?.toHtml(JANE).attrs;
+
+        expect(attrs).toMatchObject({ title: 'Jane Smith', 'data-mention-name': 'Jane Doe' });
+        expect(
+            parse(
+                `<a href="/u/jane" title="${attrs?.title}" data-mention-id="jane" data-mention-username="jane" data-mention-name="${attrs?.['data-mention-name']}">@jane</a>`,
+            ),
+        ).toEqual(JANE);
+    });
+
     it('marks a deleted or forbidden person unavailable, with the stored name and no link', () => {
         const content = mentionContent({
             href: (mention) => `/u/${mention.id}`,

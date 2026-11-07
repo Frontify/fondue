@@ -12,6 +12,7 @@ import {
     defineMark,
     definePlugin,
     linkPlugin,
+    mentionPlugin,
     type RteDocument,
     type RteDocumentWith,
     RichTextRenderer,
@@ -315,5 +316,33 @@ describe('a link in a reading view and in export', () => {
             expect(container.querySelectorAll('a')).toHaveLength(1);
             expect(container.textContent).toBe(`a bold${NEW_TAB_NOTE}`);
         }
+    });
+});
+
+describe('a stored mention that is missing a field', () => {
+    const plugins = [mentionPlugin({ items: [] })];
+    // Stored documents are not validated, so a field can be missing or the wrong type.
+    const mentioning = (mention: Record<string, unknown>): RteDocument =>
+        ({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: '' }, mention, { text: '' }] }],
+        }) as RteDocument;
+
+    it('shows the username alone when it has no name', () => {
+        const doc = mentioning({ type: 'mention', id: 'x', username: 'x' });
+
+        for (const container of [
+            rendered(<RichTextRenderer value={doc} plugins={plugins} />),
+            exported(serializeToHtml(doc, { plugins })),
+        ]) {
+            expect(container.textContent).toBe('@x');
+        }
+    });
+
+    it('does not throw for a username that is not a string', () => {
+        const doc = mentioning({ type: 'mention', id: 'x', username: 7, name: 'X' });
+
+        expect(() => rendered(<RichTextRenderer value={doc} plugins={plugins} />)).not.toThrow();
+        expect(() => serializeToHtml(doc, { plugins })).not.toThrow();
     });
 });

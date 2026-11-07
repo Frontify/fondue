@@ -33,6 +33,14 @@ const resolutionOf = (
     }
 };
 
+/** Stored documents are not validated: a field that is not a string reads as empty. */
+const storedText = (field: unknown): string => {
+    if (typeof field !== 'string') {
+        return '';
+    }
+    return withoutControlCharacters(field);
+};
+
 /**
  * What a mention shows, from the stored value and what the app knows now: the
  * current username and name, or the stored ones with a note when the person is
@@ -43,8 +51,8 @@ export const mentionDisplay = (
     { resolve, href, trigger }: MentionDisplayOptions,
 ): MentionDisplay => {
     const resolution = resolutionOf(mention, resolve);
-    let username = withoutControlCharacters(mention.username);
-    let name = withoutControlCharacters(mention.name);
+    let username = storedText(mention.username);
+    let name = storedText(mention.name);
     if (resolution?.status === 'current' && typeof resolution.username === 'string') {
         const currentUsername = withoutControlCharacters(resolution.username);
         if (currentUsername !== '') {

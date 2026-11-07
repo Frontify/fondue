@@ -26,6 +26,7 @@ export const MentionLink = ({ value, display }: { value: MentionValue; display: 
         title: display.title,
         'data-mention-id': value.id,
         'data-mention-username': value.username,
+        'data-mention-name': value.name,
         'data-mention-kind': value.kind,
         className: styles.mention,
     };

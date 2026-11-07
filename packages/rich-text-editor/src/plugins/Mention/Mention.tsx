@@ -35,6 +35,14 @@ export type MentionContentOptions = {
 
 const KINDS: readonly MentionKind[] = ['user', 'group', 'all'];
 
+/** Stored documents are not validated, and an attribute that is not a string cannot be written. */
+const attributeText = (field: unknown): string | undefined => {
+    if (typeof field !== 'string') {
+        return undefined;
+    }
+    return field;
+};
+
 /** What the document keeps of a chosen item: no avatar, and no `kind` for a person, as before kinds existed. */
 export const mentionValueOf = ({ id, username, name, kind }: MentionItem): MentionValue =>
     kind === undefined || kind === 'user' ? { id, username, name } : { id, username, name, kind };
@@ -61,8 +69,10 @@ export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentO
                         attrs: {
                             href: shown.href,
                             title: shown.title,
-                            'data-mention-id': mention.id,
-                            'data-mention-username': mention.username,
+                            'data-mention-id': attributeText(mention.id),
+                            'data-mention-username': attributeText(mention.username),
+                            // The stored name, so the shown one never flows back into the document on paste.
+                            'data-mention-name': attributeText(mention.name),
                             'data-mention-kind': mention.kind,
                             class: styles.mention ?? '',
                         },
@@ -81,10 +91,10 @@ export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentO
                         value: (element) => {
                             const id = element.dataset.mentionId ?? '';
                             const username = element.dataset.mentionUsername ?? '';
+                            // Copies from before `data-mention-name` carry the name in the title.
+                            const name = element.dataset.mentionName ?? element.title;
                             const kind = KINDS.find((known) => known === element.dataset.mentionKind);
-                            return id === '' || username === ''
-                                ? null
-                                : mentionValueOf({ id, username, name: element.title, kind });
+                            return id === '' || username === '' ? null : mentionValueOf({ id, username, name, kind });
                         },
                     },
                 ],
