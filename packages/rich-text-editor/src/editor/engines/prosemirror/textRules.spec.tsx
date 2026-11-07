@@ -83,8 +83,12 @@ describe('a text rule with a word boundary', () => {
 
     it('waits for the next character and keeps it', () => {
         expect(typed('a -- b', plugins)).toEqual([paragraph(text('a — b'))]);
-        expect(typed('a --.', plugins)).toEqual([paragraph(text('a —.'))]);
+        expect(typed('a --,', plugins)).toEqual([paragraph(text('a —,'))]);
         expect(typed('(a --)', plugins)).toEqual([paragraph(text('(a —)'))]);
+    });
+
+    it('leaves a run ended by a full stop as typed: a decimal point or a file extension', () => {
+        expect(typed('a --.', plugins)).toEqual([paragraph(text('a --.'))]);
     });
 
     it('fires only before whitespace or sentence punctuation', () => {
@@ -110,6 +114,25 @@ describe('a text rule with a word boundary', () => {
         expect(editor.stored()).toEqual([paragraph(text('x-- y', { code: true }))]);
     });
 
+    it('stays as typed in a code run when a plain space follows it', () => {
+        const editor = editorWith([...shipped('code'), ...plugins], [paragraph(text('npm i --', { code: true }))]);
+        editor.caretAfter('npm i --');
+
+        editor.type(' ');
+
+        expect(editor.stored()).toEqual([paragraph(text('npm i --', { code: true }), text(' '))]);
+    });
+
+    it('keeps the marks of the replaced text and gives the typed character the marks typing carries', () => {
+        const editor = editorWith([...shipped('bold'), ...plugins], [paragraph(text('a --', { bold: true }))]);
+        editor.caretAfter('a --');
+        editor.api.marks.toggle('bold');
+
+        editor.type(' ');
+
+        expect(editor.stored()).toEqual([paragraph(text('a —', { bold: true }), text(' '))]);
+    });
+
     it('is taken back on Backspace, leaving what was typed', () => {
         const editor = editorWith(plugins, [paragraph()]);
         editor.type('a -- ');
@@ -117,6 +140,30 @@ describe('a text rule with a word boundary', () => {
         expect(press(editor.view, 'Backspace')).toBe(true);
 
         expect(editor.stored()).toEqual([paragraph(text('a -- '))]);
+    });
+
+    it('does not fire when an IME ends a composition with nothing typed', async () => {
+        const editor = editorWith(plugins, [paragraph(text('a -- '))]);
+        editor.caretAfter('a -- ');
+
+        editor.view.dom.dispatchEvent(new Event('compositionend'));
+        await new Promise((resolve) => setTimeout(resolve));
+
+        expect(editor.view.state.doc.textContent).toBe('a -- ');
+    });
+});
+
+describe('a text rule on a mark that opts out of typing rules', () => {
+    it('does not fire across a code run and plain text: `a-` then a plain `>`', () => {
+        const editor = editorWith(
+            [...shipped('code'), rulesPlugin({ kind: 'text', match: '->', replace: '→' })],
+            [paragraph(text('a-', { code: true }))],
+        );
+        editor.caretAfter('a-');
+
+        editor.type('>');
+
+        expect(editor.stored()).toEqual([paragraph(text('a-', { code: true }), text('>'))]);
     });
 });
 
@@ -132,7 +179,6 @@ describe('typographyPlugin', () => {
         ['(tm)', '™'],
         ['(sm)', '℠'],
         ['+/-', '±'],
-        ['~-', '₋'],
         ['^o', '°'],
         ['^+', '⁺'],
         ['^-', '⁻'],
@@ -144,7 +190,6 @@ describe('typographyPlugin', () => {
         ['--', '—'],
         ['<-', '←'],
         ['!=', '≠'],
-        ['~2', '₂'],
         ['2^2', '2²'],
         ['1/2', '½'],
         ['1/10', '⅒'],
@@ -153,7 +198,7 @@ describe('typographyPlugin', () => {
         ['1920x1080', '1920×1080'],
     ])('turns "%s" into "%s" once the run ends', (shortcut, glyph) => {
         expect(typed(`a ${shortcut} b`, withTypography)).toEqual([paragraph(text(`a ${glyph} b`))]);
-        expect(typed(`a ${shortcut}.`, withTypography)).toEqual([paragraph(text(`a ${glyph}.`))]);
+        expect(typed(`a ${shortcut},`, withTypography)).toEqual([paragraph(text(`a ${glyph},`))]);
         expect(typed(`a ${shortcut}`, withTypography)).toEqual([paragraph(text(`a ${shortcut}`))]);
     });
 
@@ -166,13 +211,23 @@ describe('typographyPlugin', () => {
         expect(typed('<-- x', withTypography)).toEqual([paragraph(text('<-- x'))]);
     });
 
-    it('keeps a longer run as typed: !==, 0x1F, 10^23, 1/25, ~25', () => {
+    it('keeps a longer run as typed: !==, 0x1F, 10^23, 1/25', () => {
         expect(typed('a !== b', withTypography)).toEqual([paragraph(text('a !== b'))]);
         expect(typed('0x1F ', withTypography)).toEqual([paragraph(text('0x1F '))]);
         expect(typed('0x10 ', withTypography)).toEqual([paragraph(text('0x10 '))]);
         expect(typed('10^23 ', withTypography)).toEqual([paragraph(text('10^23 '))]);
         expect(typed('1/25 ', withTypography)).toEqual([paragraph(text('1/25 '))]);
-        expect(typed('a ~25 ', withTypography)).toEqual([paragraph(text('a ~25 '))]);
+    });
+
+    it('keeps a run ended by a full stop as typed: file names and decimals', () => {
+        expect(typed('banner-1920x1080.png', withTypography)).toEqual([paragraph(text('banner-1920x1080.png'))]);
+        expect(typed('2^2.5 ', withTypography)).toEqual([paragraph(text('2^2.5 '))]);
+        expect(typed('~2.5 ', withTypography)).toEqual([paragraph(text('~2.5 '))]);
+    });
+
+    it('does not rewrite a tilde and a digit: "~2 hours"', () => {
+        expect(typed('~2 hours', withTypography)).toEqual([paragraph(text('~2 hours'))]);
+        expect(typed('~-5 ', withTypography)).toEqual([paragraph(text('~-5 '))]);
     });
 
     it('leaves comparison operators and arrow functions alone', () => {
@@ -211,6 +266,30 @@ describe('typographyPlugin', () => {
             editor.type('"');
 
             expect(editor.stored()).toEqual([paragraph(text('x"y', { code: true }))]);
+        });
+
+        it('opens a quote after an inline element', () => {
+            const editor = editorWith(
+                [...shipped('softBreak'), typographyPlugin()],
+                [paragraph(text('a'), { type: 'break' })],
+            );
+            editor.caretAfter('￼');
+
+            editor.type('"hi"');
+
+            expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'break' }, text('“hi”'))]);
+        });
+
+        it.each([
+            ['useState', { code: true }],
+            ['Frontify', { link: { href: 'https://frontify.com' } }],
+        ])('leaves the run "%s" intact when an apostrophe and "s" are typed after it', (word, marks) => {
+            const editor = editorWith([...shipped('code', 'link'), typographyPlugin()], [paragraph(text(word, marks))]);
+            editor.caretAfter(word);
+
+            editor.type("'s");
+
+            expect(editor.stored()).toEqual([paragraph(text(word, marks), text('’s'))]);
         });
 
         it('is taken back on Backspace', () => {

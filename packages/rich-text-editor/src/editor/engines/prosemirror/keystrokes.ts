@@ -298,6 +298,21 @@ const textPattern = (match: string | RegExp, suffix: string): RegExp => {
 const withGroups = (replace: string, found: RegExpMatchArray): string =>
     replace.replaceAll(/\$(\d)/g, (_, group: string) => found[Number(group)] ?? '');
 
+/** A text rule leaves text alone when any of it carries a mark that opts out of rules (inline code). */
+const toTextInputRule = (pattern: RegExp, handler: RuleHandler, context: RuleContext): InputRule =>
+    toInputRule(
+        {
+            pattern,
+            handler: (state, found, start, end) => {
+                if (context.excludedMarks.some((markType) => state.doc.rangeHasMark(start, end, markType))) {
+                    return null;
+                }
+                return handler(state, found, start, end);
+            },
+        },
+        context,
+    );
+
 /** `->` -> `→`. The replacement carries the marks the matched text did. */
 const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
     if (rule.boundary) {
@@ -309,13 +324,13 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
     // but not the document yet, so replacing up to `end` swaps all of it.
     const handler: RuleHandler = (state, found, start, end) =>
         state.tr.insertText(withGroups(replace, found), start, end);
-    return toInputRule({ pattern, handler }, context);
+    return toTextInputRule(pattern, handler, context);
 };
 
 /** The characters that end a run: whitespace and sentence punctuation. */
-const ENDS_A_RUN = /[\s.,;:!?)\]}"'”’…]/;
+const ENDS_A_RUN = /[\s,;:!?)\]}"'”’…]/;
 
-/** `--` -> `—` once a character that ends the run is typed, which stays. */
+/** `--` becomes a dash once a character that ends the run is typed, which stays. */
 const boundaryTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
     const { match, replace } = rule;
     const pattern = textPattern(match, '([\\s\\S])$');
@@ -324,9 +339,19 @@ const boundaryTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): Input
         if (!ENDS_A_RUN.test(typed)) {
             return null;
         }
-        return state.tr.insertText(withGroups(replace, found) + typed, start, end);
+        // An IME's compositionend runs rules with nothing typed: the character is already in the document.
+        if (state.selection.empty && start + found[0].length === end) {
+            return null;
+        }
+        // The replacement keeps the marks of what it replaces, the typed character the marks typing carries.
+        const replaced = state.doc.resolve(start).marksAcross(state.doc.resolve(end)) ?? [];
+        const typedMarks = state.storedMarks ?? state.selection.$from.marks();
+        return state.tr.replaceWith(start, end, [
+            state.schema.text(withGroups(replace, found), replaced),
+            state.schema.text(typed, typedMarks),
+        ]);
     };
-    return toInputRule({ pattern, handler }, context);
+    return toTextInputRule(pattern, handler, context);
 };
 
 // Baseline

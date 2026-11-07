@@ -24,6 +24,12 @@ describe('typographyPlugin', () => {
         expect(new Set(matches).size).toBe(matches.length);
     });
 
+    it('orders the rules the same whatever order the groups are listed in', () => {
+        expect(typographyPlugin({ groups: ['numeric', 'symbols', 'quotes'] }).inputRules).toEqual(
+            typographyPlugin({ groups: ['quotes', 'symbols', 'numeric'] }).inputRules,
+        );
+    });
+
     it('declares fewer rules for fewer groups, and none for no group', () => {
         const count = (groups: Parameters<typeof typographyPlugin>[0]) =>
             (typographyPlugin(groups).inputRules ?? []).length;

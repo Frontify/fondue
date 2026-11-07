@@ -15,26 +15,22 @@ export type TypographyPluginOptions = {
 /** `boundary` waits for the run to end (a space or punctuation is typed), so `--flag`, `-->` and `10^23` stay as typed. */
 type Replacement = readonly [match: string | RegExp, replace: string, boundary?: true];
 
+/** How an inline element (a soft break, a mention) reads in the text a rule matches. */
+const OBJECT_REPLACEMENT = '￼';
+
+/** Where a quote opens: the start of a block, whitespace, an inline element, or an opening bracket or quote. */
+const OPENERS = String.raw`(?<=^|[\s([{<'"“‘${OBJECT_REPLACEMENT}])`;
+
 /** `^2` for `²`, only right after a digit and at the end of a run (`2^2`, not `x^2` or `10^23`). `^o` for a degree sign. */
 const SUPERSCRIPTS: readonly Replacement[] = /* @__PURE__ */ [...'0123456789o+-'].map(
     (character, index): Replacement => {
         const glyph = '⁰¹²³⁴⁵⁶⁷⁸⁹°⁺⁻'.charAt(index);
         if (/\d/.test(character)) {
-            return [new RegExp(String.raw`(\d)\^${character}`), `$1${glyph}`, true];
+            return [new RegExp(String.raw`(?<=\d)\^${character}`), glyph, true];
         }
         return [`^${character}`, glyph];
     },
 );
-
-/** `~2` for `₂` at the end of a run. Never right after a `~`, so a strikethrough's `~~` can open on a digit: `~~2~~`. */
-const SUBSCRIPTS: readonly Replacement[] = /* @__PURE__ */ [...'0123456789+-'].map((character, index): Replacement => {
-    const match = new RegExp(`(?<!~)~[${character}]`);
-    const glyph = '₀₁₂₃₄₅₆₇₈₉₊₋'.charAt(index);
-    if (/\d/.test(character)) {
-        return [match, glyph, true];
-    }
-    return [match, glyph];
-});
 
 /**
  * `1/2` for `½`. Not right after a digit or a slash, so dates (`11/2`) and
@@ -70,10 +66,10 @@ const FRACTIONS: readonly Replacement[] = /* @__PURE__ */ (
  */
 const RULES: Record<TypographyGroup, readonly Replacement[]> = {
     quotes: [
-        [/(^|[\s([{<'"“‘])"/, '$1“'],
+        [/* @__PURE__ */ new RegExp(`${OPENERS}"`), '“'],
         ['"', '”'],
-        [/(^|[\s([{<'"“‘])'/, '$1‘'],
-        [/([\p{L}\p{N}])'/u, '$1’'],
+        [/* @__PURE__ */ new RegExp(`${OPENERS}'`), '‘'],
+        [/(?<=[\p{L}\p{N}])'/u, '’'],
     ],
     ellipsis: [['...', '…']],
     dashes: [[/(?<![-<!])--/, '—', true]],
@@ -93,7 +89,7 @@ const RULES: Record<TypographyGroup, readonly Replacement[]> = {
         ['+/-', '±'],
         ['!=', '≠', true],
     ],
-    numeric: [...SUBSCRIPTS, ...SUPERSCRIPTS, ...FRACTIONS, [/(?<![\p{L}\p{N}_])(?!0x)(\d+)x(\d+)/u, '$1×$2', true]],
+    numeric: [...SUPERSCRIPTS, ...FRACTIONS, [/(?<![\p{L}\p{N}_])(?!0x)(\d+)x(\d+)/u, '$1×$2', true]],
 };
 
 const toRule = ([match, replace, boundary]: Replacement): RteInputRule => {
@@ -112,5 +108,8 @@ const toRule = ([match, replace, boundary]: Replacement): RteInputRule => {
 export const typographyPlugin = ({ groups = TYPOGRAPHY_GROUPS }: TypographyPluginOptions = {}) =>
     definePlugin({
         id: 'typography',
-        inputRules: groups.flatMap((group) => RULES[group].map(toRule)),
+        // In the fixed order, so how the host lists the groups never changes which rule goes first.
+        inputRules: TYPOGRAPHY_GROUPS.filter((group) => groups.includes(group)).flatMap((group) =>
+            RULES[group].map(toRule),
+        ),
     });

@@ -688,8 +688,8 @@ export const Typography: Story = {
             <div className={LAYOUT}>
                 <p className={HINT}>
                     Try <code>a -- b</code>, <code>&lt;-&gt;</code>, <code>"quoted"</code>, <code>don't</code>,{' '}
-                    <code>3x4 </code>, <code>2^2 </code>, and see <code>--flag</code>, <code>--&gt;</code>,{' '}
-                    <code>x &lt;= 5</code> and <code>`a -- b`</code> stay as typed.
+                    <code>3x4 </code>, <code>2^2 </code>, and see <code>--flag</code>, <code>--&gt;</code>, and{' '}
+                    <code>x &lt;= 5</code> stay as typed.
                 </p>
                 <div className={FRAME}>
                     <RichTextEditor value={doc} onChange={setDoc} plugins={[codePlugin, typographyPlugin()]} />
