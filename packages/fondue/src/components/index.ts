@@ -16,6 +16,4 @@ export * from './InputLabel';
 export * from './LegacyTextarea';
 export * from './MenuItem';
 export * from './MultiSelect';
-export * from './OrderableList';
 export * from './Toast';
-export * from './Tree';
