@@ -71,6 +71,8 @@ export const ToolbarMore = ({
             </Tooltip.Root>
             <Flyout.Content
                 ref={contentRef}
+                // The panel is a dialog to assistive technology, which needs a name of its own.
+                aria-label={labels.more}
                 side="bottom"
                 align="end"
                 padding="tight"
