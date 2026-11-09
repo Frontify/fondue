@@ -85,9 +85,9 @@ const blockLines = (blocks: readonly RteBlockNode[], registry: PluginRegistry): 
 
 export type ToPlainTextOptions = {
     /**
-     * The plugins whose inlines to read, or only their content: the editor's
-     * list. An inline whose plugin is missing contributes nothing. The package
-     * root defaults it to `defaultContent`.
+     * The plugins, or only their content, whose inlines to read. An inline
+     * whose plugin is missing contributes nothing.
+     * @default defaultContent
      */
     plugins?: readonly (RtePlugin | RteContent)[];
 };

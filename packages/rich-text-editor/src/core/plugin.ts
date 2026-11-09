@@ -12,12 +12,11 @@ import { type EditorControlApi, type RteSelectionSnapshot } from './commands';
 import { type HtmlSpec, type StyleMap } from './htmlSpec';
 
 /**
- * What a document can hold, apart from how it is edited: the renderer, the
- * HTML export and a server load only this. It imports no editing code.
+ * What a document can hold, apart from how it is edited. The renderer, the HTML
+ * export and a server load use only this.
  *
- * Every node is described the same way: `toHtml` (the static markup) and
- * `parse` (how pasted HTML is read back). An advanced node adds a readonly
- * React view under `render.component`. Export and copy always use `toHtml`.
+ * Every node has `toHtml` (its markup) and `parse` (how pasted HTML is read
+ * back); an advanced node adds a readonly view under `render.component`.
  */
 export type RteContent = {
     /** Block types (`defineBlock`), keyed by the `type` they are stored under. */
@@ -28,13 +27,29 @@ export type RteContent = {
     inlines?: Record<string, InlineDefinition>;
     /** Attributes every text block carries, whichever plugin declared the block (alignment), keyed by stored name. */
     blockAttributes?: Record<string, BlockAttributeDefinition>;
-    /** A class for the editable element itself, for a feature that styles the content as a whole (the column layout). */
+    /**
+     * Class added to the editable element, for a feature that styles all content (columns)
+     */
     contentClassName?: string;
-    /** Custom properties set on the editable element, how a plugin option reaches its stylesheet: `{ '--rte-columns': '3' }`. */
+    /**
+     * Custom properties set on the editable element, such as `{ '--rte-columns': '3' }`
+     */
     contentProperties?: Record<string, string>;
 };
 
-/** Types an `RteContent` with no wider type. */
+/**
+ * Declares what a plugin's document can hold.
+ * @example
+ * const quoteContent = defineContent({
+ *     blocks: {
+ *         quote: defineBlock({
+ *             content: 'text',
+ *             toHtml: () => ({ tag: 'blockquote', children: true }),
+ *             parse: [{ tag: 'blockquote' }],
+ *         }),
+ *     },
+ * });
+ */
 export const defineContent = (content: RteContent): RteContent => content;
 
 export const typesOf = (content: RteContent | undefined): string[] => [
@@ -43,41 +58,33 @@ export const typesOf = (content: RteContent | undefined): string[] => [
     ...Object.keys(content?.inlines ?? {}),
 ];
 
-/** The only type a content declares (a mark, block or inline name), or undefined when it declares none or several. */
+/**
+ * The only type a content declares, or undefined when it declares none or several
+ */
 export const onlyTypeOf = (content: RteContent | undefined): string | undefined => {
     const types = typesOf(content);
     return types.length === 1 ? types[0] : undefined;
 };
 
 /**
- * A feature, described as data: its `content` (what exists) and how to
- * interact with it (toolbar, editing views, hotkeys, input rules). It never
- * runs anything itself: effects go through the `EditorControlApi` it is handed.
- *
- * ```ts
- * export const boldContent = defineContent({ marks: { bold: defineMark({ tag: 'strong' }) } });
- * export const boldPlugin = definePlugin({
- *     content: boldContent,
- *     toolbar: [{ icon: IconTextFormatBold, shortcut: 'Mod-b' }],
- *     inputRules: [{ delimiter: '**' }],
- * });
- * plugins={[boldPlugin, mentionPlugin({ items })]}
- * ```
+ * A feature, described as data: its `content` and how to interact with it. It
+ * never runs anything itself: effects go through the `EditorControlApi` it is handed.
  */
 export type RtePlugin = {
     id: string;
     content?: RteContent;
-    /** The toolbar controls this feature offers, in the order given. */
+    /**
+     * Toolbar controls this feature offers, in the order given
+     */
     toolbar?: readonly RteToolbarEntry[];
     /**
-     * The editor's view of a node in place of its `toHtml`, by the node's type.
+     * The editor's view of a node in place of its `toHtml`, by the node's type
      *
-     * - A block keeps the outer element `toHtml` gives it (a list item stays an
-     *   `<li>`); the view draws what is inside, with the content as `children`.
+     * - A block keeps the outer element `toHtml` gives it; the view draws what
+     *   is inside, with the content as `children`.
      * - A mark's view is the whole element, with the run's text as `children`.
      * - An inline inserted without a value (`api.insert(type)`) is a draft the
-     *   view completes: its `value` is null until then, and the draft is left
-     *   out of the document.
+     *   view completes: its `value` is null until then.
      */
     edit?: Record<string, RteEditView>;
     /** Entries for the floating bar's "Turn into" menu and the `/` menu, in the order given. */
@@ -89,15 +96,29 @@ export type RtePlugin = {
      * before the editor's own, in plugin order.
      */
     hotkeys?: Record<string, HotkeyHandler>;
-    /** Text rewritten as it is typed: markdown shortcuts and autolinks. */
+    /**
+     * Text rewritten as it is typed: markdown shortcuts and autolinks
+     */
     inputRules?: readonly (RteInputRule | RteDelimiterRule)[];
     /** Runs before the editor's own paste, in plugin order. */
     onPaste?: PasteHandler;
 };
 
-/** `definePlugin`'s input: `id` defaults to the content's only type. */
+/**
+ * What `definePlugin` takes: a plugin whose `id` may be left out
+ */
 export type RtePluginDefinition = Omit<RtePlugin, 'id'> & { id?: string };
 
+/**
+ * Declares a plugin. The `id` defaults to the only type its content declares;
+ * with none or several, it throws unless an `id` is given.
+ * @example
+ * const quotePlugin = definePlugin({
+ *     content: quoteContent,
+ *     toolbar: [{ icon: IconSpeechBubbleQuote }],
+ *     inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
+ * });
+ */
 export const definePlugin = ({ id, ...plugin }: RtePluginDefinition): RtePlugin => {
     const resolved = id ?? onlyTypeOf(plugin.content);
     if (resolved === undefined) {
@@ -110,41 +131,61 @@ export const definePlugin = ({ id, ...plugin }: RtePluginDefinition): RtePlugin 
     return { id: resolved, ...plugin };
 };
 
-/** Wrapping delimiters that turn into the plugin's only mark: `{ delimiter: '**' }`. */
+/**
+ * Delimiters that wrap text in the plugin's only mark, such as `{ delimiter: '**' }`
+ */
 export type RteDelimiterRule = { delimiter: string };
 
-// Each view is typed by its own node's value, so a map of several can only be typed loosely.
+/**
+ * A component that draws the editing UI of a node
+ */
 // oxlint-disable-next-line typescript/no-explicit-any -- the views of one plugin have different value types.
 export type RteEditView = ComponentType<EditProps<any, any>>;
 
-/** An icon component, as `@frontify/fondue-icons` exports them. Typed by their own size prop, which React's `propTypes` check makes invariant. */
+/**
+ * An icon component from `@frontify/fondue-icons`
+ */
+// Typed by its size prop only: React's `propTypes` check makes ComponentType invariant in its props.
 export type RteIcon = ComponentType<Pick<FondueIconProps, 'size'>>;
 
-/** One toolbar control, as data the editor draws. */
+/**
+ * A toolbar control, declared as data
+ */
 export type RteToolbarEntry = {
-    /** The type it turns on and off: one of the plugin's marks, blocks or inlines. Defaults to the plugin's only one. */
+    /**
+     * The mark, block or inline type the control turns on and off
+     * @default onlyTypeOf(plugin.content)
+     */
     toggles?: string;
-    /** Accessible name and tooltip. Defaults to the toggled type's name with its first letter capitalised. One string so it can become a translation key later. */
+    /**
+     * Accessible name and tooltip
+     * @default capitalised(type)
+     */
     label?: string;
+    /**
+     * Icon of the button. Required without a `render`
+     */
     icon?: RteIcon;
-    /** `Mod-b` style. Registered as a toggle of `toggles` unless the plugin's `hotkeys` binds the same key; shown in the tooltip. */
+    /**
+     * Hotkey in `Mod-b` style, shown in the tooltip. It toggles `toggles`
+     * unless the plugin's `hotkeys` binds the same key.
+     */
     shortcut?: string;
     /**
-     * In the floating bar (`'inline'`) or not (`'hidden'`). The top toolbar
-     * shows every entry regardless.
-     *
-     * Defaults to `'inline'` for a mark, `'hidden'` otherwise: a block reaches
-     * the floating bar through `commands`.
+     * Whether the control is in the floating bar (`'inline'`) or not (`'hidden'`).
+     * The top toolbar shows every control regardless.
+     * @default "inline" for a mark, "hidden" otherwise
      */
     floating?: 'inline' | 'hidden';
     /**
-     * Custom UI in place of the button: a plain function, called inside a
-     * component of its own keyed by the plugin's `id`, so it may use hooks
-     * (always the same ones) and keeps its state across edits and rebuilt plugins. It re-renders only when its props change (selection
-     * snapshot, selected node, `isActive`), so derive what it shows from them.
+     * Custom UI in place of the button. It runs inside a component of its own, so
+     * it may use hooks (always the same ones), and re-renders only when its props change.
      */
     render?: (props: ToolbarItemProps) => ReactNode;
-    /** Also offered in the `/` menu, and in Turn into for a text block or list, found by these extra words. */
+    /**
+     * Also offers the control in the `/` menu, and in Turn into for a text block
+     * or list. `keywords` are extra words it is found by.
+     */
     menu?: { keywords?: readonly string[] };
 };
 
@@ -164,6 +205,12 @@ type DefaultsWhenValued<TValue> = [keyof TValue] extends [never]
 /**
  * Type a node's callbacks by its value, then erase the type so the definition
  * fits a plugin's map beside nodes with other values.
+ * @example
+ * const quote = defineBlock({
+ *     content: 'text',
+ *     toHtml: () => ({ tag: 'blockquote', children: true }),
+ *     parse: [{ tag: 'blockquote' }],
+ * });
  */
 export const defineBlock = <TValue extends object = Record<string, never>>(
     definition: BlockDefinition<TValue> & DefaultsWhenValued<TValue>,
@@ -198,8 +245,10 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
 export type ContentModel = 'text' | { items: string } | { blocks: readonly string[] };
 
 /**
- * `defineBlock` for marks. A mark that is only a tag may say `tag` instead of
- * `toHtml`: `defineMark({ tag: 'strong' })` writes `<strong>` and reads it back.
+ * `defineBlock` for marks. A mark that is only a tag may give `tag` in place
+ * of `toHtml` and `parse`.
+ * @example
+ * const bold = defineMark({ tag: 'strong' });
  */
 export const defineMark = <TValue extends object = Record<string, never>>(
     definition:
@@ -232,14 +281,26 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
     };
 };
 
-/** `defineBlock` for inline elements. */
+/**
+ * `defineBlock` for inline elements.
+ * @example
+ * const emoji = defineInline<{ char: string }>({
+ *     toHtml: ({ char }) => ({ tag: 'span', attrs: { 'data-emoji': char }, children: char }),
+ *     parse: [{ tag: 'span[data-emoji]', value: (element) => ({ char: element.dataset.emoji ?? '' }) }],
+ * });
+ */
 export const defineInline = <TValue extends object = Record<string, never>>(
     definition: InlineDefinition<TValue>,
 ): InlineDefinition => definition as unknown as InlineDefinition;
 
-/** A void inline element (a mention, a line break): no text of its own, its value stored flat on the document node. */
+/**
+ * A void inline element (a mention, a line break): no text of its own, its value stored flat on the document node
+ */
 export type InlineDefinition<TValue = Record<string, unknown>> = {
-    /** What the inline stores when inserted or parsed without a value; unused when the plugin has an `edit` view for it. Defaults to `{}`. */
+    /**
+     * What the inline stores when inserted or parsed without a value. Unused when the plugin has an `edit` view for it.
+     * @default {}
+     */
     defaults?: TValue;
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<TValue>[];
@@ -296,13 +357,14 @@ export type BlockAttributeDefinition = {
 // --- Toolbar ---
 
 /**
- * What a toolbar entry's `render` gets: the API, the entry's selected node, the
- * selection, and commands bound to the entry's toggled type that do the right
- * thing for its kind. Anything else goes through `api`.
+ * What a toolbar entry's `render` gets: the API, the selection, and commands
+ * bound to the entry's toggled type. Anything else goes through `api`.
  */
 export type ToolbarItemProps = {
     api: EditorControlApi;
-    /** The entry's toggled type at the selection, or null when the selection is not in one. */
+    /**
+     * The entry's toggled type at the selection, or null when the selection is not in one
+     */
     selectedNode: SelectedNode | null;
     selection: RteSelectionSnapshot;
     /** The selection carries this mark, or sits in this block. Never for an inline. */
@@ -314,7 +376,9 @@ export type ToolbarItemProps = {
      * holding other blocks (a list item), or an entry with no type of its own.
      */
     toggle: (value?: Record<string, unknown>) => void;
-    /** Open the plugin's `edit` view on its node at the selection. */
+    /**
+     * Open the plugin's `edit` view on its node at the selection
+     */
     openEditor: () => void;
 };
 

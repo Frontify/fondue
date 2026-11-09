@@ -25,12 +25,9 @@ export type RteSelectionSnapshot = {
 };
 
 /**
- * The API plugins are handed in their toolbar controls, hotkeys and `edit` views:
- * all a plugin needs to drive the editor, whatever the engine.
- *
- * Reads and writes are shaped differently on purpose: everything to *know* is
- * one value (`selection.get()`); everything to *do* is one command per act,
- * keyed by the type it acts on, so new features need nothing added here.
+ * The API plugins are handed in their toolbar controls, hotkeys and `edit` views,
+ * to drive the editor whatever the engine. Read with `selection.get()`; act with
+ * one command per act, keyed by the type it acts on.
  */
 export type EditorControlApi = {
     /** What is selected. */
@@ -109,7 +106,9 @@ export type EditorControlApi = {
 
     /** Which node's editing UI is open. The editor holds it so a toolbar button can open it; leaving the node closes it. */
     editors: {
-        /** Open the `edit` view of the node of this type at the selection. */
+        /**
+         * Open the `edit` view of the node of this type at the selection
+         */
         open(type: string): void;
         close(): void;
     };

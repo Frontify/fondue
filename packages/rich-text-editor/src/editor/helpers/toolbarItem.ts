@@ -11,7 +11,10 @@ import {
     toggleOwn,
 } from '#/core';
 
-/** `own` is what the entry acts on, resolved by the registry (`ownTypeOf`). */
+/**
+ * The props a toolbar entry's `render` is handed
+ * @param own - What the entry acts on, resolved by the registry (`ownTypeOf`)
+ */
 export const toolbarItemProps = (
     own: OwnType,
     api: EditorControlApi,

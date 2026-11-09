@@ -197,9 +197,8 @@ type ToolbarItemSlotProps = {
 };
 
 /**
- * One plugin's control: its own `render` called in this component, so the hooks it calls
- * keep their state when another plugin is added or removed, else a button
- * drawn from the entry's data.
+ * One toolbar control: the entry's own `render`, else a button drawn from its data.
+ * `render` is called in this component, so its hooks keep their state when another plugin is added or removed.
  */
 const ToolbarItemSlot = ({ item, itemProps }: ToolbarItemSlotProps): ReactNode => {
     const { render, icon: Icon } = item;

@@ -55,7 +55,9 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlock>(props: Ri
 /** `TBlock` as for `RichTextEditorProps`. */
 export type RichTextRendererProps<TBlock extends RteBlockNode = RteBlock> = RendererProps<TBlock>;
 
-/** A readonly view of a document; works on the server. Uses `defaultContent` when given no `plugins`. */
+/**
+ * A readonly view of a document; works on the server. Uses `defaultContent` when given no `plugins`
+ */
 export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlock>(
     props: RichTextRendererProps<TBlock>,
 ): ReactNode =>
@@ -66,9 +68,14 @@ export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlock>(
 
 /**
  * The document as an HTML string, the same markup the editor copies to the
- * clipboard. No React or browser needed. Uses `defaultContent` when given no
- * `plugins`; `wrap: false` leaves out the root element. Style it with this
- * package's stylesheet (emails need the styles inlined).
+ * clipboard. No React or browser needed. Style it with this package's
+ * stylesheet (emails need the styles inlined).
+ * @param options - `plugins` defaults to `defaultContent`; `wrap: false` leaves out the root element
+ * @example
+ * const html = serializeToHtml(
+ *     { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'Hello', bold: true }] }] },
+ *     { wrap: false },
+ * );
  */
 export const serializeToHtml = <TBlock extends RteBlockNode = RteBlock>(
     doc: RteDocument<TBlock>,
@@ -83,7 +90,10 @@ export { isEmpty };
 
 /**
  * The document's text, one line per text block. Inlines read as their plugin's
- * markup (a mention as `@jane`). Uses `defaultContent` when given no `plugins`.
+ * markup (a mention as `@jane`).
+ * @param options - `plugins` defaults to `defaultContent`
+ * @example
+ * const text = toPlainText({ version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'Hello' }] }] });
  */
 export const toPlainText = <TBlock extends RteBlockNode = RteBlock>(
     doc: RteDocument<TBlock>,

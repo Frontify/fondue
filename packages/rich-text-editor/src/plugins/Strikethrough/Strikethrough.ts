@@ -6,12 +6,19 @@ import { defineContent, defineMark, definePlugin } from '#/core';
 
 import { declaresDecoration } from '../shared/helpers/declaredStyle';
 
-/** The flag this plugin sets on text nodes: present means on, and `true` is the only value it takes. */
+/**
+ * The flag this plugin sets on text nodes
+ */
 export type StrikethroughMark = {
+    /**
+     * Whether the text is struck through. Present means on, and `true` is the only value.
+     */
     strikethrough?: true;
 };
 
-/** Struck-through text: `<s>`. */
+/**
+ * Struck-through text, written as `<s>`
+ */
 export const strikethroughContent = /* @__PURE__ */ defineContent({
     marks: {
         strikethrough: /* @__PURE__ */ defineMark({
@@ -27,7 +34,9 @@ export const strikethroughContent = /* @__PURE__ */ defineContent({
     },
 });
 
-/** Struck-through text: `Mod-Shift-x`, and `~~text~~` while typing. */
+/**
+ * Struck-through text with the `Mod-Shift-x` shortcut, and `~~text~~` while typing
+ */
 export const strikethroughPlugin = /* @__PURE__ */ definePlugin({
     content: strikethroughContent,
     toolbar: [{ icon: IconTextFormatStrikethrough, shortcut: 'Mod-Shift-x' }],

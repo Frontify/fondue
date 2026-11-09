@@ -29,7 +29,9 @@ import {
 } from './plugin';
 import { PARAGRAPH, paragraphBlock } from './vocabulary';
 
-/** What a toolbar entry acts on: the type it toggles, by what that type is. */
+/**
+ * What a toolbar entry acts on: the type it toggles, by what that type is.
+ */
 export type OwnType =
     | { kind: 'mark'; type: string }
     /** A block holding items: `content: { items }`. */
@@ -42,19 +44,27 @@ export type OwnType =
     | { kind: 'inline'; type: string }
     | { kind: 'none' };
 
-/** One of a plugin's toolbar controls, with the type it acts on already resolved. */
+/**
+ * One of a plugin's toolbar controls, with the type it acts on already resolved.
+ */
 export type ToolbarEntry = {
     /** The plugin's id. */
     id: string;
-    /** The control's React key: the id, made unique when two plugins share one, and by position for a plugin's later entries. */
+    /**
+     * React key of the control: the id, made unique when plugins share one, and by position for a later entry
+     */
     key: string;
     own: OwnType;
-    /** Where the floating bar puts it: the entry's choice, else by what it owns. */
+    /**
+     * Whether the floating bar shows the control
+     */
     floating: 'inline' | 'hidden';
     label: string;
     icon?: RteIcon;
     shortcut?: string;
-    /** Custom UI in place of the button. */
+    /**
+     * Custom UI in place of the button.
+     */
     render?: (props: ToolbarItemProps) => ReactNode;
 };
 
@@ -71,7 +81,9 @@ export type PluginRegistry = {
     blockAttributes: Map<string, BlockAttributeDefinition>;
     /** List type → its item type, inferred from `content: { items }`. */
     itemTypeByList: Map<string, string>;
-    /** Node type → the editor's view of it, from the plugins' `edit`. */
+    /**
+     * Node type → the editor's view of it, from the plugins' `edit`.
+     */
     edits: Map<string, RteEditView>;
     /** Plugin ids in mount order: the editor's identity — a new set builds a new editor. */
     ids: readonly string[];
@@ -101,7 +113,9 @@ export type PluginRegistry = {
 const defaultFloatingPlacement = (own: OwnType): ToolbarEntry['floating'] =>
     own.kind === 'mark' ? 'inline' : 'hidden';
 
-/** A type of the content, by what it is: looked up in marks, then blocks, then inlines. */
+/**
+ * A type of the content, by what it is: looked up in marks, then blocks, then inlines.
+ */
 export const ownTypeOf = (content: RteContent | undefined, type: string | undefined): OwnType => {
     if (type === undefined) {
         return { kind: 'none' };
@@ -158,7 +172,9 @@ export const toggleOwn = (
 
 const isPlugin = (entry: RtePlugin | RteContent): entry is RtePlugin => 'id' in entry && typeof entry.id === 'string';
 
-/** Names a bare content in errors: the first type it declares. */
+/**
+ * Names a bare content in errors: the first type it declares.
+ */
 const firstTypeOf = (content: RteContent): string => typesOf(content)[0] ?? 'content';
 
 const capitalised = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
@@ -202,7 +218,9 @@ const register = <TDefinition>(
     }
 };
 
-/** What an entry without its own `render` is drawn as: a button toggling one of these. */
+/**
+ * What an entry without its own `render` is drawn as: a button toggling one of these.
+ */
 const BUTTON_KINDS: ReadonlySet<OwnType['kind']> = new Set(['mark', 'list', 'textBlock', 'voidBlock', 'inline']);
 
 const NOTHING_TO_TOGGLE = 'nothing to toggle: name a mark, list, text block, void block or inline with `toggles`.';
@@ -231,7 +249,9 @@ const toolbarEntryOf = (plugin: RtePlugin, entry: RteToolbarEntry, key: string):
     };
 };
 
-/** The `/` menu (and Turn into) entry a toolbar entry's `menu` asks for. */
+/**
+ * The `/` menu (and Turn into) entry a toolbar entry's `menu` asks for.
+ */
 const menuCommandOf = (
     plugin: RtePlugin,
     entry: ToolbarEntry,
@@ -270,7 +290,9 @@ const menuCommandOf = (
     }
 };
 
-/** A delimiter rule is a mark rule on the plugin's only mark. */
+/**
+ * A delimiter rule is a mark rule on the plugin's only mark.
+ */
 const inputRuleOf = (plugin: RtePlugin, rule: RteInputRule | RteDelimiterRule): RteInputRule => {
     if ('kind' in rule) {
         return rule;
@@ -295,7 +317,9 @@ const forMatching = (rules: readonly RteInputRule[]): RteInputRule[] => [
 const byNesting = (marks: Map<string, MarkDefinition>): Map<string, MarkDefinition> =>
     new Map([...marks].sort(([, left], [, right]) => (left.nesting ?? 0) - (right.nesting ?? 0)));
 
-/** What `buildPluginRegistry` fills while it walks the entries. */
+/**
+ * What `buildPluginRegistry` fills while it walks the entries.
+ */
 type Draft = {
     blocks: Map<string, BlockDefinition>;
     inlines: Map<string, InlineDefinition>;
@@ -334,7 +358,9 @@ const addCommand = (draft: Draft, owner: string, command: RteBlockCommand): void
     draft.commands.push(command);
 };
 
-/** The hotkey a toolbar entry's `shortcut` binds, unless the plugin binds that key itself. */
+/**
+ * The hotkey a toolbar entry's `shortcut` binds, unless the plugin binds that key itself.
+ */
 const addShortcut = (draft: Draft, plugin: RtePlugin, entry: RteToolbarEntry, item: ToolbarEntry): void => {
     const { shortcut } = entry;
     if (shortcut === undefined || shortcut in (plugin.hotkeys ?? {})) {
@@ -372,7 +398,9 @@ const addEditViews = (draft: Draft, plugin: RtePlugin): void => {
     register('edit view', draft.edits, draft.editOwners, plugin.id, plugin.edit);
 };
 
-/** What a plugin adds beyond its content: hotkeys, toolbar, input rules, paste, commands, edit views. */
+/**
+ * What a plugin adds beyond its content: hotkeys, toolbar, input rules, paste, commands, edit views.
+ */
 const addEditing = (draft: Draft, plugin: RtePlugin): void => {
     const occurrence = draft.seenIds.get(plugin.id) ?? 0;
     if (occurrence > 0) {
@@ -406,7 +434,9 @@ const addItemTypes = (draft: Draft, blocks: RteContent['blocks']): void => {
     }
 };
 
-/** What a content declares: styling hooks, block, inline and mark types, block attributes. */
+/**
+ * What a content declares: styling hooks, block, inline and mark types, block attributes.
+ */
 const addContent = (draft: Draft, content: RteContent | undefined, owner: string): void => {
     if (content?.contentClassName) {
         draft.contentClassNames.push(content.contentClassName);

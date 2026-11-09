@@ -98,7 +98,9 @@ export const createNodeViews = (
 
 // --- LiveViews: which views a state change can concern ---
 
-/** A plugin's `edit` view, for any kind of node; `TCurrent` is what its value can be right now. */
+/**
+ * A plugin's `edit` view, for any kind of node. `TCurrent` is what its value can be right now
+ */
 type EditComponent<TCurrent = Record<string, unknown>> = ComponentType<EditProps<Record<string, unknown>, TCurrent>>;
 
 /** What a live view last handed its component; the callbacks are stable, so this is all that changes. */
@@ -478,7 +480,9 @@ const IN_SELECTION_CLASS = 'rte-in-selection';
 /** Class on an inline node view's element; engine.scss keeps host styles off it. */
 const INLINE_VIEW_CLASS = 'rte-inline-view';
 
-/** Hosts an inline element's `edit` view. Events from inside it belong to it: an input there types into the input, not the document. */
+/**
+ * Hosts an inline element's `edit` view. Events from inside it belong to it: an input there types into the input, not the document
+ */
 class ReactInlineView extends ReactNodeView<Record<string, unknown> | null> {
     dom: HTMLElement;
 

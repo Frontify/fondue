@@ -57,7 +57,9 @@ export type TextStyleBlock = {
 /** What the dropdown may offer. `paragraph` is the editor's baseline block, not a preset: picking it clears the style. */
 export type TextStyleOption = 'paragraph' | TextStyleName;
 
-/** Every option, in dropdown order: what the host gets by naming none. */
+/**
+ * Every option, in dropdown order
+ */
 export const ALL_TEXT_STYLES: readonly TextStyleOption[] = [
     PARAGRAPH,
     .../* @__PURE__ */ PRESETS.map((preset) => preset.name),

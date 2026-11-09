@@ -6,12 +6,19 @@ import { defineContent, defineMark, definePlugin } from '#/core';
 
 import { declaresDecoration } from '../shared/helpers/declaredStyle';
 
-/** The flag this plugin sets on text nodes: present means on, and `true` is the only value it takes. */
+/**
+ * The flag this plugin sets on text nodes
+ */
 export type UnderlineMark = {
+    /**
+     * Whether the text is underlined. Present means on, and `true` is the only value.
+     */
     underline?: true;
 };
 
-/** Underlined text: `<u>`. */
+/**
+ * Underlined text, written as `<u>`
+ */
 export const underlineContent = /* @__PURE__ */ defineContent({
     marks: {
         underline: /* @__PURE__ */ defineMark({
@@ -25,7 +32,9 @@ export const underlineContent = /* @__PURE__ */ defineContent({
     },
 });
 
-/** Underlined text: `<u>` and `Mod-u`. */
+/**
+ * Underlined text with the `Mod-u` shortcut
+ */
 export const underlinePlugin = /* @__PURE__ */ definePlugin({
     content: underlineContent,
     toolbar: [{ icon: IconTextFormatUnderline, shortcut: 'Mod-u' }],

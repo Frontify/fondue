@@ -15,12 +15,7 @@ import {
 import styles from './list.module.scss';
 
 /**
- * Lists are the one place the document nests: a list holds items, and an item
- * holds blocks, a paragraph for its text, plus any list nested under it.
- *
- * Both list types share the item, so mounting either or both works. The item
- * allows `ANY_LIST` inside it, so whatever lists are mounted may nest, a list
- * a consumer wrote included.
+ * A list item, holding a paragraph and any lists nested under it
  */
 export type ListItemBlock<TContent extends RteBlockNode = RteBlockNode> = {
     type: 'listItem';
@@ -37,11 +32,7 @@ export type NumberedListBlock<TItem extends RteBlockNode = RteBlockNode> = {
     children: TItem[];
 };
 
-/**
- * The item both list contents declare. One object rather than one each: two
- * plugins may declare the same type only with the very same definition, so
- * mounting either list or both works, and neither can drift from the other.
- */
+// One shared object: two plugins may declare the same type only with the very same definition.
 const listItem = /* @__PURE__ */ defineBlock({
     // The paragraph comes first: it is what a new item is filled with.
     content: { blocks: [PARAGRAPH, ANY_LIST] },
@@ -52,11 +43,15 @@ const listItem = /* @__PURE__ */ defineBlock({
 type ListContentParams = {
     type: 'bulletList' | 'numberedList';
     tag: 'ul' | 'ol';
-    /** The list's own class; the marker per nesting level hangs off it. */
+    /**
+     * The class that sets the marker style per nesting level
+     */
     className: string | undefined;
 };
 
-/** Shared declaration of the two list contents, which differ only in type, tag and marker style. */
+/**
+ * Declares a list content, where the two lists differ only in type, tag and marker style
+ */
 const listContent = ({ type, tag, className }: ListContentParams) =>
     defineContent({
         blocks: {
@@ -69,14 +64,18 @@ const listContent = ({ type, tag, className }: ListContentParams) =>
         },
     });
 
-/** A bulleted list (`ul`). Shares its item with `numberedListContent`. */
+/**
+ * A bulleted list, written as `<ul>`. Shares its item with `numberedListContent`.
+ */
 export const bulletListContent = /* @__PURE__ */ listContent({
     type: 'bulletList',
     tag: 'ul',
     className: styles.bulletList,
 });
 
-/** A numbered list (`ol`). Shares its item with `bulletListContent`. */
+/**
+ * A numbered list, written as `<ol>`. Shares its item with `bulletListContent`.
+ */
 export const numberedListContent = /* @__PURE__ */ listContent({
     type: 'numberedList',
     tag: 'ol',
@@ -89,15 +88,23 @@ type ListPluginParams = {
     type: 'bulletList' | 'numberedList';
     icon: FondueIcon;
     label: string;
-    /** Words the `/` menu also finds it by. */
+    /**
+     * Extra words the `/` menu matches this entry by
+     */
     keywords: readonly string[];
-    /** What starts this list when typed at the beginning of a line. */
+    /**
+     * Text that starts this list when typed at the beginning of a line
+     */
     markdown: readonly string[];
-    /** The keyboard shortcut that toggles it, as other editors bind it. */
+    /**
+     * The keyboard shortcut that toggles the list
+     */
     shortcut: string;
 };
 
-/** Shared declaration of the two list plugins, which differ only in content, icon, label, shortcut and typing rule. */
+/**
+ * Declares a list plugin, where the two lists differ only in content, icon, label, shortcut and typing rule
+ */
 const listPlugin = ({ id, content, type, icon, label, keywords, markdown, shortcut }: ListPluginParams) =>
     definePlugin({
         id,
@@ -108,7 +115,9 @@ const listPlugin = ({ id, content, type, icon, label, keywords, markdown, shortc
         inputRules: markdown.map((match) => ({ kind: 'list' as const, match, list: type })),
     });
 
-/** A bulleted list (`ul`). Shares its item with `numberedListPlugin`. */
+/**
+ * A bulleted list with the `Mod-Shift-8` shortcut, and `- ` or `* ` while typing
+ */
 export const bulletListPlugin = /* @__PURE__ */ listPlugin({
     id: 'bullet-list',
     content: bulletListContent,
@@ -120,7 +129,9 @@ export const bulletListPlugin = /* @__PURE__ */ listPlugin({
     shortcut: 'Mod-Shift-8',
 });
 
-/** A numbered list (`ol`). Shares its item with `bulletListPlugin`. */
+/**
+ * A numbered list with the `Mod-Shift-7` shortcut, and `1. ` or `1) ` while typing
+ */
 export const numberedListPlugin = /* @__PURE__ */ listPlugin({
     id: 'numbered-list',
     content: numberedListContent,

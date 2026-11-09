@@ -6,12 +6,19 @@ import { defineContent, defineMark, definePlugin } from '#/core';
 
 import { declaresBoldWeight, declaresNormalWeight } from '../shared/helpers/declaredStyle';
 
-/** The flag this plugin sets on text nodes: present means on, and `true` is the only value it takes. */
+/**
+ * The flag this plugin sets on text nodes
+ */
 export type BoldMark = {
+    /**
+     * Whether the text is bold. Present means on, and `true` is the only value.
+     */
     bold?: true;
 };
 
-/** Bold text: `<strong>`. */
+/**
+ * Bold text, written as `<strong>`
+ */
 export const boldContent = /* @__PURE__ */ defineContent({
     marks: {
         bold: /* @__PURE__ */ defineMark({
@@ -28,7 +35,9 @@ export const boldContent = /* @__PURE__ */ defineContent({
     },
 });
 
-/** Bold text: `Mod-b`, and `**text**` while typing. */
+/**
+ * Bold text with the `Mod-b` shortcut, and `**text**` while typing
+ */
 export const boldPlugin = /* @__PURE__ */ definePlugin({
     content: boldContent,
     toolbar: [{ icon: IconTextFormatBold, shortcut: 'Mod-b' }],

@@ -9,21 +9,15 @@ import { type EmojiItem } from './types';
 
 export type EmojiPluginOptions = {
     /**
-     * The emoji offered, in picker order. `defaultEmojis` (a curated few
-     * hundred) unless given; spread it into a list of your own to add more.
+     * The emoji offered, in picker order. Spread `defaultEmojis` into your own list to add more.
+     * @default defaultEmojis
      */
     emojis?: readonly EmojiItem[];
 };
 
 /**
- * Emoji, inserted as the plain characters they are: from a picker in the
- * toolbar, or by typing `:` and a shortcode (`:smi` lists 😄 and friends,
- * `:smile:` inserts it outright).
- *
- * The document never holds an emoji node. The `:` inserts an empty draft
- * inline through an ordinary hotkey, as a mention does; its `edit` view
- * draws the query and list, and on a choice takes itself away and leaves the
- * emoji behind as text.
+ * Emoji inserted as plain text, from a toolbar picker or by typing `:` and a shortcode
+ * (`:smi` lists matches, `:smile:` inserts it outright)
  */
 export const emojiPlugin = (options: EmojiPluginOptions = {}): RtePlugin => {
     const { emojis = defaultEmojis } = options;

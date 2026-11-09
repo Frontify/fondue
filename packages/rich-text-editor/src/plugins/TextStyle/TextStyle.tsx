@@ -30,7 +30,11 @@ import {
 export type { TextStyleBlock } from './helpers/presets';
 
 export type TextStylePluginOptions = {
-    /** The styles the dropdown offers, in order. Include `'paragraph'` for the option that clears one. */
+    /**
+     * The styles the dropdown offers, in order, and what pasted HTML may become.
+     * Include `'paragraph'` for the option that clears a style.
+     * @default ALL_TEXT_STYLES
+     */
     styles?: readonly TextStyleOption[];
 };
 
@@ -65,10 +69,7 @@ const textStyleContentFor = (options: readonly TextStyleOption[]): RteContent =>
 };
 
 /**
- * The text block carrying a style, covering every style. `textStylePlugin({ styles })`
- * narrows what pasted HTML may become: an editor that does not offer `heading3`
- * turns a pasted `h3` into a paragraph. Rendering accepts every style, so a
- * document written by a differently configured editor still displays as it was authored.
+ * The text block carrying a style, accepting every style
  */
 export const textStyleContent = /* @__PURE__ */ textStyleContentFor(ALL_TEXT_STYLES);
 
@@ -83,13 +84,8 @@ const HEADING_KEYWORDS: Partial<Record<number, readonly string[]>> = {
 };
 
 /**
- * Which styles an editor offers is a product decision — a comment box wants
- * none, a page editor wants all — so it is an option. `styles` is the dropdown,
- * in the order given, and it is also what pasted HTML may become: an editor
- * that does not offer `heading3` turns a pasted `h3` into a paragraph.
- *
- * Rendering is not restricted the same way, so a document written by a
- * differently configured editor still displays as it was authored.
+ * Paragraph and heading styles chosen from a dropdown, with `Mod-Alt-0` to `Mod-Alt-4` shortcuts and `# ` to `#### ` while typing.
+ * An editor that does not offer `heading3` turns a pasted `h3` into a paragraph.
  */
 export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStylePluginOptions = {}): RtePlugin => {
     const offered = presetsFor(options);

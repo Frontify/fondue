@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/** The schemes a link may use. Everything else — `javascript:`, `data:` — never becomes one. */
+/**
+ * The schemes a link may use, which leaves out `javascript:` and `data:`
+ */
 const SAFE_SCHEMES = /* @__PURE__ */ new Set(['http:', 'https:', 'mailto:', 'tel:']);
 
 /**

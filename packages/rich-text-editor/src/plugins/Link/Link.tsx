@@ -10,8 +10,13 @@ import { openNewLinkForm } from './helpers/newLinkForms';
 import { type LinkValue } from './helpers/value';
 import styles from './link.module.scss';
 
-/** The value this plugin sets on text nodes. */
+/**
+ * The value this plugin sets on text nodes
+ */
 export type LinkMark = {
+    /**
+     * The target of the link
+     */
     link?: LinkValue;
 };
 
@@ -19,11 +24,8 @@ const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string
     link?.openInNewTab === true ? { target: '_blank', rel: 'noopener noreferrer' } : {};
 
 /**
- * A link is a mark: the text stays text, and the target rides along on it.
- *
- * Only web, mail and phone links (and relative ones) are links: anything else
- * pasted in stays plain text, and a stored one is written out without its
- * target, so a `javascript:` URL is never clickable.
+ * Links as a mark on text, written as `<a href>`.
+ * Only web, mail, phone and relative targets count, so a `javascript:` URL is never clickable.
  */
 export const linkContent = /* @__PURE__ */ defineContent({
     marks: {
@@ -86,16 +88,13 @@ const hotkeys = {
     },
 } satisfies Record<string, HotkeyHandler>;
 
-/** Add or edit a link, as in most editors. */
 const HOTKEY: keyof typeof hotkeys = 'Mod-k';
 
 const LinkToolbar = (props: ToolbarItemProps) => <LinkToolbarButton {...props} shortcut={HOTKEY} />;
 
 /**
- * Editing a link: the `edit` view draws the anchor around the text and the
- * flyout that hangs off it while the caret is inside, showing the target,
- * editing it, removing the link. The toolbar button is how a link is made, and
- * Mod-k does what it does.
+ * Links, made with a toolbar button or `Mod-k` and edited in a flyout while the caret is inside.
+ * A web address followed by a space becomes a link, and pasting one over selected text links that text.
  */
 export const linkPlugin = /* @__PURE__ */ definePlugin({
     content: linkContent,

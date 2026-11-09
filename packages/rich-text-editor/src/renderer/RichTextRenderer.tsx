@@ -17,10 +17,10 @@ import { specToReact, toReact } from './toReact';
 export type RendererProps<TBlock extends RteBlockNode = RteBlockNode> = {
     value: RteDocumentOf<TBlock>;
     /**
-     * The editor's plugins, or only their content, whose markup draws the
-     * document. A node shows its `render.component`, else its `toHtml`. A node
-     * whose plugin is missing is skipped (a block keeps its content), with a
-     * warning in development.
+     * The plugins, or only their content, whose markup draws the document. A node
+     * shows its `render.component`, else its `toHtml`. A node whose plugin is
+     * missing is skipped (a block keeps its content), with a warning in development.
+     * @default defaultContent
      */
     plugins?: readonly (RtePlugin | RteContent)[];
     /** A class for the element the document sits in, beside the document's own. */

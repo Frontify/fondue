@@ -9,38 +9,48 @@ import { MentionLink } from './components/MentionLink';
 import styles from './mention.module.scss';
 import { type MentionItem, type MentionItems, type MentionKind, type MentionValue } from './types';
 
-/** What the content of a mention depends on: how it reads and where it links. */
 export type MentionContentOptions = {
     /**
-     * Where a mention links to: the person's or group's profile. Without it,
-     * or where it returns `undefined` (`@all` has no profile), the mention is
-     * text, not a link.
+     * Returns where a mention links to, such as the profile of a person or group.
+     * Without it, or where it returns `undefined`, the mention is plain text.
      */
     href?: (mention: MentionValue) => string | undefined;
-    /** The one character that starts a mention. `@` unless the app needs something else. */
+    /**
+     * The single character that starts a mention
+     * @default '@'
+     */
     trigger?: string;
 };
 
 const KINDS: readonly MentionKind[] = ['user', 'group', 'all'];
 
-/** What the document keeps of a chosen item: no avatar, and no `kind` for a person, as before kinds existed. */
+/**
+ * Returns what the document keeps of a chosen item, without the avatar
+ */
 export const mentionValueOf = ({ id, username, name, kind }: MentionItem): MentionValue =>
     kind === undefined || kind === 'user' ? { id, username, name } : { id, username, name, kind };
 
-/** The hotkey fires on a single typed character, so a longer trigger could never start a mention. */
+/**
+ * Throws unless the trigger is exactly one character
+ */
 const assertMentionTrigger = (trigger: string, factory: string): void => {
+    // The hotkey fires on a single typed character, so a longer trigger could never start a mention.
     if ([...trigger].length !== 1) {
         throw new Error(`${factory}: \`trigger\` must be exactly one character, got "${trigger}".`);
     }
 };
 
-/** The app's `href` is held to what a link is: a `javascript:` profile URL is left off. */
+/**
+ * Returns the app's `href` for a mention, or `undefined` when the URL is unsafe, such as `javascript:`
+ */
 const safeMentionHref = (href: MentionContentOptions['href'], mention: MentionValue): string | undefined => {
     const target = href?.(mention);
     return target !== undefined && isSafeHref(target) ? target : undefined;
 };
 
-/** A mention: the username as a link to the person (or group), full name on hover. */
+/**
+ * A mention, shown as the username linked to the person or group, with the full name on hover
+ */
 export const mentionContent = ({ href, trigger = '@' }: MentionContentOptions = {}) => {
     assertMentionTrigger(trigger, 'mentionContent');
     return defineContent({
@@ -94,15 +104,15 @@ export const mentionContent = ({ href, trigger = '@' }: MentionContentOptions = 
 
 export type MentionPluginOptions = MentionContentOptions & {
     /**
-     * Who can be mentioned. A list is searched by username and name, ignoring
-     * case. A function is handed what has been typed after the trigger and
-     * returns the matches, or a promise of them to search on a server; an
-     * answer that arrives after the query moved on is dropped.
+     * Who can be mentioned. A list is searched by username and name, ignoring case.
+     * A function receives the text typed after the trigger and returns the matches, or a promise of them.
      */
     items: readonly MentionItem[] | MentionItems;
 };
 
-/** Everyone in a fixed list whose username or name contains the query. */
+/**
+ * Returns a search over a fixed list, matching the query in username or name
+ */
 export const searchIn =
     (list: readonly MentionItem[]): MentionItems =>
     (query) => {
@@ -113,10 +123,7 @@ export const searchIn =
     };
 
 /**
- * A mention: the username as a link to the person (or group), full name on hover.
- *
- * The editor does no mention-specific work: the trigger inserts an empty mention
- * through an ordinary hotkey, and the `edit` view draws the query, list and choice.
+ * Mentions a person or group: typing the trigger (`@` by default) opens a list to choose from
  */
 export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
     const { href, trigger = '@' } = options;

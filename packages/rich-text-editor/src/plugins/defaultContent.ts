@@ -21,9 +21,7 @@ import { underlineContent } from './Underline/Underline';
 // Every top-level call in a plugin file or its helpers needs `/* @__PURE__ */`, or the renderer keeps the plugin; rendererBundle.spec.ts fails when that drags editing UI in.
 
 /**
- * The content of every `defaultPlugins` entry, in the same order (it decides
- * how marks nest on a tie). `RichTextRenderer`, `serializeToHtml` and
- * `toPlainText` read it when given no `plugins`.
+ * The content of every `defaultPlugins` entry, in the same order, which the renderer reads when given no `plugins`
  */
 export const defaultContent: readonly RteContent[] = Object.freeze([
     textStyleContent,
