@@ -69,6 +69,15 @@ const FRACTIONS: readonly Replacement[] = /* @__PURE__ */ (
 
 const toRule = ([match, replace]: Replacement): RteInputRule => ({ kind: 'text', match, replace });
 
+const INPUT_RULES = /* @__PURE__ */ [
+    ...PUNCTUATION,
+    ...ARROWS,
+    ...LEGAL,
+    ...SUBSCRIPTS,
+    ...SUPERSCRIPTS,
+    ...FRACTIONS,
+].map(toRule);
+
 /**
  * Typographic shortcuts, rewritten as they are typed: `->` becomes `→`, `(c)`
  * becomes `©`, `1/2` becomes `½`. Backspace right after takes one back. Text in
@@ -76,7 +85,5 @@ const toRule = ([match, replace]: Replacement): RteInputRule => ({ kind: 'text',
  */
 export const typographyPlugin = /* @__PURE__ */ definePlugin({
     id: 'typography',
-    inputRules: /* @__PURE__ */ [...PUNCTUATION, ...ARROWS, ...LEGAL, ...SUBSCRIPTS, ...SUPERSCRIPTS, ...FRACTIONS].map(
-        toRule,
-    ),
+    inputRules: INPUT_RULES,
 });
