@@ -10,7 +10,7 @@ import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, type T
 import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
 
 import { keepCarriedAttrs } from './controlApi';
-import { valueAttrsFor } from './documentConversion';
+import { EXTRA_ATTR, valueAttrsFor } from './documentConversion';
 import { listKeys } from './lists';
 
 /**
@@ -363,5 +363,6 @@ const resetEmptyFirstBlock: Command = (state, dispatch) => {
     if (!block.isTextblock || block.content.size > 0 || block.type === paragraph) {
         return false;
     }
-    return setBlockType(paragraph)(state, dispatch);
+    // A plain paragraph, but its undeclared stored keys stay: the block is still there.
+    return setBlockType(paragraph, { [EXTRA_ATTR]: block.attrs[EXTRA_ATTR] as unknown })(state, dispatch);
 };

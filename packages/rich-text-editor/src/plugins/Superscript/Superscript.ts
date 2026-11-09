@@ -4,12 +4,19 @@ import { IconSuperscript } from '@frontify/fondue-icons';
 
 import { defineContent, defineMark, definePlugin } from '#/core';
 
-/** The flag this plugin sets on text nodes: present means on, and `true` is the only value it takes. */
+/**
+ * The flag this plugin sets on text nodes
+ */
 export type SuperscriptMark = {
+    /**
+     * Whether the text is superscript. Present means on, and `true` is the only value.
+     */
     superscript?: true;
 };
 
-/** Superscript text: `<sup>`. */
+/**
+ * Superscript text, written as `<sup>`
+ */
 export const superscriptContent = /* @__PURE__ */ defineContent({
     marks: {
         superscript: /* @__PURE__ */ defineMark({
@@ -24,7 +31,9 @@ export const superscriptContent = /* @__PURE__ */ defineContent({
     },
 });
 
-/** Superscript text: `<sup>` and `Mod-.`. */
+/**
+ * Superscript text with the `Mod-.` shortcut
+ */
 export const superscriptPlugin = /* @__PURE__ */ definePlugin({
     content: superscriptContent,
     toolbar: [{ icon: IconSuperscript, shortcut: 'Mod-.' }],

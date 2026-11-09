@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineContent, defineMark, definePlugin, type ToolbarItemProps } from '#/core';
+import { defineContent, defineMark, definePlugin, type HotkeyHandler, type ToolbarItemProps } from '#/core';
 
 import { isSafeHref, toHref } from '../shared/helpers/href';
 
@@ -10,8 +10,13 @@ import { openNewLinkForm } from './helpers/newLinkForms';
 import { type LinkValue } from './helpers/value';
 import styles from './link.module.scss';
 
-/** The value this plugin sets on text nodes. */
+/**
+ * The value this plugin sets on text nodes
+ */
 export type LinkMark = {
+    /**
+     * The target of the link
+     */
     link?: LinkValue;
 };
 
@@ -19,11 +24,8 @@ const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string
     link?.openInNewTab === true ? { target: '_blank', rel: 'noopener noreferrer' } : {};
 
 /**
- * A link is a mark: the text stays text, and the target rides along on it.
- *
- * Only web, mail and phone links (and relative ones) are links: anything else
- * pasted in stays plain text, and a stored one is written out without its
- * target, so a `javascript:` URL is never clickable.
+ * Links as a mark on text, written as `<a href>`.
+ * Only web, mail, phone and relative targets count, so a `javascript:` URL is never clickable.
  */
 export const linkContent = /* @__PURE__ */ defineContent({
     marks: {
@@ -36,7 +38,9 @@ export const linkContent = /* @__PURE__ */ defineContent({
             // Typing at the end of a link does not extend it.
             inclusive: false,
 
-            /** The link everywhere but while editing: readonly, export, copy. */
+            /**
+             * The link everywhere but while editing: readonly, export, copy
+             */
             toHtml: (value) => {
                 // A stored document may hold anything here (`{}`, `true`), so
                 // nothing about its shape is taken on trust.
@@ -73,33 +77,32 @@ export const linkContent = /* @__PURE__ */ defineContent({
     },
 });
 
-/** Add or edit a link, as in most editors. */
-const HOTKEY = 'Mod-k';
+// The key is a literal because a computed key keeps this plugin in the renderer; HOTKEY's type ties it to this key.
+const hotkeys = {
+    'Mod-k': (api) => {
+        if (api.marks.getRun('link') !== null) {
+            api.editors.open('link');
+            return true;
+        }
+        // Nothing selected is nothing to link, but the key is still the
+        // editor's, not the browser's search bar.
+        return api.selection.get().isCollapsed || openNewLinkForm(api);
+    },
+} satisfies Record<string, HotkeyHandler>;
+
+const HOTKEY: keyof typeof hotkeys = 'Mod-k';
 
 const LinkToolbar = (props: ToolbarItemProps) => <LinkToolbarButton {...props} shortcut={HOTKEY} />;
 
 /**
- * Editing a link: the `edit` view draws the anchor around the text and the
- * flyout that hangs off it while the caret is inside, showing the target,
- * editing it, removing the link. The toolbar button is how a link is made, and
- * Mod-k does what it does.
+ * Links, made with a toolbar button or `Mod-k` and edited in a flyout while the caret is inside.
+ * A web address followed by a space becomes a link, and pasting one over selected text links that text.
  */
 export const linkPlugin = /* @__PURE__ */ definePlugin({
     content: linkContent,
     toolbar: [{ render: LinkToolbar }],
     edit: { link: LinkEditor },
-    hotkeys: {
-        // HOTKEY spelled out: a computed key makes esbuild keep this call, and the UI with it, in the renderer.
-        'Mod-k': (api) => {
-            if (api.marks.getRun('link') !== null) {
-                api.editors.open('link');
-                return true;
-            }
-            // Nothing selected is nothing to link, but the key is still the
-            // editor's, not the browser's search bar.
-            return api.selection.get().isCollapsed || openNewLinkForm(api);
-        },
-    },
+    hotkeys,
     // A web address typed and followed by a space becomes a link. The pattern
     // names only web schemes, so what it matches is always a safe href.
     inputRules: [{ kind: 'markPattern', pattern: /https?:\/\/[^\s]+/, mark: 'link', value: (href) => ({ href }) }],

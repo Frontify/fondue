@@ -49,9 +49,8 @@ const calculateMaxDepth = (previousNode: ReactElement, nextNode: ReactElement) =
     if (previousNode?.props.accepts) {
         const nextNodeDepth = getNodeDepth(nextNode);
         return previousNodeDepth >= nextNodeDepth ? previousNodeDepth + 1 : nextNodeDepth;
-    } else {
-        return previousNodeDepth;
     }
+    return previousNodeDepth;
 };
 
 const calculateMinDepth = (previousNode: ReactElement, nextNode: ReactElement) => {
@@ -59,9 +58,8 @@ const calculateMinDepth = (previousNode: ReactElement, nextNode: ReactElement) =
 
     if (previousNode?.props.accepts) {
         return nextNodeDepth;
-    } else {
-        return Math.min(getNodeDepth(previousNode), nextNodeDepth);
     }
+    return Math.min(getNodeDepth(previousNode), nextNodeDepth);
 };
 
 /**

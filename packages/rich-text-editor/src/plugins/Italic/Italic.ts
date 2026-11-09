@@ -4,12 +4,19 @@ import { IconTextFormatItalic } from '@frontify/fondue-icons';
 
 import { defineContent, defineMark, definePlugin } from '#/core';
 
-/** The flag this plugin sets on text nodes: present means on, and `true` is the only value it takes. */
+/**
+ * The flag this plugin sets on text nodes
+ */
 export type ItalicMark = {
+    /**
+     * Whether the text is italic. Present means on, and `true` is the only value.
+     */
     italic?: true;
 };
 
-/** Italic text: `<em>`. */
+/**
+ * Italic text, written as `<em>`
+ */
 export const italicContent = /* @__PURE__ */ defineContent({
     marks: {
         italic: /* @__PURE__ */ defineMark({
@@ -25,7 +32,9 @@ export const italicContent = /* @__PURE__ */ defineContent({
     },
 });
 
-/** Italic text: `Mod-i`, and `*text*` or `_text_` while typing. */
+/**
+ * Italic text with the `Mod-i` shortcut, and `*text*` or `_text_` while typing
+ */
 export const italicPlugin = /* @__PURE__ */ definePlugin({
     content: italicContent,
     toolbar: [{ icon: IconTextFormatItalic, shortcut: 'Mod-i' }],
