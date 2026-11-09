@@ -1,0 +1,129 @@
+packages/rich-text-edior/src/plugins.stories.tsx
+  s_5326f5c03062f6::t_651fd43e9c0486 1078
+packages/rich-text-edior/src/plugins/Link/Link.tsx
+  s_5326f5c03062f6::t_fdf692b2c9bb71 48-58,60
+packages/rich-text-edior/src/plugins/Mention/Mention.tsx
+  s_5326f5c03062f6::t_9380d666b29789 69-89,91
+packages/rich-text-edior/src/RichTextEditor/hooks/useFloating.ts
+  s_5326f5c03062f6::t_6881ffde96f708 45,49
+  s_5326f5c03062f6::t_f920144857c2d8 18
+packages/rich-text-edior/src/plugins/Link/underline.module.scss
+  s_882536cb7dd91a::t_0f760b7eb3773e 10-11
+packages/rich-text-edior/src/plugins/Quote/quote.module.scss
+  s_882536cb7dd91a::t_55cf4a17f77951 5-6
+packages/rich-text-edior/src/RichTextEditor/prosemirror/floating.ts
+  s_5326f5c03062f6::t_360565a034d9b5 77,79
+  s_5326f5c03062f6::t_8b9d90468425c4 27,31
+packages/rich-text-edior/src/plugins/FontColor/components/colorFlyout.module.scss
+  s_75b9b080def7cc::t_c3cd815fddfde5 1-28
+packages/rich-text-edior/src/plugins/ColumnBreak/columnBreak.module.scss
+  s_882536cb7dd91a::t_b12518765e4d35 16-17
+packages/rich-text-edior/src/plugins/Link/components/linkPanel.module.scss
+  s_882536cb7dd91a::t_2a4177b5a4944f 11-13
+  s_882536cb7dd91a::t_bf612b6f9fed96 32
+  s_882536cb7dd91a::t_ef6d12dc65d3e7 9
+packages/rich-text-edior/src/plugins/FontColor/helpers/colors.ts
+  s_75b9b080def7cc::t_c32ae11c3f3ab3 3-70
+packages/rich-text-edior/src/RichTextEditor/types/plugin.ts
+  s_5326f5c03062f6::t_19fc3c92ec63bc 58-59,61
+packages/rich-text-edior/src/plugins/TextStyle/components/textStyleSelect.module.scss
+  s_882536cb7dd91a::t_25e5e400665720 21-23
+  s_882536cb7dd91a::t_83da87db5c4558 20
+packages/rich-text-edior/src/RichTextEditor/richTextEditor.module.scss
+  s_882536cb7dd91a::t_236267a14ce6c2 39-40
+  s_882536cb7dd91a::t_452333acf1802d 54
+  s_befcea34ddf4bd::t_aaa377a61cbc1f 69-77,81-91
+  s_882536cb7dd91a::t_ec0308b7144896 78-80
+  s_a639272dac94ba::t_a1106324a8ccd0 15-34
+  s_befcea34ddf4bd::t_2f4555142e3582 68
+packages/rich-text-edior/src/RichTextEditor/prosemirror/triggers.ts
+  s_5326f5c03062f6::t_da7aeefddfb437 44-47
+packages/rich-text-edior/src/plugins/Link/components/linkForm.module.scss
+  s_882536cb7dd91a::t_d27d3b124ff49f 13-15
+  s_882536cb7dd91a::t_4945859e82474a 22
+  s_882536cb7dd91a::t_4136726e7561a1 11
+  s_882536cb7dd91a::t_bc8eacda4a29f8 36
+  s_882536cb7dd91a::t_bce02c5b9eda3a 28
+packages/rich-text-edior/src/plugins/TextStyle/textStyle.module.scss
+  s_882536cb7dd91a::t_c1cf7c372da9f1 54-55
+  s_882536cb7dd91a::t_280921797006fd 72
+packages/rich-text-edior/src/plugins/Mention/components/combobox.module.scss
+  s_882536cb7dd91a::t_f4673f70b4e0a8 20,22
+packages/rich-text-edior/src/plugins/FontColor/FontColor.tsx
+  s_75b9b080def7cc::t_91d6dec2c12a6f 27
+  s_75b9b080def7cc::t_db2fe15328e1dc 5
+packages/rich-text-edior/src/plugins/CheckList/checkList.module.scss
+  s_882536cb7dd91a::t_d4bfdba617755b 12
+packages/rich-text-edior/src/plugins/FontColor/components/ColorFlyout.tsx
+  s_75b9b080def7cc::t_9f771396aa7022 1-105
+packages/rich-text-edior/src/RichTextEditor/prosemirror/attributes.ts
+  s_befcea34ddf4bd::t_61c93caaaaa22e 20-30
+  s_befcea34ddf4bd::t_c74375472e071f 54
+packages/rich-text-edior/src/RichTextEditor/RichTextEditor.tsx
+  s_a639272dac94ba::t_415a440239e723 7
+  s_a639272dac94ba::t_02a1de14f71ff5 64
+  s_a639272dac94ba::t_5e4f23baacb60f 30-39
+  s_a639272dac94ba::t_a3b4cde7b97c2c 93,97
+packages/rich-text-edior/src/plugins/Code/code.module.scss
+  s_882536cb7dd91a::t_7e6023a56a7314 5
+packages/rich-text-edior/src/RichTextEditor.stories.tsx
+  s_a639272dac94ba::t_f4ea381cb65b3f 156-223
+  s_a639272dac94ba::t_edba4877592613 155
+packages/rich-text-edior/src/RichTextEditor/prosemirror/nodeSpecs.ts
+  s_befcea34ddf4bd::t_ce8529f213c608 56-63
+packages/rich-text-edior/src/plugins/Mention/mention.module.scss
+  s_882536cb7dd91a::t_844a43e7de4906 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "6b5e13b7af88d98b144068f35699eb88dcca9d78",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_5326f5c03062f6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1cfa6e78-ada7-41af-8f2d-80923e6c4c01",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_75b9b080def7cc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f2c53d75-41a5-48a5-9eab-228b561e7507",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_882536cb7dd91a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "11368974-f644-455e-86e0-70764f002fcd",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_a639272dac94ba": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "db90b9ed-18cc-4b9a-ac41-13e53f6c34b4",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_befcea34ddf4bd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dcc77efd-31fa-411f-9251-1b9189eee5fb",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
