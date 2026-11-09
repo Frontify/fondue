@@ -1,7 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button, Tooltip } from '@frontify/fondue-components';
-import { type ButtonHTMLAttributes, type ComponentProps, forwardRef, type MouseEvent, type ReactNode } from 'react';
+import {
+    type ButtonHTMLAttributes,
+    type ComponentProps,
+    forwardRef,
+    type MouseEvent,
+    type ReactNode,
+    useState,
+} from 'react';
 
 import styles from './toolbarButton.module.scss';
 
@@ -58,8 +65,12 @@ export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(f
         },
     } as ComponentProps<typeof Button>;
 
+    const [tooltipOpen, setTooltipOpen] = useState(false);
+    // A flyout this button opened is the layer Escape belongs to; a tooltip over it would take the key first.
+    const ownFlyoutOpen = rest['aria-expanded'] === true || rest['aria-expanded'] === 'true';
+
     return (
-        <Tooltip.Root>
+        <Tooltip.Root open={tooltipOpen && !ownFlyoutOpen} onOpenChange={setTooltipOpen}>
             <Tooltip.Trigger asChild>
                 <Button
                     {...domProps}

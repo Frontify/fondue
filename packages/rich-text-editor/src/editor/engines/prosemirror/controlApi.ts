@@ -53,12 +53,19 @@ const marksAt = (state: EditorState): Pick<RteSelectionSnapshot, 'marks' | 'part
     }
 
     // Only text contributes: the document stores no marks on inline elements.
-    const runs: (readonly PmMark[])[] = [];
-    state.doc.nodesBetween(from, to, (node) => {
+    const textRuns: { marks: readonly PmMark[]; blank: boolean }[] = [];
+    state.doc.nodesBetween(from, to, (node, pos) => {
         if (node.isText) {
-            runs.push(node.marks);
+            const text = node.textBetween(Math.max(from - pos, 0), Math.min(to - pos, node.nodeSize));
+            textRuns.push({ marks: node.marks, blank: /^\s*$/.test(text) });
         }
     });
+    // A toggle passes over whitespace-only runs, so the state it acts on does too; all-blank ranges keep them.
+    let counted = textRuns.filter((run) => !run.blank);
+    if (counted.length === 0) {
+        counted = textRuns;
+    }
+    const runs = counted.map((run) => run.marks);
     const [first = [], ...rest] = runs;
     const carried = first.filter((mark) => rest.every((marks) => mark.type.isInSet(marks) !== undefined));
     const marks = Object.fromEntries(carried.map((mark) => [mark.type.name, markValueOf(mark)]));
@@ -351,10 +358,13 @@ const createHistoryApi = (getView: () => EditorView): EditorControlApi['history'
     undo() {
         const view = getView();
         undoStep(view.state, view.dispatch);
+        // The button may disable itself; focus goes back to the text, as after any toolbar command.
+        view.focus();
     },
     redo() {
         const view = getView();
         redo(view.state, view.dispatch);
+        view.focus();
     },
     canUndo: () => undoDepth(getView().state) > 0,
     canRedo: () => redoDepth(getView().state) > 0,

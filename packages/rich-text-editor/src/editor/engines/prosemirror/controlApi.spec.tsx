@@ -155,6 +155,16 @@ describe('the selection snapshot', () => {
         expect(editor.api.selection.get().partialMarks).toEqual({ bold: true });
     });
 
+    it('passes over a plain space between marked words, as the toggle does', () => {
+        const editor = editorWith(plugins, [
+            paragraph(text('foo', { bold: true }), text(' '), text('bar', { bold: true })),
+        ]);
+        editor.selectBetween('foo', 'bar');
+
+        expect(editor.api.selection.get().marks).toEqual({ bold: {} });
+        expect(editor.api.selection.get().partialMarks).toEqual({});
+    });
+
     it('reports no partial marks at a caret', () => {
         const editor = editorWith(plugins, [paragraph(text('half', { bold: true }), text(' plain'))]);
         editor.caretAfter('half');
