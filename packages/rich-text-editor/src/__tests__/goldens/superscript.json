@@ -1,0 +1,49 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "plain"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "plain then "
+                },
+                {
+                    "text": "marked",
+                    "superscript": true
+                },
+                {
+                    "text": " then plain"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "all marked",
+                    "superscript": true
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "start",
+                    "superscript": true
+                },
+                {
+                    "text": " end"
+                }
+            ]
+        }
+    ]
+}

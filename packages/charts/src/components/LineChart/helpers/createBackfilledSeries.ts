@@ -67,8 +67,7 @@ export const createBackfilledSeries = (series: LineChartSeries[]): LineChartSeri
                     dataPoints,
                 })),
             ];
-        } else {
-            return accumulator;
         }
+        return accumulator;
     }, []);
 };
