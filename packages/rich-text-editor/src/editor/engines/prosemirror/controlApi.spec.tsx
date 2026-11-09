@@ -6,7 +6,15 @@ import { undo } from 'prosemirror-history';
 import { NodeSelection } from 'prosemirror-state';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { defineBlock, defineInline, defineMark, definePlugin, type RteBlockNode, type RtePlugin } from '#/core';
+import {
+    defineBlock,
+    defineContent,
+    defineInline,
+    defineMark,
+    definePlugin,
+    type RteBlockNode,
+    type RtePlugin,
+} from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { toEngineDocument } from './documentConversion';
@@ -19,24 +27,24 @@ import { destroyEditors, editorWith, paragraph, text } from './testEditor';
 
 const tagPlugin: RtePlugin = definePlugin({
     id: 'tag',
-    content: {
+    content: defineContent({
         inlines: {
             tag: defineInline<{ name: string }>({
                 toHtml: ({ name }) => ({ tag: 'span', children: name }),
                 parse: [],
             }),
         },
-    },
+    }),
 });
 
 /** A void block of the spec's own: the shipped ones need options or are not in `defaultPlugins`. */
 const dividerPlugin: RtePlugin = definePlugin({
     id: 'divider',
-    content: {
+    content: defineContent({
         blocks: {
             divider: defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [{ tag: 'hr' }] }),
         },
-    },
+    }),
 });
 
 const plugins: RtePlugin[] = [...defaultPlugins, dividerPlugin, tagPlugin];
@@ -238,7 +246,7 @@ describe('marks.toggle', () => {
                 ...plugins,
                 definePlugin({
                     id: 'highlight',
-                    content: {
+                    content: defineContent({
                         marks: {
                             highlight: defineMark<{ color: string }>({
                                 defaults: { color: 'yellow' },
@@ -246,7 +254,7 @@ describe('marks.toggle', () => {
                                 parse: [],
                             }),
                         },
-                    },
+                    }),
                 }),
             ],
             [paragraph(text('note'))],
@@ -533,7 +541,7 @@ describe('insert', () => {
                 ...plugins,
                 definePlugin({
                     id: 'chip',
-                    content: {
+                    content: defineContent({
                         inlines: {
                             chip: defineInline<{ label: string }>({
                                 defaults: { label: 'new' },
@@ -541,7 +549,7 @@ describe('insert', () => {
                                 parse: [],
                             }),
                         },
-                    },
+                    }),
                 }),
             ],
             [paragraph(text('ab'))],

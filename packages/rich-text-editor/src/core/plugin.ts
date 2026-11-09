@@ -19,6 +19,7 @@ import { type HtmlSpec, type StyleMap } from './htmlSpec';
  * back); an advanced node adds a readonly view under `render.component`.
  */
 export type RteContent = {
+    kind: 'content';
     /**
      * Block types (`defineBlock`), keyed by the `type` they are stored under
      */
@@ -46,6 +47,11 @@ export type RteContent = {
 };
 
 /**
+ * What `defineContent` takes: a content without its `kind`
+ */
+export type RteContentDefinition = Omit<RteContent, 'kind'>;
+
+/**
  * Declares what a plugin's document can hold.
  * @example
  * const quoteContent = defineContent({
@@ -58,7 +64,7 @@ export type RteContent = {
  *     },
  * });
  */
-export const defineContent = (content: RteContent): RteContent => content;
+export const defineContent = (content: RteContentDefinition): RteContent => ({ ...content, kind: 'content' });
 
 export const typesOf = (content: RteContent | undefined): string[] => [
     ...Object.keys(content?.marks ?? {}),
@@ -79,6 +85,10 @@ export const onlyTypeOf = (content: RteContent | undefined): string | undefined 
  * never runs anything itself: effects go through the `EditorControlApi` it is handed.
  */
 export type RtePlugin = {
+    /**
+     * Set by `definePlugin`. A plain object without it still counts as a plugin.
+     */
+    kind?: 'plugin';
     id: string;
     content?: RteContent;
     /**
@@ -119,7 +129,7 @@ export type RtePlugin = {
 /**
  * What `definePlugin` takes: a plugin whose `id` may be left out
  */
-export type RtePluginDefinition = Omit<RtePlugin, 'id'> & { id?: string };
+export type RtePluginDefinition = Omit<RtePlugin, 'id' | 'kind'> & { id?: string };
 
 /**
  * Declares a plugin. The `id` defaults to the only type its content declares;
@@ -140,7 +150,7 @@ export const definePlugin = ({ id, ...plugin }: RtePluginDefinition): RtePlugin 
         }
         throw new Error(`A plugin that declares several types (${types.join(', ')}) needs an \`id\`.`);
     }
-    return { id: resolved, ...plugin };
+    return { kind: 'plugin', id: resolved, ...plugin };
 };
 
 /**
@@ -161,9 +171,9 @@ export type RteEditView = ComponentType<EditProps<any, any>>;
 export type RteIcon = ComponentType<Pick<FondueIconProps, 'size'>>;
 
 /**
- * A toolbar control, declared as data
+ * What every toolbar control has, whether it is a button or custom UI
  */
-export type RteToolbarEntry = {
+type RteToolbarEntryBase = {
     /**
      * The mark, block or inline type the control turns on and off
      * @default onlyTypeOf(plugin.content)
@@ -174,10 +184,6 @@ export type RteToolbarEntry = {
      * @default capitalised(type)
      */
     label?: string;
-    /**
-     * Icon of the button. Required without a `render`
-     */
-    icon?: RteIcon;
     /**
      * Hotkey in `Mod-b` style, shown in the tooltip. It toggles `toggles`
      * unless the plugin's `hotkeys` binds the same key.
@@ -190,16 +196,36 @@ export type RteToolbarEntry = {
      */
     floating?: 'inline' | 'hidden';
     /**
-     * Custom UI in place of the button. It runs inside a component of its own, so
-     * it may use hooks (always the same ones), and re-renders only when its props change.
-     */
-    render?: (props: ToolbarItemProps) => ReactNode;
-    /**
      * Also offers the control in the `/` menu, and in Turn into for a text block
      * or list. `keywords` are extra words it is found by.
      */
     menu?: { keywords?: readonly string[] };
 };
+
+/**
+ * A toolbar control, declared as data: a button given an `icon`, or custom UI given a `render`
+ */
+export type RteToolbarEntry = RteToolbarEntryBase &
+    (
+        | {
+              /**
+               * Icon of the button
+               */
+              icon: RteIcon;
+              render?: never;
+          }
+        | {
+              /**
+               * Custom UI in place of the button. It runs inside a component of its own, so
+               * it may use hooks (always the same ones), and re-renders only when its props change.
+               */
+              render: (props: ToolbarItemProps) => ReactNode;
+              /**
+               * Icon of the entry's `/` menu command
+               */
+              icon?: RteIcon;
+          }
+    );
 
 // --- Nodes ---
 
@@ -266,8 +292,11 @@ export type ContentModel = 'text' | { items: string } | { blocks: readonly strin
  */
 export const defineMark = <TValue extends object = Record<string, never>>(
     definition:
-        | MarkDefinition<TValue>
-        | ({ tag: string; parse?: readonly ParseRule<TValue>[] } & Omit<MarkDefinition<TValue>, 'toHtml' | 'parse'>),
+        | (MarkDefinition<TValue> & { tag?: never })
+        | ({ tag: string; parse?: readonly ParseRule<TValue>[]; toHtml?: never } & Omit<
+              MarkDefinition<TValue>,
+              'toHtml' | 'parse'
+          >),
 ): MarkDefinition => {
     if (!('tag' in definition)) {
         return definition as unknown as MarkDefinition;

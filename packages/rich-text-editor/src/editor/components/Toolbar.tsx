@@ -213,26 +213,26 @@ type ToolbarItemSlotProps = {
  * `render` is called in this component, so its hooks keep their state when another plugin is added or removed.
  */
 const ToolbarItemSlot = ({ item, itemProps }: ToolbarItemSlotProps): ReactNode => {
-    const { render, icon: Icon } = item;
-    if (render) {
-        // Called, not mounted as an element: a factory-built control changes identity on every host render.
-        return render(itemProps);
+    switch (item.control) {
+        case 'custom':
+            // Called, not mounted as an element: a factory-built control changes identity on every host render.
+            return item.render(itemProps);
+        case 'button': {
+            const { icon: Icon } = item;
+            // A void block or an inline is inserted, not switched on and off.
+            const toggles = item.own.kind === 'mark' || item.own.kind === 'list' || item.own.kind === 'textBlock';
+            return (
+                <ToolbarButton
+                    title={item.label}
+                    shortcut={item.shortcut}
+                    active={toggles ? itemProps.isActive : undefined}
+                    onClick={() => itemProps.toggle()}
+                >
+                    <Icon size={16} />
+                </ToolbarButton>
+            );
+        }
     }
-    if (!Icon) {
-        return null;
-    }
-    // A void block or an inline is inserted, not switched on and off.
-    const toggles = item.own.kind === 'mark' || item.own.kind === 'list' || item.own.kind === 'textBlock';
-    return (
-        <ToolbarButton
-            title={item.label}
-            shortcut={item.shortcut}
-            active={toggles ? itemProps.isActive : undefined}
-            onClick={() => itemProps.toggle()}
-        >
-            <Icon size={16} />
-        </ToolbarButton>
-    );
 };
 
 /**

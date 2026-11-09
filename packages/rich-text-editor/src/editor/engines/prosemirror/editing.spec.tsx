@@ -9,6 +9,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
     buildPluginRegistry,
+    defineContent,
     defineInline,
     defineMark,
     definePlugin,
@@ -27,25 +28,25 @@ import { mountEditorForTests } from './editing';
 const plugins: RtePlugin[] = [
     definePlugin({
         id: 'tag',
-        content: {
+        content: defineContent({
             inlines: {
                 tag: defineInline<{ name: string }>({
                     toHtml: ({ name }) => ({ tag: 'span', children: name }),
                     parse: [],
                 }),
             },
-        },
+        }),
     }),
     definePlugin({
         id: 'bold',
-        content: {
+        content: defineContent({
             marks: {
                 bold: defineMark({
                     toHtml: () => ({ tag: 'strong', children: true }),
                     parse: [{ tag: 'strong' }],
                 }),
             },
-        },
+        }),
     }),
 ];
 

@@ -65,13 +65,18 @@ export type ToolbarEntry = {
      */
     floating: 'inline' | 'hidden';
     label: string;
-    icon?: RteIcon;
     shortcut?: string;
-    /**
-     * Custom UI in place of the button.
-     */
-    render?: (props: ToolbarItemProps) => ReactNode;
-};
+} & (
+    | { control: 'button'; icon: RteIcon }
+    | {
+          /**
+           * Custom UI in place of the button.
+           */
+          control: 'custom';
+          render: (props: ToolbarItemProps) => ReactNode;
+          icon?: RteIcon;
+      }
+);
 
 export type PluginRegistry = {
     /**
@@ -212,12 +217,23 @@ export const toggleOwn = ({ own, api, selection, value }: ToggleOwnParams): void
     }
 };
 
-const isPlugin = (entry: RtePlugin | RteContent): entry is RtePlugin => 'id' in entry && typeof entry.id === 'string';
+const isContent = (entry: RtePlugin | RteContent): entry is RteContent => entry.kind === 'content';
 
 /**
  * Names a bare content in errors: the first type it declares.
  */
 const firstTypeOf = (content: RteContent): string => typesOf(content)[0] ?? 'content';
+
+/**
+ * An untyped caller can leave out a plugin's `id`; it would be read as content otherwise.
+ */
+const assertHasId = (plugin: RtePlugin): void => {
+    if (typeof plugin.id === 'string' && plugin.id !== '') {
+        return;
+    }
+    const first = typesOf(plugin.content)[0] ?? 'no type declared';
+    throw new Error(`Plugin has no id: ${first}`);
+};
 
 const capitalised = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
 
@@ -273,22 +289,24 @@ const toolbarEntryOf = (plugin: RtePlugin, entry: RteToolbarEntry, key: string):
     if (entry.toggles !== undefined && own.kind === 'none') {
         throw new Error(`Plugin "${plugin.id}" toggles "${entry.toggles}", which its content does not declare.`);
     }
-    if (entry.render === undefined && entry.icon === undefined) {
-        throw new Error(`Plugin "${plugin.id}" has a toolbar entry with no \`render\` and no \`icon\`.`);
-    }
-    if (entry.render === undefined && !BUTTON_KINDS.has(own.kind)) {
-        throw new Error(`Plugin "${plugin.id}" has a toolbar entry with ${NOTHING_TO_TOGGLE}`);
-    }
-    return {
+    const shared = {
         id: plugin.id,
         key,
         own,
         floating: entry.floating ?? defaultFloatingPlacement(own),
         label: labelOf(plugin, entry, type),
-        icon: entry.icon,
         shortcut: entry.shortcut,
-        render: entry.render,
     };
+    if (entry.render !== undefined) {
+        return { ...shared, control: 'custom', render: entry.render, icon: entry.icon };
+    }
+    if (entry.icon === undefined) {
+        throw new Error(`Plugin "${plugin.id}" has a toolbar entry with no \`render\` and no \`icon\`.`);
+    }
+    if (!BUTTON_KINDS.has(own.kind)) {
+        throw new Error(`Plugin "${plugin.id}" has a toolbar entry with ${NOTHING_TO_TOGGLE}`);
+    }
+    return { ...shared, control: 'button', icon: entry.icon };
 };
 
 /**
@@ -523,12 +541,15 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         editOwners: new Map(),
     };
 
+    const ids: string[] = [];
     for (const entry of entries) {
-        if (isPlugin(entry)) {
+        if (isContent(entry)) {
+            addContent(draft, entry, firstTypeOf(entry));
+        } else {
+            assertHasId(entry);
+            ids.push(entry.id);
             addEditing(draft, entry);
             addContent(draft, entry.content, entry.id);
-        } else {
-            addContent(draft, entry, firstTypeOf(entry));
         }
     }
 
@@ -539,7 +560,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         blockAttributes: draft.blockAttributes,
         itemTypeByList: draft.itemTypeByList,
         edits: draft.edits,
-        ids: entries.filter(isPlugin).map((plugin) => plugin.id),
+        ids,
         duplicateIds: [...draft.duplicateIds],
         hotkeys: draft.hotkeys,
         inputRules: forMatching(draft.inputRules),

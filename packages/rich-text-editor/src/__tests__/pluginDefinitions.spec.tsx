@@ -6,7 +6,14 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { describe, expect, it } from 'vitest';
 
-import { buildPluginRegistry, defineBlock, definePlugin, type EditorControlApi, type RtePlugin } from '../core';
+import {
+    buildPluginRegistry,
+    defineBlock,
+    defineContent,
+    definePlugin,
+    type EditorControlApi,
+    type RtePlugin,
+} from '../core';
 import {
     blurOnBreakPlugin,
     bulletListPlugin,
@@ -205,7 +212,7 @@ describe('the readonly renderer', () => {
         const drawn: string[] = [];
         const notePlugin: RtePlugin = definePlugin({
             id: 'note',
-            content: {
+            content: defineContent({
                 blocks: {
                     note: defineBlock<{ label: string }>({
                         defaults: { label: '' },
@@ -219,7 +226,7 @@ describe('the readonly renderer', () => {
                         },
                     }),
                 },
-            },
+            }),
         });
         // One list for both renders, as a host holds it: a new list is a new
         // set of plugins, which redraws everything.

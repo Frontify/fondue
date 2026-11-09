@@ -4,7 +4,15 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { buildPluginRegistry, defineBlock, defineInline, defineMark, definePlugin, type RtePlugin } from '#/core';
+import {
+    buildPluginRegistry,
+    defineBlock,
+    defineContent,
+    defineInline,
+    defineMark,
+    definePlugin,
+    type RtePlugin,
+} from '#/core';
 
 import { buildSchema as buildSchemaFromRegistry } from './schema';
 
@@ -13,29 +21,29 @@ const buildSchema = (plugins: RtePlugin[]) => buildSchemaFromRegistry(buildPlugi
 const plugins: RtePlugin[] = [
     definePlugin({
         id: 'bold',
-        content: {
+        content: defineContent({
             marks: {
                 bold: defineMark({
                     toHtml: () => ({ tag: 'strong', children: true }),
                     parse: [{ tag: 'strong' }, { tag: 'b' }],
                 }),
             },
-        },
+        }),
     }),
     definePlugin({
         id: 'link',
-        content: {
+        content: defineContent({
             marks: {
                 link: defineMark<{ href: string }>({
                     toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
                     parse: [{ tag: 'a', value: (element) => ({ href: element.getAttribute('href') ?? '' }) }],
                 }),
             },
-        },
+        }),
     }),
     definePlugin({
         id: 'quote',
-        content: {
+        content: defineContent({
             blocks: {
                 quote: defineBlock({
                     content: 'text',
@@ -43,7 +51,7 @@ const plugins: RtePlugin[] = [
                     parse: [{ tag: 'blockquote' }],
                 }),
             },
-        },
+        }),
     }),
 ];
 
@@ -76,7 +84,7 @@ describe('buildSchema', () => {
         const schema = buildSchema([
             definePlugin({
                 id: 'list',
-                content: {
+                content: defineContent({
                     blocks: {
                         bulletList: defineBlock({
                             content: { items: 'listItem' },
@@ -89,7 +97,7 @@ describe('buildSchema', () => {
                             parse: [{ tag: 'li' }],
                         }),
                     },
-                },
+                }),
             }),
         ]);
 
@@ -103,7 +111,7 @@ describe('buildSchema', () => {
             buildSchema([
                 definePlugin({
                     id: 'list',
-                    content: {
+                    content: defineContent({
                         blocks: {
                             bulletList: defineBlock({
                                 content: { items: 'nope' },
@@ -111,7 +119,7 @@ describe('buildSchema', () => {
                                 parse: [{ tag: 'ul' }],
                             }),
                         },
-                    },
+                    }),
                 }),
             ]),
         ).toThrow('Block "bulletList" declares items of type "nope", which is not registered.');
@@ -121,7 +129,7 @@ describe('buildSchema', () => {
         const schema = buildSchema([
             definePlugin({
                 id: 'highlight',
-                content: {
+                content: defineContent({
                     marks: {
                         highlight: defineMark<{ color: string }>({
                             defaults: { color: 'yellow' },
@@ -129,7 +137,7 @@ describe('buildSchema', () => {
                             parse: [{ tag: 'mark' }],
                         }),
                     },
-                },
+                }),
             }),
         ]);
 
@@ -140,7 +148,7 @@ describe('buildSchema', () => {
         const schema = buildSchema([
             definePlugin({
                 id: 'chips',
-                content: {
+                content: defineContent({
                     inlines: {
                         chip: defineInline<{ label: string }>({
                             defaults: { label: 'new' },
@@ -153,7 +161,7 @@ describe('buildSchema', () => {
                             parse: [],
                         }),
                     },
-                },
+                }),
                 edit: { draft: () => null },
             }),
         ]);

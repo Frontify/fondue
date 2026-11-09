@@ -33,6 +33,7 @@ export {
     type PasteHandler,
     type RteBlockCommand,
     type RteContent,
+    type RteContentDefinition,
     type RteDelimiterRule,
     type RteEditView,
     type RteIcon,

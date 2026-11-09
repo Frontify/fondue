@@ -7,6 +7,7 @@ import {
     ANY_LIST,
     buildPluginRegistry,
     defineBlock,
+    defineContent,
     defineInline,
     defineMark,
     definePlugin,
@@ -28,29 +29,29 @@ import { buildSchema } from './schema';
 const plugins: RtePlugin[] = [
     definePlugin({
         id: 'bold',
-        content: {
+        content: defineContent({
             marks: {
                 bold: defineMark({
                     toHtml: () => ({ tag: 'strong', children: true }),
                     parse: [{ tag: 'strong' }],
                 }),
             },
-        },
+        }),
     }),
     definePlugin({
         id: 'link',
-        content: {
+        content: defineContent({
             marks: {
                 link: defineMark<{ href: string }>({
                     toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
                     parse: [{ tag: 'a', value: (element) => ({ href: element.getAttribute('href') ?? '' }) }],
                 }),
             },
-        },
+        }),
     }),
     definePlugin({
         id: 'heading',
-        content: {
+        content: defineContent({
             blocks: {
                 heading: defineBlock({
                     content: 'text',
@@ -59,22 +60,22 @@ const plugins: RtePlugin[] = [
                     parse: [{ tag: 'h1' }],
                 }),
             },
-        },
+        }),
     }),
     definePlugin({
         id: 'mention',
-        content: {
+        content: defineContent({
             inlines: {
                 mention: defineInline<{ id: string }>({
                     toHtml: ({ id }) => ({ tag: 'span', children: id }),
                     parse: [{ tag: 'span', value: (element) => ({ id: element.textContent ?? '' }) }],
                 }),
             },
-        },
+        }),
     }),
     definePlugin({
         id: 'list',
-        content: {
+        content: defineContent({
             blocks: {
                 bulletList: defineBlock({
                     content: { items: 'listItem' },
@@ -87,11 +88,11 @@ const plugins: RtePlugin[] = [
                     parse: [{ tag: 'li' }],
                 }),
             },
-        },
+        }),
     }),
     definePlugin({
         id: 'align',
-        content: { blockAttributes: { align: { style: (value) => ({ 'text-align': value }) } } },
+        content: defineContent({ blockAttributes: { align: { style: (value) => ({ 'text-align': value }) } } }),
     }),
 ];
 
