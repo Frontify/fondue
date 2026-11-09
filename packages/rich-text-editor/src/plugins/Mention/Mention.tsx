@@ -28,14 +28,14 @@ export const mentionValueOf = ({ id, username, name, kind }: MentionItem): Menti
     kind === undefined || kind === 'user' ? { id, username, name } : { id, username, name, kind };
 
 /** The hotkey fires on a single typed character, so a longer trigger could never start a mention. */
-export const assertMentionTrigger = (trigger: string, factory: string): void => {
+const assertMentionTrigger = (trigger: string, factory: string): void => {
     if ([...trigger].length !== 1) {
         throw new Error(`${factory}: \`trigger\` must be exactly one character, got "${trigger}".`);
     }
 };
 
 /** The app's `href` is held to what a link is: a `javascript:` profile URL is left off. */
-export const safeMentionHref = (href: MentionContentOptions['href'], mention: MentionValue): string | undefined => {
+const safeMentionHref = (href: MentionContentOptions['href'], mention: MentionValue): string | undefined => {
     const target = href?.(mention);
     return target !== undefined && isSafeHref(target) ? target : undefined;
 };

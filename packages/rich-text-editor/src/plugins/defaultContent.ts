@@ -18,7 +18,7 @@ import { superscriptContent } from './Superscript/Superscript';
 import { textStyleContent } from './TextStyle/TextStyle';
 import { underlineContent } from './Underline/Underline';
 
-// Imports the plugin files for their content: their `/* @__PURE__ */` calls let a bundler drop the plugins.
+// Every top-level call in a plugin file or its helpers needs `/* @__PURE__ */`, or the renderer keeps the plugin; rendererBundle.spec.ts fails when one is missing.
 
 /**
  * The content of every `defaultPlugins` entry, in the same order (it decides
