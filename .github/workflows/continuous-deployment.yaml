@@ -116,15 +116,12 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
         with:
-          playwright-cache: "true"
+          playwright: "true"
 
       - name: Build Fondue Icons
         uses: ./.github/actions/build-packages
         with:
           icons: "true"
-
-      - name: Install Playwright browsers
-        run: pnpm --stream --filter {packages/components} install:playwright
 
       - name: Playwright tests
         run: pnpm --filter {packages/components} exec playwright test --shard=${{ matrix.shard }}/${{ strategy.job-total }}
