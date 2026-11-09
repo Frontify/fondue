@@ -13,10 +13,14 @@ import styles from '../link.module.scss';
 
 import { LinkTargetForm } from './LinkTargetForm';
 
-/** The controls Tab can reach in the panel. */
+/**
+ * The controls Tab can reach in the panel.
+ */
 const PANEL_CONTROLS = 'a[href], button:not([disabled])';
 
-/** Copies the target and says whether it worked, in a live region that is always in the panel. */
+/**
+ * Copies the target and says whether it worked, in a live region that is always in the panel.
+ */
 const CopyLink = ({ href }: { href: string }): ReactNode => {
     const [status, setStatus] = useState('');
     const copy = (): void => {
@@ -40,7 +44,7 @@ const CopyLink = ({ href }: { href: string }): ReactNode => {
 
 /**
  * A link while editing: the anchor around the editable text, with a flyout.
- * With the caret inside it shows the target, Edit and Remove; when `isOpen`
+ * With the caret inside it shows the target, Copy link, Edit and Remove; when `isOpen`
  * (Edit, the toolbar button, Mod-k) it shows the form instead.
  *
  * Open state belongs to the editor so the toolbar can open this flyout. Focus
@@ -148,7 +152,10 @@ export const LinkEditor = ({
                     // A click places the caret; it must neither follow the link nor toggle the flyout. Mod+click opens it.
                     onClick={(event) => {
                         event.preventDefault();
-                        const modified = isApple() ? event.metaKey : event.ctrlKey;
+                        let modified = event.ctrlKey;
+                        if (isApple()) {
+                            modified = event.metaKey;
+                        }
                         if (modified && href !== undefined) {
                             window.open(href, '_blank', 'noopener,noreferrer');
                         }
@@ -173,6 +180,7 @@ export const LinkEditor = ({
                     {isOpen ? (
                         <LinkTargetForm
                             initial={value}
+                            kind="edit"
                             policy={policy}
                             search={search}
                             onSave={(next) => {

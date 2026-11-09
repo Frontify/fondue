@@ -4,7 +4,7 @@ import { defineContent, defineInline, definePlugin, type EditProps, type RtePlug
 
 import { MentionDraft } from './components/MentionDraft';
 import { MentionLink } from './components/MentionLink';
-import { mentionDisplay, storedKind, storedString } from './helpers/display';
+import { mentionAttributes, mentionDisplay } from './helpers/display';
 import styles from './mention.module.scss';
 import { MENTION_KINDS, type MentionItem, type MentionItems, type MentionResolution, type MentionValue } from './types';
 
@@ -18,7 +18,8 @@ export type MentionContentOptions = {
      * What the app knows now about a stored mention: a renamed person shows
      * their current username and name, a deleted or forbidden one shows the
      * stored username marked unavailable, with no link. Without it, or for
-     * `unknown`, the stored value shows. The document is never changed.
+     * `unknown`, the stored value shows. The document is never changed. A throw
+     * is not caught.
      */
     resolve?: (mention: MentionValue) => MentionResolution;
     /**
@@ -61,11 +62,7 @@ export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentO
                         attrs: {
                             href: shown.href,
                             title: shown.title,
-                            'data-mention-id': storedString(mention.id),
-                            'data-mention-username': storedString(mention.username),
-                            // The stored name, so the shown one never flows back into the document on paste.
-                            'data-mention-name': storedString(mention.name),
-                            'data-mention-kind': storedKind(mention.kind),
+                            ...mentionAttributes(mention),
                             class: styles.mention ?? '',
                         },
                         // Isolated so a right-to-left name cannot reorder the text around it.
@@ -86,7 +83,10 @@ export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentO
                             // Copies from before `data-mention-name` carry the name in the title.
                             const name = element.dataset.mentionName ?? element.title;
                             const kind = MENTION_KINDS.find((known) => known === element.dataset.mentionKind);
-                            return id === '' || username === '' ? null : mentionValueOf({ id, username, name, kind });
+                            if (id === '' || username === '') {
+                                return null;
+                            }
+                            return mentionValueOf({ id, username, name, kind });
                         },
                     },
                 ],

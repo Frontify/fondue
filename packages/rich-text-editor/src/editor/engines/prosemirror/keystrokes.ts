@@ -177,13 +177,17 @@ const unlessInExcludedMark =
         return excluded.some((markType) => markType.isInSet(marks)) ? null : handler(state, match, start, end);
     };
 
-/** A text rule leaves text alone when any of it carries a mark that opts out of rules (inline code). */
+/**
+ * A text rule leaves text alone when any of it carries a mark that opts out of rules (inline code).
+ */
 const unlessRangeHasExcludedMark =
     (excluded: readonly PmMarkType[], handler: RuleHandler): RuleHandler =>
-    (state, match, start, end) =>
-        excluded.some((markType) => state.doc.rangeHasMark(start, end, markType))
-            ? null
-            : handler(state, match, start, end);
+    (state, match, start, end) => {
+        if (excluded.some((markType) => state.doc.rangeHasMark(start, end, markType))) {
+            return null;
+        }
+        return handler(state, match, start, end);
+    };
 
 const withoutStateFlags = (pattern: RegExp): string => pattern.flags.replaceAll(/[gy]/g, '');
 
@@ -315,7 +319,9 @@ const listRule = (rule: RuleOfKind<'list'>, { schema, registry }: RuleContext): 
         : null;
 };
 
-/** A rule's `match` as a pattern anchored to the end of the text before the caret, then `suffix`. */
+/**
+ * A rule's `match` as a pattern anchored to the end of the text before the caret, then `suffix`.
+ */
 const textPattern = (match: string | RegExp, suffix: string): RegExp => {
     if (typeof match === 'string') {
         return new RegExp(`${escapeForRegExp(match)}${suffix}`);
@@ -323,7 +329,9 @@ const textPattern = (match: string | RegExp, suffix: string): RegExp => {
     return new RegExp(`(?:${match.source})${suffix}`, withoutStateFlags(match));
 };
 
-/** `$1` in a rule's `replace` stands for the first group of its pattern. */
+/**
+ * `$1` in a rule's `replace` stands for the first group of its pattern.
+ */
 const withGroups = (replace: string, found: RegExpMatchArray): string =>
     replace.replaceAll(/\$(\d)/g, (_, group: string) => found[Number(group)] ?? '');
 
@@ -341,10 +349,14 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
     return toInputRule({ pattern, handler: unlessRangeHasExcludedMark(context.excludedMarks, handler) }, context);
 };
 
-/** The characters that end a run: whitespace and sentence punctuation. Not quotes: one may close the quotation the run sits in, as in `"wait --"`. */
+/**
+ * The characters that end a run: whitespace and sentence punctuation. Not quotes: one may close the quotation the run sits in, as in `"wait --"`.
+ */
 const RUN_END = /[\s,;:!?)\]}…]/;
 
-/** `--` becomes a dash once a character that ends the run is typed, which stays. */
+/**
+ * `--` becomes a dash once a character that ends the run is typed, which stays.
+ */
 const runEndTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
     const { match, replace } = rule;
     const pattern = textPattern(match, '[\\s\\S]$');

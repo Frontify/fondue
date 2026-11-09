@@ -31,11 +31,15 @@ export type LinkMark = {
 };
 
 export type LinkPluginOptions = LinkPolicy & {
-    /** Offers the app's own pages as link targets while the author types. Editing only: the content never needs it. */
+    /**
+     * Offers the app's own pages as link targets while the author types. Editing only: the content never needs it.
+     */
     search?: LinkSearch;
 };
 
-/** The address prefixes that mark typed or pasted text as a link. */
+/**
+ * The address prefixes that mark typed or pasted text as a link.
+ */
 const LINKABLE_SCHEMES = 'https?://|mailto:|tel:';
 const AUTOLINK_PATTERN = new RegExp(`(?:${LINKABLE_SCHEMES})[^\\s]+`);
 const LINKABLE_START = new RegExp(`^(?:${LINKABLE_SCHEMES})`, 'i');
@@ -55,10 +59,7 @@ export const linkContent = (policy: LinkPolicy = {}) =>
     /* @__PURE__ */ defineContent({
         marks: {
             link: /* @__PURE__ */ defineMark<LinkValue>({
-                // Outside every other mark, so a partly styled link still renders
-                // as ONE anchor: an element stays open across text runs only while
-                // the marks around it are the same, and a colour or an emphasis
-                // inside would otherwise cut it up.
+                // Outside every other mark, so a partly styled link renders as one anchor, not cut up by a colour or an emphasis inside.
                 nesting: -2,
                 // Typing at the end of a link does not extend it.
                 inclusive: false,
@@ -67,8 +68,7 @@ export const linkContent = (policy: LinkPolicy = {}) =>
                  * The link everywhere but while editing: readonly, export, copy
                  */
                 toHtml: (value) => {
-                    // A stored document may hold anything here (`{}`, `true`), so
-                    // nothing about its shape is taken on trust.
+                    // A stored document may hold anything here (`{}`, `true`), so its shape is not taken on trust.
                     const link = typeof value === 'object' ? (value as Partial<LinkValue> | null) : null;
                     const href = link?.href;
                     const allowed = allowsHref(policy, href);
@@ -101,14 +101,13 @@ export const linkContent = (policy: LinkPolicy = {}) =>
                         tag: 'a[href]',
                         value: (element) => {
                             const href = element.getAttribute('href') ?? '';
-                            return allowsHref(policy, href)
-                                ? {
-                                      href,
-                                      ...(element.getAttribute('target') === '_blank'
-                                          ? { openInNewTab: true as const }
-                                          : {}),
-                                  }
-                                : null;
+                            if (!allowsHref(policy, href)) {
+                                return null;
+                            }
+                            if (element.getAttribute('target') === '_blank') {
+                                return { href, openInNewTab: true as const };
+                            }
+                            return { href };
                         },
                     },
                 ],
@@ -124,7 +123,10 @@ const hotkeys = {
             return true;
         }
         // At a caret the key stays the editor's even with no form to open (floating toolbar), never the browser's.
-        return openNewLinkForm(api) || api.selection.get().isCollapsed;
+        if (openNewLinkForm(api)) {
+            return true;
+        }
+        return api.selection.get().isCollapsed;
     },
 } satisfies Record<string, HotkeyHandler>;
 
@@ -132,7 +134,12 @@ const HOTKEY: keyof typeof hotkeys = 'Mod-k';
 
 /**
  * Links, made with a toolbar button or `Mod-k` and edited in a flyout while the caret is inside.
- * A web address followed by a space becomes a link, and pasting one over selected text links that text.
+ * A web, mail or phone address followed by a space becomes a link, and pasting one links the
+ * selected text, or goes in linked at a caret outside a link. The policy decides which links are
+ * allowed, and `search` offers the app's own pages as targets.
+ *
+ * @example
+ * const links = linkPlugin({ allowedSchemes: ['https', 'mailto'], search });
  */
 export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) => {
     const LinkToolbar = (props: ToolbarItemProps) => (
@@ -145,8 +152,7 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) => {
         toolbar: [{ render: LinkToolbar }],
         edit: { link: LinkEdit },
         hotkeys,
-        // A web, mail or phone address typed and followed by a space becomes a
-        // link, when the policy allows it. The pattern names only typed schemes.
+        // The pattern names only typed schemes, and the policy still decides which become links.
         inputRules: [
             {
                 kind: 'markPattern',
@@ -155,13 +161,14 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) => {
                 value: (href) => (allowsHref(policy, href) ? { href } : null),
             },
         ],
-        // A web, mail or phone address pasted over selected text links that
-        // text, and at a caret outside a link it goes in linked, as in most
-        // editors; anything else pastes as usual.
+        // Anything that is not an allowed web, mail or phone address pastes as usual.
         onPaste: ({ text }, api) => {
             const typed = text.trim();
             const { isCollapsed, marks } = api.selection.get();
-            const href = LINKABLE_START.test(typed) ? toHref(typed) : null;
+            let href: string | null = null;
+            if (LINKABLE_START.test(typed)) {
+                href = toHref(typed);
+            }
             if (href === null || !allowsHref(policy, href)) {
                 return false;
             }
@@ -173,8 +180,7 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) => {
                 api.insertText(href, { link: { href } });
                 return true;
             }
-            // A toggle over text that is all linked already would take the link
-            // off, so it goes first and the new target is set after.
+            // A toggle over text that is all linked already would take the link off, so it goes first.
             if ('link' in marks) {
                 api.marks.toggle('link');
             }

@@ -146,9 +146,9 @@ describe('mentionPlugin', () => {
         expect(
             written({ href: () => '/u', resolve: () => ({ status: 'current', username: 'j', name: 'J' }) }),
         ).toContain('<bdi>@j</bdi>');
-        expect(
-            written({ href: () => '/u', resolve: () => ({ status: 'unavailable', reason: 'forbidden' }) }),
-        ).toContain('<bdi>@jane (unavailable)</bdi>');
+        expect(written({ href: () => '/u', resolve: () => ({ status: 'unavailable' }) })).toContain(
+            '<bdi>@jane (unavailable)</bdi>',
+        );
         expect(written({ href: () => '/u', resolve: () => ({ status: 'unknown' }) })).toBe(
             written({ href: () => '/u' }),
         );
@@ -157,7 +157,7 @@ describe('mentionPlugin', () => {
     it('draws what the app resolves, isolated, and leaves the stored value as it was', () => {
         const resolutions = {
             ana: { status: 'current', username: 'ana.m', name: 'Ana Meier' },
-            bob: { status: 'unavailable', reason: 'deleted' },
+            bob: { status: 'unavailable' },
             cy: { status: 'unknown' },
         } as const;
         const plugins = [

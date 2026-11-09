@@ -76,7 +76,7 @@ const resolveMention = (mention: MentionValue): MentionResolution => {
         return { status: 'current', username: 'jane.s', name: 'Jane Smith' };
     }
     if (mention.id === 'bob') {
-        return { status: 'unavailable', reason: 'deleted' };
+        return { status: 'unavailable' };
     }
     return { status: 'unknown' };
 };

@@ -18,7 +18,7 @@ declare global {
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 const JANE = { id: 'jane', username: 'jane', name: 'Jane Doe' };
-const resolve = () => ({ status: 'unavailable', reason: 'deleted' }) as const;
+const resolve = () => ({ status: 'unavailable' }) as const;
 
 const teardown: (() => void)[] = [];
 afterEach(() => {

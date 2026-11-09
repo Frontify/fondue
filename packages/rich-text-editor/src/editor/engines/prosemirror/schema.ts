@@ -125,7 +125,9 @@ const inlineNodeSpec = (definition: InlineDefinition, hasEditView: boolean): PmN
     },
 });
 
-/** The engine's list replaces its default of the mark itself, and throws on a type it does not know. */
+/**
+ * The engine's list replaces its default of the mark itself, and throws on a type it does not know.
+ */
 const excludedMarks = (
     type: string,
     definition: MarkDefinition,

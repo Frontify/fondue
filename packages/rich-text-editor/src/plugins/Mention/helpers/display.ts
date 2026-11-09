@@ -4,13 +4,21 @@ import { isSafeHref } from '../../shared/helpers/href';
 import { withoutControlCharacters } from '../../shared/helpers/text';
 import { MENTION_KINDS, type MentionKind, type MentionResolution, type MentionValue } from '../types';
 
-/** What a mention shows. Every view draws this and nothing else, so they cannot disagree. */
+/**
+ * What a mention shows. Every view draws this and nothing else, so they cannot disagree.
+ */
 export type MentionDisplay = {
-    /** The trigger, the username, and a note when the person is unavailable. */
+    /**
+     * The trigger, the username, and a note when the person is unavailable.
+     */
     label: string;
-    /** Shown on hover. */
+    /**
+     * Shown on hover.
+     */
     title: string;
-    /** Where it links to; absent when unavailable, without a target, or not a safe link. */
+    /**
+     * Where it links to; absent when unavailable, without a target, or not a safe link.
+     */
     href: string | undefined;
 };
 
@@ -20,19 +28,11 @@ type MentionDisplayOptions = {
     trigger: string;
 };
 
-/** A lookup that throws or answers with something else is no answer: the stored value shows. */
-const resolutionOf = (
-    mention: MentionValue,
-    resolve: MentionDisplayOptions['resolve'],
-): MentionResolution | undefined => {
-    try {
-        return resolve?.(mention);
-    } catch {
-        return undefined;
-    }
-};
+type MentionNames = { username: string; name: string };
 
-/** Stored documents are not validated: a field that is not a string reads as empty. */
+/**
+ * Stored documents are not validated: a field that is not a string reads as empty.
+ */
 export const storedString = (field: unknown): string => {
     if (typeof field !== 'string') {
         return '';
@@ -40,40 +40,74 @@ export const storedString = (field: unknown): string => {
     return field;
 };
 
-/** A stored kind this version does not know, or a non-string, writes no attribute. */
+/**
+ * A stored kind this version does not know, or a non-string, writes no attribute.
+ */
 export const storedKind = (value: unknown): MentionKind | undefined => MENTION_KINDS.find((known) => known === value);
 
-/** A stored field as shown: control and bidirectional characters removed. */
+/**
+ * The `data-mention-*` attributes that let copied markup paste back as a mention.
+ * They carry the stored value, so the shown name never flows back into the document on paste.
+ */
+export const mentionAttributes = (mention: MentionValue) => ({
+    'data-mention-id': storedString(mention.id),
+    'data-mention-username': storedString(mention.username),
+    'data-mention-name': storedString(mention.name),
+    'data-mention-kind': storedKind(mention.kind),
+});
+
+/**
+ * A stored field as shown: control and bidirectional characters removed.
+ */
 const storedText = (field: unknown): string => withoutControlCharacters(storedString(field));
+
+/**
+ * The names to show for a person the app still knows: the current ones, unless
+ * the username is not text or is empty once cleaned, which keeps the stored ones.
+ */
+const currentNames = (stored: MentionNames, current: MentionNames): MentionNames => {
+    if (typeof current.username !== 'string') {
+        return stored;
+    }
+    const username = withoutControlCharacters(current.username);
+    if (username === '') {
+        return stored;
+    }
+    if (typeof current.name !== 'string') {
+        return { username, name: stored.name };
+    }
+    return { username, name: withoutControlCharacters(current.name) };
+};
 
 /**
  * What a mention shows, from the stored value and what the app knows now: the
  * current username and name, or the stored ones with a note when the person is
- * unavailable. The stored value is never changed.
+ * unavailable. The stored value is never changed. A throw from `resolve` or
+ * `href` is not caught.
  */
 export const mentionDisplay = (
     mention: MentionValue,
     { resolve, href, trigger }: MentionDisplayOptions,
 ): MentionDisplay => {
-    const resolution = resolutionOf(mention, resolve);
-    let username = storedText(mention.username);
-    let name = storedText(mention.name);
-    if (resolution?.status === 'current' && typeof resolution.username === 'string') {
-        const currentUsername = withoutControlCharacters(resolution.username);
-        if (currentUsername !== '') {
-            username = currentUsername;
-            if (typeof resolution.name === 'string') {
-                name = withoutControlCharacters(resolution.name);
-            }
-        }
-    }
-    if (resolution?.status === 'unavailable') {
-        return { label: `${trigger}${username} (unavailable)`, title: name, href: undefined };
+    const resolution = resolve?.(mention);
+    const stored = { username: storedText(mention.username), name: storedText(mention.name) };
+    let shown = stored;
+    switch (resolution?.status) {
+        case undefined:
+        case 'unknown':
+            break;
+        case 'current':
+            shown = currentNames(stored, resolution);
+            break;
+        case 'unavailable':
+            return { label: `${trigger}${stored.username} (unavailable)`, title: stored.name, href: undefined };
+        default:
+            throw new Error(`Unhandled mention resolution: ${JSON.stringify(resolution satisfies never)}`);
     }
     const target = href?.(mention);
     return {
-        label: `${trigger}${username}`,
-        title: name,
+        label: `${trigger}${shown.username}`,
+        title: shown.name,
         href: target !== undefined && isSafeHref(target) ? target : undefined,
     };
 };

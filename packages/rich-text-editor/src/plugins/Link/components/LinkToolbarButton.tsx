@@ -74,7 +74,8 @@ export const LinkToolbarButton = ({
                 <Flyout.Body>
                     <LinkTargetForm
                         initial={{ href: '' }}
-                        initialText={selection.text}
+                        kind="create"
+                        text={selection.text}
                         policy={policy}
                         search={search}
                         onSave={(value, text) => {

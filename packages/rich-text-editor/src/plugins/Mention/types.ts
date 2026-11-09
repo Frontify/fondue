@@ -28,7 +28,7 @@ export type MentionItem = MentionValue & {
  */
 export type MentionResolution =
     | { status: 'current'; username: string; name: string }
-    | { status: 'unavailable'; reason: 'deleted' | 'forbidden' }
+    | { status: 'unavailable' }
     | { status: 'unknown' };
 
 /** The void inline this plugin adds to the document. */

@@ -88,7 +88,7 @@ describe('the mention inline', () => {
     it('marks a deleted or forbidden person unavailable, with the stored name and no link', () => {
         const content = mentionContent({
             href: (mention) => `/u/${mention.id}`,
-            resolve: () => ({ status: 'unavailable', reason: 'deleted' }),
+            resolve: () => ({ status: 'unavailable' }),
         });
         const spec = content.inlines?.mention?.toHtml(JANE);
 
