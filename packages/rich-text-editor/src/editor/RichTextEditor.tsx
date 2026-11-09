@@ -43,25 +43,15 @@ import { warnNewerVersion } from './warnings';
  */
 export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
     /**
-     * The document to show. Documents from `onChange` handed back in the
-     * order they came change nothing, however late. One handed back after a
-     * newer one or after a document of the host's own, or any other new
-     * object, replaces only the blocks and text that differ (a caret inside
-     * changed text moves to the end of the change) and stays out of undo
-     * history, so undo reverts the user's own edits; where the host changed
-     * the same attribute, or retyped the block, undoing that edit restores the
-     * user's earlier value or does nothing. A value that arrives during IME
-     * composition is applied once it ends. Keeping the same object does not
-     * reject an edit: pass a copy of the last accepted document instead. Never
-     * mutate a document already passed: the editor keeps references into it,
-     * and in development freezes in place the values it hands back (mark
-     * values, unknown content).
+     * The document to show. One handed back from `onChange` changes nothing;
+     * any other replaces only what differs, keeping the caret and the user's
+     * undo history. Never mutate a document once passed; to reject an edit,
+     * pass a copy of the last accepted one.
      */
     value?: RteDocumentOf<TBlock>;
     /**
-     * Called with the new document after each edit. Emitted documents share
-     * their unchanged blocks, so replace a block to change it, never mutate
-     * it (in development a mutation throws).
+     * Called with the new document after each edit. Unchanged blocks are the
+     * same objects as before, so replace a block to change it, never mutate it.
      */
     onChange?: (value: RteDocumentOf<TBlock>) => void;
     /**
@@ -133,8 +123,8 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * The editor lost focus, handed the document as it stands: the hook to
      * commit on instead of every keystroke. Fires once focus has left the
      * editor: moving into its toolbar or a plugin's UI (the link flyout's
-     * fields, a mention being typed) is still inside. The document is shared
-     * and frozen like `onChange`'s.
+     * fields, a mention being typed) is still inside. Never mutate the
+     * document, as with `onChange`.
      */
     onBlur?: (value: RteDocumentOf<TBlock>) => void;
 };

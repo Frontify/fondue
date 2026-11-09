@@ -19,7 +19,7 @@ import {
 } from '#/core';
 
 import { toEngineDocument } from './documentConversion';
-import { mountEditorForTests } from './editing';
+import { type FrameScheduler, mountEditorForTests } from './editing';
 import { destroyEditors, editorWith, shipped } from './testEditor';
 
 /**
@@ -56,23 +56,30 @@ const mounted: { destroy(): void }[] = [];
 
 const mount = (
     initialDoc: RteDocumentOf,
-    { placeholder = '', attributes = {} }: { placeholder?: string; attributes?: Record<string, string> } = {},
+    {
+        placeholder = '',
+        attributes = {},
+        frames,
+    }: { placeholder?: string; attributes?: Record<string, string>; frames?: FrameScheduler } = {},
 ) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
     const onDocChange = vi.fn<(doc: RteDocumentOf) => void>();
 
-    const { mounted: live, view } = mountEditorForTests({
-        container,
-        initialDoc,
-        registry: buildPluginRegistry(plugins),
-        placeholder,
-        attributes,
-        placeholderClassName: 'placeholder',
-        onDocChange,
-        onStateChange: () => {},
-        viewPortals: { set: () => {}, delete: () => {} },
-    });
+    const { mounted: live, view } = mountEditorForTests(
+        {
+            container,
+            initialDoc,
+            registry: buildPluginRegistry(plugins),
+            placeholder,
+            attributes,
+            placeholderClassName: 'placeholder',
+            onDocChange,
+            onStateChange: () => {},
+            viewPortals: { set: () => {}, delete: () => {} },
+        },
+        frames,
+    );
     mounted.push(live);
     const handle = { ...live.handle, setDoc: live.setDoc };
 
@@ -565,26 +572,50 @@ describe('a document set by the host while text is being composed', () => {
         }
         view.dom.dispatchEvent(new CompositionEvent(phase, { bubbles: true }));
     };
-    const nextFrame = (): Promise<void> => new Promise((resolve) => requestAnimationFrame(() => resolve()));
+    /** Frames the spec runs by hand, so a held document is retried exactly when the spec says. */
+    const manualFrames = () => {
+        const callbacks = new Map<number, () => void>();
+        let last = 0;
+        const scheduler: FrameScheduler = {
+            request: (callback) => {
+                last += 1;
+                callbacks.set(last, callback);
+                return last;
+            },
+            cancel: (frame) => {
+                callbacks.delete(frame);
+            },
+        };
+        const runFrame = (): void => {
+            const due = [...callbacks.values()];
+            callbacks.clear();
+            for (const callback of due) {
+                callback();
+            }
+        };
+        return { scheduler, runFrame, pending: () => callbacks.size };
+    };
 
-    it('waits for the composition to end, then applies the latest one', async () => {
-        const { handle, view } = mount(paragraph('typing'));
+    it('waits for the composition to end, then applies the latest one', () => {
+        const frames = manualFrames();
+        const { handle, view } = mount(paragraph('typing'), { frames: frames.scheduler });
         composing(view, true);
 
         handle.setDoc(paragraph('first'));
         handle.setDoc(paragraph('latest'));
-        await nextFrame();
+        frames.runFrame();
 
         expect(view.state.doc.textContent).toBe('typing');
 
         composing(view, false);
-        await nextFrame();
+        frames.runFrame();
 
         expect(view.state.doc.textContent).toBe('latest');
     });
 
-    it('drops a waiting one when the host hands back what the editor reported', async () => {
-        const { handle, view, stored } = mount(paragraph('typing'));
+    it('drops a waiting one when the host hands back what the editor reported', () => {
+        const frames = manualFrames();
+        const { handle, view, stored } = mount(paragraph('typing'), { frames: frames.scheduler });
         handle.api.insertText('!');
         const reported = stored() as RteDocumentOf;
         composing(view, true);
@@ -592,13 +623,14 @@ describe('a document set by the host while text is being composed', () => {
         handle.setDoc(paragraph('reset'));
         handle.setDoc(reported);
         composing(view, false);
-        await nextFrame();
+        frames.runFrame();
 
         expect(view.state.doc.textContent).toBe('!typing');
     });
 
-    it('applies a reported document the host restores after one it handed over mid-composition', async () => {
-        const { handle, view, stored } = mount(paragraph('typing'));
+    it('applies a reported document the host restores after one it handed over mid-composition', () => {
+        const frames = manualFrames();
+        const { handle, view, stored } = mount(paragraph('typing'), { frames: frames.scheduler });
         handle.api.insertText('a');
         const restored = stored() as RteDocumentOf;
         composing(view, true);
@@ -607,23 +639,21 @@ describe('a document set by the host while text is being composed', () => {
         handle.setDoc(paragraph('reset'));
         handle.setDoc(restored);
         composing(view, false);
-        await nextFrame();
+        frames.runFrame();
 
         expect(view.state.doc.textContent).toBe('atyping');
     });
 
-    it('drops a waiting one once the editor is destroyed', async () => {
-        const { handle, view, live } = mount(paragraph('typing'));
+    it('drops a waiting one once the editor is destroyed', () => {
+        const frames = manualFrames();
+        const { handle, view, live } = mount(paragraph('typing'), { frames: frames.scheduler });
         composing(view, true);
         handle.setDoc(paragraph('late'));
+        expect(frames.pending()).toBe(1);
 
         live.destroy();
-        const dispatch = vi.spyOn(view, 'dispatch');
-        // A destroyed view handles no events, so the composition is ended directly.
-        Object.defineProperty(view, 'composing', { configurable: true, get: () => false });
-        await nextFrame();
 
-        expect(dispatch).not.toHaveBeenCalled();
+        expect(frames.pending()).toBe(0);
     });
 });
 
