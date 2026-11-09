@@ -336,7 +336,7 @@ const splitKeepingCarriedAttrs =
     (state, dispatch) => {
         // At the very start of a non-default block the engine retypes the empty block above to the default, dropping its attributes.
         let splitAtStart = false;
-        return chainCommands(
+        const split = chainCommands(
             newlineInCode,
             createParagraphNear,
             liftEmptyBlock,
@@ -352,22 +352,22 @@ const splitKeepingCarriedAttrs =
                 }
                 return { type, attrs: keepCarriedAttrs(registry, type, undefined)(node) };
             }),
-        )(
-            state,
-            dispatch &&
-                ((transaction) => {
-                    const { $from } = transaction.selection;
-                    const above = transaction.doc.resolve($from.before()).nodeBefore;
-                    if (splitAtStart && above?.isTextblock) {
-                        const carried = keepCarriedAttrs(registry, above.type, undefined)($from.parent);
-                        const attrs = { ...above.attrs, ...carried };
-                        if (!above.hasMarkup(above.type, attrs, above.marks)) {
-                            transaction.setNodeMarkup($from.before() - above.nodeSize, undefined, attrs);
-                        }
-                    }
-                    dispatch(transaction);
-                }),
         );
+        if (!dispatch) {
+            return split(state);
+        }
+        return split(state, (transaction) => {
+            const { $from } = transaction.selection;
+            const above = transaction.doc.resolve($from.before()).nodeBefore;
+            if (splitAtStart && above?.isTextblock) {
+                const carried = keepCarriedAttrs(registry, above.type, undefined)($from.parent);
+                const attrs = { ...above.attrs, ...carried };
+                if (!above.hasMarkup(above.type, attrs, above.marks)) {
+                    transaction.setNodeMarkup($from.before() - above.nodeSize, undefined, attrs);
+                }
+            }
+            dispatch(transaction);
+        });
     };
 
 /**

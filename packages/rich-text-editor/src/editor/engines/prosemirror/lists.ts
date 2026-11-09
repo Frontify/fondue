@@ -1,7 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { autoJoin } from 'prosemirror-commands';
-import { type Node as PmNode, type NodeType as PmNodeType, type ResolvedPos, type Schema } from 'prosemirror-model';
+import {
+    type Attrs,
+    type Node as PmNode,
+    type NodeType as PmNodeType,
+    type ResolvedPos,
+    type Schema,
+} from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem as pmSplitListItem, wrapInList } from 'prosemirror-schema-list';
 import { type Command, type EditorState, Selection, type Transaction } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
@@ -40,6 +46,59 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
 
 // Splitting
 
+type MarkupChange = { pos: number; attrs: Attrs };
+
+/** The innermost ancestor of a position that is an item of `itemType`, with the position it sits at. */
+const findItem = ($pos: ResolvedPos, itemType: PmNodeType): { node: PmNode; pos: number } | null => {
+    for (let depth = $pos.depth; depth > 0; depth--) {
+        const node = $pos.node(depth);
+        if (node.type === itemType) {
+            return { node, pos: $pos.before(depth) };
+        }
+    }
+    return null;
+};
+
+/** Where the item a split made sits: above the caret's item after a split at its very start, else the caret's item. */
+const newItemPos = (doc: PmNode, item: { node: PmNode; pos: number }, atItemStart: boolean): number => {
+    const block = item.node.firstChild;
+    const previous = doc.resolve(item.pos).nodeBefore;
+    // Split at the very start, the text stays in the caret's item and the empty one above is new.
+    if (atItemStart && block !== null && block.content.size > 0 && previous !== null) {
+        return item.pos - previous.nodeSize;
+    }
+    return item.pos;
+};
+
+/** The item at `pos` back to its type's default attributes, or null when it has them already. */
+const resetToDefaults = (doc: PmNode, pos: number): MarkupChange | null => {
+    const item = doc.nodeAt(pos);
+    if (!item) {
+        return null;
+    }
+    const defaults = item.type.create().attrs;
+    if (item.hasMarkup(item.type, defaults, item.marks)) {
+        return null;
+    }
+    return { pos, attrs: defaults };
+};
+
+/** The item's first text block with the attributes every text block carries, or null when it has them already. */
+const withCarriedAttrs = (
+    item: { node: PmNode; pos: number },
+    carried: (type: PmNodeType) => Attrs,
+): MarkupChange | null => {
+    const block = item.node.firstChild;
+    if (!block?.isTextblock) {
+        return null;
+    }
+    const attrs = { ...block.attrs, ...carried(block.type) };
+    if (block.hasMarkup(block.type, attrs, block.marks)) {
+        return null;
+    }
+    return { pos: item.pos + 1, attrs };
+};
+
 /**
  * `splitListItem`, except the new item starts from its type's default
  * attributes (an unchecked to-do, not a copy of the checked one) and its first
@@ -48,48 +107,30 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
 const splitListItem =
     (registry: PluginRegistry, itemType: PmNodeType): Command =>
     (state, dispatch) => {
+        const split = pmSplitListItem(itemType);
+        if (!dispatch) {
+            return split(state);
+        }
         const source = state.selection.$from.parent;
         const { $from: caret } = state.selection;
         // The first child only: at a later child's start the item above still holds earlier content.
         const atItemStart = caret.depth >= 2 && caret.parentOffset === 0 && caret.index(-1) === 0;
-        return pmSplitListItem(itemType)(
-            state,
-            dispatch &&
-                ((transaction) => {
-                    const { $from } = transaction.selection;
-                    for (let depth = $from.depth; depth > 0; depth--) {
-                        const item = $from.node(depth);
-                        if (item.type !== itemType) {
-                            continue;
-                        }
-                        const block = item.firstChild;
-                        const caretItemPos = $from.before(depth);
-                        // Split at the very start, the text stays in the caret's item and the empty one above is new.
-                        const previous = transaction.doc.resolve(caretItemPos).nodeBefore;
-                        const newAbove = atItemStart && block !== null && block.content.size > 0 && previous !== null;
-                        let newPos = caretItemPos;
-                        if (newAbove) {
-                            newPos = caretItemPos - previous.nodeSize;
-                        }
-                        const newItem = transaction.doc.nodeAt(newPos);
-                        const defaults = itemType.create().attrs;
-                        if (newItem && !newItem.hasMarkup(itemType, defaults, newItem.marks)) {
-                            transaction.setNodeMarkup(newPos, undefined, defaults);
-                        }
-                        if (!newAbove && block?.isTextblock) {
-                            const carried = {
-                                ...block.attrs,
-                                ...keepCarriedAttrs(registry, block.type, undefined)(source),
-                            };
-                            if (!block.hasMarkup(block.type, carried, block.marks)) {
-                                transaction.setNodeMarkup(caretItemPos + 1, undefined, carried);
-                            }
-                        }
-                        break;
+        return split(state, (transaction) => {
+            const item = findItem(transaction.selection.$from, itemType);
+            if (item) {
+                const newPos = newItemPos(transaction.doc, item, atItemStart);
+                const changes = [resetToDefaults(transaction.doc, newPos)];
+                if (newPos === item.pos) {
+                    changes.push(withCarriedAttrs(item, (type) => keepCarriedAttrs(registry, type, undefined)(source)));
+                }
+                for (const change of changes) {
+                    if (change) {
+                        transaction.setNodeMarkup(change.pos, undefined, change.attrs);
                     }
-                    dispatch(transaction);
-                }),
-        );
+                }
+            }
+            dispatch(transaction);
+        });
     };
 
 // The list half of the control API
@@ -110,7 +151,7 @@ export const createListApi = (
         }
         return command(itemType)(view.state, view.dispatch, view);
     };
-    // Same-type lists left side by side join, so numbering carries on; a join keeps only the first list's attributes.
+    /** Same-type lists left side by side join, so numbering carries on; a join keeps only the first list's attributes. */
     const joiningLists = (command: Command): Command =>
         autoJoin(command, (before, after) => itemTypeByList.has(before.type.name) && before.sameMarkup(after));
 

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { closeHistory } from 'prosemirror-history';
-import { EditorState, Selection, TextSelection } from 'prosemirror-state';
+import { EditorState, Selection, TextSelection, type Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { type MountedDocument, type MountDocument, type MountOptions } from '#/editor/port';
@@ -46,6 +46,25 @@ const HOST_DOC = 'rte-host-doc';
  * classes to THIS editor's content and leave other editors on the page alone.
  */
 const EDITABLE_ATTRIBUTE = 'data-rte-editable';
+
+/**
+ * Whether a transaction closes the undo step before it, and whether the edit
+ * after it must: typing groups into one step, while a paste, cut or drop, and
+ * the first edit after it, stand apart.
+ */
+const undoGrouping = (
+    transaction: Transaction,
+    closeBeforeNextEdit: boolean,
+): { close: boolean; closeBeforeNextEdit: boolean } => {
+    const uiEvent: unknown = transaction.getMeta('uiEvent');
+    if (uiEvent === 'paste' || uiEvent === 'cut' || uiEvent === 'drop') {
+        return { close: true, closeBeforeNextEdit: true };
+    }
+    if (transaction.docChanged) {
+        return { close: closeBeforeNextEdit, closeBeforeNextEdit: false };
+    }
+    return { close: false, closeBeforeNextEdit };
+};
 
 /** The editable element's attributes: the host's, then the marker. */
 const editableAttributes = (attributes: Readonly<Record<string, string>>): Record<string, string> => ({
@@ -153,21 +172,15 @@ const mount = ({
             return false;
         },
         dispatchTransaction(transaction) {
-            // Typing groups into one undo step; a paste, cut or drop, and the first edit after it, stand apart.
-            const uiEvent: unknown = transaction.getMeta('uiEvent');
-            const isTransfer = uiEvent === 'paste' || uiEvent === 'cut' || uiEvent === 'drop';
-            if (isTransfer || (closeBeforeNextEdit && transaction.docChanged)) {
+            const grouping = undoGrouping(transaction, closeBeforeNextEdit);
+            if (grouping.close) {
                 closeHistory(transaction);
             }
             // History joins only edits it finds adjacent, and a mark change has no range: a shared composition id joins a feature paste's edits.
             if (inFeaturePaste) {
                 transaction.setMeta('composition', 'rte-paste');
             }
-            if (isTransfer) {
-                closeBeforeNextEdit = true;
-            } else if (transaction.docChanged) {
-                closeBeforeNextEdit = false;
-            }
+            closeBeforeNextEdit = grouping.closeBeforeNextEdit;
             editorView.updateState(editorView.state.apply(transaction));
             repaintViews();
             // Host-originated changes are not reported back to the host.
