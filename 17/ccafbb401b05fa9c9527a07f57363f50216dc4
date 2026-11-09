@@ -1,0 +1,23 @@
+packages/components/src/components/Tree/hooks/useTreeController.ts
+  s_f4bd8cfbf36733::t_430613adb274d6 139-140
+  s_f4bd8cfbf36733::t_463f8a2aa8321b 126-127
+  s_f4bd8cfbf36733::t_089f10982d88b1 115-125,128-130
+  s_f4bd8cfbf36733::t_bffb8f7e302bde 15
+  s_f4bd8cfbf36733::t_71c0c17a5ce3f9 283
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "17ccafbb401b05fa9c9527a07f57363f50216dc4",
+  "prompts": {},
+  "sessions": {
+    "s_f4bd8cfbf36733": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "957f9406-1dc3-4ef8-8f4e-f3f47b88741e",
+        "model": "grok-4.7"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
