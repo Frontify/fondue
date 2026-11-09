@@ -116,7 +116,9 @@ export type EditorControlApi = {
     insert(type: string, value?: Record<string, unknown>): void;
     /**
      * Insert plain text at the selection, replacing what is selected, carrying the marks typing there would plus
-     * `marks` (type to value, as in `marks.toggle`), in one undo step. Unknown mark types are ignored.
+     * `marks`, in one undo step. Unknown mark types are ignored.
+     * @param marks - Marks to add, by type to value, as in `marks.toggle`.
+     * @default {}
      */
     insertText(text: string, marks?: Record<string, Record<string, unknown>>): void;
 

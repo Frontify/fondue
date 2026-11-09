@@ -23,8 +23,7 @@ export const strikethroughContent = /* @__PURE__ */ defineContent({
     marks: {
         strikethrough: /* @__PURE__ */ defineMark({
             tag: 's',
-            // An element with the decoration is struck through too: how Google Docs writes it.
-            // No rule reads `text-decoration: none` as a removal: a browser cannot take an ancestor's line off.
+            // A decorated element counts too, as Google Docs writes it; `text-decoration: none` never removes it, as in a browser.
             parse: [
                 { tag: 's' },
                 { tag: 'del' },

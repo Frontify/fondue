@@ -23,8 +23,7 @@ export const underlineContent = /* @__PURE__ */ defineContent({
     marks: {
         underline: /* @__PURE__ */ defineMark({
             tag: 'u',
-            // An element with the decoration is underlined too: how Google Docs writes it.
-            // No rule reads `text-decoration: none` as a removal: a browser cannot take an ancestor's line off.
+            // A decorated element counts too, as Google Docs writes it; `text-decoration: none` never removes it, as in a browser.
             parse: [
                 { tag: 'u' },
                 { style: 'text-decoration', value: (value) => (hasDecorationLine(value, 'underline') ? {} : null) },

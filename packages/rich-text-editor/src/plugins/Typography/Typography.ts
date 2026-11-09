@@ -4,21 +4,32 @@ import { definePlugin, INLINE_PLACEHOLDER, type RteInputRule } from '#/core';
 
 const TYPOGRAPHY_GROUPS = ['quotes', 'ellipsis', 'dashes', 'symbols', 'numeric'] as const;
 
-/** A set of shortcuts that can be turned on or off together. */
+/**
+ * A set of shortcuts that can be turned on or off together.
+ */
 export type TypographyGroup = (typeof TYPOGRAPHY_GROUPS)[number];
 
 export type TypographyPluginOptions = {
-    /** The groups of shortcuts to turn on. All of them by default. */
+    /**
+     * The groups of shortcuts to turn on.
+     * @default TYPOGRAPHY_GROUPS
+     */
     groups?: readonly TypographyGroup[];
 };
 
-/** `waitForRunEnd` waits for the run to end (a space or punctuation is typed), so `--flag`, `-->` and `10^23` stay as typed. */
+/**
+ * `waitForRunEnd` waits for the run to end (a space or punctuation is typed), so `--flag`, `-->` and `10^23` stay as typed.
+ */
 type Replacement = readonly [match: string | RegExp, replace: string, waitForRunEnd?: true];
 
-/** Where a quote opens: the start of a block, whitespace, an inline element, or an opening bracket or quote. */
+/**
+ * Where a quote opens: the start of a block, whitespace, an inline element, or an opening bracket or quote.
+ */
 const OPENERS = String.raw`(?<=^|[\s([{<'"“‘${INLINE_PLACEHOLDER}])`;
 
-/** `^2` for `²`, only right after a digit and at the end of a run (`2^2`, not `x^2` or `10^23`). `^o` for a degree sign. */
+/**
+ * `^2` for `²`, only right after a digit and at the end of a run (`2^2`, not `x^2` or `10^23`). `^o` for a degree sign.
+ */
 const SUPERSCRIPTS: readonly Replacement[] = /* @__PURE__ */ [...'0123456789o+-'].map(
     (character, index): Replacement => {
         const glyph = '⁰¹²³⁴⁵⁶⁷⁸⁹°⁺⁻'.charAt(index);
@@ -102,6 +113,8 @@ const toRule = ([match, replace, waitForRunEnd]: Replacement): RteInputRule => (
  * becomes `©`, `1/2` becomes `½`, a straight quote becomes a curly one.
  * Backspace right after takes one back. Text in inline code is left alone. No
  * toolbar and no document types: only typing rules. `groups` keeps only some.
+ * @example
+ * typographyPlugin({ groups: ['quotes', 'dashes'] })
  */
 export const typographyPlugin = ({ groups = TYPOGRAPHY_GROUPS }: TypographyPluginOptions = {}) =>
     definePlugin({

@@ -19,8 +19,7 @@ export const htmlSpecToDom = (spec: HtmlSpec): DOMOutputSpec => {
     } else if (typeof children === 'string') {
         head.push(children);
     } else if (children?.includes(true)) {
-        // A content hole must be its parent's only child, so what sits beside it
-        // (screen-reader text) stays out of the editor's DOM and its clipboard.
+        // A content hole must be its parent's only child, so what sits beside it (screen-reader text) stays out of the editor's DOM and clipboard.
         head.push(0);
     } else if (children) {
         head.push(...children.map((child) => (typeof child === 'object' ? htmlSpecToDom(child) : child)));

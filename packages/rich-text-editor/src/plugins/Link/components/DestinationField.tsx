@@ -49,14 +49,20 @@ export const DestinationField = ({
     inputRef: Ref<HTMLInputElement>;
     value: string;
     status: 'neutral' | 'error';
-    /** The message shown under the field while `status` is an error. */
+    /**
+     * The message shown under the field while `status` is an error.
+     */
     errorId: string | undefined;
-    /** Without it the field is a plain address input. */
+    /**
+     * Without it the field is a plain address input.
+     */
     search?: LinkSearch;
     policy: LinkPolicy;
     onChange: (value: string) => void;
     onPick: (destination: LinkDestination) => void;
-    /** Enter with no option active: the form's own Enter. */
+    /**
+     * Enter with no option active: the form's own Enter.
+     */
     onEnter: (event: KeyboardEvent<HTMLInputElement>) => void;
 }): ReactNode => {
     const listId = useId();
@@ -67,7 +73,10 @@ export const DestinationField = ({
     const [closedFor, setClosedFor] = useState<string | null>(value);
     // Tagged with its value so typing drops the highlight without an effect.
     const [highlighted, setHighlighted] = useState({ value, index: -1 });
-    const activeIndex = highlighted.value === value ? Math.min(highlighted.index, results.length - 1) : -1;
+    let activeIndex = -1;
+    if (highlighted.value === value) {
+        activeIndex = Math.min(highlighted.index, results.length - 1);
+    }
     const active = results[activeIndex];
     const shown = closedFor !== value;
     const listOpen = shown && results.length > 0;
@@ -132,16 +141,16 @@ export const DestinationField = ({
     };
 
     // A spread: the field's props do not list the combobox attributes, but pass them on to the input.
-    const comboboxProps =
-        search === undefined
-            ? {}
-            : {
-                  role: 'combobox',
-                  'aria-expanded': listOpen,
-                  'aria-controls': listOpen ? listId : undefined,
-                  'aria-autocomplete': 'list',
-                  'aria-activedescendant': listOpen && active !== undefined ? optionId(activeIndex) : undefined,
-              };
+    let comboboxProps = {};
+    if (search !== undefined) {
+        comboboxProps = {
+            role: 'combobox',
+            'aria-expanded': listOpen,
+            'aria-controls': listOpen ? listId : undefined,
+            'aria-autocomplete': 'list',
+            'aria-activedescendant': listOpen && active !== undefined ? optionId(activeIndex) : undefined,
+        };
+    }
 
     return (
         <>

@@ -5,7 +5,9 @@ import { useEffect, useState } from 'react';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
 import { allowsHref, type LinkPolicy } from '../helpers/policy';
 
-/** How long the author must pause before a search runs. */
+/**
+ * How long the author must pause before a search runs.
+ */
 const SEARCH_DELAY_MS = 200;
 
 export type DestinationSearch = {
@@ -13,7 +15,9 @@ export type DestinationSearch = {
     status: 'idle' | 'searching' | 'done' | 'failed';
 };
 
-/** The answer to one query; `null` results mean the search failed. */
+/**
+ * The answer to one query; `null` results mean the search failed.
+ */
 type Answer = { query: string; results: readonly LinkDestination[] | null };
 
 /**

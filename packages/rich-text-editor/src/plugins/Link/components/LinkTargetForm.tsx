@@ -15,35 +15,43 @@ import styles from './linkForm.module.scss';
 const UNREADABLE = 'Enter a web address (example.com), an email address, or a phone number (tel:…).';
 
 /**
- * Where a link points, and whether it opens a new tab. An existing link's text
- * is edited in place; a new link gets a Text field, shown when `initialText`
- * is given. Input is validated on save, with the reason announced under the
- * field.
+ * The `kind` says whether the form makes a new link, which gets a Text field, or edits one that exists, whose text is edited in place. It also decides what `onSave` receives.
  */
-export const LinkTargetForm = ({
-    initial,
-    initialText,
-    policy,
-    search,
-    onSave,
-    onCancel,
-    onRemove,
-}: {
+export type LinkTargetFormProps = {
     initial: LinkValue;
-    /** The text the link shows, for a link not made yet. Without it the form has no Text field. */
-    initialText?: string;
     policy: LinkPolicy;
-    /** Turns the "Link to" field into a search over the app's pages. */
+    /**
+     * Turns the "Link to" field into a search over the app's pages.
+     */
     search?: LinkSearch;
-    /** The text is the Text field's, or empty when the form has none. */
-    onSave: (value: LinkValue, text: string) => void;
     onCancel: () => void;
     /** Offered for a link that exists: take it away, keeping its text. */
     onRemove?: () => void;
-}): ReactNode => {
+} & (
+    | {
+          kind: 'create';
+          /**
+           * The text the new link shows, to start with.
+           */
+          text: string;
+          /**
+           * The text is the Text field's.
+           */
+          onSave: (value: LinkValue, text: string) => void;
+      }
+    | { kind: 'edit'; onSave: (value: LinkValue) => void }
+);
+
+/**
+ * Where a link points, and whether it opens a new tab. An existing link's text
+ * is edited in place; a new link gets a Text field, shown in `create` mode.
+ * Input is validated on save, with the reason announced under the field.
+ */
+export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
+    const { initial, policy, search, onCancel, onRemove } = props;
     // A stored link without a string target opens the form empty rather than uncontrolled.
     const [typed, setTyped] = useState(typeof initial.href === 'string' ? initial.href : '');
-    const [text, setText] = useState(initialText ?? '');
+    const [text, setText] = useState(props.kind === 'create' ? props.text : '');
     const [openInNewTab, setOpenInNewTab] = useState(initial.openInNewTab === true);
     // Set by a failed save, cleared when the field changes.
     const [error, setError] = useState<string | null>(null);
@@ -54,11 +62,15 @@ export const LinkTargetForm = ({
     const urlFieldRef = useRef<HTMLInputElement>(null);
     const textFieldRef = useRef<HTMLInputElement>(null);
 
+    const startsOnText = props.kind === 'create' && props.text === '';
     useEffect(() => {
         // Selected text is already there to keep, so the address is what is left to type.
-        const first = initialText === '' ? textFieldRef.current : urlFieldRef.current;
+        let first = urlFieldRef.current;
+        if (startsOnText) {
+            first = textFieldRef.current;
+        }
         first?.focus();
-    }, [initialText]);
+    }, [startsOnText]);
 
     const save = (): void => {
         const href = toHref(typed);
@@ -74,8 +86,15 @@ export const LinkTargetForm = ({
             urlFieldRef.current?.focus();
             return;
         }
-        const value: LinkValue = openInNewTab ? { href, openInNewTab: true } : { href };
-        onSave(value, text);
+        let value: LinkValue = { href };
+        if (openInNewTab) {
+            value = { href, openInNewTab: true };
+        }
+        if (props.kind === 'create') {
+            props.onSave(value, text);
+        } else {
+            props.onSave(value);
+        }
     };
 
     const saveOnEnter = (event: KeyboardEvent<HTMLInputElement>): void => {
@@ -92,14 +111,14 @@ export const LinkTargetForm = ({
         setTyped(destination.href);
         setError(null);
         // An empty Text field takes the page's name; text already there is the author's.
-        if (initialText !== undefined && text === '') {
+        if (props.kind === 'create' && text === '') {
             setText(destination.label);
         }
     };
 
     return (
         <div className={styles.fields}>
-            {initialText === undefined ? null : (
+            {props.kind === 'edit' ? null : (
                 <div className={styles.field}>
                     <Label htmlFor={textId}>Text</Label>
                     <TextInput
