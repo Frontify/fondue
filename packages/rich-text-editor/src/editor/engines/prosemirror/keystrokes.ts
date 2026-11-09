@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { baseKeymap, chainCommands, setBlockType } from 'prosemirror-commands';
-import { history, redo, undo } from 'prosemirror-history';
+import { baseKeymap, setBlockType } from 'prosemirror-commands';
+import { history, redo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { type MarkType as PmMarkType, type Schema } from 'prosemirror-model';
@@ -9,7 +9,7 @@ import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, type T
 
 import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
 
-import { keepCarriedAttrs } from './controlApi';
+import { keepCarriedAttrs, undoStep } from './controlApi';
 import { EXTRA_ATTR, valueAttrsFor } from './documentConversion';
 import { listKeys } from './lists';
 
@@ -36,7 +36,7 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         // 1
         history(),
         keymap({
-            'Mod-z': chainCommands(undoInputRule, undo),
+            'Mod-z': undoStep,
             'Mod-y': redo,
             'Mod-Shift-z': redo,
             Backspace: undoInputRule,

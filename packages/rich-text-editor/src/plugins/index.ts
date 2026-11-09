@@ -8,6 +8,7 @@ import { checkListPlugin } from './CheckList';
 import { codePlugin } from './Code';
 import { emojiPlugin } from './Emoji';
 import { fontColorPlugin } from './FontColor';
+import { historyPlugin } from './History';
 import { italicPlugin } from './Italic';
 import { linkPlugin } from './Link';
 import { bulletListPlugin, numberedListPlugin } from './List';
@@ -38,6 +39,7 @@ import { underlinePlugin } from './Underline';
  * `(c)` and `1/2` as they are typed).
  */
 export const defaultPlugins: readonly RtePlugin[] = Object.freeze([
+    historyPlugin(),
     textStylePlugin(),
     boldPlugin(),
     italicPlugin(),

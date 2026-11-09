@@ -95,6 +95,7 @@ export { codePlugin } from './plugins/Code';
 export { columnBreakPlugin } from './plugins/ColumnBreak';
 export { defaultEmojis, emojiPlugin } from './plugins/Emoji';
 export { fontColorPlugin } from './plugins/FontColor';
+export { historyPlugin } from './plugins/History';
 export { italicPlugin } from './plugins/Italic';
 export { linkPlugin } from './plugins/Link';
 export { bulletListPlugin, numberedListPlugin } from './plugins/List';
@@ -118,7 +119,7 @@ export { type TextStylePluginOptions } from './plugins/TextStyle';
 
 // --- Plugin authoring ---
 
-export { ANY_LIST, defineBlock, defineInline, defineMark } from './core';
+export { ANY_LIST, defineBlock, defineInline, defineMark, type RteToolbarGroup } from './core';
 
 /** A plugin. The types to write one with are nested: `RtePlugin.EditorControlApi`, `RtePlugin.BlockDefinition<T>`, … */
 export type RtePlugin = CorePlugin;

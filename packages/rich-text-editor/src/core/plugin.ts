@@ -52,6 +52,12 @@ export type RtePlugin = {
      * otherwise — a block reaches the floating bar through `commands`.
      */
     floatingToolbar?: 'inline' | 'hidden';
+    /**
+     * Which cluster of the toolbar `toolbarItem` sits in. Groups follow a fixed
+     * order, items keep mount order inside theirs, and items with no group come
+     * last, together.
+     */
+    toolbarGroup?: RteToolbarGroup;
     /** Entries for the floating bar's "Turn into" menu and the `/` menu, in the order given. */
     commands?: readonly RteBlockCommand[];
     /**
@@ -224,6 +230,12 @@ export type BlockAttributeDefinition = {
 // --- Toolbar ---
 
 /**
+ * The toolbar's clusters, in the order they are drawn: undo and redo, text
+ * style, inline marks, colour, link, lists, alignment, inserts, then panels.
+ */
+export type RteToolbarGroup = 'history' | 'text' | 'marks' | 'color' | 'link' | 'lists' | 'align' | 'insert' | 'panels';
+
+/**
  * What a `toolbarItem` gets: the API, the plugin's own node at the selection,
  * the selection, and commands bound to the plugin's own type that do the right
  * thing for its kind. Anything else goes through `api`.
@@ -235,6 +247,8 @@ export type ToolbarItemProps = {
     selection: RteSelectionSnapshot;
     /** The selection carries this mark, or sits in this block. Never for an inline. */
     isActive: boolean;
+    /** Only part of a selected range carries this mark, so the control shows it as mixed. Never for anything but a mark. */
+    isMixed: boolean;
     /**
      * Toggle the mark, wrap or unwrap the list, switch a text block to this
      * type or back to a paragraph, insert the void block or the inline.

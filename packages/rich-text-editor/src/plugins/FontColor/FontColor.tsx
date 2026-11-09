@@ -56,5 +56,6 @@ export const fontColorPlugin = (): RtePlugin => ({
             ],
         }),
     },
+    toolbarGroup: 'color',
     toolbarItem: ({ api, selection }) => <ColorFlyout selection={selection} api={api} />,
 });

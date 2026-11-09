@@ -31,6 +31,7 @@ export {
     type RteBlockCommand,
     type RteInputRule,
     type RtePlugin,
+    type RteToolbarGroup,
     type SelectedNode,
     type ToolbarItemProps,
 } from './plugin';

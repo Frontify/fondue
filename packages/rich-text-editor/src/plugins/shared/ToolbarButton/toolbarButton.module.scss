@@ -1,31 +1,60 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 /**
- * The "on" state of a toggle or radio, which Fondue's Button has no form for:
- * the highlight fill. The doubled class outweighs the Button's variant
- * selectors without `!important`.
+ * The toolbar look over Fondue's weak Button. The attributes lift these rules
+ * above the Button's variant selectors without `!important`.
  */
-.button.button:is([aria-pressed='true'], [aria-checked='true']):not([disabled]) {
-    background-color: var(--color-container-highlight-default);
-    color: var(--color-container-highlight-on-highlight-container);
+.button[data-variant][data-emphasis][data-size][data-aspect]:not([disabled]) {
+    // A theme switch repaints the toolbar at once, not through Fondue's colour fade.
+    transition: none;
+    background-color: transparent;
+    color: var(--color-primary-default);
 
-    &:hover {
-        background-color: var(--color-container-highlight-hover);
+    /** The "on" state Fondue's Button has no form for: a fill and a bar under the icon, dashed when mixed. */
+    &:is([aria-pressed='true'], [aria-pressed='mixed'], [aria-checked='true']) {
+        // The bar takes the 2px the padding holds, so the icon stays put.
+        padding-block-start: 2px;
+        border-block-end: 2px solid currentcolor;
+        background-color: var(--color-container-secondary-default);
     }
 
+    &[aria-pressed='mixed'] {
+        border-block-end-style: dashed;
+    }
+
+    &:hover,
     &:active {
-        background-color: var(--color-container-highlight-active);
+        background-color: var(--color-container-secondary-hover);
+        color: var(--color-primary-hover);
+    }
+}
+
+/** A coarse pointer gets 44 by 44 CSS pixel targets. */
+@media (pointer: coarse) {
+    .button[data-size][data-aspect] {
+        min-inline-size: 44px;
+        min-block-size: 44px;
     }
 }
 
 /**
- * Forced colours drop fills and shadows, which is all the state above is drawn
- * with; the system's highlight pair takes over.
+ * Forced colours drop fills, which is half of the state above; the system's
+ * highlight pair takes over.
  */
 @media (forced-colors: active) {
-    .button.button:is([aria-pressed='true'], [aria-checked='true']):not([disabled]) {
+    .button[data-variant][data-emphasis][data-size][data-aspect]:is(
+            [aria-pressed='true'],
+            [aria-pressed='mixed'],
+            [aria-checked='true']
+        ):not([disabled]) {
         background-color: Highlight;
         color: HighlightText;
         forced-color-adjust: none;
     }
+}
+
+/** The label and its shortcut side by side. */
+.tooltip {
+    display: inline-flex;
+    gap: var(--spacing-x-small);
 }

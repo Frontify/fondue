@@ -19,23 +19,39 @@
     margin-bottom: var(--spacing-x-small);
 }
 
-/** The controls themselves, wherever the bar holding them ends up. */
+/** The controls themselves, wherever the bar holding them ends up. The gap parts the groups. */
 .toolbar {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: var(--spacing-xx-small);
+    gap: var(--spacing-small);
     // The inset inside the floating bar's surface.
-    padding: var(--spacing-x-small);
+    padding: var(--spacing-xx-small);
 
     /**
-     * A row above the content, lined up with the text's left edge rather than
-     * inset into a strip; the space below keeps it off the first line.
+     * One row above the content that stays in view while the content scrolls,
+     * lined up with the text's left edge rather than inset into a strip; the
+     * space below keeps it off the first line.
      */
     &[data-placement='top'] {
+        position: sticky;
+        inset-block-start: 0;
+        z-index: 1;
+        flex-wrap: nowrap;
         padding: 0;
         margin-bottom: var(--spacing-x-small);
+        background-color: var(--color-surface-default);
     }
+
+    @media print {
+        display: none;
+    }
+}
+
+/** One cluster of related controls, packed tight. */
+.group {
+    display: flex;
+    align-items: center;
 }
 
 /**
@@ -77,8 +93,24 @@
     }
 }
 
-/** The "Turn into" button of the floating bar: the block's name beside a caret. */
-.turnInto {
+/**
+ * The "Turn into" button of the floating bar: the block's name beside a caret,
+ * with the toolbar buttons' hover. The attributes outweigh the Button's variant rules.
+ */
+.turnInto[data-variant][data-emphasis][data-size] {
     gap: var(--spacing-xx-small);
     white-space: nowrap;
+    // A theme switch repaints the toolbar at once, not through Fondue's colour fade.
+    transition: none;
+
+    &:hover,
+    &:active {
+        background-color: var(--color-container-secondary-hover);
+        color: var(--color-primary-hover);
+    }
+
+    /** A coarse pointer gets a 44 CSS pixel target. */
+    @media (pointer: coarse) {
+        min-block-size: 44px;
+    }
 }

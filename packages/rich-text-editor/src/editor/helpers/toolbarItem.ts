@@ -19,6 +19,7 @@ export const toolbarItemProps = (
 ): ToolbarItemProps => {
     const selectedNode = selectedNodeOf(own, api, selection);
     const isActive = own.kind === 'mark' ? own.type in selection.marks : selectedNode !== null;
+    const isMixed = own.kind === 'mark' && own.type in selection.partialMarks;
 
     const toggle = (value?: Record<string, unknown>): void => {
         switch (own.kind) {
@@ -48,6 +49,7 @@ export const toolbarItemProps = (
         selectedNode,
         selection,
         isActive,
+        isMixed,
         toggle,
         openEditor: () => {
             if (own.kind !== 'none') {

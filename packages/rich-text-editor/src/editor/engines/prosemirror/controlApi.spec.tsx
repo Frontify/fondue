@@ -146,6 +146,22 @@ describe('the selection snapshot', () => {
         expect(editor.api.selection.get().marks).toEqual({});
     });
 
+    it('reports a mark only part of a range carries as partial, and one all of it carries as not', () => {
+        const editor = editorWith(plugins, [
+            paragraph(text('half', { bold: true, italic: true }), text(' plain', { italic: true })),
+        ]);
+        editor.selectBetween('half', 'plain');
+
+        expect(editor.api.selection.get().partialMarks).toEqual({ bold: true });
+    });
+
+    it('reports no partial marks at a caret', () => {
+        const editor = editorWith(plugins, [paragraph(text('half', { bold: true }), text(' plain'))]);
+        editor.caretAfter('half');
+
+        expect(editor.api.selection.get().partialMarks).toEqual({});
+    });
+
     it('reports the value of the run the range starts in when a mark has several', () => {
         const editor = editorWith(plugins, [
             paragraph(
@@ -659,6 +675,38 @@ describe('insert', () => {
         expect(editor.stored()).toEqual([
             paragraph(text('a', { bold: true }), { type: 'tag', name: 'Ada' }, text('b', { bold: true })),
         ]);
+    });
+});
+
+describe('history', () => {
+    it('has nothing to undo or redo before an edit', () => {
+        const { api } = editorWith(plugins, [paragraph()]);
+
+        expect(api.history.canUndo()).toBe(false);
+        expect(api.history.canRedo()).toBe(false);
+    });
+
+    it('undoes an edit and redoes it', () => {
+        const editor = editorWith(plugins, [paragraph()]);
+        editor.type('hi');
+
+        expect(editor.api.history.canUndo()).toBe(true);
+        editor.api.history.undo();
+
+        expect(editor.stored()).toEqual([paragraph()]);
+        expect(editor.api.history.canRedo()).toBe(true);
+        editor.api.history.redo();
+
+        expect(editor.stored()).toEqual([paragraph(text('hi'))]);
+    });
+
+    it('takes just a typing rewrite back on undo, as Mod-z does', () => {
+        const editor = editorWith(plugins, [paragraph()]);
+        editor.type('## ');
+
+        editor.api.history.undo();
+
+        expect(editor.stored()).toEqual([paragraph(text('## '))]);
     });
 });
 

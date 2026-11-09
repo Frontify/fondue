@@ -34,7 +34,7 @@ export const EmojiToolbarButton = ({
         <Flyout.Root open={open} onOpenChange={setOpen}>
             <Flyout.Trigger>
                 <ToolbarButton title="Emoji">
-                    <IconFaceHappy size={16} />
+                    <IconFaceHappy size={20} />
                 </ToolbarButton>
             </Flyout.Trigger>
             <Flyout.Content

@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { setBlockType as pmSetBlockType, toggleMark as pmToggleMark } from 'prosemirror-commands';
+import { chainCommands, setBlockType as pmSetBlockType, toggleMark as pmToggleMark } from 'prosemirror-commands';
+import { redo, redoDepth, undo, undoDepth } from 'prosemirror-history';
+import { undoInputRule } from 'prosemirror-inputrules';
 import {
     type Mark as PmMark,
     type MarkType as PmMarkType,
@@ -8,7 +10,7 @@ import {
     type NodeType as PmNodeType,
     type Schema,
 } from 'prosemirror-model';
-import { type EditorState, NodeSelection, TextSelection } from 'prosemirror-state';
+import { type Command, type EditorState, NodeSelection, TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry, type RteSelectionSnapshot } from '#/core';
@@ -36,14 +38,18 @@ import { warnUnknownType } from './warnings';
  * The marks a caret would type with, or the marks EVERY text in a range
  * carries — a half-bold range is not bold. Each with the first value found, so
  * a mark spanning differently-valued runs reads as the one the range starts in.
+ * A range also reports the marks only some of its text carries.
  */
-const marksAt = (state: EditorState): Record<string, Record<string, unknown>> => {
+const marksAt = (state: EditorState): Pick<RteSelectionSnapshot, 'marks' | 'partialMarks'> => {
     const { from, to, empty, $from } = state.selection;
     if (empty) {
         // Stored marks (a toggle not yet typed into), else what is behind the caret.
-        return Object.fromEntries(
-            (state.storedMarks ?? $from.marks()).map((mark) => [mark.type.name, markValueOf(mark)]),
-        );
+        return {
+            marks: Object.fromEntries(
+                (state.storedMarks ?? $from.marks()).map((mark) => [mark.type.name, markValueOf(mark)]),
+            ),
+            partialMarks: {},
+        };
     }
 
     // Only text contributes: the document stores no marks on inline elements.
@@ -55,7 +61,16 @@ const marksAt = (state: EditorState): Record<string, Record<string, unknown>> =>
     });
     const [first = [], ...rest] = runs;
     const carried = first.filter((mark) => rest.every((marks) => mark.type.isInSet(marks) !== undefined));
-    return Object.fromEntries(carried.map((mark) => [mark.type.name, markValueOf(mark)]));
+    const marks = Object.fromEntries(carried.map((mark) => [mark.type.name, markValueOf(mark)]));
+    const partialMarks: Record<string, true> = {};
+    for (const run of runs) {
+        for (const mark of run) {
+            if (!(mark.type.name in marks)) {
+                partialMarks[mark.type.name] = true;
+            }
+        }
+    }
+    return { marks, partialMarks };
 };
 
 /** The chain of blocks around the selection, and which of them is *the* one. */
@@ -95,7 +110,7 @@ const snapshotOf = (state: EditorState): RteSelectionSnapshot => {
         // Void nodes (a mention, a line break) contribute nothing: only readable text.
         text: empty ? '' : state.doc.textBetween(from, to, ' '),
         ...blocksAt(state),
-        marks: marksAt(state),
+        ...marksAt(state),
     };
 };
 
@@ -327,6 +342,24 @@ const createBlockApi = (
     };
 };
 
+// --- History ---
+
+/** Takes a typing rewrite back first, as Backspace right after one does; Mod-z runs it too. */
+export const undoStep: Command = chainCommands(undoInputRule, undo);
+
+const createHistoryApi = (getView: () => EditorView): EditorControlApi['history'] => ({
+    undo() {
+        const view = getView();
+        undoStep(view.state, view.dispatch);
+    },
+    redo() {
+        const view = getView();
+        redo(view.state, view.dispatch);
+    },
+    canUndo: () => undoDepth(getView().state) > 0,
+    canRedo: () => redoDepth(getView().state) > 0,
+});
+
 // --- The whole api ---
 
 /** Which type's editing UI is open, and how to redraw the views that show it. */
@@ -343,6 +376,7 @@ export const createControlApi = (
     marks: createMarkApi(getView, schema),
     blocks: createBlockApi(getView, schema, registry),
     lists: createListApi(getView, schema, registry),
+    history: createHistoryApi(getView),
 
     insert(type, value) {
         const nodeType = schema.nodes[type];

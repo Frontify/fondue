@@ -22,6 +22,11 @@ export type RteSelectionSnapshot = {
      * every text in it carries — a half-bold range is not bold.
      */
     marks: Record<string, Record<string, unknown>>;
+    /**
+     * The marks some but not all of a range's text carries, by mark type: a
+     * half-bold range has `bold` here and not in `marks`. Empty on a caret.
+     */
+    partialMarks: Record<string, true>;
 };
 
 /**
@@ -105,6 +110,16 @@ export type EditorControlApi = {
         afterCaret(): string;
         /** Delete this many characters before the caret, without leaving the block. */
         deleteBefore(count: number): void;
+    };
+
+    /** The undo history, the same steps as Mod-z and Mod-Shift-z. */
+    history: {
+        /** Take the last change back; right after a typing rewrite, only the rewrite. */
+        undo(): void;
+        /** Make the last undone change again. */
+        redo(): void;
+        canUndo(): boolean;
+        canRedo(): boolean;
     };
 
     /** Return focus to the editor, e.g. after closing plugin UI. */

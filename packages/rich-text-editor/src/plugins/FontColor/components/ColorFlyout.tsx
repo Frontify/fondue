@@ -104,7 +104,7 @@ export const ColorFlyout = ({
                     title={currentCss === undefined ? 'Text colour' : `Text colour: ${currentCss.toUpperCase()}`}
                 >
                     <span className={styles.trigger}>
-                        <IconDroplet size={16} />
+                        <IconDroplet size={20} />
                         <span
                             aria-hidden
                             className={styles.swatch}
