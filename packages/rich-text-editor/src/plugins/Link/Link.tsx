@@ -38,7 +38,9 @@ export const linkContent = /* @__PURE__ */ defineContent({
             // Typing at the end of a link does not extend it.
             inclusive: false,
 
-            /** The link everywhere but while editing: readonly, export, copy. */
+            /**
+             * The link everywhere but while editing: readonly, export, copy
+             */
             toHtml: (value) => {
                 // A stored document may hold anything here (`{}`, `true`), so
                 // nothing about its shape is taken on trust.

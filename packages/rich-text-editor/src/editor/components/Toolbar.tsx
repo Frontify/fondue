@@ -54,17 +54,27 @@ export const Toolbar = ({
     controls,
     focusRequestRef,
 }: {
-    /** The registry's toolbar entries, in mount order. The floating bar keeps the inline ones. */
+    /**
+     * The registry's toolbar entries, in mount order. The floating bar keeps the inline ones.
+     */
     items: readonly ToolbarEntry[];
-    /** Floating bar only: every block command, for its "Turn into" menu. */
+    /**
+     * Floating bar only: every block command, for its "Turn into" menu
+     */
     commands?: readonly RteBlockCommand[];
     api: EditorControlApi;
     editorState: EditorStateStore;
-    /** The row above the text sits flush with it; a floating bar is a surface of its own, inset. */
+    /**
+     * The row above the text sits flush with it; a floating bar is a surface of its own, inset
+     */
     placement: ToolbarPlacement;
-    /** The editor's words: the toolbar's accessible name, and Turn into's. */
+    /**
+     * The editor's words: the toolbar's accessible name, and Turn into's
+     */
     labels: RichTextEditorLabels;
-    /** The id of the editable element the controls act on. */
+    /**
+     * The id of the editable element the controls act on
+     */
     controls: string;
     /**
      * Set by the editor when the toolbar should take focus (Alt+F10): read
@@ -179,7 +189,9 @@ export const Toolbar = ({
     );
 };
 
-/** A click on the toolbar that misses a control would move focus, and the selection with it. */
+/**
+ * A click on the toolbar that misses a control would move focus, and the selection with it
+ */
 const keepSelection = (event: MouseEvent<HTMLDivElement>): void => {
     const target = event.target as HTMLElement;
     // A flyout's events arrive here through the component tree; they are not ours.
@@ -223,7 +235,9 @@ const ToolbarItemSlot = ({ item, itemProps }: ToolbarItemSlotProps): ReactNode =
     );
 };
 
-/** Every element in the toolbar a keyboard can land on. Disabled controls are passed over. */
+/**
+ * Every element in the toolbar a keyboard can land on. Disabled controls are passed over.
+ */
 const CONTROLS = 'button, input, select, textarea, a[href], [role="combobox"]';
 
 const controlsIn = (toolbar: HTMLElement): HTMLElement[] =>
@@ -231,7 +245,9 @@ const controlsIn = (toolbar: HTMLElement): HTMLElement[] =>
         (control) => !control.matches(':disabled') && control.closest('[aria-hidden="true"]') === null,
     );
 
-/** A text field keeps the arrow keys for its own caret. */
+/**
+ * A text field keeps the arrow keys for its own caret
+ */
 const keepsArrowKeys = (target: HTMLElement): boolean =>
     target instanceof HTMLTextAreaElement ||
     (target instanceof HTMLInputElement && !['button', 'checkbox', 'radio'].includes(target.type));

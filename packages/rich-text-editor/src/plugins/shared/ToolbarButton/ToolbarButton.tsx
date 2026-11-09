@@ -7,20 +7,28 @@ import styles from './toolbarButton.module.scss';
 
 type ToolbarButtonProps = {
     children: ReactNode;
-    /** Omit for buttons that are actions rather than toggles — it drives `aria-pressed`. */
+    /**
+     * Omit for buttons that are actions rather than toggles — it drives `aria-pressed`
+     */
     active?: boolean;
     disabled?: boolean;
     onClick?: () => void;
-    /** Accessible name and tooltip. Required: the labels are icons, which have no name of their own. */
+    /**
+     * Accessible name and tooltip. Required: the labels are icons, which have no name of their own.
+     */
     title: string;
-    /** The matching hotkey, written as in a plugin's `hotkeys` (`Mod-b`). Shown in the tooltip and `aria-keyshortcuts`; the binding is the plugin's. */
+    /**
+     * The matching hotkey, written as in a plugin's `hotkeys` (`Mod-b`). Shown in the tooltip and `aria-keyshortcuts`; the binding is the plugin's.
+     */
     shortcut?: string;
     // Other props reach the button so it works as a `Flyout.Trigger`, whose injected handlers and `aria-expanded` must hit the DOM.
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'title' | 'children'>;
 
 const isApple = (): boolean => typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
 
-/** `Mod-Shift-x` as `aria-keyshortcuts` spells it: `Meta+Shift+X` on Apple systems, `Control+Shift+X` elsewhere. */
+/**
+ * `Mod-Shift-x` as `aria-keyshortcuts` spells it: `Meta+Shift+X` on Apple systems, `Control+Shift+X` elsewhere
+ */
 export const ariaKeyShortcut = (shortcut: string, apple = isApple()): string =>
     shortcut
         .split('-')
@@ -29,7 +37,9 @@ export const ariaKeyShortcut = (shortcut: string, apple = isApple()): string =>
 
 const APPLE_SYMBOLS: Record<string, string> = { Mod: '⌘', Shift: '⇧', Alt: '⌥', Ctrl: '⌃' };
 
-/** `Mod-Shift-x` as people read it: `⌘⇧X` on Apple systems, `Ctrl+Shift+X` elsewhere. */
+/**
+ * `Mod-Shift-x` as people read it: `⌘⇧X` on Apple systems, `Ctrl+Shift+X` elsewhere
+ */
 export const readableShortcut = (shortcut: string, apple = isApple()): string => {
     const parts = shortcut.split('-').map((part) => (part.length === 1 ? part.toUpperCase() : part));
     return apple

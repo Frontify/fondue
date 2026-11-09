@@ -75,7 +75,9 @@ export const textStyleContent = /* @__PURE__ */ textStyleContentFor(ALL_TEXT_STY
 
 const HEADING_LEVEL: Partial<Record<string, number>> = { h1: 1, h2: 2, h3: 3, h4: 4 };
 
-/** Words the `/` menu also finds a heading by. */
+/**
+ * Words the `/` menu also finds a heading by
+ */
 const HEADING_KEYWORDS: Partial<Record<number, readonly string[]>> = {
     1: ['h1', 'title'],
     2: ['h2', 'subtitle'],

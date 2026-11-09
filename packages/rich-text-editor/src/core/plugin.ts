@@ -19,13 +19,21 @@ import { type HtmlSpec, type StyleMap } from './htmlSpec';
  * back); an advanced node adds a readonly view under `render.component`.
  */
 export type RteContent = {
-    /** Block types (`defineBlock`), keyed by the `type` they are stored under. */
+    /**
+     * Block types (`defineBlock`), keyed by the `type` they are stored under
+     */
     blocks?: Record<string, BlockDefinition>;
-    /** Marks (`defineMark`), keyed by the key they are stored under on a text node. */
+    /**
+     * Marks (`defineMark`), keyed by the key they are stored under on a text node
+     */
     marks?: Record<string, MarkDefinition>;
-    /** Void inline elements (`defineInline`), keyed by the `type` they are stored under. */
+    /**
+     * Void inline elements (`defineInline`), keyed by the `type` they are stored under
+     */
     inlines?: Record<string, InlineDefinition>;
-    /** Attributes every text block carries, whichever plugin declared the block (alignment), keyed by stored name. */
+    /**
+     * Attributes every text block carries, whichever plugin declared the block (alignment), keyed by stored name
+     */
     blockAttributes?: Record<string, BlockAttributeDefinition>;
     /**
      * Class added to the editable element, for a feature that styles all content (columns)
@@ -87,7 +95,9 @@ export type RtePlugin = {
      *   view completes: its `value` is null until then.
      */
     edit?: Record<string, RteEditView>;
-    /** Entries for the floating bar's "Turn into" menu and the `/` menu, in the order given. */
+    /**
+     * Entries for the floating bar's "Turn into" menu and the `/` menu, in the order given
+     */
     commands?: readonly RteBlockCommand[];
     /**
      * Keybindings, keyed `Mod-b` style (Mod = Cmd on macOS, Ctrl elsewhere) or
@@ -100,7 +110,9 @@ export type RtePlugin = {
      * Text rewritten as it is typed: markdown shortcuts and autolinks
      */
     inputRules?: readonly (RteInputRule | RteDelimiterRule)[];
-    /** Runs before the editor's own paste, in plugin order. */
+    /**
+     * Runs before the editor's own paste, in plugin order
+     */
     onPaste?: PasteHandler;
 };
 
@@ -223,7 +235,9 @@ export const defineBlock = <TValue extends object = Record<string, never>>(
 export type BlockDefinition<TValue = Record<string, unknown>> = {
     content?: ContentModel;
     defaults?: TValue;
-    /** The block's markup. `children: true` is where its content goes. */
+    /**
+     * The block's markup. `children: true` is where its content goes.
+     */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<Partial<TValue>>[];
     render?: {
@@ -262,21 +276,35 @@ export const defineMark = <TValue extends object = Record<string, never>>(
     return { ...rest, toHtml: () => ({ tag, children: true }), parse: parse ?? [{ tag }] } as unknown as MarkDefinition;
 };
 
-/** A mark: stored as `true` on the text node when it carries nothing, else as its value. */
+/**
+ * A mark: stored as `true` on the text node when it carries nothing, else as its value
+ */
 export type MarkDefinition<TValue = Record<string, unknown>> = {
-    /** Where the mark sits when marks nest on the same text: lower wraps higher, ties keep plugin order. Defaults to `0`. */
+    /**
+     * Where the mark sits when marks nest on the same text: lower wraps higher, ties keep plugin order. Defaults to `0`.
+     */
     nesting?: number;
-    /** Text typed at the end of the mark carries it on. Defaults to true; a link says false. */
+    /**
+     * Text typed at the end of the mark carries it on. Defaults to true; a link says false.
+     */
     inclusive?: boolean;
-    /** Typing rules do not rewrite text carrying this mark — inline code keeps `--` and `**` as typed. Defaults to false. */
+    /**
+     * Typing rules do not rewrite text carrying this mark — inline code keeps `--` and `**` as typed. Defaults to false.
+     */
     excludesInputRules?: boolean;
-    /** What the mark carries when put on without a value (a toggle, a parse rule). Defaults to `{}`. */
+    /**
+     * What the mark carries when put on without a value (a toggle, a parse rule). Defaults to `{}`.
+     */
     defaults?: TValue;
-    /** The mark's markup around its text, which goes where `children: true` is. */
+    /**
+     * The mark's markup around its text, which goes where `children: true` is
+     */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<TValue>[];
     render?: {
-        /** Readonly view in place of `toHtml`. */
+        /**
+         * Readonly view in place of `toHtml`
+         */
         component?: ComponentType<{ value: TValue; children: ReactNode }>;
     };
 };
@@ -305,7 +333,9 @@ export type InlineDefinition<TValue = Record<string, unknown>> = {
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<TValue>[];
     render?: {
-        /** Readonly view in place of `toHtml`. */
+        /**
+         * Readonly view in place of `toHtml`
+         */
         component?: ComponentType<{ value: TValue }>;
     };
 };
@@ -316,7 +346,9 @@ export type InlineDefinition<TValue = Record<string, unknown>> = {
  * not this node after all (a `span` without a colour is no font colour).
  */
 export type ParseRule<TValue> = {
-    /** A CSS selector: `strong`, `a[href]`, `li[data-checked]`. */
+    /**
+     * A CSS selector: `strong`, `a[href]`, `li[data-checked]`
+     */
     tag: string;
     value?: (element: HTMLElement) => TValue | null;
 };
@@ -328,29 +360,49 @@ export type ParseRule<TValue> = {
  */
 export type EditProps<TValue, TCurrent = TValue> = {
     value: TCurrent;
-    /** The node's content, still editable (a block's text, a mark's run); put it where the content belongs. Absent for inlines. */
+    /**
+     * The node's content, still editable (a block's text, a mark's run); put it where the content belongs. Absent for inlines.
+     */
     children?: ReactNode;
-    /** Store a new value: on the block, across the mark's whole run, on the inline. */
+    /**
+     * Store a new value: on the block, across the mark's whole run, on the inline
+     */
     setValue: (value: TValue) => void;
-    /** The selection is in the node, or (for an inline) the caret sits right after it. */
+    /**
+     * The selection is in the node, or (for an inline) the caret sits right after it
+     */
     isFocused: boolean;
-    /** The node is inside a selected range. The editor already paints the highlight. */
+    /**
+     * The node is inside a selected range. The editor already paints the highlight.
+     */
     isSelected: boolean;
-    /** Its editing UI is open — set by `setOpen`, or from outside (the toolbar's `openEditor`). */
+    /**
+     * Its editing UI is open — set by `setOpen`, or from outside (the toolbar's `openEditor`)
+     */
     isOpen: boolean;
     setOpen: (open: boolean) => void;
-    /** Take it away: the block, the mark (keeping its text), the inline. */
+    /**
+     * Take it away: the block, the mark (keeping its text), the inline
+     */
     remove: () => void;
     api: EditorControlApi;
 };
 
-/** An attribute every text block carries: how it styles the block, and how it is read back. */
+/**
+ * An attribute every text block carries: how it styles the block, and how it is read back
+ */
 export type BlockAttributeDefinition = {
-    /** Value when the attribute is absent. */
+    /**
+     * Value when the attribute is absent
+     */
     default?: string;
-    /** The CSS it puts on the block's outermost element. */
+    /**
+     * The CSS it puts on the block's outermost element
+     */
     style: (value: string) => StyleMap;
-    /** Read it back from a pasted element, or null when the element does not set it. */
+    /**
+     * Read it back from a pasted element, or null when the element does not set it
+     */
     parse?: (element: HTMLElement) => string | null;
 };
 
@@ -367,7 +419,9 @@ export type ToolbarItemProps = {
      */
     selectedNode: SelectedNode | null;
     selection: RteSelectionSnapshot;
-    /** The selection carries this mark, or sits in this block. Never for an inline. */
+    /**
+     * The selection carries this mark, or sits in this block. Never for an inline.
+     */
     isActive: boolean;
     /**
      * Toggle the mark, wrap or unwrap the list, switch a text block to this
@@ -391,34 +445,54 @@ export type ToolbarItemProps = {
  */
 export type SelectedNode = {
     type: string;
-    /** Its value — a mark's attributes, a block's attributes. */
+    /**
+     * Its value — a mark's attributes, a block's attributes
+     */
     value: Record<string, unknown>;
-    /** The text it covers; for a block, the selected text. */
+    /**
+     * The text it covers; for a block, the selected text
+     */
     text: string;
 };
 
 // --- Menus, keyboard, paste, typing ---
 
-/** A labelled entry a plugin offers to the "Turn into" menu and the `/` menu. */
+/**
+ * A labelled entry a plugin offers to the "Turn into" menu and the `/` menu
+ */
 export type RteBlockCommand = {
-    /** Unique across plugins, e.g. `'heading-1'`. */
+    /**
+     * Unique across plugins, e.g. `'heading-1'`.
+     */
     id: string;
-    /** What the menus call it: `'Heading 1'`. */
+    /**
+     * What the menus call it: `'Heading 1'`
+     */
     label: string;
     icon?: ReactNode;
-    /** Further words the `/` menu filters by: `['h1', 'title']`. */
+    /**
+     * Further words the `/` menu filters by: `['h1', 'title']`
+     */
     keywords?: readonly string[];
-    /** `'turnInto'` converts the current block (and is offered by `/` too); `'insert'` adds something (only `/`). */
+    /**
+     * `'turnInto'` converts the current block (and is offered by `/` too); `'insert'` adds something (only `/`)
+     */
     group: 'turnInto' | 'insert';
-    /** Whether the selection is already this — the Turn-into button shows the active label. */
+    /**
+     * Whether the selection is already this — the Turn-into button shows the active label
+     */
     isActive?: (selection: RteSelectionSnapshot) => boolean;
     run: (api: EditorControlApi) => void;
 };
 
-/** A plugin's handler for one key. Return `false` to leave the key to the next handler, and in the end the editor and browser. */
+/**
+ * A plugin's handler for one key. Return `false` to leave the key to the next handler, and in the end the editor and browser.
+ */
 export type HotkeyHandler = (api: EditorControlApi) => boolean | void;
 
-/** A plugin's `onPaste`, handed the clipboard's text and HTML (if any). Return true when handled: the default paste and later plugins are skipped. */
+/**
+ * A plugin's `onPaste`, handed the clipboard's text and HTML (if any). Return true when handled: the default paste and later plugins are skipped.
+ */
 export type PasteHandler = (paste: { text: string; html: string | null }, api: EditorControlApi) => boolean;
 
 /**
@@ -426,11 +500,17 @@ export type PasteHandler = (paste: { text: string; html: string | null }, api: E
  * does the matching, so a plugin only says what to look for.
  */
 export type RteInputRule =
-    /** Wrapping delimiters turn into a mark: `**bold**`, `` `code` ``. */
+    /**
+     * Wrapping delimiters turn into a mark: `**bold**`, `` `code` ``
+     */
     | { kind: 'mark'; key: string; delimiter: string }
-    /** A prefix turns the block into another type: `## ` becomes a level-2 heading. */
+    /**
+     * A prefix turns the block into another type: `## ` becomes a level-2 heading
+     */
     | { kind: 'block'; match: string; block: string; attributes?: Record<string, unknown> }
-    /** A prefix wraps the block in a list: `- `, `1. `. */
+    /**
+     * A prefix wraps the block in a list: `- `, `1. `.
+     */
     | { kind: 'list'; match: string; list: string }
     /**
      * A token ended by a space (or punctuation then a space) becomes text

@@ -4,7 +4,9 @@ import { definePlugin, type RteInputRule } from '#/core';
 
 type Replacement = readonly [match: string | RegExp, replace: string];
 
-/** `--` for a dash, `...` for an ellipsis, `<<` and `>>` for guillemets. */
+/**
+ * `--` for a dash, `...` for an ellipsis, `<<` and `>>` for guillemets
+ */
 const PUNCTUATION: readonly Replacement[] = [
     ['--', '—'],
     ['...', '…'],
