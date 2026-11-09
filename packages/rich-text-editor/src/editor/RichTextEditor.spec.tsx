@@ -874,6 +874,90 @@ describe('the toolbar from the keyboard', () => {
         expect(radios.map((radio) => radio.getAttribute('aria-checked'))).toEqual(['true', 'false', 'false', 'false']);
     });
 
+    describe('in a narrow top row', () => {
+        // Every slot and More are 30 wide; the row is as wide as `rowWidth`.
+        let rowWidth = 200;
+        const observers: ResizeObserverCallback[] = [];
+
+        beforeEach(() => {
+            rowWidth = 200;
+            vi.stubGlobal(
+                'ResizeObserver',
+                class {
+                    constructor(callback: ResizeObserverCallback) {
+                        observers.push(callback);
+                    }
+                    observe(): void {}
+                    unobserve(): void {}
+                    disconnect(): void {}
+                },
+            );
+            vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element) {
+                let width = 0;
+                if (this.getAttribute('role') === 'toolbar') {
+                    width = rowWidth;
+                }
+                if (this.hasAttribute('data-toolbar-slot') || this.hasAttribute('data-toolbar-more')) {
+                    width = 30;
+                }
+                return new DOMRect(0, 0, width, 24);
+            });
+        });
+
+        afterEach(() => {
+            vi.unstubAllGlobals();
+            vi.restoreAllMocks();
+            observers.splice(0);
+        });
+
+        const resize = (width: number): void => {
+            rowWidth = width;
+            act(() => {
+                for (const observer of observers) {
+                    observer([], {} as ResizeObserver);
+                }
+            });
+        };
+
+        const more = (container: HTMLElement): HTMLButtonElement | null =>
+            container.querySelector<HTMLButtonElement>('[aria-label="More"]');
+
+        it('moves what does not fit behind More, whose panel the arrow keys move through', () => {
+            const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
+            ready();
+            const toolbar = toolbarIn(container);
+            expect(more(container)).toBeNull();
+
+            // Bold, More and the gap: Link and Align no longer fit.
+            resize(70);
+            expect(toolbar.querySelector('[aria-label="Bold"]')).not.toBeNull();
+            expect(toolbar.querySelector('[aria-label="Align left"]')).toBeNull();
+            expect(more(container)?.getAttribute('aria-haspopup')).toBe('dialog');
+
+            // A click with no pointer behind it is the keyboard's: focus moves into the panel.
+            act(() => more(container)?.click());
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            const panel = window.document.querySelector<HTMLElement>('[role="toolbar"][aria-label="More"]');
+            expect(panel?.querySelector('[aria-label="Add link"]')).not.toBeNull();
+            expect(focusedLabel()).toBe('Align left');
+
+            press(window.document.activeElement as Element, 'ArrowRight');
+            expect(focusedLabel()).toBe('Align center');
+            press(window.document.activeElement as Element, 'End');
+            expect(focusedLabel()).toBe('Justify');
+            press(window.document.activeElement as Element, 'Home');
+            expect(focusedLabel()).toBe('Align left');
+
+            press(window.document.activeElement as Element, 'Escape');
+            expect(window.document.activeElement).toBe(more(container));
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+
+            resize(200);
+            expect(more(container)).toBeNull();
+            expect(toolbar.querySelector('[aria-label="Align left"]')).not.toBeNull();
+        });
+    });
+
     it('names the shortcut a button has', () => {
         const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
         ready();

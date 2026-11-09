@@ -54,6 +54,49 @@
     align-items: center;
 }
 
+/** One plugin's controls. Never shrunk, so the top row measures each at its own size. */
+.slot {
+    display: flex;
+    flex: none;
+    align-items: center;
+}
+
+/**
+ * The More button, drawn like the plugins' toolbar buttons, which the editor
+ * cannot import. The attributes outweigh the Button's variant rules.
+ */
+.more[data-variant][data-emphasis][data-size][data-aspect] {
+    flex: none;
+    // A theme switch repaints the toolbar at once, not through Fondue's colour fade.
+    transition: none;
+    background-color: transparent;
+    color: var(--color-primary-default);
+
+    &[aria-expanded='true'] {
+        background-color: var(--color-container-secondary-default);
+    }
+
+    &:hover,
+    &:active {
+        background-color: var(--color-container-secondary-hover);
+        color: var(--color-primary-hover);
+    }
+
+    /** A coarse pointer gets a 44 by 44 CSS pixel target. */
+    @media (pointer: coarse) {
+        min-inline-size: 44px;
+        min-block-size: 44px;
+    }
+}
+
+/** The controls behind More, in their groups, wrapping onto more lines when the panel is too narrow. */
+.panel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-small);
+}
+
 /**
  * What the editable element adds to the document: cursor and placeholder, no
  * inset or minimum height. Text styling comes from the renderer's `.document`

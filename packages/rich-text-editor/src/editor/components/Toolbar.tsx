@@ -1,16 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    type FocusEvent,
-    type KeyboardEvent,
-    type MouseEvent,
-    type MutableRefObject,
-    type ReactNode,
-    useCallback,
-    useLayoutEffect,
-    useRef,
-    useSyncExternalStore,
-} from 'react';
+import { type MutableRefObject, type ReactNode, useCallback, useRef, useSyncExternalStore } from 'react';
 
 import {
     type EditorControlApi,
@@ -21,11 +11,15 @@ import {
 } from '#/core';
 
 import { turnIntoCommands } from '../helpers/blockCommands';
+import { type SlotGroup, splitGroups } from '../helpers/toolbarFit';
 import { toolbarItemProps } from '../helpers/toolbarItem';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
+import { SLOT_ATTRIBUTE, type ToolbarFit, useToolbarFit } from '../hooks/useToolbarFit';
+import { useToolbarRoving } from '../hooks/useToolbarRoving';
 import { type RichTextEditorLabels } from '../labels';
 import styles from '../richTextEditor.module.scss';
 
+import { ToolbarMore } from './ToolbarMore';
 import { TurnInto } from './TurnInto';
 
 /**
@@ -44,11 +38,11 @@ export type ToolbarPlacement = 'floating' | 'top';
  * Subscribes to the editor state itself, so a keystroke re-renders the toolbar
  * rather than the editor around it.
  *
- * Keyboard use follows the toolbar pattern: the bar is one tab stop, the arrow
- * keys (and Home/End) move between its controls, Escape returns to the text
- * with the selection intact. The controls are whatever the plugins render, so
- * the stops are found in the DOM and their `tabIndex` set there after every
- * render.
+ * Keyboard use follows the toolbar pattern (`useToolbarRoving`): Escape
+ * returns to the text with the selection intact.
+ *
+ * The top row is one line: the plugins' controls that do not fit move behind a
+ * More button at its end.
  */
 export const Toolbar = ({
     items: allItems,
@@ -82,89 +76,27 @@ export const Toolbar = ({
     const getSelection = useCallback(() => api.selection.get(), [api]);
     const selection = useSyncExternalStore(editorState.subscribe, getSelection, getSelection);
     const toolbarRef = useRef<HTMLDivElement | null>(null);
-    // The stop the toolbar is entered at: the control used last.
-    const currentRef = useRef(0);
-
-    useLayoutEffect(() => {
-        const toolbar = toolbarRef.current;
-        if (!toolbar) {
-            return;
-        }
-        const stops = controlsIn(toolbar);
-        currentRef.current = Math.min(currentRef.current, Math.max(stops.length - 1, 0));
-        for (const [index, stop] of stops.entries()) {
-            stop.tabIndex = index === currentRef.current ? 0 : -1;
-        }
-        if (focusRequestRef.current) {
-            focusRequestRef.current = false;
-            stops[currentRef.current]?.focus();
-        }
-    });
-
-    const moveTo = (stops: HTMLElement[], index: number): void => {
-        const next = stops[index];
-        if (!next) {
-            return;
-        }
-        stops[currentRef.current]?.setAttribute('tabindex', '-1');
-        next.tabIndex = 0;
-        currentRef.current = index;
-        next.focus();
-    };
-
-    const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
-        const target = event.target as HTMLElement;
-        // Keys from a flyout a control opened arrive here through the
-        // component tree; they belong to that flyout.
-        if (!event.currentTarget.contains(target)) {
-            return;
-        }
-        // An open tooltip prevents Escape too, yet leaving the toolbar closes it;
-        // only a control's own open menu keeps the key.
-        if (event.key === 'Escape' && target.getAttribute('aria-expanded') !== 'true') {
-            event.preventDefault();
-            api.focus();
-            return;
-        }
-        if (event.defaultPrevented) {
-            return;
-        }
-        if (keepsArrowKeys(target)) {
-            return;
-        }
-        const stops = controlsIn(event.currentTarget);
-        const index = stops.findIndex((stop) => stop === target || stop.contains(target));
-        const last = stops.length - 1;
-        const next = {
-            ArrowRight: index >= last ? 0 : index + 1,
-            ArrowLeft: index <= 0 ? last : index - 1,
-            Home: 0,
-            End: last,
-        }[event.key];
-        if (next === undefined) {
-            return;
-        }
-        event.preventDefault();
-        moveTo(stops, next);
-    };
-
-    // A control focused by any means — a click, a flyout handing focus back —
-    // becomes the one the toolbar is entered at.
-    const onFocus = (event: FocusEvent<HTMLDivElement>): void => {
-        const stops = controlsIn(event.currentTarget);
-        const index = stops.findIndex((stop) => stop === event.target || stop.contains(event.target));
-        if (index !== -1 && index !== currentRef.current) {
-            stops[currentRef.current]?.setAttribute('tabindex', '-1');
-            stops[index]?.setAttribute('tabindex', '0');
-            currentRef.current = index;
-        }
-    };
+    const roving = useToolbarRoving({ toolbarRef, focusRequestRef, onEscape: () => api.focus() });
 
     const floating = placement === 'floating';
     const items = floating ? allItems.filter((item) => item.floating === 'inline') : allItems;
     const turnInto = floating ? turnIntoCommands(commands) : [];
     // The built-in Text alone is nothing to turn into.
     const showTurnInto = turnInto.length > 1;
+    const groups = groupsOf(items);
+    const { row, overflow, more } = layoutOf(groups, useToolbarFit(toolbarRef, groups, !floating));
+
+    const drawGroups = (drawn: readonly SlotGroup<ToolbarEntry>[]): ReactNode =>
+        drawn.map((group) => (
+            <div key={group.key} role="group" className={styles.group}>
+                {group.items.map((item) => (
+                    // An element per slot, so the row can measure what each plugin drew.
+                    <div key={item.key} className={styles.slot} {...{ [SLOT_ATTRIBUTE]: item.key }}>
+                        <ToolbarItemSlot render={item.render} itemProps={toolbarItemProps(item.own, api, selection)} />
+                    </div>
+                ))}
+            </div>
+        ));
 
     return (
         <div
@@ -175,25 +107,16 @@ export const Toolbar = ({
             aria-label={labels.toolbar}
             aria-controls={controls}
             aria-orientation="horizontal"
-            onMouseDown={keepSelection}
-            onKeyDown={onKeyDown}
-            onFocus={onFocus}
+            onMouseDown={roving.onMouseDown}
+            onKeyDown={roving.onKeyDown}
+            onFocus={roving.onFocus}
             className={styles.toolbar}
             // Where the bar ended up, for the stylesheet to read.
             data-placement={placement}
         >
             {showTurnInto ? <TurnInto api={api} commands={turnInto} selection={selection} labels={labels} /> : null}
-            {groupsOf(items).map((group) => (
-                <div key={group.key} role="group" className={styles.group}>
-                    {group.items.map((item) => (
-                        <ToolbarItemSlot
-                            key={item.key}
-                            render={item.render}
-                            itemProps={toolbarItemProps(item.own, api, selection)}
-                        />
-                    ))}
-                </div>
-            ))}
+            {drawGroups(row)}
+            {more ? <ToolbarMore labels={labels}>{drawGroups(overflow)}</ToolbarMore> : null}
         </div>
     );
 };
@@ -212,7 +135,7 @@ const GROUP_ORDER: readonly RteToolbarGroup[] = [
 ];
 
 /** The items by group in drawing order, those with no group last; empty groups are left out. */
-const groupsOf = (items: readonly ToolbarEntry[]): { key: string; items: ToolbarEntry[] }[] => {
+const groupsOf = (items: readonly ToolbarEntry[]): SlotGroup<ToolbarEntry>[] => {
     const groups = [...GROUP_ORDER, undefined].map((group) => ({
         key: group ?? 'ungrouped',
         items: items.filter((item) => item.group === group),
@@ -220,15 +143,18 @@ const groupsOf = (items: readonly ToolbarEntry[]): { key: string; items: Toolbar
     return groups.filter((group) => group.items.length > 0);
 };
 
-/** A click on the toolbar that misses a control would move focus, and the selection with it. */
-const keepSelection = (event: MouseEvent<HTMLDivElement>): void => {
-    const target = event.target as HTMLElement;
-    // A flyout's events arrive here through the component tree; they are not ours.
-    if (!event.currentTarget.contains(target)) {
-        return;
-    }
-    if (!target.closest('button, input, [role="combobox"]')) {
-        event.preventDefault();
+/** What the row draws and what goes behind More; while measuring, every slot and More, so each has a size to read. */
+const layoutOf = (
+    groups: SlotGroup<ToolbarEntry>[],
+    fit: ToolbarFit,
+): { row: SlotGroup<ToolbarEntry>[]; overflow: SlotGroup<ToolbarEntry>[]; more: boolean } => {
+    switch (fit.kind) {
+        case 'measuring':
+            return { row: groups, overflow: [], more: true };
+        case 'fitted': {
+            const { row, overflow } = splitGroups(groups, fit.shown);
+            return { row, overflow, more: overflow.length > 0 };
+        }
     }
 };
 
@@ -242,16 +168,3 @@ type ToolbarItemSlotProps = {
  * their state when another plugin is added or removed.
  */
 const ToolbarItemSlot = ({ render, itemProps }: ToolbarItemSlotProps): ReactNode => render(itemProps);
-
-/** Every element in the toolbar a keyboard can land on. Disabled controls are passed over. */
-const CONTROLS = 'button, input, select, textarea, a[href], [role="combobox"]';
-
-const controlsIn = (toolbar: HTMLElement): HTMLElement[] =>
-    [...toolbar.querySelectorAll<HTMLElement>(CONTROLS)].filter(
-        (control) => !control.matches(':disabled') && control.closest('[aria-hidden="true"]') === null,
-    );
-
-/** A text field keeps the arrow keys for its own caret. */
-const keepsArrowKeys = (target: HTMLElement): boolean =>
-    target instanceof HTMLTextAreaElement ||
-    (target instanceof HTMLInputElement && !['button', 'checkbox', 'radio'].includes(target.type));
