@@ -49,17 +49,15 @@ const listItem = /* @__PURE__ */ defineBlock({
     parse: [{ tag: 'li' }],
 });
 
-/** Shared declaration of the two list contents, which differ only in type, tag and marker style. */
-const listContent = ({
-    type,
-    tag,
-    className,
-}: {
+type ListContentParams = {
     type: 'bulletList' | 'numberedList';
     tag: 'ul' | 'ol';
     /** The list's own class; the marker per nesting level hangs off it. */
     className: string | undefined;
-}) =>
+};
+
+/** Shared declaration of the two list contents, which differ only in type, tag and marker style. */
+const listContent = ({ type, tag, className }: ListContentParams) =>
     defineContent({
         blocks: {
             [type]: defineBlock({
@@ -85,17 +83,7 @@ export const numberedListContent = /* @__PURE__ */ listContent({
     className: styles.numberedList,
 });
 
-/** Shared declaration of the two list plugins, which differ only in content, icon, label, shortcut and typing rule. */
-const listPlugin = ({
-    id,
-    content,
-    type,
-    icon,
-    label,
-    keywords,
-    markdown,
-    shortcut,
-}: {
+type ListPluginParams = {
     id: string;
     content: RteContent;
     type: 'bulletList' | 'numberedList';
@@ -107,7 +95,10 @@ const listPlugin = ({
     markdown: readonly string[];
     /** The keyboard shortcut that toggles it, as other editors bind it. */
     shortcut: string;
-}) =>
+};
+
+/** Shared declaration of the two list plugins, which differ only in content, icon, label, shortcut and typing rule. */
+const listPlugin = ({ id, content, type, icon, label, keywords, markdown, shortcut }: ListPluginParams) =>
     definePlugin({
         id,
         content,

@@ -30,16 +30,14 @@ export type CheckValue = { checked: boolean };
 /** The checkbox's name in exported HTML, where it has no visible text to point at. */
 const stateLabel = (checked: boolean): string => (checked ? 'Done' : 'Not done');
 
-/** The readonly item: the editor's look, its checkbox showing the state without letting it change. */
-const ReadonlyCheckItem = ({
-    value,
-    children,
-    style,
-}: {
+type ReadonlyCheckItemProps = {
     value: CheckValue;
     children?: ReactNode;
     style?: CSSProperties;
-}): ReactNode => {
+};
+
+/** The readonly item: the editor's look, its checkbox showing the state without letting it change. */
+const ReadonlyCheckItem = ({ value, children, style }: ReadonlyCheckItemProps): ReactNode => {
     const labelId = useId();
     const checked = value.checked === true;
     return (
@@ -104,16 +102,14 @@ export const checkListContent = /* @__PURE__ */ defineContent({
     },
 });
 
-/** The item in the editor: its checkbox, named by the item's own text. */
-const EditCheckItem = ({
-    value,
-    setValue,
-    children,
-}: {
+type EditCheckItemProps = {
     value: CheckValue;
     setValue: (value: CheckValue) => void;
     children?: ReactNode;
-}): ReactNode => {
+};
+
+/** The item in the editor: its checkbox, named by the item's own text. */
+const EditCheckItem = ({ value, setValue, children }: EditCheckItemProps): ReactNode => {
     const labelId = useId();
     const checked = value.checked === true;
     return (
