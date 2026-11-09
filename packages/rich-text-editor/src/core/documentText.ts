@@ -50,7 +50,10 @@ const specText = (spec: HtmlSpec): string => {
                   if (child === true) {
                       return '';
                   }
-                  return typeof child === 'string' ? child : specText(child);
+                  if (typeof child === 'string') {
+                      return child;
+                  }
+                  return specText(child);
               })
               .join('')
         : '';

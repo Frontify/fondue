@@ -59,7 +59,10 @@ export const specToReact = (spec: HtmlSpec, content: ReactNode[], key?: number):
             if (child === true) {
                 return content;
             }
-            return typeof child === 'string' ? child : specToReact(child, content, index);
+            if (typeof child === 'string') {
+                return child;
+            }
+            return specToReact(child, content, index);
         });
     }
     return createElement(spec.tag, { ...reactProps(spec.attrs), key }, ...inner);

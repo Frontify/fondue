@@ -23,20 +23,17 @@ afterEach(() => {
     }
 });
 
-const mountForm = (policy: LinkPolicy, initialText?: string) => {
+const mountForm = (
+    policy: LinkPolicy,
+    mode: { kind: 'create'; text: string } | { kind: 'edit' } = { kind: 'edit' },
+) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
     const root = createRoot(container);
     const onSave = vi.fn();
     act(() => {
         root.render(
-            <LinkTargetForm
-                initial={{ href: '' }}
-                initialText={initialText}
-                policy={policy}
-                onSave={onSave}
-                onCancel={vi.fn()}
-            />,
+            <LinkTargetForm initial={{ href: '' }} {...mode} policy={policy} onSave={onSave} onCancel={vi.fn()} />,
         );
     });
     teardown.push(() => {
@@ -98,7 +95,7 @@ describe('the link target form', () => {
         save();
 
         expect(alert()).toBe('');
-        expect(onSave).toHaveBeenCalledWith({ href: 'https://app.frontify.com' }, '');
+        expect(onSave).toHaveBeenCalledWith({ href: 'https://app.frontify.com' });
     });
 
     it('keeps the generic messages for empty and unreadable input', () => {
@@ -119,7 +116,7 @@ describe('the link target form', () => {
         save();
 
         expect(container.querySelector('input[type="text"]')).toBeNull();
-        expect(onSave.mock.calls).toEqual([[{ href: 'https://example.com' }, '']]);
+        expect(onSave.mock.calls).toEqual([[{ href: 'https://example.com' }]]);
     });
 
     describe('with a Text field', () => {
@@ -132,7 +129,7 @@ describe('the link target form', () => {
         };
 
         it('labels it Text, prefilled, and saves the text with the address', () => {
-            const { container, type, save, onSave } = mountForm({}, 'the docs');
+            const { container, type, save, onSave } = mountForm({}, { kind: 'create', text: 'the docs' });
             type('example.com');
 
             save();
@@ -144,7 +141,7 @@ describe('the link target form', () => {
         });
 
         it('reads Text, Link to, Open in new tab, then the buttons', () => {
-            const { container } = mountForm({}, 'the docs');
+            const { container } = mountForm({}, { kind: 'create', text: 'the docs' });
 
             const stops = [...container.querySelectorAll<HTMLElement>('input, button')].map(
                 (control) => labelOf(container, control) ?? control.textContent,
@@ -154,10 +151,10 @@ describe('the link target form', () => {
         });
 
         it('focuses Text when it is empty, and the address when there is text to keep', () => {
-            const empty = mountForm({}, '');
+            const empty = mountForm({}, { kind: 'create', text: '' });
             expect(window.document.activeElement).toBe(textField(empty.container));
 
-            const filled = mountForm({}, 'the docs');
+            const filled = mountForm({}, { kind: 'create', text: 'the docs' });
             expect(window.document.activeElement).toBe(filled.field);
         });
     });

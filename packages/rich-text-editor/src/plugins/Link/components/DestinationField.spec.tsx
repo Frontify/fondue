@@ -34,7 +34,10 @@ afterEach(() => {
 
 const mountSearchForm = (
     search: LinkSearch | undefined,
-    { policy = {}, initialText }: { policy?: LinkPolicy; initialText?: string } = {},
+    {
+        policy = {},
+        mode = { kind: 'edit' },
+    }: { policy?: LinkPolicy; mode?: { kind: 'create'; text: string } | { kind: 'edit' } } = {},
 ) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
@@ -44,7 +47,7 @@ const mountSearchForm = (
         root.render(
             <LinkTargetForm
                 initial={{ href: '' }}
-                initialText={initialText}
+                {...mode}
                 policy={policy}
                 search={search}
                 onSave={onSave}
@@ -177,7 +180,7 @@ describe('the destination field', () => {
 
         press('Enter');
 
-        expect(onSave).toHaveBeenCalledWith({ href: 'https://frontify.com/typed' }, '');
+        expect(onSave).toHaveBeenCalledWith({ href: 'https://frontify.com/typed' });
     });
 
     it('does not pick on the Enter that confirms a composition', async () => {
@@ -266,20 +269,20 @@ describe('the destination field', () => {
     });
 
     it('fills an empty Text field with the label when a result is picked, and leaves typed text alone', async () => {
-        const first = mountSearchForm(fixed(BRAND), { initialText: '' });
+        const first = mountSearchForm(fixed(BRAND), { mode: { kind: 'create', text: '' } });
         await first.type('br');
         first.press('ArrowDown');
         first.press('Enter');
         expect(first.textField()?.value).toBe(BRAND.label);
         expect(first.field.value).toBe(BRAND.href);
 
-        const second = mountSearchForm(fixed(BRAND), { initialText: 'my words' });
+        const second = mountSearchForm(fixed(BRAND), { mode: { kind: 'create', text: 'my words' } });
         await second.type('br');
         second.press('ArrowDown');
         second.press('Enter');
         expect(second.textField()?.value).toBe('my words');
 
-        const third = mountSearchForm(fixed(BRAND), { initialText: '' });
+        const third = mountSearchForm(fixed(BRAND), { mode: { kind: 'create', text: '' } });
         third.setText('typed');
         await third.type('br');
         third.press('ArrowDown');
