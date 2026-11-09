@@ -7,7 +7,7 @@ import { fittingSlotCount, splitGroups } from './toolbarFit';
 describe('fittingSlotCount', () => {
     // Three groups: 2 slots, 1 slot, 2 slots, all 30 wide; 8 between groups; More is 24.
     const groups = [[30, 30], [30], [30, 30]];
-    const fit = (available: number): number => fittingSlotCount({ groups, gap: 8, more: 24, available });
+    const fit = (available: number): number => fittingSlotCount({ groups, gap: 8, itemGap: 0, more: 24, available });
 
     it('shows every slot, with no room kept for More, when they all fit', () => {
         // 150 of slots and two gaps.
@@ -24,8 +24,21 @@ describe('fittingSlotCount', () => {
 
     it('counts the gap before a group only when something precedes it', () => {
         // 60 + 8 + 30 needs 98; at 97 the gap pushes the third slot out.
-        expect(fittingSlotCount({ groups, gap: 8, more: 0, available: 97 + 8 })).toBe(2);
-        expect(fittingSlotCount({ groups, gap: 8, more: 0, available: 98 + 8 })).toBe(3);
+        expect(fittingSlotCount({ groups, gap: 8, itemGap: 0, more: 0, available: 97 + 8 })).toBe(2);
+        expect(fittingSlotCount({ groups, gap: 8, itemGap: 0, more: 0, available: 98 + 8 })).toBe(3);
+    });
+
+    it('counts the gap between slots of one group, not before a group', () => {
+        // 30 + 4 + 30 + 8 + 30 = 102 shown, plus 8 + 24 for More.
+        const spaced = (available: number): number =>
+            fittingSlotCount({ groups, gap: 8, itemGap: 4, more: 24, available });
+        expect(spaced(134)).toBe(3);
+        expect(spaced(133)).toBe(2);
+        // 150 of slots, two item gaps and two group gaps.
+        expect(spaced(174)).toBe(5);
+        // 102 + 8 + 30 = 140 fits beside More at 173, not at 171.
+        expect(spaced(173)).toBe(4);
+        expect(spaced(171)).toBe(3);
     });
 
     it('shows nothing but More when not even the first slot fits', () => {
@@ -37,7 +50,7 @@ describe('fittingSlotCount', () => {
     });
 
     it('fits an empty toolbar', () => {
-        expect(fittingSlotCount({ groups: [], gap: 8, more: 24, available: 0 })).toBe(0);
+        expect(fittingSlotCount({ groups: [], gap: 8, itemGap: 0, more: 24, available: 0 })).toBe(0);
     });
 });
 

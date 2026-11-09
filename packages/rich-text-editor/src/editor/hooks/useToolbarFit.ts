@@ -75,9 +75,15 @@ export const useToolbarFit = ({
                 moreWidthRef.current = more.getBoundingClientRect().width;
             }
             const style = getComputedStyle(toolbar);
+            const group = toolbar.querySelector('[role="group"]');
+            let itemGap = 0;
+            if (group !== null) {
+                itemGap = pixels(getComputedStyle(group).columnGap);
+            }
             const next = fittingSlotCount({
                 groups: keys.map((group) => group.map((key) => widthsRef.current.get(key) ?? 0)),
                 gap: pixels(style.columnGap),
+                itemGap,
                 more: moreWidthRef.current,
                 available:
                     toolbar.getBoundingClientRect().width -

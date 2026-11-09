@@ -48,10 +48,11 @@
     }
 }
 
-/** One cluster of related controls, packed tight. */
+/** One cluster of related controls, a narrower gap apart than the groups. */
 .group {
     display: flex;
     align-items: center;
+    gap: var(--spacing-xx-small);
 }
 
 /** One plugin's controls. Never shrunk, so the top row measures each at its own size. */
