@@ -396,23 +396,35 @@ export type ParseRule<TValue> = {
     value?: (element: HTMLElement) => TValue | null;
 };
 
-/** A rule that matches any element whose own `style` attribute declares the CSS property, handed the declared value. */
+/**
+ * A rule that matches any element whose own `style` attribute declares the CSS property, handed the declared value.
+ */
 export type StyleParseRule<TValue> = {
-    /** A CSS property name: `font-weight`. */
+    /**
+     * A CSS property name: `font-weight`.
+     */
     style: string;
-    /** Never set: lets TypeScript tell a style rule from a tag rule. */
+    /**
+     * Never set: lets TypeScript tell a style rule from a tag rule.
+     */
     tag?: undefined;
     value?: (cssValue: string) => TValue | null;
 };
 
-/** When `clears` is true for the declared value, the element's content does not carry the mark even if an ancestor set it (`<strong><span style="font-weight:normal">`). */
+/**
+ * When `clears` is true for the declared value, the element's content does not carry the mark even if an ancestor set it (`<strong><span style="font-weight:normal">`).
+ */
 export type MarkClearRule = {
-    /** A CSS property name: `font-weight`. */
+    /**
+     * A CSS property name: `font-weight`.
+     */
     style: string;
     clears: (cssValue: string) => boolean;
 };
 
-/** The rules a mark reads pasted HTML with: by tag, by declared style, or to clear it. The `style?: undefined` lets TypeScript type a style rule's `value`. */
+/**
+ * The rules a mark reads pasted HTML with: by tag, by declared style, or to clear it. The `style?: undefined` lets TypeScript type a style rule's `value`.
+ */
 export type MarkParseRule<TValue> =
     | (ParseRule<TValue> & { style?: undefined })
     | StyleParseRule<TValue>

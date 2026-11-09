@@ -64,7 +64,9 @@ const markClearRule = (type: string, rule: MarkClearRule): PmStyleParseRule => (
     getAttrs: (cssValue: string) => (rule.clears(cssValue) ? null : false),
 });
 
-/** A mark's rules: tag and style rules put it on with its value, clear rules take it off the element's content. */
+/**
+ * A mark's rules: tag and style rules put it on with its value, clear rules take it off the element's content.
+ */
 export const markParseRules = (type: string, rules: readonly MarkParseRule<unknown>[]): PmParseRule[] =>
     rules.map((rule) => {
         if ('clears' in rule) {
@@ -73,7 +75,10 @@ export const markParseRules = (type: string, rules: readonly MarkParseRule<unkno
         if (rule.style === undefined) {
             return valueParseRule(rule, MARK_PRIORITY);
         }
-        return markStyleRule(rule);
+        if (typeof rule.style === 'string') {
+            return markStyleRule(rule);
+        }
+        throw new Error(`Unhandled mark parse rule: ${JSON.stringify(rule satisfies never)}`);
     });
 
 /**
