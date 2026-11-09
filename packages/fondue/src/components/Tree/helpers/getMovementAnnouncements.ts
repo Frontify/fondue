@@ -133,12 +133,11 @@ const getMovementAnnouncement = ({
                 overId === currentPosition.overId
             ) {
                 return;
-            } else {
-                setCurrentPosition({
-                    parentId: projected.parentId,
-                    overId,
-                });
             }
+            setCurrentPosition({
+                parentId: projected.parentId,
+                overId,
+            });
         }
 
         const announcementNodes: AnnouncementItem[] = treeState.nodes.map(({ props }) => ({

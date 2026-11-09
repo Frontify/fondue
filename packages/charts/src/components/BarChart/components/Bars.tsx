@@ -33,9 +33,8 @@ export const Bars = ({ series, horizontal, displayStyle }: BarGroupProps) => {
             colorAccessor={(datum: BarChartDataPoint) => {
                 if (focusedItemLabel === datum.label) {
                     return hoverColorAccessorByIndex(seriesIndex);
-                } else {
-                    return colorAccessorByIndex(seriesIndex);
                 }
+                return colorAccessorByIndex(seriesIndex);
             }}
             onPointerMove={isOverlapped ? onPointerMove : undefined}
             onPointerOut={isOverlapped ? onPointerOut : undefined}
