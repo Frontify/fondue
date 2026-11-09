@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { type RteBlockNode, type RteDocumentOf } from './document';
 import { isEmpty, toPlainText } from './documentText';
-import { defineBlock, defineInline, definePlugin, type RtePlugin } from './plugin';
+import { defineBlock, defineContent, defineInline, definePlugin, type RtePlugin } from './plugin';
 import { emptyDocument } from './vocabulary';
 
 /**
@@ -26,7 +26,7 @@ const mention = { type: 'mention', id: '1', username: 'jane' };
 const plugins: RtePlugin[] = [
     definePlugin({
         id: 'list',
-        content: {
+        content: defineContent({
             blocks: {
                 list: defineBlock({
                     content: { items: 'item' },
@@ -39,32 +39,32 @@ const plugins: RtePlugin[] = [
                     parse: [],
                 }),
             },
-        },
+        }),
     }),
     definePlugin({
         id: 'divider',
-        content: { blocks: { divider: defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [] }) } },
+        content: defineContent({ blocks: { divider: defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [] }) } }),
     }),
     definePlugin({
         id: 'mention',
-        content: {
+        content: defineContent({
             inlines: {
                 mention: defineInline<{ username: string }>({
                     toHtml: ({ username }) => ({ tag: 'a', children: [{ tag: 'span', children: '@' }, username] }),
                     parse: [],
                 }),
             },
-        },
+        }),
     }),
     definePlugin({
         id: 'break',
-        content: { inlines: { break: defineInline({ toHtml: () => ({ tag: 'br' }), parse: [] }) } },
+        content: defineContent({ inlines: { break: defineInline({ toHtml: () => ({ tag: 'br' }), parse: [] }) } }),
     }),
     definePlugin({
         id: 'emoji',
-        content: {
+        content: defineContent({
             inlines: { emoji: defineInline({ toHtml: () => ({ tag: 'img', attrs: { alt: '🙂' } }), parse: [] }) },
-        },
+        }),
     }),
 ];
 

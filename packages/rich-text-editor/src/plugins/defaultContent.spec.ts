@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type BlockDefinition, type RteContent } from '#/core';
+import { type BlockDefinition, defineContent, type RteContent } from '#/core';
 
 import { defaultContent } from './defaultContent';
 
@@ -28,7 +28,7 @@ describe('the default content', () => {
 
         expect(defaultContent).toHaveLength(fromPlugins.length);
         for (const [index, content] of defaultContent.entries()) {
-            const expected = declared(fromPlugins[index] ?? {});
+            const expected = declared(fromPlugins[index] ?? defineContent({}));
             const actual = declared(content);
             expect(actual.map(({ kind, type }) => `${kind}:${type}`)).toEqual(
                 expected.map(({ kind, type }) => `${kind}:${type}`),

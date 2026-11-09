@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
     defineBlock,
+    defineContent,
     defineInline,
     defineMark,
     type EditorControlApi,
@@ -59,6 +60,9 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
                     ...selection,
                     marks: present === undefined ? { ...others, [type]: value ?? {} } : others,
                 };
+            },
+            set: (type, value) => {
+                selection = { ...selection, marks: { ...selection.marks, [type]: value ?? {} } };
             },
             removeAll: () => {
                 selection = { ...selection, marks: {} };
@@ -116,71 +120,71 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
 };
 
 const markPlugin: Subject = {
-    content: {
+    content: defineContent({
         marks: {
             link: defineMark<{ href: string }>({
                 toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
                 parse: [],
             }),
         },
-    },
+    }),
 };
 
 const listPlugin: Subject = {
-    content: {
+    content: defineContent({
         blocks: {
             bulletList: defineBlock({ content: { items: LIST_ITEM }, toHtml: () => ({ tag: 'ul' }), parse: [] }),
             [LIST_ITEM]: defineBlock({ content: { blocks: [PARAGRAPH] }, toHtml: () => ({ tag: 'li' }), parse: [] }),
         },
-    },
+    }),
     type: 'bulletList',
 };
 
 const containerPlugin: Subject = {
-    content: {
+    content: defineContent({
         blocks: {
             callout: defineBlock({ content: { blocks: [PARAGRAPH] }, toHtml: () => ({ tag: 'aside' }), parse: [] }),
         },
-    },
+    }),
 };
 
 const textBlockPlugin: Subject = {
-    content: {
+    content: defineContent({
         blocks: {
             quote: defineBlock({ content: 'text', toHtml: () => ({ tag: 'blockquote' }), parse: [] }),
         },
-    },
+    }),
 };
 
 const voidBlockPlugin: Subject = {
-    content: {
+    content: defineContent({
         blocks: {
             divider: defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [] }),
         },
-    },
+    }),
 };
 
 const inlinePlugin: Subject = {
-    content: {
+    content: defineContent({
         inlines: {
             mention: defineInline<{ id: string }>({ toHtml: ({ id }) => ({ tag: 'span', children: id }), parse: [] }),
         },
-    },
+    }),
 };
 
 const attributePlugin: Subject = {
-    content: { blockAttributes: { align: { style: (value) => ({ 'text-align': value }) } } },
+    content: defineContent({ blockAttributes: { align: { style: (value) => ({ 'text-align': value }) } } }),
 };
 
 const LINK = { href: 'https://example.com' };
 
 describe('what a toolbar entry acts on', () => {
     it('is the type it names, whichever kind of node that is', () => {
-        const content: RteContent = {
+        const content = defineContent({
             ...inlinePlugin.content,
             blocks: { ...textBlockPlugin.content.blocks, ...voidBlockPlugin.content.blocks },
             marks: markPlugin.content.marks,
-        };
+        });
 
         expect(ownTypeOf(content, 'link')).toEqual({ kind: 'mark', type: 'link' });
         expect(ownTypeOf(content, 'quote')).toEqual({ kind: 'textBlock', type: 'quote' });

@@ -6,13 +6,17 @@ import { defineBlock, defineContent, definePlugin, type RteInlineNode } from '#/
 
 import styles from './quote.module.scss';
 
-/** The block type this plugin adds. Part of the assembled RteBlock union at the package root. */
+/**
+ * The block type this plugin adds
+ */
 export type QuoteBlock = {
     type: 'quote';
     children: RteInlineNode[];
 };
 
-/** A block quote: `<blockquote>`. */
+/**
+ * A block quote, written as `<blockquote>`
+ */
 export const quoteContent = /* @__PURE__ */ defineContent({
     blocks: {
         quote: /* @__PURE__ */ defineBlock({
@@ -23,7 +27,9 @@ export const quoteContent = /* @__PURE__ */ defineContent({
     },
 });
 
-/** A block quote: `> ` while typing, and a turn-into command. */
+/**
+ * A block quote, with a `/` entry, and `> ` while typing
+ */
 export const quotePlugin = /* @__PURE__ */ definePlugin({
     content: quoteContent,
     toolbar: [{ icon: IconSpeechBubbleQuote, menu: { keywords: ['blockquote', 'citation'] } }],

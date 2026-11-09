@@ -10,6 +10,7 @@ import { buildPluginRegistry } from '../core';
 import {
     columnBreakPlugin,
     defaultPlugins,
+    defineContent,
     defineMark,
     definePlugin,
     mentionPlugin,
@@ -122,7 +123,7 @@ describe('a style value that could break out of its declaration', () => {
     // what it must not write, the same way on both paths.
     const tintPlugin: RtePlugin = definePlugin({
         id: 'tint',
-        content: {
+        content: defineContent({
             marks: {
                 tint: defineMark<{ color: string }>({
                     defaults: { color: 'inherit' },
@@ -134,7 +135,7 @@ describe('a style value that could break out of its declaration', () => {
                     parse: [],
                 }),
             },
-        },
+        }),
     });
     const tinted = (color: string): RteDocumentWith<{ mark: { tint?: { color: string } } }> => ({
         version: 1,
