@@ -280,6 +280,18 @@ describe('a plugin id', () => {
         ).toThrow(several);
     });
 
+    it('cannot be empty', () => {
+        expect(() => definePlugin({ id: '', content: defineContent({ marks: { bold: mark() } }) })).toThrow(
+            'A plugin `id` cannot be empty.',
+        );
+    });
+
+    it('rejects a toggled type that only exists on Object.prototype', () => {
+        expect(() =>
+            buildPluginRegistry([definePlugin({ id: 'odd', toolbar: [{ icon, toggles: 'constructor' }] })]),
+        ).toThrow('Plugin "odd" toggles "constructor", which its content does not declare.');
+    });
+
     it('is required of a plain object in the plugins list, which is not read as content', () => {
         // @ts-expect-error an untyped caller can leave out the `id`
         expect(() => buildPluginRegistry([{ toolbar: [{ icon }] }])).toThrow('Plugin has no id: no type declared');

@@ -144,6 +144,9 @@ export type RtePluginDefinition = Omit<RtePlugin, 'id' | 'kind'> & { id?: string
  * });
  */
 export const definePlugin = ({ id, ...plugin }: RtePluginDefinition): RtePlugin => {
+    if (id === '') {
+        throw new Error('A plugin `id` cannot be empty.');
+    }
     const resolved = id ?? onlyTypeOf(plugin.content);
     if (resolved === undefined) {
         const types = typesOf(plugin.content);

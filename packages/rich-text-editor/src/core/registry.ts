@@ -174,19 +174,23 @@ const ownBlockTypeOf = (block: BlockDefinition, type: string): OwnType => {
 /**
  * A type of the content, by what it is: looked up in marks, then blocks, then inlines.
  */
+// `Object.hasOwn` needs an ES2022 lib, which this package does not target.
+const hasOwnKey = (record: object, key: string): boolean => Object.prototype.hasOwnProperty.call(record, key);
+
 export const ownTypeOf = (content: RteContent | undefined, type: string | undefined): OwnType => {
     if (type === undefined) {
         return { kind: 'none' };
     }
     const { marks = {}, blocks = {}, inlines = {} } = content ?? {};
-    if (marks[type] !== undefined) {
+    // Own keys only: `toggles: 'constructor'` must not find Object.prototype.
+    if (hasOwnKey(marks, type)) {
         return { kind: 'mark', type };
     }
     const block = blocks[type];
-    if (block !== undefined) {
+    if (hasOwnKey(blocks, type) && block !== undefined) {
         return ownBlockTypeOf(block, type);
     }
-    if (inlines[type] !== undefined) {
+    if (hasOwnKey(inlines, type)) {
         return { kind: 'inline', type };
     }
     return { kind: 'none' };
