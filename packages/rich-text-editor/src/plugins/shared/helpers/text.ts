@@ -20,7 +20,9 @@ const isControlCharacter = (character: string): boolean => {
     return CONTROL_RANGES.some(([from, to]) => code >= from && code <= to);
 };
 
-/** Text from a stored document or an app lookup as shown: without control characters; the letters of every script stay. */
+/**
+ * Text from a stored document or an app lookup as shown: without control characters; the letters of every script stay.
+ */
 export const withoutControlCharacters = (text: string): string =>
     Array.from(text)
         .filter((character) => !isControlCharacter(character))

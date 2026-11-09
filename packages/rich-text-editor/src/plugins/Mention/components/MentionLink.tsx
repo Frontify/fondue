@@ -4,7 +4,7 @@ import { Tooltip } from '@frontify/fondue-components';
 import { IconPeople } from '@frontify/fondue-icons';
 import { type MouseEvent, type ReactNode } from 'react';
 
-import { type MentionDisplay, storedKind, storedString } from '../helpers/display';
+import { type MentionDisplay, mentionAttributes } from '../helpers/display';
 import styles from '../mention.module.scss';
 import { type MentionValue } from '../types';
 
@@ -28,15 +28,15 @@ export const MentionLink = ({
 }: {
     value: MentionValue;
     display: MentionDisplay;
-    /** Reading view: a mention with no link takes focus so its tooltip opens from the keyboard. */
+    /**
+     * Reading view: a mention with no link takes focus so its tooltip opens from the keyboard.
+     * @default false
+     */
     focusableWhenUnlinked?: boolean;
 }): ReactNode => {
     const attributes = {
         title: display.title,
-        'data-mention-id': storedString(value.id),
-        'data-mention-username': storedString(value.username),
-        'data-mention-name': storedString(value.name),
-        'data-mention-kind': storedKind(value.kind),
+        ...mentionAttributes(value),
         className: styles.mention,
     };
     const content = (

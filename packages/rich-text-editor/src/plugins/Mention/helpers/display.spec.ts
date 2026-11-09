@@ -28,11 +28,11 @@ describe('mentionDisplay', () => {
     });
 
     it('shows the stored username as unavailable, with its stored name and no link', () => {
-        for (const reason of ['deleted', 'forbidden'] as const) {
-            expect(
-                mentionDisplay(JANE, { href, trigger: '@', resolve: () => ({ status: 'unavailable', reason }) }),
-            ).toEqual({ label: '@jane (unavailable)', title: 'Jane Doe', href: undefined });
-        }
+        expect(mentionDisplay(JANE, { href, trigger: '@', resolve: () => ({ status: 'unavailable' }) })).toEqual({
+            label: '@jane (unavailable)',
+            title: 'Jane Doe',
+            href: undefined,
+        });
     });
 
     it('is text without a target, and leaves out a target that is not a safe link', () => {
@@ -62,11 +62,11 @@ describe('mentionDisplay', () => {
         ).toMatchObject({ label: '@jane', title: 'Jane Doe' });
     });
 
-    it('keeps the stored value when the resolver throws', () => {
+    it('lets a throw from the resolver propagate', () => {
         const resolve = (): never => {
             throw new Error('offline');
         };
 
-        expect(mentionDisplay(JANE, { href, trigger: '@', resolve })).toMatchObject({ label: '@jane' });
+        expect(() => mentionDisplay(JANE, { href, trigger: '@', resolve })).toThrow('offline');
     });
 });

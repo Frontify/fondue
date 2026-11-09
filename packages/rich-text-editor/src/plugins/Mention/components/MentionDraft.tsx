@@ -12,7 +12,9 @@ import { type MentionItem, type MentionItems } from '../types';
 /** How many people the picker offers at once. */
 const SUGGESTION_LIMIT = 8;
 
-/** What a failed lookup says, to a screen reader and in the list: the message, then how to retry from the keyboard. */
+/**
+ * What a failed lookup says, to a screen reader and in the list: the message, then how to retry from the keyboard.
+ */
 const FAILED_MESSAGE = 'Could not load people.';
 const FAILED_HINT = 'Press Enter to retry';
 
@@ -84,7 +86,9 @@ const usePeople = (
 
 type PeoplePhase = 'searching' | 'failed' | 'empty' | 'list';
 
-/** Where a lookup stands: people to show, else still searching, else failed, else nobody matches. */
+/**
+ * Where a lookup stands: people to show, else still searching, else failed, else nobody matches.
+ */
 const phaseOf = ({
     people,
     pending,
