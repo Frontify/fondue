@@ -15,8 +15,8 @@ import { ForwardedRefSelectItem, ForwardedRefSelectItemGroup, type SelectItemPro
  * Extracts and returns an object containing `value` and `label` from a given SelectItemProps object.
  * It prioritizes explicit `value` and `label` properties but will fall back to using `children` as the value or label if necessary.
  *
- * @param {SelectItemProps} props - The properties of a select item, which include potential children, value, and label.
- * @returns {{ value: string; label: string, children?: ReactNode }} An object containing `value` and `label` as strings.
+ * @param props - The properties of a select item, which include potential children, value, and label.
+ * @returns An object containing `value` and `label` as strings.
  *
  * @example
  * // Returns { value: 'option1', label: 'Option 1' }
@@ -52,9 +52,9 @@ export const getSelectOptionValue = ({
 /**
  * Determines if the child is a leaf node of React, meaning it has one final child of a native type;
  *
- * @param {ReactNode} child - The React child node to check.
- * @param {JSXElementConstructor<never>} Component - The React component constructor used for comparison.
- * @returns {boolean} Returns true if the `child` is a valid React element of the specified `Component` type.
+ * @param child - The React child node to check.
+ * @param Component - The React component constructor used for comparison.
+ * @returns Returns true if the `child` is a valid React element of the specified `Component` type.
  *
  * @example
  * // Assuming ForwardedRefSelectItem is a component that renders an <input> element
@@ -72,11 +72,11 @@ export const isReactLeaf = (child: ReactNode, Component: JSXElementConstructor<n
  * Recursively maps through React children, applying a callback to each child that meets the specified conditions.
  * This function is useful for deeply nested structures where modifications or checks are needed at multiple levels.
  *
- * @param {ReactNode} children - The children to be recursively processed.
- * @param {function(ReactNode, number): ReactNode} callback - A function that is called for each child that meets the condition. It receives the child and its index, and returns a React node.
- * @param {string} [filterText=''] - Optional text used to filter children based on their properties.
- * @param {number} [nextIndex=0] - The starting index for numbering children, defaults to 0.
- * @returns {{ parsedChildren: ReactNode[], subElementCount: number }} An object containing the transformed children array and the count of all processed sub-elements.
+ * @param children - The children to be recursively processed.
+ * @param callback - A function that is called for each child that meets the condition. It receives the child and its index, and returns a React node.
+ * @param [filterText=''] - Optional text used to filter children based on their properties.
+ * @param [nextIndex=0] - The starting index for numbering children, defaults to 0.
+ * @returns An object containing the transformed children array and the count of all processed sub-elements.
  *
  * @example
  * // Example usage in a select component where only items containing a certain text are modified

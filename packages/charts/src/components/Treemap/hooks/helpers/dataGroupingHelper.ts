@@ -92,13 +92,12 @@ const addDataPointToGroup = (
             value: (group.value ?? 0) + (dataPoint.value ?? 0),
             groupIds: [...(group.groupIds || []), dataPoint.id],
         };
-    } else {
-        return {
-            ...dataPoint,
-            id: groupId,
-            description: '',
-            groupIds: [dataPoint.id],
-            parentId: parentGroup ? `group-${parentGroup.color}` : dataPoint.parentId,
-        };
     }
+    return {
+        ...dataPoint,
+        id: groupId,
+        description: '',
+        groupIds: [dataPoint.id],
+        parentId: parentGroup ? `group-${parentGroup.color}` : dataPoint.parentId,
+    };
 };
