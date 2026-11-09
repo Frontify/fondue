@@ -10,8 +10,8 @@ import { syncRefs } from '#/utilities/domUtilities';
  * and allow external access through a forwarded ref.
  *
  * @template TElement - The type of the DOM element being referenced. Defaults to HTMLElement.
- * @param {RefObject<TElement>} localRef - The local ref object used internally by the component.
- * @param {ForwardedRef<TElement>} forwardedRef - The ref forwarded from a parent component.
+ * @param localRef - The local ref object used internally by the component.
+ * @param forwardedRef - The ref forwarded from a parent component.
  *
  * @example
  * ```tsx

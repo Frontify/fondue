@@ -7,9 +7,7 @@ import { definePlugin, type EditorControlApi, PARAGRAPH, type ToolbarItemProps }
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
 /**
- * Puts the selection back to plain text: marks gone, block type back to
- * paragraph, alignment cleared, lists unwrapped. No schema of its own — it only
- * drives the control API.
+ * Puts the selection back to plain text: no marks, a paragraph, default attributes, no lists
  */
 const reset = (api: EditorControlApi): void => {
     api.marks.removeAll();
@@ -28,7 +26,9 @@ const ResetFormattingButton = ({ api }: ToolbarItemProps) => (
     </ToolbarButton>
 );
 
-/** A toolbar button that strips the selection back to plain text. */
+/**
+ * A toolbar button that puts the selection back to plain text
+ */
 export const resetFormattingPlugin = /* @__PURE__ */ definePlugin({
     id: 'reset-formatting',
     toolbar: [{ render: ResetFormattingButton, floating: 'inline' }],

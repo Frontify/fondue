@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/** The schemes a link may use. Everything else — `javascript:`, `data:` — never becomes one. */
+/**
+ * The schemes a link may use, which leaves out `javascript:` and `data:`
+ */
 const SAFE_SCHEMES = /* @__PURE__ */ new Set(['http:', 'https:', 'mailto:', 'tel:']);
 
 /**
@@ -10,13 +12,19 @@ const SAFE_SCHEMES = /* @__PURE__ */ new Set(['http:', 'https:', 'mailto:', 'tel
  */
 const HOST_AND_PORT = /^[^/:?#]+:\d+(?:[/?#]|$)/;
 
-/** Longer than any link someone means, and than most browsers keep. */
+/**
+ * Longer than any link someone means, and than most browsers keep
+ */
 const MAX_HREF_LENGTH = 2048;
 
-/** C0 and C1 control characters, which no link someone means contains. */
+/**
+ * C0 and C1 control characters, which no link someone means contains
+ */
 const CONTROL_CHARACTER = /[\u0000-\u001F\u007F-\u009F]/;
 
-/** The scheme an href names, lower-cased with its colon, or null for a relative one. */
+/**
+ * The scheme an href names, lower-cased with its colon, or null for a relative one
+ */
 const schemeOf = (href: string): string | null => {
     // Browsers ignore tabs, newlines and control characters in URLs, so `java\tscript:` must read as `javascript:`.
     const compact = href.replaceAll(/[\u0000- ]/g, '');
@@ -37,7 +45,9 @@ export const isSafeHref = (href: unknown): href is string => {
     return scheme === null || SAFE_SCHEMES.has(scheme);
 };
 
-/** What an `<img>` may load: a web or relative URL, or a `data:` image; an image cannot run script, but a `javascript:` or other scheme is still refused. */
+/**
+ * What an `<img>` may load: a web or relative URL, or a `data:` image; an image cannot run script, but a `javascript:` or other scheme is still refused
+ */
 export const isSafeImageSrc = (src: unknown): src is string => {
     if (typeof src !== 'string') {
         return false;
@@ -52,12 +62,16 @@ export const isSafeImageSrc = (src: unknown): src is string => {
     return scheme === null || scheme === 'http:' || scheme === 'https:';
 };
 
-/** Paths and fragments within the site the document is shown on, kept as typed. */
+/**
+ * Paths and fragments within the site the document is shown on, kept as typed
+ */
 const isRelative = (typed: string): boolean => /^(#|\/|\.\.?\/|\?)/.test(typed);
 
 const isEmail = (typed: string): boolean => /^[^\s@/:]+@[^\s@/:]+\.[^\s@/:]+$/.test(typed);
 
-/** A host someone means: a domain with a dot in it, an IP address, or the local machine. */
+/**
+ * A host someone means: a domain with a dot in it, an IP address, or the local machine
+ */
 const isHost = (hostname: string): boolean =>
     hostname === 'localhost' || /\.[a-z\d-]{2,}$/i.test(hostname) || /^\d{1,3}(\.\d{1,3}){3}$/.test(hostname);
 

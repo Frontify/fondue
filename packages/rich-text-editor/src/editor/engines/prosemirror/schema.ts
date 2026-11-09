@@ -12,7 +12,15 @@ import {
     type PluginRegistry,
 } from '#/core';
 
-import { plainTextOf, RAW_ATTR, UNKNOWN_BLOCK, UNKNOWN_INLINE, UNKNOWN_MARKS, VALUE_ATTR } from './documentConversion';
+import {
+    EXTRA_ATTR,
+    plainTextOf,
+    RAW_ATTR,
+    UNKNOWN_BLOCK,
+    UNKNOWN_INLINE,
+    UNKNOWN_MARKS,
+    VALUE_ATTR,
+} from './documentConversion';
 import { htmlSpecToDom } from './htmlSpecToDom';
 import { blockParseRules, INLINE_PRIORITY, markParseRules, valueParseRules } from './pasteRules';
 
@@ -91,6 +99,7 @@ const blockNodeSpec = (
         // invariant (4)
         ...(isListItem ? {} : { group: 'block' }),
         attrs: {
+            [EXTRA_ATTR]: { default: null },
             ...Object.fromEntries(
                 Object.entries(definition.defaults ?? {}).map(([name, value]) => [name, { default: value ?? null }]),
             ),
@@ -158,7 +167,9 @@ const unknownInlineSpec: PmNodeSpec = {
     toDOM: (node) => ['span', { 'data-rte-unknown': '', contenteditable: 'false' }, plainTextOf(node.attrs[RAW_ATTR])],
 };
 
-/** Carried along with the text it is on, drawing nothing; typing next to it does not extend it. */
+/**
+ * Carried along with the text it is on, drawing nothing; typing next to it does not extend it
+ */
 const unknownMarksSpec: PmMarkSpec = {
     attrs: { [RAW_ATTR]: {} },
     inclusive: false,

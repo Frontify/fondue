@@ -56,7 +56,9 @@ import { markValueOf, VALUE_ATTR } from './documentConversion';
 
 // --- Entry points ---
 
-/** Only marks with editing UI get a view; the rest are drawn from `toHtml`, as in the readonly view and export. */
+/**
+ * Only marks with editing UI get a view; the rest are drawn from `toHtml`, as in the readonly view and export
+ */
 export const createMarkViews = (
     registry: PluginRegistry,
     api: EditorControlApi,
@@ -98,19 +100,27 @@ export const createNodeViews = (
 
 // --- LiveViews: which views a state change can concern ---
 
-/** A plugin's `edit` view, for any kind of node; `TCurrent` is what its value can be right now. */
+/**
+ * A plugin's `edit` view, for any kind of node. `TCurrent` is what its value can be right now
+ */
 type EditComponent<TCurrent = Record<string, unknown>> = ComponentType<EditProps<Record<string, unknown>, TCurrent>>;
 
-/** What a live view last handed its component; the callbacks are stable, so this is all that changes. */
+/**
+ * What a live view last handed its component; the callbacks are stable, so this is all that changes
+ */
 type Painted = { focused: boolean; selected: boolean; open: boolean; value: unknown };
 
 const samePaint = (a: Painted | null, b: Painted): boolean =>
     a !== null && a.focused === b.focused && a.selected === b.selected && a.open === b.open && a.value === b.value;
 
-/** What a repaint reports: the view's type, and whether the selection is in it. */
+/**
+ * What a repaint reports: the view's type, and whether the selection is in it
+ */
 type PaintResult = { type: string; focused: boolean };
 
-/** A view whose props follow the selection (focus, selection, openness); `LiveViews.repaint` offers it changes. */
+/**
+ * A view whose props follow the selection (focus, selection, openness); `LiveViews.repaint` offers it changes
+ */
 type Repaintable = { paint(): PaintResult };
 
 /**
@@ -130,7 +140,9 @@ export class LiveViews {
         this.views.delete(view);
     }
 
-    /** Repaint every view. Reports whether one of `openType` is still focused — when none is, its editing UI closes. */
+    /**
+     * Repaint every view. Reports whether one of `openType` is still focused — when none is, its editing UI closes.
+     */
     repaint(openType: string | null): boolean {
         let openStillFocused = false;
         for (const view of this.views) {
@@ -161,19 +173,31 @@ abstract class ReactEditView<TCurrent> implements Repaintable {
         private readonly openEditors: OpenEditors,
     ) {}
 
-    /** The node or mark type this view draws. */
+    /**
+     * The node or mark type this view draws
+     */
     protected abstract get type(): string;
-    /** Whether the selection is in the node, and whether it covers it whole. */
+    /**
+     * Whether the selection is in the node, and whether it covers it whole
+     */
     protected abstract placement(): { focused: boolean; selected: boolean };
-    /** The value handed to the component; a new identity means a repaint. */
+    /**
+     * The value handed to the component; a new identity means a repaint
+     */
     protected abstract value(): TCurrent;
-    /** What goes in as `children`. */
+    /**
+     * What goes in as `children`
+     */
     protected abstract children(): ReactNode;
     protected abstract store(value: Record<string, unknown>): void;
     protected abstract drop(): void;
-    /** Called with each new paint, before React renders it. */
+    /**
+     * Called with each new paint, before React renders it
+     */
     protected painting(_next: Painted): void {}
-    /** Where the editable content sits in the document, for views that have some. */
+    /**
+     * Where the editable content sits in the document, for views that have some
+     */
     protected contentRange(): { from: number; to: number } | null {
         return null;
     }
@@ -292,7 +316,9 @@ abstract class ReactEditView<TCurrent> implements Repaintable {
     }
 }
 
-/** A view standing for a node — a block or an inline — rather than a mark's run. */
+/**
+ * A view standing for a node — a block or an inline — rather than a mark's run
+ */
 abstract class ReactNodeView<TCurrent> extends ReactEditView<TCurrent> implements NodeView {
     abstract dom: HTMLElement;
 
@@ -312,12 +338,16 @@ abstract class ReactNodeView<TCurrent> extends ReactEditView<TCurrent> implement
         return this.node.type.name;
     }
 
-    /** Where the node is, while the view still stands for one. Not gated on `view.isDestroyed`, which is also true during the engine's first DOM build, when the position is already known. */
+    /**
+     * Where the node is, while the view still stands for one. Not gated on `view.isDestroyed`, which is also true during the engine's first DOM build, when the position is already known.
+     */
     protected pos(): number | undefined {
         return this.destroyed ? undefined : this.getPos();
     }
 
-    /** A new node of the same type: take it, or say no and get a new view. */
+    /**
+     * A new node of the same type: take it, or say no and get a new view
+     */
     protected accepts(node: PmNode): boolean {
         return !this.destroyed && node.type === this.node.type;
     }
@@ -334,7 +364,9 @@ abstract class ReactNodeView<TCurrent> extends ReactEditView<TCurrent> implement
 
 // --- Block views ---
 
-/** The tag and attributes of a block's outermost element, as `toHtml` (with alignment) says. */
+/**
+ * The tag and attributes of a block's outermost element, as `toHtml` (with alignment) says
+ */
 const outerElement = (
     registry: PluginRegistry,
     definition: BlockDefinition,
@@ -419,7 +451,9 @@ class ReactBlockView extends ReactNodeView<Record<string, unknown>> {
 
     private cachedValue: { attrs: PmNode['attrs']; value: Record<string, unknown> } | null = null;
 
-    /** Rebuilt only when `node.attrs` is replaced, so its identity tells a repaint whether it changed. */
+    /**
+     * Rebuilt only when `node.attrs` is replaced, so its identity tells a repaint whether it changed
+     */
     protected value(): Record<string, unknown> {
         if (this.cachedValue?.attrs !== this.node.attrs) {
             this.cachedValue = { attrs: this.node.attrs, value: blockValueOf(this.definition, this.node.attrs) };
@@ -472,13 +506,19 @@ class ReactBlockView extends ReactNodeView<Record<string, unknown>> {
 
 // --- Inline views ---
 
-/** Set on an inline node view inside a selected range; engine.scss paints the highlight. */
+/**
+ * Set on an inline node view inside a selected range; engine.scss paints the highlight
+ */
 const IN_SELECTION_CLASS = 'rte-in-selection';
 
-/** Class on an inline node view's element; engine.scss keeps host styles off it. */
+/**
+ * Class on an inline node view's element; engine.scss keeps host styles off it
+ */
 const INLINE_VIEW_CLASS = 'rte-inline-view';
 
-/** Hosts an inline element's `edit` view. Events from inside it belong to it: an input there types into the input, not the document. */
+/**
+ * Hosts an inline element's `edit` view. Events from inside it belong to it: an input there types into the input, not the document
+ */
 class ReactInlineView extends ReactNodeView<Record<string, unknown> | null> {
     dom: HTMLElement;
 
@@ -593,7 +633,9 @@ class ReactMarkView extends ReactEditView<Record<string, unknown>> implements Ma
         return this.mark.type.name;
     }
 
-    /** Where this run of the mark sits in the document, read off its content. */
+    /**
+     * Where this run of the mark sits in the document, read off its content
+     */
     private range(): { from: number; to: number } | null {
         if (this.destroyed || this.view.isDestroyed || !this.contentDOM.isConnected) {
             return null;
@@ -664,7 +706,9 @@ class ReactMarkView extends ReactEditView<Record<string, unknown>> implements Ma
  */
 const WRAPPER_CLASS = 'rte-view-wrapper';
 
-/** A wrapper element: no box of its own, and no host styles. */
+/**
+ * A wrapper element: no box of its own, and no host styles
+ */
 const wrapper = (tag: 'span' | 'div'): HTMLElement => {
     const element = document.createElement(tag);
     element.className = WRAPPER_CLASS;
@@ -672,7 +716,9 @@ const wrapper = (tag: 'span' | 'div'): HTMLElement => {
     return element;
 };
 
-/** Moves the engine's content into `parent`, restoring the caret that the move would collapse. */
+/**
+ * Moves the engine's content into `parent`, restoring the caret that the move would collapse
+ */
 const moveContent = (content: HTMLElement, parent: HTMLElement): void => {
     if (content.parentNode === parent) {
         return;
@@ -722,7 +768,9 @@ const isTypedText = (node: Node, dom: HTMLElement): node is Text => {
     return island === null || island === undefined || !dom.contains(island);
 };
 
-/** A DOM change outside the content that is typing rather than React drawing the chrome. */
+/**
+ * A DOM change outside the content that is typing rather than React drawing the chrome
+ */
 const isTypedBesideContent = (mutation: ViewMutationRecord, dom: HTMLElement): boolean => {
     if (mutation.type === 'characterData') {
         return isTypedText(mutation.target, dom);
@@ -733,7 +781,9 @@ const isTypedBesideContent = (mutation: ViewMutationRecord, dom: HTMLElement): b
     return false;
 };
 
-/** Takes the typed text outside `content` out of the DOM, split by whether it sat before or after it. */
+/**
+ * Takes the typed text outside `content` out of the DOM, split by whether it sat before or after it
+ */
 const takeTypedText = (dom: HTMLElement, content: HTMLElement): { before: string; after: string } => {
     const found = { before: '', after: '' };
     const walker = dom.ownerDocument.createTreeWalker(dom, NodeFilter.SHOW_TEXT);

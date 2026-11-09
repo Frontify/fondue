@@ -21,6 +21,7 @@ import {
     columnBreakPlugin,
     defaultPlugins,
     defineBlock,
+    defineContent,
     defineInline,
     defineMark,
     definePlugin,
@@ -1037,7 +1038,7 @@ const highlightPlugin = (): RtePlugin =>
             },
         ],
         hotkeys: { 'Mod-h': (api) => api.marks.toggle('highlight') },
-        content: {
+        content: defineContent({
             marks: {
                 highlight: defineMark({
                     toHtml: () => ({
@@ -1050,7 +1051,7 @@ const highlightPlugin = (): RtePlugin =>
                     parse: [{ tag: 'mark' }],
                 }),
             },
-        },
+        }),
     });
 
 /**
@@ -1113,7 +1114,7 @@ const calloutPlugin = (): RtePlugin =>
                 },
             },
         ],
-        content: {
+        content: defineContent({
             blocks: {
                 callout: defineBlock({
                     content: 'text',
@@ -1127,7 +1128,7 @@ const calloutPlugin = (): RtePlugin =>
                     parse: [{ tag: 'aside' }],
                 }),
             },
-        },
+        }),
     });
 
 /** An extra block type joins the official union in the same type argument. */
@@ -1216,7 +1217,7 @@ const embedPlugin = (): RtePlugin =>
         id: 'embed',
         // An empty embed, which its `edit` view then takes over.
         hotkeys: { '/': (api) => api.insert('embed') },
-        content: {
+        content: defineContent({
             inlines: {
                 embed: defineInline<EmbedValue>({
                     toHtml: ({ provider }) => ({
@@ -1229,7 +1230,7 @@ const embedPlugin = (): RtePlugin =>
                     ],
                 }),
             },
-        },
+        }),
         edit: {
             embed: ({ value, setValue, remove, api }: RtePlugin.EditProps<EmbedValue, EmbedValue | null>) =>
                 value === null ? (

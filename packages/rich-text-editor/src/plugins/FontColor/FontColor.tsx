@@ -7,16 +7,17 @@ import { declaredStyle } from '../shared/helpers/declaredStyle';
 import { ColorFlyout } from './components/ColorFlyout';
 import { type FontColorValue, isCssColor, parseCssColor } from './helpers/colors';
 
-/** The value this plugin sets on text nodes. */
+/**
+ * The value this plugin sets on text nodes
+ */
 export type FontColorMark = {
+    /**
+     * The colour of the text
+     */
     fontColor?: FontColorValue;
 };
 
-/**
- * Colours that say "ordinary text" rather than pick one. Word processors write
- * black onto every run they copy, and a colour inherited from the page is no
- * choice either: kept, they would pin the text to black in a dark theme.
- */
+// Word processors write black onto every run they copy; kept, it would pin the text to black in a dark theme.
 const DEFAULT_TEXT_KEYWORD = /^(black|windowtext|canvastext|inherit|initial|unset|currentcolor)$/i;
 
 const isDefaultTextColor = (color: string): boolean => {
@@ -27,7 +28,9 @@ const isDefaultTextColor = (color: string): boolean => {
     return parsed !== undefined && parsed.red === 0 && parsed.green === 0 && parsed.blue === 0 && parsed.alpha === 1;
 };
 
-/** Text colour as a mark. */
+/**
+ * Text colour as a mark
+ */
 export const fontColorContent = /* @__PURE__ */ defineContent({
     marks: {
         fontColor: /* @__PURE__ */ defineMark<FontColorValue>({
@@ -57,7 +60,9 @@ export const fontColorContent = /* @__PURE__ */ defineContent({
     },
 });
 
-/** Text colour as a mark, picked from a flyout in the toolbar. */
+/**
+ * Text colour, picked from a flyout in the toolbar
+ */
 export const fontColorPlugin = /* @__PURE__ */ definePlugin({
     id: 'font-color',
     content: fontColorContent,

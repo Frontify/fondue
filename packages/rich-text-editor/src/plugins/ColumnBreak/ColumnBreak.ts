@@ -6,22 +6,28 @@ import { defineBlock, defineContent, definePlugin } from '#/core';
 
 import styles from './columnBreak.module.scss';
 
-/** The void block this plugin adds: where the next column starts. */
+/**
+ * The void block this plugin adds, where the next column starts
+ */
 export type ColumnBreakBlock = {
     type: 'columnBreak';
 };
 
 export type ColumnBreakPluginOptions = {
-    /** How many columns the content is laid out in. */
+    /**
+     * How many columns the content is laid out in
+     * @default 2
+     */
     columns?: number;
-    /** The gap between them, as a CSS length: `'24px'`, `'2rem'`, `'normal'`. */
+    /**
+     * The gap between the columns, as a CSS length such as `'24px'`
+     * @default 'normal'
+     */
     gap?: string;
 };
 
 /**
- * Lays the content out in columns and lets the author say where each one ends.
- * The column count belongs to the editor instance rather than to the document,
- * so it is an option rather than something stored.
+ * Lays the content out in columns, with a block that marks where each column ends
  */
 export const columnBreakContent = ({ columns = 2, gap = 'normal' }: ColumnBreakPluginOptions = {}) =>
     defineContent({
@@ -48,7 +54,9 @@ export const columnBreakContent = ({ columns = 2, gap = 'normal' }: ColumnBreakP
         },
     });
 
-/** Adds the column break to the content laid out in columns, and a button and `/` entry to insert it. */
+/**
+ * Lays the content out in columns, with a toolbar button and `/` entry that insert a column break
+ */
 export const columnBreakPlugin = (options: ColumnBreakPluginOptions = {}) =>
     definePlugin({
         id: 'column-break',

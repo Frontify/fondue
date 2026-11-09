@@ -37,6 +37,7 @@ export {
     type PasteHandler,
     type RteBlockCommand,
     type RteContent,
+    type RteContentDefinition,
     type RteDelimiterRule,
     type RteEditView,
     type RteIcon,
@@ -45,6 +46,7 @@ export {
     type RtePluginDefinition,
     type RteToolbarEntry,
     type SelectedNode,
+    TOOLBAR_ICON_SIZE,
     type ToolbarItemProps,
 } from './plugin';
 export {

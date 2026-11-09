@@ -15,11 +15,12 @@ import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 import styles from './align.module.scss';
 
 /**
- * Alignment is an attribute on every text block rather than a block type of its
- * own, so it applies to paragraphs, headings, quotes and list items alike,
- * block types this plugin knows nothing about included.
+ * The attribute this plugin adds to every text block
  */
 export type AlignAttribute = {
+    /**
+     * The text alignment of the block
+     */
     align?: 'left' | 'center' | 'right' | 'justify';
 };
 
@@ -28,7 +29,9 @@ const ALIGN_VALUES: readonly NonNullable<AlignAttribute['align']>[] = ['left', '
 const isAlignment = (value: unknown): value is NonNullable<AlignAttribute['align']> =>
     ALIGN_VALUES.some((alignment) => alignment === value);
 
-/** Text alignment as a block attribute. */
+/**
+ * Text alignment as a block attribute
+ */
 export const alignContent = /* @__PURE__ */ defineContent({
     blockAttributes: {
         align: {
@@ -69,7 +72,13 @@ const AlignToolbar = ({ api, selection }: ToolbarItemProps) => {
                     title={title}
                     // Choosing the alignment already set clears it, so the
                     // block inherits the editor's direction again.
-                    onClick={() => api.blocks.updateAttributes({ align: align === value ? null : value })}
+                    onClick={() => {
+                        let next: typeof value | null = value;
+                        if (align === value) {
+                            next = null;
+                        }
+                        api.blocks.updateAttributes({ align: next });
+                    }}
                 >
                     <Icon size={16} />
                 </ToolbarButton>
@@ -78,7 +87,9 @@ const AlignToolbar = ({ api, selection }: ToolbarItemProps) => {
     );
 };
 
-/** Text alignment as a block attribute, with a four-way radio group in the toolbar. */
+/**
+ * Text alignment, with a four-way radio group in the toolbar
+ */
 export const alignPlugin = /* @__PURE__ */ definePlugin({
     id: 'align',
     content: alignContent,
