@@ -238,6 +238,21 @@ const unknownBlockNode = (block: RteBlockNode, registry: PluginRegistry, options
     return content.length === 0 ? null : html({ tag: 'div', children: true }, content);
 };
 
+/** A block's child. A list holds only items, so a block no plugin defines stands in one as an item of its own. */
+const childNode = (
+    child: RteBlockNode,
+    parent: RteBlockNode,
+    registry: PluginRegistry,
+    options: Options,
+): DrawnNode | null => {
+    const drawn = blockNode(child, registry, options);
+    const isUnknownInList = registry.itemTypeByList.has(parent.type) && !registry.blocks.has(child.type);
+    if (drawn === null || !isUnknownInList) {
+        return drawn;
+    }
+    return html({ tag: 'li', children: true }, [drawn]);
+};
+
 // --- Public ---
 
 /** The block drawn, or null for a block no plugin defines that holds nothing. */
@@ -252,7 +267,7 @@ export const blockNode = (block: RteBlockNode, registry: PluginRegistry, options
         content = textBlockContent(block, registry, options);
     } else if (definition.content !== undefined) {
         content = ((block.children as RteBlockNode[] | undefined) ?? []).flatMap(
-            (child) => blockNode(child, registry, options) ?? [],
+            (child) => childNode(child, block, registry, options) ?? [],
         );
     }
     const style = definition.content === 'text' ? blockAttributeStyle(registry, stored) : undefined;

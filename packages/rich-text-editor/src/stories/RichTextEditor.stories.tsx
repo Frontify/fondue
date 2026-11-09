@@ -342,6 +342,30 @@ export const Readonly: Story = {
 };
 
 /**
+ * A document saved by a newer version of the editor may hold what this one
+ * would lose on save, so it is shown read-only with a notice saying why. The
+ * notice text is the `newerVersion` label.
+ */
+export const NewerVersion: Story = {
+    render: () => (
+        <div className={LAYOUT}>
+            <div className={FRAME}>
+                <RichTextEditor
+                    value={
+                        {
+                            // Far above any real version, so the story keeps showing the notice.
+                            version: 1000,
+                            blocks: [{ type: 'paragraph', children: [{ text: 'Saved by a newer editor.' }] }],
+                        } as unknown as RteDocument
+                    }
+                    plugins={defaultPlugins}
+                />
+            </div>
+        </div>
+    ),
+};
+
+/**
  * `showEditor={false}` drops the editor's own UI — the toolbar and the `/` menu —
  * so only the content is rendered. The editor draws no box either way: with
  * no wrapper around it, as here, the document sits in the page as if it were

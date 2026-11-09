@@ -45,6 +45,11 @@ export type EditorControlApi = {
          * (`{ href }` for links).
          */
         toggle(type: string, value?: Record<string, unknown>): void;
+        /**
+         * Put a mark on all of the selection with `value`, replacing the value
+         * any of it carried, as one undo step: how a colour is changed.
+         */
+        set(type: string, value?: Record<string, unknown>): void;
         /** Strip every mark from the selection — the formatting half of "reset formatting". */
         removeAll(): void;
         /**

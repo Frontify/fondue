@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Notice } from '@frontify/fondue-components';
 import {
     type CSSProperties,
     type KeyboardEvent,
@@ -17,6 +18,7 @@ import {
 import {
     buildPluginRegistry,
     emptyDocument,
+    newerVersionOf,
     type PluginRegistry,
     type RteBlockNode,
     type RteDocumentOf,
@@ -35,6 +37,7 @@ import { useFocusWithin } from './hooks/useFocusWithin';
 import { useMouseDrag } from './hooks/useMouseDrag';
 import { DEFAULT_LABELS, type RichTextEditorLabels } from './labels';
 import styles from './richTextEditor.module.scss';
+import { warnNewerVersion } from './warnings';
 
 /**
  * `TBlock` is the document's block union. It defaults to the structural
@@ -75,11 +78,17 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * @default 'top'
      */
     toolbarPlacement?: ToolbarPlacement;
-    /** Show the content without allowing edits. The toolbar goes away with it. */
+    /**
+     * Show the content without allowing edits. The toolbar goes away with it.
+     * A document from a newer format version is always shown this way, with no
+     * `onChange` or `onBlur`, and with a notice saying why (`labels.newerVersion`)
+     * unless this is set.
+     */
     readonly?: boolean;
     /**
      * Draw the editor's own UI: the toolbar and the `/` menu. Off, only the
-     * content is rendered, still editable unless `readonly`.
+     * content is rendered, still editable unless `readonly` or the document is
+     * from a newer format version.
      *
      * The editor draws no box either way — no border, background or inset;
      * a host that wants a field wraps the editor in one.
@@ -158,7 +167,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     const fallbackReportedRef = useRef(false);
     const onFallbackCatch = (error: Error): void => {
         // A readonly editor's view is the one that crashed, already reported.
-        if (shellProps.readonly === true || fallbackReportedRef.current) {
+        if (shellProps.readonly === true || newerVersionOf(document) !== null || fallbackReportedRef.current) {
             return;
         }
         fallbackReportedRef.current = true;
@@ -243,7 +252,7 @@ const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
     focusWithinRef,
     onChange,
     toolbarPlacement = 'top',
-    readonly: readOnly = false,
+    readonly: readonlyProp = false,
     showEditor = true,
     placeholder = '',
     'aria-label': ariaLabel,
@@ -251,6 +260,15 @@ const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
     'aria-describedby': ariaDescribedBy,
     onBlur,
 }: ShellProps<TBlock>): ReactNode => {
+    // A document from a newer format may hold what this editor would drop on save, so it is only shown.
+    const newerVersion = newerVersionOf(document);
+    const readOnly = readonlyProp || newerVersion !== null;
+    useEffect(() => {
+        if (newerVersion !== null) {
+            warnNewerVersion(newerVersion);
+        }
+    }, [newerVersion]);
+
     const commands = useMemo(() => commandsOf(registry, labels.text), [registry, labels.text]);
 
     const editableId = useId();
@@ -315,7 +333,8 @@ const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
     // toolbar and the flyouts they portal out — not just the editable element.
     const hadFocusRef = useRef(false);
     useEffect(() => {
-        if (hadFocusRef.current && !focusWithin && handle !== null) {
+        // The handle can outlive a switch to a newer document by one render; its document would overwrite that one.
+        if (hadFocusRef.current && !focusWithin && handle !== null && newerVersion === null) {
             onBlur?.(handle.document() as RteDocumentOf<TBlock>);
         }
         // Changes only: the mount must not overwrite the focus a pressed Retry handed over.
@@ -326,6 +345,16 @@ const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
         // Only the change of focus is the event; the callback is read when it happens.
         // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [focusWithin]);
+    // The notice takes the focus the removed text dropped onto the page, and says why; `focusWithin` lags a blur.
+    const noticeRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        const { activeElement, body } = window.document;
+        if (newerVersion !== null && focusWithin && (activeElement === null || activeElement === body)) {
+            noticeRef.current?.focus();
+        }
+        // Only the switch is the event; focus is read when it happens.
+        // eslint-disable-next-line @eslint-react/exhaustive-deps
+    }, [newerVersion]);
     // Alt+F10 asks the toolbar to take focus; it reads and clears the request
     // once it has rendered, which for a floating bar may be its first render.
     const focusRequestRef = useRef(false);
@@ -420,6 +449,14 @@ const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
                 tabIndex={focusReadonlyView ? -1 : undefined}
             >
                 {toolbarFloats ? null : toolbar}
+                {/* A host that shows it read-only anyway offered no editing to explain. */}
+                {newerVersion === null || readonlyProp ? null : (
+                    <div ref={noticeRef} tabIndex={-1} className={styles.notice}>
+                        <Notice variant="warning" emphasis="weak">
+                            {labels.newerVersion}
+                        </Notice>
+                    </div>
+                )}
                 {readOnly ? (
                     // The renderer adds the document and plugin classes itself.
                     <RegistryRenderer value={document} registry={registry} className={styles.content} />
