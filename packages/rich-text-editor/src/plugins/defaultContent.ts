@@ -18,7 +18,7 @@ import { superscriptContent } from './Superscript/Superscript';
 import { textStyleContent } from './TextStyle/TextStyle';
 import { underlineContent } from './Underline/Underline';
 
-// Every top-level call in a plugin file or its helpers needs `/* @__PURE__ */`, or the renderer keeps the plugin; rendererBundle.spec.ts fails when one is missing.
+// Every top-level call in a plugin file or its helpers needs `/* @__PURE__ */`, or the renderer keeps the plugin; rendererBundle.spec.ts fails when that drags editing UI in.
 
 /**
  * The content of every `defaultPlugins` entry, in the same order (it decides

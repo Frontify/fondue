@@ -22,7 +22,8 @@ inlines, and how each one is written as HTML and read back. Its plugin (`defineP
 the editing on top: toolbar buttons, editing views, keys and typing rules. Export both from one
 file and mark each top-level call `/* @__PURE__ */`. A page that only shows documents then keeps
 the content and its bundler drops the plugin with its editing code. A computed key or any other
-side effect in a `definePlugin` argument stops the bundler from dropping it.
+side effect in a `definePlugin` argument stops the bundler from dropping it. The package's own
+plugins are checked by a spec that fails when editing UI lands in the renderer bundle.
 
 ```tsx
 export const highlightContent = /* @__PURE__ */ defineContent({
