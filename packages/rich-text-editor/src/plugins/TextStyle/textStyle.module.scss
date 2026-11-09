@@ -2,13 +2,7 @@
 
 // Every preset. Headings use Fondue's semantic heading tokens, the rest the typography scale.
 // The presets table (helpers/presets.ts) reads these for both the block and the dropdown previews.
-@mixin preset {
-    margin: 0;
-}
-
 @mixin heading {
-    @include preset;
-
     line-height: 1.3;
 }
 
@@ -41,8 +35,6 @@
 }
 
 .custom1 {
-    @include preset;
-
     font-size: var(--typography-font-size-medium);
     font-weight: var(--typography-font-weight-medium);
     // `em` rather than `--typography-letter-spacing-*`: the wide token is far
@@ -51,31 +43,23 @@
 }
 
 .custom2 {
-    @include preset;
-
     color: var(--color-secondary-default);
     font-size: var(--typography-font-size-medium);
     font-style: italic;
 }
 
 .custom3 {
-    @include preset;
-
     font-size: var(--typography-font-size-small);
     letter-spacing: var(--typography-letter-spacing-wide);
     text-transform: var(--typography-text-transform-uppercase);
 }
 
 .imageTitle {
-    @include preset;
-
     font-size: var(--typography-font-size-medium);
     font-weight: var(--typography-font-weight-bold);
 }
 
 .imageCaption {
-    @include preset;
-
     color: var(--color-secondary-default);
     font-size: var(--typography-font-size-x-small);
 }

@@ -4,7 +4,6 @@
 // widest one: a marker wider than the padding pokes out of the document and is
 // cut off by a host that clips its overflow.
 @mixin list($indent) {
-    margin: 0;
     padding-left: $indent;
 }
 
