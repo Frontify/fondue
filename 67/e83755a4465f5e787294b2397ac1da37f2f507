@@ -1,0 +1,21 @@
+packages/components/src/components/Tree/hooks/useTreeController.spec.tsx
+  s_f352e2f3591a8e::t_3170df7f1a20e8 524,545
+packages/components/src/components/Tree/components/TreeRoot.ct.tsx
+  s_f352e2f3591a8e::t_3170df7f1a20e8 149-151,161-163,167,315-318,332-335,337
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "67e83755a4465f5e787294b2397ac1da37f2f507",
+  "prompts": {},
+  "sessions": {
+    "s_f352e2f3591a8e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3ce9f7f4-bf4d-434e-a017-d6c30c7ba29a",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
