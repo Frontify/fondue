@@ -396,29 +396,43 @@ export type ParseRule<TValue> = {
     value?: (element: HTMLElement) => TValue | null;
 };
 
-/** A rule that matches any element whose own `style` attribute declares the CSS property, handed the declared value. */
+/**
+ * A rule that matches any element whose own `style` attribute declares the CSS property, handed the declared value.
+ */
 export type StyleParseRule<TValue> = {
-    /** A CSS property name: `font-weight`. */
+    /**
+     * A CSS property name: `font-weight`.
+     */
     style: string;
-    /** Never set: lets TypeScript tell a style rule from a tag rule. */
+    /**
+     * Never set: lets TypeScript tell a style rule from a tag rule.
+     */
     tag?: undefined;
     value?: (cssValue: string) => TValue | null;
 };
 
-/** When `clears` is true for the declared value, the element's content does not carry the mark even if an ancestor set it (`<strong><span style="font-weight:normal">`). */
+/**
+ * When `clears` is true for the declared value, the element's content does not carry the mark even if an ancestor set it (`<strong><span style="font-weight:normal">`).
+ */
 export type MarkClearRule = {
-    /** A CSS property name: `font-weight`. */
+    /**
+     * A CSS property name: `font-weight`.
+     */
     style: string;
     clears: (cssValue: string) => boolean;
 };
 
-/** An element the mark's own markup adds, such as a hidden note, skipped with its content when pasted back. */
+/**
+ * An element the mark's own markup adds, such as a hidden note, skipped with its content when pasted back.
+ */
 export type MarkIgnoreRule = {
     tag: string;
     ignore: true;
 };
 
-/** The rules a mark reads pasted HTML with: by tag, by declared style, to clear it, or to skip an element. The `style?: undefined` lets TypeScript type a style rule's `value`. */
+/**
+ * The rules a mark reads pasted HTML with: by tag, by declared style, to clear it, or to skip an element. The `style?: undefined` lets TypeScript type a style rule's `value`.
+ */
 export type MarkParseRule<TValue> =
     | (ParseRule<TValue> & { style?: undefined; ignore?: undefined })
     | StyleParseRule<TValue>
@@ -605,11 +619,18 @@ export type RteInputRule =
      * the text it would replace carries a mark that opts out (inline code).
      * Only the matched text is replaced, so match a character only to look at
      * it with a lookbehind.
-     *
-     * With `waitForRunEnd` the rule fires only once the NEXT typed character
-     * ends the run, and that character stays after the replacement. A
-     * character ends the run when it is whitespace or one of
-     * `, ; : ! ? ) ] } …` (not `.`, which may be a decimal point or a
-     * file extension). Any other character leaves the text as typed.
      */
-    | { kind: 'text'; match: string | RegExp; replace: string; waitForRunEnd?: boolean };
+    | {
+          kind: 'text';
+          match: string | RegExp;
+          replace: string;
+          /**
+           * Fire only once the NEXT typed character ends the run, and that
+           * character stays after the replacement. A character ends the run when
+           * it is whitespace or one of `, ; : ! ? ) ] } …` (not `.`, which may be
+           * a decimal point or a file extension). Any other character leaves the
+           * text as typed.
+           * @default false
+           */
+          waitForRunEnd?: boolean;
+      };

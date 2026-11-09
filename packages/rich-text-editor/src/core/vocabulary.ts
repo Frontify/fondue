@@ -32,7 +32,9 @@ export const newerVersionOf = (document: RteDocumentOf): number | null => {
     return null;
 };
 
-/** What an inline element (a soft break, a mention) reads as in the text a typing rule matches. */
+/**
+ * What an inline element (a soft break, a mention) reads as in the text a typing rule matches.
+ */
 export const INLINE_PLACEHOLDER = '\uFFFC';
 
 /**
