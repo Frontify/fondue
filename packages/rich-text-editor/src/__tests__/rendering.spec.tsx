@@ -228,3 +228,38 @@ describe('a node no plugin defines', () => {
         warn.mockRestore();
     });
 });
+
+describe('a list holding a block no plugin defines among its items', () => {
+    const item = (children: unknown[]) => ({ type: 'listItem', children: [{ type: 'paragraph', children }] });
+    const doc = {
+        version: 1,
+        blocks: [
+            {
+                type: 'numberedList',
+                children: [
+                    item([{ text: 'one' }]),
+                    { type: 'callout', children: [{ text: 'two' }] },
+                    item([{ text: 'three', link: { href: 'https://example.com' } }]),
+                ],
+            },
+        ],
+    } as unknown as RteDocument;
+
+    it('draws the block as an item of its own, keeping the known items as they are', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        for (const container of [
+            rendered(<RichTextRenderer value={doc} />),
+            exported(serializeToHtml(doc, { plugins: defaultPlugins, wrap: false })),
+        ]) {
+            expect(container.querySelectorAll('ol > :not(li)')).toHaveLength(0);
+            expect([...container.querySelectorAll('ol > li')].map((li) => li.textContent)).toEqual([
+                'one',
+                'two',
+                'three',
+            ]);
+            expect(container.querySelector('ol > li a')?.getAttribute('href')).toBe('https://example.com');
+        }
+        warn.mockRestore();
+    });
+});

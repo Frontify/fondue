@@ -56,6 +56,9 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
                     marks: present === undefined ? { ...others, [type]: value ?? {} } : others,
                 };
             },
+            set: (type, value) => {
+                selection = { ...selection, marks: { ...selection.marks, [type]: value ?? {} } };
+            },
             removeAll: () => {
                 selection = { ...selection, marks: {} };
             },
