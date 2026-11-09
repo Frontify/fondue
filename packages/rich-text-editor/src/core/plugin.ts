@@ -604,11 +604,18 @@ export type RteInputRule =
      * the text it would replace carries a mark that opts out (inline code).
      * Only the matched text is replaced, so match a character only to look at
      * it with a lookbehind.
-     *
-     * With `waitForRunEnd` the rule fires only once the NEXT typed character
-     * ends the run, and that character stays after the replacement. A
-     * character ends the run when it is whitespace or one of
-     * `, ; : ! ? ) ] } …` (not `.`, which may be a decimal point or a
-     * file extension). Any other character leaves the text as typed.
      */
-    | { kind: 'text'; match: string | RegExp; replace: string; waitForRunEnd?: boolean };
+    | {
+          kind: 'text';
+          match: string | RegExp;
+          replace: string;
+          /**
+           * Fire only once the NEXT typed character ends the run, and that
+           * character stays after the replacement. A character ends the run when
+           * it is whitespace or one of `, ; : ! ? ) ] } …` (not `.`, which may be
+           * a decimal point or a file extension). Any other character leaves the
+           * text as typed.
+           * @default false
+           */
+          waitForRunEnd?: boolean;
+      };
