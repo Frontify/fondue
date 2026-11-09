@@ -34,13 +34,7 @@ export type TextStylePluginOptions = {
     styles?: readonly TextStyleOption[];
 };
 
-/**
- * The text block carrying a style. `styles` is also what pasted HTML may become:
- * an editor that does not offer `heading3` turns a pasted `h3` into a paragraph.
- * Rendering is not restricted the same way, so a document written by a
- * differently configured editor still displays as it was authored.
- */
-export const textStyleContent = ({ styles: options = ALL_TEXT_STYLES }: TextStylePluginOptions = {}): RteContent => {
+const textStyleContentFor = (options: readonly TextStyleOption[]): RteContent => {
     const offered = presetsFor(options);
 
     return defineContent({
@@ -69,6 +63,14 @@ export const textStyleContent = ({ styles: options = ALL_TEXT_STYLES }: TextStyl
         },
     });
 };
+
+/**
+ * The text block carrying a style, covering every style. `textStylePlugin({ styles })`
+ * narrows what pasted HTML may become: an editor that does not offer `heading3`
+ * turns a pasted `h3` into a paragraph. Rendering accepts every style, so a
+ * document written by a differently configured editor still displays as it was authored.
+ */
+export const textStyleContent = /* @__PURE__ */ textStyleContentFor(ALL_TEXT_STYLES);
 
 const HEADING_LEVEL: Partial<Record<string, number>> = { h1: 1, h2: 2, h3: 3, h4: 4 };
 
@@ -124,9 +126,15 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
         <TextStyleSelect selection={selection} api={api} options={options} />
     );
 
+    // Reuse the shared object so the default plugin and defaultContent declare the very same block definition.
+    let content = textStyleContent;
+    if (options !== ALL_TEXT_STYLES) {
+        content = textStyleContentFor(options);
+    }
+
     return definePlugin({
         id: 'text-style',
-        content: textStyleContent({ styles: options }),
+        content,
         toolbar: [{ render: TextStyleToolbar }],
         hotkeys,
         // `# ` through `#### `, for the headings this editor offers.

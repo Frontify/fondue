@@ -26,7 +26,7 @@ import { underlineContent } from './Underline/Underline';
  * `toPlainText` read it when given no `plugins`.
  */
 export const defaultContent: readonly RteContent[] = Object.freeze([
-    textStyleContent(),
+    textStyleContent,
     boldContent,
     italicContent,
     underlineContent,
