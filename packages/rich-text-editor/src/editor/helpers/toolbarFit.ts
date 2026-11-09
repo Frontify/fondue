@@ -5,18 +5,20 @@ const TOLERANCE = 0.5;
 
 /**
  * How many leading slots of a one-row toolbar fit in its width. Groups sit
- * `gap` apart and their slots touch; when not every slot fits, More and the gap
- * before it are reserved at the row's end.
+ * `gap` apart and their slots `itemGap` apart; when not every slot fits, More
+ * and the gap before it are reserved at the row's end.
  */
 export const fittingSlotCount = ({
     groups,
     gap,
+    itemGap,
     more,
     available,
 }: {
     /** Each group's slot widths, in drawing order. */
     groups: readonly (readonly number[])[];
     gap: number;
+    itemGap: number;
     /** The More button's width. */
     more: number;
     available: number;
@@ -27,7 +29,10 @@ export const fittingSlotCount = ({
         if (index > 0) {
             total += gap;
         }
-        for (const width of group) {
+        for (const [slot, width] of group.entries()) {
+            if (slot > 0) {
+                total += itemGap;
+            }
             total += width;
             count += 1;
         }
@@ -44,6 +49,9 @@ export const fittingSlotCount = ({
             let needed = width;
             if (index === 0 && shown > 0) {
                 needed += gap;
+            }
+            if (index > 0) {
+                needed += itemGap;
             }
             if (used + needed > limit + TOLERANCE) {
                 return shown;
