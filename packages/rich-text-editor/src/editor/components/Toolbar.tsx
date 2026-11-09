@@ -12,7 +12,13 @@ import {
     useSyncExternalStore,
 } from 'react';
 
-import { type EditorControlApi, type RteBlockCommand, type ToolbarEntry, type ToolbarItemProps } from '#/core';
+import {
+    type EditorControlApi,
+    type RteBlockCommand,
+    TOOLBAR_ICON_SIZE,
+    type ToolbarEntry,
+    type ToolbarItemProps,
+} from '#/core';
 import { ToolbarButton } from '#/plugins/shared/ToolbarButton/ToolbarButton';
 
 import { turnIntoCommands } from '../helpers/blockCommands';
@@ -219,16 +225,14 @@ const ToolbarItemSlot = ({ item, itemProps }: ToolbarItemSlotProps): ReactNode =
             return item.render(itemProps);
         case 'button': {
             const { icon: Icon } = item;
-            // A void block or an inline is inserted, not switched on and off.
-            const toggles = item.own.kind === 'mark' || item.own.kind === 'list' || item.own.kind === 'textBlock';
             return (
                 <ToolbarButton
                     title={item.label}
                     shortcut={item.shortcut}
-                    active={toggles ? itemProps.isActive : undefined}
+                    active={item.pressable ? itemProps.isActive : undefined}
                     onClick={() => itemProps.toggle()}
                 >
-                    <Icon size={16} />
+                    <Icon size={TOOLBAR_ICON_SIZE} />
                 </ToolbarButton>
             );
         }

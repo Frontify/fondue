@@ -42,6 +42,7 @@ export {
     type RtePluginDefinition,
     type RteToolbarEntry,
     type SelectedNode,
+    TOOLBAR_ICON_SIZE,
     type ToolbarItemProps,
 } from './plugin';
 export {

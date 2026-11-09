@@ -24,6 +24,7 @@ import {
     type RteInputRule,
     type RtePlugin,
     type RteToolbarEntry,
+    TOOLBAR_ICON_SIZE,
     type ToolbarItemProps,
     typesOf,
 } from './plugin';
@@ -67,7 +68,14 @@ export type ToolbarEntry = {
     label: string;
     shortcut?: string;
 } & (
-    | { control: 'button'; icon: RteIcon }
+    | {
+          control: 'button';
+          icon: RteIcon;
+          /**
+           * Whether the button shows a pressed state: a void block or an inline is inserted, not switched on and off
+           */
+          pressable: boolean;
+      }
     | {
           /**
            * Custom UI in place of the button.
@@ -306,7 +314,8 @@ const toolbarEntryOf = (plugin: RtePlugin, entry: RteToolbarEntry, key: string):
     if (!BUTTON_KINDS.has(own.kind)) {
         throw new Error(`Plugin "${plugin.id}" has a toolbar entry with ${NOTHING_TO_TOGGLE}`);
     }
-    return { ...shared, control: 'button', icon: entry.icon };
+    const pressable = own.kind === 'mark' || own.kind === 'list' || own.kind === 'textBlock';
+    return { ...shared, control: 'button', icon: entry.icon, pressable };
 };
 
 /**
@@ -318,11 +327,11 @@ const menuCommandOf = (
     keywords: readonly string[] | undefined,
 ): RteBlockCommand => {
     const { own } = entry;
-    const command = {
-        label: entry.label,
-        icon: entry.icon === undefined ? undefined : createElement(entry.icon, { size: 16 }),
-        keywords,
-    };
+    let icon: ReactNode;
+    if (entry.icon !== undefined) {
+        icon = createElement(entry.icon, { size: TOOLBAR_ICON_SIZE });
+    }
+    const command = { label: entry.label, icon, keywords };
     switch (own.kind) {
         case 'textBlock':
             return {
@@ -492,14 +501,6 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
     addEditViews(draft, plugin);
 };
 
-const addItemTypes = (draft: Draft, blocks: RteContent['blocks']): void => {
-    for (const [type, definition] of Object.entries(blocks ?? {})) {
-        if (typeof definition.content === 'object' && 'items' in definition.content) {
-            draft.itemTypeByList.set(type, definition.content.items);
-        }
-    }
-};
-
 /**
  * What a content declares: styling hooks, block, inline and mark types, block attributes.
  */
@@ -513,7 +514,11 @@ const addContent = (draft: Draft, content: RteContent | undefined, owner: string
     register('inline type', draft.inlines, draft.inlineOwners, owner, content?.inlines);
     register('mark type', draft.marks, draft.markOwners, owner, content?.marks);
     register('block attribute', draft.blockAttributes, draft.attributeOwners, owner, content?.blockAttributes);
-    addItemTypes(draft, content?.blocks);
+    for (const [type, definition] of Object.entries(content?.blocks ?? {})) {
+        if (typeof definition.content === 'object' && 'items' in definition.content) {
+            draft.itemTypeByList.set(type, definition.content.items);
+        }
+    }
 };
 
 export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]): PluginRegistry => {

@@ -5,7 +5,6 @@
 // to it, the toolbar entries it offers as data, then menu, keyboard, paste and
 // typing hooks.
 
-import { type FondueIconProps } from '@frontify/fondue-icons';
 import { type ComponentType, type CSSProperties, type ReactNode } from 'react';
 
 import { type EditorControlApi, type RteSelectionSnapshot } from './commands';
@@ -165,10 +164,15 @@ export type RteDelimiterRule = { delimiter: string };
 export type RteEditView = ComponentType<EditProps<any, any>>;
 
 /**
- * An icon component from `@frontify/fondue-icons`
+ * An icon component, such as one from `@frontify/fondue-icons`
  */
-// Typed by its size prop only: React's `propTypes` check makes ComponentType invariant in its props.
-export type RteIcon = ComponentType<Pick<FondueIconProps, 'size'>>;
+// A bare function type: ComponentType's `propTypes` check makes it invariant in its props.
+export type RteIcon = (props: { size?: 16 }) => ReactNode;
+
+/**
+ * The size the editor draws every toolbar and menu icon at
+ */
+export const TOOLBAR_ICON_SIZE = 16 satisfies NonNullable<Parameters<RteIcon>[0]['size']>;
 
 /**
  * What every toolbar control has, whether it is a button or custom UI
