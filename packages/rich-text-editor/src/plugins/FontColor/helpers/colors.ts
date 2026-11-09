@@ -51,21 +51,21 @@ const hslToRgb = (hue: number, saturation: number, lightness: number): [number, 
  */
 const splitArguments = (
     args: string,
-): { channels: string[]; alpha: string | undefined; legacy: boolean } | undefined => {
+): { channels: string[]; alpha: string | undefined; syntax: 'comma' | 'space' } | undefined => {
     const value = args.trim();
     if (value.includes(',')) {
         const parts = value.split(',').map((part) => part.trim());
         if (value.includes('/') || (parts.length !== 3 && parts.length !== 4)) {
             return undefined;
         }
-        return { channels: parts.slice(0, 3), alpha: parts[3], legacy: true };
+        return { channels: parts.slice(0, 3), alpha: parts[3], syntax: 'comma' };
     }
     const [channels = '', alpha, ...rest] = value.split('/');
     const parts = channels.trim().split(/\s+/);
     if (rest.length > 0 || parts.length !== 3) {
         return undefined;
     }
-    return { channels: parts, alpha: alpha?.trim(), legacy: false };
+    return { channels: parts, alpha: alpha?.trim(), syntax: 'space' };
 };
 
 /** One `rgb()`/`rgba()`/`hsl()`/`hsla()`, with an optional alpha. */
@@ -74,7 +74,7 @@ const readColorFunction = (name: string, args: string): RgbaColor | undefined =>
     if (split === undefined) {
         return undefined;
     }
-    const { channels: parts, legacy } = split;
+    const { channels: parts, syntax } = split;
     let alpha: number | undefined = 1;
     if (split.alpha !== undefined) {
         alpha = readNumber(split.alpha, 1);
@@ -85,7 +85,7 @@ const readColorFunction = (name: string, args: string): RgbaColor | undefined =>
 
     if (name.startsWith('rgb')) {
         // The comma form takes three numbers or three percentages, not a mix.
-        if (legacy && new Set(parts.map((part) => part.endsWith('%'))).size > 1) {
+        if (syntax === 'comma' && new Set(parts.map((part) => part.endsWith('%'))).size > 1) {
             return undefined;
         }
         const [red, green, blue] = parts.map((part) => readNumber(part, 255));
@@ -102,7 +102,7 @@ const readColorFunction = (name: string, args: string): RgbaColor | undefined =>
         hue = readNumber(huePart, 360);
     }
     // Saturation and lightness are percentages; only the space form may drop the sign.
-    if (legacy && !parts.slice(1).every((part) => part.endsWith('%'))) {
+    if (syntax === 'comma' && !parts.slice(1).every((part) => part.endsWith('%'))) {
         return undefined;
     }
     const [saturation, lightness] = parts.slice(1).map((part) => readNumber(part, 100));
@@ -170,8 +170,8 @@ export const readStoredColor = (value: unknown): string | undefined => {
 };
 
 /** A stored colour's channels, alpha to two decimals, so an alpha the picker wrote reads back unchanged. */
-const decode = (stored: string): RgbaColor => {
-    const channel = (index: number): number => parseInt(stored.slice(1 + index * 2, 3 + index * 2), 16);
+export const decodeStoredColor = (stored: string): RgbaColor => {
+    const channel = (index: number): number => Number.parseInt(stored.slice(1 + index * 2, 3 + index * 2), 16);
     let alpha = 1;
     if (stored.length === 9) {
         alpha = Math.round((channel(3) / 255) * 100) / 100;
@@ -188,7 +188,7 @@ export const parseCssColor = (css: string | undefined): RgbaColor | undefined =>
     if (stored === undefined) {
         return undefined;
     }
-    return decode(stored);
+    return decodeStoredColor(stored);
 };
 
 /** The picker's colour as the document stores it. */
@@ -206,8 +206,8 @@ export const toExportedColor = (stored: string): string => {
     if (stored.length === 7) {
         return stored;
     }
-    const { red, green, blue } = decode(stored);
-    const byte = parseInt(stored.slice(7, 9), 16);
+    const { red, green, blue } = decodeStoredColor(stored);
+    const byte = Number.parseInt(stored.slice(7, 9), 16);
     // The shortest alpha that pastes back as the same byte.
     let alpha = Math.round((byte / 255) * 100) / 100;
     if (Math.round(alpha * 255) !== byte) {

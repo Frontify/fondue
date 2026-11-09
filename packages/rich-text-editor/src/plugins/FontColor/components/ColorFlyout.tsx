@@ -8,7 +8,14 @@ import { type EditorControlApi, type RteSelectionSnapshot } from '#/core';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
 import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
-import { type FontColorValue, parseCssColor, readStoredColor, type RgbaColor, toCssColor } from '../helpers/colors';
+import {
+    decodeStoredColor,
+    type FontColorValue,
+    parseCssColor,
+    readStoredColor,
+    type RgbaColor,
+    toCssColor,
+} from '../helpers/colors';
 
 import styles from './colorFlyout.module.scss';
 
@@ -46,11 +53,13 @@ export const ColorFlyout = ({
     api: EditorControlApi;
 }): ReactNode => {
     const value = selection.marks.fontColor as Partial<FontColorValue> | undefined;
-    // Coloured text may carry a stored value that is no colour: it shows no
-    // colour, and is still removable.
+    // A stored value that is no colour shows none, and is still removable.
     const hasColor = 'fontColor' in selection.marks;
     const currentCss = readStoredColor(value?.color);
-    const current = parseCssColor(currentCss);
+    let current: RgbaColor | undefined;
+    if (currentCss !== undefined) {
+        current = decodeStoredColor(currentCss);
+    }
     // Named as hex, then the opacity while translucent, as the picker's fields read.
     let colorName: string | undefined;
     if (current !== undefined) {

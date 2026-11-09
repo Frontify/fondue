@@ -31,8 +31,7 @@ export const fontColorPlugin = (): RtePlugin => ({
                 }
                 return { tag: 'span', attrs: { style: { color: toExportedColor(color) } }, children: true };
             },
-            // Any span may be pasted; only one that sets a colour itself is
-            // one. Stored as hex, so `red` and `#f00` both become `#ff0000`.
+            // Only a span whose own style sets a colour is one; stored as hex, so `red` and `#f00` both become `#ff0000`.
             parse: [
                 {
                     tag: 'span',
