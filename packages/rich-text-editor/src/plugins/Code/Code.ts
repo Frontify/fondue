@@ -6,12 +6,19 @@ import { defineContent, defineMark, definePlugin } from '#/core';
 
 import styles from './code.module.scss';
 
-/** The flag this plugin sets on text nodes: present means on, and `true` is the only value it takes. */
+/**
+ * The flag this plugin sets on text nodes
+ */
 export type CodeMark = {
+    /**
+     * Whether the text is inline code. Present means on, and `true` is the only value.
+     */
     code?: true;
 };
 
-/** Inline code: `<code>`. */
+/**
+ * Inline code, written as `<code>`
+ */
 export const codeContent = /* @__PURE__ */ defineContent({
     marks: {
         code: /* @__PURE__ */ defineMark({
@@ -25,7 +32,9 @@ export const codeContent = /* @__PURE__ */ defineContent({
     },
 });
 
-/** Inline code: `Mod-e`, and `` `text` `` while typing. */
+/**
+ * Inline code with the `Mod-e` shortcut, and `` `text` `` while typing
+ */
 export const codePlugin = /* @__PURE__ */ definePlugin({
     content: codeContent,
     toolbar: [{ icon: IconCode, shortcut: 'Mod-e' }],

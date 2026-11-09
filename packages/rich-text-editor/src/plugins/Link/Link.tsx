@@ -1,6 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineContent, defineMark, definePlugin, type EditProps, type HtmlSpec, type ToolbarItemProps } from '#/core';
+import {
+    defineContent,
+    defineMark,
+    definePlugin,
+    type EditProps,
+    type HotkeyHandler,
+    type HtmlSpec,
+    type ToolbarItemProps,
+} from '#/core';
 
 import { toHref } from '../shared/helpers/href';
 
@@ -12,8 +20,13 @@ import { allowsHref, type LinkPolicy } from './helpers/policy';
 import { type LinkValue } from './helpers/value';
 import styles from './link.module.scss';
 
-/** The value this plugin sets on text nodes. */
+/**
+ * The value this plugin sets on text nodes
+ */
 export type LinkMark = {
+    /**
+     * The target of the link
+     */
     link?: LinkValue;
 };
 
@@ -50,7 +63,9 @@ export const linkContent = (policy: LinkPolicy = {}) =>
                 // Typing at the end of a link does not extend it.
                 inclusive: false,
 
-                /** The link everywhere but while editing: readonly, export, copy. */
+                /**
+                 * The link everywhere but while editing: readonly, export, copy
+                 */
                 toHtml: (value) => {
                     // A stored document may hold anything here (`{}`, `true`), so
                     // nothing about its shape is taken on trust.
@@ -101,14 +116,23 @@ export const linkContent = (policy: LinkPolicy = {}) =>
         },
     });
 
-/** Add or edit a link, as in most editors. */
-const HOTKEY = 'Mod-k';
+// The key is a literal because a computed key keeps this plugin in the renderer; HOTKEY's type ties it to this key.
+const hotkeys = {
+    'Mod-k': (api) => {
+        if (api.marks.getRun('link') !== null) {
+            api.editors.open('link');
+            return true;
+        }
+        // At a caret the key stays the editor's even with no form to open (floating toolbar), never the browser's.
+        return openNewLinkForm(api) || api.selection.get().isCollapsed;
+    },
+} satisfies Record<string, HotkeyHandler>;
+
+const HOTKEY: keyof typeof hotkeys = 'Mod-k';
 
 /**
- * Editing a link: the `edit` view draws the anchor around the text and the
- * flyout that hangs off it while the caret is inside, showing the target,
- * editing it, removing the link. The toolbar button is how a link is made, and
- * Mod-k does what it does.
+ * Links, made with a toolbar button or `Mod-k` and edited in a flyout while the caret is inside.
+ * A web address followed by a space becomes a link, and pasting one over selected text links that text.
  */
 export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) => {
     const LinkToolbar = (props: ToolbarItemProps) => (
@@ -120,17 +144,7 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) => {
         content: /* @__PURE__ */ linkContent(policy),
         toolbar: [{ render: LinkToolbar }],
         edit: { link: LinkEdit },
-        hotkeys: {
-            // HOTKEY spelled out: a computed key makes esbuild keep this call, and the UI with it, in the renderer.
-            'Mod-k': (api) => {
-                if (api.marks.getRun('link') !== null) {
-                    api.editors.open('link');
-                    return true;
-                }
-                // At a caret the key stays the editor's even with no form to open (floating toolbar), never the browser's.
-                return openNewLinkForm(api) || api.selection.get().isCollapsed;
-            },
-        },
+        hotkeys,
         // A web, mail or phone address typed and followed by a space becomes a
         // link, when the policy allows it. The pattern names only typed schemes.
         inputRules: [

@@ -8,14 +8,14 @@ import { ANY_LIST, defineBlock, defineContent, definePlugin, PARAGRAPH, type Rte
 import styles from './checkList.module.scss';
 
 /**
- * A to-do list: the same nesting shape as the other lists, with a `checked`
- * attribute per item. `toHtml` draws a static checkbox for export; the readonly
- * view (`render.component`) draws one that looks like the editor's but cannot
- * be changed, and the editor's `edit` view makes it interactive via
- * `setValue`.
+ * A to-do list item with a checkbox
  */
 export type CheckItemBlock<TContent extends RteBlockNode = RteBlockNode> = {
     type: 'checkItem';
+    /**
+     * Whether the item is done
+     * @default false
+     */
     checked?: boolean;
     children: TContent[];
 };
@@ -27,19 +27,18 @@ export type CheckListBlock<TItem extends RteBlockNode = RteBlockNode> = {
 
 export type CheckValue = { checked: boolean };
 
-/** The checkbox's name in exported HTML, where it has no visible text to point at. */
+/**
+ * The checkbox's name in exported HTML, where it has no visible text to point at
+ */
 const stateLabel = (checked: boolean): string => (checked ? 'Done' : 'Not done');
 
-/** The readonly item: the editor's look, its checkbox showing the state without letting it change. */
-const ReadonlyCheckItem = ({
-    value,
-    children,
-    style,
-}: {
+type ReadonlyCheckItemProps = {
     value: CheckValue;
     children?: ReactNode;
     style?: CSSProperties;
-}): ReactNode => {
+};
+
+const ReadonlyCheckItem = ({ value, children, style }: ReadonlyCheckItemProps): ReactNode => {
     const labelId = useId();
     const checked = value.checked === true;
     return (
@@ -62,7 +61,9 @@ const ReadonlyCheckItem = ({
     );
 };
 
-/** A to-do list: each item has a checkbox. */
+/**
+ * A to-do list whose items each have a checkbox
+ */
 export const checkListContent = /* @__PURE__ */ defineContent({
     blocks: {
         checkList: /* @__PURE__ */ defineBlock({
@@ -104,16 +105,13 @@ export const checkListContent = /* @__PURE__ */ defineContent({
     },
 });
 
-/** The item in the editor: its checkbox, named by the item's own text. */
-const EditCheckItem = ({
-    value,
-    setValue,
-    children,
-}: {
+type EditCheckItemProps = {
     value: CheckValue;
     setValue: (value: CheckValue) => void;
     children?: ReactNode;
-}): ReactNode => {
+};
+
+const EditCheckItem = ({ value, setValue, children }: EditCheckItemProps): ReactNode => {
     const labelId = useId();
     const checked = value.checked === true;
     return (
@@ -136,7 +134,9 @@ const EditCheckItem = ({
     );
 };
 
-/** A to-do list: `[] ` while typing starts one, and each item has a checkbox. */
+/**
+ * A to-do list with a toolbar button and `/` entry, and `[] ` while typing starts one
+ */
 export const checkListPlugin = /* @__PURE__ */ definePlugin({
     id: 'check-list',
     content: checkListContent,

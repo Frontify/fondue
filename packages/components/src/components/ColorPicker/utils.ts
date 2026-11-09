@@ -7,8 +7,7 @@ export const DEFAULT_FORMAT = 'HEX';
 
 /**
  * Converts a color object to a CSS color string.
- * @param {RgbaColor} color - The color object to be converted.
- * @returns {string}
+ * @param color - The color object to be converted.
  * @example
  * colorToCss({ red: 255, green: 255, blue: 255, alpha: 1 }); // 'rgba(255, 255, 255, 1)'
  * @example
@@ -26,8 +25,7 @@ export const colorToCss = (color?: RgbaColor) => {
 /**
  * Checks if a string is a valid hexadecimal color code. This function accepts
  * both three-digit and six-digit hex codes without the '#' symbol.
- * @param {string} color - The color code to be checked.
- * @returns {boolean}
+ * @param color - The color code to be checked.
  * @example
  * isValidHexColor('FFF'); // true
  * @example
@@ -43,8 +41,7 @@ export const isValidHexColor = (color: string): boolean => {
 /**
  * Converts a hexadecimal color code to an RGBA color object. This function accepts
  * both three-digit and six-digit hex codes without the '#' symbol.
- * @param {string} hex - The hex code, either 3 or 6 characters long. Characters should be from the set [0-9A-Fa-f].
- * @returns {RgbaColor}
+ * @param hex - The hex code, either 3 or 6 characters long. Characters should be from the set [0-9A-Fa-f].
  * @example
  * hexColorToRgba('FFF'); // { red: 255, green: 255, blue: 255, alpha: 1 }
  * @example
@@ -83,8 +80,7 @@ export const hexColorToRgba = (hex: string): RgbaColor => {
 /**
  * Converts an RGBA color object to a hexadecimal color code. This function returns a
  * six-digit hex code without the '#' symbol.
- * @param {RgbaColor} rgb - The RGBA color object.
- * @returns {string}
+ * @param rgb - The RGBA color object.
  * @example
  * rgbColorToHex({ red: 255, green: 255, blue: 255, alpha: 1 }); // '#FFFFFF'
  * @example
@@ -99,8 +95,7 @@ export const rgbColorToHex = (rgb: Omit<RgbaColor, 'alpha'>): string => {
 
 /**
  * Returns a hex color display name with alpha percentage if alpha < 100%.
- * @param {RgbaColor} color - The RGBA color object.
- * @returns {string}
+ * @param color - The RGBA color object.
  * @example
  * getHexDisplayName({ red: 255, green: 255, blue: 255, alpha: 1 }); // '#FFFFFF'
  * @example
@@ -122,9 +117,8 @@ export const getHexDisplayName = (color: RgbaColor): string => {
 
 /**
  * Returns a color object with a name property based on the provided color and format.
- * @param {RgbaColor} color - The RGBA color object.
- * @param {ColorFormat} currentFormat - The current format of the color.
- * @returns {RgbaColor}
+ * @param color - The RGBA color object.
+ * @param currentFormat - The current format of the color.
  * @example
  * getColorWithName({ red: 255, green: 255, blue: 255, alpha: 1 }, 'HEX'); // { red: 255, green: 255, blue: 255, alpha: 1, name: '#FFFFFF' }
  * @example
@@ -149,10 +143,9 @@ export const getColorWithName = (color: RgbaColor, currentFormat: ColorFormat) =
 
 /**
  * Returns a number between a minimum and maximum value, inclusive.
- * @param {string} value - The value to be limited.
- * @param {number} [min=0] - The minimum value (inclusive).
- * @param {number} [max=255] - The maximum value (inclusive).
- * @returns {number}
+ * @param value - The value to be limited.
+ * @param [min=0] - The minimum value (inclusive).
+ * @param [max=255] - The maximum value (inclusive).
  * @example
  * getLimitedColorChannelValue('255'); // 255
  * @example

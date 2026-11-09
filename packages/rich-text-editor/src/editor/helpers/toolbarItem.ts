@@ -11,7 +11,10 @@ import {
     toggleOwn,
 } from '#/core';
 
-/** `own` is what the entry acts on, resolved by the registry (`ownTypeOf`). */
+/**
+ * The props a toolbar entry's `render` is handed, for what the entry acts on
+ * (`own`, resolved by the registry's `ownTypeOf`).
+ */
 export const toolbarItemProps = (
     own: OwnType,
     api: EditorControlApi,
@@ -20,7 +23,7 @@ export const toolbarItemProps = (
     const selectedNode = selectedNodeOf(own, api, selection);
     const isActive = own.kind === 'mark' ? own.type in selection.marks : selectedNode !== null;
 
-    const toggle = (value?: Record<string, unknown>): void => toggleOwn(own, api, selection, value);
+    const toggle = (value?: Record<string, unknown>): void => toggleOwn({ own, api, selection, value });
 
     return {
         api,

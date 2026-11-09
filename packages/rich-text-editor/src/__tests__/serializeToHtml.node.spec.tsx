@@ -5,7 +5,15 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { defineBlock, defineMark, definePlugin, PARAGRAPH, type RteDocumentOf, type RtePlugin } from '../core';
+import {
+    defineBlock,
+    defineContent,
+    defineMark,
+    definePlugin,
+    PARAGRAPH,
+    type RteDocumentOf,
+    type RtePlugin,
+} from '../core';
 import { serializeToHtml } from '../renderer/serializeToHtml';
 
 // Serializing where an app does it: on a server, with no page — no engine, no React, no `document`.
@@ -13,18 +21,18 @@ import { serializeToHtml } from '../renderer/serializeToHtml';
 const features: RtePlugin[] = [
     definePlugin({
         id: 'bold',
-        content: {
+        content: defineContent({
             marks: {
                 bold: defineMark({
                     toHtml: () => ({ tag: 'strong', children: true }),
                     parse: [{ tag: 'strong' }],
                 }),
             },
-        },
+        }),
     }),
     definePlugin({
         id: 'heading',
-        content: {
+        content: defineContent({
             blocks: {
                 heading: defineBlock({
                     content: 'text',
@@ -32,7 +40,7 @@ const features: RtePlugin[] = [
                     parse: [{ tag: 'h2' }],
                 }),
             },
-        },
+        }),
     }),
 ];
 
