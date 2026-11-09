@@ -10,6 +10,8 @@ import {
     useRef,
 } from 'react';
 
+import { SLOT_ATTRIBUTE } from './useToolbarFit';
+
 /**
  * The toolbar pattern's keyboard model over whatever controls a toolbar holds:
  * the toolbar is one tab stop, the arrow keys (and Home/End) move between its
@@ -32,8 +34,27 @@ export const useToolbarRoving = ({
     onFocus: (event: FocusEvent<HTMLElement>) => void;
     onMouseDown: (event: MouseEvent<HTMLElement>) => void;
 } => {
-    // The stop the toolbar is entered at: the control used last.
-    const currentRef = useRef(0);
+    // The stop the toolbar is entered at: the control used last. Kept by element
+    // and by slot, so a control redrawn elsewhere in the row stays the entry point.
+    const currentRef = useRef<Stop>({ element: null, slot: null, index: 0 });
+
+    const currentIndex = (stops: HTMLElement[]): number => {
+        const { element, slot, index } = currentRef.current;
+        const same = stops.findIndex((stop) => stop === element);
+        if (same !== -1) {
+            return same;
+        }
+        const inSlot = stops.findIndex((stop) => slot !== null && slotOf(stop) === slot);
+        if (inSlot !== -1) {
+            return inSlot;
+        }
+        return Math.min(index, Math.max(stops.length - 1, 0));
+    };
+
+    const remember = (stops: HTMLElement[], index: number): void => {
+        const element = stops[index] ?? null;
+        currentRef.current = { element, slot: slotOf(element), index };
+    };
 
     useLayoutEffect(() => {
         const toolbar = toolbarRef.current;
@@ -41,13 +62,14 @@ export const useToolbarRoving = ({
             return;
         }
         const stops = controlsIn(toolbar);
-        currentRef.current = Math.min(currentRef.current, Math.max(stops.length - 1, 0));
+        const current = currentIndex(stops);
+        remember(stops, current);
         for (const [index, stop] of stops.entries()) {
-            stop.tabIndex = index === currentRef.current ? 0 : -1;
+            stop.tabIndex = index === current ? 0 : -1;
         }
         if (focusRequestRef.current) {
             focusRequestRef.current = false;
-            stops[currentRef.current]?.focus();
+            stops[current]?.focus();
         }
     });
 
@@ -56,9 +78,9 @@ export const useToolbarRoving = ({
         if (!next) {
             return;
         }
-        stops[currentRef.current]?.setAttribute('tabindex', '-1');
+        currentRef.current.element?.setAttribute('tabindex', '-1');
         next.tabIndex = 0;
-        currentRef.current = index;
+        remember(stops, index);
         next.focus();
     };
 
@@ -103,14 +125,25 @@ export const useToolbarRoving = ({
     const onFocus = (event: FocusEvent<HTMLElement>): void => {
         const stops = controlsIn(event.currentTarget);
         const index = stops.findIndex((stop) => stop === event.target || stop.contains(event.target));
-        if (index !== -1 && index !== currentRef.current) {
-            stops[currentRef.current]?.setAttribute('tabindex', '-1');
+        if (index !== -1 && stops[index] !== currentRef.current.element) {
+            currentRef.current.element?.setAttribute('tabindex', '-1');
             stops[index]?.setAttribute('tabindex', '0');
-            currentRef.current = index;
+            remember(stops, index);
         }
     };
 
     return { onKeyDown, onFocus, onMouseDown: keepSelection };
+};
+
+/** A stop, and the slot it is drawn in; More and Turn into are in none. */
+type Stop = { element: HTMLElement | null; slot: string | null; index: number };
+
+const slotOf = (element: HTMLElement | null): string | null => {
+    const slot = element?.closest(`[${SLOT_ATTRIBUTE}]`);
+    if (slot === null || slot === undefined) {
+        return null;
+    }
+    return slot.getAttribute(SLOT_ATTRIBUTE);
 };
 
 /** A click on the toolbar that misses a control would move focus, and the selection with it. */

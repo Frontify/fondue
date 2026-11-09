@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type MutableRefObject, type ReactNode, useCallback, useRef, useSyncExternalStore } from 'react';
+import { type MutableRefObject, type ReactNode, useCallback, useRef, useState, useSyncExternalStore } from 'react';
 
 import {
     type EditorControlApi,
@@ -76,7 +76,7 @@ export const Toolbar = ({
     const getSelection = useCallback(() => api.selection.get(), [api]);
     const selection = useSyncExternalStore(editorState.subscribe, getSelection, getSelection);
     const toolbarRef = useRef<HTMLDivElement | null>(null);
-    const roving = useToolbarRoving({ toolbarRef, focusRequestRef, onEscape: () => api.focus() });
+    const [panel, setPanel] = useState<HTMLElement | null>(null);
 
     const floating = placement === 'floating';
     const items = floating ? allItems.filter((item) => item.floating === 'inline') : allItems;
@@ -84,7 +84,10 @@ export const Toolbar = ({
     // The built-in Text alone is nothing to turn into.
     const showTurnInto = turnInto.length > 1;
     const groups = groupsOf(items);
-    const { row, overflow, more } = layoutOf(groups, useToolbarFit(toolbarRef, groups, !floating));
+    // Before the roving focus, whose layout effect then honours a refocus the refit asked for.
+    const fit = useToolbarFit({ toolbarRef, panel, groups, fits: !floating, focusRequestRef });
+    const roving = useToolbarRoving({ toolbarRef, focusRequestRef, onEscape: () => api.focus() });
+    const { row, overflow, more } = layoutOf(groups, fit);
 
     const drawGroups = (drawn: readonly SlotGroup<ToolbarEntry>[]): ReactNode =>
         drawn.map((group) => (
@@ -116,7 +119,11 @@ export const Toolbar = ({
         >
             {showTurnInto ? <TurnInto api={api} commands={turnInto} selection={selection} labels={labels} /> : null}
             {drawGroups(row)}
-            {more ? <ToolbarMore labels={labels}>{drawGroups(overflow)}</ToolbarMore> : null}
+            {more ? (
+                <ToolbarMore labels={labels} onPanel={setPanel}>
+                    {drawGroups(overflow)}
+                </ToolbarMore>
+            ) : null}
         </div>
     );
 };

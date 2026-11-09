@@ -89,6 +89,32 @@
     }
 }
 
+/**
+ * The surface behind More, drawn like a Fondue flyout. Closed, it stays laid
+ * out, so its slots keep a size, but hidden: not seen, focused or announced.
+ */
+.morePanel {
+    box-sizing: border-box;
+    max-inline-size: 360px;
+    max-block-size: var(--radix-popover-content-available-height);
+    overflow: auto;
+    padding: var(--spacing-x-small);
+    border: var(--border-width-default) solid var(--color-line-subtle);
+    border-radius: var(--border-radius-medium);
+    background-color: var(--color-surface-default);
+    color: var(--color-primary-default);
+    box-shadow: 0 3px 10px 0 rgba(8, 8, 8, 0.15);
+
+    &[data-state='closed'] {
+        visibility: hidden;
+    }
+}
+
+/** The box Radix positions the panel in would still catch clicks over the text while the panel is closed. */
+:global([data-radix-popper-content-wrapper]):has(> .morePanel[data-state='closed']) {
+    visibility: hidden;
+}
+
 /** The controls behind More, in their groups, wrapping onto more lines when the panel is too narrow. */
 .panel {
     display: flex;

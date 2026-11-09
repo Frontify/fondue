@@ -956,6 +956,57 @@ describe('the toolbar from the keyboard', () => {
             expect(more(container)).toBeNull();
             expect(toolbar.querySelector('[aria-label="Align left"]')).not.toBeNull();
         });
+
+        it("opens the panel when a hotkey opens a hidden control's flyout", async () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(70);
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+            const editable = editableIn(container);
+            act(() => editable.focus());
+            selectAll(editable);
+
+            const mod = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
+            press(editable, 'k', mod);
+            // The panel follows the link button's `aria-expanded`, which it observes.
+            await act(async () => {});
+
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            const dialogs = [...window.document.querySelectorAll('[role="dialog"]')];
+            expect(dialogs.some((dialog) => dialog.textContent?.includes('Add link'))).toBe(true);
+        });
+
+        it('closes a panel opened with a click on Escape in the text, leaving the caret there', () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(70);
+            const editable = editableIn(container);
+            act(() => editable.focus());
+
+            act(() => {
+                more(container)?.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }));
+            });
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            expect(window.document.activeElement).toBe(editable);
+
+            press(editable, 'Escape');
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+            expect(window.document.activeElement).toBe(editable);
+        });
+
+        it('keeps focus in the toolbar when a refit takes the focused control away', () => {
+            const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
+            ready();
+            act(() => container.querySelector<HTMLElement>('[aria-label="Align left"]')?.focus());
+
+            resize(70);
+
+            expect(window.document.activeElement).toBe(more(container));
+        });
     });
 
     it('names the shortcut a button has', () => {
