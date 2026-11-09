@@ -94,6 +94,22 @@ describe('the selection snapshot', () => {
         expect(blocks).toEqual([{ type: 'divider' }]);
     });
 
+    it('reports a selected unknown block by its type alone, never the stored data it keeps', () => {
+        const editor = editorWith(plugins, [
+            paragraph(text('a')),
+            { type: 'mystery', secret: 'tok', children: [] },
+            paragraph(text('b')),
+        ]);
+        const { view } = editor;
+        view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, 3)));
+
+        const { block, blocks } = editor.api.selection.get();
+
+        expect(block).toEqual({ type: '__rteUnknownBlock' });
+        expect(blocks).toEqual([{ type: '__rteUnknownBlock' }]);
+        expect(JSON.stringify([block, blocks])).not.toContain('tok');
+    });
+
     it('reports the marks typing at a caret would carry', () => {
         const editor = editorWith(plugins, [paragraph(text('plain '), text('bold', { bold: true }))]);
         editor.caretAfter('bo');
@@ -245,6 +261,52 @@ describe('marks.toggle', () => {
 
         expect(editor.onDocChange).not.toHaveBeenCalled();
         expect(warn).toHaveBeenCalledWith(expect.stringContaining('marks.toggle("unknown")'));
+        warn.mockRestore();
+    });
+});
+
+describe('marks.set', () => {
+    const RED = { fontColor: { color: '#c5221f' } };
+    const BLUE = { fontColor: { color: '#1a73e8' } };
+
+    it('replaces the value the selected text carries', () => {
+        const editor = editorWith(plugins, [paragraph(text('red', RED), text(' plain'))]);
+        editor.selectBetween('red', 'plain');
+
+        editor.api.marks.set('fontColor', BLUE.fontColor);
+
+        expect(editor.stored()).toEqual([paragraph(text('red plain', BLUE))]);
+    });
+
+    it('is one undo step', () => {
+        const editor = editorWith(plugins, [paragraph(text('red', RED))]);
+        editor.select('red');
+
+        editor.api.marks.set('fontColor', BLUE.fontColor);
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual([paragraph(text('red', RED))]);
+    });
+
+    it('makes what is typed next at a caret carry the value', () => {
+        const editor = editorWith(plugins, [paragraph(text('ab'))]);
+        editor.caretAfter('a');
+
+        editor.api.marks.set('fontColor', BLUE.fontColor);
+        editor.api.insertText('X');
+
+        expect(editor.stored()).toEqual([paragraph(text('a'), text('X', BLUE), text('b'))]);
+    });
+
+    it('ignores a mark no plugin provides, and says so while developing', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const editor = editorWith(plugins, [paragraph(text('text'))]);
+        editor.select('text');
+
+        editor.api.marks.set('unknown');
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining('marks.set("unknown")'));
         warn.mockRestore();
     });
 });
@@ -503,6 +565,37 @@ describe('insert', () => {
         editor.api.insert('divider');
 
         expect(editor.stored()).toEqual([paragraph(text('keep this')), { type: 'divider' }, paragraph(text(' text'))]);
+    });
+
+    it('keeps the undeclared keys of a block a void block goes in front of', () => {
+        const editor = editorWith(plugins, [{ ...paragraph(text('ab')), foo: 1 }]);
+        editor.caretBefore('a');
+
+        editor.api.insert('divider');
+
+        expect(editor.stored()).toEqual([{ type: 'divider' }, { ...paragraph(text('ab')), foo: 1 }]);
+    });
+
+    it('keeps the undeclared keys of a block a void block goes after', () => {
+        const editor = editorWith(plugins, [{ ...paragraph(text('ab')), foo: 1 }]);
+        editor.caretAfter('b');
+
+        editor.api.insert('divider');
+
+        expect(editor.stored()).toEqual([{ ...paragraph(text('ab')), foo: 1 }, { type: 'divider' }]);
+    });
+
+    it('keeps the undeclared keys of a block split by a void block on its first half', () => {
+        const editor = editorWith(plugins, [{ ...paragraph(text('onetwo')), foo: 1 }]);
+        editor.caretAfter('one');
+
+        editor.api.insert('divider');
+
+        expect(editor.stored()).toEqual([
+            { ...paragraph(text('one')), foo: 1 },
+            { type: 'divider' },
+            paragraph(text('two')),
+        ]);
     });
 
     it('stores the declared defaults of an inline without editing UI inserted without a value', () => {

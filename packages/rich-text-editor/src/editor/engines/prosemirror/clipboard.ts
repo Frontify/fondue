@@ -3,14 +3,16 @@
 import {
     DOMParser as PmDOMParser,
     DOMSerializer,
+    Fragment,
     type Node as PmNode,
     type Schema,
-    type Slice,
+    Slice,
 } from 'prosemirror-model';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PasteHandler } from '#/core';
 
+import { EXTRA_ATTR, mapExtras } from './documentConversion';
 import { tidyGoogleDocs } from './pasteGoogleDocs';
 import { tidyOffice } from './pasteOffice';
 
@@ -45,6 +47,22 @@ class ClipboardSerializer extends DOMSerializer {
         return written;
     }
 }
+
+/**
+ * A pasted or dropped slice without the undeclared stored keys: every block it
+ * brings is new, as with cut and paste. A drag within the editor moves its
+ * blocks, so they keep them, and `copiedExtrasPlugin` clears a copy-drag's copy.
+ */
+export const pastedWithoutExtras = (slice: Slice, view: EditorView): Slice => {
+    if (view.dragging !== null) {
+        return slice;
+    }
+    return new Slice(
+        Fragment.fromArray(slice.content.content.map((node) => mapExtras(node, () => null))),
+        slice.openStart,
+        slice.openEnd,
+    );
+};
 
 export const clipboardSerializer = (schema: Schema): DOMSerializer => {
     const nodes = DOMSerializer.nodesFromSchema(schema);
@@ -152,7 +170,11 @@ export const handlePasteIntoEmptyBlock = (view: EditorView, _event: ClipboardEve
         $at.parent.canReplaceWith($at.index(), $at.index() + 1, first.type) &&
         first.type.validContent(merged.content)
     ) {
-        transaction.setNodeMarkup(at, first.type, first.attrs);
+        // The block stays the one it was: its undeclared stored keys are not the pasted block's to replace.
+        transaction.setNodeMarkup(at, first.type, {
+            ...first.attrs,
+            [EXTRA_ATTR]: merged.attrs[EXTRA_ATTR] as unknown,
+        });
     }
     view.dispatch(transaction.scrollIntoView().setMeta('paste', true).setMeta('uiEvent', 'paste'));
     return true;
