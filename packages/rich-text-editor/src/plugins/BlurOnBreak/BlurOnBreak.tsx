@@ -3,9 +3,13 @@
 import { definePlugin, type EditorControlApi } from '#/core';
 
 export type BlurOnBreakPluginOptions = {
-    /** Called when Enter commits, just before the editor gives up focus. Never called for a click away: that is the host's `onBlur`. */
+    /**
+     * Called when Enter commits, just before the editor gives up focus. Never called for a click away: that is the host's `onBlur`.
+     */
     onBreak?: () => void;
-    /** Enter on an empty editor refuses instead of committing, and says why: `true` for the default words, or a string for yours. */
+    /**
+     * Enter on an empty editor refuses instead of committing, and says why: `true` for the default words, or a string for yours
+     */
     required?: boolean | string;
 };
 

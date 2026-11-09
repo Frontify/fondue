@@ -14,6 +14,7 @@ import {
     boldPlugin,
     checkListPlugin,
     defaultPlugins,
+    defineContent,
     definePlugin,
     linkPlugin,
     mentionPlugin,
@@ -519,7 +520,7 @@ describe('the editable element', () => {
     it("follows a plugin's content class when the plugins change", () => {
         const columns = (className: string) => [
             ...defaultPlugins,
-            definePlugin({ id: 'columns', content: { contentClassName: className } }),
+            definePlugin({ id: 'columns', content: defineContent({ contentClassName: className }) }),
         ];
         const { container, rerender, ready } = mount(() => <RichTextEditor plugins={columns('two')} />);
         ready();

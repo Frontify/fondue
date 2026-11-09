@@ -9,6 +9,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
     buildPluginRegistry,
+    defineContent,
     defineInline,
     defineMark,
     definePlugin,
@@ -27,25 +28,25 @@ import { mountEditorForTests } from './editing';
 const plugins: RtePlugin[] = [
     definePlugin({
         id: 'tag',
-        content: {
+        content: defineContent({
             inlines: {
                 tag: defineInline<{ name: string }>({
                     toHtml: ({ name }) => ({ tag: 'span', children: name }),
                     parse: [],
                 }),
             },
-        },
+        }),
     }),
     definePlugin({
         id: 'bold',
-        content: {
+        content: defineContent({
             marks: {
                 bold: defineMark({
                     toHtml: () => ({ tag: 'strong', children: true }),
                     parse: [{ tag: 'strong' }],
                 }),
             },
-        },
+        }),
     }),
 ];
 
@@ -134,6 +135,58 @@ describe('a document set by the host', () => {
 
         expect(stored()).toEqual(paragraph('123456|'));
         expect(onDocChange).toHaveBeenCalledTimes(1);
+    });
+
+    describe('with keys on the document itself that no plugin declares', () => {
+        const withMeta = (meta?: string): RteDocumentOf =>
+            ({ ...paragraph('same'), ...(meta === undefined ? {} : { meta }) }) as RteDocumentOf;
+
+        it('takes the new ones from the host, and reports them with the next edit', () => {
+            const { handle, onDocChange, stored } = mount(withMeta('a'));
+
+            handle.setDoc(withMeta('b'));
+
+            expect(onDocChange).not.toHaveBeenCalled();
+            expect(handle.document()).toEqual(withMeta('b'));
+            handle.api.insertText('!');
+            expect(stored()).toMatchObject({ meta: 'b' });
+        });
+
+        it('drops the ones the host no longer has', () => {
+            const { handle } = mount(withMeta('a'));
+
+            handle.setDoc(withMeta());
+
+            expect(handle.document()).toStrictEqual(paragraph('same'));
+        });
+
+        it('leaves the caret where it was when only they changed', () => {
+            const { handle, view } = mount(withMeta('a'));
+            view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, 2)));
+
+            handle.setDoc(withMeta('b'));
+
+            expect(view.state.selection.from).toBe(2);
+        });
+
+        it('redraws nothing when only they changed', () => {
+            const { handle, view } = mount(withMeta('a'));
+            const { state } = view;
+            const drawn = view.dom.firstChild;
+
+            handle.setDoc(withMeta('b'));
+
+            expect(view.state).toBe(state);
+            expect(view.dom.firstChild).toBe(drawn);
+        });
+
+        it('takes them along with new content', () => {
+            const { handle } = mount(withMeta('a'));
+
+            handle.setDoc({ ...paragraph('other'), meta: 'b' } as RteDocumentOf);
+
+            expect(handle.document()).toEqual({ ...paragraph('other'), meta: 'b' });
+        });
     });
 
     it('still reports the edits the user makes after it', () => {

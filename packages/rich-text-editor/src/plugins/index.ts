@@ -27,16 +27,10 @@ import { underlinePlugin } from './Underline';
 // picker, Link's flyout).
 
 /**
- * The built-in plugins that need no configuration, in toolbar order. What
- * `RichTextEditor` mounts when given no `plugins` (the renderer reads
- * `defaultContent`, their content, instead). Pass a subset, or spread it into
- * a list of your own to add more.
- *
- * Left out on purpose, because they need arguments or change how the editor
- * behaves: `mentionPlugin` (needs the people to mention), `columnBreakPlugin`
- * (lays the content out in columns), `blurOnBreakPlugin` (makes Enter
- * commit instead of adding a paragraph) and `typographyPlugin` (rewrites `->`,
- * `(c)` and `1/2` as they are typed).
+ * The built-in plugins that need no configuration, in toolbar order, which `RichTextEditor` mounts when given no `plugins`.
+ * Pass a subset, or spread it into your own list to add more.
+ * Left out because they need arguments or change how the editor behaves: `mentionPlugin`, `columnBreakPlugin`,
+ * `blurOnBreakPlugin` and `typographyPlugin`.
  */
 export const defaultPlugins: readonly RtePlugin[] = Object.freeze([
     textStylePlugin(),

@@ -11,6 +11,7 @@ import {
     buildPluginRegistry,
     ANY_LIST,
     defineBlock,
+    defineContent,
     defineInline,
     defineMark,
     definePlugin,
@@ -40,7 +41,7 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 /** A mirror of the shipped check list: the engine adapter may not import plugins. */
 const checkList: RtePlugin = definePlugin({
     id: 'check-list',
-    content: {
+    content: defineContent({
         blocks: {
             checkList: defineBlock({
                 content: { items: 'checkItem' },
@@ -63,7 +64,7 @@ const checkList: RtePlugin = definePlugin({
                 parse: [{ tag: 'li[data-checked]' }],
             }),
         },
-    },
+    }),
     edit: {
         checkItem: ({ value, setValue, children }: EditProps<{ checked: boolean }>) => (
             <>
@@ -81,27 +82,27 @@ const checkList: RtePlugin = definePlugin({
 
 const bold: RtePlugin = definePlugin({
     id: 'bold',
-    content: {
+    content: defineContent({
         marks: {
             bold: defineMark({
                 toHtml: () => ({ tag: 'strong', children: true }),
                 parse: [{ tag: 'strong' }],
             }),
         },
-    },
+    }),
 });
 
 const tagRenders = vi.fn<() => void>();
 const tag: RtePlugin = definePlugin({
     id: 'tag',
-    content: {
+    content: defineContent({
         inlines: {
             tag: defineInline<{ label: string }>({
                 toHtml: ({ label }) => ({ tag: 'span', attrs: { 'data-tag': '' }, children: label }),
                 parse: [{ tag: 'span[data-tag]', value: (element) => ({ label: element.textContent ?? '' }) }],
             }),
         },
-    },
+    }),
     edit: {
         tag: ({ value, isFocused }: EditProps<{ label: string }>) => {
             tagRenders();
@@ -415,7 +416,7 @@ describe('every view with editing UI', () => {
         plugins.push(
             definePlugin({
                 id: 'probe',
-                content: {
+                content: defineContent({
                     blocks: {
                         probe: defineBlock({
                             content: 'text',
@@ -423,7 +424,7 @@ describe('every view with editing UI', () => {
                             parse: [],
                         }),
                     },
-                },
+                }),
                 edit: {
                     probe: ({ api, children }) => {
                         seen.push(api);
@@ -451,14 +452,14 @@ describe('every view with editing UI', () => {
         plugins.push(
             definePlugin({
                 id: 'probe',
-                content: {
+                content: defineContent({
                     inlines: {
                         probe: defineInline({
                             toHtml: () => ({ tag: 'span' }),
                             parse: [],
                         }),
                     },
-                },
+                }),
                 edit: { probe: ContextProbe },
             }),
         );
@@ -486,7 +487,7 @@ describe('every view with editing UI', () => {
 describe('a mark with editing UI', () => {
     const linkLike: RtePlugin = definePlugin({
         id: 'anchor',
-        content: {
+        content: defineContent({
             marks: {
                 anchor: defineMark<{ href: string }>({
                     inclusive: false,
@@ -494,7 +495,7 @@ describe('a mark with editing UI', () => {
                     parse: [{ tag: 'a[href]', value: (element) => ({ href: element.getAttribute('href') ?? '' }) }],
                 }),
             },
-        },
+        }),
         edit: { anchor: ({ value, children }: EditProps<{ href: string }>) => <a href={value.href}>{children}</a> },
     });
 

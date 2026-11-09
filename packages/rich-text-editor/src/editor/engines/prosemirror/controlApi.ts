@@ -19,7 +19,7 @@ import {
     type RteSelectionSnapshot,
 } from '#/core';
 
-import { markValueOf, shallowBlock, toRteDocument, valueAttrsFor } from './documentConversion';
+import { EXTRA_ATTR, markValueOf, shallowBlock, toRteDocument, valueAttrsFor } from './documentConversion';
 import { createListApi, liftOutOfLists } from './lists';
 import { warnUnknownType } from './warnings';
 
@@ -187,6 +187,26 @@ const createMarkApi = (getView: () => EditorView, schema: Schema, dispatch: Disp
         pmToggleMark(markType, valueAttrsFor(value), { removeWhenPresent: false })(view.state, dispatch);
         view.focus();
     },
+    set(type, value) {
+        const markType = schema.marks[type];
+        if (!markType) {
+            warnUnknownType('marks.set', type);
+            return;
+        }
+        const view = getView();
+        const { selection, tr } = view.state;
+        // A mark excludes others of its type, so adding it replaces their value.
+        const mark = markType.create(valueAttrsFor(value));
+        if (selection.empty) {
+            tr.addStoredMark(mark);
+        } else {
+            for (const range of selection.ranges) {
+                tr.addMark(range.$from.pos, range.$to.pos, mark);
+            }
+        }
+        dispatch(tr);
+        view.focus();
+    },
     removeAll({ except = [] } = {}) {
         const view = getView();
         const { state } = view;
@@ -243,7 +263,8 @@ export const keepCarriedAttrs =
     ): ((node: PmNode) => Record<string, unknown>) =>
     (node) => ({
         ...Object.fromEntries(
-            [...blockAttributes.keys()]
+            // The extras ride along: they are the block's stored keys no plugin declares.
+            [...blockAttributes.keys(), EXTRA_ATTR]
                 .filter((name) => name in node.attrs && name in (nodeType.spec.attrs ?? {}))
                 .map((name) => [name, node.attrs[name]]),
         ),

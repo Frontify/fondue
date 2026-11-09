@@ -12,7 +12,13 @@ import {
     useSyncExternalStore,
 } from 'react';
 
-import { type EditorControlApi, type RteBlockCommand, type ToolbarEntry, type ToolbarItemProps } from '#/core';
+import {
+    type EditorControlApi,
+    type RteBlockCommand,
+    TOOLBAR_ICON_SIZE,
+    type ToolbarEntry,
+    type ToolbarItemProps,
+} from '#/core';
 import { ToolbarButton } from '#/plugins/shared/ToolbarButton/ToolbarButton';
 
 import { turnIntoCommands } from '../helpers/blockCommands';
@@ -54,17 +60,27 @@ export const Toolbar = ({
     controls,
     focusRequestRef,
 }: {
-    /** The registry's toolbar entries, in mount order. The floating bar keeps the inline ones. */
+    /**
+     * The registry's toolbar entries, in mount order. The floating bar keeps the inline ones.
+     */
     items: readonly ToolbarEntry[];
-    /** Floating bar only: every block command, for its "Turn into" menu. */
+    /**
+     * Floating bar only: every block command, for its "Turn into" menu
+     */
     commands?: readonly RteBlockCommand[];
     api: EditorControlApi;
     editorState: EditorStateStore;
-    /** The row above the text sits flush with it; a floating bar is a surface of its own, inset. */
+    /**
+     * The row above the text sits flush with it; a floating bar is a surface of its own, inset
+     */
     placement: ToolbarPlacement;
-    /** The editor's words: the toolbar's accessible name, and Turn into's. */
+    /**
+     * The editor's words: the toolbar's accessible name, and Turn into's
+     */
     labels: RichTextEditorLabels;
-    /** The id of the editable element the controls act on. */
+    /**
+     * The id of the editable element the controls act on
+     */
     controls: string;
     /**
      * Set by the editor when the toolbar should take focus (Alt+F10): read
@@ -179,7 +195,9 @@ export const Toolbar = ({
     );
 };
 
-/** A click on the toolbar that misses a control would move focus, and the selection with it. */
+/**
+ * A click on the toolbar that misses a control would move focus, and the selection with it
+ */
 const keepSelection = (event: MouseEvent<HTMLDivElement>): void => {
     const target = event.target as HTMLElement;
     // A flyout's events arrive here through the component tree; they are not ours.
@@ -197,34 +215,33 @@ type ToolbarItemSlotProps = {
 };
 
 /**
- * One plugin's control: its own `render` called in this component, so the hooks it calls
- * keep their state when another plugin is added or removed, else a button
- * drawn from the entry's data.
+ * One toolbar control: the entry's own `render`, else a button drawn from its data.
+ * `render` is called in this component, so its hooks keep their state when another plugin is added or removed.
  */
 const ToolbarItemSlot = ({ item, itemProps }: ToolbarItemSlotProps): ReactNode => {
-    const { render, icon: Icon } = item;
-    if (render) {
-        // Called, not mounted as an element: a factory-built control changes identity on every host render.
-        return render(itemProps);
+    switch (item.control) {
+        case 'custom':
+            // Called, not mounted as an element: a factory-built control changes identity on every host render.
+            return item.render(itemProps);
+        case 'button': {
+            const { icon: Icon } = item;
+            return (
+                <ToolbarButton
+                    title={item.label}
+                    shortcut={item.shortcut}
+                    active={item.pressable ? itemProps.isActive : undefined}
+                    onClick={() => itemProps.toggle()}
+                >
+                    <Icon size={TOOLBAR_ICON_SIZE} />
+                </ToolbarButton>
+            );
+        }
     }
-    if (!Icon) {
-        return null;
-    }
-    // A void block or an inline is inserted, not switched on and off.
-    const toggles = item.own.kind === 'mark' || item.own.kind === 'list' || item.own.kind === 'textBlock';
-    return (
-        <ToolbarButton
-            title={item.label}
-            shortcut={item.shortcut}
-            active={toggles ? itemProps.isActive : undefined}
-            onClick={() => itemProps.toggle()}
-        >
-            <Icon size={16} />
-        </ToolbarButton>
-    );
 };
 
-/** Every element in the toolbar a keyboard can land on. Disabled controls are passed over. */
+/**
+ * Every element in the toolbar a keyboard can land on. Disabled controls are passed over.
+ */
 const CONTROLS = 'button, input, select, textarea, a[href], [role="combobox"]';
 
 const controlsIn = (toolbar: HTMLElement): HTMLElement[] =>
@@ -232,7 +249,9 @@ const controlsIn = (toolbar: HTMLElement): HTMLElement[] =>
         (control) => !control.matches(':disabled') && control.closest('[aria-hidden="true"]') === null,
     );
 
-/** A text field keeps the arrow keys for its own caret. */
+/**
+ * A text field keeps the arrow keys for its own caret
+ */
 const keepsArrowKeys = (target: HTMLElement): boolean =>
     target instanceof HTMLTextAreaElement ||
     (target instanceof HTMLInputElement && !['button', 'checkbox', 'radio'].includes(target.type));

@@ -24,42 +24,72 @@ import {
     type RteInputRule,
     type RtePlugin,
     type RteToolbarEntry,
+    TOOLBAR_ICON_SIZE,
     type ToolbarItemProps,
     typesOf,
 } from './plugin';
 import { PARAGRAPH, paragraphBlock } from './vocabulary';
 
-/** What a toolbar entry acts on: the type it toggles, by what that type is. */
+/**
+ * What a toolbar entry acts on: the type it toggles, by what that type is.
+ */
 export type OwnType =
     | { kind: 'mark'; type: string }
-    /** A block holding items: `content: { items }`. */
+    /**
+     * A block holding items: `content: { items }`
+     */
     | { kind: 'list'; type: string }
-    /** A block holding other blocks, `content: { blocks }` — a list item. */
+    /**
+     * A block holding other blocks, `content: { blocks }` — a list item
+     */
     | { kind: 'container'; type: string }
     | { kind: 'textBlock'; type: string }
-    /** A block holding nothing — a column break. */
+    /**
+     * A block holding nothing — a column break
+     */
     | { kind: 'voidBlock'; type: string }
     | { kind: 'inline'; type: string }
     | { kind: 'none' };
 
-/** One of a plugin's toolbar controls, with the type it acts on already resolved. */
+/**
+ * One of a plugin's toolbar controls, with the type it acts on already resolved.
+ */
 export type ToolbarEntry = {
-    /** The plugin's id. */
     id: string;
-    /** The control's React key: the id, made unique when two plugins share one, and by position for a plugin's later entries. */
+    /**
+     * React key of the control: the id, made unique when plugins share one, and by position for a later entry
+     */
     key: string;
     own: OwnType;
-    /** Where the floating bar puts it: the entry's choice, else by what it owns. */
+    /**
+     * Whether the floating bar shows the control
+     */
     floating: 'inline' | 'hidden';
     label: string;
-    icon?: RteIcon;
     shortcut?: string;
-    /** Custom UI in place of the button. */
-    render?: (props: ToolbarItemProps) => ReactNode;
-};
+} & (
+    | {
+          control: 'button';
+          icon: RteIcon;
+          /**
+           * Whether the button shows a pressed state: a void block or an inline is inserted, not switched on and off
+           */
+          pressable: boolean;
+      }
+    | {
+          /**
+           * Custom UI in place of the button.
+           */
+          control: 'custom';
+          render: (props: ToolbarItemProps) => ReactNode;
+          icon?: RteIcon;
+      }
+);
 
 export type PluginRegistry = {
-    /** Every block type, the paragraph baseline first. */
+    /**
+     * Every block type, the paragraph baseline first
+     */
     blocks: Map<string, BlockDefinition>;
     inlines: Map<string, InlineDefinition>;
     /**
@@ -67,17 +97,29 @@ export type PluginRegistry = {
      * plugin order). Engine and renderer both read this order, so they nest alike.
      */
     marks: Map<string, MarkDefinition>;
-    /** Attributes every text block carries (alignment), by name. */
+    /**
+     * Attributes every text block carries (alignment), by name
+     */
     blockAttributes: Map<string, BlockAttributeDefinition>;
-    /** List type → its item type, inferred from `content: { items }`. */
+    /**
+     * List type → its item type, inferred from `content: { items }`
+     */
     itemTypeByList: Map<string, string>;
-    /** Node type → the editor's view of it, from the plugins' `edit`. */
+    /**
+     * Node type → the editor's view of it, from the plugins' `edit`.
+     */
     edits: Map<string, RteEditView>;
-    /** Plugin ids in mount order: the editor's identity — a new set builds a new editor. */
+    /**
+     * Plugin ids in mount order: the editor's identity — a new set builds a new editor
+     */
     ids: readonly string[];
-    /** Ids declared by more than one plugin, which the editor warns about. */
+    /**
+     * Ids declared by more than one plugin, which the editor warns about
+     */
     duplicateIds: readonly string[];
-    /** Key → its handlers, in mount order; they run until one handles it. */
+    /**
+     * Key → its handlers, in mount order; they run until one handles it
+     */
     hotkeys: Map<string, readonly HotkeyHandler[]>;
     /**
      * Every typing rule, ordered for matching: mark rules first, longest
@@ -85,46 +127,84 @@ export type PluginRegistry = {
      * `*bold*` — then the rest as declared.
      */
     inputRules: readonly RteInputRule[];
-    /** Every plugin's `onPaste`, in mount order; they run until one handles the paste. */
+    /**
+     * Every plugin's `onPaste`, in mount order; they run until one handles the paste
+     */
     pasteHandlers: readonly PasteHandler[];
-    /** The toolbar's controls, in mount order. */
+    /**
+     * The toolbar's controls, in mount order
+     */
     toolbarItems: readonly ToolbarEntry[];
-    /** Every block command the plugins offer, in mount order. */
+    /**
+     * Every block command the plugins offer, in mount order
+     */
     commands: readonly RteBlockCommand[];
-    /** Classes for the element holding the content (the column layout). */
+    /**
+     * Classes for the element holding the content (the column layout)
+     */
     contentClassNames: readonly string[];
-    /** Custom properties set alongside them, later plugins winning. */
+    /**
+     * Custom properties set alongside them, later plugins winning
+     */
     contentProperties: Readonly<Record<string, string>>;
-    /** Every plugin's `description`, in mount order. */
+    /**
+     * Every plugin's `description`, in mount order
+     */
     descriptions: readonly string[];
 };
 
-/** A mark sits in the floating bar; a block is reached through its commands instead. */
+/**
+ * A mark sits in the floating bar; a block is reached through its commands instead
+ */
 const defaultFloatingPlacement = (own: OwnType): ToolbarEntry['floating'] =>
     own.kind === 'mark' ? 'inline' : 'hidden';
 
-/** A type of the content, by what it is: looked up in marks, then blocks, then inlines. */
+/**
+ * A block type, by what its content holds: nothing, text, items or other blocks.
+ */
+const ownBlockTypeOf = (block: BlockDefinition, type: string): OwnType => {
+    if (block.content === undefined) {
+        return { kind: 'voidBlock', type };
+    }
+    if (block.content === 'text') {
+        return { kind: 'textBlock', type };
+    }
+    if ('items' in block.content) {
+        return { kind: 'list', type };
+    }
+    return { kind: 'container', type };
+};
+
+// `Object.hasOwn` needs an ES2022 lib, which this package does not target.
+const hasOwnKey = (record: object, key: string): boolean => Object.prototype.hasOwnProperty.call(record, key);
+
+/**
+ * A type of the content, by what it is: looked up in marks, then blocks, then inlines.
+ */
 export const ownTypeOf = (content: RteContent | undefined, type: string | undefined): OwnType => {
     if (type === undefined) {
         return { kind: 'none' };
     }
-    if (content?.marks?.[type] !== undefined) {
+    const { marks = {}, blocks = {}, inlines = {} } = content ?? {};
+    // Own keys only: `toggles: 'constructor'` must not find Object.prototype.
+    if (hasOwnKey(marks, type)) {
         return { kind: 'mark', type };
     }
-    const block = content?.blocks?.[type];
-    if (block !== undefined) {
-        if (block.content === undefined) {
-            return { kind: 'voidBlock', type };
-        }
-        if (block.content === 'text') {
-            return { kind: 'textBlock', type };
-        }
-        return 'items' in block.content ? { kind: 'list', type } : { kind: 'container', type };
+    const block = blocks[type];
+    if (hasOwnKey(blocks, type) && block !== undefined) {
+        return ownBlockTypeOf(block, type);
     }
-    if (content?.inlines?.[type] !== undefined) {
+    if (hasOwnKey(inlines, type)) {
         return { kind: 'inline', type };
     }
     return { kind: 'none' };
+};
+
+type ToggleOwnParams = {
+    own: OwnType;
+    api: EditorControlApi;
+    selection: RteSelectionSnapshot;
+    value?: Record<string, unknown>;
 };
 
 /**
@@ -132,12 +212,7 @@ export const ownTypeOf = (content: RteContent | undefined, type: string | undefi
  * unwrap the list, switch a text block to the type or back to a paragraph,
  * insert the void block or the inline. Nothing for the rest.
  */
-export const toggleOwn = (
-    own: OwnType,
-    api: EditorControlApi,
-    selection: RteSelectionSnapshot,
-    value?: Record<string, unknown>,
-): void => {
+export const toggleOwn = ({ own, api, selection, value }: ToggleOwnParams): void => {
     switch (own.kind) {
         case 'mark':
             return api.marks.toggle(own.type, value);
@@ -145,7 +220,11 @@ export const toggleOwn = (
             return api.lists.toggle(own.type);
         case 'textBlock': {
             const isActive = selection.blocks.some((block) => block.type === own.type);
-            return api.blocks.setType(isActive ? PARAGRAPH : own.type, value);
+            let type = own.type;
+            if (isActive) {
+                type = PARAGRAPH;
+            }
+            return api.blocks.setType(type, value);
         }
         case 'voidBlock':
         case 'inline':
@@ -158,10 +237,23 @@ export const toggleOwn = (
     }
 };
 
-const isPlugin = (entry: RtePlugin | RteContent): entry is RtePlugin => 'id' in entry && typeof entry.id === 'string';
+const isContent = (entry: RtePlugin | RteContent): entry is RteContent => entry.kind === 'content';
 
-/** Names a bare content in errors: the first type it declares. */
+/**
+ * Names a bare content in errors: the first type it declares.
+ */
 const firstTypeOf = (content: RteContent): string => typesOf(content)[0] ?? 'content';
+
+/**
+ * An untyped caller can leave out a plugin's `id`; it would be read as content otherwise.
+ */
+const assertHasId = (plugin: RtePlugin): void => {
+    if (typeof plugin.id === 'string' && plugin.id !== '') {
+        return;
+    }
+    const first = typesOf(plugin.content)[0] ?? 'no type declared';
+    throw new Error(`Plugin has no id: ${first}`);
+};
 
 const capitalised = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
 
@@ -191,11 +283,13 @@ const register = <TDefinition>(
         const existing = target.get(type);
         if (existing !== undefined && existing !== definition) {
             const first = owners.get(type);
-            throw new Error(
-                first === undefined
-                    ? `Duplicate ${kind} "${type}": built into the editor and declared by plugin "${owner}".`
-                    : `Duplicate ${kind} "${type}": declared by plugin "${first}" and plugin "${owner}".`,
-            );
+            let message: string;
+            if (first === undefined) {
+                message = `Duplicate ${kind} "${type}": built into the editor and declared by plugin "${owner}".`;
+            } else {
+                message = `Duplicate ${kind} "${type}": declared by plugin "${first}" and plugin "${owner}".`;
+            }
+            throw new Error(message);
         }
         target.set(type, definition);
         if (!owners.has(type)) {
@@ -204,7 +298,9 @@ const register = <TDefinition>(
     }
 };
 
-/** What an entry without its own `render` is drawn as: a button toggling one of these. */
+/**
+ * What an entry without its own `render` is drawn as: a button toggling one of these.
+ */
 const BUTTON_KINDS: ReadonlySet<OwnType['kind']> = new Set(['mark', 'list', 'textBlock', 'voidBlock', 'inline']);
 
 const NOTHING_TO_TOGGLE = 'nothing to toggle: name a mark, list, text block, void block or inline with `toggles`.';
@@ -215,36 +311,41 @@ const toolbarEntryOf = (plugin: RtePlugin, entry: RteToolbarEntry, key: string):
     if (entry.toggles !== undefined && own.kind === 'none') {
         throw new Error(`Plugin "${plugin.id}" toggles "${entry.toggles}", which its content does not declare.`);
     }
-    if (entry.render === undefined && entry.icon === undefined) {
-        throw new Error(`Plugin "${plugin.id}" has a toolbar entry with no \`render\` and no \`icon\`.`);
-    }
-    if (entry.render === undefined && !BUTTON_KINDS.has(own.kind)) {
-        throw new Error(`Plugin "${plugin.id}" has a toolbar entry with ${NOTHING_TO_TOGGLE}`);
-    }
-    return {
+    const shared = {
         id: plugin.id,
         key,
         own,
         floating: entry.floating ?? defaultFloatingPlacement(own),
         label: labelOf(plugin, entry, type),
-        icon: entry.icon,
         shortcut: entry.shortcut,
-        render: entry.render,
     };
+    if (entry.render !== undefined) {
+        return { ...shared, control: 'custom', render: entry.render, icon: entry.icon };
+    }
+    if (entry.icon === undefined) {
+        throw new Error(`Plugin "${plugin.id}" has a toolbar entry with no \`render\` and no \`icon\`.`);
+    }
+    if (!BUTTON_KINDS.has(own.kind)) {
+        throw new Error(`Plugin "${plugin.id}" has a toolbar entry with ${NOTHING_TO_TOGGLE}`);
+    }
+    const pressable = own.kind === 'mark' || own.kind === 'list' || own.kind === 'textBlock';
+    return { ...shared, control: 'button', icon: entry.icon, pressable };
 };
 
-/** The `/` menu (and Turn into) entry a toolbar entry's `menu` asks for. */
+/**
+ * The `/` menu (and Turn into) entry a toolbar entry's `menu` asks for.
+ */
 const menuCommandOf = (
     plugin: RtePlugin,
     entry: ToolbarEntry,
     keywords: readonly string[] | undefined,
 ): RteBlockCommand => {
     const { own } = entry;
-    const command = {
-        label: entry.label,
-        icon: entry.icon === undefined ? undefined : createElement(entry.icon, { size: 16 }),
-        keywords,
-    };
+    let icon: ReactNode;
+    if (entry.icon !== undefined) {
+        icon = createElement(entry.icon, { size: TOOLBAR_ICON_SIZE });
+    }
+    const command = { label: entry.label, icon, keywords };
     switch (own.kind) {
         case 'textBlock':
             return {
@@ -272,7 +373,9 @@ const menuCommandOf = (
     }
 };
 
-/** A delimiter rule is a mark rule on the plugin's only mark. */
+/**
+ * A delimiter rule is a mark rule on the plugin's only mark.
+ */
 const inputRuleOf = (plugin: RtePlugin, rule: RteInputRule | RteDelimiterRule): RteInputRule => {
     if ('kind' in rule) {
         return rule;
@@ -285,7 +388,9 @@ const inputRuleOf = (plugin: RtePlugin, rule: RteInputRule | RteDelimiterRule): 
     return { kind: 'mark', key, delimiter: rule.delimiter };
 };
 
-/** Mark rules first, longest delimiter first; everything else keeps its declared order. */
+/**
+ * Mark rules first, longest delimiter first; everything else keeps its declared order
+ */
 const forMatching = (rules: readonly RteInputRule[]): RteInputRule[] => [
     ...rules
         .filter((rule) => rule.kind === 'mark')
@@ -293,11 +398,15 @@ const forMatching = (rules: readonly RteInputRule[]): RteInputRule[] => [
     ...rules.filter((rule) => rule.kind !== 'mark'),
 ];
 
-/** A stable sort, so ties stay in mount order. */
+/**
+ * A stable sort, so ties stay in mount order
+ */
 const byNesting = (marks: Map<string, MarkDefinition>): Map<string, MarkDefinition> =>
     new Map([...marks].sort(([, left], [, right]) => (left.nesting ?? 0) - (right.nesting ?? 0)));
 
-/** What `buildPluginRegistry` fills while it walks the entries. */
+/**
+ * What `buildPluginRegistry` fills while it walks the entries.
+ */
 type Draft = {
     blocks: Map<string, BlockDefinition>;
     inlines: Map<string, InlineDefinition>;
@@ -314,7 +423,9 @@ type Draft = {
     contentClassNames: string[];
     contentProperties: Record<string, string>;
     descriptions: string[];
-    /** How often each id has come up so far, for unique toolbar keys. */
+    /**
+     * How often each id has come up so far, for unique toolbar keys
+     */
     seenIds: Map<string, number>;
     duplicateIds: Set<string>;
     blockOwners: Map<string, string>;
@@ -337,16 +448,18 @@ const addCommand = (draft: Draft, owner: string, command: RteBlockCommand): void
     draft.commands.push(command);
 };
 
-/** The hotkey a toolbar entry's `shortcut` binds, unless the plugin binds that key itself. */
-const addShortcut = (draft: Draft, plugin: RtePlugin, entry: RteToolbarEntry, item: ToolbarEntry): void => {
-    const { shortcut } = entry;
-    if (shortcut === undefined || shortcut in (plugin.hotkeys ?? {})) {
+/**
+ * The hotkey a toolbar entry's `shortcut` binds, unless the plugin binds that key itself.
+ */
+const addShortcut = (draft: Draft, plugin: RtePlugin, item: ToolbarEntry): void => {
+    const { shortcut } = item;
+    if (shortcut === undefined || hasOwnKey(plugin.hotkeys ?? {}, shortcut)) {
         return;
     }
     if (!BUTTON_KINDS.has(item.own.kind)) {
         throw new Error(`Plugin "${plugin.id}" names shortcut "${shortcut}" with ${NOTHING_TO_TOGGLE}`);
     }
-    addHotkey(draft, shortcut, (api) => toggleOwn(item.own, api, api.selection.get()));
+    addHotkey(draft, shortcut, (api) => toggleOwn({ own: item.own, api, selection: api.selection.get() }));
 };
 
 const addToolbarEntries = (draft: Draft, plugin: RtePlugin, pluginKey: string): void => {
@@ -357,7 +470,7 @@ const addToolbarEntries = (draft: Draft, plugin: RtePlugin, pluginKey: string): 
         }
         const item = toolbarEntryOf(plugin, entry, key);
         draft.toolbarItems.push(item);
-        addShortcut(draft, plugin, entry, item);
+        addShortcut(draft, plugin, item);
         if (entry.menu !== undefined) {
             addCommand(draft, plugin.id, menuCommandOf(plugin, item, entry.menu.keywords));
         }
@@ -375,7 +488,9 @@ const addEditViews = (draft: Draft, plugin: RtePlugin): void => {
     register('edit view', draft.edits, draft.editOwners, plugin.id, plugin.edit);
 };
 
-/** What a plugin adds beyond its content: hotkeys, toolbar, input rules, paste, commands, edit views, descriptions. */
+/**
+ * What a plugin adds beyond its content: hotkeys, toolbar, input rules, paste, commands, edit views, descriptions.
+ */
 const addEditing = (draft: Draft, plugin: RtePlugin): void => {
     const occurrence = draft.seenIds.get(plugin.id) ?? 0;
     if (occurrence > 0) {
@@ -404,15 +519,9 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
     }
 };
 
-const addItemTypes = (draft: Draft, blocks: RteContent['blocks']): void => {
-    for (const [type, definition] of Object.entries(blocks ?? {})) {
-        if (typeof definition.content === 'object' && 'items' in definition.content) {
-            draft.itemTypeByList.set(type, definition.content.items);
-        }
-    }
-};
-
-/** What a content declares: styling hooks, block, inline and mark types, block attributes. */
+/**
+ * What a content declares: styling hooks, block, inline and mark types, block attributes.
+ */
 const addContent = (draft: Draft, content: RteContent | undefined, owner: string): void => {
     if (content?.contentClassName) {
         draft.contentClassNames.push(content.contentClassName);
@@ -423,7 +532,11 @@ const addContent = (draft: Draft, content: RteContent | undefined, owner: string
     register('inline type', draft.inlines, draft.inlineOwners, owner, content?.inlines);
     register('mark type', draft.marks, draft.markOwners, owner, content?.marks);
     register('block attribute', draft.blockAttributes, draft.attributeOwners, owner, content?.blockAttributes);
-    addItemTypes(draft, content?.blocks);
+    for (const [type, definition] of Object.entries(content?.blocks ?? {})) {
+        if (typeof definition.content === 'object' && 'items' in definition.content) {
+            draft.itemTypeByList.set(type, definition.content.items);
+        }
+    }
 };
 
 export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]): PluginRegistry => {
@@ -452,12 +565,15 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         editOwners: new Map(),
     };
 
+    const ids: string[] = [];
     for (const entry of entries) {
-        if (isPlugin(entry)) {
+        if (isContent(entry)) {
+            addContent(draft, entry, firstTypeOf(entry));
+        } else {
+            assertHasId(entry);
+            ids.push(entry.id);
             addEditing(draft, entry);
             addContent(draft, entry.content, entry.id);
-        } else {
-            addContent(draft, entry, firstTypeOf(entry));
         }
     }
 
@@ -468,7 +584,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         blockAttributes: draft.blockAttributes,
         itemTypeByList: draft.itemTypeByList,
         edits: draft.edits,
-        ids: entries.filter(isPlugin).map((plugin) => plugin.id),
+        ids,
         duplicateIds: [...draft.duplicateIds],
         hotkeys: draft.hotkeys,
         inputRules: forMatching(draft.inputRules),
@@ -491,7 +607,9 @@ export const blockValueOf = (definition: BlockDefinition, stored: Record<string,
     return Object.fromEntries(Object.entries(defaults).map(([name, fallback]) => [name, stored[name] ?? fallback]));
 };
 
-/** The CSS the attributes every text block carries put on this one, by their values on it. */
+/**
+ * The CSS the attributes every text block carries put on this one, by their values on it
+ */
 export const blockAttributeStyle = (registry: PluginRegistry, stored: Record<string, unknown>): StyleMap => {
     const style: StyleMap = {};
     for (const [name, attribute] of registry.blockAttributes) {

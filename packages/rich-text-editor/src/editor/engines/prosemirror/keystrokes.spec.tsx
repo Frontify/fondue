@@ -6,7 +6,14 @@ import { TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { defineInline, definePlugin, type EditorControlApi, type RteBlockNode, type RtePlugin } from '#/core';
+import {
+    defineContent,
+    defineInline,
+    definePlugin,
+    type EditorControlApi,
+    type RteBlockNode,
+    type RtePlugin,
+} from '#/core';
 import { blurOnBreakPlugin, defaultPlugins } from '#/plugins';
 
 import { trimTrailingPunctuation } from './keystrokes';
@@ -187,6 +194,30 @@ describe('undoing a typing rewrite', () => {
 });
 
 describe('Backspace', () => {
+    it('turns an emptied, centred heading back into a plain paragraph', () => {
+        const editor = editorWith(defaultPlugins, [
+            { type: 'textStyle', style: 'heading1', align: 'center', children: [] },
+            paragraph(text('body')),
+        ]);
+        editor.view.dispatch(editor.view.state.tr.setSelection(TextSelection.create(editor.view.state.doc, 1)));
+
+        expect(press(editor.view, 'Backspace')).toBe(true);
+
+        expect(editor.stored()).toEqual([paragraph(), paragraph(text('body'))]);
+    });
+
+    it('keeps the undeclared keys of an emptied heading it turns back into a paragraph', () => {
+        const editor = editorWith(defaultPlugins, [
+            { type: 'textStyle', style: 'heading1', note: 'x', children: [] },
+            paragraph(text('body')),
+        ]);
+        editor.view.dispatch(editor.view.state.tr.setSelection(TextSelection.create(editor.view.state.doc, 1)));
+
+        expect(press(editor.view, 'Backspace')).toBe(true);
+
+        expect(editor.stored()).toEqual([{ ...paragraph(), note: 'x' }, paragraph(text('body'))]);
+    });
+
     it('turns an emptied heading at the top of the document back into a paragraph', () => {
         const editor = editorWith(defaultPlugins, [
             { type: 'textStyle', style: 'heading2', children: [] },
@@ -414,14 +445,14 @@ describe('a character hotkey during IME composition', () => {
 describe('a mark shortcut around content that is more than plain text', () => {
     const tagPlugin: RtePlugin = definePlugin({
         id: 'tag',
-        content: {
+        content: defineContent({
             inlines: {
                 tag: defineInline<{ name: string }>({
                     toHtml: ({ name }) => ({ tag: 'span', children: name }),
                     parse: [],
                 }),
             },
-        },
+        }),
     });
 
     it('keeps an inline element inside it', () => {
@@ -550,14 +581,14 @@ describe('the alignment shortcuts', () => {
 describe('the reset formatting shortcut', () => {
     const tagPlugin = definePlugin({
         id: 'tag',
-        content: {
+        content: defineContent({
             inlines: {
                 tag: defineInline<{ name: string }>({
                     toHtml: ({ name }) => ({ tag: 'span', children: name }),
                     parse: [],
                 }),
             },
-        },
+        }),
     });
     const plugins = [...defaultPlugins, tagPlugin];
     const LINK = { href: 'https://example.com' };

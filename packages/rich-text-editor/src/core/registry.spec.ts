@@ -44,9 +44,9 @@ afterEach(() => {
 describe('the marks of a registry', () => {
     it('are ordered by nesting, lower wrapping higher', () => {
         const registry = buildPluginRegistry([
-            { id: 'inner', content: { marks: { inner: mark(10) } } },
-            { id: 'outer', content: { marks: { outer: mark(-10) } } },
-            { id: 'middle', content: { marks: { middle: mark() } } },
+            { id: 'inner', content: defineContent({ marks: { inner: mark(10) } }) },
+            { id: 'outer', content: defineContent({ marks: { outer: mark(-10) } }) },
+            { id: 'middle', content: defineContent({ marks: { middle: mark() } }) },
         ]);
 
         expect([...registry.marks.keys()]).toEqual(['outer', 'middle', 'inner']);
@@ -54,9 +54,9 @@ describe('the marks of a registry', () => {
 
     it('keep the order their plugins were passed in on a tie', () => {
         const registry = buildPluginRegistry([
-            { id: 'b', content: { marks: { b: mark(1) } } },
-            { id: 'a', content: { marks: { a: mark(1) } } },
-            { id: 'c', content: { marks: { c: mark(1) } } },
+            { id: 'b', content: defineContent({ marks: { b: mark(1) } }) },
+            { id: 'a', content: defineContent({ marks: { a: mark(1) } }) },
+            { id: 'c', content: defineContent({ marks: { c: mark(1) } }) },
         ]);
 
         expect([...registry.marks.keys()]).toEqual(['b', 'a', 'c']);
@@ -99,8 +99,8 @@ describe('the paste handlers of a registry', () => {
 describe('a type declared twice', () => {
     it('is an error when two plugins declare different blocks under it', () => {
         const plugins: RtePlugin[] = [
-            { id: 'a', content: { blocks: { callout: textBlock() } } },
-            { id: 'b', content: { blocks: { callout: textBlock() } } },
+            { id: 'a', content: defineContent({ blocks: { callout: textBlock() } }) },
+            { id: 'b', content: defineContent({ blocks: { callout: textBlock() } }) },
         ];
 
         expect(() => buildPluginRegistry(plugins)).toThrow(
@@ -111,14 +111,14 @@ describe('a type declared twice', () => {
     it('is an error for marks and inlines alike', () => {
         expect(() =>
             buildPluginRegistry([
-                { id: 'a', content: { marks: { highlight: mark() } } },
-                { id: 'b', content: { marks: { highlight: mark() } } },
+                { id: 'a', content: defineContent({ marks: { highlight: mark() } }) },
+                { id: 'b', content: defineContent({ marks: { highlight: mark() } }) },
             ]),
         ).toThrow('Duplicate mark type "highlight": declared by plugin "a" and plugin "b".');
         expect(() =>
             buildPluginRegistry([
-                { id: 'a', content: { inlines: { embed: inline() } } },
-                { id: 'b', content: { inlines: { embed: inline() } } },
+                { id: 'a', content: defineContent({ inlines: { embed: inline() } }) },
+                { id: 'b', content: defineContent({ inlines: { embed: inline() } }) },
             ]),
         ).toThrow('Duplicate inline type "embed": declared by plugin "a" and plugin "b".');
     });
@@ -128,24 +128,24 @@ describe('a type declared twice', () => {
 
         expect(() =>
             buildPluginRegistry([
-                { id: 'a', content: { blockAttributes: { align: attribute() } } },
-                { id: 'b', content: { blockAttributes: { align: attribute() } } },
+                { id: 'a', content: defineContent({ blockAttributes: { align: attribute() } }) },
+                { id: 'b', content: defineContent({ blockAttributes: { align: attribute() } }) },
             ]),
         ).toThrow('Duplicate block attribute "align": declared by plugin "a" and plugin "b".');
     });
 
     it('is an error when a plugin replaces the paragraph the editor brings', () => {
-        expect(() => buildPluginRegistry([{ id: 'a', content: { blocks: { paragraph: textBlock() } } }])).toThrow(
-            'Duplicate block type "paragraph": built into the editor and declared by plugin "a".',
-        );
+        expect(() =>
+            buildPluginRegistry([{ id: 'a', content: defineContent({ blocks: { paragraph: textBlock() } }) }]),
+        ).toThrow('Duplicate block type "paragraph": built into the editor and declared by plugin "a".');
     });
 
     it('is fine when it is the very same definition, the way both list plugins share their item', () => {
         const shared = textBlock();
 
         const registry = buildPluginRegistry([
-            { id: 'a', content: { blocks: { item: shared } } },
-            { id: 'b', content: { blocks: { item: shared } } },
+            { id: 'a', content: defineContent({ blocks: { item: shared } }) },
+            { id: 'b', content: defineContent({ blocks: { item: shared } }) },
         ]);
 
         expect(registry.blocks.get('item')).toBe(shared);
@@ -170,6 +170,9 @@ describe('a node value', () => {
             toHtml: () => ({ tag: 'span', children: true }),
             parse: [],
         });
+
+        // @ts-expect-error `tag` is the shorthand for `toHtml` and `parse`, so it excludes `toHtml`
+        defineMark({ tag: 'b', toHtml: () => ({ tag: 'b', children: true }) });
 
         expect(colour.defaults).toEqual({ color: 'inherit' });
         expect(embed.defaults).toEqual({ provider: 'figma' });
@@ -211,14 +214,18 @@ describe('where a toolbar entry goes in the floating bar', () => {
     const onlyType = (plugin: RtePlugin) => Object.keys({ ...plugin.content?.marks, ...plugin.content?.blocks })[0];
 
     it('is inline for a mark', () => {
-        expect(placementOf({ id: 'bold', content: { marks: { bold: mark() } } })).toBe('inline');
+        expect(placementOf({ id: 'bold', content: defineContent({ marks: { bold: mark() } }) })).toBe('inline');
     });
 
     it('is hidden for anything else, which reaches the bar through commands', () => {
-        expect(placementOf({ id: 'quote', content: { blocks: { quote: textBlock() } } })).toBe('hidden');
+        expect(placementOf({ id: 'quote', content: defineContent({ blocks: { quote: textBlock() } }) })).toBe('hidden');
         expect(
             buildPluginRegistry([
-                { id: 'mention', content: { inlines: { mention: inline() } }, toolbar: [{ render: button }] },
+                {
+                    id: 'mention',
+                    content: defineContent({ inlines: { mention: inline() } }),
+                    toolbar: [{ render: button }],
+                },
             ]).toolbarItems[0]?.floating,
         ).toBe('hidden');
         expect(buildPluginRegistry([{ id: 'nothing', toolbar: [{ render: button }] }]).toolbarItems[0]?.floating).toBe(
@@ -227,8 +234,12 @@ describe('where a toolbar entry goes in the floating bar', () => {
     });
 
     it('is what the entry says, over the default', () => {
-        expect(placementOf({ id: 'bold', content: { marks: { bold: mark() } } }, 'hidden')).toBe('hidden');
-        expect(placementOf({ id: 'quote', content: { blocks: { quote: textBlock() } } }, 'inline')).toBe('inline');
+        expect(placementOf({ id: 'bold', content: defineContent({ marks: { bold: mark() } }) }, 'hidden')).toBe(
+            'hidden',
+        );
+        expect(placementOf({ id: 'quote', content: defineContent({ blocks: { quote: textBlock() } }) }, 'inline')).toBe(
+            'inline',
+        );
         expect(
             buildPluginRegistry([{ id: 'align', toolbar: [{ render: button, floating: 'inline' }] }]).toolbarItems[0]
                 ?.floating,
@@ -251,20 +262,39 @@ describe('plugins sharing an id', () => {
 
 describe('a plugin id', () => {
     it('defaults to the only type its content declares', () => {
-        expect(definePlugin({ content: { marks: { bold: mark() } } }).id).toBe('bold');
-        expect(definePlugin({ content: { inlines: { embed: inline() } } }).id).toBe('embed');
+        expect(definePlugin({ content: defineContent({ marks: { bold: mark() } }) }).id).toBe('bold');
+        expect(definePlugin({ content: defineContent({ inlines: { embed: inline() } }) }).id).toBe('embed');
     });
 
     it('is what was given, over the default', () => {
-        expect(definePlugin({ id: 'strong', content: { marks: { bold: mark() } } }).id).toBe('strong');
+        expect(definePlugin({ id: 'strong', content: defineContent({ marks: { bold: mark() } }) }).id).toBe('strong');
     });
 
     it('is required when the content declares no type, or several, and lists them', () => {
         const several = 'A plugin that declares several types (a, b) needs an `id`.';
 
         expect(() => definePlugin({})).toThrow('A plugin that declares no type needs an `id`.');
-        expect(() => definePlugin({ content: { marks: { a: mark(), b: mark() } } })).toThrow(several);
-        expect(() => definePlugin({ content: { marks: { a: mark() }, blocks: { b: textBlock() } } })).toThrow(several);
+        expect(() => definePlugin({ content: defineContent({ marks: { a: mark(), b: mark() } }) })).toThrow(several);
+        expect(() =>
+            definePlugin({ content: defineContent({ marks: { a: mark() }, blocks: { b: textBlock() } }) }),
+        ).toThrow(several);
+    });
+
+    it('cannot be empty', () => {
+        expect(() => definePlugin({ id: '', content: defineContent({ marks: { bold: mark() } }) })).toThrow(
+            'A plugin `id` cannot be empty.',
+        );
+    });
+
+    it('rejects a toggled type that only exists on Object.prototype', () => {
+        expect(() =>
+            buildPluginRegistry([definePlugin({ id: 'odd', toolbar: [{ icon, toggles: 'constructor' }] })]),
+        ).toThrow('Plugin "odd" toggles "constructor", which its content does not declare.');
+    });
+
+    it('is required of a plain object in the plugins list, which is not read as content', () => {
+        // @ts-expect-error an untyped caller can leave out the `id`
+        expect(() => buildPluginRegistry([{ toolbar: [{ icon }] }])).toThrow('Plugin has no id: no type declared');
     });
 });
 
@@ -273,7 +303,7 @@ describe('the type a toolbar entry toggles', () => {
 
     it('defaults to the only type the content declares', () => {
         const registry = buildPluginRegistry([
-            { id: 'bold', content: { marks: { bold: mark() } }, toolbar: [{ icon, label: 'Bold' }] },
+            { id: 'bold', content: defineContent({ marks: { bold: mark() } }), toolbar: [{ icon, label: 'Bold' }] },
         ]);
 
         expect(registry.toolbarItems[0]?.own).toEqual({ kind: 'mark', type: 'bold' });
@@ -321,7 +351,10 @@ describe('the type a toolbar entry toggles', () => {
 
     it('needs an icon when the entry has no `render`', () => {
         expect(() =>
-            buildPluginRegistry([{ id: 'bold', content: { marks: { bold: mark() } }, toolbar: [{}] }]),
+            buildPluginRegistry([
+                // @ts-expect-error -- an entry with neither `icon` nor `render` fails typecheck, and still throws for an untyped caller.
+                { id: 'bold', content: defineContent({ marks: { bold: mark() } }), toolbar: [{}] },
+            ]),
         ).toThrow('Plugin "bold" has a toolbar entry with no `render` and no `icon`.');
     });
 
@@ -333,7 +366,7 @@ describe('the type a toolbar entry toggles', () => {
 });
 
 describe('the hotkeys of a registry', () => {
-    const boldContent = { marks: { bold: mark() } };
+    const boldContent = defineContent({ marks: { bold: mark() } });
 
     it('include the shortcut of a toolbar entry, as a toggle of what it toggles', () => {
         const toggled: string[] = [];
@@ -422,7 +455,9 @@ describe('the menu commands of a toolbar entry', () => {
 
     it('are an error for a type that is neither a block nor an inline to insert', () => {
         expect(() =>
-            buildPluginRegistry([{ id: 'bold', content: { marks: { bold: mark() } }, toolbar: [{ icon, menu: {} }] }]),
+            buildPluginRegistry([
+                { id: 'bold', content: defineContent({ marks: { bold: mark() } }), toolbar: [{ icon, menu: {} }] },
+            ]),
         ).toThrow('Plugin "bold" offers a `menu`');
     });
 });
@@ -430,7 +465,7 @@ describe('the menu commands of a toolbar entry', () => {
 describe('a delimiter typing rule', () => {
     it("becomes a mark rule on the plugin's only mark", () => {
         const registry = buildPluginRegistry([
-            { id: 'bold', content: { marks: { bold: mark() } }, inputRules: [{ delimiter: '**' }] },
+            { id: 'bold', content: defineContent({ marks: { bold: mark() } }), inputRules: [{ delimiter: '**' }] },
         ]);
 
         expect(registry.inputRules).toEqual([{ kind: 'mark', key: 'bold', delimiter: '**' }]);
@@ -448,7 +483,7 @@ describe('the edit views of a registry', () => {
 
     it('are collected by node type', () => {
         const registry = buildPluginRegistry([
-            { id: 'bold', content: { marks: { bold: mark() } }, edit: { bold: view } },
+            { id: 'bold', content: defineContent({ marks: { bold: mark() } }), edit: { bold: view } },
         ]);
 
         expect(registry.edits.get('bold')).toBe(view);
@@ -456,7 +491,9 @@ describe('the edit views of a registry', () => {
 
     it("may not name a type the plugin's content does not declare", () => {
         expect(() =>
-            buildPluginRegistry([{ id: 'bold', content: { marks: { bold: mark() } }, edit: { italic: view } }]),
+            buildPluginRegistry([
+                { id: 'bold', content: defineContent({ marks: { bold: mark() } }), edit: { italic: view } },
+            ]),
         ).toThrow('Plugin "bold" has an edit view for "italic", which its content does not declare.');
     });
 });
@@ -464,8 +501,12 @@ describe('the edit views of a registry', () => {
 describe('bare content in a registry', () => {
     it('contributes its types, class and properties, and is no plugin', () => {
         const registry = buildPluginRegistry([
-            { marks: { bold: mark() }, contentClassName: 'columns', contentProperties: { '--rte-columns': '3' } },
-            { id: 'quote', content: { blocks: { quote: textBlock() } } },
+            defineContent({
+                marks: { bold: mark() },
+                contentClassName: 'columns',
+                contentProperties: { '--rte-columns': '3' },
+            }),
+            { id: 'quote', content: defineContent({ blocks: { quote: textBlock() } }) },
         ]);
 
         expect([...registry.marks.keys()]).toEqual(['bold']);
@@ -477,7 +518,10 @@ describe('bare content in a registry', () => {
 
     it('is named by its first type when it clashes with another', () => {
         expect(() =>
-            buildPluginRegistry([{ marks: { bold: mark() } }, { id: 'strong', content: { marks: { bold: mark() } } }]),
+            buildPluginRegistry([
+                defineContent({ marks: { bold: mark() } }),
+                { id: 'strong', content: defineContent({ marks: { bold: mark() } }) },
+            ]),
         ).toThrow('Duplicate mark type "bold": declared by plugin "bold" and plugin "strong".');
     });
 });

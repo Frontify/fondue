@@ -37,7 +37,9 @@ import { type EditorHandle, type MountedDocument, type ViewPortals } from '#/edi
  */
 export type EditorStateStore = {
     subscribe: (onChange: () => void) => () => void;
-    /** Bumped on every editor state change. */
+    /**
+     * Bumped on every editor state change
+     */
     getVersion: () => number;
 };
 
@@ -103,7 +105,9 @@ export const createViewPortals = (): ViewPortals & {
 const NO_PORTALS: readonly ReactNode[] = [];
 const noPortals = (): readonly ReactNode[] => NO_PORTALS;
 
-/** Renders every view's portal; one React commit covers all of them. */
+/**
+ * Renders every view's portal; one React commit covers all of them
+ */
 export const ViewPortalHost = ({ store }: { store: ReturnType<typeof createViewPortals> }): ReactNode =>
     // No views on the server: the editor only mounts in the browser.
     useSyncExternalStore(store.subscribe, store.getSnapshot, noPortals);
@@ -127,16 +131,24 @@ const warnOnDuplicateIds = (duplicateIds: readonly string[]): void => {
 
 type UseEditorHandleOptions = {
     registry: PluginRegistry;
-    /** The document as it currently stands — what a (re)mount starts from. */
+    /**
+     * The document as it currently stands — what a (re)mount starts from
+     */
     document: RteDocumentOf;
     placeholder: string;
-    /** Further attributes for the editable element. Memoize them: a new object is applied to the editor. */
+    /**
+     * Further attributes for the editable element. Memoize them: a new object is applied to the editor.
+     */
     attributes: Readonly<Record<string, string>>;
     placeholderClassName: string;
     onDocChange: (doc: RteDocumentOf) => void;
-    /** Says a message through the live region, for `api.announce`. */
+    /**
+     * Says a message through the live region, for `api.announce`
+     */
     announce: (message: string) => void;
-    /** When false, nothing is mounted — the shell is showing the renderer. */
+    /**
+     * When false, nothing is mounted — the shell is showing the renderer
+     */
     enabled: boolean;
 };
 
@@ -151,9 +163,13 @@ export const useEditorHandle = ({
     enabled,
 }: UseEditorHandleOptions): {
     containerRef: MutableRefObject<HTMLDivElement | null>;
-    /** The live editor, or null until it has mounted (and while readonly). */
+    /**
+     * The live editor, or null until it has mounted (and while readonly)
+     */
     handle: EditorHandle | null;
-    /** Subscribe here to re-render with the editor state. */
+    /**
+     * Subscribe here to re-render with the editor state
+     */
     editorState: EditorStateStore;
     /**
      * The React the editor's views draw (a plugin's `edit` view), as portals

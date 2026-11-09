@@ -9,6 +9,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
     columnBreakPlugin,
     defaultPlugins,
+    defineContent,
     defineMark,
     definePlugin,
     linkPlugin,
@@ -62,7 +63,7 @@ const paragraph = (
 type HighlightMark = { highlight?: true };
 const highlightPlugin: RtePlugin = definePlugin({
     id: 'highlight',
-    content: {
+    content: defineContent({
         marks: {
             highlight: defineMark({
                 toHtml: () => ({ tag: 'mark', children: true }),
@@ -72,7 +73,7 @@ const highlightPlugin: RtePlugin = definePlugin({
                 },
             }),
         },
-    },
+    }),
 });
 const highlighted: RteDocumentWith<{ mark: HighlightMark }> = {
     version: 1,
