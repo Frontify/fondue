@@ -82,44 +82,43 @@ export const TokenCollectionOverview = ({
                             getClassName={getClassName}
                         />
                     );
-                } else {
-                    const hasDirectTokens = Object.values(value).some((v) => typeof v === 'object' && 'value' in v);
-
-                    return (
-                        <Flex direction="column" gap={4} key={key}>
-                            <GroupLabel label={key} parentKeys={parentKeys} />
-                            <div className="tw-border-l-line-mid tw-border-l-large tw-pl-4">
-                                {hasDirectTokens ? (
-                                    <Grid
-                                        columns={{
-                                            xs: 1,
-                                            sm: 2,
-                                            md: 3,
-                                            lg: 4,
-                                        }}
-                                        gap={4}
-                                    >
-                                        <TokenCollectionOverview
-                                            tokens={value}
-                                            parentKeys={[...parentKeys, key]}
-                                            tokenPreview={tokenPreview}
-                                            getClassName={getClassName}
-                                        />
-                                    </Grid>
-                                ) : (
-                                    <Flex direction="column" gap={8}>
-                                        <TokenCollectionOverview
-                                            tokens={value}
-                                            parentKeys={[...parentKeys, key]}
-                                            tokenPreview={tokenPreview}
-                                            getClassName={getClassName}
-                                        />
-                                    </Flex>
-                                )}
-                            </div>
-                        </Flex>
-                    );
                 }
+                const hasDirectTokens = Object.values(value).some((v) => typeof v === 'object' && 'value' in v);
+
+                return (
+                    <Flex direction="column" gap={4} key={key}>
+                        <GroupLabel label={key} parentKeys={parentKeys} />
+                        <div className="tw-border-l-line-mid tw-border-l-large tw-pl-4">
+                            {hasDirectTokens ? (
+                                <Grid
+                                    columns={{
+                                        xs: 1,
+                                        sm: 2,
+                                        md: 3,
+                                        lg: 4,
+                                    }}
+                                    gap={4}
+                                >
+                                    <TokenCollectionOverview
+                                        tokens={value}
+                                        parentKeys={[...parentKeys, key]}
+                                        tokenPreview={tokenPreview}
+                                        getClassName={getClassName}
+                                    />
+                                </Grid>
+                            ) : (
+                                <Flex direction="column" gap={8}>
+                                    <TokenCollectionOverview
+                                        tokens={value}
+                                        parentKeys={[...parentKeys, key]}
+                                        tokenPreview={tokenPreview}
+                                        getClassName={getClassName}
+                                    />
+                                </Flex>
+                            )}
+                        </div>
+                    </Flex>
+                );
             }
             return false;
         });

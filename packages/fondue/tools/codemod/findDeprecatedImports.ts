@@ -26,9 +26,8 @@ const getImports = (pathToAnalyze: string, selectedImports: string[] = []) => {
                 .map((line) => JSON.parse(line) as { path: string; imports: string[] });
             rmSync(join(tempDir), { recursive: true });
             return detectedImports;
-        } else {
-            return [];
         }
+        return [];
     });
 };
 
