@@ -2,7 +2,7 @@
 
 import { type PlateEditor, toggleNodeType } from '@udecode/plate-core';
 import { ELEMENT_LI } from '@udecode/plate-list';
-import { getAboveNode, someNode } from '@udecode/slate';
+import { getAboveNode, getEdgePoints, getRange, isText, setNodes, someNode } from '@udecode/slate';
 import { getMark, setMarks } from '@udecode/slate-utils';
 
 import { merge } from '@utilities/merge';
@@ -42,8 +42,16 @@ export const DropdownItem = ({ editor, type, children, onSelect }: DropdownItemP
                 if (!editor || !editor.selection) {
                     return;
                 }
-                setMarks(editor, { [MARK_TEXT_STYLE]: type.id });
-                if (!isInList(editor)) {
+                if (isInList(editor)) {
+                    setMarks(editor, { [MARK_TEXT_STYLE]: type.id });
+                } else {
+                    // The block type changes as a whole, so the mark must cover whole blocks too.
+                    const [start, end] = getEdgePoints(editor, editor.selection);
+                    setNodes(
+                        editor,
+                        { [MARK_TEXT_STYLE]: type.id },
+                        { at: getRange(editor, [start.path[0]], [end.path[0]]), match: isText, split: false },
+                    );
                     toggleNodeType(editor, {
                         activeType: type.id,
                         inactiveType: type.id,

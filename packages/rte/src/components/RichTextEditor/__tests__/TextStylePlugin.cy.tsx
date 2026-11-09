@@ -16,6 +16,18 @@ import {
     TOOLBAR_GROUP_2,
 } from './fixtures/selectors';
 
+const selectWord = (word: string) => {
+    cy.get('[contenteditable=true]').then(([editable]) => {
+        const walker = editable.ownerDocument.createTreeWalker(editable, NodeFilter.SHOW_TEXT);
+        let node = walker.nextNode();
+        while (node && !node.textContent?.includes(word)) {
+            node = walker.nextNode();
+        }
+        const start = node?.textContent?.indexOf(word) ?? 0;
+        editable.ownerDocument.getSelection()?.setBaseAndExtent(node as Node, start, node as Node, start + word.length);
+    });
+};
+
 describe('TextStylePlugin', () => {
     it('renders a bold text', () => {
         cy.mount(<RichTextEditor />);
@@ -109,6 +121,24 @@ describe('TextStylePlugin', () => {
         cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
         cy.get(TEXTSTYLE_OPTION).first().click();
         cy.get('[contenteditable=true]').should('include.html', '<h1');
+    });
+
+    it('applies a text style to the whole block and shows it for any selection inside it', () => {
+        cy.mount(<RichTextWithCustomTextStylesDefaultValues />);
+
+        cy.get('[contenteditable=true]').click().type('Lorem ipsum dolor');
+        selectWord('Lorem ipsum dolor');
+        cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
+        cy.get(TEXTSTYLE_OPTION).eq(4).click();
+        selectWord('ipsum');
+        cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
+        cy.get(TEXTSTYLE_OPTION).first().click();
+        cy.get('[contenteditable=true] > h1').should('contain.text', 'Lorem ipsum dolor');
+
+        selectWord('Lorem');
+        // The trigger keeps the old label until Slate picks up the new selection.
+        cy.wait(300);
+        cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).invoke('text').should('eq', 'Heading 1');
     });
 
     it('renders a custom text style', () => {
