@@ -100,6 +100,11 @@ export const ToolbarMore = ({
         setOpen(next);
     };
 
+    // Nor does a tooltip come back as the panel closes, over a pointer that rested on More, to take the next Escape.
+    if (open && tooltipOpen) {
+        setTooltipOpen(false);
+    }
+
     const closeToMore = (): void => {
         moreRef.current?.focus();
         setOpen(false);
@@ -108,7 +113,14 @@ export const ToolbarMore = ({
     return (
         <PopoverRoot open={open} onOpenChange={onOpenChange}>
             {/* The panel is the layer Escape belongs to while open; a tooltip over it would take the key first. */}
-            <Tooltip.Root open={tooltipOpen && !open} onOpenChange={setTooltipOpen}>
+            <Tooltip.Root
+                open={tooltipOpen}
+                onOpenChange={(next) => {
+                    if (!open) {
+                        setTooltipOpen(next);
+                    }
+                }}
+            >
                 <Tooltip.Trigger asChild>
                     <PopoverTrigger asChild>
                         <Button

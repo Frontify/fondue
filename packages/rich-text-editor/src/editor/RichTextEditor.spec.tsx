@@ -978,6 +978,54 @@ describe('the toolbar from the keyboard', () => {
             expect(dialogs.some((dialog) => dialog.textContent?.includes('Add link'))).toBe(true);
         });
 
+        it('closes the link form, then the panel it opened, one Escape each, focus never on the page', async () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(70);
+            const editable = editableIn(container);
+            const linkForm = (): Element | undefined =>
+                [...window.document.querySelectorAll('[role="dialog"]')].find((dialog) =>
+                    dialog.textContent?.includes('Add link'),
+                );
+            // Radix hands focus back a task after a flyout closes.
+            const settle = (): Promise<void> => act(() => new Promise<void>((resolve) => setTimeout(resolve, 0)));
+            const mod = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
+
+            // Twice over: the second round starts from what the first left behind, with the pointer resting on
+            // the link button, whose tooltip must not come back as the form closes and take the next Escape.
+            for (let round = 0; round < 2; round++) {
+                act(() => editable.focus());
+                selectAll(editable);
+                press(editable, 'k', mod);
+                await act(async () => {});
+                expect(linkForm()).not.toBeUndefined();
+                expect(linkForm()?.contains(window.document.activeElement)).toBe(true);
+                if (round === 1) {
+                    act(() => {
+                        window.document
+                            .querySelector('[aria-label="Add link"]')
+                            ?.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerType: 'mouse' }));
+                    });
+                    // Past the tooltip's delay.
+                    await act(() => new Promise<void>((resolve) => setTimeout(resolve, 800)));
+                }
+
+                press(window.document.activeElement as Element, 'Escape');
+                await settle();
+                expect(linkForm()).toBeUndefined();
+                expect(window.document.activeElement).toBe(editable);
+                expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+                expect(window.document.querySelector('[role="tooltip"]')).toBeNull();
+
+                press(window.document.activeElement as Element, 'Escape');
+                await settle();
+                expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+                expect(window.document.activeElement).toBe(editable);
+            }
+        });
+
         it('closes a panel opened with a click on Escape in the text, leaving the caret there', () => {
             const { container, ready } = mount(() => (
                 <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
