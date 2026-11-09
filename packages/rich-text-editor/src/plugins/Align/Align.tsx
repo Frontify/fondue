@@ -72,7 +72,13 @@ const AlignToolbar = ({ api, selection }: ToolbarItemProps) => {
                     title={title}
                     // Choosing the alignment already set clears it, so the
                     // block inherits the editor's direction again.
-                    onClick={() => api.blocks.updateAttributes({ align: align === value ? null : value })}
+                    onClick={() => {
+                        let next: typeof value | null = value;
+                        if (align === value) {
+                            next = null;
+                        }
+                        api.blocks.updateAttributes({ align: next });
+                    }}
                 >
                     <Icon size={16} />
                 </ToolbarButton>

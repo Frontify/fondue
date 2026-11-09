@@ -76,7 +76,10 @@ export const typesOf = (content: RteContent | undefined): string[] => [
  */
 export const onlyTypeOf = (content: RteContent | undefined): string | undefined => {
     const types = typesOf(content);
-    return types.length === 1 ? types[0] : undefined;
+    if (types.length === 1) {
+        return types[0];
+    }
+    return undefined;
 };
 
 /**

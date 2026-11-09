@@ -53,14 +53,11 @@ const textStyleContentFor = (options: readonly TextStyleOption[]): RteContent =>
                     if (preset === undefined) {
                         return { tag: 'p', children: true };
                     }
-                    return {
-                        tag: preset.tag,
-                        attrs: {
-                            class: preset.className,
-                            ...(preset.tag === 'p' ? { 'data-text-style': preset.name } : {}),
-                        },
-                        children: true,
-                    };
+                    const attrs: Record<string, string | undefined> = { class: preset.className };
+                    if (preset.tag === 'p') {
+                        attrs['data-text-style'] = preset.name;
+                    }
+                    return { tag: preset.tag, attrs, children: true };
                 },
                 parse: offered.map(parseRuleFor),
             }),

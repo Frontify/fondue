@@ -45,7 +45,10 @@ const assertMentionTrigger = (trigger: string, factory: string): void => {
  */
 const safeMentionHref = (href: MentionContentOptions['href'], mention: MentionValue): string | undefined => {
     const target = href?.(mention);
-    return target !== undefined && isSafeHref(target) ? target : undefined;
+    if (target !== undefined && isSafeHref(target)) {
+        return target;
+    }
+    return undefined;
 };
 
 /**
@@ -128,7 +131,12 @@ export const searchIn =
 export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
     const { href, trigger = '@' } = options;
     assertMentionTrigger(trigger, 'mentionPlugin');
-    const items = typeof options.items === 'function' ? options.items : searchIn(options.items);
+    let items: MentionItems;
+    if (typeof options.items === 'function') {
+        items = options.items;
+    } else {
+        items = searchIn(options.items);
+    }
 
     // `value` is null until someone is chosen.
     const MentionEditor = ({

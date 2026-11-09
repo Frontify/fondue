@@ -212,7 +212,11 @@ export const toggleOwn = ({ own, api, selection, value }: ToggleOwnParams): void
             return api.lists.toggle(own.type);
         case 'textBlock': {
             const isActive = selection.blocks.some((block) => block.type === own.type);
-            return api.blocks.setType(isActive ? PARAGRAPH : own.type, value);
+            let type = own.type;
+            if (isActive) {
+                type = PARAGRAPH;
+            }
+            return api.blocks.setType(type, value);
         }
         case 'voidBlock':
         case 'inline':
@@ -271,11 +275,13 @@ const register = <TDefinition>(
         const existing = target.get(type);
         if (existing !== undefined && existing !== definition) {
             const first = owners.get(type);
-            throw new Error(
-                first === undefined
-                    ? `Duplicate ${kind} "${type}": built into the editor and declared by plugin "${owner}".`
-                    : `Duplicate ${kind} "${type}": declared by plugin "${first}" and plugin "${owner}".`,
-            );
+            let message: string;
+            if (first === undefined) {
+                message = `Duplicate ${kind} "${type}": built into the editor and declared by plugin "${owner}".`;
+            } else {
+                message = `Duplicate ${kind} "${type}": declared by plugin "${first}" and plugin "${owner}".`;
+            }
+            throw new Error(message);
         }
         target.set(type, definition);
         if (!owners.has(type)) {
