@@ -9,7 +9,7 @@ const PACKAGE_ROOT = fileURLToPath(new URL('../..', import.meta.url));
 // A plugin's own top-level file, its helpers and its styles; never components/, another package or node_modules
 const OWN_LAYERS = String.raw`index\.ts$|core/|renderer/`;
 const SHARED_PLUGIN_CODE = String.raw`defaultContent\.ts$|shared/helpers/`;
-const PLUGIN_FILES = String.raw`(?<plugin>[A-Za-z]+)/(\k<plugin>\.tsx?$|helpers/|\w+\.module\.scss$)`;
+const PLUGIN_FILES = String.raw`(?<plugin>[A-Za-z]+)/(\k<plugin>\.tsx?$|helpers/|types\.ts$|\w+\.module\.scss$)`;
 const CONTENT_CODE = new RegExp(`^src/(${OWN_LAYERS}|plugins/(${SHARED_PLUGIN_CODE}|${PLUGIN_FILES}))`);
 const MENTION_READ_VIEW = 'src/plugins/Mention/components/MentionLink.tsx';
 
