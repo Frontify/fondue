@@ -2,11 +2,9 @@
 
 import { IconEraser } from '@frontify/fondue-icons';
 
-import { definePlugin, type EditorControlApi, PARAGRAPH, type ToolbarItemProps } from '#/core';
+import { definePlugin, type EditorControlApi, type HotkeyHandler, PARAGRAPH, type ToolbarItemProps } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
-
-const SHORTCUT = 'Mod-\\';
 
 /**
  * Puts the selection back to plain text: marks gone (links stay, and so do
@@ -22,11 +20,20 @@ const reset = (api: EditorControlApi): void => {
         if (!api.selection.get().isCollapsed) {
             api.lists.unwrapAll();
         }
-        // Whatever attributes plugins add to every block (alignment today) go
-        // back to their defaults, without this plugin having to name another's.
+        // Whatever attributes plugins add to every block (alignment today) go back to their defaults, without this plugin having to name another's.
         api.blocks.resetAttributes();
     });
 };
+
+// The key is a literal because a computed key keeps this plugin in the renderer; SHORTCUT's type ties it to this key.
+const hotkeys = {
+    'Mod-\\': (api) => {
+        reset(api);
+        api.announce('Formatting reset');
+    },
+} satisfies Record<string, HotkeyHandler>;
+
+const SHORTCUT: keyof typeof hotkeys = 'Mod-\\';
 
 const ResetFormattingButton = ({ api }: ToolbarItemProps) => (
     <ToolbarButton title="Reset formatting" shortcut={SHORTCUT} onClick={() => reset(api)}>
@@ -40,11 +47,5 @@ const ResetFormattingButton = ({ api }: ToolbarItemProps) => (
 export const resetFormattingPlugin = /* @__PURE__ */ definePlugin({
     id: 'reset-formatting',
     toolbar: [{ render: ResetFormattingButton, floating: 'inline' }],
-    hotkeys: {
-        // Same as SHORTCUT, spelled out: a computed key makes esbuild keep this call, and the UI with it, in the renderer.
-        'Mod-\\': (api) => {
-            reset(api);
-            api.announce('Formatting reset');
-        },
-    },
+    hotkeys,
 });

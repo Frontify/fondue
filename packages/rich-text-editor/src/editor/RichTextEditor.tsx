@@ -397,7 +397,9 @@ const editableAttributes = ({
     isNamed: boolean;
     placeholder: string;
     defaultLabel: string;
-    /** The element holding the plugins' descriptions, when there are any: read after the host's own description. */
+    /**
+     * The element holding the plugins' descriptions, when there are any: read after the host's own description
+     */
     descriptionId: string | undefined;
 }): Record<string, string> => {
     const describedBy = [hostLabels['aria-describedby'], descriptionId].filter(Boolean).join(' ');

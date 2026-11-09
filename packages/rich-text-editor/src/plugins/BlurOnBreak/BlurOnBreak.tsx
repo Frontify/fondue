@@ -8,12 +8,19 @@ export type BlurOnBreakPluginOptions = {
      */
     onBreak?: () => void;
     /**
-     * Enter on an empty editor refuses instead of committing, and says why: `true` for the default words, or a string for yours
+     * Enter on an empty editor refuses instead of committing, and says why: `true` or an empty string for the default words, or a string for yours
      */
     required?: boolean | string;
 };
 
 const REQUIRED_MESSAGE = 'Type something before submitting.';
+
+const requiredMessageOf = (required: true | string): string => {
+    if (required === true || required === '') {
+        return REQUIRED_MESSAGE;
+    }
+    return required;
+};
 
 /**
  * Enter commits instead of adding a paragraph, what a single-line editor (a
@@ -22,14 +29,17 @@ const REQUIRED_MESSAGE = 'Type something before submitting.';
  * `onBreak` and gives up focus. Plugin hotkeys run before the editor's own
  * keys, so this handler splits the item itself rather than leaving Enter to
  * the list.
+ *
+ * @example
+ * blurOnBreakPlugin({ onBreak: submit, required: 'Write a comment first.' })
  */
 export const blurOnBreakPlugin = ({ onBreak, required }: BlurOnBreakPluginOptions = {}) => {
     const breakLine = (api: EditorControlApi): void => {
         if (api.lists.split()) {
             return;
         }
-        if (required && api.isEmpty()) {
-            api.announce(typeof required === 'string' ? required : REQUIRED_MESSAGE);
+        if (required !== undefined && required !== false && api.isEmpty()) {
+            api.announce(requiredMessageOf(required));
             return;
         }
         onBreak?.();

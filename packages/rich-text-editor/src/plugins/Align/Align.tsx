@@ -8,7 +8,14 @@ import {
     IconTextAlignmentRight,
 } from '@frontify/fondue-icons';
 
-import { defineContent, definePlugin, type EditorControlApi, type StyleMap, type ToolbarItemProps } from '#/core';
+import {
+    defineContent,
+    definePlugin,
+    type EditorControlApi,
+    type HotkeyHandler,
+    type StyleMap,
+    type ToolbarItemProps,
+} from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -45,44 +52,51 @@ export const alignContent = /* @__PURE__ */ defineContent({
     },
 });
 
-const ALIGNMENTS: readonly {
+type Alignment = {
     value: NonNullable<AlignAttribute['align']>;
     icon: FondueIcon;
     title: string;
-    shortcut: string;
+    shortcut: keyof typeof hotkeys;
     announcement: string;
-}[] = [
-    {
-        value: 'left',
-        icon: IconTextAlignmentLeft,
-        title: 'Align left',
-        shortcut: 'Mod-Shift-l',
-        announcement: 'Aligned left',
-    },
-    {
-        value: 'center',
-        icon: IconTextAlignmentCentre,
-        title: 'Align center',
-        shortcut: 'Mod-Shift-e',
-        announcement: 'Centered',
-    },
-    {
-        value: 'right',
-        icon: IconTextAlignmentRight,
-        title: 'Align right',
-        shortcut: 'Mod-Shift-r',
-        announcement: 'Aligned right',
-    },
-    {
-        value: 'justify',
-        icon: IconTextAlignmentJustify,
-        title: 'Justify',
-        shortcut: 'Mod-Shift-j',
-        announcement: 'Justified',
-    },
-];
+};
 
-/** What a button or its shortcut does: choosing the alignment already set clears it, so the block inherits the editor's direction again. */
+const LEFT: Alignment = {
+    value: 'left',
+    icon: IconTextAlignmentLeft,
+    title: 'Align left',
+    shortcut: 'Mod-Shift-l',
+    announcement: 'Aligned left',
+};
+
+const CENTER: Alignment = {
+    value: 'center',
+    icon: IconTextAlignmentCentre,
+    title: 'Align center',
+    shortcut: 'Mod-Shift-e',
+    announcement: 'Centered',
+};
+
+const RIGHT: Alignment = {
+    value: 'right',
+    icon: IconTextAlignmentRight,
+    title: 'Align right',
+    shortcut: 'Mod-Shift-r',
+    announcement: 'Aligned right',
+};
+
+const JUSTIFY: Alignment = {
+    value: 'justify',
+    icon: IconTextAlignmentJustify,
+    title: 'Justify',
+    shortcut: 'Mod-Shift-j',
+    announcement: 'Justified',
+};
+
+const ALIGNMENTS: readonly Alignment[] = [LEFT, CENTER, RIGHT, JUSTIFY];
+
+/**
+ * What a button or its shortcut does: choosing the alignment already set clears it, so the block inherits the editor's direction again.
+ */
 const toggleAlign = (
     api: EditorControlApi,
     value: NonNullable<AlignAttribute['align']>,
@@ -96,9 +110,12 @@ const toggleAlign = (
     return value;
 };
 
-const alignFromKeyboard = (api: EditorControlApi, value: NonNullable<AlignAttribute['align']>) => {
-    const announcement = ALIGNMENTS.find((alignment) => alignment.value === value)?.announcement ?? '';
-    api.announce(toggleAlign(api, value) === null ? 'Alignment cleared' : announcement);
+const alignFromKeyboard = (api: EditorControlApi, { value, announcement }: Alignment) => {
+    if (toggleAlign(api, value) === null) {
+        api.announce('Alignment cleared');
+        return;
+    }
+    api.announce(announcement);
 };
 
 const AlignToolbar = ({ api, selection }: ToolbarItemProps) => {
@@ -130,6 +147,22 @@ const AlignToolbar = ({ api, selection }: ToolbarItemProps) => {
     );
 };
 
+// The keys are literals because a computed key keeps this plugin in the renderer; each alignment's `shortcut` type ties it to one.
+const hotkeys = {
+    'Mod-Shift-l': (api) => {
+        alignFromKeyboard(api, LEFT);
+    },
+    'Mod-Shift-e': (api) => {
+        alignFromKeyboard(api, CENTER);
+    },
+    'Mod-Shift-r': (api) => {
+        alignFromKeyboard(api, RIGHT);
+    },
+    'Mod-Shift-j': (api) => {
+        alignFromKeyboard(api, JUSTIFY);
+    },
+} satisfies Record<string, HotkeyHandler>;
+
 /**
  * Text alignment, with a four-way radio group in the toolbar
  */
@@ -137,19 +170,5 @@ export const alignPlugin = /* @__PURE__ */ definePlugin({
     id: 'align',
     content: alignContent,
     toolbar: [{ render: AlignToolbar, floating: 'inline' }],
-    hotkeys: {
-        // HOTKEYS spelled out: a computed key makes esbuild keep this call, and the UI with it, in the renderer.
-        'Mod-Shift-l': (api) => {
-            alignFromKeyboard(api, 'left');
-        },
-        'Mod-Shift-e': (api) => {
-            alignFromKeyboard(api, 'center');
-        },
-        'Mod-Shift-r': (api) => {
-            alignFromKeyboard(api, 'right');
-        },
-        'Mod-Shift-j': (api) => {
-            alignFromKeyboard(api, 'justify');
-        },
-    },
+    hotkeys,
 });

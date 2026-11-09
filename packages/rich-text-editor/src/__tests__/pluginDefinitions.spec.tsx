@@ -237,6 +237,14 @@ describe('blurOnBreakPlugin', () => {
         expect(second.calls).toEqual(['split', 'announce Write first.']);
     });
 
+    it('refuses an empty editor with the default words when required is an empty string', () => {
+        const { api, calls } = recordingApi({ empty: true });
+
+        enterOf({ required: '' })?.(api);
+
+        expect(calls).toEqual(['split', 'announce Type something before submitting.']);
+    });
+
     it('commits a required editor that has something in it', () => {
         const { api, calls } = recordingApi();
 

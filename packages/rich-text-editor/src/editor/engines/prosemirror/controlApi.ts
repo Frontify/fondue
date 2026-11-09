@@ -36,7 +36,9 @@ import { warnUnknownType } from './warnings';
  * the selection snapshot, then marks, then blocks. Lists live in `./lists.ts`.
  */
 
-/** The one way a command changes the editor, so a group can see every transaction. */
+/**
+ * The one way a command changes the editor, so a group can see every transaction.
+ */
 export type Dispatch = (transaction: Transaction) => void;
 
 // --- Selection snapshot: what all feature UI renders from ---
@@ -367,15 +369,14 @@ export const createControlApi = (
     announce: EditorControlApi['announce'],
 ): EditorControlApi => {
     // Inside a group, the document changes after the first join that one's undo step.
-    let grouping = false;
-    let firstChange: Transaction | null = null;
+    let group: { first: Transaction | null } | null = null;
     const dispatch: Dispatch = (transaction) => {
-        if (grouping) {
-            if (firstChange !== null) {
+        if (group !== null) {
+            if (group.first !== null) {
                 // prosemirror-history merges a transaction appended to an earlier one into that one's event.
-                transaction.setMeta('appendedTransaction', firstChange);
+                transaction.setMeta('appendedTransaction', group.first);
             } else if (transaction.docChanged) {
-                firstChange = transaction;
+                group.first = transaction;
             }
         }
         getView().dispatch(transaction);
@@ -454,16 +455,15 @@ export const createControlApi = (
         },
         isEmpty: () => isEmpty(toRteDocument(getView().state.doc)),
         group(run) {
-            if (grouping) {
+            if (group !== null) {
                 run();
                 return;
             }
-            grouping = true;
+            group = { first: null };
             try {
                 run();
             } finally {
-                grouping = false;
-                firstChange = null;
+                group = null;
             }
         },
         announce,

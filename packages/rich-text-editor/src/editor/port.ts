@@ -44,7 +44,9 @@ export type MountOptions = {
      */
     onStateChange: () => void;
     viewPortals: ViewPortals;
-    /** Say a message through the shell's live region, for `api.announce`. */
+    /**
+     * Say a message through the shell's live region, for `api.announce`
+     */
     announce: (message: string) => void;
 };
 

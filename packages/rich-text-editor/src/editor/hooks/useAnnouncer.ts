@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-// A message that no longer applies must not be found later in browse mode.
+/**
+ * How long a message stays in the live region: one that no longer applies must not be found later in browse mode.
+ */
 const CLEAR_AFTER_MS = 5000;
 
 /**
