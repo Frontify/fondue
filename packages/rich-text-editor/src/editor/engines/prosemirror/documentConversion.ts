@@ -89,10 +89,13 @@ export const valueAttrsFor = (value: Record<string, unknown> | undefined): Recor
 });
 
 /** Type and attributes only — what the toolbar needs, without dragging the subtree along. */
-export const shallowBlock = (node: PmNode): { type: string; [attribute: string]: unknown } => ({
-    ...definedAttrs(node.attrs),
-    type: node.type.name,
-});
+export const shallowBlock = (node: PmNode): { type: string; [attribute: string]: unknown } => {
+    // An unknown block's only attribute is its stored data, which no plugin may see.
+    if (node.type.name === UNKNOWN_BLOCK) {
+        return { type: UNKNOWN_BLOCK };
+    }
+    return { ...definedAttrs(node.attrs), type: node.type.name };
+};
 
 /** The attributes a node type declared, picked off a document node (they live flat on it). */
 const declaredAttrs = (
