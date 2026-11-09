@@ -171,12 +171,12 @@ const ownBlockTypeOf = (block: BlockDefinition, type: string): OwnType => {
     return { kind: 'container', type };
 };
 
-/**
- * A type of the content, by what it is: looked up in marks, then blocks, then inlines.
- */
 // `Object.hasOwn` needs an ES2022 lib, which this package does not target.
 const hasOwnKey = (record: object, key: string): boolean => Object.prototype.hasOwnProperty.call(record, key);
 
+/**
+ * A type of the content, by what it is: looked up in marks, then blocks, then inlines.
+ */
 export const ownTypeOf = (content: RteContent | undefined, type: string | undefined): OwnType => {
     if (type === undefined) {
         return { kind: 'none' };
@@ -448,7 +448,7 @@ const addCommand = (draft: Draft, owner: string, command: RteBlockCommand): void
  */
 const addShortcut = (draft: Draft, plugin: RtePlugin, item: ToolbarEntry): void => {
     const { shortcut } = item;
-    if (shortcut === undefined || shortcut in (plugin.hotkeys ?? {})) {
+    if (shortcut === undefined || hasOwnKey(plugin.hotkeys ?? {}, shortcut)) {
         return;
     }
     if (!BUTTON_KINDS.has(item.own.kind)) {
