@@ -1,0 +1,25 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.ts
+  s_eecb278abe0cf5::t_44cdcc758a3637 8-14,112
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.spec.tsx
+  s_eecb278abe0cf5::t_44cdcc758a3637 7,29-57
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.ts
+  s_eecb278abe0cf5::t_e1051abdc78e66 60-63
+  s_eecb278abe0cf5::t_44cdcc758a3637 6,9,15,49-59,64-69
+  s_eecb278abe0cf5::t_800e7a61c0eeea 70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bc4cc6c0cdfb8f117ccb8213a948a7b6e0616766",
+  "prompts": {},
+  "sessions": {
+    "s_eecb278abe0cf5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "02ff1c4d-dc17-4323-8121-0c1783040630",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
