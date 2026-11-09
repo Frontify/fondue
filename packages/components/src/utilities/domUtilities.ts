@@ -9,7 +9,7 @@ export const MAX_HEIGHT_MARGIN = 8;
  * The function calculates the space below the dialog up to the bottom of the viewport window,
  * subtracting a default margin, and sets this value as the max-height style of the dialog.
  *
- * @param {HTMLElement} dialog - The dialog element whose maximum height is to be set.
+ * @param dialog - The dialog element whose maximum height is to be set.
  *
  * @example
  * // Suppose you have a dialog element with id 'my-dialog'.
@@ -41,8 +41,8 @@ export function setMaxHeightToAvailableSpace(dialog: HTMLElement) {
  * - The element's computed style must not be `display: none`, `visibility: hidden`, or `opacity: 0`.
  * - The element must be within the bounds of the current viewport.
  *
- * @param {HTMLElement} element - The HTML element to check for visibility.
- * @returns {boolean} Returns true if the element is visible according to the criteria specified, otherwise returns false.
+ * @param element - The HTML element to check for visibility.
+ * @returns Returns true if the element is visible according to the criteria specified, otherwise returns false.
  */
 export function isElementVisible(element: HTMLElement) {
     const rect = element.getBoundingClientRect();
@@ -61,8 +61,8 @@ export function isElementVisible(element: HTMLElement) {
 /**
  * Assigns a local DOM ref to a forwarded ref.
  *
- * @param {RefObject<HTMLDivElement>} localRef - The local React reference to an HTMLDivElement.
- * @param {ForwardedRef<HTMLDivElement>} forwardedRef - The ref forwarded from a parent component.
+ * @param localRef - The local React reference to an HTMLDivElement.
+ * @param forwardedRef - The ref forwarded from a parent component.
  */
 export function syncRefs<TElement = HTMLElement>(
     localRef: RefObject<TElement | null>,

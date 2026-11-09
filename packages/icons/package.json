@@ -32,6 +32,7 @@
         "icons",
         "dist"
     ],
+    "sideEffects": false,
     "engines": {
         "node": ">=18"
     },

@@ -4,6 +4,8 @@ import { expect, test } from '@playwright/experimental-ct-react';
 
 import { Tabs } from '../Tabs';
 
+import { ControlledTabs } from './ControlledTabs';
+
 const TABS_ROOT_TEST_ID = 'test-tabs-root';
 const FIRST_TAB_TRIGGER_TEST_ID = 'test-first-tab-trigger';
 const FIRST_TAB_CONTENT_TEST_ID = 'test-first-tab-content';
@@ -681,5 +683,71 @@ test.describe('small viewports', () => {
         await expect(component.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).not.toBeVisible();
         await expect(component.getByTestId(SECOND_TAB_CONTENT_TEST_ID)).not.toBeVisible();
         await expect(component.getByTestId(THIRD_TAB_CONTENT_TEST_ID)).toBeVisible();
+    });
+});
+
+test.describe('onActiveTabChange', () => {
+    test('should call once per click when controlled', async ({ mount }) => {
+        const calls: string[] = [];
+        const component = await mount(<ControlledTabs onActiveTabChange={(value) => calls.push(value)} />);
+
+        await component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID).click();
+        await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toHaveAttribute('data-state', 'active');
+
+        await expect.poll(() => calls).toEqual(['second']);
+        // A duplicate is sent in the same event as the first call, so it has arrived by now
+        expect(calls).toEqual(['second']);
+    });
+
+    test('should call once per click when uncontrolled', async ({ mount }) => {
+        const calls: string[] = [];
+        const component = await mount(
+            <Tabs.Root defaultActiveTab="first" onActiveTabChange={(value) => calls.push(value)}>
+                <Tabs.Tab value="first">
+                    <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>First Tab</Tabs.Trigger>
+                    <Tabs.Content>First Content</Tabs.Content>
+                </Tabs.Tab>
+                <Tabs.Tab value="second">
+                    <Tabs.Trigger data-test-id={SECOND_TAB_TRIGGER_TEST_ID}>Second Tab</Tabs.Trigger>
+                    <Tabs.Content>Second Content</Tabs.Content>
+                </Tabs.Tab>
+            </Tabs.Root>,
+        );
+
+        await component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID).click();
+        await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toHaveAttribute('data-state', 'active');
+
+        await expect.poll(() => calls).toEqual(['second']);
+        expect(calls).toEqual(['second']);
+    });
+
+    test('should call once per tab change when using the keyboard', async ({ mount, page }) => {
+        const calls: string[] = [];
+        const component = await mount(<ControlledTabs onActiveTabChange={(value) => calls.push(value)} />);
+
+        await component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID).focus();
+        await page.keyboard.press('ArrowRight');
+        await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toHaveAttribute('data-state', 'active');
+        await page.keyboard.press('ArrowRight');
+        await expect(component.getByTestId(THIRD_TAB_TRIGGER_TEST_ID)).toHaveAttribute('data-state', 'active');
+        await page.keyboard.press('Enter');
+        await page.keyboard.press(' ');
+
+        await expect.poll(() => calls).toEqual(['second', 'third']);
+        expect(calls).toEqual(['second', 'third']);
+    });
+
+    test('should call again when the parent refuses the change', async ({ mount }) => {
+        const calls: string[] = [];
+        const component = await mount(
+            <ControlledTabs ignoreChanges onActiveTabChange={(value) => calls.push(value)} />,
+        );
+
+        await component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID).click();
+        await expect.poll(() => calls).toEqual(['second']);
+        await component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID).click();
+
+        await expect.poll(() => calls).toEqual(['second', 'second']);
+        expect(calls).toEqual(['second', 'second']);
     });
 });

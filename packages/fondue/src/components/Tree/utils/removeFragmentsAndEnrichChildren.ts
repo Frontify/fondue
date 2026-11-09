@@ -11,8 +11,8 @@ type EnrichedProps = {
 /**
  * Recursively removes React Fragments and enriches the remaining child elements passed in with additional properties.
  *
- * @param children The child elements to remove React Fragments from and enrich.
- * @param enrichedProps Additional properties to add to each child element.
+ * @param children - The child elements to remove React Fragments from and enrich.
+ * @param enrichedProps - Additional properties to add to each child element.
  * @returns An array of ReactElements with enriched props.
  *
  * @example
@@ -32,7 +32,7 @@ type EnrichedProps = {
  *
  * const flattenedAndEnriched = flattenAndEnrichChildren(children, enrichedProps);
  *
- * @returns {ReactElement[]} Array with the three child elements from the example, each with the `parentId` and `level` props added.
+ * @returns Array with the three child elements from the example, each with the `parentId` and `level` props added.
  *
  * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
  */
