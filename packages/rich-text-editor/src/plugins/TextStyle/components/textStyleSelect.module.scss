@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../../../styles/sizes' as sizes;
+
 /** Wide enough for "Image caption" and fixed, so the control does not stretch across the toolbar. */
 .control {
     flex: none;
@@ -10,7 +12,7 @@
      * Select has no size of its own. The attributes outweigh its field rules.
      */
     > [role='combobox'][data-empty][data-disabled='false'] {
-        height: 24px;
+        height: sizes.$toolbar-control-height;
         border-color: transparent;
         background-color: transparent;
         font-size: var(--typography-font-size-small);

@@ -14,7 +14,14 @@ import {
     type Transaction,
 } from 'prosemirror-state';
 
-import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
+import {
+    type EditorControlApi,
+    type HotkeyHandler,
+    type PluginRegistry,
+    REDO_HOTKEY,
+    type RteInputRule,
+    UNDO_HOTKEY,
+} from '#/core';
 
 import { keepCarriedAttrs, undoStep } from './controlApi';
 import { EXTRA_ATTR, valueAttrsFor } from './documentConversion';
@@ -45,9 +52,9 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         // 1
         history(),
         keymap({
-            'Mod-z': undoStep,
+            [UNDO_HOTKEY]: undoStep,
             'Mod-y': redo,
-            'Mod-Shift-z': redo,
+            [REDO_HOTKEY]: redo,
             Backspace: undoInputRule,
         }),
         // 2
