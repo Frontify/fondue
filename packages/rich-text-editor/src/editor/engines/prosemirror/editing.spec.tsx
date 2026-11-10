@@ -318,6 +318,36 @@ describe('a document set by the host', () => {
         expect(view.state.doc.textContent).toBe('from the host');
     });
 
+    it('keeps a bold the host set when the user undoes the bold they set on the same text', () => {
+        const { handle, view } = mount(paragraph('hello world'));
+        const bold = view.state.schema.marks.bold;
+        if (!bold) {
+            throw new Error('no bold mark');
+        }
+        view.dispatch(view.state.tr.addMark(7, 12, bold.create()));
+        const fromHost: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: PARAGRAPH, children: [{ text: 'hello ' }, { text: 'WORld', bold: true }] }],
+        };
+
+        handle.setDoc(fromHost);
+        undo(view.state, view.dispatch);
+
+        expect(handle.document()).toEqual(fromHost);
+    });
+
+    it('keeps undo for typing the host only inserted text next to, then changed that text again', () => {
+        const { handle, view } = mount(paragraph('ab'));
+        view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, 3)));
+        handle.api.insertText('X');
+
+        handle.setDoc(paragraph('abXY'));
+        handle.setDoc(paragraph('abXZ'));
+        undo(view.state, view.dispatch);
+
+        expect(view.state.doc.textContent).toBe('abZ');
+    });
+
     it('leaves the host change in place when the user undoes an edit in another block', () => {
         const { handle, view } = mount({
             version: 1,
@@ -545,6 +575,23 @@ describe('a document set by the host that changes the blocks around the caret', 
 
         expect(view.state.doc.child(0).attrs.style).toBe('heading2');
         expect(view.state.doc.child(0).attrs.align ?? null).toBeNull();
+    });
+
+    it('keeps the alignment the host set when the user undoes the alignment they set on the same block', () => {
+        const heading = (align?: string) => ({
+            type: 'textStyle',
+            style: 'heading1',
+            ...(align === undefined ? {} : { align }),
+            children: [{ text: 'one' }],
+        });
+        const { view, editor, api } = editorWith(shipped('text-style', 'align'), [heading()] as never);
+        caretIn(view, 'one', 1);
+        api.blocks.updateAttributes({ align: 'center' });
+
+        editor.setDoc(blocksOf(heading('right')));
+        undo(view.state, view.dispatch);
+
+        expect(view.state.doc.child(0).attrs.align).toBe('right');
     });
 
     it('keeps the caret in a to-do the host ticks', () => {
