@@ -11,14 +11,15 @@ import styles from './checkList.module.scss';
 
 /**
  * A to-do list: the same nesting shape as the other lists, with a `checked`
- * attribute per item. `toHtml` draws a static checkbox for export; the readonly
+ * attribute per item: `true` when done, `'inProgress'` once started, `false`
+ * otherwise. `toHtml` draws a static checkbox for export; the readonly
  * view (`render.component`) draws one that looks like the editor's but cannot
  * be changed, and the editor's `render.edit` makes it interactive via
  * `setValue`.
  */
 export type CheckItemBlock<TContent extends RteBlockNode = RteBlockNode> = {
     type: 'checkItem';
-    checked?: boolean;
+    checked?: boolean | 'inProgress';
     children: TContent[];
 };
 
@@ -27,10 +28,46 @@ export type CheckListBlock<TItem extends RteBlockNode = RteBlockNode> = {
     children: TItem[];
 };
 
-type CheckValue = { checked: boolean };
+type CheckValue = { checked: boolean | 'inProgress' };
 
-/** The checkbox's name in exported HTML, where it has no visible text to point at. */
-const stateLabel = (checked: boolean): string => (checked ? 'Done' : 'Not done');
+/** What `checked` holds for an item that is started but not finished. */
+const IN_PROGRESS = 'inProgress';
+
+/** One state of an item, with everything that depends on it. */
+type CheckState = {
+    value: CheckValue['checked'];
+    /** What `data-checked` holds in exported HTML, which `parse` reads back. */
+    data: string;
+    /** The checkbox's name in exported HTML, where it has no visible text to point at. */
+    label: string;
+};
+
+const DONE: CheckState = { value: true, data: 'true', label: 'Done' };
+const STARTED: CheckState = { value: IN_PROGRESS, data: IN_PROGRESS, label: 'In progress' };
+const NOT_DONE: CheckState = { value: false, data: 'false', label: 'Not done' };
+const CHECK_STATES = [DONE, STARTED, NOT_DONE];
+
+/** Anything stored but `true` and `'inProgress'` is not done: a stored `"false"` is truthy, and would draw a tick. */
+const stateOfValue = (checked: unknown): CheckState =>
+    CHECK_STATES.find((state) => state.value === checked) ?? NOT_DONE;
+
+const stateOfData = (data: string | undefined): CheckState =>
+    CHECK_STATES.find((state) => state.data === data) ?? NOT_DONE;
+
+/** A click finishes an item, in progress or not, and reopens a finished one. */
+const afterClick = (state: CheckState): CheckState => {
+    if (state === DONE) {
+        return NOT_DONE;
+    }
+    return DONE;
+};
+
+/** `indeterminate` is a DOM property with no attribute or React prop, so it is set on the element. */
+const setIndeterminate = (input: HTMLInputElement | null, indeterminate: boolean): void => {
+    if (input) {
+        input.indeterminate = indeterminate;
+    }
+};
 
 /** The readonly item: the editor's look, its checkbox showing the state without letting it change. */
 const ReadonlyCheckItem = ({
@@ -43,12 +80,13 @@ const ReadonlyCheckItem = ({
     style?: CSSProperties;
 }): ReactNode => {
     const labelId = useId();
-    const checked = value.checked === true;
+    const state = stateOfValue(value.checked);
     return (
-        <li data-checked={String(checked)} className={styles.item} style={style}>
+        <li data-checked={state.data} className={styles.item} style={style}>
             <input
+                ref={(input) => setIndeterminate(input, state === STARTED)}
                 type="checkbox"
-                checked={checked}
+                checked={state === DONE}
                 readOnly
                 aria-readonly="true"
                 aria-labelledby={labelId}
@@ -75,18 +113,19 @@ const EditCheckItem = ({
     children?: ReactNode;
 }): ReactNode => {
     const labelId = useId();
-    const checked = value.checked === true;
+    const state = stateOfValue(value.checked);
     return (
         <>
             <input
+                ref={(input) => setIndeterminate(input, state === STARTED)}
                 type="checkbox"
-                checked={checked}
+                checked={state === DONE}
                 contentEditable={false}
                 aria-labelledby={labelId}
                 // Keeps focus — and the caret — in the text, so checking an
                 // item is not the editor losing focus (and firing `onBlur`).
                 onMouseDown={(event) => event.preventDefault()}
-                onChange={() => setValue({ checked: !checked })}
+                onChange={() => setValue({ checked: afterClick(state).value })}
                 className={styles.checkbox}
             />
             <div id={labelId} className={styles.label}>
@@ -110,20 +149,19 @@ export const checkListPlugin = (): RtePlugin => ({
             defaults: { checked: false },
             // Exported HTML cannot be interacted with, so its checkbox is a
             // disabled one, named by its state.
-            // Only `true` is checked: a stored `"false"` is truthy, and would draw a tick.
             toHtml: (value) => {
-                const checked = value.checked === true;
+                const state = stateOfValue(value.checked);
                 return {
                     tag: 'li',
-                    attrs: { 'data-checked': String(checked), class: styles.item },
+                    attrs: { 'data-checked': state.data, class: styles.item },
                     children: [
                         {
                             tag: 'input',
                             attrs: {
                                 type: 'checkbox',
-                                checked,
+                                checked: state === DONE,
                                 disabled: true,
-                                'aria-label': stateLabel(checked),
+                                'aria-label': state.label,
                                 class: styles.checkbox,
                             },
                         },
@@ -131,9 +169,13 @@ export const checkListPlugin = (): RtePlugin => ({
                     ],
                 };
             },
-            // Read from the attribute value rather than off the checkbox, so
-            // it comes back as a boolean rather than a string.
-            parse: [{ tag: 'li[data-checked]', value: (element) => ({ checked: element.dataset.checked === 'true' }) }],
+            // Read from the attribute, not the checkbox, so it comes back as the stored value.
+            parse: [
+                {
+                    tag: 'li[data-checked]',
+                    value: (element) => ({ checked: stateOfData(element.dataset.checked).value }),
+                },
+            ],
             render: {
                 component: ReadonlyCheckItem,
                 // Only what is inside: the item keeps the `<li>` from `toHtml`.
@@ -146,10 +188,13 @@ export const checkListPlugin = (): RtePlugin => ({
             <IconListCheck size={16} />
         </ToolbarButton>
     ),
-    // `[] ` and `[ ] ` both start one, the two ways a to-do is written in markdown.
+    // `[] ` and `[ ] ` both start one, the two ways a to-do is written in markdown; `[x] ` starts it done, `[~] ` in progress.
     inputRules: [
         { kind: 'list', match: '[] ', list: 'checkList' },
         { kind: 'list', match: '[ ] ', list: 'checkList' },
+        { kind: 'list', match: '[x] ', list: 'checkList', itemAttributes: { checked: true } },
+        { kind: 'list', match: '[X] ', list: 'checkList', itemAttributes: { checked: true } },
+        { kind: 'list', match: '[~] ', list: 'checkList', itemAttributes: { checked: IN_PROGRESS } },
     ],
     commands: [
         {
