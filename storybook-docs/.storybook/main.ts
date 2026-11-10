@@ -68,7 +68,7 @@ const config: StorybookConfig = {
         if (configType === 'DEVELOPMENT') {
             return {
                 rte: {
-                    title: 'Rich Text Editor',
+                    title: 'Legacy Rich Text Editor',
                     url: 'http://localhost:6011',
                     type: 'auto-inject',
                     expanded: true,
@@ -78,7 +78,7 @@ const config: StorybookConfig = {
 
         return {
             rte: {
-                title: 'Rich Text Editor',
+                title: 'Legacy Rich Text Editor',
                 url: `${getSubpackageURL('rte')}`,
                 expanded: true,
             },
