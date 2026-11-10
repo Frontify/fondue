@@ -39,6 +39,8 @@
         inset-block-start: 0;
         z-index: 1;
         flex-wrap: nowrap;
+        // Its slots must not widen a grid or flex parent; the fit moves what does not fit behind More.
+        contain: inline-size;
         padding: 0;
         margin-bottom: var(--spacing-x-small);
         background-color: var(--color-surface-default);
