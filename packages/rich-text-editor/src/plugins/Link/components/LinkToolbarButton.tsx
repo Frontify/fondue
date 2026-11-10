@@ -5,9 +5,10 @@ import { IconLink } from '@frontify/fondue-icons';
 import { type ReactNode, useEffect, useId, useState } from 'react';
 
 import { type ToolbarItemProps } from '#/core';
+import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
+import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
-import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
 import { registerNewLinkForm } from '../helpers/newLinkForms';
 
 import { LinkTargetForm } from './LinkTargetForm';
@@ -24,7 +25,7 @@ export const LinkToolbarButton = ({
     toggle,
     openEditor,
     shortcut,
-}: ToolbarItemProps & { shortcut: string }): ReactNode => {
+}: ToolbarItemProps): ReactNode => {
     const inLink = selectedNode !== null;
     const [creating, setCreating] = useState(false);
     const titleId = useId();
@@ -58,7 +59,7 @@ export const LinkToolbarButton = ({
                     // A link needs text to sit on.
                     disabled={!inLink && selection.isCollapsed}
                 >
-                    <IconLink size={16} />
+                    <IconLink size={TOOLBAR_ICON_SIZE} />
                 </ToolbarButton>
             </Flyout.Trigger>
             <Flyout.Content

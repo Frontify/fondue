@@ -12,14 +12,9 @@ import {
     useSyncExternalStore,
 } from 'react';
 
-import {
-    type EditorControlApi,
-    type RteBlockCommand,
-    TOOLBAR_ICON_SIZE,
-    type ToolbarEntry,
-    type ToolbarItemProps,
-} from '#/core';
-import { ToolbarButton } from '#/plugins/shared/ToolbarButton/ToolbarButton';
+import { type EditorControlApi, type RteBlockCommand, type ToolbarEntry, type ToolbarItemProps } from '#/core';
+import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
+import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { turnIntoCommands } from '../helpers/blockCommands';
 import { toolbarItemProps } from '../helpers/toolbarItem';
@@ -191,7 +186,7 @@ export const Toolbar = ({
         >
             {showTurnInto ? <TurnInto api={api} commands={turnInto} selection={selection} labels={labels} /> : null}
             {items.map((item) => (
-                <ToolbarItemSlot key={item.key} item={item} itemProps={toolbarItemProps(item.own, api, selection)} />
+                <ToolbarItemSlot key={item.key} item={item} itemProps={toolbarItemProps(item, api, selection)} />
             ))}
         </div>
     );

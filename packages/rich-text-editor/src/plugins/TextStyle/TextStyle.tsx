@@ -12,7 +12,7 @@ import {
     type ToolbarItemProps,
 } from '#/core';
 
-import { HeadingLevelIcon } from './components/HeadingLevelIcon';
+import { headingLevelIcon } from './components/HeadingLevelIcon';
 import { TextStyleSelect } from './components/TextStyleSelect';
 import {
     ALL_TEXT_STYLES,
@@ -108,7 +108,7 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
         return {
             id: preset.tag === 'p' ? preset.name : `heading-${level}`,
             label: preset.label,
-            icon: level === undefined ? undefined : <HeadingLevelIcon level={level} />,
+            icon: level === undefined ? undefined : headingLevelIcon(level),
             keywords: level === undefined ? [] : (HEADING_KEYWORDS[level] ?? []),
             group: 'turnInto',
             isActive: (selection) => isTextStyle(selection.block) && selection.block.style === preset.name,
@@ -117,8 +117,8 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
     });
 
     // Made here, not at module level: the dropdown needs this editor's `styles`.
-    const TextStyleToolbar = ({ api, selection }: ToolbarItemProps) => (
-        <TextStyleSelect selection={selection} api={api} options={options} />
+    const TextStyleToolbar = ({ api, selection, label }: ToolbarItemProps) => (
+        <TextStyleSelect selection={selection} api={api} options={options} label={label} />
     );
 
     // Reuse the shared object so the default plugin and defaultContent declare the very same block definition.

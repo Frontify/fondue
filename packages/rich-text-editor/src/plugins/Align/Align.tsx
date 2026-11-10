@@ -9,8 +9,8 @@ import {
 } from '@frontify/fondue-icons';
 
 import { defineContent, definePlugin, type StyleMap, type ToolbarItemProps } from '#/core';
-
-import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
+import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
+import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import styles from './align.module.scss';
 
@@ -52,7 +52,7 @@ const ALIGNMENTS: readonly { value: NonNullable<AlignAttribute['align']>; icon: 
     { value: 'justify', icon: IconTextAlignmentJustify, title: 'Justify' },
 ];
 
-const AlignToolbar = ({ api, selection }: ToolbarItemProps) => {
+const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
     // The block the selection is in carries the attribute this plugin
     // added, which the structural node type does not know about.
     const align = (selection.block as AlignAttribute | null)?.align;
@@ -61,7 +61,7 @@ const AlignToolbar = ({ api, selection }: ToolbarItemProps) => {
     return (
         // One choice of four, so a radio group: the checked one is the
         // block's alignment.
-        <div role="radiogroup" aria-label="Alignment" className={styles.group}>
+        <div role="radiogroup" aria-label={label} className={styles.group}>
             {ALIGNMENTS.map(({ value, icon: Icon, title }) => (
                 // A <button> underneath, which the toolbar gives its tabIndex.
                 // oxlint-disable-next-line jsx-a11y/interactive-supports-focus
@@ -80,7 +80,7 @@ const AlignToolbar = ({ api, selection }: ToolbarItemProps) => {
                         api.blocks.updateAttributes({ align: next });
                     }}
                 >
-                    <Icon size={16} />
+                    <Icon size={TOOLBAR_ICON_SIZE} />
                 </ToolbarButton>
             ))}
         </div>

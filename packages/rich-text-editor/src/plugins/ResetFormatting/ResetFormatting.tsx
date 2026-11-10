@@ -3,8 +3,8 @@
 import { IconEraser } from '@frontify/fondue-icons';
 
 import { definePlugin, type EditorControlApi, PARAGRAPH, type ToolbarItemProps } from '#/core';
-
-import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
+import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
+import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 /**
  * Puts the selection back to plain text: no marks, a paragraph, default attributes, no lists
@@ -20,9 +20,9 @@ const reset = (api: EditorControlApi): void => {
     api.blocks.resetAttributes();
 };
 
-const ResetFormattingButton = ({ api }: ToolbarItemProps) => (
-    <ToolbarButton title="Reset formatting" onClick={() => reset(api)}>
-        <IconEraser size={16} />
+const ResetFormattingButton = ({ api, label }: ToolbarItemProps) => (
+    <ToolbarButton title={label} onClick={() => reset(api)}>
+        <IconEraser size={TOOLBAR_ICON_SIZE} />
     </ToolbarButton>
 );
 

@@ -42,7 +42,6 @@ export {
     type RtePluginDefinition,
     type RteToolbarEntry,
     type SelectedNode,
-    TOOLBAR_ICON_SIZE,
     type ToolbarItemProps,
 } from './plugin';
 export {
@@ -50,6 +49,9 @@ export {
     blockHtml,
     blockValueOf,
     buildPluginRegistry,
+    controlOf,
+    isOwnActive,
+    type OwnControl,
     type OwnType,
     ownTypeOf,
     type PluginRegistry,

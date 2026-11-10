@@ -14,6 +14,7 @@ import { i14 } from '#/index'; // banned
 import { i11 } from '#/plugins'; // banned
 import { i12 } from '#/plugins/Bold'; // banned
 import { i13 } from '#/renderer'; // banned
+import { i17 } from '#/ui/ToolbarButton/ToolbarButton'; // banned
 
 import { i6 } from '../../../core'; // banned
 import { i5 } from '../../port'; // banned
@@ -21,4 +22,4 @@ import { i4 } from '../../RichTextEditor'; // banned
 
 import { i0 } from './schema';
 
-export const all = [i0, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16];
+export const all = [i0, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16, i17];

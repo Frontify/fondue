@@ -5,6 +5,7 @@ import { IconCaretDown, IconCheckMark } from '@frontify/fondue-icons';
 import { type ComponentProps, type MouseEvent, type ReactNode, useRef } from 'react';
 
 import { type EditorControlApi, type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
+import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { activeCommand } from '../helpers/blockCommands';
 import { type RichTextEditorLabels } from '../labels';
@@ -83,6 +84,7 @@ export const TurnInto = ({
             <Dropdown.Content {...contentProps} onEscapeKeyDown={returnToText}>
                 {commands.map((command) => {
                     const isActive = command === active;
+                    const { icon: Icon } = command;
                     return (
                         <Dropdown.Item
                             key={command.id}
@@ -97,8 +99,10 @@ export const TurnInto = ({
                                 }
                             }}
                         >
-                            {command.icon === undefined ? null : (
-                                <Dropdown.Slot name="left">{command.icon}</Dropdown.Slot>
+                            {Icon === undefined ? null : (
+                                <Dropdown.Slot name="left">
+                                    <Icon size={TOOLBAR_ICON_SIZE} />
+                                </Dropdown.Slot>
                             )}
                             {/* An element of its own: the menu keys only the ones it is handed, and wraps bare text without. */}
                             <span>{command.label}</span>

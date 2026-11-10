@@ -52,7 +52,8 @@ Layers import inward only; `oxlint.config.ts` enforces it.
 ```
 src/
 ├── core/            The contract: document types, RtePlugin, the registry. Imports nothing else.
-├── plugins/         One folder per feature (Bold, Link, List, …). Each imports only core and plugins/shared.
+├── plugins/         One folder per feature (Bold, Link, List, …). Each imports only core, ui and plugins/shared.
+├── ui/              Controls the shell and the plugins both draw with (ToolbarButton). Imports at most core.
 ├── renderer/        Readonly view and HTML export, both from each feature's content (`toHtml`).
 ├── editor/          The editing shell.
 │   ├── RichTextEditor.tsx   The component a host mounts.

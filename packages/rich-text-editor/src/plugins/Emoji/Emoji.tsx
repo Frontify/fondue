@@ -21,7 +21,9 @@ export type EmojiPluginOptions = {
  */
 export const emojiPlugin = (options: EmojiPluginOptions = {}): RtePlugin => {
     const { emojis = defaultEmojis } = options;
-    const EmojiToolbar = ({ api }: ToolbarItemProps) => <EmojiToolbarButton api={api} emojis={emojis} />;
+    const EmojiToolbar = ({ api, label }: ToolbarItemProps) => (
+        <EmojiToolbarButton api={api} emojis={emojis} label={label} />
+    );
     return definePlugin({
         id: 'emoji',
         content: defineContent({

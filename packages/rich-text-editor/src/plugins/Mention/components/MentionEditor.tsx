@@ -3,8 +3,7 @@
 import { type EditProps } from '#/core';
 
 import { mentionValueOf, safeMentionHref } from '../helpers/mention';
-import { type MentionContentOptions } from '../Mention';
-import { type MentionItems, type MentionValue } from '../types';
+import { type MentionHref, type MentionItems, type MentionValue } from '../types';
 
 import { MentionDraft } from './MentionDraft';
 import { MentionLink } from './MentionLink';
@@ -12,7 +11,7 @@ import { MentionLink } from './MentionLink';
 type MentionEditorProps = EditProps<MentionValue, MentionValue | null> & {
     items: MentionItems;
     trigger: string;
-    href: MentionContentOptions['href'];
+    href: MentionHref | undefined;
 };
 
 /**

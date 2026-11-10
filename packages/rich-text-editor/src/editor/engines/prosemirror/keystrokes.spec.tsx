@@ -194,8 +194,8 @@ describe('a feature hotkey', () => {
         const second = vi.fn<(api: EditorControlApi) => void>((api) => api.insertText('!'));
         const editor = editorWith(
             [
-                { id: 'first', hotkeys: { 'Alt-x': first } },
-                { id: 'second', hotkeys: { 'Alt-x': second } },
+                definePlugin({ id: 'first', hotkeys: { 'Alt-x': first } }),
+                definePlugin({ id: 'second', hotkeys: { 'Alt-x': second } }),
             ],
             [paragraph(text('a'))],
         );
@@ -211,7 +211,7 @@ describe('a feature hotkey', () => {
     it('takes a key the list keys would otherwise claim', () => {
         const claim = vi.fn(() => true);
         const editor = editorWith(
-            [...defaultPlugins, { id: 'claims-enter', hotkeys: { Enter: claim } }],
+            [...defaultPlugins, definePlugin({ id: 'claims-enter', hotkeys: { Enter: claim } })],
             [{ type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('ab'))] }] }],
         );
         editor.caretAfter('a');
@@ -224,7 +224,7 @@ describe('a feature hotkey', () => {
 
     it('naming a character does not fire in the middle of a word', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>();
-        const editor = editorWith([{ id: 'mention', hotkeys: { '@': mention } }], empty());
+        const editor = editorWith([definePlugin({ id: 'mention', hotkeys: { '@': mention } })], empty());
 
         editor.type('noah@frontify.com');
 
@@ -234,7 +234,7 @@ describe('a feature hotkey', () => {
 
     it('naming a character fires on that character being typed, and the character is not inserted', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>((api) => api.insertText('[mention]'));
-        const editor = editorWith([{ id: 'mention', hotkeys: { '@': mention } }], empty());
+        const editor = editorWith([definePlugin({ id: 'mention', hotkeys: { '@': mention } })], empty());
 
         editor.type('hi @');
 
@@ -362,7 +362,7 @@ describe('the list keys', () => {
 describe('a character hotkey during IME composition', () => {
     it('does not fire: the composition owns the character', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>();
-        const editor = editorWith([{ id: 'mention', hotkeys: { '@': mention } }], empty());
+        const editor = editorWith([definePlugin({ id: 'mention', hotkeys: { '@': mention } })], empty());
         vi.spyOn(editor.view, 'composing', 'get').mockReturnValue(true);
 
         editor.type('@');

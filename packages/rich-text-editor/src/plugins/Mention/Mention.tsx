@@ -6,14 +6,14 @@ import { MentionEditor } from './components/MentionEditor';
 import { MentionLink } from './components/MentionLink';
 import { mentionValueOf, safeMentionHref } from './helpers/mention';
 import styles from './mention.module.scss';
-import { type MentionItem, type MentionItems, type MentionKind, type MentionValue } from './types';
+import { type MentionHref, type MentionItem, type MentionItems, type MentionKind, type MentionValue } from './types';
 
 export type MentionContentOptions = {
     /**
      * Returns where a mention links to, such as the profile of a person or group.
      * Without it, or where it returns `undefined`, the mention is plain text.
      */
-    href?: (mention: MentionValue) => string | undefined;
+    href?: MentionHref;
     /**
      * The single character that starts a mention
      * @default '@'

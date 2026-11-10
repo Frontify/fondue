@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineContent, defineMark, definePlugin, type HotkeyHandler, type ToolbarItemProps } from '#/core';
+import { defineContent, defineMark, definePlugin, type HotkeyHandler } from '#/core';
 
 import { isLinkablePaste, isSafeHref, toHref, WEB_ADDRESS } from '../shared/helpers/href';
 
@@ -92,15 +92,13 @@ const hotkeys = {
 
 const HOTKEY: keyof typeof hotkeys = 'Mod-k';
 
-const LinkToolbar = (props: ToolbarItemProps) => <LinkToolbarButton {...props} shortcut={HOTKEY} />;
-
 /**
  * Links, made with a toolbar button or `Mod-k` and edited in a flyout while the caret is inside.
  * A web address followed by a space becomes a link, and pasting one over selected text links that text.
  */
 export const linkPlugin = /* @__PURE__ */ definePlugin({
     content: linkContent,
-    toolbar: [{ label: 'Link', render: LinkToolbar }],
+    toolbar: [{ label: 'Link', shortcut: HOTKEY, render: LinkToolbarButton }],
     edit: { link: LinkEditor },
     hotkeys,
     // A web address typed and followed by a space becomes a link. The pattern
