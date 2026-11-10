@@ -184,7 +184,7 @@ export const Toolbar = ({
         >
             {showTurnInto ? <TurnInto api={api} commands={turnInto} selection={selection} labels={labels} /> : null}
             {groupsOf(items).map((group) => (
-                <div key={group.key} role="group" className={styles.group}>
+                <div key={group.key} className={styles.group}>
                     {group.items.map((item) => (
                         <ToolbarItemSlot
                             key={item.key}
