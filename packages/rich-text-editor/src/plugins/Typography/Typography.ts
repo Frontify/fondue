@@ -30,21 +30,19 @@ const OPENERS = String.raw`(?<=^|[\s([{<'"“‘${INLINE_PLACEHOLDER}])`;
 /**
  * `^2` for `²`, only right after a digit and at the end of a run (`2^2`, not `x^2` or `10^23`). `^o` for a degree sign.
  */
-const SUPERSCRIPTS: readonly Replacement[] = /* @__PURE__ */ [...'0123456789o+-'].map(
-    (character, index): Replacement => {
-        const glyph = '⁰¹²³⁴⁵⁶⁷⁸⁹°⁺⁻'.charAt(index);
-        if (/\d/.test(character)) {
-            return [new RegExp(String.raw`(?<=\d)\^${character}`), glyph, true];
-        }
-        return [`^${character}`, glyph];
-    },
-);
+const SUPERSCRIPTS: readonly Replacement[] = [...'0123456789o+-'].map((character, index): Replacement => {
+    const glyph = '⁰¹²³⁴⁵⁶⁷⁸⁹°⁺⁻'.charAt(index);
+    if (/\d/.test(character)) {
+        return [new RegExp(String.raw`(?<=\d)\^${character}`), glyph, true];
+    }
+    return [`^${character}`, glyph];
+});
 
 /**
  * `1/2` for `½`. Not right after a digit or a slash, so dates (`11/2`) and
  * paths (`/1/2`) stay as typed, and so does `1/25`: it waits for the run to end.
  */
-const FRACTIONS: readonly Replacement[] = /* @__PURE__ */ (
+const FRACTIONS: readonly Replacement[] = (
     [
         ['1/2', '½'],
         ['1/3', '⅓'],
@@ -74,9 +72,9 @@ const FRACTIONS: readonly Replacement[] = /* @__PURE__ */ (
  */
 const RULES: Record<TypographyGroup, readonly Replacement[]> = {
     quotes: [
-        [/* @__PURE__ */ new RegExp(`${OPENERS}"`), '“'],
+        [new RegExp(`${OPENERS}"`), '“'],
         ['"', '”'],
-        [/* @__PURE__ */ new RegExp(`${OPENERS}'`), '‘'],
+        [new RegExp(`${OPENERS}'`), '‘'],
         // A closing single quote and an apostrophe are the same character.
         ["'", '’'],
     ],

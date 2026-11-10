@@ -4,7 +4,7 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { type PasteHandler, type RtePlugin } from '#/core';
+import { definePlugin, type PasteHandler, type RtePlugin } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
@@ -18,7 +18,7 @@ afterEach(destroyEditors);
 
 const withPaste = (...handlers: PasteHandler[]): RtePlugin[] => [
     ...defaultPlugins,
-    ...handlers.map((onPaste, index) => ({ id: `paste-${index}`, onPaste })),
+    ...handlers.map((onPaste, index) => definePlugin({ id: `paste-${index}`, onPaste })),
 ];
 
 describe('a plugin paste handler', () => {

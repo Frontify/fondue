@@ -31,12 +31,19 @@ const typed = (value: string, plugins: readonly RtePlugin[] = defaultPlugins): R
     return editor.stored();
 };
 
-const press = (view: EditorView, key: string, init: KeyboardEventInit = {}): boolean =>
-    view.someProp('handleKeyDown', (handle) => handle(view, new KeyboardEvent('keydown', { key, ...init }))) === true;
+const press = (view: EditorView, key: string, init: KeyboardEventInit = {}): boolean => {
+    const event = new KeyboardEvent('keydown', { key, ...init });
+    // happy-dom answers `getModifierState('AltGraph')` with `altKey`; browsers answer with `modifierAltGraph`.
+    const getModifierState = event.getModifierState.bind(event);
+    event.getModifierState = (modifier) =>
+        modifier === 'AltGraph' ? init.modifierAltGraph === true : getModifierState(modifier);
+    return view.someProp('handleKeyDown', (handle) => handle(view, event)) === true;
+};
 
 const mod = /Mac|iP(hone|[oa]d)/.test(navigator.platform) ? { metaKey: true } : { ctrlKey: true };
 
 afterEach(destroyEditors);
+afterEach(() => vi.restoreAllMocks());
 
 describe('typing a mark shortcut', () => {
     it('turns **text** bold', () => {
@@ -245,8 +252,8 @@ describe('a feature hotkey', () => {
         const second = vi.fn<(api: EditorControlApi) => void>((api) => api.insertText('!'));
         const editor = editorWith(
             [
-                { id: 'first', hotkeys: { 'Alt-x': first } },
-                { id: 'second', hotkeys: { 'Alt-x': second } },
+                definePlugin({ id: 'first', hotkeys: { 'Alt-x': first } }),
+                definePlugin({ id: 'second', hotkeys: { 'Alt-x': second } }),
             ],
             [paragraph(text('a'))],
         );
@@ -259,10 +266,44 @@ describe('a feature hotkey', () => {
         expect(editor.stored()).toEqual([paragraph(text('a!'))]);
     });
 
+    // Firefox on macOS reports Option as AltGraph, though a Mac has no AltGr key.
+    for (const [keys, init] of [
+        ['Meta-Alt-x', { metaKey: true, altKey: true }],
+        ['Alt-x', { altKey: true }],
+    ] as const) {
+        it(`runs ${keys} on a Mac when Option reports AltGraph`, () => {
+            vi.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
+            const run = vi.fn<(api: EditorControlApi) => void>((api) => api.insertText('!'));
+            const editor = editorWith(
+                [definePlugin({ id: 'option', hotkeys: { [keys]: run } })],
+                [paragraph(text('a'))],
+            );
+            editor.caretAfter('a');
+
+            expect(press(editor.view, 'x', { ...init, modifierAltGraph: true })).toBe(true);
+
+            expect(run).toHaveBeenCalledTimes(1);
+        });
+    }
+
+    it('leaves Ctrl-Alt-x to AltGr off a Mac', () => {
+        vi.spyOn(navigator, 'platform', 'get').mockReturnValue('Win32');
+        const run = vi.fn();
+        const editor = editorWith(
+            [definePlugin({ id: 'ctrl-alt', hotkeys: { 'Ctrl-Alt-x': run } })],
+            [paragraph(text('a'))],
+        );
+        editor.caretAfter('a');
+
+        expect(press(editor.view, 'x', { ctrlKey: true, altKey: true, modifierAltGraph: true })).toBe(false);
+
+        expect(run).not.toHaveBeenCalled();
+    });
+
     it('takes a key the list keys would otherwise claim', () => {
         const claim = vi.fn(() => true);
         const editor = editorWith(
-            [...defaultPlugins, { id: 'claims-enter', hotkeys: { Enter: claim } }],
+            [...defaultPlugins, definePlugin({ id: 'claims-enter', hotkeys: { Enter: claim } })],
             [{ type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('ab'))] }] }],
         );
         editor.caretAfter('a');
@@ -275,7 +316,7 @@ describe('a feature hotkey', () => {
 
     it('naming a character does not fire in the middle of a word', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>();
-        const editor = editorWith([{ id: 'mention', hotkeys: { '@': mention } }], empty());
+        const editor = editorWith([definePlugin({ id: 'mention', hotkeys: { '@': mention } })], empty());
 
         editor.type('noah@frontify.com');
 
@@ -285,7 +326,7 @@ describe('a feature hotkey', () => {
 
     it('naming a character fires on that character being typed, and the character is not inserted', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>((api) => api.insertText('[mention]'));
-        const editor = editorWith([{ id: 'mention', hotkeys: { '@': mention } }], empty());
+        const editor = editorWith([definePlugin({ id: 'mention', hotkeys: { '@': mention } })], empty());
 
         editor.type('hi @');
 
@@ -410,10 +451,47 @@ describe('the list keys', () => {
     });
 });
 
+describe('typing rewrites when a composition ends', () => {
+    const composition = (view: EditorView, type: 'compositionstart' | 'compositionend'): void => {
+        view.dom.dispatchEvent(new CompositionEvent(type, { bubbles: true }));
+    };
+
+    /** A composition that leaves `text` at the caret. */
+    const compose = (view: EditorView, text: string): void => {
+        composition(view, 'compositionstart');
+        view.dispatch(view.state.tr.insertText(text));
+        composition(view, 'compositionend');
+    };
+
+    afterEach(() => vi.useRealTimers());
+
+    it('rewrites the composed text even when the next composition starts at once', () => {
+        vi.useFakeTimers();
+        const editor = editorWith(defaultPlugins, empty());
+
+        compose(editor.view, '**bold**');
+        composition(editor.view, 'compositionstart');
+        composition(editor.view, 'compositionend');
+        vi.runAllTimers();
+
+        expect(editor.stored()).toEqual([paragraph(text('bold', { bold: true }))]);
+    });
+
+    it('does nothing once the editor is gone', () => {
+        vi.useFakeTimers();
+        const editor = editorWith(defaultPlugins, empty());
+
+        compose(editor.view, '**bold**');
+        editor.view.destroy();
+
+        expect(() => vi.runAllTimers()).not.toThrow();
+    });
+});
+
 describe('a character hotkey during IME composition', () => {
     it('does not fire: the composition owns the character', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>();
-        const editor = editorWith([{ id: 'mention', hotkeys: { '@': mention } }], empty());
+        const editor = editorWith([definePlugin({ id: 'mention', hotkeys: { '@': mention } })], empty());
         vi.spyOn(editor.view, 'composing', 'get').mockReturnValue(true);
 
         editor.type('@');

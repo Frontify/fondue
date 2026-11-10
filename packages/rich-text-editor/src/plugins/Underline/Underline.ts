@@ -19,9 +19,9 @@ export type UnderlineMark = {
 /**
  * Underlined text, written as `<u>`
  */
-export const underlineContent = /* @__PURE__ */ defineContent({
+export const underlineContent = defineContent({
     marks: {
-        underline: /* @__PURE__ */ defineMark({
+        underline: defineMark({
             tag: 'u',
             // A decorated element counts too, as Google Docs writes it; `text-decoration: none` never removes it, as in a browser.
             parse: [
@@ -41,5 +41,5 @@ export const underlineContent = /* @__PURE__ */ defineContent({
  */
 export const underlinePlugin = /* @__PURE__ */ definePlugin({
     content: underlineContent,
-    toolbar: [{ icon: IconTextFormatUnderline, shortcut: 'Mod-u' }],
+    toolbar: [{ label: 'Underline', icon: IconTextFormatUnderline, shortcut: 'Mod-u' }],
 });

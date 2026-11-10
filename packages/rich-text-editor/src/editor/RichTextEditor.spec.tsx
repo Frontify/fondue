@@ -653,14 +653,17 @@ describe('the toolbar', () => {
             </button>
         );
     };
-    const statefulPlugin: RtePlugin = definePlugin({ id: 'stateful', toolbar: [{ render: ClickCounter }] });
+    const statefulPlugin: RtePlugin = definePlugin({
+        id: 'stateful',
+        toolbar: [{ label: 'Clicks', render: ClickCounter }],
+    });
 
     /** A control using hooks of other kinds, so a shifted hook order would show. */
     const OtherHooks = (): ReactNode => {
         const [label] = useState(() => 'other');
         return <span>{label}</span>;
     };
-    const otherPlugin: RtePlugin = definePlugin({ id: 'other', toolbar: [{ render: OtherHooks }] });
+    const otherPlugin: RtePlugin = definePlugin({ id: 'other', toolbar: [{ label: 'Other', render: OtherHooks }] });
 
     const clickCount = (container: HTMLElement): string | null | undefined =>
         container.querySelector('[data-testid="clicks"]')?.textContent;
@@ -697,7 +700,7 @@ describe('the toolbar', () => {
                     </button>
                 );
             };
-            return definePlugin({ id: 'built', toolbar: [{ render: Built }] });
+            return definePlugin({ id: 'built', toolbar: [{ label: 'Built', render: Built }] });
         };
         const { container, rerender, ready } = mount(() => (
             <RichTextEditor plugins={[...defaultPlugins, buildPlugin()]} toolbarPlacement="top" />

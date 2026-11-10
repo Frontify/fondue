@@ -73,15 +73,17 @@ const contentExpression = (
     return `(${[...contains, UNKNOWN_BLOCK].join(' | ')})+`;
 };
 
+type BlockNodeSpecParams = {
+    registry: PluginRegistry;
+    isListItem: boolean;
+    known: Set<string>;
+    lists: Set<string>;
+};
+
 const blockNodeSpec = (
     type: string,
     definition: BlockDefinition,
-    {
-        registry,
-        isListItem,
-        known,
-        lists,
-    }: { registry: PluginRegistry; isListItem: boolean; known: Set<string>; lists: Set<string> },
+    { registry, isListItem, known, lists }: BlockNodeSpecParams,
 ): PmNodeSpec => {
     const isVoid = definition.content === undefined;
     const isList = typeof definition.content === 'object' && 'items' in definition.content;

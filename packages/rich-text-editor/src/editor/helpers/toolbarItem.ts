@@ -4,29 +4,38 @@
 
 import {
     type EditorControlApi,
+    isOwnActive,
     type OwnType,
     type RteSelectionSnapshot,
     type SelectedNode,
-    type ToolbarItemProps,
     toggleOwn,
+    type ToolbarEntry,
+    type ToolbarItemProps,
 } from '#/core';
+
+/**
+ * The part of a registry toolbar entry its `render` props come from
+ */
+type ToolbarItemSource = Pick<ToolbarEntry, 'own' | 'label' | 'shortcut'>;
 
 /**
  * The props a toolbar entry's `render` is handed, for what the entry acts on
  * (`own`, resolved by the registry's `ownTypeOf`).
  */
 export const toolbarItemProps = (
-    own: OwnType,
+    { own, label, shortcut }: ToolbarItemSource,
     api: EditorControlApi,
     selection: RteSelectionSnapshot,
 ): ToolbarItemProps => {
     const selectedNode = selectedNodeOf(own, api, selection);
-    const isActive = own.kind === 'mark' ? own.type in selection.marks : selectedNode !== null;
+    const isActive = isOwnActive(own, selection);
 
     const toggle = (value?: Record<string, unknown>): void => toggleOwn({ own, api, selection, value });
 
     return {
         api,
+        label,
+        shortcut,
         selectedNode,
         selection,
         isActive,
