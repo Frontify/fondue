@@ -16,6 +16,7 @@ type Globals = {
 };
 
 const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {
+    // Storybook types globals as a loose record, and `globalTypes` below declares `theme` with only these values.
     const { theme = 'light' } = context.globals as Globals;
     return (
         <ThemeProvider theme={theme}>
