@@ -49,6 +49,9 @@ const CSS_PROPERTY = /^-{0,2}[a-zA-Z][a-zA-Z0-9-]*$/;
  */
 const UNSAFE_CSS_VALUE = /[;{}\\<]|url\(|expression\(/i;
 
+/** Whether a value cannot break out of its declaration. */
+export const isSafeCssValue = (value: string): boolean => !UNSAFE_CSS_VALUE.test(value);
+
 /**
  * The declarations safe to write: a property that is a property name, a value
  * that cannot break out of its declaration. The rest are dropped. Every
@@ -56,8 +59,7 @@ const UNSAFE_CSS_VALUE = /[;{}\\<]|url\(|expression\(/i;
  */
 export const safeStyleEntries = (style: StyleMap): [string, string][] =>
     Object.entries(style).filter(
-        ([property, value]) =>
-            CSS_PROPERTY.test(property) && typeof value === 'string' && !UNSAFE_CSS_VALUE.test(value),
+        ([property, value]) => CSS_PROPERTY.test(property) && typeof value === 'string' && isSafeCssValue(value),
     );
 
 /** `{ 'text-align': 'center' }` → `text-align: center;`, the way browsers write a style attribute. */

@@ -1,14 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
+    type BlockDefinition,
     defineBlock,
     defineContent,
     definePlugin,
     type HotkeyHandler,
+    lookProperties,
     PARAGRAPH,
     type RteBlockCommand,
     type RteContent,
     type RtePlugin,
+    type TextLook,
     type ToolbarItemProps,
 } from '#/core';
 
@@ -22,12 +25,13 @@ import {
     markdownRuleFor,
     parseRuleFor,
     presetsFor,
+    type TextStyleName,
     type TextStyleOption,
 } from './helpers/presets';
 
 // The block this plugin contributes; the package root assembles it into the
 // official document union.
-export type { TextStyleBlock } from './helpers/presets';
+export type { TextStyleBlock, TextStyleName } from './helpers/presets';
 
 export type TextStylePluginOptions = {
     /**
@@ -36,32 +40,57 @@ export type TextStylePluginOptions = {
      * @default ALL_TEXT_STYLES
      */
     styles?: readonly TextStyleOption[];
+    /**
+     * How each preset looks, by name. A preset left out, and a field left out of one, keeps Fondue's look.
+     */
+    presets?: Partial<Record<TextStyleName, TextLook>>;
 };
 
-const textStyleContentFor = (options: readonly TextStyleOption[]): RteContent => {
+const textStyleBlockFor = (options: readonly TextStyleOption[]): BlockDefinition => {
     const offered = presetsFor(options);
 
-    return defineContent({
-        blocks: {
-            textStyle: defineBlock<{ style: string }>({
-                content: 'text',
-                // Only reached by a node that arrives without one; every
-                // path that sets the attribute names a style.
-                defaults: { style: offered[0]?.name ?? FIRST_PRESET },
-                toHtml: ({ style }) => {
-                    const preset = findPreset(style);
-                    if (preset === undefined) {
-                        return { tag: 'p', children: true };
-                    }
-                    const attrs: Record<string, string | undefined> = { class: preset.className };
-                    if (preset.tag === 'p') {
-                        attrs['data-text-style'] = preset.name;
-                    }
-                    return { tag: preset.tag, attrs, children: true };
-                },
-                parse: offered.map(parseRuleFor),
-            }),
+    return defineBlock<{ style: string }>({
+        content: 'text',
+        // Only reached by a node that arrives without one; every
+        // path that sets the attribute names a style.
+        defaults: { style: offered[0]?.name ?? FIRST_PRESET },
+        toHtml: ({ style }) => {
+            const preset = findPreset(style);
+            if (preset === undefined) {
+                return { tag: 'p', children: true };
+            }
+            const attrs: Record<string, string | undefined> = { class: preset.className };
+            if (preset.tag === 'p') {
+                attrs['data-text-style'] = preset.name;
+            }
+            return { tag: preset.tag, attrs, children: true };
         },
+        parse: offered.map(parseRuleFor),
+    });
+};
+
+// Shared so every content offering all styles declares the very same block, which the registry requires.
+const ALL_STYLES_BLOCK = textStyleBlockFor(ALL_TEXT_STYLES);
+
+const textStyleContentFor = (
+    options: readonly TextStyleOption[],
+    presets: TextStylePluginOptions['presets'] = {},
+): RteContent => {
+    const contentProperties: Record<string, string> = {};
+    for (const [name, look] of Object.entries(presets)) {
+        if (look !== undefined) {
+            Object.assign(contentProperties, lookProperties(name, look));
+        }
+    }
+
+    let block = ALL_STYLES_BLOCK;
+    if (options !== ALL_TEXT_STYLES) {
+        block = textStyleBlockFor(options);
+    }
+
+    return defineContent({
+        contentProperties,
+        blocks: { textStyle: block },
     });
 };
 
@@ -86,7 +115,10 @@ const HEADING_KEYWORDS: Partial<Record<number, readonly string[]>> = {
  * Paragraph and heading styles chosen from a dropdown, with `Mod-Alt-0` to `Mod-Alt-4` shortcuts and `# ` to `#### ` while typing.
  * An editor that does not offer `heading3` turns a pasted `h3` into a paragraph.
  */
-export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStylePluginOptions = {}): RtePlugin => {
+export const textStylePlugin = ({
+    styles: options = ALL_TEXT_STYLES,
+    presets,
+}: TextStylePluginOptions = {}): RtePlugin => {
     const offered = presetsFor(options);
 
     // The shortcuts other editors use: `Mod-Alt-0` for a paragraph, `Mod-Alt-1`
@@ -123,8 +155,8 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
 
     // Reuse the shared object so the default plugin and defaultContent declare the very same block definition.
     let content = textStyleContent;
-    if (options !== ALL_TEXT_STYLES) {
-        content = textStyleContentFor(options);
+    if (options !== ALL_TEXT_STYLES || presets !== undefined) {
+        content = textStyleContentFor(options, presets);
     }
 
     return definePlugin({

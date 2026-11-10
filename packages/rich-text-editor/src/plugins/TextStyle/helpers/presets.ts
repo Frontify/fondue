@@ -27,7 +27,7 @@ const PRESETS = [
 /**
  * The value of a text block's `style` attribute
  */
-type TextStyleName =
+export type TextStyleName =
     | 'heading1'
     | 'heading2'
     | 'heading3'

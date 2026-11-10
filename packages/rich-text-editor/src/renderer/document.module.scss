@@ -33,8 +33,9 @@
     // A paragraph adds no space of its own, like every other block: spacing
     // between blocks belongs to the document, not to the page's default
     // stylesheet (which would otherwise give paragraphs `1em` margins in some
-    // hosts and none in others).
-    p {
+    // hosts and none in others). Not a text style: it sets its own margins, and
+    // this rule would outrank its class.
+    p:not([data-text-style]) {
         margin: 0;
     }
 

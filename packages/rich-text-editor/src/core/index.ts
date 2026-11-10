@@ -14,7 +14,15 @@ export {
     type StoredMarkValue,
 } from './document';
 export { isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
-export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
+export {
+    attributeEntries,
+    type HtmlAttributes,
+    type HtmlSpec,
+    isSafeCssValue,
+    safeStyleEntries,
+    type StyleMap,
+} from './htmlSpec';
+export { LOOK_PROPERTIES, lookProperties, type TextLook } from './look';
 export {
     type BlockAttributeDefinition,
     type BlockDefinition,

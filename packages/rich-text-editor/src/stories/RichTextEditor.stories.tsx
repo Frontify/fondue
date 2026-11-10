@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ThemeProvider } from '@frontify/fondue-components';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useEffect, useRef, useState } from 'react';
+import { type CSSProperties, useEffect, useRef, useState } from 'react';
 
 // Stories import only the package public API. The plugins have their own story
 // file (`PluginExamples.stories.tsx`); this one is about the editor itself — the props
@@ -17,6 +18,8 @@ import {
     type RteDocument,
     RichTextEditor,
     RichTextRenderer,
+    textStylePlugin,
+    type TextStylePluginOptions,
 } from '../index';
 
 /** Who can be mentioned is the app's business, which is why the mention plugin requires it as an option. */
@@ -741,4 +744,113 @@ export const TwoEditors: Story = {
             </div>
         );
     },
+};
+
+/** The guideline settings a host defines around its editors; the presets below read them. */
+type GuidelineVariables = Record<`--f-theme-settings-${string}`, string>;
+
+const LIGHT_GUIDELINE: GuidelineVariables = {
+    '--f-theme-settings-heading1-font-family': 'Georgia, serif',
+    '--f-theme-settings-heading1-font-size': '36px',
+    '--f-theme-settings-heading1-color': 'rgb(120, 40, 20)',
+    '--f-theme-settings-heading2-font-size': '28px',
+    '--f-theme-settings-heading2-text-transform': 'uppercase',
+    '--f-theme-settings-custom1-letter-spacing': '0.1em',
+    '--f-theme-settings-custom2-color': 'rgb(30, 90, 60)',
+    '--f-theme-settings-image-title-color': 'rgb(20, 60, 120)',
+    '--f-theme-settings-image-caption-font-size': '11px',
+};
+
+const DARK_GUIDELINE: GuidelineVariables = {
+    '--f-theme-settings-heading1-font-family': 'Georgia, serif',
+    '--f-theme-settings-heading1-font-size': '36px',
+    '--f-theme-settings-heading1-color': 'rgb(255, 190, 150)',
+    '--f-theme-settings-heading2-font-size': '28px',
+    '--f-theme-settings-heading2-text-transform': 'uppercase',
+    '--f-theme-settings-custom1-letter-spacing': '0.1em',
+    '--f-theme-settings-custom2-color': 'rgb(150, 230, 190)',
+    '--f-theme-settings-image-title-color': 'rgb(150, 190, 255)',
+    '--f-theme-settings-image-caption-font-size': '11px',
+};
+
+/**
+ * Each preset reads the guideline variables the host defines. `heading3` reads one that
+ * no section defines, so it keeps Fondue's look.
+ */
+const GUIDELINE_PRESETS: TextStylePluginOptions['presets'] = {
+    heading1: {
+        fontFamily: 'var(--f-theme-settings-heading1-font-family)',
+        fontSize: 'var(--f-theme-settings-heading1-font-size)',
+        color: 'var(--f-theme-settings-heading1-color)',
+    },
+    heading2: {
+        fontSize: 'var(--f-theme-settings-heading2-font-size)',
+        textTransform: 'var(--f-theme-settings-heading2-text-transform)',
+    },
+    heading3: { fontSize: 'var(--f-theme-settings-heading3-font-size)' },
+    custom1: { letterSpacing: 'var(--f-theme-settings-custom1-letter-spacing)' },
+    custom2: { color: 'var(--f-theme-settings-custom2-color)' },
+    imageTitle: { color: 'var(--f-theme-settings-image-title-color)' },
+    imageCaption: { fontSize: 'var(--f-theme-settings-image-caption-font-size)' },
+};
+
+const HOST_STYLING_PLUGINS = [textStylePlugin({ presets: GUIDELINE_PRESETS })];
+
+const HOST_STYLING_DOCUMENT: RteDocument = {
+    version: 1,
+    blocks: [
+        { type: 'textStyle', style: 'heading1', children: [{ text: 'Heading 1' }] },
+        { type: 'textStyle', style: 'heading2', children: [{ text: 'Heading 2' }] },
+        { type: 'textStyle', style: 'heading3', children: [{ text: 'Heading 3, Fondue look' }] },
+        { type: 'textStyle', style: 'heading4', children: [{ text: 'Heading 4' }] },
+        { type: 'textStyle', style: 'custom1', children: [{ text: 'Custom 1' }] },
+        { type: 'textStyle', style: 'custom2', children: [{ text: 'Custom 2' }] },
+        { type: 'textStyle', style: 'custom3', children: [{ text: 'Custom 3' }] },
+        { type: 'textStyle', style: 'imageTitle', children: [{ text: 'Image title' }] },
+        { type: 'textStyle', style: 'imageCaption', children: [{ text: 'Image caption' }] },
+        { type: 'paragraph', children: [{ text: 'A paragraph keeps the page text.' }] },
+    ],
+};
+
+type HostStylingSectionProps = {
+    title: string;
+    guideline: GuidelineVariables;
+};
+
+const HostStylingSection = ({ title, guideline }: HostStylingSectionProps) => {
+    const [doc, setDoc] = useState<RteDocument>(HOST_STYLING_DOCUMENT);
+
+    return (
+        // A CSS variable is not a CSSProperties key, which only the cast tells the compiler.
+        <div className="tw-grid tw-gap-4 tw-bg-surface tw-p-4" style={guideline as CSSProperties}>
+            <p className="tw-m-0 tw-body-small tw-text-secondary">{title}</p>
+            <div className="tw-grid tw-grid-cols-2 tw-gap-4">
+                <div className={FRAME}>
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={HOST_STYLING_PLUGINS} />
+                </div>
+                <div className={FRAME}>
+                    <RichTextRenderer value={doc} plugins={HOST_STYLING_PLUGINS} />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+/**
+ * A host sets the look of each text style with `textStylePlugin({ presets })`, usually from its
+ * guideline settings: values are CSS, so `var(--f-theme-settings-…)` works and follows the section
+ * the editor sits in. Anything the host leaves out, or a variable nobody defines, keeps Fondue's look.
+ * The editor and the renderer draw the same.
+ */
+export const HostStyling: Story = {
+    render: () => (
+        <div className="tw-grid tw-font-primary">
+            <ThemeProvider theme="light">
+                <HostStylingSection title="Light section" guideline={LIGHT_GUIDELINE} />
+            </ThemeProvider>
+            <ThemeProvider theme="dark">
+                <HostStylingSection title="Dark section" guideline={DARK_GUIDELINE} />
+            </ThemeProvider>
+        </div>
+    ),
 };
