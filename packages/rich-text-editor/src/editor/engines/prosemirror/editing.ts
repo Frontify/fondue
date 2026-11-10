@@ -37,9 +37,6 @@ export const mountDocument: MountDocument = (options) => mount(options).mounted;
 export const mountEditorForTests = (options: MountOptions): { mounted: MountedDocument; view: EditorView } =>
     mount(options);
 
-/** Transaction meta marking a change that came from the host, not the user. */
-const HOST_DOC = 'rte-host-doc';
-
 /**
  * Set on the editable element, so engine.scss can scope the engine's own
  * classes to THIS editor's content and leave other editors on the page alone.
@@ -139,8 +136,7 @@ const mount = ({
         dispatchTransaction(transaction) {
             editorView.updateState(editorView.state.apply(transaction));
             repaintViews();
-            // Host-originated changes are not reported back to the host.
-            if (transaction.docChanged && transaction.getMeta(HOST_DOC) !== true) {
+            if (transaction.docChanged) {
                 const emitted = toRteDocument(editorView.state.doc, rootExtras);
                 emittedDocs.add(emitted);
                 onDocChange(emitted);
@@ -164,13 +160,14 @@ const mount = ({
             agreedDoc = doc;
             return;
         }
-        // Different content: the old caret position means nothing in it, so the
-        // caret goes to the end rather than mid-word somewhere.
-        const transaction = editorView.state.tr.replaceWith(0, editorView.state.doc.content.size, next.content);
-        transaction.setSelection(Selection.atEnd(transaction.doc));
-        transaction.setMeta(HOST_DOC, true);
-        transaction.setMeta('addToHistory', false);
-        editorView.dispatch(transaction);
+        // Different content is a new document: a fresh state drops the undo
+        // history, whose steps no longer map onto it, and is not reported back
+        // to the host. The caret goes to the end rather than mid-word somewhere.
+        editorView.updateState(
+            EditorState.create({ doc: next, selection: Selection.atEnd(next), plugins: editorView.state.plugins }),
+        );
+        repaintViews();
+        onStateChange();
         agreedDoc = doc;
     };
 

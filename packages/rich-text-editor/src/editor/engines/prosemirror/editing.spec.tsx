@@ -2,7 +2,7 @@
 
 // @vitest-environment happy-dom
 
-import { redo, undo } from 'prosemirror-history';
+import { redo, undo, undoDepth } from 'prosemirror-history';
 import { TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -200,6 +200,17 @@ describe('a document set by the host', () => {
 
         expect(view.state.doc.textContent).toBe('from the host');
         expect(stored()).toEqual(paragraph('typed mine'));
+    });
+
+    it('starts a new undo history, since the earlier steps belong to a document no longer there', () => {
+        const { handle, view } = mount(emptyDocument());
+        handle.api.insertText('hi');
+
+        handle.setDoc(paragraph('from the host'));
+
+        expect(undoDepth(view.state)).toBe(0);
+        expect(undo(view.state, view.dispatch)).toBe(false);
+        expect(view.state.doc.textContent).toBe('from the host');
     });
 });
 
