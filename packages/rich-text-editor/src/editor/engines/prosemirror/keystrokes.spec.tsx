@@ -127,16 +127,24 @@ describe('typing a list shortcut at the start of a line', () => {
 });
 
 describe('a check list shortcut inside a check list', () => {
+    // `RteBlockNode` names no plugin attribute, so the item's `checked` needs the cast.
     const checkItem = (label: string): RteBlockNode =>
         ({ type: 'checkItem', checked: false, children: [paragraph(text(label))] }) as RteBlockNode;
     const twoItems = (): RteBlockNode[] => [{ type: 'checkList', children: [checkItem('one'), checkItem('two')] }];
+
+    const withoutChecked = (key: string, value: unknown): unknown => {
+        if (key === 'checked') {
+            return undefined;
+        }
+        return value;
+    };
 
     /** The document with `checked` left out, so `[x] ` and `[ ] ` can be compared on structure alone. */
     const shapeAfterTyping = (prefix: string, before: string): string => {
         const editor = editorWith(defaultPlugins, twoItems());
         editor.caretBefore(before);
         editor.type(prefix);
-        return JSON.stringify(editor.stored(), (key, value: unknown) => (key === 'checked' ? undefined : value));
+        return JSON.stringify(editor.stored(), withoutChecked);
     };
 
     it.each(['one', 'two'])('gives "[x] " and "[ ] " the same structure at the start of the item "%s"', (before) => {
@@ -174,7 +182,7 @@ describe('a check list shortcut inside a check list', () => {
 
     it('joins "[x] " typed below a check list into that list', () => {
         const editor = editorWith(defaultPlugins, [
-            { type: 'checkList', children: [checkItem('one')] } as RteBlockNode,
+            { type: 'checkList', children: [checkItem('one')] },
             paragraph(text('task')),
         ]);
         editor.caretBefore('task');

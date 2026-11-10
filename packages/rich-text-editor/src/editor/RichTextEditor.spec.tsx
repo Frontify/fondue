@@ -567,7 +567,10 @@ describe('the editable element', () => {
         const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
         ready();
 
-        const mountPoint = editableIn(container).parentElement as HTMLElement;
+        const mountPoint = editableIn(container).parentElement;
+        if (!mountPoint) {
+            throw new Error('the editable element has no parent');
+        }
         expect(window.getComputedStyle(mountPoint).position).toBe('relative');
     });
 
@@ -1182,6 +1185,7 @@ describe('a to-do list', () => {
         expect(box?.checked).toBe(true);
     });
 
+    // `RteDocument` names no plugin block, so the check list needs the cast.
     const started = (checked: boolean | 'inProgress'): RteDocument =>
         ({
             version: 1,

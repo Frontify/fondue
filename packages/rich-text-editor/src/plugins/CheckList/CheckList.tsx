@@ -30,43 +30,44 @@ export type CheckListBlock<TItem extends RteBlockNode = RteBlockNode> = {
 
 type CheckValue = { checked: boolean | 'inProgress' };
 
-type CheckState = 'done' | 'inProgress' | 'notDone';
+/** What `checked` holds for an item that is started but not finished. */
+const IN_PROGRESS = 'inProgress';
 
-/** Only `true` is done: a stored `"false"` is truthy, and would draw a tick. */
-const stateOf = (value: { checked?: unknown }): CheckState => {
-    if (value.checked === true) {
-        return 'done';
-    }
-    if (value.checked === 'inProgress') {
-        return 'inProgress';
-    }
-    return 'notDone';
+/** One state of an item, with everything that depends on it. */
+type CheckState = {
+    value: CheckValue['checked'];
+    /** What `data-checked` holds in exported HTML, which `parse` reads back. */
+    data: string;
+    /** The checkbox's name in exported HTML, where it has no visible text to point at. */
+    label: string;
 };
 
-/** The checkbox's name in exported HTML, where it has no visible text to point at. */
-const STATE_LABEL: Record<CheckState, string> = { done: 'Done', inProgress: 'In progress', notDone: 'Not done' };
+const DONE: CheckState = { value: true, data: 'true', label: 'Done' };
+const STARTED: CheckState = { value: IN_PROGRESS, data: IN_PROGRESS, label: 'In progress' };
+const NOT_DONE: CheckState = { value: false, data: 'false', label: 'Not done' };
+const CHECK_STATES = [DONE, STARTED, NOT_DONE];
 
-/** What `data-checked` holds, and `parse` reads back. */
-const DATA_CHECKED: Record<CheckState, string> = { done: 'true', inProgress: 'inProgress', notDone: 'false' };
+/** Anything stored but `true` and `'inProgress'` is not done: a stored `"false"` is truthy, and would draw a tick. */
+const stateOfValue = (checked: unknown): CheckState =>
+    CHECK_STATES.find((state) => state.value === checked) ?? NOT_DONE;
 
-const checkedFromData = (data: string | undefined): CheckValue['checked'] => {
-    if (data === 'true') {
-        return true;
+const stateOfData = (data: string | undefined): CheckState =>
+    CHECK_STATES.find((state) => state.data === data) ?? NOT_DONE;
+
+/** A click finishes an item, in progress or not, and reopens a finished one. */
+const afterClick = (state: CheckState): CheckState => {
+    if (state === DONE) {
+        return NOT_DONE;
     }
-    if (data === 'inProgress') {
-        return 'inProgress';
-    }
-    return false;
+    return DONE;
 };
 
 /** `indeterminate` is a DOM property with no attribute or React prop, so it is set on the element. */
-const showInProgress =
-    (inProgress: boolean) =>
-    (input: HTMLInputElement | null): void => {
-        if (input) {
-            input.indeterminate = inProgress;
-        }
-    };
+const setIndeterminate = (input: HTMLInputElement | null, indeterminate: boolean): void => {
+    if (input) {
+        input.indeterminate = indeterminate;
+    }
+};
 
 /** The readonly item: the editor's look, its checkbox showing the state without letting it change. */
 const ReadonlyCheckItem = ({
@@ -79,13 +80,13 @@ const ReadonlyCheckItem = ({
     style?: CSSProperties;
 }): ReactNode => {
     const labelId = useId();
-    const state = stateOf(value);
+    const state = stateOfValue(value.checked);
     return (
-        <li data-checked={DATA_CHECKED[state]} className={styles.item} style={style}>
+        <li data-checked={state.data} className={styles.item} style={style}>
             <input
-                ref={showInProgress(state === 'inProgress')}
+                ref={(input) => setIndeterminate(input, state === STARTED)}
                 type="checkbox"
-                checked={state === 'done'}
+                checked={state === DONE}
                 readOnly
                 aria-readonly="true"
                 aria-labelledby={labelId}
@@ -112,21 +113,19 @@ const EditCheckItem = ({
     children?: ReactNode;
 }): ReactNode => {
     const labelId = useId();
-    const state = stateOf(value);
-    const checked = state === 'done';
+    const state = stateOfValue(value.checked);
     return (
         <>
             <input
-                ref={showInProgress(state === 'inProgress')}
+                ref={(input) => setIndeterminate(input, state === STARTED)}
                 type="checkbox"
-                checked={checked}
+                checked={state === DONE}
                 contentEditable={false}
                 aria-labelledby={labelId}
                 // Keeps focus — and the caret — in the text, so checking an
                 // item is not the editor losing focus (and firing `onBlur`).
                 onMouseDown={(event) => event.preventDefault()}
-                // An item in progress is done on the next click, as an unchecked one is.
-                onChange={() => setValue({ checked: !checked })}
+                onChange={() => setValue({ checked: afterClick(state).value })}
                 className={styles.checkbox}
             />
             <div id={labelId} className={styles.label}>
@@ -151,18 +150,18 @@ export const checkListPlugin = (): RtePlugin => ({
             // Exported HTML cannot be interacted with, so its checkbox is a
             // disabled one, named by its state.
             toHtml: (value) => {
-                const state = stateOf(value);
+                const state = stateOfValue(value.checked);
                 return {
                     tag: 'li',
-                    attrs: { 'data-checked': DATA_CHECKED[state], class: styles.item },
+                    attrs: { 'data-checked': state.data, class: styles.item },
                     children: [
                         {
                             tag: 'input',
                             attrs: {
                                 type: 'checkbox',
-                                checked: state === 'done',
+                                checked: state === DONE,
                                 disabled: true,
-                                'aria-label': STATE_LABEL[state],
+                                'aria-label': state.label,
                                 class: styles.checkbox,
                             },
                         },
@@ -170,12 +169,11 @@ export const checkListPlugin = (): RtePlugin => ({
                     ],
                 };
             },
-            // Read from the attribute value rather than off the checkbox, so
-            // it comes back as the stored value rather than a string.
+            // Read from the attribute, not the checkbox, so it comes back as the stored value.
             parse: [
                 {
                     tag: 'li[data-checked]',
-                    value: (element) => ({ checked: checkedFromData(element.dataset.checked) }),
+                    value: (element) => ({ checked: stateOfData(element.dataset.checked).value }),
                 },
             ],
             render: {
@@ -196,7 +194,7 @@ export const checkListPlugin = (): RtePlugin => ({
         { kind: 'list', match: '[ ] ', list: 'checkList' },
         { kind: 'list', match: '[x] ', list: 'checkList', itemAttributes: { checked: true } },
         { kind: 'list', match: '[X] ', list: 'checkList', itemAttributes: { checked: true } },
-        { kind: 'list', match: '[~] ', list: 'checkList', itemAttributes: { checked: 'inProgress' } },
+        { kind: 'list', match: '[~] ', list: 'checkList', itemAttributes: { checked: IN_PROGRESS } },
     ],
     commands: [
         {

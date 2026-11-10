@@ -1,26 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { baseKeymap, chainCommands, setBlockType } from 'prosemirror-commands';
-import { closeHistory, history, redo, undo } from 'prosemirror-history';
-import { InputRule, inputRules, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
+import { history, redo, undo } from 'prosemirror-history';
+import { InputRule, inputRules, undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
-import { type Mark as PmMark, type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
-import {
-    type Command,
-    type EditorState,
-    Plugin,
-    PluginKey,
-    type Plugin as PmPlugin,
-    TextSelection,
-    type Transaction,
-} from 'prosemirror-state';
+import { type Node as PmNode, type Schema } from 'prosemirror-model';
+import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, TextSelection } from 'prosemirror-state';
 import { canJoin, findWrapping } from 'prosemirror-transform';
 
 import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
 
+import { autolinkOnEnter, markPatternRule } from './autolink';
 import { keepCarriedAttrs } from './controlApi';
-import { EXTRA_ATTR, valueAttrsFor } from './documentConversion';
+import { EXTRA_ATTR } from './documentConversion';
 import { listKeys } from './lists';
+import {
+    type RuleContext,
+    type RuleHandler,
+    type RuleOfKind,
+    ruleContext,
+    toInputRule,
+    withoutStateFlags,
+} from './ruleContext';
 
 /**
  * What happens when a key is pressed, as one ordered list of ProseMirror plugins.
@@ -155,23 +156,6 @@ const characterHotkeys = (hotkeys: PluginRegistry['hotkeys'], api: EditorControl
 // Each `xxxRule` turns a declared rule into an engine `InputRule`, or `null`
 // when it names a mark or block no mounted feature provides.
 
-type RuleHandler = (state: EditorState, match: RegExpMatchArray, start: number, end: number) => Transaction | null;
-type RulePattern = { pattern: RegExp; handler: RuleHandler };
-
-/** What every kind's translation needs: the schema, the registry, and the marks that opt out of rules. */
-type RuleContext = {
-    schema: Schema;
-    registry: PluginRegistry;
-    excludedMarks: readonly PmMarkType[];
-};
-
-const ruleContext = (registry: PluginRegistry, schema: Schema): RuleContext => {
-    const excludedMarks = [...registry.marks]
-        .filter(([, definition]) => definition.excludesInputRules === true)
-        .flatMap(([type]) => schema.marks[type] ?? []);
-    return { schema, registry, excludedMarks };
-};
-
 const typingRewrites = (registry: PluginRegistry, schema: Schema): PmPlugin[] => {
     const context = ruleContext(registry, schema);
     // The registry orders rules longest delimiter first; otherwise `**bold**`
@@ -242,29 +226,7 @@ const toEngineRule = (rule: RteInputRule, context: RuleContext): InputRule | nul
     }
 };
 
-type RuleOfKind<Kind extends RteInputRule['kind']> = Extract<RteInputRule, { kind: Kind }>;
-
 const escapeForRegExp = (text: string): string => text.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-/** Text carrying a mark that opts out (inline code) is typed as is: the rule steps aside. */
-const isInExcludedMark = (state: EditorState, excluded: readonly PmMarkType[], position: number): boolean => {
-    const marks = state.storedMarks ?? state.doc.resolve(position).marks();
-    return excluded.some((markType) => markType.isInSet(marks));
-};
-
-const unlessInExcludedMark =
-    (excluded: readonly PmMarkType[], handler: RuleHandler): RuleHandler =>
-    (state, match, start, end) => {
-        if (isInExcludedMark(state, excluded, end)) {
-            return null;
-        }
-        return handler(state, match, start, end);
-    };
-
-const withoutStateFlags = (pattern: RegExp): string => pattern.flags.replaceAll(/[gy]/g, '');
-
-const toInputRule = ({ pattern, handler }: RulePattern, { excludedMarks }: RuleContext): InputRule =>
-    new InputRule(pattern, unlessInExcludedMark(excludedMarks, handler));
 
 /** `**bold**` -> a bold mark over `bold`. The engine ships block and text rules but no mark rule. */
 const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | null => {
@@ -302,239 +264,6 @@ const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | n
     return toInputRule({ pattern, handler }, context);
 };
 
-/** Punctuation that ends a sentence rather than a link, though a link may contain it. */
-const TRAILING_PUNCTUATION = /[.,;:!?]+$/;
-
-const count = (text: string, character: string): number => text.split(character).length - 1;
-
-/** Drops trailing punctuation, and a trailing `)` only while it has no `(` to close. */
-const trimTrailingPunctuation = (address: string): string => {
-    let trimmed = address;
-    for (;;) {
-        const next = trimmed.replace(TRAILING_PUNCTUATION, '');
-        const unbalanced = next.endsWith(')') && count(next, ')') > count(next, '(');
-        if (!unbalanced && next === trimmed) {
-            return trimmed;
-        }
-        trimmed = unbalanced ? next.slice(0, -1) : next;
-    }
-};
-
-/** What reading a block as text gives for an inline element (a line break, a mention). */
-const INLINE_ELEMENT = '\uFFFC';
-
-/** How much text before the caret a rule reads, as the engine's input rules do. */
-const MAX_MATCH = 500;
-
-/**
- * What typing a space and pressing Enter share: the pattern that finds a token
- * before the caret, and where it sits once found. The pattern ends in the
- * terminator being typed, which is not in the document yet. An inline element
- * ends a token as whitespace does.
- */
-const markPatternMatcher = (rule: RuleOfKind<'markPattern'>, context: RuleContext) => {
-    const markType = context.schema.marks[rule.mark];
-    if (!markType) {
-        return null;
-    }
-    const flags = withoutStateFlags(rule.pattern);
-    const token = new RegExp(`^(?:${rule.pattern.source})$`, flags);
-    const pattern = new RegExp(`(?:^|[\\s${INLINE_ELEMENT}])((?:${rule.pattern.source}))\\s$`, flags);
-
-    /** The range to mark and the mark, or null when the token is no match or already carries a mark. */
-    const find = (
-        state: EditorState,
-        match: RegExpMatchArray,
-        start: number,
-    ): { from: number; to: number; mark: PmMark } | null => {
-        // A token pattern may match across an inline element: only what follows the last one counts.
-        const typed = match[1]?.split(INLINE_ELEMENT).pop();
-        if (!typed) {
-            return null;
-        }
-        const linked = trimTrailingPunctuation(typed);
-        if (!token.test(linked)) {
-            return null;
-        }
-        // The match is the token plus the terminator, and maybe the whitespace before the token.
-        const from = start + (match[0].length - 1 - typed.length);
-        const to = from + linked.length;
-        if ([markType, ...context.excludedMarks].some((type) => state.doc.rangeHasMark(from, to, type))) {
-            return null;
-        }
-        return { from, to, mark: markType.create(valueAttrsFor(rule.value(linked))) };
-    };
-    return { markType, pattern, find };
-};
-
-/**
- * `https://example.com ` -> the address carries the mark, the space does not.
- * Punctuation right before the space is left out of the mark. A token that
- * already carries the mark, or one that opts out of rules, stays as typed.
- */
-const markPatternRule = (rule: RuleOfKind<'markPattern'>, context: RuleContext): InputRule | null => {
-    const matcher = markPatternMatcher(rule, context);
-    if (!matcher) {
-        return null;
-    }
-    const { markType, pattern, find } = matcher;
-    const handler: RuleHandler = (state, match, start, end) => {
-        const found = find(state, match, start);
-        if (!found) {
-            return null;
-        }
-        // One space follows the token, whatever sits there now: nothing, the
-        // composed space, or the selection the typed space replaces.
-        return state.tr
-            .addMark(found.from, found.to, found.mark)
-            .replaceWith(start + match[0].length - 1, end, state.schema.text(' '))
-            .removeStoredMark(markType);
-    };
-    return toInputRule({ pattern, handler }, context);
-};
-
-type PendingLink = { from: number; to: number; mark: PmMark; text: string };
-
-const autolinkKey = new PluginKey<boolean>('autolinkOnEnter');
-
-/**
- * Enter and Shift-Enter end a token as a space does: the keypress carries on
- * (always "not handled") to split the block or break the line, and the address
- * before the caret is linked right after, as its own history step. Backspace
- * right after takes the link back and keeps the text.
- */
-const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] => {
-    const context = ruleContext(registry, schema);
-    const matchers = registry.inputRules.flatMap((rule) => {
-        if (rule.kind !== 'markPattern') {
-            return [];
-        }
-        return markPatternMatcher(rule, context) ?? [];
-    });
-    if (matchers.length === 0) {
-        return [];
-    }
-    const addressBeforeCaret = (state: EditorState, composing: boolean): PendingLink | null => {
-        const { $from, empty } = state.selection;
-        if (!empty || !$from.parent.isTextblock || composing) {
-            return null;
-        }
-        if (isInExcludedMark(state, context.excludedMarks, $from.pos)) {
-            return null;
-        }
-        const textBefore = $from.parent.textBetween(
-            Math.max(0, $from.parentOffset - MAX_MATCH),
-            $from.parentOffset,
-            undefined,
-            INLINE_ELEMENT,
-        );
-        for (const { pattern, find } of matchers) {
-            const match = pattern.exec(`${textBefore} `);
-            if (!match) {
-                continue;
-            }
-            const found = find(state, match, $from.pos - (match[0].length - 1));
-            if (found) {
-                return { ...found, text: state.doc.textBetween(found.from, found.to) };
-            }
-        }
-        return null;
-    };
-
-    // The address found when the key went down, and the document it was found in. Only the
-    // key handler and its fallback change it: a state can be applied and thrown away (`blocks.setType`).
-    let pending: { link: PendingLink; doc: PmNode } | null = null;
-
-    /** The link as its own history step, so the first undo takes back the link and keeps the new line. */
-    const linkTransaction = (state: EditorState, link: PendingLink, focused: boolean): Transaction | null => {
-        if (link.to > state.doc.content.size || state.doc.textBetween(link.from, link.to) !== link.text) {
-            return null;
-        }
-        // Backspace takes the link back only while the author is still in the editor.
-        return closeHistory(state.tr.addMark(link.from, link.to, link.mark)).setMeta(autolinkKey, focused);
-    };
-
-    const plugin = new Plugin<boolean>({
-        key: autolinkKey,
-        state: {
-            init: () => false,
-            // True while nothing has happened since the link was added.
-            apply: (transaction, justLinked) => {
-                const meta: unknown = transaction.getMeta(autolinkKey);
-                if (typeof meta === 'boolean') {
-                    return meta;
-                }
-                if (transaction.docChanged || transaction.selectionSet || transaction.storedMarksSet) {
-                    return false;
-                }
-                return justLinked;
-            },
-        },
-        props: {
-            handleDOMEvents: {
-                blur: (view) => {
-                    if (autolinkKey.getState(view.state) === true) {
-                        view.dispatch(view.state.tr.setMeta(autolinkKey, false));
-                    }
-                    return false;
-                },
-            },
-            handleKeyDown: (view, event) => {
-                const modified = event.altKey || event.ctrlKey || event.metaKey;
-                if (
-                    event.key === 'Backspace' &&
-                    !modified &&
-                    !event.shiftKey &&
-                    autolinkKey.getState(view.state) === true
-                ) {
-                    return undo(view.state, view.dispatch);
-                }
-                if (event.key !== 'Enter' || modified) {
-                    return false;
-                }
-                const link = addressBeforeCaret(view.state, view.composing);
-                if (!link) {
-                    return false;
-                }
-                const { doc } = view.state;
-                pending = { link, doc };
-                // A key that changes nothing (Enter that blurs a single-line editor) still links.
-                queueMicrotask(() => {
-                    if (pending?.link !== link) {
-                        return;
-                    }
-                    pending = null;
-                    if (view.isDestroyed || view.state.doc !== doc) {
-                        return;
-                    }
-                    const transaction = linkTransaction(view.state, link, view.hasFocus());
-                    if (transaction) {
-                        view.dispatch(transaction);
-                    }
-                });
-                return false;
-            },
-        },
-        appendTransaction: (transactions, oldState, newState) => {
-            // Only the key's own change: later ones start from another document.
-            if (pending === null || pending.doc !== oldState.doc) {
-                return null;
-            }
-            if (!transactions.some((transaction) => transaction.docChanged)) {
-                return null;
-            }
-            const { link } = pending;
-            let { from, to } = link;
-            for (const transaction of transactions) {
-                from = transaction.mapping.map(from, 1);
-                to = transaction.mapping.map(to, -1);
-            }
-            return linkTransaction(newState, { ...link, from, to }, true);
-        },
-    });
-    return [plugin];
-};
-
 /**
  * `# ` at the start of a block turns it into another block type. The engine's
  * `textblockTypeInputRule`, except that the attributes every text block carries
@@ -565,25 +294,24 @@ const listRule = (rule: RuleOfKind<'list'>, { schema, registry }: RuleContext): 
     }
     const pattern = new RegExp(`^${escapeForRegExp(rule.match)}$`);
     const { itemAttributes } = rule;
-    if (!itemAttributes) {
-        return wrappingInputRule(pattern, listType);
-    }
-    // The engine's `wrappingInputRule` cannot set attributes on the item, so
-    // it is repeated here with them; `wrapInList` treats a paragraph in an
-    // item differently, which would make `[x] ` and `[ ] ` nest differently.
+    // The engine's `wrappingInputRule` cannot set attributes on the item, so it is repeated here with them.
     return new InputRule(pattern, (state, _match, start, end) => {
         const transaction = state.tr.delete(start, end);
         const range = transaction.doc.resolve(start).blockRange();
-        const wrapping = range && findWrapping(range, listType);
-        if (!range || !wrapping) {
+        if (!range) {
             return null;
         }
-        transaction.wrap(
-            range,
-            wrapping.map((wrapper) =>
-                wrapper.type.name === itemName ? { ...wrapper, attrs: itemAttributes } : wrapper,
-            ),
-        );
+        const wrapping = findWrapping(range, listType);
+        if (!wrapping) {
+            return null;
+        }
+        const wrappers = wrapping.map((wrapper) => {
+            if (itemAttributes && wrapper.type.name === itemName) {
+                return { ...wrapper, attrs: itemAttributes };
+            }
+            return wrapper;
+        });
+        transaction.wrap(range, wrappers);
         const before = transaction.doc.resolve(start - 1).nodeBefore;
         if (before?.type === listType && canJoin(transaction.doc, start - 1)) {
             transaction.join(start - 1);
