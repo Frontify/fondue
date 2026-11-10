@@ -31,17 +31,21 @@
     overflow-wrap: anywhere;
 
     // The document owns block spacing: host stylesheets give `1em` margins in some hosts and none in others.
+    // The trims below reset the variable, not the margin, so a block class that reads the gap keeps them.
+    // Each block sets the gap again rather than inheriting it, so a trimmed quote does not trim its own paragraphs.
     :is(p, h1, h2, h3, h4, ul, ol, blockquote) {
-        margin-block: 0 var(--spacing-x-small);
+        --rte-block-gap: var(--spacing-x-small);
+
+        margin-block: 0 var(--rte-block-gap);
 
         &:last-child {
-            margin-block-end: 0;
+            --rte-block-gap: 0;
         }
     }
 
     // A list's items sit tight: the blocks inside an item, a nested list among them, add no gap.
     li :is(p, h1, h2, h3, h4, ul, ol, blockquote) {
-        margin-block: 0;
+        --rte-block-gap: 0;
     }
 
     // Raised and lowered text without growing the line it sits on. Browsers'
