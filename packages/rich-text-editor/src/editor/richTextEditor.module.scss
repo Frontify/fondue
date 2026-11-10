@@ -59,6 +59,14 @@
 }
 
 /**
+ * Where the editable element mounts. Positioned so the drop cursor, which the
+ * engine draws in the editable's offset parent, stays inside the host's theme.
+ */
+.mount {
+    position: relative;
+}
+
+/**
  * What the editable element adds to the document: cursor and placeholder, no
  * inset or minimum height. Text styling comes from the renderer's `.document`
  * class, so the readonly view matches.
