@@ -223,7 +223,10 @@ describe('a feature hotkey', () => {
         it(`runs ${keys} on a Mac when Option reports AltGraph`, () => {
             vi.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
             const run = vi.fn<(api: EditorControlApi) => void>((api) => api.insertText('!'));
-            const editor = editorWith([{ id: 'option', hotkeys: { [keys]: run } }], [paragraph(text('a'))]);
+            const editor = editorWith(
+                [definePlugin({ id: 'option', hotkeys: { [keys]: run } })],
+                [paragraph(text('a'))],
+            );
             editor.caretAfter('a');
 
             expect(press(editor.view, 'x', { ...init, modifierAltGraph: true })).toBe(true);
@@ -235,7 +238,10 @@ describe('a feature hotkey', () => {
     it('leaves Ctrl-Alt-x to AltGr off a Mac', () => {
         vi.spyOn(navigator, 'platform', 'get').mockReturnValue('Win32');
         const run = vi.fn();
-        const editor = editorWith([{ id: 'ctrl-alt', hotkeys: { 'Ctrl-Alt-x': run } }], [paragraph(text('a'))]);
+        const editor = editorWith(
+            [definePlugin({ id: 'ctrl-alt', hotkeys: { 'Ctrl-Alt-x': run } })],
+            [paragraph(text('a'))],
+        );
         editor.caretAfter('a');
 
         expect(press(editor.view, 'x', { ctrlKey: true, altKey: true, modifierAltGraph: true })).toBe(false);
