@@ -34,14 +34,15 @@ const LEGAL: readonly Replacement[] = [
 /**
  * `^2` for `²`, `^o` for a degree sign
  */
-const SUPERSCRIPTS: readonly Replacement[] = /* @__PURE__ */ [...'0123456789o+-'].map(
-    (character, index): Replacement => [`^${character}`, '⁰¹²³⁴⁵⁶⁷⁸⁹°⁺⁻'.charAt(index)],
-);
+const SUPERSCRIPTS: readonly Replacement[] = [...'0123456789o+-'].map((character, index): Replacement => [
+    `^${character}`,
+    '⁰¹²³⁴⁵⁶⁷⁸⁹°⁺⁻'.charAt(index),
+]);
 
 /**
  * `~2` for `₂`, except right after a `~`, so a strikethrough can open on a digit: `~~2~~`
  */
-const SUBSCRIPTS: readonly Replacement[] = /* @__PURE__ */ [...'0123456789+-'].map((character, index): Replacement => [
+const SUBSCRIPTS: readonly Replacement[] = [...'0123456789+-'].map((character, index): Replacement => [
     new RegExp(`(?<!~)~[${character}]`),
     '₀₁₂₃₄₅₆₇₈₉₊₋'.charAt(index),
 ]);
@@ -49,7 +50,7 @@ const SUBSCRIPTS: readonly Replacement[] = /* @__PURE__ */ [...'0123456789+-'].m
 /**
  * `1/2` for `½`, except right after a digit or a slash, so dates and paths stay as typed
  */
-const FRACTIONS: readonly Replacement[] = /* @__PURE__ */ (
+const FRACTIONS: readonly Replacement[] = (
     [
         ['1/2', '½'],
         ['1/3', '⅓'],
@@ -74,14 +75,7 @@ const FRACTIONS: readonly Replacement[] = /* @__PURE__ */ (
 
 const toRule = ([match, replace]: Replacement): RteInputRule => ({ kind: 'text', match, replace });
 
-const INPUT_RULES = /* @__PURE__ */ [
-    ...PUNCTUATION,
-    ...ARROWS,
-    ...LEGAL,
-    ...SUBSCRIPTS,
-    ...SUPERSCRIPTS,
-    ...FRACTIONS,
-].map(toRule);
+const INPUT_RULES = [...PUNCTUATION, ...ARROWS, ...LEGAL, ...SUBSCRIPTS, ...SUPERSCRIPTS, ...FRACTIONS].map(toRule);
 
 /**
  * Rewrites typographic shortcuts as they are typed: `->` becomes `→`, `(c)` becomes `©`, `1/2` becomes `½`.

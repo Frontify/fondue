@@ -12,9 +12,9 @@ export type BreakInline = {
 /**
  * A line break, written as `<br>`
  */
-export const softBreakContent = /* @__PURE__ */ defineContent({
+export const softBreakContent = defineContent({
     inlines: {
-        break: /* @__PURE__ */ defineInline({
+        break: defineInline({
             toHtml: () => ({ tag: 'br' }),
             parse: [{ tag: 'br' }],
         }),

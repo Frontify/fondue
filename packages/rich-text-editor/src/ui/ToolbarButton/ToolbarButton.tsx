@@ -24,7 +24,12 @@ type ToolbarButtonProps = {
     // Other props reach the button so it works as a `Flyout.Trigger`, whose injected handlers and `aria-expanded` must hit the DOM.
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'title' | 'children'>;
 
-const isApple = (): boolean => typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
+/**
+ * The platform names of Apple systems, where `Mod` is the Command key
+ */
+const APPLE_PLATFORM = /Mac|iPhone|iPad/;
+
+const isApple = (): boolean => typeof navigator !== 'undefined' && APPLE_PLATFORM.test(navigator.platform);
 
 /**
  * `Mod-Shift-x` as `aria-keyshortcuts` spells it: `Meta+Shift+X` on Apple systems, `Control+Shift+X` elsewhere
@@ -50,7 +55,7 @@ export const readableShortcut = (shortcut: string, apple = isApple()): string =>
 /**
  * The toolbar button the built-in plugins share, with a pressed state for toggles
  */
-export const ToolbarButton = /* @__PURE__ */ forwardRef<HTMLButtonElement, ToolbarButtonProps>(function ToolbarButton(
+export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(function ToolbarButton(
     { children, active, disabled, onClick, title, shortcut, className, ...rest },
     ref,
 ): ReactNode {

@@ -68,10 +68,7 @@ export type TextStyleOption = 'paragraph' | TextStyleName;
 /**
  * Every option, in dropdown order
  */
-export const ALL_TEXT_STYLES: readonly TextStyleOption[] = [
-    PARAGRAPH,
-    .../* @__PURE__ */ PRESETS.map((preset) => preset.name),
-];
+export const ALL_TEXT_STYLES: readonly TextStyleOption[] = [PARAGRAPH, ...PRESETS.map((preset) => preset.name)];
 
 /**
  * The style a node falls back to when it arrives without one

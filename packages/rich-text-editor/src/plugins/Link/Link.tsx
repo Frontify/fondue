@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineContent, defineMark, definePlugin, type HotkeyHandler, type ToolbarItemProps } from '#/core';
+import { defineContent, defineMark, definePlugin, type HotkeyHandler } from '#/core';
 
-import { isSafeHref, toHref } from '../shared/helpers/href';
+import { isLinkablePaste, isSafeHref, toHref, WEB_ADDRESS } from '../shared/helpers/href';
 
 import { LinkEditor } from './components/LinkEditor';
 import { LinkToolbarButton } from './components/LinkToolbarButton';
@@ -27,9 +27,9 @@ const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string
  * Links as a mark on text, written as `<a href>`.
  * Only web, mail, phone and relative targets count, so a `javascript:` URL is never clickable.
  */
-export const linkContent = /* @__PURE__ */ defineContent({
+export const linkContent = defineContent({
     marks: {
-        link: /* @__PURE__ */ defineMark<LinkValue>({
+        link: defineMark<LinkValue>({
             // Outside every other mark, so a partly styled link still renders
             // as ONE anchor: an element stays open across text runs only while
             // the marks around it are the same, and a colour or an emphasis
@@ -92,26 +92,27 @@ const hotkeys = {
 
 const HOTKEY: keyof typeof hotkeys = 'Mod-k';
 
-const LinkToolbar = (props: ToolbarItemProps) => <LinkToolbarButton {...props} shortcut={HOTKEY} />;
-
 /**
  * Links, made with a toolbar button or `Mod-k` and edited in a flyout while the caret is inside.
  * A web address followed by a space becomes a link, and pasting one over selected text links that text.
  */
 export const linkPlugin = /* @__PURE__ */ definePlugin({
     content: linkContent,
-    toolbar: [{ render: LinkToolbar }],
+    toolbar: [{ label: 'Link', shortcut: HOTKEY, render: LinkToolbarButton }],
     edit: { link: LinkEditor },
     hotkeys,
     // A web address typed and followed by a space becomes a link. The pattern
     // names only web schemes, so what it matches is always a safe href.
-    inputRules: [{ kind: 'markPattern', pattern: /https?:\/\/[^\s]+/, mark: 'link', value: (href) => ({ href }) }],
+    inputRules: [{ kind: 'markPattern', pattern: WEB_ADDRESS, mark: 'link', value: (href) => ({ href }) }],
     // A web or mail address pasted over selected text links that text, as
     // in most editors; anything else pastes as usual.
     onPaste: ({ text }, api) => {
         const typed = text.trim();
         const { isCollapsed, marks } = api.selection.get();
-        const href = /^(https?:\/\/|mailto:)/i.test(typed) ? toHref(typed) : null;
+        let href: string | null = null;
+        if (isLinkablePaste(typed)) {
+            href = toHref(typed);
+        }
         if (isCollapsed || href === null || !isSafeHref(href)) {
             return false;
         }

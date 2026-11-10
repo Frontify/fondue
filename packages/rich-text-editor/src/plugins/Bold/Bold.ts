@@ -19,9 +19,9 @@ export type BoldMark = {
 /**
  * Bold text, written as `<strong>`
  */
-export const boldContent = /* @__PURE__ */ defineContent({
+export const boldContent = defineContent({
     marks: {
-        bold: /* @__PURE__ */ defineMark({
+        bold: defineMark({
             tag: 'strong',
             // Pasted HTML says bold in more ways than the tags: Google Docs
             // writes a span with a weight, and wraps everything it copies in
@@ -41,6 +41,6 @@ export const boldContent = /* @__PURE__ */ defineContent({
  */
 export const boldPlugin = /* @__PURE__ */ definePlugin({
     content: boldContent,
-    toolbar: [{ icon: IconTextFormatBold, shortcut: 'Mod-b' }],
+    toolbar: [{ label: 'Bold', icon: IconTextFormatBold, shortcut: 'Mod-b' }],
     inputRules: [{ delimiter: '**' }, { delimiter: '__' }],
 });

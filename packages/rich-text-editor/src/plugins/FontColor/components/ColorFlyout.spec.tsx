@@ -28,7 +28,7 @@ const mount = (
     const api = { marks: { toggle, set }, focus: vi.fn() } as unknown as EditorControlApi;
     const container = document.body.appendChild(document.createElement('div'));
     root = createRoot(container);
-    act(() => root?.render(<ColorFlyout selection={{ marks } as never} api={api} />));
+    act(() => root?.render(<ColorFlyout selection={{ marks } as never} api={api} label="Text colour" />));
     act(() => container.querySelector('button')?.click());
     return { toggle, set };
 };

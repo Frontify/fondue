@@ -5,7 +5,7 @@ import { type EditorControlApi } from '#/core';
 /**
  * The openers of the toolbar buttons' new-link forms, by editor, so the hotkey can open one
  */
-const openers = /* @__PURE__ */ new WeakMap<EditorControlApi, () => void>();
+const openers = new WeakMap<EditorControlApi, () => void>();
 
 /**
  * Registers a button's opener for its editor; the returned function unregisters it

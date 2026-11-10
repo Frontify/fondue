@@ -31,9 +31,9 @@ const isDefaultTextColor = (color: string): boolean => {
 /**
  * Text colour as a mark
  */
-export const fontColorContent = /* @__PURE__ */ defineContent({
+export const fontColorContent = defineContent({
     marks: {
-        fontColor: /* @__PURE__ */ defineMark<FontColorValue>({
+        fontColor: defineMark<FontColorValue>({
             // Underline and strikethrough draw their line in the colour of
             // their own element, which a descendant cannot change, so the
             // colour has to be set on an element wrapping them.
@@ -66,5 +66,5 @@ export const fontColorContent = /* @__PURE__ */ defineContent({
 export const fontColorPlugin = /* @__PURE__ */ definePlugin({
     id: 'font-color',
     content: fontColorContent,
-    toolbar: [{ render: ColorFlyout }],
+    toolbar: [{ label: 'Text colour', render: ColorFlyout }],
 });
