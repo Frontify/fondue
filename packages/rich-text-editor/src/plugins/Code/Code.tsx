@@ -28,8 +28,8 @@ export const codePlugin = (): RtePlugin => ({
         }),
     },
     toolbarGroup: 'marks',
-    toolbarItem: ({ isActive, isMixed, toggle }) => (
-        <ToolbarButton title="Code" shortcut={HOTKEY} active={isMixed ? 'mixed' : isActive} onClick={() => toggle()}>
+    toolbarItem: ({ isActive, toggle }) => (
+        <ToolbarButton title="Code" shortcut={HOTKEY} active={isActive} onClick={() => toggle()}>
             <IconCode size={20} />
         </ToolbarButton>
     ),
