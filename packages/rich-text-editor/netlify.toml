@@ -1,0 +1,9 @@
+# Netlify site "fondue-rich-text-editor": a Storybook preview of this package on pull requests.
+# Base directory is the repository root, so every path here is relative to it.
+# Node comes from the root .nvmrc and pnpm from the root package.json packageManager field.
+
+[build]
+  command = "pnpm build:storybook:rich-text-editor"
+  publish = "packages/rich-text-editor/storybook-static"
+  # Exit 0 skips the build. Without a build cache both refs are equal, so build instead of diffing nothing.
+  ignore = '[ "$CACHED_COMMIT_REF" != "$COMMIT_REF" ] && git diff --quiet "$CACHED_COMMIT_REF" "$COMMIT_REF" -- packages/rich-text-editor packages/components packages/icons packages/tokens package.json pnpm-lock.yaml'
