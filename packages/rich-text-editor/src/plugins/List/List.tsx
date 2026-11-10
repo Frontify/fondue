@@ -107,7 +107,7 @@ const numberedList = defineBlock<NumberedListValue>({
     ],
 });
 
-type ListPluginOptions = {
+type ListPluginParams = {
     id: string;
     type: 'bulletList' | 'numberedList';
     block: BlockDefinition;
@@ -131,7 +131,7 @@ const listPlugin = ({
     keywords,
     markdown,
     hotkey,
-}: ListPluginOptions): RtePlugin => ({
+}: ListPluginParams): RtePlugin => ({
     id,
     blocks: {
         [type]: block,
