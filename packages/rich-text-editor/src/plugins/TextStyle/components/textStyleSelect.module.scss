@@ -12,14 +12,12 @@
      * attributes outweigh its field rules.
      */
     > [role='combobox'][data-status][data-empty]:not([data-disabled='true']) {
-        height: 24px;
+        height: 1.5rem;
         border: none;
         background-color: transparent;
         color: var(--color-primary-default);
         font-size: var(--typography-font-size-small);
         line-height: var(--typography-line-height-tight);
-        // A theme switch repaints the toolbar at once, not through Fondue's colour fade.
-        transition: none;
 
         &:hover {
             background-color: var(--color-container-secondary-hover);

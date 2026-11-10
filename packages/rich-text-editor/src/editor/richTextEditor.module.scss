@@ -5,6 +5,7 @@
 //
 // No frame: no border, background, shadow or inset around the editor. The
 // editor is its content; a host that wants a field draws the box around it.
+// One exception: the sticky top toolbar paints the surface colour, so text scrolled under it stays hidden.
 
 /**
  * Wraps the toolbar, the content and the floating bar so the editor has one
@@ -63,24 +64,29 @@
 }
 
 /**
- * The More button, drawn like the plugins' toolbar buttons, which the editor
- * cannot import. The attributes outweigh the Button's variant rules.
+ * The More button, a weak Fondue Button with the toolbar buttons' open fill, which the editor cannot import. The attributes outweigh the Button's variant rules.
  */
 .more[data-variant][data-emphasis][data-size][data-aspect] {
     flex: none;
-    // A theme switch repaints the toolbar at once, not through Fondue's colour fade.
-    transition: none;
-    background-color: transparent;
-    color: var(--color-primary-default);
 
-    &[aria-expanded='true'] {
+    &[aria-expanded='true']:not([disabled]) {
         background-color: var(--color-container-secondary-default);
+
+        &:hover {
+            background-color: var(--color-container-secondary-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-secondary-active);
+        }
     }
 
-    &:hover,
-    &:active {
-        background-color: var(--color-container-secondary-hover);
-        color: var(--color-primary-hover);
+    @media (forced-colors: active) {
+        &[aria-expanded='true'] {
+            background-color: Highlight;
+            color: HighlightText;
+            forced-color-adjust: none;
+        }
     }
 
     /** A coarse pointer gets a 44 by 44 CSS pixel target. */
@@ -191,19 +197,11 @@
 
 /**
  * The "Turn into" button of the floating bar: the block's name beside a caret,
- * with the toolbar buttons' hover. The attributes outweigh the Button's variant rules.
+ * The attributes outweigh the Button's gap.
  */
 .turnInto[data-variant][data-emphasis][data-size] {
     gap: var(--spacing-xx-small);
     white-space: nowrap;
-    // A theme switch repaints the toolbar at once, not through Fondue's colour fade.
-    transition: none;
-
-    &:hover,
-    &:active {
-        background-color: var(--color-container-secondary-hover);
-        color: var(--color-primary-hover);
-    }
 
     /** A coarse pointer gets a 44 CSS pixel target. */
     @media (pointer: coarse) {
