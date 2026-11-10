@@ -142,14 +142,27 @@ describe('a text rule that waits for the run to end', () => {
         expect(editor.stored()).toEqual([paragraph(text('a -- '))]);
     });
 
-    it('does not fire when an IME ends a composition with nothing typed', async () => {
+    it('does not fire when a composition leaves the text as it was', async () => {
         const editor = editorWith(plugins, [paragraph(text('a -- '))]);
         editor.caretAfter('a -- ');
 
-        editor.view.dom.dispatchEvent(new Event('compositionend'));
+        editor.view.dom.dispatchEvent(new CompositionEvent('compositionstart', { bubbles: true }));
+        editor.view.dom.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true }));
         await new Promise((resolve) => setTimeout(resolve));
 
         expect(editor.view.state.doc.textContent).toBe('a -- ');
+    });
+
+    it('fires when a phone keyboard composes the dash and the space that ends the run', async () => {
+        const editor = editorWith(plugins, [paragraph(text('a '))]);
+        editor.caretAfter('a ');
+
+        editor.view.dom.dispatchEvent(new CompositionEvent('compositionstart', { bubbles: true }));
+        editor.view.dispatch(editor.view.state.tr.insertText('-- '));
+        editor.view.dom.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true }));
+        await new Promise((resolve) => setTimeout(resolve));
+
+        expect(editor.view.state.doc.textContent).toBe('a — ');
     });
 });
 
