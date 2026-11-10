@@ -260,6 +260,9 @@
 
 .menu {
     display: none;
+    margin: 0;
+    padding: 0;
+    list-style: none;
     border-radius: var(--border-radius-medium);
     background-color: var(--color-surface-default);
     border: var(--border-width-default) solid var(--color-line-subtle);

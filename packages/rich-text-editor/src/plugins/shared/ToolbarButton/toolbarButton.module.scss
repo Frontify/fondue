@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../../../styles/sizes' as sizes;
+
 /**
  * The "on" state Fondue's Button has no form for: a fill and a bar under the
  * icon, dashed when mixed. The attributes lift it above the Button's weak
@@ -31,8 +33,8 @@
 /** A coarse pointer gets 44 by 44 CSS pixel targets. */
 @media (pointer: coarse) {
     .button[data-size][data-aspect] {
-        min-inline-size: 44px;
-        min-block-size: 44px;
+        min-inline-size: sizes.$touch-target-size;
+        min-block-size: sizes.$touch-target-size;
     }
 }
 

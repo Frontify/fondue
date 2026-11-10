@@ -2,7 +2,7 @@
 
 import { IconArrowRoundAntiClockwise, IconArrowRoundClockwise } from '@frontify/fondue-icons';
 
-import { type RtePlugin } from '#/core';
+import { REDO_HOTKEY, type RtePlugin, UNDO_HOTKEY } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -17,7 +17,7 @@ export const historyPlugin = (): RtePlugin => ({
         <>
             <ToolbarButton
                 title="Undo"
-                shortcut="Mod-z"
+                shortcut={UNDO_HOTKEY}
                 disabled={!selection.history.canUndo}
                 onClick={() => api.history.undo()}
             >
@@ -25,7 +25,7 @@ export const historyPlugin = (): RtePlugin => ({
             </ToolbarButton>
             <ToolbarButton
                 title="Redo"
-                shortcut="Mod-Shift-z"
+                shortcut={REDO_HOTKEY}
                 disabled={!selection.history.canRedo}
                 onClick={() => api.history.redo()}
             >

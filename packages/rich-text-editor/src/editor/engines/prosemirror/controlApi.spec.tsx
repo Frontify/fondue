@@ -114,7 +114,7 @@ describe('the selection snapshot', () => {
         const editor = editorWith(plugins, [paragraph(text('plain '), text('bold', { bold: true }))]);
         editor.caretAfter('bo');
 
-        expect(editor.api.selection.get().marks).toEqual({ bold: {} });
+        expect(editor.api.selection.get().marks).toEqual({ bold: { coverage: 'all', value: {} } });
     });
 
     it('reports a mark toggled at a caret before anything is typed', () => {
@@ -123,7 +123,7 @@ describe('the selection snapshot', () => {
 
         editor.api.marks.toggle('italic');
 
-        expect(editor.api.selection.get().marks).toEqual({ italic: {} });
+        expect(editor.api.selection.get().marks).toEqual({ italic: { coverage: 'all', value: {} } });
     });
 
     it('reports the marks all of a range carries, a value-carrying one with its value', () => {
@@ -136,23 +136,29 @@ describe('the selection snapshot', () => {
         ]);
         editor.selectBetween('bold', 'link');
 
-        expect(editor.api.selection.get().marks).toEqual({ link: LINK });
+        expect(editor.api.selection.get().marks).toEqual({
+            bold: { coverage: 'some' },
+            link: { coverage: 'all', value: LINK },
+        });
     });
 
-    it('does not report a mark only part of a range carries', () => {
+    it('reports a mark only part of a range carries as some', () => {
         const editor = editorWith(plugins, [paragraph(text('half', { bold: true }), text(' plain'))]);
         editor.selectBetween('half', 'plain');
 
-        expect(editor.api.selection.get().marks).toEqual({});
+        expect(editor.api.selection.get().marks).toEqual({ bold: { coverage: 'some' } });
     });
 
-    it('reports a mark only part of a range carries as partial, and one all of it carries as not', () => {
+    it('reports a mark only part of a range carries as some, and one all of it carries as all', () => {
         const editor = editorWith(plugins, [
             paragraph(text('half', { bold: true, italic: true }), text(' plain', { italic: true })),
         ]);
         editor.selectBetween('half', 'plain');
 
-        expect(editor.api.selection.get().partialMarks).toEqual({ bold: true });
+        expect(editor.api.selection.get().marks).toEqual({
+            bold: { coverage: 'some' },
+            italic: { coverage: 'all', value: {} },
+        });
     });
 
     it('passes over a plain space between marked words, as the toggle does', () => {
@@ -161,15 +167,14 @@ describe('the selection snapshot', () => {
         ]);
         editor.selectBetween('foo', 'bar');
 
-        expect(editor.api.selection.get().marks).toEqual({ bold: {} });
-        expect(editor.api.selection.get().partialMarks).toEqual({});
+        expect(editor.api.selection.get().marks).toEqual({ bold: { coverage: 'all', value: {} } });
     });
 
-    it('reports no partial marks at a caret', () => {
+    it('reports no some coverage at a caret', () => {
         const editor = editorWith(plugins, [paragraph(text('half', { bold: true }), text(' plain'))]);
         editor.caretAfter('half');
 
-        expect(editor.api.selection.get().partialMarks).toEqual({});
+        expect(editor.api.selection.get().marks).toEqual({ bold: { coverage: 'all', value: {} } });
     });
 
     it('reports the value of the run the range starts in when a mark has several', () => {
@@ -182,7 +187,7 @@ describe('the selection snapshot', () => {
         ]);
         editor.selectBetween('first', 'second');
 
-        expect(editor.api.selection.get().marks).toEqual({ link: { href: 'a' } });
+        expect(editor.api.selection.get().marks).toEqual({ link: { coverage: 'all', value: { href: 'a' } } });
     });
 
     it('is the same value until the editor state changes', () => {

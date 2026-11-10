@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../styles/sizes' as sizes;
+
 // The editor's own parts: the toolbar and the editable surface. What a plugin
 // renders is styled by that plugin's module.
 //
@@ -93,8 +95,8 @@
 
     /** A coarse pointer gets a 44 by 44 CSS pixel target. */
     @media (pointer: coarse) {
-        min-inline-size: 44px;
-        min-block-size: 44px;
+        min-inline-size: sizes.$touch-target-size;
+        min-block-size: sizes.$touch-target-size;
     }
 }
 
@@ -207,6 +209,6 @@
 
     /** A coarse pointer gets a 44 CSS pixel target. */
     @media (pointer: coarse) {
-        min-block-size: 44px;
+        min-block-size: sizes.$touch-target-size;
     }
 }

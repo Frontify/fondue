@@ -16,6 +16,7 @@ import {
     type RteBlockNode,
     type RteInlineNode,
     type RtePlugin as CorePlugin,
+    type RteMarkState,
     type RteSelectionSnapshot,
     type RteToolbarGroup,
     type ToolbarItemProps,
@@ -141,6 +142,7 @@ type Html = HtmlSpec;
 export declare namespace RtePlugin {
     export type EditorControlApi = ControlApi;
     export type SelectionSnapshot = RteSelectionSnapshot;
+    export type MarkState = RteMarkState;
     export type BlockCommand = RteBlockCommand;
     export type ToolbarItemProps = ToolbarProps;
     export type ToolbarGroup = ToolbarGroupName;

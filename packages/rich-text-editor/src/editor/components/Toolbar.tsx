@@ -137,6 +137,8 @@ export const Toolbar = ({
     );
 };
 
+const UNGROUPED_GROUP_KEY = 'ungrouped';
+
 /** The items by group in drawing order, those with no group or an unknown one last; empty groups are left out. */
 const groupsOf = (items: readonly ToolbarEntry[]): SlotGroup<ToolbarEntry>[] => {
     const known: readonly (RteToolbarGroup | undefined)[] = RTE_TOOLBAR_GROUPS;
@@ -146,7 +148,7 @@ const groupsOf = (items: readonly ToolbarEntry[]): SlotGroup<ToolbarEntry>[] => 
             items: items.filter((item) => item.group === group),
         })),
         // A plugin cast past the type can name a group that is not drawn; it still gets its control.
-        { key: 'ungrouped', items: items.filter((item) => !known.includes(item.group)) },
+        { key: UNGROUPED_GROUP_KEY, items: items.filter((item) => !known.includes(item.group)) },
     ];
     return groups.filter((group) => group.items.length > 0);
 };

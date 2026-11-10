@@ -13,7 +13,7 @@ import {
 import { type Command, type EditorState, NodeSelection, TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
-import { type EditorControlApi, type PluginRegistry, type RteSelectionSnapshot } from '#/core';
+import { type EditorControlApi, type PluginRegistry, type RteMarkState, type RteSelectionSnapshot } from '#/core';
 
 import { EXTRA_ATTR, markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
 import { createListApi, liftOutOfLists } from './lists';
@@ -34,22 +34,24 @@ import { warnUnknownType } from './warnings';
 
 // --- Selection snapshot: what all feature UI renders from ---
 
+const BLANK_TEXT = /^\s*$/;
+
 /**
  * The marks a caret would type with, or the marks EVERY text in a range
  * carries — a half-bold range is not bold. Each with the first value found, so
  * a mark spanning differently-valued runs reads as the one the range starts in.
  * A range also reports the marks only some of its text carries.
  */
-const marksAt = (state: EditorState): Pick<RteSelectionSnapshot, 'marks' | 'partialMarks'> => {
+const marksAt = (state: EditorState): RteSelectionSnapshot['marks'] => {
     const { from, to, empty, $from } = state.selection;
     if (empty) {
         // Stored marks (a toggle not yet typed into), else what is behind the caret.
-        return {
-            marks: Object.fromEntries(
-                (state.storedMarks ?? $from.marks()).map((mark) => [mark.type.name, markValueOf(mark)]),
-            ),
-            partialMarks: {},
-        };
+        return Object.fromEntries(
+            (state.storedMarks ?? $from.marks()).map((mark): [string, RteMarkState] => [
+                mark.type.name,
+                { coverage: 'all', value: markValueOf(mark) },
+            ]),
+        );
     }
 
     // Only text contributes: the document stores no marks on inline elements.
@@ -57,7 +59,7 @@ const marksAt = (state: EditorState): Pick<RteSelectionSnapshot, 'marks' | 'part
     state.doc.nodesBetween(from, to, (node, pos) => {
         if (node.isText) {
             const text = node.textBetween(Math.max(from - pos, 0), Math.min(to - pos, node.nodeSize));
-            textRuns.push({ marks: node.marks, blank: /^\s*$/.test(text) });
+            textRuns.push({ marks: node.marks, blank: BLANK_TEXT.test(text) });
         }
     });
     // A toggle passes over whitespace-only runs, so the state it acts on does too; all-blank ranges keep them.
@@ -68,16 +70,17 @@ const marksAt = (state: EditorState): Pick<RteSelectionSnapshot, 'marks' | 'part
     const runs = counted.map((run) => run.marks);
     const [first = [], ...rest] = runs;
     const carried = first.filter((mark) => rest.every((marks) => mark.type.isInSet(marks) !== undefined));
-    const marks = Object.fromEntries(carried.map((mark) => [mark.type.name, markValueOf(mark)]));
-    const partialMarks: Record<string, true> = {};
+    const marks: RteSelectionSnapshot['marks'] = Object.fromEntries(
+        carried.map((mark): [string, RteMarkState] => [mark.type.name, { coverage: 'all', value: markValueOf(mark) }]),
+    );
     for (const run of runs) {
         for (const mark of run) {
             if (!(mark.type.name in marks)) {
-                partialMarks[mark.type.name] = true;
+                marks[mark.type.name] = { coverage: 'some' };
             }
         }
     }
-    return { marks, partialMarks };
+    return marks;
 };
 
 /** The chain of blocks around the selection, and which of them is *the* one. */
@@ -117,7 +120,7 @@ const snapshotOf = (state: EditorState): RteSelectionSnapshot => {
         // Void nodes (a mention, a line break) contribute nothing: only readable text.
         text: empty ? '' : state.doc.textBetween(from, to, ' '),
         ...blocksAt(state),
-        ...marksAt(state),
+        marks: marksAt(state),
         history: { canUndo: undoDepth(state) > 0, canRedo: redoDepth(state) > 0 },
     };
 };

@@ -6,6 +6,7 @@ import {
     type EditorControlApi,
     type OwnType,
     PARAGRAPH,
+    type RteMarkState,
     type RteSelectionSnapshot,
     type SelectedNode,
     type ToolbarItemProps,
@@ -29,7 +30,11 @@ export const toolbarItemProps = (
                 api.lists.toggle(own.type);
                 break;
             case 'textBlock':
-                api.blocks.setType(isActive === true ? PARAGRAPH : own.type, value);
+                if (isActive === true) {
+                    api.blocks.setType(PARAGRAPH, value);
+                } else {
+                    api.blocks.setType(own.type, value);
+                }
                 break;
             case 'voidBlock':
             case 'inline':
@@ -65,13 +70,16 @@ const activeOf = (
     if (own.kind !== 'mark') {
         return selectedNode !== null;
     }
-    if (own.type in selection.marks) {
-        return true;
+    const mark: RteMarkState | undefined = selection.marks[own.type];
+    if (mark === undefined) {
+        return false;
     }
-    if (own.type in selection.partialMarks) {
-        return 'mixed';
+    switch (mark.coverage) {
+        case 'all':
+            return true;
+        case 'some':
+            return 'mixed';
     }
-    return false;
 };
 
 const attributesOf = (block: Record<string, unknown>): Record<string, unknown> =>
