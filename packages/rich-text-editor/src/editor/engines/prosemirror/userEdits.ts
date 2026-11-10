@@ -19,8 +19,12 @@ const ADD_TO_HISTORY = 'addToHistory';
 /** Transaction meta prosemirror-state sets on a transaction a plugin appended, holding the one it follows. */
 const APPENDED_TRANSACTION = 'appendedTransaction';
 
+type ContentEdit = { kind: 'content'; from: number; to: number };
+
+type AttributeEdit = { kind: 'attribute'; pos: number; name: string };
+
 /** What one change wrote: a stretch of content (empty where it only deleted), or one attribute of the node at `pos`. */
-type Edit = { kind: 'content'; from: number; to: number } | { kind: 'attribute'; pos: number; name: string };
+type Edit = ContentEdit | AttributeEdit;
 
 type Side = 'before' | 'after';
 
@@ -56,6 +60,17 @@ const editsOf = (step: Step, side: Side): Edit[] => {
 /** How an edit moves through a change: `widen` for one the history holds, `keep` for a host change. */
 type Mapping = 'widen' | 'keep';
 
+const mapContentEdit = (map: StepMap, edit: ContentEdit, mapping: Mapping): Edit => {
+    switch (mapping) {
+        case 'widen':
+            return { ...edit, from: map.map(edit.from, -1), to: map.map(edit.to, 1) };
+        case 'keep': {
+            const from = map.map(edit.from, 1);
+            return { ...edit, from, to: Math.max(from, map.map(edit.to, -1)) };
+        }
+    }
+};
+
 /**
  * Moves `edit` through `map`. One the history holds widens over text inserted
  * at its edges, so the check errs towards forgetting the history; a host change
@@ -63,16 +78,8 @@ type Mapping = 'widen' | 'keep';
  */
 const mapEdit = (map: StepMap, edit: Edit, mapping: Mapping): Edit => {
     switch (edit.kind) {
-        case 'content': {
-            switch (mapping) {
-                case 'widen':
-                    return { ...edit, from: map.map(edit.from, -1), to: map.map(edit.to, 1) };
-                case 'keep': {
-                    const from = map.map(edit.from, 1);
-                    return { ...edit, from, to: Math.max(from, map.map(edit.to, -1)) };
-                }
-            }
-        }
+        case 'content':
+            return mapContentEdit(map, edit, mapping);
         case 'attribute':
             return { ...edit, pos: map.map(edit.pos, 1) };
     }
@@ -80,23 +87,31 @@ const mapEdit = (map: StepMap, edit: Edit, mapping: Mapping): Edit => {
 
 const covers = (from: number, to: number, pos: number): boolean => from <= pos && pos < to;
 
+const overlapsContent = (host: ContentEdit, user: Edit): boolean => {
+    switch (user.kind) {
+        case 'content':
+            return host.from < user.to && host.to > user.from;
+        case 'attribute':
+            return covers(host.from, host.to, user.pos);
+    }
+};
+
+const overlapsAttribute = (host: AttributeEdit, user: Edit): boolean => {
+    switch (user.kind) {
+        case 'content':
+            return covers(user.from, user.to, host.pos);
+        case 'attribute':
+            return host.pos === user.pos && host.name === user.name;
+    }
+};
+
 /** Whether `host` changes what `user` wrote, so undoing `user` would take the host's change back too. */
 const overlaps = (host: Edit, user: Edit): boolean => {
     switch (host.kind) {
         case 'content':
-            switch (user.kind) {
-                case 'content':
-                    return host.from < user.to && host.to > user.from;
-                case 'attribute':
-                    return covers(host.from, host.to, user.pos);
-            }
+            return overlapsContent(host, user);
         case 'attribute':
-            switch (user.kind) {
-                case 'content':
-                    return covers(user.from, user.to, host.pos);
-                case 'attribute':
-                    return host.pos === user.pos && host.name === user.name;
-            }
+            return overlapsAttribute(host, user);
     }
 };
 
