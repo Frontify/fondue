@@ -19,9 +19,9 @@ export type CodeMark = {
 /**
  * Inline code, written as `<code>`
  */
-export const codeContent = /* @__PURE__ */ defineContent({
+export const codeContent = defineContent({
     marks: {
-        code: /* @__PURE__ */ defineMark({
+        code: defineMark({
             // Code is literal: `--` and `**` stay as typed inside it.
             excludesInputRules: true,
             toHtml: () => ({ tag: 'code', attrs: { class: styles.code ?? '' }, children: true }),

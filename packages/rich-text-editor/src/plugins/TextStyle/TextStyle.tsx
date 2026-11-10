@@ -68,7 +68,7 @@ const textStyleContentFor = (options: readonly TextStyleOption[]): RteContent =>
 /**
  * The text block carrying a style, accepting every style
  */
-export const textStyleContent = /* @__PURE__ */ textStyleContentFor(ALL_TEXT_STYLES);
+export const textStyleContent = textStyleContentFor(ALL_TEXT_STYLES);
 
 const HEADING_LEVEL: Partial<Record<string, number>> = { h1: 1, h2: 2, h3: 3, h4: 4 };
 

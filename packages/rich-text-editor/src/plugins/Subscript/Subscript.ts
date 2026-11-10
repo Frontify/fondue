@@ -17,9 +17,9 @@ export type SubscriptMark = {
 /**
  * Subscript text, written as `<sub>`
  */
-export const subscriptContent = /* @__PURE__ */ defineContent({
+export const subscriptContent = defineContent({
     marks: {
-        subscript: /* @__PURE__ */ defineMark({ tag: 'sub' }),
+        subscript: defineMark({ tag: 'sub' }),
     },
 });
 

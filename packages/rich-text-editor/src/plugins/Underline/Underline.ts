@@ -19,9 +19,9 @@ export type UnderlineMark = {
 /**
  * Underlined text, written as `<u>`
  */
-export const underlineContent = /* @__PURE__ */ defineContent({
+export const underlineContent = defineContent({
     marks: {
-        underline: /* @__PURE__ */ defineMark({
+        underline: defineMark({
             tag: 'u',
             // A span with the decoration is underlined too: how Google Docs writes it.
             parse: [

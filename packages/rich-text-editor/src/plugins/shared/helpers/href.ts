@@ -3,7 +3,7 @@
 /**
  * The schemes a link may use, which leaves out `javascript:` and `data:`
  */
-const SAFE_SCHEMES = /* @__PURE__ */ new Set(['http:', 'https:', 'mailto:', 'tel:']);
+const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']);
 
 /**
  * `localhost:3000`, `example.com:8080/x`: a host and a port, which reads like a

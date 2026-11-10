@@ -17,9 +17,9 @@ export type QuoteBlock = {
 /**
  * A block quote, written as `<blockquote>`
  */
-export const quoteContent = /* @__PURE__ */ defineContent({
+export const quoteContent = defineContent({
     blocks: {
-        quote: /* @__PURE__ */ defineBlock({
+        quote: defineBlock({
             content: 'text',
             toHtml: () => ({ tag: 'blockquote', attrs: { class: styles.quote }, children: true }),
             parse: [{ tag: 'blockquote' }],

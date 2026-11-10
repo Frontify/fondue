@@ -19,9 +19,9 @@ export type StrikethroughMark = {
 /**
  * Struck-through text, written as `<s>`
  */
-export const strikethroughContent = /* @__PURE__ */ defineContent({
+export const strikethroughContent = defineContent({
     marks: {
-        strikethrough: /* @__PURE__ */ defineMark({
+        strikethrough: defineMark({
             tag: 's',
             // A span with the decoration is struck through too: how Google Docs writes it.
             parse: [

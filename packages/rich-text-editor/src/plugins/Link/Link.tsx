@@ -27,9 +27,9 @@ const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string
  * Links as a mark on text, written as `<a href>`.
  * Only web, mail, phone and relative targets count, so a `javascript:` URL is never clickable.
  */
-export const linkContent = /* @__PURE__ */ defineContent({
+export const linkContent = defineContent({
     marks: {
-        link: /* @__PURE__ */ defineMark<LinkValue>({
+        link: defineMark<LinkValue>({
             // Outside every other mark, so a partly styled link still renders
             // as ONE anchor: an element stays open across text runs only while
             // the marks around it are the same, and a colour or an emphasis

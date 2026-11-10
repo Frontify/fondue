@@ -459,8 +459,8 @@ const split = (words: string | undefined): readonly string[] => (words ? words.s
 /**
  * The emoji `emojiPlugin` offers by default, in picker order
  */
-export const defaultEmojis: readonly EmojiItem[] = /* @__PURE__ */ Object.freeze(
-    /* @__PURE__ */ CATEGORIES.flatMap(([category, rows]) =>
+export const defaultEmojis: readonly EmojiItem[] = Object.freeze(
+    CATEGORIES.flatMap(([category, rows]) =>
         rows.map(([emoji, shortcodes, name, keywords]): EmojiItem => ({
             emoji,
             name,

@@ -32,7 +32,7 @@ const isAlignment = (value: unknown): value is NonNullable<AlignAttribute['align
 /**
  * Text alignment as a block attribute
  */
-export const alignContent = /* @__PURE__ */ defineContent({
+export const alignContent = defineContent({
     blockAttributes: {
         align: {
             // Only the four this plugin offers reach a style: a stored value is

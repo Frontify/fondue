@@ -17,9 +17,9 @@ export type SuperscriptMark = {
 /**
  * Superscript text, written as `<sup>`
  */
-export const superscriptContent = /* @__PURE__ */ defineContent({
+export const superscriptContent = defineContent({
     marks: {
-        superscript: /* @__PURE__ */ defineMark({ tag: 'sup' }),
+        superscript: defineMark({ tag: 'sup' }),
     },
 });
 

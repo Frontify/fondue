@@ -19,9 +19,9 @@ export type ItalicMark = {
 /**
  * Italic text, written as `<em>`
  */
-export const italicContent = /* @__PURE__ */ defineContent({
+export const italicContent = defineContent({
     marks: {
-        italic: /* @__PURE__ */ defineMark({
+        italic: defineMark({
             tag: 'em',
             // A span with the style is italic too: how Google Docs writes it.
             parse: [
