@@ -10,6 +10,7 @@ import {
     clipboardSerializer,
     handlePasteByFeatures,
     handlePasteIntoEmptyBlock,
+    keepOfficeListStyles,
     pastedWithoutExtras,
 } from './clipboard';
 import { createControlApi, type OpenEditors } from './controlApi';
@@ -17,7 +18,6 @@ import { rootExtrasOf, toEngineDocument, toRteDocument, withoutDrafts } from './
 import { copiedExtrasPlugin } from './extraAttributes';
 import { keystrokePipeline } from './keystrokes';
 import { createMarkViews, createNodeViews, LiveViews } from './nodeViews';
-import { keepOfficeListStyles } from './pasteOffice';
 import { placeholderPlugin } from './placeholder';
 import { buildSchema } from './schema';
 import { createSelectionRectReader } from './selectionRect';

@@ -15,6 +15,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { defaultPlugins, RichTextEditor, type RteDocument } from '../../index';
 
 declare global {
+    // Only a `var` declares a property on `globalThis`, which is where React reads this flag.
     // eslint-disable-next-line no-var
     var IS_REACT_ACT_ENVIRONMENT: boolean;
 }
@@ -28,6 +29,13 @@ Object.defineProperty(window.CSSStyleSheet.prototype, 'rules', {
 });
 
 const FIXTURES = join(dirname(fileURLToPath(import.meta.url)), 'fixtures');
+
+/** A text block holding only whitespace, which `<o:p>&nbsp;</o:p>` used to leave; an empty block is a real blank line. */
+const BLANK_TEXT = /^\s+$/;
+/** A marker glyph or number from the source list, left at the start of an outline line's text. */
+const LEFTOVER_MARKER = /: (?:[·o§•]\s|\d+[.)]\s)/;
+/** Vendor markup a clean paste stores none of. */
+const JUNK_TRACES = ['mso-', 'o:p', 'docs-internal', 'font-weight', 'font-family', '<'];
 
 type Node = { type?: string; text?: string; style?: string; children?: Node[]; [key: string]: unknown };
 
@@ -79,6 +87,7 @@ const pasted = (html: string): RteDocument => {
 
 const fixture = (name: string): string => readFileSync(join(FIXTURES, `${name}.html`), 'utf8');
 
+// The specs read stored blocks as plain JSON, whichever plugin's type each one has.
 const nodesOf = (doc: RteDocument): Node[] => doc.blocks as Node[];
 
 const textOf = (children: Node[] = []): string => {
@@ -142,14 +151,12 @@ const soleBreaks = (doc: RteDocument): Node[] =>
 
 /** Everything a clean paste has none of, whatever the vendor. */
 const expectNoJunk = (doc: RteDocument): void => {
-    // A block of one space is what `<o:p>&nbsp;</o:p>` used to leave; an empty block is a real blank line.
-    expect(textBlocks(nodesOf(doc)).filter((block) => /^\s+$/.test(textOf(block.children)))).toEqual([]);
+    expect(textBlocks(nodesOf(doc)).filter((block) => BLANK_TEXT.test(textOf(block.children)))).toEqual([]);
     const emitted = JSON.stringify(doc);
-    for (const trace of ['mso-', 'o:p', 'docs-internal', 'font-weight', 'font-family', '<']) {
+    for (const trace of JUNK_TRACES) {
         expect(emitted).not.toContain(trace);
     }
-    // A marker glyph or number from the source list left at the start of an item or heading.
-    expect(outline(nodesOf(doc)).filter((line) => /: (?:[·o§•]\s|\d+[.)]\s)/.test(line))).toEqual([]);
+    expect(outline(nodesOf(doc)).filter((line) => LEFTOVER_MARKER.test(line))).toEqual([]);
 };
 
 describe('pasting from other applications', () => {
