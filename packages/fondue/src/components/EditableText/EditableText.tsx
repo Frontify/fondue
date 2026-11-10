@@ -57,8 +57,6 @@ export interface EditableTextProps {
     onEditableSave?: (value: string) => void;
     onModeChange?: (editableState?: EditableMode) => void;
     options?: EditableOptionProps;
-    /** @deprecated Temporary solution for text with ellipisis in Tree Component */
-    isOverflowing?: boolean;
     'data-test-id'?: string;
 }
 
@@ -71,7 +69,6 @@ export const EditableText = ({
     onAdditionalValueSave,
     children,
     options,
-    isOverflowing = false,
     'data-test-id': dataTestId = 'editable-node-container',
 }: EditableTextProps) => {
     // Read initial text strings from children
@@ -164,7 +161,7 @@ export const EditableText = ({
                 >
                     <div
                         data-test-id="editable-input"
-                        className={merge(['tw-relative', isOverflowing && 'tw-w-full tw-flex tw-items-center'])}
+                        className="tw-relative"
                     >
                         <input
                             ref={inputRef}
@@ -187,7 +184,6 @@ export const EditableText = ({
                             className={merge([
                                 'tw-rounded tw-px-4 tw-py-2 tw-bg-base tw-truncate',
                                 options?.isSlimInputField === true && 'tw-py-0 tw-px-2',
-                                isOverflowing && 'tw-w-0',
                             ])}
                             style={inputStyling}
                         >
@@ -199,7 +195,7 @@ export const EditableText = ({
             <button
                 type="button"
                 style={{ display: editableState === EditableMode.INPUT ? 'none' : 'flex' }}
-                className={merge([isOverflowing && 'tw-w-full', 'tw-h-full tw-items-center', FOCUS_VISIBLE_STYLE])}
+                className={merge(['tw-h-full tw-items-center', FOCUS_VISIBLE_STYLE])}
                 {...clickBehaviour}
                 data-test-id={'node-link-name'}
                 aria-pressed="false"
