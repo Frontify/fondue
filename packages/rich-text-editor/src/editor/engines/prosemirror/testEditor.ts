@@ -67,7 +67,7 @@ const findText = (doc: PmNode, needle: string): { from: number; to: number } => 
  * A block as a spec writes it: the plugin's own attributes sit flat on it, which
  * the open `RteBlockNode` cannot name.
  */
-type BlockInput = RteBlockNode | (Record<string, unknown> & { type: string });
+export type BlockInput = RteBlockNode | (Record<string, unknown> & { type: string });
 
 /** Shipped plugins by id, taken from `defaultPlugins` — the one plugin import this folder may make. */
 export const shipped = (...ids: string[]): RtePlugin[] => defaultPlugins.filter((plugin) => ids.includes(plugin.id));

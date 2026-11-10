@@ -380,6 +380,7 @@ const inlineFromEngine = (child: PmNode): RteInlineNode | null => {
 
     let converted: RteInlineNode;
     if (child.type.name === UNKNOWN_INLINE) {
+        // The raw attribute holds the host's own inline as handed over.
         converted = frozenInDevelopment(child.attrs[RAW_ATTR] as RteInlineNode);
     } else if (child.isText) {
         const text: Record<string, unknown> = { text: child.text ?? '' };
@@ -396,6 +397,7 @@ const inlineFromEngine = (child: PmNode): RteInlineNode | null => {
                 text[mark.type.name] = true;
             }
         }
+        // The text run and the inline below are built to the document format, which the open inline type cannot name.
         converted = frozenInDevelopment(text) as RteInlineNode;
     } else {
         converted = frozenInDevelopment({
@@ -415,6 +417,7 @@ const blockFromEngine = (node: PmNode): RteBlockNode => {
     }
 
     if (node.type.name === UNKNOWN_BLOCK) {
+        // The raw attribute holds the host's own block as handed over.
         return frozenInDevelopment(node.attrs[RAW_ATTR] as RteBlockNode);
     }
 
@@ -425,6 +428,7 @@ const blockFromEngine = (node: PmNode): RteBlockNode => {
         block.children = mapChildren(node, blockFromEngine);
     }
 
+    // The block is built to the document format, which the open block type cannot name.
     const converted = frozenInDevelopment(block) as unknown as RteBlockNode;
     convertedBlocks.set(node, converted);
     engineNodeOf.set(converted, node);

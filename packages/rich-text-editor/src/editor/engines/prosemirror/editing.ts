@@ -179,9 +179,7 @@ const mount = (
         record = recordHandOver(record);
         rootExtras = rootExtrasOf(doc);
         const next = toEngineDocument(doc, schema);
-        // Drafts (an inline still being made) are in no document the host holds,
-        // though a block reused from one handed out may bring one along; an
-        // echo of what is there must leave them, and the caret, alone.
+        // A draft in the editor is in no document the host holds, so an echo must leave it and the caret alone.
         if (!withoutDrafts(next).eq(withoutDrafts(editorView.state.doc))) {
             const transaction = editorView.state.tr;
             syncDocument(transaction, next);

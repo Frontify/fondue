@@ -188,6 +188,7 @@ describe('the document boundary', () => {
             const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
             try {
                 const handedOut = toRteDocument(toEngineDocument(structuredClone(withUnknown), schema));
+                // The specs read plugin attributes the open block type does not name.
                 const [paragraph, callout, list] = handedOut.blocks as unknown as [
                     { children: [{ highlight: { color: string } }, { name: string }] },
                     { children: [{ children: [{ text: string }] }] },
@@ -213,6 +214,7 @@ describe('the document boundary', () => {
             const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
             try {
                 const video = Object.freeze({ type: 'video', data: { src: 'a.mp4' } });
+                // A block type no plugin declares is outside the typed document.
                 const handedOut = toRteDocument(
                     toEngineDocument({ version: 1, blocks: [video] } as unknown as RteDocumentOf, schema),
                 );

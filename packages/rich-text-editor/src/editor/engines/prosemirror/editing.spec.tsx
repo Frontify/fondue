@@ -20,7 +20,10 @@ import {
 
 import { toEngineDocument } from './documentConversion';
 import { type FrameScheduler, mountEditorForTests } from './editing';
-import { destroyEditors, editorWith, shipped } from './testEditor';
+import { type BlockInput, destroyEditors, editorWith, shipped } from './testEditor';
+
+// Checked independently of the source: the character the spec expects for an inline atom in text.
+const INLINE_ATOM_STAND_IN = '￼';
 
 /**
  * The controlled-`value` protocol: a host hands back the document it was given,
@@ -54,14 +57,9 @@ const paragraph = (text: string): RteDocumentOf => ({
 
 const mounted: { destroy(): void }[] = [];
 
-const mount = (
-    initialDoc: RteDocumentOf,
-    {
-        placeholder = '',
-        attributes = {},
-        frames,
-    }: { placeholder?: string; attributes?: Record<string, string>; frames?: FrameScheduler } = {},
-) => {
+type MountTestOptions = { placeholder?: string; attributes?: Record<string, string>; frames?: FrameScheduler };
+
+const mount = (initialDoc: RteDocumentOf, { placeholder = '', attributes = {}, frames }: MountTestOptions = {}) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
     const onDocChange = vi.fn<(doc: RteDocumentOf) => void>();
@@ -431,9 +429,9 @@ describe('a document set by the host', () => {
 });
 
 describe('a document set by the host that changes the blocks around the caret', () => {
-    const blocksOf = (...blocks: Record<string, unknown>[]): RteDocumentOf =>
-        ({ version: 1, blocks }) as unknown as RteDocumentOf;
-    const text = (value: string) => ({ type: PARAGRAPH, children: [{ text: value }] });
+    // A block with flat plugin attributes is outside the typed document, so the cast is only a test-side widening.
+    const blocksOf = (...blocks: BlockInput[]): RteDocumentOf => ({ version: 1, blocks }) as unknown as RteDocumentOf;
+    const text = (value: string): BlockInput => ({ type: PARAGRAPH, children: [{ text: value }] });
     const caretAt = (view: EditorView) => ({
         block: view.state.selection.$from.parent.textContent,
         offset: view.state.selection.$from.parentOffset,
@@ -450,7 +448,7 @@ describe('a document set by the host that changes the blocks around the caret', 
     };
 
     it('keeps the caret in its block when the host only restyles it', () => {
-        const { view, editor } = editorWith(shipped('text-style'), [text('one'), text('two')] as never);
+        const { view, editor } = editorWith(shipped('text-style'), [text('one'), text('two')]);
         caretIn(view, 'one', 2);
 
         editor.setDoc(blocksOf({ type: 'textStyle', style: 'heading1', children: [{ text: 'one' }] }, text('two')));
@@ -460,8 +458,8 @@ describe('a document set by the host that changes the blocks around the caret', 
     });
 
     it('keeps the caret in its block when the host inserts a block with the same text before it', () => {
-        const heading = { type: 'textStyle', style: 'heading1', children: [{ text: 'T' }] };
-        const { view, editor } = editorWith(shipped('text-style'), [heading, text('x')] as never);
+        const heading: BlockInput = { type: 'textStyle', style: 'heading1', children: [{ text: 'T' }] };
+        const { view, editor } = editorWith(shipped('text-style'), [heading, text('x')]);
         caretIn(view, 'T', 1);
 
         editor.setDoc(blocksOf(text('T'), heading, text('x')));
@@ -471,7 +469,7 @@ describe('a document set by the host that changes the blocks around the caret', 
     });
 
     it('leaves the caret and undo in a block between two the host changes', () => {
-        const { view, editor } = editorWith([], [text('a'), text('b'), text('c')] as never);
+        const { view, editor } = editorWith([], [text('a'), text('b'), text('c')]);
         caretIn(view, 'b', 1);
         view.dispatch(view.state.tr.insertText('X'));
 
@@ -484,7 +482,7 @@ describe('a document set by the host that changes the blocks around the caret', 
 
     it('leaves the caret alone in a long document when the host inserts a block far from it', () => {
         const texts = Array.from({ length: 600 }, (_, index) => `block ${index}`);
-        const { view, editor } = editorWith([], texts.map(text) as never);
+        const { view, editor } = editorWith([], texts.map(text));
         caretIn(view, 'block 599', 1);
 
         editor.setDoc(blocksOf(...texts.slice(0, 300).map(text), text('new'), ...texts.slice(300).map(text)));
@@ -495,7 +493,7 @@ describe('a document set by the host that changes the blocks around the caret', 
 
     it('leaves the caret and undo alone mid-document when the host changes both ends of a long one', () => {
         const texts = Array.from({ length: 600 }, (_, index) => `block ${index}`);
-        const { view, editor } = editorWith([], texts.map(text) as never);
+        const { view, editor } = editorWith([], texts.map(text));
         caretIn(view, 'block 300', 1);
         view.dispatch(view.state.tr.insertText('X'));
 
@@ -516,7 +514,7 @@ describe('a document set by the host that changes the blocks around the caret', 
 
     it('keeps the caret in its block when the host changes every block of a long document, in a few steps', () => {
         const texts = Array.from({ length: 600 }, (_, index) => `block ${index}`);
-        const { view, editor } = editorWith([], texts.map(text) as never);
+        const { view, editor } = editorWith([], texts.map(text));
         caretIn(view, 'block 300', 3);
         const dispatch = vi.spyOn(view, 'dispatch');
 
@@ -530,7 +528,7 @@ describe('a document set by the host that changes the blocks around the caret', 
     it('replaces a long document with a longer one without comparing every block with every other', () => {
         const { view, editor } = editorWith(
             [],
-            Array.from({ length: 600 }, (_, index) => text(`old ${index}`)) as never,
+            Array.from({ length: 600 }, (_, index) => text(`old ${index}`)),
         );
         const compare = vi.spyOn(PmNode.prototype, 'eq');
 
@@ -544,7 +542,7 @@ describe('a document set by the host that changes the blocks around the caret', 
     });
 
     it('keeps a host restyle when the user undoes their own change to the same block', () => {
-        const { view, editor, api } = editorWith(shipped('text-style', 'align'), [text('one'), text('two')] as never);
+        const { view, editor, api } = editorWith(shipped('text-style', 'align'), [text('one'), text('two')]);
         caretIn(view, 'one', 1);
         api.blocks.updateAttributes({ align: 'center' });
 
@@ -560,13 +558,14 @@ describe('a document set by the host that changes the blocks around the caret', 
     });
 
     it('undoes only the attribute the user changed when the host changed another on the same block', () => {
-        const heading = (style: string, align?: string) => ({
-            type: 'textStyle',
-            style,
-            ...(align === undefined ? {} : { align }),
-            children: [{ text: 'one' }],
-        });
-        const { view, editor, api } = editorWith(shipped('text-style', 'align'), [heading('heading1')] as never);
+        const heading = (style: string, align?: string): BlockInput => {
+            const block: BlockInput = { type: 'textStyle', style, children: [{ text: 'one' }] };
+            if (align !== undefined) {
+                block.align = align;
+            }
+            return block;
+        };
+        const { view, editor, api } = editorWith(shipped('text-style', 'align'), [heading('heading1')]);
         caretIn(view, 'one', 1);
         api.blocks.updateAttributes({ align: 'center' });
 
@@ -578,13 +577,14 @@ describe('a document set by the host that changes the blocks around the caret', 
     });
 
     it('keeps the alignment the host set when the user undoes the alignment they set on the same block', () => {
-        const heading = (align?: string) => ({
-            type: 'textStyle',
-            style: 'heading1',
-            ...(align === undefined ? {} : { align }),
-            children: [{ text: 'one' }],
-        });
-        const { view, editor, api } = editorWith(shipped('text-style', 'align'), [heading()] as never);
+        const heading = (align?: string): BlockInput => {
+            const block: BlockInput = { type: 'textStyle', style: 'heading1', children: [{ text: 'one' }] };
+            if (align !== undefined) {
+                block.align = align;
+            }
+            return block;
+        };
+        const { view, editor, api } = editorWith(shipped('text-style', 'align'), [heading()]);
         caretIn(view, 'one', 1);
         api.blocks.updateAttributes({ align: 'center' });
 
@@ -595,11 +595,11 @@ describe('a document set by the host that changes the blocks around the caret', 
     });
 
     it('keeps the caret in a to-do the host ticks', () => {
-        const todo = (checked: boolean) => ({
+        const todo = (checked: boolean): BlockInput => ({
             type: 'checkList',
             children: [{ type: 'checkItem', checked, children: [text('task')] }],
         });
-        const { view, editor } = editorWith(shipped('check-list'), [todo(false), text('after')] as never);
+        const { view, editor } = editorWith(shipped('check-list'), [todo(false), text('after')]);
         caretIn(view, 'task', 2);
 
         editor.setDoc(blocksOf(todo(true), text('after')));
@@ -609,11 +609,11 @@ describe('a document set by the host that changes the blocks around the caret', 
     });
 
     it('keeps the caret in its list item when the host removes an item before it', () => {
-        const list = (...items: string[]) => ({
+        const list = (...items: string[]): BlockInput => ({
             type: 'bulletList',
             children: items.map((item) => ({ type: 'listItem', children: [text(item)] })),
         });
-        const { view, editor } = editorWith(shipped('bullet-list'), [list('a', 'b', 'c')] as never);
+        const { view, editor } = editorWith(shipped('bullet-list'), [list('a', 'b', 'c')]);
         caretIn(view, 'c', 1);
 
         editor.setDoc(blocksOf(list('b', 'c')));
@@ -896,7 +896,12 @@ describe('a document set by the host, over generated documents', () => {
     };
     // A soft break now and then, so inline elements sit between runs.
     const runs = (random: Random): Json[] =>
-        Array.from({ length: below(random, 4) }, () => (random() < 0.15 ? { type: 'break' } : run(random)));
+        Array.from({ length: below(random, 4) }, (): Json => {
+            if (random() < 0.15) {
+                return { type: 'break' };
+            }
+            return run(random);
+        });
     const textBlock = (random: Random): Json => {
         if (random() < 0.3) {
             return {
@@ -912,15 +917,18 @@ describe('a document set by the host, over generated documents', () => {
         if (depth < 3 && random() < 0.4) {
             children.push(list(random, depth + 1));
         }
-        return {
-            type,
-            ...(type === 'checkItem' ? { checked: random() < 0.5 } : {}),
-            children,
-        };
+        const result: Json = { type, children };
+        if (type === 'checkItem') {
+            result.checked = random() < 0.5;
+        }
+        return result;
     };
     const list = (random: Random, depth: number): Json => {
         const type = pick(random, ['bulletList', 'numberedList', 'checkList']);
-        const itemType = type === 'checkList' ? 'checkItem' : 'listItem';
+        let itemType = 'listItem';
+        if (type === 'checkList') {
+            itemType = 'checkItem';
+        }
         return {
             type,
             children: Array.from({ length: 1 + below(random, 3) }, () => item(random, itemType, depth)),
@@ -970,7 +978,11 @@ describe('a document set by the host, over generated documents', () => {
             if (random() < 0.5) {
                 target.text = pick(random, TEXTS);
             } else {
-                target.bold = random() < 0.5 ? true : undefined;
+                let bold: true | undefined;
+                if (random() < 0.5) {
+                    bold = true;
+                }
+                target.bold = bold;
             }
             return copy;
         }
@@ -979,7 +991,10 @@ describe('a document set by the host, over generated documents', () => {
             for (const member of members) {
                 const children = (member.children ?? []) as Json[];
                 if (member.type === 'bulletList' || member.type === 'numberedList' || member.type === 'checkList') {
-                    const itemType = member.type === 'checkList' ? 'checkItem' : 'listItem';
+                    let itemType = 'listItem';
+                    if (member.type === 'checkList') {
+                        itemType = 'checkItem';
+                    }
                     lists.push({
                         blocks: children,
                         make: (r: Random) => item(r, itemType, 3),
@@ -1007,7 +1022,7 @@ describe('a document set by the host, over generated documents', () => {
         const places: number[] = [];
         view.state.doc.descendants((node, position) => {
             if (node.isTextblock) {
-                const text = node.textBetween(0, node.content.size, undefined, '￼');
+                const text = node.textBetween(0, node.content.size, undefined, INLINE_ATOM_STAND_IN);
                 for (const { index } of graphemes.segment(text)) {
                     places.push(position + 1 + index);
                 }
@@ -1023,7 +1038,12 @@ describe('a document set by the host, over generated documents', () => {
     it.each(seeds)('lands on exactly the new document, the caret on a character boundary (seed %i)', (seed) => {
         const random = seeded(seed);
         const before = generate(random);
-        let after = seed % 5 === 0 ? generate(random) : mutate(random, before);
+        let after: RteDocumentOf;
+        if (seed % 5 === 0) {
+            after = generate(random);
+        } else {
+            after = mutate(random, before);
+        }
         // Some documents change in two places, so unchanged blocks can sit between changes.
         if (seed % 3 === 0) {
             after = mutate(random, after);
@@ -1040,7 +1060,7 @@ describe('a document set by the host, over generated documents', () => {
                 'numbered-list',
                 'check-list',
             ),
-            before.blocks as never,
+            before.blocks,
         );
         const { view, onDocChange } = editor;
         view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, caretPosition(random, view))));
@@ -1051,7 +1071,7 @@ describe('a document set by the host, over generated documents', () => {
         expect(onDocChange).not.toHaveBeenCalled();
         const { $head } = view.state.selection;
         expect($head.parent.isTextblock).toBe(true);
-        const text = $head.parent.textBetween(0, $head.parent.content.size, undefined, '￼');
+        const text = $head.parent.textBetween(0, $head.parent.content.size, undefined, INLINE_ATOM_STAND_IN);
         const character = graphemes.segment(text).containing($head.parentOffset);
         expect(character?.index ?? text.length).toBe($head.parentOffset);
     });
