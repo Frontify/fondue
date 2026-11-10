@@ -165,6 +165,24 @@ const findMarkRange = (state: EditorState, markType: PmMarkType): { from: number
     return range;
 };
 
+/** What toggling a mark does: at a caret it changes the stored marks, over a range the text. */
+type MarkToggle = 'caretOff' | 'caretOn' | 'rangeOff' | 'rangeOn';
+
+/** Off exactly when the snapshot reports the mark on, so the toolbar and the toggle agree. */
+const markToggleFor = (state: EditorState, type: string): MarkToggle => {
+    const isOn = type in marksAt(state);
+    if (state.selection.empty) {
+        if (isOn) {
+            return 'caretOff';
+        }
+        return 'caretOn';
+    }
+    if (isOn) {
+        return 'rangeOff';
+    }
+    return 'rangeOn';
+};
+
 /** Whether a mark is *on* is not here: that is a field of the selection snapshot. */
 const createMarkApi = (getView: () => EditorView, schema: Schema): EditorControlApi['marks'] => ({
     toggle(type, value) {
@@ -175,25 +193,36 @@ const createMarkApi = (getView: () => EditorView, schema: Schema): EditorControl
         }
         const view = getView();
         const { selection, tr } = view.state;
-        // Off exactly when the snapshot reports it on, so the toolbar and the toggle agree.
-        const isOn = type in marksAt(view.state);
-        if (selection.empty && isOn) {
-            tr.removeStoredMark(markType);
-        } else if (selection.empty) {
-            tr.addStoredMark(markType.create(valueAttrsFor(value)));
-        } else if (isOn) {
-            for (const range of selection.ranges) {
-                tr.removeMark(range.$from.pos, range.$to.pos, markType);
+        switch (markToggleFor(view.state, type)) {
+            case 'caretOff': {
+                tr.removeStoredMark(markType);
+                break;
             }
-        } else {
-            const mark = markType.create(valueAttrsFor(value));
-            for (const { $from, $to } of selection.ranges) {
-                // Text only, as the snapshot reads it: the document stores no marks on inline elements.
-                tr.doc.nodesBetween($from.pos, $to.pos, (node, position) => {
-                    if (node.isText) {
-                        tr.addMark(Math.max(position, $from.pos), Math.min(position + node.nodeSize, $to.pos), mark);
-                    }
-                });
+            case 'caretOn': {
+                tr.addStoredMark(markType.create(valueAttrsFor(value)));
+                break;
+            }
+            case 'rangeOff': {
+                for (const range of selection.ranges) {
+                    tr.removeMark(range.$from.pos, range.$to.pos, markType);
+                }
+                break;
+            }
+            case 'rangeOn': {
+                const mark = markType.create(valueAttrsFor(value));
+                for (const { $from, $to } of selection.ranges) {
+                    // Text only, as the snapshot reads it: the document stores no marks on inline elements.
+                    tr.doc.nodesBetween($from.pos, $to.pos, (node, position) => {
+                        if (node.isText) {
+                            tr.addMark(
+                                Math.max(position, $from.pos),
+                                Math.min(position + node.nodeSize, $to.pos),
+                                mark,
+                            );
+                        }
+                    });
+                }
+                break;
             }
         }
         view.dispatch(tr);
