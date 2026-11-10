@@ -28,5 +28,5 @@ export const superscriptContent = /* @__PURE__ */ defineContent({
  */
 export const superscriptPlugin = /* @__PURE__ */ definePlugin({
     content: superscriptContent,
-    toolbar: [{ icon: IconSuperscript, shortcut: 'Mod-.' }],
+    toolbar: [{ label: 'Superscript', icon: IconSuperscript, shortcut: 'Mod-.' }],
 });

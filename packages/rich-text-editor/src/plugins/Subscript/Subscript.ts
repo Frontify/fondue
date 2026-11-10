@@ -28,5 +28,5 @@ export const subscriptContent = /* @__PURE__ */ defineContent({
  */
 export const subscriptPlugin = /* @__PURE__ */ definePlugin({
     content: subscriptContent,
-    toolbar: [{ icon: IconSubscript, shortcut: 'Mod-,' }],
+    toolbar: [{ label: 'Subscript', icon: IconSubscript, shortcut: 'Mod-,' }],
 });

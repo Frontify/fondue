@@ -743,12 +743,17 @@ const moveContent = (content: HTMLElement, parent: HTMLElement): void => {
     }
 };
 
+type ContentHoleProps = {
+    element: HTMLElement;
+    home: HTMLElement;
+};
+
 /**
  * Where the component put `{children}`. The content moves in once, when the
  * hole mounts, and back to the view's element (`home`) if the component stops
  * rendering the hole, so the engine's content never leaves the page.
  */
-const ContentHole = ({ element, home }: { element: HTMLElement; home: HTMLElement }): ReactNode => {
+const ContentHole = ({ element, home }: ContentHoleProps): ReactNode => {
     const place = useCallback((node: HTMLSpanElement | null) => moveContent(element, node ?? home), [element, home]);
     return <span ref={place} className={WRAPPER_CLASS} style={{ display: 'contents' }} />;
 };

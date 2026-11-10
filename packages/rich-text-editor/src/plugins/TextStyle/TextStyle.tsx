@@ -130,7 +130,7 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
     return definePlugin({
         id: 'text-style',
         content,
-        toolbar: [{ render: TextStyleToolbar }],
+        toolbar: [{ label: 'Text style', render: TextStyleToolbar }],
         hotkeys,
         // `# ` through `#### `, for the headings this editor offers.
         inputRules: offered.flatMap(markdownRuleFor),

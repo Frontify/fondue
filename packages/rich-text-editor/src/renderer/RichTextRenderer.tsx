@@ -35,10 +35,15 @@ type RegistryRendererProps = {
     className?: string;
 };
 
+type BlockProps = {
+    block: RteBlockNode;
+    registry: PluginRegistry;
+};
+
 /**
  * One top-level block, memoized on the block itself: the editor keeps the same object for untouched blocks, so an edit redraws only its block
  */
-const Block = memo(({ block, registry }: { block: RteBlockNode; registry: PluginRegistry }): ReactNode => {
+const Block = memo(({ block, registry }: BlockProps): ReactNode => {
     const drawn = blockNode(block, registry, { useComponents: true });
     return drawn === null ? null : toReact([drawn]);
 });

@@ -32,6 +32,6 @@ export const quoteContent = /* @__PURE__ */ defineContent({
  */
 export const quotePlugin = /* @__PURE__ */ definePlugin({
     content: quoteContent,
-    toolbar: [{ icon: IconSpeechBubbleQuote, menu: { keywords: ['blockquote', 'citation'] } }],
+    toolbar: [{ label: 'Quote', icon: IconSpeechBubbleQuote, menu: { keywords: ['blockquote', 'citation'] } }],
     inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
 });

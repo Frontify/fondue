@@ -66,5 +66,5 @@ export const fontColorContent = /* @__PURE__ */ defineContent({
 export const fontColorPlugin = /* @__PURE__ */ definePlugin({
     id: 'font-color',
     content: fontColorContent,
-    toolbar: [{ render: ColorFlyout }],
+    toolbar: [{ label: 'Text colour', render: ColorFlyout }],
 });

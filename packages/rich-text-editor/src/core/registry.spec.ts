@@ -209,8 +209,9 @@ describe('the block commands of a registry', () => {
 
 describe('where a toolbar entry goes in the floating bar', () => {
     const placementOf = (plugin: RtePlugin, floating?: 'inline' | 'hidden') =>
-        buildPluginRegistry([{ ...plugin, toolbar: [{ toggles: onlyType(plugin), render: button, floating }] }])
-            .toolbarItems[0]?.floating;
+        buildPluginRegistry([
+            { ...plugin, toolbar: [{ toggles: onlyType(plugin), label: 'Label', render: button, floating }] },
+        ]).toolbarItems[0]?.floating;
     const onlyType = (plugin: RtePlugin) => Object.keys({ ...plugin.content?.marks, ...plugin.content?.blocks })[0];
 
     it('is inline for a mark', () => {
@@ -224,13 +225,14 @@ describe('where a toolbar entry goes in the floating bar', () => {
                 {
                     id: 'mention',
                     content: defineContent({ inlines: { mention: inline() } }),
-                    toolbar: [{ render: button }],
+                    toolbar: [{ label: 'Label', render: button }],
                 },
             ]).toolbarItems[0]?.floating,
         ).toBe('hidden');
-        expect(buildPluginRegistry([{ id: 'nothing', toolbar: [{ render: button }] }]).toolbarItems[0]?.floating).toBe(
-            'hidden',
-        );
+        expect(
+            buildPluginRegistry([{ id: 'nothing', toolbar: [{ label: 'Label', render: button }] }]).toolbarItems[0]
+                ?.floating,
+        ).toBe('hidden');
     });
 
     it('is what the entry says, over the default', () => {
@@ -241,8 +243,8 @@ describe('where a toolbar entry goes in the floating bar', () => {
             'inline',
         );
         expect(
-            buildPluginRegistry([{ id: 'align', toolbar: [{ render: button, floating: 'inline' }] }]).toolbarItems[0]
-                ?.floating,
+            buildPluginRegistry([{ id: 'align', toolbar: [{ label: 'Label', render: button, floating: 'inline' }] }])
+                .toolbarItems[0]?.floating,
         ).toBe('inline');
     });
 });
@@ -250,9 +252,9 @@ describe('where a toolbar entry goes in the floating bar', () => {
 describe('plugins sharing an id', () => {
     it('are reported, and their toolbar controls still keyed apart', () => {
         const registry = buildPluginRegistry([
-            { id: 'same', toolbar: [{ render: button }] },
-            { id: 'other', toolbar: [{ render: button }] },
-            { id: 'same', toolbar: [{ render: button }] },
+            { id: 'same', toolbar: [{ label: 'Label', render: button }] },
+            { id: 'other', toolbar: [{ label: 'Label', render: button }] },
+            { id: 'same', toolbar: [{ label: 'Label', render: button }] },
         ]);
 
         expect(registry.duplicateIds).toEqual(['same']);
@@ -288,7 +290,9 @@ describe('a plugin id', () => {
 
     it('rejects a toggled type that only exists on Object.prototype', () => {
         expect(() =>
-            buildPluginRegistry([definePlugin({ id: 'odd', toolbar: [{ icon, toggles: 'constructor' }] })]),
+            buildPluginRegistry([
+                definePlugin({ id: 'odd', toolbar: [{ icon, label: 'Odd', toggles: 'constructor' }] }),
+            ]),
         ).toThrow('Plugin "odd" toggles "constructor", which its content does not declare.');
     });
 
@@ -315,8 +319,8 @@ describe('the type a toolbar entry toggles', () => {
                 id: 'both',
                 content,
                 toolbar: [
-                    { toggles: 'quote', icon },
-                    { toggles: 'bold', icon },
+                    { toggles: 'quote', icon, label: 'Quote' },
+                    { toggles: 'bold', icon, label: 'Bold' },
                 ],
             },
         ]);
@@ -328,13 +332,13 @@ describe('the type a toolbar entry toggles', () => {
         expect(registry.toolbarItems.map(({ key }) => key)).toEqual(['both', 'both/1']);
     });
 
-    it('is labelled by its name capitalised unless the entry says otherwise', () => {
+    it('is labelled by the entry', () => {
         const registry = buildPluginRegistry([
             {
                 id: 'both',
                 content,
                 toolbar: [
-                    { toggles: 'quote', icon },
+                    { toggles: 'quote', icon, label: 'Quote' },
                     { toggles: 'bold', icon, label: 'Strong' },
                 ],
             },
@@ -343,10 +347,15 @@ describe('the type a toolbar entry toggles', () => {
         expect(registry.toolbarItems.map(({ label }) => label)).toEqual(['Quote', 'Strong']);
     });
 
+    it('needs a label, which is the control accessible name', () => {
+        // @ts-expect-error -- an entry without a `label` fails typecheck
+        buildPluginRegistry([{ id: 'bold', content: defineContent({ marks: { bold: mark() } }), toolbar: [{ icon }] }]);
+    });
+
     it('is an error when the content does not declare it', () => {
-        expect(() => buildPluginRegistry([{ id: 'both', content, toolbar: [{ toggles: 'italic', icon }] }])).toThrow(
-            'Plugin "both" toggles "italic", which its content does not declare.',
-        );
+        expect(() =>
+            buildPluginRegistry([{ id: 'both', content, toolbar: [{ toggles: 'italic', icon, label: 'Italic' }] }]),
+        ).toThrow('Plugin "both" toggles "italic", which its content does not declare.');
     });
 
     it('needs an icon when the entry has no `render`', () => {
@@ -359,7 +368,7 @@ describe('the type a toolbar entry toggles', () => {
     });
 
     it('needs a toggleable type when the entry has an icon but no `render`', () => {
-        expect(() => buildPluginRegistry([{ id: 'nothing', toolbar: [{ icon }] }])).toThrow(
+        expect(() => buildPluginRegistry([{ id: 'nothing', toolbar: [{ icon, label: 'Nothing' }] }])).toThrow(
             'Plugin "nothing" has a toolbar entry with nothing to toggle: name a mark, list, text block, void block or inline with `toggles`.',
         );
     });
@@ -371,7 +380,7 @@ describe('the hotkeys of a registry', () => {
     it('include the shortcut of a toolbar entry, as a toggle of what it toggles', () => {
         const toggled: string[] = [];
         const registry = buildPluginRegistry([
-            { id: 'bold', content: boldContent, toolbar: [{ icon, shortcut: 'Mod-b' }] },
+            { id: 'bold', content: boldContent, toolbar: [{ icon, label: 'Bold', shortcut: 'Mod-b' }] },
         ]);
 
         registry.hotkeys.get('Mod-b')?.[0]?.(apiToggling(toggled));
@@ -381,7 +390,9 @@ describe('the hotkeys of a registry', () => {
 
     it('are an error for a shortcut on an entry with nothing to toggle', () => {
         expect(() =>
-            buildPluginRegistry([{ id: 'custom', toolbar: [{ render: () => null, shortcut: 'Mod-b' }] }]),
+            buildPluginRegistry([
+                { id: 'custom', toolbar: [{ label: 'Custom', render: () => null, shortcut: 'Mod-b' }] },
+            ]),
         ).toThrow(
             'Plugin "custom" names shortcut "Mod-b" with nothing to toggle: name a mark, list, text block, void block or inline with `toggles`.',
         );
@@ -390,7 +401,12 @@ describe('the hotkeys of a registry', () => {
     it('leave a key the plugin binds itself to the plugin, the entry only showing it', () => {
         const own = vi.fn();
         const registry = buildPluginRegistry([
-            { id: 'bold', content: boldContent, toolbar: [{ icon, shortcut: 'Mod-b' }], hotkeys: { 'Mod-b': own } },
+            {
+                id: 'bold',
+                content: boldContent,
+                toolbar: [{ icon, label: 'Bold', shortcut: 'Mod-b' }],
+                hotkeys: { 'Mod-b': own },
+            },
         ]);
 
         expect(registry.hotkeys.get('Mod-b')).toEqual([own]);
@@ -407,7 +423,7 @@ describe('the menu commands of a toolbar entry', () => {
             {
                 id: 'quote',
                 content,
-                toolbar: [{ icon, menu: { keywords: ['cite'] } }],
+                toolbar: [{ icon, label: 'Quote', menu: { keywords: ['cite'] } }],
                 commands: [explicit],
             },
         ]);
@@ -418,7 +434,7 @@ describe('the menu commands of a toolbar entry', () => {
 
     it('turn a text block into the type, and know when the selection is in it', () => {
         const types: string[] = [];
-        const registry = buildPluginRegistry([{ id: 'quote', content, toolbar: [{ icon, menu: {} }] }]);
+        const registry = buildPluginRegistry([{ id: 'quote', content, toolbar: [{ icon, label: 'Quote', menu: {} }] }]);
         const command = registry.commands[0];
 
         command?.run({ blocks: { setType: (type: string) => types.push(type) } } as unknown as EditorControlApi);
@@ -431,7 +447,7 @@ describe('the menu commands of a toolbar entry', () => {
     it('may not share an id with a command another plugin declares', () => {
         expect(() =>
             buildPluginRegistry([
-                { id: 'quote', content, toolbar: [{ icon, menu: {} }] },
+                { id: 'quote', content, toolbar: [{ icon, label: 'Quote', menu: {} }] },
                 { id: 'other', commands: [{ id: 'quote', label: 'Quote', group: 'insert', run: () => {} }] },
             ]),
         ).toThrow('Duplicate command id "quote": declared by plugin "quote" and plugin "other".');
@@ -440,7 +456,11 @@ describe('the menu commands of a toolbar entry', () => {
     it('are an error for a type that is neither a block nor an inline to insert', () => {
         expect(() =>
             buildPluginRegistry([
-                { id: 'bold', content: defineContent({ marks: { bold: mark() } }), toolbar: [{ icon, menu: {} }] },
+                {
+                    id: 'bold',
+                    content: defineContent({ marks: { bold: mark() } }),
+                    toolbar: [{ icon, label: 'Quote', menu: {} }],
+                },
             ]),
         ).toThrow('Plugin "bold" offers a `menu`');
     });

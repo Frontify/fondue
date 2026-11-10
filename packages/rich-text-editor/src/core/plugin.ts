@@ -139,7 +139,7 @@ export type RtePluginDefinition = Omit<RtePlugin, 'id' | 'kind'> & { id?: string
  * @example
  * const quotePlugin = definePlugin({
  *     content: quoteContent,
- *     toolbar: [{ icon: IconSpeechBubbleQuote }],
+ *     toolbar: [{ label: 'Quote', icon: IconSpeechBubbleQuote }],
  *     inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
  * });
  */
@@ -170,10 +170,15 @@ export type RteDelimiterRule = { delimiter: string };
 export type RteEditView = ComponentType<EditProps<any, any>>;
 
 /**
+ * What an icon component is called with
+ */
+export type RteIconProps = { size?: 16 };
+
+/**
  * An icon component, such as one from `@frontify/fondue-icons`
  */
 // A bare function type: ComponentType's `propTypes` check makes it invariant in its props.
-export type RteIcon = (props: { size?: 16 }) => ReactNode;
+export type RteIcon = (props: RteIconProps) => ReactNode;
 
 /**
  * The size the editor draws every toolbar and menu icon at
@@ -190,10 +195,9 @@ type RteToolbarEntryBase = {
      */
     toggles?: string;
     /**
-     * Accessible name and tooltip
-     * @default capitalised(type)
+     * The button's accessible name and tooltip, and the control's name in the `/` menu
      */
-    label?: string;
+    label: string;
     /**
      * Hotkey in `Mod-b` style, shown in the tooltip. It toggles `toggles`
      * unless the plugin's `hotkeys` binds the same key.

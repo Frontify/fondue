@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineContent, defineInline, definePlugin, type EditProps, type RtePlugin } from '#/core';
+import { defineContent, defineInline, definePlugin, type RtePlugin } from '#/core';
 
-import { isSafeHref } from '../shared/helpers/href';
-
-import { MentionDraft } from './components/MentionDraft';
+import { MentionEditor } from './components/MentionEditor';
 import { MentionLink } from './components/MentionLink';
+import { mentionValueOf, safeMentionHref } from './helpers/mention';
 import styles from './mention.module.scss';
 import { type MentionItem, type MentionItems, type MentionKind, type MentionValue } from './types';
 
@@ -25,12 +24,6 @@ export type MentionContentOptions = {
 const KINDS: readonly MentionKind[] = ['user', 'group', 'all'];
 
 /**
- * Returns what the document keeps of a chosen item, without the avatar
- */
-export const mentionValueOf = ({ id, username, name, kind }: MentionItem): MentionValue =>
-    kind === undefined || kind === 'user' ? { id, username, name } : { id, username, name, kind };
-
-/**
  * Throws unless the trigger is exactly one character
  */
 const assertMentionTrigger = (trigger: string, factory: string): void => {
@@ -38,17 +31,6 @@ const assertMentionTrigger = (trigger: string, factory: string): void => {
     if ([...trigger].length !== 1) {
         throw new Error(`${factory}: \`trigger\` must be exactly one character, got "${trigger}".`);
     }
-};
-
-/**
- * Returns the app's `href` for a mention, or `undefined` when the URL is unsafe, such as `javascript:`
- */
-const safeMentionHref = (href: MentionContentOptions['href'], mention: MentionValue): string | undefined => {
-    const target = href?.(mention);
-    if (target !== undefined && isSafeHref(target)) {
-        return target;
-    }
-    return undefined;
 };
 
 /**
@@ -88,9 +70,10 @@ export const mentionContent = ({ href, trigger = '@' }: MentionContentOptions = 
                             const id = element.dataset.mentionId ?? '';
                             const username = element.dataset.mentionUsername ?? '';
                             const kind = KINDS.find((known) => known === element.dataset.mentionKind);
-                            return id === '' || username === ''
-                                ? null
-                                : mentionValueOf({ id, username, name: element.title, kind });
+                            if (id === '' || username === '') {
+                                return null;
+                            }
+                            return mentionValueOf({ id, username, name: element.title, kind });
                         },
                     },
                 ],
@@ -138,44 +121,9 @@ export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
         items = searchIn(options.items);
     }
 
-    // `value` is null until someone is chosen.
-    const MentionEditor = ({
-        value,
-        setValue,
-        isFocused,
-        remove,
-        api,
-    }: EditProps<MentionValue, MentionValue | null>) => {
-        if (value === null) {
-            return (
-                <MentionDraft
-                    trigger={trigger}
-                    items={items}
-                    focused={isFocused}
-                    onChoose={(person) => {
-                        setValue(mentionValueOf(person));
-                        // Return the caret to after the mention; the space keeps typing outside it.
-                        api.focus();
-                        api.insertText(' ');
-                    }}
-                    onCancel={(text) => {
-                        remove();
-                        api.focus();
-                        api.insertText(text);
-                    }}
-                    onRemove={() => {
-                        remove();
-                        api.focus();
-                    }}
-                />
-            );
-        }
-        return <MentionLink value={value} href={safeMentionHref(href, value)} trigger={trigger} />;
-    };
-
     return definePlugin({
         content: mentionContent({ href, trigger }),
-        edit: { mention: MentionEditor },
+        edit: { mention: (props) => <MentionEditor {...props} items={items} trigger={trigger} href={href} /> },
         hotkeys: {
             // Inserts an empty mention that the `edit` view takes over.
             [trigger]: (api) => api.insert('mention'),

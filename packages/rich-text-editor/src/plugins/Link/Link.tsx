@@ -2,7 +2,7 @@
 
 import { defineContent, defineMark, definePlugin, type HotkeyHandler, type ToolbarItemProps } from '#/core';
 
-import { isSafeHref, toHref } from '../shared/helpers/href';
+import { isLinkablePaste, isSafeHref, toHref, WEB_ADDRESS } from '../shared/helpers/href';
 
 import { LinkEditor } from './components/LinkEditor';
 import { LinkToolbarButton } from './components/LinkToolbarButton';
@@ -100,18 +100,21 @@ const LinkToolbar = (props: ToolbarItemProps) => <LinkToolbarButton {...props} s
  */
 export const linkPlugin = /* @__PURE__ */ definePlugin({
     content: linkContent,
-    toolbar: [{ render: LinkToolbar }],
+    toolbar: [{ label: 'Link', render: LinkToolbar }],
     edit: { link: LinkEditor },
     hotkeys,
     // A web address typed and followed by a space becomes a link. The pattern
     // names only web schemes, so what it matches is always a safe href.
-    inputRules: [{ kind: 'markPattern', pattern: /https?:\/\/[^\s]+/, mark: 'link', value: (href) => ({ href }) }],
+    inputRules: [{ kind: 'markPattern', pattern: WEB_ADDRESS, mark: 'link', value: (href) => ({ href }) }],
     // A web or mail address pasted over selected text links that text, as
     // in most editors; anything else pastes as usual.
     onPaste: ({ text }, api) => {
         const typed = text.trim();
         const { isCollapsed, marks } = api.selection.get();
-        const href = /^(https?:\/\/|mailto:)/i.test(typed) ? toHref(typed) : null;
+        let href: string | null = null;
+        if (isLinkablePaste(typed)) {
+            href = toHref(typed);
+        }
         if (isCollapsed || href === null || !isSafeHref(href)) {
             return false;
         }

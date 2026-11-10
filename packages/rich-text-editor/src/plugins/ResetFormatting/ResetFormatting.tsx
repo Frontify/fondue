@@ -31,5 +31,5 @@ const ResetFormattingButton = ({ api }: ToolbarItemProps) => (
  */
 export const resetFormattingPlugin = /* @__PURE__ */ definePlugin({
     id: 'reset-formatting',
-    toolbar: [{ render: ResetFormattingButton, floating: 'inline' }],
+    toolbar: [{ label: 'Reset formatting', render: ResetFormattingButton, floating: 'inline' }],
 });

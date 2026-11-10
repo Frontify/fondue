@@ -32,7 +32,7 @@ export const highlightContent = /* @__PURE__ */ defineContent({
 
 export const highlightPlugin = /* @__PURE__ */ definePlugin({
     content: highlightContent,
-    toolbar: [{ icon: IconHighlight, shortcut: 'Mod-h' }],
+    toolbar: [{ label: 'Highlight', icon: IconHighlight, shortcut: 'Mod-h' }],
 });
 
 <RichTextEditor plugins={[...defaultPlugins, highlightPlugin]} />

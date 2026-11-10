@@ -39,6 +39,6 @@ export const strikethroughContent = /* @__PURE__ */ defineContent({
  */
 export const strikethroughPlugin = /* @__PURE__ */ definePlugin({
     content: strikethroughContent,
-    toolbar: [{ icon: IconTextFormatStrikethrough, shortcut: 'Mod-Shift-x' }],
+    toolbar: [{ label: 'Strikethrough', icon: IconTextFormatStrikethrough, shortcut: 'Mod-Shift-x' }],
     inputRules: [{ delimiter: '~~' }],
 });

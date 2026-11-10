@@ -251,18 +251,6 @@ const assertHasId = (plugin: RtePlugin): void => {
     throw new Error(`Plugin has no id: ${first}`);
 };
 
-const capitalised = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
-
-const labelOf = (plugin: RtePlugin, entry: RteToolbarEntry, type: string | undefined): string => {
-    if (entry.label !== undefined) {
-        return entry.label;
-    }
-    if (type === undefined) {
-        return plugin.id;
-    }
-    return capitalised(type);
-};
-
 /**
  * Adds a plugin's declared types to `target`. Two plugins declaring the same
  * type is an error (one would silently replace the other); the same definition
@@ -312,7 +300,7 @@ const toolbarEntryOf = (plugin: RtePlugin, entry: RteToolbarEntry, key: string):
         key,
         own,
         floating: entry.floating ?? defaultFloatingPlacement(own),
-        label: labelOf(plugin, entry, type),
+        label: entry.label,
         shortcut: entry.shortcut,
     };
     if (entry.render !== undefined) {
