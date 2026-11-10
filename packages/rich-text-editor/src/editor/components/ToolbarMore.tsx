@@ -159,14 +159,9 @@ export const ToolbarMore = ({
                                 // Focus is placed by the panel on open and by its closing.
                                 onOpenAutoFocus={(event) => event.preventDefault()}
                                 onCloseAutoFocus={(event) => event.preventDefault()}
-                                // A flyout a control opened portals to the body, outside the panel to Radix, yet it is the panel's own.
+                                // A flyout or menu a control in the panel has open portals out of it, so any press is the panel's own while one is open.
                                 onInteractOutside={(event) => {
-                                    const { target } = event;
-                                    if (!(target instanceof Element) || content === null) {
-                                        return;
-                                    }
-                                    const layer = target.closest('[data-radix-popper-content-wrapper]');
-                                    if (layer !== null && !layer.contains(content)) {
+                                    if (host.querySelector('[aria-expanded="true"]') !== null) {
                                         event.preventDefault();
                                     }
                                 }}
