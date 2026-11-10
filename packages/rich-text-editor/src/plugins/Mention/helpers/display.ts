@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { isSafeHref } from '../../shared/helpers/href';
 import { withoutControlCharacters } from '../../shared/helpers/text';
-import { MENTION_KINDS, type MentionKind, type MentionResolution, type MentionValue } from '../types';
+import { MENTION_KINDS, type MentionHref, type MentionKind, type MentionResolution, type MentionValue } from '../types';
+
+import { safeMentionHref } from './mention';
 
 /**
  * What a mention shows. Every view draws this and nothing else, so they cannot disagree.
@@ -24,7 +25,7 @@ export type MentionDisplay = {
 
 type MentionDisplayOptions = {
     resolve?: (mention: MentionValue) => MentionResolution;
-    href?: (mention: MentionValue) => string | undefined;
+    href?: MentionHref;
     trigger: string;
 };
 
@@ -104,10 +105,5 @@ export const mentionDisplay = (
         default:
             throw new Error(`Unhandled mention resolution: ${JSON.stringify(resolution satisfies never)}`);
     }
-    const target = href?.(mention);
-    return {
-        label: `${trigger}${shown.username}`,
-        title: shown.name,
-        href: target !== undefined && isSafeHref(target) ? target : undefined,
-    };
+    return { label: `${trigger}${shown.username}`, title: shown.name, href: safeMentionHref(href, mention) };
 };

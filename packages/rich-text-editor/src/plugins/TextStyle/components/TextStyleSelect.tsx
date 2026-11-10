@@ -14,10 +14,12 @@ export const TextStyleSelect = ({
     selection,
     api,
     options,
+    label,
 }: {
     selection: RteSelectionSnapshot;
     api: EditorControlApi;
     options: readonly TextStyleOption[];
+    label: string;
 }): ReactNode => {
     const currentBlock = selection.block;
     // A stored style this editor does not offer still renders, but the dropdown shows it as a paragraph.
@@ -39,7 +41,7 @@ export const TextStyleSelect = ({
     return (
         // A Select fills its container, which in the toolbar's flex row is the whole width.
         <div className={styles.control}>
-            <Select aria-label="Text style" value={current} onSelect={handleSelect}>
+            <Select aria-label={label} value={current} onSelect={handleSelect}>
                 {options.map((option) => (
                     // Rows preview their style; the trigger keeps the plain label so the toolbar height stays fixed.
                     <Select.Item key={option} value={option} label={labelOf(option)}>

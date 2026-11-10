@@ -17,9 +17,9 @@ export type SubscriptMark = {
 /**
  * Subscript text, written as `<sub>`
  */
-export const subscriptContent = /* @__PURE__ */ defineContent({
+export const subscriptContent = defineContent({
     marks: {
-        subscript: /* @__PURE__ */ defineMark({
+        subscript: defineMark({
             tag: 'sub',
             excludes: ['superscript'],
             // An element with the alignment is subscript too: how Google Docs writes it.
@@ -36,5 +36,5 @@ export const subscriptContent = /* @__PURE__ */ defineContent({
  */
 export const subscriptPlugin = /* @__PURE__ */ definePlugin({
     content: subscriptContent,
-    toolbar: [{ icon: IconSubscript, shortcut: 'Mod-,' }],
+    toolbar: [{ label: 'Subscript', icon: IconSubscript, shortcut: 'Mod-,' }],
 });

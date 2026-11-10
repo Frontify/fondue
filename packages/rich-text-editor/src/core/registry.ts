@@ -4,7 +4,7 @@
 // reads `RtePlugin` and `RteContent`: the editor shell, engine and renderer read
 // the registry, so each declaration is gathered, ordered and checked once.
 
-import { createElement, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import { type EditorControlApi, type RteSelectionSnapshot } from './commands';
 import { type HtmlSpec, type StyleMap, withRootStyle } from './htmlSpec';
@@ -24,7 +24,6 @@ import {
     type RteInputRule,
     type RtePlugin,
     type RteToolbarEntry,
-    TOOLBAR_ICON_SIZE,
     type ToolbarItemProps,
     typesOf,
 } from './plugin';
@@ -196,6 +195,50 @@ export const ownTypeOf = (content: RteContent | undefined, type: string | undefi
     return { kind: 'none' };
 };
 
+/**
+ * What a toolbar entry is drawn as for its kind. A button is `pressable` when
+ * it shows a pressed state: a void block or an inline is inserted, not switched on and off.
+ */
+export type OwnControl = { kind: 'button'; pressable: boolean } | { kind: 'none' };
+
+/**
+ * The control an entry without its own `render` gets for its kind: a button
+ * toggling a mark, list, text block, void block or inline; nothing for the rest.
+ */
+export const controlOf = (own: OwnType): OwnControl => {
+    switch (own.kind) {
+        case 'mark':
+        case 'list':
+        case 'textBlock':
+            return { kind: 'button', pressable: true };
+        case 'voidBlock':
+        case 'inline':
+            return { kind: 'button', pressable: false };
+        case 'container':
+        case 'none':
+            return { kind: 'none' };
+    }
+};
+
+/**
+ * Whether the selection already carries the type: the mark, or a block of it
+ * around the selection. Never for an inline, which the selection only sits beside.
+ */
+export const isOwnActive = (own: OwnType, selection: RteSelectionSnapshot): boolean => {
+    switch (own.kind) {
+        case 'mark':
+            return own.type in selection.marks;
+        case 'list':
+        case 'container':
+        case 'textBlock':
+        case 'voidBlock':
+            return selection.blocks.some((block) => block.type === own.type);
+        case 'inline':
+        case 'none':
+            return false;
+    }
+};
+
 type ToggleOwnParams = {
     own: OwnType;
     api: EditorControlApi;
@@ -215,9 +258,8 @@ export const toggleOwn = ({ own, api, selection, value }: ToggleOwnParams): void
         case 'list':
             return api.lists.toggle(own.type);
         case 'textBlock': {
-            const isActive = selection.blocks.some((block) => block.type === own.type);
             let type = own.type;
-            if (isActive) {
+            if (isOwnActive(own, selection)) {
                 type = PARAGRAPH;
             }
             return api.blocks.setType(type, value);
@@ -233,15 +275,13 @@ export const toggleOwn = ({ own, api, selection, value }: ToggleOwnParams): void
     }
 };
 
-const isContent = (entry: RtePlugin | RteContent): entry is RteContent => entry.kind === 'content';
-
 /**
  * Names a bare content in errors: the first type it declares.
  */
 const firstTypeOf = (content: RteContent): string => typesOf(content)[0] ?? 'content';
 
 /**
- * An untyped caller can leave out a plugin's `id`; it would be read as content otherwise.
+ * A plugin built by hand, not by `definePlugin`, can leave out its `id` or leave it empty.
  */
 const assertHasId = (plugin: RtePlugin): void => {
     if (typeof plugin.id === 'string' && plugin.id !== '') {
@@ -249,18 +289,6 @@ const assertHasId = (plugin: RtePlugin): void => {
     }
     const first = typesOf(plugin.content)[0] ?? 'no type declared';
     throw new Error(`Plugin has no id: ${first}`);
-};
-
-const capitalised = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
-
-const labelOf = (plugin: RtePlugin, entry: RteToolbarEntry, type: string | undefined): string => {
-    if (entry.label !== undefined) {
-        return entry.label;
-    }
-    if (type === undefined) {
-        return plugin.id;
-    }
-    return capitalised(type);
 };
 
 /**
@@ -294,12 +322,16 @@ const register = <TDefinition>(
     }
 };
 
-/**
- * What an entry without its own `render` is drawn as: a button toggling one of these.
- */
-const BUTTON_KINDS: ReadonlySet<OwnType['kind']> = new Set(['mark', 'list', 'textBlock', 'voidBlock', 'inline']);
-
 const NOTHING_TO_TOGGLE = 'nothing to toggle: name a mark, list, text block, void block or inline with `toggles`.';
+
+/**
+ * Throws unless the entry has a label. The label is the control's only accessible name, so an untyped caller cannot leave it out.
+ */
+const assertLabelled = (plugin: RtePlugin, entry: RteToolbarEntry): void => {
+    if (typeof entry.label !== 'string' || entry.label === '') {
+        throw new Error(`Plugin "${plugin.id}" has a toolbar entry with no \`label\`.`);
+    }
+};
 
 const toolbarEntryOf = (plugin: RtePlugin, entry: RteToolbarEntry, key: string): ToolbarEntry => {
     const type = entry.toggles ?? onlyTypeOf(plugin.content);
@@ -307,12 +339,13 @@ const toolbarEntryOf = (plugin: RtePlugin, entry: RteToolbarEntry, key: string):
     if (entry.toggles !== undefined && own.kind === 'none') {
         throw new Error(`Plugin "${plugin.id}" toggles "${entry.toggles}", which its content does not declare.`);
     }
+    assertLabelled(plugin, entry);
     const shared = {
         id: plugin.id,
         key,
         own,
         floating: entry.floating ?? defaultFloatingPlacement(own),
-        label: labelOf(plugin, entry, type),
+        label: entry.label,
         shortcut: entry.shortcut,
     };
     if (entry.render !== undefined) {
@@ -321,11 +354,11 @@ const toolbarEntryOf = (plugin: RtePlugin, entry: RteToolbarEntry, key: string):
     if (entry.icon === undefined) {
         throw new Error(`Plugin "${plugin.id}" has a toolbar entry with no \`render\` and no \`icon\`.`);
     }
-    if (!BUTTON_KINDS.has(own.kind)) {
+    const control = controlOf(own);
+    if (control.kind === 'none') {
         throw new Error(`Plugin "${plugin.id}" has a toolbar entry with ${NOTHING_TO_TOGGLE}`);
     }
-    const pressable = own.kind === 'mark' || own.kind === 'list' || own.kind === 'textBlock';
-    return { ...shared, control: 'button', icon: entry.icon, pressable };
+    return { ...shared, control: 'button', icon: entry.icon, pressable: control.pressable };
 };
 
 /**
@@ -337,11 +370,7 @@ const menuCommandOf = (
     keywords: readonly string[] | undefined,
 ): RteBlockCommand => {
     const { own } = entry;
-    let icon: ReactNode;
-    if (entry.icon !== undefined) {
-        icon = createElement(entry.icon, { size: TOOLBAR_ICON_SIZE });
-    }
-    const command = { label: entry.label, icon, keywords };
+    const command = { label: entry.label, icon: entry.icon, keywords };
     switch (own.kind) {
         case 'textBlock':
             return {
@@ -362,7 +391,9 @@ const menuCommandOf = (
         case 'voidBlock':
         case 'inline':
             return { ...command, id: own.type, group: 'insert', run: (api) => api.insert(own.type) };
-        default:
+        case 'mark':
+        case 'container':
+        case 'none':
             throw new Error(
                 `Plugin "${plugin.id}" offers a \`menu\` for something that is no text block, list, void block or inline.`,
             );
@@ -451,7 +482,7 @@ const addShortcut = (draft: Draft, plugin: RtePlugin, item: ToolbarEntry): void 
     if (shortcut === undefined || hasOwnKey(plugin.hotkeys ?? {}, shortcut)) {
         return;
     }
-    if (!BUTTON_KINDS.has(item.own.kind)) {
+    if (controlOf(item.own).kind === 'none') {
         throw new Error(`Plugin "${plugin.id}" names shortcut "${shortcut}" with ${NOTHING_TO_TOGGLE}`);
     }
     addHotkey(draft, shortcut, (api) => toggleOwn({ own: item.own, api, selection: api.selection.get() }));
@@ -558,13 +589,21 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
 
     const ids: string[] = [];
     for (const entry of entries) {
-        if (isContent(entry)) {
-            addContent(draft, entry, firstTypeOf(entry));
-        } else {
-            assertHasId(entry);
-            ids.push(entry.id);
-            addEditing(draft, entry);
-            addContent(draft, entry.content, entry.id);
+        switch (entry.kind) {
+            case 'content':
+                addContent(draft, entry, firstTypeOf(entry));
+                break;
+            case 'plugin':
+                assertHasId(entry);
+                ids.push(entry.id);
+                addEditing(draft, entry);
+                addContent(draft, entry.content, entry.id);
+                break;
+            // Only an untyped caller gets here: every typed entry is one of the two kinds above.
+            default:
+                throw new Error(
+                    `Unknown entry kind ${JSON.stringify((entry as { kind?: unknown }).kind)}: build a plugin with \`definePlugin\` and a content with \`defineContent\`.`,
+                );
         }
     }
 

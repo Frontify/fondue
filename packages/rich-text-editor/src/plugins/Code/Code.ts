@@ -19,9 +19,9 @@ export type CodeMark = {
 /**
  * Inline code, written as `<code>`
  */
-export const codeContent = /* @__PURE__ */ defineContent({
+export const codeContent = defineContent({
     marks: {
-        code: /* @__PURE__ */ defineMark({
+        code: defineMark({
             // Code is literal: `--` and `**` stay as typed inside it.
             excludesInputRules: true,
             // Typing at the end of code does not carry it on.
@@ -37,6 +37,6 @@ export const codeContent = /* @__PURE__ */ defineContent({
  */
 export const codePlugin = /* @__PURE__ */ definePlugin({
     content: codeContent,
-    toolbar: [{ icon: IconCode, shortcut: 'Mod-e' }],
+    toolbar: [{ label: 'Code', icon: IconCode, shortcut: 'Mod-e' }],
     inputRules: [{ delimiter: '`' }],
 });

@@ -5,9 +5,10 @@ import { IconDroplet } from '@frontify/fondue-icons';
 import { type ReactNode, useId, useRef, useState } from 'react';
 
 import { type EditorControlApi, type RteSelectionSnapshot } from '#/core';
+import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
+import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
-import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
 import { type FontColorValue, isCssColor, parseCssColor, type RgbaColor, toCssColor } from '../helpers/colors';
 
 import styles from './colorFlyout.module.scss';
@@ -37,9 +38,11 @@ const typedHex = (container: HTMLElement | null, alpha: number | undefined): Rgb
 export const ColorFlyout = ({
     selection,
     api,
+    label,
 }: {
     selection: RteSelectionSnapshot;
     api: EditorControlApi;
+    label: string;
 }): ReactNode => {
     const value = selection.marks.fontColor as Partial<FontColorValue> | undefined;
     // Coloured text may carry a colour the picker cannot read (`red`, `hsl()`
@@ -101,10 +104,10 @@ export const ColorFlyout = ({
                 <ToolbarButton
                     active={hasColor}
                     // The swatch is visual only, so the colour goes in the name.
-                    title={currentCss === undefined ? 'Text colour' : `Text colour: ${currentCss.toUpperCase()}`}
+                    title={currentCss === undefined ? label : `${label}: ${currentCss.toUpperCase()}`}
                 >
                     <span className={styles.trigger}>
-                        <IconDroplet size={16} />
+                        <IconDroplet size={TOOLBAR_ICON_SIZE} />
                         <span
                             aria-hidden
                             className={styles.swatch}
