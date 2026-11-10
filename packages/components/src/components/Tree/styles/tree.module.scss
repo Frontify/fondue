@@ -63,6 +63,8 @@
 
 .item {
     flex: 1;
+    /* Lets long labels truncate instead of widening the row past its container. */
+    min-width: 0;
     display: flex;
     align-items: center;
     column-gap: var(--tree-gap);
