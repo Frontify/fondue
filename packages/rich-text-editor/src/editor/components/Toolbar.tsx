@@ -20,7 +20,7 @@ import { useToolbarRoving } from '../hooks/useToolbarRoving';
 import { type RichTextEditorLabels } from '../labels';
 import styles from '../richTextEditor.module.scss';
 
-import { ToolbarMore } from './ToolbarMore';
+import { ToolbarMore, ToolbarMoreProbe } from './ToolbarMore';
 import { TurnInto } from './TurnInto';
 
 /**
@@ -102,6 +102,18 @@ export const Toolbar = ({
             </div>
         ));
 
+    let moreNode: ReactNode = null;
+    if (more && panel === null && fit.kind === 'measuring') {
+        // Nothing has overflowed yet: More's width is all the measuring needs.
+        moreNode = <ToolbarMoreProbe labels={labels} />;
+    } else if (more) {
+        moreNode = (
+            <ToolbarMore labels={labels} onPanel={setPanel}>
+                {drawGroups(overflow)}
+            </ToolbarMore>
+        );
+    }
+
     return (
         <div
             ref={toolbarRef}
@@ -120,11 +132,7 @@ export const Toolbar = ({
         >
             {showTurnInto ? <TurnInto api={api} commands={turnInto} selection={selection} labels={labels} /> : null}
             {drawGroups(row)}
-            {more ? (
-                <ToolbarMore labels={labels} onPanel={setPanel}>
-                    {drawGroups(overflow)}
-                </ToolbarMore>
-            ) : null}
+            {moreNode}
         </div>
     );
 };

@@ -10,6 +10,7 @@ import {
 } from '@radix-ui/react-popover';
 import {
     type ComponentProps,
+    forwardRef,
     type KeyboardEvent,
     type MouseEvent,
     type MutableRefObject,
@@ -92,16 +93,14 @@ export const ToolbarMore = ({
         return () => onPanel(null);
     }, [host, onPanel]);
 
-    // Fondue's Button spreads undeclared props onto the <button>, so these still reach the DOM.
     const buttonProps = {
-        [MORE_ATTRIBUTE]: '',
         // Keep the selection in the editor; runs before the trigger's own handler.
         onMouseDown: (event: MouseEvent<HTMLButtonElement>) => event.preventDefault(),
         // Runs before the trigger toggles the panel; a keyboard's click has no pointer detail.
         onClick: (event: MouseEvent<HTMLButtonElement>) => {
             wantsFocusRef.current = event.detail === 0;
         },
-    } as ComponentProps<typeof Button>;
+    };
 
     const onOpenChange = (next: boolean): void => {
         // Closing hides the panel and any focus in it; More is where the panel was opened from.
@@ -136,18 +135,7 @@ export const ToolbarMore = ({
                     <span className={styles.moreAnchor}>
                         <Tooltip.Trigger asChild>
                             <PopoverTrigger asChild>
-                                <Button
-                                    {...buttonProps}
-                                    ref={moreRef}
-                                    type="button"
-                                    size="small"
-                                    aspect="square"
-                                    emphasis="weak"
-                                    className={styles.more}
-                                    aria-label={labels.more}
-                                >
-                                    <IconDotsHorizontal size={20} />
-                                </Button>
+                                <MoreButton {...buttonProps} ref={moreRef} label={labels.more} />
                             </PopoverTrigger>
                         </Tooltip.Trigger>
                         {/* Out of sight and of the accessibility tree, yet laid out, so the row can measure the slots in it and a flyout can hang from them. */}
@@ -201,6 +189,40 @@ export const ToolbarMore = ({
         </>
     );
 };
+
+/**
+ * More's button alone, for the row to read its width before anything
+ * overflows: the panel, its tooltip and its theme are not needed for that, and
+ * a row that fits never mounts them.
+ */
+export const ToolbarMoreProbe = ({ labels }: { labels: RichTextEditorLabels }): ReactNode => (
+    <span className={styles.moreAnchor}>
+        <MoreButton label={labels.more} />
+    </span>
+);
+
+type MoreButtonProps = { label: string } & Omit<ComponentProps<typeof Button>, 'children' | 'aria-label'>;
+
+/** The More button as drawn; a trigger's injected props reach the <button> through Fondue's Button. */
+const MoreButton = forwardRef<HTMLButtonElement, MoreButtonProps>(function MoreButton({ label, ...rest }, ref) {
+    // Fondue's Button spreads undeclared props onto the <button>, so the marker still reaches the DOM.
+    const marker = { [MORE_ATTRIBUTE]: '' } as ComponentProps<typeof Button>;
+    return (
+        <Button
+            {...marker}
+            {...rest}
+            ref={ref}
+            type="button"
+            size="small"
+            aspect="square"
+            emphasis="weak"
+            className={styles.more}
+            aria-label={label}
+        >
+            <IconDotsHorizontal size={20} />
+        </Button>
+    );
+});
 
 /** The panel's toolbar, with the roving focus the row has. */
 const MorePanel = ({
