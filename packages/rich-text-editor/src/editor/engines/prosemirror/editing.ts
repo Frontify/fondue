@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { dropCursor } from 'prosemirror-dropcursor';
 import { EditorState, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
@@ -124,6 +125,8 @@ const mount = ({
                 ...keystrokePipeline(registry, schema, api),
                 copiedExtrasPlugin(),
                 placeholderPlugin(() => currentPlaceholder, placeholderClassName),
+                // Drawn in the view's offset parent, outside the text, so `currentColor` would be the host's colour.
+                dropCursor({ color: 'var(--color-primary-default)', width: 2 }),
             ],
         }),
         // Clicking an inline atom (mention, ...) puts the caret after it rather than selecting it.
