@@ -19,9 +19,9 @@ export type StrikethroughMark = {
 /**
  * Struck-through text, written as `<s>`
  */
-export const strikethroughContent = /* @__PURE__ */ defineContent({
+export const strikethroughContent = defineContent({
     marks: {
-        strikethrough: /* @__PURE__ */ defineMark({
+        strikethrough: defineMark({
             tag: 's',
             // A decorated element counts too, as Google Docs writes it; `text-decoration: none` never removes it, as in a browser.
             parse: [
@@ -46,6 +46,6 @@ export const strikethroughContent = /* @__PURE__ */ defineContent({
  */
 export const strikethroughPlugin = /* @__PURE__ */ definePlugin({
     content: strikethroughContent,
-    toolbar: [{ icon: IconTextFormatStrikethrough, shortcut: 'Mod-Shift-x' }],
+    toolbar: [{ label: 'Strikethrough', icon: IconTextFormatStrikethrough, shortcut: 'Mod-Shift-x' }],
     inputRules: [{ delimiter: '~~' }],
 });

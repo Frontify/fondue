@@ -4,8 +4,8 @@ import { Button, Flyout } from '@frontify/fondue-components';
 import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { type EditProps } from '#/core';
+import { isApple } from '#/ui/platform';
 
-import { isApple } from '../../shared/helpers/platform';
 import { type LinkSearch } from '../helpers/destination';
 import { allowsHref, type LinkPolicy } from '../helpers/policy';
 import { type LinkValue } from '../helpers/value';

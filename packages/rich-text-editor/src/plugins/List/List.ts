@@ -33,7 +33,7 @@ export type NumberedListBlock<TItem extends RteBlockNode = RteBlockNode> = {
 };
 
 // One shared object: two plugins may declare the same type only with the very same definition.
-const listItem = /* @__PURE__ */ defineBlock({
+const listItem = defineBlock({
     // The paragraph comes first: it is what a new item is filled with.
     content: { blocks: [PARAGRAPH, ANY_LIST] },
     toHtml: () => ({ tag: 'li', attrs: { class: styles.item }, children: true }),
@@ -67,7 +67,7 @@ const listContent = ({ type, tag, className }: ListContentParams) =>
 /**
  * A bulleted list, written as `<ul>`. Shares its item with `numberedListContent`.
  */
-export const bulletListContent = /* @__PURE__ */ listContent({
+export const bulletListContent = listContent({
     type: 'bulletList',
     tag: 'ul',
     className: styles.bulletList,
@@ -76,7 +76,7 @@ export const bulletListContent = /* @__PURE__ */ listContent({
 /**
  * A numbered list, written as `<ol>`. Shares its item with `bulletListContent`.
  */
-export const numberedListContent = /* @__PURE__ */ listContent({
+export const numberedListContent = listContent({
     type: 'numberedList',
     tag: 'ol',
     className: styles.numberedList,

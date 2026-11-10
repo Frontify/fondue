@@ -3,7 +3,7 @@
 /**
  * The schemes a link may use, which leaves out `javascript:` and `data:`
  */
-const SAFE_SCHEMES = /* @__PURE__ */ new Set(['http:', 'https:', 'mailto:', 'tel:']);
+const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']);
 
 /**
  * `localhost:3000`, `example.com:8080/x`: a host and a port, which reads like a
@@ -11,6 +11,21 @@ const SAFE_SCHEMES = /* @__PURE__ */ new Set(['http:', 'https:', 'mailto:', 'tel
  * a browser takes `javascript:0/alert(1)` as a scheme, and so does `isSafeHref`.
  */
 const HOST_AND_PORT = /^[^/:?#]+:\d+(?:[/?#]|$)/;
+
+/**
+ * The schemes a typed or pasted address may start with to become a link
+ */
+const LINKABLE_SCHEMES = 'https?://|mailto:|tel:';
+
+/**
+ * A web, mail or phone address as it is typed in text: a linkable scheme and everything up to the next space
+ */
+export const LINKABLE_ADDRESS = new RegExp(`(?:${LINKABLE_SCHEMES})[^\\s]+`);
+
+/**
+ * What pasted text starts with to become a link: a web, mail or phone scheme
+ */
+const LINKABLE_PASTE = new RegExp(`^(?:${LINKABLE_SCHEMES})`, 'i');
 
 /**
  * Longer than any link someone means, and than most browsers keep
@@ -44,6 +59,11 @@ export const isSafeHref = (href: unknown): href is string => {
     const scheme = schemeOf(href);
     return scheme === null || SAFE_SCHEMES.has(scheme);
 };
+
+/**
+ * Whether pasted text is a web, mail or phone address that may become a link
+ */
+export const isLinkablePaste = (text: string): boolean => LINKABLE_PASTE.test(text);
 
 /**
  * Paths and fragments within the site the document is shown on, kept as typed

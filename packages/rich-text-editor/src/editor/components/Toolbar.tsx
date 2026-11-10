@@ -12,14 +12,9 @@ import {
     useSyncExternalStore,
 } from 'react';
 
-import {
-    type EditorControlApi,
-    type RteBlockCommand,
-    TOOLBAR_ICON_SIZE,
-    type ToolbarEntry,
-    type ToolbarItemProps,
-} from '#/core';
-import { ToolbarButton } from '#/plugins/shared/ToolbarButton/ToolbarButton';
+import { type EditorControlApi, type RteBlockCommand, type ToolbarEntry, type ToolbarItemProps } from '#/core';
+import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
+import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { turnIntoCommands } from '../helpers/blockCommands';
 import { toolbarItemProps } from '../helpers/toolbarItem';
@@ -38,28 +33,7 @@ import { TurnInto } from './TurnInto';
  */
 export type ToolbarPlacement = 'floating' | 'top';
 
-/**
- * The plugins' toolbar UI, in mount order; nothing when no plugin has any.
- *
- * Subscribes to the editor state itself, so a keystroke re-renders the toolbar
- * rather than the editor around it.
- *
- * Keyboard use follows the toolbar pattern: the bar is one tab stop, the arrow
- * keys (and Home/End) move between its controls, Escape returns to the text
- * with the selection intact. The controls are whatever the plugins render, so
- * the stops are found in the DOM and their `tabIndex` set there after every
- * render.
- */
-export const Toolbar = ({
-    items: allItems,
-    commands = [],
-    api,
-    editorState,
-    placement,
-    labels,
-    controls,
-    focusRequestRef,
-}: {
+type ToolbarProps = {
     /**
      * The registry's toolbar entries, in mount order. The floating bar keeps the inline ones.
      */
@@ -88,7 +62,30 @@ export const Toolbar = ({
      * the first render after it was asked for.
      */
     focusRequestRef: MutableRefObject<boolean>;
-}): ReactNode => {
+};
+
+/**
+ * The plugins' toolbar UI, in mount order; nothing when no plugin has any.
+ *
+ * Subscribes to the editor state itself, so a keystroke re-renders the toolbar
+ * rather than the editor around it.
+ *
+ * Keyboard use follows the toolbar pattern: the bar is one tab stop, the arrow
+ * keys (and Home/End) move between its controls, Escape returns to the text
+ * with the selection intact. The controls are whatever the plugins render, so
+ * the stops are found in the DOM and their `tabIndex` set there after every
+ * render.
+ */
+export const Toolbar = ({
+    items: allItems,
+    commands = [],
+    api,
+    editorState,
+    placement,
+    labels,
+    controls,
+    focusRequestRef,
+}: ToolbarProps): ReactNode => {
     const getSelection = useCallback(() => api.selection.get(), [api]);
     const selection = useSyncExternalStore(editorState.subscribe, getSelection, getSelection);
     const toolbarRef = useRef<HTMLDivElement | null>(null);
@@ -189,7 +186,7 @@ export const Toolbar = ({
         >
             {showTurnInto ? <TurnInto api={api} commands={turnInto} selection={selection} labels={labels} /> : null}
             {items.map((item) => (
-                <ToolbarItemSlot key={item.key} item={item} itemProps={toolbarItemProps(item.own, api, selection)} />
+                <ToolbarItemSlot key={item.key} item={item} itemProps={toolbarItemProps(item, api, selection)} />
             ))}
         </div>
     );

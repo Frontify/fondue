@@ -64,14 +64,14 @@ const ReadonlyCheckItem = ({ value, children, style }: ReadonlyCheckItemProps): 
 /**
  * A to-do list whose items each have a checkbox
  */
-export const checkListContent = /* @__PURE__ */ defineContent({
+export const checkListContent = defineContent({
     blocks: {
-        checkList: /* @__PURE__ */ defineBlock({
+        checkList: defineBlock({
             content: { items: 'checkItem' },
             toHtml: () => ({ tag: 'ul', attrs: { 'data-check-list': '', class: styles.checkList }, children: true }),
             parse: [{ tag: 'ul[data-check-list]' }],
         }),
-        checkItem: /* @__PURE__ */ defineBlock<CheckValue>({
+        checkItem: defineBlock<CheckValue>({
             content: { blocks: [PARAGRAPH, ANY_LIST] },
             defaults: { checked: false },
             // Exported HTML cannot be interacted with, so its checkbox is a

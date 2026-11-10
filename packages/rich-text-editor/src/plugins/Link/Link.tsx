@@ -1,16 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    defineContent,
-    defineMark,
-    definePlugin,
-    type EditProps,
-    type HotkeyHandler,
-    type HtmlSpec,
-    type ToolbarItemProps,
-} from '#/core';
+import { defineContent, defineMark, definePlugin, type HotkeyHandler, type HtmlSpec } from '#/core';
 
-import { toHref } from '../shared/helpers/href';
+import { isLinkablePaste, LINKABLE_ADDRESS, toHref } from '../shared/helpers/href';
 
 import { LinkEditor } from './components/LinkEditor';
 import { LinkToolbarButton } from './components/LinkToolbarButton';
@@ -40,9 +32,6 @@ export type LinkPluginOptions = LinkPolicy & {
 /**
  * The address prefixes that mark typed or pasted text as a link.
  */
-const LINKABLE_SCHEMES = 'https?://|mailto:|tel:';
-const AUTOLINK_PATTERN = new RegExp(`(?:${LINKABLE_SCHEMES})[^\\s]+`);
-const LINKABLE_START = new RegExp(`^(?:${LINKABLE_SCHEMES})`, 'i');
 
 const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string, string> =>
     link?.openInNewTab === true ? { target: '_blank', rel: 'noopener noreferrer' } : {};
@@ -56,9 +45,9 @@ const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string
  * phone link, and any relative one.
  */
 export const linkContent = (policy: LinkPolicy = {}) =>
-    /* @__PURE__ */ defineContent({
+    defineContent({
         marks: {
-            link: /* @__PURE__ */ defineMark<LinkValue>({
+            link: defineMark<LinkValue>({
                 // Outside every other mark, so a partly styled link renders as one anchor, not cut up by a colour or an emphasis inside.
                 nesting: -2,
                 // Typing at the end of a link does not extend it.
@@ -141,22 +130,23 @@ const HOTKEY: keyof typeof hotkeys = 'Mod-k';
  * @example
  * const links = linkPlugin({ allowedSchemes: ['https', 'mailto'], search });
  */
-export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) => {
-    const LinkToolbar = (props: ToolbarItemProps) => (
-        <LinkToolbarButton {...props} shortcut={HOTKEY} policy={policy} search={search} />
-    );
-    const LinkEdit = (props: EditProps<LinkValue>) => <LinkEditor {...props} policy={policy} search={search} />;
-
-    return /* @__PURE__ */ definePlugin({
-        content: /* @__PURE__ */ linkContent(policy),
-        toolbar: [{ render: LinkToolbar }],
-        edit: { link: LinkEdit },
+export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) =>
+    /* @__PURE__ */ definePlugin({
+        content: linkContent(policy),
+        toolbar: [
+            {
+                label: 'Link',
+                shortcut: HOTKEY,
+                render: (props) => <LinkToolbarButton {...props} policy={policy} search={search} />,
+            },
+        ],
+        edit: { link: (props) => <LinkEditor {...props} policy={policy} search={search} /> },
         hotkeys,
         // The pattern names only typed schemes, and the policy still decides which become links.
         inputRules: [
             {
                 kind: 'markPattern',
-                pattern: AUTOLINK_PATTERN,
+                pattern: LINKABLE_ADDRESS,
                 mark: 'link',
                 value: (href) => (allowsHref(policy, href) ? { href } : null),
             },
@@ -166,7 +156,7 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) => {
             const typed = text.trim();
             const { isCollapsed, marks } = api.selection.get();
             let href: string | null = null;
-            if (LINKABLE_START.test(typed)) {
+            if (isLinkablePaste(typed)) {
                 href = toHref(typed);
             }
             if (href === null || !allowsHref(policy, href)) {
@@ -188,4 +178,3 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) => {
             return true;
         },
     });
-};

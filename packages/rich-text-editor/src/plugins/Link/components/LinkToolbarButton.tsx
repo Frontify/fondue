@@ -5,14 +5,17 @@ import { IconLink } from '@frontify/fondue-icons';
 import { type ReactNode, useEffect, useId, useState } from 'react';
 
 import { type ToolbarItemProps } from '#/core';
+import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
+import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
-import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
 import { type LinkSearch } from '../helpers/destination';
 import { registerNewLinkForm } from '../helpers/newLinkForms';
 import { type LinkPolicy } from '../helpers/policy';
 
 import { LinkTargetForm } from './LinkTargetForm';
+
+type LinkToolbarButtonProps = ToolbarItemProps & { policy: LinkPolicy; search?: LinkSearch };
 
 /**
  * The toolbar entry point. On a link it opens the link's own editor; on plain
@@ -28,7 +31,7 @@ export const LinkToolbarButton = ({
     shortcut,
     policy,
     search,
-}: ToolbarItemProps & { shortcut: string; policy: LinkPolicy; search?: LinkSearch }): ReactNode => {
+}: LinkToolbarButtonProps): ReactNode => {
     const inLink = selectedNode !== null;
     const [creating, setCreating] = useState(false);
     const titleId = useId();
@@ -56,7 +59,7 @@ export const LinkToolbarButton = ({
         >
             <Flyout.Trigger>
                 <ToolbarButton title={inLink ? 'Edit link' : 'Add link'} shortcut={shortcut} active={inLink}>
-                    <IconLink size={16} />
+                    <IconLink size={TOOLBAR_ICON_SIZE} />
                 </ToolbarButton>
             </Flyout.Trigger>
             <Flyout.Content

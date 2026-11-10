@@ -17,9 +17,9 @@ export type SuperscriptMark = {
 /**
  * Superscript text, written as `<sup>`
  */
-export const superscriptContent = /* @__PURE__ */ defineContent({
+export const superscriptContent = defineContent({
     marks: {
-        superscript: /* @__PURE__ */ defineMark({
+        superscript: defineMark({
             tag: 'sup',
             excludes: ['subscript'],
             // An element with the alignment is superscript too: how Google Docs writes it.
@@ -36,5 +36,5 @@ export const superscriptContent = /* @__PURE__ */ defineContent({
  */
 export const superscriptPlugin = /* @__PURE__ */ definePlugin({
     content: superscriptContent,
-    toolbar: [{ icon: IconSuperscript, shortcut: 'Mod-.' }],
+    toolbar: [{ label: 'Superscript', icon: IconSuperscript, shortcut: 'Mod-.' }],
 });

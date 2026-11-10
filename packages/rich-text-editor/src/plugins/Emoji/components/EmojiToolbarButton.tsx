@@ -5,9 +5,10 @@ import { IconFaceHappy } from '@frontify/fondue-icons';
 import { type ReactNode, useId, useRef, useState } from 'react';
 
 import { type EditorControlApi } from '#/core';
+import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
+import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
-import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
 import { type EmojiItem } from '../types';
 
 import { EmojiPicker } from './EmojiPicker';
@@ -16,9 +17,11 @@ import { EmojiPicker } from './EmojiPicker';
 export const EmojiToolbarButton = ({
     api,
     emojis,
+    label,
 }: {
     api: EditorControlApi;
     emojis: readonly EmojiItem[];
+    label: string;
 }): ReactNode => {
     const [open, setOpen] = useState(false);
     const titleId = useId();
@@ -33,8 +36,8 @@ export const EmojiToolbarButton = ({
     return (
         <Flyout.Root open={open} onOpenChange={setOpen}>
             <Flyout.Trigger>
-                <ToolbarButton title="Emoji">
-                    <IconFaceHappy size={16} />
+                <ToolbarButton title={label}>
+                    <IconFaceHappy size={TOOLBAR_ICON_SIZE} />
                 </ToolbarButton>
             </Flyout.Trigger>
             <Flyout.Content
