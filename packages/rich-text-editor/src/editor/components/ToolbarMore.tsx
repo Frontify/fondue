@@ -159,6 +159,17 @@ export const ToolbarMore = ({
                                 // Focus is placed by the panel on open and by its closing.
                                 onOpenAutoFocus={(event) => event.preventDefault()}
                                 onCloseAutoFocus={(event) => event.preventDefault()}
+                                // A flyout a control opened portals to the body, outside the panel to Radix, yet it is the panel's own.
+                                onInteractOutside={(event) => {
+                                    const { target } = event;
+                                    if (!(target instanceof Element) || content === null) {
+                                        return;
+                                    }
+                                    const layer = target.closest('[data-radix-popper-content-wrapper]');
+                                    if (layer !== null && !layer.contains(content)) {
+                                        event.preventDefault();
+                                    }
+                                }}
                                 onEscapeKeyDown={(event) => {
                                     const target = event.target as HTMLElement;
                                     // A control's open menu, or the text's open suggestion list, keeps Escape; More's own state is this panel's.

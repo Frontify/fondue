@@ -22,6 +22,7 @@ import {
     type RteDocument,
     type RtePlugin,
     serializeToHtml,
+    textStylePlugin,
 } from '../index';
 
 import { useFocusWithin } from './hooks/useFocusWithin';
@@ -1118,6 +1119,145 @@ describe('the toolbar from the keyboard', () => {
             editable.removeAttribute('aria-expanded');
             press(editable, 'Escape');
             expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+        });
+
+        // Radix hands focus back a task after a flyout closes.
+        const settle = (): Promise<void> => act(() => new Promise<void>((resolve) => setTimeout(resolve, 0)));
+
+        /** Where focus may not rest after a flyout closes: the page, or what the open panel hides. */
+        const expectFocusSomewhereReal = (): void => {
+            const { activeElement, body } = window.document;
+            expect(activeElement).not.toBe(body);
+            expect(activeElement?.closest('[aria-hidden="true"]')).toBeNull();
+        };
+
+        const panelOf = (): HTMLElement | null =>
+            window.document.querySelector<HTMLElement>('[role="toolbar"][aria-label="More"]');
+
+        it('keeps the panel open under the link form opened from it, and Escape closes the form before the panel', async () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(70);
+            const editable = editableIn(container);
+            act(() => editable.focus());
+            selectAll(editable);
+
+            press(editable, 'F10', { altKey: true });
+            expect(focusedLabel()).toBe('Bold');
+            press(window.document.activeElement as Element, 'End');
+            expect(window.document.activeElement).toBe(more(container));
+            press(window.document.activeElement as Element, 'Enter');
+            act(() => more(container)?.click());
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            expect(panelOf()?.contains(window.document.activeElement)).toBe(true);
+
+            while (focusedLabel() !== 'Add link') {
+                press(window.document.activeElement as Element, 'ArrowRight');
+            }
+            press(window.document.activeElement as Element, 'Enter');
+            act(() => (window.document.activeElement as HTMLElement).click());
+            await settle();
+
+            const linkForm = (): Element | undefined =>
+                [...window.document.querySelectorAll('[role="dialog"]')].find((dialog) =>
+                    dialog.textContent?.includes('Add link'),
+                );
+            expect(linkForm()).not.toBeUndefined();
+            expect(linkForm()?.contains(window.document.activeElement)).toBe(true);
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+
+            press(window.document.activeElement as Element, 'Escape');
+            await settle();
+            expect(linkForm()).toBeUndefined();
+            expectFocusSomewhereReal();
+            const rested = window.document.activeElement;
+            expect(rested === editable || panelOf()?.contains(rested) === true).toBe(true);
+
+            if (panelOf()?.contains(rested) === true) {
+                expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+                // The first Escape belongs to the tooltip the focus opened, if any.
+                press(rested as Element, 'Escape');
+                if (more(container)?.getAttribute('aria-expanded') === 'true') {
+                    press(window.document.activeElement as Element, 'Escape');
+                }
+                expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+                expect(window.document.activeElement).toBe(more(container));
+            }
+        });
+
+        it('keeps the panel usable after a text style menu opened from it is closed with Escape', async () => {
+            const withSelect = [boldPlugin(), linkPlugin(), alignPlugin(), textStylePlugin()];
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={withSelect} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(40);
+            const editable = editableIn(container);
+            act(() => editable.focus());
+            selectAll(editable);
+
+            act(() => more(container)?.click());
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            const select = panelOf()?.querySelector<HTMLElement>('[aria-label="Text style"]');
+            expect(select).not.toBeNull();
+            act(() => select?.focus());
+            press(select as Element, 'Enter');
+            await settle();
+            expect(select?.getAttribute('aria-expanded')).toBe('true');
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+
+            press(window.document.activeElement as Element, 'Escape');
+            await settle();
+            expect(select?.getAttribute('aria-expanded')).toBe('false');
+            expectFocusSomewhereReal();
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            // Still a toolbar: an arrow key moves focus between its controls.
+            act(() => select?.focus());
+            const before = window.document.activeElement;
+            press(before as Element, 'ArrowLeft');
+            expect(window.document.activeElement).not.toBe(before);
+            expect(panelOf()?.contains(window.document.activeElement)).toBe(true);
+        });
+
+        it('closes a click-opened panel on a press outside without moving focus onto More, onBlur as with no panel', () => {
+            vi.useFakeTimers();
+            teardown.push(() => vi.useRealTimers());
+            const onBlur = vi.fn<(doc: RteDocument) => void>();
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} onBlur={onBlur} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(70);
+            const editable = editableIn(container);
+            const outside = window.document.createElement('div');
+            window.document.body.append(outside);
+            teardown.push(() => outside.remove());
+            act(() => {
+                editable.focus();
+                vi.runAllTimers();
+            });
+            act(() => {
+                more(container)?.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }));
+            });
+            // The panel starts listening for outside presses a task after it opens.
+            act(() => {
+                vi.runAllTimers();
+            });
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            expect(window.document.activeElement).toBe(editable);
+
+            act(() => {
+                outside.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerType: 'mouse' }));
+                outside.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+                outside.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+                vi.runAllTimers();
+            });
+
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+            expect(window.document.activeElement).not.toBe(more(container));
+            expect(onBlur).not.toHaveBeenCalled();
         });
 
         it('keeps focus in the toolbar when a refit takes the focused control away', () => {
