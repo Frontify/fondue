@@ -939,11 +939,41 @@ describe('content no mounted plugin knows', () => {
     });
 });
 
+/** A switch a test flips to make a toolbar item throw. */
+type CrashSwitch = { crash: boolean };
+
+/** A switch a test flips to make a plugin throw until it is fixed. */
+type BrokenSwitch = { broken: boolean };
+
+type CalloutProps = { children?: ReactNode };
+
+/** Read by `Callout`, which the editor renders with block props only. */
+const calloutState: BrokenSwitch = { broken: false };
+
+const Callout = ({ children }: CalloutProps): ReactNode => {
+    if (calloutState.broken) {
+        throw new Error('readonly view broke');
+    }
+    return <p>{children}</p>;
+};
+
 describe('an editor that crashes', () => {
+    beforeEach(() => {
+        calloutState.broken = false;
+    });
+
     /** React logs every caught render error; the tests expect it and keep the output clean. */
     const silenceReact = (): void => {
         const error = vi.spyOn(console, 'error').mockImplementation(() => {});
         teardown.push(() => error.mockRestore());
+    };
+    /** Blurs the focused element; fails when nothing is focused, since the test expects focus to leave. */
+    const blurActiveElement = (): void => {
+        const active = window.document.activeElement;
+        if (!(active instanceof HTMLElement)) {
+            throw new TypeError('No element has focus to blur');
+        }
+        active.blur();
     };
     const throwingPlugin = (): RtePlugin => ({
         id: 'throws',
@@ -952,7 +982,7 @@ describe('an editor that crashes', () => {
         },
     });
     /** A toolbar item that throws once `state.crash` is set and the selection moves, as an edit makes it. */
-    const lateCrashPlugin = (state: { crash: boolean }): RtePlugin => ({
+    const lateCrashPlugin = (state: CrashSwitch): RtePlugin => ({
         id: 'late',
         toolbarItem: ({ selection }) => {
             if (state.crash && selection) {
@@ -972,7 +1002,7 @@ describe('an editor that crashes', () => {
         },
     });
     /** A toolbar item that throws while `state.broken` is set. */
-    const flakyPlugin = (state: { broken: boolean }): RtePlugin => ({
+    const flakyPlugin = (state: BrokenSwitch): RtePlugin => ({
         id: 'flaky',
         toolbarItem: () => {
             if (state.broken) {
@@ -981,26 +1011,20 @@ describe('an editor that crashes', () => {
             return <span>fine</span>;
         },
     });
-    /** A block whose readonly view throws while `state.broken` is set. */
-    const calloutPlugin = (state: { broken: boolean }): RtePlugin => {
-        const Callout = ({ children }: { children?: ReactNode }): ReactNode => {
-            if (state.broken) {
-                throw new Error('readonly view broke');
-            }
-            return <p>{children}</p>;
-        };
-        return {
-            id: 'callout',
-            blocks: {
-                callout: {
-                    content: 'text',
-                    toHtml: () => ({ tag: 'p', attrs: { 'data-callout': '' }, children: true }),
-                    parse: [{ tag: 'p[data-callout]' }],
-                    render: { component: Callout },
-                },
-            } as unknown as NonNullable<RtePlugin['blocks']>,
-        };
-    };
+    /** A block whose readonly view throws while `calloutState.broken` is set. */
+    const calloutPlugin = (): RtePlugin => ({
+        id: 'callout',
+        // A test-only block type outside the `RteBlock` union.
+        blocks: {
+            callout: {
+                content: 'text',
+                toHtml: () => ({ tag: 'p', attrs: { 'data-callout': '' }, children: true }),
+                parse: [{ tag: 'p[data-callout]' }],
+                render: { component: Callout },
+            },
+        } as unknown as NonNullable<RtePlugin['blocks']>,
+    });
+    // A test-only block type outside the `RteBlock` union.
     const callout = (text: string): RteDocument =>
         ({ version: 1, blocks: [{ type: 'callout', children: [{ text }] }] }) as unknown as RteDocument;
 
@@ -1055,11 +1079,11 @@ describe('an editor that crashes', () => {
 
     it('leaves focus alone after a Retry pressed without taking focus, as a mouse press may', () => {
         silenceReact();
-        const state = { broken: true };
+        calloutState.broken = true;
         const { container } = mount(() => (
-            <RichTextEditor value={callout('read me')} plugins={[calloutPlugin(state)]} readonly />
+            <RichTextEditor value={callout('read me')} plugins={[calloutPlugin()]} readonly />
         ));
-        state.broken = false;
+        calloutState.broken = false;
 
         act(() => {
             retryButton(container).click();
@@ -1190,7 +1214,10 @@ describe('an editor that crashes', () => {
         ));
         state.broken = false;
         retry(container);
-        const elsewhere = container.querySelector('input') as HTMLInputElement;
+        const elsewhere = container.querySelector('input');
+        if (!(elsewhere instanceof HTMLInputElement)) {
+            throw new TypeError('The test input is missing');
+        }
         act(() => elsewhere.focus());
 
         state.broken = true;
@@ -1235,7 +1262,7 @@ describe('an editor that crashes', () => {
         ready();
         expect(editableIn(container).contains(window.document.activeElement)).toBe(true);
         act(() => {
-            (window.document.activeElement as HTMLElement).blur();
+            blurActiveElement();
             vi.runAllTimers();
         });
         expect(window.document.activeElement).toBe(window.document.body);
@@ -1271,14 +1298,14 @@ describe('an editor that crashes', () => {
 
     it('does not take focus later when it was retried readonly', () => {
         silenceReact();
-        const state = { broken: true };
-        const plugin = calloutPlugin(state);
+        calloutState.broken = true;
+        const plugin = calloutPlugin();
         const value = callout('read me');
         const { container, rerender, ready } = mount(() => (
             <RichTextEditor value={value} plugins={[plugin]} readonly />
         ));
 
-        state.broken = false;
+        calloutState.broken = false;
         retry(container);
         expect(container.textContent).toContain('read me');
         rerender(<RichTextEditor value={value} plugins={[plugin]} />);
@@ -1374,8 +1401,8 @@ describe('an editor that crashes', () => {
 
     it('keeps an earlier edit the host restores while readonly', () => {
         silenceReact();
-        const state = { broken: false };
-        const plugins = [...defaultPlugins, calloutPlugin(state)];
+        calloutState.broken = false;
+        const plugins = [...defaultPlugins, calloutPlugin()];
         const onError = errorSpy();
         const { container, onChange, rerender, ready } = mount((change) => (
             <RichTextEditor value={callout('start')} onChange={change} plugins={plugins} onError={onError} />
@@ -1389,7 +1416,7 @@ describe('an editor that crashes', () => {
 
         // An undo in the host, made while the editor is readonly: the readonly view shows it.
         rerender(<RichTextEditor value={first} onChange={onChange} plugins={plugins} onError={onError} readonly />);
-        state.broken = true;
+        calloutState.broken = true;
         // A new plugin list draws the readonly view again.
         rerender(
             <RichTextEditor value={first} onChange={onChange} plugins={[...plugins]} onError={onError} readonly />,
@@ -1399,7 +1426,7 @@ describe('an editor that crashes', () => {
         expect(onError).toHaveBeenCalledOnce();
 
         // The fallback cannot show it, so Retry with the cause gone does.
-        state.broken = false;
+        calloutState.broken = false;
         retry(container);
         expect(container.textContent).toContain('one');
         expect(container.textContent).not.toContain('two');
@@ -1407,8 +1434,8 @@ describe('an editor that crashes', () => {
 
     it('shows a document the host pushes after the fallback could not show the last one', () => {
         silenceReact();
-        const state = { broken: true };
-        const plugins = [throwingPlugin(), calloutPlugin(state)];
+        calloutState.broken = true;
+        const plugins = [throwingPlugin(), calloutPlugin()];
         const { container, rerender } = mount(() => <RichTextEditor value={callout('unshowable')} plugins={plugins} />);
         expect(retryButton(container)).toBeDefined();
         expect(container.textContent).not.toContain('unshowable');
@@ -1489,11 +1516,11 @@ describe('an editor that crashes', () => {
 
     it('hands the focus of a pressed Retry to a readonly view', () => {
         silenceReact();
-        const state = { broken: true };
+        calloutState.broken = true;
         const { container } = mount(() => (
-            <RichTextEditor value={callout('read me')} plugins={[calloutPlugin(state)]} readonly />
+            <RichTextEditor value={callout('read me')} plugins={[calloutPlugin()]} readonly />
         ));
-        state.broken = false;
+        calloutState.broken = false;
 
         retry(container);
 
@@ -1508,20 +1535,20 @@ describe('an editor that crashes', () => {
         silenceReact();
         vi.useFakeTimers();
         teardown.push(() => vi.useRealTimers());
-        const state = { broken: true };
-        const plugins = [calloutPlugin(state)];
+        calloutState.broken = true;
+        const plugins = [calloutPlugin()];
         const { container, rerender } = mount(() => (
             <RichTextEditor value={callout('one')} plugins={plugins} readonly />
         ));
-        state.broken = false;
+        calloutState.broken = false;
         retry(container);
         act(() => {
-            (window.document.activeElement as HTMLElement).blur();
+            blurActiveElement();
             vi.runAllTimers();
         });
         expect(window.document.activeElement).toBe(window.document.body);
 
-        state.broken = true;
+        calloutState.broken = true;
         rerender(<RichTextEditor value={callout('two')} plugins={plugins} readonly />);
 
         expect(retryButton(container)).toBeDefined();
@@ -1596,12 +1623,12 @@ describe('an editor that crashes', () => {
 
     it('reports a read-only view that cannot show the document after a crash', () => {
         silenceReact();
-        const state = { broken: true };
+        calloutState.broken = true;
         const onError = errorSpy();
         mount(() => (
             <RichTextEditor
                 value={callout('unshowable')}
-                plugins={[throwingPlugin(), calloutPlugin(state)]}
+                plugins={[throwingPlugin(), calloutPlugin()]}
                 onError={onError}
             />
         ));
@@ -1613,8 +1640,8 @@ describe('an editor that crashes', () => {
 
     it('reports a read-only view that cannot show the document once per crash, however often the host passes it', () => {
         silenceReact();
-        const state = { broken: true };
-        const plugins = [throwingPlugin(), calloutPlugin(state)];
+        calloutState.broken = true;
+        const plugins = [throwingPlugin(), calloutPlugin()];
         const onError = errorSpy();
         const { container, rerender } = mount(() => (
             <RichTextEditor value={callout('same')} plugins={plugins} onError={onError} />
@@ -1634,8 +1661,8 @@ describe('an editor that crashes', () => {
 
     it('reports a readonly view that crashes once, not again for the same view in the fallback', () => {
         silenceReact();
-        const state = { broken: true };
-        const plugins = [calloutPlugin(state)];
+        calloutState.broken = true;
+        const plugins = [calloutPlugin()];
         const onError = errorSpy();
         const { container, rerender } = mount(() => (
             <RichTextEditor value={callout('same')} plugins={plugins} readonly onError={onError} />
@@ -1653,18 +1680,18 @@ describe('an editor that crashes', () => {
 
     it('reports once when a document from a newer version, shown read-only, crashes its view', () => {
         silenceReact();
-        const state = { broken: true };
+        calloutState.broken = true;
         const onError = errorSpy();
         const newer = { ...callout('newer'), version: 2 } as unknown as RteDocument;
-        mount(() => <RichTextEditor value={newer} plugins={[calloutPlugin(state)]} onError={onError} />);
+        mount(() => <RichTextEditor value={newer} plugins={[calloutPlugin()]} onError={onError} />);
 
         expect(onError).toHaveBeenCalledOnce();
     });
 
     it('settles on the message and Retry when every document it gets cannot be shown', () => {
         silenceReact();
-        const state = { broken: true };
-        const plugins = [throwingPlugin(), calloutPlugin(state)];
+        calloutState.broken = true;
+        const plugins = [throwingPlugin(), calloutPlugin()];
         const { container, rerender } = mount(() => <RichTextEditor value={callout('first')} plugins={plugins} />);
 
         rerender(<RichTextEditor value={callout('second')} plugins={plugins} />);
@@ -1748,8 +1775,8 @@ describe('an editor that crashes', () => {
 
     it('keeps the value a readonly view shows, though newer edits never reached the host', () => {
         silenceReact();
-        const state = { broken: false };
-        const plugins = [...defaultPlugins, calloutPlugin(state)];
+        calloutState.broken = false;
+        const plugins = [...defaultPlugins, calloutPlugin()];
         const saved = callout('saved');
         const onError = errorSpy();
         // A host that commits on blur and never passes edits back as `value`.
@@ -1760,7 +1787,7 @@ describe('an editor that crashes', () => {
         paste(container, '<p>draft</p>');
         rerender(<RichTextEditor value={saved} plugins={plugins} onError={onError} readonly />);
 
-        state.broken = true;
+        calloutState.broken = true;
         // A new plugin list draws the readonly view again.
         rerender(<RichTextEditor value={saved} plugins={[...plugins]} onError={onError} readonly />);
 
@@ -1768,7 +1795,7 @@ describe('an editor that crashes', () => {
         expect(onError).toHaveBeenCalledOnce();
 
         // The fallback cannot show it, so Retry with the cause gone does.
-        state.broken = false;
+        calloutState.broken = false;
         retry(container);
         expect(container.textContent).toContain('saved');
         expect(container.textContent).not.toContain('draft');
@@ -1809,6 +1836,7 @@ describe('an editor that crashes', () => {
         };
         const broken: RtePlugin = {
             id: 'broken',
+            // A test-only block type outside the `RteBlock` union.
             blocks: {
                 broken: {
                     content: 'text',
@@ -1818,6 +1846,7 @@ describe('an editor that crashes', () => {
                 },
             } as unknown as NonNullable<RtePlugin['blocks']>,
         };
+        // A test-only block type outside the `RteBlock` union.
         const value = {
             version: 1,
             blocks: [{ type: 'broken', children: [{ text: 'in a view' }] }],
