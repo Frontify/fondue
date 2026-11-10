@@ -15,10 +15,11 @@ import {
     type MutableRefObject,
     type ReactNode,
     useCallback,
-    useEffect,
+    useLayoutEffect,
     useRef,
     useState,
 } from 'react';
+import { createPortal } from 'react-dom';
 
 import { MORE_ATTRIBUTE } from '../hooks/useToolbarFit';
 import { useToolbarRoving } from '../hooks/useToolbarRoving';
@@ -29,9 +30,12 @@ import styles from '../richTextEditor.module.scss';
  * The More button at the end of the top row and the panel it opens, a toolbar
  * of its own holding the controls the row has no room for.
  *
- * The panel stays mounted while closed, hidden, so the controls in it keep
- * working: a plugin's hotkey can still open the flyout of a control behind
- * More, which opens the panel too, for that flyout to hang from.
+ * The controls stay mounted while the panel is closed, in an element parked
+ * out of sight just below More and moved into the panel as it opens, so they
+ * keep working: a plugin's hotkey can still open the flyout of a control
+ * behind More, which hangs from where that control is parked, with no panel.
+ * A closed panel is no layer, so Escape reaches the flyout, or whatever
+ * dialog holds the editor.
  *
  * Opened from the keyboard, the panel takes focus; opened with a click, focus
  * stays in the text, as with every toolbar button. Escape and Tab in the panel
@@ -43,38 +47,50 @@ export const ToolbarMore = ({
     children,
 }: {
     labels: RichTextEditorLabels;
-    /** Called with the panel's element as it mounts and unmounts, for the row to measure the slots in it. */
+    /** Called with the element the controls live in as More mounts and unmounts, for the row to measure the slots in it. */
     onPanel: (panel: HTMLElement | null) => void;
     /** The groups the row has no room for. */
     children: ReactNode;
 }): ReactNode => {
     const [open, setOpen] = useState(false);
     const [tooltipOpen, setTooltipOpen] = useState(false);
+    // Made once and moved between the parking element and the open panel, which keeps the controls' state.
+    const [host] = useState(() => window.document.createElement('div'));
     const [content, setContent] = useState<HTMLDivElement | null>(null);
+    const parkedRef = useRef<HTMLDivElement | null>(null);
     const moreRef = useRef<HTMLButtonElement | null>(null);
+    // Set by the click, passed on once the controls are in the panel, where a stop can take the focus.
+    const wantsFocusRef = useRef(false);
     const focusRequestRef = useRef(false);
+
+    const parkHost = useCallback(
+        (element: HTMLDivElement | null) => {
+            parkedRef.current = element;
+            element?.append(host);
+        },
+        [host],
+    );
 
     const contentRef = useCallback(
         (element: HTMLDivElement | null) => {
+            if (element === null) {
+                parkedRef.current?.append(host);
+                setContent(null);
+                return;
+            }
+            element.append(host);
+            focusRequestRef.current = wantsFocusRef.current;
+            wantsFocusRef.current = false;
+            // Draws the panel's toolbar again, now its controls are in view, to find its stops and take the focus.
             setContent(element);
-            onPanel(element);
         },
-        [onPanel],
+        [host],
     );
 
-    // A control behind More that opens its own flyout (Mod+K's link form) needs the panel shown to anchor it.
-    useEffect(() => {
-        if (content === null) {
-            return undefined;
-        }
-        const observer = new MutationObserver((mutations) => {
-            if (mutations.some((mutation) => (mutation.target as Element).getAttribute('aria-expanded') === 'true')) {
-                setOpen(true);
-            }
-        });
-        observer.observe(content, { subtree: true, attributes: true, attributeFilter: ['aria-expanded'] });
-        return () => observer.disconnect();
-    }, [content]);
+    useLayoutEffect(() => {
+        onPanel(host);
+        return () => onPanel(null);
+    }, [host, onPanel]);
 
     // Fondue's Button spreads undeclared props onto the <button>, so these still reach the DOM.
     const buttonProps = {
@@ -83,27 +99,22 @@ export const ToolbarMore = ({
         onMouseDown: (event: MouseEvent<HTMLButtonElement>) => event.preventDefault(),
         // Runs before the trigger toggles the panel; a keyboard's click has no pointer detail.
         onClick: (event: MouseEvent<HTMLButtonElement>) => {
-            focusRequestRef.current = event.detail === 0;
+            wantsFocusRef.current = event.detail === 0;
         },
     } as ComponentProps<typeof Button>;
 
     const onOpenChange = (next: boolean): void => {
-        // The closed panel is still a layer, which reports every outside click and Escape as a close.
-        if (next === open) {
-            return;
-        }
         // Closing hides the panel and any focus in it; More is where the panel was opened from.
         const { activeElement, body } = window.document;
         if (!next && (activeElement === null || activeElement === body || content?.contains(activeElement) === true)) {
             moreRef.current?.focus();
         }
+        // Nor does a tooltip come back as the panel closes, over a pointer that rested on More, to take the next Escape.
+        if (next) {
+            setTooltipOpen(false);
+        }
         setOpen(next);
     };
-
-    // Nor does a tooltip come back as the panel closes, over a pointer that rested on More, to take the next Escape.
-    if (open && tooltipOpen) {
-        setTooltipOpen(false);
-    }
 
     const closeToMore = (): void => {
         moreRef.current?.focus();
@@ -111,70 +122,83 @@ export const ToolbarMore = ({
     };
 
     return (
-        <PopoverRoot open={open} onOpenChange={onOpenChange}>
-            {/* The panel is the layer Escape belongs to while open; a tooltip over it would take the key first. */}
-            <Tooltip.Root
-                open={tooltipOpen}
-                onOpenChange={(next) => {
-                    if (!open) {
-                        setTooltipOpen(next);
-                    }
-                }}
-            >
-                <Tooltip.Trigger asChild>
-                    <PopoverTrigger asChild>
-                        <Button
-                            {...buttonProps}
-                            ref={moreRef}
-                            type="button"
-                            size="small"
-                            aspect="square"
-                            emphasis="weak"
-                            className={styles.more}
-                            aria-label={labels.more}
-                        >
-                            <IconDotsHorizontal size={20} />
-                        </Button>
-                    </PopoverTrigger>
-                </Tooltip.Trigger>
-                <Tooltip.Content padding="compact">{labels.more}</Tooltip.Content>
-            </Tooltip.Root>
-            {/* Mounted while closed too, so the controls in it keep their state and hotkeys. */}
-            <PopoverPortal forceMount>
+        <>
+            <PopoverRoot open={open} onOpenChange={onOpenChange}>
+                {/* The panel is the layer Escape belongs to while open; a tooltip over it would take the key first. */}
+                <Tooltip.Root
+                    open={tooltipOpen}
+                    onOpenChange={(next) => {
+                        if (!open) {
+                            setTooltipOpen(next);
+                        }
+                    }}
+                >
+                    <span className={styles.moreAnchor}>
+                        <Tooltip.Trigger asChild>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    {...buttonProps}
+                                    ref={moreRef}
+                                    type="button"
+                                    size="small"
+                                    aspect="square"
+                                    emphasis="weak"
+                                    className={styles.more}
+                                    aria-label={labels.more}
+                                >
+                                    <IconDotsHorizontal size={20} />
+                                </Button>
+                            </PopoverTrigger>
+                        </Tooltip.Trigger>
+                        {/* Out of sight and of the accessibility tree, yet laid out, so the row can measure the slots in it and a flyout can hang from them. */}
+                        <div ref={parkHost} aria-hidden="true" className={styles.morePanelParked} />
+                    </span>
+                    <Tooltip.Content padding="compact">{labels.more}</Tooltip.Content>
+                </Tooltip.Root>
+                {/* Only while open: a closed panel would be a layer, taking Escape from a dialog holding the editor. */}
+                {open ? (
+                    <PopoverPortal>
+                        <ThemeProvider>
+                            <PopoverContent
+                                ref={contentRef}
+                                // The panel is a dialog to assistive technology, which needs a name of its own.
+                                aria-label={labels.more}
+                                side="bottom"
+                                align="end"
+                                sideOffset={8}
+                                collisionPadding={8}
+                                className={styles.morePanel}
+                                // Focus is placed by the panel on open and by its closing.
+                                onOpenAutoFocus={(event) => event.preventDefault()}
+                                onCloseAutoFocus={(event) => event.preventDefault()}
+                                onEscapeKeyDown={(event) => {
+                                    const target = event.target as HTMLElement;
+                                    // A control's open menu, or the text's open suggestion list, keeps Escape; More's own state is this panel's.
+                                    if (target !== moreRef.current && target.getAttribute('aria-expanded') === 'true') {
+                                        event.preventDefault();
+                                        return;
+                                    }
+                                    // Inside the panel the close is the layer's own, and onOpenChange puts focus on More.
+                                    if (content?.contains(target) === true) {
+                                        return;
+                                    }
+                                    // From the text or More, Escape only closes the panel; the editor must not leave the text too.
+                                    event.stopPropagation();
+                                }}
+                            />
+                        </ThemeProvider>
+                    </PopoverPortal>
+                ) : null}
+            </PopoverRoot>
+            {createPortal(
                 <ThemeProvider>
-                    <PopoverContent
-                        ref={contentRef}
-                        // The panel is a dialog to assistive technology, which needs a name of its own.
-                        aria-label={labels.more}
-                        aria-hidden={!open}
-                        side="bottom"
-                        align="end"
-                        sideOffset={8}
-                        collisionPadding={8}
-                        className={styles.morePanel}
-                        // Focus is placed by the panel on open and by its closing.
-                        onOpenAutoFocus={(event) => event.preventDefault()}
-                        onCloseAutoFocus={(event) => event.preventDefault()}
-                        onEscapeKeyDown={(event) => {
-                            if (!open) {
-                                return;
-                            }
-                            // Inside the panel, its toolbar decides: a control's open menu keeps Escape.
-                            if (content?.contains(event.target as Node) === true) {
-                                event.preventDefault();
-                                return;
-                            }
-                            // From the text or More, Escape only closes the panel; the editor must not leave the text too.
-                            event.stopPropagation();
-                        }}
-                    >
-                        <MorePanel label={labels.more} focusRequestRef={focusRequestRef} onLeave={closeToMore}>
-                            {children}
-                        </MorePanel>
-                    </PopoverContent>
-                </ThemeProvider>
-            </PopoverPortal>
-        </PopoverRoot>
+                    <MorePanel label={labels.more} focusRequestRef={focusRequestRef} onLeave={closeToMore}>
+                        {children}
+                    </MorePanel>
+                </ThemeProvider>,
+                host,
+            )}
+        </>
     );
 };
 
@@ -192,7 +216,11 @@ const MorePanel = ({
     children: ReactNode;
 }): ReactNode => {
     const panelRef = useRef<HTMLDivElement | null>(null);
-    const roving = useToolbarRoving({ toolbarRef: panelRef, focusRequestRef, onEscape: onLeave });
+    const roving = useToolbarRoving({
+        toolbarRef: panelRef,
+        focusRequestRef,
+        onEscape: onLeave,
+    });
 
     const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
         // Not prevented: the browser's Tab carries on from More.

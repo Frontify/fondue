@@ -91,9 +91,9 @@ export const useToolbarRoving = ({
         if (!event.currentTarget.contains(target)) {
             return;
         }
-        // An open tooltip prevents Escape too, yet leaving the toolbar closes it;
-        // only a control's own open menu keeps the key.
-        if (event.key === 'Escape' && target.getAttribute('aria-expanded') !== 'true') {
+        // A layer that took Escape (an open tooltip) prevented it, and the first
+        // Escape is its alone; so is a control's own open menu's.
+        if (event.key === 'Escape' && !event.defaultPrevented && target.getAttribute('aria-expanded') !== 'true') {
             event.preventDefault();
             onEscape();
             return;

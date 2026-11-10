@@ -2,6 +2,7 @@
 
 // @vitest-environment happy-dom
 
+import { Dialog } from '@frontify/fondue-components';
 import { act, Profiler, type ReactNode, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
@@ -794,6 +795,11 @@ describe('the toolbar from the keyboard', () => {
         press(editable, 'F10', { altKey: true });
         expect(window.document.activeElement?.getAttribute('aria-label')).toBe('Bold');
 
+        // The first Escape belongs to the tooltip the focus opened.
+        press(window.document.activeElement as Element, 'Escape');
+        expect(window.document.querySelector('[role="tooltip"]')).toBeNull();
+        expect(window.document.activeElement?.getAttribute('aria-label')).toBe('Bold');
+
         press(window.document.activeElement as Element, 'Escape');
         expect(editable.contains(window.document.activeElement)).toBe(true);
     });
@@ -803,6 +809,12 @@ describe('the toolbar from the keyboard', () => {
     const selectAll = (editable: HTMLElement): void => {
         const mod = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
         press(editable, 'a', mod);
+    };
+
+    // The focus opened a tooltip, which takes the first Escape.
+    const leaveToolbar = (): void => {
+        press(window.document.activeElement as Element, 'Escape');
+        press(window.document.activeElement as Element, 'Escape');
     };
 
     describe.each(['top', 'floating'] as const)('with the %s toolbar, asked for again', (placement) => {
@@ -829,7 +841,7 @@ describe('the toolbar from the keyboard', () => {
 
             press(editable, 'F10', { altKey: true });
             expect(focusedLabel()).toBe('Bold');
-            press(window.document.activeElement as Element, 'Escape');
+            leaveToolbar();
             expect(window.document.activeElement).toBe(editable);
 
             press(editable, 'F10', { altKey: true });
@@ -839,9 +851,9 @@ describe('the toolbar from the keyboard', () => {
         it('leaves no request pending to pull focus later', () => {
             const { editable, rerender } = start();
             press(editable, 'F10', { altKey: true });
-            press(window.document.activeElement as Element, 'Escape');
+            leaveToolbar();
             press(editable, 'F10', { altKey: true });
-            press(window.document.activeElement as Element, 'Escape');
+            leaveToolbar();
             expect(window.document.activeElement).toBe(editable);
 
             rerender();
@@ -931,7 +943,8 @@ describe('the toolbar from the keyboard', () => {
             // Bold, More and the gap: Link and Align no longer fit.
             resize(70);
             expect(toolbar.querySelector('[aria-label="Bold"]')).not.toBeNull();
-            expect(toolbar.querySelector('[aria-label="Align left"]')).toBeNull();
+            // Parked out of sight beside More, not drawn in the row.
+            expect(toolbar.querySelector('[aria-label="Align left"]')?.closest('[aria-hidden="true"]')).not.toBeNull();
             expect(more(container)?.getAttribute('aria-haspopup')).toBe('dialog');
 
             // A click with no pointer behind it is the keyboard's: focus moves into the panel.
@@ -948,6 +961,9 @@ describe('the toolbar from the keyboard', () => {
             press(window.document.activeElement as Element, 'Home');
             expect(focusedLabel()).toBe('Align left');
 
+            // The first Escape belongs to the tooltip the focus opened.
+            press(window.document.activeElement as Element, 'Escape');
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
             press(window.document.activeElement as Element, 'Escape');
             expect(window.document.activeElement).toBe(more(container));
             expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
@@ -957,7 +973,7 @@ describe('the toolbar from the keyboard', () => {
             expect(toolbar.querySelector('[aria-label="Align left"]')).not.toBeNull();
         });
 
-        it("opens the panel when a hotkey opens a hidden control's flyout", async () => {
+        it("hangs a hidden control's flyout from More when a hotkey opens it, with the panel closed", async () => {
             const { container, ready } = mount(() => (
                 <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
             ));
@@ -970,15 +986,14 @@ describe('the toolbar from the keyboard', () => {
 
             const mod = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
             press(editable, 'k', mod);
-            // The panel follows the link button's `aria-expanded`, which it observes.
             await act(async () => {});
 
-            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
             const dialogs = [...window.document.querySelectorAll('[role="dialog"]')];
             expect(dialogs.some((dialog) => dialog.textContent?.includes('Add link'))).toBe(true);
         });
 
-        it('closes the link form, then the panel it opened, one Escape each, focus never on the page', async () => {
+        it('closes the link form on one Escape, the panel never opened, focus never on the page', async () => {
             const { container, ready } = mount(() => (
                 <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
             ));
@@ -994,7 +1009,7 @@ describe('the toolbar from the keyboard', () => {
             const mod = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
 
             // Twice over: the second round starts from what the first left behind, with the pointer resting on
-            // the link button, whose tooltip must not come back as the form closes and take the next Escape.
+            // the link button, whose tooltip must not come back as the form closes.
             for (let round = 0; round < 2; round++) {
                 act(() => editable.focus());
                 selectAll(editable);
@@ -1016,13 +1031,8 @@ describe('the toolbar from the keyboard', () => {
                 await settle();
                 expect(linkForm()).toBeUndefined();
                 expect(window.document.activeElement).toBe(editable);
-                expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
-                expect(window.document.querySelector('[role="tooltip"]')).toBeNull();
-
-                press(window.document.activeElement as Element, 'Escape');
-                await settle();
                 expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
-                expect(window.document.activeElement).toBe(editable);
+                expect(window.document.querySelector('[role="tooltip"]')).toBeNull();
             }
         });
 
@@ -1044,6 +1054,54 @@ describe('the toolbar from the keyboard', () => {
             press(editable, 'Escape');
             expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
             expect(window.document.activeElement).toBe(editable);
+        });
+
+        it('closes only the host dialog on Escape, with More shown inside it', () => {
+            const onOpenChange = vi.fn<(open: boolean) => void>();
+            mount(() => (
+                <Dialog.Root open onOpenChange={onOpenChange}>
+                    <Dialog.Content>
+                        <Dialog.Header>
+                            <Dialog.Title>Edit</Dialog.Title>
+                        </Dialog.Header>
+                        <Dialog.Body>
+                            <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+                        </Dialog.Body>
+                    </Dialog.Content>
+                </Dialog.Root>
+            ));
+            resize(70);
+            const dialogMore = window.document.querySelector<HTMLElement>('[aria-label="More"]');
+            expect(dialogMore?.getAttribute('aria-expanded')).toBe('false');
+            const editable = window.document.querySelector<HTMLElement>('[contenteditable]');
+            act(() => editable?.focus());
+
+            press(editable as Element, 'Escape');
+
+            expect(onOpenChange).toHaveBeenCalledWith(false);
+        });
+
+        it('leaves Escape to a suggestion list open in the text before the panel takes it', () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(70);
+            const editable = editableIn(container);
+            act(() => editable.focus());
+            act(() => {
+                more(container)?.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }));
+            });
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+
+            // What the focused element of an open mention or emoji draft says.
+            editable.setAttribute('aria-expanded', 'true');
+            press(editable, 'Escape');
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+
+            editable.removeAttribute('aria-expanded');
+            press(editable, 'Escape');
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
         });
 
         it('keeps focus in the toolbar when a refit takes the focused control away', () => {

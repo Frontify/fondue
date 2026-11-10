@@ -90,10 +90,7 @@
     }
 }
 
-/**
- * The surface behind More, drawn like a Fondue flyout. Closed, it stays laid
- * out, so its slots keep a size, but hidden: not seen, focused or announced.
- */
+/** The surface behind More, drawn like a Fondue flyout. */
 .morePanel {
     box-sizing: border-box;
     max-inline-size: 360px;
@@ -105,15 +102,44 @@
     background-color: var(--color-surface-default);
     color: var(--color-primary-default);
     box-shadow: 0 3px 10px 0 rgba(8, 8, 8, 0.15);
-
-    &[data-state='closed'] {
-        visibility: hidden;
-    }
 }
 
-/** The box Radix positions the panel in would still catch clicks over the text while the panel is closed. */
-:global([data-radix-popper-content-wrapper]):has(> .morePanel[data-state='closed']) {
+/** More, and the zero-size spot below it its controls are parked in; a flyout they open hangs from here. */
+.moreAnchor {
+    position: relative;
+    display: flex;
+    flex: none;
+}
+
+/**
+ * Where the controls behind More wait while the panel is closed: laid out, so
+ * their slots keep a size, but not seen, focused or announced. Clipped to
+ * nothing, so they add no scrolling to the page.
+ */
+.morePanelParked {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline-end: 0;
+    inline-size: 0;
+    block-size: 0;
+    overflow: clip;
     visibility: hidden;
+    pointer-events: none;
+
+    > div {
+        position: absolute;
+        inset-block-start: 0;
+        inset-inline-end: 0;
+        inline-size: max-content;
+    }
+
+    // Stacked on one spot below More, each at its own width, so a flyout one opens hangs in view.
+    [data-toolbar-slot] {
+        position: absolute;
+        inset-block-start: 0;
+        inset-inline-end: 0;
+        inline-size: max-content;
+    }
 }
 
 /** The controls behind More, in their groups, wrapping onto more lines when the panel is too narrow. */

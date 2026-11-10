@@ -7,6 +7,8 @@ import { fittingSlotCount, type SlotGroup } from '../helpers/toolbarFit';
 
 /** Marks a slot's element with its item key, for the measuring to find. */
 export const SLOT_ATTRIBUTE = 'data-toolbar-slot';
+/** Marks a group's element, for the measuring to read the gap between its slots from. */
+export const GROUP_ATTRIBUTE = 'data-toolbar-group';
 /** Marks the More button, for the measuring to find. */
 export const MORE_ATTRIBUTE = 'data-toolbar-more';
 
@@ -75,7 +77,7 @@ export const useToolbarFit = ({
                 moreWidthRef.current = more.getBoundingClientRect().width;
             }
             const style = getComputedStyle(toolbar);
-            const group = toolbar.querySelector('[role="group"]');
+            const group = toolbar.querySelector(`[${GROUP_ATTRIBUTE}]`);
             let itemGap = 0;
             if (group !== null) {
                 itemGap = pixels(getComputedStyle(group).columnGap);

@@ -14,7 +14,7 @@ import { turnIntoCommands } from '../helpers/blockCommands';
 import { type SlotGroup, splitGroups } from '../helpers/toolbarFit';
 import { toolbarItemProps } from '../helpers/toolbarItem';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
-import { SLOT_ATTRIBUTE, type ToolbarFit, useToolbarFit } from '../hooks/useToolbarFit';
+import { GROUP_ATTRIBUTE, SLOT_ATTRIBUTE, type ToolbarFit, useToolbarFit } from '../hooks/useToolbarFit';
 import { useToolbarRoving } from '../hooks/useToolbarRoving';
 import { type RichTextEditorLabels } from '../labels';
 import styles from '../richTextEditor.module.scss';
@@ -91,7 +91,7 @@ export const Toolbar = ({
 
     const drawGroups = (drawn: readonly SlotGroup<ToolbarEntry>[]): ReactNode =>
         drawn.map((group) => (
-            <div key={group.key} role="group" className={styles.group}>
+            <div key={group.key} className={styles.group} {...{ [GROUP_ATTRIBUTE]: '' }}>
                 {group.items.map((item) => (
                     // An element per slot, so the row can measure what each plugin drew.
                     <div key={item.key} className={styles.slot} {...{ [SLOT_ATTRIBUTE]: item.key }}>
