@@ -49,7 +49,9 @@ export const useToolbarFit = ({
     const moreWidthRef = useRef(0);
     // Whether the focus was in the toolbar or its panel when a refit moved slots.
     const refocusRef = useRef(false);
-    const shown = fitted?.shown;
+    const measured = fitted !== null && fitted.itemsKey === itemsKey;
+    // Measuring draws every slot in the row, as a fit that shows them all does, so the first fit changes nothing drawn.
+    const drawn = measured ? fitted.shown : keys.flat().length;
 
     useLayoutEffect(() => {
         const toolbar = toolbarRef.current;
@@ -93,7 +95,7 @@ export const useToolbarFit = ({
                     pixels(style.paddingInlineEnd),
             });
             const focused = toolbar.ownerDocument.activeElement;
-            if (next !== shown && (toolbar.contains(focused) || panel?.contains(focused) === true)) {
+            if (next !== drawn && (toolbar.contains(focused) || panel?.contains(focused) === true)) {
                 refocusRef.current = true;
             }
             // Only the drawn slots tell what fits, so the layout effect sets it before paint.
@@ -115,14 +117,14 @@ export const useToolbarFit = ({
             observer.observe(slot);
         }
         return () => observer.disconnect();
-        // The key stands for `keys`, new arrays every render; a new `shown` or panel changes which slots are drawn where.
+        // The key stands for `keys`, new arrays every render; a new `drawn` or panel changes which slots are drawn where.
         // eslint-disable-next-line @eslint-react/exhaustive-deps
-    }, [toolbarRef, fits, itemsKey, shown, panel]);
+    }, [toolbarRef, fits, itemsKey, drawn, panel]);
 
     if (!fits) {
         return { kind: 'fitted', shown: keys.flat().length };
     }
-    if (fitted === null || fitted.itemsKey !== itemsKey) {
+    if (!measured) {
         return { kind: 'measuring' };
     }
     return { kind: 'fitted', shown: fitted.shown };

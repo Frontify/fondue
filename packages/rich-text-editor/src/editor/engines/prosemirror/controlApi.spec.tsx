@@ -692,19 +692,19 @@ describe('history', () => {
     it('has nothing to undo or redo before an edit', () => {
         const { api } = editorWith(plugins, [paragraph()]);
 
-        expect(api.history.canUndo()).toBe(false);
-        expect(api.history.canRedo()).toBe(false);
+        expect(api.selection.get().history.canUndo).toBe(false);
+        expect(api.selection.get().history.canRedo).toBe(false);
     });
 
     it('undoes an edit and redoes it', () => {
         const editor = editorWith(plugins, [paragraph()]);
         editor.type('hi');
 
-        expect(editor.api.history.canUndo()).toBe(true);
+        expect(editor.api.selection.get().history.canUndo).toBe(true);
         editor.api.history.undo();
 
         expect(editor.stored()).toEqual([paragraph()]);
-        expect(editor.api.history.canRedo()).toBe(true);
+        expect(editor.api.selection.get().history.canRedo).toBe(true);
         editor.api.history.redo();
 
         expect(editor.stored()).toEqual([paragraph(text('hi'))]);

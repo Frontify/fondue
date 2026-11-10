@@ -32,6 +32,7 @@ const snapshot = (overrides: Partial<RteSelectionSnapshot> = {}): RteSelectionSn
     blocks: [{ type: PARAGRAPH }],
     marks: {},
     partialMarks: {},
+    history: { canUndo: false, canRedo: false },
     ...overrides,
 });
 
@@ -93,7 +94,7 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
             inserted.push({ type, value });
         },
         insertText: () => {},
-        history: { undo: () => {}, redo: () => {}, canUndo: () => false, canRedo: () => false },
+        history: { undo: () => {}, redo: () => {} },
         focus: () => {},
         blur: () => {},
         editors: {
@@ -222,14 +223,13 @@ describe('a mark plugin', () => {
 
         const props = editor.props(markPlugin);
 
-        expect(props.isMixed).toBe(true);
-        expect(props.isActive).toBe(false);
+        expect(props.isActive).toBe('mixed');
     });
 
     it('is not mixed when another mark is partial', () => {
         const editor = fakeEditor({ text: 'here', isCollapsed: false, partialMarks: { bold: true } });
 
-        expect(editor.props(markPlugin).isMixed).toBe(false);
+        expect(editor.props(markPlugin).isActive).toBe(false);
     });
 
     it('opens the editor of its mark', () => {

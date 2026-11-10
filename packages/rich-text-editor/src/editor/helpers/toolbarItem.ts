@@ -18,8 +18,7 @@ export const toolbarItemProps = (
     selection: RteSelectionSnapshot,
 ): ToolbarItemProps => {
     const selectedNode = selectedNodeOf(own, api, selection);
-    const isActive = own.kind === 'mark' ? own.type in selection.marks : selectedNode !== null;
-    const isMixed = own.kind === 'mark' && own.type in selection.partialMarks;
+    const isActive = activeOf(own, selection, selectedNode);
 
     const toggle = (value?: Record<string, unknown>): void => {
         switch (own.kind) {
@@ -30,7 +29,7 @@ export const toolbarItemProps = (
                 api.lists.toggle(own.type);
                 break;
             case 'textBlock':
-                api.blocks.setType(isActive ? PARAGRAPH : own.type, value);
+                api.blocks.setType(isActive === true ? PARAGRAPH : own.type, value);
                 break;
             case 'voidBlock':
             case 'inline':
@@ -49,7 +48,6 @@ export const toolbarItemProps = (
         selectedNode,
         selection,
         isActive,
-        isMixed,
         toggle,
         openEditor: () => {
             if (own.kind !== 'none') {
@@ -57,6 +55,23 @@ export const toolbarItemProps = (
             }
         },
     };
+};
+
+const activeOf = (
+    own: OwnType,
+    selection: RteSelectionSnapshot,
+    selectedNode: SelectedNode | null,
+): ToolbarItemProps['isActive'] => {
+    if (own.kind !== 'mark') {
+        return selectedNode !== null;
+    }
+    if (own.type in selection.marks) {
+        return true;
+    }
+    if (own.type in selection.partialMarks) {
+        return 'mixed';
+    }
+    return false;
 };
 
 const attributesOf = (block: Record<string, unknown>): Record<string, unknown> =>

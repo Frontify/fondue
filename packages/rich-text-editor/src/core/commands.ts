@@ -27,6 +27,8 @@ export type RteSelectionSnapshot = {
      * half-bold range has `bold` here and not in `marks`. Empty on a caret.
      */
     partialMarks: Record<string, true>;
+    /** Whether the undo history has a change to take back or make again — what undo and redo buttons enable on. */
+    history: { canUndo: boolean; canRedo: boolean };
 };
 
 /**
@@ -118,8 +120,6 @@ export type EditorControlApi = {
         undo(): void;
         /** Make the last undone change again. */
         redo(): void;
-        canUndo(): boolean;
-        canRedo(): boolean;
     };
 
     /** Return focus to the editor, e.g. after closing plugin UI. */

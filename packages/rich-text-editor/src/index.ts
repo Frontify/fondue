@@ -17,6 +17,7 @@ import {
     type RteInlineNode,
     type RtePlugin as CorePlugin,
     type RteSelectionSnapshot,
+    type RteToolbarGroup,
     type ToolbarItemProps,
     toPlainText as plainText,
     type ToPlainTextOptions,
@@ -119,7 +120,7 @@ export { type TextStylePluginOptions } from './plugins/TextStyle';
 
 // --- Plugin authoring ---
 
-export { ANY_LIST, defineBlock, defineInline, defineMark, type RteToolbarGroup } from './core';
+export { ANY_LIST, defineBlock, defineInline, defineMark } from './core';
 
 /** A plugin. The types to write one with are nested: `RtePlugin.EditorControlApi`, `RtePlugin.BlockDefinition<T>`, … */
 export type RtePlugin = CorePlugin;
@@ -127,6 +128,7 @@ export type RtePlugin = CorePlugin;
 // Aliases so a namespace member doesn't refer to itself (`type ParseRule<T> = ParseRule<T>`).
 type ControlApi = EditorControlApi;
 type ToolbarProps = ToolbarItemProps;
+type ToolbarGroupName = RteToolbarGroup;
 type OnPaste = PasteHandler;
 type BlockDef<TValue> = BlockDefinition<TValue>;
 type MarkDef<TValue> = MarkDefinition<TValue>;
@@ -141,6 +143,7 @@ export declare namespace RtePlugin {
     export type SelectionSnapshot = RteSelectionSnapshot;
     export type BlockCommand = RteBlockCommand;
     export type ToolbarItemProps = ToolbarProps;
+    export type ToolbarGroup = ToolbarGroupName;
     export type PasteHandler = OnPaste;
     export type BlockDefinition<TValue = Record<string, unknown>> = BlockDef<TValue>;
     export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;

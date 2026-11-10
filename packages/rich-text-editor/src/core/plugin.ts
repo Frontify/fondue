@@ -233,7 +233,19 @@ export type BlockAttributeDefinition = {
  * The toolbar's clusters, in the order they are drawn: undo and redo, text
  * style, inline marks, colour, link, lists, alignment, inserts, then panels.
  */
-export type RteToolbarGroup = 'history' | 'text' | 'marks' | 'color' | 'link' | 'lists' | 'align' | 'insert' | 'panels';
+export const RTE_TOOLBAR_GROUPS = [
+    'history',
+    'text',
+    'marks',
+    'color',
+    'link',
+    'lists',
+    'align',
+    'insert',
+    'panels',
+] as const;
+
+export type RteToolbarGroup = (typeof RTE_TOOLBAR_GROUPS)[number];
 
 /**
  * What a `toolbarItem` gets: the API, the plugin's own node at the selection,
@@ -245,10 +257,12 @@ export type ToolbarItemProps = {
     /** The plugin's own node at the selection, or null when the selection is not in one. */
     selectedNode: SelectedNode | null;
     selection: RteSelectionSnapshot;
-    /** The selection carries this mark, or sits in this block. Never for an inline. */
-    isActive: boolean;
-    /** Only part of a selected range carries this mark, so the control shows it as mixed. Never for anything but a mark. */
-    isMixed: boolean;
+    /**
+     * The selection carries this mark, or sits in this block. `'mixed'` when
+     * only part of a selected range carries the mark; never for anything but a
+     * mark. Never on for an inline.
+     */
+    isActive: boolean | 'mixed';
     /**
      * Toggle the mark, wrap or unwrap the list, switch a text block to this
      * type or back to a paragraph, insert the void block or the inline.

@@ -5,6 +5,7 @@ import { type MutableRefObject, type ReactNode, useCallback, useRef, useState, u
 import {
     type EditorControlApi,
     type RteBlockCommand,
+    RTE_TOOLBAR_GROUPS,
     type RteToolbarGroup,
     type ToolbarEntry,
     type ToolbarItemProps,
@@ -19,7 +20,7 @@ import { useToolbarRoving } from '../hooks/useToolbarRoving';
 import { type RichTextEditorLabels } from '../labels';
 import styles from '../richTextEditor.module.scss';
 
-import { ToolbarMore } from './ToolbarMore';
+import { ToolbarMore, ToolbarMoreProbe } from './ToolbarMore';
 import { TurnInto } from './TurnInto';
 
 /**
@@ -101,6 +102,18 @@ export const Toolbar = ({
             </div>
         ));
 
+    let moreNode: ReactNode = null;
+    if (more && panel === null && fit.kind === 'measuring') {
+        // Nothing has overflowed yet: More's width is all the measuring needs.
+        moreNode = <ToolbarMoreProbe labels={labels} />;
+    } else if (more) {
+        moreNode = (
+            <ToolbarMore labels={labels} onPanel={setPanel}>
+                {drawGroups(overflow)}
+            </ToolbarMore>
+        );
+    }
+
     return (
         <div
             ref={toolbarRef}
@@ -119,34 +132,22 @@ export const Toolbar = ({
         >
             {showTurnInto ? <TurnInto api={api} commands={turnInto} selection={selection} labels={labels} /> : null}
             {drawGroups(row)}
-            {more ? (
-                <ToolbarMore labels={labels} onPanel={setPanel}>
-                    {drawGroups(overflow)}
-                </ToolbarMore>
-            ) : null}
+            {moreNode}
         </div>
     );
 };
 
-/** The order groups are drawn in. */
-const GROUP_ORDER: readonly RteToolbarGroup[] = [
-    'history',
-    'text',
-    'marks',
-    'color',
-    'link',
-    'lists',
-    'align',
-    'insert',
-    'panels',
-];
-
-/** The items by group in drawing order, those with no group last; empty groups are left out. */
+/** The items by group in drawing order, those with no group or an unknown one last; empty groups are left out. */
 const groupsOf = (items: readonly ToolbarEntry[]): SlotGroup<ToolbarEntry>[] => {
-    const groups = [...GROUP_ORDER, undefined].map((group) => ({
-        key: group ?? 'ungrouped',
-        items: items.filter((item) => item.group === group),
-    }));
+    const known: readonly (RteToolbarGroup | undefined)[] = RTE_TOOLBAR_GROUPS;
+    const groups = [
+        ...RTE_TOOLBAR_GROUPS.map((group) => ({
+            key: group,
+            items: items.filter((item) => item.group === group),
+        })),
+        // A plugin cast past the type can name a group that is not drawn; it still gets its control.
+        { key: 'ungrouped', items: items.filter((item) => !known.includes(item.group)) },
+    ];
     return groups.filter((group) => group.items.length > 0);
 };
 

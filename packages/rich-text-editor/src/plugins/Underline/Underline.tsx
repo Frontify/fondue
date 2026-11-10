@@ -29,13 +29,8 @@ export const underlinePlugin = (): RtePlugin => ({
         }),
     },
     toolbarGroup: 'marks',
-    toolbarItem: ({ isActive, isMixed, toggle }) => (
-        <ToolbarButton
-            title="Underline"
-            shortcut={HOTKEY}
-            active={isMixed ? 'mixed' : isActive}
-            onClick={() => toggle()}
-        >
+    toolbarItem: ({ isActive, toggle }) => (
+        <ToolbarButton title="Underline" shortcut={HOTKEY} active={isActive} onClick={() => toggle()}>
             <IconTextFormatUnderline size={20} />
         </ToolbarButton>
     ),

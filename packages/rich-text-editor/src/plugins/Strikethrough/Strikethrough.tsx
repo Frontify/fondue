@@ -31,13 +31,8 @@ export const strikethroughPlugin = (): RtePlugin => ({
         }),
     },
     toolbarGroup: 'marks',
-    toolbarItem: ({ isActive, isMixed, toggle }) => (
-        <ToolbarButton
-            title="Strikethrough"
-            shortcut={HOTKEY}
-            active={isMixed ? 'mixed' : isActive}
-            onClick={() => toggle()}
-        >
+    toolbarItem: ({ isActive, toggle }) => (
+        <ToolbarButton title="Strikethrough" shortcut={HOTKEY} active={isActive} onClick={() => toggle()}>
             <IconTextFormatStrikethrough size={20} />
         </ToolbarButton>
     ),

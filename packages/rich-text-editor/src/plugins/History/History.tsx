@@ -13,12 +13,12 @@ import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 export const historyPlugin = (): RtePlugin => ({
     id: 'history',
     toolbarGroup: 'history',
-    toolbarItem: ({ api }) => (
+    toolbarItem: ({ api, selection }) => (
         <>
             <ToolbarButton
                 title="Undo"
                 shortcut="Mod-z"
-                disabled={!api.history.canUndo()}
+                disabled={!selection.history.canUndo}
                 onClick={() => api.history.undo()}
             >
                 <IconArrowRoundAntiClockwise size={20} />
@@ -26,7 +26,7 @@ export const historyPlugin = (): RtePlugin => ({
             <ToolbarButton
                 title="Redo"
                 shortcut="Mod-Shift-z"
-                disabled={!api.history.canRedo()}
+                disabled={!selection.history.canRedo}
                 onClick={() => api.history.redo()}
             >
                 <IconArrowRoundClockwise size={20} />
