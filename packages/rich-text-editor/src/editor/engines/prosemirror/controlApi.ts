@@ -8,7 +8,7 @@ import {
     type NodeType as PmNodeType,
     type Schema,
 } from 'prosemirror-model';
-import { type EditorState, NodeSelection, TextSelection } from 'prosemirror-state';
+import { type EditorState, NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry, type RteSelectionSnapshot } from '#/core';
@@ -32,6 +32,24 @@ import { warnUnknownType } from './warnings';
 
 // --- Selection snapshot: what all feature UI renders from ---
 
+/** A piece of text inside a range, cut to the range's ends. */
+type TextRun = { from: number; to: number; marks: readonly PmMark[] };
+
+/** The text a range covers, piece by piece: marks live on text only, never on inline elements. */
+const textRunsBetween = (doc: PmNode, from: number, to: number): TextRun[] => {
+    const runs: TextRun[] = [];
+    doc.nodesBetween(from, to, (node, position) => {
+        if (node.isText) {
+            runs.push({
+                from: Math.max(position, from),
+                to: Math.min(position + node.nodeSize, to),
+                marks: node.marks,
+            });
+        }
+    });
+    return runs;
+};
+
 /**
  * The marks a caret would type with, or the marks EVERY text in a range
  * carries — a half-bold range is not bold. Each with the first value found, so
@@ -46,13 +64,7 @@ const marksAt = (state: EditorState): Record<string, Record<string, unknown>> =>
         );
     }
 
-    // Only text contributes: the document stores no marks on inline elements.
-    const runs: (readonly PmMark[])[] = [];
-    state.doc.nodesBetween(from, to, (node) => {
-        if (node.isText) {
-            runs.push(node.marks);
-        }
-    });
+    const runs = textRunsBetween(state.doc, from, to).map((run) => run.marks);
     const [first = [], ...rest] = runs;
     const carried = first.filter((mark) => rest.every((marks) => mark.type.isInSet(marks) !== undefined));
     return Object.fromEntries(carried.map((mark) => [mark.type.name, markValueOf(mark)]));
@@ -183,6 +195,38 @@ const markToggleFor = (state: EditorState, type: string): MarkToggle => {
     return 'rangeOn';
 };
 
+/** Returning the transaction from every case makes the compiler check the switch covers them all. */
+const markToggleTransaction = (
+    state: EditorState,
+    markType: PmMarkType,
+    value: Record<string, unknown> | undefined,
+): Transaction => {
+    const { selection, tr } = state;
+    switch (markToggleFor(state, markType.name)) {
+        case 'caretOff': {
+            return tr.removeStoredMark(markType);
+        }
+        case 'caretOn': {
+            return tr.addStoredMark(markType.create(valueAttrsFor(value)));
+        }
+        case 'rangeOff': {
+            for (const range of selection.ranges) {
+                tr.removeMark(range.$from.pos, range.$to.pos, markType);
+            }
+            return tr;
+        }
+        case 'rangeOn': {
+            const mark = markType.create(valueAttrsFor(value));
+            for (const range of selection.ranges) {
+                for (const run of textRunsBetween(state.doc, range.$from.pos, range.$to.pos)) {
+                    tr.addMark(run.from, run.to, mark);
+                }
+            }
+            return tr;
+        }
+    }
+};
+
 /** Whether a mark is *on* is not here: that is a field of the selection snapshot. */
 const createMarkApi = (getView: () => EditorView, schema: Schema): EditorControlApi['marks'] => ({
     toggle(type, value) {
@@ -192,40 +236,7 @@ const createMarkApi = (getView: () => EditorView, schema: Schema): EditorControl
             return;
         }
         const view = getView();
-        const { selection, tr } = view.state;
-        switch (markToggleFor(view.state, type)) {
-            case 'caretOff': {
-                tr.removeStoredMark(markType);
-                break;
-            }
-            case 'caretOn': {
-                tr.addStoredMark(markType.create(valueAttrsFor(value)));
-                break;
-            }
-            case 'rangeOff': {
-                for (const range of selection.ranges) {
-                    tr.removeMark(range.$from.pos, range.$to.pos, markType);
-                }
-                break;
-            }
-            case 'rangeOn': {
-                const mark = markType.create(valueAttrsFor(value));
-                for (const { $from, $to } of selection.ranges) {
-                    // Text only, as the snapshot reads it: the document stores no marks on inline elements.
-                    tr.doc.nodesBetween($from.pos, $to.pos, (node, position) => {
-                        if (node.isText) {
-                            tr.addMark(
-                                Math.max(position, $from.pos),
-                                Math.min(position + node.nodeSize, $to.pos),
-                                mark,
-                            );
-                        }
-                    });
-                }
-                break;
-            }
-        }
-        view.dispatch(tr);
+        view.dispatch(markToggleTransaction(view.state, markType, value));
         view.focus();
     },
     set(type, value) {
