@@ -23,7 +23,7 @@ import { placeholderPlugin } from './placeholder';
 import { buildSchema } from './schema';
 import { createSelectionRectReader } from './selectionRect';
 import { syncDocument } from './syncDocument';
-import { rewritesUserEdits, userEditsPlugin } from './userEdits';
+import { dispatchOutsideHistory, userEditsPlugin } from './userEdits';
 import './engine.scss';
 
 /** Schedules the next try of a host document held while text is composed. */
@@ -186,14 +186,8 @@ const mount = (
             const transaction = editorView.state.tr;
             syncDocument(transaction, next);
             if (transaction.docChanged) {
-                const forgetsHistory = rewritesUserEdits(editorView.state, transaction);
                 transaction.setMeta(HOST_DOC, true);
-                transaction.setMeta('addToHistory', false);
-                editorView.dispatch(transaction);
-                if (forgetsHistory) {
-                    // A fresh state is the only way to empty the undo history.
-                    const { doc: synced, selection, plugins } = editorView.state;
-                    editorView.updateState(EditorState.create({ doc: synced, selection, plugins }));
+                if (dispatchOutsideHistory(editorView, transaction)) {
                     onStateChange();
                 }
             }
