@@ -324,7 +324,7 @@ const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
     useEffect(() => {
         if (focusPendingRef.current && handle !== null) {
             focusPendingRef.current = false;
-            handle.api.focus();
+            handle.focusAtEnd();
         }
     }, [handle]);
 

@@ -1262,6 +1262,11 @@ describe('an editor that crashes', () => {
         expect(editableIn(container).contains(window.document.activeElement)).toBe(true);
         // The text has the focus: nothing around it is made focusable for a Retry.
         expect(editableIn(container).parentElement?.closest('[tabindex]')).toBeNull();
+        // Typing goes on after the text, not before it.
+        const caret = window.getSelection();
+        expect(caret?.isCollapsed).toBe(true);
+        expect(caret?.anchorNode?.textContent).toBe('text');
+        expect(caret?.anchorOffset).toBe('text'.length);
     });
 
     it('does not take focus later when it was retried readonly', () => {

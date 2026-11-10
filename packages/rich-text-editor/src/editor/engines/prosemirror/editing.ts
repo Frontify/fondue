@@ -183,6 +183,10 @@ const mount = ({
             api,
             selectionRect: createSelectionRectReader(editorView),
             document: () => toRteDocument(editorView.state.doc, rootExtras),
+            focusAtEnd: () => {
+                editorView.dispatch(editorView.state.tr.setSelection(Selection.atEnd(editorView.state.doc)));
+                editorView.focus();
+            },
         },
         setDoc,
         setPlaceholder(next) {
