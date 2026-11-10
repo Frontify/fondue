@@ -164,15 +164,20 @@ export const ToolbarMore = ({ labels, onPanel, children }: ToolbarMoreProps): Re
                                     }
                                 }}
                                 onEscapeKeyDown={(event) => {
-                                    const target = event.target as HTMLElement;
-                                    // A control's open menu, or the text's open suggestion list, keeps Escape; More's own state is this panel's.
-                                    if (target !== moreRef.current && target.getAttribute('aria-expanded') === 'true') {
-                                        event.preventDefault();
-                                        return;
-                                    }
-                                    // Inside the panel the close is the layer's own, and onOpenChange puts focus on More.
-                                    if (content?.contains(target) === true) {
-                                        return;
+                                    const { target } = event;
+                                    if (target instanceof HTMLElement) {
+                                        // A control's open menu, or the text's open suggestion list, keeps Escape; More's own state is this panel's.
+                                        if (
+                                            target !== moreRef.current &&
+                                            target.getAttribute('aria-expanded') === 'true'
+                                        ) {
+                                            event.preventDefault();
+                                            return;
+                                        }
+                                        // Inside the panel the close is the layer's own, and onOpenChange puts focus on More.
+                                        if (content?.contains(target) === true) {
+                                            return;
+                                        }
                                     }
                                     // From the text or More, Escape only closes the panel; the editor must not leave the text too.
                                     event.stopPropagation();
@@ -249,7 +254,7 @@ const MorePanel = ({ label, focusRequestRef, onLeave, children }: MorePanelProps
 
     const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
         // Not prevented: the browser's Tab carries on from More.
-        if (event.key === 'Tab' && event.currentTarget.contains(event.target as Node)) {
+        if (event.key === 'Tab' && event.target instanceof Node && event.currentTarget.contains(event.target)) {
             onLeave();
             return;
         }
