@@ -30,7 +30,7 @@ import {
 
 import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
 
-import { keepCarriedAttrs } from './controlApi';
+import { keepCarriedAttrs, withCarriedAttrs } from './carriedAttrs';
 import { EXTRA_ATTR, valueAttrsFor } from './documentConversion';
 import { listKeys } from './lists';
 
@@ -446,9 +446,8 @@ const splitKeepingCarriedAttrs =
             const { $from } = transaction.selection;
             const above = transaction.doc.resolve($from.before()).nodeBefore;
             if (splitAtStart && above?.isTextblock) {
-                const carried = keepCarriedAttrs(registry, above.type, undefined)($from.parent);
-                const attrs = { ...above.attrs, ...carried };
-                if (!above.hasMarkup(above.type, attrs, above.marks)) {
+                const attrs = withCarriedAttrs(registry, above, $from.parent);
+                if (attrs) {
                     transaction.setNodeMarkup($from.before() - above.nodeSize, undefined, attrs);
                 }
             }

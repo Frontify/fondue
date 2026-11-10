@@ -262,12 +262,14 @@ describe('undo and redo', () => {
 });
 
 describe('undo after a paste', () => {
+    // `pasteText` reads only the event's clipboard API, so a stand-in with empty data replaces a real ClipboardEvent.
+    const clipboard = { getData: () => '', preventDefault: () => {} } as unknown as ClipboardEvent;
+
     it('takes the typing before, the paste and the typing after back as three steps', () => {
         const { view, stored } = mount({ version: 1, blocks: [{ type: PARAGRAPH, children: [] }] });
         const typeText = (value: string): void => {
             view.dispatch(view.state.tr.insertText(value));
         };
-        const clipboard = { getData: () => '', preventDefault: () => {} } as unknown as ClipboardEvent;
         typeText('one');
         view.pasteText(' pasted', clipboard);
         typeText(' two');
@@ -284,7 +286,6 @@ describe('undo after a paste', () => {
 
     it('keeps typing after the paste apart even when the caret moves in between', () => {
         const { view, stored } = mount({ version: 1, blocks: [{ type: PARAGRAPH, children: [] }] });
-        const clipboard = { getData: () => '', preventDefault: () => {} } as unknown as ClipboardEvent;
         view.dispatch(view.state.tr.insertText('one'));
         view.pasteText(' pasted', clipboard);
         view.dispatch(view.state.tr.setSelection(TextSelection.atEnd(view.state.doc)));

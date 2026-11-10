@@ -204,6 +204,7 @@ describe('toggling a list', () => {
                 }),
             },
         };
+        // A host plugin's block carries its own attributes, which the open RteBlockNode cannot name.
         const marked = (marker: string, ...values: string[]): RteBlockNode =>
             ({
                 type: 'markedList',

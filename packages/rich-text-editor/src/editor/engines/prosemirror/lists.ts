@@ -14,7 +14,7 @@ import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry } from '#/core';
 
-import { keepCarriedAttrs } from './controlApi';
+import { withCarriedAttrs } from './carriedAttrs';
 import { mapChildren } from './documentConversion';
 import { warnUnknownType } from './warnings';
 
@@ -26,8 +26,11 @@ import { warnUnknownType } from './warnings';
 
 // Where the caret is
 
+/** A node and the position it sits at. */
+type NodeAt = { node: PmNode; pos: number };
+
 /** The innermost ancestor of a position that is a list of items, with the position it sits at. */
-const findList = ($from: ResolvedPos, itemTypeByList: Map<string, string>): { node: PmNode; pos: number } | null => {
+const findList = ($from: ResolvedPos, itemTypeByList: Map<string, string>): NodeAt | null => {
     for (let depth = $from.depth; depth > 0; depth--) {
         const node = $from.node(depth);
         if (itemTypeByList.has(node.type.name)) {
@@ -49,7 +52,7 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
 type MarkupChange = { pos: number; attrs: Attrs };
 
 /** The innermost ancestor of a position that is an item of `itemType`, with the position it sits at. */
-const findItem = ($pos: ResolvedPos, itemType: PmNodeType): { node: PmNode; pos: number } | null => {
+const findItem = ($pos: ResolvedPos, itemType: PmNodeType): NodeAt | null => {
     for (let depth = $pos.depth; depth > 0; depth--) {
         const node = $pos.node(depth);
         if (node.type === itemType) {
@@ -60,11 +63,11 @@ const findItem = ($pos: ResolvedPos, itemType: PmNodeType): { node: PmNode; pos:
 };
 
 /** Where the item a split made sits: above the caret's item after a split at its very start, else the caret's item. */
-const newItemPos = (doc: PmNode, item: { node: PmNode; pos: number }, atItemStart: boolean): number => {
+const newItemPos = (doc: PmNode, item: NodeAt, splitAtItemStart: boolean): number => {
     const block = item.node.firstChild;
     const previous = doc.resolve(item.pos).nodeBefore;
     // Split at the very start, the text stays in the caret's item and the empty one above is new.
-    if (atItemStart && block !== null && block.content.size > 0 && previous !== null) {
+    if (splitAtItemStart && block !== null && block.content.size > 0 && previous !== null) {
         return item.pos - previous.nodeSize;
     }
     return item.pos;
@@ -84,16 +87,13 @@ const resetToDefaults = (doc: PmNode, pos: number): MarkupChange | null => {
 };
 
 /** The item's first text block with the attributes every text block carries, or null when it has them already. */
-const withCarriedAttrs = (
-    item: { node: PmNode; pos: number },
-    carried: (type: PmNodeType) => Attrs,
-): MarkupChange | null => {
+const carryIntoFirstBlock = (registry: PluginRegistry, item: NodeAt, source: PmNode): MarkupChange | null => {
     const block = item.node.firstChild;
     if (!block?.isTextblock) {
         return null;
     }
-    const attrs = { ...block.attrs, ...carried(block.type) };
-    if (block.hasMarkup(block.type, attrs, block.marks)) {
+    const attrs = withCarriedAttrs(registry, block, source);
+    if (!attrs) {
         return null;
     }
     return { pos: item.pos + 1, attrs };
@@ -114,14 +114,14 @@ const splitListItem =
         const source = state.selection.$from.parent;
         const { $from: caret } = state.selection;
         // The first child only: at a later child's start the item above still holds earlier content.
-        const atItemStart = caret.depth >= 2 && caret.parentOffset === 0 && caret.index(-1) === 0;
+        const splitAtItemStart = caret.depth >= 2 && caret.parentOffset === 0 && caret.index(-1) === 0;
         return split(state, (transaction) => {
             const item = findItem(transaction.selection.$from, itemType);
             if (item) {
-                const newPos = newItemPos(transaction.doc, item, atItemStart);
+                const newPos = newItemPos(transaction.doc, item, splitAtItemStart);
                 const changes = [resetToDefaults(transaction.doc, newPos)];
                 if (newPos === item.pos) {
-                    changes.push(withCarriedAttrs(item, (type) => keepCarriedAttrs(registry, type, undefined)(source)));
+                    changes.push(carryIntoFirstBlock(registry, item, source));
                 }
                 for (const change of changes) {
                     if (change) {
@@ -132,6 +132,10 @@ const splitListItem =
             dispatch(transaction);
         });
     };
+
+/** Same-type lists left side by side join, so numbering carries on; a join keeps only the first list's attributes. */
+const joiningLists = (command: Command, itemTypeByList: Map<string, string>): Command =>
+    autoJoin(command, (before, after) => itemTypeByList.has(before.type.name) && before.sameMarkup(after));
 
 // The list half of the control API
 
@@ -151,9 +155,6 @@ export const createListApi = (
         }
         return command(itemType)(view.state, view.dispatch, view);
     };
-    /** Same-type lists left side by side join, so numbering carries on; a join keeps only the first list's attributes. */
-    const joiningLists = (command: Command): Command =>
-        autoJoin(command, (before, after) => itemTypeByList.has(before.type.name) && before.sameMarkup(after));
 
     return {
         toggle(type) {
@@ -168,7 +169,7 @@ export const createListApi = (
             const current = findList(view.state.selection.$from, itemTypeByList);
 
             if (!current) {
-                joiningLists(wrapInList(listType))(view.state, view.dispatch);
+                joiningLists(wrapInList(listType), itemTypeByList)(view.state, view.dispatch);
             } else if (current.node.type === listType) {
                 runListCommand(liftListItem);
             } else {
@@ -190,7 +191,7 @@ export const createListApi = (
                     transaction.setSelection(Selection.fromJSON(transaction.doc, state.selection.toJSON()));
                     dispatch?.(transaction);
                     return true;
-                })(view.state, view.dispatch);
+                }, itemTypeByList)(view.state, view.dispatch);
             }
             view.focus();
         },
@@ -200,7 +201,7 @@ export const createListApi = (
         unwrapAll() {
             const view = getView();
             const { from, to } = view.state.selection;
-            const lists: { node: PmNode; pos: number }[] = [];
+            const lists: NodeAt[] = [];
             view.state.doc.nodesBetween(from, to, (node, pos) => {
                 if (!itemTypeByList.has(node.type.name)) {
                     return true;

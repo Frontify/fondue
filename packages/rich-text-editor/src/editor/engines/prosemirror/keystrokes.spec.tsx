@@ -538,11 +538,10 @@ describe('Enter in a to-do list', () => {
             children,
         });
         const editor = editorWith(defaultPlugins, [
+            // A nested check list written out by hand: RteBlockNode cannot name a plugin's block.
             {
                 type: 'checkList',
-                children: [
-                    nestedItem(true, paragraph(text('outer')), checkList({ checked: true, text: 'inner' })),
-                ],
+                children: [nestedItem(true, paragraph(text('outer')), checkList({ checked: true, text: 'inner' }))],
             } as RteBlockNode,
         ]);
         editor.caretAfter('inner');
@@ -553,6 +552,7 @@ describe('Enter in a to-do list', () => {
             {
                 type: 'checkList',
                 children: [
+                    // RteBlockNode cannot name a plugin's block, so the nested check list is cast.
                     nestedItem(true, paragraph(text('outer')), {
                         type: 'checkList',
                         children: [nestedItem(true, paragraph(text('inner'))), nestedItem(false, paragraph())],
@@ -666,12 +666,13 @@ describe('Enter in a to-do list', () => {
 });
 
 describe('Enter in a block with attributes every text block carries', () => {
-    const aligned = (value: string, extra: Record<string, unknown> = {}) => ({
-        type: 'paragraph',
-        align: 'center',
-        children: value === '' ? [] : [text(value)],
-        ...extra,
-    });
+    const aligned = (value: string, extra: Record<string, unknown> = {}) => {
+        const children = [];
+        if (value !== '') {
+            children.push(text(value));
+        }
+        return { type: 'paragraph', align: 'center', children, ...extra };
+    };
 
     it('at the end of a paragraph gives the new paragraph the same alignment', () => {
         const editor = editorWith(defaultPlugins, [aligned('one')]);
@@ -700,6 +701,7 @@ describe('Enter in a block with attributes every text block carries', () => {
 
         press(editor.view, 'Enter');
 
+        // `align` is a plugin's block attribute, which RteBlockNode does not declare.
         expect(editor.stored()?.map((block) => (block as { align?: string }).align)).toEqual(['center', 'center']);
     });
 

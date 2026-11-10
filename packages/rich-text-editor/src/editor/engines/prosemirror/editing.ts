@@ -47,17 +47,27 @@ const HOST_DOC = 'rte-host-doc';
  */
 const EDITABLE_ATTRIBUTE = 'data-rte-editable';
 
+/** ProseMirror's transaction meta naming the DOM event behind an edit. */
+const UI_EVENT_META = 'uiEvent';
+
+/** The `uiEvent` values that move content in or out: each is an undo step of its own. */
+const TRANSFER_EVENTS: ReadonlySet<unknown> = new Set(['paste', 'cut', 'drop']);
+
+/** prosemirror-history's transaction meta: edits sharing its value join one undo step. */
+const COMPOSITION_META = 'composition';
+
+/** The composition id a feature's paste gives all its edits. */
+const FEATURE_PASTE_COMPOSITION = 'rte-paste';
+
+type UndoGrouping = { close: boolean; closeBeforeNextEdit: boolean };
+
 /**
  * Whether a transaction closes the undo step before it, and whether the edit
  * after it must: typing groups into one step, while a paste, cut or drop, and
  * the first edit after it, stand apart.
  */
-const undoGrouping = (
-    transaction: Transaction,
-    closeBeforeNextEdit: boolean,
-): { close: boolean; closeBeforeNextEdit: boolean } => {
-    const uiEvent: unknown = transaction.getMeta('uiEvent');
-    if (uiEvent === 'paste' || uiEvent === 'cut' || uiEvent === 'drop') {
+const undoGrouping = (transaction: Transaction, closeBeforeNextEdit: boolean): UndoGrouping => {
+    if (TRANSFER_EVENTS.has(transaction.getMeta(UI_EVENT_META))) {
         return { close: true, closeBeforeNextEdit: true };
     }
     if (transaction.docChanged) {
@@ -178,7 +188,7 @@ const mount = ({
             }
             // History joins only edits it finds adjacent, and a mark change has no range: a shared composition id joins a feature paste's edits.
             if (inFeaturePaste) {
-                transaction.setMeta('composition', 'rte-paste');
+                transaction.setMeta(COMPOSITION_META, FEATURE_PASTE_COMPOSITION);
             }
             closeBeforeNextEdit = grouping.closeBeforeNextEdit;
             editorView.updateState(editorView.state.apply(transaction));
