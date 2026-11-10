@@ -5,6 +5,7 @@
 //
 // No frame: no border, background, shadow or inset around the editor. The
 // editor is its content; a host that wants a field draws the box around it.
+// One exception: the sticky top toolbar paints the surface colour, so text scrolled under it stays hidden.
 
 /**
  * Wraps the toolbar, the content and the floating bar so the editor has one
@@ -96,19 +97,11 @@
 
 /**
  * The "Turn into" button of the floating bar: the block's name beside a caret,
- * with the toolbar buttons' hover. The attributes outweigh the Button's variant rules.
+ * The attributes outweigh the Button's gap.
  */
 .turnInto[data-variant][data-emphasis][data-size] {
     gap: var(--spacing-xx-small);
     white-space: nowrap;
-    // A theme switch repaints the toolbar at once, not through Fondue's colour fade.
-    transition: none;
-
-    &:hover,
-    &:active {
-        background-color: var(--color-container-secondary-hover);
-        color: var(--color-primary-hover);
-    }
 
     /** A coarse pointer gets a 44 CSS pixel target. */
     @media (pointer: coarse) {
