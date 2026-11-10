@@ -9,6 +9,7 @@ import {
     type EditorControlApi,
     ownTypeOf,
     PARAGRAPH,
+    type RteMarkState,
     type RtePlugin,
     type RteSelectionSnapshot,
 } from '#/core';
@@ -31,12 +32,13 @@ const snapshot = (overrides: Partial<RteSelectionSnapshot> = {}): RteSelectionSn
     block: { type: PARAGRAPH },
     blocks: [{ type: PARAGRAPH }],
     marks: {},
-    partialMarks: {},
     history: { canUndo: false, canRedo: false },
     ...overrides,
 });
 
 const LIST_ITEM = 'listItem';
+
+const allOf = (value: Record<string, unknown> = {}): RteMarkState => ({ coverage: 'all', value });
 
 const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
     let selection = snapshot(initial);
@@ -55,18 +57,21 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
                 const { [type]: present, ...others } = selection.marks;
                 selection = {
                     ...selection,
-                    marks: present === undefined ? { ...others, [type]: value ?? {} } : others,
+                    marks: present === undefined ? { ...others, [type]: allOf(value) } : others,
                 };
             },
             set: (type, value) => {
-                selection = { ...selection, marks: { ...selection.marks, [type]: value ?? {} } };
+                selection = { ...selection, marks: { ...selection.marks, [type]: allOf(value) } };
             },
             removeAll: () => {
                 selection = { ...selection, marks: {} };
             },
             getRun: (type) => {
-                const value = selection.marks[type];
-                return value === undefined ? null : { value, text: selection.text };
+                const mark = selection.marks[type];
+                if (mark?.coverage !== 'all') {
+                    return null;
+                }
+                return { value: mark.value, text: selection.text };
             },
         },
         blocks: {
@@ -219,7 +224,7 @@ describe('a mark plugin', () => {
     });
 
     it('is mixed when only part of the selection carries its mark', () => {
-        const editor = fakeEditor({ text: 'here', isCollapsed: false, partialMarks: { link: true } });
+        const editor = fakeEditor({ text: 'here', isCollapsed: false, marks: { link: { coverage: 'some' } } });
 
         const props = editor.props(markPlugin);
 
@@ -227,7 +232,7 @@ describe('a mark plugin', () => {
     });
 
     it('is not mixed when another mark is partial', () => {
-        const editor = fakeEditor({ text: 'here', isCollapsed: false, partialMarks: { bold: true } });
+        const editor = fakeEditor({ text: 'here', isCollapsed: false, marks: { bold: { coverage: 'some' } } });
 
         expect(editor.props(markPlugin).isActive).toBe(false);
     });

@@ -685,6 +685,7 @@ describe('the toolbar', () => {
     });
 
     it('draws the control of a plugin with an unknown group last', () => {
+        // The test passes a group outside RteToolbarGroup on purpose.
         const unknownGroupPlugin = {
             id: 'unknown-group',
             toolbarGroup: 'not-a-group',
