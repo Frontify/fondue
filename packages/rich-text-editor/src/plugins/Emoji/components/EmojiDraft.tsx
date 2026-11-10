@@ -20,6 +20,9 @@ import { type EmojiItem } from '../types';
 /** The colon that starts a shortcode, and ends one: `:smile:`. */
 export const TRIGGER = ':';
 
+/** The shortcode an option shows, colons included: `:smile:`. */
+const shortcodeOf = (item: EmojiItem): string => `${TRIGGER}${item.shortcodes[0]}${TRIGGER}`;
+
 /** How many emoji the list offers at once. */
 const SUGGESTION_LIMIT = 8;
 
@@ -178,7 +181,7 @@ export const EmojiDraft = ({
                                           role="option"
                                           aria-selected={index === activeIndex}
                                           // The shortcode too: it is what the option shows, so what a voice user says.
-                                          aria-label={`${item.name} ${TRIGGER}${item.shortcodes[0]}${TRIGGER}`}
+                                          aria-label={`${item.name} ${shortcodeOf(item)}`}
                                           // Keep focus in the input: blurring would cancel before the click lands.
                                           onMouseDown={(event) => event.preventDefault()}
                                           onClick={() => finish(() => onChoose(item))}
@@ -193,9 +196,7 @@ export const EmojiDraft = ({
                                               {item.emoji}
                                           </span>
                                           <span aria-hidden className={styles.hint}>
-                                              {TRIGGER}
-                                              {item.shortcodes[0]}
-                                              {TRIGGER}
+                                              {shortcodeOf(item)}
                                           </span>
                                       </li>
                                   ))}

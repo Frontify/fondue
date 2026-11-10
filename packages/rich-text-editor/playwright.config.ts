@@ -3,6 +3,9 @@
 import { defineConfig, devices } from '@playwright/experimental-ct-react';
 import tsConfigPaths from 'vite-tsconfig-paths';
 
+// Tests that drive the browser through the DevTools protocol, which only Chromium has.
+const NEEDS_DEVTOOLS_PROTOCOL = /@devtools-protocol/;
+
 // https://playwright.dev/docs/test-configuration
 export default defineConfig({
     testDir: './src',
@@ -24,7 +27,7 @@ export default defineConfig({
     },
     projects: [
         { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-        { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-        { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+        { name: 'firefox', grepInvert: NEEDS_DEVTOOLS_PROTOCOL, use: { ...devices['Desktop Firefox'] } },
+        { name: 'webkit', grepInvert: NEEDS_DEVTOOLS_PROTOCOL, use: { ...devices['Desktop Safari'] } },
     ],
 });

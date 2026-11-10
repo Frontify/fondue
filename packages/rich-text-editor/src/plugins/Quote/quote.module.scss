@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../shared/mutedText' as shared;
+
 .quote {
+    @include shared.muted-text;
+
     margin: 0;
     padding-left: var(--spacing-small);
     border-left: var(--border-width-large) solid var(--color-line-strong);
-    // The muted tone that still reaches 4.5:1 on inline code's background.
-    color: var(--color-container-secondary-on-secondary-container-variant);
 }

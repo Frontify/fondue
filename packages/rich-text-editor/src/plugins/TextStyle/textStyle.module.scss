@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../shared/mutedText' as shared;
+
 // Every preset. Headings use Fondue's semantic heading tokens, the rest the typography scale.
 // The presets table (helpers/presets.ts) reads these for both the block and the dropdown previews.
 @mixin preset {
@@ -52,9 +54,8 @@
 
 .custom2 {
     @include preset;
+    @include shared.muted-text;
 
-    // The muted tone that still reaches 4.5:1 on inline code's background.
-    color: var(--color-container-secondary-on-secondary-container-variant);
     font-size: var(--typography-font-size-medium);
     font-style: italic;
 }
@@ -76,8 +77,7 @@
 
 .imageCaption {
     @include preset;
+    @include shared.muted-text;
 
-    // The muted tone that still reaches 4.5:1 on inline code's background.
-    color: var(--color-container-secondary-on-secondary-container-variant);
     font-size: var(--typography-font-size-x-small);
 }

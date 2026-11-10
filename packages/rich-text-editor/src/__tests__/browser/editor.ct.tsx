@@ -165,34 +165,42 @@ const FIELD_PLACEHOLDER = '[data-test-id="fondue-text-input"] div[aria-hidden="t
 const scan = (page: Page): AxeBuilder =>
     new AxeBuilder({ page }).withTags(WCAG_22_AA).disableRules(PAGE_LEVEL_RULES).exclude(FIELD_PLACEHOLDER);
 
+const COLOR_CONTRAST = 'color-contrast';
+
+type AxeNode = Awaited<ReturnType<AxeBuilder['analyze']>>['violations'][number]['nodes'][number];
+
+/** One node breaking one axe rule, so a failure says what to fix. */
+type Violation = { rule: string; target: string };
+
+/** The CSS selector axe reports for a node. */
+const selectorOf = (node: AxeNode): string => node.target.join(' ');
+
 /**
- * The rule id and node of each axe violation, so a failure says what to fix.
- * Contrast axe could not decide counts too: overlaid text is where that happens.
- * A node scrolled out of its list is undecided only for that reason, so it is
- * checked again once scrolled into view.
+ * Every axe violation on the page. Contrast axe could not decide counts too:
+ * overlaid text is where that happens. A node scrolled out of its list is
+ * undecided only for that reason, so it is checked again once scrolled into view.
  */
-const violationsOf = async (page: Page): Promise<string[]> => {
+const violationsOf = async (page: Page): Promise<Violation[]> => {
     const { violations, incomplete } = await scan(page).analyze();
-    const undecided = incomplete.filter(({ id }) => id === 'color-contrast').flatMap(({ nodes }) => nodes);
-    const stillUndecided = [];
+    const found: Violation[] = violations.flatMap(({ id, nodes }) =>
+        nodes.map((node) => ({ rule: id, target: selectorOf(node) })),
+    );
+    const undecided = incomplete.filter(({ id }) => id === COLOR_CONTRAST).flatMap(({ nodes }) => nodes);
     for (const node of undecided) {
-        await page.locator(node.target.join(' ')).scrollIntoViewIfNeeded();
-        const recheck = await scan(page).include(node.target.join(' ')).withRules(['color-contrast']).analyze();
+        const target = selectorOf(node);
+        await page.locator(target).scrollIntoViewIfNeeded();
+        const recheck = await scan(page).include(target).withRules([COLOR_CONTRAST]).analyze();
         if (recheck.violations.length > 0 || recheck.incomplete.length > 0) {
-            stillUndecided.push(`color-contrast: ${node.target.join(' ')}`);
+            found.push({ rule: COLOR_CONTRAST, target });
         }
     }
-    return [
-        ...violations.flatMap(({ id, nodes }) => nodes.map((node) => `${id}: ${node.target.join(' ')}`)),
-        ...stillUndecided,
-    ];
+    return found;
 };
 
 /** How many nodes break each rule: what a scan with a known violation pins, so fixing it turns the test red. */
-const countsOf = (violations: string[]): Record<string, number> => {
+const countsOf = (violations: Violation[]): Record<string, number> => {
     const counts: Record<string, number> = {};
-    for (const violation of violations) {
-        const rule = violation.slice(0, violation.indexOf(':'));
+    for (const { rule } of violations) {
         counts[rule] = (counts[rule] ?? 0) + 1;
     }
     return counts;
@@ -253,11 +261,13 @@ test.describe('editor', () => {
     });
 });
 
+const SELECT_ALL = 'ControlOrMeta+a';
+
 /** Types `text` into the editor and selects it, which the toolbar needs for a link or a colour. */
 const typeAndSelect = async (page: Page, text: string): Promise<void> => {
     await page.getByRole('textbox').click();
     await page.keyboard.type(text);
-    await page.keyboard.press('ControlOrMeta+a');
+    await page.keyboard.press(SELECT_ALL);
 };
 
 test.describe('accessibility', () => {

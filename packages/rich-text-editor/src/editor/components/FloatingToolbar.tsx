@@ -8,6 +8,15 @@ import { type EditorStateStore } from '../hooks/useEditorHandle';
 import { useSelectionAnchor } from '../hooks/useSelectionAnchor';
 import { type EditorHandle } from '../port';
 
+type FloatingToolbarProps = {
+    handle: EditorHandle;
+    editorState: EditorStateStore;
+    editableRef: RefObject<HTMLElement | null>;
+    /** The bar's accessible name: the Flyout makes it a dialog, which needs one. */
+    label: string;
+    children: ReactNode;
+};
+
 /**
  * The bar hung over the selected text, shown while there is a selection. The
  * Flyout places it above the selection (below where there is no room) and
@@ -22,14 +31,7 @@ export const FloatingToolbar = ({
     editableRef,
     label,
     children,
-}: {
-    handle: EditorHandle;
-    editorState: EditorStateStore;
-    editableRef: RefObject<HTMLElement | null>;
-    /** The bar's accessible name: the Flyout makes it a dialog, which needs one. */
-    label: string;
-    children: ReactNode;
-}): ReactNode => {
+}: FloatingToolbarProps): ReactNode => {
     const anchor = useSelectionAnchor({ handle, editorState, editableRef });
     const contentRef = useRef<HTMLDivElement | null>(null);
 

@@ -20,12 +20,16 @@ const PEOPLE = [
 
 const plugins = [...defaultPlugins, mentionPlugin({ items: PEOPLE, href: ({ id }) => `#/people/${id}` })];
 
+type EditorWithMentionsProps = Omit<RichTextEditorProps, 'plugins'>;
+
+type RendererWithMentionsProps = Omit<RichTextRendererProps, 'plugins'>;
+
 /** The editor with the default plugins and mentions. */
-export const EditorWithMentions = (props: Omit<RichTextEditorProps, 'plugins'>): ReactNode => (
+export const EditorWithMentions = (props: EditorWithMentionsProps): ReactNode => (
     <RichTextEditor {...props} plugins={plugins} />
 );
 
 /** The renderer with the default plugins and mentions. */
-export const RendererWithMentions = (props: Omit<RichTextRendererProps, 'plugins'>): ReactNode => (
+export const RendererWithMentions = (props: RendererWithMentionsProps): ReactNode => (
     <RichTextRenderer {...props} plugins={plugins} />
 );
