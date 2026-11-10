@@ -1,0 +1,253 @@
+packages/rich-text-editor/src/__tests__/goldens/link.json
+  s_eecb278abe0cf5::t_96c00eae7ec077 1-71
+packages/rich-text-editor/src/__tests__/goldens/check-list.json
+  s_eecb278abe0cf5::t_96c00eae7ec077 1-117,230-232
+  s_eecb278abe0cf5::t_695257fdfd7e66 118-229
+packages/rich-text-editor/src/__tests__/goldens/strikethrough.json
+  s_eecb278abe0cf5::t_96c00eae7ec077 1-49
+packages/rich-text-editor/src/__tests__/goldens/column-break.json
+  s_eecb278abe0cf5::t_96c00eae7ec077 1-38
+packages/rich-text-editor/src/__tests__/goldens/emoji.json
+  s_eecb278abe0cf5::t_96c00eae7ec077 1-29
+packages/rich-text-editor/src/__tests__/goldens/bullet-list.json
+  s_eecb278abe0cf5::t_96c00eae7ec077 1-111,218-220
+  s_eecb278abe0cf5::t_5a65758b85e2d1 112-217
+packages/rich-text-editor/src/__tests__/goldens/numbered-list.json
+  s_eecb278abe0cf5::t_96c00eae7ec077 1-111,218-220
+  s_eecb278abe0cf5::t_695257fdfd7e66 112-217
+packages/rich-text-editor/src/__tests__/goldens/superscript.json
+  s_eecb278abe0cf5::t_96c00eae7ec077 1-49
+packages/rich-text-editor/src/__tests__/goldens/mention.json
+  s_eecb278abe0cf5::t_96c00eae7ec077 1-77
+packages/rich-text-editor/src/__tests__/goldens/text-style.json
+  s_eecb278abe0cf5::t_96c00eae7ec077 1-94
+packages/rich-text-editor/src/__tests__/goldens/align.json
+  s_eecb278abe0cf5::t_96c00eae7ec077 1-49
+packages/rich-text-editor/src/__tests__/goldens/code.json
+  s_eecb278abe0cf5::t_96c00eae7ec077 1-49
+packages/rich-text-editor/src/__tests__/goldens/font-color.json
+  s_eecb278abe0cf5::t_96c00eae7ec077 1-90
+packages/rich-text-editor/src/__tests__/goldens/bold.json
+  s_eecb278abe0cf5::t_96c00eae7ec077 1-49
+packages/rich-text-editor/src/__tests__/goldens/quote.json
+  s_eecb278abe0cf5::t_96c00eae7ec077 1-33
+packages/rich-text-editor/src/__tests__/goldens/soft-break.json
+  s_eecb278abe0cf5::t_96c00eae7ec077 1-74
+packages/rich-text-editor/src/__tests__/goldens/underline.json
+  s_eecb278abe0cf5::t_96c00eae7ec077 1-49
+packages/rich-text-editor/src/__tests__/goldens/italic.json
+  s_eecb278abe0cf5::t_96c00eae7ec077 1-49
+packages/rich-text-editor/src/__tests__/goldens/subscript.json
+  s_eecb278abe0cf5::t_96c00eae7ec077 1-49
+packages/rich-text-editor/src/__tests__/formatRegression.spec.tsx
+  s_eecb278abe0cf5::t_c2baad6a1fadb1 67
+  s_eecb278abe0cf5::t_c6fa7d3f34f0ea 384
+  s_eecb278abe0cf5::t_70b059d2c8c4a2 98,107-109,196-206,271-274,288-291,293
+  s_eecb278abe0cf5::t_a356ba8bc47816 1-66,68-69,71-80,83-87,90-95,97,110,115-131,133,135-143,145-149,151-155,161-178,193-195,207-208,218-220,222-226,253-270,275-287,294-327,329-330,338-346,357-358,360,362-375,377,379-380,382-383,385-389,392-393,395-396
+  s_eecb278abe0cf5::t_fe84fb1d4dae9b 132,134
+  s_eecb278abe0cf5::t_ca1abca7f4ec57 156-160,292
+  s_eecb278abe0cf5::t_d234bdd48c7add 347-351,354-356
+  s_eecb278abe0cf5::t_dbd282ced9a877 352-353
+  s_eecb278abe0cf5::t_448f86538521fb 378
+  s_eecb278abe0cf5::t_d85bfb82422984 331-337
+  s_eecb278abe0cf5::t_48e29a2d16b93c 70,81-82,88-89,111-114,150
+  s_eecb278abe0cf5::t_3f7126040191c1 96,209-217,221,227-252,328,359,361,376,381,390-391
+  s_eecb278abe0cf5::t_832b578f9a2eb5 99,144
+  s_eecb278abe0cf5::t_7f52c5f1ebfe53 99
+  s_eecb278abe0cf5::t_792f439a69f090 100
+  s_eecb278abe0cf5::t_86279f48378a1a 101-106,144,394
+  s_eecb278abe0cf5::t_6eb1f02ee5416b 179-189,191-192
+  s_eecb278abe0cf5::t_74a2888ab6495f 190
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.ts
+  s_eecb278abe0cf5::t_52d836b33cb178 16,168-172
+  s_eecb278abe0cf5::t_e1051abdc78e66 57
+  s_eecb278abe0cf5::t_44cdcc758a3637 6,9,63-64
+  s_eecb278abe0cf5::t_c83ab1aacb3a9d 63-64
+  s_eecb278abe0cf5::t_b5c151f9de2c08 57,63
+  s_0d7a164615ceb9::t_ec1598ec2399b5 49,53
+  s_e090dd636f75c9::t_912f122602abfa 63-64
+  s_7e256622168d14::t_78c6115c2b9c69 11,50-52,54-57
+  s_7e256622168d14::t_0f07a72e0c16f7 15,58-62
+packages/rich-text-editor/src/editor/engines/prosemirror/documentConversion.ts
+  s_eecb278abe0cf5::t_52d836b33cb178 50-51,76,78-80,115,121-124,128-132,134,170-171,269-272
+  s_eecb278abe0cf5::t_a6b16e8b38ee65 133,135
+  s_0d7a164615ceb9::t_45ad845c08f5fd 19
+  s_0d7a164615ceb9::t_e817ec42a7328c 116-120,125-126
+  s_ba2ed58698a9c2::t_d3a78b255bb5d3 127
+  s_0d7a164615ceb9::t_b174fc249276b5 273-276
+  s_0d7a164615ceb9::t_b1a83a5c62701f 280-286,406-407,409
+  s_c9bef17c5c3a0c::t_e6dc3128ea11a9 391,412
+  s_7e256622168d14::t_32109a611ff620 138-171,292-307
+packages/rich-text-editor/src/__tests__/serializeToHtml.spec.tsx
+  s_eecb278abe0cf5::t_52d836b33cb178 32-51
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_eecb278abe0cf5::t_52748bd0fd76b8 16,241-242
+  s_0d7a164615ceb9::t_a02cb0eb3717ee 363
+packages/rich-text-editor/src/editor/engines/prosemirror/documentConversion.spec.tsx
+  s_eecb278abe0cf5::t_b8df8f3dc40293 81-84,252-253,258-276,289-313,324-341,353-355,357-361,363-373
+  s_eecb278abe0cf5::t_fd3417dc9eec2d 314-323
+  s_0d7a164615ceb9::t_5526bd51eb02f0 18,254-257,356,362
+  s_0d7a164615ceb9::t_43fc645864434d 342-352
+  s_c9bef17c5c3a0c::t_13b60e9624c71b 277-288
+packages/rich-text-editor/src/editor/engines/prosemirror/extraAttributes.spec.tsx
+  s_eecb278abe0cf5::t_95e92262c8de8c 1-4,7,9,11-35,53-57,83-93,119-127,177-196,206-250,252-257,259-272,392-402
+  s_eecb278abe0cf5::t_e699c95f49fa13 52,58-60,62-66,251,258
+  s_eecb278abe0cf5::t_2995d89e296b64 370-384,390
+  s_eecb278abe0cf5::t_e8f744e0ab429c 356-358
+  s_eecb278abe0cf5::t_e85e8e5a806bb1 71-76
+  s_eecb278abe0cf5::t_79e5cada185f2a 6,61,67-70,77-82,273-283,323-331,339-355,359-362
+  s_eecb278abe0cf5::t_08a64f9acd6b7f 332-338
+  s_eecb278abe0cf5::t_b720b99328173e 391
+  s_eecb278abe0cf5::t_811f8ac8e67422 315-319
+  s_eecb278abe0cf5::t_2a9a5bcd8154b2 10,94-118,306-314,320-321
+  s_eecb278abe0cf5::t_be7affdd7045e2 322
+  s_0d7a164615ceb9::t_a5ab7b133d434d 37-38,43,45,47-51
+  s_0d7a164615ceb9::t_a610d5458addc7 8
+  s_0d7a164615ceb9::t_2eb733f1e8f0e5 167-176
+  s_0d7a164615ceb9::t_b174fc249276b5 146-148
+  s_0d7a164615ceb9::t_b7a233c476e7c5 137
+  s_0d7a164615ceb9::t_aeea5956b837e5 128-136,138-145,149-155
+  s_0d7a164615ceb9::t_43fc645864434d 5,36,39-42,44,46,156-164
+  s_0d7a164615ceb9::t_5ee11a7cae8c2a 363-369,385-389
+  s_0d7a164615ceb9::t_33d443f8576cbd 165-166
+  s_0d7a164615ceb9::t_fa6d631d0ad908 197-198,203
+  s_0d7a164615ceb9::t_90adc6fbe56b6f 199-202,204-205,285-295
+  s_0d7a164615ceb9::t_dae617ce4a0042 284
+  s_0d7a164615ceb9::t_642c5db2cf1fd1 296
+  s_0d7a164615ceb9::t_86007f2636b061 297-305
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.ts
+  s_eecb278abe0cf5::t_89d227b96d2506 15-23,102
+  s_c9bef17c5c3a0c::t_6dc4270b8e1a7a 170
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.spec.tsx
+  s_eecb278abe0cf5::t_b002db9ad02464 133-164,176-184
+  s_0d7a164615ceb9::t_85c49fbebbe3ea 165-166,168-171,173-175
+  s_0d7a164615ceb9::t_43fc645864434d 167,172
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_eecb278abe0cf5::t_56b84783082503 150-161
+  s_0d7a164615ceb9::t_99ddf1a0a7e27f 138-149
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.ts
+  s_eecb278abe0cf5::t_44cdcc758a3637 8-12,14
+  s_0d7a164615ceb9::t_7be399b3f68f3f 17
+  s_0d7a164615ceb9::t_65cf90761ad47e 79-80
+  s_0d7a164615ceb9::t_b1a83a5c62701f 16,144,162-163,181
+  s_7e256622168d14::t_a51314c50452e4 13,115
+  s_578d4f4cfbdb16::t_adaa6b6d3abb36 123
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.spec.tsx
+  s_eecb278abe0cf5::t_44cdcc758a3637 9,31-42,47,60-71
+  s_eecb278abe0cf5::t_c83ab1aacb3a9d 6,91-119
+  s_eecb278abe0cf5::t_32baf0aa8fbbb3 121
+  s_eecb278abe0cf5::t_8c818e17ed955b 130,133
+  s_0d7a164615ceb9::t_c81f2169ae7bd9 44-45
+  s_7e256622168d14::t_830ff142c269fd 5,120,122-129,131-132,134-137,139-140,142-154,156-159,162-163,165-166,168-169,172-173,175,178-180,182,186-206
+  s_7e256622168d14::t_5aa13ec258b84c 43,46,48-60
+packages/rich-text-editor/src/editor/engines/prosemirror/lists.ts
+  s_eecb278abe0cf5::t_88bf17293092c9 10
+  s_0d7a164615ceb9::t_46ba4b3df216b9 55
+  s_0d7a164615ceb9::t_d27730b75aa922 89
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_eecb278abe0cf5::t_88bf17293092c9 14
+  s_0d7a164615ceb9::t_f230160294b7c0 308-320
+  s_0d7a164615ceb9::t_5d8c95498c2882 13,52
+  s_0d7a164615ceb9::t_d27730b75aa922 3,53
+packages/rich-text-editor/src/editor/engines/prosemirror/extraAttributes.ts
+  s_eecb278abe0cf5::t_88bf17293092c9 1-2,4,6-11,13,18-19,21,23,25-26,36,38,52-53
+  s_0d7a164615ceb9::t_82c431f39b1186 22,42,45,61,64-65,73,85-90
+  s_0d7a164615ceb9::t_29a4efe1b5ff22 3
+  s_0d7a164615ceb9::t_7423a734a33ca3 50,63-65
+  s_0d7a164615ceb9::t_3e4f263f75b286 21,23,29,31,40-41
+  s_0d7a164615ceb9::t_87d4cf61e54ab7 13
+  s_7e256622168d14::t_b27546ffceaa67 12,14-20,22,24,27-28,30,32-39,43-44,46-49,51,55-56,62,69-72,74-84
+  s_578d4f4cfbdb16::t_f71997c8966312 5,57-58,60,66
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_0d7a164615ceb9::t_6864832452c815 588,590-594,596-600
+  s_0d7a164615ceb9::t_646e2fb84ad62b 595
+  s_0d7a164615ceb9::t_9f884adbed33be 589
+  s_0d7a164615ceb9::t_0ca59f63e3fca3 585
+  s_0d7a164615ceb9::t_15a99b7bb6ca77 570-584,586-587
+packages/rich-text-editor/src/editor/engines/prosemirror/warnings.ts
+  s_0d7a164615ceb9::t_48b618e43a635f 23-33
+.changeset/rte-format-goldens.md
+  s_17e6325854cf61::t_622e49979a6067 1-4
+.changeset/rte-keep-undeclared-attributes.md
+  s_7e256622168d14::t_787804b5ae6be2 1-4
+.changeset/tabs-single-active-tab-change.md
+  s_7e256622168d14::t_fd9915ee141c96 1-5
+packages/components/src/components/Tabs/Tabs.tsx
+  s_7e256622168d14::t_0901ecb223422d 105-106,109-116
+packages/components/src/components/Tabs/__tests__/ControlledTabs.tsx
+  s_7e256622168d14::t_46bbf744bbb2a7 1-39
+packages/components/src/components/Tabs/__tests__/Tabs.ct.tsx
+  s_7e256622168d14::t_3d084ee345bcc2 7-8,688-753
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7d7cc690b4e8c661d3e0cdc9f8c2544894162649",
+  "prompts": {},
+  "sessions": {
+    "s_0d7a164615ceb9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ce3ed5dc-cb25-4b93-8e3d-ca0fc9174e7d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_17e6325854cf61": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5dd182d0-d7de-40a0-8dd8-b9746fb93e26",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_578d4f4cfbdb16": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "b9ece22e-b392-4e5e-b56f-a5f2edc08065",
+        "model": "claude-opus-5-5-medium"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_7e256622168d14": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f515e4d0-41ca-4403-a057-96417402fecd",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_ba2ed58698a9c2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5aa133c1-3979-4ca3-87b9-433245f79961",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_c9bef17c5c3a0c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c6c8eb0b-549e-438a-aaf8-1b7abc83dee2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_e090dd636f75c9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c7d6ea89-316e-49b8-b097-cf331faa9e19",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_eecb278abe0cf5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "02ff1c4d-dc17-4323-8121-0c1783040630",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

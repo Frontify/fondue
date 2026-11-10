@@ -1,0 +1,25 @@
+.github/workflows/charts-pull-requests.yaml
+  s_0c78ff5c576d6d::t_b82ed481f7e509 18-19
+  s_0c78ff5c576d6d::t_ecb5ea431f81cb 7
+.github/workflows/fondue-pull-requests.yaml
+  s_0c78ff5c576d6d::t_b82ed481f7e509 57-60
+.github/actions/setup/action.yaml
+  s_0c78ff5c576d6d::t_c6d13a686ac2fc 51-56
+  s_0c78ff5c576d6d::t_6db96291a4dedc 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "74a9b7024eace233e855bc766912b4a2fe6d3ada",
+  "prompts": {},
+  "sessions": {
+    "s_0c78ff5c576d6d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "81a33e14-ea9e-4419-a91f-21fae0f9e44d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
