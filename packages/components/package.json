@@ -13,6 +13,9 @@
     "files": [
         "dist"
     ],
+    "sideEffects": [
+        "**/*.css"
+    ],
     "type": "module",
     "exports": {
         ".": {
