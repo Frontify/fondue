@@ -27,6 +27,14 @@ import { useToolbarRoving } from '../hooks/useToolbarRoving';
 import { type RichTextEditorLabels } from '../labels';
 import styles from '../richTextEditor.module.scss';
 
+type ToolbarMoreProps = {
+    labels: RichTextEditorLabels;
+    /** Called with the element the controls live in as More mounts and unmounts, for the row to measure the slots in it. */
+    onPanel: (panel: HTMLElement | null) => void;
+    /** The groups the row has no room for. */
+    children: ReactNode;
+};
+
 /**
  * The More button at the end of the top row and the panel it opens, a toolbar
  * of its own holding the controls the row has no room for.
@@ -42,17 +50,7 @@ import styles from '../richTextEditor.module.scss';
  * stays in the text, as with every toolbar button. Escape and Tab in the panel
  * close it and put focus back on More, Tab carrying on from there.
  */
-export const ToolbarMore = ({
-    labels,
-    onPanel,
-    children,
-}: {
-    labels: RichTextEditorLabels;
-    /** Called with the element the controls live in as More mounts and unmounts, for the row to measure the slots in it. */
-    onPanel: (panel: HTMLElement | null) => void;
-    /** The groups the row has no room for. */
-    children: ReactNode;
-}): ReactNode => {
+export const ToolbarMore = ({ labels, onPanel, children }: ToolbarMoreProps): ReactNode => {
     const [open, setOpen] = useState(false);
     const [tooltipOpen, setTooltipOpen] = useState(false);
     // Made once and moved between the parking element and the open panel, which keeps the controls' state.
@@ -196,12 +194,14 @@ export const ToolbarMore = ({
     );
 };
 
+type ToolbarMoreProbeProps = { labels: RichTextEditorLabels };
+
 /**
  * More's button alone, for the row to read its width before anything
  * overflows: the panel, its tooltip and its theme are not needed for that, and
  * a row that fits never mounts them.
  */
-export const ToolbarMoreProbe = ({ labels }: { labels: RichTextEditorLabels }): ReactNode => (
+export const ToolbarMoreProbe = ({ labels }: ToolbarMoreProbeProps): ReactNode => (
     <span className={styles.moreAnchor}>
         <MoreButton label={labels.more} />
     </span>
@@ -230,19 +230,16 @@ const MoreButton = forwardRef<HTMLButtonElement, MoreButtonProps>(function MoreB
     );
 });
 
-/** The panel's toolbar, with the roving focus the row has. */
-const MorePanel = ({
-    label,
-    focusRequestRef,
-    onLeave,
-    children,
-}: {
+type MorePanelProps = {
     label: string;
     focusRequestRef: MutableRefObject<boolean>;
     /** Escape or Tab in the panel: close it, focus on More. */
     onLeave: () => void;
     children: ReactNode;
-}): ReactNode => {
+};
+
+/** The panel's toolbar, with the roving focus the row has. */
+const MorePanel = ({ label, focusRequestRef, onLeave, children }: MorePanelProps): ReactNode => {
     const panelRef = useRef<HTMLDivElement | null>(null);
     const roving = useToolbarRoving({
         toolbarRef: panelRef,

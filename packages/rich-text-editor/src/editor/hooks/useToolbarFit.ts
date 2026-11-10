@@ -20,6 +20,18 @@ export const MORE_ATTRIBUTE = 'data-toolbar-more';
  */
 export type ToolbarFit = { kind: 'measuring' } | { kind: 'fitted'; shown: number };
 
+export type UseToolbarFitParams = {
+    toolbarRef: RefObject<HTMLElement | null>;
+    /** The panel behind More, which holds the slots the row has no room for; null while there is no More. */
+    panel: HTMLElement | null;
+    groups: readonly SlotGroup<{ key: string }>[];
+    fits: boolean;
+    /** Set when a refit took the focused control away, for the toolbar to focus its current stop. */
+    focusRequestRef: MutableRefObject<boolean>;
+};
+
+type FittedRow = { itemsKey: string; shown: number };
+
 /**
  * How many leading slots of a one-row toolbar fit its width. Each slot is
  * measured while every slot shows in the row, once per item set; after that
@@ -32,18 +44,10 @@ export const useToolbarFit = ({
     groups,
     fits,
     focusRequestRef,
-}: {
-    toolbarRef: RefObject<HTMLElement | null>;
-    /** The panel behind More, which holds the slots the row has no room for; null while there is no More. */
-    panel: HTMLElement | null;
-    groups: readonly SlotGroup<{ key: string }>[];
-    fits: boolean;
-    /** Set when a refit took the focused control away, for the toolbar to focus its current stop. */
-    focusRequestRef: MutableRefObject<boolean>;
-}): ToolbarFit => {
+}: UseToolbarFitParams): ToolbarFit => {
     const keys = groups.map((group) => group.items.map((item) => item.key));
     const itemsKey = JSON.stringify(keys);
-    const [fitted, setFitted] = useState<{ itemsKey: string; shown: number } | null>(null);
+    const [fitted, setFitted] = useState<FittedRow | null>(null);
     // By item key, so a slot moved behind More keeps the width it had in the row.
     const widthsRef = useRef(new Map<string, number>());
     const moreWidthRef = useRef(0);
@@ -78,21 +82,10 @@ export const useToolbarFit = ({
             if (more !== null) {
                 moreWidthRef.current = more.getBoundingClientRect().width;
             }
-            const style = getComputedStyle(toolbar);
-            const group = toolbar.querySelector(`[${GROUP_ATTRIBUTE}]`);
-            let itemGap = 0;
-            if (group !== null) {
-                itemGap = pixels(getComputedStyle(group).columnGap);
-            }
             const next = fittingSlotCount({
-                groups: keys.map((group) => group.map((key) => widthsRef.current.get(key) ?? 0)),
-                gap: pixels(style.columnGap),
-                itemGap,
+                groups: slotWidths(keys, widthsRef.current),
+                ...rowMetricsOf(toolbar),
                 more: moreWidthRef.current,
-                available:
-                    toolbar.getBoundingClientRect().width -
-                    pixels(style.paddingInlineStart) -
-                    pixels(style.paddingInlineEnd),
             });
             const focused = toolbar.ownerDocument.activeElement;
             if (next !== drawn && (toolbar.contains(focused) || panel?.contains(focused) === true)) {
@@ -137,4 +130,35 @@ const pixels = (value: string): number => {
         return 0;
     }
     return parsed;
+};
+
+/** Each key's measured width, in the keys' groups; a key not measured yet is 0. */
+const slotWidths = (keys: readonly (readonly string[])[], widths: ReadonlyMap<string, number>): number[][] => {
+    const result: number[][] = [];
+    for (const group of keys) {
+        const groupWidths: number[] = [];
+        for (const key of group) {
+            groupWidths.push(widths.get(key) ?? 0);
+        }
+        result.push(groupWidths);
+    }
+    return result;
+};
+
+type RowMetrics = { gap: number; itemGap: number; available: number };
+
+/** The toolbar's gap between groups, the gap between slots in a group, and the width its slots can fill. */
+const rowMetricsOf = (toolbar: HTMLElement): RowMetrics => {
+    const style = getComputedStyle(toolbar);
+    const group = toolbar.querySelector(`[${GROUP_ATTRIBUTE}]`);
+    let itemGap = 0;
+    if (group !== null) {
+        itemGap = pixels(getComputedStyle(group).columnGap);
+    }
+    return {
+        gap: pixels(style.columnGap),
+        itemGap,
+        available:
+            toolbar.getBoundingClientRect().width - pixels(style.paddingInlineStart) - pixels(style.paddingInlineEnd),
+    };
 };

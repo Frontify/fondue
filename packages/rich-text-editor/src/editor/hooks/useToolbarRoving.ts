@@ -12,6 +12,20 @@ import {
 
 import { SLOT_ATTRIBUTE } from './useToolbarFit';
 
+export type UseToolbarRovingParams = {
+    toolbarRef: RefObject<HTMLElement | null>;
+    /** Read and cleared after every render: when set, the stop the toolbar is entered at takes focus. */
+    focusRequestRef: MutableRefObject<boolean>;
+    /** Escape on a control, unless that control's own menu is open. */
+    onEscape: () => void;
+};
+
+export type ToolbarRoving = {
+    onKeyDown: (event: KeyboardEvent<HTMLElement>) => void;
+    onFocus: (event: FocusEvent<HTMLElement>) => void;
+    onMouseDown: (event: MouseEvent<HTMLElement>) => void;
+};
+
 /**
  * The toolbar pattern's keyboard model over whatever controls a toolbar holds:
  * the toolbar is one tab stop, the arrow keys (and Home/End) move between its
@@ -19,30 +33,18 @@ import { SLOT_ATTRIBUTE } from './useToolbarFit';
  * render, so the stops are found in the DOM and their `tabIndex` set there
  * after every render. Spread the handlers onto the toolbar element.
  */
-export const useToolbarRoving = ({
-    toolbarRef,
-    focusRequestRef,
-    onEscape,
-}: {
-    toolbarRef: RefObject<HTMLElement | null>;
-    /** Read and cleared after every render: when set, the stop the toolbar is entered at takes focus. */
-    focusRequestRef: MutableRefObject<boolean>;
-    /** Escape on a control, unless that control's own menu is open. */
-    onEscape: () => void;
-}): {
-    onKeyDown: (event: KeyboardEvent<HTMLElement>) => void;
-    onFocus: (event: FocusEvent<HTMLElement>) => void;
-    onMouseDown: (event: MouseEvent<HTMLElement>) => void;
-} => {
+export const useToolbarRoving = ({ toolbarRef, focusRequestRef, onEscape }: UseToolbarRovingParams): ToolbarRoving => {
     // The stop the toolbar is entered at: the control used last. Kept by element
     // and by slot, so a control redrawn elsewhere in the row stays the entry point.
     const currentRef = useRef<Stop>({ element: null, slot: null, index: 0 });
 
     const currentIndex = (stops: HTMLElement[]): number => {
         const { element, slot, index } = currentRef.current;
-        const same = stops.findIndex((stop) => stop === element);
-        if (same !== -1) {
-            return same;
+        if (element !== null) {
+            const same = stops.indexOf(element);
+            if (same !== -1) {
+                return same;
+            }
         }
         const inSlot = stops.findIndex((stop) => slot !== null && slotOf(stop) === slot);
         if (inSlot !== -1) {

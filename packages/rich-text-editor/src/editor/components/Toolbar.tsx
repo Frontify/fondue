@@ -12,7 +12,7 @@ import {
 } from '#/core';
 
 import { turnIntoCommands } from '../helpers/blockCommands';
-import { type SlotGroup, splitGroups } from '../helpers/toolbarFit';
+import { type GroupSplit, type SlotGroup, splitGroups } from '../helpers/toolbarFit';
 import { toolbarItemProps } from '../helpers/toolbarItem';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
 import { GROUP_ATTRIBUTE, SLOT_ATTRIBUTE, type ToolbarFit, useToolbarFit } from '../hooks/useToolbarFit';
@@ -31,6 +31,27 @@ import { TurnInto } from './TurnInto';
  * - `'top'` — a row above the text.
  */
 export type ToolbarPlacement = 'floating' | 'top';
+
+type ToolbarProps = {
+    /** The registry's toolbar entries, in mount order. The floating bar keeps the inline ones. */
+    items: readonly ToolbarEntry[];
+    /** Floating bar only: every block command, for its "Turn into" menu. */
+    commands?: readonly RteBlockCommand[];
+    api: EditorControlApi;
+    editorState: EditorStateStore;
+    /** The row above the text sits flush with it; a floating bar is a surface of its own, inset. */
+    placement: ToolbarPlacement;
+    /** The editor's words: the toolbar's accessible name, and Turn into's. */
+    labels: RichTextEditorLabels;
+    /** The id of the editable element the controls act on. */
+    controls: string;
+    /**
+     * Set by the editor when the toolbar should take focus (Alt+F10): read
+     * and cleared once the toolbar has rendered, which for a floating bar is
+     * the first render after it was asked for.
+     */
+    focusRequestRef: MutableRefObject<boolean>;
+};
 
 /**
  * The plugins' toolbar UI in groups, mount order kept inside each; nothing
@@ -54,26 +75,7 @@ export const Toolbar = ({
     labels,
     controls,
     focusRequestRef,
-}: {
-    /** The registry's toolbar entries, in mount order. The floating bar keeps the inline ones. */
-    items: readonly ToolbarEntry[];
-    /** Floating bar only: every block command, for its "Turn into" menu. */
-    commands?: readonly RteBlockCommand[];
-    api: EditorControlApi;
-    editorState: EditorStateStore;
-    /** The row above the text sits flush with it; a floating bar is a surface of its own, inset. */
-    placement: ToolbarPlacement;
-    /** The editor's words: the toolbar's accessible name, and Turn into's. */
-    labels: RichTextEditorLabels;
-    /** The id of the editable element the controls act on. */
-    controls: string;
-    /**
-     * Set by the editor when the toolbar should take focus (Alt+F10): read
-     * and cleared once the toolbar has rendered, which for a floating bar is
-     * the first render after it was asked for.
-     */
-    focusRequestRef: MutableRefObject<boolean>;
-}): ReactNode => {
+}: ToolbarProps): ReactNode => {
     const getSelection = useCallback(() => api.selection.get(), [api]);
     const selection = useSyncExternalStore(editorState.subscribe, getSelection, getSelection);
     const toolbarRef = useRef<HTMLDivElement | null>(null);
@@ -153,11 +155,10 @@ const groupsOf = (items: readonly ToolbarEntry[]): SlotGroup<ToolbarEntry>[] => 
     return groups.filter((group) => group.items.length > 0);
 };
 
+type ToolbarLayout = GroupSplit<ToolbarEntry> & { more: boolean };
+
 /** What the row draws and what goes behind More; while measuring, every slot and More, so each has a size to read. */
-const layoutOf = (
-    groups: SlotGroup<ToolbarEntry>[],
-    fit: ToolbarFit,
-): { row: SlotGroup<ToolbarEntry>[]; overflow: SlotGroup<ToolbarEntry>[]; more: boolean } => {
+const layoutOf = (groups: SlotGroup<ToolbarEntry>[], fit: ToolbarFit): ToolbarLayout => {
     switch (fit.kind) {
         case 'measuring':
             return { row: groups, overflow: [], more: true };
