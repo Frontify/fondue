@@ -43,9 +43,15 @@
         }
     }
 
+    // A heading belongs to the text below it, so it sits further from the block above than from its own text.
+    :is(h1, h2, h3, h4):not(:first-child) {
+        margin-block-start: var(--rte-heading-gap, var(--spacing-medium));
+    }
+
     // A list's items sit tight: the blocks inside an item, a nested list among them, add no gap.
     li :is(p, h1, h2, h3, h4, ul, ol, blockquote) {
         --rte-block-gap: 0;
+        --rte-heading-gap: 0;
     }
 
     // Raised and lowered text without growing the line it sits on. Browsers'
