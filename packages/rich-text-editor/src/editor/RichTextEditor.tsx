@@ -160,6 +160,10 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     const hasDescriptions = registry.descriptions.length > 0;
     const { hostLabels, isNamed } = hostLabelsOf({ ariaLabel, ariaLabelledBy, ariaDescribedBy });
     const className = [documentStyles.document, styles.content, ...registry.contentClassNames].join(' ');
+    let pluginDescriptionId: string | undefined;
+    if (hasDescriptions) {
+        pluginDescriptionId = descriptionId;
+    }
     const attributes = useMemo(
         () =>
             editableAttributes({
@@ -169,7 +173,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                 isNamed,
                 placeholder,
                 defaultLabel: labels.editor,
-                descriptionId: hasDescriptions ? descriptionId : undefined,
+                descriptionId: pluginDescriptionId,
             }),
         // `hostLabels` is rebuilt every render; the props it is built from are the deps.
         // eslint-disable-next-line @eslint-react/exhaustive-deps
@@ -381,16 +385,7 @@ const hostLabelsOf = ({
     isNamed: ariaLabel !== undefined || ariaLabelledBy !== undefined,
 });
 
-/** The attributes of the editable element: a textbox, named by the host or else by `defaultLabel`. */
-const editableAttributes = ({
-    id,
-    className,
-    hostLabels,
-    isNamed,
-    placeholder,
-    defaultLabel,
-    descriptionId,
-}: {
+type EditableAttributesOptions = {
     id: string;
     className: string;
     hostLabels: Record<string, string>;
@@ -401,18 +396,36 @@ const editableAttributes = ({
      * The element holding the plugins' descriptions, when there are any: read after the host's own description
      */
     descriptionId: string | undefined;
-}): Record<string, string> => {
+};
+
+/** The attributes of the editable element: a textbox, named by the host or else by `defaultLabel`. */
+const editableAttributes = ({
+    id,
+    className,
+    hostLabels,
+    isNamed,
+    placeholder,
+    defaultLabel,
+    descriptionId,
+}: EditableAttributesOptions): Record<string, string> => {
     const describedBy = [hostLabels['aria-describedby'], descriptionId].filter(Boolean).join(' ');
-    return {
+    const attributes: Record<string, string> = {
         id,
         class: className,
         role: 'textbox',
         'aria-multiline': 'true',
-        ...(isNamed ? {} : { 'aria-label': defaultLabel }),
-        ...hostLabels,
-        ...(describedBy === '' ? {} : { 'aria-describedby': describedBy }),
-        ...(placeholder === '' ? {} : { 'aria-placeholder': placeholder }),
     };
+    if (!isNamed) {
+        attributes['aria-label'] = defaultLabel;
+    }
+    Object.assign(attributes, hostLabels);
+    if (describedBy !== '') {
+        attributes['aria-describedby'] = describedBy;
+    }
+    if (placeholder !== '') {
+        attributes['aria-placeholder'] = placeholder;
+    }
+    return attributes;
 };
 
 /**

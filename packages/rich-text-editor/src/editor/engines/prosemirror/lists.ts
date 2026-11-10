@@ -7,7 +7,7 @@ import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry } from '#/core';
 
-import { type Dispatch } from './controlApi';
+import { type Dispatch } from './dispatch';
 import { mapChildren } from './documentConversion';
 import { warnUnknownType } from './warnings';
 

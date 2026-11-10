@@ -606,12 +606,13 @@ describe('the alignment shortcuts', () => {
     const plain = (): RteBlockNode[] => [paragraph(text('one')), paragraph(text('two'))];
 
     it.each([
-        ['l', 76, 'left'],
-        ['e', 69, 'center'],
-        ['r', 82, 'right'],
-        ['j', 74, 'justify'],
-    ])('Mod-Shift-%s aligns the block %s', (key, keyCode, align) => {
-        const editor = editorWith(defaultPlugins, plain());
+        ['l', 76, 'left', 'Aligned left'],
+        ['e', 69, 'center', 'Centered'],
+        ['r', 82, 'right', 'Aligned right'],
+        ['j', 74, 'justify', 'Justified'],
+    ])('Mod-Shift-%s aligns the block %s and announces %s', (key, keyCode, align, announcement) => {
+        const announce = vi.fn<(message: string) => void>();
+        const editor = editorWith(defaultPlugins, plain(), { announce });
         editor.caretAfter('on');
 
         expect(press(editor.view, key.toUpperCase(), modShift(keyCode))).toBe(true);
@@ -620,6 +621,7 @@ describe('the alignment shortcuts', () => {
             { type: 'paragraph', align, children: [{ text: 'one' }] },
             paragraph(text('two')),
         ]);
+        expect(announce).toHaveBeenLastCalledWith(announcement);
     });
 
     it('clears the alignment it is pressed on again, as the button does', () => {
@@ -770,6 +772,7 @@ describe('the reset formatting shortcut in a list', () => {
     });
 
     it('turns a heading and a list under a select-all into paragraphs', () => {
+        // The block attributes sit flat on the node, which the open `RteBlockNode` cannot name.
         const heading = {
             type: 'textStyle',
             style: 'heading2',
@@ -825,6 +828,7 @@ describe('Enter in an editor with blurOnBreakPlugin', () => {
 
         expect(onBreak).not.toHaveBeenCalled();
         expect(editor.stored()?.[0]).toMatchObject({ type: 'bulletList' });
+        // The open `RteBlockNode` does not name `children`.
         expect((editor.stored()?.[0] as { children: unknown[] }).children).toHaveLength(2);
     });
 

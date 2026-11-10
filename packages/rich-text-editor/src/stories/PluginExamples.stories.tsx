@@ -104,6 +104,7 @@ const LAYOUT = 'tw-grid tw-grid-cols-2 tw-content-start tw-gap-4 tw-p-4 tw-font-
 const JSON_PANEL =
     'tw-m-0 tw-min-h-[200px] tw-overflow-auto tw-rounded tw-bg-surface-dim tw-p-3 tw-font-monospace tw-text-x-small tw-leading-medium';
 const HINT = 'tw-col-span-full tw-m-0 tw-body-small tw-text-secondary';
+const LIST = 'tw-m-0 tw-body-small';
 
 /**
  * The field box around an editor. The editor draws none of its own — no
@@ -909,7 +910,7 @@ export const BlurOnBreak: Story = {
                         aria-label="Comment"
                     />
                 </div>
-                <ul className="tw-m-0 tw-body-small">
+                <ul className={LIST}>
                     {submitted.map(({ id, text }) => (
                         <li key={id}>{text}</li>
                     ))}

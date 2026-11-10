@@ -13,6 +13,7 @@ import {
     definePlugin,
     type EditorControlApi,
     type HotkeyHandler,
+    type RteSelectionSnapshot,
     type StyleMap,
     type ToolbarItemProps,
 } from '#/core';
@@ -94,6 +95,12 @@ const JUSTIFY: Alignment = {
 
 const ALIGNMENTS: readonly Alignment[] = [LEFT, CENTER, RIGHT, JUSTIFY];
 
+const CLEARED_ANNOUNCEMENT = 'Alignment cleared';
+
+const alignOf = (selection: RteSelectionSnapshot): AlignAttribute['align'] =>
+    // The structural block type does not know the attribute this plugin adds to every text block.
+    (selection.block as AlignAttribute | null)?.align;
+
 /**
  * What a button or its shortcut does: choosing the alignment already set clears it, so the block inherits the editor's direction again.
  */
@@ -101,8 +108,7 @@ const toggleAlign = (
     api: EditorControlApi,
     value: NonNullable<AlignAttribute['align']>,
 ): AlignAttribute['align'] | null => {
-    const current = (api.selection.get().block as AlignAttribute | null)?.align;
-    if (current === value) {
+    if (alignOf(api.selection.get()) === value) {
         api.blocks.updateAttributes({ align: null });
         return null;
     }
@@ -112,17 +118,15 @@ const toggleAlign = (
 
 const alignFromKeyboard = (api: EditorControlApi, { value, announcement }: Alignment) => {
     if (toggleAlign(api, value) === null) {
-        api.announce('Alignment cleared');
+        api.announce(CLEARED_ANNOUNCEMENT);
         return;
     }
     api.announce(announcement);
 };
 
 const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
-    // The block the selection is in carries the attribute this plugin
-    // added, which the structural node type does not know about.
     // A block without one reads left to right, so left is what it shows.
-    const current = (selection.block as AlignAttribute | null)?.align ?? 'left';
+    const current = alignOf(selection) ?? 'left';
     return (
         // One choice of four, so a radio group: the checked one is the
         // block's alignment.

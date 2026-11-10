@@ -119,6 +119,8 @@ const press = (target: Element, key: string, init: KeyboardEventInit = {}): void
     });
 };
 
+const mod = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
+
 /** The text of a block in what the host was handed, marks and all. */
 const childrenOf = (doc: RteDocument | null, index = 0): unknown[] => {
     const block = doc?.blocks[index];
@@ -623,9 +625,8 @@ describe('the editable element', () => {
             return status;
         };
         // Not an Alt key: happy-dom reports any Alt as AltGraph, which the editor leaves to text entry.
-        const MOD = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
         const announce = (container: HTMLElement): void =>
-            press(editableIn(container), 'a', { ...MOD, shiftKey: true });
+            press(editableIn(container), 'a', { ...mod, shiftKey: true });
 
         it('says a message in the polite live region on the next frame', () => {
             vi.useFakeTimers();
@@ -976,7 +977,6 @@ describe('the toolbar from the keyboard', () => {
     const focusedLabel = (): string | null | undefined => window.document.activeElement?.getAttribute('aria-label');
 
     const selectAll = (editable: HTMLElement): void => {
-        const mod = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
         press(editable, 'a', mod);
     };
 

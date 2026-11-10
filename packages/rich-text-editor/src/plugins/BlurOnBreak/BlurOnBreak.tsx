@@ -14,12 +14,30 @@ export type BlurOnBreakPluginOptions = {
 };
 
 const REQUIRED_MESSAGE = 'Type something before submitting.';
+const DESCRIPTION = 'Press Enter to submit.';
 
-const requiredMessageOf = (required: true | string): string => {
+/** What to say when an empty editor refuses Enter, or null when the editor need not be filled. */
+const requiredMessageOf = (required: boolean | string | undefined): string | null => {
+    if (required === undefined || required === false) {
+        return null;
+    }
     if (required === true || required === '') {
         return REQUIRED_MESSAGE;
     }
     return required;
+};
+
+const breakLine = (api: EditorControlApi, { onBreak, required }: BlurOnBreakPluginOptions): void => {
+    if (api.lists.split()) {
+        return;
+    }
+    const requiredMessage = requiredMessageOf(required);
+    if (requiredMessage !== null && api.isEmpty()) {
+        api.announce(requiredMessage);
+        return;
+    }
+    onBreak?.();
+    api.blur();
 };
 
 /**
@@ -33,27 +51,15 @@ const requiredMessageOf = (required: true | string): string => {
  * @example
  * blurOnBreakPlugin({ onBreak: submit, required: 'Write a comment first.' })
  */
-export const blurOnBreakPlugin = ({ onBreak, required }: BlurOnBreakPluginOptions = {}) => {
-    const breakLine = (api: EditorControlApi): void => {
-        if (api.lists.split()) {
-            return;
-        }
-        if (required !== undefined && required !== false && api.isEmpty()) {
-            api.announce(requiredMessageOf(required));
-            return;
-        }
-        onBreak?.();
-        api.blur();
-    };
-    return definePlugin({
+export const blurOnBreakPlugin = (options: BlurOnBreakPluginOptions = {}) =>
+    definePlugin({
         id: 'blur-on-break',
-        description: 'Press Enter to submit.',
+        description: DESCRIPTION,
         hotkeys: {
             // Enter is always this plugin's: it splits an item, refuses, or submits.
             Enter: (api) => {
-                breakLine(api);
+                breakLine(api, options);
                 return true;
             },
         },
     });
-};

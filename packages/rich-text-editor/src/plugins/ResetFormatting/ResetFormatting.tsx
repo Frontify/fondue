@@ -6,6 +6,8 @@ import { definePlugin, type EditorControlApi, type HotkeyHandler, PARAGRAPH, typ
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
+const RESET_ANNOUNCEMENT = 'Formatting reset';
+
 /**
  * Puts the selection back to plain text: marks gone (links stay, and so do
  * mentions, which are no marks), block type back to paragraph, alignment
@@ -29,7 +31,7 @@ const reset = (api: EditorControlApi): void => {
 const hotkeys = {
     'Mod-\\': (api) => {
         reset(api);
-        api.announce('Formatting reset');
+        api.announce(RESET_ANNOUNCEMENT);
     },
 } satisfies Record<string, HotkeyHandler>;
 

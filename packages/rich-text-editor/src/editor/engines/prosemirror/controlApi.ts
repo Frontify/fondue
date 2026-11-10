@@ -19,6 +19,7 @@ import {
     type RteSelectionSnapshot,
 } from '#/core';
 
+import { type Dispatch } from './dispatch';
 import { EXTRA_ATTR, markValueOf, shallowBlock, toRteDocument, valueAttrsFor } from './documentConversion';
 import { createListApi, liftOutOfLists } from './lists';
 import { warnUnknownType } from './warnings';
@@ -35,11 +36,6 @@ import { warnUnknownType } from './warnings';
  * Layout: `createControlApi` (the whole api) is at the bottom, assembled from
  * the selection snapshot, then marks, then blocks. Lists live in `./lists.ts`.
  */
-
-/**
- * The one way a command changes the editor, so a group can see every transaction.
- */
-export type Dispatch = (transaction: Transaction) => void;
 
 // --- Selection snapshot: what all feature UI renders from ---
 
@@ -357,6 +353,37 @@ const createBlockApi = (
 
 // --- The whole api ---
 
+/** The undo group: none running, running with no change yet, or running after its first change. */
+type GroupState = { kind: 'idle' } | { kind: 'open' } | { kind: 'joined'; first: Transaction };
+
+// prosemirror-history joins a transaction carrying this meta into the undo step of the one it names.
+const APPENDED_TRANSACTION_META = 'appendedTransaction';
+
+type CaretSide = 'before' | 'after';
+
+/**
+ * The text of the caret's block on one side of it; empty unless the selection is a caret in a text block.
+ */
+const textAroundCaret = (state: EditorState, side: CaretSide): string => {
+    const { $from, empty } = state.selection;
+    if (!empty || !$from.parent.isTextblock) {
+        return '';
+    }
+    switch (side) {
+        case 'before': {
+            return $from.parent.textBetween(0, $from.parentOffset, undefined, INLINE_PLACEHOLDER);
+        }
+        case 'after': {
+            return $from.parent.textBetween(
+                $from.parentOffset,
+                $from.parent.content.size,
+                undefined,
+                INLINE_PLACEHOLDER,
+            );
+        }
+    }
+};
+
 /** Which type's editing UI is open, and how to redraw the views that show it. */
 export type OpenEditors = { type: string | null; repaint: () => void };
 
@@ -369,14 +396,21 @@ export const createControlApi = (
     announce: EditorControlApi['announce'],
 ): EditorControlApi => {
     // Inside a group, the document changes after the first join that one's undo step.
-    let group: { first: Transaction | null } | null = null;
+    let groupState: GroupState = { kind: 'idle' };
     const dispatch: Dispatch = (transaction) => {
-        if (group !== null) {
-            if (group.first !== null) {
-                // prosemirror-history merges a transaction appended to an earlier one into that one's event.
-                transaction.setMeta('appendedTransaction', group.first);
-            } else if (transaction.docChanged) {
-                group.first = transaction;
+        switch (groupState.kind) {
+            case 'idle': {
+                break;
+            }
+            case 'open': {
+                if (transaction.docChanged) {
+                    groupState = { kind: 'joined', first: transaction };
+                }
+                break;
+            }
+            case 'joined': {
+                transaction.setMeta(APPENDED_TRANSACTION_META, groupState.first);
+                break;
             }
         }
         getView().dispatch(transaction);
@@ -426,23 +460,10 @@ export const createControlApi = (
         },
         text: {
             beforeCaret() {
-                const { selection } = getView().state;
-                const { $from, empty } = selection;
-                return empty && $from.parent.isTextblock
-                    ? $from.parent.textBetween(0, $from.parentOffset, undefined, INLINE_PLACEHOLDER)
-                    : '';
+                return textAroundCaret(getView().state, 'before');
             },
             afterCaret() {
-                const { selection } = getView().state;
-                const { $from, empty } = selection;
-                return empty && $from.parent.isTextblock
-                    ? $from.parent.textBetween(
-                          $from.parentOffset,
-                          $from.parent.content.size,
-                          undefined,
-                          INLINE_PLACEHOLDER,
-                      )
-                    : '';
+                return textAroundCaret(getView().state, 'after');
             },
             deleteBefore(count) {
                 const view = getView();
@@ -455,15 +476,15 @@ export const createControlApi = (
         },
         isEmpty: () => isEmpty(toRteDocument(getView().state.doc)),
         group(run) {
-            if (group !== null) {
+            if (groupState.kind !== 'idle') {
                 run();
                 return;
             }
-            group = { first: null };
+            groupState = { kind: 'open' };
             try {
                 run();
             } finally {
-                group = null;
+                groupState = { kind: 'idle' };
             }
         },
         announce,

@@ -34,6 +34,14 @@ export type RteSelectionSnapshot = {
     marks: Record<string, Record<string, unknown>>;
 };
 
+export type RemoveAllMarksOptions = {
+    /**
+     * Mark types to leave on
+     * @default []
+     */
+    except?: readonly string[];
+};
+
 /**
  * The API plugins are handed in their toolbar controls, hotkeys and `edit` views,
  * to drive the editor whatever the engine. Read with `selection.get()`; act with
@@ -60,13 +68,7 @@ export type EditorControlApi = {
          * Strip every mark from the selection, except the types named in `except`: the formatting half of
          * "reset formatting". At a caret it clears the whole text block around it, not just what is typed next.
          */
-        removeAll(options?: {
-            /**
-             * Mark types to leave on
-             * @default []
-             */
-            except?: readonly string[];
-        }): void;
+        removeAll(options?: RemoveAllMarksOptions): void;
         /**
          * The whole run of a mark around the selection (its value and text), or
          * null. Unlike the snapshot's `marks` it is about the run, not the
