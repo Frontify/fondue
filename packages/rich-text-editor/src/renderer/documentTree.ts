@@ -281,6 +281,20 @@ export const documentTree = (doc: RteDocumentOf, registry: PluginRegistry, optio
     doc.blocks.flatMap((block) => blockNode(block, registry, options) ?? []);
 
 /**
+ * How the document reads, written inline for HTML exported without the stylesheet: the same
+ * values as `.document` in `document.module.scss`. `pre-wrap` alone, as email clients know it.
+ */
+export const DOCUMENT_STYLE: StyleMap = {
+    color: 'var(--color-primary-default)',
+    'font-family': 'var(--typography-font-family-primary)',
+    'font-size': 'var(--typography-font-size-medium)',
+    'line-height': '1.6',
+    'font-variant-ligatures': 'none',
+    'white-space': 'pre-wrap',
+    'overflow-wrap': 'anywhere',
+};
+
+/**
  * The element a document sits in: the document's own class, plugins' content
  * classes and their custom properties. Readonly view and export both wrap in
  * it, so a document reads the same in either, and as in the editor.

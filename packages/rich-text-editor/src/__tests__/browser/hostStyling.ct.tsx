@@ -5,7 +5,7 @@ import { type Locator } from '@playwright/test';
 
 import { type LinkLook, type TextLook, type TextStyleName } from '../../index';
 
-import { HostLooksPair, HostStylingPair, HostStylingSections } from './HostStylingFixtures';
+import { ExportedLooksPair, HostLooksPair, HostStylingPair, HostStylingSections } from './HostStylingFixtures';
 
 // Hosts set the look of each text style with `textStylePlugin({ presets })`. Without a
 // value, or with one that resolves to nothing, Fondue's look stays, in the editor and the renderer alike.
@@ -359,5 +359,50 @@ test.describe('host styling of body text, quotes and links', () => {
         for (const surface of SURFACES) {
             expect(await looksOfBlocksIn(component.getByTestId(surface))).toEqual(BASELINE_LOOKS);
         }
+    });
+});
+
+// `serializeToHtml(doc, { styling: 'inline' })` writes the looks into `style`. Without any class,
+// the root's included, as on a page without the package stylesheet, a block must read as the class
+// output does: this holds the fallbacks in TypeScript equal to the ones in the stylesheet.
+
+/** Drops every class in the exported HTML, the root's included. */
+const removeClasses = (container: Locator): Promise<void> =>
+    container.evaluate((node) => {
+        for (const element of node.querySelectorAll('[class]')) {
+            element.removeAttribute('class');
+        }
+    });
+
+const allLooksIn = async (surface: Locator) => ({
+    presets: await computedLooksIn(surface),
+    others: await looksOfBlocksIn(surface),
+});
+
+const HOST_PRESETS: Partial<Record<TextStyleName, TextLook>> = Object.fromEntries(
+    STYLE_NAMES.map((name) => [name, HOST_LOOK]),
+);
+
+test.describe('inline styling of exported HTML', () => {
+    test('reads as the class output does, with no looks set', async ({ mount }) => {
+        const component = await mount(<ExportedLooksPair />);
+        const inline = component.getByTestId('inline');
+
+        await removeClasses(inline);
+
+        await expect(inline.locator('[class]')).toHaveCount(0);
+        expect(await allLooksIn(inline)).toEqual(await allLooksIn(component.getByTestId('classes')));
+    });
+
+    test('reads as the class output does, with a host look for every owner', async ({ mount }) => {
+        const component = await mount(
+            <ExportedLooksPair presets={HOST_PRESETS} body={HOST_LOOK} quote={HOST_LOOK} link={HOST_LINK_LOOK} />,
+        );
+        const inline = component.getByTestId('inline');
+
+        await removeClasses(inline);
+
+        await expect(inline.locator('[class]')).toHaveCount(0);
+        expect(await allLooksIn(inline)).toEqual(await allLooksIn(component.getByTestId('classes')));
     });
 });

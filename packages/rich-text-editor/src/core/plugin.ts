@@ -43,6 +43,10 @@ export type RteContent = {
      * Custom properties set on the editable element, such as `{ '--rte-columns': '3' }`
      */
     contentProperties?: Record<string, string>;
+    /**
+     * The inline style of each class this content writes, for HTML exported with `styling: 'inline'`; keyed by class name
+     */
+    contentStyles?: Record<string, StyleMap>;
 };
 
 /**

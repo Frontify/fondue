@@ -14,6 +14,7 @@ import {
     RichTextRenderer,
     type RtePlugin,
     type RteDocument,
+    serializeToHtml,
     type TextLook,
     textStylePlugin,
     type TextStylePluginOptions,
@@ -120,11 +121,12 @@ type HostLooksProps = {
     body?: TextLook;
     quote?: TextLook;
     link?: LinkLook;
+    presets?: TextStylePluginOptions['presets'];
 };
 
-const pluginsWithLooks = ({ body, quote, link }: HostLooksProps): RtePlugin[] => {
+const pluginsWithLooks = ({ body, quote, link, presets }: HostLooksProps): RtePlugin[] => {
     const plugins = [
-        textStylePlugin(),
+        textStylePlugin({ presets }),
         bulletListPlugin,
         checkListPlugin,
         fontColorPlugin,
@@ -149,6 +151,38 @@ export const HostLooksPair = (props: HostLooksProps) => {
             <div data-testid="editor">
                 <RichTextEditor value={BODY_QUOTE_LINK_DOCUMENT} plugins={plugins} />
             </div>
+        </>
+    );
+};
+
+/** Every text style, then body text (in list items too), a quote and a link; the text styles are listed once. */
+const EXPORT_DOCUMENT: RteDocument = {
+    version: 1,
+    blocks: [
+        ...ALL_PRESETS_DOCUMENT.blocks,
+        ...BODY_QUOTE_LINK_DOCUMENT.blocks.filter((block) => block.type !== 'textStyle'),
+    ],
+};
+
+type ExportedHtmlProps = {
+    html: string;
+    testId: string;
+};
+
+const ExportedHtml = ({ html, testId }: ExportedHtmlProps) => (
+    // Safe: the HTML is our own serializer's output for a fixed document, so nothing in it comes from a user.
+    // oxlint-disable-next-line @eslint-react/dom-no-dangerously-set-innerhtml
+    <div data-testid={testId} dangerouslySetInnerHTML={{ __html: html }} />
+);
+
+/** The same document exported twice, as classes and as inline styles, with the same looks. */
+export const ExportedLooksPair = (props: HostLooksProps) => {
+    const plugins = pluginsWithLooks(props);
+
+    return (
+        <>
+            <ExportedHtml testId="classes" html={serializeToHtml(EXPORT_DOCUMENT, { plugins })} />
+            <ExportedHtml testId="inline" html={serializeToHtml(EXPORT_DOCUMENT, { plugins, styling: 'inline' })} />
         </>
     );
 };

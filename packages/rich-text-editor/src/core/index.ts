@@ -22,7 +22,7 @@ export {
     safeStyleEntries,
     type StyleMap,
 } from './htmlSpec';
-export { LOOK_PROPERTIES, lookProperties, type TextLook } from './look';
+export { BLOCK_FALLBACKS, LOOK_PROPERTIES, lookProperties, lookStyle, styleOfClass, type TextLook } from './look';
 export {
     type BlockAttributeDefinition,
     type BlockDefinition,
@@ -66,4 +66,11 @@ export {
     type ToolbarEntry,
     toggleOwn,
 } from './registry';
-export { ANY_LIST, DOCUMENT_VERSION, emptyDocument, newerVersionOf, PARAGRAPH } from './vocabulary';
+export {
+    ANY_LIST,
+    DOCUMENT_VERSION,
+    emptyDocument,
+    newerVersionOf,
+    PARAGRAPH,
+    PARAGRAPH_CLASS_NAME,
+} from './vocabulary';

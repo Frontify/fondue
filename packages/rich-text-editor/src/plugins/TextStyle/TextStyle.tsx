@@ -1,16 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
+    BLOCK_FALLBACKS,
     type BlockDefinition,
     defineBlock,
     defineContent,
     definePlugin,
     type HotkeyHandler,
     lookProperties,
+    lookStyle,
     PARAGRAPH,
     type RteBlockCommand,
     type RteContent,
     type RtePlugin,
+    styleOfClass,
+    type StyleMap,
     type TextLook,
     type ToolbarItemProps,
 } from '#/core';
@@ -83,6 +87,13 @@ const textStyleContentFor = (
         }
     }
 
+    // The same values the stylesheet falls back to (`hostStyling.ct.tsx` holds them equal), for every preset, offered or not.
+    const contentStyles: Record<string, StyleMap> = {};
+    for (const preset of presetsFor(ALL_TEXT_STYLES)) {
+        const look = lookStyle(presets[preset.name] ?? {}, { ...BLOCK_FALLBACKS, ...preset.fallback });
+        Object.assign(contentStyles, styleOfClass(preset.className, look));
+    }
+
     let block = ALL_STYLES_BLOCK;
     if (options !== ALL_TEXT_STYLES) {
         block = textStyleBlockFor(options);
@@ -90,6 +101,7 @@ const textStyleContentFor = (
 
     return defineContent({
         contentProperties,
+        contentStyles,
         blocks: { textStyle: block },
     });
 };

@@ -1,6 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineContent, defineMark, definePlugin, type HotkeyHandler, lookProperties, type TextLook } from '#/core';
+import {
+    defineContent,
+    defineMark,
+    definePlugin,
+    type HotkeyHandler,
+    lookProperties,
+    lookStyle,
+    styleOfClass,
+    type TextLook,
+} from '#/core';
 
 import { isLinkablePaste, isSafeHref, toHref, WEB_ADDRESS } from '../shared/helpers/href';
 
@@ -19,6 +28,9 @@ export type LinkMark = {
      */
     link?: LinkValue;
 };
+
+/** The gap between a link's text and its underline, as `_underline.scss` writes it. */
+const UNDERLINE_OFFSET = '2px';
 
 const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string, string> =>
     link?.openInNewTab === true ? { target: '_blank', rel: 'noopener noreferrer' } : {};
@@ -86,7 +98,15 @@ const linkMark = defineMark<LinkValue>({
  * Only web, mail, phone and relative targets count, so a `javascript:` URL is never clickable.
  */
 export const linkContent = ({ look = {} }: LinkPluginOptions = {}) =>
-    defineContent({ marks: { link: linkMark }, contentProperties: lookProperties('link', look) });
+    defineContent({
+        marks: { link: linkMark },
+        contentProperties: lookProperties('link', look),
+        // The same values the stylesheet falls back to; `hostStyling.ct.tsx` holds them equal.
+        contentStyles: styleOfClass(
+            styles.link,
+            lookStyle(look, { color: 'var(--color-highlight-default)', 'text-underline-offset': UNDERLINE_OFFSET }),
+        ),
+    });
 
 // The key is a literal because a computed key keeps this plugin in the renderer; HOTKEY's type ties it to this key.
 const hotkeys = {

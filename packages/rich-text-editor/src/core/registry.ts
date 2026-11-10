@@ -8,6 +8,7 @@ import { type ReactNode } from 'react';
 
 import { type EditorControlApi, type RteSelectionSnapshot } from './commands';
 import { type HtmlSpec, type StyleMap, withRootStyle } from './htmlSpec';
+import { BLOCK_FALLBACKS } from './look';
 import {
     type BlockAttributeDefinition,
     type BlockDefinition,
@@ -27,7 +28,7 @@ import {
     type ToolbarItemProps,
     typesOf,
 } from './plugin';
-import { PARAGRAPH, paragraphBlock } from './vocabulary';
+import { PARAGRAPH, PARAGRAPH_CLASS_NAME, paragraphBlock } from './vocabulary';
 
 /**
  * What a toolbar entry acts on: the type it toggles, by what that type is.
@@ -146,6 +147,10 @@ export type PluginRegistry = {
      * Custom properties set alongside them, later plugins winning
      */
     contentProperties: Readonly<Record<string, string>>;
+    /**
+     * The inline style of each class the content writes, for HTML exported with `styling: 'inline'`
+     */
+    contentStyles: Readonly<Record<string, StyleMap>>;
 };
 
 /**
@@ -449,6 +454,7 @@ type Draft = {
     commandOwners: Map<string, string>;
     contentClassNames: string[];
     contentProperties: Record<string, string>;
+    contentStyles: Record<string, StyleMap>;
     /**
      * How often each id has come up so far, for unique toolbar keys
      */
@@ -550,6 +556,7 @@ const addContent = (draft: Draft, content: RteContent | undefined, owner: string
         draft.contentClassNames.push(content.contentClassName);
     }
     Object.assign(draft.contentProperties, content?.contentProperties);
+    Object.assign(draft.contentStyles, content?.contentStyles);
 
     register('block type', draft.blocks, draft.blockOwners, owner, content?.blocks);
     register('inline type', draft.inlines, draft.inlineOwners, owner, content?.inlines);
@@ -578,6 +585,8 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         commandOwners: new Map(),
         contentClassNames: [],
         contentProperties: {},
+        // The built-in paragraph's inline style, as its stylesheet rule; a paragraph plugin's look replaces it.
+        contentStyles: { [PARAGRAPH_CLASS_NAME]: BLOCK_FALLBACKS },
         seenIds: new Map(),
         duplicateIds: new Set(),
         blockOwners: new Map(),
@@ -623,6 +632,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         commands: draft.commands,
         contentClassNames: draft.contentClassNames,
         contentProperties: draft.contentProperties,
+        contentStyles: draft.contentStyles,
     };
 };
 
