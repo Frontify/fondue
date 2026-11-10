@@ -431,12 +431,14 @@ const runEndTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRu
         if (!RUN_END.test(typed)) {
             return null;
         }
-        // An IME's compositionend runs rules with nothing typed: the character is already in the document.
-        if (state.selection.empty && start + found[0].length === end) {
-            return null;
+        const runEnd = start + found[0].length - typed.length;
+        // The replacement keeps the marks of what it replaces.
+        const replaced = state.doc.resolve(start).marksAcross(state.doc.resolve(runEnd)) ?? [];
+        // After a composition the ending character is already in the document: only the run before it is replaced.
+        if (runEnd + typed.length === end) {
+            return state.tr.replaceWith(start, runEnd, state.schema.text(withGroups(replace, found), replaced));
         }
-        // The replacement keeps the marks of what it replaces, the typed character the marks typing carries.
-        const replaced = state.doc.resolve(start).marksAcross(state.doc.resolve(end)) ?? [];
+        // While typing the ending character is still to come, and it carries the marks typing carries.
         const typedMarks = state.storedMarks ?? state.selection.$from.marks();
         return state.tr.replaceWith(start, end, [
             state.schema.text(withGroups(replace, found), replaced),
