@@ -610,7 +610,7 @@ describe('the editable element', () => {
         const announcer = definePlugin({
             id: 'announcer',
             hotkeys: {
-                'Alt-a': (api) => {
+                'Mod-Shift-a': (api) => {
                     api.announce('Saved');
                 },
             },
@@ -622,7 +622,10 @@ describe('the editable element', () => {
             }
             return status;
         };
-        const announce = (container: HTMLElement): void => press(editableIn(container), 'a', { altKey: true });
+        // Not an Alt key: happy-dom reports any Alt as AltGraph, which the editor leaves to text entry.
+        const MOD = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
+        const announce = (container: HTMLElement): void =>
+            press(editableIn(container), 'a', { ...MOD, shiftKey: true });
 
         it('says a message in the polite live region on the next frame', () => {
             vi.useFakeTimers();
@@ -805,14 +808,17 @@ describe('the toolbar', () => {
             </button>
         );
     };
-    const statefulPlugin: RtePlugin = definePlugin({ id: 'stateful', toolbar: [{ render: ClickCounter }] });
+    const statefulPlugin: RtePlugin = definePlugin({
+        id: 'stateful',
+        toolbar: [{ label: 'Clicks', render: ClickCounter }],
+    });
 
     /** A control using hooks of other kinds, so a shifted hook order would show. */
     const OtherHooks = (): ReactNode => {
         const [label] = useState(() => 'other');
         return <span>{label}</span>;
     };
-    const otherPlugin: RtePlugin = definePlugin({ id: 'other', toolbar: [{ render: OtherHooks }] });
+    const otherPlugin: RtePlugin = definePlugin({ id: 'other', toolbar: [{ label: 'Other', render: OtherHooks }] });
 
     const clickCount = (container: HTMLElement): string | null | undefined =>
         container.querySelector('[data-testid="clicks"]')?.textContent;
@@ -849,7 +855,7 @@ describe('the toolbar', () => {
                     </button>
                 );
             };
-            return definePlugin({ id: 'built', toolbar: [{ render: Built }] });
+            return definePlugin({ id: 'built', toolbar: [{ label: 'Built', render: Built }] });
         };
         const { container, rerender, ready } = mount(() => (
             <RichTextEditor plugins={[...defaultPlugins, buildPlugin()]} toolbarPlacement="top" />
@@ -905,7 +911,10 @@ describe('the toolbar from the keyboard', () => {
             N
         </button>
     );
-    const needsTextPlugin: RtePlugin = definePlugin({ id: 'needs-text', toolbar: [{ render: NeedsText }] });
+    const needsTextPlugin: RtePlugin = definePlugin({
+        id: 'needs-text',
+        toolbar: [{ label: 'Needs text', render: NeedsText }],
+    });
     const plugins = [boldPlugin, alignPlugin, linkPlugin(), needsTextPlugin];
 
     const toolbarIn = (container: HTMLElement): HTMLElement => {

@@ -7,6 +7,7 @@ import { Anchor as FlyoutAnchor } from '@radix-ui/react-popover';
 import { type ReactNode, type RefObject, useEffect, useId, useRef, useState } from 'react';
 
 import { PARAGRAPH, type RteBlockCommand } from '#/core';
+import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { matchCommands } from '../helpers/blockCommands';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
@@ -322,21 +323,24 @@ const SlashOption = ({
     isActive: boolean;
     onHover: () => void;
     onRun: () => void;
-}): ReactNode => (
-    // The keyboard drives the list from the text; the mouse picks here.
-    // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
-    <div
-        id={id}
-        role="option"
-        tabIndex={-1}
-        aria-selected={isActive}
-        onClick={onRun}
-        onMouseMove={isActive ? undefined : onHover}
-        className={isActive ? `${styles.option} ${styles.optionActive}` : styles.option}
-    >
-        <span aria-hidden className={styles.icon}>
-            {command.icon}
-        </span>
-        <span>{command.label}</span>
-    </div>
-);
+}): ReactNode => {
+    const { icon: Icon } = command;
+    return (
+        // The keyboard drives the list from the text; the mouse picks here.
+        // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
+        <div
+            id={id}
+            role="option"
+            tabIndex={-1}
+            aria-selected={isActive}
+            onClick={onRun}
+            onMouseMove={isActive ? undefined : onHover}
+            className={isActive ? `${styles.option} ${styles.optionActive}` : styles.option}
+        >
+            <span aria-hidden className={styles.icon}>
+                {Icon === undefined ? null : <Icon size={TOOLBAR_ICON_SIZE} />}
+            </span>
+            <span>{command.label}</span>
+        </div>
+    );
+};

@@ -105,10 +105,14 @@ export const createViewPortals = (): ViewPortals & {
 const NO_PORTALS: readonly ReactNode[] = [];
 const noPortals = (): readonly ReactNode[] => NO_PORTALS;
 
+type ViewPortalHostProps = {
+    store: ReturnType<typeof createViewPortals>;
+};
+
 /**
  * Renders every view's portal; one React commit covers all of them
  */
-export const ViewPortalHost = ({ store }: { store: ReturnType<typeof createViewPortals> }): ReactNode =>
+export const ViewPortalHost = ({ store }: ViewPortalHostProps): ReactNode =>
     // No views on the server: the editor only mounts in the browser.
     useSyncExternalStore(store.subscribe, store.getSnapshot, noPortals);
 

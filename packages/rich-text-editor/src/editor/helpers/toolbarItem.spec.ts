@@ -41,6 +41,8 @@ type Subject = { content: RteContent; type?: string };
 
 const LIST_ITEM = 'listItem';
 
+const LABEL = 'Control';
+
 const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
     let selection = snapshot(initial);
     const inserted: { type: string; value?: Record<string, unknown> }[] = [];
@@ -116,7 +118,11 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
         api,
         /** What the entry toggling `type` (default: the content's only type) is handed right now. */
         props: ({ content, type }: Subject) =>
-            toolbarItemProps(ownTypeOf(content, type ?? onlyTypeOf(content)), api, api.selection.get()),
+            toolbarItemProps(
+                { own: ownTypeOf(content, type ?? onlyTypeOf(content)), label: LABEL },
+                api,
+                api.selection.get(),
+            ),
         inserted,
         openEditor: () => openEditor,
     };
@@ -365,9 +371,22 @@ describe('an entry with no type of its own', () => {
         const editor = fakeEditor();
         const selection = editor.api.selection.get();
 
-        const props = toolbarItemProps({ kind: 'none' }, editor.api, selection);
+        const props = toolbarItemProps({ own: { kind: 'none' }, label: LABEL }, editor.api, selection);
 
         expect(props.api).toBe(editor.api);
         expect(props.selection).toBe(selection);
+    });
+
+    it('hands over the label and shortcut of the entry', () => {
+        const editor = fakeEditor();
+
+        const props = toolbarItemProps(
+            { own: { kind: 'none' }, label: LABEL, shortcut: 'Mod-k' },
+            editor.api,
+            editor.api.selection.get(),
+        );
+
+        expect(props.label).toBe(LABEL);
+        expect(props.shortcut).toBe('Mod-k');
     });
 });

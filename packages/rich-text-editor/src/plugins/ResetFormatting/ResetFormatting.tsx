@@ -3,8 +3,8 @@
 import { IconEraser } from '@frontify/fondue-icons';
 
 import { definePlugin, type EditorControlApi, type HotkeyHandler, PARAGRAPH, type ToolbarItemProps } from '#/core';
-
-import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
+import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
+import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 /**
  * Puts the selection back to plain text: marks gone (links stay, and so do
@@ -35,9 +35,9 @@ const hotkeys = {
 
 const SHORTCUT: keyof typeof hotkeys = 'Mod-\\';
 
-const ResetFormattingButton = ({ api }: ToolbarItemProps) => (
-    <ToolbarButton title="Reset formatting" shortcut={SHORTCUT} onClick={() => reset(api)}>
-        <IconEraser size={16} />
+const ResetFormattingButton = ({ api, label, shortcut }: ToolbarItemProps) => (
+    <ToolbarButton title={label} shortcut={shortcut} onClick={() => reset(api)}>
+        <IconEraser size={TOOLBAR_ICON_SIZE} />
     </ToolbarButton>
 );
 
@@ -46,6 +46,6 @@ const ResetFormattingButton = ({ api }: ToolbarItemProps) => (
  */
 export const resetFormattingPlugin = /* @__PURE__ */ definePlugin({
     id: 'reset-formatting',
-    toolbar: [{ render: ResetFormattingButton, floating: 'inline' }],
+    toolbar: [{ label: 'Reset formatting', shortcut: SHORTCUT, render: ResetFormattingButton, floating: 'inline' }],
     hotkeys,
 });

@@ -3,7 +3,7 @@
 import { Button } from '@frontify/fondue-components';
 import { type ButtonHTMLAttributes, type ComponentProps, forwardRef, type MouseEvent, type ReactNode } from 'react';
 
-import { isApple } from '../helpers/platform';
+import { isApple } from '../platform';
 
 import styles from './toolbarButton.module.scss';
 
@@ -50,7 +50,7 @@ export const readableShortcut = (shortcut: string, apple = isApple()): string =>
 /**
  * The toolbar button the built-in plugins share, with a pressed state for toggles
  */
-export const ToolbarButton = /* @__PURE__ */ forwardRef<HTMLButtonElement, ToolbarButtonProps>(function ToolbarButton(
+export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(function ToolbarButton(
     { children, active, disabled, onClick, title, shortcut, className, ...rest },
     ref,
 ): ReactNode {

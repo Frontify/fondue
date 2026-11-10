@@ -167,7 +167,12 @@ describe('the floating bar', () => {
     it('draws no bar when there is nothing to put in it', () => {
         const editor = mount((onChange) => (
             <RichTextEditor
-                plugins={[definePlugin({ id: 'quiet', toolbar: [{ render: () => null, floating: 'hidden' }] })]}
+                plugins={[
+                    definePlugin({
+                        id: 'quiet',
+                        toolbar: [{ label: 'Quiet', render: () => null, floating: 'hidden' }],
+                    }),
+                ]}
                 toolbarPlacement="floating"
                 onChange={onChange}
             />

@@ -31,6 +31,11 @@ export type MentionResolution =
     | { status: 'unavailable' }
     | { status: 'unknown' };
 
+/**
+ * Where a mention links to, such as the profile of a person or group. Returns `undefined` when the mention has no page.
+ */
+export type MentionHref = (mention: MentionValue) => string | undefined;
+
 /** The void inline this plugin adds to the document. */
 export type MentionInline = { type: 'mention' } & MentionValue;
 

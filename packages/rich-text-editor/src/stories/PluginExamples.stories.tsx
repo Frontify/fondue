@@ -1057,6 +1057,7 @@ const highlightPlugin = (): RtePlugin =>
         id: 'highlight',
         toolbar: [
             {
+                label: 'Highlight',
                 render: ({ api, selection }) => {
                     const active = 'highlight' in selection.marks;
                     return (
@@ -1134,6 +1135,7 @@ const calloutPlugin = (): RtePlugin =>
         id: 'callout',
         toolbar: [
             {
+                label: 'Callout',
                 render: ({ api, selection }) => {
                     const active = selection.block?.type === 'callout';
                     return (
@@ -1216,18 +1218,17 @@ type EmbedValue = Omit<EmbedInline, 'type'>;
 const embedClasses =
     'tw-rounded-small tw-bg-container-highlight tw-px-1 tw-font-medium tw-text-container-highlight-on-highlight-container';
 
+type EmbedDraftProps = {
+    onChoose: (provider: string) => void;
+    onRemove: () => void;
+};
+
 /**
  * A consumer-written picker, showing what an inline's `edit` view gives
  * an external plugin: the node is inserted without a value, and the component
  * completes it with `setValue` — or takes it away with `remove`.
  */
-const EmbedDraft = ({
-    onChoose,
-    onRemove,
-}: {
-    onChoose: (provider: string) => void;
-    onRemove: () => void;
-}): ReactNode => (
+const EmbedDraft = ({ onChoose, onRemove }: EmbedDraftProps): ReactNode => (
     <span role="listbox" aria-label="Embed suggestions" className="tw-inline-flex tw-gap-1">
         {EMBEDS.map((item) => (
             <button

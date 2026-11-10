@@ -17,9 +17,9 @@ export type ItalicMark = {
 /**
  * Italic text, written as `<em>`
  */
-export const italicContent = /* @__PURE__ */ defineContent({
+export const italicContent = defineContent({
     marks: {
-        italic: /* @__PURE__ */ defineMark({
+        italic: defineMark({
             tag: 'em',
             // An element with the style is italic too: how Google Docs writes it.
             parse: [
@@ -37,7 +37,7 @@ export const italicContent = /* @__PURE__ */ defineContent({
  */
 export const italicPlugin = /* @__PURE__ */ definePlugin({
     content: italicContent,
-    toolbar: [{ icon: IconTextFormatItalic, shortcut: 'Mod-i' }],
+    toolbar: [{ label: 'Italic', icon: IconTextFormatItalic, shortcut: 'Mod-i' }],
     // `_text_` is emphasis in markdown, as `*text*` is.
     inputRules: [{ delimiter: '*' }, { delimiter: '_' }],
 });

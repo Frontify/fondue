@@ -4,7 +4,8 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { mentionContent, mentionPlugin, mentionValueOf } from './Mention';
+import { mentionValueOf } from './helpers/mention';
+import { mentionContent, mentionPlugin } from './Mention';
 
 const JANE = { id: 'jane', username: 'jane', name: 'Jane Doe' };
 const DESIGN = { id: 'design', username: 'design', name: 'Design team', kind: 'group' } as const;
