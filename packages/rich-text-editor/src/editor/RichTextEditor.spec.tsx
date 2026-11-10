@@ -750,7 +750,7 @@ describe('the toolbar', () => {
 });
 
 describe('the toolbar from the keyboard', () => {
-    const plugins = [boldPlugin, alignPlugin, linkPlugin];
+    const plugins = [boldPlugin, alignPlugin, linkPlugin()];
 
     const toolbarIn = (container: HTMLElement): HTMLElement => {
         const toolbar = container.querySelector<HTMLElement>('[role="toolbar"]');
@@ -1175,7 +1175,7 @@ describe('exported links', () => {
                     { type: 'paragraph', children: [{ text: 'good', link: { href: 'https://example.com' } }] },
                 ],
             },
-            { plugins: [linkPlugin] },
+            { plugins: [linkPlugin()] },
         );
 
         expect(html).not.toContain('javascript:');

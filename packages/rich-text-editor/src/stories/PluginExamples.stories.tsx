@@ -176,7 +176,7 @@ export const Quote: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[quotePlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[quotePlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -410,7 +410,7 @@ export const Link: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[linkPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[linkPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -658,7 +658,7 @@ export const MarkdownShortcuts: Story = {
                         onChange={setDoc}
                         plugins={[
                             textStylePlugin(),
-                            quotePlugin,
+                            quotePlugin(),
                             boldPlugin,
                             italicPlugin,
                             underlinePlugin,

@@ -9,12 +9,16 @@ import { type CSSProperties, useEffect, useRef, useState } from 'react';
 // that are its own rather than a plugin's.
 import {
     boldPlugin,
+    bulletListPlugin,
+    checkListPlugin,
     columnBreakPlugin,
     defaultPlugins,
     italicPlugin,
     linkPlugin,
     type MentionItem,
     mentionPlugin,
+    paragraphPlugin,
+    quotePlugin,
     type RteDocument,
     RichTextEditor,
     RichTextRenderer,
@@ -619,7 +623,7 @@ export const CommentBox: Story = {
                         plugins={[
                             boldPlugin,
                             italicPlugin,
-                            linkPlugin,
+                            linkPlugin(),
                             mentionPlugin({
                                 items: MENTIONABLE,
                                 href: profileHref,
@@ -759,6 +763,12 @@ const LIGHT_GUIDELINE: GuidelineVariables = {
     '--f-theme-settings-custom2-color': 'rgb(30, 90, 60)',
     '--f-theme-settings-image-title-color': 'rgb(20, 60, 120)',
     '--f-theme-settings-image-caption-font-size': '11px',
+    '--f-theme-settings-body-font-size': '16px',
+    '--f-theme-settings-body-color': 'rgb(40, 40, 60)',
+    '--f-theme-settings-quote-font-style': 'italic',
+    '--f-theme-settings-quote-color': 'rgb(90, 50, 110)',
+    '--f-theme-settings-link-color': 'rgb(190, 40, 90)',
+    '--f-theme-settings-link-font-weight': '600',
 };
 
 const DARK_GUIDELINE: GuidelineVariables = {
@@ -771,6 +781,12 @@ const DARK_GUIDELINE: GuidelineVariables = {
     '--f-theme-settings-custom2-color': 'rgb(150, 230, 190)',
     '--f-theme-settings-image-title-color': 'rgb(150, 190, 255)',
     '--f-theme-settings-image-caption-font-size': '11px',
+    '--f-theme-settings-body-font-size': '16px',
+    '--f-theme-settings-body-color': 'rgb(220, 220, 235)',
+    '--f-theme-settings-quote-font-style': 'italic',
+    '--f-theme-settings-quote-color': 'rgb(210, 170, 235)',
+    '--f-theme-settings-link-color': 'rgb(255, 150, 190)',
+    '--f-theme-settings-link-font-weight': '600',
 };
 
 /**
@@ -794,7 +810,31 @@ const GUIDELINE_PRESETS: TextStylePluginOptions['presets'] = {
     imageCaption: { fontSize: 'var(--f-theme-settings-image-caption-font-size)' },
 };
 
-const HOST_STYLING_PLUGINS = [textStylePlugin({ presets: GUIDELINE_PRESETS })];
+/** Body text and quotes read the guideline too; the quote's line height is one no section defines. */
+const HOST_STYLING_PLUGINS = [
+    textStylePlugin({ presets: GUIDELINE_PRESETS }),
+    bulletListPlugin,
+    checkListPlugin,
+    paragraphPlugin({
+        look: {
+            fontSize: 'var(--f-theme-settings-body-font-size)',
+            color: 'var(--f-theme-settings-body-color)',
+        },
+    }),
+    quotePlugin({
+        look: {
+            fontStyle: 'var(--f-theme-settings-quote-font-style)',
+            lineHeight: 'var(--f-theme-settings-quote-line-height)',
+            color: 'var(--f-theme-settings-quote-color)',
+        },
+    }),
+    linkPlugin({
+        look: {
+            fontWeight: 'var(--f-theme-settings-link-font-weight)',
+            color: 'var(--f-theme-settings-link-color)',
+        },
+    }),
+];
 
 const HOST_STYLING_DOCUMENT: RteDocument = {
     version: 1,
@@ -808,7 +848,30 @@ const HOST_STYLING_DOCUMENT: RteDocument = {
         { type: 'textStyle', style: 'custom3', children: [{ text: 'Custom 3' }] },
         { type: 'textStyle', style: 'imageTitle', children: [{ text: 'Image title' }] },
         { type: 'textStyle', style: 'imageCaption', children: [{ text: 'Image caption' }] },
-        { type: 'paragraph', children: [{ text: 'A paragraph keeps the page text.' }] },
+        { type: 'paragraph', children: [{ text: 'Body text takes the body look.' }] },
+        {
+            type: 'bulletList',
+            children: [{ type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'A bullet item' }] }] }],
+        },
+        {
+            type: 'checkList',
+            children: [
+                {
+                    type: 'checkItem',
+                    checked: false,
+                    children: [{ type: 'paragraph', children: [{ text: 'A check item' }] }],
+                },
+            ],
+        },
+        { type: 'quote', children: [{ text: 'A quote takes the quote look.' }] },
+        {
+            type: 'paragraph',
+            children: [
+                { text: 'A ' },
+                { text: 'link', link: { href: 'https://example.com' } },
+                { text: ' takes the link look.' },
+            ],
+        },
     ],
 };
 
@@ -837,7 +900,8 @@ const HostStylingSection = ({ title, guideline }: HostStylingSectionProps) => {
 };
 
 /**
- * A host sets the look of each text style with `textStylePlugin({ presets })`, usually from its
+ * A host sets the look of each text style with `textStylePlugin({ presets })`, and of body text,
+ * quotes and links with `paragraphPlugin`, `quotePlugin` and `linkPlugin`, usually from its
  * guideline settings: values are CSS, so `var(--f-theme-settings-…)` works and follows the section
  * the editor sits in. Anything the host leaves out, or a variable nobody defines, keeps Fondue's look.
  * The editor and the renderer draw the same.

@@ -3,9 +3,9 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator } from '@playwright/test';
 
-import { type TextLook, type TextStyleName } from '../../index';
+import { type LinkLook, type TextLook, type TextStyleName } from '../../index';
 
-import { HostStylingPair, HostStylingSections } from './HostStylingFixtures';
+import { HostLooksPair, HostStylingPair, HostStylingSections } from './HostStylingFixtures';
 
 // Hosts set the look of each text style with `textStylePlugin({ presets })`. Without a
 // value, or with one that resolves to nothing, Fondue's look stays, in the editor and the renderer alike.
@@ -186,5 +186,178 @@ test.describe('host styling of text styles', () => {
         expect(look['font-size']).toBe(FONDUE_LOOKS.heading1['font-size']);
         expect(look['margin-top']).toBe('0px');
         expect(look['margin-bottom']).toBe('0px');
+    });
+});
+
+// Body text, block quotes and links take a look through `paragraphPlugin`, `quotePlugin` and `linkPlugin`.
+
+type LookedBlock = 'body' | 'bullet' | 'check' | 'quote' | 'link' | 'custom1' | 'heading1';
+
+/** The text each block of the fixture document holds, which is how both surfaces are searched. */
+const LOOKED_TEXTS: Record<LookedBlock, string> = {
+    body: 'Body text',
+    bullet: 'Bullet item',
+    check: 'Check item',
+    quote: 'A quote',
+    link: 'A link',
+    custom1: 'Custom 1',
+    heading1: 'Heading 1',
+};
+
+const LOOKED_BLOCKS = Object.keys(LOOKED_TEXTS) as LookedBlock[];
+
+const SURFACES = ['renderer', 'editor'] as const;
+
+/** The checked item in the fixture document, which a check list greys out and strikes through. */
+const DONE_ITEM = 'Done item';
+
+const SECONDARY_TEXT_COLOR = 'rgb(103, 103, 99)';
+
+/** A link is found by its role, because its text sits in a nested element whose decoration is not the link's. */
+const blockIn = (surface: Locator, block: LookedBlock): Locator => {
+    if (block === 'link') {
+        return surface.getByRole('link', { name: LOOKED_TEXTS.link, exact: true });
+    }
+    return surface.getByText(LOOKED_TEXTS[block], { exact: true });
+};
+
+const looksOfBlocksIn = async (surface: Locator): Promise<Record<LookedBlock, ComputedLook>> => {
+    const looks: Partial<Record<LookedBlock, ComputedLook>> = {};
+    for (const block of LOOKED_BLOCKS) {
+        looks[block] = await computedLookOf(blockIn(surface, block));
+    }
+    // Filled for every block in LOOKED_BLOCKS just above.
+    return looks as Record<LookedBlock, ComputedLook>;
+};
+
+// Measured with the default theme on the commit before these looks existed (a81b3376ab); the editor and the renderer agree.
+const QUOTE_LOOK: ComputedLook = { ...PLAIN, color: 'rgb(103, 103, 99)' };
+const LINK_LOOK: ComputedLook = { ...PLAIN, 'text-decoration-line': 'underline', color: 'rgb(182, 10, 227)' };
+
+const BASELINE_LOOKS: Record<LookedBlock, ComputedLook> = {
+    body: PLAIN,
+    bullet: PLAIN,
+    check: PLAIN,
+    quote: QUOTE_LOOK,
+    link: LINK_LOOK,
+    custom1: FONDUE_LOOKS.custom1,
+    heading1: FONDUE_LOOKS.heading1,
+};
+
+const QUOTE_BOX = { 'margin-left': '0px', 'padding-left': '12px', 'border-left': '2px solid rgb(17, 17, 16)' };
+
+const expectQuoteBox = async (quote: Locator): Promise<void> => {
+    for (const [property, value] of Object.entries(QUOTE_BOX)) {
+        await expect(quote).toHaveCSS(property, value);
+    }
+};
+const LINK_UNDERLINE_OFFSET = '2px';
+const COLOURED_RUN = 'span[style*=color]';
+const COLOURED_RUN_COLOR = 'rgb(255, 0, 0)';
+
+/** A link's look has no decoration or vertical margins, so the host look leaves those as Fondue draws them. */
+const HOST_LINK_LOOK: LinkLook = {
+    fontFamily: HOST_LOOK.fontFamily,
+    fontSize: HOST_LOOK.fontSize,
+    fontWeight: HOST_LOOK.fontWeight,
+    fontStyle: HOST_LOOK.fontStyle,
+    lineHeight: HOST_LOOK.lineHeight,
+    letterSpacing: HOST_LOOK.letterSpacing,
+    textTransform: HOST_LOOK.textTransform,
+    color: HOST_LOOK.color,
+};
+
+const HOST_LINK_COMPUTED_LOOK: ComputedLook = {
+    ...HOST_COMPUTED_LOOK,
+    'text-decoration-line': 'underline',
+    'margin-top': '0px',
+    'margin-bottom': '0px',
+};
+
+const UNSET_LINK_LOOK: LinkLook = {
+    fontFamily: UNSET_VARIABLE,
+    fontSize: UNSET_VARIABLE,
+    fontWeight: UNSET_VARIABLE,
+    fontStyle: UNSET_VARIABLE,
+    lineHeight: UNSET_VARIABLE,
+    letterSpacing: UNSET_VARIABLE,
+    textTransform: UNSET_VARIABLE,
+    color: UNSET_VARIABLE,
+};
+
+test.describe('host styling of body text, quotes and links', () => {
+    test('keeps Fondue looks when the host sets none, in the renderer and the editor', async ({ mount }) => {
+        const component = await mount(<HostLooksPair />);
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            expect(await looksOfBlocksIn(section)).toEqual(BASELINE_LOOKS);
+            await expectQuoteBox(section.locator('blockquote'));
+            await expect(section.getByRole('link', { name: LOOKED_TEXTS.link, exact: true })).toHaveCSS(
+                'text-underline-offset',
+                LINK_UNDERLINE_OFFSET,
+            );
+        }
+    });
+
+    test('applies the body look to plain paragraphs, in list items too, and not to text styles', async ({ mount }) => {
+        const component = await mount(<HostLooksPair body={HOST_LOOK} />);
+
+        for (const surface of SURFACES) {
+            // The link sits in a paragraph and inherits its look, so it is not part of the comparison.
+            expect(await looksOfBlocksIn(component.getByTestId(surface))).toMatchObject({
+                body: HOST_COMPUTED_LOOK,
+                bullet: HOST_COMPUTED_LOOK,
+                check: HOST_COMPUTED_LOOK,
+                quote: BASELINE_LOOKS.quote,
+                custom1: BASELINE_LOOKS.custom1,
+                heading1: BASELINE_LOOKS.heading1,
+            });
+        }
+    });
+
+    test('keeps a checked item grey and struck through under a body look', async ({ mount }) => {
+        const component = await mount(<HostLooksPair body={HOST_LOOK} />);
+
+        for (const surface of SURFACES) {
+            const done = component.getByTestId(surface).getByText(DONE_ITEM, { exact: true });
+            await expect(done).toHaveCSS('color', SECONDARY_TEXT_COLOR);
+            await expect(done).toHaveCSS('text-decoration-line', 'line-through');
+        }
+    });
+
+    test('applies the quote look to the quote alone, keeping its padding and border', async ({ mount }) => {
+        const component = await mount(<HostLooksPair quote={HOST_LOOK} />);
+        const expected = { ...BASELINE_LOOKS, quote: HOST_COMPUTED_LOOK };
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            expect(await looksOfBlocksIn(section)).toEqual(expected);
+            await expectQuoteBox(section.locator('blockquote'));
+        }
+    });
+
+    test('applies the link look and keeps the underline, also under a run with its own colour', async ({ mount }) => {
+        const component = await mount(<HostLooksPair link={HOST_LINK_LOOK} />);
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            const link = section.getByRole('link', { name: LOOKED_TEXTS.link, exact: true });
+            const colouredRun = section.locator(COLOURED_RUN);
+
+            expect(await computedLookOf(link)).toEqual(HOST_LINK_COMPUTED_LOOK);
+            await expect(link).toHaveCSS('text-underline-offset', LINK_UNDERLINE_OFFSET);
+            await expect(colouredRun).toHaveCSS('text-decoration-line', 'underline');
+            await expect(colouredRun).toHaveCSS('color', COLOURED_RUN_COLOR);
+            await expect(colouredRun).toHaveCSS('text-underline-offset', LINK_UNDERLINE_OFFSET);
+        }
+    });
+
+    test('keeps Fondue looks for values that resolve to an unset guideline variable', async ({ mount }) => {
+        const component = await mount(<HostLooksPair body={UNSET_LOOK} quote={UNSET_LOOK} link={UNSET_LINK_LOOK} />);
+
+        for (const surface of SURFACES) {
+            expect(await looksOfBlocksIn(component.getByTestId(surface))).toEqual(BASELINE_LOOKS);
+        }
     });
 });

@@ -27,8 +27,15 @@ $default-fallbacks: (
 /// Writes each property as the host's `--rte-<key>-<property>` custom property, falling back to Fondue's look.
 /// @param {String} $key - The style's kebab-case name, such as `image-title`.
 /// @param {Map} $fallbacks - Fondue's value per property where it differs from the default.
-@mixin look($key, $fallbacks: ()) {
+/// @param {List} $except - Properties the style keeps for itself, so the host cannot set them.
+@mixin look($key, $fallbacks: (), $except: ()) {
     @each $property in map.keys($fallbacks) {
+        @if not list.index($look-properties, $property) {
+            @error 'look(): "#{$property}" is not a look property.';
+        }
+    }
+
+    @each $property in $except {
         @if not list.index($look-properties, $property) {
             @error 'look(): "#{$property}" is not a look property.';
         }
@@ -37,6 +44,8 @@ $default-fallbacks: (
     $resolved: map.merge($default-fallbacks, $fallbacks);
 
     @each $property in $look-properties {
-        #{$property}: var(--rte-#{$key}-#{$property}, #{map.get($resolved, $property)});
+        @if not list.index($except, $property) {
+            #{$property}: var(--rte-#{$key}-#{$property}, #{map.get($resolved, $property)});
+        }
     }
 }

@@ -9,10 +9,17 @@ import { type BlockDefinition, defineBlock } from './plugin';
 /** The baseline block every editor has; the default for empty documents and Enter-key splits. */
 export const PARAGRAPH = 'paragraph';
 
+/**
+ * The class a plain paragraph is written with. A plain class, not a CSS module one, because core
+ * holds no stylesheet; `renderer/document.module.scss` (margins) and
+ * `plugins/Paragraph/paragraph.module.scss` (the rest of the body look) target it.
+ */
+export const PARAGRAPH_CLASS_NAME = 'rte-paragraph';
+
 /** The paragraph, registered ahead of every plugin's blocks so it is treated like any other block. */
 export const paragraphBlock: BlockDefinition = defineBlock({
     content: 'text',
-    toHtml: () => ({ tag: 'p', children: true }),
+    toHtml: () => ({ tag: 'p', attrs: { class: PARAGRAPH_CLASS_NAME }, children: true }),
     parse: [{ tag: 'p' }],
 });
 

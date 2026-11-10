@@ -119,6 +119,7 @@ export { defaultEmojis, emojiPlugin } from './plugins/Emoji';
 export { fontColorContent, fontColorPlugin } from './plugins/FontColor';
 export { italicContent, italicPlugin } from './plugins/Italic';
 export { linkContent, linkPlugin } from './plugins/Link';
+export { paragraphContent, paragraphPlugin } from './plugins/Paragraph';
 export { bulletListContent, bulletListPlugin, numberedListContent, numberedListPlugin } from './plugins/List';
 export { mentionContent, mentionPlugin } from './plugins/Mention';
 export { quoteContent, quotePlugin } from './plugins/Quote';
@@ -141,6 +142,9 @@ export {
     type MentionPluginOptions,
     type MentionValue,
 } from './plugins/Mention';
+export { type ParagraphPluginOptions } from './plugins/Paragraph';
+export { type QuotePluginOptions } from './plugins/Quote';
+export { type LinkLook, type LinkPluginOptions } from './plugins/Link';
 export { type TextLook } from './core';
 export { type TextStyleName, type TextStylePluginOptions } from './plugins/TextStyle';
 

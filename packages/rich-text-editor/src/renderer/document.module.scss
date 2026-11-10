@@ -33,10 +33,17 @@
     // A paragraph adds no space of its own, like every other block: spacing
     // between blocks belongs to the document, not to the page's default
     // stylesheet (which would otherwise give paragraphs `1em` margins in some
-    // hosts and none in others). Not a text style: it sets its own margins, and
-    // this rule would outrank its class.
-    p:not([data-text-style]) {
+    // hosts and none in others). Not a text style or a plain paragraph: they set
+    // their own margins, and this rule would outrank them.
+    p:not([data-text-style], :global(.rte-paragraph)) {
         margin: 0;
+    }
+
+    // A plain paragraph's margins: the host's body look (`paragraphPlugin`), in list items too, else none.
+    // Here rather than in that plugin's stylesheet, because a paragraph needs them whether or not it is loaded.
+    :global(.rte-paragraph) {
+        margin-top: var(--rte-body-margin-top, 0);
+        margin-bottom: var(--rte-body-margin-bottom, var(--rte-block-gap, 0));
     }
 
     // Raised and lowered text without growing the line it sits on. Browsers'

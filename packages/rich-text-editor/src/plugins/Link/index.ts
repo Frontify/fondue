@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { linkContent, type LinkMark, linkPlugin } from './Link';
+export { linkContent, type LinkLook, type LinkMark, linkPlugin, type LinkPluginOptions } from './Link';

@@ -1,8 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../shared/look';
+
 .quote {
-    margin: 0;
+    @include look.look(
+        'quote',
+        (
+            color: var(--color-secondary-default),
+        )
+    );
+    // The browser's own side margins on a blockquote; the look writes only the vertical ones.
+    margin-inline: 0;
     padding-left: var(--spacing-small);
     border-left: var(--border-width-large) solid var(--color-line-strong);
-    color: var(--color-secondary-default);
 }

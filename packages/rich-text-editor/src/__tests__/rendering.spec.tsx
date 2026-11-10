@@ -180,7 +180,7 @@ describe('the element a document sits in', () => {
     });
 
     it('is left out of export with wrap: false', () => {
-        expect(serializeToHtml(doc, { plugins, wrap: false })).toBe('<p>Hello</p>');
+        expect(serializeToHtml(doc, { plugins, wrap: false })).toBe('<p class="rte-paragraph">Hello</p>');
     });
 });
 

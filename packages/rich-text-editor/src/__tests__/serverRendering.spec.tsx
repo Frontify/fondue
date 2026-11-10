@@ -25,7 +25,9 @@ describe('rendering on a server', () => {
     });
 
     it('draws the same markup through RichTextRenderer and serializeToHtml', () => {
-        expect(serializeToHtml(doc, { plugins: defaultPlugins, wrap: false })).toBe(`<p>${TEXT}</p>`);
+        expect(serializeToHtml(doc, { plugins: defaultPlugins, wrap: false })).toBe(
+            `<p class="rte-paragraph">${TEXT}</p>`,
+        );
         expect(renderToString(<RichTextRenderer value={doc} plugins={defaultPlugins} />)).toContain(TEXT);
     });
 });

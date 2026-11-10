@@ -72,19 +72,21 @@ describe('copying', () => {
     it('keeps a line break at the end of a block, which a single <br> would lose', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('line'), { type: 'break' })]);
 
-        expect(copied(editor)).toBe('<p>line<br><br></p>');
+        expect(copied(editor)).toBe('<p class="rte-paragraph">line<br><br></p>');
     });
 
     it('writes an empty block with a <br>, so it does not collapse', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('a')), paragraph(), paragraph(text('b'))]);
 
-        expect(copied(editor)).toBe('<p>a</p><p><br></p><p>b</p>');
+        expect(copied(editor)).toBe(
+            '<p class="rte-paragraph">a</p><p class="rte-paragraph"><br></p><p class="rte-paragraph">b</p>',
+        );
     });
 
     it('leaves a break in the middle of a block as it is', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('a'), { type: 'break' }, text('b'))]);
 
-        expect(copied(editor)).toBe('<p>a<br>b</p>');
+        expect(copied(editor)).toBe('<p class="rte-paragraph">a<br>b</p>');
     });
 });
 

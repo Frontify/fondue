@@ -3,9 +3,18 @@
 import { type CSSProperties } from 'react';
 
 import {
+    bulletListPlugin,
+    checkListPlugin,
+    fontColorPlugin,
+    type LinkLook,
+    linkPlugin,
+    paragraphPlugin,
+    quotePlugin,
     RichTextEditor,
     RichTextRenderer,
+    type RtePlugin,
     type RteDocument,
+    type TextLook,
     textStylePlugin,
     type TextStylePluginOptions,
 } from '../../index';
@@ -64,3 +73,82 @@ export const HostStylingSections = ({ presets }: HostStylingProps) => (
         </div>
     </>
 );
+
+/** Body text, a block quote and links, with a preset and a heading beside them that the body look must not reach. */
+const BODY_QUOTE_LINK_DOCUMENT: RteDocument = {
+    version: 1,
+    blocks: [
+        { type: 'paragraph', children: [{ text: 'Body text' }] },
+        {
+            type: 'bulletList',
+            children: [{ type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'Bullet item' }] }] }],
+        },
+        {
+            type: 'checkList',
+            children: [
+                {
+                    type: 'checkItem',
+                    checked: false,
+                    children: [{ type: 'paragraph', children: [{ text: 'Check item' }] }],
+                },
+                {
+                    type: 'checkItem',
+                    checked: true,
+                    children: [{ type: 'paragraph', children: [{ text: 'Done item' }] }],
+                },
+            ],
+        },
+        { type: 'quote', children: [{ text: 'A quote' }] },
+        { type: 'paragraph', children: [{ text: 'A link', link: { href: 'https://example.com' } }] },
+        {
+            type: 'paragraph',
+            children: [
+                {
+                    text: 'A coloured link',
+                    link: { href: 'https://example.com' },
+                    fontColor: { color: '#ff0000' },
+                },
+            ],
+        },
+        { type: 'textStyle', style: 'custom1', children: [{ text: 'Custom 1' }] },
+        { type: 'textStyle', style: 'heading1', children: [{ text: 'Heading 1' }] },
+    ],
+};
+
+type HostLooksProps = {
+    /** Body text; the plugin is mounted only when this is given. */
+    body?: TextLook;
+    quote?: TextLook;
+    link?: LinkLook;
+};
+
+const pluginsWithLooks = ({ body, quote, link }: HostLooksProps): RtePlugin[] => {
+    const plugins = [
+        textStylePlugin(),
+        bulletListPlugin,
+        checkListPlugin,
+        fontColorPlugin,
+        quotePlugin({ look: quote }),
+        linkPlugin({ look: link }),
+    ];
+    if (body !== undefined) {
+        plugins.push(paragraphPlugin({ look: body }));
+    }
+    return plugins;
+};
+
+/** The renderer and the editor side by side, drawing body text, a quote and links with the same looks. */
+export const HostLooksPair = (props: HostLooksProps) => {
+    const plugins = pluginsWithLooks(props);
+
+    return (
+        <>
+            <div data-testid="renderer">
+                <RichTextRenderer value={BODY_QUOTE_LINK_DOCUMENT} plugins={plugins} />
+            </div>
+            <div data-testid="editor">
+                <RichTextEditor value={BODY_QUOTE_LINK_DOCUMENT} plugins={plugins} />
+            </div>
+        </>
+    );
+};
