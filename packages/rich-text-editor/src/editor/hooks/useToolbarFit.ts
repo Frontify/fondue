@@ -55,7 +55,10 @@ export const useToolbarFit = ({
     const refocusRef = useRef(false);
     const measured = fitted !== null && fitted.itemsKey === itemsKey;
     // Measuring draws every slot in the row, as a fit that shows them all does, so the first fit changes nothing drawn.
-    const drawn = measured ? fitted.shown : keys.flat().length;
+    let drawn = keys.flat().length;
+    if (measured) {
+        drawn = fitted.shown;
+    }
 
     useLayoutEffect(() => {
         const toolbar = toolbarRef.current;

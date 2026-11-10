@@ -67,7 +67,11 @@ export const useToolbarRoving = ({ toolbarRef, focusRequestRef, onEscape }: UseT
         const current = currentIndex(stops);
         remember(stops, current);
         for (const [index, stop] of stops.entries()) {
-            stop.tabIndex = index === current ? 0 : -1;
+            if (index === current) {
+                stop.tabIndex = 0;
+            } else {
+                stop.tabIndex = -1;
+            }
         }
         if (focusRequestRef.current) {
             focusRequestRef.current = false;
@@ -87,7 +91,10 @@ export const useToolbarRoving = ({ toolbarRef, focusRequestRef, onEscape }: UseT
     };
 
     const onKeyDown = (event: KeyboardEvent<HTMLElement>): void => {
-        const target = event.target as HTMLElement;
+        const { target } = event;
+        if (!(target instanceof HTMLElement)) {
+            return;
+        }
         // Keys from a flyout a control opened arrive here through the
         // component tree; they belong to that flyout.
         if (!event.currentTarget.contains(target)) {
@@ -109,9 +116,17 @@ export const useToolbarRoving = ({ toolbarRef, focusRequestRef, onEscape }: UseT
         const stops = controlsIn(event.currentTarget);
         const index = stops.findIndex((stop) => stop === target || stop.contains(target));
         const last = stops.length - 1;
+        let nextStop = index + 1;
+        if (index >= last) {
+            nextStop = 0;
+        }
+        let previousStop = index - 1;
+        if (index <= 0) {
+            previousStop = last;
+        }
         const next = {
-            ArrowRight: index >= last ? 0 : index + 1,
-            ArrowLeft: index <= 0 ? last : index - 1,
+            ArrowRight: nextStop,
+            ArrowLeft: previousStop,
             Home: 0,
             End: last,
         }[event.key];
@@ -150,22 +165,34 @@ const slotOf = (element: HTMLElement | null): string | null => {
 
 /** A click on the toolbar that misses a control would move focus, and the selection with it. */
 const keepSelection = (event: MouseEvent<HTMLElement>): void => {
-    const target = event.target as HTMLElement;
+    const { target } = event;
+    // An icon's SVG is an Element, not an HTMLElement, and a press on it still counts.
+    if (!(target instanceof Element)) {
+        return;
+    }
     // A flyout's events arrive here through the component tree; they are not ours.
     if (!event.currentTarget.contains(target)) {
         return;
     }
-    if (!target.closest('button, input, [role="combobox"]')) {
+    if (target.closest(PRESSABLE) === null) {
         event.preventDefault();
     }
 };
 
+/** What a press on the toolbar may land on without taking the selection: the controls handle it themselves. */
+const PRESSABLE = 'button, input, [role="combobox"]';
+
 /** Every element in the toolbar a keyboard can land on. Disabled controls are passed over. */
 const CONTROLS = 'button, input, select, textarea, a[href], [role="combobox"]';
 
+/** Controls inside a subtree hidden from the accessibility tree are not stops. */
+const HIDDEN_SUBTREE = '[aria-hidden="true"]';
+
+const DISABLED = ':disabled';
+
 const controlsIn = (toolbar: HTMLElement): HTMLElement[] =>
     [...toolbar.querySelectorAll<HTMLElement>(CONTROLS)].filter(
-        (control) => !control.matches(':disabled') && control.closest('[aria-hidden="true"]') === null,
+        (control) => !control.matches(DISABLED) && control.closest(HIDDEN_SUBTREE) === null,
     );
 
 /** A text field keeps the arrow keys for its own caret. */
