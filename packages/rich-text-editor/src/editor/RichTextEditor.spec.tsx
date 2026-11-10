@@ -5,7 +5,7 @@
 import { act, Profiler, type ReactNode, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Driven through the package's public API, the way a host does: the props are
 // the whole conversation between a host and a mounted editor.
@@ -276,6 +276,208 @@ describe('a readonly editor', () => {
         ready();
 
         expect(container.textContent).toContain('was readonly');
+    });
+});
+
+describe('a document from a newer format version', () => {
+    // A version of its own per test: the warning is given once per version for the whole page.
+    // Far above any real version, so raising the format's version leaves these documents newer.
+    let version = 1000;
+    let newer: RteDocument;
+    beforeEach(() => {
+        version += 1;
+        newer = { ...paragraph('from the future'), version } as unknown as RteDocument;
+    });
+
+    it('is shown read-only and warns once', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container, onChange } = mount((handler) => (
+            <RichTextEditor value={newer} onChange={handler} plugins={defaultPlugins} />
+        ));
+
+        expect(container.textContent).toContain('from the future');
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+        expect(container.querySelector('[role="toolbar"]')).toBeNull();
+        expect(warn).toHaveBeenCalledTimes(1);
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining(`version ${version}`));
+        expect(container.querySelector('[role="status"]')?.textContent).toBe(
+            'This content was saved with a newer version of the editor. Try reloading the page to edit it.',
+        );
+        expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it('shows the notice when only the content is drawn', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} showEditor={false} />);
+
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+        expect(container.querySelector('[role="status"]')).not.toBeNull();
+    });
+
+    it('says so in the words the host gives', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container } = mount(() => (
+            <RichTextEditor value={newer} plugins={defaultPlugins} labels={{ newerVersion: 'Nur lesbar' }} />
+        ));
+
+        expect(container.querySelector('[role="status"]')?.textContent).toBe('Nur lesbar');
+    });
+
+    it('shows no notice when the host already shows it read-only', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} readonly />);
+
+        expect(container.textContent).toContain('from the future');
+        expect(container.querySelector('[role="status"]')).toBeNull();
+    });
+
+    it('warns once for several editors showing the same version', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        mount(() => (
+            <>
+                <RichTextEditor value={newer} plugins={defaultPlugins} />
+                <RichTextEditor value={newer} plugins={defaultPlugins} />
+            </>
+        ));
+
+        expect(warn).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not repeat the warning on re-render', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { rerender } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} />);
+
+        rerender(<RichTextEditor value={newer} plugins={defaultPlugins} placeholder="again" />);
+
+        expect(warn).toHaveBeenCalledTimes(1);
+    });
+
+    it('stops reporting once the host switches to a newer document mid-edit', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const onChange = vi.fn<(doc: RteDocument) => void>();
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} onChange={onChange} plugins={defaultPlugins} />
+        ));
+        ready();
+        paste(container, '<p>typed</p>');
+        expect(onChange).toHaveBeenCalledTimes(1);
+
+        rerender(<RichTextEditor value={newer} onChange={onChange} plugins={defaultPlugins} />);
+
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+        expect(container.textContent).toContain('from the future');
+        expect(onChange).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not hand the older document to onBlur when focus leaves as a newer one arrives', () => {
+        vi.useFakeTimers();
+        teardown.push(() => vi.useRealTimers());
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const outside = window.document.createElement('input');
+        window.document.body.append(outside);
+        teardown.push(() => outside.remove());
+        const onBlur = vi.fn<(doc: RteDocument) => void>();
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} onBlur={onBlur} plugins={defaultPlugins} />
+        ));
+        ready();
+        act(() => editableIn(container).focus());
+
+        // Focus leaving and the newer document land in one render.
+        act(() => {
+            outside.focus();
+            rerender(<RichTextEditor value={newer} onBlur={onBlur} plugins={defaultPlugins} />);
+            vi.runAllTimers();
+        });
+
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+        expect(onBlur).not.toHaveBeenCalled();
+    });
+
+    it('moves focus to the notice when the text being edited goes away', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} />
+        ));
+        ready();
+        act(() => editableIn(container).focus());
+
+        rerender(<RichTextEditor value={newer} plugins={defaultPlugins} />);
+
+        const focused = window.document.activeElement;
+        expect(focused?.getAttribute('tabindex')).toBe('-1');
+        expect(focused?.firstElementChild).toBe(container.querySelector('[role="status"]'));
+    });
+
+    it('leaves focus where the user just moved it when a newer document arrives', () => {
+        vi.useFakeTimers();
+        teardown.push(() => vi.useRealTimers());
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const outside = window.document.createElement('input');
+        window.document.body.append(outside);
+        teardown.push(() => outside.remove());
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} />
+        ));
+        ready();
+        act(() => editableIn(container).focus());
+
+        // The host updates in the same task as the blur, before the editor hears that focus left.
+        act(() => {
+            outside.focus();
+            rerender(<RichTextEditor value={newer} plugins={defaultPlugins} />);
+        });
+
+        expect(window.document.activeElement).toBe(outside);
+    });
+
+    it('leaves focus alone when a newer document arrives in an editor nobody is in', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container, rerender, ready } = mount(() => (
+            <RichTextEditor value={paragraph('current')} plugins={defaultPlugins} />
+        ));
+        ready();
+
+        rerender(<RichTextEditor value={newer} plugins={defaultPlugins} />);
+
+        expect(container.contains(window.document.activeElement)).toBe(false);
+    });
+
+    it('becomes editable once given a document of the current version', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container, rerender, ready } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} />);
+        expect(container.querySelector('[contenteditable]')).toBeNull();
+
+        rerender(<RichTextEditor value={paragraph('now current')} plugins={defaultPlugins} />);
+        ready();
+
+        expect(container.textContent).toContain('now current');
+    });
+
+    it.each([
+        ['the current version', paragraph('current')],
+        ['no version', { blocks: paragraph('missing').blocks } as unknown as RteDocument],
+        ['a version that is not a number', { ...paragraph('text'), version: '3' } as unknown as RteDocument],
+    ])('stays editable, without a warning, with %s', (_name, value) => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        teardown.push(() => warn.mockRestore());
+        const { container, ready } = mount(() => <RichTextEditor value={value} plugins={defaultPlugins} />);
+        ready();
+
+        expect(warn).not.toHaveBeenCalled();
+        expect(container.querySelector('[role="status"]')).toBeNull();
     });
 });
 

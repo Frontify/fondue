@@ -7,7 +7,6 @@ export const getFormattedTooltipDate = (timestamp?: Date, locale?: string) => {
             day: '2-digit',
             year: 'numeric',
         }).format(timestamp);
-    } else {
-        return '';
     }
+    return '';
 };

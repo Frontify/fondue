@@ -38,11 +38,14 @@
         "build:storybook": "storybook build",
         "format": "oxfmt",
         "format:check": "oxfmt --check",
+        "install:playwright": "playwright install --with-deps chromium",
         "lint": "oxlint",
         "lint:fix": "oxlint --fix",
         "storybook": "storybook dev -p 6012",
         "test": "vitest run",
         "test:watch": "vitest",
+        "test:components": "playwright test --ui",
+        "test:components:ci": "playwright test",
         "typecheck": "tsgo --noEmit && tsgo --noEmit -p tsconfig.node.json"
     },
     "peerDependencies": {
@@ -66,11 +69,14 @@
         "prosemirror-view": "^1.42.8"
     },
     "devDependencies": {
+        "@axe-core/playwright": "^4.14.0",
         "@frontify/fondue-components": "workspace:*",
         "@frontify/fondue-icons": "workspace:*",
         "@frontify/fondue-tokens": "workspace:*",
         "@frontify/oxfmt-config": "^0.0.2",
         "@frontify/oxlint-config-react": "^0.0.2",
+        "@playwright/experimental-ct-react": "~1.61.1",
+        "@playwright/test": "~1.61.1",
         "@storybook/addon-a11y": "^10.6.5",
         "@storybook/react-vite": "^10.6.5",
         "@tony.ganchev/eslint-plugin-header": "^3.4.4",

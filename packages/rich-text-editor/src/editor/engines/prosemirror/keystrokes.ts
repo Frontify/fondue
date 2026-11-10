@@ -11,6 +11,7 @@ import {
     Plugin,
     PluginKey,
     type Plugin as PmPlugin,
+    TextSelection,
     type Transaction,
 } from 'prosemirror-state';
 import { canJoin, findWrapping } from 'prosemirror-transform';
@@ -18,7 +19,7 @@ import { canJoin, findWrapping } from 'prosemirror-transform';
 import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
 
 import { keepCarriedAttrs } from './controlApi';
-import { valueAttrsFor } from './documentConversion';
+import { EXTRA_ATTR, valueAttrsFor } from './documentConversion';
 import { listKeys } from './lists';
 
 /**
@@ -26,13 +27,15 @@ import { listKeys } from './lists';
  * Order is precedence: the first plugin to handle a key wins, so keep the list
  * in `keystrokePipeline` matching the numbers used below.
  *
+ * 0. Every handler below steps aside for keys that enter text rather than
+ *    command the editor (an input method's, AltGr combinations).
  * 1. Undo / redo, and Backspace right after a typing rewrite (takes the rewrite back).
  * 2. Enter and Shift-Enter link the address before the caret once the key has acted;
  *    Backspace right after takes the link back.
  * 3. Feature hotkeys (Mod-b, ...). Before the list keys so a feature can take a
  *    key lists would claim (`blurOnBreak` takes Enter).
  * 4. List keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
- * 5. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`).
+ * 5. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`); held until a composition ends.
  * 6. Baseline keymap, plus Backspace resetting an emptied first heading.
  *
  * Mark input rules build their own transaction instead of calling
@@ -63,7 +66,41 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         // 6
         keymap({ Backspace: resetEmptyFirstBlock }),
         keymap(baseKeymap),
-    ];
+    ].map(ignoringTextEntryKeys);
+};
+
+// Text entry keys
+
+// A Mac has no AltGr key, yet Firefox on macOS reports Option as AltGraph.
+const isApple = (): boolean => typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
+
+/**
+ * A key an input method or an AltGr combination sends is text, not a command:
+ * Enter that commits a composition must not split the block, and AltGr+q (`@` on
+ * a German layout, Ctrl+Alt on Windows) must not run a Mod-Alt hotkey.
+ */
+const isTextEntryKey = (event: KeyboardEvent): boolean =>
+    // `keyCode` 229 marks the input method's keydowns that `isComposing` misses, just before and after a composition.
+    event.isComposing || event.keyCode === 229 || (!isApple() && (event.getModifierState?.('AltGraph') ?? false)); // NOSONAR
+
+/**
+ * The plugin with its key handler skipping those keys. It declines them rather
+ * than claiming them: a claimed keydown is `preventDefault`ed, which would stop
+ * the browser from typing the character.
+ */
+const ignoringTextEntryKeys = (plugin: PmPlugin): PmPlugin => {
+    const { handleKeyDown } = plugin.props;
+    if (!handleKeyDown) {
+        return plugin;
+    }
+    return new Plugin({
+        ...plugin.spec,
+        props: {
+            ...plugin.props,
+            // ProseMirror itself calls this with plain `Event`s for Android's Enter and Backspace.
+            handleKeyDown: (view, event) => !isTextEntryKey(event) && handleKeyDown.call(plugin, view, event),
+        },
+    });
 };
 
 // Feature hotkeys
@@ -141,7 +178,48 @@ const typingRewrites = (registry: PluginRegistry, schema: Schema): PmPlugin[] =>
     // reads as an italic `*` wrapping `*bold*`.
     const rules = registry.inputRules.flatMap((rule) => toEngineRule(rule, context) ?? []);
 
-    return rules.length > 0 ? [inputRules({ rules })] : [];
+    return rules.length > 0 ? [rewritingOnlyComposedText(inputRules({ rules }))] : [];
+};
+
+/**
+ * The rules run again when a composition ends, so mobile keyboards, which
+ * compose ordinary typing, still get them. That run is skipped when the
+ * composition left the document as it was: a keyboard recomposing the word
+ * before the caret would otherwise redo a rewrite Backspace just took back.
+ * This replaces the engine's own run, which waits a second timeout an unmount
+ * can fall between. The plugin is edited in place: its undo bookkeeping is
+ * keyed by the instance.
+ */
+const rewritingOnlyComposedText = (plugin: PmPlugin): PmPlugin => {
+    const runRules = plugin.props.handleTextInput;
+    if (!runRules) {
+        return plugin;
+    }
+    let docAtStart: PmNode | null = null;
+    plugin.props.handleDOMEvents = {
+        ...plugin.props.handleDOMEvents,
+        compositionstart: (view) => {
+            docAtStart = view.state.doc;
+            return false;
+        },
+        compositionend: (view) => {
+            // Taken now: the next composition can start before the timeout runs.
+            const started = docAtStart;
+            // The last composed characters can land after `compositionend`.
+            setTimeout(() => {
+                if (view.isDestroyed || (started && view.state.doc.eq(started))) {
+                    return;
+                }
+                const { selection } = view.state;
+                if (selection instanceof TextSelection && selection.$cursor) {
+                    const { pos } = selection.$cursor;
+                    runRules.call(plugin, view, pos, pos, '', () => view.state.tr);
+                }
+            });
+            return false;
+        },
+    };
+    return plugin;
 };
 
 const toEngineRule = (rule: RteInputRule, context: RuleContext): InputRule | null => {
@@ -206,13 +284,13 @@ const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | n
         if (!content) {
             return null;
         }
-        // The match may include that preceding character. Derive the opening
-        // delimiter from `start`: `end` is where the just-typed character will
-        // land, so the closing delimiter is still one character short.
+        // The match may include that preceding character. Derive every position
+        // from `start`: the closing delimiter's last character is still to come
+        // while typing, but already in the document after a composition.
         const leading = match[0].length - (delimiter.length * 2 + content.length);
         const from = start + leading;
         const contentFrom = from + delimiter.length;
-        const contentTo = end - (delimiter.length - 1);
+        const contentTo = contentFrom + content.length;
         // Only the delimiters go, closing first so the opening one's position
         // holds: the content stays as it is, inline elements and marks included.
         return state.tr
@@ -278,8 +356,7 @@ const markPatternMatcher = (rule: RuleOfKind<'markPattern'>, context: RuleContex
         if (!token.test(linked)) {
             return null;
         }
-        // The match is the token plus the terminator being typed, and maybe
-        // the whitespace before the token.
+        // The match is the token plus the terminator, and maybe the whitespace before the token.
         const from = start + (match[0].length - 1 - typed.length);
         const to = from + linked.length;
         if ([markType, ...context.excludedMarks].some((type) => state.doc.rangeHasMark(from, to, type))) {
@@ -306,9 +383,11 @@ const markPatternRule = (rule: RuleOfKind<'markPattern'>, context: RuleContext):
         if (!found) {
             return null;
         }
+        // One space follows the token, whatever sits there now: nothing, the
+        // composed space, or the selection the typed space replaces.
         return state.tr
             .addMark(found.from, found.to, found.mark)
-            .insert(end, state.schema.text(' '))
+            .replaceWith(start + match[0].length - 1, end, state.schema.text(' '))
             .removeStoredMark(markType);
     };
     return toInputRule({ pattern, handler }, context);
@@ -520,8 +599,8 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
         typeof match === 'string'
             ? new RegExp(`${escapeForRegExp(match)}$`)
             : new RegExp(`(?:${match.source})$`, withoutStateFlags(match));
-    // `end` is where the just-typed character will land: it is in the match
-    // but not the document yet, so replacing up to `end` swaps all of it.
+    // `start` to `end` is the part of the match in the document: replacing it
+    // swaps all of it, whether a typed character is still to come or not.
     const handler: RuleHandler = (state, _match, start, end) => state.tr.insertText(replace, start, end);
     return toInputRule({ pattern, handler }, context);
 };
@@ -542,5 +621,6 @@ const resetEmptyFirstBlock: Command = (state, dispatch) => {
     if (!block.isTextblock || block.content.size > 0 || block.type === paragraph) {
         return false;
     }
-    return setBlockType(paragraph)(state, dispatch);
+    // A plain paragraph, but its undeclared stored keys stay: the block is still there.
+    return setBlockType(paragraph, { [EXTRA_ATTR]: block.attrs[EXTRA_ATTR] as unknown })(state, dispatch);
 };
