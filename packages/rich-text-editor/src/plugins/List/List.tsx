@@ -62,6 +62,20 @@ const bulletList = defineBlock({
     parse: [{ tag: 'ul' }],
 });
 
+/** How many digits of a list's first number the stylesheet's marker room fits. */
+const MARKER_DIGITS = 2;
+
+/** The custom property `list.module.scss` widens a numbered list by, once per digit past `MARKER_DIGITS`. */
+const EXTRA_DIGITS_PROPERTY = '--rte-list-extra-digits';
+
+/** The start to store, or `null` for 1 (what no start means) and for an unsafe integer, which would write back as another number. */
+const storedStart = (value: unknown): number | null => {
+    if (typeof value !== 'number' || !Number.isSafeInteger(value) || value === 1) {
+        return null;
+    }
+    return value;
+};
+
 /** The numbered list, which stores where its numbering starts only when that is not 1. */
 const numberedList = defineBlock<NumberedListValue>({
     content: { items: 'listItem' },
@@ -69,12 +83,13 @@ const numberedList = defineBlock<NumberedListValue>({
     toHtml: ({ start }) => {
         let first: string | undefined;
         let style: StyleMap | undefined;
-        if (Number.isInteger(start) && start !== 1) {
-            first = String(start);
+        const stored = storedStart(start);
+        if (stored !== null) {
+            first = String(stored);
         }
-        // The stylesheet leaves room for two digits; a list that starts past them widens for its first number.
-        if (first !== undefined && first.length > 2) {
-            style = { '--rte-list-extra-digits': String(first.length - 2) };
+        // A list that starts past the stylesheet's room widens for its first number.
+        if (first !== undefined && first.length > MARKER_DIGITS) {
+            style = { [EXTRA_DIGITS_PROPERTY]: String(first.length - MARKER_DIGITS) };
         }
         return { tag: 'ol', attrs: { class: styles.numberedList, start: first, style }, children: true };
     },
@@ -82,8 +97,8 @@ const numberedList = defineBlock<NumberedListValue>({
         {
             tag: 'ol',
             value: (element) => {
-                const start = Number.parseInt(element.getAttribute('start') ?? '', 10);
-                if (Number.isNaN(start) || start === 1) {
+                const start = storedStart(Number.parseInt(element.getAttribute('start') ?? '', 10));
+                if (start === null) {
                     return {};
                 }
                 return { start };
@@ -92,17 +107,7 @@ const numberedList = defineBlock<NumberedListValue>({
     ],
 });
 
-/** Shared declaration of the two list plugins, which differ only in type, block, icon and shortcut. */
-const listPlugin = ({
-    id,
-    type,
-    block,
-    icon: Icon,
-    title,
-    keywords,
-    markdown,
-    hotkey,
-}: {
+type ListPluginOptions = {
     id: string;
     type: 'bulletList' | 'numberedList';
     block: BlockDefinition;
@@ -114,7 +119,19 @@ const listPlugin = ({
     markdown: readonly string[];
     /** The keyboard shortcut that toggles it, as other editors bind it. */
     hotkey: string;
-}): RtePlugin => ({
+};
+
+/** Shared declaration of the two list plugins, which differ only in type, block, icon and shortcut. */
+const listPlugin = ({
+    id,
+    type,
+    block,
+    icon: Icon,
+    title,
+    keywords,
+    markdown,
+    hotkey,
+}: ListPluginOptions): RtePlugin => ({
     id,
     blocks: {
         [type]: block,

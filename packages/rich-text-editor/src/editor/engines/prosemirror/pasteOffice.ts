@@ -63,16 +63,17 @@ export const keepOfficeListStyles = (html: string): string => {
 const isOffice = (dom: HTMLElement): boolean =>
     dom.getElementsByTagName('o:p').length > 0 || dom.querySelector('[class*="Mso"], [style*="mso-"]') !== null;
 
+/** A list marker: a bullet, or a number (the item's number as Word wrote it, when the marker has one). */
+type ListMarker = { kind: 'bullet' } | { kind: 'numbered'; number: string | undefined };
+
 type ListParagraph = {
     paragraph: HTMLElement;
     list: string;
     level: number;
-    ordered: boolean;
-    /** The item's number as Word wrote it, when its marker has one. */
-    number: string | undefined;
+    marker: ListMarker;
 };
 
-type OpenList = { element: HTMLElement; level: number; ordered: boolean; list: string };
+type OpenList = { element: HTMLElement; level: number; kind: ListMarker['kind']; list: string };
 
 /** The elements of `dom` that hold text other than whitespace, each ancestor added once. */
 const elementsWithText = (dom: HTMLElement): Set<Node> => {
@@ -132,19 +133,17 @@ const readListParagraph = (element: Node): ListParagraph | undefined => {
     if (declared === null || Number(declared[2]) < 1) {
         return undefined;
     }
-    const marker = (markerSpans(element)[0]?.textContent ?? '').trim();
-    const ordered = NUMBERED_MARKER.test(marker);
-    let number: string | undefined;
-    if (ordered) {
-        const numbers = marker.match(MARKER_NUMBERS);
-        number = numbers?.[numbers.length - 1];
+    const markerText = (markerSpans(element)[0]?.textContent ?? '').trim();
+    let marker: ListMarker = { kind: 'bullet' };
+    if (NUMBERED_MARKER.test(markerText)) {
+        const numbers = markerText.match(MARKER_NUMBERS);
+        marker = { kind: 'numbered', number: numbers?.[numbers.length - 1] };
     }
     return {
         paragraph: element,
         list: `${declared[1] ?? ''} ${declared[3] ?? ''}`,
         level: Math.min(Number(declared[2]), MAX_LEVEL),
-        ordered,
-        number,
+        marker,
     };
 };
 
@@ -165,26 +164,32 @@ const runFrom = (first: ListParagraph): ListParagraph[] => {
 };
 
 /** Closes the open lists deeper than `item`, and the one at its level when `item` cannot join it. */
-const closeListsFor = (open: OpenList[], { list, level, ordered }: ListParagraph): void => {
+const closeListsFor = (open: OpenList[], { list, level, marker }: ListParagraph): void => {
     while ((open[open.length - 1]?.level ?? 0) > level) {
         open.pop();
     }
     const current = open[open.length - 1];
-    if (current?.level === level && (current.ordered !== ordered || (ordered && current.list !== list))) {
+    if (
+        current?.level === level &&
+        (current.kind !== marker.kind || (marker.kind === 'numbered' && current.list !== list))
+    ) {
         open.pop();
     }
 };
 
-const createList = (document: Document, { list, level, ordered, number }: ListParagraph): OpenList => {
-    let tag = 'ul';
-    if (ordered) {
-        tag = 'ol';
+const createList = (document: Document, { list, level, marker }: ListParagraph): OpenList => {
+    switch (marker.kind) {
+        case 'bullet': {
+            return { element: document.createElement('ul'), level, kind: marker.kind, list };
+        }
+        case 'numbered': {
+            const element = document.createElement('ol');
+            if (marker.number !== undefined) {
+                element.setAttribute('start', marker.number);
+            }
+            return { element, level, kind: marker.kind, list };
+        }
     }
-    const element = document.createElement(tag);
-    if (number !== undefined) {
-        element.setAttribute('start', number);
-    }
-    return { element, level, ordered, list };
 };
 
 /**

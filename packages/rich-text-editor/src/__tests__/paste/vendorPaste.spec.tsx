@@ -499,6 +499,12 @@ describe('pasting from other applications', () => {
 
             expect(nodesOf(doc).map((block) => block.start)).toEqual([4, undefined, undefined]);
         });
+
+        it('stores no start it cannot write back exactly', () => {
+            const doc = pasted('<ol start="99999999999999999999999"><li>Huge</li></ol>');
+
+            expect(nodesOf(doc)[0]?.start).toBeUndefined();
+        });
     });
 
     describe('list data in the class rule of a Word list style', () => {
