@@ -1,0 +1,19 @@
+pnpm-lock.yaml
+  s_e64416f39e5c0d::t_2a56c984af6975 8949-8950,9575-9576,11425,15984,18971,19700,20058
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "a1340bf3fbe0a05111f08653b3d5910efb0642c8",
+  "prompts": {},
+  "sessions": {
+    "s_e64416f39e5c0d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fc13f2a4-1f2f-4266-8ca4-81de310aba64",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+.github/workflows/continuous-deployment.yaml
+  s_a47920858a4287::t_6b6bc92d0e0352 149
+.github/workflows/generate-tokens.yaml
+  s_a47920858a4287::t_ed5ff84991f206 24
+.github/workflows/icon-generation.yaml
+  s_a47920858a4287::t_326b2bb25c28d6 22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "185d227cb089441bbf1f86264534219efe7f59a3",
+  "prompts": {},
+  "sessions": {
+    "s_a47920858a4287": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f399058b-9e6e-4398-8cd1-af0d57a5de5d",
+        "model": "unknown"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
