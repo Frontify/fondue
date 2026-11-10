@@ -3,18 +3,7 @@
 // Subpixel layout rounds an exact fit either way.
 const TOLERANCE = 0.5;
 
-/**
- * How many leading slots of a one-row toolbar fit in its width. Groups sit
- * `gap` apart and their slots `itemGap` apart; when not every slot fits, More
- * and the gap before it are reserved at the row's end.
- */
-export const fittingSlotCount = ({
-    groups,
-    gap,
-    itemGap,
-    more,
-    available,
-}: {
+export type FittingSlotCountParams = {
     /** Each group's slot widths, in drawing order. */
     groups: readonly (readonly number[])[];
     gap: number;
@@ -22,54 +11,62 @@ export const fittingSlotCount = ({
     /** The More button's width. */
     more: number;
     available: number;
-}): number => {
-    let total = 0;
-    let count = 0;
-    for (const [index, group] of groups.entries()) {
-        if (index > 0) {
-            total += gap;
-        }
-        for (const [slot, width] of group.entries()) {
-            if (slot > 0) {
-                total += itemGap;
-            }
-            total += width;
-            count += 1;
-        }
-    }
-    if (total <= available + TOLERANCE) {
-        return count;
-    }
+};
 
-    const limit = available - gap - more;
-    let used = 0;
-    let shown = 0;
+const gapBefore = (indexInGroup: number, slotsBefore: number, gap: number, itemGap: number): number => {
+    if (slotsBefore === 0) {
+        return 0;
+    }
+    if (indexInGroup === 0) {
+        return gap;
+    }
+    return itemGap;
+};
+
+/** Each slot's width plus the gap before it, in drawing order. */
+const slotAdvances = (groups: readonly (readonly number[])[], gap: number, itemGap: number): number[] => {
+    const advances: number[] = [];
     for (const group of groups) {
         for (const [index, width] of group.entries()) {
-            let needed = width;
-            if (index === 0 && shown > 0) {
-                needed += gap;
-            }
-            if (index > 0) {
-                needed += itemGap;
-            }
-            if (used + needed > limit + TOLERANCE) {
-                return shown;
-            }
-            used += needed;
-            shown += 1;
+            advances.push(width + gapBefore(index, advances.length, gap, itemGap));
         }
     }
-    return shown;
+    return advances;
+};
+
+/** How many leading advances fit under the limit. */
+const leadingCount = (advances: readonly number[], limit: number): number => {
+    let used = 0;
+    let count = 0;
+    for (const advance of advances) {
+        if (used + advance > limit + TOLERANCE) {
+            return count;
+        }
+        used += advance;
+        count += 1;
+    }
+    return count;
+};
+
+/**
+ * How many leading slots of a one-row toolbar fit in its width. Groups sit
+ * `gap` apart and their slots `itemGap` apart; when not every slot fits, More
+ * and the gap before it are reserved at the row's end.
+ */
+export const fittingSlotCount = ({ groups, gap, itemGap, more, available }: FittingSlotCountParams): number => {
+    const advances = slotAdvances(groups, gap, itemGap);
+    if (leadingCount(advances, available) === advances.length) {
+        return advances.length;
+    }
+    return leadingCount(advances, available - gap - more);
 };
 
 export type SlotGroup<Item> = { key: string; items: readonly Item[] };
 
+export type GroupSplit<Item> = { row: SlotGroup<Item>[]; overflow: SlotGroup<Item>[] };
+
 /** The first `shown` slots for the row and the rest for More, each side keeping the groups and their order. */
-export const splitGroups = <Item>(
-    groups: readonly SlotGroup<Item>[],
-    shown: number,
-): { row: SlotGroup<Item>[]; overflow: SlotGroup<Item>[] } => {
+export const splitGroups = <Item>(groups: readonly SlotGroup<Item>[], shown: number): GroupSplit<Item> => {
     const row: SlotGroup<Item>[] = [];
     const overflow: SlotGroup<Item>[] = [];
     let left = shown;
