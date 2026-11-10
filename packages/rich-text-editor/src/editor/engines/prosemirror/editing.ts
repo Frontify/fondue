@@ -16,6 +16,7 @@ import {
 import { createControlApi, type OpenEditors } from './controlApi';
 import { rootExtrasOf, toEngineDocument, toRteDocument, withoutDrafts } from './documentConversion';
 import { copiedExtrasPlugin } from './extraAttributes';
+import { createHostRecord, hostDocAction, recordAgreed, recordEcho, recordHandOver, recordReport } from './hostRecord';
 import { keystrokePipeline } from './keystrokes';
 import { createMarkViews, createNodeViews, LiveViews } from './nodeViews';
 import { placeholderPlugin } from './placeholder';
@@ -58,35 +59,6 @@ export const mountEditorForTests = (
 /** Transaction meta marking a change that came from the host, not the user. */
 const HOST_DOC = 'rte-host-doc';
 
-/** What the editor reported to the host and what the host last handed over, to tell echoes from resets. */
-type HostRecord = {
-    /** The last document the host handed over that the editor still holds unedited. */
-    agreed: RteDocumentOf | null;
-    /** The order each reported document was reported in. */
-    reported: WeakMap<RteDocumentOf, number>;
-    reportCount: number;
-    /** Reports at or below this are older than what the host holds; one above it handed back is an echo. */
-    hostSeq: number;
-};
-
-/** What `setDoc` does with a document the host hands over. */
-type HostDocAction = { kind: 'ignore' } | { kind: 'echo'; seq: number } | { kind: 'wait' } | { kind: 'apply' };
-
-const hostDocAction = (record: Readonly<HostRecord>, doc: RteDocumentOf, composing: boolean): HostDocAction => {
-    if (doc === record.agreed) {
-        return { kind: 'ignore' };
-    }
-    const seq = record.reported.get(doc);
-    if (seq !== undefined && seq > record.hostSeq) {
-        return { kind: 'echo', seq };
-    }
-    // Replacing text mid-composition breaks the word being composed, so the change waits for it to end, as in Slate.
-    if (composing) {
-        return { kind: 'wait' };
-    }
-    return { kind: 'apply' };
-};
-
 /** A host document held while text is composed, with the frame that tries it again. */
 type Held = { kind: 'none' } | { kind: 'waiting'; doc: RteDocumentOf; frame: number };
 
@@ -124,7 +96,7 @@ const mount = (
 ): { mounted: MountedDocument; view: EditorView } => {
     const schema = buildSchema(registry);
     let currentPlaceholder = placeholder;
-    const record: HostRecord = { agreed: initialDoc, reported: new WeakMap(), reportCount: 0, hostSeq: 0 };
+    let record = createHostRecord(initialDoc);
     // The document's own undeclared keys: only the host changes them, so they live here, not in the engine document.
     let rootExtras = rootExtrasOf(initialDoc);
 
@@ -192,9 +164,7 @@ const mount = (
             // Host-originated changes are not reported back to the host.
             if (transaction.docChanged && transaction.getMeta(HOST_DOC) !== true) {
                 const emitted = toRteDocument(editorView.state.doc, rootExtras);
-                record.reportCount += 1;
-                record.reported.set(emitted, record.reportCount);
-                record.agreed = null;
+                record = recordReport(record, emitted);
                 onDocChange(emitted);
             }
             onStateChange();
@@ -206,8 +176,7 @@ const mount = (
     let held: Held = { kind: 'none' };
 
     const applyDoc = (doc: RteDocumentOf): void => {
-        // The host now holds a document of its own, newer than everything reported so far.
-        record.hostSeq = record.reportCount;
+        record = recordHandOver(record);
         rootExtras = rootExtrasOf(doc);
         const next = toEngineDocument(doc, schema);
         // Drafts (an inline still being made) are in no document the host holds,
@@ -229,7 +198,7 @@ const mount = (
                 }
             }
         }
-        record.agreed = doc;
+        record = recordAgreed(record, doc);
     };
 
     const retryHeld = (): void => {
@@ -269,11 +238,11 @@ const mount = (
                 return;
             case 'echo':
                 release();
-                record.hostSeq = action.seq;
+                record = recordEcho(record, action.seq);
                 return;
             case 'wait':
                 // Held or not, the host now holds a document of its own, so what it hands back after this is a reset.
-                record.hostSeq = record.reportCount;
+                record = recordHandOver(record);
                 hold(doc);
                 return;
             case 'apply':
