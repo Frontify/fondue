@@ -1010,11 +1010,12 @@ const calloutPlugin = (): RtePlugin =>
         toolbar: [
             {
                 label: 'Callout',
-                render: ({ api, selection }) => {
+                render: ({ api, selection, label }) => {
                     const active = selection.block?.type === 'callout';
                     return (
                         <button
                             type="button"
+                            aria-label={label}
                             aria-pressed={active}
                             onMouseDown={(event) => event.preventDefault()}
                             onClick={() => (active ? api.blocks.setType('paragraph') : api.blocks.setType('callout'))}
