@@ -1,0 +1,33 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "Meeting notes, "
+                },
+                {
+                    "text": "Tuesday",
+                    "bold": true
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": []
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "Attendees",
+                    "italic": true
+                },
+                {
+                    "text": ": Ada, Grace"
+                }
+            ]
+        }
+    ]
+}
