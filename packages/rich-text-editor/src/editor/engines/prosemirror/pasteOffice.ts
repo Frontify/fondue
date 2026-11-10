@@ -4,14 +4,25 @@
 // marker (a bullet glyph or a number) as text in a span, and end every
 // paragraph with an `<o:p>` marker.
 
-/** Word's list data on a paragraph, as in `mso-list: l0 level2 lfo1`: list template, level and list instance. */
-const LIST_STYLE = /(?:^|;)\s*(?:--)?mso-list:\s*(l\d+)\s+level(\d+)(?:\s+(lfo\d+))?/i;
-/** A paragraph's own `mso-list`, which can also say `none`. */
-const OWN_LIST_STYLE = /(?:^|;)\s*(?:--)?mso-list:/i;
-/** The list data a `<style>` rule gave a paragraph, under its own name so the paragraph's own wins. */
-const RULE_LIST_STYLE = /(?:^|;)\s*--mso-list-rule:\s*(l\d+)\s+level(\d+)(?:\s+(lfo\d+))?/i;
+/** The name `mso-list` takes in a style attribute, so the engine's style merge keeps it. */
+const KEPT_LIST_PROPERTY = '--mso-list';
+/** The name `mso-list` takes in a `<style>` rule, apart from a paragraph's own so that one wins. */
+const RULE_LIST_PROPERTY = '--mso-list-rule';
+/** A paragraph's own list property, as Word writes it or as `keepOfficeListStyles` renamed it. */
+const OWN_LIST_PROPERTY = `(?:mso-list|${KEPT_LIST_PROPERTY})`;
+/** Word's list data, as in `l0 level2 lfo1`: list template, level and list instance. */
+const LIST_DATA = String.raw`(l\d+)\s+level(\d+)(?:\s+(lfo\d+))?`;
+
+/** A declaration of `property` in a style attribute whose value starts with `value`. */
+const declaration = (property: string, value: string): RegExp =>
+    new RegExp(String.raw`(?:^|;)\s*${property}:\s*${value}`, 'i');
+
+const LIST_STYLE = declaration(OWN_LIST_PROPERTY, LIST_DATA);
+/** A paragraph's own list property, which can also say `none`. */
+const OWN_LIST_STYLE = declaration(OWN_LIST_PROPERTY, '');
+const RULE_LIST_STYLE = declaration(RULE_LIST_PROPERTY, LIST_DATA);
 /** The style of the span that holds a list paragraph's marker. */
-const MARKER_STYLE = /(?:^|;)\s*(?:--)?mso-list:\s*ignore/i;
+const MARKER_STYLE = declaration(OWN_LIST_PROPERTY, 'ignore');
 /** Dot-separated numbers (`1.`, `1.1.`, `1.1`) or letters with a delimiter (`iv)`, `a.`) are numbered markers; a glyph (`·`, `o`, `§`) is a bullet. */
 const NUMBERED_MARKER = /^\(?(?:\d+(?:\.\d+)*[.)]?|[a-z]+[.)])$/i;
 /** The numbers in a marker; the last is the item's own, the 3 of `3.`, `1.3.` or `(3)`. */
@@ -27,6 +38,13 @@ const STYLE_ATTRIBUTE = /(\sstyle\s*=\s*)("[^"]*"|'[^']*')/gi;
 // Split on, not matched around: a pattern holding a whole `<style>` body overflows the regexp stack past a few megabytes.
 const STYLE_TAGS = /(<\/?style(?![\w-])[^<>]*>)/gi;
 const MSO_LIST_PROPERTY = /(?<![\w-])mso-list(?=\s*:)/gi;
+
+/** The marker Word ends each paragraph with. */
+const PARAGRAPH_MARKER = 'o:p';
+/** Elements only Word and Outlook write: their style classes and `mso-` properties. */
+const OFFICE_STYLED = '[class*="Mso"], [style*="mso-"]';
+/** Spans that may hold a list paragraph's marker, before their style is read. */
+const LIST_SPAN = 'span[style*="mso-list"]';
 
 /**
  * Keeps Word's list data past the engine, which merges the pasted `<style>`
@@ -44,7 +62,7 @@ export const keepOfficeListStyles = (html: string): string => {
     const withAttributes = html.replaceAll(TAG, (tag) =>
         tag.replaceAll(
             STYLE_ATTRIBUTE,
-            (_match, name: string, value: string) => name + value.replaceAll(MSO_LIST_PROPERTY, '--mso-list'),
+            (_match, name: string, value: string) => name + value.replaceAll(MSO_LIST_PROPERTY, KEPT_LIST_PROPERTY),
         ),
     );
     // The split puts each style tag at an odd index; a body is the text between an opening tag and a closing one.
@@ -53,7 +71,7 @@ export const keepOfficeListStyles = (html: string): string => {
         const opening = parts[index - 1] ?? '';
         const closing = parts[index + 1] ?? '';
         if (!opening.startsWith('</') && closing.startsWith('</')) {
-            parts[index] = (parts[index] ?? '').replaceAll(MSO_LIST_PROPERTY, '--mso-list-rule');
+            parts[index] = (parts[index] ?? '').replaceAll(MSO_LIST_PROPERTY, RULE_LIST_PROPERTY);
         }
     }
     return parts.join('');
@@ -61,19 +79,41 @@ export const keepOfficeListStyles = (html: string): string => {
 
 /** Whether the paste carries Word or Outlook markup, found without reading every element's style. */
 const isOffice = (dom: HTMLElement): boolean =>
-    dom.getElementsByTagName('o:p').length > 0 || dom.querySelector('[class*="Mso"], [style*="mso-"]') !== null;
+    dom.getElementsByTagName(PARAGRAPH_MARKER).length > 0 || dom.querySelector(OFFICE_STYLED) !== null;
 
-/** A list marker: a bullet, or a number (the item's number as Word wrote it, when the marker has one). */
+type ListKind = 'bullet' | 'numbered';
+
+/** Where an item belongs: Word's list (template and instance), its level, and its kind of list. */
+type ListPlace = { list: string; level: number; kind: ListKind };
+
+/** An item's marker: a bullet, or a number with the item's number as Word wrote it, when the marker has one. */
 type ListMarker = { kind: 'bullet' } | { kind: 'numbered'; number: string | undefined };
 
-type ListParagraph = {
-    paragraph: HTMLElement;
-    list: string;
-    level: number;
-    marker: ListMarker;
+type ListParagraph = Omit<ListPlace, 'kind'> & ListMarker & { paragraph: HTMLElement };
+
+type OpenList = ListPlace & { element: HTMLElement };
+
+const tagOf = (kind: ListKind): string => {
+    switch (kind) {
+        case 'bullet':
+            return 'ul';
+        case 'numbered':
+            return 'ol';
+    }
 };
 
-type OpenList = { element: HTMLElement; level: number; kind: ListMarker['kind']; list: string };
+/** Whether `item` continues `open` at its level: a bullet list runs across Word's lists, a numbered one restarts with each, as Word numbers them. */
+const continues = (open: ListPlace, item: ListPlace): boolean => {
+    if (open.kind !== item.kind) {
+        return false;
+    }
+    switch (item.kind) {
+        case 'bullet':
+            return true;
+        case 'numbered':
+            return open.list === item.list;
+    }
+};
 
 /** The elements of `dom` that hold text other than whitespace, each ancestor added once. */
 const elementsWithText = (dom: HTMLElement): Set<Node> => {
@@ -97,7 +137,7 @@ const elementsWithText = (dom: HTMLElement): Set<Node> => {
  */
 const removeParagraphMarkers = (dom: HTMLElement): void => {
     // By tag name, since not every DOM parses the escaped `o\:p` selector.
-    const markers = [...dom.getElementsByTagName('o:p')];
+    const markers = [...dom.getElementsByTagName(PARAGRAPH_MARKER)];
     if (markers.length === 0) {
         return;
     }
@@ -112,7 +152,7 @@ const removeParagraphMarkers = (dom: HTMLElement): void => {
 };
 
 const markerSpans = (root: ParentNode): HTMLElement[] =>
-    [...root.querySelectorAll<HTMLElement>('span[style*="mso-list"]')].filter((span) =>
+    [...root.querySelectorAll<HTMLElement>(LIST_SPAN)].filter((span) =>
         MARKER_STYLE.test(span.getAttribute('style') ?? ''),
     );
 
@@ -143,7 +183,7 @@ const readListParagraph = (element: Node): ListParagraph | undefined => {
         paragraph: element,
         list: `${declared[1] ?? ''} ${declared[3] ?? ''}`,
         level: Math.min(Number(declared[2]), MAX_LEVEL),
-        marker,
+        ...marker,
     };
 };
 
@@ -164,41 +204,30 @@ const runFrom = (first: ListParagraph): ListParagraph[] => {
 };
 
 /** Closes the open lists deeper than `item`, and the one at its level when `item` cannot join it. */
-const closeListsFor = (open: OpenList[], { list, level, marker }: ListParagraph): void => {
-    while ((open[open.length - 1]?.level ?? 0) > level) {
+const closeListsFor = (open: OpenList[], item: ListParagraph): void => {
+    while ((open[open.length - 1]?.level ?? 0) > item.level) {
         open.pop();
     }
     const current = open[open.length - 1];
-    if (
-        current?.level === level &&
-        (current.kind !== marker.kind || (marker.kind === 'numbered' && current.list !== list))
-    ) {
+    if (current?.level === item.level && !continues(current, item)) {
         open.pop();
     }
 };
 
-const createList = (document: Document, { list, level, marker }: ListParagraph): OpenList => {
-    switch (marker.kind) {
-        case 'bullet': {
-            return { element: document.createElement('ul'), level, kind: marker.kind, list };
-        }
-        case 'numbered': {
-            const element = document.createElement('ol');
-            if (marker.number !== undefined) {
-                element.setAttribute('start', marker.number);
-            }
-            return { element, level, kind: marker.kind, list };
-        }
+const createList = (document: Document, item: ListParagraph): OpenList => {
+    const element = document.createElement(tagOf(item.kind));
+    if (item.kind === 'numbered' && item.number !== undefined) {
+        element.setAttribute('start', item.number);
     }
+    return { element, list: item.list, level: item.level, kind: item.kind };
 };
 
 /**
  * Rebuilds one run of list paragraphs as nested lists where it stood. A level
  * below the one before opens one list inside the last item, so no empty item
- * holds it. A bullet run continues across Word's list instances, a numbered
- * one restarts with each, as Word numbers them. A numbered list starts at the
- * number Word wrote for its first item, so one that resumes after another
- * block, or a copy that begins partway through, keeps Word's numbering.
+ * holds it. A numbered list starts at the number Word wrote for its first
+ * item, so one that resumes after another block, or a copy that begins
+ * partway through, keeps Word's numbering.
  */
 const rebuildRun = (run: readonly ListParagraph[]): void => {
     const first = run[0];

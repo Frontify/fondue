@@ -5,11 +5,19 @@
 
 /** The id Docs writes on the wrapper, or in Firefox on the first block. */
 const MARKED = '[id^="docs-internal-guid-"]';
+/** Docs' wrapper is a `<b>` with this weight; a bold `<b>` with the id is formatting. */
+const WRAPPER_TAG = 'b';
+const WRAPPER_WEIGHT = 'normal';
+/** The break WebKit adds after a copy. */
+const INTERCHANGE_NEWLINE = 'br.Apple-interchange-newline';
 
-/** Elements that are blocks to the parse, between which a `<br>` stands for an empty line. */
+/**
+ * Elements that are blocks to the parse, between which a `<br>` stands for an
+ * empty line: prosemirror-model's own `blockTags`, which it does not export.
+ */
 const BLOCKS = [
-    'address, article, aside, blockquote, dd, div, dl, dt, figure, footer, header, hr, li, ol, p, pre, section, ul',
-    'h1, h2, h3, h4, h5, h6, table',
+    'address, article, aside, blockquote, body, canvas, dd, div, dl, fieldset, figcaption, figure, footer, form',
+    'h1, h2, h3, h4, h5, h6, header, hgroup, hr, li, noscript, ol, output, p, pre, section, table, tfoot, ul',
 ].join(', ');
 
 /** Whether `element` is a block, or the start or end of `root` when there is none. */
@@ -42,33 +50,43 @@ const breaksAsParagraphs = (root: Element): void => {
     replaceBreaks(undefined);
 };
 
-/**
- * Cleans a Google Docs copy, found by its id: breaks between blocks become
- * empty paragraphs, and the break WebKit adds after the copy goes. The bold
- * mark's own rule reads the wrapper as not bold. Does nothing to a paste from elsewhere.
- */
-export const tidyGoogleDocs = (dom: HTMLElement): void => {
+/** The element whose children are a Docs copy's blocks: the wrapper, or the paste when Firefox marks its first block. */
+const docsCopyRoot = (dom: HTMLElement): Element | undefined => {
     const marked = dom.querySelector(MARKED);
     if (marked === null) {
-        return;
+        return undefined;
     }
-    // Docs' wrapper is a `<b>` that says it is not bold; a bold `<b>` with the id is formatting.
-    const wrapped = marked.localName === 'b' && (marked as HTMLElement).style.fontWeight === 'normal';
+    if (
+        marked instanceof HTMLElement &&
+        marked.localName === WRAPPER_TAG &&
+        marked.style.fontWeight === WRAPPER_WEIGHT
+    ) {
+        return marked;
+    }
     // The engine drops a `<meta>` only at the very start, so one after the clipboard's Windows preamble stays.
     let first = dom.firstElementChild;
     while (first?.localName === 'meta') {
         first = first.nextElementSibling;
     }
     // Anywhere but the wrapper or a first block, the id says nothing about the paste.
-    if (!wrapped && (marked !== first || !marked.matches(BLOCKS))) {
+    if (marked === first && marked.matches(BLOCKS)) {
+        return dom;
+    }
+    return undefined;
+};
+
+/**
+ * Cleans a Google Docs copy, found by its id: breaks between blocks become
+ * empty paragraphs, and the break WebKit adds after the copy goes. The bold
+ * mark's own rule reads the wrapper as not bold. Does nothing to a paste from elsewhere.
+ */
+export const tidyGoogleDocs = (dom: HTMLElement): void => {
+    const root = docsCopyRoot(dom);
+    if (root === undefined) {
         return;
     }
-    for (const lineBreak of dom.querySelectorAll('br.Apple-interchange-newline')) {
+    for (const lineBreak of dom.querySelectorAll(INTERCHANGE_NEWLINE)) {
         lineBreak.remove();
     }
-    if (!wrapped) {
-        breaksAsParagraphs(dom);
-        return;
-    }
-    breaksAsParagraphs(marked);
+    breaksAsParagraphs(root);
 };

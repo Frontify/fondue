@@ -82,6 +82,9 @@ export const clipboardSerializer = (schema: Schema): DOMSerializer => {
 
 // Paste
 
+// The HTML pass that keeps Word's list styles alive for `tidyOffice` after the engine reads the paste.
+export { keepOfficeListStyles } from './pasteOffice';
+
 /**
  * Cleans what Word, Outlook and Google Docs write besides content, then keeps
  * text from running together in structure no plugin reads. Table cells
