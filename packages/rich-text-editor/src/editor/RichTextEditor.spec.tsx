@@ -612,8 +612,11 @@ describe('the editable element', () => {
         const announcer = definePlugin({
             id: 'announcer',
             hotkeys: {
-                'Mod-Shift-a': (api) => {
-                    api.announce('Saved');
+                'Mod-Shift-a': {
+                    label: 'Save',
+                    run: (api) => {
+                        api.announce('Saved');
+                    },
                 },
             },
         });

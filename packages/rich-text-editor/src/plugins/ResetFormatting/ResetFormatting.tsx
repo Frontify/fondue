@@ -2,9 +2,11 @@
 
 import { IconEraser } from '@frontify/fondue-icons';
 
-import { definePlugin, type EditorControlApi, type HotkeyHandler, PARAGRAPH, type ToolbarItemProps } from '#/core';
+import { definePlugin, type EditorControlApi, PARAGRAPH, type RteHotkey, type ToolbarItemProps } from '#/core';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
+
+const RESET_LABEL = 'Reset formatting';
 
 const RESET_ANNOUNCEMENT = 'Formatting reset';
 
@@ -29,11 +31,14 @@ const reset = (api: EditorControlApi): void => {
 
 // The key is a literal because a computed key keeps this plugin in the renderer; SHORTCUT's type ties it to this key.
 const hotkeys = {
-    'Mod-\\': (api) => {
-        reset(api);
-        api.announce(RESET_ANNOUNCEMENT);
+    'Mod-\\': {
+        label: RESET_LABEL,
+        run: (api) => {
+            reset(api);
+            api.announce(RESET_ANNOUNCEMENT);
+        },
     },
-} satisfies Record<string, HotkeyHandler>;
+} satisfies Record<string, RteHotkey>;
 
 const SHORTCUT: keyof typeof hotkeys = 'Mod-\\';
 
@@ -48,6 +53,6 @@ const ResetFormattingButton = ({ api, label, shortcut }: ToolbarItemProps) => (
  */
 export const resetFormattingPlugin = /* @__PURE__ */ definePlugin({
     id: 'reset-formatting',
-    toolbar: [{ label: 'Reset formatting', shortcut: SHORTCUT, render: ResetFormattingButton, floating: 'inline' }],
+    toolbar: [{ label: RESET_LABEL, shortcut: SHORTCUT, render: ResetFormattingButton, floating: 'inline' }],
     hotkeys,
 });

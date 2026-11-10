@@ -462,12 +462,66 @@ describe('the hotkeys of a registry', () => {
                 id: 'bold',
                 content: boldContent,
                 toolbar: [{ icon, label: 'Bold', shortcut: 'Mod-b' }],
-                hotkeys: { 'Mod-b': own },
+                hotkeys: { 'Mod-b': { label: 'Bold', run: own } },
             }),
         ]);
 
         expect(registry.hotkeys.get('Mod-b')).toEqual([own]);
         expect(registry.toolbarItems[0]?.shortcut).toBe('Mod-b');
+    });
+
+    it('need a label, which the keyboard reference names the key by', () => {
+        expect(() =>
+            buildPluginRegistry([
+                {
+                    kind: 'plugin',
+                    id: 'bold',
+                    // @ts-expect-error -- a hotkey without a `label` fails typecheck, and still throws for an untyped caller.
+                    hotkeys: { 'Mod-b': { run: () => {} } },
+                },
+            ]),
+        ).toThrow('Plugin "bold" has a hotkey "Mod-b" with no `label`.');
+    });
+
+    it('need a label that is not empty', () => {
+        expect(() =>
+            buildPluginRegistry([definePlugin({ id: 'bold', hotkeys: { 'Mod-b': { label: '', run: () => {} } } })]),
+        ).toThrow('Plugin "bold" has a hotkey "Mod-b" with no `label`.');
+    });
+});
+
+describe('the shortcuts of a registry', () => {
+    const boldContent = defineContent({ marks: { bold: mark() } });
+
+    it('list the hotkeys of a plugin, then the toolbar shortcuts that bind a key, plugin by plugin', () => {
+        const registry = buildPluginRegistry([
+            definePlugin({
+                id: 'bold',
+                content: boldContent,
+                toolbar: [{ icon, label: 'Bold', shortcut: 'Mod-b' }],
+                hotkeys: { 'Alt-x': { label: 'Extra', run: () => {} } },
+            }),
+            definePlugin({ id: 'break', hotkeys: { 'Shift-Enter': { label: 'Line break', run: () => {} } } }),
+        ]);
+
+        expect(registry.shortcuts).toEqual([
+            { pluginId: 'bold', key: 'Alt-x', label: 'Extra' },
+            { pluginId: 'bold', key: 'Mod-b', label: 'Bold' },
+            { pluginId: 'break', key: 'Shift-Enter', label: 'Line break' },
+        ]);
+    });
+
+    it('list a key the plugin binds and the toolbar shows once, by the hotkey label', () => {
+        const registry = buildPluginRegistry([
+            definePlugin({
+                id: 'bold',
+                content: boldContent,
+                toolbar: [{ icon, label: 'Bold', shortcut: 'Mod-b' }],
+                hotkeys: { 'Mod-b': { label: 'Make bold', run: () => {} } },
+            }),
+        ]);
+
+        expect(registry.shortcuts).toEqual([{ pluginId: 'bold', key: 'Mod-b', label: 'Make bold' }]);
     });
 });
 

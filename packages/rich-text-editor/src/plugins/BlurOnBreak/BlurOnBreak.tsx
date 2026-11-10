@@ -57,9 +57,12 @@ export const blurOnBreakPlugin = (options: BlurOnBreakPluginOptions = {}) =>
         description: DESCRIPTION,
         hotkeys: {
             // Enter is always this plugin's: it splits an item, refuses, or submits.
-            Enter: (api) => {
-                breakLine(api, options);
-                return true;
+            Enter: {
+                label: 'Submit, outside a list',
+                run: (api) => {
+                    breakLine(api, options);
+                    return true;
+                },
             },
         },
     });

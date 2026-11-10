@@ -76,6 +76,7 @@
         "@playwright/experimental-ct-react": "~1.61.1",
         "@playwright/test": "~1.61.1",
         "@storybook/addon-a11y": "^10.6.5",
+        "@storybook/addon-docs": "^10.6.5",
         "@storybook/react-vite": "^10.6.5",
         "@tony.ganchev/eslint-plugin-header": "^3.4.4",
         "@types/node": "^24.19.2",

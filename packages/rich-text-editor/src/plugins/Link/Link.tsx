@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineContent, defineMark, definePlugin, type HotkeyHandler, type HtmlSpec } from '#/core';
+import { defineContent, defineMark, definePlugin, type HtmlSpec, type RteHotkey } from '#/core';
 
 import { isLinkablePaste, LINKABLE_ADDRESS, toHref } from '../shared/helpers/href';
 
@@ -106,18 +106,21 @@ export const linkContent = (policy: LinkPolicy = {}) =>
 
 // The key is a literal because a computed key keeps this plugin in the renderer; HOTKEY's type ties it to this key.
 const hotkeys = {
-    'Mod-k': (api) => {
-        if (api.marks.getRun('link') !== null) {
-            api.editors.open('link');
-            return true;
-        }
-        // At a caret the key stays the editor's even with no form to open (floating toolbar), never the browser's.
-        if (openNewLinkForm(api)) {
-            return true;
-        }
-        return api.selection.get().isCollapsed;
+    'Mod-k': {
+        label: 'Edit link',
+        run: (api) => {
+            if (api.marks.getRun('link') !== null) {
+                api.editors.open('link');
+                return true;
+            }
+            // At a caret the key stays the editor's even with no form to open (floating toolbar), never the browser's.
+            if (openNewLinkForm(api)) {
+                return true;
+            }
+            return api.selection.get().isCollapsed;
+        },
     },
-} satisfies Record<string, HotkeyHandler>;
+} satisfies Record<string, RteHotkey>;
 
 const HOTKEY: keyof typeof hotkeys = 'Mod-k';
 

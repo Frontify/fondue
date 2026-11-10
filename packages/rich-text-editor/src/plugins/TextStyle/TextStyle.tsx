@@ -4,10 +4,10 @@ import {
     defineBlock,
     defineContent,
     definePlugin,
-    type HotkeyHandler,
     PARAGRAPH,
     type RteBlockCommand,
     type RteContent,
+    type RteHotkey,
     type RtePlugin,
     type ToolbarItemProps,
 } from '#/core';
@@ -19,6 +19,7 @@ import {
     findPreset,
     FIRST_PRESET,
     isTextStyle,
+    labelOf,
     markdownRuleFor,
     parseRuleFor,
     presetsFor,
@@ -91,14 +92,17 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
 
     // The shortcuts other editors use: `Mod-Alt-0` for a paragraph, `Mod-Alt-1`
     // to `Mod-Alt-4` for the headings — each only when this editor offers it.
-    const hotkeys: Record<string, HotkeyHandler> = {};
+    const hotkeys: Record<string, RteHotkey> = {};
     if (options.includes(PARAGRAPH)) {
-        hotkeys['Mod-Alt-0'] = (api) => api.blocks.setType(PARAGRAPH);
+        hotkeys['Mod-Alt-0'] = { label: labelOf(PARAGRAPH), run: (api) => api.blocks.setType(PARAGRAPH) };
     }
     for (const preset of offered) {
         const level = HEADING_LEVEL[preset.tag];
         if (level !== undefined) {
-            hotkeys[`Mod-Alt-${level}`] = (api) => api.blocks.setType('textStyle', { style: preset.name });
+            hotkeys[`Mod-Alt-${level}`] = {
+                label: preset.label,
+                run: (api) => api.blocks.setType('textStyle', { style: preset.name }),
+            };
         }
     }
 

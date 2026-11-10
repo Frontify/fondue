@@ -28,7 +28,7 @@ describe('the emoji plugin', () => {
         const inserted: string[] = [];
         const api = { insert: (type: string) => inserted.push(type) } as unknown as EditorControlApi;
 
-        emojiPlugin().hotkeys?.[':']?.(api);
+        emojiPlugin().hotkeys?.[':']?.run(api);
 
         expect(inserted).toEqual(['emojiDraft']);
     });

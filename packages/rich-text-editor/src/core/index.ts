@@ -40,6 +40,7 @@ export {
     type RteContentDefinition,
     type RteDelimiterRule,
     type RteEditView,
+    type RteHotkey,
     type RteIcon,
     type RteInputRule,
     type RtePlugin,
@@ -59,6 +60,7 @@ export {
     type OwnType,
     ownTypeOf,
     type PluginRegistry,
+    type RteShortcut,
     type ToolbarEntry,
     toggleOwn,
 } from './registry';

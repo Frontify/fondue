@@ -1,0 +1,27 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// Borders are translucent greys, so the tables read on Storybook's light and dark docs themes alike.
+.reference {
+    table {
+        border-collapse: collapse;
+        margin-block: var(--spacing-small);
+        inline-size: 100%;
+    }
+
+    caption {
+        margin-block-end: var(--spacing-xx-small);
+        font-weight: var(--typography-font-weight-bold);
+        text-align: start;
+    }
+
+    th,
+    td {
+        padding: var(--spacing-xx-small) var(--spacing-x-small);
+        border: var(--border-width-default) solid var(--color-line-mid);
+        text-align: start;
+    }
+
+    th[scope='row'] {
+        font-weight: var(--typography-font-weight-medium);
+    }
+}

@@ -12,7 +12,7 @@ import {
     defineContent,
     definePlugin,
     type EditorControlApi,
-    type HotkeyHandler,
+    type RteHotkey,
     type RteSelectionSnapshot,
     type StyleMap,
     type ToolbarItemProps,
@@ -61,34 +61,42 @@ type Alignment = {
     announcement: string;
 };
 
+const LEFT_TITLE = 'Align left';
+
 const LEFT: Alignment = {
     value: 'left',
     icon: IconTextAlignmentLeft,
-    title: 'Align left',
+    title: LEFT_TITLE,
     shortcut: 'Mod-Shift-l',
     announcement: 'Aligned left',
 };
 
+const CENTER_TITLE = 'Align center';
+
 const CENTER: Alignment = {
     value: 'center',
     icon: IconTextAlignmentCentre,
-    title: 'Align center',
+    title: CENTER_TITLE,
     shortcut: 'Mod-Shift-e',
     announcement: 'Centered',
 };
 
+const RIGHT_TITLE = 'Align right';
+
 const RIGHT: Alignment = {
     value: 'right',
     icon: IconTextAlignmentRight,
-    title: 'Align right',
+    title: RIGHT_TITLE,
     shortcut: 'Mod-Shift-r',
     announcement: 'Aligned right',
 };
 
+const JUSTIFY_TITLE = 'Justify';
+
 const JUSTIFY: Alignment = {
     value: 'justify',
     icon: IconTextAlignmentJustify,
-    title: 'Justify',
+    title: JUSTIFY_TITLE,
     shortcut: 'Mod-Shift-j',
     announcement: 'Justified',
 };
@@ -152,20 +160,33 @@ const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
 };
 
 // The keys are literals because a computed key keeps this plugin in the renderer; each alignment's `shortcut` type ties it to one.
+// The labels are the titles' constants, not `LEFT.title`: reading an alignment here would keep its icon in the renderer too.
 const hotkeys = {
-    'Mod-Shift-l': (api) => {
-        alignFromKeyboard(api, LEFT);
+    'Mod-Shift-l': {
+        label: LEFT_TITLE,
+        run: (api) => {
+            alignFromKeyboard(api, LEFT);
+        },
     },
-    'Mod-Shift-e': (api) => {
-        alignFromKeyboard(api, CENTER);
+    'Mod-Shift-e': {
+        label: CENTER_TITLE,
+        run: (api) => {
+            alignFromKeyboard(api, CENTER);
+        },
     },
-    'Mod-Shift-r': (api) => {
-        alignFromKeyboard(api, RIGHT);
+    'Mod-Shift-r': {
+        label: RIGHT_TITLE,
+        run: (api) => {
+            alignFromKeyboard(api, RIGHT);
+        },
     },
-    'Mod-Shift-j': (api) => {
-        alignFromKeyboard(api, JUSTIFY);
+    'Mod-Shift-j': {
+        label: JUSTIFY_TITLE,
+        run: (api) => {
+            alignFromKeyboard(api, JUSTIFY);
+        },
     },
-} satisfies Record<string, HotkeyHandler>;
+} satisfies Record<string, RteHotkey>;
 
 /**
  * Text alignment, with a four-way radio group in the toolbar

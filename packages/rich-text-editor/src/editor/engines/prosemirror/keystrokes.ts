@@ -15,6 +15,7 @@ import {
 } from 'prosemirror-state';
 
 import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
+import { EDITOR_SHORTCUTS } from '#/editor/port';
 
 import { keepCarriedAttrs } from './controlApi';
 import { EXTRA_ATTR, valueAttrsFor } from './documentConversion';
@@ -46,9 +47,9 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         // 1
         history(),
         keymap({
-            'Mod-z': chainCommands(undoInputRule, undo),
-            'Mod-y': redo,
-            'Mod-Shift-z': redo,
+            [EDITOR_SHORTCUTS.undo.key]: chainCommands(undoInputRule, undo),
+            [EDITOR_SHORTCUTS.redo.key]: redo,
+            [EDITOR_SHORTCUTS.redoWithShift.key]: redo,
             Backspace: undoInputRule,
         }),
         // 2
