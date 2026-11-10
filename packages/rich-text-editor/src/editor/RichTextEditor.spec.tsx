@@ -1134,11 +1134,13 @@ describe('the toolbar from the keyboard', () => {
         const panelOf = (): HTMLElement | null =>
             window.document.querySelector<HTMLElement>('[role="toolbar"][aria-label="More"]');
 
-        it('keeps the panel open under the link form opened from it, and Escape closes the form before the panel', async () => {
-            const { container, ready } = mount(() => (
-                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
-            ));
-            ready();
+        const linkForm = (): Element | undefined =>
+            [...window.document.querySelectorAll('[role="dialog"]')].find((dialog) =>
+                dialog.textContent?.includes('Add link'),
+            );
+
+        /** Overflows the toolbar, opens More from the keyboard and the link form from the panel. */
+        const openLinkFormFromPanel = async (container: HTMLElement): Promise<HTMLElement> => {
             resize(70);
             const editable = editableIn(container);
             act(() => editable.focus());
@@ -1160,13 +1162,27 @@ describe('the toolbar from the keyboard', () => {
             act(() => (window.document.activeElement as HTMLElement).click());
             await settle();
 
-            const linkForm = (): Element | undefined =>
-                [...window.document.querySelectorAll('[role="dialog"]')].find((dialog) =>
-                    dialog.textContent?.includes('Add link'),
-                );
             expect(linkForm()).not.toBeUndefined();
             expect(linkForm()?.contains(window.document.activeElement)).toBe(true);
             expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            return editable;
+        };
+
+        /** A press Radix reads as outside the panel: the pointer's event first, then the mouse's own. */
+        const pressOn = (target: Element): void => {
+            act(() => {
+                target.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerType: 'mouse' }));
+                target.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+                target.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+            });
+        };
+
+        it('keeps the panel open under the link form opened from it, and Escape closes the form before the panel', async () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            const editable = await openLinkFormFromPanel(container);
 
             press(window.document.activeElement as Element, 'Escape');
             await settle();
@@ -1187,6 +1203,71 @@ describe('the toolbar from the keyboard', () => {
             }
         });
 
+        it('keeps the panel open on a press inside the link form opened from it', async () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            await openLinkFormFromPanel(container);
+            const input = linkForm()?.querySelector('input');
+            expect(input).not.toBeNull();
+
+            pressOn(input as Element);
+            await settle();
+
+            expect(linkForm()).not.toBeUndefined();
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+        });
+
+        it('closes the panel on a press outside once the link form opened from it is closed', async () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            await openLinkFormFromPanel(container);
+            const outside = window.document.createElement('div');
+            window.document.body.append(outside);
+            teardown.push(() => outside.remove());
+            press(window.document.activeElement as Element, 'Escape');
+            await settle();
+            expect(linkForm()).toBeUndefined();
+            // The form hands focus back to the text, which may have closed the panel; open it again.
+            if (more(container)?.getAttribute('aria-expanded') === 'false') {
+                act(() => {
+                    more(container)?.dispatchEvent(
+                        new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }),
+                    );
+                });
+                await settle();
+            }
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+
+            pressOn(outside);
+            await settle();
+
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+        });
+
+        it('closes the panel on a press inside a popper layer that is not a flyout of its controls', async () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(70);
+            const layer = window.document.createElement('div');
+            layer.setAttribute('data-radix-popper-content-wrapper', '');
+            window.document.body.append(layer);
+            teardown.push(() => layer.remove());
+            act(() => more(container)?.click());
+            await settle();
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+
+            pressOn(layer);
+            await settle();
+
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+        });
+
         it('keeps the panel usable after a text style menu opened from it is closed with Escape', async () => {
             const withSelect = [boldPlugin(), linkPlugin(), alignPlugin(), textStylePlugin()];
             const { container, ready } = mount(() => (
@@ -1204,6 +1285,16 @@ describe('the toolbar from the keyboard', () => {
             expect(select).not.toBeNull();
             act(() => select?.focus());
             press(select as Element, 'Enter');
+            await settle();
+            expect(select?.getAttribute('aria-expanded')).toBe('true');
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+
+            // A press in the menu is outside the panel to Radix, yet the menu is the panel's own.
+            const option = window.document.querySelector('[role="option"]');
+            expect(option).not.toBeNull();
+            act(() => {
+                option?.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerType: 'mouse' }));
+            });
             await settle();
             expect(select?.getAttribute('aria-expanded')).toBe('true');
             expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
