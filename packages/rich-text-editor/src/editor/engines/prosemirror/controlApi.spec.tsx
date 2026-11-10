@@ -219,6 +219,28 @@ describe('marks.toggle', () => {
         ]);
     });
 
+    it('takes the mark off a range whose text carries it around a line break', () => {
+        const editor = editorWith(plugins, [
+            paragraph(text('a', { bold: true }), { type: 'break' }, text('b', { bold: true })),
+        ]);
+        editor.selectBetween('a', 'b');
+        expect(editor.api.selection.get().marks).toHaveProperty('bold');
+
+        editor.api.marks.toggle('bold');
+
+        expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'break' }, text('b'))]);
+        expect(editor.api.selection.get().marks).not.toHaveProperty('bold');
+    });
+
+    it('puts the mark on a range of blank text', () => {
+        const editor = editorWith(plugins, [paragraph(text('  '))]);
+        editor.select('  ');
+
+        editor.api.marks.toggle('bold');
+
+        expect(editor.stored()).toEqual([paragraph(text('  ', { bold: true }))]);
+    });
+
     it('puts the mark on all of a range only part of which carries it', () => {
         const editor = editorWith(plugins, [paragraph(text('half', { bold: true }), text(' plain'))]);
         editor.selectBetween('half', 'plain');

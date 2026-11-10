@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { setBlockType as pmSetBlockType, toggleMark as pmToggleMark } from 'prosemirror-commands';
+import { setBlockType as pmSetBlockType } from 'prosemirror-commands';
 import {
     type Mark as PmMark,
     type MarkType as PmMarkType,
@@ -174,8 +174,29 @@ const createMarkApi = (getView: () => EditorView, schema: Schema): EditorControl
             return;
         }
         const view = getView();
-        // On unless ALL of the selection carries it, matching the snapshot.
-        pmToggleMark(markType, valueAttrsFor(value), { removeWhenPresent: false })(view.state, view.dispatch);
+        const { selection, tr } = view.state;
+        // Off exactly when the snapshot reports it on, so the toolbar and the toggle agree.
+        const isOn = type in marksAt(view.state);
+        if (selection.empty && isOn) {
+            tr.removeStoredMark(markType);
+        } else if (selection.empty) {
+            tr.addStoredMark(markType.create(valueAttrsFor(value)));
+        } else if (isOn) {
+            for (const range of selection.ranges) {
+                tr.removeMark(range.$from.pos, range.$to.pos, markType);
+            }
+        } else {
+            const mark = markType.create(valueAttrsFor(value));
+            for (const { $from, $to } of selection.ranges) {
+                // Text only, as the snapshot reads it: the document stores no marks on inline elements.
+                tr.doc.nodesBetween($from.pos, $to.pos, (node, position) => {
+                    if (node.isText) {
+                        tr.addMark(Math.max(position, $from.pos), Math.min(position + node.nodeSize, $to.pos), mark);
+                    }
+                });
+            }
+        }
+        view.dispatch(tr);
         view.focus();
     },
     set(type, value) {
