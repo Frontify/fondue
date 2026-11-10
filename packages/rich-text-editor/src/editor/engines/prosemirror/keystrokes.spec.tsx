@@ -770,3 +770,46 @@ describe('Enter in a block with attributes every text block carries', () => {
         ]);
     });
 });
+
+describe('Enter on a block with stored keys no plugin declares', () => {
+    // `foo` is an undeclared stored key and `align` a plugin's attribute, neither of which RteBlockNode names.
+    const centred = (value: string): RteBlockNode =>
+        ({ ...paragraph(text(value)), align: 'center', foo: 1 }) as RteBlockNode;
+
+    it('leaves the block Enter opens after the text without them', () => {
+        const editor = editorWith(defaultPlugins, [centred('ab')]);
+        editor.caretAfter('b');
+
+        press(editor.view, 'Enter');
+        editor.type('c');
+
+        expect(editor.stored()).toEqual([centred('ab'), { ...paragraph(text('c')), align: 'center' }]);
+    });
+
+    it('leaves the block Enter opens before the text without them', () => {
+        const editor = editorWith(defaultPlugins, [centred('ab')]);
+        editor.caretBefore('a');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([{ ...paragraph(), align: 'center' }, centred('ab')]);
+    });
+
+    it('leaves the item a list split makes without them', () => {
+        // The item's `foo` is undeclared too, and RteBlockNode names neither list blocks nor their keys.
+        const item = (value: string): RteBlockNode =>
+            ({ type: 'listItem', foo: 2, children: [centred(value)] }) as RteBlockNode;
+        const editor = editorWith(defaultPlugins, [{ type: 'bulletList', children: [item('ab')] } as RteBlockNode]);
+        editor.caretAfter('b');
+
+        press(editor.view, 'Enter');
+        editor.type('c');
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'bulletList',
+                children: [item('ab'), { type: 'listItem', children: [{ ...paragraph(text('c')), align: 'center' }] }],
+            },
+        ]);
+    });
+});
