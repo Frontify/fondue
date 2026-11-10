@@ -22,6 +22,7 @@ import { createMarkViews, createNodeViews, LiveViews } from './nodeViews';
 import { placeholderPlugin } from './placeholder';
 import { buildSchema } from './schema';
 import { createSelectionRectReader } from './selectionRect';
+import { rewritesUserEdits, userEditsPlugin } from './userEdits';
 import './engine.scss';
 
 /** Schedules the next try of a host document held while text is composed. */
@@ -462,6 +463,7 @@ const mount = (
             plugins: [
                 ...keystrokePipeline(registry, schema, api),
                 copiedExtrasPlugin(),
+                userEditsPlugin(),
                 placeholderPlugin(() => currentPlaceholder, placeholderClassName),
             ],
         }),
@@ -508,9 +510,16 @@ const mount = (
             const transaction = editorView.state.tr;
             syncDocument(transaction, next);
             if (transaction.docChanged) {
+                const forgetsHistory = rewritesUserEdits(editorView.state, transaction);
                 transaction.setMeta(HOST_DOC, true);
                 transaction.setMeta('addToHistory', false);
                 editorView.dispatch(transaction);
+                if (forgetsHistory) {
+                    // A fresh state is the only way to empty the undo history.
+                    const { doc: synced, selection, plugins } = editorView.state;
+                    editorView.updateState(EditorState.create({ doc: synced, selection, plugins }));
+                    onStateChange();
+                }
             }
         }
         record.agreed = doc;

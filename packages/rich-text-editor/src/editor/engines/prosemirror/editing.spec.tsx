@@ -2,7 +2,7 @@
 
 // @vitest-environment happy-dom
 
-import { redo, undo } from 'prosemirror-history';
+import { redo, undo, undoDepth } from 'prosemirror-history';
 import { Node as PmNode } from 'prosemirror-model';
 import { NodeSelection, TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
@@ -304,7 +304,18 @@ describe('a document set by the host', () => {
         undo(view.state, view.dispatch);
 
         expect(view.state.doc.textContent).toBe('from the host');
-        expect(stored()).toEqual(paragraph('from the host'));
+        expect(stored()).toEqual(paragraph('typed mine'));
+    });
+
+    it('leaves nothing to undo when it replaces the text the user typed', () => {
+        const { handle, view } = mount(emptyDocument());
+        handle.api.insertText('hi');
+
+        handle.setDoc(paragraph('from the host'));
+
+        expect(undoDepth(view.state)).toBe(0);
+        expect(undo(view.state, view.dispatch)).toBe(false);
+        expect(view.state.doc.textContent).toBe('from the host');
     });
 
     it('leaves the host change in place when the user undoes an edit in another block', () => {
