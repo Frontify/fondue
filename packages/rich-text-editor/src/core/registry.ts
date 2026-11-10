@@ -289,12 +289,22 @@ const BUTTON_KINDS: ReadonlySet<OwnType['kind']> = new Set(['mark', 'list', 'tex
 
 const NOTHING_TO_TOGGLE = 'nothing to toggle: name a mark, list, text block, void block or inline with `toggles`.';
 
+/**
+ * Throws unless the entry has a label. The label is the control's only accessible name, so an untyped caller cannot leave it out.
+ */
+const assertLabelled = (plugin: RtePlugin, entry: RteToolbarEntry): void => {
+    if (typeof entry.label !== 'string' || entry.label === '') {
+        throw new Error(`Plugin "${plugin.id}" has a toolbar entry with no \`label\`.`);
+    }
+};
+
 const toolbarEntryOf = (plugin: RtePlugin, entry: RteToolbarEntry, key: string): ToolbarEntry => {
     const type = entry.toggles ?? onlyTypeOf(plugin.content);
     const own = ownTypeOf(plugin.content, type);
     if (entry.toggles !== undefined && own.kind === 'none') {
         throw new Error(`Plugin "${plugin.id}" toggles "${entry.toggles}", which its content does not declare.`);
     }
+    assertLabelled(plugin, entry);
     const shared = {
         id: plugin.id,
         key,

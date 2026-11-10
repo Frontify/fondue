@@ -348,8 +348,20 @@ describe('the type a toolbar entry toggles', () => {
     });
 
     it('needs a label, which is the control accessible name', () => {
-        // @ts-expect-error -- an entry without a `label` fails typecheck
-        buildPluginRegistry([{ id: 'bold', content: defineContent({ marks: { bold: mark() } }), toolbar: [{ icon }] }]);
+        expect(() =>
+            buildPluginRegistry([
+                // @ts-expect-error -- an entry without a `label` fails typecheck, and still throws for an untyped caller.
+                { id: 'bold', content: defineContent({ marks: { bold: mark() } }), toolbar: [{ icon }] },
+            ]),
+        ).toThrow('Plugin "bold" has a toolbar entry with no `label`.');
+    });
+
+    it('needs a label that is not empty', () => {
+        expect(() =>
+            buildPluginRegistry([
+                { id: 'bold', content: defineContent({ marks: { bold: mark() } }), toolbar: [{ icon, label: '' }] },
+            ]),
+        ).toThrow('Plugin "bold" has a toolbar entry with no `label`.');
     });
 
     it('is an error when the content does not declare it', () => {
@@ -362,7 +374,7 @@ describe('the type a toolbar entry toggles', () => {
         expect(() =>
             buildPluginRegistry([
                 // @ts-expect-error -- an entry with neither `icon` nor `render` fails typecheck, and still throws for an untyped caller.
-                { id: 'bold', content: defineContent({ marks: { bold: mark() } }), toolbar: [{}] },
+                { id: 'bold', content: defineContent({ marks: { bold: mark() } }), toolbar: [{ label: 'Bold' }] },
             ]),
         ).toThrow('Plugin "bold" has a toolbar entry with no `render` and no `icon`.');
     });
