@@ -36,7 +36,7 @@ const profileHref = (mention: MentionItem): string => `#/people/${mention.id}`;
  */
 const LAYOUT = 'tw-grid tw-grid-cols-2 tw-content-start tw-gap-4 tw-p-4 tw-font-primary';
 const JSON_PANEL =
-    'tw-m-0 tw-min-h-[200px] tw-overflow-auto tw-rounded tw-bg-surface-dim tw-p-3 tw-font-monospace tw-text-x-small tw-leading-medium';
+    'tw-m-0 tw-min-h-[200px] tw-overflow-auto tw-rounded tw-bg-surface-dim tw-text-primary tw-p-3 tw-font-monospace tw-text-x-small tw-leading-medium';
 const HINT = 'tw-col-span-full tw-m-0 tw-body-small tw-text-secondary';
 
 /**
