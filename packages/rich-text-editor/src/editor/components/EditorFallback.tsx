@@ -84,7 +84,7 @@ export const EditorFallback = ({
                 ref={retryRef}
                 type="button"
                 size="medium"
-                emphasis="weak"
+                emphasis="default"
                 aria-describedby={messageId}
                 onPress={onPress}
             >
