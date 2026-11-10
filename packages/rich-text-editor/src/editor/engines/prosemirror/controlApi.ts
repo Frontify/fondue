@@ -118,6 +118,7 @@ const snapshotOf = (state: EditorState): RteSelectionSnapshot => {
         text: empty ? '' : state.doc.textBetween(from, to, ' '),
         ...blocksAt(state),
         ...marksAt(state),
+        history: { canUndo: undoDepth(state) > 0, canRedo: redoDepth(state) > 0 },
     };
 };
 
@@ -366,8 +367,6 @@ const createHistoryApi = (getView: () => EditorView): EditorControlApi['history'
         redo(view.state, view.dispatch);
         view.focus();
     },
-    canUndo: () => undoDepth(getView().state) > 0,
-    canRedo: () => redoDepth(getView().state) > 0,
 });
 
 // --- The whole api ---

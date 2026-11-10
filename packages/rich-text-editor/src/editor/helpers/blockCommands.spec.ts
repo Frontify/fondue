@@ -58,6 +58,7 @@ describe('the active command', () => {
                 blocks: [{ type: 'x' }],
                 marks: {},
                 partialMarks: {},
+                history: { canUndo: false, canRedo: false },
             }),
         ).toBe(heading);
     });
@@ -78,6 +79,7 @@ describe('the active command', () => {
             blocks,
             marks: {},
             partialMarks: {},
+            history: { canUndo: false, canRedo: false },
         };
 
         expect(activeCommand([TEXT_COMMAND, bullet, numbered], selection)).toBe(numbered);
@@ -91,6 +93,7 @@ describe('the active command', () => {
             blocks: types.map((type) => ({ type })),
             marks: {},
             partialMarks: {},
+            history: { canUndo: false, canRedo: false },
         });
 
         expect(TEXT_COMMAND.isActive?.(selection(['paragraph']))).toBe(true);

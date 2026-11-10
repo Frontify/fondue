@@ -24,13 +24,8 @@ export const superscriptPlugin = (): RtePlugin => ({
         }),
     },
     toolbarGroup: 'marks',
-    toolbarItem: ({ isActive, isMixed, toggle }) => (
-        <ToolbarButton
-            title="Superscript"
-            shortcut={HOTKEY}
-            active={isMixed ? 'mixed' : isActive}
-            onClick={() => toggle()}
-        >
+    toolbarItem: ({ isActive, toggle }) => (
+        <ToolbarButton title="Superscript" shortcut={HOTKEY} active={isActive} onClick={() => toggle()}>
             <IconSuperscript size={20} />
         </ToolbarButton>
     ),

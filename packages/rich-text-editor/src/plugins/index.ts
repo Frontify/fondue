@@ -28,9 +28,10 @@ import { underlinePlugin } from './Underline';
 // picker, Link's flyout).
 
 /**
- * The built-in plugins that need no configuration, in toolbar order — what
- * `RichTextEditor` and `RichTextRenderer` mount when given no `plugins`. Pass a
- * subset, or spread it into a list of your own to add more.
+ * The built-in plugins that need no configuration — what `RichTextEditor` and
+ * `RichTextRenderer` mount when given no `plugins`. The toolbar draws them by
+ * `toolbarGroup` in the fixed group order, list order within a group, ungrouped
+ * plugins last. Pass a subset, or spread it into a list of your own to add more.
  *
  * Left out on purpose, because they need arguments or change how the editor
  * behaves: `mentionPlugin` (needs the people to mention), `columnBreakPlugin`

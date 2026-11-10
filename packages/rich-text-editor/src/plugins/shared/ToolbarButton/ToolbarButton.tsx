@@ -14,7 +14,7 @@ import styles from './toolbarButton.module.scss';
 
 type ToolbarButtonProps = {
     children: ReactNode;
-    /** Omit for buttons that are actions rather than toggles — it drives `aria-pressed`, `'mixed'` when only part of the selection is on. */
+    /** Whether the toggle is on; drives `aria-pressed`. `'mixed'` means only part of the selection has it. Omit for buttons that are actions, not toggles. */
     active?: boolean | 'mixed';
     disabled?: boolean;
     onClick?: () => void;

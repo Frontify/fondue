@@ -682,6 +682,22 @@ describe('the toolbar', () => {
         expect(clickCount(container)).toBe('2');
     });
 
+    it('draws the control of a plugin with an unknown group last', () => {
+        const unknownGroupPlugin = {
+            id: 'unknown-group',
+            toolbarGroup: 'not-a-group',
+            toolbarItem: () => <span data-testid="unknown-group">unknown</span>,
+        } as unknown as RtePlugin;
+        const { container, ready } = mount(() => (
+            <RichTextEditor plugins={[unknownGroupPlugin, ...defaultPlugins]} toolbarPlacement="top" />
+        ));
+        ready();
+
+        const group = container.querySelector('[data-testid="unknown-group"]')?.parentElement;
+        expect(group).toBeTruthy();
+        expect(group?.parentElement?.lastElementChild).toBe(group);
+    });
+
     it('keeps Undo and Redo current as edits are made and taken back', () => {
         const { container, ready, stored } = mount((onChange) => (
             <RichTextEditor plugins={defaultPlugins} toolbarPlacement="top" onChange={onChange} />
