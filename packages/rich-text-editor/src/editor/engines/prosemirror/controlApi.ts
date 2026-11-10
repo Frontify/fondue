@@ -13,6 +13,7 @@ import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry, type RteSelectionSnapshot } from '#/core';
 
+import { setChangedAttributes } from './attributes';
 import { EXTRA_ATTR, markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
 import { createListApi, liftOutOfLists } from './lists';
 import { warnUnknownType } from './warnings';
@@ -263,13 +264,7 @@ const createBlockApi = (
         view.state.doc.nodesBetween(from, to, (node, pos) => {
             if (node.isTextblock) {
                 // Undeclared attributes are ignored, so mixed selections are safe.
-                // Unchanged attributes are skipped so a no-op adds no undo step, and
-                // one step per attribute lets undo leave a host's other changes alone.
-                for (const [name, value] of Object.entries(attributes)) {
-                    if (name in node.attrs && node.attrs[name] !== value) {
-                        transaction.setNodeAttribute(pos, name, value);
-                    }
-                }
+                setChangedAttributes(transaction, { pos, node }, attributes);
             }
         });
         if (transaction.docChanged) {
