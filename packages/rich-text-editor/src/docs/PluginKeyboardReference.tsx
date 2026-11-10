@@ -8,6 +8,9 @@ import { readableShortcut } from '#/ui/ToolbarButton/ToolbarButton';
 import { type KeyboardGroupOwner, keyboardReference } from './keyboardReference';
 import styles from './keyboardReference.module.scss';
 
+// Storybook's docs pages restyle tables; this class opts the reference out so the tokens decide its colours.
+const STORYBOOK_UNSTYLED = 'sb-unstyled';
+
 const FOR_APPLE = true;
 const FOR_OTHER_PLATFORMS = false;
 
@@ -40,7 +43,7 @@ type PluginKeyboardReferenceProps = {
  * Every key the plugins bind, a table per plugin with the keys as Apple and other systems write them
  */
 export const PluginKeyboardReference = ({ plugins }: PluginKeyboardReferenceProps): ReactNode => (
-    <div className={styles.reference}>
+    <div className={`${STORYBOOK_UNSTYLED} ${styles.reference}`}>
         {keyboardReference(plugins).map(({ owner, rows }) => (
             <table key={ownerKeyOf(owner)}>
                 <caption>{ownerHeadingOf(owner)}</caption>

@@ -1,17 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// Borders are translucent greys, so the tables read on Storybook's light and dark docs themes alike.
+// The tables opt out of Storybook's docs styles (`sb-unstyled`), so every colour comes from the tokens and follows the theme.
 .reference {
+    color: var(--color-primary-default);
+
     table {
         border-collapse: collapse;
         margin-block: var(--spacing-small);
         inline-size: 100%;
+        table-layout: fixed;
+        background-color: var(--color-surface-default);
     }
 
     caption {
         margin-block-end: var(--spacing-xx-small);
         font-weight: var(--typography-font-weight-bold);
         text-align: start;
+    }
+
+    thead {
+        background-color: var(--color-surface-dim);
     }
 
     th,
