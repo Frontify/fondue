@@ -410,6 +410,7 @@ export type ParseRule<TValue> = {
 
 /**
  * A rule that matches any element whose own `style` attribute declares the CSS property, handed the declared value.
+ * It never stops tag rules or other style rules from reading the same element.
  */
 export type StyleParseRule<TValue> = {
     /**
@@ -435,6 +436,10 @@ export type MarkClearRule = {
      * A CSS property name: `font-weight`.
      */
     style: string;
+    /**
+     * Never set: lets TypeScript tell a clear rule from a tag rule.
+     */
+    tag?: undefined;
     /**
      * Receives the declared CSS value and returns true when it takes the mark off.
      */
