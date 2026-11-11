@@ -971,9 +971,6 @@ importers:
       '@types/is-hotkey':
         specifier: ^0.1.10
         version: 0.1.10
-      '@types/jscodeshift':
-        specifier: ^17.3.0
-        version: 17.3.0
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
@@ -4317,9 +4314,6 @@ packages:
 
   '@types/is-hotkey@0.1.10':
     resolution: {integrity: sha512-RvC8KMw5BCac1NvRRyaHgMMEtBaZ6wh0pyPTBu7izn4Sj/AX9Y4aXU5c7rX8PnM/knsuUpC1IeoBkANtxBypsQ==}
-
-  '@types/jscodeshift@17.3.0':
-    resolution: {integrity: sha512-ogvGG8VQQqAQQ096uRh+d6tBHrYuZjsumHirKtvBa5qEyTMN3IQJ7apo+sw9lxaB/iKWIhbbLlF3zmAWk9XQIg==}
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -12442,11 +12436,6 @@ snapshots:
       '@types/unist': 3.0.3
 
   '@types/is-hotkey@0.1.10': {}
-
-  '@types/jscodeshift@17.3.0':
-    dependencies:
-      ast-types: 0.16.3
-      recast: 0.23.21
 
   '@types/json-schema@7.0.15': {}
 

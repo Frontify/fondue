@@ -163,7 +163,6 @@
         "@tony.ganchev/eslint-plugin-header": "^3.4.4",
         "@types/escape-html": "^1.0.4",
         "@types/is-hotkey": "^0.1.10",
-        "@types/jscodeshift": "^17.3.0",
         "@types/lodash-es": "^4.17.12",
         "@types/node": "^24.19.2",
         "@types/react": "^18.3.31",
