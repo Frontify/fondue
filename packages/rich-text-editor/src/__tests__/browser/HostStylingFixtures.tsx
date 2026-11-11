@@ -10,6 +10,8 @@ import {
     type TextStylePluginOptions,
 } from '../../index';
 
+import { H1_COLOR_VARIABLE, SECTION_A_H1_COLOR, SECTION_B_H1_COLOR } from './hostStylingValues';
+
 // Mounted by hostStyling.ct.tsx: a component test mounts imported components, and
 // the plugin list holds functions, which cannot travel as props.
 
@@ -34,15 +36,17 @@ const hostVariable = (name: string, value: string): CSSProperties =>
     // CSSProperties has no custom properties.
     ({ [name]: value }) as CSSProperties;
 
-const SECTION_A = hostVariable('--f-h1-color', 'rgb(255, 0, 0)');
-const SECTION_B = hostVariable('--f-h1-color', 'rgb(0, 0, 255)');
+const SECTION_A = hostVariable(H1_COLOR_VARIABLE, SECTION_A_H1_COLOR);
+const SECTION_B = hostVariable(H1_COLOR_VARIABLE, SECTION_B_H1_COLOR);
 
-type HostStylingProps = {
+type HostStylingPairProps = {
     presets?: TextStylePluginOptions['presets'];
 };
 
+type HostStylingSectionsProps = HostStylingPairProps;
+
 /** The renderer and the editor side by side, drawing the same document with the same presets. */
-export const HostStylingPair = ({ presets }: HostStylingProps) => (
+export const HostStylingPair = ({ presets }: HostStylingPairProps) => (
     <>
         <div data-testid="renderer">
             <RichTextRenderer value={ALL_PRESETS_DOCUMENT} plugins={[textStylePlugin({ presets })]} />
@@ -54,7 +58,7 @@ export const HostStylingPair = ({ presets }: HostStylingProps) => (
 );
 
 /** Two sections that define the same variable differently, each with its own renderer. */
-export const HostStylingSections = ({ presets }: HostStylingProps) => (
+export const HostStylingSections = ({ presets }: HostStylingSectionsProps) => (
     <>
         <div data-testid="section-a" style={SECTION_A}>
             <RichTextRenderer value={ALL_PRESETS_DOCUMENT} plugins={[textStylePlugin({ presets })]} />

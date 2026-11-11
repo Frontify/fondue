@@ -6,6 +6,7 @@ import { type Locator } from '@playwright/test';
 import { type TextLook, type TextStyleName } from '../../index';
 
 import { HostStylingPair, HostStylingSections } from './HostStylingFixtures';
+import { H1_COLOR_VARIABLE, SECTION_A_H1_COLOR, SECTION_B_H1_COLOR } from './hostStylingValues';
 
 // Hosts set the look of each text style with `textStylePlugin({ presets })`. Without a
 // value, or with one that resolves to nothing, Fondue's look stays, in the editor and the renderer alike.
@@ -169,11 +170,12 @@ test.describe('host styling of text styles', () => {
     });
 
     test('reads a guideline variable where the editor stands, so sections can differ', async ({ mount }) => {
-        const component = await mount(<HostStylingSections presets={{ heading1: { color: 'var(--f-h1-color)' } }} />);
+        const component = await mount(
+            <HostStylingSections presets={{ heading1: { color: `var(${H1_COLOR_VARIABLE})` } }} />,
+        );
 
-        // The colours the fixture gives each section's `--f-h1-color`.
-        await expect(component.getByTestId('section-a').locator('h1')).toHaveCSS('color', 'rgb(255, 0, 0)');
-        await expect(component.getByTestId('section-b').locator('h1')).toHaveCSS('color', 'rgb(0, 0, 255)');
+        await expect(component.getByTestId('section-a').locator('h1')).toHaveCSS('color', SECTION_A_H1_COLOR);
+        await expect(component.getByTestId('section-b').locator('h1')).toHaveCSS('color', SECTION_B_H1_COLOR);
     });
 
     test('previews a preset in the dropdown with Fondue look, not the host one', async ({ mount, page }) => {
