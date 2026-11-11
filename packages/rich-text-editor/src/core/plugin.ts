@@ -647,9 +647,9 @@ export type RteInputRule =
      * Text swapped for other text the moment its last character is typed, no
      * space needed: `->` becomes `→`. A string matches as written; a pattern
      * is anchored to the end of the text before the caret, so a lookbehind can
-     * say what may not come before it, and its `replace` may use `$1` to `$9`
-     * (a `$` and a digit cannot be written literally there). An
-     * inline element reads as U+FFFC in the text. The rule steps aside when
+     * say what may not come before it, and its `replace` may use `$1` to `$9`:
+     * there, `$` and a digit from 1 to 9 is always a group reference, and one
+     * the pattern lacks throws. An inline element reads as U+FFFC in the text. The rule steps aside when
      * the text it would replace carries a mark that opts out (inline code).
      * Only the matched text is replaced, so match a character only to look at
      * it with a lookbehind.

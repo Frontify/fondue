@@ -100,8 +100,8 @@ const SUPERSCRIPTS: readonly Replacement[] = SUPERSCRIPT_PAIRS.map(([character, 
 const DEGREE: Replacement = [new RegExp(String.raw`${AFTER_A_NUMBER}\^o`, 'u'), '°'];
 
 /**
- * `1/2` for `½`, as a whole token, so dates (`11/2`) and paths (`/1/2`) stay as typed, and so does
- * `1/25`: it waits for the run to end.
+ * `1/2` for `½`, as a whole token, so dates (`11/2`), paths (`/1/2`), decimals (`0.1/2`) and
+ * addresses (`10.0.0.1/8`) stay as typed, and so does `1/25`: it waits for the run to end.
  */
 const FRACTIONS: readonly Replacement[] = (
     [

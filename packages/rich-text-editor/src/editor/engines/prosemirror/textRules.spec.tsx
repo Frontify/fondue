@@ -350,6 +350,16 @@ describe('typographyPlugin', () => {
         expect(typed('0.1/2 ', withTypography)).toEqual([paragraph(text('0.1/2 '))]);
     });
 
+    it('keeps the marks of a character before a selection that a rule replaces', () => {
+        const link = { link: { href: 'https://frontify.com' } };
+        const editor = editorWith([...shipped('link'), typographyPlugin()], [paragraph(text('go -', link), text('x'))]);
+        editor.select('x');
+
+        editor.type('>');
+
+        expect(editor.stored()).toEqual([paragraph(text('go →', link))]);
+    });
+
     it('does not carry a selected link onto the quote typed over it', () => {
         const link = { link: { href: 'https://frontify.com' } };
         const editor = editorWith(
