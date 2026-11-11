@@ -6,6 +6,8 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { readableShortcut } from '#/ui/ToolbarButton/ToolbarButton';
+
 import { type MentionItem, type MentionItems } from '../types';
 
 import { MentionDraft } from './MentionDraft';
@@ -188,7 +190,10 @@ describe('a mention being searched for', () => {
 
         expect(status()).toBe('Could not load people. Press Enter to retry.');
         expect(popup()).toContain('Could not load people.');
-        expect(popup()).toContain('Press Enter to retry');
+        expect(popup()).not.toContain('Press Enter to retry');
+        const shortcut = window.document.querySelector('kbd');
+        expect(shortcut?.textContent).toBe(readableShortcut('Enter'));
+        expect(shortcut?.getAttribute('aria-hidden')).toBe('true');
         expect(popup()).not.toContain('No matches');
         const retry = [...window.document.querySelectorAll('button')].find((button) => button.textContent === 'Retry');
         expect(retry).toBeDefined();
@@ -253,11 +258,13 @@ describe('a mention being searched for', () => {
             (query) => new Promise<MentionItem[]>((resolve) => answers.set(query, resolve)),
         );
         await type('j');
+        // The index is in range, but indexed access reads as possibly undefined.
         act(() => answers.get('')?.([PEOPLE[2] as MentionItem]));
         await settle();
 
         // The dropped answer is no earlier answer to keep showing.
         expect(status()).toBe('Searching');
+        // Same as above: the index is in range.
         act(() => answers.get('j')?.([PEOPLE[0] as MentionItem]));
         await settle();
         expect(status()).toBe('1 person');

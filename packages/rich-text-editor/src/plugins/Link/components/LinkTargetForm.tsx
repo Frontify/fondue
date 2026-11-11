@@ -13,6 +13,13 @@ import { DestinationField } from './DestinationField';
 import styles from './linkForm.module.scss';
 
 const UNREADABLE = 'Enter a web address (example.com), an email address, or a phone number (tel:…).';
+const MISSING_ADDRESS = 'Enter where the link goes.';
+const TEXT_LABEL = 'Text';
+const LINK_TO_LABEL = 'Link to';
+const NEW_TAB_LABEL = 'Open in new tab';
+const REMOVE_LABEL = 'Remove link';
+const CANCEL_LABEL = 'Cancel';
+const SAVE_LABEL = 'Save';
 
 /**
  * The `kind` says whether the form makes a new link, which gets a Text field, or edits one that exists, whose text is edited in place. It also decides what `onSave` receives.
@@ -42,6 +49,27 @@ export type LinkTargetFormProps = {
     | { kind: 'edit'; onSave: (value: LinkValue) => void }
 );
 
+type TextField = {
+    text: string;
+};
+
+type FormMode = {
+    /** The Text field a new link shows; null for an existing link, whose text is edited in place. */
+    textField: TextField | null;
+    onSave: (value: LinkValue, text: string) => void;
+};
+
+const resolveMode = (props: LinkTargetFormProps): FormMode => {
+    switch (props.kind) {
+        case 'create':
+            return { textField: { text: props.text }, onSave: props.onSave };
+        case 'edit': {
+            const { onSave } = props;
+            return { textField: null, onSave: (value) => onSave(value) };
+        }
+    }
+};
+
 /**
  * Where a link points, and whether it opens a new tab. An existing link's text
  * is edited in place; a new link gets a Text field, shown in `create` mode.
@@ -49,9 +77,14 @@ export type LinkTargetFormProps = {
  */
 export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
     const { initial, policy, search, onCancel, onRemove } = props;
+    const { textField, onSave } = resolveMode(props);
     // A stored link without a string target opens the form empty rather than uncontrolled.
     const [typed, setTyped] = useState(typeof initial.href === 'string' ? initial.href : '');
-    const [text, setText] = useState(props.kind === 'create' ? props.text : '');
+    let initialText = '';
+    if (textField !== null) {
+        initialText = textField.text;
+    }
+    const [text, setText] = useState(initialText);
     const [openInNewTab, setOpenInNewTab] = useState(initial.openInNewTab === true);
     // Set by a failed save, cleared when the field changes.
     const [error, setError] = useState<string | null>(null);
@@ -62,7 +95,7 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
     const urlFieldRef = useRef<HTMLInputElement>(null);
     const textFieldRef = useRef<HTMLInputElement>(null);
 
-    const startsOnText = props.kind === 'create' && props.text === '';
+    const startsOnText = textField !== null && textField.text === '';
     useEffect(() => {
         // Selected text is already there to keep, so the address is what is left to type.
         let first = urlFieldRef.current;
@@ -76,12 +109,16 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
         const href = toHref(typed);
         if (href === null || !allowsHref(policy, href)) {
             if (typed.trim() === '') {
-                setError('Enter where the link goes.');
+                setError(MISSING_ADDRESS);
             } else if (href === null) {
                 setError(UNREADABLE);
             } else {
                 // A policy with nothing to name cannot be what refused it.
-                setError(describeAllowed(policy) || UNREADABLE);
+                let reason = describeAllowed(policy);
+                if (reason === '') {
+                    reason = UNREADABLE;
+                }
+                setError(reason);
             }
             urlFieldRef.current?.focus();
             return;
@@ -90,11 +127,7 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
         if (openInNewTab) {
             value = { href, openInNewTab: true };
         }
-        if (props.kind === 'create') {
-            props.onSave(value, text);
-        } else {
-            props.onSave(value);
-        }
+        onSave(value, text);
     };
 
     const saveOnEnter = (event: KeyboardEvent<HTMLInputElement>): void => {
@@ -111,16 +144,16 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
         setTyped(destination.href);
         setError(null);
         // An empty Text field takes the page's name; text already there is the author's.
-        if (props.kind === 'create' && text === '') {
+        if (textField !== null && text === '') {
             setText(destination.label);
         }
     };
 
     return (
         <div className={styles.fields}>
-            {props.kind === 'edit' ? null : (
+            {textField === null ? null : (
                 <div className={styles.field}>
-                    <Label htmlFor={textId}>Text</Label>
+                    <Label htmlFor={textId}>{TEXT_LABEL}</Label>
                     <TextInput
                         id={textId}
                         ref={textFieldRef}
@@ -132,10 +165,10 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
                 </div>
             )}
             <div className={styles.field}>
-                <Label htmlFor={urlId}>Link to</Label>
+                <Label htmlFor={urlId}>{LINK_TO_LABEL}</Label>
                 <DestinationField
                     id={urlId}
-                    inputRef={urlFieldRef}
+                    ref={urlFieldRef}
                     value={typed}
                     status={error === null ? 'neutral' : 'error'}
                     errorId={errorId}
@@ -159,19 +192,19 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
                     value={openInNewTab}
                     onChange={() => setOpenInNewTab((previous) => !previous)}
                 />
-                <Label htmlFor={newTabId}>Open in new tab</Label>
+                <Label htmlFor={newTabId}>{NEW_TAB_LABEL}</Label>
             </div>
             <div className={styles.formActions}>
                 {onRemove ? (
                     <Button size="small" emphasis="weak" onPress={onRemove}>
-                        Remove link
+                        {REMOVE_LABEL}
                     </Button>
                 ) : null}
                 <Button size="small" emphasis="weak" onPress={onCancel}>
-                    Cancel
+                    {CANCEL_LABEL}
                 </Button>
                 <Button size="small" onPress={save}>
-                    Save
+                    {SAVE_LABEL}
                 </Button>
             </div>
         </div>

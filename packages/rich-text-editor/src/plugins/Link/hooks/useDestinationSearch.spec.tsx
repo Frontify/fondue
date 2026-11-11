@@ -31,11 +31,15 @@ afterEach(() => {
     vi.useRealTimers();
 });
 
+type ProbeProps = {
+    query: string;
+};
+
 const mountHook = (search: LinkSearch | undefined, initialQuery: string, policy: LinkPolicy = {}) => {
     const container = window.document.createElement('div');
     const root = createRoot(container);
-    let latest: DestinationSearch = { results: [], status: 'idle' };
-    const Probe = ({ query }: { query: string }) => {
+    let latest: DestinationSearch = { status: 'idle' };
+    const Probe = ({ query }: ProbeProps) => {
         latest = useDestinationSearch(search, query, policy);
         return null;
     };
@@ -70,7 +74,7 @@ describe('the destination search', () => {
         await advance(1000);
 
         expect(search).not.toHaveBeenCalled();
-        expect(hook.current()).toEqual({ results: [], status: 'idle' });
+        expect(hook.current()).toEqual({ status: 'idle' });
     });
 
     it('waits for a pause of 200 ms, then asks once with the trimmed query', async () => {
@@ -88,7 +92,7 @@ describe('the destination search', () => {
 
         expect(search).toHaveBeenCalledTimes(1);
         expect(search.mock.calls[0]?.[0]).toBe('bra');
-        expect(hook.current()).toEqual({ results: [PAGE], status: 'done' });
+        expect(hook.current()).toEqual({ status: 'done', results: [PAGE] });
     });
 
     it('aborts the request in flight when a new query arrives, and never shows its answer', async () => {
@@ -112,12 +116,12 @@ describe('the destination search', () => {
             resolvers[0]?.([ELSEWHERE]);
             await Promise.resolve();
         });
-        expect(hook.current()).toEqual({ results: [], status: 'searching' });
+        expect(hook.current()).toEqual({ status: 'searching' });
         await act(async () => {
             resolvers[1]?.([PAGE]);
             await Promise.resolve();
         });
-        expect(hook.current()).toEqual({ results: [PAGE], status: 'done' });
+        expect(hook.current()).toEqual({ status: 'done', results: [PAGE] });
     });
 
     it('aborts on unmount', async () => {
@@ -141,7 +145,7 @@ describe('the destination search', () => {
 
         await advance(200);
 
-        expect(hook.current()).toEqual({ results: [PAGE], status: 'done' });
+        expect(hook.current()).toEqual({ status: 'done', results: [PAGE] });
     });
 
     it('reports a failed search with no results', async () => {
@@ -150,6 +154,6 @@ describe('the destination search', () => {
 
         await advance(200);
 
-        expect(hook.current()).toEqual({ results: [], status: 'failed' });
+        expect(hook.current()).toEqual({ status: 'failed' });
     });
 });

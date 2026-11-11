@@ -31,6 +31,9 @@ export type MentionResolution =
     | { status: 'unavailable' }
     | { status: 'unknown' };
 
+/** Asks the app what it knows now about a stored mention. */
+export type MentionResolve = (mention: MentionValue) => MentionResolution;
+
 /**
  * Where a mention links to, such as the profile of a person or group. Returns `undefined` when the mention has no page.
  */

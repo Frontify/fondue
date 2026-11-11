@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { withoutControlCharacters } from '../../shared/helpers/text';
-import { MENTION_KINDS, type MentionHref, type MentionKind, type MentionResolution, type MentionValue } from '../types';
+import { MENTION_KINDS, type MentionHref, type MentionKind, type MentionResolve, type MentionValue } from '../types';
 
 import { safeMentionHref } from './mention';
 
@@ -24,10 +24,13 @@ export type MentionDisplay = {
 };
 
 type MentionDisplayOptions = {
-    resolve?: (mention: MentionValue) => MentionResolution;
+    resolve?: MentionResolve;
     href?: MentionHref;
     trigger: string;
 };
+
+/** Said after the username of someone the app no longer knows. */
+const UNAVAILABLE_NOTE = '(unavailable)';
 
 type MentionNames = { username: string; name: string };
 
@@ -101,8 +104,9 @@ export const mentionDisplay = (
             shown = currentNames(stored, resolution);
             break;
         case 'unavailable':
-            return { label: `${trigger}${stored.username} (unavailable)`, title: stored.name, href: undefined };
+            return { label: `${trigger}${stored.username} ${UNAVAILABLE_NOTE}`, title: stored.name, href: undefined };
         default:
+            // A resolver written in JS can return any status.
             throw new Error(`Unhandled mention resolution: ${JSON.stringify(resolution satisfies never)}`);
     }
     return { label: `${trigger}${shown.username}`, title: shown.name, href: safeMentionHref(href, mention) };

@@ -4,13 +4,13 @@ import { IconPeople, IconPerson, IconTarget } from '@frontify/fondue-icons';
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { readableShortcut } from '#/ui/ToolbarButton/ToolbarButton';
+
 import { isSafeImageSrc } from '../../shared/helpers/href';
 import { isCompositionKey } from '../../shared/helpers/keys';
+import { usePeople } from '../hooks/usePeople';
 import styles from '../mention.module.scss';
 import { type MentionItem, type MentionItems } from '../types';
-
-/** How many people the picker offers at once. */
-const SUGGESTION_LIMIT = 8;
 
 /**
  * What a failed lookup says, to a screen reader and in the list: the message, then how to retry from the keyboard.
@@ -18,86 +18,52 @@ const SUGGESTION_LIMIT = 8;
 const FAILED_MESSAGE = 'Could not load people.';
 const FAILED_HINT = 'Press Enter to retry';
 
+/** The key drawn beside Retry. */
+const RETRY_KEY = 'Enter';
+
+/** What the list says, in the list and to a screen reader, while there is nobody to show yet or nobody matches. */
+const SEARCHING_MESSAGE = 'Searching';
+const NO_MATCHES_MESSAGE = 'No matches';
+
+/** The label of the button that asks the lookup again. */
+const RETRY_LABEL = 'Retry';
+
 /** The gap between the query and the list under it. */
 const LIST_OFFSET = 4;
+
+const avatarPicture = (person: MentionItem): ReactNode => {
+    if (isSafeImageSrc(person.image)) {
+        return <img src={person.image} alt="" />;
+    }
+    if (person.kind === 'group') {
+        return <IconPeople size={12} />;
+    }
+    if (person.kind === 'all') {
+        return <IconTarget size={12} />;
+    }
+    return <IconPerson size={12} />;
+};
+
+type AvatarProps = { person: MentionItem };
 
 /**
  * The round picture beside a name: the avatar when there is one, otherwise the
  * kind's icon — a person, a group, everyone. Decorative: the name is beside it.
  */
-const Avatar = ({ person }: { person: MentionItem }): ReactNode => (
+const Avatar = ({ person }: AvatarProps): ReactNode => (
     <span className={styles.avatar} aria-hidden>
-        {isSafeImageSrc(person.image) ? (
-            <img src={person.image} alt="" />
-        ) : person.kind === 'group' ? (
-            <IconPeople size={12} />
-        ) : person.kind === 'all' ? (
-            <IconTarget size={12} />
-        ) : (
-            <IconPerson size={12} />
-        )}
+        {avatarPicture(person)}
     </span>
 );
 
-/**
- * The people for a query. Answers are tagged with their query so a slow one
- * never overwrites a newer one; the last answer stays up while `pending`, so a
- * server-backed list does not flicker on every key. A failed lookup offers
- * nobody rather than leaving the last list up, and `retry` asks again.
- */
-const usePeople = (
-    items: MentionItems,
-    query: string,
-): { people: readonly MentionItem[]; pending: boolean; failed: boolean; retry: () => void } => {
-    const [answer, setAnswer] = useState<{
-        query: string;
-        people: readonly MentionItem[];
-        failed: boolean;
-    } | null>(null);
-    const [attempt, setAttempt] = useState(0);
-
-    useEffect(() => {
-        let current = true;
-        const settle = (people: readonly MentionItem[], failed: boolean): void => {
-            if (current) {
-                setAnswer({ query, people: people.slice(0, SUGGESTION_LIMIT), failed });
-            }
-        };
-        Promise.resolve(items(query))
-            .then((people) => settle(people, false))
-            .catch(() => settle([], true));
-        return () => {
-            current = false;
-        };
-    }, [items, query, attempt]);
-
-    const retry = (): void => {
-        setAnswer(null);
-        setAttempt((previous) => previous + 1);
-    };
-
-    return {
-        people: answer?.people ?? [],
-        pending: answer?.query !== query,
-        failed: answer?.query === query && answer.failed,
-        retry,
-    };
-};
-
 type PeoplePhase = 'searching' | 'failed' | 'empty' | 'list';
+
+type PhaseOfParams = { people: readonly MentionItem[]; pending: boolean; failed: boolean };
 
 /**
  * Where a lookup stands: people to show, else still searching, else failed, else nobody matches.
  */
-const phaseOf = ({
-    people,
-    pending,
-    failed,
-}: {
-    people: readonly MentionItem[];
-    pending: boolean;
-    failed: boolean;
-}): PeoplePhase => {
+const phaseOf = ({ people, pending, failed }: PhaseOfParams): PeoplePhase => {
     if (people.length > 0) {
         return 'list';
     }
@@ -108,6 +74,113 @@ const phaseOf = ({
         return 'failed';
     }
     return 'empty';
+};
+
+/**
+ * What a screen reader hears for a phase. Searching is announced only with no earlier list to count, so the count is not interrupted on every key.
+ */
+const statusOf = (phase: PeoplePhase, people: readonly MentionItem[]): string => {
+    switch (phase) {
+        case 'searching':
+            return SEARCHING_MESSAGE;
+        case 'failed':
+            return `${FAILED_MESSAGE} ${FAILED_HINT}.`;
+        case 'empty':
+            return NO_MATCHES_MESSAGE;
+        case 'list':
+            if (people.length === 1) {
+                return '1 person';
+            }
+            return `${people.length} people`;
+        default:
+            // Adding a phase fails to compile here until it is handled.
+            throw new Error(`Unhandled people phase: ${JSON.stringify(phase satisfies never)}`);
+    }
+};
+
+type MentionPopupBodyProps = {
+    phase: PeoplePhase;
+    people: readonly MentionItem[];
+    trigger: string;
+    listId: string;
+    activeIndex: number;
+    optionId: (index: number) => string;
+    onRetry: () => void;
+    onPick: (person: MentionItem) => void;
+    onHighlight: (index: number) => void;
+};
+
+/**
+ * What the popup shows for a phase: a message, the retry button, or the list of people.
+ */
+const MentionPopupBody = ({
+    phase,
+    people,
+    trigger,
+    listId,
+    activeIndex,
+    optionId,
+    onRetry,
+    onPick,
+    onHighlight,
+}: MentionPopupBodyProps): ReactNode => {
+    switch (phase) {
+        case 'searching':
+            return <div className={styles.empty}>{SEARCHING_MESSAGE}</div>;
+        case 'failed':
+            return (
+                <div className={styles.empty}>
+                    {FAILED_MESSAGE}{' '}
+                    <button
+                        type="button"
+                        // Out of the Tab order and off the mouse's focus: the query keeps the caret.
+                        tabIndex={-1}
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={onRetry}
+                        className={styles.retry}
+                    >
+                        {RETRY_LABEL}
+                    </button>
+                    <kbd aria-hidden="true" className={styles.shortcut}>
+                        {readableShortcut(RETRY_KEY)}
+                    </kbd>
+                </div>
+            );
+        case 'empty':
+            return <div className={styles.empty}>{NO_MATCHES_MESSAGE}</div>;
+        case 'list':
+            return (
+                <ul id={listId} role="listbox" aria-label="People" className={styles.list}>
+                    {people.map((person, index) => (
+                        // The keyboard drives the list from the input; the mouse picks here.
+                        // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
+                        <li
+                            key={optionId(index)}
+                            id={optionId(index)}
+                            role="option"
+                            aria-selected={index === activeIndex}
+                            // Keep focus in the input: blurring would cancel before the click lands.
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => onPick(person)}
+                            onMouseEnter={() => onHighlight(index)}
+                            className={
+                                index === activeIndex ? `${styles.option} ${styles.optionActive}` : styles.option
+                            }
+                        >
+                            <Avatar person={person} />
+                            <span>{person.name}</span>
+                            <span className={styles.hint}>
+                                {trigger}
+                                {person.username}
+                            </span>
+                        </li>
+                    ))}
+                </ul>
+            );
+        default:
+            // Adding a phase fails to compile here until it is handled.
+            throw new Error(`Unhandled people phase: ${JSON.stringify(phase satisfies never)}`);
+    }
 };
 
 /** Viewport position under the query, kept in step with scrolling and resizing. */
@@ -257,22 +330,6 @@ export const MentionDraft = ({
         event.preventDefault();
     };
 
-    let status = `${people.length} ${people.length === 1 ? 'person' : 'people'}`;
-    // Searching is announced only with no earlier list to count, so the count is not interrupted on every key.
-    switch (phase) {
-        case 'searching':
-            status = 'Searching';
-            break;
-        case 'failed':
-            status = `${FAILED_MESSAGE} ${FAILED_HINT}.`;
-            break;
-        case 'empty':
-            status = 'No matches';
-            break;
-        case 'list':
-            break;
-    }
-
     return (
         <span ref={draftRef} className={styles.draft}>
             {trigger}
@@ -293,62 +350,22 @@ export const MentionDraft = ({
                 className={styles.input}
             />
             <span role="status" className={styles.visuallyHidden}>
-                {status}
+                {statusOf(phase, people)}
             </span>
             {open && position !== null
                 ? createPortal(
                       <div className={styles.popup} style={{ left: position.left, top: position.top }}>
-                          {phase !== 'list' ? (
-                              <div className={styles.empty}>
-                                  {phase === 'searching' ? 'Searching' : null}
-                                  {phase === 'failed' ? (
-                                      <>
-                                          {FAILED_MESSAGE}{' '}
-                                          <button
-                                              type="button"
-                                              // Out of the Tab order and off the mouse's focus: the query keeps the caret.
-                                              tabIndex={-1}
-                                              onMouseDown={(event) => event.preventDefault()}
-                                              onClick={retry}
-                                              className={styles.retry}
-                                          >
-                                              Retry
-                                          </button>{' '}
-                                          <span className={styles.hint}>{FAILED_HINT}</span>
-                                      </>
-                                  ) : null}
-                                  {phase === 'empty' ? 'No matches' : null}
-                              </div>
-                          ) : (
-                              <ul id={listId} role="listbox" aria-label="People" className={styles.list}>
-                                  {people.map((person, index) => (
-                                      // The keyboard drives the list from the input; the mouse picks here.
-                                      // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
-                                      <li
-                                          key={optionId(index)}
-                                          id={optionId(index)}
-                                          role="option"
-                                          aria-selected={index === activeIndex}
-                                          // Keep focus in the input: blurring would cancel before the click lands.
-                                          onMouseDown={(event) => event.preventDefault()}
-                                          onClick={() => finish(() => onChoose(person))}
-                                          onMouseEnter={() => highlight(index)}
-                                          className={
-                                              index === activeIndex
-                                                  ? `${styles.option} ${styles.optionActive}`
-                                                  : styles.option
-                                          }
-                                      >
-                                          <Avatar person={person} />
-                                          <span>{person.name}</span>
-                                          <span className={styles.hint}>
-                                              {trigger}
-                                              {person.username}
-                                          </span>
-                                      </li>
-                                  ))}
-                              </ul>
-                          )}
+                          <MentionPopupBody
+                              phase={phase}
+                              people={people}
+                              trigger={trigger}
+                              listId={listId}
+                              activeIndex={activeIndex}
+                              optionId={optionId}
+                              onRetry={retry}
+                              onPick={(person) => finish(() => onChoose(person))}
+                              onHighlight={highlight}
+                          />
                       </div>,
                       draftRef.current?.ownerDocument.body ?? document.body,
                   )

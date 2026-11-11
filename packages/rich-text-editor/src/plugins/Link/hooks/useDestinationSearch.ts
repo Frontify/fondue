@@ -10,15 +10,16 @@ import { allowsHref, type LinkPolicy } from '../helpers/policy';
  */
 const SEARCH_DELAY_MS = 200;
 
-export type DestinationSearch = {
-    results: readonly LinkDestination[];
-    status: 'idle' | 'searching' | 'done' | 'failed';
-};
+export type DestinationSearch =
+    | { status: 'done'; results: readonly LinkDestination[] }
+    | { status: 'idle' | 'searching' | 'failed' };
 
 /**
- * The answer to one query; `null` results mean the search failed.
+ * The answer to one query.
  */
-type Answer = { query: string; results: readonly LinkDestination[] | null };
+type Answer =
+    | { query: string; status: 'done'; results: readonly LinkDestination[] }
+    | { query: string; status: 'failed' };
 
 /**
  * The destinations matching a query, once the author pauses typing. A newer
@@ -40,14 +41,14 @@ export const useDestinationSearch = (
         }
         const controller = new AbortController();
         const lookUp = async (): Promise<void> => {
-            let results: readonly LinkDestination[] | null = null;
+            let found: Answer = { query: wanted, status: 'failed' };
             try {
-                results = await search(wanted, controller.signal);
+                found = { query: wanted, status: 'done', results: await search(wanted, controller.signal) };
             } catch {
-                // Left null: the search failed.
+                // Left failed.
             }
             if (!controller.signal.aborted) {
-                setAnswer({ query: wanted, results });
+                setAnswer(found);
             }
         };
         const timer = setTimeout(() => {
@@ -60,13 +61,13 @@ export const useDestinationSearch = (
     }, [search, wanted]);
 
     if (search === undefined || wanted === '') {
-        return { results: [], status: 'idle' };
+        return { status: 'idle' };
     }
     if (answer?.query !== wanted) {
-        return { results: [], status: 'searching' };
+        return { status: 'searching' };
     }
-    if (answer.results === null) {
-        return { results: [], status: 'failed' };
+    if (answer.status === 'failed') {
+        return { status: 'failed' };
     }
-    return { results: answer.results.filter((found) => allowsHref(policy, found.href)), status: 'done' };
+    return { status: 'done', results: answer.results.filter((found) => allowsHref(policy, found.href)) };
 };

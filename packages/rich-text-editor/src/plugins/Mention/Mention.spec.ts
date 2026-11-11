@@ -4,6 +4,7 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { BIDI_ISOLATE_TAG } from './components/MentionLink';
 import { mentionValueOf } from './helpers/mention';
 import { mentionContent, mentionPlugin } from './Mention';
 
@@ -33,7 +34,7 @@ describe('the mention inline', () => {
         const spec = mentionFor()?.toHtml(ALL);
         expect(spec?.tag).toBe('span');
         expect(spec?.attrs?.href).toBeUndefined();
-        expect(spec?.children).toEqual([{ tag: 'bdi', children: '@all' }]);
+        expect(spec?.children).toEqual([{ tag: BIDI_ISOLATE_TAG, children: '@all' }]);
         const noProfile = mentionPlugin({ items: [], href: (m) => (m.kind === 'all' ? undefined : `/u/${m.id}`) });
         expect(noProfile.content?.inlines?.mention?.toHtml(ALL).tag).toBe('span');
         expect(noProfile.content?.inlines?.mention?.toHtml(JANE).tag).toBe('a');
@@ -54,7 +55,7 @@ describe('the mention inline', () => {
     });
 
     it('isolates the label so a right-to-left name cannot reorder the text around it', () => {
-        expect(mentionFor('/u')?.toHtml(JANE).children).toEqual([{ tag: 'bdi', children: '@jane' }]);
+        expect(mentionFor('/u')?.toHtml(JANE).children).toEqual([{ tag: BIDI_ISOLATE_TAG, children: '@jane' }]);
     });
 
     it('shows the current username and name where the app resolves one, and stores the old ones in the data', () => {
@@ -67,7 +68,7 @@ describe('the mention inline', () => {
         expect(spec).toMatchObject({
             tag: 'a',
             attrs: { href: '/u/jane', title: 'Jane Smith', 'data-mention-username': 'jane' },
-            children: [{ tag: 'bdi', children: '@jane.s' }],
+            children: [{ tag: BIDI_ISOLATE_TAG, children: '@jane.s' }],
         });
     });
 
@@ -95,7 +96,7 @@ describe('the mention inline', () => {
 
         expect(spec?.tag).toBe('span');
         expect(spec?.attrs).toMatchObject({ href: undefined, title: 'Jane Doe', 'data-mention-id': 'jane' });
-        expect(spec?.children).toEqual([{ tag: 'bdi', children: '@jane (unavailable)' }]);
+        expect(spec?.children).toEqual([{ tag: BIDI_ISOLATE_TAG, children: '@jane (unavailable)' }]);
     });
 
     it('shows the stored value where the app does not know the person', () => {

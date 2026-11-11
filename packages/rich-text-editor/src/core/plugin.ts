@@ -298,18 +298,21 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
 export type ContentModel = 'text' | { items: string } | { blocks: readonly string[] };
 
 /**
+ * A mark that is only a tag: `tag` stands in for `toHtml` and, unless given, `parse`
+ */
+type TagMarkDefinition<TValue> = { tag: string; parse?: readonly MarkParseRule<TValue>[]; toHtml?: never } & Omit<
+    MarkDefinition<TValue>,
+    'toHtml' | 'parse'
+>;
+
+/**
  * `defineBlock` for marks. A mark that is only a tag may give `tag` in place
  * of `toHtml` and `parse`.
  * @example
  * const bold = defineMark({ tag: 'strong' });
  */
 export const defineMark = <TValue extends object = Record<string, never>>(
-    definition:
-        | (MarkDefinition<TValue> & { tag?: never })
-        | ({ tag: string; parse?: readonly MarkParseRule<TValue>[]; toHtml?: never } & Omit<
-              MarkDefinition<TValue>,
-              'toHtml' | 'parse'
-          >),
+    definition: (MarkDefinition<TValue> & { tag?: never }) | TagMarkDefinition<TValue>,
 ): MarkDefinition => {
     if (!('tag' in definition)) {
         return definition as unknown as MarkDefinition;
@@ -323,11 +326,13 @@ export const defineMark = <TValue extends object = Record<string, never>>(
  */
 export type MarkDefinition<TValue = Record<string, unknown>> = {
     /**
-     * Where the mark sits when marks nest on the same text: lower wraps higher, ties keep plugin order. Defaults to `0`.
+     * Where the mark sits when marks nest on the same text: lower wraps higher, ties keep plugin order.
+     * @default 0
      */
     nesting?: number;
     /**
-     * Text typed at the end of the mark carries it on. Defaults to true; a link says false.
+     * Text typed at the end of the mark carries it on. A link says false.
+     * @default true
      */
     inclusive?: boolean;
     /**
@@ -335,11 +340,13 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
      */
     excludes?: readonly string[];
     /**
-     * Typing rules do not rewrite text carrying this mark — inline code keeps `--` and `**` as typed. Defaults to false.
+     * Typing rules do not rewrite text carrying this mark — inline code keeps `--` and `**` as typed.
+     * @default false
      */
     excludesInputRules?: boolean;
     /**
-     * What the mark carries when put on without a value (a toggle, a parse rule). Defaults to `{}`.
+     * What the mark carries when put on without a value (a toggle, a parse rule).
+     * @default {}
      */
     defaults?: TValue;
     /**
@@ -411,6 +418,10 @@ export type StyleParseRule<TValue> = {
      * Never set: lets TypeScript tell a style rule from a tag rule.
      */
     tag?: undefined;
+    /**
+     * Receives the declared CSS value and returns the mark's value, or null when
+     * the declaration is not this mark.
+     */
     value?: (cssValue: string) => TValue | null;
 };
 
@@ -422,6 +433,9 @@ export type MarkClearRule = {
      * A CSS property name: `font-weight`.
      */
     style: string;
+    /**
+     * Receives the declared CSS value and returns true when it takes the mark off.
+     */
     clears: (cssValue: string) => boolean;
 };
 
@@ -617,14 +631,15 @@ export type RteInputRule =
      */
     | { kind: 'block'; match: string; block: string; attributes?: Record<string, unknown> }
     /**
-     * A prefix wraps the block in a list: `- `, `1. `.
+     * A prefix wraps the block in a list: `- `, `1. `. `itemAttributes` set attributes on the new item: `[x] ` starts it checked.
      */
-    | { kind: 'list'; match: string; list: string }
+    | { kind: 'list'; match: string; list: string; itemAttributes?: Record<string, unknown> }
     /**
-     * A token ended by a space (or punctuation then a space) becomes text
-     * carrying the mark — an autolink. `pattern` matches the token only; the
-     * engine anchors it to the end of the text before the terminator. A
-     * `value` that returns null leaves the token as typed.
+     * A token ended by a space, Enter or Shift-Enter (or punctuation then one
+     * of them) becomes text carrying the mark: an autolink. Backspace right
+     * after takes the mark back. `pattern` matches the token only; the engine
+     * anchors it to the end of the text before the terminator. A `value`
+     * that returns null leaves the token as typed.
      */
     | {
           kind: 'markPattern';
