@@ -197,15 +197,6 @@ const violationsOf = async (page: Page): Promise<Violation[]> => {
     return found;
 };
 
-/** How many nodes break each rule: what a scan with a known violation pins, so fixing it turns the test red. */
-const countsOf = (violations: Violation[]): Record<string, number> => {
-    const counts: Record<string, number> = {};
-    for (const { rule } of violations) {
-        counts[rule] = (counts[rule] ?? 0) + 1;
-    }
-    return counts;
-};
-
 test.describe('editor', () => {
     test('mounts editable', async ({ mount }) => {
         const component = await mount(<RichTextEditor />);
@@ -358,24 +349,28 @@ test.describe('accessibility', () => {
         await expect(page.getByRole('menu')).toBeVisible();
 
         // The "H1" to "H4" icons are symbolic text, which WCAG 2.5.3 lets a name leave out ("B" for Bold); axe cannot tell.
-        expect(countsOf(await violationsOf(page))).toEqual({ 'label-content-name-mismatch': 4 });
+        const symbolicHeadings = [1, 2, 3, 4].map((level) => ({
+            rule: 'label-content-name-mismatch',
+            target: `div[aria-label="Heading ${level}"]`,
+        }));
+        expect(await violationsOf(page)).toEqual(symbolicHeadings);
     });
 
     test("the text style menu has only Fondue Select's known axe violation", async ({ mount, page }) => {
         await mount(<RichTextEditor />);
         await page.getByRole('textbox').click();
         await page.getByRole('combobox', { name: 'Text style' }).click();
-        await expect(page.getByRole('listbox')).toBeVisible();
+        await expect(page.getByRole('option', { name: 'Heading 1' })).toBeVisible();
 
-        // Known (FP-792): Fondue's Select opens its list in a dialog without a name.
-        expect(countsOf(await violationsOf(page))).toEqual({ 'aria-dialog-name': 1 });
+        // Known (FP-792): Fondue's Select opens its list in a dialog without a name; its target is a generated id.
+        expect(await violationsOf(page)).toEqual([{ rule: 'aria-dialog-name', target: expect.any(String) }]);
     });
 
     test('the text colour flyout has no axe violations', async ({ mount, page }) => {
         await mount(<RichTextEditor />);
         await typeAndSelect(page, 'Hello');
         await page.getByRole('button', { name: 'Text colour' }).click();
-        await expect(page.getByRole('dialog')).toBeVisible();
+        await expect(page.getByRole('group', { name: 'Suggested colours' }).getByRole('button').first()).toBeVisible();
 
         expect(await violationsOf(page)).toEqual([]);
     });

@@ -141,6 +141,10 @@ test.describe('keys that belong to an input method', () => {
         await editable.dispatchEvent('keydown', { key: 'Enter', keyCode: 229, isComposing: false });
 
         await expect(editable.locator('p')).toHaveCount(1);
+
+        // The control: a plain Enter dispatched the same way does split, so the two above reached the editor.
+        await editable.dispatchEvent('keydown', { key: 'Enter', keyCode: 13 });
+        await expect(editable.locator('p')).toHaveCount(2);
     });
 
     for (const [name, init] of [
