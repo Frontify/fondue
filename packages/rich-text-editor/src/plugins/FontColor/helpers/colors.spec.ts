@@ -40,6 +40,15 @@ describe('toStoredColor', () => {
             ['hsl(0, 150%, 25%)', '#800000'],
             ['hsl(0, -10%, 50%)', '#808080'],
             ['hsl(480, 100%, 25%)', '#008000'],
+            ['hsl(0.5turn 100% 50%)', '#00ffff'],
+            ['hsl(3.14159rad 100% 50%)', '#00ffff'],
+            ['hsl(200grad 100% 50%)', '#00ffff'],
+            ['hsl(0.5turn, 100%, 50%)', '#00ffff'],
+            ['hsl(none 100% 50%)', '#ff0000'],
+            ['rgb(255 none 0)', '#ff0000'],
+            ['rgb(255 0 0 / none)', '#ff000000'],
+            ['hsl(0 none 50%)', '#808080'],
+            ['rgb(none 2 3)', '#000203'],
         ];
         for (const [css, stored] of cases) {
             expect(toStoredColor(css)).toBe(stored);
@@ -69,7 +78,10 @@ describe('toStoredColor', () => {
             'rgb(1, 2)',
             'rgb(a, b, c)',
             'rgb(1px, 2, 3)',
-            'rgb(none 2 3)',
+            'rgb(255, none, 0)',
+            'hsl(none, 100%, 50%)',
+            'hsl(1px 100% 50%)',
+            'hsl(10% 100% 50%)',
             'rgb(1 2 3 0.5)',
             'rgb(1 2 3, 0.5)',
             'rgb(1, 2, 3 / 0.5)',
@@ -130,8 +142,18 @@ describe('the picker colour', () => {
     });
 
     it('reads back from the stored hex', () => {
-        expect(decodeStoredColor('#ff000080')).toEqual({ red: 255, green: 0, blue: 0, alpha: 0.5 });
+        expect(decodeStoredColor('#ff000080')).toEqual({ red: 255, green: 0, blue: 0, alpha: 128 / 255 });
         expect(decodeStoredColor('#ff0000')).toEqual({ red: 255, green: 0, blue: 0, alpha: 1 });
+    });
+
+    it('stores back as the same bytes for every alpha', () => {
+        for (let byte = 0; byte <= 255; byte++) {
+            let stored = '#ff0000';
+            if (byte !== 255) {
+                stored = `#ff0000${byte.toString(16).padStart(2, '0')}`;
+            }
+            expect(toCssColor(decodeStoredColor(stored))).toBe(stored);
+        }
     });
 });
 
