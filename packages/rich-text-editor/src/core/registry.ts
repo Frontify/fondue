@@ -569,8 +569,9 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
             addHotkey(draft, keys, handler);
         }
     }
-    for (const keys of unbound) {
-        throw new Error(`Plugin "${plugin.id}" owns hotkey "${keys}", which its \`hotkeys\` does not bind.`);
+    const [unboundKeys] = unbound;
+    if (unboundKeys !== undefined) {
+        throw new Error(`Plugin "${plugin.id}" owns hotkey "${unboundKeys}", which its \`hotkeys\` does not bind.`);
     }
     // A shared id is a mistake the editor warns about; the toolbar still keys each control apart.
     let pluginKey = plugin.id;
