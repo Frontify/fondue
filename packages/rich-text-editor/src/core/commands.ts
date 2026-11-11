@@ -45,9 +45,9 @@ export type RteSelectionSnapshot = {
 };
 
 /**
- * What `blocks.toggleAttribute` did: put the value on the blocks, or took it off them
+ * What `blocks.toggleAttribute` did: put the value on the blocks, took it off them, or found no selected text block that declares the attribute
  */
-export type BlockAttributeToggle = 'set' | 'removed';
+export type BlockAttributeToggle = 'set' | 'removed' | 'unchanged';
 
 export type RemoveAllMarksOptions = {
     /**
@@ -103,7 +103,7 @@ export type EditorControlApi = {
          */
         updateAttributes(attributes: Record<string, unknown>): void;
         /**
-         * Set `name` to `value` on every text block the selection touches, or remove it (set it to null) when every one already has that value
+         * Set `name` to `value` on every text block the selection touches, or remove it (set it to null) when every one already has that value. Changes nothing when no selected text block declares `name`
          */
         toggleAttribute(name: string, value: unknown): BlockAttributeToggle;
         /**

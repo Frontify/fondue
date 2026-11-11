@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { chainCommands, setBlockType as pmSetBlockType, toggleMark as pmToggleMark } from 'prosemirror-commands';
-import { redo, redoDepth, undo, undoDepth } from 'prosemirror-history';
+import { closeHistory, redo, redoDepth, undo, undoDepth } from 'prosemirror-history';
 import { undoInputRule } from 'prosemirror-inputrules';
 import {
     type Mark as PmMark,
@@ -381,7 +381,10 @@ const createBlockApi = (
                     }
                 }
             });
-            if (declaring > 0 && holding === declaring) {
+            if (declaring === 0) {
+                return 'unchanged';
+            }
+            if (holding === declaring) {
                 applyToTextBlocks({ [name]: null });
                 return 'removed';
             }
@@ -471,6 +474,8 @@ export const createControlApi = (
             }
             case 'open': {
                 if (transaction.docChanged) {
+                    // Keeps the group's step apart from the edit before it.
+                    closeHistory(transaction);
                     groupState = { kind: 'joined', first: transaction };
                 }
                 break;
@@ -481,6 +486,14 @@ export const createControlApi = (
             }
         }
         getView().dispatch(transaction);
+    };
+
+    const endGroup = (): void => {
+        // Keeps the next input out of the group's step.
+        if (groupState.kind === 'joined') {
+            getView().dispatch(closeHistory(getView().state.tr));
+        }
+        groupState = { kind: 'idle' };
     };
 
     return {
@@ -552,7 +565,7 @@ export const createControlApi = (
             try {
                 run();
             } finally {
-                groupState = { kind: 'idle' };
+                endGroup();
             }
         },
         announce,

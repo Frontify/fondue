@@ -112,6 +112,8 @@ const alignFromKeyboard = (api: EditorControlApi, { value, announcement }: Align
         case 'set':
             api.announce(announcement);
             return;
+        case 'unchanged':
+            return;
     }
 };
 

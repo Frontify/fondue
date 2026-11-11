@@ -609,6 +609,14 @@ describe('block attributes', () => {
         expect(editor.stored()).toEqual([paragraph(text('one')), paragraph(text('two'))]);
     });
 
+    it('toggle changes nothing when no selected block declares the attribute', () => {
+        const editor = editorWith(plugins, [paragraph(text('a')), { type: 'divider' }, paragraph(text('b'))]);
+        editor.view.dispatch(editor.view.state.tr.setSelection(NodeSelection.create(editor.view.state.doc, 3)));
+
+        expect(editor.api.blocks.toggleAttribute('align', 'center')).toBe('unchanged');
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
     it('go back to their defaults on reset, the block type kept', () => {
         const editor = editorWith(plugins, [
             { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },
@@ -997,6 +1005,35 @@ describe('group', () => {
         editor.api.marks.toggle('code');
 
         expect(undoAll(editor)).toBe(3);
+    });
+
+    // Mark steps change no range, so history never sees them as adjacent: these groups insert text.
+    it('keeps the typing right before it as its own step', () => {
+        const editor = editorWith(plugins, [paragraph(text('one'))]);
+        editor.caretAfter('one');
+        editor.type('x');
+
+        editor.api.group(() => {
+            editor.api.insertText('y');
+            editor.api.insertText('z');
+        });
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual([paragraph(text('onex'))]);
+    });
+
+    it('keeps the typing right after it as its own step', () => {
+        const editor = editorWith(plugins, [paragraph(text('one'))]);
+        editor.caretAfter('one');
+
+        editor.api.group(() => {
+            editor.api.insertText('y');
+            editor.api.marks.toggle('bold');
+        });
+        editor.type('x');
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual([paragraph(text('oney'))]);
     });
 
     it('stops grouping when the commands it runs throw', () => {
