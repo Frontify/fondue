@@ -37,6 +37,7 @@ export const codeContent = defineContent({
  */
 export const codePlugin = /* @__PURE__ */ definePlugin({
     content: codeContent,
+    toolbarGroup: 'marks',
     toolbar: [{ label: 'Code', icon: IconCode, shortcut: 'Mod-e' }],
     inputRules: [{ delimiter: '`' }],
 });

@@ -93,5 +93,6 @@ const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
 export const alignPlugin = /* @__PURE__ */ definePlugin({
     id: 'align',
     content: alignContent,
+    toolbarGroup: 'align',
     toolbar: [{ label: 'Alignment', render: AlignToolbar, floating: 'inline' }],
 });

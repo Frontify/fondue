@@ -89,6 +89,7 @@ export const editorWith = (
         attributes: options.attributes ?? {},
         placeholderClassName: 'placeholder',
         onDocChange,
+        onDocApplied: () => {},
         onStateChange: () => {},
         viewPortals: { set: () => {}, delete: () => {} },
     });

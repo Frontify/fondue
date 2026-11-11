@@ -75,17 +75,21 @@ const ALL_PLUGINS: readonly RtePlugin[] = [...defaultPlugins, mentionPlugin({ it
  * (`tw-` prefix, token-backed utilities). The package itself ships plain CSS —
  * Tailwind is Storybook-only here.
  */
-const LAYOUT = 'tw-grid tw-grid-cols-2 tw-content-start tw-gap-4 tw-p-4 tw-font-primary';
+/** One column on a phone; beside the JSON panel the editor takes what is left, and `minmax(0, …)` lets it shrink. */
+const LAYOUT =
+    'tw-grid tw-grid-cols-1 md:tw-grid-cols-[minmax(0,1fr)_minmax(0,24rem)] tw-content-start tw-items-start tw-gap-4 tw-p-4 tw-font-primary';
 const JSON_PANEL =
     'tw-m-0 tw-min-h-[200px] tw-overflow-auto tw-rounded tw-bg-surface-dim tw-p-3 tw-font-monospace tw-text-x-small tw-leading-medium';
 const HINT = 'tw-col-span-full tw-m-0 tw-body-small tw-text-secondary';
 
 /**
- * The field box around an editor. The editor draws none of its own — no
- * border, background or inset — so an app wraps it the same way.
+ * The box around a renderer. The package draws none of its own — no border,
+ * background or inset — so an app wraps it the same way.
  */
-const FRAME =
-    'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-surface tw-px-small tw-py-x-small tw-shadow hover:tw-border-line-strong focus-within:tw-border-line-strong';
+const SURFACE = 'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-surface tw-p-medium';
+
+/** The field box around an editor: the surface, plus a ring while focus is inside it. */
+const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-ring-focus`;
 
 const toolbarButtonClasses = (active: boolean): string =>
     [
@@ -628,7 +632,9 @@ export const Emoji: Story = {
                     Type <code>:smi</code> for suggestions, or <code>:tada:</code> to insert 🎉 outright. A colon inside
                     a word (<code>10:30</code>) or followed by a space stays a colon.
                 </p>
-                <RichTextEditor value={doc} onChange={setDoc} plugins={[emojiPlugin()]} />
+                <div className={FRAME}>
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[emojiPlugin()]} />
+                </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
         );
@@ -933,7 +939,7 @@ const highlightPlugin = (): RtePlugin =>
             {
                 label: 'Highlight',
                 render: ({ api, selection }) => {
-                    const active = 'highlight' in selection.marks;
+                    const active = selection.marks.highlight?.coverage === 'all';
                     return (
                         <button
                             type="button"
