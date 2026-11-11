@@ -21,6 +21,8 @@ export type HtmlAttributes = {
     id?: string;
     /** As HTML spells it; the readonly view passes it to React as `tabIndex`. */
     tabindex?: string;
+    /** An ordered list's first number. */
+    start?: string;
     /** Boolean attributes: present when true, absent otherwise. */
     checked?: boolean;
     disabled?: boolean;

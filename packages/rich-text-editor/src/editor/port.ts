@@ -9,7 +9,7 @@
 
 import { type ReactNode } from 'react';
 
-import { type EditorControlApi, type PluginRegistry, type RteDocumentOf } from '#/core';
+import { type EditorControlApi, type PluginRegistry, REDO_HOTKEY, type RteDocumentOf, UNDO_HOTKEY } from '#/core';
 
 /**
  * A key the editor binds itself, written as in a plugin's `hotkeys`
@@ -24,9 +24,9 @@ export type EditorShortcut = {
  * `focusToolbar` is only listed here: the shell's Alt+F10 check stays in its own code.
  */
 export const EDITOR_SHORTCUTS = {
-    undo: { key: 'Mod-z', label: 'Undo' },
+    undo: { key: UNDO_HOTKEY, label: 'Undo' },
     redo: { key: 'Mod-y', label: 'Redo' },
-    redoWithShift: { key: 'Mod-Shift-z', label: 'Redo' },
+    redoWithShift: { key: REDO_HOTKEY, label: 'Redo' },
     focusToolbar: { key: 'Alt-F10', label: 'Move focus to the toolbar' },
 } satisfies Record<string, EditorShortcut>;
 
@@ -58,6 +58,10 @@ export type MountOptions = {
      * The document changed through editing
      */
     onDocChange: (doc: RteDocumentOf) => void;
+    /**
+     * The editor now shows this document from the host: the initial one, or one `setDoc` took rather than ignored as its own
+     */
+    onDocApplied: (doc: RteDocumentOf) => void;
     /**
      * The editor state moved: any transaction, including a caret move
      */
@@ -101,6 +105,8 @@ export type EditorHandle = {
      * The document as it stands now, as the host would be handed it
      */
     document(): RteDocumentOf;
+    /** Focus the text with the caret after its last character, as when the editor comes back after a crash. */
+    focusAtEnd(): void;
 };
 
 /**

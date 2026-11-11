@@ -130,6 +130,7 @@
         },
         {
             "type": "numberedList",
+            "start": 3,
             "children": [
                 {
                     "type": "listItem",

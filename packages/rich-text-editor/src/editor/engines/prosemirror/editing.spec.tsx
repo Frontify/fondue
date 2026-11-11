@@ -73,6 +73,7 @@ const mount = (
         attributes,
         placeholderClassName: 'placeholder',
         onDocChange,
+        onDocApplied: () => {},
         onStateChange: () => {},
         viewPortals: { set: () => {}, delete: () => {} },
         announce: () => {},

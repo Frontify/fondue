@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { baseKeymap, chainCommands, setBlockType } from 'prosemirror-commands';
-import { history, redo, undo } from 'prosemirror-history';
+import { baseKeymap, setBlockType } from 'prosemirror-commands';
+import { history, redo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
@@ -12,7 +12,7 @@ import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type Rt
 import { EDITOR_SHORTCUTS } from '#/editor/port';
 
 import { autolinkOnEnter, markPatternRule } from './autolink';
-import { keepCarriedAttrs } from './controlApi';
+import { keepCarriedAttrs, undoStep } from './controlApi';
 import { EXTRA_ATTR } from './documentConversion';
 import { listKeys } from './lists';
 import {
@@ -54,7 +54,7 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         // 1
         history(),
         keymap({
-            [EDITOR_SHORTCUTS.undo.key]: chainCommands(undoInputRule, undo),
+            [EDITOR_SHORTCUTS.undo.key]: undoStep,
             [EDITOR_SHORTCUTS.redo.key]: redo,
             [EDITOR_SHORTCUTS.redoWithShift.key]: redo,
             Backspace: undoInputRule,
