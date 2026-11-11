@@ -222,6 +222,46 @@ describe('a mention being searched for', () => {
         }
     });
 
+    it('starts the Searching delay again when a slow lookup that failed is retried', async () => {
+        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+        const frame = async (): Promise<void> => {
+            await act(async () => {
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+            });
+        };
+        try {
+            const { press } = await mountDraft(
+                () =>
+                    new Promise<MentionItem[]>((_resolve, reject) =>
+                        setTimeout(() => reject(new Error('offline')), 400),
+                    ),
+            );
+            act(() => {
+                vi.advanceTimersByTime(300);
+            });
+            await frame();
+            expect(popup()).toContain('Searching');
+            act(() => {
+                vi.advanceTimersByTime(100);
+            });
+            await settle();
+            await frame();
+            expect(popup()).toContain('Could not load people.');
+
+            press('Enter');
+            await frame();
+            expect(window.document.body.textContent).not.toContain('Searching');
+
+            act(() => {
+                vi.advanceTimersByTime(300);
+            });
+            await frame();
+            expect(popup()).toContain('Searching');
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
     it('says No matches only for an empty answer that arrived', async () => {
         const { status, type } = await mountDraft((query) => (query === '' ? PEOPLE : []));
         await type('zz');

@@ -19,7 +19,7 @@ export type MentionContentOptions = {
      * What the app knows now about a stored mention: a renamed person shows
      * their current username and name, a deleted or forbidden one shows the
      * stored username marked unavailable, with no link. Without it, for
-     * `unknown`, or when it throws, the stored value shows. The document is
+     * `unknown`, when it throws, or when it answers with no known status, the stored value shows. The document is
      * never changed. Read when a mention is drawn: a changed `resolve` applies
      * once the editor is remounted.
      */

@@ -3,8 +3,8 @@
 /**
  * C0 and C1 control characters, and the bidirectional marks, embeddings,
  * overrides and isolates that reorder the text around them, as code point
- * ranges: written as escapes, the formatter turns them into the invisible
- * characters themselves.
+ * ranges: written as numbers, because the formatter turns escapes into the
+ * invisible characters themselves.
  */
 const CONTROL_RANGES: readonly (readonly [from: number, to: number])[] = [
     [0x0000, 0x001f],
@@ -21,7 +21,7 @@ const isControlCharacter = (character: string): boolean => {
 };
 
 /**
- * Text from a stored document or an app lookup as shown: without control characters; the letters of every script stay.
+ * Text from a stored document or an app lookup as shown: without control and bidirectional-formatting characters; the letters of every script stay.
  */
 export const withoutControlCharacters = (text: string): string =>
     Array.from(text)

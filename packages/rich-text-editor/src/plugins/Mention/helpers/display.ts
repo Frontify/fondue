@@ -17,7 +17,7 @@ import { safeMentionHref } from './mention';
  */
 export type MentionDisplay = {
     /**
-     * The trigger, the username, and a note when the person is unavailable.
+     * The trigger and the username, or a name for the kind when there is no username, plus a note when the person is unavailable.
      */
     label: string;
     /**
@@ -73,8 +73,9 @@ export const mentionAttributes = (mention: MentionValue) => ({
 const storedText = (field: unknown): string => withoutControlCharacters(storedString(field));
 
 /**
- * The names to show for a person the app still knows: the current ones, unless
- * the username is not text or is empty once cleaned, which keeps the stored ones.
+ * The names to show for a person the app still knows: the current ones. A
+ * username that is not text or is empty once cleaned keeps both stored names;
+ * a name that is not text keeps the stored name.
  */
 const currentNames = (stored: MentionNames, current: MentionNames): MentionNames => {
     if (typeof current.username !== 'string') {

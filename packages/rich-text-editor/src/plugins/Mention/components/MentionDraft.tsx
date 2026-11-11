@@ -13,12 +13,11 @@ import styles from '../mention.module.scss';
 import { type MentionItem, type MentionItems } from '../types';
 
 /**
- * What a failed lookup says, to a screen reader and in the list: the message, then how to retry from the keyboard.
+ * What a failed lookup says to a screen reader: the message, then how to retry from the keyboard.
  */
 const FAILED_MESSAGE = 'Could not load people.';
 const FAILED_HINT = 'Press Enter to retry';
 
-/** The key drawn beside Retry. */
 const RETRY_KEY = 'Enter';
 
 /** What the list shows, not announced, while a lookup runs past the searching delay. */
@@ -27,16 +26,12 @@ const SEARCHING_MESSAGE = 'Searching';
 /** How long a lookup runs before the list says it is searching, so a quick answer never flashes the row. */
 const SEARCHING_DELAY_MS = 300;
 
-/** What the list says, in the list and to a screen reader, when nobody matches. */
 const NO_MATCHES_MESSAGE = 'No matches';
 
-/** The label of the button that asks the lookup again. */
 const RETRY_LABEL = 'Retry';
 
-/** The accessible name of the list of people. */
 const LIST_LABEL = 'People';
 
-/** The size of a kind's icon in the avatar circle. */
 const AVATAR_ICON_SIZE = 12;
 
 /** The gap between the query and the list under it. */
@@ -73,7 +68,7 @@ const Avatar = ({ person }: AvatarProps): ReactNode => (
 );
 
 /**
- * Where a lookup stands. `waiting` is a first lookup still inside the searching delay: nothing is shown or announced yet.
+ * Where a lookup stands. `waiting` is a lookup inside the searching delay, or a newer one after an empty or failed answer: nothing is shown or announced yet.
  */
 type PeoplePhase = 'waiting' | 'searching' | 'failed' | 'empty' | 'list';
 
@@ -173,7 +168,8 @@ const statusOf = (phase: PeoplePhase, people: readonly MentionItem[]): string =>
 
 /**
  * Whether the pending lookup for a query has run past the searching delay. The
- * timer records the query it ran for, so a new query starts the delay again.
+ * timer records the query it ran for and is forgotten when the lookup settles,
+ * so each new query or retry starts the delay again.
  */
 const useSlowLookup = (pending: boolean, query: string): boolean => {
     const [slowQuery, setSlowQuery] = useState<string | null>(null);
@@ -182,7 +178,10 @@ const useSlowLookup = (pending: boolean, query: string): boolean => {
             return undefined;
         }
         const timer = setTimeout(() => setSlowQuery(query), SEARCHING_DELAY_MS);
-        return () => clearTimeout(timer);
+        return () => {
+            clearTimeout(timer);
+            setSlowQuery(null);
+        };
     }, [pending, query]);
     return pending && slowQuery === query;
 };

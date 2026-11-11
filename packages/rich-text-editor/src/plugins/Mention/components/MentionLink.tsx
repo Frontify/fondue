@@ -32,10 +32,10 @@ type MentionLinkProps = {
 };
 
 /**
- * A finished mention: the username linking to the person, full name on hover.
- * Carries the same attributes as `toHtml`, so copied text pastes back as a
- * mention. A group is marked with its icon, as the old editor did; with nowhere
- * to link to (`@all`), the mention is text.
+ * A finished mention: the shown username linking to the person, with the name
+ * on hover. Carries the same attributes as `toHtml`, so copied text pastes back
+ * as a mention. A group is marked with its icon, as the old editor did; with
+ * nowhere to link to (`@all`, or an unavailable person), the mention is text.
  */
 export const MentionLink = ({ value, display, focusableWhenUnlinked = false }: MentionLinkProps): ReactNode => {
     const attributes = {

@@ -69,7 +69,7 @@ const MENTIONABLE: readonly MentionItem[] = [
 const profileHref = (mention: MentionValue): string | undefined =>
     mention.kind === 'all' ? undefined : `#/people/${mention.id}`;
 
-/** What the app knows now: Jane has been renamed, Bob has left. Anyone else is not looked up. */
+/** What the app knows now: Jane has been renamed, Bob has left. Anyone else is unknown, so the stored value shows. */
 const resolveMention = (mention: MentionValue): MentionResolution => {
     if (mention.id === 'jane') {
         return { status: 'current', username: 'jane.s', name: 'Jane Smith' };
