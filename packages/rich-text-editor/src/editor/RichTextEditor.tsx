@@ -316,7 +316,12 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                 )}
             </div>
             {toolbarFloats && toolbar !== null && handle !== null && focusWithin && !isDragging ? (
-                <FloatingToolbar handle={handle} editorState={editorState} editableRef={containerRef}>
+                <FloatingToolbar
+                    handle={handle}
+                    editorState={editorState}
+                    editableRef={containerRef}
+                    label={labels.toolbar}
+                >
                     {toolbar}
                 </FloatingToolbar>
             ) : null}
