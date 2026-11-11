@@ -342,7 +342,7 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
      */
     excludes?: readonly string[];
     /**
-     * Typing rules do not rewrite text carrying this mark — inline code keeps `--` and `**` as typed.
+     * Typing rules and single-character hotkeys do not act on text carrying this mark — inline code keeps `--`, `**` and `@` as typed.
      * @default false
      */
     excludesInputRules?: boolean;
