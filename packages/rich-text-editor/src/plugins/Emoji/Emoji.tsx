@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineContent, defineInline, definePlugin, type RtePlugin, type ToolbarItemProps } from '#/core';
+import { defineContent, defineInline, definePlugin, type RtePlugin } from '#/core';
 
 import { EmojiDraft, TRIGGER } from './components/EmojiDraft';
 import { EmojiToolbarButton } from './components/EmojiToolbarButton';
@@ -21,9 +21,6 @@ export type EmojiPluginOptions = {
  */
 export const emojiPlugin = (options: EmojiPluginOptions = {}): RtePlugin => {
     const { emojis = defaultEmojis } = options;
-    const EmojiToolbar = ({ api, label }: ToolbarItemProps) => (
-        <EmojiToolbarButton api={api} emojis={emojis} label={label} />
-    );
     return definePlugin({
         id: 'emoji',
         content: defineContent({
@@ -36,7 +33,7 @@ export const emojiPlugin = (options: EmojiPluginOptions = {}): RtePlugin => {
                 }),
             },
         }),
-        toolbar: [{ label: 'Emoji', render: EmojiToolbar }],
+        toolbar: [{ label: 'Emoji', render: (props) => <EmojiToolbarButton {...props} emojis={emojis} /> }],
         edit: {
             emojiDraft: ({ isFocused, remove, api }) => (
                 <EmojiDraft
