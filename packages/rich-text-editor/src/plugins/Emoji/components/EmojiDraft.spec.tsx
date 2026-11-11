@@ -91,8 +91,8 @@ describe('a shortcode being typed', () => {
         expect(listbox?.getAttribute('role')).toBe('listbox');
         const options = [...(listbox?.querySelectorAll('[role="option"]') ?? [])];
         expect(options.map((option) => option.getAttribute('aria-label'))).toEqual([
-            'Grinning face with smiling eyes',
-            'Smirking face',
+            'Grinning face with smiling eyes :smile:',
+            'Smirking face :smirk:',
         ]);
         expect(input.getAttribute('aria-activedescendant')).toBe(options[0]?.id);
         expect(status()).toBe('2 emoji');

@@ -13,16 +13,14 @@ import { type EmojiItem } from '../types';
 
 import { EmojiPicker } from './EmojiPicker';
 
-/** The toolbar entry point: the picker in a flyout, inserting the emoji at the caret as text. */
-export const EmojiToolbarButton = ({
-    api,
-    emojis,
-    label,
-}: {
+type EmojiToolbarButtonProps = {
     api: EditorControlApi;
     emojis: readonly EmojiItem[];
     label: string;
-}): ReactNode => {
+};
+
+/** The toolbar entry point: the picker in a flyout, inserting the emoji at the caret as text. */
+export const EmojiToolbarButton = ({ api, emojis, label }: EmojiToolbarButtonProps): ReactNode => {
     const [open, setOpen] = useState(false);
     const titleId = useId();
     const searchRef = useRef<HTMLInputElement>(null);

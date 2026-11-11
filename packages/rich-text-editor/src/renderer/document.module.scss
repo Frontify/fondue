@@ -1,5 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+// The blocks the document spaces apart, and the headings among them.
+$blocks: p, h1, h2, h3, h4, ul, ol, blockquote;
+$headings: h1, h2, h3, h4;
+
 /**
  * How a document reads, wherever it is drawn: the editable element in the
  * editor and the root of `RichTextRenderer` both carry this class, so the two
@@ -30,13 +34,32 @@
     // flex parent that the document sits in.
     overflow-wrap: anywhere;
 
-    // A paragraph adds no space of its own, like every other block: spacing
-    // between blocks belongs to the document, not to the page's default
-    // stylesheet (which would otherwise give paragraphs `1em` margins in some
-    // hosts and none in others). Not a text style: it sets its own margins, and
-    // this rule would outrank its class.
+    // The document owns block spacing: host stylesheets give `1em` margins in some hosts and none in others.
+    // The trims below reset the variable, not the margin, so a block class that reads the gap keeps them.
+    // Each block sets the gap again rather than inheriting it, so a trimmed quote does not trim its own paragraphs.
+    :is(#{$blocks}) {
+        --rte-block-gap: var(--spacing-x-small);
+
+        &:last-child {
+            --rte-block-gap: 0;
+        }
+    }
+
+    // A heading sets its own gap above (see the text styles); the first one has no block above to sit apart from.
+    :is(#{$headings}):first-child {
+        --rte-heading-gap: 0;
+    }
+
+    // A list's items sit tight: the blocks inside an item, a nested list among them, add no gap.
+    li :is(#{$blocks}) {
+        --rte-block-gap: 0;
+        --rte-heading-gap: 0;
+    }
+
+    // Margins only for blocks no text style owns: a text style reads the gaps itself, so a host margin is never trimmed.
+    :is(ul, ol, blockquote),
     p:not([data-text-style]) {
-        margin: 0;
+        margin-block: 0 var(--rte-block-gap);
     }
 
     // Raised and lowered text without growing the line it sits on. Browsers'

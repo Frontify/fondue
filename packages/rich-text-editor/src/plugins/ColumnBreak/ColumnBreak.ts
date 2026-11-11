@@ -61,6 +61,7 @@ export const columnBreakPlugin = (options: ColumnBreakPluginOptions = {}) =>
     definePlugin({
         id: 'column-break',
         content: columnBreakContent(options),
+        toolbarGroup: 'insert',
         toolbar: [
             { label: 'Column break', icon: IconTextColumnBreak, menu: { keywords: ['columns', 'break', 'split'] } },
         ],

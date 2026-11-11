@@ -40,6 +40,7 @@ export const boldContent = defineContent({
  */
 export const boldPlugin = /* @__PURE__ */ definePlugin({
     content: boldContent,
+    toolbarGroup: 'marks',
     toolbar: [{ label: 'Bold', icon: IconTextFormatBold, shortcut: 'Mod-b' }],
     inputRules: [{ delimiter: '**' }],
 });

@@ -10,12 +10,12 @@ import {
     PARAGRAPH,
     type RteBlockCommand,
     type RteContent,
+    type RteIcon,
     type RtePlugin,
     type TextLook,
-    type ToolbarItemProps,
 } from '#/core';
 
-import { headingLevelIcon } from './components/HeadingLevelIcon';
+import { HEADING_LEVEL_ICONS } from './components/HeadingLevelIcon';
 import { TextStyleSelect } from './components/TextStyleSelect';
 import {
     ALL_TEXT_STYLES,
@@ -137,21 +137,20 @@ export const textStylePlugin = ({
     // The paragraph is the editor's own "Text" command, so only the presets are listed.
     const commands: RteBlockCommand[] = offered.map((preset) => {
         const level = HEADING_LEVEL[preset.tag];
+        let icon: RteIcon | undefined;
+        if (level !== undefined) {
+            icon = HEADING_LEVEL_ICONS[level];
+        }
         return {
             id: preset.tag === 'p' ? preset.name : `heading-${level}`,
             label: preset.label,
-            icon: level === undefined ? undefined : headingLevelIcon(level),
+            icon,
             keywords: level === undefined ? [] : (HEADING_KEYWORDS[level] ?? []),
             group: 'turnInto',
             isActive: (selection) => isTextStyle(selection.block) && selection.block.style === preset.name,
             run: (api) => api.blocks.setType('textStyle', { style: preset.name }),
         };
     });
-
-    // Made here, not at module level: the dropdown needs this editor's `styles`.
-    const TextStyleToolbar = ({ api, selection, label }: ToolbarItemProps) => (
-        <TextStyleSelect selection={selection} api={api} options={options} label={label} />
-    );
 
     // Reuse the shared object so the default plugin and defaultContent declare the very same block definition.
     let content = textStyleContent;
@@ -162,7 +161,8 @@ export const textStylePlugin = ({
     return definePlugin({
         id: 'text-style',
         content,
-        toolbar: [{ label: 'Text style', render: TextStyleToolbar }],
+        toolbarGroup: 'text',
+        toolbar: [{ label: 'Text style', render: (props) => <TextStyleSelect {...props} options={options} /> }],
         hotkeys,
         // `# ` through `#### `, for the headings this editor offers.
         inputRules: offered.flatMap(markdownRuleFor),
