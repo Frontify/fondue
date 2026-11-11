@@ -201,8 +201,10 @@ export const Toolbar = ({
 
 const UNGROUPED_GROUP_KEY = 'ungrouped';
 
+type EntryGroup = { key: string; items: ToolbarEntry[] };
+
 /** The items by group in drawing order, those with no group or an unknown one last; empty groups are left out. */
-const groupsOf = (items: readonly ToolbarEntry[]): { key: string; items: ToolbarEntry[] }[] => {
+const groupsOf = (items: readonly ToolbarEntry[]): EntryGroup[] => {
     const known: readonly (RteToolbarGroup | undefined)[] = RTE_TOOLBAR_GROUPS;
     const groups = [
         ...RTE_TOOLBAR_GROUPS.map((group) => ({
