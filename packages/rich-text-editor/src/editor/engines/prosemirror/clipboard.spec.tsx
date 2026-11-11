@@ -19,10 +19,10 @@ import { destroyEditors, editorWith, paragraph, text } from './testEditor';
 
 afterEach(destroyEditors);
 
-/** The HTML a copy of the whole document puts on the clipboard. */
 /** What the editor puts on its own copies. */
 const COPY_MARKER = 'data-rte-copy';
 
+/** The HTML a copy of the whole document puts on the clipboard. */
 const copied = (editor: ReturnType<typeof editorWith>): string => {
     const { schema, doc } = editor.view.state;
     const container = window.document.createElement('div');

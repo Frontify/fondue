@@ -162,6 +162,29 @@ describe('the destination field', () => {
         scrolled.mockRestore();
     });
 
+    it('leaves the list where it is on hover after arrows that could not move the highlight', async () => {
+        const scrolled = vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(() => {});
+        const search = vi.fn<LinkSearch>((query) => {
+            if (query === 'b') {
+                return Promise.resolve([BRAND]);
+            }
+            return Promise.resolve([BRAND, LOGOS]);
+        });
+        const { type, press, options } = mountSearchForm(search);
+        await type('b');
+        press('ArrowDown');
+        press('ArrowDown');
+        scrolled.mockClear();
+        await type('br');
+
+        act(() => {
+            options()[1]?.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
+        });
+
+        expect(scrolled).not.toHaveBeenCalled();
+        scrolled.mockRestore();
+    });
+
     it('does not search again for the address a pick fills in', async () => {
         const search = vi.fn<LinkSearch>(fixed(BRAND, LOGOS));
         const { type, press } = mountSearchForm(search);

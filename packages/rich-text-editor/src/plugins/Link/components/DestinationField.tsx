@@ -101,10 +101,12 @@ export const DestinationField = forwardRef<HTMLInputElement, DestinationFieldPro
 
     // The list scrolls, so the arrows could move the highlight onto a row out of sight.
     useEffect(() => {
-        if (!revealHighlight.current || activeIndex < 0) {
+        // Cleared on every change, so arrows that left the highlight where it was cannot make a later hover scroll.
+        const reveal = revealHighlight.current;
+        revealHighlight.current = false;
+        if (!reveal || activeIndex < 0) {
             return;
         }
-        revealHighlight.current = false;
         listRef.current?.children[activeIndex]?.scrollIntoView({ block: 'nearest' });
     }, [activeIndex]);
 
