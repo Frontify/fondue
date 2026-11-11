@@ -185,9 +185,10 @@ export const DestinationField = ({
                                 event.preventDefault();
                                 pick(destination);
                             }}
-                            className={
-                                index === activeIndex ? `${styles.option} ${styles.optionActive}` : styles.option
-                            }
+                            // The pointer moves the same highlight the arrow keys do, as Fondue's Select.
+                            onMouseMove={() => highlight(index)}
+                            data-highlighted={index === activeIndex}
+                            className={styles.option}
                         >
                             <span>{destination.label}</span>
                             <span className={styles.optionHref}>{destination.href}</span>

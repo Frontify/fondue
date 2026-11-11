@@ -37,7 +37,7 @@
     font-size: var(--typography-font-size-small);
 }
 
-/** The destinations found, listed in the flow under the field so the flyout needs no placement of its own. */
+// The destinations found, listed in the flow under the field so the flyout needs no placement of its own.
 .results {
     max-height: 160px;
     margin: 0;
@@ -45,6 +45,7 @@
     overflow-y: auto;
     list-style: none;
     font-size: var(--typography-font-size-small);
+    line-height: var(--typography-line-height-medium);
 }
 
 .option {
@@ -54,12 +55,16 @@
     border-radius: var(--border-radius-medium);
     color: var(--color-primary-default);
     cursor: pointer;
-}
 
-/** The active row, as the mention list highlights one. */
-.optionActive,
-.option:hover {
-    background: var(--color-surface-hover);
+    // The highlighted row, as the mention list highlights one.
+    &[data-highlighted='true'] {
+        background-color: var(--color-surface-hover);
+    }
+
+    &[data-highlighted='true']:active {
+        background-color: var(--color-surface-active);
+        transition: none;
+    }
 }
 
 .optionHref {

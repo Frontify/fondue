@@ -174,6 +174,18 @@ describe('the destination field', () => {
         expect(field.getAttribute('aria-expanded')).toBe('false');
     });
 
+    it('moves the highlight to the option under the pointer', async () => {
+        const { field, type, options } = mountSearchForm(fixed(BRAND, LOGOS));
+        await type('br');
+
+        act(() => {
+            options()[1]?.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
+        });
+
+        expect(field.getAttribute('aria-activedescendant')).toBe(options()[1]?.id);
+        expect(options()[1]?.getAttribute('data-highlighted')).toBe('true');
+    });
+
     it('saves a typed address on Enter when no option is active', async () => {
         const { type, press, onSave } = mountSearchForm(fixed(BRAND));
         await type('https://frontify.com/typed');
