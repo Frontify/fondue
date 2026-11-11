@@ -195,13 +195,14 @@ const markToggleFor = (state: EditorState, type: string): MarkToggle => {
     return 'rangeOn';
 };
 
-/** Returning the transaction from every case makes the compiler check the switch covers them all. */
+/** Builds the transaction that toggles a mark on the current selection. */
 const markToggleTransaction = (
     state: EditorState,
     markType: PmMarkType,
     value: Record<string, unknown> | undefined,
 ): Transaction => {
     const { selection, tr } = state;
+    // Every case returns, so the compiler rejects one left unhandled.
     switch (markToggleFor(state, markType.name)) {
         case 'caretOff': {
             return tr.removeStoredMark(markType);
