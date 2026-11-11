@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@use '../shared/look';
+@use '../shared/look.module.scss';
 @use './underline' as link;
 
 /** A stylesheet rule, not inline, so an explicit font colour (written inline) still wins. */

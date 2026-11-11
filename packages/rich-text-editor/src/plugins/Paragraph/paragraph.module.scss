@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@use '../shared/look';
+@use '../shared/look.module.scss';
 
 // `.body` is on the document while the paragraph plugin is on. `rte-paragraph` is PARAGRAPH_CLASS_NAME
 // (core/vocabulary.ts), a plain class because core holds no stylesheet; a text style's `<p>` lacks it.
