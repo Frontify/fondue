@@ -1694,6 +1694,7 @@ describe('an editor that crashes', () => {
         silenceReact();
         calloutState.broken = true;
         const onError = errorSpy();
+        // A version this editor does not write, which `RteDocument` does not allow.
         const newer = { ...callout('newer'), version: 2 } as unknown as RteDocument;
         mount(() => <RichTextEditor value={newer} plugins={[calloutPlugin()]} onError={onError} />);
 
