@@ -1,0 +1,25 @@
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_ba2ed58698a9c2::t_967cc1ff42a48f 355-356
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_ba2ed58698a9c2::t_bbc61f161ff4d8 417-418
+  s_ba2ed58698a9c2::t_ce86c269754cc2 284-285
+  s_ba2ed58698a9c2::t_17d7d9cbfa5501 449
+  s_ba2ed58698a9c2::t_a34375a3d31d2f 292
+  s_ba2ed58698a9c2::t_47f7507dc23600 307-308,310-313,315-316
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2b2100bb424c6a67997ed14b3e3913901dbb78de",
+  "prompts": {},
+  "sessions": {
+    "s_ba2ed58698a9c2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5aa133c1-3979-4ca3-87b9-433245f79961",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
