@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { setBlockType as pmSetBlockType } from 'prosemirror-commands';
+import { chainCommands, setBlockType as pmSetBlockType } from 'prosemirror-commands';
+import { redo, redoDepth, undo, undoDepth } from 'prosemirror-history';
+import { undoInputRule } from 'prosemirror-inputrules';
 import {
     type Mark as PmMark,
     type MarkType as PmMarkType,
@@ -8,10 +10,10 @@ import {
     type NodeType as PmNodeType,
     type Schema,
 } from 'prosemirror-model';
-import { type EditorState, NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
+import { type Command, type EditorState, NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
-import { type EditorControlApi, type PluginRegistry, type RteSelectionSnapshot } from '#/core';
+import { type EditorControlApi, type PluginRegistry, type RteMarkState, type RteSelectionSnapshot } from '#/core';
 
 import { EXTRA_ATTR, markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
 import { createListApi, liftOutOfLists } from './lists';
@@ -50,24 +52,46 @@ const textRunsBetween = (doc: PmNode, from: number, to: number): TextRun[] => {
     return runs;
 };
 
+const BLANK_TEXT = /^\s*$/;
+
 /**
  * The marks a caret would type with, or the marks EVERY text in a range
  * carries — a half-bold range is not bold. Each with the first value found, so
  * a mark spanning differently-valued runs reads as the one the range starts in.
+ * A range also reports the marks only some of its text carries.
  */
-const marksAt = (state: EditorState): Record<string, Record<string, unknown>> => {
+const marksAt = (state: EditorState): RteSelectionSnapshot['marks'] => {
     const { from, to, empty, $from } = state.selection;
     if (empty) {
         // Stored marks (a toggle not yet typed into), else what is behind the caret.
         return Object.fromEntries(
-            (state.storedMarks ?? $from.marks()).map((mark) => [mark.type.name, markValueOf(mark)]),
+            (state.storedMarks ?? $from.marks()).map((mark): [string, RteMarkState] => [
+                mark.type.name,
+                { coverage: 'all', value: markValueOf(mark) },
+            ]),
         );
     }
 
-    const runs = textRunsBetween(state.doc, from, to).map((run) => run.marks);
+    const textRuns = textRunsBetween(state.doc, from, to);
+    // Whitespace-only runs do not decide a mark; an all-blank range keeps them.
+    let counted = textRuns.filter((run) => !BLANK_TEXT.test(state.doc.textBetween(run.from, run.to)));
+    if (counted.length === 0) {
+        counted = textRuns;
+    }
+    const runs = counted.map((run) => run.marks);
     const [first = [], ...rest] = runs;
     const carried = first.filter((mark) => rest.every((marks) => mark.type.isInSet(marks) !== undefined));
-    return Object.fromEntries(carried.map((mark) => [mark.type.name, markValueOf(mark)]));
+    const marks: RteSelectionSnapshot['marks'] = Object.fromEntries(
+        carried.map((mark): [string, RteMarkState] => [mark.type.name, { coverage: 'all', value: markValueOf(mark) }]),
+    );
+    for (const run of runs) {
+        for (const mark of run) {
+            if (!(mark.type.name in marks)) {
+                marks[mark.type.name] = { coverage: 'some' };
+            }
+        }
+    }
+    return marks;
 };
 
 /** The chain of blocks around the selection, and which of them is *the* one. */
@@ -108,6 +132,7 @@ const snapshotOf = (state: EditorState): RteSelectionSnapshot => {
         text: empty ? '' : state.doc.textBetween(from, to, ' '),
         ...blocksAt(state),
         marks: marksAt(state),
+        history: { canUndo: undoDepth(state) > 0, canRedo: redoDepth(state) > 0 },
     };
 };
 
@@ -182,7 +207,8 @@ type MarkToggle = 'caretOff' | 'caretOn' | 'rangeOff' | 'rangeOn';
 
 /** Off exactly when the snapshot reports the mark on, so the toolbar and the toggle agree. */
 const markToggleFor = (state: EditorState, type: string): MarkToggle => {
-    const isOn = type in marksAt(state);
+    // A mark only part of the selection carries is off: toggling puts it on all of it.
+    const isOn = marksAt(state)[type]?.coverage === 'all';
     if (state.selection.empty) {
         if (isOn) {
             return 'caretOff';
@@ -389,6 +415,25 @@ const createBlockApi = (
     };
 };
 
+// --- History ---
+
+/** Takes a typing rewrite back first, as Backspace right after one does; Mod-z runs it too. */
+export const undoStep: Command = chainCommands(undoInputRule, undo);
+
+const createHistoryApi = (getView: () => EditorView): EditorControlApi['history'] => ({
+    undo() {
+        const view = getView();
+        undoStep(view.state, view.dispatch);
+        // The button may disable itself; focus goes back to the text, as after any toolbar command.
+        view.focus();
+    },
+    redo() {
+        const view = getView();
+        redo(view.state, view.dispatch);
+        view.focus();
+    },
+});
+
 // --- The whole api ---
 
 /** Which type's editing UI is open, and how to redraw the views that show it. */
@@ -405,6 +450,7 @@ export const createControlApi = (
     marks: createMarkApi(getView, schema),
     blocks: createBlockApi(getView, schema, registry),
     lists: createListApi(getView, schema, registry),
+    history: createHistoryApi(getView),
 
     insert(type, value) {
         const nodeType = schema.nodes[type];

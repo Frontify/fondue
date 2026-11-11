@@ -25,6 +25,8 @@ const RULE_LIST_STYLE = declaration(RULE_LIST_PROPERTY, LIST_DATA);
 const MARKER_STYLE = declaration(OWN_LIST_PROPERTY, 'ignore');
 /** Dot-separated numbers (`1.`, `1.1.`, `1.1`) or letters with a delimiter (`iv)`, `a.`) are numbered markers; a glyph (`·`, `o`, `§`) is a bullet. */
 const NUMBERED_MARKER = /^\(?(?:\d+(?:\.\d+)*[.)]?|[a-z]+[.)])$/i;
+/** The numbers in a marker; the last is the item's own, the 3 of `3.`, `1.3.` or `(3)`. */
+const MARKER_NUMBERS = /\d+/g;
 /** Word has nine list levels, which also keeps hostile input from nesting without end. */
 const MAX_LEVEL = 9;
 
@@ -84,7 +86,10 @@ type ListKind = 'bullet' | 'numbered';
 /** Where an item belongs: Word's list (template and instance), its level, and its kind of list. */
 type ListPlace = { list: string; level: number; kind: ListKind };
 
-type ListParagraph = ListPlace & { paragraph: HTMLElement };
+/** An item's marker: a bullet, or a number with the item's number as Word wrote it, when the marker has one. */
+type ListMarker = { kind: 'bullet' } | { kind: 'numbered'; number: string | undefined };
+
+type ListParagraph = Omit<ListPlace, 'kind'> & ListMarker & { paragraph: HTMLElement };
 
 type OpenList = ListPlace & { element: HTMLElement };
 
@@ -168,16 +173,17 @@ const readListParagraph = (element: Node): ListParagraph | undefined => {
     if (declared === null || Number(declared[2]) < 1) {
         return undefined;
     }
-    const marker = (markerSpans(element)[0]?.textContent ?? '').trim();
-    let kind: ListKind = 'bullet';
-    if (NUMBERED_MARKER.test(marker)) {
-        kind = 'numbered';
+    const markerText = (markerSpans(element)[0]?.textContent ?? '').trim();
+    let marker: ListMarker = { kind: 'bullet' };
+    if (NUMBERED_MARKER.test(markerText)) {
+        const numbers = markerText.match(MARKER_NUMBERS);
+        marker = { kind: 'numbered', number: numbers?.[numbers.length - 1] };
     }
     return {
         paragraph: element,
         list: `${declared[1] ?? ''} ${declared[3] ?? ''}`,
         level: Math.min(Number(declared[2]), MAX_LEVEL),
-        kind,
+        ...marker,
     };
 };
 
@@ -208,18 +214,20 @@ const closeListsFor = (open: OpenList[], item: ListParagraph): void => {
     }
 };
 
-const createList = (document: Document, { list, level, kind }: ListParagraph): OpenList => ({
-    element: document.createElement(tagOf(kind)),
-    list,
-    level,
-    kind,
-});
+const createList = (document: Document, item: ListParagraph): OpenList => {
+    const element = document.createElement(tagOf(item.kind));
+    if (item.kind === 'numbered' && item.number !== undefined) {
+        element.setAttribute('start', item.number);
+    }
+    return { element, list: item.list, level: item.level, kind: item.kind };
+};
 
 /**
  * Rebuilds one run of list paragraphs as nested lists where it stood. A level
  * below the one before opens one list inside the last item, so no empty item
- * holds it. A numbered list that another paragraph interrupts starts again
- * at 1: the format stores no start number.
+ * holds it. A numbered list starts at the number Word wrote for its first
+ * item, so one that resumes after another block, or a copy that begins
+ * partway through, keeps Word's numbering.
  */
 const rebuildRun = (run: readonly ListParagraph[]): void => {
     const first = run[0];

@@ -3,7 +3,13 @@
 // The shared language: document shape, plugin contract, commands, registry.
 // Imports from no other layer; plugins, renderer and editor all import here.
 
-export { type EditorControlApi, type RteSelectionSnapshot } from './commands';
+export {
+    type EditorControlApi,
+    REDO_HOTKEY,
+    type RteMarkState,
+    type RteSelectionSnapshot,
+    UNDO_HOTKEY,
+} from './commands';
 export {
     type ParagraphBlock,
     type RteBlockNode,
@@ -31,6 +37,8 @@ export {
     type RteBlockCommand,
     type RteInputRule,
     type RtePlugin,
+    RTE_TOOLBAR_GROUPS,
+    type RteToolbarGroup,
     type SelectedNode,
     type ToolbarItemProps,
 } from './plugin';

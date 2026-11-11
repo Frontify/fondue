@@ -57,6 +57,7 @@ describe('the active command', () => {
                 block: { type: 'x' },
                 blocks: [{ type: 'x' }],
                 marks: {},
+                history: { canUndo: false, canRedo: false },
             }),
         ).toBe(heading);
     });
@@ -70,7 +71,14 @@ describe('the active command', () => {
         const numbered = listCommand('numberedList');
         const blocks = ['paragraph', 'listItem', 'numberedList', 'listItem', 'bulletList'].map((type) => ({ type }));
 
-        const selection = { isCollapsed: true, text: '', block: blocks[0] ?? null, blocks, marks: {} };
+        const selection = {
+            isCollapsed: true,
+            text: '',
+            block: blocks[0] ?? null,
+            blocks,
+            marks: {},
+            history: { canUndo: false, canRedo: false },
+        };
 
         expect(activeCommand([TEXT_COMMAND, bullet, numbered], selection)).toBe(numbered);
     });
@@ -82,6 +90,7 @@ describe('the active command', () => {
             block: { type: types[0] ?? '' },
             blocks: types.map((type) => ({ type })),
             marks: {},
+            history: { canUndo: false, canRedo: false },
         });
 
         expect(TEXT_COMMAND.isActive?.(selection(['paragraph']))).toBe(true);

@@ -17,6 +17,8 @@ const plugins = shipped('bullet-list', 'numbered-list', 'check-list');
 
 const item = (...children: RteBlockNode[]): RteBlockNode => ({ type: 'listItem', children }) as RteBlockNode;
 const list = (type: string, ...items: RteBlockNode[]): RteBlockNode => ({ type, children: items }) as RteBlockNode;
+const numbered = (start: number, ...texts: string[]): RteBlockNode =>
+    ({ ...list('numberedList', ...texts.map((value) => item(paragraph(text(value))))), start }) as RteBlockNode;
 const bullets = (...texts: string[]): RteBlockNode =>
     list('bulletList', ...texts.map((value) => item(paragraph(text(value)))));
 
@@ -155,6 +157,15 @@ describe('outdenting a list item', () => {
         expect(editor.api.lists.outdent()).toBe(true);
 
         expect(editor.stored()).toEqual([bullets('one'), paragraph(text('two'))]);
+    });
+
+    it('keeps the start on both halves of a list it splits, as ProseMirror and Tiptap do', () => {
+        const editor = editorWith(plugins, [numbered(3, 'one', 'two', 'three')]);
+        editor.caretAfter('tw');
+
+        expect(editor.api.lists.outdent()).toBe(true);
+
+        expect(editor.stored()).toEqual([numbered(3, 'one'), paragraph(text('two')), numbered(3, 'three')]);
     });
 
     it('does nothing outside a list', () => {

@@ -29,9 +29,10 @@ export const italicPlugin = (): RtePlugin => ({
             ],
         }),
     },
+    toolbarGroup: 'marks',
     toolbarItem: ({ isActive, toggle }) => (
         <ToolbarButton title="Italic" shortcut={HOTKEY} active={isActive} onClick={() => toggle()}>
-            <IconTextFormatItalic size={16} />
+            <IconTextFormatItalic size={20} />
         </ToolbarButton>
     ),
     hotkeys: { [HOTKEY]: (api) => api.marks.toggle('italic') },

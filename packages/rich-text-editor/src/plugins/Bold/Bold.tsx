@@ -31,9 +31,10 @@ export const boldPlugin = (): RtePlugin => ({
             ],
         }),
     },
+    toolbarGroup: 'marks',
     toolbarItem: ({ isActive, toggle }) => (
         <ToolbarButton title="Bold" shortcut={HOTKEY} active={isActive} onClick={() => toggle()}>
-            <IconTextFormatBold size={16} />
+            <IconTextFormatBold size={20} />
         </ToolbarButton>
     ),
     hotkeys: { [HOTKEY]: (api) => api.marks.toggle('bold') },
