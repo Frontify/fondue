@@ -15,14 +15,18 @@ type RowProps = {
     onDrop: DragHandler;
     draggable: boolean;
 };
+type GetPropsParams = { item: ItemInstance<TreeItemData>; prev: () => RowProps };
+type ChevronBox = { left: number; right: number };
 
-const makeRow = (direction: 'rtl' | 'ltr', chevron?: { left: number; right: number }): HTMLElement => {
+const makeRow = (direction: 'rtl' | 'ltr', chevron?: ChevronBox): HTMLElement => {
     const row = document.createElement('div');
     row.style.direction = direction;
+    // Partial test double with only the fields the feature reads.
     row.getBoundingClientRect = () => ({ left: 100, right: 500 }) as DOMRect;
     if (chevron) {
         const chevronElement = document.createElement('span');
         chevronElement.className = styles.chevron ?? '';
+        // Partial test double with only the fields the feature reads.
         chevronElement.getBoundingClientRect = () => chevron as DOMRect;
         row.append(chevronElement);
     }
@@ -30,18 +34,17 @@ const makeRow = (direction: 'rtl' | 'ltr', chevron?: { left: number; right: numb
     return row;
 };
 
-const getWrappedProps = (direction: 'rtl' | 'ltr', chevron?: { left: number; right: number }) => {
-    const onDragOver = vi.fn();
-    const onDrop = vi.fn();
+const getWrappedProps = (direction: 'rtl' | 'ltr', chevron?: ChevronBox) => {
+    const onDragOver = vi.fn<DragHandler>();
+    const onDrop = vi.fn<DragHandler>();
     let row: HTMLElement | undefined;
+    // Partial test double with only the fields the feature reads.
     const item = {
         getElement: () => row,
         getItemMeta: () => ({ level: 2 }),
     } as unknown as ItemInstance<TreeItemData>;
-    const getProps = dropLevelFeature.itemInstance?.getProps as unknown as (args: {
-        item: ItemInstance<TreeItemData>;
-        prev: () => RowProps;
-    }) => RowProps;
+    // headless-tree types getProps for every feature at once; narrow it to the row props this test reads.
+    const getProps = dropLevelFeature.itemInstance?.getProps as unknown as (args: GetPropsParams) => RowProps;
     const props = getProps({
         item,
         prev: () => ({ onDragOver, onDrop, draggable: true }),
@@ -51,6 +54,7 @@ const getWrappedProps = (direction: 'rtl' | 'ltr', chevron?: { left: number; rig
     return { props, onDragOver, onDrop };
 };
 
+// Partial test double with only the fields the feature reads.
 const makeEvent = (clientX: number) =>
     ({
         clientX,
@@ -68,7 +72,10 @@ describe('dropLevelFeature', () => {
         const { props, onDragOver } = getWrappedProps('ltr', ltrChevron);
         const event = makeEvent(200);
         props.onDragOver(event);
-        const [received] = onDragOver.mock.calls[0] as [DragEvent<HTMLElement>];
+        const received = onDragOver.mock.lastCall?.[0];
+        if (!received) {
+            throw new Error('onDragOver was not called');
+        }
         expect(received.clientX).toBe(172);
         expect(received.clientY).toBe(event.clientY);
         expect(received.dataTransfer).toBe(event.dataTransfer);
@@ -77,7 +84,10 @@ describe('dropLevelFeature', () => {
     it('clamps a cursor over the leading space to the row edge', () => {
         const { props, onDragOver } = getWrappedProps('ltr', ltrChevron);
         props.onDragOver(makeEvent(110));
-        const [received] = onDragOver.mock.calls[0] as [DragEvent<HTMLElement>];
+        const received = onDragOver.mock.lastCall?.[0];
+        if (!received) {
+            throw new Error('onDragOver was not called');
+        }
         expect(received.clientX).toBe(100);
     });
 
@@ -85,7 +95,10 @@ describe('dropLevelFeature', () => {
         const { props, onDragOver } = getWrappedProps('rtl', rtlChevron);
         const event = makeEvent(440);
         props.onDragOver(event);
-        const [received] = onDragOver.mock.calls[0] as [DragEvent<HTMLElement>];
+        const received = onDragOver.mock.lastCall?.[0];
+        if (!received) {
+            throw new Error('onDragOver was not called');
+        }
         expect(received.clientX).toBe(132);
         expect(received.clientY).toBe(event.clientY);
         expect(received.dataTransfer).toBe(event.dataTransfer);
@@ -101,7 +114,10 @@ describe('dropLevelFeature', () => {
         const { props, onDragOver } = getWrappedProps('rtl', rtlChevron);
         const event = makeEvent(480);
         props.onDragOver(event);
-        const [received] = onDragOver.mock.calls[0] as [DragEvent<HTMLElement>];
+        const received = onDragOver.mock.lastCall?.[0];
+        if (!received) {
+            throw new Error('onDragOver was not called');
+        }
         received.stopPropagation();
         received.preventDefault();
         expect(vi.mocked(event.stopPropagation).mock.contexts[0]).toBe(event);
@@ -112,7 +128,7 @@ describe('dropLevelFeature', () => {
         const { props, onDragOver } = getWrappedProps('ltr');
         const event = makeEvent(480);
         props.onDragOver(event);
-        expect(onDragOver.mock.calls[0]?.[0]).toBe(event);
+        expect(onDragOver.mock.lastCall?.[0]).toBe(event);
     });
 
     it('keeps the other props from the wrapped feature', () => {

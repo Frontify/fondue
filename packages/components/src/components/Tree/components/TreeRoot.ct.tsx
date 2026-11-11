@@ -1850,21 +1850,33 @@ const dropTree: TreeChangeState = [
         ],
     },
 ];
-const dropTopology = (state: { id: string; children?: { id: string }[] }[]) =>
-    state.map((node) => (node.children ? `${node.id}[${node.children.map((child) => child.id).join(',')}]` : node.id));
+const HARNESS_WIDTH_PX = 400;
+const EDGE_INSET_PX = 4;
+const LOWER_HALF_Y_RATIO = 0.75;
+const CHEVRON_SELECTOR = '[class*="chevron"]';
+const dropTopology = (state: TreeChangeState) =>
+    state.map((node) => {
+        if (node.children) {
+            return `${node.id}[${node.children.map((child) => child.id).join(',')}]`;
+        }
+        return node.id;
+    });
 
 test.describe('TreeRoot drop level by text direction', () => {
     // Dropping on the lower half of the last child in a group: near the row's inline start outdents
     // to the parent level, near its inline end keeps the child level.
     for (const dir of ['ltr', 'rtl'] as const) {
         for (const edge of ['start', 'end'] as const) {
-            const expected = edge === 'start' ? ['a[a1,a2]', 'x'] : ['a[a1,a2,x]'];
+            let expected = ['a[a1,a2,x]'];
+            if (edge === 'start') {
+                expected = ['a[a1,a2]', 'x'];
+            }
             test(`${dir}: dropping near the inline ${edge} of the last child gives ${expected.join(' ')}`, async ({
                 mount,
             }) => {
                 const states: string[][] = [];
                 const component = await mount(
-                    <div dir={dir} style={{ width: 400 }}>
+                    <div dir={dir} style={{ width: HARNESS_WIDTH_PX }}>
                         <TestHarness
                             reorderable
                             initial={dropTree}
@@ -1879,8 +1891,11 @@ test.describe('TreeRoot drop level by text direction', () => {
                     throw new Error('a2 row has no box');
                 }
                 const atPhysicalLeft = (dir === 'ltr') === (edge === 'start');
-                const x = atPhysicalLeft ? 4 : box.width - 4;
-                await source.dragTo(target, { targetPosition: { x, y: box.height * 0.75 } });
+                let x = box.width - EDGE_INSET_PX;
+                if (atPhysicalLeft) {
+                    x = EDGE_INSET_PX;
+                }
+                await source.dragTo(target, { targetPosition: { x, y: box.height * LOWER_HALF_Y_RATIO } });
                 await expect.poll(() => states[states.length - 1]).toEqual(expected);
             });
         }
@@ -1896,13 +1911,16 @@ test.describe('TreeRoot drop level follows the indent columns', () => {
                 if (over === 'A') {
                     expected = ['a[a1,a2]', 'x'];
                 }
-                const mode = multiSelect ? 'multi-select' : 'single-select';
+                let mode = 'single-select';
+                if (multiSelect) {
+                    mode = 'multi-select';
+                }
                 test(`${dir} ${mode}: dropping over the chevron of ${over} gives ${expected.join(' ')}`, async ({
                     mount,
                 }) => {
                     const states: string[][] = [];
                     const component = await mount(
-                        <div dir={dir} style={{ width: 400 }}>
+                        <div dir={dir} style={{ width: HARNESS_WIDTH_PX }}>
                             <TestHarness
                                 reorderable
                                 multiSelect={multiSelect}
@@ -1915,7 +1933,7 @@ test.describe('TreeRoot drop level follows the indent columns', () => {
                     const target = component.getByRole('treeitem', { name: 'a2', exact: true });
                     const chevron = component
                         .getByRole('treeitem', { name: over, exact: true })
-                        .locator('[class*="chevron"]')
+                        .locator(CHEVRON_SELECTOR)
                         .first();
                     const targetBox = await target.boundingBox();
                     const chevronBox = await chevron.boundingBox();
@@ -1923,7 +1941,7 @@ test.describe('TreeRoot drop level follows the indent columns', () => {
                         throw new Error('missing row or chevron box');
                     }
                     const x = chevronBox.x + chevronBox.width / 2 - targetBox.x;
-                    await source.dragTo(target, { targetPosition: { x, y: targetBox.height * 0.75 } });
+                    await source.dragTo(target, { targetPosition: { x, y: targetBox.height * LOWER_HALF_Y_RATIO } });
                     await expect.poll(() => states[states.length - 1]).toEqual(expected);
                 });
             }
