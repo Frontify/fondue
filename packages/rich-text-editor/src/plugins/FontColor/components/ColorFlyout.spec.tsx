@@ -245,4 +245,64 @@ describe('the colour flyout', () => {
             act(() => root?.unmount());
         }
     });
+
+    it('applies nothing on a key other than Enter', () => {
+        const { toggle, set } = mount({});
+        const field = typeHex('c5221f');
+        for (const key of ['a', 'Tab']) {
+            act(() => {
+                field.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
+            });
+        }
+
+        expect(toggle).not.toHaveBeenCalled();
+        expect(set).not.toHaveBeenCalled();
+    });
+
+    it('applies nothing on Enter outside the hex field', () => {
+        const { set } = mount({});
+        typeHex('c5221f');
+        const alpha = document.querySelector<HTMLInputElement>('[data-test-id="color-picker-value-input-alpha"] input');
+        act(() => {
+            alpha?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        });
+
+        expect(set).not.toHaveBeenCalled();
+    });
+
+    it('prevents the default on Enter in the hex field only', () => {
+        mount({});
+        const field = typeHex('c5221f');
+        const enter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+        const other = new KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true });
+        act(() => {
+            field.dispatchEvent(enter);
+            field.dispatchEvent(other);
+        });
+
+        expect(enter.defaultPrevented).toBe(true);
+        expect(other.defaultPrevented).toBe(false);
+    });
+
+    it.each<[string, Record<string, Record<string, unknown>>, string, string]>([
+        ['uncoloured text', {}, 'c5221f', '#c5221f'],
+        ['stored #ff000080', { fontColor: { color: '#ff000080' } }, '#c5221f', '#c5221f80'],
+    ])('keeps the last complete hex when an incomplete one is typed after it on %s', (_, marks, first, color) => {
+        const { set } = mount(marks);
+        typeHex(first);
+        typeHex('zz');
+        press('Save');
+
+        expect(set.mock.calls).toEqual([['fontColor', { color }]]);
+    });
+
+    it('does not preview a three-digit hex, so Save after leaving the field changes nothing', () => {
+        const { toggle, set } = mount({ fontColor: { color: '#00ff00' } });
+        typeHex('f00');
+        typeHex('zz');
+        press('Save');
+
+        expect(toggle).not.toHaveBeenCalled();
+        expect(set).not.toHaveBeenCalled();
+    });
 });

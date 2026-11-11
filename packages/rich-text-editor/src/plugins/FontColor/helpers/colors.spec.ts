@@ -122,6 +122,9 @@ describe('toStoredColor', () => {
             'x rgb(1,2,3)',
             'rgb(1,2,3)x',
             'x red',
+            'hsl(0, 50%, 50)',
+            'hsl(0, 50%, none)',
+            'hsla(0, 50, 50%, 0.5)',
             '',
         ]) {
             expect(toStoredColor(css)).toBeUndefined();
@@ -199,6 +202,11 @@ describe('parseTypedHex', () => {
         expect(parseTypedHex('c5221f', undefined)).toEqual(decodeStoredColor('#c5221f'));
         expect(parseTypedHex('f00', undefined)).toEqual(decodeStoredColor('#ff0000'));
         expect(parseTypedHex('#c5221f', undefined)).toEqual(decodeStoredColor('#c5221f'));
+    });
+
+    it('reads upper case digits, and refuses a doubled hash', () => {
+        expect(parseTypedHex('C5221F', undefined)).toEqual(decodeStoredColor('#c5221f'));
+        expect(parseTypedHex('##fff', undefined)).toBeUndefined();
     });
 
     it('refuses any other length and no text', () => {
