@@ -7,7 +7,7 @@ import { Anchor as FlyoutAnchor } from '@radix-ui/react-popover';
 import { type ReactNode, type RefObject, useEffect, useId, useRef, useState } from 'react';
 
 import { PARAGRAPH, type RteBlockCommand } from '#/core';
-import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
+import { MENU_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { matchCommands } from '../helpers/blockCommands';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
@@ -334,7 +334,7 @@ const SlashOption = ({ id, command, isActive, onHover, onRun }: SlashOptionProps
             className={isActive ? `${styles.option} ${styles.optionActive}` : styles.option}
         >
             <span aria-hidden className={styles.icon}>
-                {Icon === undefined ? null : <Icon size={TOOLBAR_ICON_SIZE} />}
+                {Icon === undefined ? null : <Icon size={MENU_ICON_SIZE} />}
             </span>
             <span>{command.label}</span>
         </div>

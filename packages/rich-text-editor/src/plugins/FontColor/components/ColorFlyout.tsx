@@ -4,7 +4,7 @@ import { Button, ColorPicker, Flyout } from '@frontify/fondue-components';
 import { IconDroplet } from '@frontify/fondue-icons';
 import { type ReactNode, useId, useRef, useState } from 'react';
 
-import { type EditorControlApi, type RteSelectionSnapshot } from '#/core';
+import { type EditorControlApi, type RteSelectionSnapshot, type ToolbarItemProps } from '#/core';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
@@ -34,6 +34,10 @@ type ColorFlyoutProps = {
     selection: RteSelectionSnapshot;
     api: EditorControlApi;
     label: string;
+    /**
+     * Whether the selection carries a colour; `'mixed'` when only part of it does
+     */
+    isActive: ToolbarItemProps['isActive'];
 };
 
 /**
@@ -41,11 +45,16 @@ type ColorFlyoutProps = {
  * picker in a flyout. The colour reaches the document on save, not while
  * dragging, so the undo history gets one step per choice.
  */
-export const ColorFlyout = ({ selection, api, label }: ColorFlyoutProps): ReactNode => {
-    const value = selection.marks.fontColor as Partial<FontColorValue> | undefined;
+export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProps): ReactNode => {
+    const fontColor = selection.marks.fontColor;
+    let value: Partial<FontColorValue> | undefined;
+    // A half-coloured selection has no one colour to show.
+    if (fontColor?.coverage === 'all') {
+        value = fontColor.value;
+    }
     // Coloured text may carry a colour the picker cannot read (`red`, `hsl()`
     // pasted in): it is still coloured, and still removable.
-    const hasColor = 'fontColor' in selection.marks;
+    const hasColor = isActive !== false;
     const current = parseCssColor(value?.color);
     const [open, setOpen] = useState(false);
     const [draft, setDraft] = useState<RgbaColor | undefined>(undefined);
@@ -100,7 +109,7 @@ export const ColorFlyout = ({ selection, api, label }: ColorFlyoutProps): ReactN
         >
             <Flyout.Trigger>
                 <ToolbarButton
-                    active={hasColor}
+                    active={isActive}
                     // The swatch is visual only, so the colour goes in the name.
                     title={currentCss === undefined ? label : `${label}: ${currentCss.toUpperCase()}`}
                 >

@@ -111,6 +111,7 @@ const listPlugin = ({ id, content, type, icon, label, keywords, markdown, shortc
         content,
         // Active anywhere inside the list (the caret sits in a paragraph inside an
         // item); toggling wraps or unwraps.
+        toolbarGroup: 'lists',
         toolbar: [{ toggles: type, label, icon, shortcut, menu: { keywords } }],
         inputRules: markdown.map((match) => ({ kind: 'list' as const, match, list: type })),
     });

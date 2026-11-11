@@ -34,17 +34,21 @@ const profileHref = (mention: MentionItem): string => `#/people/${mention.id}`;
  * (`tw-` prefix, token-backed utilities). The package itself ships plain CSS —
  * Tailwind is Storybook-only here.
  */
-const LAYOUT = 'tw-grid tw-grid-cols-2 tw-content-start tw-gap-4 tw-p-4 tw-font-primary';
+/** One column on a phone; beside the JSON panel the editor takes what is left, and `minmax(0, …)` lets it shrink. */
+const LAYOUT =
+    'tw-grid tw-grid-cols-1 md:tw-grid-cols-[minmax(0,1fr)_minmax(0,24rem)] tw-content-start tw-items-start tw-gap-4 tw-p-4 tw-font-primary';
 const JSON_PANEL =
     'tw-m-0 tw-min-h-[200px] tw-overflow-auto tw-rounded tw-bg-surface-dim tw-p-3 tw-font-monospace tw-text-x-small tw-leading-medium';
 const HINT = 'tw-col-span-full tw-m-0 tw-body-small tw-text-secondary';
 
 /**
- * The field box around an editor. The editor draws none of its own — no
- * border, background or inset — so an app wraps it the same way.
+ * The box around a renderer. The package draws none of its own — no border,
+ * background or inset — so an app wraps it the same way.
  */
-const FRAME =
-    'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-surface tw-px-small tw-py-x-small tw-shadow hover:tw-border-line-strong focus-within:tw-border-line-strong';
+const SURFACE = 'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-surface tw-p-medium';
+
+/** The field box around an editor: the surface, plus a ring while focus is inside it. */
+const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-ring-focus`;
 
 const buttonClasses = (active: boolean): string =>
     [
@@ -112,11 +116,13 @@ export const Default: Story = {
 
         return (
             <div className={LAYOUT}>
-                <div>
+                <div className="tw-flex tw-flex-col tw-gap-4">
                     <div className={FRAME}>
                         <RichTextEditor value={doc} onChange={setDoc} plugins={defaultPlugins} />
                     </div>
-                    <RichTextRenderer value={doc} plugins={defaultPlugins} />
+                    <div className={SURFACE}>
+                        <RichTextRenderer value={doc} plugins={defaultPlugins} />
+                    </div>
                 </div>
 
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
@@ -280,7 +286,9 @@ export const Renderer: Story = {
 
         return (
             <div className={LAYOUT}>
-                <RichTextRenderer value={doc} plugins={defaultPlugins} />
+                <div className={SURFACE}>
+                    <RichTextRenderer value={doc} plugins={defaultPlugins} />
+                </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
         );
@@ -366,9 +374,9 @@ export const NewerVersion: Story = {
 
 /**
  * `showEditor={false}` drops the editor's own UI — the toolbar and the `/` menu —
- * so only the content is rendered. The editor draws no box either way: with
- * no wrapper around it, as here, the document sits in the page as if it were
- * written there. Toggle the two independently to see which does what.
+ * so only the content is rendered. The editor draws no box either way: the
+ * frame here is the story's, as an app would draw it. Toggle the two
+ * independently to see which does what.
  */
 export const ContentOnly: Story = {
     render: () => {
@@ -429,13 +437,15 @@ export const ContentOnly: Story = {
                         </button>
                     </div>
                     <div className="tw-w-full">
-                        <RichTextEditor
-                            value={doc}
-                            onChange={setDoc}
-                            plugins={defaultPlugins}
-                            showEditor={showEditor}
-                            readonly={readonly}
-                        />
+                        <div className={FRAME}>
+                            <RichTextEditor
+                                value={doc}
+                                onChange={setDoc}
+                                plugins={defaultPlugins}
+                                showEditor={showEditor}
+                                readonly={readonly}
+                            />
+                        </div>
                     </div>
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>

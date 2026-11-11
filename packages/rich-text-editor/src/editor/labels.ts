@@ -10,6 +10,8 @@ export type RichTextEditorLabels = {
     editor: string;
     /** The formatting toolbar's accessible name. */
     toolbar: string;
+    /** The button at the end of the top toolbar holding the controls that do not fit, and the panel it opens. */
+    more: string;
     /** The built-in command turning a block back into plain text. */
     text: string;
     /** The "Turn into" button's tooltip, and the `/` menu's heading over the same commands. */
@@ -33,6 +35,7 @@ export type RichTextEditorLabels = {
 export const DEFAULT_LABELS: RichTextEditorLabels = {
     editor: 'Rich text editor',
     toolbar: 'Formatting',
+    more: 'More',
     text: 'Text',
     turnInto: 'Turn into',
     turnIntoCurrent: (blockLabel) => `Turn into: ${blockLabel}`,

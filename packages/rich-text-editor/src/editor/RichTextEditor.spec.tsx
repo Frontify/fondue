@@ -2,10 +2,13 @@
 
 // @vitest-environment happy-dom
 
+import { Dialog } from '@frontify/fondue-components';
 import { act, Profiler, type ReactNode, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { type RteToolbarGroup } from '#/core';
 
 // Driven through the package's public API, the way a host does: the props are
 // the whole conversation between a host and a mounted editor.
@@ -23,6 +26,7 @@ import {
     type RteDocument,
     type RtePlugin,
     serializeToHtml,
+    textStylePlugin,
 } from '../index';
 
 import { useFocusWithin } from './hooks/useFocusWithin';
@@ -731,6 +735,50 @@ describe('the toolbar', () => {
         expect(clickCount(container)).toBe('2');
     });
 
+    it('draws the control of a plugin with an unknown group last', () => {
+        // The test passes a group outside RteToolbarGroup on purpose.
+        const unknownGroupPlugin = definePlugin({
+            id: 'unknown-group',
+            toolbarGroup: 'not-a-group' as RteToolbarGroup,
+            toolbar: [{ label: 'Unknown', render: () => <span data-testid="unknown-group">unknown</span> }],
+        });
+        const { container, ready } = mount(() => (
+            <RichTextEditor plugins={[unknownGroupPlugin, ...defaultPlugins]} toolbarPlacement="top" />
+        ));
+        ready();
+
+        const group = container.querySelector('[data-testid="unknown-group"]')?.parentElement;
+        expect(group).toBeTruthy();
+        expect(group?.parentElement?.lastElementChild).toBe(group);
+    });
+
+    it('keeps Undo and Redo current as edits are made and taken back', () => {
+        const { container, ready, stored } = mount((onChange) => (
+            <RichTextEditor plugins={defaultPlugins} toolbarPlacement="top" onChange={onChange} />
+        ));
+        ready();
+        const undo = (): HTMLButtonElement | null => container.querySelector('[aria-label="Undo"]');
+        const redo = (): HTMLButtonElement | null => container.querySelector('[aria-label="Redo"]');
+        expect(undo()?.disabled).toBe(true);
+        expect(redo()?.disabled).toBe(true);
+
+        // Pasting is how this spec edits: the paste handler is the input the engine takes from the DOM here.
+        paste(container, '<p>one</p>');
+        expect(undo()?.disabled).toBe(false);
+        expect(redo()?.disabled).toBe(true);
+
+        // Edits close together share one undo step, so the count of presses is the history's to decide.
+        for (let presses = 0; undo()?.disabled === false; presses++) {
+            expect(presses).toBeLessThan(10);
+            act(() => undo()?.click());
+        }
+        expect(childrenOf(stored())).toEqual([]);
+        expect(redo()?.disabled).toBe(false);
+
+        act(() => redo()?.click());
+        expect(undo()?.disabled).toBe(false);
+    });
+
     it('warns in development when two plugins share an id', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         // The duplicate toolbar key gets React's own complaint too.
@@ -816,6 +864,11 @@ describe('the toolbar from the keyboard', () => {
         press(editable, 'F10', { altKey: true });
         expect(window.document.activeElement?.getAttribute('aria-label')).toBe('Bold');
 
+        // The first Escape belongs to the tooltip the focus opened.
+        press(window.document.activeElement as Element, 'Escape');
+        expect(window.document.querySelector('[role="tooltip"]')).toBeNull();
+        expect(window.document.activeElement?.getAttribute('aria-label')).toBe('Bold');
+
         press(window.document.activeElement as Element, 'Escape');
         expect(editable.contains(window.document.activeElement)).toBe(true);
     });
@@ -825,6 +878,12 @@ describe('the toolbar from the keyboard', () => {
     const selectAll = (editable: HTMLElement): void => {
         const mod = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
         press(editable, 'a', mod);
+    };
+
+    // The focus opened a tooltip, which takes the first Escape.
+    const leaveToolbar = (): void => {
+        press(window.document.activeElement as Element, 'Escape');
+        press(window.document.activeElement as Element, 'Escape');
     };
 
     describe.each(['top', 'floating'] as const)('with the %s toolbar, asked for again', (placement) => {
@@ -851,7 +910,7 @@ describe('the toolbar from the keyboard', () => {
 
             press(editable, 'F10', { altKey: true });
             expect(focusedLabel()).toBe('Bold');
-            press(window.document.activeElement as Element, 'Escape');
+            leaveToolbar();
             expect(window.document.activeElement).toBe(editable);
 
             press(editable, 'F10', { altKey: true });
@@ -861,9 +920,9 @@ describe('the toolbar from the keyboard', () => {
         it('leaves no request pending to pull focus later', () => {
             const { editable, rerender } = start();
             press(editable, 'F10', { altKey: true });
-            press(window.document.activeElement as Element, 'Escape');
+            leaveToolbar();
             press(editable, 'F10', { altKey: true });
-            press(window.document.activeElement as Element, 'Escape');
+            leaveToolbar();
             expect(window.document.activeElement).toBe(editable);
 
             rerender();
@@ -896,13 +955,474 @@ describe('the toolbar from the keyboard', () => {
         expect(radios.map((radio) => radio.getAttribute('aria-checked'))).toEqual(['true', 'false', 'false', 'false']);
     });
 
+    describe('in a narrow top row', () => {
+        // Every slot and More are 30 wide; the row is as wide as `rowWidth`.
+        let rowWidth = 200;
+        const observers: ResizeObserverCallback[] = [];
+
+        beforeEach(() => {
+            rowWidth = 200;
+            vi.stubGlobal(
+                'ResizeObserver',
+                class {
+                    constructor(callback: ResizeObserverCallback) {
+                        observers.push(callback);
+                    }
+                    observe(): void {}
+                    unobserve(): void {}
+                    disconnect(): void {}
+                },
+            );
+            vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element) {
+                let width = 0;
+                if (this.getAttribute('role') === 'toolbar') {
+                    width = rowWidth;
+                }
+                if (this.hasAttribute('data-toolbar-slot') || this.hasAttribute('data-toolbar-more')) {
+                    width = 30;
+                }
+                return new DOMRect(0, 0, width, 24);
+            });
+        });
+
+        afterEach(() => {
+            vi.unstubAllGlobals();
+            vi.restoreAllMocks();
+            observers.splice(0);
+        });
+
+        const resize = (width: number): void => {
+            rowWidth = width;
+            act(() => {
+                for (const observer of observers) {
+                    observer([], {} as ResizeObserver);
+                }
+            });
+        };
+
+        const more = (container: HTMLElement): HTMLButtonElement | null =>
+            container.querySelector<HTMLButtonElement>('[aria-label="More"]');
+
+        it('moves what does not fit behind More, whose panel the arrow keys move through', () => {
+            const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
+            ready();
+            const toolbar = toolbarIn(container);
+            expect(more(container)).toBeNull();
+
+            // Bold, More and the gap: Link and Align no longer fit.
+            resize(70);
+            expect(toolbar.querySelector('[aria-label="Bold"]')).not.toBeNull();
+            // Parked out of sight beside More, not drawn in the row.
+            expect(toolbar.querySelector('[aria-label="Align left"]')?.closest('[aria-hidden="true"]')).not.toBeNull();
+            expect(more(container)?.getAttribute('aria-haspopup')).toBe('dialog');
+
+            // A click with no pointer behind it is the keyboard's: focus moves into the panel.
+            act(() => more(container)?.click());
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            const panel = window.document.querySelector<HTMLElement>('[role="toolbar"][aria-label="More"]');
+            expect(panel?.querySelector('[aria-label="Add link"]')).not.toBeNull();
+            expect(focusedLabel()).toBe('Align left');
+
+            press(window.document.activeElement as Element, 'ArrowRight');
+            expect(focusedLabel()).toBe('Align center');
+            press(window.document.activeElement as Element, 'End');
+            expect(focusedLabel()).toBe('Justify');
+            press(window.document.activeElement as Element, 'Home');
+            expect(focusedLabel()).toBe('Align left');
+
+            // The first Escape belongs to the tooltip the focus opened.
+            press(window.document.activeElement as Element, 'Escape');
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            press(window.document.activeElement as Element, 'Escape');
+            expect(window.document.activeElement).toBe(more(container));
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+
+            resize(200);
+            expect(more(container)).toBeNull();
+            expect(toolbar.querySelector('[aria-label="Align left"]')).not.toBeNull();
+        });
+
+        it("hangs a hidden control's flyout from More when a hotkey opens it, with the panel closed", async () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(70);
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+            const editable = editableIn(container);
+            act(() => editable.focus());
+            selectAll(editable);
+
+            const mod = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
+            press(editable, 'k', mod);
+            await act(async () => {});
+
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+            const dialogs = [...window.document.querySelectorAll('[role="dialog"]')];
+            expect(dialogs.some((dialog) => dialog.textContent?.includes('Add link'))).toBe(true);
+        });
+
+        it('closes the link form on one Escape, the panel never opened, focus never on the page', async () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(70);
+            const editable = editableIn(container);
+            const linkForm = (): Element | undefined =>
+                [...window.document.querySelectorAll('[role="dialog"]')].find((dialog) =>
+                    dialog.textContent?.includes('Add link'),
+                );
+            // Radix hands focus back a task after a flyout closes.
+            const settle = (): Promise<void> => act(() => new Promise<void>((resolve) => setTimeout(resolve, 0)));
+            const mod = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
+
+            // Twice over: the second round starts from what the first left behind, with the pointer resting on
+            // the link button, whose tooltip must not come back as the form closes.
+            for (let round = 0; round < 2; round++) {
+                act(() => editable.focus());
+                selectAll(editable);
+                press(editable, 'k', mod);
+                await act(async () => {});
+                expect(linkForm()).not.toBeUndefined();
+                expect(linkForm()?.contains(window.document.activeElement)).toBe(true);
+                if (round === 1) {
+                    act(() => {
+                        window.document
+                            .querySelector('[aria-label="Add link"]')
+                            ?.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerType: 'mouse' }));
+                    });
+                    // Past the tooltip's delay.
+                    await act(() => new Promise<void>((resolve) => setTimeout(resolve, 800)));
+                }
+
+                press(window.document.activeElement as Element, 'Escape');
+                await settle();
+                expect(linkForm()).toBeUndefined();
+                expect(window.document.activeElement).toBe(editable);
+                expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+                expect(window.document.querySelector('[role="tooltip"]')).toBeNull();
+            }
+        });
+
+        it('closes a panel opened with a click on Escape in the text, leaving the caret there', () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(70);
+            const editable = editableIn(container);
+            act(() => editable.focus());
+
+            act(() => {
+                more(container)?.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }));
+            });
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            expect(window.document.activeElement).toBe(editable);
+
+            press(editable, 'Escape');
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+            expect(window.document.activeElement).toBe(editable);
+        });
+
+        it('closes only the host dialog on Escape, with More shown inside it', () => {
+            const onOpenChange = vi.fn<(open: boolean) => void>();
+            mount(() => (
+                <Dialog.Root open onOpenChange={onOpenChange}>
+                    <Dialog.Content>
+                        <Dialog.Header>
+                            <Dialog.Title>Edit</Dialog.Title>
+                        </Dialog.Header>
+                        <Dialog.Body>
+                            <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+                        </Dialog.Body>
+                    </Dialog.Content>
+                </Dialog.Root>
+            ));
+            resize(70);
+            const dialogMore = window.document.querySelector<HTMLElement>('[aria-label="More"]');
+            expect(dialogMore?.getAttribute('aria-expanded')).toBe('false');
+            const editable = window.document.querySelector<HTMLElement>('[contenteditable]');
+            act(() => editable?.focus());
+
+            press(editable as Element, 'Escape');
+
+            expect(onOpenChange).toHaveBeenCalledWith(false);
+        });
+
+        it('leaves Escape to a suggestion list open in the text before the panel takes it', () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(70);
+            const editable = editableIn(container);
+            act(() => editable.focus());
+            act(() => {
+                more(container)?.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }));
+            });
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+
+            // What the focused element of an open mention or emoji draft says.
+            editable.setAttribute('aria-expanded', 'true');
+            press(editable, 'Escape');
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+
+            editable.removeAttribute('aria-expanded');
+            press(editable, 'Escape');
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+        });
+
+        // Radix hands focus back a task after a flyout closes.
+        const settle = (): Promise<void> => act(() => new Promise<void>((resolve) => setTimeout(resolve, 0)));
+
+        /** Where focus may not rest after a flyout closes: the page, or what the open panel hides. */
+        const expectFocusSomewhereReal = (): void => {
+            const { activeElement, body } = window.document;
+            expect(activeElement).not.toBe(body);
+            expect(activeElement?.closest('[aria-hidden="true"]')).toBeNull();
+        };
+
+        const panelOf = (): HTMLElement | null =>
+            window.document.querySelector<HTMLElement>('[role="toolbar"][aria-label="More"]');
+
+        const linkForm = (): Element | undefined =>
+            [...window.document.querySelectorAll('[role="dialog"]')].find((dialog) =>
+                dialog.textContent?.includes('Add link'),
+            );
+
+        /** Overflows the toolbar, opens More from the keyboard and the link form from the panel. */
+        const openLinkFormFromPanel = async (container: HTMLElement): Promise<HTMLElement> => {
+            resize(70);
+            const editable = editableIn(container);
+            act(() => editable.focus());
+            selectAll(editable);
+
+            press(editable, 'F10', { altKey: true });
+            expect(focusedLabel()).toBe('Bold');
+            press(window.document.activeElement as Element, 'End');
+            expect(window.document.activeElement).toBe(more(container));
+            press(window.document.activeElement as Element, 'Enter');
+            act(() => more(container)?.click());
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            expect(panelOf()?.contains(window.document.activeElement)).toBe(true);
+
+            while (focusedLabel() !== 'Add link') {
+                press(window.document.activeElement as Element, 'ArrowRight');
+            }
+            press(window.document.activeElement as Element, 'Enter');
+            act(() => (window.document.activeElement as HTMLElement).click());
+            await settle();
+
+            expect(linkForm()).not.toBeUndefined();
+            expect(linkForm()?.contains(window.document.activeElement)).toBe(true);
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            return editable;
+        };
+
+        /** A press Radix reads as outside the panel: the pointer's event first, then the mouse's own. */
+        const pressOn = (target: Element): void => {
+            act(() => {
+                target.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerType: 'mouse' }));
+                target.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+                target.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+            });
+        };
+
+        it('keeps the panel open under the link form opened from it, and Escape closes the form before the panel', async () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            const editable = await openLinkFormFromPanel(container);
+
+            press(window.document.activeElement as Element, 'Escape');
+            await settle();
+            expect(linkForm()).toBeUndefined();
+            expectFocusSomewhereReal();
+            const rested = window.document.activeElement;
+            expect(rested === editable || panelOf()?.contains(rested) === true).toBe(true);
+
+            if (panelOf()?.contains(rested) === true) {
+                expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+                // The first Escape belongs to the tooltip the focus opened, if any.
+                press(rested as Element, 'Escape');
+                if (more(container)?.getAttribute('aria-expanded') === 'true') {
+                    press(window.document.activeElement as Element, 'Escape');
+                }
+                expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+                expect(window.document.activeElement).toBe(more(container));
+            }
+        });
+
+        it('keeps the panel open on a press inside the link form opened from it', async () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            await openLinkFormFromPanel(container);
+            const input = linkForm()?.querySelector('input');
+            expect(input).not.toBeNull();
+
+            pressOn(input as Element);
+            await settle();
+
+            expect(linkForm()).not.toBeUndefined();
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+        });
+
+        it('closes the panel on a press outside once the link form opened from it is closed', async () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            await openLinkFormFromPanel(container);
+            const outside = window.document.createElement('div');
+            window.document.body.append(outside);
+            teardown.push(() => outside.remove());
+            press(window.document.activeElement as Element, 'Escape');
+            await settle();
+            expect(linkForm()).toBeUndefined();
+            // The form hands focus back to the text, which may have closed the panel; open it again.
+            if (more(container)?.getAttribute('aria-expanded') === 'false') {
+                act(() => {
+                    more(container)?.dispatchEvent(
+                        new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }),
+                    );
+                });
+                await settle();
+            }
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+
+            pressOn(outside);
+            await settle();
+
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+        });
+
+        it('closes the panel on a press inside a popper layer that is not a flyout of its controls', async () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(70);
+            const layer = window.document.createElement('div');
+            layer.setAttribute('data-radix-popper-content-wrapper', '');
+            window.document.body.append(layer);
+            teardown.push(() => layer.remove());
+            act(() => more(container)?.click());
+            await settle();
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+
+            pressOn(layer);
+            await settle();
+
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+        });
+
+        it('keeps the panel usable after a text style menu opened from it is closed with Escape', async () => {
+            const withSelect = [boldPlugin, linkPlugin, alignPlugin, textStylePlugin()];
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} plugins={withSelect} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(40);
+            const editable = editableIn(container);
+            act(() => editable.focus());
+            selectAll(editable);
+
+            act(() => more(container)?.click());
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            const select = panelOf()?.querySelector<HTMLElement>('[aria-label="Text style"]');
+            expect(select).not.toBeNull();
+            act(() => select?.focus());
+            press(select as Element, 'Enter');
+            await settle();
+            expect(select?.getAttribute('aria-expanded')).toBe('true');
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+
+            // A press in the menu is outside the panel to Radix, yet the menu is the panel's own.
+            const option = window.document.querySelector('[role="option"]');
+            expect(option).not.toBeNull();
+            act(() => {
+                option?.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerType: 'mouse' }));
+            });
+            await settle();
+            expect(select?.getAttribute('aria-expanded')).toBe('true');
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+
+            press(window.document.activeElement as Element, 'Escape');
+            await settle();
+            expect(select?.getAttribute('aria-expanded')).toBe('false');
+            expectFocusSomewhereReal();
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            // Still a toolbar: an arrow key moves focus between its controls.
+            act(() => select?.focus());
+            const before = window.document.activeElement;
+            press(before as Element, 'ArrowLeft');
+            expect(window.document.activeElement).not.toBe(before);
+            expect(panelOf()?.contains(window.document.activeElement)).toBe(true);
+        });
+
+        it('closes a click-opened panel on a press outside without moving focus onto More, onBlur as with no panel', () => {
+            vi.useFakeTimers();
+            teardown.push(() => vi.useRealTimers());
+            const onBlur = vi.fn<(doc: RteDocument) => void>();
+            const { container, ready } = mount(() => (
+                <RichTextEditor value={paragraph('text')} onBlur={onBlur} plugins={plugins} toolbarPlacement="top" />
+            ));
+            ready();
+            resize(70);
+            const editable = editableIn(container);
+            const outside = window.document.createElement('div');
+            window.document.body.append(outside);
+            teardown.push(() => outside.remove());
+            act(() => {
+                editable.focus();
+                vi.runAllTimers();
+            });
+            act(() => {
+                more(container)?.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }));
+            });
+            // The panel starts listening for outside presses a task after it opens.
+            act(() => {
+                vi.runAllTimers();
+            });
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
+            expect(window.document.activeElement).toBe(editable);
+
+            act(() => {
+                outside.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerType: 'mouse' }));
+                outside.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+                outside.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+                vi.runAllTimers();
+            });
+
+            expect(more(container)?.getAttribute('aria-expanded')).toBe('false');
+            expect(window.document.activeElement).not.toBe(more(container));
+            expect(onBlur).not.toHaveBeenCalled();
+        });
+
+        it('keeps focus in the toolbar when a refit takes the focused control away', () => {
+            const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
+            ready();
+            act(() => container.querySelector<HTMLElement>('[aria-label="Align left"]')?.focus());
+
+            resize(70);
+
+            expect(window.document.activeElement).toBe(more(container));
+        });
+    });
+
     it('names the shortcut a button has', () => {
         const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
         ready();
 
-        const bold = container.querySelector('[aria-label="Bold"]');
+        const bold = container.querySelector<HTMLElement>('[aria-label="Bold"]');
         expect(bold?.getAttribute('aria-keyshortcuts')).toMatch(/^(Meta|Control)\+B$/);
-        expect(bold?.getAttribute('title')).toMatch(/^Bold \((⌘B|Ctrl\+B)\)$/);
+
+        act(() => bold?.focus());
+        expect(window.document.querySelector('[role="tooltip"]')?.textContent).toMatch(/^Bold(⌘B|Ctrl\+B)$/);
     });
 });
 
