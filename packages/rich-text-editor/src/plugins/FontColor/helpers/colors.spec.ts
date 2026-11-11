@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { decodeStoredColor, toCssColor, toExportedColor, toStoredColor } from './colors';
+import { decodeStoredColor, encodeStoredColor, toExportedColor, toStoredColor } from './colors';
 
 describe('toStoredColor', () => {
     it('stores a named colour, a hex value, or one colour function of plain numbers as lowercase hex', () => {
@@ -136,9 +136,9 @@ describe('toStoredColor on stored values', () => {
 
 describe('the picker colour', () => {
     it('is stored as hex, with two alpha digits only while translucent', () => {
-        expect(toCssColor({ red: 255, green: 0, blue: 0, alpha: 1 })).toBe('#ff0000');
-        expect(toCssColor({ red: 255, green: 0, blue: 0, alpha: 0.5 })).toBe('#ff000080');
-        expect(toCssColor({ red: 255, green: 0, blue: 0, alpha: 0.999 })).toBe('#ff0000');
+        expect(encodeStoredColor({ red: 255, green: 0, blue: 0, alpha: 1 })).toBe('#ff0000');
+        expect(encodeStoredColor({ red: 255, green: 0, blue: 0, alpha: 0.5 })).toBe('#ff000080');
+        expect(encodeStoredColor({ red: 255, green: 0, blue: 0, alpha: 0.999 })).toBe('#ff0000');
     });
 
     it('reads back from the stored hex', () => {
@@ -152,7 +152,7 @@ describe('the picker colour', () => {
             if (byte !== 255) {
                 stored = `#ff0000${byte.toString(16).padStart(2, '0')}`;
             }
-            expect(toCssColor(decodeStoredColor(stored))).toBe(stored);
+            expect(encodeStoredColor(decodeStoredColor(stored))).toBe(stored);
         }
     });
 });

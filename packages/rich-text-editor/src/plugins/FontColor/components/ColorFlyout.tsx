@@ -8,7 +8,7 @@ import { type EditorControlApi, type RteSelectionSnapshot } from '#/core';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
 import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
-import { decodeStoredColor, type FontColorValue, type Rgba, toCssColor, toStoredColor } from '../helpers/colors';
+import { decodeStoredColor, type FontColorValue, type Rgba, encodeStoredColor, toStoredColor } from '../helpers/colors';
 
 import styles from './colorFlyout.module.scss';
 
@@ -20,6 +20,15 @@ const toRgba = (color: PickerColor): Rgba => ({ ...color, alpha: color.alpha ?? 
 
 /** What the picker's hex field takes: three or six digits; anything else is its error state, not a colour. */
 const HEX_FIELD_DIGITS = /^([\dA-Fa-f]{3}){1,2}$/;
+
+/** The hex field inside the picker. */
+const HEX_FIELD_SELECTOR = 'input[type="text"]';
+
+/** A leading `#` on typed hex. */
+const LEADING_HASH = /^#/;
+
+/** The control's name, for its button and flyout header. */
+const COLOR_LABEL = 'Text colour';
 
 /** One-click colours. Fondue has no text palette, so these are our own, each at least 4.5:1 on white. */
 const PRESETS: readonly { name: string; color: string }[] = [
@@ -33,7 +42,7 @@ const PRESETS: readonly { name: string; color: string }[] = [
 
 /** The colour typed in the picker's hex field. The field reports only on blur, so Enter and Save read it directly. */
 const typedHex = (container: HTMLElement | null, alpha: number | undefined): PickerColor | undefined => {
-    const typed = container?.querySelector<HTMLInputElement>('input[type="text"]')?.value.replace(/^#/, '');
+    const typed = container?.querySelector<HTMLInputElement>(HEX_FIELD_SELECTOR)?.value.replace(LEADING_HASH, '');
     if (typed === undefined || !HEX_FIELD_DIGITS.test(typed)) {
         return undefined;
     }
@@ -44,18 +53,14 @@ const typedHex = (container: HTMLElement | null, alpha: number | undefined): Pic
     return { ...decodeStoredColor(stored), alpha: alpha ?? 1 };
 };
 
+type ColorFlyoutProps = { selection: RteSelectionSnapshot; api: EditorControlApi };
+
 /**
  * The colour control: a toolbar button showing the selection's colour, with the
  * picker in a flyout. The colour reaches the document on save, not while
  * dragging, so the undo history gets one step per choice.
  */
-export const ColorFlyout = ({
-    selection,
-    api,
-}: {
-    selection: RteSelectionSnapshot;
-    api: EditorControlApi;
-}): ReactNode => {
+export const ColorFlyout = ({ selection, api }: ColorFlyoutProps): ReactNode => {
     const value = selection.marks.fontColor as Partial<FontColorValue> | undefined;
     // A stored value that is no colour shows none, and is still removable.
     const hasColor = 'fontColor' in selection.marks;
@@ -67,10 +72,14 @@ export const ColorFlyout = ({
     // Named as hex, then the opacity while translucent, as the picker's fields read.
     let colorName: string | undefined;
     if (current !== undefined) {
-        colorName = toCssColor({ ...current, alpha: 1 }).toUpperCase();
+        colorName = encodeStoredColor({ ...current, alpha: 1 }).toUpperCase();
         if (current.alpha !== undefined && current.alpha < 1) {
             colorName += ` ${Math.round(current.alpha * 100)}%`;
         }
+    }
+    let title = COLOR_LABEL;
+    if (colorName !== undefined) {
+        title += `: ${colorName}`;
     }
     const [open, setOpen] = useState(false);
     const [draft, setDraft] = useState<PickerColor | undefined>(undefined);
@@ -90,7 +99,7 @@ export const ColorFlyout = ({
         if (color === undefined) {
             api.marks.toggle('fontColor');
         } else {
-            api.marks.set('fontColor', { color: toCssColor(toRgba(color)) });
+            api.marks.set('fontColor', { color: encodeStoredColor(toRgba(color)) });
         }
         close();
     };
@@ -99,7 +108,7 @@ export const ColorFlyout = ({
         const picked = typedHex(pickerRef.current, draft?.alpha) ?? draft;
         // Nothing picked or typed: an unreadable colour would otherwise be
         // overwritten with whatever the picker fell back to showing.
-        if (picked === undefined || toCssColor(toRgba(picked)) === openedWithRef.current) {
+        if (picked === undefined || encodeStoredColor(toRgba(picked)) === openedWithRef.current) {
             close();
             return;
         }
@@ -123,7 +132,7 @@ export const ColorFlyout = ({
                 <ToolbarButton
                     active={hasColor}
                     // The swatch is visual only, so the colour goes in the name.
-                    title={colorName === undefined ? 'Text colour' : `Text colour: ${colorName}`}
+                    title={title}
                 >
                     <span className={styles.trigger}>
                         <IconDroplet size={16} />
@@ -144,12 +153,16 @@ export const ColorFlyout = ({
                 onOpenAutoFocus={(event) => {
                     event.preventDefault();
                     const shown = typedHex(pickerRef.current, current?.alpha);
-                    openedWithRef.current = shown === undefined ? undefined : toCssColor(toRgba(shown));
-                    pickerRef.current?.querySelector<HTMLInputElement>('input[type="text"]')?.focus();
+                    let openedWith: string | undefined;
+                    if (shown !== undefined) {
+                        openedWith = encodeStoredColor(toRgba(shown));
+                    }
+                    openedWithRef.current = openedWith;
+                    pickerRef.current?.querySelector<HTMLInputElement>(HEX_FIELD_SELECTOR)?.focus();
                 }}
             >
                 <Flyout.Header>
-                    <span id={titleId}>Text colour</span>
+                    <span id={titleId}>{COLOR_LABEL}</span>
                 </Flyout.Header>
                 <Flyout.Body>
                     <div className={styles.presets} role="group" aria-label="Suggested colours">
@@ -171,7 +184,7 @@ export const ColorFlyout = ({
                         ref={pickerRef}
                         className={styles.picker}
                         onKeyDown={(event) => {
-                            if (event.key === 'Enter' && (event.target as HTMLElement).matches('input[type="text"]')) {
+                            if (event.key === 'Enter' && (event.target as HTMLElement).matches(HEX_FIELD_SELECTOR)) {
                                 event.preventDefault();
                                 save();
                             }
@@ -179,7 +192,7 @@ export const ColorFlyout = ({
                         onInput={(event) => {
                             // A complete hex value updates the picker at once; a partial one waits.
                             const target = event.target as HTMLInputElement;
-                            if (target.matches('input[type="text"]') && /^#?[\dA-Fa-f]{6}$/.test(target.value)) {
+                            if (target.matches(HEX_FIELD_SELECTOR) && /^#?[\dA-Fa-f]{6}$/.test(target.value)) {
                                 setDraft(typedHex(pickerRef.current, draft?.alpha));
                             }
                         }}

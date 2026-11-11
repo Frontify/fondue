@@ -202,6 +202,11 @@ const toHex = (bytes: Bytes): string => {
  * input may be any value, since another tool may have written the stored
  * value, so any colour read here counts, such as the legacy editor's `rgba()`,
  * and nothing else reaches a `style`.
+ *
+ * @example
+ * ```ts
+ * toStoredColor('hsl(0, 50%, 50%)'); // '#bf4040'
+ * ```
  */
 export const toStoredColor = (css: unknown): string | undefined => {
     if (typeof css !== 'string') {
@@ -236,17 +241,33 @@ export const toStoredColor = (css: unknown): string | undefined => {
     if (color === undefined) {
         return undefined;
     }
-    return toCssColor(color);
+    return encodeStoredColor(color);
 };
 
-/** A stored colour's channels, with alpha exactly `byte / 255`, so re-encoding gives back the same byte. */
+/**
+ * A stored colour's channels, with alpha exactly `byte / 255`, so re-encoding gives back the same byte.
+ *
+ * @param stored - a lowercase `#rrggbb` or `#rrggbbaa` from `toStoredColor`
+ *
+ * @example
+ * ```ts
+ * decodeStoredColor('#ff0000'); // { red: 255, green: 0, blue: 0, alpha: 1 }
+ * ```
+ */
 export const decodeStoredColor = (stored: string): Rgba => {
     const [red, green, blue, alphaByte] = readHexDigits(stored.slice(1));
     return { red, green, blue, alpha: alphaByte / MAX_CHANNEL };
 };
 
-/** The picker's colour as the document stores it. */
-export const toCssColor = ({ red, green, blue, alpha }: Rgba): string => {
+/**
+ * The picker's colour as the document stores it.
+ *
+ * @example
+ * ```ts
+ * encodeStoredColor({ red: 255, green: 0, blue: 0, alpha: 0.5 }); // '#ff000080'
+ * ```
+ */
+export const encodeStoredColor = ({ red, green, blue, alpha }: Rgba): string => {
     const bytes: Bytes = [
         Math.round(clamp(red, MAX_CHANNEL)),
         Math.round(clamp(green, MAX_CHANNEL)),
@@ -256,7 +277,16 @@ export const toCssColor = ({ red, green, blue, alpha }: Rgba): string => {
     return toHex(bytes);
 };
 
-/** Hex while opaque, `rgba()` otherwise: hex alpha is not understood everywhere exported HTML ends up. */
+/**
+ * Hex while opaque, `rgba()` otherwise: hex alpha is not understood everywhere exported HTML ends up.
+ *
+ * @param stored - a lowercase `#rrggbb` or `#rrggbbaa` from `toStoredColor`
+ *
+ * @example
+ * ```ts
+ * toExportedColor('#ff000080'); // 'rgba(255, 0, 0, 0.5)'
+ * ```
+ */
 export const toExportedColor = (stored: string): string => {
     const [red, green, blue, byte] = readHexDigits(stored.slice(1));
     if (byte === MAX_CHANNEL) {
