@@ -32,12 +32,16 @@ afterEach(() => {
     vi.useRealTimers();
 });
 
+type SearchFormOptions = {
+    policy?: LinkPolicy;
+    mode?: { kind: 'create'; text: string } | { kind: 'edit' };
+};
+
+type KeyPressInit = KeyboardEventInit & { keyCode?: number };
+
 const mountSearchForm = (
     search: LinkSearch | undefined,
-    {
-        policy = {},
-        mode = { kind: 'edit' },
-    }: { policy?: LinkPolicy; mode?: { kind: 'create'; text: string } | { kind: 'edit' } } = {},
+    { policy = {}, mode = { kind: 'edit' } }: SearchFormOptions = {},
 ) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
@@ -75,7 +79,7 @@ const mountSearchForm = (
             await vi.advanceTimersByTimeAsync(200);
         });
     };
-    const press = (key: string, init: KeyboardEventInit & { keyCode?: number } = {}): KeyboardEvent => {
+    const press = (key: string, init: KeyPressInit = {}): KeyboardEvent => {
         const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init });
         act(() => {
             field.dispatchEvent(event);

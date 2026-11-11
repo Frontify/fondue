@@ -67,6 +67,7 @@ const mount = (value: RteDocument, policy = {}, toolbarPlacement: 'top' | 'float
 
 const doc = (...children: Record<string, unknown>[]): RteDocument => ({
     version: 1,
+    // The fixtures are loose records on purpose, so one helper builds them; the editor still parses what it gets.
     blocks: [{ type: 'paragraph', children: children as never }],
 });
 
@@ -240,6 +241,7 @@ describe('the panel of a link', () => {
     };
 
     const clipboard = (writeText: (text: string) => Promise<void>): void => {
+        // Only writeText is read, so a full Clipboard is not built.
         vi.spyOn(window.navigator, 'clipboard', 'get').mockReturnValue({ writeText } as unknown as Clipboard);
     };
 
@@ -384,6 +386,7 @@ describe('pasting the reading markup of a link', () => {
         expect(JSON.stringify(first)).not.toContain('opens in new tab');
 
         // The text of the second paste lands next to the first link, so what is compared is the link run alone.
+        // `stored()` is typed nullable; the expectation above has already shown it holds a document.
         pasteHtml(editable, serializeToHtml(first as RteDocument, { plugins: [linkPlugin()] }));
         const second = JSON.stringify(stored());
         expect(second).not.toContain('opens in new tab');

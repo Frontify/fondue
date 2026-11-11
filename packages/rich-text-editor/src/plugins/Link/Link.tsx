@@ -8,6 +8,7 @@ import { LinkEditor } from './components/LinkEditor';
 import { LinkToolbarButton } from './components/LinkToolbarButton';
 import { type LinkSearch } from './helpers/destination';
 import { openNewLinkForm } from './helpers/newLinkForms';
+import { NEW_TAB_NOTE, NEW_TAB_NOTE_ATTRIBUTE, NEW_TAB_REL, NEW_TAB_TARGET } from './helpers/newTab';
 import { allowsHref, type LinkPolicy } from './helpers/policy';
 import { type LinkValue } from './helpers/value';
 import styles from './link.module.scss';
@@ -29,12 +30,14 @@ export type LinkPluginOptions = LinkPolicy & {
     search?: LinkSearch;
 };
 
-/**
- * The address prefixes that mark typed or pasted text as a link.
- */
+const NEW_TAB_NOTE_SELECTOR = `span[${NEW_TAB_NOTE_ATTRIBUTE}]`;
 
-const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string, string> =>
-    link?.openInNewTab === true ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string, string> => {
+    if (link?.openInNewTab === true) {
+        return { target: NEW_TAB_TARGET, rel: NEW_TAB_REL };
+    }
+    return {};
+};
 
 /**
  * A link is a mark: the text stays text, and the target rides along on it.
@@ -43,6 +46,10 @@ const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string
  * plain text, and a stored one is written out without its target, so a
  * `javascript:` URL is never clickable. By default that is any web, mail or
  * phone link, and any relative one.
+ *
+ * @param policy - Which links are allowed; by default every web, mail, phone and relative link.
+ * @example
+ * const content = linkContent({ allowedSchemes: ['https'] });
  */
 export const linkContent = (policy: LinkPolicy = {}) =>
     defineContent({
@@ -58,7 +65,11 @@ export const linkContent = (policy: LinkPolicy = {}) =>
                  */
                 toHtml: (value) => {
                     // A stored document may hold anything here (`{}`, `true`), so its shape is not taken on trust.
-                    const link = typeof value === 'object' ? (value as Partial<LinkValue> | null) : null;
+                    let link: Partial<LinkValue> | null = null;
+                    if (typeof value === 'object') {
+                        // The declared type is trusted only this far: every field is checked before use.
+                        link = value as Partial<LinkValue> | null;
+                    }
                     const href = link?.href;
                     const allowed = allowsHref(policy, href);
                     const spec: HtmlSpec = {
@@ -75,8 +86,8 @@ export const linkContent = (policy: LinkPolicy = {}) =>
                             true,
                             {
                                 tag: 'span',
-                                attrs: { class: styles.visuallyHidden, 'data-rte-link-note': '' },
-                                children: ' (opens in new tab)',
+                                attrs: { class: styles.visuallyHidden, [NEW_TAB_NOTE_ATTRIBUTE]: '' },
+                                children: NEW_TAB_NOTE,
                             },
                         ];
                     }
@@ -85,7 +96,7 @@ export const linkContent = (policy: LinkPolicy = {}) =>
 
                 parse: [
                     // The hidden note toHtml adds is not text of the link.
-                    { tag: 'span[data-rte-link-note]', ignore: true },
+                    { tag: NEW_TAB_NOTE_SELECTOR, ignore: true },
                     {
                         tag: 'a[href]',
                         value: (element) => {
@@ -148,7 +159,12 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) =>
                 kind: 'markPattern',
                 pattern: LINKABLE_ADDRESS,
                 mark: 'link',
-                value: (href) => (allowsHref(policy, href) ? { href } : null),
+                value: (href) => {
+                    if (allowsHref(policy, href)) {
+                        return { href };
+                    }
+                    return null;
+                },
             },
         ],
         // Anything that is not an allowed web, mail or phone address pastes as usual.

@@ -7,6 +7,7 @@ import { type EditProps } from '#/core';
 import { isApple } from '#/ui/platform';
 
 import { type LinkSearch } from '../helpers/destination';
+import { NEW_TAB_NOTE, NEW_TAB_REL, NEW_TAB_TARGET, NEW_TAB_WINDOW_FEATURES } from '../helpers/newTab';
 import { allowsHref, type LinkPolicy } from '../helpers/policy';
 import { type LinkValue } from '../helpers/value';
 import styles from '../link.module.scss';
@@ -18,28 +19,53 @@ import { LinkTargetForm } from './LinkTargetForm';
  */
 const PANEL_CONTROLS = 'a[href], button:not([disabled])';
 
+const COPIED_TEXT = 'Link copied';
+const COPY_FAILED_TEXT = 'Could not copy the link';
+
+type CopyState = 'idle' | 'copied' | 'failed';
+
+const describeCopy = (state: CopyState): string => {
+    switch (state) {
+        case 'idle':
+            return '';
+        case 'copied':
+            return COPIED_TEXT;
+        case 'failed':
+            return COPY_FAILED_TEXT;
+    }
+};
+
+type CopyLinkProps = {
+    href: string;
+};
+
 /**
  * Copies the target and says whether it worked, in a live region that is always in the panel.
  */
-const CopyLink = ({ href }: { href: string }): ReactNode => {
-    const [status, setStatus] = useState('');
+const CopyLink = ({ href }: CopyLinkProps): ReactNode => {
+    const [copyState, setCopyState] = useState<CopyState>('idle');
     const copy = (): void => {
-        // Emptied first, so the same outcome twice is announced twice.
-        setStatus('');
+        // Reset first, so the same outcome twice is announced twice.
+        setCopyState('idle');
         // Inside a promise: a browser without the clipboard API throws before any promise exists.
         Promise.resolve()
             .then(() => navigator.clipboard.writeText(href))
-            .then(() => setStatus('Link copied'))
-            .catch(() => setStatus('Could not copy the link'));
+            .then(() => setCopyState('copied'))
+            .catch(() => setCopyState('failed'));
     };
     return (
         <>
             <Button size="small" emphasis="weak" onPress={copy}>
                 Copy link
             </Button>
-            <output className={styles.visuallyHidden}>{status}</output>
+            <output className={styles.visuallyHidden}>{describeCopy(copyState)}</output>
         </>
     );
+};
+
+type LinkEditorProps = EditProps<LinkValue> & {
+    policy: LinkPolicy;
+    search?: LinkSearch;
 };
 
 /**
@@ -61,7 +87,7 @@ export const LinkEditor = ({
     api,
     policy,
     search,
-}: EditProps<LinkValue> & { policy: LinkPolicy; search?: LinkSearch }): ReactNode => {
+}: LinkEditorProps): ReactNode => {
     // A flyout closed by hand stays closed until the caret leaves the link and returns.
     const [dismissed, setDismissed] = useState(false);
     const [wasFocused, setWasFocused] = useState(isFocused);
@@ -129,7 +155,10 @@ export const LinkEditor = ({
         }
     };
 
-    const href = allowsHref(policy, value.href) ? value.href : undefined;
+    let href: string | undefined;
+    if (allowsHref(policy, value.href)) {
+        href = value.href;
+    }
 
     return (
         <Flyout.Root
@@ -157,7 +186,7 @@ export const LinkEditor = ({
                             modified = event.metaKey;
                         }
                         if (modified && href !== undefined) {
-                            window.open(href, '_blank', 'noopener,noreferrer');
+                            window.open(href, NEW_TAB_TARGET, NEW_TAB_WINDOW_FEATURES);
                         }
                     }}
                 >
@@ -200,11 +229,12 @@ export const LinkEditor = ({
                             }
                         />
                     ) : (
+                        // The div only catches the Tab key bubbling up from the controls inside it; it is not a control itself.
                         // oxlint-disable-next-line jsx-a11y/no-static-element-interactions
                         <div className={styles.panel} onKeyDown={backToText}>
-                            <a href={href} target="_blank" rel="noopener noreferrer" className={styles.target}>
+                            <a href={href} target={NEW_TAB_TARGET} rel={NEW_TAB_REL} className={styles.target}>
                                 {value.href}
-                                <span className={styles.visuallyHidden}> (opens in new tab)</span>
+                                <span className={styles.visuallyHidden}>{NEW_TAB_NOTE}</span>
                             </a>
                             {href !== undefined && <CopyLink href={href} />}
                             <Button size="small" emphasis="weak" onPress={() => setOpen(true)}>

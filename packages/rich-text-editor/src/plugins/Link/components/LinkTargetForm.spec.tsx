@@ -23,10 +23,11 @@ afterEach(() => {
     }
 });
 
-const mountForm = (
-    policy: LinkPolicy,
-    mode: { kind: 'create'; text: string } | { kind: 'edit' } = { kind: 'edit' },
-) => {
+type FormMode = { kind: 'create'; text: string } | { kind: 'edit' };
+
+type EnterPressInit = KeyboardEventInit & { keyCode?: number };
+
+const mountForm = (policy: LinkPolicy, mode: FormMode = { kind: 'edit' }) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
     const root = createRoot(container);
@@ -52,7 +53,7 @@ const mountForm = (
         });
     };
     const alert = (): string => container.querySelector('[role="alert"]')?.textContent ?? '';
-    const press = (init: KeyboardEventInit & { keyCode?: number }): void => {
+    const press = (init: EnterPressInit): void => {
         act(() => {
             field.dispatchEvent(
                 new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true, ...init }),

@@ -13,6 +13,13 @@ import { DestinationField } from './DestinationField';
 import styles from './linkForm.module.scss';
 
 const UNREADABLE = 'Enter a web address (example.com), an email address, or a phone number (tel:…).';
+const MISSING_ADDRESS = 'Enter where the link goes.';
+const TEXT_LABEL = 'Text';
+const LINK_TO_LABEL = 'Link to';
+const NEW_TAB_LABEL = 'Open in new tab';
+const REMOVE_LABEL = 'Remove link';
+const CANCEL_LABEL = 'Cancel';
+const SAVE_LABEL = 'Save';
 
 /**
  * The `kind` says whether the form makes a new link, which gets a Text field, or edits one that exists, whose text is edited in place. It also decides what `onSave` receives.
@@ -76,12 +83,16 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
         const href = toHref(typed);
         if (href === null || !allowsHref(policy, href)) {
             if (typed.trim() === '') {
-                setError('Enter where the link goes.');
+                setError(MISSING_ADDRESS);
             } else if (href === null) {
                 setError(UNREADABLE);
             } else {
                 // A policy with nothing to name cannot be what refused it.
-                setError(describeAllowed(policy) || UNREADABLE);
+                let reason = describeAllowed(policy);
+                if (reason === '') {
+                    reason = UNREADABLE;
+                }
+                setError(reason);
             }
             urlFieldRef.current?.focus();
             return;
@@ -120,7 +131,7 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
         <div className={styles.fields}>
             {props.kind === 'edit' ? null : (
                 <div className={styles.field}>
-                    <Label htmlFor={textId}>Text</Label>
+                    <Label htmlFor={textId}>{TEXT_LABEL}</Label>
                     <TextInput
                         id={textId}
                         ref={textFieldRef}
@@ -132,7 +143,7 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
                 </div>
             )}
             <div className={styles.field}>
-                <Label htmlFor={urlId}>Link to</Label>
+                <Label htmlFor={urlId}>{LINK_TO_LABEL}</Label>
                 <DestinationField
                     id={urlId}
                     inputRef={urlFieldRef}
@@ -159,19 +170,19 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
                     value={openInNewTab}
                     onChange={() => setOpenInNewTab((previous) => !previous)}
                 />
-                <Label htmlFor={newTabId}>Open in new tab</Label>
+                <Label htmlFor={newTabId}>{NEW_TAB_LABEL}</Label>
             </div>
             <div className={styles.formActions}>
                 {onRemove ? (
                     <Button size="small" emphasis="weak" onPress={onRemove}>
-                        Remove link
+                        {REMOVE_LABEL}
                     </Button>
                 ) : null}
                 <Button size="small" emphasis="weak" onPress={onCancel}>
-                    Cancel
+                    {CANCEL_LABEL}
                 </Button>
                 <Button size="small" onPress={save}>
-                    Save
+                    {SAVE_LABEL}
                 </Button>
             </div>
         </div>

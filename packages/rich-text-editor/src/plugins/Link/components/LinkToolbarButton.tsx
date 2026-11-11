@@ -86,7 +86,11 @@ export const LinkToolbarButton = ({
                                 // Formatting inside the selection survives.
                                 toggle(value);
                             } else {
-                                api.insertText(text === '' ? value.href : text, { link: value });
+                                let shown = text;
+                                if (text === '') {
+                                    shown = value.href;
+                                }
+                                api.insertText(shown, { link: value });
                             }
                             finish();
                         }}
