@@ -16,8 +16,8 @@ import { EXTRA_ATTR, mapExtras } from './documentConversion';
 import { tidyGoogleDocs } from './pasteGoogleDocs';
 import { tidyOffice } from './pasteOffice';
 
-/** The attribute the engine puts on the HTML it copies, which marks a paste as copied from an editor. */
-const EDITOR_SLICE_ATTRIBUTE = 'data-pm-slice';
+/** Put on what this editor copies, so a paste can tell it came from an editor like this one. */
+const COPIED_FROM_EDITOR = 'data-rte-copy';
 
 // Copy and paste fixes beyond what the engine does on its own.
 
@@ -47,6 +47,11 @@ class ClipboardSerializer extends DOMSerializer {
     serializeFragment(...args: Parameters<DOMSerializer['serializeFragment']>): HTMLElement | DocumentFragment {
         const written = super.serializeFragment(...args);
         keepBreaks(written);
+        const [, , target] = args;
+        // Only the outer call, which the engine makes without a target; nested content is serialized into one.
+        if (target === undefined) {
+            written.firstElementChild?.setAttribute(COPIED_FROM_EDITOR, '');
+        }
         return written;
     }
 }
@@ -146,7 +151,8 @@ export const handlePasteByFeatures =
         }
         const html = data.getData('text/html') || null;
         let source: PasteSource = 'elsewhere';
-        if (html?.includes(EDITOR_SLICE_ATTRIBUTE) === true) {
+        // Only a marker: forged, it just leaves a caret paste to the editor's own paste rules.
+        if (html?.includes(COPIED_FROM_EDITOR) === true) {
             source = 'editor';
         }
         const paste: Paste = { text: data.getData('text/plain'), html, source };

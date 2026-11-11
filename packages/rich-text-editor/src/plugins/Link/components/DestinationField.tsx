@@ -96,12 +96,15 @@ export const DestinationField = forwardRef<HTMLInputElement, DestinationFieldPro
     const optionId = (index: number): string => `${listId}-option-${index}`;
     const highlight = (index: number): void => setHighlighted({ value, index });
     const listRef = useRef<HTMLUListElement>(null);
+    // Set by the arrow keys only: a row the pointer highlights is in sight already.
+    const revealHighlight = useRef(false);
 
     // The list scrolls, so the arrows could move the highlight onto a row out of sight.
     useEffect(() => {
-        if (activeIndex < 0) {
+        if (!revealHighlight.current || activeIndex < 0) {
             return;
         }
+        revealHighlight.current = false;
         listRef.current?.children[activeIndex]?.scrollIntoView({ block: 'nearest' });
     }, [activeIndex]);
 
@@ -138,6 +141,7 @@ export const DestinationField = forwardRef<HTMLInputElement, DestinationFieldPro
         if (results.length === 0) {
             return;
         }
+        revealHighlight.current = true;
         if (event.key === 'ArrowDown') {
             highlight((activeIndex + 1) % results.length);
             return;

@@ -148,6 +148,20 @@ describe('the destination field', () => {
         scrolled.mockRestore();
     });
 
+    it('leaves the list where it is when the pointer highlights an option', async () => {
+        const scrolled = vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(() => {});
+        const { type, options } = mountSearchForm(fixed(BRAND, LOGOS));
+        await type('br');
+
+        act(() => {
+            options()[1]?.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
+        });
+
+        expect(options()[1]?.getAttribute('aria-selected')).toBe('true');
+        expect(scrolled).not.toHaveBeenCalled();
+        scrolled.mockRestore();
+    });
+
     it('does not search again for the address a pick fills in', async () => {
         const search = vi.fn<LinkSearch>(fixed(BRAND, LOGOS));
         const { type, press } = mountSearchForm(search);

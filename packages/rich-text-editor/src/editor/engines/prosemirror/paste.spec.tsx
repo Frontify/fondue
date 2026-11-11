@@ -244,6 +244,17 @@ describe('pasting over selected text with the link plugin', () => {
         expect(editor.stored()).toEqual([paragraph(text('a'), text('https://example.com', copied))]);
     });
 
+    it('links an address at a caret when another app on the same engine copied it', () => {
+        const editor = editorWith(shipped('link'), [paragraph(text('a'))]);
+        editor.caretAfter('a');
+
+        editor.paste('https://example.com', '<p data-pm-slice="1 1 []">https://example.com</p>');
+
+        expect(editor.stored()).toEqual([
+            paragraph(text('a'), text('https://example.com', link('https://example.com'))),
+        ]);
+    });
+
     it('pastes an address as plain text inside a link', () => {
         const editor = editorWith(shipped('link'), [paragraph(text('frontify', link('https://old.example')))]);
         editor.caretAfter('fron');
