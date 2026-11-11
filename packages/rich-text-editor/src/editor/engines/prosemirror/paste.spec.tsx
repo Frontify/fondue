@@ -173,16 +173,17 @@ describe('pasting formatted text', () => {
         ]);
     });
 
-    it('does not read any bold weight a heading shows by default as formatting', () => {
-        expect(pasted('<h3><span style="font-weight:650">x</span></h3>')).toEqual([
-            { type: 'textStyle', style: 'heading3', children: [text('x')] },
+    it('does not read the bold a heading declares on itself as formatting', () => {
+        expect(pasted('<h2 style="font-weight:bold">x</h2>')).toEqual([
+            { type: 'textStyle', style: 'heading2', children: [text('x')] },
         ]);
     });
 
-    it('does not read the bold a heading shows by default as formatting', () => {
-        expect(pasted('<h1><span style="font-weight:bold">x</span></h1>')).toEqual([
-            { type: 'textStyle', style: 'heading1', children: [text('x')] },
-        ]);
+    it.each([
+        ['<h1><span style="font-weight:bold">x</span></h1>', 'heading1'],
+        ['<h3><span style="font-weight:650">x</span></h3>', 'heading3'],
+    ])('keeps the bold an author set on heading text: %s', (html, style) => {
+        expect(pasted(html)).toEqual([{ type: 'textStyle', style, children: [text('x', { bold: true })] }]);
     });
 
     it('keeps only the inner of subscript and superscript', () => {

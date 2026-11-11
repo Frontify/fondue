@@ -57,17 +57,32 @@ export const valueParseRules = (rules: readonly ParseRule<unknown>[], priority: 
     rules.map((rule) => valueParseRule(rule, priority));
 
 /**
- * A style an element shows by default is not formatting when it sits in that element:
- * Word and Google Docs underline a link's text and bold a heading's text in a span.
- * `strip` removes what the enclosing element already shows from the declared value.
+ * Where a default style is declared: on the element that shows it, or on anything inside it.
+ */
+type DefaultStyleScope = 'self' | 'inside';
+
+/**
+ * A style an element shows by default is not formatting where it repeats that default:
+ * Google Docs underlines a link's text in a span, and a pasted `<style>` rule bolds a LibreOffice heading.
+ * `strip` removes what the element already shows from the declared value.
  */
 type DefaultStyle = {
     property: string;
     /**
-     * The enclosing elements that show the style by default.
+     * The elements that show the style by default.
      */
     within: string;
+    scope: DefaultStyleScope;
     strip: RegExp;
+};
+
+const showsDefault = (element: HTMLElement, defaults: DefaultStyle): boolean => {
+    switch (defaults.scope) {
+        case 'self':
+            return element.matches(defaults.within);
+        case 'inside':
+            return element.closest(defaults.within) !== null;
+    }
 };
 
 /**
@@ -81,22 +96,18 @@ const UNDERLINE_WORD = /\bunderline\b/gi;
 const BOLD_WEIGHT_VALUE = /^\s*(?:bold|bolder|[6-9]\d\d(?:\.\d+)?|1000)\s*$/i;
 
 /**
- * What an enclosing element already shows by default: a link's underline, a heading's bold. Pasted text repeating it is not formatting.
+ * What an element already shows by default: a link's underline, a heading's bold. Bold on text inside a heading is the author's, as Google Docs writes it.
  */
 const DEFAULT_STYLES: readonly DefaultStyle[] = [
-    { property: 'text-decoration', within: 'a[href]', strip: UNDERLINE_WORD },
-    { property: 'text-decoration-line', within: 'a[href]', strip: UNDERLINE_WORD },
-    {
-        property: 'font-weight',
-        within: 'h1, h2, h3, h4, h5, h6, th',
-        strip: BOLD_WEIGHT_VALUE,
-    },
+    { property: 'text-decoration', within: 'a[href]', scope: 'inside', strip: UNDERLINE_WORD },
+    { property: 'text-decoration-line', within: 'a[href]', scope: 'inside', strip: UNDERLINE_WORD },
+    { property: 'font-weight', within: 'h1, h2, h3, h4, h5, h6, th', scope: 'self', strip: BOLD_WEIGHT_VALUE },
 ];
 
 const declaredValue = (element: HTMLElement, property: string): string => {
     let value = element.style.getPropertyValue(property);
     for (const defaults of DEFAULT_STYLES) {
-        if (defaults.property === property && element.closest(defaults.within) !== null) {
+        if (defaults.property === property && showsDefault(element, defaults)) {
             value = value.replace(defaults.strip, '');
         }
     }
