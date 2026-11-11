@@ -28,6 +28,13 @@ export type RichTextEditorLabels = {
     noResults: string;
     /** Announced as the `/` menu narrows, when something matches. */
     commandCount: (count: number) => string;
+    /**
+     * Shown in place of the editor when it crashed, below its read-only content when that can be shown.
+     * It names the `retry` button, so translate the two together.
+     */
+    editorFailed: string;
+    /** The button that mounts the editor again after it crashed. */
+    retry: string;
     /** Shown above a document a newer version of the editor saved, which is shown read-only; left out when the host sets `readonly`. */
     newerVersion: string;
 };
@@ -44,5 +51,7 @@ export const DEFAULT_LABELS: RichTextEditorLabels = {
     commands: 'Commands',
     noResults: 'No results',
     commandCount: (count) => `${count} ${count === 1 ? 'command' : 'commands'}`,
+    editorFailed: 'The editor stopped working. Try again to load it.',
+    retry: 'Try again',
     newerVersion: 'This content was saved with a newer version of the editor. Try reloading the page to edit it.',
 };
