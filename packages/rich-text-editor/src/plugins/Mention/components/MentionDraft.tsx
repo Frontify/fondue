@@ -8,11 +8,9 @@ import { readableShortcut } from '#/ui/ToolbarButton/ToolbarButton';
 
 import { isSafeImageSrc } from '../../shared/helpers/href';
 import { isCompositionKey } from '../../shared/helpers/keys';
+import { usePeople } from '../hooks/usePeople';
 import styles from '../mention.module.scss';
 import { type MentionItem, type MentionItems } from '../types';
-
-/** How many people the picker offers at once. */
-const SUGGESTION_LIMIT = 8;
 
 /**
  * What a failed lookup says, to a screen reader and in the list: the message, then how to retry from the keyboard.
@@ -58,51 +56,6 @@ const Avatar = ({ person }: AvatarProps): ReactNode => (
     </span>
 );
 
-/**
- * The people for a query. Answers are tagged with their query so a slow one
- * never overwrites a newer one; the last answer stays up while `pending`, so a
- * server-backed list does not flicker on every key. A failed lookup offers
- * nobody rather than leaving the last list up, and `retry` asks again.
- */
-const usePeople = (
-    items: MentionItems,
-    query: string,
-): { people: readonly MentionItem[]; pending: boolean; failed: boolean; retry: () => void } => {
-    const [answer, setAnswer] = useState<{
-        query: string;
-        people: readonly MentionItem[];
-        failed: boolean;
-    } | null>(null);
-    const [attempt, setAttempt] = useState(0);
-
-    useEffect(() => {
-        let current = true;
-        const settle = (people: readonly MentionItem[], failed: boolean): void => {
-            if (current) {
-                setAnswer({ query, people: people.slice(0, SUGGESTION_LIMIT), failed });
-            }
-        };
-        Promise.resolve(items(query))
-            .then((people) => settle(people, false))
-            .catch(() => settle([], true));
-        return () => {
-            current = false;
-        };
-    }, [items, query, attempt]);
-
-    const retry = (): void => {
-        setAnswer(null);
-        setAttempt((previous) => previous + 1);
-    };
-
-    return {
-        people: answer?.people ?? [],
-        pending: answer?.query !== query,
-        failed: answer?.query === query && answer.failed,
-        retry,
-    };
-};
-
 type PeoplePhase = 'searching' | 'failed' | 'empty' | 'list';
 
 type PhaseOfParams = { people: readonly MentionItem[]; pending: boolean; failed: boolean };
@@ -139,6 +92,91 @@ const statusOf = (phase: PeoplePhase, people: readonly MentionItem[]): string =>
                 return '1 person';
             }
             return `${people.length} people`;
+        default:
+            // Adding a phase fails to compile here until it is handled.
+            throw new Error(`Unhandled people phase: ${JSON.stringify(phase satisfies never)}`);
+    }
+};
+
+type MentionPopupBodyProps = {
+    phase: PeoplePhase;
+    people: readonly MentionItem[];
+    trigger: string;
+    listId: string;
+    activeIndex: number;
+    optionId: (index: number) => string;
+    onRetry: () => void;
+    onPick: (person: MentionItem) => void;
+    onHighlight: (index: number) => void;
+};
+
+/**
+ * What the popup shows for a phase: a message, the retry button, or the list of people.
+ */
+const MentionPopupBody = ({
+    phase,
+    people,
+    trigger,
+    listId,
+    activeIndex,
+    optionId,
+    onRetry,
+    onPick,
+    onHighlight,
+}: MentionPopupBodyProps): ReactNode => {
+    switch (phase) {
+        case 'searching':
+            return <div className={styles.empty}>{SEARCHING_MESSAGE}</div>;
+        case 'failed':
+            return (
+                <div className={styles.empty}>
+                    {FAILED_MESSAGE}{' '}
+                    <button
+                        type="button"
+                        // Out of the Tab order and off the mouse's focus: the query keeps the caret.
+                        tabIndex={-1}
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={onRetry}
+                        className={styles.retry}
+                    >
+                        {RETRY_LABEL}
+                    </button>
+                    <kbd aria-hidden="true" className={styles.shortcut}>
+                        {readableShortcut(RETRY_KEY)}
+                    </kbd>
+                </div>
+            );
+        case 'empty':
+            return <div className={styles.empty}>{NO_MATCHES_MESSAGE}</div>;
+        case 'list':
+            return (
+                <ul id={listId} role="listbox" aria-label="People" className={styles.list}>
+                    {people.map((person, index) => (
+                        // The keyboard drives the list from the input; the mouse picks here.
+                        // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
+                        <li
+                            key={optionId(index)}
+                            id={optionId(index)}
+                            role="option"
+                            aria-selected={index === activeIndex}
+                            // Keep focus in the input: blurring would cancel before the click lands.
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => onPick(person)}
+                            onMouseEnter={() => onHighlight(index)}
+                            className={
+                                index === activeIndex ? `${styles.option} ${styles.optionActive}` : styles.option
+                            }
+                        >
+                            <Avatar person={person} />
+                            <span>{person.name}</span>
+                            <span className={styles.hint}>
+                                {trigger}
+                                {person.username}
+                            </span>
+                        </li>
+                    ))}
+                </ul>
+            );
         default:
             // Adding a phase fails to compile here until it is handled.
             throw new Error(`Unhandled people phase: ${JSON.stringify(phase satisfies never)}`);
@@ -292,66 +330,6 @@ export const MentionDraft = ({
         event.preventDefault();
     };
 
-    const popupBody = (): ReactNode => {
-        switch (phase) {
-            case 'searching':
-                return <div className={styles.empty}>{SEARCHING_MESSAGE}</div>;
-            case 'failed':
-                return (
-                    <div className={styles.empty}>
-                        {FAILED_MESSAGE}{' '}
-                        <button
-                            type="button"
-                            // Out of the Tab order and off the mouse's focus: the query keeps the caret.
-                            tabIndex={-1}
-                            onMouseDown={(event) => event.preventDefault()}
-                            onClick={retry}
-                            className={styles.retry}
-                        >
-                            {RETRY_LABEL}
-                        </button>
-                        <kbd aria-hidden="true" className={styles.shortcut}>
-                            {readableShortcut(RETRY_KEY)}
-                        </kbd>
-                    </div>
-                );
-            case 'empty':
-                return <div className={styles.empty}>{NO_MATCHES_MESSAGE}</div>;
-            case 'list':
-                return (
-                    <ul id={listId} role="listbox" aria-label="People" className={styles.list}>
-                        {people.map((person, index) => (
-                            // The keyboard drives the list from the input; the mouse picks here.
-                            // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
-                            <li
-                                key={optionId(index)}
-                                id={optionId(index)}
-                                role="option"
-                                aria-selected={index === activeIndex}
-                                // Keep focus in the input: blurring would cancel before the click lands.
-                                onMouseDown={(event) => event.preventDefault()}
-                                onClick={() => finish(() => onChoose(person))}
-                                onMouseEnter={() => highlight(index)}
-                                className={
-                                    index === activeIndex ? `${styles.option} ${styles.optionActive}` : styles.option
-                                }
-                            >
-                                <Avatar person={person} />
-                                <span>{person.name}</span>
-                                <span className={styles.hint}>
-                                    {trigger}
-                                    {person.username}
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
-                );
-            default:
-                // Adding a phase fails to compile here until it is handled.
-                throw new Error(`Unhandled people phase: ${JSON.stringify(phase satisfies never)}`);
-        }
-    };
-
     return (
         <span ref={draftRef} className={styles.draft}>
             {trigger}
@@ -377,7 +355,17 @@ export const MentionDraft = ({
             {open && position !== null
                 ? createPortal(
                       <div className={styles.popup} style={{ left: position.left, top: position.top }}>
-                          {popupBody()}
+                          <MentionPopupBody
+                              phase={phase}
+                              people={people}
+                              trigger={trigger}
+                              listId={listId}
+                              activeIndex={activeIndex}
+                              optionId={optionId}
+                              onRetry={retry}
+                              onPick={(person) => finish(() => onChoose(person))}
+                              onHighlight={highlight}
+                          />
                       </div>,
                       draftRef.current?.ownerDocument.body ?? document.body,
                   )
