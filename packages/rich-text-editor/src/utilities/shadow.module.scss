@@ -1,8 +1,0 @@
-/* (c) Copyright Frontify Ltd., all rights reserved. */
-
-// The same value as packages/components' `shadow-md`, which this package cannot import.
-@mixin shadow-md {
-    & {
-        box-shadow: 0 3px 10px 0 rgba(8, 8, 8, 0.15);
-    }
-}

@@ -1,13 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ThemeProvider, Tooltip } from '@frontify/fondue-components';
+import { Button, Flyout, ThemeProvider, Tooltip } from '@frontify/fondue-components';
 import { IconDotsHorizontal } from '@frontify/fondue-icons';
-import {
-    Content as PopoverContent,
-    Portal as PopoverPortal,
-    Root as PopoverRoot,
-    Trigger as PopoverTrigger,
-} from '@radix-ui/react-popover';
 import {
     type ComponentProps,
     forwardRef,
@@ -120,7 +114,7 @@ export const ToolbarMore = ({ label, onPanel, children }: ToolbarMoreProps): Rea
 
     return (
         <>
-            <PopoverRoot open={open} onOpenChange={onOpenChange}>
+            <Flyout.Root open={open} onOpenChange={onOpenChange}>
                 {/* The panel is the layer Escape belongs to while open; a tooltip over it would take the key first. */}
                 <Tooltip.Root
                     open={tooltipOpen}
@@ -132,9 +126,9 @@ export const ToolbarMore = ({ label, onPanel, children }: ToolbarMoreProps): Rea
                 >
                     <span className={styles.moreAnchor}>
                         <Tooltip.Trigger asChild>
-                            <PopoverTrigger asChild>
+                            <Flyout.Trigger>
                                 <MoreButton {...buttonProps} ref={moreRef} label={label} />
-                            </PopoverTrigger>
+                            </Flyout.Trigger>
                         </Tooltip.Trigger>
                         {/* Out of sight and of the accessibility tree, yet laid out, so the row can measure the slots in it and a flyout can hang from them. */}
                         <div ref={parkHost} aria-hidden="true" className={styles.morePanelParked} />
@@ -143,50 +137,41 @@ export const ToolbarMore = ({ label, onPanel, children }: ToolbarMoreProps): Rea
                 </Tooltip.Root>
                 {/* Only while open: a closed panel would be a layer, taking Escape from a dialog holding the editor. */}
                 {open ? (
-                    <PopoverPortal>
-                        <ThemeProvider>
-                            <PopoverContent
-                                ref={contentRef}
-                                // The panel is a dialog to assistive technology, which needs a name of its own.
-                                aria-label={label}
-                                side="bottom"
-                                align="end"
-                                sideOffset={8}
-                                collisionPadding={8}
-                                className={styles.morePanel}
-                                // Focus is placed by the panel on open and by its closing.
-                                onOpenAutoFocus={(event) => event.preventDefault()}
-                                onCloseAutoFocus={(event) => event.preventDefault()}
-                                // A flyout or menu a control in the panel has open portals out of it, so any press is the panel's own while one is open.
-                                onInteractOutside={(event) => {
-                                    if (host.querySelector('[aria-expanded="true"]') !== null) {
-                                        event.preventDefault();
-                                    }
-                                }}
-                                onEscapeKeyDown={(event) => {
-                                    const { target } = event;
-                                    if (target instanceof HTMLElement) {
-                                        // A control's open menu, or the text's open suggestion list, keeps Escape; More's own state is this panel's.
-                                        if (
-                                            target !== moreRef.current &&
-                                            target.getAttribute('aria-expanded') === 'true'
-                                        ) {
-                                            event.preventDefault();
-                                            return;
-                                        }
-                                        // Inside the panel the close is the layer's own, and onOpenChange puts focus on More.
-                                        if (content?.contains(target) === true) {
-                                            return;
-                                        }
-                                    }
-                                    // From the text or More, Escape only closes the panel; the editor must not leave the text too.
-                                    event.stopPropagation();
-                                }}
-                            />
-                        </ThemeProvider>
-                    </PopoverPortal>
+                    <Flyout.Content
+                        ref={contentRef}
+                        // The panel is a dialog to assistive technology, which needs a name of its own.
+                        aria-label={label}
+                        side="bottom"
+                        align="end"
+                        padding="none"
+                        // Focus is placed by the panel on open and by its closing.
+                        onOpenAutoFocus={(event) => event.preventDefault()}
+                        onCloseAutoFocus={(event) => event.preventDefault()}
+                        // A flyout or menu a control in the panel has open portals out of it, so any press is the panel's own while one is open.
+                        onInteractOutside={(event) => {
+                            if (host.querySelector('[aria-expanded="true"]') !== null) {
+                                event.preventDefault();
+                            }
+                        }}
+                        onEscapeKeyDown={(event) => {
+                            const { target } = event;
+                            if (target instanceof HTMLElement) {
+                                // A control's open menu, or the text's open suggestion list, keeps Escape; More's own state is this panel's.
+                                if (target !== moreRef.current && target.getAttribute('aria-expanded') === 'true') {
+                                    event.preventDefault();
+                                    return;
+                                }
+                                // Inside the panel the close is the layer's own, and onOpenChange puts focus on More.
+                                if (content?.contains(target) === true) {
+                                    return;
+                                }
+                            }
+                            // From the text or More, Escape only closes the panel; the editor must not leave the text too.
+                            event.stopPropagation();
+                        }}
+                    />
                 ) : null}
-            </PopoverRoot>
+            </Flyout.Root>
             {createPortal(
                 <ThemeProvider>
                     <MorePanel label={label} focusRequestRef={focusRequestRef} onLeave={closeToMore}>
