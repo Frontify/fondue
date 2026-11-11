@@ -723,6 +723,18 @@ describe('the editable element', () => {
         expect(editableIn(container).hasAttribute('aria-placeholder')).toBe(false);
     });
 
+    // The drop cursor is drawn in the editable's offset parent: positioned, that is the editor's own element.
+    it('mounts in a positioned element, so the drop cursor stays inside the host', () => {
+        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} />);
+        ready();
+
+        const mountPoint = editableIn(container).parentElement;
+        if (!mountPoint) {
+            throw new Error('the editable element has no parent');
+        }
+        expect(window.getComputedStyle(mountPoint).position).toBe('relative');
+    });
+
     it('follows a changed name without being rebuilt', () => {
         const { container, rerender, ready } = mount(() => (
             <RichTextEditor plugins={defaultPlugins} aria-label="One" />
@@ -1392,5 +1404,61 @@ describe('a to-do list', () => {
         expect(box?.getAttribute('aria-readonly')).toBe('true');
         act(() => box?.click());
         expect(box?.checked).toBe(true);
+    });
+
+    // `RteDocument` names no plugin block, so the check list needs the cast.
+    const started = (checked: boolean | 'inProgress'): RteDocument =>
+        ({
+            version: 1,
+            blocks: [
+                {
+                    type: 'checkList',
+                    children: [
+                        {
+                            type: 'checkItem',
+                            checked,
+                            children: [{ type: 'paragraph', children: [{ text: 'Started' }] }],
+                        },
+                    ],
+                },
+            ],
+        }) as RteDocument;
+
+    it('shows an item in progress as a mixed checkbox, in the editor and the readonly view', () => {
+        for (const element of [
+            <RichTextEditor key="editor" value={started('inProgress')} plugins={checkListPlugins} />,
+            <RichTextRenderer key="renderer" value={started('inProgress')} plugins={checkListPlugins} />,
+        ]) {
+            const box = render(element).querySelector<HTMLInputElement>('input[type="checkbox"]');
+
+            expect(box?.indeterminate).toBe(true);
+            expect(box?.checked).toBe(false);
+        }
+    });
+
+    it('marks an item in progress done on a click', () => {
+        const { container, ready, stored } = mount((onChange) => (
+            <RichTextEditor value={started('inProgress')} onChange={onChange} plugins={checkListPlugins} />
+        ));
+        ready();
+
+        act(() => container.querySelector<HTMLInputElement>('input[type="checkbox"]')?.click());
+
+        expect(stored()).toEqual(started(true));
+    });
+
+    it('exports an item in progress named by its state, and reads it back', () => {
+        const html = serializeToHtml(started('inProgress'), { plugins: checkListPlugins });
+
+        expect(html).toContain('aria-label="In progress"');
+        expect(html).toContain('data-checked="inProgress"');
+
+        const { container, ready, stored } = mount((onChange) => (
+            <RichTextEditor onChange={onChange} plugins={checkListPlugins} />
+        ));
+        ready();
+        paste(container, html);
+
+        expect(stored()?.blocks).toContainEqual(started('inProgress').blocks[0]);
     });
 });
