@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { dropCursor } from 'prosemirror-dropcursor';
 import { closeHistory } from 'prosemirror-history';
 import { EditorState, Selection, TextSelection, type Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
@@ -11,6 +12,7 @@ import {
     clipboardSerializer,
     handlePasteByFeatures,
     handlePasteIntoEmptyBlock,
+    keepOfficeListStyles,
     pastedWithoutExtras,
 } from './clipboard';
 import { createControlApi, type OpenEditors } from './controlApi';
@@ -146,6 +148,7 @@ const mount = ({
         markViews: createMarkViews(registry, api, liveViews, openEditors),
         clipboardSerializer: clipboardSerializer(schema),
         clipboardParser: clipboardParser(schema),
+        transformPastedHTML: keepOfficeListStyles,
         transformPasted: pastedWithoutExtras,
         handlePaste: (pasteView, event, slice) => {
             // The feature's first edit starts the paste's undo step, and the edit after the paste starts another.
@@ -167,6 +170,8 @@ const mount = ({
                 ...keystrokePipeline(registry, schema, api),
                 copiedExtrasPlugin(),
                 placeholderPlugin(() => currentPlaceholder, placeholderClassName),
+                // Drawn in the view's offset parent, outside the text, so `currentColor` would be the host's colour.
+                dropCursor({ color: 'var(--color-primary-default)', width: 2 }),
             ],
         }),
         // Clicking an inline atom (mention, ...) puts the caret after it rather than selecting it.
