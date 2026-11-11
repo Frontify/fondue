@@ -12,6 +12,7 @@ import {
     decodeStoredColor,
     encodeStoredColor,
     type FontColorValue,
+    isCompleteHex,
     OPAQUE_ALPHA,
     parseTypedHex,
     type Rgba,
@@ -30,9 +31,6 @@ const encodePickerColor = (color: PickerColor): string =>
 
 /** The hex field inside the picker. */
 const HEX_FIELD_SELECTOR = 'input[type="text"]';
-
-/** The hex field holds all six digits, so the picker can update at once. */
-const COMPLETE_HEX = /^#?[\dA-Fa-f]{6}$/;
 
 /** The control's name, for its button and flyout header. */
 const COLOR_LABEL = 'Text colour';
@@ -200,7 +198,7 @@ export const ColorFlyout = ({ selection, api, isActive }: ColorFlyoutProps): Rea
                             if (!(target instanceof HTMLInputElement)) {
                                 return;
                             }
-                            if (target.matches(HEX_FIELD_SELECTOR) && COMPLETE_HEX.test(target.value)) {
+                            if (target.matches(HEX_FIELD_SELECTOR) && isCompleteHex(target.value)) {
                                 setDraft(readHexField(pickerRef.current, draft?.alpha));
                             }
                         }}

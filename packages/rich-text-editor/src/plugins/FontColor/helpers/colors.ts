@@ -44,13 +44,26 @@ const HEX_FIELD_DIGITS = /^([\dA-Fa-f]{3}){1,2}$/;
 /** A leading `#` on typed hex. */
 const LEADING_HASH = /^#/;
 
+const COMPLETE_HEX = /^#?[\dA-Fa-f]{6}$/;
+
+/**
+ * Whether the hex field holds all six digits, with or without a leading `#`, so the picker can preview at once.
+ *
+ * @example
+ * ```ts
+ * isCompleteHex('#C5221F'); // true
+ * isCompleteHex('f00'); // false
+ * ```
+ */
+export const isCompleteHex = (text: string): boolean => COMPLETE_HEX.test(text);
+
 const HEX_COLOR = /^#([\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/;
 const COLOR_FUNCTION = new RegExp(`^(${COLOR_FUNCTIONS.join('|')})a?\\(([^()]*)\\)$`);
 const isColorFunction = (kind: string): kind is ColorFunction => COLOR_FUNCTIONS.some((known) => known === kind);
 const NUMBER = /^[+-]?(\d+(\.\d+)?|\.\d+)(e[+-]?\d+)?%?$/;
 
-const SHORT_ALPHA_DECIMALS = 100;
-const LONG_ALPHA_DECIMALS = 1000;
+const SHORT_ALPHA_SCALE = 100;
+const LONG_ALPHA_SCALE = 1000;
 
 const clamp = (value: number, max: number): number => Math.min(Math.max(value, 0), max);
 
@@ -167,6 +180,11 @@ const readHsl = (parts: string[], syntax: ColorSyntax, alpha: number): Rgba | un
     return { red, green, blue, alpha: clamp(alpha, 1) };
 };
 
+type ColorReader = (parts: string[], syntax: ColorSyntax, alpha: number) => Rgba | undefined;
+
+/** A new `ColorFunction` fails to compile until it has a reader here. */
+const COLOR_FUNCTION_READERS: Record<ColorFunction, ColorReader> = { rgb: readRgb, hsl: readHsl };
+
 /** One `rgb()`/`rgba()`/`hsl()`/`hsla()`, with an optional alpha. */
 const readColorFunction = (kind: ColorFunction, args: string): Rgba | undefined => {
     const split = splitArguments(args);
@@ -181,23 +199,16 @@ const readColorFunction = (kind: ColorFunction, args: string): Rgba | undefined 
     if (alpha === undefined) {
         return undefined;
     }
-    switch (kind) {
-        case 'rgb': {
-            return readRgb(parts, syntax, alpha);
-        }
-        case 'hsl': {
-            return readHsl(parts, syntax, alpha);
-        }
-    }
+    return COLOR_FUNCTION_READERS[kind](parts, syntax, alpha);
 };
 
 /** The shortest alpha, in two decimals or else three, that encodes back to the same byte. */
 const toShortestAlpha = (byte: number): number => {
-    const short = Math.round((byte / MAX_CHANNEL) * SHORT_ALPHA_DECIMALS) / SHORT_ALPHA_DECIMALS;
+    const short = Math.round((byte / MAX_CHANNEL) * SHORT_ALPHA_SCALE) / SHORT_ALPHA_SCALE;
     if (Math.round(short * MAX_CHANNEL) === byte) {
         return short;
     }
-    return Math.round((byte / MAX_CHANNEL) * LONG_ALPHA_DECIMALS) / LONG_ALPHA_DECIMALS;
+    return Math.round((byte / MAX_CHANNEL) * LONG_ALPHA_SCALE) / LONG_ALPHA_SCALE;
 };
 
 /** Reads 6 or 8 lowercase hex digits as red, green, blue and alpha bytes; alpha is full with 6. */
@@ -313,7 +324,7 @@ export const encodeStoredColor = ({ red, green, blue, alpha }: Rgba): string => 
  * ```
  */
 export const toColorName = (color: Rgba): string => {
-    let name = encodeStoredColor({ ...color, alpha: 1 }).toUpperCase();
+    let name = encodeStoredColor({ ...color, alpha: OPAQUE_ALPHA }).toUpperCase();
     if (color.alpha < OPAQUE_ALPHA) {
         name += ` ${Math.round(color.alpha * PERCENT)}%`;
     }
