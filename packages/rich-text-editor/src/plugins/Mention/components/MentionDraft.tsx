@@ -4,6 +4,8 @@ import { IconPeople, IconPerson, IconTarget } from '@frontify/fondue-icons';
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { readableShortcut } from '#/ui/ToolbarButton/ToolbarButton';
+
 import { isSafeImageSrc } from '../../shared/helpers/href';
 import { isCompositionKey } from '../../shared/helpers/keys';
 import styles from '../mention.module.scss';
@@ -17,6 +19,9 @@ const SUGGESTION_LIMIT = 8;
  */
 const FAILED_MESSAGE = 'Could not load people.';
 const FAILED_HINT = 'Press Enter to retry';
+
+/** The key drawn beside Retry. */
+const RETRY_KEY = 'Enter';
 
 /** The gap between the query and the list under it. */
 const LIST_OFFSET = 4;
@@ -313,8 +318,10 @@ export const MentionDraft = ({
                                               className={styles.retry}
                                           >
                                               Retry
-                                          </button>{' '}
-                                          <span className={styles.hint}>{FAILED_HINT}</span>
+                                          </button>
+                                          <kbd aria-hidden="true" className={styles.shortcut}>
+                                              {readableShortcut(RETRY_KEY)}
+                                          </kbd>
                                       </>
                                   ) : null}
                                   {phase === 'empty' ? 'No matches' : null}

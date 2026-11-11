@@ -6,6 +6,8 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { readableShortcut } from '#/ui/ToolbarButton/ToolbarButton';
+
 import { type MentionItem, type MentionItems } from '../types';
 
 import { MentionDraft } from './MentionDraft';
@@ -188,7 +190,10 @@ describe('a mention being searched for', () => {
 
         expect(status()).toBe('Could not load people. Press Enter to retry.');
         expect(popup()).toContain('Could not load people.');
-        expect(popup()).toContain('Press Enter to retry');
+        expect(popup()).not.toContain('Press Enter to retry');
+        const shortcut = window.document.querySelector('kbd');
+        expect(shortcut?.textContent).toBe(readableShortcut('Enter'));
+        expect(shortcut?.getAttribute('aria-hidden')).toBe('true');
         expect(popup()).not.toContain('No matches');
         const retry = [...window.document.querySelectorAll('button')].find((button) => button.textContent === 'Retry');
         expect(retry).toBeDefined();
