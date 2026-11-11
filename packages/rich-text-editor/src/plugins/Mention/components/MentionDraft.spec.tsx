@@ -258,11 +258,13 @@ describe('a mention being searched for', () => {
             (query) => new Promise<MentionItem[]>((resolve) => answers.set(query, resolve)),
         );
         await type('j');
+        // The index is in range, but indexed access reads as possibly undefined.
         act(() => answers.get('')?.([PEOPLE[2] as MentionItem]));
         await settle();
 
         // The dropped answer is no earlier answer to keep showing.
         expect(status()).toBe('Searching');
+        // Same as above: the index is in range.
         act(() => answers.get('j')?.([PEOPLE[0] as MentionItem]));
         await settle();
         expect(status()).toBe('1 person');

@@ -153,7 +153,10 @@ const characterHotkeys = (
                 if (view.composing) {
                     return false;
                 }
-                const handlers = isCharacterHotkey(text) ? hotkeys.get(text) : undefined;
+                if (!isCharacterHotkey(text)) {
+                    return false;
+                }
+                const handlers = hotkeys.get(text);
                 if (!handlers || !isAtWordStart(view.state, from)) {
                     return false;
                 }
