@@ -338,7 +338,7 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
      */
     inclusive?: boolean;
     /**
-     * Mark types that cannot sit on the same text as this one: putting this mark on takes them off. A type no mounted plugin registers is ignored.
+     * Mark types that cannot sit on the same text as this one: putting this mark on takes them off. Name each other in both marks, or the other mark cannot be put on this one's text. A type no mounted plugin registers is ignored.
      */
     excludes?: readonly string[];
     /**
@@ -425,7 +425,7 @@ export type StyleParseRule<TValue> = {
      * Receives the declared CSS value and returns the mark's value, or null when
      * the declaration is not this mark.
      */
-    value?: (cssValue: string) => TValue | null;
+    value: (cssValue: string) => TValue | null;
 };
 
 /**

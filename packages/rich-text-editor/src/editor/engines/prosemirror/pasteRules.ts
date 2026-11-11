@@ -107,9 +107,14 @@ const markStyleRule = (rule: StyleParseRule<unknown>): TagParseRule => ({
         if (cssValue.trim() === '') {
             return false;
         }
-        return valueAttrs(rule.value ? rule.value(cssValue) : {});
+        return valueAttrs(rule.value(cssValue));
     },
 });
+
+/**
+ * A CSS property name as a style attribute writes it: lowercase words joined by hyphens, `font-weight`.
+ */
+const CSS_PROPERTY = /^-?[a-z]+(?:-[a-z]+)*$/;
 
 const markClearRule = (type: string, rule: MarkClearRule): PmStyleParseRule => ({
     style: rule.style,
@@ -126,6 +131,11 @@ const markClearRule = (type: string, rule: MarkClearRule): PmStyleParseRule => (
  */
 export const markParseRules = (type: string, rules: readonly MarkParseRule<unknown>[]): PmParseRule[] =>
     rules.map((rule) => {
+        if (rule.style !== undefined && !CSS_PROPERTY.test(rule.style)) {
+            throw new Error(
+                `The "${type}" mark reads "${rule.style}", which is not a CSS property name such as font-weight.`,
+            );
+        }
         if ('clears' in rule) {
             return markClearRule(type, rule);
         }
