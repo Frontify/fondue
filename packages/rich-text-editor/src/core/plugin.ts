@@ -559,13 +559,14 @@ export type RteInputRule =
      */
     | { kind: 'block'; match: string; block: string; attributes?: Record<string, unknown> }
     /**
-     * A prefix wraps the block in a list: `- `, `1. `.
+     * A prefix wraps the block in a list: `- `, `1. `. `itemAttributes` set attributes on the new item: `[x] ` starts it checked.
      */
-    | { kind: 'list'; match: string; list: string }
+    | { kind: 'list'; match: string; list: string; itemAttributes?: Record<string, unknown> }
     /**
-     * A token ended by a space (or punctuation then a space) becomes text
-     * carrying the mark — an autolink. `pattern` matches the token only; the
-     * engine anchors it to the end of the text before the terminator.
+     * A token ended by a space, Enter or Shift-Enter (or punctuation then one
+     * of them) becomes text carrying the mark: an autolink. Backspace right
+     * after takes the mark back. `pattern` matches the token only; the engine
+     * anchors it to the end of the text before the terminator.
      */
     | { kind: 'markPattern'; pattern: RegExp; mark: string; value: (match: string) => Record<string, unknown> }
     /**

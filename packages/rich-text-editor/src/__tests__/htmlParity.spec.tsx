@@ -75,6 +75,11 @@ const doc: RteDocumentWith<{ block: { type: 'columnBreak' } }> = {
             children: [
                 { type: 'checkItem', checked: true, children: [{ type: 'paragraph', children: [{ text: 'Done' }] }] },
                 { type: 'checkItem', checked: false, children: [{ type: 'paragraph', children: [{ text: 'Open' }] }] },
+                {
+                    type: 'checkItem',
+                    checked: 'inProgress',
+                    children: [{ type: 'paragraph', children: [{ text: 'Started' }] }],
+                },
             ],
         },
         { type: 'columnBreak' },
