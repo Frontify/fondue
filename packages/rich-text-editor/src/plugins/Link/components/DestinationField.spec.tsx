@@ -148,6 +148,20 @@ describe('the destination field', () => {
         scrolled.mockRestore();
     });
 
+    it('does not search again for the address a pick fills in', async () => {
+        const search = vi.fn<LinkSearch>(fixed(BRAND, LOGOS));
+        const { type, press } = mountSearchForm(search);
+        await type('br');
+        press('ArrowDown');
+        press('Enter');
+
+        await act(async () => {
+            await vi.advanceTimersByTimeAsync(200);
+        });
+
+        expect(search.mock.calls.map(([query]) => query)).toEqual(['br']);
+    });
+
     it('moves the active option with the arrows and picks it with Enter', async () => {
         const { field, type, press, options, onSave } = mountSearchForm(fixed(BRAND, LOGOS));
         await type('br');

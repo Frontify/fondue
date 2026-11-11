@@ -106,6 +106,8 @@ export const DestinationField = forwardRef<HTMLInputElement, DestinationFieldPro
     }, [activeIndex]);
 
     const pick = (destination: LinkDestination): void => {
+        // The picked address is not a query: it is searched only once the author types or presses an arrow key again.
+        setDormant(true);
         setClosedFor(destination.href);
         onPick(destination);
     };
