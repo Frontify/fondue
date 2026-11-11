@@ -82,8 +82,10 @@ export type EditorControlApi = {
         /**
          * Strip every mark from the selection, except the types named in `except`: the formatting half of
          * "reset formatting". At a caret it clears the whole text block around it, not just what is typed next.
+         *
+         * @returns whether any mark was removed, from the document or from the marks the caret would type with
          */
-        removeAll(options?: RemoveAllMarksOptions): void;
+        removeAll(options?: RemoveAllMarksOptions): boolean;
         /**
          * The whole run of a mark around the selection (its value and text), or
          * null. Unlike the snapshot's `marks` it is about the run, not the

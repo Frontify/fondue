@@ -405,6 +405,23 @@ describe('marks.removeAll', () => {
         expect(caret.stored()).toEqual(expected);
     });
 
+    it('returns whether it removed a mark from the text or from what the caret types next', () => {
+        const formatted = editorWith(plugins, [paragraph(text('bold', { bold: true }))]);
+        formatted.caretAfter('bold');
+        const plain = editorWith(plugins, [paragraph(text('plain'))]);
+        plain.caretAfter('plain');
+        const carrying = editorWith(plugins, [paragraph(text('plain'))]);
+        carrying.caretAfter('plain');
+        carrying.api.marks.toggle('bold');
+        const linkOnly = editorWith(plugins, [paragraph(text('link', { link: LINK }))]);
+        linkOnly.caretAfter('link');
+
+        expect(formatted.api.marks.removeAll()).toBe(true);
+        expect(plain.api.marks.removeAll()).toBe(false);
+        expect(carrying.api.marks.removeAll()).toBe(true);
+        expect(linkOnly.api.marks.removeAll({ except: ['link'] })).toBe(false);
+    });
+
     it('keeps a mention', () => {
         const mention = { type: 'tag', name: 'Ada' };
         const editor = editorWith(plugins, [paragraph(text('hi ', { bold: true }), mention)]);

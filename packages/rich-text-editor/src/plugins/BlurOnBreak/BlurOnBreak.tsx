@@ -63,6 +63,10 @@ export const blurOnBreakPlugin = (options: BlurOnBreakPluginOptions = {}) => {
     let description: string | undefined;
     if (options.onBreak !== undefined) {
         description = DESCRIPTION;
+        const requiredMessage = requiredMessageOf(options.required);
+        if (requiredMessage !== null) {
+            description = `${DESCRIPTION} ${requiredMessage}`;
+        }
     }
     return definePlugin({
         id: 'blur-on-break',

@@ -243,18 +243,27 @@ const createMarkApi = (getView: () => EditorView, schema: Schema, dispatch: Disp
             range = { from: $from.start(), to: $from.end() };
         }
         const transaction = state.tr;
+        let removed = false;
         for (const markType of Object.values(schema.marks)) {
             if (!except.includes(markType.name)) {
+                if (state.doc.rangeHasMark(range.from, range.to, markType)) {
+                    removed = true;
+                }
                 transaction.removeMark(range.from, range.to, markType);
             }
         }
         if (empty) {
             // What typing here would carry, as far as it is kept.
-            const kept = (state.storedMarks ?? $from.marks()).filter((mark) => except.includes(mark.type.name));
+            const carried = state.storedMarks ?? $from.marks();
+            const kept = carried.filter((mark) => except.includes(mark.type.name));
+            if (kept.length < carried.length) {
+                removed = true;
+            }
             transaction.setStoredMarks(kept);
         }
         dispatch(transaction);
         view.focus();
+        return removed;
     },
     getRun(type) {
         const { state } = getView();

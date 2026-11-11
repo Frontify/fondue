@@ -71,7 +71,9 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
                 selection = { ...selection, marks: { ...selection.marks, [type]: allOf(value) } };
             },
             removeAll: () => {
+                const removed = Object.keys(selection.marks).length > 0;
                 selection = { ...selection, marks: {} };
+                return removed;
             },
             getRun: (type) => {
                 const mark = selection.marks[type];

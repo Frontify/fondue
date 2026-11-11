@@ -865,6 +865,16 @@ describe('the clear formatting shortcut', () => {
         expect(announce).toHaveBeenCalledWith('Formatting cleared');
     });
 
+    it('announces nothing when there was no formatting to clear', () => {
+        const announce = vi.fn<(message: string) => void>();
+        const editor = editorWith(plugins, [paragraph(text('plain'))], { announce });
+        editor.caretAfter('plain');
+
+        resetKeys(editor.view);
+
+        expect(announce).not.toHaveBeenCalled();
+    });
+
     it('is one undo step', () => {
         const editor = editorWith(plugins, formatted());
         editor.caretAfter('big');
@@ -927,6 +937,16 @@ describe('the reset formatting button', () => {
         clickResetButton(editor);
 
         expect(editor.stored()).toEqual([paragraph(text('big link'), { type: 'tag', name: 'Ada' }), formatted()[1]]);
+    });
+
+    it('announces that formatting was reset', () => {
+        const announce = vi.fn<(message: string) => void>();
+        const editor = editorWith(resetPlugins, formatted(), { announce });
+        editor.caretAfter('big');
+
+        clickResetButton(editor);
+
+        expect(announce).toHaveBeenCalledWith('Formatting reset');
     });
 
     it('is one undo step, however many commands it takes', () => {

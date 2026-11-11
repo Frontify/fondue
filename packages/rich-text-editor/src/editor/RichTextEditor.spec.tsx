@@ -297,6 +297,9 @@ describe('a readonly editor', () => {
     });
 });
 
+// The editor's own live region is an `output` with the same role.
+const NOTICE_SELECTOR = '[role="status"]:not(output)';
+
 describe('a document from a newer format version', () => {
     // A version of its own per test: the warning is given once per version for the whole page.
     // Far above any real version, so raising the format's version leaves these documents newer.
@@ -319,7 +322,7 @@ describe('a document from a newer format version', () => {
         expect(container.querySelector('[role="toolbar"]')).toBeNull();
         expect(warn).toHaveBeenCalledTimes(1);
         expect(warn).toHaveBeenCalledWith(expect.stringContaining(`version ${version}`));
-        expect(container.querySelector('[role="status"]')?.textContent).toBe(
+        expect(container.querySelector(NOTICE_SELECTOR)?.textContent).toBe(
             'This content was saved with a newer version of the editor. Try reloading the page to edit it.',
         );
         expect(onChange).not.toHaveBeenCalled();
@@ -331,7 +334,7 @@ describe('a document from a newer format version', () => {
         const { container } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} showEditor={false} />);
 
         expect(container.querySelector('[contenteditable]')).toBeNull();
-        expect(container.querySelector('[role="status"]')).not.toBeNull();
+        expect(container.querySelector(NOTICE_SELECTOR)).not.toBeNull();
     });
 
     it('says so in the words the host gives', () => {
@@ -341,7 +344,7 @@ describe('a document from a newer format version', () => {
             <RichTextEditor value={newer} plugins={defaultPlugins} labels={{ newerVersion: 'Nur lesbar' }} />
         ));
 
-        expect(container.querySelector('[role="status"]')?.textContent).toBe('Nur lesbar');
+        expect(container.querySelector(NOTICE_SELECTOR)?.textContent).toBe('Nur lesbar');
     });
 
     it('shows no notice when the host already shows it read-only', () => {
@@ -351,7 +354,7 @@ describe('a document from a newer format version', () => {
 
         expect(container.textContent).toContain('from the future');
         // The editor's own live region is always there; it is empty until something is announced.
-        expect(container.querySelector('[role="status"]')).toBeNull();
+        expect(container.querySelector(NOTICE_SELECTOR)).toBeNull();
     });
 
     it('warns once for several editors showing the same version', () => {
@@ -434,7 +437,7 @@ describe('a document from a newer format version', () => {
 
         const focused = window.document.activeElement;
         expect(focused?.getAttribute('tabindex')).toBe('-1');
-        expect(focused?.firstElementChild).toBe(container.querySelector('[role="status"]'));
+        expect(focused?.firstElementChild).toBe(container.querySelector(NOTICE_SELECTOR));
     });
 
     it('leaves focus where the user just moved it when a newer document arrives', () => {
@@ -497,7 +500,7 @@ describe('a document from a newer format version', () => {
 
         expect(warn).not.toHaveBeenCalled();
         // The editor's own live region is always there; it is empty until something is announced.
-        expect(container.querySelector('[role="status"]')).toBeNull();
+        expect(container.querySelector(NOTICE_SELECTOR)).toBeNull();
     });
 });
 
@@ -641,6 +644,13 @@ describe('the editable element', () => {
         // Not an Alt key: happy-dom reports any Alt as AltGraph, which the editor leaves to text entry.
         const announce = (container: HTMLElement): void =>
             press(editableIn(container), 'a', { ...mod, shiftKey: true });
+
+        it('marks its live region as a status, since Safari does not read an output as one', () => {
+            const { container, ready } = mount(() => <RichTextEditor plugins={[announcer]} />);
+            ready();
+
+            expect(statusIn(container).getAttribute('role')).toBe('status');
+        });
 
         it('says a message in the polite live region on the next frame', () => {
             vi.useFakeTimers();

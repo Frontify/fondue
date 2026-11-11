@@ -9,6 +9,7 @@ import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 import { LINK_MARK } from '../shared/helpers/linkMark';
 
 const CLEARED_ANNOUNCEMENT = 'Formatting cleared';
+const RESET_ANNOUNCEMENT = 'Formatting reset';
 
 /**
  * What the toolbar button does: puts the selection back to plain text. Every
@@ -34,16 +35,24 @@ const reset = (api: EditorControlApi): void => {
 const hotkeys = {
     /** Clears the marks only, links excepted: block types, lists and alignment stay. Not what the toolbar button does. */
     'Mod-\\': (api) => {
-        api.marks.removeAll({ except: [LINK_MARK] });
-        api.announce(CLEARED_ANNOUNCEMENT);
+        if (api.marks.removeAll({ except: [LINK_MARK] })) {
+            api.announce(CLEARED_ANNOUNCEMENT);
+        }
     },
 } satisfies Record<string, HotkeyHandler>;
 
-const ResetFormattingButton = ({ api, label }: ToolbarItemProps) => (
-    <ToolbarButton title={label} onClick={() => reset(api)}>
-        <IconEraser size={TOOLBAR_ICON_SIZE} />
-    </ToolbarButton>
-);
+const ResetFormattingButton = ({ api, label }: ToolbarItemProps) => {
+    const onClick = (): void => {
+        reset(api);
+        // The API gives no signal for whether the whole reset changed anything, so this always announces.
+        api.announce(RESET_ANNOUNCEMENT);
+    };
+    return (
+        <ToolbarButton title={label} onClick={onClick}>
+            <IconEraser size={TOOLBAR_ICON_SIZE} />
+        </ToolbarButton>
+    );
+};
 
 /**
  * A toolbar button that strips the selection back to plain text, and `Mod-\`, which only clears its marks except links
