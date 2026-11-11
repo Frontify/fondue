@@ -8,7 +8,7 @@
 export type RichTextEditorLabels = {
     /** The editor's accessible name when the host gives none (`aria-label`, `aria-labelledby`). */
     editor: string;
-    /** The formatting toolbar's accessible name. */
+    /** The formatting toolbar's accessible name, and of the pop-up that holds it. */
     toolbar: string;
     /** The built-in command turning a block back into plain text. */
     text: string;
@@ -20,7 +20,7 @@ export type RichTextEditorLabels = {
     currentCommand: (commandLabel: string) => string;
     /** The `/` menu's heading over commands that insert something. */
     insert: string;
-    /** The `/` menu's list, for assistive technology. */
+    /** The `/` menu's list and the pop-up that holds it, for assistive technology. */
     commands: string;
     /** Shown and announced when nothing matches what was typed after the `/`. */
     noResults: string;
