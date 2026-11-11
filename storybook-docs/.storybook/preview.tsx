@@ -132,6 +132,11 @@ const preview: Preview = {
                     color: '#ffffff',
                     description: 'This component is stable and released',
                 },
+                experimental: {
+                    background: 'rgb(255, 160, 50)',
+                    color: '#ffffff',
+                    description: 'This is experimental: the API and document format can still change in any release',
+                },
                 in_progress: {
                     background: 'rgb(154, 126, 254)',
                     color: '#ffffff',

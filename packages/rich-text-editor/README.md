@@ -1,5 +1,10 @@
 # @frontify/fondue-rich-text-editor
 
+> [!WARNING]
+> **Experimental.** This package is still in development. Its API and stored document format can change
+> in any release, including minor and patch releases, until it reaches 1.0. This also applies when you
+> import it through `@frontify/fondue/rich-text-editor`.
+
 A plugin-based rich text editor for React. Documents are plain JSON (`RteDocument`);
 every block, mark and inline comes from a plugin.
 
