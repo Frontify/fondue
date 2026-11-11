@@ -4,17 +4,10 @@ import { defineContent, defineInline, definePlugin, type RtePlugin } from '#/cor
 
 import { MentionEditor } from './components/MentionEditor';
 import { BIDI_ISOLATE_TAG, MentionLink } from './components/MentionLink';
-import { mentionAttributes, mentionDisplay } from './helpers/display';
+import { mentionAttributes, mentionDisplay, storedKind } from './helpers/display';
 import { mentionValueOf } from './helpers/mention';
 import styles from './mention.module.scss';
-import {
-    MENTION_KINDS,
-    type MentionHref,
-    type MentionItem,
-    type MentionItems,
-    type MentionResolve,
-    type MentionValue,
-} from './types';
+import { type MentionHref, type MentionItem, type MentionItems, type MentionResolve, type MentionValue } from './types';
 
 export type MentionContentOptions = {
     /**
@@ -85,7 +78,7 @@ export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentO
                             const username = element.dataset.mentionUsername ?? '';
                             // Copies from before `data-mention-name` carry the name in the title.
                             const name = element.dataset.mentionName ?? element.title;
-                            const kind = MENTION_KINDS.find((known) => known === element.dataset.mentionKind);
+                            const kind = storedKind(element.dataset.mentionKind);
                             if (id === '' || username === '') {
                                 return null;
                             }

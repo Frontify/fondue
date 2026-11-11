@@ -33,6 +33,12 @@ const NO_MATCHES_MESSAGE = 'No matches';
 /** The label of the button that asks the lookup again. */
 const RETRY_LABEL = 'Retry';
 
+/** The accessible name of the list of people. */
+const LIST_LABEL = 'People';
+
+/** The size of a kind's icon in the avatar circle. */
+const AVATAR_ICON_SIZE = 12;
+
 /** The gap between the query and the list under it. */
 const LIST_OFFSET = 4;
 
@@ -43,11 +49,11 @@ const avatarPicture = (person: MentionItem): ReactNode => {
     switch (person.kind) {
         case undefined:
         case 'user':
-            return <IconPerson size={12} />;
+            return <IconPerson size={AVATAR_ICON_SIZE} />;
         case 'group':
-            return <IconPeople size={12} />;
+            return <IconPeople size={AVATAR_ICON_SIZE} />;
         case 'all':
-            return <IconTarget size={12} />;
+            return <IconTarget size={AVATAR_ICON_SIZE} />;
         default:
             // Adding a kind fails to compile here until it is handled.
             throw new Error(`Unhandled mention kind: ${JSON.stringify(person.kind satisfies never)}`);
@@ -235,7 +241,7 @@ const MentionPopupBody = ({
             return <div className={styles.empty}>{NO_MATCHES_MESSAGE}</div>;
         case 'list':
             return (
-                <ul id={listId} role="listbox" aria-label="People" className={styles.list}>
+                <ul id={listId} role="listbox" aria-label={LIST_LABEL} className={styles.list}>
                     {people.map((person, index) => (
                         // The keyboard drives the list from the input; the mouse picks here.
                         // oxlint-disable-next-line jsx-a11y/click-events-have-key-events

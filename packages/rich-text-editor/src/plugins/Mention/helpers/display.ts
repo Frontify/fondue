@@ -44,7 +44,7 @@ type MentionNames = { username: string; name: string };
 /**
  * Stored documents are not validated: a field that is not a string reads as empty.
  */
-export const storedString = (field: unknown): string => {
+const storedString = (field: unknown): string => {
     if (typeof field !== 'string') {
         return '';
     }
@@ -52,7 +52,7 @@ export const storedString = (field: unknown): string => {
 };
 
 /**
- * A stored kind this version does not know, or a non-string, writes no attribute.
+ * A stored or pasted kind as this version knows it: an unknown kind or a non-string reads as none.
  */
 export const storedKind = (value: unknown): MentionKind | undefined => MENTION_KINDS.find((known) => known === value);
 
@@ -131,17 +131,22 @@ const warnResolveFailed = (mention: MentionValue, problem: unknown): void => {
     console.warn(`[RichTextEditor] The mention resolver failed for "${id}", so its stored name is shown.`, problem);
 };
 
-const RESOLUTION_STATUSES: readonly unknown[] = [
-    'current',
-    'unavailable',
-    'unknown',
-] satisfies MentionResolution['status'][];
+/** Every status a resolution can have; a status added to `MentionResolution` fails to compile until it is listed. */
+const RESOLUTION_STATUSES: Record<MentionResolution['status'], true> = {
+    current: true,
+    unavailable: true,
+    unknown: true,
+};
 
 /**
  * A resolver written in JS can answer anything: only an object with a known status is a resolution.
  */
 const isResolution = (answer: unknown): answer is MentionResolution =>
-    typeof answer === 'object' && answer !== null && 'status' in answer && RESOLUTION_STATUSES.includes(answer.status);
+    typeof answer === 'object' &&
+    answer !== null &&
+    'status' in answer &&
+    typeof answer.status === 'string' &&
+    Object.prototype.hasOwnProperty.call(RESOLUTION_STATUSES, answer.status);
 
 /**
  * What the app knows now about a mention: a throw or an unknown answer means it

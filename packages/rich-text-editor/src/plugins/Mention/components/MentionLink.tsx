@@ -11,6 +11,7 @@ import { type MentionValue } from '../types';
 /** The tag that isolates the shown name, so a right-to-left name cannot reorder the text around it. */
 export const BIDI_ISOLATE_TAG = 'bdi';
 
+// JSX needs a capitalised name to use the shared tag as an element.
 const BidiIsolate = BIDI_ISOLATE_TAG;
 
 /** In the editor a click places the caret; the link is followed only when reading. */
