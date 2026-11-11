@@ -1160,7 +1160,13 @@ const acmeCalloutPlugin = /* @__PURE__ */ definePlugin({
                         aria-label={label}
                         aria-pressed={active}
                         onMouseDown={(event) => event.preventDefault()}
-                        onClick={() => (active ? api.blocks.setType('paragraph') : api.blocks.setType('acme-callout'))}
+                        onClick={() => {
+                            if (active) {
+                                api.blocks.setType('paragraph');
+                            } else {
+                                api.blocks.setType('acme-callout');
+                            }
+                        }}
                         className={toolbarButtonClasses(active)}
                     >
                         💡
