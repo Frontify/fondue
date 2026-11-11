@@ -27,6 +27,7 @@ import {
     type RuleOfKind,
     ruleContext,
     toInputRule,
+    touchesExcludedMark,
     withoutStateFlags,
 } from './ruleContext';
 
@@ -260,6 +261,13 @@ const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | n
         const from = start + leading;
         const contentFrom = from + delimiter.length;
         const contentTo = contentFrom + content.length;
+        // Content may carry code; the delimiters the rule deletes may not.
+        if (
+            touchesExcludedMark(state, context.excludedMarks, from, contentFrom) ||
+            touchesExcludedMark(state, context.excludedMarks, contentTo, end)
+        ) {
+            return null;
+        }
         // Only the delimiters go, closing first so the opening one's position
         // holds: the content stays as it is, inline elements and marks included.
         return state.tr
@@ -336,7 +344,12 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
             : new RegExp(`(?:${match.source})$`, withoutStateFlags(match));
     // `start` to `end` is the part of the match in the document: replacing it
     // swaps all of it, whether a typed character is still to come or not.
-    const handler: RuleHandler = (state, _match, start, end) => state.tr.insertText(replace, start, end);
+    const handler: RuleHandler = (state, _match, start, end) => {
+        if (touchesExcludedMark(state, context.excludedMarks, start, end)) {
+            return null;
+        }
+        return state.tr.insertText(replace, start, end);
+    };
     return toInputRule({ pattern, handler }, context);
 };
 

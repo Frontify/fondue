@@ -234,6 +234,25 @@ describe('inline code', () => {
         expect(editor.stored()).toEqual([paragraph(text('x', { code: true }), text('y'))]);
     });
 
+    it('can sit inside text a mark shortcut wraps', () => {
+        expect(typed('**run `npm` now**')).toEqual([
+            paragraph(
+                text('run ', { bold: true }),
+                text('npm', { bold: true, code: true }),
+                text(' now', { bold: true }),
+            ),
+        ]);
+    });
+
+    it('lets a mark shortcut typed right after its end apply', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('foo', { code: true }))]);
+        editor.caretAfter('foo');
+
+        editor.type('**b**');
+
+        expect(editor.stored()).toEqual([paragraph(text('foo', { code: true }), text('b', { bold: true }))]);
+    });
+
     it('keeps its text when a typing rule after its end would reach into it', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('snake_case', { code: true }))]);
         editor.caretAfter('snake_case');
