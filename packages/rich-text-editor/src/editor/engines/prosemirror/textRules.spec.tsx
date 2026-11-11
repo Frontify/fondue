@@ -67,6 +67,36 @@ describe('a text rule', () => {
         expect(typed('11/2', plugins)).toEqual([paragraph(text('11/2'))]);
     });
 
+    it('waits for the run to end before a character already in the block', () => {
+        const editor = editorWith(withTypography, [paragraph(text('a --tail'))]);
+        editor.caretAfter('a --');
+
+        editor.type(' ');
+
+        expect(editor.stored()).toEqual([paragraph(text('a — tail'))]);
+    });
+
+    it('gives the dash and the character that ends the run the marks typing carries there', () => {
+        const editor = editorWith([...shipped('bold'), typographyPlugin()], [paragraph(text('a --', { bold: true }))]);
+        editor.caretAfter('a --');
+
+        editor.type(' ');
+
+        expect(editor.stored()).toEqual([paragraph(text('a — ', { bold: true }))]);
+    });
+
+    it('steps aside when the run ends inside inline code', () => {
+        const editor = editorWith(
+            [...shipped('code'), typographyPlugin()],
+            [paragraph(text('a -'), text('-', { code: true }))],
+        );
+        editor.caretAfter('a --');
+
+        editor.type(' ');
+
+        expect(editor.stored()).toEqual([paragraph(text('a -'), text('-', { code: true }), text(' '))]);
+    });
+
     it('keeps the marks of the text it replaces', () => {
         const editor = editorWith(
             [...shipped('bold'), rulesPlugin({ kind: 'text', match: '->', replace: '→' })],
@@ -86,6 +116,15 @@ describe('a text rule', () => {
         expect(typed('a ->', [rulesPlugin({ kind: 'text', match: '->', replace: '$1 off' })])).toEqual([
             paragraph(text('a $1 off')),
         ]);
+    });
+
+    it('puts nothing for a group that took no part in the match, and takes `$0` as written', () => {
+        expect(typed('b', [rulesPlugin({ kind: 'text', match: /(a)?b/, replace: '[$1]' })])).toEqual([
+            paragraph(text('[]')),
+        ]);
+        expect(
+            typed('a -- ', [rulesPlugin({ kind: 'text', match: /--/, replace: '$0', waitForRunEnd: true })]),
+        ).toEqual([paragraph(text('a $0 '))]);
     });
 
     it('throws when `replace` refers to a group its pattern does not have', () => {
@@ -251,6 +290,19 @@ describe('typographyPlugin', () => {
         expect(typed(`a ${shortcut}`, withTypography)).toEqual([paragraph(text(`a ${shortcut}`))]);
     });
 
+    it.each([';', ':', '!', '?', ']', '}', '…'])('ends a run at "%s"', (ending) => {
+        expect(typed(`a --${ending}`, withTypography)).toEqual([paragraph(text(`a —${ending}`))]);
+    });
+
+    it('turns on dashes, the ellipsis and symbols by default', () => {
+        expect(typed('a -- b ... ->', [...defaultPlugins, typographyPlugin()])).toEqual([paragraph(text('a — b … →'))]);
+    });
+
+    it('turns a caret and o into a degree sign only right after a whole number', () => {
+        expect(typed('x^o', withTypography)).toEqual([paragraph(text('x^o'))]);
+        expect(typed('v2^o', withTypography)).toEqual([paragraph(text('v2^o'))]);
+    });
+
     it('keeps dashes and arrows in technical text as typed', () => {
         expect(typed('--flag', withTypography)).toEqual([paragraph(text('--flag'))]);
         expect(typed('--brand-color', withTypography)).toEqual([paragraph(text('--brand-color'))]);
@@ -356,6 +408,22 @@ describe('typographyPlugin', () => {
             editor.type('"');
 
             expect(editor.stored()).toEqual([paragraph(text('x"y', { code: true }))]);
+        });
+
+        it('opens a quote after an opening bracket or quote', () => {
+            expect(typed('["hi"]', withTypography)).toEqual([paragraph(text('[“hi”]'))]);
+            expect(typed('{"a"}', withTypography)).toEqual([paragraph(text('{“a”}'))]);
+            expect(typed(`"'hi'"`, withTypography)).toEqual([paragraph(text('“‘hi’”'))]);
+        });
+
+        it('opens a double quote after an inline element such as a mention', () => {
+            const tag = { type: 'tag', name: 'Noah' };
+            const editor = editorWith([tagPlugin, typographyPlugin()], [paragraph(text('a '), tag)]);
+            editor.caretAfter('￼');
+
+            editor.type('"hi"');
+
+            expect(editor.stored()).toEqual([paragraph(text('a '), tag, text('“hi”'))]);
         });
 
         it('opens a quote after an inline element', () => {

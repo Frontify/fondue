@@ -339,9 +339,10 @@ const AT_CARET = '$';
 const ONE_CHARACTER_BEFORE_CARET = `[\\s\\S]${AT_CARET}`;
 
 /**
- * Matches a `$1`-style reference to a group of the rule's pattern.
+ * Matches a `$1`-style reference to a group of the rule's pattern. Not `$0`: a rule that waits for
+ * the run to end matches the ending character too, so the whole match would repeat it.
  */
-const GROUP_REFERENCE = /\$(\d)/g;
+const GROUP_REFERENCE = /\$([1-9])/g;
 
 /**
  * A rule's `match` as a pattern anchored to the end of the text before the caret, then `suffix`.
