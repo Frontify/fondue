@@ -27,6 +27,13 @@ const HUE_UNIT_DEGREES: Record<'deg' | 'grad' | 'rad' | 'turn', number> = {
     turn: FULL_TURN,
 };
 const PRINTABLE_ASCII = /^[\t\n\f\r -~]*$/;
+const PERCENT = 100;
+
+/** What the picker's hex field takes: three or six digits; anything else is its error state, not a colour. */
+const HEX_FIELD_DIGITS = /^([\dA-Fa-f]{3}){1,2}$/;
+
+/** A leading `#` on typed hex. */
+const LEADING_HASH = /^#/;
 
 const HEX_COLOR = /^#([\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/;
 const COLOR_FUNCTION = /^(rgb|hsl)a?\(([^()]*)\)$/;
@@ -45,7 +52,7 @@ const readNumber = (part: string | undefined, full: number): number | undefined 
         return undefined;
     }
     if (part.endsWith('%')) {
-        return (value / 100) * full;
+        return (value / PERCENT) * full;
     }
     return value;
 };
@@ -139,14 +146,14 @@ const readHsl = (parts: string[], syntax: ColorArguments['syntax'], alpha: numbe
     if (syntax === 'comma' && !parts.slice(1).every((part) => part.endsWith('%'))) {
         return undefined;
     }
-    const [saturation, lightness] = parts.slice(1).map((part) => readComponent(part, 100, syntax));
+    const [saturation, lightness] = parts.slice(1).map((part) => readComponent(part, PERCENT, syntax));
     if (hue === undefined || saturation === undefined || lightness === undefined) {
         return undefined;
     }
     const [red, green, blue] = hslToRgb(
         ((hue % FULL_TURN) + FULL_TURN) % FULL_TURN,
-        clamp(saturation, 100) / 100,
-        clamp(lightness, 100) / 100,
+        clamp(saturation, PERCENT) / PERCENT,
+        clamp(lightness, PERCENT) / PERCENT,
     );
     return { red, green, blue, alpha: clamp(alpha, 1) };
 };
@@ -275,6 +282,47 @@ export const encodeStoredColor = ({ red, green, blue, alpha }: Rgba): string => 
         Math.round(clamp(alpha * MAX_CHANNEL, MAX_CHANNEL)),
     ];
     return toHex(bytes);
+};
+
+/**
+ * A colour named as upper-case hex, then the opacity while translucent, as the picker's fields read.
+ *
+ * @example
+ * ```ts
+ * toColorName({ red: 255, green: 0, blue: 0, alpha: 0.5 }); // '#FF0000 50%'
+ * ```
+ */
+export const toColorName = (color: Rgba): string => {
+    let name = encodeStoredColor({ ...color, alpha: 1 }).toUpperCase();
+    if (color.alpha < 1) {
+        name += ` ${Math.round(color.alpha * PERCENT)}%`;
+    }
+    return name;
+};
+
+/**
+ * The colour typed in the picker's hex field, or `undefined` while it is no colour.
+ *
+ * @param alpha - the opacity to give the colour, full when `undefined`
+ *
+ * @example
+ * ```ts
+ * parseTypedHex('#f00', 0.5); // { red: 255, green: 0, blue: 0, alpha: 0.5 }
+ * ```
+ */
+export const parseTypedHex = (text: string | undefined, alpha: number | undefined): Rgba | undefined => {
+    if (text === undefined) {
+        return undefined;
+    }
+    const digits = text.replace(LEADING_HASH, '');
+    if (!HEX_FIELD_DIGITS.test(digits)) {
+        return undefined;
+    }
+    const stored = toStoredColor(`#${digits}`);
+    if (stored === undefined) {
+        return undefined;
+    }
+    return { ...decodeStoredColor(stored), alpha: alpha ?? 1 };
 };
 
 /**
