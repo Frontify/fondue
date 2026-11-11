@@ -1,15 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { isSafeHref } from '../../shared/helpers/href';
+import { isSafeHref, LINK_SCHEMES, type LinkScheme } from '../../shared/helpers/href';
 
-/**
- * The schemes a link may use.
- */
-export type LinkScheme = 'https' | 'http' | 'mailto' | 'tel';
+export { type LinkScheme } from '../../shared/helpers/href';
 
 /**
  * Which links an editor accepts, kept in the content so the renderer and the
- * export enforce it too. Hosts apply to web links only; a relative link points
+ * export enforce it too, when they are given the same `linkPlugin` or `linkContent`;
+ * without it, they render any safe link. Hosts apply to web links only; a relative link points
  * at the site the document is shown on, so it is always allowed.
  */
 export type LinkPolicy = {
@@ -23,8 +21,6 @@ export type LinkPolicy = {
      */
     allowedHosts?: readonly string[];
 };
-
-const ALL_SCHEMES: readonly LinkScheme[] = ['https', 'http', 'mailto', 'tel'];
 
 /**
  * Starts a host pattern that also matches its subdomains.
@@ -78,7 +74,7 @@ export const allowsHref = (policy: LinkPolicy, href: unknown): href is string =>
     if (url === null) {
         return false;
     }
-    const { allowedSchemes = ALL_SCHEMES, allowedHosts } = policy;
+    const { allowedSchemes = LINK_SCHEMES, allowedHosts } = policy;
     const scheme = url.protocol.slice(0, -1);
     if (!allowedSchemes.some((allowed) => allowed === scheme)) {
         return false;
@@ -126,7 +122,7 @@ export const describeAllowed = ({ allowedSchemes, allowedHosts }: LinkPolicy): s
     if (allowedHosts !== undefined) {
         sentences.push(describeHosts(allowedHosts));
     }
-    if (allowedSchemes !== undefined && !ALL_SCHEMES.every((scheme) => allowedSchemes.includes(scheme))) {
+    if (allowedSchemes !== undefined && !LINK_SCHEMES.every((scheme) => allowedSchemes.includes(scheme))) {
         sentences.push(`Links may use ${joinOr(allowedSchemes)}.`);
     }
     return sentences.join(' ');
