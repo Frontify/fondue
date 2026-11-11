@@ -424,16 +424,23 @@ export const createControlApi = (
         beforeCaret() {
             const { selection } = getView().state;
             const { $from, empty } = selection;
-            return empty && $from.parent.isTextblock
-                ? $from.parent.textBetween(0, $from.parentOffset, undefined, INLINE_PLACEHOLDER)
-                : '';
+            if (!empty || !$from.parent.isTextblock) {
+                return '';
+            }
+            return $from.parent.textBetween(0, $from.parentOffset, undefined, INLINE_PLACEHOLDER);
         },
         afterCaret() {
             const { selection } = getView().state;
             const { $from, empty } = selection;
-            return empty && $from.parent.isTextblock
-                ? $from.parent.textBetween($from.parentOffset, $from.parent.content.size, undefined, INLINE_PLACEHOLDER)
-                : '';
+            if (!empty || !$from.parent.isTextblock) {
+                return '';
+            }
+            return $from.parent.textBetween(
+                $from.parentOffset,
+                $from.parent.content.size,
+                undefined,
+                INLINE_PLACEHOLDER,
+            );
         },
         deleteBefore(count) {
             const view = getView();

@@ -336,7 +336,7 @@ const AT_CARET = '$';
 /**
  * Matches one character before the caret, the one that was just typed.
  */
-const ONE_CHARACTER_BEFORE_CARET = '[\\s\\S]$';
+const ONE_CHARACTER_BEFORE_CARET = `[\\s\\S]${AT_CARET}`;
 
 /**
  * Matches a `$1`-style reference to a group of the rule's pattern.
@@ -385,7 +385,7 @@ const replacementOf = ({ match, replace }: RuleOfKind<'text'>): ((found: RegExpM
 };
 
 /**
- * The marks typing carries at the caret.
+ * The marks typed text gets: stored marks first, so a mark toggled off just before typing stays off.
  */
 const typingMarks = (state: EditorState): readonly PmMark[] => state.storedMarks ?? state.selection.$from.marks();
 

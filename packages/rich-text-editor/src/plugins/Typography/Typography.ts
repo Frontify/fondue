@@ -14,6 +14,9 @@ const DEFAULT_GROUPS: readonly TypographyGroup[] = ['quotes', 'ellipsis', 'dashe
  */
 export type TypographyGroup = (typeof TYPOGRAPHY_GROUPS)[number];
 
+/**
+ * Which typographic shortcuts the plugin turns on.
+ */
 export type TypographyPluginOptions = {
     /**
      * The groups of shortcuts to turn on.
@@ -23,10 +26,20 @@ export type TypographyPluginOptions = {
 };
 
 /**
- * `waitForRunEnd` waits for the run to end (a space or punctuation is typed), so `--flag`, `-->`
- * and `10^23` stay as typed.
+ * A shortcut: the text typed, what it becomes, and whether it waits for the run to end (a space or
+ * punctuation is typed), so `--flag`, `-->` and `10^23` stay as typed.
  */
-type Replacement = readonly [match: string | RegExp, replace: string, waitForRunEnd?: true];
+type Replacement = readonly [match: string | RegExp, replace: string, waitForRunEnd?: typeof AT_RUN_END];
+
+/**
+ * Marks a shortcut that fires only once the run ends.
+ */
+const AT_RUN_END = true;
+
+/**
+ * Not right after a letter, digit or underscore.
+ */
+const NOT_IN_A_WORD = String.raw`(?<![\p{L}\p{N}_])`;
 
 /**
  * What may come before an opening quote, besides the start of a block: whitespace, or an opening
@@ -53,7 +66,7 @@ const TOKEN_START = String.raw`(?<![\p{L}\p{N}_/])`;
 /**
  * Right after a whole number: `2^2`, not `x^2` or `v2^2`.
  */
-const AFTER_A_NUMBER = String.raw`(?<=(?<![\p{L}\p{N}_])\d+)`;
+const AFTER_A_NUMBER = String.raw`(?<=${NOT_IN_A_WORD}\d+)`;
 
 /**
  * Each character typed after `^`, with the superscript glyph it becomes.
@@ -78,7 +91,7 @@ const SUPERSCRIPT_PAIRS: readonly (readonly [character: string, glyph: string])[
 const SUPERSCRIPTS: readonly Replacement[] = SUPERSCRIPT_PAIRS.map(([character, glyph]): Replacement => [
     new RegExp(String.raw`${AFTER_A_NUMBER}\^${character}`, 'u'),
     glyph,
-    true,
+    AT_RUN_END,
 ]);
 
 /**
@@ -111,7 +124,22 @@ const FRACTIONS: readonly Replacement[] = (
         ['5/8', '⅝'],
         ['7/8', '⅞'],
     ] as const
-).map(([fraction, glyph]): Replacement => [new RegExp(`${TOKEN_START}${fraction}`, 'u'), glyph, true]);
+).map(([fraction, glyph]): Replacement => [new RegExp(`${TOKEN_START}${fraction}`, 'u'), glyph, AT_RUN_END]);
+
+/**
+ * Two hyphens, not after a hyphen, `<` or `!`, so `---`, `<--` and `<!--` stay as typed.
+ */
+const DOUBLE_HYPHEN = /(?<![-<!])--/;
+
+/**
+ * `->`, not after a hyphen, so `-->` stays as typed.
+ */
+const RIGHT_ARROW = /(?<!-)->/;
+
+/**
+ * Two whole numbers around an `x`, as in `3x4`, but not a hexadecimal number such as `0x10`.
+ */
+const DIMENSIONS = new RegExp(String.raw`${NOT_IN_A_WORD}(?!0x)(\d+)x(\d+)`, 'u');
 
 /**
  * The rules of each group, in the order they are tried: `<->` before `->`, which
@@ -127,11 +155,11 @@ const RULES: Record<TypographyGroup, readonly Replacement[]> = {
         ["'", '’'],
     ],
     ellipsis: [['...', '…']],
-    dashes: [[/(?<![-<!])--/, '—', true]],
+    dashes: [[DOUBLE_HYPHEN, '—', AT_RUN_END]],
     symbols: [
         ['<->', '↔'],
-        [/(?<!-)->/, '→'],
-        ['<-', '←', true],
+        [RIGHT_ARROW, '→'],
+        ['<-', '←', AT_RUN_END],
         ['>>', '»'],
         ['<<', '«'],
         ['(tm)', '™'],
@@ -142,9 +170,9 @@ const RULES: Record<TypographyGroup, readonly Replacement[]> = {
         ['(C)', '©'],
         ['(sm)', '℠'],
         ['+/-', '±'],
-        ['!=', '≠', true],
+        ['!=', '≠', AT_RUN_END],
     ],
-    numeric: [...SUPERSCRIPTS, DEGREE, ...FRACTIONS, [/(?<![\p{L}\p{N}_])(?!0x)(\d+)x(\d+)/u, '$1×$2', true]],
+    numeric: [...SUPERSCRIPTS, DEGREE, ...FRACTIONS, [DIMENSIONS, '$1×$2', AT_RUN_END]],
 };
 
 const toRule = ([match, replace, waitForRunEnd]: Replacement): RteInputRule => ({
@@ -163,11 +191,13 @@ const toRule = ([match, replace, waitForRunEnd]: Replacement): RteInputRule => (
  * @example
  * typographyPlugin({ groups: ['quotes', 'dashes'] })
  */
-export const typographyPlugin = ({ groups = DEFAULT_GROUPS }: TypographyPluginOptions = {}) =>
-    definePlugin({
-        id: 'typography',
-        // In the fixed order, so how the host lists the groups never changes which rule goes first.
-        inputRules: TYPOGRAPHY_GROUPS.filter((group) => groups.includes(group)).flatMap((group) =>
-            RULES[group].map(toRule),
-        ),
-    });
+export const typographyPlugin = ({ groups = DEFAULT_GROUPS }: TypographyPluginOptions = {}) => {
+    const inputRules: RteInputRule[] = [];
+    // In the fixed order, so how the host lists the groups never changes which rule goes first.
+    for (const group of TYPOGRAPHY_GROUPS) {
+        if (groups.includes(group)) {
+            inputRules.push(...RULES[group].map(toRule));
+        }
+    }
+    return definePlugin({ id: 'typography', inputRules });
+};
