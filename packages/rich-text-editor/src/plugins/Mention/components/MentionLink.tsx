@@ -4,7 +4,7 @@ import { Tooltip } from '@frontify/fondue-components';
 import { IconPeople } from '@frontify/fondue-icons';
 import { type MouseEvent, type ReactNode } from 'react';
 
-import { type MentionDisplay, mentionAttributes } from '../helpers/display';
+import { type MentionDisplay, mentionAttributes, UNAVAILABLE_NOTE } from '../helpers/display';
 import styles from '../mention.module.scss';
 import { type MentionValue } from '../types';
 
@@ -24,46 +24,53 @@ const placeCaretInEditor = (event: MouseEvent<HTMLAnchorElement>): void => {
 type MentionLinkProps = {
     value: MentionValue;
     display: MentionDisplay;
-    /**
-     * Reading view: a mention with no link takes focus so its tooltip opens from the keyboard.
-     * @default false
-     */
-    focusableWhenUnlinked?: boolean;
 };
 
 /**
  * A finished mention: the shown username linking to the person, with the name
  * on hover. Carries the same attributes as `toHtml`, so copied text pastes back
  * as a mention. A group is marked with its icon, as the old editor did; with
- * nowhere to link to (`@all`, or an unavailable person), the mention is text.
+ * nowhere to link to (`@all`), the mention is text, and an unavailable person
+ * is text with a note after the name.
  */
-export const MentionLink = ({ value, display, focusableWhenUnlinked = false }: MentionLinkProps): ReactNode => {
+export const MentionLink = ({ value, display }: MentionLinkProps): ReactNode => {
     const attributes = {
         title: display.title,
         ...mentionAttributes(value),
         className: styles.mention,
     };
-    const content = (
+    const name = (
         <>
             {value.kind === 'group' ? <IconPeople size={12} aria-hidden className={styles.kindIcon} /> : null}
             <BidiIsolate>{display.label}</BidiIsolate>
         </>
     );
+    let element: ReactNode;
+    switch (display.status) {
+        case 'linked':
+            element = (
+                <a href={display.href} {...attributes} onClick={placeCaretInEditor}>
+                    {name}
+                </a>
+            );
+            break;
+        case 'text':
+            element = <span {...attributes}>{name}</span>;
+            break;
+        case 'unavailable':
+            element = (
+                <span {...attributes}>
+                    {name} {UNAVAILABLE_NOTE}
+                </span>
+            );
+            break;
+        default:
+            // Adding a display status fails to compile here until it is handled.
+            throw new Error(`Unhandled mention display: ${JSON.stringify(display satisfies never)}`);
+    }
     return (
         <Tooltip.Root>
-            <Tooltip.Trigger asChild>
-                {display.href === undefined ? (
-                    // Focus is the only way a keyboard user reaches the tooltip.
-                    // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-                    <span {...attributes} tabIndex={focusableWhenUnlinked ? 0 : undefined}>
-                        {content}
-                    </span>
-                ) : (
-                    <a href={display.href} {...attributes} onClick={placeCaretInEditor}>
-                        {content}
-                    </a>
-                )}
-            </Tooltip.Trigger>
+            <Tooltip.Trigger asChild>{element}</Tooltip.Trigger>
             <Tooltip.Content padding="compact">{display.title}</Tooltip.Content>
         </Tooltip.Root>
     );

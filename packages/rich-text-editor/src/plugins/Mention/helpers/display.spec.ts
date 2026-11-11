@@ -15,7 +15,7 @@ describe('mentionDisplay', () => {
     });
 
     it('shows the stored value with no resolver, or one that does not know', () => {
-        const stored = { label: '@jane', title: 'Jane Doe', href: '/u/jane' };
+        const stored = { status: 'linked', label: '@jane', title: 'Jane Doe', href: '/u/jane' };
 
         expect(mentionDisplay(JANE, { href, trigger: '@' })).toEqual(stored);
         expect(mentionDisplay(JANE, { href, trigger: '@', resolve: () => ({ status: 'unknown' }) })).toEqual(stored);
@@ -25,6 +25,7 @@ describe('mentionDisplay', () => {
         const resolve = () => ({ status: 'current', username: 'jane.s', name: 'Jane Smith' }) as const;
 
         expect(mentionDisplay(JANE, { href, trigger: '#', resolve })).toEqual({
+            status: 'linked',
             label: '#jane.s',
             title: 'Jane Smith',
             href: '/u/jane',
@@ -33,16 +34,16 @@ describe('mentionDisplay', () => {
 
     it('shows the stored username as unavailable, with its stored name and no link', () => {
         expect(mentionDisplay(JANE, { href, trigger: '@', resolve: () => ({ status: 'unavailable' }) })).toEqual({
-            label: '@jane (unavailable)',
+            status: 'unavailable',
+            label: '@jane',
             title: 'Jane Doe',
-            href: undefined,
         });
     });
 
     it('is text without a target, and leaves out a target that is not a safe link', () => {
-        expect(mentionDisplay(JANE, { trigger: '@' }).href).toBeUndefined();
-        expect(mentionDisplay(JANE, { trigger: '@', href: () => undefined }).href).toBeUndefined();
-        expect(mentionDisplay(JANE, { trigger: '@', href: () => 'javascript:alert(1)' }).href).toBeUndefined();
+        expect(mentionDisplay(JANE, { trigger: '@' }).status).toBe('text');
+        expect(mentionDisplay(JANE, { trigger: '@', href: () => undefined }).status).toBe('text');
+        expect(mentionDisplay(JANE, { trigger: '@', href: () => 'javascript:alert(1)' }).status).toBe('text');
     });
 
     it('removes control and bidirectional characters from what it shows, stored or resolved', () => {
@@ -77,6 +78,7 @@ describe('mentionDisplay', () => {
         };
 
         expect(mentionDisplay(JANE, { href, trigger: '@', resolve })).toEqual({
+            status: 'linked',
             label: '@jane',
             title: 'Jane Doe',
             href: '/u/jane',
@@ -112,7 +114,7 @@ describe('mentionDisplay', () => {
         expect(mentionDisplay(empty, { trigger: '@' }).label).toBe('Unknown person');
         expect(mentionDisplay({ ...empty, kind: 'group' }, { trigger: '@' }).label).toBe('Unknown group');
         expect(mentionDisplay(empty, { trigger: '@', resolve: () => ({ status: 'unavailable' }) }).label).toBe(
-            'Unknown person (unavailable)',
+            'Unknown person',
         );
     });
 });

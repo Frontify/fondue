@@ -4,7 +4,7 @@ import { defineContent, defineInline, definePlugin, type RtePlugin } from '#/cor
 
 import { MentionEditor } from './components/MentionEditor';
 import { BIDI_ISOLATE_TAG, MentionLink } from './components/MentionLink';
-import { mentionAttributes, mentionDisplay, storedKind } from './helpers/display';
+import { linkTarget, mentionAttributes, mentionDisplay, storedKind } from './helpers/display';
 import { mentionValueOf } from './helpers/mention';
 import styles from './mention.module.scss';
 import { type MentionHref, type MentionItem, type MentionItems, type MentionResolve, type MentionValue } from './types';
@@ -53,15 +53,17 @@ export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentO
                 // nowhere to link to), no tooltip.
                 toHtml: (mention) => {
                     const shown = mentionDisplay(mention, { resolve, href, trigger });
+                    const target = linkTarget(shown);
                     return {
-                        tag: shown.href === undefined ? 'span' : 'a',
+                        tag: target === undefined ? 'span' : 'a',
                         attrs: {
-                            href: shown.href,
+                            href: target,
                             title: shown.title,
                             ...mentionAttributes(mention),
                             class: styles.mention ?? '',
                         },
-                        // Isolated so a right-to-left name cannot reorder the text around it.
+                        // Isolated so a right-to-left name cannot reorder the text around it; `@` and
+                        // the label only, without the note an unavailable mention shows when read.
                         children: [{ tag: BIDI_ISOLATE_TAG, children: shown.label }],
                     };
                 },
@@ -89,11 +91,7 @@ export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentO
 
                 render: {
                     component: ({ value }) => (
-                        <MentionLink
-                            value={value}
-                            display={mentionDisplay(value, { resolve, href, trigger })}
-                            focusableWhenUnlinked
-                        />
+                        <MentionLink value={value} display={mentionDisplay(value, { resolve, href, trigger })} />
                     ),
                 },
             }),
