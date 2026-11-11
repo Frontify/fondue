@@ -9,6 +9,8 @@ export type BlurOnBreakPluginOptions = {
     onBreak?: () => void;
     /**
      * Enter on an empty editor refuses instead of committing, and says why: `true` or an empty string for the default words, or a string for yours
+     *
+     * @default false
      */
     required?: boolean | string;
 };

@@ -119,7 +119,16 @@ const press = (target: Element, key: string, init: KeyboardEventInit = {}): void
     });
 };
 
-const mod = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform) ? { metaKey: true } : { ctrlKey: true };
+const APPLE_PLATFORM = /Mac|iP(hone|[oa]d)/;
+
+const modifierFor = (platform: string) => {
+    if (APPLE_PLATFORM.test(platform)) {
+        return { metaKey: true };
+    }
+    return { ctrlKey: true };
+};
+
+const mod = modifierFor(window.navigator.platform);
 
 /** The text of a block in what the host was handed, marks and all. */
 const childrenOf = (doc: RteDocument | null, index = 0): unknown[] => {

@@ -16,6 +16,7 @@ import {
 } from '../core';
 import {
     blurOnBreakPlugin,
+    type BlurOnBreakPluginOptions,
     bulletListPlugin,
     columnBreakPlugin,
     defaultPlugins,
@@ -40,7 +41,9 @@ declare global {
 }
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
-const recordingApi = ({ inList = false, empty = false } = {}) => {
+type RecordingApiOptions = { inList?: boolean; empty?: boolean };
+
+const recordingApi = ({ inList = false, empty = false }: RecordingApiOptions = {}) => {
     const calls: string[] = [];
     const api = {
         isEmpty: () => empty,
@@ -203,7 +206,7 @@ describe('mentionPlugin', () => {
 });
 
 describe('blurOnBreakPlugin', () => {
-    const enterOf = (options?: Parameters<typeof blurOnBreakPlugin>[0]) => blurOnBreakPlugin(options).hotkeys?.Enter;
+    const enterOf = (options?: BlurOnBreakPluginOptions) => blurOnBreakPlugin(options).hotkeys?.Enter;
 
     it('splits the list item when Enter is pressed inside a list, and keeps focus', () => {
         const { api, calls } = recordingApi({ inList: true });
