@@ -12,7 +12,10 @@ import { attributeEntries, type HtmlSpec } from '#/core';
 export const htmlSpecToDom = (spec: HtmlSpec): DOMOutputSpec => {
     const entries = attributeEntries(spec.attrs);
     // The attributes slot is optional; left out when there are none.
-    const head: unknown[] = entries.length > 0 ? [spec.tag, Object.fromEntries(entries)] : [spec.tag];
+    let head: unknown[] = [spec.tag];
+    if (entries.length > 0) {
+        head = [spec.tag, Object.fromEntries(entries)];
+    }
     const { children } = spec;
     if (children === true) {
         head.push(0);
