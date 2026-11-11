@@ -434,6 +434,27 @@ describe('the type a toolbar entry toggles', () => {
 describe('the hotkeys of a registry', () => {
     const boldContent = defineContent({ marks: { bold: mark() } });
 
+    it('runs the owner of a key before plugins mounted earlier, owners in mount order', () => {
+        const early = vi.fn();
+        const owner = vi.fn();
+        const secondOwner = vi.fn();
+        const late = vi.fn();
+        const registry = buildPluginRegistry([
+            definePlugin({ id: 'early', hotkeys: { 'Shift-Enter': early } }),
+            definePlugin({ id: 'owner', hotkeys: { 'Shift-Enter': owner }, ownedHotkeys: ['Shift-Enter'] }),
+            definePlugin({ id: 'late', hotkeys: { 'Shift-Enter': late } }),
+            definePlugin({ id: 'second', hotkeys: { 'Shift-Enter': secondOwner }, ownedHotkeys: ['Shift-Enter'] }),
+        ]);
+
+        expect(registry.hotkeys.get('Shift-Enter')).toEqual([owner, secondOwner, early, late]);
+    });
+
+    it('throws when a plugin owns a key it does not bind', () => {
+        expect(() => buildPluginRegistry([definePlugin({ id: 'p', ownedHotkeys: ['Shift-Enter'] })])).toThrow(
+            'Plugin "p" owns hotkey "Shift-Enter", which its `hotkeys` does not bind.',
+        );
+    });
+
     it('include the shortcut of a toolbar entry, as a toggle of what it toggles', () => {
         const toggled: string[] = [];
         const registry = buildPluginRegistry([

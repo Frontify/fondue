@@ -20,7 +20,7 @@ export type BlurOnBreakPluginOptions = {
 };
 
 const REQUIRED_MESSAGE = 'Type something before submitting.';
-const DESCRIPTION = 'Press Enter to submit.';
+const DESCRIPTION = 'Press Enter to submit, Shift+Enter for a new line.';
 
 /** What to say when an empty editor refuses Enter, or null when the editor need not be filled. */
 const requiredMessageOf = (required: boolean | string | undefined): string | null => {
@@ -46,6 +46,14 @@ const breakLine = (api: EditorControlApi, { onBreak, required }: BlurOnBreakPlug
     api.blur();
 };
 
+/** Shift-Enter does Enter's structural action: split the item or leave the list, else split the paragraph. */
+const splitBlock = (api: EditorControlApi): void => {
+    if (api.lists.split()) {
+        return;
+    }
+    api.blocks.split();
+};
+
 /**
  * Enter commits instead of adding a paragraph, what a single-line editor (a
  * title field, a comment box) wants. Inside a list Enter still splits the
@@ -54,6 +62,9 @@ const breakLine = (api: EditorControlApi, { onBreak, required }: BlurOnBreakPlug
  * `onBreak` and gives up focus. Plugin hotkeys run before the editor's own
  * keys, so this handler splits the item itself rather than leaving Enter to
  * the list.
+ * Shift-Enter does Enter's normal action instead: a new paragraph, or a new
+ * list item. The plugin owns that key, so it wins over the soft break wherever
+ * the two are mounted.
  *
  * @example
  * blurOnBreakPlugin({ onBreak: submit, required: 'Write a comment first.' })
@@ -71,10 +82,15 @@ export const blurOnBreakPlugin = (options: BlurOnBreakPluginOptions = {}) => {
     return definePlugin({
         id: 'blur-on-break',
         description,
+        ownedHotkeys: ['Shift-Enter'],
         hotkeys: {
             // Enter is always this plugin's: it splits an item, refuses, or submits.
             Enter: (api) => {
                 breakLine(api, options);
+                return true;
+            },
+            'Shift-Enter': (api) => {
+                splitBlock(api);
                 return true;
             },
         },

@@ -1150,7 +1150,7 @@ describe('Enter in an editor with blurOnBreakPlugin', () => {
         expect(announce).not.toHaveBeenCalled();
     });
 
-    it('leaves Shift-Enter to the soft break', () => {
+    it("does Enter's action on Shift-Enter: splits the paragraph mid-text, never submits or breaks the line", () => {
         const onBreak = vi.fn();
         const editor = editorWith([...defaultPlugins, blurOnBreakPlugin({ onBreak })], [paragraph(text('ab'))]);
         editor.caretAfter('a');
@@ -1158,6 +1158,61 @@ describe('Enter in an editor with blurOnBreakPlugin', () => {
         press(editor.view, 'Enter', { shiftKey: true });
 
         expect(onBreak).not.toHaveBeenCalled();
+        expect(editor.stored()).toEqual([paragraph(text('a')), paragraph(text('b'))]);
+    });
+
+    it('wins Shift-Enter from a soft break mounted after it', () => {
+        const editor = editorWith(
+            [blurOnBreakPlugin({ onBreak: vi.fn() }), ...defaultPlugins],
+            [paragraph(text('ab'))],
+        );
+        editor.caretAfter('a');
+
+        press(editor.view, 'Enter', { shiftKey: true });
+
+        expect(editor.stored()).toEqual([paragraph(text('a')), paragraph(text('b'))]);
+    });
+
+    it('splits a list item on Shift-Enter', () => {
+        const onBreak = vi.fn();
+        const editor = editorWith([...defaultPlugins, blurOnBreakPlugin({ onBreak })], inList());
+        editor.caretAfter('it');
+
+        press(editor.view, 'Enter', { shiftKey: true });
+
+        expect(onBreak).not.toHaveBeenCalled();
+        expect((editor.stored()?.[0] as { children: unknown[] }).children).toHaveLength(2);
+    });
+
+    it('leaves the list on Shift-Enter in an empty item', () => {
+        const editor = editorWith(
+            [...defaultPlugins, blurOnBreakPlugin({ onBreak: vi.fn() })],
+            [
+                {
+                    type: 'bulletList',
+                    children: [
+                        { type: 'listItem', children: [paragraph(text('a'))] },
+                        { type: 'listItem', children: [paragraph()] },
+                    ],
+                },
+            ],
+        );
+        editor.view.dispatch(editor.view.state.tr.setSelection(TextSelection.atEnd(editor.view.state.doc)));
+
+        press(editor.view, 'Enter', { shiftKey: true });
+
+        expect(editor.stored()).toEqual([
+            { type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('a'))] }] },
+            paragraph(),
+        ]);
+    });
+
+    it('still breaks the line on Shift-Enter in an editor without blurOnBreak', () => {
+        const editor = editorWith([...defaultPlugins], [paragraph(text('ab'))]);
+        editor.caretAfter('a');
+
+        press(editor.view, 'Enter', { shiftKey: true });
+
         expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'break' }, text('b'))]);
     });
 });

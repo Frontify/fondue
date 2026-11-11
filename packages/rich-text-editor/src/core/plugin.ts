@@ -125,9 +125,14 @@ export type RtePlugin = {
      * Keybindings, keyed `Mod-b` style (Mod = Cmd on macOS, Ctrl elsewhere) or
      * by a single typed character (`@`). Modifiers are Mod, Cmd, Meta, Ctrl,
      * Alt and Shift in any case; any other throws when the editor mounts. They run
-     * before the editor's own, in plugin order.
+     * before the editor's own, in plugin order (owned keys first: see `ownedHotkeys`).
      */
     hotkeys?: Record<string, HotkeyHandler>;
+    /**
+     * Keys from `hotkeys` this plugin owns: its handler runs before every plugin that merely binds the key,
+     * wherever the plugin is mounted. Owners of one key run in mount order. A key not in `hotkeys` throws when the editor mounts.
+     */
+    ownedHotkeys?: readonly string[];
     /**
      * Text rewritten as it is typed: markdown shortcuts and autolinks
      */

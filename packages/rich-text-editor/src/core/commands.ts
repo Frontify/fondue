@@ -112,6 +112,10 @@ export type EditorControlApi = {
          * Reset every `blockAttributes` attribute (alignment) to its default across the selection
          */
         resetAttributes(): void;
+        /**
+         * Split the current block at the caret, as Enter does outside a list: a paragraph is split in two, an empty block is lifted out or followed by a paragraph. Returns false when nothing can be split
+         */
+        split(): boolean;
     };
 
     lists: {

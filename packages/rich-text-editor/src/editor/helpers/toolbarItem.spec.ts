@@ -88,6 +88,7 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
             updateAttributes: () => {},
             toggleAttribute: () => 'set',
             resetAttributes: () => {},
+            split: () => false,
         },
         lists: {
             // Wraps the text block in a list and an item, or takes it out again.
