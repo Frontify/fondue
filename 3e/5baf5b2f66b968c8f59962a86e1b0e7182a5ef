@@ -1,0 +1,33 @@
+packages/components/src/components/Tree/components/TreeLoadingRow.tsx
+  s_14ce5cc0103714::t_802cbfa60b0fb5 15
+packages/components/src/components/Tree/Tree.metadata.json
+  s_14ce5cc0103714::t_802cbfa60b0fb5 4
+packages/components/src/components/Tree/components/TreeDragLine.ct.tsx
+  s_14ce5cc0103714::t_802cbfa60b0fb5 41,44,52
+packages/components/src/components/Tree/styles/tree.module.scss
+  s_14ce5cc0103714::t_802cbfa60b0fb5 108-112,212,214-215,226,253
+packages/components/src/components/Tree/components/TreeRoot.ct.tsx
+  s_14ce5cc0103714::t_a1f03ddbf8f0a3 1506-1507,1510-1515
+  s_14ce5cc0103714::t_802cbfa60b0fb5 1488-1505,1508-1509,1516-1517
+.changeset/tree-handle-gutter.md
+  s_14ce5cc0103714::t_802cbfa60b0fb5 1-5
+packages/components/src/components/Tree/components/TreeRoot.tsx
+  s_14ce5cc0103714::t_07c18b2ae6f719 172,178
+  s_14ce5cc0103714::t_802cbfa60b0fb5 46-48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3e5baf5b2f66b968c8f59962a86e1b0e7182a5ef",
+  "prompts": {},
+  "sessions": {
+    "s_14ce5cc0103714": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "83da3adc-d2a0-4b6b-aac3-afe8d2a7b2f2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

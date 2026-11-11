@@ -1,0 +1,19 @@
+.changeset/tiny-buttons-guess.md
+  s_1b4cb72f14f783::t_7d68eeabb73a8a 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "954f85ee485297c33fdce46c682cd6fb243c6285",
+  "prompts": {},
+  "sessions": {
+    "s_1b4cb72f14f783": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "23286c54-2204-457f-b5c1-369a06d17011",
+        "model": "unknown"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
