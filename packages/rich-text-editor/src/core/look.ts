@@ -21,7 +21,7 @@ export type TextLook = {
 };
 
 /** The CSS property each field sets. `plugins/shared/look.module.scss` spells the same names. */
-export const LOOK_PROPERTIES = {
+const LOOK_PROPERTIES = {
     fontFamily: 'font-family',
     fontSize: 'font-size',
     fontWeight: 'font-weight',
@@ -34,6 +34,9 @@ export const LOOK_PROPERTIES = {
     marginBottom: 'margin-bottom',
     color: 'color',
 } as const satisfies Record<keyof TextLook, string>;
+
+/** The prefix every look's custom property carries; `look.module.scss` writes the same. */
+const LOOK_VARIABLE_PREFIX = '--rte-';
 
 const UPPER_CASE_LETTER = /[A-Z]/g;
 
@@ -67,7 +70,7 @@ export const lookProperties = (key: string, look: TextLook): Record<string, stri
             continue;
         }
         assertUsableValue(field, value, `the "${key}" look`);
-        properties[`--rte-${kebabCase(key)}-${property}`] = value;
+        properties[`${LOOK_VARIABLE_PREFIX}${kebabCase(key)}-${property}`] = value;
     }
     return properties;
 };

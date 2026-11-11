@@ -14,15 +14,8 @@ export {
     type StoredMarkValue,
 } from './document';
 export { isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
-export {
-    attributeEntries,
-    type HtmlAttributes,
-    type HtmlSpec,
-    isSafeCssValue,
-    safeStyleEntries,
-    type StyleMap,
-} from './htmlSpec';
-export { BLOCK_FALLBACKS, LOOK_PROPERTIES, lookProperties, lookStyle, styleOfClass, type TextLook } from './look';
+export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
+export { BLOCK_FALLBACKS, lookProperties, lookStyle, styleOfClass, type TextLook } from './look';
 export {
     type BlockAttributeDefinition,
     type BlockDefinition,

@@ -40,7 +40,8 @@
     }
 
     // A plain paragraph's margins: the host's body look (`paragraphPlugin`), in list items too, else none.
-    // Here rather than in that plugin's stylesheet, because a paragraph needs them whether or not it is loaded.
+    // Here rather than in that plugin's stylesheet, because a paragraph needs them whether or not it is loaded;
+    // the names and defaults mirror `look('body')` in plugins/shared/look.module.scss, which this layer cannot import.
     :global(.rte-paragraph) {
         margin-top: var(--rte-body-margin-top, 0);
         margin-bottom: var(--rte-body-margin-bottom, var(--rte-block-gap, 0));
