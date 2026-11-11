@@ -285,7 +285,7 @@ export const Underline: Story = {
     },
 };
 
-/** ⌘⇧X, or the toolbar button. */
+/** ⇧⌘X, or the toolbar button. */
 export const Strikethrough: Story = {
     render: () => {
         const [doc, setDoc] = useState<RteDocument>({
@@ -296,7 +296,7 @@ export const Strikethrough: Story = {
                     children: [
                         { text: 'Some ' },
                         { text: 'struck-through', strikethrough: true },
-                        { text: ' text (⌘⇧X).' },
+                        { text: ' text (⇧⌘X).' },
                     ],
                 },
             ],

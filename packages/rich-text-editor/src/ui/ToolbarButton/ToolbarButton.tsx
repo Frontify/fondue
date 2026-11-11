@@ -38,13 +38,28 @@ export const ariaKeyShortcut = (shortcut: string, apple = isApple()): string =>
 const APPLE_SYMBOLS: Record<string, string> = { Mod: '⌘', Shift: '⇧', Alt: '⌥', Ctrl: '⌃' };
 
 /**
- * `Mod-Shift-x` as people read it: `⌘⇧X` on Apple systems, `Ctrl+Shift+X` elsewhere
+ * The order macOS menus list modifiers in, whatever order the shortcut is written in
+ */
+const APPLE_MODIFIER_ORDER = ['Ctrl', 'Alt', 'Shift', 'Mod'];
+
+const appleOrder = (part: string): number => {
+    const index = APPLE_MODIFIER_ORDER.indexOf(part);
+    if (index === -1) {
+        return APPLE_MODIFIER_ORDER.length;
+    }
+    return index;
+};
+
+/**
+ * `Mod-Shift-x` as people read it: `⇧⌘X` on Apple systems, `Ctrl+Shift+X` elsewhere
  */
 export const readableShortcut = (shortcut: string, apple = isApple()): string => {
     const parts = shortcut.split('-').map((part) => (part.length === 1 ? part.toUpperCase() : part));
-    return apple
-        ? parts.map((part) => APPLE_SYMBOLS[part] ?? part).join('')
-        : parts.map((part) => (part === 'Mod' ? 'Ctrl' : part)).join('+');
+    if (apple) {
+        const ordered = [...parts].sort((first, second) => appleOrder(first) - appleOrder(second));
+        return ordered.map((part) => APPLE_SYMBOLS[part] ?? part).join('');
+    }
+    return parts.map((part) => (part === 'Mod' ? 'Ctrl' : part)).join('+');
 };
 
 /**
