@@ -20,7 +20,7 @@ export type TextLook = {
     color?: string;
 };
 
-/** The CSS property each field sets. The stylesheet's `_look.scss` spells the same names. */
+/** The CSS property each field sets. `plugins/shared/look.module.scss` spells the same names. */
 export const LOOK_PROPERTIES = {
     fontFamily: 'font-family',
     fontSize: 'font-size',

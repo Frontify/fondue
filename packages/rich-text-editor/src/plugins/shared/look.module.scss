@@ -24,9 +24,8 @@ $default-fallbacks: (
     color: inherit,
 );
 
-/// Writes each property as the host's `--rte-<key>-<property>` custom property, falling back to Fondue's look.
-/// @param {String} $key - The style's kebab-case name, such as `image-title`.
-/// @param {Map} $fallbacks - Fondue's value per property where it differs from the default.
+// Writes each property as the host's `--rte-<$key>-<property>`, falling back to Fondue's look: `$fallbacks`
+// where it differs from the default. `$key` is the style's kebab-case name, such as `image-title`.
 @mixin look($key, $fallbacks: ()) {
     @each $property in map.keys($fallbacks) {
         @if not list.index($look-properties, $property) {
