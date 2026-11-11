@@ -133,6 +133,7 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
     return definePlugin({
         id: 'text-style',
         content,
+        toolbarGroup: 'text',
         toolbar: [{ label: 'Text style', render: (props) => <TextStyleSelect {...props} options={options} /> }],
         hotkeys,
         // `# ` through `#### `, for the headings this editor offers.

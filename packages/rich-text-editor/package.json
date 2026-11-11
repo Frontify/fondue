@@ -38,14 +38,14 @@
         "build:storybook": "storybook build",
         "format": "oxfmt",
         "format:check": "oxfmt --check",
-        "install:playwright": "playwright install --with-deps chromium",
+        "install:playwright": "playwright install --with-deps",
         "lint": "oxlint",
         "lint:fix": "oxlint --fix",
         "storybook": "storybook dev -p 6012",
         "test": "vitest run",
         "test:watch": "vitest",
         "test:components": "playwright test --ui",
-        "test:components:ci": "playwright test",
+        "test:components:ci": "playwright test --project=chromium --project=webkit",
         "typecheck": "tsgo --noEmit && tsgo --noEmit -p tsconfig.node.json"
     },
     "peerDependencies": {

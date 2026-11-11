@@ -36,5 +36,6 @@ export const superscriptContent = defineContent({
  */
 export const superscriptPlugin = /* @__PURE__ */ definePlugin({
     content: superscriptContent,
+    toolbarGroup: 'marks',
     toolbar: [{ label: 'Superscript', icon: IconSuperscript, shortcut: 'Mod-.' }],
 });
