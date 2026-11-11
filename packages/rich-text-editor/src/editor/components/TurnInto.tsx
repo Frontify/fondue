@@ -5,7 +5,7 @@ import { IconCaretDown, IconCheckMark } from '@frontify/fondue-icons';
 import { type ComponentProps, type MouseEvent, type ReactNode, useRef } from 'react';
 
 import { type EditorControlApi, type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
-import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
+import { MENU_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { activeCommand } from '../helpers/blockCommands';
 import { type RichTextEditorLabels } from '../labels';
@@ -70,7 +70,7 @@ export const TurnInto = ({
             <Dropdown.Trigger>
                 <Button
                     type="button"
-                    size="medium"
+                    size="small"
                     emphasis="weak"
                     aria-label={labels.turnIntoCurrent(label)}
                     title={labels.turnInto}
@@ -101,7 +101,7 @@ export const TurnInto = ({
                         >
                             {Icon === undefined ? null : (
                                 <Dropdown.Slot name="left">
-                                    <Icon size={TOOLBAR_ICON_SIZE} />
+                                    <Icon size={MENU_ICON_SIZE} />
                                 </Dropdown.Slot>
                             )}
                             {/* An element of its own: the menu keys only the ones it is handed, and wraps bare text without. */}

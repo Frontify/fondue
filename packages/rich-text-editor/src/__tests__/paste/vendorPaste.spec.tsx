@@ -416,6 +416,121 @@ describe('pasting from other applications', () => {
         });
     });
 
+    describe('a Word list that resumes after another paragraph', () => {
+        /** A top-level item of Word's list `template`, in its list `instance`. */
+        const item = (template: string, instance: string, marker: string, text: string): string =>
+            `<p class="MsoListParagraph" style="mso-list: ${template} level1 ${instance}">` +
+            `<span style="mso-list: Ignore">${marker}</span>${text}<o:p></o:p></p>`;
+        const between = '<p class="MsoNormal">Between<o:p></o:p></p>';
+        /** Each top-level block's type, and where a numbered list starts when it says. */
+        const starts = (doc: RteDocument): string[] =>
+            nodesOf(doc).map((block) => {
+                if (typeof block.start !== 'number') {
+                    return block.type ?? '';
+                }
+                return `${block.type} from ${block.start}`;
+            });
+
+        it('continues its numbering', () => {
+            const doc = pasted(
+                item('l0', 'lfo1', '1.', 'One') +
+                    item('l0', 'lfo1', '2.', 'Two') +
+                    between +
+                    item('l0', 'lfo1', '3.', 'Three'),
+            );
+
+            expect(outline(nodesOf(doc))).toEqual([
+                'number: One',
+                'number: Two',
+                'paragraph: Between',
+                'number: Three',
+            ]);
+            expect(starts(doc)).toEqual(['numberedList', 'paragraph', 'numberedList from 3']);
+        });
+
+        it('restarts at 1 when the list after the paragraph is another one', () => {
+            const doc = pasted(
+                item('l0', 'lfo1', '1.', 'One') +
+                    item('l0', 'lfo1', '2.', 'Two') +
+                    between +
+                    item('l1', 'lfo2', '1.', 'Other'),
+            );
+
+            expect(starts(doc)).toEqual(['numberedList', 'paragraph', 'numberedList']);
+        });
+
+        it('restarts under each numbered heading of the same list', () => {
+            const heading = (marker: string, text: string): string =>
+                `<h1 style="mso-list: l0 level1 lfo1"><span style="mso-list: Ignore">${marker}</span>${text}</h1>`;
+            const point = (marker: string, text: string): string =>
+                `<p class="MsoListParagraph" style="mso-list: l0 level2 lfo1">` +
+                `<span style="mso-list: Ignore">${marker}</span>${text}<o:p></o:p></p>`;
+            const doc = pasted(
+                heading('1', 'Scope') +
+                    point('1.1.', 'Logos') +
+                    point('1.2.', 'Colours') +
+                    heading('2', 'Terms') +
+                    point('2.1.', 'Payment'),
+            );
+
+            expect(starts(doc)).toEqual(['textStyle', 'numberedList', 'textStyle', 'numberedList']);
+        });
+
+        it('starts at the number Word wrote when the copy begins partway through the list', () => {
+            const doc = pasted(item('l0', 'lfo1', '3.', 'Three') + item('l0', 'lfo1', '4.', 'Four'));
+
+            expect(starts(doc)).toEqual(['numberedList from 3']);
+        });
+
+        it('leaves a bulleted list as it is', () => {
+            const doc = pasted(
+                item('l0', 'lfo1', '·', 'One') +
+                    item('l0', 'lfo1', '·', 'Two') +
+                    between +
+                    item('l0', 'lfo1', '·', 'Three'),
+            );
+
+            expect(outline(nodesOf(doc))).toEqual([
+                'bullet: One',
+                'bullet: Two',
+                'paragraph: Between',
+                'bullet: Three',
+            ]);
+            expect(starts(doc)).toEqual(['bulletList', 'paragraph', 'bulletList']);
+        });
+    });
+
+    describe('a numbered list that starts later', () => {
+        it('keeps its first number, and stores none for a list that starts at 1', () => {
+            const doc = pasted('<ol start="4"><li>Four</li></ol><p>Between</p><ol start="1"><li>One</li></ol>');
+
+            expect(nodesOf(doc).map((block) => block.start)).toEqual([4, undefined, undefined]);
+        });
+
+        it('stores no start it cannot write back exactly', () => {
+            const doc = pasted('<ol start="99999999999999999999999"><li>Huge</li></ol>');
+
+            expect(nodesOf(doc)[0]?.start).toBeUndefined();
+        });
+
+        it('keeps starts at both ends of the 32-bit range browsers draw and drops the ones just past them', () => {
+            const doc = pasted(
+                '<ol start="2147483648"><li>Past</li></ol><p>Between</p><ol start="2147483647"><li>Last</li></ol>' +
+                    '<p>Between</p><ol start="-2147483648"><li>First</li></ol><p>Between</p><ol start="-2147483649"><li>Before</li></ol>',
+            );
+
+            expect(nodesOf(doc).map((block) => block.start)).toEqual([
+                undefined,
+                undefined,
+                2147483647,
+                undefined,
+                -2147483648,
+                undefined,
+                undefined,
+            ]);
+        });
+    });
+
     describe('list data in the class rule of a Word list style', () => {
         const styled = (style: string, text: string): string =>
             `<p class="MsoListNumber"${style}><span style="mso-list: Ignore">1.</span>${text}<o:p></o:p></p>`;

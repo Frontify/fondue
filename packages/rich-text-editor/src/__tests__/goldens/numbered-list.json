@@ -215,6 +215,46 @@
                     ]
                 }
             ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "resumed"
+                }
+            ]
+        },
+        {
+            "type": "numberedList",
+            "start": 3,
+            "children": [
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "three"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "four"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }

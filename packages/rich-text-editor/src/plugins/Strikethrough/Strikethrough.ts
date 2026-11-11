@@ -46,6 +46,7 @@ export const strikethroughContent = defineContent({
  */
 export const strikethroughPlugin = /* @__PURE__ */ definePlugin({
     content: strikethroughContent,
+    toolbarGroup: 'marks',
     toolbar: [{ label: 'Strikethrough', icon: IconTextFormatStrikethrough, shortcut: 'Mod-Shift-x' }],
     inputRules: [{ delimiter: '~~' }],
 });
