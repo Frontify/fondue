@@ -326,6 +326,15 @@ describe('typographyPlugin', () => {
         expect(typed('~2.5 ', withTypography)).toEqual([paragraph(text('~2.5 '))]);
     });
 
+    it('turns a tilde and a digit into a subscript digit in a formula', () => {
+        expect(typed('H~2O', withTypography)).toEqual([paragraph(text('H₂O'))]);
+        expect(typed('(OH)~2 ', withTypography)).toEqual([paragraph(text('(OH)₂ '))]);
+    });
+
+    it('leaves quotes straight unless the quotes group is asked for', () => {
+        expect(typed('say "hi"', [...defaultPlugins, typographyPlugin()])).toEqual([paragraph(text('say "hi"'))]);
+    });
+
     it('does not rewrite a tilde and a digit: "~2 hours"', () => {
         expect(typed('~2 hours', withTypography)).toEqual([paragraph(text('~2 hours'))]);
         expect(typed('~-5 ', withTypography)).toEqual([paragraph(text('~-5 '))]);
@@ -363,7 +372,7 @@ describe('typographyPlugin', () => {
     it('does not carry a selected link onto the quote typed over it', () => {
         const link = { link: { href: 'https://frontify.com' } };
         const editor = editorWith(
-            [...shipped('link'), typographyPlugin()],
+            [...shipped('link'), typographyPlugin({ groups: ['quotes'] })],
             [paragraph(text('a '), text('Frontify', link))],
         );
         editor.select('Frontify');
@@ -428,7 +437,7 @@ describe('typographyPlugin', () => {
 
         it('leaves a quote in inline code as typed', () => {
             const editor = editorWith(
-                [...shipped('code'), typographyPlugin()],
+                [...shipped('code'), typographyPlugin({ groups: ['quotes'] })],
                 [paragraph(text('xy', { code: true }))],
             );
             editor.caretAfter('x');
@@ -446,7 +455,10 @@ describe('typographyPlugin', () => {
 
         it('opens a double quote after an inline element such as a mention', () => {
             const tag = { type: 'tag', name: 'Noah' };
-            const editor = editorWith([tagPlugin, typographyPlugin()], [paragraph(text('a '), tag)]);
+            const editor = editorWith(
+                [tagPlugin, typographyPlugin({ groups: ['quotes'] })],
+                [paragraph(text('a '), tag)],
+            );
             editor.caretAfter('￼');
 
             editor.type('"hi"');
@@ -456,7 +468,7 @@ describe('typographyPlugin', () => {
 
         it('opens a quote after an inline element', () => {
             const editor = editorWith(
-                [...shipped('softBreak'), typographyPlugin()],
+                [...shipped('softBreak'), typographyPlugin({ groups: ['quotes'] })],
                 [paragraph(text('a'), { type: 'break' })],
             );
             editor.caretAfter('￼');
@@ -468,7 +480,10 @@ describe('typographyPlugin', () => {
 
         it('turns a single quote after an inline element such as a mention into an apostrophe', () => {
             const tag = { type: 'tag', name: 'Noah' };
-            const editor = editorWith([tagPlugin, typographyPlugin()], [paragraph(text('a '), tag)]);
+            const editor = editorWith(
+                [tagPlugin, typographyPlugin({ groups: ['quotes'] })],
+                [paragraph(text('a '), tag)],
+            );
             editor.caretAfter('￼');
 
             editor.type("'s");
@@ -480,7 +495,10 @@ describe('typographyPlugin', () => {
             ['useState', { code: true }],
             ['Frontify', { link: { href: 'https://frontify.com' } }],
         ])('leaves the run "%s" intact when an apostrophe and "s" are typed after it', (word, marks) => {
-            const editor = editorWith([...shipped('code', 'link'), typographyPlugin()], [paragraph(text(word, marks))]);
+            const editor = editorWith(
+                [...shipped('code', 'link'), typographyPlugin({ groups: ['quotes'] })],
+                [paragraph(text(word, marks))],
+            );
             editor.caretAfter(word);
 
             editor.type("'s");
@@ -489,7 +507,7 @@ describe('typographyPlugin', () => {
         });
 
         it('is taken back on Backspace', () => {
-            const editor = editorWith([typographyPlugin()], [paragraph()]);
+            const editor = editorWith([typographyPlugin({ groups: ['quotes'] })], [paragraph()]);
             editor.type('a "');
 
             expect(press(editor.view, 'Backspace')).toBe(true);

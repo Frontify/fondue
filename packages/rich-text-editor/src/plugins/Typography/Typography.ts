@@ -5,9 +5,10 @@ import { definePlugin, INLINE_PLACEHOLDER, type RteInputRule } from '#/core';
 const TYPOGRAPHY_GROUPS = ['quotes', 'ellipsis', 'dashes', 'symbols', 'numeric'] as const;
 
 /**
- * Every group but `numeric`, which reads too much technical text as numbers to be on unasked.
+ * Every group but `numeric`, which reads too much technical text as numbers to be on unasked, and
+ * `quotes`, which curls English quotes whatever the language of the text.
  */
-const DEFAULT_GROUPS: readonly TypographyGroup[] = ['quotes', 'ellipsis', 'dashes', 'symbols'];
+const DEFAULT_GROUPS: readonly TypographyGroup[] = ['ellipsis', 'dashes', 'symbols'];
 
 /**
  * A set of shortcuts that can be turned on or off together.
@@ -20,7 +21,7 @@ export type TypographyGroup = (typeof TYPOGRAPHY_GROUPS)[number];
 export type TypographyPluginOptions = {
     /**
      * The groups of shortcuts to turn on.
-     * @default ['quotes', 'ellipsis', 'dashes', 'symbols']
+     * @default ['ellipsis', 'dashes', 'symbols']
      */
     groups?: readonly TypographyGroup[];
 };
@@ -92,6 +93,36 @@ const SUPERSCRIPTS: readonly Replacement[] = SUPERSCRIPT_PAIRS.map(([character, 
     new RegExp(String.raw`${AFTER_A_NUMBER}\^${character}`, 'u'),
     glyph,
     AT_RUN_END,
+]);
+
+/**
+ * Each digit typed after `~`, with the subscript glyph it becomes.
+ */
+const SUBSCRIPT_PAIRS: readonly (readonly [character: string, glyph: string])[] = [
+    ['0', '₀'],
+    ['1', '₁'],
+    ['2', '₂'],
+    ['3', '₃'],
+    ['4', '₄'],
+    ['5', '₅'],
+    ['6', '₆'],
+    ['7', '₇'],
+    ['8', '₈'],
+    ['9', '₉'],
+];
+
+/**
+ * Right after a letter or a closing bracket, as in a formula: `H~2O`, `(OH)~2`. Not after a space,
+ * so `~2 hours` stays as typed, nor after a `~`, so a strikethrough can open on a digit: `~~2~~`.
+ */
+const AFTER_A_FORMULA = String.raw`(?<=[\p{L})\]])`;
+
+/**
+ * `~2` for `₂` in a formula, the moment the digit is typed: `H~2O` becomes `H₂O`.
+ */
+const SUBSCRIPTS: readonly Replacement[] = SUBSCRIPT_PAIRS.map(([character, glyph]): Replacement => [
+    new RegExp(String.raw`${AFTER_A_FORMULA}~${character}`, 'u'),
+    glyph,
 ]);
 
 /**
@@ -172,7 +203,7 @@ const RULES: Record<TypographyGroup, readonly Replacement[]> = {
         ['+/-', '±'],
         ['!=', '≠', AT_RUN_END],
     ],
-    numeric: [...SUPERSCRIPTS, DEGREE, ...FRACTIONS, [DIMENSIONS, '$1×$2', AT_RUN_END]],
+    numeric: [...SUPERSCRIPTS, ...SUBSCRIPTS, DEGREE, ...FRACTIONS, [DIMENSIONS, '$1×$2', AT_RUN_END]],
 };
 
 const toRule = ([match, replace, waitForRunEnd]: Replacement): RteInputRule => ({
@@ -184,8 +215,8 @@ const toRule = ([match, replace, waitForRunEnd]: Replacement): RteInputRule => (
 
 /**
  * Typographic shortcuts, rewritten as they are typed: `->` becomes `→`, `(c)`
- * becomes `©`, a straight quote becomes a curly one, and, with the `numeric` group,
- * `1/2` becomes `½`.
+ * becomes `©`; with the `quotes` group a straight quote becomes an English curly
+ * one, and with the `numeric` group `1/2` becomes `½` and `H~2O` becomes `H₂O`.
  * Backspace right after takes one back. Text in inline code is left alone. No
  * toolbar and no document types: only typing rules. `groups` keeps only some.
  * @example
