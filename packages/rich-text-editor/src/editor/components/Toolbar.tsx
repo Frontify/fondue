@@ -35,7 +35,10 @@ export type ToolbarPlacement = 'floating' | 'top';
 type ToolbarProps = {
     /** The registry's toolbar entries, in mount order. The floating bar keeps the inline ones. */
     items: readonly ToolbarEntry[];
-    /** Floating bar only: every block command, for its "Turn into" menu. */
+    /**
+     * Floating bar only: every block command, for its "Turn into" menu.
+     * @default []
+     */
     commands?: readonly RteBlockCommand[];
     api: EditorControlApi;
     editorState: EditorStateStore;

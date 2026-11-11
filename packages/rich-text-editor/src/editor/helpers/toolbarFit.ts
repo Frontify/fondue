@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// Subpixel layout rounds an exact fit either way.
+/** Slack for subpixel layout, which rounds an exact fit either way. */
 const TOLERANCE = 0.5;
 
 export type FittingSlotCountParams = {
@@ -61,14 +61,14 @@ export const fittingSlotCount = ({ groups, gap, itemGap, more, available }: Fitt
     return leadingCount(advances, available - gap - more);
 };
 
-export type SlotGroup<Item> = { key: string; items: readonly Item[] };
+export type SlotGroup<TItem> = { key: string; items: readonly TItem[] };
 
-export type GroupSplit<Item> = { row: SlotGroup<Item>[]; overflow: SlotGroup<Item>[] };
+export type GroupSplit<TItem> = { row: SlotGroup<TItem>[]; overflow: SlotGroup<TItem>[] };
 
 /** The first `shown` slots for the row and the rest for More, each side keeping the groups and their order. */
-export const splitGroups = <Item>(groups: readonly SlotGroup<Item>[], shown: number): GroupSplit<Item> => {
-    const row: SlotGroup<Item>[] = [];
-    const overflow: SlotGroup<Item>[] = [];
+export const splitGroups = <TItem>(groups: readonly SlotGroup<TItem>[], shown: number): GroupSplit<TItem> => {
+    const row: SlotGroup<TItem>[] = [];
+    const overflow: SlotGroup<TItem>[] = [];
     let left = shown;
     for (const group of groups) {
         const kept = group.items.slice(0, Math.max(left, 0));
