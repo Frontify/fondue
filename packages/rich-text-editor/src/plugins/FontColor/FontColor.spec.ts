@@ -39,9 +39,10 @@ describe('the font colour mark', () => {
         for (const color of ['rgb(1, 2, 3) url(x)', 'inherit', 'GrayText', 'banana']) {
             expect(parse(`<span style="color: ${color}">x</span>`)).toBeNull();
         }
+        expect(parse('<span>x</span>')).toBeNull();
     });
 
-    it('leaves pasted black in any form alone, but keeps a translucent black', () => {
+    it('drops opaque black in any form, and keeps translucent black and other colours', () => {
         for (const color of ['black', '#000', '#000000ff', 'rgb(0 0 0)', 'hsl(0, 0%, 0%)', 'WindowText']) {
             expect(parse(`<span style="color: ${color}">x</span>`)).toBeNull();
         }

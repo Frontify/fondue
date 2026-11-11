@@ -40,9 +40,6 @@ export const fontColorPlugin = (): RtePlugin => ({
                     tag: 'span',
                     value: (element) => {
                         const declared = declaredStyle(element, 'color');
-                        if (declared === null) {
-                            return null;
-                        }
                         const color = toStoredColor(declared);
                         // Word processors write opaque black on every run; kept, it would pin text to black in a dark theme.
                         if (color === undefined || color === OPAQUE_BLACK) {

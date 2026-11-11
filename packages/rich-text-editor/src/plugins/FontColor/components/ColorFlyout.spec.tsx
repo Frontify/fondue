@@ -266,18 +266,38 @@ describe('the colour flyout', () => {
         expect(set).not.toHaveBeenCalled();
     });
 
+    it('hides Remove when the text has no colour', () => {
+        mount({}, false);
+        const labels = [...document.querySelectorAll('button')].map((button) => button.textContent);
+
+        expect(labels).not.toContain('Remove');
+        expect(labels).toContain('Cancel');
+        expect(labels).toContain('Save');
+    });
+
+    it('shows no colour for a half-coloured selection, even with a value', () => {
+        // The cast simulates a stray value the type does not allow.
+        const marks = { fontColor: { coverage: 'some', value: { color: '#ff0000' } } } as never;
+        const { trigger } = mount(marks, 'mixed');
+
+        expect(trigger?.getAttribute('aria-label')).toBe('Text colour');
+        expect(trigger?.querySelector<HTMLElement>('span[aria-hidden]')?.style.background).toBe('transparent');
+    });
+
     it('applies nothing on Enter outside the hex field', () => {
         const { set } = mount({}, false);
         typeHex('c5221f');
         const alpha = document.querySelector<HTMLInputElement>('[data-test-id="color-picker-value-input-alpha"] input');
+        const enter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
         act(() => {
-            alpha?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+            alpha?.dispatchEvent(enter);
         });
 
         expect(set).not.toHaveBeenCalled();
+        expect(enter.defaultPrevented).toBe(false);
     });
 
-    it('prevents the default on Enter in the hex field only', () => {
+    it('prevents the default on Enter in the hex field, not on another key', () => {
         mount({}, false);
         const field = typeHex('c5221f');
         const enter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });

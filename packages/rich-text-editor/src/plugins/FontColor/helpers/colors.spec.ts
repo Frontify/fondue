@@ -260,5 +260,8 @@ describe('isCompleteHex', () => {
         expect(isCompleteHex('f00')).toBe(false);
         expect(isCompleteHex('c5221')).toBe(false);
         expect(isCompleteHex('zz')).toBe(false);
+        expect(isCompleteHex('c5221f0')).toBe(false);
+        expect(isCompleteHex('ff000080')).toBe(false);
+        expect(isCompleteHex('##c5221f')).toBe(false);
     });
 });
