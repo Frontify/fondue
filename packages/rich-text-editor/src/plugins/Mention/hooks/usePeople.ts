@@ -8,22 +8,30 @@ import { type MentionItem, type MentionItems } from '../types';
 const SUGGESTION_LIMIT = 8;
 
 /**
- * The answer to one query.
+ * How a lookup ended: the people found, or a failure.
  */
-type Answer = { query: string; people: readonly MentionItem[]; failed: boolean };
+export type PeopleOutcome = { status: 'found'; people: readonly MentionItem[] } | { status: 'failed' };
+
+/**
+ * The outcome of one lookup, tagged with the query and attempt it answers.
+ */
+type Answer = { query: string; attempt: number; outcome: PeopleOutcome };
 
 export type UsePeopleResult = {
-    people: readonly MentionItem[];
+    /**
+     * The latest outcome, kept while a newer lookup is pending; `null` before the first.
+     */
+    outcome: PeopleOutcome | null;
     pending: boolean;
-    failed: boolean;
     retry: () => void;
 };
 
 /**
- * The people for a query. Answers are tagged with their query so a slow one
- * never overwrites a newer one; the last answer stays up while `pending`, so a
- * server-backed list does not flicker on every key. A failed lookup offers
- * nobody rather than leaving the last list up, and `retry` asks again.
+ * The people for a query. Answers are tagged with their query and attempt so a
+ * slow one never overwrites a newer one; the last outcome stays up while
+ * `pending`, so a server-backed list does not flicker on every key. A failed
+ * lookup offers nobody rather than leaving the last list up, and `retry` asks
+ * again.
  */
 export const usePeople = (items: MentionItems, query: string): UsePeopleResult => {
     const [answer, setAnswer] = useState<Answer | null>(null);
@@ -31,28 +39,26 @@ export const usePeople = (items: MentionItems, query: string): UsePeopleResult =
 
     useEffect(() => {
         let current = true;
-        const settle = (people: readonly MentionItem[], failed: boolean): void => {
+        const settle = (outcome: PeopleOutcome): void => {
             if (current) {
-                setAnswer({ query, people: people.slice(0, SUGGESTION_LIMIT), failed });
+                setAnswer({ query, attempt, outcome });
             }
         };
         Promise.resolve(items(query))
-            .then((people) => settle(people, false))
-            .catch(() => settle([], true));
+            .then((people) => settle({ status: 'found', people: people.slice(0, SUGGESTION_LIMIT) }))
+            .catch(() => settle({ status: 'failed' }));
         return () => {
             current = false;
         };
     }, [items, query, attempt]);
 
     const retry = (): void => {
-        setAnswer(null);
         setAttempt((previous) => previous + 1);
     };
 
     return {
-        people: answer?.people ?? [],
-        pending: answer?.query !== query,
-        failed: answer?.query === query && answer.failed,
+        outcome: answer?.outcome ?? null,
+        pending: answer === null || answer.query !== query || answer.attempt !== attempt,
         retry,
     };
 };

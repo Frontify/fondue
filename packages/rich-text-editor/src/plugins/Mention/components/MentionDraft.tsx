@@ -8,7 +8,7 @@ import { readableShortcut } from '#/ui/ToolbarButton/ToolbarButton';
 
 import { isSafeImageSrc } from '../../shared/helpers/href';
 import { isCompositionKey } from '../../shared/helpers/keys';
-import { usePeople } from '../hooks/usePeople';
+import { type PeopleOutcome, usePeople } from '../hooks/usePeople';
 import styles from '../mention.module.scss';
 import { type MentionItem, type MentionItems } from '../types';
 
@@ -21,8 +21,13 @@ const FAILED_HINT = 'Press Enter to retry';
 /** The key drawn beside Retry. */
 const RETRY_KEY = 'Enter';
 
-/** What the list says, in the list and to a screen reader, while there is nobody to show yet or nobody matches. */
+/** What the list shows, not announced, while a lookup runs past the searching delay. */
 const SEARCHING_MESSAGE = 'Searching';
+
+/** How long a lookup runs before the list says it is searching, so a quick answer never flashes the row. */
+const SEARCHING_DELAY_MS = 300;
+
+/** What the list says, in the list and to a screen reader, when nobody matches. */
 const NO_MATCHES_MESSAGE = 'No matches';
 
 /** The label of the button that asks the lookup again. */
@@ -56,33 +61,82 @@ const Avatar = ({ person }: AvatarProps): ReactNode => (
     </span>
 );
 
-type PeoplePhase = 'searching' | 'failed' | 'empty' | 'list';
+/**
+ * Where a lookup stands. `waiting` is a first lookup still inside the searching delay: nothing is shown or announced yet.
+ */
+type PeoplePhase = 'waiting' | 'searching' | 'failed' | 'empty' | 'list';
 
-type PhaseOfParams = { people: readonly MentionItem[]; pending: boolean; failed: boolean };
+type PhaseOfParams = { outcome: PeopleOutcome | null; slow: boolean };
 
 /**
- * Where a lookup stands: people to show, else still searching, else failed, else nobody matches.
+ * The people an outcome offers: none before the first answer or after a failure.
  */
-const phaseOf = ({ people, pending, failed }: PhaseOfParams): PeoplePhase => {
-    if (people.length > 0) {
-        return 'list';
+const peopleOf = (outcome: PeopleOutcome | null): readonly MentionItem[] => {
+    if (outcome === null) {
+        return [];
     }
-    if (pending) {
-        return 'searching';
+    switch (outcome.status) {
+        case 'found':
+            return outcome.people;
+        case 'failed':
+            return [];
+        default:
+            // Adding an outcome fails to compile here until it is handled.
+            throw new Error(`Unhandled people outcome: ${JSON.stringify(outcome satisfies never)}`);
     }
-    if (failed) {
-        return 'failed';
-    }
-    return 'empty';
 };
 
 /**
- * What a screen reader hears for a phase. Searching is announced only with no earlier list to count, so the count is not interrupted on every key.
+ * Where a lookup stands: people to show, else searching past the delay, else the last outcome, failed or nobody matches.
+ */
+const phaseOf = ({ outcome, slow }: PhaseOfParams): PeoplePhase => {
+    if (peopleOf(outcome).length > 0) {
+        return 'list';
+    }
+    if (slow) {
+        return 'searching';
+    }
+    if (outcome === null) {
+        return 'waiting';
+    }
+    switch (outcome.status) {
+        case 'found':
+            return 'empty';
+        case 'failed':
+            return 'failed';
+        default:
+            // Adding an outcome fails to compile here until it is handled.
+            throw new Error(`Unhandled people outcome: ${JSON.stringify(outcome satisfies never)}`);
+    }
+};
+
+/**
+ * Whether the popup is up for a phase: not while waiting, and for nobody matching only once something is typed.
+ */
+const isOpen = (phase: PeoplePhase, query: string): boolean => {
+    switch (phase) {
+        case 'waiting':
+            return false;
+        case 'searching':
+        case 'failed':
+        case 'list':
+            return true;
+        case 'empty':
+            return query !== '';
+        default:
+            // Adding a phase fails to compile here until it is handled.
+            throw new Error(`Unhandled people phase: ${JSON.stringify(phase satisfies never)}`);
+    }
+};
+
+/**
+ * What a screen reader hears for a phase. Waiting and searching say nothing, so a count or a failure is not interrupted on every key.
  */
 const statusOf = (phase: PeoplePhase, people: readonly MentionItem[]): string => {
     switch (phase) {
+        case 'waiting':
         case 'searching':
-            return SEARCHING_MESSAGE;
+            return '';
         case 'failed':
             return `${FAILED_MESSAGE} ${FAILED_HINT}.`;
         case 'empty':
@@ -96,6 +150,22 @@ const statusOf = (phase: PeoplePhase, people: readonly MentionItem[]): string =>
             // Adding a phase fails to compile here until it is handled.
             throw new Error(`Unhandled people phase: ${JSON.stringify(phase satisfies never)}`);
     }
+};
+
+/**
+ * Whether the pending lookup for a query has run past the searching delay. The
+ * timer records the query it ran for, so a new query starts the delay again.
+ */
+const useSlowLookup = (pending: boolean, query: string): boolean => {
+    const [slowQuery, setSlowQuery] = useState<string | null>(null);
+    useEffect(() => {
+        if (!pending) {
+            return undefined;
+        }
+        const timer = setTimeout(() => setSlowQuery(query), SEARCHING_DELAY_MS);
+        return () => clearTimeout(timer);
+    }, [pending, query]);
+    return pending && slowQuery === query;
 };
 
 type MentionPopupBodyProps = {
@@ -125,6 +195,8 @@ const MentionPopupBody = ({
     onHighlight,
 }: MentionPopupBodyProps): ReactNode => {
     switch (phase) {
+        case 'waiting':
+            return null;
         case 'searching':
             return <div className={styles.empty}>{SEARCHING_MESSAGE}</div>;
         case 'failed':
@@ -258,9 +330,11 @@ export const MentionDraft = ({
         leave();
     };
     const [query, setQuery] = useState('');
-    const { people, pending, failed, retry } = usePeople(items, query);
-    const phase = phaseOf({ people, pending, failed });
-    const open = phase !== 'empty' || query !== '';
+    const { outcome, pending, retry } = usePeople(items, query);
+    const slow = useSlowLookup(pending, query);
+    const people = peopleOf(outcome);
+    const phase = phaseOf({ outcome, slow });
+    const open = isOpen(phase, query);
     const position = useListPosition(draftRef, open);
     const listShown = open && position !== null && phase === 'list';
 

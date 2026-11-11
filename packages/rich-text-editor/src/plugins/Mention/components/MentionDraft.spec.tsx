@@ -156,15 +156,32 @@ describe('a mention being made', () => {
 describe('a mention being searched for', () => {
     const popup = (): string => window.document.querySelector('[class*="popup"]')?.textContent ?? '';
 
-    it('says Searching while the answer is pending, in the list and to a screen reader', async () => {
-        const { status } = await mountDraft(() => new Promise<MentionItem[]>(() => {}));
-        await act(async () => {
-            await new Promise((resolve) => requestAnimationFrame(resolve));
-        });
+    it('shows Searching only once a lookup runs past the delay, and never announces it', async () => {
+        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+        try {
+            const { status } = await mountDraft(() => new Promise<MentionItem[]>(() => {}));
 
-        expect(status()).toBe('Searching');
-        expect(popup()).toContain('Searching');
-        expect(popup()).not.toContain('No matches');
+            act(() => {
+                vi.advanceTimersByTime(299);
+            });
+            await act(async () => {
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+            });
+            expect(popup()).toBe('');
+            expect(status()).toBe('');
+
+            act(() => {
+                vi.advanceTimersByTime(1);
+            });
+            await act(async () => {
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+            });
+            expect(popup()).toContain('Searching');
+            expect(popup()).not.toContain('No matches');
+            expect(status()).toBe('');
+        } finally {
+            vi.useRealTimers();
+        }
     });
 
     it('says No matches only for an empty answer that arrived', async () => {
@@ -263,7 +280,7 @@ describe('a mention being searched for', () => {
         await settle();
 
         // The dropped answer is no earlier answer to keep showing.
-        expect(status()).toBe('Searching');
+        expect(status()).toBe('');
         // Same as above: the index is in range.
         act(() => answers.get('j')?.([PEOPLE[0] as MentionItem]));
         await settle();

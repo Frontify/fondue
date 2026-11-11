@@ -66,19 +66,11 @@ export const isSafeHref = (href: unknown): href is string => {
 export const isLinkablePaste = (text: string): boolean => LINKABLE_PASTE.test(text);
 
 /**
- * A `data:` URL holding an image
- */
-const DATA_IMAGE = /^data:image\//i;
-
-/**
- * What an `<img>` may load: a web or relative URL, or a `data:` image; an image cannot run script, but a `javascript:` or other scheme is still refused
+ * What an `<img>` may load: a web or relative URL; `data:`, `javascript:` and other schemes are refused
  */
 export const isSafeImageSrc = (src: unknown): src is string => {
     if (typeof src !== 'string') {
         return false;
-    }
-    if (DATA_IMAGE.test(src)) {
-        return true;
     }
     if (!isSafeHref(src)) {
         return false;

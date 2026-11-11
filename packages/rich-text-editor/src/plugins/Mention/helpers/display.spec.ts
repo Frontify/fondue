@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { type MentionValue } from '../types';
 
@@ -62,11 +62,33 @@ describe('mentionDisplay', () => {
         ).toMatchObject({ label: '@jane', title: 'Jane Doe' });
     });
 
-    it('lets a throw from the resolver propagate', () => {
-        const resolve = (): never => {
-            throw new Error('offline');
+    it('shows the stored value only for a mention whose resolver throws, and still resolves the others', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const john: MentionValue = { id: 'john', username: 'john', name: 'John Roe' };
+        const resolve = (mention: MentionValue) => {
+            if (mention.id === 'jane') {
+                throw new Error('offline');
+            }
+            return { status: 'current', username: 'john.r', name: 'John Roe' } as const;
         };
 
-        expect(() => mentionDisplay(JANE, { href, trigger: '@', resolve })).toThrow('offline');
+        expect(mentionDisplay(JANE, { href, trigger: '@', resolve })).toEqual({
+            label: '@jane',
+            title: 'Jane Doe',
+            href: '/u/jane',
+        });
+        expect(mentionDisplay(john, { href, trigger: '@', resolve }).label).toBe('@john.r');
+        expect(warn).toHaveBeenCalledOnce();
+        warn.mockRestore();
+    });
+
+    it('names an empty stored username by its kind instead of a bare trigger', () => {
+        const empty: MentionValue = { id: 'x', username: '', name: '' };
+
+        expect(mentionDisplay(empty, { trigger: '@' }).label).toBe('Unknown person');
+        expect(mentionDisplay({ ...empty, kind: 'group' }, { trigger: '@' }).label).toBe('Unknown group');
+        expect(mentionDisplay(empty, { trigger: '@', resolve: () => ({ status: 'unavailable' }) }).label).toBe(
+            'Unknown person (unavailable)',
+        );
     });
 });

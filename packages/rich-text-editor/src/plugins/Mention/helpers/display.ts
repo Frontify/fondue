@@ -1,7 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { withoutControlCharacters } from '../../shared/helpers/text';
-import { MENTION_KINDS, type MentionHref, type MentionKind, type MentionResolve, type MentionValue } from '../types';
+import {
+    MENTION_KINDS,
+    type MentionHref,
+    type MentionKind,
+    type MentionResolution,
+    type MentionResolve,
+    type MentionValue,
+} from '../types';
 
 import { safeMentionHref } from './mention';
 
@@ -83,17 +90,70 @@ const currentNames = (stored: MentionNames, current: MentionNames): MentionNames
     return { username, name: withoutControlCharacters(current.name) };
 };
 
+/** Shown in place of a stored username that is empty or not text. */
+const unknownLabel = (kind: MentionKind | undefined): string => {
+    switch (kind) {
+        case undefined:
+        case 'user':
+            return 'Unknown person';
+        case 'group':
+            return 'Unknown group';
+        case 'all':
+            return 'Unknown mention';
+        default:
+            // Adding a kind fails to compile here until it is handled.
+            throw new Error(`Unhandled mention kind: ${JSON.stringify(kind satisfies never)}`);
+    }
+};
+
+/**
+ * The trigger and the username, or a named label when there is no username to show.
+ */
+const labelOf = (username: string, trigger: string, kind: MentionKind | undefined): string => {
+    if (username === '') {
+        return unknownLabel(kind);
+    }
+    return `${trigger}${username}`;
+};
+
+const warnedResolveIds = new Set<string>();
+
+/**
+ * Dev-only warning, once per mention id, for a resolver that threw; that mention shows its stored value.
+ */
+const warnResolveFailed = (mention: MentionValue, error: unknown): void => {
+    const id = storedString(mention.id);
+    if (process.env.NODE_ENV === 'production' || warnedResolveIds.has(id)) {
+        return;
+    }
+    warnedResolveIds.add(id);
+    console.warn(`[RichTextEditor] The mention resolver threw for "${id}", so its stored name is shown.`, error);
+};
+
+/**
+ * What the app knows now about a mention: a throw means it does not know, so
+ * only that mention falls back to its stored value and the others still resolve.
+ */
+const resolutionOf = (mention: MentionValue, resolve: MentionResolve | undefined): MentionResolution | undefined => {
+    try {
+        return resolve?.(mention);
+    } catch (error) {
+        warnResolveFailed(mention, error);
+        return { status: 'unknown' };
+    }
+};
+
 /**
  * What a mention shows, from the stored value and what the app knows now: the
  * current username and name, or the stored ones with a note when the person is
- * unavailable. The stored value is never changed. A throw from `resolve` or
- * `href` is not caught.
+ * unavailable. The stored value is never changed. A throw from `href` is not caught.
  */
 export const mentionDisplay = (
     mention: MentionValue,
     { resolve, href, trigger }: MentionDisplayOptions,
 ): MentionDisplay => {
-    const resolution = resolve?.(mention);
+    const resolution = resolutionOf(mention, resolve);
+    const kind = storedKind(mention.kind);
     const stored = { username: storedText(mention.username), name: storedText(mention.name) };
     let shown = stored;
     switch (resolution?.status) {
@@ -104,10 +164,14 @@ export const mentionDisplay = (
             shown = currentNames(stored, resolution);
             break;
         case 'unavailable':
-            return { label: `${trigger}${stored.username} ${UNAVAILABLE_NOTE}`, title: stored.name, href: undefined };
+            return {
+                label: `${labelOf(stored.username, trigger, kind)} ${UNAVAILABLE_NOTE}`,
+                title: stored.name,
+                href: undefined,
+            };
         default:
             // A resolver written in JS can return any status.
             throw new Error(`Unhandled mention resolution: ${JSON.stringify(resolution satisfies never)}`);
     }
-    return { label: `${trigger}${shown.username}`, title: shown.name, href: safeMentionHref(href, mention) };
+    return { label: labelOf(shown.username, trigger, kind), title: shown.name, href: safeMentionHref(href, mention) };
 };
