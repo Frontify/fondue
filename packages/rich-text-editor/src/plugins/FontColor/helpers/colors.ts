@@ -39,6 +39,9 @@ const HEX_COLOR = /^#([\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/;
 const COLOR_FUNCTION = /^(rgb|hsl)a?\(([^()]*)\)$/;
 const NUMBER = /^[+-]?(\d+(\.\d+)?|\.\d+)(e[+-]?\d+)?%?$/;
 
+const SHORT_ALPHA_DECIMALS = 100;
+const LONG_ALPHA_DECIMALS = 1000;
+
 const clamp = (value: number, max: number): number => Math.min(Math.max(value, 0), max);
 
 /** A plain number, or a percentage of `full`; `undefined` for anything else, `none` and units included. */
@@ -186,6 +189,15 @@ const readColorFunction = (kind: ColorFunction, args: string): Rgba | undefined 
     }
 };
 
+/** The shortest alpha, in two decimals or else three, that encodes back to the same byte. */
+const toShortestAlpha = (byte: number): number => {
+    const short = Math.round((byte / MAX_CHANNEL) * SHORT_ALPHA_DECIMALS) / SHORT_ALPHA_DECIMALS;
+    if (Math.round(short * MAX_CHANNEL) === byte) {
+        return short;
+    }
+    return Math.round((byte / MAX_CHANNEL) * LONG_ALPHA_DECIMALS) / LONG_ALPHA_DECIMALS;
+};
+
 /** Reads 6 or 8 lowercase hex digits as red, green, blue and alpha bytes; alpha is full with 6. */
 const readHexDigits = (digits: string): Bytes => {
     const byte = (index: number): number => Number.parseInt(digits.slice(index * 2, index * 2 + 2), 16);
@@ -256,7 +268,7 @@ export const toStoredColor = (css: unknown): string | undefined => {
 };
 
 /**
- * A stored colour's channels, with alpha exactly `byte / 255`, so re-encoding gives back the same byte.
+ * A stored colour's channels, with the shortest alpha that encodes back to the same byte, so a whole percent the picker wrote reads back unchanged.
  *
  * @param stored - a lowercase `#rrggbb` or `#rrggbbaa` from `toStoredColor`
  *
@@ -267,7 +279,7 @@ export const toStoredColor = (css: unknown): string | undefined => {
  */
 export const decodeStoredColor = (stored: string): Rgba => {
     const [red, green, blue, alphaByte] = readHexDigits(stored.slice(1));
-    return { red, green, blue, alpha: alphaByte / MAX_CHANNEL };
+    return { red, green, blue, alpha: toShortestAlpha(alphaByte) };
 };
 
 /**
@@ -344,10 +356,5 @@ export const toExportedColor = (stored: string): string => {
     if (byte === MAX_CHANNEL) {
         return stored;
     }
-    // The shortest alpha that pastes back as the same byte.
-    let alpha = Math.round((byte / MAX_CHANNEL) * 100) / 100;
-    if (Math.round(alpha * MAX_CHANNEL) !== byte) {
-        alpha = Math.round((byte / MAX_CHANNEL) * 1000) / 1000;
-    }
-    return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+    return `rgba(${red}, ${green}, ${blue}, ${toShortestAlpha(byte)})`;
 };

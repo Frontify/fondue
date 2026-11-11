@@ -157,7 +157,9 @@ describe('the picker colour', () => {
     });
 
     it('reads back from the stored hex', () => {
-        expect(decodeStoredColor('#ff000080')).toEqual({ red: 255, green: 0, blue: 0, alpha: 128 / 255 });
+        expect(decodeStoredColor('#ff000080')).toEqual({ red: 255, green: 0, blue: 0, alpha: 0.5 });
+        expect(decodeStoredColor('#c5221f5e')).toEqual({ red: 197, green: 34, blue: 31, alpha: 0.37 });
+        expect(decodeStoredColor('#ff0000fe')).toEqual({ red: 255, green: 0, blue: 0, alpha: 0.996 });
         expect(decodeStoredColor('#ff0000')).toEqual({ red: 255, green: 0, blue: 0, alpha: 1 });
     });
 
@@ -170,6 +172,13 @@ describe('the picker colour', () => {
             expect(encodeStoredColor(decodeStoredColor(stored))).toBe(stored);
         }
     });
+
+    it('reads back every whole percent the picker writes exactly', () => {
+        for (let percent = 0; percent <= 100; percent++) {
+            const stored = encodeStoredColor({ red: 255, green: 0, blue: 0, alpha: percent / 100 });
+            expect(decodeStoredColor(stored).alpha).toBe(percent / 100);
+        }
+    });
 });
 
 describe('toColorName', () => {
@@ -179,7 +188,7 @@ describe('toColorName', () => {
         expect(toColorName(decodeStoredColor('#ff000000'))).toBe('#FF0000 0%');
     });
 
-    it('rounds the opacity like the picker alpha field but still marks the colour as translucent', () => {
+    it('rounds the opacity to a whole percent but still marks a translucent colour', () => {
         expect(toColorName(decodeStoredColor('#ff0000fe'))).toBe('#FF0000 100%');
     });
 });

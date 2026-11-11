@@ -95,6 +95,14 @@ describe('the colour flyout', () => {
         expect(set).not.toHaveBeenCalled();
     });
 
+    it('shows a stored alpha as the whole percent that was picked', () => {
+        mount({ fontColor: { color: '#c5221f5e' } });
+
+        expect(
+            document.querySelector<HTMLInputElement>('[data-test-id="color-picker-value-input-alpha"] input')?.value,
+        ).toBe('37');
+    });
+
     it('removes a colour', () => {
         const { toggle, set } = mount({ fontColor: { color: '#c5221f' } });
         press('Remove');
