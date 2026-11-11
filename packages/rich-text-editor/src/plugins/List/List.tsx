@@ -68,7 +68,7 @@ const MARKER_DIGITS = 2;
 /** The custom property `list.module.scss` widens a numbered list by, once per digit past `MARKER_DIGITS`. */
 const EXTRA_DIGITS_PROPERTY = '--rte-list-extra-digits';
 
-/** The smallest `start` browsers honour: they read the attribute as a 32-bit integer and draw a list past it from 1. */
+/** The smallest `start` browsers honour: they read the attribute as a 32-bit integer so a list past it does not number as written. */
 const MIN_START = -(2 ** 31);
 
 /** The largest `start` browsers honour, for the same reason as `MIN_START`. */

@@ -41,7 +41,7 @@
 
     // A nested list's room also counts its start's digits, which over-sizes
     // most letters and can under-size a long Roman numeral (`xxxviii.`), but
-    // fits the decimal browsers fall back to past their letter and Roman range.
+    // fits the decimal browsers fall back to outside their letter and Roman range.
     .numberedList {
         list-style-type: lower-alpha;
 
