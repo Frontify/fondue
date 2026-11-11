@@ -71,11 +71,16 @@ type DefaultStyle = {
 };
 
 /**
+ * The `underline` keyword in a decoration value.
+ */
+const UNDERLINE_WORD = /\bunderline\b/gi;
+
+/**
  * What an enclosing element already shows by default: a link's underline, a heading's bold. Pasted text repeating it is not formatting.
  */
 const DEFAULT_STYLES: readonly DefaultStyle[] = [
-    { property: 'text-decoration', within: 'a[href]', strip: /\bunderline\b/gi },
-    { property: 'text-decoration-line', within: 'a[href]', strip: /\bunderline\b/gi },
+    { property: 'text-decoration', within: 'a[href]', strip: UNDERLINE_WORD },
+    { property: 'text-decoration-line', within: 'a[href]', strip: UNDERLINE_WORD },
     {
         property: 'font-weight',
         within: 'h1, h2, h3, h4, h5, h6, th',
@@ -97,8 +102,13 @@ const declaredValue = (element: HTMLElement, property: string): string => {
  * ProseMirror style rules only see the CSS value, not the element, so a style rule
  * is a tag rule on any styled element that reads the declared value itself.
  */
+/**
+ * Any element with a `style` attribute.
+ */
+const STYLED_ELEMENT = '[style]';
+
 const markStyleRule = (rule: StyleParseRule<unknown>): TagParseRule => ({
-    tag: '[style]',
+    tag: STYLED_ELEMENT,
     priority: STYLE_PRIORITY,
     // One declaration, such as `text-decoration: underline line-through`, can set two marks.
     consuming: false,
@@ -142,10 +152,7 @@ export const markParseRules = (type: string, rules: readonly MarkParseRule<unkno
         if (rule.style === undefined) {
             return valueParseRule(rule, MARK_PRIORITY);
         }
-        if (typeof rule.style === 'string') {
-            return markStyleRule(rule);
-        }
-        throw new Error(`Unhandled mark parse rule: ${JSON.stringify(rule satisfies never)}`);
+        return markStyleRule(rule);
     });
 
 /**

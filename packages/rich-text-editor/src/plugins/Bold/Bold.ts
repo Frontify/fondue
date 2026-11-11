@@ -4,7 +4,7 @@ import { IconTextFormatBold } from '@frontify/fondue-icons';
 
 import { defineContent, defineMark, definePlugin } from '#/core';
 
-import { declaresNormalWeight, isBoldWeight, isNormalWeight } from '../shared/helpers/declaredStyle';
+import { declaresNormalWeight, isBoldWeight, isNormalWeight, markWhen } from '../shared/helpers/declaredStyle';
 
 /**
  * The flag this plugin sets on text nodes
@@ -29,7 +29,7 @@ export const boldContent = defineContent({
             parse: [
                 { tag: 'strong', value: (element) => (declaresNormalWeight(element) ? null : {}) },
                 { tag: 'b', value: (element) => (declaresNormalWeight(element) ? null : {}) },
-                { style: 'font-weight', value: (value) => (isBoldWeight(value) ? {} : null) },
+                { style: 'font-weight', value: markWhen(isBoldWeight) },
                 { style: 'font-weight', clears: isNormalWeight },
             ],
         }),

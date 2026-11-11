@@ -128,7 +128,7 @@ const inlineNodeSpec = (definition: InlineDefinition, hasEditView: boolean): PmN
 });
 
 /**
- * The engine's list replaces its default of the mark itself, and throws on a type it does not know.
+ * The mark itself plus the excluded marks the mounted plugins register: the engine's list replaces its default of the mark itself, and the engine throws on a name it does not know.
  * @param type - the mark's name in the schema
  * @param registered - the marks the mounted plugins registered, by name
  */
