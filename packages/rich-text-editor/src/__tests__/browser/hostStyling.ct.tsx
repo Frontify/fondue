@@ -9,7 +9,14 @@ import { ExportedLooksPair } from './ExportedLooksPair';
 import { HostLooksPair } from './HostLooksPair';
 import { HostStylingPair } from './HostStylingPair';
 import { HostStylingSections } from './HostStylingSections';
-import { H1_COLOR_VARIABLE, SECTION_A_H1_COLOR, SECTION_B_H1_COLOR } from './hostStylingValues';
+import {
+    H1_COLOR_VARIABLE,
+    LAST_QUOTE_TEXT,
+    MIDDLE_QUOTE_TEXT,
+    QUOTES_DOCUMENT,
+    SECTION_A_H1_COLOR,
+    SECTION_B_H1_COLOR,
+} from './hostStylingValues';
 
 // Hosts set the look of each text style with `textStylePlugin({ presets })`. Without a
 // value, or with one that resolves to nothing, Fondue's look stays, in the editor and the renderer alike.
@@ -46,32 +53,51 @@ const BLOCK_SELECTORS: Record<TextStyleName, string> = {
 // `Object.keys` widens to string; the keys are the record's `TextStyleName`s.
 const STYLE_NAMES = Object.keys(BLOCK_SELECTORS) as TextStyleName[];
 
-const computedLookOf = (element: Locator): Promise<ComputedLook> =>
-    element.evaluate((node, properties) => {
+const PX_VALUE = /^(-?\d+(?:\.\d+)?)px$/;
+
+/** A px length to one decimal, any other value as it is. WebKit writes 31.200001px where Chromium writes 31.2px. */
+const roundedPx = (value: string): string => {
+    const match = PX_VALUE.exec(value);
+    if (match === null) {
+        return value;
+    }
+    return `${Math.round(Number(match[1]) * 10) / 10}px`;
+};
+
+const computedLookOf = async (element: Locator): Promise<ComputedLook> => {
+    const look = await element.evaluate((node, properties) => {
         const style = getComputedStyle(node);
-        const look: Record<string, string> = {};
+        const values: Record<string, string> = {};
         for (const property of properties) {
-            look[property] = style.getPropertyValue(property);
+            values[property] = style.getPropertyValue(property);
         }
         // Filled from COMPUTED_PROPERTIES just above, one key each.
-        return look as ComputedLook;
+        return values as ComputedLook;
     }, COMPUTED_PROPERTIES);
+    return { ...look, 'line-height': roundedPx(look['line-height']) };
+};
+
+/** Stands for the document root's own font family, which each browser writes its own way. */
+const DOCUMENT_FONT_FAMILY = 'the document root font family';
 
 const computedLooksIn = async (surface: Locator): Promise<Record<TextStyleName, ComputedLook>> => {
+    // The blocks are the document root's children, so a block's parent is the root.
+    const documentLook = await computedLookOf(surface.locator(BLOCK_SELECTORS.heading1).locator('..'));
     const looks: Partial<Record<TextStyleName, ComputedLook>> = {};
     for (const name of STYLE_NAMES) {
-        looks[name] = await computedLookOf(surface.locator(BLOCK_SELECTORS[name]));
+        const look = await computedLookOf(surface.locator(BLOCK_SELECTORS[name]));
+        if (look['font-family'] === documentLook['font-family']) {
+            look['font-family'] = DOCUMENT_FONT_FAMILY;
+        }
+        looks[name] = look;
     }
     // Filled for every name in STYLE_NAMES just above.
     return looks as Record<TextStyleName, ComputedLook>;
 };
 
-// Measured with the default theme on the commit before presets existed (032905115b).
-const FONT_FAMILY =
-    'Diatype, Geist, Arial, -apple-system, "system-ui", "Segoe UI", Roboto, Helvetica, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"';
-
+// Measured with the default theme on the parent branch before presets existed (7bb89f0e81), in Chromium and WebKit.
 const PLAIN: ComputedLook = {
-    'font-family': FONT_FAMILY,
+    'font-family': DOCUMENT_FONT_FAMILY,
     'font-size': '14px',
     'font-weight': '400',
     'font-style': 'normal',
@@ -84,22 +110,57 @@ const PLAIN: ComputedLook = {
     color: 'rgb(17, 17, 16)',
 };
 
+/** The document's gap below every block but the last. */
+const BLOCK_GAP = '8px';
+/** The document's gap above every heading but the first. */
+const HEADING_GAP = '16px';
+const MUTED_COLOR = 'rgb(87, 87, 83)';
+
+// In document order, so the first heading has no gap above it and the image caption, last, none below it.
 const FONDUE_LOOKS: Record<TextStyleName, ComputedLook> = {
-    heading1: { ...PLAIN, 'font-size': '24px', 'font-weight': '700', 'line-height': '31.2px' },
-    heading2: { ...PLAIN, 'font-size': '20px', 'font-weight': '700', 'line-height': '26px' },
-    heading3: { ...PLAIN, 'font-size': '16px', 'font-weight': '500', 'line-height': '20.8px' },
-    heading4: { ...PLAIN, 'font-size': '14px', 'font-weight': '500', 'line-height': '18.2px' },
-    custom1: { ...PLAIN, 'font-weight': '500', 'letter-spacing': '0.28px' },
-    custom2: { ...PLAIN, 'font-style': 'italic', color: 'rgb(103, 103, 99)' },
+    heading1: {
+        ...PLAIN,
+        'font-size': '24px',
+        'font-weight': '700',
+        'line-height': '31.2px',
+        'margin-bottom': BLOCK_GAP,
+    },
+    heading2: {
+        ...PLAIN,
+        'font-size': '20px',
+        'font-weight': '700',
+        'line-height': '26px',
+        'margin-top': HEADING_GAP,
+        'margin-bottom': BLOCK_GAP,
+    },
+    heading3: {
+        ...PLAIN,
+        'font-size': '16px',
+        'font-weight': '500',
+        'line-height': '20.8px',
+        'margin-top': HEADING_GAP,
+        'margin-bottom': BLOCK_GAP,
+    },
+    heading4: {
+        ...PLAIN,
+        'font-size': '14px',
+        'font-weight': '500',
+        'line-height': '18.2px',
+        'margin-top': HEADING_GAP,
+        'margin-bottom': BLOCK_GAP,
+    },
+    custom1: { ...PLAIN, 'font-weight': '500', 'letter-spacing': '0.28px', 'margin-bottom': BLOCK_GAP },
+    custom2: { ...PLAIN, 'font-style': 'italic', color: MUTED_COLOR, 'margin-bottom': BLOCK_GAP },
     custom3: {
         ...PLAIN,
         'font-size': '13px',
         'line-height': '20.8px',
         'letter-spacing': '0.88px',
         'text-transform': 'uppercase',
+        'margin-bottom': BLOCK_GAP,
     },
-    imageTitle: { ...PLAIN, 'font-weight': '700' },
-    imageCaption: { ...PLAIN, 'font-size': '12px', 'line-height': '19.2px', color: 'rgb(103, 103, 99)' },
+    imageTitle: { ...PLAIN, 'font-weight': '700', 'margin-bottom': BLOCK_GAP },
+    imageCaption: { ...PLAIN, 'font-size': '12px', 'line-height': '19.2px', color: MUTED_COLOR },
 };
 
 const HOST_LOOK: TextLook = {
@@ -129,6 +190,9 @@ const HOST_COMPUTED_LOOK: ComputedLook = {
     'margin-bottom': '20px',
     color: 'rgb(1, 2, 3)',
 };
+
+/** Margins for a heading that is neither first nor last, where the document would otherwise set its gaps. */
+const HOST_MARGINS = { marginTop: '40px', marginBottom: '30px' } satisfies TextLook;
 
 const UNSET_VARIABLE = 'var(--unset-guideline)';
 
@@ -163,6 +227,21 @@ test.describe('host styling of text styles', () => {
 
         expect(rendered).toEqual(expected);
         expect(edited).toEqual(expected);
+    });
+
+    test('applies host margins as given between blocks, and keeps the first heading flush', async ({ mount }) => {
+        const component = await mount(<HostStylingPair presets={{ heading2: HOST_MARGINS }} />);
+        const expected = {
+            ...FONDUE_LOOKS,
+            heading2: {
+                ...FONDUE_LOOKS.heading2,
+                'margin-top': HOST_MARGINS.marginTop,
+                'margin-bottom': HOST_MARGINS.marginBottom,
+            },
+        };
+
+        expect(await computedLooksIn(component.getByTestId('renderer'))).toEqual(expected);
+        expect(await computedLooksIn(component.getByTestId('editor'))).toEqual(expected);
     });
 
     test('keeps Fondue looks for a value that resolves to an unset guideline variable', async ({ mount }) => {
@@ -228,26 +307,33 @@ const blockIn = (surface: Locator, block: LookedBlock): Locator => {
 };
 
 const looksOfBlocksIn = async (surface: Locator): Promise<Record<LookedBlock, ComputedLook>> => {
+    // The heading is one of the document root's children, so its parent is the root.
+    const documentLook = await computedLookOf(blockIn(surface, 'heading1').locator('..'));
     const looks: Partial<Record<LookedBlock, ComputedLook>> = {};
     for (const block of LOOKED_BLOCKS) {
-        looks[block] = await computedLookOf(blockIn(surface, block));
+        const look = await computedLookOf(blockIn(surface, block));
+        if (look['font-family'] === documentLook['font-family']) {
+            look['font-family'] = DOCUMENT_FONT_FAMILY;
+        }
+        looks[block] = look;
     }
     // Filled for every block in LOOKED_BLOCKS just above.
     return looks as Record<LookedBlock, ComputedLook>;
 };
 
-// Measured with the default theme on the commit before these looks existed (a81b3376ab); the editor and the renderer agree.
-const QUOTE_LOOK: ComputedLook = { ...PLAIN, color: 'rgb(103, 103, 99)' };
+// Measured with the default theme on the parent branch before these looks existed (b25fe19442), in Chromium and WebKit.
+const QUOTE_LOOK: ComputedLook = { ...PLAIN, 'margin-bottom': BLOCK_GAP, color: MUTED_COLOR };
 const LINK_LOOK: ComputedLook = { ...PLAIN, 'text-decoration-line': 'underline', color: 'rgb(182, 10, 227)' };
 
+// In document order: list items sit tight, and the heading, last but not first, has a gap above and none below.
 const BASELINE_LOOKS: Record<LookedBlock, ComputedLook> = {
-    body: PLAIN,
+    body: { ...PLAIN, 'margin-bottom': BLOCK_GAP },
     bullet: PLAIN,
     check: PLAIN,
     quote: QUOTE_LOOK,
     link: LINK_LOOK,
     custom1: FONDUE_LOOKS.custom1,
-    heading1: FONDUE_LOOKS.heading1,
+    heading1: { ...FONDUE_LOOKS.heading1, 'margin-top': HEADING_GAP, 'margin-bottom': '0px' },
 };
 
 const QUOTE_BOX = { 'margin-left': '0px', 'padding-left': '12px', 'border-left': '2px solid rgb(17, 17, 16)' };
@@ -279,6 +365,9 @@ const HOST_LINK_COMPUTED_LOOK: ComputedLook = {
     'margin-top': '0px',
     'margin-bottom': '0px',
 };
+
+/** Margins for a quote, which the document must not trim when the quote is last. */
+const QUOTE_MARGINS = { marginTop: '24px', marginBottom: '12px' } satisfies TextLook;
 
 const UNSET_LINK_LOOK: LinkLook = {
     fontFamily: UNSET_VARIABLE,
@@ -340,6 +429,27 @@ test.describe('host styling of body text, quotes and links', () => {
             const section = component.getByTestId(surface);
             expect(await looksOfBlocksIn(section)).toEqual(expected);
             await expectQuoteBox(section.locator('blockquote'));
+        }
+    });
+
+    test('applies quote margins as given, also on the last block, and trims only the gap', async ({ mount }) => {
+        const plain = await mount(<HostLooksPair value={QUOTES_DOCUMENT} />);
+
+        for (const surface of SURFACES) {
+            const section = plain.getByTestId(surface);
+            await expect(section.getByText(MIDDLE_QUOTE_TEXT, { exact: true })).toHaveCSS('margin-bottom', BLOCK_GAP);
+            await expect(section.getByText(LAST_QUOTE_TEXT, { exact: true })).toHaveCSS('margin-bottom', '0px');
+        }
+        await plain.unmount();
+
+        const styled = await mount(<HostLooksPair value={QUOTES_DOCUMENT} quote={QUOTE_MARGINS} />);
+
+        for (const surface of SURFACES) {
+            for (const text of [MIDDLE_QUOTE_TEXT, LAST_QUOTE_TEXT]) {
+                const quote = styled.getByTestId(surface).getByText(text, { exact: true });
+                await expect(quote).toHaveCSS('margin-top', QUOTE_MARGINS.marginTop);
+                await expect(quote).toHaveCSS('margin-bottom', QUOTE_MARGINS.marginBottom);
+            }
         }
     });
 

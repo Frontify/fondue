@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PARAGRAPH, type ParseRule, type RteInlineNode, type RteInputRule, type StyleMap } from '#/core';
+import { MUTED_COLOR, PARAGRAPH, type ParseRule, type RteInlineNode, type RteInputRule, type StyleMap } from '#/core';
 
 import styles from '../textStyle.module.scss';
 
@@ -14,7 +14,8 @@ const HEADING_FALLBACK: StyleMap = { 'line-height': '1.3' };
  *
  * Source of truth for how each style renders (`tag` plus class) and reads
  * (`label`); order here is dropdown order. Must name every `TextStyleName`.
- * Each `fallback` is the same values `textStyle.module.scss` falls back to, for exported inline styles.
+ * Each `fallback` is the same values `textStyle.module.scss` falls back to, for exported inline styles;
+ * the margins are the document's gaps, which `renderer/inlineLooks.ts` writes by position.
  */
 const PRESETS = [
     {
@@ -78,7 +79,7 @@ const PRESETS = [
         tag: 'p',
         className: styles.custom2,
         fallback: {
-            color: 'var(--color-secondary-default)',
+            color: MUTED_COLOR,
             'font-size': 'var(--typography-font-size-medium)',
             'font-style': 'italic',
         },
@@ -110,7 +111,7 @@ const PRESETS = [
         tag: 'p',
         className: styles.imageCaption,
         fallback: {
-            color: 'var(--color-secondary-default)',
+            color: MUTED_COLOR,
             'font-size': 'var(--typography-font-size-x-small)',
         },
     },

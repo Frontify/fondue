@@ -3,7 +3,13 @@
 // The shared language: document shape, plugin contract, commands, registry.
 // Imports from no other layer; plugins, renderer and editor all import here.
 
-export { type EditorControlApi, type RteSelectionSnapshot } from './commands';
+export {
+    type EditorControlApi,
+    REDO_HOTKEY,
+    type RteMarkState,
+    type RteSelectionSnapshot,
+    UNDO_HOTKEY,
+} from './commands';
 export {
     type ParagraphBlock,
     type RteBlockNode,
@@ -15,7 +21,7 @@ export {
 } from './document';
 export { isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
 export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
-export { BLOCK_FALLBACKS, lookProperties, lookStyle, styleOfClass, type TextLook } from './look';
+export { lookProperties, lookStyle, MUTED_COLOR, styleOfClass, type TextLook } from './look';
 export {
     type BlockAttributeDefinition,
     type BlockDefinition,
@@ -42,6 +48,8 @@ export {
     type RtePlugin,
     type RtePluginDefinition,
     type RteToolbarEntry,
+    RTE_TOOLBAR_GROUPS,
+    type RteToolbarGroup,
     type SelectedNode,
     type ToolbarItemProps,
 } from './plugin';

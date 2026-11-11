@@ -114,6 +114,12 @@ export type RtePlugin = {
     /**
      * Entries for the floating bar's "Turn into" menu and the `/` menu, in the order given
      */
+    /**
+     * Which cluster of the toolbar its entries sit in. Groups follow a fixed
+     * order, entries keep mount order inside theirs, and entries with no group
+     * come last, together.
+     */
+    toolbarGroup?: RteToolbarGroup;
     commands?: readonly RteBlockCommand[];
     /**
      * Keybindings, keyed `Mod-b` style (Mod = Cmd on macOS, Ctrl elsewhere) or
@@ -176,7 +182,7 @@ export type RteEditView = ComponentType<EditProps<any, any>>;
 /**
  * What an icon component is called with
  */
-export type RteIconProps = { size?: 16 };
+export type RteIconProps = { size?: 16 | 20 };
 
 /**
  * An icon component, such as one from `@frontify/fondue-icons`
@@ -298,18 +304,21 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
 export type ContentModel = 'text' | { items: string } | { blocks: readonly string[] };
 
 /**
+ * A mark that is only a tag: `tag` stands in for `toHtml` and, unless given, `parse`
+ */
+type TagMarkDefinition<TValue> = { tag: string; parse?: readonly ParseRule<TValue>[]; toHtml?: never } & Omit<
+    MarkDefinition<TValue>,
+    'toHtml' | 'parse'
+>;
+
+/**
  * `defineBlock` for marks. A mark that is only a tag may give `tag` in place
  * of `toHtml` and `parse`.
  * @example
  * const bold = defineMark({ tag: 'strong' });
  */
 export const defineMark = <TValue extends object = Record<string, never>>(
-    definition:
-        | (MarkDefinition<TValue> & { tag?: never })
-        | ({ tag: string; parse?: readonly ParseRule<TValue>[]; toHtml?: never } & Omit<
-              MarkDefinition<TValue>,
-              'toHtml' | 'parse'
-          >),
+    definition: (MarkDefinition<TValue> & { tag?: never }) | TagMarkDefinition<TValue>,
 ): MarkDefinition => {
     if (!('tag' in definition)) {
         return definition as unknown as MarkDefinition;
@@ -323,19 +332,23 @@ export const defineMark = <TValue extends object = Record<string, never>>(
  */
 export type MarkDefinition<TValue = Record<string, unknown>> = {
     /**
-     * Where the mark sits when marks nest on the same text: lower wraps higher, ties keep plugin order. Defaults to `0`.
+     * Where the mark sits when marks nest on the same text: lower wraps higher, ties keep plugin order.
+     * @default 0
      */
     nesting?: number;
     /**
-     * Text typed at the end of the mark carries it on. Defaults to true; a link says false.
+     * Text typed at the end of the mark carries it on. A link says false.
+     * @default true
      */
     inclusive?: boolean;
     /**
-     * Typing rules do not rewrite text carrying this mark — inline code keeps `--` and `**` as typed. Defaults to false.
+     * Typing rules do not rewrite text carrying this mark — inline code keeps `--` and `**` as typed.
+     * @default false
      */
     excludesInputRules?: boolean;
     /**
-     * What the mark carries when put on without a value (a toggle, a parse rule). Defaults to `{}`.
+     * What the mark carries when put on without a value (a toggle, a parse rule).
+     * @default {}
      */
     defaults?: TValue;
     /**
@@ -451,6 +464,24 @@ export type BlockAttributeDefinition = {
 // --- Toolbar ---
 
 /**
+ * The toolbar's clusters, in the order they are drawn: undo and redo, text
+ * style, inline marks, colour, link, lists, alignment, inserts, then panels
+ */
+export const RTE_TOOLBAR_GROUPS = [
+    'history',
+    'text',
+    'marks',
+    'color',
+    'link',
+    'lists',
+    'align',
+    'insert',
+    'panels',
+] as const;
+
+export type RteToolbarGroup = (typeof RTE_TOOLBAR_GROUPS)[number];
+
+/**
  * What a toolbar entry's `render` gets: the API, the selection, and commands
  * bound to the entry's toggled type. Anything else goes through `api`.
  */
@@ -470,9 +501,11 @@ export type ToolbarItemProps = {
     selectedNode: SelectedNode | null;
     selection: RteSelectionSnapshot;
     /**
-     * The selection carries this mark, or sits in this block. Never for an inline.
+     * The selection carries this mark, or sits in this block. `'mixed'` when
+     * only part of a selected range carries the mark; never for anything but a
+     * mark. Never on for an inline.
      */
-    isActive: boolean;
+    isActive: boolean | 'mixed';
     /**
      * Toggle the mark, wrap or unwrap the list, switch a text block to this
      * type or back to a paragraph, insert the void block or the inline.

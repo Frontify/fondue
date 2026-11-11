@@ -75,10 +75,8 @@ export const lookProperties = (key: string, look: TextLook): Record<string, stri
     return properties;
 };
 
-/**
- * A block's margins where nothing sets a gap, as the stylesheet's default.
- */
-export const BLOCK_FALLBACKS: StyleMap = { 'margin-top': '0', 'margin-bottom': '0' };
+/** Muted text's colour (quotes, quieter text styles): the same value as `$color` in `plugins/shared/_mutedText.scss`. */
+export const MUTED_COLOR = 'var(--color-container-secondary-on-secondary-container-variant)';
 
 /**
  * One class's style, shaped as `contentStyles` takes it.

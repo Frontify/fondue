@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { BLOCK_FALLBACKS, lookProperties, lookStyle, styleOfClass } from './look';
+import { lookProperties, lookStyle, styleOfClass } from './look';
 
 describe('lookProperties', () => {
     it('names one custom property per field the host set', () => {
@@ -29,18 +29,20 @@ describe('lookProperties', () => {
 });
 
 describe('lookStyle', () => {
+    const FALLBACKS = { 'margin-top': '0', 'margin-bottom': '0' };
+
     it('puts the host values over the fallbacks, by CSS property name', () => {
         const style = lookStyle(
             { fontSize: 'var(--f-size)', marginBottom: '8px' },
-            { ...BLOCK_FALLBACKS, 'font-size': '14px' },
+            { ...FALLBACKS, 'font-size': '14px' },
         );
 
         expect(style).toEqual({ 'margin-top': '0', 'margin-bottom': '8px', 'font-size': 'var(--f-size)' });
     });
 
     it('is the fallbacks when the host sets nothing', () => {
-        expect(lookStyle({}, BLOCK_FALLBACKS)).toEqual(BLOCK_FALLBACKS);
-        expect(lookStyle({ color: undefined }, BLOCK_FALLBACKS)).toEqual(BLOCK_FALLBACKS);
+        expect(lookStyle({}, FALLBACKS)).toEqual(FALLBACKS);
+        expect(lookStyle({ color: undefined }, FALLBACKS)).toEqual(FALLBACKS);
     });
 
     for (const value of ['red; display: none', 'url(https://example.com/a.png)', '}', '', '   ']) {

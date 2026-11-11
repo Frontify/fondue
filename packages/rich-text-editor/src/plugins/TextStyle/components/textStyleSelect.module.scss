@@ -1,13 +1,41 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/** Wide enough for "Image caption" and fixed, so the control does not stretch across the toolbar. */
+@use '../../../utilities/sizes.module.scss';
+
+// Wide enough that most style names keep the control one size.
+$control-min-size: 7rem;
+
+/** Never stretched across the toolbar, and wide enough that most style names keep it one size. */
 .control {
     flex: none;
-    width: 140px;
+    min-inline-size: $control-min-size;
+
+    /**
+     * The trigger as a plain picker like the toolbar buttons: no border, their
+     * height and weak hover, the caret kept; Fondue's Select has no size of its
+     * own. `data-disabled` is only there when set, hence the `:not`. The
+     * attributes outweigh its field rules.
+     */
+    > [role='combobox'][data-status][data-empty]:not([data-disabled='true']) {
+        height: sizes.$toolbar-control-height;
+        border: none;
+        background-color: transparent;
+        color: var(--color-primary-default);
+        font-size: var(--typography-font-size-small);
+        line-height: var(--typography-line-height-tight);
+
+        &:hover {
+            background-color: var(--color-container-secondary-hover);
+            color: var(--color-primary-hover);
+        }
+    }
 }
 
 /** A row draws its option in the style it applies, previewing the scale. */
 .preview {
+    // A preview has no block above it, so a heading previews without the gap the document gives it.
+    --rte-heading-gap: 0;
+
     display: block;
     padding-block: var(--spacing-xx-small);
     // The menu is portaled out of the editor's frame, and a preview only reads as

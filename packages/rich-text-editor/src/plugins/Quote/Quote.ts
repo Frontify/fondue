@@ -3,12 +3,12 @@
 import { IconSpeechBubbleQuote } from '@frontify/fondue-icons';
 
 import {
-    BLOCK_FALLBACKS,
     defineBlock,
     defineContent,
     definePlugin,
     lookProperties,
     lookStyle,
+    MUTED_COLOR,
     type RteInlineNode,
     styleOfClass,
     type TextLook,
@@ -47,10 +47,7 @@ export const quoteContent = ({ look = {} }: QuotePluginOptions = {}) =>
         blocks: { quote: quoteBlock },
         contentProperties: lookProperties('quote', look),
         // The same values the stylesheet falls back to; `hostStyling.ct.tsx` holds them equal.
-        contentStyles: styleOfClass(
-            styles.quote,
-            lookStyle(look, { ...BLOCK_FALLBACKS, color: 'var(--color-secondary-default)' }),
-        ),
+        contentStyles: styleOfClass(styles.quote, lookStyle(look, { color: MUTED_COLOR })),
     });
 
 /**
@@ -59,6 +56,7 @@ export const quoteContent = ({ look = {} }: QuotePluginOptions = {}) =>
 export const quotePlugin = (options: QuotePluginOptions = {}) =>
     definePlugin({
         content: quoteContent(options),
+        toolbarGroup: 'text',
         toolbar: [{ label: 'Quote', icon: IconSpeechBubbleQuote, menu: { keywords: ['blockquote', 'citation'] } }],
         inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
     });

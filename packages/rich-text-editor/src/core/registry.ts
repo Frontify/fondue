@@ -6,9 +6,8 @@
 
 import { type ReactNode } from 'react';
 
-import { type EditorControlApi, type RteSelectionSnapshot } from './commands';
+import { type EditorControlApi, type RteMarkState, type RteSelectionSnapshot } from './commands';
 import { type HtmlSpec, type StyleMap, withRootStyle } from './htmlSpec';
-import { BLOCK_FALLBACKS } from './look';
 import {
     type BlockAttributeDefinition,
     type BlockDefinition,
@@ -25,10 +24,11 @@ import {
     type RteInputRule,
     type RtePlugin,
     type RteToolbarEntry,
+    type RteToolbarGroup,
     type ToolbarItemProps,
     typesOf,
 } from './plugin';
-import { PARAGRAPH, PARAGRAPH_CLASS_NAME, paragraphBlock } from './vocabulary';
+import { PARAGRAPH, paragraphBlock } from './vocabulary';
 
 /**
  * What a toolbar entry acts on: the type it toggles, by what that type is.
@@ -65,6 +65,10 @@ export type ToolbarEntry = {
      * Whether the floating bar shows the control
      */
     floating: 'inline' | 'hidden';
+    /**
+     * The plugin's `toolbarGroup`; none puts it in the last group
+     */
+    group: RteToolbarGroup | undefined;
     label: string;
     shortcut?: string;
 } & (
@@ -225,14 +229,27 @@ export const controlOf = (own: OwnType): OwnControl => {
     }
 };
 
+const markActiveOf = (mark: RteMarkState | undefined): ToolbarItemProps['isActive'] => {
+    if (mark === undefined) {
+        return false;
+    }
+    switch (mark.coverage) {
+        case 'all':
+            return true;
+        case 'some':
+            return 'mixed';
+    }
+};
+
 /**
  * Whether the selection already carries the type: the mark, or a block of it
- * around the selection. Never for an inline, which the selection only sits beside.
+ * around the selection. `'mixed'` for a mark only part of a range carries.
+ * Never for an inline, which the selection only sits beside.
  */
-export const isOwnActive = (own: OwnType, selection: RteSelectionSnapshot): boolean => {
+export const isOwnActive = (own: OwnType, selection: RteSelectionSnapshot): ToolbarItemProps['isActive'] => {
     switch (own.kind) {
         case 'mark':
-            return own.type in selection.marks;
+            return markActiveOf(selection.marks[own.type]);
         case 'list':
         case 'container':
         case 'textBlock':
@@ -264,7 +281,7 @@ export const toggleOwn = ({ own, api, selection, value }: ToggleOwnParams): void
             return api.lists.toggle(own.type);
         case 'textBlock': {
             let type = own.type;
-            if (isOwnActive(own, selection)) {
+            if (isOwnActive(own, selection) === true) {
                 type = PARAGRAPH;
             }
             return api.blocks.setType(type, value);
@@ -350,6 +367,7 @@ const toolbarEntryOf = (plugin: RtePlugin, entry: RteToolbarEntry, key: string):
         key,
         own,
         floating: entry.floating ?? defaultFloatingPlacement(own),
+        group: plugin.toolbarGroup,
         label: entry.label,
         shortcut: entry.shortcut,
     };
@@ -585,8 +603,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         commandOwners: new Map(),
         contentClassNames: [],
         contentProperties: {},
-        // The built-in paragraph's inline style, as its stylesheet rule; a paragraph plugin's look replaces it.
-        contentStyles: { [PARAGRAPH_CLASS_NAME]: BLOCK_FALLBACKS },
+        contentStyles: {},
         seenIds: new Map(),
         duplicateIds: new Set(),
         blockOwners: new Map(),

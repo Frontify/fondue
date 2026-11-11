@@ -10,6 +10,7 @@ import {
     defineContent,
     defineMark,
     definePlugin,
+    MUTED_COLOR,
     PARAGRAPH,
     type RteDocumentOf,
     type RtePlugin,
@@ -139,7 +140,7 @@ describe('serializing with inline styling', () => {
     it('writes the fallbacks of a quote and a link, and no margin on the link', () => {
         const html = serializeToHtml(looksDoc, { plugins: withLooks, wrap: false, styling: 'inline' });
 
-        expect(styleOfFirst(html, 'blockquote')).toContain('color: var(--color-secondary-default);');
+        expect(styleOfFirst(html, 'blockquote')).toContain(`color: ${MUTED_COLOR};`);
         const link = styleOfFirst(html, 'a');
         expect(link).toContain('color: var(--color-highlight-default);');
         expect(link).not.toContain('margin');
@@ -152,10 +153,10 @@ describe('serializing with inline styling', () => {
         expect(styleOfFirst(html, 'span')).toBe('color: #ff0000;');
     });
 
-    it('keeps a plain paragraph free of browser margins without a paragraph plugin', () => {
+    it('gives a plain paragraph the document gap in place of browser margins without a paragraph plugin', () => {
         const html = serializeToHtml(looksDoc, { plugins: [quotePlugin()], wrap: false, styling: 'inline' });
 
-        expect(styleOfFirst(html, 'p')).toContain('margin-top: 0; margin-bottom: 0;');
+        expect(styleOfFirst(html, 'p')).toContain('margin-top: 0; margin-bottom: var(--spacing-x-small);');
     });
 
     it('inlines each block when the document is not wrapped', () => {

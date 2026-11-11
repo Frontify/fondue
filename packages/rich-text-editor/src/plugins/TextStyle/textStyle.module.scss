@@ -1,18 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 @use '../shared/look.module.scss';
+@use '../shared/mutedText' as muted;
 
 // Every preset. Headings use Fondue's semantic heading tokens, the rest the typography scale.
 // The presets table (helpers/presets.ts) reads these for both the block and the dropdown previews.
 // A host sets a preset's look through `--rte-<preset>-<property>` (see `look`); what is given here is Fondue's look.
 // A ratio, not a token: the line-height tokens are fixed heights, and a heading's leading scales with its size.
 $heading-line-height: 1.3;
+// A heading sits further from the block above than from its own text; the document zeroes the gap where none is above.
+$heading-margin-top: var(--rte-heading-gap, var(--spacing-medium));
 
 .heading1 {
     @include look.look(
         'heading1',
         (
             line-height: $heading-line-height,
+            margin-top: $heading-margin-top,
             font-size: var(--text-heading-xx-large-strong-font-size),
             font-weight: var(--text-heading-xx-large-strong-font-weight),
         )
@@ -24,6 +28,7 @@ $heading-line-height: 1.3;
         'heading2',
         (
             line-height: $heading-line-height,
+            margin-top: $heading-margin-top,
             font-size: var(--text-heading-x-large-strong-font-size),
             font-weight: var(--text-heading-x-large-strong-font-weight),
         )
@@ -35,6 +40,7 @@ $heading-line-height: 1.3;
         'heading3',
         (
             line-height: $heading-line-height,
+            margin-top: $heading-margin-top,
             font-size: var(--text-heading-large-default-font-size),
             font-weight: var(--text-heading-large-default-font-weight),
         )
@@ -46,6 +52,7 @@ $heading-line-height: 1.3;
         'heading4',
         (
             line-height: $heading-line-height,
+            margin-top: $heading-margin-top,
             font-size: var(--text-heading-medium-default-font-size),
             font-weight: var(--text-heading-medium-default-font-weight),
         )
@@ -69,7 +76,7 @@ $heading-line-height: 1.3;
     @include look.look(
         'custom2',
         (
-            color: var(--color-secondary-default),
+            color: muted.$color,
             font-size: var(--typography-font-size-medium),
             font-style: italic,
         )
@@ -101,7 +108,7 @@ $heading-line-height: 1.3;
     @include look.look(
         'image-caption',
         (
-            color: var(--color-secondary-default),
+            color: muted.$color,
             font-size: var(--typography-font-size-x-small),
         )
     );

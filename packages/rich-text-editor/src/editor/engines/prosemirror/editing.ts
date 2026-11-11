@@ -11,6 +11,7 @@ import {
     clipboardSerializer,
     handlePasteByFeatures,
     handlePasteIntoEmptyBlock,
+    keepOfficeListStyles,
     pastedWithoutExtras,
 } from './clipboard';
 import { createControlApi, type OpenEditors } from './controlApi';
@@ -67,6 +68,7 @@ const mount = ({
     attributes,
     placeholderClassName,
     onDocChange,
+    onDocApplied,
     onStateChange,
     viewPortals,
 }: MountOptions): { mounted: MountedDocument; view: EditorView } => {
@@ -113,6 +115,7 @@ const mount = ({
         markViews: createMarkViews(registry, api, liveViews, openEditors),
         clipboardSerializer: clipboardSerializer(schema),
         clipboardParser: clipboardParser(schema),
+        transformPastedHTML: keepOfficeListStyles,
         transformPasted: pastedWithoutExtras,
         handlePaste: (pasteView, event, slice) =>
             handlePasteByFeatures(registry.pasteHandlers, api)(pasteView, event) ||
@@ -152,6 +155,7 @@ const mount = ({
         },
     });
     view = editorView;
+    onDocApplied(initialDoc);
 
     // 4. What the host gets back.
     const setDoc = (doc: typeof initialDoc): void => {
@@ -165,6 +169,7 @@ const mount = ({
         rootExtras = rootExtrasOf(doc);
         if (withoutDrafts(next).eq(withoutDrafts(editorView.state.doc))) {
             agreedDoc = doc;
+            onDocApplied(doc);
             return;
         }
         // Different content: the old caret position means nothing in it, so the
@@ -175,6 +180,7 @@ const mount = ({
         transaction.setMeta('addToHistory', false);
         editorView.dispatch(transaction);
         agreedDoc = doc;
+        onDocApplied(doc);
     };
 
     const mounted: MountedDocument = {
@@ -182,6 +188,10 @@ const mount = ({
             api,
             selectionRect: createSelectionRectReader(editorView),
             document: () => toRteDocument(editorView.state.doc, rootExtras),
+            focusAtEnd: () => {
+                editorView.dispatch(editorView.state.tr.setSelection(Selection.atEnd(editorView.state.doc)));
+                editorView.focus();
+            },
         },
         setDoc,
         setPlaceholder(next) {
