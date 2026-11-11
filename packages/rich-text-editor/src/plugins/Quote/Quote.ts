@@ -41,6 +41,7 @@ export const quoteContent = ({ look = {} }: QuotePluginOptions = {}) =>
 export const quotePlugin = (options: QuotePluginOptions = {}) =>
     definePlugin({
         content: quoteContent(options),
+        toolbarGroup: 'text',
         toolbar: [{ label: 'Quote', icon: IconSpeechBubbleQuote, menu: { keywords: ['blockquote', 'citation'] } }],
         inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
     });

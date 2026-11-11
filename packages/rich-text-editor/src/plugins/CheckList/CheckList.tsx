@@ -8,7 +8,6 @@ import { ANY_LIST, defineBlock, defineContent, definePlugin, PARAGRAPH, type Rte
 import styles from './checkList.module.scss';
 
 /**
-/**
  * A to-do list item with a checkbox
  */
 export type CheckItemBlock<TContent extends RteBlockNode = RteBlockNode> = {
@@ -26,7 +25,7 @@ export type CheckListBlock<TItem extends RteBlockNode = RteBlockNode> = {
     children: TItem[];
 };
 
-export type CheckValue = { checked: boolean | 'inProgress' };
+type CheckValue = { checked: boolean | 'inProgress' };
 
 /**
  * What `checked` holds for an item that is started but not finished
@@ -194,6 +193,7 @@ const EditCheckItem = ({ value, setValue, children }: EditCheckItemProps): React
 export const checkListPlugin = /* @__PURE__ */ definePlugin({
     id: 'check-list',
     content: checkListContent,
+    toolbarGroup: 'lists',
     toolbar: [
         {
             toggles: 'checkList',

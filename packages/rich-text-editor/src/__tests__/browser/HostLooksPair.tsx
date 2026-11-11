@@ -12,6 +12,7 @@ import {
     quotePlugin,
     RichTextEditor,
     RichTextRenderer,
+    type RteDocument,
     type RtePlugin,
     type TextLook,
     textStylePlugin,
@@ -24,6 +25,11 @@ type HostLooksPairProps = {
     body?: TextLook;
     quote?: TextLook;
     link?: LinkLook;
+    /**
+     * The document both surfaces draw.
+     * @default BODY_QUOTE_LINK_DOCUMENT
+     */
+    value?: RteDocument;
 };
 
 const pluginsWithLooks = ({ body, quote, link }: HostLooksPairProps): RtePlugin[] => {
@@ -42,16 +48,16 @@ const pluginsWithLooks = ({ body, quote, link }: HostLooksPairProps): RtePlugin[
 };
 
 /** The renderer and the editor side by side, drawing body text, a quote and links with the same looks. */
-export const HostLooksPair = (props: HostLooksPairProps) => {
-    const plugins = pluginsWithLooks(props);
+export const HostLooksPair = ({ value = BODY_QUOTE_LINK_DOCUMENT, ...looks }: HostLooksPairProps) => {
+    const plugins = pluginsWithLooks(looks);
 
     return (
         <>
             <div data-test-id="renderer">
-                <RichTextRenderer value={BODY_QUOTE_LINK_DOCUMENT} plugins={plugins} />
+                <RichTextRenderer value={value} plugins={plugins} />
             </div>
             <div data-test-id="editor">
-                <RichTextEditor value={BODY_QUOTE_LINK_DOCUMENT} plugins={plugins} />
+                <RichTextEditor value={value} plugins={plugins} />
             </div>
         </>
     );

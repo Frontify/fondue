@@ -121,6 +121,7 @@ const HOTKEY: keyof typeof hotkeys = 'Mod-k';
 export const linkPlugin = (options: LinkPluginOptions = {}) =>
     definePlugin({
         content: linkContent(options),
+        toolbarGroup: 'link',
         toolbar: [{ label: 'Link', shortcut: HOTKEY, render: LinkToolbarButton }],
         edit: { link: LinkEditor },
         hotkeys,

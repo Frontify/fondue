@@ -1,0 +1,151 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "Launch checklist",
+                    "bold": true
+                }
+            ]
+        },
+        {
+            "type": "bulletList",
+            "children": [
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "Brief the team"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "bulletList",
+                            "children": [
+                                {
+                                    "type": "listItem",
+                                    "children": [
+                                        {
+                                            "type": "paragraph",
+                                            "children": [
+                                                {
+                                                    "text": "Share the "
+                                                },
+                                                {
+                                                    "text": "brand book",
+                                                    "italic": true
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "bulletList",
+                                            "children": [
+                                                {
+                                                    "type": "listItem",
+                                                    "children": [
+                                                        {
+                                                            "type": "paragraph",
+                                                            "children": [
+                                                                {
+                                                                    "text": "Agree on the palette"
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "Book the room"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": []
+        },
+        {
+            "type": "numberedList",
+            "children": [
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "Draft the copy"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "Review it with "
+                                },
+                                {
+                                    "text": "Legal",
+                                    "bold": true
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "Legal signs off before anything is published."
+                }
+            ]
+        },
+        {
+            "type": "numberedList",
+            "start": 3,
+            "children": [
+                {
+                    "type": "listItem",
+                    "children": [
+                        {
+                            "type": "paragraph",
+                            "children": [
+                                {
+                                    "text": "Publish"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

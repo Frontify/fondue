@@ -15,8 +15,15 @@ export const HeadingLevelIcon = ({ level }: HeadingLevelIconProps): ReactNode =>
     </span>
 );
 
-/** The level's mark as an icon component, which is what a menu command takes. */
-export const headingLevelIcon = (level: number): RteIcon => {
-    const Icon: RteIcon = () => <HeadingLevelIcon level={level} />;
-    return Icon;
+const HeadingLevel1Icon: RteIcon = () => <HeadingLevelIcon level={1} />;
+const HeadingLevel2Icon: RteIcon = () => <HeadingLevelIcon level={2} />;
+const HeadingLevel3Icon: RteIcon = () => <HeadingLevelIcon level={3} />;
+const HeadingLevel4Icon: RteIcon = () => <HeadingLevelIcon level={4} />;
+
+/** Each heading level's mark as an icon component, which is what a menu command takes */
+export const HEADING_LEVEL_ICONS: Partial<Record<number, RteIcon>> = {
+    1: HeadingLevel1Icon,
+    2: HeadingLevel2Icon,
+    3: HeadingLevel3Icon,
+    4: HeadingLevel4Icon,
 };

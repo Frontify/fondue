@@ -76,3 +76,17 @@ export const BODY_QUOTE_LINK_DOCUMENT: RteDocument = {
         { type: 'textStyle', style: 'heading1', children: [{ text: 'Heading 1' }] },
     ],
 };
+
+export const MIDDLE_QUOTE_TEXT = 'Middle quote';
+export const LAST_QUOTE_TEXT = 'Last quote';
+
+/** A quote between paragraphs and one at the end, where the document trims the gap below. */
+export const QUOTES_DOCUMENT: RteDocument = {
+    version: 1,
+    blocks: [
+        { type: 'paragraph', children: [{ text: 'Before' }] },
+        { type: 'quote', children: [{ text: MIDDLE_QUOTE_TEXT }] },
+        { type: 'paragraph', children: [{ text: 'After' }] },
+        { type: 'quote', children: [{ text: LAST_QUOTE_TEXT }] },
+    ],
+};
