@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCaretDown, IconCross, IconDroplet } from '@frontify/fondue-icons';
-import { type CSSProperties, type ForwardedRef, forwardRef } from 'react';
+import { type CSSProperties, type ForwardedRef, forwardRef, useId } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 import { type CommonAriaAttrs } from '#/utilities/types';
@@ -49,18 +49,24 @@ export const ColorPickerInput = (
         onClear,
         onClick,
         'data-test-id': dataTestId = 'color-picker-input',
+        'aria-labelledby': ariaLabelledBy,
         ...props
     }: ColorPickerInputProps,
-    forwardedRef: ForwardedRef<HTMLDivElement>,
+    forwardedRef: ForwardedRef<HTMLButtonElement>,
 ) => {
     const { t } = useTranslation();
+    const valueId = useId();
     const colorName = currentColor?.name ?? (currentColor ? getColorWithName(currentColor, 'RGBA').name : '');
     const hasValue = currentColor?.red !== undefined;
+    const labelledBy = ariaLabelledBy ? `${ariaLabelledBy} ${valueId}` : undefined;
     return (
-        <div id={id} className={styles.root} ref={forwardedRef} data-test-id={dataTestId}>
+        <div className={styles.root} data-test-id={dataTestId}>
             <button
+                id={id}
+                ref={forwardedRef}
                 className={styles.button}
                 {...props}
+                aria-labelledby={labelledBy}
                 disabled={disabled}
                 onClick={onClick}
                 type="button"
@@ -75,11 +81,13 @@ export const ColorPickerInput = (
                 ) : (
                     <>
                         <IconDroplet size={16} />
-                        <span>{t('ColorPicker_selectColor')}</span>
+                        <span id={valueId}>{t('ColorPicker_selectColor')}</span>
                     </>
                 )}
 
-                <span className={styles.colorName}>{colorName}</span>
+                <span id={hasValue ? valueId : undefined} className={styles.colorName}>
+                    {colorName}
+                </span>
             </button>
             <div className={styles.actions}>
                 {hasValue && onClear && !disabled && (
@@ -96,4 +104,4 @@ export const ColorPickerInput = (
 };
 ColorPickerInput.displayName = 'ColorPicker.Input';
 
-export const ForwardedRefColorPickerInput = forwardRef<HTMLDivElement, ColorPickerInputProps>(ColorPickerInput);
+export const ForwardedRefColorPickerInput = forwardRef<HTMLButtonElement, ColorPickerInputProps>(ColorPickerInput);
