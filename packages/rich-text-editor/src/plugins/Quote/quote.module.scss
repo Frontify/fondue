@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 @use '../shared/look.module.scss';
+@use '../shared/mutedText' as muted;
 
 .quote {
     @include look.look(
         'quote',
         (
-            // The muted tone of `_mutedText.scss`, spelled out because `look` takes a value, not a mixin.
-            color: var(--color-container-secondary-on-secondary-container-variant),
+            color: muted.$color,
         )
     );
     // The browser's own side margins on a blockquote; the look writes only the vertical ones.
