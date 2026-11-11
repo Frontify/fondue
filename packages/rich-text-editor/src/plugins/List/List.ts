@@ -10,6 +10,7 @@ import {
     PARAGRAPH,
     type RteBlockNode,
     type RteContent,
+    type StyleMap,
 } from '#/core';
 
 import styles from './list.module.scss';
@@ -29,8 +30,14 @@ export type BulletListBlock<TItem extends RteBlockNode = RteBlockNode> = {
 
 export type NumberedListBlock<TItem extends RteBlockNode = RteBlockNode> = {
     type: 'numberedList';
+    /**
+     * The first item's number, absent when it is 1
+     */
+    start?: number;
     children: TItem[];
 };
+
+type NumberedListValue = { start: number | null };
 
 // One shared object: two plugins may declare the same type only with the very same definition.
 const listItem = defineBlock({
@@ -40,47 +47,93 @@ const listItem = defineBlock({
     parse: [{ tag: 'li' }],
 });
 
-type ListContentParams = {
-    type: 'bulletList' | 'numberedList';
-    tag: 'ul' | 'ol';
-    /**
-     * The class that sets the marker style per nesting level
-     */
-    className: string | undefined;
+/**
+ * The bulleted list, its marker per nesting level hanging off its class
+ */
+const bulletList = defineBlock({
+    content: { items: 'listItem' },
+    toHtml: () => ({ tag: 'ul', attrs: { class: styles.bulletList }, children: true }),
+    parse: [{ tag: 'ul' }],
+});
+
+/**
+ * How many digits of a list's first number the stylesheet's marker room fits
+ */
+const MARKER_DIGITS = 2;
+
+/**
+ * The custom property `list.module.scss` widens a numbered list by, once per digit past `MARKER_DIGITS`
+ */
+const EXTRA_DIGITS_PROPERTY = '--rte-list-extra-digits';
+
+/**
+ * The smallest `start` browsers honour: they read the attribute as a 32-bit integer so a list past it does not number as written
+ */
+const MIN_START = -(2 ** 31);
+
+/**
+ * The largest `start` browsers honour, for the same reason as `MIN_START`
+ */
+const MAX_START = 2 ** 31 - 1;
+
+/**
+ * The start to store, or `null` for 1 (what no start means) and for an integer browsers cannot draw or write back as given
+ */
+const storedStart = (value: unknown): number | null => {
+    if (
+        typeof value !== 'number' ||
+        !Number.isInteger(value) ||
+        value < MIN_START ||
+        value > MAX_START ||
+        value === 1
+    ) {
+        return null;
+    }
+    return value;
 };
 
 /**
- * Declares a list content, where the two lists differ only in type, tag and marker style
+ * The numbered list, which stores where its numbering starts only when that is not 1
  */
-const listContent = ({ type, tag, className }: ListContentParams) =>
-    defineContent({
-        blocks: {
-            [type]: defineBlock({
-                content: { items: 'listItem' },
-                toHtml: () => ({ tag, attrs: { class: className }, children: true }),
-                parse: [{ tag }],
-            }),
-            listItem,
+const numberedList = defineBlock<NumberedListValue>({
+    content: { items: 'listItem' },
+    defaults: { start: null },
+    toHtml: ({ start }) => {
+        let first: string | undefined;
+        let style: StyleMap | undefined;
+        const stored = storedStart(start);
+        if (stored !== null) {
+            first = String(stored);
+        }
+        // A list that starts past the stylesheet's room widens for its first number only.
+        if (first !== undefined && first.length > MARKER_DIGITS) {
+            style = { [EXTRA_DIGITS_PROPERTY]: String(first.length - MARKER_DIGITS) };
+        }
+        return { tag: 'ol', attrs: { class: styles.numberedList, start: first, style }, children: true };
+    },
+    parse: [
+        {
+            tag: 'ol',
+            value: (element) => {
+                const start = storedStart(Number.parseInt(element.getAttribute('start') ?? '', 10));
+                if (start === null) {
+                    return {};
+                }
+                return { start };
+            },
         },
-    });
+    ],
+});
 
 /**
  * A bulleted list, written as `<ul>`. Shares its item with `numberedListContent`.
  */
-export const bulletListContent = listContent({
-    type: 'bulletList',
-    tag: 'ul',
-    className: styles.bulletList,
-});
+export const bulletListContent = defineContent({ blocks: { bulletList, listItem } });
 
 /**
- * A numbered list, written as `<ol>`. Shares its item with `bulletListContent`.
+ * A numbered list, written as `<ol>`, starting at any number. Shares its item with `bulletListContent`.
  */
-export const numberedListContent = listContent({
-    type: 'numberedList',
-    tag: 'ol',
-    className: styles.numberedList,
-});
+export const numberedListContent = defineContent({ blocks: { numberedList, listItem } });
 
 type ListPluginParams = {
     id: string;
