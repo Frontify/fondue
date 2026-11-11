@@ -90,7 +90,7 @@ const numberedList = defineBlock<NumberedListValue>({
         if (stored !== null) {
             first = String(stored);
         }
-        // A list that starts past the stylesheet's room widens for its first number.
+        // A list that starts past the stylesheet's room widens for its first number only; a nested one ignores it.
         if (first !== undefined && first.length > MARKER_DIGITS) {
             style = { [EXTRA_DIGITS_PROPERTY]: String(first.length - MARKER_DIGITS) };
         }

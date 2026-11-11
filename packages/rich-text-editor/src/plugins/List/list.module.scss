@@ -27,9 +27,11 @@
 
 // Two digits and a full stop (`10.`) need more room than a bullet. A list
 // that starts at 100 or more sets how many digits its first number adds; it
-// is reset here so a list nested inside does not inherit it. The property
-// name and the two-digit room are set from `EXTRA_DIGITS_PROPERTY` and
-// `MARKER_DIGITS` in List.tsx.
+// is reset here so a list nested inside does not inherit it. The room fits
+// the first number only, so a list that grows to more digits than it starts
+// with clips, as one past 99 items always did. The property name and the
+// two-digit room are set from `EXTRA_DIGITS_PROPERTY` and `MARKER_DIGITS` in
+// List.tsx.
 .numberedList {
     --rte-list-extra-digits: 0;
 
@@ -37,7 +39,11 @@
 
     list-style-type: decimal;
 
+    // Letters and Roman numerals are not as wide as their number's digits, so
+    // a nested list keeps the two-digit room whatever its start.
     .numberedList {
+        @include list(2em);
+
         list-style-type: lower-alpha;
 
         .numberedList {
