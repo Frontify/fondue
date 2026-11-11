@@ -1,0 +1,40 @@
+packages/icons/scripts/figma/document.ts
+  s_1f79d6d6f0d893::t_6d07110d790701 3
+  s_1f79d6d6f0d893::t_c8f4fab4b67f36 12-13
+  s_1f79d6d6f0d893::t_ab6be38316e9da 37
+packages/icons/package.json
+  s_1f79d6d6f0d893::t_775db15aeeea04 60
+  s_1f79d6d6f0d893::t_f960316d5eb502 78
+packages/icons/scripts/figma/downloadIcons.ts
+  s_1f79d6d6f0d893::t_60ccd8654cd6bd 19
+  s_1f79d6d6f0d893::t_223be2c634ae16 22-29
+packages/icons/scripts/figma/getNewIconsFromFigma.ts
+  s_1f79d6d6f0d893::t_97bccc5a17941d 5
+  s_1f79d6d6f0d893::t_3cee1aacaefebd 19
+  s_1f79d6d6f0d893::t_68ac34009d3016 21
+  s_1f79d6d6f0d893::t_c5a6a7b1acf00d 52,56,58
+  s_1f79d6d6f0d893::t_14454d0e806923 20
+packages/icons/scripts/utilities/snapshot.ts
+  s_1f79d6d6f0d893::t_62129f31005845 23
+  s_1f79d6d6f0d893::t_4d2d764ac6d5e0 6
+  s_1f79d6d6f0d893::t_51d4af0f23a50a 18
+  s_1f79d6d6f0d893::t_3cee1aacaefebd 8
+pnpm-lock.yaml
+  s_1f79d6d6f0d893::t_61a289c5e7714e 726-728,781-782,2669-2671,7167-7168,11846-11847,16998,17000-17001,17004
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "1c58399ee1cf47092da4bb90e983481c45b68fd7",
+  "prompts": {},
+  "sessions": {
+    "s_1f79d6d6f0d893": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f069bd34-9ddf-4f24-842a-aa65262d7249",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

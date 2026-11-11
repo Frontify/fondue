@@ -1,0 +1,20 @@
+packages/components/src/components/Tree/styles/tree.module.scss
+  s_68254d0d83d78c::t_72fd901c3a610b 53,63-64,74,78
+  s_68254d0d83d78c::t_3ea9bb57375aaa 87
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9dde6cc5ed4cbd7a4f28bf680ca93bb5cff5cd81",
+  "prompts": {},
+  "sessions": {
+    "s_68254d0d83d78c": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "df3dcb80-010b-40ab-bde9-b5db35224c1d",
+        "model": "grok-4.7"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

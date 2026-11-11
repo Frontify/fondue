@@ -1,0 +1,33 @@
+packages/components/src/components/Tree/components/TreeRow.tsx
+  s_a4ae07428a601c::t_471cd25ad42add 146,211
+  s_a4ae07428a601c::t_72533ed062c28f 145,209-210,212
+packages/components/src/components/Tree/Tree.stories.tsx
+  s_a4ae07428a601c::t_a17b69ccc5accb 730-731
+  s_a4ae07428a601c::t_471cd25ad42add 751
+  s_a4ae07428a601c::t_72533ed062c28f 728-729
+packages/components/src/components/Tree/types.ts
+  s_a4ae07428a601c::t_a17b69ccc5accb 100-101,106-108
+  s_a4ae07428a601c::t_471cd25ad42add 111,148
+  s_a4ae07428a601c::t_72533ed062c28f 105,109-110
+packages/components/src/components/Tree/components/TreeRoot.ct.tsx
+  s_a4ae07428a601c::t_72533ed062c28f 458-462,464-473
+  s_a4ae07428a601c::t_471cd25ad42add 457,463
+packages/components/src/components/Tree/utils/parseChildren.ts
+  s_a4ae07428a601c::t_471cd25ad42add 46,60,78,87,105,112,125,140
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c1885abe0bef8f7480605152d4d0cdf1dfc43e33",
+  "prompts": {},
+  "sessions": {
+    "s_a4ae07428a601c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a2591b94-9023-49ce-bec3-a76781144d81",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    }
+  }
+}

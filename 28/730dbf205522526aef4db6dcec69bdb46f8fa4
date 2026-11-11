@@ -1,0 +1,21 @@
+packages/rich-text-editor/src/__tests__/paste/vendorPaste.spec.tsx
+  s_c9bef17c5c3a0c::t_eb1b29306577a2 347-352
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteGoogleDocs.ts
+  s_c9bef17c5c3a0c::t_eb1b29306577a2 56-60,62
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "28730dbf205522526aef4db6dcec69bdb46f8fa4",
+  "prompts": {},
+  "sessions": {
+    "s_c9bef17c5c3a0c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c6c8eb0b-549e-438a-aaf8-1b7abc83dee2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
