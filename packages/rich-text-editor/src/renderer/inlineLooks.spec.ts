@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type HtmlSpec } from '#/core';
+import { type HtmlAttributes, type HtmlSpec } from '#/core';
 
 import { type DrawnNode } from './documentTree';
 import { inlineLooks } from './inlineLooks';
@@ -15,7 +15,7 @@ const CONTENT_STYLES = {
     bold: { 'font-weight': '700', color: 'blue' },
 };
 
-const element = (attrs: { class?: string; style?: Record<string, string> }, content: DrawnNode[] = []): HtmlNode => ({
+const element = (attrs: HtmlAttributes, content: DrawnNode[] = []): HtmlNode => ({
     kind: 'html',
     spec: { tag: 'p', attrs, children: true },
     content,

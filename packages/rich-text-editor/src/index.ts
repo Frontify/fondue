@@ -87,6 +87,7 @@ export const serializeToHtml = <TBlock extends RteBlockNode = RteBlock>(
     doc: RteDocument<TBlock>,
     options: SerializeToHtmlOptions = {},
 ): string => serialize(doc, { ...options, plugins: options.plugins ?? defaultContent });
+export { type HtmlStyling, type SerializeToHtmlOptions } from './renderer';
 
 // --- Document format ---
 
