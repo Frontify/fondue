@@ -577,6 +577,23 @@ describe('block attributes', () => {
         ]);
     });
 
+    it('toggle on only when some block lacks the value, and off when every block has it', () => {
+        const editor = editorWith(plugins, [
+            { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },
+            paragraph(text('two')),
+        ]);
+        editor.selectBetween('one', 'two');
+
+        expect(editor.api.blocks.toggleAttribute('align', 'center')).toBe('set');
+        expect(editor.stored()).toEqual([
+            { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },
+            { type: 'paragraph', align: 'center', children: [{ text: 'two' }] },
+        ]);
+
+        expect(editor.api.blocks.toggleAttribute('align', 'center')).toBe('removed');
+        expect(editor.stored()).toEqual([paragraph(text('one')), paragraph(text('two'))]);
+    });
+
     it('go back to their defaults on reset, the block type kept', () => {
         const editor = editorWith(plugins, [
             { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },

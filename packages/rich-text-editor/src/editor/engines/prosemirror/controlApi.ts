@@ -14,6 +14,7 @@ import { type Command, type EditorState, NodeSelection, TextSelection, type Tran
 import { type EditorView } from 'prosemirror-view';
 
 import {
+    type BlockAttributeToggle,
     type EditorControlApi,
     INLINE_PLACEHOLDER,
     isEmpty,
@@ -367,6 +368,26 @@ const createBlockApi = (
             view.focus();
         },
         updateAttributes: applyToTextBlocks,
+        toggleAttribute(name, value): BlockAttributeToggle {
+            const view = getView();
+            const { from, to } = view.state.selection;
+            let declaring = 0;
+            let holding = 0;
+            view.state.doc.nodesBetween(from, to, (node) => {
+                if (node.isTextblock && name in node.attrs) {
+                    declaring++;
+                    if ((node.attrs[name] ?? null) === (value ?? null)) {
+                        holding++;
+                    }
+                }
+            });
+            if (declaring > 0 && holding === declaring) {
+                applyToTextBlocks({ [name]: null });
+                return 'removed';
+            }
+            applyToTextBlocks({ [name]: value });
+            return 'set';
+        },
         resetAttributes() {
             // Resets whichever attributes features inject into text blocks; names none.
             applyToTextBlocks(

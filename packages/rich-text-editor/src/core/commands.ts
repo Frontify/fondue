@@ -44,6 +44,11 @@ export type RteSelectionSnapshot = {
     history: { canUndo: boolean; canRedo: boolean };
 };
 
+/**
+ * What `blocks.toggleAttribute` did: put the value on the blocks, or took it off them
+ */
+export type BlockAttributeToggle = 'set' | 'removed';
+
 export type RemoveAllMarksOptions = {
     /**
      * Mark types to leave on
@@ -97,6 +102,10 @@ export type EditorControlApi = {
          * Set attributes on every block the selection touches — how alignment is applied
          */
         updateAttributes(attributes: Record<string, unknown>): void;
+        /**
+         * Set `name` to `value` on every text block the selection touches, or remove it (set it to null) when every one already has that value
+         */
+        toggleAttribute(name: string, value: unknown): BlockAttributeToggle;
         /**
          * Reset every `blockAttributes` attribute (alignment) to its default across the selection
          */

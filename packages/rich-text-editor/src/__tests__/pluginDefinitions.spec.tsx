@@ -257,8 +257,12 @@ describe('blurOnBreakPlugin', () => {
         expect(calls).toEqual(['split', 'blur']);
     });
 
-    it('describes its key for screen readers', () => {
-        expect(blurOnBreakPlugin().description).toBe('Press Enter to submit.');
+    it('describes its key for screen readers when there is something to submit', () => {
+        expect(blurOnBreakPlugin({ onBreak: () => {} }).description).toBe('Press Enter to submit.');
+    });
+
+    it('says nothing about submitting when there is no onBreak', () => {
+        expect(blurOnBreakPlugin().description).toBeUndefined();
     });
 });
 

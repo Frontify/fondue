@@ -96,32 +96,22 @@ const JUSTIFY: Alignment = {
 const ALIGNMENTS: readonly Alignment[] = [LEFT, CENTER, RIGHT, JUSTIFY];
 
 const CLEARED_ANNOUNCEMENT = 'Alignment cleared';
+const ALIGN_ATTRIBUTE = 'align';
 
 const alignOf = (selection: RteSelectionSnapshot): AlignAttribute['align'] =>
     // The structural block type does not know the attribute this plugin adds to every text block.
     (selection.block as AlignAttribute | null)?.align;
 
-/**
- * What a button or its shortcut does: choosing the alignment already set clears it, so the block inherits the editor's direction again.
- */
-const toggleAlign = (
-    api: EditorControlApi,
-    value: NonNullable<AlignAttribute['align']>,
-): AlignAttribute['align'] | null => {
-    if (alignOf(api.selection.get()) === value) {
-        api.blocks.updateAttributes({ align: null });
-        return null;
-    }
-    api.blocks.updateAttributes({ align: value });
-    return value;
-};
-
 const alignFromKeyboard = (api: EditorControlApi, { value, announcement }: Alignment) => {
-    if (toggleAlign(api, value) === null) {
-        api.announce(CLEARED_ANNOUNCEMENT);
-        return;
+    // Choosing the alignment every selected block already has clears it, so they inherit the editor's direction again.
+    switch (api.blocks.toggleAttribute(ALIGN_ATTRIBUTE, value)) {
+        case 'removed':
+            api.announce(CLEARED_ANNOUNCEMENT);
+            return;
+        case 'set':
+            api.announce(announcement);
+            return;
     }
-    api.announce(announcement);
 };
 
 const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
@@ -141,7 +131,7 @@ const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
                     title={title}
                     shortcut={shortcut}
                     onClick={() => {
-                        toggleAlign(api, value);
+                        api.blocks.toggleAttribute(ALIGN_ATTRIBUTE, value);
                     }}
                 >
                     <Icon size={TOOLBAR_ICON_SIZE} />

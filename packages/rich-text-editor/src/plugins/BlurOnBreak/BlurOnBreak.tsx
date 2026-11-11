@@ -33,9 +33,27 @@ const requiredMessageOf = (required: boolean | string | undefined): string | nul
     return required;
 };
 
+/** A caret in a block with no text, where Enter in a list means "leave it" rather than "submit". */
+const inEmptyBlock = (api: EditorControlApi): boolean => {
+    if (!api.selection.get().isCollapsed) {
+        return false;
+    }
+    if (api.text.beforeCaret() !== '') {
+        return false;
+    }
+    return api.text.afterCaret() === '';
+};
+
 const breakLine = (api: EditorControlApi, { onBreak, required }: BlurOnBreakPluginOptions): void => {
     if (api.lists.split()) {
         return;
+    }
+    // As the editor's own list Enter: an empty top-level item is left, not split.
+    if (inEmptyBlock(api)) {
+        const leftList = api.lists.outdent();
+        if (leftList) {
+            return;
+        }
     }
     const requiredMessage = requiredMessageOf(required);
     if (requiredMessage !== null && api.isEmpty()) {
@@ -49,7 +67,8 @@ const breakLine = (api: EditorControlApi, { onBreak, required }: BlurOnBreakPlug
 /**
  * Enter commits instead of adding a paragraph, what a single-line editor (a
  * title field, a comment box) wants. Inside a list Enter still splits the
- * item, so a list typed into such an editor can grow; anywhere else it calls
+ * item, so a list typed into such an editor can grow, and on an empty item it
+ * leaves the list; anywhere else it calls
  * `onBreak` and gives up focus. Plugin hotkeys run before the editor's own
  * keys, so this handler splits the item itself rather than leaving Enter to
  * the list.
@@ -57,10 +76,15 @@ const breakLine = (api: EditorControlApi, { onBreak, required }: BlurOnBreakPlug
  * @example
  * blurOnBreakPlugin({ onBreak: submit, required: 'Write a comment first.' })
  */
-export const blurOnBreakPlugin = (options: BlurOnBreakPluginOptions = {}) =>
-    definePlugin({
+export const blurOnBreakPlugin = (options: BlurOnBreakPluginOptions = {}) => {
+    // A field with no submit to announce says nothing about submitting.
+    let description: string | undefined;
+    if (options.onBreak !== undefined) {
+        description = DESCRIPTION;
+    }
+    return definePlugin({
         id: 'blur-on-break',
-        description: DESCRIPTION,
+        description,
         hotkeys: {
             // Enter is always this plugin's: it splits an item, refuses, or submits.
             Enter: (api) => {
@@ -69,3 +93,4 @@ export const blurOnBreakPlugin = (options: BlurOnBreakPluginOptions = {}) =>
             },
         },
     });
+};

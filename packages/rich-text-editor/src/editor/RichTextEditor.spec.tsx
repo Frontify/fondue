@@ -658,7 +658,7 @@ describe('the editable element', () => {
             expect(statusIn(container).textContent).toBe('Saved');
         });
 
-        it('says the same message twice by clearing the region in between', () => {
+        it('says the same message twice by clearing the region in between, the repeat ending in a no-break space', () => {
             vi.useFakeTimers();
             teardown.push(() => vi.useRealTimers());
             const { container, ready } = mount(() => <RichTextEditor plugins={[announcer]} />);
@@ -675,7 +675,24 @@ describe('the editable element', () => {
                 vi.advanceTimersByTime(100);
             });
 
-            expect(statusIn(container).textContent).toBe('Saved');
+            expect(statusIn(container).textContent).toBe('Saved\u00A0');
+        });
+
+        it('writes a repeat differently each time, so Safari reads it again', () => {
+            vi.useFakeTimers();
+            teardown.push(() => vi.useRealTimers());
+            const { container, ready } = mount(() => <RichTextEditor plugins={[announcer]} />);
+            ready();
+            const said: string[] = [];
+            for (let repeat = 0; repeat < 3; repeat++) {
+                announce(container);
+                act(() => {
+                    vi.advanceTimersByTime(100);
+                });
+                said.push(statusIn(container).textContent);
+            }
+
+            expect(said).toEqual(['Saved', 'Saved\u00A0', 'Saved']);
         });
 
         it('clears a message after five seconds, and a newer one restarts the wait', () => {
@@ -699,7 +716,7 @@ describe('the editable element', () => {
             act(() => {
                 vi.advanceTimersByTime(4000);
             });
-            expect(statusIn(container).textContent).toBe('Saved');
+            expect(statusIn(container).textContent).toBe('Saved\u00A0');
 
             act(() => {
                 vi.advanceTimersByTime(1000);
@@ -2635,6 +2652,42 @@ describe('an editor that crashes', () => {
 
         expect(container.textContent).toContain('The editor stopped working.');
         expect(retryButton(container)).toBeDefined();
+    });
+});
+
+describe('the reset formatting button', () => {
+    it('removes every mark, links included, and makes the block a plain paragraph', () => {
+        const value: RteDocument = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'bulletList',
+                    children: [
+                        {
+                            type: 'listItem',
+                            children: [
+                                {
+                                    type: 'paragraph',
+                                    align: 'center',
+                                    children: [{ text: 'linked', bold: true, link: { href: 'https://example.com' } }],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+        const { container, ready, stored } = mount((onChange) => (
+            <RichTextEditor value={value} onChange={onChange} plugins={defaultPlugins} toolbarPlacement="top" />
+        ));
+        ready();
+        const editable = editableIn(container);
+        act(() => editable.focus());
+        press(editable, 'a', mod);
+
+        act(() => container.querySelector<HTMLElement>('[aria-label="Reset formatting"]')?.click());
+
+        expect(stored()?.blocks).toEqual([{ type: 'paragraph', children: [{ text: 'linked' }] }]);
     });
 });
 

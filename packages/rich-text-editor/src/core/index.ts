@@ -4,6 +4,7 @@
 // Imports from no other layer; plugins, renderer and editor all import here.
 
 export {
+    type BlockAttributeToggle,
     type EditorControlApi,
     REDO_HOTKEY,
     type RemoveAllMarksOptions,
