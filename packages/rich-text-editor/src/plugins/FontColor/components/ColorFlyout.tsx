@@ -22,6 +22,9 @@ const PRESETS: readonly { name: string; color: string }[] = [
     { name: 'Purple', color: '#8430ce' },
 ];
 
+/** What the picker starts at on text with no one colour: white, as Fondue's picker does without one. */
+const NO_COLOR_DRAFT: RgbaColor = { red: 255, green: 255, blue: 255, alpha: 1 };
+
 /** The colour typed in the picker's hex field. The field reports only on blur, so Enter and Save read it directly. */
 const typedHex = (container: HTMLElement | null, alpha: number | undefined): RgbaColor | undefined => {
     const field = container?.querySelector<HTMLInputElement>('input[type="text"]');
@@ -52,12 +55,17 @@ export const ColorFlyout = ({ selection, api, isActive }: ColorFlyoutProps): Rea
     // pasted in): it is still coloured, and still removable.
     const hasColor = isActive !== false;
     const current = parseCssColor(value?.color);
+    // One the picker cannot read still shows as written, when it is a colour at all.
+    const currentCss =
+        current === undefined ? (isCssColor(value?.color) ? value.color : undefined) : toCssColor(current);
+
     const [open, setOpen] = useState(false);
-    const [draft, setDraft] = useState<RgbaColor | undefined>(undefined);
+    const [draft, setDraft] = useState<RgbaColor>(current ?? NO_COLOR_DRAFT);
     const titleId = useId();
     const pickerRef = useRef<HTMLDivElement | null>(null);
-    // What the picker showed when it opened, so Save without a choice changes nothing.
-    const openedWithRef = useRef<string | undefined>(undefined);
+    // Whether a colour was dragged or typed since opening. The value alone cannot
+    // say: white typed over uncoloured text equals the white the picker starts at.
+    const choseRef = useRef(false);
 
     const { returnToText, contentProps } = useFocusAfterClose(api);
     // Closing from inside the flyout returns focus to the text.
@@ -68,7 +76,7 @@ export const ColorFlyout = ({ selection, api, isActive }: ColorFlyoutProps): Rea
 
     const apply = (color: RgbaColor | undefined): void => {
         if (color === undefined) {
-            api.marks.toggle('fontColor');
+            api.marks.remove('fontColor');
         } else {
             api.marks.set('fontColor', { color: toCssColor(color) });
         }
@@ -76,19 +84,23 @@ export const ColorFlyout = ({ selection, api, isActive }: ColorFlyoutProps): Rea
     };
 
     const save = (): void => {
-        const picked = typedHex(pickerRef.current, draft?.alpha) ?? draft;
+        const picked = typedHex(pickerRef.current, draft.alpha) ?? draft;
         // Nothing picked or typed: an unreadable colour would otherwise be
-        // overwritten with whatever the picker fell back to showing.
-        if (picked === undefined || toCssColor(picked) === openedWithRef.current) {
+        // overwritten with the white the picker starts at.
+        if (!choseRef.current || toCssColor(picked) === currentCss) {
             close();
             return;
         }
         apply(picked);
     };
 
-    // One the picker cannot read still shows as written, when it is a colour at all.
-    const currentCss =
-        current === undefined ? (isCssColor(value?.color) ? value.color : undefined) : toCssColor(current);
+    // The picker also reports the colour it shows, on blur and on a format switch: not a choice.
+    const choose = (color: RgbaColor): void => {
+        if (toCssColor(color) !== toCssColor(draft)) {
+            choseRef.current = true;
+        }
+        setDraft(color);
+    };
 
     return (
         <Flyout.Root
@@ -96,7 +108,8 @@ export const ColorFlyout = ({ selection, api, isActive }: ColorFlyoutProps): Rea
             // The draft starts at the text's colour, so cancelling changes nothing.
             onOpenChange={(next) => {
                 if (next) {
-                    setDraft(current);
+                    choseRef.current = false;
+                    setDraft(current ?? NO_COLOR_DRAFT);
                     setOpen(true);
                 } else {
                     setOpen(false);
@@ -127,8 +140,6 @@ export const ColorFlyout = ({ selection, api, isActive }: ColorFlyoutProps): Rea
                 // The hex field is the one input a keyboard can pick a colour with.
                 onOpenAutoFocus={(event) => {
                     event.preventDefault();
-                    const shown = typedHex(pickerRef.current, current?.alpha);
-                    openedWithRef.current = shown === undefined ? undefined : toCssColor(shown);
                     pickerRef.current?.querySelector<HTMLInputElement>('input[type="text"]')?.focus();
                 }}
             >
@@ -163,12 +174,16 @@ export const ColorFlyout = ({ selection, api, isActive }: ColorFlyoutProps): Rea
                         onInput={(event) => {
                             // A complete hex value updates the picker at once; a partial one waits.
                             const target = event.target as HTMLInputElement;
+                            // An unfinished value is no choice, so Save then changes nothing.
+                            if (target.matches('input[type="text"]')) {
+                                choseRef.current = typedHex(pickerRef.current, draft.alpha) !== undefined;
+                            }
                             if (target.matches('input[type="text"]') && /^#?[\dA-Fa-f]{6}$/.test(target.value)) {
-                                setDraft(typedHex(pickerRef.current, draft?.alpha));
+                                setDraft(typedHex(pickerRef.current, draft.alpha) ?? draft);
                             }
                         }}
                     >
-                        <ColorPicker.Root defaultFormat="HEX" currentColor={draft} onColorChange={setDraft}>
+                        <ColorPicker.Root defaultFormat="HEX" currentColor={draft} onColorChange={choose}>
                             <ColorPicker.Values />
                             <ColorPicker.Gradient />
                         </ColorPicker.Root>
