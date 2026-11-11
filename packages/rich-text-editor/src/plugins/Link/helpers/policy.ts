@@ -50,9 +50,13 @@ const hostMatches = (pattern: string, hostname: string): boolean => {
 const isRelative = (typed: string): boolean => !SCHEME_PREFIX.test(typed) && !typed.startsWith('//');
 
 const parseAbsolute = (typed: string): URL | null => {
-    try {
+    let address = typed;
+    if (typed.startsWith('//')) {
         // `//host/x` follows the scheme of the page, so it is judged as https.
-        return new URL(typed.startsWith('//') ? `${HTTPS}:${typed}` : typed);
+        address = `${HTTPS}:${typed}`;
+    }
+    try {
+        return new URL(address);
     } catch {
         return null;
     }

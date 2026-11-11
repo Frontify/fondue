@@ -624,7 +624,7 @@ export type RteBlockCommand = {
 export type HotkeyHandler = (api: EditorControlApi) => boolean | void;
 
 /**
- * Where pasted content was copied from: an editor, whose own markup pastes back as it was, or anywhere else.
+ * Where pasted content was copied from: an editor on the same engine (this one or another), whose markup pastes back as it was, or anywhere else.
  */
 export type PasteSource = 'editor' | 'elsewhere';
 

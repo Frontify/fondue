@@ -171,12 +171,20 @@ export const DestinationField = forwardRef<HTMLInputElement, DestinationFieldPro
     // A spread: the field's props do not list the combobox attributes, but pass them on to the input.
     let comboboxProps = {};
     if (search !== undefined) {
+        let controls: string | undefined;
+        let activeDescendant: string | undefined;
+        if (listOpen) {
+            controls = listId;
+            if (active !== undefined) {
+                activeDescendant = optionId(activeIndex);
+            }
+        }
         comboboxProps = {
             role: 'combobox',
             'aria-expanded': listOpen,
-            'aria-controls': listOpen ? listId : undefined,
+            'aria-controls': controls,
             'aria-autocomplete': 'list',
-            'aria-activedescendant': listOpen && active !== undefined ? optionId(activeIndex) : undefined,
+            'aria-activedescendant': activeDescendant,
         };
     }
 
