@@ -1,5 +1,18 @@
 # @frontify/fondue-rte
 
+## 0.2.0-beta.0
+
+### Minor Changes
+
+- [`23ccc7e`](https://github.com/Frontify/fondue/commit/23ccc7eb80a62ad7d1113b489a4de8ad4bea8478) Thanks [@noahwaldner](https://github.com/noahwaldner)! - Release the legacy rich text editor on the fondue v14 line, continuing from 0.1.15. It stays on 0.x; the v14 changes are breaking, so this is a minor bump.
+
+### Patch Changes
+
+- Updated dependencies [[`40df7a2`](https://github.com/Frontify/fondue/commit/40df7a2c25b4d2ec66e4bc2017c966fa277fda03), [`40df7a2`](https://github.com/Frontify/fondue/commit/40df7a2c25b4d2ec66e4bc2017c966fa277fda03), [`a59db73`](https://github.com/Frontify/fondue/commit/a59db7301cbb6d4dd9d62dcdad5bbd63542bc49b), [`d5df360`](https://github.com/Frontify/fondue/commit/d5df3600960affc56fbf662d807ef3a31578ce20), [`e610067`](https://github.com/Frontify/fondue/commit/e610067b4878e90f675aabb4a61333002bd99105), [`66a5800`](https://github.com/Frontify/fondue/commit/66a5800ac077b4bf23f943e845b68cec8b7a7c3a), [`a711a4d`](https://github.com/Frontify/fondue/commit/a711a4d48ceda578e757296dfbef6f0baea2ad40)]:
+  - @frontify/fondue-charts@10.0.0-beta.0
+  - @frontify/fondue-components@37.0.0-beta.0
+  - @frontify/fondue-icons@1.0.0-beta.1
+
 ## 1.0.0-beta.0
 
 ### Major Changes
