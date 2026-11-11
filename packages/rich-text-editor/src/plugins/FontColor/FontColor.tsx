@@ -5,7 +5,9 @@ import { defineMark, type RtePlugin } from '#/core';
 import { declaredStyle } from '../shared/helpers/declaredStyle';
 
 import { ColorFlyout } from './components/ColorFlyout';
-import { type FontColorValue, readStoredColor, toExportedColor, toStoredColor } from './helpers/colors';
+import { type FontColorValue, toExportedColor, toStoredColor } from './helpers/colors';
+
+const OPAQUE_BLACK = '#000000';
 
 /** The value this plugin sets on text nodes. */
 export type FontColorMark = {
@@ -25,7 +27,8 @@ export const fontColorPlugin = (): RtePlugin => ({
             inclusive: false,
             // A stored value that is no colour is left out rather than written into the style.
             toHtml: (value) => {
-                const color = readStoredColor((value as Partial<FontColorValue> | null)?.color);
+                // A stored document may hold anything here, so nothing about the value's shape is taken on trust.
+                const color = toStoredColor((value as Partial<FontColorValue> | null)?.color);
                 if (color === undefined) {
                     return { tag: 'span', attrs: {}, children: true };
                 }
@@ -42,7 +45,7 @@ export const fontColorPlugin = (): RtePlugin => ({
                         }
                         const color = toStoredColor(declared);
                         // Word processors write opaque black on every run; kept, it would pin text to black in a dark theme.
-                        if (color === undefined || color === '#000000') {
+                        if (color === undefined || color === OPAQUE_BLACK) {
                             return null;
                         }
                         return { color };

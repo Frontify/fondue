@@ -2,22 +2,24 @@
 
 import { Button, ColorPicker, Flyout } from '@frontify/fondue-components';
 import { IconDroplet } from '@frontify/fondue-icons';
-import { type ReactNode, useId, useRef, useState } from 'react';
+import { type ComponentProps, type ReactNode, useId, useRef, useState } from 'react';
 
 import { type EditorControlApi, type RteSelectionSnapshot } from '#/core';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
 import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
-import {
-    decodeStoredColor,
-    type FontColorValue,
-    parseCssColor,
-    readStoredColor,
-    type RgbaColor,
-    toCssColor,
-} from '../helpers/colors';
+import { decodeStoredColor, type FontColorValue, type Rgba, toCssColor, toStoredColor } from '../helpers/colors';
 
 import styles from './colorFlyout.module.scss';
+
+/** The picker's colour type, derived from the component because Fondue does not export it. */
+type PickerColor = NonNullable<ComponentProps<typeof ColorPicker.Root>['currentColor']>;
+
+/** The picker's colour with alpha filled in, since the picker leaves it out when opaque. */
+const toRgba = (color: PickerColor): Rgba => ({ ...color, alpha: color.alpha ?? 1 });
+
+/** What the picker's hex field takes: three or six digits; anything else is its error state, not a colour. */
+const HEX_FIELD_DIGITS = /^([\dA-Fa-f]{3}){1,2}$/;
 
 /** One-click colours. Fondue has no text palette, so these are our own, each at least 4.5:1 on white. */
 const PRESETS: readonly { name: string; color: string }[] = [
@@ -30,14 +32,16 @@ const PRESETS: readonly { name: string; color: string }[] = [
 ];
 
 /** The colour typed in the picker's hex field. The field reports only on blur, so Enter and Save read it directly. */
-const typedHex = (container: HTMLElement | null, alpha: number | undefined): RgbaColor | undefined => {
+const typedHex = (container: HTMLElement | null, alpha: number | undefined): PickerColor | undefined => {
     const typed = container?.querySelector<HTMLInputElement>('input[type="text"]')?.value.replace(/^#/, '');
-    // The field takes three or six digits; anything else is its error state, not a colour.
-    if (typed === undefined || !/^([\dA-Fa-f]{3}){1,2}$/.test(typed)) {
+    if (typed === undefined || !HEX_FIELD_DIGITS.test(typed)) {
         return undefined;
     }
-    const parsed = parseCssColor(`#${typed}`);
-    return parsed === undefined ? undefined : { ...parsed, alpha: alpha ?? 1 };
+    const stored = toStoredColor(`#${typed}`);
+    if (stored === undefined) {
+        return undefined;
+    }
+    return { ...decodeStoredColor(stored), alpha: alpha ?? 1 };
 };
 
 /**
@@ -55,8 +59,8 @@ export const ColorFlyout = ({
     const value = selection.marks.fontColor as Partial<FontColorValue> | undefined;
     // A stored value that is no colour shows none, and is still removable.
     const hasColor = 'fontColor' in selection.marks;
-    const currentCss = readStoredColor(value?.color);
-    let current: RgbaColor | undefined;
+    const currentCss = toStoredColor(value?.color);
+    let current: PickerColor | undefined;
     if (currentCss !== undefined) {
         current = decodeStoredColor(currentCss);
     }
@@ -69,7 +73,7 @@ export const ColorFlyout = ({
         }
     }
     const [open, setOpen] = useState(false);
-    const [draft, setDraft] = useState<RgbaColor | undefined>(undefined);
+    const [draft, setDraft] = useState<PickerColor | undefined>(undefined);
     const titleId = useId();
     const pickerRef = useRef<HTMLDivElement | null>(null);
     // What the picker showed when it opened, so Save without a choice changes nothing.
@@ -82,11 +86,11 @@ export const ColorFlyout = ({
         setOpen(false);
     };
 
-    const apply = (color: RgbaColor | undefined): void => {
+    const apply = (color: PickerColor | undefined): void => {
         if (color === undefined) {
             api.marks.toggle('fontColor');
         } else {
-            api.marks.set('fontColor', { color: toCssColor(color) });
+            api.marks.set('fontColor', { color: toCssColor(toRgba(color)) });
         }
         close();
     };
@@ -95,7 +99,7 @@ export const ColorFlyout = ({
         const picked = typedHex(pickerRef.current, draft?.alpha) ?? draft;
         // Nothing picked or typed: an unreadable colour would otherwise be
         // overwritten with whatever the picker fell back to showing.
-        if (picked === undefined || toCssColor(picked) === openedWithRef.current) {
+        if (picked === undefined || toCssColor(toRgba(picked)) === openedWithRef.current) {
             close();
             return;
         }
@@ -140,7 +144,7 @@ export const ColorFlyout = ({
                 onOpenAutoFocus={(event) => {
                     event.preventDefault();
                     const shown = typedHex(pickerRef.current, current?.alpha);
-                    openedWithRef.current = shown === undefined ? undefined : toCssColor(shown);
+                    openedWithRef.current = shown === undefined ? undefined : toCssColor(toRgba(shown));
                     pickerRef.current?.querySelector<HTMLInputElement>('input[type="text"]')?.focus();
                 }}
             >
@@ -157,7 +161,7 @@ export const ColorFlyout = ({
                                 title={name}
                                 className={styles.preset}
                                 style={{ background: color }}
-                                onClick={() => apply(parseCssColor(color))}
+                                onClick={() => apply(decodeStoredColor(color))}
                             />
                         ))}
                     </div>

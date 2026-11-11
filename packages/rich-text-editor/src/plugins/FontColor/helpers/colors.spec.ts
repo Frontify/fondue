@@ -2,11 +2,11 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { parseCssColor, readStoredColor, toCssColor, toExportedColor, toStoredColor } from './colors';
+import { decodeStoredColor, toCssColor, toExportedColor, toStoredColor } from './colors';
 
 describe('toStoredColor', () => {
     it('stores a named colour, a hex value, or one colour function of plain numbers as lowercase hex', () => {
-        for (const [css, stored] of [
+        const cases: [string, string][] = [
             ['red', '#ff0000'],
             ['RebeccaPurple', '#663399'],
             [' DarkSlateGrey ', '#2f4f4f'],
@@ -40,8 +40,9 @@ describe('toStoredColor', () => {
             ['hsl(0, 150%, 25%)', '#800000'],
             ['hsl(0, -10%, 50%)', '#808080'],
             ['hsl(480, 100%, 25%)', '#008000'],
-        ]) {
-            expect(toStoredColor(css as string)).toBe(stored);
+        ];
+        for (const [css, stored] of cases) {
+            expect(toStoredColor(css)).toBe(stored);
         }
     });
 
@@ -100,7 +101,7 @@ describe('toStoredColor', () => {
     });
 });
 
-describe('readStoredColor', () => {
+describe('toStoredColor on stored values', () => {
     it('reads a stored value written in another CSS form, such as the legacy editor wrote, as hex', () => {
         for (const [value, stored] of [
             ['#aabbcc', '#aabbcc'],
@@ -110,13 +111,13 @@ describe('readStoredColor', () => {
             ['rgb(0 0 255)', '#0000ff'],
             ['rgba(255, 20, 73, 0.5)', '#ff144980'],
         ]) {
-            expect(readStoredColor(value)).toBe(stored);
+            expect(toStoredColor(value)).toBe(stored);
         }
     });
 
     it('reads anything else as no colour', () => {
         for (const value of ['#aabbcc; x', 'x;y#aabbcc', '#aabbcc8', 'banana', undefined, null, 1, {}]) {
-            expect(readStoredColor(value)).toBeUndefined();
+            expect(toStoredColor(value)).toBeUndefined();
         }
     });
 });
@@ -129,10 +130,8 @@ describe('the picker colour', () => {
     });
 
     it('reads back from the stored hex', () => {
-        expect(parseCssColor('#ff000080')).toEqual({ red: 255, green: 0, blue: 0, alpha: 0.5 });
-        expect(parseCssColor('red')).toEqual({ red: 255, green: 0, blue: 0, alpha: 1 });
-        expect(parseCssColor('banana')).toBeUndefined();
-        expect(parseCssColor(undefined)).toBeUndefined();
+        expect(decodeStoredColor('#ff000080')).toEqual({ red: 255, green: 0, blue: 0, alpha: 0.5 });
+        expect(decodeStoredColor('#ff0000')).toEqual({ red: 255, green: 0, blue: 0, alpha: 1 });
     });
 });
 
