@@ -35,21 +35,34 @@ const describeCopy = (state: CopyState): string => {
     }
 };
 
+const writeToClipboard = (text: string): Promise<void> => navigator.clipboard.writeText(text);
+
+/**
+ * Mod is Command on Apple platforms and Control elsewhere.
+ */
+const isModClick = (event: Pick<MouseEvent, 'metaKey' | 'ctrlKey'>, apple: boolean): boolean => {
+    if (apple) {
+        return event.metaKey;
+    }
+    return event.ctrlKey;
+};
+
 type CopyLinkProps = {
     href: string;
+    writeText: (text: string) => Promise<void>;
 };
 
 /**
  * Copies the target and says whether it worked, in a live region that is always in the panel.
  */
-const CopyLink = ({ href }: CopyLinkProps): ReactNode => {
+const CopyLink = ({ href, writeText }: CopyLinkProps): ReactNode => {
     const [copyState, setCopyState] = useState<CopyState>('idle');
     const copy = (): void => {
         // Reset first, so the same outcome twice is announced twice.
         setCopyState('idle');
         // Inside a promise: a browser without the clipboard API throws before any promise exists.
         Promise.resolve()
-            .then(() => navigator.clipboard.writeText(href))
+            .then(() => writeText(href))
             .then(() => setCopyState('copied'))
             .catch(() => setCopyState('failed'));
     };
@@ -181,11 +194,7 @@ export const LinkEditor = ({
                     // A click places the caret; it must neither follow the link nor toggle the flyout. Mod+click opens it.
                     onClick={(event) => {
                         event.preventDefault();
-                        let modified = event.ctrlKey;
-                        if (isApple()) {
-                            modified = event.metaKey;
-                        }
-                        if (modified && href !== undefined) {
+                        if (isModClick(event, isApple()) && href !== undefined) {
                             window.open(href, NEW_TAB_TARGET, NEW_TAB_WINDOW_FEATURES);
                         }
                     }}
@@ -236,7 +245,7 @@ export const LinkEditor = ({
                                 {value.href}
                                 <span className={styles.visuallyHidden}>{NEW_TAB_NOTE}</span>
                             </a>
-                            {href !== undefined && <CopyLink href={href} />}
+                            {href !== undefined && <CopyLink href={href} writeText={writeToClipboard} />}
                             <Button size="small" emphasis="weak" onPress={() => setOpen(true)}>
                                 Edit
                             </Button>

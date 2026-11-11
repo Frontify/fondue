@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TextInput } from '@frontify/fondue-components';
-import { type KeyboardEvent, type ReactNode, type Ref, useEffect, useId, useState } from 'react';
+import { forwardRef, type KeyboardEvent, type ReactNode, useEffect, useId, useState } from 'react';
 
 import { isCompositionKey } from '../../shared/helpers/keys';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
@@ -41,11 +41,10 @@ const describeStatus = (search: DestinationSearch): string => {
 
 type DestinationFieldProps = {
     id: string;
-    inputRef: Ref<HTMLInputElement>;
     value: string;
     status: 'neutral' | 'error';
     /**
-     * The message shown under the field while `status` is an error.
+     * The id of the message shown under the field while `status` is an error.
      */
     errorId: string;
     /**
@@ -67,18 +66,10 @@ type DestinationFieldProps = {
  * option is active until an arrow key makes one, so Enter on a typed address
  * still saves it rather than picking the first result.
  */
-export const DestinationField = ({
-    id,
+export const DestinationField = forwardRef<HTMLInputElement, DestinationFieldProps>(function DestinationField(
+    { id, value, status, errorId, search, policy, onChange, onPick, onEnter },
     inputRef,
-    value,
-    status,
-    errorId,
-    search,
-    policy,
-    onChange,
-    onPick,
-    onEnter,
-}: DestinationFieldProps): ReactNode => {
+): ReactNode {
     const listId = useId();
     // An unedited stored value is not searched until the author types or presses an arrow key.
     const [dormant, setDormant] = useState(true);
@@ -223,4 +214,4 @@ export const DestinationField = ({
             )}
         </>
     );
-};
+});

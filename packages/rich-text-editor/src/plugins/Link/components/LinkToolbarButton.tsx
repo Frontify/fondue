@@ -12,8 +12,28 @@ import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
 import { type LinkSearch } from '../helpers/destination';
 import { registerNewLinkForm } from '../helpers/newLinkForms';
 import { type LinkPolicy } from '../helpers/policy';
+import { type LinkValue } from '../helpers/value';
 
 import { LinkTargetForm } from './LinkTargetForm';
+
+type NewLinkAction = { kind: 'toggle'; value: LinkValue } | { kind: 'insert'; text: string; value: LinkValue };
+
+type NewLinkActionOptions = {
+    selection: ToolbarItemProps['selection'];
+    value: LinkValue;
+    text: string;
+};
+
+const decideNewLinkAction = ({ selection, value, text }: NewLinkActionOptions): NewLinkAction => {
+    if (text === selection.text && !selection.isCollapsed) {
+        // Formatting inside the selection survives.
+        return { kind: 'toggle', value };
+    }
+    if (text === '') {
+        return { kind: 'insert', text: value.href, value };
+    }
+    return { kind: 'insert', text, value };
+};
 
 type LinkToolbarButtonProps = ToolbarItemProps & { policy: LinkPolicy; search?: LinkSearch };
 
@@ -82,15 +102,14 @@ export const LinkToolbarButton = ({
                         policy={policy}
                         search={search}
                         onSave={(value, text) => {
-                            if (text === selection.text && !selection.isCollapsed) {
-                                // Formatting inside the selection survives.
-                                toggle(value);
-                            } else {
-                                let shown = text;
-                                if (text === '') {
-                                    shown = value.href;
-                                }
-                                api.insertText(shown, { link: value });
+                            const action = decideNewLinkAction({ selection, value, text });
+                            switch (action.kind) {
+                                case 'toggle':
+                                    toggle(action.value);
+                                    break;
+                                case 'insert':
+                                    api.insertText(action.text, { link: action.value });
+                                    break;
                             }
                             finish();
                         }}
