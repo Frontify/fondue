@@ -59,6 +59,7 @@ export const emojiPlugin = (options: EmojiPluginOptions = {}): RtePlugin => {
                 },
             }),
         },
+        toolbarGroup: 'insert',
         toolbarItem: ({ api }) => <EmojiToolbarButton api={api} emojis={emojis} />,
         hotkeys: {
             // Inserts an empty draft that `render.edit` takes over. The editor

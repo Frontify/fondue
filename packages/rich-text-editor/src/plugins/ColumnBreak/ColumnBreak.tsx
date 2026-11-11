@@ -42,9 +42,10 @@ export const columnBreakPlugin = ({ columns = 2, gap = 'normal' }: ColumnBreakPl
         }),
     },
     // Toggling a void block inserts it.
+    toolbarGroup: 'insert',
     toolbarItem: ({ toggle }) => (
         <ToolbarButton title="Column break" onClick={() => toggle()}>
-            <IconTextColumnBreak size={16} />
+            <IconTextColumnBreak size={20} />
         </ToolbarButton>
     ),
     commands: [

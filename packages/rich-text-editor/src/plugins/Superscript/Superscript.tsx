@@ -23,9 +23,10 @@ export const superscriptPlugin = (): RtePlugin => ({
             parse: [{ tag: 'sup' }],
         }),
     },
+    toolbarGroup: 'marks',
     toolbarItem: ({ isActive, toggle }) => (
         <ToolbarButton title="Superscript" shortcut={HOTKEY} active={isActive} onClick={() => toggle()}>
-            <IconSuperscript size={16} />
+            <IconSuperscript size={20} />
         </ToolbarButton>
     ),
     hotkeys: { [HOTKEY]: (api) => api.marks.toggle('superscript') },

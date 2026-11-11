@@ -38,14 +38,14 @@
         "build:storybook": "storybook build",
         "format": "oxfmt",
         "format:check": "oxfmt --check",
-        "install:playwright": "playwright install --with-deps chromium",
+        "install:playwright": "playwright install --with-deps",
         "lint": "oxlint",
         "lint:fix": "oxlint --fix",
         "storybook": "storybook dev -p 6012",
         "test": "vitest run",
         "test:watch": "vitest",
         "test:components": "playwright test --ui",
-        "test:components:ci": "playwright test",
+        "test:components:ci": "playwright test --project=chromium --project=webkit",
         "typecheck": "tsgo --noEmit && tsgo --noEmit -p tsconfig.node.json"
     },
     "peerDependencies": {
@@ -58,12 +58,14 @@
     "dependencies": {
         "@radix-ui/react-popover": "^1.3.1",
         "prosemirror-commands": "^1.7.2",
+        "prosemirror-dropcursor": "^1.8.4",
         "prosemirror-history": "^1.5.1",
         "prosemirror-inputrules": "^1.5.1",
         "prosemirror-keymap": "^1.2.3",
         "prosemirror-model": "^1.25.12",
         "prosemirror-schema-list": "^1.5.1",
         "prosemirror-state": "^1.4.4",
+        "prosemirror-transform": "^1.12.2",
         "prosemirror-view": "^1.42.8"
     },
     "devDependencies": {

@@ -27,9 +27,10 @@ export const codePlugin = (): RtePlugin => ({
             parse: [{ tag: 'code' }],
         }),
     },
+    toolbarGroup: 'marks',
     toolbarItem: ({ isActive, toggle }) => (
         <ToolbarButton title="Code" shortcut={HOTKEY} active={isActive} onClick={() => toggle()}>
-            <IconCode size={16} />
+            <IconCode size={20} />
         </ToolbarButton>
     ),
     hotkeys: { [HOTKEY]: (api) => api.marks.toggle('code') },
