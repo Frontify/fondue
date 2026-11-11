@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactNode } from 'react';
+import { type ComponentType, type ReactNode } from 'react';
 
-import { defineContent, defineMark, definePlugin, type HotkeyHandler, type HtmlAttributes } from '#/core';
+import { defineContent, defineMark, definePlugin, type HotkeyHandler } from '#/core';
 
 import { isLinkablePaste, LINKABLE_ADDRESS, toHref } from '../shared/helpers/href';
 
@@ -37,7 +37,7 @@ const NEW_TAB_NOTE_SELECTOR = `span[${NEW_TAB_NOTE_ATTRIBUTE}]`;
 /**
  * A stored link as the reader and the export draw it: without its target when the policy refuses it.
  */
-type DrawnLink = { kind: 'refused' } | { kind: 'allowed'; href: string; openInNewTab: boolean };
+type DrawnLink = { kind: 'refused' } | { kind: 'sameTab'; href: string } | { kind: 'newTab'; href: string };
 
 const drawnLink = (policy: LinkPolicy, value: unknown): DrawnLink => {
     // A stored document may hold anything here (`{}`, `true`), so its shape is not taken on trust.
@@ -50,18 +50,29 @@ const drawnLink = (policy: LinkPolicy, value: unknown): DrawnLink => {
     if (!allowsHref(policy, href)) {
         return { kind: 'refused' };
     }
-    return { kind: 'allowed', href, openInNewTab: link?.openInNewTab === true };
+    if (link?.openInNewTab === true) {
+        return { kind: 'newTab', href };
+    }
+    return { kind: 'sameTab', href };
 };
 
-const linkAttrs = (drawn: DrawnLink): HtmlAttributes => {
+/**
+ * The anchor attributes the reader and the export share; each adds its own class attribute.
+ */
+type LinkAnchorAttrs = {
+    href?: string;
+    target?: string;
+    rel?: string;
+};
+
+const anchorAttrs = (drawn: DrawnLink): LinkAnchorAttrs => {
     switch (drawn.kind) {
         case 'refused':
-            return { class: styles.link };
-        case 'allowed':
-            if (drawn.openInNewTab) {
-                return { href: drawn.href, target: NEW_TAB_TARGET, rel: NEW_TAB_REL, class: styles.link };
-            }
-            return { href: drawn.href, class: styles.link };
+            return {};
+        case 'sameTab':
+            return { href: drawn.href };
+        case 'newTab':
+            return { href: drawn.href, target: NEW_TAB_TARGET, rel: NEW_TAB_REL };
     }
 };
 
@@ -70,6 +81,23 @@ const linkAttrs = (drawn: DrawnLink): HtmlAttributes => {
  */
 const NEW_TAB_NOTE_MARKER = { [NEW_TAB_NOTE_ATTRIBUTE]: '' };
 
+/**
+ * The note only a screen reader hears, on a link that opens a new tab. Same wording as the editing panel.
+ */
+const newTabNote = (drawn: DrawnLink): ReactNode => {
+    switch (drawn.kind) {
+        case 'refused':
+        case 'sameTab':
+            return null;
+        case 'newTab':
+            return (
+                <span className={styles.visuallyHidden} {...NEW_TAB_NOTE_MARKER}>
+                    {NEW_TAB_NOTE}
+                </span>
+            );
+    }
+};
+
 type LinkReaderProps = {
     value: LinkValue;
     children: ReactNode;
@@ -77,32 +105,39 @@ type LinkReaderProps = {
 };
 
 /**
- * A link in the reader: the export's markup, and on a link that opens a new tab a note only a screen reader hears.
+ * A link in the reader: the export's markup, plus the new-tab note.
  */
 const LinkReader = ({ value, children, policy }: LinkReaderProps): ReactNode => {
     const drawn = drawnLink(policy, value);
-    switch (drawn.kind) {
-        case 'refused':
-            // oxlint-disable-next-line jsx-a11y/anchor-is-valid -- a refused link keeps its anchor without a target, as the export writes it, so it is not a link at all.
-            return <a className={styles.link}>{children}</a>;
-        case 'allowed':
-            if (drawn.openInNewTab) {
-                return (
-                    <a href={drawn.href} target={NEW_TAB_TARGET} rel={NEW_TAB_REL} className={styles.link}>
-                        {children}
-                        {/* Same wording as the editing panel. */}
-                        <span className={styles.visuallyHidden} {...NEW_TAB_NOTE_MARKER}>
-                            {NEW_TAB_NOTE}
-                        </span>
-                    </a>
-                );
-            }
-            return (
-                <a href={drawn.href} className={styles.link}>
-                    {children}
-                </a>
-            );
+    return (
+        // A refused link keeps its anchor without a target, as the export writes it.
+        <a {...anchorAttrs(drawn)} className={styles.link}>
+            {children}
+            {newTabNote(drawn)}
+        </a>
+    );
+};
+
+/**
+ * What the renderer hands a mark's reader component.
+ */
+type BoundLinkReaderProps = Omit<LinkReaderProps, 'policy'>;
+
+/**
+ * One reader component per policy value, so a renderer handed a new `linkPlugin()` on every render keeps its links
+ * mounted (and focused) rather than seeing a new component each time.
+ */
+const readers = new Map<string, ComponentType<BoundLinkReaderProps>>();
+
+const readerFor = (policy: LinkPolicy): ComponentType<BoundLinkReaderProps> => {
+    const key = JSON.stringify([policy.allowedSchemes ?? null, policy.allowedHosts ?? null]);
+    const known = readers.get(key);
+    if (known !== undefined) {
+        return known;
     }
+    const reader = (props: BoundLinkReaderProps): ReactNode => <LinkReader {...props} policy={policy} />;
+    readers.set(key, reader);
+    return reader;
 };
 
 /**
@@ -129,11 +164,13 @@ export const linkContent = (policy: LinkPolicy = {}) =>
                 /**
                  * The link in the export and on the clipboard, with no text of its own, so pasting it adds none
                  */
-                toHtml: (value) => ({ tag: 'a', attrs: linkAttrs(drawnLink(policy, value)), children: true }),
+                toHtml: (value) => ({
+                    tag: 'a',
+                    attrs: { ...anchorAttrs(drawnLink(policy, value)), class: styles.link },
+                    children: true,
+                }),
 
-                render: {
-                    component: (props) => <LinkReader {...props} policy={policy} />,
-                },
+                render: { component: readerFor(policy) },
 
                 parse: [
                     // The hidden note the reader adds is not text of the link, when the reader is copied back in.

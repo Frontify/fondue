@@ -289,6 +289,17 @@ describe('pasting over selected text with the link plugin', () => {
         expect(editor.stored()).toEqual([paragraph(text('ab'))]);
     });
 
+    it('is its own undo step even right after typing', () => {
+        const editor = editorWith(shipped('link'), [paragraph()]);
+        editor.type('ab');
+
+        editor.paste('https://example.com');
+        undo(editor.view.state, editor.view.dispatch);
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual([paragraph(text('ab'))]);
+    });
+
     it('does not link a javascript: address', () => {
         const editor = editorWith(shipped('link'), [paragraph(text('frontify'))]);
         editor.select('frontify');

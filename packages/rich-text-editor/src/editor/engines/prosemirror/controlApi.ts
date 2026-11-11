@@ -427,7 +427,8 @@ export const createControlApi = (
             case 'together':
                 break;
             case 'marksFirst':
-                view.dispatch(transaction);
+                // Closed on both sides: the text is a step of its own, and the marks one after it.
+                view.dispatch(closeHistory(transaction));
                 transaction = closeHistory(view.state.tr);
                 break;
         }

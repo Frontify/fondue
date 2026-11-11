@@ -75,7 +75,7 @@ describe('the link target form', () => {
 
         save();
 
-        expect(alert()).toBe('Enter a link to frontify.com or its subdomains.');
+        expect(alert()).toBe('Enter a link to frontify.com (or a subdomain).');
         expect(window.document.activeElement).toBe(field);
         expect(onSave).not.toHaveBeenCalled();
     });

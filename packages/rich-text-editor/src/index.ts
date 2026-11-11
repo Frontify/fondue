@@ -83,8 +83,9 @@ export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlock>(
     });
 
 /**
- * The document as an HTML string: the reading markup, what `RichTextRenderer`
- * draws, as static HTML. No React or browser needed. Uses `defaultContent` when given no
+ * The document as an HTML string: the reading markup `RichTextRenderer` draws,
+ * as static HTML, without its screen-reader-only text (a link's new-tab note), so
+ * the HTML shows nothing extra where the stylesheet is missing. No React or browser needed. Uses `defaultContent` when given no
  * `plugins`; `wrap: false` leaves out the root element. Style it with this
  * package's stylesheet (emails need the styles inlined).
  * @example

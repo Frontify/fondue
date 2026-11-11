@@ -101,7 +101,7 @@ const describeHosts = (hosts: readonly string[]): string => {
     const lowered = hosts.map((host) => host.toLowerCase());
     const phrases = lowered.flatMap((host) => {
         if (host.startsWith(SUBDOMAIN_WILDCARD)) {
-            return [`${host.slice(SUBDOMAIN_WILDCARD.length)} or its subdomains`];
+            return [`${host.slice(SUBDOMAIN_WILDCARD.length)} (or a subdomain)`];
         }
         // The wildcard's phrase names this host already.
         if (lowered.includes(`${SUBDOMAIN_WILDCARD}${host}`)) {

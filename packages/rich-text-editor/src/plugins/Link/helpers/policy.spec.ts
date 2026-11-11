@@ -76,14 +76,17 @@ describe('allowsHref', () => {
 describe('describeAllowed', () => {
     it('names the hosts', () => {
         expect(describeAllowed({ allowedHosts: ['frontify.com', '*.frontify.com'] })).toBe(
-            'Enter a link to frontify.com or its subdomains.',
+            'Enter a link to frontify.com (or a subdomain).',
         );
         expect(describeAllowed({ allowedHosts: ['frontify.com'] })).toBe('Enter a link to frontify.com.');
         expect(describeAllowed({ allowedHosts: [] })).toBe('Enter a link within this site.');
         expect(describeAllowed({ allowedHosts: ['*.frontify.com'] })).toBe(
-            'Enter a link to frontify.com or its subdomains.',
+            'Enter a link to frontify.com (or a subdomain).',
         );
         expect(describeAllowed({ allowedHosts: ['a.com', 'b.com'] })).toBe('Enter a link to a.com or b.com.');
+        expect(describeAllowed({ allowedHosts: ['*.frontify.com', 'b.com'] })).toBe(
+            'Enter a link to frontify.com (or a subdomain) or b.com.',
+        );
     });
 
     it('names the schemes', () => {

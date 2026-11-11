@@ -309,6 +309,21 @@ describe('a link in a reading view and in export', () => {
         expect(sameTab?.querySelector('span')).toBeNull();
     });
 
+    it('keeps a focused link in the reading view focused when its parent renders again with a new link plugin', () => {
+        const doc = paragraph([{ text: 'docs', link: { href: 'https://example.com', openInNewTab: true } }]);
+        const container = window.document.createElement('div');
+        window.document.body.append(container);
+        const root = createRoot(container);
+        act(() => root.render(<RichTextRenderer value={doc} plugins={[linkPlugin()]} />));
+        container.querySelector('a')?.focus();
+
+        act(() => root.render(<RichTextRenderer value={doc} plugins={[linkPlugin()]} />));
+
+        expect(window.document.activeElement).toBe(container.querySelector('a'));
+        act(() => root.unmount());
+        container.remove();
+    });
+
     it('exports a link that opens a new tab with its target and rel, and no text of its own', () => {
         const doc = paragraph([{ text: 'new', link: { href: 'https://example.com', openInNewTab: true } }]);
 
