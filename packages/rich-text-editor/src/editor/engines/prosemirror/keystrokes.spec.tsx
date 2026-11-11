@@ -2,7 +2,7 @@
 
 // @vitest-environment happy-dom
 
-import { TextSelection } from 'prosemirror-state';
+import { NodeSelection, TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { act, createElement } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -10,6 +10,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
     buildPluginRegistry,
+    defineBlock,
     defineContent,
     defineInline,
     definePlugin,
@@ -696,6 +697,16 @@ const undoAllByKeyboard = (view: EditorView): number => {
 /** The `keyCode` is what the keymap reads to match a shifted letter. */
 const modShift = (keyCode: number): KeyboardEventInit => ({ ...mod, shiftKey: true, keyCode });
 
+/** A void block that declares no `align`, which the shipped blocks cannot stand in for. */
+const dividerPlugin = definePlugin({
+    id: 'divider',
+    content: defineContent({
+        blocks: {
+            divider: defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [{ tag: 'hr' }] }),
+        },
+    }),
+});
+
 describe('the alignment shortcuts', () => {
     const plain = (): RteBlockNode[] => [paragraph(text('one')), paragraph(text('two'))];
 
@@ -737,6 +748,21 @@ describe('the alignment shortcuts', () => {
         expect(announce).toHaveBeenLastCalledWith('Centered');
         press(editor.view, 'E', modShift(69));
         expect(announce).toHaveBeenLastCalledWith('Alignment cleared');
+    });
+
+    it('announces and changes nothing when no selected block can be aligned', () => {
+        const announce = vi.fn<(message: string) => void>();
+        const editor = editorWith(
+            [...defaultPlugins, dividerPlugin],
+            [paragraph(text('a')), { type: 'divider' }, paragraph(text('b'))],
+            { announce },
+        );
+        editor.view.dispatch(editor.view.state.tr.setSelection(NodeSelection.create(editor.view.state.doc, 3)));
+
+        press(editor.view, 'E', modShift(69));
+
+        expect(announce).not.toHaveBeenCalled();
+        expect(editor.onDocChange).not.toHaveBeenCalled();
     });
 
     it('aligns every block a range touches', () => {

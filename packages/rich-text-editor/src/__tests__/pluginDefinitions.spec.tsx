@@ -277,6 +277,10 @@ describe('blurOnBreakPlugin', () => {
     it('says nothing about submitting when there is no onBreak', () => {
         expect(blurOnBreakPlugin().description).toBeUndefined();
     });
+
+    it('says nothing about a required field when there is no onBreak to submit to', () => {
+        expect(blurOnBreakPlugin({ required: true }).description).toBeUndefined();
+    });
 });
 
 describe('the list plugins', () => {

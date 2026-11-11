@@ -4,7 +4,7 @@
 
 import { undo } from 'prosemirror-history';
 import { NodeSelection, TextSelection } from 'prosemirror-state';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
     defineBlock,
@@ -50,6 +50,8 @@ const dividerPlugin: RtePlugin = definePlugin({
 const plugins: RtePlugin[] = [...defaultPlugins, dividerPlugin, tagPlugin];
 
 const LINK = { href: 'https://example.com' };
+
+const FROZEN_TIME = new Date('2026-01-01T00:00:00Z');
 
 afterEach(destroyEditors);
 
@@ -419,6 +421,16 @@ describe('marks.removeAll', () => {
         expect(formatted.api.marks.removeAll()).toBe(true);
         expect(plain.api.marks.removeAll()).toBe(false);
         expect(carrying.api.marks.removeAll()).toBe(true);
+        expect(linkOnly.api.marks.removeAll({ except: ['link'] })).toBe(false);
+    });
+
+    it('returns whether it removed a mark from the text over a range', () => {
+        const formatted = editorWith(plugins, [paragraph(text('bold', { bold: true }), text(' end'))]);
+        formatted.selectBetween('bold', 'end');
+        const linkOnly = editorWith(plugins, [paragraph(text('link', { link: LINK }), text(' end'))]);
+        linkOnly.selectBetween('link', 'end');
+
+        expect(formatted.api.marks.removeAll()).toBe(true);
         expect(linkOnly.api.marks.removeAll({ except: ['link'] })).toBe(false);
     });
 
@@ -1007,7 +1019,7 @@ describe('group', () => {
         expect(editor.stored()).toEqual(original);
     });
 
-    it('starts its step apart from the edit before it, and ends it when it returns', () => {
+    it('keeps a mark toggle before it and one after it as their own steps', () => {
         const editor = editorWith(plugins, original);
         editor.select('one');
         editor.api.marks.toggle('bold');
@@ -1024,33 +1036,44 @@ describe('group', () => {
         expect(undoAll(editor)).toBe(3);
     });
 
-    // Mark steps change no range, so history never sees them as adjacent: these groups insert text.
-    it('keeps the typing right before it as its own step', () => {
-        const editor = editorWith(plugins, [paragraph(text('one'))]);
-        editor.caretAfter('one');
-        editor.type('x');
-
-        editor.api.group(() => {
-            editor.api.insertText('y');
-            editor.api.insertText('z');
+    describe('around typing', () => {
+        // History merges typing closer together than its group delay, so the clock is frozen: only closeHistory can separate the steps.
+        beforeEach(() => {
+            vi.useFakeTimers({ toFake: ['Date'] });
+            vi.setSystemTime(FROZEN_TIME);
         });
-        undo(editor.view.state, editor.view.dispatch);
-
-        expect(editor.stored()).toEqual([paragraph(text('onex'))]);
-    });
-
-    it('keeps the typing right after it as its own step', () => {
-        const editor = editorWith(plugins, [paragraph(text('one'))]);
-        editor.caretAfter('one');
-
-        editor.api.group(() => {
-            editor.api.insertText('y');
-            editor.api.marks.toggle('bold');
+        afterEach(() => {
+            vi.useRealTimers();
         });
-        editor.type('x');
-        undo(editor.view.state, editor.view.dispatch);
 
-        expect(editor.stored()).toEqual([paragraph(text('oney'))]);
+        // Mark steps change no range, so history never sees them as adjacent: these groups insert text.
+        it('keeps the typing right before it as its own step', () => {
+            const editor = editorWith(plugins, [paragraph(text('one'))]);
+            editor.caretAfter('one');
+            editor.type('x');
+
+            editor.api.group(() => {
+                editor.api.insertText('y');
+                editor.api.insertText('z');
+            });
+            undo(editor.view.state, editor.view.dispatch);
+
+            expect(editor.stored()).toEqual([paragraph(text('onex'))]);
+        });
+
+        it('keeps the typing right after it as its own step', () => {
+            const editor = editorWith(plugins, [paragraph(text('one'))]);
+            editor.caretAfter('one');
+
+            editor.api.group(() => {
+                editor.api.insertText('y');
+                editor.api.marks.toggle('bold');
+            });
+            editor.type('x');
+            undo(editor.view.state, editor.view.dispatch);
+
+            expect(editor.stored()).toEqual([paragraph(text('oney'))]);
+        });
     });
 
     it('stops grouping when the commands it runs throw', () => {

@@ -641,6 +641,8 @@ describe('the editable element', () => {
             }
             return status;
         };
+        // Past the five seconds a message stays, so a leftover timer would have fired by then.
+        const CLEAR_WAIT_MS = 6000;
         // Not an Alt key: happy-dom reports any Alt as AltGraph, which the editor leaves to text entry.
         const announce = (container: HTMLElement): void =>
             press(editableIn(container), 'a', { ...mod, shiftKey: true });
@@ -732,6 +734,98 @@ describe('the editable element', () => {
                 vi.advanceTimersByTime(1000);
             });
             expect(statusIn(container).textContent).toBe('');
+        });
+
+        it('cancels a pending frame when the editor unmounts, with no update after it', () => {
+            vi.useFakeTimers();
+            teardown.push(() => vi.useRealTimers());
+            const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+            teardown.push(() => error.mockRestore());
+            const { container, ready, rerender } = mount(() => <RichTextEditor plugins={[announcer]} />);
+            ready();
+            announce(container);
+            expect(vi.getTimerCount()).toBeGreaterThan(0);
+
+            rerender(null);
+            act(() => {
+                vi.advanceTimersByTime(CLEAR_WAIT_MS);
+            });
+
+            expect(vi.getTimerCount()).toBe(0);
+            expect(error).not.toHaveBeenCalled();
+        });
+
+        it('cancels the pending clear when the editor unmounts after the message was said', () => {
+            vi.useFakeTimers();
+            teardown.push(() => vi.useRealTimers());
+            const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+            teardown.push(() => error.mockRestore());
+            const { container, ready, rerender } = mount(() => <RichTextEditor plugins={[announcer]} />);
+            ready();
+            announce(container);
+            act(() => {
+                vi.advanceTimersByTime(100);
+            });
+            expect(statusIn(container).textContent).toBe('Saved');
+            expect(vi.getTimerCount()).toBeGreaterThan(0);
+
+            rerender(null);
+            act(() => {
+                vi.advanceTimersByTime(CLEAR_WAIT_MS);
+            });
+
+            expect(vi.getTimerCount()).toBe(0);
+            expect(error).not.toHaveBeenCalled();
+        });
+
+        it('says only the last of two messages announced before a frame', () => {
+            vi.useFakeTimers();
+            teardown.push(() => vi.useRealTimers());
+            const first = definePlugin({
+                id: 'two-announcers',
+                hotkeys: {
+                    'Mod-Shift-a': (api) => {
+                        api.announce('First');
+                        api.announce('Second');
+                    },
+                },
+            });
+            const { container, ready } = mount(() => <RichTextEditor plugins={[first]} />);
+            ready();
+
+            announce(container);
+            act(() => {
+                vi.advanceTimersByTime(100);
+            });
+
+            expect(statusIn(container).textContent).toBe('Second');
+        });
+
+        it('adds no no-break space to a message that differs from the one before', () => {
+            vi.useFakeTimers();
+            teardown.push(() => vi.useRealTimers());
+            const messages = ['Saved', 'Deleted'];
+            const varying = definePlugin({
+                id: 'varying-announcer',
+                hotkeys: {
+                    'Mod-Shift-a': (api) => {
+                        api.announce(messages.shift() ?? '');
+                    },
+                },
+            });
+            const { container, ready } = mount(() => <RichTextEditor plugins={[varying]} />);
+            ready();
+            announce(container);
+            act(() => {
+                vi.advanceTimersByTime(100);
+            });
+
+            announce(container);
+            act(() => {
+                vi.advanceTimersByTime(100);
+            });
+
+            expect(statusIn(container).textContent).toBe('Deleted');
         });
 
         it('has one live region per editor', () => {
