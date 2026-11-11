@@ -8,11 +8,12 @@ import {
     PARAGRAPH,
     type RteBlockCommand,
     type RteContent,
+    type RteIcon,
     type RtePlugin,
     type ToolbarItemProps,
 } from '#/core';
 
-import { headingLevelIcon } from './components/HeadingLevelIcon';
+import { HEADING_LEVEL_ICONS } from './components/HeadingLevelIcon';
 import { TextStyleSelect } from './components/TextStyleSelect';
 import {
     ALL_TEXT_STYLES,
@@ -105,10 +106,14 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
     // The paragraph is the editor's own "Text" command, so only the presets are listed.
     const commands: RteBlockCommand[] = offered.map((preset) => {
         const level = HEADING_LEVEL[preset.tag];
+        let icon: RteIcon | undefined;
+        if (level !== undefined) {
+            icon = HEADING_LEVEL_ICONS[level];
+        }
         return {
             id: preset.tag === 'p' ? preset.name : `heading-${level}`,
             label: preset.label,
-            icon: level === undefined ? undefined : headingLevelIcon(level),
+            icon,
             keywords: level === undefined ? [] : (HEADING_KEYWORDS[level] ?? []),
             group: 'turnInto',
             isActive: (selection) => isTextStyle(selection.block) && selection.block.style === preset.name,
