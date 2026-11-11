@@ -266,6 +266,15 @@ describe('subscript and superscript', () => {
         expect(editor.stored()).toEqual([paragraph(text('x', { subscript: true }))]);
     });
 
+    it('a stored run carrying both loses the one turned off', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { subscript: true, superscript: true }))]);
+        editor.select('x');
+
+        editor.api.marks.toggle('subscript');
+
+        expect(editor.stored()).toEqual([paragraph(text('x', { superscript: true }))]);
+    });
+
     it('turning one on at a caret types only that one', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('x', { subscript: true }))]);
         editor.caretAfter('x');

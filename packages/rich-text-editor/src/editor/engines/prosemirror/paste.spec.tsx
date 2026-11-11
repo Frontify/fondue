@@ -154,9 +154,28 @@ describe('pasting formatted text', () => {
         ).toEqual([paragraph(text('x', { link: { href: 'https://example.com' }, strikethrough: true }))]);
     });
 
+    it('does not read the underline a link declares on itself as formatting', () => {
+        expect(pasted('<p><a href="https://example.com" style="text-decoration-line:underline">x</a></p>')).toEqual([
+            paragraph(text('x', { link: { href: 'https://example.com' } })),
+        ]);
+    });
+
+    it.each(['<p><b style="font-weight:500">x</b></p>', '<p><strong style="font-weight:lighter">x</strong></p>'])(
+        'does not read a bold tag that sets a weight under 600 as bold: %s',
+        (html) => {
+            expect(pasted(html)).toEqual([paragraph(text('x'))]);
+        },
+    );
+
+    it('keeps a line-through drawn by an ancestor under text-decoration-line: none', () => {
+        expect(pasted('<p><s>a<span style="text-decoration-line: none">b</span></s></p>')).toEqual([
+            paragraph(text('ab', { strikethrough: true })),
+        ]);
+    });
+
     it('does not read any bold weight a heading shows by default as formatting', () => {
-        expect(pasted('<h1><span style="font-weight:650">x</span></h1>')).toEqual([
-            { type: 'textStyle', style: 'heading1', children: [text('x')] },
+        expect(pasted('<h3><span style="font-weight:650">x</span></h3>')).toEqual([
+            { type: 'textStyle', style: 'heading3', children: [text('x')] },
         ]);
     });
 
