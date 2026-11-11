@@ -26,20 +26,37 @@ export type LinkPolicy = {
 
 const ALL_SCHEMES: readonly LinkScheme[] = ['https', 'http', 'mailto', 'tel'];
 
+/**
+ * Starts a host pattern that also matches its subdomains.
+ */
+const SUBDOMAIN_WILDCARD = '*.';
+
+/**
+ * The scheme `//host/x` takes, and with `HTTP` the web schemes that host limits apply to.
+ */
+const HTTPS: LinkScheme = 'https';
+
+const HTTP: LinkScheme = 'http';
+
+/**
+ * A leading `scheme:`, which makes a link absolute.
+ */
+const SCHEME_PREFIX = /^[a-z][a-z\d+.-]*:/i;
+
 const hostMatches = (pattern: string, hostname: string): boolean => {
     const allowed = pattern.toLowerCase();
-    if (allowed.startsWith('*.')) {
+    if (allowed.startsWith(SUBDOMAIN_WILDCARD)) {
         return hostname.endsWith(allowed.slice(1)) && hostname.length > allowed.length - 1;
     }
     return hostname === allowed;
 };
 
-const isRelative = (typed: string): boolean => !/^[a-z][a-z\d+.-]*:/i.test(typed) && !typed.startsWith('//');
+const isRelative = (typed: string): boolean => !SCHEME_PREFIX.test(typed) && !typed.startsWith('//');
 
 const parseAbsolute = (typed: string): URL | null => {
     try {
         // `//host/x` follows the scheme of the page, so it is judged as https.
-        return new URL(typed.startsWith('//') ? `https:${typed}` : typed);
+        return new URL(typed.startsWith('//') ? `${HTTPS}:${typed}` : typed);
     } catch {
         return null;
     }
@@ -66,7 +83,7 @@ export const allowsHref = (policy: LinkPolicy, href: unknown): href is string =>
     if (!allowedSchemes.some((allowed) => allowed === scheme)) {
         return false;
     }
-    if (allowedHosts === undefined || (scheme !== 'https' && scheme !== 'http')) {
+    if (allowedHosts === undefined || (scheme !== HTTPS && scheme !== HTTP)) {
         return true;
     }
     return allowedHosts.some((pattern) => hostMatches(pattern, url.hostname));
@@ -82,15 +99,15 @@ const joinOr = (items: readonly string[]): string => {
 const describeHosts = (hosts: readonly string[]): string => {
     const lowered = hosts.map((host) => host.toLowerCase());
     const phrases = lowered.flatMap((host) => {
-        if (host.startsWith('*.')) {
-            const apex = host.slice(2);
+        if (host.startsWith(SUBDOMAIN_WILDCARD)) {
+            const apex = host.slice(SUBDOMAIN_WILDCARD.length);
             // Folded into the apex's phrase when both are allowed.
             if (lowered.includes(apex)) {
                 return [];
             }
             return [`subdomains of ${apex}`];
         }
-        if (lowered.includes(`*.${host}`)) {
+        if (lowered.includes(`${SUBDOMAIN_WILDCARD}${host}`)) {
             return [`${host} or its subdomains`];
         }
         return [host];

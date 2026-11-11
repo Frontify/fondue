@@ -8,11 +8,26 @@ import { type MentionDisplay, mentionAttributes } from '../helpers/display';
 import styles from '../mention.module.scss';
 import { type MentionValue } from '../types';
 
+/** The tag that isolates the shown name, so a right-to-left name cannot reorder the text around it. */
+export const BIDI_ISOLATE_TAG = 'bdi';
+
+const BidiIsolate = BIDI_ISOLATE_TAG;
+
 /** In the editor a click places the caret; the link is followed only when reading. */
 const placeCaretInEditor = (event: MouseEvent<HTMLAnchorElement>): void => {
     if (event.currentTarget.closest('[contenteditable="true"]') !== null) {
         event.preventDefault();
     }
+};
+
+type MentionLinkProps = {
+    value: MentionValue;
+    display: MentionDisplay;
+    /**
+     * Reading view: a mention with no link takes focus so its tooltip opens from the keyboard.
+     * @default false
+     */
+    focusableWhenUnlinked?: boolean;
 };
 
 /**
@@ -21,19 +36,7 @@ const placeCaretInEditor = (event: MouseEvent<HTMLAnchorElement>): void => {
  * mention. A group is marked with its icon, as the old editor did; with nowhere
  * to link to (`@all`), the mention is text.
  */
-export const MentionLink = ({
-    value,
-    display,
-    focusableWhenUnlinked = false,
-}: {
-    value: MentionValue;
-    display: MentionDisplay;
-    /**
-     * Reading view: a mention with no link takes focus so its tooltip opens from the keyboard.
-     * @default false
-     */
-    focusableWhenUnlinked?: boolean;
-}): ReactNode => {
+export const MentionLink = ({ value, display, focusableWhenUnlinked = false }: MentionLinkProps): ReactNode => {
     const attributes = {
         title: display.title,
         ...mentionAttributes(value),
@@ -42,7 +45,7 @@ export const MentionLink = ({
     const content = (
         <>
             {value.kind === 'group' ? <IconPeople size={12} aria-hidden className={styles.kindIcon} /> : null}
-            <bdi>{display.label}</bdi>
+            <BidiIsolate>{display.label}</BidiIsolate>
         </>
     );
     return (

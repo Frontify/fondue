@@ -164,6 +164,7 @@ describe('mentionPlugin', () => {
             mentionPlugin({
                 items: [],
                 href: (mention) => `/u/${mention.id}`,
+                // The document below only mentions the ids that `resolutions` lists.
                 resolve: (mention) => resolutions[mention.id as keyof typeof resolutions],
             }),
         ];

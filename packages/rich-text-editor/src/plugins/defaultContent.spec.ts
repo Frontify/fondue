@@ -41,6 +41,7 @@ describe('the default content', () => {
             }
             // Likewise the link, built from its policy.
             if (actual[0]?.type === 'link') {
+                // The declared list types a definition loosely; the type check above says it is the link mark.
                 const toHtml = (definition: unknown) =>
                     (definition as MarkDefinition).toHtml({ href: 'https://example.com', openInNewTab: true });
                 expect(toHtml(actual[0].definition)).toEqual(toHtml(expected[0]?.definition));

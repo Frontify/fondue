@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TextInput } from '@frontify/fondue-components';
-import { type KeyboardEvent, type ReactNode, type Ref, useEffect, useId, useState } from 'react';
+import { forwardRef, type KeyboardEvent, type ReactNode, useEffect, useId, useState } from 'react';
 
 import { isCompositionKey } from '../../shared/helpers/keys';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
@@ -11,48 +11,42 @@ import linkStyles from '../link.module.scss';
 
 import styles from './linkForm.module.scss';
 
-const describeStatus = (status: DestinationSearch['status'], count: number): string => {
-    if (status === 'searching') {
-        return 'Searching';
+const SEARCHING_STATUS = 'Searching';
+const FAILED_STATUS = 'Search failed';
+const NO_RESULTS_STATUS = 'No results';
+const ONE_RESULT_STATUS = '1 result';
+const URL_PLACEHOLDER = 'example.com';
+const RESULTS_LABEL = 'Pages';
+
+const describeManyResults = (count: number): string => `${count} results`;
+
+const describeStatus = (search: DestinationSearch): string => {
+    switch (search.status) {
+        case 'idle':
+            return '';
+        case 'searching':
+            return SEARCHING_STATUS;
+        case 'failed':
+            return FAILED_STATUS;
+        case 'done':
+            if (search.results.length === 0) {
+                return NO_RESULTS_STATUS;
+            }
+            if (search.results.length === 1) {
+                return ONE_RESULT_STATUS;
+            }
+            return describeManyResults(search.results.length);
     }
-    if (status === 'failed') {
-        return 'Search failed';
-    }
-    if (status === 'done') {
-        if (count === 0) {
-            return 'No results';
-        }
-        return `${count} ${count === 1 ? 'result' : 'results'}`;
-    }
-    return '';
 };
 
-/**
- * The "Link to" input as a combobox over the destinations an app can search.
- * What is typed still works as an address; the list only offers shortcuts. No
- * option is active until an arrow key makes one, so Enter on a typed address
- * still saves it rather than picking the first result.
- */
-export const DestinationField = ({
-    id,
-    inputRef,
-    value,
-    status,
-    errorId,
-    search,
-    policy,
-    onChange,
-    onPick,
-    onEnter,
-}: {
+type DestinationFieldProps = {
     id: string;
-    inputRef: Ref<HTMLInputElement>;
     value: string;
     status: 'neutral' | 'error';
     /**
-     * The message shown under the field while `status` is an error.
+     * The id of the message shown under the field while `status` is an error.
      */
-    errorId: string | undefined;
+    errorId: string;
     /**
      * Without it the field is a plain address input.
      */
@@ -64,11 +58,30 @@ export const DestinationField = ({
      * Enter with no option active: the form's own Enter.
      */
     onEnter: (event: KeyboardEvent<HTMLInputElement>) => void;
-}): ReactNode => {
+};
+
+/**
+ * The "Link to" input as a combobox over the destinations an app can search.
+ * What is typed still works as an address; the list only offers shortcuts. No
+ * option is active until an arrow key makes one, so Enter on a typed address
+ * still saves it rather than picking the first result.
+ */
+export const DestinationField = forwardRef<HTMLInputElement, DestinationFieldProps>(function DestinationField(
+    { id, value, status, errorId, search, policy, onChange, onPick, onEnter },
+    inputRef,
+): ReactNode {
     const listId = useId();
     // An unedited stored value is not searched until the author types or presses an arrow key.
     const [dormant, setDormant] = useState(true);
-    const { results, status: searchStatus } = useDestinationSearch(search, dormant ? '' : value, policy);
+    let searched = value;
+    if (dormant) {
+        searched = '';
+    }
+    const destinationSearch = useDestinationSearch(search, searched, policy);
+    let results: readonly LinkDestination[] = [];
+    if (destinationSearch.status === 'done') {
+        results = destinationSearch.results;
+    }
     // The value the list was closed for: typing again opens it, so no extra "open" state exists.
     const [closedFor, setClosedFor] = useState<string | null>(value);
     // Tagged with its value so typing drops the highlight without an effect.
@@ -159,7 +172,7 @@ export const DestinationField = ({
                 id={id}
                 ref={inputRef}
                 type="url"
-                placeholder="example.com"
+                placeholder={URL_PLACEHOLDER}
                 value={value}
                 status={status}
                 aria-describedby={status === 'error' ? errorId : undefined}
@@ -172,7 +185,7 @@ export const DestinationField = ({
                 onBlur={() => setClosedFor(value)}
             />
             {listOpen ? (
-                <ul id={listId} role="listbox" aria-label="Pages" className={styles.results}>
+                <ul id={listId} role="listbox" aria-label={RESULTS_LABEL} className={styles.results}>
                     {results.map((destination, index) => (
                         // The keyboard drives the list from the input; the mouse picks here.
                         <li
@@ -185,9 +198,10 @@ export const DestinationField = ({
                                 event.preventDefault();
                                 pick(destination);
                             }}
-                            className={
-                                index === activeIndex ? `${styles.option} ${styles.optionActive}` : styles.option
-                            }
+                            // The pointer moves the same highlight the arrow keys do, as Fondue's Select.
+                            onMouseMove={() => highlight(index)}
+                            data-highlighted={index === activeIndex}
+                            className={styles.option}
                         >
                             <span>{destination.label}</span>
                             <span className={styles.optionHref}>{destination.href}</span>
@@ -196,10 +210,8 @@ export const DestinationField = ({
                 </ul>
             ) : null}
             {search === undefined ? null : (
-                <output className={linkStyles.visuallyHidden}>
-                    {shown ? describeStatus(searchStatus, results.length) : ''}
-                </output>
+                <output className={linkStyles.visuallyHidden}>{shown ? describeStatus(destinationSearch) : ''}</output>
             )}
         </>
     );
-};
+});
