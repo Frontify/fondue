@@ -222,6 +222,8 @@ describe('a mention being searched for', () => {
         expect(press0.defaultPrevented).toBe(true);
         const callsBefore = lookup.mock.calls.length;
         act(() => retry?.click());
+        // Cleared while asking again, so the same failure is announced again.
+        expect(status()).toBe('');
         await settle();
         expect(lookup.mock.calls.length).toBe(callsBefore + 1);
         expect(status()).toBe('Could not load people. Press Enter to retry.');

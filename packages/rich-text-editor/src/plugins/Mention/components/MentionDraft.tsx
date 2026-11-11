@@ -92,7 +92,7 @@ const peopleOf = (outcome: PeopleOutcome | null): readonly MentionItem[] => {
 };
 
 /**
- * Where a lookup stands: people to show, else searching past the delay, else the last failure, else nobody matches once this query is answered.
+ * Where a lookup stands: people to show, else searching past the delay, else, once this lookup is answered, failed or nobody matches.
  */
 const phaseOf = ({ outcome, pending, slow }: PhaseOfParams): PeoplePhase => {
     if (peopleOf(outcome).length > 0) {
@@ -112,6 +112,10 @@ const phaseOf = ({ outcome, pending, slow }: PhaseOfParams): PeoplePhase => {
             }
             return 'empty';
         case 'failed':
+            // Cleared while asking again, so a second failure is announced again.
+            if (pending) {
+                return 'waiting';
+            }
             return 'failed';
         default:
             // Adding an outcome fails to compile here until it is handled.
@@ -423,7 +427,7 @@ export const MentionDraft = ({
                 // Only while the listbox is in the page: an id pointing at nothing is an error.
                 aria-controls={listShown ? listId : undefined}
                 aria-autocomplete="list"
-                aria-activedescendant={open && active ? optionId(activeIndex) : undefined}
+                aria-activedescendant={listShown && active ? optionId(activeIndex) : undefined}
                 aria-label="Mention someone"
                 value={query}
                 size={Math.max(query.length, 1)}
