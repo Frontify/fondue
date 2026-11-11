@@ -1,5 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+// The blocks the document spaces apart, and the headings among them.
+$blocks: p, h1, h2, h3, h4, ul, ol, blockquote;
+$headings: h1, h2, h3, h4;
+
 /**
  * How a document reads, wherever it is drawn: the editable element in the
  * editor and the root of `RichTextRenderer` both carry this class, so the two
@@ -33,7 +37,7 @@
     // The document owns block spacing: host stylesheets give `1em` margins in some hosts and none in others.
     // The trims below reset the variable, not the margin, so a block class that reads the gap keeps them.
     // Each block sets the gap again rather than inheriting it, so a trimmed quote does not trim its own paragraphs.
-    :is(p, h1, h2, h3, h4, ul, ol, blockquote) {
+    :is(#{$blocks}) {
         --rte-block-gap: var(--spacing-x-small);
 
         margin-block: 0 var(--rte-block-gap);
@@ -44,12 +48,12 @@
     }
 
     // A heading belongs to the text below it, so it sits further from the block above than from its own text.
-    :is(h1, h2, h3, h4):not(:first-child) {
+    :is(#{$headings}):not(:first-child) {
         margin-block-start: var(--rte-heading-gap, var(--spacing-medium));
     }
 
     // A list's items sit tight: the blocks inside an item, a nested list among them, add no gap.
-    li :is(p, h1, h2, h3, h4, ul, ol, blockquote) {
+    li :is(#{$blocks}) {
         --rte-block-gap: 0;
         --rte-heading-gap: 0;
     }
