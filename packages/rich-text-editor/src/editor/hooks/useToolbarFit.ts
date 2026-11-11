@@ -4,13 +4,7 @@ import { type MutableRefObject, type RefObject, useLayoutEffect, useRef, useStat
 import { flushSync } from 'react-dom';
 
 import { fittingSlotCount, type SlotGroup } from '../helpers/toolbarFit';
-
-/** Marks a slot's element with its item key, for the measuring to find. */
-export const SLOT_ATTRIBUTE = 'data-toolbar-slot';
-/** Marks a group's element, for the measuring to read the gap between its slots from. */
-export const GROUP_ATTRIBUTE = 'data-toolbar-group';
-/** Marks the More button, for the measuring to find. */
-export const MORE_ATTRIBUTE = 'data-toolbar-more';
+import { GROUP_ATTRIBUTE, MORE_ATTRIBUTE, SLOT_ATTRIBUTE } from '../helpers/toolbarMarkers';
 
 /**
  * Whether the row has been measured for the current items.

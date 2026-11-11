@@ -1,11 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@use '../../../styles/sizes' as sizes;
+@use '../../../utilities/sizes.module.scss';
+
+// Wide enough that most style names keep the control one size.
+$control-min-size: 7rem;
 
 /** Never stretched across the toolbar, and wide enough that most style names keep it one size. */
 .control {
     flex: none;
-    min-inline-size: 7rem;
+    min-inline-size: $control-min-size;
 
     /**
      * The trigger as a plain picker like the toolbar buttons: no border, their

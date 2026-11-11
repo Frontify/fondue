@@ -22,13 +22,13 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 
-import { MORE_ATTRIBUTE } from '../hooks/useToolbarFit';
+import { MORE_ATTRIBUTE } from '../helpers/toolbarMarkers';
 import { useToolbarRoving } from '../hooks/useToolbarRoving';
-import { type RichTextEditorLabels } from '../labels';
 import styles from '../richTextEditor.module.scss';
 
 type ToolbarMoreProps = {
-    labels: RichTextEditorLabels;
+    /** More's accessible name, also its tooltip and the panel's name. */
+    label: string;
     /** Called with the element the controls live in as More mounts and unmounts, for the row to measure the slots in it. */
     onPanel: (panel: HTMLElement | null) => void;
     /** The groups the row has no room for. */
@@ -50,7 +50,7 @@ type ToolbarMoreProps = {
  * stays in the text, as with every toolbar button. Escape and Tab in the panel
  * close it and put focus back on More, Tab carrying on from there.
  */
-export const ToolbarMore = ({ labels, onPanel, children }: ToolbarMoreProps): ReactNode => {
+export const ToolbarMore = ({ label, onPanel, children }: ToolbarMoreProps): ReactNode => {
     const [open, setOpen] = useState(false);
     const [tooltipOpen, setTooltipOpen] = useState(false);
     // Made once and moved between the parking element and the open panel, which keeps the controls' state.
@@ -133,13 +133,13 @@ export const ToolbarMore = ({ labels, onPanel, children }: ToolbarMoreProps): Re
                     <span className={styles.moreAnchor}>
                         <Tooltip.Trigger asChild>
                             <PopoverTrigger asChild>
-                                <MoreButton {...buttonProps} ref={moreRef} label={labels.more} />
+                                <MoreButton {...buttonProps} ref={moreRef} label={label} />
                             </PopoverTrigger>
                         </Tooltip.Trigger>
                         {/* Out of sight and of the accessibility tree, yet laid out, so the row can measure the slots in it and a flyout can hang from them. */}
                         <div ref={parkHost} aria-hidden="true" className={styles.morePanelParked} />
                     </span>
-                    <Tooltip.Content padding="compact">{labels.more}</Tooltip.Content>
+                    <Tooltip.Content padding="compact">{label}</Tooltip.Content>
                 </Tooltip.Root>
                 {/* Only while open: a closed panel would be a layer, taking Escape from a dialog holding the editor. */}
                 {open ? (
@@ -148,7 +148,7 @@ export const ToolbarMore = ({ labels, onPanel, children }: ToolbarMoreProps): Re
                             <PopoverContent
                                 ref={contentRef}
                                 // The panel is a dialog to assistive technology, which needs a name of its own.
-                                aria-label={labels.more}
+                                aria-label={label}
                                 side="bottom"
                                 align="end"
                                 sideOffset={8}
@@ -189,7 +189,7 @@ export const ToolbarMore = ({ labels, onPanel, children }: ToolbarMoreProps): Re
             </PopoverRoot>
             {createPortal(
                 <ThemeProvider>
-                    <MorePanel label={labels.more} focusRequestRef={focusRequestRef} onLeave={closeToMore}>
+                    <MorePanel label={label} focusRequestRef={focusRequestRef} onLeave={closeToMore}>
                         {children}
                     </MorePanel>
                 </ThemeProvider>,
@@ -199,16 +199,16 @@ export const ToolbarMore = ({ labels, onPanel, children }: ToolbarMoreProps): Re
     );
 };
 
-type ToolbarMoreProbeProps = { labels: RichTextEditorLabels };
+type ToolbarMoreProbeProps = { label: string };
 
 /**
  * More's button alone, for the row to read its width before anything
  * overflows: the panel, its tooltip and its theme are not needed for that, and
  * a row that fits never mounts them.
  */
-export const ToolbarMoreProbe = ({ labels }: ToolbarMoreProbeProps): ReactNode => (
+export const ToolbarMoreProbe = ({ label }: ToolbarMoreProbeProps): ReactNode => (
     <span className={styles.moreAnchor}>
-        <MoreButton label={labels.more} />
+        <MoreButton label={label} />
     </span>
 );
 
@@ -234,6 +234,7 @@ const MoreButton = forwardRef<HTMLButtonElement, MoreButtonProps>(function MoreB
         </Button>
     );
 });
+MoreButton.displayName = 'MoreButton';
 
 type MorePanelProps = {
     label: string;
@@ -272,7 +273,7 @@ const MorePanel = ({ label, focusRequestRef, onLeave, children }: MorePanelProps
             onMouseDown={roving.onMouseDown}
             onKeyDown={onKeyDown}
             onFocus={roving.onFocus}
-            className={styles.panel}
+            className={styles.moreControls}
         >
             {children}
         </div>

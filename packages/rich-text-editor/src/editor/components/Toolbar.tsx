@@ -14,8 +14,9 @@ import {
 import { turnIntoCommands } from '../helpers/blockCommands';
 import { type GroupSplit, type SlotGroup, splitGroups } from '../helpers/toolbarFit';
 import { toolbarItemProps } from '../helpers/toolbarItem';
+import { GROUP_ATTRIBUTE, SLOT_ATTRIBUTE } from '../helpers/toolbarMarkers';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
-import { GROUP_ATTRIBUTE, SLOT_ATTRIBUTE, type ToolbarFit, useToolbarFit } from '../hooks/useToolbarFit';
+import { type ToolbarFit, useToolbarFit } from '../hooks/useToolbarFit';
 import { useToolbarRoving } from '../hooks/useToolbarRoving';
 import { type RichTextEditorLabels } from '../labels';
 import styles from '../richTextEditor.module.scss';
@@ -35,7 +36,10 @@ export type ToolbarPlacement = 'floating' | 'top';
 type ToolbarProps = {
     /** The registry's toolbar entries, in mount order. The floating bar keeps the inline ones. */
     items: readonly ToolbarEntry[];
-    /** Floating bar only: every block command, for its "Turn into" menu. */
+    /**
+     * Floating bar only: every block command, for its "Turn into" menu.
+     * @default []
+     */
     commands?: readonly RteBlockCommand[];
     api: EditorControlApi;
     editorState: EditorStateStore;
@@ -107,10 +111,10 @@ export const Toolbar = ({
     let moreNode: ReactNode = null;
     if (more && panel === null && fit.kind === 'measuring') {
         // Nothing has overflowed yet: More's width is all the measuring needs.
-        moreNode = <ToolbarMoreProbe labels={labels} />;
+        moreNode = <ToolbarMoreProbe label={labels.more} />;
     } else if (more) {
         moreNode = (
-            <ToolbarMore labels={labels} onPanel={setPanel}>
+            <ToolbarMore label={labels.more} onPanel={setPanel}>
                 {drawGroups(overflow)}
             </ToolbarMore>
         );

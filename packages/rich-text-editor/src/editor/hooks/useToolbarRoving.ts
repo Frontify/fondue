@@ -10,7 +10,7 @@ import {
     useRef,
 } from 'react';
 
-import { SLOT_ATTRIBUTE } from './useToolbarFit';
+import { SLOT_ATTRIBUTE } from '../helpers/toolbarMarkers';
 
 export type UseToolbarRovingParams = {
     toolbarRef: RefObject<HTMLElement | null>;
