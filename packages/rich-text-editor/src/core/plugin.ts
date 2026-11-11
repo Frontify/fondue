@@ -414,6 +414,10 @@ export type StyleParseRule<TValue> = {
      * Never set: lets TypeScript tell a style rule from a tag rule.
      */
     tag?: undefined;
+    /**
+     * Receives the declared CSS value and returns the mark's value, or null when
+     * the declaration is not this mark.
+     */
     value?: (cssValue: string) => TValue | null;
 };
 
@@ -425,6 +429,9 @@ export type MarkClearRule = {
      * A CSS property name: `font-weight`.
      */
     style: string;
+    /**
+     * Receives the declared CSS value and returns true when it takes the mark off.
+     */
     clears: (cssValue: string) => boolean;
 };
 

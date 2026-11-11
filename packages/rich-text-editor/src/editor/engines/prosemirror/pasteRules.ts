@@ -35,7 +35,9 @@ export const INLINE_PRIORITY = 70;
  */
 const qualifiedPriority = (tag: string): number | undefined => (/[[.#:]/.test(tag) ? MARK_PRIORITY : undefined);
 
-/** Mark and inline rules keep their whole value in one attribute; a null value means "not this node". */
+/**
+ * Wraps a parsed value as the node's single value attribute, or false when the value is null.
+ */
 const valueAttrs = (value: unknown) => (value === null ? false : { [VALUE_ATTR]: value });
 
 const valueParseRule = (rule: ParseRule<unknown>, priority: number): TagParseRule => ({
@@ -44,6 +46,9 @@ const valueParseRule = (rule: ParseRule<unknown>, priority: number): TagParseRul
     getAttrs: (element: HTMLElement) => valueAttrs(rule.value ? rule.value(element) : {}),
 });
 
+/**
+ * Mark and inline rules keep their whole value in one attribute; a null value means "not this node".
+ */
 export const valueParseRules = (rules: readonly ParseRule<unknown>[], priority: number): TagParseRule[] =>
     rules.map((rule) => valueParseRule(rule, priority));
 
@@ -54,7 +59,9 @@ export const valueParseRules = (rules: readonly ParseRule<unknown>[], priority: 
  */
 type DefaultStyle = {
     property: string;
-    /** The enclosing elements that show the style by default. */
+    /**
+     * The enclosing elements that show the style by default.
+     */
     within: string;
     strip: RegExp;
 };
@@ -107,6 +114,7 @@ const markClearRule = (type: string, rule: MarkClearRule): PmStyleParseRule => (
 
 /**
  * A mark's rules: tag and style rules put it on with its value, clear rules take it off the element's content.
+ * @param type - the mark's name in the schema
  */
 export const markParseRules = (type: string, rules: readonly MarkParseRule<unknown>[]): PmParseRule[] =>
     rules.map((rule) => {
