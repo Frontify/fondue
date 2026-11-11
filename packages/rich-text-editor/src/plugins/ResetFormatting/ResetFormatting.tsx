@@ -12,11 +12,7 @@ const CLEARED_ANNOUNCEMENT = 'Formatting cleared';
 const RESET_ANNOUNCEMENT = 'Formatting reset';
 
 /**
- * What the toolbar button does: puts the selection back to plain text. Every
- * mark goes (links included; mentions are no marks and stay), block type back
- * to paragraph, alignment cleared, lists unwrapped, all as one undo step. At a
- * caret it acts on the whole text block. No schema of its own: it only drives
- * the control API.
+ * What the toolbar button does: the selection back to plain text, links included, as one undo step. Mentions stay because they are no marks.
  */
 const reset = (api: EditorControlApi): void => {
     api.group(() => {
@@ -31,7 +27,7 @@ const reset = (api: EditorControlApi): void => {
     });
 };
 
-// The key is a literal because a computed key keeps this plugin in the renderer.
+/** The key is a literal because a computed key keeps this plugin in the renderer. */
 const hotkeys = {
     /** Clears the marks only, links excepted: block types, lists and alignment stay. Not what the toolbar button does. */
     'Mod-\\': (api) => {

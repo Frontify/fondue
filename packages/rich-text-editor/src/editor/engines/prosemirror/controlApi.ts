@@ -435,7 +435,7 @@ const createHistoryApi = (getView: () => EditorView): EditorControlApi['history'
 /** The undo group: none running, running with no change yet, or running after its first change. */
 type GroupState = { kind: 'idle' } | { kind: 'open' } | { kind: 'joined'; first: Transaction };
 
-// prosemirror-history joins a transaction carrying this meta into the undo step of the one it names.
+/** prosemirror-history joins a transaction carrying this meta into the undo step of the one it names. */
 const APPENDED_TRANSACTION_META = 'appendedTransaction';
 
 type CaretSide = 'before' | 'after';

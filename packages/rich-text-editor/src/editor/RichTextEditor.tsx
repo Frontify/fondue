@@ -591,23 +591,32 @@ const mountFocusTarget = (retryFocus: RetryFocus, readOnly: boolean): MountFocus
     }
 };
 
-/** What the host named and described the editor with, and whether it gave a name. */
-const hostLabelsOf = ({
-    ariaLabel,
-    ariaLabelledBy,
-    ariaDescribedBy,
-}: {
+const ARIA_LABEL = 'aria-label';
+const ARIA_LABELLEDBY = 'aria-labelledby';
+const ARIA_DESCRIBEDBY = 'aria-describedby';
+
+type HostLabelsOfParams = {
     ariaLabel: string | undefined;
     ariaLabelledBy: string | undefined;
     ariaDescribedBy: string | undefined;
-}): { hostLabels: Record<string, string>; isNamed: boolean } => ({
-    hostLabels: {
-        ...(ariaLabel === undefined ? {} : { 'aria-label': ariaLabel }),
-        ...(ariaLabelledBy === undefined ? {} : { 'aria-labelledby': ariaLabelledBy }),
-        ...(ariaDescribedBy === undefined ? {} : { 'aria-describedby': ariaDescribedBy }),
-    },
-    isNamed: ariaLabel !== undefined || ariaLabelledBy !== undefined,
-});
+};
+
+type HostLabels = { hostLabels: Record<string, string>; isNamed: boolean };
+
+/** What the host named and described the editor with, and whether it gave a name. */
+const hostLabelsOf = ({ ariaLabel, ariaLabelledBy, ariaDescribedBy }: HostLabelsOfParams): HostLabels => {
+    const hostLabels: Record<string, string> = {};
+    if (ariaLabel !== undefined) {
+        hostLabels[ARIA_LABEL] = ariaLabel;
+    }
+    if (ariaLabelledBy !== undefined) {
+        hostLabels[ARIA_LABELLEDBY] = ariaLabelledBy;
+    }
+    if (ariaDescribedBy !== undefined) {
+        hostLabels[ARIA_DESCRIBEDBY] = ariaDescribedBy;
+    }
+    return { hostLabels, isNamed: ariaLabel !== undefined || ariaLabelledBy !== undefined };
+};
 
 type EditableAttributesOptions = {
     id: string;
@@ -632,7 +641,7 @@ const editableAttributes = ({
     defaultLabel,
     descriptionId,
 }: EditableAttributesOptions): Record<string, string> => {
-    const describedBy = [hostLabels['aria-describedby'], descriptionId].filter(Boolean).join(' ');
+    const describedBy = [hostLabels[ARIA_DESCRIBEDBY], descriptionId].filter(Boolean).join(' ');
     const attributes: Record<string, string> = {
         id,
         class: className,
@@ -640,11 +649,11 @@ const editableAttributes = ({
         'aria-multiline': 'true',
     };
     if (!isNamed) {
-        attributes['aria-label'] = defaultLabel;
+        attributes[ARIA_LABEL] = defaultLabel;
     }
     Object.assign(attributes, hostLabels);
     if (describedBy !== '') {
-        attributes['aria-describedby'] = describedBy;
+        attributes[ARIA_DESCRIBEDBY] = describedBy;
     }
     if (placeholder !== '') {
         attributes['aria-placeholder'] = placeholder;

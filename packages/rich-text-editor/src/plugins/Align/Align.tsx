@@ -144,7 +144,7 @@ const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
     );
 };
 
-// The keys are literals because a computed key keeps this plugin in the renderer; each alignment's `shortcut` type ties it to one.
+/** The keys are literals because a computed key keeps this plugin in the renderer; each alignment's `shortcut` type ties it to one. */
 const hotkeys = {
     'Mod-Shift-l': (api) => {
         alignFromKeyboard(api, LEFT);
