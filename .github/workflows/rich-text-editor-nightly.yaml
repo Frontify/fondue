@@ -22,16 +22,13 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
         with:
-          playwright-cache: "true"
+          playwright: "true"
 
       - name: Build Fondue Icons
         run: pnpm build:icons
 
       - name: Build Fondue Components
         run: pnpm build:components
-
-      - name: Install Playwright Firefox
-        run: pnpm --stream --filter {packages/rich-text-editor} exec playwright install --with-deps firefox
 
       - name: Component tests
         run: pnpm --stream --filter {packages/rich-text-editor} exec playwright test --project=firefox
