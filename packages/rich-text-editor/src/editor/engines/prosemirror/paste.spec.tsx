@@ -120,6 +120,26 @@ describe('pasting formatted text', () => {
         ]);
     });
 
+    it('does not read the underline a link shows by default as formatting', () => {
+        expect(
+            pasted('<p><a href="https://example.com"><span style="text-decoration:underline">x</span></a></p>'),
+        ).toEqual([paragraph(text('x', { link: { href: 'https://example.com' } }))]);
+    });
+
+    it('keeps the other lines a link declares beside the underline', () => {
+        expect(
+            pasted(
+                '<p><a href="https://example.com"><span style="text-decoration:underline line-through">x</span></a></p>',
+            ),
+        ).toEqual([paragraph(text('x', { link: { href: 'https://example.com' }, strikethrough: true }))]);
+    });
+
+    it('does not read the bold a heading shows by default as formatting', () => {
+        expect(pasted('<h1><span style="font-weight:bold">x</span></h1>')).toEqual([
+            { type: 'textStyle', style: 'heading1', children: [text('x')] },
+        ]);
+    });
+
     it('keeps only the inner of subscript and superscript', () => {
         expect(pasted('<p><sub><sup>x</sup></sub></p>')).toEqual([paragraph(text('x', { superscript: true }))]);
     });

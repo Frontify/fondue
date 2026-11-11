@@ -311,19 +311,15 @@ const SlashList = ({
     );
 };
 
-const SlashOption = ({
-    id,
-    command,
-    isActive,
-    onHover,
-    onRun,
-}: {
+type SlashOptionProps = {
     id: string;
     command: RteBlockCommand;
     isActive: boolean;
     onHover: () => void;
     onRun: () => void;
-}): ReactNode => {
+};
+
+const SlashOption = ({ id, command, isActive, onHover, onRun }: SlashOptionProps): ReactNode => {
     const { icon: Icon } = command;
     return (
         // The keyboard drives the list from the text; the mouse picks here.

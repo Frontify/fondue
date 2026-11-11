@@ -9,18 +9,15 @@ import { findPreset, isTextStyle, labelOf, type TextStyleOption } from '../helpe
 
 import styles from './textStyleSelect.module.scss';
 
-/** The style dropdown, controlled by the document: its value is derived from the selection on every render. */
-export const TextStyleSelect = ({
-    selection,
-    api,
-    options,
-    label,
-}: {
+type TextStyleSelectProps = {
     selection: RteSelectionSnapshot;
     api: EditorControlApi;
     options: readonly TextStyleOption[];
     label: string;
-}): ReactNode => {
+};
+
+/** The style dropdown, controlled by the document: its value is derived from the selection on every render. */
+export const TextStyleSelect = ({ selection, api, options, label }: TextStyleSelectProps): ReactNode => {
     const currentBlock = selection.block;
     // A stored style this editor does not offer still renders, but the dropdown shows it as a paragraph.
     const current = isTextStyle(currentBlock) && options.includes(currentBlock.style) ? currentBlock.style : PARAGRAPH;
