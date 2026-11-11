@@ -3,7 +3,7 @@
 import { defineContent, defineInline, definePlugin, type RtePlugin } from '#/core';
 
 import { MentionEditor } from './components/MentionEditor';
-import { MentionLink } from './components/MentionLink';
+import { BIDI_ISOLATE_TAG, MentionLink } from './components/MentionLink';
 import { mentionAttributes, mentionDisplay } from './helpers/display';
 import { mentionValueOf } from './helpers/mention';
 import styles from './mention.module.scss';
@@ -12,7 +12,7 @@ import {
     type MentionHref,
     type MentionItem,
     type MentionItems,
-    type MentionResolution,
+    type MentionResolve,
     type MentionValue,
 } from './types';
 
@@ -29,7 +29,7 @@ export type MentionContentOptions = {
      * `unknown`, the stored value shows. The document is never changed. A throw
      * is not caught.
      */
-    resolve?: (mention: MentionValue) => MentionResolution;
+    resolve?: MentionResolve;
     /**
      * The single character that starts a mention
      * @default '@'
@@ -68,7 +68,7 @@ export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentO
                             class: styles.mention ?? '',
                         },
                         // Isolated so a right-to-left name cannot reorder the text around it.
-                        children: [{ tag: 'bdi', children: shown.label }],
+                        children: [{ tag: BIDI_ISOLATE_TAG, children: shown.label }],
                     };
                 },
 

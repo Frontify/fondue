@@ -32,12 +32,16 @@ afterEach(() => {
     vi.useRealTimers();
 });
 
+type SearchFormOptions = {
+    policy?: LinkPolicy;
+    mode?: { kind: 'create'; text: string } | { kind: 'edit' };
+};
+
+type KeyPressInit = KeyboardEventInit & { keyCode?: number };
+
 const mountSearchForm = (
     search: LinkSearch | undefined,
-    {
-        policy = {},
-        mode = { kind: 'edit' },
-    }: { policy?: LinkPolicy; mode?: { kind: 'create'; text: string } | { kind: 'edit' } } = {},
+    { policy = {}, mode = { kind: 'edit' } }: SearchFormOptions = {},
 ) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
@@ -75,7 +79,7 @@ const mountSearchForm = (
             await vi.advanceTimersByTimeAsync(200);
         });
     };
-    const press = (key: string, init: KeyboardEventInit & { keyCode?: number } = {}): KeyboardEvent => {
+    const press = (key: string, init: KeyPressInit = {}): KeyboardEvent => {
         const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init });
         act(() => {
             field.dispatchEvent(event);
@@ -172,6 +176,18 @@ describe('the destination field', () => {
         expect(window.document.activeElement).toBe(field);
         expect(onSave).not.toHaveBeenCalled();
         expect(field.getAttribute('aria-expanded')).toBe('false');
+    });
+
+    it('moves the highlight to the option under the pointer', async () => {
+        const { field, type, options } = mountSearchForm(fixed(BRAND, LOGOS));
+        await type('br');
+
+        act(() => {
+            options()[1]?.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
+        });
+
+        expect(field.getAttribute('aria-activedescendant')).toBe(options()[1]?.id);
+        expect(options()[1]?.getAttribute('data-highlighted')).toBe('true');
     });
 
     it('saves a typed address on Enter when no option is active', async () => {

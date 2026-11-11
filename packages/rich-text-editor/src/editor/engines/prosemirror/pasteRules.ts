@@ -35,7 +35,9 @@ export const INLINE_PRIORITY = 70;
  */
 const qualifiedPriority = (tag: string): number | undefined => (/[[.#:]/.test(tag) ? MARK_PRIORITY : undefined);
 
-/** Mark and inline rules keep their whole value in one attribute; a null value means "not this node". */
+/**
+ * Wraps a parsed value as the node's single value attribute, or false when the value is null.
+ */
 const valueAttrs = (value: unknown) => (value === null ? false : { [VALUE_ATTR]: value });
 
 const valueParseRule = (rule: ParseRule<unknown>, priority: number): TagParseRule => ({
@@ -44,15 +46,61 @@ const valueParseRule = (rule: ParseRule<unknown>, priority: number): TagParseRul
     getAttrs: (element: HTMLElement) => valueAttrs(rule.value ? rule.value(element) : {}),
 });
 
+/**
+ * Mark and inline rules keep their whole value in one attribute; a null value means "not this node".
+ */
 export const valueParseRules = (rules: readonly ParseRule<unknown>[], priority: number): TagParseRule[] =>
     rules.map((rule) => valueParseRule(rule, priority));
 
-const markStyleRule = (rule: StyleParseRule<unknown>): PmStyleParseRule => ({
-    style: rule.style,
+/**
+ * A style an element shows by default is not formatting when it sits in that element:
+ * Word and Google Docs underline a link's text and bold a heading's text in a span.
+ * `strip` removes what the enclosing element already shows from the declared value.
+ */
+type DefaultStyle = {
+    property: string;
+    /**
+     * The enclosing elements that show the style by default.
+     */
+    within: string;
+    strip: RegExp;
+};
+
+/**
+ * What an enclosing element already shows by default: a link's underline, a heading's bold. Pasted text repeating it is not formatting.
+ */
+const DEFAULT_STYLES: readonly DefaultStyle[] = [
+    { property: 'text-decoration', within: 'a', strip: /\bunderline\b/gi },
+    { property: 'text-decoration-line', within: 'a', strip: /\bunderline\b/gi },
+    { property: 'font-weight', within: 'h1, h2, h3, h4, h5, h6, th', strip: /^\s*(?:bold|bolder|[6-9]00)\s*$/i },
+];
+
+const declaredValue = (element: HTMLElement, property: string): string => {
+    let value = element.style.getPropertyValue(property);
+    for (const defaults of DEFAULT_STYLES) {
+        if (defaults.property === property && element.closest(defaults.within) !== null) {
+            value = value.replace(defaults.strip, '');
+        }
+    }
+    return value;
+};
+
+/**
+ * ProseMirror style rules only see the CSS value, not the element, so a style rule
+ * is a tag rule on any styled element that reads the declared value itself.
+ */
+const markStyleRule = (rule: StyleParseRule<unknown>): TagParseRule => ({
+    tag: '[style]',
     priority: MARK_PRIORITY,
     // One declaration, such as `text-decoration: underline line-through`, can set two marks.
     consuming: false,
-    getAttrs: (cssValue: string) => valueAttrs(rule.value ? rule.value(cssValue) : {}),
+    getAttrs: (element: HTMLElement) => {
+        const cssValue = declaredValue(element, rule.style);
+        if (cssValue.trim() === '') {
+            return false;
+        }
+        return valueAttrs(rule.value ? rule.value(cssValue) : {});
+    },
 });
 
 const markClearRule = (type: string, rule: MarkClearRule): PmStyleParseRule => ({
@@ -66,6 +114,7 @@ const markClearRule = (type: string, rule: MarkClearRule): PmStyleParseRule => (
 
 /**
  * A mark's rules: tag and style rules put it on with its value, clear rules take it off the element's content, ignore rules drop the element.
+ * @param type - the mark's name in the schema
  */
 export const markParseRules = (type: string, rules: readonly MarkParseRule<unknown>[]): PmParseRule[] =>
     rules.map((rule) => {

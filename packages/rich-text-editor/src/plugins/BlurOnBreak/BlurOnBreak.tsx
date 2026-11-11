@@ -2,6 +2,10 @@
 
 import { definePlugin, type EditorControlApi } from '#/core';
 
+/**
+ * Read once, when the editor mounts the plugin: a new `onBreak` or `required` from a later render is not seen.
+ * Build the plugin once and read changing state, such as the text to save, through a ref.
+ */
 export type BlurOnBreakPluginOptions = {
     /**
      * Called when Enter commits, just before the editor gives up focus. Never called for a click away: that is the host's `onBlur`.
@@ -9,6 +13,8 @@ export type BlurOnBreakPluginOptions = {
     onBreak?: () => void;
     /**
      * Enter on an empty editor refuses instead of committing, and says why: `true` or an empty string for the default words, or a string for yours
+     *
+     * @default false
      */
     required?: boolean | string;
 };

@@ -311,3 +311,22 @@ describe('the editable element', () => {
         expect(editable?.classList.contains('two')).toBe(false);
     });
 });
+
+describe('the drop cursor', () => {
+    it('shows a 2px line in the primary colour token while something is dragged over the editor', () => {
+        const { view } = mount(paragraph('text'));
+        // happy-dom has no layout: the pointer position, its rectangle, the editor's size and the offset parent are given.
+        Object.defineProperty(view.dom, 'offsetParent', { value: window.document.body });
+        Object.defineProperty(view.dom, 'offsetWidth', { value: 100 });
+        Object.defineProperty(view.dom, 'offsetHeight', { value: 20 });
+        vi.spyOn(view.dom, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 100, 20));
+        vi.spyOn(view, 'posAtCoords').mockReturnValue({ pos: 3, inside: 1 });
+        vi.spyOn(view, 'coordsAtPos').mockReturnValue({ left: 10, right: 10, top: 0, bottom: 20 });
+
+        view.dom.dispatchEvent(new Event('dragover', { bubbles: true }));
+
+        const cursor = window.document.querySelector<HTMLElement>('.prosemirror-dropcursor-inline');
+        expect(cursor?.style.backgroundColor).toBe('var(--color-primary-default)');
+        expect(cursor?.style.width).toBe('2px');
+    });
+});

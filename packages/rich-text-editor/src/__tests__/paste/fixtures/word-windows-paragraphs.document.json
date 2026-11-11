@@ -1,0 +1,73 @@
+{
+    "version": 1,
+    "blocks": [
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "Brand review"
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": []
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "The "
+                },
+                {
+                    "text": "new palette",
+                    "bold": true
+                },
+                {
+                    "text": " is "
+                },
+                {
+                    "text": "warmer",
+                    "italic": true
+                },
+                {
+                    "text": ", see "
+                },
+                {
+                    "text": "the guidelines",
+                    "link": {
+                        "href": "https://www.frontify.com/brand"
+                    },
+                    "fontColor": {
+                        "color": "#0563C1"
+                    }
+                },
+                {
+                    "text": "."
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": [
+                {
+                    "text": "Due ",
+                    "fontColor": {
+                        "color": "#c00000"
+                    }
+                },
+                {
+                    "text": "Friday",
+                    "fontColor": {
+                        "color": "#c00000"
+                    },
+                    "underline": true
+                }
+            ]
+        },
+        {
+            "type": "paragraph",
+            "children": []
+        }
+    ]
+}
