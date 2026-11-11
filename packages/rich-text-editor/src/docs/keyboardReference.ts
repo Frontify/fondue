@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { buildPluginRegistry, type RtePlugin } from '#/core';
-import { EDITOR_SHORTCUTS } from '#/editor/port';
+import { EDITOR_SHORTCUTS, type EditorShortcut } from '#/editor/port';
 
 /**
  * Who binds the keys of a group: the editor itself, or one plugin
@@ -11,10 +11,7 @@ export type KeyboardGroupOwner = { kind: 'editor' } | { kind: 'plugin'; pluginId
 /**
  * One key and what it does; the key is written as in a plugin's `hotkeys` (`Mod-b`)
  */
-export type KeyboardRow = {
-    key: string;
-    label: string;
-};
+export type KeyboardRow = EditorShortcut;
 
 export type KeyboardGroup = {
     owner: KeyboardGroupOwner;
