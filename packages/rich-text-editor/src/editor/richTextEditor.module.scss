@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@use '../utilities/shadow.module.scss';
 @use '../utilities/sizes.module.scss';
 
 // The editor's own parts: the toolbar and the editable surface. What a plugin
@@ -101,21 +100,6 @@
     }
 }
 
-/** The surface behind More, drawn like a Fondue flyout. */
-.morePanel {
-    box-sizing: border-box;
-    max-inline-size: 360px;
-    max-block-size: var(--radix-popover-content-available-height);
-    overflow: auto;
-    padding: var(--spacing-x-small);
-    border: var(--border-width-default) solid var(--color-line-subtle);
-    border-radius: var(--border-radius-medium);
-    background-color: var(--color-surface-default);
-    color: var(--color-primary-default);
-
-    @include shadow.shadow-md;
-}
-
 /** More, and the zero-size spot below it its controls are parked in; a flyout they open hangs from here. */
 .moreAnchor {
     position: relative;
@@ -153,6 +137,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: var(--spacing-small);
+    padding: var(--spacing-x-small);
 }
 
 /**
