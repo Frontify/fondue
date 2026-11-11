@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../utilities/shadow.module.scss';
 @use '../utilities/sizes.module.scss';
 
 // The editor's own parts: the toolbar and the editable surface. What a plugin
@@ -111,7 +112,8 @@
     border-radius: var(--border-radius-medium);
     background-color: var(--color-surface-default);
     color: var(--color-primary-default);
-    box-shadow: 0 3px 10px 0 rgba(8, 8, 8, 0.15);
+
+    @include shadow.shadow-md;
 }
 
 /** More, and the zero-size spot below it its controls are parked in; a flyout they open hangs from here. */
@@ -136,15 +138,8 @@
     visibility: hidden;
     pointer-events: none;
 
-    > div {
-        position: absolute;
-        inset-block-start: 0;
-        inset-inline-end: 0;
-        inline-size: max-content;
-    }
-
     // Stacked on one spot below More, each at its own width, so a flyout one opens hangs in view.
-    [data-toolbar-slot] {
+    .slot {
         position: absolute;
         inset-block-start: 0;
         inset-inline-end: 0;
@@ -153,7 +148,7 @@
 }
 
 /** The controls behind More, in their groups, wrapping onto more lines when the panel is too narrow. */
-.panel {
+.moreControls {
     display: flex;
     flex-wrap: wrap;
     align-items: center;

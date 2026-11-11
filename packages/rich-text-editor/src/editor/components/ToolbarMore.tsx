@@ -272,7 +272,7 @@ const MorePanel = ({ label, focusRequestRef, onLeave, children }: MorePanelProps
             onMouseDown={roving.onMouseDown}
             onKeyDown={onKeyDown}
             onFocus={roving.onFocus}
-            className={styles.panel}
+            className={styles.moreControls}
         >
             {children}
         </div>
