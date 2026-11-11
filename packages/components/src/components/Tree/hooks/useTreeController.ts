@@ -17,10 +17,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { INDENT_STEP_PX, ROOT_ID, ROOT_NAME } from '../constants';
 import { type TreeChangeState, type TreeDropCandidate, type TreeItemData } from '../types';
 import { buildChangeState, type FlatTreeState } from '../utils/buildChangeState';
-import { getCheckedUnitIds, isCheckableUnit } from '../utils/computeCheckedStates';
+import { computeCheckedStates, getCheckedUnitIds, isCheckableUnit } from '../utils/computeCheckedStates';
 import { createCanDrop } from '../utils/createCanDrop';
 import { createDropHandler } from '../utils/createDropHandler';
 import { diffSelection } from '../utils/diffSelection';
+import { getFocusFallback, getVisibleIds } from '../utils/getFocusFallback';
 import { getStructureKey } from '../utils/getStructureKey';
 
 type UseTreeControllerOptions = {
@@ -30,6 +31,7 @@ type UseTreeControllerOptions = {
     reorderable?: boolean;
     countDisabledInFolderState?: boolean;
     rootAccepts?: (items: TreeDropCandidate[]) => boolean;
+    hasFocusWithin?: boolean;
 };
 
 const resolveUpdater = <T>(updater: Updater<T>, prev: T): T =>
@@ -48,6 +50,8 @@ const resolveUpdater = <T>(updater: Updater<T>, prev: T): T =>
  * - `isSelected` maps to `checkboxesFeature` (multi-select) or `selectionFeature`
  *   (single-select); the single-select setter pins to one id so modifier hotkeys
  *   can't escalate into multi-selection.
+ * - The roving tab stop is the first visible selected (or checked) row while the tree has
+ *   no DOM focus (per the WAI-ARIA APG tree pattern); it stops following once focus moves inside.
  * - Setters batched within one user event thread a shared `pendingState` (React hasn't
  *   re-rendered between them), and their emits coalesce into a single microtask flush —
  *   `onChange` fires at most once per interaction, and never for no-op interactions.
@@ -66,6 +70,7 @@ export const useTreeController = ({
     reorderable = false,
     countDisabledInFolderState = false,
     rootAccepts,
+    hasFocusWithin = false,
 }: UseTreeControllerOptions): TreeInstance<TreeItemData> => {
     const itemsWithRoot = useMemo<TreeItemData[]>(
         () => [
@@ -111,6 +116,38 @@ export const useTreeController = ({
     // Focus is internal-only (not in `onChange`), seeded to the first item so one row
     // gets `tabIndex=0` — otherwise the roving tabindex leaves the tree unreachable by Tab.
     const [internalFocusedItem, setInternalFocusedItem] = useState<string | undefined>(() => items[0]?.id);
+    const [previousItems, setPreviousItems] = useState(items);
+    // Adjusted during render so the row leaving the screen never renders as the tab stop; `undefined` falls back to the first row.
+    if (previousItems !== items) {
+        setPreviousItems(items);
+        setInternalFocusedItem(getFocusFallback(internalFocusedItem, previousItems, items));
+    }
+
+    // Derived, not stored: once focus moves inside, the tab stop is again the row the user moved to.
+    const focusedItem = useMemo(() => {
+        if (hasFocusWithin) {
+            return internalFocusedItem;
+        }
+        const selectedIds = new Set(selectedItems);
+        // Folder rows count too: a collapsed folder whose descendants are all checked renders as checked.
+        if (multiSelect) {
+            const checkedStates = computeCheckedStates(items, new Set(checkedItems), { countDisabledInFolderState });
+            for (const [id, state] of checkedStates) {
+                if (state === true) {
+                    selectedIds.add(id);
+                }
+            }
+        }
+        return getVisibleIds(items).find((id) => selectedIds.has(id)) ?? internalFocusedItem;
+    }, [
+        hasFocusWithin,
+        internalFocusedItem,
+        items,
+        selectedItems,
+        checkedItems,
+        multiSelect,
+        countDisabledInFolderState,
+    ]);
 
     // Renames are started by the `isRenaming` prop but ended by the tree, which must take
     // effect before the consumer clears the prop — so internal state is the source of
@@ -119,8 +156,8 @@ export const useTreeController = ({
     const [renamingValue, setRenamingValue] = useState<string>('');
 
     const treeState = useMemo<FlatTreeState>(
-        () => ({ expandedItems, checkedItems, selectedItems, focusedItem: internalFocusedItem }),
-        [expandedItems, checkedItems, selectedItems, internalFocusedItem],
+        () => ({ expandedItems, checkedItems, selectedItems, focusedItem }),
+        [expandedItems, checkedItems, selectedItems, focusedItem],
     );
 
     // Emits are coalesced: one user event can hit several setters (a folder click sets
@@ -263,7 +300,7 @@ export const useTreeController = ({
             getItem: (itemId) => itemsById.get(itemId) as TreeItemData,
             getChildren: (itemId) => itemsById.get(itemId)?.children ?? [],
         },
-        state: { ...treeState, renamingItem, renamingValue },
+        state: { ...treeState, focusedItem: focusedItem ?? null, renamingItem, renamingValue },
         setExpandedItems,
         setCheckedItems,
         setSelectedItems: multiSelect ? undefined : setSelectedItems,

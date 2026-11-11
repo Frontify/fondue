@@ -119,6 +119,12 @@ export type FlyoutContentProps = {
      */
     onOpenAutoFocus?: (event: Event) => void;
     /**
+     * Event handler called when focus is about to be moved back to the trigger after the flyout closes.
+     * Call `event.preventDefault()` to keep focus from returning to the trigger, for example to move it
+     * to a different element instead.
+     */
+    onCloseAutoFocus?: (event: Event) => void;
+    /**
      * Event handler called when the escape key is pressed.
      */
     onEscapeKeyDown?: (event: KeyboardEvent) => void;

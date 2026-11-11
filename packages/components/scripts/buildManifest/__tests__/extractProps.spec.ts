@@ -6,7 +6,7 @@ const mockParse = vi.hoisted(() => vi.fn().mockReturnValue([]));
 
 vi.mock('glob');
 vi.mock('react-docgen-typescript', () => ({
-    withCompilerOptions: vi.fn().mockReturnValue({ parse: mockParse }),
+    withCompilerOptions: vi.fn().mockReturnValue({ parseWithProgramProvider: mockParse }),
 }));
 vi.mock('../utils', () => ({
     resolveFromRoot: (...segments: string[]) => ['<root>', ...segments].filter(Boolean).join('/'),
@@ -99,9 +99,9 @@ describe('extractProps', () => {
 
         extractProps('Button', 'src/components/Button');
 
-        // parse is called once per non-excluded file
+        // the parser is called once per non-excluded file
         expect(mockParse).toHaveBeenCalledTimes(1);
-        expect(mockParse).toHaveBeenCalledWith('<root>/src/components/Button/Button.tsx');
+        expect(mockParse).toHaveBeenCalledWith('<root>/src/components/Button/Button.tsx', expect.any(Function));
     });
 
     it('extracts main component props when displayName matches', () => {

@@ -86,6 +86,11 @@ export type ComboboxSharedProps = {
      * Event handler called when the escape key is pressed
      */
     onEscapeKeyDown?: (event: KeyboardEvent) => void;
+    /**
+     * Event handler called when the menu opens or closes.
+     * Useful for multiple selects to act once the user has finished selecting, e.g. to persist the selection when the menu closes.
+     */
+    onOpenChange?: (open: boolean) => void;
 } & CommonAriaProps &
     CommonGlobalProps;
 
@@ -130,6 +135,7 @@ const ComboboxBaseInput = (
         viewportCollisionPadding = 'compact',
         getAsyncItems,
         onEscapeKeyDown,
+        onOpenChange,
         multiple,
         lang,
         ...props
@@ -207,9 +213,10 @@ const ComboboxBaseInput = (
         onInputValueChange: ({ inputValue }) => {
             setFilterText(inputValue);
         },
-        onIsOpenChange: () => {
+        onIsOpenChange: ({ isOpen }) => {
             setHasInteractedSinceOpening(false);
             setFilterText('');
+            onOpenChange?.(isOpen);
         },
         onHighlightedIndexChange: () => {
             setHasInteractedSinceOpening(true);

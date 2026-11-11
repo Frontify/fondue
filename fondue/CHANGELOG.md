@@ -31,6 +31,51 @@
   - @frontify/fondue-sdk@1.0.0-beta.0
   - @frontify/fondue-tokens@6.0.0-beta.0
 
+## 13.11.3
+
+### Patch Changes
+
+- [#2966](https://github.com/Frontify/fondue/pull/2966) [`04ee335`](https://github.com/Frontify/fondue/commit/04ee335b4f5071262315ac1df2d6297fb82fc602) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(Card): center `Card.BannerDescription` in the banner and only leave room for the selection checkbox when the card is selectable, so the description shows more lines. The revealed description now has a bottom border that separates it from the card content.
+
+- [#2962](https://github.com/Frontify/fondue/pull/2962) [`eddd1cc`](https://github.com/Frontify/fondue/commit/eddd1cc0a496ba20e3f8926d893b0bc2ee25dfe2) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(Tree): add `folderClickType` to `Tree.Root`. The default `'select'` keeps the current single-select behavior (the first click on a folder only selects it). `'toggle'` expands or collapses a folder on every click, for trees whose folders are only containers.
+
+- Updated dependencies [[`1fc4e6e`](https://github.com/Frontify/fondue/commit/1fc4e6e5859082edc24fc3bde97491fccae907e0), [`04ee335`](https://github.com/Frontify/fondue/commit/04ee335b4f5071262315ac1df2d6297fb82fc602), [`eddd1cc`](https://github.com/Frontify/fondue/commit/eddd1cc0a496ba20e3f8926d893b0bc2ee25dfe2), [`f9f8c9f`](https://github.com/Frontify/fondue/commit/f9f8c9f39efab944a8163cb912ca31f0e17f6a7b)]:
+  - @frontify/fondue-charts@9.1.0
+  - @frontify/fondue-components@36.0.2
+  - @frontify/fondue-sdk@0.3.3
+  - @frontify/fondue-tokens@5.2.0
+
+## 13.11.2
+
+### Patch Changes
+
+- [#2923](https://github.com/Frontify/fondue/pull/2923) [`ed52d6e`](https://github.com/Frontify/fondue/commit/ed52d6e458a8c03be92559fc00fc43d648106608) Thanks [@jcosta33](https://github.com/jcosta33)! - Update runtime dependencies to the latest versions already allowed by the current majors. Radix primitives move to their current 1.x minors, except `@radix-ui/react-scroll-area`, which stays on the patched 1.2.18. `@headless-tree/*` moves to 1.8, `@react-types/shared` to 3.37, and `@ctrl/tinycolor`, `react-colorful`, and `unist-util-visit` move to their latest patches.
+
+- Updated dependencies [[`7311deb`](https://github.com/Frontify/fondue/commit/7311deb88a2dfdc4f5820b89883c574ecb4d4bee), [`ed52d6e`](https://github.com/Frontify/fondue/commit/ed52d6e458a8c03be92559fc00fc43d648106608), [`cbec3e4`](https://github.com/Frontify/fondue/commit/cbec3e41f01ac497b59816bae2b771c3f10e7315), [`90552fe`](https://github.com/Frontify/fondue/commit/90552fe1a71ccf86b58d87b792dd711794965608), [`35390a0`](https://github.com/Frontify/fondue/commit/35390a03b88f30045d5b8b738564fb33e43031ad), [`2c9db91`](https://github.com/Frontify/fondue/commit/2c9db91df4d604b5c1ee6518b64f2f8368b4753b)]:
+  - @frontify/fondue-rte@0.1.15
+  - @frontify/fondue-components@36.0.1
+  - @frontify/fondue-sdk@0.3.2
+  - @frontify/fondue-tokens@5.2.0
+
+## 13.11.1
+
+### Patch Changes
+
+- [#2919](https://github.com/Frontify/fondue/pull/2919) [`a6eec2b`](https://github.com/Frontify/fondue/commit/a6eec2b98efd41dada738fcbe9aec1a67f090a60) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(Card): stop the hover background from flickering in Chrome
+
+- [#2920](https://github.com/Frontify/fondue/pull/2920) [`d0d8cba`](https://github.com/Frontify/fondue/commit/d0d8cba2e2ddf05c7d3d5149a23e750cbf45756d) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat(Flyout): expose `onCloseAutoFocus` on `Flyout.Content`
+
+- [#2921](https://github.com/Frontify/fondue/pull/2921) [`1bf4b45`](https://github.com/Frontify/fondue/commit/1bf4b455a9d0d55b8dd8829eab7338b48fcd67e6) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add explicit box sizing
+
+- [#2915](https://github.com/Frontify/fondue/pull/2915) [`5c9ad21`](https://github.com/Frontify/fondue/commit/5c9ad2104dfb30cbac659e7fe72b57dd17a89771) Thanks [@syeo66](https://github.com/syeo66)! - feat(Select): add onOpenChange prop to signal state change
+
+- Updated dependencies [[`a6eec2b`](https://github.com/Frontify/fondue/commit/a6eec2b98efd41dada738fcbe9aec1a67f090a60), [`d0d8cba`](https://github.com/Frontify/fondue/commit/d0d8cba2e2ddf05c7d3d5149a23e750cbf45756d), [`1bf4b45`](https://github.com/Frontify/fondue/commit/1bf4b455a9d0d55b8dd8829eab7338b48fcd67e6), [`5c9ad21`](https://github.com/Frontify/fondue/commit/5c9ad2104dfb30cbac659e7fe72b57dd17a89771), [`5a7b8cb`](https://github.com/Frontify/fondue/commit/5a7b8cbbce4a53eeb0a55f386dd55ce5ba802ef4), [`d55e0e0`](https://github.com/Frontify/fondue/commit/d55e0e0f297a416193f3142ec04f82cf6b00933c), [`381b6dd`](https://github.com/Frontify/fondue/commit/381b6dd482a79e3092e179f5fbae180eb903db73)]:
+  - @frontify/fondue-components@36.0.0
+  - @frontify/fondue-sdk@0.3.1
+  - @frontify/fondue-rte@0.1.14
+  - @frontify/fondue-icons@0.32.0
+  - @frontify/fondue-tokens@5.2.0
+
 ## 13.11.0
 
 ### Minor Changes

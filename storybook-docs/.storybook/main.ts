@@ -21,11 +21,11 @@ const packagePath = (...segments: string[]): string => join(packagesRoot, ...seg
 const getSubpackageURL = (subpackage: string): string => {
     if (process.env.CONTEXT === 'deploy-preview' && process.env.REVIEW_ID) {
         return `https://deploy-preview-${process.env.REVIEW_ID}.${subpackage}.fondue-components.frontify.com/`;
-    } else if (process.env.CONTEXT === 'branch-deploy' && process.env.BRANCH) {
-        return `https://${toBranchSubdomain(process.env.BRANCH)}.${subpackage}.fondue-components.frontify.com/`;
-    } else {
-        return `https://${subpackage}.fondue-components.frontify.com/`;
     }
+    if (process.env.CONTEXT === 'branch-deploy' && process.env.BRANCH) {
+        return `https://${toBranchSubdomain(process.env.BRANCH)}.${subpackage}.fondue-components.frontify.com/`;
+    }
+    return `https://${subpackage}.fondue-components.frontify.com/`;
 };
 
 const config: StorybookConfig = {

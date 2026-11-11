@@ -1,13 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { dropCursor } from 'prosemirror-dropcursor';
 import { EditorState, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { type MountedDocument, type MountDocument, type MountOptions } from '#/editor/port';
 
-import { clipboardParser, clipboardSerializer, handlePasteByFeatures, handlePasteIntoEmptyBlock } from './clipboard';
+import {
+    clipboardParser,
+    clipboardSerializer,
+    handlePasteByFeatures,
+    handlePasteIntoEmptyBlock,
+    keepOfficeListStyles,
+    pastedWithoutExtras,
+} from './clipboard';
 import { createControlApi, type OpenEditors } from './controlApi';
-import { toEngineDocument, toRteDocument, withoutDrafts } from './documentConversion';
+import { rootExtrasOf, toEngineDocument, toRteDocument, withoutDrafts } from './documentConversion';
+import { copiedExtrasPlugin } from './extraAttributes';
 import { keystrokePipeline } from './keystrokes';
 import { createMarkViews, createNodeViews, LiveViews } from './nodeViews';
 import { placeholderPlugin } from './placeholder';
@@ -69,6 +78,8 @@ const mount = ({
     // Every document reported to the host: one arriving back, even late and
     // behind newer edits, is the editor's own and never replaces what it holds.
     const emittedDocs = new WeakSet<typeof initialDoc>();
+    // The document's own undeclared keys: only the host changes them, so they live here, not in the engine document.
+    let rootExtras = rootExtrasOf(initialDoc);
 
     // 1. Views with editing UI (blocks, inline elements, link-like marks) follow
     //    the selection, since `isFocused` does. Each state change is offered to
@@ -103,6 +114,8 @@ const mount = ({
         markViews: createMarkViews(registry, api, liveViews, openEditors),
         clipboardSerializer: clipboardSerializer(schema),
         clipboardParser: clipboardParser(schema),
+        transformPastedHTML: keepOfficeListStyles,
+        transformPasted: pastedWithoutExtras,
         handlePaste: (pasteView, event, slice) =>
             handlePasteByFeatures(registry.pasteHandlers, api)(pasteView, event) ||
             handlePasteIntoEmptyBlock(pasteView, event, slice),
@@ -110,7 +123,10 @@ const mount = ({
             doc: toEngineDocument(initialDoc, schema),
             plugins: [
                 ...keystrokePipeline(registry, schema, api),
+                copiedExtrasPlugin(),
                 placeholderPlugin(() => currentPlaceholder, placeholderClassName),
+                // Drawn in the view's offset parent, outside the text, so `currentColor` would be the host's colour.
+                dropCursor({ color: 'var(--color-primary-default)', width: 2 }),
             ],
         }),
         // Clicking an inline atom (mention, ...) puts the caret after it rather than selecting it.
@@ -130,7 +146,7 @@ const mount = ({
             repaintViews();
             // Host-originated changes are not reported back to the host.
             if (transaction.docChanged && transaction.getMeta(HOST_DOC) !== true) {
-                const emitted = toRteDocument(editorView.state.doc);
+                const emitted = toRteDocument(editorView.state.doc, rootExtras);
                 emittedDocs.add(emitted);
                 onDocChange(emitted);
             }
@@ -148,6 +164,7 @@ const mount = ({
         // Drafts (an inline still being made) are in no document the host holds,
         // though a block reused from one handed out may bring one along; an
         // echo of what is there must leave them, and the caret, alone.
+        rootExtras = rootExtrasOf(doc);
         if (withoutDrafts(next).eq(withoutDrafts(editorView.state.doc))) {
             agreedDoc = doc;
             return;
@@ -166,7 +183,7 @@ const mount = ({
         handle: {
             api,
             selectionRect: createSelectionRectReader(editorView),
-            document: () => toRteDocument(editorView.state.doc),
+            document: () => toRteDocument(editorView.state.doc, rootExtras),
         },
         setDoc,
         setPlaceholder(next) {

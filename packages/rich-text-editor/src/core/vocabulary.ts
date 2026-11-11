@@ -16,8 +16,21 @@ export const paragraphBlock: BlockDefinition = defineBlock({
     parse: [{ tag: 'p' }],
 });
 
-/** The document format's version, carried on every document. */
+/**
+ * The document format's version, carried on every document. An editor shows a
+ * newer document read-only, so raise it only for a change an older editor would
+ * lose or misread: today that includes a new block attribute, which it drops on save.
+ */
 export const DOCUMENT_VERSION = 1;
+
+/** The document's version when it is newer than this editor writes; a missing or non-numeric one is not. */
+export const newerVersionOf = (document: RteDocumentOf): number | null => {
+    const { version } = document;
+    if (typeof version === 'number' && version > DOCUMENT_VERSION) {
+        return version;
+    }
+    return null;
+};
 
 /**
  * Inside a block's `content.blocks`, stands for every mounted list (a block with

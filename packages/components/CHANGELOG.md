@@ -12,6 +12,58 @@
   - @frontify/fondue-icons@1.0.0-beta.0
   - @frontify/fondue-tokens@6.0.0-beta.0
 
+## 36.0.2
+
+### Patch Changes
+
+- [#2966](https://github.com/Frontify/fondue/pull/2966) [`04ee335`](https://github.com/Frontify/fondue/commit/04ee335b4f5071262315ac1df2d6297fb82fc602) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(Card): center `Card.BannerDescription` in the banner and only leave room for the selection checkbox when the card is selectable, so the description shows more lines. The revealed description now has a bottom border that separates it from the card content.
+
+- [#2962](https://github.com/Frontify/fondue/pull/2962) [`eddd1cc`](https://github.com/Frontify/fondue/commit/eddd1cc0a496ba20e3f8926d893b0bc2ee25dfe2) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(Tree): add `folderClickType` to `Tree.Root`. The default `'select'` keeps the current single-select behavior (the first click on a folder only selects it). `'toggle'` expands or collapses a folder on every click, for trees whose folders are only containers.
+
+- [#2963](https://github.com/Frontify/fondue/pull/2963) [`f9f8c9f`](https://github.com/Frontify/fondue/commit/f9f8c9f39efab944a8163cb912ca31f0e17f6a7b) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): keep focus where the user moved it when a rename input blurs
+
+  Blurring the rename input still commits the name, but it no longer moves focus back to a tree row afterwards. Before, opening another row's action menu while a row was renaming closed the menu right after it opened, because the deferred focus restore pulled focus out of it. Enter and Escape still return focus to the renamed row.
+
+- Updated dependencies []:
+  - @frontify/fondue-tokens@5.2.0
+
+## 36.0.1
+
+### Patch Changes
+
+- [#2923](https://github.com/Frontify/fondue/pull/2923) [`ed52d6e`](https://github.com/Frontify/fondue/commit/ed52d6e458a8c03be92559fc00fc43d648106608) Thanks [@jcosta33](https://github.com/jcosta33)! - Update runtime dependencies to the latest versions already allowed by the current majors. Radix primitives move to their current 1.x minors, except `@radix-ui/react-scroll-area`, which stays on the patched 1.2.18. `@headless-tree/*` moves to 1.8, `@react-types/shared` to 3.37, and `@ctrl/tinycolor`, `react-colorful`, and `unist-util-visit` move to their latest patches.
+
+- [#2914](https://github.com/Frontify/fondue/pull/2914) [`cbec3e4`](https://github.com/Frontify/fondue/commit/cbec3e41f01ac497b59816bae2b771c3f10e7315) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): removing a row no longer pulls focus back into the tree after focus has moved elsewhere, such as after a dismissed row menu
+
+- [#2931](https://github.com/Frontify/fondue/pull/2931) [`90552fe`](https://github.com/Frontify/fondue/commit/90552fe1a71ccf86b58d87b792dd711794965608) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(Tree): add `onDoubleClick` to rows; the second click of a double-click no longer selects or toggles a row that has one
+
+- [#2945](https://github.com/Frontify/fondue/pull/2945) [`35390a0`](https://github.com/Frontify/fondue/commit/35390a03b88f30045d5b8b738564fb33e43031ad) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): the drag handle no longer shifts row content in single-select reorderable trees. It overlays the row's leading space, so reorderable and static roots align. Row content in every tree moves 2px toward the end to make room for it.
+
+- [#2949](https://github.com/Frontify/fondue/pull/2949) [`2c9db91`](https://github.com/Frontify/fondue/commit/2c9db91df4d604b5c1ee6518b64f2f8368b4753b) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): derive the row geometry from shared custom properties and align the drag line in right-to-left trees
+
+  The indent, drag handle, drag line and loading row now derive their offsets from custom properties declared once on the tree root, and the indent step comes from the same constant headless-tree uses for drop hit-testing. At the default 16px root font size nothing moves; at other root font sizes each level now indents 16px (the step drop hit-testing already used) instead of `1rem`, and the drag line follows the chevron. The drag line uses logical properties, so in right-to-left trees it starts under the target folder's chevron instead of from the left edge.
+
+- Updated dependencies []:
+  - @frontify/fondue-tokens@5.2.0
+
+## 36.0.0
+
+### Patch Changes
+
+- [#2919](https://github.com/Frontify/fondue/pull/2919) [`a6eec2b`](https://github.com/Frontify/fondue/commit/a6eec2b98efd41dada738fcbe9aec1a67f090a60) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(Card): stop the hover background from flickering in Chrome
+
+- [#2920](https://github.com/Frontify/fondue/pull/2920) [`d0d8cba`](https://github.com/Frontify/fondue/commit/d0d8cba2e2ddf05c7d3d5149a23e750cbf45756d) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat(Flyout): expose `onCloseAutoFocus` on `Flyout.Content`
+
+- [#2915](https://github.com/Frontify/fondue/pull/2915) [`5c9ad21`](https://github.com/Frontify/fondue/commit/5c9ad2104dfb30cbac659e7fe72b57dd17a89771) Thanks [@syeo66](https://github.com/syeo66)! - feat(Select): add onOpenChange prop to signal state change
+
+- [#2860](https://github.com/Frontify/fondue/pull/2860) [`5a7b8cb`](https://github.com/Frontify/fondue/commit/5a7b8cbbce4a53eeb0a55f386dd55ce5ba802ef4) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): while the tree has no DOM focus, put the roving tab stop on the first visible selected row (in multi-select, the first checked row or fully checked folder). With no visible selection it stays on the row last clicked or arrowed to
+
+- [#2857](https://github.com/Frontify/fondue/pull/2857) [`d55e0e0`](https://github.com/Frontify/fondue/commit/d55e0e0f297a416193f3142ec04f82cf6b00933c) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): when the focused row is removed, move the tab stop to its next visible row (else the previous); when a collapse hides it, move the tab stop to the collapsed folder. DOM focus follows when it was inside the tree, so the tree keeps one tabbable row
+
+- Updated dependencies [[`381b6dd`](https://github.com/Frontify/fondue/commit/381b6dd482a79e3092e179f5fbae180eb903db73)]:
+  - @frontify/fondue-icons@0.32.0
+  - @frontify/fondue-tokens@5.2.0
+
 ## 35.0.0
 
 ### Minor Changes

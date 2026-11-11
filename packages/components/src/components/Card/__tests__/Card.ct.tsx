@@ -178,6 +178,87 @@ test('should still shift an un-toned banner background on hover', async ({ mount
         .toBe(expectedHover);
 });
 
+const readHoverLayer = (card: Locator) =>
+    card.evaluate((element) => {
+        const layer = getComputedStyle(element, '::before');
+        return { opacity: layer.opacity, backgroundColor: layer.backgroundColor };
+    });
+
+const readHoverOpacity = (card: Locator) => card.evaluate((element) => getComputedStyle(element, '::before').opacity);
+
+test('should not transition the root background color', async ({ mount }) => {
+    const wrapper = await mount(
+        <RouterProvider navigate={() => {}} useHref={(path) => path}>
+            <Card.Root data-test-id={CARD_TEST_ID} href="/page" aria-label="Card">
+                <Card.Title>Card title</Card.Title>
+            </Card.Root>
+        </RouterProvider>,
+    );
+
+    // Chrome runs background-color transitions on the compositor and can paint the
+    // start color for one frame when it hands back to the main thread, which reads
+    // as a flicker on hover. The hover tint fades via the ::before layer's opacity.
+    const transitionDuration = await wrapper
+        .getByTestId(CARD_TEST_ID)
+        .evaluate((element) => getComputedStyle(element).transitionDuration);
+    expect(transitionDuration).toBe('0s');
+});
+
+test('should fade the hover tint in on hover and out on leave', async ({ mount, page }) => {
+    const wrapper = await mount(
+        <RouterProvider navigate={() => {}} useHref={(path) => path}>
+            <Card.Root data-test-id={CARD_TEST_ID} href="/page" aria-label="Card">
+                <Card.Banner>
+                    <Card.BannerImage src={TRANSPARENT_GIF} />
+                </Card.Banner>
+                <Card.Title>Card title</Card.Title>
+            </Card.Root>
+        </RouterProvider>,
+    );
+    const card = wrapper.getByTestId(CARD_TEST_ID);
+    const expectedHover = await resolveToken(card, 'color', '--color-surface-hover');
+    const expectedDefault = await resolveToken(card, 'color', '--color-surface-default');
+    expect(await readHoverOpacity(card)).toBe('0');
+
+    await card.hover();
+    await expect.poll(() => readHoverLayer(card)).toEqual({ opacity: '1', backgroundColor: expectedHover });
+    expect(await card.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe(expectedDefault);
+
+    await page.mouse.move(0, 0);
+    await expect.poll(() => readHoverOpacity(card)).toBe('0');
+});
+
+test('should show the pressed tint while the card is pressed', async ({ mount, page }) => {
+    const wrapper = await mount(
+        <RouterProvider navigate={() => {}} useHref={(path) => path}>
+            <Card.Root data-test-id={CARD_TEST_ID} href="/page" aria-label="Card">
+                <Card.Title>Card title</Card.Title>
+            </Card.Root>
+        </RouterProvider>,
+    );
+    const card = wrapper.getByTestId(CARD_TEST_ID);
+    const expectedActive = await resolveToken(card, 'color', '--color-surface-active');
+
+    await card.hover();
+    await page.mouse.down();
+
+    await expect.poll(() => readHoverLayer(card)).toEqual({ opacity: '1', backgroundColor: expectedActive });
+    await page.mouse.up();
+});
+
+test('should not show the hover tint on a non-interactive card', async ({ mount }) => {
+    const wrapper = await mount(
+        <Card.Root data-test-id={CARD_TEST_ID}>
+            <Card.Title>Card title</Card.Title>
+        </Card.Root>,
+    );
+    const card = wrapper.getByTestId(CARD_TEST_ID);
+
+    await card.hover();
+
+    expect(await readHoverOpacity(card)).toBe('0');
+});
+
 test('should render lang on the card root', async ({ mount }) => {
     const wrapper = await mount(
         <Card.Root data-test-id={CARD_TEST_ID} lang="fr-CH">
@@ -285,4 +366,67 @@ test('should clamp a long banner description to the lines that fit the banner', 
     expect(textBox!.height).toBeLessThanOrEqual(lines * lineHeight + 1);
     expect(textBox!.y).toBeGreaterThanOrEqual(bannerBox!.y);
     expect(textBox!.y + textBox!.height).toBeLessThanOrEqual(bannerBox!.y + bannerBox!.height);
+});
+
+test('should center the banner description in the banner when the card is not selectable', async ({ mount }) => {
+    const wrapper = await mount(
+        <div style={{ width: 280 }}>
+            <Card.Root>
+                <Card.Banner data-test-id="banner">
+                    <Card.BannerDescription data-test-id="banner-description">Description</Card.BannerDescription>
+                </Card.Banner>
+            </Card.Root>
+        </div>,
+    );
+    const bannerBox = await wrapper.getByTestId('banner').boundingBox();
+    const textBox = await wrapper.getByTestId('banner-description').locator('p').boundingBox();
+    expect(bannerBox).not.toBeNull();
+    expect(textBox).not.toBeNull();
+
+    const bannerCenter = bannerBox!.y + bannerBox!.height / 2;
+    const textCenter = textBox!.y + textBox!.height / 2;
+    expect(Math.abs(textCenter - bannerCenter)).toBeLessThanOrEqual(1);
+});
+
+test('should center the banner description below the checkbox when the card is selectable', async ({ mount }) => {
+    const wrapper = await mount(
+        <RouterProvider navigate={() => {}} useHref={(path) => path}>
+            <div style={{ width: 280 }}>
+                <Card.Root href="/page" onSelect={() => {}} selected={false} aria-label="Card">
+                    <Card.Banner data-test-id="banner">
+                        <Card.BannerDescription data-test-id="banner-description">Description</Card.BannerDescription>
+                    </Card.Banner>
+                </Card.Root>
+            </div>
+        </RouterProvider>,
+    );
+    const checkboxBox = await wrapper.getByRole('button', { name: 'Select' }).boundingBox();
+    const bannerBox = await wrapper.getByTestId('banner').boundingBox();
+    const textBox = await wrapper.getByTestId('banner-description').locator('p').boundingBox();
+    expect(checkboxBox).not.toBeNull();
+    expect(bannerBox).not.toBeNull();
+    expect(textBox).not.toBeNull();
+
+    const spacingSmall = Number.parseFloat(await resolveToken(wrapper, 'width', '--spacing-small'));
+    const spacingMedium = Number.parseFloat(await resolveToken(wrapper, 'width', '--spacing-medium'));
+    const areaTop = checkboxBox!.y + checkboxBox!.height + spacingSmall;
+    const areaBottom = bannerBox!.y + bannerBox!.height - spacingMedium;
+    const textCenter = textBox!.y + textBox!.height / 2;
+    expect(textBox!.y).toBeGreaterThanOrEqual(areaTop);
+    expect(Math.abs(textCenter - (areaTop + areaBottom) / 2)).toBeLessThanOrEqual(1);
+});
+
+test('should draw a bottom border under the banner description', async ({ mount }) => {
+    const wrapper = await mount(
+        <Card.Root>
+            <Card.Banner>
+                <Card.BannerDescription data-test-id="banner-description">Description</Card.BannerDescription>
+            </Card.Banner>
+        </Card.Root>,
+    );
+    const description = wrapper.getByTestId('banner-description');
+    const lineColor = await resolveToken(description, 'color', '--color-line-subtle');
+    const boxShadow = await description.evaluate((element) => getComputedStyle(element).boxShadow);
+
+    expect(boxShadow).toBe(`${lineColor} 0px -1px 0px 0px inset`);
 });

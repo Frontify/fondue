@@ -70,16 +70,16 @@ export default defineConfig({
         dts({
             insertTypesEntry: true,
             rollupTypes: true,
+            // Only the package source: not `.storybook/`, which the tsconfig also covers.
             include: ['src'],
-            exclude: ['**/*.stories.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
+            exclude: ['**/*.stories.tsx', '**/*.spec.ts', '**/*.spec.tsx', '**/*.ct.ts', '**/*.ct.tsx'],
         }),
         externalizeJsDeps(),
     ],
     /**
      * SCSS modules end up in one `dist/style.css` (`@frontify/fondue-rich-text-editor/styles`).
      * PostCSS is inline and without Tailwind, so no `postcss.config.*` is picked
-     * up and no utility CSS reaches the bundle; the stories get Tailwind from the
-     * shared Storybook in `storybook-docs/`.
+     * up and no utility CSS reaches the bundle; Tailwind is added in `.storybook/main.ts`.
      */
     css: {
         modules: { generateScopedName: stableScopedName() },

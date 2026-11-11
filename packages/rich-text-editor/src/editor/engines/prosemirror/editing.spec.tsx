@@ -130,6 +130,58 @@ describe('a document set by the host', () => {
         expect(onDocChange).toHaveBeenCalledTimes(1);
     });
 
+    describe('with keys on the document itself that no plugin declares', () => {
+        const withMeta = (meta?: string): RteDocumentOf =>
+            ({ ...paragraph('same'), ...(meta === undefined ? {} : { meta }) }) as RteDocumentOf;
+
+        it('takes the new ones from the host, and reports them with the next edit', () => {
+            const { handle, onDocChange, stored } = mount(withMeta('a'));
+
+            handle.setDoc(withMeta('b'));
+
+            expect(onDocChange).not.toHaveBeenCalled();
+            expect(handle.document()).toEqual(withMeta('b'));
+            handle.api.insertText('!');
+            expect(stored()).toMatchObject({ meta: 'b' });
+        });
+
+        it('drops the ones the host no longer has', () => {
+            const { handle } = mount(withMeta('a'));
+
+            handle.setDoc(withMeta());
+
+            expect(handle.document()).toStrictEqual(paragraph('same'));
+        });
+
+        it('leaves the caret where it was when only they changed', () => {
+            const { handle, view } = mount(withMeta('a'));
+            view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, 2)));
+
+            handle.setDoc(withMeta('b'));
+
+            expect(view.state.selection.from).toBe(2);
+        });
+
+        it('redraws nothing when only they changed', () => {
+            const { handle, view } = mount(withMeta('a'));
+            const { state } = view;
+            const drawn = view.dom.firstChild;
+
+            handle.setDoc(withMeta('b'));
+
+            expect(view.state).toBe(state);
+            expect(view.dom.firstChild).toBe(drawn);
+        });
+
+        it('takes them along with new content', () => {
+            const { handle } = mount(withMeta('a'));
+
+            handle.setDoc({ ...paragraph('other'), meta: 'b' } as RteDocumentOf);
+
+            expect(handle.document()).toEqual({ ...paragraph('other'), meta: 'b' });
+        });
+    });
+
     it('still reports the edits the user makes after it', () => {
         const { handle, stored } = mount(emptyDocument());
 
@@ -250,5 +302,24 @@ describe('the editable element', () => {
         expect(editable?.getAttribute('aria-describedby')).toBe('hint');
         expect(editable?.classList.contains('three')).toBe(true);
         expect(editable?.classList.contains('two')).toBe(false);
+    });
+});
+
+describe('the drop cursor', () => {
+    it('shows a 2px line in the primary colour token while something is dragged over the editor', () => {
+        const { view } = mount(paragraph('text'));
+        // happy-dom has no layout: the pointer position, its rectangle, the editor's size and the offset parent are given.
+        Object.defineProperty(view.dom, 'offsetParent', { value: window.document.body });
+        Object.defineProperty(view.dom, 'offsetWidth', { value: 100 });
+        Object.defineProperty(view.dom, 'offsetHeight', { value: 20 });
+        vi.spyOn(view.dom, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 100, 20));
+        vi.spyOn(view, 'posAtCoords').mockReturnValue({ pos: 3, inside: 1 });
+        vi.spyOn(view, 'coordsAtPos').mockReturnValue({ left: 10, right: 10, top: 0, bottom: 20 });
+
+        view.dom.dispatchEvent(new Event('dragover', { bubbles: true }));
+
+        const cursor = window.document.querySelector<HTMLElement>('.prosemirror-dropcursor-inline');
+        expect(cursor?.style.backgroundColor).toBe('var(--color-primary-default)');
+        expect(cursor?.style.width).toBe('2px');
     });
 });

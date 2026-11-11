@@ -11,6 +11,12 @@
 - Updated dependencies [[`f59824e`](https://github.com/Frontify/fondue/commit/f59824e0f9b33a4ee6b8f1f290cbfed5b67374c7)]:
   - @frontify/fondue-tokens@6.0.0-beta.0
 
+## 0.32.0
+
+### Minor Changes
+
+- [#2918](https://github.com/Frontify/fondue/pull/2918) [`381b6dd`](https://github.com/Frontify/fondue/commit/381b6dd482a79e3092e179f5fbae180eb903db73) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - feat: update icons
+
 ## 0.31.0
 
 ### Minor Changes

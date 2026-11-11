@@ -70,6 +70,11 @@ export type SelectSharedProps = {
      * Event handler called when the escape key is pressed
      */
     onEscapeKeyDown?: (event: KeyboardEvent) => void;
+    /**
+     * Event handler called when the menu opens or closes.
+     * Useful for multiple selects to act once the user has finished selecting, e.g. to persist the selection when the menu closes.
+     */
+    onOpenChange?: (open: boolean) => void;
 } & CommonAriaProps;
 
 type SelectBaseProps = SelectSharedProps & {
@@ -113,6 +118,7 @@ const SelectBaseInput = (
         'data-test-id': dataTestId = 'fondue-select',
         viewportCollisionPadding = 'compact',
         onEscapeKeyDown,
+        onOpenChange,
         multiple,
         ...props
     }: SelectBaseProps,
@@ -164,8 +170,9 @@ const SelectBaseInput = (
         selectedItem: null,
         toggleButtonId: id,
         labelId: 'aria-labelledby' in props ? props['aria-labelledby'] : undefined,
-        onIsOpenChange: () => {
+        onIsOpenChange: ({ isOpen }) => {
             setHasInteractedSinceOpening(false);
+            onOpenChange?.(isOpen);
         },
         onHighlightedIndexChange: () => {
             setHasInteractedSinceOpening(true);

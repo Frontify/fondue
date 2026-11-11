@@ -239,7 +239,8 @@ export const SingleSelectNestedFolders: Story = {
                     'Single-select across nested folders: any row — item or folder, at any depth — can be the ' +
                     'one selected row. The first click on a folder only selects it; clicking the selected ' +
                     'folder, or any chevron, expands or collapses it. The `isSelected` and `isExpanded` flags ' +
-                    'emitted via `onChange` are fed straight back into the tree.',
+                    'emitted via `onChange` are fed straight back into the tree. Set `folderClickType="toggle"` to ' +
+                    'expand or collapse a folder on every click instead.',
             },
         },
     },
@@ -326,6 +327,20 @@ export const SingleSelectNestedFolders: Story = {
             </Tree.Root>
         );
     },
+};
+
+export const FolderClickToggle: Story = {
+    ...SingleSelectNestedFolders,
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'With `folderClickType="toggle"`, every click on a folder expands or collapses it, as well as ' +
+                    'selecting it. Use it for trees whose folders are only containers, not answers.',
+            },
+        },
+    },
+    args: { folderClickType: 'toggle' },
 };
 
 export const MultiSelect: Story = {
@@ -808,6 +823,7 @@ export const Renaming: Story = {
                     'away commits: the row fires `onRename` with the new name and the root fires `onChange` ' +
                     'with the updated `name`, so re-rendering from either source applies the rename. Escape ' +
                     'cancels. Either way `onRenamingChange(false)` fires so the consumer can clear its flag. ' +
+                    "Double-clicking a row also starts a rename here: the story sets `isRenaming` from the row's `onDoubleClick`. " +
                     'A `<Tree.Decorator>` (here on Logo.svg) is hidden while its row renames, so the input ' +
                     'spans the full width up to the actions slot.',
             },
@@ -832,6 +848,7 @@ export const Renaming: Story = {
         const renameProps = (n: TreeNodeState) => ({
             isRenaming: renamingId === n.id,
             onRenamingChange: (isRenaming: boolean) => setRenamingId(isRenaming ? n.id : null),
+            onDoubleClick: () => setRenamingId(n.id),
             onRename: (newName: string) => {
                 action('onRename')(n.id, newName);
             },

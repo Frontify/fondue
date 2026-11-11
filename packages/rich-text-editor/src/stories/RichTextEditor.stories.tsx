@@ -55,11 +55,6 @@ const buttonClasses = (active: boolean): string =>
 const meta: Meta<typeof RichTextEditor> = {
     title: 'Rich Text Editor/Editor',
     component: RichTextEditor,
-    parameters: {
-        status: {
-            type: 'beta',
-        },
-    },
 };
 export default meta;
 
@@ -343,6 +338,30 @@ export const Readonly: Story = {
             </div>
         );
     },
+};
+
+/**
+ * A document saved by a newer version of the editor may hold what this one
+ * would lose on save, so it is shown read-only with a notice saying why. The
+ * notice text is the `newerVersion` label.
+ */
+export const NewerVersion: Story = {
+    render: () => (
+        <div className={LAYOUT}>
+            <div className={FRAME}>
+                <RichTextEditor
+                    value={
+                        {
+                            // Far above any real version, so the story keeps showing the notice.
+                            version: 1000,
+                            blocks: [{ type: 'paragraph', children: [{ text: 'Saved by a newer editor.' }] }],
+                        } as unknown as RteDocument
+                    }
+                    plugins={defaultPlugins}
+                />
+            </div>
+        </div>
+    ),
 };
 
 /**
