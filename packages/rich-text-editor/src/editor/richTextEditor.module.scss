@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@use '../styles/sizes' as sizes;
+@use '../utilities/sizes.module.scss';
 
 // The editor's own parts: the toolbar and the editable surface. What a plugin
 // renders is styled by that plugin's module.

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@use '../../../styles/sizes' as sizes;
+@use '../../../utilities/sizes.module.scss';
 
 /** Never stretched across the toolbar, and wide enough that most style names keep it one size. */
 .control {
