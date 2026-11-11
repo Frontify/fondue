@@ -68,6 +68,7 @@ const mount = ({
     attributes,
     placeholderClassName,
     onDocChange,
+    onDocApplied,
     onStateChange,
     viewPortals,
     announce,
@@ -155,6 +156,7 @@ const mount = ({
         },
     });
     view = editorView;
+    onDocApplied(initialDoc);
 
     // 4. What the host gets back.
     const setDoc = (doc: typeof initialDoc): void => {
@@ -168,6 +170,7 @@ const mount = ({
         rootExtras = rootExtrasOf(doc);
         if (withoutDrafts(next).eq(withoutDrafts(editorView.state.doc))) {
             agreedDoc = doc;
+            onDocApplied(doc);
             return;
         }
         // Different content: the old caret position means nothing in it, so the
@@ -178,6 +181,7 @@ const mount = ({
         transaction.setMeta('addToHistory', false);
         editorView.dispatch(transaction);
         agreedDoc = doc;
+        onDocApplied(doc);
     };
 
     const mounted: MountedDocument = {
@@ -185,6 +189,10 @@ const mount = ({
             api,
             selectionRect: createSelectionRectReader(editorView),
             document: () => toRteDocument(editorView.state.doc, rootExtras),
+            focusAtEnd: () => {
+                editorView.dispatch(editorView.state.tr.setSelection(Selection.atEnd(editorView.state.doc)));
+                editorView.focus();
+            },
         },
         setDoc,
         setPlaceholder(next) {

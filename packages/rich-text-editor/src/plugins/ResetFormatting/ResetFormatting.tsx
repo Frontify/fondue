@@ -48,6 +48,7 @@ const ResetFormattingButton = ({ api, label, shortcut }: ToolbarItemProps) => (
  */
 export const resetFormattingPlugin = /* @__PURE__ */ definePlugin({
     id: 'reset-formatting',
+    toolbarGroup: 'marks',
     toolbar: [{ label: 'Reset formatting', shortcut: SHORTCUT, render: ResetFormattingButton, floating: 'inline' }],
     hotkeys,
 });

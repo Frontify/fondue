@@ -147,6 +147,10 @@ type UseEditorHandleOptions = {
     placeholderClassName: string;
     onDocChange: (doc: RteDocumentOf) => void;
     /**
+     * The editor took on a document from the host: at mount, or through a new `document`
+     */
+    onDocApplied: (doc: RteDocumentOf) => void;
+    /**
      * Says a message through the live region, for `api.announce`
      */
     announce: (message: string) => void;
@@ -163,6 +167,7 @@ export const useEditorHandle = ({
     attributes,
     placeholderClassName,
     onDocChange,
+    onDocApplied,
     announce,
     enabled,
 }: UseEditorHandleOptions): {
@@ -192,8 +197,8 @@ export const useEditorHandle = ({
     const [viewPortals] = useState(() => createElement(ViewPortalHost, { store: portals }));
     // The latest props, read by the mount (which runs only when the plugins
     // change or editing is turned on) and by the callbacks it hands the editor.
-    const latestRef = useRef({ document, placeholder, registry, attributes, onDocChange, announce });
-    latestRef.current = { document, placeholder, registry, attributes, onDocChange, announce };
+    const latestRef = useRef({ document, placeholder, registry, attributes, onDocChange, onDocApplied, announce });
+    latestRef.current = { document, placeholder, registry, attributes, onDocChange, onDocApplied, announce };
 
     const pluginsKey = registry.ids.join('|');
 
@@ -221,6 +226,7 @@ export const useEditorHandle = ({
             attributes: latest.attributes,
             placeholderClassName,
             onDocChange: (doc) => latestRef.current.onDocChange(doc),
+            onDocApplied: (doc) => latestRef.current.onDocApplied(doc),
             onStateChange: store.notify,
             viewPortals: portals,
             announce: (message) => latestRef.current.announce(message),

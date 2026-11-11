@@ -1,17 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { baseKeymap, chainCommands, setBlockType } from 'prosemirror-commands';
-import { history, redo, undo } from 'prosemirror-history';
+import { baseKeymap, setBlockType } from 'prosemirror-commands';
+import { history, redo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
 import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, TextSelection } from 'prosemirror-state';
 import { canJoin, findWrapping } from 'prosemirror-transform';
 
-import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
+import {
+    type EditorControlApi,
+    type HotkeyHandler,
+    type PluginRegistry,
+    REDO_HOTKEY,
+    type RteInputRule,
+    UNDO_HOTKEY,
+} from '#/core';
 
 import { autolinkOnEnter, markPatternRule } from './autolink';
-import { keepCarriedAttrs } from './controlApi';
+import { keepCarriedAttrs, undoStep } from './controlApi';
 import { EXTRA_ATTR } from './documentConversion';
 import { listKeys } from './lists';
 import {
@@ -53,9 +60,9 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         // 1
         history(),
         keymap({
-            'Mod-z': chainCommands(undoInputRule, undo),
+            [UNDO_HOTKEY]: undoStep,
             'Mod-y': redo,
-            'Mod-Shift-z': redo,
+            [REDO_HOTKEY]: redo,
             Backspace: undoInputRule,
         }),
         // 2

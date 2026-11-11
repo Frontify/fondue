@@ -173,6 +173,7 @@ const hotkeys = {
 export const alignPlugin = /* @__PURE__ */ definePlugin({
     id: 'align',
     content: alignContent,
+    toolbarGroup: 'align',
     toolbar: [{ label: 'Alignment', render: AlignToolbar, floating: 'inline' }],
     hotkeys,
 });

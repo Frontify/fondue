@@ -37,6 +37,7 @@ export const italicContent = defineContent({
  */
 export const italicPlugin = /* @__PURE__ */ definePlugin({
     content: italicContent,
+    toolbarGroup: 'marks',
     toolbar: [{ label: 'Italic', icon: IconTextFormatItalic, shortcut: 'Mod-i' }],
     // `_text_` is emphasis in markdown, as `*text*` is.
     inputRules: [{ delimiter: '*' }, { delimiter: '_' }],

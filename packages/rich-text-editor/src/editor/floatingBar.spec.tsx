@@ -358,7 +358,7 @@ describe('the / menu', () => {
         type(editable, '/');
 
         expect(listbox()?.getAttribute('aria-label')).toBe('Befehle');
-        expect(labels(window.document.querySelectorAll('[role="group"]'))).toEqual(['Umwandeln', 'Einfügen']);
+        expect(labels(listbox()?.querySelectorAll('[role="group"]') ?? [])).toEqual(['Umwandeln', 'Einfügen']);
         expect(options()).toContain('Absatz');
         expect([...window.document.querySelectorAll('[role="status"]')].map((status) => status.textContent)).toContain(
             `${options().length} Befehle`,

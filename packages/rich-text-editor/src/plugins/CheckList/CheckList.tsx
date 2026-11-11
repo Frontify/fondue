@@ -193,6 +193,7 @@ const EditCheckItem = ({ value, setValue, children }: EditCheckItemProps): React
 export const checkListPlugin = /* @__PURE__ */ definePlugin({
     id: 'check-list',
     content: checkListContent,
+    toolbarGroup: 'lists',
     toolbar: [
         {
             toggles: 'checkList',
