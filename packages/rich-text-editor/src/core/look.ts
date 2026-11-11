@@ -35,6 +35,9 @@ export const LOOK_PROPERTIES = {
     color: 'color',
 } as const satisfies Record<keyof TextLook, string>;
 
+/** The prefix every look's custom property carries; `look.module.scss` writes the same. */
+const LOOK_VARIABLE_PREFIX = '--rte-';
+
 const UPPER_CASE_LETTER = /[A-Z]/g;
 
 /** `imageTitle` → `image-title`, the form the stylesheet names a style's variables with. */
@@ -58,7 +61,7 @@ export const lookProperties = (key: string, look: TextLook): Record<string, stri
         if (value.trim() === '' || !isSafeCssValue(value)) {
             throw new Error(`The "${field}" of the "${key}" look is not a usable CSS value: ${JSON.stringify(value)}`);
         }
-        properties[`--rte-${kebabCase(key)}-${property}`] = value;
+        properties[`${LOOK_VARIABLE_PREFIX}${kebabCase(key)}-${property}`] = value;
     }
     return properties;
 };

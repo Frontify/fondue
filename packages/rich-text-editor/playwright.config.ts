@@ -14,6 +14,7 @@ export default defineConfig({
     reporter: 'html',
     testMatch: '**/*.ct.{ts,tsx}',
     use: {
+        testIdAttribute: 'data-test-id',
         trace: 'on-first-retry',
         ctPort: 3101,
         ctViteConfig: {
