@@ -20,6 +20,7 @@ import {
     type RteBlockNode,
     type RteContent,
     type RteEditView,
+    type RteHotkey,
     type RteIcon,
     type RteInlineNode,
     type RtePlugin as CorePlugin,
@@ -186,6 +187,7 @@ export declare namespace RtePlugin {
     export type BlockCommand = RteBlockCommand;
     export type ToolbarItemProps = ToolbarProps;
     export type PasteHandler = OnPaste;
+    export type Hotkey = RteHotkey;
     export type BlockDefinition<TValue = Record<string, unknown>> = BlockDef<TValue>;
     export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
