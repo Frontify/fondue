@@ -6,8 +6,9 @@ import { definePlugin, type EditorControlApi, type HotkeyHandler, PARAGRAPH, typ
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
+import { LINK_MARK } from '../shared/helpers/linkMark';
+
 const CLEARED_ANNOUNCEMENT = 'Formatting cleared';
-const LINK_MARK = 'link';
 
 /**
  * What the toolbar button does: puts the selection back to plain text. Every

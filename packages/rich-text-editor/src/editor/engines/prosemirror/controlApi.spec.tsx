@@ -3,7 +3,7 @@
 // @vitest-environment happy-dom
 
 import { undo } from 'prosemirror-history';
-import { NodeSelection } from 'prosemirror-state';
+import { NodeSelection, TextSelection } from 'prosemirror-state';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -476,6 +476,21 @@ describe('blocks.setType', () => {
             { type: 'quote', children: [{ text: 'one' }] },
             { type: 'quote', children: [{ text: 'two' }] },
         ]);
+    });
+});
+
+describe('lists.split', () => {
+    const item = (...children: RteBlockNode[]): RteBlockNode => ({ type: 'listItem', children }) as RteBlockNode;
+    const bullets = (...children: RteBlockNode[]): RteBlockNode => ({ type: 'bulletList', children }) as RteBlockNode;
+
+    it('turns an empty top-level item into a paragraph after the list', () => {
+        const editor = editorWith(plugins, [bullets(item(paragraph(text('one'))), item(paragraph()))]);
+        // The caret goes to the end of the document: the empty item.
+        editor.view.dispatch(editor.view.state.tr.setSelection(TextSelection.atEnd(editor.view.state.doc)));
+
+        expect(editor.api.lists.split()).toBe(true);
+
+        expect(editor.stored()).toEqual([bullets(item(paragraph(text('one')))), paragraph()]);
     });
 });
 

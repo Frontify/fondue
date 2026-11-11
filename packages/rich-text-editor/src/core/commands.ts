@@ -127,7 +127,7 @@ export type EditorControlApi = {
          */
         outdent(): boolean;
         /**
-         * Split the current list item in two — Enter inside a list. Returns false outside one.
+         * Split the current list item in two or, in an empty item, leave the list (outdent) — Enter inside a list. Returns false outside one.
          */
         split(): boolean;
         /**

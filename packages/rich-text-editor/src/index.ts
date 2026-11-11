@@ -3,6 +3,7 @@
 import { createElement, type ReactNode } from 'react';
 
 import {
+    type BlockAttributeToggle as AttributeToggle,
     type BlockDefinition,
     type EditorControlApi,
     type EditProps,
@@ -16,6 +17,7 @@ import {
     type ParseRule,
     type StyleParseRule,
     type PasteHandler,
+    type RemoveAllMarksOptions as RemoveAllOptions,
     type RteBlockCommand,
     type RteBlockNode,
     type RteContent,
@@ -188,6 +190,8 @@ export declare namespace RtePlugin {
     export type SelectionSnapshot = RteSelectionSnapshot;
     export type MarkState = RteMarkState;
     export type BlockCommand = RteBlockCommand;
+    export type BlockAttributeToggle = AttributeToggle;
+    export type RemoveAllMarksOptions = RemoveAllOptions;
     export type ToolbarItemProps = ToolbarProps;
     export type ToolbarGroup = RteToolbarGroup;
     export type PasteHandler = OnPaste;

@@ -1148,6 +1148,26 @@ describe('the toolbar from the keyboard', () => {
         expect(radios.map((radio) => radio.getAttribute('aria-checked'))).toEqual(['true', 'false', 'false', 'false']);
     });
 
+    it('names on each alignment button the key that sets that alignment', () => {
+        const { container, ready, stored } = mount((onChange) => (
+            <RichTextEditor value={paragraph('text')} onChange={onChange} plugins={plugins} toolbarPlacement="top" />
+        ));
+        ready();
+        const editable = editableIn(container);
+        act(() => editable.focus());
+        selectAll(editable);
+        const radios = [...container.querySelectorAll('[role="radiogroup"] [role="radio"]')];
+        const alignments = ['left', 'center', 'right', 'justify'];
+
+        for (const [index, alignment] of alignments.entries()) {
+            const keys = radios[index]?.getAttribute('aria-keyshortcuts')?.split('+') ?? [];
+            const key = keys.pop() ?? '';
+            // Meta or Control is the Mod key as `mod` presses it; keyCode is what the keymap reads for a shifted letter.
+            press(editable, key, { ...mod, shiftKey: keys.includes('Shift'), keyCode: key.charCodeAt(0) });
+            expect(stored()?.blocks[0]).toMatchObject({ align: alignment });
+        }
+    });
+
     describe('in a narrow top row', () => {
         // Every slot and More are 30 wide; the row is as wide as `rowWidth`.
         let rowWidth = 200;

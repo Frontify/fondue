@@ -33,27 +33,9 @@ const requiredMessageOf = (required: boolean | string | undefined): string | nul
     return required;
 };
 
-/** A caret in a block with no text, where Enter in a list means "leave it" rather than "submit". */
-const inEmptyBlock = (api: EditorControlApi): boolean => {
-    if (!api.selection.get().isCollapsed) {
-        return false;
-    }
-    if (api.text.beforeCaret() !== '') {
-        return false;
-    }
-    return api.text.afterCaret() === '';
-};
-
 const breakLine = (api: EditorControlApi, { onBreak, required }: BlurOnBreakPluginOptions): void => {
     if (api.lists.split()) {
         return;
-    }
-    // As the editor's own list Enter: an empty top-level item is left, not split.
-    if (inEmptyBlock(api)) {
-        const leftList = api.lists.outdent();
-        if (leftList) {
-            return;
-        }
     }
     const requiredMessage = requiredMessageOf(required);
     if (requiredMessage !== null && api.isEmpty()) {

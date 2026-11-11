@@ -3,6 +3,7 @@
 import { defineContent, defineMark, definePlugin, type HotkeyHandler, type HtmlSpec } from '#/core';
 
 import { isLinkablePaste, LINKABLE_ADDRESS, toHref } from '../shared/helpers/href';
+import { LINK_MARK } from '../shared/helpers/linkMark';
 
 import { LinkEditor } from './components/LinkEditor';
 import { LinkToolbarButton } from './components/LinkToolbarButton';
@@ -54,7 +55,7 @@ const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string
 export const linkContent = (policy: LinkPolicy = {}) =>
     defineContent({
         marks: {
-            link: defineMark<LinkValue>({
+            [LINK_MARK]: defineMark<LinkValue>({
                 // Outside every other mark, so a partly styled link renders as one anchor, not cut up by a colour or an emphasis inside.
                 nesting: -2,
                 // Typing at the end of a link does not extend it.
@@ -118,8 +119,8 @@ export const linkContent = (policy: LinkPolicy = {}) =>
 // The key is a literal because a computed key keeps this plugin in the renderer; HOTKEY's type ties it to this key.
 const hotkeys = {
     'Mod-k': (api) => {
-        if (api.marks.getRun('link') !== null) {
-            api.editors.open('link');
+        if (api.marks.getRun(LINK_MARK) !== null) {
+            api.editors.open(LINK_MARK);
             return true;
         }
         // At a caret the key stays the editor's even with no form to open (floating toolbar), never the browser's.
@@ -159,7 +160,7 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) =>
             {
                 kind: 'markPattern',
                 pattern: LINKABLE_ADDRESS,
-                mark: 'link',
+                mark: LINK_MARK,
                 value: (href) => {
                     if (allowsHref(policy, href)) {
                         return { href };
@@ -181,17 +182,17 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) =>
             }
             if (isCollapsed) {
                 // Inside a link the address stays plain text rather than nesting a link.
-                if ('link' in marks) {
+                if (LINK_MARK in marks) {
                     return false;
                 }
                 api.insertText(href, { link: { href } });
                 return true;
             }
             // A toggle over text that is all linked already would take the link off, so it goes first.
-            if ('link' in marks) {
-                api.marks.toggle('link');
+            if (LINK_MARK in marks) {
+                api.marks.toggle(LINK_MARK);
             }
-            api.marks.toggle('link', { href });
+            api.marks.toggle(LINK_MARK, { href });
             return true;
         },
     });

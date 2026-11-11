@@ -32,6 +32,8 @@ export type AlignAttribute = {
     align?: 'left' | 'center' | 'right' | 'justify';
 };
 
+const ALIGN_ATTRIBUTE = 'align';
+
 const ALIGN_VALUES: readonly NonNullable<AlignAttribute['align']>[] = ['left', 'center', 'right', 'justify'];
 
 const isAlignment = (value: unknown): value is NonNullable<AlignAttribute['align']> =>
@@ -42,7 +44,7 @@ const isAlignment = (value: unknown): value is NonNullable<AlignAttribute['align
  */
 export const alignContent = defineContent({
     blockAttributes: {
-        align: {
+        [ALIGN_ATTRIBUTE]: {
             // Only the four this plugin offers reach a style: a stored value is
             // not trusted to be one, and anything else could carry more CSS.
             style: (value): StyleMap => (isAlignment(value) ? { 'text-align': value } : {}),
@@ -96,7 +98,6 @@ const JUSTIFY: Alignment = {
 const ALIGNMENTS: readonly Alignment[] = [LEFT, CENTER, RIGHT, JUSTIFY];
 
 const CLEARED_ANNOUNCEMENT = 'Alignment cleared';
-const ALIGN_ATTRIBUTE = 'align';
 
 const alignOf = (selection: RteSelectionSnapshot): AlignAttribute['align'] =>
     // The structural block type does not know the attribute this plugin adds to every text block.
