@@ -46,6 +46,7 @@ export const alignPlugin = (): RtePlugin => ({
             parse: (element) => (isAlignment(element.style.textAlign) ? element.style.textAlign : null),
         },
     },
+    toolbarGroup: 'align',
     toolbarItem: ({ api, selection }) => {
         // The block the selection is in carries the attribute this plugin
         // added, which the structural node type does not know about.
@@ -68,7 +69,7 @@ export const alignPlugin = (): RtePlugin => ({
                         // block inherits the editor's direction again.
                         onClick={() => api.blocks.updateAttributes({ align: align === value ? null : value })}
                     >
-                        <Icon size={16} />
+                        <Icon size={20} />
                     </ToolbarButton>
                 ))}
             </div>

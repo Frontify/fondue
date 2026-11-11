@@ -9,17 +9,25 @@ import {
     setBlockType,
     splitBlockAs,
 } from 'prosemirror-commands';
-import { history, redo, undo } from 'prosemirror-history';
+import { history, redo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { type ContentMatch, type Node as PmNode, type NodeType as PmNodeType, type Schema } from 'prosemirror-model';
 import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, TextSelection } from 'prosemirror-state';
 import { canJoin, findWrapping } from 'prosemirror-transform';
 
-import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
+import {
+    type EditorControlApi,
+    type HotkeyHandler,
+    type PluginRegistry,
+    REDO_HOTKEY,
+    type RteInputRule,
+    UNDO_HOTKEY,
+} from '#/core';
 
 import { autolinkOnEnter, markPatternRule } from './autolink';
 import { keepCarriedAttrs, withCarriedAttrs } from './carriedAttrs';
+import { undoStep } from './controlApi';
 import { EXTRA_ATTR } from './documentConversion';
 import { listKeys } from './lists';
 import {
@@ -59,9 +67,9 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         // 1
         history(),
         keymap({
-            'Mod-z': chainCommands(undoInputRule, undo),
+            [UNDO_HOTKEY]: undoStep,
             'Mod-y': redo,
-            'Mod-Shift-z': redo,
+            [REDO_HOTKEY]: redo,
             Backspace: undoInputRule,
         }),
         // 2
