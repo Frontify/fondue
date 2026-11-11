@@ -1,14 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button } from '@frontify/fondue-components';
-import { type ButtonHTMLAttributes, type ComponentProps, forwardRef, type MouseEvent, type ReactNode } from 'react';
+import { Button, Tooltip } from '@frontify/fondue-components';
+import {
+    type ButtonHTMLAttributes,
+    type ComponentProps,
+    forwardRef,
+    type MouseEvent,
+    type ReactNode,
+    useState,
+} from 'react';
 
 import styles from './toolbarButton.module.scss';
 
 type ToolbarButtonProps = {
     children: ReactNode;
-    /** Omit for buttons that are actions rather than toggles — it drives `aria-pressed`. */
-    active?: boolean;
+    /** Whether the toggle is on; drives `aria-pressed`. `'mixed'` means only part of the selection has it. Omit for buttons that are actions, not toggles. */
+    active?: boolean | 'mixed';
     disabled?: boolean;
     onClick?: () => void;
     /** Accessible name and tooltip. Required: the labels are icons, which have no name of their own. */
@@ -38,8 +45,9 @@ export const readableShortcut = (shortcut: string, apple = isApple()): string =>
 };
 
 /**
- * The toolbar button the built-in plugins share: Fondue's low-emphasis `Button`
- * with a pressed state for toggles. Not editor API. Takes a ref so a flyout can anchor to it.
+ * The toolbar button the built-in plugins share: Fondue's small square
+ * low-emphasis `Button` with a pressed state for toggles and a tooltip naming
+ * it. Not editor API. Takes a ref so a flyout can anchor to it.
  */
 export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(function ToolbarButton(
     { children, active, disabled, onClick, title, shortcut, className, ...rest },
@@ -57,21 +65,35 @@ export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(f
         },
     } as ComponentProps<typeof Button>;
 
+    const [tooltipOpen, setTooltipOpen] = useState(false);
+    // A flyout this button opened is the layer Escape belongs to; a tooltip over it would take the key first.
+    const ownFlyoutOpen = rest['aria-expanded'] === true || rest['aria-expanded'] === 'true';
+
     return (
-        <Button
-            {...domProps}
-            ref={ref}
-            type="button"
-            size="medium"
-            // Both states are the ghost button; "on" is drawn by our stylesheet.
-            emphasis="weak"
-            className={[styles.button, className].filter(Boolean).join(' ')}
-            disabled={disabled}
-            title={shortcut === undefined ? title : `${title} (${readableShortcut(shortcut)})`}
-            aria-label={title}
-            onPress={onClick}
-        >
-            {children}
-        </Button>
+        <Tooltip.Root open={tooltipOpen && !ownFlyoutOpen} onOpenChange={setTooltipOpen}>
+            <Tooltip.Trigger asChild>
+                <Button
+                    {...domProps}
+                    ref={ref}
+                    type="button"
+                    size="small"
+                    aspect="square"
+                    // Both states are the ghost button; "on" is drawn by our stylesheet.
+                    emphasis="weak"
+                    className={[styles.button, className].filter(Boolean).join(' ')}
+                    disabled={disabled}
+                    aria-label={title}
+                    onPress={onClick}
+                >
+                    {children}
+                </Button>
+            </Tooltip.Trigger>
+            <Tooltip.Content padding="compact">
+                <span className={styles.tooltip}>
+                    <span>{title}</span>
+                    {shortcut === undefined ? null : <kbd>{readableShortcut(shortcut)}</kbd>}
+                </span>
+            </Tooltip.Content>
+        </Tooltip.Root>
     );
 });

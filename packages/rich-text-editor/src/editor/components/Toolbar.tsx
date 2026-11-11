@@ -12,7 +12,14 @@ import {
     useSyncExternalStore,
 } from 'react';
 
-import { type EditorControlApi, type RteBlockCommand, type ToolbarEntry, type ToolbarItemProps } from '#/core';
+import {
+    type EditorControlApi,
+    type RteBlockCommand,
+    RTE_TOOLBAR_GROUPS,
+    type RteToolbarGroup,
+    type ToolbarEntry,
+    type ToolbarItemProps,
+} from '#/core';
 
 import { turnIntoCommands } from '../helpers/blockCommands';
 import { toolbarItemProps } from '../helpers/toolbarItem';
@@ -32,7 +39,8 @@ import { TurnInto } from './TurnInto';
 export type ToolbarPlacement = 'floating' | 'top';
 
 /**
- * The plugins' toolbar UI, in mount order; nothing when no plugin has any.
+ * The plugins' toolbar UI in groups, mount order kept inside each; nothing
+ * when no plugin has any.
  *
  * Subscribes to the editor state itself, so a keystroke re-renders the toolbar
  * rather than the editor around it.
@@ -109,12 +117,17 @@ export const Toolbar = ({
         const target = event.target as HTMLElement;
         // Keys from a flyout a control opened arrive here through the
         // component tree; they belong to that flyout.
-        if (event.defaultPrevented || !event.currentTarget.contains(target)) {
+        if (!event.currentTarget.contains(target)) {
             return;
         }
-        if (event.key === 'Escape') {
+        // An open tooltip prevents Escape too, yet leaving the toolbar closes it;
+        // only a control's own open menu keeps the key.
+        if (event.key === 'Escape' && target.getAttribute('aria-expanded') !== 'true') {
             event.preventDefault();
             api.focus();
+            return;
+        }
+        if (event.defaultPrevented) {
             return;
         }
         if (keepsArrowKeys(target)) {
@@ -171,15 +184,37 @@ export const Toolbar = ({
             data-placement={placement}
         >
             {showTurnInto ? <TurnInto api={api} commands={turnInto} selection={selection} labels={labels} /> : null}
-            {items.map((item) => (
-                <ToolbarItemSlot
-                    key={item.key}
-                    render={item.render}
-                    itemProps={toolbarItemProps(item.own, api, selection)}
-                />
+            {groupsOf(items).map((group) => (
+                <div key={group.key} className={styles.group}>
+                    {group.items.map((item) => (
+                        <ToolbarItemSlot
+                            key={item.key}
+                            render={item.render}
+                            itemProps={toolbarItemProps(item.own, api, selection)}
+                        />
+                    ))}
+                </div>
             ))}
         </div>
     );
+};
+
+const UNGROUPED_GROUP_KEY = 'ungrouped';
+
+type EntryGroup = { key: string; items: ToolbarEntry[] };
+
+/** The items by group in drawing order, those with no group or an unknown one last; empty groups are left out. */
+const groupsOf = (items: readonly ToolbarEntry[]): EntryGroup[] => {
+    const known: readonly (RteToolbarGroup | undefined)[] = RTE_TOOLBAR_GROUPS;
+    const groups = [
+        ...RTE_TOOLBAR_GROUPS.map((group) => ({
+            key: group,
+            items: items.filter((item) => item.group === group),
+        })),
+        // A plugin cast past the type can name a group that is not drawn; it still gets its control.
+        { key: UNGROUPED_GROUP_KEY, items: items.filter((item) => !known.includes(item.group)) },
+    ];
+    return groups.filter((group) => group.items.length > 0);
 };
 
 /** A click on the toolbar that misses a control would move focus, and the selection with it. */

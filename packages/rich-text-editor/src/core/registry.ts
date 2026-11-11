@@ -17,6 +17,7 @@ import {
     type RteBlockCommand,
     type RteInputRule,
     type RtePlugin,
+    type RteToolbarGroup,
     type ToolbarItemProps,
 } from './plugin';
 import { PARAGRAPH, paragraphBlock } from './vocabulary';
@@ -47,6 +48,8 @@ export type ToolbarEntry = {
     own: OwnType;
     /** Where the floating bar puts it: the plugin's choice, else by what it owns. */
     floating: 'inline' | 'hidden';
+    /** The plugin's `toolbarGroup`; none puts it in the last group. */
+    group: RteToolbarGroup | undefined;
 };
 
 export type PluginRegistry = {
@@ -194,6 +197,7 @@ export const buildPluginRegistry = (plugins: readonly RtePlugin[]): PluginRegist
                 render: plugin.toolbarItem,
                 own,
                 floating: plugin.floatingToolbar ?? defaultFloatingPlacement(own),
+                group: plugin.toolbarGroup,
             });
         }
         for (const command of plugin.commands ?? []) {

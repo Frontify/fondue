@@ -80,9 +80,10 @@ const listPlugin = ({
     },
     // Active anywhere inside the list (the caret sits in a paragraph inside an
     // item); toggling wraps or unwraps.
+    toolbarGroup: 'lists',
     toolbarItem: ({ isActive, toggle }) => (
         <ToolbarButton active={isActive} title={title} onClick={() => toggle()}>
-            <Icon size={16} />
+            <Icon size={20} />
         </ToolbarButton>
     ),
     hotkeys: { [hotkey]: (api) => api.lists.toggle(type) },

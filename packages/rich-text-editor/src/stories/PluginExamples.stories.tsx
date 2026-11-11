@@ -920,7 +920,7 @@ const highlightPlugin = (): RtePlugin => ({
         }),
     },
     toolbarItem: ({ api, selection }) => {
-        const active = 'highlight' in selection.marks;
+        const active = selection.marks.highlight?.coverage === 'all';
         return (
             <button
                 type="button"

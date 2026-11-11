@@ -1,9 +1,29 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../../../utilities/sizes.module.scss';
+
 /** Wide enough for "Image caption" and fixed, so the control does not stretch across the toolbar. */
 .control {
     flex: none;
     width: 140px;
+
+    /**
+     * The trigger at the toolbar buttons' small size and weak look; Fondue's
+     * Select has no size of its own. The attributes outweigh its field rules.
+     */
+    > [role='combobox'][data-empty][data-disabled='false'] {
+        height: sizes.$toolbar-control-height;
+        border-color: transparent;
+        background-color: transparent;
+        font-size: var(--typography-font-size-small);
+        line-height: var(--typography-line-height-tight);
+
+        &:hover {
+            border-color: transparent;
+            background-color: var(--color-container-secondary-hover);
+            color: var(--color-primary-hover);
+        }
+    }
 }
 
 /** A row draws its option in the style it applies, previewing the scale. */

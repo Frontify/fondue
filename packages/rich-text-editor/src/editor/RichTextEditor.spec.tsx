@@ -694,6 +694,50 @@ describe('the toolbar', () => {
         expect(clickCount(container)).toBe('2');
     });
 
+    it('draws the control of a plugin with an unknown group last', () => {
+        // The test passes a group outside RteToolbarGroup on purpose.
+        const unknownGroupPlugin = {
+            id: 'unknown-group',
+            toolbarGroup: 'not-a-group',
+            toolbarItem: () => <span data-testid="unknown-group">unknown</span>,
+        } as unknown as RtePlugin;
+        const { container, ready } = mount(() => (
+            <RichTextEditor plugins={[unknownGroupPlugin, ...defaultPlugins]} toolbarPlacement="top" />
+        ));
+        ready();
+
+        const group = container.querySelector('[data-testid="unknown-group"]')?.parentElement;
+        expect(group).toBeTruthy();
+        expect(group?.parentElement?.lastElementChild).toBe(group);
+    });
+
+    it('keeps Undo and Redo current as edits are made and taken back', () => {
+        const { container, ready, stored } = mount((onChange) => (
+            <RichTextEditor plugins={defaultPlugins} toolbarPlacement="top" onChange={onChange} />
+        ));
+        ready();
+        const undo = (): HTMLButtonElement | null => container.querySelector('[aria-label="Undo"]');
+        const redo = (): HTMLButtonElement | null => container.querySelector('[aria-label="Redo"]');
+        expect(undo()?.disabled).toBe(true);
+        expect(redo()?.disabled).toBe(true);
+
+        // Pasting is how this spec edits: the paste handler is the input the engine takes from the DOM here.
+        paste(container, '<p>one</p>');
+        expect(undo()?.disabled).toBe(false);
+        expect(redo()?.disabled).toBe(true);
+
+        // Edits close together share one undo step, so the count of presses is the history's to decide.
+        for (let presses = 0; undo()?.disabled === false; presses++) {
+            expect(presses).toBeLessThan(10);
+            act(() => undo()?.click());
+        }
+        expect(childrenOf(stored())).toEqual([]);
+        expect(redo()?.disabled).toBe(false);
+
+        act(() => redo()?.click());
+        expect(undo()?.disabled).toBe(false);
+    });
+
     it('warns in development when two plugins share an id', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         // The duplicate toolbar key gets React's own complaint too.
@@ -863,9 +907,11 @@ describe('the toolbar from the keyboard', () => {
         const { container, ready } = mount(() => <RichTextEditor plugins={plugins} toolbarPlacement="top" />);
         ready();
 
-        const bold = container.querySelector('[aria-label="Bold"]');
+        const bold = container.querySelector<HTMLElement>('[aria-label="Bold"]');
         expect(bold?.getAttribute('aria-keyshortcuts')).toMatch(/^(Meta|Control)\+B$/);
-        expect(bold?.getAttribute('title')).toMatch(/^Bold \((⌘B|Ctrl\+B)\)$/);
+
+        act(() => bold?.focus());
+        expect(window.document.querySelector('[role="tooltip"]')?.textContent).toMatch(/^Bold(⌘B|Ctrl\+B)$/);
     });
 });
 
