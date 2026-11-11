@@ -1,7 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/** Muted text (quotes, quieter text styles); a mixin-only partial, so it emits no CSS. */
+/** Muted text (quotes, quieter text styles); a value and a mixin only, so it emits no CSS. */
+
+// The muted tone that still reaches 4.5:1 on inline code's background; a value, so a `look` can fall back to it.
+$color: var(--color-container-secondary-on-secondary-container-variant);
+
 @mixin muted-text {
-    // The muted tone that still reaches 4.5:1 on inline code's background.
-    color: var(--color-container-secondary-on-secondary-container-variant);
+    color: $color;
 }
