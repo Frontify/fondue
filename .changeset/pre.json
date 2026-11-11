@@ -14,7 +14,26 @@
   },
   "changesets": [
     "bright-pens-write",
+    "charts-v14-major",
+    "components-manifest-shared-parsing",
+    "components-v14-major",
+    "declare-side-effects",
     "quiet-trees-fall",
-    "rude-moose-guess"
+    "rich-text-editor-main-catch-up",
+    "rte-browser-tests",
+    "rte-editing-extras",
+    "rte-font-color-flyout",
+    "rte-format-goldens",
+    "rte-keep-undeclared-attributes",
+    "rte-newer-version-read-only",
+    "rte-office-paste-cleanup",
+    "rte-reader-unknown-list-items",
+    "rte-unknown-block-raw-leak",
+    "rte-v14-minor",
+    "rude-moose-guess",
+    "select-menu-list-reset",
+    "tabs-single-active-tab-change",
+    "text-input-native-border",
+    "tree-item-min-width"
   ]
 }
