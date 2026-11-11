@@ -44,7 +44,8 @@ export const usePeople = (items: MentionItems, query: string): UsePeopleResult =
                 setAnswer({ query, attempt, outcome });
             }
         };
-        Promise.resolve(items(query))
+        // In a promise, so a lookup that throws at once fails like one that rejects.
+        new Promise<readonly MentionItem[]>((resolve) => resolve(items(query)))
             .then((people) => settle({ status: 'found', people: people.slice(0, SUGGESTION_LIMIT) }))
             .catch(() => settle({ status: 'failed' }));
         return () => {

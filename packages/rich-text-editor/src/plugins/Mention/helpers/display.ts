@@ -119,28 +119,51 @@ const labelOf = (username: string, trigger: string, kind: MentionKind | undefine
 const warnedResolveIds = new Set<string>();
 
 /**
- * Dev-only warning, once per mention id, for a resolver that threw; that mention shows its stored value.
+ * Dev-only warning, once per mention id, for a resolver that threw or answered
+ * with no known status; that mention shows its stored value.
  */
-const warnResolveFailed = (mention: MentionValue, error: unknown): void => {
+const warnResolveFailed = (mention: MentionValue, problem: unknown): void => {
     const id = storedString(mention.id);
     if (process.env.NODE_ENV === 'production' || warnedResolveIds.has(id)) {
         return;
     }
     warnedResolveIds.add(id);
-    console.warn(`[RichTextEditor] The mention resolver threw for "${id}", so its stored name is shown.`, error);
+    console.warn(`[RichTextEditor] The mention resolver failed for "${id}", so its stored name is shown.`, problem);
 };
 
+const RESOLUTION_STATUSES: readonly unknown[] = [
+    'current',
+    'unavailable',
+    'unknown',
+] satisfies MentionResolution['status'][];
+
 /**
- * What the app knows now about a mention: a throw means it does not know, so
- * only that mention falls back to its stored value and the others still resolve.
+ * A resolver written in JS can answer anything: only an object with a known status is a resolution.
+ */
+const isResolution = (answer: unknown): answer is MentionResolution =>
+    typeof answer === 'object' && answer !== null && 'status' in answer && RESOLUTION_STATUSES.includes(answer.status);
+
+/**
+ * What the app knows now about a mention: a throw or an unknown answer means it
+ * does not know, so only that mention falls back to its stored value and the
+ * others still resolve.
  */
 const resolutionOf = (mention: MentionValue, resolve: MentionResolve | undefined): MentionResolution | undefined => {
+    if (resolve === undefined) {
+        return undefined;
+    }
+    let answer: unknown;
     try {
-        return resolve?.(mention);
+        answer = resolve(mention);
     } catch (error) {
         warnResolveFailed(mention, error);
         return { status: 'unknown' };
     }
+    if (!isResolution(answer)) {
+        warnResolveFailed(mention, answer);
+        return { status: 'unknown' };
+    }
+    return answer;
 };
 
 /**
@@ -170,7 +193,7 @@ export const mentionDisplay = (
                 href: undefined,
             };
         default:
-            // A resolver written in JS can return any status.
+            // Unreachable: `resolutionOf` lets only known statuses through.
             throw new Error(`Unhandled mention resolution: ${JSON.stringify(resolution satisfies never)}`);
     }
     return { label: labelOf(shown.username, trigger, kind), title: shown.name, href: safeMentionHref(href, mention) };

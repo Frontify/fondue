@@ -269,6 +269,32 @@ describe('a mention being searched for', () => {
         expect(seen).toEqual(['3 people', '3 people', '3 people', '3 people']);
     });
 
+    it('keeps a space typed while a newer query is unanswered, after an earlier No matches', async () => {
+        const { type, press, onCancel } = await mountDraft((query) => {
+            if (query === 'z') {
+                return new Promise<MentionItem[]>(() => {});
+            }
+            return [];
+        });
+        await type('zz');
+        await type('z');
+        press(' ');
+
+        expect(onCancel).not.toHaveBeenCalled();
+    });
+
+    it('says the search failed when the lookup throws instead of rejecting', async () => {
+        const { type, status } = await mountDraft((query) => {
+            if (query === 'x') {
+                throw new Error('bad query');
+            }
+            return PEOPLE;
+        });
+        await type('x');
+
+        expect(status()).toBe('Could not load people. Press Enter to retry.');
+    });
+
     it('drops the answer of a query that has moved on', async () => {
         const answers = new Map<string, (people: MentionItem[]) => void>();
         const { type, status } = await mountDraft(

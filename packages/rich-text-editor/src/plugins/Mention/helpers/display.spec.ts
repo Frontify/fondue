@@ -2,7 +2,7 @@
 
 import { describe, expect, it, vi } from 'vitest';
 
-import { type MentionValue } from '../types';
+import { type MentionResolve, type MentionValue } from '../types';
 
 import { mentionDisplay } from './display';
 
@@ -78,6 +78,16 @@ describe('mentionDisplay', () => {
             href: '/u/jane',
         });
         expect(mentionDisplay(john, { href, trigger: '@', resolve }).label).toBe('@john.r');
+        expect(warn).toHaveBeenCalledOnce();
+        warn.mockRestore();
+    });
+
+    it('shows the stored value for a resolver answer with no known status', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        // A resolver written in JS can answer anything.
+        const resolve = (() => ({ status: 'renamed' })) as unknown as MentionResolve;
+
+        expect(mentionDisplay({ ...JANE, id: 'odd' }, { trigger: '@', resolve }).label).toBe('@jane');
         expect(warn).toHaveBeenCalledOnce();
         warn.mockRestore();
     });

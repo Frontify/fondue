@@ -40,13 +40,18 @@ const avatarPicture = (person: MentionItem): ReactNode => {
     if (isSafeImageSrc(person.image)) {
         return <img src={person.image} alt="" />;
     }
-    if (person.kind === 'group') {
-        return <IconPeople size={12} />;
+    switch (person.kind) {
+        case undefined:
+        case 'user':
+            return <IconPerson size={12} />;
+        case 'group':
+            return <IconPeople size={12} />;
+        case 'all':
+            return <IconTarget size={12} />;
+        default:
+            // Adding a kind fails to compile here until it is handled.
+            throw new Error(`Unhandled mention kind: ${JSON.stringify(person.kind satisfies never)}`);
     }
-    if (person.kind === 'all') {
-        return <IconTarget size={12} />;
-    }
-    return <IconPerson size={12} />;
 };
 
 type AvatarProps = { person: MentionItem };
@@ -66,7 +71,7 @@ const Avatar = ({ person }: AvatarProps): ReactNode => (
  */
 type PeoplePhase = 'waiting' | 'searching' | 'failed' | 'empty' | 'list';
 
-type PhaseOfParams = { outcome: PeopleOutcome | null; slow: boolean };
+type PhaseOfParams = { outcome: PeopleOutcome | null; pending: boolean; slow: boolean };
 
 /**
  * The people an outcome offers: none before the first answer or after a failure.
@@ -87,9 +92,9 @@ const peopleOf = (outcome: PeopleOutcome | null): readonly MentionItem[] => {
 };
 
 /**
- * Where a lookup stands: people to show, else searching past the delay, else the last outcome, failed or nobody matches.
+ * Where a lookup stands: people to show, else searching past the delay, else the last failure, else nobody matches once this query is answered.
  */
-const phaseOf = ({ outcome, slow }: PhaseOfParams): PeoplePhase => {
+const phaseOf = ({ outcome, pending, slow }: PhaseOfParams): PeoplePhase => {
     if (peopleOf(outcome).length > 0) {
         return 'list';
     }
@@ -101,6 +106,10 @@ const phaseOf = ({ outcome, slow }: PhaseOfParams): PeoplePhase => {
     }
     switch (outcome.status) {
         case 'found':
+            // An earlier empty answer is not this query's: a space must not end the mention before it arrives.
+            if (pending) {
+                return 'waiting';
+            }
             return 'empty';
         case 'failed':
             return 'failed';
@@ -333,7 +342,7 @@ export const MentionDraft = ({
     const { outcome, pending, retry } = usePeople(items, query);
     const slow = useSlowLookup(pending, query);
     const people = peopleOf(outcome);
-    const phase = phaseOf({ outcome, slow });
+    const phase = phaseOf({ outcome, pending, slow });
     const open = isOpen(phase, query);
     const position = useListPosition(draftRef, open);
     const listShown = open && position !== null && phase === 'list';
