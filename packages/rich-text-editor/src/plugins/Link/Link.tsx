@@ -1,6 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineContent, defineMark, definePlugin, type HotkeyHandler, type HtmlSpec } from '#/core';
+import {
+    defineContent,
+    defineMark,
+    definePlugin,
+    type HotkeyHandler,
+    type HtmlAttributes,
+    type HtmlSpec,
+} from '#/core';
 
 import { isLinkablePaste, LINKABLE_ADDRESS, toHref } from '../shared/helpers/href';
 
@@ -72,14 +79,11 @@ export const linkContent = (policy: LinkPolicy = {}) =>
                     }
                     const href = link?.href;
                     const allowed = allowsHref(policy, href);
-                    const spec: HtmlSpec = {
-                        tag: 'a',
-                        attrs: {
-                            ...(allowed ? { href, ...newTabAttrs(link) } : {}),
-                            class: styles.link,
-                        },
-                        children: true,
-                    };
+                    let attrs: HtmlAttributes = { class: styles.link };
+                    if (allowed) {
+                        attrs = { href, ...newTabAttrs(link), ...attrs };
+                    }
+                    const spec: HtmlSpec = { tag: 'a', attrs, children: true };
                     if (allowed && link?.openInNewTab === true) {
                         // Same wording as the editing panel.
                         spec.children = [

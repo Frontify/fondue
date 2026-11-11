@@ -142,7 +142,11 @@ export const DestinationField = forwardRef<HTMLInputElement, DestinationFieldPro
             highlight((activeIndex + 1) % results.length);
             return;
         }
-        highlight(activeIndex <= 0 ? results.length - 1 : activeIndex - 1);
+        if (activeIndex <= 0) {
+            highlight(results.length - 1);
+            return;
+        }
+        highlight(activeIndex - 1);
     };
 
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {

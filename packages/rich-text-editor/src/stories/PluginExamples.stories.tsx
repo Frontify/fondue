@@ -433,13 +433,16 @@ const INTERNAL_PAGES: readonly LinkDestination[] = [
     { id: 'partner', label: 'Partner logos (other site)', href: 'https://example.com/partner-logos' },
 ];
 
+/** How long the fake lookup takes, so the story shows the field while it searches. */
+const FAKE_LOOKUP_MS = 300;
+
 /** A fake lookup with a short delay that gives up when aborted, as a real request would. */
 const searchPages = (query: string, signal: AbortSignal): Promise<readonly LinkDestination[]> =>
     new Promise((resolve, reject) => {
         const timer = setTimeout(() => {
             const needle = query.toLowerCase();
             resolve(INTERNAL_PAGES.filter((page) => page.label.toLowerCase().includes(needle)));
-        }, 300);
+        }, FAKE_LOOKUP_MS);
         signal.addEventListener('abort', () => {
             clearTimeout(timer);
             reject(new DOMException('Aborted', 'AbortError'));
