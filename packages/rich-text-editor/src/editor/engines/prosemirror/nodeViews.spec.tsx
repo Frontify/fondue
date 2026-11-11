@@ -186,6 +186,7 @@ const mountInto = (container: HTMLElement, initialDoc: RteDocumentOf) => {
         attributes: {},
         placeholderClassName: 'placeholder',
         onDocChange,
+        onDocApplied: () => {},
         onStateChange: () => {},
         viewPortals: portals,
     });

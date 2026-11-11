@@ -33,6 +33,7 @@ export const emojiPlugin = (options: EmojiPluginOptions = {}): RtePlugin => {
                 }),
             },
         }),
+        toolbarGroup: 'insert',
         toolbar: [{ label: 'Emoji', render: (props) => <EmojiToolbarButton {...props} emojis={emojis} /> }],
         edit: {
             emojiDraft: ({ isFocused, remove, api }) => (

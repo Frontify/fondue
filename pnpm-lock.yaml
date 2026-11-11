@@ -23,6 +23,9 @@ importers:
       concurrently:
         specifier: ^10.0.6
         version: 10.0.6
+      esbuild:
+        specifier: ^0.28.2
+        version: 0.28.2
       glob:
         specifier: ^13.0.6
         version: 13.0.6

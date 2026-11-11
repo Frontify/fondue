@@ -1,5 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+// The blocks the document spaces apart, and the headings among them.
+$blocks: p, h1, h2, h3, h4, ul, ol, blockquote;
+$headings: h1, h2, h3, h4;
+
 /**
  * How a document reads, wherever it is drawn: the editable element in the
  * editor and the root of `RichTextRenderer` both carry this class, so the two
@@ -30,12 +34,28 @@
     // flex parent that the document sits in.
     overflow-wrap: anywhere;
 
-    // A paragraph adds no space of its own, like every other block: spacing
-    // between blocks belongs to the document, not to the page's default
-    // stylesheet (which would otherwise give paragraphs `1em` margins in some
-    // hosts and none in others).
-    p {
-        margin: 0;
+    // The document owns block spacing: host stylesheets give `1em` margins in some hosts and none in others.
+    // The trims below reset the variable, not the margin, so a block class that reads the gap keeps them.
+    // Each block sets the gap again rather than inheriting it, so a trimmed quote does not trim its own paragraphs.
+    :is(#{$blocks}) {
+        --rte-block-gap: var(--spacing-x-small);
+
+        margin-block: 0 var(--rte-block-gap);
+
+        &:last-child {
+            --rte-block-gap: 0;
+        }
+    }
+
+    // A heading belongs to the text below it, so it sits further from the block above than from its own text.
+    :is(#{$headings}):not(:first-child) {
+        margin-block-start: var(--rte-heading-gap, var(--spacing-medium));
+    }
+
+    // A list's items sit tight: the blocks inside an item, a nested list among them, add no gap.
+    li :is(#{$blocks}) {
+        --rte-block-gap: 0;
+        --rte-heading-gap: 0;
     }
 
     // Raised and lowered text without growing the line it sits on. Browsers'
