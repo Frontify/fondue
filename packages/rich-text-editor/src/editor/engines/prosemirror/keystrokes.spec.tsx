@@ -594,8 +594,10 @@ describe('Enter in a list over a range across items', () => {
     });
 });
 
+type CheckItemSpec = { checked: boolean; text: string };
+
 describe('Enter in a to-do list', () => {
-    const checkList = (...items: { checked: boolean; text: string }[]): RteBlockNode => ({
+    const checkList = (...items: CheckItemSpec[]): RteBlockNode => ({
         type: 'checkList',
         children: items.map(({ checked, text: value }) => ({
             type: 'checkItem',
