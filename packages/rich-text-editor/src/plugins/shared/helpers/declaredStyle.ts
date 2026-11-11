@@ -21,14 +21,31 @@ export const declaredStyle = (element: HTMLElement, property: string): string | 
 };
 
 /**
+ * The lowest numeric `font-weight` that reads as bold.
+ */
+const BOLD_WEIGHT = 600;
+
+/**
  * Whether a `font-weight` value is not bold.
  */
-export const isNormalWeight = (value: string): boolean => /^(normal|lighter|[1-4]00)$/i.test(value.trim());
+export const isNormalWeight = (value: string): boolean => {
+    const weight = value.trim().toLowerCase();
+    if (weight === 'normal' || weight === 'lighter') {
+        return true;
+    }
+    return weight !== '' && Number(weight) < BOLD_WEIGHT;
+};
 
 /**
  * Whether a `font-weight` value is bold, such as `700`.
  */
-export const isBoldWeight = (value: string): boolean => /^(bold|bolder|[6-9]00)$/i.test(value.trim());
+export const isBoldWeight = (value: string): boolean => {
+    const weight = value.trim().toLowerCase();
+    if (weight === 'bold' || weight === 'bolder') {
+        return true;
+    }
+    return Number(weight) >= BOLD_WEIGHT;
+};
 
 /**
  * Whether a `text-decoration` or `text-decoration-line` value draws this line (`underline`, `line-through`).

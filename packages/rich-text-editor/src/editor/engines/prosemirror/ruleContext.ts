@@ -43,6 +43,10 @@ const unlessInExcludedMark =
         if (isInExcludedMark(state, excluded, end)) {
             return null;
         }
+        // A non-inclusive mark such as code ends at the caret, but the match may still reach into it.
+        if (excluded.some((markType) => state.doc.rangeHasMark(start, end, markType))) {
+            return null;
+        }
         return handler(state, match, start, end);
     };
 

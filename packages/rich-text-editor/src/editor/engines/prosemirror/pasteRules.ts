@@ -27,6 +27,10 @@ import { VALUE_ATTR } from './documentConversion';
  */
 export const MARK_PRIORITY = 60;
 export const INLINE_PRIORITY = 70;
+/**
+ * Style rules run before the mark tag rules, which consume their element, so `<strong style="font-style:italic">` is italic too.
+ */
+const STYLE_PRIORITY = 65;
 
 /**
  * A qualified selector (`p[data-text-style=imageCaption]`, `ul[data-check-list]`)
@@ -70,8 +74,8 @@ type DefaultStyle = {
  * What an enclosing element already shows by default: a link's underline, a heading's bold. Pasted text repeating it is not formatting.
  */
 const DEFAULT_STYLES: readonly DefaultStyle[] = [
-    { property: 'text-decoration', within: 'a', strip: /\bunderline\b/gi },
-    { property: 'text-decoration-line', within: 'a', strip: /\bunderline\b/gi },
+    { property: 'text-decoration', within: 'a[href]', strip: /\bunderline\b/gi },
+    { property: 'text-decoration-line', within: 'a[href]', strip: /\bunderline\b/gi },
     { property: 'font-weight', within: 'h1, h2, h3, h4, h5, h6, th', strip: /^\s*(?:bold|bolder|[6-9]00)\s*$/i },
 ];
 
@@ -91,7 +95,7 @@ const declaredValue = (element: HTMLElement, property: string): string => {
  */
 const markStyleRule = (rule: StyleParseRule<unknown>): TagParseRule => ({
     tag: '[style]',
-    priority: MARK_PRIORITY,
+    priority: STYLE_PRIORITY,
     // One declaration, such as `text-decoration: underline line-through`, can set two marks.
     consuming: false,
     getAttrs: (element: HTMLElement) => {

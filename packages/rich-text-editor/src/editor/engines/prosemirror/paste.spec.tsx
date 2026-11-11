@@ -89,6 +89,27 @@ describe('pasting formatted text', () => {
         expect(pasted(html)).toEqual([paragraph(text('x', marks))]);
     });
 
+    it.each([
+        ['<p><strong style="font-style:italic">x</strong></p>', { bold: true, italic: true }],
+        ['<p><span style="color:#f00;font-weight:700">x</span></p>', { bold: true, fontColor: { color: '#f00' } }],
+    ])('reads a style on an element another mark already reads: %s', (html, marks) => {
+        expect(pasted(html)).toEqual([paragraph(text('x', marks))]);
+    });
+
+    it.each([
+        ['<p><span style="font-weight:650">x</span></p>', [text('x', { bold: true })]],
+        ['<p><span style="font-weight:1000">x</span></p>', [text('x', { bold: true })]],
+        ['<p><strong><span style="font-weight:500">x</span></strong></p>', [text('x')]],
+    ])('reads any weight of 600 or more as bold: %s', (html, children) => {
+        expect(pasted(html)).toEqual([paragraph(...children)]);
+    });
+
+    it('reads the underline under an anchor that is not a link', () => {
+        expect(pasted('<p><a name="x"><span style="text-decoration:underline">x</span></a></p>')).toEqual([
+            paragraph(text('x', { underline: true })),
+        ]);
+    });
+
     it('reads every mark one element declares', () => {
         expect(
             pasted(

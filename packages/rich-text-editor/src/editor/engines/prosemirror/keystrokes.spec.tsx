@@ -234,6 +234,15 @@ describe('inline code', () => {
         expect(editor.stored()).toEqual([paragraph(text('x', { code: true }), text('y'))]);
     });
 
+    it('keeps its text when a typing rule after its end would reach into it', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('snake_case', { code: true }))]);
+        editor.caretAfter('snake_case');
+
+        editor.type('_');
+
+        expect(editor.stored()).toEqual([paragraph(text('snake_case', { code: true }), text('_'))]);
+    });
+
     it('carries on at its end once Mod-e turns it back on', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
         editor.caretAfter('x');
