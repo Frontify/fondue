@@ -443,6 +443,34 @@ describe('a feature hotkey', () => {
 
         expect(mention).toHaveBeenCalledTimes(1);
     });
+
+    it('naming a character still fires after a space in bold text', () => {
+        const mention = vi.fn<(api: EditorControlApi) => void>();
+        const editor = editorWith(
+            [...defaultPlugins, definePlugin({ id: 'mention', hotkeys: { '@': mention } })],
+            [paragraph(text('hi ', { bold: true }))],
+        );
+
+        editor.caretAfter('hi ');
+        editor.type('@');
+
+        expect(mention).toHaveBeenCalledTimes(1);
+    });
+
+    it('naming a character does not fire at a caret where inline code was just turned on', () => {
+        const mention = vi.fn<(api: EditorControlApi) => void>();
+        const editor = editorWith(
+            [...defaultPlugins, definePlugin({ id: 'mention', hotkeys: { '@': mention } })],
+            [paragraph(text('hi '))],
+        );
+        editor.caretAfter('hi ');
+
+        expect(press(editor.view, 'e', mod)).toBe(true);
+        editor.type('@');
+
+        expect(mention).not.toHaveBeenCalled();
+        expect(editor.stored()).toEqual([paragraph(text('hi '), text('@', { code: true }))]);
+    });
 });
 
 describe('the list keys', () => {

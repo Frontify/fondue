@@ -168,6 +168,7 @@ describe('a mention being searched for', () => {
                 await new Promise((resolve) => requestAnimationFrame(resolve));
             });
             expect(popup()).toBe('');
+            expect(window.document.body.textContent).not.toContain('Searching');
             expect(status()).toBe('');
 
             act(() => {
@@ -179,6 +180,43 @@ describe('a mention being searched for', () => {
             expect(popup()).toContain('Searching');
             expect(popup()).not.toContain('No matches');
             expect(status()).toBe('');
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    it('starts the Searching delay again for each new query', async () => {
+        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+        try {
+            const { type } = await mountDraft(() => new Promise<MentionItem[]>(() => {}));
+            act(() => {
+                vi.advanceTimersByTime(300);
+            });
+            await act(async () => {
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+            });
+            expect(window.document.body.textContent).toContain('Searching');
+
+            await type('ja');
+            act(() => {
+                vi.advanceTimersByTime(299);
+            });
+            await act(async () => {
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+            });
+            await act(async () => {
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+            });
+            expect(popup()).toBe('');
+            expect(window.document.body.textContent).not.toContain('Searching');
+
+            act(() => {
+                vi.advanceTimersByTime(1);
+            });
+            await act(async () => {
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+            });
+            expect(popup()).toContain('Searching');
         } finally {
             vi.useRealTimers();
         }

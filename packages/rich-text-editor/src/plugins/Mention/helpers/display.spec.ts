@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { type MentionResolve, type MentionValue } from '../types';
 
@@ -10,6 +10,10 @@ const JANE: MentionValue = { id: 'jane', username: 'jane', name: 'Jane Doe' };
 const href = (mention: MentionValue): string => `/u/${mention.id}`;
 
 describe('mentionDisplay', () => {
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
     it('shows the stored value with no resolver, or one that does not know', () => {
         const stored = { label: '@jane', title: 'Jane Doe', href: '/u/jane' };
 
@@ -79,7 +83,18 @@ describe('mentionDisplay', () => {
         });
         expect(mentionDisplay(john, { href, trigger: '@', resolve }).label).toBe('@john.r');
         expect(warn).toHaveBeenCalledOnce();
-        warn.mockRestore();
+    });
+
+    it('warns once for a mention whose resolver throws again', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const resolve = () => {
+            throw new Error('offline');
+        };
+
+        mentionDisplay({ ...JANE, id: 'repeat' }, { trigger: '@', resolve });
+        mentionDisplay({ ...JANE, id: 'repeat' }, { trigger: '@', resolve });
+
+        expect(warn).toHaveBeenCalledOnce();
     });
 
     it('shows the stored value for a resolver answer with no known status', () => {
@@ -89,7 +104,6 @@ describe('mentionDisplay', () => {
 
         expect(mentionDisplay({ ...JANE, id: 'odd' }, { trigger: '@', resolve }).label).toBe('@jane');
         expect(warn).toHaveBeenCalledOnce();
-        warn.mockRestore();
     });
 
     it('names an empty stored username by its kind instead of a bare trigger', () => {

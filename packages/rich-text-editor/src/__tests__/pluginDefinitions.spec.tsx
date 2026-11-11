@@ -194,7 +194,39 @@ describe('mentionPlugin', () => {
         ]);
         // The stored username stays in the data, whatever is shown.
         expect(mentions.map((mention) => mention.getAttribute('data-mention-username'))).toEqual(['ana', 'bob', 'cy']);
+        // The stored name travels in the markup, whatever the title shows.
+        expect(mentions.map((mention) => mention.getAttribute('data-mention-name'))).toEqual([
+            'Name ana',
+            'Name bob',
+            'Name cy',
+        ]);
         act(() => root.unmount());
+    });
+
+    it('pastes back an empty stored name as empty, never the name shown', () => {
+        const plugins = [
+            mentionPlugin({
+                items: [],
+                href: (mention) => `/u/${mention.id}`,
+                resolve: () => ({ status: 'current', username: 'jj', name: 'Jane Smith' }),
+            }),
+        ];
+        const html = serializeToHtml(
+            {
+                version: 1,
+                blocks: [
+                    { type: 'paragraph', children: [{ type: 'mention', id: 'jane', username: 'jane', name: '' }] },
+                ],
+            },
+            { plugins },
+        );
+        const element = window.document.createElement('div');
+        element.innerHTML = html;
+        const anchor = element.querySelector<HTMLElement>('[data-mention-id]');
+
+        const parsed = plugins[0]?.content?.inlines?.mention?.parse[0]?.value?.(anchor as HTMLElement);
+
+        expect(parsed).toEqual({ id: 'jane', username: 'jane', name: '' });
     });
 });
 

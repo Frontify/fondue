@@ -345,6 +345,12 @@ describe('a stored mention that is missing a field', () => {
 
         expect(() => rendered(<RichTextRenderer value={doc} plugins={plugins} />)).not.toThrow();
         expect(() => serializeToHtml(doc, { plugins })).not.toThrow();
+        for (const container of [
+            rendered(<RichTextRenderer value={doc} plugins={plugins} />),
+            exported(serializeToHtml(doc, { plugins })),
+        ]) {
+            expect(container.textContent).toBe('Unknown person');
+        }
     });
 
     it('renders a kind this version does not know without a data-mention-kind attribute', () => {
