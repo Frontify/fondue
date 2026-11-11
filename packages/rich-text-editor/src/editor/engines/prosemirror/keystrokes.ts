@@ -2,23 +2,28 @@
 
 import { baseKeymap, chainCommands, setBlockType } from 'prosemirror-commands';
 import { history, redo, undo } from 'prosemirror-history';
-import { InputRule, inputRules, undoInputRule, wrappingInputRule } from 'prosemirror-inputrules';
+import { InputRule, inputRules, undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
-import {
-    type Command,
-    type EditorState,
-    Plugin,
-    type Plugin as PmPlugin,
-    TextSelection,
-    type Transaction,
-} from 'prosemirror-state';
+import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, TextSelection } from 'prosemirror-state';
+import { canJoin, findWrapping } from 'prosemirror-transform';
 
 import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
 
+import { autolinkOnEnter, markPatternRule } from './autolink';
 import { keepCarriedAttrs } from './controlApi';
-import { EXTRA_ATTR, valueAttrsFor } from './documentConversion';
+import { EXTRA_ATTR } from './documentConversion';
 import { listKeys } from './lists';
+import {
+    isInExcludedMark,
+    type RuleContext,
+    type RuleHandler,
+    type RuleOfKind,
+    ruleContext,
+    toInputRule,
+    unlessRangeHasExcludedMark,
+    withoutStateFlags,
+} from './ruleContext';
 
 /**
  * What happens when a key is pressed, as one ordered list of ProseMirror plugins.
@@ -28,11 +33,13 @@ import { listKeys } from './lists';
  * 0. Every handler below steps aside for keys that enter text rather than
  *    command the editor (an input method's, AltGr combinations).
  * 1. Undo / redo, and Backspace right after a typing rewrite (takes the rewrite back).
- * 2. Feature hotkeys (Mod-b, ...). Before the list keys so a feature can take a
+ * 2. Enter and Shift-Enter link the address before the caret once the key has acted;
+ *    Backspace right after takes the link back.
+ * 3. Feature hotkeys (Mod-b, ...). Before the list keys so a feature can take a
  *    key lists would claim (`blurOnBreak` takes Enter).
- * 3. List keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
- * 4. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`); held until a composition ends.
- * 5. Baseline keymap, plus Backspace resetting an emptied first heading.
+ * 4. List keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
+ * 5. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`); held until a composition ends.
+ * 6. Baseline keymap, plus Backspace resetting an emptied first heading.
  *
  * Mark input rules build their own transaction instead of calling
  * `api.marks.toggle`, because the input-rule machinery owns undo grouping.
@@ -40,7 +47,7 @@ import { listKeys } from './lists';
 
 export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api: EditorControlApi): PmPlugin[] => {
     const hasLists = registry.itemTypeByList.size > 0;
-    const excludedMarks = marksExcludingInputRules(registry, schema);
+    const { excludedMarks } = ruleContext(registry, schema);
 
     return [
         // 1
@@ -52,13 +59,15 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
             Backspace: undoInputRule,
         }),
         // 2
+        ...autolinkOnEnter(registry, schema),
+        // 3
         keymap(featureHotkeys(registry.hotkeys, api)),
         characterHotkeys(registry.hotkeys, excludedMarks, api),
-        // 3
-        ...(hasLists ? [keymap(listKeys(api, registry.itemTypeByList))] : []),
         // 4
-        ...typingRewrites(registry, schema, excludedMarks),
+        ...(hasLists ? [keymap(listKeys(api, registry.itemTypeByList))] : []),
         // 5
+        ...typingRewrites(registry, schema),
+        // 6
         keymap({ Backspace: resetEmptyFirstBlock }),
         keymap(baseKeymap),
     ].map(ignoringTextEntryKeys);
@@ -148,8 +157,7 @@ const characterHotkeys = (
                 if (!handlers || !isAtWordStart(view.state, from)) {
                     return false;
                 }
-                const marks = view.state.storedMarks ?? view.state.doc.resolve(from).marks();
-                if (excludedMarks.some((markType) => markType.isInSet(marks))) {
+                if (isInExcludedMark(view.state, excludedMarks, from)) {
                     return false;
                 }
                 return runUntilHandled(handlers, api);
@@ -163,24 +171,8 @@ const characterHotkeys = (
 // Each `xxxRule` turns a declared rule into an engine `InputRule`, or `null`
 // when it names a mark or block no mounted feature provides.
 
-type RuleHandler = (state: EditorState, match: RegExpMatchArray, start: number, end: number) => Transaction | null;
-type RulePattern = { pattern: RegExp; handler: RuleHandler };
-
-/** What every kind's translation needs: the schema, the registry, and the marks that opt out of rules. */
-type RuleContext = {
-    schema: Schema;
-    registry: PluginRegistry;
-    excludedMarks: readonly PmMarkType[];
-};
-
-/** The marks that opt out of typing rules (inline code). */
-const marksExcludingInputRules = (registry: PluginRegistry, schema: Schema): PmMarkType[] =>
-    [...registry.marks]
-        .filter(([, definition]) => definition.excludesInputRules === true)
-        .flatMap(([type]) => schema.marks[type] ?? []);
-
-const typingRewrites = (registry: PluginRegistry, schema: Schema, excludedMarks: readonly PmMarkType[]): PmPlugin[] => {
-    const context: RuleContext = { schema, registry, excludedMarks };
+const typingRewrites = (registry: PluginRegistry, schema: Schema): PmPlugin[] => {
+    const context = ruleContext(registry, schema);
     // The registry orders rules longest delimiter first; otherwise `**bold**`
     // reads as an italic `*` wrapping `*bold*`.
     const rules = registry.inputRules.flatMap((rule) => toEngineRule(rule, context) ?? []);
@@ -249,34 +241,7 @@ const toEngineRule = (rule: RteInputRule, context: RuleContext): InputRule | nul
     }
 };
 
-type RuleOfKind<Kind extends RteInputRule['kind']> = Extract<RteInputRule, { kind: Kind }>;
-
 const escapeForRegExp = (text: string): string => text.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-/** Text carrying a mark that opts out (inline code) is typed as is: the rule steps aside. */
-const unlessInExcludedMark =
-    (excluded: readonly PmMarkType[], handler: RuleHandler): RuleHandler =>
-    (state, match, start, end) => {
-        const marks = state.storedMarks ?? state.doc.resolve(end).marks();
-        return excluded.some((markType) => markType.isInSet(marks)) ? null : handler(state, match, start, end);
-    };
-
-/**
- * A text rule leaves text alone when any of it carries a mark that opts out of rules (inline code).
- */
-const unlessRangeHasExcludedMark =
-    (excluded: readonly PmMarkType[], handler: RuleHandler): RuleHandler =>
-    (state, match, start, end) => {
-        if (excluded.some((markType) => state.doc.rangeHasMark(start, end, markType))) {
-            return null;
-        }
-        return handler(state, match, start, end);
-    };
-
-const withoutStateFlags = (pattern: RegExp): string => pattern.flags.replaceAll(/[gy]/g, '');
-
-const toInputRule = ({ pattern, handler }: RulePattern, { excludedMarks }: RuleContext): InputRule =>
-    new InputRule(pattern, unlessInExcludedMark(excludedMarks, handler));
 
 /** `**bold**` -> a bold mark over `bold`. The engine ships block and text rules but no mark rule. */
 const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | null => {
@@ -314,66 +279,6 @@ const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | n
     return toInputRule({ pattern, handler }, context);
 };
 
-/** Punctuation and closing quotes that end a sentence or quotation rather than a link, though a link may contain them. */
-const TRAILING_PUNCTUATION = /[.,;:!?"'”’]$/;
-
-const count = (text: string, character: string): number => text.split(character).length - 1;
-
-/** Drops trailing punctuation, and a trailing `)` only while it has no `(` to close. */
-export const trimTrailingPunctuation = (address: string): string => {
-    let trimmed = address;
-    for (;;) {
-        const unbalanced = trimmed.endsWith(')') && count(trimmed, ')') > count(trimmed, '(');
-        if (!unbalanced && !TRAILING_PUNCTUATION.test(trimmed)) {
-            return trimmed;
-        }
-        trimmed = trimmed.slice(0, -1);
-    }
-};
-
-/**
- * `https://example.com ` -> the address carries the mark, the space does not.
- * Punctuation right before the space is left out of the mark, and the address
- * may follow an opening bracket or quote. A token that
- * already carries the mark, or one that opts out of rules, stays as typed.
- */
-const markPatternRule = (rule: RuleOfKind<'markPattern'>, context: RuleContext): InputRule | null => {
-    const markType = context.schema.marks[rule.mark];
-    if (!markType) {
-        return null;
-    }
-    const flags = withoutStateFlags(rule.pattern);
-    const token = new RegExp(`^(?:${rule.pattern.source})$`, flags);
-    const pattern = new RegExp(`(?:^|${WORD_BOUNDARY_BEFORE.source})((?:${rule.pattern.source}))\\s$`, flags);
-
-    const handler: RuleHandler = (state, match, start, end) => {
-        const typed = match[1];
-        if (!typed) {
-            return null;
-        }
-        const linked = trimTrailingPunctuation(typed);
-        if (!token.test(linked)) {
-            return null;
-        }
-        // The match is the token plus the space, and maybe the whitespace before the token.
-        const from = start + (match[0].length - 1 - typed.length);
-        const to = from + linked.length;
-        if ([markType, ...context.excludedMarks].some((type) => state.doc.rangeHasMark(from, to, type))) {
-            return null;
-        }
-        const value = rule.value(linked);
-        if (value === null) {
-            return null;
-        }
-        // One space follows the token, whatever sits there now: nothing, the composed space, or the selection the typed space replaces.
-        return state.tr
-            .addMark(from, to, markType.create(valueAttrsFor(value)))
-            .replaceWith(from + typed.length, end, state.schema.text(' '))
-            .removeStoredMark(markType);
-    };
-    return toInputRule({ pattern, handler }, context);
-};
-
 /**
  * `# ` at the start of a block turns it into another block type. The engine's
  * `textblockTypeInputRule`, except that the attributes every text block carries
@@ -395,12 +300,39 @@ const blockRule = (rule: RuleOfKind<'block'>, { schema, registry }: RuleContext)
     });
 };
 
-/** `- ` at the start of a block wraps it in a list. */
+/** `- ` at the start of a block wraps it in a list, its new item carrying `itemAttributes`. */
 const listRule = (rule: RuleOfKind<'list'>, { schema, registry }: RuleContext): InputRule | null => {
     const listType = schema.nodes[rule.list];
-    return listType && registry.itemTypeByList.has(rule.list)
-        ? wrappingInputRule(new RegExp(`^${escapeForRegExp(rule.match)}$`), listType)
-        : null;
+    const itemName = registry.itemTypeByList.get(rule.list);
+    if (!listType || itemName === undefined) {
+        return null;
+    }
+    const pattern = new RegExp(`^${escapeForRegExp(rule.match)}$`);
+    const { itemAttributes } = rule;
+    // The engine's `wrappingInputRule` cannot set attributes on the item, so it is repeated here with them.
+    return new InputRule(pattern, (state, _match, start, end) => {
+        const transaction = state.tr.delete(start, end);
+        const range = transaction.doc.resolve(start).blockRange();
+        if (!range) {
+            return null;
+        }
+        const wrapping = findWrapping(range, listType);
+        if (!wrapping) {
+            return null;
+        }
+        const wrappers = wrapping.map((wrapper) => {
+            if (itemAttributes && wrapper.type.name === itemName) {
+                return { ...wrapper, attrs: itemAttributes };
+            }
+            return wrapper;
+        });
+        transaction.wrap(range, wrappers);
+        const before = transaction.doc.resolve(start - 1).nodeBefore;
+        if (before?.type === listType && canJoin(transaction.doc, start - 1)) {
+            transaction.join(start - 1);
+        }
+        return transaction;
+    });
 };
 
 /**

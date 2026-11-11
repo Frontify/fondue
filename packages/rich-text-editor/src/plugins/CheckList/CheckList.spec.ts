@@ -20,4 +20,14 @@ describe('the check item', () => {
             expect(checkbox(value)?.attrs?.checked).toBe(false);
         }
     });
+
+    it('exports an item in progress as an unchecked box named by its state', () => {
+        const item = checkItem?.toHtml({ checked: 'inProgress' });
+
+        expect(item?.attrs?.['data-checked']).toBe('inProgress');
+        expect(checkbox({ checked: 'inProgress' })?.attrs).toMatchObject({
+            checked: false,
+            'aria-label': 'In progress',
+        });
+    });
 });
