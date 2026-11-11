@@ -8,33 +8,42 @@ type DropHandlers = {
     onDrop?: (event: DragEvent<HTMLElement>) => void;
 };
 
-const mirrorInRtl = (
-    event: DragEvent<HTMLElement>,
-    element: HTMLElement | null | undefined,
-): DragEvent<HTMLElement> => {
+type InlineAxis = { kind: 'unchanged' } | { kind: 'mirrored'; left: number; right: number };
+
+const readInlineAxis = (element: HTMLElement | null | undefined): InlineAxis => {
     if (!element || getComputedStyle(element).direction !== 'rtl') {
-        return event;
+        return { kind: 'unchanged' };
     }
 
     const { left, right } = element.getBoundingClientRect();
-    const mirroredClientX = left + right - event.clientX;
-
-    return new Proxy(event, {
-        get: (target, property) => {
-            if (property === 'clientX') {
-                return mirroredClientX;
-            }
-            const value: unknown = Reflect.get(target, property);
-            if (typeof value === 'function') {
-                // stopPropagation and preventDefault must act on React's original event
-                return (value as (...args: unknown[]) => unknown).bind(target);
-            }
-            return value;
-        },
-    });
+    return { kind: 'mirrored', left, right };
 };
 
-// headless-tree measures the drop level from the row's physical left edge, which is the wrong side in RTL
+const toInlineStartEvent = (event: DragEvent<HTMLElement>, axis: InlineAxis): DragEvent<HTMLElement> => {
+    switch (axis.kind) {
+        case 'unchanged': {
+            return event;
+        }
+        case 'mirrored': {
+            const mirroredClientX = axis.left + axis.right - event.clientX;
+            return new Proxy(event, {
+                get: (target, property) => {
+                    if (property === 'clientX') {
+                        return mirroredClientX;
+                    }
+                    const value: unknown = Reflect.get(target, property);
+                    if (typeof value === 'function') {
+                        // stopPropagation and preventDefault must act on React's original event; the cast keeps bind from returning any
+                        return (value as (...args: unknown[]) => unknown).bind(target);
+                    }
+                    return value;
+                },
+            });
+        }
+    }
+};
+
+/** Measures the drop level from the row's inline start edge. headless-tree measures from the physical left edge, which is the wrong side in RTL. */
 export const rtlDropLevelFeature: FeatureImplementation = {
     key: 'rtl-drop-level',
     deps: ['drag-and-drop'],
@@ -46,8 +55,10 @@ export const rtlDropLevelFeature: FeatureImplementation = {
             const { onDragOver, onDrop }: DropHandlers = props ?? {};
             return {
                 ...props,
-                onDragOver: (event: DragEvent<HTMLElement>) => onDragOver?.(mirrorInRtl(event, item.getElement())),
-                onDrop: (event: DragEvent<HTMLElement>) => onDrop?.(mirrorInRtl(event, item.getElement())),
+                onDragOver: (event: DragEvent<HTMLElement>) =>
+                    onDragOver?.(toInlineStartEvent(event, readInlineAxis(item.getElement()))),
+                onDrop: (event: DragEvent<HTMLElement>) =>
+                    onDrop?.(toInlineStartEvent(event, readInlineAxis(item.getElement()))),
             };
         },
     },

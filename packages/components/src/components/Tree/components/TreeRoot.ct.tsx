@@ -1838,6 +1838,9 @@ test.describe('TreeRoot accepts predicate', () => {
 });
 
 test.describe('TreeRoot drop level by text direction', () => {
+    const HARNESS_WIDTH_PX = 400;
+    const EDGE_INSET_PX = 4;
+    const LOWER_HALF_Y_RATIO = 0.75;
     const initial: TreeChangeState = [
         { id: 'x', name: 'X', isFolder: false },
         {
@@ -1851,22 +1854,28 @@ test.describe('TreeRoot drop level by text direction', () => {
             ],
         },
     ];
-    const topology = (state: { id: string; children?: { id: string }[] }[]) =>
-        state.map((node) =>
-            node.children ? `${node.id}[${node.children.map((child) => child.id).join(',')}]` : node.id,
-        );
+    const topology = (state: TreeChangeState) =>
+        state.map((node) => {
+            if (node.children) {
+                return `${node.id}[${node.children.map((child) => child.id).join(',')}]`;
+            }
+            return node.id;
+        });
 
     // Dropping on the lower half of the last child in a group: the strip one indent wide at the
     // row's inline start outdents to the parent level, the rest of the row keeps the child level.
     for (const dir of ['ltr', 'rtl'] as const) {
         for (const edge of ['start', 'end'] as const) {
-            const expected = edge === 'start' ? ['a[a1,a2]', 'x'] : ['a[a1,a2,x]'];
+            let expected = ['a[a1,a2,x]'];
+            if (edge === 'start') {
+                expected = ['a[a1,a2]', 'x'];
+            }
             test(`${dir}: dropping near the inline ${edge} of the last child gives ${expected.join(' ')}`, async ({
                 mount,
             }) => {
                 const states: string[][] = [];
                 const component = await mount(
-                    <div dir={dir} style={{ width: 400 }}>
+                    <div dir={dir} style={{ width: HARNESS_WIDTH_PX }}>
                         <TestHarness reorderable initial={initial} onChange={(state) => states.push(topology(state))} />
                     </div>,
                 );
@@ -1877,8 +1886,11 @@ test.describe('TreeRoot drop level by text direction', () => {
                     throw new Error('a2 row has no box');
                 }
                 const atPhysicalLeft = (dir === 'ltr') === (edge === 'start');
-                const x = atPhysicalLeft ? 4 : box.width - 4;
-                await source.dragTo(target, { targetPosition: { x, y: box.height * 0.75 } });
+                let x = box.width - EDGE_INSET_PX;
+                if (atPhysicalLeft) {
+                    x = EDGE_INSET_PX;
+                }
+                await source.dragTo(target, { targetPosition: { x, y: box.height * LOWER_HALF_Y_RATIO } });
                 await expect.poll(() => states[states.length - 1]).toEqual(expected);
             });
         }
