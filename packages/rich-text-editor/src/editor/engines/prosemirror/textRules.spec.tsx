@@ -345,6 +345,24 @@ describe('typographyPlugin', () => {
         expect(typed('v3x4 ', withTypography)).toEqual([paragraph(text('v3x4 '))]);
     });
 
+    it('leaves a fraction after a full stop as typed: addresses and decimals', () => {
+        expect(typed('10.0.0.1/8 ', withTypography)).toEqual([paragraph(text('10.0.0.1/8 '))]);
+        expect(typed('0.1/2 ', withTypography)).toEqual([paragraph(text('0.1/2 '))]);
+    });
+
+    it('does not carry a selected link onto the quote typed over it', () => {
+        const link = { link: { href: 'https://frontify.com' } };
+        const editor = editorWith(
+            [...shipped('link'), typographyPlugin()],
+            [paragraph(text('a '), text('Frontify', link))],
+        );
+        editor.select('Frontify');
+
+        editor.type('"');
+
+        expect(editor.stored()).toEqual([paragraph(text('a “'))]);
+    });
+
     it('rewrites a number only as a whole token: v1/2, v2^2, ^origin and 10^-3 stay as typed', () => {
         expect(typed('v1/2 ', withTypography)).toEqual([paragraph(text('v1/2 '))]);
         expect(typed('v2^2 ', withTypography)).toEqual([paragraph(text('v2^2 '))]);

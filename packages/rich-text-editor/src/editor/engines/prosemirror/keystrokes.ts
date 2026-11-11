@@ -391,11 +391,12 @@ const replacementOf = ({ match, replace }: RuleOfKind<'text'>): ((found: RegExpM
 const typingMarks = (state: EditorState): readonly PmMark[] => state.storedMarks ?? state.selection.$from.marks();
 
 /**
- * The marks of the first character from `start` to `end`, which a replacement keeps even where a
- * mark such as a link ends there. Typing marks when that text is still to be typed.
+ * The marks of the first character from `start` to `end` before the selection, which a replacement
+ * keeps even where a mark such as a link ends there. Typing marks when none of it is typed yet, as
+ * selected text is typed over.
  */
 const replacedMarks = (state: EditorState, start: number, end: number): readonly PmMark[] => {
-    const first = start < end ? state.doc.nodeAt(start) : null;
+    const first = start < Math.min(end, state.selection.from) ? state.doc.nodeAt(start) : null;
     if (first === null) {
         return typingMarks(state);
     }

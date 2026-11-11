@@ -58,10 +58,10 @@ const DOUBLE_QUOTE_OPENS = `(?<=^|[${OPENING_CONTEXT}${INLINE_PLACEHOLDER}])`;
 const SINGLE_QUOTE_OPENS = `(?<=^|[${OPENING_CONTEXT}])`;
 
 /**
- * Not right after a letter, digit, underscore or slash, so a number stands as a whole token:
+ * Not right after a letter, digit, underscore, slash or full stop, so a number stands as a whole token:
  * `v1/2`, `11/2` and `/1/2` stay as typed.
  */
-const TOKEN_START = String.raw`(?<![\p{L}\p{N}_/])`;
+const TOKEN_START = String.raw`(?<![\p{L}\p{N}_/.])`;
 
 /**
  * Right after a whole number: `2^2`, not `x^2` or `v2^2`.
