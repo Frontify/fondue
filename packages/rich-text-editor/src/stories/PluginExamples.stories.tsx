@@ -699,7 +699,14 @@ export const Typography: Story = {
                     <code>x &lt;= 5</code> stay as typed.
                 </p>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[codePlugin, typographyPlugin()]} />
+                    <RichTextEditor
+                        value={doc}
+                        onChange={setDoc}
+                        plugins={[
+                            codePlugin,
+                            typographyPlugin({ groups: ['quotes', 'ellipsis', 'dashes', 'symbols', 'numeric'] }),
+                        ]}
+                    />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
