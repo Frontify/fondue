@@ -39,11 +39,10 @@
 
     list-style-type: decimal;
 
-    // Letters and Roman numerals are not as wide as their number's digits, so
-    // a nested list keeps the two-digit room whatever its start.
+    // A nested list's room also counts its start's digits, which over-sizes
+    // most letters and can under-size a long Roman numeral (`xxxviii.`), but
+    // fits the decimal browsers fall back to past their letter and Roman range.
     .numberedList {
-        @include list(2em);
-
         list-style-type: lower-alpha;
 
         .numberedList {

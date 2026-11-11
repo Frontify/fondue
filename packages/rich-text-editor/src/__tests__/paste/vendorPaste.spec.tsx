@@ -515,10 +515,19 @@ describe('pasting from other applications', () => {
 
         it('stores no start past the 32-bit range browsers draw, and keeps the largest one inside it', () => {
             const doc = pasted(
-                '<ol start="2147483648"><li>Past</li></ol><p>Between</p><ol start="2147483647"><li>Last</li></ol>',
+                '<ol start="2147483648"><li>Past</li></ol><p>Between</p><ol start="2147483647"><li>Last</li></ol>' +
+                    '<p>Between</p><ol start="-2147483648"><li>First</li></ol><p>Between</p><ol start="-2147483649"><li>Before</li></ol>',
             );
 
-            expect(nodesOf(doc).map((block) => block.start)).toEqual([undefined, undefined, 2147483647]);
+            expect(nodesOf(doc).map((block) => block.start)).toEqual([
+                undefined,
+                undefined,
+                2147483647,
+                undefined,
+                -2147483648,
+                undefined,
+                undefined,
+            ]);
         });
     });
 

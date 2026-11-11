@@ -68,12 +68,21 @@ const MARKER_DIGITS = 2;
 /** The custom property `list.module.scss` widens a numbered list by, once per digit past `MARKER_DIGITS`. */
 const EXTRA_DIGITS_PROPERTY = '--rte-list-extra-digits';
 
-/** The largest `start` browsers honour: they read the attribute as a 32-bit integer and draw a list past it from 1. */
+/** The smallest `start` browsers honour: they read the attribute as a 32-bit integer and draw a list past it from 1. */
+const MIN_START = -(2 ** 31);
+
+/** The largest `start` browsers honour, for the same reason as `MIN_START`. */
 const MAX_START = 2 ** 31 - 1;
 
 /** The start to store, or `null` for 1 (what no start means) and for an integer browsers cannot draw or write back as given. */
 const storedStart = (value: unknown): number | null => {
-    if (typeof value !== 'number' || !Number.isInteger(value) || Math.abs(value) > MAX_START || value === 1) {
+    if (
+        typeof value !== 'number' ||
+        !Number.isInteger(value) ||
+        value < MIN_START ||
+        value > MAX_START ||
+        value === 1
+    ) {
         return null;
     }
     return value;
@@ -90,7 +99,7 @@ const numberedList = defineBlock<NumberedListValue>({
         if (stored !== null) {
             first = String(stored);
         }
-        // A list that starts past the stylesheet's room widens for its first number only; a nested one ignores it.
+        // A list that starts past the stylesheet's room widens for its first number only.
         if (first !== undefined && first.length > MARKER_DIGITS) {
             style = { [EXTRA_DIGITS_PROPERTY]: String(first.length - MARKER_DIGITS) };
         }
