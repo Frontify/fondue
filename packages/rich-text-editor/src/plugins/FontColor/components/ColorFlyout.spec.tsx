@@ -6,7 +6,7 @@ import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { type EditorControlApi } from '#/core';
+import { type EditorControlApi, type RteSelectionSnapshot, type ToolbarItemProps } from '#/core';
 
 import { ColorFlyout } from './ColorFlyout';
 
@@ -20,8 +20,15 @@ afterEach(() => {
 
 type Marks = EditorControlApi['marks'];
 
+const COLORED: RteSelectionSnapshot['marks'] = { fontColor: { coverage: 'all', value: { color: '#ff0000' } } };
+
+const colored = (color: string): RteSelectionSnapshot['marks'] => ({
+    fontColor: { coverage: 'all', value: { color } },
+});
+
 const mount = (
-    marks: Record<string, Record<string, unknown>>,
+    marks: RteSelectionSnapshot['marks'],
+    isActive: ToolbarItemProps['isActive'],
 ): {
     toggle: ReturnType<typeof vi.fn<Marks['toggle']>>;
     set: ReturnType<typeof vi.fn<Marks['set']>>;
@@ -32,7 +39,7 @@ const mount = (
     const api = { marks: { toggle, set }, focus: vi.fn() } as unknown as EditorControlApi;
     const container = document.body.appendChild(document.createElement('div'));
     root = createRoot(container);
-    act(() => root?.render(<ColorFlyout selection={{ marks } as never} api={api} />));
+    act(() => root?.render(<ColorFlyout selection={{ marks } as never} api={api} isActive={isActive} />));
     const trigger = container.querySelector('button');
     act(() => trigger?.click());
     return { toggle, set, trigger };
@@ -67,18 +74,18 @@ const press = (label: string): void => {
 
 describe('the colour flyout', () => {
     it('replaces a colour in one command', () => {
-        const { toggle, set } = mount({ fontColor: { color: '#ff0000' } });
+        const { toggle, set } = mount(COLORED, true);
         typeHexAndPressEnter('c5221f');
 
         expect(set.mock.calls).toEqual([['fontColor', { color: '#c5221f' }]]);
         expect(toggle).not.toHaveBeenCalled();
     });
 
-    it.each<[string, Record<string, Record<string, unknown>>]>([
-        ['coloured', { fontColor: { color: '#ff0000' } }],
-        ['uncoloured', {}],
-    ])('changes nothing on Save without a choice on %s text', (_, marks) => {
-        const { toggle, set } = mount(marks);
+    it.each<[string, RteSelectionSnapshot['marks'], ToolbarItemProps['isActive']]>([
+        ['coloured', COLORED, true],
+        ['uncoloured', {}, false],
+    ])('changes nothing on Save without a choice on %s text', (_, marks, isActive) => {
+        const { toggle, set } = mount(marks, isActive);
         // Clicking Save moves focus off the hex field first, and the picker reports its value again on blur.
         act(() => document.querySelector<HTMLInputElement>('input[type="text"]')?.blur());
         press('Save');
@@ -88,7 +95,7 @@ describe('the colour flyout', () => {
     });
 
     it('changes nothing when the text keeps its own colour', () => {
-        const { toggle, set } = mount({ fontColor: { color: '#c5221f' } });
+        const { toggle, set } = mount({ fontColor: { coverage: 'all', value: { color: '#c5221f' } } }, true);
         typeHexAndPressEnter('c5221f');
 
         expect(toggle).not.toHaveBeenCalled();
@@ -96,7 +103,7 @@ describe('the colour flyout', () => {
     });
 
     it('shows a stored alpha as the whole percent that was picked', () => {
-        mount({ fontColor: { color: '#c5221f5e' } });
+        mount(colored('#c5221f5e'), true);
 
         expect(
             document.querySelector<HTMLInputElement>('[data-test-id="color-picker-value-input-alpha"] input')?.value,
@@ -104,7 +111,7 @@ describe('the colour flyout', () => {
     });
 
     it('removes a colour', () => {
-        const { toggle, set } = mount({ fontColor: { color: '#c5221f' } });
+        const { toggle, set } = mount({ fontColor: { coverage: 'all', value: { color: '#c5221f' } } }, true);
         press('Remove');
 
         expect(toggle.mock.calls).toEqual([['fontColor']]);
@@ -118,7 +125,7 @@ describe('the colour flyout', () => {
             ['#c5221f', 'Text colour: #C5221F'],
         ];
         for (const [color, title] of cases) {
-            expect(mount({ fontColor: { color } }).trigger?.getAttribute('title')).toBe(title);
+            expect(mount(colored(color), true).trigger?.getAttribute('aria-label')).toBe(title);
             act(() => root?.unmount());
         }
     });
@@ -129,7 +136,7 @@ describe('the colour flyout', () => {
             ['banana', 'Text colour'],
         ];
         for (const [color, title] of cases) {
-            expect(mount({ fontColor: { color } }).trigger?.getAttribute('title')).toBe(title);
+            expect(mount(colored(color), true).trigger?.getAttribute('aria-label')).toBe(title);
             act(() => root?.unmount());
         }
     });
@@ -141,7 +148,7 @@ describe('the colour flyout', () => {
             ['#c5221f', '#c5221f'],
         ];
         for (const [hex, color] of cases) {
-            const { set } = mount({});
+            const { set } = mount({}, false);
             typeHexAndPressEnter(hex);
 
             expect(set).toHaveBeenCalledWith('fontColor', { color });
@@ -150,7 +157,7 @@ describe('the colour flyout', () => {
     });
 
     it('replaces a colour, keeping its opacity, in one command', () => {
-        const { toggle, set } = mount({ fontColor: { color: '#ff000080' } });
+        const { toggle, set } = mount(colored('#ff000080'), true);
         typeHexAndPressEnter('c5221f');
 
         expect(set.mock.calls).toEqual([['fontColor', { color: '#c5221f80' }]]);
@@ -165,7 +172,7 @@ describe('the colour flyout', () => {
         ['Blue', '#1a73e8'],
         ['Purple', '#8430ce'],
     ])('applies the %s preset', (name, color) => {
-        const { set } = mount({});
+        const { set } = mount({}, false);
         act(() => document.querySelector<HTMLButtonElement>(`button[aria-label="${name}"]`)?.click());
 
         expect(set.mock.calls).toEqual([['fontColor', { color }]]);
@@ -174,7 +181,7 @@ describe('the colour flyout', () => {
     it.each<[string]>([['#ff00008c'], ['rgba(255, 0, 0, 0.5)'], ['banana']])(
         'changes nothing on Save after blur without a choice on stored %s',
         (color) => {
-            const { toggle, set } = mount({ fontColor: { color } });
+            const { toggle, set } = mount(colored(color), true);
             act(() => document.querySelector<HTMLInputElement>('input[type="text"]')?.blur());
             press('Save');
 
@@ -183,11 +190,11 @@ describe('the colour flyout', () => {
         },
     );
 
-    it.each<[string, Record<string, Record<string, unknown>>, string]>([
+    it.each<[string, RteSelectionSnapshot['marks'], string]>([
         ['uncoloured text', {}, '#c5221f'],
-        ['stored #ff000080', { fontColor: { color: '#ff000080' } }, '#c5221f80'],
+        ['stored #ff000080', colored('#ff000080'), '#c5221f80'],
     ])('sets the typed colour on Save from %s', (_, marks, color) => {
-        const { set } = mount(marks);
+        const { set } = mount(marks, marks.fontColor !== undefined);
         typeHex('c5221f');
         press('Save');
 
@@ -195,7 +202,7 @@ describe('the colour flyout', () => {
     });
 
     it('keeps a fully transparent stored colour transparent when a new hex is typed', () => {
-        const { set } = mount({ fontColor: { color: '#ff000000' } });
+        const { set } = mount(colored('#ff000000'), true);
         typeHexAndPressEnter('c5221f');
 
         expect(set.mock.calls).toEqual([['fontColor', { color: '#c5221f00' }]]);
@@ -207,7 +214,7 @@ describe('the colour flyout', () => {
             ['banana', 'transparent'],
         ];
         for (const [color, background] of cases) {
-            const { trigger } = mount({ fontColor: { color } });
+            const { trigger } = mount(colored(color), true);
 
             expect(trigger?.querySelector<HTMLElement>('span[aria-hidden]')?.style.background).toBe(background);
             act(() => root?.unmount());
@@ -215,7 +222,7 @@ describe('the colour flyout', () => {
     });
 
     it('labels the flyout content with the colour title', () => {
-        mount({});
+        mount({}, false);
         const content = document.querySelector('[aria-labelledby]');
         const titleId = content?.getAttribute('aria-labelledby') ?? '';
 
@@ -224,7 +231,7 @@ describe('the colour flyout', () => {
 
     it('applies nothing for a typed value the hex field does not take', () => {
         for (const hex of ['ff00', 'ff000080']) {
-            const { toggle, set } = mount({});
+            const { toggle, set } = mount({}, false);
             typeHexAndPressEnter(hex);
 
             expect(toggle).not.toHaveBeenCalled();
@@ -234,9 +241,9 @@ describe('the colour flyout', () => {
     });
 
     it('changes nothing on Cancel', () => {
-        const cases: Record<string, Record<string, unknown>>[] = [{ fontColor: { color: '#ff000080' } }, {}];
+        const cases: RteSelectionSnapshot['marks'][] = [colored('#ff000080'), {}];
         for (const marks of cases) {
-            const { toggle, set } = mount(marks);
+            const { toggle, set } = mount(marks, marks.fontColor !== undefined);
             typeHex('c5221f');
             press('Cancel');
 
@@ -247,7 +254,7 @@ describe('the colour flyout', () => {
     });
 
     it('applies nothing on a key other than Enter', () => {
-        const { toggle, set } = mount({});
+        const { toggle, set } = mount({}, false);
         const field = typeHex('c5221f');
         for (const key of ['a', 'Tab']) {
             act(() => {
@@ -260,7 +267,7 @@ describe('the colour flyout', () => {
     });
 
     it('applies nothing on Enter outside the hex field', () => {
-        const { set } = mount({});
+        const { set } = mount({}, false);
         typeHex('c5221f');
         const alpha = document.querySelector<HTMLInputElement>('[data-test-id="color-picker-value-input-alpha"] input');
         act(() => {
@@ -271,7 +278,7 @@ describe('the colour flyout', () => {
     });
 
     it('prevents the default on Enter in the hex field only', () => {
-        mount({});
+        mount({}, false);
         const field = typeHex('c5221f');
         const enter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
         const other = new KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true });
@@ -284,11 +291,11 @@ describe('the colour flyout', () => {
         expect(other.defaultPrevented).toBe(false);
     });
 
-    it.each<[string, Record<string, Record<string, unknown>>, string, string]>([
+    it.each<[string, RteSelectionSnapshot['marks'], string, string]>([
         ['uncoloured text', {}, 'c5221f', '#c5221f'],
-        ['stored #ff000080', { fontColor: { color: '#ff000080' } }, '#c5221f', '#c5221f80'],
+        ['stored #ff000080', colored('#ff000080'), '#c5221f', '#c5221f80'],
     ])('keeps the last complete hex when an incomplete one is typed after it on %s', (_, marks, first, color) => {
-        const { set } = mount(marks);
+        const { set } = mount(marks, marks.fontColor !== undefined);
         typeHex(first);
         typeHex('zz');
         press('Save');
@@ -297,12 +304,20 @@ describe('the colour flyout', () => {
     });
 
     it('does not preview a three-digit hex, so Save after leaving the field changes nothing', () => {
-        const { toggle, set } = mount({ fontColor: { color: '#00ff00' } });
+        const { toggle, set } = mount(colored('#00ff00'), true);
         typeHex('f00');
         typeHex('zz');
         press('Save');
 
         expect(toggle).not.toHaveBeenCalled();
         expect(set).not.toHaveBeenCalled();
+    });
+
+    it('shows a half-coloured selection as mixed, still removable', () => {
+        const { toggle } = mount({ fontColor: { coverage: 'some' } }, 'mixed');
+
+        expect(document.querySelector('button[aria-pressed]')?.getAttribute('aria-pressed')).toBe('mixed');
+        press('Remove');
+        expect(toggle.mock.calls).toEqual([['fontColor']]);
     });
 });

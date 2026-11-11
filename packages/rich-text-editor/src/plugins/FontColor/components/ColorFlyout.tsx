@@ -4,7 +4,7 @@ import { Button, ColorPicker, Flyout } from '@frontify/fondue-components';
 import { IconDroplet } from '@frontify/fondue-icons';
 import { type ComponentProps, type ReactNode, useId, useRef, useState } from 'react';
 
-import { type EditorControlApi, type RteSelectionSnapshot } from '#/core';
+import { type EditorControlApi, type RteSelectionSnapshot, type ToolbarItemProps } from '#/core';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
 import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
@@ -53,14 +53,19 @@ const readHexField = (container: HTMLElement | null, alpha: number | undefined):
     return parseTypedHex(text, alpha);
 };
 
-type ColorFlyoutProps = { selection: RteSelectionSnapshot; api: EditorControlApi };
+type ColorFlyoutProps = {
+    selection: RteSelectionSnapshot;
+    api: EditorControlApi;
+    /** Whether the selection carries a colour; `'mixed'` when only part of it does. */
+    isActive: ToolbarItemProps['isActive'];
+};
 
 /**
  * The colour control: a toolbar button showing the selection's colour, with the
  * picker in a flyout. The colour reaches the document on save, not while
  * dragging, so the undo history gets one step per choice.
  */
-export const ColorFlyout = ({ selection, api }: ColorFlyoutProps): ReactNode => {
+export const ColorFlyout = ({ selection, api, isActive }: ColorFlyoutProps): ReactNode => {
     const [open, setOpen] = useState(false);
     const [draft, setDraft] = useState<PickerColor | undefined>(undefined);
     const titleId = useId();
@@ -70,10 +75,14 @@ export const ColorFlyout = ({ selection, api }: ColorFlyoutProps): ReactNode => 
 
     const { returnToText, contentProps } = useFocusAfterClose(api);
 
-    // Marks are untyped at the editor boundary; toStoredColor validates the value.
-    const value = selection.marks.fontColor as Partial<FontColorValue> | undefined;
+    const fontColor = selection.marks.fontColor;
+    let value: Partial<FontColorValue> | undefined;
+    // A half-coloured selection has no one colour to show.
+    if (fontColor?.coverage === 'all') {
+        value = fontColor.value;
+    }
     // A stored value that is no colour shows none, and is still removable.
-    const hasColor = 'fontColor' in selection.marks;
+    const hasColor = isActive !== false;
     const storedColor = toStoredColor(value?.color);
     let currentColor: Rgba | undefined;
     let title = COLOR_LABEL;
@@ -122,12 +131,12 @@ export const ColorFlyout = ({ selection, api }: ColorFlyoutProps): ReactNode => 
         >
             <Flyout.Trigger>
                 <ToolbarButton
-                    active={hasColor}
+                    active={isActive}
                     // The swatch is visual only, so the colour goes in the name.
                     title={title}
                 >
                     <span className={styles.trigger}>
-                        <IconDroplet size={16} />
+                        <IconDroplet size={20} />
                         <span
                             aria-hidden
                             className={styles.swatch}
