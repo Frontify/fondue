@@ -2,7 +2,6 @@
     "name": "@frontify/fondue-rich-text-editor",
     "type": "module",
     "version": "0.1.0-beta.0",
-    "private": true,
     "description": "Revamped Rich Text Editor for the Fondue design system",
     "author": "Frontify Developers <developers@frontify.com>",
     "homepage": "https://github.com/Frontify/fondue",
