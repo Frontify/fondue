@@ -186,7 +186,7 @@ const RULES: Record<TypographyGroup, readonly Replacement[]> = {
         ["'", '’'],
     ],
     ellipsis: [['...', '…']],
-    dashes: [[DOUBLE_HYPHEN, '—', AT_RUN_END]],
+    dashes: [[DOUBLE_HYPHEN, '–', AT_RUN_END]],
     symbols: [
         ['<->', '↔'],
         [RIGHT_ARROW, '→'],

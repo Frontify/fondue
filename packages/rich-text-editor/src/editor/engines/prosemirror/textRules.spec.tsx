@@ -73,7 +73,7 @@ describe('a text rule', () => {
 
         editor.type(' ');
 
-        expect(editor.stored()).toEqual([paragraph(text('a — tail'))]);
+        expect(editor.stored()).toEqual([paragraph(text('a – tail'))]);
     });
 
     it('gives the dash and the character that ends the run the marks typing carries there', () => {
@@ -82,7 +82,7 @@ describe('a text rule', () => {
 
         editor.type(' ');
 
-        expect(editor.stored()).toEqual([paragraph(text('a — ', { bold: true }))]);
+        expect(editor.stored()).toEqual([paragraph(text('a – ', { bold: true }))]);
     });
 
     it('steps aside when the run ends inside inline code', () => {
@@ -275,7 +275,7 @@ describe('typographyPlugin', () => {
     });
 
     it.each([
-        ['--', '—'],
+        ['--', '–'],
         ['<-', '←'],
         ['!=', '≠'],
         ['2^2', '2²'],
@@ -291,11 +291,11 @@ describe('typographyPlugin', () => {
     });
 
     it.each([';', ':', '!', '?', ']', '}', '…'])('ends a run at "%s"', (ending) => {
-        expect(typed(`a --${ending}`, withTypography)).toEqual([paragraph(text(`a —${ending}`))]);
+        expect(typed(`a --${ending}`, withTypography)).toEqual([paragraph(text(`a –${ending}`))]);
     });
 
     it('turns on dashes, the ellipsis and symbols by default', () => {
-        expect(typed('a -- b ... ->', [...defaultPlugins, typographyPlugin()])).toEqual([paragraph(text('a — b … →'))]);
+        expect(typed('a -- b ... ->', [...defaultPlugins, typographyPlugin()])).toEqual([paragraph(text('a – b … →'))]);
     });
 
     it('turns a caret and o into a degree sign only right after a whole number', () => {
@@ -415,7 +415,7 @@ describe('typographyPlugin', () => {
 
         editor.type(' ');
 
-        expect(editor.stored()).toEqual([paragraph(text('a — '))]);
+        expect(editor.stored()).toEqual([paragraph(text('a – '))]);
     });
 
     describe('quotes', () => {
