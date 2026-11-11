@@ -2,7 +2,7 @@
 
 import { Component, type ReactNode } from 'react';
 
-import { warnEditorCrashed } from './warnings';
+import { warnEditorCrashed } from '../warnings';
 
 type EditorErrorBoundaryProps = {
     children: ReactNode;

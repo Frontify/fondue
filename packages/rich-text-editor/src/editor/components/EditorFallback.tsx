@@ -6,9 +6,10 @@ import { type ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { type PluginRegistry, type RteDocumentOf } from '#/core';
 import { RegistryRenderer } from '#/renderer';
 
-import { EditorErrorBoundary } from '../EditorErrorBoundary';
 import { type RichTextEditorLabels } from '../labels';
 import styles from '../richTextEditor.module.scss';
+
+import { EditorErrorBoundary } from './EditorErrorBoundary';
 
 type EditorFallbackProps = {
     /** The host's document; one it passes after the crash is shown instead. */

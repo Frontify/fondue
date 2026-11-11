@@ -27,11 +27,11 @@ import {
 import { RegistryRenderer } from '#/renderer';
 import documentStyles from '#/renderer/document.module.scss';
 
+import { EditorErrorBoundary } from './components/EditorErrorBoundary';
 import { EditorFallback } from './components/EditorFallback';
 import { FloatingToolbar } from './components/FloatingToolbar';
 import { SlashMenu } from './components/SlashMenu';
 import { Toolbar, type ToolbarPlacement } from './components/Toolbar';
-import { EditorErrorBoundary } from './EditorErrorBoundary';
 import { commandsOf, turnIntoCommands } from './helpers/blockCommands';
 import { useEditorHandle } from './hooks/useEditorHandle';
 import { useFocusWithin } from './hooks/useFocusWithin';
@@ -237,7 +237,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                 />
             }
         >
-            <EditorShell
+            <Shell
                 {...shellProps}
                 retryFocus={retryFocus}
                 onFocusWithinChange={onFocusWithinChange}
@@ -266,7 +266,7 @@ type ShellProps<TBlock extends RteBlockNode> = Omit<
     onFocusWithinChange: (focusWithin: boolean) => void;
 };
 
-const EditorShell = <TBlock extends RteBlockNode = RteBlockNode>({
+const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     document,
     onShown,
     registry,
