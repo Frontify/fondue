@@ -322,7 +322,23 @@ const listRule = (rule: RuleOfKind<'list'>, { schema, registry }: RuleContext): 
 };
 
 /**
+ * Matches right at the caret.
+ */
+const AT_CARET = '$';
+
+/**
+ * Matches one character before the caret, the one that was just typed.
+ */
+const ONE_CHARACTER_BEFORE_CARET = '[\\s\\S]$';
+
+/**
+ * Matches a `$1`-style reference to a group of the rule's pattern.
+ */
+const GROUP_REFERENCE = /\$(\d)/g;
+
+/**
  * A rule's `match` as a pattern anchored to the end of the text before the caret, then `suffix`.
+ * @param suffix - pattern source appended after the anchored match
  */
 const textPattern = (match: string | RegExp, suffix: string): RegExp => {
     if (typeof match === 'string') {
@@ -335,7 +351,7 @@ const textPattern = (match: string | RegExp, suffix: string): RegExp => {
  * `$1` in a rule's `replace` stands for the first group of its pattern.
  */
 const withGroups = (replace: string, found: RegExpMatchArray): string =>
-    replace.replaceAll(/\$(\d)/g, (_, group: string) => found[Number(group)] ?? '');
+    replace.replaceAll(GROUP_REFERENCE, (_, group: string) => found[Number(group)] ?? '');
 
 /** `->` -> `→`. The replacement carries the marks the matched text did. */
 const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
@@ -343,7 +359,7 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
         return runEndTextRule(rule, context);
     }
     const { match, replace } = rule;
-    const pattern = textPattern(match, '$');
+    const pattern = textPattern(match, AT_CARET);
     // `start` to `end` is the part of the match in the document: replacing it swaps all of it, typed character or not.
     const handler: RuleHandler = (state, found, start, end) =>
         state.tr.insertText(withGroups(replace, found), start, end);
@@ -351,7 +367,8 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
 };
 
 /**
- * The characters that end a run: whitespace and sentence punctuation. Not quotes: one may close the quotation the run sits in, as in `"wait --"`.
+ * The characters that end a run: whitespace and sentence punctuation. Not quotes: one may close
+ * the quotation the run sits in, as in `"wait --"`.
  */
 const RUN_END = /[\s,;:!?)\]}…]/;
 
@@ -360,7 +377,7 @@ const RUN_END = /[\s,;:!?)\]}…]/;
  */
 const runEndTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
     const { match, replace } = rule;
-    const pattern = textPattern(match, '[\\s\\S]$');
+    const pattern = textPattern(match, ONE_CHARACTER_BEFORE_CARET);
     const handler: RuleHandler = (state, found, start, end) => {
         const typed = found[0].slice(-1);
         if (!RUN_END.test(typed)) {
