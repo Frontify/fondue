@@ -41,5 +41,6 @@ export const underlineContent = defineContent({
  */
 export const underlinePlugin = /* @__PURE__ */ definePlugin({
     content: underlineContent,
+    toolbarGroup: 'marks',
     toolbar: [{ label: 'Underline', icon: IconTextFormatUnderline, shortcut: 'Mod-u' }],
 });

@@ -4,6 +4,13 @@
 // code reaches the editor.
 
 /**
+ * How a mark is carried by the selection. `'all'`: every counted text carries
+ * it, or a caret would type with it, and `value` is its attributes. `'some'`:
+ * only part of a range carries it.
+ */
+export type RteMarkState = { coverage: 'all'; value: Record<string, unknown> } | { coverage: 'some' };
+
+/**
  * What is selected, as one value that plugin UI renders itself from. Read it in a toolbar render function, which runs on every state change.
  */
 export type RteSelectionSnapshot = {
@@ -24,14 +31,17 @@ export type RteSelectionSnapshot = {
      */
     blocks: { type: string; [attribute: string]: unknown }[];
     /**
-     * The marks the selection carries, by mark type. Presence is on/off
-     * (`'bold' in marks`); the value is the mark's attributes (`{}` for a plain
-     * mark, `{ href }` for a link).
+     * The marks the selection carries, by mark type; a mark the selection does
+     * not touch is absent. `coverage: 'all'` carries the mark's attributes in
+     * `value` (`{}` for a plain mark, `{ href }` for a link).
      *
-     * On a caret, the marks typing here would carry; over a range, the marks
-     * every text in it carries — a half-bold range is not bold.
+     * On a caret, every entry is `'all'`: the marks typing here would carry.
+     * Over a range, `'all'` is a mark every text in it carries and `'some'` one
+     * only part of it carries — a half-bold range is `'some'`, not bold.
      */
-    marks: Record<string, Record<string, unknown>>;
+    marks: Record<string, RteMarkState>;
+    /** Whether the undo history has a change to take back or make again — what undo and redo buttons enable on. */
+    history: { canUndo: boolean; canRedo: boolean };
 };
 
 /**
@@ -141,6 +151,20 @@ export type EditorControlApi = {
     };
 
     /**
+     * The undo history, the same steps as `UNDO_HOTKEY` and `REDO_HOTKEY`
+     */
+    history: {
+        /**
+         * Take the last change back; right after a typing rewrite, only the rewrite
+         */
+        undo(): void;
+        /**
+         * Make the last undone change again
+         */
+        redo(): void;
+    };
+
+    /**
      * Return focus to the editor, e.g. after closing plugin UI.
      */
     focus(): void;
@@ -160,3 +184,9 @@ export type EditorControlApi = {
         close(): void;
     };
 };
+
+/** The key that takes the last change back. */
+export const UNDO_HOTKEY = 'Mod-z';
+
+/** The key that makes the last undone change again. */
+export const REDO_HOTKEY = 'Mod-Shift-z';

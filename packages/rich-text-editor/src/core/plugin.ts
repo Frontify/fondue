@@ -110,6 +110,12 @@ export type RtePlugin = {
     /**
      * Entries for the floating bar's "Turn into" menu and the `/` menu, in the order given
      */
+    /**
+     * Which cluster of the toolbar its entries sit in. Groups follow a fixed
+     * order, entries keep mount order inside theirs, and entries with no group
+     * come last, together.
+     */
+    toolbarGroup?: RteToolbarGroup;
     commands?: readonly RteBlockCommand[];
     /**
      * Keybindings, keyed `Mod-b` style (Mod = Cmd on macOS, Ctrl elsewhere) or
@@ -172,7 +178,7 @@ export type RteEditView = ComponentType<EditProps<any, any>>;
 /**
  * What an icon component is called with
  */
-export type RteIconProps = { size?: 16 };
+export type RteIconProps = { size?: 16 | 20 };
 
 /**
  * An icon component, such as one from `@frontify/fondue-icons`
@@ -508,6 +514,24 @@ export type BlockAttributeDefinition = {
 // --- Toolbar ---
 
 /**
+ * The toolbar's clusters, in the order they are drawn: undo and redo, text
+ * style, inline marks, colour, link, lists, alignment, inserts, then panels
+ */
+export const RTE_TOOLBAR_GROUPS = [
+    'history',
+    'text',
+    'marks',
+    'color',
+    'link',
+    'lists',
+    'align',
+    'insert',
+    'panels',
+] as const;
+
+export type RteToolbarGroup = (typeof RTE_TOOLBAR_GROUPS)[number];
+
+/**
  * What a toolbar entry's `render` gets: the API, the selection, and commands
  * bound to the entry's toggled type. Anything else goes through `api`.
  */
@@ -527,9 +551,11 @@ export type ToolbarItemProps = {
     selectedNode: SelectedNode | null;
     selection: RteSelectionSnapshot;
     /**
-     * The selection carries this mark, or sits in this block. Never for an inline.
+     * The selection carries this mark, or sits in this block. `'mixed'` when
+     * only part of a selected range carries the mark; never for anything but a
+     * mark. Never on for an inline.
      */
-    isActive: boolean;
+    isActive: boolean | 'mixed';
     /**
      * Toggle the mark, wrap or unwrap the list, switch a text block to this
      * type or back to a paragraph, insert the void block or the inline.
