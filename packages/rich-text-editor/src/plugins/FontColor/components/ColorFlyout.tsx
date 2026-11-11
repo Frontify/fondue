@@ -30,20 +30,18 @@ const typedHex = (container: HTMLElement | null, alpha: number | undefined): Rgb
     return parsed === undefined ? undefined : { ...parsed, alpha: alpha ?? 1 };
 };
 
+type ColorFlyoutProps = {
+    selection: RteSelectionSnapshot;
+    api: EditorControlApi;
+    label: string;
+};
+
 /**
  * The colour control: a toolbar button showing the selection's colour, with the
  * picker in a flyout. The colour reaches the document on save, not while
  * dragging, so the undo history gets one step per choice.
  */
-export const ColorFlyout = ({
-    selection,
-    api,
-    label,
-}: {
-    selection: RteSelectionSnapshot;
-    api: EditorControlApi;
-    label: string;
-}): ReactNode => {
+export const ColorFlyout = ({ selection, api, label }: ColorFlyoutProps): ReactNode => {
     const value = selection.marks.fontColor as Partial<FontColorValue> | undefined;
     // Coloured text may carry a colour the picker cannot read (`red`, `hsl()`
     // pasted in): it is still coloured, and still removable.

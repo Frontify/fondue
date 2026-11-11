@@ -294,18 +294,21 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
 export type ContentModel = 'text' | { items: string } | { blocks: readonly string[] };
 
 /**
+ * A mark that is only a tag: `tag` stands in for `toHtml` and, unless given, `parse`
+ */
+type TagMarkDefinition<TValue> = { tag: string; parse?: readonly MarkParseRule<TValue>[]; toHtml?: never } & Omit<
+    MarkDefinition<TValue>,
+    'toHtml' | 'parse'
+>;
+
+/**
  * `defineBlock` for marks. A mark that is only a tag may give `tag` in place
  * of `toHtml` and `parse`.
  * @example
  * const bold = defineMark({ tag: 'strong' });
  */
 export const defineMark = <TValue extends object = Record<string, never>>(
-    definition:
-        | (MarkDefinition<TValue> & { tag?: never })
-        | ({ tag: string; parse?: readonly MarkParseRule<TValue>[]; toHtml?: never } & Omit<
-              MarkDefinition<TValue>,
-              'toHtml' | 'parse'
-          >),
+    definition: (MarkDefinition<TValue> & { tag?: never }) | TagMarkDefinition<TValue>,
 ): MarkDefinition => {
     if (!('tag' in definition)) {
         return definition as unknown as MarkDefinition;
@@ -319,11 +322,13 @@ export const defineMark = <TValue extends object = Record<string, never>>(
  */
 export type MarkDefinition<TValue = Record<string, unknown>> = {
     /**
-     * Where the mark sits when marks nest on the same text: lower wraps higher, ties keep plugin order. Defaults to `0`.
+     * Where the mark sits when marks nest on the same text: lower wraps higher, ties keep plugin order.
+     * @default 0
      */
     nesting?: number;
     /**
-     * Text typed at the end of the mark carries it on. Defaults to true; a link says false.
+     * Text typed at the end of the mark carries it on. A link says false.
+     * @default true
      */
     inclusive?: boolean;
     /**
@@ -331,11 +336,13 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
      */
     excludes?: readonly string[];
     /**
-     * Typing rules do not rewrite text carrying this mark — inline code keeps `--` and `**` as typed. Defaults to false.
+     * Typing rules do not rewrite text carrying this mark — inline code keeps `--` and `**` as typed.
+     * @default false
      */
     excludesInputRules?: boolean;
     /**
-     * What the mark carries when put on without a value (a toggle, a parse rule). Defaults to `{}`.
+     * What the mark carries when put on without a value (a toggle, a parse rule).
+     * @default {}
      */
     defaults?: TValue;
     /**

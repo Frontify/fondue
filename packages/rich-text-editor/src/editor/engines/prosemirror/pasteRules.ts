@@ -47,12 +47,53 @@ const valueParseRule = (rule: ParseRule<unknown>, priority: number): TagParseRul
 export const valueParseRules = (rules: readonly ParseRule<unknown>[], priority: number): TagParseRule[] =>
     rules.map((rule) => valueParseRule(rule, priority));
 
-const markStyleRule = (rule: StyleParseRule<unknown>): PmStyleParseRule => ({
-    style: rule.style,
+/**
+ * A style an element shows by default is not formatting when it sits in that element:
+ * Word and Google Docs underline a link's text and bold a heading's text in a span.
+ * `strip` removes what the enclosing element already shows from the declared value.
+ */
+type DefaultStyle = {
+    property: string;
+    /** The enclosing elements that show the style by default. */
+    within: string;
+    strip: RegExp;
+};
+
+/**
+ * What an enclosing element already shows by default: a link's underline, a heading's bold. Pasted text repeating it is not formatting.
+ */
+const DEFAULT_STYLES: readonly DefaultStyle[] = [
+    { property: 'text-decoration', within: 'a', strip: /\bunderline\b/gi },
+    { property: 'text-decoration-line', within: 'a', strip: /\bunderline\b/gi },
+    { property: 'font-weight', within: 'h1, h2, h3, h4, h5, h6, th', strip: /^\s*(?:bold|bolder|[6-9]00)\s*$/i },
+];
+
+const declaredValue = (element: HTMLElement, property: string): string => {
+    let value = element.style.getPropertyValue(property);
+    for (const defaults of DEFAULT_STYLES) {
+        if (defaults.property === property && element.closest(defaults.within) !== null) {
+            value = value.replace(defaults.strip, '');
+        }
+    }
+    return value;
+};
+
+/**
+ * ProseMirror style rules only see the CSS value, not the element, so a style rule
+ * is a tag rule on any styled element that reads the declared value itself.
+ */
+const markStyleRule = (rule: StyleParseRule<unknown>): TagParseRule => ({
+    tag: '[style]',
     priority: MARK_PRIORITY,
     // One declaration, such as `text-decoration: underline line-through`, can set two marks.
     consuming: false,
-    getAttrs: (cssValue: string) => valueAttrs(rule.value ? rule.value(cssValue) : {}),
+    getAttrs: (element: HTMLElement) => {
+        const cssValue = declaredValue(element, rule.style);
+        if (cssValue.trim() === '') {
+            return false;
+        }
+        return valueAttrs(rule.value ? rule.value(cssValue) : {});
+    },
 });
 
 const markClearRule = (type: string, rule: MarkClearRule): PmStyleParseRule => ({
