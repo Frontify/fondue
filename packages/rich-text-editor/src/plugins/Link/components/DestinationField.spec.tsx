@@ -137,6 +137,17 @@ describe('the destination field', () => {
         ]);
     });
 
+    it('scrolls the active option into view as the arrows move it', async () => {
+        const scrolled = vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(() => {});
+        const { type, press, options } = mountSearchForm(fixed(BRAND, LOGOS));
+        await type('br');
+
+        press('ArrowUp');
+
+        expect(scrolled.mock.contexts).toEqual([options()[1]]);
+        scrolled.mockRestore();
+    });
+
     it('moves the active option with the arrows and picks it with Enter', async () => {
         const { field, type, press, options, onSave } = mountSearchForm(fixed(BRAND, LOGOS));
         await type('br');

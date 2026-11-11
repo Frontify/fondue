@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TextInput } from '@frontify/fondue-components';
-import { forwardRef, type KeyboardEvent, type ReactNode, useEffect, useId, useState } from 'react';
+import { forwardRef, type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
 import { isCompositionKey } from '../../shared/helpers/keys';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
@@ -95,6 +95,15 @@ export const DestinationField = forwardRef<HTMLInputElement, DestinationFieldPro
     const listOpen = shown && results.length > 0;
     const optionId = (index: number): string => `${listId}-option-${index}`;
     const highlight = (index: number): void => setHighlighted({ value, index });
+    const listRef = useRef<HTMLUListElement>(null);
+
+    // The list scrolls, so the arrows could move the highlight onto a row out of sight.
+    useEffect(() => {
+        if (activeIndex < 0) {
+            return;
+        }
+        listRef.current?.children[activeIndex]?.scrollIntoView({ block: 'nearest' });
+    }, [activeIndex]);
 
     const pick = (destination: LinkDestination): void => {
         setClosedFor(destination.href);
@@ -185,7 +194,7 @@ export const DestinationField = forwardRef<HTMLInputElement, DestinationFieldPro
                 onBlur={() => setClosedFor(value)}
             />
             {listOpen ? (
-                <ul id={listId} role="listbox" aria-label={RESULTS_LABEL} className={styles.results}>
+                <ul ref={listRef} id={listId} role="listbox" aria-label={RESULTS_LABEL} className={styles.results}>
                     {results.map((destination, index) => (
                         // The keyboard drives the list from the input; the mouse picks here.
                         <li
