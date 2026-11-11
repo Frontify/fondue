@@ -1,0 +1,31 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.spec.tsx
+  s_7e256622168d14::t_830ff142c269fd 5,110,112-119,121-122,124-127,129-130,132-144,146-149,152-153,155-156,158-159,162-163,165,168-170,172,176-196
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.ts
+  s_e090dd636f75c9::t_912f122602abfa 11,69-70,72,75-107
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.ts
+  s_7e256622168d14::t_cd6f50c55c58e7 11,115
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b73c4e34d8936f99fa6309b60a5eeddeee6be886",
+  "prompts": {},
+  "sessions": {
+    "s_7e256622168d14": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f515e4d0-41ca-4403-a057-96417402fecd",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_e090dd636f75c9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c7d6ea89-316e-49b8-b097-cf331faa9e19",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
