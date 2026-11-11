@@ -66,6 +66,7 @@ const doc: RteDocumentWith<{ block: { type: 'columnBreak' } }> = {
         { type: 'quote', children: [{ text: 'A quote' }] },
         {
             type: 'numberedList',
+            start: 3,
             children: [{ type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'One' }] }] }],
         },
         {

@@ -2,7 +2,15 @@
 
 import { IconListBullet, IconListNumbers, type FondueIcon } from '@frontify/fondue-icons';
 
-import { ANY_LIST, PARAGRAPH, type RteBlockNode, defineBlock, type RtePlugin } from '#/core';
+import {
+    ANY_LIST,
+    type BlockDefinition,
+    PARAGRAPH,
+    type RteBlockNode,
+    defineBlock,
+    type RtePlugin,
+    type StyleMap,
+} from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -28,8 +36,12 @@ export type BulletListBlock<TItem extends RteBlockNode = RteBlockNode> = {
 
 export type NumberedListBlock<TItem extends RteBlockNode = RteBlockNode> = {
     type: 'numberedList';
+    /** The first item's number, absent when it is 1. */
+    start?: number;
     children: TItem[];
 };
+
+type NumberedListValue = { start: number | null };
 
 /**
  * The item both list plugins declare. One object rather than one each: two
@@ -43,39 +55,98 @@ const listItem = defineBlock({
     parse: [{ tag: 'li' }],
 });
 
-/** Shared declaration of the two list plugins, which differ only in type, tag, icon, marker style and shortcut. */
-const listPlugin = ({
-    id,
-    type,
-    tag,
-    icon: Icon,
-    title,
-    keywords,
-    className,
-    markdown,
-    hotkey,
-}: {
+/** The bulleted list, its marker per nesting level hanging off its class. */
+const bulletList = defineBlock({
+    content: { items: 'listItem' },
+    toHtml: () => ({ tag: 'ul', attrs: { class: styles.bulletList }, children: true }),
+    parse: [{ tag: 'ul' }],
+});
+
+/** How many digits of a list's first number the stylesheet's marker room fits. */
+const MARKER_DIGITS = 2;
+
+/** The custom property `list.module.scss` widens a numbered list by, once per digit past `MARKER_DIGITS`. */
+const EXTRA_DIGITS_PROPERTY = '--rte-list-extra-digits';
+
+/** The smallest `start` browsers honour: they read the attribute as a 32-bit integer so a list past it does not number as written. */
+const MIN_START = -(2 ** 31);
+
+/** The largest `start` browsers honour, for the same reason as `MIN_START`. */
+const MAX_START = 2 ** 31 - 1;
+
+/** The start to store, or `null` for 1 (what no start means) and for an integer browsers cannot draw or write back as given. */
+const storedStart = (value: unknown): number | null => {
+    if (
+        typeof value !== 'number' ||
+        !Number.isInteger(value) ||
+        value < MIN_START ||
+        value > MAX_START ||
+        value === 1
+    ) {
+        return null;
+    }
+    return value;
+};
+
+/** The numbered list, which stores where its numbering starts only when that is not 1. */
+const numberedList = defineBlock<NumberedListValue>({
+    content: { items: 'listItem' },
+    defaults: { start: null },
+    toHtml: ({ start }) => {
+        let first: string | undefined;
+        let style: StyleMap | undefined;
+        const stored = storedStart(start);
+        if (stored !== null) {
+            first = String(stored);
+        }
+        // A list that starts past the stylesheet's room widens for its first number only.
+        if (first !== undefined && first.length > MARKER_DIGITS) {
+            style = { [EXTRA_DIGITS_PROPERTY]: String(first.length - MARKER_DIGITS) };
+        }
+        return { tag: 'ol', attrs: { class: styles.numberedList, start: first, style }, children: true };
+    },
+    parse: [
+        {
+            tag: 'ol',
+            value: (element) => {
+                const start = storedStart(Number.parseInt(element.getAttribute('start') ?? '', 10));
+                if (start === null) {
+                    return {};
+                }
+                return { start };
+            },
+        },
+    ],
+});
+
+type ListPluginParams = {
     id: string;
     type: 'bulletList' | 'numberedList';
-    tag: 'ul' | 'ol';
+    block: BlockDefinition;
     icon: FondueIcon;
     title: string;
     /** Words the `/` menu also finds it by. */
     keywords: readonly string[];
-    /** The list's own class; the marker per nesting level hangs off it. */
-    className: string | undefined;
     /** What starts this list when typed at the beginning of a line. */
     markdown: readonly string[];
     /** The keyboard shortcut that toggles it, as other editors bind it. */
     hotkey: string;
-}): RtePlugin => ({
+};
+
+/** Shared declaration of the two list plugins, which differ only in type, block, icon and shortcut. */
+const listPlugin = ({
+    id,
+    type,
+    block,
+    icon: Icon,
+    title,
+    keywords,
+    markdown,
+    hotkey,
+}: ListPluginParams): RtePlugin => ({
     id,
     blocks: {
-        [type]: defineBlock({
-            content: { items: 'listItem' },
-            toHtml: () => ({ tag, attrs: { class: className }, children: true }),
-            parse: [{ tag }],
-        }),
+        [type]: block,
         listItem,
     },
     // Active anywhere inside the list (the caret sits in a paragraph inside an
@@ -106,11 +177,10 @@ export const bulletListPlugin = (): RtePlugin =>
     listPlugin({
         id: 'bullet-list',
         type: 'bulletList',
-        tag: 'ul',
+        block: bulletList,
         icon: IconListBullet,
         title: 'Bulleted list',
         keywords: ['ul', 'unordered', 'bullets'],
-        className: styles.bulletList,
         markdown: ['- ', '* '],
         hotkey: 'Mod-Shift-8',
     });
@@ -120,11 +190,10 @@ export const numberedListPlugin = (): RtePlugin =>
     listPlugin({
         id: 'numbered-list',
         type: 'numberedList',
-        tag: 'ol',
+        block: numberedList,
         icon: IconListNumbers,
         title: 'Numbered list',
         keywords: ['ol', 'ordered', 'numbers'],
-        className: styles.numberedList,
         markdown: ['1. ', '1) '],
         hotkey: 'Mod-Shift-7',
     });
