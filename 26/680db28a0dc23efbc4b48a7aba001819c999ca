@@ -1,0 +1,62 @@
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_b778dae1e2640c::t_e23568add48fba 686-701
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_b778dae1e2640c::t_e23568add48fba 695-696,703,707
+packages/rich-text-editor/src/core/index.ts
+  s_b778dae1e2640c::t_e23568add48fba 34
+packages/rich-text-editor/src/plugins/Code/Code.tsx
+  s_b778dae1e2640c::t_e23568add48fba 31-32
+packages/rich-text-editor/src/core/commands.ts
+  s_b778dae1e2640c::t_e23568add48fba 30-31
+packages/rich-text-editor/src/editor/helpers/toolbarItem.spec.ts
+  s_b778dae1e2640c::t_e23568add48fba 35,97,226,232
+packages/rich-text-editor/src/editor/helpers/toolbarItem.ts
+  s_b778dae1e2640c::t_e23568add48fba 21,32,60-74
+  s_b778dae1e2640c::t_71ccafe271e7e4 75-76
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_b778dae1e2640c::t_e23568add48fba 48-51
+packages/rich-text-editor/src/plugins/index.ts
+  s_b778dae1e2640c::t_e23568add48fba 31-34
+packages/rich-text-editor/src/plugins/Underline/Underline.tsx
+  s_b778dae1e2640c::t_e23568add48fba 32-33
+packages/rich-text-editor/src/plugins/Subscript/Subscript.tsx
+  s_b778dae1e2640c::t_e23568add48fba 27-28
+packages/rich-text-editor/src/editor/helpers/blockCommands.spec.ts
+  s_b778dae1e2640c::t_e23568add48fba 61,82,96
+packages/rich-text-editor/src/plugins/Italic/Italic.tsx
+  s_b778dae1e2640c::t_e23568add48fba 33-34
+packages/rich-text-editor/src/plugins/Strikethrough/Strikethrough.tsx
+  s_b778dae1e2640c::t_e23568add48fba 34-35
+packages/rich-text-editor/src/plugins/Superscript/Superscript.tsx
+  s_b778dae1e2640c::t_e23568add48fba 27-28
+packages/rich-text-editor/src/core/plugin.ts
+  s_b778dae1e2640c::t_e23568add48fba 236-248,260-265
+packages/rich-text-editor/src/plugins/shared/ToolbarButton/ToolbarButton.tsx
+  s_b778dae1e2640c::t_e23568add48fba 17
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_b778dae1e2640c::t_e23568add48fba 121
+packages/rich-text-editor/src/editor/components/Toolbar.tsx
+  s_b778dae1e2640c::t_e23568add48fba 8,132,134-142
+packages/rich-text-editor/src/plugins/History/History.tsx
+  s_b778dae1e2640c::t_e23568add48fba 16,21,29
+packages/rich-text-editor/src/plugins/Bold/Bold.tsx
+  s_b778dae1e2640c::t_e23568add48fba 35-36
+packages/rich-text-editor/src/index.ts
+  s_b778dae1e2640c::t_e23568add48fba 20,123,131,146
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "26680db28a0dc23efbc4b48a7aba001819c999ca",
+  "prompts": {},
+  "sessions": {
+    "s_b778dae1e2640c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e5a3cbe8-bdeb-468e-b690-663c281f1976",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
