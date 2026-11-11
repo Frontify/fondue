@@ -1073,7 +1073,7 @@ const acmeHighlightPlugin = /* @__PURE__ */ definePlugin({
     toolbar: [
         {
             label: 'Highlight',
-            render: ({ api, selection }) => {
+            render: ({ api, selection, label }) => {
                 const active = 'acme-highlight' in selection.marks;
                 return (
                     <button
@@ -1083,7 +1083,7 @@ const acmeHighlightPlugin = /* @__PURE__ */ definePlugin({
                         onClick={() => api.marks.toggle('acme-highlight')}
                         className={toolbarButtonClasses(active)}
                     >
-                        Highlight
+                        {label}
                     </button>
                 );
             },
@@ -1237,13 +1237,11 @@ type EmbedDraftProps = {
  * completes it with `setValue` — or takes it away with `remove`.
  */
 const EmbedDraft = ({ onChoose, onRemove }: EmbedDraftProps): ReactNode => (
-    <span role="listbox" aria-label="Embed suggestions" className="tw-inline-flex tw-gap-1">
+    <span role="group" aria-label="Embed suggestions" className="tw-inline-flex tw-gap-1">
         {EMBEDS.map((item) => (
             <button
                 key={item.id}
                 type="button"
-                role="option"
-                aria-selected={false}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => onChoose(item.id)}
                 className="tw-rounded-small tw-bg-container-secondary tw-px-1"
@@ -1270,27 +1268,33 @@ const acmeEmbedContent = defineContent({
     },
 });
 
+/**
+ * The embed while editing: the picker until a provider is chosen, then the embed itself
+ */
+const AcmeEmbedEdit = ({ value, setValue, remove, api }: RtePlugin.EditProps<EmbedValue, EmbedValue | null>) => {
+    if (value === null) {
+        return (
+            <EmbedDraft
+                onChoose={(provider) => {
+                    setValue({ provider });
+                    api.focus();
+                }}
+                onRemove={() => {
+                    remove();
+                    api.focus();
+                }}
+            />
+        );
+    }
+    return <span data-embed={value.provider} className={embedClasses}>{`▤ ${value.provider}`}</span>;
+};
+
 const acmeEmbedPlugin = /* @__PURE__ */ definePlugin({
     content: acmeEmbedContent,
     // An empty embed, which its `edit` view then takes over.
-    hotkeys: { '/': { label: 'Insert an embed', run: (api) => api.insert('acme-embed') } },
-    edit: {
-        'acme-embed': ({ value, setValue, remove, api }: RtePlugin.EditProps<EmbedValue, EmbedValue | null>) =>
-            value === null ? (
-                <EmbedDraft
-                    onChoose={(provider) => {
-                        setValue({ provider });
-                        api.focus();
-                    }}
-                    onRemove={() => {
-                        remove();
-                        api.focus();
-                    }}
-                />
-            ) : (
-                <span data-embed={value.provider} className={embedClasses}>{`▤ ${value.provider}`}</span>
-            ),
-    },
+    // The editor's `/` menu owns the `/` key, so the embed is one of its entries.
+    commands: [{ id: 'acme-embed', label: 'Embed', group: 'insert', run: (api) => api.insert('acme-embed') }],
+    edit: { 'acme-embed': AcmeEmbedEdit },
 });
 
 /** A consumer inline element widens the same parameter as a consumer mark. */
@@ -1304,7 +1308,7 @@ export const ConsumerInline: Story = {
                     children: [
                         { text: 'Attach a ' },
                         { type: 'acme-embed', provider: 'figma' },
-                        { text: ' — or type / to pick another one.' },
+                        { text: ' — or, on an empty line, type /embed to pick another one.' },
                     ],
                 },
             ],
@@ -1313,7 +1317,8 @@ export const ConsumerInline: Story = {
         return (
             <div className={LAYOUT}>
                 <p className={HINT}>
-                    Type <code>/</code> to open the consumer plugin&apos;s own picker.
+                    On an empty line, type <code>/embed</code> and press Enter to open the consumer plugin&apos;s own
+                    picker.
                 </p>
                 <div className={FRAME}>
                     <RichTextEditor value={doc} onChange={setDoc} plugins={[...defaultPlugins, acmeEmbedPlugin]} />

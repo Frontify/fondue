@@ -45,7 +45,7 @@ const acmeHighlightPlugin = /* @__PURE__ */ definePlugin({
     toolbar: [
         {
             label: 'Highlight',
-            render: ({ api, selection }) => {
+            render: ({ api, selection, label }) => {
                 const active = 'acme-highlight' in selection.marks;
                 return (
                     <button
@@ -55,7 +55,7 @@ const acmeHighlightPlugin = /* @__PURE__ */ definePlugin({
                         onClick={() => api.marks.toggle('acme-highlight')}
                         className={toolbarButtonClasses(active)}
                     >
-                        Highlight
+                        {label}
                     </button>
                 );
             },
@@ -66,6 +66,8 @@ const acmeHighlightPlugin = /* @__PURE__ */ definePlugin({
 ```
 
 `definePlugin` takes its `id` from the only type the content declares. With several types, give it an `id`.
+
+`toolbarButtonClasses` is the story's own styling. Use your own classes in its place.
 
 Pass the plugin to the editor and the content to the renderer.
 
@@ -133,7 +135,7 @@ A plugin lists its toolbar controls in `toolbar`. Each entry is data:
 - `icon` is the button's icon, a component such as one from `@frontify/fondue-icons`.
 - `shortcut` is a key in `Mod-b` style. The tooltip shows it, and it toggles the entry's type.
 - `toggles` names the mark, block or inline the entry turns on and off. It defaults to the only type the content declares.
-- `render` draws custom UI in place of the button. It gets the `api`, the `selection` and a `toggle` function. An entry has an `icon` or a `render`.
+- `render` draws custom UI in place of the button. It gets the `api`, the `selection`, the entry's `label` to name it with, and a `toggle` function. An entry has an `icon` or a `render`.
 
 Source: `src/plugins/Underline/Underline.ts`
 
