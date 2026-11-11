@@ -79,6 +79,10 @@ const readHue = (part: string | undefined, syntax: ColorArguments['syntax']): nu
     let degrees = 1;
     if (unit !== undefined) {
         number = part.slice(0, -unit.length);
+        // `none` stands alone: with a unit it is no hue.
+        if (number === NONE) {
+            return undefined;
+        }
         // HUE_UNIT only captures the units HUE_UNIT_DEGREES lists.
         degrees = HUE_UNIT_DEGREES[unit as keyof typeof HUE_UNIT_DEGREES];
     }

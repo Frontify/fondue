@@ -55,6 +55,7 @@ const doc: RteDocumentWith<{ block: { type: 'columnBreak' } }> = {
                 { text: 'sub', subscript: true },
                 { text: 'sup', superscript: true },
                 { text: 'red', fontColor: { color: '#ff0000' } },
+                { text: 'tint', fontColor: { color: '#ff000080' } },
                 { text: 'link', link: { href: 'https://example.com', openInNewTab: true } },
                 { type: 'break' },
                 { type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' },

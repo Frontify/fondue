@@ -149,11 +149,69 @@ describe('the colour flyout', () => {
         expect(toggle).not.toHaveBeenCalled();
     });
 
-    it('applies a preset', () => {
+    it.each<[string, string]>([
+        ['Grey', '#5f6368'],
+        ['Red', '#c5221f'],
+        ['Orange', '#b45309'],
+        ['Green', '#188038'],
+        ['Blue', '#1a73e8'],
+        ['Purple', '#8430ce'],
+    ])('applies the %s preset', (name, color) => {
         const { set } = mount({});
-        act(() => document.querySelector<HTMLButtonElement>('button[aria-label="Blue"]')?.click());
+        act(() => document.querySelector<HTMLButtonElement>(`button[aria-label="${name}"]`)?.click());
 
-        expect(set.mock.calls).toEqual([['fontColor', { color: '#1a73e8' }]]);
+        expect(set.mock.calls).toEqual([['fontColor', { color }]]);
+    });
+
+    it.each<[string]>([['#ff00008c'], ['rgba(255, 0, 0, 0.5)'], ['banana']])(
+        'changes nothing on Save after blur without a choice on stored %s',
+        (color) => {
+            const { toggle, set } = mount({ fontColor: { color } });
+            act(() => document.querySelector<HTMLInputElement>('input[type="text"]')?.blur());
+            press('Save');
+
+            expect(toggle).not.toHaveBeenCalled();
+            expect(set).not.toHaveBeenCalled();
+        },
+    );
+
+    it.each<[string, Record<string, Record<string, unknown>>, string]>([
+        ['uncoloured text', {}, '#c5221f'],
+        ['stored #ff000080', { fontColor: { color: '#ff000080' } }, '#c5221f80'],
+    ])('sets the typed colour on Save from %s', (_, marks, color) => {
+        const { set } = mount(marks);
+        typeHex('c5221f');
+        press('Save');
+
+        expect(set.mock.calls).toEqual([['fontColor', { color }]]);
+    });
+
+    it('keeps a fully transparent stored colour transparent when a new hex is typed', () => {
+        const { set } = mount({ fontColor: { color: '#ff000000' } });
+        typeHexAndPressEnter('c5221f');
+
+        expect(set.mock.calls).toEqual([['fontColor', { color: '#c5221f00' }]]);
+    });
+
+    it('paints the swatch with the stored colour, and nothing for one that is no colour', () => {
+        const cases: [string, string][] = [
+            ['red', '#ff0000'],
+            ['banana', 'transparent'],
+        ];
+        for (const [color, background] of cases) {
+            const { trigger } = mount({ fontColor: { color } });
+
+            expect(trigger?.querySelector<HTMLElement>('span[aria-hidden]')?.style.background).toBe(background);
+            act(() => root?.unmount());
+        }
+    });
+
+    it('labels the flyout content with the colour title', () => {
+        mount({});
+        const content = document.querySelector('[aria-labelledby]');
+        const titleId = content?.getAttribute('aria-labelledby') ?? '';
+
+        expect(document.getElementById(titleId)?.textContent).toBe('Text colour');
     });
 
     it('applies nothing for a typed value the hex field does not take', () => {
@@ -171,6 +229,7 @@ describe('the colour flyout', () => {
         const cases: Record<string, Record<string, unknown>>[] = [{ fontColor: { color: '#ff000080' } }, {}];
         for (const marks of cases) {
             const { toggle, set } = mount(marks);
+            typeHex('c5221f');
             press('Cancel');
 
             expect(toggle).not.toHaveBeenCalled();

@@ -10,6 +10,7 @@ import {
     toExportedColor,
     toStoredColor,
 } from './colors';
+import { NAMED_COLORS } from './namedColors';
 
 describe('toStoredColor', () => {
     it('stores a named colour, a hex value, or one colour function of plain numbers as lowercase hex', () => {
@@ -56,6 +57,10 @@ describe('toStoredColor', () => {
             ['rgb(255 0 0 / none)', '#ff000000'],
             ['hsl(0 none 50%)', '#808080'],
             ['rgb(none 2 3)', '#000203'],
+            ['rgba(1, 2, 3, 2)', '#010203'],
+            ['rgb(1 2 3 / 150%)', '#010203'],
+            ['rgba(1, 2, 3, -1)', '#01020300'],
+            ['hsla(0, 100%, 50%, 2)', '#ff0000'],
         ];
         for (const [css, stored] of cases) {
             expect(toStoredColor(css)).toBe(stored);
@@ -87,6 +92,9 @@ describe('toStoredColor', () => {
             'rgb(1px, 2, 3)',
             'rgb(255, none, 0)',
             'hsl(none, 100%, 50%)',
+            'hsl(nonedeg 100% 50%)',
+            'hsl(noneturn 100% 50%)',
+            'rgb(1, 2, 3, none)',
             'hsl(1px 100% 50%)',
             'hsl(10% 100% 50%)',
             'rgb(1 2 3 0.5)',
@@ -168,6 +176,11 @@ describe('toColorName', () => {
     it('names a colour as upper-case hex, with the opacity while translucent', () => {
         expect(toColorName(decodeStoredColor('#ff000080'))).toBe('#FF0000 50%');
         expect(toColorName(decodeStoredColor('#c5221f'))).toBe('#C5221F');
+        expect(toColorName(decodeStoredColor('#ff000000'))).toBe('#FF0000 0%');
+    });
+
+    it('rounds the opacity like the picker alpha field but still marks the colour as translucent', () => {
+        expect(toColorName(decodeStoredColor('#ff0000fe'))).toBe('#FF0000 100%');
     });
 });
 
@@ -186,6 +199,7 @@ describe('parseTypedHex', () => {
 
     it('passes the alpha through', () => {
         expect(parseTypedHex('f00', 0.5)).toEqual({ red: 255, green: 0, blue: 0, alpha: 0.5 });
+        expect(parseTypedHex('f00', 0)).toEqual({ red: 255, green: 0, blue: 0, alpha: 0 });
     });
 });
 
@@ -193,12 +207,26 @@ describe('toExportedColor', () => {
     it('writes hex while opaque and rgba() while translucent', () => {
         expect(toExportedColor('#c5221f')).toBe('#c5221f');
         expect(toExportedColor('#ff000080')).toBe('rgba(255, 0, 0, 0.5)');
+        expect(toExportedColor('#ff000081')).toBe('rgba(255, 0, 0, 0.506)');
     });
 
     it('pastes back as the same stored colour for every alpha', () => {
         for (let byte = 0; byte < 255; byte++) {
             const stored = `#ff0000${byte.toString(16).padStart(2, '0')}`;
             expect(toStoredColor(toExportedColor(stored))).toBe(stored);
+        }
+    });
+});
+
+describe('NAMED_COLORS', () => {
+    it('holds the 148 CSS Color 4 names plus transparent', () => {
+        expect(NAMED_COLORS.size).toBe(149);
+    });
+
+    it('maps lowercase letter names to lowercase hex', () => {
+        for (const [name, hex] of NAMED_COLORS) {
+            expect(name).toMatch(/^[a-z]+$/);
+            expect(hex).toMatch(/^#[\da-f]{6}([\da-f]{2})?$/);
         }
     });
 });
