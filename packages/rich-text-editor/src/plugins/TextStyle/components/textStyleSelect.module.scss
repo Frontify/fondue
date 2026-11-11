@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@use '../../../styles/sizes' as sizes;
+@use '../../../utilities/sizes.module.scss';
 
 /** Wide enough for "Image caption" and fixed, so the control does not stretch across the toolbar. */
 .control {
