@@ -76,7 +76,11 @@ type DefaultStyle = {
 const DEFAULT_STYLES: readonly DefaultStyle[] = [
     { property: 'text-decoration', within: 'a[href]', strip: /\bunderline\b/gi },
     { property: 'text-decoration-line', within: 'a[href]', strip: /\bunderline\b/gi },
-    { property: 'font-weight', within: 'h1, h2, h3, h4, h5, h6, th', strip: /^\s*(?:bold|bolder|[6-9]00)\s*$/i },
+    {
+        property: 'font-weight',
+        within: 'h1, h2, h3, h4, h5, h6, th',
+        strip: /^\s*(?:bold|bolder|[6-9]\d\d(?:\.\d+)?|1000)\s*$/i,
+    },
 ];
 
 const declaredValue = (element: HTMLElement, property: string): string => {

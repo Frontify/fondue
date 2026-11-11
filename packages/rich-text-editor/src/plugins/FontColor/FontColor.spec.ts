@@ -11,6 +11,7 @@ const fontColor = fontColorPlugin.content?.marks?.fontColor;
 const parse = (html: string): unknown => {
     const element = document.createElement('div');
     element.innerHTML = html;
+    // The font colour mark's first rule is its `span` tag rule, which reads the element.
     const rule = fontColor?.parse[0] as { value?: (element: HTMLElement) => unknown } | undefined;
     return rule?.value?.(element.firstElementChild as HTMLElement);
 };

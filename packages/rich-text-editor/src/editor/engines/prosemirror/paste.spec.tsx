@@ -154,6 +154,12 @@ describe('pasting formatted text', () => {
         ).toEqual([paragraph(text('x', { link: { href: 'https://example.com' }, strikethrough: true }))]);
     });
 
+    it('does not read any bold weight a heading shows by default as formatting', () => {
+        expect(pasted('<h1><span style="font-weight:650">x</span></h1>')).toEqual([
+            { type: 'textStyle', style: 'heading1', children: [text('x')] },
+        ]);
+    });
+
     it('does not read the bold a heading shows by default as formatting', () => {
         expect(pasted('<h1><span style="font-weight:bold">x</span></h1>')).toEqual([
             { type: 'textStyle', style: 'heading1', children: [text('x')] },

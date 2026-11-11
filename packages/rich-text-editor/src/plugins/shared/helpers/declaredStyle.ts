@@ -57,4 +57,5 @@ export const hasDecorationLine = (value: string, line: string): boolean =>
  * Whether the element's own style resets the weight: Google Docs wraps copies in `<b style="font-weight: normal">`.
  */
 export const declaresNormalWeight = (element: HTMLElement): boolean =>
-    isNormalWeight(declaredStyle(element, 'font-weight') ?? '');
+    // Read as the browser does, like the `font-weight` style rules, so `font` shorthands and invalid values agree.
+    isNormalWeight(element.style.getPropertyValue('font-weight'));
