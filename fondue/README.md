@@ -1,12 +1,12 @@
 # Fondue Design System by Frontify
 
-<a href="https://github.com/Frontify/fondue/actions/workflows/continuous-integration.yml">
-    <img src="https://github.com/Frontify/react-components/actions/workflows/continuous-integration.yml/badge.svg" alt="CI Status" />
+<a href="https://github.com/Frontify/fondue/actions/workflows/continuous-deployment.yaml">
+    <img src="https://github.com/Frontify/fondue/actions/workflows/continuous-deployment.yaml/badge.svg" alt="CI Status" />
 </a>
 <a href="https://snyk.io/test/github/Frontify/fondue">
     <img src="https://snyk.io/test/github/Frontify/fondue/badge.svg" alt="Known Vulnerabilities" />
 </a>
-<a href="https://github.com/Frontify/fondue/blob/main/README.md" title="latest">
+<a href="https://www.npmjs.com/package/@frontify/fondue" title="latest">
     <img alt="latest" src="https://img.shields.io/npm/v/@frontify/fondue/latest.svg" />
 </a>
 
@@ -28,4 +28,4 @@ Documentation for the provided components and how to use them is available in [S
 
 ## Contributing
 
-See [Contribution Guidelines](CONTRIBUTING.md) for contributing and local development help.
+See [Contribution Guidelines](https://github.com/Frontify/fondue/blob/main/CONTRIBUTING.md) for contributing and local development help.
