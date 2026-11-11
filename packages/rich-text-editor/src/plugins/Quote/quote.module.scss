@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@use '../shared/look';
+@use '../shared/look.module.scss';
 
 .quote {
     @include look.look(
