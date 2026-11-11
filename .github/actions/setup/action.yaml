@@ -6,8 +6,8 @@ inputs:
     description: When 'true', restore the Cypress binary cache and install the binary. Otherwise the binary download is skipped.
     required: false
     default: "false"
-  playwright-cache:
-    description: When 'true', also restore the Playwright browser cache.
+  playwright:
+    description: When 'true', also install the Playwright browsers and their system packages, from cache where possible.
     required: false
     default: "false"
 
@@ -20,7 +20,7 @@ runs:
         run_install: false
 
     - name: Use Node.js
-      uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+      uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
       with:
         node-version-file: .nvmrc
         cache: pnpm
@@ -36,17 +36,26 @@ runs:
     # Playwright reuses one browser folder name across OS releases, so a cache from another release skips the install.
     - name: Get OS release
       id: os-release
-      if: inputs.playwright-cache == 'true'
+      if: inputs.playwright == 'true'
       shell: bash
       run: echo "id=$(. /etc/os-release && echo "$ID$VERSION_ID")" >> "$GITHUB_OUTPUT"
 
     - name: Cache Playwright browsers
-      if: inputs.playwright-cache == 'true'
+      if: inputs.playwright == 'true'
       uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
       with:
         path: ~/.cache/ms-playwright
         key: playwright-${{ runner.os }}-${{ steps.os-release.outputs.id }}-${{ hashFiles('pnpm-lock.yaml') }}
         restore-keys: playwright-${{ runner.os }}-${{ steps.os-release.outputs.id }}-
+
+    # Some runners get the browsers' ~140 MB of apt packages at ~150 KB/s, so keep the .deb files between runs.
+    - name: Cache Playwright system packages
+      if: inputs.playwright == 'true'
+      uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+      with:
+        path: ~/.cache/playwright-apt
+        key: playwright-apt-${{ runner.os }}-${{ steps.os-release.outputs.id }}-${{ hashFiles('pnpm-lock.yaml') }}
+        restore-keys: playwright-apt-${{ runner.os }}-${{ steps.os-release.outputs.id }}-
 
     # Cypress's postinstall downloads its binary (~8s). Only jobs that run Cypress need it.
     - name: Skip Cypress binary download
@@ -57,3 +66,16 @@ runs:
     - name: Install dependencies
       shell: bash
       run: pnpm i --frozen-lockfile
+
+    - name: Install Playwright browsers
+      if: inputs.playwright == 'true'
+      shell: bash
+      run: |
+        mkdir -p ~/.cache/playwright-apt
+        sudo find ~/.cache/playwright-apt -name '*.deb' -exec cp -t /var/cache/apt/archives {} +
+        pnpm --stream --filter {packages/components} install:playwright
+        # Drops package versions the mirror no longer serves, so the cache does not grow with every update.
+        sudo apt-get autoclean
+        rm -rf ~/.cache/playwright-apt
+        mkdir ~/.cache/playwright-apt
+        find /var/cache/apt/archives -maxdepth 1 -name '*.deb' -exec cp -t ~/.cache/playwright-apt {} +

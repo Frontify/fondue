@@ -747,6 +747,9 @@ importers:
       prosemirror-commands:
         specifier: ^1.7.2
         version: 1.7.2
+      prosemirror-dropcursor:
+        specifier: ^1.8.4
+        version: 1.8.4
       prosemirror-history:
         specifier: ^1.5.1
         version: 1.5.1
@@ -765,10 +768,16 @@ importers:
       prosemirror-state:
         specifier: ^1.4.4
         version: 1.4.4
+      prosemirror-transform:
+        specifier: ^1.12.2
+        version: 1.12.2
       prosemirror-view:
         specifier: ^1.42.8
         version: 1.42.8
     devDependencies:
+      '@axe-core/playwright':
+        specifier: ^4.14.0
+        version: 4.14.0(playwright-core@1.61.1)
       '@frontify/fondue-components':
         specifier: workspace:*
         version: link:../components
@@ -784,6 +793,12 @@ importers:
       '@frontify/oxlint-config-react':
         specifier: ^0.0.2
         version: 0.0.2(eslint@10.13.0(jiti@2.7.0))(oxlint@1.90.0(oxlint-tsgolint@0.23.0))(supports-color@8.1.1)(typescript@5.9.3)
+      '@playwright/experimental-ct-react':
+        specifier: ~1.61.1
+        version: 1.61.1(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(sass@1.107.0)(tsx@4.23.15)(vite@6.4.5(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(sass@1.107.0)(tsx@4.23.15)(yaml@2.9.0))(yaml@2.9.0)
+      '@playwright/test':
+        specifier: ~1.61.1
+        version: 1.61.1
       '@storybook/addon-a11y':
         specifier: ^10.6.5
         version: 10.6.5(storybook@10.6.5(@types/react@18.3.31)(prettier@3.9.10)(react@18.3.1))
@@ -1467,6 +1482,12 @@ packages:
     resolution: {integrity: sha512-KkYFVPA1IvC3m+WBKUuY5oxYc4OdXr83jvnlOn8a+bJM10yQMu+slFN/1pDzAw2JZVi+FYP9IYjo4KaPIccMmA==}
     engines: {node: '>=20.19.0'}
     hasBin: true
+
+  '@axe-core/playwright@4.14.0':
+    resolution: {integrity: sha512-SGUhG5PIHd2eMdpgBF2PyQLOhX+qyDR2PT4cmoS4Qk2ak+jX/rrSvst9l0PGv5WTHolKpUMvVmoHpr4cZgf1RQ==}
+    engines: {node: '>=22.12.0'}
+    peerDependencies:
+      playwright-core: '>= 1.0.0'
 
   '@babel/code-frame@7.29.7':
     resolution: {integrity: sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw==}
@@ -6142,6 +6163,10 @@ packages:
     resolution: {integrity: sha512-UzGt8zg7Ny8djbYMhxl2zuEevVa7r2gJjYY5Lwr1xM7+XU2nd6CkIWFTVcCIbAP63vSz71NaVyyuSk9lHKcy0A==}
     engines: {node: '>=4'}
 
+  axe-core@4.14.0:
+    resolution: {integrity: sha512-9WTZxEjsZ7b13TH8JPmbV2z8CHbl80/2hm3XPEG4JgNdQLK81IBRXmSxHfMAOkSqQeRxT/0dwNDz2GOm3zzpcQ==}
+    engines: {node: '>=4'}
+
   axios@1.20.0:
     resolution: {integrity: sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==}
 
@@ -8976,6 +9001,9 @@ packages:
   prosemirror-commands@1.7.2:
     resolution: {integrity: sha512-q6Q6szxqdu9Xd6EcdKsqXghu5nQdZTpB4Q9yd04WRc7/jt763e/rT60Owh0L1GYY+T46o5rD+9lEN36dZS43tw==}
 
+  prosemirror-dropcursor@1.8.4:
+    resolution: {integrity: sha512-VmKxhcA6a+h5oPSYmfF1ZNeQqPbyYaIxqZsKqeYCyTlPtrjUgNaHL3P8vVaO19oqAV0zuaM/axkowZHrB1P3Tg==}
+
   prosemirror-history@1.5.1:
     resolution: {integrity: sha512-onlwnqKvgtFg6srZOmDOAhlAy1FIHQpOExORybX0S+DvJepE5tPALrB9iGet/2sqqqrelSnB10OoiOJqAvu2DA==}
 
@@ -10384,6 +10412,11 @@ snapshots:
       package-manager-detector: 1.8.0
       tinyexec: 1.3.1
       tinyglobby: 0.2.17
+
+  '@axe-core/playwright@4.14.0(playwright-core@1.61.1)':
+    dependencies:
+      axe-core: 4.14.0
+      playwright-core: 1.61.1
 
   '@babel/code-frame@7.29.7':
     dependencies:
@@ -12899,10 +12932,47 @@ snapshots:
       - tsx
       - yaml
 
+  '@playwright/experimental-ct-core@1.61.1(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(sass@1.107.0)(tsx@4.23.15)(yaml@2.9.0)':
+    dependencies:
+      playwright: 1.61.1
+      playwright-core: 1.61.1
+      vite: 6.4.5(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(sass@1.107.0)(tsx@4.23.15)(yaml@2.9.0)
+    transitivePeerDependencies:
+      - '@types/node'
+      - jiti
+      - less
+      - lightningcss
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - terser
+      - tsx
+      - yaml
+
   '@playwright/experimental-ct-react@1.61.1(@types/node@24.19.2)(jiti@1.21.7)(lightningcss@1.33.0)(sass@1.107.0)(tsx@4.23.15)(vite@6.4.5(@types/node@24.19.2)(jiti@1.21.7)(lightningcss@1.33.0)(sass@1.107.0)(tsx@4.23.15)(yaml@2.9.0))(yaml@2.9.0)':
     dependencies:
       '@playwright/experimental-ct-core': 1.61.1(@types/node@24.19.2)(jiti@1.21.7)(lightningcss@1.33.0)(sass@1.107.0)(tsx@4.23.15)(yaml@2.9.0)
       '@vitejs/plugin-react': 4.7.0(vite@6.4.5(@types/node@24.19.2)(jiti@1.21.7)(lightningcss@1.33.0)(sass@1.107.0)(tsx@4.23.15)(yaml@2.9.0))
+    transitivePeerDependencies:
+      - '@types/node'
+      - jiti
+      - less
+      - lightningcss
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+      - tsx
+      - vite
+      - yaml
+
+  '@playwright/experimental-ct-react@1.61.1(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(sass@1.107.0)(tsx@4.23.15)(vite@6.4.5(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(sass@1.107.0)(tsx@4.23.15)(yaml@2.9.0))(yaml@2.9.0)':
+    dependencies:
+      '@playwright/experimental-ct-core': 1.61.1(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(sass@1.107.0)(tsx@4.23.15)(yaml@2.9.0)
+      '@vitejs/plugin-react': 4.7.0(vite@6.4.5(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(sass@1.107.0)(tsx@4.23.15)(yaml@2.9.0))
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -15593,6 +15663,8 @@ snapshots:
   aws4@1.13.2: {}
 
   axe-core@4.13.0: {}
+
+  axe-core@4.14.0: {}
 
   axios@1.20.0(supports-color@8.1.1):
     dependencies:
@@ -19038,6 +19110,12 @@ snapshots:
       prosemirror-model: 1.25.12
       prosemirror-state: 1.4.4
       prosemirror-transform: 1.12.2
+
+  prosemirror-dropcursor@1.8.4:
+    dependencies:
+      prosemirror-state: 1.4.4
+      prosemirror-transform: 1.12.2
+      prosemirror-view: 1.42.8
 
   prosemirror-history@1.5.1:
     dependencies:

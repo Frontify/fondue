@@ -14,6 +14,11 @@
     display: contents;
 }
 
+/** Why the content cannot be edited, kept off its first line like the toolbar. */
+.notice {
+    margin-bottom: var(--spacing-x-small);
+}
+
 /** The controls themselves, wherever the bar holding them ends up. */
 .toolbar {
     display: flex;
@@ -31,6 +36,14 @@
         padding: 0;
         margin-bottom: var(--spacing-x-small);
     }
+}
+
+/**
+ * Where the editable element mounts. Positioned so the drop cursor, which the
+ * engine draws in the editable's offset parent, stays inside the host's theme.
+ */
+.mount {
+    position: relative;
 }
 
 /**

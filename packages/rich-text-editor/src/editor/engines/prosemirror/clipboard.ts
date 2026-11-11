@@ -3,13 +3,18 @@
 import {
     DOMParser as PmDOMParser,
     DOMSerializer,
+    Fragment,
     type Node as PmNode,
     type Schema,
-    type Slice,
+    Slice,
 } from 'prosemirror-model';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PasteHandler } from '#/core';
+
+import { EXTRA_ATTR, mapExtras } from './documentConversion';
+import { tidyGoogleDocs } from './pasteGoogleDocs';
+import { tidyOffice } from './pasteOffice';
 
 // Copy and paste fixes beyond what the engine does on its own.
 
@@ -43,6 +48,22 @@ class ClipboardSerializer extends DOMSerializer {
     }
 }
 
+/**
+ * A pasted or dropped slice without the undeclared stored keys: every block it
+ * brings is new, as with cut and paste. A drag within the editor moves its
+ * blocks, so they keep them, and `copiedExtrasPlugin` clears a copy-drag's copy.
+ */
+export const pastedWithoutExtras = (slice: Slice, view: EditorView): Slice => {
+    if (view.dragging !== null) {
+        return slice;
+    }
+    return new Slice(
+        Fragment.fromArray(slice.content.content.map((node) => mapExtras(node, () => null))),
+        slice.openStart,
+        slice.openEnd,
+    );
+};
+
 export const clipboardSerializer = (schema: Schema): DOMSerializer => {
     const nodes = DOMSerializer.nodesFromSchema(schema);
     for (const [name, nodeType] of Object.entries(schema.nodes)) {
@@ -61,13 +82,19 @@ export const clipboardSerializer = (schema: Schema): DOMSerializer => {
 
 // Paste
 
+// The HTML pass that keeps Word's list styles alive for `tidyOffice` after the engine reads the paste.
+export { keepOfficeListStyles } from './pasteOffice';
+
 /**
- * Keeps text from running together in structure no plugin reads. Table cells
+ * Cleans what Word, Outlook and Google Docs write besides content, then keeps
+ * text from running together in structure no plugin reads. Table cells
  * are not blocks to the engine (`<td>a</td><td>b</td>` would paste as `ab`), so
  * each row becomes a block with cells joined by a space. A `<pre>`'s newlines
  * collapse as whitespace, so each line becomes a block.
  */
 const tidyPasted = (dom: HTMLElement): void => {
+    tidyOffice(dom);
+    tidyGoogleDocs(dom);
     const document = dom.ownerDocument;
     const lineBlock = (text: string): HTMLElement => {
         const block = document.createElement('div');
@@ -146,7 +173,11 @@ export const handlePasteIntoEmptyBlock = (view: EditorView, _event: ClipboardEve
         $at.parent.canReplaceWith($at.index(), $at.index() + 1, first.type) &&
         first.type.validContent(merged.content)
     ) {
-        transaction.setNodeMarkup(at, first.type, first.attrs);
+        // The block stays the one it was: its undeclared stored keys are not the pasted block's to replace.
+        transaction.setNodeMarkup(at, first.type, {
+            ...first.attrs,
+            [EXTRA_ATTR]: merged.attrs[EXTRA_ATTR] as unknown,
+        });
     }
     view.dispatch(transaction.scrollIntoView().setMeta('paste', true).setMeta('uiEvent', 'paste'));
     return true;
