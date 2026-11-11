@@ -72,7 +72,7 @@ const ALL_PLUGINS: readonly RtePlugin[] = [...defaultPlugins, mentionPlugin({ it
  * (`tw-` prefix, token-backed utilities). The package itself ships plain CSS —
  * Tailwind is Storybook-only here.
  */
-// One column on a phone; beside the JSON panel the editor takes what is left, and `minmax(0, …)` lets it shrink.
+/** One column on a phone; beside the JSON panel the editor takes what is left, and `minmax(0, …)` lets it shrink. */
 const LAYOUT =
     'tw-grid tw-grid-cols-1 md:tw-grid-cols-[minmax(0,1fr)_minmax(0,24rem)] tw-content-start tw-items-start tw-gap-4 tw-p-4 tw-font-primary';
 const JSON_PANEL =
