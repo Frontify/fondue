@@ -42,7 +42,10 @@ describe('a plugin paste handler', () => {
 
         editor.paste('pasted', '<p>pasted</p>');
 
-        expect(handler).toHaveBeenCalledWith({ text: 'pasted', html: '<p>pasted</p>' }, editor.api);
+        expect(handler).toHaveBeenCalledWith(
+            { text: 'pasted', html: '<p>pasted</p>', source: 'elsewhere' },
+            editor.api,
+        );
         expect(editor.stored()).toEqual([paragraph(text('apasted'))]);
     });
 
@@ -53,7 +56,20 @@ describe('a plugin paste handler', () => {
 
         editor.paste('pasted');
 
-        expect(handler.mock.calls[0]?.[0]).toEqual({ text: 'pasted', html: null });
+        expect(handler.mock.calls[0]?.[0]).toEqual({ text: 'pasted', html: null, source: 'elsewhere' });
+    });
+
+    it('is told the paste was copied from an editor', () => {
+        const handler = vi.fn<PasteHandler>(() => false);
+        const source = editorWith(defaultPlugins, [paragraph(text('copied'))]);
+        source.select('copied');
+        const html = source.view.serializeForClipboard(source.view.state.selection.content()).dom.innerHTML;
+        const editor = editorWith(withPaste(handler), [paragraph(text('a'))]);
+        editor.caretAfter('a');
+
+        editor.paste('copied', html);
+
+        expect(handler.mock.calls[0]?.[0]).toMatchObject({ source: 'editor' });
     });
 
     it('stops at the first handler that handles the paste', () => {
@@ -209,6 +225,19 @@ describe('pasting over selected text with the link plugin', () => {
                 text('tel:+41791234567', link('tel:+41791234567')),
             ),
         ]);
+    });
+
+    it('keeps the marks of a link copied inside the editor and pasted at a caret', () => {
+        const copied = { link: { href: 'https://example.com', openInNewTab: true }, bold: true };
+        const source = editorWith(shipped('link', 'bold'), [paragraph(text('https://example.com', copied))]);
+        source.select('https://example.com');
+        const html = source.view.serializeForClipboard(source.view.state.selection.content()).dom.innerHTML;
+        const editor = editorWith(shipped('link', 'bold'), [paragraph(text('a'))]);
+        editor.caretAfter('a');
+
+        editor.paste('https://example.com', html);
+
+        expect(editor.stored()).toEqual([paragraph(text('a'), text('https://example.com', copied))]);
     });
 
     it('pastes an address as plain text inside a link', () => {

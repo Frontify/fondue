@@ -251,6 +251,20 @@ describe('marks.toggle', () => {
         expect(editor.stored()).toEqual([paragraph(text('a'), text('X', { bold: true }), text('b'))]);
     });
 
+    it('marks all the text it puts in place of a selected block', () => {
+        const editor = editorWith(plugins, [paragraph(text('a')), { type: 'divider' }, paragraph(text('b'))]);
+        const { view } = editor;
+        view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, 3)));
+
+        editor.api.insertText('XY', { link: LINK });
+
+        expect(editor.stored()).toEqual([
+            paragraph(text('a')),
+            paragraph(text('XY', { link: LINK })),
+            paragraph(text('b')),
+        ]);
+    });
+
     it('puts the mark on the text of a range but never on an inline element in it', () => {
         const editor = editorWith(plugins, [paragraph(text('a'), { type: 'tag', name: 'Ada' }, text('b'))]);
         editor.selectBetween('a', 'b');

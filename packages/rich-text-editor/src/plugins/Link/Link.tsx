@@ -169,7 +169,7 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) =>
             },
         ],
         // Anything that is not an allowed web, mail or phone address pastes as usual.
-        onPaste: ({ text }, api) => {
+        onPaste: ({ text, source }, api) => {
             const typed = text.trim();
             const { isCollapsed, marks } = api.selection.get();
             let href: string | null = null;
@@ -182,6 +182,10 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) =>
             if (isCollapsed) {
                 // Inside a link the address stays plain text rather than nesting a link.
                 if ('link' in marks) {
+                    return false;
+                }
+                // Copied from an editor, the address pastes back with its link and marks as they were.
+                if (source === 'editor') {
                     return false;
                 }
                 api.insertText(href, { link: { href } });

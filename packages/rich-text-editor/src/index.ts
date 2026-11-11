@@ -15,7 +15,9 @@ import {
     type MarkParseRule,
     type ParseRule,
     type StyleParseRule,
+    type Paste,
     type PasteHandler,
+    type PasteSource,
     type RteBlockCommand,
     type RteBlockNode,
     type RteContent,
@@ -171,6 +173,8 @@ export type RtePlugin = CorePlugin;
 type ControlApi = EditorControlApi;
 type ToolbarProps = ToolbarItemProps;
 type OnPaste = PasteHandler;
+type Pasted = Paste;
+type PastedFrom = PasteSource;
 type BlockDef<TValue> = BlockDefinition<TValue>;
 type MarkDef<TValue> = MarkDefinition<TValue>;
 type InlineDef<TValue> = InlineDefinition<TValue>;
@@ -189,6 +193,8 @@ export declare namespace RtePlugin {
     export type ToolbarItemProps = ToolbarProps;
     export type ToolbarGroup = RteToolbarGroup;
     export type PasteHandler = OnPaste;
+    export type Paste = Pasted;
+    export type PasteSource = PastedFrom;
     export type BlockDefinition<TValue = Record<string, unknown>> = BlockDef<TValue>;
     export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;

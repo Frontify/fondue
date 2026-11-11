@@ -10,11 +10,14 @@ import {
 } from 'prosemirror-model';
 import { type EditorView } from 'prosemirror-view';
 
-import { type EditorControlApi, type PasteHandler } from '#/core';
+import { type EditorControlApi, type Paste, type PasteHandler, type PasteSource } from '#/core';
 
 import { EXTRA_ATTR, mapExtras } from './documentConversion';
 import { tidyGoogleDocs } from './pasteGoogleDocs';
 import { tidyOffice } from './pasteOffice';
+
+/** The attribute the engine puts on the HTML it copies, which marks a paste as copied from an editor. */
+const EDITOR_SLICE_ATTRIBUTE = 'data-pm-slice';
 
 // Copy and paste fixes beyond what the engine does on its own.
 
@@ -141,7 +144,12 @@ export const handlePasteByFeatures =
         if (handlers.length === 0 || !data) {
             return false;
         }
-        const paste = { text: data.getData('text/plain'), html: data.getData('text/html') || null };
+        const html = data.getData('text/html') || null;
+        let source: PasteSource = 'elsewhere';
+        if (html?.includes(EDITOR_SLICE_ATTRIBUTE) === true) {
+            source = 'editor';
+        }
+        const paste: Paste = { text: data.getData('text/plain'), html, source };
         return handlers.some((handler) => handler(paste, api));
     };
 

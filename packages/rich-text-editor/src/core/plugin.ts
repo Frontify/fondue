@@ -624,9 +624,19 @@ export type RteBlockCommand = {
 export type HotkeyHandler = (api: EditorControlApi) => boolean | void;
 
 /**
- * A plugin's `onPaste`, handed the clipboard's text and HTML (if any). Return true when handled: the default paste and later plugins are skipped.
+ * Where pasted content was copied from: an editor, whose own markup pastes back as it was, or anywhere else.
  */
-export type PasteHandler = (paste: { text: string; html: string | null }, api: EditorControlApi) => boolean;
+export type PasteSource = 'editor' | 'elsewhere';
+
+/**
+ * What a paste carries: the clipboard's text, its HTML (if any), and where it was copied from.
+ */
+export type Paste = { text: string; html: string | null; source: PasteSource };
+
+/**
+ * A plugin's `onPaste`, handed the paste. Return true when handled: the default paste and later plugins are skipped.
+ */
+export type PasteHandler = (paste: Paste, api: EditorControlApi) => boolean;
 
 /**
  * A text pattern rewritten while typing. Declared, not implemented: the editor

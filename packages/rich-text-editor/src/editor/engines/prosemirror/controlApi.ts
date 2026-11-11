@@ -418,13 +418,15 @@ export const createControlApi = (
     insertText(text, marks = {}) {
         const view = getView();
         const transaction = view.state.tr;
-        const from = transaction.selection.from;
         transaction.insertText(text);
+        // Measured back from the caret after the insert: a selected block is replaced by a new paragraph, which shifts the text.
+        const to = transaction.selection.from;
+        const from = to - text.length;
         for (const [type, value] of Object.entries(marks)) {
             const markType = schema.marks[type];
             if (markType) {
                 // Adding replaces a mark of the same type the caret carried.
-                transaction.addMark(from, from + text.length, markType.create(valueAttrsFor(value)));
+                transaction.addMark(from, to, markType.create(valueAttrsFor(value)));
             } else {
                 warnUnknownType('insertText', type);
             }
