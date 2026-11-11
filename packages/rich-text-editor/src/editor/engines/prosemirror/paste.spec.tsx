@@ -164,6 +164,10 @@ describe('pasting formatted text', () => {
 describe('pasting over selected text with the link plugin', () => {
     const link = (href: string) => ({ link: { href } });
 
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
     it('links it when the text is a web address', () => {
         const editor = editorWith(shipped('link'), [paragraph(text('see frontify now'))]);
         editor.select('frontify');
@@ -266,7 +270,6 @@ describe('pasting over selected text with the link plugin', () => {
 
         editor.paste('https://example.com');
         undo(editor.view.state, editor.view.dispatch);
-        vi.useRealTimers();
 
         expect(editor.stored()).toEqual([paragraph(text('ab'))]);
     });

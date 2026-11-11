@@ -807,8 +807,11 @@ describe('insertText', () => {
     it('is one undo step, text and marks together', () => {
         const editor = editorWith(plugins, [paragraph(text('one two three'))]);
         editor.select('two');
+        const notifiedBefore = editor.onDocChange.mock.calls.length;
 
         editor.api.insertText('2', { link: LINK });
+
+        expect(editor.onDocChange).toHaveBeenCalledTimes(notifiedBefore + 1);
         undo(editor.view.state, editor.view.dispatch);
 
         expect(editor.stored()).toEqual([paragraph(text('one two three'))]);

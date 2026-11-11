@@ -19,6 +19,8 @@ import {
     type RtePlugin,
     serializeToHtml,
 } from '../index';
+import { NEW_TAB_NOTE_ATTRIBUTE } from '../plugins/Link/helpers/newTab';
+import linkStyles from '../plugins/Link/link.module.scss';
 
 // The readonly view and export draw the same tree, so they are tested side by
 // side: the renderer as React in the test DOM, export as the string it returns.
@@ -298,7 +300,10 @@ describe('a link in a reading view and in export', () => {
         for (const container of both(doc)) {
             const [newTab, sameTab] = [...container.querySelectorAll('a')];
             expect(newTab?.textContent).toBe(`new${NEW_TAB_NOTE}`);
-            expect(newTab?.querySelector('span')?.textContent).toBe(NEW_TAB_NOTE);
+            const note = newTab?.querySelector('span');
+            expect(note?.textContent).toBe(NEW_TAB_NOTE);
+            expect(note?.hasAttribute(NEW_TAB_NOTE_ATTRIBUTE)).toBe(true);
+            expect(note?.classList.contains(linkStyles.visuallyHidden ?? '')).toBe(true);
             expect(newTab?.lastElementChild?.tagName).toBe('SPAN');
             expect(sameTab?.textContent).toBe('same');
             expect(sameTab?.querySelector('span')).toBeNull();
