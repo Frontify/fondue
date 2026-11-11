@@ -73,6 +73,7 @@ const mount = (initialDoc: RteDocumentOf, { placeholder = '', attributes = {}, f
             attributes,
             placeholderClassName: 'placeholder',
             onDocChange,
+            onDocApplied: () => {},
             onStateChange: () => {},
             viewPortals: { set: () => {}, delete: () => {} },
         },

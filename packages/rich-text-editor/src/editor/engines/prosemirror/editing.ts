@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { dropCursor } from 'prosemirror-dropcursor';
-import { EditorState, TextSelection } from 'prosemirror-state';
+import { EditorState, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { type RteDocumentOf } from '#/core';
@@ -91,6 +91,7 @@ const mount = (
         attributes,
         placeholderClassName,
         onDocChange,
+        onDocApplied,
         onStateChange,
         viewPortals,
     }: MountOptions,
@@ -176,6 +177,7 @@ const mount = (
         },
     });
     view = editorView;
+    onDocApplied(initialDoc);
 
     // 4. What the host gets back.
     let held: Held = { kind: 'none' };
@@ -196,6 +198,7 @@ const mount = (
             }
         }
         record = recordAgreed(record, doc);
+        onDocApplied(doc);
     };
 
     const retryHeld = (): void => {
@@ -254,6 +257,10 @@ const mount = (
             api,
             selectionRect: createSelectionRectReader(editorView),
             document: () => toRteDocument(editorView.state.doc, rootExtras),
+            focusAtEnd: () => {
+                editorView.dispatch(editorView.state.tr.setSelection(Selection.atEnd(editorView.state.doc)));
+                editorView.focus();
+            },
         },
         setDoc,
         setPlaceholder(next) {

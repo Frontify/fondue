@@ -6,7 +6,7 @@ import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { type EditorControlApi } from '#/core';
+import { type EditorControlApi, type RteSelectionSnapshot, type ToolbarItemProps } from '#/core';
 
 import { ColorFlyout } from './ColorFlyout';
 
@@ -20,15 +20,18 @@ afterEach(() => {
 
 type Marks = EditorControlApi['marks'];
 
+const COLORED: RteSelectionSnapshot['marks'] = { fontColor: { coverage: 'all', value: { color: '#ff0000' } } };
+
 const mount = (
-    marks: Record<string, Record<string, unknown>>,
+    marks: RteSelectionSnapshot['marks'],
+    isActive: ToolbarItemProps['isActive'],
 ): { toggle: ReturnType<typeof vi.fn<Marks['toggle']>>; set: ReturnType<typeof vi.fn<Marks['set']>> } => {
     const toggle = vi.fn<Marks['toggle']>();
     const set = vi.fn<Marks['set']>();
     const api = { marks: { toggle, set }, focus: vi.fn() } as unknown as EditorControlApi;
     const container = document.body.appendChild(document.createElement('div'));
     root = createRoot(container);
-    act(() => root?.render(<ColorFlyout selection={{ marks } as never} api={api} />));
+    act(() => root?.render(<ColorFlyout selection={{ marks } as never} api={api} isActive={isActive} />));
     act(() => container.querySelector('button')?.click());
     return { toggle, set };
 };
@@ -62,18 +65,18 @@ const press = (label: string): void => {
 
 describe('the colour flyout', () => {
     it('replaces a colour in one command', () => {
-        const { toggle, set } = mount({ fontColor: { color: '#ff0000' } });
+        const { toggle, set } = mount(COLORED, true);
         typeHexAndPressEnter('c5221f');
 
         expect(set.mock.calls).toEqual([['fontColor', { color: '#c5221f' }]]);
         expect(toggle).not.toHaveBeenCalled();
     });
 
-    it.each<[string, Record<string, Record<string, unknown>>]>([
-        ['coloured', { fontColor: { color: '#ff0000' } }],
-        ['uncoloured', {}],
-    ])('changes nothing on Save without a choice on %s text', (_, marks) => {
-        const { toggle, set } = mount(marks);
+    it.each<[string, RteSelectionSnapshot['marks'], ToolbarItemProps['isActive']]>([
+        ['coloured', COLORED, true],
+        ['uncoloured', {}, false],
+    ])('changes nothing on Save without a choice on %s text', (_, marks, isActive) => {
+        const { toggle, set } = mount(marks, isActive);
         // Clicking Save moves focus off the hex field first, and the picker reports its value again on blur.
         act(() => document.querySelector<HTMLInputElement>('input[type="text"]')?.blur());
         press('Save');
@@ -83,7 +86,7 @@ describe('the colour flyout', () => {
     });
 
     it('changes nothing when the text keeps its own colour', () => {
-        const { toggle, set } = mount({ fontColor: { color: '#c5221f' } });
+        const { toggle, set } = mount({ fontColor: { coverage: 'all', value: { color: '#c5221f' } } }, true);
         typeHexAndPressEnter('c5221f');
 
         expect(toggle).not.toHaveBeenCalled();
@@ -91,10 +94,18 @@ describe('the colour flyout', () => {
     });
 
     it('removes a colour', () => {
-        const { toggle, set } = mount({ fontColor: { color: '#c5221f' } });
+        const { toggle, set } = mount({ fontColor: { coverage: 'all', value: { color: '#c5221f' } } }, true);
         press('Remove');
 
         expect(toggle.mock.calls).toEqual([['fontColor']]);
         expect(set).not.toHaveBeenCalled();
+    });
+
+    it('shows a half-coloured selection as mixed, still removable', () => {
+        const { toggle } = mount({ fontColor: { coverage: 'some' } }, 'mixed');
+
+        expect(document.querySelector('button[aria-pressed]')?.getAttribute('aria-pressed')).toBe('mixed');
+        press('Remove');
+        expect(toggle.mock.calls).toEqual([['fontColor']]);
     });
 });

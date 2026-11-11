@@ -9,6 +9,9 @@ import { RichTextEditor } from '../../index';
 // thing to a real input method a test has: the browser fires the composition
 // events itself.
 
+// The DevTools protocol is Chromium's: playwright.config.ts leaves tests with this tag out of the other engines.
+const NEEDS_DEVTOOLS_PROTOCOL = { tag: '@devtools-protocol' };
+
 /** Starts a composition showing `text`, as an IME does while the user is still choosing. */
 const compose = async (page: Page, text: string): Promise<void> => {
     const client = await page.context().newCDPSession(page);
@@ -25,7 +28,7 @@ const modifier = (page: Page): Promise<'metaKey' | 'ctrlKey'> =>
 // Mobile keyboards compose ordinary typing, so the rewrites wait for the
 // composition to end rather than skipping composed text.
 test.describe('composed text', () => {
-    test('is not rewritten while the composition is open', async ({ mount, page }) => {
+    test('is not rewritten while the composition is open', NEEDS_DEVTOOLS_PROTOCOL, async ({ mount, page }) => {
         const component = await mount(<RichTextEditor />);
         const editable = component.getByRole('textbox');
 
@@ -43,34 +46,42 @@ test.describe('composed text', () => {
         ['https://example.com ', 'a', 'https://example.com', 'https://example.com '],
         ['- ', 'ul > li', '', ''],
     ] as const) {
-        test(`"${composed}" is rewritten once the composition ends`, async ({ mount, page }) => {
+        test(
+            `"${composed}" is rewritten once the composition ends`,
+            NEEDS_DEVTOOLS_PROTOCOL,
+            async ({ mount, page }) => {
+                const component = await mount(<RichTextEditor />);
+                const editable = component.getByRole('textbox');
+
+                await editable.click();
+                await compose(page, composed);
+                await page.keyboard.insertText(composed);
+
+                await expect(editable.locator(element)).toHaveText(marked);
+                expect(await editable.textContent()).toBe(text);
+            },
+        );
+    }
+
+    test(
+        'stays as typed after Backspace took a rewrite back and a composition ends empty',
+        NEEDS_DEVTOOLS_PROTOCOL,
+        async ({ mount, page }) => {
             const component = await mount(<RichTextEditor />);
             const editable = component.getByRole('textbox');
 
             await editable.click();
-            await compose(page, composed);
-            await page.keyboard.insertText(composed);
+            await page.keyboard.type('**bold**');
+            await page.keyboard.press('Backspace');
+            await expect(editable).toHaveText('**bold**');
+            await compose(page, 'x');
+            await compose(page, '');
+            await settle(page);
 
-            await expect(editable.locator(element)).toHaveText(marked);
-            expect(await editable.textContent()).toBe(text);
-        });
-    }
-
-    test('stays as typed after Backspace took a rewrite back and a composition ends empty', async ({ mount, page }) => {
-        const component = await mount(<RichTextEditor />);
-        const editable = component.getByRole('textbox');
-
-        await editable.click();
-        await page.keyboard.type('**bold**');
-        await page.keyboard.press('Backspace');
-        await expect(editable).toHaveText('**bold**');
-        await compose(page, 'x');
-        await compose(page, '');
-        await settle(page);
-
-        await expect(editable).toHaveText('**bold**');
-        await expect(editable.locator('strong')).toHaveCount(0);
-    });
+            await expect(editable).toHaveText('**bold**');
+            await expect(editable.locator('strong')).toHaveCount(0);
+        },
+    );
 
     test('still gets rewritten when typed with the keyboard', async ({ mount, page }) => {
         const component = await mount(<RichTextEditor />);
@@ -84,31 +95,56 @@ test.describe('composed text', () => {
 });
 
 test.describe('keys that belong to an input method', () => {
-    test('the Enter that commits a composition does not split the block', async ({ mount, page }) => {
+    test(
+        'the Enter that commits a composition does not split the block',
+        NEEDS_DEVTOOLS_PROTOCOL,
+        async ({ mount, page }) => {
+            const component = await mount(<RichTextEditor />);
+            const editable = component.getByRole('textbox');
+
+            await editable.click();
+            await compose(page, 'あ');
+            await page.keyboard.insertText('あ');
+            // Safari and Firefox send the Enter after `compositionend`, still marked as the input method's.
+            await editable.dispatchEvent('keydown', { key: 'Enter', keyCode: 229, isComposing: true });
+            await editable.dispatchEvent('keydown', { key: 'Enter', keyCode: 229, isComposing: false });
+
+            await expect(editable.locator('p')).toHaveCount(1);
+        },
+    );
+
+    test(
+        'Enter that commits a composition does not split a list item',
+        NEEDS_DEVTOOLS_PROTOCOL,
+        async ({ mount, page }) => {
+            const component = await mount(<RichTextEditor />);
+            const editable = component.getByRole('textbox');
+
+            await editable.click();
+            await page.keyboard.type('- ');
+            await compose(page, 'あ');
+            await page.keyboard.insertText('あ');
+            await editable.dispatchEvent('keydown', { key: 'Enter', keyCode: 229, isComposing: true });
+
+            await expect(editable.locator('li')).toHaveCount(1);
+        },
+    );
+
+    // Without the DevTools protocol there is no composition, but the Enter keydowns are the same.
+    test("an Enter marked as the input method's does not split the block", async ({ mount, page }) => {
         const component = await mount(<RichTextEditor />);
         const editable = component.getByRole('textbox');
 
         await editable.click();
-        await compose(page, 'あ');
         await page.keyboard.insertText('あ');
-        // Safari and Firefox send the Enter after `compositionend`, still marked as the input method's.
         await editable.dispatchEvent('keydown', { key: 'Enter', keyCode: 229, isComposing: true });
         await editable.dispatchEvent('keydown', { key: 'Enter', keyCode: 229, isComposing: false });
 
         await expect(editable.locator('p')).toHaveCount(1);
-    });
 
-    test('Enter that commits a composition does not split a list item', async ({ mount, page }) => {
-        const component = await mount(<RichTextEditor />);
-        const editable = component.getByRole('textbox');
-
-        await editable.click();
-        await page.keyboard.type('- ');
-        await compose(page, 'あ');
-        await page.keyboard.insertText('あ');
-        await editable.dispatchEvent('keydown', { key: 'Enter', keyCode: 229, isComposing: true });
-
-        await expect(editable.locator('li')).toHaveCount(1);
+        // The control: a plain Enter dispatched the same way does split, so the two above reached the editor.
+        await editable.dispatchEvent('keydown', { key: 'Enter', keyCode: 13 });
+        await expect(editable.locator('p')).toHaveCount(2);
     });
 
     for (const [name, init] of [
@@ -147,7 +183,9 @@ test.describe('AltGr', () => {
         await expect(editable.locator('h1')).toHaveCount(1);
     });
 
-    test('AltGr plus a key does not run a Mod-Alt hotkey', async ({ mount, page }) => {
+    test('AltGr plus a key does not run a Mod-Alt hotkey', async ({ mount, page, browserName }) => {
+        // Safari runs only on Apple systems, which have no AltGr key.
+        test.skip(browserName === 'webkit', "WebKit's KeyboardEvent drops modifierAltGraph, so AltGr cannot be sent");
         const component = await mount(<RichTextEditor />);
         const editable = component.getByRole('textbox');
         const mod = await modifier(page);

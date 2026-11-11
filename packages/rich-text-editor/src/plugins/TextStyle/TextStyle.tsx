@@ -98,6 +98,7 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
                 parse: offered.map(parseRuleFor),
             }),
         },
+        toolbarGroup: 'text',
         toolbarItem: ({ api, selection }) => <TextStyleSelect selection={selection} api={api} options={options} />,
         hotkeys,
         // `# ` through `#### `, for the headings this editor offers.
