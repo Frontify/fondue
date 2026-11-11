@@ -254,6 +254,7 @@ const SlashList = ({
         <Flyout.Root open onOpenChange={(open) => !open && onDismiss()}>
             <FlyoutAnchor virtualRef={anchor} />
             <Flyout.Content
+                aria-label={labels.commands}
                 side="bottom"
                 align="start"
                 padding="none"
