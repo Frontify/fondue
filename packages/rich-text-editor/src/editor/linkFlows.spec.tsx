@@ -8,7 +8,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { isApple } from '#/ui/platform';
 
-import { boldPlugin, linkPlugin, RichTextEditor, type RteDocument, serializeToHtml } from '../index';
+import { boldPlugin, linkPlugin, RichTextEditor, RichTextRenderer, type RteDocument } from '../index';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -464,9 +464,22 @@ describe('pasting the reading markup of a link', () => {
         });
     };
 
+    const readingMarkup = (value: RteDocument): string => {
+        const container = window.document.createElement('div');
+        const root = createRoot(container);
+        act(() => {
+            root.render(<RichTextRenderer value={value} plugins={[linkPlugin()]} />);
+        });
+        const html = container.innerHTML;
+        act(() => {
+            root.unmount();
+        });
+        return html;
+    };
+
     it('keeps the new-tab note out of the text, round trip after round trip', () => {
         const link = { text: 'docs', link: { href: HREF, openInNewTab: true as const } };
-        const html = serializeToHtml(doc(link), { plugins: [linkPlugin()] });
+        const html = readingMarkup(doc(link));
         expect(html).toContain('opens in new tab');
 
         const { editable, stored } = mount(doc({ text: 'x' }));
@@ -478,7 +491,7 @@ describe('pasting the reading markup of a link', () => {
 
         // The text of the second paste lands next to the first link, so what is compared is the link run alone.
         // `stored()` is typed nullable; the expectation above has already shown it holds a document.
-        pasteHtml(editable, serializeToHtml(first as RteDocument, { plugins: [linkPlugin()] }));
+        pasteHtml(editable, readingMarkup(first as RteDocument));
         const second = JSON.stringify(stored());
         expect(second).not.toContain('opens in new tab');
         expect(second.split('"docs"')).toHaveLength(3);

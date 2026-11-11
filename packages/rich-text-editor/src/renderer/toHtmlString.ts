@@ -46,15 +46,7 @@ const specToString = (spec: HtmlSpec, content: string): string => {
         inner = escapeText(children);
     } else if (children) {
         inner = children
-            .map((child) => {
-                if (child === true) {
-                    return content;
-                }
-                if (typeof child === 'string') {
-                    return escapeText(child);
-                }
-                return specToString(child, content);
-            })
+            .map((child) => (typeof child === 'string' ? escapeText(child) : specToString(child, content)))
             .join('');
     }
     return `${open}${inner}</${spec.tag}>`;

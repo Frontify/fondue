@@ -1,13 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    defineContent,
-    defineMark,
-    definePlugin,
-    type HotkeyHandler,
-    type HtmlAttributes,
-    type HtmlSpec,
-} from '#/core';
+import { type ReactNode } from 'react';
+
+import { defineContent, defineMark, definePlugin, type HotkeyHandler, type HtmlAttributes } from '#/core';
 
 import { isLinkablePaste, LINKABLE_ADDRESS, toHref } from '../shared/helpers/href';
 
@@ -39,11 +34,75 @@ export type LinkPluginOptions = LinkPolicy & {
 
 const NEW_TAB_NOTE_SELECTOR = `span[${NEW_TAB_NOTE_ATTRIBUTE}]`;
 
-const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string, string> => {
-    if (link?.openInNewTab === true) {
-        return { target: NEW_TAB_TARGET, rel: NEW_TAB_REL };
+/**
+ * A stored link as the reader and the export draw it: without its target when the policy refuses it.
+ */
+type DrawnLink = { kind: 'refused' } | { kind: 'allowed'; href: string; openInNewTab: boolean };
+
+const drawnLink = (policy: LinkPolicy, value: unknown): DrawnLink => {
+    // A stored document may hold anything here (`{}`, `true`), so its shape is not taken on trust.
+    let link: Partial<LinkValue> | null = null;
+    if (typeof value === 'object') {
+        // The declared type is trusted only this far: every field is checked before use.
+        link = value as Partial<LinkValue> | null;
     }
-    return {};
+    const href = link?.href;
+    if (!allowsHref(policy, href)) {
+        return { kind: 'refused' };
+    }
+    return { kind: 'allowed', href, openInNewTab: link?.openInNewTab === true };
+};
+
+const linkAttrs = (drawn: DrawnLink): HtmlAttributes => {
+    switch (drawn.kind) {
+        case 'refused':
+            return { class: styles.link };
+        case 'allowed':
+            if (drawn.openInNewTab) {
+                return { href: drawn.href, target: NEW_TAB_TARGET, rel: NEW_TAB_REL, class: styles.link };
+            }
+            return { href: drawn.href, class: styles.link };
+    }
+};
+
+/**
+ * The marker attribute on the hidden note, spread because JSX has no computed attribute names.
+ */
+const NEW_TAB_NOTE_MARKER = { [NEW_TAB_NOTE_ATTRIBUTE]: '' };
+
+type LinkReaderProps = {
+    value: LinkValue;
+    children: ReactNode;
+    policy: LinkPolicy;
+};
+
+/**
+ * A link in the reader: the export's markup, and on a link that opens a new tab a note only a screen reader hears.
+ */
+const LinkReader = ({ value, children, policy }: LinkReaderProps): ReactNode => {
+    const drawn = drawnLink(policy, value);
+    switch (drawn.kind) {
+        case 'refused':
+            // oxlint-disable-next-line jsx-a11y/anchor-is-valid -- a refused link keeps its anchor without a target, as the export writes it, so it is not a link at all.
+            return <a className={styles.link}>{children}</a>;
+        case 'allowed':
+            if (drawn.openInNewTab) {
+                return (
+                    <a href={drawn.href} target={NEW_TAB_TARGET} rel={NEW_TAB_REL} className={styles.link}>
+                        {children}
+                        {/* Same wording as the editing panel. */}
+                        <span className={styles.visuallyHidden} {...NEW_TAB_NOTE_MARKER}>
+                            {NEW_TAB_NOTE}
+                        </span>
+                    </a>
+                );
+            }
+            return (
+                <a href={drawn.href} className={styles.link}>
+                    {children}
+                </a>
+            );
+    }
 };
 
 /**
@@ -68,38 +127,16 @@ export const linkContent = (policy: LinkPolicy = {}) =>
                 inclusive: false,
 
                 /**
-                 * The link everywhere but while editing: readonly, export, copy
+                 * The link in the export and on the clipboard, with no text of its own, so pasting it adds none
                  */
-                toHtml: (value) => {
-                    // A stored document may hold anything here (`{}`, `true`), so its shape is not taken on trust.
-                    let link: Partial<LinkValue> | null = null;
-                    if (typeof value === 'object') {
-                        // The declared type is trusted only this far: every field is checked before use.
-                        link = value as Partial<LinkValue> | null;
-                    }
-                    const href = link?.href;
-                    const allowed = allowsHref(policy, href);
-                    let attrs: HtmlAttributes = { class: styles.link };
-                    if (allowed) {
-                        attrs = { href, ...newTabAttrs(link), ...attrs };
-                    }
-                    const spec: HtmlSpec = { tag: 'a', attrs, children: true };
-                    if (allowed && link?.openInNewTab === true) {
-                        // Same wording as the editing panel.
-                        spec.children = [
-                            true,
-                            {
-                                tag: 'span',
-                                attrs: { class: styles.visuallyHidden, [NEW_TAB_NOTE_ATTRIBUTE]: '' },
-                                children: NEW_TAB_NOTE,
-                            },
-                        ];
-                    }
-                    return spec;
+                toHtml: (value) => ({ tag: 'a', attrs: linkAttrs(drawnLink(policy, value)), children: true }),
+
+                render: {
+                    component: (props) => <LinkReader {...props} policy={policy} />,
                 },
 
                 parse: [
-                    // The hidden note toHtml adds is not text of the link.
+                    // The hidden note the reader adds is not text of the link, when the reader is copied back in.
                     { tag: NEW_TAB_NOTE_SELECTOR, ignore: true },
                     {
                         tag: 'a[href]',
@@ -192,7 +229,8 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) =>
                 if (source === 'editor') {
                     return false;
                 }
-                api.insertText(href, { link: { href } });
+                // The first undo takes the link off and keeps the address, as after an autolink.
+                api.insertText(href, { link: { href } }, { undo: 'marksFirst' });
                 return true;
             }
             // A toggle over text that is all linked already would take the link off, so it goes first.

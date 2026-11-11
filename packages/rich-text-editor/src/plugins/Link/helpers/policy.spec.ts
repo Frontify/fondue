@@ -26,12 +26,13 @@ describe('allowsHref', () => {
         expect(allowsHref(policy, 'tel:+4912345')).toBe(false);
     });
 
-    it('matches an exact host, and a subdomain only with a wildcard', () => {
+    it('matches an exact host, and with a wildcard the host and its subdomains', () => {
         expect(allowsHref({ allowedHosts: ['frontify.com'] }, 'https://frontify.com/x')).toBe(true);
         expect(allowsHref({ allowedHosts: ['frontify.com'] }, 'https://app.frontify.com')).toBe(false);
         expect(allowsHref({ allowedHosts: ['*.frontify.com'] }, 'https://app.frontify.com')).toBe(true);
         expect(allowsHref({ allowedHosts: ['*.frontify.com'] }, 'https://a.b.frontify.com')).toBe(true);
-        expect(allowsHref({ allowedHosts: ['*.frontify.com'] }, 'https://frontify.com')).toBe(false);
+        expect(allowsHref({ allowedHosts: ['*.frontify.com'] }, 'https://frontify.com')).toBe(true);
+        expect(allowsHref({ allowedHosts: ['*.frontify.com'] }, 'https://evilfrontify.com')).toBe(false);
     });
 
     it('does not take a look-alike host for the allowed one', () => {
@@ -46,10 +47,14 @@ describe('allowsHref', () => {
         expect(allowsHref({ allowedHosts: ['Frontify.com'] }, 'HTTPS://FRONTIFY.COM/x')).toBe(true);
     });
 
-    it('applies hosts to web links only, and keeps relative links', () => {
+    it('applies hosts to every link that names one, and keeps mail, phone and relative links', () => {
         const policy = { allowedHosts: ['frontify.com'] };
 
         expect(allowsHref(policy, 'mailto:a@elsewhere.com')).toBe(true);
+        expect(allowsHref(policy, 'tel:+41445000000')).toBe(true);
+        expect(allowsHref(policy, 'mailto://evil.example/x')).toBe(false);
+        expect(allowsHref(policy, 'tel://evil.example/x')).toBe(false);
+        expect(allowsHref(policy, 'mailto://frontify.com/x')).toBe(true);
         expect(allowsHref(policy, '/x')).toBe(true);
         expect(allowsHref(policy, '#x')).toBe(true);
         expect(allowsHref(policy, './x')).toBe(true);
@@ -76,7 +81,7 @@ describe('describeAllowed', () => {
         expect(describeAllowed({ allowedHosts: ['frontify.com'] })).toBe('Enter a link to frontify.com.');
         expect(describeAllowed({ allowedHosts: [] })).toBe('Enter a link within this site.');
         expect(describeAllowed({ allowedHosts: ['*.frontify.com'] })).toBe(
-            'Enter a link to subdomains of frontify.com.',
+            'Enter a link to frontify.com or its subdomains.',
         );
         expect(describeAllowed({ allowedHosts: ['a.com', 'b.com'] })).toBe('Enter a link to a.com or b.com.');
     });

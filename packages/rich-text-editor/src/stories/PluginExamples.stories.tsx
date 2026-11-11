@@ -472,9 +472,7 @@ export const LinkWithSearch: Story = {
                     <RichTextEditor
                         value={doc}
                         onChange={setDoc}
-                        plugins={[
-                            linkPlugin({ allowedHosts: ['frontify.com', '*.frontify.com'], search: searchPages }),
-                        ]}
+                        plugins={[linkPlugin({ allowedHosts: ['*.frontify.com'], search: searchPages })]}
                     />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>

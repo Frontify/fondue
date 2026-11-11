@@ -97,13 +97,13 @@ export const DestinationField = forwardRef<HTMLInputElement, DestinationFieldPro
     const highlight = (index: number): void => setHighlighted({ value, index });
     const listRef = useRef<HTMLUListElement>(null);
     // Set by the arrow keys only: a row the pointer highlights is in sight already.
-    const revealHighlight = useRef(false);
+    const revealHighlightRef = useRef(false);
 
     // The list scrolls, so the arrows could move the highlight onto a row out of sight.
     useEffect(() => {
         // Cleared on every change, so arrows that left the highlight where it was cannot make a later hover scroll.
-        const reveal = revealHighlight.current;
-        revealHighlight.current = false;
+        const reveal = revealHighlightRef.current;
+        revealHighlightRef.current = false;
         if (!reveal || activeIndex < 0) {
             return;
         }
@@ -143,7 +143,7 @@ export const DestinationField = forwardRef<HTMLInputElement, DestinationFieldPro
         if (results.length === 0) {
             return;
         }
-        revealHighlight.current = true;
+        revealHighlightRef.current = true;
         if (event.key === 'ArrowDown') {
             highlight((activeIndex + 1) % results.length);
             return;

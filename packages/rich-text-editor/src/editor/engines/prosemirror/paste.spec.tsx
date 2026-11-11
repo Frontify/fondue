@@ -273,13 +273,17 @@ describe('pasting over selected text with the link plugin', () => {
         expect(editor.stored()).toEqual([paragraph(text('aexample.com'))]);
     });
 
-    it('is its own undo step once the history pauses after the typing before it', () => {
+    it('is undone in two steps once the history pauses after the typing before it: the link, then the text', () => {
         vi.useFakeTimers();
         const editor = editorWith(shipped('link'), [paragraph()]);
         editor.type('ab');
         vi.advanceTimersByTime(1000);
 
         editor.paste('https://example.com');
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual([paragraph(text('abhttps://example.com'))]);
+
         undo(editor.view.state, editor.view.dispatch);
 
         expect(editor.stored()).toEqual([paragraph(text('ab'))]);

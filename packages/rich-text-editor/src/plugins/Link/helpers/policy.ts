@@ -7,8 +7,9 @@ export { type LinkScheme } from '../../shared/helpers/href';
 /**
  * Which links an editor accepts, kept in the content so the renderer and the
  * export enforce it too, when they are given the same `linkPlugin` or `linkContent`;
- * without it, they render any safe link. Hosts apply to web links only; a relative link points
- * at the site the document is shown on, so it is always allowed.
+ * without it, they render any safe link. Hosts apply to every link that names one; a mail or
+ * phone address names none, and a relative link points at the site the document is shown on,
+ * so both are always allowed by host.
  */
 export type LinkPolicy = {
     /**
@@ -17,22 +18,20 @@ export type LinkPolicy = {
      */
     allowedSchemes?: readonly LinkScheme[];
     /**
-     * An exact host (`frontify.com`) or any subdomain of one, not the apex (`*.frontify.com`). Without it, any host is allowed.
+     * An exact host (`frontify.com`), or a host and any subdomain of it (`*.frontify.com`). Without it, any host is allowed.
      */
     allowedHosts?: readonly string[];
 };
 
 /**
- * Starts a host pattern that also matches its subdomains.
+ * Starts a host pattern that matches its host and every subdomain of it.
  */
 const SUBDOMAIN_WILDCARD = '*.';
 
 /**
- * The scheme `//host/x` takes, and with `HTTP` the web schemes that host limits apply to.
+ * The scheme `//host/x` takes.
  */
 const HTTPS: LinkScheme = 'https';
-
-const HTTP: LinkScheme = 'http';
 
 /**
  * A leading `scheme:`, which makes a link absolute.
@@ -42,7 +41,8 @@ const SCHEME_PREFIX = /^[a-z][a-z\d+.-]*:/i;
 const hostMatches = (pattern: string, hostname: string): boolean => {
     const allowed = pattern.toLowerCase();
     if (allowed.startsWith(SUBDOMAIN_WILDCARD)) {
-        return hostname.endsWith(allowed.slice(1)) && hostname.length > allowed.length - 1;
+        const host = allowed.slice(SUBDOMAIN_WILDCARD.length);
+        return hostname === host || hostname.endsWith(`.${host}`);
     }
     return hostname === allowed;
 };
@@ -83,7 +83,8 @@ export const allowsHref = (policy: LinkPolicy, href: unknown): href is string =>
     if (!allowedSchemes.some((allowed) => allowed === scheme)) {
         return false;
     }
-    if (allowedHosts === undefined || (scheme !== HTTPS && scheme !== HTTP)) {
+    // `mailto:a@b.co` has no host, but `mailto://evil.example/x` has one, which is checked like any other.
+    if (allowedHosts === undefined || url.hostname === '') {
         return true;
     }
     return allowedHosts.some((pattern) => hostMatches(pattern, url.hostname));
@@ -100,15 +101,11 @@ const describeHosts = (hosts: readonly string[]): string => {
     const lowered = hosts.map((host) => host.toLowerCase());
     const phrases = lowered.flatMap((host) => {
         if (host.startsWith(SUBDOMAIN_WILDCARD)) {
-            const apex = host.slice(SUBDOMAIN_WILDCARD.length);
-            // Folded into the apex's phrase when both are allowed.
-            if (lowered.includes(apex)) {
-                return [];
-            }
-            return [`subdomains of ${apex}`];
+            return [`${host.slice(SUBDOMAIN_WILDCARD.length)} or its subdomains`];
         }
+        // The wildcard's phrase names this host already.
         if (lowered.includes(`${SUBDOMAIN_WILDCARD}${host}`)) {
-            return [`${host} or its subdomains`];
+            return [];
         }
         return [host];
     });

@@ -5,6 +5,8 @@
 
 export {
     type EditorControlApi,
+    type InsertTextOptions,
+    type InsertTextUndo,
     REDO_HOTKEY,
     type RteMarkState,
     type RteSelectionSnapshot,
