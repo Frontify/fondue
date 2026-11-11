@@ -5,7 +5,8 @@ import { type Locator } from '@playwright/test';
 
 import { type TextLook, type TextStyleName } from '../../index';
 
-import { HostStylingPair, HostStylingSections } from './HostStylingFixtures';
+import { HostStylingPair } from './HostStylingPair';
+import { HostStylingSections } from './HostStylingSections';
 import { H1_COLOR_VARIABLE, SECTION_A_H1_COLOR, SECTION_B_H1_COLOR } from './hostStylingValues';
 
 // Hosts set the look of each text style with `textStylePlugin({ presets })`. Without a
