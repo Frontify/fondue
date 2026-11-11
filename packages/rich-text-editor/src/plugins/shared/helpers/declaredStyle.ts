@@ -70,10 +70,15 @@ export const isNormalStyle = (value: string): boolean => value.trim().toLowerCas
 export const isVerticalAlign = (value: string, keyword: string): boolean => value.trim().toLowerCase() === keyword;
 
 /**
+ * The gaps between the keywords of a CSS value.
+ */
+const WHITESPACE = /\s+/;
+
+/**
  * Whether a `text-decoration` or `text-decoration-line` value draws this line (`underline`, `line-through`).
  */
 export const hasDecorationLine = (value: string, line: string): boolean =>
-    value.toLowerCase().split(/\s+/).includes(line);
+    value.toLowerCase().split(WHITESPACE).includes(line);
 
 /**
  * A style rule's `value` that puts the mark on, with no value of its own, when the declared CSS value passes the check.

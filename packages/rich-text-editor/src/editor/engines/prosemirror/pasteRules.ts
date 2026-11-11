@@ -51,7 +51,7 @@ const valueParseRule = (rule: ParseRule<unknown>, priority: number): TagParseRul
 });
 
 /**
- * Mark and inline rules keep their whole value in one attribute; a null value means "not this node".
+ * Inline rules keep their whole value in one attribute; a null value means "not this node".
  */
 export const valueParseRules = (rules: readonly ParseRule<unknown>[], priority: number): TagParseRule[] =>
     rules.map((rule) => valueParseRule(rule, priority));
@@ -76,6 +76,11 @@ type DefaultStyle = {
 const UNDERLINE_WORD = /\bunderline\b/gi;
 
 /**
+ * A whole `font-weight` value of 600 or more.
+ */
+const BOLD_WEIGHT_VALUE = /^\s*(?:bold|bolder|[6-9]\d\d(?:\.\d+)?|1000)\s*$/i;
+
+/**
  * What an enclosing element already shows by default: a link's underline, a heading's bold. Pasted text repeating it is not formatting.
  */
 const DEFAULT_STYLES: readonly DefaultStyle[] = [
@@ -84,7 +89,7 @@ const DEFAULT_STYLES: readonly DefaultStyle[] = [
     {
         property: 'font-weight',
         within: 'h1, h2, h3, h4, h5, h6, th',
-        strip: /^\s*(?:bold|bolder|[6-9]\d\d(?:\.\d+)?|1000)\s*$/i,
+        strip: BOLD_WEIGHT_VALUE,
     },
 ];
 
@@ -99,14 +104,14 @@ const declaredValue = (element: HTMLElement, property: string): string => {
 };
 
 /**
- * ProseMirror style rules only see the CSS value, not the element, so a style rule
- * is a tag rule on any styled element that reads the declared value itself.
- */
-/**
  * Any element with a `style` attribute.
  */
 const STYLED_ELEMENT = '[style]';
 
+/**
+ * ProseMirror style rules only see the CSS value, not the element, so a style rule
+ * is a tag rule on any styled element that reads the declared value itself.
+ */
 const markStyleRule = (rule: StyleParseRule<unknown>): TagParseRule => ({
     tag: STYLED_ELEMENT,
     priority: STYLE_PRIORITY,
