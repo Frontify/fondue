@@ -10,7 +10,6 @@ import {
     type RteContent,
     type RteIcon,
     type RtePlugin,
-    type ToolbarItemProps,
 } from '#/core';
 
 import { HEADING_LEVEL_ICONS } from './components/HeadingLevelIcon';
@@ -121,11 +120,6 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
         };
     });
 
-    // Made here, not at module level: the dropdown needs this editor's `styles`.
-    const TextStyleToolbar = ({ api, selection, label }: ToolbarItemProps) => (
-        <TextStyleSelect selection={selection} api={api} options={options} label={label} />
-    );
-
     // Reuse the shared object so the default plugin and defaultContent declare the very same block definition.
     let content = textStyleContent;
     if (options !== ALL_TEXT_STYLES) {
@@ -135,7 +129,7 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
     return definePlugin({
         id: 'text-style',
         content,
-        toolbar: [{ label: 'Text style', render: TextStyleToolbar }],
+        toolbar: [{ label: 'Text style', render: (props) => <TextStyleSelect {...props} options={options} /> }],
         hotkeys,
         // `# ` through `#### `, for the headings this editor offers.
         inputRules: offered.flatMap(markdownRuleFor),
