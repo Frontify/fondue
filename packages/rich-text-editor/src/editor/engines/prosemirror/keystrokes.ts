@@ -4,7 +4,7 @@ import { baseKeymap, setBlockType } from 'prosemirror-commands';
 import { history, redo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
-import { type Node as PmNode, type Schema } from 'prosemirror-model';
+import { type Mark as PmMark, type Node as PmNode, type Schema } from 'prosemirror-model';
 import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, TextSelection } from 'prosemirror-state';
 import { canJoin, findWrapping } from 'prosemirror-transform';
 
@@ -360,6 +360,23 @@ const textPattern = (match: string | RegExp, suffix: string): RegExp => {
 const withGroups = (replace: string, found: RegExpMatchArray): string =>
     replace.replaceAll(GROUP_REFERENCE, (_, group: string) => found[Number(group)] ?? '');
 
+/**
+ * The marks typing carries at the caret.
+ */
+const typingMarks = (state: EditorState): readonly PmMark[] => state.storedMarks ?? state.selection.$from.marks();
+
+/**
+ * The marks of the first character from `start` to `end`, which a replacement keeps even where a
+ * mark such as a link ends there. Typing marks when that text is still to be typed.
+ */
+const replacedMarks = (state: EditorState, start: number, end: number): readonly PmMark[] => {
+    const first = start < end ? state.doc.nodeAt(start) : null;
+    if (first === null) {
+        return typingMarks(state);
+    }
+    return first.marks;
+};
+
 /** `->` -> `→`. The replacement carries the marks the matched text did. */
 const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
     if (rule.waitForRunEnd) {
@@ -369,7 +386,11 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
     const pattern = textPattern(match, AT_CARET);
     // `start` to `end` is the part of the match in the document: replacing it swaps all of it, typed character or not.
     const handler: RuleHandler = (state, found, start, end) =>
-        state.tr.insertText(withGroups(replace, found), start, end);
+        state.tr.replaceWith(
+            start,
+            end,
+            state.schema.text(withGroups(replace, found), replacedMarks(state, start, end)),
+        );
     return toInputRule({ pattern, handler: unlessRangeHasExcludedMark(context.excludedMarks, handler) }, context);
 };
 
@@ -391,17 +412,15 @@ const runEndTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRu
             return null;
         }
         const runEnd = start + found[0].length - typed.length;
-        // The replacement keeps the marks of what it replaces.
-        const replaced = state.doc.resolve(start).marksAcross(state.doc.resolve(runEnd)) ?? [];
+        const replaced = replacedMarks(state, start, runEnd);
         // After a composition the ending character is already in the document: only the run before it is replaced.
-        if (runEnd + typed.length === end) {
+        if (state.selection.empty && runEnd + typed.length === end) {
             return state.tr.replaceWith(start, runEnd, state.schema.text(withGroups(replace, found), replaced));
         }
         // While typing the ending character is still to come, and it carries the marks typing carries.
-        const typedMarks = state.storedMarks ?? state.selection.$from.marks();
         return state.tr.replaceWith(start, end, [
             state.schema.text(withGroups(replace, found), replaced),
-            state.schema.text(typed, typedMarks),
+            state.schema.text(typed, typingMarks(state)),
         ]);
     };
     return toInputRule({ pattern, handler: unlessRangeHasExcludedMark(context.excludedMarks, handler) }, context);

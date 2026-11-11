@@ -5,7 +5,14 @@
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { definePlugin, type RteBlockNode, type RteInputRule, type RtePlugin } from '#/core';
+import {
+    defineContent,
+    defineInline,
+    definePlugin,
+    type RteBlockNode,
+    type RteInputRule,
+    type RtePlugin,
+} from '#/core';
 import { defaultPlugins, typographyPlugin } from '#/plugins';
 
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
@@ -26,7 +33,23 @@ const typed = (value: string, plugins: readonly RtePlugin[]): RteBlockNode[] | n
 const press = (view: EditorView, key: string): boolean =>
     view.someProp('handleKeyDown', (handle) => handle(view, new KeyboardEvent('keydown', { key }))) === true;
 
-const withTypography = [...defaultPlugins, typographyPlugin()];
+/** An inline element of the spec's own, like a mention: the shipped one needs options. */
+const tagPlugin: RtePlugin = definePlugin({
+    id: 'tag',
+    content: defineContent({
+        inlines: {
+            tag: defineInline<{ name: string }>({
+                toHtml: ({ name }) => ({ tag: 'span', children: name }),
+                parse: [],
+            }),
+        },
+    }),
+});
+
+const withTypography = [
+    ...defaultPlugins,
+    typographyPlugin({ groups: ['quotes', 'ellipsis', 'dashes', 'symbols', 'numeric'] }),
+];
 
 afterEach(destroyEditors);
 
@@ -192,9 +215,7 @@ describe('typographyPlugin', () => {
         ['(tm)', '™'],
         ['(sm)', '℠'],
         ['+/-', '±'],
-        ['^o', '°'],
-        ['^+', '⁺'],
-        ['^-', '⁻'],
+        ['20^o', '20°'],
     ])('turns "%s" into "%s"', (shortcut, glyph) => {
         expect(typed(`a ${shortcut}`, withTypography)).toEqual([paragraph(text(`a ${glyph}`))]);
     });
@@ -257,6 +278,42 @@ describe('typographyPlugin', () => {
         expect(typed('v3x4 ', withTypography)).toEqual([paragraph(text('v3x4 '))]);
     });
 
+    it('rewrites a number only as a whole token: v1/2, v2^2, ^origin and 10^-3 stay as typed', () => {
+        expect(typed('v1/2 ', withTypography)).toEqual([paragraph(text('v1/2 '))]);
+        expect(typed('v2^2 ', withTypography)).toEqual([paragraph(text('v2^2 '))]);
+        expect(typed('^origin', withTypography)).toEqual([paragraph(text('^origin'))]);
+        expect(typed('10^-3 ', withTypography)).toEqual([paragraph(text('10^-3 '))]);
+    });
+
+    it('leaves numbers as typed unless the numeric group is asked for', () => {
+        expect(typed('a 1/2 3x4 2^2 ', [...defaultPlugins, typographyPlugin()])).toEqual([
+            paragraph(text('a 1/2 3x4 2^2 ')),
+        ]);
+    });
+
+    it('keeps a link on what it rewrites at the link end', () => {
+        const link = { link: { href: 'https://frontify.com' } };
+        const plugins = [...shipped('link'), typographyPlugin({ groups: ['dashes', 'symbols', 'numeric'] })];
+        const sized = editorWith(plugins, [paragraph(text('Size 3x4', link))]);
+        sized.caretAfter('3x4');
+        sized.type(' ');
+        const arrow = editorWith(plugins, [paragraph(text('go -', link))]);
+        arrow.caretAfter('go -');
+        arrow.type('>');
+
+        expect(sized.stored()).toEqual([paragraph(text('Size 3×4', link), text(' '))]);
+        expect(arrow.stored()).toEqual([paragraph(text('go →', link))]);
+    });
+
+    it('replaces a selected character with what ends the run', () => {
+        const editor = editorWith(withTypography, [paragraph(text('a --x'))]);
+        editor.select('x');
+
+        editor.type(' ');
+
+        expect(editor.stored()).toEqual([paragraph(text('a — '))]);
+    });
+
     describe('quotes', () => {
         it('opens a double quote at the start of the block, after a space and after an opener', () => {
             expect(typed('"hi"', withTypography)).toEqual([paragraph(text('“hi”'))]);
@@ -296,6 +353,16 @@ describe('typographyPlugin', () => {
             editor.type('"hi"');
 
             expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'break' }, text('“hi”'))]);
+        });
+
+        it('turns a single quote after an inline element such as a mention into an apostrophe', () => {
+            const tag = { type: 'tag', name: 'Noah' };
+            const editor = editorWith([tagPlugin, typographyPlugin()], [paragraph(text('a '), tag)]);
+            editor.caretAfter('￼');
+
+            editor.type("'s");
+
+            expect(editor.stored()).toEqual([paragraph(text('a '), tag, text('’s'))]);
         });
 
         it.each([
