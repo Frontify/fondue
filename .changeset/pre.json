@@ -2,8 +2,8 @@
   "mode": "pre",
   "tag": "beta",
   "initialVersions": {
-    "@frontify/fondue-charts": "8.0.2",
-    "@frontify/fondue-components": "33.0.1",
+    "@frontify/fondue-charts": "9.1.0",
+    "@frontify/fondue-components": "36.0.2",
     "@frontify/fondue": "13.8.1",
     "@frontify/fondue-icons": "0.29.0",
     "@frontify/fondue-rte": "0.1.11",
