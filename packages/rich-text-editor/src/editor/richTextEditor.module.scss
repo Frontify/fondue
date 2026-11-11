@@ -41,6 +41,8 @@
         inset-block-start: 0;
         z-index: 1;
         flex-wrap: nowrap;
+        // Its slots must not widen a grid or flex parent; the fit moves what does not fit behind More.
+        contain: inline-size;
         padding: 0;
         margin-bottom: var(--spacing-x-small);
         background-color: var(--color-surface-default);
@@ -56,6 +58,86 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-xx-small);
+}
+
+/** One plugin's controls. Never shrunk, so the top row measures each at its own size. */
+.slot {
+    display: flex;
+    flex: none;
+    align-items: center;
+}
+
+/**
+ * The More button, a weak Fondue Button with the toolbar buttons' open fill, which the editor cannot import. The attributes outweigh the Button's variant rules.
+ */
+.more[data-variant][data-emphasis][data-size][data-aspect] {
+    flex: none;
+
+    &[aria-expanded='true']:not([disabled]) {
+        background-color: var(--color-container-secondary-default);
+
+        &:hover {
+            background-color: var(--color-container-secondary-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-secondary-active);
+        }
+    }
+
+    @media (forced-colors: active) {
+        &[aria-expanded='true'] {
+            background-color: Highlight;
+            color: HighlightText;
+            forced-color-adjust: none;
+        }
+    }
+
+    /** A coarse pointer gets a 44 by 44 CSS pixel target. */
+    @media (pointer: coarse) {
+        min-inline-size: sizes.$touch-target-size;
+        min-block-size: sizes.$touch-target-size;
+    }
+}
+
+/** More, and the zero-size spot below it its controls are parked in; a flyout they open hangs from here. */
+.moreAnchor {
+    position: relative;
+    display: flex;
+    flex: none;
+}
+
+/**
+ * Where the controls behind More wait while the panel is closed: laid out, so
+ * their slots keep a size, but not seen, focused or announced. Clipped to
+ * nothing, so they add no scrolling to the page.
+ */
+.morePanelParked {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline-end: 0;
+    inline-size: 0;
+    block-size: 0;
+    overflow: clip;
+    visibility: hidden;
+    pointer-events: none;
+
+    // Stacked on one spot below More, each at its own width, so a flyout one opens hangs in view.
+    .slot {
+        position: absolute;
+        inset-block-start: 0;
+        inset-inline-end: 0;
+        inline-size: max-content;
+    }
+}
+
+/** The controls behind More, in their groups, wrapping onto more lines when the panel is too narrow. */
+.moreControls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-small);
+    padding: var(--spacing-x-small);
 }
 
 /**

@@ -68,9 +68,20 @@ export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(f
     const [tooltipOpen, setTooltipOpen] = useState(false);
     // A flyout this button opened is the layer Escape belongs to; a tooltip over it would take the key first.
     const ownFlyoutOpen = rest['aria-expanded'] === true || rest['aria-expanded'] === 'true';
+    // Nor does it come back as the flyout closes, over a pointer that rested here, to take the next Escape.
+    if (ownFlyoutOpen && tooltipOpen) {
+        setTooltipOpen(false);
+    }
 
     return (
-        <Tooltip.Root open={tooltipOpen && !ownFlyoutOpen} onOpenChange={setTooltipOpen}>
+        <Tooltip.Root
+            open={tooltipOpen}
+            onOpenChange={(next) => {
+                if (!ownFlyoutOpen) {
+                    setTooltipOpen(next);
+                }
+            }}
+        >
             <Tooltip.Trigger asChild>
                 <Button
                     {...domProps}
