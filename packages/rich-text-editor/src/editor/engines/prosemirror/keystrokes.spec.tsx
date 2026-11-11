@@ -16,7 +16,7 @@ import {
 } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
-import { trimTrailingPunctuation } from './keystrokes';
+import { trimTrailingPunctuation } from './autolink';
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
 
 /**
@@ -119,8 +119,98 @@ describe('typing a list shortcut at the start of a line', () => {
         ]);
     });
 
+    it.each(['[x] ', '[X] '])('turns "%s" into a checked item', (prefix) => {
+        expect(typed(`${prefix}task`)).toEqual([
+            {
+                type: 'checkList',
+                children: [{ type: 'checkItem', checked: true, children: [paragraph(text('task'))] }],
+            },
+        ]);
+    });
+
+    it('turns "[~] " into an item in progress', () => {
+        expect(typed('[~] task')).toEqual([
+            {
+                type: 'checkList',
+                children: [{ type: 'checkItem', checked: 'inProgress', children: [paragraph(text('task'))] }],
+            },
+        ]);
+    });
+
     it('stays plain text when no list is mounted', () => {
         expect(typed('- item', shipped('quote'))).toEqual([paragraph(text('- item'))]);
+    });
+});
+
+describe('a check list shortcut inside a check list', () => {
+    // `RteBlockNode` names no plugin attribute, so the item's `checked` needs the cast.
+    const checkItem = (label: string): RteBlockNode =>
+        ({ type: 'checkItem', checked: false, children: [paragraph(text(label))] }) as RteBlockNode;
+    const twoItems = (): RteBlockNode[] => [{ type: 'checkList', children: [checkItem('one'), checkItem('two')] }];
+
+    const withoutChecked = (key: string, value: unknown): unknown => {
+        if (key === 'checked') {
+            return undefined;
+        }
+        return value;
+    };
+
+    /** The document with `checked` left out, so `[x] ` and `[ ] ` can be compared on structure alone. */
+    const shapeAfterTyping = (prefix: string, before: string): string => {
+        const editor = editorWith(defaultPlugins, twoItems());
+        editor.caretBefore(before);
+        editor.type(prefix);
+        return JSON.stringify(editor.stored(), withoutChecked);
+    };
+
+    it.each(['one', 'two'])('gives "[x] " and "[ ] " the same structure at the start of the item "%s"', (before) => {
+        expect(shapeAfterTyping('[x] ', before)).toBe(shapeAfterTyping('[ ] ', before));
+    });
+
+    it.each([
+        ['[x] ', true],
+        ['[ ] ', false],
+    ])('nests "%s" in the item it is typed in, checked: %s', (prefix, checked) => {
+        const editor = editorWith(defaultPlugins, twoItems());
+        editor.caretBefore('two');
+
+        editor.type(prefix);
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'checkList',
+                children: [
+                    checkItem('one'),
+                    {
+                        type: 'checkItem',
+                        checked: false,
+                        children: [
+                            {
+                                type: 'checkList',
+                                children: [{ type: 'checkItem', checked, children: [paragraph(text('two'))] }],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ]);
+    });
+
+    it('joins "[x] " typed below a check list into that list', () => {
+        const editor = editorWith(defaultPlugins, [
+            { type: 'checkList', children: [checkItem('one')] },
+            paragraph(text('task')),
+        ]);
+        editor.caretBefore('task');
+
+        editor.type('[x] ');
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'checkList',
+                children: [checkItem('one'), { type: 'checkItem', checked: true, children: [paragraph(text('task'))] }],
+            },
+        ]);
     });
 });
 
