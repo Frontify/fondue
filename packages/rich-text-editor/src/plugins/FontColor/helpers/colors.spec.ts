@@ -94,6 +94,7 @@ describe('toStoredColor', () => {
             'hsl(none, 100%, 50%)',
             'hsl(nonedeg 100% 50%)',
             'hsl(noneturn 100% 50%)',
+            'hsl(10%deg 100% 50%)',
             'rgb(1, 2, 3, none)',
             'hsl(1px 100% 50%)',
             'hsl(10% 100% 50%)',

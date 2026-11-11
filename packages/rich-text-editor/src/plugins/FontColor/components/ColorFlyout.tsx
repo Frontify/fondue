@@ -12,6 +12,7 @@ import {
     decodeStoredColor,
     encodeStoredColor,
     type FontColorValue,
+    OPAQUE_ALPHA,
     parseTypedHex,
     type Rgba,
     toColorName,
@@ -24,7 +25,8 @@ import styles from './colorFlyout.module.scss';
 type PickerColor = NonNullable<ComponentProps<typeof ColorPicker.Root>['currentColor']>;
 
 /** The picker's colour as the document stores it; alpha is filled in, since the picker leaves it out when opaque. */
-const encodePickerColor = (color: PickerColor): string => encodeStoredColor({ ...color, alpha: color.alpha ?? 1 });
+const encodePickerColor = (color: PickerColor): string =>
+    encodeStoredColor({ ...color, alpha: color.alpha ?? OPAQUE_ALPHA });
 
 /** The hex field inside the picker. */
 const HEX_FIELD_SELECTOR = 'input[type="text"]';
@@ -46,7 +48,7 @@ const PRESETS: readonly { name: string; color: string }[] = [
 ];
 
 /** The colour typed in the picker's hex field. The field reports only on blur, so Enter and Save read it directly. */
-const readTypedHex = (container: HTMLElement | null, alpha: number | undefined): PickerColor | undefined => {
+const readHexField = (container: HTMLElement | null, alpha: number | undefined): PickerColor | undefined => {
     const text = container?.querySelector<HTMLInputElement>(HEX_FIELD_SELECTOR)?.value;
     return parseTypedHex(text, alpha);
 };
@@ -68,6 +70,7 @@ export const ColorFlyout = ({ selection, api }: ColorFlyoutProps): ReactNode => 
 
     const { returnToText, contentProps } = useFocusAfterClose(api);
 
+    // Marks are untyped at the editor boundary; toStoredColor validates the value.
     const value = selection.marks.fontColor as Partial<FontColorValue> | undefined;
     // A stored value that is no colour shows none, and is still removable.
     const hasColor = 'fontColor' in selection.marks;
@@ -94,7 +97,7 @@ export const ColorFlyout = ({ selection, api }: ColorFlyoutProps): ReactNode => 
     };
 
     const save = (): void => {
-        const picked = readTypedHex(pickerRef.current, draft?.alpha) ?? draft;
+        const picked = readHexField(pickerRef.current, draft?.alpha) ?? draft;
         // Nothing picked or typed: an unreadable colour would otherwise be
         // overwritten with whatever the picker fell back to showing.
         if (picked === undefined || encodePickerColor(picked) === openedWithRef.current) {
@@ -141,7 +144,7 @@ export const ColorFlyout = ({ selection, api }: ColorFlyoutProps): ReactNode => 
                 // The hex field is the one input a keyboard can pick a colour with.
                 onOpenAutoFocus={(event) => {
                     event.preventDefault();
-                    const shown = readTypedHex(pickerRef.current, currentColor?.alpha);
+                    const shown = readHexField(pickerRef.current, currentColor?.alpha);
                     let openedWith: string | undefined;
                     if (shown !== undefined) {
                         openedWith = encodePickerColor(shown);
@@ -173,16 +176,23 @@ export const ColorFlyout = ({ selection, api }: ColorFlyoutProps): ReactNode => 
                         ref={pickerRef}
                         className={styles.picker}
                         onKeyDown={(event) => {
-                            if (event.key === 'Enter' && (event.target as HTMLElement).matches(HEX_FIELD_SELECTOR)) {
+                            const target = event.target;
+                            if (event.key !== 'Enter' || !(target instanceof HTMLElement)) {
+                                return;
+                            }
+                            if (target.matches(HEX_FIELD_SELECTOR)) {
                                 event.preventDefault();
                                 save();
                             }
                         }}
                         onInput={(event) => {
                             // A complete hex value updates the picker at once; a partial one waits.
-                            const target = event.target as HTMLInputElement;
+                            const target = event.target;
+                            if (!(target instanceof HTMLInputElement)) {
+                                return;
+                            }
                             if (target.matches(HEX_FIELD_SELECTOR) && COMPLETE_HEX.test(target.value)) {
-                                setDraft(readTypedHex(pickerRef.current, draft?.alpha));
+                                setDraft(readHexField(pickerRef.current, draft?.alpha));
                             }
                         }}
                     >

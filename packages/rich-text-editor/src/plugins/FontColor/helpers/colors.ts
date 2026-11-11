@@ -10,22 +10,31 @@ export type FontColorValue = {
 /** A colour as the picker holds it: channels run from 0 to 255 and alpha from 0 to 1. */
 export type Rgba = { red: number; green: number; blue: number; alpha: number };
 
-type Bytes = [number, number, number, number];
-type ColorFunction = 'rgb' | 'hsl';
-type ColorArguments = { channels: string[]; alpha: string | undefined; syntax: 'comma' | 'space' };
+/** Full opacity, which the picker leaves out. */
+export const OPAQUE_ALPHA = 1;
+
+type RgbaBytes = [number, number, number, number];
+type ColorSyntax = 'comma' | 'space';
+type ColorArguments = { channels: string[]; alpha: string | undefined; syntax: ColorSyntax };
+
+const COLOR_FUNCTIONS = ['rgb', 'hsl'] as const;
+type ColorFunction = (typeof COLOR_FUNCTIONS)[number];
 
 const MAX_CHANNEL = 255;
 const FULL_TURN = 360;
 const WHITESPACE = /\s+/;
-const HUE_UNIT = /(deg|grad|rad|turn)$/;
 const NONE = 'none';
 /** CSS Color 4 hue units, in degrees per unit. */
-const HUE_UNIT_DEGREES: Record<'deg' | 'grad' | 'rad' | 'turn', number> = {
+const HUE_UNIT_DEGREES = {
     deg: 1,
     grad: 0.9,
     rad: 180 / Math.PI,
     turn: FULL_TURN,
 };
+type HueUnit = keyof typeof HUE_UNIT_DEGREES;
+const isHueUnit = (unit: string): unit is HueUnit => unit in HUE_UNIT_DEGREES;
+// Leftmost matching makes `grad` win over `rad`.
+const HUE_UNIT = new RegExp(`(${Object.keys(HUE_UNIT_DEGREES).join('|')})$`);
 const PRINTABLE_ASCII = /^[\t\n\f\r -~]*$/;
 const PERCENT = 100;
 
@@ -36,7 +45,8 @@ const HEX_FIELD_DIGITS = /^([\dA-Fa-f]{3}){1,2}$/;
 const LEADING_HASH = /^#/;
 
 const HEX_COLOR = /^#([\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/;
-const COLOR_FUNCTION = /^(rgb|hsl)a?\(([^()]*)\)$/;
+const COLOR_FUNCTION = new RegExp(`^(${COLOR_FUNCTIONS.join('|')})a?\\(([^()]*)\\)$`);
+const isColorFunction = (kind: string): kind is ColorFunction => COLOR_FUNCTIONS.some((known) => known === kind);
 const NUMBER = /^[+-]?(\d+(\.\d+)?|\.\d+)(e[+-]?\d+)?%?$/;
 
 const SHORT_ALPHA_DECIMALS = 100;
@@ -61,11 +71,7 @@ const readNumber = (part: string | undefined, full: number): number | undefined 
 };
 
 /** `readNumber`, where the space syntax also takes `none` as 0. */
-const readComponent = (
-    part: string | undefined,
-    full: number,
-    syntax: ColorArguments['syntax'],
-): number | undefined => {
+const readComponent = (part: string | undefined, full: number, syntax: ColorSyntax): number | undefined => {
     if (syntax === 'space' && part === NONE) {
         return 0;
     }
@@ -73,30 +79,26 @@ const readComponent = (
 };
 
 /** A hue in degrees: a plain number or one followed by a CSS hue unit, never a percentage. */
-const readHue = (part: string | undefined, syntax: ColorArguments['syntax']): number | undefined => {
+const readHue = (part: string | undefined, syntax: ColorSyntax): number | undefined => {
     if (part === undefined) {
         return undefined;
     }
     const unit = HUE_UNIT.exec(part)?.[1];
     let number = part;
-    let degrees = 1;
     if (unit !== undefined) {
         number = part.slice(0, -unit.length);
-        // `none` stands alone: with a unit it is no hue.
-        if (number === NONE) {
-            return undefined;
-        }
-        // HUE_UNIT only captures the units HUE_UNIT_DEGREES lists.
-        degrees = HUE_UNIT_DEGREES[unit as keyof typeof HUE_UNIT_DEGREES];
     }
     if (number.endsWith('%')) {
         return undefined;
     }
-    const value = readComponent(number, FULL_TURN, syntax);
+    if (unit === undefined || !isHueUnit(unit)) {
+        return readComponent(number, FULL_TURN, syntax);
+    }
+    const value = readNumber(number, FULL_TURN);
     if (value === undefined) {
         return undefined;
     }
-    return value * degrees;
+    return value * HUE_UNIT_DEGREES[unit];
 };
 
 /** CSS Color 4's `hsl()` in sRGB: hue in degrees, saturation and lightness from 0 to 1. */
@@ -130,7 +132,7 @@ const splitArguments = (args: string): ColorArguments | undefined => {
     return { channels: parts, alpha: alpha?.trim(), syntax: 'space' };
 };
 
-const readRgb = (parts: string[], syntax: ColorArguments['syntax'], alpha: number): Rgba | undefined => {
+const readRgb = (parts: string[], syntax: ColorSyntax, alpha: number): Rgba | undefined => {
     // The comma form takes three numbers or three percentages, not a mix.
     if (syntax === 'comma' && new Set(parts.map((part) => part.endsWith('%'))).size > 1) {
         return undefined;
@@ -147,7 +149,7 @@ const readRgb = (parts: string[], syntax: ColorArguments['syntax'], alpha: numbe
     };
 };
 
-const readHsl = (parts: string[], syntax: ColorArguments['syntax'], alpha: number): Rgba | undefined => {
+const readHsl = (parts: string[], syntax: ColorSyntax, alpha: number): Rgba | undefined => {
     const hue = readHue(parts[0], syntax);
     // Saturation and lightness are percentages; only the space form may drop the sign.
     if (syntax === 'comma' && !parts.slice(1).every((part) => part.endsWith('%'))) {
@@ -172,7 +174,7 @@ const readColorFunction = (kind: ColorFunction, args: string): Rgba | undefined 
         return undefined;
     }
     const { channels: parts, syntax } = split;
-    let alpha: number | undefined = 1;
+    let alpha: number | undefined = OPAQUE_ALPHA;
     if (split.alpha !== undefined) {
         alpha = readComponent(split.alpha, 1, syntax);
     }
@@ -199,7 +201,7 @@ const toShortestAlpha = (byte: number): number => {
 };
 
 /** Reads 6 or 8 lowercase hex digits as red, green, blue and alpha bytes; alpha is full with 6. */
-const readHexDigits = (digits: string): Bytes => {
+const readHexDigits = (digits: string): RgbaBytes => {
     const byte = (index: number): number => Number.parseInt(digits.slice(index * 2, index * 2 + 2), 16);
     let alpha = MAX_CHANNEL;
     if (digits.length === 8) {
@@ -209,7 +211,7 @@ const readHexDigits = (digits: string): Bytes => {
 };
 
 /** Writes `#rrggbb`, with the alpha pair only while it is not full. */
-const toHex = (bytes: Bytes): string => {
+const toHex = (bytes: RgbaBytes): string => {
     const [red, green, blue, alpha] = bytes;
     const pairs = [red, green, blue];
     if (alpha !== MAX_CHANNEL) {
@@ -259,8 +261,10 @@ export const toStoredColor = (css: unknown): string | undefined => {
     if (kind === undefined || args === undefined) {
         return undefined;
     }
-    // COLOR_FUNCTION only captures rgb or hsl.
-    const color = readColorFunction(kind as ColorFunction, args);
+    if (!isColorFunction(kind)) {
+        return undefined;
+    }
+    const color = readColorFunction(kind, args);
     if (color === undefined) {
         return undefined;
     }
@@ -291,7 +295,7 @@ export const decodeStoredColor = (stored: string): Rgba => {
  * ```
  */
 export const encodeStoredColor = ({ red, green, blue, alpha }: Rgba): string => {
-    const bytes: Bytes = [
+    const bytes: RgbaBytes = [
         Math.round(clamp(red, MAX_CHANNEL)),
         Math.round(clamp(green, MAX_CHANNEL)),
         Math.round(clamp(blue, MAX_CHANNEL)),
@@ -310,7 +314,7 @@ export const encodeStoredColor = ({ red, green, blue, alpha }: Rgba): string => 
  */
 export const toColorName = (color: Rgba): string => {
     let name = encodeStoredColor({ ...color, alpha: 1 }).toUpperCase();
-    if (color.alpha < 1) {
+    if (color.alpha < OPAQUE_ALPHA) {
         name += ` ${Math.round(color.alpha * PERCENT)}%`;
     }
     return name;
@@ -338,7 +342,7 @@ export const parseTypedHex = (text: string | undefined, alpha: number | undefine
     if (stored === undefined) {
         return undefined;
     }
-    return { ...decodeStoredColor(stored), alpha: alpha ?? 1 };
+    return { ...decodeStoredColor(stored), alpha: alpha ?? OPAQUE_ALPHA };
 };
 
 /**
