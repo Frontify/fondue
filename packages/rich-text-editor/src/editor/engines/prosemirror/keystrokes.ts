@@ -355,10 +355,34 @@ const textPattern = (match: string | RegExp, suffix: string): RegExp => {
 };
 
 /**
- * `$1` in a rule's `replace` stands for the first group of its pattern.
+ * How many capturing groups a pattern has, read from a match of an empty alternative, which always matches.
  */
-const withGroups = (replace: string, found: RegExpMatchArray): string =>
-    replace.replaceAll(GROUP_REFERENCE, (_, group: string) => found[Number(group)] ?? '');
+const groupCount = (pattern: RegExp): number => {
+    const empty = new RegExp(`${pattern.source}|`, withoutStateFlags(pattern)).exec('');
+    if (empty === null) {
+        throw new Error(`Text rule ${String(pattern)} could not be read.`);
+    }
+    return empty.length - 1;
+};
+
+/**
+ * A rule's replacement for what it found. `$1` stands for the first group of a pattern; a string
+ * `match` has none, so its `replace` is taken as written. A reference to a group the pattern does
+ * not have throws when the editor is built, not at the keystroke.
+ */
+const replacementOf = ({ match, replace }: RuleOfKind<'text'>): ((found: RegExpMatchArray) => string) => {
+    if (typeof match === 'string') {
+        return () => replace;
+    }
+    const groups = groupCount(match);
+    for (const [reference, group] of replace.matchAll(GROUP_REFERENCE)) {
+        if (Number(group) > groups) {
+            throw new Error(`Text rule ${String(match)} replaces with "${reference}", but has ${groups} group(s).`);
+        }
+    }
+    // A group that took no part in the match stands for nothing, as in `String.prototype.replace`.
+    return (found) => replace.replaceAll(GROUP_REFERENCE, (_, group: string) => found[Number(group)] ?? '');
+};
 
 /**
  * The marks typing carries at the caret.
@@ -382,15 +406,11 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
     if (rule.waitForRunEnd) {
         return runEndTextRule(rule, context);
     }
-    const { match, replace } = rule;
-    const pattern = textPattern(match, AT_CARET);
+    const replacement = replacementOf(rule);
+    const pattern = textPattern(rule.match, AT_CARET);
     // `start` to `end` is the part of the match in the document: replacing it swaps all of it, typed character or not.
     const handler: RuleHandler = (state, found, start, end) =>
-        state.tr.replaceWith(
-            start,
-            end,
-            state.schema.text(withGroups(replace, found), replacedMarks(state, start, end)),
-        );
+        state.tr.replaceWith(start, end, state.schema.text(replacement(found), replacedMarks(state, start, end)));
     return toInputRule({ pattern, handler: unlessRangeHasExcludedMark(context.excludedMarks, handler) }, context);
 };
 
@@ -404,8 +424,8 @@ const RUN_END = /[\s,;:!?)\]}…]/;
  * `--` becomes a dash once a character that ends the run is typed, which stays.
  */
 const runEndTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
-    const { match, replace } = rule;
-    const pattern = textPattern(match, ONE_CHARACTER_BEFORE_CARET);
+    const replacement = replacementOf(rule);
+    const pattern = textPattern(rule.match, ONE_CHARACTER_BEFORE_CARET);
     const handler: RuleHandler = (state, found, start, end) => {
         const typed = found[0].slice(-1);
         if (!RUN_END.test(typed)) {
@@ -415,11 +435,11 @@ const runEndTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRu
         const replaced = replacedMarks(state, start, runEnd);
         // After a composition the ending character is already in the document: only the run before it is replaced.
         if (state.selection.empty && runEnd + typed.length === end) {
-            return state.tr.replaceWith(start, runEnd, state.schema.text(withGroups(replace, found), replaced));
+            return state.tr.replaceWith(start, runEnd, state.schema.text(replacement(found), replaced));
         }
         // While typing the ending character is still to come, and it carries the marks typing carries.
         return state.tr.replaceWith(start, end, [
-            state.schema.text(withGroups(replace, found), replaced),
+            state.schema.text(replacement(found), replaced),
             state.schema.text(typed, typingMarks(state)),
         ]);
     };

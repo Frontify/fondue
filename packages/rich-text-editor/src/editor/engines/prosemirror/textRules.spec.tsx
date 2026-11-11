@@ -79,6 +79,21 @@ describe('a text rule', () => {
         expect(editor.stored()).toEqual([paragraph(text('x→', { bold: true }))]);
     });
 
+    it("puts a group of its pattern where `replace` says $1, and takes a string match's `replace` as written", () => {
+        expect(typed('a 3x4', [rulesPlugin({ kind: 'text', match: /(\d)x(\d)/, replace: '$1×$2' })])).toEqual([
+            paragraph(text('a 3×4')),
+        ]);
+        expect(typed('a ->', [rulesPlugin({ kind: 'text', match: '->', replace: '$1 off' })])).toEqual([
+            paragraph(text('a $1 off')),
+        ]);
+    });
+
+    it('throws when `replace` refers to a group its pattern does not have', () => {
+        expect(() => editorWith([rulesPlugin({ kind: 'text', match: /(a)b/, replace: '$2' })], [paragraph()])).toThrow(
+            /has 1 group/,
+        );
+    });
+
     it('steps aside inside a mark that opts out of typing rules', () => {
         const editor = editorWith(
             [...shipped('code'), rulesPlugin({ kind: 'text', match: '->', replace: '→' })],
