@@ -512,6 +512,14 @@ describe('pasting from other applications', () => {
 
             expect(nodesOf(doc)[0]?.start).toBeUndefined();
         });
+
+        it('stores no start past the 32-bit range browsers draw, and keeps the largest one inside it', () => {
+            const doc = pasted(
+                '<ol start="2147483648"><li>Past</li></ol><p>Between</p><ol start="2147483647"><li>Last</li></ol>',
+            );
+
+            expect(nodesOf(doc).map((block) => block.start)).toEqual([undefined, undefined, 2147483647]);
+        });
     });
 
     describe('list data in the class rule of a Word list style', () => {
