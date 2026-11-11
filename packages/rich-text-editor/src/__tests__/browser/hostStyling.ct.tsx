@@ -208,6 +208,7 @@ const LOOKED_TEXTS: Record<LookedBlock, string> = {
     heading1: 'Heading 1',
 };
 
+// `Object.keys` widens to string; the keys are the record's `LookedBlock`s.
 const LOOKED_BLOCKS = Object.keys(LOOKED_TEXTS) as LookedBlock[];
 
 const SURFACES = ['renderer', 'editor'] as const;

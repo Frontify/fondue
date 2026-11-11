@@ -1,6 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineContent, defineMark, definePlugin, type HotkeyHandler, lookProperties, type TextLook } from '#/core';
+import {
+    defineContent,
+    defineMark,
+    definePlugin,
+    type HotkeyHandler,
+    type HtmlAttributes,
+    lookProperties,
+    type TextLook,
+} from '#/core';
 
 import { isLinkablePaste, isSafeHref, toHref, WEB_ADDRESS } from '../shared/helpers/href';
 
@@ -52,17 +60,18 @@ const linkMark = defineMark<LinkValue>({
     toHtml: (value) => {
         // A stored document may hold anything here (`{}`, `true`), so
         // nothing about its shape is taken on trust.
-        const link = typeof value === 'object' ? (value as Partial<LinkValue> | null) : null;
+        let link: Partial<LinkValue> | null = null;
+        if (typeof value === 'object') {
+            link = value as Partial<LinkValue> | null;
+        }
         const href = link?.href;
-        return {
-            tag: 'a',
-            attrs: {
-                ...(isSafeHref(href) ? { href } : {}),
-                class: styles.link,
-                ...newTabAttrs(link),
-            },
-            children: true,
-        };
+        const attrs: HtmlAttributes = {};
+        if (isSafeHref(href)) {
+            attrs.href = href;
+        }
+        attrs.class = styles.link;
+        Object.assign(attrs, newTabAttrs(link));
+        return { tag: 'a', attrs, children: true };
     },
 
     parse: [
@@ -70,12 +79,14 @@ const linkMark = defineMark<LinkValue>({
             tag: 'a[href]',
             value: (element) => {
                 const href = element.getAttribute('href') ?? '';
-                return isSafeHref(href)
-                    ? {
-                          href,
-                          ...(element.getAttribute('target') === '_blank' ? { openInNewTab: true as const } : {}),
-                      }
-                    : null;
+                if (!isSafeHref(href)) {
+                    return null;
+                }
+                const value: LinkValue = { href };
+                if (element.getAttribute('target') === '_blank') {
+                    value.openInNewTab = true;
+                }
+                return value;
             },
         },
     ],

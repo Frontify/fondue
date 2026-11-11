@@ -119,9 +119,9 @@ export { defaultEmojis, emojiPlugin } from './plugins/Emoji';
 export { fontColorContent, fontColorPlugin } from './plugins/FontColor';
 export { italicContent, italicPlugin } from './plugins/Italic';
 export { linkContent, linkPlugin } from './plugins/Link';
-export { paragraphContent, paragraphPlugin } from './plugins/Paragraph';
 export { bulletListContent, bulletListPlugin, numberedListContent, numberedListPlugin } from './plugins/List';
 export { mentionContent, mentionPlugin } from './plugins/Mention';
+export { paragraphContent, paragraphPlugin } from './plugins/Paragraph';
 export { quoteContent, quotePlugin } from './plugins/Quote';
 export { resetFormattingPlugin } from './plugins/ResetFormatting';
 export { softBreakContent, softBreakPlugin } from './plugins/SoftBreak';
@@ -136,6 +136,7 @@ export { underlineContent, underlinePlugin } from './plugins/Underline';
 
 export { type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './plugins/Emoji';
+export { type LinkLook, type LinkPluginOptions } from './plugins/Link';
 export {
     type MentionContentOptions,
     type MentionItem,
@@ -144,7 +145,6 @@ export {
 } from './plugins/Mention';
 export { type ParagraphPluginOptions } from './plugins/Paragraph';
 export { type QuotePluginOptions } from './plugins/Quote';
-export { type LinkLook, type LinkPluginOptions } from './plugins/Link';
 export { type TextLook } from './core';
 export { type TextStyleName, type TextStylePluginOptions } from './plugins/TextStyle';
 
