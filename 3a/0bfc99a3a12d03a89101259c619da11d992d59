@@ -1,0 +1,20 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteOffice.ts
+  s_e090dd636f75c9::t_22de3a3c14e9eb 17-18
+  s_e090dd636f75c9::t_f241cc53f2f326 139-140
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3a0bfc99a3a12d03a89101259c619da11d992d59",
+  "prompts": {},
+  "sessions": {
+    "s_e090dd636f75c9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c7d6ea89-316e-49b8-b097-cf331faa9e19",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
