@@ -55,7 +55,7 @@ export const trimTrailingPunctuation = (address: string): string => {
 const INLINE_ELEMENT = '￼';
 
 /** What may come right before a token: whitespace, an inline element, or an opening bracket or quote. Brackets are escaped so a rule with the `v` flag still compiles. */
-const TOKEN_OPENERS = `\\s${INLINE_ELEMENT}\\(\\[\\{<'"“‘`;
+const TOKEN_OPENERS = String.raw`\s${INLINE_ELEMENT}\(\[\{<'"“‘`;
 
 /** How much text before the caret a rule reads, as the engine's input rules do. */
 const MAX_MATCH = 500;
@@ -83,7 +83,7 @@ const markPatternMatcher = (rule: RuleOfKind<'markPattern'>, context: RuleContex
     }
     const flags = withoutStateFlags(rule.pattern);
     const token = new RegExp(`^(?:${rule.pattern.source})$`, flags);
-    const pattern = new RegExp(`(?:^|[${TOKEN_OPENERS}])((?:${rule.pattern.source}))\\s$`, flags);
+    const pattern = new RegExp(String.raw`(?:^|[${TOKEN_OPENERS}])((?:${rule.pattern.source}))\s$`, flags);
 
     const find = (state: EditorState, match: RegExpMatchArray, start: number): MarkRange | null => {
         // A token pattern may match across an inline element: only what follows the last one counts.

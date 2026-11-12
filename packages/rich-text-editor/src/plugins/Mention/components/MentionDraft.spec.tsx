@@ -303,12 +303,12 @@ describe('a mention being searched for', () => {
         // Cleared while asking again, so the same failure is announced again.
         expect(status()).toBe('');
         await settle();
-        expect(lookup.mock.calls.length).toBe(callsBefore + 1);
+        expect(lookup.mock.calls).toHaveLength(callsBefore + 1);
         expect(status()).toBe('Could not load people. Press Enter to retry.');
 
         press('Enter');
         await settle();
-        expect(lookup.mock.calls.length).toBe(callsBefore + 2);
+        expect(lookup.mock.calls).toHaveLength(callsBefore + 2);
         expect(window.document.activeElement).toBe(input);
     });
 
@@ -327,7 +327,7 @@ describe('a mention being searched for', () => {
         await settle();
 
         expect(event.defaultPrevented).toBe(true);
-        expect(lookup.mock.calls.length).toBe(callsBefore + 1);
+        expect(lookup.mock.calls).toHaveLength(callsBefore + 1);
         expect(onCancel).not.toHaveBeenCalled();
     });
 
