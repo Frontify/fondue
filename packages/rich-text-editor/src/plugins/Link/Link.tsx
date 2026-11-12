@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineContent, defineMark, definePlugin, type HotkeyHandler } from '#/core';
+import { type DefaultStyle, defineContent, defineMark, definePlugin, type HotkeyHandler } from '#/core';
 
+import { withoutDecorationLine } from '../shared/helpers/declaredStyle';
 import { isLinkablePaste, isSafeHref, toHref, WEB_ADDRESS } from '../shared/helpers/href';
 
 import { LinkEditor } from './components/LinkEditor';
@@ -20,6 +21,13 @@ export type LinkMark = {
 
 const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string, string> =>
     link?.openInNewTab === true ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+
+const withoutUnderline = (value: string): string => withoutDecorationLine(value, 'underline');
+
+const LINK_DEFAULT_STYLES: readonly DefaultStyle[] = [
+    { property: 'text-decoration', scope: 'inside', strip: withoutUnderline },
+    { property: 'text-decoration-line', scope: 'inside', strip: withoutUnderline },
+];
 
 /**
  * Links as a mark on text, written as `<a href>`.
@@ -52,6 +60,9 @@ export const linkContent = defineContent({
                     children: true,
                 };
             },
+
+            // A pasted span inside a link, such as Google Docs writes, repeats the underline the link already shows.
+            defaultStyles: LINK_DEFAULT_STYLES,
 
             parse: [
                 {

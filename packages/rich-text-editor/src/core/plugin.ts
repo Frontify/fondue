@@ -275,6 +275,8 @@ export const defineBlock = <TValue extends object = Record<string, never>>(
 export type BlockDefinition<TValue = Record<string, unknown>> = {
     content?: ContentModel;
     defaults?: TValue;
+    /** Styles the block's own tags show by default, which pasted HTML repeats without meaning them as formatting. */
+    defaultStyles?: readonly DefaultStyle[];
     /** The block's markup. `children: true` is where its content goes. */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<Partial<TValue>>[];
@@ -326,12 +328,14 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
     nesting?: number;
     /** Text typed at the end of the mark carries it on. Defaults to true; a link says false. */
     inclusive?: boolean;
-    /** Mark types that cannot sit on the same text as this one: putting this mark on takes them off. Name each other in both marks, or the other mark cannot be put on this one's text. A type no mounted plugin registers is ignored. */
+    /** Mark types that cannot sit on the same text as this one: putting either mark on takes the other off. Naming it in one mark is enough. A type no mounted plugin registers is ignored. */
     excludes?: readonly string[];
     /** Typing rules do not rewrite text carrying this mark — inline code keeps `--` and `**` as typed. Defaults to false. */
     excludesInputRules?: boolean;
     /** What the mark carries when put on without a value (a toggle, a parse rule). Defaults to `{}`. */
     defaults?: TValue;
+    /** Styles the mark's own tags show by default, which pasted HTML repeats without meaning them as formatting. */
+    defaultStyles?: readonly DefaultStyle[];
     /** The mark's markup around its text, which goes where `children: true` is. */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly MarkParseRule<TValue>[];
@@ -361,6 +365,30 @@ export type InlineDefinition<TValue = Record<string, unknown>> = {
         /** Readonly view in place of `toHtml`. */
         component?: ComponentType<{ value: TValue }>;
     };
+};
+
+/**
+ * Where a default style is declared: on the element that shows it, or on anything inside it.
+ */
+export type DefaultStyleScope = 'self' | 'inside';
+
+/**
+ * A style a node's own tags show by default is not formatting where pasted HTML repeats it: a link's underline written on a span inside it.
+ * Mark rules that read `property` see the value with `strip` applied, and nothing when it strips to empty.
+ */
+export type DefaultStyle = {
+    /**
+     * A CSS property name: `text-decoration`.
+     */
+    property: string;
+    /**
+     * `'self'` strips on the node's own tags; `'inside'` also on elements inside them.
+     */
+    scope: DefaultStyleScope;
+    /**
+     * Takes the declared value and returns it without what the node already shows.
+     */
+    strip: (cssValue: string) => string;
 };
 
 /**

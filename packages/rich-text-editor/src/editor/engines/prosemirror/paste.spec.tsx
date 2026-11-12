@@ -4,7 +4,7 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { definePlugin, type PasteHandler, type RtePlugin } from '#/core';
+import { defineContent, defineMark, definePlugin, type PasteHandler, type RtePlugin } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
@@ -184,6 +184,34 @@ describe('pasting formatted text', () => {
         ['<h3><span style="font-weight:650">x</span></h3>', 'heading3'],
     ])('keeps the bold an author set on heading text: %s', (html, style) => {
         expect(pasted(html)).toEqual([{ type: 'textStyle', style, children: [text('x', { bold: true })] }]);
+    });
+
+    it('keeps the underline inside a link where no link plugin is mounted', () => {
+        const editor = editorWith(shipped('underline'), [paragraph()]);
+
+        editor.pasteHTML('<p><a href="https://example.com"><span style="text-decoration:underline">x</span></a></p>');
+
+        expect(editor.stored()).toEqual([paragraph(text('x', { underline: true }))]);
+    });
+
+    it('strips the default styles a host mark declares from its own tags', () => {
+        const stripBold = (value: string) => (value === 'bold' ? '' : value);
+        const host = definePlugin({
+            id: 'host-highlight',
+            content: defineContent({
+                marks: {
+                    highlight: defineMark({
+                        tag: 'mark',
+                        defaultStyles: [{ property: 'font-weight', scope: 'self', strip: stripBold }],
+                    }),
+                },
+            }),
+        });
+        const editor = editorWith([...shipped('bold'), host], [paragraph()]);
+
+        editor.pasteHTML('<p><mark style="font-weight:bold">x</mark><span style="font-weight:bold">y</span></p>');
+
+        expect(editor.stored()).toEqual([paragraph(text('x', { highlight: true }), text('y', { bold: true }))]);
     });
 
     it('keeps only the inner of subscript and superscript', () => {

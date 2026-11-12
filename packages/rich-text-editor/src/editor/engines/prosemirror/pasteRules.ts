@@ -9,9 +9,11 @@ import {
 import {
     type BlockAttributeDefinition,
     type BlockDefinition,
+    type DefaultStyle,
     type MarkClearRule,
     type MarkParseRule,
     type ParseRule,
+    type PluginRegistry,
     type StyleParseRule,
 } from '#/core';
 
@@ -57,26 +59,13 @@ export const valueParseRules = (rules: readonly ParseRule<unknown>[], priority: 
     rules.map((rule) => valueParseRule(rule, priority));
 
 /**
- * Where a default style is declared: on the element that shows it, or on anything inside it.
+ * A mounted node's default style, with the selector of the tags that show it: the node's own parse tags.
  */
-type DefaultStyleScope = 'self' | 'inside';
-
-/**
- * A style an element shows by default is not formatting where it repeats that default:
- * Google Docs underlines a link's text in a span, and a pasted `<style>` rule bolds a LibreOffice heading.
- * `strip` removes what the element already shows from the declared value.
- */
-type DefaultStyle = {
-    property: string;
-    /**
-     * The elements that show the style by default.
-     */
+export type DefaultStyleRule = DefaultStyle & {
     within: string;
-    scope: DefaultStyleScope;
-    strip: RegExp;
 };
 
-const showsDefault = (element: HTMLElement, defaults: DefaultStyle): boolean => {
+const showsDefault = (element: HTMLElement, defaults: DefaultStyleRule): boolean => {
     switch (defaults.scope) {
         case 'self':
             return element.matches(defaults.within);
@@ -85,33 +74,45 @@ const showsDefault = (element: HTMLElement, defaults: DefaultStyle): boolean => 
     }
 };
 
-/**
- * The `underline` keyword in a decoration value.
- */
-const UNDERLINE_WORD = /\bunderline\b/gi;
-
-/**
- * A whole `font-weight` value of 600 or more.
- */
-const BOLD_WEIGHT_VALUE = /^\s*(?:bold|bolder|[6-9]\d\d(?:\.\d+)?|1000)\s*$/i;
-
-/**
- * What an element already shows by default: a link's underline, a heading's bold. Bold on text inside a heading is the author's, as Google Docs writes it.
- */
-const DEFAULT_STYLES: readonly DefaultStyle[] = [
-    { property: 'text-decoration', within: 'a[href]', scope: 'inside', strip: UNDERLINE_WORD },
-    { property: 'text-decoration-line', within: 'a[href]', scope: 'inside', strip: UNDERLINE_WORD },
-    { property: 'font-weight', within: 'h1, h2, h3, h4, h5, h6, th', scope: 'self', strip: BOLD_WEIGHT_VALUE },
-];
-
-const declaredValue = (element: HTMLElement, property: string): string => {
+const declaredValue = (element: HTMLElement, property: string, defaultStyles: readonly DefaultStyleRule[]): string => {
     let value = element.style.getPropertyValue(property);
-    for (const defaults of DEFAULT_STYLES) {
+    for (const defaults of defaultStyles) {
         if (defaults.property === property && showsDefault(element, defaults)) {
-            value = value.replace(defaults.strip, '');
+            value = defaults.strip(value);
         }
     }
     return value;
+};
+
+/**
+ * A parse rule seen only by the tag it matches; style and clear rules have none.
+ */
+type TagOfRule = {
+    tag?: string;
+};
+
+/**
+ * The tags a node's parse rules read, as one selector; empty when it reads none.
+ */
+const ownSelector = (rules: readonly TagOfRule[]): string =>
+    rules.flatMap((rule) => (rule.tag === undefined ? [] : [rule.tag])).join(', ');
+
+/**
+ * What each mounted mark and block shows by default, matched against its own tags.
+ * A node whose plugin is not mounted strips nothing.
+ */
+export const defaultStyleRules = (registry: PluginRegistry): DefaultStyleRule[] => {
+    const rules: DefaultStyleRule[] = [];
+    for (const node of [...registry.marks.values(), ...registry.blocks.values()]) {
+        const within = ownSelector(node.parse);
+        if (within === '') {
+            continue;
+        }
+        for (const style of node.defaultStyles ?? []) {
+            rules.push({ ...style, within });
+        }
+    }
+    return rules;
 };
 
 /**
@@ -123,13 +124,13 @@ const STYLED_ELEMENT = '[style]';
  * ProseMirror style rules only see the CSS value, not the element, so a style rule
  * is a tag rule on any styled element that reads the declared value itself.
  */
-const markStyleRule = (rule: StyleParseRule<unknown>): TagParseRule => ({
+const markStyleRule = (rule: StyleParseRule<unknown>, defaultStyles: readonly DefaultStyleRule[]): TagParseRule => ({
     tag: STYLED_ELEMENT,
     priority: STYLE_PRIORITY,
     // One declaration, such as `text-decoration: underline line-through`, can set two marks.
     consuming: false,
     getAttrs: (element: HTMLElement) => {
-        const cssValue = declaredValue(element, rule.style);
+        const cssValue = declaredValue(element, rule.style, defaultStyles);
         if (cssValue.trim() === '') {
             return false;
         }
@@ -154,8 +155,13 @@ const markClearRule = (type: string, rule: MarkClearRule): PmStyleParseRule => (
 /**
  * A mark's rules: tag and style rules put it on with its value, clear rules take it off the element's content.
  * @param type - the mark's name in the schema
+ * @param defaultStyles - what mounted nodes show by default, stripped from the values style rules read
  */
-export const markParseRules = (type: string, rules: readonly MarkParseRule<unknown>[]): PmParseRule[] =>
+export const markParseRules = (
+    type: string,
+    rules: readonly MarkParseRule<unknown>[],
+    defaultStyles: readonly DefaultStyleRule[],
+): PmParseRule[] =>
     rules.map((rule) => {
         if (rule.style !== undefined && !CSS_PROPERTY.test(rule.style)) {
             throw new Error(
@@ -168,7 +174,7 @@ export const markParseRules = (type: string, rules: readonly MarkParseRule<unkno
         if (rule.style === undefined) {
             return valueParseRule(rule, MARK_PRIORITY);
         }
-        return markStyleRule(rule);
+        return markStyleRule(rule, defaultStyles);
     });
 
 /**
