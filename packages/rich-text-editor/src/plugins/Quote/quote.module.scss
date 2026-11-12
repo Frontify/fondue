@@ -1,8 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../shared/mutedText' as shared;
+
 .quote {
+    @include shared.muted-text;
+
     margin: 0;
     padding-left: var(--spacing-small);
     border-left: var(--border-width-large) solid var(--color-line-strong);
-    color: var(--color-secondary-default);
 }
