@@ -361,7 +361,7 @@ const AT_CARET = '$';
 /**
  * Matches one character before the caret, the one that was just typed.
  */
-const ONE_CHARACTER_BEFORE_CARET = `[\\s\\S]${AT_CARET}`;
+const ONE_CHARACTER_BEFORE_CARET = String.raw`[\s\S]${AT_CARET}`;
 
 /**
  * Matches a `$1`-style reference to a group of the rule's pattern. Not `$0`: a rule that waits for
