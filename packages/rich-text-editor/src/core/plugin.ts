@@ -275,6 +275,12 @@ export const defineBlock = <TValue extends object = Record<string, never>>(
 export type BlockDefinition<TValue = Record<string, unknown>> = {
     content?: ContentModel;
     defaults?: TValue;
+    /**
+     * Whether the block's own stylesheet writes its margins. The document then leaves them alone;
+     * otherwise it gives the block the gap between blocks.
+     * @default false
+     */
+    ownsMargins?: boolean;
     /** The block's markup. `children: true` is where its content goes. */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<Partial<TValue>>[];

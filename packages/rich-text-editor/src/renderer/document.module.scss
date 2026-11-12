@@ -56,9 +56,10 @@ $headings: h1, h2, h3, h4;
         --rte-heading-gap: 0;
     }
 
-    // Margins only for blocks no text style owns: a text style reads the gaps itself, so a host margin is never trimmed.
+    // Margins only for blocks that do not own theirs (`ownsMargins`): such a block reads the gaps itself,
+    // so a host margin is never trimmed.
     :is(ul, ol, blockquote),
-    p:not([data-text-style]) {
+    p:not([data-rte-own-margins]) {
         margin-block: 0 var(--rte-block-gap);
     }
 
