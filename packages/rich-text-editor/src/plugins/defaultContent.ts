@@ -33,7 +33,7 @@ export const defaultContent: readonly RteContent[] = Object.freeze([
     subscriptContent,
     superscriptContent,
     fontColorContent,
-    /* @__PURE__ */ linkContent(),
+    linkContent(),
     alignContent,
     bulletListContent,
     numberedListContent,
