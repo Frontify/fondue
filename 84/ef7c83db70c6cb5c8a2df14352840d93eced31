@@ -1,0 +1,78 @@
+packages/fondue/src/components/Badge/helpers.ts
+  s_e41515cdd260ef::t_ddb447324606f5 96-101
+packages/components/src/components/Badge/utils.ts
+  s_e41515cdd260ef::t_90bdd718da9779 9
+packages/rte/src/utilities/merge.ts
+  s_e41515cdd260ef::t_90bdd718da9779 8
+packages/charts/src/components/LineChart/helpers/createBackfilledSeries.ts
+  s_e41515cdd260ef::t_ddb447324606f5 71
+packages/components/src/components/Select/utils.ts
+  s_e41515cdd260ef::t_90bdd718da9779 18,55,75
+  s_e41515cdd260ef::t_827a16fa1e5288 57,77
+  s_e41515cdd260ef::t_92efd34872b95e 78
+  s_e41515cdd260ef::t_f47a1899e11da5 19,56,76
+  s_e41515cdd260ef::t_f085cbe00c78fe 79
+packages/rte/src/components/Flyout/hooks/useContainScroll.ts
+  s_e41515cdd260ef::t_ddb447324606f5 18
+packages/fondue/src/utilities/merge.ts
+  s_e41515cdd260ef::t_90bdd718da9779 8
+packages/fondue/src/components/Tree/helpers/projection.ts
+  s_e41515cdd260ef::t_ddb447324606f5 53,62
+packages/charts/src/components/BarChart/components/Bars.tsx
+  s_e41515cdd260ef::t_ddb447324606f5 37
+packages/components/src/components/ColorPicker/utils.ts
+  s_e41515cdd260ef::t_f47a1899e11da5 121,147
+  s_e41515cdd260ef::t_90bdd718da9779 10,28,44,83,98,120,146
+  s_e41515cdd260ef::t_827a16fa1e5288 148
+packages/rte/src/components/Badge/helpers.ts
+  s_e41515cdd260ef::t_ddb447324606f5 84-89
+packages/components/src/hooks/useSyncRefs.ts
+  s_e41515cdd260ef::t_f47a1899e11da5 14
+  s_e41515cdd260ef::t_90bdd718da9779 13
+packages/fondue/tools/codemod/findDeprecatedImports.ts
+  s_e41515cdd260ef::t_ddb447324606f5 30
+packages/components/src/utilities/domUtilities.ts
+  s_e41515cdd260ef::t_90bdd718da9779 12,44,64
+  s_e41515cdd260ef::t_f47a1899e11da5 45,65
+packages/tokens/stories/components/Tokens/TokenCollectionOverview.tsx
+  s_e41515cdd260ef::t_ddb447324606f5 86-121
+packages/charts/src/components/Treemap/hooks/helpers/dataGroupingHelper.ts
+  s_e41515cdd260ef::t_ddb447324606f5 96-102
+packages/rte/cypress/support/component.ts
+  s_e41515cdd260ef::t_90bdd718da9779 13
+  s_e41515cdd260ef::t_f47a1899e11da5 14
+packages/fondue/src/components/Tree/helpers/getMovementAnnouncements.ts
+  s_e41515cdd260ef::t_ddb447324606f5 137-140
+packages/components/scripts/transforms.ts
+  s_e41515cdd260ef::t_90bdd718da9779 6,17,25
+packages/components/src/components/Select/hooks/useSelectData.tsx
+  s_e41515cdd260ef::t_90bdd718da9779 77,108
+  s_e41515cdd260ef::t_f47a1899e11da5 78,109
+  s_e41515cdd260ef::t_827a16fa1e5288 110
+storybook-docs/.storybook/main.ts
+  s_e41515cdd260ef::t_ddb447324606f5 23
+packages/charts/src/components/common/components/Tooltip/helpers/getFormattedTooltipDate.ts
+  s_e41515cdd260ef::t_ddb447324606f5 11
+packages/fondue/src/components/Tree/utils/removeFragmentsAndEnrichChildren.ts
+  s_e41515cdd260ef::t_827a16fa1e5288 35
+  s_e41515cdd260ef::t_f47a1899e11da5 15
+  s_e41515cdd260ef::t_90bdd718da9779 14
+packages/components/src/hooks/useTextTruncation.ts
+  s_e41515cdd260ef::t_90bdd718da9779 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "84ef7c83db70c6cb5c8a2df14352840d93eced31",
+  "prompts": {},
+  "sessions": {
+    "s_e41515cdd260ef": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bd45d470-3737-4e4f-a2da-3e89e7a865d0",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
