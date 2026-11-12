@@ -23,10 +23,6 @@ type ThemeProviderProps = {
      */
     dir?: 'ltr' | 'rtl';
     /**
-     * @deprecated Use `locale` instead.
-     */
-    translations?: LocaleConfig;
-    /**
      * Locale object to use for component strings.
      * Import from '@frontify/fondue/components/locales' or provide your own.
      * Must be a complete LocaleConfig object.
@@ -89,7 +85,7 @@ export const useFondueTheme = () => {
 
 export const ThemeProvider = forwardRef<HTMLDivElement, ThemeProviderProps>(
     (
-        { children, theme, dir, translations, locale, lang, className, asChild = false },
+        { children, theme, dir, locale, lang, className, asChild = false },
         forwardedRef: ForwardedRef<HTMLDivElement>,
     ) => {
         const Comp = asChild ? Slot : 'div';
@@ -100,11 +96,11 @@ export const ThemeProvider = forwardRef<HTMLDivElement, ThemeProviderProps>(
             () => ({
                 theme: theme ?? existingContext.theme,
                 dir: dir ?? existingContext.dir,
-                locale: locale ?? translations ?? existingContext.locale,
-                lang: lang ?? (locale ?? translations)?.lang ?? existingContext.lang,
+                locale: locale ?? existingContext.locale,
+                lang: lang ?? locale?.lang ?? existingContext.lang,
                 className: className ?? existingContext.className,
             }),
-            [dir, theme, locale, translations, lang, className, existingContext],
+            [dir, theme, locale, lang, className, existingContext],
         );
 
         return (
