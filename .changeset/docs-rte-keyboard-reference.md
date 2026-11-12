@@ -1,5 +1,5 @@
 ---
-"@frontify/fondue-rich-text-editor": patch
+"@frontify/fondue-rich-text-editor": minor
 ---
 
-docs(RichTextEditor): keyboard reference generated from the plugins
+feat(RichTextEditor): keyboard reference generated from the plugins; a hotkey that names an unknown modifier now throws when the editor mounts
