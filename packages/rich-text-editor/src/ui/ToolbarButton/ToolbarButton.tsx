@@ -10,8 +10,6 @@ import {
     useState,
 } from 'react';
 
-import { isApple } from '../platform';
-
 import styles from './toolbarButton.module.scss';
 
 type ToolbarButtonProps = {
@@ -32,6 +30,13 @@ type ToolbarButtonProps = {
     shortcut?: string;
     // Other props reach the button so it works as a `Flyout.Trigger`, whose injected handlers and `aria-expanded` must hit the DOM.
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'title' | 'children'>;
+
+/**
+ * The platform names of Apple systems, where `Mod` is the Command key
+ */
+const APPLE_PLATFORM = /Mac|iPhone|iPad/;
+
+const isApple = (): boolean => typeof navigator !== 'undefined' && APPLE_PLATFORM.test(navigator.platform);
 
 /**
  * `Mod-Shift-x` as `aria-keyshortcuts` spells it: `Meta+Shift+X` on Apple systems, `Control+Shift+X` elsewhere

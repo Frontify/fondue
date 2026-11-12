@@ -576,6 +576,22 @@ export type Paste = { text: string; html: string | null; source: PasteSource };
 export type PasteHandler = (paste: Paste, api: EditorControlApi) => boolean;
 
 /**
+ * How a `markPattern` token loses the end it does not own, such as the full stop of the sentence it ends.
+ */
+export type RteMarkPatternTrim = {
+    /**
+     * Characters dropped from the end of the token, one run after another.
+     * The engine anchors it to the end of the token.
+     */
+    punctuation: RegExp;
+    /**
+     * Each closing bracket a token may end in, and the opening one it closes.
+     * A closing bracket is dropped only while the token holds no opening one left for it to close.
+     */
+    pairs: Readonly<Record<string, string>>;
+};
+
+/**
  * A text pattern rewritten while typing. Declared, not implemented: the editor
  * does the matching, so a plugin only says what to look for.
  */
@@ -598,6 +614,11 @@ export type RteInputRule =
           pattern: RegExp;
           mark: string;
           value: (match: string) => Record<string, unknown> | null;
+          /**
+           * What the token's end may hold that is not part of it, so it stays outside the mark.
+           * @default no trimming: the token ends where `pattern` says
+           */
+          trim?: RteMarkPatternTrim;
       }
     /**
      * Text swapped for other text the moment its last character is typed, no

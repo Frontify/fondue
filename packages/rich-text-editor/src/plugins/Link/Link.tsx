@@ -4,7 +4,7 @@ import { type ComponentType, type ReactNode } from 'react';
 
 import { defineContent, defineMark, definePlugin, type HotkeyHandler } from '#/core';
 
-import { isLinkablePaste, LINKABLE_ADDRESS, toHref } from '../shared/helpers/href';
+import { isLinkablePaste, LINKABLE_ADDRESS, LINKABLE_ADDRESS_TRIM, toHref } from '../shared/helpers/href';
 
 import { LinkEditor } from './components/LinkEditor';
 import { LinkToolbarButton } from './components/LinkToolbarButton';
@@ -236,6 +236,7 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) =>
                 kind: 'markPattern',
                 pattern: LINKABLE_ADDRESS,
                 mark: 'link',
+                trim: LINKABLE_ADDRESS_TRIM,
                 value: (href) => {
                     if (allowsHref(policy, href)) {
                         return { href };

@@ -22,6 +22,7 @@ export {
     type StoredMarkValue,
 } from './document';
 export { isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
+export { type HotkeyEvent, type HotkeyModifier, matchesHotkey, type ParsedHotkey, parseHotkey } from './hotkeys';
 export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
 export {
     type BlockAttributeDefinition,
@@ -51,6 +52,7 @@ export {
     type RteEditView,
     type RteIcon,
     type RteInputRule,
+    type RteMarkPatternTrim,
     type RtePlugin,
     type RtePluginDefinition,
     type RteToolbarEntry,
