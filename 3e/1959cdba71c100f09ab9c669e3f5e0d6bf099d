@@ -1,0 +1,21 @@
+.changeset/rich-text-editor-components-peer.md
+  s_e303d90a4d1a69::t_5058a660772895 1-4
+packages/rich-text-editor/package.json
+  s_e303d90a4d1a69::t_bf0047b50685d7 51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "3e1959cdba71c100f09ab9c669e3f5e0d6bf099d",
+  "prompts": {},
+  "sessions": {
+    "s_e303d90a4d1a69": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b95187bb-e9f1-45de-99f7-7bb025d6a241",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

@@ -1,0 +1,44 @@
+packages/components/src/components/Select/components/CollapsibleBadges.tsx
+  s_c7d5341c72bd65::t_58a3daa75a9ad2 29-30,93,175,192,200,207,214
+packages/components/src/components/Select/components/SelectBase.tsx
+  s_c7d5341c72bd65::t_58a3daa75a9ad2 251
+packages/components/src/components/Select/Select.stories.tsx
+  s_c7d5341c72bd65::t_b570333b43aabc 57
+  s_c7d5341c72bd65::t_d5f5d7c35b906e 44-56,58-60,84-88,115,117-122,131,147-152,158,178-183,189
+packages/components/src/components/Select/components/ComboboxBase.tsx
+  s_c7d5341c72bd65::t_58a3daa75a9ad2 322
+packages/components/src/components/Select/__tests__/CollapsibleBadges.spec.tsx
+  s_c7d5341c72bd65::t_7ae890baf9c812 100,102-108,110-120
+  s_c53f0609504eea::t_0358a4e632fdaa 16,22,30,42,52,58,66,74,82,101,109,122,129,135,149
+.changeset/better-things-learn.md
+  h_72595612499821 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "1ba4166cafcf628a32b412be17c2d568cfa93570",
+  "prompts": {},
+  "humans": {
+    "h_72595612499821": {
+      "author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_c53f0609504eea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bff45a6d-c8e2-4297-8d91-90a456a8e98f",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    },
+    "s_c7d5341c72bd65": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "efcb5144-074c-48fc-a620-0ec6120b255a",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    }
+  }
+}

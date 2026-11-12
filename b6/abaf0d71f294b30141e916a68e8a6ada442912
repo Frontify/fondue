@@ -1,0 +1,36 @@
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_015d03d51fa568::t_b4e08425e823b7 1190-1224,1226-1248
+  s_015d03d51fa568::t_6ba93691e5b39e 1225
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_015d03d51fa568::t_2ea933accf01c5 202
+  s_015d03d51fa568::t_d4b3d21684096f 137-140,144-151,155
+packages/rich-text-editor/src/editor/EditorErrorBoundary.tsx
+  s_015d03d51fa568::t_9968c3f1324b22 110
+  s_015d03d51fa568::t_9e11da0d211ad4 18-19,22
+  s_015d03d51fa568::t_56fcfbe4f7a079 29-30,32,36-43
+  s_077f0b4d19cf93::t_51a02c9313b282 23,44-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b6abaf0d71f294b30141e916a68e8a6ada442912",
+  "prompts": {},
+  "sessions": {
+    "s_015d03d51fa568": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "126ffac7-9421-429e-9451-6e8be2aba5c4",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_077f0b4d19cf93": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "81baae15-1e84-4323-914e-0492f2731224",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
