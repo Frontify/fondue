@@ -6,6 +6,7 @@ import { type DefaultStyle, defineContent, defineMark, definePlugin, type RteHot
 
 import { withoutDecorationLine } from '../shared/helpers/declaredStyle';
 import { isLinkablePaste, LINKABLE_ADDRESS, LINKABLE_ADDRESS_TRIM, toHref } from '../shared/helpers/href';
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
 
 import { LinkEditor } from './components/LinkEditor';
 import { LinkToolbarButton } from './components/LinkToolbarButton';
@@ -236,7 +237,7 @@ const HOTKEY: keyof typeof hotkeys = 'Mod-k';
 export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) =>
     /* @__PURE__ */ definePlugin({
         content: linkContent(policy),
-        toolbarGroup: 'link',
+        toolbarGroup: TOOLBAR_GROUPS.link,
         toolbar: [
             {
                 label: 'Link',

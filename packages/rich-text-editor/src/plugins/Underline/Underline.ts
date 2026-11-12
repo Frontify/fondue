@@ -5,6 +5,7 @@ import { IconTextFormatUnderline } from '@frontify/fondue-icons';
 import { defineContent, defineMark, definePlugin } from '#/core';
 
 import { decorationLineRules } from '../shared/helpers/declaredStyle';
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
 
 /**
  * The flag this plugin sets on text nodes
@@ -34,6 +35,6 @@ export const underlineContent = defineContent({
  */
 export const underlinePlugin = /* @__PURE__ */ definePlugin({
     content: underlineContent,
-    toolbarGroup: 'marks',
+    toolbarGroup: TOOLBAR_GROUPS.marks,
     toolbar: [{ label: 'Underline', icon: IconTextFormatUnderline, shortcut: 'Mod-u' }],
 });

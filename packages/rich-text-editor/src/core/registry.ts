@@ -32,6 +32,12 @@ import {
 } from './plugin';
 import { PARAGRAPH } from './vocabulary';
 
+/** The entries of one toolbar group, in mount order; `id` is undefined for the entries of plugins with no group. */
+export type ToolbarEntryGroup = {
+    id: string | undefined;
+    entries: readonly ToolbarEntry[];
+};
+
 /**
  * What a toolbar entry acts on: the type it toggles, by what that type is.
  */
@@ -57,7 +63,7 @@ export type ToolbarEntry = {
     own: OwnType;
     /** Where the floating bar puts it: the plugin's choice, else by what it owns. */
     floating: 'inline' | 'hidden';
-    /** The plugin's `toolbarGroup`; none puts it in the last group. */
+    /** The plugin's `toolbarGroup`; none puts it after every group. */
     group: RteToolbarGroup | undefined;
     label: string;
     shortcut?: string;
@@ -382,6 +388,9 @@ const editorShortcutRows = (): RteShortcut[] =>
         label,
     }));
 
+/** The first plugin to declare a toolbar group, and the order it gave it. */
+type ToolbarGroupOwner = { pluginId: string; order: number };
+
 /**
  * What `buildPluginRegistry` fills while it walks the plugins.
  */
@@ -397,6 +406,7 @@ type Draft = {
     pasteHandlers: PasteHandler[];
     pasteTransforms: Map<string, PasteTransform>;
     toolbarItems: ToolbarEntry[];
+    toolbarGroupOwners: Map<string, ToolbarGroupOwner>;
     commands: RteBlockCommand[];
     commandOwners: Map<string, string>;
     descriptions: string[];
@@ -449,7 +459,37 @@ const addShortcut = (draft: Draft, plugin: RtePlugin, item: ToolbarEntry): void 
     draft.shortcuts.push({ owner: { kind: 'plugin', pluginId: plugin.id }, key: shortcut, label: item.label });
 };
 
+/**
+ * Throws unless the plugin's toolbar group has an id and a finite order, and agrees on that order with every plugin that shares the id. The order is what the toolbar draws by, so one group with two orders has no right place.
+ */
+const assertToolbarGroup = (draft: Draft, plugin: RtePlugin): void => {
+    const group = plugin.toolbarGroup;
+    if (group === undefined) {
+        return;
+    }
+    // Falsy covers an untyped declaration with no id, as well as an empty one.
+    if (!group.id) {
+        throw new TypeError(`Plugin "${plugin.id}" has a \`toolbarGroup\` with no \`id\`.`);
+    }
+    if (!Number.isFinite(group.order)) {
+        throw new TypeError(
+            `Plugin "${plugin.id}" has toolbar group "${group.id}" with an \`order\` that is not a finite number.`,
+        );
+    }
+    const first = draft.toolbarGroupOwners.get(group.id);
+    if (first === undefined) {
+        draft.toolbarGroupOwners.set(group.id, { pluginId: plugin.id, order: group.order });
+        return;
+    }
+    if (first.order !== group.order) {
+        throw new Error(
+            `Toolbar group "${group.id}" has order ${first.order} in plugin "${first.pluginId}" and order ${group.order} in plugin "${plugin.id}".`,
+        );
+    }
+};
+
 const addToolbarEntries = (draft: Draft, plugin: RtePlugin, pluginKey: string): void => {
+    assertToolbarGroup(draft, plugin);
     for (const [index, entry] of (plugin.toolbar ?? []).entries()) {
         let key = pluginKey;
         if (index > 0) {
@@ -525,6 +565,35 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
 };
 
 /**
+ * The entries by toolbar group in drawing order: lowest `order` first, entries in the order given inside their group.
+ * Groups with equal `order` keep the order their ids first appear in; entries of plugins with no group come last, together.
+ */
+export const toolbarGroupsOf = (entries: readonly ToolbarEntry[]): ToolbarEntryGroup[] => {
+    const grouped = new Map<string, { order: number; entries: ToolbarEntry[] }>();
+    const ungrouped: ToolbarEntry[] = [];
+    for (const entry of entries) {
+        const { group } = entry;
+        if (group === undefined) {
+            ungrouped.push(entry);
+            continue;
+        }
+        const drawn = grouped.get(group.id);
+        if (drawn === undefined) {
+            grouped.set(group.id, { order: group.order, entries: [entry] });
+        } else {
+            drawn.entries.push(entry);
+        }
+    }
+    // A stable sort: equal orders keep the order the ids were first seen in.
+    const ordered = [...grouped.entries()].sort(([, a], [, b]) => a.order - b.order);
+    const groups: ToolbarEntryGroup[] = ordered.map(([id, drawn]) => ({ id, entries: drawn.entries }));
+    if (ungrouped.length > 0) {
+        groups.push({ id: undefined, entries: ungrouped });
+    }
+    return groups;
+};
+
+/**
  * The content registry plus what the plugins add for editing.
  */
 export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]): PluginRegistry => {
@@ -538,6 +607,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         pasteHandlers: [],
         pasteTransforms: new Map(),
         toolbarItems: [],
+        toolbarGroupOwners: new Map(),
         commands: [],
         commandOwners: new Map(),
         descriptions: [],

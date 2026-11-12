@@ -83,7 +83,6 @@ export {
     type RtePlugin,
     type RtePluginDefinition,
     type RteToolbarEntry,
-    RTE_TOOLBAR_GROUPS,
     type RteToolbarGroup,
     type SelectedNode,
     type StyleParseRule,
@@ -102,7 +101,9 @@ export {
     type RteShortcut,
     type RteShortcutOwner,
     type ToolbarEntry,
+    type ToolbarEntryGroup,
     toggleOwn,
+    toolbarGroupsOf,
 } from './registry';
 export {
     decodeStoredColor,

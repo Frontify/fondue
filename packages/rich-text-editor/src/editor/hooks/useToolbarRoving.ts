@@ -10,6 +10,7 @@ import {
     useRef,
 } from 'react';
 
+import { keepSelectionExcept, TEXT_CONTROL } from '../helpers/keepSelection';
 import { SLOT_ATTRIBUTE } from '../helpers/toolbarMarkers';
 
 export type UseToolbarRovingParams = {
@@ -163,24 +164,11 @@ const slotOf = (element: HTMLElement | null): string | null => {
     return slot.getAttribute(SLOT_ATTRIBUTE);
 };
 
-/** A click on the toolbar that misses a control would move focus, and the selection with it. */
-const keepSelection = (event: MouseEvent<HTMLElement>): void => {
-    const { target } = event;
-    // An icon's SVG is an Element, not an HTMLElement, and a press on it still counts.
-    if (!(target instanceof Element)) {
-        return;
-    }
-    // A flyout's events arrive here through the component tree; they are not ours.
-    if (!event.currentTarget.contains(target)) {
-        return;
-    }
-    if (target.closest(PRESSABLE) === null) {
-        event.preventDefault();
-    }
-};
+/** What a press on the toolbar may land on without taking the selection: a button keeps it itself, a text control takes focus. */
+const PRESSABLE = `button, ${TEXT_CONTROL}`;
 
-/** What a press on the toolbar may land on without taking the selection: the controls handle it themselves. */
-const PRESSABLE = 'button, input, [role="combobox"]';
+/** A click on the toolbar that misses a control would move focus, and the selection with it. */
+const keepSelection = (event: MouseEvent<HTMLElement>): void => keepSelectionExcept(event, PRESSABLE);
 
 /** Every element in the toolbar a keyboard can land on. Disabled controls are passed over. */
 const CONTROLS = 'button, input, select, textarea, a[href], [role="combobox"]';

@@ -6,6 +6,8 @@ import { definePlugin, type EditorControlApi, PARAGRAPH, type RteHotkey, type To
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
+
 const RESET_LABEL = 'Reset formatting';
 const CLEAR_MARKS_LABEL = 'Clear inline formatting, keep links';
 const CLEARED_ANNOUNCEMENT = 'Formatting cleared';
@@ -54,7 +56,7 @@ const ResetFormattingButton = ({ api, label }: ToolbarItemProps) => {
  */
 export const resetFormattingPlugin = /* @__PURE__ */ definePlugin({
     id: 'reset-formatting',
-    toolbarGroup: 'marks',
+    toolbarGroup: TOOLBAR_GROUPS.marks,
     toolbar: [{ label: RESET_LABEL, render: ResetFormattingButton, floating: 'inline' }],
     hotkeys,
 });

@@ -2,6 +2,8 @@
 
 import { defineContent, defineMark, definePlugin, isSafeCssColor, isStoredColor, warnOnce } from '#/core';
 
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
+
 import { ColorFlyout } from './components/ColorFlyout';
 import { type FontColorValue, toExportedColor } from './helpers/colors';
 
@@ -72,6 +74,6 @@ export const fontColorContent = defineContent({
 export const fontColorPlugin = /* @__PURE__ */ definePlugin({
     id: 'font-color',
     content: fontColorContent,
-    toolbarGroup: 'color',
+    toolbarGroup: TOOLBAR_GROUPS.color,
     toolbar: [{ label: 'Text colour', render: ColorFlyout }],
 });

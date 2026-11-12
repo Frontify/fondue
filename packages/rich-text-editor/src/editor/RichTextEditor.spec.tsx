@@ -8,8 +8,6 @@ import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { type RteToolbarGroup } from '#/core';
-
 // Driven through the package's public API, the way a host does: the props are
 // the whole conversation between a host and a mounted editor.
 import {
@@ -29,8 +27,10 @@ import {
     type RtePlugin,
     serializeToHtml,
     textStylePlugin,
+    TOOLBAR_GROUPS,
 } from '../index';
 
+import { GROUP_ATTRIBUTE } from './helpers/toolbarMarkers';
 import { useFocusWithin } from './hooks/useFocusWithin';
 
 declare global {
@@ -38,6 +38,20 @@ declare global {
     var IS_REACT_ACT_ENVIRONMENT: boolean;
 }
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+
+const GROUP_SELECTOR = `[${GROUP_ATTRIBUTE}]`;
+
+/** The default toolbar's buttons by group, as drawn before groups were data: history, text, marks, colour, link, lists, align, insert. */
+const DEFAULT_TOOLBAR_LABELS: (string | null)[][] = [
+    ['Undo', 'Redo'],
+    ['Quote'],
+    ['Bold', 'Italic', 'Underline', 'Strikethrough', 'Code', 'Subscript', 'Superscript', 'Reset formatting'],
+    ['Text colour'],
+    ['Add link'],
+    ['Bulleted list', 'Numbered list', 'To-do list'],
+    ['Align left', 'Align center', 'Align right', 'Justify'],
+    ['Emoji'],
+];
 
 const paragraph = (text: string): RteDocument => ({
     version: 1,
@@ -1032,21 +1046,75 @@ describe('the toolbar', () => {
         expect(clickCount(container)).toBe('2');
     });
 
-    it('draws the control of a plugin with an unknown group last', () => {
-        // The test passes a group outside RteToolbarGroup on purpose.
-        const unknownGroupPlugin = definePlugin({
-            id: 'unknown-group',
-            toolbarGroup: 'not-a-group' as RteToolbarGroup,
-            toolbar: [{ label: 'Unknown', render: () => <span data-testid="unknown-group">unknown</span> }],
+    it('draws a plugin group between two built-in ones when its order lies between theirs', () => {
+        const customGroupPlugin = definePlugin({
+            id: 'custom-group',
+            toolbarGroup: { id: 'custom', order: TOOLBAR_GROUPS.link.order + 10 },
+            toolbar: [{ label: 'Custom', render: () => <span data-testid="custom-group">custom</span> }],
         });
         const { container, ready } = mount(() => (
-            <RichTextEditor plugins={[unknownGroupPlugin, ...defaultPlugins]} toolbarPlacement="top" />
+            <RichTextEditor plugins={[customGroupPlugin, ...defaultPlugins]} toolbarPlacement="top" />
         ));
         ready();
 
-        const group = container.querySelector('[data-testid="unknown-group"]')?.parentElement;
-        expect(group).toBeTruthy();
-        expect(group?.parentElement?.lastElementChild).toBe(group);
+        const group = container.querySelector('[data-testid="custom-group"]')?.closest(GROUP_SELECTOR);
+        expect(group?.previousElementSibling?.querySelector('[aria-label="Add link"]')).toBeTruthy();
+        expect(group?.nextElementSibling?.querySelector('[aria-label="Bulleted list"]')).toBeTruthy();
+    });
+
+    it('draws the default toolbar in its groups in the same order', () => {
+        const { container, ready } = mount(() => <RichTextEditor plugins={defaultPlugins} toolbarPlacement="top" />);
+        ready();
+
+        const labels = [...container.querySelectorAll(GROUP_SELECTOR)].map((group) =>
+            [...group.querySelectorAll('button')].map((control) => control.getAttribute('aria-label')),
+        );
+        expect(labels).toEqual(DEFAULT_TOOLBAR_LABELS);
+    });
+
+    describe('a press inside a toolbar slot', () => {
+        const mousedownOn = (target: Element): boolean =>
+            target.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+
+        const withControls = definePlugin({
+            id: 'slot-controls',
+            toolbar: [
+                {
+                    label: 'Plain',
+                    render: () => (
+                        <>
+                            <button type="button" data-testid="plain-button">
+                                plain
+                            </button>
+                            <input type="text" aria-label="Field" data-testid="slot-field" />
+                        </>
+                    ),
+                },
+            ],
+        });
+
+        it('keeps the text selection when it lands on a plain button a plugin drew', () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor plugins={[withControls, ...defaultPlugins]} toolbarPlacement="top" />
+            ));
+            ready();
+
+            const button = container.querySelector('[data-testid="plain-button"]');
+            expect(button).toBeTruthy();
+            // `dispatchEvent` returns false once a handler called `preventDefault`.
+            expect(mousedownOn(button as Element)).toBe(false);
+        });
+
+        it('lets a text field in the slot take focus', () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor plugins={[withControls, ...defaultPlugins]} toolbarPlacement="top" />
+            ));
+            ready();
+
+            const field = container.querySelector('[data-testid="slot-field"]');
+            expect(field).toBeTruthy();
+            expect(mousedownOn(field as Element)).toBe(true);
+        });
     });
 
     it('keeps Undo and Redo current as edits are made and taken back', () => {

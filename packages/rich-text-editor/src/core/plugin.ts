@@ -104,9 +104,9 @@ export type RtePlugin = {
      */
     edit?: Record<string, RteEditView>;
     /**
-     * Which cluster of the toolbar its entries sit in. Groups follow a fixed
-     * order, entries keep mount order inside theirs, and entries with no group
-     * come last, together.
+     * Which cluster of the toolbar its entries sit in. Groups are drawn by
+     * their `order`, entries keep mount order inside theirs, and entries of a
+     * plugin with no group come after every group, together, in mount order.
      */
     toolbarGroup?: RteToolbarGroup;
     /**
@@ -527,23 +527,13 @@ export type BlockAttributeDefinition = {
 
 // --- Toolbar ---
 
-/**
- * The toolbar's clusters, in the order they are drawn: undo and redo, text
- * style, inline marks, colour, link, lists, alignment, inserts, then panels.
- */
-export const RTE_TOOLBAR_GROUPS = [
-    'history',
-    'text',
-    'marks',
-    'color',
-    'link',
-    'lists',
-    'align',
-    'insert',
-    'panels',
-] as const;
-
-export type RteToolbarGroup = (typeof RTE_TOOLBAR_GROUPS)[number];
+/** A cluster of toolbar controls. Groups are drawn by `order`, lowest first; controls keep mount order inside their group. */
+export type RteToolbarGroup = {
+    /** Names the group; plugins that share a group give the same id and the same order. */
+    id: string;
+    /** Where the group sits among the others: lower is drawn first. */
+    order: number;
+};
 
 /**
  * What a toolbar entry's `render` gets: the API, the selection, and commands

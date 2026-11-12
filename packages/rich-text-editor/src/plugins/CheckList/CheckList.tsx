@@ -5,6 +5,8 @@ import { type CSSProperties, type ReactNode, useId } from 'react';
 
 import { ANY_LIST, defineBlock, defineContent, definePlugin, PARAGRAPH, type RteBlockNode } from '#/core';
 
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
+
 import styles from './checkList.module.scss';
 
 /**
@@ -179,7 +181,7 @@ const EditCheckItem = ({ value, setValue, children }: EditCheckItemProps): React
 export const checkListPlugin = /* @__PURE__ */ definePlugin({
     id: 'check-list',
     content: checkListContent,
-    toolbarGroup: 'lists',
+    toolbarGroup: TOOLBAR_GROUPS.lists,
     toolbar: [
         {
             toggles: 'checkList',

@@ -15,8 +15,9 @@ import {
     type RteContent,
     type RteInputRule,
     type RtePlugin,
+    type RteToolbarGroup,
 } from './plugin';
-import { buildPluginRegistry, isClaimedBy } from './registry';
+import { buildPluginRegistry, isClaimedBy, toolbarGroupsOf } from './registry';
 
 /**
  * The registry is the one place plugins are read: it gathers their
@@ -840,5 +841,61 @@ describe('bare content in a registry', () => {
                 definePlugin({ id: 'strong', content: defineContent({ marks: { bold: mark() } }) }),
             ]),
         ).toThrow('Duplicate mark type "bold": declared by plugin "bold" and plugin "strong".');
+    });
+});
+
+describe('toolbar groups', () => {
+    const grouped = (id: string, group?: RteToolbarGroup) =>
+        definePlugin({ id, toolbarGroup: group, toolbar: [{ label: id, render: button }] });
+
+    /** The drawing order as `group: plugin ids`, with `-` for the plugins that have no group. */
+    const drawn = (plugins: RtePlugin[]): string[] =>
+        toolbarGroupsOf(buildPluginRegistry(plugins).toolbarItems).map(
+            ({ id, entries }) => `${id ?? '-'}: ${entries.map((entry) => entry.id).join(',')}`,
+        );
+
+    it('are drawn by order, lowest first, whatever order the plugins mount in', () => {
+        expect(
+            drawn([
+                grouped('late', { id: 'second', order: 20 }),
+                grouped('early', { id: 'first', order: 10 }),
+                grouped('also-late', { id: 'second', order: 20 }),
+            ]),
+        ).toEqual(['first: early', 'second: late,also-late']);
+    });
+
+    it('keep the order their ids first appear in when their orders are equal', () => {
+        expect(
+            drawn([
+                grouped('b', { id: 'bravo', order: 10 }),
+                grouped('a', { id: 'alpha', order: 10 }),
+                grouped('c', { id: 'bravo', order: 10 }),
+            ]),
+        ).toEqual(['bravo: b,c', 'alpha: a']);
+    });
+
+    it('put the controls of plugins with no group last, together, in mount order', () => {
+        expect(drawn([grouped('loose-1'), grouped('only', { id: 'only', order: 500 }), grouped('loose-2')])).toEqual([
+            'only: only',
+            '-: loose-1,loose-2',
+        ]);
+    });
+
+    it('throw when two plugins give one id two orders', () => {
+        expect(() =>
+            buildPluginRegistry([grouped('a', { id: 'shared', order: 1 }), grouped('b', { id: 'shared', order: 2 })]),
+        ).toThrow('Toolbar group "shared" has order 1 in plugin "a" and order 2 in plugin "b".');
+    });
+
+    it('throw when the id is empty', () => {
+        expect(() => buildPluginRegistry([grouped('a', { id: '', order: 1 })])).toThrow(
+            'Plugin "a" has a `toolbarGroup` with no `id`.',
+        );
+    });
+
+    it.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])('throw when the order is %s', (order) => {
+        expect(() => buildPluginRegistry([grouped('a', { id: 'odd', order })])).toThrow(
+            'Plugin "a" has toolbar group "odd" with an `order` that is not a finite number.',
+        );
     });
 });

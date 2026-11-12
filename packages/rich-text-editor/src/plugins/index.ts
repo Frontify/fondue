@@ -30,7 +30,7 @@ import { underlinePlugin } from './Underline';
 
 /**
  * The built-in plugins that need no configuration, which `RichTextEditor` mounts when given no `plugins`.
- * The toolbar draws them by `toolbarGroup` in the fixed group order, list order within a group, ungrouped plugins last.
+ * The toolbar draws them by `toolbarGroup`, lowest `order` first, list order within a group, ungrouped plugins last.
  * Pass a subset, or spread it into your own list to add more.
  * Left out because they need arguments or change how the editor behaves: `mentionPlugin`, `columnBreakPlugin`,
  * `blurOnBreakPlugin` and `typographyPlugin`.

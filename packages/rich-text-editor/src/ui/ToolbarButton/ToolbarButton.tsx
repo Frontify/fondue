@@ -1,14 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button, Tooltip } from '@frontify/fondue-components';
-import {
-    type ButtonHTMLAttributes,
-    type ComponentProps,
-    forwardRef,
-    type MouseEvent,
-    type ReactNode,
-    useState,
-} from 'react';
+import { type ButtonHTMLAttributes, type ComponentProps, forwardRef, type ReactNode, useState } from 'react';
 
 import { ariaKeyShortcut, readableShortcut } from '../shortcut';
 
@@ -47,11 +40,6 @@ export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(f
         ...rest,
         'aria-pressed': active,
         'aria-keyshortcuts': shortcut === undefined ? undefined : ariaKeyShortcut(shortcut),
-        onMouseDown: (event: MouseEvent<HTMLButtonElement>) => {
-            // Keep the selection in the editor; runs before the flyout trigger's own handler.
-            event.preventDefault();
-            rest.onMouseDown?.(event);
-        },
     } as ComponentProps<typeof Button>;
 
     const [tooltipOpen, setTooltipOpen] = useState(false);

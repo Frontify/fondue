@@ -5,6 +5,7 @@ import { IconTextFormatBold } from '@frontify/fondue-icons';
 import { defineContent, defineMark, definePlugin } from '#/core';
 
 import { declaresNormalWeight, isBoldWeight, isNormalWeight, markWhen } from '../shared/helpers/declaredStyle';
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
 
 /**
  * The flag this plugin sets on text nodes
@@ -41,7 +42,7 @@ export const boldContent = defineContent({
  */
 export const boldPlugin = /* @__PURE__ */ definePlugin({
     content: boldContent,
-    toolbarGroup: 'marks',
+    toolbarGroup: TOOLBAR_GROUPS.marks,
     toolbar: [{ label: 'Bold', icon: IconTextFormatBold, shortcut: 'Mod-b' }],
     inputRules: [{ delimiter: '**' }, { delimiter: '__' }],
 });

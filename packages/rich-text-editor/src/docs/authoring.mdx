@@ -50,7 +50,6 @@ const acmeHighlightPlugin = /* @__PURE__ */ definePlugin({
                 <button
                     type="button"
                     aria-pressed={isActive}
-                    onMouseDown={(event) => event.preventDefault()}
                     onClick={() => toggle()}
                     className={toolbarButtonClasses(isActive)}
                 >
@@ -136,15 +135,25 @@ A plugin lists its toolbar controls in `toolbar`. Each entry is data:
 - `toggles` names the mark, block or inline the entry turns on and off. It defaults to the only type the content declares.
 - `render` draws custom UI in place of the button. It gets the entry's `label` to name it with, `isActive` (`true`, `false` or `'mixed'` when only part of the selection has the mark) and a `toggle` function that turns the entry's type on or off. It also gets the `api`, the `selection`, the `selectedNode` and `openEditor`. An entry has an `icon` or a `render`.
 
-`toolbarGroup`, on the plugin, picks the toolbar cluster its entries sit in, such as `'marks'` or `'insert'`. A plugin without one sits after the built-in groups.
+`toolbarGroup`, on the plugin, picks the toolbar cluster its entries sit in. It is `{ id, order }`: groups are drawn by `order`, lowest first, and plugins that share an `id` give it the same `order`. The built-in groups are exported as `TOOLBAR_GROUPS`, 100 apart so a host can place its own between two of them. A plugin without a group sits after every group.
 
 Source: `src/plugins/Underline/Underline.ts`
 
 ```ts
 export const underlinePlugin = /* @__PURE__ */ definePlugin({
     content: underlineContent,
-    toolbarGroup: 'marks',
+    toolbarGroup: TOOLBAR_GROUPS.marks,
     toolbar: [{ label: 'Underline', icon: IconTextFormatUnderline, shortcut: 'Mod-u' }],
+});
+```
+
+To put a host group between two built-in ones, give it an `order` between theirs:
+
+```ts
+const reviewPlugin = definePlugin({
+    content: reviewContent,
+    toolbarGroup: { id: 'review', order: TOOLBAR_GROUPS.link.order + 10 },
+    toolbar: [{ label: 'Review', render: ReviewButton }],
 });
 ```
 
