@@ -75,6 +75,7 @@ describe('isSafeHref', () => {
     it('refuses control characters and overlong links', () => {
         expect(isSafeHref('https://example.com/\u0000')).toBe(false);
         expect(isSafeHref('https://example.com/\u0085')).toBe(false);
+        expect(isSafeHref('https://example.com/‮')).toBe(false);
         expect(isSafeHref(`https://example.com/${'a'.repeat(2048)}`)).toBe(false);
     });
 

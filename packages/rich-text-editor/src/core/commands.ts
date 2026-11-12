@@ -11,6 +11,12 @@
 export type RteMarkState = { coverage: 'all'; value: Record<string, unknown> } | { coverage: 'some' };
 
 /**
+ * How a block attribute is carried by the text blocks the selection touches. `'all'`: every one that declares it has
+ * the same `value` (`null` when unset). `'some'`: they differ.
+ */
+export type RteAttributeState = { coverage: 'all'; value: unknown } | { coverage: 'some' };
+
+/**
  * How `insertText` is undone. `'together'`: the text and its marks in one step. `'marksFirst'`: the marks in a step
  * of their own, so the first undo keeps the text, as undoing an autolink does.
  */
@@ -49,6 +55,11 @@ export type RteSelectionSnapshot = {
      * only part of it carries — a half-bold range is `'some'`, not bold.
      */
     marks: Record<string, RteMarkState>;
+    /**
+     * The block attributes plugins add to every text block (alignment), by name; one no selected text block declares
+     * is absent. On a caret it is the caret's block.
+     */
+    attributes: Record<string, RteAttributeState>;
     /** Whether the undo history has a change to take back or make again — what undo and redo buttons enable on. */
     history: { canUndo: boolean; canRedo: boolean };
 };
@@ -58,12 +69,25 @@ export type RteSelectionSnapshot = {
  */
 export type BlockAttributeToggle = 'set' | 'removed' | 'unchanged';
 
-export type RemoveAllMarksOptions = {
+/**
+ * How much of the document `marks.removeAll` clears at a caret: `'typing'` only stops the next typed text carrying
+ * marks, `'block'` also clears the marks of the caret's whole text block. A range clears what it covers either way.
+ */
+export type ClearMarksScope = 'typing' | 'block';
+
+/**
+ * Options for `marks.removeAll`.
+ */
+export type ClearMarksOptions = {
     /**
-     * Mark types to leave on
-     * @default []
+     * How much a caret clears.
      */
-    except?: readonly string[];
+    scope: ClearMarksScope;
+    /**
+     * Leave on the marks that declare `survivesClear`.
+     * @default false
+     */
+    keepSurviving?: boolean;
 };
 
 /**
@@ -89,12 +113,12 @@ export type EditorControlApi = {
          */
         set(type: string, value?: Record<string, unknown>): void;
         /**
-         * Strip every mark from the selection, except the types named in `except`: the formatting half of
-         * "reset formatting". At a caret it clears the whole text block around it, not just what is typed next.
+         * Strip every mark from the selection, except those that declare `survivesClear` when `keepSurviving` is set:
+         * the formatting half of "reset formatting".
          *
          * @returns whether any mark was removed, from the document or from the marks the caret would type with
          */
-        removeAll(options?: RemoveAllMarksOptions): boolean;
+        removeAll(options: ClearMarksOptions): boolean;
         /**
          * The whole run of a mark around the selection (its value and text), or
          * null. Unlike the snapshot's `marks` it is about the run, not the
@@ -106,7 +130,8 @@ export type EditorControlApi = {
     blocks: {
         /**
          * Turn every text block the selection touches into this type, with `value` as its attributes.
-         * A block inside a list is first taken out of its list, so the result stands on its own.
+         * A block inside a list is first taken out of its list, so the result stands on its own, whichever lists
+         * the selection spans.
          */
         setType(type: string, value?: Record<string, unknown>): void;
         /** Set attributes on every block the selection touches — how alignment is applied. */
@@ -139,8 +164,6 @@ export type EditorControlApi = {
          * Split the current list item in two or, in an empty item, leave the list (outdent) — Enter inside a list. Returns false outside one.
          */
         split(): boolean;
-        /** Replace every list the selection touches with the blocks its items held, even when the selection merely contains lists. */
-        unwrapAll(): boolean;
     };
 
     /**

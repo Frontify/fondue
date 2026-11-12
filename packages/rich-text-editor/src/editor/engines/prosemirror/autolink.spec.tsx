@@ -182,6 +182,32 @@ describe('typing a web address right after an opening bracket or quote', () => {
         expect(() => editorWith([...defaultPlugins, hashtags], [paragraph()])).not.toThrow();
     });
 
+    it('starts a token of a rule with the v flag after an opening bracket', () => {
+        const hashtags = definePlugin({
+            id: 'hashtags',
+            inputRules: [
+                { kind: 'markPattern', pattern: new RegExp(String.raw`#\w+`, 'v'), mark: 'bold', value: () => ({}) },
+            ],
+        });
+        const editor = editorWith([...defaultPlugins, hashtags], [paragraph()]);
+
+        editor.type('(#tag ');
+
+        expect(editor.stored()).toEqual([paragraph(text('('), text('#tag', { bold: true }), text(' '))]);
+    });
+
+    it('keeps the punctuation and brackets of a token whose rule declares no trim', () => {
+        const mentions = definePlugin({
+            id: 'mentions',
+            inputRules: [{ kind: 'markPattern', pattern: /@[^\s]+/, mark: 'bold', value: () => ({}) }],
+        });
+        const editor = editorWith([...defaultPlugins, mentions], [paragraph()]);
+
+        editor.type('@ana). ');
+
+        expect(editor.stored()).toEqual([paragraph(text('@ana).', { bold: true }), text(' '))]);
+    });
+
     it('links an address in straight double quotes', () => {
         const stored = typedIntoEmptyParagraph('see "https://frontify.com" ');
 

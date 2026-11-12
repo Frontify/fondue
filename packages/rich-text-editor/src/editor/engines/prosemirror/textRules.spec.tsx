@@ -176,6 +176,15 @@ describe('a text rule that waits for the run to end', () => {
         expect(typed('(a --)', plugins)).toEqual([paragraph(text('(a —)'))]);
     });
 
+    it('ends the run at the characters the rule declares, instead of the usual ones', () => {
+        const byFullStop = [
+            rulesPlugin({ kind: 'text', match: /--/, replace: '—', waitForRunEnd: true, runEnd: /\./ }),
+        ];
+
+        expect(typed('a --.', byFullStop)).toEqual([paragraph(text('a —.'))]);
+        expect(typed('a -- b', byFullStop)).toEqual([paragraph(text('a -- b'))]);
+    });
+
     it('leaves a run ended by a full stop as typed: a decimal point or a file extension', () => {
         expect(typed('a --.', plugins)).toEqual([paragraph(text('a --.'))]);
     });
@@ -490,17 +499,25 @@ describe('typographyPlugin', () => {
             expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'break' }, text('“hi”'))]);
         });
 
-        it('turns a single quote after an inline element such as a mention into an apostrophe', () => {
+        it('turns a single quote after an inline element into an apostrophe, where a character hotkey still fires', () => {
             const tag = { type: 'tag', name: 'Noah' };
-            const editor = editorWith(
+            const mention = definePlugin({
+                id: 'mention',
+                hotkeys: { '@': (api) => api.insertText('[mention]') },
+            });
+            const quoting = editorWith(
                 [tagPlugin, typographyPlugin({ groups: ['quotes'] })],
                 [paragraph(text('a '), tag)],
             );
-            editor.caretAfter('￼');
+            quoting.caretAfter('￼');
+            const hotkeyed = editorWith([tagPlugin, mention], [paragraph(text('a '), tag)]);
+            hotkeyed.caretAfter('￼');
 
-            editor.type("'s");
+            quoting.type("'s");
+            hotkeyed.type('@');
 
-            expect(editor.stored()).toEqual([paragraph(text('a '), tag, text('’s'))]);
+            expect(quoting.stored()).toEqual([paragraph(text('a '), tag, text('’s'))]);
+            expect(hotkeyed.stored()).toEqual([paragraph(text('a '), tag, text('[mention]'))]);
         });
 
         it.each([

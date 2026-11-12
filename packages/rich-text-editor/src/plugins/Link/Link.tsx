@@ -2,10 +2,10 @@
 
 import { type ComponentType, type ReactNode } from 'react';
 
-import { defineContent, defineMark, definePlugin, type HotkeyHandler } from '#/core';
+import { type DefaultStyle, defineContent, defineMark, definePlugin, type HotkeyHandler } from '#/core';
 
-import { isLinkablePaste, LINKABLE_ADDRESS, toHref } from '../shared/helpers/href';
-import { LINK_MARK } from '../shared/helpers/linkMark';
+import { withoutDecorationLine } from '../shared/helpers/declaredStyle';
+import { isLinkablePaste, LINKABLE_ADDRESS, LINKABLE_ADDRESS_TRIM, toHref } from '../shared/helpers/href';
 
 import { LinkEditor } from './components/LinkEditor';
 import { LinkToolbarButton } from './components/LinkToolbarButton';
@@ -32,6 +32,13 @@ export type LinkPluginOptions = LinkPolicy & {
 };
 
 const NEW_TAB_NOTE_SELECTOR = `span[${NEW_TAB_NOTE_ATTRIBUTE}]`;
+
+const withoutUnderline = (value: string): string => withoutDecorationLine(value, 'underline');
+
+const LINK_DEFAULT_STYLES: readonly DefaultStyle[] = [
+    { property: 'text-decoration', scope: 'inside', strip: withoutUnderline },
+    { property: 'text-decoration-line', scope: 'inside', strip: withoutUnderline },
+];
 
 /**
  * A stored link as the reader and the export draw it: without its target when the policy refuses it.
@@ -154,11 +161,13 @@ const readerFor = (policy: LinkPolicy): ComponentType<BoundLinkReaderProps> => {
 export const linkContent = (policy: LinkPolicy = {}) =>
     defineContent({
         marks: {
-            [LINK_MARK]: defineMark<LinkValue>({
+            link: defineMark<LinkValue>({
                 // Outside every other mark, so a partly styled link renders as one anchor, not cut up by a colour or an emphasis inside.
                 nesting: -2,
                 // Typing at the end of a link does not extend it.
                 inclusive: false,
+                // Clearing formatting is about how text looks; where a link goes is not.
+                survivesClear: true,
 
                 /**
                  * The link in the export and on the clipboard, with no text of its own, so pasting it adds none
@@ -170,6 +179,9 @@ export const linkContent = (policy: LinkPolicy = {}) =>
                 }),
 
                 render: { component: readerFor(policy) },
+
+                // A pasted span inside a link, such as Google Docs writes, repeats the underline the link already shows.
+                defaultStyles: LINK_DEFAULT_STYLES,
 
                 parse: [
                     // The hidden note the reader adds is not text of the link, when the reader is copied back in.
@@ -195,8 +207,8 @@ export const linkContent = (policy: LinkPolicy = {}) =>
 // The key is a literal because a computed key keeps this plugin in the renderer; HOTKEY's type ties it to this key.
 const hotkeys = {
     'Mod-k': (api) => {
-        if (api.marks.getRun(LINK_MARK) !== null) {
-            api.editors.open(LINK_MARK);
+        if (api.marks.getRun('link') !== null) {
+            api.editors.open('link');
             return true;
         }
         // At a caret the key stays the editor's even with no form to open (floating toolbar), never the browser's.
@@ -236,7 +248,8 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) =>
             {
                 kind: 'markPattern',
                 pattern: LINKABLE_ADDRESS,
-                mark: LINK_MARK,
+                mark: 'link',
+                trim: LINKABLE_ADDRESS_TRIM,
                 value: (href) => {
                     if (allowsHref(policy, href)) {
                         return { href };
@@ -258,7 +271,7 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) =>
             }
             if (isCollapsed) {
                 // Inside a link the address stays plain text rather than nesting a link.
-                if (LINK_MARK in marks) {
+                if ('link' in marks) {
                     return false;
                 }
                 // Copied from an editor, the address pastes back with its link and marks as they were.
@@ -270,10 +283,10 @@ export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) =>
                 return true;
             }
             // A toggle over text that is all linked already would take the link off, so it goes first.
-            if (LINK_MARK in marks) {
-                api.marks.toggle(LINK_MARK);
+            if ('link' in marks) {
+                api.marks.toggle('link');
             }
-            api.marks.toggle(LINK_MARK, { href });
+            api.marks.toggle('link', { href });
             return true;
         },
     });

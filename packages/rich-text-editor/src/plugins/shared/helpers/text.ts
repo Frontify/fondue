@@ -15,7 +15,10 @@ const CONTROL_RANGES: readonly (readonly [from: number, to: number])[] = [
     [0x2066, 0x2069],
 ];
 
-const isControlCharacter = (character: string): boolean => {
+/**
+ * Whether a character is a control or bidirectional-formatting character
+ */
+export const isControlCharacter = (character: string): boolean => {
     const code = character.codePointAt(0) ?? 0;
     return CONTROL_RANGES.some(([from, to]) => code >= from && code <= to);
 };

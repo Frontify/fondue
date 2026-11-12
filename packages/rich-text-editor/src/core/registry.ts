@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 // The plugin list flattened into one engine-agnostic lookup. The only place that
-// reads `RtePlugin`: the editor shell, engine and renderer read the registry, so
-// each declaration is gathered, ordered and checked once.
+// reads `RtePlugin` and `RteContent`: the editor shell, engine and renderer read
+// the registry, so each declaration is gathered, ordered and checked once.
 
 import { type ReactNode } from 'react';
 
@@ -412,6 +412,33 @@ const forMatching = (rules: readonly RteInputRule[]): RteInputRule[] => [
     ...rules.filter((rule) => rule.kind !== 'mark'),
 ];
 
+/**
+ * Every mark that excludes another is excluded by it too, so one declaration covers both.
+ * A name no mounted plugin registers is dropped.
+ */
+const withMutualExcludes = (marks: Map<string, MarkDefinition>): Map<string, MarkDefinition> => {
+    const excluded = new Map<string, Set<string>>();
+    for (const [name, mark] of marks) {
+        for (const other of mark.excludes ?? []) {
+            if (!marks.has(other)) {
+                continue;
+            }
+            excluded.set(name, (excluded.get(name) ?? new Set()).add(other));
+            excluded.set(other, (excluded.get(other) ?? new Set()).add(name));
+        }
+    }
+    const folded = new Map<string, MarkDefinition>();
+    for (const [name, mark] of marks) {
+        const names = excluded.get(name);
+        if (mark.excludes === undefined && names === undefined) {
+            folded.set(name, mark);
+        } else {
+            folded.set(name, { ...mark, excludes: [...(names ?? [])] });
+        }
+    }
+    return folded;
+};
+
 /** A stable sort, so ties stay in mount order. */
 const byNesting = (marks: Map<string, MarkDefinition>): Map<string, MarkDefinition> =>
     new Map([...marks].sort(([, left], [, right]) => (left.nesting ?? 0) - (right.nesting ?? 0)));
@@ -624,7 +651,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
     return {
         blocks: draft.blocks,
         inlines: draft.inlines,
-        marks: byNesting(draft.marks),
+        marks: byNesting(withMutualExcludes(draft.marks)),
         blockAttributes: draft.blockAttributes,
         itemTypeByList: draft.itemTypeByList,
         edits: draft.edits,
