@@ -8,25 +8,31 @@ import { readableShortcut } from '#/ui/ToolbarButton/ToolbarButton';
 
 import { isSafeImageSrc } from '../../shared/helpers/href';
 import { isCompositionKey } from '../../shared/helpers/keys';
-import { usePeople } from '../hooks/usePeople';
+import { type PeopleOutcome, usePeople } from '../hooks/usePeople';
 import styles from '../mention.module.scss';
 import { type MentionItem, type MentionItems } from '../types';
 
 /**
- * What a failed lookup says, to a screen reader and in the list: the message, then how to retry from the keyboard.
+ * What a failed lookup says to a screen reader: the message, then how to retry from the keyboard.
  */
 const FAILED_MESSAGE = 'Could not load people.';
 const FAILED_HINT = 'Press Enter to retry';
 
-/** The key drawn beside Retry. */
 const RETRY_KEY = 'Enter';
 
-/** What the list says, in the list and to a screen reader, while there is nobody to show yet or nobody matches. */
+/** What the list shows, not announced, while a lookup runs past the searching delay. */
 const SEARCHING_MESSAGE = 'Searching';
+
+/** How long a lookup runs before the list says it is searching, so a quick answer never flashes the row. */
+const SEARCHING_DELAY_MS = 300;
+
 const NO_MATCHES_MESSAGE = 'No matches';
 
-/** The label of the button that asks the lookup again. */
 const RETRY_LABEL = 'Retry';
+
+const LIST_LABEL = 'People';
+
+const AVATAR_ICON_SIZE = 12;
 
 /** The gap between the query and the list under it. */
 const LIST_OFFSET = 4;
@@ -35,13 +41,18 @@ const avatarPicture = (person: MentionItem): ReactNode => {
     if (isSafeImageSrc(person.image)) {
         return <img src={person.image} alt="" />;
     }
-    if (person.kind === 'group') {
-        return <IconPeople size={12} />;
+    switch (person.kind) {
+        case undefined:
+        case 'user':
+            return <IconPerson size={AVATAR_ICON_SIZE} />;
+        case 'group':
+            return <IconPeople size={AVATAR_ICON_SIZE} />;
+        case 'all':
+            return <IconTarget size={AVATAR_ICON_SIZE} />;
+        default:
+            // Adding a kind fails to compile here until it is handled.
+            throw new Error(`Unhandled mention kind: ${JSON.stringify(person.kind satisfies never)}`);
     }
-    if (person.kind === 'all') {
-        return <IconTarget size={12} />;
-    }
-    return <IconPerson size={12} />;
 };
 
 type AvatarProps = { person: MentionItem };
@@ -56,33 +67,90 @@ const Avatar = ({ person }: AvatarProps): ReactNode => (
     </span>
 );
 
-type PeoplePhase = 'searching' | 'failed' | 'empty' | 'list';
+/**
+ * Where a lookup stands. `waiting` is a lookup inside the searching delay, or a newer one after an empty or failed answer: nothing is shown or announced yet.
+ */
+type PeoplePhase = 'waiting' | 'searching' | 'failed' | 'empty' | 'list';
 
-type PhaseOfParams = { people: readonly MentionItem[]; pending: boolean; failed: boolean };
+type PhaseOfParams = { outcome: PeopleOutcome | null; pending: boolean; slow: boolean };
 
 /**
- * Where a lookup stands: people to show, else still searching, else failed, else nobody matches.
+ * The people an outcome offers: none before the first answer or after a failure.
  */
-const phaseOf = ({ people, pending, failed }: PhaseOfParams): PeoplePhase => {
-    if (people.length > 0) {
-        return 'list';
+const peopleOf = (outcome: PeopleOutcome | null): readonly MentionItem[] => {
+    if (outcome === null) {
+        return [];
     }
-    if (pending) {
-        return 'searching';
+    switch (outcome.status) {
+        case 'found':
+            return outcome.people;
+        case 'failed':
+            return [];
+        default:
+            // Adding an outcome fails to compile here until it is handled.
+            throw new Error(`Unhandled people outcome: ${JSON.stringify(outcome satisfies never)}`);
     }
-    if (failed) {
-        return 'failed';
-    }
-    return 'empty';
 };
 
 /**
- * What a screen reader hears for a phase. Searching is announced only with no earlier list to count, so the count is not interrupted on every key.
+ * Where a lookup stands: people to show, else searching past the delay, else, once this lookup is answered, failed or nobody matches.
+ */
+const phaseOf = ({ outcome, pending, slow }: PhaseOfParams): PeoplePhase => {
+    if (peopleOf(outcome).length > 0) {
+        return 'list';
+    }
+    if (slow) {
+        return 'searching';
+    }
+    if (outcome === null) {
+        return 'waiting';
+    }
+    switch (outcome.status) {
+        case 'found':
+            // An earlier empty answer is not this query's: a space must not end the mention before it arrives.
+            if (pending) {
+                return 'waiting';
+            }
+            return 'empty';
+        case 'failed':
+            // Cleared while asking again, so a second failure is announced again.
+            if (pending) {
+                return 'waiting';
+            }
+            return 'failed';
+        default:
+            // Adding an outcome fails to compile here until it is handled.
+            throw new Error(`Unhandled people outcome: ${JSON.stringify(outcome satisfies never)}`);
+    }
+};
+
+/**
+ * Whether the popup is up for a phase: not while waiting, and for nobody matching only once something is typed.
+ */
+const isOpen = (phase: PeoplePhase, query: string): boolean => {
+    switch (phase) {
+        case 'waiting':
+            return false;
+        case 'searching':
+        case 'failed':
+        case 'list':
+            return true;
+        case 'empty':
+            return query !== '';
+        default:
+            // Adding a phase fails to compile here until it is handled.
+            throw new Error(`Unhandled people phase: ${JSON.stringify(phase satisfies never)}`);
+    }
+};
+
+/**
+ * What a screen reader hears for a phase. Waiting and searching say nothing, so a count or a failure is not interrupted on every key.
  */
 const statusOf = (phase: PeoplePhase, people: readonly MentionItem[]): string => {
     switch (phase) {
+        case 'waiting':
         case 'searching':
-            return SEARCHING_MESSAGE;
+            return '';
         case 'failed':
             return `${FAILED_MESSAGE} ${FAILED_HINT}.`;
         case 'empty':
@@ -96,6 +164,26 @@ const statusOf = (phase: PeoplePhase, people: readonly MentionItem[]): string =>
             // Adding a phase fails to compile here until it is handled.
             throw new Error(`Unhandled people phase: ${JSON.stringify(phase satisfies never)}`);
     }
+};
+
+/**
+ * Whether the pending lookup for a query has run past the searching delay. The
+ * timer records the query it ran for and is forgotten when the lookup settles,
+ * so each new query or retry starts the delay again.
+ */
+const useSlowLookup = (pending: boolean, query: string): boolean => {
+    const [slowQuery, setSlowQuery] = useState<string | null>(null);
+    useEffect(() => {
+        if (!pending) {
+            return undefined;
+        }
+        const timer = setTimeout(() => setSlowQuery(query), SEARCHING_DELAY_MS);
+        return () => {
+            clearTimeout(timer);
+            setSlowQuery(null);
+        };
+    }, [pending, query]);
+    return pending && slowQuery === query;
 };
 
 type MentionPopupBodyProps = {
@@ -125,6 +213,8 @@ const MentionPopupBody = ({
     onHighlight,
 }: MentionPopupBodyProps): ReactNode => {
     switch (phase) {
+        case 'waiting':
+            return null;
         case 'searching':
             return <div className={styles.empty}>{SEARCHING_MESSAGE}</div>;
         case 'failed':
@@ -150,7 +240,7 @@ const MentionPopupBody = ({
             return <div className={styles.empty}>{NO_MATCHES_MESSAGE}</div>;
         case 'list':
             return (
-                <ul id={listId} role="listbox" aria-label="People" className={styles.list}>
+                <ul id={listId} role="listbox" aria-label={LIST_LABEL} className={styles.list}>
                     {people.map((person, index) => (
                         // The keyboard drives the list from the input; the mouse picks here.
                         // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
@@ -258,9 +348,11 @@ export const MentionDraft = ({
         leave();
     };
     const [query, setQuery] = useState('');
-    const { people, pending, failed, retry } = usePeople(items, query);
-    const phase = phaseOf({ people, pending, failed });
-    const open = phase !== 'empty' || query !== '';
+    const { outcome, pending, retry } = usePeople(items, query);
+    const slow = useSlowLookup(pending, query);
+    const people = peopleOf(outcome);
+    const phase = phaseOf({ outcome, pending, slow });
+    const open = isOpen(phase, query);
     const position = useListPosition(draftRef, open);
     const listShown = open && position !== null && phase === 'list';
 
@@ -340,7 +432,7 @@ export const MentionDraft = ({
                 // Only while the listbox is in the page: an id pointing at nothing is an error.
                 aria-controls={listShown ? listId : undefined}
                 aria-autocomplete="list"
-                aria-activedescendant={open && active ? optionId(activeIndex) : undefined}
+                aria-activedescendant={listShown && active ? optionId(activeIndex) : undefined}
                 aria-label="Mention someone"
                 value={query}
                 size={Math.max(query.length, 1)}

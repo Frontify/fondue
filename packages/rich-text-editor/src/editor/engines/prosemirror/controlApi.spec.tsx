@@ -253,6 +253,20 @@ describe('marks.toggle', () => {
         expect(editor.stored()).toEqual([paragraph(text('a'), text('X', { bold: true }), text('b'))]);
     });
 
+    it('marks all the text it puts in place of a selected block', () => {
+        const editor = editorWith(plugins, [paragraph(text('a')), { type: 'divider' }, paragraph(text('b'))]);
+        const { view } = editor;
+        view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, 3)));
+
+        editor.api.insertText('XY', { link: LINK });
+
+        expect(editor.stored()).toEqual([
+            paragraph(text('a')),
+            paragraph(text('XY', { link: LINK })),
+            paragraph(text('b')),
+        ]);
+    });
+
     it('puts the mark on the text of a range but never on an inline element in it', () => {
         const editor = editorWith(plugins, [paragraph(text('a'), { type: 'tag', name: 'Ada' }, text('b'))]);
         editor.selectBetween('a', 'b');
@@ -899,8 +913,11 @@ describe('insertText', () => {
     it('is one undo step, text and marks together', () => {
         const editor = editorWith(plugins, [paragraph(text('one two three'))]);
         editor.select('two');
+        const notifiedBefore = editor.onDocChange.mock.calls.length;
 
         editor.api.insertText('2', { link: LINK });
+
+        expect(editor.onDocChange).toHaveBeenCalledTimes(notifiedBefore + 1);
         undo(editor.view.state, editor.view.dispatch);
 
         expect(editor.stored()).toEqual([paragraph(text('one two three'))]);

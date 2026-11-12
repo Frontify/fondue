@@ -149,9 +149,10 @@ describe('mentionPlugin', () => {
         expect(
             written({ href: () => '/u', resolve: () => ({ status: 'current', username: 'j', name: 'J' }) }),
         ).toContain('<bdi>@j</bdi>');
-        expect(written({ href: () => '/u', resolve: () => ({ status: 'unavailable' }) })).toContain(
-            '<bdi>@jane (unavailable)</bdi>',
-        );
+        // Exports keep `@` and the label; the unavailable note is only for reading.
+        const unavailable = written({ href: () => '/u', resolve: () => ({ status: 'unavailable' }) });
+        expect(unavailable).toContain('<bdi>@jane</bdi>');
+        expect(unavailable).not.toContain('(unavailable)');
         expect(written({ href: () => '/u', resolve: () => ({ status: 'unknown' }) })).toBe(
             written({ href: () => '/u' }),
         );
@@ -194,14 +195,43 @@ describe('mentionPlugin', () => {
         expect(mentions.map((mention) => mention.tagName)).toEqual(['A', 'SPAN', 'A']);
         expect(mentions.map((mention) => mention.textContent)).toEqual(['@ana.m', '@bob (unavailable)', '@cy']);
         expect(mentions.map((mention) => mention.getAttribute('title'))).toEqual(['Ana Meier', 'Name bob', 'Name cy']);
-        expect(mentions.map((mention) => mention.querySelector('bdi')?.textContent)).toEqual([
-            '@ana.m',
-            '@bob (unavailable)',
-            '@cy',
-        ]);
+        // The note stays outside the isolated name.
+        expect(mentions.map((mention) => mention.querySelector('bdi')?.textContent)).toEqual(['@ana.m', '@bob', '@cy']);
         // The stored username stays in the data, whatever is shown.
         expect(mentions.map((mention) => mention.getAttribute('data-mention-username'))).toEqual(['ana', 'bob', 'cy']);
+        // The stored name travels in the markup, whatever the title shows.
+        expect(mentions.map((mention) => mention.getAttribute('data-mention-name'))).toEqual([
+            'Name ana',
+            'Name bob',
+            'Name cy',
+        ]);
         act(() => root.unmount());
+    });
+
+    it('pastes back an empty stored name as empty, never the name shown', () => {
+        const plugins = [
+            mentionPlugin({
+                items: [],
+                href: (mention) => `/u/${mention.id}`,
+                resolve: () => ({ status: 'current', username: 'jj', name: 'Jane Smith' }),
+            }),
+        ];
+        const html = serializeToHtml(
+            {
+                version: 1,
+                blocks: [
+                    { type: 'paragraph', children: [{ type: 'mention', id: 'jane', username: 'jane', name: '' }] },
+                ],
+            },
+            { plugins },
+        );
+        const element = window.document.createElement('div');
+        element.innerHTML = html;
+        const anchor = element.querySelector<HTMLElement>('[data-mention-id]');
+
+        const parsed = plugins[0]?.content?.inlines?.mention?.parse[0]?.value?.(anchor as HTMLElement);
+
+        expect(parsed).toEqual({ id: 'jane', username: 'jane', name: '' });
     });
 });
 

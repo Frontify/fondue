@@ -5,7 +5,14 @@
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { definePlugin, type RteBlockNode, type RteInputRule, type RtePlugin } from '#/core';
+import {
+    defineContent,
+    defineInline,
+    definePlugin,
+    type RteBlockNode,
+    type RteInputRule,
+    type RtePlugin,
+} from '#/core';
 import { defaultPlugins, typographyPlugin } from '#/plugins';
 
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
@@ -26,7 +33,23 @@ const typed = (value: string, plugins: readonly RtePlugin[]): RteBlockNode[] | n
 const press = (view: EditorView, key: string): boolean =>
     view.someProp('handleKeyDown', (handle) => handle(view, new KeyboardEvent('keydown', { key }))) === true;
 
-const withTypography = [...defaultPlugins, typographyPlugin()];
+/** An inline element of the spec's own, like a mention: the shipped one needs options. */
+const tagPlugin: RtePlugin = definePlugin({
+    id: 'tag',
+    content: defineContent({
+        inlines: {
+            tag: defineInline<{ name: string }>({
+                toHtml: ({ name }) => ({ tag: 'span', children: name }),
+                parse: [],
+            }),
+        },
+    }),
+});
+
+const withTypography = [
+    ...defaultPlugins,
+    typographyPlugin({ groups: ['quotes', 'ellipsis', 'dashes', 'symbols', 'numeric'] }),
+];
 
 afterEach(destroyEditors);
 
@@ -44,6 +67,36 @@ describe('a text rule', () => {
         expect(typed('11/2', plugins)).toEqual([paragraph(text('11/2'))]);
     });
 
+    it('waits for the run to end before a character already in the block', () => {
+        const editor = editorWith(withTypography, [paragraph(text('a --tail'))]);
+        editor.caretAfter('a --');
+
+        editor.type(' ');
+
+        expect(editor.stored()).toEqual([paragraph(text('a – tail'))]);
+    });
+
+    it('gives the dash and the character that ends the run the marks typing carries there', () => {
+        const editor = editorWith([...shipped('bold'), typographyPlugin()], [paragraph(text('a --', { bold: true }))]);
+        editor.caretAfter('a --');
+
+        editor.type(' ');
+
+        expect(editor.stored()).toEqual([paragraph(text('a – ', { bold: true }))]);
+    });
+
+    it('steps aside when the run ends inside inline code', () => {
+        const editor = editorWith(
+            [...shipped('code'), typographyPlugin()],
+            [paragraph(text('a -'), text('-', { code: true }))],
+        );
+        editor.caretAfter('a --');
+
+        editor.type(' ');
+
+        expect(editor.stored()).toEqual([paragraph(text('a -'), text('-', { code: true }), text(' '))]);
+    });
+
     it('keeps the marks of the text it replaces', () => {
         const editor = editorWith(
             [...shipped('bold'), rulesPlugin({ kind: 'text', match: '->', replace: '→' })],
@@ -56,6 +109,30 @@ describe('a text rule', () => {
         expect(editor.stored()).toEqual([paragraph(text('x→', { bold: true }))]);
     });
 
+    it("puts a group of its pattern where `replace` says $1, and takes a string match's `replace` as written", () => {
+        expect(typed('a 3x4', [rulesPlugin({ kind: 'text', match: /(\d)x(\d)/, replace: '$1×$2' })])).toEqual([
+            paragraph(text('a 3×4')),
+        ]);
+        expect(typed('a ->', [rulesPlugin({ kind: 'text', match: '->', replace: '$1 off' })])).toEqual([
+            paragraph(text('a $1 off')),
+        ]);
+    });
+
+    it('puts nothing for a group that took no part in the match, and takes `$0` as written', () => {
+        expect(typed('b', [rulesPlugin({ kind: 'text', match: /(a)?b/, replace: '[$1]' })])).toEqual([
+            paragraph(text('[]')),
+        ]);
+        expect(
+            typed('a -- ', [rulesPlugin({ kind: 'text', match: /--/, replace: '$0', waitForRunEnd: true })]),
+        ).toEqual([paragraph(text('a $0 '))]);
+    });
+
+    it('throws when `replace` refers to a group its pattern does not have', () => {
+        expect(() => editorWith([rulesPlugin({ kind: 'text', match: /(a)b/, replace: '$2' })], [paragraph()])).toThrow(
+            /has 1 group/,
+        );
+    });
+
     it('steps aside inside a mark that opts out of typing rules', () => {
         const editor = editorWith(
             [...shipped('code'), rulesPlugin({ kind: 'text', match: '->', replace: '→' })],
@@ -66,6 +143,18 @@ describe('a text rule', () => {
         editor.type('->');
 
         expect(editor.stored()).toEqual([paragraph(text('x->y', { code: true }))]);
+    });
+
+    it('leaves the text of a mark that opts out when the match reaches back into it', () => {
+        const editor = editorWith(
+            [...shipped('code'), rulesPlugin({ kind: 'text', match: '->', replace: '→' })],
+            [paragraph(text('x-', { code: true }))],
+        );
+        editor.caretAfter('x-');
+
+        editor.type('>');
+
+        expect(editor.stored()).toEqual([paragraph(text('x-', { code: true }), text('>'))]);
     });
 
     it('is taken back on Backspace, leaving what was typed', () => {
@@ -192,15 +281,13 @@ describe('typographyPlugin', () => {
         ['(tm)', '™'],
         ['(sm)', '℠'],
         ['+/-', '±'],
-        ['^o', '°'],
-        ['^+', '⁺'],
-        ['^-', '⁻'],
+        ['20^o', '20°'],
     ])('turns "%s" into "%s"', (shortcut, glyph) => {
         expect(typed(`a ${shortcut}`, withTypography)).toEqual([paragraph(text(`a ${glyph}`))]);
     });
 
     it.each([
-        ['--', '—'],
+        ['--', '–'],
         ['<-', '←'],
         ['!=', '≠'],
         ['2^2', '2²'],
@@ -213,6 +300,19 @@ describe('typographyPlugin', () => {
         expect(typed(`a ${shortcut} b`, withTypography)).toEqual([paragraph(text(`a ${glyph} b`))]);
         expect(typed(`a ${shortcut},`, withTypography)).toEqual([paragraph(text(`a ${glyph},`))]);
         expect(typed(`a ${shortcut}`, withTypography)).toEqual([paragraph(text(`a ${shortcut}`))]);
+    });
+
+    it.each([';', ':', '!', '?', ']', '}', '…'])('ends a run at "%s"', (ending) => {
+        expect(typed(`a --${ending}`, withTypography)).toEqual([paragraph(text(`a –${ending}`))]);
+    });
+
+    it('turns on dashes, the ellipsis and symbols by default', () => {
+        expect(typed('a -- b ... ->', [...defaultPlugins, typographyPlugin()])).toEqual([paragraph(text('a – b … →'))]);
+    });
+
+    it('turns a caret and o into a degree sign only right after a whole number', () => {
+        expect(typed('x^o', withTypography)).toEqual([paragraph(text('x^o'))]);
+        expect(typed('v2^o', withTypography)).toEqual([paragraph(text('v2^o'))]);
     });
 
     it('keeps dashes and arrows in technical text as typed', () => {
@@ -238,6 +338,15 @@ describe('typographyPlugin', () => {
         expect(typed('~2.5 ', withTypography)).toEqual([paragraph(text('~2.5 '))]);
     });
 
+    it('turns a tilde and a digit into a subscript digit in a formula', () => {
+        expect(typed('H~2O', withTypography)).toEqual([paragraph(text('H₂O'))]);
+        expect(typed('(OH)~2 ', withTypography)).toEqual([paragraph(text('(OH)₂ '))]);
+    });
+
+    it('leaves quotes straight unless the quotes group is asked for', () => {
+        expect(typed('say "hi"', [...defaultPlugins, typographyPlugin()])).toEqual([paragraph(text('say "hi"'))]);
+    });
+
     it('does not rewrite a tilde and a digit: "~2 hours"', () => {
         expect(typed('~2 hours', withTypography)).toEqual([paragraph(text('~2 hours'))]);
         expect(typed('~-5 ', withTypography)).toEqual([paragraph(text('~-5 '))]);
@@ -255,6 +364,70 @@ describe('typographyPlugin', () => {
 
     it('leaves a digit and x inside a word as typed', () => {
         expect(typed('v3x4 ', withTypography)).toEqual([paragraph(text('v3x4 '))]);
+    });
+
+    it('leaves a fraction after a full stop as typed: addresses and decimals', () => {
+        expect(typed('10.0.0.1/8 ', withTypography)).toEqual([paragraph(text('10.0.0.1/8 '))]);
+        expect(typed('0.1/2 ', withTypography)).toEqual([paragraph(text('0.1/2 '))]);
+    });
+
+    it('keeps the marks of a character before a selection that a rule replaces', () => {
+        const link = { link: { href: 'https://frontify.com' } };
+        const editor = editorWith([...shipped('link'), typographyPlugin()], [paragraph(text('go -', link), text('x'))]);
+        editor.select('x');
+
+        editor.type('>');
+
+        expect(editor.stored()).toEqual([paragraph(text('go →', link))]);
+    });
+
+    it('does not carry a selected link onto the quote typed over it', () => {
+        const link = { link: { href: 'https://frontify.com' } };
+        const editor = editorWith(
+            [...shipped('link'), typographyPlugin({ groups: ['quotes'] })],
+            [paragraph(text('a '), text('Frontify', link))],
+        );
+        editor.select('Frontify');
+
+        editor.type('"');
+
+        expect(editor.stored()).toEqual([paragraph(text('a “'))]);
+    });
+
+    it('rewrites a number only as a whole token: v1/2, v2^2, ^origin and 10^-3 stay as typed', () => {
+        expect(typed('v1/2 ', withTypography)).toEqual([paragraph(text('v1/2 '))]);
+        expect(typed('v2^2 ', withTypography)).toEqual([paragraph(text('v2^2 '))]);
+        expect(typed('^origin', withTypography)).toEqual([paragraph(text('^origin'))]);
+        expect(typed('10^-3 ', withTypography)).toEqual([paragraph(text('10^-3 '))]);
+    });
+
+    it('leaves numbers as typed unless the numeric group is asked for', () => {
+        expect(typed('a 1/2 3x4 2^2 ', [...defaultPlugins, typographyPlugin()])).toEqual([
+            paragraph(text('a 1/2 3x4 2^2 ')),
+        ]);
+    });
+
+    it('keeps a link on what it rewrites at the link end', () => {
+        const link = { link: { href: 'https://frontify.com' } };
+        const plugins = [...shipped('link'), typographyPlugin({ groups: ['dashes', 'symbols', 'numeric'] })];
+        const sized = editorWith(plugins, [paragraph(text('Size 3x4', link))]);
+        sized.caretAfter('3x4');
+        sized.type(' ');
+        const arrow = editorWith(plugins, [paragraph(text('go -', link))]);
+        arrow.caretAfter('go -');
+        arrow.type('>');
+
+        expect(sized.stored()).toEqual([paragraph(text('Size 3×4', link), text(' '))]);
+        expect(arrow.stored()).toEqual([paragraph(text('go →', link))]);
+    });
+
+    it('replaces a selected character with what ends the run', () => {
+        const editor = editorWith(withTypography, [paragraph(text('a --x'))]);
+        editor.select('x');
+
+        editor.type(' ');
+
+        expect(editor.stored()).toEqual([paragraph(text('a – '))]);
     });
 
     describe('quotes', () => {
@@ -276,7 +449,7 @@ describe('typographyPlugin', () => {
 
         it('leaves a quote in inline code as typed', () => {
             const editor = editorWith(
-                [...shipped('code'), typographyPlugin()],
+                [...shipped('code'), typographyPlugin({ groups: ['quotes'] })],
                 [paragraph(text('xy', { code: true }))],
             );
             editor.caretAfter('x');
@@ -286,9 +459,28 @@ describe('typographyPlugin', () => {
             expect(editor.stored()).toEqual([paragraph(text('x"y', { code: true }))]);
         });
 
+        it('opens a quote after an opening bracket or quote', () => {
+            expect(typed('["hi"]', withTypography)).toEqual([paragraph(text('[“hi”]'))]);
+            expect(typed('{"a"}', withTypography)).toEqual([paragraph(text('{“a”}'))]);
+            expect(typed(`"'hi'"`, withTypography)).toEqual([paragraph(text('“‘hi’”'))]);
+        });
+
+        it('opens a double quote after an inline element such as a mention', () => {
+            const tag = { type: 'tag', name: 'Noah' };
+            const editor = editorWith(
+                [tagPlugin, typographyPlugin({ groups: ['quotes'] })],
+                [paragraph(text('a '), tag)],
+            );
+            editor.caretAfter('￼');
+
+            editor.type('"hi"');
+
+            expect(editor.stored()).toEqual([paragraph(text('a '), tag, text('“hi”'))]);
+        });
+
         it('opens a quote after an inline element', () => {
             const editor = editorWith(
-                [...shipped('softBreak'), typographyPlugin()],
+                [...shipped('softBreak'), typographyPlugin({ groups: ['quotes'] })],
                 [paragraph(text('a'), { type: 'break' })],
             );
             editor.caretAfter('￼');
@@ -298,11 +490,27 @@ describe('typographyPlugin', () => {
             expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'break' }, text('“hi”'))]);
         });
 
+        it('turns a single quote after an inline element such as a mention into an apostrophe', () => {
+            const tag = { type: 'tag', name: 'Noah' };
+            const editor = editorWith(
+                [tagPlugin, typographyPlugin({ groups: ['quotes'] })],
+                [paragraph(text('a '), tag)],
+            );
+            editor.caretAfter('￼');
+
+            editor.type("'s");
+
+            expect(editor.stored()).toEqual([paragraph(text('a '), tag, text('’s'))]);
+        });
+
         it.each([
             ['useState', { code: true }],
             ['Frontify', { link: { href: 'https://frontify.com' } }],
         ])('leaves the run "%s" intact when an apostrophe and "s" are typed after it', (word, marks) => {
-            const editor = editorWith([...shipped('code', 'link'), typographyPlugin()], [paragraph(text(word, marks))]);
+            const editor = editorWith(
+                [...shipped('code', 'link'), typographyPlugin({ groups: ['quotes'] })],
+                [paragraph(text(word, marks))],
+            );
             editor.caretAfter(word);
 
             editor.type("'s");
@@ -311,7 +519,7 @@ describe('typographyPlugin', () => {
         });
 
         it('is taken back on Backspace', () => {
-            const editor = editorWith([typographyPlugin()], [paragraph()]);
+            const editor = editorWith([typographyPlugin({ groups: ['quotes'] })], [paragraph()]);
             editor.type('a "');
 
             expect(press(editor.view, 'Backspace')).toBe(true);

@@ -10,13 +10,16 @@ import {
     type HtmlSpec,
     type InlineDefinition,
     isEmpty,
-    type MarkClearRule as ClearRule,
+    type MarkClearRule,
     type MarkDefinition,
-    type MarkIgnoreRule as IgnoreRule,
+    type MarkIgnoreRule,
     type MarkParseRule,
     type ParseRule,
-    type StyleParseRule,
+    type InsertTextOptions,
+    type InsertTextUndo,
+    type Paste,
     type PasteHandler,
+    type PasteSource,
     type RemoveAllMarksOptions as RemoveAllOptions,
     type RteBlockCommand,
     type RteBlockNode,
@@ -30,6 +33,7 @@ import {
     type RteToolbarEntry,
     type RteToolbarGroup,
     type RtePluginDefinition,
+    type StyleParseRule,
     type ToolbarItemProps,
     toPlainText as plainText,
     type ToPlainTextOptions,
@@ -81,8 +85,9 @@ export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlock>(
     });
 
 /**
- * The document as an HTML string: the reading markup, what `RichTextRenderer`
- * draws, as static HTML. No React or browser needed. Uses `defaultContent` when given no
+ * The document as an HTML string: the reading markup `RichTextRenderer` draws,
+ * as static HTML, without its screen-reader-only text (a link's new-tab note), so
+ * the HTML shows nothing extra where the stylesheet is missing. No React or browser needed. Uses `defaultContent` when given no
  * `plugins`; `wrap: false` leaves out the root element. Style it with this
  * package's stylesheet (emails need the styles inlined).
  * @example
@@ -175,6 +180,10 @@ export type RtePlugin = CorePlugin;
 type ControlApi = EditorControlApi;
 type ToolbarProps = ToolbarItemProps;
 type OnPaste = PasteHandler;
+type Pasted = Paste;
+type InsertOptions = InsertTextOptions;
+type InsertUndo = InsertTextUndo;
+type PastedFrom = PasteSource;
 type BlockDef<TValue> = BlockDefinition<TValue>;
 type MarkDef<TValue> = MarkDefinition<TValue>;
 type InlineDef<TValue> = InlineDefinition<TValue>;
@@ -182,6 +191,8 @@ type EditComponentProps<TValue, TCurrent> = EditProps<TValue, TCurrent>;
 type Parse<TValue> = ParseRule<TValue>;
 type MarkParse<TValue> = MarkParseRule<TValue>;
 type StyleParse<TValue> = StyleParseRule<TValue>;
+type MarkClear = MarkClearRule;
+type MarkIgnore = MarkIgnoreRule;
 type Html = HtmlSpec;
 
 // oxlint-disable-next-line typescript/no-namespace -- types only; groups the authoring types under `RtePlugin`.
@@ -195,6 +206,10 @@ export declare namespace RtePlugin {
     export type ToolbarItemProps = ToolbarProps;
     export type ToolbarGroup = RteToolbarGroup;
     export type PasteHandler = OnPaste;
+    export type Paste = Pasted;
+    export type InsertTextOptions = InsertOptions;
+    export type InsertTextUndo = InsertUndo;
+    export type PasteSource = PastedFrom;
     export type BlockDefinition<TValue = Record<string, unknown>> = BlockDef<TValue>;
     export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
@@ -202,8 +217,8 @@ export declare namespace RtePlugin {
     export type ParseRule<TValue> = Parse<TValue>;
     export type MarkParseRule<TValue> = MarkParse<TValue>;
     export type StyleParseRule<TValue> = StyleParse<TValue>;
-    export type MarkClearRule = ClearRule;
-    export type MarkIgnoreRule = IgnoreRule;
+    export type MarkClearRule = MarkClear;
+    export type MarkIgnoreRule = MarkIgnore;
     export type HtmlSpec = Html;
     export type Content = RteContent;
     export type ToolbarEntry = RteToolbarEntry;

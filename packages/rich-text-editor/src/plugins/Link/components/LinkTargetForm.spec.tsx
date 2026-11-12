@@ -75,7 +75,7 @@ describe('the link target form', () => {
 
         save();
 
-        expect(alert()).toBe('Enter a link to frontify.com or its subdomains.');
+        expect(alert()).toBe('Enter a link to frontify.com (or a subdomain).');
         expect(window.document.activeElement).toBe(field);
         expect(onSave).not.toHaveBeenCalled();
     });
@@ -149,6 +149,35 @@ describe('the link target form', () => {
             );
 
             expect(stops).toEqual(['Text', 'Link to', 'Open in new tab', 'Cancel', 'Save']);
+        });
+
+        describe('Enter in the Text field', () => {
+            const pressEnterInText = (container: HTMLElement, init: EnterPressInit): void => {
+                const field = textField(container);
+                act(() => {
+                    field.dispatchEvent(
+                        new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true, ...init }),
+                    );
+                });
+            };
+
+            it('does not save when it confirms an input-method composition', () => {
+                const { container, type, onSave } = mountForm({}, { kind: 'create', text: 'the docs' });
+                type('example.com');
+
+                pressEnterInText(container, { isComposing: true });
+
+                expect(onSave).not.toHaveBeenCalled();
+            });
+
+            it('does not save when the browser reports it as key code 229', () => {
+                const { container, type, onSave } = mountForm({}, { kind: 'create', text: 'the docs' });
+                type('example.com');
+
+                pressEnterInText(container, { keyCode: 229 });
+
+                expect(onSave).not.toHaveBeenCalled();
+            });
         });
 
         it('focuses Text when it is empty, and the address when there is text to keep', () => {

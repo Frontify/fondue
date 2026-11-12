@@ -2846,6 +2846,46 @@ describe('onBlur', () => {
     });
 });
 
+describe('a mention in the editor', () => {
+    it('shows what resolve answers and keeps the stored username in the document', () => {
+        const plugins = [
+            ...defaultPlugins,
+            mentionPlugin({
+                items: [],
+                resolve: () => ({ status: 'current', username: 'jane.s', name: 'Jane Smith' }),
+            }),
+        ];
+        const value: RteDocument = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'Ask ' },
+                        { type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' },
+                        { text: '' },
+                    ],
+                },
+            ],
+        };
+        const { container, stored, ready } = mount((onChange) => (
+            <RichTextEditor value={value} onChange={onChange} plugins={plugins} />
+        ));
+        ready();
+
+        expect(container.querySelector('[data-mention-id] bdi')?.textContent).toBe('@jane.s');
+
+        paste(container, '<p>x</p>');
+
+        expect(childrenOf(stored())).toContainEqual({
+            type: 'mention',
+            id: 'jane',
+            username: 'jane',
+            name: 'Jane Doe',
+        });
+    });
+});
+
 describe('pasting', () => {
     describe('into a mounted editor', () => {
         it('turns a copied mention back into a mention, even where links are mounted', () => {

@@ -4,17 +4,10 @@ import { defineContent, defineInline, definePlugin, type RtePlugin } from '#/cor
 
 import { MentionEditor } from './components/MentionEditor';
 import { BIDI_ISOLATE_TAG, MentionLink } from './components/MentionLink';
-import { mentionAttributes, mentionDisplay } from './helpers/display';
+import { linkTarget, mentionAttributes, mentionDisplay, storedKind } from './helpers/display';
 import { mentionValueOf } from './helpers/mention';
 import styles from './mention.module.scss';
-import {
-    MENTION_KINDS,
-    type MentionHref,
-    type MentionItem,
-    type MentionItems,
-    type MentionResolve,
-    type MentionValue,
-} from './types';
+import { type MentionHref, type MentionItem, type MentionItems, type MentionResolve, type MentionValue } from './types';
 
 export type MentionContentOptions = {
     /**
@@ -25,9 +18,10 @@ export type MentionContentOptions = {
     /**
      * What the app knows now about a stored mention: a renamed person shows
      * their current username and name, a deleted or forbidden one shows the
-     * stored username marked unavailable, with no link. Without it, or for
-     * `unknown`, the stored value shows. The document is never changed. A throw
-     * is not caught.
+     * stored username marked unavailable, with no link. Without it, for
+     * `unknown`, when it throws, or when it answers with no known status, the stored value shows. The document is
+     * never changed. Read when a mention is drawn: a changed `resolve` applies
+     * once the editor is remounted.
      */
     resolve?: MentionResolve;
     /**
@@ -59,15 +53,17 @@ export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentO
                 // nowhere to link to), no tooltip.
                 toHtml: (mention) => {
                     const shown = mentionDisplay(mention, { resolve, href, trigger });
+                    const target = linkTarget(shown);
                     return {
-                        tag: shown.href === undefined ? 'span' : 'a',
+                        tag: target === undefined ? 'span' : 'a',
                         attrs: {
-                            href: shown.href,
+                            href: target,
                             title: shown.title,
                             ...mentionAttributes(mention),
                             class: styles.mention ?? '',
                         },
-                        // Isolated so a right-to-left name cannot reorder the text around it.
+                        // Isolated so a right-to-left name cannot reorder the text around it; `@` and
+                        // the label only, without the note an unavailable mention shows when read.
                         children: [{ tag: BIDI_ISOLATE_TAG, children: shown.label }],
                     };
                 },
@@ -84,7 +80,7 @@ export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentO
                             const username = element.dataset.mentionUsername ?? '';
                             // Copies from before `data-mention-name` carry the name in the title.
                             const name = element.dataset.mentionName ?? element.title;
-                            const kind = MENTION_KINDS.find((known) => known === element.dataset.mentionKind);
+                            const kind = storedKind(element.dataset.mentionKind);
                             if (id === '' || username === '') {
                                 return null;
                             }
@@ -95,11 +91,7 @@ export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentO
 
                 render: {
                     component: ({ value }) => (
-                        <MentionLink
-                            value={value}
-                            display={mentionDisplay(value, { resolve, href, trigger })}
-                            focusableWhenUnlinked
-                        />
+                        <MentionLink value={value} display={mentionDisplay(value, { resolve, href, trigger })} />
                     ),
                 },
             }),

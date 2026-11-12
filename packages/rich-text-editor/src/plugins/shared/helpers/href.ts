@@ -3,7 +3,17 @@
 /**
  * The schemes a link may use, which leaves out `javascript:` and `data:`
  */
-const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']);
+export const LINK_SCHEMES = ['https', 'http', 'mailto', 'tel'] as const;
+
+/**
+ * A scheme a link may use.
+ */
+export type LinkScheme = (typeof LINK_SCHEMES)[number];
+
+/**
+ * The link schemes as an href starts with them, colon included
+ */
+const SAFE_SCHEMES = new Set<string>(LINK_SCHEMES.map((scheme) => `${scheme}:`));
 
 /**
  * `localhost:3000`, `example.com:8080/x`: a host and a port, which reads like a
@@ -66,19 +76,11 @@ export const isSafeHref = (href: unknown): href is string => {
 export const isLinkablePaste = (text: string): boolean => LINKABLE_PASTE.test(text);
 
 /**
- * A `data:` URL holding an image
- */
-const DATA_IMAGE = /^data:image\//i;
-
-/**
- * What an `<img>` may load: a web or relative URL, or a `data:` image; an image cannot run script, but a `javascript:` or other scheme is still refused
+ * What an `<img>` may load: a web or relative URL; `data:`, `javascript:` and other schemes are refused
  */
 export const isSafeImageSrc = (src: unknown): src is string => {
     if (typeof src !== 'string') {
         return false;
-    }
-    if (DATA_IMAGE.test(src)) {
-        return true;
     }
     if (!isSafeHref(src)) {
         return false;

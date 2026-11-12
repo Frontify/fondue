@@ -33,13 +33,12 @@ export type HtmlAttributes = {
 /**
  * One element. `children: true` is where the node's content goes (the text of
  * a paragraph, the items of a list); a string, or a mix of strings and nested
- * elements, is fixed content — a mention's `@jane`. A `true` among them is the
- * content too, with fixed content around it (a link's hidden note after its text).
+ * elements, is fixed content — a mention's `@jane`.
  */
 export type HtmlSpec = {
     tag: keyof HTMLElementTagNameMap;
     attrs?: HtmlAttributes;
-    children?: true | string | readonly (HtmlSpec | string | true)[];
+    children?: true | string | readonly (HtmlSpec | string)[];
 };
 
 /** A property name as CSS writes one, custom properties (`--rte-columns`) included. */

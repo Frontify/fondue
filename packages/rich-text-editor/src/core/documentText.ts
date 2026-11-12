@@ -45,17 +45,7 @@ const specText = (spec: HtmlSpec): string => {
         return spec.children;
     }
     return typeof spec.children === 'object'
-        ? spec.children
-              .map((child) => {
-                  if (child === true) {
-                      return '';
-                  }
-                  if (typeof child === 'string') {
-                      return child;
-                  }
-                  return specText(child);
-              })
-              .join('')
+        ? spec.children.map((child) => (typeof child === 'string' ? child : specText(child))).join('')
         : '';
 };
 

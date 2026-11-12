@@ -11,6 +11,23 @@
 export type RteMarkState = { coverage: 'all'; value: Record<string, unknown> } | { coverage: 'some' };
 
 /**
+ * How `insertText` is undone. `'together'`: the text and its marks in one step. `'marksFirst'`: the marks in a step
+ * of their own, so the first undo keeps the text, as undoing an autolink does.
+ */
+export type InsertTextUndo = 'together' | 'marksFirst';
+
+/**
+ * Options for `insertText`.
+ */
+export type InsertTextOptions = {
+    /**
+     * How the insert is undone.
+     * @default 'together'
+     */
+    undo?: InsertTextUndo;
+};
+
+/**
  * What is selected, as one value that plugin UI renders itself from. Read it in a toolbar render function, which runs on every state change.
  */
 export type RteSelectionSnapshot = {
@@ -146,11 +163,11 @@ export type EditorControlApi = {
     insert(type: string, value?: Record<string, unknown>): void;
     /**
      * Insert plain text at the selection, replacing what is selected, carrying the marks typing there would plus
-     * `marks`, in one undo step. Unknown mark types are ignored.
+     * `marks`. Unknown mark types are ignored.
      * @param marks - Marks to add, by type to value, as in `marks.toggle`.
-     * @default {}
+     * @param options - How the insert is undone.
      */
-    insertText(text: string, marks?: Record<string, Record<string, unknown>>): void;
+    insertText(text: string, marks?: Record<string, Record<string, unknown>>, options?: InsertTextOptions): void;
 
     /**
      * The text around the caret, within its block

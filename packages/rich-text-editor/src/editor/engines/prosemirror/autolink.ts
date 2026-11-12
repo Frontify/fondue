@@ -21,26 +21,41 @@ import {
 /** Punctuation and closing quotes that end a sentence or quotation rather than a link, though a link may contain them. */
 const TRAILING_PUNCTUATION = /[.,;:!?"'”’]+$/;
 
+/** Each closing bracket a link may end in, and the opening one it closes. */
+const BRACKET_PAIRS: Readonly<Record<string, string>> = { ')': '(', ']': '[', '}': '{', '>': '<' };
+
 const count = (text: string, character: string): number => text.split(character).length - 1;
 
-/** Drops trailing punctuation, and a trailing `)` only while it has no `(` to close. */
+/** Whether the text ends in a closing bracket with no opening one left for it to close. */
+const endsInUnbalancedBracket = (text: string): boolean => {
+    const closing = text.slice(-1);
+    const opening = BRACKET_PAIRS[closing];
+    if (opening === undefined) {
+        return false;
+    }
+    return count(text, closing) > count(text, opening);
+};
+
+/** Drops trailing punctuation, and a trailing closing bracket only while it has no opening one to close. */
 export const trimTrailingPunctuation = (address: string): string => {
     let trimmed = address;
     for (;;) {
-        const next = trimmed.replace(TRAILING_PUNCTUATION, '');
-        const unbalanced = next.endsWith(')') && count(next, ')') > count(next, '(');
-        if (!unbalanced && next === trimmed) {
+        let next = trimmed.replace(TRAILING_PUNCTUATION, '');
+        if (endsInUnbalancedBracket(next)) {
+            next = next.slice(0, -1);
+        }
+        if (next === trimmed) {
             return trimmed;
         }
-        trimmed = unbalanced ? next.slice(0, -1) : next;
+        trimmed = next;
     }
 };
 
 /** What reading a block as text gives for an inline element (a line break, a mention). */
 const INLINE_ELEMENT = '￼';
 
-/** What may come right before a token: whitespace, an inline element, or an opening bracket or quote. */
-const TOKEN_OPENERS = `\\s${INLINE_ELEMENT}([{<'"“‘`;
+/** What may come right before a token: whitespace, an inline element, or an opening bracket or quote. Brackets are escaped so a rule with the `v` flag still compiles. */
+const TOKEN_OPENERS = `\\s${INLINE_ELEMENT}\\(\\[\\{<'"“‘`;
 
 /** How much text before the caret a rule reads, as the engine's input rules do. */
 const MAX_MATCH = 500;
