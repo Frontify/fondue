@@ -180,7 +180,8 @@ export declare namespace RtePlugin {
     export type ParseRule<TValue> = Parse<TValue>;
     export type MarkParseRule<TValue> = MarkParse<TValue>;
     export type StyleParseRule<TValue> = StyleParse<TValue>;
-    export type MarkClearRule = MarkClear;
+    // A namespace member cannot take the name of the type it renames, so each of these needs an alias outside.
+    export type MarkClearRule = MarkClear; // NOSONAR
     export type HtmlSpec = Html;
     export type Content = RteContent;
     export type ToolbarEntry = RteToolbarEntry;
