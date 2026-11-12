@@ -331,7 +331,7 @@ export const defineMark = <TValue extends object = Record<string, never>>(
 export type MarkDefinition<TValue = Record<string, unknown>> = {
     /** Where the mark sits when marks nest on the same text: lower wraps higher, ties keep plugin order. Defaults to `0`. */
     nesting?: number;
-    /** Text typed at the end of the mark carries it on. Defaults to true; a link says false. */
+    /** Text typed at the end of the mark carries it on. Defaults to true; a mark that declares `inclusive: false` stops at its end. */
     inclusive?: boolean;
     /** Mark types that cannot sit on the same text as this one: putting either mark on takes the other off. Naming it in one mark is enough. A type no mounted plugin registers is ignored. */
     excludes?: readonly string[];
@@ -341,7 +341,7 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
      */
     excludesInputRules?: boolean;
     /**
-     * Clearing formatting with `keepSurviving` leaves this mark on — a link stays through "clear formatting" but not through "reset formatting".
+     * Clearing formatting with `keepSurviving` leaves this mark on — a mark that declares `survivesClear` stays through "clear formatting" but not through "reset formatting".
      * @default false
      */
     survivesClear?: boolean;
@@ -581,7 +581,7 @@ export type ToolbarItemProps = {
  * The entry's toggled type at the selection: a mark, a block or an inline.
  *
  * A mark is found as its whole run, edges included — a caret at the end of a
- * link still finds the link. A block is the innermost one of that type around
+ * run still finds it. A block is the innermost one of that type around
  * the selection. An inline is never found: the selection sits beside one.
  */
 export type SelectedNode = {

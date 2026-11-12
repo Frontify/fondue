@@ -732,7 +732,7 @@ const ContentHole = ({ element, home }: ContentHoleProps): ReactNode => {
 
 /**
  * A text node the browser typed into the view's element outside the content
- * (Chrome puts a character typed at the end of a link AFTER the component's
+ * (for example, Chrome puts a character typed at the end of a link AFTER the component's
  * `<a>`). Text inside a non-editable island is React's own, not typed.
  */
 const isTypedText = (node: Node, dom: HTMLElement): node is Text => {

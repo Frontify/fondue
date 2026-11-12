@@ -46,9 +46,9 @@ import {
  * 2. Enter and Shift-Enter mark the token a `markPattern` rule matches before the caret
  *    once the key has acted; Backspace right after takes the mark back.
  * 3. Feature hotkeys (Mod-b, ...). Before the list keys so a feature can take a
- *    key lists would claim (`blurOnBreak` takes Enter).
+ *    key lists would claim (for example, `blurOnBreak` takes Enter).
  * 4. List keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
- * 5. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`); held until a composition ends.
+ * 5. Typing rewrites: declared `RteInputRule`s (for example, `**bold**`, `- `, `-->`); held until a composition ends.
  * 6. Baseline keymap, plus Backspace turning an emptied first block back into the default block.
  *
  * Mark input rules build their own transaction instead of calling
@@ -187,7 +187,7 @@ const characterHotkeys = (
 
 const typingRewrites = (registry: PluginRegistry, schema: Schema): PmPlugin[] => {
     const context = ruleContext(registry, schema);
-    // The registry orders rules longest delimiter first; otherwise `**bold**`
+    // The registry orders rules longest delimiter first; otherwise (for example) `**bold**`
     // reads as an italic `*` wrapping `*bold*`.
     const rules = registry.inputRules.flatMap((rule) => toEngineRule(rule, context) ?? []);
 
@@ -257,7 +257,7 @@ const toEngineRule = (rule: RteInputRule, context: RuleContext): InputRule | nul
 
 const escapeForRegExp = (text: string): string => text.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-/** `**bold**` -> a bold mark over `bold`. The engine ships block and text rules but no mark rule. */
+/** A delimiter pair becomes a mark over its text (for example, `**bold**` -> bold over `bold`). The engine ships block and text rules but no mark rule. */
 const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | null => {
     const markType = context.schema.marks[rule.key];
     if (!markType) {
@@ -267,7 +267,7 @@ const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | n
     const escaped = escapeForRegExp(delimiter);
     const firstChar = escapeForRegExp(delimiter.charAt(0));
     // The character before the opening delimiter must not be the delimiter
-    // itself, or typing `**bold**` fires the italic rule on `**bold*` first.
+    // itself, or typing (for example) `**bold**` fires the italic rule on `**bold*` first.
     const pattern = new RegExp(`(?:^|[^${firstChar}])${escaped}([^${firstChar}]+)${escaped}$`);
 
     const handler: RuleHandler = (state, match, start, end) => {
@@ -420,7 +420,7 @@ const typingMarks = (state: EditorState): readonly PmMark[] => state.storedMarks
 
 /**
  * The marks of the first character from `start` that lies before the selection, kept by a
- * replacement even where a mark such as a link ends there. Typing marks otherwise, so text typed
+ * replacement even where a mark (for example, a link) ends there. Typing marks otherwise, so text typed
  * over a selection does not take the selected text's marks.
  */
 const replacedMarks = (state: EditorState, start: number, end: number): readonly PmMark[] => {

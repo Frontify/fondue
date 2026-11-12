@@ -41,7 +41,7 @@ const HIGH_PRECEDENCE_OFFSET = 6;
 const DEFAULT_PRECEDENCE: ParsePrecedence = 'normal';
 
 /**
- * A qualified selector (`p[data-text-style=imageCaption]`, `ul[data-check-list]`)
+ * A qualified selector (for example, `p[data-text-style=imageCaption]`, `ul[data-check-list]`)
  * outranks a bare tag of the same precedence. Otherwise the paragraph baseline,
  * registered first, claims every pasted `<p>` and `<ul>` and drops text styles and check marks.
  */
@@ -52,7 +52,7 @@ const QUALIFIED_OFFSET = 1;
 const MARK_PRIORITY = MARK_BASE_PRIORITY + NORMAL_PRECEDENCE_OFFSET;
 
 /**
- * Style rules run before the mark tag rules, which consume their element, so `<strong style="font-style:italic">` is italic too.
+ * Style rules run before the mark tag rules, which consume their element, so (for example) `<strong style="font-style:italic">` is italic too.
  * Derived to stay 65, just above a high precedence qualified mark tag rule, as before it was derived.
  */
 const STYLE_PRIORITY = MARK_BASE_PRIORITY + HIGH_PRECEDENCE_OFFSET + QUALIFIED_OFFSET + 1;
@@ -185,7 +185,7 @@ const STYLED_ELEMENT = '[style]';
 const markStyleRule = (rule: StyleParseRule<unknown>, defaultStyles: readonly DefaultStyleRule[]): TagParseRule => ({
     tag: STYLED_ELEMENT,
     priority: STYLE_PRIORITY,
-    // One declaration, such as `text-decoration: underline line-through`, can set two marks.
+    // One declaration, for example `text-decoration: underline line-through`, can set two marks.
     consuming: false,
     getAttrs: (element: HTMLElement) => {
         const cssValue = declaredValue(element, rule.style, defaultStyles);

@@ -35,7 +35,7 @@ export type RteInlineNode = RteTextNode | RteInlineElementNode;
 
 /**
  * A text leaf. Marks live flat on the node, keyed by mark type: `true` for a
- * plain mark (`bold: true`), the attributes for a valued one (`link: { href }`).
+ * plain mark (for example, `bold: true`), the attributes for a valued one (for example, `link: { href }`).
  * Presence turns a mark on; there is no `false`.
  *
  * The index signature keeps the format open over plugin marks. Displaying a

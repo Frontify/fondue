@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// Google Docs wraps what it copies in a `<b>` that is bold in name only, and
+// Google Docs wraps what it copies in a `<b style=font-weight:normal>` that is not formatting, and
 // writes an empty line as a lone `<br>` between blocks.
 
 /** The id Docs writes on the wrapper, or in Firefox on the first block. */
 const MARKED = '[id^="docs-internal-guid-"]';
-/** Docs' wrapper is a `<b>` with this weight; a bold `<b>` with the id is formatting. */
+/** Docs' wrapper is a `<b>` with this weight; a `<b>` with the id and any other weight is formatting. */
 const WRAPPER_TAG = 'b';
 const WRAPPER_WEIGHT = 'normal';
 /** The break WebKit adds after a copy. */
@@ -77,8 +77,8 @@ const docsCopyRoot = (dom: HTMLElement): Element | undefined => {
 
 /**
  * Cleans a Google Docs copy, found by its id: breaks between blocks become
- * empty paragraphs, and the break WebKit adds after the copy goes. The bold
- * mark's own rule reads the wrapper as not bold. Does nothing to a paste from elsewhere.
+ * empty paragraphs, and the break WebKit adds after the copy goes. Whichever
+ * mark parses `<b>` reads the wrapper as not carrying it. Does nothing to a paste from elsewhere.
  */
 export const tidyGoogleDocs = (dom: HTMLElement): void => {
     const root = docsCopyRoot(dom);

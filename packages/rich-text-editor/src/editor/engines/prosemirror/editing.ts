@@ -85,7 +85,7 @@ const mount = ({
     // The document's own undeclared keys: only the host changes them, so they live here, not in the engine document.
     let rootExtras = rootExtrasOf(initialDoc);
 
-    // 1. Views with editing UI (blocks, inline elements, link-like marks) follow
+    // 1. Views with editing UI (blocks, inline elements, marks with their own editing UI) follow
     //    the selection, since `isFocused` does. Each state change is offered to
     //    all of them, and each re-renders only when its props changed.
     const liveViews = new LiveViews(viewPortals);

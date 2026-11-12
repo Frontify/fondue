@@ -124,7 +124,7 @@ export type PluginRegistry = ContentRegistry & {
     shortcuts: readonly RteShortcut[];
     /**
      * Every typing rule, ordered for matching: mark rules first, longest
-     * delimiter first — or `**bold**` would be read as an italic `*` wrapping
+     * delimiter first — or (for example) `**bold**` would be read as an italic `*` wrapping
      * `*bold*` — then the rest as declared.
      */
     inputRules: readonly RteInputRule[];
