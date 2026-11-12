@@ -13,6 +13,8 @@ import {
     type StyleMap,
 } from '#/core';
 
+import { PASTED_LISTS } from '../shared/paste/pastedLists';
+
 import styles from './list.module.scss';
 
 /**
@@ -167,6 +169,7 @@ const listPlugin = ({ id, content, type, icon, label, keywords, markdown, shortc
         toolbarGroup: 'lists',
         toolbar: [{ toggles: type, label, icon, shortcut, menu: { keywords } }],
         inputRules: markdown.map((match) => ({ kind: 'list' as const, match, list: type })),
+        pasteTransforms: [PASTED_LISTS],
     });
 
 /**

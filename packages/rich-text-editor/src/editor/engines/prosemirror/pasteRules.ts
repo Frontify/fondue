@@ -12,6 +12,7 @@ import {
     type DefaultStyle,
     type MarkClearRule,
     type MarkParseRule,
+    type ParsePrecedence,
     type ParseRule,
     type PluginRegistry,
     type StyleParseRule,
@@ -22,41 +23,75 @@ import { VALUE_ATTR } from './documentConversion';
 // Turns each plugin's `parse` rules into the engine's `parseDOM`, once at mount.
 
 /**
- * Priorities for rules that match the same element; the engine otherwise tries
- * equal priorities in schema order. An inline element's markup may also match a
- * mark's rule (a mention `<a href data-mention-id>` matches a link's `a[href]`),
- * so inline rules outrank mark rules.
+ * Where each kind's tag rules start, for rules that match the same element; the
+ * engine otherwise tries equal priorities in schema order. An inline element's
+ * markup may also match a mark's rule (a mention `<a href data-mention-id>`
+ * matches a link's `a[href]`), so inline rules outrank mark rules.
  */
-export const MARK_PRIORITY = 60;
-export const INLINE_PRIORITY = 70;
+const BLOCK_BASE_PRIORITY = 47;
+const MARK_BASE_PRIORITY = 57;
+const INLINE_BASE_PRIORITY = 67;
+
+/** What each precedence adds to its kind's base: a normal bare block lands on 50, the engine's default. */
+const LOW_PRECEDENCE_OFFSET = 0;
+const NORMAL_PRECEDENCE_OFFSET = 3;
+const HIGH_PRECEDENCE_OFFSET = 6;
+
+/** The precedence of a rule that declares none. */
+const DEFAULT_PRECEDENCE: ParsePrecedence = 'normal';
+
+/**
+ * A qualified selector (`p[data-text-style=imageCaption]`, `ul[data-check-list]`)
+ * outranks a bare tag of the same precedence. Otherwise the paragraph baseline,
+ * registered first, claims every pasted `<p>` and `<ul>` and drops text styles and check marks.
+ */
+const QUALIFIED_SELECTOR = /[[.#:]/;
+const QUALIFIED_OFFSET = 1;
+
+/** Ignore and clear rules sit where a normal mark tag rule with a bare tag does. */
+const MARK_PRIORITY = MARK_BASE_PRIORITY + NORMAL_PRECEDENCE_OFFSET;
+
 /**
  * Style rules run before the mark tag rules, which consume their element, so `<strong style="font-style:italic">` is italic too.
  */
 const STYLE_PRIORITY = 65;
 
-/**
- * A qualified selector (`p[data-text-style=imageCaption]`, `ul[data-check-list]`)
- * outranks a bare tag. Otherwise the paragraph baseline, registered first,
- * claims every pasted `<p>` and `<ul>` and drops text styles and check marks.
- */
-const qualifiedPriority = (tag: string): number | undefined => (/[[.#:]/.test(tag) ? MARK_PRIORITY : undefined);
+const precedenceOffset = (precedence: ParsePrecedence): number => {
+    switch (precedence) {
+        case 'low':
+            return LOW_PRECEDENCE_OFFSET;
+        case 'normal':
+            return NORMAL_PRECEDENCE_OFFSET;
+        case 'high':
+            return HIGH_PRECEDENCE_OFFSET;
+    }
+};
+
+/** A tag rule's priority: its kind's base, raised by its precedence and by a qualified selector. */
+const tagRulePriority = (base: number, rule: ParseRule<unknown>): number => {
+    let priority = base + precedenceOffset(rule.precedence ?? DEFAULT_PRECEDENCE);
+    if (QUALIFIED_SELECTOR.test(rule.tag)) {
+        priority += QUALIFIED_OFFSET;
+    }
+    return priority;
+};
 
 /**
  * Wraps a parsed value as the node's single value attribute, or false when the value is null.
  */
 const valueAttrs = (value: unknown) => (value === null ? false : { [VALUE_ATTR]: value });
 
-const valueParseRule = (rule: ParseRule<unknown>, priority: number): TagParseRule => ({
+const valueParseRule = (rule: ParseRule<unknown>, base: number): TagParseRule => ({
     tag: rule.tag,
-    priority,
+    priority: tagRulePriority(base, rule),
     getAttrs: (element: HTMLElement) => valueAttrs(rule.value ? rule.value(element) : {}),
 });
 
 /**
  * Inline rules keep their whole value in one attribute; a null value means "not this node".
  */
-export const valueParseRules = (rules: readonly ParseRule<unknown>[], priority: number): TagParseRule[] =>
-    rules.map((rule) => valueParseRule(rule, priority));
+export const valueParseRules = (rules: readonly ParseRule<unknown>[]): TagParseRule[] =>
+    rules.map((rule) => valueParseRule(rule, INLINE_BASE_PRIORITY));
 
 /**
  * A mounted node's default style, with the selector of the tags that show it: the node's own parse tags.
@@ -175,7 +210,7 @@ export const markParseRules = (
             return { tag: rule.tag, priority: MARK_PRIORITY, ignore: true };
         }
         if (rule.style === undefined) {
-            return valueParseRule(rule, MARK_PRIORITY);
+            return valueParseRule(rule, MARK_BASE_PRIORITY);
         }
         return markStyleRule(rule, defaultStyles);
     });
@@ -190,7 +225,7 @@ export const blockParseRules = (
 ): TagParseRule[] =>
     definition.parse.map((rule) => ({
         tag: rule.tag,
-        priority: qualifiedPriority(rule.tag),
+        priority: tagRulePriority(BLOCK_BASE_PRIORITY, rule),
         getAttrs: (element: HTMLElement) => {
             const value = rule.value ? rule.value(element) : {};
             if (value === null) {

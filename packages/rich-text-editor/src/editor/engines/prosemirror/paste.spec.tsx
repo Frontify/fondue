@@ -5,7 +5,16 @@
 import { undo } from 'prosemirror-history';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { defineContent, defineMark, definePlugin, type PasteHandler, type RtePlugin } from '#/core';
+import {
+    defineBlock,
+    defineContent,
+    defineMark,
+    definePlugin,
+    type ParsePrecedence,
+    type PasteHandler,
+    type PasteTransform,
+    type RtePlugin,
+} from '#/core';
 import { defaultPlugins, linkPlugin } from '#/plugins';
 
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
@@ -84,6 +93,106 @@ describe('a plugin paste handler', () => {
         expect(first).toHaveBeenCalledOnce();
         expect(second).toHaveBeenCalledOnce();
         expect(third).not.toHaveBeenCalled();
+    });
+});
+
+describe('a plugin paste transform', () => {
+    it('rewrites the pasted HTML before the parse rules read it', () => {
+        const shout: PasteTransform = {
+            id: 'shout',
+            run: (dom) => {
+                for (const block of dom.querySelectorAll('p')) {
+                    block.textContent = (block.textContent ?? '').toUpperCase();
+                }
+            },
+        };
+        const editor = editorWith([definePlugin({ id: 'shouting', pasteTransforms: [shout] })], [paragraph()]);
+
+        editor.pasteHTML('<p>quiet</p>');
+
+        expect(editor.stored()).toEqual([paragraph(text('QUIET'))]);
+    });
+
+    it('runs once when two plugins share it', () => {
+        const run = vi.fn<PasteTransform['run']>();
+        const shared: PasteTransform = { id: 'shared', run };
+        const editor = editorWith(
+            [
+                definePlugin({ id: 'a', pasteTransforms: [shared] }),
+                definePlugin({ id: 'b', pasteTransforms: [shared] }),
+            ],
+            [paragraph()],
+        );
+
+        editor.pasteHTML('<p>x</p>');
+
+        expect(run).toHaveBeenCalledOnce();
+    });
+});
+
+describe('pasting a table or preformatted text', () => {
+    const TABLE = '<table><tr><td>a</td><td>b</td></tr><tr><td>c</td><td>d</td></tr></table>';
+
+    const pasted = (plugins: readonly RtePlugin[], html: string) => {
+        const editor = editorWith(plugins, [paragraph()]);
+        editor.pasteHTML(html);
+        return editor.stored();
+    };
+
+    it('pastes one line per table row when no plugin reads tables', () => {
+        expect(pasted(defaultPlugins, TABLE)).toEqual([paragraph(text('a b')), paragraph(text('c d'))]);
+    });
+
+    it('pastes one line per line of a <pre>', () => {
+        expect(pasted(defaultPlugins, '<pre>one\ntwo</pre>')).toEqual([paragraph(text('one')), paragraph(text('two'))]);
+    });
+
+    it('leaves a table to the block that reads it', () => {
+        const table = defineBlock({
+            content: 'text',
+            toHtml: () => ({ tag: 'table', children: true }),
+            parse: [{ tag: 'table' }],
+        });
+        const plugins = [
+            ...defaultPlugins,
+            definePlugin({ id: 'table', content: defineContent({ blocks: { table } }) }),
+        ];
+
+        expect(pasted(plugins, TABLE)?.map((block) => block.type)).toEqual(['table']);
+    });
+});
+
+describe('parse precedence', () => {
+    const pasted = (plugins: readonly RtePlugin[], html: string) => {
+        const editor = editorWith(plugins, [paragraph()]);
+        editor.pasteHTML(html);
+        return editor.stored()?.map((block) => block.type);
+    };
+
+    const pullQuotePlugin = (precedence?: ParsePrecedence): RtePlugin => {
+        const pullQuote = defineBlock({
+            content: 'text',
+            toHtml: () => ({ tag: 'blockquote', children: true }),
+            parse: [{ tag: 'blockquote', precedence }],
+        });
+        return definePlugin({ id: 'pull-quote', content: defineContent({ blocks: { pullQuote } }) });
+    };
+
+    it('lets a high-precedence block rule read what the quote plugin, mounted first, also reads', () => {
+        expect(pasted([...defaultPlugins, pullQuotePlugin('high')], '<blockquote>said</blockquote>')).toEqual([
+            'pullQuote',
+        ]);
+    });
+
+    it('leaves a tie to the plugin mounted first', () => {
+        expect(pasted([...defaultPlugins, pullQuotePlugin()], '<blockquote>said</blockquote>')).toEqual(['quote']);
+    });
+
+    it.each([
+        ['a text style', '<p data-text-style="imageCaption">c</p>', 'textStyle'],
+        ['a check list', '<ul data-check-list><li data-checked="true"><p>c</p></li></ul>', 'checkList'],
+    ])('reads %s by its qualified selector over the bare tag', (_name, html, type) => {
+        expect(pasted(defaultPlugins, html)).toEqual([type]);
     });
 });
 

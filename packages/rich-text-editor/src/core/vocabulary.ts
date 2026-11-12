@@ -50,6 +50,25 @@ export const WORD_START_CONTEXT = String.raw`\s([{<'"“‘`;
  */
 export const ANY_LIST = '@anyList';
 
+/**
+ * The pasted-list contract between the editor and list plugins: the attributes the editor writes on each pasted
+ * paragraph the source app marks as a list item, for a paste transform to rebuild lists from. The editor removes any
+ * the paste itself carries before it writes them.
+ * - `list`: the source app's list identity (Word's `l0 lfo1`).
+ * - `level`: the nesting level, 1 to 9.
+ * - `marker`: the kind of marker, a `PastedListMarker`.
+ * - `number`: the item's own number, when its marker has one.
+ */
+export const PASTED_LIST_ITEM_ATTRIBUTES = {
+    list: 'data-rte-pasted-list',
+    level: 'data-rte-pasted-list-level',
+    marker: 'data-rte-pasted-list-marker',
+    number: 'data-rte-pasted-list-number',
+} as const;
+
+/** The kind of marker a pasted list item showed in the source app. */
+export type PastedListMarker = 'bullet' | 'numbered';
+
 /** The document the editor starts from when it is given none: one empty paragraph. */
 export const emptyDocument = (): RteDocumentOf => ({
     version: DOCUMENT_VERSION,

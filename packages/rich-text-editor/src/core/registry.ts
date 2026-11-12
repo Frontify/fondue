@@ -15,8 +15,11 @@ import {
     type HotkeyHandler,
     type InlineDefinition,
     type MarkDefinition,
+    type MarkParseRule,
     onlyTypeOf,
     type PasteHandler,
+    type PasteTransform,
+    type PasteTransformContext,
     type RteBlockCommand,
     type RteContent,
     type RteDelimiterRule,
@@ -133,6 +136,8 @@ export type PluginRegistry = {
     inputRules: readonly RteInputRule[];
     /** Every plugin's `onPaste`, in mount order; they run until one handles the paste. */
     pasteHandlers: readonly PasteHandler[];
+    /** Every plugin's `pasteTransforms`, in mount order, each shared one once. */
+    pasteTransforms: readonly PasteTransform[];
     /** The toolbar's controls, in mount order. */
     toolbarItems: readonly ToolbarEntry[];
     /** Every block command the plugins offer, in mount order. */
@@ -307,7 +312,7 @@ const assertHasId = (plugin: RtePlugin): void => {
  * object registered twice is fine — two list plugins share their item that way.
  */
 const register = <TDefinition>(
-    kind: 'block type' | 'mark type' | 'inline type' | 'block attribute' | 'edit view',
+    kind: 'block type' | 'mark type' | 'inline type' | 'block attribute' | 'edit view' | 'paste transform',
     target: Map<string, TDefinition>,
     owners: Map<string, string>,
     owner: string,
@@ -489,6 +494,7 @@ type Draft = {
     ownedHotkeyCounts: Map<string, number>;
     inputRules: RteInputRule[];
     pasteHandlers: PasteHandler[];
+    pasteTransforms: Map<string, PasteTransform>;
     toolbarItems: ToolbarEntry[];
     commands: RteBlockCommand[];
     commandOwners: Map<string, string>;
@@ -505,6 +511,7 @@ type Draft = {
     markOwners: Map<string, string>;
     attributeOwners: Map<string, string>;
     editOwners: Map<string, string>;
+    pasteTransformOwners: Map<string, string>;
 };
 
 const addHotkey = (draft: Draft, keys: string, handler: HotkeyHandler): void => {
@@ -608,6 +615,11 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
     if (plugin.onPaste) {
         draft.pasteHandlers.push(plugin.onPaste);
     }
+    for (const transform of plugin.pasteTransforms ?? []) {
+        register('paste transform', draft.pasteTransforms, draft.pasteTransformOwners, plugin.id, {
+            [transform.id]: transform,
+        });
+    }
     for (const command of plugin.commands ?? []) {
         addCommand(draft, plugin.id, command);
     }
@@ -650,6 +662,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         ownedHotkeyCounts: new Map(),
         inputRules: [],
         pasteHandlers: [],
+        pasteTransforms: new Map(),
         toolbarItems: [],
         commands: [],
         commandOwners: new Map(),
@@ -663,6 +676,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         markOwners: new Map(),
         attributeOwners: new Map(),
         editOwners: new Map(),
+        pasteTransformOwners: new Map(),
     };
 
     const ids: string[] = [];
@@ -698,12 +712,39 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         shortcuts: draft.shortcuts,
         inputRules: forMatching(draft.inputRules),
         pasteHandlers: draft.pasteHandlers,
+        pasteTransforms: [...draft.pasteTransforms.values()],
         toolbarItems: draft.toolbarItems,
         commands: draft.commands,
         contentClassNames: draft.contentClassNames,
         contentProperties: draft.contentProperties,
         descriptions: draft.descriptions,
     };
+};
+
+/**
+ * Whether `rule` reads `element`: a tag rule whose selector matches it, and that skips it or finds a value on it.
+ * Style and clear rules read no element of their own.
+ */
+const readsElement = (rule: MarkParseRule<unknown>, element: HTMLElement): boolean => {
+    if (rule.tag === undefined || !element.matches(rule.tag)) {
+        return false;
+    }
+    if (rule.ignore === true) {
+        return true;
+    }
+    return rule.value === undefined || rule.value(element) !== null;
+};
+
+/**
+ * The `isClaimed` a paste transform is handed: whether a mounted block, inline or mark reads an element by one of
+ * its tag rules.
+ */
+export const isClaimedBy = (registry: PluginRegistry): PasteTransformContext['isClaimed'] => {
+    const rules: MarkParseRule<unknown>[] = [];
+    for (const node of [...registry.blocks.values(), ...registry.inlines.values(), ...registry.marks.values()]) {
+        rules.push(...node.parse);
+    }
+    return (element) => rules.some((rule) => readsElement(rule, element));
 };
 
 /**

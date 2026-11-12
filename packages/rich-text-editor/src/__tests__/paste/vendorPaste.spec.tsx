@@ -12,7 +12,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 // Driven through the package's public API, the way a host does: what a paste
 // from another application leaves in the document the host is told about.
-import { defaultPlugins, RichTextEditor, type RteDocument } from '../../index';
+import { defaultPlugins, RichTextEditor, type RteDocument, type RtePlugin } from '../../index';
 
 declare global {
     // Only a `var` declares a property on `globalThis`, which is where React reads this flag.
@@ -47,8 +47,8 @@ afterEach(() => {
     }
 });
 
-/** What the host is holding after `html` is pasted into an empty editor. */
-const pasted = (html: string): RteDocument => {
+/** What the host is holding after `html` is pasted into an empty editor with `plugins`. */
+const pasted = (html: string, plugins: readonly RtePlugin[] = defaultPlugins): RteDocument => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
     const root = createRoot(container);
@@ -58,7 +58,7 @@ const pasted = (html: string): RteDocument => {
             <RichTextEditor
                 value={{ version: 1, blocks: [{ type: 'paragraph', children: [{ text: '' }] }] }}
                 onChange={onChange}
-                plugins={defaultPlugins}
+                plugins={plugins}
             />,
         );
     });
@@ -183,6 +183,26 @@ describe('pasting from other applications', () => {
             await expect(`${JSON.stringify(doc, null, 4)}\n`).toMatchFileSnapshot(
                 './fixtures/word-windows-lists.document.json',
             );
+        });
+
+        it('pastes mso-list paragraphs as paragraphs without their markers when no list plugin is mounted', () => {
+            const doc = pasted(fixture('word-windows-lists'), []);
+
+            expect(outline(nodesOf(doc))).toEqual([
+                'paragraph: Launch checklist',
+                'paragraph: Brief the team',
+                'paragraph: Share the brand book',
+                'paragraph: Agree on the palette',
+                'paragraph: Book the room',
+                'paragraph:',
+                'paragraph: Draft the copy',
+                'paragraph: Review it with Legal',
+                'paragraph: Legal signs off before anything is published.',
+                'paragraph: Publish',
+            ]);
+            expectNoJunk(doc);
+            expect(JSON.stringify(doc)).not.toContain('data-rte-pasted');
+            expect(window.document.body.innerHTML).not.toContain('data-rte-pasted');
         });
 
         it('keeps numbered headings as headings, without their numbers', async () => {

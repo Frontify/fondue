@@ -4,6 +4,8 @@
 // marker (a bullet glyph or a number) as text in a span, and end every
 // paragraph with an `<o:p>` marker.
 
+import { PASTED_LIST_ITEM_ATTRIBUTES, type PastedListMarker } from '#/core';
+
 /** The name `mso-list` takes in a style attribute, so the engine's style merge keeps it. */
 const KEPT_LIST_PROPERTY = '--mso-list';
 /** The name `mso-list` takes in a `<style>` rule, apart from a paragraph's own so that one wins. */
@@ -45,6 +47,13 @@ const PARAGRAPH_MARKER = 'o:p';
 const OFFICE_STYLED = '[class*="Mso"], [style*="mso-"]';
 /** Spans that may hold a list paragraph's marker, before their style is read. */
 const LIST_SPAN = 'span[style*="mso-list"]';
+/** The element Word writes a list item as. */
+const LIST_PARAGRAPH = 'p';
+
+/** Every attribute of the pasted-list contract. */
+const CONTRACT_ATTRIBUTES = Object.values(PASTED_LIST_ITEM_ATTRIBUTES);
+/** Elements carrying any attribute of the pasted-list contract. */
+const CARRYING_CONTRACT = CONTRACT_ATTRIBUTES.map((name) => `[${name}]`).join(', ');
 
 /**
  * Keeps Word's list data past the engine, which merges the pasted `<style>`
@@ -81,39 +90,11 @@ export const keepOfficeListStyles = (html: string): string => {
 const isOffice = (dom: HTMLElement): boolean =>
     dom.getElementsByTagName(PARAGRAPH_MARKER).length > 0 || dom.querySelector(OFFICE_STYLED) !== null;
 
-type ListKind = 'bullet' | 'numbered';
-
-/** Where an item belongs: Word's list (template and instance), its level, and its kind of list. */
-type ListPlace = { list: string; level: number; kind: ListKind };
-
 /** An item's marker: a bullet, or a number with the item's number as Word wrote it, when the marker has one. */
 type ListMarker = { kind: 'bullet' } | { kind: 'numbered'; number: string | undefined };
 
-type ListParagraph = Omit<ListPlace, 'kind'> & ListMarker & { paragraph: HTMLElement };
-
-type OpenList = ListPlace & { element: HTMLElement };
-
-const tagOf = (kind: ListKind): string => {
-    switch (kind) {
-        case 'bullet':
-            return 'ul';
-        case 'numbered':
-            return 'ol';
-    }
-};
-
-/** Whether `item` continues `open` at its level: a bullet list runs across Word's lists, a numbered one restarts with each, as Word numbers them. */
-const continues = (open: ListPlace, item: ListPlace): boolean => {
-    if (open.kind !== item.kind) {
-        return false;
-    }
-    switch (item.kind) {
-        case 'bullet':
-            return true;
-        case 'numbered':
-            return open.list === item.list;
-    }
-};
+/** Where an item belongs: Word's list (template and instance), its level, and its marker. */
+type ListParagraph = { list: string; level: number } & ListMarker;
 
 /** The elements of `dom` that hold text other than whitespace, each ancestor added once. */
 const elementsWithText = (dom: HTMLElement): Set<Node> => {
@@ -157,12 +138,9 @@ const markerSpans = (root: ParentNode): HTMLElement[] =>
     );
 
 /** `element` as a list paragraph, or `undefined` when it is not one. */
-const readListParagraph = (element: Node): ListParagraph | undefined => {
-    if (!(element instanceof HTMLElement) || element.localName !== 'p') {
-        return undefined;
-    }
+const readListParagraph = (element: HTMLElement): ListParagraph | undefined => {
     // Word never puts a paragraph inside another; only parser tricks do, and lists rebuilt there would nest without bound.
-    if (element.parentElement?.closest('p')) {
+    if (element.parentElement?.closest(LIST_PARAGRAPH)) {
         return undefined;
     }
     const style = element.getAttribute('style') ?? '';
@@ -180,114 +158,55 @@ const readListParagraph = (element: Node): ListParagraph | undefined => {
         marker = { kind: 'numbered', number: numbers?.[numbers.length - 1] };
     }
     return {
-        paragraph: element,
         list: `${declared[1] ?? ''} ${declared[3] ?? ''}`,
         level: Math.min(Number(declared[2]), MAX_LEVEL),
         ...marker,
     };
 };
 
-/** The list paragraphs that follow `first` as siblings, with only layout between them. */
-const runFrom = (first: ListParagraph): ListParagraph[] => {
-    const run = [first];
-    for (let next = first.paragraph.nextSibling; next !== null; next = next.nextSibling) {
-        if (next.nodeType === Node.COMMENT_NODE || (next.nodeType === Node.TEXT_NODE && !next.textContent?.trim())) {
-            continue;
-        }
-        const item = readListParagraph(next);
-        if (item === undefined) {
-            break;
-        }
-        run.push(item);
-    }
-    return run;
-};
-
-/** Closes the open lists deeper than `item`, and the one at its level when `item` cannot join it. */
-const closeListsFor = (open: OpenList[], item: ListParagraph): void => {
-    while ((open[open.length - 1]?.level ?? 0) > item.level) {
-        open.pop();
-    }
-    const current = open[open.length - 1];
-    if (current?.level === item.level && !continues(current, item)) {
-        open.pop();
-    }
-};
-
-const createList = (document: Document, item: ListParagraph): OpenList => {
-    const element = document.createElement(tagOf(item.kind));
+/** Writes the pasted-list contract on a list paragraph. */
+const writeContract = (paragraph: HTMLElement, item: ListParagraph): void => {
+    const marker: PastedListMarker = item.kind;
+    paragraph.setAttribute(PASTED_LIST_ITEM_ATTRIBUTES.list, item.list);
+    paragraph.setAttribute(PASTED_LIST_ITEM_ATTRIBUTES.level, String(item.level));
+    paragraph.setAttribute(PASTED_LIST_ITEM_ATTRIBUTES.marker, marker);
     if (item.kind === 'numbered' && item.number !== undefined) {
-        element.setAttribute('start', item.number);
+        paragraph.setAttribute(PASTED_LIST_ITEM_ATTRIBUTES.number, item.number);
     }
-    return { element, list: item.list, level: item.level, kind: item.kind };
 };
 
-/**
- * Rebuilds one run of list paragraphs as nested lists where it stood. A level
- * below the one before opens one list inside the last item, so no empty item
- * holds it. A numbered list starts at the number Word wrote for its first
- * item, so one that resumes after another block, or a copy that begins
- * partway through, keeps Word's numbering.
- */
-const rebuildRun = (run: readonly ListParagraph[]): void => {
-    const first = run[0];
-    if (first === undefined) {
-        return;
-    }
-    const document = first.paragraph.ownerDocument;
-    // Top-level lists go in order before this mark, which holds the run's place as its paragraphs move.
-    const anchor = document.createTextNode('');
-    first.paragraph.before(anchor);
-    const open: OpenList[] = [];
-    for (const item of run) {
-        closeListsFor(open, item);
-        let parent = open[open.length - 1];
-        if (parent === undefined || parent.level < item.level) {
-            const created = createList(document, item);
-            if (parent === undefined) {
-                anchor.before(created.element);
-            } else {
-                parent.element.lastElementChild?.append(created.element);
-            }
-            parent = created;
-            open.push(created);
+/** Writes the pasted-list contract on each list paragraph, for a list plugin's paste transform to rebuild lists from. */
+const annotateListParagraphs = (dom: HTMLElement): void => {
+    for (const paragraph of dom.querySelectorAll(LIST_PARAGRAPH)) {
+        const item = readListParagraph(paragraph);
+        if (item !== undefined) {
+            writeContract(paragraph, item);
         }
-        const element = document.createElement('li');
-        element.append(item.paragraph);
-        parent.element.append(element);
     }
-    anchor.remove();
 };
 
-const rebuildLists = (dom: HTMLElement): void => {
-    const done = new Set<Element>();
-    for (const paragraph of dom.querySelectorAll('p')) {
-        if (done.has(paragraph)) {
-            continue;
+/** Only the engine writes the pasted-list contract, so none the paste itself carries is read. */
+const removeForgedContract = (dom: HTMLElement): void => {
+    for (const element of dom.querySelectorAll(CARRYING_CONTRACT)) {
+        for (const name of CONTRACT_ATTRIBUTES) {
+            element.removeAttribute(name);
         }
-        const first = readListParagraph(paragraph);
-        if (first === undefined) {
-            continue;
-        }
-        const run = runFrom(first);
-        for (const item of run) {
-            done.add(item.paragraph);
-        }
-        rebuildRun(run);
     }
 };
 
 /**
- * Turns Word and Outlook's list paragraphs into nested lists and removes what
- * they write besides content: the `<o:p>` markers and each list marker, also
- * the number a heading carries. Does nothing to a paste from elsewhere.
+ * Removes any pasted-list contract the paste carries, then, for Word and
+ * Outlook, writes the contract on their list paragraphs and removes what they
+ * write besides content: the `<o:p>` markers and each list marker, also the
+ * number a heading carries. Does nothing else to a paste from elsewhere.
  */
 export const tidyOffice = (dom: HTMLElement): void => {
+    removeForgedContract(dom);
     if (!isOffice(dom)) {
         return;
     }
     removeParagraphMarkers(dom);
-    rebuildLists(dom);
+    annotateListParagraphs(dom);
     for (const span of markerSpans(dom)) {
         span.remove();
     }

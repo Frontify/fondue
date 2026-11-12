@@ -15,12 +15,15 @@ import {
     type MarkDefinition,
     type MarkIgnoreRule,
     type MarkParseRule,
+    type ParsePrecedence,
     type ParseRule,
     type InsertTextOptions,
     type InsertTextUndo,
     type Paste,
     type PasteHandler,
     type PasteSource,
+    type PasteTransform,
+    type PasteTransformContext,
     type ClearMarksOptions as ClearOptions,
     type ClearMarksScope as ClearScope,
     type RteAttributeState,
@@ -137,6 +140,7 @@ export { italicContent, italicPlugin } from './plugins/Italic';
 export { linkContent, linkPlugin } from './plugins/Link';
 export { bulletListContent, bulletListPlugin, numberedListContent, numberedListPlugin } from './plugins/List';
 export { mentionContent, mentionPlugin } from './plugins/Mention';
+export { pasteLinesPlugin } from './plugins/PasteLines';
 export { quoteContent, quotePlugin } from './plugins/Quote';
 export { resetFormattingPlugin } from './plugins/ResetFormatting';
 export { softBreakContent, softBreakPlugin } from './plugins/SoftBreak';
@@ -184,6 +188,9 @@ type Pasted = Paste;
 type InsertOptions = InsertTextOptions;
 type InsertUndo = InsertTextUndo;
 type PastedFrom = PasteSource;
+type PastedHtmlTransform = PasteTransform;
+type PastedHtmlTransformContext = PasteTransformContext;
+type Precedence = ParsePrecedence;
 type BlockDef<TValue> = BlockDefinition<TValue>;
 type MarkDef<TValue> = MarkDefinition<TValue>;
 type InlineDef<TValue> = InlineDefinition<TValue>;
@@ -215,6 +222,9 @@ export declare namespace RtePlugin {
     export type InsertTextOptions = InsertOptions; // NOSONAR
     export type InsertTextUndo = InsertUndo; // NOSONAR
     export type PasteSource = PastedFrom; // NOSONAR
+    export type PasteTransform = PastedHtmlTransform; // NOSONAR
+    export type PasteTransformContext = PastedHtmlTransformContext; // NOSONAR
+    export type ParsePrecedence = Precedence; // NOSONAR
     export type BlockDefinition<TValue = Record<string, unknown>> = BlockDef<TValue>;
     export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;

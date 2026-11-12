@@ -4,6 +4,8 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { PASTED_LIST_ITEM_ATTRIBUTES } from '#/core';
+
 import { keepOfficeListStyles, tidyOffice } from './pasteOffice';
 
 const timed = (run: () => void): number => {
@@ -22,11 +24,19 @@ const tidied = (html: string): HTMLElement => {
 const item = (level: number, marker: string, text: string, list = 'l0'): string =>
     `<p style="mso-list: ${list} level${level} lfo1"><span style="mso-list: Ignore">${marker}</span>${text}</p>`;
 
-/** Each list of `body` in document order, as its tag and the text of its own items. */
-const listsOf = (body: HTMLElement): string[] =>
-    [...body.querySelectorAll('ol, ul')].map(
-        (list) =>
-            `${list.localName}: ${[...list.children].map((entry) => entry.firstElementChild?.textContent).join(', ')}`,
+/** The paragraphs of `body` marked as list items. */
+const markedOf = (body: HTMLElement): Element[] => [...body.querySelectorAll(`[${PASTED_LIST_ITEM_ATTRIBUTES.list}]`)];
+
+/** Each list item `body` marks, in document order, as its text and the contract written on it. */
+const contractOf = (body: HTMLElement): string[] =>
+    markedOf(body).map((paragraph) =>
+        [
+            paragraph.textContent,
+            paragraph.getAttribute(PASTED_LIST_ITEM_ATTRIBUTES.list),
+            paragraph.getAttribute(PASTED_LIST_ITEM_ATTRIBUTES.level),
+            paragraph.getAttribute(PASTED_LIST_ITEM_ATTRIBUTES.marker),
+            paragraph.getAttribute(PASTED_LIST_ITEM_ATTRIBUTES.number),
+        ].join(' | '),
     );
 
 describe('keepOfficeListStyles on hostile HTML', () => {
@@ -92,36 +102,38 @@ describe('keepOfficeListStyles', () => {
 });
 
 describe('tidyOffice', () => {
-    it('nests at most nine levels, as Word does', () => {
+    it('marks at most nine levels, as Word does', () => {
         const body = tidied(Array.from({ length: 20 }, (_, index) => item(index + 1, '·', `L${index + 1}`)).join(''));
-        let deepest = 0;
-        for (const entry of body.querySelectorAll('li')) {
-            let depth = 0;
-            for (let parent = entry.parentElement; parent !== null; parent = parent.parentElement) {
-                if (parent.localName === 'ul') {
-                    depth++;
-                }
-            }
-            deepest = Math.max(deepest, depth);
-        }
+        const levels = markedOf(body).map((paragraph) =>
+            Number(paragraph.getAttribute(PASTED_LIST_ITEM_ATTRIBUTES.level)),
+        );
 
-        expect(deepest).toBe(9);
+        expect(Math.max(...levels)).toBe(9);
     });
 
-    it('starts a new list where numbers turn into bullets at one level of one list', () => {
-        expect(listsOf(tidied(item(1, '1.', 'A') + item(1, '·', 'B')))).toEqual(['ol: A', 'ul: B']);
+    it('marks each item with its list, level, marker and own number, without the marker text', () => {
+        expect(contractOf(tidied(item(1, '1.', 'A') + item(2, '·', 'B', 'l1') + item(1, '3.', 'C')))).toEqual([
+            'A | l0 lfo1 | 1 | numbered | 1',
+            'B | l1 lfo1 | 2 | bullet | ',
+            'C | l0 lfo1 | 1 | numbered | 3',
+        ]);
     });
 
     it.each(['a.', 'iv)', '(1)', '1.1.'])('reads the marker `%s` as numbered', (marker) => {
-        expect(listsOf(tidied(item(1, marker, 'A')))).toEqual(['ol: A']);
-    });
-
-    it('keeps one list across a comment between its paragraphs', () => {
-        expect(listsOf(tidied(`${item(1, '·', 'A')}<!-- note -->${item(1, '·', 'B')}`))).toEqual(['ul: A, B']);
+        expect(markedOf(tidied(item(1, marker, 'A')))[0]?.getAttribute(PASTED_LIST_ITEM_ATTRIBUTES.marker)).toBe(
+            'numbered',
+        );
     });
 
     it('keeps a paragraph whose list level is 0 as a paragraph', () => {
-        expect(listsOf(tidied(item(0, '·', 'A')))).toEqual([]);
+        expect(markedOf(tidied(item(0, '·', 'A')))).toEqual([]);
+    });
+
+    it.each([
+        ['an Office paste', '<p class="MsoNormal" data-rte-pasted-list="x" data-rte-pasted-list-level="1">a</p>'],
+        ['a paste from elsewhere', '<p data-rte-pasted-list-marker="numbered" data-rte-pasted-list-number="7">a</p>'],
+    ])('removes the list contract %s carries itself', (_name, html) => {
+        expect(tidied(html).innerHTML).not.toContain('data-rte-pasted');
     });
 
     it('keeps the text an `<o:p>` holds', () => {
@@ -138,7 +150,7 @@ describe('tidyOffice', () => {
 });
 
 describe('tidyOffice on paragraphs inside paragraphs', () => {
-    it('rebuilds no list inside a list paragraph, so nesting stays bounded', () => {
+    it('marks no list paragraph inside a list paragraph, so nesting stays bounded', () => {
         const body = document.createElement('body');
         const listParagraph = (): HTMLElement => {
             const paragraph = document.createElement('p');
@@ -154,6 +166,6 @@ describe('tidyOffice on paragraphs inside paragraphs', () => {
 
         tidyOffice(body);
 
-        expect(body.querySelectorAll('ol, ul')).toHaveLength(1);
+        expect(markedOf(body)).toEqual([outer]);
     });
 });

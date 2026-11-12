@@ -26,7 +26,6 @@ import {
     blockParseRules,
     type DefaultStyleRule,
     defaultStyleRules,
-    INLINE_PRIORITY,
     markParseRules,
     valueParseRules,
 } from './pasteRules';
@@ -126,7 +125,7 @@ const inlineNodeSpec = (definition: InlineDefinition, hasEditView: boolean): PmN
     // With editing UI, a node inserted without a value is a draft (null) the UI
     // completes; without it, it stores the declared defaults.
     attrs: { [VALUE_ATTR]: { default: hasEditView ? null : (definition.defaults ?? {}) } },
-    parseDOM: valueParseRules(definition.parse, INLINE_PRIORITY),
+    parseDOM: valueParseRules(definition.parse),
     toDOM: (node) => {
         const value = node.attrs[VALUE_ATTR] as Record<string, unknown> | null;
         // A draft has nothing portable to say yet.

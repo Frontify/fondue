@@ -10,7 +10,14 @@ import {
 } from 'prosemirror-model';
 import { type EditorView } from 'prosemirror-view';
 
-import { type EditorControlApi, type Paste, type PasteHandler, type PasteSource } from '#/core';
+import {
+    type EditorControlApi,
+    type Paste,
+    type PasteHandler,
+    type PasteSource,
+    type PasteTransform,
+    type PasteTransformContext,
+} from '#/core';
 
 import { EXTRA_ATTR, mapExtras } from './documentConversion';
 import { tidyGoogleDocs } from './pasteGoogleDocs';
@@ -93,53 +100,41 @@ export const clipboardSerializer = (schema: Schema): DOMSerializer => {
 // The HTML pass that keeps Word's list styles alive for `tidyOffice` after the engine reads the paste.
 export { keepOfficeListStyles } from './pasteOffice';
 
-/**
- * Cleans what Word, Outlook and Google Docs write besides content, then keeps
- * text from running together in structure no plugin reads. Table cells
- * are not blocks to the engine (`<td>a</td><td>b</td>` would paste as `ab`), so
- * each row becomes a block with cells joined by a space. A `<pre>`'s newlines
- * collapse as whitespace, so each line becomes a block.
- */
-const tidyPasted = (dom: HTMLElement): void => {
-    tidyOffice(dom);
-    tidyGoogleDocs(dom);
-    const document = dom.ownerDocument;
-    const lineBlock = (text: string): HTMLElement => {
-        const block = document.createElement('div');
-        block.textContent = text;
-        return block;
-    };
-    // Innermost first (document order puts a nested table after its outer
-    // one), so an outer cell reads a nested table as the lines it became; and
-    // `rows` and `cells` are the table's own, so no cell is read twice.
-    for (const table of [...dom.querySelectorAll('table')].reverse()) {
-        const rows = [...table.rows].map((row) =>
-            lineBlock(
-                [...row.cells]
-                    .map((cell) => cell.textContent?.trim() ?? '')
-                    .filter(Boolean)
-                    .join(' '),
-            ),
-        );
-        table.replaceWith(...rows);
-    }
-    for (const pre of dom.querySelectorAll('pre')) {
-        pre.replaceWith(...(pre.textContent ?? '').split(/\r?\n/).map(lineBlock));
-    }
+/** What the paste parser needs besides the schema: the plugins' paste transforms and what they ask of the content. */
+export type ClipboardParserOptions = {
+    schema: Schema;
+    transforms: readonly PasteTransform[];
+    isClaimed: PasteTransformContext['isClaimed'];
 };
 
+/**
+ * Cleans what Word, Outlook and Google Docs write besides content, then runs
+ * the plugins' paste transforms, before the parse rules read the paste.
+ */
 class PasteParser extends PmDOMParser {
+    private readonly transforms: readonly PasteTransform[];
+    private readonly context: PasteTransformContext;
+
+    constructor({ schema, transforms, isClaimed }: ClipboardParserOptions) {
+        super(schema, PmDOMParser.fromSchema(schema).rules);
+        this.transforms = transforms;
+        this.context = { isClaimed };
+    }
+
     parseSlice(...args: Parameters<PmDOMParser['parseSlice']>): Slice {
         const [dom] = args;
         if (dom instanceof HTMLElement) {
-            tidyPasted(dom);
+            tidyOffice(dom);
+            tidyGoogleDocs(dom);
+            for (const transform of this.transforms) {
+                transform.run(dom, this.context);
+            }
         }
         return super.parseSlice(...args);
     }
 }
 
-export const clipboardParser = (schema: Schema): PmDOMParser =>
-    new PasteParser(schema, PmDOMParser.fromSchema(schema).rules);
+export const clipboardParser = (options: ClipboardParserOptions): PmDOMParser => new PasteParser(options);
 
 /** Feature paste handlers run before every other paste rule; the first to return true ends the paste. */
 export const handlePasteByFeatures =
