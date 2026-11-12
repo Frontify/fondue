@@ -325,14 +325,14 @@ describe('the colour flyout', () => {
         expect(set.mock.calls).toEqual([['fontColor', { color }]]);
     });
 
-    it('does not preview a three-digit hex, so Save after leaving the field changes nothing', () => {
+    it('applies the last valid three-digit hex when an unfinished one is typed after it', () => {
         const { toggle, set } = mount(colored('#00ff00'), true);
         typeHex('f00');
         typeHex('zz');
         press('Save');
 
         expect(toggle).not.toHaveBeenCalled();
-        expect(set).not.toHaveBeenCalled();
+        expect(set.mock.calls).toEqual([['fontColor', { color: '#ff0000' }]]);
     });
 
     it('shows a half-coloured selection as mixed, and removes its colour rather than toggling it', () => {
@@ -377,20 +377,20 @@ describe('the colour flyout', () => {
         expect(set.mock.calls).toEqual([['fontColor', { color: '#ffffff' }]]);
     });
 
-    it('changes nothing on Save when a three-digit hex is followed by an unfinished one on uncoloured text', () => {
+    it('applies the last valid three-digit hex on Save when an unfinished one follows it on uncoloured text', () => {
         const { set } = mount({}, false);
         typeHex('abc');
         typeHex('ab');
         press('Save');
 
-        expect(set).not.toHaveBeenCalled();
+        expect(set.mock.calls).toEqual([['fontColor', { color: '#aabbcc' }]]);
     });
 
-    it('changes nothing on Enter when a three-digit hex is followed by an unfinished one on mixed text', () => {
+    it('applies the last valid three-digit hex on Enter when an unfinished one follows it on mixed text', () => {
         const { set } = mount({ fontColor: { coverage: 'some' } }, 'mixed');
         typeHex('1a2');
         typeHexAndPressEnter('1a2b');
 
-        expect(set).not.toHaveBeenCalled();
+        expect(set.mock.calls).toEqual([['fontColor', { color: '#11aa22' }]]);
     });
 });
