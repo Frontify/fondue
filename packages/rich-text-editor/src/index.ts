@@ -16,7 +16,9 @@ import {
     type RteBlockNode,
     type RteInlineNode,
     type RtePlugin as CorePlugin,
+    type RteMarkState,
     type RteSelectionSnapshot,
+    type RteToolbarGroup,
     type ToolbarItemProps,
     toPlainText as plainText,
     type ToPlainTextOptions,
@@ -39,7 +41,11 @@ import {
 /** `TBlock` widens the document when a plugin adds blocks: `RichTextEditorProps<RteBlock | CalloutBlock>`. */
 export type RichTextEditorProps<TBlock extends RteBlockNode = RteBlock> = EditorShellProps<TBlock>;
 
-/** The editor. Uses `defaultPlugins` when given no `plugins`. */
+/**
+ * The editor. Uses `defaultPlugins` when given no `plugins`.
+ *
+ * @experimental The API and document format can change in any release until 1.0.
+ */
 export const RichTextEditor = <TBlock extends RteBlockNode = RteBlock>(props: RichTextEditorProps<TBlock>): ReactNode =>
     createElement(EditorShell as (next: RichTextEditorProps<TBlock>) => ReactNode, {
         ...props,
@@ -49,7 +55,11 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlock>(props: Ri
 /** `TBlock` as for `RichTextEditorProps`. */
 export type RichTextRendererProps<TBlock extends RteBlockNode = RteBlock> = RendererProps<TBlock>;
 
-/** A readonly view of a document; works on the server. Uses `defaultPlugins` when given no `plugins`. */
+/**
+ * A readonly view of a document; works on the server. Uses `defaultPlugins` when given no `plugins`.
+ *
+ * @experimental The API and document format can change in any release until 1.0.
+ */
 export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlock>(
     props: RichTextRendererProps<TBlock>,
 ): ReactNode =>
@@ -95,6 +105,7 @@ export { codePlugin } from './plugins/Code';
 export { columnBreakPlugin } from './plugins/ColumnBreak';
 export { defaultEmojis, emojiPlugin } from './plugins/Emoji';
 export { fontColorPlugin } from './plugins/FontColor';
+export { historyPlugin } from './plugins/History';
 export { italicPlugin } from './plugins/Italic';
 export { linkPlugin } from './plugins/Link';
 export { bulletListPlugin, numberedListPlugin } from './plugins/List';
@@ -138,8 +149,10 @@ type Html = HtmlSpec;
 export declare namespace RtePlugin {
     export type EditorControlApi = ControlApi;
     export type SelectionSnapshot = RteSelectionSnapshot;
+    export type MarkState = RteMarkState;
     export type BlockCommand = RteBlockCommand;
     export type ToolbarItemProps = ToolbarProps;
+    export type ToolbarGroup = RteToolbarGroup;
     export type PasteHandler = OnPaste;
     export type BlockDefinition<TValue = Record<string, unknown>> = BlockDef<TValue>;
     export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;

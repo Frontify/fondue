@@ -1,5 +1,10 @@
 # @frontify/fondue-rich-text-editor
 
+> [!WARNING]
+> **Experimental.** This package is still in development. Its API and stored document format can change
+> in any release, including minor and patch releases, until it reaches 1.0. This also applies when you
+> import it through `@frontify/fondue/rich-text-editor`.
+
 A plugin-based rich text editor for React. Documents are plain JSON (`RteDocument`);
 every block, mark and inline comes from a plugin.
 
@@ -42,3 +47,12 @@ Specs for a single module sit next to it (`registry.spec.ts` beside `registry.ts
 ## Scripts
 
 `pnpm typecheck` · `pnpm lint` · `pnpm test` · `pnpm storybook` · `pnpm build`
+
+## Browser tests
+
+The browser tests (`*.ct.tsx`) run in Playwright.
+
+- Chromium and WebKit run on every pull request that changes this package. The check must pass.
+- Firefox runs every night. A failure there does not block a pull request.
+- If a WebKit test is flaky, quarantine that test. Do not remove WebKit from the run.
+- Playwright's WebKit is not Safari: input methods (IME) and some selection behaviour are different. Before a release, test the editor by hand in real Safari.

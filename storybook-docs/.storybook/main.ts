@@ -12,6 +12,8 @@ const getAbsolutePath = (packageName: string): string => {
     return dirname(fileURLToPath(import.meta.resolve(packageName)));
 };
 
+// Netlify branch subdomains use the branch name lowercased, with anything outside [a-z0-9] replaced by dashes.
+const toBranchSubdomain = (branch: string): string => branch.toLowerCase().replaceAll(/[^a-z0-9]+/g, '-');
 const storybookDir = dirname(fileURLToPath(import.meta.url));
 const packagesRoot = resolve(storybookDir, '../../packages');
 const packagePath = (...segments: string[]): string => join(packagesRoot, ...segments);
@@ -19,6 +21,9 @@ const packagePath = (...segments: string[]): string => join(packagesRoot, ...seg
 const getSubpackageURL = (subpackage: string): string => {
     if (process.env.CONTEXT === 'deploy-preview' && process.env.REVIEW_ID) {
         return `https://deploy-preview-${process.env.REVIEW_ID}.${subpackage}.fondue-components.frontify.com/`;
+    }
+    if (process.env.CONTEXT === 'branch-deploy' && process.env.BRANCH) {
+        return `https://${toBranchSubdomain(process.env.BRANCH)}.${subpackage}.fondue-components.frontify.com/`;
     }
     return `https://${subpackage}.fondue-components.frontify.com/`;
 };
@@ -32,6 +37,7 @@ const config: StorybookConfig = {
         '../../packages/icons/src/**/*.stories.@(ts|tsx)',
         '../../packages/components/src/**/*.stories.@(ts|tsx)',
         '../../packages/charts/src/**/*.stories.@(ts|tsx)',
+        '../../packages/rich-text-editor/src/**/*.stories.@(ts|tsx)',
     ],
     addons: [
         '@storybook/addon-links',
@@ -60,7 +66,7 @@ const config: StorybookConfig = {
         if (configType === 'DEVELOPMENT') {
             return {
                 rte: {
-                    title: 'Rich Text Editor',
+                    title: 'Legacy Rich Text Editor',
                     url: 'http://localhost:6011',
                     type: 'auto-inject',
                     expanded: true,
@@ -70,7 +76,7 @@ const config: StorybookConfig = {
 
         return {
             rte: {
-                title: 'Rich Text Editor',
+                title: 'Legacy Rich Text Editor',
                 url: `${getSubpackageURL('rte')}`,
                 expanded: true,
             },
@@ -112,7 +118,7 @@ const config: StorybookConfig = {
                 // Resolves each package's own aliases (`#/`, `#storybook/`, `@components/`).
                 tsConfigPaths({
                     root: packagesRoot,
-                    projects: ['components/tsconfig.json', 'charts/tsconfig.json'],
+                    projects: ['components/tsconfig.json', 'charts/tsconfig.json', 'rich-text-editor/tsconfig.json'],
                 }),
                 {
                     name: 'fix-mdx-file-imports',

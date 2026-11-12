@@ -13,6 +13,8 @@ import { type EditorView } from 'prosemirror-view';
 import { type EditorControlApi, type PasteHandler } from '#/core';
 
 import { EXTRA_ATTR, mapExtras } from './documentConversion';
+import { tidyGoogleDocs } from './pasteGoogleDocs';
+import { tidyOffice } from './pasteOffice';
 
 // Copy and paste fixes beyond what the engine does on its own.
 
@@ -80,13 +82,19 @@ export const clipboardSerializer = (schema: Schema): DOMSerializer => {
 
 // Paste
 
+// The HTML pass that keeps Word's list styles alive for `tidyOffice` after the engine reads the paste.
+export { keepOfficeListStyles } from './pasteOffice';
+
 /**
- * Keeps text from running together in structure no plugin reads. Table cells
+ * Cleans what Word, Outlook and Google Docs write besides content, then keeps
+ * text from running together in structure no plugin reads. Table cells
  * are not blocks to the engine (`<td>a</td><td>b</td>` would paste as `ab`), so
  * each row becomes a block with cells joined by a space. A `<pre>`'s newlines
  * collapse as whitespace, so each line becomes a block.
  */
 const tidyPasted = (dom: HTMLElement): void => {
+    tidyOffice(dom);
+    tidyGoogleDocs(dom);
     const document = dom.ownerDocument;
     const lineBlock = (text: string): HTMLElement => {
         const block = document.createElement('div');

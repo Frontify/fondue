@@ -69,7 +69,7 @@ export const TurnInto = ({
             <Dropdown.Trigger>
                 <Button
                     type="button"
-                    size="medium"
+                    size="small"
                     emphasis="weak"
                     aria-label={labels.turnIntoCurrent(label)}
                     title={labels.turnInto}
