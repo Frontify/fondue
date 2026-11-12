@@ -108,7 +108,7 @@ describe('pasting formatted text', () => {
 
     it.each([
         ['<p><strong style="font-style:italic">x</strong></p>', { bold: true, italic: true }],
-        ['<p><span style="color:#f00;font-weight:700">x</span></p>', { bold: true, fontColor: { color: '#f00' } }],
+        ['<p><span style="color:#f00;font-weight:700">x</span></p>', { bold: true, fontColor: { color: '#ff0000' } }],
     ])('reads a style on an element another mark already reads: %s', (html, marks) => {
         expect(pasted(html)).toEqual([paragraph(text('x', marks))]);
     });
