@@ -9,6 +9,8 @@ type ColorArguments = { channels: string[]; alpha: string | undefined; syntax: C
 
 const COLOR_FUNCTIONS = ['rgb', 'hsl'] as const;
 type ColorFunction = (typeof COLOR_FUNCTIONS)[number];
+const COLOR_FUNCTION_NAMES: ReadonlySet<string> = /* @__PURE__ */ new Set(COLOR_FUNCTIONS);
+const isColorFunction = (kind: string): kind is ColorFunction => COLOR_FUNCTION_NAMES.has(kind);
 
 const FULL_TURN = 360;
 const WHITESPACE = /\s+/;
@@ -29,8 +31,6 @@ const PERCENT = 100;
 
 const HEX_COLOR = /^#([\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/;
 const COLOR_FUNCTION = /* @__PURE__ */ new RegExp(String.raw`^(${COLOR_FUNCTIONS.join('|')})a?\(([^()]*)\)$`);
-// The cast widens the literal tuple so `includes` accepts any string.
-const isColorFunction = (kind: string): kind is ColorFunction => (COLOR_FUNCTIONS as readonly string[]).includes(kind);
 const NUMBER = /^[+-]?(\d+(\.\d+)?|\.\d+)(e[+-]?\d+)?%?$/;
 
 /**
