@@ -1,0 +1,27 @@
+storybook-docs/.storybook/main.ts
+  s_1d51adbd955109::t_ff2068916e5383 123
+  s_1d51adbd955109::t_5bd2e04ea3e54b 26-32
+  s_1d51adbd955109::t_eab9e24106a003 42
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_1d51adbd955109::t_e5bb2a54a03fa4 77
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_1d51adbd955109::t_e5bb2a54a03fa4 39
+storybook-docs/.storybook/tailwind.config.ts
+  s_1d51adbd955109::t_2738d2e5860e26 22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5186abad51d9e1e465e55132f73524c9f3f3399b",
+  "prompts": {},
+  "sessions": {
+    "s_1d51adbd955109": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "78e2150d-4d1f-4b5a-aa6d-f29946efb4eb",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
