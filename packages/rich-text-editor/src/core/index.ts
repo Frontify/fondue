@@ -121,10 +121,9 @@ export {
     emptyDocument,
     INLINE_PLACEHOLDER,
     newerVersionOf,
+    OFFICE_LIST_ATTRIBUTES,
     PARAGRAPH,
-    PASTED_LIST_ITEM_ATTRIBUTES,
-    type PastedListMarker,
-    removePastedListContract,
+    removeOfficeListData,
     WORD_START_CONTEXT,
 } from './vocabulary';
 export { warnOnce } from './warnings';

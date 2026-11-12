@@ -1,31 +1,38 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    PASTED_LIST_ITEM_ATTRIBUTES,
-    type PastedListMarker,
-    type PasteTransform,
-    removePastedListContract,
-} from '#/core';
+import { OFFICE_LIST_ATTRIBUTES, type PasteTransform } from '#/core';
 
 import { BULLET_LIST_TAG, LIST_ITEM_TAG, NUMBERED_LIST_TAG, START_ATTRIBUTE } from './helpers/listMarkup';
 
-// The editor marks each list item another app wrote as a paragraph (Word,
-// Outlook) with the pasted-list contract; the list plugins rebuild the lists.
+// The editor keeps what Word and Outlook write on each list paragraph (the
+// list's id, the level and the marker text) as attributes; this reads them and
+// rebuilds the lists.
 
-/** Paragraphs the editor marked as list items. */
-const MARKED_ITEM = `[${PASTED_LIST_ITEM_ATTRIBUTES.list}]`;
+/** Paragraphs the editor kept list data on. */
+const LIST_PARAGRAPH = `[${OFFICE_LIST_ATTRIBUTES.list}]`;
+
+/** Dot-separated numbers (`1.`, `1.1.`, `1.1`) or letters with a delimiter (`iv)`, `a.`) are numbered markers; a glyph (`·`, `o`, `§`) is a bullet. */
+const NUMBERED_MARKER = /^\(?(?:\d+(?:\.\d+)*[.)]?|[a-z]+[.)])$/i;
+/** The numbers in a marker; the last is the item's own, the 3 of `3.`, `1.3.` or `(3)`. */
+const MARKER_NUMBERS = /\d+/g;
+/** Word has nine list levels, which also keeps hostile input from nesting without end. */
+const MAX_LEVEL = 9;
+/** Word's list levels start at 1, so a paragraph that says level 0 is not a list item. */
+const FIRST_LEVEL = 1;
+
+type ListKind = 'bullet' | 'numbered';
 
 /** Where an item belongs: the source app's list, its level, and its kind of list. */
-type ListPlace = { list: string; level: number; kind: PastedListMarker };
+type ListPlace = { list: string; level: number; kind: ListKind };
 
 /** An item's marker: a bullet, or a number with the item's own number, when the marker has one. */
-type ListMarker = { kind: Exclude<PastedListMarker, 'numbered'> } | { kind: 'numbered'; number: string | null };
+type ListMarker = { kind: Exclude<ListKind, 'numbered'> } | { kind: 'numbered'; number: string | null };
 
 type ListParagraph = Omit<ListPlace, 'kind'> & ListMarker & { paragraph: HTMLElement };
 
 type OpenList = ListPlace & { element: HTMLElement };
 
-const tagOf = (kind: PastedListMarker): string => {
+const tagOf = (kind: ListKind): string => {
     switch (kind) {
         case 'bullet':
             return BULLET_LIST_TAG;
@@ -47,34 +54,38 @@ const continues = (open: ListPlace, item: ListPlace): boolean => {
     }
 };
 
-/** The marker the contract names on `paragraph`; throws on one the contract does not define, as only the editor writes it. */
-const readMarker = (paragraph: HTMLElement): ListMarker => {
-    const marker = paragraph.getAttribute(PASTED_LIST_ITEM_ATTRIBUTES.marker);
-    switch (marker) {
-        case 'bullet':
-            return { kind: 'bullet' };
-        case 'numbered':
-            return { kind: 'numbered', number: paragraph.getAttribute(PASTED_LIST_ITEM_ATTRIBUTES.number) };
-        default:
-            // The attribute is text, so a value outside `PastedListMarker` is a bug in the writer and is not read as a bullet.
-            throw new Error(`The pasted list item has the marker "${marker}", which is neither a bullet nor numbered.`);
+/** The kind of marker `text` is, and the item's own number when it is a number. */
+const readMarker = (text: string): ListMarker => {
+    const marker = text.trim();
+    if (!NUMBERED_MARKER.test(marker)) {
+        return { kind: 'bullet' };
     }
+    const numbers = marker.match(MARKER_NUMBERS);
+    return { kind: 'numbered', number: numbers?.[numbers.length - 1] ?? null };
 };
 
-/** `node` as a list item the editor marked, or `undefined` when it is not one. */
+/** `node` as a list item, or `undefined` when it is not one. */
 const readListParagraph = (node: Node): ListParagraph | undefined => {
     if (!(node instanceof HTMLElement)) {
         return undefined;
     }
-    const list = node.getAttribute(PASTED_LIST_ITEM_ATTRIBUTES.list);
+    const list = node.getAttribute(OFFICE_LIST_ATTRIBUTES.list);
     if (list === null) {
+        return undefined;
+    }
+    const level = Number(node.getAttribute(OFFICE_LIST_ATTRIBUTES.level));
+    // The attribute is text, so a level that is no number is a bug in the writer and is not read as a level.
+    if (!Number.isInteger(level)) {
+        throw new TypeError(`The list paragraph has the level "${node.getAttribute(OFFICE_LIST_ATTRIBUTES.level)}".`);
+    }
+    if (level < FIRST_LEVEL) {
         return undefined;
     }
     return {
         paragraph: node,
         list,
-        level: Number(node.getAttribute(PASTED_LIST_ITEM_ATTRIBUTES.level)),
-        ...readMarker(node),
+        level: Math.min(level, MAX_LEVEL),
+        ...readMarker(node.getAttribute(OFFICE_LIST_ATTRIBUTES.marker) ?? ''),
     };
 };
 
@@ -152,7 +163,7 @@ const rebuildRun = (run: readonly ListParagraph[]): void => {
 
 const rebuildLists = (dom: HTMLElement): void => {
     const done = new Set<Element>();
-    for (const paragraph of dom.querySelectorAll(MARKED_ITEM)) {
+    for (const paragraph of dom.querySelectorAll(LIST_PARAGRAPH)) {
         if (done.has(paragraph)) {
             continue;
         }
@@ -169,14 +180,10 @@ const rebuildLists = (dom: HTMLElement): void => {
 };
 
 /**
- * Rebuilds the list items a paste carries as paragraphs marked with the pasted-list contract (Word, Outlook) as
- * nested bulleted and numbered lists, which the list plugins share.
+ * Rebuilds the list items a paste carries as paragraphs with Word's list data (Word, Outlook) as nested bulleted and
+ * numbered lists, which the list plugins share. The editor removes the list data once every transform has run.
  */
 export const PASTED_LISTS: PasteTransform = {
     id: 'pasted-lists',
-    run: (dom) => {
-        rebuildLists(dom);
-        // Rebuilt or not, no paragraph keeps the contract.
-        removePastedListContract(dom);
-    },
+    run: rebuildLists,
 };
