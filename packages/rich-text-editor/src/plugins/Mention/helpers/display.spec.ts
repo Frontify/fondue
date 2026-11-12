@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { type MentionResolve, type MentionValue } from '../types';
 
-import { mentionDisplay } from './display';
+import { mentionAttributes, mentionDisplay } from './display';
 
 const JANE: MentionValue = { id: 'jane', username: 'jane', name: 'Jane Doe' };
 const href = (mention: MentionValue): string => `/u/${mention.id}`;
@@ -116,5 +116,25 @@ describe('mentionDisplay', () => {
         expect(mentionDisplay(empty, { trigger: '@', resolve: () => ({ status: 'unavailable' }) }).label).toBe(
             'Unknown person',
         );
+    });
+
+    // Stored documents are not validated, so a field can be missing or the wrong type.
+    it('shows the username alone when the stored mention has no name', () => {
+        const noName = { id: 'x', username: 'x' } as unknown as MentionValue;
+
+        expect(mentionDisplay(noName, { trigger: '@' })).toMatchObject({ label: '@x', title: '' });
+    });
+
+    it('names a stored username that is not text by its kind, without throwing', () => {
+        const wrongType = { id: 'x', username: 7, name: 'X' } as unknown as MentionValue;
+
+        expect(mentionDisplay(wrongType, { trigger: '@' }).label).toBe('Unknown person');
+    });
+
+    it('writes no kind attribute for a stored kind this version does not know', () => {
+        const wrongKind = { ...JANE, kind: 7 } as unknown as MentionValue;
+
+        expect(mentionAttributes(wrongKind)['data-mention-kind']).toBeUndefined();
+        expect(mentionAttributes({ ...JANE, kind: 'group' })['data-mention-kind']).toBe('group');
     });
 });

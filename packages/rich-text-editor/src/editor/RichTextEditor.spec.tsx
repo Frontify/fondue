@@ -19,6 +19,7 @@ import {
     defaultPlugins,
     defineBlock,
     defineContent,
+    defineInline,
     definePlugin,
     linkPlugin,
     mentionPlugin,
@@ -2855,43 +2856,42 @@ describe('onBlur', () => {
     });
 });
 
-describe('a mention in the editor', () => {
-    it('shows what resolve answers and keeps the stored username in the document', () => {
-        const plugins = [
-            ...defaultPlugins,
-            mentionPlugin({
-                items: [],
-                resolve: () => ({ status: 'current', username: 'jane.s', name: 'Jane Smith' }),
-            }),
-        ];
-        const value: RteDocument = {
-            version: 1,
-            blocks: [
-                {
-                    type: 'paragraph',
-                    children: [
-                        { text: 'Ask ' },
-                        { type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' },
-                        { text: '' },
-                    ],
-                },
-            ],
-        };
+describe('an inline whose view shows something other than its stored value', () => {
+    type Badge = { id: string; label: string };
+    const badgePlugin = definePlugin({
+        id: 'badge',
+        content: defineContent({
+            inlines: {
+                badge: defineInline<Badge>({
+                    toHtml: (value) => ({ tag: 'span', attrs: { 'data-badge-id': value.id }, children: value.label }),
+                    parse: [],
+                }),
+            },
+        }),
+        edit: { badge: ({ value }) => <span data-badge>{value.label.toUpperCase()}</span> },
+    });
+    // `RteDocument` names no plugin inline, so the badge needs the cast.
+    const value = {
+        version: 1,
+        blocks: [
+            {
+                type: 'paragraph',
+                children: [{ text: 'Ask ' }, { type: 'badge', id: 'b1', label: 'Jane' }, { text: '' }],
+            },
+        ],
+    } as RteDocument;
+
+    it('keeps the stored value in the document after an unrelated edit', () => {
         const { container, stored, ready } = mount((onChange) => (
-            <RichTextEditor value={value} onChange={onChange} plugins={plugins} />
+            <RichTextEditor value={value} onChange={onChange} plugins={[...defaultPlugins, badgePlugin]} />
         ));
         ready();
 
-        expect(container.querySelector('[data-mention-id] bdi')?.textContent).toBe('@jane.s');
+        expect(container.querySelector('[data-badge]')?.textContent).toBe('JANE');
 
         paste(container, '<p>x</p>');
 
-        expect(childrenOf(stored())).toContainEqual({
-            type: 'mention',
-            id: 'jane',
-            username: 'jane',
-            name: 'Jane Doe',
-        });
+        expect(childrenOf(stored())).toContainEqual({ type: 'badge', id: 'b1', label: 'Jane' });
     });
 });
 

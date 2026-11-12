@@ -139,3 +139,16 @@ describe('the mention inline', () => {
         expect(parse('<a href="/u" data-mention-id="jane">@</a>')).toBeNull();
     });
 });
+
+describe('a stored mention that is missing a field', () => {
+    // Stored documents are not validated, so a field can be missing or the wrong type.
+    const wrongType = { id: 'x', username: 7, name: 'X', kind: 7 } as unknown as typeof JANE;
+
+    it('is exported without throwing, named by its kind and with no kind attribute', () => {
+        const mention = mentionFor();
+
+        expect(() => mention?.toHtml(wrongType)).not.toThrow();
+        expect(mention?.toHtml(wrongType).children).toEqual([{ tag: BIDI_ISOLATE_TAG, children: 'Unknown person' }]);
+        expect(mention?.toHtml(wrongType).attrs?.['data-mention-kind']).toBeUndefined();
+    });
+});
