@@ -6,7 +6,9 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { boldPlugin, linkPlugin, RichTextEditor, type RteDocument, serializeToHtml } from '../index';
+import { isApple } from '#/ui/platform';
+
+import { boldPlugin, linkPlugin, RichTextEditor, RichTextRenderer, type RteDocument } from '../index';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -26,11 +28,30 @@ afterEach(() => {
         clean();
     }
     vi.restoreAllMocks();
+    vi.useRealTimers();
 });
 
 const HREF = 'https://example.com';
-const apple = /Mac|iP(hone|[oa]d)/.test(window.navigator.platform);
-const MOD: KeyboardEventInit & MouseEventInit = apple ? { metaKey: true } : { ctrlKey: true };
+const SEARCH_DEBOUNCE_MS = 200;
+const PANEL_LABEL = 'Link';
+
+type ModifierInit = KeyboardEventInit & MouseEventInit;
+
+type PlatformModifiers = {
+    /** The key `Mod` means on this platform. */
+    mod: ModifierInit;
+    /** The one `Mod` does not mean here. */
+    other: ModifierInit;
+};
+
+const platformModifiers = (): PlatformModifiers => {
+    if (isApple()) {
+        return { mod: { metaKey: true }, other: { ctrlKey: true } };
+    }
+    return { mod: { ctrlKey: true }, other: { metaKey: true } };
+};
+
+const { mod: MOD, other: OTHER_MOD } = platformModifiers();
 
 const mount = (value: RteDocument, policy = {}, toolbarPlacement: 'top' | 'floating' = 'top') => {
     const container = window.document.createElement('div');
@@ -47,12 +68,13 @@ const mount = (value: RteDocument, policy = {}, toolbarPlacement: 'top' | 'float
             />,
         );
     });
-    teardown.push(() => {
+    const clean = (): void => {
         act(() => {
             root.unmount();
         });
         container.remove();
-    });
+    };
+    teardown.push(clean);
     const editable = container.querySelector<HTMLElement>('[contenteditable]');
     if (!editable) {
         throw new Error('the editor never became editable');
@@ -61,6 +83,11 @@ const mount = (value: RteDocument, policy = {}, toolbarPlacement: 'top' | 'float
     return {
         container,
         editable,
+        /** Takes the editor down now rather than after the test. */
+        unmount: (): void => {
+            teardown.splice(teardown.indexOf(clean), 1);
+            clean();
+        },
         stored: (): RteDocument | null => onChange.mock.calls[onChange.mock.calls.length - 1]?.[0] ?? null,
     };
 };
@@ -161,11 +188,10 @@ describe('adding a link', () => {
         press(window.document.activeElement as Element, 'Escape');
         // The flyout hands focus back once it has finished closing.
         await act(async () => {
-            await new Promise((resolve) => setTimeout(resolve, 50));
+            await vi.waitFor(() => expect(editable.contains(window.document.activeElement)).toBe(true));
         });
 
         expect(window.document.querySelector('input[type="text"]')).toBeNull();
-        expect(editable.contains(window.document.activeElement)).toBe(true);
     });
 
     it('writes the text and the link at a caret', () => {
@@ -248,6 +274,11 @@ describe('the panel of a link', () => {
         vi.spyOn(window.navigator, 'clipboard', 'get').mockReturnValue({ writeText } as unknown as Clipboard);
     };
 
+    const noClipboard = (): void => {
+        // A browser without the clipboard API has no `navigator.clipboard` at all.
+        vi.spyOn(window.navigator, 'clipboard', 'get').mockReturnValue(undefined as unknown as Clipboard);
+    };
+
     const copy = async (): Promise<void> => {
         await act(async () => {
             buttonNamed('Copy link').click();
@@ -276,6 +307,15 @@ describe('the panel of a link', () => {
         expect(status().textContent).toBe('Could not copy the link');
     });
 
+    it('says when the link could not be copied because the browser has no clipboard', async () => {
+        noClipboard();
+        linked();
+
+        await copy();
+
+        expect(status().textContent).toBe('Could not copy the link');
+    });
+
     it('announces a second copy with the same outcome again', async () => {
         clipboard(vi.fn<(text: string) => Promise<void>>().mockResolvedValue());
         linked();
@@ -290,18 +330,48 @@ describe('the panel of a link', () => {
         expect(texts).toEqual(['Link copied', '', 'Link copied']);
     });
 
+    const shiftTab = (target: Element): KeyboardEvent => {
+        const event = new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, cancelable: true });
+        act(() => {
+            target.dispatchEvent(event);
+        });
+        return event;
+    };
+
     it('returns focus to the text on Shift-Tab from the first control, which is Edit when the link is refused', () => {
         const { editable } = linked({ allowedHosts: ['frontify.com'] });
 
         press(editable, 'Tab');
         expect(window.document.activeElement).toBe(buttonNamed('Edit'));
-        const event = new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, cancelable: true });
-        act(() => {
-            buttonNamed('Edit').dispatchEvent(event);
-        });
+        const event = shiftTab(buttonNamed('Edit'));
 
         expect(event.defaultPrevented).toBe(true);
         expect(editable.contains(window.document.activeElement)).toBe(true);
+    });
+
+    it('returns focus to the text on Shift-Tab from the first control, which is the link when it is allowed', () => {
+        const { editable } = linked();
+
+        press(editable, 'Tab');
+        const target = window.document.querySelector(`[aria-label="${PANEL_LABEL}"] a`);
+        expect(target).not.toBeNull();
+        expect(window.document.activeElement).toBe(target);
+        const event = shiftTab(target as Element);
+
+        expect(event.defaultPrevented).toBe(true);
+        expect(editable.contains(window.document.activeElement)).toBe(true);
+    });
+
+    it('leaves Shift-Tab from a later control to the browser', () => {
+        const { editable } = linked();
+        press(editable, 'Tab');
+        const remove = buttonNamed('Remove');
+        act(() => remove.focus());
+
+        const event = shiftTab(remove);
+
+        expect(event.defaultPrevented).toBe(false);
+        expect(editable.contains(window.document.activeElement)).toBe(false);
     });
 
     it('opens the link in a new tab on a Mod+click, and a plain click only places the caret', () => {
@@ -316,6 +386,18 @@ describe('the panel of a link', () => {
         expect(open).toHaveBeenCalledWith(HREF, '_blank', 'noopener,noreferrer');
     });
 
+    it("does not open the link on the other platform's modifier", () => {
+        const open = vi.spyOn(window, 'open').mockReturnValue(null);
+        const { editable } = linked();
+        const anchor = editable.querySelector('a');
+
+        click(anchor, OTHER_MOD);
+        expect(open).not.toHaveBeenCalled();
+
+        click(anchor, MOD);
+        expect(open).toHaveBeenCalledTimes(1);
+    });
+
     it('offers no Copy link for a stored link the policy refuses', () => {
         for (const [href, policy] of [
             [HREF, { allowedHosts: ['frontify.com'] }],
@@ -324,10 +406,11 @@ describe('the panel of a link', () => {
             const editor = mount(doc({ text: 'see ' }, { text: 'docs', link: { href } }), policy);
             select(editor.editable, 'docs', 2);
 
-            expect([...window.document.querySelectorAll('button')].map((button) => button.textContent)).not.toContain(
-                'Copy link',
-            );
+            const names = [...window.document.querySelectorAll('button')].map((button) => button.textContent);
+            expect(names).toContain('Edit');
+            expect(names).not.toContain('Copy link');
             expect(window.document.querySelector(PANEL_STATUS)).toBeNull();
+            editor.unmount();
         }
     });
 
@@ -342,26 +425,34 @@ describe('the panel of a link', () => {
 });
 
 describe('the destination search of a stored link', () => {
-    it('stays quiet until the value is edited, and Escape closes the form rather than a list', async () => {
+    const openStoredLink = () => {
         const search = vi.fn<(query: string, signal: AbortSignal) => Promise<never[]>>().mockResolvedValue([]);
         const { editable } = mount(doc({ text: 'see ' }, { text: 'docs', link: { href: HREF } }), { search });
         select(editable, 'docs', 2);
         click(buttonNamed('Edit'), {});
+        return search;
+    };
+
+    it('stays quiet until the value is edited', async () => {
+        vi.useFakeTimers();
+        const search = openStoredLink();
 
         await act(async () => {
-            await new Promise((resolve) => setTimeout(resolve, 300));
+            await vi.advanceTimersByTimeAsync(SEARCH_DEBOUNCE_MS * 2);
         });
 
         expect(fieldLabelled('Link to').value).toBe(HREF);
         expect(search).not.toHaveBeenCalled();
         expect(window.document.querySelector(PANEL_STATUS)?.textContent).toBe('');
+    });
+
+    it('closes the form on Escape rather than a list', async () => {
+        openStoredLink();
 
         press(fieldLabelled('Link to'), 'Escape');
         await act(async () => {
-            await new Promise((resolve) => setTimeout(resolve, 50));
+            await vi.waitFor(() => expect(window.document.querySelector('input[type="url"]')).toBeNull());
         });
-
-        expect(window.document.querySelector('input[type="url"]')).toBeNull();
     });
 });
 
@@ -376,9 +467,22 @@ describe('pasting the reading markup of a link', () => {
         });
     };
 
+    const readingMarkup = (value: RteDocument): string => {
+        const container = window.document.createElement('div');
+        const root = createRoot(container);
+        act(() => {
+            root.render(<RichTextRenderer value={value} plugins={[linkPlugin()]} />);
+        });
+        const html = container.innerHTML;
+        act(() => {
+            root.unmount();
+        });
+        return html;
+    };
+
     it('keeps the new-tab note out of the text, round trip after round trip', () => {
         const link = { text: 'docs', link: { href: HREF, openInNewTab: true as const } };
-        const html = serializeToHtml(doc(link), { plugins: [linkPlugin()] });
+        const html = readingMarkup(doc(link));
         expect(html).toContain('opens in new tab');
 
         const { editable, stored } = mount(doc({ text: 'x' }));
@@ -390,7 +494,7 @@ describe('pasting the reading markup of a link', () => {
 
         // The text of the second paste lands next to the first link, so what is compared is the link run alone.
         // `stored()` is typed nullable; the expectation above has already shown it holds a document.
-        pasteHtml(editable, serializeToHtml(first as RteDocument, { plugins: [linkPlugin()] }));
+        pasteHtml(editable, readingMarkup(first as RteDocument));
         const second = JSON.stringify(stored());
         expect(second).not.toContain('opens in new tab');
         expect(second.split('"docs"')).toHaveLength(3);

@@ -32,6 +32,8 @@ export type AlignAttribute = {
     align?: 'left' | 'center' | 'right' | 'justify';
 };
 
+const ALIGN_ATTRIBUTE = 'align';
+
 const ALIGN_VALUES: readonly NonNullable<AlignAttribute['align']>[] = ['left', 'center', 'right', 'justify'];
 
 const isAlignment = (value: unknown): value is NonNullable<AlignAttribute['align']> =>
@@ -42,7 +44,7 @@ const isAlignment = (value: unknown): value is NonNullable<AlignAttribute['align
  */
 export const alignContent = defineContent({
     blockAttributes: {
-        align: {
+        [ALIGN_ATTRIBUTE]: {
             // Only the four this plugin offers reach a style: a stored value is
             // not trusted to be one, and anything else could carry more CSS.
             style: (value): StyleMap => (isAlignment(value) ? { 'text-align': value } : {}),
@@ -109,27 +111,18 @@ const alignOf = (selection: RteSelectionSnapshot): AlignAttribute['align'] =>
     // The structural block type does not know the attribute this plugin adds to every text block.
     (selection.block as AlignAttribute | null)?.align;
 
-/**
- * What a button or its shortcut does: choosing the alignment already set clears it, so the block inherits the editor's direction again.
- */
-const toggleAlign = (
-    api: EditorControlApi,
-    value: NonNullable<AlignAttribute['align']>,
-): AlignAttribute['align'] | null => {
-    if (alignOf(api.selection.get()) === value) {
-        api.blocks.updateAttributes({ align: null });
-        return null;
-    }
-    api.blocks.updateAttributes({ align: value });
-    return value;
-};
-
 const alignFromKeyboard = (api: EditorControlApi, { value, announcement }: Alignment) => {
-    if (toggleAlign(api, value) === null) {
-        api.announce(CLEARED_ANNOUNCEMENT);
-        return;
+    // Choosing the alignment every selected block already has clears it, so they inherit the editor's direction again.
+    switch (api.blocks.toggleAttribute(ALIGN_ATTRIBUTE, value)) {
+        case 'removed':
+            api.announce(CLEARED_ANNOUNCEMENT);
+            return;
+        case 'set':
+            api.announce(announcement);
+            return;
+        case 'unchanged':
+            return;
     }
-    api.announce(announcement);
 };
 
 const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
@@ -149,7 +142,7 @@ const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
                     title={title}
                     shortcut={shortcut}
                     onClick={() => {
-                        toggleAlign(api, value);
+                        api.blocks.toggleAttribute(ALIGN_ATTRIBUTE, value);
                     }}
                 >
                     <Icon size={TOOLBAR_ICON_SIZE} />
@@ -159,8 +152,10 @@ const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
     );
 };
 
-// The keys are literals because a computed key keeps this plugin in the renderer; each alignment's `shortcut` type ties it to one.
-// The labels are the titles' constants, not `LEFT.title`: reading an alignment here would keep its icon in the renderer too.
+/**
+ * The keys are literals because a computed key keeps this plugin in the renderer; each alignment's `shortcut` type ties it to one.
+ * The labels are the titles' constants, not `LEFT.title`: reading an alignment here would keep its icon in the renderer too.
+ */
 const hotkeys = {
     'Mod-Shift-l': {
         label: LEFT_TITLE,

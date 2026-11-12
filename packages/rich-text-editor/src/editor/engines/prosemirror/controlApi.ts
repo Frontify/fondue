@@ -1,7 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { chainCommands, setBlockType as pmSetBlockType, toggleMark as pmToggleMark } from 'prosemirror-commands';
-import { redo, redoDepth, undo, undoDepth } from 'prosemirror-history';
+import {
+    chainCommands,
+    createParagraphNear,
+    liftEmptyBlock,
+    newlineInCode,
+    setBlockType as pmSetBlockType,
+    splitBlock,
+    toggleMark as pmToggleMark,
+} from 'prosemirror-commands';
+import { closeHistory, redo, redoDepth, undo, undoDepth } from 'prosemirror-history';
 import { undoInputRule } from 'prosemirror-inputrules';
 import {
     type Mark as PmMark,
@@ -14,6 +22,7 @@ import { type Command, type EditorState, NodeSelection, TextSelection, type Tran
 import { type EditorView } from 'prosemirror-view';
 
 import {
+    type BlockAttributeToggle,
     type EditorControlApi,
     INLINE_PLACEHOLDER,
     isEmpty,
@@ -242,18 +251,27 @@ const createMarkApi = (getView: () => EditorView, schema: Schema, dispatch: Disp
             range = { from: $from.start(), to: $from.end() };
         }
         const transaction = state.tr;
+        let removed = false;
         for (const markType of Object.values(schema.marks)) {
             if (!except.includes(markType.name)) {
+                if (state.doc.rangeHasMark(range.from, range.to, markType)) {
+                    removed = true;
+                }
                 transaction.removeMark(range.from, range.to, markType);
             }
         }
         if (empty) {
             // What typing here would carry, as far as it is kept.
-            const kept = (state.storedMarks ?? $from.marks()).filter((mark) => except.includes(mark.type.name));
+            const carried = state.storedMarks ?? $from.marks();
+            const kept = carried.filter((mark) => except.includes(mark.type.name));
+            if (kept.length < carried.length) {
+                removed = true;
+            }
             transaction.setStoredMarks(kept);
         }
         dispatch(transaction);
         view.focus();
+        return removed;
     },
     getRun(type) {
         const { state } = getView();
@@ -367,6 +385,29 @@ const createBlockApi = (
             view.focus();
         },
         updateAttributes: applyToTextBlocks,
+        toggleAttribute(name, value): BlockAttributeToggle {
+            const view = getView();
+            const { from, to } = view.state.selection;
+            let declaring = 0;
+            let holding = 0;
+            view.state.doc.nodesBetween(from, to, (node) => {
+                if (node.isTextblock && name in node.attrs) {
+                    declaring++;
+                    if ((node.attrs[name] ?? null) === (value ?? null)) {
+                        holding++;
+                    }
+                }
+            });
+            if (declaring === 0) {
+                return 'unchanged';
+            }
+            if (holding === declaring) {
+                applyToTextBlocks({ [name]: null });
+                return 'removed';
+            }
+            applyToTextBlocks({ [name]: value });
+            return 'set';
+        },
         resetAttributes() {
             // Resets whichever attributes features inject into text blocks; names none.
             applyToTextBlocks(
@@ -375,8 +416,14 @@ const createBlockApi = (
                 ),
             );
         },
+        split() {
+            return splitBlockAtCaret(getView().state, dispatch);
+        },
     };
 };
+
+/** The block half of the base keymap's Enter, so `blocks.split` does what Enter does outside a list. */
+const splitBlockAtCaret: Command = chainCommands(newlineInCode, createParagraphNear, liftEmptyBlock, splitBlock);
 
 // --- History ---
 
@@ -402,7 +449,7 @@ const createHistoryApi = (getView: () => EditorView): EditorControlApi['history'
 /** The undo group: none running, running with no change yet, or running after its first change. */
 type GroupState = { kind: 'idle' } | { kind: 'open' } | { kind: 'joined'; first: Transaction };
 
-// prosemirror-history joins a transaction carrying this meta into the undo step of the one it names.
+/** prosemirror-history joins a transaction carrying this meta into the undo step of the one it names. */
 const APPENDED_TRANSACTION_META = 'appendedTransaction';
 
 type CaretSide = 'before' | 'after';
@@ -450,6 +497,8 @@ export const createControlApi = (
             }
             case 'open': {
                 if (transaction.docChanged) {
+                    // Keeps the group's step apart from the edit before it.
+                    closeHistory(transaction);
                     groupState = { kind: 'joined', first: transaction };
                 }
                 break;
@@ -460,6 +509,14 @@ export const createControlApi = (
             }
         }
         getView().dispatch(transaction);
+    };
+
+    const endGroup = (): void => {
+        // Keeps the next input out of the group's step.
+        if (groupState.kind === 'joined') {
+            getView().dispatch(closeHistory(getView().state.tr));
+        }
+        groupState = { kind: 'idle' };
     };
 
     return {
@@ -488,16 +545,28 @@ export const createControlApi = (
             dispatch(transaction.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline));
             view.focus();
         },
-        insertText(text, marks = {}) {
+        insertText(text, marks = {}, options = {}) {
+            const undoWith = options.undo ?? 'together';
             const view = getView();
-            const transaction = view.state.tr;
-            const from = transaction.selection.from;
+            let transaction = view.state.tr;
             transaction.insertText(text);
+            // Measured back from the caret after the insert: a selected block is replaced by a new paragraph, which shifts the text.
+            const to = transaction.selection.from;
+            const from = to - text.length;
+            switch (undoWith) {
+                case 'together':
+                    break;
+                case 'marksFirst':
+                    // Closed on both sides: the text is a step of its own, and the marks one after it.
+                    dispatch(closeHistory(transaction));
+                    transaction = closeHistory(view.state.tr);
+                    break;
+            }
             for (const [type, value] of Object.entries(marks)) {
                 const markType = schema.marks[type];
                 if (markType) {
                     // Adding replaces a mark of the same type the caret carried.
-                    transaction.addMark(from, from + text.length, markType.create(valueAttrsFor(value)));
+                    transaction.addMark(from, to, markType.create(valueAttrsFor(value)));
                 } else {
                     warnUnknownType('insertText', type);
                 }
@@ -531,7 +600,7 @@ export const createControlApi = (
             try {
                 run();
             } finally {
-                groupState = { kind: 'idle' };
+                endGroup();
             }
         },
         announce,

@@ -19,11 +19,16 @@ import { destroyEditors, editorWith, paragraph, text } from './testEditor';
 
 afterEach(destroyEditors);
 
+/** What the editor puts on its own copies. */
+const COPY_MARKER = 'data-rte-copy';
+
 /** The HTML a copy of the whole document puts on the clipboard. */
 const copied = (editor: ReturnType<typeof editorWith>): string => {
     const { schema, doc } = editor.view.state;
     const container = window.document.createElement('div');
     container.append(clipboardSerializer(schema).serializeFragment(doc.content));
+    // The copy marker says where a paste came from; these tests look at the markup alone.
+    container.querySelector(`[${COPY_MARKER}]`)?.removeAttribute(COPY_MARKER);
     return container.innerHTML;
 };
 

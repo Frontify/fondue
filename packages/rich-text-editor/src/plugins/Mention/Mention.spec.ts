@@ -96,7 +96,7 @@ describe('the mention inline', () => {
 
         expect(spec?.tag).toBe('span');
         expect(spec?.attrs).toMatchObject({ href: undefined, title: 'Jane Doe', 'data-mention-id': 'jane' });
-        expect(spec?.children).toEqual([{ tag: BIDI_ISOLATE_TAG, children: '@jane (unavailable)' }]);
+        expect(spec?.children).toEqual([{ tag: BIDI_ISOLATE_TAG, children: '@jane' }]);
     });
 
     it('shows the stored value where the app does not know the person', () => {

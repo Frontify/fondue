@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/** Who a mention names: one person, a group of people, or everyone. */
-export type MentionKind = 'user' | 'group' | 'all';
+/** Every kind a mention can have; the one list that `MentionKind` and parsing read. */
+export const MENTION_KINDS = ['user', 'group', 'all'] as const;
 
-export const MENTION_KINDS: readonly MentionKind[] = ['user', 'group', 'all'];
+/** Who a mention names: one person, a group of people, or everyone. */
+export type MentionKind = (typeof MENTION_KINDS)[number];
 
 /** What a mention stores on its inline node. */
 export type MentionValue = {

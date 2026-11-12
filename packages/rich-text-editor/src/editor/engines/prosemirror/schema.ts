@@ -128,11 +128,11 @@ const inlineNodeSpec = (definition: InlineDefinition, hasEditView: boolean): PmN
 });
 
 /**
- * The engine's list replaces its default of the mark itself, and throws on a type it does not know.
+ * The mark itself plus the excluded marks the mounted plugins register: the engine's list replaces its default of the mark itself, and the engine throws on a name it does not know.
  * @param type - the mark's name in the schema
  * @param registered - the marks the mounted plugins registered, by name
  */
-const excludedMarks = (
+const excludesSpec = (
     type: string,
     definition: MarkDefinition,
     registered: PluginRegistry['marks'],
@@ -147,7 +147,7 @@ const markSpec = (type: string, definition: MarkDefinition, registered: PluginRe
     // A mark turned on without a value carries its declared defaults.
     attrs: { [VALUE_ATTR]: { default: definition.defaults ?? {} } },
     inclusive: definition.inclusive ?? true,
-    excludes: excludedMarks(type, definition, registered),
+    excludes: excludesSpec(type, definition, registered),
     parseDOM: markParseRules(type, definition.parse),
     toDOM: (mark) => htmlSpecToDom(definition.toHtml(mark.attrs[VALUE_ATTR] as Record<string, unknown>)),
 });

@@ -151,11 +151,6 @@
     font: inherit;
     text-decoration: underline;
     cursor: pointer;
-
-    &:focus-visible {
-        box-shadow: 0 2px 0 var(--color-focus-default);
-        outline: none;
-    }
 }
 
 /** The key that retries, drawn as Fondue draws a dropdown item's shortcut. */

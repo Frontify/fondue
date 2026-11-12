@@ -125,9 +125,14 @@ export type RtePlugin = {
      * Keybindings, keyed `Mod-b` style (Mod = Cmd on macOS, Ctrl elsewhere) or
      * by a single typed character (`@`). Modifiers are Mod, Cmd, Meta, Ctrl,
      * Alt and Shift in any case; any other throws when the editor mounts. They run
-     * before the editor's own, in plugin order.
+     * before the editor's own, in plugin order (owned keys first: see `ownedHotkeys`).
      */
     hotkeys?: Record<string, RteHotkey>;
+    /**
+     * Keys from `hotkeys` this plugin owns: its handler runs before every plugin that merely binds the key,
+     * wherever the plugin is mounted. Owners of one key run in mount order. A key not in `hotkeys` throws when the editor mounts.
+     */
+    ownedHotkeys?: readonly string[];
     /**
      * Text rewritten as it is typed: markdown shortcuts and autolinks
      */
@@ -342,11 +347,11 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
      */
     inclusive?: boolean;
     /**
-     * Mark types that cannot sit on the same text as this one: putting this mark on takes them off. A type no mounted plugin registers is ignored.
+     * Mark types that cannot sit on the same text as this one: putting this mark on takes them off. Name each other in both marks, or the other mark cannot be put on this one's text. A type no mounted plugin registers is ignored.
      */
     excludes?: readonly string[];
     /**
-     * Typing rules do not rewrite text carrying this mark — inline code keeps `--` and `**` as typed.
+     * Typing rules and single-character hotkeys do not act on text carrying this mark — inline code keeps `--`, `**` and `@` as typed.
      * @default false
      */
     excludesInputRules?: boolean;
@@ -414,6 +419,7 @@ export type ParseRule<TValue> = {
 
 /**
  * A rule that matches any element whose own `style` attribute declares the CSS property, handed the declared value.
+ * It never stops tag rules or other style rules from reading the same element.
  */
 export type StyleParseRule<TValue> = {
     /**
@@ -428,7 +434,7 @@ export type StyleParseRule<TValue> = {
      * Receives the declared CSS value and returns the mark's value, or null when
      * the declaration is not this mark.
      */
-    value?: (cssValue: string) => TValue | null;
+    value: (cssValue: string) => TValue | null;
 };
 
 /**
@@ -439,6 +445,10 @@ export type MarkClearRule = {
      * A CSS property name: `font-weight`.
      */
     style: string;
+    /**
+     * Never set: lets TypeScript tell a clear rule from a tag rule.
+     */
+    tag?: undefined;
     /**
      * Receives the declared CSS value and returns true when it takes the mark off.
      */
@@ -451,6 +461,10 @@ export type MarkClearRule = {
 export type MarkIgnoreRule = {
     tag: string;
     ignore: true;
+    /**
+     * Never set: lets TypeScript read `style` on every parse rule.
+     */
+    style?: undefined;
 };
 
 /**
@@ -639,9 +653,19 @@ export type RteHotkey = {
 export type HotkeyHandler = (api: EditorControlApi) => boolean | void;
 
 /**
- * A plugin's `onPaste`, handed the clipboard's text and HTML (if any). Return true when handled: the default paste and later plugins are skipped.
+ * Where pasted content was copied from: an editor of this package (this one or another), whose markup pastes back as it was, or anywhere else.
  */
-export type PasteHandler = (paste: { text: string; html: string | null }, api: EditorControlApi) => boolean;
+export type PasteSource = 'editor' | 'elsewhere';
+
+/**
+ * What a paste carries: the clipboard's text, its HTML (if any), and where it was copied from.
+ */
+export type Paste = { text: string; html: string | null; source: PasteSource };
+
+/**
+ * A plugin's `onPaste`, handed the paste. Return true when handled: the default paste and later plugins are skipped.
+ */
+export type PasteHandler = (paste: Paste, api: EditorControlApi) => boolean;
 
 /**
  * A text pattern rewritten while typing. Declared, not implemented: the editor
@@ -677,8 +701,9 @@ export type RteInputRule =
      * Text swapped for other text the moment its last character is typed, no
      * space needed: `->` becomes `→`. A string matches as written; a pattern
      * is anchored to the end of the text before the caret, so a lookbehind can
-     * say what may not come before it, and its `replace` may use `$1`. An
-     * inline element reads as U+FFFC in the text. The rule steps aside when
+     * say what may not come before it, and its `replace` may use `$1` to `$9`:
+     * there, `$` and a digit from 1 to 9 is always a group reference, and one
+     * the pattern lacks throws. An inline element reads as U+FFFC in the text. The rule steps aside when
      * the text it would replace carries a mark that opts out (inline code).
      * Only the matched text is replaced, so match a character only to look at
      * it with a lookbehind.

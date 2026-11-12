@@ -2,17 +2,22 @@
 
 // @vitest-environment happy-dom
 
-import { TextSelection } from 'prosemirror-state';
+import { NodeSelection, TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
+import { act, createElement } from 'react';
+import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
+    buildPluginRegistry,
+    defineBlock,
     defineContent,
     defineInline,
     definePlugin,
     type EditorControlApi,
     type RteBlockNode,
     type RtePlugin,
+    type ToolbarItemProps,
 } from '#/core';
 import { blurOnBreakPlugin, defaultPlugins } from '#/plugins';
 
@@ -235,6 +240,34 @@ describe('inline code', () => {
         expect(editor.stored()).toEqual([paragraph(text('x', { code: true }), text('y'))]);
     });
 
+    it('can sit inside text a mark shortcut wraps', () => {
+        expect(typed('**run `npm` now**')).toEqual([
+            paragraph(
+                text('run ', { bold: true }),
+                text('npm', { bold: true, code: true }),
+                text(' now', { bold: true }),
+            ),
+        ]);
+    });
+
+    it('lets a mark shortcut typed right after its end apply', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('foo', { code: true }))]);
+        editor.caretAfter('foo');
+
+        editor.type('**b**');
+
+        expect(editor.stored()).toEqual([paragraph(text('foo', { code: true }), text('b', { bold: true }))]);
+    });
+
+    it('keeps its text when a typing rule after its end would reach into it', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('snake_case', { code: true }))]);
+        editor.caretAfter('snake_case');
+
+        editor.type('_');
+
+        expect(editor.stored()).toEqual([paragraph(text('snake_case', { code: true }), text('_'))]);
+    });
+
     it('carries on at its end once Mod-e turns it back on', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
         editor.caretAfter('x');
@@ -256,6 +289,15 @@ describe('subscript and superscript', () => {
 
         editor.api.marks.toggle('subscript');
         expect(editor.stored()).toEqual([paragraph(text('x', { subscript: true }))]);
+    });
+
+    it('a stored run carrying both loses the one turned off', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { subscript: true, superscript: true }))]);
+        editor.select('x');
+
+        editor.api.marks.toggle('subscript');
+
+        expect(editor.stored()).toEqual([paragraph(text('x', { superscript: true }))]);
     });
 
     it('turning one on at a caret types only that one', () => {
@@ -451,6 +493,34 @@ describe('a feature hotkey', () => {
         editor.type(' @');
 
         expect(mention).toHaveBeenCalledTimes(1);
+    });
+
+    it('naming a character still fires after a space in bold text', () => {
+        const mention = vi.fn<(api: EditorControlApi) => void>();
+        const editor = editorWith(
+            [...defaultPlugins, definePlugin({ id: 'mention', hotkeys: { '@': { label: 'Mention', run: mention } } })],
+            [paragraph(text('hi ', { bold: true }))],
+        );
+
+        editor.caretAfter('hi ');
+        editor.type('@');
+
+        expect(mention).toHaveBeenCalledTimes(1);
+    });
+
+    it('naming a character does not fire at a caret where inline code was just turned on', () => {
+        const mention = vi.fn<(api: EditorControlApi) => void>();
+        const editor = editorWith(
+            [...defaultPlugins, definePlugin({ id: 'mention', hotkeys: { '@': { label: 'Mention', run: mention } } })],
+            [paragraph(text('hi '))],
+        );
+        editor.caretAfter('hi ');
+
+        expect(press(editor.view, 'e', mod)).toBe(true);
+        editor.type('@');
+
+        expect(mention).not.toHaveBeenCalled();
+        expect(editor.stored()).toEqual([paragraph(text('hi '), text('@', { code: true }))]);
     });
 });
 
@@ -704,6 +774,16 @@ const undoAllByKeyboard = (view: EditorView): number => {
 /** The `keyCode` is what the keymap reads to match a shifted letter. */
 const modShift = (keyCode: number): KeyboardEventInit => ({ ...mod, shiftKey: true, keyCode });
 
+/** A void block that declares no `align`, which the shipped blocks cannot stand in for. */
+const dividerPlugin = definePlugin({
+    id: 'divider',
+    content: defineContent({
+        blocks: {
+            divider: defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [{ tag: 'hr' }] }),
+        },
+    }),
+});
+
 describe('the alignment shortcuts', () => {
     const plain = (): RteBlockNode[] => [paragraph(text('one')), paragraph(text('two'))];
 
@@ -747,6 +827,21 @@ describe('the alignment shortcuts', () => {
         expect(announce).toHaveBeenLastCalledWith('Alignment cleared');
     });
 
+    it('announces and changes nothing when no selected block can be aligned', () => {
+        const announce = vi.fn<(message: string) => void>();
+        const editor = editorWith(
+            [...defaultPlugins, dividerPlugin],
+            [paragraph(text('a')), { type: 'divider' }, paragraph(text('b'))],
+            { announce },
+        );
+        editor.view.dispatch(editor.view.state.tr.setSelection(NodeSelection.create(editor.view.state.doc, 3)));
+
+        press(editor.view, 'E', modShift(69));
+
+        expect(announce).not.toHaveBeenCalled();
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
     it('aligns every block a range touches', () => {
         const editor = editorWith(defaultPlugins, plain());
         editor.selectBetween('one', 'two');
@@ -758,63 +853,132 @@ describe('the alignment shortcuts', () => {
             { type: 'paragraph', align: 'right', children: [{ text: 'two' }] },
         ]);
     });
+
+    it('aligns every block of a range that only some have, and clears them once all have it', () => {
+        const editor = editorWith(defaultPlugins, [
+            { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },
+            paragraph(text('two')),
+        ]);
+        editor.selectBetween('one', 'two');
+
+        press(editor.view, 'E', modShift(69));
+        expect(editor.stored()).toEqual([
+            { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },
+            { type: 'paragraph', align: 'center', children: [{ text: 'two' }] },
+        ]);
+
+        press(editor.view, 'E', modShift(69));
+        expect(editor.stored()).toEqual(plain());
+    });
 });
 
-describe('the reset formatting shortcut', () => {
-    const tagPlugin = definePlugin({
-        id: 'tag',
-        content: defineContent({
-            inlines: {
-                tag: defineInline<{ name: string }>({
-                    toHtml: ({ name }) => ({ tag: 'span', children: name }),
-                    parse: [],
-                }),
-            },
-        }),
-    });
-    const plugins = [...defaultPlugins, tagPlugin];
-    const LINK = { href: 'https://example.com' };
+const tagPlugin = definePlugin({
+    id: 'tag',
+    content: defineContent({
+        inlines: {
+            tag: defineInline<{ name: string }>({
+                toHtml: ({ name }) => ({ tag: 'span', children: name }),
+                parse: [],
+            }),
+        },
+    }),
+});
+const resetPlugins = [...defaultPlugins, tagPlugin];
+const LINK = { href: 'https://example.com' };
+
+// The block attributes sit flat on the node, which the open `RteBlockNode` cannot name.
+const formatted = (): RteBlockNode[] =>
+    [
+        {
+            type: 'textStyle',
+            style: 'heading2',
+            align: 'center',
+            children: [
+                text('big ', { bold: true }),
+                text('link', { link: LINK, italic: true }),
+                { type: 'tag', name: 'Ada' },
+            ],
+        },
+        { type: 'textStyle', style: 'heading2', align: 'right', children: [text('next', { bold: true })] },
+    ] as unknown as RteBlockNode[];
+
+const listItem = (value: string, marks: Record<string, unknown> = {}): RteBlockNode => ({
+    type: 'listItem',
+    children: [paragraph(text(value, marks))],
+});
+
+/** Clicks the toolbar's Reset formatting button, rendered from the plugin's own entry against the editor's api. */
+type ClickResetButtonParams = { api: EditorControlApi };
+
+const clickResetButton = ({ api }: ClickResetButtonParams): void => {
+    const entry = buildPluginRegistry(shipped('reset-formatting')).toolbarItems[0];
+    if (entry?.control !== 'custom') {
+        throw new Error('the reset formatting plugin has no custom toolbar entry');
+    }
+    const container = window.document.createElement('div');
+    window.document.body.append(container);
+    const root = createRoot(container);
+    // The reset button reads only `api` and `label`; the rest is what any entry is handed.
+    const props: ToolbarItemProps = {
+        api,
+        label: entry.label,
+        selection: api.selection.get(),
+        selectedNode: null,
+        isActive: false,
+        toggle: () => {},
+        openEditor: () => {},
+    };
+    act(() => root.render(createElement(entry.render, props)));
+    const button = container.querySelector('button');
+    if (button === null) {
+        throw new Error('the entry drew no button');
+    }
+    act(() => button.click());
+    act(() => root.unmount());
+};
+
+describe('the clear formatting shortcut', () => {
+    const plugins = resetPlugins;
     const resetKeys = (view: EditorView): boolean => press(view, '\\', mod);
 
-    // The block attributes sit flat on the node, which the open `RteBlockNode` cannot name.
-    const formatted = (): RteBlockNode[] =>
-        [
-            {
-                type: 'textStyle',
-                style: 'heading2',
-                align: 'center',
-                children: [
-                    text('big ', { bold: true }),
-                    text('link', { link: LINK, italic: true }),
-                    { type: 'tag', name: 'Ada' },
-                ],
-            },
-            { type: 'textStyle', style: 'heading2', align: 'right', children: [text('next', { bold: true })] },
-        ] as unknown as RteBlockNode[];
-
-    it('puts the block the caret is in back to plain text, links and mentions kept, neighbours alone', () => {
+    it('clears the marks of the block the caret is in, keeping links, mentions, block type and alignment', () => {
         const editor = editorWith(plugins, formatted());
         editor.caretAfter('big');
 
         expect(resetKeys(editor.view)).toBe(true);
 
         expect(editor.stored()).toEqual([
-            paragraph(text('big '), text('link', { link: LINK }), { type: 'tag', name: 'Ada' }),
+            {
+                type: 'textStyle',
+                style: 'heading2',
+                align: 'center',
+                children: [text('big '), text('link', { link: LINK }), { type: 'tag', name: 'Ada' }],
+            },
             formatted()[1],
-        ]);
+        ] as unknown as RteBlockNode[]);
     });
 
-    it('announces the reset', () => {
+    it('announces that formatting was cleared', () => {
         const announce = vi.fn<(message: string) => void>();
         const editor = editorWith(plugins, formatted(), { announce });
         editor.caretAfter('big');
 
         resetKeys(editor.view);
 
-        expect(announce).toHaveBeenCalledWith('Formatting reset');
+        expect(announce).toHaveBeenCalledWith('Formatting cleared');
     });
 
-    it('is one undo step, however many commands it takes', () => {
+    it('announces nothing when there was no formatting to clear', () => {
+        const announce = vi.fn<(message: string) => void>();
+        const editor = editorWith(plugins, [paragraph(text('plain'))], { announce });
+        editor.caretAfter('plain');
+
+        resetKeys(editor.view);
+
+        expect(announce).not.toHaveBeenCalled();
+    });
+
+    it('is one undo step', () => {
         const editor = editorWith(plugins, formatted());
         editor.caretAfter('big');
 
@@ -824,51 +988,115 @@ describe('the reset formatting shortcut', () => {
         expect(editor.stored()).toEqual(formatted());
     });
 
-    it('takes a list item out of its list and clears its marks, in one step', () => {
-        const list = (): RteBlockNode[] => [
-            {
-                type: 'bulletList',
-                children: [{ type: 'listItem', children: [paragraph(text('item', { bold: true }))] }],
-            },
-        ];
+    it('keeps a centred block in a list item, its list and its link, and removes its bold', () => {
+        const list = (): RteBlockNode[] =>
+            [
+                {
+                    type: 'bulletList',
+                    children: [
+                        {
+                            type: 'listItem',
+                            children: [
+                                {
+                                    type: 'paragraph',
+                                    align: 'center',
+                                    children: [text('big', { bold: true }), text('link', { link: LINK, bold: true })],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ] as unknown as RteBlockNode[];
         const editor = editorWith(plugins, list());
-        editor.caretAfter('it');
+        editor.caretAfter('bi');
 
         resetKeys(editor.view);
+
+        expect(editor.stored()).toEqual([
+            {
+                type: 'bulletList',
+                children: [
+                    {
+                        type: 'listItem',
+                        children: [
+                            {
+                                type: 'paragraph',
+                                align: 'center',
+                                children: [text('big'), text('link', { link: LINK })],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ]);
+    });
+});
+
+describe('the reset formatting button', () => {
+    it('puts the block the caret is in back to plain text, links removed too, neighbours alone', () => {
+        const editor = editorWith(resetPlugins, formatted());
+        editor.caretAfter('big');
+
+        clickResetButton(editor);
+
+        expect(editor.stored()).toEqual([paragraph(text('big link'), { type: 'tag', name: 'Ada' }), formatted()[1]]);
+    });
+
+    it('announces that formatting was reset', () => {
+        const announce = vi.fn<(message: string) => void>();
+        const editor = editorWith(resetPlugins, formatted(), { announce });
+        editor.caretAfter('big');
+
+        clickResetButton(editor);
+
+        expect(announce).toHaveBeenCalledWith('Formatting reset');
+    });
+
+    it('is one undo step, however many commands it takes', () => {
+        const editor = editorWith(resetPlugins, formatted());
+        editor.caretAfter('big');
+
+        clickResetButton(editor);
+
+        expect(undoAllByKeyboard(editor.view)).toBe(1);
+        expect(editor.stored()).toEqual(formatted());
+    });
+
+    it('takes a list item out of its list and clears its marks, in one step', () => {
+        const list = (): RteBlockNode[] => [{ type: 'bulletList', children: [listItem('item', { bold: true })] }];
+        const editor = editorWith(resetPlugins, list());
+        editor.caretAfter('it');
+
+        clickResetButton(editor);
 
         expect(editor.stored()).toEqual([paragraph(text('item'))]);
         expect(undoAllByKeyboard(editor.view)).toBe(1);
         expect(editor.stored()).toEqual(list());
     });
-});
 
-describe('the reset formatting shortcut in a list', () => {
     it('takes only the caret item out, leaving its neighbours in the list', () => {
-        const item = (value: string): RteBlockNode => ({ type: 'listItem', children: [paragraph(text(value))] });
         const editor = editorWith(defaultPlugins, [
-            { type: 'bulletList', children: [item('one'), item('two'), item('three')] },
+            { type: 'bulletList', children: [listItem('one'), listItem('two'), listItem('three')] },
         ]);
         editor.caretAfter('tw');
 
-        press(editor.view, '\\', mod);
+        clickResetButton(editor);
 
         expect(editor.stored()).toEqual([
-            { type: 'bulletList', children: [item('one')] },
+            { type: 'bulletList', children: [listItem('one')] },
             paragraph(text('two')),
-            { type: 'bulletList', children: [item('three')] },
+            { type: 'bulletList', children: [listItem('three')] },
         ]);
     });
-
-    const item = (value: string): RteBlockNode => ({ type: 'listItem', children: [paragraph(text(value))] });
 
     it('unwraps a list the range reaches from a paragraph above it', () => {
         const editor = editorWith(defaultPlugins, [
             paragraph(text('intro')),
-            { type: 'bulletList', children: [item('one')] },
+            { type: 'bulletList', children: [listItem('one')] },
         ]);
         editor.selectBetween('intro', 'one');
 
-        press(editor.view, '\\', mod);
+        clickResetButton(editor);
 
         expect(editor.stored()).toEqual([paragraph(text('intro')), paragraph(text('one'))]);
     });
@@ -880,22 +1108,22 @@ describe('the reset formatting shortcut in a list', () => {
             style: 'heading2',
             children: [text('title')],
         } as unknown as RteBlockNode;
-        const editor = editorWith(defaultPlugins, [heading, { type: 'bulletList', children: [item('one')] }]);
+        const editor = editorWith(defaultPlugins, [heading, { type: 'bulletList', children: [listItem('one')] }]);
         editor.selectBetween('title', 'one');
 
-        press(editor.view, '\\', mod);
+        clickResetButton(editor);
 
         expect(editor.stored()).toEqual([paragraph(text('title')), paragraph(text('one'))]);
     });
 
     it('unwraps both lists of a range across two lists', () => {
         const editor = editorWith(defaultPlugins, [
-            { type: 'bulletList', children: [item('one')] },
-            { type: 'numberedList', children: [item('two')] },
+            { type: 'bulletList', children: [listItem('one')] },
+            { type: 'numberedList', children: [listItem('two')] },
         ]);
         editor.selectBetween('one', 'two');
 
-        press(editor.view, '\\', mod);
+        clickResetButton(editor);
 
         expect(editor.stored()).toEqual([paragraph(text('one')), paragraph(text('two'))]);
     });
@@ -934,6 +1162,36 @@ describe('Enter in an editor with blurOnBreakPlugin', () => {
         expect((editor.stored()?.[0] as { children: unknown[] }).children).toHaveLength(2);
     });
 
+    it('leaves the list on Enter in an empty item, and submits on the next Enter', () => {
+        const onBreak = vi.fn();
+        const editor = editorWith(
+            [...defaultPlugins, blurOnBreakPlugin({ onBreak })],
+            [
+                {
+                    type: 'bulletList',
+                    children: [
+                        { type: 'listItem', children: [paragraph(text('a'))] },
+                        { type: 'listItem', children: [paragraph()] },
+                    ],
+                },
+            ],
+        );
+        // The caret goes to the end of the document: the empty item.
+        editor.view.dispatch(editor.view.state.tr.setSelection(TextSelection.atEnd(editor.view.state.doc)));
+
+        press(editor.view, 'Enter');
+
+        expect(onBreak).not.toHaveBeenCalled();
+        expect(editor.stored()).toEqual([
+            { type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('a'))] }] },
+            paragraph(),
+        ]);
+
+        press(editor.view, 'Enter');
+
+        expect(onBreak).toHaveBeenCalledTimes(1);
+    });
+
     it('refuses an empty editor when required, says why and keeps focus', () => {
         const onBreak = vi.fn();
         const announce = vi.fn<(message: string) => void>();
@@ -969,7 +1227,7 @@ describe('Enter in an editor with blurOnBreakPlugin', () => {
         expect(announce).not.toHaveBeenCalled();
     });
 
-    it('leaves Shift-Enter to the soft break', () => {
+    it("does Enter's action on Shift-Enter: splits the paragraph mid-text, never submits or breaks the line", () => {
         const onBreak = vi.fn();
         const editor = editorWith([...defaultPlugins, blurOnBreakPlugin({ onBreak })], [paragraph(text('ab'))]);
         editor.caretAfter('a');
@@ -977,6 +1235,61 @@ describe('Enter in an editor with blurOnBreakPlugin', () => {
         press(editor.view, 'Enter', { shiftKey: true });
 
         expect(onBreak).not.toHaveBeenCalled();
+        expect(editor.stored()).toEqual([paragraph(text('a')), paragraph(text('b'))]);
+    });
+
+    it('wins Shift-Enter from a soft break mounted after it', () => {
+        const editor = editorWith(
+            [blurOnBreakPlugin({ onBreak: vi.fn() }), ...defaultPlugins],
+            [paragraph(text('ab'))],
+        );
+        editor.caretAfter('a');
+
+        press(editor.view, 'Enter', { shiftKey: true });
+
+        expect(editor.stored()).toEqual([paragraph(text('a')), paragraph(text('b'))]);
+    });
+
+    it('splits a list item on Shift-Enter', () => {
+        const onBreak = vi.fn();
+        const editor = editorWith([...defaultPlugins, blurOnBreakPlugin({ onBreak })], inList());
+        editor.caretAfter('it');
+
+        press(editor.view, 'Enter', { shiftKey: true });
+
+        expect(onBreak).not.toHaveBeenCalled();
+        expect((editor.stored()?.[0] as { children: unknown[] }).children).toHaveLength(2);
+    });
+
+    it('leaves the list on Shift-Enter in an empty item', () => {
+        const editor = editorWith(
+            [...defaultPlugins, blurOnBreakPlugin({ onBreak: vi.fn() })],
+            [
+                {
+                    type: 'bulletList',
+                    children: [
+                        { type: 'listItem', children: [paragraph(text('a'))] },
+                        { type: 'listItem', children: [paragraph()] },
+                    ],
+                },
+            ],
+        );
+        editor.view.dispatch(editor.view.state.tr.setSelection(TextSelection.atEnd(editor.view.state.doc)));
+
+        press(editor.view, 'Enter', { shiftKey: true });
+
+        expect(editor.stored()).toEqual([
+            { type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('a'))] }] },
+            paragraph(),
+        ]);
+    });
+
+    it('still breaks the line on Shift-Enter in an editor without blurOnBreak', () => {
+        const editor = editorWith([...defaultPlugins], [paragraph(text('ab'))]);
+        editor.caretAfter('a');
+
+        press(editor.view, 'Enter', { shiftKey: true });
+
         expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'break' }, text('b'))]);
     });
 });

@@ -71,7 +71,9 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
                 selection = { ...selection, marks: { ...selection.marks, [type]: allOf(value) } };
             },
             removeAll: () => {
+                const removed = Object.keys(selection.marks).length > 0;
                 selection = { ...selection, marks: {} };
+                return removed;
             },
             getRun: (type) => {
                 const mark = selection.marks[type];
@@ -84,7 +86,9 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
         blocks: {
             setType: (type, value) => setBlocks([{ type, ...value }, ...selection.blocks.slice(1)]),
             updateAttributes: () => {},
+            toggleAttribute: () => 'set',
             resetAttributes: () => {},
+            split: () => false,
         },
         lists: {
             // Wraps the text block in a list and an item, or takes it out again.

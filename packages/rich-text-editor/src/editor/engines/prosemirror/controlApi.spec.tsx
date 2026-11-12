@@ -3,8 +3,8 @@
 // @vitest-environment happy-dom
 
 import { undo } from 'prosemirror-history';
-import { NodeSelection } from 'prosemirror-state';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { NodeSelection, TextSelection } from 'prosemirror-state';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
     defineBlock,
@@ -50,6 +50,8 @@ const dividerPlugin: RtePlugin = definePlugin({
 const plugins: RtePlugin[] = [...defaultPlugins, dividerPlugin, tagPlugin];
 
 const LINK = { href: 'https://example.com' };
+
+const FROZEN_TIME = new Date('2026-01-01T00:00:00Z');
 
 afterEach(destroyEditors);
 
@@ -251,6 +253,20 @@ describe('marks.toggle', () => {
         expect(editor.stored()).toEqual([paragraph(text('a'), text('X', { bold: true }), text('b'))]);
     });
 
+    it('marks all the text it puts in place of a selected block', () => {
+        const editor = editorWith(plugins, [paragraph(text('a')), { type: 'divider' }, paragraph(text('b'))]);
+        const { view } = editor;
+        view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, 3)));
+
+        editor.api.insertText('XY', { link: LINK });
+
+        expect(editor.stored()).toEqual([
+            paragraph(text('a')),
+            paragraph(text('XY', { link: LINK })),
+            paragraph(text('b')),
+        ]);
+    });
+
     it('puts the mark on the text of a range but never on an inline element in it', () => {
         const editor = editorWith(plugins, [paragraph(text('a'), { type: 'tag', name: 'Ada' }, text('b'))]);
         editor.selectBetween('a', 'b');
@@ -405,6 +421,33 @@ describe('marks.removeAll', () => {
         expect(caret.stored()).toEqual(expected);
     });
 
+    it('returns whether it removed a mark from the text or from what the caret types next', () => {
+        const formatted = editorWith(plugins, [paragraph(text('bold', { bold: true }))]);
+        formatted.caretAfter('bold');
+        const plain = editorWith(plugins, [paragraph(text('plain'))]);
+        plain.caretAfter('plain');
+        const carrying = editorWith(plugins, [paragraph(text('plain'))]);
+        carrying.caretAfter('plain');
+        carrying.api.marks.toggle('bold');
+        const linkOnly = editorWith(plugins, [paragraph(text('link', { link: LINK }))]);
+        linkOnly.caretAfter('link');
+
+        expect(formatted.api.marks.removeAll()).toBe(true);
+        expect(plain.api.marks.removeAll()).toBe(false);
+        expect(carrying.api.marks.removeAll()).toBe(true);
+        expect(linkOnly.api.marks.removeAll({ except: ['link'] })).toBe(false);
+    });
+
+    it('returns whether it removed a mark from the text over a range', () => {
+        const formatted = editorWith(plugins, [paragraph(text('bold', { bold: true }), text(' end'))]);
+        formatted.selectBetween('bold', 'end');
+        const linkOnly = editorWith(plugins, [paragraph(text('link', { link: LINK }), text(' end'))]);
+        linkOnly.selectBetween('link', 'end');
+
+        expect(formatted.api.marks.removeAll()).toBe(true);
+        expect(linkOnly.api.marks.removeAll({ except: ['link'] })).toBe(false);
+    });
+
     it('keeps a mention', () => {
         const mention = { type: 'tag', name: 'Ada' };
         const editor = editorWith(plugins, [paragraph(text('hi ', { bold: true }), mention)]);
@@ -476,6 +519,21 @@ describe('blocks.setType', () => {
             { type: 'quote', children: [{ text: 'one' }] },
             { type: 'quote', children: [{ text: 'two' }] },
         ]);
+    });
+});
+
+describe('lists.split', () => {
+    const item = (...children: RteBlockNode[]): RteBlockNode => ({ type: 'listItem', children }) as RteBlockNode;
+    const bullets = (...children: RteBlockNode[]): RteBlockNode => ({ type: 'bulletList', children }) as RteBlockNode;
+
+    it('turns an empty top-level item into a paragraph after the list', () => {
+        const editor = editorWith(plugins, [bullets(item(paragraph(text('one'))), item(paragraph()))]);
+        // The caret goes to the end of the document: the empty item.
+        editor.view.dispatch(editor.view.state.tr.setSelection(TextSelection.atEnd(editor.view.state.doc)));
+
+        expect(editor.api.lists.split()).toBe(true);
+
+        expect(editor.stored()).toEqual([bullets(item(paragraph(text('one')))), paragraph()]);
     });
 });
 
@@ -575,6 +633,31 @@ describe('block attributes', () => {
                 ],
             },
         ]);
+    });
+
+    it('toggle on only when some block lacks the value, and off when every block has it', () => {
+        const editor = editorWith(plugins, [
+            { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },
+            paragraph(text('two')),
+        ]);
+        editor.selectBetween('one', 'two');
+
+        expect(editor.api.blocks.toggleAttribute('align', 'center')).toBe('set');
+        expect(editor.stored()).toEqual([
+            { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },
+            { type: 'paragraph', align: 'center', children: [{ text: 'two' }] },
+        ]);
+
+        expect(editor.api.blocks.toggleAttribute('align', 'center')).toBe('removed');
+        expect(editor.stored()).toEqual([paragraph(text('one')), paragraph(text('two'))]);
+    });
+
+    it('toggle changes nothing when no selected block declares the attribute', () => {
+        const editor = editorWith(plugins, [paragraph(text('a')), { type: 'divider' }, paragraph(text('b'))]);
+        editor.view.dispatch(editor.view.state.tr.setSelection(NodeSelection.create(editor.view.state.doc, 3)));
+
+        expect(editor.api.blocks.toggleAttribute('align', 'center')).toBe('unchanged');
+        expect(editor.onDocChange).not.toHaveBeenCalled();
     });
 
     it('go back to their defaults on reset, the block type kept', () => {
@@ -830,8 +913,11 @@ describe('insertText', () => {
     it('is one undo step, text and marks together', () => {
         const editor = editorWith(plugins, [paragraph(text('one two three'))]);
         editor.select('two');
+        const notifiedBefore = editor.onDocChange.mock.calls.length;
 
         editor.api.insertText('2', { link: LINK });
+
+        expect(editor.onDocChange).toHaveBeenCalledTimes(notifiedBefore + 1);
         undo(editor.view.state, editor.view.dispatch);
 
         expect(editor.stored()).toEqual([paragraph(text('one two three'))]);
@@ -950,7 +1036,7 @@ describe('group', () => {
         expect(editor.stored()).toEqual(original);
     });
 
-    it('starts its step apart from the edit before it, and ends it when it returns', () => {
+    it('keeps a mark toggle before it and one after it as their own steps', () => {
         const editor = editorWith(plugins, original);
         editor.select('one');
         editor.api.marks.toggle('bold');
@@ -965,6 +1051,46 @@ describe('group', () => {
         editor.api.marks.toggle('code');
 
         expect(undoAll(editor)).toBe(3);
+    });
+
+    describe('around typing', () => {
+        // History merges typing closer together than its group delay, so the clock is frozen: only closeHistory can separate the steps.
+        beforeEach(() => {
+            vi.useFakeTimers({ toFake: ['Date'] });
+            vi.setSystemTime(FROZEN_TIME);
+        });
+        afterEach(() => {
+            vi.useRealTimers();
+        });
+
+        // Mark steps change no range, so history never sees them as adjacent: these groups insert text.
+        it('keeps the typing right before it as its own step', () => {
+            const editor = editorWith(plugins, [paragraph(text('one'))]);
+            editor.caretAfter('one');
+            editor.type('x');
+
+            editor.api.group(() => {
+                editor.api.insertText('y');
+                editor.api.insertText('z');
+            });
+            undo(editor.view.state, editor.view.dispatch);
+
+            expect(editor.stored()).toEqual([paragraph(text('onex'))]);
+        });
+
+        it('keeps the typing right after it as its own step', () => {
+            const editor = editorWith(plugins, [paragraph(text('one'))]);
+            editor.caretAfter('one');
+
+            editor.api.group(() => {
+                editor.api.insertText('y');
+                editor.api.marks.toggle('bold');
+            });
+            editor.type('x');
+            undo(editor.view.state, editor.view.dispatch);
+
+            expect(editor.stored()).toEqual([paragraph(text('oney'))]);
+        });
     });
 
     it('stops grouping when the commands it runs throw', () => {
