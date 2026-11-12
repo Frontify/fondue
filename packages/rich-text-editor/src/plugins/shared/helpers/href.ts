@@ -30,7 +30,7 @@ const LINKABLE_SCHEMES = 'https?://|mailto:|tel:';
 /**
  * A web, mail or phone address as it is typed in text: a linkable scheme and everything up to the next space
  */
-export const LINKABLE_ADDRESS = new RegExp(`(?:${LINKABLE_SCHEMES})[^\\s]+`);
+export const LINKABLE_ADDRESS = new RegExp(String.raw`(?:${LINKABLE_SCHEMES})[^\s]+`);
 
 /**
  * What pasted text starts with to become a link: a web, mail or phone scheme
