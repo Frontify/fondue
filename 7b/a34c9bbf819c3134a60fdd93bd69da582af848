@@ -1,0 +1,21 @@
+.github/workflows/rich-text-editor-nightly.yaml
+  s_e5e5c02af574bd::t_1a1a534dee3d0c 25
+.github/workflows/rich-text-editor-pull-requests.yaml
+  s_e5e5c02af574bd::t_1a1a534dee3d0c 96
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7ba34c9bbf819c3134a60fdd93bd69da582af848",
+  "prompts": {},
+  "sessions": {
+    "s_e5e5c02af574bd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "305fce7a-de69-4ef6-85a7-57269eb92863",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
