@@ -131,9 +131,10 @@ const featureHotkeys = (hotkeys: PluginRegistry['hotkeys'], api: EditorControlAp
             .map(([keys, handlers]): [string, Command] => [keys, () => runUntilHandled(handlers, api)]),
     );
 
-const WORD_BOUNDARY_BEFORE = new RegExp(`[${WORD_START_CONTEXT}]`);
+// An inline element is a word start here, so `@name` fires after a soft break; it cannot yet tell a mention (FP-897).
+const WORD_BOUNDARY_BEFORE = new RegExp(`[${WORD_START_CONTEXT}${INLINE_PLACEHOLDER}]`);
 
-/** The start of the block, or right after a character of `WORD_START_CONTEXT`. */
+/** The start of the block, or after whitespace, opening punctuation or an inline element. */
 const isAtWordStart = (state: EditorState, from: number): boolean => {
     const $from = state.doc.resolve(from);
     if ($from.parentOffset === 0) {

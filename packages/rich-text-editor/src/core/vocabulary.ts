@@ -38,11 +38,11 @@ export const newerVersionOf = (document: RteDocumentOf): number | null => {
 export const INLINE_PLACEHOLDER = '\uFFFC';
 
 /**
- * What may come right before a word starts, besides the start of a block, as the body of a character class:
- * whitespace, an opening bracket or quote, or an inline element. Hotkeys and typing rules that ask whether a
- * character opens a word read this one rule.
+ * The characters that may come right before a word starts, besides the start of a block, as the body of a
+ * character class: whitespace, an opening bracket or a quote. Whether an inline element counts is for each
+ * reader to say, as `INLINE_PLACEHOLDER` is not part of it.
  */
-export const WORD_START_CONTEXT = String.raw`\s([{<'"“‘${INLINE_PLACEHOLDER}`;
+export const WORD_START_CONTEXT = String.raw`\s([{<'"“‘`;
 
 /**
  * Inside a block's `content.blocks`, stands for every mounted list (a block with

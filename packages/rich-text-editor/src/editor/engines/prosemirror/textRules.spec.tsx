@@ -499,7 +499,7 @@ describe('typographyPlugin', () => {
             expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'break' }, text('“hi”'))]);
         });
 
-        it('opens a single quote after an inline element, the word start a character hotkey also reads', () => {
+        it('turns a single quote after an inline element into an apostrophe, where a character hotkey still fires', () => {
             const tag = { type: 'tag', name: 'Noah' };
             const mention = definePlugin({
                 id: 'mention',
@@ -513,10 +513,10 @@ describe('typographyPlugin', () => {
             const hotkeyed = editorWith([tagPlugin, mention], [paragraph(text('a '), tag)]);
             hotkeyed.caretAfter('￼');
 
-            quoting.type("'hi'");
+            quoting.type("'s");
             hotkeyed.type('@');
 
-            expect(quoting.stored()).toEqual([paragraph(text('a '), tag, text('‘hi’'))]);
+            expect(quoting.stored()).toEqual([paragraph(text('a '), tag, text('’s'))]);
             expect(hotkeyed.stored()).toEqual([paragraph(text('a '), tag, text('[mention]'))]);
         });
 
