@@ -14,16 +14,21 @@ const outDir = join(dirname(fileURLToPath(import.meta.url)), '../stories');
 
 /**
  * Turns a guide id directory into a human-readable sidebar group label,
- * e.g. "getting-started" → "Getting started".
+ * one segment at a time, e.g. "getting-started" → "Getting started" and
+ * "development/upgrading" → "Development/Upgrading".
  * @param {string} dir
  */
-const toGroupLabel = (dir) => {
-    if (dir === 'sdk') {
-        return 'SDK';
-    }
-    const spaced = dir.replaceAll('-', ' ');
-    return spaced.charAt(0).toUpperCase() + spaced.slice(1);
-};
+const toGroupLabel = (dir) =>
+    dir
+        .split('/')
+        .map((segment) => {
+            if (segment === 'sdk') {
+                return 'SDK';
+            }
+            const spaced = segment.replaceAll('-', ' ');
+            return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+        })
+        .join('/');
 
 /**
  * @param {import('@frontify/fondue-sdk').Guide} guide
@@ -33,10 +38,16 @@ const groupOf = (guide) => {
     return separatorIndex === -1 ? undefined : guide.id.slice(0, separatorIndex);
 };
 
+// Counts every guide below a group, including those in nested groups, so a
+// group with one guide of its own and a subgroup (e.g. "development" with
+// "Contributing" and "upgrading/…") is not collapsed into a single leaf.
 const guidesPerGroup = new Map();
 for (const guide of guides.list()) {
-    const group = groupOf(guide);
-    guidesPerGroup.set(group, (guidesPerGroup.get(group) ?? 0) + 1);
+    const segments = guide.id.split('/').slice(0, -1);
+    for (let depth = 1; depth <= segments.length; depth++) {
+        const group = segments.slice(0, depth).join('/');
+        guidesPerGroup.set(group, (guidesPerGroup.get(group) ?? 0) + 1);
+    }
 }
 
 /**

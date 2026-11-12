@@ -12,6 +12,8 @@ const getAbsolutePath = (packageName: string): string => {
     return dirname(fileURLToPath(import.meta.resolve(packageName)));
 };
 
+// Netlify branch subdomains use the branch name lowercased, with anything outside [a-z0-9] replaced by dashes.
+const toBranchSubdomain = (branch: string): string => branch.toLowerCase().replaceAll(/[^a-z0-9]+/g, '-');
 const storybookDir = dirname(fileURLToPath(import.meta.url));
 const packagesRoot = resolve(storybookDir, '../../packages');
 const packagePath = (...segments: string[]): string => join(packagesRoot, ...segments);
@@ -20,15 +22,11 @@ const getSubpackageURL = (subpackage: string): string => {
     if (process.env.CONTEXT === 'deploy-preview' && process.env.REVIEW_ID) {
         return `https://deploy-preview-${process.env.REVIEW_ID}.${subpackage}.fondue-components.frontify.com/`;
     }
+    if (process.env.CONTEXT === 'branch-deploy' && process.env.BRANCH) {
+        return `https://${toBranchSubdomain(process.env.BRANCH)}.${subpackage}.fondue-components.frontify.com/`;
+    }
     return `https://${subpackage}.fondue-components.frontify.com/`;
 };
-
-// The new editor is unreleased: local runs and deploy previews show its stories, the published Storybook does not.
-const RICH_TEXT_EDITOR_STORIES = '../../packages/rich-text-editor/src/**/*.stories.@(ts|tsx)';
-const unreleasedStories: string[] = [];
-if (process.env.CONTEXT !== 'production') {
-    unreleasedStories.push(RICH_TEXT_EDITOR_STORIES);
-}
 
 const config: StorybookConfig = {
     // Story files carry their full sidebar path in `title`; the order lives in `storySort` in preview.tsx.
@@ -39,7 +37,7 @@ const config: StorybookConfig = {
         '../../packages/icons/src/**/*.stories.@(ts|tsx)',
         '../../packages/components/src/**/*.stories.@(ts|tsx)',
         '../../packages/charts/src/**/*.stories.@(ts|tsx)',
-        ...unreleasedStories,
+        '../../packages/rich-text-editor/src/**/*.stories.@(ts|tsx)',
     ],
     addons: [
         '@storybook/addon-links',
