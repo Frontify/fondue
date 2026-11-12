@@ -173,9 +173,7 @@ const unknownInlineSpec: PmNodeSpec = {
     toDOM: (node) => ['span', { 'data-rte-unknown': '', contenteditable: 'false' }, plainTextOf(node.attrs[RAW_ATTR])],
 };
 
-/**
- * Carried along with the text it is on, drawing nothing; typing next to it does not extend it
- */
+/** Carried along with the text it is on, drawing nothing; typing next to it does not extend it. */
 const unknownMarksSpec: PmMarkSpec = {
     attrs: { [RAW_ATTR]: {} },
     inclusive: false,

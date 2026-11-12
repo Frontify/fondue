@@ -19,10 +19,4 @@ const App = () => <Button>Click Me</Button>;
 
 ## Legacy components
 
-If you need to use a legacy component (indicated by a [legacy] badge in the Storybook top bar), you can continue to import them directly from the `@frontify/fondue` package.
-
-```tsx
-import { Button } from '@frontify/fondue';
-
-const App = () => <Button>Click Me</Button>;
-```
+Fondue 14 removed the legacy components and the root `@frontify/fondue` entry. Import components from `@frontify/fondue/components`. The [migration guide](https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md) maps each legacy component to its replacement.

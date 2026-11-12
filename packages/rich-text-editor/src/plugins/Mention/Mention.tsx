@@ -10,13 +10,16 @@ import { type MentionHref, type MentionItem, type MentionItems, type MentionKind
 
 export type MentionContentOptions = {
     /**
-     * Returns where a mention links to, such as the profile of a person or group.
-     * Without it, or where it returns `undefined`, the mention is plain text.
+     * Who can be mentioned. A list is searched by username and name, ignoring
+     * case. A function is handed what has been typed after the trigger and
+     * returns the matches — or a promise of them, to search on a server; an
+     * answer that arrives after the query moved on is dropped.
      */
     href?: MentionHref;
     /**
-     * The single character that starts a mention
-     * @default '@'
+     * Where a mention links to — the person's or group's profile. Without it,
+     * or where it returns `undefined` (`@all` has no profile), the mention is
+     * text, not a link.
      */
     trigger?: string;
 };
