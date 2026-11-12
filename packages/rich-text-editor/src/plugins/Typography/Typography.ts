@@ -121,7 +121,7 @@ const AFTER_A_FORMULA = String.raw`(?<=[\p{L})\]])`;
  * `~2` for `₂` in a formula, the moment the digit is typed: `H~2O` becomes `H₂O`.
  */
 const SUBSCRIPTS: readonly Replacement[] = SUBSCRIPT_PAIRS.map(([character, glyph]): Replacement => [
-    new RegExp(String.raw`${AFTER_A_FORMULA}~${character}`, 'u'),
+    new RegExp(`${AFTER_A_FORMULA}~${character}`, 'u'),
     glyph,
 ]);
 
