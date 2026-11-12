@@ -8,8 +8,16 @@ import { type Mark as PmMark, type MarkType as PmMarkType, type Node as PmNode, 
 import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, TextSelection } from 'prosemirror-state';
 import { canJoin, findWrapping } from 'prosemirror-transform';
 
-import { type EditorControlApi, type HotkeyHandler, type PluginRegistry, type RteInputRule } from '#/core';
-import { EDITOR_SHORTCUTS } from '#/editor/port';
+import {
+    EDITOR_SHORTCUTS,
+    type EditorControlApi,
+    type HotkeyHandler,
+    INLINE_PLACEHOLDER,
+    isApplePlatform,
+    type PluginRegistry,
+    type RteInputRule,
+    WORD_START_CONTEXT,
+} from '#/core';
 
 import { autolinkOnEnter, markPatternRule } from './autolink';
 import { keepCarriedAttrs, undoStep } from './controlApi';
@@ -78,8 +86,6 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
 // Text entry keys
 
 // A Mac has no AltGr key, yet Firefox on macOS reports Option as AltGraph.
-const isApple = (): boolean => typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
-
 /**
  * A key an input method or an AltGr combination sends is text, not a command:
  * Enter that commits a composition must not split the block, and AltGr+q (`@` on
@@ -87,7 +93,9 @@ const isApple = (): boolean => typeof navigator !== 'undefined' && /Mac|iPhone|i
  */
 const isTextEntryKey = (event: KeyboardEvent): boolean =>
     // `keyCode` 229 marks the input method's keydowns that `isComposing` misses, just before and after a composition.
-    event.isComposing || event.keyCode === 229 || (!isApple() && (event.getModifierState?.('AltGraph') ?? false)); // NOSONAR
+    event.isComposing ||
+    event.keyCode === 229 ||
+    (!isApplePlatform() && (event.getModifierState?.('AltGraph') ?? false)); // NOSONAR
 
 /**
  * The plugin with its key handler skipping those keys. It declines them rather
@@ -125,15 +133,16 @@ const featureHotkeys = (hotkeys: PluginRegistry['hotkeys'], api: EditorControlAp
             .map(([keys, handlers]): [string, Command] => [keys, () => runUntilHandled(handlers, api)]),
     );
 
-const WORD_BOUNDARY_BEFORE = /[\s([{<'"“‘]/;
+// An inline element is a word start here, so `@name` fires after a soft break; it cannot yet tell a mention (FP-897).
+const WORD_BOUNDARY_BEFORE = new RegExp(`[${WORD_START_CONTEXT}${INLINE_PLACEHOLDER}]`);
 
-/** The start of the block, or after whitespace or opening punctuation. An inline element counts as a space. */
+/** The start of the block, or after whitespace, opening punctuation or an inline element. */
 const isAtWordStart = (state: EditorState, from: number): boolean => {
     const $from = state.doc.resolve(from);
     if ($from.parentOffset === 0) {
         return true;
     }
-    const before = $from.parent.textBetween($from.parentOffset - 1, $from.parentOffset, undefined, ' ');
+    const before = $from.parent.textBetween($from.parentOffset - 1, $from.parentOffset, undefined, INLINE_PLACEHOLDER);
     return WORD_BOUNDARY_BEFORE.test(before);
 };
 
@@ -273,7 +282,7 @@ const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | n
         const from = start + leading;
         const contentFrom = from + delimiter.length;
         const contentTo = contentFrom + content.length;
-        // Content may carry code; the delimiters the rule deletes may not.
+        // Content may carry an excluded mark; the delimiters the rule deletes may not.
         if (
             touchesExcludedMark(state, context.excludedMarks, from, contentFrom) ||
             touchesExcludedMark(state, context.excludedMarks, contentTo, end)
@@ -436,20 +445,21 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
 };
 
 /**
- * The characters that end a run: whitespace and sentence punctuation. Not quotes: one may close
- * the quotation the run sits in, as in `"wait --"`.
+ * The characters that end a run unless the rule says otherwise: whitespace and sentence punctuation. Not
+ * quotes: one may close the quotation the run sits in, as in `"wait --"`.
  */
-const RUN_END = /[\s,;:!?)\]}…]/;
+const DEFAULT_RUN_END = /[\s,;:!?)\]}…]/;
 
 /**
  * `--` becomes a dash once a character that ends the run is typed, which stays.
  */
 const runEndTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
     const replacement = replacementOf(rule);
+    const endsRun = rule.runEnd ?? DEFAULT_RUN_END;
     const pattern = textPattern(rule.match, ONE_CHARACTER_BEFORE_CARET);
     const handler: RuleHandler = (state, found, start, end) => {
         const typed = found[0].slice(-1);
-        if (!RUN_END.test(typed)) {
+        if (!endsRun.test(typed)) {
             return null;
         }
         const runEnd = start + found[0].length - typed.length;

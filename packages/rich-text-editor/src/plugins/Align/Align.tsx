@@ -109,9 +109,15 @@ const ALIGNMENTS: readonly Alignment[] = [LEFT, CENTER, RIGHT, JUSTIFY];
 
 const CLEARED_ANNOUNCEMENT = 'Alignment cleared';
 
-const alignOf = (selection: RteSelectionSnapshot): AlignAttribute['align'] =>
-    // The structural block type does not know the attribute this plugin adds to every text block.
-    (selection.block as AlignAttribute | null)?.align;
+/** What the selected blocks show: their one alignment, left for blocks without one, or nothing when they differ. */
+const alignOf = ({ attributes }: RteSelectionSnapshot): AlignAttribute['align'] | null => {
+    const state = attributes[ALIGN_ATTRIBUTE];
+    if (state === undefined || state.coverage === 'some') {
+        return null;
+    }
+    // A block without one reads left to right, so left is what it shows.
+    return isAlignment(state.value) ? state.value : 'left';
+};
 
 const alignFromKeyboard = (api: EditorControlApi, { value, announcement }: Alignment) => {
     // Choosing the alignment every selected block already has clears it, so they inherit the editor's direction again.
@@ -128,11 +134,10 @@ const alignFromKeyboard = (api: EditorControlApi, { value, announcement }: Align
 };
 
 const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
-    // A block without one reads left to right, so left is what it shows.
-    const current = alignOf(selection) ?? 'left';
+    const current = alignOf(selection);
     return (
         // One choice of four, so a radio group: the checked one is the
-        // block's alignment.
+        // blocks' alignment, none when they differ.
         <div role="radiogroup" aria-label={label} className={styles.group}>
             {ALIGNMENTS.map(({ value, icon: Icon, title, shortcut }) => (
                 // A <button> underneath, which the toolbar gives its tabIndex.

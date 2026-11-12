@@ -5,11 +5,15 @@
 
 export {
     type BlockAttributeToggle,
+    type ClearMarksOptions,
+    type ClearMarksScope,
+    EDITOR_SHORTCUTS,
     type EditorControlApi,
+    type EditorShortcut,
     type InsertTextOptions,
     type InsertTextUndo,
     REDO_HOTKEY,
-    type RemoveAllMarksOptions,
+    type RteAttributeState,
     type RteMarkState,
     type RteSelectionSnapshot,
     UNDO_HOTKEY,
@@ -24,11 +28,20 @@ export {
     type StoredMarkValue,
 } from './document';
 export { isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
+export {
+    type HotkeyEvent,
+    type HotkeyModifier,
+    isApplePlatform,
+    matchesHotkey,
+    type ParsedHotkey,
+    parseHotkey,
+} from './hotkeys';
 export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
 export {
     type BlockAttributeDefinition,
     type BlockDefinition,
     type ContentModel,
+    type DefaultStyle,
     defineBlock,
     defineContent,
     defineInline,
@@ -54,6 +67,7 @@ export {
     type RteHotkey,
     type RteIcon,
     type RteInputRule,
+    type RteMarkPatternTrim,
     type RtePlugin,
     type RtePluginDefinition,
     type RteToolbarEntry,
@@ -75,7 +89,17 @@ export {
     ownTypeOf,
     type PluginRegistry,
     type RteShortcut,
+    type RteShortcutOwner,
     type ToolbarEntry,
     toggleOwn,
 } from './registry';
-export { ANY_LIST, DOCUMENT_VERSION, emptyDocument, INLINE_PLACEHOLDER, newerVersionOf, PARAGRAPH } from './vocabulary';
+export {
+    ANY_LIST,
+    DOCUMENT_VERSION,
+    emptyDocument,
+    INLINE_PLACEHOLDER,
+    newerVersionOf,
+    PARAGRAPH,
+    WORD_START_CONTEXT,
+} from './vocabulary';
+export { warnOnce } from './warnings';

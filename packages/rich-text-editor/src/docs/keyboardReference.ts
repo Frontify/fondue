@@ -1,21 +1,30 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { buildPluginRegistry, type RtePlugin } from '#/core';
-import { EDITOR_SHORTCUTS, type EditorShortcut } from '#/editor/port';
-
-/**
- * Who binds the keys of a group: the editor itself, or one plugin
- */
-export type KeyboardGroupOwner = { kind: 'editor' } | { kind: 'plugin'; pluginId: string };
+import { buildPluginRegistry, type RtePlugin, type RteShortcutOwner } from '#/core';
 
 /**
  * One key and what it does; the key is written as in a plugin's `hotkeys` (`Mod-b`)
  */
-export type KeyboardRow = EditorShortcut;
+export type KeyboardRow = {
+    key: string;
+    label: string;
+};
 
 export type KeyboardGroup = {
-    owner: KeyboardGroupOwner;
+    owner: RteShortcutOwner;
     rows: readonly KeyboardRow[];
+};
+
+/**
+ * A key that names one owner, for finding its group and for a React `key`
+ */
+export const ownerKeyOf = (owner: RteShortcutOwner): string => {
+    switch (owner.kind) {
+        case 'editor':
+            return 'editor';
+        case 'plugin':
+            return `plugin ${owner.pluginId}`;
+    }
 };
 
 /**
@@ -23,16 +32,11 @@ export type KeyboardGroup = {
  * Plugins that bind no key have no group.
  */
 export const keyboardReference = (plugins: readonly RtePlugin[]): readonly KeyboardGroup[] => {
-    const rowsByPlugin = new Map<string, KeyboardRow[]>();
-    for (const { pluginId, key, label } of buildPluginRegistry(plugins).shortcuts) {
-        const rows = rowsByPlugin.get(pluginId) ?? [];
-        rows.push({ key, label });
-        rowsByPlugin.set(pluginId, rows);
+    const groups = new Map<string, KeyboardGroup>();
+    for (const { owner, key, label } of buildPluginRegistry(plugins).shortcuts) {
+        const ownerKey = ownerKeyOf(owner);
+        const group = groups.get(ownerKey) ?? { owner, rows: [] };
+        groups.set(ownerKey, { owner, rows: [...group.rows, { key, label }] });
     }
-
-    const groups: KeyboardGroup[] = [{ owner: { kind: 'editor' }, rows: Object.values(EDITOR_SHORTCUTS) }];
-    for (const [pluginId, rows] of rowsByPlugin) {
-        groups.push({ owner: { kind: 'plugin', pluginId }, rows });
-    }
-    return groups;
+    return [...groups.values()];
 };

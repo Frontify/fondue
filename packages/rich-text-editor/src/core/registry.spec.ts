@@ -2,7 +2,7 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { type EditorControlApi, type RteSelectionSnapshot } from './commands';
+import { EDITOR_SHORTCUTS, type EditorControlApi, type RteSelectionSnapshot } from './commands';
 import {
     defineBlock,
     defineContent,
@@ -60,6 +60,24 @@ describe('the marks of a registry', () => {
         ]);
 
         expect([...registry.marks.keys()]).toEqual(['b', 'a', 'c']);
+    });
+
+    it('exclude each other when only one names the other', () => {
+        const excluding = defineMark({
+            excludes: ['plain', 'unmounted'],
+            toHtml: () => ({ tag: 'span', children: true }),
+            parse: [],
+        });
+        const registry = buildPluginRegistry([
+            definePlugin({ id: 'excluding', content: defineContent({ marks: { excluding } }) }),
+            definePlugin({ id: 'plain', content: defineContent({ marks: { plain: mark() } }) }),
+            definePlugin({ id: 'other', content: defineContent({ marks: { other: mark() } }) }),
+        ]);
+
+        expect(registry.marks.get('excluding')?.excludes).toEqual(['plain']);
+        expect(registry.marks.get('plain')?.excludes).toEqual(['excluding']);
+        expect(registry.marks.get('other')?.excludes).toBeUndefined();
+        expect(excluding.excludes).toEqual(['plain', 'unmounted']);
     });
 });
 
@@ -512,6 +530,14 @@ describe('the hotkeys of a registry', () => {
         ).toThrow('Plugin "bold" has a hotkey "Mod-b" with no `label`.');
     });
 
+    it('throw for a modifier the grammar does not know', () => {
+        expect(() =>
+            buildPluginRegistry([
+                definePlugin({ id: 'bold', hotkeys: { 'Hyper-b': { label: 'Bold', run: () => {} } } }),
+            ]),
+        ).toThrow('Unknown modifier "Hyper" in hotkey "Hyper-b".');
+    });
+
     it('need a label that is not empty', () => {
         expect(() =>
             buildPluginRegistry([definePlugin({ id: 'bold', hotkeys: { 'Mod-b': { label: '', run: () => {} } } })]),
@@ -521,8 +547,18 @@ describe('the hotkeys of a registry', () => {
 
 describe('the shortcuts of a registry', () => {
     const boldContent = defineContent({ marks: { bold: mark() } });
+    const editorRows = Object.values(EDITOR_SHORTCUTS).map(({ key, label }) => ({
+        owner: { kind: 'editor' },
+        key,
+        label,
+    }));
+    const pluginRow = (pluginId: string, key: string, label: string) => ({
+        owner: { kind: 'plugin', pluginId },
+        key,
+        label,
+    });
 
-    it('list the hotkeys of a plugin, then the toolbar shortcuts that bind a key, plugin by plugin', () => {
+    it('list the editor first, then the hotkeys of a plugin and the toolbar shortcuts that bind a key, plugin by plugin', () => {
         const registry = buildPluginRegistry([
             definePlugin({
                 id: 'bold',
@@ -534,9 +570,10 @@ describe('the shortcuts of a registry', () => {
         ]);
 
         expect(registry.shortcuts).toEqual([
-            { pluginId: 'bold', key: 'Alt-x', label: 'Extra' },
-            { pluginId: 'bold', key: 'Mod-b', label: 'Bold' },
-            { pluginId: 'break', key: 'Shift-Enter', label: 'Line break' },
+            ...editorRows,
+            pluginRow('bold', 'Alt-x', 'Extra'),
+            pluginRow('bold', 'Mod-b', 'Bold'),
+            pluginRow('break', 'Shift-Enter', 'Line break'),
         ]);
     });
 
@@ -550,7 +587,16 @@ describe('the shortcuts of a registry', () => {
             }),
         ]);
 
-        expect(registry.shortcuts).toEqual([{ pluginId: 'bold', key: 'Mod-b', label: 'Make bold' }]);
+        expect(registry.shortcuts).toEqual([...editorRows, pluginRow('bold', 'Mod-b', 'Make bold')]);
+    });
+
+    it('name the editor undo and redo keys', () => {
+        expect(buildPluginRegistry([]).shortcuts).toEqual(
+            expect.arrayContaining([
+                { owner: { kind: 'editor' }, key: 'Mod-z', label: 'Undo' },
+                { owner: { kind: 'editor' }, key: 'Alt-F10', label: 'Move focus to the toolbar' },
+            ]),
+        );
     });
 });
 

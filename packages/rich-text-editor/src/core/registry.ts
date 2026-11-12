@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 // The plugin list flattened into one engine-agnostic lookup. The only place that
-// reads `RtePlugin`: the editor shell, engine and renderer read the registry, so
-// each declaration is gathered, ordered and checked once.
+// reads `RtePlugin` and `RteContent`: the editor shell, engine and renderer read
+// the registry, so each declaration is gathered, ordered and checked once.
 
 import { type ReactNode } from 'react';
 
-import { type EditorControlApi, type RteMarkState, type RteSelectionSnapshot } from './commands';
+import { EDITOR_SHORTCUTS, type EditorControlApi, type RteMarkState, type RteSelectionSnapshot } from './commands';
+import { parseHotkey } from './hotkeys';
 import { type HtmlSpec, type StyleMap, withRootStyle } from './htmlSpec';
 import {
     type BlockAttributeDefinition,
@@ -79,10 +80,15 @@ export type ToolbarEntry = {
 );
 
 /**
- * A key the plugins bind, as the keyboard reference lists it
+ * Who binds a shortcut: the editor itself, or one plugin
+ */
+export type RteShortcutOwner = { kind: 'editor' } | { kind: 'plugin'; pluginId: string };
+
+/**
+ * A key the editor or a plugin binds, as the keyboard reference lists it
  */
 export type RteShortcut = {
-    pluginId: string;
+    owner: RteShortcutOwner;
     /**
      * In `Mod-b` style
      */
@@ -116,7 +122,7 @@ export type PluginRegistry = {
      */
     hotkeys: Map<string, readonly HotkeyHandler[]>;
     /**
-     * Every key the plugins bind, labelled: their `hotkeys`, then the toolbar `shortcut`s that bind a key too. Plugin by plugin, in declaration order.
+     * Every key bound, labelled: the editor's own first, then each plugin's `hotkeys` and the toolbar `shortcut`s that bind a key too, plugin by plugin in declaration order.
      */
     shortcuts: readonly RteShortcut[];
     /**
@@ -428,9 +434,42 @@ const forMatching = (rules: readonly RteInputRule[]): RteInputRule[] => [
     ...rules.filter((rule) => rule.kind !== 'mark'),
 ];
 
+/**
+ * Every mark that excludes another is excluded by it too, so one declaration covers both.
+ * A name no mounted plugin registers is dropped.
+ */
+const withMutualExcludes = (marks: Map<string, MarkDefinition>): Map<string, MarkDefinition> => {
+    const excluded = new Map<string, Set<string>>();
+    for (const [name, mark] of marks) {
+        for (const other of mark.excludes ?? []) {
+            if (!marks.has(other)) {
+                continue;
+            }
+            excluded.set(name, (excluded.get(name) ?? new Set()).add(other));
+            excluded.set(other, (excluded.get(other) ?? new Set()).add(name));
+        }
+    }
+    const folded = new Map<string, MarkDefinition>();
+    for (const [name, mark] of marks) {
+        const names = excluded.get(name);
+        if (mark.excludes === undefined && names === undefined) {
+            folded.set(name, mark);
+        } else {
+            folded.set(name, { ...mark, excludes: [...(names ?? [])] });
+        }
+    }
+    return folded;
+};
+
 /** A stable sort, so ties stay in mount order. */
 const byNesting = (marks: Map<string, MarkDefinition>): Map<string, MarkDefinition> =>
     new Map([...marks].sort(([, left], [, right]) => (left.nesting ?? 0) - (right.nesting ?? 0)));
+
+const EDITOR_SHORTCUT_ROWS: readonly RteShortcut[] = Object.values(EDITOR_SHORTCUTS).map(({ key, label }) => ({
+    owner: { kind: 'editor' },
+    key,
+    label,
+}));
 
 /**
  * What `buildPluginRegistry` fills while it walks the entries.
@@ -502,8 +541,10 @@ const addShortcut = (draft: Draft, plugin: RtePlugin, item: ToolbarEntry): void 
     if (controlOf(item.own).kind === 'none') {
         throw new Error(`Plugin "${plugin.id}" names shortcut "${shortcut}" with ${NOTHING_TO_TOGGLE}`);
     }
+    // Throws for a modifier the grammar does not know, before the editor mounts.
+    parseHotkey(shortcut);
     addHotkey(draft, shortcut, (api) => toggleOwn({ own: item.own, api, selection: api.selection.get() }));
-    draft.shortcuts.push({ pluginId: plugin.id, key: shortcut, label: item.label });
+    draft.shortcuts.push({ owner: { kind: 'plugin', pluginId: plugin.id }, key: shortcut, label: item.label });
 };
 
 const addToolbarEntries = (draft: Draft, plugin: RtePlugin, pluginKey: string): void => {
@@ -543,13 +584,15 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
     draft.seenIds.set(plugin.id, occurrence + 1);
     const unbound = new Set(plugin.ownedHotkeys ?? []);
     for (const [keys, hotkey] of Object.entries(plugin.hotkeys ?? {})) {
+        // Throws for a modifier the grammar does not know, before the editor mounts.
+        parseHotkey(keys);
         assertLabelled(plugin, hotkey.label, `a hotkey "${keys}"`);
         if (unbound.delete(keys)) {
             addOwnedHotkey(draft, keys, hotkey.run);
         } else {
             addHotkey(draft, keys, hotkey.run);
         }
-        draft.shortcuts.push({ pluginId: plugin.id, key: keys, label: hotkey.label });
+        draft.shortcuts.push({ owner: { kind: 'plugin', pluginId: plugin.id }, key: keys, label: hotkey.label });
     }
     const [unboundKeys] = unbound;
     if (unboundKeys !== undefined) {
@@ -603,7 +646,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         itemTypeByList: new Map(),
         edits: new Map(),
         hotkeys: new Map(),
-        shortcuts: [],
+        shortcuts: [...EDITOR_SHORTCUT_ROWS],
         ownedHotkeyCounts: new Map(),
         inputRules: [],
         pasteHandlers: [],
@@ -645,7 +688,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
     return {
         blocks: draft.blocks,
         inlines: draft.inlines,
-        marks: byNesting(draft.marks),
+        marks: byNesting(withMutualExcludes(draft.marks)),
         blockAttributes: draft.blockAttributes,
         itemTypeByList: draft.itemTypeByList,
         edits: draft.edits,

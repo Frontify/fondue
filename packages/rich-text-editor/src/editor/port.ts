@@ -9,26 +9,7 @@
 
 import { type ReactNode } from 'react';
 
-import { type EditorControlApi, type PluginRegistry, REDO_HOTKEY, type RteDocumentOf, UNDO_HOTKEY } from '#/core';
-
-/**
- * A key the editor binds itself, written as in a plugin's `hotkeys`
- */
-export type EditorShortcut = {
-    key: string;
-    label: string;
-};
-
-/**
- * The keys the editor owns rather than a plugin, which the engine binds and the keyboard reference lists.
- * `focusToolbar` is only listed here: the shell's Alt+F10 check stays in its own code.
- */
-export const EDITOR_SHORTCUTS = {
-    undo: { key: UNDO_HOTKEY, label: 'Undo' },
-    redo: { key: 'Mod-y', label: 'Redo' },
-    redoWithShift: { key: REDO_HOTKEY, label: 'Redo' },
-    focusToolbar: { key: 'Alt-F10', label: 'Move focus to the toolbar' },
-} satisfies Record<string, EditorShortcut>;
+import { type EditorControlApi, type PluginRegistry, type RteDocumentOf } from '#/core';
 
 /** What an engine adapter implements: put an editable document in a container. */
 export type MountDocument = (options: MountOptions) => MountedDocument;

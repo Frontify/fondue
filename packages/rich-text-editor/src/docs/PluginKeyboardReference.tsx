@@ -2,25 +2,16 @@
 
 import { type ReactNode } from 'react';
 
-import { type RtePlugin } from '#/core';
-import { readableShortcut } from '#/ui/ToolbarButton/ToolbarButton';
+import { type RtePlugin, type RteShortcutOwner } from '#/core';
+import { readableShortcut } from '#/ui/shortcut';
 
-import { type KeyboardGroupOwner, keyboardReference } from './keyboardReference';
+import { keyboardReference, ownerKeyOf } from './keyboardReference';
 import styles from './keyboardReference.module.scss';
 
 const FOR_APPLE = true;
 const FOR_OTHER_PLATFORMS = false;
 
-const ownerKeyOf = (owner: KeyboardGroupOwner): string => {
-    switch (owner.kind) {
-        case 'editor':
-            return 'editor';
-        case 'plugin':
-            return `plugin ${owner.pluginId}`;
-    }
-};
-
-const ownerHeadingOf = (owner: KeyboardGroupOwner): ReactNode => {
+const ownerHeadingOf = (owner: RteShortcutOwner): ReactNode => {
     switch (owner.kind) {
         case 'editor':
             return 'Editor';

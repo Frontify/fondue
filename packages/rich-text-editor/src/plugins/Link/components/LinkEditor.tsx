@@ -3,8 +3,7 @@
 import { Button, Flyout } from '@frontify/fondue-components';
 import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from 'react';
 
-import { type EditProps } from '#/core';
-import { isApple } from '#/ui/platform';
+import { type EditProps, matchesHotkey } from '#/core';
 
 import { type LinkSearch } from '../helpers/destination';
 import { NEW_TAB_NOTE, NEW_TAB_REL, NEW_TAB_TARGET, NEW_TAB_WINDOW_FEATURES } from '../helpers/newTab';
@@ -38,14 +37,9 @@ const describeCopy = (state: CopyState): string => {
 const writeToClipboard = (text: string): Promise<void> => navigator.clipboard.writeText(text);
 
 /**
- * Mod is Command on Apple platforms and Control elsewhere.
+ * The click that opens the link in a new tab: Command on Apple platforms, Control elsewhere.
  */
-const isModClick = (event: Pick<MouseEvent, 'metaKey' | 'ctrlKey'>, apple: boolean): boolean => {
-    if (apple) {
-        return event.metaKey;
-    }
-    return event.ctrlKey;
-};
+const OPEN_LINK_CLICK = 'Mod';
 
 type CopyLinkProps = {
     href: string;
@@ -194,7 +188,7 @@ export const LinkEditor = ({
                     // A click places the caret; it must neither follow the link nor toggle the flyout. Mod+click opens it.
                     onClick={(event) => {
                         event.preventDefault();
-                        if (isModClick(event, isApple()) && href !== undefined) {
+                        if (matchesHotkey(OPEN_LINK_CLICK, event) && href !== undefined) {
                             window.open(href, NEW_TAB_TARGET, NEW_TAB_WINDOW_FEATURES);
                         }
                     }}

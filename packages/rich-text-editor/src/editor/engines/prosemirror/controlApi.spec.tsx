@@ -47,7 +47,19 @@ const dividerPlugin: RtePlugin = definePlugin({
     }),
 });
 
+/** A mark of the spec's own that declares it survives a clear, as a link does: the engine knows the declaration, not the name. */
+const pinPlugin: RtePlugin = definePlugin({
+    id: 'pin',
+    content: defineContent({
+        marks: {
+            pin: defineMark({ survivesClear: true, toHtml: () => ({ tag: 'span', children: true }), parse: [] }),
+        },
+    }),
+});
+
 const plugins: RtePlugin[] = [...defaultPlugins, dividerPlugin, tagPlugin];
+
+const pluginsWithPin: RtePlugin[] = [...plugins, pinPlugin];
 
 const LINK = { href: 'https://example.com' };
 
@@ -379,21 +391,45 @@ describe('marks.removeAll', () => {
         ]);
         editor.selectBetween('bold', 'link');
 
-        editor.api.marks.removeAll();
+        editor.api.marks.removeAll({ scope: 'block' });
 
         expect(editor.stored()).toEqual([paragraph(text('bold link'))]);
     });
 
-    it('clears the whole text block around a caret, and only that block', () => {
+    it('clears the whole text block around a caret with scope block, and only that block', () => {
         const editor = editorWith(plugins, [
             paragraph(text('bo', { bold: true }), text('ld', { italic: true })),
             paragraph(text('next', { bold: true })),
         ]);
         editor.caretAfter('bo');
 
-        editor.api.marks.removeAll();
+        editor.api.marks.removeAll({ scope: 'block' });
 
         expect(editor.stored()).toEqual([paragraph(text('bold')), paragraph(text('next', { bold: true }))]);
+    });
+
+    it('leaves the text at a caret alone with scope typing, and only stops what is typed next', () => {
+        const editor = editorWith(plugins, [paragraph(text('bold', { bold: true }))]);
+        editor.caretAfter('bold');
+
+        const removed = editor.api.marks.removeAll({ scope: 'typing' });
+        editor.api.insertText('X');
+
+        expect(removed).toBe(true);
+        expect(editor.stored()).toEqual([paragraph(text('bold', { bold: true }), text('X'))]);
+    });
+
+    it('clears a range the same with either scope', () => {
+        const blocks = [paragraph(text('bold', { bold: true }), text(' it', { italic: true }))];
+        const typing = editorWith(plugins, blocks);
+        typing.selectBetween('bold', 'it');
+        typing.api.marks.removeAll({ scope: 'typing' });
+        const block = editorWith(plugins, blocks);
+        block.selectBetween('bold', 'it');
+        block.api.marks.removeAll({ scope: 'block' });
+
+        expect(typing.stored()).toEqual(block.stored());
+        expect(block.stored()).toEqual([paragraph(text('bold it'))]);
     });
 
     it('makes what is typed next at a caret carry no marks', () => {
@@ -401,22 +437,33 @@ describe('marks.removeAll', () => {
         editor.caretAfter('plain');
         editor.api.marks.toggle('bold');
 
-        editor.api.marks.removeAll();
+        editor.api.marks.removeAll({ scope: 'block' });
         editor.api.insertText('X');
 
         expect(editor.stored()).toEqual([paragraph(text('plainX'))]);
     });
 
-    it('keeps the mark types named in `except`, over a range and at a caret', () => {
-        const blocks = [paragraph(text('bold', { bold: true, link: LINK }), text(' '), text('it', { italic: true }))];
-        const range = editorWith(plugins, blocks);
-        range.selectBetween('bold', 'it');
-        range.api.marks.removeAll({ except: ['link'] });
-        const caret = editorWith(plugins, blocks);
-        caret.caretAfter('bo');
-        caret.api.marks.removeAll({ except: ['link'] });
+    it('removes a mark that survives a clear unless `keepSurviving` is set', () => {
+        const editor = editorWith(pluginsWithPin, [paragraph(text('pinned', { pin: true, link: LINK }))]);
+        editor.select('pinned');
 
-        const expected = [paragraph(text('bold', { link: LINK }), text(' it'))];
+        editor.api.marks.removeAll({ scope: 'block' });
+
+        expect(editor.stored()).toEqual([paragraph(text('pinned'))]);
+    });
+
+    it('keeps every mark that declares `survivesClear` when `keepSurviving` is set, over a range and at a caret', () => {
+        const blocks = [
+            paragraph(text('bold', { bold: true, link: LINK, pin: true }), text(' '), text('it', { italic: true })),
+        ];
+        const range = editorWith(pluginsWithPin, blocks);
+        range.selectBetween('bold', 'it');
+        range.api.marks.removeAll({ scope: 'block', keepSurviving: true });
+        const caret = editorWith(pluginsWithPin, blocks);
+        caret.caretAfter('bo');
+        caret.api.marks.removeAll({ scope: 'block', keepSurviving: true });
+
+        const expected = [paragraph(text('bold', { link: LINK, pin: true }), text(' it'))];
         expect(range.stored()).toEqual(expected);
         expect(caret.stored()).toEqual(expected);
     });
@@ -432,10 +479,10 @@ describe('marks.removeAll', () => {
         const linkOnly = editorWith(plugins, [paragraph(text('link', { link: LINK }))]);
         linkOnly.caretAfter('link');
 
-        expect(formatted.api.marks.removeAll()).toBe(true);
-        expect(plain.api.marks.removeAll()).toBe(false);
-        expect(carrying.api.marks.removeAll()).toBe(true);
-        expect(linkOnly.api.marks.removeAll({ except: ['link'] })).toBe(false);
+        expect(formatted.api.marks.removeAll({ scope: 'block' })).toBe(true);
+        expect(plain.api.marks.removeAll({ scope: 'block' })).toBe(false);
+        expect(carrying.api.marks.removeAll({ scope: 'block' })).toBe(true);
+        expect(linkOnly.api.marks.removeAll({ scope: 'block', keepSurviving: true })).toBe(false);
     });
 
     it('returns whether it removed a mark from the text over a range', () => {
@@ -444,8 +491,8 @@ describe('marks.removeAll', () => {
         const linkOnly = editorWith(plugins, [paragraph(text('link', { link: LINK }), text(' end'))]);
         linkOnly.selectBetween('link', 'end');
 
-        expect(formatted.api.marks.removeAll()).toBe(true);
-        expect(linkOnly.api.marks.removeAll({ except: ['link'] })).toBe(false);
+        expect(formatted.api.marks.removeAll({ scope: 'block' })).toBe(true);
+        expect(linkOnly.api.marks.removeAll({ scope: 'block', keepSurviving: true })).toBe(false);
     });
 
     it('keeps a mention', () => {
@@ -453,7 +500,7 @@ describe('marks.removeAll', () => {
         const editor = editorWith(plugins, [paragraph(text('hi ', { bold: true }), mention)]);
         editor.caretAfter('hi');
 
-        editor.api.marks.removeAll();
+        editor.api.marks.removeAll({ scope: 'block' });
 
         expect(editor.stored()).toEqual([paragraph(text('hi '), mention)]);
     });
@@ -594,6 +641,79 @@ describe('blocks.setType inside a list', () => {
 
         expect(editor.stored()).toEqual([bullets(item(paragraph(text('one'))))]);
     });
+
+    it('lifts only the selected items of a list, leaving the others in it', () => {
+        const editor = editorWith(plugins, [
+            bullets(item(paragraph(text('one'))), item(paragraph(text('two'))), item(paragraph(text('three')))),
+        ]);
+        editor.selectBetween('two', 'three');
+
+        editor.api.blocks.setType('paragraph');
+
+        expect(editor.stored()).toEqual([
+            bullets(item(paragraph(text('one')))),
+            paragraph(text('two')),
+            paragraph(text('three')),
+        ]);
+    });
+
+    it('lifts every list a range spans, and the plain blocks between them stay', () => {
+        const editor = editorWith(plugins, [
+            bullets(item(paragraph(text('one')))),
+            paragraph(text('between')),
+            {
+                type: 'numberedList',
+                children: [{ type: 'listItem', children: [paragraph(text('two'))] }],
+            } as RteBlockNode,
+        ]);
+        editor.selectBetween('one', 'two');
+
+        editor.api.blocks.setType('textStyle', { style: 'heading1' });
+
+        expect(editor.stored()).toEqual([
+            heading,
+            { type: 'textStyle', style: 'heading1', children: [{ text: 'between' }] },
+            { type: 'textStyle', style: 'heading1', children: [{ text: 'two' }] },
+        ]);
+    });
+
+    it('lifts nested lists across a range, keeping the order', () => {
+        const numbered = (...children: RteBlockNode[]): RteBlockNode =>
+            ({ type: 'numberedList', children }) as RteBlockNode;
+        const editor = editorWith(plugins, [
+            paragraph(text('before')),
+            bullets(item(paragraph(text('outer')), numbered(item(paragraph(text('inner')))))),
+            bullets(item(paragraph(text('second')))),
+            paragraph(text('after')),
+        ]);
+        editor.selectBetween('before', 'after');
+
+        editor.api.blocks.setType('paragraph');
+
+        expect(editor.stored()).toEqual([
+            paragraph(text('before')),
+            paragraph(text('outer')),
+            paragraph(text('inner')),
+            paragraph(text('second')),
+            paragraph(text('after')),
+        ]);
+    });
+
+    it('keeps the selection over the blocks it covered, so one undo takes back every lift', () => {
+        const editor = editorWith(plugins, [
+            bullets(item(paragraph(text('one')))),
+            bullets(item(paragraph(text('two')))),
+        ]);
+        editor.selectBetween('one', 'two');
+
+        editor.api.blocks.setType('paragraph');
+        const { from, to } = editor.view.state.selection;
+        const covered = editor.view.state.doc.textBetween(from, to, ' ');
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(covered).toBe('one two');
+        expect(editor.stored()).toEqual([bullets(item(paragraph(text('one')))), bullets(item(paragraph(text('two'))))]);
+    });
 });
 
 describe('block attributes', () => {
@@ -658,6 +778,40 @@ describe('block attributes', () => {
 
         expect(editor.api.blocks.toggleAttribute('align', 'center')).toBe('unchanged');
         expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
+
+    it('are in the snapshot with their value when every selected text block has it', () => {
+        const editor = editorWith(plugins, [
+            { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },
+            { type: 'textStyle', style: 'heading2', align: 'center', children: [{ text: 'two' }] },
+        ]);
+        editor.selectBetween('one', 'two');
+
+        expect(editor.api.selection.get().attributes).toEqual({ align: { coverage: 'all', value: 'center' } });
+    });
+
+    it('are in the snapshot as unset when no selected text block has a value', () => {
+        const editor = editorWith(plugins, [paragraph(text('plain'))]);
+        editor.caretAfter('pla');
+
+        expect(editor.api.selection.get().attributes).toEqual({ align: { coverage: 'all', value: null } });
+    });
+
+    it('are in the snapshot as partial when the selected text blocks differ', () => {
+        const editor = editorWith(plugins, [
+            { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },
+            paragraph(text('two')),
+        ]);
+        editor.selectBetween('one', 'two');
+
+        expect(editor.api.selection.get().attributes).toEqual({ align: { coverage: 'some' } });
+    });
+
+    it('are left out of the snapshot when no selected text block declares them', () => {
+        const editor = editorWith(plugins, [paragraph(text('a')), { type: 'divider' }, paragraph(text('b'))]);
+        editor.view.dispatch(editor.view.state.tr.setSelection(NodeSelection.create(editor.view.state.doc, 3)));
+
+        expect(editor.api.selection.get().attributes).toEqual({});
     });
 
     it('go back to their defaults on reset, the block type kept', () => {

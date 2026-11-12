@@ -6,8 +6,6 @@ import { definePlugin, type EditorControlApi, PARAGRAPH, type RteHotkey, type To
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
-import { LINK_MARK } from '../shared/helpers/linkMark';
-
 const RESET_LABEL = 'Reset formatting';
 const CLEAR_MARKS_LABEL = 'Clear inline formatting, keep links';
 const CLEARED_ANNOUNCEMENT = 'Formatting cleared';
@@ -18,12 +16,8 @@ const RESET_ANNOUNCEMENT = 'Formatting reset';
  */
 const reset = (api: EditorControlApi): void => {
     api.group(() => {
-        api.marks.removeAll();
+        api.marks.removeAll({ scope: 'block' });
         api.blocks.setType(PARAGRAPH);
-        // After `setType`, since unwrapping first moves the selection off the blocks before it; a range may span lists `setType` cannot lift.
-        if (!api.selection.get().isCollapsed) {
-            api.lists.unwrapAll();
-        }
         // Whatever attributes plugins add to every block (alignment today) go back to their defaults, without this plugin having to name another's.
         api.blocks.resetAttributes();
     });
@@ -33,9 +27,9 @@ const reset = (api: EditorControlApi): void => {
 const hotkeys = {
     'Mod-\\': {
         label: CLEAR_MARKS_LABEL,
-        // Clears the marks only, links excepted: block types, lists and alignment stay. Not what the toolbar button does.
+        // Clears the marks only, those that survive a clear excepted (links): block types, lists and alignment stay. Not what the toolbar button does.
         run: (api) => {
-            if (api.marks.removeAll({ except: [LINK_MARK] })) {
+            if (api.marks.removeAll({ scope: 'block', keepSurviving: true })) {
                 api.announce(CLEARED_ANNOUNCEMENT);
             }
         },
@@ -56,7 +50,7 @@ const ResetFormattingButton = ({ api, label }: ToolbarItemProps) => {
 };
 
 /**
- * A toolbar button that strips the selection back to plain text, and `Mod-\`, which only clears its marks except links
+ * A toolbar button that strips the selection back to plain text, and `Mod-\`, which only clears its marks except those that survive a clear
  */
 export const resetFormattingPlugin = /* @__PURE__ */ definePlugin({
     id: 'reset-formatting',
