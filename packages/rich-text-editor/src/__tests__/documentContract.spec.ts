@@ -13,16 +13,16 @@ import { DOCUMENT_GAP_VARIABLES, OWN_MARGINS_ATTRIBUTE } from '../core/documentC
 const SOURCE_DIRECTORY = fileURLToPath(new URL('..', import.meta.url));
 const DOCUMENT_STYLESHEET = join(SOURCE_DIRECTORY, 'renderer', 'document.module.scss');
 
-/** Whatever a stylesheet spells as a block or heading variable: the gaps the document hands a block, or a misspelling of one. */
-const GAP_VARIABLE = /--rte-(?:block|heading)-[a-z0-9-]+/g;
+/** Whatever a stylesheet spells as a block variable: the gap the document hands a block, or a misspelling of one. */
+const GAP_VARIABLE = /--rte-block-[a-z0-9-]+/g;
 
 const stylesheetTexts = (): string[] =>
     readdirSync(SOURCE_DIRECTORY, { recursive: true, encoding: 'utf8' })
         .filter((file) => file.endsWith('.scss'))
         .map((file) => readFileSync(join(SOURCE_DIRECTORY, file), 'utf8'));
 
-describe('the gap variables of the document', () => {
-    it('are the ones core names, in every stylesheet that writes or reads one', () => {
+describe('the gap variable of the document', () => {
+    it('is the one core names, in every stylesheet that writes or reads it', () => {
         const spelled = stylesheetTexts().flatMap((text) => text.match(GAP_VARIABLE) ?? []);
 
         expect([...new Set(spelled)].sort()).toEqual(Object.values(DOCUMENT_GAP_VARIABLES).sort());
