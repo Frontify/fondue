@@ -43,6 +43,7 @@ type NumberedListValue = { start: number | null };
 const listItem = defineBlock({
     // The paragraph comes first: it is what a new item is filled with.
     content: { blocks: [PARAGRAPH, ANY_LIST] },
+    childSpacing: 'tight',
     toHtml: () => ({ tag: 'li', attrs: { class: styles.item }, children: true }),
     parse: [{ tag: 'li' }],
 });

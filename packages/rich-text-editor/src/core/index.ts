@@ -20,12 +20,32 @@ export {
     type StoredMarkValue,
 } from './document';
 export { isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
-export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
-export { DOCUMENT_GAP_VARIABLES, DOCUMENT_TEST_ID, OWN_MARGINS_ATTRIBUTE } from './documentContract';
-export { lookProperties, lookStyle, lookVariableName, styleOfClass, type TextLook } from './look';
+export {
+    attributeEntries,
+    contentElementOf,
+    type HtmlAttributes,
+    type HtmlSpec,
+    safeStyleEntries,
+    type StyleMap,
+} from './htmlSpec';
+export {
+    CHILD_SPACING_ATTRIBUTE,
+    DOCUMENT_GAP_VARIABLES,
+    DOCUMENT_TEST_ID,
+    OWN_MARGINS_ATTRIBUTE,
+} from './documentContract';
+export {
+    LOOK_MARGIN_FALLBACKS,
+    lookProperties,
+    lookStyle,
+    lookVariableName,
+    styleOfClass,
+    type TextLook,
+} from './look';
 export {
     type BlockAttributeDefinition,
     type BlockDefinition,
+    type ChildSpacing,
     type ContentModel,
     defineBlock,
     defineContent,
@@ -59,6 +79,8 @@ export {
     blockHtml,
     blockValueOf,
     buildPluginRegistry,
+    childSpacingAttributes,
+    childSpacingOf,
     controlOf,
     isOwnActive,
     type OwnControl,

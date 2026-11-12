@@ -108,6 +108,7 @@ export const checkListContent = defineContent({
         }),
         checkItem: defineBlock<CheckValue>({
             content: { blocks: [PARAGRAPH, ANY_LIST] },
+            childSpacing: 'tight',
             defaults: { checked: false },
             // Exported HTML cannot be interacted with, so its checkbox is a
             // disabled one, named by its state.

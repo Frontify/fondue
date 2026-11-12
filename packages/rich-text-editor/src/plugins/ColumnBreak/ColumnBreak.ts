@@ -33,6 +33,8 @@ export const columnBreakContent = ({ columns = 2, gap = 'normal' }: ColumnBreakP
     defineContent({
         blocks: {
             columnBreak: defineBlock({
+                // Its stylesheet writes its margins, which the document must not replace.
+                ownsMargins: true,
                 toHtml: () => ({
                     tag: 'div',
                     attrs: {

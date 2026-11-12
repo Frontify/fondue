@@ -18,6 +18,7 @@ import {
     type BlockDefinition,
     blockHtml,
     blockValueOf,
+    childSpacingAttributes,
     type EditorControlApi,
     type EditProps,
     type PluginRegistry,
@@ -385,6 +386,10 @@ class ReactBlockView extends ReactNodeView<Record<string, unknown>> {
         if (definition.content !== undefined) {
             // Inline content in a span, blocks in a div; neither adds a box.
             this.contentDOM = wrapper(definition.content === 'text' ? 'span' : 'div');
+            // The blocks sit in this wrapper, not in the element `toHtml` holds them in, so the mark goes here.
+            for (const [name, value] of attributeEntries(childSpacingAttributes(definition))) {
+                this.contentDOM.setAttribute(name, value);
+            }
             this.dom.append(this.contentDOM);
         }
         this.start(container);

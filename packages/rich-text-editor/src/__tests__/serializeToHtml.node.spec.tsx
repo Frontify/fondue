@@ -10,6 +10,7 @@ import {
     defineContent,
     defineMark,
     definePlugin,
+    lookVariableName,
     PARAGRAPH,
     type RteDocumentOf,
     type RtePlugin,
@@ -154,7 +155,9 @@ describe('serializing with inline styling', () => {
     it('gives a plain paragraph the document gap in place of browser margins without a paragraph plugin', () => {
         const html = serializeToHtml(looksDoc, { plugins: [quotePlugin()], wrap: false, styling: 'inline' });
 
-        expect(styleOfFirst(html, 'p')).toContain('margin-top: 0; margin-bottom: var(--spacing-x-small);');
+        const paragraph = styleOfFirst(html, 'p');
+        expect(paragraph).toContain('--rte-block-gap: var(--spacing-x-small);');
+        expect(paragraph).toContain('margin-top: 0; margin-bottom: var(--rte-block-gap);');
     });
 
     it('inlines each block when the document is not wrapped', () => {
@@ -164,11 +167,12 @@ describe('serializing with inline styling', () => {
         expect(html.match(/ style="/g)?.length).toBeGreaterThanOrEqual(5);
     });
 
-    it('wraps in the document element, with its own look in place of the --rte- properties', () => {
+    it('wraps in the document element, with its own look in place of the host look properties', () => {
         const html = serializeToHtml(looksDoc, { plugins: withLooks, styling: 'inline' });
 
         expect(html).toMatch(/^<div class="[^"]+" style="[^"]*line-height: 1.6;[^"]*">/);
-        expect(html).not.toContain('--rte-');
+        expect(html).not.toContain(lookVariableName('heading1', 'font-size'));
+        expect(html).not.toContain(lookVariableName('body', 'font-size'));
     });
 
     it('writes classes as before when asked for classes or given no styling', () => {

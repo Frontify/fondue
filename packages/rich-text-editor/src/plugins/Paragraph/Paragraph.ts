@@ -1,6 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineContent, definePlugin, lookProperties, lookStyle, PARAGRAPH, styleOfClass, type TextLook } from '#/core';
+import {
+    defineContent,
+    definePlugin,
+    LOOK_MARGIN_FALLBACKS,
+    lookProperties,
+    lookStyle,
+    PARAGRAPH,
+    styleOfClass,
+    type TextLook,
+} from '#/core';
 
 import styles from './paragraph.module.scss';
 
@@ -21,7 +30,7 @@ export const paragraphContent = ({ look = {} }: ParagraphPluginOptions = {}) =>
         extendBlocks: { [PARAGRAPH]: { className: styles.paragraph, ownsMargins: true } },
         contentProperties: lookProperties('body', look),
         // The same values the stylesheet falls back to; `hostStyling.ct.tsx` holds them equal.
-        contentStyles: styleOfClass(styles.paragraph, lookStyle(look, {})),
+        contentStyles: styleOfClass(styles.paragraph, lookStyle(look, LOOK_MARGIN_FALLBACKS)),
     });
 
 /**

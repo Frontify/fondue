@@ -6,6 +6,7 @@ import {
     defineContent,
     definePlugin,
     type HotkeyHandler,
+    LOOK_MARGIN_FALLBACKS,
     lookProperties,
     lookStyle,
     PARAGRAPH,
@@ -91,7 +92,7 @@ const textStyleContentFor = (
     // The same values the stylesheet falls back to (`hostStyling.ct.tsx` holds them equal), for every preset, offered or not.
     const contentStyles: Record<string, StyleMap> = {};
     for (const preset of presetsFor(ALL_TEXT_STYLES)) {
-        const look = lookStyle(presets[preset.name] ?? {}, preset.fallback);
+        const look = lookStyle(presets[preset.name] ?? {}, { ...LOOK_MARGIN_FALLBACKS, ...preset.fallback });
         Object.assign(contentStyles, styleOfClass(preset.className, look));
     }
 

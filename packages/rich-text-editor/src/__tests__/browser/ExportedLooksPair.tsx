@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// Mounted by hostStyling.ct.tsx: a component test mounts imported components, and the plugin list holds functions, which cannot travel as props.
+// Mounted by hostStyling.ct.tsx and documentSpacing.ct.tsx: a component test mounts imported components, and the plugin list holds functions, which cannot travel as props.
 
+import { type RteDocumentOf } from '../../core/document';
 import { serializeToHtml } from '../../index';
 
 import { type HostLooksOptions, pluginsWithLooks } from './hostStylingPlugins';
@@ -18,16 +19,22 @@ const ExportedHtml = ({ html, testId }: ExportedHtmlProps) => (
     <div data-test-id={testId} dangerouslySetInnerHTML={{ __html: html }} />
 );
 
-type ExportedLooksPairProps = HostLooksOptions;
+type ExportedLooksPairProps = HostLooksOptions & {
+    /**
+     * The document both exports hold.
+     * @default EXPORT_DOCUMENT
+     */
+    value?: RteDocumentOf;
+};
 
 /** The same document exported twice, as classes and as inline styles, with the same looks. */
-export const ExportedLooksPair = (props: ExportedLooksPairProps) => {
-    const plugins = pluginsWithLooks(props);
+export const ExportedLooksPair = ({ value = EXPORT_DOCUMENT, ...looks }: ExportedLooksPairProps) => {
+    const plugins = pluginsWithLooks(looks);
 
     return (
         <>
-            <ExportedHtml testId="classes" html={serializeToHtml(EXPORT_DOCUMENT, { plugins })} />
-            <ExportedHtml testId="inline" html={serializeToHtml(EXPORT_DOCUMENT, { plugins, styling: 'inline' })} />
+            <ExportedHtml testId="classes" html={serializeToHtml(value, { plugins })} />
+            <ExportedHtml testId="inline" html={serializeToHtml(value, { plugins, styling: 'inline' })} />
         </>
     );
 };

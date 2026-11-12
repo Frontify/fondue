@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { DOCUMENT_GAP_VARIABLES } from './documentContract';
 import { isSafeCssValue, type StyleMap } from './htmlSpec';
 
 /**
@@ -34,6 +35,15 @@ export const LOOK_PROPERTIES = {
     marginBottom: 'margin-bottom',
     color: 'color',
 } as const satisfies Record<keyof TextLook, string>;
+
+/**
+ * The margins a block's look falls back to, as `$default-fallbacks` in `styles/look.module.scss`:
+ * none above, and the document's gap below. For the inline style of a block that owns its margins.
+ */
+export const LOOK_MARGIN_FALLBACKS: StyleMap = {
+    'margin-top': '0',
+    'margin-bottom': `var(${DOCUMENT_GAP_VARIABLES.block}, 0)`,
+};
 
 /** The prefix every look's custom property carries; `styles/look.module.scss` writes the same. */
 const LOOK_VARIABLE_PREFIX = '--rte-';

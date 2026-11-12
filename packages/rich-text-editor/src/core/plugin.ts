@@ -55,7 +55,7 @@ export type RteContentDefinition = Omit<RteContent, 'kind'>;
 /**
  * How a block looks, whichever plugin defines it: the part of a block's definition another plugin may add to.
  */
-export type BlockLook = Pick<BlockDefinition, 'className' | 'ownsMargins'>;
+export type BlockLook = Pick<BlockDefinition, 'className' | 'ownsMargins' | 'childSpacing'>;
 
 /**
  * Declares what a plugin's document can hold.
@@ -286,6 +286,11 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
      */
     ownsMargins?: boolean;
     /**
+     * How a block that holds blocks spaces them. Only read for `content: { blocks }`.
+     * @default 'apart'
+     */
+    childSpacing?: ChildSpacing;
+    /**
      * A class on the block's outermost element, written next to the one its `toHtml` sets.
      */
     className?: string;
@@ -300,6 +305,12 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
         component?: ComponentType<{ value: TValue; children?: ReactNode; style?: CSSProperties }>;
     };
 };
+
+/**
+ * How a block spaces the blocks it holds: `'apart'` by the gap between blocks, as the document does,
+ * or `'tight'`, without gaps, as a list item does.
+ */
+export type ChildSpacing = 'apart' | 'tight';
 
 /**
  * What a block holds:
