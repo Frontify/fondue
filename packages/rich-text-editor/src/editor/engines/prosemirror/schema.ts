@@ -22,7 +22,14 @@ import {
     VALUE_ATTR,
 } from './documentConversion';
 import { htmlSpecToDom } from './htmlSpecToDom';
-import { blockParseRules, INLINE_PRIORITY, markParseRules, valueParseRules } from './pasteRules';
+import {
+    blockParseRules,
+    type DefaultStyleRule,
+    defaultStyleRules,
+    INLINE_PRIORITY,
+    markParseRules,
+    valueParseRules,
+} from './pasteRules';
 
 /**
  * The mounted features -> one engine schema (`buildSchema`, at the bottom, with
@@ -128,27 +135,26 @@ const inlineNodeSpec = (definition: InlineDefinition, hasEditView: boolean): PmN
 });
 
 /**
- * The mark itself plus the excluded marks the mounted plugins register: the engine's list replaces its default of the mark itself, and the engine throws on a name it does not know.
+ * The mark itself plus the marks it excludes: the engine's list replaces its default of the mark itself.
  * @param type - the mark's name in the schema
- * @param registered - the marks the mounted plugins registered, by name
  */
-const excludesSpec = (
-    type: string,
-    definition: MarkDefinition,
-    registered: PluginRegistry['marks'],
-): string | undefined => {
+const excludesSpec = (type: string, definition: MarkDefinition): string | undefined => {
     if (!definition.excludes) {
         return undefined;
     }
-    return [type, ...definition.excludes.filter((name) => registered.has(name))].join(' ');
+    return [type, ...definition.excludes].join(' ');
 };
 
-const markSpec = (type: string, definition: MarkDefinition, registered: PluginRegistry['marks']): PmMarkSpec => ({
+const markSpec = (
+    type: string,
+    definition: MarkDefinition,
+    defaultStyles: readonly DefaultStyleRule[],
+): PmMarkSpec => ({
     // A mark turned on without a value carries its declared defaults.
     attrs: { [VALUE_ATTR]: { default: definition.defaults ?? {} } },
     inclusive: definition.inclusive ?? true,
-    excludes: excludesSpec(type, definition, registered),
-    parseDOM: markParseRules(type, definition.parse),
+    excludes: excludesSpec(type, definition),
+    parseDOM: markParseRules(type, definition.parse, defaultStyles),
     toDOM: (mark) => htmlSpecToDom(definition.toHtml(mark.attrs[VALUE_ATTR] as Record<string, unknown>)),
 });
 
@@ -200,8 +206,9 @@ export const buildSchema = (registry: PluginRegistry): Schema => {
 
     // invariant (2): the registry already holds marks in nesting order.
     const marks: Record<string, PmMarkSpec> = {};
+    const defaultStyles = defaultStyleRules(registry);
     for (const [type, mark] of registry.marks) {
-        marks[type] = markSpec(type, mark, registry.marks);
+        marks[type] = markSpec(type, mark, defaultStyles);
     }
     // Last, so it wraps nothing a plugin's mark would.
     marks[UNKNOWN_MARKS] = unknownMarksSpec;

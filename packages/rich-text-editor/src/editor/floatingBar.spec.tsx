@@ -84,6 +84,22 @@ const selectText = (editable: HTMLElement): void => {
     });
 };
 
+/** Selects from the start of the first run of text to the end of the last, across every block between. */
+const selectAcross = (editable: HTMLElement): void => {
+    const walker = window.document.createTreeWalker(editable, NodeFilter.SHOW_TEXT);
+    const first = walker.nextNode();
+    let last = first;
+    for (let next = walker.nextNode(); next; next = walker.nextNode()) {
+        last = next;
+    }
+    act(() => {
+        if (first && last) {
+            window.getSelection()?.setBaseAndExtent(first, 0, last, last.textContent?.length ?? 0);
+        }
+        window.document.dispatchEvent(new Event('selectionchange'));
+    });
+};
+
 const labels = (elements: Iterable<Element>): (string | null)[] =>
     [...elements].map((element) => element.getAttribute('aria-label'));
 
@@ -222,6 +238,19 @@ describe('the floating bar', () => {
             style: 'heading1',
             children: [{ text: 'one' }],
         });
+    });
+
+    it('turns a range across two lists and the text between them into plain text', () => {
+        const { bar, editable, stored } = open('<ul><li>one</li></ul><p>between</p><ol><li>two</li></ol>');
+        selectAcross(editable);
+
+        turnInto(bar, 'Text');
+
+        expect(stored()?.blocks).toEqual([
+            { type: 'paragraph', children: [{ text: 'one' }] },
+            { type: 'paragraph', children: [{ text: 'between' }] },
+            { type: 'paragraph', children: [{ text: 'two' }] },
+        ]);
     });
 
     it('does nothing when the entry chosen is the one the block already is', () => {

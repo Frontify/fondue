@@ -5,7 +5,7 @@ import { type InputRule } from 'prosemirror-inputrules';
 import { type Mark as PmMark, type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
 import { type EditorState, Plugin, PluginKey, type Plugin as PmPlugin, type Transaction } from 'prosemirror-state';
 
-import { type PluginRegistry } from '#/core';
+import { INLINE_PLACEHOLDER, type PluginRegistry, type RteMarkPatternTrim, WORD_START_CONTEXT } from '#/core';
 
 import { valueAttrsFor } from './documentConversion';
 import {
@@ -18,30 +18,29 @@ import {
     withoutStateFlags,
 } from './ruleContext';
 
-/** Punctuation and closing quotes that end a sentence or quotation rather than a link, though a link may contain them. */
-const TRAILING_PUNCTUATION = /[.,;:!?"'”’]+$/;
-
-/** Each closing bracket a link may end in, and the opening one it closes. */
-const BRACKET_PAIRS: Readonly<Record<string, string>> = { ')': '(', ']': '[', '}': '{', '>': '<' };
-
 const count = (text: string, character: string): number => text.split(character).length - 1;
 
 /** Whether the text ends in a closing bracket with no opening one left for it to close. */
-const endsInUnbalancedBracket = (text: string): boolean => {
+const endsInUnbalancedBracket = (text: string, pairs: RteMarkPatternTrim['pairs']): boolean => {
     const closing = text.slice(-1);
-    const opening = BRACKET_PAIRS[closing];
+    const opening = pairs[closing];
     if (opening === undefined) {
         return false;
     }
     return count(text, closing) > count(text, opening);
 };
 
-/** Drops trailing punctuation, and a trailing closing bracket only while it has no opening one to close. */
-export const trimTrailingPunctuation = (address: string): string => {
-    let trimmed = address;
+/** Matches `trim.punctuation` at the end of a token. */
+const trailingPunctuation = ({ punctuation }: RteMarkPatternTrim): RegExp =>
+    new RegExp(`(?:${punctuation.source})$`, withoutStateFlags(punctuation));
+
+/** Drops the trailing punctuation a rule declares, and a trailing closing bracket only while it has no opening one to close. */
+export const trimTrailingPunctuation = (token: string, trim: RteMarkPatternTrim): string => {
+    const trailing = trailingPunctuation(trim);
+    let trimmed = token;
     for (;;) {
-        let next = trimmed.replace(TRAILING_PUNCTUATION, '');
-        if (endsInUnbalancedBracket(next)) {
+        let next = trimmed.replace(trailing, '');
+        if (endsInUnbalancedBracket(next, trim.pairs)) {
             next = next.slice(0, -1);
         }
         if (next === trimmed) {
@@ -51,11 +50,11 @@ export const trimTrailingPunctuation = (address: string): string => {
     }
 };
 
-/** What reading a block as text gives for an inline element (a line break, a mention). */
-const INLINE_ELEMENT = '￼';
+/** The characters core says may precede a word, as a class body that also compiles under the `v` flag, where a bracket must be escaped. */
+const WORD_START_CLASS_BODY = WORD_START_CONTEXT.replaceAll(/[([{]/g, String.raw`\$&`);
 
-/** What may come right before a token: whitespace, an inline element, or an opening bracket or quote. Brackets are escaped so a rule with the `v` flag still compiles. */
-const TOKEN_OPENERS = String.raw`\s${INLINE_ELEMENT}\(\[\{<'"“‘`;
+/** What may come right before a token: a word start, or an inline element. */
+const TOKEN_OPENERS = `${WORD_START_CLASS_BODY}${INLINE_PLACEHOLDER}`;
 
 /** How much text before the caret a rule reads, as the engine's input rules do. */
 const MAX_MATCH = 500;
@@ -87,11 +86,14 @@ const markPatternMatcher = (rule: RuleOfKind<'markPattern'>, context: RuleContex
 
     const find = (state: EditorState, match: RegExpMatchArray, start: number): MarkRange | null => {
         // A token pattern may match across an inline element: only what follows the last one counts.
-        const typed = match[1]?.split(INLINE_ELEMENT).pop();
+        const typed = match[1]?.split(INLINE_PLACEHOLDER).pop();
         if (!typed) {
             return null;
         }
-        const linked = trimTrailingPunctuation(typed);
+        let linked = typed;
+        if (rule.trim !== undefined) {
+            linked = trimTrailingPunctuation(typed, rule.trim);
+        }
         if (!token.test(linked)) {
             return null;
         }
@@ -163,7 +165,7 @@ const addressBeforeCaret = (
         Math.max(0, $from.parentOffset - MAX_MATCH),
         $from.parentOffset,
         undefined,
-        INLINE_ELEMENT,
+        INLINE_PLACEHOLDER,
     );
     for (const { pattern, find } of matchers) {
         const match = pattern.exec(`${textBefore} `);

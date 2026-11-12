@@ -21,6 +21,7 @@ import {
     type RteInlineNode,
     type RteTextNode,
     type StyleMap,
+    warnOnce,
 } from '#/core';
 
 import styles from './document.module.scss';
@@ -45,13 +46,9 @@ type Options = { useComponents: boolean };
  * a newer version. Drawing what can be drawn beats losing the whole document,
  * so it is skipped (a block keeps its content) and, in development, named once.
  */
-const warnedUnknown = new Set<string>();
 const warnUnknownType = (kind: 'block' | 'inline' | 'mark', type: string): void => {
-    if (process.env.NODE_ENV === 'production' || warnedUnknown.has(`${kind}:${type}`)) {
-        return;
-    }
-    warnedUnknown.add(`${kind}:${type}`);
-    console.warn(
+    warnOnce(
+        `renderer-unknown-type:${kind}:${type}`,
         `[RichTextRenderer] Unknown ${kind} type "${type}" skipped. Did you forget to pass the plugin that defines it in \`plugins\`?`,
     );
 };

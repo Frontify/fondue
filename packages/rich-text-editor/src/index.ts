@@ -5,6 +5,7 @@ import { createElement, type ReactNode } from 'react';
 import {
     type BlockAttributeToggle as AttributeToggle,
     type BlockDefinition,
+    type DefaultStyle,
     type EditorControlApi,
     type EditProps,
     type HtmlSpec,
@@ -20,7 +21,9 @@ import {
     type Paste,
     type PasteHandler,
     type PasteSource,
-    type RemoveAllMarksOptions as RemoveAllOptions,
+    type ClearMarksOptions as ClearOptions,
+    type ClearMarksScope as ClearScope,
+    type RteAttributeState,
     type RteBlockCommand,
     type RteBlockNode,
     type RteContent,
@@ -73,7 +76,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlock>(props: Ri
 export type RichTextRendererProps<TBlock extends RteBlockNode = RteBlock> = RendererProps<TBlock>;
 
 /**
- * A readonly view of a document; works on the server. Uses `defaultPlugins` when given no `plugins`.
+ * A readonly view of a document; works on the server. Uses `defaultContent` when given no `plugins`.
  *
  * @experimental The API and document format can change in any release until 1.0.
  */
@@ -110,7 +113,7 @@ export { isEmpty };
 
 /**
  * The document's text, one line per text block. Inlines read as their plugin's
- * markup (a mention as `@jane`). Uses `defaultPlugins` when given no `plugins`.
+ * markup (a mention as `@jane`). Uses `defaultContent` when given no `plugins`.
  */
 export const toPlainText = <TBlock extends RteBlockNode = RteBlock>(
     doc: RteDocument<TBlock>,
@@ -190,6 +193,7 @@ type MarkParse<TValue> = MarkParseRule<TValue>;
 type StyleParse<TValue> = StyleParseRule<TValue>;
 type MarkClear = MarkClearRule;
 type MarkIgnore = MarkIgnoreRule;
+type DefaultStyleType = DefaultStyle;
 type Html = HtmlSpec;
 
 // oxlint-disable-next-line typescript/no-namespace -- types only; groups the authoring types under `RtePlugin`.
@@ -199,7 +203,9 @@ export declare namespace RtePlugin {
     export type MarkState = RteMarkState;
     export type BlockCommand = RteBlockCommand;
     export type BlockAttributeToggle = AttributeToggle;
-    export type RemoveAllMarksOptions = RemoveAllOptions;
+    export type ClearMarksOptions = ClearOptions;
+    export type ClearMarksScope = ClearScope;
+    export type AttributeState = RteAttributeState;
     export type ToolbarItemProps = ToolbarProps;
     export type ToolbarGroup = RteToolbarGroup;
     export type PasteHandler = OnPaste;
@@ -219,6 +225,7 @@ export declare namespace RtePlugin {
     // Same reason as above.
     export type MarkClearRule = MarkClear; // NOSONAR
     export type MarkIgnoreRule = MarkIgnore; // NOSONAR
+    export type DefaultStyle = DefaultStyleType; // NOSONAR
     export type HtmlSpec = Html;
     export type Content = RteContent;
     export type ToolbarEntry = RteToolbarEntry;

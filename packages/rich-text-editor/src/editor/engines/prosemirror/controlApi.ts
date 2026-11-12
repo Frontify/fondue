@@ -23,10 +23,12 @@ import { type EditorView } from 'prosemirror-view';
 
 import {
     type BlockAttributeToggle,
+    type ClearMarksScope,
     type EditorControlApi,
     INLINE_PLACEHOLDER,
     isEmpty,
     type PluginRegistry,
+    type RteAttributeState,
     type RteMarkState,
     type RteSelectionSnapshot,
 } from '#/core';
@@ -130,7 +132,48 @@ const blocksAt = (state: EditorState): Pick<RteSelectionSnapshot, 'block' | 'blo
     return { block, blocks };
 };
 
-const snapshotOf = (state: EditorState): RteSelectionSnapshot => {
+/**
+ * How one block attribute is carried by the text blocks the selection touches, or null when none declares it. The one
+ * rule the snapshot's `attributes` and `blocks.toggleAttribute` both follow.
+ */
+const attributeStateAt = (state: EditorState, name: string): RteAttributeState | null => {
+    const { from, to } = state.selection;
+    let declared = false;
+    let uniform = true;
+    let first: unknown = null;
+    state.doc.nodesBetween(from, to, (node) => {
+        if (node.isTextblock && name in node.attrs) {
+            const value: unknown = node.attrs[name] ?? null;
+            if (!declared) {
+                declared = true;
+                first = value;
+            } else if (value !== first) {
+                uniform = false;
+            }
+        }
+    });
+    if (!declared) {
+        return null;
+    }
+    if (!uniform) {
+        return { coverage: 'some' };
+    }
+    return { coverage: 'all', value: first };
+};
+
+/** The block attributes plugins add to every text block, as the selection carries them. */
+const attributesAt = (state: EditorState, { blockAttributes }: PluginRegistry): RteSelectionSnapshot['attributes'] => {
+    const attributes: RteSelectionSnapshot['attributes'] = {};
+    for (const name of blockAttributes.keys()) {
+        const attributeState = attributeStateAt(state, name);
+        if (attributeState !== null) {
+            attributes[name] = attributeState;
+        }
+    }
+    return attributes;
+};
+
+const snapshotOf = (state: EditorState, registry: PluginRegistry): RteSelectionSnapshot => {
     const { from, to, empty } = state.selection;
     return {
         isCollapsed: empty,
@@ -138,11 +181,12 @@ const snapshotOf = (state: EditorState): RteSelectionSnapshot => {
         text: empty ? '' : state.doc.textBetween(from, to, ' '),
         ...blocksAt(state),
         marks: marksAt(state),
+        attributes: attributesAt(state, registry),
         history: { canUndo: undoDepth(state) > 0, canRedo: redoDepth(state) > 0 },
     };
 };
 
-const createSelectionApi = (getView: () => EditorView): EditorControlApi['selection'] => {
+const createSelectionApi = (getView: () => EditorView, registry: PluginRegistry): EditorControlApi['selection'] => {
     // Every feature's UI reads the same snapshot, so it is built once per
     // (immutable, hence identity-keyed) editor state.
     let cached: { state: EditorState; snapshot: RteSelectionSnapshot } | null = null;
@@ -151,7 +195,7 @@ const createSelectionApi = (getView: () => EditorView): EditorControlApi['select
         get() {
             const { state } = getView();
             if (cached?.state !== state) {
-                cached = { state, snapshot: snapshotOf(state) };
+                cached = { state, snapshot: snapshotOf(state, registry) };
             }
             return cached.snapshot;
         },
@@ -208,8 +252,32 @@ const findMarkRange = (state: EditorState, markType: PmMarkType): { from: number
     return range;
 };
 
+/**
+ * The text a clear covers: the selection, or at a caret in a text block with scope `'block'`, the whole block around
+ * it, so a reset leaves no half-formatted paragraph.
+ */
+const clearRangeOf = (state: EditorState, scope: ClearMarksScope): { from: number; to: number } => {
+    const { from, to, empty, $from } = state.selection;
+    switch (scope) {
+        case 'typing': {
+            return { from, to };
+        }
+        case 'block': {
+            if (empty && $from.parent.isTextblock) {
+                return { from: $from.start(), to: $from.end() };
+            }
+            return { from, to };
+        }
+    }
+};
+
 /** Whether a mark is *on* is not here: that is a field of the selection snapshot. */
-const createMarkApi = (getView: () => EditorView, schema: Schema, dispatch: Dispatch): EditorControlApi['marks'] => ({
+const createMarkApi = (
+    getView: () => EditorView,
+    schema: Schema,
+    registry: PluginRegistry,
+    dispatch: Dispatch,
+): EditorControlApi['marks'] => ({
     toggle(type, value) {
         const markType = schema.marks[type];
         if (!markType) {
@@ -241,29 +309,29 @@ const createMarkApi = (getView: () => EditorView, schema: Schema, dispatch: Disp
         dispatch(tr);
         view.focus();
     },
-    removeAll({ except = [] } = {}) {
+    removeAll({ scope, keepSurviving = false }) {
         const view = getView();
         const { state } = view;
-        const { from, to, empty, $from } = state.selection;
-        let range = { from, to };
-        if (empty && $from.parent.isTextblock) {
-            // A caret clears its whole text block, so a reset leaves no half-formatted paragraph.
-            range = { from: $from.start(), to: $from.end() };
-        }
+        const { empty, $from } = state.selection;
+        const range = clearRangeOf(state, scope);
+        const keeps = (type: string): boolean => keepSurviving && registry.marks.get(type)?.survivesClear === true;
         const transaction = state.tr;
         let removed = false;
-        for (const markType of Object.values(schema.marks)) {
-            if (!except.includes(markType.name)) {
-                if (state.doc.rangeHasMark(range.from, range.to, markType)) {
-                    removed = true;
+        // A caret with scope 'typing' covers no text, so only what typing would carry changes.
+        if (range.from < range.to) {
+            for (const markType of Object.values(schema.marks)) {
+                if (!keeps(markType.name)) {
+                    if (state.doc.rangeHasMark(range.from, range.to, markType)) {
+                        removed = true;
+                    }
+                    transaction.removeMark(range.from, range.to, markType);
                 }
-                transaction.removeMark(range.from, range.to, markType);
             }
         }
         if (empty) {
             // What typing here would carry, as far as it is kept.
             const carried = state.storedMarks ?? $from.marks();
-            const kept = carried.filter((mark) => except.includes(mark.type.name));
+            const kept = carried.filter((mark) => keeps(mark.type.name));
             if (kept.length < carried.length) {
                 removed = true;
             }
@@ -386,22 +454,11 @@ const createBlockApi = (
         },
         updateAttributes: applyToTextBlocks,
         toggleAttribute(name, value): BlockAttributeToggle {
-            const view = getView();
-            const { from, to } = view.state.selection;
-            let declaring = 0;
-            let holding = 0;
-            view.state.doc.nodesBetween(from, to, (node) => {
-                if (node.isTextblock && name in node.attrs) {
-                    declaring++;
-                    if ((node.attrs[name] ?? null) === (value ?? null)) {
-                        holding++;
-                    }
-                }
-            });
-            if (declaring === 0) {
+            const attributeState = attributeStateAt(getView().state, name);
+            if (attributeState === null) {
                 return 'unchanged';
             }
-            if (holding === declaring) {
+            if (attributeState.coverage === 'all' && attributeState.value === (value ?? null)) {
                 applyToTextBlocks({ [name]: null });
                 return 'removed';
             }
@@ -520,8 +577,8 @@ export const createControlApi = (
     };
 
     return {
-        selection: createSelectionApi(getView),
-        marks: createMarkApi(getView, schema, dispatch),
+        selection: createSelectionApi(getView, registry),
+        marks: createMarkApi(getView, schema, registry, dispatch),
         blocks: createBlockApi(getView, schema, registry, dispatch),
         lists: createListApi(getView, schema, registry, dispatch),
         history: createHistoryApi(getView),

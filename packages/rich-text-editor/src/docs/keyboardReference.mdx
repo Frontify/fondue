@@ -2,7 +2,7 @@
 
 import { Meta } from '@storybook/addon-docs/blocks';
 
-import { blurOnBreakPlugin, defaultPlugins } from '../plugins';
+import { defaultPlugins } from '../plugins';
 import { mentionPlugin } from '../plugins/Mention';
 import { PluginKeyboardReference } from './PluginKeyboardReference';
 
@@ -12,6 +12,8 @@ import { PluginKeyboardReference } from './PluginKeyboardReference';
 
 Every key the editor binds, grouped by who binds it. `Mod` is ⌘ on Apple systems and Ctrl everywhere else, so each table shows both.
 
-The tables are written from the plugins themselves: a plugin that gains a key appears here with no edit to this page.
+Each table is written from the plugin's own hotkeys, so a key that one of the plugins below gains appears here with no edit to this page.
 
-<PluginKeyboardReference plugins={[...defaultPlugins, mentionPlugin({ items: [] }), blurOnBreakPlugin()]} />
+<PluginKeyboardReference plugins={[...defaultPlugins, mentionPlugin({ items: [] })]} />
+
+An editor that submits on Enter (`blurOnBreakPlugin`) changes two keys: Enter submits outside a list, and Shift+Enter starts a new paragraph or list item instead of a line break.

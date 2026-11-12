@@ -81,6 +81,25 @@ export const hasDecorationLine = (value: string, line: string): boolean =>
     value.toLowerCase().split(WHITESPACE).includes(line);
 
 /**
+ * A `text-decoration` or `text-decoration-line` value without this line (`underline`).
+ */
+export const withoutDecorationLine = (value: string, line: string): string =>
+    value
+        .split(WHITESPACE)
+        .filter((word) => word.toLowerCase() !== line)
+        .join(' ');
+
+/**
+ * A `font-weight` value, or nothing where it is bold.
+ */
+export const withoutBoldWeight = (value: string): string => {
+    if (isBoldWeight(value)) {
+        return '';
+    }
+    return value;
+};
+
+/**
  * A style rule's `value` that puts the mark on, with no value of its own, when the declared CSS value passes the check.
  */
 export const markWhen =

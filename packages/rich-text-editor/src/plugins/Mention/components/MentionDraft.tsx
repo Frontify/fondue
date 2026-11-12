@@ -4,7 +4,7 @@ import { IconPeople, IconPerson, IconTarget } from '@frontify/fondue-icons';
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { readableShortcut } from '#/ui/ToolbarButton/ToolbarButton';
+import { readableShortcut } from '#/ui/shortcut';
 
 import { isSafeImageSrc } from '../../shared/helpers/href';
 import { isCompositionKey } from '../../shared/helpers/keys';

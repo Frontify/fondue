@@ -6,8 +6,6 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { isApple } from '#/ui/platform';
-
 import { boldPlugin, linkPlugin, RichTextEditor, RichTextRenderer, type RteDocument } from '../index';
 
 declare global {
@@ -44,8 +42,10 @@ type PlatformModifiers = {
     other: ModifierInit;
 };
 
+const APPLE_PLATFORM = /Mac|iPhone|iPad/;
+
 const platformModifiers = (): PlatformModifiers => {
-    if (isApple()) {
+    if (APPLE_PLATFORM.test(navigator.platform)) {
         return { mod: { metaKey: true }, other: { ctrlKey: true } };
     }
     return { mod: { ctrlKey: true }, other: { metaKey: true } };
