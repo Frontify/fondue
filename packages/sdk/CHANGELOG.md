@@ -1,5 +1,39 @@
 # @frontify/fondue-sdk
 
+## 1.0.0-beta.2
+
+### Patch Changes
+
+- [#3013](https://github.com/Frontify/fondue/pull/3013) [`b7bc6c7`](https://github.com/Frontify/fondue/commit/b7bc6c7774795824cdcf52cb10201162d83ee252) Thanks [@noahwaldner](https://github.com/noahwaldner)! - docs: update import paths and links for fondue 14. The SDK guides no longer mention the removed `@frontify/fondue` root entry or `@frontify/fondue/styles`, and `ThemeProvider` points to `@frontify/fondue/components/locales`.
+
+- [#3020](https://github.com/Frontify/fondue/pull/3020) [`b73c9d4`](https://github.com/Frontify/fondue/commit/b73c9d43562cf5579b29ebaf941ee2fd8d717157) Thanks [@noahwaldner](https://github.com/noahwaldner)! - docs: add the "Upgrading to Fondue v14" guide. The upgrade guides now live under `development/upgrading/v13` and `development/upgrading/v14`, replacing `development/Upgrading`.
+
+- Updated dependencies [[`4e92d69`](https://github.com/Frontify/fondue/commit/4e92d69a07cd9df0763a2e00cbd78c7ca3ceb4ed), [`b7bc6c7`](https://github.com/Frontify/fondue/commit/b7bc6c7774795824cdcf52cb10201162d83ee252), [`876e823`](https://github.com/Frontify/fondue/commit/876e8239702086c9acc2139fa7f5037a984de05b)]:
+    - @frontify/fondue-components@37.0.0-beta.1
+    - @frontify/fondue-tokens@6.0.0-beta.1
+
+## 1.0.0-beta.1
+
+### Patch Changes
+
+- Updated dependencies [[`40df7a2`](https://github.com/Frontify/fondue/commit/40df7a2c25b4d2ec66e4bc2017c966fa277fda03), [`a59db73`](https://github.com/Frontify/fondue/commit/a59db7301cbb6d4dd9d62dcdad5bbd63542bc49b), [`d5df360`](https://github.com/Frontify/fondue/commit/d5df3600960affc56fbf662d807ef3a31578ce20), [`e610067`](https://github.com/Frontify/fondue/commit/e610067b4878e90f675aabb4a61333002bd99105), [`66a5800`](https://github.com/Frontify/fondue/commit/66a5800ac077b4bf23f943e845b68cec8b7a7c3a), [`a711a4d`](https://github.com/Frontify/fondue/commit/a711a4d48ceda578e757296dfbef6f0baea2ad40)]:
+    - @frontify/fondue-components@37.0.0-beta.0
+    - @frontify/fondue-icons@1.0.0-beta.1
+    - @frontify/fondue-tokens@6.0.0-beta.0
+
+## 1.0.0-beta.0
+
+### Major Changes
+
+- [#2877](https://github.com/Frontify/fondue/pull/2877) [`f59824e`](https://github.com/Frontify/fondue/commit/f59824e0f9b33a4ee6b8f1f290cbfed5b67374c7) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - bump packages for fondue v14
+
+### Patch Changes
+
+- Updated dependencies [[`f59824e`](https://github.com/Frontify/fondue/commit/f59824e0f9b33a4ee6b8f1f290cbfed5b67374c7)]:
+    - @frontify/fondue-components@34.0.0-beta.0
+    - @frontify/fondue-icons@1.0.0-beta.0
+    - @frontify/fondue-tokens@6.0.0-beta.0
+
 ## 0.3.3
 
 ### Patch Changes

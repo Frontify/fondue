@@ -9,8 +9,8 @@ import { type EmojiItem } from './types';
 
 export type EmojiPluginOptions = {
     /**
-     * The emoji offered, in picker order. Spread `defaultEmojis` into your own list to add more.
-     * @default defaultEmojis
+     * The emoji offered, in picker order. `defaultEmojis` (a curated few
+     * hundred) unless given; spread it into a list of your own to add more.
      */
     emojis?: readonly EmojiItem[];
 };

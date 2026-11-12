@@ -31,21 +31,13 @@ export type InsertTextOptions = {
  * What is selected, as one value that plugin UI renders itself from. Read it in a toolbar render function, which runs on every state change.
  */
 export type RteSelectionSnapshot = {
-    /**
-     * A caret rather than a range, so it covers nothing and `text` is empty
-     */
+    /** A caret rather than a range, so it covers nothing and `text` is empty. */
     isCollapsed: boolean;
-    /**
-     * The plain text the selection covers — what plugin UI prefills a text field with
-     */
+    /** The plain text the selection covers — what plugin UI prefills a text field with. */
     text: string;
-    /**
-     * The block the selection is in, attributes flat, no children — in a list item, the paragraph inside it
-     */
+    /** The block the selection is in, attributes flat, no children — in a list item, the paragraph inside it. */
     block: { type: string; [attribute: string]: unknown } | null;
-    /**
-     * Every block around the selection, innermost first (`block`, then its list items and lists) — what a wrapper's active state reads
-     */
+    /** Every block around the selection, innermost first (`block`, then its list items and lists) — what a wrapper's active state reads. */
     blocks: { type: string; [attribute: string]: unknown }[];
     /**
      * The marks the selection carries, by mark type; a mark the selection does
@@ -93,7 +85,7 @@ export type EditorControlApi = {
         toggle(type: string, value?: Record<string, unknown>): void;
         /**
          * Put a mark on all of the selection with `value`, replacing the value
-         * any of it carried, as one undo step: how a colour is changed
+         * any of it carried, as one undo step: how a colour is changed.
          */
         set(type: string, value?: Record<string, unknown>): void;
         /**
@@ -117,9 +109,7 @@ export type EditorControlApi = {
          * A block inside a list is first taken out of its list, so the result stands on its own.
          */
         setType(type: string, value?: Record<string, unknown>): void;
-        /**
-         * Set attributes on every block the selection touches — how alignment is applied
-         */
+        /** Set attributes on every block the selection touches — how alignment is applied. */
         updateAttributes(attributes: Record<string, unknown>): void;
         /**
          * Set `name` to `value` on every text block the selection touches, or remove it (set it to null) when every one already has that value. Changes nothing when no selected text block declares `name`
@@ -141,21 +131,15 @@ export type EditorControlApi = {
          * that type. Switching between list types converts in place.
          */
         toggle(type: string): void;
-        /**
-         * Nest the current list item under the one above it. Returns false when there is nothing to nest.
-         */
+        /** Nest the current list item under the one above it. Returns false when there is nothing to nest. */
         indent(): boolean;
-        /**
-         * Lift the current list item out one level, leaving the list entirely at the top
-         */
+        /** Lift the current list item out one level, leaving the list entirely at the top. */
         outdent(): boolean;
         /**
          * Split the current list item in two or, in an empty item, leave the list (outdent) — Enter inside a list. Returns false outside one.
          */
         split(): boolean;
-        /**
-         * Replace every list the selection touches with the blocks its items held, even when the selection merely contains lists
-         */
+        /** Replace every list the selection touches with the blocks its items held, even when the selection merely contains lists. */
         unwrapAll(): boolean;
     };
 
@@ -173,35 +157,21 @@ export type EditorControlApi = {
      */
     insertText(text: string, marks?: Record<string, Record<string, unknown>>, options?: InsertTextOptions): void;
 
-    /**
-     * The text around the caret, within its block
-     */
+    /** The text around the caret, within its block. */
     text: {
-        /**
-         * Everything in the caret's block before the caret; empty when the selection is not a caret in text
-         */
+        /** Everything in the caret's block before the caret; empty when the selection is not a caret in text. */
         beforeCaret(): string;
-        /**
-         * Everything in the caret's block after the caret
-         */
+        /** Everything in the caret's block after the caret. */
         afterCaret(): string;
-        /**
-         * Delete this many characters before the caret, without leaving the block
-         */
+        /** Delete this many characters before the caret, without leaving the block. */
         deleteBefore(count: number): void;
     };
 
-    /**
-     * The undo history, the same steps as `UNDO_HOTKEY` and `REDO_HOTKEY`
-     */
+    /** The undo history, the same steps as `UNDO_HOTKEY` and `REDO_HOTKEY`. */
     history: {
-        /**
-         * Take the last change back; right after a typing rewrite, only the rewrite
-         */
+        /** Take the last change back; right after a typing rewrite, only the rewrite. */
         undo(): void;
-        /**
-         * Make the last undone change again
-         */
+        /** Make the last undone change again. */
         redo(): void;
     };
 
@@ -224,14 +194,10 @@ export type EditorControlApi = {
      * Return focus to the editor, e.g. after closing plugin UI.
      */
     focus(): void;
-    /**
-     * Give up focus, e.g. to commit a single-line editor on Enter.
-     */
+    /** Give up focus, e.g. to commit a single-line editor on Enter. */
     blur(): void;
 
-    /**
-     * Which node's editing UI is open. The editor holds it so a toolbar button can open it; leaving the node closes it.
-     */
+    /** Which node's editing UI is open. The editor holds it so a toolbar button can open it; leaving the node closes it. */
     editors: {
         /**
          * Open the `edit` view of the node of this type at the selection

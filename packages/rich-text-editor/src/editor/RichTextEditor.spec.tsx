@@ -2980,7 +2980,7 @@ describe('pasting', () => {
             const block = stored()?.blocks[0];
             const children = block && 'children' in block ? block.children : [];
             expect(children).toContainEqual({ text: 'plain ' });
-            expect(children).toContainEqual({ text: 'red', fontColor: { color: 'red' } });
+            expect(children).toContainEqual({ text: 'red', fontColor: { color: '#ff0000' } });
         });
 
         it('shows what was pasted', () => {
@@ -3036,12 +3036,12 @@ describe('pasting', () => {
             ]);
         });
 
-        it('keeps a colour as it was written, and leaves plain black alone', () => {
+        it('stores a colour as hex, and leaves plain black alone', () => {
             const doc = pasted(
                 '<p><span style="color: #f00">red</span><span style="color: rgb(0, 0, 0)">black</span></p>',
             );
 
-            expect(childrenOf(doc)).toEqual([{ text: 'red', fontColor: { color: '#f00' } }, { text: 'black' }]);
+            expect(childrenOf(doc)).toEqual([{ text: 'red', fontColor: { color: '#ff0000' } }, { text: 'black' }]);
         });
 
         it('reads only the alignments it offers', () => {

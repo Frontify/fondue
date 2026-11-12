@@ -126,6 +126,11 @@ const toolbarButtonClasses = (active: boolean): string =>
 const meta: Meta<typeof RichTextEditor> = {
     title: 'Rich Text Editor/Plugins',
     component: RichTextEditor,
+    parameters: {
+        status: {
+            type: 'experimental',
+        },
+    },
 };
 export default meta;
 
