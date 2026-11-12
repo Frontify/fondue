@@ -1,5 +1,20 @@
 # @frontify/fondue-components
 
+## 37.0.0-beta.1
+
+### Major Changes
+
+- [#3019](https://github.com/Frontify/fondue/pull/3019) [`4e92d69`](https://github.com/Frontify/fondue/commit/4e92d69a07cd9df0763a2e00cbd78c7ca3ceb4ed) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat!: remove deprecated APIs
+
+  - `Accordion.Trigger`: put the content in `Accordion.Header` directly.
+  - `Table.Root` `sticky` (`'head' | 'col' | 'both'`): use `Table.Header sticky` for a sticky header, and `Table.Body firstColumnSticky` or `lastColumnSticky` for sticky columns.
+  - `Textarea` `extraActions` and the `ExtraAction` type: use `Textarea.Slot` with your own buttons.
+  - `ThemeProvider` `translations`: use `locale`.
+
+### Patch Changes
+
+- [#3013](https://github.com/Frontify/fondue/pull/3013) [`b7bc6c7`](https://github.com/Frontify/fondue/commit/b7bc6c7774795824cdcf52cb10201162d83ee252) Thanks [@noahwaldner](https://github.com/noahwaldner)! - docs: update import paths and links for fondue 14. The SDK guides no longer mention the removed `@frontify/fondue` root entry or `@frontify/fondue/styles`, and `ThemeProvider` points to `@frontify/fondue/components/locales`.
+
 ## 37.0.0-beta.0
 
 ### Major Changes

@@ -1,5 +1,11 @@
 # @frontify/fondue-tokens
 
+## 6.0.0-beta.1
+
+### Major Changes
+
+- [#3011](https://github.com/Frontify/fondue/pull/3011) [`876e823`](https://github.com/Frontify/fondue/commit/876e8239702086c9acc2139fa7f5037a984de05b) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat!: remove the legacy token codemod. The `@frontify/fondue-tokens/legacy/tools/replaceLegacyTokens` export is gone (it pointed at a file that was never published). Use a version below 6 if you still need to migrate legacy CSS variables or Tailwind classes.
+
 ## 6.0.0-beta.0
 
 ### Major Changes
