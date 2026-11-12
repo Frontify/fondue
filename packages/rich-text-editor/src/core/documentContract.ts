@@ -6,12 +6,11 @@
 /**
  * The custom properties through which the document hands out the space between blocks.
  * The document sets them on each block; a block's look reads them for its margins.
+ * A plugin that wants a gap of its own names that variable itself.
  */
 export const DOCUMENT_GAP_VARIABLES = {
     /** The gap below a block. */
     block: '--rte-block-gap',
-    /** The gap above a heading, which is larger than a block's own gap. */
-    heading: '--rte-heading-gap',
 } as const;
 
 /**
