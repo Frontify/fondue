@@ -338,7 +338,7 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
      */
     inclusive?: boolean;
     /**
-     * Mark types that cannot sit on the same text as this one: putting this mark on takes them off. A type no mounted plugin registers is ignored.
+     * Mark types that cannot sit on the same text as this one: putting this mark on takes them off. Name each other in both marks, or the other mark cannot be put on this one's text. A type no mounted plugin registers is ignored.
      */
     excludes?: readonly string[];
     /**
@@ -410,6 +410,7 @@ export type ParseRule<TValue> = {
 
 /**
  * A rule that matches any element whose own `style` attribute declares the CSS property, handed the declared value.
+ * It never stops tag rules or other style rules from reading the same element.
  */
 export type StyleParseRule<TValue> = {
     /**
@@ -424,7 +425,7 @@ export type StyleParseRule<TValue> = {
      * Receives the declared CSS value and returns the mark's value, or null when
      * the declaration is not this mark.
      */
-    value?: (cssValue: string) => TValue | null;
+    value: (cssValue: string) => TValue | null;
 };
 
 /**
@@ -435,6 +436,10 @@ export type MarkClearRule = {
      * A CSS property name: `font-weight`.
      */
     style: string;
+    /**
+     * Never set: lets TypeScript tell a clear rule from a tag rule.
+     */
+    tag?: undefined;
     /**
      * Receives the declared CSS value and returns true when it takes the mark off.
      */
@@ -447,6 +452,10 @@ export type MarkClearRule = {
 export type MarkIgnoreRule = {
     tag: string;
     ignore: true;
+    /**
+     * Never set: lets TypeScript read `style` on every parse rule.
+     */
+    style?: undefined;
 };
 
 /**
@@ -672,8 +681,9 @@ export type RteInputRule =
      * Text swapped for other text the moment its last character is typed, no
      * space needed: `->` becomes `→`. A string matches as written; a pattern
      * is anchored to the end of the text before the caret, so a lookbehind can
-     * say what may not come before it, and its `replace` may use `$1`. An
-     * inline element reads as U+FFFC in the text. The rule steps aside when
+     * say what may not come before it, and its `replace` may use `$1` to `$9`:
+     * there, `$` and a digit from 1 to 9 is always a group reference, and one
+     * the pattern lacks throws. An inline element reads as U+FFFC in the text. The rule steps aside when
      * the text it would replace carries a mark that opts out (inline code).
      * Only the matched text is replaced, so match a character only to look at
      * it with a lookbehind.

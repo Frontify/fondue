@@ -9,12 +9,11 @@ import {
     type HtmlSpec,
     type InlineDefinition,
     isEmpty,
-    type MarkClearRule as ClearRule,
+    type MarkClearRule,
     type MarkDefinition,
-    type MarkIgnoreRule as IgnoreRule,
+    type MarkIgnoreRule,
     type MarkParseRule,
     type ParseRule,
-    type StyleParseRule,
     type InsertTextOptions,
     type InsertTextUndo,
     type Paste,
@@ -32,6 +31,7 @@ import {
     type RteToolbarEntry,
     type RteToolbarGroup,
     type RtePluginDefinition,
+    type StyleParseRule,
     type ToolbarItemProps,
     toPlainText as plainText,
     type ToPlainTextOptions,
@@ -187,6 +187,8 @@ type EditComponentProps<TValue, TCurrent> = EditProps<TValue, TCurrent>;
 type Parse<TValue> = ParseRule<TValue>;
 type MarkParse<TValue> = MarkParseRule<TValue>;
 type StyleParse<TValue> = StyleParseRule<TValue>;
+type MarkClear = MarkClearRule;
+type MarkIgnore = MarkIgnoreRule;
 type Html = HtmlSpec;
 
 // oxlint-disable-next-line typescript/no-namespace -- types only; groups the authoring types under `RtePlugin`.
@@ -209,8 +211,8 @@ export declare namespace RtePlugin {
     export type ParseRule<TValue> = Parse<TValue>;
     export type MarkParseRule<TValue> = MarkParse<TValue>;
     export type StyleParseRule<TValue> = StyleParse<TValue>;
-    export type MarkClearRule = ClearRule;
-    export type MarkIgnoreRule = IgnoreRule;
+    export type MarkClearRule = MarkClear;
+    export type MarkIgnoreRule = MarkIgnore;
     export type HtmlSpec = Html;
     export type Content = RteContent;
     export type ToolbarEntry = RteToolbarEntry;

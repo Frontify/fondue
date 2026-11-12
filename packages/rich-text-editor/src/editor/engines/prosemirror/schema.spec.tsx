@@ -128,6 +128,24 @@ describe('buildSchema', () => {
         ).toThrow('Block "bulletList" declares items of type "nope", which is not registered.');
     });
 
+    it('refuses a mark style rule whose property is not a CSS property name', () => {
+        expect(() =>
+            buildSchema([
+                definePlugin({
+                    id: 'bold',
+                    content: defineContent({
+                        marks: {
+                            bold: defineMark({
+                                toHtml: () => ({ tag: 'strong', children: true }),
+                                parse: [{ style: 'fontWeight', value: () => ({}) }],
+                            }),
+                        },
+                    }),
+                }),
+            ]),
+        ).toThrow('The "bold" mark reads "fontWeight", which is not a CSS property name such as font-weight.');
+    });
+
     it('lets a mark take off the marks it excludes, ignoring a type no mounted plugin registers', () => {
         const both = buildSchema(shipped('subscript', 'superscript'));
         const subscriptOnly = buildSchema(shipped('subscript'));
