@@ -184,7 +184,7 @@ const annotateListParagraphs = (dom: HTMLElement): void => {
  * Removes any pasted-list contract the paste carries, then, for Word and
  * Outlook, writes the contract on their list paragraphs and removes what they
  * write besides content: the `<o:p>` markers and each list marker, also the
- * number a heading carries. Does nothing else to a paste from elsewhere.
+ * number a text block carries, for example a heading. Does nothing else to a paste from elsewhere.
  */
 export const tidyOffice = (dom: HTMLElement): void => {
     // Only the engine writes the pasted-list contract, so none the paste itself carries is read.

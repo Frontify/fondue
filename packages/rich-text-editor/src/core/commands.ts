@@ -18,7 +18,7 @@ export type RteAttributeState = { coverage: 'all'; value: unknown } | { coverage
 
 /**
  * How `insertText` is undone. `'together'`: the text and its marks in one step. `'marksFirst'`: the marks in a step
- * of their own, so the first undo keeps the text, as undoing an autolink does.
+ * of their own, so the first undo keeps the text, as undoing a `markPattern` token does.
  */
 export type InsertTextUndo = 'together' | 'marksFirst';
 
@@ -58,7 +58,7 @@ export type RteSelectionSnapshot = {
      */
     marks: Record<string, RteMarkState>;
     /**
-     * The block attributes plugins add to every text block (alignment), by name; one no selected text block declares
+     * The block attributes plugins add to every text block (for example, alignment), by name; one no selected text block declares
      * is absent. On a caret it is the caret's block.
      */
     attributes: Record<string, RteAttributeState>;
@@ -141,14 +141,14 @@ export type EditorControlApi = {
          * the selection spans.
          */
         setType(type: string, value?: Record<string, unknown>): void;
-        /** Set attributes on every block the selection touches — how alignment is applied. */
+        /** Set attributes on every block the selection touches — for example, how alignment is applied. */
         updateAttributes(attributes: Record<string, unknown>): void;
         /**
          * Set `name` to `value` on every text block the selection touches, or remove it (set it to null) when every one already has that value. Changes nothing when no selected text block declares `name`
          */
         toggleAttribute(name: string, value: unknown): BlockAttributeToggle;
         /**
-         * Reset every `blockAttributes` attribute (alignment) to its default across the selection
+         * Reset every `blockAttributes` attribute (for example, alignment) to its default across the selection
          */
         resetAttributes(): void;
         /**
@@ -174,8 +174,8 @@ export type EditorControlApi = {
     };
 
     /**
-     * Insert a node at the selection — how void blocks (a column break) and
-     * inline elements (mentions) get added, with `value` as what it stores.
+     * Insert a node at the selection — how void blocks (for example, a column break) and
+     * inline elements (for example, mentions) get added, with `value` as what it stores.
      * The caret ends up after what was inserted.
      */
     insert(type: string, value?: Record<string, unknown>): void;

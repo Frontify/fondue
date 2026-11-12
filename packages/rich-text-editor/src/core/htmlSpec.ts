@@ -15,7 +15,7 @@ export type HtmlAttributes = { class?: string; style?: StyleMap } & Record<
 /**
  * One element. `children: true` is where the node's content goes (the text of
  * a paragraph, the items of a list); a string, or a mix of strings and nested
- * elements, is fixed content — a mention's `@jane`.
+ * elements, is fixed content, for example a mention's `@jane`.
  */
 export type HtmlSpec = {
     tag: keyof HTMLElementTagNameMap;
@@ -28,7 +28,7 @@ const CSS_PROPERTY = /^-{0,2}[a-zA-Z][a-zA-Z0-9-]*$/;
 
 /**
  * What could end a declaration, open a rule, load a resource or leave the
- * attribute. Values come from stored documents (a font colour), so this is a
+ * attribute. Values come from stored documents (for example, a font colour), so this is a
  * backstop behind each plugin's own checks, not the only one.
  */
 const UNSAFE_CSS_VALUE = /[;{}\\<]|url\(|expression\(/i;
@@ -143,7 +143,7 @@ export const attributeEntries = (tag: string, attrs?: HtmlAttributes): [string, 
     return entries;
 };
 
-/** Merges styles onto the outermost element, so a block-wide attribute (alignment) lands without the block knowing. */
+/** Merges styles onto the outermost element, so a block-wide attribute (for example, alignment) lands without the block knowing. */
 export const withRootStyle = (spec: HtmlSpec, style: StyleMap): HtmlSpec =>
     Object.keys(style).length === 0
         ? spec

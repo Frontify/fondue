@@ -24,7 +24,7 @@ export type ContentRegistry = {
      * plugin order). Engine and renderer both read this order, so they nest alike.
      */
     marks: Map<string, MarkDefinition>;
-    /** Attributes every text block carries (alignment), by name. */
+    /** Attributes every text block carries (for example, alignment), by name. */
     blockAttributes: Map<string, BlockAttributeDefinition>;
     /** List type → its item type, inferred from `content: { items }`. */
     itemTypeByList: Map<string, string>;
@@ -229,7 +229,7 @@ export const blockAttributeStyle = (registry: ContentRegistry, stored: Record<st
 };
 
 /**
- * A block's markup with what every text block carries (alignment) applied to
+ * A block's markup with what every text block carries (for example, alignment) applied to
  * its outermost element — shared by editor, readonly view and export so they agree.
  */
 export const blockHtml = (

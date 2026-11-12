@@ -121,7 +121,7 @@ const blocksAt = (state: EditorState): Pick<RteSelectionSnapshot, 'block' | 'blo
         }
     }
 
-    // A selected void block (a column break): the selection sits at doc level, so
+    // A selected void block (for example, a column break): the selection sits at doc level, so
     // there is no ancestor to have found it as.
     const selected = $from.nodeAfter;
     if (block === null && selected?.type.spec.group === 'block') {
@@ -177,7 +177,7 @@ const snapshotOf = (state: EditorState, registry: PluginRegistry): RteSelectionS
     const { from, to, empty } = state.selection;
     return {
         isCollapsed: empty,
-        // Void nodes (a mention, a line break) contribute nothing: only readable text.
+        // Void nodes (for example, a mention or a line break) contribute nothing: only readable text.
         text: empty ? '' : state.doc.textBetween(from, to, ' '),
         ...blocksAt(state),
         marks: marksAt(state),
@@ -381,7 +381,7 @@ const createMarkApi = (
 
 /**
  * Attributes for a block turned into another type: the ones every text block
- * carries (alignment) stay as they were, under the new type's own. Per block,
+ * carries (for example, alignment) stay as they were, under the new type's own. Per block,
  * as the engine's `setBlockType` takes them, since blocks differ.
  */
 export const keepCarriedAttrs =

@@ -50,7 +50,7 @@ export type OwnType =
     /** A block holding other blocks, `content: { blocks }` — a list item. */
     | { kind: 'container'; type: string }
     | { kind: 'textBlock'; type: string }
-    /** A block holding nothing — a column break. */
+    /** A block holding nothing, for example a column break. */
     | { kind: 'voidBlock'; type: string }
     | { kind: 'inline'; type: string }
     | { kind: 'none' };
@@ -338,9 +338,9 @@ const holdsBlocks = (type: string, registry: ContentRegistry): boolean => {
 
 /**
  * The command whose `active` block the selection is in, if any. Blocks are
- * read innermost first, so a numbered list inside a bulleted item names the
- * numbered one. A paragraph that is the content of a block holding blocks (a
- * list item) is skipped, so the container's command names the selection; any
+ * read innermost first, so a block inside an item of another block names the
+ * inner one. A text block that is the content of a block holding blocks (for
+ * example, a list item) is skipped, so the container's command names the selection; any
  * other text block names it itself.
  */
 export const activeCommand = (

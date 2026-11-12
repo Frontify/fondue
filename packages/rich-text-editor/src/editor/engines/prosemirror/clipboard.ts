@@ -156,8 +156,8 @@ export const handlePasteByFeatures =
 
 /**
  * Pasting blocks into an empty one: the engine keeps the target block's type
- * and attributes (a centred heading pasted into an empty paragraph would turn
- * plain), so the empty block takes on the first pasted block's instead.
+ * and attributes (for example, a centred heading pasted into an empty paragraph would
+ * turn plain), so the empty block takes on the first pasted block's instead.
  */
 export const handlePasteIntoEmptyBlock = (view: EditorView, _event: ClipboardEvent, slice: Slice): boolean => {
     const { $from, empty } = view.state.selection;

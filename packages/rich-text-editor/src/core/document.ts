@@ -17,7 +17,7 @@ export type RteDocumentOf<TBlock extends RteBlockNode = RteBlockNode> = {
  * Structural shape of any block; plugin-declared attributes live flat on it.
  * `children` is text runs for a text block, blocks for a container (a list
  * holds its items) — per the block's declared `content` — and absent for a void
- * block (a column break).
+ * block (for example, a column break).
  */
 export type RteBlockNode = {
     type: string;
@@ -30,7 +30,7 @@ export type ParagraphBlock = {
     children: RteInlineNode[];
 };
 
-/** What can sit inside a text block: text runs, or void inline elements (mentions, line breaks). */
+/** What can sit inside a text block: text runs, or void inline elements (for example, mentions or line breaks). */
 export type RteInlineNode = RteTextNode | RteInlineElementNode;
 
 /**

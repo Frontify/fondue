@@ -90,20 +90,20 @@ const markPatternMatcher = (rule: RuleOfKind<'markPattern'>, context: RuleContex
         if (!typed) {
             return null;
         }
-        let linked = typed;
+        let trimmed = typed;
         if (rule.trim !== undefined) {
-            linked = trimTrailingPunctuation(typed, rule.trim);
+            trimmed = trimTrailingPunctuation(typed, rule.trim);
         }
-        if (!token.test(linked)) {
+        if (!token.test(trimmed)) {
             return null;
         }
         // The match is the token plus the terminator, and maybe the whitespace before the token.
         const from = start + (match[0].length - 1 - typed.length);
-        const to = from + linked.length;
+        const to = from + trimmed.length;
         if ([markType, ...context.excludedMarks].some((type) => state.doc.rangeHasMark(from, to, type))) {
             return null;
         }
-        const value = rule.value(linked);
+        const value = rule.value(trimmed);
         if (value === null) {
             return null;
         }
@@ -113,9 +113,10 @@ const markPatternMatcher = (rule: RuleOfKind<'markPattern'>, context: RuleContex
 };
 
 /**
- * `https://example.com ` -> the address carries the mark, the space does not.
- * Punctuation right before the space is left out of the mark. A token that
- * already carries the mark, or one that opts out of rules, stays as typed.
+ * A token followed by a space gets the rule's mark, the space does not.
+ * Punctuation right before the space is left out of the mark when the rule
+ * declares a `trim`. A token that already carries the mark, or one that opts
+ * out of rules, stays as typed.
  */
 export const markPatternRule = (rule: RuleOfKind<'markPattern'>, context: RuleContext): InputRule | null => {
     const matcher = markPatternMatcher(rule, context);
@@ -139,21 +140,21 @@ export const markPatternRule = (rule: RuleOfKind<'markPattern'>, context: RuleCo
 };
 
 /** A token found before the caret, with the text it had then. */
-type PendingLink = MarkRange & { text: string };
+type PendingToken = MarkRange & { text: string };
 
-/** What reading an address before the caret needs. */
-type Autolinker = {
+/** What reading a token before the caret needs. */
+type TokenMatcher = {
     matchers: readonly MarkPatternMatcher[];
     excludedMarks: readonly PmMarkType[];
 };
 
-const autolinkKey = new PluginKey<boolean>('autolinkOnEnter');
+const markTokenKey = new PluginKey<boolean>('markTokenOnEnter');
 
-const addressBeforeCaret = (
+const tokenBeforeCaret = (
     state: EditorState,
-    { matchers, excludedMarks }: Autolinker,
+    { matchers, excludedMarks }: TokenMatcher,
     composing: boolean,
-): PendingLink | null => {
+): PendingToken | null => {
     const { $from, empty } = state.selection;
     if (!empty || !$from.parent.isTextblock || composing) {
         return null;
@@ -180,22 +181,22 @@ const addressBeforeCaret = (
     return null;
 };
 
-/** The link as its own history step, so the first undo takes back the link and keeps the new line. */
-const linkTransaction = (state: EditorState, link: PendingLink, focused: boolean): Transaction | null => {
-    if (link.to > state.doc.content.size || state.doc.textBetween(link.from, link.to) !== link.text) {
+/** The token as its own history step, so the first undo takes back the token and keeps the new line. */
+const markTransaction = (state: EditorState, token: PendingToken, focused: boolean): Transaction | null => {
+    if (token.to > state.doc.content.size || state.doc.textBetween(token.from, token.to) !== token.text) {
         return null;
     }
-    // Backspace takes the link back only while the author is still in the editor.
-    return closeHistory(state.tr.addMark(link.from, link.to, link.mark)).setMeta(autolinkKey, focused);
+    // Backspace takes the token back only while the author is still in the editor.
+    return closeHistory(state.tr.addMark(token.from, token.to, token.mark)).setMeta(markTokenKey, focused);
 };
 
 /**
  * Enter and Shift-Enter end a token as a space does: the keypress carries on
- * (always "not handled") to split the block or break the line, and the address
- * before the caret is linked right after, as its own history step. Backspace
- * right after takes the link back and keeps the text.
+ * (always "not handled") to split the block or break the line, and the token
+ * before the caret is marked right after, as its own history step. Backspace
+ * right after takes the token back and keeps the text.
  */
-export const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] => {
+export const markTokenOnEnter = (registry: PluginRegistry, schema: Schema): PmPlugin[] => {
     const context = ruleContext(registry, schema);
     const matchers = registry.inputRules.flatMap((rule) => {
         if (rule.kind !== 'markPattern') {
@@ -206,32 +207,32 @@ export const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlu
     if (matchers.length === 0) {
         return [];
     }
-    const autolinker: Autolinker = { matchers, excludedMarks: context.excludedMarks };
+    const tokenMatcher: TokenMatcher = { matchers, excludedMarks: context.excludedMarks };
 
     // Set only by the key handler and its fallback: a state can be applied and thrown away (`blocks.setType`).
-    let pending: { link: PendingLink; doc: PmNode } | null = null;
+    let pending: { token: PendingToken; doc: PmNode } | null = null;
 
     const plugin = new Plugin<boolean>({
-        key: autolinkKey,
+        key: markTokenKey,
         state: {
             init: () => false,
-            // True while nothing has happened since the link was added.
-            apply: (transaction, justLinked) => {
-                const meta: unknown = transaction.getMeta(autolinkKey);
+            // True while nothing has happened since the token was added.
+            apply: (transaction, justMarked) => {
+                const meta: unknown = transaction.getMeta(markTokenKey);
                 if (typeof meta === 'boolean') {
                     return meta;
                 }
                 if (transaction.docChanged || transaction.selectionSet || transaction.storedMarksSet) {
                     return false;
                 }
-                return justLinked;
+                return justMarked;
             },
         },
         props: {
             handleDOMEvents: {
                 blur: (view) => {
-                    if (autolinkKey.getState(view.state) === true) {
-                        view.dispatch(view.state.tr.setMeta(autolinkKey, false));
+                    if (markTokenKey.getState(view.state) === true) {
+                        view.dispatch(view.state.tr.setMeta(markTokenKey, false));
                     }
                     return false;
                 },
@@ -242,29 +243,29 @@ export const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlu
                     event.key === 'Backspace' &&
                     !modified &&
                     !event.shiftKey &&
-                    autolinkKey.getState(view.state) === true
+                    markTokenKey.getState(view.state) === true
                 ) {
                     return undo(view.state, view.dispatch);
                 }
                 if (event.key !== 'Enter' || modified) {
                     return false;
                 }
-                const link = addressBeforeCaret(view.state, autolinker, view.composing);
-                if (!link) {
+                const token = tokenBeforeCaret(view.state, tokenMatcher, view.composing);
+                if (!token) {
                     return false;
                 }
                 const { doc } = view.state;
-                pending = { link, doc };
-                // A key that changes nothing (Enter that blurs a single-line editor) still links.
+                pending = { token, doc };
+                // A key that changes nothing (Enter that blurs a single-line editor) still marks the token.
                 queueMicrotask(() => {
-                    if (pending?.link !== link) {
+                    if (pending?.token !== token) {
                         return;
                     }
                     pending = null;
                     if (view.isDestroyed || view.state.doc !== doc) {
                         return;
                     }
-                    const transaction = linkTransaction(view.state, link, view.hasFocus());
+                    const transaction = markTransaction(view.state, token, view.hasFocus());
                     if (transaction) {
                         view.dispatch(transaction);
                     }
@@ -280,13 +281,13 @@ export const autolinkOnEnter = (registry: PluginRegistry, schema: Schema): PmPlu
             if (!transactions.some((transaction) => transaction.docChanged)) {
                 return null;
             }
-            const { link } = pending;
-            let { from, to } = link;
+            const { token } = pending;
+            let { from, to } = token;
             for (const transaction of transactions) {
                 from = transaction.mapping.map(from, 1);
                 to = transaction.mapping.map(to, -1);
             }
-            return linkTransaction(newState, { ...link, from, to }, true);
+            return markTransaction(newState, { ...token, from, to }, true);
         },
     });
     return [plugin];

@@ -13,7 +13,7 @@
  */
 
 /**
- * A void block (a column break) is selected whole and the engine marks it only
+ * A void block (for example, a column break) is selected whole and the engine marks it only
  * with a class, so it needs a visible ring. `hideselection`, added only while a
  * whole node is selected, drops the native caret and highlight elsewhere.
  */
@@ -41,7 +41,7 @@
     display: contents;
 }
 
-/** An inline node view's element (a mention): reset the same way, but an inline box. */
+/** An inline node view's element (for example, a mention): reset the same way, but an inline box. */
 [data-rte-editable] .rte-inline-view {
     all: unset;
 }

@@ -22,7 +22,7 @@ import {
 } from '#/core';
 import { blurOnBreakPlugin, defaultPlugins } from '#/plugins';
 
-import { trimTrailingPunctuation } from './autolink';
+import { trimTrailingPunctuation } from './markPatternKeys';
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
 
 /**
