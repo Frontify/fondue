@@ -11,9 +11,7 @@ import { buildPluginRegistry, type PluginRegistry } from './registry';
 
 type AnyNode = RteBlockNode | RteInlineNode;
 
-/**
- * Whitespace-only text, an empty block, a block of those. A node without `children` (a mention, a column break) is content.
- */
+/** Whitespace-only text, an empty block, a block of those. A node without `children` (a mention, a column break) is content. */
 const isBlank = (node: AnyNode): boolean => {
     if ('text' in node && typeof node.text === 'string') {
         return !/\S/.test(node.text);
@@ -49,9 +47,7 @@ const specText = (spec: HtmlSpec): string => {
         : '';
 };
 
-/**
- * A text block's runs as one line; an inline no plugin defines has no text to give
- */
+/** A text block's runs as one line; an inline no plugin defines has no text to give. */
 const inlineText = (inlines: readonly RteInlineNode[], registry: PluginRegistry): string =>
     inlines
         .map((inline) => {
@@ -76,9 +72,7 @@ const holdsBlocks = (block: RteBlockNode, registry: PluginRegistry): boolean => 
     return (block.children ?? []).some((child) => Array.isArray((child as AnyNode).children));
 };
 
-/**
- * One line per text block, lists flattened; a void block (a column break) adds none
- */
+/** One line per text block, lists flattened; a void block (a column break) adds none. */
 const blockLines = (blocks: readonly RteBlockNode[], registry: PluginRegistry): string[] =>
     blocks.flatMap((block) => {
         if (block.children === undefined) {

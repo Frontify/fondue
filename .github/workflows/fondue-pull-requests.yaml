@@ -6,6 +6,7 @@ on:
       - .github/actions/**
       - .github/workflows/fondue-pull-requests.yaml
       - packages/**
+      - fondue/**
       - .npmrc
       - .nvmrc
       - package.json
@@ -46,14 +47,17 @@ jobs:
       - name: Build Fondue RTE
         run: pnpm build:rte
 
+      - name: Build Fondue Rich Text Editor
+        run: pnpm build:rich-text-editor
+
       - name: Build Fondue SDK
         run: pnpm build:sdk
 
       - name: Lint code
-        run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} --filter {packages/sdk} lint
+        run: pnpm --stream --filter {fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} --filter {packages/sdk} lint
 
       - name: Typecheck code
-        run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} --filter {packages/sdk} typecheck
+        run: pnpm --stream --filter {fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} --filter {packages/sdk} typecheck
 
       # Runs here rather than in its own job: the tests take ~1s, a separate job spent ~30s on setup.
       - name: SDK unit tests

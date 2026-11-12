@@ -15,7 +15,9 @@ import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 import styles from './align.module.scss';
 
 /**
- * The attribute this plugin adds to every text block
+ * Alignment is an attribute on every text block rather than a block type of its
+ * own, so it applies to paragraphs, headings, quotes and list items alike —
+ * block types this plugin knows nothing about included.
  */
 export type AlignAttribute = {
     /**
