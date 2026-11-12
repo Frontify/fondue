@@ -1,0 +1,37 @@
+# Fondue Design System by Frontify
+
+<a href="https://github.com/Frontify/fondue/actions/workflows/continuous-deployment.yaml">
+    <img src="https://github.com/Frontify/fondue/actions/workflows/continuous-deployment.yaml/badge.svg" alt="CI Status" />
+</a>
+<a href="https://snyk.io/test/github/Frontify/fondue">
+    <img src="https://snyk.io/test/github/Frontify/fondue/badge.svg" alt="Known Vulnerabilities" />
+</a>
+<a href="https://www.npmjs.com/package/@frontify/fondue" title="latest">
+    <img alt="latest" src="https://img.shields.io/npm/v/@frontify/fondue/latest.svg" />
+</a>
+
+## Using `@frontify/fondue`
+
+1. Install fondue from npm
+
+```shell
+npm install @frontify/fondue
+```
+
+2. Use Components
+
+```typescript
+import { Button } from '@frontify/fondue/components';
+```
+
+Documentation for the provided components and how to use them is available in [Storybook](https://fondue-components.frontify.com/).
+
+### Experimental entries
+
+`@frontify/fondue/rich-text-editor` (and `@frontify/fondue/rich-text-editor/styles`) is **experimental**. It re-exports
+[`@frontify/fondue-rich-text-editor`](https://www.npmjs.com/package/@frontify/fondue-rich-text-editor), which is still in development. Its API and
+stored document format can change in any `@frontify/fondue` release, including minor and patch releases.
+
+## Contributing
+
+See [Contribution Guidelines](https://github.com/Frontify/fondue/blob/main/CONTRIBUTING.md) for contributing and local development help.
