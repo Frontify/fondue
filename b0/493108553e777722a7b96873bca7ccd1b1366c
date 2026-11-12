@@ -1,0 +1,23 @@
+.changeset/tokens-remove-legacy-token-tools.md
+  s_e303d90a4d1a69::t_0ba96de6257e09 1-5
+packages/tokens/package.json
+  s_e303d90a4d1a69::t_6a2e4cc3dc4a98 42
+packages/tokens/tsconfig.json
+  s_e303d90a4d1a69::t_d1898262549998 20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "b0493108553e777722a7b96873bca7ccd1b1366c",
+  "prompts": {},
+  "sessions": {
+    "s_e303d90a4d1a69": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b95187bb-e9f1-45de-99f7-7bb025d6a241",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
