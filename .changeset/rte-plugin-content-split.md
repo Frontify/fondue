@@ -1,5 +1,5 @@
 ---
-"@frontify/fondue-rich-text-editor": patch
+"@frontify/fondue-rich-text-editor": minor
 ---
 
-refactor(RichTextEditor): keep plugin content apart from editing UI
+refactor(RichTextEditor): keep plugin content apart from editing UI; plugins move their editing UI out of content
