@@ -5,7 +5,7 @@ import { type InputRule } from 'prosemirror-inputrules';
 import { type Mark as PmMark, type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
 import { type EditorState, Plugin, PluginKey, type Plugin as PmPlugin, type Transaction } from 'prosemirror-state';
 
-import { type PluginRegistry } from '#/core';
+import { INLINE_PLACEHOLDER, type PluginRegistry } from '#/core';
 
 import { valueAttrsFor } from './documentConversion';
 import {
@@ -51,11 +51,8 @@ export const trimTrailingPunctuation = (address: string): string => {
     }
 };
 
-/** What reading a block as text gives for an inline element (a line break, a mention). */
-const INLINE_ELEMENT = '￼';
-
 /** What may come right before a token: whitespace, an inline element, or an opening bracket or quote. Brackets are escaped so a rule with the `v` flag still compiles. */
-const TOKEN_OPENERS = String.raw`\s${INLINE_ELEMENT}\(\[\{<'"“‘`;
+const TOKEN_OPENERS = String.raw`\s${INLINE_PLACEHOLDER}\(\[\{<'"“‘`;
 
 /** How much text before the caret a rule reads, as the engine's input rules do. */
 const MAX_MATCH = 500;
@@ -87,7 +84,7 @@ const markPatternMatcher = (rule: RuleOfKind<'markPattern'>, context: RuleContex
 
     const find = (state: EditorState, match: RegExpMatchArray, start: number): MarkRange | null => {
         // A token pattern may match across an inline element: only what follows the last one counts.
-        const typed = match[1]?.split(INLINE_ELEMENT).pop();
+        const typed = match[1]?.split(INLINE_PLACEHOLDER).pop();
         if (!typed) {
             return null;
         }
@@ -163,7 +160,7 @@ const addressBeforeCaret = (
         Math.max(0, $from.parentOffset - MAX_MATCH),
         $from.parentOffset,
         undefined,
-        INLINE_ELEMENT,
+        INLINE_PLACEHOLDER,
     );
     for (const { pattern, find } of matchers) {
         const match = pattern.exec(`${textBefore} `);
