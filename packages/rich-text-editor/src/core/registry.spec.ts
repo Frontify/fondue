@@ -12,12 +12,13 @@ import {
     defineMark,
     definePlugin,
     type PasteTransform,
+    type RteBlockCommand,
     type RteContent,
     type RteInputRule,
     type RtePlugin,
     type RteToolbarGroup,
 } from './plugin';
-import { buildPluginRegistry, isClaimedBy, toolbarGroupsOf } from './registry';
+import { activeCommand, buildPluginRegistry, isClaimedBy, toolbarGroupsOf } from './registry';
 
 /**
  * The registry is the one place plugins are read: it gathers their
@@ -733,7 +734,7 @@ describe('the menu commands of a toolbar entry', () => {
         expect(registry.commands[0]).toMatchObject({ label: 'Quote', group: 'turnInto', keywords: ['cite'] });
     });
 
-    it('turn a text block into the type, and know when the selection is in it', () => {
+    it('turn a text block into the type, and name the block that makes it current', () => {
         const types: string[] = [];
         const registry = buildPluginRegistry([
             definePlugin({ id: 'quote', content, toolbar: [{ icon, label: 'Quote', menu: {} }] }),
@@ -743,8 +744,7 @@ describe('the menu commands of a toolbar entry', () => {
         command?.run({ blocks: { setType: (type: string) => types.push(type) } } as unknown as EditorControlApi);
 
         expect(types).toEqual(['quote']);
-        expect(command?.isActive?.({ block: { type: 'quote' } } as RteSelectionSnapshot)).toBe(true);
-        expect(command?.isActive?.({ block: { type: 'paragraph' } } as RteSelectionSnapshot)).toBe(false);
+        expect(command?.active).toEqual({ type: 'quote' });
     });
 
     it('may not share an id with a command another plugin declares', () => {
@@ -897,5 +897,89 @@ describe('toolbar groups', () => {
         expect(() => buildPluginRegistry([grouped('a', { id: 'odd', order })])).toThrow(
             'Plugin "a" has toolbar group "odd" with an `order` that is not a finite number.',
         );
+    });
+});
+
+describe('the active command', () => {
+    const blockOf = (content: ReturnType<typeof defineBlock>['content']) =>
+        defineBlock({ content, toHtml: () => ({ tag: 'div', children: true }), parse: [] });
+    const registry = buildPluginRegistry([
+        definePlugin({
+            id: 'blocks',
+            content: defineContent({
+                blocks: {
+                    listItem: blockOf({ blocks: ['paragraph'] }),
+                    bulletList: blockOf({ items: 'listItem' }),
+                    numberedList: blockOf({ items: 'listItem' }),
+                    textStyle: blockOf('text'),
+                },
+            }),
+        }),
+    ]);
+    const command = (id: string, active?: RteBlockCommand['active']): RteBlockCommand => ({
+        id,
+        label: id,
+        group: 'turnInto',
+        active,
+        run: () => {},
+    });
+    const text = command('text', { type: 'paragraph' });
+    const bullet = command('bullet', { type: 'bulletList' });
+    const numbered = command('numbered', { type: 'numberedList' });
+    const heading = command('heading', { type: 'textStyle', attributes: { style: 'heading-1' } });
+    const body = command('body', { type: 'textStyle', attributes: { style: 'body' } });
+    const commands = [text, bullet, numbered, heading, body];
+    const selectionIn = (...blocks: RteSelectionSnapshot['blocks']): RteSelectionSnapshot =>
+        ({ block: blocks[0] ?? null, blocks }) as RteSelectionSnapshot;
+
+    it('is Text for a paragraph at the top level', () => {
+        expect(activeCommand(commands, selectionIn({ type: 'paragraph' }), registry)).toBe(text);
+    });
+
+    it('is the list for a paragraph in a list item', () => {
+        const selection = selectionIn({ type: 'paragraph' }, { type: 'listItem' }, { type: 'bulletList' });
+
+        expect(activeCommand(commands, selection, registry)).toBe(bullet);
+    });
+
+    it('is the style for a styled text block in a list item', () => {
+        const selection = selectionIn(
+            { type: 'textStyle', style: 'heading-1' },
+            { type: 'listItem' },
+            { type: 'bulletList' },
+        );
+
+        expect(activeCommand(commands, selection, registry)).toBe(heading);
+    });
+
+    it('is the inner list for a list nested in a list item', () => {
+        const selection = selectionIn(
+            { type: 'paragraph' },
+            { type: 'listItem' },
+            { type: 'numberedList' },
+            { type: 'listItem' },
+            { type: 'bulletList' },
+        );
+
+        expect(activeCommand(commands, selection, registry)).toBe(numbered);
+    });
+
+    it('needs every listed attribute to match', () => {
+        const selection = selectionIn({ type: 'textStyle', style: 'heading-2' });
+
+        expect(activeCommand(commands, selection, registry)).toBeUndefined();
+        expect(
+            activeCommand(
+                [command('both', { type: 'textStyle', attributes: { style: 'heading-2', x: 1 } })],
+                selection,
+                registry,
+            ),
+        ).toBeUndefined();
+    });
+
+    it('is never a command without `active`', () => {
+        const selection = selectionIn({ type: 'paragraph' });
+
+        expect(activeCommand([command('plain')], selection, registry)).toBeUndefined();
     });
 });

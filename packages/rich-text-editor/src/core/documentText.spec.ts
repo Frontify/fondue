@@ -58,12 +58,20 @@ const plugins: RtePlugin[] = [
     }),
     definePlugin({
         id: 'break',
-        content: defineContent({ inlines: { break: defineInline({ toHtml: () => ({ tag: 'br' }), parse: [] }) } }),
+        content: defineContent({
+            inlines: { break: defineInline({ toHtml: () => ({ tag: 'br' }), toText: () => '\n', parse: [] }) },
+        }),
     }),
     definePlugin({
         id: 'emoji',
         content: defineContent({
-            inlines: { emoji: defineInline({ toHtml: () => ({ tag: 'img', attrs: { alt: '🙂' } }), parse: [] }) },
+            inlines: {
+                emoji: defineInline({
+                    toHtml: () => ({ tag: 'img', attrs: { alt: 'smile' } }),
+                    toText: () => '🙂',
+                    parse: [],
+                }),
+            },
         }),
     }),
 ];
@@ -117,13 +125,33 @@ describe('toPlainText', () => {
         expect(toPlainText(doc(callout, { type: 'unknownText', children: [{ text: 'line' }] }))).toBe('inside\nline');
     });
 
-    it('reads an inline element as the text of its markup: a mention, a break, an image’s alt', () => {
+    it('reads an inline element as its declared `toText`, else the fixed text of its markup', () => {
         const text = toPlainText(
             doc(paragraph({ text: 'hi ' }, mention, { type: 'break' }, { text: 'bye ' }, { type: 'emoji' })),
             { plugins },
         );
 
         expect(text).toBe('hi @jane\nbye 🙂');
+    });
+
+    it('reads fixed text nested in the markup, and no text for markup that holds none', () => {
+        const nested = definePlugin({
+            id: 'nested',
+            content: defineContent({
+                inlines: {
+                    nested: defineInline({
+                        toHtml: () => ({
+                            tag: 'a',
+                            children: [{ tag: 'span', children: ['a', { tag: 'b', children: 'b' }] }, 'c'],
+                        }),
+                        parse: [],
+                    }),
+                    image: defineInline({ toHtml: () => ({ tag: 'img', attrs: { alt: 'picture' } }), parse: [] }),
+                },
+            }),
+        });
+
+        expect(toPlainText(doc(paragraph({ type: 'nested' }, { type: 'image' })), { plugins: [nested] })).toBe('abc');
     });
 
     it('reads a text block holding only an inline element as text, not as a container', () => {

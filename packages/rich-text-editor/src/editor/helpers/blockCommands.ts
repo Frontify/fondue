@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PARAGRAPH, type PluginRegistry, type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
+import { PARAGRAPH, type PluginRegistry, type RteBlockCommand } from '#/core';
 
 /**
  * The paragraph is the editor's own block rather than a plugin's, so its
@@ -12,8 +12,7 @@ export const TEXT_COMMAND: RteBlockCommand = {
     label: 'Text',
     keywords: ['paragraph', 'plain'],
     group: 'turnInto',
-    // A paragraph inside a list item is the list's, not plain text.
-    isActive: (selection) => selection.blocks.length === 1 && selection.block?.type === PARAGRAPH,
+    active: { type: PARAGRAPH },
     run: (api) => api.blocks.setType(PARAGRAPH),
 };
 
@@ -26,30 +25,6 @@ export const commandsOf = (registry: PluginRegistry, textLabel = TEXT_COMMAND.la
 /** What the "Turn into" button offers: only blocks something is converted into. */
 export const turnIntoCommands = (commands: readonly RteBlockCommand[]): readonly RteBlockCommand[] =>
     commands.filter((command) => command.group === 'turnInto');
-
-/**
- * The command the selection already is, if any. When several say so (a numbered
- * list inside a bulleted item), the one for the innermost block wins: that is
- * the block the caret is actually in.
- */
-export const activeCommand = (
-    commands: readonly RteBlockCommand[],
-    selection: RteSelectionSnapshot,
-): RteBlockCommand | undefined => {
-    const active = commands.filter((command) => command.isActive?.(selection) === true);
-    if (active.length <= 1) {
-        return active[0];
-    }
-    // How deep a command's block sits: the first block, innermost first, that
-    // alone makes it active.
-    const depthOf = (command: RteBlockCommand): number => {
-        const depth = selection.blocks.findIndex(
-            (block) => command.isActive?.({ ...selection, block, blocks: [block] }) === true,
-        );
-        return depth === -1 ? Number.POSITIVE_INFINITY : depth;
-    };
-    return active.reduce((best, command) => (depthOf(command) < depthOf(best) ? command : best));
-};
 
 const wordsOf = (text: string): string[] => text.toLowerCase().split(/\s+/).filter(Boolean);
 

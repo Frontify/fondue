@@ -373,6 +373,8 @@ export type InlineDefinition<TValue = Record<string, unknown>> = {
      */
     defaults?: TValue;
     toHtml: (value: TValue) => HtmlSpec;
+    /** The inline's plain text; default, the fixed text its `toHtml` writes. */
+    toText?: (value: TValue) => string;
     parse: readonly ParseRule<TValue>[];
     render?: {
         /** Readonly view in place of `toHtml`. */
@@ -590,6 +592,9 @@ export type SelectedNode = {
 
 // --- Menus, keyboard, paste, typing ---
 
+/** The block the selection must be in for a command to be the current one: its type, and any attributes it must carry. */
+export type RteCommandTarget = { type: string; attributes?: Record<string, unknown> };
+
 /** A labelled entry a plugin offers to the "Turn into" menu and the `/` menu. */
 export type RteBlockCommand = {
     /** Unique across plugins, e.g. `'heading-1'`. */
@@ -601,8 +606,8 @@ export type RteBlockCommand = {
     keywords?: readonly string[];
     /** `'turnInto'` converts the current block (and is offered by `/` too); `'insert'` adds something (only `/`). */
     group: 'turnInto' | 'insert';
-    /** Whether the selection is already this — the Turn-into button shows the active label. */
-    isActive?: (selection: RteSelectionSnapshot) => boolean;
+    /** The block the selection is in for this to be the current command: the Turn-into button shows its label. */
+    active?: RteCommandTarget;
     run: (api: EditorControlApi) => void;
 };
 

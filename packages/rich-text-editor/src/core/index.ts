@@ -44,7 +44,15 @@ export {
     type ParsedHotkey,
     parseHotkey,
 } from './hotkeys';
-export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
+export {
+    attributeEntries,
+    type CheckedAttribute,
+    checkedAttributes,
+    type HtmlAttributes,
+    type HtmlSpec,
+    safeStyleEntries,
+    type StyleMap,
+} from './htmlSpec';
 export {
     type BlockAttributeDefinition,
     type BlockDefinition,
@@ -72,6 +80,7 @@ export {
     type PasteTransform,
     type PasteTransformContext,
     type RteBlockCommand,
+    type RteCommandTarget,
     type RteContent,
     type RteContentDefinition,
     type RteDelimiterRule,
@@ -90,6 +99,7 @@ export {
 } from './plugin';
 export { parseReaderOf, readTagRule, type TagRule, type TagRuleReading } from './parseReader';
 export {
+    activeCommand,
     buildPluginRegistry,
     controlOf,
     isClaimedBy,
@@ -100,6 +110,7 @@ export {
     type PluginRegistry,
     type RteShortcut,
     type RteShortcutOwner,
+    selectedNodeOf,
     type ToolbarEntry,
     type ToolbarEntryGroup,
     toggleOwn,

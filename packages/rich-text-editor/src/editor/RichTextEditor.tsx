@@ -462,6 +462,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
         <Toolbar
             items={registry.toolbarItems}
             commands={commands}
+            registry={registry}
             api={handle.api}
             editorState={editorState}
             placement={toolbarPlacement}

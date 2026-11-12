@@ -20,6 +20,7 @@ import {
     type PasteTransform,
     type PasteTransformContext,
     type RteBlockCommand,
+    type RteCommandTarget,
     type RteContent,
     type RteDelimiterRule,
     type RteEditView,
@@ -28,6 +29,7 @@ import {
     type RtePlugin,
     type RteToolbarEntry,
     type RteToolbarGroup,
+    type SelectedNode,
     type ToolbarItemProps,
 } from './plugin';
 import { PARAGRAPH } from './vocabulary';
@@ -278,6 +280,94 @@ export const toggleOwn = ({ own, api, selection, value }: ToggleOwnParams): void
     }
 };
 
+/** A block's own attributes: everything but its type and children. */
+const attributesOf = (block: Record<string, unknown>): Record<string, unknown> =>
+    Object.fromEntries(Object.entries(block).filter(([name]) => name !== 'type' && name !== 'children'));
+
+/**
+ * The entry's type at the selection: a mark as its whole run, edges included;
+ * the innermost block of that type around the selection. Null when the
+ * selection is not in one, and always for an inline, which it only sits beside.
+ */
+export const selectedNodeOf = (
+    own: OwnType,
+    api: EditorControlApi,
+    selection: RteSelectionSnapshot,
+): SelectedNode | null => {
+    switch (own.kind) {
+        case 'mark': {
+            const run = api.marks.getRun(own.type);
+            if (run === null) {
+                return null;
+            }
+            return { type: own.type, value: run.value, text: run.text };
+        }
+        // The selection sits beside an inline, never in one.
+        case 'inline':
+        case 'none':
+            return null;
+        case 'list':
+        case 'container':
+        case 'textBlock':
+        case 'voidBlock': {
+            // Innermost first, so a list nested in a list finds the inner one.
+            const block = selection.blocks.find((candidate) => candidate.type === own.type);
+            if (block === undefined) {
+                return null;
+            }
+            return { type: own.type, value: attributesOf(block), text: selection.text };
+        }
+    }
+};
+
+type SelectionBlock = RteSelectionSnapshot['blocks'][number];
+
+/** Whether the block is the one the command names: its type, and every attribute the command lists. */
+const isCommandTarget = (target: RteCommandTarget, block: SelectionBlock): boolean => {
+    if (target.type !== block.type) {
+        return false;
+    }
+    return Object.entries(target.attributes ?? {}).every(([name, value]) => block[name] === value);
+};
+
+/** Whether the type holds other blocks (`content: { blocks }`), as a list item does. */
+const holdsBlocks = (type: string, registry: ContentRegistry): boolean => {
+    const content = registry.blocks.get(type)?.content;
+    return typeof content === 'object' && 'blocks' in content;
+};
+
+/**
+ * The command whose `active` block the selection is in, if any. Blocks are
+ * read innermost first, so a numbered list inside a bulleted item names the
+ * numbered one. A paragraph that is the content of a block holding blocks (a
+ * list item) is skipped, so the container's command names the selection; any
+ * other text block names it itself.
+ */
+export const activeCommand = (
+    commands: readonly RteBlockCommand[],
+    selection: RteSelectionSnapshot,
+    registry: ContentRegistry,
+): RteBlockCommand | undefined => {
+    const { blocks } = selection;
+    for (let index = 0; index < blocks.length; index++) {
+        const block = blocks[index];
+        const outer = blocks[index + 1];
+        if (block === undefined) {
+            continue;
+        }
+        if (block.type === PARAGRAPH && outer !== undefined && holdsBlocks(outer.type, registry)) {
+            continue;
+        }
+        const command = commands.find(
+            (candidate) => candidate.active !== undefined && isCommandTarget(candidate.active, block),
+        );
+        if (command !== undefined) {
+            return command;
+        }
+    }
+    return undefined;
+};
+
 const NOTHING_TO_TOGGLE = 'nothing to toggle: name a mark, list, text block, void block or inline with `toggles`.';
 
 /**
@@ -334,7 +424,7 @@ const menuCommandOf = (
                 ...command,
                 id: own.type,
                 group: 'turnInto',
-                isActive: (selection) => selection.block?.type === own.type,
+                active: { type: own.type },
                 run: (api) => api.blocks.setType(own.type),
             };
         case 'list':
@@ -342,7 +432,7 @@ const menuCommandOf = (
                 ...command,
                 id: own.type,
                 group: 'turnInto',
-                isActive: (selection) => selection.blocks.some((block) => block.type === own.type),
+                active: { type: own.type },
                 run: (api) => api.lists.toggle(own.type),
             };
         case 'voidBlock':
