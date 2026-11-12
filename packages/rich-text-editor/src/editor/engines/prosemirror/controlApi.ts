@@ -49,9 +49,9 @@ const BLANK_TEXT = /^\s*$/;
 
 /**
  * The marks a caret would type with, or the marks EVERY text in a range
- * carries — a half-bold range is not bold. Each with the first value found, so
- * a mark spanning differently-valued runs reads as the one the range starts in.
- * A range also reports the marks only some of its text carries.
+ * carries with one value — a half-bold range is not bold, and a red-and-blue
+ * range has no one colour. A range also reports the marks only some of its
+ * text carries, or carries with different values.
  */
 const marksAt = (state: EditorState): RteSelectionSnapshot['marks'] => {
     const { from, to, empty, $from } = state.selection;
@@ -80,7 +80,7 @@ const marksAt = (state: EditorState): RteSelectionSnapshot['marks'] => {
     }
     const runs = counted.map((run) => run.marks);
     const [first = [], ...rest] = runs;
-    const carried = first.filter((mark) => rest.every((marks) => mark.type.isInSet(marks) !== undefined));
+    const carried = first.filter((mark) => rest.every((marks) => mark.isInSet(marks)));
     const marks: RteSelectionSnapshot['marks'] = Object.fromEntries(
         carried.map((mark): [string, RteMarkState] => [mark.type.name, { coverage: 'all', value: markValueOf(mark) }]),
     );
@@ -296,6 +296,24 @@ const createMarkApi = (
         } else {
             for (const range of selection.ranges) {
                 tr.addMark(range.$from.pos, range.$to.pos, mark);
+            }
+        }
+        dispatch(tr);
+        view.focus();
+    },
+    remove(type) {
+        const markType = schema.marks[type];
+        if (!markType) {
+            warnUnknownType('marks.remove', type);
+            return;
+        }
+        const view = getView();
+        const { selection, tr } = view.state;
+        if (selection.empty) {
+            tr.removeStoredMark(markType);
+        } else {
+            for (const range of selection.ranges) {
+                tr.removeMark(range.$from.pos, range.$to.pos, markType);
             }
         }
         dispatch(tr);

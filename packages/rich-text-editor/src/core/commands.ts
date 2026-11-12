@@ -52,7 +52,9 @@ export type RteSelectionSnapshot = {
      *
      * On a caret, every entry is `'all'`: the marks typing here would carry.
      * Over a range, `'all'` is a mark every text in it carries and `'some'` one
-     * only part of it carries — a half-bold range is `'some'`, not bold.
+     * only part of it carries — a half-bold range is `'some'`, not bold. A mark
+     * all of it carries, but with different values, is `'some'` too: a
+     * red-and-blue range has no one colour.
      */
     marks: Record<string, RteMarkState>;
     /**
@@ -112,6 +114,11 @@ export type EditorControlApi = {
          * any of it carried, as one undo step: how a colour is changed.
          */
         set(type: string, value?: Record<string, unknown>): void;
+        /**
+         * Take a mark off all of the selection, however much of it carried the
+         * mark, as one undo step: how a colour is removed.
+         */
+        remove(type: string): void;
         /**
          * Strip every mark from the selection, except those that declare `survivesClear` when `keepSurviving` is set:
          * the formatting half of "reset formatting".
