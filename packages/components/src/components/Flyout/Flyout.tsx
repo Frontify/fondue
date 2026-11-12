@@ -128,6 +128,15 @@ export type FlyoutContentProps = {
      * Event handler called when the escape key is pressed.
      */
     onEscapeKeyDown?: (event: KeyboardEvent) => void;
+    /**
+     * Event handler called when a pointer or focus event happens outside the flyout.
+     * Call `event.preventDefault()` to keep the flyout open, for example while a menu portaled out of it is open.
+     */
+    onInteractOutside?: (event: Event) => void;
+    /**
+     * The flyout's accessible name, for a flyout without a header to name it.
+     */
+    'aria-label'?: string;
     children?: ReactNode;
     'data-test-id'?: string;
 };

@@ -25,9 +25,10 @@ export const quotePlugin = (): RtePlugin => ({
         }),
     },
     // Toggling a text block switches between it and the paragraph.
+    toolbarGroup: 'text',
     toolbarItem: ({ isActive, toggle }) => (
         <ToolbarButton title="Quote" active={isActive} onClick={() => toggle()}>
-            <IconSpeechBubbleQuote size={16} />
+            <IconSpeechBubbleQuote size={20} />
         </ToolbarButton>
     ),
     inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],

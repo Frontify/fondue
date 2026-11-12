@@ -8,6 +8,7 @@ import { checkListPlugin } from './CheckList';
 import { codePlugin } from './Code';
 import { emojiPlugin } from './Emoji';
 import { fontColorPlugin } from './FontColor';
+import { historyPlugin } from './History';
 import { italicPlugin } from './Italic';
 import { linkPlugin } from './Link';
 import { bulletListPlugin, numberedListPlugin } from './List';
@@ -27,9 +28,10 @@ import { underlinePlugin } from './Underline';
 // picker, Link's flyout).
 
 /**
- * The built-in plugins that need no configuration, in toolbar order — what
- * `RichTextEditor` and `RichTextRenderer` mount when given no `plugins`. Pass a
- * subset, or spread it into a list of your own to add more.
+ * The built-in plugins that need no configuration — what `RichTextEditor` and
+ * `RichTextRenderer` mount when given no `plugins`. The toolbar draws them by
+ * `toolbarGroup` in the fixed group order, list order within a group, ungrouped
+ * plugins last. Pass a subset, or spread it into a list of your own to add more.
  *
  * Left out on purpose, because they need arguments or change how the editor
  * behaves: `mentionPlugin` (needs the people to mention), `columnBreakPlugin`
@@ -38,6 +40,7 @@ import { underlinePlugin } from './Underline';
  * `(c)` and `1/2` as they are typed).
  */
 export const defaultPlugins: readonly RtePlugin[] = Object.freeze([
+    historyPlugin(),
     textStylePlugin(),
     boldPlugin(),
     italicPlugin(),

@@ -183,9 +183,10 @@ export const checkListPlugin = (): RtePlugin => ({
             },
         }),
     },
+    toolbarGroup: 'lists',
     toolbarItem: ({ isActive, toggle }) => (
         <ToolbarButton active={isActive} title="To-do list" onClick={() => toggle()}>
-            <IconListCheck size={16} />
+            <IconListCheck size={20} />
         </ToolbarButton>
     ),
     // `[] ` and `[ ] ` both start one, the two ways a to-do is written in markdown; `[x] ` starts it done, `[~] ` in progress.

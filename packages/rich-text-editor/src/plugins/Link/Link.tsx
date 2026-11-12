@@ -82,6 +82,7 @@ export const linkPlugin = (): RtePlugin => ({
             render: { edit: LinkEditor },
         }),
     },
+    toolbarGroup: 'link',
     toolbarItem: (props) => <LinkToolbarButton {...props} shortcut={HOTKEY} />,
     hotkeys: {
         [HOTKEY]: (api) => {

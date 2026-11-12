@@ -23,9 +23,10 @@ export const subscriptPlugin = (): RtePlugin => ({
             parse: [{ tag: 'sub' }],
         }),
     },
+    toolbarGroup: 'marks',
     toolbarItem: ({ isActive, toggle }) => (
         <ToolbarButton title="Subscript" shortcut={HOTKEY} active={isActive} onClick={() => toggle()}>
-            <IconSubscript size={16} />
+            <IconSubscript size={20} />
         </ToolbarButton>
     ),
     hotkeys: { [HOTKEY]: (api) => api.marks.toggle('subscript') },
