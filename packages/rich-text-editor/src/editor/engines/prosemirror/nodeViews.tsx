@@ -342,7 +342,7 @@ const outerElement = (
     definition: BlockDefinition,
     node: PmNode,
 ): { tag: string; attrs: Record<string, string> } => {
-    const spec = blockHtml(registry, node.type.name, definition, node.attrs);
+    const spec = blockHtml(registry, definition, node.attrs);
     return { tag: spec.tag, attrs: Object.fromEntries(attributeEntries(spec.attrs)) };
 };
 

@@ -24,8 +24,8 @@ describe('the paragraph plugin look', () => {
     it('classes the paragraph and has it own its margins, while the plugin is on', () => {
         const content = paragraphContent();
 
-        expect(Object.keys(content.blockClassNames ?? {})).toEqual([PARAGRAPH]);
-        expect(content.blocksOwningMargins).toEqual([PARAGRAPH]);
+        expect(Object.keys(content.extendBlocks ?? {})).toEqual([PARAGRAPH]);
+        expect(content.extendBlocks?.[PARAGRAPH]?.ownsMargins).toBe(true);
     });
 
     it('refuses a value that could break out of its declaration', () => {

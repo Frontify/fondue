@@ -17,9 +17,8 @@ export type ParagraphPluginOptions = {
  */
 export const paragraphContent = ({ look = {} }: ParagraphPluginOptions = {}) =>
     defineContent({
-        // The paragraph is core's block, so the class and the margins are declared by type, and only while this plugin is on.
-        blockClassNames: { [PARAGRAPH]: styles.paragraph },
-        blocksOwningMargins: [PARAGRAPH],
+        // The paragraph is core's block, so its class and margins are declared by type, and only while this plugin is on.
+        extendBlocks: { [PARAGRAPH]: { className: styles.paragraph, ownsMargins: true } },
         contentProperties: lookProperties('body', look),
     });
 

@@ -108,7 +108,7 @@ const blockNodeSpec = (
             ...Object.fromEntries(carried.map(([name, attribute]) => [name, { default: attribute.default ?? null }])),
         },
         parseDOM: blockParseRules(definition, carried),
-        toDOM: (node) => htmlSpecToDom(blockHtml(registry, type, definition, node.attrs)),
+        toDOM: (node) => htmlSpecToDom(blockHtml(registry, definition, node.attrs)),
     };
 };
 

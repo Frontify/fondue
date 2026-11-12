@@ -36,22 +36,22 @@ export type RteContent = {
      */
     contentProperties?: Record<string, string>;
     /**
-     * Classes added to the outermost element of a block, keyed by block type. The block may be another
-     * plugin's (the paragraph), so a style reaches it only while this plugin is on. A CSS module class is
-     * `undefined` when its stylesheet lacks it, and adds none.
+     * What a plugin adds to a block it does not define, such as core's paragraph, keyed by block type.
+     * The registry folds it into the block's definition and throws for an unknown block, or for a field another
+     * plugin, or the block itself, already sets.
      */
-    blockClassNames?: Record<string, string | undefined>;
-    /**
-     * Block types whose stylesheet, declared here, writes their margins, so the document leaves them alone.
-     * The same as a block's own `ownsMargins`, for a block this plugin does not define (the paragraph).
-     */
-    blocksOwningMargins?: readonly string[];
+    extendBlocks?: Record<string, BlockLook>;
 };
 
 /**
  * What `defineContent` takes: a content without its `kind`
  */
 export type RteContentDefinition = Omit<RteContent, 'kind'>;
+
+/**
+ * How a block looks, whichever plugin defines it: the part of a block's definition another plugin may add to.
+ */
+export type BlockLook = Pick<BlockDefinition, 'className' | 'ownsMargins'>;
 
 /**
  * Declares what a plugin's document can hold.
@@ -281,6 +281,10 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
      * @default false
      */
     ownsMargins?: boolean;
+    /**
+     * A class on the block's outermost element, written next to the one its `toHtml` sets.
+     */
+    className?: string;
     /** The block's markup. `children: true` is where its content goes. */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<Partial<TValue>>[];

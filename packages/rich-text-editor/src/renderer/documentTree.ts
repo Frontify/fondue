@@ -273,7 +273,7 @@ export const blockNode = (block: RteBlockNode, registry: PluginRegistry, options
     const style = definition.content === 'text' ? blockAttributeStyle(registry, stored) : undefined;
     return (
         component(definition.render?.component, { value: blockValueOf(definition, stored) }, content, options, style) ??
-        html(blockHtml(registry, block.type, definition, stored), content)
+        html(blockHtml(registry, definition, stored), content)
     );
 };
 
