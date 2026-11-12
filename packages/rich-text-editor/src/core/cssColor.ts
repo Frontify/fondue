@@ -28,8 +28,9 @@ const PRINTABLE_ASCII = /^[\t\n\f\r -~]*$/;
 const PERCENT = 100;
 
 const HEX_COLOR = /^#([\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/;
-const COLOR_FUNCTION = /* @__PURE__ */ new RegExp(`^(${COLOR_FUNCTIONS.join('|')})a?\\(([^()]*)\\)$`);
-const isColorFunction = (kind: string): kind is ColorFunction => COLOR_FUNCTIONS.some((known) => known === kind);
+const COLOR_FUNCTION = /* @__PURE__ */ new RegExp(String.raw`^(${COLOR_FUNCTIONS.join('|')})a?\(([^()]*)\)$`);
+// The cast widens the literal tuple so `includes` accepts any string.
+const isColorFunction = (kind: string): kind is ColorFunction => (COLOR_FUNCTIONS as readonly string[]).includes(kind);
 const NUMBER = /^[+-]?(\d+(\.\d+)?|\.\d+)(e[+-]?\d+)?%?$/;
 
 /**
