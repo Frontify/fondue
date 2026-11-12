@@ -1,6 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { isApple } from './platform';
+/**
+ * The platform names of Apple systems, where `Mod` is the Command key
+ */
+const APPLE_PLATFORM = /Mac|iPhone|iPad/;
+
+const isApple = (): boolean => typeof navigator !== 'undefined' && APPLE_PLATFORM.test(navigator.platform);
 
 const MODIFIER_SEPARATOR = '-';
 

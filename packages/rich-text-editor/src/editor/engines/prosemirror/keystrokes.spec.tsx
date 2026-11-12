@@ -12,6 +12,7 @@ import {
     definePlugin,
     type EditorControlApi,
     type RteBlockNode,
+    type RteMarkPatternTrim,
     type RtePlugin,
 } from '#/core';
 import { defaultPlugins } from '#/plugins';
@@ -745,18 +746,25 @@ describe('Enter in a list over a range across items', () => {
     });
 });
 
+const LINKABLE_ADDRESS_TRIM: RteMarkPatternTrim = {
+    punctuation: /[.,;:!?"'”’]+/,
+    pairs: { ')': '(', ']': '[', '}': '{', '>': '<' },
+};
+
 describe('trimming punctuation off a typed address', () => {
     it('strips closing quotes, brackets and stops one by one', () => {
-        expect(trimTrailingPunctuation('https://a.com/x"),.')).toBe('https://a.com/x');
-        expect(trimTrailingPunctuation('https://a.com/Foo_(bar)).')).toBe('https://a.com/Foo_(bar)');
+        expect(trimTrailingPunctuation('https://a.com/x"),.', LINKABLE_ADDRESS_TRIM)).toBe('https://a.com/x');
+        expect(trimTrailingPunctuation('https://a.com/Foo_(bar)).', LINKABLE_ADDRESS_TRIM)).toBe(
+            'https://a.com/Foo_(bar)',
+        );
     });
 
     it('finishes quickly on a long run of full stops', () => {
         const run = '.'.repeat(5000);
         const started = performance.now();
 
-        expect(trimTrailingPunctuation(`https://a.com/x${run}a`)).toBe(`https://a.com/x${run}a`);
-        expect(trimTrailingPunctuation(`https://a.com/x${run}`)).toBe('https://a.com/x');
+        expect(trimTrailingPunctuation(`https://a.com/x${run}a`, LINKABLE_ADDRESS_TRIM)).toBe(`https://a.com/x${run}a`);
+        expect(trimTrailingPunctuation(`https://a.com/x${run}`, LINKABLE_ADDRESS_TRIM)).toBe('https://a.com/x');
         expect(performance.now() - started).toBeLessThan(1000);
     });
 });

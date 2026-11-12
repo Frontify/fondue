@@ -11,22 +11,11 @@ import { type EditorControlApi, type RteSelectionSnapshot } from './commands';
 import { type HtmlSpec, type StyleMap } from './htmlSpec';
 
 /**
- * A feature, described as data: a plain object declaring what exists
- * (`blocks`, `marks`, `inlines`, `blockAttributes`) and how to interact with it
- * (toolbar, hotkeys, input rules). It never runs anything itself — effects go
- * through the `EditorControlApi` it is handed.
+ * What a document can hold, apart from how it is edited. The renderer, the HTML
+ * export and a server load use only this.
  *
- * Every node is described the same way: `toHtml` (the static markup) and
- * `parse` (how pasted HTML is read back). An advanced node adds React under
- * `render`: `component` for a richer readonly view, `edit` for interactive
- * editing. Export and copy always use `toHtml`.
- *
- * Plugins are functions returning this object:
- *
- * ```ts
- * export const boldPlugin = (): RtePlugin => ({ id: 'bold', marks: { bold: defineMark({ … }) } });
- * plugins={[boldPlugin(), mentionPlugin({ items })]}
- * ```
+ * Every node has `toHtml` (its markup) and `parse` (how pasted HTML is read
+ * back); an advanced node adds a readonly view under `render.component`.
  */
 export type RteContent = {
     kind: 'content';
@@ -111,14 +100,14 @@ export type RtePlugin = {
      */
     edit?: Record<string, RteEditView>;
     /**
-     * Entries for the floating bar's "Turn into" menu and the `/` menu, in the order given
-     */
-    /**
      * Which cluster of the toolbar its entries sit in. Groups follow a fixed
      * order, entries keep mount order inside theirs, and entries with no group
      * come last, together.
      */
     toolbarGroup?: RteToolbarGroup;
+    /**
+     * Entries for the floating bar's "Turn into" menu and the `/` menu, in the order given
+     */
     commands?: readonly RteBlockCommand[];
     /**
      * Keybindings, keyed `Mod-b` style (Mod = Cmd on macOS, Ctrl elsewhere) or
@@ -275,6 +264,8 @@ export const defineBlock = <TValue extends object = Record<string, never>>(
 export type BlockDefinition<TValue = Record<string, unknown>> = {
     content?: ContentModel;
     defaults?: TValue;
+    /** Styles the block's own tags show by default, which pasted HTML repeats without meaning them as formatting. */
+    defaultStyles?: readonly DefaultStyle[];
     /** The block's markup. `children: true` is where its content goes. */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<Partial<TValue>>[];
@@ -326,7 +317,7 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
     nesting?: number;
     /** Text typed at the end of the mark carries it on. Defaults to true; a link says false. */
     inclusive?: boolean;
-    /** Mark types that cannot sit on the same text as this one: putting this mark on takes them off. Name each other in both marks, or the other mark cannot be put on this one's text. A type no mounted plugin registers is ignored. */
+    /** Mark types that cannot sit on the same text as this one: putting either mark on takes the other off. Naming it in one mark is enough. A type no mounted plugin registers is ignored. */
     excludes?: readonly string[];
     /**
      * Typing rules and single-character hotkeys do not act on text carrying this mark — inline code keeps `--`, `**` and `@` as typed.
@@ -335,6 +326,8 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
     excludesInputRules?: boolean;
     /** What the mark carries when put on without a value (a toggle, a parse rule). Defaults to `{}`. */
     defaults?: TValue;
+    /** Styles the mark's own tags show by default, which pasted HTML repeats without meaning them as formatting. */
+    defaultStyles?: readonly DefaultStyle[];
     /** The mark's markup around its text, which goes where `children: true` is. */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly MarkParseRule<TValue>[];
@@ -364,6 +357,30 @@ export type InlineDefinition<TValue = Record<string, unknown>> = {
         /** Readonly view in place of `toHtml`. */
         component?: ComponentType<{ value: TValue }>;
     };
+};
+
+/**
+ * Where a default style is declared: on the element that shows it, or on anything inside it.
+ */
+export type DefaultStyleScope = 'self' | 'inside';
+
+/**
+ * A style a node's own tags show by default is not formatting where pasted HTML repeats it: a link's underline written on a span inside it.
+ * Mark rules that read `property` see the value with `strip` applied, and nothing when it strips to empty.
+ */
+export type DefaultStyle = {
+    /**
+     * A CSS property name: `text-decoration`.
+     */
+    property: string;
+    /**
+     * `'self'` strips on the node's own tags; `'inside'` also on elements inside them.
+     */
+    scope: DefaultStyleScope;
+    /**
+     * Takes the declared value and returns it without what the node already shows.
+     */
+    strip: (cssValue: string) => string;
 };
 
 /**
@@ -579,6 +596,22 @@ export type Paste = { text: string; html: string | null; source: PasteSource };
 export type PasteHandler = (paste: Paste, api: EditorControlApi) => boolean;
 
 /**
+ * How a `markPattern` token loses the end it does not own, such as the full stop of the sentence it ends.
+ */
+export type RteMarkPatternTrim = {
+    /**
+     * Characters dropped from the end of the token, one run after another.
+     * The engine anchors it to the end of the token.
+     */
+    punctuation: RegExp;
+    /**
+     * Each closing bracket a token may end in, and the opening one it closes.
+     * A closing bracket is dropped only while the token holds no opening one left for it to close.
+     */
+    pairs: Readonly<Record<string, string>>;
+};
+
+/**
  * A text pattern rewritten while typing. Declared, not implemented: the editor
  * does the matching, so a plugin only says what to look for.
  */
@@ -601,6 +634,11 @@ export type RteInputRule =
           pattern: RegExp;
           mark: string;
           value: (match: string) => Record<string, unknown> | null;
+          /**
+           * What the token's end may hold that is not part of it, so it stays outside the mark.
+           * @default no trimming: the token ends where `pattern` says
+           */
+          trim?: RteMarkPatternTrim;
       }
     /**
      * Text swapped for other text the moment its last character is typed, no
@@ -620,10 +658,13 @@ export type RteInputRule =
           /**
            * Fire only once the NEXT typed character ends the run, and that
            * character stays after the replacement. A character ends the run when
-           * it is whitespace or one of `, ; : ! ? ) ] } …` (not `.`, which may be
-           * a decimal point or a file extension). Any other character leaves the
-           * text as typed.
+           * it matches `runEnd`. Any other character leaves the text as typed.
            * @default false
            */
           waitForRunEnd?: boolean;
+          /**
+           * The characters that end a run, for a rule that waits for the run to end.
+           * @default whitespace or one of `, ; : ! ? ) ] } …` (not `.`, which may be a decimal point or a file extension)
+           */
+          runEnd?: RegExp;
       };

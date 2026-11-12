@@ -8,8 +8,7 @@ export type BreakInline = {
 };
 
 /**
- * Shift-Enter breaks the line without ending the block. No toolbar: the
- * keybinding is the whole feature.
+ * A line break, written as `<br>`
  */
 export const softBreakContent = defineContent({
     inlines: {

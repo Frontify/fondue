@@ -22,11 +22,13 @@ export {
     type StoredMarkValue,
 } from './document';
 export { isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
+export { type HotkeyEvent, type HotkeyModifier, matchesHotkey, type ParsedHotkey, parseHotkey } from './hotkeys';
 export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
 export {
     type BlockAttributeDefinition,
     type BlockDefinition,
     type ContentModel,
+    type DefaultStyle,
     defineBlock,
     defineContent,
     defineInline,
@@ -51,6 +53,7 @@ export {
     type RteEditView,
     type RteIcon,
     type RteInputRule,
+    type RteMarkPatternTrim,
     type RtePlugin,
     type RtePluginDefinition,
     type RteToolbarEntry,
@@ -74,5 +77,13 @@ export {
     type ToolbarEntry,
     toggleOwn,
 } from './registry';
-export { ANY_LIST, DOCUMENT_VERSION, emptyDocument, INLINE_PLACEHOLDER, newerVersionOf, PARAGRAPH } from './vocabulary';
+export {
+    ANY_LIST,
+    DOCUMENT_VERSION,
+    emptyDocument,
+    INLINE_PLACEHOLDER,
+    newerVersionOf,
+    PARAGRAPH,
+    WORD_START_CONTEXT,
+} from './vocabulary';
 export { warnOnce } from './warnings';
