@@ -8,6 +8,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 import { mentionDisplay } from '../helpers/display';
 import { mentionContent } from '../Mention';
+import { type MentionValue } from '../types';
 
 import { MentionLink } from './MentionLink';
 
@@ -59,5 +60,17 @@ describe('an unavailable mention', () => {
         const container = mount(<Component value={JANE} />);
 
         expect(container.querySelector('span[data-mention-id]')?.hasAttribute('tabindex')).toBe(false);
+    });
+});
+
+describe('a mention stored with a field of the wrong type', () => {
+    it('is drawn without throwing, named by its kind and with no kind attribute', () => {
+        // Stored documents are not validated, so a field can be missing or the wrong type.
+        const wrongType = { id: 'x', username: 7, name: 'X', kind: 7 } as unknown as MentionValue;
+        const display = mentionDisplay(wrongType, { trigger: '@' });
+        const container = mount(<MentionLink value={wrongType} display={display} />);
+
+        expect(container.querySelector('[data-mention-id]')?.textContent).toBe('Unknown person');
+        expect(container.querySelector('[data-mention-kind]')).toBeNull();
     });
 });
