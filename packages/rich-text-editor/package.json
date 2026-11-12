@@ -48,7 +48,7 @@
         "typecheck": "tsgo --noEmit && tsgo --noEmit -p tsconfig.node.json"
     },
     "peerDependencies": {
-        "@frontify/fondue-components": "^36.0.2 || ^37.0.0-beta.0",
+        "@frontify/fondue-components": "workspace:^",
         "@frontify/fondue-icons": "workspace:^",
         "@frontify/fondue-tokens": "workspace:^",
         "react": "^18",
