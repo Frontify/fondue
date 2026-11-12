@@ -3,7 +3,15 @@
 import { IconListCheck } from '@frontify/fondue-icons';
 import { type CSSProperties, type ReactNode, useId } from 'react';
 
-import { ANY_LIST, defineBlock, defineContent, definePlugin, PARAGRAPH, type RteBlockNode } from '#/core';
+import {
+    ANY_LIST,
+    type BlockRootAttributes,
+    defineBlock,
+    defineContent,
+    definePlugin,
+    PARAGRAPH,
+    type RteBlockNode,
+} from '#/core';
 
 import styles from './checkList.module.scss';
 
@@ -70,13 +78,14 @@ type ReadonlyCheckItemProps = {
     value: CheckValue;
     children?: ReactNode;
     style?: CSSProperties;
+    rootAttributes: BlockRootAttributes;
 };
 
-const ReadonlyCheckItem = ({ value, children, style }: ReadonlyCheckItemProps): ReactNode => {
+const ReadonlyCheckItem = ({ value, children, style, rootAttributes }: ReadonlyCheckItemProps): ReactNode => {
     const labelId = useId();
     const state = stateOfValue(value.checked);
     return (
-        <li data-checked={state.data} className={styles.item} style={style}>
+        <li {...rootAttributes} data-checked={state.data} className={styles.item} style={style}>
             <input
                 ref={(input) => setIndeterminate(input, state === STARTED)}
                 type="checkbox"

@@ -89,3 +89,52 @@ export const CHECK_ITEM_DOCUMENT: RteDocument = {
         { type: 'paragraph', children: [{ text: CHECK_TEXTS.after }] },
     ],
 };
+
+export const UNKNOWN_TEXTS = {
+    first: 'Callout first',
+    last: 'Callout last',
+} as const;
+
+/** A block no plugin defines, holding two paragraphs, between two more. */
+export const UNKNOWN_CONTAINER_DOCUMENT: RteDocumentOf = {
+    version: 1,
+    blocks: [
+        { type: 'paragraph', children: [{ text: 'Before' }] },
+        {
+            type: 'callout',
+            children: [
+                { type: 'paragraph', children: [{ text: UNKNOWN_TEXTS.first }] },
+                { type: 'paragraph', children: [{ text: UNKNOWN_TEXTS.last }] },
+            ],
+        },
+        { type: 'paragraph', children: [{ text: 'After' }] },
+    ],
+};
+
+export const NEWER_STYLE_TEXT = 'Newer style';
+
+/** A text style block whose style no preset names, as a newer version may write, between two paragraphs. */
+export const NEWER_STYLE_DOCUMENT: RteDocumentOf<StyledBlock> = {
+    version: 1,
+    blocks: [
+        { type: 'paragraph', children: [{ text: 'Before' }] },
+        { type: 'textStyle', style: 'heading9', children: [{ text: NEWER_STYLE_TEXT }] },
+        { type: 'paragraph', children: [{ text: 'After' }] },
+    ],
+};
+
+/** The block type of `ownMarginsPlugin.tsx`, drawn by its own component, whose class writes its margins. */
+export const BOXED_TYPE = 'boxed';
+export const BOXED_TEXT = 'Boxed';
+/** The margins `ownMarginsPlugin.module.scss` writes. */
+export const BOXED_MARGIN = '20px';
+
+/** The block that owns its margins, between two paragraphs, where the document would give it none above. */
+export const BOXED_DOCUMENT: RteDocumentOf = {
+    version: 1,
+    blocks: [
+        { type: 'paragraph', children: [{ text: 'Before' }] },
+        { type: BOXED_TYPE, children: [{ text: BOXED_TEXT }] },
+        { type: 'paragraph', children: [{ text: 'After' }] },
+    ],
+};

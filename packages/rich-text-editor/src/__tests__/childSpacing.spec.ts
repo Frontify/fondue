@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import {
     CHILD_SPACING_ATTRIBUTE,
@@ -94,5 +94,17 @@ describe('a block that holds blocks', () => {
             expect(style).toContain(gapDeclaration(DOCUMENT_GAP_VARIABLES.block, '0'));
             expect(style).toContain(gapDeclaration(DOCUMENT_GAP_VARIABLES.leading, '0'));
         }
+    });
+
+    it('spaces its children apart when no plugin defines it', () => {
+        // The renderer names the unknown block once per run; this test is about its spacing alone.
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const html = serializeToHtml(calloutDocument, { plugins: [], wrap: false, styling: 'inline' });
+
+        const first = paragraphStyle(html, FIRST_TEXT);
+        expect(first).toContain(gapDeclaration(DOCUMENT_GAP_VARIABLES.block, BLOCK_GAP));
+        expect(first).toContain(`margin-bottom: var(${DOCUMENT_GAP_VARIABLES.block});`);
+        warn.mockRestore();
     });
 });

@@ -2,9 +2,13 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { buildPluginRegistry } from '#/core';
+import { blockHtml, buildPluginRegistry, LOOK_MARGIN_FALLBACKS } from '#/core';
 
+import { UNKNOWN_STYLE_CLASS_NAME } from './helpers/presets';
 import { textStyleContent, textStylePlugin } from './TextStyle';
+
+/** A style a newer version of the editor may write, which no preset here names. */
+const NEWER_STYLE = 'heading9';
 
 describe('the text style plugin presets', () => {
     it('sets a custom property for each field of a preset the host looks', () => {
@@ -39,5 +43,29 @@ describe('the text style plugin presets', () => {
 
         expect(plugin.content?.blocks?.textStyle).toBe(textStyleContent.blocks?.textStyle);
         expect(() => buildPluginRegistry([textStyleContent, plugin])).not.toThrow();
+    });
+});
+
+describe('a text style no preset names', () => {
+    const registry = buildPluginRegistry([textStyleContent]);
+
+    it('draws a paragraph with the class that spaces it like body text', () => {
+        const definition = registry.blocks.get('textStyle');
+        if (definition === undefined) {
+            throw new Error('The text style content declares no textStyle block');
+        }
+
+        expect(blockHtml(registry, definition, { style: NEWER_STYLE })).toMatchObject({
+            tag: 'p',
+            attrs: { class: UNKNOWN_STYLE_CLASS_NAME },
+        });
+    });
+
+    it('writes the margins every look falls back to for the inline export, and no other look', () => {
+        if (UNKNOWN_STYLE_CLASS_NAME === undefined) {
+            throw new Error('The text style stylesheet has no class for an unknown style');
+        }
+
+        expect(registry.contentStyles[UNKNOWN_STYLE_CLASS_NAME]).toEqual(LOOK_MARGIN_FALLBACKS);
     });
 });

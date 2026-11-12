@@ -44,7 +44,9 @@ export {
 } from './look';
 export {
     type BlockAttributeDefinition,
+    type BlockComponentProps,
     type BlockDefinition,
+    type BlockRootAttributes,
     type ChildSpacing,
     type ContentModel,
     defineBlock,
@@ -81,12 +83,14 @@ export {
     buildPluginRegistry,
     childSpacingAttributes,
     childSpacingOf,
+    DEFAULT_CHILD_SPACING,
     controlOf,
     isOwnActive,
     type OwnControl,
     type OwnType,
     ownTypeOf,
     type PluginRegistry,
+    rootAttributesOf,
     type ToolbarEntry,
     toggleOwn,
 } from './registry';

@@ -14,13 +14,17 @@ import {
     type BlockDefinition,
     blockHtml,
     blockValueOf,
+    CHILD_SPACING_ATTRIBUTE,
     childSpacingAttributes,
+    DEFAULT_CHILD_SPACING,
+    type HtmlAttributes,
     type HtmlSpec,
     type MarkDefinition,
     type PluginRegistry,
     type RteBlockNode,
     type RteDocumentOf,
     type RteInlineNode,
+    rootAttributesOf,
     type RteTextNode,
     type StyleMap,
 } from '#/core';
@@ -226,7 +230,8 @@ const isBlockLike = (node: unknown, registry: PluginRegistry): boolean => {
 
 /**
  * A block no plugin defines: its content, in a plain `div`, so the text in it
- * still reads. Nothing when it holds nothing (a void block).
+ * still reads, blocks spaced as a block holding blocks spaces them by default.
+ * Nothing when it holds nothing (a void block).
  */
 const unknownBlockNode = (block: RteBlockNode, registry: PluginRegistry, options: Options): DrawnNode | null => {
     warnUnknownType('block', block.type);
@@ -234,10 +239,18 @@ const unknownBlockNode = (block: RteBlockNode, registry: PluginRegistry, options
     if (children.length === 0) {
         return null;
     }
-    const content = children.every((child) => isBlockLike(child, registry))
-        ? (children as RteBlockNode[]).flatMap((child) => blockNode(child, registry, options) ?? [])
-        : inlineNodes(children as RteInlineNode[], registry, options);
-    return content.length === 0 ? null : html({ tag: 'div', children: true }, content);
+    let content: DrawnNode[];
+    let attrs: HtmlAttributes | undefined;
+    if (children.every((child) => isBlockLike(child, registry))) {
+        content = (children as RteBlockNode[]).flatMap((child) => blockNode(child, registry, options) ?? []);
+        attrs = { [CHILD_SPACING_ATTRIBUTE]: DEFAULT_CHILD_SPACING };
+    } else {
+        content = inlineNodes(children as RteInlineNode[], registry, options);
+    }
+    if (content.length === 0) {
+        return null;
+    }
+    return html({ tag: 'div', attrs, children: true }, content);
 };
 
 /** A block's child. A list holds only items, so a block no plugin defines stands in one as an item of its own. */
@@ -297,7 +310,7 @@ export const blockNode = (block: RteBlockNode, registry: PluginRegistry, options
     return (
         component(
             definition.render?.component,
-            { value: blockValueOf(definition, stored) },
+            { value: blockValueOf(definition, stored), rootAttributes: rootAttributesOf(definition) },
             componentContent(definition, content),
             options,
             style,

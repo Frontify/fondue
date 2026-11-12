@@ -298,12 +298,26 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<Partial<TValue>>[];
     render?: {
-        /**
-         * Readonly view in place of `toHtml`. `style` carries what every text
-         * block carries (alignment); put it on the outermost element.
-         */
-        component?: ComponentType<{ value: TValue; children?: ReactNode; style?: CSSProperties }>;
+        /** Readonly view in place of `toHtml`. */
+        component?: ComponentType<BlockComponentProps<TValue>>;
     };
+};
+
+/**
+ * Attributes the document needs on a block's outermost element, such as the mark of a block that owns its margins.
+ */
+export type BlockRootAttributes = Partial<Record<`data-rte-${string}`, string>>;
+
+/**
+ * What a block's readonly component receives.
+ */
+export type BlockComponentProps<TValue> = {
+    value: TValue;
+    children?: ReactNode;
+    /** What every text block carries (alignment); put it on the outermost element. */
+    style?: CSSProperties;
+    /** Attributes the document needs on the outermost element; spread them there, like `style`. */
+    rootAttributes: BlockRootAttributes;
 };
 
 /**

@@ -13,6 +13,7 @@ import {
     type BlockAttributeDefinition,
     type BlockDefinition,
     type BlockLook,
+    type BlockRootAttributes,
     type ChildSpacing,
     type HotkeyHandler,
     type InlineDefinition,
@@ -694,7 +695,15 @@ export const blockAttributeStyle = (registry: PluginRegistry, stored: Record<str
 };
 
 /** How a block spaces the blocks it holds when it does not say. */
-const DEFAULT_CHILD_SPACING: ChildSpacing = 'apart';
+export const DEFAULT_CHILD_SPACING: ChildSpacing = 'apart';
+
+/** The attributes the document needs on a block's outermost element: the margin marker on one that owns its margins. */
+export const rootAttributesOf = (definition: BlockDefinition): BlockRootAttributes => {
+    if (definition.ownsMargins === true) {
+        return { [OWN_MARGINS_ATTRIBUTE]: '' };
+    }
+    return {};
+};
 
 /**
  * The child-spacing mark for the element a block's content sits in, or undefined for a block
@@ -750,8 +759,9 @@ export const blockHtml = (
         classNames.push(definition.className);
         spec = { ...spec, attrs: { ...spec.attrs, class: classNames.join(' ') } };
     }
-    if (definition.ownsMargins === true) {
-        spec = { ...spec, attrs: { ...spec.attrs, [OWN_MARGINS_ATTRIBUTE]: '' } };
+    const rootAttributes = rootAttributesOf(definition);
+    if (Object.keys(rootAttributes).length > 0) {
+        spec = { ...spec, attrs: { ...spec.attrs, ...rootAttributes } };
     }
     const childSpacing = childSpacingAttributes(definition);
     if (childSpacing !== undefined) {

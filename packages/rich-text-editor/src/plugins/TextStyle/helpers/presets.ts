@@ -174,6 +174,9 @@ export const FIRST_PRESET: TextStyleName = PRESETS[0].name;
 
 export const findPreset = (name: string): Preset | undefined => PRESETS.find((preset) => preset.name === name);
 
+/** The class of a text block whose style no preset names, which only gives it a body paragraph's margins. */
+export const UNKNOWN_STYLE_CLASS_NAME = styles.unknownStyle;
+
 export const labelOf = (option: TextStyleOption): string => findPreset(option)?.label ?? 'Paragraph';
 
 /** The presets an editor was configured with, in the order they were given. */

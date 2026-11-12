@@ -5,7 +5,19 @@ import { type Locator } from '@playwright/test';
 
 import { DOCUMENT_TEST_ID } from '../../core/documentContract';
 
-import { CHECK_ITEM_DOCUMENT, CHECK_TEXTS, SPACING_DOCUMENT, SPACING_TEXTS } from './documentSpacingValues';
+import {
+    BOXED_DOCUMENT,
+    BOXED_MARGIN,
+    BOXED_TEXT,
+    CHECK_ITEM_DOCUMENT,
+    CHECK_TEXTS,
+    NEWER_STYLE_DOCUMENT,
+    NEWER_STYLE_TEXT,
+    SPACING_DOCUMENT,
+    SPACING_TEXTS,
+    UNKNOWN_CONTAINER_DOCUMENT,
+    UNKNOWN_TEXTS,
+} from './documentSpacingValues';
 import { ExportedLooksPair } from './ExportedLooksPair';
 import { HostLooksPair } from './HostLooksPair';
 
@@ -144,5 +156,63 @@ test.describe('document spacing', () => {
         expect(await checkMarginsIn(inline)).toEqual(CHECK_MARGINS);
         // Without its class the checkbox has the browser's margins; the export must not space it.
         await expect(firstCheckbox(inline)).not.toHaveAttribute('style');
+    });
+
+    test('spaces the blocks of a block no plugin defines apart, in the readonly view and the exports', async ({
+        mount,
+    }) => {
+        const expected = { first: margins(NO_GAP, BLOCK_GAP), last: margins(NO_GAP, NO_GAP) };
+        const unknownMarginsIn = async (surface: Locator) => ({
+            first: await marginsOf(surface.getByText(UNKNOWN_TEXTS.first, { exact: true })),
+            last: await marginsOf(surface.getByText(UNKNOWN_TEXTS.last, { exact: true })),
+        });
+
+        const drawn = await mount(<HostLooksPair value={UNKNOWN_CONTAINER_DOCUMENT} />);
+        expect(await unknownMarginsIn(drawn.getByTestId('renderer'))).toEqual(expected);
+        await drawn.unmount();
+
+        const exported = await mount(<ExportedLooksPair value={UNKNOWN_CONTAINER_DOCUMENT} />);
+        const inline = exported.getByTestId('inline');
+        await removeClasses(inline);
+        expect(await unknownMarginsIn(exported.getByTestId('classes'))).toEqual(expected);
+        expect(await unknownMarginsIn(inline)).toEqual(expected);
+    });
+
+    test('spaces a text style no preset names like body text, on every surface', async ({ mount }) => {
+        const expected = margins(NO_GAP, BLOCK_GAP);
+
+        const drawn = await mount(<HostLooksPair value={NEWER_STYLE_DOCUMENT} />);
+        for (const surface of ['renderer', 'editor']) {
+            const block = drawn.getByTestId(surface).getByText(NEWER_STYLE_TEXT, { exact: true });
+            expect(await marginsOf(block)).toEqual(expected);
+        }
+        await drawn.unmount();
+
+        const exported = await mount(<ExportedLooksPair value={NEWER_STYLE_DOCUMENT} />);
+        const inline = exported.getByTestId('inline');
+        await removeClasses(inline);
+        for (const surface of [exported.getByTestId('classes'), inline]) {
+            expect(await marginsOf(surface.getByText(NEWER_STYLE_TEXT, { exact: true }))).toEqual(expected);
+        }
+    });
+
+    test('leaves the margins of a block drawn by its own component that owns them, on every surface', async ({
+        mount,
+    }) => {
+        const expected = margins(BOXED_MARGIN, BOXED_MARGIN);
+
+        const drawn = await mount(<HostLooksPair value={BOXED_DOCUMENT} withOwnMarginsBlock />);
+        for (const surface of ['renderer', 'editor']) {
+            const boxed = drawn.getByTestId(surface).getByText(BOXED_TEXT, { exact: true });
+            expect(await marginsOf(boxed)).toEqual(expected);
+        }
+        await drawn.unmount();
+
+        const exported = await mount(<ExportedLooksPair value={BOXED_DOCUMENT} withOwnMarginsBlock />);
+        const inline = exported.getByTestId('inline');
+        await removeClasses(inline);
+        for (const surface of [exported.getByTestId('classes'), inline]) {
+            expect(await marginsOf(surface.getByText(BOXED_TEXT, { exact: true }))).toEqual(expected);
+        }
     });
 });
