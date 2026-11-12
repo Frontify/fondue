@@ -80,7 +80,9 @@ export const allowsHref = (policy: LinkPolicy, href: unknown): href is string =>
     }
     const { allowedSchemes = LINK_SCHEMES, allowedHosts } = policy;
     const scheme = url.protocol.slice(0, -1);
-    if (!allowedSchemes.some((allowed) => allowed === scheme)) {
+    // Widened so a scheme read from a URL, which is any string, can be looked up.
+    const permittedSchemes: readonly string[] = allowedSchemes;
+    if (!permittedSchemes.includes(scheme)) {
         return false;
     }
     // `mailto:a@b.co` has no host, but `mailto://evil.example/x` has one, which is checked like any other.
