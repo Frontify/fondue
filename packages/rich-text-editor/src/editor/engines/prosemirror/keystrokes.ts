@@ -27,6 +27,7 @@ import {
     type RuleOfKind,
     ruleContext,
     toInputRule,
+    touchesExcludedMark,
     unlessRangeHasExcludedMark,
     withoutStateFlags,
 } from './ruleContext';
@@ -261,6 +262,13 @@ const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | n
         const from = start + leading;
         const contentFrom = from + delimiter.length;
         const contentTo = contentFrom + content.length;
+        // Content may carry code; the delimiters the rule deletes may not.
+        if (
+            touchesExcludedMark(state, context.excludedMarks, from, contentFrom) ||
+            touchesExcludedMark(state, context.excludedMarks, contentTo, end)
+        ) {
+            return null;
+        }
         // Only the delimiters go, closing first so the opening one's position
         // holds: the content stays as it is, inline elements and marks included.
         return state.tr

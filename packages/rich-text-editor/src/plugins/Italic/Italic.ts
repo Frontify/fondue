@@ -4,6 +4,8 @@ import { IconTextFormatItalic } from '@frontify/fondue-icons';
 
 import { defineContent, defineMark, definePlugin } from '#/core';
 
+import { isItalicStyle, isNormalStyle, markWhen } from '../shared/helpers/declaredStyle';
+
 /**
  * The flag this plugin sets on text nodes
  */
@@ -25,8 +27,8 @@ export const italicContent = defineContent({
             parse: [
                 { tag: 'em' },
                 { tag: 'i' },
-                { style: 'font-style', value: (value) => (/^(italic|oblique)\b/i.test(value) ? {} : null) },
-                { style: 'font-style', clears: (value) => value.trim().toLowerCase() === 'normal' },
+                { style: 'font-style', value: markWhen(isItalicStyle) },
+                { style: 'font-style', clears: isNormalStyle },
             ],
         }),
     },

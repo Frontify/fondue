@@ -38,7 +38,6 @@ export {
     type MarkParseRule,
     onlyTypeOf,
     type ParseRule,
-    type StyleParseRule,
     type PasteHandler,
     type RteBlockCommand,
     type RteContent,
@@ -53,6 +52,7 @@ export {
     RTE_TOOLBAR_GROUPS,
     type RteToolbarGroup,
     type SelectedNode,
+    type StyleParseRule,
     type ToolbarItemProps,
 } from './plugin';
 export {

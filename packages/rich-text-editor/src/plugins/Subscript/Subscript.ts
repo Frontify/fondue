@@ -4,6 +4,8 @@ import { IconSubscript } from '@frontify/fondue-icons';
 
 import { defineContent, defineMark, definePlugin } from '#/core';
 
+import { isVerticalAlign, markWhen } from '../shared/helpers/declaredStyle';
+
 /**
  * The flag this plugin sets on text nodes
  */
@@ -25,7 +27,7 @@ export const subscriptContent = defineContent({
             // An element with the alignment is subscript too: how Google Docs writes it.
             parse: [
                 { tag: 'sub' },
-                { style: 'vertical-align', value: (value) => (value.trim().toLowerCase() === 'sub' ? {} : null) },
+                { style: 'vertical-align', value: markWhen((value) => isVerticalAlign(value, 'sub')) },
             ],
         }),
     },
