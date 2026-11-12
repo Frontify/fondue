@@ -26,23 +26,24 @@ const colored = (color: string): RteSelectionSnapshot['marks'] => ({
     fontColor: { coverage: 'all', value: { color } },
 });
 
-const mount = (
-    marks: RteSelectionSnapshot['marks'],
-    isActive: ToolbarItemProps['isActive'],
-): {
+type MountedFlyout = {
     toggle: ReturnType<typeof vi.fn<Marks['toggle']>>;
     set: ReturnType<typeof vi.fn<Marks['set']>>;
+    remove: ReturnType<typeof vi.fn<Marks['remove']>>;
     trigger: HTMLButtonElement | null;
-} => {
+};
+
+const mount = (marks: RteSelectionSnapshot['marks'], isActive: ToolbarItemProps['isActive']): MountedFlyout => {
     const toggle = vi.fn<Marks['toggle']>();
     const set = vi.fn<Marks['set']>();
-    const api = { marks: { toggle, set }, focus: vi.fn() } as unknown as EditorControlApi;
+    const remove = vi.fn<Marks['remove']>();
+    const api = { marks: { toggle, set, remove }, focus: vi.fn() } as unknown as EditorControlApi;
     const container = document.body.appendChild(document.createElement('div'));
     root = createRoot(container);
     act(() => root?.render(<ColorFlyout selection={{ marks } as never} api={api} isActive={isActive} />));
     const trigger = container.querySelector('button');
     act(() => trigger?.click());
-    return { toggle, set, trigger };
+    return { toggle, set, remove, trigger };
 };
 
 const typeHex = (hex: string): HTMLInputElement => {
@@ -111,10 +112,11 @@ describe('the colour flyout', () => {
     });
 
     it('removes a colour', () => {
-        const { toggle, set } = mount({ fontColor: { coverage: 'all', value: { color: '#c5221f' } } }, true);
+        const { toggle, set, remove } = mount({ fontColor: { coverage: 'all', value: { color: '#c5221f' } } }, true);
         press('Remove');
 
-        expect(toggle.mock.calls).toEqual([['fontColor']]);
+        expect(remove.mock.calls).toEqual([['fontColor']]);
+        expect(toggle).not.toHaveBeenCalled();
         expect(set).not.toHaveBeenCalled();
     });
 
@@ -333,11 +335,38 @@ describe('the colour flyout', () => {
         expect(set).not.toHaveBeenCalled();
     });
 
-    it('shows a half-coloured selection as mixed, still removable', () => {
-        const { toggle } = mount({ fontColor: { coverage: 'some' } }, 'mixed');
+    it('shows a half-coloured selection as mixed, and removes its colour rather than toggling it', () => {
+        const { toggle, remove } = mount({ fontColor: { coverage: 'some' } }, 'mixed');
 
         expect(document.querySelector('button[aria-pressed]')?.getAttribute('aria-pressed')).toBe('mixed');
         press('Remove');
-        expect(toggle.mock.calls).toEqual([['fontColor']]);
+        expect(remove.mock.calls).toEqual([['fontColor']]);
+        expect(toggle).not.toHaveBeenCalled();
+    });
+
+    it.each<[string, RteSelectionSnapshot['marks'], ToolbarItemProps['isActive']]>([
+        ['uncoloured', {}, false],
+        ['half-coloured', { fontColor: { coverage: 'some' } }, 'mixed'],
+    ])('colours %s text white, the colour the picker shows before a choice', (_, marks, isActive) => {
+        const { set } = mount(marks, isActive);
+        typeHexAndPressEnter('ffffff');
+
+        expect(set.mock.calls).toEqual([['fontColor', { color: '#ffffff' }]]);
+    });
+
+    it('changes nothing on Save with an unfinished hex value on uncoloured text', () => {
+        const { set } = mount({}, false);
+        typeHex('ff');
+        press('Save');
+
+        expect(set).not.toHaveBeenCalled();
+    });
+
+    it('colours uncoloured text white on Save', () => {
+        const { set } = mount({}, false);
+        typeHex('ffffff');
+        press('Save');
+
+        expect(set.mock.calls).toEqual([['fontColor', { color: '#ffffff' }]]);
     });
 });
