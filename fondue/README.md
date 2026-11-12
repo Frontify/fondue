@@ -26,6 +26,12 @@ import { Button } from '@frontify/fondue/components';
 
 Documentation for the provided components and how to use them is available in [Storybook](https://fondue-components.frontify.com/).
 
+### Experimental entries
+
+`@frontify/fondue/rich-text-editor` (and `@frontify/fondue/rich-text-editor/styles`) is **experimental**. It re-exports
+[`@frontify/fondue-rich-text-editor`](https://www.npmjs.com/package/@frontify/fondue-rich-text-editor), which is still in development. Its API and
+stored document format can change in any `@frontify/fondue` release, including minor and patch releases.
+
 ## Contributing
 
 See [Contribution Guidelines](https://github.com/Frontify/fondue/blob/main/CONTRIBUTING.md) for contributing and local development help.
