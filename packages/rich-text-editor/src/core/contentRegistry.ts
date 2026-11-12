@@ -40,12 +40,17 @@ export type ContentRegistry = {
 const firstTypeOf = (content: RteContent): string => typesOf(content)[0] ?? 'content';
 
 /**
+ * What `register` names in the duplicate error: "block type", "edit view".
+ */
+export type RegisterKind = string;
+
+/**
  * Adds a plugin's declared types to `target`. Two plugins declaring the same
  * type is an error (one would silently replace the other); the same definition
  * object registered twice is fine — two list plugins share their item that way.
  */
 export const register = <TDefinition>(
-    kind: 'block type' | 'mark type' | 'inline type' | 'block attribute' | 'edit view',
+    kind: RegisterKind,
     target: Map<string, TDefinition>,
     owners: Map<string, string>,
     owner: string,
@@ -68,6 +73,17 @@ export const register = <TDefinition>(
             owners.set(type, owner);
         }
     }
+};
+
+/**
+ * A plugin built by hand, not by `definePlugin`, can leave out its `id` or leave it empty.
+ */
+const assertHasId = (plugin: RtePlugin): void => {
+    if (typeof plugin.id === 'string' && plugin.id !== '') {
+        return;
+    }
+    const first = typesOf(plugin.content)[0] ?? 'no type declared';
+    throw new Error(`Plugin has no id: ${first}`);
 };
 
 /**
@@ -168,6 +184,7 @@ export const buildContentRegistry = (entries: readonly (RtePlugin | RteContent)[
                 addContent(draft, entry, firstTypeOf(entry));
                 break;
             case 'plugin':
+                assertHasId(entry);
                 addContent(draft, entry.content, entry.id);
                 break;
             // Only an untyped caller gets here: every typed entry is one of the two kinds above.

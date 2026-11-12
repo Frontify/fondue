@@ -3,7 +3,7 @@
 // Small enough for the renderer to load: the CSS parser that produces these colours lives in cssColor.ts.
 
 /** A colour as a document stores it: lowercase `#rrggbb`, or `#rrggbbaa` when translucent. */
-export const STORED_COLOR = /^#([\da-f]{6}|[\da-f]{8})$/;
+const STORED_COLOR = /^#([\da-f]{6}|[\da-f]{8})$/;
 
 /**
  * Whether a value is a colour in the stored form, so it may go into a `style` as it is.
@@ -16,13 +16,13 @@ export const STORED_COLOR = /^#([\da-f]{6}|[\da-f]{8})$/;
  */
 export const isStoredColor = (value: unknown): value is string => typeof value === 'string' && STORED_COLOR.test(value);
 
-/** A colour as the picker holds it: channels run from 0 to 255 and alpha from 0 to 1. */
+/** A colour decoded from or encoded to the stored form: channels run from 0 to 255 and alpha from 0 to 1. */
 export type Rgba = { red: number; green: number; blue: number; alpha: number };
 
 /** Red, green, blue and alpha, each a byte. */
 export type RgbaBytes = [number, number, number, number];
 
-/** Full opacity, which the picker leaves out. */
+/** Full opacity, which the stored form leaves out. */
 export const OPAQUE_ALPHA = 1;
 
 /** The largest channel value, and the alpha byte of full opacity. */

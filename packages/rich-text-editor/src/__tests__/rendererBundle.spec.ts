@@ -13,8 +13,8 @@ const PLUGIN_FILES = String.raw`(?<plugin>[A-Za-z]+)/(\k<plugin>\.tsx?$|helpers/
 const CONTENT_CODE = new RegExp(`^src/(${OWN_LAYERS}|plugins/(${SHARED_PLUGIN_CODE}|${PLUGIN_FILES}))`);
 const MENTION_READ_VIEW = 'src/plugins/Mention/components/MentionLink.tsx';
 const RENDERER_ENTRY = `export { RichTextRenderer, serializeToHtml, toPlainText, columnBreakContent } from './src/index.ts';`;
-// The editing registry and the CSS colour parser: only the editor needs them
-const EDITING_ONLY_CORE = /^src\/core\/(registry|hotkeys|cssColor)\.ts$/;
+// The editing registry, the CSS colour parser and the paste reader built on it: only the editor needs them
+const EDITING_ONLY_CORE = /^src\/core\/(registry|hotkeys|cssColor|parseReader)\.ts$/;
 
 const bundleInputs = async (exportLine: string): Promise<string[]> => {
     const result = await build({

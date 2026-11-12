@@ -4,16 +4,11 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type ParseReader, type ParseRule, toStoredColor } from '#/core';
+import { type ParseRule, parseReaderOf } from '#/core';
 
 import { fontColorPlugin } from './FontColor';
 
 const fontColor = fontColorPlugin.content?.marks?.fontColor;
-
-/** Reads the element's declared style as the editor's reader does; a plugin spec may not import the engine. */
-const readerOf = (element: HTMLElement): ParseReader => ({
-    color: (property) => toStoredColor(element.style.getPropertyValue(property)),
-});
 
 const parse = (html: string): unknown => {
     const element = document.createElement('div');
@@ -21,7 +16,7 @@ const parse = (html: string): unknown => {
     const span = element.firstElementChild as HTMLElement;
     // The font colour mark's first rule is its `span` tag rule, which reads the element.
     const rule = fontColor?.parse[0] as ParseRule<unknown> | undefined;
-    return rule?.value?.(span, readerOf(span));
+    return rule?.value?.(span, parseReaderOf(span));
 };
 
 describe('the font colour mark', () => {

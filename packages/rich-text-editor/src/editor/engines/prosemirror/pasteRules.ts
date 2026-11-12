@@ -12,11 +12,10 @@ import {
     type DefaultStyle,
     type MarkClearRule,
     type MarkParseRule,
-    type ParseReader,
     type ParseRule,
+    parseReaderOf,
     type PluginRegistry,
     type StyleParseRule,
-    toStoredColor,
 } from '#/core';
 
 import { VALUE_ATTR } from './documentConversion';
@@ -47,13 +46,6 @@ const qualifiedPriority = (tag: string): number | undefined => (/[[.#:]/.test(ta
  * Wraps a parsed value as the node's single value attribute, or false when the value is null.
  */
 const valueAttrs = (value: unknown) => (value === null ? false : { [VALUE_ATTR]: value });
-
-/**
- * What a tag rule reads off its element: the element's own declared style, as the engine reads it for style rules.
- */
-const parseReaderOf = (element: HTMLElement): ParseReader => ({
-    color: (property) => toStoredColor(element.style.getPropertyValue(property)),
-});
 
 /**
  * A tag rule's value: what its `value` reads off the element, or no attributes when it reads none.

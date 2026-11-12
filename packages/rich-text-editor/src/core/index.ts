@@ -86,6 +86,7 @@ export {
     type StyleParseRule,
     type ToolbarItemProps,
 } from './plugin';
+export { parseReaderOf } from './parseReader';
 export {
     buildPluginRegistry,
     controlOf,
@@ -107,7 +108,6 @@ export {
     OPAQUE_ALPHA,
     readHexDigits,
     type Rgba,
-    STORED_COLOR,
     toShortestAlpha,
 } from './storedColor';
 export {

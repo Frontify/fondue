@@ -25,7 +25,6 @@ import {
     type RteToolbarEntry,
     type RteToolbarGroup,
     type ToolbarItemProps,
-    typesOf,
 } from './plugin';
 import { PARAGRAPH } from './vocabulary';
 
@@ -265,17 +264,6 @@ export const toggleOwn = ({ own, api, selection, value }: ToggleOwnParams): void
         case 'none':
             return;
     }
-};
-
-/**
- * A plugin built by hand, not by `definePlugin`, can leave out its `id` or leave it empty.
- */
-const assertHasId = (plugin: RtePlugin): void => {
-    if (typeof plugin.id === 'string' && plugin.id !== '') {
-        return;
-    }
-    const first = typesOf(plugin.content)[0] ?? 'no type declared';
-    throw new Error(`Plugin has no id: ${first}`);
 };
 
 const NOTHING_TO_TOGGLE = 'nothing to toggle: name a mark, list, text block, void block or inline with `toggles`.';
@@ -550,7 +538,6 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
             case 'content':
                 break;
             case 'plugin':
-                assertHasId(entry);
                 ids.push(entry.id);
                 addEditing(draft, entry);
                 break;
