@@ -54,13 +54,13 @@ import {
 
 // --- Editor & renderer ---
 
-/**
- * `TBlock` widens the document when a plugin adds blocks: `RichTextEditorProps<RteBlock | CalloutBlock>`
- */
+/** `TBlock` widens the document when a plugin adds blocks: `RichTextEditorProps<RteBlock | CalloutBlock>`. */
 export type RichTextEditorProps<TBlock extends RteBlockNode = RteBlock> = EditorShellProps<TBlock>;
 
 /**
  * The editor. Uses `defaultPlugins` when given no `plugins`.
+ *
+ * @experimental The API and document format can change in any release until 1.0.
  */
 export const RichTextEditor = <TBlock extends RteBlockNode = RteBlock>(props: RichTextEditorProps<TBlock>): ReactNode =>
     createElement(EditorShell as (next: RichTextEditorProps<TBlock>) => ReactNode, {
@@ -68,13 +68,13 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlock>(props: Ri
         plugins: props.plugins ?? defaultPlugins,
     });
 
-/**
- * `TBlock` as for `RichTextEditorProps`
- */
+/** `TBlock` as for `RichTextEditorProps`. */
 export type RichTextRendererProps<TBlock extends RteBlockNode = RteBlock> = RendererProps<TBlock>;
 
 /**
- * A readonly view of a document; works on the server. Uses `defaultContent` when given no `plugins`
+ * A readonly view of a document; works on the server. Uses `defaultPlugins` when given no `plugins`.
+ *
+ * @experimental The API and document format can change in any release until 1.0.
  */
 export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlock>(
     props: RichTextRendererProps<TBlock>,
@@ -109,9 +109,7 @@ export { isEmpty };
 
 /**
  * The document's text, one line per text block. Inlines read as their plugin's
- * markup (a mention as `@jane`). Uses `defaultContent` when given no `plugins`.
- * @example
- * const text = toPlainText({ version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'Hello' }] }] });
+ * markup (a mention as `@jane`). Uses `defaultPlugins` when given no `plugins`.
  */
 export const toPlainText = <TBlock extends RteBlockNode = RteBlock>(
     doc: RteDocument<TBlock>,
@@ -171,9 +169,7 @@ export { type TypographyGroup, type TypographyPluginOptions } from './plugins/Ty
 
 export { ANY_LIST, defineBlock, defineContent, defineInline, defineMark, definePlugin } from './core';
 
-/**
- * A plugin. The types to write one with are nested: `RtePlugin.EditorControlApi`, `RtePlugin.BlockDefinition<T>`, …
- */
+/** A plugin. The types to write one with are nested: `RtePlugin.EditorControlApi`, `RtePlugin.BlockDefinition<T>`, … */
 export type RtePlugin = CorePlugin;
 
 // Aliases so a namespace member doesn't refer to itself (`type ParseRule<T> = ParseRule<T>`).

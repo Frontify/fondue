@@ -265,7 +265,10 @@ const ComboboxBaseInput = (
         if (multiple) {
             return false;
         }
-        return !getAsyncItems && !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()));
+        if (getAsyncItems || inputValue.trim() === '') {
+            return false;
+        }
+        return !items.some((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()));
     }, [inputValue, items, getAsyncItems, multiple]);
 
     const hasStatusError = status === 'error';
