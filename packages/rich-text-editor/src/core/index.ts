@@ -107,6 +107,7 @@ export {
 export {
     decodeStoredColor,
     encodeStoredColor,
+    isSafeCssColor,
     isStoredColor,
     MAX_CHANNEL,
     OPAQUE_ALPHA,

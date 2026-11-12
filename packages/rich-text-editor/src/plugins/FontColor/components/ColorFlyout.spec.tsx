@@ -134,9 +134,9 @@ describe('the colour flyout', () => {
         }
     });
 
-    it('names a stored value in another CSS form, or one that is no colour, as no colour', () => {
+    it('names a stored value in another CSS form by its hex, and one that is no colour as no colour', () => {
         const cases: [string, string][] = [
-            ['rgba(255, 0, 0, 0.5)', 'Text colour'],
+            ['rgba(255, 0, 0, 0.5)', 'Text colour: #FF0000 50%'],
             ['banana', 'Text colour'],
         ];
         for (const [color, title] of cases) {
@@ -212,10 +212,9 @@ describe('the colour flyout', () => {
         expect(set.mock.calls).toEqual([['fontColor', { color: '#c5221f00' }]]);
     });
 
-    it('paints the swatch with the stored colour, and nothing for one that is not a stored colour', () => {
+    it('paints the swatch with the stored colour, and nothing for one that is no colour', () => {
         const cases: [string, string][] = [
-            ['#ff0000', '#ff0000'],
-            ['red', 'transparent'],
+            ['red', '#ff0000'],
             ['banana', 'transparent'],
         ];
         for (const [color, background] of cases) {

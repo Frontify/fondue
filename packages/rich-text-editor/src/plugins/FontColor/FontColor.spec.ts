@@ -2,7 +2,7 @@
 
 // @vitest-environment happy-dom
 
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import { type ParseRule, parseReaderOf } from '#/core';
 
@@ -20,21 +20,43 @@ const parse = (html: string): unknown => {
 };
 
 describe('the font colour mark', () => {
+    let warn: MockInstance<typeof console.warn>;
+    beforeEach(() => {
+        warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    });
+    afterEach(() => {
+        warn.mockRestore();
+    });
+
+    it('draws an older colour form as it is written, with no warning', () => {
+        for (const color of ['red', 'rgba(255, 20, 73, 0.5)', 'hsl(120deg 100% 50% / 50%)', '#C5221F', '#f00']) {
+            expect(fontColor?.toHtml({ color }).attrs).toEqual({ style: { color } });
+        }
+        expect(warn).not.toHaveBeenCalled();
+    });
+
     it('writes a stored colour into the style, as rgba() while translucent', () => {
         expect(fontColor?.toHtml({ color: '#c5221f' }).attrs).toEqual({ style: { color: '#c5221f' } });
         expect(fontColor?.toHtml({ color: '#c5221f80' }).attrs).toEqual({ style: { color: 'rgba(197, 34, 31, 0.5)' } });
     });
 
-    it('leaves out a stored value in another CSS form, which this editor never writes', () => {
-        for (const color of ['red', 'rgba(255, 20, 73, 0.5)', '#C5221F', '#f00']) {
-            expect(fontColor?.toHtml({ color }).attrs).toEqual({});
+    it('keeps a value that could be more than a colour out of the style, and names it once in development', () => {
+        for (const color of ['red; background: url(x)', 'expression(alert(1))', 'url(x)', 'rgb(1, 2, 3) url(x)']) {
+            const value = { color };
+
+            expect(fontColor?.toHtml(value).attrs).toEqual({});
+            expect(fontColor?.toHtml(value).attrs).toEqual({});
+            expect(value).toEqual({ color });
         }
+        expect(warn).toHaveBeenCalledTimes(4);
+        expect(warn.mock.calls[0]?.[0]).toContain('"fontColor" mark holds "red; background: url(x)"');
     });
 
-    it('leaves out a stored value that is no colour', () => {
-        for (const value of [{ color: 'red; background: url(x)' }, { color: 'banana' }, { color: 1 }, {}]) {
+    it('draws nothing and names nothing when the mark carries no colour', () => {
+        for (const value of [{}, null]) {
             expect(fontColor?.toHtml(value as never).attrs).toEqual({});
         }
+        expect(warn).not.toHaveBeenCalled();
     });
 
     it('stores a pasted colour as hex, and ignores one that is not a colour', () => {
