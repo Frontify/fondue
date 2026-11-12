@@ -16,6 +16,30 @@ const STORED_COLOR = /^#([\da-f]{6}|[\da-f]{8})$/;
  */
 export const isStoredColor = (value: unknown): value is string => typeof value === 'string' && STORED_COLOR.test(value);
 
+/** A hex colour of 3, 4, 6 or 8 digits, in either case. */
+const HEX_COLOR = /^#(?:[\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/i;
+
+/** An `rgb()`, `rgba()`, `hsl()` or `hsla()` holding only numbers, `%`, `deg`, commas, spaces and `/`. */
+const COLOR_FUNCTION = /^(?:rgba?|hsla?)\((?:[\d.%,\s/]|deg)*\)$/i;
+
+/** A bare word, such as a named colour; the browser ignores one it does not know. */
+const COLOR_WORD = /^[a-z]+$/i;
+
+/**
+ * Whether a value may go into a `style` as a colour as it is written, without parsing it: a hex colour, a colour
+ * function of plain numbers, or a bare word. Older documents may hold these forms; anything else could carry
+ * more CSS than a colour, so it is not drawn.
+ *
+ * @example
+ * ```ts
+ * isSafeCssColor('#F00'); // true
+ * isSafeCssColor('rgb(255, 0, 0)'); // true
+ * isSafeCssColor('red; background: url(x)'); // false
+ * ```
+ */
+export const isSafeCssColor = (value: unknown): value is string =>
+    typeof value === 'string' && [HEX_COLOR, COLOR_FUNCTION, COLOR_WORD].some((pattern) => pattern.test(value));
+
 /** A colour decoded from or encoded to the stored form: channels run from 0 to 255 and alpha from 0 to 1. */
 export type Rgba = { red: number; green: number; blue: number; alpha: number };
 

@@ -8,11 +8,11 @@ import {
     decodeStoredColor,
     type EditorControlApi,
     encodeStoredColor,
-    isStoredColor,
     OPAQUE_ALPHA,
     type Rgba,
     type RteSelectionSnapshot,
     type ToolbarItemProps,
+    toStoredColor,
 } from '#/core';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
@@ -86,12 +86,11 @@ export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProp
     }
     // A stored value that is no colour shows none, and is still removable.
     const hasColor = isActive !== false;
-    const markColor = value?.color;
-    let storedColor: string | undefined;
+    // A legacy value (`red`, `rgb()`) reads as its stored form, as the document draws it.
+    const storedColor = toStoredColor(value?.color);
     let currentColor: Rgba | undefined;
     let title = label;
-    if (isStoredColor(markColor)) {
-        storedColor = markColor;
+    if (storedColor !== undefined) {
         currentColor = decodeStoredColor(storedColor);
         title += `: ${toColorName(currentColor)}`;
     }
