@@ -4,7 +4,7 @@
 // marker (a bullet glyph or a number) as text in a span, and end every
 // paragraph with an `<o:p>` marker.
 
-import { PASTED_LIST_ITEM_ATTRIBUTES, type PastedListMarker, removePastedListContract } from '#/core';
+import { OFFICE_LIST_ATTRIBUTES, removeOfficeListData } from '#/core';
 
 /** The name `mso-list` takes in a style attribute, so the engine's style merge keeps it. */
 const KEPT_LIST_PROPERTY = '--mso-list';
@@ -25,12 +25,6 @@ const OWN_LIST_STYLE = declaration(OWN_LIST_PROPERTY, '');
 const RULE_LIST_STYLE = declaration(RULE_LIST_PROPERTY, LIST_DATA);
 /** The style of the span that holds a list paragraph's marker. */
 const MARKER_STYLE = declaration(OWN_LIST_PROPERTY, 'ignore');
-/** Dot-separated numbers (`1.`, `1.1.`, `1.1`) or letters with a delimiter (`iv)`, `a.`) are numbered markers; a glyph (`·`, `o`, `§`) is a bullet. */
-const NUMBERED_MARKER = /^\(?(?:\d+(?:\.\d+)*[.)]?|[a-z]+[.)])$/i;
-/** The numbers in a marker; the last is the item's own, the 3 of `3.`, `1.3.` or `(3)`. */
-const MARKER_NUMBERS = /\d+/g;
-/** Word has nine list levels, which also keeps hostile input from nesting without end. */
-const MAX_LEVEL = 9;
 
 /** Word's list data in the HTML string, found without parsing it. */
 const OFFICE_LIST_MARKUP = /mso-list/i;
@@ -85,11 +79,8 @@ export const keepOfficeListStyles = (html: string): string => {
 const isOffice = (dom: HTMLElement): boolean =>
     dom.getElementsByTagName(PARAGRAPH_MARKER).length > 0 || dom.querySelector(OFFICE_STYLED) !== null;
 
-/** An item's marker: a bullet, or a number with the item's number as Word wrote it, when the marker has one. */
-type ListMarker = { kind: Exclude<PastedListMarker, 'numbered'> } | { kind: 'numbered'; number: string | undefined };
-
-/** Where an item belongs: Word's list (template and instance), its level, and its marker. */
-type ListParagraph = { list: string; level: number } & ListMarker;
+/** Word's list data on a list paragraph, as written: the list's id, the level's digits and the marker's text. */
+type ListData = { list: string; level: string; marker: string };
 
 /** The elements of `dom` that hold text other than whitespace, each ancestor added once. */
 const elementsWithText = (dom: HTMLElement): Set<Node> => {
@@ -132,9 +123,9 @@ const markerSpans = (root: ParentNode): HTMLElement[] =>
         MARKER_STYLE.test(span.getAttribute('style') ?? ''),
     );
 
-/** `element` as a list paragraph, or `undefined` when it is not one. */
-const readListParagraph = (element: HTMLElement): ListParagraph | undefined => {
-    // Word never puts a paragraph inside another; only parser tricks do, and a contract written there would nest lists without bound.
+/** The list data on `element`, or `undefined` when it is not a list paragraph. */
+const readListData = (element: HTMLElement): ListData | undefined => {
+    // Word never puts a paragraph inside another; only parser tricks do, and list data written there would nest lists without bound.
     if (element.parentElement?.closest(LIST_PARAGRAPH)) {
         return undefined;
     }
@@ -143,57 +134,42 @@ const readListParagraph = (element: HTMLElement): ListParagraph | undefined => {
     if (OWN_LIST_STYLE.test(style)) {
         declared = LIST_STYLE.exec(style);
     }
-    if (declared === null || Number(declared[2]) < 1) {
+    if (declared === null) {
         return undefined;
     }
-    const markerText = (markerSpans(element)[0]?.textContent ?? '').trim();
-    let marker: ListMarker = { kind: 'bullet' };
-    if (NUMBERED_MARKER.test(markerText)) {
-        const numbers = markerText.match(MARKER_NUMBERS);
-        marker = { kind: 'numbered', number: numbers?.[numbers.length - 1] };
-    }
     return {
-        list: `${declared[1] ?? ''} ${declared[3] ?? ''}`,
-        level: Math.min(Number(declared[2]), MAX_LEVEL),
-        ...marker,
+        list: `${declared[1] ?? ''} ${declared[3] ?? ''}`.trim(),
+        level: declared[2] ?? '',
+        marker: markerSpans(element)[0]?.textContent ?? '',
     };
 };
 
-/** Writes the pasted-list contract on a list paragraph. */
-const writeContract = (paragraph: HTMLElement, item: ListParagraph): void => {
-    const marker: PastedListMarker = item.kind;
-    paragraph.setAttribute(PASTED_LIST_ITEM_ATTRIBUTES.list, item.list);
-    paragraph.setAttribute(PASTED_LIST_ITEM_ATTRIBUTES.level, String(item.level));
-    paragraph.setAttribute(PASTED_LIST_ITEM_ATTRIBUTES.marker, marker);
-    if (item.kind === 'numbered' && item.number !== undefined) {
-        paragraph.setAttribute(PASTED_LIST_ITEM_ATTRIBUTES.number, item.number);
-    }
-};
-
-/** Writes the pasted-list contract on each list paragraph, for a list plugin's paste transform to rebuild lists from. */
-const annotateListParagraphs = (dom: HTMLElement): void => {
+/** Keeps the list data of each list paragraph, for a list plugin's paste transform to read. */
+const keepListData = (dom: HTMLElement): void => {
     for (const paragraph of dom.querySelectorAll(LIST_PARAGRAPH)) {
-        const item = readListParagraph(paragraph);
-        if (item !== undefined) {
-            writeContract(paragraph, item);
+        const data = readListData(paragraph);
+        if (data !== undefined) {
+            paragraph.setAttribute(OFFICE_LIST_ATTRIBUTES.list, data.list);
+            paragraph.setAttribute(OFFICE_LIST_ATTRIBUTES.level, data.level);
+            paragraph.setAttribute(OFFICE_LIST_ATTRIBUTES.marker, data.marker);
         }
     }
 };
 
 /**
- * Removes any pasted-list contract the paste carries, then, for Word and
- * Outlook, writes the contract on their list paragraphs and removes what they
- * write besides content: the `<o:p>` markers and each list marker, also the
- * number a heading carries. Does nothing else to a paste from elsewhere.
+ * Removes any Office list data the paste carries, then, for Word and Outlook,
+ * keeps the list data of their list paragraphs as attributes and removes what
+ * they write besides content: the `<o:p>` markers and each list marker, also
+ * the number a heading carries. Does nothing else to a paste from elsewhere.
  */
 export const tidyOffice = (dom: HTMLElement): void => {
-    // Only the engine writes the pasted-list contract, so none the paste itself carries is read.
-    removePastedListContract(dom);
+    // Only the editor writes the Office list data, so none the paste itself carries is read.
+    removeOfficeListData(dom);
     if (!isOffice(dom)) {
         return;
     }
     removeParagraphMarkers(dom);
-    annotateListParagraphs(dom);
+    keepListData(dom);
     for (const span of markerSpans(dom)) {
         span.remove();
     }

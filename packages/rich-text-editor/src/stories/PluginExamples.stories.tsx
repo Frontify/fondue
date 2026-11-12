@@ -1242,7 +1242,7 @@ type EmbedDraftProps = {
  * completes it with `setValue` — or takes it away with `remove`.
  */
 const EmbedDraft = ({ onChoose, onRemove }: EmbedDraftProps): ReactNode => (
-    <span role="group" aria-label="Embed suggestions" className="tw-inline-flex tw-gap-1">
+    <fieldset aria-label="Embed suggestions" className="tw-m-0 tw-inline-flex tw-gap-1 tw-border-0 tw-p-0">
         {EMBEDS.map((item) => (
             <button
                 key={item.id}
@@ -1257,7 +1257,7 @@ const EmbedDraft = ({ onChoose, onRemove }: EmbedDraftProps): ReactNode => (
         <button type="button" aria-label="Cancel" onClick={onRemove} className="tw-px-1">
             ×
         </button>
-    </span>
+    </fieldset>
 );
 
 const acmeEmbedContent = defineContent({

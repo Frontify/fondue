@@ -51,33 +51,28 @@ export const WORD_START_CONTEXT = String.raw`\s([{<'"“‘`;
 export const ANY_LIST = '@anyList';
 
 /**
- * The pasted-list contract between the editor and list plugins: the attributes the editor writes on each pasted
- * paragraph the source app marks as a list item, for a paste transform to rebuild lists from. The editor removes any
- * the paste itself carries before it writes them.
- * - `list`: the source app's list identity (Word's `l0 lfo1`).
- * - `level`: the nesting level, 1 to 9.
- * - `marker`: the kind of marker, a `PastedListMarker`.
- * - `number`: the item's own number, when its marker has one.
+ * What the editor keeps of the list data Word and Outlook write on a list paragraph, as attributes on that paragraph,
+ * exactly as the source app wrote it and without reading it, for a paste transform to read. The editor removes any
+ * the paste itself carries before it writes them, and removes them again after the transforms have run.
+ * - `list`: the id of the source app's list (Word's `l0 lfo1`).
+ * - `level`: the nesting level, as the digits Word wrote.
+ * - `marker`: the text of the marker the paragraph began with, such as `1.` or `·`.
  */
-export const PASTED_LIST_ITEM_ATTRIBUTES = {
-    list: 'data-rte-pasted-list',
-    level: 'data-rte-pasted-list-level',
-    marker: 'data-rte-pasted-list-marker',
-    number: 'data-rte-pasted-list-number',
+export const OFFICE_LIST_ATTRIBUTES = {
+    list: 'data-rte-office-list',
+    level: 'data-rte-office-level',
+    marker: 'data-rte-office-marker',
 } as const;
 
-/** The kind of marker a pasted list item showed in the source app. */
-export type PastedListMarker = 'bullet' | 'numbered';
+/** Every attribute of the Office list data. */
+const OFFICE_LIST_ATTRIBUTE_NAMES = Object.values(OFFICE_LIST_ATTRIBUTES);
+/** Elements carrying any attribute of the Office list data. */
+const CARRYING_OFFICE_LIST_DATA = OFFICE_LIST_ATTRIBUTE_NAMES.map((name) => `[${name}]`).join(', ');
 
-/** Every attribute of the pasted-list contract. */
-const CONTRACT_ATTRIBUTES = Object.values(PASTED_LIST_ITEM_ATTRIBUTES);
-/** Elements carrying any attribute of the pasted-list contract. */
-const CARRYING_CONTRACT = CONTRACT_ATTRIBUTES.map((name) => `[${name}]`).join(', ');
-
-/** Removes the pasted-list contract from every element of `root` that carries it. */
-export const removePastedListContract = (root: ParentNode): void => {
-    for (const element of root.querySelectorAll(CARRYING_CONTRACT)) {
-        for (const name of CONTRACT_ATTRIBUTES) {
+/** Removes the Office list data from every element of `root` that carries it. */
+export const removeOfficeListData = (root: ParentNode): void => {
+    for (const element of root.querySelectorAll(CARRYING_OFFICE_LIST_DATA)) {
+        for (const name of OFFICE_LIST_ATTRIBUTE_NAMES) {
             element.removeAttribute(name);
         }
     }
