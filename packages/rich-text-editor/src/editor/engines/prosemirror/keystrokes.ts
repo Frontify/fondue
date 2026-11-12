@@ -11,10 +11,12 @@ import { canJoin, findWrapping } from 'prosemirror-transform';
 import {
     type EditorControlApi,
     type HotkeyHandler,
+    INLINE_PLACEHOLDER,
     type PluginRegistry,
     REDO_HOTKEY,
     type RteInputRule,
     UNDO_HOTKEY,
+    WORD_START_CONTEXT,
 } from '#/core';
 
 import { autolinkOnEnter, markPatternRule } from './autolink';
@@ -129,15 +131,15 @@ const featureHotkeys = (hotkeys: PluginRegistry['hotkeys'], api: EditorControlAp
             .map(([keys, handlers]): [string, Command] => [keys, () => runUntilHandled(handlers, api)]),
     );
 
-const WORD_BOUNDARY_BEFORE = /[\s([{<'"“‘]/;
+const WORD_BOUNDARY_BEFORE = new RegExp(`[${WORD_START_CONTEXT}]`);
 
-/** The start of the block, or after whitespace or opening punctuation. An inline element counts as a space. */
+/** The start of the block, or right after a character of `WORD_START_CONTEXT`. */
 const isAtWordStart = (state: EditorState, from: number): boolean => {
     const $from = state.doc.resolve(from);
     if ($from.parentOffset === 0) {
         return true;
     }
-    const before = $from.parent.textBetween($from.parentOffset - 1, $from.parentOffset, undefined, ' ');
+    const before = $from.parent.textBetween($from.parentOffset - 1, $from.parentOffset, undefined, INLINE_PLACEHOLDER);
     return WORD_BOUNDARY_BEFORE.test(before);
 };
 
@@ -425,20 +427,21 @@ const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => 
 };
 
 /**
- * The characters that end a run: whitespace and sentence punctuation. Not quotes: one may close
- * the quotation the run sits in, as in `"wait --"`.
+ * The characters that end a run unless the rule says otherwise: whitespace and sentence punctuation. Not
+ * quotes: one may close the quotation the run sits in, as in `"wait --"`.
  */
-const RUN_END = /[\s,;:!?)\]}…]/;
+const DEFAULT_RUN_END = /[\s,;:!?)\]}…]/;
 
 /**
  * `--` becomes a dash once a character that ends the run is typed, which stays.
  */
 const runEndTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
     const replacement = replacementOf(rule);
+    const endsRun = rule.runEnd ?? DEFAULT_RUN_END;
     const pattern = textPattern(rule.match, ONE_CHARACTER_BEFORE_CARET);
     const handler: RuleHandler = (state, found, start, end) => {
         const typed = found[0].slice(-1);
-        if (!RUN_END.test(typed)) {
+        if (!endsRun.test(typed)) {
             return null;
         }
         const runEnd = start + found[0].length - typed.length;

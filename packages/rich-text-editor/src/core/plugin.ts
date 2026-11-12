@@ -586,10 +586,13 @@ export type RteInputRule =
           /**
            * Fire only once the NEXT typed character ends the run, and that
            * character stays after the replacement. A character ends the run when
-           * it is whitespace or one of `, ; : ! ? ) ] } …` (not `.`, which may be
-           * a decimal point or a file extension). Any other character leaves the
-           * text as typed.
+           * it matches `runEnd`. Any other character leaves the text as typed.
            * @default false
            */
           waitForRunEnd?: boolean;
+          /**
+           * The characters that end a run, for a rule that waits for the run to end.
+           * @default whitespace or one of `, ; : ! ? ) ] } …` (not `.`, which may be a decimal point or a file extension)
+           */
+          runEnd?: RegExp;
       };

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { definePlugin, INLINE_PLACEHOLDER, type RteInputRule } from '#/core';
+import { definePlugin, type RteInputRule, WORD_START_CONTEXT } from '#/core';
 
 const TYPOGRAPHY_GROUPS = ['quotes', 'ellipsis', 'dashes', 'symbols', 'numeric'] as const;
 
@@ -43,20 +43,9 @@ const AT_RUN_END = true;
 const NOT_IN_A_WORD = String.raw`(?<![\p{L}\p{N}_])`;
 
 /**
- * What may come before an opening quote, besides the start of a block: whitespace, or an opening
- * bracket or quote.
+ * Where a quote opens: at the start of a block or at a word start, as for a character hotkey.
  */
-const OPENING_CONTEXT = String.raw`\s([{<'"“‘`;
-
-/**
- * Where a double quote opens: also after an inline element, such as a soft break.
- */
-const DOUBLE_QUOTE_OPENS = `(?<=^|[${OPENING_CONTEXT}${INLINE_PLACEHOLDER}])`;
-
-/**
- * Where a single quote opens. After an inline element it is an apostrophe: `@Noah's`.
- */
-const SINGLE_QUOTE_OPENS = `(?<=^|[${OPENING_CONTEXT}])`;
+const QUOTE_OPENS = `(?<=^|[${WORD_START_CONTEXT}])`;
 
 /**
  * Not right after a letter, digit, underscore, slash or full stop, so a number stands as a whole token:
@@ -179,9 +168,9 @@ const DIMENSIONS = new RegExp(String.raw`${NOT_IN_A_WORD}(?!0x)(\d+)x(\d+)`, 'u'
  */
 const RULES: Record<TypographyGroup, readonly Replacement[]> = {
     quotes: [
-        [new RegExp(`${DOUBLE_QUOTE_OPENS}"`), '“'],
+        [new RegExp(`${QUOTE_OPENS}"`), '“'],
         ['"', '”'],
-        [new RegExp(`${SINGLE_QUOTE_OPENS}'`), '‘'],
+        [new RegExp(`${QUOTE_OPENS}'`), '‘'],
         // A closing single quote and an apostrophe are the same character.
         ["'", '’'],
     ],

@@ -38,6 +38,13 @@ export const newerVersionOf = (document: RteDocumentOf): number | null => {
 export const INLINE_PLACEHOLDER = '\uFFFC';
 
 /**
+ * What may come right before a word starts, besides the start of a block, as the body of a character class:
+ * whitespace, an opening bracket or quote, or an inline element. Hotkeys and typing rules that ask whether a
+ * character opens a word read this one rule.
+ */
+export const WORD_START_CONTEXT = String.raw`\s([{<'"“‘${INLINE_PLACEHOLDER}`;
+
+/**
  * Inside a block's `content.blocks`, stands for every mounted list (a block with
  * `content: { items }`), so a list item can allow nesting without naming lists.
  */
