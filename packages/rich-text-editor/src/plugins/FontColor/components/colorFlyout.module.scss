@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/** The icon with the current colour under it. */
+/** The icon with the current colour under it, no gap so both fit the small button. */
 .trigger {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
 }
 
 /** Empty while nothing is set — the element stays, so the icon does not shift. */

@@ -58,7 +58,7 @@ export const LinkToolbarButton = ({
                     // A link needs text to sit on.
                     disabled={!inLink && selection.isCollapsed}
                 >
-                    <IconLink size={16} />
+                    <IconLink size={20} />
                 </ToolbarButton>
             </Flyout.Trigger>
             <Flyout.Content

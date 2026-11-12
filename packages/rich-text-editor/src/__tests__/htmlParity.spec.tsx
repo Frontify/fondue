@@ -54,7 +54,8 @@ const doc: RteDocumentWith<{ block: { type: 'columnBreak' } }> = {
                 { text: 'code', code: true },
                 { text: 'sub', subscript: true },
                 { text: 'sup', superscript: true },
-                { text: 'red', fontColor: { color: 'rgb(255, 0, 0)' } },
+                { text: 'red', fontColor: { color: '#ff0000' } },
+                { text: 'tint', fontColor: { color: '#ff000080' } },
                 { text: 'link', link: { href: 'https://example.com', openInNewTab: true } },
                 { type: 'break' },
                 { type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' },
@@ -66,6 +67,7 @@ const doc: RteDocumentWith<{ block: { type: 'columnBreak' } }> = {
         { type: 'quote', children: [{ text: 'A quote' }] },
         {
             type: 'numberedList',
+            start: 3,
             children: [{ type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'One' }] }] }],
         },
         {
