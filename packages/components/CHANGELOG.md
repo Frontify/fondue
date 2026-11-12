@@ -1,5 +1,31 @@
 # @frontify/fondue-components
 
+## 36.0.3
+
+### Patch Changes
+
+- [#3016](https://github.com/Frontify/fondue/pull/3016) [`48899ef`](https://github.com/Frontify/fondue/commit/48899ef5a6beb9eb5e2bf36f36deb6a97918aa49) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(ColorPicker): forward the ref and id of `ColorPicker.Input` to its button, so focus returns to it when a flyout closes, and add the shown color to a name given by `aria-labelledby`
+
+- [#3016](https://github.com/Frontify/fondue/pull/3016) [`48899ef`](https://github.com/Frontify/fondue/commit/48899ef5a6beb9eb5e2bf36f36deb6a97918aa49) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(Select): don't show the no-match error of `Select.Combobox` while its input is empty
+
+- [#2978](https://github.com/Frontify/fondue/pull/2978) [`a59db73`](https://github.com/Frontify/fondue/commit/a59db7301cbb6d4dd9d62dcdad5bbd63542bc49b) Thanks [@jcosta33](https://github.com/jcosta33)! - fix: declare `sideEffects` in both packages so bundlers drop the icons and components you do not import.
+
+- [#2991](https://github.com/Frontify/fondue/pull/2991) [`136542d`](https://github.com/Frontify/fondue/commit/136542d78767263187de2011bab9194078e79a38) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(Flyout): expose `onInteractOutside` and `aria-label` on `Flyout.Content`
+
+- [#3016](https://github.com/Frontify/fondue/pull/3016) [`48899ef`](https://github.com/Frontify/fondue/commit/48899ef5a6beb9eb5e2bf36f36deb6a97918aa49) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(OrderableList): stop making the content of a non-selectable item a tab stop when it has a drag handle
+
+- [#2994](https://github.com/Frontify/fondue/pull/2994) [`d5df360`](https://github.com/Frontify/fondue/commit/d5df3600960affc56fbf662d807ef3a31578ce20) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Select): reset the option menu's list margin, padding and bullets so it has no empty strip on pages without a CSS reset
+
+- [#2965](https://github.com/Frontify/fondue/pull/2965) [`e610067`](https://github.com/Frontify/fondue/commit/e610067b4878e90f675aabb4a61333002bd99105) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tabs): call `onActiveTabChange` once per tab change. `@radix-ui/react-tabs` 1.2.1 focuses the trigger on mouse down, which with automatic activation requested the tab twice, so controlled Tabs called the handler twice per click. See https://github.com/radix-ui/primitives/pull/4060 and https://github.com/Frontify/web-app/pull/18284.
+
+- [#2975](https://github.com/Frontify/fondue/pull/2975) [`66a5800`](https://github.com/Frontify/fondue/commit/66a5800ac077b4bf23f943e845b68cec8b7a7c3a) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(TextInput, Textarea): remove the browser's default border from the inner `<input>` and `<textarea>`. Hosts without a CSS reset showed a native border inside the component frame, for example in the ColorPicker hex and opacity fields.
+
+- [#2997](https://github.com/Frontify/fondue/pull/2997) [`a711a4d`](https://github.com/Frontify/fondue/commit/a711a4d48ceda578e757296dfbef6f0baea2ad40) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): truncate long labels so the row's actions stay in view. A long label widened the row past its container and pushed the actions out of reach.
+
+- Updated dependencies [[`a59db73`](https://github.com/Frontify/fondue/commit/a59db7301cbb6d4dd9d62dcdad5bbd63542bc49b)]:
+  - @frontify/fondue-icons@0.32.1
+  - @frontify/fondue-tokens@5.2.0
+
 ## 36.0.2
 
 ### Patch Changes
