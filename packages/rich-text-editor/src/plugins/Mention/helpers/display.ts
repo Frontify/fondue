@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { warnOnce } from '#/core';
+
 import { withoutControlCharacters } from '../../shared/helpers/text';
 import {
     MENTION_KINDS,
@@ -111,19 +113,17 @@ const labelOf = (username: string, trigger: string, kind: MentionKind | undefine
     return `${trigger}${username}`;
 };
 
-const warnedResolveIds = new Set<string>();
-
 /**
  * Dev-only warning, once per mention id, for a resolver that threw or answered
  * with no known status; that mention shows its stored value.
  */
 const warnResolveFailed = (mention: MentionValue, problem: unknown): void => {
     const id = storedString(mention.id);
-    if (process.env.NODE_ENV === 'production' || warnedResolveIds.has(id)) {
-        return;
-    }
-    warnedResolveIds.add(id);
-    console.warn(`[RichTextEditor] The mention resolver failed for "${id}", so its stored name is shown.`, problem);
+    warnOnce(
+        `mention-resolve-failed:${id}`,
+        `[RichTextEditor] The mention resolver failed for "${id}", so its stored name is shown.`,
+        problem,
+    );
 };
 
 /** Every status a resolution can have; a status added to `MentionResolution` fails to compile until it is listed. */

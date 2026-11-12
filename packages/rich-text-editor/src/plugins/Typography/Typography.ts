@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { definePlugin, INLINE_PLACEHOLDER, type RteInputRule } from '#/core';
+import { definePlugin, INLINE_PLACEHOLDER, type RteInputRule, WORD_START_CONTEXT } from '#/core';
 
 const TYPOGRAPHY_GROUPS = ['quotes', 'ellipsis', 'dashes', 'symbols', 'numeric'] as const;
 
@@ -43,20 +43,15 @@ const AT_RUN_END = true;
 const NOT_IN_A_WORD = String.raw`(?<![\p{L}\p{N}_])`;
 
 /**
- * What may come before an opening quote, besides the start of a block: whitespace, or an opening
- * bracket or quote.
+ * Where a double quote opens: also after an inline element, such as a soft break. It cannot yet tell a mention
+ * from one (FP-897).
  */
-const OPENING_CONTEXT = String.raw`\s([{<'"“‘`;
+const DOUBLE_QUOTE_OPENS = `(?<=^|[${WORD_START_CONTEXT}${INLINE_PLACEHOLDER}])`;
 
 /**
- * Where a double quote opens: also after an inline element, such as a soft break.
+ * Where a single quote opens. After an inline element it is an apostrophe: `@Noah's` (FP-897).
  */
-const DOUBLE_QUOTE_OPENS = `(?<=^|[${OPENING_CONTEXT}${INLINE_PLACEHOLDER}])`;
-
-/**
- * Where a single quote opens. After an inline element it is an apostrophe: `@Noah's`.
- */
-const SINGLE_QUOTE_OPENS = `(?<=^|[${OPENING_CONTEXT}])`;
+const SINGLE_QUOTE_OPENS = `(?<=^|[${WORD_START_CONTEXT}])`;
 
 /**
  * Not right after a letter, digit, underscore, slash or full stop, so a number stands as a whole token:
