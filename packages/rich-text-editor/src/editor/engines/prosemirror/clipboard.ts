@@ -17,6 +17,7 @@ import {
     type PasteSource,
     type PasteTransform,
     type PasteTransformContext,
+    removeOfficeListData,
 } from '#/core';
 
 import { EXTRA_ATTR, mapExtras } from './documentConversion';
@@ -129,6 +130,8 @@ class PasteParser extends PmDOMParser {
             for (const transform of this.transforms) {
                 transform.run(dom, this.context);
             }
+            // Read by the transforms alone; the parse rules never see it.
+            removeOfficeListData(dom);
         }
         return super.parseSlice(...args);
     }

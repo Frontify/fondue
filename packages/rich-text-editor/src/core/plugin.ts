@@ -132,8 +132,8 @@ export type RtePlugin = {
     /** Runs before the editor's own paste, in plugin order. */
     onPaste?: PasteHandler;
     /**
-     * Rewrites pasted HTML before the parse rules read it, in plugin order. Plugins that share a transform declare
-     * the same object, and it runs once.
+     * Rewrites pasted HTML before the parse rules read it, in plugin order. Runs only on a paste into the editor,
+     * never on `parseHtml`. Plugins that share a transform declare the same object, and it runs once.
      */
     pasteTransforms?: readonly PasteTransform[];
 };
@@ -646,6 +646,7 @@ export type PasteHandler = (paste: Paste, api: EditorControlApi) => boolean;
 
 /**
  * Rewrites pasted HTML, after the editor has read the source app's own markup and before the plugins' parse rules read it.
+ * Runs only on a paste into the editor, never when `parseHtml` reads HTML on the server.
  */
 export type PasteTransform = {
     /** Unique across plugins; plugins that share a transform declare the same object, and it runs once. */
