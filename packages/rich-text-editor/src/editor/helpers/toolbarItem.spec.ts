@@ -70,6 +70,10 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
             set: (type, value) => {
                 selection = { ...selection, marks: { ...selection.marks, [type]: allOf(value) } };
             },
+            remove: (type) => {
+                const { [type]: _removed, ...others } = selection.marks;
+                selection = { ...selection, marks: others };
+            },
             removeAll: () => {
                 selection = { ...selection, marks: {} };
             },
