@@ -12,20 +12,14 @@ import { attributeEntries, type HtmlSpec } from '#/core';
 export const htmlSpecToDom = (spec: HtmlSpec): DOMOutputSpec => {
     const entries = attributeEntries(spec.attrs);
     // The attributes slot is optional; left out when there are none.
-    let head: unknown[] = [spec.tag];
-    if (entries.length > 0) {
-        head = [spec.tag, Object.fromEntries(entries)];
-    }
+    const head: unknown[] = entries.length > 0 ? [spec.tag, Object.fromEntries(entries)] : [spec.tag];
     const { children } = spec;
     if (children === true) {
         head.push(0);
     } else if (typeof children === 'string') {
         head.push(children);
-    } else if (children?.includes(true)) {
-        // A content hole must be its parent's only child, so what sits beside it (screen-reader text) stays out of the editor's DOM and clipboard.
-        head.push(0);
     } else if (children) {
-        head.push(...children.map((child) => (typeof child === 'object' ? htmlSpecToDom(child) : child)));
+        head.push(...children.map((child) => (typeof child === 'string' ? child : htmlSpecToDom(child))));
     }
     return head as unknown as DOMOutputSpec;
 };

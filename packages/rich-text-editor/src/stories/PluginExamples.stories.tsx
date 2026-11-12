@@ -103,7 +103,7 @@ const ALL_PLUGINS: readonly RtePlugin[] = [...defaultPlugins, mentionPlugin({ it
 const LAYOUT =
     'tw-grid tw-grid-cols-1 md:tw-grid-cols-[minmax(0,1fr)_minmax(0,24rem)] tw-content-start tw-items-start tw-gap-4 tw-p-4 tw-font-primary';
 const JSON_PANEL =
-    'tw-m-0 tw-min-h-[200px] tw-overflow-auto tw-rounded tw-bg-surface-dim tw-p-3 tw-font-monospace tw-text-x-small tw-leading-medium';
+    'tw-m-0 tw-min-h-[200px] tw-overflow-auto tw-rounded tw-bg-surface-dim tw-text-primary tw-p-3 tw-font-monospace tw-text-x-small tw-leading-medium';
 const HINT = 'tw-col-span-full tw-m-0 tw-body-small tw-text-secondary';
 
 /**
@@ -456,13 +456,16 @@ const INTERNAL_PAGES: readonly LinkDestination[] = [
     { id: 'partner', label: 'Partner logos (other site)', href: 'https://example.com/partner-logos' },
 ];
 
+/** How long the fake lookup takes, so the story shows the field while it searches. */
+const FAKE_LOOKUP_MS = 300;
+
 /** A fake lookup with a short delay that gives up when aborted, as a real request would. */
 const searchPages = (query: string, signal: AbortSignal): Promise<readonly LinkDestination[]> =>
     new Promise((resolve, reject) => {
         const timer = setTimeout(() => {
             const needle = query.toLowerCase();
             resolve(INTERNAL_PAGES.filter((page) => page.label.toLowerCase().includes(needle)));
-        }, 300);
+        }, FAKE_LOOKUP_MS);
         signal.addEventListener('abort', () => {
             clearTimeout(timer);
             reject(new DOMException('Aborted', 'AbortError'));
@@ -492,9 +495,7 @@ export const LinkWithSearch: Story = {
                     <RichTextEditor
                         value={doc}
                         onChange={setDoc}
-                        plugins={[
-                            linkPlugin({ allowedHosts: ['frontify.com', '*.frontify.com'], search: searchPages }),
-                        ]}
+                        plugins={[linkPlugin({ allowedHosts: ['*.frontify.com'], search: searchPages })]}
                     />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
@@ -789,7 +790,14 @@ export const Typography: Story = {
                     <code>x &lt;= 5</code> stay as typed.
                 </p>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[codePlugin, typographyPlugin()]} />
+                    <RichTextEditor
+                        value={doc}
+                        onChange={setDoc}
+                        plugins={[
+                            codePlugin,
+                            typographyPlugin({ groups: ['quotes', 'ellipsis', 'dashes', 'symbols', 'numeric'] }),
+                        ]}
+                    />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>

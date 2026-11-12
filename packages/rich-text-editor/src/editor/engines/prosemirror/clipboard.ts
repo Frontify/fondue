@@ -10,11 +10,14 @@ import {
 } from 'prosemirror-model';
 import { type EditorView } from 'prosemirror-view';
 
-import { type EditorControlApi, type PasteHandler } from '#/core';
+import { type EditorControlApi, type Paste, type PasteHandler, type PasteSource } from '#/core';
 
 import { EXTRA_ATTR, mapExtras } from './documentConversion';
 import { tidyGoogleDocs } from './pasteGoogleDocs';
 import { tidyOffice } from './pasteOffice';
+
+/** Put on what this editor copies, so a paste can tell it came from an editor like this one. */
+const COPIED_FROM_EDITOR = 'data-rte-copy';
 
 // Copy and paste fixes beyond what the engine does on its own.
 
@@ -44,6 +47,11 @@ class ClipboardSerializer extends DOMSerializer {
     serializeFragment(...args: Parameters<DOMSerializer['serializeFragment']>): HTMLElement | DocumentFragment {
         const written = super.serializeFragment(...args);
         keepBreaks(written);
+        const [, , target] = args;
+        // Only the outer call, which the engine makes without a target; nested content is serialized into one.
+        if (target === undefined) {
+            written.firstElementChild?.setAttribute(COPIED_FROM_EDITOR, '');
+        }
         return written;
     }
 }
@@ -141,7 +149,13 @@ export const handlePasteByFeatures =
         if (handlers.length === 0 || !data) {
             return false;
         }
-        const paste = { text: data.getData('text/plain'), html: data.getData('text/html') || null };
+        const html = data.getData('text/html') || null;
+        let source: PasteSource = 'elsewhere';
+        // Only a marker: forged, it just leaves a caret paste to the editor's own paste rules.
+        if (html?.includes(COPIED_FROM_EDITOR) === true) {
+            source = 'editor';
+        }
+        const paste: Paste = { text: data.getData('text/plain'), html, source };
         return handlers.some((handler) => handler(paste, api));
     };
 

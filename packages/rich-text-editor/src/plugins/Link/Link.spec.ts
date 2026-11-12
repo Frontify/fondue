@@ -37,15 +37,10 @@ describe('the link mark', () => {
         expect(html?.children).toBe(true);
     });
 
-    it('puts a hidden note after the text of a link that opens a new tab', () => {
+    it('exports a link that opens a new tab with its target and rel and no text of its own', () => {
         const html = link?.toHtml({ href: 'https://example.com', openInNewTab: true });
 
-        const children = html?.children;
-        if (typeof children !== 'object') {
-            throw new TypeError('expected the text and a note');
-        }
-        expect(children).toHaveLength(2);
-        expect(children[0]).toBe(true);
-        expect(children[1]).toMatchObject({ tag: 'span', children: ' (opens in new tab)' });
+        expect(html?.attrs).toMatchObject({ target: '_blank', rel: 'noopener noreferrer' });
+        expect(html?.children).toBe(true);
     });
 });

@@ -3,7 +3,17 @@
 /**
  * The schemes a link may use, which leaves out `javascript:` and `data:`
  */
-const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']);
+export const LINK_SCHEMES = ['https', 'http', 'mailto', 'tel'] as const;
+
+/**
+ * A scheme a link may use.
+ */
+export type LinkScheme = (typeof LINK_SCHEMES)[number];
+
+/**
+ * The link schemes as an href starts with them, colon included
+ */
+const SAFE_SCHEMES = new Set<string>(LINK_SCHEMES.map((scheme) => `${scheme}:`));
 
 /**
  * `localhost:3000`, `example.com:8080/x`: a host and a port, which reads like a

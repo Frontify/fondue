@@ -55,15 +55,9 @@ export const specToReact = (spec: HtmlSpec, content: ReactNode[], key?: number):
     } else if (typeof children === 'string') {
         inner = [children];
     } else if (children) {
-        inner = children.flatMap((child, index) => {
-            if (child === true) {
-                return content;
-            }
-            if (typeof child === 'string') {
-                return child;
-            }
-            return specToReact(child, content, index);
-        });
+        inner = children.map((child, index) =>
+            typeof child === 'string' ? child : specToReact(child, content, index),
+        );
     }
     return createElement(spec.tag, { ...reactProps(spec.attrs), key }, ...inner);
 };

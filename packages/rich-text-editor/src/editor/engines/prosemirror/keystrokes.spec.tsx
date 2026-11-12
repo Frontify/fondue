@@ -235,6 +235,34 @@ describe('inline code', () => {
         expect(editor.stored()).toEqual([paragraph(text('x', { code: true }), text('y'))]);
     });
 
+    it('can sit inside text a mark shortcut wraps', () => {
+        expect(typed('**run `npm` now**')).toEqual([
+            paragraph(
+                text('run ', { bold: true }),
+                text('npm', { bold: true, code: true }),
+                text(' now', { bold: true }),
+            ),
+        ]);
+    });
+
+    it('lets a mark shortcut typed right after its end apply', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('foo', { code: true }))]);
+        editor.caretAfter('foo');
+
+        editor.type('**b**');
+
+        expect(editor.stored()).toEqual([paragraph(text('foo', { code: true }), text('b', { bold: true }))]);
+    });
+
+    it('keeps its text when a typing rule after its end would reach into it', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('snake_case', { code: true }))]);
+        editor.caretAfter('snake_case');
+
+        editor.type('_');
+
+        expect(editor.stored()).toEqual([paragraph(text('snake_case', { code: true }), text('_'))]);
+    });
+
     it('carries on at its end once Mod-e turns it back on', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
         editor.caretAfter('x');
@@ -256,6 +284,15 @@ describe('subscript and superscript', () => {
 
         editor.api.marks.toggle('subscript');
         expect(editor.stored()).toEqual([paragraph(text('x', { subscript: true }))]);
+    });
+
+    it('a stored run carrying both loses the one turned off', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { subscript: true, superscript: true }))]);
+        editor.select('x');
+
+        editor.api.marks.toggle('subscript');
+
+        expect(editor.stored()).toEqual([paragraph(text('x', { superscript: true }))]);
     });
 
     it('turning one on at a caret types only that one', () => {

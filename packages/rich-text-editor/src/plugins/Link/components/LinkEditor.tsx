@@ -245,7 +245,7 @@ export const LinkEditor = ({
                                 {value.href}
                                 <span className={styles.visuallyHidden}>{NEW_TAB_NOTE}</span>
                             </a>
-                            {href !== undefined && <CopyLink href={href} writeText={writeToClipboard} />}
+                            {href === undefined ? null : <CopyLink href={href} writeText={writeToClipboard} />}
                             <Button size="small" emphasis="weak" onPress={() => setOpen(true)}>
                                 Edit
                             </Button>
