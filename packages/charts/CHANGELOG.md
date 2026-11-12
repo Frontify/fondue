@@ -1,5 +1,22 @@
 # @frontify/fondue-charts
 
+## 10.0.0-beta.0
+
+### Major Changes
+
+- [#3008](https://github.com/Frontify/fondue/pull/3008) [`40df7a2`](https://github.com/Frontify/fondue/commit/40df7a2c25b4d2ec66e4bc2017c966fa277fda03) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - Release charts on the fondue v14 line. The code is the same as 9.1.0; the peer dependency now requires `@frontify/fondue-tokens` 6.
+
+## 9.0.0-beta.0
+
+### Major Changes
+
+- [#2877](https://github.com/Frontify/fondue/pull/2877) [`f59824e`](https://github.com/Frontify/fondue/commit/f59824e0f9b33a4ee6b8f1f290cbfed5b67374c7) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - bump packages for fondue v14
+
+### Patch Changes
+
+- Updated dependencies [[`f59824e`](https://github.com/Frontify/fondue/commit/f59824e0f9b33a4ee6b8f1f290cbfed5b67374c7)]:
+  - @frontify/fondue-tokens@6.0.0-beta.0
+
 ## 9.1.0
 
 ### Minor Changes
