@@ -1,0 +1,40 @@
+packages/rich-text-editor/src/editor/hooks/useToolbarFit.ts
+  s_5e1a57eef69e61::t_a2c48b456111db 1-63,66-101
+  s_5e1a57eef69e61::t_ce810d5cd3e6c9 64-65
+packages/rich-text-editor/src/editor/helpers/toolbarFit.spec.ts
+  s_5e1a57eef69e61::t_90214b3f0b47b6 1-69
+packages/rich-text-editor/src/editor/richTextEditor.module.scss
+  s_5e1a57eef69e61::t_c65e0eae58c7d6 57-99
+packages/rich-text-editor/src/editor/labels.ts
+  s_5e1a57eef69e61::t_4106b75e9807c0 13-14,38
+packages/rich-text-editor/src/editor/components/ToolbarMore.tsx
+  s_5e1a57eef69e61::t_9b31ca3274ce51 1-126
+packages/rich-text-editor/src/editor/components/Toolbar.tsx
+  s_5e1a57eef69e61::t_23eda481dff620 79
+  s_5e1a57eef69e61::t_c6e37a4c7111eb 3,14,17-18,22,41-45,86-99,110-112,118-119,138,146-157
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_5e1a57eef69e61::t_43b5a364115ffb 877-960
+packages/rich-text-editor/src/editor/helpers/toolbarFit.ts
+  s_5e1a57eef69e61::t_1777a4fcc5c4f8 1-60,62-80
+  s_5e1a57eef69e61::t_c97c828547264e 61
+packages/rich-text-editor/src/editor/hooks/useToolbarRoving.ts
+  s_5e1a57eef69e61::t_bd27fd6b40d933 1-139
+packages/rich-text-editor/src/plugins/TextStyle/components/textStyleSelect.module.scss
+  s_5e1a57eef69e61::t_9f8d5adb4c4c78 3,6,9-12,14,16,18,21-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "de6a72731d9fc72914c4d0750be7534fec880b67",
+  "prompts": {},
+  "sessions": {
+    "s_5e1a57eef69e61": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a0fb14d7-e897-462c-896c-1d2c9e62b697",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
