@@ -22,15 +22,6 @@ import { useSyncRefs } from '#/hooks/useSyncRefs';
 
 import styles from './styles/textarea.module.scss';
 
-/**
- * @deprecated Use Textarea.Slot instead for custom actions
- */
-export type ExtraAction = {
-    icon: ReactElement;
-    title: string;
-    callback: () => void;
-};
-
 type Status = 'default' | 'loading' | 'success' | 'error';
 
 type TextareaProps = CommonGlobalProps & {
@@ -63,11 +54,6 @@ type TextareaProps = CommonGlobalProps & {
      */
     defaultValue?: string;
     disabled?: boolean;
-    /**
-     * Collection of extra actions the input can preform
-     * @deprecated Use Textarea.Slot instead for custom actions
-     */
-    extraActions?: ExtraAction[];
     /**
      * If `true`, Textarea will be focused on mount
      */
@@ -139,7 +125,6 @@ export const TextareaRoot = (
         decorator,
         defaultValue,
         disabled,
-        extraActions,
         focusOnMount,
         minRows: rows = 1,
         maxRows,
@@ -163,7 +148,7 @@ export const TextareaRoot = (
 
     const [value, setValue] = useState(inputValue ?? defaultValue ?? '');
 
-    const hasTools = extraActions?.length !== undefined || clearable || ['success', 'error'].includes(status);
+    const hasTools = clearable || ['success', 'error'].includes(status);
 
     const clear = () => {
         setValue('');
@@ -287,17 +272,6 @@ export const TextareaRoot = (
                             <IconExclamationMarkTriangle size={20} />
                         </div>
                     )}
-                    {extraActions?.map(({ icon, title, callback }) => (
-                        <button
-                            className={styles.toolsButton}
-                            disabled={disabled || readOnly}
-                            key={title}
-                            onClick={callback}
-                            title={title}
-                        >
-                            {icon}
-                        </button>
-                    ))}
                     {clearable && (
                         <button className={styles.toolsButton} onClick={clear} disabled={disabled || readOnly}>
                             <IconCross size={16} fill="currentColor" />

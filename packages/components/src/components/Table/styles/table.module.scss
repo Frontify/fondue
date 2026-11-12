@@ -16,36 +16,7 @@
         background-color: var(--table-sticky-background-color, var(--color-surface-default)),
     );
 
-    // Legacy support for deprecated data-sticky-header attribute
-    &[data-sticky-header='true'] {
-        thead {
-            @each $prop, $value in $sticky-base {
-                #{$prop}: $value;
-            }
-            top: 0;
-            z-index: 2;
-        }
-    }
-
-    // Legacy support for deprecated data-sticky-left-column attribute
-    &[data-sticky-left-column='true'] {
-        .headerCell:first-child,
-        .rowCell:first-child {
-            @each $prop, $value in $sticky-base {
-                #{$prop}: $value;
-            }
-            inset-inline-start: 0;
-        }
-
-        &[data-has-horizontal-overflow='true'] {
-            .headerCell:first-child,
-            .rowCell:first-child {
-                border-inline-end: 1px solid var(--color-line-subtle);
-            }
-        }
-    }
-
-    // New approach: sticky columns controlled by tbody attributes
+    // Sticky columns are controlled by tbody attributes
     &:has(tbody[data-first-column-sticky='true']) {
         .headerCell:first-child,
         .rowCell:first-child {

@@ -433,19 +433,10 @@ AccordionSlot.displayName = 'Accordion.Slot';
 
 const ForwardedRefAccordionSlot = AccordionSlot;
 
-/**
- * @deprecated Use `Accordion.Header` instead.
- */
-const DeprecatedAccordionTrigger = ({ children }: { children: ReactNode }) => children;
-
 export const Accordion = {
     Root: AccordionRoot,
     Item: AccordionItem,
     Header: AccordionHeader,
-    /**
-     * @deprecated Use `Accordion.Header` instead.
-     */
-    Trigger: DeprecatedAccordionTrigger,
     Content: AccordionContent,
     Slot: ForwardedRefAccordionSlot,
 };
