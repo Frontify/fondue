@@ -20,7 +20,7 @@ export type TextLook = {
     color?: string;
 };
 
-/** The CSS property each field sets. `styles/_look.scss` spells the same names. */
+/** The CSS property each field sets. `styles/look.module.scss` spells the same names. */
 export const LOOK_PROPERTIES = {
     fontFamily: 'font-family',
     fontSize: 'font-size',
@@ -35,7 +35,7 @@ export const LOOK_PROPERTIES = {
     color: 'color',
 } as const satisfies Record<keyof TextLook, string>;
 
-/** The prefix every look's custom property carries; `styles/_look.scss` writes the same. */
+/** The prefix every look's custom property carries; `styles/look.module.scss` writes the same. */
 const LOOK_VARIABLE_PREFIX = '--rte-';
 
 const UPPER_CASE_LETTER = /[A-Z]/g;

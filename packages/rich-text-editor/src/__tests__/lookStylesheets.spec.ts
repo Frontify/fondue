@@ -29,7 +29,7 @@ const declarationsCoreNames = (key: string, properties: readonly string[]): Look
 const CORE_PROPERTIES = Object.values(LOOK_PROPERTIES);
 
 const compileMixinCall = (call: string): string =>
-    compileString(`@use 'look';\n.sample { ${call} }`, { loadPaths: [STYLES_DIRECTORY] }).css;
+    compileString(`@use 'look.module.scss';\n.sample { ${call} }`, { loadPaths: [STYLES_DIRECTORY] }).css;
 
 /** The body of the rule for `.<className>`. */
 const ruleBodyOf = (css: string, className: string): string => {
