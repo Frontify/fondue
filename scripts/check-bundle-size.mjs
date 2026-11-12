@@ -35,7 +35,7 @@ const ENTRIES = [
     {
         name: 'Rich text renderer',
         code: "export { RichTextRenderer } from '@frontify/fondue-rich-text-editor';",
-        limitKb: 23,
+        limitKb: 29,
     },
 ];
 

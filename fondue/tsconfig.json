@@ -1,0 +1,31 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "esModuleInterop": true,
+        "jsx": "react-jsx",
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "noEmit": true,
+        "noUnusedLocals": true,
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "target": "esnext",
+        "types": ["vite/client", "node"]
+    },
+    "exclude": ["node_modules", "dist"],
+    "include": [
+        "oxlint.config.ts",
+        "oxfmt.config.ts",
+        "src",
+        "scripts",
+        "components.vite.config.ts",
+        "charts.vite.config.ts",
+        "icons.vite.config.ts",
+        "rte.vite.config.ts",
+        "rich-text-editor.vite.config.ts",
+        "sdk.vite.config.ts",
+        "tokens.vite.config.ts"
+    ]
+}

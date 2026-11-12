@@ -109,6 +109,7 @@ export default defineConfig({
             entry: './src/index.ts',
             fileName: (format: string) => `[name].${format}.js`,
             formats: ['es'],
+            cssFileName: 'style',
         },
         sourcemap: true,
         minify: true,
