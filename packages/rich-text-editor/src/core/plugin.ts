@@ -337,6 +337,11 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
      * @default false
      */
     excludesInputRules?: boolean;
+    /**
+     * Clearing formatting with `keepSurviving` leaves this mark on — a link stays through "clear formatting" but not through "reset formatting".
+     * @default false
+     */
+    survivesClear?: boolean;
     /** What the mark carries when put on without a value (a toggle, a parse rule). Defaults to `{}`. */
     defaults?: TValue;
     /** The mark's markup around its text, which goes where `children: true` is. */

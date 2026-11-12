@@ -34,6 +34,7 @@ const snapshot = (overrides: Partial<RteSelectionSnapshot> = {}): RteSelectionSn
     block: { type: PARAGRAPH },
     blocks: [{ type: PARAGRAPH }],
     marks: {},
+    attributes: {},
     history: { canUndo: false, canRedo: false },
     ...overrides,
 });
@@ -103,7 +104,6 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
             indent: () => false,
             outdent: () => false,
             split: () => false,
-            unwrapAll: () => false,
         },
         insert: (type, value) => {
             inserted.push({ type, value });

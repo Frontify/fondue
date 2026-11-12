@@ -5,11 +5,13 @@
 
 export {
     type BlockAttributeToggle,
+    type ClearMarksOptions,
+    type ClearMarksScope,
     type EditorControlApi,
     type InsertTextOptions,
     type InsertTextUndo,
     REDO_HOTKEY,
-    type RemoveAllMarksOptions,
+    type RteAttributeState,
     type RteMarkState,
     type RteSelectionSnapshot,
     UNDO_HOTKEY,

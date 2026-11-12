@@ -20,7 +20,9 @@ import {
     type Paste,
     type PasteHandler,
     type PasteSource,
-    type RemoveAllMarksOptions as RemoveAllOptions,
+    type ClearMarksOptions as ClearOptions,
+    type ClearMarksScope as ClearScope,
+    type RteAttributeState,
     type RteBlockCommand,
     type RteBlockNode,
     type RteContent,
@@ -198,7 +200,9 @@ export declare namespace RtePlugin {
     export type MarkState = RteMarkState;
     export type BlockCommand = RteBlockCommand;
     export type BlockAttributeToggle = AttributeToggle;
-    export type RemoveAllMarksOptions = RemoveAllOptions;
+    export type ClearMarksOptions = ClearOptions;
+    export type ClearMarksScope = ClearScope;
+    export type AttributeState = RteAttributeState;
     export type ToolbarItemProps = ToolbarProps;
     export type ToolbarGroup = RteToolbarGroup;
     export type PasteHandler = OnPaste;
