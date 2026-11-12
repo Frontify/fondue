@@ -304,7 +304,10 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     const { message: announcement, announce } = useAnnouncer();
     const hasDescriptions = registry.descriptions.length > 0;
     const { hostLabels, isNamed } = hostLabelsOf({ ariaLabel, ariaLabelledBy, ariaDescribedBy });
-    const className = [documentStyles.document, styles.content, ...registry.contentClassNames].join(' ');
+    // The mounted editor is the editable one; `editable` is what shows the text cursor.
+    const className = [documentStyles.document, styles.content, styles.editable, ...registry.contentClassNames].join(
+        ' ',
+    );
     let pluginDescriptionId: string | undefined;
     if (hasDescriptions) {
         pluginDescriptionId = descriptionId;

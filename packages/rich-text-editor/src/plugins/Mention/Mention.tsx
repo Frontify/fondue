@@ -91,7 +91,11 @@ export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentO
 
                 render: {
                     component: ({ value }) => (
-                        <MentionLink value={value} display={mentionDisplay(value, { resolve, href, trigger })} />
+                        <MentionLink
+                            value={value}
+                            display={mentionDisplay(value, { resolve, href, trigger })}
+                            placesCaret={false}
+                        />
                     ),
                 },
             }),

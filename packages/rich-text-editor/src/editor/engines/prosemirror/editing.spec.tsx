@@ -311,6 +311,20 @@ describe('the editable element', () => {
         expect(editable?.classList.contains('three')).toBe(true);
         expect(editable?.classList.contains('two')).toBe(false);
     });
+
+    it('sets and removes attributes by name through `setEditableAttributes`, keeping the others', () => {
+        const { handle, container } = mount(emptyDocument(), { attributes: { 'aria-label': 'Notes' } });
+        const editable = container.querySelector('[contenteditable]');
+
+        handle.setEditableAttributes({ 'aria-activedescendant': 'option-1', 'aria-controls': 'list' });
+        expect(editable?.getAttribute('aria-activedescendant')).toBe('option-1');
+        expect(editable?.getAttribute('aria-controls')).toBe('list');
+
+        handle.setEditableAttributes({ 'aria-activedescendant': null });
+        expect(editable?.hasAttribute('aria-activedescendant')).toBe(false);
+        expect(editable?.getAttribute('aria-controls')).toBe('list');
+        expect(editable?.getAttribute('aria-label')).toBe('Notes');
+    });
 });
 
 describe('the drop cursor', () => {

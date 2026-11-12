@@ -104,9 +104,13 @@ const tag: RtePlugin = definePlugin({
         },
     }),
     edit: {
-        tag: ({ value, isFocused }: EditProps<{ label: string }>) => {
+        tag: ({ value, isFocused, editing }: EditProps<{ label: string }>) => {
             tagRenders();
-            return <span data-focused={String(isFocused)}>{value?.label}</span>;
+            return (
+                <span data-focused={String(isFocused)} data-editing={String(editing)}>
+                    {value?.label}
+                </span>
+            );
         },
     },
 });
@@ -408,6 +412,25 @@ describe('an inline element with editing UI', () => {
         act(() => live.handle.api.insertText('2'));
 
         expect(tagRenders).toHaveBeenCalledTimes(rendersAfterMount);
+    });
+});
+
+describe('a view that is told whether the editor takes edits', () => {
+    it('gets `editing`, and is drawn again with the new value when the editor becomes read-only', () => {
+        const { container, view } = mount({
+            version: 1,
+            blocks: [{ type: PARAGRAPH, children: [{ text: 'ab' }, { type: 'tag', label: 'x' }, { text: 'cd' }] }],
+        });
+        const editing = (): string | null | undefined =>
+            container.querySelector('[data-editing]')?.getAttribute('data-editing');
+
+        expect(editing()).toBe('true');
+
+        act(() => view.setProps({ editable: () => false }));
+        expect(editing()).toBe('false');
+
+        act(() => view.setProps({ editable: () => true }));
+        expect(editing()).toBe('true');
     });
 });
 

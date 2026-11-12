@@ -104,10 +104,15 @@ export const createNodeViews = (
 type EditComponent<TCurrent = Record<string, unknown>> = ComponentType<EditProps<Record<string, unknown>, TCurrent>>;
 
 /** What a live view last handed its component; the callbacks are stable, so this is all that changes. */
-type Painted = { focused: boolean; selected: boolean; open: boolean; value: unknown };
+type Painted = { focused: boolean; selected: boolean; open: boolean; editing: boolean; value: unknown };
 
 const samePaint = (a: Painted | null, b: Painted): boolean =>
-    a !== null && a.focused === b.focused && a.selected === b.selected && a.open === b.open && a.value === b.value;
+    a !== null &&
+    a.focused === b.focused &&
+    a.selected === b.selected &&
+    a.open === b.open &&
+    a.editing === b.editing &&
+    a.value === b.value;
 
 /** What a repaint reports: the view's type, and whether the selection is in it. */
 type PaintResult = { type: string; focused: boolean };
@@ -256,7 +261,13 @@ abstract class ReactEditView<TCurrent> implements Repaintable {
         }
         const { focused, selected } = this.placement();
         const value = this.value();
-        const next: Painted = { focused, selected, open: focused && this.openEditors.type === type, value };
+        const next: Painted = {
+            focused,
+            selected,
+            open: focused && this.openEditors.type === type,
+            editing: this.view.editable,
+            value,
+        };
         if (samePaint(this.painted, next)) {
             return { type, focused };
         }
@@ -271,6 +282,7 @@ abstract class ReactEditView<TCurrent> implements Repaintable {
                     isFocused={next.focused}
                     isSelected={next.selected}
                     isOpen={next.open}
+                    editing={next.editing}
                     setOpen={this.setOpen}
                     api={this.api}
                     setValue={this.setValue}

@@ -49,9 +49,14 @@ export type MountedDocument = {
     destroy(): void;
 };
 
+/** Attributes to set on the editable element by name; `null` removes one. */
+export type EditableAttributes = Readonly<Record<string, string | null>>;
+
 /** What a live editor offers the shell: the commands, and where the selection is on screen. */
 export type EditorHandle = {
     api: EditorControlApi;
+    /** Set or remove attributes on the editable element, for state that changes while it is mounted (the `/` menu's active option). */
+    setEditableAttributes(attributes: EditableAttributes): void;
     /**
      * The box around the selected text, or around the caret when nothing is
      * selected. For the editor's own chrome (the floating toolbar, the `/`

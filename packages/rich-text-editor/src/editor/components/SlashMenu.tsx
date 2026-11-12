@@ -13,12 +13,15 @@ import { matchCommands } from '../helpers/blockCommands';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
 import { useSelectionAnchor } from '../hooks/useSelectionAnchor';
 import { type RichTextEditorLabels } from '../labels';
-import { type EditorHandle } from '../port';
+import { type EditableAttributes, type EditorHandle } from '../port';
 
 import styles from './slashMenu.module.scss';
 
 /** The character that opens the menu. */
 const TRIGGER = '/';
+
+/** What the editable element carries while no list is open. */
+const NO_LIST_ATTRIBUTES: EditableAttributes = { 'aria-controls': null, 'aria-activedescendant': null };
 
 /** The groups in list order, each headed by the label under that key. */
 const GROUPS: readonly { group: RteBlockCommand['group']; label: 'turnInto' | 'insert' }[] = [
@@ -223,23 +226,14 @@ const SlashList = ({
     // follows the list while the caret stays in the text.
     const activeId = commands.length === 0 ? undefined : optionId(index);
     useEffect(() => {
-        const editable = editableRef.current?.querySelector<HTMLElement>('[contenteditable]');
-        if (!editable) {
-            return;
-        }
         // With nothing matching there is no list to point at, only the "no results" note.
         if (activeId === undefined) {
-            editable.removeAttribute('aria-controls');
-            editable.removeAttribute('aria-activedescendant');
+            handle.setEditableAttributes(NO_LIST_ATTRIBUTES);
         } else {
-            editable.setAttribute('aria-controls', listId);
-            editable.setAttribute('aria-activedescendant', activeId);
+            handle.setEditableAttributes({ 'aria-controls': listId, 'aria-activedescendant': activeId });
         }
-        return () => {
-            editable.removeAttribute('aria-controls');
-            editable.removeAttribute('aria-activedescendant');
-        };
-    }, [editableRef, listId, activeId]);
+        return () => handle.setEditableAttributes(NO_LIST_ATTRIBUTES);
+    }, [handle, listId, activeId]);
 
     // Keep the highlighted row in view as the arrows walk the list.
     useEffect(() => {

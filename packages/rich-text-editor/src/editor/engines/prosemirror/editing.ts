@@ -17,6 +17,7 @@ import {
 } from './clipboard';
 import { createControlApi, type OpenEditors } from './controlApi';
 import { rootExtrasOf, toEngineDocument, toRteDocument, withoutDrafts } from './documentConversion';
+import { editableWatchPlugin } from './editableWatch';
 import { copiedExtrasPlugin } from './extraAttributes';
 import { keystrokePipeline } from './keystrokes';
 import { createMarkViews, createNodeViews, LiveViews } from './nodeViews';
@@ -131,6 +132,7 @@ const mount = ({
             plugins: [
                 ...keystrokePipeline(registry, schema, api),
                 copiedExtrasPlugin(),
+                editableWatchPlugin(repaintViews),
                 placeholderPlugin(() => currentPlaceholder, placeholderClassName),
                 // Drawn in the view's offset parent, outside the text, so `currentColor` would be the host's colour.
                 dropCursor({ color: 'var(--color-primary-default)', width: 2 }),
@@ -192,6 +194,15 @@ const mount = ({
     const mounted: MountedDocument = {
         handle: {
             api,
+            setEditableAttributes(next) {
+                for (const [name, value] of Object.entries(next)) {
+                    if (value === null) {
+                        editorView.dom.removeAttribute(name);
+                    } else {
+                        editorView.dom.setAttribute(name, value);
+                    }
+                }
+            },
             selectionRect: createSelectionRectReader(editorView),
             document: () => toRteDocument(editorView.state.doc, rootExtras),
             focusAtEnd: () => {
