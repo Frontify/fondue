@@ -1,5 +1,11 @@
 # @frontify/fondue-icons
 
+## 0.32.1
+
+### Patch Changes
+
+- [#2978](https://github.com/Frontify/fondue/pull/2978) [`a59db73`](https://github.com/Frontify/fondue/commit/a59db7301cbb6d4dd9d62dcdad5bbd63542bc49b) Thanks [@jcosta33](https://github.com/jcosta33)! - fix: declare `sideEffects` in both packages so bundlers drop the icons and components you do not import.
+
 ## 0.32.0
 
 ### Minor Changes

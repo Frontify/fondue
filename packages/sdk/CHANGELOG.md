@@ -1,5 +1,16 @@
 # @frontify/fondue-sdk
 
+## 0.3.4
+
+### Patch Changes
+
+- [#2991](https://github.com/Frontify/fondue/pull/2991) [`136542d`](https://github.com/Frontify/fondue/commit/136542d78767263187de2011bab9194078e79a38) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(Flyout): expose `onInteractOutside` and `aria-label` on `Flyout.Content`
+
+- Updated dependencies [[`48899ef`](https://github.com/Frontify/fondue/commit/48899ef5a6beb9eb5e2bf36f36deb6a97918aa49), [`48899ef`](https://github.com/Frontify/fondue/commit/48899ef5a6beb9eb5e2bf36f36deb6a97918aa49), [`a59db73`](https://github.com/Frontify/fondue/commit/a59db7301cbb6d4dd9d62dcdad5bbd63542bc49b), [`136542d`](https://github.com/Frontify/fondue/commit/136542d78767263187de2011bab9194078e79a38), [`48899ef`](https://github.com/Frontify/fondue/commit/48899ef5a6beb9eb5e2bf36f36deb6a97918aa49), [`d5df360`](https://github.com/Frontify/fondue/commit/d5df3600960affc56fbf662d807ef3a31578ce20), [`e610067`](https://github.com/Frontify/fondue/commit/e610067b4878e90f675aabb4a61333002bd99105), [`66a5800`](https://github.com/Frontify/fondue/commit/66a5800ac077b4bf23f943e845b68cec8b7a7c3a), [`a711a4d`](https://github.com/Frontify/fondue/commit/a711a4d48ceda578e757296dfbef6f0baea2ad40)]:
+    - @frontify/fondue-components@36.0.3
+    - @frontify/fondue-icons@0.32.1
+    - @frontify/fondue-tokens@5.2.0
+
 ## 0.3.3
 
 ### Patch Changes
