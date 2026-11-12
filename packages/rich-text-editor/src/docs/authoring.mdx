@@ -170,14 +170,7 @@ export const underlineContent = defineContent({
         underline: defineMark({
             tag: 'u',
             // A decorated element counts too, as Google Docs writes it; `text-decoration: none` never removes it, as in a browser.
-            parse: [
-                { tag: 'u' },
-                { style: 'text-decoration', value: (value) => (hasDecorationLine(value, 'underline') ? {} : null) },
-                {
-                    style: 'text-decoration-line',
-                    value: (value) => (hasDecorationLine(value, 'underline') ? {} : null),
-                },
-            ],
+            parse: [{ tag: 'u' }, ...decorationLineRules('underline')],
         }),
     },
 });
