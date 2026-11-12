@@ -232,7 +232,8 @@ import { guides } from '@frontify/fondue/sdk';
 guides.list().map((g) => ({ id: g.id, title: g.title }));
 // → [
 //     { id: 'development/Contributing', title: 'How to contribute' },
-//     { id: 'development/Upgrading',    title: 'Upgrading to Fondue v13' },
+//     { id: 'development/upgrading/v13', title: 'Upgrading to Fondue v13' },
+//     { id: 'development/upgrading/v14', title: 'Upgrading to Fondue v14' },
 //     { id: 'getting-started/Setup',    title: 'Setup' },
 //     { id: 'usage/Components',         title: 'Components' },
 //     { id: 'usage/Styling',            title: 'Styling' },
@@ -250,7 +251,7 @@ setup?.content; // '# Setup\n\nWelcome to Fondue, …'
 
 ```ts
 guides.where({ text: 'tailwind' }).map((g) => g.id);
-// → ['development/Upgrading', 'getting-started/Setup', 'usage/Styling']
+// → ['development/upgrading/v13', 'getting-started/Setup', 'usage/Styling']
 ```
 
 ### "Drop the corpus into a system prompt"

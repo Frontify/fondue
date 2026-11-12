@@ -46,14 +46,14 @@ The base tokens define every token as a CSS variable on `:root`, with the values
 
 Then add the stylesheet for each other entry point you use:
 
-| Stylesheet                           | Import it when you use…                                     | Includes Tailwind preflight |
-| ------------------------------------ | ----------------------------------------------------------- | --------------------------- |
-| `@frontify/fondue/components/styles` | components from `@frontify/fondue/components` (most apps)   | No                          |
-| `@frontify/fondue/charts/styles`     | charts from `@frontify/fondue/charts`                       | No                          |
-| `@frontify/fondue/rte/styles`        | the rich text editor from `@frontify/fondue/rte`            | Yes                         |
-| `@frontify/fondue/styles`            | legacy components imported directly from `@frontify/fondue` | Yes                         |
+| Stylesheet                                 | Import it when you use…                                                           | Includes Tailwind preflight |
+| ------------------------------------------ | --------------------------------------------------------------------------------- | --------------------------- |
+| `@frontify/fondue/components/styles`       | components from `@frontify/fondue/components` (most apps)                         | No                          |
+| `@frontify/fondue/charts/styles`           | charts from `@frontify/fondue/charts`                                             | No                          |
+| `@frontify/fondue/rte/styles`              | the legacy rich text editor from `@frontify/fondue/rte`                           | Yes                         |
+| `@frontify/fondue/rich-text-editor/styles` | the experimental rich text editor from `@frontify/fondue/rich-text-editor`        | No                          |
 
-The legacy and rich text editor stylesheets ship their own copy of Tailwind's preflight (a global CSS reset for `body`, headings, buttons, …). Importing them resets base element styles even if your app doesn't use Tailwind itself. If your app also uses Tailwind with `@tailwind base`, the same reset is applied twice, which is harmless.
+The legacy rich text editor stylesheet ships its own copy of Tailwind's preflight (a global CSS reset for `body`, headings, buttons, …). Importing it resets base element styles even if your app doesn't use Tailwind itself. If your app also uses Tailwind with `@tailwind base`, the same reset is applied twice, which is harmless.
 
 ## 4. Add the fonts
 

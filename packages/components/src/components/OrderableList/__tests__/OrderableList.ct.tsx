@@ -279,7 +279,7 @@ test.describe('OrderableList', () => {
                 </OrderableList.Root>,
             );
 
-            const content = component.locator(`[data-test-id="${ITEM_TEST_ID}"] > div[tabindex="0"]`);
+            const content = component.locator(`[data-test-id="${ITEM_TEST_ID}"] > div`).first();
             await expect(content).toHaveCSS('opacity', '0.5');
         });
 
@@ -475,7 +475,10 @@ test.describe('OrderableList', () => {
     });
 
     test.describe('keyboard navigation', () => {
-        test('should make content area focusable for non-selectable items with a drag handle', async ({ mount }) => {
+        test('should not add a tab stop for the content area of non-selectable items with a drag handle', async ({
+            mount,
+            page,
+        }) => {
             const component = await mount(
                 <OrderableList.Root order={['1']}>
                     <OrderableList.Item id="1">
@@ -485,9 +488,9 @@ test.describe('OrderableList', () => {
                 </OrderableList.Root>,
             );
 
-            const content = component.locator(`[data-test-id="${ITEM_TEST_ID}"] > div[tabindex="0"]`);
-            await content.focus();
-            await expect(content).toBeFocused();
+            await expect(component.locator(`[data-test-id="${ITEM_TEST_ID}"] > div[tabindex]`)).toHaveCount(0);
+            await page.keyboard.press('Tab');
+            await expect(component.getByRole('button')).toBeFocused();
         });
 
         test('should not double-focus when no drag handle is present', async ({ mount }) => {
