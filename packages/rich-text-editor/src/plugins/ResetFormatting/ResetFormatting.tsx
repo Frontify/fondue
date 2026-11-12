@@ -7,7 +7,9 @@ import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 /**
- * Puts the selection back to plain text: no marks, a paragraph, default attributes, no lists
+ * Puts the selection back to plain text: marks gone, block type back to
+ * paragraph, alignment cleared, lists unwrapped. No schema of its own — it only
+ * drives the control API.
  */
 const reset = (api: EditorControlApi): void => {
     api.marks.removeAll();

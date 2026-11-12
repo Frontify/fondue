@@ -9,9 +9,7 @@ import { type FontColorValue, toExportedColor, toStoredColor } from './helpers/c
 
 const OPAQUE_BLACK = '#000000';
 
-/**
- * The value this plugin sets on text nodes
- */
+/** The value this plugin sets on text nodes. */
 export type FontColorMark = {
     /**
      * The colour of the text

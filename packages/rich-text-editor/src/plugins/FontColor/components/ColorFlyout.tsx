@@ -56,9 +56,7 @@ type ColorFlyoutProps = {
      * The control's name, for its button and the flyout's header
      */
     label: string;
-    /**
-     * Whether the selection carries a colour; `'mixed'` when only part of it does
-     */
+    /** Whether the selection carries a colour; `'mixed'` when only part of it does. */
     isActive: ToolbarItemProps['isActive'];
 };
 

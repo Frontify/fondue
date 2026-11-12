@@ -40,17 +40,13 @@ type BlockProps = {
     registry: PluginRegistry;
 };
 
-/**
- * One top-level block, memoized on the block itself: the editor keeps the same object for untouched blocks, so an edit redraws only its block
- */
+/** One top-level block, memoized on the block itself: the editor keeps the same object for untouched blocks, so an edit redraws only its block. */
 const Block = memo(({ block, registry }: BlockProps): ReactNode => {
     const drawn = blockNode(block, registry, { useComponents: true });
     return drawn === null ? null : toReact([drawn]);
 });
 
-/**
- * The renderer for an already built registry, so the editor's readonly view doesn't gather plugins twice
- */
+/** The renderer for an already built registry, so the editor's readonly view doesn't gather plugins twice. */
 export const RegistryRenderer = ({ value, registry, className }: RegistryRendererProps): ReactNode =>
     specToReact(
         documentRootSpec(registry, className),
@@ -59,9 +55,7 @@ export const RegistryRenderer = ({ value, registry, className }: RegistryRendere
         value.blocks.map((block, index) => <Block key={index} block={block} registry={registry} />),
     );
 
-/**
- * A stored document as React, with no editing engine: readonly display, client or server
- */
+/** A stored document as React, with no editing engine: readonly display, client or server. */
 export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlockNode>({
     value,
     plugins = [],
