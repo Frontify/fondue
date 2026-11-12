@@ -12,6 +12,7 @@ import {
     defineContent,
     definePlugin,
     type EditorControlApi,
+    type ParseReader,
     type RtePlugin,
 } from '../core';
 import {
@@ -229,7 +230,9 @@ describe('mentionPlugin', () => {
         element.innerHTML = html;
         const anchor = element.querySelector<HTMLElement>('[data-mention-id]');
 
-        const parsed = plugins[0]?.content?.inlines?.mention?.parse[0]?.value?.(anchor as HTMLElement);
+        // The mention rule reads no CSS, so its reader finds none.
+        const reader: ParseReader = { color: () => undefined };
+        const parsed = plugins[0]?.content?.inlines?.mention?.parse[0]?.value?.(anchor as HTMLElement, reader);
 
         expect(parsed).toEqual({ id: 'jane', username: 'jane', name: '' });
     });

@@ -4,22 +4,21 @@ import { Button, ColorPicker, Flyout } from '@frontify/fondue-components';
 import { IconDroplet } from '@frontify/fondue-icons';
 import { type ComponentProps, type ReactNode, useId, useRef, useState } from 'react';
 
-import { type EditorControlApi, type RteSelectionSnapshot, type ToolbarItemProps } from '#/core';
+import {
+    decodeStoredColor,
+    type EditorControlApi,
+    encodeStoredColor,
+    isStoredColor,
+    OPAQUE_ALPHA,
+    type Rgba,
+    type RteSelectionSnapshot,
+    type ToolbarItemProps,
+} from '#/core';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
-import {
-    decodeStoredColor,
-    encodeStoredColor,
-    type FontColorValue,
-    isCompleteHex,
-    OPAQUE_ALPHA,
-    parseTypedHex,
-    type Rgba,
-    toColorName,
-    toStoredColor,
-} from '../helpers/colors';
+import { type FontColorValue, isCompleteHex, parseTypedHex, toColorName } from '../helpers/colors';
 
 import styles from './colorFlyout.module.scss';
 
@@ -87,10 +86,12 @@ export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProp
     }
     // A stored value that is no colour shows none, and is still removable.
     const hasColor = isActive !== false;
-    const storedColor = toStoredColor(value?.color);
+    const markColor = value?.color;
+    let storedColor: string | undefined;
     let currentColor: Rgba | undefined;
     let title = label;
-    if (storedColor !== undefined) {
+    if (isStoredColor(markColor)) {
+        storedColor = markColor;
         currentColor = decodeStoredColor(storedColor);
         title += `: ${toColorName(currentColor)}`;
     }
