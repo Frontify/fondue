@@ -202,10 +202,11 @@ export declare namespace RtePlugin {
     export type ToolbarItemProps = ToolbarProps;
     export type ToolbarGroup = RteToolbarGroup;
     export type PasteHandler = OnPaste;
-    export type Paste = Pasted;
-    export type InsertTextOptions = InsertOptions;
-    export type InsertTextUndo = InsertUndo;
-    export type PasteSource = PastedFrom;
+    // A namespace member cannot take the name of the type it renames, so each of these needs an alias outside.
+    export type Paste = Pasted; // NOSONAR
+    export type InsertTextOptions = InsertOptions; // NOSONAR
+    export type InsertTextUndo = InsertUndo; // NOSONAR
+    export type PasteSource = PastedFrom; // NOSONAR
     export type BlockDefinition<TValue = Record<string, unknown>> = BlockDef<TValue>;
     export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
@@ -213,8 +214,9 @@ export declare namespace RtePlugin {
     export type ParseRule<TValue> = Parse<TValue>;
     export type MarkParseRule<TValue> = MarkParse<TValue>;
     export type StyleParseRule<TValue> = StyleParse<TValue>;
-    export type MarkClearRule = MarkClear;
-    export type MarkIgnoreRule = MarkIgnore;
+    // Same reason as above.
+    export type MarkClearRule = MarkClear; // NOSONAR
+    export type MarkIgnoreRule = MarkIgnore; // NOSONAR
     export type HtmlSpec = Html;
     export type Content = RteContent;
     export type ToolbarEntry = RteToolbarEntry;

@@ -240,7 +240,10 @@ export const LinkEditor = ({
                     ) : (
                         // The div only catches the Tab key bubbling up from the controls inside it; it is not a control itself.
                         // oxlint-disable-next-line jsx-a11y/no-static-element-interactions
-                        <div className={styles.panel} onKeyDown={backToText}>
+                        <div // NOSONAR
+                            className={styles.panel}
+                            onKeyDown={backToText}
+                        >
                             <a href={href} target={NEW_TAB_TARGET} rel={NEW_TAB_REL} className={styles.target}>
                                 {value.href}
                                 <span className={styles.visuallyHidden}>{NEW_TAB_NOTE}</span>
