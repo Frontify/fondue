@@ -7,11 +7,13 @@ import { defineConfig } from 'oxlint';
 /**
  * The layer boundaries, as import rings. Dependencies point inward: core ←
  * plugins / renderer / editor, with ProseMirror confined to
- * `editor/engines/prosemirror/`. Another layer is reached through its `#/…`
- * alias only, so each ring bans the aliases it may not use — always the bare
- * alias too (`#/plugins`, not just `#/plugins/**`) — and bans relative paths
- * that climb out of the importing file's own layer. How far `../` may climb
- * depends on how deep the importing file sits, hence one ring per depth.
+ * `editor/engines/prosemirror/`. The shell and the plugins also draw with the
+ * shared `ui/`, which the core, the renderer and the engine never import.
+ * Another layer is reached through its `#/…` alias only, so each ring bans the
+ * aliases it may not use — always the bare alias too (`#/plugins`, not just
+ * `#/plugins/**`) — and bans relative paths that climb out of the importing
+ * file's own layer. How far `../` may climb depends on how deep the importing
+ * file sits, hence one ring per depth.
  *
  * Patterns are globs matched against the import specifier: `*` stays within one
  * path segment, `**` crosses any number, and a later `!pattern` re-allows what
