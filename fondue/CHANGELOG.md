@@ -1,5 +1,19 @@
 # @frontify/fondue
 
+## 14.0.0-beta.3
+
+### Patch Changes
+
+- [#3013](https://github.com/Frontify/fondue/pull/3013) [`b7bc6c7`](https://github.com/Frontify/fondue/commit/b7bc6c7774795824cdcf52cb10201162d83ee252) Thanks [@noahwaldner](https://github.com/noahwaldner)! - docs: update import paths and links for fondue 14. The SDK guides no longer mention the removed `@frontify/fondue` root entry or `@frontify/fondue/styles`, and `ThemeProvider` points to `@frontify/fondue/components/locales`.
+
+- [#3012](https://github.com/Frontify/fondue/pull/3012) [`2328458`](https://github.com/Frontify/fondue/commit/232845885a8bf906905a751a352f8e71d188939e) Thanks [@noahwaldner](https://github.com/noahwaldner)! - docs(RichTextEditor): mark the rich text editor as experimental. `@frontify/fondue-rich-text-editor` and the `@frontify/fondue/rich-text-editor` entry can change their API and document format in any release until the editor reaches 1.0.
+
+- Updated dependencies [[`4e92d69`](https://github.com/Frontify/fondue/commit/4e92d69a07cd9df0763a2e00cbd78c7ca3ceb4ed), [`b7bc6c7`](https://github.com/Frontify/fondue/commit/b7bc6c7774795824cdcf52cb10201162d83ee252), [`2328458`](https://github.com/Frontify/fondue/commit/232845885a8bf906905a751a352f8e71d188939e), [`b73c9d4`](https://github.com/Frontify/fondue/commit/b73c9d43562cf5579b29ebaf941ee2fd8d717157), [`876e823`](https://github.com/Frontify/fondue/commit/876e8239702086c9acc2139fa7f5037a984de05b)]:
+  - @frontify/fondue-components@37.0.0-beta.1
+  - @frontify/fondue-sdk@1.0.0-beta.2
+  - @frontify/fondue-rich-text-editor@0.1.0-beta.2
+  - @frontify/fondue-tokens@6.0.0-beta.1
+
 ## 14.0.0-beta.2
 
 ### Patch Changes

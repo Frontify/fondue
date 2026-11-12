@@ -1,5 +1,11 @@
 # @frontify/fondue-rich-text-editor
 
+## 0.1.0-beta.2
+
+### Patch Changes
+
+- [#3012](https://github.com/Frontify/fondue/pull/3012) [`2328458`](https://github.com/Frontify/fondue/commit/232845885a8bf906905a751a352f8e71d188939e) Thanks [@noahwaldner](https://github.com/noahwaldner)! - docs(RichTextEditor): mark the rich text editor as experimental. `@frontify/fondue-rich-text-editor` and the `@frontify/fondue/rich-text-editor` entry can change their API and document format in any release until the editor reaches 1.0.
+
 ## 0.1.0-beta.1
 
 ### Minor Changes

@@ -16,9 +16,13 @@
     "bright-pens-write",
     "charts-v14-major",
     "components-manifest-shared-parsing",
+    "components-remove-deprecated-apis",
     "components-v14-major",
     "declare-side-effects",
+    "docs-v14-import-paths",
     "quiet-trees-fall",
+    "rich-text-editor-components-peer",
+    "rich-text-editor-experimental",
     "rich-text-editor-main-catch-up",
     "rte-browser-tests",
     "rte-editing-extras",
@@ -31,9 +35,11 @@
     "rte-unknown-block-raw-leak",
     "rte-v14-minor",
     "rude-moose-guess",
+    "sdk-upgrading-v14-guide",
     "select-menu-list-reset",
     "tabs-single-active-tab-change",
     "text-input-native-border",
+    "tokens-remove-legacy-token-tools",
     "tree-item-min-width"
   ]
 }
