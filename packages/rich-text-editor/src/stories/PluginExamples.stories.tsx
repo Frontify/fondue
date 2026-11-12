@@ -117,7 +117,7 @@ const SURFACE = 'tw-rounded tw-border tw-border-solid tw-border-line-mid tw-bg-s
 /** The field box around an editor: the surface, plus a ring while focus is inside it. */
 const FRAME = `${SURFACE} hover:tw-border-line-strong focus-within:tw-ring-focus`;
 
-const toolbarButtonClasses = (active: boolean): string =>
+const toolbarButtonClasses = (active: boolean | 'mixed'): string =>
     [
         'tw-body-small tw-rounded tw-border tw-border-solid tw-border-line-strong tw-px-2 tw-py-1 tw-text-secondary tw-cursor-pointer',
         active ? 'tw-bg-container-secondary' : 'tw-bg-transparent',
@@ -1092,23 +1092,20 @@ const acmeHighlightPlugin = /* @__PURE__ */ definePlugin({
     toolbar: [
         {
             label: 'Highlight',
-            render: ({ api, selection, label }) => {
-                const active = selection.marks['acme-highlight']?.coverage === 'all';
-                return (
-                    <button
-                        type="button"
-                        aria-pressed={active}
-                        onMouseDown={(event) => event.preventDefault()}
-                        onClick={() => api.marks.toggle('acme-highlight')}
-                        className={toolbarButtonClasses(active)}
-                    >
-                        {label}
-                    </button>
-                );
-            },
+            shortcut: 'Mod-Shift-h',
+            render: ({ isActive, toggle, label }) => (
+                <button
+                    type="button"
+                    aria-pressed={isActive}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => toggle()}
+                    className={toolbarButtonClasses(isActive)}
+                >
+                    {label}
+                </button>
+            ),
         },
     ],
-    hotkeys: { 'Mod-Shift-h': { label: 'Highlight', run: (api) => api.marks.toggle('acme-highlight') } },
 });
 
 /**
@@ -1171,27 +1168,18 @@ const acmeCalloutPlugin = /* @__PURE__ */ definePlugin({
     toolbar: [
         {
             label: 'Callout',
-            render: ({ api, selection, label }) => {
-                const active = selection.block?.type === 'acme-callout';
-                return (
-                    <button
-                        type="button"
-                        aria-label={label}
-                        aria-pressed={active}
-                        onMouseDown={(event) => event.preventDefault()}
-                        onClick={() => {
-                            if (active) {
-                                api.blocks.setType('paragraph');
-                            } else {
-                                api.blocks.setType('acme-callout');
-                            }
-                        }}
-                        className={toolbarButtonClasses(active)}
-                    >
-                        💡
-                    </button>
-                );
-            },
+            render: ({ isActive, toggle, label }) => (
+                <button
+                    type="button"
+                    aria-label={label}
+                    aria-pressed={isActive}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => toggle()}
+                    className={toolbarButtonClasses(isActive)}
+                >
+                    💡
+                </button>
+            ),
         },
     ],
 });

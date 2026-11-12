@@ -10,7 +10,7 @@ import * as PluginExamples from '../stories/PluginExamples.stories';
 
 A plugin adds a mark, a block or an inline element to the editor. A mark styles a run of text, such as bold. A block is a paragraph-sized unit, such as a quote. An inline is a small element inside a line of text, such as a mention.
 
-Every example on this page is real code. The excerpts are copied from the file named in the line above each one.
+Every example on this page is real code. The excerpts are copied from the file named in the line above each one, except the one sketch that says it is not.
 
 ## A mark in one file
 
@@ -45,25 +45,24 @@ const acmeHighlightPlugin = /* @__PURE__ */ definePlugin({
     toolbar: [
         {
             label: 'Highlight',
-            render: ({ api, selection, label }) => {
-                const active = selection.marks['acme-highlight']?.coverage === 'all';
-                return (
-                    <button
-                        type="button"
-                        aria-pressed={active}
-                        onMouseDown={(event) => event.preventDefault()}
-                        onClick={() => api.marks.toggle('acme-highlight')}
-                        className={toolbarButtonClasses(active)}
-                    >
-                        {label}
-                    </button>
-                );
-            },
+            shortcut: 'Mod-Shift-h',
+            render: ({ isActive, toggle, label }) => (
+                <button
+                    type="button"
+                    aria-pressed={isActive}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => toggle()}
+                    className={toolbarButtonClasses(isActive)}
+                >
+                    {label}
+                </button>
+            ),
         },
     ],
-    hotkeys: { 'Mod-Shift-h': { label: 'Highlight', run: (api) => api.marks.toggle('acme-highlight') } },
 });
 ```
+
+The button asks the editor instead of working things out itself: `isActive` says whether the selection has the mark, and `toggle` turns it on or off. `shortcut` binds the key to the same toggle.
 
 `definePlugin` takes its `id` from the only type the content declares. With several types, give it an `id`.
 
@@ -135,7 +134,7 @@ A plugin lists its toolbar controls in `toolbar`. Each entry is data:
 - `icon` is the button's icon, a component such as one from `@frontify/fondue-icons`.
 - `shortcut` is a key in `Mod-b` style. The tooltip shows it, and it toggles the entry's type.
 - `toggles` names the mark, block or inline the entry turns on and off. It defaults to the only type the content declares.
-- `render` draws custom UI in place of the button. It gets the `api`, the `selection`, the entry's `label` to name it with, and a `toggle` function. An entry has an `icon` or a `render`.
+- `render` draws custom UI in place of the button. It gets the entry's `label` to name it with, `isActive` (`true`, `false` or `'mixed'` when only part of the selection has the mark) and a `toggle` function that turns the entry's type on or off. It also gets the `api`, the `selection`, the `selectedNode` and `openEditor`. An entry has an `icon` or a `render`.
 
 `toolbarGroup`, on the plugin, picks the toolbar cluster its entries sit in, such as `'marks'` or `'insert'`. A plugin without one sits after the built-in groups.
 
@@ -149,7 +148,7 @@ export const underlinePlugin = /* @__PURE__ */ definePlugin({
 });
 ```
 
-For a key with its own action, use `hotkeys`, as the highlight plugin above does. Each binding needs a `label` and a `run` function. `Mod` is Cmd on macOS and Ctrl elsewhere. Avoid keys the system or browser takes, such as `Mod-h`, which hides the app on macOS.
+For a key that does something other than toggle the entry's type, use `hotkeys`. Each binding needs a `label` and a `run` function. `Mod` is Cmd on macOS and Ctrl elsewhere. Avoid keys the system or browser takes, such as `Mod-h`, which hides the app on macOS.
 
 The label is not optional. The [Keyboard reference](?path=/docs/rich-text-editor-guides-keyboard-reference--docs) page is written from these labels and the toolbar shortcuts, so a plugin that gains a key appears there with no edit to that page.
 
@@ -162,17 +161,19 @@ Every definition says how it is written and how it is read back.
 
 A mark that is only a tag can skip both with `defineMark({ tag: 'u' })`. A mark also takes parse rules for inline styles, as Google Docs writes them. A `style` rule matches an element that declares that CSS property, and its `value` function gets the declared value.
 
-Source: `src/plugins/Underline/Underline.ts`
+A sketch of both rules on one mark, not code from the package:
 
 ```ts
-export const underlineContent = defineContent({
-    marks: {
-        underline: defineMark({
-            tag: 'u',
-            // A decorated element counts too, as Google Docs writes it; `text-decoration: none` never removes it, as in a browser.
-            parse: [{ tag: 'u' }, ...decorationLineRules('underline')],
-        }),
-    },
+const declaresUnderline = (cssValue: string): Record<string, never> | null => {
+    if (cssValue.includes('underline')) {
+        return {};
+    }
+    return null;
+};
+
+defineMark({
+    tag: 'u',
+    parse: [{ tag: 'u' }, { style: 'text-decoration', value: declaresUnderline }],
 });
 ```
 
