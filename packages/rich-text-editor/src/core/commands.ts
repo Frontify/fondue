@@ -27,7 +27,9 @@ export type RteSelectionSnapshot = {
      *
      * On a caret, every entry is `'all'`: the marks typing here would carry.
      * Over a range, `'all'` is a mark every text in it carries and `'some'` one
-     * only part of it carries — a half-bold range is `'some'`, not bold.
+     * only part of it carries — a half-bold range is `'some'`, not bold. A mark
+     * all of it carries, but with different values, is `'some'` too: a
+     * red-and-blue range has no one colour.
      */
     marks: Record<string, RteMarkState>;
     /** Whether the undo history has a change to take back or make again — what undo and redo buttons enable on. */
@@ -56,6 +58,11 @@ export type EditorControlApi = {
          * any of it carried, as one undo step: how a colour is changed.
          */
         set(type: string, value?: Record<string, unknown>): void;
+        /**
+         * Take a mark off all of the selection, however much of it carried the
+         * mark, as one undo step: how a colour is removed.
+         */
+        remove(type: string): void;
         /** Strip every mark from the selection — the formatting half of "reset formatting". */
         removeAll(): void;
         /**
