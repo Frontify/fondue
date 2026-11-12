@@ -532,8 +532,11 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
                     {registry.descriptions.join(' ')}
                 </div>
             )}
-            {/* What `api.announce` says. */}
-            <output role="status" className={styles.visuallyHidden}>
+            {/* What `api.announce` says. The role is written out on purpose: the specs and the notice lookup find the region by it. */}
+            <output // NOSONAR
+                role="status"
+                className={styles.visuallyHidden}
+            >
                 {announcement}
             </output>
             {/* The plugins' editing UI, portalled into the text but part of this tree, so it shares the host's context. */}
