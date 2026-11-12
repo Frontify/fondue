@@ -75,9 +75,6 @@ export const lookProperties = (key: string, look: TextLook): Record<string, stri
     return properties;
 };
 
-/** Muted text's colour (quotes, quieter text styles): the same value as `$color` in `plugins/shared/_mutedText.scss`. */
-export const MUTED_COLOR = 'var(--color-container-secondary-on-secondary-container-variant)';
-
 /**
  * One class's style, shaped as `contentStyles` takes it.
  * @throws When the class has no name, as when its stylesheet module did not load, rather than writing no style.

@@ -10,7 +10,6 @@ import {
     defineContent,
     defineMark,
     definePlugin,
-    MUTED_COLOR,
     PARAGRAPH,
     type RteDocumentOf,
     type RtePlugin,
@@ -21,6 +20,7 @@ import { fontColorPlugin } from '../plugins/FontColor';
 import { linkPlugin } from '../plugins/Link';
 import { paragraphPlugin } from '../plugins/Paragraph';
 import { quotePlugin } from '../plugins/Quote';
+import { MUTED_COLOR } from '../plugins/shared/helpers/mutedText';
 import { textStylePlugin } from '../plugins/TextStyle';
 import { serializeToHtml } from '../renderer/serializeToHtml';
 

@@ -21,7 +21,7 @@ export {
 } from './document';
 export { isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
 export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
-export { lookProperties, lookStyle, MUTED_COLOR, styleOfClass, type TextLook } from './look';
+export { lookProperties, lookStyle, styleOfClass, type TextLook } from './look';
 export {
     type BlockAttributeDefinition,
     type BlockDefinition,

@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { MUTED_COLOR, PARAGRAPH, type ParseRule, type RteInlineNode, type RteInputRule, type StyleMap } from '#/core';
+import { PARAGRAPH, type ParseRule, type RteInlineNode, type RteInputRule, type StyleMap } from '#/core';
 
+import { MUTED_COLOR } from '../../shared/helpers/mutedText';
 import styles from '../textStyle.module.scss';
 
 /** The leading the headings share, as `$heading-line-height` in `textStyle.module.scss`. */

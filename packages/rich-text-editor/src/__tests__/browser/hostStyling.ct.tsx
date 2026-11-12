@@ -490,10 +490,47 @@ const removeClasses = (container: Locator): Promise<void> =>
         }
     });
 
+/** The underline offset of every link, which no block look above holds. */
+const underlineOffsetsIn = (surface: Locator): Promise<string[]> =>
+    surface.locator('a').evaluateAll((links) => links.map((link) => getComputedStyle(link).textUnderlineOffset));
+
 const allLooksIn = async (surface: Locator) => ({
     presets: await computedLooksIn(surface),
     others: await looksOfBlocksIn(surface),
+    underlineOffsets: await underlineOffsetsIn(surface),
 });
+
+const DOCUMENT_ROOT_PROPERTIES = ['white-space', 'overflow-wrap', 'font-variant-ligatures'] as const;
+
+type DocumentRootLook = Record<(typeof DOCUMENT_ROOT_PROPERTIES)[number], string>;
+
+/** The root's own value of what it sets for its text to read as the editor's, which its blocks only inherit. */
+const documentRootLookIn = (surface: Locator): Promise<DocumentRootLook> =>
+    // The heading is one of the document root's children, so its parent is the root.
+    surface
+        .locator(BLOCK_SELECTORS.heading1)
+        .locator('..')
+        .evaluate((root, properties) => {
+            const style = getComputedStyle(root);
+            const values: Record<string, string> = {};
+            for (const property of properties) {
+                values[property] = style.getPropertyValue(property);
+            }
+            // Filled from DOCUMENT_ROOT_PROPERTIES just above, one key each.
+            return values as DocumentRootLook;
+        }, DOCUMENT_ROOT_PROPERTIES);
+
+// The stylesheet writes `pre-wrap` and then `break-spaces` for browsers that know it; the inline style writes `pre-wrap`
+// alone, as email clients read it. Both keep every typed space, so this is the one value that differs.
+const CLASSES_WHITE_SPACE = 'break-spaces';
+const INLINE_WHITE_SPACE = 'pre-wrap';
+
+const expectRootsToMatch = async (inline: Locator, classes: Locator): Promise<void> => {
+    const classesRoot = await documentRootLookIn(classes);
+
+    expect(classesRoot['white-space']).toBe(CLASSES_WHITE_SPACE);
+    expect(await documentRootLookIn(inline)).toEqual({ ...classesRoot, 'white-space': INLINE_WHITE_SPACE });
+};
 
 const HOST_PRESETS: Partial<Record<TextStyleName, TextLook>> = Object.fromEntries(
     STYLE_NAMES.map((name) => [name, HOST_LOOK]),
@@ -508,6 +545,7 @@ test.describe('inline styling of exported HTML', () => {
 
         await expect(inline.locator('[class]')).toHaveCount(0);
         expect(await allLooksIn(inline)).toEqual(await allLooksIn(component.getByTestId('classes')));
+        await expectRootsToMatch(inline, component.getByTestId('classes'));
     });
 
     test('reads as the class output does, with a host look for every owner', async ({ mount }) => {
@@ -520,5 +558,6 @@ test.describe('inline styling of exported HTML', () => {
 
         await expect(inline.locator('[class]')).toHaveCount(0);
         expect(await allLooksIn(inline)).toEqual(await allLooksIn(component.getByTestId('classes')));
+        await expectRootsToMatch(inline, component.getByTestId('classes'));
     });
 });

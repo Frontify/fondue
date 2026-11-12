@@ -8,11 +8,12 @@ import {
     definePlugin,
     lookProperties,
     lookStyle,
-    MUTED_COLOR,
     type RteInlineNode,
     styleOfClass,
     type TextLook,
 } from '#/core';
+
+import { MUTED_COLOR } from '../shared/helpers/mutedText';
 
 import styles from './quote.module.scss';
 
