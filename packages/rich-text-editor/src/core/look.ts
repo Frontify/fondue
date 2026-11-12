@@ -20,7 +20,7 @@ export type TextLook = {
     color?: string;
 };
 
-/** The CSS property each field sets. `plugins/shared/look.module.scss` spells the same names. */
+/** The CSS property each field sets. `styles/look.module.scss` spells the same names. */
 export const LOOK_PROPERTIES = {
     fontFamily: 'font-family',
     fontSize: 'font-size',
@@ -35,7 +35,7 @@ export const LOOK_PROPERTIES = {
     color: 'color',
 } as const satisfies Record<keyof TextLook, string>;
 
-/** The prefix every look's custom property carries; `look.module.scss` writes the same. */
+/** The prefix every look's custom property carries; `styles/look.module.scss` writes the same. */
 const LOOK_VARIABLE_PREFIX = '--rte-';
 
 const UPPER_CASE_LETTER = /[A-Z]/g;
@@ -44,8 +44,17 @@ const UPPER_CASE_LETTER = /[A-Z]/g;
 const kebabCase = (key: string): string => key.replaceAll(UPPER_CASE_LETTER, (letter) => `-${letter.toLowerCase()}`);
 
 /**
- * The custom properties a style's look sets, `--rte-<key>-<css property>`, which
- * the stylesheet reads with Fondue's look as the fallback.
+ * The custom property a host sets for one field of a style's look, `--rte-<key>-<css property>`.
+ * The stylesheet reads it with Fondue's look as the fallback.
+ *
+ * @param key - The style's name, such as `imageTitle`.
+ * @param property - The CSS property, as a value of `LOOK_PROPERTIES`.
+ */
+export const lookVariableName = (key: string, property: string): string =>
+    `${LOOK_VARIABLE_PREFIX}${kebabCase(key)}-${property}`;
+
+/**
+ * The custom properties a style's look sets, which the stylesheet reads with Fondue's look as the fallback.
  *
  * @param key - The style's name, such as `imageTitle`.
  * @throws When a value is empty or could break out of its declaration, rather than dropping it silently.
@@ -61,7 +70,7 @@ export const lookProperties = (key: string, look: TextLook): Record<string, stri
         if (value.trim() === '' || !isSafeCssValue(value)) {
             throw new Error(`The "${field}" of the "${key}" look is not a usable CSS value: ${JSON.stringify(value)}`);
         }
-        properties[`${LOOK_VARIABLE_PREFIX}${kebabCase(key)}-${property}`] = value;
+        properties[lookVariableName(key, property)] = value;
     }
     return properties;
 };

@@ -3,6 +3,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { type EditorControlApi, type RteSelectionSnapshot } from './commands';
+import { OWN_MARGINS_ATTRIBUTE } from './documentContract';
 import {
     defineBlock,
     defineContent,
@@ -12,7 +13,8 @@ import {
     type RteInputRule,
     type RtePlugin,
 } from './plugin';
-import { buildPluginRegistry } from './registry';
+import { blockHtml, buildPluginRegistry } from './registry';
+import { paragraphBlock } from './vocabulary';
 
 /**
  * The registry is the one place plugins are read: it gathers their
@@ -597,5 +599,66 @@ describe('bare content in a registry', () => {
                 definePlugin({ id: 'strong', content: defineContent({ marks: { bold: mark() } }) }),
             ]),
         ).toThrow('Duplicate mark type "bold": declared by plugin "bold" and plugin "strong".');
+    });
+});
+
+describe('the markup of a block', () => {
+    const blockOf = (ownsMargins?: boolean) =>
+        defineBlock({ content: 'text', ownsMargins, toHtml: () => ({ tag: 'p', children: true }), parse: [] });
+
+    it('carries the margin marker when the block owns its margins', () => {
+        const definition = blockOf(true);
+        const registry = buildPluginRegistry([defineContent({ blocks: { owner: definition } })]);
+
+        expect(blockHtml(registry, 'owner', definition, {})).toEqual({
+            tag: 'p',
+            attrs: { [OWN_MARGINS_ATTRIBUTE]: '' },
+            children: true,
+        });
+    });
+
+    it('carries no marker otherwise', () => {
+        for (const ownsMargins of [undefined, false]) {
+            const definition = blockOf(ownsMargins);
+            const registry = buildPluginRegistry([defineContent({ blocks: { plain: definition } })]);
+
+            expect(blockHtml(registry, 'plain', definition, {})).toEqual({ tag: 'p', children: true });
+        }
+    });
+
+    it("adds the classes a plugin declares for a block's type, to a block another plugin owns", () => {
+        const registry = buildPluginRegistry([
+            defineContent({ blockClassNames: { paragraph: 'looked' } }),
+            defineContent({ blockClassNames: { paragraph: 'again' } }),
+        ]);
+
+        expect(blockHtml(registry, 'paragraph', paragraphBlock, {})).toEqual({
+            tag: 'p',
+            attrs: { class: 'looked again' },
+            children: true,
+        });
+    });
+
+    it('keeps the class the block writes itself', () => {
+        const definition = defineBlock({
+            content: 'text',
+            toHtml: () => ({ tag: 'blockquote', attrs: { class: 'own' }, children: true }),
+            parse: [],
+        });
+        const registry = buildPluginRegistry([
+            defineContent({ blocks: { quote: definition }, blockClassNames: { quote: 'added' } }),
+        ]);
+
+        expect(blockHtml(registry, 'quote', definition, {}).attrs?.class).toBe('own added');
+    });
+
+    it('marks a block that a plugin declares to own its margins, though another plugin defines it', () => {
+        const registry = buildPluginRegistry([defineContent({ blocksOwningMargins: ['paragraph'] })]);
+
+        expect(blockHtml(registry, 'paragraph', paragraphBlock, {})).toEqual({
+            tag: 'p',
+            attrs: { [OWN_MARGINS_ATTRIBUTE]: '' },
+            children: true,
+        });
     });
 });

@@ -160,7 +160,7 @@ describe('a style value that could break out of its declaration', () => {
     ])('is dropped from the style, keeping the rest: %s', (color) => {
         const exported = serializeToHtml(tinted(color), { plugins: [tintPlugin], wrap: false });
 
-        expect(exported).toBe('<p class="rte-paragraph"><span style="font-weight: bold;">x</span></p>');
+        expect(exported).toBe('<p><span style="font-weight: bold;">x</span></p>');
         expect(normalized(drawnWithReact(tinted(color), [tintPlugin]))).toBe(normalized(exported));
     });
 

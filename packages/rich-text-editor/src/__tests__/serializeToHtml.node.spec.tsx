@@ -61,9 +61,7 @@ describe('serializing without a browser', () => {
 
         const html = serializeToHtml(doc, { plugins: features, wrap: false });
 
-        expect(html).toMatch(
-            /^<h2>Hello<\/h2><p class="rte-paragraph">Sent from <strong>a server<\/strong>\.<\/p><p class="rte-paragraph"><br\s*\/?><\/p>$/,
-        );
+        expect(html).toMatch(/^<h2>Hello<\/h2><p>Sent from <strong>a server<\/strong>\.<\/p><p><br\s*\/?><\/p>$/);
     });
 
     it('carries a preset look on the root so a server render matches the browser', () => {

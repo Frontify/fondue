@@ -11,22 +11,11 @@ import { type EditorControlApi, type RteSelectionSnapshot } from './commands';
 import { type HtmlSpec, type StyleMap } from './htmlSpec';
 
 /**
- * A feature, described as data: a plain object declaring what exists
- * (`blocks`, `marks`, `inlines`, `blockAttributes`) and how to interact with it
- * (toolbar, hotkeys, input rules). It never runs anything itself — effects go
- * through the `EditorControlApi` it is handed.
+ * What a document can hold, apart from how it is edited. The renderer, the HTML
+ * export and a server load use only this.
  *
- * Every node is described the same way: `toHtml` (the static markup) and
- * `parse` (how pasted HTML is read back). An advanced node adds React under
- * `render`: `component` for a richer readonly view, `edit` for interactive
- * editing. Export and copy always use `toHtml`.
- *
- * Plugins are functions returning this object:
- *
- * ```ts
- * export const boldPlugin = (): RtePlugin => ({ id: 'bold', marks: { bold: defineMark({ … }) } });
- * plugins={[boldPlugin(), mentionPlugin({ items })]}
- * ```
+ * Every node has `toHtml` (its markup) and `parse` (how pasted HTML is read
+ * back); an advanced node adds a readonly view under `render.component`.
  */
 export type RteContent = {
     kind: 'content';
@@ -46,6 +35,17 @@ export type RteContent = {
      * Custom properties set on the editable element, such as `{ '--rte-columns': '3' }`
      */
     contentProperties?: Record<string, string>;
+    /**
+     * Classes added to the outermost element of a block, keyed by block type. The block may be another
+     * plugin's (the paragraph), so a style reaches it only while this plugin is on. A CSS module class is
+     * `undefined` when its stylesheet lacks it, and adds none.
+     */
+    blockClassNames?: Record<string, string | undefined>;
+    /**
+     * Block types whose stylesheet, declared here, writes their margins, so the document leaves them alone.
+     * The same as a block's own `ownsMargins`, for a block this plugin does not define (the paragraph).
+     */
+    blocksOwningMargins?: readonly string[];
 };
 
 /**
@@ -111,14 +111,14 @@ export type RtePlugin = {
      */
     edit?: Record<string, RteEditView>;
     /**
-     * Entries for the floating bar's "Turn into" menu and the `/` menu, in the order given
-     */
-    /**
      * Which cluster of the toolbar its entries sit in. Groups follow a fixed
      * order, entries keep mount order inside theirs, and entries with no group
      * come last, together.
      */
     toolbarGroup?: RteToolbarGroup;
+    /**
+     * Entries for the floating bar's "Turn into" menu and the `/` menu, in the order given
+     */
     commands?: readonly RteBlockCommand[];
     /**
      * Keybindings, keyed `Mod-b` style (Mod = Cmd on macOS, Ctrl elsewhere) or
@@ -275,6 +275,12 @@ export const defineBlock = <TValue extends object = Record<string, never>>(
 export type BlockDefinition<TValue = Record<string, unknown>> = {
     content?: ContentModel;
     defaults?: TValue;
+    /**
+     * Whether the block's own stylesheet writes its margins. The document then leaves them alone;
+     * otherwise it gives the block the gap between blocks.
+     * @default false
+     */
+    ownsMargins?: boolean;
     /** The block's markup. `children: true` is where its content goes. */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<Partial<TValue>>[];

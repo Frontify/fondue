@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineContent, definePlugin, lookProperties, type TextLook } from '#/core';
+import { defineContent, definePlugin, lookProperties, PARAGRAPH, type TextLook } from '#/core';
 
 import styles from './paragraph.module.scss';
 
@@ -17,8 +17,9 @@ export type ParagraphPluginOptions = {
  */
 export const paragraphContent = ({ look = {} }: ParagraphPluginOptions = {}) =>
     defineContent({
-        // The class the body look's rules hang off, so they reach the paragraphs only while this plugin is on.
-        contentClassName: styles.body,
+        // The paragraph is core's block, so the class and the margins are declared by type, and only while this plugin is on.
+        blockClassNames: { [PARAGRAPH]: styles.paragraph },
+        blocksOwningMargins: [PARAGRAPH],
         contentProperties: lookProperties('body', look),
     });
 

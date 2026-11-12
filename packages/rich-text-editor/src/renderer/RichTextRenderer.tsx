@@ -4,6 +4,7 @@ import { memo, type ReactNode, useMemo } from 'react';
 
 import {
     buildPluginRegistry,
+    DOCUMENT_TEST_ID,
     type PluginRegistry,
     type RteBlockNode,
     type RteContent,
@@ -47,13 +48,16 @@ const Block = memo(({ block, registry }: BlockProps): ReactNode => {
 });
 
 /** The renderer for an already built registry, so the editor's readonly view doesn't gather plugins twice. */
-export const RegistryRenderer = ({ value, registry, className }: RegistryRendererProps): ReactNode =>
-    specToReact(
-        documentRootSpec(registry, className),
+export const RegistryRenderer = ({ value, registry, className }: RegistryRendererProps): ReactNode => {
+    const rootSpec = documentRootSpec(registry, className);
+    return specToReact(
+        // Only the React root carries the test id: `serializeToHtml` output goes to host pages.
+        { ...rootSpec, attrs: { ...rootSpec.attrs, 'data-test-id': DOCUMENT_TEST_ID } },
         // Blocks carry no id; position is the only key, and the memo skips unchanged ones.
         // eslint-disable-next-line @eslint-react/no-array-index-key
         value.blocks.map((block, index) => <Block key={index} block={block} registry={registry} />),
     );
+};
 
 /** A stored document as React, with no editing engine: readonly display, client or server. */
 export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlockNode>({

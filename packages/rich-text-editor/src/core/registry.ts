@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 // The plugin list flattened into one engine-agnostic lookup. The only place that
-// reads `RtePlugin`: the editor shell, engine and renderer read the registry, so
-// each declaration is gathered, ordered and checked once.
+// reads `RtePlugin` and `RteContent`: the editor shell, engine and renderer read
+// the registry, so each declaration is gathered, ordered and checked once.
 
 import { type ReactNode } from 'react';
 
 import { type EditorControlApi, type RteMarkState, type RteSelectionSnapshot } from './commands';
+import { OWN_MARGINS_ATTRIBUTE } from './documentContract';
 import { type HtmlSpec, type StyleMap, withRootStyle } from './htmlSpec';
 import {
     type BlockAttributeDefinition,
@@ -117,6 +118,10 @@ export type PluginRegistry = {
     contentClassNames: readonly string[];
     /** Custom properties set alongside them, later plugins winning. */
     contentProperties: Readonly<Record<string, string>>;
+    /** The classes plugins add to a block's element, by block type, in mount order. */
+    blockClassNames: ReadonlyMap<string, readonly string[]>;
+    /** The block types some plugin's stylesheet writes the margins of, besides those that declare `ownsMargins`. */
+    blocksOwningMargins: ReadonlySet<string>;
 };
 
 /** A mark sits in the floating bar; a block is reached through its commands instead. */
@@ -428,6 +433,8 @@ type Draft = {
     commandOwners: Map<string, string>;
     contentClassNames: string[];
     contentProperties: Record<string, string>;
+    blockClassNames: Map<string, string[]>;
+    blocksOwningMargins: Set<string>;
     /** How often each id has come up so far, for unique toolbar keys. */
     seenIds: Map<string, number>;
     duplicateIds: Set<string>;
@@ -527,6 +534,14 @@ const addContent = (draft: Draft, content: RteContent | undefined, owner: string
         draft.contentClassNames.push(content.contentClassName);
     }
     Object.assign(draft.contentProperties, content?.contentProperties);
+    for (const [type, className] of Object.entries(content?.blockClassNames ?? {})) {
+        if (className !== undefined) {
+            draft.blockClassNames.set(type, [...(draft.blockClassNames.get(type) ?? []), className]);
+        }
+    }
+    for (const type of content?.blocksOwningMargins ?? []) {
+        draft.blocksOwningMargins.add(type);
+    }
 
     register('block type', draft.blocks, draft.blockOwners, owner, content?.blocks);
     register('inline type', draft.inlines, draft.inlineOwners, owner, content?.inlines);
@@ -555,6 +570,8 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         commandOwners: new Map(),
         contentClassNames: [],
         contentProperties: {},
+        blockClassNames: new Map(),
+        blocksOwningMargins: new Set(),
         seenIds: new Map(),
         duplicateIds: new Set(),
         blockOwners: new Map(),
@@ -600,6 +617,8 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         commands: draft.commands,
         contentClassNames: draft.contentClassNames,
         contentProperties: draft.contentProperties,
+        blockClassNames: draft.blockClassNames,
+        blocksOwningMargins: draft.blocksOwningMargins,
     };
 };
 
@@ -626,14 +645,31 @@ export const blockAttributeStyle = (registry: PluginRegistry, stored: Record<str
 };
 
 /**
- * A block's markup with what every text block carries (alignment) applied to
- * its outermost element — shared by editor, readonly view and export so they agree.
+ * A block's markup with what every block carries applied to its outermost
+ * element — alignment on a text block, the classes plugins add to its type, the margin marker on one that owns its
+ * margins. Shared by editor, readonly view and export so they agree.
  */
 export const blockHtml = (
     registry: PluginRegistry,
+    type: string,
     definition: BlockDefinition,
     stored: Record<string, unknown>,
 ): HtmlSpec => {
-    const spec = definition.toHtml(blockValueOf(definition, stored));
-    return definition.content === 'text' ? withRootStyle(spec, blockAttributeStyle(registry, stored)) : spec;
+    let spec = definition.toHtml(blockValueOf(definition, stored));
+    if (definition.content === 'text') {
+        spec = withRootStyle(spec, blockAttributeStyle(registry, stored));
+    }
+    const added = registry.blockClassNames.get(type);
+    if (added !== undefined) {
+        const classNames = [];
+        if (spec.attrs?.class !== undefined) {
+            classNames.push(spec.attrs.class);
+        }
+        classNames.push(...added);
+        spec = { ...spec, attrs: { ...spec.attrs, class: classNames.join(' ') } };
+    }
+    if (definition.ownsMargins === true || registry.blocksOwningMargins.has(type)) {
+        spec = { ...spec, attrs: { ...spec.attrs, [OWN_MARGINS_ATTRIBUTE]: '' } };
+    }
+    return spec;
 };

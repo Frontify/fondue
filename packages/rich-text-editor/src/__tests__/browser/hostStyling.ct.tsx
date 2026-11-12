@@ -3,6 +3,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator } from '@playwright/test';
 
+import { DOCUMENT_TEST_ID } from '../../core/documentContract';
 import { type LinkLook, type TextLook, type TextStyleName } from '../../index';
 
 import { HostLooksPair } from './HostLooksPair';
@@ -80,8 +81,7 @@ const computedLookOf = async (element: Locator): Promise<ComputedLook> => {
 const DOCUMENT_FONT_FAMILY = 'the document root font family';
 
 const computedLooksIn = async (surface: Locator): Promise<Record<TextStyleName, ComputedLook>> => {
-    // The blocks are the document root's children, so a block's parent is the root.
-    const documentLook = await computedLookOf(surface.locator(BLOCK_SELECTORS.heading1).locator('..'));
+    const documentLook = await computedLookOf(surface.getByTestId(DOCUMENT_TEST_ID));
     const looks: Partial<Record<TextStyleName, ComputedLook>> = {};
     for (const name of STYLE_NAMES) {
         const look = await computedLookOf(surface.locator(BLOCK_SELECTORS[name]));

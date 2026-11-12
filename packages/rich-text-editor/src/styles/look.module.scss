@@ -3,7 +3,8 @@
 @use 'sass:list';
 @use 'sass:map';
 
-// The CSS properties a host can set; core/look.ts spells the same names.
+// The CSS properties a host can set. `LOOK_PROPERTIES` in core/look.ts spells the same names, and
+// `__tests__/lookStylesheets.spec.ts` fails when the two lists differ.
 $look-properties:
     font-family, font-size, font-weight, font-style, line-height, letter-spacing, text-transform, text-decoration,
     margin-top, margin-bottom, color;
@@ -24,26 +25,27 @@ $default-fallbacks: (
     color: inherit,
 );
 
-// Writes each property as the host's `--rte-<$key>-<property>`, falling back to Fondue's look: `$fallbacks`
-// where it differs from the default. `$key` is the style's kebab-case name, such as `image-title`; `$except`
-// lists the properties the style keeps for itself, so the host cannot set them.
-@mixin look($key, $fallbacks: (), $except: ()) {
-    @each $property in map.keys($fallbacks) {
+// Fails the build for a name that is not a look property, so a typo cannot pass as "no such override".
+@mixin -assert-known($properties, $argument) {
+    @each $property in $properties {
         @if not list.index($look-properties, $property) {
-            @error 'look(): "#{$property}" is not a look property.';
+            @error 'look(): "#{$property}" in #{$argument} is not a look property.';
         }
     }
+}
 
-    @each $property in $except {
-        @if not list.index($look-properties, $property) {
-            @error 'look(): "#{$property}" is not a look property.';
-        }
-    }
+// Writes each property as the host's `--rte-<$key>-<property>`, falling back to Fondue's look: `$fallbacks`
+// where it differs from the default. `$key` is the style's kebab-case name, such as `image-title`.
+// `$only` limits the output to those properties (a block that sets only its margins), `$except` leaves some out.
+@mixin look($key, $fallbacks: (), $only: $look-properties, $except: ()) {
+    @include -assert-known(map.keys($fallbacks), '$fallbacks');
+    @include -assert-known($only, '$only');
+    @include -assert-known($except, '$except');
 
     $resolved: map.merge($default-fallbacks, $fallbacks);
 
     @each $property in $look-properties {
-        @if not list.index($except, $property) {
+        @if list.index($only, $property) and not list.index($except, $property) {
             #{$property}: var(--rte-#{$key}-#{$property}, #{map.get($resolved, $property)});
         }
     }

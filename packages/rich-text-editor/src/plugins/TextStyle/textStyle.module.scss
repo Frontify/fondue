@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@use '../shared/look.module.scss';
+@use '../../styles/look.module.scss';
 @use '../shared/mutedText' as muted;
 
 // Every preset. Headings use Fondue's semantic heading tokens, the rest the typography scale.

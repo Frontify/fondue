@@ -28,4 +28,11 @@ describe('the quote plugin look', () => {
     it('registers next to the default content, which shares its block', () => {
         expect(() => buildPluginRegistry([quoteContent(), quotePlugin({ look: { color: 'red' } })])).not.toThrow();
     });
+
+    it('writes its own margins, so the document leaves them alone', () => {
+        const registry = buildPluginRegistry([quoteContent()]);
+        const definition = registry.blocks.get('quote');
+
+        expect(definition?.ownsMargins).toBe(true);
+    });
 });
