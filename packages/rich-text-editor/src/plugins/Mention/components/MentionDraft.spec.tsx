@@ -6,7 +6,7 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { readableShortcut } from '#/ui/ToolbarButton/ToolbarButton';
+import { readableShortcut } from '#/ui/shortcut';
 
 import { type MentionItem, type MentionItems } from '../types';
 

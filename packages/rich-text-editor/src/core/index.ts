@@ -75,3 +75,4 @@ export {
     toggleOwn,
 } from './registry';
 export { ANY_LIST, DOCUMENT_VERSION, emptyDocument, INLINE_PLACEHOLDER, newerVersionOf, PARAGRAPH } from './vocabulary';
+export { warnOnce } from './warnings';

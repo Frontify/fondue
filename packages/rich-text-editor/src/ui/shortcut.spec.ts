@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { ariaKeyShortcut, readableShortcut } from './ToolbarButton';
+import { ariaKeyShortcut, readableShortcut } from './shortcut';
 
 describe('a toolbar shortcut', () => {
     it('is spelled for aria-keyshortcuts by platform', () => {
