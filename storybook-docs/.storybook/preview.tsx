@@ -95,7 +95,7 @@ const preview: Preview = {
                         'SDK',
                         ['Usage', 'Concepts', 'Examples', 'Reference'],
                         'Development',
-                        ['Contributing', 'Upgrading'],
+                        ['Contributing', 'Upgrading', ['v14', 'v13']],
                     ],
                     'Tokens',
                     ['Colors', 'Semantic Tokens', 'Utilities', ['Typography', 'Custom']],
