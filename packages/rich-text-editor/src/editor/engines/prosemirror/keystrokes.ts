@@ -265,7 +265,7 @@ const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | n
         const from = start + leading;
         const contentFrom = from + delimiter.length;
         const contentTo = contentFrom + content.length;
-        // Content may carry code; the delimiters the rule deletes may not.
+        // Content may carry an excluded mark; the delimiters the rule deletes may not.
         if (
             touchesExcludedMark(state, context.excludedMarks, from, contentFrom) ||
             touchesExcludedMark(state, context.excludedMarks, contentTo, end)

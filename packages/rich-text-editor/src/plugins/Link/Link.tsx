@@ -2,8 +2,9 @@
 
 import { type ComponentType, type ReactNode } from 'react';
 
-import { defineContent, defineMark, definePlugin, type HotkeyHandler } from '#/core';
+import { type DefaultStyle, defineContent, defineMark, definePlugin, type HotkeyHandler } from '#/core';
 
+import { withoutDecorationLine } from '../shared/helpers/declaredStyle';
 import { isLinkablePaste, LINKABLE_ADDRESS, LINKABLE_ADDRESS_TRIM, toHref } from '../shared/helpers/href';
 
 import { LinkEditor } from './components/LinkEditor';
@@ -31,6 +32,13 @@ export type LinkPluginOptions = LinkPolicy & {
 };
 
 const NEW_TAB_NOTE_SELECTOR = `span[${NEW_TAB_NOTE_ATTRIBUTE}]`;
+
+const withoutUnderline = (value: string): string => withoutDecorationLine(value, 'underline');
+
+const LINK_DEFAULT_STYLES: readonly DefaultStyle[] = [
+    { property: 'text-decoration', scope: 'inside', strip: withoutUnderline },
+    { property: 'text-decoration-line', scope: 'inside', strip: withoutUnderline },
+];
 
 /**
  * A stored link as the reader and the export draw it: without its target when the policy refuses it.
@@ -169,6 +177,9 @@ export const linkContent = (policy: LinkPolicy = {}) =>
                 }),
 
                 render: { component: readerFor(policy) },
+
+                // A pasted span inside a link, such as Google Docs writes, repeats the underline the link already shows.
+                defaultStyles: LINK_DEFAULT_STYLES,
 
                 parse: [
                     // The hidden note the reader adds is not text of the link, when the reader is copied back in.
