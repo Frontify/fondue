@@ -14,6 +14,7 @@ import {
     type MarkParseRule,
     type ParsePrecedence,
     type ParseRule,
+    parseReaderOf,
     type PluginRegistry,
     type StyleParseRule,
 } from '#/core';
@@ -81,10 +82,20 @@ const tagRulePriority = (base: number, rule: ParseRule<unknown>): number => {
  */
 const valueAttrs = (value: unknown) => (value === null ? false : { [VALUE_ATTR]: value });
 
+/**
+ * A tag rule's value: what its `value` reads off the element, or no attributes when it reads none.
+ */
+const tagRuleValue = <TValue>(rule: ParseRule<TValue>, element: HTMLElement): TValue | Record<string, never> | null => {
+    if (rule.value === undefined) {
+        return {};
+    }
+    return rule.value(element, parseReaderOf(element));
+};
+
 const valueParseRule = (rule: ParseRule<unknown>, base: number): TagParseRule => ({
     tag: rule.tag,
     priority: tagRulePriority(base, rule),
-    getAttrs: (element: HTMLElement) => valueAttrs(rule.value ? rule.value(element) : {}),
+    getAttrs: (element: HTMLElement) => valueAttrs(tagRuleValue(rule, element)),
 });
 
 /**
@@ -227,7 +238,7 @@ export const blockParseRules = (
         tag: rule.tag,
         priority: tagRulePriority(BLOCK_BASE_PRIORITY, rule),
         getAttrs: (element: HTMLElement) => {
-            const value = rule.value ? rule.value(element) : {};
+            const value = tagRuleValue(rule, element);
             if (value === null) {
                 return false;
             }

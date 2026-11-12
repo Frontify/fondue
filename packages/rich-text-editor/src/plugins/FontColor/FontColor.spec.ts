@@ -4,7 +4,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type ParseRule } from '#/core';
+import { type ParseRule, parseReaderOf } from '#/core';
 
 import { fontColorPlugin } from './FontColor';
 
@@ -13,9 +13,10 @@ const fontColor = fontColorPlugin.content?.marks?.fontColor;
 const parse = (html: string): unknown => {
     const element = document.createElement('div');
     element.innerHTML = html;
+    const span = element.firstElementChild as HTMLElement;
     // The font colour mark's first rule is its `span` tag rule, which reads the element.
     const rule = fontColor?.parse[0] as ParseRule<unknown> | undefined;
-    return rule?.value?.(element.firstElementChild as HTMLElement);
+    return rule?.value?.(span, parseReaderOf(span));
 };
 
 describe('the font colour mark', () => {
@@ -24,11 +25,10 @@ describe('the font colour mark', () => {
         expect(fontColor?.toHtml({ color: '#c5221f80' }).attrs).toEqual({ style: { color: 'rgba(197, 34, 31, 0.5)' } });
     });
 
-    it('writes a stored value in another CSS form as the colour it stands for', () => {
-        expect(fontColor?.toHtml({ color: 'red' }).attrs).toEqual({ style: { color: '#ff0000' } });
-        expect(fontColor?.toHtml({ color: 'rgba(255, 20, 73, 0.5)' }).attrs).toEqual({
-            style: { color: 'rgba(255, 20, 73, 0.5)' },
-        });
+    it('leaves out a stored value in another CSS form, which this editor never writes', () => {
+        for (const color of ['red', 'rgba(255, 20, 73, 0.5)', '#C5221F', '#f00']) {
+            expect(fontColor?.toHtml({ color }).attrs).toEqual({});
+        }
     });
 
     it('leaves out a stored value that is no colour', () => {

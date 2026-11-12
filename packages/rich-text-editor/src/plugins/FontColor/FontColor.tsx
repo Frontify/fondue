@@ -1,11 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineContent, defineMark, definePlugin } from '#/core';
-
-import { declaredStyle } from '../shared/helpers/declaredStyle';
+import { defineContent, defineMark, definePlugin, isStoredColor } from '#/core';
 
 import { ColorFlyout } from './components/ColorFlyout';
-import { type FontColorValue, toExportedColor, toStoredColor } from './helpers/colors';
+import { type FontColorValue, toExportedColor } from './helpers/colors';
 
 const OPAQUE_BLACK = '#000000';
 
@@ -29,11 +27,11 @@ export const fontColorContent = defineContent({
             nesting: -1,
             // Typing at the end of coloured text does not carry the colour on.
             inclusive: false,
-            // A stored value that is no colour is left out rather than written into the style.
+            // A stored value that is not a stored colour is left out rather than written into the style.
             toHtml: (value) => {
                 // A stored document may hold anything here, so nothing about the value's shape is taken on trust.
-                const color = toStoredColor((value as Partial<FontColorValue> | null)?.color);
-                if (color === undefined) {
+                const color = (value as Partial<FontColorValue> | null)?.color;
+                if (!isStoredColor(color)) {
                     return { tag: 'span', attrs: {}, children: true };
                 }
                 return { tag: 'span', attrs: { style: { color: toExportedColor(color) } }, children: true };
@@ -42,9 +40,8 @@ export const fontColorContent = defineContent({
             parse: [
                 {
                     tag: 'span',
-                    value: (element) => {
-                        const declared = declaredStyle(element, 'color');
-                        const color = toStoredColor(declared);
+                    value: (_element, read) => {
+                        const color = read.color('color');
                         // Word processors write opaque black on every run; kept, it would pin text to black in a dark theme.
                         if (color === undefined || color === OPAQUE_BLACK) {
                             return null;

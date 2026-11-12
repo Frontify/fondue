@@ -19,6 +19,14 @@ export {
     UNDO_HOTKEY,
 } from './commands';
 export {
+    blockAttributeStyle,
+    blockHtml,
+    blockValueOf,
+    buildContentRegistry,
+    type ContentRegistry,
+} from './contentRegistry';
+export { toStoredColor } from './cssColor';
+export {
     type ParagraphBlock,
     type RteBlockNode,
     type RteDocumentOf,
@@ -56,6 +64,7 @@ export {
     type MarkParseRule,
     onlyTypeOf,
     type ParsePrecedence,
+    type ParseReader,
     type ParseRule,
     type Paste,
     type PasteHandler,
@@ -80,10 +89,8 @@ export {
     type StyleParseRule,
     type ToolbarItemProps,
 } from './plugin';
+export { parseReaderOf } from './parseReader';
 export {
-    blockAttributeStyle,
-    blockHtml,
-    blockValueOf,
     buildPluginRegistry,
     controlOf,
     isClaimedBy,
@@ -97,6 +104,16 @@ export {
     type ToolbarEntry,
     toggleOwn,
 } from './registry';
+export {
+    decodeStoredColor,
+    encodeStoredColor,
+    isStoredColor,
+    MAX_CHANNEL,
+    OPAQUE_ALPHA,
+    readHexDigits,
+    type Rgba,
+    toShortestAlpha,
+} from './storedColor';
 export {
     ANY_LIST,
     DOCUMENT_VERSION,

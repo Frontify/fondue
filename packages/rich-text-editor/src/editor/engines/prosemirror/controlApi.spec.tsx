@@ -203,17 +203,25 @@ describe('the selection snapshot', () => {
         expect(editor.api.selection.get().marks).toEqual({ bold: { coverage: 'all', value: {} } });
     });
 
-    it('reports the value of the run the range starts in when a mark has several', () => {
+    it('reports a mark whose runs carry different values as some', () => {
         const editor = editorWith(plugins, [
-            paragraph(
-                text('first', { link: { href: 'a' } }),
-                text(' ', { link: { href: 'a' } }),
-                text('second', { link: { href: 'b' } }),
-            ),
+            paragraph(text('a', { fontColor: { color: '#ff0000' } }), text('b', { fontColor: { color: '#0000ff' } })),
+        ]);
+        editor.selectBetween('a', 'b');
+
+        expect(editor.api.selection.get().marks).toEqual({ fontColor: { coverage: 'some' } });
+    });
+
+    it('reports a mark whose runs carry one value as all, with that value', () => {
+        const editor = editorWith(plugins, [
+            paragraph(text('first', { bold: true, link: LINK }), text(' second', { link: LINK })),
         ]);
         editor.selectBetween('first', 'second');
 
-        expect(editor.api.selection.get().marks).toEqual({ link: { coverage: 'all', value: { href: 'a' } } });
+        expect(editor.api.selection.get().marks).toEqual({
+            bold: { coverage: 'some' },
+            link: { coverage: 'all', value: LINK },
+        });
     });
 
     it('is the same value until the editor state changes', () => {
@@ -380,6 +388,50 @@ describe('marks.set', () => {
 
         expect(editor.onDocChange).not.toHaveBeenCalled();
         expect(warn).toHaveBeenCalledWith(expect.stringContaining('marks.set("unknown")'));
+        warn.mockRestore();
+    });
+});
+
+describe('marks.remove', () => {
+    const RED = { fontColor: { color: '#ff0000' } };
+
+    it('takes a mark off all of a range only part of which carries it', () => {
+        const editor = editorWith(plugins, [paragraph(text('a', RED), text('b'))]);
+        editor.selectBetween('a', 'b');
+
+        editor.api.marks.remove('fontColor');
+
+        expect(editor.stored()).toEqual([paragraph(text('ab'))]);
+    });
+
+    it('leaves the other marks in place', () => {
+        const editor = editorWith(plugins, [paragraph(text('ab', { ...RED, bold: true }))]);
+        editor.select('ab');
+
+        editor.api.marks.remove('fontColor');
+
+        expect(editor.stored()).toEqual([paragraph(text('ab', { bold: true }))]);
+    });
+
+    it('makes what is typed next at a caret carry no such mark', () => {
+        const editor = editorWith(plugins, [paragraph(text('ab', RED))]);
+        editor.caretAfter('a');
+
+        editor.api.marks.remove('fontColor');
+        editor.api.insertText('X');
+
+        expect(editor.stored()).toEqual([paragraph(text('a', RED), text('X'), text('b', RED))]);
+    });
+
+    it('ignores a mark no plugin provides, and says so while developing', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const editor = editorWith(plugins, [paragraph(text('text'))]);
+        editor.select('text');
+
+        editor.api.marks.remove('unknown');
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining('marks.remove("unknown")'));
         warn.mockRestore();
     });
 });

@@ -16,6 +16,7 @@ import {
     type MarkIgnoreRule,
     type MarkParseRule,
     type ParsePrecedence,
+    type ParseReader as CssReader,
     type ParseRule,
     type InsertTextOptions,
     type InsertTextUndo,
@@ -230,6 +231,7 @@ export declare namespace RtePlugin {
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
     export type EditProps<TValue, TCurrent = TValue> = EditComponentProps<TValue, TCurrent>;
     export type ParseRule<TValue> = Parse<TValue>;
+    export type ParseReader = CssReader;
     export type MarkParseRule<TValue> = MarkParse<TValue>;
     export type StyleParseRule<TValue> = StyleParse<TValue>;
     // Same reason as above.
