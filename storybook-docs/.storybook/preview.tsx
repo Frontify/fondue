@@ -95,7 +95,7 @@ const preview: Preview = {
                         'SDK',
                         ['Usage', 'Concepts', 'Examples', 'Reference'],
                         'Development',
-                        ['Contributing', 'Upgrading'],
+                        ['Contributing', 'Upgrading', ['v14', 'v13']],
                     ],
                     'Tokens',
                     ['Colors', 'Semantic Tokens', 'Utilities', ['Typography', 'Custom']],
@@ -105,6 +105,7 @@ const preview: Preview = {
                     'Layout',
                     'Providers',
                     'Charts',
+                    'Rich Text Editor',
                 ],
                 method: 'alphabetical',
             },
@@ -130,6 +131,11 @@ const preview: Preview = {
                     background: 'rgb(50, 210, 182)',
                     color: '#ffffff',
                     description: 'This component is stable and released',
+                },
+                experimental: {
+                    background: 'rgb(255, 160, 50)',
+                    color: '#ffffff',
+                    description: 'This is experimental: the API and document format can still change in any release',
                 },
                 in_progress: {
                     background: 'rgb(154, 126, 254)',

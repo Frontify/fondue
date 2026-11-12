@@ -27,23 +27,15 @@ export type CheckListBlock<TItem extends RteBlockNode = RteBlockNode> = {
 
 type CheckValue = { checked: boolean | 'inProgress' };
 
-/**
- * What `checked` holds for an item that is started but not finished
- */
+/** What `checked` holds for an item that is started but not finished. */
 const IN_PROGRESS = 'inProgress';
 
-/**
- * One state of an item, with everything that depends on it
- */
+/** One state of an item, with everything that depends on it. */
 type CheckState = {
     value: CheckValue['checked'];
-    /**
-     * What `data-checked` holds in exported HTML, which `parse` reads back
-     */
+    /** What `data-checked` holds in exported HTML, which `parse` reads back. */
     data: string;
-    /**
-     * The checkbox's name in exported HTML, where it has no visible text to point at
-     */
+    /** The checkbox's name in exported HTML, where it has no visible text to point at. */
     label: string;
 };
 
@@ -52,18 +44,14 @@ const STARTED: CheckState = { value: IN_PROGRESS, data: IN_PROGRESS, label: 'In 
 const NOT_DONE: CheckState = { value: false, data: 'false', label: 'Not done' };
 const CHECK_STATES = [DONE, STARTED, NOT_DONE];
 
-/**
- * Anything stored but `true` and `'inProgress'` is not done: a stored `"false"` is truthy, and would draw a tick
- */
+/** Anything stored but `true` and `'inProgress'` is not done: a stored `"false"` is truthy, and would draw a tick. */
 const stateOfValue = (checked: unknown): CheckState =>
     CHECK_STATES.find((state) => state.value === checked) ?? NOT_DONE;
 
 const stateOfData = (data: string | undefined): CheckState =>
     CHECK_STATES.find((state) => state.data === data) ?? NOT_DONE;
 
-/**
- * A click finishes an item, in progress or not, and reopens a finished one
- */
+/** A click finishes an item, in progress or not, and reopens a finished one. */
 const afterClick = (state: CheckState): CheckState => {
     if (state === DONE) {
         return NOT_DONE;
@@ -71,9 +59,7 @@ const afterClick = (state: CheckState): CheckState => {
     return DONE;
 };
 
-/**
- * `indeterminate` is a DOM property with no attribute or React prop, so it is set on the element
- */
+/** `indeterminate` is a DOM property with no attribute or React prop, so it is set on the element. */
 const setIndeterminate = (input: HTMLInputElement | null, indeterminate: boolean): void => {
     if (input) {
         input.indeterminate = indeterminate;
