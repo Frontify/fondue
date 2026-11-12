@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 // The plugin list flattened into one engine-agnostic lookup. The only place that
-// reads `RtePlugin`: the editor shell, engine and renderer read the registry, so
-// each declaration is gathered, ordered and checked once.
+// reads `RtePlugin` and `RteContent`: the editor shell, engine and renderer read
+// the registry, so each declaration is gathered, ordered and checked once.
 
 import { type ReactNode } from 'react';
 

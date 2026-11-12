@@ -66,7 +66,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlock>(props: Ri
 export type RichTextRendererProps<TBlock extends RteBlockNode = RteBlock> = RendererProps<TBlock>;
 
 /**
- * A readonly view of a document; works on the server. Uses `defaultPlugins` when given no `plugins`.
+ * A readonly view of a document; works on the server. Uses `defaultContent` when given no `plugins`.
  *
  * @experimental The API and document format can change in any release until 1.0.
  */
@@ -80,7 +80,7 @@ export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlock>(
 
 /**
  * The document as an HTML string, the same markup the editor copies to the
- * clipboard. No React or browser needed. Uses `defaultPlugins` when given no
+ * clipboard. No React or browser needed. Uses `defaultContent` when given no
  * `plugins`; `wrap: false` leaves out the root element. Style it with this
  * package's stylesheet (emails need the styles inlined).
  */
@@ -97,7 +97,7 @@ export { isEmpty };
 
 /**
  * The document's text, one line per text block. Inlines read as their plugin's
- * markup (a mention as `@jane`). Uses `defaultPlugins` when given no `plugins`.
+ * markup (a mention as `@jane`). Uses `defaultContent` when given no `plugins`.
  */
 export const toPlainText = <TBlock extends RteBlockNode = RteBlock>(
     doc: RteDocument<TBlock>,

@@ -11,22 +11,11 @@ import { type EditorControlApi, type RteSelectionSnapshot } from './commands';
 import { type HtmlSpec, type StyleMap } from './htmlSpec';
 
 /**
- * A feature, described as data: a plain object declaring what exists
- * (`blocks`, `marks`, `inlines`, `blockAttributes`) and how to interact with it
- * (toolbar, hotkeys, input rules). It never runs anything itself — effects go
- * through the `EditorControlApi` it is handed.
+ * What a document can hold, apart from how it is edited. The renderer, the HTML
+ * export and a server load use only this.
  *
- * Every node is described the same way: `toHtml` (the static markup) and
- * `parse` (how pasted HTML is read back). An advanced node adds React under
- * `render`: `component` for a richer readonly view, `edit` for interactive
- * editing. Export and copy always use `toHtml`.
- *
- * Plugins are functions returning this object:
- *
- * ```ts
- * export const boldPlugin = (): RtePlugin => ({ id: 'bold', marks: { bold: defineMark({ … }) } });
- * plugins={[boldPlugin(), mentionPlugin({ items })]}
- * ```
+ * Every node has `toHtml` (its markup) and `parse` (how pasted HTML is read
+ * back); an advanced node adds a readonly view under `render.component`.
  */
 export type RteContent = {
     kind: 'content';
@@ -111,14 +100,14 @@ export type RtePlugin = {
      */
     edit?: Record<string, RteEditView>;
     /**
-     * Entries for the floating bar's "Turn into" menu and the `/` menu, in the order given
-     */
-    /**
      * Which cluster of the toolbar its entries sit in. Groups follow a fixed
      * order, entries keep mount order inside theirs, and entries with no group
      * come last, together.
      */
     toolbarGroup?: RteToolbarGroup;
+    /**
+     * Entries for the floating bar's "Turn into" menu and the `/` menu, in the order given
+     */
     commands?: readonly RteBlockCommand[];
     /**
      * Keybindings, keyed `Mod-b` style (Mod = Cmd on macOS, Ctrl elsewhere) or
