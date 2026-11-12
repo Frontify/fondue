@@ -73,9 +73,7 @@ export const textStyleContent = textStyleContentFor(ALL_TEXT_STYLES);
 
 const HEADING_LEVEL: Partial<Record<string, number>> = { h1: 1, h2: 2, h3: 3, h4: 4 };
 
-/**
- * Words the `/` menu also finds a heading by
- */
+/** Words the `/` menu also finds a heading by. */
 const HEADING_KEYWORDS: Partial<Record<number, readonly string[]>> = {
     1: ['h1', 'title'],
     2: ['h2', 'subtitle'],
@@ -84,8 +82,13 @@ const HEADING_KEYWORDS: Partial<Record<number, readonly string[]>> = {
 };
 
 /**
- * Paragraph and heading styles chosen from a dropdown, with `Mod-Alt-0` to `Mod-Alt-4` shortcuts and `# ` to `#### ` while typing.
- * An editor that does not offer `heading3` turns a pasted `h3` into a paragraph.
+ * Which styles an editor offers is a product decision — a comment box wants
+ * none, a page editor wants all — so it is an option. `styles` is the dropdown,
+ * in the order given, and it is also what pasted HTML may become: an editor
+ * that does not offer `heading3` turns a pasted `h3` into a paragraph.
+ *
+ * Rendering is not restricted the same way, so a document written by a
+ * differently configured editor still displays as it was authored.
  */
 export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStylePluginOptions = {}): RtePlugin => {
     const offered = presetsFor(options);

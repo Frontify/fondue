@@ -30,41 +30,25 @@ export const EDITOR_SHORTCUTS = {
     focusToolbar: { key: 'Alt-F10', label: 'Move focus to the toolbar' },
 } satisfies Record<string, EditorShortcut>;
 
-/**
- * What an engine adapter implements: put an editable document in a container
- */
+/** What an engine adapter implements: put an editable document in a container. */
 export type MountDocument = (options: MountOptions) => MountedDocument;
 
 export type MountOptions = {
     container: HTMLElement;
     initialDoc: RteDocumentOf;
-    /**
-     * The mounted plugins, already gathered: the engine never reads a plugin itself
-     */
+    /** The mounted plugins, already gathered: the engine never reads a plugin itself. */
     registry: PluginRegistry;
-    /**
-     * Starting value; change it later through `setPlaceholder`
-     */
+    /** Starting value; change it later through `setPlaceholder`. */
     placeholder: string;
-    /**
-     * Class the placeholder decoration carries
-     */
+    /** Class the placeholder decoration carries. */
     placeholderClassName: string;
-    /**
-     * Attributes for the editable element: its classes (the editor's own plus the plugins'; the adapter does no styling) and accessible name. Starting value; change it later through `setAttributes`.
-     */
+    /** Attributes for the editable element: its classes (the editor's own plus the plugins'; the adapter does no styling) and accessible name. Starting value; change it later through `setAttributes`. */
     attributes: Readonly<Record<string, string>>;
-    /**
-     * The document changed through editing
-     */
+    /** The document changed through editing. */
     onDocChange: (doc: RteDocumentOf) => void;
-    /**
-     * The editor now shows this document from the host: the initial one, or one `setDoc` took rather than ignored as its own
-     */
+    /** The editor now shows this document from the host: the initial one, or one `setDoc` took rather than ignored as its own. */
     onDocApplied: (doc: RteDocumentOf) => void;
-    /**
-     * The editor state moved: any transaction, including a caret move
-     */
+    /** The editor state moved: any transaction, including a caret move. */
     onStateChange: () => void;
     viewPortals: ViewPortals;
     /**
@@ -75,24 +59,16 @@ export type MountOptions = {
 
 export type MountedDocument = {
     handle: EditorHandle;
-    /**
-     * Replace the content with an externally set document (the controlled `value`)
-     */
+    /** Replace the content with an externally set document (the controlled `value`). */
     setDoc(doc: RteDocumentOf): void;
-    /**
-     * Change the text shown while the document is empty. Empty string means none.
-     */
+    /** Change the text shown while the document is empty. Empty string means none. */
     setPlaceholder(placeholder: string): void;
-    /**
-     * Replace the further attributes of the editable element
-     */
+    /** Replace the further attributes of the editable element. */
     setAttributes(attributes: Readonly<Record<string, string>>): void;
     destroy(): void;
 };
 
-/**
- * What a live editor offers the shell: the commands, and where the selection is on screen
- */
+/** What a live editor offers the shell: the commands, and where the selection is on screen. */
 export type EditorHandle = {
     api: EditorControlApi;
     /**
@@ -101,9 +77,7 @@ export type EditorHandle = {
      * menu); plugin UI anchors itself.
      */
     selectionRect(): FloatingRect;
-    /**
-     * The document as it stands now, as the host would be handed it
-     */
+    /** The document as it stands now, as the host would be handed it. */
     document(): RteDocumentOf;
     /** Focus the text with the caret after its last character, as when the editor comes back after a crash. */
     focusAtEnd(): void;
@@ -120,7 +94,5 @@ export type ViewPortals = {
     delete(owner: object): void;
 };
 
-/**
- * A box in viewport coordinates
- */
+/** A box in viewport coordinates. */
 export type FloatingRect = { left: number; top: number; width: number; height: number };

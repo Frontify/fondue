@@ -22,7 +22,7 @@ import { toolbarItemProps } from './toolbarItem';
  * What a toolbar entry's `render` is handed, composed from the control API alone.
  * A small fake editor stands in for the real one: it keeps a selection snapshot
  * and changes it the way the commands would, so each test presses a control and
- * then reads what the control shows afterwards: the outcome, not which
+ * then reads what the control shows afterwards — the outcome, not which
  * command ran.
  */
 

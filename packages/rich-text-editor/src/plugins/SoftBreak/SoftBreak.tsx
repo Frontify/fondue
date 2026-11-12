@@ -2,15 +2,14 @@
 
 import { defineContent, defineInline, definePlugin } from '#/core';
 
-/**
- * The void inline this plugin adds, a line break inside a block
- */
+/** A line break inside a block — the void inline this plugin adds. */
 export type BreakInline = {
     type: 'break';
 };
 
 /**
- * A line break, written as `<br>`
+ * Shift-Enter breaks the line without ending the block. No toolbar: the
+ * keybinding is the whole feature.
  */
 export const softBreakContent = defineContent({
     inlines: {

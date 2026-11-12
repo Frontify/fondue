@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue-rte",
     "type": "module",
-    "version": "0.1.15",
+    "version": "0.2.0-beta.0",
     "description": "Rich Text Editor components extracted from Fondue design system",
     "author": "Frontify Developers <developers@frontify.com>",
     "homepage": "https://github.com/Frontify/fondue",
@@ -163,7 +163,6 @@
         "@tony.ganchev/eslint-plugin-header": "^3.4.4",
         "@types/escape-html": "^1.0.4",
         "@types/is-hotkey": "^0.1.10",
-        "@types/jscodeshift": "^17.3.0",
         "@types/lodash-es": "^4.17.12",
         "@types/node": "^24.19.2",
         "@types/react": "^18.3.31",
