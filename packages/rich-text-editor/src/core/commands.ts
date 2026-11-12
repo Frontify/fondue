@@ -11,6 +11,23 @@
 export type RteMarkState = { coverage: 'all'; value: Record<string, unknown> } | { coverage: 'some' };
 
 /**
+ * How `insertText` is undone. `'together'`: the text and its marks in one step. `'marksFirst'`: the marks in a step
+ * of their own, so the first undo keeps the text, as undoing an autolink does.
+ */
+export type InsertTextUndo = 'together' | 'marksFirst';
+
+/**
+ * Options for `insertText`.
+ */
+export type InsertTextOptions = {
+    /**
+     * How the insert is undone.
+     * @default 'together'
+     */
+    undo?: InsertTextUndo;
+};
+
+/**
  * What is selected, as one value that plugin UI renders itself from. Read it in a toolbar render function, which runs on every state change.
  */
 export type RteSelectionSnapshot = {
@@ -43,6 +60,11 @@ export type RteSelectionSnapshot = {
     /** Whether the undo history has a change to take back or make again — what undo and redo buttons enable on. */
     history: { canUndo: boolean; canRedo: boolean };
 };
+
+/**
+ * What `blocks.toggleAttribute` did: put the value on the blocks, took it off them, or found no selected text block that declares the attribute
+ */
+export type BlockAttributeToggle = 'set' | 'removed' | 'unchanged';
 
 export type RemoveAllMarksOptions = {
     /**
@@ -77,8 +99,10 @@ export type EditorControlApi = {
         /**
          * Strip every mark from the selection, except the types named in `except`: the formatting half of
          * "reset formatting". At a caret it clears the whole text block around it, not just what is typed next.
+         *
+         * @returns whether any mark was removed, from the document or from the marks the caret would type with
          */
-        removeAll(options?: RemoveAllMarksOptions): void;
+        removeAll(options?: RemoveAllMarksOptions): boolean;
         /**
          * The whole run of a mark around the selection (its value and text), or
          * null. Unlike the snapshot's `marks` it is about the run, not the
@@ -98,9 +122,17 @@ export type EditorControlApi = {
          */
         updateAttributes(attributes: Record<string, unknown>): void;
         /**
+         * Set `name` to `value` on every text block the selection touches, or remove it (set it to null) when every one already has that value. Changes nothing when no selected text block declares `name`
+         */
+        toggleAttribute(name: string, value: unknown): BlockAttributeToggle;
+        /**
          * Reset every `blockAttributes` attribute (alignment) to its default across the selection
          */
         resetAttributes(): void;
+        /**
+         * Split the current block at the caret, as Enter does outside a list: a paragraph is split in two, an empty block is lifted out or followed by a paragraph. Returns false when nothing can be split
+         */
+        split(): boolean;
     };
 
     lists: {
@@ -118,7 +150,7 @@ export type EditorControlApi = {
          */
         outdent(): boolean;
         /**
-         * Split the current list item in two — Enter inside a list. Returns false outside one.
+         * Split the current list item in two or, in an empty item, leave the list (outdent) — Enter inside a list. Returns false outside one.
          */
         split(): boolean;
         /**
@@ -135,11 +167,11 @@ export type EditorControlApi = {
     insert(type: string, value?: Record<string, unknown>): void;
     /**
      * Insert plain text at the selection, replacing what is selected, carrying the marks typing there would plus
-     * `marks`, in one undo step. Unknown mark types are ignored.
+     * `marks`. Unknown mark types are ignored.
      * @param marks - Marks to add, by type to value, as in `marks.toggle`.
-     * @default {}
+     * @param options - How the insert is undone.
      */
-    insertText(text: string, marks?: Record<string, Record<string, unknown>>): void;
+    insertText(text: string, marks?: Record<string, Record<string, unknown>>, options?: InsertTextOptions): void;
 
     /**
      * The text around the caret, within its block

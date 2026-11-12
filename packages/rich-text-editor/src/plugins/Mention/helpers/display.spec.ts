@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { type MentionValue } from '../types';
+import { type MentionResolve, type MentionValue } from '../types';
 
 import { mentionDisplay } from './display';
 
@@ -10,8 +10,12 @@ const JANE: MentionValue = { id: 'jane', username: 'jane', name: 'Jane Doe' };
 const href = (mention: MentionValue): string => `/u/${mention.id}`;
 
 describe('mentionDisplay', () => {
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
     it('shows the stored value with no resolver, or one that does not know', () => {
-        const stored = { label: '@jane', title: 'Jane Doe', href: '/u/jane' };
+        const stored = { status: 'linked', label: '@jane', title: 'Jane Doe', href: '/u/jane' };
 
         expect(mentionDisplay(JANE, { href, trigger: '@' })).toEqual(stored);
         expect(mentionDisplay(JANE, { href, trigger: '@', resolve: () => ({ status: 'unknown' }) })).toEqual(stored);
@@ -21,6 +25,7 @@ describe('mentionDisplay', () => {
         const resolve = () => ({ status: 'current', username: 'jane.s', name: 'Jane Smith' }) as const;
 
         expect(mentionDisplay(JANE, { href, trigger: '#', resolve })).toEqual({
+            status: 'linked',
             label: '#jane.s',
             title: 'Jane Smith',
             href: '/u/jane',
@@ -29,16 +34,16 @@ describe('mentionDisplay', () => {
 
     it('shows the stored username as unavailable, with its stored name and no link', () => {
         expect(mentionDisplay(JANE, { href, trigger: '@', resolve: () => ({ status: 'unavailable' }) })).toEqual({
-            label: '@jane (unavailable)',
+            status: 'unavailable',
+            label: '@jane',
             title: 'Jane Doe',
-            href: undefined,
         });
     });
 
     it('is text without a target, and leaves out a target that is not a safe link', () => {
-        expect(mentionDisplay(JANE, { trigger: '@' }).href).toBeUndefined();
-        expect(mentionDisplay(JANE, { trigger: '@', href: () => undefined }).href).toBeUndefined();
-        expect(mentionDisplay(JANE, { trigger: '@', href: () => 'javascript:alert(1)' }).href).toBeUndefined();
+        expect(mentionDisplay(JANE, { trigger: '@' }).status).toBe('text');
+        expect(mentionDisplay(JANE, { trigger: '@', href: () => undefined }).status).toBe('text');
+        expect(mentionDisplay(JANE, { trigger: '@', href: () => 'javascript:alert(1)' }).status).toBe('text');
     });
 
     it('removes control and bidirectional characters from what it shows, stored or resolved', () => {
@@ -62,11 +67,54 @@ describe('mentionDisplay', () => {
         ).toMatchObject({ label: '@jane', title: 'Jane Doe' });
     });
 
-    it('lets a throw from the resolver propagate', () => {
-        const resolve = (): never => {
+    it('shows the stored value only for a mention whose resolver throws, and still resolves the others', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const john: MentionValue = { id: 'john', username: 'john', name: 'John Roe' };
+        const resolve = (mention: MentionValue) => {
+            if (mention.id === 'jane') {
+                throw new Error('offline');
+            }
+            return { status: 'current', username: 'john.r', name: 'John Roe' } as const;
+        };
+
+        expect(mentionDisplay(JANE, { href, trigger: '@', resolve })).toEqual({
+            status: 'linked',
+            label: '@jane',
+            title: 'Jane Doe',
+            href: '/u/jane',
+        });
+        expect(mentionDisplay(john, { href, trigger: '@', resolve }).label).toBe('@john.r');
+        expect(warn).toHaveBeenCalledOnce();
+    });
+
+    it('warns once for a mention whose resolver throws again', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const resolve = () => {
             throw new Error('offline');
         };
 
-        expect(() => mentionDisplay(JANE, { href, trigger: '@', resolve })).toThrow('offline');
+        mentionDisplay({ ...JANE, id: 'repeat' }, { trigger: '@', resolve });
+        mentionDisplay({ ...JANE, id: 'repeat' }, { trigger: '@', resolve });
+
+        expect(warn).toHaveBeenCalledOnce();
+    });
+
+    it('shows the stored value for a resolver answer with no known status', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        // A resolver written in JS can answer anything.
+        const resolve = (() => ({ status: 'renamed' })) as unknown as MentionResolve;
+
+        expect(mentionDisplay({ ...JANE, id: 'odd' }, { trigger: '@', resolve }).label).toBe('@jane');
+        expect(warn).toHaveBeenCalledOnce();
+    });
+
+    it('names an empty stored username by its kind instead of a bare trigger', () => {
+        const empty: MentionValue = { id: 'x', username: '', name: '' };
+
+        expect(mentionDisplay(empty, { trigger: '@' }).label).toBe('Unknown person');
+        expect(mentionDisplay({ ...empty, kind: 'group' }, { trigger: '@' }).label).toBe('Unknown group');
+        expect(mentionDisplay(empty, { trigger: '@', resolve: () => ({ status: 'unavailable' }) }).label).toBe(
+            'Unknown person',
+        );
     });
 });

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TextInput } from '@frontify/fondue-components';
-import { forwardRef, type KeyboardEvent, type ReactNode, useEffect, useId, useState } from 'react';
+import { forwardRef, type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
 import { isCompositionKey } from '../../shared/helpers/keys';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
@@ -95,8 +95,24 @@ export const DestinationField = forwardRef<HTMLInputElement, DestinationFieldPro
     const listOpen = shown && results.length > 0;
     const optionId = (index: number): string => `${listId}-option-${index}`;
     const highlight = (index: number): void => setHighlighted({ value, index });
+    const listRef = useRef<HTMLUListElement>(null);
+    // Set by the arrow keys only: a row the pointer highlights is in sight already.
+    const revealHighlightRef = useRef(false);
+
+    // The list scrolls, so the arrows could move the highlight onto a row out of sight.
+    useEffect(() => {
+        // Cleared on every change, so arrows that left the highlight where it was cannot make a later hover scroll.
+        const reveal = revealHighlightRef.current;
+        revealHighlightRef.current = false;
+        if (!reveal || activeIndex < 0) {
+            return;
+        }
+        listRef.current?.children[activeIndex]?.scrollIntoView({ block: 'nearest' });
+    }, [activeIndex]);
 
     const pick = (destination: LinkDestination): void => {
+        // The picked address is not a query: it is searched only once the author types or presses an arrow key again.
+        setDormant(true);
         setClosedFor(destination.href);
         onPick(destination);
     };
@@ -127,11 +143,16 @@ export const DestinationField = forwardRef<HTMLInputElement, DestinationFieldPro
         if (results.length === 0) {
             return;
         }
+        revealHighlightRef.current = true;
         if (event.key === 'ArrowDown') {
             highlight((activeIndex + 1) % results.length);
             return;
         }
-        highlight(activeIndex <= 0 ? results.length - 1 : activeIndex - 1);
+        if (activeIndex <= 0) {
+            highlight(results.length - 1);
+            return;
+        }
+        highlight(activeIndex - 1);
     };
 
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
@@ -156,12 +177,20 @@ export const DestinationField = forwardRef<HTMLInputElement, DestinationFieldPro
     // A spread: the field's props do not list the combobox attributes, but pass them on to the input.
     let comboboxProps = {};
     if (search !== undefined) {
+        let controls: string | undefined;
+        let activeDescendant: string | undefined;
+        if (listOpen) {
+            controls = listId;
+            if (active !== undefined) {
+                activeDescendant = optionId(activeIndex);
+            }
+        }
         comboboxProps = {
             role: 'combobox',
             'aria-expanded': listOpen,
-            'aria-controls': listOpen ? listId : undefined,
+            'aria-controls': controls,
             'aria-autocomplete': 'list',
-            'aria-activedescendant': listOpen && active !== undefined ? optionId(activeIndex) : undefined,
+            'aria-activedescendant': activeDescendant,
         };
     }
 
@@ -185,7 +214,7 @@ export const DestinationField = forwardRef<HTMLInputElement, DestinationFieldPro
                 onBlur={() => setClosedFor(value)}
             />
             {listOpen ? (
-                <ul id={listId} role="listbox" aria-label={RESULTS_LABEL} className={styles.results}>
+                <ul ref={listRef} id={listId} role="listbox" aria-label={RESULTS_LABEL} className={styles.results}>
                     {results.map((destination, index) => (
                         // The keyboard drives the list from the input; the mouse picks here.
                         <li

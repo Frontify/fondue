@@ -38,6 +38,12 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
 };
 
+/** A caret in an empty block — where Enter in a list means "leave it" rather than "split it". */
+const inEmptyBlock = (state: EditorState): boolean => {
+    const { $from, empty } = state.selection;
+    return empty && $from.parent.isTextblock && $from.parent.content.size === 0;
+};
+
 // The list half of the control API
 
 /** Implements `EditorControlApi['lists']` against the live view. */
@@ -88,7 +94,16 @@ export const createListApi = (
         },
         indent: () => runListCommand(sinkListItem),
         outdent: () => runListCommand(liftListItem),
-        split: () => runListCommand(pmSplitListItem),
+        split() {
+            if (runListCommand(pmSplitListItem)) {
+                return true;
+            }
+            // The engine's split refuses an empty top-level item, which Enter leaves the list from instead.
+            if (inEmptyBlock(getView().state)) {
+                return runListCommand(liftListItem);
+            }
+            return false;
+        },
         unwrapAll() {
             const view = getView();
             const { from, to } = view.state.selection;
@@ -172,22 +187,14 @@ const atItemStart = (state: EditorState, itemTypeByList: Map<string, string>): b
     return [...itemTypeByList.values()].includes(item.type.name) && $from.index(-1) === 0;
 };
 
-/** A caret in an empty block — where Enter in a list means "leave it" rather than "split it". */
-const inEmptyBlock = (state: EditorState): boolean => {
-    const { $from, empty } = state.selection;
-    return empty && $from.parent.isTextblock && $from.parent.content.size === 0;
-};
-
 /**
  * Enter, Tab, Shift-Tab and Backspace inside a list. They belong to being in a
  * list, so any feature declaring `content: { items }` gets them. Outside a list
  * they report "not handled" and the baseline keymap takes over.
  */
 export const listKeys = (api: EditorControlApi, itemTypeByList: Map<string, string>): Record<string, Command> => ({
-    // The engine's own split deliberately refuses on an empty item at the top
-    // level, leaving it to be lifted out of the list instead. It also refuses
-    // a range across blocks or a selected node; those go to the baseline keymap.
-    Enter: (state) => api.lists.split() || (inEmptyBlock(state) && api.lists.outdent()),
+    // Refuses a range across blocks or a selected node; those go to the baseline keymap.
+    Enter: () => api.lists.split(),
     Tab: () => api.lists.indent(),
     'Shift-Tab': () => api.lists.outdent(),
     // At the start of an item, lift it out one level (out of the list at the

@@ -20,7 +20,7 @@ export type BlurOnBreakPluginOptions = {
 };
 
 const REQUIRED_MESSAGE = 'Type something before submitting.';
-const DESCRIPTION = 'Press Enter to submit.';
+const DESCRIPTION = 'Press Enter to submit, Shift+Enter for a new line.';
 
 /** What to say when an empty editor refuses Enter, or null when the editor need not be filled. */
 const requiredMessageOf = (required: boolean | string | undefined): string | null => {
@@ -46,21 +46,43 @@ const breakLine = (api: EditorControlApi, { onBreak, required }: BlurOnBreakPlug
     api.blur();
 };
 
+/** Shift-Enter does Enter's structural action: split the item or leave the list, else split the paragraph. */
+const splitBlock = (api: EditorControlApi): void => {
+    if (api.lists.split()) {
+        return;
+    }
+    api.blocks.split();
+};
+
 /**
  * Enter commits instead of adding a paragraph, what a single-line editor (a
  * title field, a comment box) wants. Inside a list Enter still splits the
- * item, so a list typed into such an editor can grow; anywhere else it calls
+ * item, so a list typed into such an editor can grow, and on an empty item it
+ * leaves the list; anywhere else it calls
  * `onBreak` and gives up focus. Plugin hotkeys run before the editor's own
  * keys, so this handler splits the item itself rather than leaving Enter to
  * the list.
+ * Shift-Enter does Enter's normal action instead: a new paragraph, or a new
+ * list item. The plugin owns that key, so it wins over the soft break wherever
+ * the two are mounted.
  *
  * @example
  * blurOnBreakPlugin({ onBreak: submit, required: 'Write a comment first.' })
  */
-export const blurOnBreakPlugin = (options: BlurOnBreakPluginOptions = {}) =>
-    definePlugin({
+export const blurOnBreakPlugin = (options: BlurOnBreakPluginOptions = {}) => {
+    // A field with no submit to announce says nothing about submitting.
+    let description: string | undefined;
+    if (options.onBreak !== undefined) {
+        description = DESCRIPTION;
+        const requiredMessage = requiredMessageOf(options.required);
+        if (requiredMessage !== null) {
+            description = `${DESCRIPTION} ${requiredMessage}`;
+        }
+    }
+    return definePlugin({
         id: 'blur-on-break',
-        description: DESCRIPTION,
+        description,
+        ownedHotkeys: ['Shift-Enter'],
         hotkeys: {
             // Enter is always this plugin's: it splits an item, refuses, or submits.
             Enter: {
@@ -70,5 +92,13 @@ export const blurOnBreakPlugin = (options: BlurOnBreakPluginOptions = {}) =>
                     return true;
                 },
             },
+            'Shift-Enter': {
+                label: 'New paragraph or list item, in a submit editor',
+                run: (api) => {
+                    splitBlock(api);
+                    return true;
+                },
+            },
         },
     });
+};

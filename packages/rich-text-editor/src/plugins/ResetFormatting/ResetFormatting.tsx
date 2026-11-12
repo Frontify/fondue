@@ -6,19 +6,19 @@ import { definePlugin, type EditorControlApi, PARAGRAPH, type RteHotkey, type To
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
-const RESET_LABEL = 'Reset formatting';
+import { LINK_MARK } from '../shared/helpers/linkMark';
 
+const RESET_LABEL = 'Reset formatting';
+const CLEAR_MARKS_LABEL = 'Clear inline formatting, keep links';
+const CLEARED_ANNOUNCEMENT = 'Formatting cleared';
 const RESET_ANNOUNCEMENT = 'Formatting reset';
 
 /**
- * Puts the selection back to plain text: marks gone (links stay, and so do
- * mentions, which are no marks), block type back to paragraph, alignment
- * cleared, lists unwrapped, all as one undo step. At a caret it acts on the
- * whole text block. No schema of its own: it only drives the control API.
+ * What the toolbar button does: the selection back to plain text, links included, as one undo step. Mentions stay because they are no marks.
  */
 const reset = (api: EditorControlApi): void => {
     api.group(() => {
-        api.marks.removeAll({ except: ['link'] });
+        api.marks.removeAll();
         api.blocks.setType(PARAGRAPH);
         // After `setType`, since unwrapping first moves the selection off the blocks before it; a range may span lists `setType` cannot lift.
         if (!api.selection.get().isCollapsed) {
@@ -29,31 +29,38 @@ const reset = (api: EditorControlApi): void => {
     });
 };
 
-// The key is a literal because a computed key keeps this plugin in the renderer; SHORTCUT's type ties it to this key.
+/** The key is a literal because a computed key keeps this plugin in the renderer. */
 const hotkeys = {
     'Mod-\\': {
-        label: RESET_LABEL,
+        label: CLEAR_MARKS_LABEL,
+        // Clears the marks only, links excepted: block types, lists and alignment stay. Not what the toolbar button does.
         run: (api) => {
-            reset(api);
-            api.announce(RESET_ANNOUNCEMENT);
+            if (api.marks.removeAll({ except: [LINK_MARK] })) {
+                api.announce(CLEARED_ANNOUNCEMENT);
+            }
         },
     },
 } satisfies Record<string, RteHotkey>;
 
-const SHORTCUT: keyof typeof hotkeys = 'Mod-\\';
-
-const ResetFormattingButton = ({ api, label, shortcut }: ToolbarItemProps) => (
-    <ToolbarButton title={label} shortcut={shortcut} onClick={() => reset(api)}>
-        <IconEraser size={TOOLBAR_ICON_SIZE} />
-    </ToolbarButton>
-);
+const ResetFormattingButton = ({ api, label }: ToolbarItemProps) => {
+    const onClick = (): void => {
+        reset(api);
+        // The API gives no signal for whether the whole reset changed anything, so this always announces.
+        api.announce(RESET_ANNOUNCEMENT);
+    };
+    return (
+        <ToolbarButton title={label} onClick={onClick}>
+            <IconEraser size={TOOLBAR_ICON_SIZE} />
+        </ToolbarButton>
+    );
+};
 
 /**
- * A toolbar button, and `Mod-\`, that strips the selection back to plain text
+ * A toolbar button that strips the selection back to plain text, and `Mod-\`, which only clears its marks except links
  */
 export const resetFormattingPlugin = /* @__PURE__ */ definePlugin({
     id: 'reset-formatting',
     toolbarGroup: 'marks',
-    toolbar: [{ label: RESET_LABEL, shortcut: SHORTCUT, render: ResetFormattingButton, floating: 'inline' }],
+    toolbar: [{ label: RESET_LABEL, render: ResetFormattingButton, floating: 'inline' }],
     hotkeys,
 });

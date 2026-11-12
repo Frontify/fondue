@@ -161,6 +161,27 @@ describe('typing a web address right after an opening bracket or quote', () => {
         expect(stored).toEqual([paragraph(text('('), link('https://frontify.com'), text(') '))]);
     });
 
+    it.each([
+        ['[', ']'],
+        ['{', '}'],
+        ['<', '>'],
+    ])('links an address in %s brackets and leaves the closing one out', (open, close) => {
+        const stored = typedIntoEmptyParagraph(`${open}https://frontify.com/x${close} `);
+
+        expect(stored).toEqual([paragraph(text(open), link('https://frontify.com/x'), text(`${close} `))]);
+    });
+
+    it('builds a rule whose pattern uses the v flag', () => {
+        const hashtags = definePlugin({
+            id: 'hashtags',
+            inputRules: [
+                { kind: 'markPattern', pattern: new RegExp(String.raw`#\w+`, 'v'), mark: 'bold', value: () => ({}) },
+            ],
+        });
+
+        expect(() => editorWith([...defaultPlugins, hashtags], [paragraph()])).not.toThrow();
+    });
+
     it('links an address in straight double quotes', () => {
         const stored = typedIntoEmptyParagraph('see "https://frontify.com" ');
 

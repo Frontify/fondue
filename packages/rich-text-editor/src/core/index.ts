@@ -4,7 +4,10 @@
 // Imports from no other layer; plugins, renderer and editor all import here.
 
 export {
+    type BlockAttributeToggle,
     type EditorControlApi,
+    type InsertTextOptions,
+    type InsertTextUndo,
     REDO_HOTKEY,
     type RemoveAllMarksOptions,
     type RteMarkState,
@@ -40,8 +43,9 @@ export {
     type MarkParseRule,
     onlyTypeOf,
     type ParseRule,
-    type StyleParseRule,
+    type Paste,
     type PasteHandler,
+    type PasteSource,
     type RteBlockCommand,
     type RteContent,
     type RteContentDefinition,
@@ -56,6 +60,7 @@ export {
     RTE_TOOLBAR_GROUPS,
     type RteToolbarGroup,
     type SelectedNode,
+    type StyleParseRule,
     type ToolbarItemProps,
 } from './plugin';
 export {
