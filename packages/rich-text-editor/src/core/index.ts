@@ -21,7 +21,8 @@ export {
 } from './document';
 export { isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
 export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
-export { lookProperties, lookStyle, styleOfClass, type TextLook } from './look';
+export { DOCUMENT_GAP_VARIABLES, DOCUMENT_TEST_ID, OWN_MARGINS_ATTRIBUTE } from './documentContract';
+export { lookProperties, lookStyle, lookVariableName, styleOfClass, type TextLook } from './look';
 export {
     type BlockAttributeDefinition,
     type BlockDefinition,
@@ -67,11 +68,4 @@ export {
     type ToolbarEntry,
     toggleOwn,
 } from './registry';
-export {
-    ANY_LIST,
-    DOCUMENT_VERSION,
-    emptyDocument,
-    newerVersionOf,
-    PARAGRAPH,
-    PARAGRAPH_CLASS_NAME,
-} from './vocabulary';
+export { ANY_LIST, DOCUMENT_VERSION, emptyDocument, newerVersionOf, PARAGRAPH } from './vocabulary';

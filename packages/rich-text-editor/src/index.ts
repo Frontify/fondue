@@ -62,7 +62,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlock>(props: Ri
 export type RichTextRendererProps<TBlock extends RteBlockNode = RteBlock> = RendererProps<TBlock>;
 
 /**
- * A readonly view of a document; works on the server. Uses `defaultPlugins` when given no `plugins`.
+ * A readonly view of a document; works on the server. Uses `defaultContent` when given no `plugins`.
  *
  * @experimental The API and document format can change in any release until 1.0.
  */
@@ -99,7 +99,7 @@ export { isEmpty };
 
 /**
  * The document's text, one line per text block. Inlines read as their plugin's
- * markup (a mention as `@jane`). Uses `defaultPlugins` when given no `plugins`.
+ * markup (a mention as `@jane`). Uses `defaultContent` when given no `plugins`.
  */
 export const toPlainText = <TBlock extends RteBlockNode = RteBlock>(
     doc: RteDocument<TBlock>,

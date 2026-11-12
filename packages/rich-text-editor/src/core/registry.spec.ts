@@ -3,7 +3,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { type EditorControlApi, type RteSelectionSnapshot } from './commands';
+import { OWN_MARGINS_ATTRIBUTE } from './documentContract';
 import {
+    type BlockLook,
     defineBlock,
     defineContent,
     defineInline,
@@ -12,7 +14,8 @@ import {
     type RteInputRule,
     type RtePlugin,
 } from './plugin';
-import { buildPluginRegistry } from './registry';
+import { blockHtml, buildPluginRegistry } from './registry';
+import { PARAGRAPH, paragraphBlock } from './vocabulary';
 
 /**
  * The registry is the one place plugins are read: it gathers their
@@ -597,5 +600,122 @@ describe('bare content in a registry', () => {
                 definePlugin({ id: 'strong', content: defineContent({ marks: { bold: mark() } }) }),
             ]),
         ).toThrow('Duplicate mark type "bold": declared by plugin "bold" and plugin "strong".');
+    });
+});
+
+describe('the markup of a block', () => {
+    const blockOf = (ownsMargins?: boolean) =>
+        defineBlock({ content: 'text', ownsMargins, toHtml: () => ({ tag: 'p', children: true }), parse: [] });
+
+    it('carries the margin marker when the block owns its margins', () => {
+        const definition = blockOf(true);
+        const registry = buildPluginRegistry([defineContent({ blocks: { owner: definition } })]);
+
+        expect(blockHtml(registry, definition, {})).toEqual({
+            tag: 'p',
+            attrs: { [OWN_MARGINS_ATTRIBUTE]: '' },
+            children: true,
+        });
+    });
+
+    it('carries no marker otherwise', () => {
+        for (const ownsMargins of [undefined, false]) {
+            const definition = blockOf(ownsMargins);
+            const registry = buildPluginRegistry([defineContent({ blocks: { plain: definition } })]);
+
+            expect(blockHtml(registry, definition, {})).toEqual({ tag: 'p', children: true });
+        }
+    });
+
+    it('writes the class a block declares next to the one its markup sets', () => {
+        const definition = defineBlock({
+            content: 'text',
+            className: 'declared',
+            toHtml: () => ({ tag: 'blockquote', attrs: { class: 'own' }, children: true }),
+            parse: [],
+        });
+        const registry = buildPluginRegistry([defineContent({ blocks: { quote: definition } })]);
+
+        expect(blockHtml(registry, definition, {}).attrs?.class).toBe('own declared');
+    });
+});
+
+describe('a plugin extending a block it does not define', () => {
+    const quoteBlock = () => defineBlock({ content: 'text', toHtml: () => ({ tag: 'blockquote' }), parse: [] });
+    const extending = (type: string, look: BlockLook) => defineContent({ extendBlocks: { [type]: look } });
+
+    it("folds the extension into the block's definition, core's paragraph included", () => {
+        const registry = buildPluginRegistry([extending(PARAGRAPH, { className: 'looked', ownsMargins: true })]);
+        const definition = registry.blocks.get(PARAGRAPH);
+
+        expect(definition?.className).toBe('looked');
+        expect(definition?.ownsMargins).toBe(true);
+        expect(blockHtml(registry, definition ?? paragraphBlock, {})).toEqual({
+            tag: 'p',
+            attrs: { class: 'looked', [OWN_MARGINS_ATTRIBUTE]: '' },
+            children: true,
+        });
+    });
+
+    it('leaves the definition the plugin gave, and a registry without the extension, as they were', () => {
+        buildPluginRegistry([extending(PARAGRAPH, { className: 'looked' })]);
+
+        expect(paragraphBlock.className).toBeUndefined();
+        expect(buildPluginRegistry([]).blocks.get(PARAGRAPH)).toBe(paragraphBlock);
+    });
+
+    it('folds the extension of a block a later plugin defines', () => {
+        const registry = buildPluginRegistry([
+            extending('quote', { ownsMargins: true }),
+            defineContent({ blocks: { quote: quoteBlock() } }),
+        ]);
+
+        expect(registry.blocks.get('quote')?.ownsMargins).toBe(true);
+    });
+
+    it('folds the different fields two plugins set on one block', () => {
+        const registry = buildPluginRegistry([
+            extending(PARAGRAPH, { className: 'looked' }),
+            extending(PARAGRAPH, { ownsMargins: true }),
+        ]);
+
+        expect(registry.blocks.get(PARAGRAPH)?.className).toBe('looked');
+        expect(registry.blocks.get(PARAGRAPH)?.ownsMargins).toBe(true);
+    });
+
+    it('takes the same value set twice as one fact, as a content next to its plugin does', () => {
+        const registry = buildPluginRegistry([
+            extending(PARAGRAPH, { className: 'looked' }),
+            extending(PARAGRAPH, { className: 'looked' }),
+        ]);
+
+        expect(registry.blocks.get(PARAGRAPH)?.className).toBe('looked');
+    });
+
+    it('throws when two plugins set different values for the same field on one block', () => {
+        expect(() =>
+            buildPluginRegistry([
+                definePlugin({ id: 'first', content: extending(PARAGRAPH, { className: 'a' }) }),
+                definePlugin({ id: 'second', content: extending(PARAGRAPH, { className: 'b' }) }),
+            ]),
+        ).toThrow('Duplicate className for block "paragraph": set by plugin "first" and plugin "second".');
+    });
+
+    it('throws when the block itself already sets the field', () => {
+        expect(() =>
+            buildPluginRegistry([
+                definePlugin({
+                    id: 'quote',
+                    content: defineContent({ blocks: { quote: defineBlock({ ...quoteBlock(), ownsMargins: true }) } }),
+                }),
+                definePlugin({ id: 'looks', content: extending('quote', { ownsMargins: false }) }),
+            ]),
+        ).toThrow('Duplicate ownsMargins for block "quote": set by plugin "quote" and plugin "looks".');
+    });
+
+    it('throws for a block no plugin defines', () => {
+        expect(() => buildPluginRegistry([definePlugin({ id: 'looks', content: extending('nothing', {}) })])).toThrow(
+            'Unknown block type "nothing": plugin "looks" extends it, but no plugin defines it.',
+        );
     });
 });

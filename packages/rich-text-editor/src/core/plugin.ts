@@ -11,22 +11,11 @@ import { type EditorControlApi, type RteSelectionSnapshot } from './commands';
 import { type HtmlSpec, type StyleMap } from './htmlSpec';
 
 /**
- * A feature, described as data: a plain object declaring what exists
- * (`blocks`, `marks`, `inlines`, `blockAttributes`) and how to interact with it
- * (toolbar, hotkeys, input rules). It never runs anything itself — effects go
- * through the `EditorControlApi` it is handed.
+ * What a document can hold, apart from how it is edited. The renderer, the HTML
+ * export and a server load use only this.
  *
- * Every node is described the same way: `toHtml` (the static markup) and
- * `parse` (how pasted HTML is read back). An advanced node adds React under
- * `render`: `component` for a richer readonly view, `edit` for interactive
- * editing. Export and copy always use `toHtml`.
- *
- * Plugins are functions returning this object:
- *
- * ```ts
- * export const boldPlugin = (): RtePlugin => ({ id: 'bold', marks: { bold: defineMark({ … }) } });
- * plugins={[boldPlugin(), mentionPlugin({ items })]}
- * ```
+ * Every node has `toHtml` (its markup) and `parse` (how pasted HTML is read
+ * back); an advanced node adds a readonly view under `render.component`.
  */
 export type RteContent = {
     kind: 'content';
@@ -50,12 +39,23 @@ export type RteContent = {
      * The inline style of each class this content writes, for HTML exported with `styling: 'inline'`; keyed by class name
      */
     contentStyles?: Record<string, StyleMap>;
+    /**
+     * What a plugin adds to a block it does not define, such as core's paragraph, keyed by block type.
+     * The registry folds it into the block's definition and throws for an unknown block, or for a field another
+     * plugin, or the block itself, already sets.
+     */
+    extendBlocks?: Record<string, BlockLook>;
 };
 
 /**
  * What `defineContent` takes: a content without its `kind`
  */
 export type RteContentDefinition = Omit<RteContent, 'kind'>;
+
+/**
+ * How a block looks, whichever plugin defines it: the part of a block's definition another plugin may add to.
+ */
+export type BlockLook = Pick<BlockDefinition, 'className' | 'ownsMargins'>;
 
 /**
  * Declares what a plugin's document can hold.
@@ -115,14 +115,14 @@ export type RtePlugin = {
      */
     edit?: Record<string, RteEditView>;
     /**
-     * Entries for the floating bar's "Turn into" menu and the `/` menu, in the order given
-     */
-    /**
      * Which cluster of the toolbar its entries sit in. Groups follow a fixed
      * order, entries keep mount order inside theirs, and entries with no group
      * come last, together.
      */
     toolbarGroup?: RteToolbarGroup;
+    /**
+     * Entries for the floating bar's "Turn into" menu and the `/` menu, in the order given
+     */
     commands?: readonly RteBlockCommand[];
     /**
      * Keybindings, keyed `Mod-b` style (Mod = Cmd on macOS, Ctrl elsewhere) or
@@ -279,6 +279,16 @@ export const defineBlock = <TValue extends object = Record<string, never>>(
 export type BlockDefinition<TValue = Record<string, unknown>> = {
     content?: ContentModel;
     defaults?: TValue;
+    /**
+     * Whether the block's own stylesheet writes its margins. The document then leaves them alone;
+     * otherwise it gives the block the gap between blocks.
+     * @default false
+     */
+    ownsMargins?: boolean;
+    /**
+     * A class on the block's outermost element, written next to the one its `toHtml` sets.
+     */
+    className?: string;
     /** The block's markup. `children: true` is where its content goes. */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<Partial<TValue>>[];

@@ -17,6 +17,7 @@ import {
 
 import {
     buildPluginRegistry,
+    DOCUMENT_TEST_ID,
     emptyDocument,
     newerVersionOf,
     type PluginRegistry,
@@ -597,6 +598,7 @@ const editableAttributes = ({
 }): Record<string, string> => ({
     id,
     class: className,
+    'data-test-id': DOCUMENT_TEST_ID,
     role: 'textbox',
     'aria-multiline': 'true',
     ...(isNamed ? {} : { 'aria-label': defaultLabel }),

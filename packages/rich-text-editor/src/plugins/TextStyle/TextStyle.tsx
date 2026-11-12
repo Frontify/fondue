@@ -54,6 +54,8 @@ const textStyleBlockFor = (options: readonly TextStyleOption[]): BlockDefinition
 
     return defineBlock<{ style: string }>({
         content: 'text',
+        // Each preset's stylesheet writes its margins (`look`), for the heading tags and the paragraph ones alike.
+        ownsMargins: true,
         // Only reached by a node that arrives without one; every
         // path that sets the attribute names a style.
         defaults: { style: offered[0]?.name ?? FIRST_PRESET },

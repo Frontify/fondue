@@ -3,6 +3,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator } from '@playwright/test';
 
+import { DOCUMENT_TEST_ID } from '../../core/documentContract';
 import { type LinkLook, type TextLook, type TextStyleName } from '../../index';
 
 import { ExportedLooksPair } from './ExportedLooksPair';
@@ -81,8 +82,7 @@ const computedLookOf = async (element: Locator): Promise<ComputedLook> => {
 const DOCUMENT_FONT_FAMILY = 'the document root font family';
 
 const computedLooksIn = async (surface: Locator): Promise<Record<TextStyleName, ComputedLook>> => {
-    // The blocks are the document root's children, so a block's parent is the root.
-    const documentLook = await computedLookOf(surface.locator(BLOCK_SELECTORS.heading1).locator('..'));
+    const documentLook = await computedLookOf(surface.getByTestId(DOCUMENT_TEST_ID));
     const looks: Partial<Record<TextStyleName, ComputedLook>> = {};
     for (const name of STYLE_NAMES) {
         const look = await computedLookOf(surface.locator(BLOCK_SELECTORS[name]));
@@ -490,6 +490,12 @@ const removeClasses = (container: Locator): Promise<void> =>
         }
     });
 
+/** Gives the exported root the test id the React renderer puts on its own: the export carries none, as it goes to host pages. */
+const markDocumentRoot = (container: Locator): Promise<void> =>
+    container.evaluate((node, testId) => {
+        node.firstElementChild?.setAttribute('data-test-id', testId);
+    }, DOCUMENT_TEST_ID);
+
 /** The underline offset of every link, which no block look above holds. */
 const underlineOffsetsIn = (surface: Locator): Promise<string[]> =>
     surface.locator('a').evaluateAll((links) => links.map((link) => getComputedStyle(link).textUnderlineOffset));
@@ -506,19 +512,15 @@ type DocumentRootLook = Record<(typeof DOCUMENT_ROOT_PROPERTIES)[number], string
 
 /** The root's own value of what it sets for its text to read as the editor's, which its blocks only inherit. */
 const documentRootLookIn = (surface: Locator): Promise<DocumentRootLook> =>
-    // The heading is one of the document root's children, so its parent is the root.
-    surface
-        .locator(BLOCK_SELECTORS.heading1)
-        .locator('..')
-        .evaluate((root, properties) => {
-            const style = getComputedStyle(root);
-            const values: Record<string, string> = {};
-            for (const property of properties) {
-                values[property] = style.getPropertyValue(property);
-            }
-            // Filled from DOCUMENT_ROOT_PROPERTIES just above, one key each.
-            return values as DocumentRootLook;
-        }, DOCUMENT_ROOT_PROPERTIES);
+    surface.getByTestId(DOCUMENT_TEST_ID).evaluate((root, properties) => {
+        const style = getComputedStyle(root);
+        const values: Record<string, string> = {};
+        for (const property of properties) {
+            values[property] = style.getPropertyValue(property);
+        }
+        // Filled from DOCUMENT_ROOT_PROPERTIES just above, one key each.
+        return values as DocumentRootLook;
+    }, DOCUMENT_ROOT_PROPERTIES);
 
 // The stylesheet writes `pre-wrap` and then `break-spaces` for browsers that know it; the inline style writes `pre-wrap`
 // alone, as email clients read it. Both keep every typed space, so this is the one value that differs.
@@ -542,6 +544,8 @@ test.describe('inline styling of exported HTML', () => {
         const inline = component.getByTestId('inline');
 
         await removeClasses(inline);
+        await markDocumentRoot(inline);
+        await markDocumentRoot(component.getByTestId('classes'));
 
         await expect(inline.locator('[class]')).toHaveCount(0);
         expect(await allLooksIn(inline)).toEqual(await allLooksIn(component.getByTestId('classes')));
@@ -555,6 +559,8 @@ test.describe('inline styling of exported HTML', () => {
         const inline = component.getByTestId('inline');
 
         await removeClasses(inline);
+        await markDocumentRoot(inline);
+        await markDocumentRoot(component.getByTestId('classes'));
 
         await expect(inline.locator('[class]')).toHaveCount(0);
         expect(await allLooksIn(inline)).toEqual(await allLooksIn(component.getByTestId('classes')));

@@ -36,6 +36,7 @@ export type QuotePluginOptions = {
 // One definition for every content, because the registry throws when two different objects declare one type.
 const quoteBlock = defineBlock({
     content: 'text',
+    ownsMargins: true,
     toHtml: () => ({ tag: 'blockquote', attrs: { class: styles.quote }, children: true }),
     parse: [{ tag: 'blockquote' }],
 });
