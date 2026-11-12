@@ -9,6 +9,8 @@ type ColorArguments = { channels: string[]; alpha: string | undefined; syntax: C
 
 const COLOR_FUNCTIONS = ['rgb', 'hsl'] as const;
 type ColorFunction = (typeof COLOR_FUNCTIONS)[number];
+const COLOR_FUNCTION_NAMES: ReadonlySet<string> = /* @__PURE__ */ new Set(COLOR_FUNCTIONS);
+const isColorFunction = (kind: string): kind is ColorFunction => COLOR_FUNCTION_NAMES.has(kind);
 
 const FULL_TURN = 360;
 const WHITESPACE = /\s+/;
@@ -28,8 +30,7 @@ const PRINTABLE_ASCII = /^[\t\n\f\r -~]*$/;
 const PERCENT = 100;
 
 const HEX_COLOR = /^#([\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/;
-const COLOR_FUNCTION = /* @__PURE__ */ new RegExp(`^(${COLOR_FUNCTIONS.join('|')})a?\\(([^()]*)\\)$`);
-const isColorFunction = (kind: string): kind is ColorFunction => COLOR_FUNCTIONS.some((known) => known === kind);
+const COLOR_FUNCTION = /* @__PURE__ */ new RegExp(String.raw`^(${COLOR_FUNCTIONS.join('|')})a?\(([^()]*)\)$`);
 const NUMBER = /^[+-]?(\d+(\.\d+)?|\.\d+)(e[+-]?\d+)?%?$/;
 
 /**

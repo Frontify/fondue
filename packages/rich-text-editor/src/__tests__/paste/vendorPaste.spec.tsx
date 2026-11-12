@@ -201,8 +201,8 @@ describe('pasting from other applications', () => {
                 'paragraph: Publish',
             ]);
             expectNoJunk(doc);
-            expect(JSON.stringify(doc)).not.toContain('data-rte-pasted');
-            expect(window.document.body.innerHTML).not.toContain('data-rte-pasted');
+            expect(JSON.stringify(doc)).not.toContain('data-rte-office');
+            expect(window.document.body.innerHTML).not.toContain('data-rte-office');
         });
 
         it('keeps numbered headings as headings, without their numbers', async () => {

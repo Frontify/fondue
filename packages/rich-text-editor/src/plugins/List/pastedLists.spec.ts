@@ -4,21 +4,22 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { PASTED_LIST_ITEM_ATTRIBUTES, type PastedListMarker } from '#/core';
+import { OFFICE_LIST_ATTRIBUTES, removeOfficeListData } from '#/core';
 
 import { PASTED_LISTS } from './pastedLists';
 
-/** `html`'s body after the transform. */
+/** `html`'s body after the transform, and the clean-up of the list data the editor runs after every transform. */
 const rebuilt = (html: string): HTMLElement => {
     const { body } = new DOMParser().parseFromString(html, 'text/html');
     PASTED_LISTS.run(body, { isClaimed: () => false });
+    removeOfficeListData(body);
     return body;
 };
 
-/** A paragraph the editor marked as a list item, as it does for Word's list paragraphs. */
-const item = (level: number, marker: PastedListMarker, text: string, list = 'l0 lfo1'): string =>
-    `<p ${PASTED_LIST_ITEM_ATTRIBUTES.list}="${list}" ${PASTED_LIST_ITEM_ATTRIBUTES.level}="${level}" ` +
-    `${PASTED_LIST_ITEM_ATTRIBUTES.marker}="${marker}">${text}</p>`;
+/** A paragraph with the list data the editor keeps from Word's list paragraphs. */
+const item = (level: number, marker: string, text: string, list = 'l0 lfo1'): string =>
+    `<p ${OFFICE_LIST_ATTRIBUTES.list}="${list}" ${OFFICE_LIST_ATTRIBUTES.level}="${level}" ` +
+    `${OFFICE_LIST_ATTRIBUTES.marker}="${marker}">${text}</p>`;
 
 /** Each list of `body` in document order, as its tag and the text of its own items. */
 const listsOf = (body: HTMLElement): string[] =>
@@ -29,41 +30,62 @@ const listsOf = (body: HTMLElement): string[] =>
 
 describe('PASTED_LISTS', () => {
     it('starts a new list where numbers turn into bullets at one level of one list', () => {
-        expect(listsOf(rebuilt(item(1, 'numbered', 'A') + item(1, 'bullet', 'B')))).toEqual(['ol: A', 'ul: B']);
+        expect(listsOf(rebuilt(item(1, '1.', 'A') + item(1, '·', 'B')))).toEqual(['ol: A', 'ul: B']);
     });
 
     it('keeps one list across a comment between its paragraphs', () => {
-        expect(listsOf(rebuilt(`${item(1, 'bullet', 'A')}<!-- note -->${item(1, 'bullet', 'B')}`))).toEqual([
-            'ul: A, B',
-        ]);
+        expect(listsOf(rebuilt(`${item(1, '·', 'A')}<!-- note -->${item(1, '·', 'B')}`))).toEqual(['ul: A, B']);
     });
 
     it('nests a deeper level inside the last item of the level above', () => {
-        const body = rebuilt(item(1, 'bullet', 'A') + item(2, 'numbered', 'B') + item(1, 'bullet', 'C'));
+        const body = rebuilt(item(1, '·', 'A') + item(2, '1.', 'B') + item(1, '·', 'C'));
 
-        expect(body.innerHTML).toBe('<ul><li><p>A</p><ol><li><p>B</p></li></ol></li><li><p>C</p></li></ul>');
+        expect(body.innerHTML).toBe('<ul><li><p>A</p><ol start="1"><li><p>B</p></li></ol></li><li><p>C</p></li></ul>');
     });
 
     it('starts a numbered list at the number its first item carries', () => {
-        const body = rebuilt(
-            `<p ${PASTED_LIST_ITEM_ATTRIBUTES.list}="l0 lfo1" ${PASTED_LIST_ITEM_ATTRIBUTES.level}="1" ` +
-                `${PASTED_LIST_ITEM_ATTRIBUTES.marker}="numbered" ${PASTED_LIST_ITEM_ATTRIBUTES.number}="4">A</p>`,
-        );
-
-        expect(body.querySelector('ol')?.getAttribute('start')).toBe('4');
+        expect(
+            rebuilt(item(1, '4.', 'A'))
+                .querySelector('ol')
+                ?.getAttribute('start'),
+        ).toBe('4');
     });
 
-    it('leaves no contract attribute on any paragraph', () => {
-        expect(rebuilt(item(1, 'bullet', 'A') + item(1, 'numbered', 'B', 'l1 lfo2')).innerHTML).not.toContain(
-            'data-rte-pasted',
-        );
+    it.each(['a.', 'iv)', '(1)', '1.1.'])('reads the marker `%s` as numbered', (marker) => {
+        expect(listsOf(rebuilt(item(1, marker, 'A')))).toEqual(['ol: A']);
+    });
+
+    it('starts a numbered list at the last number of a nested marker', () => {
+        expect(
+            rebuilt(item(1, '1.3.', 'A'))
+                .querySelector('ol')
+                ?.getAttribute('start'),
+        ).toBe('3');
+    });
+
+    it('starts no numbered list at a number when the marker is a letter', () => {
+        expect(
+            rebuilt(item(1, 'a.', 'A'))
+                .querySelector('ol')
+                ?.hasAttribute('start'),
+        ).toBe(false);
+    });
+
+    it('nests at most nine levels, as Word has', () => {
+        const body = rebuilt(Array.from({ length: 20 }, (_, index) => item(index + 1, '·', `L${index + 1}`)).join(''));
+
+        expect(body.querySelectorAll('ul')).toHaveLength(9);
+    });
+
+    it('keeps a paragraph whose list level is 0 as a paragraph', () => {
+        expect(rebuilt(item(0, '·', 'A')).querySelector('ul, ol')).toBeNull();
     });
 });
 
-describe('PASTED_LISTS with a marker the contract does not define', () => {
-    it('throws instead of reading it as a bullet', () => {
-        expect(() => rebuilt(item(1, 'bullet', 'A').replace('="bullet"', '="circle"'))).toThrow(
-            'The pasted list item has the marker "circle"',
+describe('PASTED_LISTS with a level that is no number', () => {
+    it('throws instead of reading it as a level', () => {
+        expect(() => rebuilt(item(1, '·', 'A').replace('level="1"', 'level="x"'))).toThrow(
+            'The list paragraph has the level "x"',
         );
     });
 });
