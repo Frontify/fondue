@@ -1,5 +1,5 @@
 ---
-"@frontify/fondue-rich-text-editor": patch
+"@frontify/fondue-rich-text-editor": minor
 ---
 
-fix(RichTextEditor): keep typing rules out of code and technical text
+fix(RichTextEditor): keep typing rules out of code and technical text. `typographyPlugin` is now a function: call `typographyPlugin()` or `typographyPlugin({ groups })` instead of passing `typographyPlugin`.
