@@ -69,6 +69,20 @@ export const PASTED_LIST_ITEM_ATTRIBUTES = {
 /** The kind of marker a pasted list item showed in the source app. */
 export type PastedListMarker = 'bullet' | 'numbered';
 
+/** Every attribute of the pasted-list contract. */
+const CONTRACT_ATTRIBUTES = Object.values(PASTED_LIST_ITEM_ATTRIBUTES);
+/** Elements carrying any attribute of the pasted-list contract. */
+const CARRYING_CONTRACT = CONTRACT_ATTRIBUTES.map((name) => `[${name}]`).join(', ');
+
+/** Removes the pasted-list contract from every element of `root` that carries it. */
+export const removePastedListContract = (root: ParentNode): void => {
+    for (const element of root.querySelectorAll(CARRYING_CONTRACT)) {
+        for (const name of CONTRACT_ATTRIBUTES) {
+            element.removeAttribute(name);
+        }
+    }
+};
+
 /** The document the editor starts from when it is given none: one empty paragraph. */
 export const emptyDocument = (): RteDocumentOf => ({
     version: DOCUMENT_VERSION,

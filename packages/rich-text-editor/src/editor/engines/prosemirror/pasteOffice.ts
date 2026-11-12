@@ -4,7 +4,7 @@
 // marker (a bullet glyph or a number) as text in a span, and end every
 // paragraph with an `<o:p>` marker.
 
-import { PASTED_LIST_ITEM_ATTRIBUTES, type PastedListMarker } from '#/core';
+import { PASTED_LIST_ITEM_ATTRIBUTES, type PastedListMarker, removePastedListContract } from '#/core';
 
 /** The name `mso-list` takes in a style attribute, so the engine's style merge keeps it. */
 const KEPT_LIST_PROPERTY = '--mso-list';
@@ -50,11 +50,6 @@ const LIST_SPAN = 'span[style*="mso-list"]';
 /** The element Word writes a list item as. */
 const LIST_PARAGRAPH = 'p';
 
-/** Every attribute of the pasted-list contract. */
-const CONTRACT_ATTRIBUTES = Object.values(PASTED_LIST_ITEM_ATTRIBUTES);
-/** Elements carrying any attribute of the pasted-list contract. */
-const CARRYING_CONTRACT = CONTRACT_ATTRIBUTES.map((name) => `[${name}]`).join(', ');
-
 /**
  * Keeps Word's list data past the engine, which merges the pasted `<style>`
  * rules into each element with the CSSOM and so drops every `mso-` property
@@ -91,7 +86,7 @@ const isOffice = (dom: HTMLElement): boolean =>
     dom.getElementsByTagName(PARAGRAPH_MARKER).length > 0 || dom.querySelector(OFFICE_STYLED) !== null;
 
 /** An item's marker: a bullet, or a number with the item's number as Word wrote it, when the marker has one. */
-type ListMarker = { kind: 'bullet' } | { kind: 'numbered'; number: string | undefined };
+type ListMarker = { kind: Exclude<PastedListMarker, 'numbered'> } | { kind: 'numbered'; number: string | undefined };
 
 /** Where an item belongs: Word's list (template and instance), its level, and its marker. */
 type ListParagraph = { list: string; level: number } & ListMarker;
@@ -139,7 +134,7 @@ const markerSpans = (root: ParentNode): HTMLElement[] =>
 
 /** `element` as a list paragraph, or `undefined` when it is not one. */
 const readListParagraph = (element: HTMLElement): ListParagraph | undefined => {
-    // Word never puts a paragraph inside another; only parser tricks do, and lists rebuilt there would nest without bound.
+    // Word never puts a paragraph inside another; only parser tricks do, and a contract written there would nest lists without bound.
     if (element.parentElement?.closest(LIST_PARAGRAPH)) {
         return undefined;
     }
@@ -185,15 +180,6 @@ const annotateListParagraphs = (dom: HTMLElement): void => {
     }
 };
 
-/** Only the engine writes the pasted-list contract, so none the paste itself carries is read. */
-const removeForgedContract = (dom: HTMLElement): void => {
-    for (const element of dom.querySelectorAll(CARRYING_CONTRACT)) {
-        for (const name of CONTRACT_ATTRIBUTES) {
-            element.removeAttribute(name);
-        }
-    }
-};
-
 /**
  * Removes any pasted-list contract the paste carries, then, for Word and
  * Outlook, writes the contract on their list paragraphs and removes what they
@@ -201,7 +187,8 @@ const removeForgedContract = (dom: HTMLElement): void => {
  * number a heading carries. Does nothing else to a paste from elsewhere.
  */
 export const tidyOffice = (dom: HTMLElement): void => {
-    removeForgedContract(dom);
+    // Only the engine writes the pasted-list contract, so none the paste itself carries is read.
+    removePastedListContract(dom);
     if (!isOffice(dom)) {
         return;
     }

@@ -14,8 +14,8 @@ import {
     type MarkParseRule,
     type ParsePrecedence,
     type ParseRule,
-    parseReaderOf,
     type PluginRegistry,
+    readTagRule,
     type StyleParseRule,
 } from '#/core';
 
@@ -31,7 +31,6 @@ import { VALUE_ATTR } from './documentConversion';
  */
 const BLOCK_BASE_PRIORITY = 47;
 const MARK_BASE_PRIORITY = 57;
-const INLINE_BASE_PRIORITY = 67;
 
 /** What each precedence adds to its kind's base: a normal bare block lands on 50, the engine's default. */
 const LOW_PRECEDENCE_OFFSET = 0;
@@ -49,13 +48,17 @@ const DEFAULT_PRECEDENCE: ParsePrecedence = 'normal';
 const QUALIFIED_SELECTOR = /[[.#:]/;
 const QUALIFIED_OFFSET = 1;
 
-/** Ignore and clear rules sit where a normal mark tag rule with a bare tag does. */
+/** Clear rules sit where a normal mark tag rule with a bare tag does. */
 const MARK_PRIORITY = MARK_BASE_PRIORITY + NORMAL_PRECEDENCE_OFFSET;
 
 /**
  * Style rules run before the mark tag rules, which consume their element, so `<strong style="font-style:italic">` is italic too.
+ * Derived to stay 65, just above a high precedence qualified mark tag rule, as before it was derived.
  */
-const STYLE_PRIORITY = 65;
+const STYLE_PRIORITY = MARK_BASE_PRIORITY + HIGH_PRECEDENCE_OFFSET + QUALIFIED_OFFSET + 1;
+
+/** Inline rules start above the style rules so they outrank every mark rule; stays 67, as before it was derived. */
+const INLINE_BASE_PRIORITY = STYLE_PRIORITY + 2;
 
 const precedenceOffset = (precedence: ParsePrecedence): number => {
     switch (precedence) {
@@ -68,8 +71,11 @@ const precedenceOffset = (precedence: ParsePrecedence): number => {
     }
 };
 
+/** What a tag rule's priority depends on: its selector and its precedence. */
+type TagRulePriorityRule = Pick<ParseRule<unknown>, 'tag' | 'precedence'>;
+
 /** A tag rule's priority: its kind's base, raised by its precedence and by a qualified selector. */
-const tagRulePriority = (base: number, rule: ParseRule<unknown>): number => {
+const tagRulePriority = (base: number, rule: TagRulePriorityRule): number => {
     let priority = base + precedenceOffset(rule.precedence ?? DEFAULT_PRECEDENCE);
     if (QUALIFIED_SELECTOR.test(rule.tag)) {
         priority += QUALIFIED_OFFSET;
@@ -83,13 +89,19 @@ const tagRulePriority = (base: number, rule: ParseRule<unknown>): number => {
 const valueAttrs = (value: unknown) => (value === null ? false : { [VALUE_ATTR]: value });
 
 /**
- * A tag rule's value: what its `value` reads off the element, or no attributes when it reads none.
+ * A tag rule's value: what its `value` reads off the element, no attributes when it has none, and null when it reads none.
  */
 const tagRuleValue = <TValue>(rule: ParseRule<TValue>, element: HTMLElement): TValue | Record<string, never> | null => {
-    if (rule.value === undefined) {
-        return {};
+    const reading = readTagRule(rule, element);
+    switch (reading.kind) {
+        case 'unread':
+            return null;
+        case 'read':
+            return reading.value;
+        case 'ignored':
+            // A value rule never ignores; the engine handles a mark's ignore rule without reading it.
+            throw new Error(`The rule for "${rule.tag}" ignores its element, so it has no value to read.`);
     }
-    return rule.value(element, parseReaderOf(element));
 };
 
 const valueParseRule = (rule: ParseRule<unknown>, base: number): TagParseRule => ({
@@ -218,7 +230,7 @@ export const markParseRules = (
             return markClearRule(type, rule);
         }
         if ('ignore' in rule && rule.ignore === true) {
-            return { tag: rule.tag, priority: MARK_PRIORITY, ignore: true };
+            return { tag: rule.tag, priority: tagRulePriority(MARK_BASE_PRIORITY, rule), ignore: true };
         }
         if (rule.style === undefined) {
             return valueParseRule(rule, MARK_BASE_PRIORITY);

@@ -10,7 +10,7 @@ import { type ReactNode } from 'react';
 import { EDITOR_SHORTCUTS, type EditorControlApi, type RteMarkState, type RteSelectionSnapshot } from './commands';
 import { buildContentRegistry, type ContentRegistry, register } from './contentRegistry';
 import { parseHotkey } from './hotkeys';
-import { parseReaderOf } from './parseReader';
+import { readTagRule } from './parseReader';
 import {
     type BlockDefinition,
     type HotkeyHandler,
@@ -583,10 +583,7 @@ const readsElement = (rule: MarkParseRule<unknown>, element: HTMLElement): boole
     if (rule.tag === undefined || !element.matches(rule.tag)) {
         return false;
     }
-    if (rule.ignore === true) {
-        return true;
-    }
-    return rule.value === undefined || rule.value(element, parseReaderOf(element)) !== null;
+    return readTagRule(rule, element).kind !== 'unread';
 };
 
 /**

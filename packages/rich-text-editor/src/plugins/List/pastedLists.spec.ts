@@ -59,3 +59,11 @@ describe('PASTED_LISTS', () => {
         );
     });
 });
+
+describe('PASTED_LISTS with a marker the contract does not define', () => {
+    it('throws instead of reading it as a bullet', () => {
+        expect(() => rebuilt(item(1, 'bullet', 'A').replace('="bullet"', '="circle"'))).toThrow(
+            'The pasted list item has the marker "circle"',
+        );
+    });
+});

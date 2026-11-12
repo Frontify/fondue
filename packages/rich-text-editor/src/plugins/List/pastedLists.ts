@@ -1,32 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PASTED_LIST_ITEM_ATTRIBUTES, type PastedListMarker, type PasteTransform } from '#/core';
+import {
+    PASTED_LIST_ITEM_ATTRIBUTES,
+    type PastedListMarker,
+    type PasteTransform,
+    removePastedListContract,
+} from '#/core';
+
+import { BULLET_LIST_TAG, LIST_ITEM_TAG, NUMBERED_LIST_TAG, START_ATTRIBUTE } from './helpers/listMarkup';
 
 // The editor marks each list item another app wrote as a paragraph (Word,
 // Outlook) with the pasted-list contract; the list plugins rebuild the lists.
 
-/** The tags the bulleted and numbered list contents parse, and their item's. */
-const BULLET_LIST_TAG = 'ul';
-const NUMBERED_LIST_TAG = 'ol';
-const LIST_ITEM_TAG = 'li';
-/** Where a numbered list's numbering starts. */
-const START_ATTRIBUTE = 'start';
-
-/** The marker the contract names for a numbered item; any other is a bullet. */
-const NUMBERED_MARKER: PastedListMarker = 'numbered';
-
 /** Paragraphs the editor marked as list items. */
 const MARKED_ITEM = `[${PASTED_LIST_ITEM_ATTRIBUTES.list}]`;
-/** Every attribute of the pasted-list contract. */
-const CONTRACT_ATTRIBUTES = Object.values(PASTED_LIST_ITEM_ATTRIBUTES);
-/** Elements carrying any attribute of the pasted-list contract. */
-const CARRYING_CONTRACT = CONTRACT_ATTRIBUTES.map((name) => `[${name}]`).join(', ');
 
 /** Where an item belongs: the source app's list, its level, and its kind of list. */
 type ListPlace = { list: string; level: number; kind: PastedListMarker };
 
 /** An item's marker: a bullet, or a number with the item's own number, when the marker has one. */
-type ListMarker = { kind: 'bullet' } | { kind: 'numbered'; number: string | null };
+type ListMarker = { kind: Exclude<PastedListMarker, 'numbered'> } | { kind: 'numbered'; number: string | null };
 
 type ListParagraph = Omit<ListPlace, 'kind'> & ListMarker & { paragraph: HTMLElement };
 
@@ -41,7 +34,7 @@ const tagOf = (kind: PastedListMarker): string => {
     }
 };
 
-/** Whether `item` continues `open` at its level: a bullet list runs across Word's lists, a numbered one restarts with each, as Word numbers them. */
+/** Whether `item` continues `open` at its level: a bullet list runs across the source app's lists, a numbered one restarts with each, as Word numbers them. */
 const continues = (open: ListPlace, item: ListPlace): boolean => {
     if (open.kind !== item.kind) {
         return false;
@@ -54,6 +47,20 @@ const continues = (open: ListPlace, item: ListPlace): boolean => {
     }
 };
 
+/** The marker the contract names on `paragraph`; throws on one the contract does not define, as only the editor writes it. */
+const readMarker = (paragraph: HTMLElement): ListMarker => {
+    const marker = paragraph.getAttribute(PASTED_LIST_ITEM_ATTRIBUTES.marker);
+    switch (marker) {
+        case 'bullet':
+            return { kind: 'bullet' };
+        case 'numbered':
+            return { kind: 'numbered', number: paragraph.getAttribute(PASTED_LIST_ITEM_ATTRIBUTES.number) };
+        default:
+            // The attribute is text, so a value outside `PastedListMarker` is a bug in the writer and is not read as a bullet.
+            throw new Error(`The pasted list item has the marker "${marker}", which is neither a bullet nor numbered.`);
+    }
+};
+
 /** `node` as a list item the editor marked, or `undefined` when it is not one. */
 const readListParagraph = (node: Node): ListParagraph | undefined => {
     if (!(node instanceof HTMLElement)) {
@@ -63,11 +70,12 @@ const readListParagraph = (node: Node): ListParagraph | undefined => {
     if (list === null) {
         return undefined;
     }
-    let marker: ListMarker = { kind: 'bullet' };
-    if (node.getAttribute(PASTED_LIST_ITEM_ATTRIBUTES.marker) === NUMBERED_MARKER) {
-        marker = { kind: 'numbered', number: node.getAttribute(PASTED_LIST_ITEM_ATTRIBUTES.number) };
-    }
-    return { paragraph: node, list, level: Number(node.getAttribute(PASTED_LIST_ITEM_ATTRIBUTES.level)), ...marker };
+    return {
+        paragraph: node,
+        list,
+        level: Number(node.getAttribute(PASTED_LIST_ITEM_ATTRIBUTES.level)),
+        ...readMarker(node),
+    };
 };
 
 /** The list paragraphs that follow `first` as siblings, with only layout between them. */
@@ -160,15 +168,6 @@ const rebuildLists = (dom: HTMLElement): void => {
     }
 };
 
-/** Removes the contract from every paragraph that carries it, rebuilt or not. */
-const removeContract = (dom: HTMLElement): void => {
-    for (const element of dom.querySelectorAll(CARRYING_CONTRACT)) {
-        for (const name of CONTRACT_ATTRIBUTES) {
-            element.removeAttribute(name);
-        }
-    }
-};
-
 /**
  * Rebuilds the list items a paste carries as paragraphs marked with the pasted-list contract (Word, Outlook) as
  * nested bulleted and numbered lists, which the list plugins share.
@@ -177,6 +176,7 @@ export const PASTED_LISTS: PasteTransform = {
     id: 'pasted-lists',
     run: (dom) => {
         rebuildLists(dom);
-        removeContract(dom);
+        // Rebuilt or not, no paragraph keeps the contract.
+        removePastedListContract(dom);
     },
 };

@@ -13,9 +13,9 @@ import {
     type StyleMap,
 } from '#/core';
 
-import { PASTED_LISTS } from '../shared/paste/pastedLists';
-
+import { BULLET_LIST_TAG, LIST_ITEM_TAG, NUMBERED_LIST_TAG, START_ATTRIBUTE } from './helpers/listMarkup';
 import styles from './list.module.scss';
+import { PASTED_LISTS } from './pastedLists';
 
 /**
  * A list item, holding a paragraph and any lists nested under it
@@ -45,8 +45,8 @@ type NumberedListValue = { start: number | null };
 const listItem = defineBlock({
     // The paragraph comes first: it is what a new item is filled with.
     content: { blocks: [PARAGRAPH, ANY_LIST] },
-    toHtml: () => ({ tag: 'li', attrs: { class: styles.item }, children: true }),
-    parse: [{ tag: 'li' }],
+    toHtml: () => ({ tag: LIST_ITEM_TAG, attrs: { class: styles.item }, children: true }),
+    parse: [{ tag: LIST_ITEM_TAG }],
 });
 
 /**
@@ -54,8 +54,8 @@ const listItem = defineBlock({
  */
 const bulletList = defineBlock({
     content: { items: 'listItem' },
-    toHtml: () => ({ tag: 'ul', attrs: { class: styles.bulletList }, children: true }),
-    parse: [{ tag: 'ul' }],
+    toHtml: () => ({ tag: BULLET_LIST_TAG, attrs: { class: styles.bulletList }, children: true }),
+    parse: [{ tag: BULLET_LIST_TAG }],
 });
 
 /**
@@ -111,13 +111,17 @@ const numberedList = defineBlock<NumberedListValue>({
         if (first !== undefined && first.length > MARKER_DIGITS) {
             style = { [EXTRA_DIGITS_PROPERTY]: String(first.length - MARKER_DIGITS) };
         }
-        return { tag: 'ol', attrs: { class: styles.numberedList, start: first, style }, children: true };
+        return {
+            tag: NUMBERED_LIST_TAG,
+            attrs: { class: styles.numberedList, [START_ATTRIBUTE]: first, style },
+            children: true,
+        };
     },
     parse: [
         {
-            tag: 'ol',
+            tag: NUMBERED_LIST_TAG,
             value: (element) => {
-                const start = storedStart(Number.parseInt(element.getAttribute('start') ?? '', 10));
+                const start = storedStart(Number.parseInt(element.getAttribute(START_ATTRIBUTE) ?? '', 10));
                 if (start === null) {
                     return {};
                 }

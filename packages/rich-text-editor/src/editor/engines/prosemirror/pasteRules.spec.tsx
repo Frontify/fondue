@@ -4,10 +4,10 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { defineBlock, type ParseRule } from '#/core';
+import { defineBlock, type MarkParseRule, type ParseRule } from '#/core';
 
 import { VALUE_ATTR } from './documentConversion';
-import { blockParseRules, valueParseRules } from './pasteRules';
+import { blockParseRules, markParseRules, valueParseRules } from './pasteRules';
 
 type ColorValue = { color: string | undefined };
 
@@ -52,5 +52,23 @@ describe("a tag rule's reader", () => {
         const [rule] = blockParseRules(block, []);
 
         expect(rule?.getAttrs?.(styled('p', 'color: #F00'))).toEqual({ color: '#ff0000' });
+    });
+});
+
+describe('a mark ignore rule', () => {
+    const priorityOf = (rule: MarkParseRule<unknown>): number | undefined =>
+        markParseRules('note', [rule], [])[0]?.priority;
+
+    it('sits where a mark tag rule with the same selector does', () => {
+        expect(priorityOf({ tag: 'small', ignore: true })).toBe(priorityOf({ tag: 'small' }));
+        expect(priorityOf({ tag: 'small[hidden]', ignore: true })).toBe(priorityOf({ tag: 'small[hidden]' }));
+    });
+
+    it('outranks a bare mark tag rule when its selector is qualified', () => {
+        const bare = priorityOf({ tag: 'small' });
+        const qualified = priorityOf({ tag: 'small[hidden]', ignore: true });
+
+        expect(bare).toBeDefined();
+        expect(qualified).toBe((bare ?? 0) + 1);
     });
 });

@@ -89,7 +89,7 @@ export {
     type StyleParseRule,
     type ToolbarItemProps,
 } from './plugin';
-export { parseReaderOf } from './parseReader';
+export { parseReaderOf, readTagRule, type TagRule, type TagRuleReading } from './parseReader';
 export {
     buildPluginRegistry,
     controlOf,
@@ -124,6 +124,7 @@ export {
     PARAGRAPH,
     PASTED_LIST_ITEM_ATTRIBUTES,
     type PastedListMarker,
+    removePastedListContract,
     WORD_START_CONTEXT,
 } from './vocabulary';
 export { warnOnce } from './warnings';
