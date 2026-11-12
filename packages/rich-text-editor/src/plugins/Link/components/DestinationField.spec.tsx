@@ -137,6 +137,68 @@ describe('the destination field', () => {
         ]);
     });
 
+    it('scrolls the active option into view as the arrows move it', async () => {
+        const scrolled = vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(() => {});
+        const { type, press, options } = mountSearchForm(fixed(BRAND, LOGOS));
+        await type('br');
+
+        press('ArrowUp');
+
+        expect(scrolled.mock.contexts).toEqual([options()[1]]);
+        scrolled.mockRestore();
+    });
+
+    it('leaves the list where it is when the pointer highlights an option', async () => {
+        const scrolled = vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(() => {});
+        const { type, options } = mountSearchForm(fixed(BRAND, LOGOS));
+        await type('br');
+
+        act(() => {
+            options()[1]?.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
+        });
+
+        expect(options()[1]?.getAttribute('aria-selected')).toBe('true');
+        expect(scrolled).not.toHaveBeenCalled();
+        scrolled.mockRestore();
+    });
+
+    it('leaves the list where it is on hover after arrows that could not move the highlight', async () => {
+        const scrolled = vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(() => {});
+        const search = vi.fn<LinkSearch>((query) => {
+            if (query === 'b') {
+                return Promise.resolve([BRAND]);
+            }
+            return Promise.resolve([BRAND, LOGOS]);
+        });
+        const { type, press, options } = mountSearchForm(search);
+        await type('b');
+        press('ArrowDown');
+        press('ArrowDown');
+        scrolled.mockClear();
+        await type('br');
+
+        act(() => {
+            options()[1]?.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
+        });
+
+        expect(scrolled).not.toHaveBeenCalled();
+        scrolled.mockRestore();
+    });
+
+    it('does not search again for the address a pick fills in', async () => {
+        const search = vi.fn<LinkSearch>(fixed(BRAND, LOGOS));
+        const { type, press } = mountSearchForm(search);
+        await type('br');
+        press('ArrowDown');
+        press('Enter');
+
+        await act(async () => {
+            await vi.advanceTimersByTimeAsync(200);
+        });
+
+        expect(search.mock.calls.map(([query]) => query)).toEqual(['br']);
+    });
+
     it('moves the active option with the arrows and picks it with Enter', async () => {
         const { field, type, press, options, onSave } = mountSearchForm(fixed(BRAND, LOGOS));
         await type('br');

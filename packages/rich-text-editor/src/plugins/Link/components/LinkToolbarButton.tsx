@@ -38,9 +38,10 @@ const decideNewLinkAction = ({ selection, value, text }: NewLinkActionOptions): 
 type LinkToolbarButtonProps = ToolbarItemProps & { policy: LinkPolicy; search?: LinkSearch };
 
 /**
- * The toolbar entry point. On a link it opens the link's own editor; on plain
- * selected text it opens a form of its own, and the text becomes a link only on
- * save, so the document never holds a link without a target.
+ * The toolbar entry point. On a link it opens the link's own editor; on selected
+ * text or at a caret it opens a form of its own, and the text becomes a link, or
+ * the typed text goes in linked, only on save, so the document never holds a link
+ * without a target.
  */
 export const LinkToolbarButton = ({
     api,

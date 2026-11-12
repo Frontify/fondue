@@ -156,15 +156,110 @@ describe('a mention being made', () => {
 describe('a mention being searched for', () => {
     const popup = (): string => window.document.querySelector('[class*="popup"]')?.textContent ?? '';
 
-    it('says Searching while the answer is pending, in the list and to a screen reader', async () => {
-        const { status } = await mountDraft(() => new Promise<MentionItem[]>(() => {}));
-        await act(async () => {
-            await new Promise((resolve) => requestAnimationFrame(resolve));
-        });
+    it('shows Searching only once a lookup runs past the delay, and never announces it', async () => {
+        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+        try {
+            const { status } = await mountDraft(() => new Promise<MentionItem[]>(() => {}));
 
-        expect(status()).toBe('Searching');
-        expect(popup()).toContain('Searching');
-        expect(popup()).not.toContain('No matches');
+            act(() => {
+                vi.advanceTimersByTime(299);
+            });
+            await act(async () => {
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+            });
+            expect(popup()).toBe('');
+            expect(window.document.body.textContent).not.toContain('Searching');
+            expect(status()).toBe('');
+
+            act(() => {
+                vi.advanceTimersByTime(1);
+            });
+            await act(async () => {
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+            });
+            expect(popup()).toContain('Searching');
+            expect(popup()).not.toContain('No matches');
+            expect(status()).toBe('');
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    it('starts the Searching delay again for each new query', async () => {
+        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+        try {
+            const { type } = await mountDraft(() => new Promise<MentionItem[]>(() => {}));
+            act(() => {
+                vi.advanceTimersByTime(300);
+            });
+            await act(async () => {
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+            });
+            expect(window.document.body.textContent).toContain('Searching');
+
+            await type('ja');
+            act(() => {
+                vi.advanceTimersByTime(299);
+            });
+            await act(async () => {
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+            });
+            await act(async () => {
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+            });
+            expect(popup()).toBe('');
+            expect(window.document.body.textContent).not.toContain('Searching');
+
+            act(() => {
+                vi.advanceTimersByTime(1);
+            });
+            await act(async () => {
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+            });
+            expect(popup()).toContain('Searching');
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    it('starts the Searching delay again when a slow lookup that failed is retried', async () => {
+        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+        const frame = async (): Promise<void> => {
+            await act(async () => {
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+            });
+        };
+        try {
+            const { press } = await mountDraft(
+                () =>
+                    new Promise<MentionItem[]>((_resolve, reject) =>
+                        setTimeout(() => reject(new Error('offline')), 400),
+                    ),
+            );
+            act(() => {
+                vi.advanceTimersByTime(300);
+            });
+            await frame();
+            expect(popup()).toContain('Searching');
+            act(() => {
+                vi.advanceTimersByTime(100);
+            });
+            await settle();
+            await frame();
+            expect(popup()).toContain('Could not load people.');
+
+            press('Enter');
+            await frame();
+            expect(window.document.body.textContent).not.toContain('Searching');
+
+            act(() => {
+                vi.advanceTimersByTime(300);
+            });
+            await frame();
+            expect(popup()).toContain('Searching');
+        } finally {
+            vi.useRealTimers();
+        }
     });
 
     it('says No matches only for an empty answer that arrived', async () => {
@@ -205,6 +300,8 @@ describe('a mention being searched for', () => {
         expect(press0.defaultPrevented).toBe(true);
         const callsBefore = lookup.mock.calls.length;
         act(() => retry?.click());
+        // Cleared while asking again, so the same failure is announced again.
+        expect(status()).toBe('');
         await settle();
         expect(lookup.mock.calls.length).toBe(callsBefore + 1);
         expect(status()).toBe('Could not load people. Press Enter to retry.');
@@ -252,6 +349,32 @@ describe('a mention being searched for', () => {
         expect(seen).toEqual(['3 people', '3 people', '3 people', '3 people']);
     });
 
+    it('keeps a space typed while a newer query is unanswered, after an earlier No matches', async () => {
+        const { type, press, onCancel } = await mountDraft((query) => {
+            if (query === 'z') {
+                return new Promise<MentionItem[]>(() => {});
+            }
+            return [];
+        });
+        await type('zz');
+        await type('z');
+        press(' ');
+
+        expect(onCancel).not.toHaveBeenCalled();
+    });
+
+    it('says the search failed when the lookup throws instead of rejecting', async () => {
+        const { type, status } = await mountDraft((query) => {
+            if (query === 'x') {
+                throw new Error('bad query');
+            }
+            return PEOPLE;
+        });
+        await type('x');
+
+        expect(status()).toBe('Could not load people. Press Enter to retry.');
+    });
+
     it('drops the answer of a query that has moved on', async () => {
         const answers = new Map<string, (people: MentionItem[]) => void>();
         const { type, status } = await mountDraft(
@@ -263,7 +386,7 @@ describe('a mention being searched for', () => {
         await settle();
 
         // The dropped answer is no earlier answer to keep showing.
-        expect(status()).toBe('Searching');
+        expect(status()).toBe('');
         // Same as above: the index is in range.
         act(() => answers.get('j')?.([PEOPLE[0] as MentionItem]));
         await settle();

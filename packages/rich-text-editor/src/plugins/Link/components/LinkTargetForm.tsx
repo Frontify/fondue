@@ -49,20 +49,16 @@ export type LinkTargetFormProps = {
     | { kind: 'edit'; onSave: (value: LinkValue) => void }
 );
 
-type TextField = {
-    text: string;
-};
-
 type FormMode = {
-    /** The Text field a new link shows; null for an existing link, whose text is edited in place. */
-    textField: TextField | null;
+    /** What the Text field of a new link starts with; null for an existing link, whose text is edited in place. */
+    textField: string | null;
     onSave: (value: LinkValue, text: string) => void;
 };
 
 const resolveMode = (props: LinkTargetFormProps): FormMode => {
     switch (props.kind) {
         case 'create':
-            return { textField: { text: props.text }, onSave: props.onSave };
+            return { textField: props.text, onSave: props.onSave };
         case 'edit': {
             const { onSave } = props;
             return { textField: null, onSave: (value) => onSave(value) };
@@ -82,7 +78,7 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
     const [typed, setTyped] = useState(typeof initial.href === 'string' ? initial.href : '');
     let initialText = '';
     if (textField !== null) {
-        initialText = textField.text;
+        initialText = textField;
     }
     const [text, setText] = useState(initialText);
     const [openInNewTab, setOpenInNewTab] = useState(initial.openInNewTab === true);
@@ -95,7 +91,7 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
     const urlFieldRef = useRef<HTMLInputElement>(null);
     const textFieldRef = useRef<HTMLInputElement>(null);
 
-    const startsOnText = textField !== null && textField.text === '';
+    const startsOnText = textField === '';
     useEffect(() => {
         // Selected text is already there to keep, so the address is what is left to type.
         let first = urlFieldRef.current;

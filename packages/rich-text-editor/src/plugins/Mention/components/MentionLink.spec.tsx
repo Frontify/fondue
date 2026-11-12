@@ -42,25 +42,22 @@ const mount = (node: ReactNode): HTMLElement => {
 describe('an unavailable mention', () => {
     const display = mentionDisplay(JANE, { resolve, trigger: '@' });
 
-    it('takes keyboard focus in the reading view, so its tooltip opens', () => {
-        const container = mount(<MentionLink value={JANE} display={display} focusableWhenUnlinked />);
-
-        expect(container.querySelector('span[data-mention-id]')?.getAttribute('tabindex')).toBe('0');
-    });
-
-    it('stays out of the tab order in the editor', () => {
+    it('is text with the note after its isolated name, and no tab stop', () => {
         const container = mount(<MentionLink value={JANE} display={display} />);
+        const mention = container.querySelector('span[data-mention-id]');
 
-        expect(container.querySelector('span[data-mention-id]')?.hasAttribute('tabindex')).toBe(false);
+        expect(mention?.textContent).toBe('@jane (unavailable)');
+        expect(mention?.querySelector('bdi')?.textContent).toBe('@jane');
+        expect(mention?.hasAttribute('tabindex')).toBe(false);
     });
 
-    it('is focusable through the content the reading view renders', () => {
+    it('stays out of the tab order in the reading view', () => {
         const Component = mentionContent({ resolve }).inlines?.mention?.render?.component;
         if (!Component) {
             throw new Error('no reading view');
         }
         const container = mount(<Component value={JANE} />);
 
-        expect(container.querySelector('span[data-mention-id]')?.getAttribute('tabindex')).toBe('0');
+        expect(container.querySelector('span[data-mention-id]')?.hasAttribute('tabindex')).toBe(false);
     });
 });

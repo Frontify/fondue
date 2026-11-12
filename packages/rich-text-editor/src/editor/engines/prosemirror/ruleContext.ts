@@ -37,6 +37,16 @@ export const isInExcludedMark = (state: EditorState, excluded: readonly PmMarkTy
     return excluded.some((markType) => markType.isInSet(marks));
 };
 
+/**
+ * Whether text a rule would delete or replace carries a mark that opts out: a non-inclusive mark such as code ends at the caret, but a match may still reach back into it.
+ */
+export const touchesExcludedMark = (
+    state: EditorState,
+    excluded: readonly PmMarkType[],
+    from: number,
+    to: number,
+): boolean => excluded.some((markType) => state.doc.rangeHasMark(from, to, markType));
+
 const unlessInExcludedMark =
     (excluded: readonly PmMarkType[], handler: RuleHandler): RuleHandler =>
     (state, match, start, end) => {
@@ -52,7 +62,7 @@ const unlessInExcludedMark =
 export const unlessRangeHasExcludedMark =
     (excluded: readonly PmMarkType[], handler: RuleHandler): RuleHandler =>
     (state, match, start, end) => {
-        if (excluded.some((markType) => state.doc.rangeHasMark(start, end, markType))) {
+        if (touchesExcludedMark(state, excluded, start, end)) {
             return null;
         }
         return handler(state, match, start, end);

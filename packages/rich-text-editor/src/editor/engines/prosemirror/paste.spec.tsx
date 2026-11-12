@@ -42,7 +42,10 @@ describe('a plugin paste handler', () => {
 
         editor.paste('pasted', '<p>pasted</p>');
 
-        expect(handler).toHaveBeenCalledWith({ text: 'pasted', html: '<p>pasted</p>' }, editor.api);
+        expect(handler).toHaveBeenCalledWith(
+            { text: 'pasted', html: '<p>pasted</p>', source: 'elsewhere' },
+            editor.api,
+        );
         expect(editor.stored()).toEqual([paragraph(text('apasted'))]);
     });
 
@@ -53,7 +56,20 @@ describe('a plugin paste handler', () => {
 
         editor.paste('pasted');
 
-        expect(handler.mock.calls[0]?.[0]).toEqual({ text: 'pasted', html: null });
+        expect(handler.mock.calls[0]?.[0]).toEqual({ text: 'pasted', html: null, source: 'elsewhere' });
+    });
+
+    it('is told the paste was copied from an editor', () => {
+        const handler = vi.fn<PasteHandler>(() => false);
+        const source = editorWith(defaultPlugins, [paragraph(text('copied'))]);
+        source.select('copied');
+        const html = source.view.serializeForClipboard(source.view.state.selection.content()).dom.innerHTML;
+        const editor = editorWith(withPaste(handler), [paragraph(text('a'))]);
+        editor.caretAfter('a');
+
+        editor.paste('copied', html);
+
+        expect(handler.mock.calls[0]?.[0]).toMatchObject({ source: 'editor' });
     });
 
     it('stops at the first handler that handles the paste', () => {
@@ -88,6 +104,27 @@ describe('pasting formatted text', () => {
         ['<p><span style="vertical-align: super">x</span></p>', { superscript: true }],
     ])('reads the mark off any element whose style declares it: %s', (html, marks) => {
         expect(pasted(html)).toEqual([paragraph(text('x', marks))]);
+    });
+
+    it.each([
+        ['<p><strong style="font-style:italic">x</strong></p>', { bold: true, italic: true }],
+        ['<p><span style="color:#f00;font-weight:700">x</span></p>', { bold: true, fontColor: { color: '#f00' } }],
+    ])('reads a style on an element another mark already reads: %s', (html, marks) => {
+        expect(pasted(html)).toEqual([paragraph(text('x', marks))]);
+    });
+
+    it.each([
+        ['<p><span style="font-weight:650">x</span></p>', [text('x', { bold: true })]],
+        ['<p><span style="font-weight:1000">x</span></p>', [text('x', { bold: true })]],
+        ['<p><strong><span style="font-weight:500">x</span></strong></p>', [text('x')]],
+    ])('reads any weight of 600 or more as bold: %s', (html, children) => {
+        expect(pasted(html)).toEqual([paragraph(...children)]);
+    });
+
+    it('reads the underline under an anchor that is not a link', () => {
+        expect(pasted('<p><a name="x"><span style="text-decoration:underline">x</span></a></p>')).toEqual([
+            paragraph(text('x', { underline: true })),
+        ]);
     });
 
     it('reads every mark one element declares', () => {
@@ -134,10 +171,36 @@ describe('pasting formatted text', () => {
         ).toEqual([paragraph(text('x', { link: { href: 'https://example.com' }, strikethrough: true }))]);
     });
 
-    it('does not read the bold a heading shows by default as formatting', () => {
-        expect(pasted('<h1><span style="font-weight:bold">x</span></h1>')).toEqual([
-            { type: 'textStyle', style: 'heading1', children: [text('x')] },
+    it('does not read the underline a link declares on itself as formatting', () => {
+        expect(pasted('<p><a href="https://example.com" style="text-decoration-line:underline">x</a></p>')).toEqual([
+            paragraph(text('x', { link: { href: 'https://example.com' } })),
         ]);
+    });
+
+    it.each(['<p><b style="font-weight:500">x</b></p>', '<p><strong style="font-weight:lighter">x</strong></p>'])(
+        'does not read a bold tag that sets a weight under 600 as bold: %s',
+        (html) => {
+            expect(pasted(html)).toEqual([paragraph(text('x'))]);
+        },
+    );
+
+    it('keeps a line-through drawn by an ancestor under text-decoration-line: none', () => {
+        expect(pasted('<p><s>a<span style="text-decoration-line: none">b</span></s></p>')).toEqual([
+            paragraph(text('ab', { strikethrough: true })),
+        ]);
+    });
+
+    it('does not read the bold a heading declares on itself as formatting', () => {
+        expect(pasted('<h2 style="font-weight:bold">x</h2>')).toEqual([
+            { type: 'textStyle', style: 'heading2', children: [text('x')] },
+        ]);
+    });
+
+    it.each([
+        ['<h1><span style="font-weight:bold">x</span></h1>', 'heading1'],
+        ['<h3><span style="font-weight:650">x</span></h3>', 'heading3'],
+    ])('keeps the bold an author set on heading text: %s', (html, style) => {
+        expect(pasted(html)).toEqual([{ type: 'textStyle', style, children: [text('x', { bold: true })] }]);
     });
 
     it('keeps only the inner of subscript and superscript', () => {
@@ -147,6 +210,10 @@ describe('pasting formatted text', () => {
 
 describe('pasting over selected text with the link plugin', () => {
     const link = (href: string) => ({ link: { href } });
+
+    afterEach(() => {
+        vi.useRealTimers();
+    });
 
     it('links it when the text is a web address', () => {
         const editor = editorWith(shipped('link'), [paragraph(text('see frontify now'))]);
@@ -211,6 +278,30 @@ describe('pasting over selected text with the link plugin', () => {
         ]);
     });
 
+    it('keeps the marks of a link copied inside the editor and pasted at a caret', () => {
+        const copied = { link: { href: 'https://example.com', openInNewTab: true }, bold: true };
+        const source = editorWith(shipped('link', 'bold'), [paragraph(text('https://example.com', copied))]);
+        source.select('https://example.com');
+        const html = source.view.serializeForClipboard(source.view.state.selection.content()).dom.innerHTML;
+        const editor = editorWith(shipped('link', 'bold'), [paragraph(text('a'))]);
+        editor.caretAfter('a');
+
+        editor.paste('https://example.com', html);
+
+        expect(editor.stored()).toEqual([paragraph(text('a'), text('https://example.com', copied))]);
+    });
+
+    it('links an address at a caret when another app on the same engine copied it', () => {
+        const editor = editorWith(shipped('link'), [paragraph(text('a'))]);
+        editor.caretAfter('a');
+
+        editor.paste('https://example.com', '<p data-pm-slice="1 1 []">https://example.com</p>');
+
+        expect(editor.stored()).toEqual([
+            paragraph(text('a'), text('https://example.com', link('https://example.com'))),
+        ]);
+    });
+
     it('pastes an address as plain text inside a link', () => {
         const editor = editorWith(shipped('link'), [paragraph(text('frontify', link('https://old.example')))]);
         editor.caretAfter('fron');
@@ -229,7 +320,7 @@ describe('pasting over selected text with the link plugin', () => {
         expect(editor.stored()).toEqual([paragraph(text('aexample.com'))]);
     });
 
-    it('is its own undo step once the history pauses after the typing before it', () => {
+    it('is undone in two steps once the history pauses after the typing before it: the link, then the text', () => {
         vi.useFakeTimers();
         const editor = editorWith(shipped('link'), [paragraph()]);
         editor.type('ab');
@@ -237,7 +328,21 @@ describe('pasting over selected text with the link plugin', () => {
 
         editor.paste('https://example.com');
         undo(editor.view.state, editor.view.dispatch);
-        vi.useRealTimers();
+
+        expect(editor.stored()).toEqual([paragraph(text('abhttps://example.com'))]);
+
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual([paragraph(text('ab'))]);
+    });
+
+    it('is its own undo step even right after typing', () => {
+        const editor = editorWith(shipped('link'), [paragraph()]);
+        editor.type('ab');
+
+        editor.paste('https://example.com');
+        undo(editor.view.state, editor.view.dispatch);
+        undo(editor.view.state, editor.view.dispatch);
 
         expect(editor.stored()).toEqual([paragraph(text('ab'))]);
     });
