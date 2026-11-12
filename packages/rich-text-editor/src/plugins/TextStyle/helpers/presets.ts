@@ -139,49 +139,35 @@ type Preset = {
     fallback: StyleMap;
 };
 
-/**
- * Fails to compile when a style is added to `TextStyleName` without a preset
- */
+/** Fails to compile when a style is added to `TextStyleName` without a preset. */
 type EveryStyleHasAPreset<TMissing extends never> = TMissing;
 export type PresetsCheck = EveryStyleHasAPreset<Exclude<TextStyleName, (typeof PRESETS)[number]['name']>>;
 
-/**
- * The block type this plugin adds. Part of the assembled RteBlock union at the package root.
- */
+/** The block type this plugin adds. Part of the assembled RteBlock union at the package root. */
 export type TextStyleBlock = {
     type: 'textStyle';
     style: TextStyleName;
     children: RteInlineNode[];
 };
 
-/**
- * What the dropdown may offer. `paragraph` is the editor's baseline block, not a preset: picking it clears the style.
- */
+/** What the dropdown may offer. `paragraph` is the editor's baseline block, not a preset: picking it clears the style. */
 export type TextStyleOption = 'paragraph' | TextStyleName;
 
-/**
- * Every option, in dropdown order
- */
+/** Every option, in dropdown order: what the host gets by naming none. */
 export const ALL_TEXT_STYLES: readonly TextStyleOption[] = [PARAGRAPH, ...PRESETS.map((preset) => preset.name)];
 
-/**
- * The style a node falls back to when it arrives without one
- */
+/** The style a node falls back to when it arrives without one. */
 export const FIRST_PRESET: TextStyleName = PRESETS[0].name;
 
 export const findPreset = (name: string): Preset | undefined => PRESETS.find((preset) => preset.name === name);
 
 export const labelOf = (option: TextStyleOption): string => findPreset(option)?.label ?? 'Paragraph';
 
-/**
- * The presets an editor was configured with, in the order they were given
- */
+/** The presets an editor was configured with, in the order they were given. */
 export const presetsFor = (options: readonly TextStyleOption[]): Preset[] =>
     options.map(findPreset).filter((preset) => preset !== undefined);
 
-/**
- * The `#` prefix each heading tag answers to; the presets rendering as `p` have none
- */
+/** The `#` prefix each heading tag answers to; the presets rendering as `p` have none. */
 const MARKDOWN_PREFIX: Partial<Record<Preset['tag'], string>> = {
     h1: '# ',
     h2: '## ',
@@ -189,23 +175,17 @@ const MARKDOWN_PREFIX: Partial<Record<Preset['tag'], string>> = {
     h4: '#### ',
 };
 
-/**
- * The markdown shortcut for a preset that has one (`## ` for a level-2 heading), so it follows the configured presets
- */
+/** The markdown shortcut for a preset that has one (`## ` for a level-2 heading), so it follows the configured presets. */
 export const markdownRuleFor = ({ name, tag }: Preset): RteInputRule[] => {
     const match = MARKDOWN_PREFIX[tag];
     return match === undefined ? [] : [{ kind: 'block', match, block: 'textStyle', attributes: { style: name } }];
 };
 
-/**
- * How pasted HTML maps to a preset: headings by bare tag, paragraph presets by their `data-text-style` attribute
- */
+/** How pasted HTML maps to a preset: headings by bare tag, paragraph presets by their `data-text-style` attribute. */
 export const parseRuleFor = ({ name, tag }: Preset): ParseRule<{ style: string }> => ({
     tag: tag === 'p' ? `p[data-text-style=${name}]` : tag,
     value: () => ({ style: name }),
 });
 
-/**
- * The selection snapshot's `block` is the structural node; narrowing it makes `style` readable
- */
+/** The selection snapshot's `block` is the structural node; narrowing it makes `style` readable. */
 export const isTextStyle = (block: { type: string } | null): block is TextStyleBlock => block?.type === 'textStyle';

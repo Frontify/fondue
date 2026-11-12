@@ -2,14 +2,10 @@
 
 import { type EditorControlApi } from '#/core';
 
-/**
- * The openers of the toolbar buttons' new-link forms, by editor, so the hotkey can open one
- */
+/** Lets the hotkey open the toolbar button's new-link form: a hotkey only gets the api, so each button registers its opener under it. */
 const openers = new WeakMap<EditorControlApi, () => void>();
 
-/**
- * Registers a button's opener for its editor; the returned function unregisters it
- */
+/** Registers a button's opener for its editor; the returned function unregisters it. */
 export const registerNewLinkForm = (api: EditorControlApi, open: () => void): (() => void) => {
     openers.set(api, open);
     return () => {
@@ -19,9 +15,7 @@ export const registerNewLinkForm = (api: EditorControlApi, open: () => void): ((
     };
 };
 
-/**
- * Open this editor's form for a new link. False when its toolbar is not showing one.
- */
+/** Open this editor's form for a new link. False when its toolbar is not showing one. */
 export const openNewLinkForm = (api: EditorControlApi): boolean => {
     const open = openers.get(api);
     open?.();

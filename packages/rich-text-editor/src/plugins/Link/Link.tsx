@@ -20,9 +20,7 @@ import { openNewLinkForm } from './helpers/newLinkForms';
 import { type LinkValue } from './helpers/value';
 import styles from './link.module.scss';
 
-/**
- * The value this plugin sets on text nodes
- */
+/** The value this plugin sets on text nodes. */
 export type LinkMark = {
     /**
      * The target of the link

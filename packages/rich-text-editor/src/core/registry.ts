@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 // The plugin list flattened into one engine-agnostic lookup. The only place that
-// reads `RtePlugin` and `RteContent`: the editor shell, engine and renderer read
-// the registry, so each declaration is gathered, ordered and checked once.
+// reads `RtePlugin`: the editor shell, engine and renderer read the registry, so
+// each declaration is gathered, ordered and checked once.
 
 import { type ReactNode } from 'react';
 
@@ -35,25 +35,17 @@ import { PARAGRAPH, paragraphBlock } from './vocabulary';
  */
 export type OwnType =
     | { kind: 'mark'; type: string }
-    /**
-     * A block holding items: `content: { items }`
-     */
+    /** A block holding items: `content: { items }`. */
     | { kind: 'list'; type: string }
-    /**
-     * A block holding other blocks, `content: { blocks }` — a list item
-     */
+    /** A block holding other blocks, `content: { blocks }` — a list item. */
     | { kind: 'container'; type: string }
     | { kind: 'textBlock'; type: string }
-    /**
-     * A block holding nothing — a column break
-     */
+    /** A block holding nothing — a column break. */
     | { kind: 'voidBlock'; type: string }
     | { kind: 'inline'; type: string }
     | { kind: 'none' };
 
-/**
- * One of a plugin's toolbar controls, with the type it acts on already resolved.
- */
+/** One plugin's toolbar control, with the type it acts on already resolved. */
 export type ToolbarEntry = {
     id: string;
     /**
@@ -61,13 +53,9 @@ export type ToolbarEntry = {
      */
     key: string;
     own: OwnType;
-    /**
-     * Whether the floating bar shows the control
-     */
+    /** Where the floating bar puts it: the plugin's choice, else by what it owns. */
     floating: 'inline' | 'hidden';
-    /**
-     * The plugin's `toolbarGroup`; none puts it in the last group
-     */
+    /** The plugin's `toolbarGroup`; none puts it in the last group. */
     group: RteToolbarGroup | undefined;
     label: string;
     shortcut?: string;
@@ -91,9 +79,7 @@ export type ToolbarEntry = {
 );
 
 export type PluginRegistry = {
-    /**
-     * Every block type, the paragraph baseline first
-     */
+    /** Every block type, the paragraph baseline first. */
     blocks: Map<string, BlockDefinition>;
     inlines: Map<string, InlineDefinition>;
     /**
@@ -101,29 +87,19 @@ export type PluginRegistry = {
      * plugin order). Engine and renderer both read this order, so they nest alike.
      */
     marks: Map<string, MarkDefinition>;
-    /**
-     * Attributes every text block carries (alignment), by name
-     */
+    /** Attributes every text block carries (alignment), by name. */
     blockAttributes: Map<string, BlockAttributeDefinition>;
-    /**
-     * List type → its item type, inferred from `content: { items }`
-     */
+    /** List type → its item type, inferred from `content: { items }`. */
     itemTypeByList: Map<string, string>;
     /**
      * Node type → the editor's view of it, from the plugins' `edit`.
      */
     edits: Map<string, RteEditView>;
-    /**
-     * Plugin ids in mount order: the editor's identity — a new set builds a new editor
-     */
+    /** Plugin ids in mount order: the editor's identity — a new set builds a new editor. */
     ids: readonly string[];
-    /**
-     * Ids declared by more than one plugin, which the editor warns about
-     */
+    /** Ids declared by more than one plugin, which the editor warns about. */
     duplicateIds: readonly string[];
-    /**
-     * Key → its handlers, in mount order; they run until one handles it
-     */
+    /** Key → its handlers, in mount order; they run until one handles it. */
     hotkeys: Map<string, readonly HotkeyHandler[]>;
     /**
      * Every typing rule, ordered for matching: mark rules first, longest
@@ -131,25 +107,15 @@ export type PluginRegistry = {
      * `*bold*` — then the rest as declared.
      */
     inputRules: readonly RteInputRule[];
-    /**
-     * Every plugin's `onPaste`, in mount order; they run until one handles the paste
-     */
+    /** Every plugin's `onPaste`, in mount order; they run until one handles the paste. */
     pasteHandlers: readonly PasteHandler[];
-    /**
-     * The toolbar's controls, in mount order
-     */
+    /** The toolbar's controls, in mount order. */
     toolbarItems: readonly ToolbarEntry[];
-    /**
-     * Every block command the plugins offer, in mount order
-     */
+    /** Every block command the plugins offer, in mount order. */
     commands: readonly RteBlockCommand[];
-    /**
-     * Classes for the element holding the content (the column layout)
-     */
+    /** Classes for the element holding the content (the column layout). */
     contentClassNames: readonly string[];
-    /**
-     * Custom properties set alongside them, later plugins winning
-     */
+    /** Custom properties set alongside them, later plugins winning. */
     contentProperties: Readonly<Record<string, string>>;
     /**
      * The inline style of each class the content writes, for HTML exported with `styling: 'inline'`
@@ -157,9 +123,7 @@ export type PluginRegistry = {
     contentStyles: Readonly<Record<string, StyleMap>>;
 };
 
-/**
- * A mark sits in the floating bar; a block is reached through its commands instead
- */
+/** A mark sits in the floating bar; a block is reached through its commands instead. */
 const defaultFloatingPlacement = (own: OwnType): ToolbarEntry['floating'] =>
     own.kind === 'mark' ? 'inline' : 'hidden';
 
@@ -316,7 +280,7 @@ const assertHasId = (plugin: RtePlugin): void => {
 /**
  * Adds a plugin's declared types to `target`. Two plugins declaring the same
  * type is an error (one would silently replace the other); the same definition
- * object registered twice is fine: two list plugins share their item that way.
+ * object registered twice is fine — two list plugins share their item that way.
  */
 const register = <TDefinition>(
     kind: 'block type' | 'mark type' | 'inline type' | 'block attribute' | 'edit view',
@@ -438,9 +402,7 @@ const inputRuleOf = (plugin: RtePlugin, rule: RteInputRule | RteDelimiterRule): 
     return { kind: 'mark', key, delimiter: rule.delimiter };
 };
 
-/**
- * Mark rules first, longest delimiter first; everything else keeps its declared order
- */
+/** Mark rules first, longest delimiter first; everything else keeps its declared order. */
 const forMatching = (rules: readonly RteInputRule[]): RteInputRule[] => [
     ...rules
         .filter((rule) => rule.kind === 'mark')
@@ -448,9 +410,7 @@ const forMatching = (rules: readonly RteInputRule[]): RteInputRule[] => [
     ...rules.filter((rule) => rule.kind !== 'mark'),
 ];
 
-/**
- * A stable sort, so ties stay in mount order
- */
+/** A stable sort, so ties stay in mount order. */
 const byNesting = (marks: Map<string, MarkDefinition>): Map<string, MarkDefinition> =>
     new Map([...marks].sort(([, left], [, right]) => (left.nesting ?? 0) - (right.nesting ?? 0)));
 
@@ -663,9 +623,7 @@ export const blockValueOf = (definition: BlockDefinition, stored: Record<string,
     return Object.fromEntries(Object.entries(defaults).map(([name, fallback]) => [name, stored[name] ?? fallback]));
 };
 
-/**
- * The CSS the attributes every text block carries put on this one, by their values on it
- */
+/** The CSS the attributes every text block carries put on this one, by their values on it. */
 export const blockAttributeStyle = (registry: PluginRegistry, stored: Record<string, unknown>): StyleMap => {
     const style: StyleMap = {};
     for (const [name, attribute] of registry.blockAttributes) {
