@@ -1,5 +1,6 @@
 packages:
     - packages/*
+    - fondue
     - storybook-docs
 
 allowBuilds:
