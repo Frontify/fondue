@@ -10,9 +10,7 @@ import { openNewLinkForm } from './helpers/newLinkForms';
 import { type LinkValue } from './helpers/value';
 import styles from './link.module.scss';
 
-/**
- * The value this plugin sets on text nodes
- */
+/** The value this plugin sets on text nodes. */
 export type LinkMark = {
     /**
      * The target of the link
@@ -38,11 +36,9 @@ export const linkContent = defineContent({
             // Typing at the end of a link does not extend it.
             inclusive: false,
 
-            /**
-             * The link everywhere but while editing: readonly, export, copy
-             */
+            /** The link everywhere but while editing: readonly, export, copy. */
             toHtml: (value) => {
-                // A stored document may hold anything here (`{}`, `true`), so
+                // A stored document may hold anything here — `{}`, `true` — so
                 // nothing about its shape is taken on trust.
                 const link = typeof value === 'object' ? (value as Partial<LinkValue> | null) : null;
                 const href = link?.href;
