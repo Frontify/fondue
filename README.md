@@ -1,5 +1,4 @@
-> [!NOTE]
-> This is the maintenance branch for Fondue v13. It only receives backported fixes. Active development happens on [`main`](https://github.com/Frontify/fondue/tree/main).
+> [!NOTE] This is the maintenance branch for Fondue v13. It only receives backported fixes. Active development happens on [`main`](https://github.com/Frontify/fondue/tree/main).
 
 # Fondue design system by Frontify
 
