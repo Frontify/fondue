@@ -6,8 +6,6 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { readableShortcut } from '#/ui/shortcut';
-
 import { type MentionItem, type MentionItems } from '../types';
 
 import { MentionDraft } from './MentionDraft';
@@ -235,7 +233,7 @@ describe('a mention being searched for', () => {
             });
         };
         try {
-            const { press } = await mountDraft(
+            await mountDraft(
                 () =>
                     new Promise<MentionItem[]>((_resolve, reject) =>
                         setTimeout(() => reject(new Error('offline')), 400),
@@ -253,7 +251,10 @@ describe('a mention being searched for', () => {
             await frame();
             expect(popup()).toContain('Could not load people.');
 
-            press('Enter');
+            const retry = [...window.document.querySelectorAll('button')].find(
+                (button) => button.textContent === 'Retry',
+            );
+            act(() => retry?.click());
             await frame();
             expect(window.document.body.textContent).not.toContain('Searching');
 
@@ -278,22 +279,18 @@ describe('a mention being searched for', () => {
         expect(popup()).toContain('No matches');
     });
 
-    it('says the search failed, and asks again from the Retry button or Enter, keeping focus in the query', async () => {
+    it('says the search failed, and asks again from the Retry button, keeping focus in the query', async () => {
         const lookup = vi.fn<MentionItems>((query) =>
             query === 'fail' ? Promise.reject(new Error('offline')) : Promise.resolve(PEOPLE),
         );
-        const { input, type, press, status, container } = await mountDraft(lookup);
+        const { input, type, status, container } = await mountDraft(lookup);
         await type('fail');
         await act(async () => {
             await new Promise((resolve) => requestAnimationFrame(resolve));
         });
 
-        expect(status()).toBe('Could not load people. Press Enter to retry.');
+        expect(status()).toBe('Could not load people.');
         expect(popup()).toContain('Could not load people.');
-        expect(popup()).not.toContain('Press Enter to retry');
-        const shortcut = window.document.querySelector('kbd');
-        expect(shortcut?.textContent).toBe(readableShortcut('Enter'));
-        expect(shortcut?.getAttribute('aria-hidden')).toBe('true');
         expect(popup()).not.toContain('No matches');
         const retry = [...window.document.querySelectorAll('button')].find((button) => button.textContent === 'Retry');
         expect(retry).toBeDefined();
@@ -309,15 +306,11 @@ describe('a mention being searched for', () => {
         expect(status()).toBe('');
         await settle();
         expect(lookup.mock.calls).toHaveLength(callsBefore + 1);
-        expect(status()).toBe('Could not load people. Press Enter to retry.');
-
-        press('Enter');
-        await settle();
-        expect(lookup.mock.calls).toHaveLength(callsBefore + 2);
+        expect(status()).toBe('Could not load people.');
         expect(window.document.activeElement).toBe(input);
     });
 
-    it('does not retry or trap Tab when the search failed', async () => {
+    it('does not retry on Enter or trap Tab when the search failed', async () => {
         const lookup = vi.fn<MentionItems>(() => Promise.reject(new Error('offline')));
         const { input } = await mountDraft(lookup);
         await act(async () => {
@@ -325,13 +318,16 @@ describe('a mention being searched for', () => {
         });
         const callsBefore = lookup.mock.calls.length;
 
-        const event = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
+        const tab = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
+        const enter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
         act(() => {
-            input.dispatchEvent(event);
+            input.dispatchEvent(tab);
+            input.dispatchEvent(enter);
         });
         await settle();
 
-        expect(event.defaultPrevented).toBe(false);
+        expect(tab.defaultPrevented).toBe(false);
+        expect(enter.defaultPrevented).toBe(false);
         expect(lookup.mock.calls).toHaveLength(callsBefore);
     });
 
@@ -376,7 +372,7 @@ describe('a mention being searched for', () => {
         });
         await type('x');
 
-        expect(status()).toBe('Could not load people. Press Enter to retry.');
+        expect(status()).toBe('Could not load people.');
     });
 
     it('drops the answer of a query that has moved on', async () => {
@@ -446,7 +442,6 @@ describe('a picker whose words come from the labels', () => {
         searching: 'Recherche',
         noMatches: 'Aucun résultat',
         failed: 'Échec.',
-        retryHint: 'Entrée pour réessayer',
         retry: 'Réessayer',
         peopleCount: (count) => `${count} gens`,
     };
@@ -469,13 +464,13 @@ describe('a picker whose words come from the labels', () => {
         expect(window.document.body.textContent).toContain('Aucun résultat');
     });
 
-    it('says the search failed, and names the retry button, in its own words', async () => {
+    it('says the search failed in its own words, and names the retry button', async () => {
         const { status } = await mountDraft(() => Promise.reject(new Error('offline')), LABELS);
         await act(async () => {
             await new Promise((resolve) => requestAnimationFrame(resolve));
         });
 
-        expect(status()).toBe('Échec. Entrée pour réessayer.');
+        expect(status()).toBe('Échec.');
         const buttons = [...window.document.querySelectorAll('button')];
         expect(buttons.some((button) => button.textContent === 'Réessayer')).toBe(true);
     });

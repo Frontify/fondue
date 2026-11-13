@@ -4,18 +4,13 @@ import { IconPeople, IconPerson, IconTarget } from '@frontify/fondue-icons';
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { readableShortcut } from '#/ui/shortcut';
-
-import { isSafeImageSrc } from '../../shared/helpers/href';
 import { isCompositionKey } from '../../shared/helpers/keys';
+import { isSafeImageSrc } from '../helpers/image';
 import { type PeopleOutcome, usePeople } from '../hooks/usePeople';
 import styles from '../mention.module.scss';
 import { type MentionItem, type MentionItems } from '../types';
 
 import { type MentionPickerLabels } from './pickerLabels';
-
-/** The key that asks again after a failed lookup. */
-const RETRY_KEY = 'Enter';
 
 /** How long a lookup runs before the list says it is searching, so a quick answer never flashes the row. */
 const SEARCHING_DELAY_MS = 300;
@@ -140,7 +135,7 @@ const statusOf = (phase: PeoplePhase, people: readonly MentionItem[], labels: Me
         case 'searching':
             return '';
         case 'failed':
-            return `${labels.failed} ${labels.retryHint}.`;
+            return labels.failed;
         case 'empty':
             return labels.noMatches;
         case 'list':
@@ -218,9 +213,6 @@ const MentionPopupBody = ({
                     >
                         {labels.retry}
                     </button>
-                    <kbd aria-hidden="true" className={styles.shortcut}>
-                        {readableShortcut(RETRY_KEY)}
-                    </kbd>
                 </div>
             );
         case 'empty':
@@ -379,11 +371,6 @@ export const MentionDraft = ({
                 break;
             case 'Enter':
             case 'Tab':
-                // Only Enter retries; Tab is not trapped where nobody can be picked.
-                if (phase === 'failed' && event.key === 'Enter') {
-                    retry();
-                    break;
-                }
                 if (!active) {
                     return;
                 }

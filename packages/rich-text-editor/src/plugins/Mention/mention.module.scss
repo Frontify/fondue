@@ -152,12 +152,3 @@
     text-decoration: underline;
     cursor: pointer;
 }
-
-/** The key that retries, drawn as Fondue draws a dropdown item's shortcut. */
-.shortcut {
-    margin-inline-start: var(--spacing-xx-small);
-    color: var(--color-secondary-default);
-    font-family: inherit;
-    font-size: var(--text-body-small-default-font-size);
-    line-height: var(--text-body-small-default-line-height);
-}
