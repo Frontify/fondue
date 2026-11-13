@@ -1,5 +1,12 @@
 # @frontify/fondue
 
+## 14.0.0-rc.1
+
+### Patch Changes
+
+- Updated dependencies [[`6e27664`](https://github.com/Frontify/fondue/commit/6e27664788d01d3deb813b8ff54b88a9021f91d9), [`e65f3ea`](https://github.com/Frontify/fondue/commit/e65f3ea2cf67486e3dedf6111124ce513e69b394), [`f5c4140`](https://github.com/Frontify/fondue/commit/f5c4140e8c0050eb64f14dc70e6b8d9d4f0ac315)]:
+  - @frontify/fondue-rich-text-editor@0.1.0-rc.1
+
 ## 14.0.0-rc.0
 
 ### Patch Changes
