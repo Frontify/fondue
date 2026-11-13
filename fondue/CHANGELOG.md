@@ -1,5 +1,20 @@
 # @frontify/fondue
 
+## 14.0.0-rc.0
+
+### Patch Changes
+
+- [#3035](https://github.com/Frontify/fondue/pull/3035) [`cf1839b`](https://github.com/Frontify/fondue/commit/cf1839b10095b928008a8a11934056d0cf5b2581) Thanks [@noahwaldner](https://github.com/noahwaldner)! - First release candidate for Fondue v14.
+
+- Updated dependencies [[`cf1839b`](https://github.com/Frontify/fondue/commit/cf1839b10095b928008a8a11934056d0cf5b2581)]:
+  - @frontify/fondue-charts@10.0.0-rc.0
+  - @frontify/fondue-components@37.0.0-rc.0
+  - @frontify/fondue-icons@1.0.0-rc.0
+  - @frontify/fondue-rich-text-editor@0.1.0-rc.0
+  - @frontify/fondue-rte@0.2.0-rc.0
+  - @frontify/fondue-sdk@1.0.0-rc.0
+  - @frontify/fondue-tokens@6.0.0-rc.0
+
 ## 14.0.0-beta.3
 
 ### Patch Changes
