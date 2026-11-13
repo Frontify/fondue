@@ -238,6 +238,26 @@ const toEngineRule = (rule: RteInputRule, context: RuleContext): InputRule | nul
     }
 };
 
+/**
+ * What may stand right before an opening delimiter of a word-bounded rule: whitespace or an opening bracket.
+ */
+const OPENING_CONTEXT = String.raw`[\s(\[{]`;
+
+/**
+ * A character that glues a closing delimiter to what follows it: a letter, digit, underscore or full stop.
+ */
+const GLUING_CHARACTER = /[\p{L}\p{N}_.]/u;
+
+/**
+ * Whether the text right after `pos` starts with a character that glues it to the word before.
+ */
+const isGluedAfter = (state: EditorState, pos: number): boolean => {
+    const $pos = state.doc.resolve(pos);
+    const { parent, parentOffset } = $pos;
+    const next = parent.textBetween(parentOffset, Math.min(parentOffset + 1, parent.content.size), '', ' ');
+    return GLUING_CHARACTER.test(next);
+};
+
 const escapeForRegExp = (text: string): string => text.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /** `**bold**` -> a bold mark over `bold`. The engine ships block and text rules but no mark rule. */
@@ -251,11 +271,18 @@ const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | n
     const firstChar = escapeForRegExp(delimiter.charAt(0));
     // The character before the opening delimiter must not be the delimiter
     // itself, or typing `**bold**` fires the italic rule on `**bold*` first.
-    const pattern = new RegExp(`(?:^|[^${firstChar}])${escaped}([^${firstChar}]+)${escaped}$`);
+    let before = `[^${firstChar}]`;
+    if (rule.wordBounded === true) {
+        before = OPENING_CONTEXT;
+    }
+    const pattern = new RegExp(`(?:^|${before})${escaped}([^${firstChar}]+)${escaped}$`);
 
     const handler: RuleHandler = (state, match, start, end) => {
         const content = match[1];
         if (!content) {
+            return null;
+        }
+        if (rule.wordBounded === true && isGluedAfter(state, end)) {
             return null;
         }
         // The match may include that preceding character. Derive every position
