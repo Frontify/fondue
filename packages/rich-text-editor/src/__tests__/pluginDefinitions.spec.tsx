@@ -288,24 +288,20 @@ describe('blurOnBreakPlugin', () => {
     });
 
     it('describes its key for screen readers when there is something to submit', () => {
-        expect(blurOnBreakPlugin({ onBreak: () => {} }).description).toBe(
-            'Press Enter to submit, Shift+Enter for a new line.',
-        );
+        expect(blurOnBreakPlugin({ onBreak: () => {} }).description).toBe('Press Enter to submit.');
     });
 
     it("adds what is required to the description, in default words or the host's own", () => {
         expect(blurOnBreakPlugin({ onBreak: () => {}, required: true }).description).toBe(
-            'Press Enter to submit, Shift+Enter for a new line. Type something before submitting.',
+            'Press Enter to submit. Type something before submitting.',
         );
         expect(blurOnBreakPlugin({ onBreak: () => {}, required: 'Write first.' }).description).toBe(
-            'Press Enter to submit, Shift+Enter for a new line. Write first.',
+            'Press Enter to submit. Write first.',
         );
     });
 
     it('adds nothing to the description when required is false', () => {
-        expect(blurOnBreakPlugin({ onBreak: () => {}, required: false }).description).toBe(
-            'Press Enter to submit, Shift+Enter for a new line.',
-        );
+        expect(blurOnBreakPlugin({ onBreak: () => {}, required: false }).description).toBe('Press Enter to submit.');
     });
 
     it('says nothing about submitting when there is no onBreak', () => {
