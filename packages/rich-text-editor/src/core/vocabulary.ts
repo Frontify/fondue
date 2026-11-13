@@ -53,7 +53,7 @@ export const ANY_LIST = '@anyList';
 /**
  * What the editor keeps of the list data Word and Outlook write on a list paragraph, as attributes on that paragraph,
  * exactly as the source app wrote it and without reading it, for a paste transform to read. The editor removes any
- * the paste itself carries before it writes them, and removes them again after the transforms have run.
+ * the paste itself carries before it writes them, and removes all of them after the transforms have run.
  * - `list`: the id of the source app's list (Word's `l0 lfo1`).
  * - `level`: the nesting level, as the digits Word wrote.
  * - `marker`: the text of the marker the paragraph began with, such as `1.` or `·`.
@@ -63,20 +63,6 @@ export const OFFICE_LIST_ATTRIBUTES = {
     level: 'data-rte-office-level',
     marker: 'data-rte-office-marker',
 } as const;
-
-/** Every attribute of the Office list data. */
-const OFFICE_LIST_ATTRIBUTE_NAMES = Object.values(OFFICE_LIST_ATTRIBUTES);
-/** Elements carrying any attribute of the Office list data. */
-const CARRYING_OFFICE_LIST_DATA = OFFICE_LIST_ATTRIBUTE_NAMES.map((name) => `[${name}]`).join(', ');
-
-/** Removes the Office list data from every element of `root` that carries it. */
-export const removeOfficeListData = (root: ParentNode): void => {
-    for (const element of root.querySelectorAll(CARRYING_OFFICE_LIST_DATA)) {
-        for (const name of OFFICE_LIST_ATTRIBUTE_NAMES) {
-            element.removeAttribute(name);
-        }
-    }
-};
 
 /** The document the editor starts from when it is given none: one empty paragraph. */
 export const emptyDocument = (): RteDocumentOf => ({

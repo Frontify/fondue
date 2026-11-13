@@ -10,7 +10,6 @@ import { type ReactNode } from 'react';
 import { EDITOR_SHORTCUTS, type EditorControlApi, type RteMarkState, type RteSelectionSnapshot } from './commands';
 import { buildContentRegistry, type ContentRegistry, register } from './contentRegistry';
 import { parseHotkey } from './hotkeys';
-import { readTagRule } from './parseReader';
 import {
     type BlockDefinition,
     type HotkeyHandler,
@@ -30,6 +29,7 @@ import {
     type RteToolbarGroup,
     type ToolbarItemProps,
 } from './plugin';
+import { readTagRule } from './tagRule';
 import { PARAGRAPH } from './vocabulary';
 
 /**
@@ -372,13 +372,11 @@ const forMatching = (rules: readonly RteInputRule[]): RteInputRule[] => [
     ...rules.filter((rule) => rule.kind !== 'mark'),
 ];
 
-/** Built per call, so no module-level code keeps this file in a bundle that only renders. */
-const editorShortcutRows = (): RteShortcut[] =>
-    Object.values(EDITOR_SHORTCUTS).map(({ key, label }) => ({
-        owner: { kind: 'editor' },
-        key,
-        label,
-    }));
+const EDITOR_SHORTCUT_ROWS: readonly RteShortcut[] = Object.values(EDITOR_SHORTCUTS).map(({ key, label }) => ({
+    owner: { kind: 'editor' },
+    key,
+    label,
+}));
 
 /** The first plugin to declare a toolbar group, and the order it gave it. */
 type ToolbarGroupOwner = { pluginId: string; order: number };
@@ -398,9 +396,7 @@ type Draft = {
     commands: RteBlockCommand[];
     commandOwners: Map<string, string>;
     descriptions: string[];
-    /**
-     * How often each id has come up so far, for unique toolbar keys
-     */
+    /** How often each id has come up so far, for unique toolbar keys. */
     seenIds: Map<string, number>;
     duplicateIds: Set<string>;
     editOwners: Map<string, string>;
@@ -541,7 +537,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
     const draft: Draft = {
         edits: new Map(),
         hotkeys: new Map(),
-        shortcuts: editorShortcutRows(),
+        shortcuts: [...EDITOR_SHORTCUT_ROWS],
         inputRules: [],
         pasteHandlers: [],
         pasteTransforms: new Map(),

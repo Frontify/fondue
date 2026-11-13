@@ -1,14 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { toStoredColor } from './cssColor';
-import { type MarkIgnoreRule, type ParseReader, type ParseRule } from './plugin';
-
-/**
- * What a tag rule reads off its element: the element's own declared style, as the engine reads it for style rules.
- */
-export const parseReaderOf = (element: HTMLElement): ParseReader => ({
-    color: (property) => toStoredColor(element.style.getPropertyValue(property)),
-});
+import { type MarkIgnoreRule, type ParseRule } from './plugin';
 
 /** A rule that matches an element by its tag: a value rule, or a mark's ignore rule. */
 export type TagRule<TValue> = (ParseRule<TValue> & { ignore?: undefined }) | MarkIgnoreRule;
@@ -33,7 +25,7 @@ export const readTagRule = <TValue>(rule: TagRule<TValue>, element: HTMLElement)
     if (rule.value === undefined) {
         return { kind: 'read', value: {} };
     }
-    const value = rule.value(element, parseReaderOf(element));
+    const value = rule.value(element);
     if (value === null) {
         return { kind: 'unread' };
     }

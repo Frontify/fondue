@@ -61,10 +61,7 @@ export const defaultPlugins: readonly RtePlugin[] = Object.freeze([
     pasteLinesPlugin(),
 ]);
 
-export { alignPlugin } from './Align';
-export { blurOnBreakPlugin } from './BlurOnBreak';
 export { emojiPlugin } from './Emoji';
 export { linkPlugin } from './Link';
 export { pasteLinesPlugin } from './PasteLines';
-export { resetFormattingPlugin } from './ResetFormatting';
 export { typographyPlugin } from './Typography';

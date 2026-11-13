@@ -86,7 +86,7 @@ export type RtePlugin = {
     id: string;
     content?: RteContent;
     /**
-     * One sentence for screen readers, read with the editor: a keyboard hint ("Press Enter to submit.")
+     * One sentence for screen readers, read with the editor: a hint about what its keys do
      */
     description?: string;
     /**
@@ -125,7 +125,7 @@ export type RtePlugin = {
     /** Runs before the editor's own paste, in plugin order. */
     onPaste?: PasteHandler;
     /**
-     * Rewrites pasted HTML before the parse rules read it, in plugin order. Runs only on a paste into the editor,
+     * Rewrites pasted HTML before the parse rules read it, in plugin order. Runs only on a paste or drop into the editor,
      * never on `parseHtml`. Plugins that share a transform declare the same object, and it runs once.
      */
     pasteTransforms?: readonly PasteTransform[];
@@ -343,7 +343,7 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
      */
     excludesInputRules?: boolean;
     /**
-     * Clearing formatting with `keepSurviving` leaves this mark on: a link stays through "clear formatting" and "reset formatting".
+     * Clearing marks with `keepSurviving` leaves this mark on, where clearing without it removes every mark.
      * @default false
      */
     survivesClear?: boolean;
@@ -406,12 +406,6 @@ export type DefaultStyle = {
     strip: (cssValue: string) => string;
 };
 
-/** What a parse rule may read off its element through the editor, so every rule reads CSS the same way. */
-export type ParseReader = {
-    /** The colour the element's own style declares for `property`, as a lowercase `#rrggbb` or `#rrggbbaa`; undefined when it declares none or no colour. Default styles of mounted nodes (`defaultStyles`) are not stripped here. */
-    color: (property: string) => string | undefined;
-};
-
 /**
  * One rule for reading pasted HTML back into a node. Leave `value` out when the
  * element carries none (`<strong>`); return null from it when the element is
@@ -420,11 +414,11 @@ export type ParseReader = {
 export type ParseRule<TValue> = {
     /** A CSS selector: `strong`, `a[href]`, `li[data-checked]`. */
     tag: string;
-    /** Reads the node's value off the element; `read` reads its CSS the way the editor does, and a rule that needs none leaves it out. */
-    value?: (element: HTMLElement, read: ParseReader) => TValue | null;
+    value?: (element: HTMLElement) => TValue | null;
     /**
      * Among rules of the same kind (blocks, inlines, marks) matching the same element, higher precedence is tried
-     * first; ties go to a qualified selector (`[`, `.`, `#`, `:`) over a bare tag, then mount order.
+     * first. Among blocks of the same precedence, a qualified selector (`[`, `.`, `#`, `:`) comes before a bare tag.
+     * Ties go to mount order.
      * @default 'normal'
      */
     precedence?: ParsePrecedence;
@@ -641,7 +635,7 @@ export type PasteHandler = (paste: Paste, api: EditorControlApi) => boolean;
 
 /**
  * Rewrites pasted HTML, after the editor has read the source app's own markup and before the plugins' parse rules read it.
- * Runs only on a paste into the editor, never when `parseHtml` reads HTML on the server.
+ * Runs only on a paste or drop into the editor, never when `parseHtml` reads HTML on the server.
  */
 export type PasteTransform = {
     /** Unique across plugins; plugins that share a transform declare the same object, and it runs once. */

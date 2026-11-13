@@ -2095,32 +2095,38 @@ describe('an editor that crashes', () => {
         expect(onError).toHaveBeenCalledTimes(2);
     });
 
-    it('hands onError the error a mention resolver throws while the editor draws the mention', () => {
+    it('hands onError the error an inline view throws while the editor draws it', () => {
         silenceReact();
         const onError = errorSpy();
         const plugins = [
             ...defaultPlugins,
-            mentionPlugin({
-                items: [],
-                resolve: () => {
-                    throw new Error('resolver offline');
+            definePlugin({
+                id: 'pulse',
+                content: defineContent({
+                    inlines: {
+                        pulse: defineInline<{ id: string }>({
+                            toHtml: (value) => ({ tag: 'span', children: value.id }),
+                            parse: [],
+                        }),
+                    },
+                }),
+                edit: {
+                    pulse: () => {
+                        throw new Error('inline view broke');
+                    },
                 },
             }),
         ];
-        const value: RteDocument = {
+        // `RteDocument` names no plugin inline, so the test-only inline needs the cast.
+        const value = {
             version: 1,
-            blocks: [
-                {
-                    type: 'paragraph',
-                    children: [{ type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' }],
-                },
-            ],
-        };
+            blocks: [{ type: 'paragraph', children: [{ type: 'pulse', id: 'p1' }] }],
+        } as unknown as RteDocument;
 
         mount(() => <RichTextEditor value={value} plugins={plugins} onError={onError} />);
 
         expect(onError).toHaveBeenCalled();
-        expect(onError.mock.calls[0]?.[0].message).toBe('resolver offline');
+        expect(onError.mock.calls[0]?.[0].message).toBe('inline view broke');
     });
 
     it('leaves focus alone after a Retry pressed without taking focus, as a mouse press may', () => {
@@ -2946,6 +2952,53 @@ describe('the reset formatting button', () => {
 
         expect(stored()?.blocks).toEqual([
             { type: 'paragraph', children: [{ text: 'linked', link: { href: 'https://example.com' } }] },
+        ]);
+    });
+});
+
+describe('the clear formatting key', () => {
+    it('removes the marks but the link, and leaves the list, the block type and the alignment', () => {
+        const link = { href: 'https://example.com' };
+        const value: RteDocument = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'bulletList',
+                    children: [
+                        {
+                            type: 'listItem',
+                            children: [
+                                {
+                                    type: 'paragraph',
+                                    align: 'center',
+                                    children: [{ text: 'linked', bold: true, link }],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+        const { container, ready, stored } = mount((onChange) => (
+            <RichTextEditor value={value} onChange={onChange} plugins={defaultPlugins} toolbarPlacement="top" />
+        ));
+        ready();
+        const editable = editableIn(container);
+        act(() => editable.focus());
+        press(editable, 'a', mod);
+
+        press(editable, '\\', mod);
+
+        expect(stored()?.blocks).toEqual([
+            {
+                type: 'bulletList',
+                children: [
+                    {
+                        type: 'listItem',
+                        children: [{ type: 'paragraph', align: 'center', children: [{ text: 'linked', link }] }],
+                    },
+                ],
+            },
         ]);
     });
 });
