@@ -142,6 +142,7 @@ export {
     type MentionValue,
 } from './plugins/Mention';
 export { type TextStylePluginOptions } from './plugins/TextStyle';
+export { type TypographyGroup, type TypographyPluginOptions } from './plugins/Typography';
 
 // --- Plugin authoring ---
 

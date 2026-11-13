@@ -56,6 +56,18 @@ const unlessInExcludedMark =
         return handler(state, match, start, end);
     };
 
+/**
+ * A text rule leaves text alone when any of it carries a mark that opts out of rules (inline code).
+ */
+export const unlessRangeHasExcludedMark =
+    (excluded: readonly PmMarkType[], handler: RuleHandler): RuleHandler =>
+    (state, match, start, end) => {
+        if (touchesExcludedMark(state, excluded, start, end)) {
+            return null;
+        }
+        return handler(state, match, start, end);
+    };
+
 export const withoutStateFlags = (pattern: RegExp): string => pattern.flags.replaceAll(/[gy]/g, '');
 
 export const toInputRule = ({ pattern, handler }: RulePattern, { excludedMarks }: RuleContext): InputRule =>

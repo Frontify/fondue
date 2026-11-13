@@ -44,6 +44,7 @@ import {
     subscriptPlugin,
     superscriptPlugin,
     textStylePlugin,
+    typographyPlugin,
     underlinePlugin,
 } from '../index';
 
@@ -678,6 +679,37 @@ export const MarkdownShortcuts: Story = {
                             bulletListPlugin,
                             numberedListPlugin,
                             checkListPlugin,
+                        ]}
+                    />
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/** Typographic shortcuts as you type; technical text such as `--flag` or `x <= 5` stays as typed. */
+export const Typography: Story = {
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: '' }] }],
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <p className={HINT}>
+                    Try <code>a -- b</code>, <code>&lt;-&gt;</code>, <code>"quoted"</code>, <code>don't</code>,{' '}
+                    <code>3x4 </code>, <code>2^2 </code>, and see <code>--flag</code>, <code>--&gt;</code>, and{' '}
+                    <code>x &lt;= 5</code> stay as typed.
+                </p>
+                <div className={FRAME}>
+                    <RichTextEditor
+                        value={doc}
+                        onChange={setDoc}
+                        plugins={[
+                            codePlugin,
+                            typographyPlugin({ groups: ['quotes', 'ellipsis', 'dashes', 'symbols', 'numeric'] }),
                         ]}
                     />
                 </div>

@@ -4,17 +4,19 @@ import { baseKeymap, setBlockType } from 'prosemirror-commands';
 import { history, redo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
-import { type Node as PmNode, type Schema } from 'prosemirror-model';
+import { type Mark as PmMark, type Node as PmNode, type Schema } from 'prosemirror-model';
 import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, TextSelection } from 'prosemirror-state';
 import { canJoin, findWrapping } from 'prosemirror-transform';
 
 import {
     type EditorControlApi,
     type HotkeyHandler,
+    INLINE_PLACEHOLDER,
     type PluginRegistry,
     REDO_HOTKEY,
     type RteInputRule,
     UNDO_HOTKEY,
+    WORD_START_CONTEXT,
 } from '#/core';
 
 import { autolinkOnEnter, markPatternRule } from './autolink';
@@ -28,6 +30,7 @@ import {
     ruleContext,
     toInputRule,
     touchesExcludedMark,
+    unlessRangeHasExcludedMark,
     withoutStateFlags,
 } from './ruleContext';
 
@@ -128,15 +131,16 @@ const featureHotkeys = (hotkeys: PluginRegistry['hotkeys'], api: EditorControlAp
             .map(([keys, handlers]): [string, Command] => [keys, () => runUntilHandled(handlers, api)]),
     );
 
-const WORD_BOUNDARY_BEFORE = /[\s([{<'"“‘]/;
+// An inline element is a word start here, so `@name` fires after a soft break; it cannot yet tell a mention from a soft break.
+const WORD_BOUNDARY_BEFORE = new RegExp(`[${WORD_START_CONTEXT}${INLINE_PLACEHOLDER}]`);
 
-/** The start of the block, or after whitespace or opening punctuation. An inline element counts as a space. */
+/** The start of the block, or after whitespace, opening punctuation or an inline element. */
 const isAtWordStart = (state: EditorState, from: number): boolean => {
     const $from = state.doc.resolve(from);
     if ($from.parentOffset === 0) {
         return true;
     }
-    const before = $from.parent.textBetween($from.parentOffset - 1, $from.parentOffset, undefined, ' ');
+    const before = $from.parent.textBetween($from.parentOffset - 1, $from.parentOffset, undefined, INLINE_PLACEHOLDER);
     return WORD_BOUNDARY_BEFORE.test(before);
 };
 
@@ -235,11 +239,6 @@ const toEngineRule = (rule: RteInputRule, context: RuleContext): InputRule | nul
 };
 
 /**
- * What may stand right before an opening delimiter of a word-bounded rule: whitespace or an opening bracket.
- */
-const OPENING_CONTEXT = String.raw`[\s(\[{]`;
-
-/**
  * A character that glues a closing delimiter to what follows it: a letter, digit, underscore or full stop.
  */
 const GLUING_CHARACTER = /[\p{L}\p{N}_.]/u;
@@ -269,7 +268,7 @@ const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | n
     // itself, or typing `**bold**` fires the italic rule on `**bold*` first.
     let before = `[^${firstChar}]`;
     if (rule.wordBounded === true) {
-        before = OPENING_CONTEXT;
+        before = `[${WORD_START_CONTEXT}]`;
     }
     const pattern = new RegExp(`(?:^|${before})${escaped}([^${firstChar}]+)${escaped}$`);
 
@@ -362,22 +361,125 @@ const listRule = (rule: RuleOfKind<'list'>, { schema, registry }: RuleContext): 
     });
 };
 
+/**
+ * Matches right at the caret.
+ */
+const AT_CARET = '$';
+
+/**
+ * Matches one character before the caret, the one that was just typed.
+ */
+const ONE_CHARACTER_BEFORE_CARET = String.raw`[\s\S]${AT_CARET}`;
+
+/**
+ * Matches a `$1`-style reference to a group of the rule's pattern. Not `$0`: a rule that waits for
+ * the run to end matches the ending character too, so the whole match would repeat it.
+ */
+const GROUP_REFERENCE = /\$([1-9])/g;
+
+/**
+ * A rule's `match` as a pattern anchored to the end of the text before the caret, then `suffix`.
+ * @param suffix - pattern source appended after the anchored match
+ */
+const textPattern = (match: string | RegExp, suffix: string): RegExp => {
+    if (typeof match === 'string') {
+        return new RegExp(`${escapeForRegExp(match)}${suffix}`);
+    }
+    return new RegExp(`(?:${match.source})${suffix}`, withoutStateFlags(match));
+};
+
+/**
+ * How many capturing groups a pattern has, read from a match of an empty alternative, which always matches.
+ */
+const groupCount = (pattern: RegExp): number => {
+    const empty = new RegExp(`${pattern.source}|`, withoutStateFlags(pattern)).exec('');
+    if (empty === null) {
+        throw new Error(`Text rule ${String(pattern)} could not be read.`);
+    }
+    return empty.length - 1;
+};
+
+/**
+ * A rule's replacement for what it found. `$1` stands for the first group of a pattern; a string
+ * `match` has none, so its `replace` is taken as written. A reference to a group the pattern does
+ * not have throws when the editor is built, not at the keystroke.
+ */
+const replacementOf = ({ match, replace }: RuleOfKind<'text'>): ((found: RegExpMatchArray) => string) => {
+    if (typeof match === 'string') {
+        return () => replace;
+    }
+    const groups = groupCount(match);
+    for (const [reference, group] of replace.matchAll(GROUP_REFERENCE)) {
+        if (Number(group) > groups) {
+            throw new Error(`Text rule ${String(match)} replaces with "${reference}", but has ${groups} group(s).`);
+        }
+    }
+    // A group that took no part in the match stands for nothing, as in `String.prototype.replace`.
+    return (found) => replace.replaceAll(GROUP_REFERENCE, (_, group: string) => found[Number(group)] ?? '');
+};
+
+/**
+ * The marks typed text gets: stored marks first, so a mark toggled off just before typing stays off.
+ */
+const typingMarks = (state: EditorState): readonly PmMark[] => state.storedMarks ?? state.selection.$from.marks();
+
+/**
+ * The marks of the first character from `start` that lies before the selection, kept by a
+ * replacement even where a mark such as a link ends there. Typing marks otherwise, so text typed
+ * over a selection does not take the selected text's marks.
+ */
+const replacedMarks = (state: EditorState, start: number, end: number): readonly PmMark[] => {
+    const first = start < Math.min(end, state.selection.from) ? state.doc.nodeAt(start) : null;
+    if (first === null) {
+        return typingMarks(state);
+    }
+    return first.marks;
+};
+
 /** `->` -> `→`. The replacement carries the marks the matched text did. */
 const textRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
-    const { match, replace } = rule;
-    const pattern =
-        typeof match === 'string'
-            ? new RegExp(`${escapeForRegExp(match)}$`)
-            : new RegExp(`(?:${match.source})$`, withoutStateFlags(match));
-    // `start` to `end` is the part of the match in the document: replacing it
-    // swaps all of it, whether a typed character is still to come or not.
-    const handler: RuleHandler = (state, _match, start, end) => {
-        if (touchesExcludedMark(state, context.excludedMarks, start, end)) {
+    if (rule.waitForRunEnd) {
+        return runEndTextRule(rule, context);
+    }
+    const replacement = replacementOf(rule);
+    const pattern = textPattern(rule.match, AT_CARET);
+    // `start` to `end` is the part of the match in the document: replacing it swaps all of it, typed character or not.
+    const handler: RuleHandler = (state, found, start, end) =>
+        state.tr.replaceWith(start, end, state.schema.text(replacement(found), replacedMarks(state, start, end)));
+    return toInputRule({ pattern, handler: unlessRangeHasExcludedMark(context.excludedMarks, handler) }, context);
+};
+
+/**
+ * The characters that end a run unless the rule says otherwise: whitespace and sentence punctuation. Not
+ * quotes: one may close the quotation the run sits in, as in `"wait --"`.
+ */
+const DEFAULT_RUN_END = /[\s,;:!?)\]}…]/;
+
+/**
+ * `--` becomes a dash once a character that ends the run is typed, which stays.
+ */
+const runEndTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRule => {
+    const replacement = replacementOf(rule);
+    const endsRun = rule.runEnd ?? DEFAULT_RUN_END;
+    const pattern = textPattern(rule.match, ONE_CHARACTER_BEFORE_CARET);
+    const handler: RuleHandler = (state, found, start, end) => {
+        const typed = found[0].slice(-1);
+        if (!endsRun.test(typed)) {
             return null;
         }
-        return state.tr.insertText(replace, start, end);
+        const runEnd = start + found[0].length - typed.length;
+        const replaced = replacedMarks(state, start, runEnd);
+        // After a composition the ending character is already in the document: only the run before it is replaced.
+        if (state.selection.empty && runEnd + typed.length === end) {
+            return state.tr.replaceWith(start, runEnd, state.schema.text(replacement(found), replaced));
+        }
+        // While typing the ending character is still to come, and it carries the marks typing carries.
+        return state.tr.replaceWith(start, end, [
+            state.schema.text(replacement(found), replaced),
+            state.schema.text(typed, typingMarks(state)),
+        ]);
     };
-    return toInputRule({ pattern, handler }, context);
+    return toInputRule({ pattern, handler: unlessRangeHasExcludedMark(context.excludedMarks, handler) }, context);
 };
 
 // Baseline

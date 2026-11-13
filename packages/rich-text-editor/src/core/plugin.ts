@@ -598,6 +598,27 @@ export type RteInputRule =
      * Text swapped for other text the moment its last character is typed, no
      * space needed: `->` becomes `→`. A string matches as written; a pattern
      * is anchored to the end of the text before the caret, so a lookbehind can
-     * say what may not come before it.
+     * say what may not come before it, and its `replace` may use `$1` to `$9`:
+     * there, `$` and a digit from 1 to 9 is always a group reference, and one
+     * the pattern lacks throws. An inline element reads as U+FFFC in the text. The rule steps aside when
+     * the text it would replace carries a mark that opts out (inline code).
+     * Only the matched text is replaced, so match a character only to look at
+     * it with a lookbehind.
      */
-    | { kind: 'text'; match: string | RegExp; replace: string };
+    | {
+          kind: 'text';
+          match: string | RegExp;
+          replace: string;
+          /**
+           * Fire only once the NEXT typed character ends the run, and that
+           * character stays after the replacement. A character ends the run when
+           * it matches `runEnd`. Any other character leaves the text as typed.
+           * @default false
+           */
+          waitForRunEnd?: boolean;
+          /**
+           * The characters that end a run, for a rule that waits for the run to end.
+           * @default whitespace or one of `, ; : ! ? ) ] } …` (not `.`, which may be a decimal point or a file extension)
+           */
+          runEnd?: RegExp;
+      };
