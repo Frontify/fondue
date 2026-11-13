@@ -299,6 +299,11 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
      * @default false
      */
     ownsMargins?: boolean;
+    /**
+     * How a block that holds blocks spaces them. Only read for `content: { blocks }`.
+     * @default 'apart'
+     */
+    childSpacing?: ChildSpacing;
     /** The block's markup. `children: true` is where its content goes. */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<Partial<TValue>>[];
@@ -306,10 +311,18 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
         /**
          * Readonly view in place of `toHtml`. `style` carries what every text
          * block carries (alignment); put it on the outermost element.
+         * A component for a block whose content holds blocks puts `CHILD_SPACING_ATTRIBUTE` (with its declared spacing)
+         * on the element that holds `children`, as the check list does.
          */
         component?: ComponentType<{ value: TValue; children?: ReactNode; style?: CSSProperties }>;
     };
 };
+
+/**
+ * How a block spaces the blocks it holds: `'apart'` by the gap between blocks, as the document does,
+ * or `'tight'`, without gaps, as a list item does.
+ */
+export type ChildSpacing = 'apart' | 'tight';
 
 /**
  * What a block holds:

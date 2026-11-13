@@ -3,6 +3,7 @@
 import {
     bulletListPlugin,
     checkListPlugin,
+    columnBreakPlugin,
     fontColorPlugin,
     type LinkLook,
     linkPlugin,
@@ -14,6 +15,8 @@ import {
     type TextStylePluginOptions,
 } from '../../index';
 
+import { ownMarginsPlugin } from './ownMarginsPlugin';
+
 // Apart from the fixture components, because a component test cannot import plain values from the file holding the components it mounts.
 
 export type HostLooksOptions = {
@@ -22,9 +25,20 @@ export type HostLooksOptions = {
     quote?: TextLook;
     link?: LinkLook;
     presets?: TextStylePluginOptions['presets'];
+    /** Mounts `ownMarginsPlugin`, a block drawn by its own component whose class writes its margins. */
+    withOwnMarginsBlock?: boolean;
+    /** Mounts `columnBreakPlugin`, a block whose stylesheet writes its margins. */
+    withColumnBreak?: boolean;
 };
 
-export const pluginsWithLooks = ({ body, quote, link, presets }: HostLooksOptions): RtePlugin[] => {
+export const pluginsWithLooks = ({
+    body,
+    quote,
+    link,
+    presets,
+    withOwnMarginsBlock,
+    withColumnBreak,
+}: HostLooksOptions): RtePlugin[] => {
     const plugins = [
         textStylePlugin({ presets }),
         bulletListPlugin,
@@ -35,6 +49,12 @@ export const pluginsWithLooks = ({ body, quote, link, presets }: HostLooksOption
     ];
     if (body !== undefined) {
         plugins.push(paragraphPlugin({ look: body }));
+    }
+    if (withOwnMarginsBlock === true) {
+        plugins.push(ownMarginsPlugin);
+    }
+    if (withColumnBreak === true) {
+        plugins.push(columnBreakPlugin());
     }
     return plugins;
 };

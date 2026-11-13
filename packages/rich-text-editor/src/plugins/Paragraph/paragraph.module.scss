@@ -4,7 +4,12 @@
 
 // `.body` is on the document while the paragraph plugin is on. A plain paragraph is a `<p>` without the margin
 // marker, which a text style's `<p>` carries. `:where` keeps the rule at class rank, below a checked item's colour
-// and strike. The margins are in renderer/document.module.scss, which loads with or without this plugin.
+// and strike.
 .body :where(p:not([data-rte-own-margins])) {
     @include look.look('body', $except: (margin-top, margin-bottom));
+}
+
+// One element rank above the document's gap rule and a host rule scoped to a class, in list items too.
+.body p:not([data-rte-own-margins]) {
+    @include look.look('body', $only: (margin-top, margin-bottom));
 }

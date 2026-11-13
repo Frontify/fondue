@@ -8,8 +8,8 @@
 // A host sets a preset's look through `--rte-<preset>-<property>` (see `look`); what is given here is Fondue's look.
 // A ratio, not a token: the line-height tokens are fixed heights, and a heading's leading scales with its size.
 $heading-line-height: 1.3;
-// A heading sits further from the block above than from its own text; the document zeroes the gap where none is above.
-$heading-margin-top: var(--rte-heading-gap, var(--spacing-medium));
+// A heading sits further from the block above than from its own text; the document's leading gap is `0` where none is above.
+$heading-margin-top: var(--rte-leading-gap, var(--rte-heading-gap, var(--spacing-medium)));
 
 // A style this version does not know, from a newer one, is spaced like body text. It owns its margins like
 // every text style block, so the document leaves them to this class.

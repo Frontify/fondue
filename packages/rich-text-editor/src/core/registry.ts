@@ -7,11 +7,12 @@
 import { type ReactNode } from 'react';
 
 import { type EditorControlApi, type RteMarkState, type RteSelectionSnapshot } from './commands';
-import { OWN_MARGINS_ATTRIBUTE } from './documentContract';
-import { type HtmlSpec, type StyleMap, withRootStyle } from './htmlSpec';
+import { CHILD_SPACING_ATTRIBUTE, OWN_MARGINS_ATTRIBUTE } from './documentContract';
+import { type HtmlAttributes, type HtmlSpec, type StyleMap, withContentAttributes, withRootStyle } from './htmlSpec';
 import {
     type BlockAttributeDefinition,
     type BlockDefinition,
+    type ChildSpacing,
     type ContentStyles,
     type HotkeyHandler,
     type InlineDefinition,
@@ -676,10 +677,45 @@ export const blockAttributeStyle = (registry: PluginRegistry, stored: Record<str
     return style;
 };
 
+/** How a block spaces the blocks it holds when it does not say. */
+export const DEFAULT_CHILD_SPACING: ChildSpacing = 'apart';
+
+/**
+ * The child-spacing mark for the element a block's content sits in, or undefined for a block
+ * whose content is not blocks, which the document does not space.
+ */
+export const childSpacingAttributes = (definition: BlockDefinition): HtmlAttributes | undefined => {
+    const { content } = definition;
+    if (typeof content !== 'object' || !('blocks' in content)) {
+        return undefined;
+    }
+    return { [CHILD_SPACING_ATTRIBUTE]: definition.childSpacing ?? DEFAULT_CHILD_SPACING };
+};
+
+/**
+ * How an element spaces its children, read off its child-spacing mark; undefined for an element
+ * without one, whose children the document does not space.
+ * @throws When the mark holds a value that is not a `ChildSpacing`, rather than spacing by a guess.
+ */
+export const childSpacingOf = (attrs: HtmlAttributes | undefined): ChildSpacing | undefined => {
+    const value = attrs?.[CHILD_SPACING_ATTRIBUTE];
+    switch (value) {
+        case undefined:
+            return undefined;
+        case 'apart':
+        case 'tight':
+            return value;
+        // The attribute is a string any markup may carry; only the two spacings are known.
+        default:
+            throw new Error(`Unknown ${CHILD_SPACING_ATTRIBUTE} value ${JSON.stringify(value)}.`);
+    }
+};
+
 /**
  * A block's markup with what every block carries applied to its outermost
  * element — alignment on a text block, the margin marker on one that owns its
- * margins. Shared by editor, readonly view and export so they agree.
+ * margins — and the child-spacing mark on the element its content sits in.
+ * Shared by editor, readonly view and export so they agree.
  */
 export const blockHtml = (
     registry: PluginRegistry,
@@ -692,6 +728,10 @@ export const blockHtml = (
     }
     if (definition.ownsMargins === true) {
         spec = { ...spec, attrs: { ...spec.attrs, [OWN_MARGINS_ATTRIBUTE]: '' } };
+    }
+    const childSpacing = childSpacingAttributes(definition);
+    if (childSpacing !== undefined) {
+        spec = withContentAttributes(spec, childSpacing);
     }
     return spec;
 };

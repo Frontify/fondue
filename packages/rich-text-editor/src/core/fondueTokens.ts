@@ -17,6 +17,7 @@ const FONDUE_TOKEN_VALUES = {
     'typography-font-weight-bold': '700',
     'typography-letter-spacing-wide': '0.88px',
     'typography-text-transform-uppercase': 'uppercase',
+    'spacing-xx-small': '0.25rem',
     'spacing-x-small': '0.5rem',
     'spacing-medium': '1rem',
     'text-heading-xx-large-strong-font-size': '1.5rem',

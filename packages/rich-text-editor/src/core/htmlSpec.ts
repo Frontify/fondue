@@ -94,3 +94,42 @@ export const withRootStyle = (spec: HtmlSpec, style: StyleMap): HtmlSpec =>
     Object.keys(style).length === 0
         ? spec
         : { ...spec, attrs: { ...spec.attrs, style: { ...spec.attrs?.style, ...style } } };
+
+/** The element where a node's content goes (`children: true`), or undefined for a node that holds none. */
+export const contentElementOf = (spec: HtmlSpec): HtmlSpec | undefined => {
+    if (spec.children === true) {
+        return spec;
+    }
+    if (typeof spec.children === 'string' || spec.children === undefined) {
+        return undefined;
+    }
+    for (const child of spec.children) {
+        if (typeof child === 'string') {
+            continue;
+        }
+        const found = contentElementOf(child);
+        if (found !== undefined) {
+            return found;
+        }
+    }
+    return undefined;
+};
+
+/** Adds attributes to the element where the node's content goes; a node that holds none is left as it is. */
+export const withContentAttributes = (spec: HtmlSpec, attrs: HtmlAttributes): HtmlSpec => {
+    if (spec.children === true) {
+        return { ...spec, attrs: { ...spec.attrs, ...attrs } };
+    }
+    if (typeof spec.children === 'string' || spec.children === undefined) {
+        return spec;
+    }
+    return {
+        ...spec,
+        children: spec.children.map((child) => {
+            if (typeof child === 'string') {
+                return child;
+            }
+            return withContentAttributes(child, attrs);
+        }),
+    };
+};

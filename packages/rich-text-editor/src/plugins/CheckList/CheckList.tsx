@@ -3,7 +3,16 @@
 import { IconListCheck } from '@frontify/fondue-icons';
 import { type CSSProperties, type ReactNode, useId } from 'react';
 
-import { ANY_LIST, defineBlock, defineContent, definePlugin, PARAGRAPH, type RteBlockNode } from '#/core';
+import {
+    ANY_LIST,
+    CHILD_SPACING_ATTRIBUTE,
+    type ChildSpacing,
+    defineBlock,
+    defineContent,
+    definePlugin,
+    PARAGRAPH,
+    type RteBlockNode,
+} from '#/core';
 
 import styles from './checkList.module.scss';
 
@@ -66,6 +75,12 @@ const setIndeterminate = (input: HTMLInputElement | null, indeterminate: boolean
     }
 };
 
+/** How an item spaces the blocks it holds: together, as a list item does. */
+const ITEM_CHILD_SPACING: ChildSpacing = 'tight';
+
+/** The mark the document spaces an item's content by, on the element the content sits in. */
+const ITEM_CHILD_SPACING_MARK = { [CHILD_SPACING_ATTRIBUTE]: ITEM_CHILD_SPACING };
+
 type ReadonlyCheckItemProps = {
     value: CheckValue;
     children?: ReactNode;
@@ -89,7 +104,7 @@ const ReadonlyCheckItem = ({ value, children, style }: ReadonlyCheckItemProps): 
                 onClick={(event) => event.preventDefault()}
                 className={styles.checkbox}
             />
-            <div id={labelId} className={styles.label}>
+            <div id={labelId} {...ITEM_CHILD_SPACING_MARK} className={styles.label}>
                 {children}
             </div>
         </li>
@@ -108,6 +123,7 @@ export const checkListContent = defineContent({
         }),
         checkItem: defineBlock<CheckValue>({
             content: { blocks: [PARAGRAPH, ANY_LIST] },
+            childSpacing: ITEM_CHILD_SPACING,
             defaults: { checked: false },
             // Exported HTML cannot be interacted with, so its checkbox is a
             // disabled one, named by its state.

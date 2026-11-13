@@ -1,12 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { fondueToken, PARAGRAPH, type ParseRule, type RteInlineNode, type RteInputRule, type StyleMap } from '#/core';
+import {
+    DOCUMENT_GAP_VARIABLES,
+    fondueToken,
+    PARAGRAPH,
+    type ParseRule,
+    type RteInlineNode,
+    type RteInputRule,
+    type StyleMap,
+} from '#/core';
 
 import { MUTED_COLOR } from '../../shared/helpers/mutedText';
 import styles from '../textStyle.module.scss';
 
-/** The leading the headings share, as `$heading-line-height` in `textStyle.module.scss`. */
-const HEADING_FALLBACK: StyleMap = { 'line-height': '1.3' };
+import { HEADING_GAP_VARIABLE } from './headingGap';
+
+/** The gap above a heading, as `$heading-margin-top` in `textStyle.module.scss`. */
+const HEADING_MARGIN_TOP = `var(${DOCUMENT_GAP_VARIABLES.leading}, var(${HEADING_GAP_VARIABLE}, ${fondueToken('spacing-medium')}))`;
+
+/** The leading and the gap above that the headings share, as `$heading-line-height` and `$heading-margin-top`. */
+const HEADING_FALLBACK: StyleMap = { 'line-height': '1.3', 'margin-top': HEADING_MARGIN_TOP };
 
 /**
  * Every typography preset a text block can take: the heading scale, three
@@ -15,8 +28,8 @@ const HEADING_FALLBACK: StyleMap = { 'line-height': '1.3' };
  *
  * Source of truth for how each style renders (`tag` plus class) and reads
  * (`label`); order here is dropdown order. Must name every `TextStyleName`.
- * Each `fallback` is the same values `textStyle.module.scss` falls back to, for exported inline styles;
- * the margins are the document's gaps, which `renderer/inlineLooks.ts` writes by position.
+ * Each `fallback` is the same values `textStyle.module.scss` falls back to, for exported inline styles,
+ * over the margins every look falls back to.
  */
 const PRESETS = [
     {

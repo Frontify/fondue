@@ -1,11 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@use '../styles/look.module.scss';
-
-// The blocks the document spaces apart, and the headings among them.
-$blocks: p, h1, h2, h3, h4, ul, ol, blockquote;
-$headings: h1, h2, h3, h4;
-
 /**
  * How a document reads, wherever it is drawn: the editable element in the
  * editor and the root of `RichTextRenderer` both carry this class, so the two
@@ -37,43 +31,35 @@ $headings: h1, h2, h3, h4;
     overflow-wrap: anywhere;
 
     // The document owns block spacing: host stylesheets give `1em` margins in some hosts and none in others.
-    // The trims below reset the variable, not the margin, so a block class that reads the gap keeps them.
-    // Each block sets the gap again rather than inheriting it, so a trimmed quote does not trim its own paragraphs.
-    :is(#{$blocks}) {
+    // It spaces its own children and the content of every block that holds blocks (`childSpacing`), by structure alone.
+    // The trims reset the variables, not the margin, so a block class that reads the gaps keeps them.
+    // Each spaced element sets the gaps again rather than inheriting them, so a trimmed quote does not trim its own paragraphs.
+    // `:where` gives a nested block the rank of a top-level one, so one plugin rule a rank above overrides both.
+    > *,
+    :where([data-rte-child-spacing]) > * {
         --rte-block-gap: var(--spacing-x-small);
+        // Unset rather than inherited, so a block with one above it never takes an ancestor's `0`.
+        --rte-leading-gap: initial;
+
+        &:first-child {
+            --rte-leading-gap: 0;
+        }
 
         &:last-child {
             --rte-block-gap: 0;
         }
+
+        // Margins only for blocks that do not own theirs (`ownsMargins`): such a block reads the gaps itself,
+        // so a host margin is never trimmed.
+        &:not([data-rte-own-margins]) {
+            margin-block: 0 var(--rte-block-gap);
+        }
     }
 
-    // A heading sets its own gap above (see the text styles); the first one has no block above to sit apart from.
-    :is(#{$headings}):first-child {
-        --rte-heading-gap: 0;
-    }
-
-    // A list's items sit tight: the blocks inside an item, a nested list among them, add no gap.
-    li :is(#{$blocks}) {
+    // A tight container's blocks sit together: no gap below, none above.
+    [data-rte-child-spacing='tight'] > * {
         --rte-block-gap: 0;
-        --rte-heading-gap: 0;
-    }
-
-    // Margins only for blocks that do not own theirs (`ownsMargins`): such a block reads the gaps itself,
-    // so a host margin is never trimmed.
-    :is(#{$blocks}):not(p, [data-rte-own-margins]) {
-        margin-block: 0 var(--rte-block-gap);
-    }
-
-    // A plain paragraph reads the margins of the body look, which a host sets with `paragraphPlugin`, in list items too.
-    // Without one, the look's defaults are no top margin and the gap below, so this has the rank of the rule above.
-    p:not([data-rte-own-margins]) {
-        @include look.look('body', $only: (margin-top, margin-bottom));
-    }
-
-    // A heading belongs to the text below it, so it sits further from the block above than from its own text.
-    // The gap is `0` where no block sits above (see the first heading and a list item's blocks above).
-    :is(#{$headings}):not([data-rte-own-margins]) {
-        margin-block-start: var(--rte-heading-gap, var(--spacing-medium));
+        --rte-leading-gap: 0;
     }
 
     // Raised and lowered text without growing the line it sits on. Browsers'
