@@ -99,9 +99,7 @@ export type PluginRegistry = {
     ids: readonly string[];
     /** Ids declared by more than one plugin, which the editor warns about. */
     duplicateIds: readonly string[];
-    /**
-     * Key → its handlers, owners of the key first, then the rest, each in mount order; they run until one handles it
-     */
+    /** Key → its handlers, in mount order; they run until one handles it. */
     hotkeys: Map<string, readonly HotkeyHandler[]>;
     /**
      * Every typing rule, ordered for matching: mark rules first, longest
@@ -454,10 +452,6 @@ type Draft = {
     itemTypeByList: Map<string, string>;
     edits: Map<string, RteEditView>;
     hotkeys: Map<string, HotkeyHandler[]>;
-    /**
-     * How many handlers at the front of each key's list belong to owners of that key
-     */
-    ownedHotkeyCounts: Map<string, number>;
     inputRules: RteInputRule[];
     pasteHandlers: PasteHandler[];
     toolbarItems: ToolbarEntry[];
@@ -480,16 +474,6 @@ type Draft = {
 
 const addHotkey = (draft: Draft, keys: string, handler: HotkeyHandler): void => {
     draft.hotkeys.set(keys, [...(draft.hotkeys.get(keys) ?? []), handler]);
-};
-
-/**
- * Puts the owner's handler after the owners already mounted and before every other handler of the key.
- */
-const addOwnedHotkey = (draft: Draft, keys: string, handler: HotkeyHandler): void => {
-    const handlers = draft.hotkeys.get(keys) ?? [];
-    const owned = draft.ownedHotkeyCounts.get(keys) ?? 0;
-    draft.hotkeys.set(keys, [...handlers.slice(0, owned), handler, ...handlers.slice(owned)]);
-    draft.ownedHotkeyCounts.set(keys, owned + 1);
 };
 
 const addCommand = (draft: Draft, owner: string, command: RteBlockCommand): void => {
@@ -550,17 +534,8 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
         draft.duplicateIds.add(plugin.id);
     }
     draft.seenIds.set(plugin.id, occurrence + 1);
-    const unbound = new Set(plugin.ownedHotkeys ?? []);
     for (const [keys, handler] of Object.entries(plugin.hotkeys ?? {})) {
-        if (unbound.delete(keys)) {
-            addOwnedHotkey(draft, keys, handler);
-        } else {
-            addHotkey(draft, keys, handler);
-        }
-    }
-    const [unboundKeys] = unbound;
-    if (unboundKeys !== undefined) {
-        throw new Error(`Plugin "${plugin.id}" owns hotkey "${unboundKeys}", which its \`hotkeys\` does not bind.`);
+        addHotkey(draft, keys, handler);
     }
     // A shared id is a mistake the editor warns about; the toolbar still keys each control apart.
     let pluginKey = plugin.id;
@@ -610,7 +585,6 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         itemTypeByList: new Map(),
         edits: new Map(),
         hotkeys: new Map(),
-        ownedHotkeyCounts: new Map(),
         inputRules: [],
         pasteHandlers: [],
         toolbarItems: [],

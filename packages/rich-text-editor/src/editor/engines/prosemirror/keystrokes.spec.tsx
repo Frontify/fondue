@@ -1218,7 +1218,7 @@ describe('Enter in an editor with blurOnBreakPlugin', () => {
 
     it("does Enter's action on Shift-Enter: splits the paragraph mid-text, never submits or breaks the line", () => {
         const onBreak = vi.fn();
-        const editor = editorWith([...defaultPlugins, blurOnBreakPlugin({ onBreak })], [paragraph(text('ab'))]);
+        const editor = editorWith([blurOnBreakPlugin({ onBreak }), ...defaultPlugins], [paragraph(text('ab'))]);
         editor.caretAfter('a');
 
         press(editor.view, 'Enter', { shiftKey: true });
@@ -1227,21 +1227,20 @@ describe('Enter in an editor with blurOnBreakPlugin', () => {
         expect(editor.stored()).toEqual([paragraph(text('a')), paragraph(text('b'))]);
     });
 
-    it('wins Shift-Enter from a soft break mounted after it', () => {
-        const editor = editorWith(
-            [blurOnBreakPlugin({ onBreak: vi.fn() }), ...defaultPlugins],
-            [paragraph(text('ab'))],
-        );
+    it('leaves Shift-Enter to the soft break when mounted after it', () => {
+        const onBreak = vi.fn();
+        const editor = editorWith([...defaultPlugins, blurOnBreakPlugin({ onBreak })], [paragraph(text('ab'))]);
         editor.caretAfter('a');
 
         press(editor.view, 'Enter', { shiftKey: true });
 
-        expect(editor.stored()).toEqual([paragraph(text('a')), paragraph(text('b'))]);
+        expect(onBreak).not.toHaveBeenCalled();
+        expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'break' }, text('b'))]);
     });
 
     it('splits a list item on Shift-Enter', () => {
         const onBreak = vi.fn();
-        const editor = editorWith([...defaultPlugins, blurOnBreakPlugin({ onBreak })], inList());
+        const editor = editorWith([blurOnBreakPlugin({ onBreak }), ...defaultPlugins], inList());
         editor.caretAfter('it');
 
         press(editor.view, 'Enter', { shiftKey: true });
@@ -1252,7 +1251,7 @@ describe('Enter in an editor with blurOnBreakPlugin', () => {
 
     it('leaves the list on Shift-Enter in an empty item', () => {
         const editor = editorWith(
-            [...defaultPlugins, blurOnBreakPlugin({ onBreak: vi.fn() })],
+            [blurOnBreakPlugin({ onBreak: vi.fn() }), ...defaultPlugins],
             [
                 {
                     type: 'bulletList',
