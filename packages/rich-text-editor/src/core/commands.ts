@@ -123,9 +123,11 @@ export type EditorControlApi = {
          * Strip every mark from the selection, except those that declare `survivesClear` when `keepSurviving` is set:
          * the formatting half of "reset formatting".
          *
+         * @param options - how much a caret clears and which marks stay; with none, a caret only stops the marks it
+         * would type with and every mark goes
          * @returns whether any mark was removed, from the document or from the marks the caret would type with
          */
-        removeAll(options: ClearMarksOptions): boolean;
+        removeAll(options?: ClearMarksOptions): boolean;
         /**
          * The whole run of a mark around the selection (its value and text), or
          * null. Unlike the snapshot's `marks` it is about the run, not the
