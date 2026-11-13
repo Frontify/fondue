@@ -1,5 +1,14 @@
 # @frontify/fondue-icons
 
+## 1.0.0-rc.0
+
+### Patch Changes
+
+- [#3035](https://github.com/Frontify/fondue/pull/3035) [`cf1839b`](https://github.com/Frontify/fondue/commit/cf1839b10095b928008a8a11934056d0cf5b2581) Thanks [@noahwaldner](https://github.com/noahwaldner)! - First release candidate for Fondue v14.
+
+- Updated dependencies [[`cf1839b`](https://github.com/Frontify/fondue/commit/cf1839b10095b928008a8a11934056d0cf5b2581)]:
+  - @frontify/fondue-tokens@6.0.0-rc.0
+
 ## 1.0.0-beta.1
 
 ### Patch Changes
