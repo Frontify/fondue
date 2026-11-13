@@ -12,29 +12,28 @@ const groupOfPlugin = (groups: readonly KeyboardGroup[], pluginId: string) =>
 describe('keyboardReference', () => {
     const groups = keyboardReference(defaultPlugins);
 
-    it('lists the editor first, with undo and redo', () => {
+    it('lists the editor first, with the keys of one action in one row', () => {
         expect(groups[0]?.owner).toEqual({ kind: 'editor' });
         expect(groups[0]?.rows).toEqual(
             expect.arrayContaining([
-                { key: 'Mod-z', label: 'Undo' },
-                { key: 'Mod-y', label: 'Redo' },
-                { key: 'Mod-Shift-z', label: 'Redo' },
+                { keys: ['Mod-z'], label: 'Undo' },
+                { keys: ['Mod-y', 'Mod-Shift-z'], label: 'Redo' },
             ]),
         );
     });
 
     it('names the key a toolbar shortcut binds', () => {
-        expect(groupOfPlugin(groups, 'bold')?.rows).toEqual([{ key: 'Mod-b', label: 'Bold' }]);
+        expect(groupOfPlugin(groups, 'bold')?.rows).toEqual([{ keys: ['Mod-b'], label: 'Bold' }]);
     });
 
     it('names the key a plugin hotkey binds', () => {
-        expect(groupOfPlugin(groups, 'align')?.rows).toContainEqual({ key: 'Mod-Shift-l', label: 'Align left' });
+        expect(groupOfPlugin(groups, 'align')?.rows).toContainEqual({ keys: ['Mod-Shift-l'], label: 'Align left' });
     });
 
     it('lists a key both the toolbar and the plugin hotkeys bind once', () => {
         const rows = groups.flatMap((group) => group.rows);
 
-        expect(rows.filter(({ key }) => key === 'Mod-k')).toEqual([{ key: 'Mod-k', label: 'Edit link' }]);
+        expect(rows.filter(({ keys }) => keys.includes('Mod-k'))).toEqual([{ keys: ['Mod-k'], label: 'Edit link' }]);
     });
 
     it('names a key with the words the host gave the plugin', () => {
@@ -43,10 +42,16 @@ describe('keyboardReference', () => {
             resetFormattingPlugin({ clearMarksLabel: 'Formatierung entfernen' }),
         ]);
 
-        expect(groupOfPlugin(translated, 'align')?.rows).toContainEqual({ key: 'Mod-Shift-l', label: 'Linksbündig' });
-        expect(groupOfPlugin(translated, 'align')?.rows).toContainEqual({ key: 'Mod-Shift-e', label: 'Align center' });
+        expect(groupOfPlugin(translated, 'align')?.rows).toContainEqual({
+            keys: ['Mod-Shift-l'],
+            label: 'Linksbündig',
+        });
+        expect(groupOfPlugin(translated, 'align')?.rows).toContainEqual({
+            keys: ['Mod-Shift-e'],
+            label: 'Align center',
+        });
         expect(groupOfPlugin(translated, 'reset-formatting')?.rows).toEqual([
-            { key: 'Mod-\\', label: 'Formatierung entfernen' },
+            { keys: ['Mod-\\'], label: 'Formatierung entfernen' },
         ]);
     });
 });

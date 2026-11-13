@@ -13,8 +13,10 @@ import {
     defineBlock,
     defineContent,
     defineInline,
+    defineMark,
     definePlugin,
     type EditorControlApi,
+    PARAGRAPH,
     type RteBlockNode,
     type RteMarkPatternTrim,
     type RtePlugin,
@@ -401,6 +403,45 @@ describe('Backspace', () => {
     });
 });
 
+/** A list and its item declared by the content model alone, which is all the list keys read. */
+const itemListPlugin = definePlugin({
+    id: 'item-list',
+    content: defineContent({
+        blocks: {
+            itemList: defineBlock({
+                content: { items: 'item' },
+                toHtml: () => ({ tag: 'ul', children: true }),
+                parse: [{ tag: 'ul' }],
+            }),
+            item: defineBlock({
+                content: { blocks: [PARAGRAPH] },
+                toHtml: () => ({ tag: 'li', children: true }),
+                parse: [{ tag: 'li' }],
+            }),
+        },
+    }),
+});
+
+/** A mark that typing rules and single-character hotkeys leave alone, with a key that toggles it. */
+const literalMarkPlugin = definePlugin({
+    id: 'literal',
+    content: defineContent({ marks: { literal: defineMark({ tag: 'span', excludesInputRules: true }) } }),
+    hotkeys: {
+        'Mod-e': {
+            label: 'Literal',
+            run: (api) => {
+                api.marks.toggle('literal');
+            },
+        },
+    },
+});
+
+/** A mark that does not stop typing rules or single-character hotkeys. */
+const weightMarkPlugin = definePlugin({
+    id: 'weight',
+    content: defineContent({ marks: { weight: defineMark({ tag: 'strong' }) } }),
+});
+
 describe('a feature hotkey', () => {
     it('runs when its keys are pressed — Shift-Enter breaks the line', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('ab'))]);
@@ -468,10 +509,10 @@ describe('a feature hotkey', () => {
         const claim = vi.fn(() => true);
         const editor = editorWith(
             [
-                ...defaultPlugins,
+                itemListPlugin,
                 definePlugin({ id: 'claims-enter', hotkeys: { Enter: { label: 'Claim Enter', run: claim } } }),
             ],
-            [{ type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('ab'))] }] }],
+            [{ type: 'itemList', children: [{ type: 'item', children: [paragraph(text('ab'))] }] }],
         );
         editor.caretAfter('a');
 
@@ -507,18 +548,18 @@ describe('a feature hotkey', () => {
         expect(editor.stored()).toEqual([paragraph(text('hi [mention]'))]);
     });
 
-    it('naming a character is typed as it is inside inline code, and fires outside it', () => {
+    it('naming a character is typed as it is inside a literal mark, and fires outside it', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>();
         const editor = editorWith(
-            [...defaultPlugins, definePlugin({ id: 'mention', hotkeys: { '@': { label: 'Mention', run: mention } } })],
-            [paragraph(text('a b', { code: true }), text(' c'))],
+            [literalMarkPlugin, definePlugin({ id: 'mention', hotkeys: { '@': { label: 'Mention', run: mention } } })],
+            [paragraph(text('a b', { literal: true }), text(' c'))],
         );
 
         editor.caretAfter('a ');
         editor.type('@');
 
         expect(mention).not.toHaveBeenCalled();
-        expect(editor.stored()).toEqual([paragraph(text('a @b', { code: true }), text(' c'))]);
+        expect(editor.stored()).toEqual([paragraph(text('a @b', { literal: true }), text(' c'))]);
 
         editor.caretAfter(' c');
         editor.type(' @');
@@ -526,11 +567,11 @@ describe('a feature hotkey', () => {
         expect(mention).toHaveBeenCalledTimes(1);
     });
 
-    it('naming a character still fires after a space in bold text', () => {
+    it('naming a character still fires after a space in weighted text', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>();
         const editor = editorWith(
-            [...defaultPlugins, definePlugin({ id: 'mention', hotkeys: { '@': { label: 'Mention', run: mention } } })],
-            [paragraph(text('hi ', { bold: true }))],
+            [weightMarkPlugin, definePlugin({ id: 'mention', hotkeys: { '@': { label: 'Mention', run: mention } } })],
+            [paragraph(text('hi ', { weight: true }))],
         );
 
         editor.caretAfter('hi ');
@@ -539,10 +580,10 @@ describe('a feature hotkey', () => {
         expect(mention).toHaveBeenCalledTimes(1);
     });
 
-    it('naming a character does not fire at a caret where inline code was just turned on', () => {
+    it('naming a character does not fire at a caret where a literal mark was just turned on', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>();
         const editor = editorWith(
-            [...defaultPlugins, definePlugin({ id: 'mention', hotkeys: { '@': { label: 'Mention', run: mention } } })],
+            [literalMarkPlugin, definePlugin({ id: 'mention', hotkeys: { '@': { label: 'Mention', run: mention } } })],
             [paragraph(text('hi '))],
         );
         editor.caretAfter('hi ');
@@ -551,7 +592,7 @@ describe('a feature hotkey', () => {
         editor.type('@');
 
         expect(mention).not.toHaveBeenCalled();
-        expect(editor.stored()).toEqual([paragraph(text('hi '), text('@', { code: true }))]);
+        expect(editor.stored()).toEqual([paragraph(text('hi '), text('@', { literal: true }))]);
     });
 });
 
