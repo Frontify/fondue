@@ -841,8 +841,8 @@ export const SoftBreak: Story = {
 };
 
 /**
- * Puts the selection back to plain text: marks gone, block type back to
- * paragraph, alignment cleared, lists unwrapped. It owns no schema — it only
+ * Puts the selection back to plain text: marks gone (links stay), block type
+ * back to paragraph, alignment cleared, lists unwrapped. It owns no schema — it only
  * drives the control API, so it needs something to undo.
  */
 export const ResetFormatting: Story = {
