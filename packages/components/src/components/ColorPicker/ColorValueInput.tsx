@@ -49,6 +49,15 @@ type ColorValueInputProps = {
 
 const nooperation = () => {};
 
+/** Tells whether the typed hex text is a valid colour with the same red, green and blue as the given colour. */
+const showsColor = (hex: string, color: RgbaColor): boolean => {
+    if (!isValidHexColor(hex)) {
+        return false;
+    }
+    const typedColor = hexColorToRgba(hex);
+    return typedColor.red === color.red && typedColor.green === color.green && typedColor.blue === color.blue;
+};
+
 export const ColorValueInput = (
     {
         currentColor = DEFAULT_COLOR,
@@ -63,7 +72,13 @@ export const ColorValueInput = (
     const [hexColorValue, setHexColorValue] = useState<string>(() => rgbColorToHex(currentColor));
 
     useEffect(() => {
-        setHexColorValue(rgbColorToHex(currentColor));
+        // A typed `abc` must not be rewritten to `aabbcc` while the colour round-trips through the parent.
+        setHexColorValue((previous) => {
+            if (showsColor(previous, currentColor)) {
+                return previous;
+            }
+            return rgbColorToHex(currentColor);
+        });
     }, [currentColor]);
 
     return (
@@ -88,17 +103,18 @@ export const ColorValueInput = (
                     type="text"
                     value={hexColorValue}
                     status={isValidHexColor(hexColorValue) ? 'neutral' : 'error'}
-                    onBlur={(event) => {
-                        if (isValidHexColor(event.target.value)) {
-                            onColorChange({ ...hexColorToRgba(event.target.value), alpha: currentColor.alpha });
-                        }
-                    }}
                     onChange={(event) => {
                         const inputValue = event.target.value.startsWith('#')
                             ? event.target.value.slice(1)
                             : event.target.value;
 
                         setHexColorValue(inputValue);
+                        if (isValidHexColor(inputValue)) {
+                            onColorChange({
+                                ...hexColorToRgba(inputValue),
+                                alpha: currentColor.alpha,
+                            });
+                        }
                     }}
                     aria-label={t('ColorPicker_hexValue')}
                 >
