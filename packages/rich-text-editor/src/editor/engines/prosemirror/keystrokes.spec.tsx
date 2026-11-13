@@ -1064,13 +1064,28 @@ describe('the clear formatting shortcut', () => {
 });
 
 describe('the reset formatting button', () => {
-    it('puts the block the caret is in back to plain text, links removed too, neighbours alone', () => {
+    it('puts the block the caret is in back to plain text, keeping its link and mention, neighbours alone', () => {
         const editor = editorWith(resetPlugins, formatted());
         editor.caretAfter('big');
 
         clickResetButton(editor);
 
-        expect(editor.stored()).toEqual([paragraph(text('big link'), { type: 'tag', name: 'Ada' }), formatted()[1]]);
+        expect(editor.stored()).toEqual([
+            paragraph(text('big '), text('link', { link: LINK }), { type: 'tag', name: 'Ada' }),
+            formatted()[1],
+        ]);
+    });
+
+    it('keeps the link of a selection and removes the other marks, block types and alignment around it', () => {
+        const editor = editorWith(resetPlugins, formatted());
+        editor.selectBetween('big', 'next');
+
+        clickResetButton(editor);
+
+        expect(editor.stored()).toEqual([
+            paragraph(text('big '), text('link', { link: LINK }), { type: 'tag', name: 'Ada' }),
+            paragraph(text('next')),
+        ]);
     });
 
     it('announces that formatting was reset', () => {
