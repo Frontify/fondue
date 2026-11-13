@@ -89,6 +89,7 @@ describe('typing a mark shortcut', () => {
         ['at the start of a line', '__text__', [text('text', { bold: true })]],
         ['after a space', 'a __text__', [text('a '), text('text', { bold: true })]],
         ['after an opening bracket', '(__text__', [text('('), text('text', { bold: true })]],
+        ['after a quote', '"__x__', [text('"'), text('x', { bold: true })]],
     ])('turns __text__ bold %s', (_where, value, children) => {
         expect(typed(value)).toEqual([paragraph(...children)]);
     });
