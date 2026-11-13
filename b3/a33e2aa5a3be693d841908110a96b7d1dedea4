@@ -1,0 +1,80 @@
+packages/rich-text-editor/src/__tests__/paste/fixtures/word-windows-image.html
+  s_eecb278abe0cf5::t_61bcab38407b26 1-56
+packages/rich-text-editor/src/__tests__/paste/fixtures/outlook-lists.document.json
+  s_eecb278abe0cf5::t_7500e920697171 1-161
+packages/rich-text-editor/src/__tests__/paste/fixtures/word-windows-paragraphs.document.json
+  s_eecb278abe0cf5::t_7500e920697171 1-73
+packages/rich-text-editor/src/__tests__/paste/fixtures/word-windows-lists.document.json
+  s_eecb278abe0cf5::t_7500e920697171 1-150
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteGoogleDocs.ts
+  s_eecb278abe0cf5::t_7500e920697171 1-58
+packages/rich-text-editor/src/__tests__/paste/fixtures/word-online.html
+  s_eecb278abe0cf5::t_61bcab38407b26 1-5
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.ts
+  s_eecb278abe0cf5::t_7500e920697171 14-16,68-69,75-76
+packages/rich-text-editor/src/__tests__/paste/fixtures/libreoffice.html
+  s_eecb278abe0cf5::t_61bcab38407b26 1-49
+packages/rich-text-editor/src/__tests__/paste/fixtures/README.md
+  s_eecb278abe0cf5::t_61bcab38407b26 1
+packages/rich-text-editor/src/__tests__/paste/fixtures/google-docs-empty.html
+  s_eecb278abe0cf5::t_61bcab38407b26 1-3
+packages/rich-text-editor/src/__tests__/paste/fixtures/word-mac-headings.document.json
+  s_eecb278abe0cf5::t_7500e920697171 1-57
+packages/rich-text-editor/src/__tests__/paste/fixtures/word-windows-lists.html
+  s_eecb278abe0cf5::t_61bcab38407b26 1-140
+packages/rich-text-editor/src/__tests__/paste/fixtures/google-docs-chrome.document.json
+  s_eecb278abe0cf5::t_7500e920697171 1-86
+packages/rich-text-editor/src/__tests__/paste/vendorPaste.spec.tsx
+  s_eecb278abe0cf5::t_2eac70e9f059ac 369-370,372-388
+  s_eecb278abe0cf5::t_7a605c2afa1570 371
+  s_eecb278abe0cf5::t_b7475b223020bb 73,176,193,213,223,231-234,238,265,289,309,326,342,363
+  s_eecb278abe0cf5::t_6b87a2a9dea917 1-72,74-116,119,123,125-128,132-138,143-144,150,153-175,177-192,194-212,214-222,224-230,235-237,239-264,266-288,290-308,310-325,327-341,343-362,364-368,389-420
+  s_eecb278abe0cf5::t_65e0290615b2eb 117-118,120-122,124,129-131,139-142,145-149,151-152
+packages/rich-text-editor/src/__tests__/paste/fixtures/google-docs-runs.html
+  s_eecb278abe0cf5::t_61bcab38407b26 1-3
+packages/rich-text-editor/src/__tests__/paste/fixtures/word-online.document.json
+  s_eecb278abe0cf5::t_6b87a2a9dea917 1-36
+packages/rich-text-editor/src/__tests__/paste/fixtures/google-docs-chrome.html
+  s_eecb278abe0cf5::t_61bcab38407b26 1-4
+packages/rich-text-editor/src/__tests__/paste/fixtures/word-windows-paragraphs.html
+  s_eecb278abe0cf5::t_61bcab38407b26 1-77
+packages/rich-text-editor/src/__tests__/paste/fixtures/google-docs-runs.document.json
+  s_eecb278abe0cf5::t_65e0290615b2eb 1-55
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.ts
+  s_eecb278abe0cf5::t_7500e920697171 13,107
+packages/rich-text-editor/src/__tests__/paste/fixtures/outlook-lists.html
+  s_eecb278abe0cf5::t_61bcab38407b26 1-105
+packages/rich-text-editor/src/__tests__/paste/fixtures/word-mac-headings.html
+  s_eecb278abe0cf5::t_61bcab38407b26 1-111
+packages/rich-text-editor/src/__tests__/paste/fixtures/word-windows-image.document.json
+  s_eecb278abe0cf5::t_6b87a2a9dea917 1-25
+packages/rich-text-editor/src/__tests__/paste/fixtures/google-docs-firefox.html
+  s_eecb278abe0cf5::t_61bcab38407b26 1-6
+packages/rich-text-editor/src/__tests__/paste/fixtures/google-docs-firefox.document.json
+  s_eecb278abe0cf5::t_7500e920697171 1-33
+packages/rich-text-editor/src/__tests__/paste/fixtures/libreoffice.document.json
+  s_eecb278abe0cf5::t_65e0290615b2eb 1-75
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteOffice.ts
+  s_eecb278abe0cf5::t_2ff8ed3af56ac0 158-161
+  s_eecb278abe0cf5::t_7500e920697171 1-15,23-25,29,47-121,123-124,126-128,130-157,162-187
+  s_eecb278abe0cf5::t_b7475b223020bb 122,125,129
+  s_eecb278abe0cf5::t_7a605c2afa1570 16-22,26-28,30-46
+packages/rich-text-editor/src/__tests__/paste/fixtures/google-docs-empty.document.json
+  s_eecb278abe0cf5::t_7500e920697171 1-73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b3a33e2aa5a3be693d841908110a96b7d1dedea4",
+  "prompts": {},
+  "sessions": {
+    "s_eecb278abe0cf5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "02ff1c4d-dc17-4323-8121-0c1783040630",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

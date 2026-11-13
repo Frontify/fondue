@@ -1,0 +1,21 @@
+packages/components/src/components/Textarea/styles/textarea.module.scss
+  s_97b5e7e51be01e::t_3ba782253b8ba6 133
+.changeset/text-input-native-border.md
+  s_97b5e7e51be01e::t_78bcb69171e95c 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d1d729a1d4b36e7ed0f7c5d93fd4e53b46ea807a",
+  "prompts": {},
+  "sessions": {
+    "s_97b5e7e51be01e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6fb48806-bd84-4e1f-b968-1619b73e8736",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
