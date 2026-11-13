@@ -10,19 +10,14 @@ import {
     useSyncExternalStore,
 } from 'react';
 
-import {
-    type EditorControlApi,
-    type RteBlockCommand,
-    type ToolbarEntry,
-    type ToolbarItemProps,
-    toolbarGroupsOf,
-} from '#/core';
+import { type EditorControlApi, type RteBlockCommand, type ToolbarEntry, type ToolbarItemProps } from '#/core';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { turnIntoCommands } from '../helpers/blockCommands';
 import { keepSelectionExcept, TEXT_CONTROL } from '../helpers/keepSelection';
 import { type GroupSplit, type SlotGroup, splitGroups } from '../helpers/toolbarFit';
+import { toolbarGroupsOf } from '../helpers/toolbarGroups';
 import { toolbarItemProps } from '../helpers/toolbarItem';
 import { GROUP_ATTRIBUTE, SLOT_ATTRIBUTE } from '../helpers/toolbarMarkers';
 import { type EditorStateStore } from '../hooks/useEditorHandle';

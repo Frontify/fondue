@@ -99,9 +99,7 @@ export {
     type RteShortcut,
     type RteShortcutOwner,
     type ToolbarEntry,
-    type ToolbarEntryGroup,
     toggleOwn,
-    toolbarGroupsOf,
 } from './registry';
 export {
     decodeStoredColor,
