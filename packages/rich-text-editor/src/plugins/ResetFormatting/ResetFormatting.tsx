@@ -6,25 +6,34 @@ import { definePlugin, type EditorControlApi, type HotkeyHandler, PARAGRAPH, typ
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
-const DEFAULT_CLEARED_ANNOUNCEMENT = 'Formatting cleared';
-const DEFAULT_RESET_ANNOUNCEMENT = 'Formatting reset';
-
 /**
- * What the reset button and its key say to screen readers, with a default of English.
+ * The words the reset button and its key say to screen readers
  */
-export type ResetFormattingPluginOptions = {
+export type ResetFormattingLabels = {
     /**
      * Said after `Mod-\` removed a mark. It says nothing when there was no mark to remove.
      *
      * @default 'Formatting cleared'
      */
-    clearedAnnouncement?: string;
+    cleared: string;
     /**
      * Said after the Reset formatting button ran.
      *
      * @default 'Formatting reset'
      */
-    resetAnnouncement?: string;
+    reset: string;
+};
+
+const DEFAULT_RESET_FORMATTING_LABELS: ResetFormattingLabels = {
+    cleared: 'Formatting cleared',
+    reset: 'Formatting reset',
+};
+
+export type ResetFormattingPluginOptions = {
+    /**
+     * The words the plugin says. Each one left out stays English.
+     */
+    labels?: Partial<ResetFormattingLabels>;
 };
 
 /**
@@ -39,13 +48,13 @@ const reset = (api: EditorControlApi): void => {
     });
 };
 
-type ResetFormattingButtonProps = ToolbarItemProps & { resetAnnouncement: string };
+type ResetFormattingButtonProps = ToolbarItemProps & { labels: ResetFormattingLabels };
 
-const ResetFormattingButton = ({ api, label, resetAnnouncement }: ResetFormattingButtonProps) => {
+const ResetFormattingButton = ({ api, label, labels }: ResetFormattingButtonProps) => {
     const onClick = (): void => {
         reset(api);
         // The API gives no signal for whether the whole reset changed anything, so this always announces.
-        api.announce(resetAnnouncement);
+        api.announce(labels.reset);
     };
     return (
         <ToolbarButton title={label} onClick={onClick}>
@@ -57,17 +66,15 @@ const ResetFormattingButton = ({ api, label, resetAnnouncement }: ResetFormattin
 /**
  * A toolbar button that resets the selection's marks, lists, block types and attributes, and `Mod-\`, which only clears its marks. Both keep the marks that survive a clear
  */
-export const resetFormattingPlugin = ({
-    clearedAnnouncement = DEFAULT_CLEARED_ANNOUNCEMENT,
-    resetAnnouncement = DEFAULT_RESET_ANNOUNCEMENT,
-}: ResetFormattingPluginOptions = {}) =>
-    definePlugin({
+export const resetFormattingPlugin = (options: ResetFormattingPluginOptions = {}) => {
+    const labels: ResetFormattingLabels = { ...DEFAULT_RESET_FORMATTING_LABELS, ...options.labels };
+    return definePlugin({
         id: 'reset-formatting',
         toolbarGroup: 'marks',
         toolbar: [
             {
                 label: 'Reset formatting',
-                render: (props) => <ResetFormattingButton {...props} resetAnnouncement={resetAnnouncement} />,
+                render: (props) => <ResetFormattingButton {...props} labels={labels} />,
                 floating: 'inline',
             },
         ],
@@ -76,8 +83,9 @@ export const resetFormattingPlugin = ({
             /** Clears the marks only, those that survive a clear (links) excepted: block types, lists and alignment stay, which the toolbar button resets. */
             'Mod-\\': (api) => {
                 if (api.marks.removeAll({ scope: 'block', keepSurviving: true })) {
-                    api.announce(clearedAnnouncement);
+                    api.announce(labels.cleared);
                 }
             },
         } satisfies Record<string, HotkeyHandler>,
     });
+};

@@ -19,6 +19,7 @@ import { defaultPlugins } from '#/plugins';
 
 import { toEngineDocument } from './documentConversion';
 import { destroyEditors, editorWith, paragraph, text } from './testEditor';
+import { fixturePlugins } from './testFixtures';
 
 /**
  * The control API is what every feature drives the editor through, so each
@@ -59,7 +60,8 @@ const pinPlugin: RtePlugin = definePlugin({
 
 const plugins: RtePlugin[] = [...defaultPlugins, dividerPlugin, tagPlugin];
 
-const pluginsWithPin: RtePlugin[] = [...plugins, pinPlugin];
+/** What this spec's newer tests run on: the engine's own fixtures, never a shipped plugin. */
+const fixtures: RtePlugin[] = [...fixturePlugins, dividerPlugin, tagPlugin, pinPlugin];
 
 const LINK = { href: 'https://example.com' };
 
@@ -438,7 +440,7 @@ describe('marks.remove', () => {
 
 describe('marks.removeAll', () => {
     it('strips every mark from the selected text', () => {
-        const editor = editorWith(plugins, [
+        const editor = editorWith(fixtures, [
             paragraph(text('bold', { bold: true, italic: true }), text(' '), text('link', { link: LINK })),
         ]);
         editor.selectBetween('bold', 'link');
@@ -449,7 +451,7 @@ describe('marks.removeAll', () => {
     });
 
     it('clears the whole text block around a caret with scope block, and only that block', () => {
-        const editor = editorWith(plugins, [
+        const editor = editorWith(fixtures, [
             paragraph(text('bo', { bold: true }), text('ld', { italic: true })),
             paragraph(text('next', { bold: true })),
         ]);
@@ -461,7 +463,7 @@ describe('marks.removeAll', () => {
     });
 
     it('leaves the text at a caret alone with scope typing, and only stops what is typed next', () => {
-        const editor = editorWith(plugins, [paragraph(text('bold', { bold: true }))]);
+        const editor = editorWith(fixtures, [paragraph(text('bold', { bold: true }))]);
         editor.caretAfter('bold');
 
         const removed = editor.api.marks.removeAll({ scope: 'typing' });
@@ -473,10 +475,10 @@ describe('marks.removeAll', () => {
 
     it('clears a range the same with either scope', () => {
         const blocks = [paragraph(text('bold', { bold: true }), text(' it', { italic: true }))];
-        const typing = editorWith(plugins, blocks);
+        const typing = editorWith(fixtures, blocks);
         typing.selectBetween('bold', 'it');
         typing.api.marks.removeAll({ scope: 'typing' });
-        const block = editorWith(plugins, blocks);
+        const block = editorWith(fixtures, blocks);
         block.selectBetween('bold', 'it');
         block.api.marks.removeAll({ scope: 'block' });
 
@@ -485,7 +487,7 @@ describe('marks.removeAll', () => {
     });
 
     it('makes what is typed next at a caret carry no marks', () => {
-        const editor = editorWith(plugins, [paragraph(text('plain'))]);
+        const editor = editorWith(fixtures, [paragraph(text('plain'))]);
         editor.caretAfter('plain');
         editor.api.marks.toggle('bold');
 
@@ -496,7 +498,7 @@ describe('marks.removeAll', () => {
     });
 
     it('removes a mark that survives a clear unless `keepSurviving` is set', () => {
-        const editor = editorWith(pluginsWithPin, [paragraph(text('pinned', { pin: true, link: LINK }))]);
+        const editor = editorWith(fixtures, [paragraph(text('pinned', { pin: true, link: LINK }))]);
         editor.select('pinned');
 
         editor.api.marks.removeAll({ scope: 'block' });
@@ -508,10 +510,10 @@ describe('marks.removeAll', () => {
         const blocks = [
             paragraph(text('bold', { bold: true, link: LINK, pin: true }), text(' '), text('it', { italic: true })),
         ];
-        const range = editorWith(pluginsWithPin, blocks);
+        const range = editorWith(fixtures, blocks);
         range.selectBetween('bold', 'it');
         range.api.marks.removeAll({ scope: 'block', keepSurviving: true });
-        const caret = editorWith(pluginsWithPin, blocks);
+        const caret = editorWith(fixtures, blocks);
         caret.caretAfter('bo');
         caret.api.marks.removeAll({ scope: 'block', keepSurviving: true });
 
@@ -521,14 +523,14 @@ describe('marks.removeAll', () => {
     });
 
     it('returns whether it removed a mark from the text or from what the caret types next', () => {
-        const formatted = editorWith(plugins, [paragraph(text('bold', { bold: true }))]);
+        const formatted = editorWith(fixtures, [paragraph(text('bold', { bold: true }))]);
         formatted.caretAfter('bold');
-        const plain = editorWith(plugins, [paragraph(text('plain'))]);
+        const plain = editorWith(fixtures, [paragraph(text('plain'))]);
         plain.caretAfter('plain');
-        const carrying = editorWith(plugins, [paragraph(text('plain'))]);
+        const carrying = editorWith(fixtures, [paragraph(text('plain'))]);
         carrying.caretAfter('plain');
         carrying.api.marks.toggle('bold');
-        const linkOnly = editorWith(plugins, [paragraph(text('link', { link: LINK }))]);
+        const linkOnly = editorWith(fixtures, [paragraph(text('link', { link: LINK }))]);
         linkOnly.caretAfter('link');
 
         expect(formatted.api.marks.removeAll({ scope: 'block' })).toBe(true);
@@ -538,9 +540,9 @@ describe('marks.removeAll', () => {
     });
 
     it('returns whether it removed a mark from the text over a range', () => {
-        const formatted = editorWith(plugins, [paragraph(text('bold', { bold: true }), text(' end'))]);
+        const formatted = editorWith(fixtures, [paragraph(text('bold', { bold: true }), text(' end'))]);
         formatted.selectBetween('bold', 'end');
-        const linkOnly = editorWith(plugins, [paragraph(text('link', { link: LINK }), text(' end'))]);
+        const linkOnly = editorWith(fixtures, [paragraph(text('link', { link: LINK }), text(' end'))]);
         linkOnly.selectBetween('link', 'end');
 
         expect(formatted.api.marks.removeAll({ scope: 'block' })).toBe(true);
@@ -548,12 +550,12 @@ describe('marks.removeAll', () => {
     });
 
     it('with no options strips a range of every mark and, at a caret, only stops what is typed next', () => {
-        const range = editorWith(pluginsWithPin, [
+        const range = editorWith(fixtures, [
             paragraph(text('bold', { bold: true, link: LINK, pin: true }), text(' end')),
         ]);
         range.selectBetween('bold', 'end');
         range.api.marks.removeAll();
-        const caret = editorWith(pluginsWithPin, [paragraph(text('bold', { bold: true, link: LINK, pin: true }))]);
+        const caret = editorWith(fixtures, [paragraph(text('bold', { bold: true, link: LINK, pin: true }))]);
         caret.caretAfter('bold');
         caret.api.marks.removeAll();
         caret.api.insertText('X');
@@ -564,7 +566,7 @@ describe('marks.removeAll', () => {
 
     it('keeps a mention', () => {
         const mention = { type: 'tag', name: 'Ada' };
-        const editor = editorWith(plugins, [paragraph(text('hi ', { bold: true }), mention)]);
+        const editor = editorWith(fixtures, [paragraph(text('hi ', { bold: true }), mention)]);
         editor.caretAfter('hi');
 
         editor.api.marks.removeAll({ scope: 'block' });
@@ -641,7 +643,7 @@ describe('lists.split', () => {
     const bullets = (...children: RteBlockNode[]): RteBlockNode => ({ type: 'bulletList', children }) as RteBlockNode;
 
     it('turns an empty top-level item into a paragraph after the list', () => {
-        const editor = editorWith(plugins, [bullets(item(paragraph(text('one'))), item(paragraph()))]);
+        const editor = editorWith(fixtures, [bullets(item(paragraph(text('one'))), item(paragraph()))]);
         // The caret goes to the end of the document: the empty item.
         editor.view.dispatch(editor.view.state.tr.setSelection(TextSelection.atEnd(editor.view.state.doc)));
 
@@ -655,6 +657,8 @@ describe('blocks.setType inside a list', () => {
     const item = (...children: RteBlockNode[]): RteBlockNode => ({ type: 'listItem', children }) as RteBlockNode;
     const bullets = (...children: RteBlockNode[]): RteBlockNode => ({ type: 'bulletList', children }) as RteBlockNode;
     const heading = { type: 'textStyle', style: 'heading1', children: [{ text: 'one' }] } as RteBlockNode;
+    const headed = (value: string): RteBlockNode =>
+        ({ type: 'heading', level: 1, children: [{ text: value }] }) as RteBlockNode;
 
     it('takes the item out of its list to leave a paragraph', () => {
         const editor = editorWith(plugins, [bullets(item(paragraph(text('one'))))]);
@@ -710,7 +714,7 @@ describe('blocks.setType inside a list', () => {
     });
 
     it('lifts only the selected items of a list, leaving the others in it', () => {
-        const editor = editorWith(plugins, [
+        const editor = editorWith(fixtures, [
             bullets(item(paragraph(text('one'))), item(paragraph(text('two'))), item(paragraph(text('three')))),
         ]);
         editor.selectBetween('two', 'three');
@@ -725,7 +729,7 @@ describe('blocks.setType inside a list', () => {
     });
 
     it('lifts every list a range spans, and the plain blocks between them stay', () => {
-        const editor = editorWith(plugins, [
+        const editor = editorWith(fixtures, [
             bullets(item(paragraph(text('one')))),
             paragraph(text('between')),
             {
@@ -735,19 +739,15 @@ describe('blocks.setType inside a list', () => {
         ]);
         editor.selectBetween('one', 'two');
 
-        editor.api.blocks.setType('textStyle', { style: 'heading1' });
+        editor.api.blocks.setType('heading', { level: 1 });
 
-        expect(editor.stored()).toEqual([
-            heading,
-            { type: 'textStyle', style: 'heading1', children: [{ text: 'between' }] },
-            { type: 'textStyle', style: 'heading1', children: [{ text: 'two' }] },
-        ]);
+        expect(editor.stored()).toEqual([headed('one'), headed('between'), headed('two')]);
     });
 
     it('lifts nested lists across a range, keeping the order', () => {
         const numbered = (...children: RteBlockNode[]): RteBlockNode =>
             ({ type: 'numberedList', children }) as RteBlockNode;
-        const editor = editorWith(plugins, [
+        const editor = editorWith(fixtures, [
             paragraph(text('before')),
             bullets(item(paragraph(text('outer')), numbered(item(paragraph(text('inner')))))),
             bullets(item(paragraph(text('second')))),
@@ -767,7 +767,7 @@ describe('blocks.setType inside a list', () => {
     });
 
     it('keeps the selection over the blocks it covered, so one undo takes back every lift', () => {
-        const editor = editorWith(plugins, [
+        const editor = editorWith(fixtures, [
             bullets(item(paragraph(text('one')))),
             bullets(item(paragraph(text('two')))),
         ]);
@@ -802,7 +802,7 @@ describe('block attributes', () => {
     });
 
     it('report whether any block changed: not when every block has the value or none declares the attribute', () => {
-        const editor = editorWith(plugins, [paragraph(text('one'))]);
+        const editor = editorWith(fixtures, [paragraph(text('one'))]);
         editor.caretAfter('on');
 
         expect(editor.api.blocks.updateAttributes({ align: 'center' })).toBe(true);
@@ -1173,7 +1173,7 @@ describe('group', () => {
     };
 
     it('makes the commands it runs one undo step', () => {
-        const editor = editorWith(plugins, original);
+        const editor = editorWith(fixtures, original);
 
         editor.api.group(() => formatEach(editor));
 
@@ -1183,7 +1183,7 @@ describe('group', () => {
     });
 
     it('leaves the same commands separate steps outside a group', () => {
-        const editor = editorWith(plugins, original);
+        const editor = editorWith(fixtures, original);
 
         formatEach(editor);
 
@@ -1191,7 +1191,7 @@ describe('group', () => {
     });
 
     it('lets a group inside a group join the outer step', () => {
-        const editor = editorWith(plugins, original);
+        const editor = editorWith(fixtures, original);
 
         editor.api.group(() => {
             editor.select('one');
@@ -1209,7 +1209,7 @@ describe('group', () => {
     });
 
     it('keeps a mark toggle before it and one after it as their own steps', () => {
-        const editor = editorWith(plugins, original);
+        const editor = editorWith(fixtures, original);
         editor.select('one');
         editor.api.marks.toggle('bold');
 
@@ -1237,7 +1237,7 @@ describe('group', () => {
 
         // Mark steps change no range, so history never sees them as adjacent: these groups insert text.
         it('keeps the typing right before it as its own step', () => {
-            const editor = editorWith(plugins, [paragraph(text('one'))]);
+            const editor = editorWith(fixtures, [paragraph(text('one'))]);
             editor.caretAfter('one');
             editor.type('x');
 
@@ -1251,7 +1251,7 @@ describe('group', () => {
         });
 
         it('keeps the typing right after it as its own step', () => {
-            const editor = editorWith(plugins, [paragraph(text('one'))]);
+            const editor = editorWith(fixtures, [paragraph(text('one'))]);
             editor.caretAfter('one');
 
             editor.api.group(() => {
@@ -1266,7 +1266,7 @@ describe('group', () => {
     });
 
     it('stops grouping when the commands it runs throw', () => {
-        const editor = editorWith(plugins, original);
+        const editor = editorWith(fixtures, original);
 
         expect(() =>
             editor.api.group(() => {
@@ -1281,18 +1281,18 @@ describe('group', () => {
 
 describe('isEmpty', () => {
     it('is true for a document of one empty paragraph, or only blank text', () => {
-        expect(editorWith(plugins, [paragraph()]).api.isEmpty()).toBe(true);
-        expect(editorWith(plugins, [paragraph(text('  '))]).api.isEmpty()).toBe(true);
+        expect(editorWith(fixtures, [paragraph()]).api.isEmpty()).toBe(true);
+        expect(editorWith(fixtures, [paragraph(text('  '))]).api.isEmpty()).toBe(true);
     });
 
     it('is false once there is text, a mention or a void block', () => {
-        expect(editorWith(plugins, [paragraph(text('a'))]).api.isEmpty()).toBe(false);
-        expect(editorWith(plugins, [paragraph({ type: 'tag', name: 'Ada' })]).api.isEmpty()).toBe(false);
-        expect(editorWith(plugins, [paragraph(), { type: 'divider' }]).api.isEmpty()).toBe(false);
+        expect(editorWith(fixtures, [paragraph(text('a'))]).api.isEmpty()).toBe(false);
+        expect(editorWith(fixtures, [paragraph({ type: 'tag', name: 'Ada' })]).api.isEmpty()).toBe(false);
+        expect(editorWith(fixtures, [paragraph(), { type: 'divider' }]).api.isEmpty()).toBe(false);
     });
 
     it('follows what is typed', () => {
-        const editor = editorWith(plugins, [paragraph()]);
+        const editor = editorWith(fixtures, [paragraph()]);
 
         editor.type('a');
 
@@ -1303,7 +1303,7 @@ describe('isEmpty', () => {
 describe('announce', () => {
     it('hands the message to the shell it is mounted in', () => {
         const announce = vi.fn<(message: string) => void>();
-        const editor = editorWith(plugins, [paragraph()], { announce });
+        const editor = editorWith(fixtures, [paragraph()], { announce });
 
         editor.api.announce('Saved');
 

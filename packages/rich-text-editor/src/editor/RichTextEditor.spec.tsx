@@ -2873,6 +2873,53 @@ describe('the reset formatting button', () => {
     });
 });
 
+describe('the clear formatting key', () => {
+    it('removes the marks but the link, and leaves the list, the block type and the alignment', () => {
+        const link = { href: 'https://example.com' };
+        const value: RteDocument = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'bulletList',
+                    children: [
+                        {
+                            type: 'listItem',
+                            children: [
+                                {
+                                    type: 'paragraph',
+                                    align: 'center',
+                                    children: [{ text: 'linked', bold: true, link }],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+        const { container, ready, stored } = mount((onChange) => (
+            <RichTextEditor value={value} onChange={onChange} plugins={defaultPlugins} toolbarPlacement="top" />
+        ));
+        ready();
+        const editable = editableIn(container);
+        act(() => editable.focus());
+        press(editable, 'a', mod);
+
+        press(editable, '\\', mod);
+
+        expect(stored()?.blocks).toEqual([
+            {
+                type: 'bulletList',
+                children: [
+                    {
+                        type: 'listItem',
+                        children: [{ type: 'paragraph', align: 'center', children: [{ text: 'linked', link }] }],
+                    },
+                ],
+            },
+        ]);
+    });
+});
+
 describe('onBlur', () => {
     it('fires once focus leaves the editor, not when it moves into the toolbar, with the document', () => {
         vi.useFakeTimers();
