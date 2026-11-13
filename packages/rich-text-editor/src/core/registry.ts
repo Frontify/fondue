@@ -12,6 +12,7 @@ import { type HtmlSpec, type StyleMap, withRootStyle } from './htmlSpec';
 import {
     type BlockAttributeDefinition,
     type BlockDefinition,
+    type ContentStyles,
     type HotkeyHandler,
     type InlineDefinition,
     type MarkDefinition,
@@ -118,6 +119,11 @@ export type PluginRegistry = {
     contentClassNames: readonly string[];
     /** Custom properties set alongside them, later plugins winning. */
     contentProperties: Readonly<Record<string, string>>;
+    /**
+     * The inline style of each class the content writes, for HTML exported with `styling: 'inline'`.
+     * Built on each call, so only that export runs the plugins' style builders.
+     */
+    contentStyles: () => Readonly<Required<ContentStyles>>;
 };
 
 /** A mark sits in the floating bar; a block is reached through its commands instead. */
@@ -456,6 +462,7 @@ type Draft = {
     commandOwners: Map<string, string>;
     contentClassNames: string[];
     contentProperties: Record<string, string>;
+    contentStyleBuilders: NonNullable<RteContent['contentStyles']>[];
     /** How often each id has come up so far, for unique toolbar keys. */
     seenIds: Map<string, number>;
     duplicateIds: Set<string>;
@@ -547,6 +554,17 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
     addEditViews(draft, plugin);
 };
 
+/** Runs each content's style builder, a later one winning for a class or a tag both write. */
+const mergeContentStyles = (builders: readonly NonNullable<RteContent['contentStyles']>[]): Required<ContentStyles> => {
+    const merged: Required<ContentStyles> = { classes: {}, plainTags: {} };
+    for (const build of builders) {
+        const { classes, plainTags } = build();
+        Object.assign(merged.classes, classes);
+        Object.assign(merged.plainTags, plainTags);
+    }
+    return merged;
+};
+
 /**
  * What a content declares: styling hooks, block, inline and mark types, block attributes.
  */
@@ -555,6 +573,9 @@ const addContent = (draft: Draft, content: RteContent | undefined, owner: string
         draft.contentClassNames.push(content.contentClassName);
     }
     Object.assign(draft.contentProperties, content?.contentProperties);
+    if (content?.contentStyles) {
+        draft.contentStyleBuilders.push(content.contentStyles);
+    }
 
     register('block type', draft.blocks, draft.blockOwners, owner, content?.blocks);
     register('inline type', draft.inlines, draft.inlineOwners, owner, content?.inlines);
@@ -583,6 +604,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         commandOwners: new Map(),
         contentClassNames: [],
         contentProperties: {},
+        contentStyleBuilders: [],
         seenIds: new Map(),
         duplicateIds: new Set(),
         blockOwners: new Map(),
@@ -628,6 +650,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         commands: draft.commands,
         contentClassNames: draft.contentClassNames,
         contentProperties: draft.contentProperties,
+        contentStyles: () => mergeContentStyles(draft.contentStyleBuilders),
     };
 };
 

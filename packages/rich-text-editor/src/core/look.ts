@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { isSafeCssValue } from './htmlSpec';
+import { isSafeCssValue, type StyleMap } from './htmlSpec';
 
 /**
  * How a text style looks. Each value is any CSS value, a guideline variable
@@ -44,6 +44,17 @@ const UPPER_CASE_LETTER = /[A-Z]/g;
 const kebabCase = (key: string): string => key.replaceAll(UPPER_CASE_LETTER, (letter) => `-${letter.toLowerCase()}`);
 
 /**
+ * Checks a look's value, so the rule for a usable one lives once.
+ * @param subject - What the value belongs to, for the message, such as `the "custom2" look`.
+ * @throws When the value is empty or could break out of its declaration, rather than dropping it silently.
+ */
+const assertUsableValue = (field: string, value: string, subject: string): void => {
+    if (value.trim() === '' || !isSafeCssValue(value)) {
+        throw new Error(`The "${field}" of ${subject} is not a usable CSS value: ${JSON.stringify(value)}`);
+    }
+};
+
+/**
  * The custom property a host sets for one field of a style's look, `--rte-<key>-<css property>`.
  * The stylesheet reads it with Fondue's look as the fallback.
  *
@@ -67,10 +78,42 @@ export const lookProperties = (key: string, look: TextLook): Record<string, stri
         if (value === undefined) {
             continue;
         }
-        if (value.trim() === '' || !isSafeCssValue(value)) {
-            throw new Error(`The "${field}" of the "${key}" look is not a usable CSS value: ${JSON.stringify(value)}`);
-        }
+        assertUsableValue(field, value, `the "${key}" look`);
         properties[lookVariableName(key, property)] = value;
     }
     return properties;
+};
+
+/**
+ * One class's style, shaped as `contentStyles` takes it.
+ * @throws When the class has no name, as when its stylesheet module did not load, rather than writing no style.
+ */
+export const styleOfClass = (className: string | undefined, style: StyleMap): Record<string, StyleMap> => {
+    if (className === undefined) {
+        throw new Error(
+            'A class has no name, so its inline style has nothing to be keyed by: is its stylesheet loaded?',
+        );
+    }
+    return { [className]: style };
+};
+
+/**
+ * The inline style a look makes, for HTML exported without the stylesheet: the
+ * fallbacks, then each value the host set, by its CSS property name.
+ *
+ * @param fallbacks - The values the stylesheet falls back to where the host sets none.
+ * @throws When a value is empty or could break out of its declaration, rather than dropping it silently.
+ */
+export const lookStyle = (look: TextLook, fallbacks: StyleMap): StyleMap => {
+    const style: StyleMap = { ...fallbacks };
+    for (const [field, property] of Object.entries(LOOK_PROPERTIES)) {
+        // `Object.entries` widens the keys to string; they are the fields of `TextLook` by `satisfies` above.
+        const value = look[field as keyof TextLook];
+        if (value === undefined) {
+            continue;
+        }
+        assertUsableValue(field, value, 'the look');
+        style[property] = value;
+    }
+    return style;
 };

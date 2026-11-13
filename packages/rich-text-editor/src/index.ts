@@ -82,12 +82,13 @@ export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlock>(
  * The document as an HTML string, the same markup the editor copies to the
  * clipboard. No React or browser needed. Uses `defaultContent` when given no
  * `plugins`; `wrap: false` leaves out the root element. Style it with this
- * package's stylesheet (emails need the styles inlined).
+ * package's stylesheet, or pass `styling: 'inline'` to write the looks into the elements.
  */
 export const serializeToHtml = <TBlock extends RteBlockNode = RteBlock>(
     doc: RteDocument<TBlock>,
     options: SerializeToHtmlOptions = {},
 ): string => serialize(doc, { ...options, plugins: options.plugins ?? defaultContent });
+export { type HtmlStyling, type SerializeToHtmlOptions } from './renderer';
 
 // --- Document format ---
 

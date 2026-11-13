@@ -1,8 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PARAGRAPH, type ParseRule, type RteInlineNode, type RteInputRule } from '#/core';
+import { fondueToken, PARAGRAPH, type ParseRule, type RteInlineNode, type RteInputRule, type StyleMap } from '#/core';
 
+import { MUTED_COLOR } from '../../shared/helpers/mutedText';
 import styles from '../textStyle.module.scss';
+
+/** The leading the headings share, as `$heading-line-height` in `textStyle.module.scss`. */
+const HEADING_FALLBACK: StyleMap = { 'line-height': '1.3' };
 
 /**
  * Every typography preset a text block can take: the heading scale, three
@@ -11,17 +15,107 @@ import styles from '../textStyle.module.scss';
  *
  * Source of truth for how each style renders (`tag` plus class) and reads
  * (`label`); order here is dropdown order. Must name every `TextStyleName`.
+ * Each `fallback` is the same values `textStyle.module.scss` falls back to, for exported inline styles;
+ * the margins are the document's gaps, which `renderer/inlineLooks.ts` writes by position.
  */
 const PRESETS = [
-    { name: 'heading1', label: 'Heading 1', tag: 'h1', className: styles.heading1 },
-    { name: 'heading2', label: 'Heading 2', tag: 'h2', className: styles.heading2 },
-    { name: 'heading3', label: 'Heading 3', tag: 'h3', className: styles.heading3 },
-    { name: 'heading4', label: 'Heading 4', tag: 'h4', className: styles.heading4 },
-    { name: 'custom1', label: 'Custom 1', tag: 'p', className: styles.custom1 },
-    { name: 'custom2', label: 'Custom 2', tag: 'p', className: styles.custom2 },
-    { name: 'custom3', label: 'Custom 3', tag: 'p', className: styles.custom3 },
-    { name: 'imageTitle', label: 'Image title', tag: 'p', className: styles.imageTitle },
-    { name: 'imageCaption', label: 'Image caption', tag: 'p', className: styles.imageCaption },
+    {
+        name: 'heading1',
+        label: 'Heading 1',
+        tag: 'h1',
+        className: styles.heading1,
+        fallback: {
+            ...HEADING_FALLBACK,
+            'font-size': fondueToken('text-heading-xx-large-strong-font-size'),
+            'font-weight': fondueToken('text-heading-xx-large-strong-font-weight'),
+        },
+    },
+    {
+        name: 'heading2',
+        label: 'Heading 2',
+        tag: 'h2',
+        className: styles.heading2,
+        fallback: {
+            ...HEADING_FALLBACK,
+            'font-size': fondueToken('text-heading-x-large-strong-font-size'),
+            'font-weight': fondueToken('text-heading-x-large-strong-font-weight'),
+        },
+    },
+    {
+        name: 'heading3',
+        label: 'Heading 3',
+        tag: 'h3',
+        className: styles.heading3,
+        fallback: {
+            ...HEADING_FALLBACK,
+            'font-size': fondueToken('text-heading-large-default-font-size'),
+            'font-weight': fondueToken('text-heading-large-default-font-weight'),
+        },
+    },
+    {
+        name: 'heading4',
+        label: 'Heading 4',
+        tag: 'h4',
+        className: styles.heading4,
+        fallback: {
+            ...HEADING_FALLBACK,
+            'font-size': fondueToken('text-heading-medium-default-font-size'),
+            'font-weight': fondueToken('text-heading-medium-default-font-weight'),
+        },
+    },
+    {
+        name: 'custom1',
+        label: 'Custom 1',
+        tag: 'p',
+        className: styles.custom1,
+        fallback: {
+            'font-size': fondueToken('typography-font-size-medium'),
+            'font-weight': fondueToken('typography-font-weight-medium'),
+            'letter-spacing': '0.02em',
+        },
+    },
+    {
+        name: 'custom2',
+        label: 'Custom 2',
+        tag: 'p',
+        className: styles.custom2,
+        fallback: {
+            color: MUTED_COLOR,
+            'font-size': fondueToken('typography-font-size-medium'),
+            'font-style': 'italic',
+        },
+    },
+    {
+        name: 'custom3',
+        label: 'Custom 3',
+        tag: 'p',
+        className: styles.custom3,
+        fallback: {
+            'font-size': fondueToken('typography-font-size-small'),
+            'letter-spacing': fondueToken('typography-letter-spacing-wide'),
+            'text-transform': fondueToken('typography-text-transform-uppercase'),
+        },
+    },
+    {
+        name: 'imageTitle',
+        label: 'Image title',
+        tag: 'p',
+        className: styles.imageTitle,
+        fallback: {
+            'font-size': fondueToken('typography-font-size-medium'),
+            'font-weight': fondueToken('typography-font-weight-bold'),
+        },
+    },
+    {
+        name: 'imageCaption',
+        label: 'Image caption',
+        tag: 'p',
+        className: styles.imageCaption,
+        fallback: {
+            color: MUTED_COLOR,
+            'font-size': fondueToken('typography-font-size-x-small'),
+        },
+    },
 ] as const satisfies readonly Preset[];
 
 /** The value of a text block's `style` attribute. */
@@ -41,6 +135,7 @@ type Preset = {
     label: string;
     tag: 'h1' | 'h2' | 'h3' | 'h4' | 'p';
     className: string | undefined;
+    fallback: StyleMap;
 };
 
 /** Fails to compile when a style is added to `TextStyleName` without a preset. */

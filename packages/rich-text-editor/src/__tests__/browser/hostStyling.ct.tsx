@@ -5,6 +5,7 @@ import { type Locator } from '@playwright/test';
 
 import { type LinkLook, type TextLook, type TextStyleName } from '../../index';
 
+import { ExportedLooksPair } from './ExportedLooksPair';
 import { HostLooksPair } from './HostLooksPair';
 import { HostResetPair } from './HostResetPair';
 import { HostStylingPair } from './HostStylingPair';
@@ -489,6 +490,89 @@ test.describe('host styling of body text, quotes and links', () => {
         for (const surface of SURFACES) {
             expect(await looksOfBlocksIn(component.getByTestId(surface))).toEqual(BASELINE_LOOKS);
         }
+    });
+});
+
+// `serializeToHtml(doc, { styling: 'inline' })` writes the looks into `style`. Without any class,
+// the root's included, as on a page without the package stylesheet, a block must read as the class
+// output does: this holds the fallbacks in TypeScript equal to the ones in the stylesheet.
+
+/** Drops every class in the exported HTML, the root's included. */
+const removeClasses = (container: Locator): Promise<void> =>
+    container.evaluate((node) => {
+        for (const element of node.querySelectorAll('[class]')) {
+            element.removeAttribute('class');
+        }
+    });
+
+/** The underline offset of every link, which no block look above holds. */
+const underlineOffsetsIn = (surface: Locator): Promise<string[]> =>
+    surface.locator('a').evaluateAll((links) => links.map((link) => getComputedStyle(link).textUnderlineOffset));
+
+const allLooksIn = async (surface: Locator) => ({
+    presets: await computedLooksIn(surface),
+    others: await looksOfBlocksIn(surface),
+    underlineOffsets: await underlineOffsetsIn(surface),
+});
+
+const DOCUMENT_ROOT_PROPERTIES = ['white-space', 'overflow-wrap', 'font-variant-ligatures'] as const;
+
+type DocumentRootLook = Record<(typeof DOCUMENT_ROOT_PROPERTIES)[number], string>;
+
+/** The root's own value of what it sets for its text to read as the editor's, which its blocks only inherit. */
+const documentRootLookIn = (surface: Locator): Promise<DocumentRootLook> =>
+    surface
+        .locator(':scope > *')
+        .first()
+        .evaluate((root, properties) => {
+            const style = getComputedStyle(root);
+            const values: Record<string, string> = {};
+            for (const property of properties) {
+                values[property] = style.getPropertyValue(property);
+            }
+            // Filled from DOCUMENT_ROOT_PROPERTIES just above, one key each.
+            return values as DocumentRootLook;
+        }, DOCUMENT_ROOT_PROPERTIES);
+
+// The stylesheet writes `pre-wrap` and then `break-spaces` for browsers that know it; the inline style writes `pre-wrap`
+// alone, as email clients read it. Both keep every typed space, so this is the one value that differs.
+const CLASSES_WHITE_SPACE = 'break-spaces';
+const INLINE_WHITE_SPACE = 'pre-wrap';
+
+const expectRootsToMatch = async (inline: Locator, classes: Locator): Promise<void> => {
+    const classesRoot = await documentRootLookIn(classes);
+
+    expect(classesRoot['white-space']).toBe(CLASSES_WHITE_SPACE);
+    expect(await documentRootLookIn(inline)).toEqual({ ...classesRoot, 'white-space': INLINE_WHITE_SPACE });
+};
+
+const HOST_PRESETS: Partial<Record<TextStyleName, TextLook>> = Object.fromEntries(
+    STYLE_NAMES.map((name) => [name, HOST_LOOK]),
+);
+
+test.describe('inline styling of exported HTML', () => {
+    test('reads as the class output does, with no looks set', async ({ mount }) => {
+        const component = await mount(<ExportedLooksPair />);
+        const inline = component.getByTestId('inline');
+
+        await removeClasses(inline);
+
+        await expect(inline.locator('[class]')).toHaveCount(0);
+        expect(await allLooksIn(inline)).toEqual(await allLooksIn(component.getByTestId('classes')));
+        await expectRootsToMatch(inline, component.getByTestId('classes'));
+    });
+
+    test('reads as the class output does, with a host look for every owner', async ({ mount }) => {
+        const component = await mount(
+            <ExportedLooksPair presets={HOST_PRESETS} body={HOST_LOOK} quote={HOST_LOOK} link={HOST_LINK_LOOK} />,
+        );
+        const inline = component.getByTestId('inline');
+
+        await removeClasses(inline);
+
+        await expect(inline.locator('[class]')).toHaveCount(0);
+        expect(await allLooksIn(inline)).toEqual(await allLooksIn(component.getByTestId('classes')));
+        await expectRootsToMatch(inline, component.getByTestId('classes'));
     });
 });
 

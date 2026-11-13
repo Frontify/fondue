@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { lookProperties } from './look';
+import { lookProperties, lookStyle, styleOfClass } from './look';
 
 describe('lookProperties', () => {
     it('names one custom property per field the host set', () => {
@@ -26,4 +26,38 @@ describe('lookProperties', () => {
             expect(() => lookProperties('plain', { letterSpacing: value })).toThrow(/"letterSpacing".*"plain"/);
         });
     }
+});
+
+describe('lookStyle', () => {
+    const FALLBACKS = { 'margin-top': '0', 'margin-bottom': '0' };
+
+    it('puts the host values over the fallbacks, by CSS property name', () => {
+        const style = lookStyle(
+            { fontSize: 'var(--f-size)', marginBottom: '8px' },
+            { ...FALLBACKS, 'font-size': '14px' },
+        );
+
+        expect(style).toEqual({ 'margin-top': '0', 'margin-bottom': '8px', 'font-size': 'var(--f-size)' });
+    });
+
+    it('is the fallbacks when the host sets nothing', () => {
+        expect(lookStyle({}, FALLBACKS)).toEqual(FALLBACKS);
+        expect(lookStyle({ color: undefined }, FALLBACKS)).toEqual(FALLBACKS);
+    });
+
+    for (const value of ['red; display: none', 'url(https://example.com/a.png)', '}', '', '   ']) {
+        it(`throws, naming the field, for ${JSON.stringify(value)}`, () => {
+            expect(() => lookStyle({ letterSpacing: value }, {})).toThrow(/"letterSpacing"/);
+        });
+    }
+});
+
+describe('styleOfClass', () => {
+    it('keys the style by the class name', () => {
+        expect(styleOfClass('sample', { color: 'red' })).toEqual({ sample: { color: 'red' } });
+    });
+
+    it('throws for a class without a name', () => {
+        expect(() => styleOfClass(undefined, {})).toThrow(/no name/);
+    });
 });

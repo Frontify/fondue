@@ -87,6 +87,15 @@ export const BODY_QUOTE_LINK_DOCUMENT: RteDocument = {
     ],
 };
 
+/** Every text style, then body text (in list items too), a quote and a link; the text styles are listed once. */
+export const EXPORT_DOCUMENT: RteDocument = {
+    version: 1,
+    blocks: [
+        ...ALL_PRESETS_DOCUMENT.blocks,
+        ...BODY_QUOTE_LINK_DOCUMENT.blocks.filter((block) => block.type !== 'textStyle'),
+    ],
+};
+
 export const MIDDLE_QUOTE_TEXT = 'Middle quote';
 export const LAST_QUOTE_TEXT = 'Last quote';
 

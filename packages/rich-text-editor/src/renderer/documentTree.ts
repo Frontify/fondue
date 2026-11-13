@@ -13,6 +13,7 @@ import {
     blockAttributeStyle,
     blockHtml,
     blockValueOf,
+    fondueToken,
     type HtmlSpec,
     type MarkDefinition,
     type PluginRegistry,
@@ -279,6 +280,20 @@ export const blockNode = (block: RteBlockNode, registry: PluginRegistry, options
 
 export const documentTree = (doc: RteDocumentOf, registry: PluginRegistry, options: Options): DrawnNode[] =>
     doc.blocks.flatMap((block) => blockNode(block, registry, options) ?? []);
+
+/**
+ * How the document reads, written inline for HTML exported without the stylesheet: the same
+ * values as `.document` in `document.module.scss`. `pre-wrap` alone, as email clients know it.
+ */
+export const DOCUMENT_STYLE: StyleMap = {
+    color: fondueToken('color-primary-default'),
+    'font-family': fondueToken('typography-font-family-primary'),
+    'font-size': fondueToken('typography-font-size-medium'),
+    'line-height': '1.6',
+    'font-variant-ligatures': 'none',
+    'white-space': 'pre-wrap',
+    'overflow-wrap': 'anywhere',
+};
 
 /**
  * The element a document sits in: the document's own class, plugins' content

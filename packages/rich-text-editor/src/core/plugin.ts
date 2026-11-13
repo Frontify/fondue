@@ -35,6 +35,24 @@ export type RteContent = {
      * Custom properties set on the editable element, such as `{ '--rte-columns': '3' }`
      */
     contentProperties?: Record<string, string>;
+    /**
+     * The inline style this content writes, for HTML exported with `styling: 'inline'`.
+     * A function, so that only that export builds the styles, and a class with no name throws there alone.
+     */
+    contentStyles?: () => ContentStyles;
+};
+
+/**
+ * The inline style a content writes, for HTML exported without the stylesheet: what its stylesheet rules set.
+ */
+export type ContentStyles = {
+    /** The style of each element that carries the class, keyed by class name. */
+    classes?: Record<string, StyleMap>;
+    /**
+     * The style of each element of the tag that does not own its margins, so carries no margin marker, keyed by
+     * tag name. These are the elements a rule such as `:where(p:not([data-rte-own-margins]))` reaches.
+     */
+    plainTags?: Record<string, StyleMap>;
 };
 
 /**
