@@ -314,11 +314,6 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
 };
 
 /**
- * Attributes the document needs on a block's outermost element, such as the mark of a block that owns its margins.
- */
-export type BlockRootAttributes = Partial<Record<`data-rte-${string}`, string>>;
-
-/**
  * What a block's readonly component receives.
  */
 export type BlockComponentProps<TValue> = {
@@ -326,8 +321,6 @@ export type BlockComponentProps<TValue> = {
     children?: ReactNode;
     /** What every text block carries (alignment); put it on the outermost element. */
     style?: CSSProperties;
-    /** Attributes the document needs on the outermost element; spread them there, like `style`. */
-    rootAttributes: BlockRootAttributes;
 };
 
 /**

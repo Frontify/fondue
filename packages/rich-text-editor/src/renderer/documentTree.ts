@@ -11,11 +11,9 @@ import { type ComponentType } from 'react';
 
 import {
     blockAttributeStyle,
-    type BlockDefinition,
     blockHtml,
     blockValueOf,
     CHILD_SPACING_ATTRIBUTE,
-    childSpacingAttributes,
     DEFAULT_CHILD_SPACING,
     fondueToken,
     type HtmlAttributes,
@@ -25,7 +23,6 @@ import {
     type RteBlockNode,
     type RteDocumentOf,
     type RteInlineNode,
-    rootAttributesOf,
     type RteTextNode,
     type StyleMap,
 } from '#/core';
@@ -276,27 +273,6 @@ const childNode = (
     return html({ tag: blockHtml(registry, item, {}).tag, children: true }, [drawn]);
 };
 
-/** The element a component's content sits in, adding no box, as the edit view's content wrapper does. */
-const CONTENT_WRAPPER_TAG = 'div';
-const CONTENT_WRAPPER_STYLE: StyleMap = { display: 'contents' };
-
-/**
- * A component's content, in an element carrying the child-spacing mark for a block that holds blocks:
- * the component places its children where it likes, so the mark cannot go on an element of its own.
- */
-const componentContent = (definition: BlockDefinition, content: DrawnNode[]): DrawnNode[] => {
-    const childSpacing = childSpacingAttributes(definition);
-    if (childSpacing === undefined) {
-        return content;
-    }
-    return [
-        html(
-            { tag: CONTENT_WRAPPER_TAG, attrs: { ...childSpacing, style: CONTENT_WRAPPER_STYLE }, children: true },
-            content,
-        ),
-    ];
-};
-
 // --- Public ---
 
 /** The block drawn, or null for a block no plugin defines that holds nothing. */
@@ -316,13 +292,8 @@ export const blockNode = (block: RteBlockNode, registry: PluginRegistry, options
     }
     const style = definition.content === 'text' ? blockAttributeStyle(registry, stored) : undefined;
     return (
-        component(
-            definition.render?.component,
-            { value: blockValueOf(definition, stored), rootAttributes: rootAttributesOf(definition) },
-            componentContent(definition, content),
-            options,
-            style,
-        ) ?? html(blockHtml(registry, definition, stored), content)
+        component(definition.render?.component, { value: blockValueOf(definition, stored) }, content, options, style) ??
+        html(blockHtml(registry, definition, stored), content)
     );
 };
 

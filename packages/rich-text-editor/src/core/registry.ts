@@ -12,7 +12,6 @@ import { type HtmlAttributes, type HtmlSpec, type StyleMap, withContentAttribute
 import {
     type BlockAttributeDefinition,
     type BlockDefinition,
-    type BlockRootAttributes,
     type ChildSpacing,
     type ContentStyles,
     type HotkeyHandler,
@@ -681,14 +680,6 @@ export const blockAttributeStyle = (registry: PluginRegistry, stored: Record<str
 /** How a block spaces the blocks it holds when it does not say. */
 export const DEFAULT_CHILD_SPACING: ChildSpacing = 'apart';
 
-/** The attributes the document needs on a block's outermost element: the margin marker on one that owns its margins. */
-export const rootAttributesOf = (definition: BlockDefinition): BlockRootAttributes => {
-    if (definition.ownsMargins === true) {
-        return { [OWN_MARGINS_ATTRIBUTE]: '' };
-    }
-    return {};
-};
-
 /**
  * The child-spacing mark for the element a block's content sits in, or undefined for a block
  * whose content is not blocks, which the document does not space.
@@ -735,9 +726,8 @@ export const blockHtml = (
     if (definition.content === 'text') {
         spec = withRootStyle(spec, blockAttributeStyle(registry, stored));
     }
-    const rootAttributes = rootAttributesOf(definition);
-    if (Object.keys(rootAttributes).length > 0) {
-        spec = { ...spec, attrs: { ...spec.attrs, ...rootAttributes } };
+    if (definition.ownsMargins === true) {
+        spec = { ...spec, attrs: { ...spec.attrs, [OWN_MARGINS_ATTRIBUTE]: '' } };
     }
     const childSpacing = childSpacingAttributes(definition);
     if (childSpacing !== undefined) {

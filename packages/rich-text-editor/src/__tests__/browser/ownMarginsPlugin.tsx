@@ -8,6 +8,7 @@ import {
     defineBlock,
     defineContent,
     definePlugin,
+    OWN_MARGINS_ATTRIBUTE,
     type RtePlugin,
     styleOfClass,
 } from '../../core';
@@ -15,14 +16,17 @@ import {
 import { BOXED_MARGIN, BOXED_TYPE } from './documentSpacingValues';
 import styles from './ownMarginsPlugin.module.scss';
 
+/** The mark that keeps the document off the margins of the block's element. */
+const OWN_MARGINS_MARK = { [OWN_MARGINS_ATTRIBUTE]: '' };
+
 /** The attribute the block's markup is read back by. */
 const BOXED_ATTRIBUTE = 'data-boxed';
 const BOXED_MARKER = { [BOXED_ATTRIBUTE]: '' };
 
 type BoxedProps = BlockComponentProps<Record<string, never>>;
 
-const Boxed = ({ children, style, rootAttributes }: BoxedProps) => (
-    <div {...rootAttributes} {...BOXED_MARKER} className={styles.boxed} style={style}>
+const Boxed = ({ children, style }: BoxedProps) => (
+    <div {...OWN_MARGINS_MARK} {...BOXED_MARKER} className={styles.boxed} style={style}>
         {children}
     </div>
 );

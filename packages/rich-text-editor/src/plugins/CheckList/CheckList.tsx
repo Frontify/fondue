@@ -5,7 +5,8 @@ import { type CSSProperties, type ReactNode, useId } from 'react';
 
 import {
     ANY_LIST,
-    type BlockRootAttributes,
+    CHILD_SPACING_ATTRIBUTE,
+    type ChildSpacing,
     defineBlock,
     defineContent,
     definePlugin,
@@ -74,18 +75,23 @@ const setIndeterminate = (input: HTMLInputElement | null, indeterminate: boolean
     }
 };
 
+/** How an item spaces the blocks it holds: together, as a list item does. */
+const ITEM_CHILD_SPACING: ChildSpacing = 'tight';
+
+/** The mark the document spaces an item's content by, on the element the content sits in. */
+const ITEM_CHILD_SPACING_MARK = { [CHILD_SPACING_ATTRIBUTE]: ITEM_CHILD_SPACING };
+
 type ReadonlyCheckItemProps = {
     value: CheckValue;
     children?: ReactNode;
     style?: CSSProperties;
-    rootAttributes: BlockRootAttributes;
 };
 
-const ReadonlyCheckItem = ({ value, children, style, rootAttributes }: ReadonlyCheckItemProps): ReactNode => {
+const ReadonlyCheckItem = ({ value, children, style }: ReadonlyCheckItemProps): ReactNode => {
     const labelId = useId();
     const state = stateOfValue(value.checked);
     return (
-        <li {...rootAttributes} data-checked={state.data} className={styles.item} style={style}>
+        <li data-checked={state.data} className={styles.item} style={style}>
             <input
                 ref={(input) => setIndeterminate(input, state === STARTED)}
                 type="checkbox"
@@ -98,7 +104,7 @@ const ReadonlyCheckItem = ({ value, children, style, rootAttributes }: ReadonlyC
                 onClick={(event) => event.preventDefault()}
                 className={styles.checkbox}
             />
-            <div id={labelId} className={styles.label}>
+            <div id={labelId} {...ITEM_CHILD_SPACING_MARK} className={styles.label}>
                 {children}
             </div>
         </li>
@@ -117,7 +123,7 @@ export const checkListContent = defineContent({
         }),
         checkItem: defineBlock<CheckValue>({
             content: { blocks: [PARAGRAPH, ANY_LIST] },
-            childSpacing: 'tight',
+            childSpacing: ITEM_CHILD_SPACING,
             defaults: { checked: false },
             // Exported HTML cannot be interacted with, so its checkbox is a
             // disabled one, named by its state.

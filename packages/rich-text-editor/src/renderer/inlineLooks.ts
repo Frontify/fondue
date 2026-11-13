@@ -22,8 +22,11 @@ const CLASS_SEPARATOR = /\s+/;
 // The document's spacing, as `document.module.scss` hands it out.
 const BLOCK_GAP = fondueToken('spacing-x-small');
 const NO_GAP = '0';
-/** Unsets the leading gap, so a block with one above it never inherits a `0` from an ancestor. */
-const UNSET_GAP = 'initial';
+/** The custom properties the plugins' looks read from the document and from their host, which the export writes none of. */
+const DOCUMENT_VARIABLE_PREFIX = '--rte-';
+const VARIABLE_READ = 'var(';
+const VARIABLE_END = ')';
+const FALLBACK_SEPARATOR = ',';
 /** The root spaces the document's blocks as a block holding blocks does by default. */
 const ROOT_SPACING: ChildSpacing = 'apart';
 
@@ -47,8 +50,8 @@ const gapBelow = ({ spacing, isLastChild }: Placement): string => {
     }
 };
 
-/** The gap above an element: none on the first one, or in a tight container; unset elsewhere. */
-const leadingGap = ({ spacing, isFirstChild }: Placement): string => {
+/** The gap above an element where the document sets it: none on the first one or in a tight container; elsewhere the block's own look sets it. */
+const gapAbove = ({ spacing, isFirstChild }: Placement): string | undefined => {
     switch (spacing) {
         case 'tight':
             return NO_GAP;
@@ -56,29 +59,114 @@ const leadingGap = ({ spacing, isFirstChild }: Placement): string => {
             if (isFirstChild) {
                 return NO_GAP;
             }
-            return UNSET_GAP;
+            return undefined;
     }
 };
 
 /**
- * The gaps the document hands a spaced element, and its margins unless it owns them;
- * nothing for an element the document does not space.
+ * The margins the document hands a spaced element, as its stylesheet computes them: the gap below it, and none
+ * above unless it owns its margins, which then gets only the gap above that the document sets;
+ * nothing for an element the document does not space. A look's own margin replaces them.
  */
-const documentGaps = (spec: HtmlSpec, placement: Placement | undefined): StyleMap => {
+const documentMargins = (spec: HtmlSpec, placement: Placement | undefined): StyleMap => {
     if (placement === undefined) {
         return {};
     }
-    const below = gapBelow(placement);
-    const gaps: StyleMap = {
-        [DOCUMENT_GAP_VARIABLES.block]: below,
-        [DOCUMENT_GAP_VARIABLES.leading]: leadingGap(placement),
-    };
-    // The gap's own value rather than the variable, so a client without custom properties still reads it.
+    const margins: StyleMap = {};
     if (spec.attrs?.[OWN_MARGINS_ATTRIBUTE] === undefined) {
-        gaps['margin-top'] = NO_GAP;
-        gaps['margin-bottom'] = below;
+        margins['margin-top'] = NO_GAP;
+    } else {
+        const above = gapAbove(placement);
+        if (above !== undefined) {
+            margins['margin-top'] = above;
+        }
     }
-    return gaps;
+    margins['margin-bottom'] = gapBelow(placement);
+    return margins;
+};
+
+/** What the document knows of its custom properties for an element: its gaps, from where it sits. */
+const documentVariables = (placement: Placement | undefined): StyleMap => {
+    if (placement === undefined) {
+        return {};
+    }
+    const known: StyleMap = { [DOCUMENT_GAP_VARIABLES.block]: gapBelow(placement) };
+    const above = gapAbove(placement);
+    if (above !== undefined) {
+        known[DOCUMENT_GAP_VARIABLES.leading] = above;
+    }
+    return known;
+};
+
+/** The index of the parenthesis closing the one opened just before `from`. */
+const closingParenthesis = (value: string, from: number): number => {
+    let depth = 1;
+    for (let index = from; index < value.length; index++) {
+        if (value[index] === '(') {
+            depth++;
+        } else if (value[index] === VARIABLE_END) {
+            depth--;
+        }
+        if (depth === 0) {
+            return index;
+        }
+    }
+    throw new Error(`Unclosed ${VARIABLE_READ} in "${value}".`);
+};
+
+/** One `var(...)`, given what is inside its parentheses. */
+const resolveRead = (inside: string, known: StyleMap): string => {
+    const separator = inside.indexOf(FALLBACK_SEPARATOR);
+    let name = inside.trim();
+    let fallback: string | undefined;
+    if (separator !== -1) {
+        name = inside.slice(0, separator).trim();
+        fallback = resolveVariables(inside.slice(separator + 1).trim(), known);
+    }
+    if (!name.startsWith(DOCUMENT_VARIABLE_PREFIX)) {
+        // A host's own variable stays a read, with whatever the document variables in its fallback resolved.
+        if (fallback === undefined) {
+            return `${VARIABLE_READ}${name}${VARIABLE_END}`;
+        }
+        return `${VARIABLE_READ}${name}${FALLBACK_SEPARATOR} ${fallback}${VARIABLE_END}`;
+    }
+    const value = known[name];
+    if (value !== undefined) {
+        return value;
+    }
+    if (fallback === undefined) {
+        throw new Error(`${name} is read without a fallback, and the document does not set it for this element.`);
+    }
+    return fallback;
+};
+
+/**
+ * The value with every read of a document variable (`--rte-`, at any depth) replaced: by what the document knows of it
+ * for the element, else by its resolved fallback, so no custom property is left for a client that ignores them.
+ * Reads of any other variable stay.
+ * @throws When a document variable the document does not know has no fallback, rather than inventing a value.
+ */
+export const resolveVariables = (value: string, known: StyleMap): string => {
+    let resolved = '';
+    let from = 0;
+    let start = value.indexOf(VARIABLE_READ, from);
+    while (start !== -1) {
+        const insideStart = start + VARIABLE_READ.length;
+        const end = closingParenthesis(value, insideStart);
+        resolved += value.slice(from, start) + resolveRead(value.slice(insideStart, end), known);
+        from = end + 1;
+        start = value.indexOf(VARIABLE_READ, from);
+    }
+    return resolved + value.slice(from);
+};
+
+/** The style with every value's document variables resolved for the element. */
+const resolveStyle = (style: StyleMap, known: StyleMap): StyleMap => {
+    const resolved: StyleMap = {};
+    for (const [property, value] of Object.entries(style)) {
+        resolved[property] = resolveVariables(value, known);
+    }
+    return resolved;
 };
 
 /** What a plugin writes for a plain element of the tag, as its stylesheet rule reaches it: one without the margin marker. */
@@ -106,19 +194,24 @@ const classStyle = (className: string, classes: Record<string, StyleMap>): Style
 };
 
 /**
- * The spec with the document's gaps, then its tag's style and its classes' styles, under its own `style`, so a
- * host margin replaces a gap untrimmed, and alignment and a font colour still win.
+ * The spec with the document's margins where nothing sets them, then its tag's style and its classes' styles with
+ * the document's variables resolved, under its own `style`, so a host margin replaces a gap untrimmed,
+ * and alignment and a font colour still win.
  */
 const inlineSpec = (
     spec: HtmlSpec,
     placement: Placement | undefined,
     contentStyles: Required<ContentStyles>,
 ): HtmlSpec => {
-    let looked = { ...documentGaps(spec, placement), ...plainTagStyle(spec, contentStyles.plainTags) };
+    let declared: StyleMap = { ...plainTagStyle(spec, contentStyles.plainTags) };
     const className = spec.attrs?.class;
     if (className !== undefined) {
-        looked = { ...looked, ...classStyle(className, contentStyles.classes) };
+        declared = { ...declared, ...classStyle(className, contentStyles.classes) };
     }
+    const looked = {
+        ...documentMargins(spec, placement),
+        ...resolveStyle(declared, documentVariables(placement)),
+    };
     if (Object.keys(looked).length === 0) {
         return spec;
     }
@@ -139,9 +232,9 @@ const inlineNode = (
                 content: inlineSiblings(node.content, childSpacing, contentStyles),
             };
         }
-        // A component's content carries its own mark, on the element the renderer wraps it in.
+        // Export draws markup only: a component would leave its content without the document's looks.
         case 'component':
-            return { ...node, content: inlineSiblings(node.content, undefined, contentStyles) };
+            throw new Error('A component node cannot be inlined: export draws `toHtml` markup alone.');
     }
 };
 
@@ -176,7 +269,7 @@ const inlineSiblings = (
 
 /**
  * The nodes with each element's looks written into its `style`, the classes left in place:
- * the document's gaps between blocks, by where each sits and how its container spaces it, and each class's style over them.
+ * the document's margins between blocks, by where each sits and how its container spaces it, under each class's literal margins.
  *
  * @param nodes - The document's blocks, the children of its root.
  * @param contentStyles - What the plugins write, by class and by tag (`registry.contentStyles()`).

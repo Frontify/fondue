@@ -42,7 +42,6 @@ export {
     type BlockAttributeDefinition,
     type BlockComponentProps,
     type BlockDefinition,
-    type BlockRootAttributes,
     type ChildSpacing,
     type ContentModel,
     type ContentStyles,
@@ -91,7 +90,6 @@ export {
     type OwnType,
     ownTypeOf,
     type PluginRegistry,
-    rootAttributesOf,
     type ToolbarEntry,
     toggleOwn,
 } from './registry';

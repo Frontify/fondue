@@ -8,7 +8,6 @@ import {
     defineBlock,
     defineContent,
     definePlugin,
-    DOCUMENT_GAP_VARIABLES,
     fondueToken,
     PARAGRAPH,
     type RteDocumentOf,
@@ -59,7 +58,7 @@ const paragraphStyle = (html: string, text: string): string => {
     return style;
 };
 
-const gapDeclaration = (variable: string, value: string): string => `${variable}: ${value};`;
+const marginBelow = (value: string): string => `margin-bottom: ${value};`;
 
 describe('a block that holds blocks', () => {
     it('carries its declared spacing where its content goes, not on its outermost element', () => {
@@ -77,10 +76,8 @@ describe('a block that holds blocks', () => {
 
         const first = paragraphStyle(html, FIRST_TEXT);
         const last = paragraphStyle(html, LAST_TEXT);
-        expect(first).toContain(gapDeclaration(DOCUMENT_GAP_VARIABLES.block, BLOCK_GAP));
-        expect(first).toContain(gapDeclaration(DOCUMENT_GAP_VARIABLES.leading, '0'));
-        expect(last).toContain(gapDeclaration(DOCUMENT_GAP_VARIABLES.block, '0'));
-        expect(last).toContain(gapDeclaration(DOCUMENT_GAP_VARIABLES.leading, 'initial'));
+        expect(first).toContain(marginBelow(BLOCK_GAP));
+        expect(last).toContain(marginBelow('0'));
     });
 
     it('holds its children tight when it declares `tight`', () => {
@@ -92,8 +89,7 @@ describe('a block that holds blocks', () => {
 
         for (const text of [FIRST_TEXT, LAST_TEXT]) {
             const style = paragraphStyle(html, text);
-            expect(style).toContain(gapDeclaration(DOCUMENT_GAP_VARIABLES.block, '0'));
-            expect(style).toContain(gapDeclaration(DOCUMENT_GAP_VARIABLES.leading, '0'));
+            expect(style).toContain(marginBelow('0'));
         }
     });
 
@@ -104,8 +100,7 @@ describe('a block that holds blocks', () => {
         const html = serializeToHtml(calloutDocument, { plugins: [], wrap: false, styling: 'inline' });
 
         const first = paragraphStyle(html, FIRST_TEXT);
-        expect(first).toContain(gapDeclaration(DOCUMENT_GAP_VARIABLES.block, BLOCK_GAP));
-        expect(first).toContain(`margin-bottom: ${BLOCK_GAP};`);
+        expect(first).toContain(marginBelow(BLOCK_GAP));
         warn.mockRestore();
     });
 });
