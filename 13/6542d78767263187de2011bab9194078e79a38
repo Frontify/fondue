@@ -1,0 +1,269 @@
+packages/rich-text-editor/src/editor/hooks/useToolbarFit.ts
+  s_5e1a57eef69e61::t_a2c48b456111db 1-2,5-6,8-11,13-16,29-30,34,42-43,45-47,56-61,69,73-81,82,85,86,93-101,105-109,111,113-116,118-130
+  s_5e1a57eef69e61::t_ce810d5cd3e6c9 91-92
+  s_5e1a57eef69e61::t_a31f7ea18141e5 3-4,12,31-33,35-40,48-49,62-68,70-72,87,89-90,102,104
+  s_5e1a57eef69e61::t_0e2e70fa71e473 103
+  s_b778dae1e2640c::t_ad7ee86d74f3aa 50-51,88,110,112,117
+  s_b778dae1e2640c::t_56a544f52d7302 17-28,44
+  s_b778dae1e2640c::t_5807c1604cae5c 83-84
+  s_b778dae1e2640c::t_43d0ca9dc53fb1 131-161
+  s_b778dae1e2640c::t_1999a26eb77f4a 41
+  s_b778dae1e2640c::t_186951771ff811 52-55
+  s_b778dae1e2640c::t_b433aaed5bd8ad 7
+packages/rich-text-editor/src/editor/helpers/toolbarFit.spec.ts
+  s_5e1a57eef69e61::t_90214b3f0b47b6 1-9,11-26,42-52,54-82
+  s_5e1a57eef69e61::t_06c2cc574da2fd 39-41
+  s_5e1a57eef69e61::t_29314d8bdd2b42 10,27-38,53
+packages/rich-text-editor/src/editor/richTextEditor.module.scss
+  s_5e1a57eef69e61::t_c65e0eae58c7d6 63-70,72-74,75,77,86-87,94-97,131-134,136-139,149-150
+  s_5e1a57eef69e61::t_206f384cadad70 108-109,122,132-133
+  s_b778dae1e2640c::t_1461ba768d6fa0 125,127-131
+  s_b778dae1e2640c::t_511aa99f131625 114-115,123
+  s_b778dae1e2640c::t_12bf62c5c03677 111-113
+  s_b778dae1e2640c::t_dc21e593e1ab46 116-118
+  s_b778dae1e2640c::t_308bbd4c5e76a8 124
+  s_b778dae1e2640c::t_cdcbfa26f0c191 103-107,110,119-121
+  s_b778dae1e2640c::t_b2efee26324f7f 10,71,76,78-85,88-93,192
+  s_b778dae1e2640c::t_312a21cd4c04cc 44-45
+  s_b778dae1e2640c::t_8a687a8a26d0ab 4,200
+  s_b778dae1e2640c::t_91a3b08607ceab 98-99
+  s_b778dae1e2640c::t_195ebcdbb69b6e 3
+  s_b778dae1e2640c::t_9be3d2a1174cb7 126,135
+  s_b778dae1e2640c::t_84ff13ee2f0d9b 140
+packages/rich-text-editor/src/editor/labels.ts
+  s_5e1a57eef69e61::t_4106b75e9807c0 13-14,38
+packages/rich-text-editor/src/editor/components/ToolbarMore.tsx
+  s_5e1a57eef69e61::t_9b31ca3274ce51 1-2,4,18,20,21-22,32-35,43,46,48-49,54,57-58,88,90-92,94,109-110,111,113-115,184-186,225-226,229,234,249-258,260,262-266
+  s_5e1a57eef69e61::t_a804eab399dc6b 5-6,8-12,14-16,42,44-45,52,67-68,78,79,81-82,87,89,97,98-102,107-109,112,141-142,144-145,147-149,153,168-171,227-228,240-242,244-248,259
+  s_b778dae1e2640c::t_7535784976a566 13,36,50,53,55-56,59-66,69-70,72-76,80,83-86,93
+  s_b778dae1e2640c::t_7a37784e5f7409 103-106
+  s_b778dae1e2640c::t_511aa99f131625 71,77,116,118-126,137-139,173,175,178-183,235-239
+  s_b778dae1e2640c::t_2ceddbb339dbd4 17,51
+  s_b778dae1e2640c::t_a4df01b225aa31 37-41,127-128,132-135
+  s_b778dae1e2640c::t_d9cd52b3c15cee 7,95,189-193,195,197-221
+  s_b778dae1e2640c::t_dedc99eee4cd39 223
+  s_b778dae1e2640c::t_4af3e67b5fca1d 224,230-233
+  s_b778dae1e2640c::t_52c4c36c716cd9 188
+  s_b778dae1e2640c::t_c3d4cd67b6dce7 23,26-31
+  s_b778dae1e2640c::t_186951771ff811 243
+  s_b778dae1e2640c::t_9be3d2a1174cb7 261
+  s_b778dae1e2640c::t_b433aaed5bd8ad 19,24-25,47,130,136,177,187,194,196,222
+  s_b778dae1e2640c::t_328d3457d52cb4 146
+  s_b778dae1e2640c::t_84ff13ee2f0d9b 3,117,129,131,140-145,147-159,161-172,174
+  s_b778dae1e2640c::t_a476a7b68219c7 160
+packages/rich-text-editor/src/editor/components/Toolbar.tsx
+  s_5e1a57eef69e61::t_c6e37a4c7111eb 20,67-71,93,98-100,102-109,132-134,140,149,164,166-172
+  s_5e1a57eef69e61::t_e3188126f894cf 3,86,94-97
+  s_b778dae1e2640c::t_6d627d8e108548 101
+  s_b778dae1e2640c::t_e23568add48fba 8,148,150-156,158
+  s_b778dae1e2640c::t_ba3adf74cf9a7c 24,111-113,115-116,118-122,141
+  s_b778dae1e2640c::t_8a687a8a26d0ab 146-147,157
+  s_b778dae1e2640c::t_89cff8ab060ccc 36-38,43-59
+  s_b778dae1e2640c::t_a2a8ddd2c902c2 82
+  s_b778dae1e2640c::t_ea6c11b175fc20 15
+  s_b778dae1e2640c::t_e696152147bda1 162-163,165
+  s_b778dae1e2640c::t_b581809efdc325 39-42
+  s_b778dae1e2640c::t_b433aaed5bd8ad 17,19,114,117
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_5e1a57eef69e61::t_43b5a364115ffb 919-975,978-993,997-1004,1376-1377
+  s_5e1a57eef69e61::t_035a1680cab1f9 1069-1088
+  s_5e1a57eef69e61::t_b0285b1f28bcf7 1005,1007-1018,1019-1020,1022-1025,1367-1375
+  s_5e1a57eef69e61::t_a3adfd69700d4c 1041,1050-1058
+  s_5e1a57eef69e61::t_a2449a8f09b24e 1037-1038,1061
+  s_5e1a57eef69e61::t_7b492dddefcb53 1027-1036,1039-1040,1043-1049,1059-1060,1062-1063,1064,1066-1068
+  s_b778dae1e2640c::t_dc6462f9be5f65 1114,1116,1127-1128,1132-1133
+  s_b778dae1e2640c::t_ea5bba38b59c9b 1129
+  s_b778dae1e2640c::t_9d09acf6bf5a42 828-832,844-849,874,884,886,976-977,994-996
+  s_b778dae1e2640c::t_b85de1429ba597 5,1021,1089-1113,1115,1117-1126,1130-1131,1134-1135
+  s_b778dae1e2640c::t_9ecf1b57d3d78f 1006,1026,1042,1065,1136
+  s_b778dae1e2640c::t_e23568add48fba 699,701-715
+  s_b778dae1e2640c::t_89448db3f3a0e7 1347-1349
+  s_b778dae1e2640c::t_372b33153cbfce 1350
+  s_b778dae1e2640c::t_39a843f85d99db 25,1137-1149,1157-1177,1178-1180,1199-1218,1284-1289,1291-1304,1315-1346,1351-1365
+  s_b778dae1e2640c::t_d61c0bd3f4a06a 1290
+  s_b778dae1e2640c::t_2c64e50305ea30 1366
+  s_b778dae1e2640c::t_f219cf7d756e86 1219-1246,1256-1283
+  s_b778dae1e2640c::t_f9492c714c43d6 1247-1255
+  s_b778dae1e2640c::t_748bc9273ac8f3 1150-1156,1181-1198
+  s_b778dae1e2640c::t_1d2916a6a6254f 1308-1310
+  s_b778dae1e2640c::t_5a2c1e7d7532d1 1305-1307,1311-1314
+  s_b778dae1e2640c::t_8a687a8a26d0ab 700
+packages/rich-text-editor/src/editor/helpers/toolbarFit.ts
+  s_5e1a57eef69e61::t_1777a4fcc5c4f8 1-2,4-5,7-9,11-13,19,22,25,29-30,32-33,35-36,67-68,72-85
+  s_5e1a57eef69e61::t_01853a91b7879f 10
+  s_b778dae1e2640c::t_564af4d537b509 6,14-18,20-21,23-24,26-28,31,34-61,67
+  s_b778dae1e2640c::t_b581809efdc325 3
+  s_b778dae1e2640c::t_2b72ec1dc3de27 64,66,69-71
+packages/rich-text-editor/src/editor/hooks/useToolbarRoving.ts
+  s_5e1a57eef69e61::t_bd27fd6b40d933 1-12,16-20,24-26,60-66,69,75-77,79-86,88,90-93,98-102,106-118,127,130-144,147,149-154,166-167,173-176,178-181,185-187,193-194,196-201
+  s_5e1a57eef69e61::t_9bd02be8b83186 14,37-42,48-59,67-68,78,87,89,145-146,148,155-163
+  s_5e1a57eef69e61::t_5af70253826580 164-165
+  s_b778dae1e2640c::t_511aa99f131625 103-105
+  s_b778dae1e2640c::t_37061e7e8d67c4 15,21-23,27-28
+  s_b778dae1e2640c::t_776dee61eb210a 43-47
+  s_b778dae1e2640c::t_1999a26eb77f4a 36
+  s_6513c7c173ff96::t_cd4271f4524ed3 29-35
+  s_b778dae1e2640c::t_186951771ff811 70-74,94-97,119-126,128-129,168-172,177,182-184,188-192,195
+  s_b778dae1e2640c::t_b433aaed5bd8ad 13
+packages/rich-text-editor/src/plugins/TextStyle/components/textStyleSelect.module.scss
+  s_5e1a57eef69e61::t_9f8d5adb4c4c78 8,14-17,19,21,23
+  s_b778dae1e2640c::t_8a687a8a26d0ab 7,20
+  s_b778dae1e2640c::t_195ebcdbb69b6e 3
+  s_b778dae1e2640c::t_161b8f342d6fba 5-7,11
+.changeset/rte-toolbar-overflow.md
+  s_5e1a57eef69e61::t_c341dfc4fbb427 1-4
+packages/rich-text-editor/src/plugins/shared/ToolbarButton/ToolbarButton.tsx
+  s_5e1a57eef69e61::t_a07e24e949307b 71-74,77-84
+  s_b778dae1e2640c::t_e23568add48fba 17
+packages/rich-text-editor/src/plugins/shared/ToolbarButton/toolbarButton.module.scss
+  s_b778dae1e2640c::t_56c35817ce3e66 10-14,46,50
+  s_b778dae1e2640c::t_b2efee26324f7f 15-18,24,26-29
+  s_b778dae1e2640c::t_798c1df0d4ea5c 6-8
+  s_b778dae1e2640c::t_8a687a8a26d0ab 4,36-37
+  s_b778dae1e2640c::t_195ebcdbb69b6e 3
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_b778dae1e2640c::t_e23568add48fba 700-701,708,712
+  s_b778dae1e2640c::t_8a687a8a26d0ab 117,126,139-142,145,149,152,158-161,170,173,177,190
+packages/rich-text-editor/src/core/index.ts
+  s_b778dae1e2640c::t_e23568add48fba 40
+  s_b778dae1e2640c::t_8a687a8a26d0ab 6-12
+packages/rich-text-editor/src/plugins/Code/Code.tsx
+  s_b778dae1e2640c::t_e23568add48fba 31-32
+packages/rich-text-editor/src/core/commands.ts
+  s_b778dae1e2640c::t_e23568add48fba 33-34
+  s_b778dae1e2640c::t_8a687a8a26d0ab 6-12,24-26,28-30,32,120,140-145
+packages/rich-text-editor/src/editor/helpers/toolbarItem.spec.ts
+  s_b778dae1e2640c::t_e23568add48fba 35,102,231,237
+  s_b778dae1e2640c::t_8a687a8a26d0ab 12,41-42,60,64,70-74,227,235
+packages/rich-text-editor/src/editor/helpers/toolbarItem.ts
+  s_b778dae1e2640c::t_e23568add48fba 22,65-72,76,82
+  s_b778dae1e2640c::t_71ccafe271e7e4 83-84
+  s_b778dae1e2640c::t_8a687a8a26d0ab 9,33-37,73-75,77-81
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_b778dae1e2640c::t_e23568add48fba 48-51
+packages/rich-text-editor/src/plugins/index.ts
+  s_b778dae1e2640c::t_e23568add48fba 31-34
+packages/rich-text-editor/src/plugins/Underline/Underline.tsx
+  s_b778dae1e2640c::t_e23568add48fba 32-33
+packages/rich-text-editor/src/plugins/Subscript/Subscript.tsx
+  s_b778dae1e2640c::t_e23568add48fba 27-28
+packages/rich-text-editor/src/editor/helpers/blockCommands.spec.ts
+  s_b778dae1e2640c::t_e23568add48fba 60,80,93
+packages/rich-text-editor/src/plugins/Italic/Italic.tsx
+  s_b778dae1e2640c::t_e23568add48fba 33-34
+packages/rich-text-editor/src/plugins/Strikethrough/Strikethrough.tsx
+  s_b778dae1e2640c::t_e23568add48fba 34-35
+packages/rich-text-editor/src/plugins/Superscript/Superscript.tsx
+  s_b778dae1e2640c::t_e23568add48fba 27-28
+packages/rich-text-editor/src/core/plugin.ts
+  s_b778dae1e2640c::t_e23568add48fba 236-248,260-265
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_b778dae1e2640c::t_e23568add48fba 124
+  s_b778dae1e2640c::t_8a687a8a26d0ab 16,37-38,45,49-54,62,73-75,79,83,123
+packages/rich-text-editor/src/plugins/History/History.tsx
+  s_b778dae1e2640c::t_e23568add48fba 16,21,29
+  s_b778dae1e2640c::t_8a687a8a26d0ab 5,20,28
+packages/rich-text-editor/src/plugins/Bold/Bold.tsx
+  s_b778dae1e2640c::t_e23568add48fba 35-36
+packages/rich-text-editor/src/index.ts
+  s_b778dae1e2640c::t_e23568add48fba 21,124
+  s_b778dae1e2640c::t_8a687a8a26d0ab 19,144
+packages/rich-text-editor/tsconfig.json
+  s_b778dae1e2640c::t_8a687a8a26d0ab 23
+packages/rich-text-editor/playwright/index.html
+  s_b778dae1e2640c::t_8a687a8a26d0ab 1-12
+packages/rich-text-editor/tsconfig.node.json
+  s_b778dae1e2640c::t_8a687a8a26d0ab 24
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.spec.tsx
+  s_b778dae1e2640c::t_8a687a8a26d0ab 9,23-24,26-27,34,68,75-79,89,97,103-109
+  s_b778dae1e2640c::t_97563889b5d43b 110
+packages/components/src/components/Tree/styles/tree.module.scss
+  s_b778dae1e2640c::t_8a687a8a26d0ab 66
+.github/workflows/rich-text-editor-pull-requests.yaml
+  s_b778dae1e2640c::t_8a687a8a26d0ab 83-108
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_b778dae1e2640c::t_8a687a8a26d0ab 27-34,37,301-328,480-514
+  s_b778dae1e2640c::t_690b964f6822b7 515-516
+packages/rich-text-editor/src/__tests__/browser/composition.ct.tsx
+  s_b778dae1e2640c::t_8a687a8a26d0ab 1-168
+packages/rich-text-editor/src/__tests__/browser/editor.ct.tsx
+  s_b778dae1e2640c::t_8a687a8a26d0ab 1-126
+.changeset/tree-item-min-width.md
+  s_b778dae1e2640c::t_8a687a8a26d0ab 1-5
+.changeset/select-menu-list-reset.md
+  s_b778dae1e2640c::t_8a687a8a26d0ab 1-5
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.tsx
+  s_b778dae1e2640c::t_8a687a8a26d0ab 7,32-38,44-50,53,108
+packages/rich-text-editor/playwright.config.ts
+  s_b778dae1e2640c::t_8a687a8a26d0ab 1-26
+packages/rich-text-editor/vite.config.ts
+  s_b778dae1e2640c::t_8a687a8a26d0ab 75
+packages/rich-text-editor/playwright/index.tsx
+  s_b778dae1e2640c::t_8a687a8a26d0ab 1-14
+.changeset/rte-browser-tests.md
+  s_b778dae1e2640c::t_8a687a8a26d0ab 1-4
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_b778dae1e2640c::t_8a687a8a26d0ab 10-18,38-39,60,62,77-111,172-213,256-258,262,337-338
+packages/rich-text-editor/src/plugins/FontColor/FontColor.tsx
+  s_b778dae1e2640c::t_8a687a8a26d0ab 60
+packages/components/src/components/Tree/components/TreeRow.ct.tsx
+  s_b778dae1e2640c::t_8a687a8a26d0ab 136-162
+packages/rich-text-editor/package.json
+  s_b778dae1e2640c::t_8a687a8a26d0ab 41,47-48,72,78-79
+packages/components/src/components/Select/styles/select.module.scss
+  s_b778dae1e2640c::t_8a687a8a26d0ab 263-265
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_b778dae1e2640c::t_8a687a8a26d0ab 923
+packages/rich-text-editor/.gitignore
+  s_b778dae1e2640c::t_8a687a8a26d0ab 3-6
+packages/rich-text-editor/src/utilities/sizes.module.scss
+  s_b778dae1e2640c::t_8a687a8a26d0ab 1-7
+  s_b778dae1e2640c::t_195ebcdbb69b6e 1-7
+pnpm-lock.yaml
+  s_b778dae1e2640c::t_fed3fde47b8f69 778-780,796-801,1486-1491,6166-6169,10416-10420,12935-12952,12972-12990,15667-15668
+packages/rich-text-editor/src/editor/helpers/toolbarMarkers.ts
+  s_b778dae1e2640c::t_1e31f8acd687b9 1-10
+packages/components/src/components/Flyout/__tests__/FlyoutWithOutsideInteractionBlocked.tsx
+  s_b778dae1e2640c::t_54f4151141eb75 1-36
+packages/components/src/components/Flyout/__tests__/Flyout.ct.tsx
+  s_b778dae1e2640c::t_84ff13ee2f0d9b 24-25,595-618,620-624,626-643
+  s_b778dae1e2640c::t_49ac52e71b999a 619,625
+  s_b778dae1e2640c::t_1a50b31c9ffa23 26
+  s_b778dae1e2640c::t_f6d2921b75ae47 13
+.changeset/flyout-interact-outside-aria-label.md
+  s_b778dae1e2640c::t_84ff13ee2f0d9b 1-7
+packages/components/src/components/Flyout/Flyout.tsx
+  s_b778dae1e2640c::t_84ff13ee2f0d9b 131-139
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "136542d78767263187de2011bab9194078e79a38",
+  "prompts": {},
+  "sessions": {
+    "s_5e1a57eef69e61": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a0fb14d7-e897-462c-896c-1d2c9e62b697",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_6513c7c173ff96": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aece77c5-31e1-41b8-8f8c-d0099f17ec8b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_b778dae1e2640c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e5a3cbe8-bdeb-468e-b690-663c281f1976",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

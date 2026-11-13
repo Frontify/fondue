@@ -1,0 +1,22 @@
+packages/rich-text-editor/src/plugins/Emoji/Emoji.tsx
+  s_3da29b36b0ad36::t_f8f58554bd5c7a 36
+  s_3da29b36b0ad36::t_44eb5d84fc3ea4 3
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_3da29b36b0ad36::t_ba61fef6159b60 132
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1325ef07d2921387514451b580986503b3b63140",
+  "prompts": {},
+  "sessions": {
+    "s_3da29b36b0ad36": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52275dbb-cfd4-472c-b295-02ca60ef0ab1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

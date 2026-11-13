@@ -1,0 +1,79 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/nodeViews.tsx
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 59,106,112,115,135,166,168,170,172,176,178,297,317,322,339,424,477,480,600,671,679,734,745
+packages/rich-text-editor/src/editor/helpers/toolbarItem.spec.ts
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 25
+packages/rich-text-editor/src/plugins/BlurOnBreak/BlurOnBreak.tsx
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 6-10
+packages/rich-text-editor/src/core/commands.ts
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 13,15,17,19,21,56,59,75,77,87,89,91,93,103,106,108,110,112,116,118,120,124,126,129
+packages/rich-text-editor/src/core/plugin.ts
+  s_3da29b36b0ad36::t_4da0924ac8fc98 33,130,132,490
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 14-17,19-29,35,37,39,278,323,325,327,329,331,333,337,342,359,370,382,384,386,388,390,393,398,400,402,404,412,469,475,477,483,485,487,492,494,499,502,510,512,514
+packages/rich-text-editor/src/plugins/Align/Align.tsx
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 18-20
+packages/rich-text-editor/src/renderer/RichTextRenderer.tsx
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 49,58
+  s_3da29b36b0ad36::t_4da0924ac8fc98 43
+packages/rich-text-editor/src/plugins/TextStyle/helpers/presets.ts
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 27,46,50,57,60,63,70,74,82,88,94
+packages/rich-text-editor/src/plugins/Mention/Mention.tsx
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 13-16,20-22
+packages/rich-text-editor/src/plugins/shared/helpers/href.ts
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 3,26,29,60
+  s_3da29b36b0ad36::t_4da0924ac8fc98 23,55
+packages/rich-text-editor/src/editor/port.ts
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 14,20,22,24,26,28,30,32,39,41,43,48,57,74
+packages/rich-text-editor/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 10-12
+packages/rich-text-editor/src/plugins/Typography/Typography.ts
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 7,32,38,45-46,76-78
+packages/rich-text-editor/oxlint.config.ts
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 10-14
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.tsx
+  s_3da29b36b0ad36::t_4da0924ac8fc98 59
+packages/rich-text-editor/src/plugins/Emoji/helpers/emojis.ts
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 459
+packages/rich-text-editor/src/core/documentText.ts
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 14,50,75
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_3da29b36b0ad36::t_4da0924ac8fc98 13
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 39,41
+packages/rich-text-editor/src/core/registry.ts
+  s_3da29b36b0ad36::t_4da0924ac8fc98 98,401,431
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 4-5,38,40,43,48,56,58,82,90,92,100,102,110,112,114,116,118,122,279,409,616
+packages/rich-text-editor/src/editor/hooks/useEditorHandle.ts
+  s_3da29b36b0ad36::t_4da0924ac8fc98 110
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 40,134,137,141,143,158,160
+packages/rich-text-editor/src/plugins/CheckList/CheckList.tsx
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 30,33,36,38,47,54,62
+packages/rich-text-editor/src/plugins/Link/helpers/newLinkForms.ts
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 5,8,18
+packages/rich-text-editor/src/plugins/FontColor/FontColor.tsx
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 12
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 75,84-90
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.ts
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 159
+packages/rich-text-editor/src/index.ts
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 47,50,57,60,71-73,88,138
+packages/rich-text-editor/src/plugins/Emoji/Emoji.tsx
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 12-13
+packages/rich-text-editor/src/plugins/SoftBreak/SoftBreak.tsx
+  s_3da29b36b0ad36::t_96e9c4b91b8e51 5,11-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b9f21fb25bc8545b71d8a42a5be1ca5b46dae675",
+  "prompts": {},
+  "sessions": {
+    "s_3da29b36b0ad36": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52275dbb-cfd4-472c-b295-02ca60ef0ab1",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+.changeset/rich-text-editor-experimental.md
+  s_e303d90a4d1a69::t_b7253e926bdaf9 1-6
+fondue/README.md
+  s_e303d90a4d1a69::t_3ef705ae6c5d1c 29-31,33-34
+  s_e303d90a4d1a69::t_dd4cb2ee05964d 32
+packages/rich-text-editor/README.md
+  s_e303d90a4d1a69::t_63dcfd7bc90501 3-7
+packages/rich-text-editor/package.json
+  s_e303d90a4d1a69::t_e03545cbcbbfc0 5
+packages/rich-text-editor/src/index.ts
+  s_e303d90a4d1a69::t_d06e6d50875fb3 42-46,56-60
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_e303d90a4d1a69::t_a93c69e73534da 96-100
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_e303d90a4d1a69::t_a0135845023c0d 58-62
+storybook-docs/.storybook/preview.tsx
+  s_e303d90a4d1a69::t_d077b180377084 135-139
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "232845885a8bf906905a751a352f8e71d188939e",
+  "prompts": {},
+  "sessions": {
+    "s_e303d90a4d1a69": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b95187bb-e9f1-45de-99f7-7bb025d6a241",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

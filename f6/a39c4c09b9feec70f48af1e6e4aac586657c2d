@@ -1,0 +1,45 @@
+packages/rich-text-editor/src/plugins/CheckList/CheckList.tsx
+  s_eecb278abe0cf5::t_726974c5009d2b 149,153-154
+packages/rich-text-editor/package.json
+  s_eecb278abe0cf5::t_2e208c3d08319d 58
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.ts
+  s_eecb278abe0cf5::t_fd9863920661f6 3,115
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_eecb278abe0cf5::t_e9411dd387b98b 8,359,362,364-366,372-375,379,382-387,389
+  s_eecb278abe0cf5::t_e3ead8bc98fcf4 7,23-24,26-28,47-48,52,54-55,123,127-131,164-168,171-172,234-236,238,247,261-262,268-288,290,297-321,323-329
+  s_eecb278abe0cf5::t_9a07c5b94c997c 248-252,367-368,371
+  s_eecb278abe0cf5::t_f274611f366c4f 322
+  s_eecb278abe0cf5::t_726974c5009d2b 352,355-358,360-361,363,369-370,376-378,380-381,388,390
+  s_eecb278abe0cf5::t_3bbdbb38076d47 330
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_eecb278abe0cf5::t_5acc1ef3bd9652 99-103
+  s_eecb278abe0cf5::t_c68a4421c2778d 95-98
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.spec.tsx
+  s_eecb278abe0cf5::t_94e24a4e5e324f 5,107
+  s_eecb278abe0cf5::t_265e27a07136e7 113-114,118,122-123,127,140-141,145,148
+  s_eecb278abe0cf5::t_eba8b98fc17a8b 6,103-106,108-112,115-117,119-121,124-126,128-139,142-144,146-147,149
+  s_eecb278abe0cf5::t_8410949cf1e4ea 150
+packages/rich-text-editor/src/core/plugin.ts
+  s_eecb278abe0cf5::t_726974c5009d2b 298-299
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.spec.tsx
+  s_eecb278abe0cf5::t_d00272567e989e 258-260,266
+  s_eecb278abe0cf5::t_3f8700c721d440 255-257,261-265,267-269
+pnpm-lock.yaml
+  s_eecb278abe0cf5::t_584ab052f0bab7 750-752,8974-8976,19040-19045
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f6a39c4c09b9feec70f48af1e6e4aac586657c2d",
+  "prompts": {},
+  "sessions": {
+    "s_eecb278abe0cf5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "02ff1c4d-dc17-4323-8121-0c1783040630",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

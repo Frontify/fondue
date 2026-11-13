@@ -1,0 +1,65 @@
+packages/rich-text-editor/src/plugins/Align/Align.tsx
+  s_3da29b36b0ad36::t_308768d1386dcb 35
+packages/rich-text-editor/src/plugins/SoftBreak/SoftBreak.tsx
+  s_3da29b36b0ad36::t_308768d1386dcb 15,17
+packages/rich-text-editor/src/plugins/Underline/Underline.ts
+  s_3da29b36b0ad36::t_308768d1386dcb 22,24
+packages/rich-text-editor/README.md
+  s_3da29b36b0ad36::t_afcd3915e80d4b 30-31
+  s_3da29b36b0ad36::t_535ad4a3b2bebe 23-25
+packages/rich-text-editor/src/plugins/Subscript/Subscript.ts
+  s_3da29b36b0ad36::t_308768d1386dcb 20,22
+packages/rich-text-editor/src/plugins/defaultContent.ts
+  s_3da29b36b0ad36::t_7cf27e11fda685 21
+packages/rich-text-editor/src/plugins/Quote/Quote.ts
+  s_3da29b36b0ad36::t_308768d1386dcb 20,22
+packages/rich-text-editor/src/plugins/Italic/Italic.ts
+  s_3da29b36b0ad36::t_308768d1386dcb 22,24
+packages/rich-text-editor/src/plugins/Link/helpers/newLinkForms.ts
+  s_3da29b36b0ad36::t_308768d1386dcb 8
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_3da29b36b0ad36::t_308768d1386dcb 30,32
+packages/rich-text-editor/src/plugins/CheckList/CheckList.tsx
+  s_3da29b36b0ad36::t_308768d1386dcb 67,69,74
+packages/rich-text-editor/src/plugins/List/List.ts
+  s_3da29b36b0ad36::t_308768d1386dcb 36,70,79
+packages/rich-text-editor/src/plugins/FontColor/FontColor.tsx
+  s_3da29b36b0ad36::t_308768d1386dcb 34,36
+packages/rich-text-editor/src/plugins/Emoji/helpers/emojis.ts
+  s_3da29b36b0ad36::t_308768d1386dcb 462-463
+packages/rich-text-editor/src/plugins/Code/Code.ts
+  s_3da29b36b0ad36::t_308768d1386dcb 22,24
+packages/rich-text-editor/src/plugins/Typography/Typography.ts
+  s_3da29b36b0ad36::t_308768d1386dcb 45,53
+  s_3da29b36b0ad36::t_849884b714b3f6 37-40,78
+packages/rich-text-editor/src/ui/ToolbarButton/ToolbarButton.tsx
+  s_3da29b36b0ad36::t_308768d1386dcb 58
+packages/rich-text-editor/src/plugins/shared/helpers/href.ts
+  s_3da29b36b0ad36::t_308768d1386dcb 6
+packages/rich-text-editor/src/plugins/Bold/Bold.ts
+  s_3da29b36b0ad36::t_308768d1386dcb 22,24
+packages/rich-text-editor/src/plugins/Strikethrough/Strikethrough.ts
+  s_3da29b36b0ad36::t_308768d1386dcb 22,24
+packages/rich-text-editor/src/plugins/TextStyle/helpers/presets.ts
+  s_3da29b36b0ad36::t_849884b714b3f6 71
+packages/rich-text-editor/src/plugins/Superscript/Superscript.ts
+  s_3da29b36b0ad36::t_308768d1386dcb 20,22
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_3da29b36b0ad36::t_308768d1386dcb 71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1bb17dbcb7cf8b7d67625ffa9aad8a304b4b9516",
+  "prompts": {},
+  "sessions": {
+    "s_3da29b36b0ad36": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52275dbb-cfd4-472c-b295-02ca60ef0ab1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
