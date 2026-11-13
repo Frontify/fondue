@@ -1,0 +1,39 @@
+packages/rich-text-editor/src/editor/EditorErrorBoundary.tsx
+  s_7171e6d5755310::t_2f07f9080af51e 4-13,89-91,105-110,112,138-145
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.spec.tsx
+  s_7171e6d5755310::t_cca1a08e48855e 70
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_7171e6d5755310::t_55422e3f7d35e3 887-902
+  s_7171e6d5755310::t_08476c6878968e 1186-1189,1547-1548
+  s_7171e6d5755310::t_bbd8c024c3388a 1471,1523-1524,1544,1579-1580
+  s_7171e6d5755310::t_c4227e578048f3 1083-1104,1115-1116,1118
+  s_7171e6d5755310::t_630157a0380bf1 1185
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.ts
+  s_7171e6d5755310::t_cca1a08e48855e 62,142,155,166
+packages/rich-text-editor/src/editor/engines/prosemirror/nodeViews.spec.tsx
+  s_7171e6d5755310::t_cca1a08e48855e 180
+packages/rich-text-editor/src/editor/engines/prosemirror/testEditor.ts
+  s_7171e6d5755310::t_cca1a08e48855e 92
+packages/rich-text-editor/src/editor/port.ts
+  s_7171e6d5755310::t_cca1a08e48855e 30-31
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_7171e6d5755310::t_faebfc544362d6 135-137,147,149-154,175,189,199,227,284-286,289-294
+packages/rich-text-editor/src/editor/hooks/useEditorHandle.ts
+  s_7171e6d5755310::t_23720590b192c9 137-138,150,175-176,204
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "48682f76c8615c7eb70ad3ec6e9c193ecc78d00d",
+  "prompts": {},
+  "sessions": {
+    "s_7171e6d5755310": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "499b4516-c5d3-4f67-bc72-eb4814eb7bc8",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

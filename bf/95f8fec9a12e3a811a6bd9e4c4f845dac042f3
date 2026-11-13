@@ -1,0 +1,40 @@
+packages/components/src/components/Select/__tests__/MultiselectIndeterminate.ct.tsx
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 96,100
+packages/components/src/components/Select/Select.stories.tsx
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 126,132-137,152,158-163
+packages/components/src/components/Select/SelectMultiple.tsx
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 26-27
+packages/components/src/components/Select/utils.ts
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 132-141
+packages/components/src/components/Select/__tests__/ComboboxMultiple.spec.tsx
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 252,262-264
+packages/components/src/components/Select/__tests__/SelectMultiple.spec.tsx
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 193,196,204-205
+packages/components/src/components/Select/__tests__/utils.spec.tsx
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 9,122-130
+  s_fbbc580b74bf80::t_74c0ec019570fd 131
+packages/components/src/components/Select/components/ComboboxBase.tsx
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 26,147-148,173,201,248,271
+packages/components/src/components/Select/components/SelectBase.tsx
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 15,135-136,174,253
+packages/components/src/components/Select/Select.metadata.json
+  s_fbbc580b74bf80::t_b4ca250ccf9c6a 4
+packages/components/src/components/Select/ComboboxMultiple.tsx
+  s_fbbc580b74bf80::t_18ab9a36c8bf2e 26-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "bf95f8fec9a12e3a811a6bd9e4c4f845dac042f3",
+  "prompts": {},
+  "sessions": {
+    "s_fbbc580b74bf80": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "531792a9-9c10-420f-a827-63acef15ca4a",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
