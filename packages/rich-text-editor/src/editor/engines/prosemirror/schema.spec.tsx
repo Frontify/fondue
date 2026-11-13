@@ -11,10 +11,13 @@ import {
     defineInline,
     defineMark,
     definePlugin,
+    type RteDocumentOf,
     type RtePlugin,
 } from '#/core';
 
+import { toEngineDocument, toRteDocument } from './documentConversion';
 import { buildSchema as buildSchemaFromRegistry } from './schema';
+import { shipped } from './testEditor';
 
 const buildSchema = (plugins: RtePlugin[]) => buildSchemaFromRegistry(buildPluginRegistry(plugins));
 
@@ -123,6 +126,45 @@ describe('buildSchema', () => {
                 }),
             ]),
         ).toThrow('Block "bulletList" declares items of type "nope", which is not registered.');
+    });
+
+    it('refuses a mark style rule whose property is not a CSS property name', () => {
+        expect(() =>
+            buildSchema([
+                definePlugin({
+                    id: 'bold',
+                    content: defineContent({
+                        marks: {
+                            bold: defineMark({
+                                toHtml: () => ({ tag: 'strong', children: true }),
+                                parse: [{ style: 'fontWeight', value: () => ({}) }],
+                            }),
+                        },
+                    }),
+                }),
+            ]),
+        ).toThrow('The "bold" mark reads "fontWeight", which is not a CSS property name such as font-weight.');
+    });
+
+    it('lets a mark take off the marks it excludes, ignoring a type no mounted plugin registers', () => {
+        const both = buildSchema(shipped('subscript', 'superscript'));
+        const subscriptOnly = buildSchema(shipped('subscript'));
+        const superscriptOnly = buildSchema(shipped('superscript'));
+
+        expect(both.marks.subscript?.spec.excludes).toBe('subscript superscript');
+        expect(both.marks.superscript?.spec.excludes).toBe('superscript subscript');
+        expect(subscriptOnly.marks.subscript?.spec.excludes).toBe('subscript');
+        expect(superscriptOnly.marks.superscript?.spec.excludes).toBe('superscript');
+    });
+
+    it('keeps a stored run that carries both until it is edited', () => {
+        const schema = buildSchema(shipped('subscript', 'superscript'));
+        const stored: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'both', subscript: true, superscript: true }] }],
+        };
+
+        expect(toRteDocument(toEngineDocument(stored, schema))).toEqual(stored);
     });
 
     it('gives a mark turned on without a value its declared defaults', () => {

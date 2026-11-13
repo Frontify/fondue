@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
+    type DefaultStyle,
     type BlockDefinition,
     defineBlock,
     defineContent,
@@ -18,6 +19,8 @@ import {
     type StyleMap,
     type TextLook,
 } from '#/core';
+
+import { withoutBoldWeight } from '../shared/helpers/declaredStyle';
 
 import { HEADING_LEVEL_ICONS } from './components/HeadingLevelIcon';
 import { TextStyleSelect } from './components/TextStyleSelect';
@@ -51,6 +54,11 @@ export type TextStylePluginOptions = {
     presets?: Partial<Record<TextStyleName, TextLook>>;
 };
 
+// Headings are bold by default, so a bold the pasted heading declares on itself is not the author's. Bold on text inside it is.
+const TEXT_STYLE_DEFAULT_STYLES: readonly DefaultStyle[] = [
+    { property: 'font-weight', scope: 'self', strip: withoutBoldWeight },
+];
+
 const textStyleBlockFor = (options: readonly TextStyleOption[]): BlockDefinition => {
     const offered = presetsFor(options);
 
@@ -61,6 +69,7 @@ const textStyleBlockFor = (options: readonly TextStyleOption[]): BlockDefinition
         // Only reached by a node that arrives without one; every
         // path that sets the attribute names a style.
         defaults: { style: offered[0]?.name ?? FIRST_PRESET },
+        defaultStyles: TEXT_STYLE_DEFAULT_STYLES,
         toHtml: ({ style }) => {
             const preset = findPreset(style);
             if (preset === undefined) {

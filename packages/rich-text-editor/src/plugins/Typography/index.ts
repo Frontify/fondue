@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { typographyPlugin } from './Typography';
+export { typographyPlugin, type TypographyGroup, type TypographyPluginOptions } from './Typography';

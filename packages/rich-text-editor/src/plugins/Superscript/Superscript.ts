@@ -4,6 +4,8 @@ import { IconSuperscript } from '@frontify/fondue-icons';
 
 import { defineContent, defineMark, definePlugin } from '#/core';
 
+import { isVerticalAlign, markWhen } from '../shared/helpers/declaredStyle';
+
 /**
  * The flag this plugin sets on text nodes
  */
@@ -19,7 +21,15 @@ export type SuperscriptMark = {
  */
 export const superscriptContent = defineContent({
     marks: {
-        superscript: defineMark({ tag: 'sup' }),
+        superscript: defineMark({
+            tag: 'sup',
+            excludes: ['subscript'],
+            // An element with the alignment is superscript too: how Google Docs writes it.
+            parse: [
+                { tag: 'sup' },
+                { style: 'vertical-align', value: markWhen((value) => isVerticalAlign(value, 'super')) },
+            ],
+        }),
     },
 });
 

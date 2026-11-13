@@ -79,12 +79,12 @@ describe('typing a web address', () => {
     });
 
     it('does nothing inside inline code', () => {
-        const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
+        const editor = editorWith(defaultPlugins, [paragraph(text('xy', { code: true }))]);
         editor.caretAfter('x');
 
         editor.type(' https://example.com ');
 
-        expect(editor.stored()).toEqual([paragraph(text('x https://example.com ', { code: true }))]);
+        expect(editor.stored()).toEqual([paragraph(text('x https://example.com y', { code: true }))]);
     });
 
     it('is taken back by Backspace right after, leaving plain text', () => {

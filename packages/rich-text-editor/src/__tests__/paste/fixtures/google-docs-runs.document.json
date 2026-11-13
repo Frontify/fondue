@@ -16,7 +16,8 @@
                 },
                 {
                     "text": "extrabold italic",
-                    "bold": true
+                    "bold": true,
+                    "italic": true
                 }
             ]
         },
@@ -39,7 +40,8 @@
                 },
                 {
                     "text": "both",
-                    "underline": true
+                    "underline": true,
+                    "strikethrough": true
                 }
             ]
         },
@@ -47,7 +49,18 @@
             "type": "paragraph",
             "children": [
                 {
-                    "text": "H2O and E=mc2"
+                    "text": "H"
+                },
+                {
+                    "text": "2",
+                    "subscript": true
+                },
+                {
+                    "text": "O and E=mc"
+                },
+                {
+                    "text": "2",
+                    "superscript": true
                 }
             ]
         }
