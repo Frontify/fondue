@@ -18,6 +18,3 @@ export const DOCUMENT_GAP_VARIABLES = {
  * writes its margins, so the document's rule for blocks without a look leaves it alone.
  */
 export const OWN_MARGINS_ATTRIBUTE = 'data-rte-own-margins';
-
-/** Set on the element a document is drawn in, by the editor and the renderer alike, so a test can find it. */
-export const DOCUMENT_TEST_ID = 'rte-document';

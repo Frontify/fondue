@@ -36,16 +36,15 @@ $default-fallbacks: (
 
 // Writes each property as the host's `--rte-<$key>-<property>`, falling back to Fondue's look: `$fallbacks`
 // where it differs from the default. `$key` is the style's kebab-case name, such as `image-title`.
-// `$only` limits the output to those properties (a block that sets only its margins), `$except` leaves some out.
-@mixin look($key, $fallbacks: (), $only: $look-properties, $except: ()) {
+// `$except` leaves some properties out.
+@mixin look($key, $fallbacks: (), $except: ()) {
     @include -assert-known(map.keys($fallbacks), '$fallbacks');
-    @include -assert-known($only, '$only');
     @include -assert-known($except, '$except');
 
     $resolved: map.merge($default-fallbacks, $fallbacks);
 
     @each $property in $look-properties {
-        @if list.index($only, $property) and not list.index($except, $property) {
+        @if not list.index($except, $property) {
             #{$property}: var(--rte-#{$key}-#{$property}, #{map.get($resolved, $property)});
         }
     }
