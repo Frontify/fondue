@@ -4,7 +4,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { OFFICE_LIST_ATTRIBUTES, removeOfficeListData } from '#/core';
+import { OFFICE_LIST_ATTRIBUTES } from '#/core';
 
 import { PASTED_LISTS } from './pastedLists';
 
@@ -12,7 +12,12 @@ import { PASTED_LISTS } from './pastedLists';
 const rebuilt = (html: string): HTMLElement => {
     const { body } = new DOMParser().parseFromString(html, 'text/html');
     PASTED_LISTS.run(body, { isClaimed: () => false });
-    removeOfficeListData(body);
+    // What the editor does after every transform: no paragraph keeps the list data.
+    for (const paragraph of body.querySelectorAll('p')) {
+        for (const name of Object.values(OFFICE_LIST_ATTRIBUTES)) {
+            paragraph.removeAttribute(name);
+        }
+    }
     return body;
 };
 

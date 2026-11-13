@@ -18,7 +18,7 @@ import {
     type RtePlugin,
     type RteToolbarGroup,
 } from './plugin';
-import { activeCommand, buildPluginRegistry, isClaimedBy, toolbarGroupsOf } from './registry';
+import { activeCommand, buildPluginRegistry, isClaimedBy } from './registry';
 
 /**
  * The registry is the one place plugins are read: it gathers their
@@ -819,39 +819,6 @@ describe('toolbar groups', () => {
     const grouped = (id: string, group?: RteToolbarGroup) =>
         definePlugin({ id, toolbarGroup: group, toolbar: [{ label: id, render: button }] });
 
-    /** The drawing order as `group: plugin ids`, with `-` for the plugins that have no group. */
-    const drawn = (plugins: RtePlugin[]): string[] =>
-        toolbarGroupsOf(buildPluginRegistry(plugins).toolbarItems).map(
-            ({ id, entries }) => `${id ?? '-'}: ${entries.map((entry) => entry.id).join(',')}`,
-        );
-
-    it('are drawn by order, lowest first, whatever order the plugins mount in', () => {
-        expect(
-            drawn([
-                grouped('late', { id: 'second', order: 20 }),
-                grouped('early', { id: 'first', order: 10 }),
-                grouped('also-late', { id: 'second', order: 20 }),
-            ]),
-        ).toEqual(['first: early', 'second: late,also-late']);
-    });
-
-    it('keep the order their ids first appear in when their orders are equal', () => {
-        expect(
-            drawn([
-                grouped('b', { id: 'bravo', order: 10 }),
-                grouped('a', { id: 'alpha', order: 10 }),
-                grouped('c', { id: 'bravo', order: 10 }),
-            ]),
-        ).toEqual(['bravo: b,c', 'alpha: a']);
-    });
-
-    it('put the controls of plugins with no group last, together, in mount order', () => {
-        expect(drawn([grouped('loose-1'), grouped('only', { id: 'only', order: 500 }), grouped('loose-2')])).toEqual([
-            'only: only',
-            '-: loose-1,loose-2',
-        ]);
-    });
-
     it('throw when two plugins give one id two orders', () => {
         expect(() =>
             buildPluginRegistry([grouped('a', { id: 'shared', order: 1 }), grouped('b', { id: 'shared', order: 2 })]),
@@ -872,21 +839,6 @@ describe('toolbar groups', () => {
 });
 
 describe('the active command', () => {
-    const blockOf = (content: ReturnType<typeof defineBlock>['content']) =>
-        defineBlock({ content, toHtml: () => ({ tag: 'div', children: true }), parse: [] });
-    const registry = buildPluginRegistry([
-        definePlugin({
-            id: 'blocks',
-            content: defineContent({
-                blocks: {
-                    listItem: blockOf({ blocks: ['paragraph'] }),
-                    bulletList: blockOf({ items: 'listItem' }),
-                    numberedList: blockOf({ items: 'listItem' }),
-                    textStyle: blockOf('text'),
-                },
-            }),
-        }),
-    ]);
     const command = (id: string, active?: RteBlockCommand['active']): RteBlockCommand => ({
         id,
         label: id,
@@ -894,63 +846,52 @@ describe('the active command', () => {
         active,
         run: () => {},
     });
-    const text = command('text', { type: 'paragraph' });
-    const bullet = command('bullet', { type: 'bulletList' });
-    const numbered = command('numbered', { type: 'numberedList' });
-    const heading = command('heading', { type: 'textStyle', attributes: { style: 'heading-1' } });
-    const body = command('body', { type: 'textStyle', attributes: { style: 'body' } });
-    const commands = [text, bullet, numbered, heading, body];
+    const forText = command('forText', { type: 'text' });
+    const forHolderA = command('forHolderA', { type: 'holderA' });
+    const forHolderB = command('forHolderB', { type: 'holderB' });
+    const forOne = command('forOne', { type: 'styled', attributes: { variant: 'one' } });
+    const commands = [forText, forHolderA, forHolderB, forOne];
     const selectionIn = (...blocks: RteSelectionSnapshot['blocks']): RteSelectionSnapshot =>
         ({ block: blocks[0] ?? null, blocks }) as RteSelectionSnapshot;
 
-    it('is Text for a paragraph at the top level', () => {
-        expect(activeCommand(commands, selectionIn({ type: 'paragraph' }), registry)).toBe(text);
+    it('is the command whose block the selection is in', () => {
+        expect(activeCommand(commands, selectionIn({ type: 'text' }))).toBe(forText);
     });
 
-    it('is the list for a paragraph in a list item', () => {
-        const selection = selectionIn({ type: 'paragraph' }, { type: 'listItem' }, { type: 'bulletList' });
+    it('is the command of an outer block when the inner blocks have none', () => {
+        const selection = selectionIn({ type: 'other' }, { type: 'slot' }, { type: 'holderA' });
 
-        expect(activeCommand(commands, selection, registry)).toBe(bullet);
+        expect(activeCommand(commands, selection)).toBe(forHolderA);
     });
 
-    it('is the style for a styled text block in a list item', () => {
+    it('is the command for the block that has the listed attributes', () => {
+        const selection = selectionIn({ type: 'styled', variant: 'one' }, { type: 'slot' }, { type: 'holderA' });
+
+        expect(activeCommand(commands, selection)).toBe(forOne);
+    });
+
+    it('is the inner block when the same kind of block nests', () => {
         const selection = selectionIn(
-            { type: 'textStyle', style: 'heading-1' },
-            { type: 'listItem' },
-            { type: 'bulletList' },
+            { type: 'other' },
+            { type: 'slot' },
+            { type: 'holderB' },
+            { type: 'slot' },
+            { type: 'holderA' },
         );
 
-        expect(activeCommand(commands, selection, registry)).toBe(heading);
-    });
-
-    it('is the inner list for a list nested in a list item', () => {
-        const selection = selectionIn(
-            { type: 'paragraph' },
-            { type: 'listItem' },
-            { type: 'numberedList' },
-            { type: 'listItem' },
-            { type: 'bulletList' },
-        );
-
-        expect(activeCommand(commands, selection, registry)).toBe(numbered);
+        expect(activeCommand(commands, selection)).toBe(forHolderB);
     });
 
     it('needs every listed attribute to match', () => {
-        const selection = selectionIn({ type: 'textStyle', style: 'heading-2' });
+        const selection = selectionIn({ type: 'styled', variant: 'two' });
 
-        expect(activeCommand(commands, selection, registry)).toBeUndefined();
+        expect(activeCommand(commands, selection)).toBeUndefined();
         expect(
-            activeCommand(
-                [command('both', { type: 'textStyle', attributes: { style: 'heading-2', x: 1 } })],
-                selection,
-                registry,
-            ),
+            activeCommand([command('both', { type: 'styled', attributes: { variant: 'two', extra: 1 } })], selection),
         ).toBeUndefined();
     });
 
     it('is never a command without `active`', () => {
-        const selection = selectionIn({ type: 'paragraph' });
-
-        expect(activeCommand([command('plain')], selection, registry)).toBeUndefined();
+        expect(activeCommand([command('none')], selectionIn({ type: 'text' }))).toBeUndefined();
     });
 });

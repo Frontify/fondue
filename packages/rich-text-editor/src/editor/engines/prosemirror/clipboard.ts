@@ -17,12 +17,11 @@ import {
     type PasteSource,
     type PasteTransform,
     type PasteTransformContext,
-    removeOfficeListData,
 } from '#/core';
 
 import { EXTRA_ATTR, mapExtras } from './documentConversion';
 import { tidyGoogleDocs } from './pasteGoogleDocs';
-import { tidyOffice } from './pasteOffice';
+import { removeOfficeListData, tidyOffice } from './pasteOffice';
 
 /** Put on what this editor copies, so a paste can tell it came from an editor like this one. */
 const COPIED_FROM_EDITOR = 'data-rte-copy';

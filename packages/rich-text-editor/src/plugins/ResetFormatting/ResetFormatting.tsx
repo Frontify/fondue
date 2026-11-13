@@ -8,32 +8,41 @@ import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
 
-const DEFAULT_CLEAR_MARKS_LABEL = 'Clear inline formatting, keep links';
-const DEFAULT_CLEARED_ANNOUNCEMENT = 'Formatting cleared';
-const DEFAULT_RESET_ANNOUNCEMENT = 'Formatting reset';
-
 /**
- * What the reset button and its key say, to sighted users and to screen readers, with a default of English.
+ * The words the reset button and its key say: what the keyboard reference calls the key, and what screen readers hear
  */
-export type ResetFormattingPluginOptions = {
+export type ResetFormattingLabels = {
     /**
      * What the keyboard reference calls `Mod-\`.
      *
      * @default 'Clear inline formatting, keep links'
      */
-    clearMarksLabel?: string;
+    clearMarksTitle: string;
     /**
      * Said after `Mod-\` removed a mark. It says nothing when there was no mark to remove.
      *
      * @default 'Formatting cleared'
      */
-    clearedAnnouncement?: string;
+    cleared: string;
     /**
      * Said after the Reset formatting button ran.
      *
      * @default 'Formatting reset'
      */
-    resetAnnouncement?: string;
+    reset: string;
+};
+
+const DEFAULT_RESET_FORMATTING_LABELS: ResetFormattingLabels = {
+    clearMarksTitle: 'Clear inline formatting, keep links',
+    cleared: 'Formatting cleared',
+    reset: 'Formatting reset',
+};
+
+export type ResetFormattingPluginOptions = {
+    /**
+     * The words the plugin says. Each one left out stays English.
+     */
+    labels?: Partial<ResetFormattingLabels>;
 };
 
 /**
@@ -48,13 +57,13 @@ const reset = (api: EditorControlApi): void => {
     });
 };
 
-type ResetFormattingButtonProps = ToolbarItemProps & { resetAnnouncement: string };
+type ResetFormattingButtonProps = ToolbarItemProps & { labels: ResetFormattingLabels };
 
-const ResetFormattingButton = ({ api, label, resetAnnouncement }: ResetFormattingButtonProps) => {
+const ResetFormattingButton = ({ api, label, labels }: ResetFormattingButtonProps) => {
     const onClick = (): void => {
         reset(api);
         // The API gives no signal for whether the whole reset changed anything, so this always announces.
-        api.announce(resetAnnouncement);
+        api.announce(labels.reset);
     };
     return (
         <ToolbarButton title={label} onClick={onClick}>
@@ -66,31 +75,29 @@ const ResetFormattingButton = ({ api, label, resetAnnouncement }: ResetFormattin
 /**
  * A toolbar button that resets the selection's marks, lists, block types and attributes, and `Mod-\`, which only clears its marks. Both keep the marks that survive a clear
  */
-export const resetFormattingPlugin = ({
-    clearMarksLabel = DEFAULT_CLEAR_MARKS_LABEL,
-    clearedAnnouncement = DEFAULT_CLEARED_ANNOUNCEMENT,
-    resetAnnouncement = DEFAULT_RESET_ANNOUNCEMENT,
-}: ResetFormattingPluginOptions = {}) =>
-    definePlugin({
+export const resetFormattingPlugin = (options: ResetFormattingPluginOptions = {}) => {
+    const labels: ResetFormattingLabels = { ...DEFAULT_RESET_FORMATTING_LABELS, ...options.labels };
+    return definePlugin({
         id: 'reset-formatting',
         toolbarGroup: TOOLBAR_GROUPS.marks,
         toolbar: [
             {
                 label: 'Reset formatting',
-                render: (props) => <ResetFormattingButton {...props} resetAnnouncement={resetAnnouncement} />,
+                render: (props) => <ResetFormattingButton {...props} labels={labels} />,
                 floating: 'inline',
             },
         ],
         // The key is a literal because a computed key keeps this plugin in the renderer.
         hotkeys: {
             'Mod-\\': {
-                label: clearMarksLabel,
+                label: labels.clearMarksTitle,
                 // Clears the marks only, those that survive a clear (links) excepted: block types, lists and alignment stay, which the toolbar button resets.
                 run: (api) => {
                     if (api.marks.removeAll({ scope: 'block', keepSurviving: true })) {
-                        api.announce(clearedAnnouncement);
+                        api.announce(labels.cleared);
                     }
                 },
             },
         } satisfies Record<string, RteHotkey>,
     });
+};

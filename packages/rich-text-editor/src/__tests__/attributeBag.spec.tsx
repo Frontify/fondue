@@ -63,9 +63,12 @@ const REFUSED: [string, HtmlAttributes][] = [
     ['an event handler', { onclick: 'alert(1)' }],
     ['an event handler in capitals', { OnClick: 'alert(1)' }],
     ['a name with a space', { 'data x': 'y' }],
-    ['a style that is not a map', { style: 'color: red' } as unknown as HtmlAttributes],
-    ['a style map on another attribute', { title: { color: 'red' } } as unknown as HtmlAttributes],
 ];
+
+/** An attribute every stored-value case carries, so the test can find the drawn element on each surface. */
+const KEPT = 'data-keep';
+
+const toUntyped = (attrs: Record<string, unknown>): HtmlAttributes => attrs as unknown as HtmlAttributes;
 
 const mountView = (view: () => React.ReactNode): HTMLElement => {
     const container = window.document.createElement('div');
@@ -110,6 +113,20 @@ describe('the attributes of markup', () => {
         expect(element?.hasAttribute('title')).toBe(false);
     });
 
+    it('write a true boolean with the same value in the editor, the HTML export and the readonly view', () => {
+        const plugin = attributesPlugin({ 'data-x': 'y', popover: true, hidden: true, disabled: true });
+        const editor = mountView(() => <RichTextEditor value={value} plugins={[plugin]} />).querySelector('[data-x]');
+        const view = mountView(() => <RichTextRenderer value={value} plugins={[plugin]} />).querySelector('[data-x]');
+        const exported = window.document.createElement('div');
+        exported.innerHTML = serializeToHtml(value, { plugins: [plugin], wrap: false });
+
+        for (const name of ['popover', 'hidden', 'disabled']) {
+            expect(editor?.getAttribute(name)).toBe('');
+            expect(view?.getAttribute(name)).toBe('');
+            expect(exported.querySelector('[data-x]')?.getAttribute(name)).toBe('');
+        }
+    });
+
     it('reach the readonly view without a React warning, and leave a false boolean out', () => {
         const error = vi.spyOn(console, 'error').mockImplementation(() => {});
         const plugin = attributesPlugin({ 'data-x': 'y', popover: true, hidden: false });
@@ -123,6 +140,58 @@ describe('the attributes of markup', () => {
         const plugin = attributesPlugin({ style: { color: 'red' } });
 
         expect(serializeToHtml(value, { plugins: [plugin], wrap: false })).toBe('<div style="color: red;">text</div>');
+    });
+});
+
+/** The element each surface draws for the markup, so a stored value is judged the same on all three. */
+const drawnBy = (attrs: HtmlAttributes): Record<string, Element | null | undefined> => {
+    const plugin = attributesPlugin(attrs);
+    const exported = window.document.createElement('div');
+    exported.innerHTML = serializeToHtml(value, { plugins: [plugin], wrap: false });
+    return {
+        editor: mountView(() => <RichTextEditor value={value} plugins={[plugin]} />).querySelector(`[${KEPT}]`),
+        export: exported.querySelector(`[${KEPT}]`),
+        view: mountView(() => <RichTextRenderer value={value} plugins={[plugin]} />).querySelector(`[${KEPT}]`),
+    };
+};
+
+describe('a stored value in the attributes of markup', () => {
+    it('is left out when it is null or undefined, without a warning', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const surfaces = drawnBy(toUntyped({ [KEPT]: 'y', 'data-null': null, 'data-undefined': undefined }));
+
+        for (const element of Object.values(surfaces)) {
+            expect(element?.getAttribute(KEPT)).toBe('y');
+            expect(element?.hasAttribute('data-null')).toBe(false);
+            expect(element?.hasAttribute('data-undefined')).toBe(false);
+        }
+        expect(warn).not.toHaveBeenCalled();
+    });
+
+    it('is written as a string when it is a number', () => {
+        const surfaces = drawnBy(toUntyped({ [KEPT]: 'y', 'data-count': 3 }));
+
+        for (const element of Object.values(surfaces)) {
+            expect(element?.getAttribute('data-count')).toBe('3');
+        }
+    });
+
+    it('is left out with one development warning when it is anything else, a style that is not a map included', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const surfaces = drawnBy(
+            toUntyped({ [KEPT]: 'y', 'data-object-value': { color: 'red' }, title: ['a'], style: 'color: red' }),
+        );
+
+        for (const element of Object.values(surfaces)) {
+            expect(element?.getAttribute(KEPT)).toBe('y');
+            expect(element?.hasAttribute('data-object-value')).toBe(false);
+            expect(element?.hasAttribute('title')).toBe(false);
+            expect(element?.hasAttribute('style')).toBe(false);
+        }
+        const leftOut = warn.mock.calls.filter(([message]) => String(message).includes('was left out'));
+        expect(leftOut).toHaveLength(3);
     });
 });
 

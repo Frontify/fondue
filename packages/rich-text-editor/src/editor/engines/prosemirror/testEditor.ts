@@ -4,7 +4,17 @@ import { type Node as PmNode } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
 import { vi } from 'vitest';
 
-import { buildPluginRegistry, type RteBlockNode, type RteDocumentOf, type RtePlugin } from '#/core';
+import {
+    buildPluginRegistry,
+    defineContent,
+    defineMark,
+    definePlugin,
+    type PasteHandler,
+    type RteBlockNode,
+    type RteDocumentOf,
+    type RteMarkPatternTrim,
+    type RtePlugin,
+} from '#/core';
 import { type MountedDocument, type MountOptions } from '#/editor/port';
 import { defaultPlugins } from '#/plugins';
 
@@ -151,3 +161,73 @@ export const text = (value: string, marks: Record<string, unknown> = {}): Record
     text: value,
     ...marks,
 });
+
+/** The tokens the generic `token` plugin marks while typing: `tok:` and everything up to the next space. */
+const TOKEN_PATTERN = /tok:[^\s]+/;
+
+/** A trim in the shape any plugin can declare: sentence punctuation and quotes, and closing brackets with no opening one. */
+export const TOKEN_TRIM: RteMarkPatternTrim = {
+    punctuation: /[.,;:!?"'”’]+/,
+    pairs: { ')': '(', ']': '[', '}': '{', '>': '<' },
+};
+
+/** What the `token` mark carries. */
+export type TokenValue = { id: string };
+
+/** The `token` mark as a stored text node carries it. */
+export const token = (value: string, id = value): Record<string, unknown> => text(value, { token: { id } });
+
+/** What a spec decides about the generic `token` plugin. */
+export type TokenPluginOptions = {
+    /** The trim the typing rule declares. Leave out for a rule that trims nothing. */
+    trim?: RteMarkPatternTrim;
+    /** The typing rule's pattern. */
+    pattern?: RegExp;
+    /** Tokens the rule refuses, which stay as typed. */
+    refuses?: (value: string) => boolean;
+    /** The paste handler the plugin brings. */
+    onPaste?: PasteHandler;
+};
+
+/**
+ * A plugin of the engine's own specs: a mark that carries a value, a typing rule that marks a token, and
+ * optionally a paste handler. It stands in for a shipped feature, so the engine is tested through its contract alone.
+ */
+export const tokenPlugin = ({
+    trim,
+    pattern = TOKEN_PATTERN,
+    refuses = () => false,
+    onPaste,
+}: TokenPluginOptions = {}): RtePlugin =>
+    definePlugin({
+        id: 'token',
+        content: defineContent({
+            marks: {
+                token: defineMark<TokenValue>({
+                    inclusive: false,
+                    toHtml: ({ id }) => ({ tag: 'a', attrs: { 'data-token': id }, children: true }),
+                    parse: [
+                        {
+                            tag: 'a[data-token]',
+                            value: (element) => ({ id: element.getAttribute('data-token') ?? '' }),
+                        },
+                    ],
+                }),
+            },
+        }),
+        inputRules: [
+            {
+                kind: 'markPattern',
+                pattern,
+                mark: 'token',
+                trim,
+                value: (value) => {
+                    if (refuses(value)) {
+                        return null;
+                    }
+                    return { id: value };
+                },
+            },
+        ],
+        onPaste,
+    });

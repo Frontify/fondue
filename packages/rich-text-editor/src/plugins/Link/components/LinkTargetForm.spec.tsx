@@ -6,6 +6,7 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { type LinkLabels, resolveLinkLabels } from '../helpers/labels';
 import { type LinkPolicy } from '../helpers/policy';
 
 import { LinkTargetForm } from './LinkTargetForm';
@@ -27,14 +28,21 @@ type FormMode = { kind: 'create'; text: string } | { kind: 'edit' };
 
 type EnterPressInit = KeyboardEventInit & { keyCode?: number };
 
-const mountForm = (policy: LinkPolicy, mode: FormMode = { kind: 'edit' }) => {
+const mountForm = (policy: LinkPolicy, mode: FormMode = { kind: 'edit' }, labels?: Partial<LinkLabels>) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
     const root = createRoot(container);
     const onSave = vi.fn();
     act(() => {
         root.render(
-            <LinkTargetForm initial={{ href: '' }} {...mode} policy={policy} onSave={onSave} onCancel={vi.fn()} />,
+            <LinkTargetForm
+                initial={{ href: '' }}
+                {...mode}
+                policy={policy}
+                labels={resolveLinkLabels(labels)}
+                onSave={onSave}
+                onCancel={vi.fn()}
+            />,
         );
     });
     teardown.push(() => {
@@ -139,6 +147,12 @@ describe('the link target form', () => {
             expect(labelOf(container, field)).toBe('Text');
             expect(field.value).toBe('the docs');
             expect(onSave.mock.calls).toEqual([[{ href: 'https://example.com' }, 'the docs']]);
+        });
+
+        it('names the Text field with the label a host passes', () => {
+            const { container } = mountForm({}, { kind: 'create', text: '' }, { text: 'Beschriftung' });
+
+            expect(labelOf(container, textField(container))).toBe('Beschriftung');
         });
 
         it('reads Text, Link to, Open in new tab, then the buttons', () => {

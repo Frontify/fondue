@@ -9,11 +9,13 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { type EditorControlApi } from '#/core';
 
 import { mentionDisplay } from '../helpers/display';
+import { DEFAULT_MENTION_CONTENT_LABELS } from '../helpers/labels';
 import { mentionContent } from '../Mention';
 import { type MentionValue } from '../types';
 
 import { MentionEditor } from './MentionEditor';
 import { MentionLink } from './MentionLink';
+import { DEFAULT_MENTION_PICKER_LABELS } from './pickerLabels';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -55,6 +57,17 @@ describe('an unavailable mention', () => {
         expect(mention?.hasAttribute('tabindex')).toBe(false);
     });
 
+    it('says the note in the labels it is given when it is read', () => {
+        const Component = mentionContent({ resolve, labels: { unavailable: '(indisponible)' } }).inlines?.mention
+            ?.render?.component;
+        if (!Component) {
+            throw new Error('no reading view');
+        }
+        const container = mount(<Component value={JANE} />);
+
+        expect(container.querySelector('span[data-mention-id]')?.textContent).toBe('@jane (indisponible)');
+    });
+
     it('stays out of the tab order in the reading view', () => {
         const Component = mentionContent({ resolve }).inlines?.mention?.render?.component;
         if (!Component) {
@@ -87,6 +100,7 @@ describe('a click on a linked mention', () => {
                 isOpen={false}
                 editing={editing}
                 setOpen={() => {}}
+                labels={{ ...DEFAULT_MENTION_CONTENT_LABELS, ...DEFAULT_MENTION_PICKER_LABELS }}
                 remove={() => {}}
                 api={{} as EditorControlApi}
                 items={() => []}

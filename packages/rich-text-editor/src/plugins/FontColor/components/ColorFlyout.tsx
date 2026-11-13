@@ -4,21 +4,22 @@ import { Button, ColorPicker, Flyout } from '@frontify/fondue-components';
 import { IconDroplet } from '@frontify/fondue-icons';
 import { type ComponentProps, type ReactNode, useId, useRef, useState } from 'react';
 
-import {
-    decodeStoredColor,
-    type EditorControlApi,
-    encodeStoredColor,
-    OPAQUE_ALPHA,
-    type Rgba,
-    type RteSelectionSnapshot,
-    type ToolbarItemProps,
-    toStoredColor,
-} from '#/core';
+import { type EditorControlApi, type RteSelectionSnapshot, type ToolbarItemProps } from '#/core';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
-import { type FontColorValue, isCompleteHex, parseTypedHex, toColorName } from '../helpers/colors';
+import {
+    decodeStoredColor,
+    encodeStoredColor,
+    type FontColorValue,
+    isCompleteHex,
+    OPAQUE_ALPHA,
+    parseTypedHex,
+    type Rgba,
+    toColorName,
+    toStoredColor,
+} from '../helpers/colors';
 
 import styles from './colorFlyout.module.scss';
 
@@ -86,7 +87,6 @@ export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProp
     }
     // A stored value that is no colour shows none, and is still removable.
     const hasColor = isActive !== false;
-    // A legacy value (`red`, `rgb()`) reads as its stored form, as the document draws it.
     const storedColor = toStoredColor(value?.color);
     let currentColor: Rgba | undefined;
     let title = label;

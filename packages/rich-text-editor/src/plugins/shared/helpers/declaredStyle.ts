@@ -3,6 +3,26 @@
 import { type StyleParseRule } from '#/core';
 
 /**
+ * A CSS property as written in an element's own `style` attribute (`#f00` stays
+ * `#f00`), or null when not declared. Never inherited or computed values. Matches
+ * whole property names, and the last declaration wins.
+ */
+export const declaredStyle = (element: HTMLElement, property: string): string | null => {
+    const declarations = (element.getAttribute('style') ?? '').split(';');
+    let found: string | null = null;
+    for (const declaration of declarations) {
+        const colon = declaration.indexOf(':');
+        if (colon !== -1 && declaration.slice(0, colon).trim().toLowerCase() === property) {
+            found = declaration
+                .slice(colon + 1)
+                .replace(/!important\s*$/i, '')
+                .trim();
+        }
+    }
+    return found === '' ? null : found;
+};
+
+/**
  * The lowest numeric `font-weight` that reads as bold.
  */
 const BOLD_WEIGHT = 600;
