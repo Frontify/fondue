@@ -5,7 +5,7 @@ import { type InputRule } from 'prosemirror-inputrules';
 import { type Mark as PmMark, type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
 import { type EditorState, Plugin, PluginKey, type Plugin as PmPlugin, type Transaction } from 'prosemirror-state';
 
-import { INLINE_PLACEHOLDER, type PluginRegistry } from '#/core';
+import { INLINE_PLACEHOLDER, type PluginRegistry, type RteMarkPatternTrim, WORD_START_CONTEXT } from '#/core';
 
 import { valueAttrsFor } from './documentConversion';
 import {
@@ -18,23 +18,43 @@ import {
     withoutStateFlags,
 } from './ruleContext';
 
-/** Punctuation that ends a sentence rather than a link, though a link may contain it. */
-const TRAILING_PUNCTUATION = /[.,;:!?]+$/;
-
 const count = (text: string, character: string): number => text.split(character).length - 1;
 
-/** Drops trailing punctuation, and a trailing `)` only while it has no `(` to close. */
-const trimTrailingPunctuation = (address: string): string => {
-    let trimmed = address;
+/** Whether the text ends in a closing bracket with no opening one left for it to close. */
+const endsInUnbalancedBracket = (text: string, pairs: RteMarkPatternTrim['pairs']): boolean => {
+    const closing = text.slice(-1);
+    const opening = pairs[closing];
+    if (opening === undefined) {
+        return false;
+    }
+    return count(text, closing) > count(text, opening);
+};
+
+/** Matches `trim.punctuation` at the end of a token. */
+const trailingPunctuation = ({ punctuation }: RteMarkPatternTrim): RegExp =>
+    new RegExp(`(?:${punctuation.source})$`, withoutStateFlags(punctuation));
+
+/** Drops the trailing punctuation a rule declares, and a trailing closing bracket only while it has no opening one to close. */
+export const trimTrailingPunctuation = (token: string, trim: RteMarkPatternTrim): string => {
+    const trailing = trailingPunctuation(trim);
+    let trimmed = token;
     for (;;) {
-        const next = trimmed.replace(TRAILING_PUNCTUATION, '');
-        const unbalanced = next.endsWith(')') && count(next, ')') > count(next, '(');
-        if (!unbalanced && next === trimmed) {
+        let next = trimmed.replace(trailing, '');
+        if (endsInUnbalancedBracket(next, trim.pairs)) {
+            next = next.slice(0, -1);
+        }
+        if (next === trimmed) {
             return trimmed;
         }
-        trimmed = unbalanced ? next.slice(0, -1) : next;
+        trimmed = next;
     }
 };
+
+/** The characters core says may precede a word, as a class body that also compiles under the `v` flag, where a bracket must be escaped. */
+const WORD_START_CLASS_BODY = WORD_START_CONTEXT.replaceAll(/[([{]/g, String.raw`\$&`);
+
+/** What may come right before a token: a word start, or an inline element. */
+const TOKEN_OPENERS = `${WORD_START_CLASS_BODY}${INLINE_PLACEHOLDER}`;
 
 /** How much text before the caret a rule reads, as the engine's input rules do. */
 const MAX_MATCH = 500;
@@ -45,7 +65,7 @@ type MarkRange = { from: number; to: number; mark: PmMark };
 type MarkPatternMatcher = {
     markType: PmMarkType;
     pattern: RegExp;
-    /** The range to mark and the mark, or null when the token is no match or already carries a mark. */
+    /** The range to mark and the mark, or null when the token is no match, already carries a mark, or the rule refuses it. */
     find: (state: EditorState, match: RegExpMatchArray, start: number) => MarkRange | null;
 };
 
@@ -62,7 +82,7 @@ const markPatternMatcher = (rule: RuleOfKind<'markPattern'>, context: RuleContex
     }
     const flags = withoutStateFlags(rule.pattern);
     const token = new RegExp(`^(?:${rule.pattern.source})$`, flags);
-    const pattern = new RegExp(`(?:^|[\\s${INLINE_PLACEHOLDER}])((?:${rule.pattern.source}))\\s$`, flags);
+    const pattern = new RegExp(String.raw`(?:^|[${TOKEN_OPENERS}])((?:${rule.pattern.source}))\s$`, flags);
 
     const find = (state: EditorState, match: RegExpMatchArray, start: number): MarkRange | null => {
         // A token pattern may match across an inline element: only what follows the last one counts.
@@ -70,7 +90,10 @@ const markPatternMatcher = (rule: RuleOfKind<'markPattern'>, context: RuleContex
         if (!typed) {
             return null;
         }
-        const linked = trimTrailingPunctuation(typed);
+        let linked = typed;
+        if (rule.trim !== undefined) {
+            linked = trimTrailingPunctuation(typed, rule.trim);
+        }
         if (!token.test(linked)) {
             return null;
         }
@@ -80,7 +103,11 @@ const markPatternMatcher = (rule: RuleOfKind<'markPattern'>, context: RuleContex
         if ([markType, ...context.excludedMarks].some((type) => state.doc.rangeHasMark(from, to, type))) {
             return null;
         }
-        return { from, to, mark: markType.create(valueAttrsFor(rule.value(linked))) };
+        const value = rule.value(linked);
+        if (value === null) {
+            return null;
+        }
+        return { from, to, mark: markType.create(valueAttrsFor(value)) };
     };
     return { markType, pattern, find };
 };

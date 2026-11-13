@@ -1,7 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/** The schemes a link may use. Everything else — `javascript:`, `data:` — never becomes one. */
-const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']);
+/**
+ * The schemes a link may use, which leaves out `javascript:` and `data:`
+ */
+export const LINK_SCHEMES = ['https', 'http', 'mailto', 'tel'] as const;
+
+/**
+ * A scheme a link may use.
+ */
+export type LinkScheme = (typeof LINK_SCHEMES)[number];
+
+/**
+ * The link schemes as an href starts with them, colon included
+ */
+const SAFE_SCHEMES = new Set<string>(LINK_SCHEMES.map((scheme) => `${scheme}:`));
 
 /**
  * `localhost:3000`, `example.com:8080/x`: a host and a port, which reads like a
@@ -11,14 +23,19 @@ const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']);
 const HOST_AND_PORT = /^[^/:?#]+:\d+(?:[/?#]|$)/;
 
 /**
- * A web address as it is typed in text: an http or https scheme and everything up to the next space
+ * The schemes a typed or pasted address may start with to become a link
  */
-export const WEB_ADDRESS = /https?:\/\/[^\s]+/;
+const LINKABLE_SCHEMES = 'https?://|mailto:|tel:';
 
 /**
- * What pasted text starts with to link the selected text: a web or mail scheme
+ * A web, mail or phone address as it is typed in text: a linkable scheme and everything up to the next space
  */
-const LINKABLE_PASTE = /^(https?:\/\/|mailto:)/i;
+export const LINKABLE_ADDRESS = new RegExp(String.raw`(?:${LINKABLE_SCHEMES})[^\s]+`);
+
+/**
+ * What pasted text starts with to become a link: a web, mail or phone scheme
+ */
+const LINKABLE_PASTE = new RegExp(`^(?:${LINKABLE_SCHEMES})`, 'i');
 
 /** Longer than any link someone means, and than most browsers keep. */
 const MAX_HREF_LENGTH = 2048;
@@ -48,7 +65,7 @@ export const isSafeHref = (href: unknown): href is string => {
 };
 
 /**
- * Whether pasted text is a web or mail address that may link the selected text
+ * Whether pasted text is a web, mail or phone address that may become a link
  */
 export const isLinkablePaste = (text: string): boolean => LINKABLE_PASTE.test(text);
 

@@ -3,17 +3,81 @@
 import { Button, Flyout } from '@frontify/fondue-components';
 import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from 'react';
 
-import { type EditProps } from '#/core';
+import { type EditProps, matchesHotkey } from '#/core';
 
-import { isSafeHref } from '../../shared/helpers/href';
+import { type LinkSearch } from '../helpers/destination';
+import { type LinkLabels } from '../helpers/labels';
+import { NEW_TAB_REL, NEW_TAB_TARGET, NEW_TAB_WINDOW_FEATURES } from '../helpers/newTab';
+import { allowsHref, type LinkPolicy } from '../helpers/policy';
 import { type LinkValue } from '../helpers/value';
 import styles from '../link.module.scss';
 
 import { LinkTargetForm } from './LinkTargetForm';
 
 /**
+ * The controls Tab can reach in the panel.
+ */
+const PANEL_CONTROLS = 'a[href], button:not([disabled])';
+
+type CopyState = 'idle' | 'copied' | 'failed';
+
+const describeCopy = (state: CopyState, labels: LinkLabels): string => {
+    switch (state) {
+        case 'idle':
+            return '';
+        case 'copied':
+            return labels.linkCopied;
+        case 'failed':
+            return labels.copyFailed;
+    }
+};
+
+const writeToClipboard = (text: string): Promise<void> => navigator.clipboard.writeText(text);
+
+/**
+ * The click that opens the link in a new tab: Command on Apple platforms, Control elsewhere.
+ */
+const OPEN_LINK_CLICK = 'Mod';
+
+type CopyLinkProps = {
+    href: string;
+    labels: LinkLabels;
+    writeText: (text: string) => Promise<void>;
+};
+
+/**
+ * Copies the target and says whether it worked, in a live region that is always in the panel.
+ */
+const CopyLink = ({ href, labels, writeText }: CopyLinkProps): ReactNode => {
+    const [copyState, setCopyState] = useState<CopyState>('idle');
+    const copy = (): void => {
+        // Reset first, so the same outcome twice is announced twice.
+        setCopyState('idle');
+        // Inside a promise: a browser without the clipboard API throws before any promise exists.
+        Promise.resolve()
+            .then(() => writeText(href))
+            .then(() => setCopyState('copied'))
+            .catch(() => setCopyState('failed'));
+    };
+    return (
+        <>
+            <Button size="small" emphasis="weak" onPress={copy}>
+                {labels.copyLink}
+            </Button>
+            <output className={styles.visuallyHidden}>{describeCopy(copyState, labels)}</output>
+        </>
+    );
+};
+
+type LinkEditorProps = EditProps<LinkValue> & {
+    policy: LinkPolicy;
+    labels: LinkLabels;
+    search?: LinkSearch;
+};
+
+/**
  * A link while editing: the anchor around the editable text, with a flyout.
- * With the caret inside it shows the target, Edit and Remove; when `isOpen`
+ * With the caret inside it shows the target, Copy link, Edit and Remove; when `isOpen`
  * (Edit, the toolbar button, Mod-k) it shows the form instead.
  *
  * Open state belongs to the editor so the toolbar can open this flyout. Focus
@@ -28,7 +92,10 @@ export const LinkEditor = ({
     setOpen,
     remove,
     api,
-}: EditProps<LinkValue>): ReactNode => {
+    policy,
+    labels,
+    search,
+}: LinkEditorProps): ReactNode => {
     // A flyout closed by hand stays closed until the caret leaves the link and returns.
     const [dismissed, setDismissed] = useState(false);
     const [wasFocused, setWasFocused] = useState(isFocused);
@@ -74,7 +141,7 @@ export const LinkEditor = ({
             if (!active?.contains(anchor)) {
                 return;
             }
-            const first = contentRef.current?.querySelector<HTMLElement>('a[href], button:not([disabled])');
+            const first = contentRef.current?.querySelector<HTMLElement>(PANEL_CONTROLS);
             if (first) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -86,14 +153,20 @@ export const LinkEditor = ({
     }, [open, isOpen]);
 
     // Shift-Tab from the panel's first control goes back where Tab came from.
-    const backToText = (event: KeyboardEvent<HTMLAnchorElement>): void => {
-        if (event.key === 'Tab' && event.shiftKey) {
+    const backToText = (event: KeyboardEvent<HTMLDivElement>): void => {
+        if (event.key !== 'Tab' || !event.shiftKey) {
+            return;
+        }
+        if (event.target === event.currentTarget.querySelector(PANEL_CONTROLS)) {
             event.preventDefault();
             api.focus();
         }
     };
 
-    const href = isSafeHref(value.href) ? value.href : undefined;
+    let href: string | undefined;
+    if (allowsHref(policy, value.href)) {
+        href = value.href;
+    }
 
     return (
         <Flyout.Root
@@ -113,8 +186,13 @@ export const LinkEditor = ({
                     // ARIA 1.3 global attribute that the lint rule's table does not know yet.
                     // oxlint-disable-next-line jsx-a11y/role-supports-aria-props
                     aria-description={value.openInNewTab === true ? 'Opens in a new tab' : undefined}
-                    // A click places the caret; it must neither follow the link nor toggle the flyout.
-                    onClick={(event) => event.preventDefault()}
+                    // A click places the caret; it must neither follow the link nor toggle the flyout. Mod+click opens it.
+                    onClick={(event) => {
+                        event.preventDefault();
+                        if (matchesHotkey(OPEN_LINK_CLICK, event) && href !== undefined) {
+                            window.open(href, NEW_TAB_TARGET, NEW_TAB_WINDOW_FEATURES);
+                        }
+                    }}
                 >
                     {children}
                 </a>
@@ -135,6 +213,10 @@ export const LinkEditor = ({
                     {isOpen ? (
                         <LinkTargetForm
                             initial={value}
+                            kind="edit"
+                            policy={policy}
+                            labels={labels}
+                            search={search}
                             onSave={(next) => {
                                 // Close first: the link is rebuilt with its new value and would reopen.
                                 setOpen(false);
@@ -152,17 +234,19 @@ export const LinkEditor = ({
                             }
                         />
                     ) : (
-                        <div className={styles.panel}>
-                            <a
-                                href={href}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={styles.target}
-                                onKeyDown={backToText}
-                            >
+                        // The div only catches the Tab key bubbling up from the controls inside it; it is not a control itself.
+                        // oxlint-disable-next-line jsx-a11y/no-static-element-interactions
+                        <div // NOSONAR
+                            className={styles.panel}
+                            onKeyDown={backToText}
+                        >
+                            <a href={href} target={NEW_TAB_TARGET} rel={NEW_TAB_REL} className={styles.target}>
                                 {value.href}
-                                <span className={styles.visuallyHidden}> (opens in new tab)</span>
+                                <span className={styles.visuallyHidden}>{labels.newTabNote}</span>
                             </a>
+                            {href === undefined ? null : (
+                                <CopyLink href={href} labels={labels} writeText={writeToClipboard} />
+                            )}
                             <Button size="small" emphasis="weak" onPress={() => setOpen(true)}>
                                 Edit
                             </Button>

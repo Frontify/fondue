@@ -2,12 +2,13 @@
 
 // @vitest-environment happy-dom
 
+import { undo } from 'prosemirror-history';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { defineContent, defineMark, definePlugin, type PasteHandler, type RtePlugin } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
-import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
+import { destroyEditors, editorWith, paragraph, shipped, text, token, tokenPlugin } from './testEditor';
 
 /**
  * A feature's `onPaste` runs before the editor's own paste, and the link
@@ -41,7 +42,10 @@ describe('a plugin paste handler', () => {
 
         editor.paste('pasted', '<p>pasted</p>');
 
-        expect(handler).toHaveBeenCalledWith({ text: 'pasted', html: '<p>pasted</p>' }, editor.api);
+        expect(handler).toHaveBeenCalledWith(
+            { text: 'pasted', html: '<p>pasted</p>', source: 'elsewhere' },
+            editor.api,
+        );
         expect(editor.stored()).toEqual([paragraph(text('apasted'))]);
     });
 
@@ -52,7 +56,20 @@ describe('a plugin paste handler', () => {
 
         editor.paste('pasted');
 
-        expect(handler.mock.calls[0]?.[0]).toEqual({ text: 'pasted', html: null });
+        expect(handler.mock.calls[0]?.[0]).toEqual({ text: 'pasted', html: null, source: 'elsewhere' });
+    });
+
+    it('is told the paste was copied from an editor', () => {
+        const handler = vi.fn<PasteHandler>(() => false);
+        const source = editorWith(defaultPlugins, [paragraph(text('copied'))]);
+        source.select('copied');
+        const html = source.view.serializeForClipboard(source.view.state.selection.content()).dom.innerHTML;
+        const editor = editorWith(withPaste(handler), [paragraph(text('a'))]);
+        editor.caretAfter('a');
+
+        editor.paste('copied', html);
+
+        expect(handler.mock.calls[0]?.[0]).toMatchObject({ source: 'editor' });
     });
 
     it('stops at the first handler that handles the paste', () => {
@@ -222,6 +239,10 @@ describe('pasting formatted text', () => {
 describe('pasting over selected text with the link plugin', () => {
     const link = (href: string) => ({ link: { href } });
 
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
     it('links it when the text is a web address', () => {
         const editor = editorWith(shipped('link'), [paragraph(text('see frontify now'))]);
         editor.select('frontify');
@@ -260,15 +281,6 @@ describe('pasting over selected text with the link plugin', () => {
         expect(editor.stored()).toEqual([paragraph(text('not a url'))]);
     });
 
-    it('pastes as usual with nothing selected', () => {
-        const editor = editorWith(shipped('link'), [paragraph(text('a'))]);
-        editor.caretAfter('a');
-
-        editor.paste('https://example.com');
-
-        expect(editor.stored()).toEqual([paragraph(text('ahttps://example.com'))]);
-    });
-
     it('does not link a javascript: address', () => {
         const editor = editorWith(shipped('link'), [paragraph(text('frontify'))]);
         editor.select('frontify');
@@ -276,5 +288,105 @@ describe('pasting over selected text with the link plugin', () => {
         editor.paste('javascript:alert(1)');
 
         expect(editor.stored()).toEqual([paragraph(text('javascript:alert(1)'))]);
+    });
+});
+
+const TOKEN_PASTE = /^tok:[^\s]+$/;
+
+/** What a feature does with a pasted token: marks the selection, or goes in marked at a caret, as its own undo step. */
+const markPastedToken: PasteHandler = ({ text: pasted, source: copiedFrom }, api) => {
+    const typed = pasted.trim();
+    if (!TOKEN_PASTE.test(typed)) {
+        return false;
+    }
+    const { isCollapsed, marks } = api.selection.get();
+    if (!isCollapsed) {
+        api.marks.toggle('token', { id: typed });
+        return true;
+    }
+    if ('token' in marks || copiedFrom === 'editor') {
+        return false;
+    }
+    api.insertText(typed, { token: { id: typed } }, { undo: 'marksFirst' });
+    return true;
+};
+
+describe('a paste handler that marks what it inserts at a caret', () => {
+    const plugins = [...shipped('bold'), tokenPlugin({ onPaste: markPastedToken })];
+
+    it('inserts the token with its mark', () => {
+        const editor = editorWith(plugins, [paragraph(text('a'))]);
+        editor.caretAfter('a');
+
+        editor.paste('tok:a');
+
+        expect(editor.stored()).toEqual([paragraph(text('a'), token('tok:a'))]);
+    });
+
+    it('keeps the marks of text copied inside the editor and pasted at a caret', () => {
+        const copied = { token: { id: 'tok:a' }, bold: true };
+        const source = editorWith(plugins, [paragraph(text('tok:a', copied))]);
+        source.select('tok:a');
+        const html = source.view.serializeForClipboard(source.view.state.selection.content()).dom.innerHTML;
+        const editor = editorWith(plugins, [paragraph(text('a'))]);
+        editor.caretAfter('a');
+
+        editor.paste('tok:a', html);
+
+        expect(editor.stored()).toEqual([paragraph(text('a'), text('tok:a', copied))]);
+    });
+
+    it('marks the token when another app on the same engine copied it', () => {
+        const editor = editorWith(plugins, [paragraph(text('a'))]);
+        editor.caretAfter('a');
+
+        editor.paste('tok:a', '<p data-pm-slice="1 1 []">tok:a</p>');
+
+        expect(editor.stored()).toEqual([paragraph(text('a'), token('tok:a'))]);
+    });
+
+    it('pastes the token as plain text inside text that carries the mark', () => {
+        const editor = editorWith(plugins, [paragraph(token('frontify', 'old'))]);
+        editor.caretAfter('fron');
+
+        editor.paste('tok:a');
+
+        expect(editor.stored()).toEqual([paragraph(token('frontok:atify', 'old'))]);
+    });
+
+    it('pastes text the handler does not take as plain text at a caret', () => {
+        const editor = editorWith(plugins, [paragraph(text('a'))]);
+        editor.caretAfter('a');
+
+        editor.paste('example');
+
+        expect(editor.stored()).toEqual([paragraph(text('aexample'))]);
+    });
+
+    it('is undone in two steps once the history pauses after the typing before it: the mark, then the text', () => {
+        vi.useFakeTimers();
+        const editor = editorWith(plugins, [paragraph()]);
+        editor.type('ab');
+        vi.advanceTimersByTime(1000);
+
+        editor.paste('tok:a');
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual([paragraph(text('abtok:a'))]);
+
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual([paragraph(text('ab'))]);
+    });
+
+    it('is its own undo step even right after typing', () => {
+        const editor = editorWith(plugins, [paragraph()]);
+        editor.type('ab');
+
+        editor.paste('tok:a');
+        undo(editor.view.state, editor.view.dispatch);
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual([paragraph(text('ab'))]);
     });
 });

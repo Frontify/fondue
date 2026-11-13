@@ -12,9 +12,14 @@ import {
     isEmpty,
     type MarkClearRule,
     type MarkDefinition,
+    type MarkIgnoreRule,
     type MarkParseRule,
     type ParseRule,
+    type InsertTextOptions,
+    type InsertTextUndo,
+    type Paste,
     type PasteHandler,
+    type PasteSource,
     type RteBlockCommand,
     type RteBlockNode,
     type RteContent,
@@ -79,10 +84,16 @@ export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlock>(
     });
 
 /**
- * The document as an HTML string, the same markup the editor copies to the
- * clipboard. No React or browser needed. Uses `defaultContent` when given no
+ * The document as an HTML string: the reading markup `RichTextRenderer` draws,
+ * as static HTML, without its screen-reader-only text (a link's new-tab note), so
+ * the HTML shows nothing extra where the stylesheet is missing. No React or browser needed. Uses `defaultContent` when given no
  * `plugins`; `wrap: false` leaves out the root element. Style it with this
  * package's stylesheet (emails need the styles inlined).
+ * @example
+ * const html = serializeToHtml(
+ *     { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'Hello', bold: true }] }] },
+ *     { wrap: false },
+ * );
  */
 export const serializeToHtml = <TBlock extends RteBlockNode = RteBlock>(
     doc: RteDocument<TBlock>,
@@ -136,6 +147,15 @@ export { underlineContent, underlinePlugin } from './plugins/Underline';
 export { type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './plugins/Emoji';
 export {
+    type LinkContentOptions,
+    type LinkDestination,
+    type LinkLabels,
+    type LinkPluginOptions,
+    type LinkPolicy,
+    type LinkScheme,
+    type LinkSearch,
+} from './plugins/Link';
+export {
     type MentionContentOptions,
     type MentionItem,
     type MentionPluginOptions,
@@ -155,6 +175,10 @@ export type RtePlugin = CorePlugin;
 type ControlApi = EditorControlApi;
 type ToolbarProps = ToolbarItemProps;
 type OnPaste = PasteHandler;
+type Pasted = Paste;
+type InsertOptions = InsertTextOptions;
+type InsertUndo = InsertTextUndo;
+type PastedFrom = PasteSource;
 type BlockDef<TValue> = BlockDefinition<TValue>;
 type MarkDef<TValue> = MarkDefinition<TValue>;
 type InlineDef<TValue> = InlineDefinition<TValue>;
@@ -163,6 +187,7 @@ type Parse<TValue> = ParseRule<TValue>;
 type MarkParse<TValue> = MarkParseRule<TValue>;
 type StyleParse<TValue> = StyleParseRule<TValue>;
 type MarkClear = MarkClearRule;
+type MarkIgnore = MarkIgnoreRule;
 type DefaultStyleType = DefaultStyle;
 type Html = HtmlSpec;
 
@@ -175,6 +200,11 @@ export declare namespace RtePlugin {
     export type ToolbarItemProps = ToolbarProps;
     export type ToolbarGroup = RteToolbarGroup;
     export type PasteHandler = OnPaste;
+    // A namespace member cannot take the name of the type it renames, so each of these needs an alias outside.
+    export type Paste = Pasted; // NOSONAR
+    export type InsertTextOptions = InsertOptions; // NOSONAR
+    export type InsertTextUndo = InsertUndo; // NOSONAR
+    export type PasteSource = PastedFrom; // NOSONAR
     export type BlockDefinition<TValue = Record<string, unknown>> = BlockDef<TValue>;
     export type MarkDefinition<TValue = Record<string, unknown>> = MarkDef<TValue>;
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
@@ -182,8 +212,9 @@ export declare namespace RtePlugin {
     export type ParseRule<TValue> = Parse<TValue>;
     export type MarkParseRule<TValue> = MarkParse<TValue>;
     export type StyleParseRule<TValue> = StyleParse<TValue>;
-    // A namespace member cannot take the name of the type it renames, so each of these needs an alias outside.
+    // Same reason as above.
     export type MarkClearRule = MarkClear; // NOSONAR
+    export type MarkIgnoreRule = MarkIgnore; // NOSONAR
     export type DefaultStyle = DefaultStyleType; // NOSONAR
     export type HtmlSpec = Html;
     export type Content = RteContent;

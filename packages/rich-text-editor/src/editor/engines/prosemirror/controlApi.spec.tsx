@@ -18,7 +18,7 @@ import {
 import { defaultPlugins } from '#/plugins';
 
 import { toEngineDocument } from './documentConversion';
-import { destroyEditors, editorWith, paragraph, text } from './testEditor';
+import { destroyEditors, editorWith, paragraph, text, tokenPlugin } from './testEditor';
 
 /**
  * The control API is what every feature drives the editor through, so each
@@ -47,9 +47,10 @@ const dividerPlugin: RtePlugin = definePlugin({
     }),
 });
 
-const plugins: RtePlugin[] = [...defaultPlugins, dividerPlugin, tagPlugin];
+const plugins: RtePlugin[] = [...defaultPlugins, dividerPlugin, tagPlugin, tokenPlugin()];
 
 const LINK = { href: 'https://example.com' };
+const TOKEN = { id: 'tok:a' };
 
 afterEach(destroyEditors);
 
@@ -257,6 +258,20 @@ describe('marks.toggle', () => {
         editor.api.insertText('X');
 
         expect(editor.stored()).toEqual([paragraph(text('a'), text('X', { bold: true }), text('b'))]);
+    });
+
+    it('marks all the text it puts in place of a selected block', () => {
+        const editor = editorWith(plugins, [paragraph(text('a')), { type: 'divider' }, paragraph(text('b'))]);
+        const { view } = editor;
+        view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, 3)));
+
+        editor.api.insertText('XY', { token: TOKEN });
+
+        expect(editor.stored()).toEqual([
+            paragraph(text('a')),
+            paragraph(text('XY', { token: TOKEN })),
+            paragraph(text('b')),
+        ]);
     });
 
     it('puts the mark on the text of a range but never on an inline element in it', () => {
@@ -810,6 +825,61 @@ describe('insertText', () => {
         editor.api.insertText('2');
 
         expect(editor.stored()).toEqual([paragraph(text('one 2 three'))]);
+    });
+
+    it('carries the given marks at a caret, beside the ones typing there would', () => {
+        const editor = editorWith(plugins, [paragraph(text('bold', { bold: true }))]);
+        editor.caretAfter('bo');
+
+        editor.api.insertText('XY', { token: TOKEN });
+
+        expect(editor.stored()).toEqual([
+            paragraph(text('bo', { bold: true }), text('XY', { bold: true, token: TOKEN }), text('ld', { bold: true })),
+        ]);
+    });
+
+    it('replaces the selected text with text that carries the given marks', () => {
+        const editor = editorWith(plugins, [paragraph(text('one two three'))]);
+        editor.select('two');
+
+        editor.api.insertText('2', { token: TOKEN });
+
+        expect(editor.stored()).toEqual([paragraph(text('one '), text('2', { token: TOKEN }), text(' three'))]);
+    });
+
+    it('takes the place of the mark the text went over', () => {
+        const OTHER = { id: 'tok:b' };
+        const editor = editorWith(plugins, [paragraph(text('docs', { token: TOKEN }))]);
+        editor.select('ocs');
+
+        editor.api.insertText('ocs', { token: OTHER });
+
+        expect(editor.stored()).toEqual([paragraph(text('d', { token: TOKEN }), text('ocs', { token: OTHER }))]);
+    });
+
+    it('is one undo step, text and marks together', () => {
+        const editor = editorWith(plugins, [paragraph(text('one two three'))]);
+        editor.select('two');
+        const notifiedBefore = editor.onDocChange.mock.calls.length;
+
+        editor.api.insertText('2', { token: TOKEN });
+
+        expect(editor.onDocChange).toHaveBeenCalledTimes(notifiedBefore + 1);
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual([paragraph(text('one two three'))]);
+    });
+
+    it('ignores a mark type no plugin provides, and says so', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const editor = editorWith(plugins, [paragraph(text('one'))]);
+        editor.caretAfter('one');
+
+        editor.api.insertText('!', { nothing: {}, token: TOKEN });
+
+        expect(editor.stored()).toEqual([paragraph(text('one'), text('!', { token: TOKEN }))]);
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining('insertText("nothing")'));
+        warn.mockRestore();
     });
 });
 

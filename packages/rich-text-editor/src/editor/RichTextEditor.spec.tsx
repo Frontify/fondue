@@ -811,7 +811,17 @@ describe('the toolbar', () => {
 });
 
 describe('the toolbar from the keyboard', () => {
-    const plugins = [boldPlugin, alignPlugin, linkPlugin];
+    /** A control that is off on a caret, last in the bar, so the arrow keys have one to pass over. */
+    const NeedsText = ({ selection }: RtePlugin.ToolbarItemProps): ReactNode => (
+        <button type="button" aria-label="Needs text" disabled={selection.isCollapsed}>
+            N
+        </button>
+    );
+    const needsTextPlugin: RtePlugin = definePlugin({
+        id: 'needs-text',
+        toolbar: [{ label: 'Needs text', render: NeedsText }],
+    });
+    const plugins = [boldPlugin, alignPlugin, linkPlugin(), needsTextPlugin];
 
     const toolbarIn = (container: HTMLElement): HTMLElement => {
         const toolbar = container.querySelector<HTMLElement>('[role="toolbar"]');
@@ -841,12 +851,13 @@ describe('the toolbar from the keyboard', () => {
         const active = (): string | null | undefined => window.document.activeElement?.getAttribute('aria-label');
         act(() => toolbar.querySelector<HTMLElement>('[tabindex="0"]')?.focus());
 
+        // Link sits in its group after the marks, and can add a link at a caret.
         press(window.document.activeElement as Element, 'ArrowRight');
-        expect(active()).toBe('Align left');
+        expect(active()).toBe('Add link');
         press(window.document.activeElement as Element, 'ArrowLeft');
         expect(active()).toBe('Bold');
         press(window.document.activeElement as Element, 'ArrowLeft');
-        // Wraps round — and "Add link" is disabled on a caret, so Justify is last.
+        // Wraps round, passing over the disabled control at the end.
         expect(active()).toBe('Justify');
         press(window.document.activeElement as Element, 'Home');
         expect(active()).toBe('Bold');
@@ -1022,14 +1033,15 @@ describe('the toolbar from the keyboard', () => {
             expect(more(container)?.getAttribute('aria-expanded')).toBe('true');
             const panel = window.document.querySelector<HTMLElement>('[role="toolbar"][aria-label="More"]');
             expect(panel?.querySelector('[aria-label="Add link"]')).not.toBeNull();
-            expect(focusedLabel()).toBe('Align left');
+            // Link comes first in the panel, and can add a link at a caret.
+            expect(focusedLabel()).toBe('Add link');
 
             press(window.document.activeElement as Element, 'ArrowRight');
-            expect(focusedLabel()).toBe('Align center');
+            expect(focusedLabel()).toBe('Align left');
             press(window.document.activeElement as Element, 'End');
             expect(focusedLabel()).toBe('Justify');
             press(window.document.activeElement as Element, 'Home');
-            expect(focusedLabel()).toBe('Align left');
+            expect(focusedLabel()).toBe('Add link');
 
             // The first Escape belongs to the tooltip the focus opened.
             press(window.document.activeElement as Element, 'Escape');
@@ -1322,7 +1334,7 @@ describe('the toolbar from the keyboard', () => {
         });
 
         it('keeps the panel usable after a text style menu opened from it is closed with Escape', async () => {
-            const withSelect = [boldPlugin, linkPlugin, alignPlugin, textStylePlugin()];
+            const withSelect = [boldPlugin, linkPlugin(), alignPlugin, textStylePlugin()];
             const { container, ready } = mount(() => (
                 <RichTextEditor value={paragraph('text')} plugins={withSelect} toolbarPlacement="top" />
             ));
@@ -2661,11 +2673,30 @@ describe('exported links', () => {
                     { type: 'paragraph', children: [{ text: 'good', link: { href: 'https://example.com' } }] },
                 ],
             },
-            { plugins: [linkPlugin] },
+            { plugins: [linkPlugin()] },
         );
 
         expect(html).not.toContain('javascript:');
         expect(html).toContain('href="https://example.com"');
+    });
+});
+
+describe('a new-tab link in the editor', () => {
+    it('is drawn by its own view, so the hidden note of the reading view is not added to it', () => {
+        const value: RteDocument = {
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'docs', link: { href: 'https://example.com', openInNewTab: true } }],
+                },
+            ],
+        };
+        const container = render(<RichTextEditor value={value} plugins={[linkPlugin()]} />);
+        const anchor = editableIn(container).querySelector('a');
+
+        expect(anchor?.textContent).toBe('docs');
+        expect(anchor?.getAttribute('aria-description')).toBe('Opens in a new tab');
     });
 });
 

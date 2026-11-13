@@ -9,7 +9,16 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { definePlugin } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
-import { destroyEditors, editorWith, paragraph, text } from './testEditor';
+import {
+    destroyEditors,
+    editorWith,
+    paragraph,
+    text,
+    token,
+    TOKEN_TRIM,
+    tokenPlugin,
+    type TokenPluginOptions,
+} from './testEditor';
 
 // A web address followed by a space becomes a link (the link plugin's `markPattern` rule).
 
@@ -99,6 +108,89 @@ describe('typing a web address', () => {
 
         expect(handled).toBe(true);
         expect(editor.stored()).toEqual([paragraph(text('https://example.com '))]);
+    });
+});
+
+const tokenEditor = (options: TokenPluginOptions = { trim: TOKEN_TRIM }) =>
+    editorWith([...defaultPlugins, tokenPlugin(options)], [paragraph()]);
+
+const typedToken = (value: string, options?: TokenPluginOptions) => {
+    const editor = tokenEditor(options);
+    editor.type(value);
+    return editor.stored();
+};
+
+describe('typing a token a rule declares', () => {
+    it('leaves a run of closing punctuation and brackets out of the token', () => {
+        const stored = typedToken('(see tok:a/x"),. ');
+
+        expect(stored).toEqual([paragraph(text('(see '), token('tok:a/x'), text('"),. '))]);
+    });
+
+    it.each([
+        ['(', ')'],
+        ['[', ']'],
+        ['{', '}'],
+        ['<', '>'],
+    ])('marks a token after an opening %s and leaves the closing one out', (open, close) => {
+        const stored = typedToken(`${open}tok:a/x${close} `);
+
+        expect(stored).toEqual([paragraph(text(open), token('tok:a/x'), text(`${close} `))]);
+    });
+
+    it('keeps a closing bracket that balances an opening one', () => {
+        const stored = typedToken('tok:a/Foo_(bar). ');
+
+        expect(stored).toEqual([paragraph(token('tok:a/Foo_(bar)'), text('. '))]);
+    });
+
+    it.each([
+        ['straight double quotes', '"', '"'],
+        ['straight single quotes', "'", "'"],
+        ['curly double quotes', '“', '”'],
+        ['curly single quotes', '‘', '’'],
+    ])('marks a token in %s', (_name, open, close) => {
+        const stored = typedToken(`see ${open}tok:a/x${close} `);
+
+        expect(stored).toEqual([paragraph(text(`see ${open}`), token('tok:a/x'), text(`${close} `))]);
+    });
+
+    it('does not mark a token that continues a word', () => {
+        const stored = typedToken('xtok:a ');
+
+        expect(stored).toEqual([paragraph(text('xtok:a '))]);
+    });
+
+    it('does not mark inside text that already carries the mark', () => {
+        const editor = tokenEditor();
+        editor.type('tok:a ');
+        editor.caretAfter('tok');
+
+        editor.type(' tok:b ');
+
+        expect(editor.stored()).toEqual([paragraph(token('tok tok:b :a', 'tok:a'), text(' '))]);
+    });
+
+    it('leaves a token as typed when the rule refuses it', () => {
+        const stored = typedToken('tok:no tok:yes ', { trim: TOKEN_TRIM, refuses: (value) => value === 'tok:no' });
+
+        expect(stored).toEqual([paragraph(text('tok:no '), token('tok:yes'), text(' '))]);
+    });
+
+    it('keeps the punctuation and brackets of a token whose rule declares no trim', () => {
+        const stored = typedToken('tok:a). ', {});
+
+        expect(stored).toEqual([paragraph(token('tok:a).'), text(' '))]);
+    });
+
+    it('builds a rule whose pattern uses the v flag', () => {
+        expect(() => tokenEditor({ pattern: new RegExp(String.raw`#\w+`, 'v') })).not.toThrow();
+    });
+
+    it('starts a token of a rule with the v flag after an opening bracket', () => {
+        const stored = typedToken('(#tag ', { pattern: new RegExp(String.raw`#\w+`, 'v') });
+
+        expect(stored).toEqual([paragraph(text('('), token('#tag'), text(' '))]);
     });
 });
 

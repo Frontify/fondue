@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { chainCommands, setBlockType as pmSetBlockType, toggleMark as pmToggleMark } from 'prosemirror-commands';
-import { redo, redoDepth, undo, undoDepth } from 'prosemirror-history';
+import { closeHistory, redo, redoDepth, undo, undoDepth } from 'prosemirror-history';
 import { undoInputRule } from 'prosemirror-inputrules';
 import {
     type Mark as PmMark,
@@ -433,9 +433,33 @@ export const createControlApi = (
         view.dispatch(transaction.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline));
         view.focus();
     },
-    insertText(text) {
+    insertText(text, marks = {}, options = {}) {
+        const undoWith = options.undo ?? 'together';
         const view = getView();
-        view.dispatch(view.state.tr.insertText(text));
+        let transaction = view.state.tr;
+        transaction.insertText(text);
+        // Measured back from the caret after the insert: a selected block is replaced by a new paragraph, which shifts the text.
+        const to = transaction.selection.from;
+        const from = to - text.length;
+        switch (undoWith) {
+            case 'together':
+                break;
+            case 'marksFirst':
+                // Closed on both sides: the text is a step of its own, and the marks one after it.
+                view.dispatch(closeHistory(transaction));
+                transaction = closeHistory(view.state.tr);
+                break;
+        }
+        for (const [type, value] of Object.entries(marks)) {
+            const markType = schema.marks[type];
+            if (markType) {
+                // Adding replaces a mark of the same type the caret carried.
+                transaction.addMark(from, to, markType.create(valueAttrsFor(value)));
+            } else {
+                warnUnknownType('insertText', type);
+            }
+        }
+        view.dispatch(transaction);
         view.focus();
     },
     text: {

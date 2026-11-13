@@ -5,6 +5,8 @@
 
 export {
     type EditorControlApi,
+    type InsertTextOptions,
+    type InsertTextUndo,
     REDO_HOTKEY,
     type RteMarkState,
     type RteSelectionSnapshot,
@@ -20,6 +22,7 @@ export {
     type StoredMarkValue,
 } from './document';
 export { isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
+export { type HotkeyEvent, type HotkeyModifier, matchesHotkey, type ParsedHotkey, parseHotkey } from './hotkeys';
 export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
 export {
     type BlockAttributeDefinition,
@@ -36,10 +39,13 @@ export {
     type InlineDefinition,
     type MarkClearRule,
     type MarkDefinition,
+    type MarkIgnoreRule,
     type MarkParseRule,
     onlyTypeOf,
     type ParseRule,
+    type Paste,
     type PasteHandler,
+    type PasteSource,
     type RteBlockCommand,
     type RteContent,
     type RteContentDefinition,
@@ -47,6 +53,7 @@ export {
     type RteEditView,
     type RteIcon,
     type RteInputRule,
+    type RteMarkPatternTrim,
     type RtePlugin,
     type RtePluginDefinition,
     type RteToolbarEntry,

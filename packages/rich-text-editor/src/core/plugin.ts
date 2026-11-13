@@ -439,12 +439,25 @@ export type MarkClearRule = {
 };
 
 /**
- * The rules a mark reads pasted HTML with: by tag, by declared style, or to clear it. The `style?: undefined` lets TypeScript type a style rule's `value`.
+ * An element the mark's own markup adds, such as a hidden note, skipped with its content when pasted back.
+ */
+export type MarkIgnoreRule = {
+    tag: string;
+    ignore: true;
+    /**
+     * Never set: lets TypeScript read `style` on every parse rule.
+     */
+    style?: undefined;
+};
+
+/**
+ * The rules a mark reads pasted HTML with: by tag, by declared style, to clear it, or to skip an element. The `style?: undefined` lets TypeScript type a style rule's `value`.
  */
 export type MarkParseRule<TValue> =
-    | (ParseRule<TValue> & { style?: undefined })
+    | (ParseRule<TValue> & { style?: undefined; ignore?: undefined })
     | StyleParseRule<TValue>
-    | MarkClearRule;
+    | MarkClearRule
+    | MarkIgnoreRule;
 
 /**
  * What the editor hands a node's `edit` view: the same for blocks, marks
@@ -573,8 +586,36 @@ export type RteBlockCommand = {
 /** A plugin's handler for one key. Return `false` to leave the key to the next handler, and in the end the editor and browser. */
 export type HotkeyHandler = (api: EditorControlApi) => boolean | void;
 
-/** A plugin's `onPaste`, handed the clipboard's text and HTML (if any). Return true when handled: the default paste and later plugins are skipped. */
-export type PasteHandler = (paste: { text: string; html: string | null }, api: EditorControlApi) => boolean;
+/**
+ * Where pasted content was copied from: an editor of this package (this one or another), whose markup pastes back as it was, or anywhere else.
+ */
+export type PasteSource = 'editor' | 'elsewhere';
+
+/**
+ * What a paste carries: the clipboard's text, its HTML (if any), and where it was copied from.
+ */
+export type Paste = { text: string; html: string | null; source: PasteSource };
+
+/**
+ * A plugin's `onPaste`, handed the paste. Return true when handled: the default paste and later plugins are skipped.
+ */
+export type PasteHandler = (paste: Paste, api: EditorControlApi) => boolean;
+
+/**
+ * How a `markPattern` token loses the end it does not own, such as the full stop of the sentence it ends.
+ */
+export type RteMarkPatternTrim = {
+    /**
+     * Characters dropped from the end of the token, one run after another.
+     * The engine anchors it to the end of the token.
+     */
+    punctuation: RegExp;
+    /**
+     * Each closing bracket a token may end in, and the opening one it closes.
+     * A closing bracket is dropped only while the token holds no opening one left for it to close.
+     */
+    pairs: Readonly<Record<string, string>>;
+};
 
 /**
  * A text pattern rewritten while typing. Declared, not implemented: the editor
@@ -591,9 +632,20 @@ export type RteInputRule =
      * A token ended by a space, Enter or Shift-Enter (or punctuation then one
      * of them) becomes text carrying the mark: an autolink. Backspace right
      * after takes the mark back. `pattern` matches the token only; the engine
-     * anchors it to the end of the text before the terminator.
+     * anchors it to the end of the text before the terminator. A `value`
+     * that returns null leaves the token as typed.
      */
-    | { kind: 'markPattern'; pattern: RegExp; mark: string; value: (match: string) => Record<string, unknown> }
+    | {
+          kind: 'markPattern';
+          pattern: RegExp;
+          mark: string;
+          value: (match: string) => Record<string, unknown> | null;
+          /**
+           * What the token's end may hold that is not part of it, so it stays outside the mark.
+           * @default no trimming: the token ends where `pattern` says
+           */
+          trim?: RteMarkPatternTrim;
+      }
     /**
      * Text swapped for other text the moment its last character is typed, no
      * space needed: `->` becomes `→`. A string matches as written; a pattern

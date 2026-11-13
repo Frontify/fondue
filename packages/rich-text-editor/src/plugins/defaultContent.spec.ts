@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type BlockDefinition, defineContent, type RteContent } from '#/core';
+import { type BlockDefinition, defineContent, type MarkDefinition, type RteContent } from '#/core';
 
 import { defaultContent } from './defaultContent';
 
@@ -36,6 +36,14 @@ describe('the default content', () => {
             // The text style is built from options, so each call makes a new definition of the same block.
             if (actual[0]?.type === 'textStyle') {
                 const toHtml = (definition: unknown) => (definition as BlockDefinition).toHtml({ style: 'heading1' });
+                expect(toHtml(actual[0].definition)).toEqual(toHtml(expected[0]?.definition));
+                continue;
+            }
+            // Likewise the link, built from its policy.
+            if (actual[0]?.type === 'link') {
+                // The declared list types a definition loosely; the type check above says it is the link mark.
+                const toHtml = (definition: unknown) =>
+                    (definition as MarkDefinition).toHtml({ href: 'https://example.com', openInNewTab: true });
                 expect(toHtml(actual[0].definition)).toEqual(toHtml(expected[0]?.definition));
                 continue;
             }

@@ -696,7 +696,7 @@ export const CommentBox: Story = {
                         plugins={[
                             boldPlugin,
                             italicPlugin,
-                            linkPlugin,
+                            linkPlugin(),
                             mentionPlugin({
                                 items: MENTIONABLE,
                                 href: profileHref,
