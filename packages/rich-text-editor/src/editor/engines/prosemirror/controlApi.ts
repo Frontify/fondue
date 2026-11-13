@@ -1,14 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    chainCommands,
-    createParagraphNear,
-    liftEmptyBlock,
-    newlineInCode,
-    setBlockType as pmSetBlockType,
-    splitBlock,
-    toggleMark as pmToggleMark,
-} from 'prosemirror-commands';
+import { chainCommands, setBlockType as pmSetBlockType, toggleMark as pmToggleMark } from 'prosemirror-commands';
 import { closeHistory, redo, redoDepth, undo, undoDepth } from 'prosemirror-history';
 import { undoInputRule } from 'prosemirror-inputrules';
 import {
@@ -492,14 +484,8 @@ const createBlockApi = (
                 ),
             );
         },
-        split() {
-            return splitBlockAtCaret(getView().state, dispatch);
-        },
     };
 };
-
-/** The block half of the base keymap's Enter, so `blocks.split` does what Enter does outside a list. */
-const splitBlockAtCaret: Command = chainCommands(newlineInCode, createParagraphNear, liftEmptyBlock, splitBlock);
 
 // --- History ---
 
