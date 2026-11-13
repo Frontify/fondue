@@ -1,0 +1,39 @@
+packages/rich-text-editor/src/core/index.ts
+  s_3c6b1394227db8::t_078750b9821a60 72-80
+packages/rich-text-editor/src/core/plugin.ts
+  s_a585d10f570924::t_915e3a79b5c10b 589,593-597
+packages/rich-text-editor/src/core/vocabulary.ts
+  s_a585d10f570924::t_682b7516de08d1 40-46
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.ts
+  s_3c6b1394227db8::t_b5be2df3ba7cfd 8,65,69,141
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_3c6b1394227db8::t_aea34e9193856f 14,19,134,136,142,430-431,433,440,444
+packages/rich-text-editor/src/editor/engines/prosemirror/textRules.spec.tsx
+  s_3c6b1394227db8::t_abd0b8d8faec4a 179-187,502,504-508,512-514,516-517,519-520
+packages/rich-text-editor/src/plugins/Typography/Typography.ts
+  s_3c6b1394227db8::t_84dead2731dffe 3,46,48,171,173
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8e9f0dd9163103469b88b13c3d23ada5efb9585e",
+  "prompts": {},
+  "sessions": {
+    "s_3c6b1394227db8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9b985b6a-9fd8-40d4-b0ec-6d7a78f67808",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_a585d10f570924": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12fffd99-7ec0-43c7-a09b-65001cf93f56",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/textRules.spec.tsx
+  s_3c6b1394227db8::t_030cbe869a6775 329-337,375,440,458-461,471,483-486,498-501,510
+packages/rich-text-editor/src/plugins/Typography/Typography.ts
+  s_3c6b1394227db8::t_98d13c47ed611f 8-9,11,24,98-127,206,218-219
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2ca0c01cf94daceaa9489b81fedb20d43309ec4f",
+  "prompts": {},
+  "sessions": {
+    "s_3c6b1394227db8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9b985b6a-9fd8-40d4-b0ec-6d7a78f67808",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

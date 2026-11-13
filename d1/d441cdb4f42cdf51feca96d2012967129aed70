@@ -1,0 +1,21 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_3c6b1394227db8::t_559402c16670a2 134
+packages/rich-text-editor/src/plugins/Typography/Typography.ts
+  s_3c6b1394227db8::t_281c6ff0482e9b 46-47,52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d1d441cdb4f42cdf51feca96d2012967129aed70",
+  "prompts": {},
+  "sessions": {
+    "s_3c6b1394227db8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9b985b6a-9fd8-40d4-b0ec-6d7a78f67808",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
