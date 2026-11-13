@@ -77,6 +77,35 @@ describe('typing a mark shortcut', () => {
         ]);
     });
 
+    it.each([
+        ['foo__bar__', 'inside a word'],
+        ['self.__dict__', 'after a full stop'],
+        ['a__b__ c', 'glued to the word before it'],
+    ])('leaves %s as typed, since a word-bounded rule needs room around its delimiters (%s)', (value) => {
+        expect(typed(value)).toEqual([paragraph(text(value))]);
+    });
+
+    it.each([
+        ['at the start of a line', '__text__', [text('text', { bold: true })]],
+        ['after a space', 'a __text__', [text('a '), text('text', { bold: true })]],
+        ['after an opening bracket', '(__text__', [text('('), text('text', { bold: true })]],
+    ])('turns __text__ bold %s', (_where, value, children) => {
+        expect(typed(value)).toEqual([paragraph(...children)]);
+    });
+
+    it('leaves __text__ as typed when a word follows the closing delimiter', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('word'))]);
+        editor.caretBefore('word');
+
+        editor.type('__text__');
+
+        expect(editor.stored()).toEqual([paragraph(text('__text__word'))]);
+    });
+
+    it('keeps the ** rule inside a word', () => {
+        expect(typed('foo**bar**')).toEqual([paragraph(text('foo'), text('bar', { bold: true }))]);
+    });
+
     it('does not carry the mark on into what is typed after it', () => {
         expect(typed('**bold**x')).toEqual([paragraph(text('bold', { bold: true }), text('x'))]);
     });
@@ -1230,7 +1259,7 @@ describe('Enter in an editor with blurOnBreakPlugin', () => {
 
     it("does Enter's action on Shift-Enter: splits the paragraph mid-text, never submits or breaks the line", () => {
         const onBreak = vi.fn();
-        const editor = editorWith([...defaultPlugins, blurOnBreakPlugin({ onBreak })], [paragraph(text('ab'))]);
+        const editor = editorWith([blurOnBreakPlugin({ onBreak }), ...defaultPlugins], [paragraph(text('ab'))]);
         editor.caretAfter('a');
 
         press(editor.view, 'Enter', { shiftKey: true });
@@ -1239,21 +1268,20 @@ describe('Enter in an editor with blurOnBreakPlugin', () => {
         expect(editor.stored()).toEqual([paragraph(text('a')), paragraph(text('b'))]);
     });
 
-    it('wins Shift-Enter from a soft break mounted after it', () => {
-        const editor = editorWith(
-            [blurOnBreakPlugin({ onBreak: vi.fn() }), ...defaultPlugins],
-            [paragraph(text('ab'))],
-        );
+    it('leaves Shift-Enter to the soft break when mounted after it', () => {
+        const onBreak = vi.fn();
+        const editor = editorWith([...defaultPlugins, blurOnBreakPlugin({ onBreak })], [paragraph(text('ab'))]);
         editor.caretAfter('a');
 
         press(editor.view, 'Enter', { shiftKey: true });
 
-        expect(editor.stored()).toEqual([paragraph(text('a')), paragraph(text('b'))]);
+        expect(onBreak).not.toHaveBeenCalled();
+        expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'break' }, text('b'))]);
     });
 
     it('splits a list item on Shift-Enter', () => {
         const onBreak = vi.fn();
-        const editor = editorWith([...defaultPlugins, blurOnBreakPlugin({ onBreak })], inList());
+        const editor = editorWith([blurOnBreakPlugin({ onBreak }), ...defaultPlugins], inList());
         editor.caretAfter('it');
 
         press(editor.view, 'Enter', { shiftKey: true });
@@ -1264,7 +1292,7 @@ describe('Enter in an editor with blurOnBreakPlugin', () => {
 
     it('leaves the list on Shift-Enter in an empty item', () => {
         const editor = editorWith(
-            [...defaultPlugins, blurOnBreakPlugin({ onBreak: vi.fn() })],
+            [blurOnBreakPlugin({ onBreak: vi.fn() }), ...defaultPlugins],
             [
                 {
                     type: 'bulletList',
