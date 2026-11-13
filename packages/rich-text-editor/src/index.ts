@@ -113,8 +113,8 @@ export { type RteBlock, type RteDocument, type RteDocumentWith } from './documen
 export { isEmpty };
 
 /**
- * The document's text, one line per text block. Inlines read as their plugin's
- * markup (a mention as `@jane`). Uses `defaultContent` when given no `plugins`.
+ * The document's text, one line per text block. An inline reads as its plugin's
+ * `toText`, else the fixed text of its markup (a mention as `@jane`). Uses `defaultContent` when given no `plugins`.
  */
 export const toPlainText = <TBlock extends RteBlockNode = RteBlock>(
     doc: RteDocument<TBlock>,

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PARAGRAPH, type PluginRegistry, type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
+import { activeCommand, PARAGRAPH, type PluginRegistry, type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
 
 /**
  * The paragraph is the editor's own block rather than a plugin's, so its
@@ -12,8 +12,7 @@ export const TEXT_COMMAND: RteBlockCommand = {
     label: 'Text',
     keywords: ['paragraph', 'plain'],
     group: 'turnInto',
-    // A paragraph inside a list item is the list's, not plain text.
-    isActive: (selection) => selection.blocks.length === 1 && selection.block?.type === PARAGRAPH,
+    active: { type: PARAGRAPH },
     run: (api) => api.blocks.setType(PARAGRAPH),
 };
 
@@ -28,27 +27,25 @@ export const turnIntoCommands = (commands: readonly RteBlockCommand[]): readonly
     commands.filter((command) => command.group === 'turnInto');
 
 /**
- * The command the selection already is, if any. When several say so (a numbered
- * list inside a bulleted item), the one for the innermost block wins: that is
- * the block the caret is actually in.
+ * The command the selection is in. A plugin's command wins: a paragraph in a
+ * list item is the list's, not plain text. The built-in Text is the current
+ * one only when no plugin command is.
  */
-export const activeCommand = (
+export const currentCommand = (
     commands: readonly RteBlockCommand[],
     selection: RteSelectionSnapshot,
 ): RteBlockCommand | undefined => {
-    const active = commands.filter((command) => command.isActive?.(selection) === true);
-    if (active.length <= 1) {
-        return active[0];
+    const fromPlugins = activeCommand(
+        commands.filter((command) => command.id !== TEXT_COMMAND.id),
+        selection,
+    );
+    if (fromPlugins !== undefined) {
+        return fromPlugins;
     }
-    // How deep a command's block sits: the first block, innermost first, that
-    // alone makes it active.
-    const depthOf = (command: RteBlockCommand): number => {
-        const depth = selection.blocks.findIndex(
-            (block) => command.isActive?.({ ...selection, block, blocks: [block] }) === true,
-        );
-        return depth === -1 ? Number.POSITIVE_INFINITY : depth;
-    };
-    return active.reduce((best, command) => (depthOf(command) < depthOf(best) ? command : best));
+    return activeCommand(
+        commands.filter((command) => command.id === TEXT_COMMAND.id),
+        selection,
+    );
 };
 
 const wordsOf = (text: string): string[] => text.toLowerCase().split(/\s+/).filter(Boolean);

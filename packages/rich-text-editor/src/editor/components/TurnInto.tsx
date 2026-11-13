@@ -7,7 +7,7 @@ import { type ComponentProps, type MouseEvent, type ReactNode, useRef } from 're
 import { type EditorControlApi, type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
 import { MENU_ICON_SIZE } from '#/ui/toolbarIconSize';
 
-import { activeCommand } from '../helpers/blockCommands';
+import { currentCommand } from '../helpers/blockCommands';
 import { type RichTextEditorLabels } from '../labels';
 import styles from '../richTextEditor.module.scss';
 
@@ -61,7 +61,7 @@ export const TurnInto = ({
     selection: RteSelectionSnapshot;
     labels: RichTextEditorLabels;
 }): ReactNode => {
-    const active = activeCommand(commands, selection);
+    const active = currentCommand(commands, selection);
     const { returnToText, contentProps } = useReturnToText(api);
     const label = active?.label ?? labels.text;
 

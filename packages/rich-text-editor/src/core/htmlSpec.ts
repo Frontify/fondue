@@ -3,32 +3,16 @@
 // The static markup a node becomes (editor, readonly view, export, copy), as a
 // plain description rather than DOM or React, so every surface reads the same thing.
 
+import { warnOnce } from './warnings';
+
 /** CSS properties by their CSS name: `{ 'text-align': 'center' }`. */
 export type StyleMap = Record<string, string>;
 
-/** The attributes markup may carry. Closed on purpose: every surface maps them to its own form, and a short list can't be read differently. */
-export type HtmlAttributes = {
-    class?: string;
-    style?: StyleMap;
-    href?: string;
-    src?: string;
-    alt?: string;
-    title?: string;
-    target?: string;
-    rel?: string;
-    type?: string;
-    role?: string;
-    id?: string;
-    /** As HTML spells it; the readonly view passes it to React as `tabIndex`. */
-    tabindex?: string;
-    /** An ordered list's first number. */
-    start?: string;
-    /** Boolean attributes: present when true, absent otherwise. */
-    checked?: boolean;
-    disabled?: boolean;
-    [data: `data-${string}`]: string | undefined;
-    [aria: `aria-${string}`]: string | undefined;
-};
+/** The attributes markup may carry: `class` and `style` by name, any other HTML attribute by its name; true writes a boolean attribute, false or undefined leaves it out. */
+export type HtmlAttributes = { class?: string; style?: StyleMap } & Record<
+    string,
+    string | boolean | StyleMap | undefined
+>;
 
 /**
  * One element. `children: true` is where the node's content goes (the text of
@@ -68,24 +52,107 @@ export const cssText = (style: StyleMap): string =>
         .map(([property, value]) => `${property}: ${value};`)
         .join(' ');
 
+/** An attribute name as HTML spells it here: lowercase letters, digits and hyphens, starting with a letter. */
+const ATTRIBUTE_NAME = /^[a-z][a-z0-9-]*$/;
+
+/** Event-handler attributes (`onclick`) run script, so no markup may carry one. */
+const EVENT_HANDLER_PREFIX = 'on';
+
+const STYLE_ATTRIBUTE = 'style';
+
+/** One attribute that passed `checkedAttributes`, by what it holds. */
+export type CheckedAttribute =
+    | { kind: 'text'; name: string; value: string }
+    /** A boolean attribute, present. */
+    | { kind: 'flag'; name: string }
+    | { kind: 'style'; name: string; value: StyleMap };
+
+const isStyleMap = (value: unknown): value is StyleMap =>
+    typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const attributeError = (name: string, tag: string, reason: string): TypeError =>
+    new TypeError(`Attribute "${name}" on <${tag}> ${reason}.`);
+
+/** A stored value is data, not an author mistake, so a bad one is left out and the document still draws. */
+const skippedAttribute = (name: string, tag: string, value: unknown): undefined => {
+    warnOnce(
+        `attribute-value:${tag}:${name}`,
+        `Attribute "${name}" on <${tag}> was left out: its value is not a string, a number, a boolean or, for style, a map of CSS properties.`,
+        value,
+    );
+    return undefined;
+};
+
+// Typed `unknown`: a plugin's `toHtml` passes stored values on, whatever they hold.
+const checkedAttribute = (name: string, value: unknown, tag: string): CheckedAttribute | undefined => {
+    if (value === undefined || value === null || value === false) {
+        return undefined;
+    }
+    if (name === STYLE_ATTRIBUTE) {
+        if (!isStyleMap(value)) {
+            return skippedAttribute(name, tag, value);
+        }
+        return { kind: 'style', name, value };
+    }
+    if (typeof value === 'string') {
+        return { kind: 'text', name, value };
+    }
+    if (typeof value === 'number' && Number.isFinite(value)) {
+        return { kind: 'text', name, value: String(value) };
+    }
+    if (value === true) {
+        return { kind: 'flag', name };
+    }
+    return skippedAttribute(name, tag, value);
+};
+
+/**
+ * The attributes an element is written with, checked once for every surface
+ * (engine DOM, HTML string, React). A name that is no lowercase attribute name,
+ * or starts with `on`, throws: that is an author mistake. A value never throws.
+ * Null, undefined and false leave the attribute out, a number is written as a
+ * string, and any other value that is not a string, boolean or style map is
+ * left out with a development warning.
+ */
+export const checkedAttributes = (tag: string, attrs: HtmlAttributes = {}): CheckedAttribute[] => {
+    const checked: CheckedAttribute[] = [];
+    for (const [name, value] of Object.entries(attrs)) {
+        if (!ATTRIBUTE_NAME.test(name) || name.startsWith(EVENT_HANDLER_PREFIX)) {
+            throw attributeError(name, tag, 'is not a valid attribute name');
+        }
+        const attribute = checkedAttribute(name, value, tag);
+        if (attribute !== undefined) {
+            checked.push(attribute);
+        }
+    }
+    return checked;
+};
+
 /**
  * The attributes as DOM and HTML strings spell them: style as CSS text, a true
  * boolean as `''`, false or undefined left out. Shared by engine and HTML printer.
  */
-export const attributeEntries = (attrs: HtmlAttributes = {}): [string, string][] =>
-    Object.entries(attrs).flatMap(([name, value]): [string, string][] => {
-        if (value === undefined || value === false) {
-            return [];
+export const attributeEntries = (tag: string, attrs?: HtmlAttributes): [string, string][] => {
+    const entries: [string, string][] = [];
+    for (const attribute of checkedAttributes(tag, attrs)) {
+        switch (attribute.kind) {
+            case 'text':
+                entries.push([attribute.name, attribute.value]);
+                break;
+            case 'flag':
+                entries.push([attribute.name, '']);
+                break;
+            case 'style': {
+                const text = cssText(attribute.value);
+                if (text !== '') {
+                    entries.push([attribute.name, text]);
+                }
+                break;
+            }
         }
-        if (value === true) {
-            return [[name, '']];
-        }
-        if (name === 'style') {
-            const text = cssText(value as StyleMap);
-            return text === '' ? [] : [[name, text]];
-        }
-        return [[name, value as string]];
-    });
+    }
+    return entries;
+};
 
 /** Merges styles onto the outermost element, so a block-wide attribute (alignment) lands without the block knowing. */
 export const withRootStyle = (spec: HtmlSpec, style: StyleMap): HtmlSpec =>

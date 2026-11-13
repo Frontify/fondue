@@ -30,7 +30,7 @@ const escapeText = (text: string): string =>
 const escapeAttribute = (value: string): string => escapeText(value).replaceAll('"', '&quot;');
 
 const specToString = (spec: HtmlSpec, content: string): string => {
-    const attributes = attributeEntries(spec.attrs)
+    const attributes = attributeEntries(spec.tag, spec.attrs)
         .map(([name, value]) => ` ${name}="${escapeAttribute(value)}"`)
         .join('');
     if (VOID_ELEMENTS.has(spec.tag)) {

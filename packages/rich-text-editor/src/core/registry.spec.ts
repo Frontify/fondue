@@ -12,12 +12,13 @@ import {
     defineMark,
     definePlugin,
     type PasteTransform,
+    type RteBlockCommand,
     type RteContent,
     type RteInputRule,
     type RtePlugin,
     type RteToolbarGroup,
 } from './plugin';
-import { buildPluginRegistry, isClaimedBy } from './registry';
+import { activeCommand, buildPluginRegistry, isClaimedBy } from './registry';
 
 /**
  * The registry is the one place plugins are read: it gathers their
@@ -704,7 +705,7 @@ describe('the menu commands of a toolbar entry', () => {
         expect(registry.commands[0]).toMatchObject({ label: 'Quote', group: 'turnInto', keywords: ['cite'] });
     });
 
-    it('turn a text block into the type, and know when the selection is in it', () => {
+    it('turn a text block into the type, and name the block that makes it current', () => {
         const types: string[] = [];
         const registry = buildPluginRegistry([
             definePlugin({ id: 'quote', content, toolbar: [{ icon, label: 'Quote', menu: {} }] }),
@@ -714,8 +715,7 @@ describe('the menu commands of a toolbar entry', () => {
         command?.run({ blocks: { setType: (type: string) => types.push(type) } } as unknown as EditorControlApi);
 
         expect(types).toEqual(['quote']);
-        expect(command?.isActive?.({ block: { type: 'quote' } } as RteSelectionSnapshot)).toBe(true);
-        expect(command?.isActive?.({ block: { type: 'paragraph' } } as RteSelectionSnapshot)).toBe(false);
+        expect(command?.active).toEqual({ type: 'quote' });
     });
 
     it('may not share an id with a command another plugin declares', () => {
@@ -835,5 +835,63 @@ describe('toolbar groups', () => {
         expect(() => buildPluginRegistry([grouped('a', { id: 'odd', order })])).toThrow(
             'Plugin "a" has toolbar group "odd" with an `order` that is not a finite number.',
         );
+    });
+});
+
+describe('the active command', () => {
+    const command = (id: string, active?: RteBlockCommand['active']): RteBlockCommand => ({
+        id,
+        label: id,
+        group: 'turnInto',
+        active,
+        run: () => {},
+    });
+    const forText = command('forText', { type: 'text' });
+    const forHolderA = command('forHolderA', { type: 'holderA' });
+    const forHolderB = command('forHolderB', { type: 'holderB' });
+    const forOne = command('forOne', { type: 'styled', attributes: { variant: 'one' } });
+    const commands = [forText, forHolderA, forHolderB, forOne];
+    const selectionIn = (...blocks: RteSelectionSnapshot['blocks']): RteSelectionSnapshot =>
+        ({ block: blocks[0] ?? null, blocks }) as RteSelectionSnapshot;
+
+    it('is the command whose block the selection is in', () => {
+        expect(activeCommand(commands, selectionIn({ type: 'text' }))).toBe(forText);
+    });
+
+    it('is the command of an outer block when the inner blocks have none', () => {
+        const selection = selectionIn({ type: 'other' }, { type: 'slot' }, { type: 'holderA' });
+
+        expect(activeCommand(commands, selection)).toBe(forHolderA);
+    });
+
+    it('is the command for the block that has the listed attributes', () => {
+        const selection = selectionIn({ type: 'styled', variant: 'one' }, { type: 'slot' }, { type: 'holderA' });
+
+        expect(activeCommand(commands, selection)).toBe(forOne);
+    });
+
+    it('is the inner block when the same kind of block nests', () => {
+        const selection = selectionIn(
+            { type: 'other' },
+            { type: 'slot' },
+            { type: 'holderB' },
+            { type: 'slot' },
+            { type: 'holderA' },
+        );
+
+        expect(activeCommand(commands, selection)).toBe(forHolderB);
+    });
+
+    it('needs every listed attribute to match', () => {
+        const selection = selectionIn({ type: 'styled', variant: 'two' });
+
+        expect(activeCommand(commands, selection)).toBeUndefined();
+        expect(
+            activeCommand([command('both', { type: 'styled', attributes: { variant: 'two', extra: 1 } })], selection),
+        ).toBeUndefined();
+    });
+
+    it('is never a command without `active`', () => {
+        expect(activeCommand([command('none')], selectionIn({ type: 'text' }))).toBeUndefined();
     });
 });

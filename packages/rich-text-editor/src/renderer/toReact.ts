@@ -2,11 +2,11 @@
 
 // The drawn tree as React elements, for the readonly view. The only place an
 // `HtmlSpec`'s attributes become React props — the counterpart of the core's
-// `attributeEntries`; `__tests__/htmlParity.spec.tsx` holds the two to the same output.
+// `attributeEntries`, both reading `checkedAttributes`; `__tests__/htmlParity.spec.tsx` holds the two to the same output.
 
 import { createElement, type CSSProperties, type ReactNode } from 'react';
 
-import { type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from '#/core';
+import { checkedAttributes, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from '#/core';
 
 import { type DrawnNode } from './documentTree';
 
@@ -20,28 +20,52 @@ const reactStyleName = (property: string): string =>
 const toReactStyle = (style: StyleMap): CSSProperties =>
     Object.fromEntries(safeStyleEntries(style).map(([property, value]) => [reactStyleName(property), value]));
 
-const reactProps = (attrs: HtmlAttributes = {}): Record<string, unknown> => {
+// `checked` is uncontrolled: the readonly view shows the state, it does not own it.
+const REACT_PROP_NAMES = new Map([
+    ['class', 'className'],
+    ['tabindex', 'tabIndex'],
+    ['checked', 'defaultChecked'],
+]);
+
+const reactPropName = (name: string): string => REACT_PROP_NAMES.get(name) ?? name;
+
+/** Boolean attributes React 18 knows by their HTML name. It writes them for `true` and drops them for `''`. */
+const REACT_BOOLEAN_ATTRIBUTES: ReadonlySet<string> = new Set([
+    'checked',
+    'disabled',
+    'hidden',
+    'open',
+    'required',
+    'controls',
+    'loop',
+    'reversed',
+    'async',
+    'defer',
+    'default',
+]);
+
+/** What React needs for a present flag to reach the DOM as `name=""`, as the editor and the HTML export write it. */
+const flagValue = (name: string): string | true => {
+    if (REACT_BOOLEAN_ATTRIBUTES.has(name)) {
+        return true;
+    }
+    // React 18 drops `true` for a name it does not know, but writes an empty string.
+    return '';
+};
+
+const reactProps = (tag: string, attrs?: HtmlAttributes): Record<string, unknown> => {
     const props: Record<string, unknown> = {};
-    for (const [name, value] of Object.entries(attrs)) {
-        if (value === undefined || value === false) {
-            continue;
-        }
-        switch (name) {
-            case 'class':
-                props.className = value;
+    for (const attribute of checkedAttributes(tag, attrs)) {
+        switch (attribute.kind) {
+            case 'text':
+                props[reactPropName(attribute.name)] = attribute.value;
                 break;
-            case 'tabindex':
-                props.tabIndex = value;
+            case 'flag':
+                props[reactPropName(attribute.name)] = flagValue(attribute.name);
                 break;
             case 'style':
-                props.style = toReactStyle(value as StyleMap);
+                props.style = toReactStyle(attribute.value);
                 break;
-            // Uncontrolled: the readonly view shows the state, it does not own it.
-            case 'checked':
-                props.defaultChecked = true;
-                break;
-            default:
-                props[name] = value;
         }
     }
     return props;
@@ -59,7 +83,7 @@ export const specToReact = (spec: HtmlSpec, content: ReactNode[], key?: number):
             typeof child === 'string' ? child : specToReact(child, content, index),
         );
     }
-    return createElement(spec.tag, { ...reactProps(spec.attrs), key }, ...inner);
+    return createElement(spec.tag, { ...reactProps(spec.tag, spec.attrs), key }, ...inner);
 };
 
 const nodeToReact = (node: DrawnNode, key: number): ReactNode => {
