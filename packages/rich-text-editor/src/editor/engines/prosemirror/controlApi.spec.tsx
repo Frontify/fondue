@@ -47,6 +47,16 @@ const dividerPlugin: RtePlugin = definePlugin({
     }),
 });
 
+/** A plain mark of the spec's own, so a spec about marks does not depend on a shipped one. */
+const emphasisPlugin: RtePlugin = definePlugin({
+    id: 'emphasis',
+    content: defineContent({
+        marks: {
+            emphasis: defineMark({ toHtml: () => ({ tag: 'em', children: true }), parse: [] }),
+        },
+    }),
+});
+
 const plugins: RtePlugin[] = [...defaultPlugins, dividerPlugin, tagPlugin];
 
 const LINK = { href: 'https://example.com' };
@@ -271,25 +281,26 @@ describe('marks.toggle', () => {
     });
 
     it('takes the mark off a range whose text carries it around a line break', () => {
-        const editor = editorWith(plugins, [
-            paragraph(text('a', { bold: true }), { type: 'break' }, text('b', { bold: true })),
-        ]);
+        const editor = editorWith(
+            [...plugins, emphasisPlugin],
+            [paragraph(text('a', { emphasis: true }), { type: 'break' }, text('b', { emphasis: true }))],
+        );
         editor.selectBetween('a', 'b');
-        expect(editor.api.selection.get().marks).toHaveProperty('bold');
+        expect(editor.api.selection.get().marks).toHaveProperty('emphasis');
 
-        editor.api.marks.toggle('bold');
+        editor.api.marks.toggle('emphasis');
 
         expect(editor.stored()).toEqual([paragraph(text('a'), { type: 'break' }, text('b'))]);
-        expect(editor.api.selection.get().marks).not.toHaveProperty('bold');
+        expect(editor.api.selection.get().marks).not.toHaveProperty('emphasis');
     });
 
     it('puts the mark on a range of blank text', () => {
-        const editor = editorWith(plugins, [paragraph(text('  '))]);
+        const editor = editorWith([...plugins, emphasisPlugin], [paragraph(text('  '))]);
         editor.select('  ');
 
-        editor.api.marks.toggle('bold');
+        editor.api.marks.toggle('emphasis');
 
-        expect(editor.stored()).toEqual([paragraph(text('  ', { bold: true }))]);
+        expect(editor.stored()).toEqual([paragraph(text('  ', { emphasis: true }))]);
     });
 
     it('puts the mark on all of a range only part of which carries it', () => {
