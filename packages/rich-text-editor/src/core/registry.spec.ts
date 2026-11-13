@@ -62,6 +62,24 @@ describe('the marks of a registry', () => {
 
         expect([...registry.marks.keys()]).toEqual(['b', 'a', 'c']);
     });
+
+    it('exclude each other when only one names the other', () => {
+        const excluding = defineMark({
+            excludes: ['plain', 'unmounted'],
+            toHtml: () => ({ tag: 'span', children: true }),
+            parse: [],
+        });
+        const registry = buildPluginRegistry([
+            definePlugin({ id: 'excluding', content: defineContent({ marks: { excluding } }) }),
+            definePlugin({ id: 'plain', content: defineContent({ marks: { plain: mark() } }) }),
+            definePlugin({ id: 'other', content: defineContent({ marks: { other: mark() } }) }),
+        ]);
+
+        expect(registry.marks.get('excluding')?.excludes).toEqual(['plain']);
+        expect(registry.marks.get('plain')?.excludes).toEqual(['excluding']);
+        expect(registry.marks.get('other')?.excludes).toBeUndefined();
+        expect(excluding.excludes).toEqual(['plain', 'unmounted']);
+    });
 });
 
 describe('the typing rules of a registry', () => {

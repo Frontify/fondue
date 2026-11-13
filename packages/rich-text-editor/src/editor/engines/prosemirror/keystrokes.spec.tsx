@@ -40,6 +40,8 @@ const press = (view: EditorView, key: string, init: KeyboardEventInit = {}): boo
     return view.someProp('handleKeyDown', (handle) => handle(view, event)) === true;
 };
 
+const mod = /Mac|iP(hone|[oa]d)/.test(navigator.platform) ? { metaKey: true } : { ctrlKey: true };
+
 afterEach(destroyEditors);
 afterEach(() => vi.restoreAllMocks());
 
@@ -60,6 +62,42 @@ describe('typing a mark shortcut', () => {
 
     it('turns *text* italic', () => {
         expect(typed('an *aside*')).toEqual([paragraph(text('an '), text('aside', { italic: true }))]);
+    });
+
+    it('turns __text__ bold and _text_ italic', () => {
+        expect(typed('__bold__ and _aside_')).toEqual([
+            paragraph(text('bold', { bold: true }), text(' and '), text('aside', { italic: true })),
+        ]);
+    });
+
+    it.each([
+        ['foo__bar__', 'inside a word'],
+        ['self.__dict__', 'after a full stop'],
+        ['a__b__ c', 'glued to the word before it'],
+    ])('leaves %s as typed, since a word-bounded rule needs room around its delimiters (%s)', (value) => {
+        expect(typed(value)).toEqual([paragraph(text(value))]);
+    });
+
+    it.each([
+        ['at the start of a line', '__text__', [text('text', { bold: true })]],
+        ['after a space', 'a __text__', [text('a '), text('text', { bold: true })]],
+        ['after an opening bracket', '(__text__', [text('('), text('text', { bold: true })]],
+        ['after a quote', '"__x__', [text('"'), text('x', { bold: true })]],
+    ])('turns __text__ bold %s', (_where, value, children) => {
+        expect(typed(value)).toEqual([paragraph(...children)]);
+    });
+
+    it('leaves __text__ as typed when a word follows the closing delimiter', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('word'))]);
+        editor.caretBefore('word');
+
+        editor.type('__text__');
+
+        expect(editor.stored()).toEqual([paragraph(text('__text__word'))]);
+    });
+
+    it('keeps the ** rule inside a word', () => {
+        expect(typed('foo**bar**')).toEqual([paragraph(text('foo'), text('bar', { bold: true }))]);
     });
 
     it('does not carry the mark on into what is typed after it', () => {
@@ -207,12 +245,93 @@ describe('a check list shortcut inside a check list', () => {
 
 describe('a mark that opts out of typing rules', () => {
     it('keeps the delimiters typed inside it — inline code keeps `**`', () => {
-        const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
+        const editor = editorWith(defaultPlugins, [paragraph(text('xy', { code: true }))]);
         editor.caretAfter('x');
 
         editor.type(' **c**');
 
-        expect(editor.stored()).toEqual([paragraph(text('x **c**', { code: true }))]);
+        expect(editor.stored()).toEqual([paragraph(text('x **c**y', { code: true }))]);
+    });
+});
+
+describe('inline code', () => {
+    it('does not carry on into what is typed at its end', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
+        editor.caretAfter('x');
+
+        editor.type('y');
+
+        expect(editor.stored()).toEqual([paragraph(text('x', { code: true }), text('y'))]);
+    });
+
+    it('can sit inside text a mark shortcut wraps', () => {
+        expect(typed('**run `npm` now**')).toEqual([
+            paragraph(
+                text('run ', { bold: true }),
+                text('npm', { bold: true, code: true }),
+                text(' now', { bold: true }),
+            ),
+        ]);
+    });
+
+    it('lets a mark shortcut typed right after its end apply', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('foo', { code: true }))]);
+        editor.caretAfter('foo');
+
+        editor.type('**b**');
+
+        expect(editor.stored()).toEqual([paragraph(text('foo', { code: true }), text('b', { bold: true }))]);
+    });
+
+    it('keeps its text when a typing rule after its end would reach into it', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('snake_case', { code: true }))]);
+        editor.caretAfter('snake_case');
+
+        editor.type('_');
+
+        expect(editor.stored()).toEqual([paragraph(text('snake_case', { code: true }), text('_'))]);
+    });
+
+    it('carries on at its end once Mod-e turns it back on', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
+        editor.caretAfter('x');
+
+        expect(press(editor.view, 'e', mod)).toBe(true);
+        editor.type('y');
+
+        expect(editor.stored()).toEqual([paragraph(text('xy', { code: true }))]);
+    });
+});
+
+describe('subscript and superscript', () => {
+    it('turning one on over text takes the other off', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { subscript: true }))]);
+        editor.select('x');
+
+        expect(press(editor.view, '.', mod)).toBe(true);
+        expect(editor.stored()).toEqual([paragraph(text('x', { superscript: true }))]);
+
+        editor.api.marks.toggle('subscript');
+        expect(editor.stored()).toEqual([paragraph(text('x', { subscript: true }))]);
+    });
+
+    it('a stored run carrying both loses the one turned off', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { subscript: true, superscript: true }))]);
+        editor.select('x');
+
+        editor.api.marks.toggle('subscript');
+
+        expect(editor.stored()).toEqual([paragraph(text('x', { superscript: true }))]);
+    });
+
+    it('turning one on at a caret types only that one', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { subscript: true }))]);
+        editor.caretAfter('x');
+
+        expect(press(editor.view, '.', mod)).toBe(true);
+        editor.type('y');
+
+        expect(editor.stored()).toEqual([paragraph(text('x', { subscript: true }), text('y', { superscript: true }))]);
     });
 });
 
@@ -231,7 +350,6 @@ describe('undoing a typing rewrite', () => {
         const editor = editorWith(defaultPlugins, empty());
         editor.type('## ');
 
-        const mod = /Mac|iP(hone|[oa]d)/.test(navigator.platform) ? { metaKey: true } : { ctrlKey: true };
         expect(press(editor.view, 'z', mod)).toBe(true);
 
         expect(editor.stored()).toEqual([paragraph(text('## '))]);
