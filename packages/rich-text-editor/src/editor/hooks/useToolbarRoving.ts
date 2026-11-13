@@ -164,11 +164,11 @@ const slotOf = (element: HTMLElement | null): string | null => {
     return slot.getAttribute(SLOT_ATTRIBUTE);
 };
 
-/** What a press on the toolbar may land on without taking the selection: a button keeps it itself, a text control takes focus. */
-const PRESSABLE = `button, ${TEXT_CONTROL}`;
-
 /** A click on the toolbar that misses a control would move focus, and the selection with it. */
 const keepSelection = (event: MouseEvent<HTMLElement>): void => keepSelectionExcept(event, PRESSABLE);
+
+/** What a press on the toolbar may land on without taking the selection: a button keeps it itself, a text control takes focus. */
+const PRESSABLE = `button, ${TEXT_CONTROL}`;
 
 /** Every element in the toolbar a keyboard can land on. Disabled controls are passed over. */
 const CONTROLS = 'button, input, select, textarea, a[href], [role="combobox"]';

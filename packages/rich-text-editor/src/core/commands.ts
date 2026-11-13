@@ -27,9 +27,7 @@ export type InsertTextOptions = {
     undo?: InsertTextUndo;
 };
 
-/**
- * What is selected, as one value that plugin UI renders itself from. Read it in a toolbar render function, which runs on every state change.
- */
+/** What is selected, as one value that plugin UI renders itself from. Read it in a toolbar render function, which runs on every state change. */
 export type RteSelectionSnapshot = {
     /** A caret rather than a range, so it covers nothing and `text` is empty. */
     isCollapsed: boolean;
@@ -105,8 +103,7 @@ export type EditorControlApi = {
          */
         remove(type: string): void;
         /**
-         * Strip every mark from the selection, except those that declare `survivesClear` when `keepSurviving` is set:
-         * the formatting half of "reset formatting".
+         * Strip every mark from the selection, except those that declare `survivesClear` when `keepSurviving` is set.
          *
          * @param options - how much a caret clears and which marks stay; with none, a caret only stops the marks it
          * would type with and every mark goes
@@ -134,9 +131,7 @@ export type EditorControlApi = {
          * @returns whether any block changed, which is false when none of them declares the attributes or all have the values already
          */
         updateAttributes(attributes: Record<string, unknown>): boolean;
-        /**
-         * Reset every `blockAttributes` attribute (for example, alignment) to its default across the selection
-         */
+        /** Reset every `blockAttributes` attribute (for example, alignment) to its default across the selection. */
         resetAttributes(): void;
     };
 
@@ -191,7 +186,7 @@ export type EditorControlApi = {
     };
 
     /**
-     * Whether the document holds nothing to submit: no text, only empty blocks (the exported `isEmpty`)
+     * Whether the document holds no text, only empty blocks (the exported `isEmpty`)
      */
     isEmpty(): boolean;
 
@@ -205,9 +200,7 @@ export type EditorControlApi = {
      */
     announce(message: string): void;
 
-    /**
-     * Return focus to the editor, e.g. after closing plugin UI.
-     */
+    /** Return focus to the editor, e.g. after closing plugin UI. */
     focus(): void;
     /** Give up focus, e.g. to commit a single-line editor on Enter. */
     blur(): void;

@@ -10,6 +10,11 @@ import styles from './keyboardReference.module.scss';
 
 const FOR_APPLE = true;
 const FOR_OTHER_PLATFORMS = false;
+const KEY_SEPARATOR = ', ';
+
+/** Every key of a row as one platform writes them */
+const keysTextOf = (keys: readonly string[], apple: boolean): string =>
+    keys.map((key) => readableShortcut(key, apple)).join(KEY_SEPARATOR);
 
 const ownerHeadingOf = (owner: RteShortcutOwner): ReactNode => {
     switch (owner.kind) {
@@ -43,11 +48,11 @@ export const PluginKeyboardReference = ({ plugins }: PluginKeyboardReferenceProp
                     </tr>
                 </thead>
                 <tbody>
-                    {rows.map(({ key, label }) => (
-                        <tr key={`${key} ${label}`}>
+                    {rows.map(({ keys, label }) => (
+                        <tr key={label}>
                             <th scope="row">{label}</th>
-                            <td>{readableShortcut(key, FOR_APPLE)}</td>
-                            <td>{readableShortcut(key, FOR_OTHER_PLATFORMS)}</td>
+                            <td>{keysTextOf(keys, FOR_APPLE)}</td>
+                            <td>{keysTextOf(keys, FOR_OTHER_PLATFORMS)}</td>
                         </tr>
                     ))}
                 </tbody>

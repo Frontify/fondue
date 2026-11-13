@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PARAGRAPH, type PluginRegistry, type RteBlockCommand } from '#/core';
+import { activeCommand, PARAGRAPH, type PluginRegistry, type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
 
 /**
  * The paragraph is the editor's own block rather than a plugin's, so its
@@ -25,6 +25,28 @@ export const commandsOf = (registry: PluginRegistry, textLabel = TEXT_COMMAND.la
 /** What the "Turn into" button offers: only blocks something is converted into. */
 export const turnIntoCommands = (commands: readonly RteBlockCommand[]): readonly RteBlockCommand[] =>
     commands.filter((command) => command.group === 'turnInto');
+
+/**
+ * The command the selection is in. A plugin's command wins: a paragraph in a
+ * list item is the list's, not plain text. The built-in Text is the current
+ * one only when no plugin command is.
+ */
+export const currentCommand = (
+    commands: readonly RteBlockCommand[],
+    selection: RteSelectionSnapshot,
+): RteBlockCommand | undefined => {
+    const fromPlugins = activeCommand(
+        commands.filter((command) => command.id !== TEXT_COMMAND.id),
+        selection,
+    );
+    if (fromPlugins !== undefined) {
+        return fromPlugins;
+    }
+    return activeCommand(
+        commands.filter((command) => command.id === TEXT_COMMAND.id),
+        selection,
+    );
+};
 
 const wordsOf = (text: string): string[] => text.toLowerCase().split(/\s+/).filter(Boolean);
 

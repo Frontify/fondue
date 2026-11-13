@@ -7,9 +7,19 @@ import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { defineContent, defineMark, definePlugin } from '#/core';
-import { defaultPlugins, linkPlugin } from '#/plugins';
+import { defaultPlugins } from '#/plugins';
 
-import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
+import {
+    destroyEditors,
+    editorWith,
+    paragraph,
+    shipped,
+    text,
+    token,
+    TOKEN_TRIM,
+    tokenPlugin,
+    type TokenPluginOptions,
+} from './testEditor';
 
 // A web address followed by a space becomes a link (the link plugin's `markPattern` rule).
 
@@ -66,12 +76,6 @@ describe('typing a web address', () => {
         expect(stored).toEqual([paragraph(text('(see '), link('https://a.com/x'), text('). '))]);
     });
 
-    it('leaves a run of closing punctuation and brackets out of the link', () => {
-        const stored = typedIntoEmptyParagraph('(see https://a.com/x"),. ');
-
-        expect(stored).toEqual([paragraph(text('(see '), link('https://a.com/x'), text('"),. '))]);
-    });
-
     it('does not carry the link on into what is typed next', () => {
         const stored = typedIntoEmptyParagraph('https://example.com next');
 
@@ -108,156 +112,86 @@ describe('typing a web address', () => {
     });
 });
 
-describe('typing a mail or phone address', () => {
-    it('links a mailto: address once a space follows', () => {
-        const stored = typedIntoEmptyParagraph('write mailto:ana@example.com ');
+const tokenEditor = (options: TokenPluginOptions = { trim: TOKEN_TRIM }) =>
+    editorWith([...defaultPlugins, tokenPlugin(options)], [paragraph()]);
 
-        expect(stored).toEqual([paragraph(text('write '), link('mailto:ana@example.com'), text(' '))]);
-    });
+const typedToken = (value: string, options?: TokenPluginOptions) => {
+    const editor = tokenEditor(options);
+    editor.type(value);
+    return editor.stored();
+};
 
-    it('links a tel: number and leaves the full stop out', () => {
-        const stored = typedIntoEmptyParagraph('call tel:+41791234567. ');
+describe('typing a token a rule declares', () => {
+    it('leaves a run of closing punctuation and brackets out of the token', () => {
+        const stored = typedToken('(see tok:a/x"),. ');
 
-        expect(stored).toEqual([paragraph(text('call '), link('tel:+41791234567'), text('. '))]);
-    });
-
-    it('does not link a bare mail address', () => {
-        const stored = typedIntoEmptyParagraph('ana@example.com ');
-
-        expect(stored).toEqual([paragraph(text('ana@example.com '))]);
-    });
-
-    it('does not link a scheme with nothing after it', () => {
-        const stored = typedIntoEmptyParagraph('mailto: tel:. ');
-
-        expect(stored).toEqual([paragraph(text('mailto: tel:. '))]);
-    });
-
-    it('does not link inside an existing link', () => {
-        const editor = editorWith(defaultPlugins, [paragraph(text('xy', { link: { href: 'https://a.com' } }))]);
-        editor.caretAfter('x');
-
-        editor.type(' mailto:ana@example.com ');
-
-        expect(editor.stored()).toEqual([
-            paragraph(text('x mailto:ana@example.com y', { link: { href: 'https://a.com' } })),
-        ]);
-    });
-
-    it('does nothing inside inline code', () => {
-        const editor = editorWith(defaultPlugins, [paragraph(text('xy', { code: true }))]);
-        editor.caretAfter('x');
-
-        editor.type(' tel:+41791234567 ');
-
-        expect(editor.stored()).toEqual([paragraph(text('x tel:+41791234567 y', { code: true }))]);
-    });
-});
-
-describe('typing a web address right after an opening bracket or quote', () => {
-    it('links an address in parentheses and leaves the closing one out', () => {
-        const stored = typedIntoEmptyParagraph('(https://frontify.com) ');
-
-        expect(stored).toEqual([paragraph(text('('), link('https://frontify.com'), text(') '))]);
+        expect(stored).toEqual([paragraph(text('(see '), token('tok:a/x'), text('"),. '))]);
     });
 
     it.each([
+        ['(', ')'],
         ['[', ']'],
         ['{', '}'],
         ['<', '>'],
-    ])('links an address in %s brackets and leaves the closing one out', (open, close) => {
-        const stored = typedIntoEmptyParagraph(`${open}https://frontify.com/x${close} `);
+    ])('marks a token after an opening %s and leaves the closing one out', (open, close) => {
+        const stored = typedToken(`${open}tok:a/x${close} `);
 
-        expect(stored).toEqual([paragraph(text(open), link('https://frontify.com/x'), text(`${close} `))]);
+        expect(stored).toEqual([paragraph(text(open), token('tok:a/x'), text(`${close} `))]);
     });
 
-    it('builds a rule whose pattern uses the v flag', () => {
-        const hashtags = definePlugin({
-            id: 'hashtags',
-            inputRules: [
-                { kind: 'markPattern', pattern: new RegExp(String.raw`#\w+`, 'v'), mark: 'bold', value: () => ({}) },
-            ],
-        });
+    it('keeps a closing bracket that balances an opening one', () => {
+        const stored = typedToken('tok:a/Foo_(bar). ');
 
-        expect(() => editorWith([...defaultPlugins, hashtags], [paragraph()])).not.toThrow();
+        expect(stored).toEqual([paragraph(token('tok:a/Foo_(bar)'), text('. '))]);
     });
 
-    it('starts a token of a rule with the v flag after an opening bracket', () => {
-        const hashtags = definePlugin({
-            id: 'hashtags',
-            inputRules: [
-                { kind: 'markPattern', pattern: new RegExp(String.raw`#\w+`, 'v'), mark: 'bold', value: () => ({}) },
-            ],
-        });
-        const editor = editorWith([...defaultPlugins, hashtags], [paragraph()]);
+    it.each([
+        ['straight double quotes', '"', '"'],
+        ['straight single quotes', "'", "'"],
+        ['curly double quotes', '“', '”'],
+        ['curly single quotes', '‘', '’'],
+    ])('marks a token in %s', (_name, open, close) => {
+        const stored = typedToken(`see ${open}tok:a/x${close} `);
 
-        editor.type('(#tag ');
+        expect(stored).toEqual([paragraph(text(`see ${open}`), token('tok:a/x'), text(`${close} `))]);
+    });
 
-        expect(editor.stored()).toEqual([paragraph(text('('), text('#tag', { bold: true }), text(' '))]);
+    it('does not mark a token that continues a word', () => {
+        const stored = typedToken('xtok:a ');
+
+        expect(stored).toEqual([paragraph(text('xtok:a '))]);
+    });
+
+    it('does not mark inside text that already carries the mark', () => {
+        const editor = tokenEditor();
+        editor.type('tok:a ');
+        editor.caretAfter('tok');
+
+        editor.type(' tok:b ');
+
+        expect(editor.stored()).toEqual([paragraph(token('tok tok:b :a', 'tok:a'), text(' '))]);
+    });
+
+    it('leaves a token as typed when the rule refuses it', () => {
+        const stored = typedToken('tok:no tok:yes ', { trim: TOKEN_TRIM, refuses: (value) => value === 'tok:no' });
+
+        expect(stored).toEqual([paragraph(text('tok:no '), token('tok:yes'), text(' '))]);
     });
 
     it('keeps the punctuation and brackets of a token whose rule declares no trim', () => {
-        const mentions = definePlugin({
-            id: 'mentions',
-            inputRules: [{ kind: 'markPattern', pattern: /@[^\s]+/, mark: 'bold', value: () => ({}) }],
-        });
-        const editor = editorWith([...defaultPlugins, mentions], [paragraph()]);
+        const stored = typedToken('tok:a). ', {});
 
-        editor.type('@ana). ');
-
-        expect(editor.stored()).toEqual([paragraph(text('@ana).', { bold: true }), text(' '))]);
+        expect(stored).toEqual([paragraph(token('tok:a).'), text(' '))]);
     });
 
-    it('links an address in straight double quotes', () => {
-        const stored = typedIntoEmptyParagraph('see "https://frontify.com" ');
-
-        expect(stored).toEqual([paragraph(text('see "'), link('https://frontify.com'), text('" '))]);
+    it('builds a rule whose pattern uses the v flag', () => {
+        expect(() => tokenEditor({ pattern: new RegExp(String.raw`#\w+`, 'v') })).not.toThrow();
     });
 
-    it('links an address in straight single quotes', () => {
-        const stored = typedIntoEmptyParagraph("'https://frontify.com' ");
+    it('starts a token of a rule with the v flag after an opening bracket', () => {
+        const stored = typedToken('(#tag ', { pattern: new RegExp(String.raw`#\w+`, 'v') });
 
-        expect(stored).toEqual([paragraph(text("'"), link('https://frontify.com'), text("' "))]);
-    });
-
-    it('links an address in curly quotes', () => {
-        const stored = typedIntoEmptyParagraph('“https://frontify.com” ‘https://frontify.com’ ');
-
-        expect(stored).toEqual([
-            paragraph(text('“'), link('https://frontify.com'), text('” ‘'), link('https://frontify.com'), text('’ ')),
-        ]);
-    });
-
-    it('links a mail address in parentheses', () => {
-        const stored = typedIntoEmptyParagraph('(mailto:ana@example.com) ');
-
-        expect(stored).toEqual([paragraph(text('('), link('mailto:ana@example.com'), text(') '))]);
-    });
-
-    it('does not link an address that continues a word', () => {
-        const stored = typedIntoEmptyParagraph('xhttps://frontify.com ');
-
-        expect(stored).toEqual([paragraph(text('xhttps://frontify.com '))]);
-    });
-});
-
-describe('typing a web address the policy refuses', () => {
-    const plugins = [linkPlugin({ allowedHosts: ['frontify.com'] })];
-
-    it('leaves it as typed', () => {
-        const editor = editorWith(plugins, [paragraph()]);
-
-        editor.type('https://example.com ');
-
-        expect(editor.stored()).toEqual([paragraph(text('https://example.com '))]);
-    });
-
-    it('links an address the policy allows', () => {
-        const editor = editorWith(plugins, [paragraph()]);
-
-        editor.type('https://frontify.com ');
-
-        expect(editor.stored()).toEqual([paragraph(link('https://frontify.com'), text(' '))]);
+        expect(stored).toEqual([paragraph(text('('), token('#tag'), text(' '))]);
     });
 });
 

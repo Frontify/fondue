@@ -39,12 +39,6 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
 };
 
-/** A caret in an empty block — where Enter in a list means "leave it" rather than "split it". */
-const inEmptyBlock = (state: EditorState): boolean => {
-    const { $from, empty } = state.selection;
-    return empty && $from.parent.isTextblock && $from.parent.content.size === 0;
-};
-
 // The list half of the control API
 
 /** Implements `EditorControlApi['lists']` against the live view. */
@@ -232,6 +226,12 @@ const atItemStart = (state: EditorState, itemTypeByList: Map<string, string>): b
     }
     const item = $from.node(-1);
     return [...itemTypeByList.values()].includes(item.type.name) && $from.index(-1) === 0;
+};
+
+/** A caret in an empty block — where Enter in a list means "leave it" rather than "split it". */
+const inEmptyBlock = (state: EditorState): boolean => {
+    const { $from, empty } = state.selection;
+    return empty && $from.parent.isTextblock && $from.parent.content.size === 0;
 };
 
 /**

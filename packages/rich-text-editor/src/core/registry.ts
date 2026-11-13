@@ -10,7 +10,6 @@ import { type ReactNode } from 'react';
 import { EDITOR_SHORTCUTS, type EditorControlApi, type RteMarkState, type RteSelectionSnapshot } from './commands';
 import { buildContentRegistry, type ContentRegistry, register } from './contentRegistry';
 import { parseHotkey } from './hotkeys';
-import { readTagRule } from './parseReader';
 import {
     type BlockDefinition,
     type HotkeyHandler,
@@ -32,13 +31,8 @@ import {
     type SelectedNode,
     type ToolbarItemProps,
 } from './plugin';
+import { readTagRule } from './tagRule';
 import { PARAGRAPH } from './vocabulary';
-
-/** The entries of one toolbar group, in mount order; `id` is undefined for the entries of plugins with no group. */
-export type ToolbarEntryGroup = {
-    id: string | undefined;
-    entries: readonly ToolbarEntry[];
-};
 
 /**
  * What a toolbar entry acts on: the type it toggles, by what that type is.
@@ -328,34 +322,16 @@ const isCommandTarget = (target: RteCommandTarget, block: SelectionBlock): boole
     return Object.entries(target.attributes ?? {}).every(([name, value]) => block[name] === value);
 };
 
-/** Whether the type holds other blocks (`content: { blocks }`), as a list item does. */
-const holdsBlocks = (type: string, registry: ContentRegistry): boolean => {
-    const content = registry.blocks.get(type)?.content;
-    return typeof content === 'object' && 'blocks' in content;
-};
-
 /**
  * The command whose `active` block the selection is in, if any. Blocks are
- * read innermost first, so a block inside an item of another block names the
- * inner one. A text block that is the content of a block holding blocks (for
- * example, a list item) is skipped, so the container's command names the selection; any
- * other text block names it itself.
+ * read innermost first, so a list inside an item of another list names the
+ * inner one.
  */
 export const activeCommand = (
     commands: readonly RteBlockCommand[],
     selection: RteSelectionSnapshot,
-    registry: ContentRegistry,
 ): RteBlockCommand | undefined => {
-    const { blocks } = selection;
-    for (let index = 0; index < blocks.length; index++) {
-        const block = blocks[index];
-        const outer = blocks[index + 1];
-        if (block === undefined) {
-            continue;
-        }
-        if (block.type === PARAGRAPH && outer !== undefined && holdsBlocks(outer.type, registry)) {
-            continue;
-        }
+    for (const block of selection.blocks) {
         const command = commands.find(
             (candidate) => candidate.active !== undefined && isCommandTarget(candidate.active, block),
         );
@@ -468,13 +444,11 @@ const forMatching = (rules: readonly RteInputRule[]): RteInputRule[] => [
     ...rules.filter((rule) => rule.kind !== 'mark'),
 ];
 
-/** Built per call, so no module-level code keeps this file in a bundle that only renders. */
-const editorShortcutRows = (): RteShortcut[] =>
-    Object.values(EDITOR_SHORTCUTS).map(({ key, label }) => ({
-        owner: { kind: 'editor' },
-        key,
-        label,
-    }));
+const EDITOR_SHORTCUT_ROWS: readonly RteShortcut[] = Object.values(EDITOR_SHORTCUTS).map(({ key, label }) => ({
+    owner: { kind: 'editor' },
+    key,
+    label,
+}));
 
 /** The first plugin to declare a toolbar group, and the order it gave it. */
 type ToolbarGroupOwner = { pluginId: string; order: number };
@@ -494,9 +468,7 @@ type Draft = {
     commands: RteBlockCommand[];
     commandOwners: Map<string, string>;
     descriptions: string[];
-    /**
-     * How often each id has come up so far, for unique toolbar keys
-     */
+    /** How often each id has come up so far, for unique toolbar keys. */
     seenIds: Map<string, number>;
     duplicateIds: Set<string>;
     editOwners: Map<string, string>;
@@ -630,35 +602,6 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
 };
 
 /**
- * The entries by toolbar group in drawing order: lowest `order` first, entries in the order given inside their group.
- * Groups with equal `order` keep the order their ids first appear in; entries of plugins with no group come last, together.
- */
-export const toolbarGroupsOf = (entries: readonly ToolbarEntry[]): ToolbarEntryGroup[] => {
-    const grouped = new Map<string, { order: number; entries: ToolbarEntry[] }>();
-    const ungrouped: ToolbarEntry[] = [];
-    for (const entry of entries) {
-        const { group } = entry;
-        if (group === undefined) {
-            ungrouped.push(entry);
-            continue;
-        }
-        const drawn = grouped.get(group.id);
-        if (drawn === undefined) {
-            grouped.set(group.id, { order: group.order, entries: [entry] });
-        } else {
-            drawn.entries.push(entry);
-        }
-    }
-    // A stable sort: equal orders keep the order the ids were first seen in.
-    const ordered = [...grouped.entries()].sort(([, a], [, b]) => a.order - b.order);
-    const groups: ToolbarEntryGroup[] = ordered.map(([id, drawn]) => ({ id, entries: drawn.entries }));
-    if (ungrouped.length > 0) {
-        groups.push({ id: undefined, entries: ungrouped });
-    }
-    return groups;
-};
-
-/**
  * The content registry plus what the plugins add for editing.
  */
 export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]): PluginRegistry => {
@@ -666,7 +609,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
     const draft: Draft = {
         edits: new Map(),
         hotkeys: new Map(),
-        shortcuts: editorShortcutRows(),
+        shortcuts: [...EDITOR_SHORTCUT_ROWS],
         inputRules: [],
         pasteHandlers: [],
         pasteTransforms: new Map(),

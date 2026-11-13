@@ -4,7 +4,7 @@
 // marker (a bullet glyph or a number) as text in a span, and end every
 // paragraph with an `<o:p>` marker.
 
-import { OFFICE_LIST_ATTRIBUTES, removeOfficeListData } from '#/core';
+import { OFFICE_LIST_ATTRIBUTES } from '#/core';
 
 /** The name `mso-list` takes in a style attribute, so the engine's style merge keeps it. */
 const KEPT_LIST_PROPERTY = '--mso-list';
@@ -73,6 +73,20 @@ export const keepOfficeListStyles = (html: string): string => {
         }
     }
     return parts.join('');
+};
+
+/** Every attribute of the Office list data. */
+const OFFICE_LIST_ATTRIBUTE_NAMES = Object.values(OFFICE_LIST_ATTRIBUTES);
+/** Elements carrying any attribute of the Office list data. */
+const CARRYING_OFFICE_LIST_DATA = OFFICE_LIST_ATTRIBUTE_NAMES.map((name) => `[${name}]`).join(', ');
+
+/** Removes the Office list data from every element of `root` that carries it. */
+export const removeOfficeListData = (root: ParentNode): void => {
+    for (const element of root.querySelectorAll(CARRYING_OFFICE_LIST_DATA)) {
+        for (const name of OFFICE_LIST_ATTRIBUTE_NAMES) {
+            element.removeAttribute(name);
+        }
+    }
 };
 
 /** Whether the paste carries Word or Outlook markup, found without reading every element's style. */

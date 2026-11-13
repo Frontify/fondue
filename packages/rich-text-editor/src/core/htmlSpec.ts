@@ -3,6 +3,8 @@
 // The static markup a node becomes (editor, readonly view, export, copy), as a
 // plain description rather than DOM or React, so every surface reads the same thing.
 
+import { warnOnce } from './warnings';
+
 /** CSS properties by their CSS name: `{ 'text-align': 'center' }`. */
 export type StyleMap = Record<string, string>;
 
@@ -71,43 +73,52 @@ const isStyleMap = (value: unknown): value is StyleMap =>
 const attributeError = (name: string, tag: string, reason: string): TypeError =>
     new TypeError(`Attribute "${name}" on <${tag}> ${reason}.`);
 
-const checkedAttribute = (
-    name: string,
-    value: string | boolean | StyleMap,
-    tag: string,
-): CheckedAttribute | undefined => {
+/** A stored value is data, not an author mistake, so a bad one is left out and the document still draws. */
+const skippedAttribute = (name: string, tag: string, value: unknown): undefined => {
+    warnOnce(
+        `attribute-value:${tag}:${name}`,
+        `Attribute "${name}" on <${tag}> was left out: its value is not a string, a number, a boolean or, for style, a map of CSS properties.`,
+        value,
+    );
+    return undefined;
+};
+
+// Typed `unknown`: a plugin's `toHtml` passes stored values on, whatever they hold.
+const checkedAttribute = (name: string, value: unknown, tag: string): CheckedAttribute | undefined => {
+    if (value === undefined || value === null || value === false) {
+        return undefined;
+    }
     if (name === STYLE_ATTRIBUTE) {
         if (!isStyleMap(value)) {
-            throw attributeError(name, tag, 'must be a map of CSS properties');
+            return skippedAttribute(name, tag, value);
         }
         return { kind: 'style', name, value };
     }
     if (typeof value === 'string') {
         return { kind: 'text', name, value };
     }
+    if (typeof value === 'number' && Number.isFinite(value)) {
+        return { kind: 'text', name, value: String(value) };
+    }
     if (value === true) {
         return { kind: 'flag', name };
     }
-    if (value === false) {
-        return undefined;
-    }
-    throw attributeError(name, tag, 'must be a string or a boolean');
+    return skippedAttribute(name, tag, value);
 };
 
 /**
  * The attributes an element is written with, checked once for every surface
  * (engine DOM, HTML string, React). A name that is no lowercase attribute name,
- * or starts with `on`, throws; so does `style` holding anything but a map of
- * CSS properties. An undefined or false value leaves the attribute out.
+ * or starts with `on`, throws: that is an author mistake. A value never throws.
+ * Null, undefined and false leave the attribute out, a number is written as a
+ * string, and any other value that is not a string, boolean or style map is
+ * left out with a development warning.
  */
 export const checkedAttributes = (tag: string, attrs: HtmlAttributes = {}): CheckedAttribute[] => {
     const checked: CheckedAttribute[] = [];
     for (const [name, value] of Object.entries(attrs)) {
         if (!ATTRIBUTE_NAME.test(name) || name.startsWith(EVENT_HANDLER_PREFIX)) {
             throw attributeError(name, tag, 'is not a valid attribute name');
-        }
-        if (value === undefined) {
-            continue;
         }
         const attribute = checkedAttribute(name, value, tag);
         if (attribute !== undefined) {

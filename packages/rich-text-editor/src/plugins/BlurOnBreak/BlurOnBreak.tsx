@@ -3,6 +3,29 @@
 import { definePlugin, type EditorControlApi } from '#/core';
 
 /**
+ * The words the plugin says to screen readers
+ */
+export type BlurOnBreakLabels = {
+    /**
+     * Said with the editor, when `onBreak` is set, to tell that Enter submits. The reason from `required` follows it.
+     *
+     * @default 'Press Enter to submit.'
+     */
+    description: string;
+    /**
+     * Said when Enter is refused because a required editor is empty.
+     *
+     * @default 'Type something before submitting.'
+     */
+    required: string;
+};
+
+const DEFAULT_BLUR_ON_BREAK_LABELS: BlurOnBreakLabels = {
+    description: 'Press Enter to submit.',
+    required: 'Type something before submitting.',
+};
+
+/**
  * Read once, when the editor mounts the plugin: a new `onBreak` or `required` from a later render is not seen.
  * Build the plugin once and read changing state, such as the text to save, through a ref.
  */
@@ -12,42 +35,33 @@ export type BlurOnBreakPluginOptions = {
      */
     onBreak?: () => void;
     /**
-     * Enter on an empty editor refuses instead of committing, and says why: `true` or an empty string for the default
-     * words ("Type something before submitting."), or a string for yours
+     * Enter on an empty editor refuses instead of committing, and says `labels.required`.
      *
      * @default false
      */
-    required?: boolean | string;
+    required?: boolean;
     /**
-     * Said to screen readers with the editor, when `onBreak` is set, to tell that Enter submits. The reason from
-     * `required` follows it.
-     *
-     * @default 'Press Enter to submit.'
+     * The words the plugin says. Each one left out stays English.
      */
-    description?: string;
+    labels?: Partial<BlurOnBreakLabels>;
 };
 
-const REQUIRED_MESSAGE = 'Type something before submitting.';
-const DEFAULT_DESCRIPTION = 'Press Enter to submit.';
+/** What the keyboard reference calls Enter in an editor that submits. */
+const SUBMIT_LABEL = 'Submit, outside a list';
 
-/** What to say when an empty editor refuses Enter, or null when the editor need not be filled. */
-const requiredMessageOf = (required: boolean | string | undefined): string | null => {
-    if (required === undefined || required === false) {
-        return null;
-    }
-    if (required === true || required === '') {
-        return REQUIRED_MESSAGE;
-    }
-    return required;
+type BreakLineParams = {
+    api: EditorControlApi;
+    onBreak: (() => void) | undefined;
+    required: boolean;
+    labels: BlurOnBreakLabels;
 };
 
-const breakLine = (api: EditorControlApi, { onBreak, required }: BlurOnBreakPluginOptions): void => {
+const breakLine = ({ api, onBreak, required, labels }: BreakLineParams): void => {
     if (api.lists.split()) {
         return;
     }
-    const requiredMessage = requiredMessageOf(required);
-    if (requiredMessage !== null && api.isEmpty()) {
-        api.announce(requiredMessage);
+    if (required && api.isEmpty()) {
+        api.announce(labels.required);
         return;
     }
     onBreak?.();
@@ -64,28 +78,31 @@ const breakLine = (api: EditorControlApi, { onBreak, required }: BlurOnBreakPlug
  * the list.
  *
  * @example
- * blurOnBreakPlugin({ onBreak: submit, required: 'Write a comment first.' })
+ * blurOnBreakPlugin({ onBreak: submit, required: true, labels: { required: 'Write a comment first.' } })
  */
-export const blurOnBreakPlugin = (options: BlurOnBreakPluginOptions = {}) => {
+export const blurOnBreakPlugin = ({
+    onBreak,
+    required = false,
+    labels: labelOverrides,
+}: BlurOnBreakPluginOptions = {}) => {
+    const labels: BlurOnBreakLabels = { ...DEFAULT_BLUR_ON_BREAK_LABELS, ...labelOverrides };
     // A field with no submit to announce says nothing about submitting.
     let description: string | undefined;
-    if (options.onBreak !== undefined) {
-        const submitDescription = options.description ?? DEFAULT_DESCRIPTION;
-        description = submitDescription;
-        const requiredMessage = requiredMessageOf(options.required);
-        if (requiredMessage !== null) {
-            description = `${submitDescription} ${requiredMessage}`;
+    if (onBreak !== undefined) {
+        description = labels.description;
+        if (required) {
+            description = `${labels.description} ${labels.required}`;
         }
     }
     return definePlugin({
         id: 'blur-on-break',
         description,
         hotkeys: {
-            // Enter is always this plugin's: it splits an item, refuses, or submits.
             Enter: {
-                label: 'Submit, outside a list',
+                label: SUBMIT_LABEL,
+                // Enter is always this plugin's: it splits an item, refuses, or submits.
                 run: (api) => {
-                    breakLine(api, options);
+                    breakLine({ api, onBreak, required, labels });
                     return true;
                 },
             },

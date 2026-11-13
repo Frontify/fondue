@@ -416,21 +416,13 @@ describe('an inline element with editing UI', () => {
 });
 
 describe('a view that is told whether the editor takes edits', () => {
-    it('gets `editing`, and is drawn again with the new value when the editor becomes read-only', () => {
-        const { container, view } = mount({
+    it('gets `editing` while the editor takes edits', () => {
+        const { container } = mount({
             version: 1,
             blocks: [{ type: PARAGRAPH, children: [{ text: 'ab' }, { type: 'tag', label: 'x' }, { text: 'cd' }] }],
         });
-        const editing = (): string | null | undefined =>
-            container.querySelector('[data-editing]')?.getAttribute('data-editing');
 
-        expect(editing()).toBe('true');
-
-        act(() => view.setProps({ editable: () => false }));
-        expect(editing()).toBe('false');
-
-        act(() => view.setProps({ editable: () => true }));
-        expect(editing()).toBe('true');
+        expect(container.querySelector('[data-editing]')?.getAttribute('data-editing')).toBe('true');
     });
 });
 

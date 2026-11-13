@@ -7,6 +7,7 @@ import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
+import { type LinkLabels, resolveLinkLabels } from '../helpers/labels';
 import { type LinkPolicy } from '../helpers/policy';
 
 import { LinkTargetForm } from './LinkTargetForm';
@@ -35,13 +36,14 @@ afterEach(() => {
 type SearchFormOptions = {
     policy?: LinkPolicy;
     mode?: { kind: 'create'; text: string } | { kind: 'edit' };
+    labels?: Partial<LinkLabels>;
 };
 
 type KeyPressInit = KeyboardEventInit & { keyCode?: number };
 
 const mountSearchForm = (
     search: LinkSearch | undefined,
-    { policy = {}, mode = { kind: 'edit' } }: SearchFormOptions = {},
+    { policy = {}, mode = { kind: 'edit' }, labels }: SearchFormOptions = {},
 ) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
@@ -53,6 +55,7 @@ const mountSearchForm = (
                 initial={{ href: '' }}
                 {...mode}
                 policy={policy}
+                labels={resolveLinkLabels(labels)}
                 search={search}
                 onSave={onSave}
                 onCancel={vi.fn()}
@@ -344,6 +347,35 @@ describe('the destination field', () => {
             await Promise.resolve();
         });
         expect(status()).toBe('Search failed');
+    });
+
+    it('says the status with the labels a host passes', async () => {
+        const labels: Partial<LinkLabels> = {
+            searching: 'Suche läuft',
+            noResults: 'Keine Treffer',
+            resultCount: (count) => `${count} Treffer`,
+        };
+        let finish: (found: readonly LinkDestination[]) => void = () => undefined;
+        const search: LinkSearch = () =>
+            new Promise((resolve) => {
+                finish = resolve;
+            });
+        const { type, status } = mountSearchForm(search, { labels });
+
+        await type('a');
+        expect(status()).toBe('Suche läuft');
+        await act(async () => {
+            finish([BRAND, LOGOS]);
+            await Promise.resolve();
+        });
+        expect(status()).toBe('2 Treffer');
+
+        await type('ab');
+        await act(async () => {
+            finish([]);
+            await Promise.resolve();
+        });
+        expect(status()).toBe('Keine Treffer');
     });
 
     it('fills an empty Text field with the label when a result is picked, and leaves typed text alone', async () => {

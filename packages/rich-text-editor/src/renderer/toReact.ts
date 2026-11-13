@@ -20,16 +20,38 @@ const reactStyleName = (property: string): string =>
 const toReactStyle = (style: StyleMap): CSSProperties =>
     Object.fromEntries(safeStyleEntries(style).map(([property, value]) => [reactStyleName(property), value]));
 
-const CHECKED_ATTRIBUTE = 'checked';
-
 // `checked` is uncontrolled: the readonly view shows the state, it does not own it.
 const REACT_PROP_NAMES = new Map([
     ['class', 'className'],
     ['tabindex', 'tabIndex'],
-    [CHECKED_ATTRIBUTE, 'defaultChecked'],
+    ['checked', 'defaultChecked'],
 ]);
 
 const reactPropName = (name: string): string => REACT_PROP_NAMES.get(name) ?? name;
+
+/** Boolean attributes React 18 knows by their HTML name. It writes them for `true` and drops them for `''`. */
+const REACT_BOOLEAN_ATTRIBUTES: ReadonlySet<string> = new Set([
+    'checked',
+    'disabled',
+    'hidden',
+    'open',
+    'required',
+    'controls',
+    'loop',
+    'reversed',
+    'async',
+    'defer',
+    'default',
+]);
+
+/** What React needs for a present flag to reach the DOM as `name=""`, as the editor and the HTML export write it. */
+const flagValue = (name: string): string | true => {
+    if (REACT_BOOLEAN_ATTRIBUTES.has(name)) {
+        return true;
+    }
+    // React 18 drops `true` for a name it does not know, but writes an empty string.
+    return '';
+};
 
 const reactProps = (tag: string, attrs?: HtmlAttributes): Record<string, unknown> => {
     const props: Record<string, unknown> = {};
@@ -39,12 +61,7 @@ const reactProps = (tag: string, attrs?: HtmlAttributes): Record<string, unknown
                 props[reactPropName(attribute.name)] = attribute.value;
                 break;
             case 'flag':
-                if (attribute.name === CHECKED_ATTRIBUTE) {
-                    props[reactPropName(attribute.name)] = true;
-                } else {
-                    // React 18 drops `true` for a name it does not know; a non-empty string is present for known and unknown booleans alike.
-                    props[attribute.name] = attribute.name;
-                }
+                props[reactPropName(attribute.name)] = flagValue(attribute.name);
                 break;
             case 'style':
                 props.style = toReactStyle(attribute.value);
