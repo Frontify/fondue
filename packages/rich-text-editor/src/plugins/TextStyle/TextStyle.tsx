@@ -50,6 +50,8 @@ export type TextStylePluginOptions = {
     styles?: readonly TextStyleOption[];
     /**
      * How each preset looks, by name. A preset left out, and a field left out of one, keeps Fondue's look.
+     * A value that is empty or can end its CSS declaration early throws an error that names the preset and the
+     * field, so a mistake in the host's configuration never passes silently.
      */
     presets?: Partial<Record<TextStyleName, TextLook>>;
 };
