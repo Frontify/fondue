@@ -303,12 +303,16 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     const descriptionId = useId();
     const { message: announcement, announce } = useAnnouncer();
     const hasDescriptions = registry.descriptions.length > 0;
-    const { hostLabels, isNamed } = hostLabelsOf({ ariaLabel, ariaLabelledBy, ariaDescribedBy });
-    const className = [documentStyles.document, styles.content, ...registry.contentClassNames].join(' ');
     let pluginDescriptionId: string | undefined;
     if (hasDescriptions) {
         pluginDescriptionId = descriptionId;
     }
+    const { hostLabels, isNamed } = hostLabelsOf({
+        ariaLabel,
+        ariaLabelledBy,
+        ariaDescribedBy: describedByOf(ariaDescribedBy, pluginDescriptionId),
+    });
+    const className = [documentStyles.document, styles.content, ...registry.contentClassNames].join(' ');
     const attributes = useMemo(
         () =>
             editableAttributes({
@@ -318,7 +322,6 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
                 isNamed,
                 placeholder,
                 defaultLabel: labels.editor,
-                descriptionId: pluginDescriptionId,
             }),
         // `hostLabels` is rebuilt every render; the props it is built from are the deps.
         // eslint-disable-next-line @eslint-react/exhaustive-deps
@@ -597,45 +600,34 @@ const mountFocusTarget = (retryFocus: RetryFocus, readOnly: boolean): MountFocus
     }
 };
 
-const ARIA_LABEL = 'aria-label';
-const ARIA_LABELLEDBY = 'aria-labelledby';
-const ARIA_DESCRIBEDBY = 'aria-describedby';
+/** The host's description of the editor, then the element holding what the plugins say about their keys. */
+const describedByOf = (hostId: string | undefined, pluginId: string | undefined): string | undefined => {
+    if (pluginId === undefined) {
+        return hostId;
+    }
+    if (hostId === undefined || hostId === '') {
+        return pluginId;
+    }
+    return `${hostId} ${pluginId}`;
+};
 
-type HostLabelsOfParams = {
+/** What the host named and described the editor with, and whether it gave a name. */
+const hostLabelsOf = ({
+    ariaLabel,
+    ariaLabelledBy,
+    ariaDescribedBy,
+}: {
     ariaLabel: string | undefined;
     ariaLabelledBy: string | undefined;
     ariaDescribedBy: string | undefined;
-};
-
-type HostLabels = { hostLabels: Record<string, string>; isNamed: boolean };
-
-/** What the host named and described the editor with, and whether it gave a name. */
-const hostLabelsOf = ({ ariaLabel, ariaLabelledBy, ariaDescribedBy }: HostLabelsOfParams): HostLabels => {
-    const hostLabels: Record<string, string> = {};
-    if (ariaLabel !== undefined) {
-        hostLabels[ARIA_LABEL] = ariaLabel;
-    }
-    if (ariaLabelledBy !== undefined) {
-        hostLabels[ARIA_LABELLEDBY] = ariaLabelledBy;
-    }
-    if (ariaDescribedBy !== undefined) {
-        hostLabels[ARIA_DESCRIBEDBY] = ariaDescribedBy;
-    }
-    return { hostLabels, isNamed: ariaLabel !== undefined || ariaLabelledBy !== undefined };
-};
-
-type EditableAttributesOptions = {
-    id: string;
-    className: string;
-    hostLabels: Record<string, string>;
-    isNamed: boolean;
-    placeholder: string;
-    defaultLabel: string;
-    /**
-     * The element holding the plugins' descriptions, when there are any: read after the host's own description
-     */
-    descriptionId: string | undefined;
-};
+}): { hostLabels: Record<string, string>; isNamed: boolean } => ({
+    hostLabels: {
+        ...(ariaLabel === undefined ? {} : { 'aria-label': ariaLabel }),
+        ...(ariaLabelledBy === undefined ? {} : { 'aria-labelledby': ariaLabelledBy }),
+        ...(ariaDescribedBy === undefined ? {} : { 'aria-describedby': ariaDescribedBy }),
+    },
+    isNamed: ariaLabel !== undefined || ariaLabelledBy !== undefined,
+});
 
 /** The attributes of the editable element: a textbox, named by the host or else by `defaultLabel`. */
 const editableAttributes = ({
@@ -645,27 +637,22 @@ const editableAttributes = ({
     isNamed,
     placeholder,
     defaultLabel,
-    descriptionId,
-}: EditableAttributesOptions): Record<string, string> => {
-    const describedBy = [hostLabels[ARIA_DESCRIBEDBY], descriptionId].filter(Boolean).join(' ');
-    const attributes: Record<string, string> = {
-        id,
-        class: className,
-        role: 'textbox',
-        'aria-multiline': 'true',
-    };
-    if (!isNamed) {
-        attributes[ARIA_LABEL] = defaultLabel;
-    }
-    Object.assign(attributes, hostLabels);
-    if (describedBy !== '') {
-        attributes[ARIA_DESCRIBEDBY] = describedBy;
-    }
-    if (placeholder !== '') {
-        attributes['aria-placeholder'] = placeholder;
-    }
-    return attributes;
-};
+}: {
+    id: string;
+    className: string;
+    hostLabels: Record<string, string>;
+    isNamed: boolean;
+    placeholder: string;
+    defaultLabel: string;
+}): Record<string, string> => ({
+    id,
+    class: className,
+    role: 'textbox',
+    'aria-multiline': 'true',
+    ...(isNamed ? {} : { 'aria-label': defaultLabel }),
+    ...hostLabels,
+    ...(placeholder === '' ? {} : { 'aria-placeholder': placeholder }),
+});
 
 /**
  * The host's labels over the English defaults, kept the same object while the
