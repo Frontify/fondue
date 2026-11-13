@@ -155,7 +155,16 @@ export const definePlugin = ({ id, ...plugin }: RtePluginDefinition): RtePlugin 
 /**
  * Delimiters that wrap text in the plugin's only mark, such as `{ delimiter: '**' }`
  */
-export type RteDelimiterRule = { delimiter: string };
+export type RteDelimiterRule = {
+    delimiter: string;
+    /**
+     * Fires only where the delimiters stand apart from words: the opening one follows the start of the line,
+     * whitespace or an opening bracket, and the closing one is not followed by a word character or `.`.
+     * The same flag on a `mark` rule works the same way.
+     * @default false
+     */
+    wordBounded?: boolean;
+};
 
 /**
  * A component that draws the editing UI of a node
@@ -614,7 +623,7 @@ export type RteMarkPatternTrim = {
  */
 export type RteInputRule =
     /** Wrapping delimiters turn into a mark: `**bold**`, `` `code` ``. */
-    | { kind: 'mark'; key: string; delimiter: string }
+    | { kind: 'mark'; key: string; delimiter: string; wordBounded?: boolean }
     /** A prefix turns the block into another type: `## ` becomes a level-2 heading. */
     | { kind: 'block'; match: string; block: string; attributes?: Record<string, unknown> }
     /** A prefix wraps the block in a list: `- `, `1. `. `itemAttributes` set attributes on the new item: `[x] ` starts it checked. */
