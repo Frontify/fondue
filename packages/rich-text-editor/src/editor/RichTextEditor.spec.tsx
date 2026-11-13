@@ -19,6 +19,7 @@ import {
     defaultPlugins,
     defineBlock,
     defineContent,
+    defineInline,
     definePlugin,
     linkPlugin,
     mentionPlugin,
@@ -1685,6 +1686,40 @@ describe('an editor that crashes', () => {
         expect(onError).toHaveBeenCalledTimes(2);
     });
 
+    it('hands onError the error an inline view throws while the editor draws it', () => {
+        silenceReact();
+        const onError = errorSpy();
+        const plugins = [
+            ...defaultPlugins,
+            definePlugin({
+                id: 'pulse',
+                content: defineContent({
+                    inlines: {
+                        pulse: defineInline<{ id: string }>({
+                            toHtml: (value) => ({ tag: 'span', children: value.id }),
+                            parse: [],
+                        }),
+                    },
+                }),
+                edit: {
+                    pulse: () => {
+                        throw new Error('inline view broke');
+                    },
+                },
+            }),
+        ];
+        // `RteDocument` names no plugin inline, so the test-only inline needs the cast.
+        const value = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ type: 'pulse', id: 'p1' }] }],
+        } as unknown as RteDocument;
+
+        mount(() => <RichTextEditor value={value} plugins={plugins} onError={onError} />);
+
+        expect(onError).toHaveBeenCalled();
+        expect(onError.mock.calls[0]?.[0].message).toBe('inline view broke');
+    });
+
     it('leaves focus alone after a Retry pressed without taking focus, as a mouse press may', () => {
         silenceReact();
         calloutState.broken = true;
@@ -2502,6 +2537,45 @@ describe('onBlur', () => {
 
         focus(outside);
         expect(onBlur).toHaveBeenCalledExactlyOnceWith(paragraph('text'));
+    });
+});
+
+describe('an inline whose view shows something other than its stored value', () => {
+    type Badge = { id: string; label: string };
+    const badgePlugin = definePlugin({
+        id: 'badge',
+        content: defineContent({
+            inlines: {
+                badge: defineInline<Badge>({
+                    toHtml: (value) => ({ tag: 'span', attrs: { 'data-badge-id': value.id }, children: value.label }),
+                    parse: [],
+                }),
+            },
+        }),
+        edit: { badge: ({ value }) => <span data-badge>{value.label.toUpperCase()}</span> },
+    });
+    // `RteDocument` names no plugin inline, so the badge needs the cast.
+    const value = {
+        version: 1,
+        blocks: [
+            {
+                type: 'paragraph',
+                children: [{ text: 'Ask ' }, { type: 'badge', id: 'b1', label: 'Jane' }, { text: '' }],
+            },
+        ],
+    } as RteDocument;
+
+    it('keeps the stored value in the document after an unrelated edit', () => {
+        const { container, stored, ready } = mount((onChange) => (
+            <RichTextEditor value={value} onChange={onChange} plugins={[...defaultPlugins, badgePlugin]} />
+        ));
+        ready();
+
+        expect(container.querySelector('[data-badge]')?.textContent).toBe('JANE');
+
+        paste(container, '<p>x</p>');
+
+        expect(childrenOf(stored())).toContainEqual({ type: 'badge', id: 'b1', label: 'Jane' });
     });
 });
 

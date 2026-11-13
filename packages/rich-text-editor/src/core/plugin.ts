@@ -328,7 +328,10 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
     inclusive?: boolean;
     /** Mark types that cannot sit on the same text as this one: putting either mark on takes the other off. Naming it in one mark is enough. A type no mounted plugin registers is ignored. */
     excludes?: readonly string[];
-    /** Typing rules do not rewrite text carrying this mark — inline code keeps `--` and `**` as typed. Defaults to false. */
+    /**
+     * Typing rules and single-character hotkeys do not act on text carrying this mark — inline code keeps `--`, `**` and `@` as typed.
+     * @default false
+     */
     excludesInputRules?: boolean;
     /** What the mark carries when put on without a value (a toggle, a parse rule). Defaults to `{}`. */
     defaults?: TValue;

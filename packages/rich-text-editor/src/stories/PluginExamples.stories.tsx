@@ -32,6 +32,7 @@ import {
     linkPlugin,
     type MentionItem,
     mentionPlugin,
+    type MentionResolution,
     type MentionValue,
     numberedListPlugin,
     quotePlugin,
@@ -67,6 +68,28 @@ const MENTIONABLE: readonly MentionItem[] = [
 /** Where a mention links to — a profile page in a real app. Everyone has no profile, so `@all` is text. */
 const profileHref = (mention: MentionValue): string | undefined =>
     mention.kind === 'all' ? undefined : `#/people/${mention.id}`;
+
+/** What the app knows now: Jane has been renamed, Bob has left. Anyone else is unknown, so the stored value shows. */
+const resolveMention = (mention: MentionValue): MentionResolution => {
+    if (mention.id === 'jane') {
+        return { status: 'current', username: 'jane.s', name: 'Jane Smith' };
+    }
+    if (mention.id === 'bob') {
+        return { status: 'unavailable' };
+    }
+    return { status: 'unknown' };
+};
+
+/** A search that fails for the query "fail", to show the retry. */
+const searchMentionable = (query: string): Promise<readonly MentionItem[]> => {
+    if (query === 'fail') {
+        return Promise.reject(new Error('The people service is down'));
+    }
+    const needle = query.toLowerCase();
+    return Promise.resolve(
+        MENTIONABLE.filter((item) => item.username.includes(needle) || item.name.toLowerCase().includes(needle)),
+    );
+};
 
 /** Everything the package ships, plus the ones that need arguments. */
 const ALL_PLUGINS: readonly RtePlugin[] = [...defaultPlugins, mentionPlugin({ items: MENTIONABLE, href: profileHref })];
@@ -646,6 +669,8 @@ export const Mention: Story = {
                     children: [
                         { text: 'Ask ' },
                         { type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' },
+                        { text: ', ' },
+                        { type: 'mention', id: 'bob', username: 'bob', name: 'Bob Brown' },
                         { text: ' or ' },
                         { type: 'mention', id: 'design', username: 'design', name: 'Design team', kind: 'group' },
                         { text: ' about it, and tell ' },
@@ -661,13 +686,21 @@ export const Mention: Story = {
                 <p className={HINT}>
                     Type <code>@</code> to open the picker. A mention is a void inline element: clicking one puts the
                     caret after it, and it deletes as one. A mention names a person, a group or everyone; the picker
-                    shows an avatar when the app gives one.
+                    shows an avatar when the app gives one. The app resolves what is shown: Jane was renamed, so she
+                    reads as <code>@jane.s</code>, and Bob was deleted, so he reads as unavailable, though the stored
+                    document is unchanged. Type <code>@fail</code> to see a search that fails, with its retry.
                 </p>
                 <div className={FRAME}>
                     <RichTextEditor
                         value={doc}
                         onChange={setDoc}
-                        plugins={[mentionPlugin({ items: MENTIONABLE, href: profileHref })]}
+                        plugins={[
+                            mentionPlugin({
+                                items: searchMentionable,
+                                href: profileHref,
+                                resolve: resolveMention,
+                            }),
+                        ]}
                     />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>

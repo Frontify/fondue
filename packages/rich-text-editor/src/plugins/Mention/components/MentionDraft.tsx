@@ -4,58 +4,291 @@ import { IconPeople, IconPerson, IconTarget } from '@frontify/fondue-icons';
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { isCompositionKey } from '../../shared/helpers/keys';
+import { isSafeImageSrc } from '../helpers/image';
+import { type PeopleOutcome, usePeople } from '../hooks/usePeople';
 import styles from '../mention.module.scss';
 import { type MentionItem, type MentionItems } from '../types';
 
-/** How many people the picker offers at once. */
-const SUGGESTION_LIMIT = 8;
+import { type MentionPickerLabels } from './pickerLabels';
+
+/** How long a lookup runs before the list says it is searching, so a quick answer never flashes the row. */
+const SEARCHING_DELAY_MS = 300;
+
+const AVATAR_ICON_SIZE = 12;
 
 /** The gap between the query and the list under it. */
 const LIST_OFFSET = 4;
+
+const avatarPicture = (person: MentionItem): ReactNode => {
+    if (isSafeImageSrc(person.image)) {
+        return <img src={person.image} alt="" />;
+    }
+    switch (person.kind) {
+        case undefined:
+        case 'user':
+            return <IconPerson size={AVATAR_ICON_SIZE} />;
+        case 'group':
+            return <IconPeople size={AVATAR_ICON_SIZE} />;
+        case 'all':
+            return <IconTarget size={AVATAR_ICON_SIZE} />;
+        default:
+            // Adding a kind fails to compile here until it is handled.
+            throw new Error(`Unhandled mention kind: ${JSON.stringify(person.kind satisfies never)}`);
+    }
+};
+
+type AvatarProps = { person: MentionItem };
 
 /**
  * The round picture beside a name: the avatar when there is one, otherwise the
  * kind's icon — a person, a group, everyone. Decorative: the name is beside it.
  */
-const Avatar = ({ person }: { person: MentionItem }): ReactNode => (
+const Avatar = ({ person }: AvatarProps): ReactNode => (
     <span className={styles.avatar} aria-hidden>
-        {person.image ? (
-            <img src={person.image} alt="" />
-        ) : person.kind === 'group' ? (
-            <IconPeople size={12} />
-        ) : person.kind === 'all' ? (
-            <IconTarget size={12} />
-        ) : (
-            <IconPerson size={12} />
-        )}
+        {avatarPicture(person)}
     </span>
 );
 
 /**
- * The people for a query. Answers are tagged with their query so a slow one
- * never overwrites a newer one; the last answer stays up while `pending`, so a
- * server-backed list does not flicker on every key.
+ * Where a lookup stands. `waiting` is a lookup inside the searching delay, or a newer one after an empty or failed answer: nothing is shown or announced yet.
  */
-const usePeople = (items: MentionItems, query: string): { people: readonly MentionItem[]; pending: boolean } => {
-    const [answer, setAnswer] = useState<{ query: string; people: readonly MentionItem[] } | null>(null);
+type PeoplePhase = 'waiting' | 'searching' | 'failed' | 'empty' | 'list';
 
-    useEffect(() => {
-        let current = true;
-        const settle = (people: readonly MentionItem[]): void => {
-            if (current) {
-                setAnswer({ query, people: people.slice(0, SUGGESTION_LIMIT) });
+type PhaseOfParams = { outcome: PeopleOutcome | null; pending: boolean; slow: boolean };
+
+/**
+ * The people an outcome offers: none before the first answer or after a failure.
+ */
+const peopleOf = (outcome: PeopleOutcome | null): readonly MentionItem[] => {
+    if (outcome === null) {
+        return [];
+    }
+    switch (outcome.status) {
+        case 'found':
+            return outcome.people;
+        case 'failed':
+            return [];
+        default:
+            // Adding an outcome fails to compile here until it is handled.
+            throw new Error(`Unhandled people outcome: ${JSON.stringify(outcome satisfies never)}`);
+    }
+};
+
+/**
+ * Where a lookup stands: people to show, else searching past the delay, else, once this lookup is answered, failed or nobody matches.
+ */
+const phaseOf = ({ outcome, pending, slow }: PhaseOfParams): PeoplePhase => {
+    if (peopleOf(outcome).length > 0) {
+        return 'list';
+    }
+    if (slow) {
+        return 'searching';
+    }
+    if (outcome === null) {
+        return 'waiting';
+    }
+    switch (outcome.status) {
+        case 'found':
+            // An earlier empty answer is not this query's: a space must not end the mention before it arrives.
+            if (pending) {
+                return 'waiting';
             }
-        };
-        // A failed lookup offers nobody rather than leaving the last list up.
-        Promise.resolve(items(query))
-            .then(settle)
-            .catch(() => settle([]));
-        return () => {
-            current = false;
-        };
-    }, [items, query]);
+            return 'empty';
+        case 'failed':
+            // Cleared while asking again, so a second failure is announced again.
+            if (pending) {
+                return 'waiting';
+            }
+            return 'failed';
+        default:
+            // Adding an outcome fails to compile here until it is handled.
+            throw new Error(`Unhandled people outcome: ${JSON.stringify(outcome satisfies never)}`);
+    }
+};
 
-    return { people: answer?.people ?? [], pending: answer?.query !== query };
+/**
+ * Whether the popup is up for a phase: not while waiting, and for nobody matching only once something is typed.
+ */
+const isOpen = (phase: PeoplePhase, query: string): boolean => {
+    switch (phase) {
+        case 'waiting':
+            return false;
+        case 'searching':
+        case 'failed':
+        case 'list':
+            return true;
+        case 'empty':
+            return query !== '';
+        default:
+            // Adding a phase fails to compile here until it is handled.
+            throw new Error(`Unhandled people phase: ${JSON.stringify(phase satisfies never)}`);
+    }
+};
+
+/**
+ * What a screen reader hears for a phase. Waiting and searching say nothing, so a count or a failure is not interrupted on every key.
+ */
+const statusOf = (phase: PeoplePhase, people: readonly MentionItem[], labels: MentionPickerLabels): string => {
+    switch (phase) {
+        case 'waiting':
+        case 'searching':
+            return '';
+        case 'failed':
+            return labels.failed;
+        case 'empty':
+            return labels.noMatches;
+        case 'list':
+            return labels.peopleCount(people.length);
+        default:
+            // Adding a phase fails to compile here until it is handled.
+            throw new Error(`Unhandled people phase: ${JSON.stringify(phase satisfies never)}`);
+    }
+};
+
+/**
+ * Whether the pending lookup for a query has run past the searching delay. The
+ * timer records the query it ran for and is forgotten when the lookup settles,
+ * so each new query or retry starts the delay again.
+ */
+const useSlowLookup = (pending: boolean, query: string): boolean => {
+    const [slowQuery, setSlowQuery] = useState<string | null>(null);
+    useEffect(() => {
+        if (!pending) {
+            return undefined;
+        }
+        const timer = setTimeout(() => setSlowQuery(query), SEARCHING_DELAY_MS);
+        return () => {
+            clearTimeout(timer);
+            setSlowQuery(null);
+        };
+    }, [pending, query]);
+    return pending && slowQuery === query;
+};
+
+type ActiveOptionIdParams = {
+    listboxShown: boolean;
+    phase: PeoplePhase;
+    active: MentionItem | undefined;
+    activeIndex: number;
+    retryId: string;
+    optionId: (index: number) => string;
+};
+
+/**
+ * The option the input points at: Retry while the search has failed, else the highlighted person.
+ */
+const activeOptionId = ({
+    listboxShown,
+    phase,
+    active,
+    activeIndex,
+    retryId,
+    optionId,
+}: ActiveOptionIdParams): string | undefined => {
+    if (!listboxShown) {
+        return undefined;
+    }
+    if (phase === 'failed') {
+        return retryId;
+    }
+    if (active === undefined) {
+        return undefined;
+    }
+    return optionId(activeIndex);
+};
+
+type MentionPopupBodyProps = {
+    phase: PeoplePhase;
+    people: readonly MentionItem[];
+    trigger: string;
+    labels: MentionPickerLabels;
+    listId: string;
+    retryId: string;
+    activeIndex: number;
+    optionId: (index: number) => string;
+    onRetry: () => void;
+    onPick: (person: MentionItem) => void;
+    onHighlight: (index: number) => void;
+};
+
+/**
+ * What the popup shows for a phase: a message, the retry option, or the list of people.
+ */
+const MentionPopupBody = ({
+    phase,
+    people,
+    trigger,
+    labels,
+    listId,
+    retryId,
+    activeIndex,
+    optionId,
+    onRetry,
+    onPick,
+    onHighlight,
+}: MentionPopupBodyProps): ReactNode => {
+    switch (phase) {
+        case 'waiting':
+            return null;
+        case 'searching':
+            return <div className={styles.empty}>{labels.searching}</div>;
+        case 'failed':
+            return (
+                <>
+                    <div className={styles.empty}>{labels.failed}</div>
+                    <ul id={listId} role="listbox" aria-label={labels.list} className={styles.list}>
+                        {/* The keyboard runs it from the input as the active option; the mouse runs it here. */}
+                        {/* oxlint-disable-next-line jsx-a11y/click-events-have-key-events */}
+                        <li
+                            id={retryId}
+                            role="option"
+                            aria-selected
+                            // Keep focus in the input: blurring would cancel before the click lands.
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={onRetry}
+                            className={`${styles.option} ${styles.optionActive}`}
+                        >
+                            {labels.retry}
+                        </li>
+                    </ul>
+                </>
+            );
+        case 'empty':
+            return <div className={styles.empty}>{labels.noMatches}</div>;
+        case 'list':
+            return (
+                <ul id={listId} role="listbox" aria-label={labels.list} className={styles.list}>
+                    {people.map((person, index) => (
+                        // The keyboard drives the list from the input; the mouse picks here.
+                        // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
+                        <li
+                            key={optionId(index)}
+                            id={optionId(index)}
+                            role="option"
+                            aria-selected={index === activeIndex}
+                            // Keep focus in the input: blurring would cancel before the click lands.
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => onPick(person)}
+                            onMouseEnter={() => onHighlight(index)}
+                            className={
+                                index === activeIndex ? `${styles.option} ${styles.optionActive}` : styles.option
+                            }
+                        >
+                            <Avatar person={person} />
+                            <span>{person.name}</span>
+                            <span className={styles.hint}>
+                                {trigger}
+                                {person.username}
+                            </span>
+                        </li>
+                    ))}
+                </ul>
+            );
+        default:
+            // Adding a phase fails to compile here until it is handled.
+            throw new Error(`Unhandled people phase: ${JSON.stringify(phase satisfies never)}`);
+    }
 };
 
 /** Viewport position under the query, kept in step with scrolling and resizing. */
@@ -93,6 +326,19 @@ const useListPosition = (
     return open ? position : null;
 };
 
+type MentionDraftProps = {
+    trigger: string;
+    labels: MentionPickerLabels;
+    items: MentionItems;
+    /** The editor's selection is on this mention — the input takes the caret. */
+    focused: boolean;
+    onChoose: (person: MentionItem) => void;
+    /** Give up, keeping what was typed as ordinary text. */
+    onCancel: (text: string) => void;
+    /** Give up and leave nothing behind, not even the trigger. */
+    onRemove: () => void;
+};
+
 /**
  * A mention being made, from the typed trigger until a person is chosen.
  *
@@ -104,22 +350,13 @@ const useListPosition = (
  */
 export const MentionDraft = ({
     trigger,
+    labels,
     items,
     focused,
     onChoose,
     onCancel,
     onRemove,
-}: {
-    trigger: string;
-    items: MentionItems;
-    /** The editor's selection is on this mention — the input takes the caret. */
-    focused: boolean;
-    onChoose: (person: MentionItem) => void;
-    /** Give up, keeping what was typed as ordinary text. */
-    onCancel: (text: string) => void;
-    /** Give up and leave nothing behind, not even the trigger. */
-    onRemove: () => void;
-}): ReactNode => {
+}: MentionDraftProps): ReactNode => {
     const listId = useId();
     const draftRef = useRef<HTMLSpanElement | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -133,10 +370,13 @@ export const MentionDraft = ({
         leave();
     };
     const [query, setQuery] = useState('');
-    const { people, pending } = usePeople(items, query);
-    const noMatches = people.length === 0 && !pending;
-    const open = people.length > 0 || (noMatches && query !== '');
+    const { outcome, pending, retry } = usePeople(items, query);
+    const slow = useSlowLookup(pending, query);
+    const people = peopleOf(outcome);
+    const phase = phaseOf({ outcome, pending, slow });
+    const open = isOpen(phase, query);
     const position = useListPosition(draftRef, open);
+    const listboxShown = open && position !== null && (phase === 'list' || phase === 'failed');
 
     // Tagged with its query so a new query resets the highlight to the top without an effect.
     const [highlighted, setHighlighted] = useState({ query, index: 0 });
@@ -144,6 +384,7 @@ export const MentionDraft = ({
     const highlight = (index: number): void => setHighlighted({ query, index });
     const active = people[activeIndex];
     const optionId = (index: number): string => `${listId}-option-${index}`;
+    const retryId = `${listId}-retry`;
 
     useEffect(() => {
         if (focused) {
@@ -152,6 +393,10 @@ export const MentionDraft = ({
     }, [focused]);
 
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
+        // While an input method composes, no key is a command, not even Space or Escape.
+        if (isCompositionKey(event)) {
+            return;
+        }
         switch (event.key) {
             case 'ArrowDown':
             case 'ArrowUp':
@@ -166,6 +411,14 @@ export const MentionDraft = ({
                 break;
             case 'Enter':
             case 'Tab':
+                // While the search has failed, Retry is the active option and Enter runs it; Tab is not trapped.
+                if (phase === 'failed') {
+                    if (event.key !== 'Enter') {
+                        return;
+                    }
+                    retry();
+                    break;
+                }
                 if (!active) {
                     return;
                 }
@@ -173,7 +426,7 @@ export const MentionDraft = ({
                 break;
             case ' ':
                 // Nobody by that name: the text was just text after all.
-                if (!noMatches) {
+                if (phase !== 'empty') {
                     return;
                 }
                 finish(() => onCancel(`${trigger}${query} `));
@@ -195,24 +448,18 @@ export const MentionDraft = ({
         event.preventDefault();
     };
 
-    const status = pending
-        ? ''
-        : noMatches
-          ? 'No matches'
-          : `${people.length} ${people.length === 1 ? 'person' : 'people'}`;
-
     return (
         <span ref={draftRef} className={styles.draft}>
             {trigger}
             <input
                 ref={inputRef}
                 role="combobox"
-                aria-expanded={open}
+                aria-expanded={listboxShown}
                 // Only while the listbox is in the page: an id pointing at nothing is an error.
-                aria-controls={open && position !== null && !noMatches ? listId : undefined}
+                aria-controls={listboxShown ? listId : undefined}
                 aria-autocomplete="list"
-                aria-activedescendant={open && active ? optionId(activeIndex) : undefined}
-                aria-label="Mention someone"
+                aria-activedescendant={activeOptionId({ listboxShown, phase, active, activeIndex, retryId, optionId })}
+                aria-label={labels.input}
                 value={query}
                 size={Math.max(query.length, 1)}
                 onChange={(event) => setQuery(event.target.value)}
@@ -221,43 +468,24 @@ export const MentionDraft = ({
                 className={styles.input}
             />
             <span role="status" className={styles.visuallyHidden}>
-                {status}
+                {statusOf(phase, people, labels)}
             </span>
             {open && position !== null
                 ? createPortal(
                       <div className={styles.popup} style={{ left: position.left, top: position.top }}>
-                          {noMatches ? (
-                              <div className={styles.empty}>No matches</div>
-                          ) : (
-                              <ul id={listId} role="listbox" aria-label="People" className={styles.list}>
-                                  {people.map((person, index) => (
-                                      // The keyboard drives the list from the input; the mouse picks here.
-                                      // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
-                                      <li
-                                          key={optionId(index)}
-                                          id={optionId(index)}
-                                          role="option"
-                                          aria-selected={index === activeIndex}
-                                          // Keep focus in the input: blurring would cancel before the click lands.
-                                          onMouseDown={(event) => event.preventDefault()}
-                                          onClick={() => finish(() => onChoose(person))}
-                                          onMouseEnter={() => highlight(index)}
-                                          className={
-                                              index === activeIndex
-                                                  ? `${styles.option} ${styles.optionActive}`
-                                                  : styles.option
-                                          }
-                                      >
-                                          <Avatar person={person} />
-                                          <span>{person.name}</span>
-                                          <span className={styles.hint}>
-                                              {trigger}
-                                              {person.username}
-                                          </span>
-                                      </li>
-                                  ))}
-                              </ul>
-                          )}
+                          <MentionPopupBody
+                              phase={phase}
+                              people={people}
+                              trigger={trigger}
+                              labels={labels}
+                              listId={listId}
+                              retryId={retryId}
+                              activeIndex={activeIndex}
+                              optionId={optionId}
+                              onRetry={retry}
+                              onPick={(person) => finish(() => onChoose(person))}
+                              onHighlight={highlight}
+                          />
                       </div>,
                       draftRef.current?.ownerDocument.body ?? document.body,
                   )

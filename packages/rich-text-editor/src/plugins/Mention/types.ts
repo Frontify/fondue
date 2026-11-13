@@ -1,7 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+/** Every kind a mention can have; the one list that `MentionKind` and parsing read. */
+export const MENTION_KINDS = ['user', 'group', 'all'] as const;
+
 /** Who a mention names: one person, a group of people, or everyone. */
-export type MentionKind = 'user' | 'group' | 'all';
+export type MentionKind = (typeof MENTION_KINDS)[number];
 
 /** What a mention stores on its inline node. */
 export type MentionValue = {
@@ -19,6 +22,18 @@ export type MentionItem = MentionValue & {
     /** Avatar URL, shown in the picker only; the document does not keep it. */
     image?: string;
 };
+
+/**
+ * What the app knows now about a stored mention, by its id. The stored value
+ * never changes: this only decides what is shown.
+ */
+export type MentionResolution =
+    | { status: 'current'; username: string; name: string }
+    | { status: 'unavailable' }
+    | { status: 'unknown' };
+
+/** Asks the app what it knows now about a stored mention. */
+export type MentionResolve = (mention: MentionValue) => MentionResolution;
 
 /**
  * Where a mention links to, such as the profile of a person or group. Returns `undefined` when the mention has no page.

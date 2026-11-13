@@ -3,10 +3,13 @@
 import { defineContent, defineInline, definePlugin, type RtePlugin } from '#/core';
 
 import { MentionEditor } from './components/MentionEditor';
-import { MentionLink } from './components/MentionLink';
-import { mentionValueOf, safeMentionHref } from './helpers/mention';
+import { BIDI_ISOLATE_TAG, MentionLink } from './components/MentionLink';
+import { DEFAULT_MENTION_PICKER_LABELS, type MentionLabels } from './components/pickerLabels';
+import { linkTarget, mentionAttributes, mentionDisplay, storedKind } from './helpers/display';
+import { DEFAULT_MENTION_CONTENT_LABELS, type MentionContentLabels } from './helpers/labels';
+import { mentionValueOf } from './helpers/mention';
 import styles from './mention.module.scss';
-import { type MentionHref, type MentionItem, type MentionItems, type MentionKind, type MentionValue } from './types';
+import { type MentionHref, type MentionItem, type MentionItems, type MentionResolve, type MentionValue } from './types';
 
 export type MentionContentOptions = {
     /**
@@ -15,13 +18,25 @@ export type MentionContentOptions = {
      */
     href?: MentionHref;
     /**
+     * What the app knows now about a stored mention: a renamed person shows
+     * their current username and name, a deleted or forbidden one shows the
+     * stored username marked unavailable, with no link. Without it, for
+     * `unknown`, or when it answers with no known status, the stored value shows. The document is
+     * never changed. Read when a mention is drawn: a changed `resolve` applies
+     * once the editor is remounted. A throw is not caught: it reaches the editor's `onError`
+     * when the editor draws the mention, and the caller of `serializeToHtml` otherwise.
+     */
+    resolve?: MentionResolve;
+    /**
+     * What a mention says in words of its own; any left out keep their English text.
+     */
+    labels?: Partial<MentionContentLabels>;
+    /**
      * The single character that starts a mention
      * @default '@'
      */
     trigger?: string;
 };
-
-const KINDS: readonly MentionKind[] = ['user', 'group', 'all'];
 
 /**
  * Throws unless the trigger is exactly one character
@@ -36,26 +51,28 @@ const assertMentionTrigger = (trigger: string, factory: string): void => {
 /**
  * A mention, shown as the username linked to the person or group, with the full name on hover
  */
-export const mentionContent = ({ href, trigger = '@' }: MentionContentOptions = {}) => {
+export const mentionContent = ({ href, resolve, labels, trigger = '@' }: MentionContentOptions = {}) => {
     assertMentionTrigger(trigger, 'mentionContent');
+    const shownLabels = { ...DEFAULT_MENTION_CONTENT_LABELS, ...labels };
     return defineContent({
         inlines: {
             mention: defineInline<MentionValue>({
                 // Portable markup for the clipboard: a plain link (or text, with
                 // nowhere to link to), no tooltip.
                 toHtml: (mention) => {
-                    const target = safeMentionHref(href, mention);
+                    const shown = mentionDisplay(mention, { resolve, href, trigger, labels: shownLabels });
+                    const target = linkTarget(shown);
                     return {
                         tag: target === undefined ? 'span' : 'a',
                         attrs: {
                             href: target,
-                            title: mention.name,
-                            'data-mention-id': mention.id,
-                            'data-mention-username': mention.username,
-                            'data-mention-kind': mention.kind,
+                            title: shown.title,
+                            ...mentionAttributes(mention),
                             class: styles.mention ?? '',
                         },
-                        children: `${trigger}${mention.username}`,
+                        // Isolated so a right-to-left name cannot reorder the text around it; `@` and
+                        // the label only, without the note an unavailable mention shows when read.
+                        children: [{ tag: BIDI_ISOLATE_TAG, children: shown.label }],
                     };
                 },
 
@@ -69,18 +86,23 @@ export const mentionContent = ({ href, trigger = '@' }: MentionContentOptions = 
                         value: (element) => {
                             const id = element.dataset.mentionId ?? '';
                             const username = element.dataset.mentionUsername ?? '';
-                            const kind = KINDS.find((known) => known === element.dataset.mentionKind);
+                            // Copies from before `data-mention-name` carry the name in the title.
+                            const name = element.dataset.mentionName ?? element.title;
+                            const kind = storedKind(element.dataset.mentionKind);
                             if (id === '' || username === '') {
                                 return null;
                             }
-                            return mentionValueOf({ id, username, name: element.title, kind });
+                            return mentionValueOf({ id, username, name, kind });
                         },
                     },
                 ],
 
                 render: {
                     component: ({ value }) => (
-                        <MentionLink value={value} href={safeMentionHref(href, value)} trigger={trigger} />
+                        <MentionLink
+                            value={value}
+                            display={mentionDisplay(value, { resolve, href, trigger, labels: shownLabels })}
+                        />
                     ),
                 },
             }),
@@ -88,7 +110,11 @@ export const mentionContent = ({ href, trigger = '@' }: MentionContentOptions = 
     });
 };
 
-export type MentionPluginOptions = MentionContentOptions & {
+export type MentionPluginOptions = Omit<MentionContentOptions, 'labels'> & {
+    /**
+     * What the mention and its list of people say in words of their own; any left out keep their English text.
+     */
+    labels?: Partial<MentionLabels>;
     /**
      * Who can be mentioned. A list is searched by username and name, ignoring case.
      * A function receives the text typed after the trigger and returns the matches, or a promise of them.
@@ -112,7 +138,12 @@ export const searchIn =
  * Mentions a person or group: typing the trigger (`@` by default) opens a list to choose from
  */
 export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
-    const { href, trigger = '@' } = options;
+    const { href, resolve, trigger = '@' } = options;
+    const labels = {
+        ...DEFAULT_MENTION_CONTENT_LABELS,
+        ...DEFAULT_MENTION_PICKER_LABELS,
+        ...options.labels,
+    };
     assertMentionTrigger(trigger, 'mentionPlugin');
     let items: MentionItems;
     if (typeof options.items === 'function') {
@@ -122,8 +153,19 @@ export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
     }
 
     return definePlugin({
-        content: mentionContent({ href, trigger }),
-        edit: { mention: (props) => <MentionEditor {...props} items={items} trigger={trigger} href={href} /> },
+        content: mentionContent({ href, resolve, labels, trigger }),
+        edit: {
+            mention: (props) => (
+                <MentionEditor
+                    {...props}
+                    items={items}
+                    trigger={trigger}
+                    href={href}
+                    resolve={resolve}
+                    labels={labels}
+                />
+            ),
+        },
         hotkeys: {
             // Inserts an empty mention that the `edit` view takes over.
             [trigger]: (api) => api.insert('mention'),

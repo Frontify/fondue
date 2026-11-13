@@ -44,7 +44,7 @@ const MAX_HREF_LENGTH = 2048;
 const CONTROL_CHARACTER = /[\u0000-\u001F\u007F-\u009F]/;
 
 /** The scheme an href names, lower-cased with its colon, or null for a relative one. */
-const schemeOf = (href: string): string | null => {
+export const schemeOf = (href: string): string | null => {
     // Browsers ignore tabs, newlines and control characters in URLs, so `java\tscript:` must read as `javascript:`.
     const compact = href.replaceAll(/[\u0000- ]/g, '');
     return /^([a-z][a-z\d+.-]*:)/i.exec(compact)?.[1]?.toLowerCase() ?? null;
