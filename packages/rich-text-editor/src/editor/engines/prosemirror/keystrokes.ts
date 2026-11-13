@@ -1,10 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { baseKeymap, setBlockType } from 'prosemirror-commands';
+import {
+    baseKeymap,
+    chainCommands,
+    createParagraphNear,
+    liftEmptyBlock,
+    newlineInCode,
+    setBlockType,
+    splitBlockAs,
+} from 'prosemirror-commands';
 import { history, redo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
-import { type Mark as PmMark, type Node as PmNode, type Schema } from 'prosemirror-model';
+import {
+    type ContentMatch,
+    type Mark as PmMark,
+    type Node as PmNode,
+    type NodeType as PmNodeType,
+    type Schema,
+} from 'prosemirror-model';
 import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, TextSelection } from 'prosemirror-state';
 import { canJoin, findWrapping } from 'prosemirror-transform';
 
@@ -20,7 +34,8 @@ import {
 } from '#/core';
 
 import { autolinkOnEnter, markPatternRule } from './autolink';
-import { keepCarriedAttrs, undoStep } from './controlApi';
+import { keepCarriedAttrs, withCarriedAttrs } from './carriedAttrs';
+import { undoStep } from './controlApi';
 import { EXTRA_ATTR } from './documentConversion';
 import { listKeys } from './lists';
 import {
@@ -48,7 +63,8 @@ import {
  *    key lists would claim (`blurOnBreak` takes Enter).
  * 4. List keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
  * 5. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`); held until a composition ends.
- * 6. Baseline keymap, plus Backspace resetting an emptied first heading.
+ * 6. Enter keeping the attributes every text block carries, then the baseline
+ *    keymap, plus Backspace resetting an emptied first heading.
  *
  * Mark input rules build their own transaction instead of calling
  * `api.marks.toggle`, because the input-rule machinery owns undo grouping.
@@ -76,7 +92,7 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         // 5
         ...typingRewrites(registry, schema),
         // 6
-        keymap({ Backspace: resetEmptyFirstBlock }),
+        keymap({ Backspace: resetEmptyFirstBlock, Enter: splitKeepingCarriedAttrs(registry) }),
         keymap(baseKeymap),
     ].map(ignoringTextEntryKeys);
 };
@@ -483,6 +499,60 @@ const runEndTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRu
 };
 
 // Baseline
+
+/** The block the baseline's split falls back to: the first allowed text block that needs no attributes. */
+const defaultBlockAt = (match: ContentMatch): PmNodeType | null => {
+    for (let index = 0; index < match.edgeCount; index++) {
+        const { type } = match.edge(index);
+        if (type.isTextblock && !type.hasRequiredAttrs()) {
+            return type;
+        }
+    }
+    return null;
+};
+
+/**
+ * The baseline keymap's Enter, except the new block after the caret carries the
+ * attributes every text block carries (alignment), which a split at the end of
+ * a block would otherwise drop with the block's type.
+ */
+const splitKeepingCarriedAttrs =
+    (registry: PluginRegistry): Command =>
+    (state, dispatch) => {
+        // At the very start of a non-default block the engine retypes the empty block above to the default, dropping its attributes.
+        let splitAtStart = false;
+        const split = chainCommands(
+            newlineInCode,
+            createParagraphNear,
+            liftEmptyBlock,
+            splitBlockAs((node, atEnd, $from) => {
+                splitAtStart = !atEnd && $from.parentOffset === 0;
+                // Mid-block, the engine's own split copies the block, attributes included.
+                if (!atEnd) {
+                    return null;
+                }
+                const type = defaultBlockAt($from.node(-1).contentMatchAt($from.indexAfter(-1)));
+                if (!type) {
+                    return null;
+                }
+                return { type, attrs: keepCarriedAttrs(registry, type, undefined)(node) };
+            }),
+        );
+        if (!dispatch) {
+            return split(state);
+        }
+        return split(state, (transaction) => {
+            const { $from } = transaction.selection;
+            const above = transaction.doc.resolve($from.before()).nodeBefore;
+            if (splitAtStart && above?.isTextblock) {
+                const attrs = withCarriedAttrs(registry, above, $from.parent);
+                if (attrs) {
+                    transaction.setNodeMarkup($from.before() - above.nodeSize, undefined, attrs);
+                }
+            }
+            dispatch(transaction);
+        });
+    };
 
 /**
  * Backspace in an emptied block at the very top that is not the default block

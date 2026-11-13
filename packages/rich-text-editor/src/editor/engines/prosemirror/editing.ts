@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { dropCursor } from 'prosemirror-dropcursor';
-import { EditorState, Selection, TextSelection } from 'prosemirror-state';
+import { closeHistory } from 'prosemirror-history';
+import { EditorState, Selection, TextSelection, type Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { type MountedDocument, type MountDocument, type MountOptions } from '#/editor/port';
@@ -48,6 +49,35 @@ const HOST_DOC = 'rte-host-doc';
  */
 const EDITABLE_ATTRIBUTE = 'data-rte-editable';
 
+/** ProseMirror's transaction meta naming the DOM event behind an edit. */
+const UI_EVENT_META = 'uiEvent';
+
+/** The `uiEvent` values that move content in or out: each is an undo step of its own. */
+const TRANSFER_EVENTS: ReadonlySet<unknown> = new Set(['paste', 'cut', 'drop']);
+
+/** prosemirror-history's transaction meta: edits sharing its value join one undo step. */
+const COMPOSITION_META = 'composition';
+
+/** The composition id a feature's paste gives all its edits. */
+const FEATURE_PASTE_COMPOSITION = 'rte-paste';
+
+type UndoGrouping = { close: boolean; closeBeforeNextEdit: boolean };
+
+/**
+ * Whether a transaction closes the undo step before it, and whether the edit
+ * after it must: typing groups into one step, while a paste, cut or drop, and
+ * the first edit after it, stand apart.
+ */
+const undoGrouping = (transaction: Transaction, closeBeforeNextEdit: boolean): UndoGrouping => {
+    if (TRANSFER_EVENTS.has(transaction.getMeta(UI_EVENT_META))) {
+        return { close: true, closeBeforeNextEdit: true };
+    }
+    if (transaction.docChanged) {
+        return { close: closeBeforeNextEdit, closeBeforeNextEdit: false };
+    }
+    return { close: false, closeBeforeNextEdit };
+};
+
 /** The editable element's attributes: the host's, then the marker. */
 const editableAttributes = (attributes: Readonly<Record<string, string>>): Record<string, string> => ({
     ...attributes,
@@ -81,6 +111,10 @@ const mount = ({
     const emittedDocs = new WeakSet<typeof initialDoc>();
     // The document's own undeclared keys: only the host changes them, so they live here, not in the engine document.
     let rootExtras = rootExtrasOf(initialDoc);
+    // A paste, cut or drop just happened: the next edit starts an undo step of its own.
+    let closeBeforeNextEdit = false;
+    // A feature's paste handler is running: what it dispatches is a paste too, though it carries no `uiEvent`.
+    let inFeaturePaste = false;
 
     // 1. Views with editing UI (blocks, inline elements, link-like marks) follow
     //    the selection, since `isFocused` does. Each state change is offered to
@@ -117,9 +151,20 @@ const mount = ({
         clipboardParser: clipboardParser(schema),
         transformPastedHTML: keepOfficeListStyles,
         transformPasted: pastedWithoutExtras,
-        handlePaste: (pasteView, event, slice) =>
-            handlePasteByFeatures(registry.pasteHandlers, api)(pasteView, event) ||
-            handlePasteIntoEmptyBlock(pasteView, event, slice),
+        handlePaste: (pasteView, event, slice) => {
+            // The feature's first edit starts the paste's undo step, and the edit after the paste starts another.
+            closeBeforeNextEdit = true;
+            inFeaturePaste = true;
+            try {
+                if (handlePasteByFeatures(registry.pasteHandlers, api)(pasteView, event)) {
+                    closeBeforeNextEdit = true;
+                    return true;
+                }
+            } finally {
+                inFeaturePaste = false;
+            }
+            return handlePasteIntoEmptyBlock(pasteView, event, slice);
+        },
         state: EditorState.create({
             doc: toEngineDocument(initialDoc, schema),
             plugins: [
@@ -143,6 +188,15 @@ const mount = ({
             return false;
         },
         dispatchTransaction(transaction) {
+            const grouping = undoGrouping(transaction, closeBeforeNextEdit);
+            if (grouping.close) {
+                closeHistory(transaction);
+            }
+            // History joins only edits it finds adjacent, and a mark change has no range: a shared composition id joins a feature paste's edits.
+            if (inFeaturePaste) {
+                transaction.setMeta(COMPOSITION_META, FEATURE_PASTE_COMPOSITION);
+            }
+            closeBeforeNextEdit = grouping.closeBeforeNextEdit;
             editorView.updateState(editorView.state.apply(transaction));
             repaintViews();
             // Host-originated changes are not reported back to the host.
