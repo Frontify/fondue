@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { DEFAULT_NEW_TAB_NOTE } from './newTab';
+
 /**
  * The words the link plugin says, visibly or to assistive technology, that a host can translate. A host passes the
  * ones it changes (`labels` on `linkPlugin`); the rest stay English.
@@ -60,7 +62,7 @@ const DEFAULT_LABELS: LinkLabels = {
         return `${count} results`;
     },
     results: 'Pages',
-    newTabNote: ' (opens in new tab)',
+    newTabNote: DEFAULT_NEW_TAB_NOTE,
     hostAndSubdomains: (host) => `${host} (or a subdomain)`,
     hostsAllowed: (hosts) => `Enter a link to ${joinOr(hosts)}.`,
     sameSiteOnly: 'Enter a link within this site.',

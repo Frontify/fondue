@@ -13,7 +13,7 @@ import { LINKABLE_ADDRESS_TRIM } from './helpers/address';
 import { type LinkSearch } from './helpers/destination';
 import { type LinkLabels, resolveLinkLabels } from './helpers/labels';
 import { openNewLinkForm } from './helpers/newLinkForms';
-import { NEW_TAB_NOTE_ATTRIBUTE, NEW_TAB_REL, NEW_TAB_TARGET } from './helpers/newTab';
+import { DEFAULT_NEW_TAB_NOTE, NEW_TAB_NOTE_ATTRIBUTE, NEW_TAB_REL, NEW_TAB_TARGET } from './helpers/newTab';
 import { allowsHref, type LinkPolicy } from './helpers/policy';
 import { type LinkValue } from './helpers/value';
 import styles from './link.module.scss';
@@ -191,7 +191,7 @@ export const linkContent = ({ labels, ...policy }: LinkContentOptions = {}) =>
                     children: true,
                 }),
 
-                render: { component: readerFor(policy, resolveLinkLabels(labels).newTabNote) },
+                render: { component: readerFor(policy, labels?.newTabNote ?? DEFAULT_NEW_TAB_NOTE) },
 
                 // A pasted span inside a link, such as Google Docs writes, repeats the underline the link already shows.
                 defaultStyles: LINK_DEFAULT_STYLES,
