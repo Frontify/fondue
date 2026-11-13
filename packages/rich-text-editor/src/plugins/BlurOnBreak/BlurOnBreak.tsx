@@ -69,13 +69,12 @@ const breakLine = ({ api, onBreak, required, labels }: BreakLineParams): void =>
 };
 
 /**
- * Enter commits instead of adding a paragraph, what a single-line editor (a
+ * Enter commits instead of adding a paragraph — what a single-line editor (a
  * title field, a comment box) wants. Inside a list Enter still splits the
  * item, so a list typed into such an editor can grow, and on an empty item it
- * leaves the list; anywhere else it calls
- * `onBreak` and gives up focus. Plugin hotkeys run before the editor's own
- * keys, so this handler splits the item itself rather than leaving Enter to
- * the list.
+ * leaves the list; anywhere else it calls `onBreak` and gives up focus. Plugin
+ * hotkeys run before the editor's own keys, so this handler splits the item
+ * itself rather than leaving Enter to the list.
  *
  * @example
  * blurOnBreakPlugin({ onBreak: submit, required: true, labels: { required: 'Write a comment first.' } })

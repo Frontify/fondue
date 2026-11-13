@@ -397,6 +397,19 @@ describe('Backspace', () => {
     });
 });
 
+/** A test-only mark that, unlike `verbatimPlugin`'s, leaves typing rules and hotkeys on. */
+const plainMarkPlugin = definePlugin({
+    id: 'plain',
+    content: defineContent({
+        marks: {
+            plain: defineMark({
+                toHtml: () => ({ tag: 'u', children: true }),
+                parse: [{ tag: 'u' }],
+            }),
+        },
+    }),
+});
+
 /** A test-only mark that, like literal text, opts out of typing rules and single-character hotkeys. */
 const verbatimPlugin = definePlugin({
     id: 'verbatim',
@@ -542,11 +555,15 @@ describe('a feature hotkey', () => {
         expect(trigger).toHaveBeenCalledTimes(1);
     });
 
-    it('naming a character still fires after a space in bold text', () => {
+    it('naming a character still fires after a space in a mark that does not opt out of rules', () => {
         const trigger = vi.fn<(api: EditorControlApi) => void>();
         const editor = editorWith(
-            [...defaultPlugins, definePlugin({ id: 'trigger', hotkeys: { '@': { label: 'Trigger', run: trigger } } })],
-            [paragraph(text('hi ', { bold: true }))],
+            [
+                ...defaultPlugins,
+                plainMarkPlugin,
+                definePlugin({ id: 'trigger', hotkeys: { '@': { label: 'Trigger', run: trigger } } }),
+            ],
+            [paragraph(text('hi ', { plain: true }))],
         );
 
         editor.caretAfter('hi ');

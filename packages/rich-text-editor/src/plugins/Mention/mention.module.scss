@@ -141,23 +141,3 @@
     padding: var(--spacing-x-small) var(--spacing-small);
     color: var(--color-secondary-default);
 }
-
-/** Retry beside the failure, a link-like button that takes no focus from the query. */
-.retry {
-    padding: 0;
-    border: none;
-    background-color: transparent;
-    color: var(--color-highlight-default);
-    font: inherit;
-    text-decoration: underline;
-    cursor: pointer;
-}
-
-/** The key that retries, drawn as Fondue draws a dropdown item's shortcut. */
-.shortcut {
-    margin-inline-start: var(--spacing-xx-small);
-    color: var(--color-secondary-default);
-    font-family: inherit;
-    font-size: var(--text-body-small-default-font-size);
-    line-height: var(--text-body-small-default-line-height);
-}
