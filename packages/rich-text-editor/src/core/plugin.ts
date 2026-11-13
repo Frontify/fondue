@@ -343,7 +343,7 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
      */
     excludesInputRules?: boolean;
     /**
-     * Clearing formatting with `keepSurviving` leaves this mark on — a mark that declares `survivesClear` stays through "clear formatting" but not through "reset formatting".
+     * Clearing formatting with `keepSurviving` leaves this mark on, so it stays through both "clear formatting" and "reset formatting".
      * @default false
      */
     survivesClear?: boolean;
