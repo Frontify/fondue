@@ -68,7 +68,7 @@ const splitBlock = (api: EditorControlApi): void => {
  * and breaks the line.
  *
  * @example
- * blurOnBreakPlugin({ onBreak: submit, required: 'Write a comment first.' })
+ * plugins={[blurOnBreakPlugin({ onBreak: submit, required: 'Write a comment first.' }), ...defaultPlugins]}
  */
 export const blurOnBreakPlugin = (options: BlurOnBreakPluginOptions = {}) => {
     // A field with no submit to announce says nothing about submitting.
