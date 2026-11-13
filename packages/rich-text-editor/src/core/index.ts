@@ -17,6 +17,13 @@ export {
     UNDO_HOTKEY,
 } from './commands';
 export {
+    blockAttributeStyle,
+    blockHtml,
+    blockValueOf,
+    buildContentRegistry,
+    type ContentRegistry,
+} from './contentRegistry';
+export {
     type ParagraphBlock,
     type RteBlockNode,
     type RteDocumentOf,
@@ -76,9 +83,6 @@ export {
     type ToolbarItemProps,
 } from './plugin';
 export {
-    blockAttributeStyle,
-    blockHtml,
-    blockValueOf,
     buildPluginRegistry,
     controlOf,
     isOwnActive,
