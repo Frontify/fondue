@@ -9,7 +9,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { defineContent, defineMark, definePlugin } from '#/core';
 import { defaultPlugins, linkPlugin } from '#/plugins';
 
-import { destroyEditors, editorWith, paragraph, text } from './testEditor';
+import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
 
 // A web address followed by a space becomes a link (the link plugin's `markPattern` rule).
 
@@ -581,7 +581,7 @@ const tag = (value: string) => text(`#${value}`, { tag: { tag: value } });
 
 describe('a token of another markPattern rule', () => {
     it('is marked by Enter, which then splits the block', () => {
-        const editor = editorWith([...defaultPlugins, tagPlugin], [paragraph(text('see #news'))]);
+        const editor = editorWith([...shipped('paragraph'), tagPlugin], [paragraph(text('see #news'))]);
         editor.caretAfter('#news');
 
         press(editor.view, 'Enter');
@@ -590,7 +590,7 @@ describe('a token of another markPattern rule', () => {
     });
 
     it('is taken back by Backspace right after, keeping the new line', () => {
-        const editor = editorWith([...defaultPlugins, tagPlugin], [paragraph(text('#news'))]);
+        const editor = editorWith([...shipped('paragraph'), tagPlugin], [paragraph(text('#news'))]);
         editor.caretAfter('#news');
         press(editor.view, 'Enter');
 
