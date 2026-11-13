@@ -1,0 +1,19 @@
+packages/rich-text-editor/src/editor/components/Toolbar.tsx
+  s_b778dae1e2640c::t_bbc64054b9c252 204-205,207
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1c90c7bd1af3bb4dc02e0fd58a5526bab6cd1378",
+  "prompts": {},
+  "sessions": {
+    "s_b778dae1e2640c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e5a3cbe8-bdeb-468e-b690-663c281f1976",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

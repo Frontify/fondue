@@ -1,0 +1,14 @@
+.changeset/badge-font-weight-normal.md
+  h_2139c5e5c94509 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "5def68e2abc9cf91909ef5343ee059ace48c04f0",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

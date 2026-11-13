@@ -1,0 +1,39 @@
+packages/rte/package.json
+  s_7de1dc9df28918::t_948dbd6e9c2a97 4
+.changeset/pre.json
+  s_7de1dc9df28918::t_0be4bcd8c15e27 3,5-13
+packages/rich-text-editor/package.json
+  s_7de1dc9df28918::t_948dbd6e9c2a97 4
+fondue/package.json
+  s_7de1dc9df28918::t_948dbd6e9c2a97 4
+packages/tokens/package.json
+  s_7de1dc9df28918::t_948dbd6e9c2a97 4
+packages/sdk/package.json
+  s_7de1dc9df28918::t_948dbd6e9c2a97 4
+packages/components/package.json
+  s_7de1dc9df28918::t_948dbd6e9c2a97 3
+packages/icons/package.json
+  s_7de1dc9df28918::t_948dbd6e9c2a97 4
+packages/charts/package.json
+  s_7de1dc9df28918::t_948dbd6e9c2a97 4
+.changeset/v14-release-candidate.md
+  s_7de1dc9df28918::t_f74c952c899ed4 1-12
+package.json
+  s_7de1dc9df28918::t_f74c952c899ed4 24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "c9158ad00bd113decf378fc3aaa0901152f4f6e6",
+  "prompts": {},
+  "sessions": {
+    "s_7de1dc9df28918": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6d4eb5e8-8e19-4271-8cc8-cdbb36c7cb6e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

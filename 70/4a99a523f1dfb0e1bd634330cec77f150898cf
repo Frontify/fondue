@@ -1,0 +1,32 @@
+packages/rich-text-editor/src/editor/components/FloatingToolbar.tsx
+  s_642be4344ac46a::t_6abfc900c1c8e4 4,38
+packages/rich-text-editor/package.json
+  s_642be4344ac46a::t_3c532e723baae6 56
+.changeset/table-row-click-ssr.md
+  s_642be4344ac46a::t_6abfc900c1c8e4 1-5
+packages/rich-text-editor/src/editor/components/SlashMenu.tsx
+  s_642be4344ac46a::t_6abfc900c1c8e4 6,254
+packages/rich-text-editor/src/editor/hooks/useSelectionAnchor.ts
+  s_642be4344ac46a::t_6abfc900c1c8e4 10
+.github/workflows/rich-text-editor-pull-requests.yaml
+  s_642be4344ac46a::t_4903bb0bf6d0f0 30-35,51-56,75-79
+  s_642be4344ac46a::t_18111ee676adad 80
+pnpm-lock.yaml
+  s_642be4344ac46a::t_bb47827b12f9e3 194,197,423,426,706,712,824,830,834-836,876,942,945,1339,1345,1361,1385,1388,1494,11822,11831,12088,12094,12098-12099,12110,12120,12124,12131,12168,12170,14429,14434,14493,14505,16424,16435,16451,16677,16686,19915,19917,20164,20200
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "704a99a523f1dfb0e1bd634330cec77f150898cf",
+  "prompts": {},
+  "sessions": {
+    "s_642be4344ac46a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e6bd0557-4a6f-41c3-9816-9b518bbff55a",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
