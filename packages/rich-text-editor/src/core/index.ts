@@ -22,12 +22,13 @@ export {
 export { isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
 export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
 export { fondueToken, fondueTokenValues, type FondueTokenName } from './fondueTokens';
-export { DOCUMENT_GAP_VARIABLES, DOCUMENT_TEST_ID, OWN_MARGINS_ATTRIBUTE } from './documentContract';
+export { DOCUMENT_GAP_VARIABLES, OWN_MARGINS_ATTRIBUTE } from './documentContract';
 export { lookProperties, lookStyle, lookVariableName, styleOfClass, type TextLook } from './look';
 export {
     type BlockAttributeDefinition,
     type BlockDefinition,
     type ContentModel,
+    type ContentStyles,
     type DefaultStyle,
     defineBlock,
     defineContent,

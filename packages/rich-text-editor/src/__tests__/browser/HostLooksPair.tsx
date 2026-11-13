@@ -21,10 +21,10 @@ export const HostLooksPair = ({ value = BODY_QUOTE_LINK_DOCUMENT, ...looks }: Ho
 
     return (
         <>
-            <div data-test-id="renderer">
+            <div data-testid="renderer">
                 <RichTextRenderer value={value} plugins={plugins} />
             </div>
-            <div data-test-id="editor">
+            <div data-testid="editor">
                 <RichTextEditor value={value} plugins={plugins} />
             </div>
         </>

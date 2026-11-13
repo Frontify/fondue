@@ -66,14 +66,10 @@ const linkMark = defineMark<LinkValue>({
     nesting: -2,
     // Typing at the end of a link does not extend it.
     inclusive: false,
-    // A pasted span inside a link, such as Google Docs writes, repeats the underline the link already shows.
-    defaultStyles: LINK_DEFAULT_STYLES,
 
-    /**
-     * The link everywhere but while editing: readonly, export, copy
-     */
+    /** The link everywhere but while editing: readonly, export, copy. */
     toHtml: (value) => {
-        // A stored document may hold anything here (`{}`, `true`), so
+        // A stored document may hold anything here — `{}`, `true` — so
         // nothing about its shape is taken on trust.
         let link: Partial<LinkValue> | null = null;
         if (typeof value === 'object') {
@@ -88,6 +84,9 @@ const linkMark = defineMark<LinkValue>({
         Object.assign(attrs, newTabAttrs(link));
         return { tag: 'a', attrs, children: true };
     },
+
+    // A pasted span inside a link, such as Google Docs writes, repeats the underline the link already shows.
+    defaultStyles: LINK_DEFAULT_STYLES,
 
     parse: [
         {
@@ -116,14 +115,15 @@ export const linkContent = ({ look = {} }: LinkPluginOptions = {}) =>
         marks: { link: linkMark },
         contentProperties: lookProperties('link', look),
         // The same values the stylesheet falls back to; `hostStyling.ct.tsx` holds them equal.
-        contentStyles: () =>
-            styleOfClass(
+        contentStyles: () => ({
+            classes: styleOfClass(
                 styles.link,
                 lookStyle(look, {
                     color: fondueToken('color-highlight-default'),
                     'text-underline-offset': UNDERLINE_OFFSET,
                 }),
             ),
+        }),
     });
 
 // The key is a literal because a computed key keeps this plugin in the renderer; HOTKEY's type ties it to this key.

@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineContent, definePlugin, lookProperties, lookStyle, PARAGRAPH, styleOfClass, type TextLook } from '#/core';
+import { defineContent, definePlugin, lookProperties, lookStyle, type TextLook } from '#/core';
 
 import styles from './paragraph.module.scss';
+
+const PARAGRAPH_TAG = 'p';
 
 export type ParagraphPluginOptions = {
     /**
@@ -17,11 +19,11 @@ export type ParagraphPluginOptions = {
  */
 export const paragraphContent = ({ look = {} }: ParagraphPluginOptions = {}) =>
     defineContent({
-        // The paragraph is core's block, so its class and margins are declared by type, and only while this plugin is on.
-        extendBlocks: { [PARAGRAPH]: { className: styles.paragraph, ownsMargins: true } },
+        // The body look's rules hang off this class, so they reach the paragraphs only while this plugin is on.
+        contentClassName: styles.body,
         contentProperties: lookProperties('body', look),
-        // The same values the stylesheet falls back to; `hostStyling.ct.tsx` holds them equal.
-        contentStyles: () => styleOfClass(styles.paragraph, lookStyle(look, {})),
+        // What the stylesheet sets on a plain paragraph; `hostStyling.ct.tsx` holds them equal.
+        contentStyles: () => ({ plainTags: { [PARAGRAPH_TAG]: lookStyle(look, {}) } }),
     });
 
 /**

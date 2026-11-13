@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    type DefaultStyle,
     type BlockDefinition,
+    type ContentStyles,
+    type DefaultStyle,
     defineBlock,
     defineContent,
     definePlugin,
@@ -33,6 +34,7 @@ import {
     presetsFor,
     type TextStyleName,
     type TextStyleOption,
+    UNKNOWN_STYLE_CLASS_NAME,
 } from './helpers/presets';
 
 // The block this plugin contributes; the package root assembles it into the
@@ -71,7 +73,7 @@ const textStyleBlockFor = (options: readonly TextStyleOption[]): BlockDefinition
         toHtml: ({ style }) => {
             const preset = findPreset(style);
             if (preset === undefined) {
-                return { tag: 'p', children: true };
+                return { tag: 'p', attrs: { class: UNKNOWN_STYLE_CLASS_NAME }, children: true };
             }
             const attrs: Record<string, string | undefined> = { class: preset.className };
             if (preset.tag === 'p') {
@@ -98,13 +100,13 @@ const textStyleContentFor = (
     }
 
     // The same values the stylesheet falls back to (`hostStyling.ct.tsx` holds them equal), for every preset, offered or not.
-    const contentStyles = (): Record<string, StyleMap> => {
-        const styled: Record<string, StyleMap> = {};
+    const contentStyles = (): ContentStyles => {
+        const classes: Record<string, StyleMap> = {};
         for (const preset of presetsFor(ALL_TEXT_STYLES)) {
             const look = lookStyle(presets[preset.name] ?? {}, preset.fallback);
-            Object.assign(styled, styleOfClass(preset.className, look));
+            Object.assign(classes, styleOfClass(preset.className, look));
         }
-        return styled;
+        return { classes };
     };
 
     let block = ALL_STYLES_BLOCK;

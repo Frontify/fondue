@@ -118,9 +118,7 @@ const PRESETS = [
     },
 ] as const satisfies readonly Preset[];
 
-/**
- * The value of a text block's `style` attribute
- */
+/** The value of a text block's `style` attribute. */
 export type TextStyleName =
     | 'heading1'
     | 'heading2'
@@ -161,6 +159,9 @@ export const ALL_TEXT_STYLES: readonly TextStyleOption[] = [PARAGRAPH, ...PRESET
 export const FIRST_PRESET: TextStyleName = PRESETS[0].name;
 
 export const findPreset = (name: string): Preset | undefined => PRESETS.find((preset) => preset.name === name);
+
+/** The class of a text block whose style no preset names, which only gives it a body paragraph's margins. */
+export const UNKNOWN_STYLE_CLASS_NAME = styles.unknownStyle;
 
 export const labelOf = (option: TextStyleOption): string => findPreset(option)?.label ?? 'Paragraph';
 

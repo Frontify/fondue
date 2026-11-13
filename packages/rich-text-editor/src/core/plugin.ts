@@ -36,27 +36,29 @@ export type RteContent = {
      */
     contentProperties?: Record<string, string>;
     /**
-     * The inline style of each class this content writes, keyed by class name, for HTML exported with `styling: 'inline'`.
+     * The inline style this content writes, for HTML exported with `styling: 'inline'`.
      * A function, so that only that export builds the styles, and a class with no name throws there alone.
      */
-    contentStyles?: () => Record<string, StyleMap>;
+    contentStyles?: () => ContentStyles;
+};
+
+/**
+ * The inline style a content writes, for HTML exported without the stylesheet: what its stylesheet rules set.
+ */
+export type ContentStyles = {
+    /** The style of each element that carries the class, keyed by class name. */
+    classes?: Record<string, StyleMap>;
     /**
-     * What a plugin adds to a block it does not define, such as core's paragraph, keyed by block type.
-     * The registry folds it into the block's definition and throws for an unknown block, or for a field another
-     * plugin, or the block itself, already sets.
+     * The style of each element of the tag that does not own its margins, so carries no margin marker, keyed by
+     * tag name. These are the elements a rule such as `:where(p:not([data-rte-own-margins]))` reaches.
      */
-    extendBlocks?: Record<string, BlockLook>;
+    plainTags?: Record<string, StyleMap>;
 };
 
 /**
  * What `defineContent` takes: a content without its `kind`
  */
 export type RteContentDefinition = Omit<RteContent, 'kind'>;
-
-/**
- * How a block looks, whichever plugin defines it: the part of a block's definition another plugin may add to.
- */
-export type BlockLook = Pick<BlockDefinition, 'className' | 'ownsMargins'>;
 
 /**
  * Declares what a plugin's document can hold.
@@ -297,10 +299,6 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
      * @default false
      */
     ownsMargins?: boolean;
-    /**
-     * A class on the block's outermost element, written next to the one its `toHtml` sets.
-     */
-    className?: string;
     /** The block's markup. `children: true` is where its content goes. */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<Partial<TValue>>[];

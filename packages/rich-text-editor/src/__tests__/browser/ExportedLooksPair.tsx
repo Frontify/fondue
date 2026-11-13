@@ -15,7 +15,7 @@ type ExportedHtmlProps = {
 const ExportedHtml = ({ html, testId }: ExportedHtmlProps) => (
     // Safe: the HTML is our own serializer's output for a fixed document, so nothing in it comes from a user.
     // oxlint-disable-next-line @eslint-react/dom-no-dangerously-set-innerhtml
-    <div data-test-id={testId} dangerouslySetInnerHTML={{ __html: html }} />
+    <div data-testid={testId} dangerouslySetInnerHTML={{ __html: html }} />
 );
 
 type ExportedLooksPairProps = HostLooksOptions;

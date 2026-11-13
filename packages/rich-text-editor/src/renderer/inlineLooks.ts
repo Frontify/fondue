@@ -3,7 +3,7 @@
 // Export without the stylesheet: each node's looks written into its own `style`,
 // from what the plugins declared for the classes it carries.
 
-import { fondueToken, type HtmlSpec, type StyleMap } from '#/core';
+import { type ContentStyles, fondueToken, type HtmlSpec, OWN_MARGINS_ATTRIBUTE, type StyleMap } from '#/core';
 
 import { type DrawnNode } from './documentTree';
 
@@ -66,27 +66,39 @@ const documentGaps = (tag: HtmlSpec['tag'], placement: Placement): StyleMap => {
     return { 'margin-top': gapAbove(spacing, placement), 'margin-bottom': gapBelow(placement) };
 };
 
+/** What a plugin writes for a plain element of the tag, as its stylesheet rule reaches it: one without the margin marker. */
+const plainTagStyle = (spec: HtmlSpec, plainTags: Record<string, StyleMap>): StyleMap | undefined => {
+    if (spec.attrs?.[OWN_MARGINS_ATTRIBUTE] !== undefined) {
+        return undefined;
+    }
+    // Own keys only: a tag is not a property of `Object`.
+    if (Object.prototype.hasOwnProperty.call(plainTags, spec.tag)) {
+        return plainTags[spec.tag];
+    }
+    return undefined;
+};
+
 /** The style of every class the element carries that has one, later classes over earlier. */
-const classStyle = (className: string, contentStyles: Record<string, StyleMap>): StyleMap | undefined => {
+const classStyle = (className: string, classes: Record<string, StyleMap>): StyleMap | undefined => {
     let merged: StyleMap | undefined;
     for (const name of className.split(CLASS_SEPARATOR)) {
         // Own keys only: a class named `constructor` is not a style.
-        if (Object.prototype.hasOwnProperty.call(contentStyles, name)) {
-            merged = { ...merged, ...contentStyles[name] };
+        if (Object.prototype.hasOwnProperty.call(classes, name)) {
+            merged = { ...merged, ...classes[name] };
         }
     }
     return merged;
 };
 
 /**
- * The spec with the document's gaps, then its classes' styles, under its own `style`, so a host
- * margin replaces a gap untrimmed, and alignment and a font colour still win.
+ * The spec with the document's gaps, then its tag's style and its classes' styles, under its own `style`, so a
+ * host margin replaces a gap untrimmed, and alignment and a font colour still win.
  */
-const inlineSpec = (spec: HtmlSpec, placement: Placement, contentStyles: Record<string, StyleMap>): HtmlSpec => {
-    let looked = documentGaps(spec.tag, placement);
+const inlineSpec = (spec: HtmlSpec, placement: Placement, contentStyles: Required<ContentStyles>): HtmlSpec => {
+    let looked = { ...documentGaps(spec.tag, placement), ...plainTagStyle(spec, contentStyles.plainTags) };
     const className = spec.attrs?.class;
     if (className !== undefined) {
-        looked = { ...looked, ...classStyle(className, contentStyles) };
+        looked = { ...looked, ...classStyle(className, contentStyles.classes) };
     }
     if (Object.keys(looked).length === 0) {
         return spec;
@@ -97,7 +109,7 @@ const inlineSpec = (spec: HtmlSpec, placement: Placement, contentStyles: Record<
 const inlineNode = (
     node: Exclude<DrawnNode, string>,
     placement: Placement,
-    contentStyles: Record<string, StyleMap>,
+    contentStyles: Required<ContentStyles>,
 ): DrawnNode => {
     switch (node.kind) {
         case 'html': {
@@ -117,7 +129,7 @@ const inlineNode = (
 const inlineSiblings = (
     nodes: readonly DrawnNode[],
     inListItem: boolean,
-    contentStyles: Record<string, StyleMap>,
+    contentStyles: Required<ContentStyles>,
 ): DrawnNode[] => {
     const elementIndexes: number[] = [];
     for (const [index, node] of nodes.entries()) {
@@ -145,7 +157,7 @@ const inlineSiblings = (
  * the document's gaps between blocks, by where each sits, and each class's style over them.
  *
  * @param nodes - The document's blocks, the children of its root.
- * @param contentStyles - The style of each class, by class name (`registry.contentStyles`).
+ * @param contentStyles - What the plugins write, by class and by tag (`registry.contentStyles()`).
  */
-export const inlineLooks = (nodes: readonly DrawnNode[], contentStyles: Record<string, StyleMap>): DrawnNode[] =>
+export const inlineLooks = (nodes: readonly DrawnNode[], contentStyles: Required<ContentStyles>): DrawnNode[] =>
     inlineSiblings(nodes, false, contentStyles);
