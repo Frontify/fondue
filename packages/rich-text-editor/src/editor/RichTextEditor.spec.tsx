@@ -2818,7 +2818,7 @@ describe('an editor that crashes', () => {
 });
 
 describe('the reset formatting button', () => {
-    it('removes every mark, links included, and makes the block a plain paragraph', () => {
+    it('removes every mark but the link and makes the block a plain paragraph', () => {
         const value: RteDocument = {
             version: 1,
             blocks: [
@@ -2849,7 +2849,9 @@ describe('the reset formatting button', () => {
 
         act(() => container.querySelector<HTMLElement>('[aria-label="Reset formatting"]')?.click());
 
-        expect(stored()?.blocks).toEqual([{ type: 'paragraph', children: [{ text: 'linked' }] }]);
+        expect(stored()?.blocks).toEqual([
+            { type: 'paragraph', children: [{ text: 'linked', link: { href: 'https://example.com' } }] },
+        ]);
     });
 });
 
