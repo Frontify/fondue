@@ -3,8 +3,8 @@
 import { TextInput } from '@frontify/fondue-components';
 import { forwardRef, type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
+import { isCompositionKey } from '../../shared/helpers/keys';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
-import { isCompositionKey } from '../helpers/keys';
 import { type LinkLabels } from '../helpers/labels';
 import { type LinkPolicy } from '../helpers/policy';
 import { type DestinationSearch, useDestinationSearch } from '../hooks/useDestinationSearch';

@@ -4,8 +4,8 @@ import { Button, Checkbox, Label, TextInput } from '@frontify/fondue-components'
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
 import { toHref } from '../../shared/helpers/href';
+import { isCompositionKey } from '../../shared/helpers/keys';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
-import { isCompositionKey } from '../helpers/keys';
 import { type LinkLabels } from '../helpers/labels';
 import { allowsHref, describeAllowed, type LinkPolicy } from '../helpers/policy';
 import { type LinkValue } from '../helpers/value';
