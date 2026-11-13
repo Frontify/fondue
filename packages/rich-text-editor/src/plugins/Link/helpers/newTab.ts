@@ -19,8 +19,3 @@ export const NEW_TAB_WINDOW_FEATURES = 'noopener,noreferrer';
  * The marker on the hidden note a new-tab link carries, so parsing can tell it from the link's own text.
  */
 export const NEW_TAB_NOTE_ATTRIBUTE = 'data-rte-link-note';
-
-/**
- * The hidden note that tells a screen reader a link opens in a new tab.
- */
-export const NEW_TAB_NOTE = ' (opens in new tab)';

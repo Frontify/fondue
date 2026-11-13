@@ -18,7 +18,7 @@ import {
 import { defaultPlugins } from '#/plugins';
 
 import { toEngineDocument } from './documentConversion';
-import { destroyEditors, editorWith, paragraph, text } from './testEditor';
+import { destroyEditors, editorWith, paragraph, text, tokenPlugin } from './testEditor';
 
 /**
  * The control API is what every feature drives the editor through, so each
@@ -47,9 +47,10 @@ const dividerPlugin: RtePlugin = definePlugin({
     }),
 });
 
-const plugins: RtePlugin[] = [...defaultPlugins, dividerPlugin, tagPlugin];
+const plugins: RtePlugin[] = [...defaultPlugins, dividerPlugin, tagPlugin, tokenPlugin()];
 
 const LINK = { href: 'https://example.com' };
+const TOKEN = { id: 'tok:a' };
 
 afterEach(destroyEditors);
 
@@ -264,11 +265,11 @@ describe('marks.toggle', () => {
         const { view } = editor;
         view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, 3)));
 
-        editor.api.insertText('XY', { link: LINK });
+        editor.api.insertText('XY', { token: TOKEN });
 
         expect(editor.stored()).toEqual([
             paragraph(text('a')),
-            paragraph(text('XY', { link: LINK })),
+            paragraph(text('XY', { token: TOKEN })),
             paragraph(text('b')),
         ]);
     });
@@ -830,10 +831,10 @@ describe('insertText', () => {
         const editor = editorWith(plugins, [paragraph(text('bold', { bold: true }))]);
         editor.caretAfter('bo');
 
-        editor.api.insertText('XY', { link: LINK });
+        editor.api.insertText('XY', { token: TOKEN });
 
         expect(editor.stored()).toEqual([
-            paragraph(text('bo', { bold: true }), text('XY', { bold: true, link: LINK }), text('ld', { bold: true })),
+            paragraph(text('bo', { bold: true }), text('XY', { bold: true, token: TOKEN }), text('ld', { bold: true })),
         ]);
     });
 
@@ -841,19 +842,19 @@ describe('insertText', () => {
         const editor = editorWith(plugins, [paragraph(text('one two three'))]);
         editor.select('two');
 
-        editor.api.insertText('2', { link: LINK });
+        editor.api.insertText('2', { token: TOKEN });
 
-        expect(editor.stored()).toEqual([paragraph(text('one '), text('2', { link: LINK }), text(' three'))]);
+        expect(editor.stored()).toEqual([paragraph(text('one '), text('2', { token: TOKEN }), text(' three'))]);
     });
 
-    it('takes the place of the link the text went over', () => {
-        const OTHER = { href: 'https://example.org' };
-        const editor = editorWith(plugins, [paragraph(text('docs', { link: LINK }))]);
+    it('takes the place of the mark the text went over', () => {
+        const OTHER = { id: 'tok:b' };
+        const editor = editorWith(plugins, [paragraph(text('docs', { token: TOKEN }))]);
         editor.select('ocs');
 
-        editor.api.insertText('ocs', { link: OTHER });
+        editor.api.insertText('ocs', { token: OTHER });
 
-        expect(editor.stored()).toEqual([paragraph(text('d', { link: LINK }), text('ocs', { link: OTHER }))]);
+        expect(editor.stored()).toEqual([paragraph(text('d', { token: TOKEN }), text('ocs', { token: OTHER }))]);
     });
 
     it('is one undo step, text and marks together', () => {
@@ -861,7 +862,7 @@ describe('insertText', () => {
         editor.select('two');
         const notifiedBefore = editor.onDocChange.mock.calls.length;
 
-        editor.api.insertText('2', { link: LINK });
+        editor.api.insertText('2', { token: TOKEN });
 
         expect(editor.onDocChange).toHaveBeenCalledTimes(notifiedBefore + 1);
         undo(editor.view.state, editor.view.dispatch);
@@ -874,9 +875,9 @@ describe('insertText', () => {
         const editor = editorWith(plugins, [paragraph(text('one'))]);
         editor.caretAfter('one');
 
-        editor.api.insertText('!', { nothing: {}, link: LINK });
+        editor.api.insertText('!', { nothing: {}, token: TOKEN });
 
-        expect(editor.stored()).toEqual([paragraph(text('one'), text('!', { link: LINK }))]);
+        expect(editor.stored()).toEqual([paragraph(text('one'), text('!', { token: TOKEN }))]);
         expect(warn).toHaveBeenCalledWith(expect.stringContaining('insertText("nothing")'));
         warn.mockRestore();
     });

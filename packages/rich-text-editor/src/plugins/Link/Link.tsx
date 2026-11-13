@@ -5,13 +5,15 @@ import { type ComponentType, type ReactNode } from 'react';
 import { type DefaultStyle, defineContent, defineMark, definePlugin, type HotkeyHandler } from '#/core';
 
 import { withoutDecorationLine } from '../shared/helpers/declaredStyle';
-import { isLinkablePaste, LINKABLE_ADDRESS, LINKABLE_ADDRESS_TRIM, toHref } from '../shared/helpers/href';
+import { isLinkablePaste, LINKABLE_ADDRESS, toHref } from '../shared/helpers/href';
 
 import { LinkEditor } from './components/LinkEditor';
 import { LinkToolbarButton } from './components/LinkToolbarButton';
+import { LINKABLE_ADDRESS_TRIM } from './helpers/address';
 import { type LinkSearch } from './helpers/destination';
+import { type LinkLabels, resolveLinkLabels } from './helpers/labels';
 import { openNewLinkForm } from './helpers/newLinkForms';
-import { NEW_TAB_NOTE, NEW_TAB_NOTE_ATTRIBUTE, NEW_TAB_REL, NEW_TAB_TARGET } from './helpers/newTab';
+import { NEW_TAB_NOTE_ATTRIBUTE, NEW_TAB_REL, NEW_TAB_TARGET } from './helpers/newTab';
 import { allowsHref, type LinkPolicy } from './helpers/policy';
 import { type LinkValue } from './helpers/value';
 import styles from './link.module.scss';
@@ -24,7 +26,18 @@ export type LinkMark = {
     link?: LinkValue;
 };
 
-export type LinkPluginOptions = LinkPolicy & {
+/**
+ * What the link content takes: the policy, and the words the reader and the export say.
+ */
+export type LinkContentOptions = LinkPolicy & {
+    /**
+     * The words the link says, in the language of the host. Only `newTabNote` is read here.
+     * @default English
+     */
+    labels?: Partial<LinkLabels>;
+};
+
+export type LinkPluginOptions = LinkContentOptions & {
     /**
      * Offers the app's own pages as link targets while the author types. Editing only: the content never needs it.
      */
@@ -90,7 +103,7 @@ const NEW_TAB_NOTE_MARKER = { [NEW_TAB_NOTE_ATTRIBUTE]: '' };
 /**
  * The note only a screen reader hears, on a link that opens a new tab. Same wording as the editing panel.
  */
-const newTabNote = (drawn: DrawnLink): ReactNode => {
+const newTabNote = (drawn: DrawnLink, note: string): ReactNode => {
     switch (drawn.kind) {
         case 'refused':
         case 'sameTab':
@@ -98,7 +111,7 @@ const newTabNote = (drawn: DrawnLink): ReactNode => {
         case 'newTab':
             return (
                 <span className={styles.visuallyHidden} {...NEW_TAB_NOTE_MARKER}>
-                    {NEW_TAB_NOTE}
+                    {note}
                 </span>
             );
     }
@@ -108,18 +121,20 @@ type LinkReaderProps = {
     value: LinkValue;
     children: ReactNode;
     policy: LinkPolicy;
+    /** The words of the new-tab note. */
+    note: string;
 };
 
 /**
  * A link in the reader: the export's markup, plus the new-tab note.
  */
-const LinkReader = ({ value, children, policy }: LinkReaderProps): ReactNode => {
+const LinkReader = ({ value, children, policy, note }: LinkReaderProps): ReactNode => {
     const drawn = drawnLink(policy, value);
     return (
         // A refused link keeps its anchor without a target, as the export writes it.
         <a {...anchorAttrs(drawn)} className={styles.link}>
             {children}
-            {newTabNote(drawn)}
+            {newTabNote(drawn, note)}
         </a>
     );
 };
@@ -127,21 +142,21 @@ const LinkReader = ({ value, children, policy }: LinkReaderProps): ReactNode => 
 /**
  * What the renderer hands a mark's reader component.
  */
-type BoundLinkReaderProps = Omit<LinkReaderProps, 'policy'>;
+type BoundLinkReaderProps = Omit<LinkReaderProps, 'policy' | 'note'>;
 
 /**
- * One reader component per policy value, so a renderer handed a new `linkPlugin()` on every render keeps its links
+ * One reader component per policy and note, so a renderer handed a new `linkPlugin()` on every render keeps its links
  * mounted (and focused) rather than seeing a new component each time.
  */
 const readers = new Map<string, ComponentType<BoundLinkReaderProps>>();
 
-const readerFor = (policy: LinkPolicy): ComponentType<BoundLinkReaderProps> => {
-    const key = JSON.stringify([policy.allowedSchemes ?? null, policy.allowedHosts ?? null]);
+const readerFor = (policy: LinkPolicy, note: string): ComponentType<BoundLinkReaderProps> => {
+    const key = JSON.stringify([policy.allowedSchemes ?? null, policy.allowedHosts ?? null, note]);
     const known = readers.get(key);
     if (known !== undefined) {
         return known;
     }
-    const reader = (props: BoundLinkReaderProps): ReactNode => <LinkReader {...props} policy={policy} />;
+    const reader = (props: BoundLinkReaderProps): ReactNode => <LinkReader {...props} policy={policy} note={note} />;
     readers.set(key, reader);
     return reader;
 };
@@ -154,11 +169,11 @@ const readerFor = (policy: LinkPolicy): ComponentType<BoundLinkReaderProps> => {
  * `javascript:` URL is never clickable. By default that is any web, mail or
  * phone link, and any relative one.
  *
- * @param policy - Which links are allowed; by default every web, mail, phone and relative link.
+ * @param options - Which links are allowed, by default every web, mail, phone and relative link, and the words of the new-tab note.
  * @example
  * const content = linkContent({ allowedSchemes: ['https'] });
  */
-export const linkContent = (policy: LinkPolicy = {}) =>
+export const linkContent = ({ labels, ...policy }: LinkContentOptions = {}) =>
     defineContent({
         marks: {
             link: defineMark<LinkValue>({
@@ -176,7 +191,7 @@ export const linkContent = (policy: LinkPolicy = {}) =>
                     children: true,
                 }),
 
-                render: { component: readerFor(policy) },
+                render: { component: readerFor(policy, resolveLinkLabels(labels).newTabNote) },
 
                 // A pasted span inside a link, such as Google Docs writes, repeats the underline the link already shows.
                 defaultStyles: LINK_DEFAULT_STYLES,
@@ -228,18 +243,24 @@ const HOTKEY: keyof typeof hotkeys = 'Mod-k';
  * @example
  * const links = linkPlugin({ allowedSchemes: ['https', 'mailto'], search });
  */
-export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) =>
+export const linkPlugin = ({ search, labels, ...policy }: LinkPluginOptions = {}) =>
     /* @__PURE__ */ definePlugin({
-        content: linkContent(policy),
+        content: linkContent({ ...policy, labels }),
         toolbarGroup: 'link',
         toolbar: [
             {
                 label: 'Link',
                 shortcut: HOTKEY,
-                render: (props) => <LinkToolbarButton {...props} policy={policy} search={search} />,
+                render: (props) => (
+                    <LinkToolbarButton {...props} policy={policy} labels={resolveLinkLabels(labels)} search={search} />
+                ),
             },
         ],
-        edit: { link: (props) => <LinkEditor {...props} policy={policy} search={search} /> },
+        edit: {
+            link: (props) => (
+                <LinkEditor {...props} policy={policy} labels={resolveLinkLabels(labels)} search={search} />
+            ),
+        },
         hotkeys,
         // The pattern names only typed schemes, and the policy still decides which become links.
         inputRules: [

@@ -1,7 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RteMarkPatternTrim } from '#/core';
-
 /**
  * The schemes a link may use, which leaves out `javascript:` and `data:`
  */
@@ -33,14 +31,6 @@ const LINKABLE_SCHEMES = 'https?://|mailto:|tel:';
  * A web, mail or phone address as it is typed in text: a linkable scheme and everything up to the next space
  */
 export const LINKABLE_ADDRESS = new RegExp(String.raw`(?:${LINKABLE_SCHEMES})[^\s]+`);
-
-/**
- * What a typed address may end in that is not part of it: the punctuation of the sentence around it, and a closing bracket with no opening one in the address
- */
-export const LINKABLE_ADDRESS_TRIM: RteMarkPatternTrim = {
-    punctuation: /[.,;:!?"'”’]+/,
-    pairs: { ')': '(', ']': '[', '}': '{', '>': '<' },
-};
 
 /**
  * What pasted text starts with to become a link: a web, mail or phone scheme

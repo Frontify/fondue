@@ -3,39 +3,30 @@
 import { TextInput } from '@frontify/fondue-components';
 import { forwardRef, type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
-import { isCompositionKey } from '../../shared/helpers/keys';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
+import { isCompositionKey } from '../helpers/keys';
+import { type LinkLabels } from '../helpers/labels';
 import { type LinkPolicy } from '../helpers/policy';
 import { type DestinationSearch, useDestinationSearch } from '../hooks/useDestinationSearch';
 import linkStyles from '../link.module.scss';
 
 import styles from './linkForm.module.scss';
 
-const SEARCHING_STATUS = 'Searching';
-const FAILED_STATUS = 'Search failed';
-const NO_RESULTS_STATUS = 'No results';
-const ONE_RESULT_STATUS = '1 result';
 const URL_PLACEHOLDER = 'example.com';
-const RESULTS_LABEL = 'Pages';
 
-const describeManyResults = (count: number): string => `${count} results`;
-
-const describeStatus = (search: DestinationSearch): string => {
+const describeStatus = (search: DestinationSearch, labels: LinkLabels): string => {
     switch (search.status) {
         case 'idle':
             return '';
         case 'searching':
-            return SEARCHING_STATUS;
+            return labels.searching;
         case 'failed':
-            return FAILED_STATUS;
+            return labels.searchFailed;
         case 'done':
             if (search.results.length === 0) {
-                return NO_RESULTS_STATUS;
+                return labels.noResults;
             }
-            if (search.results.length === 1) {
-                return ONE_RESULT_STATUS;
-            }
-            return describeManyResults(search.results.length);
+            return labels.resultCount(search.results.length);
     }
 };
 
@@ -52,6 +43,7 @@ type DestinationFieldProps = {
      */
     search?: LinkSearch;
     policy: LinkPolicy;
+    labels: LinkLabels;
     onChange: (value: string) => void;
     onPick: (destination: LinkDestination) => void;
     /**
@@ -67,7 +59,7 @@ type DestinationFieldProps = {
  * still saves it rather than picking the first result.
  */
 export const DestinationField = forwardRef<HTMLInputElement, DestinationFieldProps>(function DestinationField(
-    { id, value, status, errorId, search, policy, onChange, onPick, onEnter },
+    { id, value, status, errorId, search, policy, labels, onChange, onPick, onEnter },
     inputRef,
 ): ReactNode {
     const listId = useId();
@@ -214,7 +206,7 @@ export const DestinationField = forwardRef<HTMLInputElement, DestinationFieldPro
                 onBlur={() => setClosedFor(value)}
             />
             {listOpen ? (
-                <ul ref={listRef} id={listId} role="listbox" aria-label={RESULTS_LABEL} className={styles.results}>
+                <ul ref={listRef} id={listId} role="listbox" aria-label={labels.results} className={styles.results}>
                     {results.map((destination, index) => (
                         // The keyboard drives the list from the input; the mouse picks here.
                         <li
@@ -239,7 +231,9 @@ export const DestinationField = forwardRef<HTMLInputElement, DestinationFieldPro
                 </ul>
             ) : null}
             {search === undefined ? null : (
-                <output className={linkStyles.visuallyHidden}>{shown ? describeStatus(destinationSearch) : ''}</output>
+                <output className={linkStyles.visuallyHidden}>
+                    {shown ? describeStatus(destinationSearch, labels) : ''}
+                </output>
             )}
         </>
     );
