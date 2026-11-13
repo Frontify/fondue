@@ -8,7 +8,7 @@ import { typographyPlugin } from './Typography';
 
 describe('typographyPlugin', () => {
     it('adds typing rules and nothing else: no document types, no toolbar', () => {
-        const registry = buildPluginRegistry([typographyPlugin]);
+        const registry = buildPluginRegistry([typographyPlugin()]);
 
         expect(registry.inputRules.length).toBeGreaterThan(0);
         expect(registry.inputRules.every((rule) => rule.kind === 'text')).toBe(true);
@@ -17,10 +17,26 @@ describe('typographyPlugin', () => {
     });
 
     it('declares each shortcut once', () => {
-        const matches = (typographyPlugin.inputRules ?? []).map((rule) =>
+        const matches = (typographyPlugin().inputRules ?? []).map((rule) =>
             'kind' in rule && rule.kind === 'text' ? String(rule.match) : 'kind' in rule ? rule.kind : 'delimiter',
         );
 
         expect(new Set(matches).size).toBe(matches.length);
+    });
+
+    it('orders the rules the same whatever order the groups are listed in', () => {
+        expect(typographyPlugin({ groups: ['numeric', 'symbols', 'quotes'] }).inputRules).toEqual(
+            typographyPlugin({ groups: ['quotes', 'symbols', 'numeric'] }).inputRules,
+        );
+    });
+
+    it('declares fewer rules for fewer groups, and none for no group', () => {
+        const count = (groups: Parameters<typeof typographyPlugin>[0]) =>
+            (typographyPlugin(groups).inputRules ?? []).length;
+
+        expect(count({ groups: ['dashes'] })).toBe(1);
+        expect(count({ groups: ['dashes', 'ellipsis'] })).toBe(2);
+        expect(count({ groups: [] })).toBe(0);
+        expect(count({ groups: ['dashes'] })).toBeLessThan(count({}));
     });
 });

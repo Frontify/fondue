@@ -4,7 +4,7 @@ import { IconTextFormatUnderline } from '@frontify/fondue-icons';
 
 import { defineContent, defineMark, definePlugin } from '#/core';
 
-import { declaresDecoration } from '../shared/helpers/declaredStyle';
+import { decorationLineRules } from '../shared/helpers/declaredStyle';
 
 /**
  * The flag this plugin sets on text nodes
@@ -23,11 +23,8 @@ export const underlineContent = defineContent({
     marks: {
         underline: defineMark({
             tag: 'u',
-            // A span with the decoration is underlined too: how Google Docs writes it.
-            parse: [
-                { tag: 'u' },
-                { tag: 'span', value: (element) => (declaresDecoration(element, 'underline') ? {} : null) },
-            ],
+            // A decorated element counts too, as Google Docs writes it; `text-decoration: none` never removes it, as in a browser.
+            parse: [{ tag: 'u' }, ...decorationLineRules('underline')],
         }),
     },
 });
