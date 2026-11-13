@@ -47,7 +47,17 @@ import { warnNewerVersion } from './warnings';
  * `RichTextEditor<RteBlock | CalloutBlock>`.
  */
 export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
+    /**
+     * The document to show. One handed back from `onChange` changes nothing;
+     * any other replaces only what differs, keeping the caret and the user's
+     * undo history. Never mutate a document once passed; to reject an edit,
+     * pass a copy of the last accepted one.
+     */
     value?: RteDocumentOf<TBlock>;
+    /**
+     * Called with the new document after each edit. Unchanged blocks are the
+     * same objects as before, so replace a block to change it, never mutate it.
+     */
     onChange?: (value: RteDocumentOf<TBlock>) => void;
     /**
      * The plugins to mount (e.g. `defaultPlugins`, extended or reduced as
@@ -120,7 +130,8 @@ export type EditorShellProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * The editor lost focus, handed the document as it stands: the hook to
      * commit on instead of every keystroke. Fires once focus has left the
      * editor: moving into its toolbar or a plugin's UI (the link flyout's
-     * fields, a mention being typed) is still inside.
+     * fields, a mention being typed) is still inside. Never mutate the
+     * document, as with `onChange`.
      */
     onBlur?: (value: RteDocumentOf<TBlock>) => void;
     /**

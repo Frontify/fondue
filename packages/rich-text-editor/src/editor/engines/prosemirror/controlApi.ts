@@ -15,6 +15,7 @@ import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type PluginRegistry, type RteMarkState, type RteSelectionSnapshot } from '#/core';
 
+import { setChangedAttributes } from './attributes';
 import { EXTRA_ATTR, markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
 import { createListApi, liftOutOfLists } from './lists';
 import { warnUnknownType } from './warnings';
@@ -307,13 +308,7 @@ const createBlockApi = (
         view.state.doc.nodesBetween(from, to, (node, pos) => {
             if (node.isTextblock) {
                 // Undeclared attributes are ignored, so mixed selections are safe.
-                // Unchanged blocks are skipped so a no-op adds no undo step.
-                const changes = Object.entries(attributes).some(
-                    ([name, value]) => name in node.attrs && (node.attrs[name] ?? null) !== (value ?? null),
-                );
-                if (changes) {
-                    transaction.setNodeMarkup(pos, undefined, { ...node.attrs, ...attributes });
-                }
+                setChangedAttributes(transaction, { pos, node }, attributes);
             }
         });
         if (transaction.docChanged) {

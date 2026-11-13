@@ -4,6 +4,7 @@ import { dropCursor } from 'prosemirror-dropcursor';
 import { EditorState, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
+import { type RteDocumentOf } from '#/core';
 import { type MountedDocument, type MountDocument, type MountOptions } from '#/editor/port';
 
 import {
@@ -17,30 +18,51 @@ import {
 import { createControlApi, type OpenEditors } from './controlApi';
 import { rootExtrasOf, toEngineDocument, toRteDocument, withoutDrafts } from './documentConversion';
 import { copiedExtrasPlugin } from './extraAttributes';
+import { createHostRecord, hostDocAction, recordAgreed, recordEcho, recordHandOver, recordReport } from './hostRecord';
 import { keystrokePipeline } from './keystrokes';
 import { createMarkViews, createNodeViews, LiveViews } from './nodeViews';
 import { placeholderPlugin } from './placeholder';
 import { buildSchema } from './schema';
 import { createSelectionRectReader } from './selectionRect';
+import { syncDocument } from './syncDocument';
+import { dispatchOutsideHistory, userEditsPlugin } from './userEdits';
 import './engine.scss';
+
+/** Schedules the next try of a host document held while text is composed. */
+export type FrameScheduler = {
+    request: (callback: () => void) => number;
+    cancel: (frame: number) => void;
+};
+
+const browserFrames: FrameScheduler = {
+    request: (callback) => requestAnimationFrame(callback),
+    cancel: (frame) => {
+        cancelAnimationFrame(frame);
+    },
+};
 
 /**
  * The live editor: `mountDocument` assembles everything in this folder over
  * one ProseMirror view. Readonly display does not come through here; that is
  * `RichTextRenderer`.
  */
-export const mountDocument: MountDocument = (options) => mount(options).mounted;
+export const mountDocument: MountDocument = (options) => mount(options, browserFrames).mounted;
 
 /**
  * Test-only: `mountDocument`'s editor plus its view, so specs can place the
  * selection and type the way the engine's input handling does. The view never
  * leaves this folder otherwise.
  */
-export const mountEditorForTests = (options: MountOptions): { mounted: MountedDocument; view: EditorView } =>
-    mount(options);
+export const mountEditorForTests = (
+    options: MountOptions,
+    frames: FrameScheduler = browserFrames,
+): { mounted: MountedDocument; view: EditorView } => mount(options, frames);
 
 /** Transaction meta marking a change that came from the host, not the user. */
 const HOST_DOC = 'rte-host-doc';
+
+/** A host document held while text is composed, with the frame that tries it again. */
+type Held = { kind: 'none' } | { kind: 'waiting'; doc: RteDocumentOf; frame: number };
 
 /**
  * Set on the editable element, so engine.scss can scope the engine's own
@@ -60,25 +82,24 @@ const editableAttributes = (attributes: Readonly<Record<string, string>>): Recor
  * So: live views and open-editor state, then api (view behind a getter), then
  * the view, then the handle the host talks to.
  */
-const mount = ({
-    container,
-    registry,
-    initialDoc,
-    placeholder,
-    attributes,
-    placeholderClassName,
-    onDocChange,
-    onDocApplied,
-    onStateChange,
-    viewPortals,
-}: MountOptions): { mounted: MountedDocument; view: EditorView } => {
+const mount = (
+    {
+        container,
+        registry,
+        initialDoc,
+        placeholder,
+        attributes,
+        placeholderClassName,
+        onDocChange,
+        onDocApplied,
+        onStateChange,
+        viewPortals,
+    }: MountOptions,
+    frames: FrameScheduler,
+): { mounted: MountedDocument; view: EditorView } => {
     const schema = buildSchema(registry);
     let currentPlaceholder = placeholder;
-    // The last document the host handed over that the editor holds; lets `setDoc` ignore it again.
-    let agreedDoc = initialDoc;
-    // Every document reported to the host: one arriving back, even late and
-    // behind newer edits, is the editor's own and never replaces what it holds.
-    const emittedDocs = new WeakSet<typeof initialDoc>();
+    let record = createHostRecord(initialDoc);
     // The document's own undeclared keys: only the host changes them, so they live here, not in the engine document.
     let rootExtras = rootExtrasOf(initialDoc);
 
@@ -125,6 +146,7 @@ const mount = ({
             plugins: [
                 ...keystrokePipeline(registry, schema, api),
                 copiedExtrasPlugin(),
+                userEditsPlugin(),
                 placeholderPlugin(() => currentPlaceholder, placeholderClassName),
                 // Drawn in the view's offset parent, outside the text, so `currentColor` would be the host's colour.
                 dropCursor({ color: 'var(--color-primary-default)', width: 2 }),
@@ -148,7 +170,7 @@ const mount = ({
             // Host-originated changes are not reported back to the host.
             if (transaction.docChanged && transaction.getMeta(HOST_DOC) !== true) {
                 const emitted = toRteDocument(editorView.state.doc, rootExtras);
-                emittedDocs.add(emitted);
+                record = recordReport(record, emitted);
                 onDocChange(emitted);
             }
             onStateChange();
@@ -158,29 +180,76 @@ const mount = ({
     onDocApplied(initialDoc);
 
     // 4. What the host gets back.
-    const setDoc = (doc: typeof initialDoc): void => {
-        if (doc === agreedDoc || emittedDocs.has(doc)) {
-            return;
-        }
-        const next = toEngineDocument(doc, schema);
-        // Drafts (an inline still being made) are in no document the host holds,
-        // though a block reused from one handed out may bring one along; an
-        // echo of what is there must leave them, and the caret, alone.
+    let held: Held = { kind: 'none' };
+
+    const applyDoc = (doc: RteDocumentOf): void => {
+        record = recordHandOver(record);
         rootExtras = rootExtrasOf(doc);
-        if (withoutDrafts(next).eq(withoutDrafts(editorView.state.doc))) {
-            agreedDoc = doc;
-            onDocApplied(doc);
+        const next = toEngineDocument(doc, schema);
+        // A draft in the editor is in no document the host holds, so an echo must leave it and the caret alone.
+        if (!withoutDrafts(next).eq(withoutDrafts(editorView.state.doc))) {
+            const transaction = editorView.state.tr;
+            syncDocument(transaction, next);
+            if (transaction.docChanged) {
+                transaction.setMeta(HOST_DOC, true);
+                if (dispatchOutsideHistory(editorView, transaction)) {
+                    onStateChange();
+                }
+            }
+        }
+        record = recordAgreed(record, doc);
+        onDocApplied(doc);
+    };
+
+    const retryHeld = (): void => {
+        if (held.kind === 'none') {
             return;
         }
-        // Different content: the old caret position means nothing in it, so the
-        // caret goes to the end rather than mid-word somewhere.
-        const transaction = editorView.state.tr.replaceWith(0, editorView.state.doc.content.size, next.content);
-        transaction.setSelection(Selection.atEnd(transaction.doc));
-        transaction.setMeta(HOST_DOC, true);
-        transaction.setMeta('addToHistory', false);
-        editorView.dispatch(transaction);
-        agreedDoc = doc;
-        onDocApplied(doc);
+        if (editorView.composing) {
+            held = { ...held, frame: frames.request(retryHeld) };
+            return;
+        }
+        const { doc } = held;
+        held = { kind: 'none' };
+        applyDoc(doc);
+    };
+
+    const hold = (doc: RteDocumentOf): void => {
+        if (held.kind === 'waiting') {
+            held = { ...held, doc };
+            return;
+        }
+        held = { kind: 'waiting', doc, frame: frames.request(retryHeld) };
+    };
+
+    // The newest document the host hands over wins, so one still held is dropped whatever this one is.
+    const release = (): void => {
+        if (held.kind === 'waiting') {
+            frames.cancel(held.frame);
+            held = { kind: 'none' };
+        }
+    };
+
+    const setDoc = (doc: RteDocumentOf): void => {
+        const action = hostDocAction(record, doc, editorView.composing);
+        switch (action.kind) {
+            case 'ignore':
+                release();
+                return;
+            case 'echo':
+                release();
+                record = recordEcho(record, action.seq);
+                return;
+            case 'wait':
+                // Held or not, the host now holds a document of its own, so what it hands back after this is a reset.
+                record = recordHandOver(record);
+                hold(doc);
+                return;
+            case 'apply':
+                release();
+                applyDoc(doc);
+                return;
+        }
     };
 
     const mounted: MountedDocument = {
@@ -203,6 +272,7 @@ const mount = ({
             editorView.setProps({ attributes: editableAttributes(next) });
         },
         destroy() {
+            release();
             editorView.destroy();
         },
     };

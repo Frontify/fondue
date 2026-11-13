@@ -24,6 +24,7 @@ import {
 } from '#/core';
 import { type ViewPortals } from '#/editor/port';
 
+import { setChangedAttributes } from './attributes';
 import { type OpenEditors } from './controlApi';
 import { markValueOf, VALUE_ATTR } from './documentConversion';
 
@@ -434,7 +435,9 @@ class ReactBlockView extends ReactNodeView<Record<string, unknown>> {
     protected store(value: Record<string, unknown>): void {
         const pos = this.pos();
         if (pos !== undefined) {
-            this.view.dispatch(this.view.state.tr.setNodeMarkup(pos, undefined, { ...this.node.attrs, ...value }));
+            const transaction = this.view.state.tr;
+            setChangedAttributes(transaction, { pos, node: this.node }, value);
+            this.view.dispatch(transaction);
         }
     }
 
@@ -528,7 +531,7 @@ class ReactInlineView extends ReactNodeView<Record<string, unknown> | null> {
     protected store(value: Record<string, unknown>): void {
         const pos = this.pos();
         if (pos !== undefined) {
-            this.view.dispatch(this.view.state.tr.setNodeMarkup(pos, undefined, { [VALUE_ATTR]: value }));
+            this.view.dispatch(this.view.state.tr.setNodeAttribute(pos, VALUE_ATTR, value));
         }
     }
 
