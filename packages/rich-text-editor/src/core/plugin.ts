@@ -124,6 +124,11 @@ export type RtePlugin = {
     inputRules?: readonly (RteInputRule | RteDelimiterRule)[];
     /** Runs before the editor's own paste, in plugin order. */
     onPaste?: PasteHandler;
+    /**
+     * Rewrites pasted HTML before the parse rules read it, in plugin order. Runs only on a paste or drop into the editor,
+     * never on `parseHtml`. Plugins that share a transform declare the same object, and it runs once.
+     */
+    pasteTransforms?: readonly PasteTransform[];
 };
 
 /**
@@ -410,7 +415,19 @@ export type ParseRule<TValue> = {
     /** A CSS selector: `strong`, `a[href]`, `li[data-checked]`. */
     tag: string;
     value?: (element: HTMLElement) => TValue | null;
+    /**
+     * Among rules of the same kind (blocks, inlines, marks) matching the same element, higher precedence is tried
+     * first. Among blocks of the same precedence, a qualified selector (`[`, `.`, `#`, `:`) comes before a bare tag.
+     * Ties go to mount order.
+     * @default 'normal'
+     */
+    precedence?: ParsePrecedence;
 };
+
+/**
+ * How early a parse rule is tried against an element other rules of its kind also match.
+ */
+export type ParsePrecedence = 'low' | 'normal' | 'high';
 
 /**
  * A rule that matches any element whose own `style` attribute declares the CSS property, handed the declared value.
@@ -625,6 +642,25 @@ export type Paste = { text: string; html: string | null; source: PasteSource };
  * A plugin's `onPaste`, handed the paste. Return true when handled: the default paste and later plugins are skipped.
  */
 export type PasteHandler = (paste: Paste, api: EditorControlApi) => boolean;
+
+/**
+ * Rewrites pasted HTML, after the editor has read the source app's own markup and before the plugins' parse rules read it.
+ * Runs only on a paste or drop into the editor, never when `parseHtml` reads HTML on the server.
+ */
+export type PasteTransform = {
+    /** Unique across plugins; plugins that share a transform declare the same object, and it runs once. */
+    id: string;
+    /** Changes `dom`, the pasted HTML, in place. */
+    run: (dom: HTMLElement, context: PasteTransformContext) => void;
+};
+
+/**
+ * What the editor tells a paste transform about the mounted content.
+ */
+export type PasteTransformContext = {
+    /** Whether a mounted block, inline or mark reads this element by one of its tag rules. */
+    isClaimed: (element: HTMLElement) => boolean;
+};
 
 /**
  * How a `markPattern` token loses the end it does not own, such as the full stop of the sentence it ends.

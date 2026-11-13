@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+// @vitest-environment happy-dom
+
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { EDITOR_SHORTCUTS, type EditorControlApi, type RteSelectionSnapshot } from './commands';
@@ -9,10 +11,12 @@ import {
     defineInline,
     defineMark,
     definePlugin,
+    type PasteTransform,
+    type RteContent,
     type RteInputRule,
     type RtePlugin,
 } from './plugin';
-import { buildPluginRegistry } from './registry';
+import { buildPluginRegistry, isClaimedBy } from './registry';
 
 /**
  * The registry is the one place plugins are read: it gathers their
@@ -111,6 +115,100 @@ describe('the paste handlers of a registry', () => {
         ]);
 
         expect(registry.pasteHandlers).toEqual([first, second]);
+    });
+});
+
+describe('the paste transforms of a registry', () => {
+    const transform = (id: string): PasteTransform => ({ id, run: () => {} });
+
+    it('are collected in mount order, a transform shared by several plugins once', () => {
+        const shared = transform('shared');
+        const own = transform('own');
+
+        const registry = buildPluginRegistry([
+            definePlugin({ id: 'a', pasteTransforms: [shared] }),
+            definePlugin({ id: 'b', pasteTransforms: [own, shared] }),
+        ]);
+
+        expect(registry.pasteTransforms).toEqual([shared, own]);
+    });
+
+    it('is an error when two plugins declare different transforms under one id', () => {
+        expect(() =>
+            buildPluginRegistry([
+                definePlugin({ id: 'a', pasteTransforms: [transform('lines')] }),
+                definePlugin({ id: 'b', pasteTransforms: [transform('lines')] }),
+            ]),
+        ).toThrow('Duplicate paste transform "lines": declared by plugin "a" and plugin "b".');
+    });
+});
+
+describe('isClaimedBy', () => {
+    const element = (html: string): HTMLElement => {
+        const holder = document.createElement('div');
+        holder.innerHTML = html;
+        const first = holder.firstElementChild;
+        if (!(first instanceof HTMLElement)) {
+            throw new TypeError(`no element in ${html}`);
+        }
+        return first;
+    };
+
+    const claims = (content: RteContent, html: string): boolean =>
+        isClaimedBy(buildPluginRegistry([definePlugin({ id: 'claiming', content })]))(element(html));
+
+    it('matches the tag rules of blocks, inlines and marks', () => {
+        const block = defineBlock({
+            content: 'text',
+            toHtml: () => ({ tag: 'aside', children: true }),
+            parse: [{ tag: 'aside' }],
+        });
+        const embed = defineInline({ toHtml: () => ({ tag: 'hr' }), parse: [{ tag: 'hr' }] });
+        const marked = defineMark({ tag: 'mark' });
+
+        expect(claims(defineContent({ blocks: { block } }), '<aside>a</aside>')).toBe(true);
+        expect(claims(defineContent({ inlines: { embed } }), '<hr>')).toBe(true);
+        expect(claims(defineContent({ marks: { marked } }), '<mark>a</mark>')).toBe(true);
+        expect(claims(defineContent({ marks: { marked } }), '<table></table>')).toBe(false);
+    });
+
+    it('counts the paragraph every editor has', () => {
+        expect(claims(defineContent({}), '<p>a</p>')).toBe(true);
+    });
+
+    it('skips style rules', () => {
+        const weight = defineMark({
+            toHtml: () => ({ tag: 'b', children: true }),
+            parse: [{ style: 'font-weight', value: () => ({}) }],
+        });
+
+        expect(claims(defineContent({ marks: { weight } }), '<span style="font-weight: bold">a</span>')).toBe(false);
+    });
+
+    it('honours a value that returns null', () => {
+        const calloutValue = (found: HTMLElement): Record<string, never> | null => {
+            if (found.hasAttribute('data-callout')) {
+                return {};
+            }
+            return null;
+        };
+        const callout = defineBlock({
+            content: 'text',
+            toHtml: () => ({ tag: 'div', children: true }),
+            parse: [{ tag: 'div', value: calloutValue }],
+        });
+
+        expect(claims(defineContent({ blocks: { callout } }), '<div data-callout>a</div>')).toBe(true);
+        expect(claims(defineContent({ blocks: { callout } }), '<div>a</div>')).toBe(false);
+    });
+
+    it('counts ignore rules', () => {
+        const note = defineMark({
+            toHtml: () => ({ tag: 'span', children: true }),
+            parse: [{ tag: 'small', ignore: true }],
+        });
+
+        expect(claims(defineContent({ marks: { note } }), '<small>a</small>')).toBe(true);
     });
 });
 

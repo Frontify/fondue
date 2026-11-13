@@ -12,6 +12,7 @@ import { historyPlugin } from './History';
 import { italicPlugin } from './Italic';
 import { linkPlugin } from './Link';
 import { bulletListPlugin, numberedListPlugin } from './List';
+import { pasteLinesPlugin } from './PasteLines';
 import { quotePlugin } from './Quote';
 import { resetFormattingPlugin } from './ResetFormatting';
 import { softBreakPlugin } from './SoftBreak';
@@ -56,8 +57,11 @@ export const defaultPlugins: readonly RtePlugin[] = Object.freeze([
     emojiPlugin(),
     // No toolbar of its own: a keybinding.
     softBreakPlugin,
+    // Last, so the list plugins rebuild pasted lists before tables are flattened.
+    pasteLinesPlugin(),
 ]);
 
 export { emojiPlugin } from './Emoji';
 export { linkPlugin } from './Link';
+export { pasteLinesPlugin } from './PasteLines';
 export { typographyPlugin } from './Typography';

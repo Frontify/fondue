@@ -12,8 +12,10 @@ import {
     type DefaultStyle,
     type MarkClearRule,
     type MarkParseRule,
+    type ParsePrecedence,
     type ParseRule,
     type PluginRegistry,
+    readTagRule,
     type StyleParseRule,
 } from '#/core';
 
@@ -41,15 +43,57 @@ const STYLE_PRIORITY = 65;
  */
 const qualifiedPriority = (tag: string): number | undefined => (/[[.#:]/.test(tag) ? MARK_PRIORITY : undefined);
 
+/** What the engine gives a rule with no priority. */
+const DEFAULT_PRIORITY = 50;
+/** Larger than the 10 a qualified block rule gains over a bare one, so a precedence always decides before the selector does. */
+const PRECEDENCE_STEP = 11;
+
+/** How far a precedence moves a rule's priority; `normal` leaves it where it was. */
+const precedenceShift = (precedence: ParsePrecedence): number => {
+    switch (precedence) {
+        case 'low':
+            return -PRECEDENCE_STEP;
+        case 'normal':
+            return 0;
+        case 'high':
+            return PRECEDENCE_STEP;
+    }
+};
+
+/** A block rule's priority: raised by a qualified selector, then moved by its declared precedence. */
+const blockPriority = (rule: ParseRule<unknown>): number | undefined => {
+    const qualified = qualifiedPriority(rule.tag);
+    if (rule.precedence === undefined) {
+        return qualified;
+    }
+    return (qualified ?? DEFAULT_PRIORITY) + precedenceShift(rule.precedence);
+};
+
 /**
  * Wraps a parsed value as the node's single value attribute, or false when the value is null.
  */
 const valueAttrs = (value: unknown) => (value === null ? false : { [VALUE_ATTR]: value });
 
+/**
+ * A tag rule's value: what its `value` reads off the element, no attributes when it has none, and null when it reads none.
+ */
+const tagRuleValue = <TValue>(rule: ParseRule<TValue>, element: HTMLElement): TValue | Record<string, never> | null => {
+    const reading = readTagRule(rule, element);
+    switch (reading.kind) {
+        case 'unread':
+            return null;
+        case 'read':
+            return reading.value;
+        case 'ignored':
+            // A value rule never ignores; the engine handles a mark's ignore rule without reading it.
+            throw new Error(`The rule for "${rule.tag}" ignores its element, so it has no value to read.`);
+    }
+};
+
 const valueParseRule = (rule: ParseRule<unknown>, priority: number): TagParseRule => ({
     tag: rule.tag,
-    priority,
-    getAttrs: (element: HTMLElement) => valueAttrs(rule.value ? rule.value(element) : {}),
+    priority: priority + precedenceShift(rule.precedence ?? 'normal'),
+    getAttrs: (element: HTMLElement) => valueAttrs(tagRuleValue(rule, element)),
 });
 
 /**
@@ -190,7 +234,7 @@ export const blockParseRules = (
 ): TagParseRule[] =>
     definition.parse.map((rule) => ({
         tag: rule.tag,
-        priority: qualifiedPriority(rule.tag),
+        priority: blockPriority(rule),
         getAttrs: (element: HTMLElement) => {
             const value = rule.value ? rule.value(element) : {};
             if (value === null) {

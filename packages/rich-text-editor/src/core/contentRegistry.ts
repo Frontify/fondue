@@ -45,7 +45,7 @@ const firstTypeOf = (content: RteContent): string => typesOf(content)[0] ?? 'con
  * object registered twice is fine — two list plugins share their item that way.
  */
 export const register = <TDefinition>(
-    kind: 'block type' | 'mark type' | 'inline type' | 'block attribute' | 'edit view',
+    kind: 'block type' | 'mark type' | 'inline type' | 'block attribute' | 'edit view' | 'paste transform',
     target: Map<string, TDefinition>,
     owners: Map<string, string>,
     owner: string,

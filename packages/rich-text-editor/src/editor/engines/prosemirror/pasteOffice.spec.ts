@@ -4,7 +4,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { keepOfficeListStyles, tidyOffice } from './pasteOffice';
+import { OFFICE_LIST_ATTRIBUTES } from '#/core';
+
+import { keepOfficeListStyles, removeOfficeListData, tidyOffice } from './pasteOffice';
 
 const timed = (run: () => void): number => {
     const start = performance.now();
@@ -22,11 +24,18 @@ const tidied = (html: string): HTMLElement => {
 const item = (level: number, marker: string, text: string, list = 'l0'): string =>
     `<p style="mso-list: ${list} level${level} lfo1"><span style="mso-list: Ignore">${marker}</span>${text}</p>`;
 
-/** Each list of `body` in document order, as its tag and the text of its own items. */
-const listsOf = (body: HTMLElement): string[] =>
-    [...body.querySelectorAll('ol, ul')].map(
-        (list) =>
-            `${list.localName}: ${[...list.children].map((entry) => entry.firstElementChild?.textContent).join(', ')}`,
+/** The paragraphs of `body` that keep list data. */
+const markedOf = (body: HTMLElement): Element[] => [...body.querySelectorAll(`[${OFFICE_LIST_ATTRIBUTES.list}]`)];
+
+/** Each list paragraph `body` keeps data on, in document order, as its text and the data kept. */
+const listDataOf = (body: HTMLElement): string[] =>
+    markedOf(body).map((paragraph) =>
+        [
+            paragraph.textContent,
+            paragraph.getAttribute(OFFICE_LIST_ATTRIBUTES.list),
+            paragraph.getAttribute(OFFICE_LIST_ATTRIBUTES.level),
+            paragraph.getAttribute(OFFICE_LIST_ATTRIBUTES.marker),
+        ].join(' | '),
     );
 
 describe('keepOfficeListStyles on hostile HTML', () => {
@@ -92,36 +101,23 @@ describe('keepOfficeListStyles', () => {
 });
 
 describe('tidyOffice', () => {
-    it('nests at most nine levels, as Word does', () => {
-        const body = tidied(Array.from({ length: 20 }, (_, index) => item(index + 1, '·', `L${index + 1}`)).join(''));
-        let deepest = 0;
-        for (const entry of body.querySelectorAll('li')) {
-            let depth = 0;
-            for (let parent = entry.parentElement; parent !== null; parent = parent.parentElement) {
-                if (parent.localName === 'ul') {
-                    depth++;
-                }
-            }
-            deepest = Math.max(deepest, depth);
-        }
-
-        expect(deepest).toBe(9);
+    it("keeps each item's list, level and marker as Word wrote them, without the marker text in the content", () => {
+        expect(listDataOf(tidied(item(1, '1.', 'A') + item(2, '·', 'B', 'l1') + item(1, '(3)', 'C')))).toEqual([
+            'A | l0 lfo1 | 1 | 1.',
+            'B | l1 lfo1 | 2 | ·',
+            'C | l0 lfo1 | 1 | (3)',
+        ]);
     });
 
-    it('starts a new list where numbers turn into bullets at one level of one list', () => {
-        expect(listsOf(tidied(item(1, '1.', 'A') + item(1, '·', 'B')))).toEqual(['ol: A', 'ul: B']);
+    it('keeps the level digits as written, without reading them', () => {
+        expect(markedOf(tidied(item(20, '·', 'A')))[0]?.getAttribute(OFFICE_LIST_ATTRIBUTES.level)).toBe('20');
     });
 
-    it.each(['a.', 'iv)', '(1)', '1.1.'])('reads the marker `%s` as numbered', (marker) => {
-        expect(listsOf(tidied(item(1, marker, 'A')))).toEqual(['ol: A']);
-    });
-
-    it('keeps one list across a comment between its paragraphs', () => {
-        expect(listsOf(tidied(`${item(1, '·', 'A')}<!-- note -->${item(1, '·', 'B')}`))).toEqual(['ul: A, B']);
-    });
-
-    it('keeps a paragraph whose list level is 0 as a paragraph', () => {
-        expect(listsOf(tidied(item(0, '·', 'A')))).toEqual([]);
+    it.each([
+        ['an Office paste', '<p class="MsoNormal" data-rte-office-list="x" data-rte-office-level="1">a</p>'],
+        ['a paste from elsewhere', '<p data-rte-office-marker="1." data-rte-office-level="7">a</p>'],
+    ])('removes the list data %s carries itself', (_name, html) => {
+        expect(tidied(html).innerHTML).not.toContain('data-rte-office');
     });
 
     it('keeps the text an `<o:p>` holds', () => {
@@ -137,8 +133,22 @@ describe('tidyOffice', () => {
     });
 });
 
+describe('removeOfficeListData', () => {
+    it('removes every Office list attribute from every element that carries one, and nothing else', () => {
+        const root = document.createElement('div');
+        root.innerHTML =
+            `<p ${OFFICE_LIST_ATTRIBUTES.list}="l0 lfo1" ${OFFICE_LIST_ATTRIBUTES.level}="1" class="a">A</p>` +
+            `<div><p ${OFFICE_LIST_ATTRIBUTES.marker}="1." ${OFFICE_LIST_ATTRIBUTES.level}="2">B</p></div>` +
+            '<p class="c">C</p>';
+
+        removeOfficeListData(root);
+
+        expect(root.innerHTML).toBe('<p class="a">A</p><div><p>B</p></div><p class="c">C</p>');
+    });
+});
+
 describe('tidyOffice on paragraphs inside paragraphs', () => {
-    it('rebuilds no list inside a list paragraph, so nesting stays bounded', () => {
+    it('keeps no list data on a paragraph inside a list paragraph, so nesting stays bounded', () => {
         const body = document.createElement('body');
         const listParagraph = (): HTMLElement => {
             const paragraph = document.createElement('p');
@@ -154,6 +164,6 @@ describe('tidyOffice on paragraphs inside paragraphs', () => {
 
         tidyOffice(body);
 
-        expect(body.querySelectorAll('ol, ul')).toHaveLength(1);
+        expect(markedOf(body)).toEqual([outer]);
     });
 });

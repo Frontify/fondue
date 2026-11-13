@@ -5,7 +5,16 @@
 import { undo } from 'prosemirror-history';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { defineContent, defineMark, definePlugin, type PasteHandler, type RtePlugin } from '#/core';
+import {
+    defineBlock,
+    defineContent,
+    defineMark,
+    definePlugin,
+    type ParsePrecedence,
+    type PasteHandler,
+    type PasteTransform,
+    type RtePlugin,
+} from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { destroyEditors, editorWith, paragraph, shipped, text, token, tokenPlugin } from './testEditor';
@@ -84,6 +93,131 @@ describe('a plugin paste handler', () => {
         expect(first).toHaveBeenCalledOnce();
         expect(second).toHaveBeenCalledOnce();
         expect(third).not.toHaveBeenCalled();
+    });
+});
+
+describe('a plugin paste transform', () => {
+    it('rewrites the pasted HTML before the parse rules read it', () => {
+        const shout: PasteTransform = {
+            id: 'shout',
+            run: (dom) => {
+                for (const block of dom.querySelectorAll('p')) {
+                    block.textContent = (block.textContent ?? '').toUpperCase();
+                }
+            },
+        };
+        const editor = editorWith([definePlugin({ id: 'shouting', pasteTransforms: [shout] })], [paragraph()]);
+
+        editor.pasteHTML('<p>quiet</p>');
+
+        expect(editor.stored()).toEqual([paragraph(text('QUIET'))]);
+    });
+
+    it('runs once when two plugins share it', () => {
+        const run = vi.fn<PasteTransform['run']>();
+        const shared: PasteTransform = { id: 'shared', run };
+        const editor = editorWith(
+            [
+                definePlugin({ id: 'a', pasteTransforms: [shared] }),
+                definePlugin({ id: 'b', pasteTransforms: [shared] }),
+            ],
+            [paragraph()],
+        );
+
+        editor.pasteHTML('<p>x</p>');
+
+        expect(run).toHaveBeenCalledOnce();
+    });
+});
+
+describe('what a paste transform is told about the mounted content', () => {
+    /** Asks the transform's `isClaimed` about `html`'s first element while `plugins` are mounted. */
+    const claimedWith = (plugins: readonly RtePlugin[], html: string): boolean | undefined => {
+        let claimed: boolean | undefined;
+        const ask: PasteTransform = {
+            id: 'ask',
+            run: (dom, { isClaimed }) => {
+                const element = dom.firstElementChild;
+                if (element instanceof HTMLElement) {
+                    claimed = isClaimed(element);
+                }
+            },
+        };
+        const editor = editorWith([...plugins, definePlugin({ id: 'asking', pasteTransforms: [ask] })], [paragraph()]);
+        editor.pasteHTML(html);
+        return claimed;
+    };
+
+    const tableBlock = defineBlock({
+        content: 'text',
+        toHtml: () => ({ tag: 'table', children: true }),
+        parse: [{ tag: 'table' }],
+    });
+    const tablePlugin = definePlugin({ id: 'table', content: defineContent({ blocks: { table: tableBlock } }) });
+    const markerMark = defineMark({
+        toHtml: () => ({ tag: 'mark', children: true }),
+        parse: [{ tag: 'mark' }],
+    });
+    const markerPlugin = definePlugin({ id: 'marker', content: defineContent({ marks: { marker: markerMark } }) });
+
+    it('says a mounted block reads the element by its tag rule', () => {
+        expect(claimedWith([tablePlugin], '<table><tr><td>a</td></tr></table>')).toBe(true);
+    });
+
+    it('says a mounted mark reads the element by its tag rule', () => {
+        expect(claimedWith([markerPlugin], '<mark>a</mark>')).toBe(true);
+    });
+
+    it('says no mounted content reads an element no rule matches', () => {
+        expect(claimedWith([tablePlugin, markerPlugin], '<pre>a</pre>')).toBe(false);
+    });
+});
+
+describe('parse precedence', () => {
+    const textBlock = (tag: string, precedence?: ParsePrecedence) =>
+        defineBlock({
+            content: 'text',
+            toHtml: () => ({ tag: 'div', children: true }),
+            parse: [{ tag, precedence }],
+        });
+
+    const blockPlugin = (id: string, tag: string, precedence?: ParsePrecedence): RtePlugin =>
+        definePlugin({ id, content: defineContent({ blocks: { [id]: textBlock(tag, precedence) } }) });
+
+    const typeRead = (plugins: readonly RtePlugin[], html: string): string | undefined => {
+        const editor = editorWith(plugins, [paragraph()]);
+        editor.pasteHTML(html);
+        return editor.stored()?.[0]?.type;
+    };
+
+    it('lets a high-precedence block rule read what a block mounted first also reads', () => {
+        expect(
+            typeRead([blockPlugin('first', 'section'), blockPlugin('host', 'section', 'high')], '<section>a</section>'),
+        ).toBe('host');
+    });
+
+    it('lets a normal block rule mounted later lose to the one mounted first', () => {
+        expect(
+            typeRead([blockPlugin('first', 'section'), blockPlugin('later', 'section')], '<section>a</section>'),
+        ).toBe('first');
+    });
+
+    it('lets a low-precedence block rule lose to a block mounted later', () => {
+        expect(
+            typeRead([blockPlugin('first', 'section', 'low'), blockPlugin('later', 'section')], '<section>a</section>'),
+        ).toBe('later');
+    });
+
+    it('reads an element by a qualified selector over the bare tag of the same precedence', () => {
+        const plugins = [blockPlugin('bare', 'section'), blockPlugin('qualified', 'section[data-kind]')];
+
+        expect(typeRead(plugins, '<section data-kind="x">a</section>')).toBe('qualified');
+    });
+
+    it('lets the precedence decide before the selector does', () => {
+        const plugins = [blockPlugin('qualified', 'section[data-kind]'), blockPlugin('host', 'section', 'high')];
+
+        expect(typeRead(plugins, '<section data-kind="x">a</section>')).toBe('host');
     });
 });
 
