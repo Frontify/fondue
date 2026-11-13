@@ -202,7 +202,7 @@ export const createListApi = (
         unwrapAll() {
             const view = getView();
             const { from, to } = view.state.selection;
-            const lists: NodeAt[] = [];
+            const lists: { node: PmNode; pos: number }[] = [];
             view.state.doc.nodesBetween(from, to, (node, pos) => {
                 if (!itemTypeByList.has(node.type.name)) {
                     return true;
