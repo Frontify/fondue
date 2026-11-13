@@ -10,7 +10,6 @@ import { type ReactNode } from 'react';
 import { EDITOR_SHORTCUTS, type EditorControlApi, type RteMarkState, type RteSelectionSnapshot } from './commands';
 import { buildContentRegistry, type ContentRegistry, register } from './contentRegistry';
 import { parseHotkey } from './hotkeys';
-import { readTagRule } from './tagRule';
 import {
     type BlockDefinition,
     type HotkeyHandler,
@@ -30,6 +29,7 @@ import {
     type RteToolbarGroup,
     type ToolbarItemProps,
 } from './plugin';
+import { readTagRule } from './tagRule';
 import { PARAGRAPH } from './vocabulary';
 
 /**

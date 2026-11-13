@@ -15,7 +15,7 @@ import {
     type PasteTransform,
     type RtePlugin,
 } from '#/core';
-import { defaultPlugins, linkPlugin } from '#/plugins';
+import { defaultPlugins } from '#/plugins';
 
 import { destroyEditors, editorWith, paragraph, shipped, text, token, tokenPlugin } from './testEditor';
 
