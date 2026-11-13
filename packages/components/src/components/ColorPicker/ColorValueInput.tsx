@@ -49,8 +49,6 @@ type ColorValueInputProps = {
 
 const nooperation = () => {};
 
-const HEX_PREFIX = '#';
-
 /** Tells whether the typed hex text is a valid colour with the same red, green and blue as the given colour. */
 const showsColor = (hex: string, color: RgbaColor): boolean => {
     if (!isValidHexColor(hex)) {
@@ -106,10 +104,9 @@ export const ColorValueInput = (
                     value={hexColorValue}
                     status={isValidHexColor(hexColorValue) ? 'neutral' : 'error'}
                     onChange={(event) => {
-                        let inputValue = event.target.value;
-                        if (inputValue.startsWith(HEX_PREFIX)) {
-                            inputValue = inputValue.slice(HEX_PREFIX.length);
-                        }
+                        const inputValue = event.target.value.startsWith('#')
+                            ? event.target.value.slice(1)
+                            : event.target.value;
 
                         setHexColorValue(inputValue);
                         if (isValidHexColor(inputValue)) {
