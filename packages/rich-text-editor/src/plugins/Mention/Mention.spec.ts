@@ -4,7 +4,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { attributeEntries, type ParseReader } from '#/core';
+import { attributeEntries } from '#/core';
 
 import { BIDI_ISOLATE_TAG } from './components/MentionLink';
 import { mentionValueOf } from './helpers/mention';
@@ -17,13 +17,10 @@ const ALL = { id: 'all', username: 'all', name: 'Everyone', kind: 'all' } as con
 const mentionFor = (href?: string) =>
     mentionPlugin({ items: [JANE], href: href === undefined ? undefined : () => href }).content?.inlines?.mention;
 
-// The mention rule reads no CSS, so its reader finds none.
-const NO_CSS_READER: ParseReader = { color: () => undefined };
-
 const parse = (html: string): unknown => {
     const element = document.createElement('div');
     element.innerHTML = html;
-    return mentionFor('/u')?.parse[0]?.value?.(element.firstElementChild as HTMLElement, NO_CSS_READER);
+    return mentionFor('/u')?.parse[0]?.value?.(element.firstElementChild as HTMLElement);
 };
 
 describe('the mention inline', () => {
@@ -142,6 +139,26 @@ describe('the mention inline', () => {
         expect(parse('<a href="/u" data-mention-id="" data-mention-username="jane">@jane</a>')).toBeNull();
         expect(parse('<a href="/u" data-mention-id="jane" data-mention-username="">@</a>')).toBeNull();
         expect(parse('<a href="/u" data-mention-id="jane">@</a>')).toBeNull();
+    });
+});
+
+describe('the mention labels', () => {
+    it('name an empty username in the labels the plugin is given, keeping English for the rest', () => {
+        const empty = { id: 'x', username: '', name: '' };
+        const mention = mentionPlugin({ items: [], labels: { unknownPerson: 'Personne inconnue' } }).content?.inlines
+            ?.mention;
+
+        expect(mention?.toHtml(empty).children).toEqual([{ tag: BIDI_ISOLATE_TAG, children: 'Personne inconnue' }]);
+        expect(mention?.toHtml({ ...empty, kind: 'group' }).children).toEqual([
+            { tag: BIDI_ISOLATE_TAG, children: 'Unknown group' },
+        ]);
+    });
+
+    it('name an empty username in the labels the content is given', () => {
+        const empty = { id: 'x', username: '', name: '' };
+        const mention = mentionContent({ labels: { unknownPerson: 'Personne inconnue' } }).inlines?.mention;
+
+        expect(mention?.toHtml(empty).children).toEqual([{ tag: BIDI_ISOLATE_TAG, children: 'Personne inconnue' }]);
     });
 });
 

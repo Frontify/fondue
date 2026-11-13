@@ -144,9 +144,7 @@ type UseEditorHandleOptions = {
      * Says a message through the live region, for `api.announce`
      */
     announce: (message: string) => void;
-    /**
-     * When false, nothing is mounted — the shell is showing the renderer
-     */
+    /** When false, nothing is mounted — the shell is showing the renderer. */
     enabled: boolean;
 };
 

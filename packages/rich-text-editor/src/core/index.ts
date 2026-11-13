@@ -23,7 +23,6 @@ export {
     buildContentRegistry,
     type ContentRegistry,
 } from './contentRegistry';
-export { toStoredColor } from './cssColor';
 export {
     type ParagraphBlock,
     type RteBlockNode,
@@ -69,7 +68,6 @@ export {
     type MarkParseRule,
     onlyTypeOf,
     type ParsePrecedence,
-    type ParseReader,
     type ParseRule,
     type Paste,
     type PasteHandler,
@@ -94,7 +92,7 @@ export {
     type StyleParseRule,
     type ToolbarItemProps,
 } from './plugin';
-export { parseReaderOf, readTagRule, type TagRule, type TagRuleReading } from './parseReader';
+export { readTagRule, type TagRule, type TagRuleReading } from './tagRule';
 export {
     activeCommand,
     buildPluginRegistry,
@@ -109,21 +107,8 @@ export {
     type RteShortcutOwner,
     selectedNodeOf,
     type ToolbarEntry,
-    type ToolbarEntryGroup,
     toggleOwn,
-    toolbarGroupsOf,
 } from './registry';
-export {
-    decodeStoredColor,
-    encodeStoredColor,
-    isSafeCssColor,
-    isStoredColor,
-    MAX_CHANNEL,
-    OPAQUE_ALPHA,
-    readHexDigits,
-    type Rgba,
-    toShortestAlpha,
-} from './storedColor';
 export {
     ANY_LIST,
     DOCUMENT_VERSION,
@@ -132,7 +117,6 @@ export {
     newerVersionOf,
     OFFICE_LIST_ATTRIBUTES,
     PARAGRAPH,
-    removeOfficeListData,
     WORD_START_CONTEXT,
 } from './vocabulary';
 export { warnOnce } from './warnings';

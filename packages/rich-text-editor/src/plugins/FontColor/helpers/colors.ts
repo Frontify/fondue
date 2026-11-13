@@ -1,21 +1,41 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    decodeStoredColor,
-    encodeStoredColor,
-    MAX_CHANNEL,
-    OPAQUE_ALPHA,
-    readHexDigits,
-    type Rgba,
-    toShortestAlpha,
-    toStoredColor,
-} from '#/core';
+import { NAMED_COLORS } from './namedColors';
 
-/** What a colour carries in the document: lowercase `#rrggbb`, or `#rrggbbaa` when translucent. */
+/** What a colour carries in the document: lowercase `#rrggbb`, or `#rrggbbaa` when translucent. Any other CSS colour reads as its hex. */
 export type FontColorValue = {
     color: string;
 };
 
+/** A colour as the picker holds it: channels run from 0 to 255 and alpha from 0 to 1. */
+export type Rgba = { red: number; green: number; blue: number; alpha: number };
+
+/** Full opacity, which the picker leaves out. */
+export const OPAQUE_ALPHA = 1;
+
+type RgbaBytes = [number, number, number, number];
+type ColorSyntax = 'comma' | 'space';
+type ColorArguments = { channels: string[]; alpha: string | undefined; syntax: ColorSyntax };
+
+const COLOR_FUNCTIONS = ['rgb', 'hsl'] as const;
+type ColorFunction = (typeof COLOR_FUNCTIONS)[number];
+
+const MAX_CHANNEL = 255;
+const FULL_TURN = 360;
+const WHITESPACE = /\s+/;
+const NONE = 'none';
+/** CSS Color 4 hue units, in degrees per unit. */
+const HUE_UNIT_DEGREES = {
+    deg: 1,
+    grad: 0.9,
+    rad: 180 / Math.PI,
+    turn: FULL_TURN,
+};
+type HueUnit = keyof typeof HUE_UNIT_DEGREES;
+const isHueUnit = (unit: string): unit is HueUnit => unit in HUE_UNIT_DEGREES;
+// Leftmost matching makes `grad` win over `rad`.
+const HUE_UNIT = new RegExp(`(${Object.keys(HUE_UNIT_DEGREES).join('|')})$`);
+const PRINTABLE_ASCII = /^[\t\n\f\r -~]*$/;
 const PERCENT = 100;
 
 /** What the picker's hex field takes: three or six digits; anything else is its error state, not a colour. */
@@ -36,6 +56,264 @@ const COMPLETE_HEX = /^#?[\dA-Fa-f]{6}$/;
  * ```
  */
 export const isCompleteHex = (text: string): boolean => COMPLETE_HEX.test(text);
+
+const HEX_COLOR = /^#([\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/;
+const COLOR_FUNCTION = new RegExp(`^(${COLOR_FUNCTIONS.join('|')})a?\\(([^()]*)\\)$`);
+const isColorFunction = (kind: string): kind is ColorFunction => COLOR_FUNCTIONS.some((known) => known === kind);
+const NUMBER = /^[+-]?(\d+(\.\d+)?|\.\d+)(e[+-]?\d+)?%?$/;
+
+const SHORT_ALPHA_SCALE = 100;
+const LONG_ALPHA_SCALE = 1000;
+
+const clamp = (value: number, max: number): number => Math.min(Math.max(value, 0), max);
+
+/** A plain number, or a percentage of `full`; `undefined` for anything else, `none` and units included. */
+const readNumber = (part: string | undefined, full: number): number | undefined => {
+    if (part === undefined || !NUMBER.test(part)) {
+        return undefined;
+    }
+    // Hundreds of digits read as Infinity, which no channel or hue can be.
+    const value = Number.parseFloat(part);
+    if (!Number.isFinite(value)) {
+        return undefined;
+    }
+    if (part.endsWith('%')) {
+        return (value / PERCENT) * full;
+    }
+    return value;
+};
+
+/** `readNumber`, where the space syntax also takes `none` as 0. */
+const readComponent = (part: string | undefined, full: number, syntax: ColorSyntax): number | undefined => {
+    if (syntax === 'space' && part === NONE) {
+        return 0;
+    }
+    return readNumber(part, full);
+};
+
+/** A hue in degrees: a plain number or one followed by a CSS hue unit, never a percentage. */
+const readHue = (part: string | undefined, syntax: ColorSyntax): number | undefined => {
+    if (part === undefined) {
+        return undefined;
+    }
+    const unit = HUE_UNIT.exec(part)?.[1];
+    let number = part;
+    if (unit !== undefined) {
+        number = part.slice(0, -unit.length);
+    }
+    if (number.endsWith('%')) {
+        return undefined;
+    }
+    if (unit === undefined || !isHueUnit(unit)) {
+        return readComponent(number, FULL_TURN, syntax);
+    }
+    const value = readNumber(number, FULL_TURN);
+    if (value === undefined) {
+        return undefined;
+    }
+    return value * HUE_UNIT_DEGREES[unit];
+};
+
+/** CSS Color 4's `hsl()` in sRGB: hue in degrees, saturation and lightness from 0 to 1. */
+const hslToRgb = (hue: number, saturation: number, lightness: number): [number, number, number] => {
+    const channel = (offset: number): number => {
+        const step = (offset + hue / 30) % 12;
+        const chroma = saturation * Math.min(lightness, 1 - lightness);
+        return (lightness - chroma * Math.max(-1, Math.min(step - 3, 9 - step, 1))) * MAX_CHANNEL;
+    };
+    return [channel(0), channel(8), channel(4)];
+};
+
+/**
+ * The three channels and the optional alpha of a colour function, in one of
+ * CSS Color 4's two forms: `1, 2, 3, 0.5` or `1 2 3 / 0.5`, never a mix.
+ */
+const splitArguments = (args: string): ColorArguments | undefined => {
+    const value = args.trim();
+    if (value.includes(',')) {
+        const parts = value.split(',').map((part) => part.trim());
+        if (value.includes('/') || (parts.length !== 3 && parts.length !== 4)) {
+            return undefined;
+        }
+        return { channels: parts.slice(0, 3), alpha: parts[3], syntax: 'comma' };
+    }
+    const [channels = '', alpha, ...rest] = value.split('/');
+    const parts = channels.trim().split(WHITESPACE);
+    if (rest.length > 0 || parts.length !== 3) {
+        return undefined;
+    }
+    return { channels: parts, alpha: alpha?.trim(), syntax: 'space' };
+};
+
+const readRgb = (parts: string[], syntax: ColorSyntax, alpha: number): Rgba | undefined => {
+    // The comma form takes three numbers or three percentages, not a mix.
+    if (syntax === 'comma' && new Set(parts.map((part) => part.endsWith('%'))).size > 1) {
+        return undefined;
+    }
+    const [red, green, blue] = parts.map((part) => readComponent(part, MAX_CHANNEL, syntax));
+    if (red === undefined || green === undefined || blue === undefined) {
+        return undefined;
+    }
+    return {
+        red: clamp(red, MAX_CHANNEL),
+        green: clamp(green, MAX_CHANNEL),
+        blue: clamp(blue, MAX_CHANNEL),
+        alpha: clamp(alpha, 1),
+    };
+};
+
+const readHsl = (parts: string[], syntax: ColorSyntax, alpha: number): Rgba | undefined => {
+    const hue = readHue(parts[0], syntax);
+    // Saturation and lightness are percentages; only the space form may drop the sign.
+    if (syntax === 'comma' && !parts.slice(1).every((part) => part.endsWith('%'))) {
+        return undefined;
+    }
+    const [saturation, lightness] = parts.slice(1).map((part) => readComponent(part, PERCENT, syntax));
+    if (hue === undefined || saturation === undefined || lightness === undefined) {
+        return undefined;
+    }
+    const [red, green, blue] = hslToRgb(
+        ((hue % FULL_TURN) + FULL_TURN) % FULL_TURN,
+        clamp(saturation, PERCENT) / PERCENT,
+        clamp(lightness, PERCENT) / PERCENT,
+    );
+    return { red, green, blue, alpha: clamp(alpha, 1) };
+};
+
+type ColorReader = (parts: string[], syntax: ColorSyntax, alpha: number) => Rgba | undefined;
+
+/** A new `ColorFunction` fails to compile until it has a reader here. */
+const COLOR_FUNCTION_READERS: Record<ColorFunction, ColorReader> = { rgb: readRgb, hsl: readHsl };
+
+/** One `rgb()`/`rgba()`/`hsl()`/`hsla()`, with an optional alpha. */
+const readColorFunction = (kind: ColorFunction, args: string): Rgba | undefined => {
+    const split = splitArguments(args);
+    if (split === undefined) {
+        return undefined;
+    }
+    const { channels: parts, syntax } = split;
+    let alpha: number | undefined = OPAQUE_ALPHA;
+    if (split.alpha !== undefined) {
+        alpha = readComponent(split.alpha, 1, syntax);
+    }
+    if (alpha === undefined) {
+        return undefined;
+    }
+    return COLOR_FUNCTION_READERS[kind](parts, syntax, alpha);
+};
+
+/** The shortest alpha, in two decimals or else three, that encodes back to the same byte. */
+const toShortestAlpha = (byte: number): number => {
+    const short = Math.round((byte / MAX_CHANNEL) * SHORT_ALPHA_SCALE) / SHORT_ALPHA_SCALE;
+    if (Math.round(short * MAX_CHANNEL) === byte) {
+        return short;
+    }
+    return Math.round((byte / MAX_CHANNEL) * LONG_ALPHA_SCALE) / LONG_ALPHA_SCALE;
+};
+
+/** Reads 6 or 8 lowercase hex digits as red, green, blue and alpha bytes; alpha is full with 6. */
+const readHexDigits = (digits: string): RgbaBytes => {
+    const byte = (index: number): number => Number.parseInt(digits.slice(index * 2, index * 2 + 2), 16);
+    let alpha = MAX_CHANNEL;
+    if (digits.length === 8) {
+        alpha = byte(3);
+    }
+    return [byte(0), byte(1), byte(2), alpha];
+};
+
+/** Writes `#rrggbb`, with the alpha pair only while it is not full. */
+const toHex = (bytes: RgbaBytes): string => {
+    const [red, green, blue, alpha] = bytes;
+    const pairs = [red, green, blue];
+    if (alpha !== MAX_CHANNEL) {
+        pairs.push(alpha);
+    }
+    return `#${pairs.map((byte) => byte.toString(16).padStart(2, '0')).join('')}`;
+};
+
+/**
+ * A CSS colour as the document stores it: a named colour, hex in three to
+ * eight digits, or one `rgb()`/`rgba()`/`hsl()`/`hsla()` of plain numbers.
+ * Anything else, system colours and `inherit` included, is no colour. The
+ * input may be any value, since another tool may have written the stored
+ * value, so any colour read here counts, such as the legacy editor's `rgba()`,
+ * and nothing else reaches a `style`.
+ *
+ * @example
+ * ```ts
+ * toStoredColor('hsl(0, 50%, 50%)'); // '#bf4040'
+ * ```
+ */
+export const toStoredColor = (css: unknown): string | undefined => {
+    if (typeof css !== 'string') {
+        return undefined;
+    }
+    // Only ASCII: `\s` and `toLowerCase` would otherwise let other Unicode through, such as a Kelvin sign lowercasing to `k`.
+    if (!PRINTABLE_ASCII.test(css)) {
+        return undefined;
+    }
+    const value = css.trim().toLowerCase();
+    const named = NAMED_COLORS.get(value);
+    if (named !== undefined) {
+        return named;
+    }
+
+    const hex = HEX_COLOR.exec(value)?.[1];
+    if (hex !== undefined) {
+        // `#abc` is `#aabbcc`.
+        let digits = hex;
+        if (hex.length <= 4) {
+            digits = [...hex].map((digit) => digit + digit).join('');
+        }
+        return toHex(readHexDigits(digits));
+    }
+
+    const [, kind, args] = COLOR_FUNCTION.exec(value) ?? [];
+    if (kind === undefined || args === undefined) {
+        return undefined;
+    }
+    if (!isColorFunction(kind)) {
+        return undefined;
+    }
+    const color = readColorFunction(kind, args);
+    if (color === undefined) {
+        return undefined;
+    }
+    return encodeStoredColor(color);
+};
+
+/**
+ * A stored colour's channels, with the shortest alpha that encodes back to the same byte, so a whole percent the picker wrote reads back unchanged.
+ *
+ * @param stored - a lowercase `#rrggbb` or `#rrggbbaa` from `toStoredColor`
+ *
+ * @example
+ * ```ts
+ * decodeStoredColor('#ff0000'); // { red: 255, green: 0, blue: 0, alpha: 1 }
+ * ```
+ */
+export const decodeStoredColor = (stored: string): Rgba => {
+    const [red, green, blue, alphaByte] = readHexDigits(stored.slice(1));
+    return { red, green, blue, alpha: toShortestAlpha(alphaByte) };
+};
+
+/**
+ * The picker's colour as the document stores it.
+ *
+ * @example
+ * ```ts
+ * encodeStoredColor({ red: 255, green: 0, blue: 0, alpha: 0.5 }); // '#ff000080'
+ * ```
+ */
+export const encodeStoredColor = ({ red, green, blue, alpha }: Rgba): string => {
+    const bytes: RgbaBytes = [
+        Math.round(clamp(red, MAX_CHANNEL)),
+        Math.round(clamp(green, MAX_CHANNEL)),
+        Math.round(clamp(blue, MAX_CHANNEL)),
+        Math.round(clamp(alpha * MAX_CHANNEL, MAX_CHANNEL)),
+    ];
+    return toHex(bytes);
+};
 
 /**
  * A colour named as upper-case hex, then the opacity while translucent, as the picker's fields read.
@@ -81,7 +359,7 @@ export const parseTypedHex = (text: string | undefined, alpha: number | undefine
 /**
  * Hex while opaque, `rgba()` otherwise: hex alpha is not understood everywhere exported HTML ends up.
  *
- * @param stored - a lowercase `#rrggbb` or `#rrggbbaa`
+ * @param stored - a lowercase `#rrggbb` or `#rrggbbaa` from `toStoredColor`
  *
  * @example
  * ```ts

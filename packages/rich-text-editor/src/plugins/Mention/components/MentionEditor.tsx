@@ -8,12 +8,14 @@ import { type MentionHref, type MentionItems, type MentionResolve, type MentionV
 
 import { MentionDraft } from './MentionDraft';
 import { MentionLink } from './MentionLink';
+import { type MentionLabels } from './pickerLabels';
 
 type MentionEditorProps = EditProps<MentionValue, MentionValue | null> & {
     items: MentionItems;
     trigger: string;
     href: MentionHref | undefined;
     resolve: MentionResolve | undefined;
+    labels: MentionLabels;
 };
 
 /**
@@ -30,11 +32,13 @@ export const MentionEditor = ({
     trigger,
     href,
     resolve,
+    labels,
 }: MentionEditorProps) => {
     if (value === null) {
         return (
             <MentionDraft
                 trigger={trigger}
+                labels={labels}
                 items={items}
                 focused={isFocused}
                 onChoose={(person) => {
@@ -55,5 +59,5 @@ export const MentionEditor = ({
             />
         );
     }
-    return <MentionLink value={value} display={mentionDisplay(value, { resolve, href, trigger })} />;
+    return <MentionLink value={value} display={mentionDisplay(value, { resolve, href, trigger, labels })} />;
 };

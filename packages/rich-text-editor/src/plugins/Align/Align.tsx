@@ -36,8 +36,6 @@ export type AlignAttribute = {
     align?: 'left' | 'center' | 'right' | 'justify';
 };
 
-const ALIGN_ATTRIBUTE = 'align';
-
 const ALIGN_VALUES: readonly NonNullable<AlignAttribute['align']>[] = ['left', 'center', 'right', 'justify'];
 
 const isAlignment = (value: unknown): value is NonNullable<AlignAttribute['align']> =>
@@ -48,7 +46,7 @@ const isAlignment = (value: unknown): value is NonNullable<AlignAttribute['align
  */
 export const alignContent = defineContent({
     blockAttributes: {
-        [ALIGN_ATTRIBUTE]: {
+        align: {
             // Only the four this plugin offers reach a style: a stored value is
             // not trusted to be one, and anything else could carry more CSS.
             style: (value): StyleMap => (isAlignment(value) ? { 'text-align': value } : {}),
@@ -64,113 +62,101 @@ type AlignValue = NonNullable<AlignAttribute['align']>;
 /** The keys are literals because a computed key keeps this plugin in the renderer; this type ties each alignment to one. */
 type AlignShortcut = 'Mod-Shift-l' | 'Mod-Shift-e' | 'Mod-Shift-r' | 'Mod-Shift-j';
 
+/** The label that names one alignment's button and key. */
+type AlignTitleKey = 'leftTitle' | 'centerTitle' | 'rightTitle' | 'justifyTitle';
+
 type Alignment = {
     value: AlignValue;
     icon: FondueIcon;
+    titleKey: AlignTitleKey;
     shortcut: AlignShortcut;
 };
 
-const LEFT: Alignment = { value: 'left', icon: IconTextAlignmentLeft, shortcut: 'Mod-Shift-l' };
-
-const CENTER: Alignment = { value: 'center', icon: IconTextAlignmentCentre, shortcut: 'Mod-Shift-e' };
-
-const RIGHT: Alignment = { value: 'right', icon: IconTextAlignmentRight, shortcut: 'Mod-Shift-r' };
-
-const JUSTIFY: Alignment = { value: 'justify', icon: IconTextAlignmentJustify, shortcut: 'Mod-Shift-j' };
-
-const ALIGNMENTS: readonly Alignment[] = [LEFT, CENTER, RIGHT, JUSTIFY];
-
-const DEFAULT_LEFT_TITLE = 'Align left';
-const DEFAULT_CENTER_TITLE = 'Align center';
-const DEFAULT_RIGHT_TITLE = 'Align right';
-const DEFAULT_JUSTIFY_TITLE = 'Justify';
-
-const DEFAULT_LEFT_ANNOUNCEMENT = 'Aligned left';
-const DEFAULT_CENTER_ANNOUNCEMENT = 'Centered';
-const DEFAULT_RIGHT_ANNOUNCEMENT = 'Aligned right';
-const DEFAULT_JUSTIFY_ANNOUNCEMENT = 'Justified';
-const DEFAULT_CLEARED_ANNOUNCEMENT = 'Alignment cleared';
+const ALIGNMENTS: readonly Alignment[] = [
+    { value: 'left', icon: IconTextAlignmentLeft, titleKey: 'leftTitle', shortcut: 'Mod-Shift-l' },
+    { value: 'center', icon: IconTextAlignmentCentre, titleKey: 'centerTitle', shortcut: 'Mod-Shift-e' },
+    { value: 'right', icon: IconTextAlignmentRight, titleKey: 'rightTitle', shortcut: 'Mod-Shift-r' },
+    { value: 'justify', icon: IconTextAlignmentJustify, titleKey: 'justifyTitle', shortcut: 'Mod-Shift-j' },
+];
 
 /**
- * What the alignment buttons and keys say, to sighted users and to screen readers, with a default of English.
+ * The words the alignment buttons and keys say: their names, and what screen readers hear after a choice
  */
-export type AlignPluginOptions = {
+export type AlignLabels = {
     /**
      * The name of the left alignment: the button's title and what the keyboard reference calls its key.
      *
      * @default 'Align left'
      */
-    leftTitle?: string;
+    leftTitle: string;
     /**
      * The name of the center alignment: the button's title and what the keyboard reference calls its key.
      *
      * @default 'Align center'
      */
-    centerTitle?: string;
+    centerTitle: string;
     /**
      * The name of the right alignment: the button's title and what the keyboard reference calls its key.
      *
      * @default 'Align right'
      */
-    rightTitle?: string;
+    rightTitle: string;
     /**
      * The name of the justified alignment: the button's title and what the keyboard reference calls its key.
      *
      * @default 'Justify'
      */
-    justifyTitle?: string;
+    justifyTitle: string;
     /**
      * Said after the left alignment is chosen.
      *
      * @default 'Aligned left'
      */
-    leftAnnouncement?: string;
+    left: string;
     /**
      * Said after the center alignment is chosen.
      *
      * @default 'Centered'
      */
-    centerAnnouncement?: string;
+    center: string;
     /**
      * Said after the right alignment is chosen.
      *
      * @default 'Aligned right'
      */
-    rightAnnouncement?: string;
+    right: string;
     /**
      * Said after the justified alignment is chosen.
      *
      * @default 'Justified'
      */
-    justifyAnnouncement?: string;
+    justify: string;
     /**
      * Said after the alignment the block already had is chosen again, which removes it.
      *
      * @default 'Alignment cleared'
      */
-    clearedAnnouncement?: string;
+    cleared: string;
 };
 
-/** The name of each alignment, which the alignment values name their own entry of. */
-type AlignTitles = Record<AlignValue, string>;
+const DEFAULT_ALIGN_LABELS: AlignLabels = {
+    leftTitle: 'Align left',
+    centerTitle: 'Align center',
+    rightTitle: 'Align right',
+    justifyTitle: 'Justify',
+    left: 'Aligned left',
+    center: 'Centered',
+    right: 'Aligned right',
+    justify: 'Justified',
+    cleared: 'Alignment cleared',
+};
 
-const titlesOf = (options: AlignPluginOptions): AlignTitles => ({
-    left: options.leftTitle ?? DEFAULT_LEFT_TITLE,
-    center: options.centerTitle ?? DEFAULT_CENTER_TITLE,
-    right: options.rightTitle ?? DEFAULT_RIGHT_TITLE,
-    justify: options.justifyTitle ?? DEFAULT_JUSTIFY_TITLE,
-});
-
-/** What is said after each choice; the alignment values name their own entry. */
-type AlignAnnouncements = Record<AlignValue | 'cleared', string>;
-
-const announcementsOf = (options: AlignPluginOptions): AlignAnnouncements => ({
-    left: options.leftAnnouncement ?? DEFAULT_LEFT_ANNOUNCEMENT,
-    center: options.centerAnnouncement ?? DEFAULT_CENTER_ANNOUNCEMENT,
-    right: options.rightAnnouncement ?? DEFAULT_RIGHT_ANNOUNCEMENT,
-    justify: options.justifyAnnouncement ?? DEFAULT_JUSTIFY_ANNOUNCEMENT,
-    cleared: options.clearedAnnouncement ?? DEFAULT_CLEARED_ANNOUNCEMENT,
-});
+export type AlignPluginOptions = {
+    /**
+     * The words the plugin says. Each one left out stays English.
+     */
+    labels?: Partial<AlignLabels>;
+};
 
 /** The alignment of the block the selection is in, which is none when the block has not been given one. */
 const alignOf = ({ block }: RteSelectionSnapshot): AlignAttribute['align'] =>
@@ -180,44 +166,44 @@ const alignOf = ({ block }: RteSelectionSnapshot): AlignAttribute['align'] =>
 type ChooseAlignmentParams = {
     api: EditorControlApi;
     value: AlignValue;
-    announcements: AlignAnnouncements;
+    labels: AlignLabels;
 };
 
 /** What a toolbar button and its key both do: set the alignment, or clear it when the block already has it, and say so when a block changed. */
-const chooseAlignment = ({ api, value, announcements }: ChooseAlignmentParams): void => {
+const chooseAlignment = ({ api, value, labels }: ChooseAlignmentParams): void => {
     let next: AlignValue | null = value;
-    let announcement = announcements[value];
+    let announcement = labels[value];
     // Choosing the alignment already set clears it, so the block inherits the editor's direction again.
     if (alignOf(api.selection.get()) === value) {
         next = null;
-        announcement = announcements.cleared;
+        announcement = labels.cleared;
     }
     // Nothing to say when no selected block can be aligned: a screen reader user would hear a change that did not happen.
-    if (api.blocks.updateAttributes({ [ALIGN_ATTRIBUTE]: next })) {
+    if (api.blocks.updateAttributes({ align: next })) {
         api.announce(announcement);
     }
 };
 
-type AlignToolbarProps = ToolbarItemProps & { titles: AlignTitles; announcements: AlignAnnouncements };
+type AlignToolbarProps = ToolbarItemProps & { labels: AlignLabels };
 
-const AlignToolbar = ({ api, selection, label, titles, announcements }: AlignToolbarProps) => {
+const AlignToolbar = ({ api, selection, label, labels }: AlignToolbarProps) => {
     // A block without one reads left to right, so left is what it shows.
     const current = alignOf(selection) ?? 'left';
     return (
         // One choice of four, so a radio group: the checked one is the
         // block's alignment.
         <div role="radiogroup" aria-label={label} className={styles.group}>
-            {ALIGNMENTS.map(({ value, icon: Icon, shortcut }) => (
+            {ALIGNMENTS.map(({ value, icon: Icon, titleKey, shortcut }) => (
                 // A <button> underneath, which the toolbar gives its tabIndex.
                 // oxlint-disable-next-line jsx-a11y/interactive-supports-focus
                 <ToolbarButton
                     key={value}
                     role="radio"
                     aria-checked={current === value}
-                    title={titles[value]}
+                    title={labels[titleKey]}
                     shortcut={shortcut}
                     onClick={() => {
-                        chooseAlignment({ api, value, announcements });
+                        chooseAlignment({ api, value, labels });
                     }}
                 >
                     <Icon size={TOOLBAR_ICON_SIZE} />
@@ -231,8 +217,7 @@ const AlignToolbar = ({ api, selection, label, titles, announcements }: AlignToo
  * Text alignment, with a four-way radio group in the toolbar and a key for each alignment
  */
 export const alignPlugin = (options: AlignPluginOptions = {}) => {
-    const titles = titlesOf(options);
-    const announcements = announcementsOf(options);
+    const labels: AlignLabels = { ...DEFAULT_ALIGN_LABELS, ...options.labels };
     return definePlugin({
         id: 'align',
         content: alignContent,
@@ -240,33 +225,34 @@ export const alignPlugin = (options: AlignPluginOptions = {}) => {
         toolbar: [
             {
                 label: 'Alignment',
-                render: (props) => <AlignToolbar {...props} titles={titles} announcements={announcements} />,
+                render: (props) => <AlignToolbar {...props} labels={labels} />,
                 floating: 'inline',
             },
         ],
+        // The keys are literals because a computed key keeps this plugin in the renderer; `AlignShortcut` ties each alignment to one.
         hotkeys: {
             'Mod-Shift-l': {
-                label: titles.left,
+                label: labels.leftTitle,
                 run: (api) => {
-                    chooseAlignment({ api, value: 'left', announcements });
+                    chooseAlignment({ api, value: 'left', labels });
                 },
             },
             'Mod-Shift-e': {
-                label: titles.center,
+                label: labels.centerTitle,
                 run: (api) => {
-                    chooseAlignment({ api, value: 'center', announcements });
+                    chooseAlignment({ api, value: 'center', labels });
                 },
             },
             'Mod-Shift-r': {
-                label: titles.right,
+                label: labels.rightTitle,
                 run: (api) => {
-                    chooseAlignment({ api, value: 'right', announcements });
+                    chooseAlignment({ api, value: 'right', labels });
                 },
             },
             'Mod-Shift-j': {
-                label: titles.justify,
+                label: labels.justifyTitle,
                 run: (api) => {
-                    chooseAlignment({ api, value: 'justify', announcements });
+                    chooseAlignment({ api, value: 'justify', labels });
                 },
             },
         } satisfies Record<AlignShortcut, RteHotkey>,
