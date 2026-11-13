@@ -535,7 +535,7 @@ export const Align: Story = {
                     Mod-Shift-L aligns left, Mod-Shift-E centres, Mod-Shift-R aligns right and Mod-Shift-J justifies.
                 </p>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[alignPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[alignPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -878,7 +878,13 @@ export const ResetFormatting: Story = {
                     <RichTextEditor
                         value={doc}
                         onChange={setDoc}
-                        plugins={[textStylePlugin(), boldPlugin, alignPlugin, bulletListPlugin, resetFormattingPlugin]}
+                        plugins={[
+                            textStylePlugin(),
+                            boldPlugin,
+                            alignPlugin(),
+                            bulletListPlugin,
+                            resetFormattingPlugin(),
+                        ]}
                     />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>

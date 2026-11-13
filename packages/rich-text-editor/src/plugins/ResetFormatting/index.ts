@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { resetFormattingPlugin } from './ResetFormatting';
+export { resetFormattingPlugin, type ResetFormattingPluginOptions } from './ResetFormatting';
