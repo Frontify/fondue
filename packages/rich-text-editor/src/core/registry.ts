@@ -395,7 +395,7 @@ const inputRuleOf = (plugin: RtePlugin, rule: RteInputRule | RteDelimiterRule): 
     if (marks.length !== 1 || key === undefined) {
         throw new Error(`Plugin "${plugin.id}" has a delimiter rule, which needs exactly one mark to wrap text in.`);
     }
-    return { kind: 'mark', key, delimiter: rule.delimiter };
+    return { kind: 'mark', key, delimiter: rule.delimiter, wordBounded: rule.wordBounded };
 };
 
 /** Mark rules first, longest delimiter first; everything else keeps its declared order. */
