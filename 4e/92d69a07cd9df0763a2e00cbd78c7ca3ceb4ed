@@ -1,0 +1,27 @@
+.changeset/components-remove-deprecated-apis.md
+  s_e303d90a4d1a69::t_d31000526d4ee4 1-10
+packages/components/src/components/Accordion/__tests__/Accordion.spec.tsx
+  s_e303d90a4d1a69::t_036a080d2edc0f 16
+packages/components/src/components/Table/styles/table.module.scss
+  s_e303d90a4d1a69::t_01b731a6f21580 19
+packages/components/src/components/Textarea/Textarea.tsx
+  s_e303d90a4d1a69::t_7b41fec4515aee 151
+packages/components/src/components/ThemeProvider/ThemeProvider.tsx
+  s_e303d90a4d1a69::t_bf7cb28d608a75 88,99-100,103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "4e92d69a07cd9df0763a2e00cbd78c7ca3ceb4ed",
+  "prompts": {},
+  "sessions": {
+    "s_e303d90a4d1a69": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b95187bb-e9f1-45de-99f7-7bb025d6a241",
+        "model": "unknown"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
