@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineMark, type RtePlugin } from '#/core';
+import { defineContent, defineMark, definePlugin } from '#/core';
 
 import { declaredStyle } from '../shared/helpers/declaredStyle';
 
@@ -11,12 +11,16 @@ const OPAQUE_BLACK = '#000000';
 
 /** The value this plugin sets on text nodes. */
 export type FontColorMark = {
+    /**
+     * The colour of the text
+     */
     fontColor?: FontColorValue;
 };
 
-/** Text colour as a mark, picked from a flyout in the toolbar. */
-export const fontColorPlugin = (): RtePlugin => ({
-    id: 'font-color',
+/**
+ * Text colour as a mark
+ */
+export const fontColorContent = defineContent({
     marks: {
         fontColor: defineMark<FontColorValue>({
             // Underline and strikethrough draw their line in the colour of
@@ -51,6 +55,14 @@ export const fontColorPlugin = (): RtePlugin => ({
             ],
         }),
     },
+});
+
+/**
+ * Text colour, picked from a flyout in the toolbar
+ */
+export const fontColorPlugin = /* @__PURE__ */ definePlugin({
+    id: 'font-color',
+    content: fontColorContent,
     toolbarGroup: 'color',
-    toolbarItem: ({ api, selection, isActive }) => <ColorFlyout selection={selection} api={api} isActive={isActive} />,
+    toolbar: [{ label: 'Text colour', render: ColorFlyout }],
 });

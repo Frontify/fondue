@@ -29,8 +29,9 @@ import { warnUnknownType } from './warnings';
 /** A node and the position it sits at. */
 type NodeAt = { node: PmNode; pos: number };
 
-/** The innermost ancestor of a position that is a list of items, with the position it sits at. */
-const findList = ($from: ResolvedPos, itemTypeByList: Map<string, string>): NodeAt | null => {
+/** The innermost ancestor that is a list of items, with the position it sits at. */
+const findList = (state: EditorState, itemTypeByList: Map<string, string>): { node: PmNode; pos: number } | null => {
+    const { $from } = state.selection;
     for (let depth = $from.depth; depth > 0; depth--) {
         const node = $from.node(depth);
         if (itemTypeByList.has(node.type.name)) {
@@ -42,7 +43,7 @@ const findList = ($from: ResolvedPos, itemTypeByList: Map<string, string>): Node
 
 /** The item type of the innermost list the selection sits in — what the list commands need. */
 const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, schema: Schema): PmNodeType | null => {
-    const list = findList(state.selection.$from, itemTypeByList);
+    const list = findList(state, itemTypeByList);
     const itemName = list ? itemTypeByList.get(list.node.type.name) : undefined;
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
 };
@@ -166,7 +167,7 @@ export const createListApi = (
                 return;
             }
             const view = getView();
-            const current = findList(view.state.selection.$from, itemTypeByList);
+            const current = findList(view.state, itemTypeByList);
 
             if (!current) {
                 joiningLists(wrapInList(listType), itemTypeByList)(view.state, view.dispatch);

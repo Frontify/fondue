@@ -4,41 +4,58 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { buildPluginRegistry, defineBlock, defineInline, defineMark, type RtePlugin } from '#/core';
+import {
+    buildPluginRegistry,
+    defineBlock,
+    defineContent,
+    defineInline,
+    defineMark,
+    definePlugin,
+    type RteDocumentOf,
+    type RtePlugin,
+} from '#/core';
 
+import { toEngineDocument, toRteDocument } from './documentConversion';
 import { buildSchema as buildSchemaFromRegistry } from './schema';
+import { shipped } from './testEditor';
 
 const buildSchema = (plugins: RtePlugin[]) => buildSchemaFromRegistry(buildPluginRegistry(plugins));
 
 const plugins: RtePlugin[] = [
-    {
+    definePlugin({
         id: 'bold',
-        marks: {
-            bold: defineMark({
-                toHtml: () => ({ tag: 'strong', children: true }),
-                parse: [{ tag: 'strong' }, { tag: 'b' }],
-            }),
-        },
-    },
-    {
+        content: defineContent({
+            marks: {
+                bold: defineMark({
+                    toHtml: () => ({ tag: 'strong', children: true }),
+                    parse: [{ tag: 'strong' }, { tag: 'b' }],
+                }),
+            },
+        }),
+    }),
+    definePlugin({
         id: 'link',
-        marks: {
-            link: defineMark<{ href: string }>({
-                toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
-                parse: [{ tag: 'a', value: (element) => ({ href: element.getAttribute('href') ?? '' }) }],
-            }),
-        },
-    },
-    {
+        content: defineContent({
+            marks: {
+                link: defineMark<{ href: string }>({
+                    toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
+                    parse: [{ tag: 'a', value: (element) => ({ href: element.getAttribute('href') ?? '' }) }],
+                }),
+            },
+        }),
+    }),
+    definePlugin({
         id: 'quote',
-        blocks: {
-            quote: defineBlock({
-                content: 'text',
-                toHtml: () => ({ tag: 'blockquote', children: true }),
-                parse: [{ tag: 'blockquote' }],
-            }),
-        },
-    },
+        content: defineContent({
+            blocks: {
+                quote: defineBlock({
+                    content: 'text',
+                    toHtml: () => ({ tag: 'blockquote', children: true }),
+                    parse: [{ tag: 'blockquote' }],
+                }),
+            },
+        }),
+    }),
 ];
 
 describe('buildSchema', () => {
@@ -68,21 +85,23 @@ describe('buildSchema', () => {
 
     it('keeps list items out of the top-level block group', () => {
         const schema = buildSchema([
-            {
+            definePlugin({
                 id: 'list',
-                blocks: {
-                    bulletList: defineBlock({
-                        content: { items: 'listItem' },
-                        toHtml: () => ({ tag: 'ul', children: true }),
-                        parse: [{ tag: 'ul' }],
-                    }),
-                    listItem: defineBlock({
-                        content: { blocks: ['paragraph'] },
-                        toHtml: () => ({ tag: 'li', children: true }),
-                        parse: [{ tag: 'li' }],
-                    }),
-                },
-            },
+                content: defineContent({
+                    blocks: {
+                        bulletList: defineBlock({
+                            content: { items: 'listItem' },
+                            toHtml: () => ({ tag: 'ul', children: true }),
+                            parse: [{ tag: 'ul' }],
+                        }),
+                        listItem: defineBlock({
+                            content: { blocks: ['paragraph'] },
+                            toHtml: () => ({ tag: 'li', children: true }),
+                            parse: [{ tag: 'li' }],
+                        }),
+                    },
+                }),
+            }),
         ]);
 
         expect(schema.nodes.bulletList?.contentMatch.defaultType?.name).toBe('listItem');
@@ -93,32 +112,75 @@ describe('buildSchema', () => {
     it('refuses a list whose item type is not registered, rather than making it a leaf', () => {
         expect(() =>
             buildSchema([
-                {
+                definePlugin({
                     id: 'list',
-                    blocks: {
-                        bulletList: defineBlock({
-                            content: { items: 'nope' },
-                            toHtml: () => ({ tag: 'ul', children: true }),
-                            parse: [{ tag: 'ul' }],
-                        }),
-                    },
-                },
+                    content: defineContent({
+                        blocks: {
+                            bulletList: defineBlock({
+                                content: { items: 'nope' },
+                                toHtml: () => ({ tag: 'ul', children: true }),
+                                parse: [{ tag: 'ul' }],
+                            }),
+                        },
+                    }),
+                }),
             ]),
         ).toThrow('Block "bulletList" declares items of type "nope", which is not registered.');
     });
 
+    it('refuses a mark style rule whose property is not a CSS property name', () => {
+        expect(() =>
+            buildSchema([
+                definePlugin({
+                    id: 'bold',
+                    content: defineContent({
+                        marks: {
+                            bold: defineMark({
+                                toHtml: () => ({ tag: 'strong', children: true }),
+                                parse: [{ style: 'fontWeight', value: () => ({}) }],
+                            }),
+                        },
+                    }),
+                }),
+            ]),
+        ).toThrow('The "bold" mark reads "fontWeight", which is not a CSS property name such as font-weight.');
+    });
+
+    it('lets a mark take off the marks it excludes, ignoring a type no mounted plugin registers', () => {
+        const both = buildSchema(shipped('subscript', 'superscript'));
+        const subscriptOnly = buildSchema(shipped('subscript'));
+        const superscriptOnly = buildSchema(shipped('superscript'));
+
+        expect(both.marks.subscript?.spec.excludes).toBe('subscript superscript');
+        expect(both.marks.superscript?.spec.excludes).toBe('superscript subscript');
+        expect(subscriptOnly.marks.subscript?.spec.excludes).toBe('subscript');
+        expect(superscriptOnly.marks.superscript?.spec.excludes).toBe('superscript');
+    });
+
+    it('keeps a stored run that carries both until it is edited', () => {
+        const schema = buildSchema(shipped('subscript', 'superscript'));
+        const stored: RteDocumentOf = {
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'both', subscript: true, superscript: true }] }],
+        };
+
+        expect(toRteDocument(toEngineDocument(stored, schema))).toEqual(stored);
+    });
+
     it('gives a mark turned on without a value its declared defaults', () => {
         const schema = buildSchema([
-            {
+            definePlugin({
                 id: 'highlight',
-                marks: {
-                    highlight: defineMark<{ color: string }>({
-                        defaults: { color: 'yellow' },
-                        toHtml: ({ color }) => ({ tag: 'mark', attrs: { 'data-color': color }, children: true }),
-                        parse: [{ tag: 'mark' }],
-                    }),
-                },
-            },
+                content: defineContent({
+                    marks: {
+                        highlight: defineMark<{ color: string }>({
+                            defaults: { color: 'yellow' },
+                            toHtml: ({ color }) => ({ tag: 'mark', attrs: { 'data-color': color }, children: true }),
+                            parse: [{ tag: 'mark' }],
+                        }),
+                    },
+                }),
+            }),
         ]);
 
         expect(schema.marks.highlight?.create().attrs).toEqual({ value: { color: 'yellow' } });
@@ -126,22 +188,24 @@ describe('buildSchema', () => {
 
     it('gives an inline without editing UI its declared defaults, and one with editing UI a draft', () => {
         const schema = buildSchema([
-            {
+            definePlugin({
                 id: 'chips',
-                inlines: {
-                    chip: defineInline<{ label: string }>({
-                        defaults: { label: 'new' },
-                        toHtml: ({ label }) => ({ tag: 'span', children: label }),
-                        parse: [],
-                    }),
-                    draft: defineInline<{ label: string }>({
-                        defaults: { label: 'new' },
-                        toHtml: ({ label }) => ({ tag: 'span', children: label }),
-                        parse: [],
-                        render: { edit: () => null },
-                    }),
-                },
-            },
+                content: defineContent({
+                    inlines: {
+                        chip: defineInline<{ label: string }>({
+                            defaults: { label: 'new' },
+                            toHtml: ({ label }) => ({ tag: 'span', children: label }),
+                            parse: [],
+                        }),
+                        draft: defineInline<{ label: string }>({
+                            defaults: { label: 'new' },
+                            toHtml: ({ label }) => ({ tag: 'span', children: label }),
+                            parse: [],
+                        }),
+                    },
+                }),
+                edit: { draft: () => null },
+            }),
         ]);
 
         expect(schema.nodes.chip?.create().attrs).toEqual({ value: { label: 'new' } });

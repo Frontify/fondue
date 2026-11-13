@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/core';
+import { definePlugin } from '#/core';
 
 /**
  * Enter commits instead of adding a paragraph — what a single-line editor (a
@@ -9,10 +9,11 @@ import { type RtePlugin } from '#/core';
  * up focus. Plugin hotkeys run before the editor's own keys, so this handler
  * splits the item itself rather than leaving Enter to the list.
  */
-export const blurOnBreakPlugin = (): RtePlugin => ({
+export const blurOnBreakPlugin = /* @__PURE__ */ definePlugin({
     id: 'blur-on-break',
     hotkeys: {
         Enter: (api) => {
+            // Plugin hotkeys run before the editor's own keys, so the list split has to happen here.
             if (!api.lists.split()) {
                 api.blur();
             }

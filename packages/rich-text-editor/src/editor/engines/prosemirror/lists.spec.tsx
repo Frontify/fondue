@@ -6,9 +6,10 @@ import { undo } from 'prosemirror-history';
 import { NodeSelection } from 'prosemirror-state';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { defineBlock, PARAGRAPH, type RteBlockNode, type RtePlugin } from '#/core';
+import { defineBlock, defineContent, definePlugin, PARAGRAPH, type RteBlockNode, type RtePlugin } from '#/core';
 
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
+import { listsPlugin } from './testPlugins';
 
 /**
  * The list commands, checked by the document they leave behind: wrapping,
@@ -23,6 +24,14 @@ const numbered = (start: number, ...texts: string[]): RteBlockNode =>
     ({ ...list('numberedList', ...texts.map((value) => item(paragraph(text(value))))), start }) as RteBlockNode;
 const bullets = (...texts: string[]): RteBlockNode =>
     list('bulletList', ...texts.map((value) => item(paragraph(text(value)))));
+
+/** A list of the generic `listsPlugin`, one `row` per text; the list carries no attributes of its own. */
+const rows = (type: string, ...texts: string[]) => ({
+    type,
+    children: texts.map((value) => ({ type: 'row', children: [paragraph(text(value))] })),
+});
+const dots = (...texts: string[]) => rows('dotList', ...texts);
+const steps = (...texts: string[]) => rows('stepList', ...texts);
 
 afterEach(destroyEditors);
 
@@ -109,17 +118,17 @@ describe('toggling a list', () => {
     });
 
     it('keeps the caret where it was when a converted list joins the one after it', () => {
-        const editor = editorWith(plugins, [bullets('one'), list('numberedList', item(paragraph(text('two'))))]);
+        const editor = editorWith([listsPlugin], [dots('one'), steps('two')]);
         editor.caretAfter('on');
 
-        editor.api.lists.toggle('numberedList');
+        editor.api.lists.toggle('stepList');
 
         const { $from } = editor.view.state.selection;
         expect([$from.parent.textContent, $from.parentOffset]).toEqual(['one', 2]);
     });
 
     it('keeps a selected block selected when its list is converted', () => {
-        const editor = editorWith(plugins, [bullets('one')]);
+        const editor = editorWith([listsPlugin], [dots('one')]);
         let paragraphAt = -1;
         editor.view.state.doc.descendants((node, pos) => {
             if (node.type.name === 'paragraph' && paragraphAt === -1) {
@@ -130,93 +139,76 @@ describe('toggling a list', () => {
             editor.view.state.tr.setSelection(NodeSelection.create(editor.view.state.doc, paragraphAt)),
         );
 
-        editor.api.lists.toggle('numberedList');
+        editor.api.lists.toggle('stepList');
 
         expect(editor.view.state.selection instanceof NodeSelection).toBe(true);
     });
 
-    it('joins the list with the numbered lists on both sides when a paragraph between is wrapped', () => {
-        const numbered = (value: string) => list('numberedList', item(paragraph(text(value))));
-        const editor = editorWith(plugins, [numbered('one'), paragraph(text('two')), numbered('three')]);
+    it('joins the list with the lists of its type on both sides when a paragraph between is wrapped', () => {
+        const editor = editorWith([listsPlugin], [steps('one'), paragraph(text('two')), steps('three')]);
         editor.caretAfter('tw');
 
-        editor.api.lists.toggle('numberedList');
+        editor.api.lists.toggle('stepList');
 
-        expect(editor.stored()).toEqual([
-            list(
-                'numberedList',
-                item(paragraph(text('one'))),
-                item(paragraph(text('two'))),
-                item(paragraph(text('three'))),
-            ),
-        ]);
+        expect(editor.stored()).toEqual([steps('one', 'two', 'three')]);
     });
 
     it('joins a converted list with a neighbour of the new type', () => {
-        const editor = editorWith(plugins, [list('numberedList', item(paragraph(text('one')))), bullets('two')]);
+        const editor = editorWith([listsPlugin], [steps('one'), dots('two')]);
         editor.caretAfter('tw');
 
-        editor.api.lists.toggle('numberedList');
+        editor.api.lists.toggle('stepList');
 
-        expect(editor.stored()).toEqual([
-            list('numberedList', item(paragraph(text('one'))), item(paragraph(text('two')))),
-        ]);
+        expect(editor.stored()).toEqual([steps('one', 'two')]);
     });
 
     it('does not join a list with a neighbour of another type', () => {
-        const editor = editorWith(plugins, [bullets('one'), paragraph(text('two'))]);
+        const editor = editorWith([listsPlugin], [dots('one'), paragraph(text('two'))]);
         editor.caretAfter('tw');
 
-        editor.api.lists.toggle('numberedList');
+        editor.api.lists.toggle('stepList');
 
-        expect(editor.stored()).toEqual([bullets('one'), list('numberedList', item(paragraph(text('two'))))]);
+        expect(editor.stored()).toEqual([dots('one'), steps('two')]);
     });
 
     it('joins a converted list with neighbours of the new type on both sides', () => {
-        const numbered = (value: string) => list('numberedList', item(paragraph(text(value))));
-        const editor = editorWith(plugins, [numbered('one'), bullets('two'), numbered('three')]);
+        const editor = editorWith([listsPlugin], [steps('one'), dots('two'), steps('three')]);
         editor.caretAfter('tw');
 
-        editor.api.lists.toggle('numberedList');
+        editor.api.lists.toggle('stepList');
 
-        expect(editor.stored()).toEqual([
-            list(
-                'numberedList',
-                item(paragraph(text('one'))),
-                item(paragraph(text('two'))),
-                item(paragraph(text('three'))),
-            ),
-        ]);
+        expect(editor.stored()).toEqual([steps('one', 'two', 'three')]);
     });
 
     describe('with a list type whose attributes differ', () => {
-        const markedList: RtePlugin = {
+        const markedList: RtePlugin = definePlugin({
             id: 'marked-list',
-            blocks: {
-                markedList: defineBlock<{ marker: string }>({
-                    content: { items: 'markedItem' },
-                    defaults: { marker: 'dots' },
-                    toHtml: () => ({ tag: 'ol', children: true }),
-                    parse: [{ tag: 'ol.marked' }],
-                }),
-                markedItem: defineBlock({
-                    content: { blocks: [PARAGRAPH] },
-                    toHtml: () => ({ tag: 'li', children: true }),
-                    parse: [{ tag: 'li.marked' }],
-                }),
-            },
-        };
+            content: defineContent({
+                blocks: {
+                    markedList: defineBlock<{ marker: string }>({
+                        content: { items: 'markedItem' },
+                        defaults: { marker: 'dots' },
+                        toHtml: () => ({ tag: 'ol', children: true }),
+                        parse: [{ tag: 'ol.marked' }],
+                    }),
+                    markedItem: defineBlock({
+                        content: { blocks: [PARAGRAPH] },
+                        toHtml: () => ({ tag: 'li', children: true }),
+                        parse: [{ tag: 'li.marked' }],
+                    }),
+                },
+            }),
+        });
         // A host plugin's block carries its own attributes, which the open RteBlockNode cannot name.
-        const marked = (marker: string, ...values: string[]): RteBlockNode =>
-            ({
-                type: 'markedList',
-                marker,
-                children: values.map((value) => ({ type: 'markedItem', children: [paragraph(text(value))] })),
-            }) as RteBlockNode;
+        const marked = (marker: string, ...values: string[]) => ({
+            type: 'markedList',
+            marker,
+            children: values.map((value) => ({ type: 'markedItem', children: [paragraph(text(value))] })),
+        });
 
         it('does not join the list before when its attributes differ', () => {
             const editor = editorWith(
-                [...plugins, markedList],
+                [markedList],
                 [marked('roman', 'one'), paragraph(text('two')), marked('dots', 'three')],
             );
             editor.caretAfter('tw');
@@ -228,7 +220,7 @@ describe('toggling a list', () => {
 
         it('does not join the list after when its attributes differ', () => {
             const editor = editorWith(
-                [...plugins, markedList],
+                [markedList],
                 [marked('dots', 'one'), paragraph(text('two')), marked('roman', 'three')],
             );
             editor.caretAfter('tw');
@@ -240,16 +232,13 @@ describe('toggling a list', () => {
     });
 
     it('is one undo step when it joins', () => {
-        const editor = editorWith(plugins, [
-            list('numberedList', item(paragraph(text('one')))),
-            paragraph(text('two')),
-        ]);
+        const editor = editorWith([listsPlugin], [steps('one'), paragraph(text('two'))]);
         editor.caretAfter('tw');
 
-        editor.api.lists.toggle('numberedList');
+        editor.api.lists.toggle('stepList');
         undo(editor.view.state, editor.view.dispatch);
 
-        expect(editor.stored()).toEqual([list('numberedList', item(paragraph(text('one')))), paragraph(text('two'))]);
+        expect(editor.stored()).toEqual([steps('one'), paragraph(text('two'))]);
     });
 
     it('ignores a type that is not a list', () => {

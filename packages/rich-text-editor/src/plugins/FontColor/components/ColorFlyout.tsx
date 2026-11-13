@@ -5,9 +5,10 @@ import { IconDroplet } from '@frontify/fondue-icons';
 import { type ComponentProps, type ReactNode, useId, useRef, useState } from 'react';
 
 import { type EditorControlApi, type RteSelectionSnapshot, type ToolbarItemProps } from '#/core';
+import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
+import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
-import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
 import {
     decodeStoredColor,
     encodeStoredColor,
@@ -32,9 +33,6 @@ const encodePickerColor = (color: PickerColor): string =>
 /** The hex field inside the picker. */
 const HEX_FIELD_SELECTOR = 'input[type="text"]';
 
-/** The control's name, for its button and flyout header. */
-const COLOR_LABEL = 'Text colour';
-
 /** One-click colours. Fondue has no text palette, so these are our own, each at least 4.5:1 on white. */
 const PRESETS: readonly { name: string; color: string }[] = [
     { name: 'Grey', color: '#5f6368' },
@@ -57,6 +55,10 @@ const readHexField = (container: HTMLElement | null, alpha: number | undefined):
 type ColorFlyoutProps = {
     selection: RteSelectionSnapshot;
     api: EditorControlApi;
+    /**
+     * The control's name, for its button and the flyout's header
+     */
+    label: string;
     /** Whether the selection carries a colour; `'mixed'` when only part of it does. */
     isActive: ToolbarItemProps['isActive'];
 };
@@ -66,7 +68,7 @@ type ColorFlyoutProps = {
  * picker in a flyout. The colour reaches the document on save, not while
  * dragging, so the undo history gets one step per choice.
  */
-export const ColorFlyout = ({ selection, api, isActive }: ColorFlyoutProps): ReactNode => {
+export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProps): ReactNode => {
     const [open, setOpen] = useState(false);
     const [draft, setDraft] = useState<PickerColor>(NO_COLOR_DRAFT);
     const titleId = useId();
@@ -87,7 +89,7 @@ export const ColorFlyout = ({ selection, api, isActive }: ColorFlyoutProps): Rea
     const hasColor = isActive !== false;
     const storedColor = toStoredColor(value?.color);
     let currentColor: Rgba | undefined;
-    let title = COLOR_LABEL;
+    let title = label;
     if (storedColor !== undefined) {
         currentColor = decodeStoredColor(storedColor);
         title += `: ${toColorName(currentColor)}`;
@@ -147,7 +149,7 @@ export const ColorFlyout = ({ selection, api, isActive }: ColorFlyoutProps): Rea
                     title={title}
                 >
                     <span className={styles.trigger}>
-                        <IconDroplet size={20} />
+                        <IconDroplet size={TOOLBAR_ICON_SIZE} />
                         <span
                             aria-hidden
                             className={styles.swatch}
@@ -168,7 +170,7 @@ export const ColorFlyout = ({ selection, api, isActive }: ColorFlyoutProps): Rea
                 }}
             >
                 <Flyout.Header>
-                    <span id={titleId}>{COLOR_LABEL}</span>
+                    <span id={titleId}>{label}</span>
                 </Flyout.Header>
                 <Flyout.Body>
                     <div className={styles.presets} role="group" aria-label="Suggested colours">

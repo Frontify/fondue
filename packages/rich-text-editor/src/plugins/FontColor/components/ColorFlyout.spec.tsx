@@ -40,7 +40,9 @@ const mount = (marks: RteSelectionSnapshot['marks'], isActive: ToolbarItemProps[
     const api = { marks: { toggle, set, remove }, focus: vi.fn() } as unknown as EditorControlApi;
     const container = document.body.appendChild(document.createElement('div'));
     root = createRoot(container);
-    act(() => root?.render(<ColorFlyout selection={{ marks } as never} api={api} isActive={isActive} />));
+    act(() =>
+        root?.render(<ColorFlyout selection={{ marks } as never} api={api} label="Text colour" isActive={isActive} />),
+    );
     const trigger = container.querySelector('button');
     act(() => trigger?.click());
     return { toggle, set, remove, trigger };

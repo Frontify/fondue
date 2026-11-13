@@ -1,8 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineBlock, type HotkeyHandler, PARAGRAPH, type RteBlockCommand, type RtePlugin } from '#/core';
+import {
+    type DefaultStyle,
+    defineBlock,
+    defineContent,
+    definePlugin,
+    type HotkeyHandler,
+    PARAGRAPH,
+    type RteBlockCommand,
+    type RteContent,
+    type RteIcon,
+    type RtePlugin,
+} from '#/core';
 
-import { HeadingLevelIcon } from './components/HeadingLevelIcon';
+import { withoutBoldWeight } from '../shared/helpers/declaredStyle';
+
+import { HEADING_LEVEL_ICONS } from './components/HeadingLevelIcon';
 import { TextStyleSelect } from './components/TextStyleSelect';
 import {
     ALL_TEXT_STYLES,
@@ -15,6 +28,57 @@ import {
     type TextStyleOption,
 } from './helpers/presets';
 
+// The block this plugin contributes; the package root assembles it into the
+// official document union.
+export type { TextStyleBlock } from './helpers/presets';
+
+export type TextStylePluginOptions = {
+    /**
+     * The styles the dropdown offers, in order, and what pasted HTML may become.
+     * Include `'paragraph'` for the option that clears a style.
+     * @default ALL_TEXT_STYLES
+     */
+    styles?: readonly TextStyleOption[];
+};
+
+// Headings are bold by default, so a bold the pasted heading declares on itself is not the author's. Bold on text inside it is.
+const TEXT_STYLE_DEFAULT_STYLES: readonly DefaultStyle[] = [
+    { property: 'font-weight', scope: 'self', strip: withoutBoldWeight },
+];
+
+const textStyleContentFor = (options: readonly TextStyleOption[]): RteContent => {
+    const offered = presetsFor(options);
+
+    return defineContent({
+        blocks: {
+            textStyle: defineBlock<{ style: string }>({
+                content: 'text',
+                // Only reached by a node that arrives without one; every
+                // path that sets the attribute names a style.
+                defaults: { style: offered[0]?.name ?? FIRST_PRESET },
+                defaultStyles: TEXT_STYLE_DEFAULT_STYLES,
+                toHtml: ({ style }) => {
+                    const preset = findPreset(style);
+                    if (preset === undefined) {
+                        return { tag: 'p', children: true };
+                    }
+                    const attrs: Record<string, string | undefined> = { class: preset.className };
+                    if (preset.tag === 'p') {
+                        attrs['data-text-style'] = preset.name;
+                    }
+                    return { tag: preset.tag, attrs, children: true };
+                },
+                parse: offered.map(parseRuleFor),
+            }),
+        },
+    });
+};
+
+/**
+ * The text block carrying a style, accepting every style
+ */
+export const textStyleContent = textStyleContentFor(ALL_TEXT_STYLES);
+
 const HEADING_LEVEL: Partial<Record<string, number>> = { h1: 1, h2: 2, h3: 3, h4: 4 };
 
 /** Words the `/` menu also finds a heading by. */
@@ -23,15 +87,6 @@ const HEADING_KEYWORDS: Partial<Record<number, readonly string[]>> = {
     2: ['h2', 'subtitle'],
     3: ['h3'],
     4: ['h4'],
-};
-
-// The block this plugin contributes; the package root assembles it into the
-// official document union.
-export type { TextStyleBlock } from './helpers/presets';
-
-export type TextStylePluginOptions = {
-    /** The styles the dropdown offers, in order. Include `'paragraph'` for the option that clears one. */
-    styles?: readonly TextStyleOption[];
 };
 
 /**
@@ -62,10 +117,14 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
     // The paragraph is the editor's own "Text" command, so only the presets are listed.
     const commands: RteBlockCommand[] = offered.map((preset) => {
         const level = HEADING_LEVEL[preset.tag];
+        let icon: RteIcon | undefined;
+        if (level !== undefined) {
+            icon = HEADING_LEVEL_ICONS[level];
+        }
         return {
             id: preset.tag === 'p' ? preset.name : `heading-${level}`,
             label: preset.label,
-            icon: level === undefined ? undefined : <HeadingLevelIcon level={level} />,
+            icon,
             keywords: level === undefined ? [] : (HEADING_KEYWORDS[level] ?? []),
             group: 'turnInto',
             isActive: (selection) => isTextStyle(selection.block) && selection.block.style === preset.name,
@@ -73,37 +132,20 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
         };
     });
 
-    return {
+    // Reuse the shared object so the default plugin and defaultContent declare the very same block definition.
+    let content = textStyleContent;
+    if (options !== ALL_TEXT_STYLES) {
+        content = textStyleContentFor(options);
+    }
+
+    return definePlugin({
         id: 'text-style',
-        blocks: {
-            textStyle: defineBlock<{ style: string }>({
-                content: 'text',
-                // Only reached by a node that arrives without one; every
-                // path that sets the attribute names a style.
-                defaults: { style: offered[0]?.name ?? FIRST_PRESET },
-                toHtml: ({ style }) => {
-                    const preset = findPreset(style);
-                    if (preset === undefined) {
-                        return { tag: 'p', children: true };
-                    }
-                    return {
-                        tag: preset.tag,
-                        attrs: {
-                            class: preset.className,
-                            ...(preset.tag === 'p' ? { 'data-text-style': preset.name } : {}),
-                        },
-                        children: true,
-                    };
-                },
-                parse: offered.map(parseRuleFor),
-            }),
-        },
+        content,
         toolbarGroup: 'text',
-        toolbarItem: ({ api, selection }) => <TextStyleSelect selection={selection} api={api} options={options} />,
+        toolbar: [{ label: 'Text style', render: (props) => <TextStyleSelect {...props} options={options} /> }],
         hotkeys,
         // `# ` through `#### `, for the headings this editor offers.
         inputRules: offered.flatMap(markdownRuleFor),
         commands,
-        floatingToolbar: 'hidden',
-    };
+    });
 };

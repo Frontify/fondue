@@ -9,8 +9,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
     buildPluginRegistry,
+    defineContent,
     defineInline,
     defineMark,
+    definePlugin,
     emptyDocument,
     PARAGRAPH,
     type RteDocumentOf,
@@ -18,31 +20,35 @@ import {
 } from '#/core';
 
 import { mountEditorForTests } from './editing';
-import { destroyEditors, editorWith, paragraph as paragraphBlock, shipped, text } from './testEditor';
+import { destroyEditors, editorWith, paragraph as paragraphBlock, text } from './testEditor';
 
 /**
  * The controlled-`value` protocol: a host hands back the document it was given,
  * and what happens then decides whether the editor is usable at all.
  */
 const plugins: RtePlugin[] = [
-    {
+    definePlugin({
         id: 'tag',
-        inlines: {
-            tag: defineInline<{ name: string }>({
-                toHtml: ({ name }) => ({ tag: 'span', children: name }),
-                parse: [],
-            }),
-        },
-    },
-    {
+        content: defineContent({
+            inlines: {
+                tag: defineInline<{ name: string }>({
+                    toHtml: ({ name }) => ({ tag: 'span', children: name }),
+                    parse: [],
+                }),
+            },
+        }),
+    }),
+    definePlugin({
         id: 'bold',
-        marks: {
-            bold: defineMark({
-                toHtml: () => ({ tag: 'strong', children: true }),
-                parse: [{ tag: 'strong' }],
-            }),
-        },
-    },
+        content: defineContent({
+            marks: {
+                bold: defineMark({
+                    toHtml: () => ({ tag: 'strong', children: true }),
+                    parse: [{ tag: 'strong' }],
+                }),
+            },
+        }),
+    }),
 ];
 
 const paragraph = (text: string): RteDocumentOf => ({
@@ -328,14 +334,14 @@ describe('undo after a cut or a drop', () => {
 
 describe('undo after a paste a feature handles', () => {
     it('takes the typing before, the paste and the typing after back as three steps', () => {
-        const insertsText: RtePlugin = {
+        const insertsText = definePlugin({
             id: 'inserts',
             onPaste: ({ text: pasted }, api) => {
                 api.insertText(pasted);
                 return true;
             },
-        };
-        const editor = editorWith([...shipped(), insertsText], [paragraphBlock()]);
+        });
+        const editor = editorWith([insertsText], [paragraphBlock()]);
         const undoOnce = (): void => {
             undo(editor.view.state, editor.view.dispatch);
         };
@@ -356,15 +362,15 @@ describe('undo after a paste a feature handles', () => {
 
 describe('undo after a paste a feature makes in several edits', () => {
     it('takes the whole paste back in one step', () => {
-        const insertsTwice: RtePlugin = {
+        const insertsTwice = definePlugin({
             id: 'inserts-twice',
             onPaste: (_paste, api) => {
                 api.insertText('a');
                 api.insertText('b');
                 return true;
             },
-        };
-        const editor = editorWith([...shipped(), insertsTwice], [paragraphBlock()]);
+        });
+        const editor = editorWith([insertsTwice], [paragraphBlock()]);
         editor.type('one');
         editor.paste('ignored');
         editor.type('two');
@@ -377,8 +383,25 @@ describe('undo after a paste a feature makes in several edits', () => {
     });
 
     it('takes back a paste made of mark changes only in one step', () => {
-        const before = [paragraphBlock(text('docs', { link: { href: 'https://old.example' } }))];
-        const editor = editorWith(shipped('link'), before);
+        // Taking a mark off and putting it on again changes marks only, so the paste makes two edits with no text change.
+        const retargets = definePlugin({
+            id: 'retargets',
+            content: defineContent({
+                marks: {
+                    ref: defineMark<{ href: string }>({
+                        toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
+                        parse: [{ tag: 'a[href]' }],
+                    }),
+                },
+            }),
+            onPaste: ({ text: pasted }, api) => {
+                api.marks.remove('ref');
+                api.marks.set('ref', { href: pasted });
+                return true;
+            },
+        });
+        const before = [paragraphBlock(text('docs', { ref: { href: 'https://old.example' } }))];
+        const editor = editorWith([retargets], before);
         editor.select('docs');
 
         editor.paste('https://new.example');

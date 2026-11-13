@@ -5,21 +5,22 @@ import { IconFaceHappy } from '@frontify/fondue-icons';
 import { type ReactNode, useId, useRef, useState } from 'react';
 
 import { type EditorControlApi } from '#/core';
+import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
+import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
-import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
 import { type EmojiItem } from '../types';
 
 import { EmojiPicker } from './EmojiPicker';
 
-/** The toolbar entry point: the picker in a flyout, inserting the emoji at the caret as text. */
-export const EmojiToolbarButton = ({
-    api,
-    emojis,
-}: {
+type EmojiToolbarButtonProps = {
     api: EditorControlApi;
     emojis: readonly EmojiItem[];
-}): ReactNode => {
+    label: string;
+};
+
+/** The toolbar entry point: the picker in a flyout, inserting the emoji at the caret as text. */
+export const EmojiToolbarButton = ({ api, emojis, label }: EmojiToolbarButtonProps): ReactNode => {
     const [open, setOpen] = useState(false);
     const titleId = useId();
     const searchRef = useRef<HTMLInputElement>(null);
@@ -33,8 +34,8 @@ export const EmojiToolbarButton = ({
     return (
         <Flyout.Root open={open} onOpenChange={setOpen}>
             <Flyout.Trigger>
-                <ToolbarButton title="Emoji">
-                    <IconFaceHappy size={20} />
+                <ToolbarButton title={label}>
+                    <IconFaceHappy size={TOOLBAR_ICON_SIZE} />
                 </ToolbarButton>
             </Flyout.Trigger>
             <Flyout.Content

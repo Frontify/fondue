@@ -6,10 +6,18 @@ import { TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { defineInline, type EditorControlApi, type RteBlockNode, type RtePlugin } from '#/core';
+import {
+    defineContent,
+    defineInline,
+    definePlugin,
+    type EditorControlApi,
+    type RteBlockNode,
+    type RtePlugin,
+} from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
+import { listsPlugin, titlePlugin, toneAttributePlugin } from './testPlugins';
 
 /**
  * What typing and key presses do, through the pipeline `keystrokePipeline`
@@ -33,6 +41,8 @@ const press = (view: EditorView, key: string, init: KeyboardEventInit = {}): boo
     return view.someProp('handleKeyDown', (handle) => handle(view, event)) === true;
 };
 
+const mod = /Mac|iP(hone|[oa]d)/.test(navigator.platform) ? { metaKey: true } : { ctrlKey: true };
+
 afterEach(destroyEditors);
 afterEach(() => vi.restoreAllMocks());
 
@@ -53,6 +63,42 @@ describe('typing a mark shortcut', () => {
 
     it('turns *text* italic', () => {
         expect(typed('an *aside*')).toEqual([paragraph(text('an '), text('aside', { italic: true }))]);
+    });
+
+    it('turns __text__ bold and _text_ italic', () => {
+        expect(typed('__bold__ and _aside_')).toEqual([
+            paragraph(text('bold', { bold: true }), text(' and '), text('aside', { italic: true })),
+        ]);
+    });
+
+    it.each([
+        ['foo__bar__', 'inside a word'],
+        ['self.__dict__', 'after a full stop'],
+        ['a__b__ c', 'glued to the word before it'],
+    ])('leaves %s as typed, since a word-bounded rule needs room around its delimiters (%s)', (value) => {
+        expect(typed(value)).toEqual([paragraph(text(value))]);
+    });
+
+    it.each([
+        ['at the start of a line', '__text__', [text('text', { bold: true })]],
+        ['after a space', 'a __text__', [text('a '), text('text', { bold: true })]],
+        ['after an opening bracket', '(__text__', [text('('), text('text', { bold: true })]],
+        ['after a quote', '"__x__', [text('"'), text('x', { bold: true })]],
+    ])('turns __text__ bold %s', (_where, value, children) => {
+        expect(typed(value)).toEqual([paragraph(...children)]);
+    });
+
+    it('leaves __text__ as typed when a word follows the closing delimiter', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('word'))]);
+        editor.caretBefore('word');
+
+        editor.type('__text__');
+
+        expect(editor.stored()).toEqual([paragraph(text('__text__word'))]);
+    });
+
+    it('keeps the ** rule inside a word', () => {
+        expect(typed('foo**bar**')).toEqual([paragraph(text('foo'), text('bar', { bold: true }))]);
     });
 
     it('does not carry the mark on into what is typed after it', () => {
@@ -200,12 +246,93 @@ describe('a check list shortcut inside a check list', () => {
 
 describe('a mark that opts out of typing rules', () => {
     it('keeps the delimiters typed inside it — inline code keeps `**`', () => {
-        const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
+        const editor = editorWith(defaultPlugins, [paragraph(text('xy', { code: true }))]);
         editor.caretAfter('x');
 
         editor.type(' **c**');
 
-        expect(editor.stored()).toEqual([paragraph(text('x **c**', { code: true }))]);
+        expect(editor.stored()).toEqual([paragraph(text('x **c**y', { code: true }))]);
+    });
+});
+
+describe('inline code', () => {
+    it('does not carry on into what is typed at its end', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
+        editor.caretAfter('x');
+
+        editor.type('y');
+
+        expect(editor.stored()).toEqual([paragraph(text('x', { code: true }), text('y'))]);
+    });
+
+    it('can sit inside text a mark shortcut wraps', () => {
+        expect(typed('**run `npm` now**')).toEqual([
+            paragraph(
+                text('run ', { bold: true }),
+                text('npm', { bold: true, code: true }),
+                text(' now', { bold: true }),
+            ),
+        ]);
+    });
+
+    it('lets a mark shortcut typed right after its end apply', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('foo', { code: true }))]);
+        editor.caretAfter('foo');
+
+        editor.type('**b**');
+
+        expect(editor.stored()).toEqual([paragraph(text('foo', { code: true }), text('b', { bold: true }))]);
+    });
+
+    it('keeps its text when a typing rule after its end would reach into it', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('snake_case', { code: true }))]);
+        editor.caretAfter('snake_case');
+
+        editor.type('_');
+
+        expect(editor.stored()).toEqual([paragraph(text('snake_case', { code: true }), text('_'))]);
+    });
+
+    it('carries on at its end once Mod-e turns it back on', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
+        editor.caretAfter('x');
+
+        expect(press(editor.view, 'e', mod)).toBe(true);
+        editor.type('y');
+
+        expect(editor.stored()).toEqual([paragraph(text('xy', { code: true }))]);
+    });
+});
+
+describe('subscript and superscript', () => {
+    it('turning one on over text takes the other off', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { subscript: true }))]);
+        editor.select('x');
+
+        expect(press(editor.view, '.', mod)).toBe(true);
+        expect(editor.stored()).toEqual([paragraph(text('x', { superscript: true }))]);
+
+        editor.api.marks.toggle('subscript');
+        expect(editor.stored()).toEqual([paragraph(text('x', { subscript: true }))]);
+    });
+
+    it('a stored run carrying both loses the one turned off', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { subscript: true, superscript: true }))]);
+        editor.select('x');
+
+        editor.api.marks.toggle('subscript');
+
+        expect(editor.stored()).toEqual([paragraph(text('x', { superscript: true }))]);
+    });
+
+    it('turning one on at a caret types only that one', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { subscript: true }))]);
+        editor.caretAfter('x');
+
+        expect(press(editor.view, '.', mod)).toBe(true);
+        editor.type('y');
+
+        expect(editor.stored()).toEqual([paragraph(text('x', { subscript: true }), text('y', { superscript: true }))]);
     });
 });
 
@@ -224,7 +351,6 @@ describe('undoing a typing rewrite', () => {
         const editor = editorWith(defaultPlugins, empty());
         editor.type('## ');
 
-        const mod = /Mac|iP(hone|[oa]d)/.test(navigator.platform) ? { metaKey: true } : { ctrlKey: true };
         expect(press(editor.view, 'z', mod)).toBe(true);
 
         expect(editor.stored()).toEqual([paragraph(text('## '))]);
@@ -284,8 +410,8 @@ describe('a feature hotkey', () => {
         const second = vi.fn<(api: EditorControlApi) => void>((api) => api.insertText('!'));
         const editor = editorWith(
             [
-                { id: 'first', hotkeys: { 'Alt-x': first } },
-                { id: 'second', hotkeys: { 'Alt-x': second } },
+                definePlugin({ id: 'first', hotkeys: { 'Alt-x': first } }),
+                definePlugin({ id: 'second', hotkeys: { 'Alt-x': second } }),
             ],
             [paragraph(text('a'))],
         );
@@ -306,7 +432,10 @@ describe('a feature hotkey', () => {
         it(`runs ${keys} on a Mac when Option reports AltGraph`, () => {
             vi.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
             const run = vi.fn<(api: EditorControlApi) => void>((api) => api.insertText('!'));
-            const editor = editorWith([{ id: 'option', hotkeys: { [keys]: run } }], [paragraph(text('a'))]);
+            const editor = editorWith(
+                [definePlugin({ id: 'option', hotkeys: { [keys]: run } })],
+                [paragraph(text('a'))],
+            );
             editor.caretAfter('a');
 
             expect(press(editor.view, 'x', { ...init, modifierAltGraph: true })).toBe(true);
@@ -318,7 +447,10 @@ describe('a feature hotkey', () => {
     it('leaves Ctrl-Alt-x to AltGr off a Mac', () => {
         vi.spyOn(navigator, 'platform', 'get').mockReturnValue('Win32');
         const run = vi.fn();
-        const editor = editorWith([{ id: 'ctrl-alt', hotkeys: { 'Ctrl-Alt-x': run } }], [paragraph(text('a'))]);
+        const editor = editorWith(
+            [definePlugin({ id: 'ctrl-alt', hotkeys: { 'Ctrl-Alt-x': run } })],
+            [paragraph(text('a'))],
+        );
         editor.caretAfter('a');
 
         expect(press(editor.view, 'x', { ctrlKey: true, altKey: true, modifierAltGraph: true })).toBe(false);
@@ -329,7 +461,7 @@ describe('a feature hotkey', () => {
     it('takes a key the list keys would otherwise claim', () => {
         const claim = vi.fn(() => true);
         const editor = editorWith(
-            [...defaultPlugins, { id: 'claims-enter', hotkeys: { Enter: claim } }],
+            [...defaultPlugins, definePlugin({ id: 'claims-enter', hotkeys: { Enter: claim } })],
             [{ type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('ab'))] }] }],
         );
         editor.caretAfter('a');
@@ -342,7 +474,7 @@ describe('a feature hotkey', () => {
 
     it('naming a character does not fire in the middle of a word', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>();
-        const editor = editorWith([{ id: 'mention', hotkeys: { '@': mention } }], empty());
+        const editor = editorWith([definePlugin({ id: 'mention', hotkeys: { '@': mention } })], empty());
 
         editor.type('noah@frontify.com');
 
@@ -352,7 +484,7 @@ describe('a feature hotkey', () => {
 
     it('naming a character fires on that character being typed, and the character is not inserted', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>((api) => api.insertText('[mention]'));
-        const editor = editorWith([{ id: 'mention', hotkeys: { '@': mention } }], empty());
+        const editor = editorWith([definePlugin({ id: 'mention', hotkeys: { '@': mention } })], empty());
 
         editor.type('hi @');
 
@@ -517,7 +649,7 @@ describe('typing rewrites when a composition ends', () => {
 describe('a character hotkey during IME composition', () => {
     it('does not fire: the composition owns the character', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>();
-        const editor = editorWith([{ id: 'mention', hotkeys: { '@': mention } }], empty());
+        const editor = editorWith([definePlugin({ id: 'mention', hotkeys: { '@': mention } })], empty());
         vi.spyOn(editor.view, 'composing', 'get').mockReturnValue(true);
 
         editor.type('@');
@@ -527,15 +659,17 @@ describe('a character hotkey during IME composition', () => {
 });
 
 describe('a mark shortcut around content that is more than plain text', () => {
-    const tagPlugin: RtePlugin = {
+    const tagPlugin: RtePlugin = definePlugin({
         id: 'tag',
-        inlines: {
-            tag: defineInline<{ name: string }>({
-                toHtml: ({ name }) => ({ tag: 'span', children: name }),
-                parse: [],
-            }),
-        },
-    };
+        content: defineContent({
+            inlines: {
+                tag: defineInline<{ name: string }>({
+                    toHtml: ({ name }) => ({ tag: 'span', children: name }),
+                    parse: [],
+                }),
+            },
+        }),
+    });
 
     it('keeps an inline element inside it', () => {
         const editor = editorWith(
@@ -594,47 +728,41 @@ describe('Enter in a list over a range across items', () => {
     });
 });
 
-type CheckItemSpec = { checked: boolean; text: string };
+type TaskSpec = { done: boolean; text: string };
 
-describe('Enter in a to-do list', () => {
-    const checkList = (...items: CheckItemSpec[]): RteBlockNode => ({
-        type: 'checkList',
-        children: items.map(({ checked, text: value }) => ({
-            type: 'checkItem',
-            checked,
-            children: [paragraph(text(value))],
-        })),
-    });
+/** A `taskList` as a spec writes it: the item's own `done` sits flat on it, which the open `RteBlockNode` cannot name. */
+const taskList = (...tasks: TaskSpec[]) => ({
+    type: 'taskList',
+    children: tasks.map(({ done, text: value }) => ({ type: 'task', done, children: [paragraph(text(value))] })),
+});
 
-    it('at the end of a checked item adds an unchecked one and keeps the first checked', () => {
-        const editor = editorWith(defaultPlugins, [checkList({ checked: true, text: 'done' })]);
+describe('Enter in a list whose items have a state', () => {
+    const plugins = [listsPlugin];
+
+    it('at the end of a done item adds one not done and keeps the first done', () => {
+        const editor = editorWith(plugins, [taskList({ done: true, text: 'done' })]);
         editor.caretAfter('done');
 
         expect(press(editor.view, 'Enter')).toBe(true);
 
         expect(editor.stored()).toEqual([
             {
-                type: 'checkList',
+                type: 'taskList',
                 children: [
-                    { type: 'checkItem', checked: true, children: [paragraph(text('done'))] },
-                    { type: 'checkItem', checked: false, children: [paragraph()] },
+                    { type: 'task', done: true, children: [paragraph(text('done'))] },
+                    { type: 'task', done: false, children: [paragraph()] },
                 ],
             },
         ]);
     });
 
-    it('in a nested checked item leaves the checked item around it as it was', () => {
-        const nestedItem = (checked: boolean, ...children: RteBlockNode[]) => ({
-            type: 'checkItem',
-            checked,
-            children,
-        });
-        const editor = editorWith(defaultPlugins, [
-            // A nested check list written out by hand: RteBlockNode cannot name a plugin's block.
+    it('in a nested done item leaves the done item around it as it was', () => {
+        const nestedItem = (done: boolean, ...children: unknown[]) => ({ type: 'task', done, children });
+        const editor = editorWith(plugins, [
             {
-                type: 'checkList',
-                children: [nestedItem(true, paragraph(text('outer')), checkList({ checked: true, text: 'inner' }))],
-            } as RteBlockNode,
+                type: 'taskList',
+                children: [nestedItem(true, paragraph(text('outer')), taskList({ done: true, text: 'inner' }))],
+            },
         ]);
         editor.caretAfter('inner');
 
@@ -642,51 +770,48 @@ describe('Enter in a to-do list', () => {
 
         expect(editor.stored()).toEqual([
             {
-                type: 'checkList',
+                type: 'taskList',
                 children: [
-                    // RteBlockNode cannot name a plugin's block, so the nested check list is cast.
                     nestedItem(true, paragraph(text('outer')), {
-                        type: 'checkList',
+                        type: 'taskList',
                         children: [nestedItem(true, paragraph(text('inner'))), nestedItem(false, paragraph())],
-                    } as RteBlockNode),
+                    }),
                 ],
             },
         ]);
     });
 
-    it('in the middle of a checked item leaves the second half unchecked', () => {
-        const editor = editorWith(defaultPlugins, [checkList({ checked: true, text: 'onetwo' })]);
+    it('in the middle of a done item leaves the second half not done', () => {
+        const editor = editorWith(plugins, [taskList({ done: true, text: 'onetwo' })]);
         editor.caretAfter('one');
 
         expect(press(editor.view, 'Enter')).toBe(true);
 
-        expect(editor.stored()).toEqual([checkList({ checked: true, text: 'one' }, { checked: false, text: 'two' })]);
+        expect(editor.stored()).toEqual([taskList({ done: true, text: 'one' }, { done: false, text: 'two' })]);
     });
 
-    it('at the very start of a checked item puts an unchecked empty item above and keeps the text checked', () => {
-        const editor = editorWith(defaultPlugins, [checkList({ checked: true, text: 'text' })]);
+    it('at the very start of a done item puts one not done and empty above and keeps the text done', () => {
+        const editor = editorWith(plugins, [taskList({ done: true, text: 'text' })]);
         editor.caretBefore('text');
 
         expect(press(editor.view, 'Enter')).toBe(true);
 
         expect(editor.stored()).toEqual([
             {
-                type: 'checkList',
+                type: 'taskList',
                 children: [
-                    { type: 'checkItem', checked: false, children: [paragraph()] },
-                    { type: 'checkItem', checked: true, children: [paragraph(text('text'))] },
+                    { type: 'task', done: false, children: [paragraph()] },
+                    { type: 'task', done: true, children: [paragraph(text('text'))] },
                 ],
             },
         ]);
     });
 
-    it('at the start of a later paragraph of a checked item keeps the first item checked', () => {
-        const editor = editorWith(defaultPlugins, [
+    it('at the start of a later paragraph of a done item keeps the first item done', () => {
+        const editor = editorWith(plugins, [
             {
-                type: 'checkList',
-                children: [
-                    { type: 'checkItem', checked: true, children: [paragraph(text('a')), paragraph(text('b'))] },
-                ],
+                type: 'taskList',
+                children: [{ type: 'task', done: true, children: [paragraph(text('a')), paragraph(text('b'))] }],
             },
         ]);
         editor.caretBefore('b');
@@ -695,26 +820,22 @@ describe('Enter in a to-do list', () => {
 
         expect(editor.stored()).toEqual([
             {
-                type: 'checkList',
+                type: 'taskList',
                 children: [
-                    { type: 'checkItem', checked: true, children: [paragraph(text('a')), paragraph()] },
-                    { type: 'checkItem', checked: false, children: [paragraph(text('b'))] },
+                    { type: 'task', done: true, children: [paragraph(text('a')), paragraph()] },
+                    { type: 'task', done: false, children: [paragraph(text('b'))] },
                 ],
             },
         ]);
     });
 
-    it('at the start of a paragraph after a nested list keeps the first item checked', () => {
-        const nested = { type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('n'))] }] };
-        const editor = editorWith(defaultPlugins, [
+    it('at the start of a paragraph after a nested list keeps the first item done', () => {
+        const nested = { type: 'dotList', children: [{ type: 'row', children: [paragraph(text('n'))] }] };
+        const editor = editorWith(plugins, [
             {
-                type: 'checkList',
+                type: 'taskList',
                 children: [
-                    {
-                        type: 'checkItem',
-                        checked: true,
-                        children: [paragraph(text('a')), nested, paragraph(text('t'))],
-                    },
+                    { type: 'task', done: true, children: [paragraph(text('a')), nested, paragraph(text('t'))] },
                 ],
             },
         ]);
@@ -724,22 +845,18 @@ describe('Enter in a to-do list', () => {
 
         expect(editor.stored()).toEqual([
             {
-                type: 'checkList',
+                type: 'taskList',
                 children: [
-                    {
-                        type: 'checkItem',
-                        checked: true,
-                        children: [paragraph(text('a')), nested, paragraph()],
-                    },
-                    { type: 'checkItem', checked: false, children: [paragraph(text('t'))] },
+                    { type: 'task', done: true, children: [paragraph(text('a')), nested, paragraph()] },
+                    { type: 'task', done: false, children: [paragraph(text('t'))] },
                 ],
             },
         ]);
     });
 
-    it('leaves a bullet list as it was', () => {
-        const editor = editorWith(defaultPlugins, [
-            { type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('one'))] }] },
+    it('leaves a list whose items have no state as it was', () => {
+        const editor = editorWith(plugins, [
+            { type: 'dotList', children: [{ type: 'row', children: [paragraph(text('one'))] }] },
         ]);
         editor.caretAfter('one');
 
@@ -747,10 +864,10 @@ describe('Enter in a to-do list', () => {
 
         expect(editor.stored()).toEqual([
             {
-                type: 'bulletList',
+                type: 'dotList',
                 children: [
-                    { type: 'listItem', children: [paragraph(text('one'))] },
-                    { type: 'listItem', children: [paragraph()] },
+                    { type: 'row', children: [paragraph(text('one'))] },
+                    { type: 'row', children: [paragraph()] },
                 ],
             },
         ]);
@@ -758,94 +875,79 @@ describe('Enter in a to-do list', () => {
 });
 
 describe('Enter in a block with attributes every text block carries', () => {
-    const aligned = (value: string, extra: Record<string, unknown> = {}) => {
+    const plugins = [listsPlugin, titlePlugin, toneAttributePlugin];
+
+    const toned = (value: string, extra: Record<string, unknown> = {}) => {
         const children = [];
         if (value !== '') {
             children.push(text(value));
         }
-        return { type: 'paragraph', align: 'center', children, ...extra };
+        return { type: 'paragraph', tone: 'warm', children, ...extra };
     };
 
-    it('at the end of a paragraph gives the new paragraph the same alignment', () => {
-        const editor = editorWith(defaultPlugins, [aligned('one')]);
+    const title = (value: string, tone: string) => ({ type: 'title', tone, children: [text(value)] });
+
+    it('at the end of a paragraph gives the new paragraph the same attribute', () => {
+        const editor = editorWith(plugins, [toned('one')]);
         editor.caretAfter('one');
 
         press(editor.view, 'Enter');
 
-        expect(editor.stored()).toEqual([aligned('one'), aligned('')]);
+        expect(editor.stored()).toEqual([toned('one'), toned('')]);
     });
 
-    it('in the middle of a paragraph keeps the alignment on both halves', () => {
-        const editor = editorWith(defaultPlugins, [aligned('onetwo')]);
+    it('in the middle of a paragraph keeps the attribute on both halves', () => {
+        const editor = editorWith(plugins, [toned('onetwo')]);
         editor.caretAfter('one');
 
         press(editor.view, 'Enter');
 
-        expect(editor.stored()).toEqual([aligned('one'), aligned('two')]);
+        expect(editor.stored()).toEqual([toned('one'), toned('two')]);
     });
 
-    it('over a range across two blocks gives both halves the alignment of the block the text stays in', () => {
-        const editor = editorWith(defaultPlugins, [
-            { type: 'paragraph', align: 'left', children: [text('abc')] },
-            { type: 'paragraph', align: 'center', children: [text('def')] },
+    it('over a range across two blocks gives both halves the attribute of the block the text stays in', () => {
+        const editor = editorWith(plugins, [
+            { type: 'paragraph', tone: 'cool', children: [text('abc')] },
+            { type: 'paragraph', tone: 'warm', children: [text('def')] },
         ]);
         editor.selectBetween('abc', 'd');
 
         press(editor.view, 'Enter');
 
-        // `align` is a plugin's block attribute, which RteBlockNode does not declare.
-        expect(editor.stored()?.map((block) => (block as { align?: string }).align)).toEqual(['center', 'center']);
+        // `tone` is a plugin's block attribute, which RteBlockNode does not declare.
+        expect(editor.stored()?.map((block) => (block as { tone?: string }).tone)).toEqual(['warm', 'warm']);
     });
 
-    it('at the end of a heading gives an aligned paragraph', () => {
-        const editor = editorWith(defaultPlugins, [
-            { type: 'textStyle', style: 'heading2', align: 'right', children: [text('Title')] },
-        ]);
+    it('at the end of a title gives a paragraph with the attribute', () => {
+        const editor = editorWith(plugins, [title('Title', 'cool')]);
         editor.caretAfter('Title');
 
         press(editor.view, 'Enter');
 
-        expect(editor.stored()).toEqual([
-            { type: 'textStyle', style: 'heading2', align: 'right', children: [text('Title')] },
-            { type: 'paragraph', align: 'right', children: [] },
-        ]);
+        expect(editor.stored()).toEqual([title('Title', 'cool'), { type: 'paragraph', tone: 'cool', children: [] }]);
     });
 
-    it('in the middle of a heading gives two headings with the same alignment', () => {
-        const heading = (value: string) => ({
-            type: 'textStyle',
-            style: 'heading2',
-            align: 'right',
-            children: [text(value)],
-        });
-        const editor = editorWith(defaultPlugins, [heading('TitleText')]);
+    it('in the middle of a title gives two titles with the same attribute', () => {
+        const editor = editorWith(plugins, [title('TitleText', 'cool')]);
         editor.caretAfter('Title');
 
         press(editor.view, 'Enter');
 
-        expect(editor.stored()).toEqual([heading('Title'), heading('Text')]);
+        expect(editor.stored()).toEqual([title('Title', 'cool'), title('Text', 'cool')]);
     });
 
-    it('at the start of a heading gives the empty paragraph above the same alignment', () => {
-        const editor = editorWith(defaultPlugins, [
-            { type: 'textStyle', style: 'heading2', align: 'right', children: [text('Title')] },
-        ]);
+    it('at the start of a title gives the empty paragraph above the same attribute', () => {
+        const editor = editorWith(plugins, [title('Title', 'cool')]);
         editor.caretBefore('Title');
 
         press(editor.view, 'Enter');
 
-        expect(editor.stored()).toEqual([
-            { type: 'paragraph', align: 'right', children: [] },
-            { type: 'textStyle', style: 'heading2', align: 'right', children: [text('Title')] },
-        ]);
+        expect(editor.stored()).toEqual([{ type: 'paragraph', tone: 'cool', children: [] }, title('Title', 'cool')]);
     });
 
-    it('at the end of a list item gives the new item an aligned paragraph', () => {
-        const editor = editorWith(defaultPlugins, [
-            {
-                type: 'bulletList',
-                children: [{ type: 'listItem', children: [aligned('one')] }],
-            },
+    it('at the end of a list item gives the new item a paragraph with the attribute', () => {
+        const editor = editorWith(plugins, [
+            { type: 'dotList', children: [{ type: 'row', children: [toned('one')] }] },
         ]);
         editor.caretAfter('one');
 
@@ -853,10 +955,10 @@ describe('Enter in a block with attributes every text block carries', () => {
 
         expect(editor.stored()).toEqual([
             {
-                type: 'bulletList',
+                type: 'dotList',
                 children: [
-                    { type: 'listItem', children: [aligned('one')] },
-                    { type: 'listItem', children: [aligned('')] },
+                    { type: 'row', children: [toned('one')] },
+                    { type: 'row', children: [toned('')] },
                 ],
             },
         ]);
@@ -864,34 +966,34 @@ describe('Enter in a block with attributes every text block carries', () => {
 });
 
 describe('Enter on a block with stored keys no plugin declares', () => {
-    // `foo` is an undeclared stored key and `align` a plugin's attribute, neither of which RteBlockNode names.
-    const centred = (value: string): RteBlockNode =>
-        ({ ...paragraph(text(value)), align: 'center', foo: 1 }) as RteBlockNode;
+    const plugins = [listsPlugin, toneAttributePlugin];
+
+    // `foo` is an undeclared stored key and `tone` a plugin's attribute, neither of which RteBlockNode names.
+    const toned = (value: string) => ({ ...paragraph(text(value)), tone: 'warm', foo: 1 });
 
     it('leaves the block Enter opens after the text without them', () => {
-        const editor = editorWith(defaultPlugins, [centred('ab')]);
+        const editor = editorWith(plugins, [toned('ab')]);
         editor.caretAfter('b');
 
         press(editor.view, 'Enter');
         editor.type('c');
 
-        expect(editor.stored()).toEqual([centred('ab'), { ...paragraph(text('c')), align: 'center' }]);
+        expect(editor.stored()).toEqual([toned('ab'), { ...paragraph(text('c')), tone: 'warm' }]);
     });
 
     it('leaves the block Enter opens before the text without them', () => {
-        const editor = editorWith(defaultPlugins, [centred('ab')]);
+        const editor = editorWith(plugins, [toned('ab')]);
         editor.caretBefore('a');
 
         press(editor.view, 'Enter');
 
-        expect(editor.stored()).toEqual([{ ...paragraph(), align: 'center' }, centred('ab')]);
+        expect(editor.stored()).toEqual([{ ...paragraph(), tone: 'warm' }, toned('ab')]);
     });
 
     it('leaves the item a list split makes without them', () => {
-        // The item's `foo` is undeclared too, and RteBlockNode names neither list blocks nor their keys.
-        const item = (value: string): RteBlockNode =>
-            ({ type: 'listItem', foo: 2, children: [centred(value)] }) as RteBlockNode;
-        const editor = editorWith(defaultPlugins, [{ type: 'bulletList', children: [item('ab')] } as RteBlockNode]);
+        // The item's `foo` is undeclared too.
+        const row = (value: string) => ({ type: 'row', foo: 2, children: [toned(value)] });
+        const editor = editorWith(plugins, [{ type: 'dotList', children: [row('ab')] }]);
         editor.caretAfter('b');
 
         press(editor.view, 'Enter');
@@ -899,8 +1001,8 @@ describe('Enter on a block with stored keys no plugin declares', () => {
 
         expect(editor.stored()).toEqual([
             {
-                type: 'bulletList',
-                children: [item('ab'), { type: 'listItem', children: [{ ...paragraph(text('c')), align: 'center' }] }],
+                type: 'dotList',
+                children: [row('ab'), { type: 'row', children: [{ ...paragraph(text('c')), tone: 'warm' }] }],
             },
         ]);
     });

@@ -30,8 +30,8 @@ const plugins: readonly RtePlugin[] = [
     ...defaultPlugins,
     mentionPlugin({ items: [] }),
     columnBreakPlugin(),
-    blurOnBreakPlugin(),
-    typographyPlugin(),
+    blurOnBreakPlugin,
+    typographyPlugin({ groups: ['quotes', 'ellipsis', 'dashes', 'symbols', 'numeric'] }),
 ];
 
 /** Added by the harness, so a paste has somewhere to land and the fixtures stay pure. */
@@ -120,7 +120,7 @@ const expectEditable = (container: HTMLElement): void => {
 };
 
 const declaresContent = (plugin: RtePlugin): boolean =>
-    [plugin.blocks, plugin.marks, plugin.inlines, plugin.blockAttributes].some(
+    [plugin.content?.blocks, plugin.content?.marks, plugin.content?.inlines, plugin.content?.blockAttributes].some(
         (declared) => declared !== undefined && Object.keys(declared).length > 0,
     );
 
