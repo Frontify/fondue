@@ -264,9 +264,6 @@ const clearRangeOf = (state: EditorState, scope: ClearMarksScope): { from: numbe
     }
 };
 
-/** What `marks.removeAll()` does with no options, as it did before it had any. */
-const DEFAULT_CLEAR_OPTIONS: ClearMarksOptions = { scope: 'typing' };
-
 /** Whether a mark is *on* is not here: that is a field of the selection snapshot. */
 const createMarkApi = (
     getView: () => EditorView,
@@ -323,7 +320,7 @@ const createMarkApi = (
         dispatch(tr);
         view.focus();
     },
-    removeAll({ scope, keepSurviving = false } = DEFAULT_CLEAR_OPTIONS) {
+    removeAll({ scope = 'typing', keepSurviving = false }: ClearMarksOptions = {}) {
         const view = getView();
         const { state } = view;
         const { empty, $from } = state.selection;
