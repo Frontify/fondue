@@ -1117,7 +1117,7 @@ describe('the toolbar from the keyboard', () => {
         id: 'needs-text',
         toolbar: [{ label: 'Needs text', render: NeedsText }],
     });
-    const plugins = [boldPlugin, alignPlugin, linkPlugin(), needsTextPlugin];
+    const plugins = [boldPlugin, alignPlugin(), linkPlugin(), needsTextPlugin];
 
     const toolbarIn = (container: HTMLElement): HTMLElement => {
         const toolbar = container.querySelector<HTMLElement>('[role="toolbar"]');
@@ -1280,6 +1280,33 @@ describe('the toolbar from the keyboard', () => {
             press(editable, key, { ...mod, shiftKey: keys.includes('Shift'), keyCode: key.charCodeAt(0) });
             expect(stored()?.blocks[0]).toMatchObject({ align: alignment });
         }
+    });
+
+    it('does with a click what its key does, and says so', () => {
+        vi.useFakeTimers();
+        teardown.push(() => vi.useRealTimers());
+        const { container, ready, stored } = mount((onChange) => (
+            <RichTextEditor value={paragraph('text')} onChange={onChange} plugins={plugins} toolbarPlacement="top" />
+        ));
+        ready();
+        const editable = editableIn(container);
+        act(() => editable.focus());
+        const center = container.querySelector<HTMLElement>('[aria-label="Align center"]');
+        // The live region takes a message on the next frame.
+        const said = (): string | null | undefined => {
+            act(() => {
+                vi.advanceTimersByTime(100);
+            });
+            return container.querySelector('output')?.textContent;
+        };
+
+        act(() => center?.click());
+        expect(stored()?.blocks[0]).toMatchObject({ align: 'center' });
+        expect(said()).toBe('Centered');
+
+        act(() => center?.click());
+        expect(stored()?.blocks[0]).not.toHaveProperty('align');
+        expect(said()).toBe('Alignment cleared');
     });
 
     describe('in a narrow top row', () => {
@@ -1649,7 +1676,7 @@ describe('the toolbar from the keyboard', () => {
         });
 
         it('keeps the panel usable after a text style menu opened from it is closed with Escape', async () => {
-            const withSelect = [boldPlugin, linkPlugin(), alignPlugin, textStylePlugin()];
+            const withSelect = [boldPlugin, linkPlugin(), alignPlugin(), textStylePlugin()];
             const { container, ready } = mount(() => (
                 <RichTextEditor value={paragraph('text')} plugins={withSelect} toolbarPlacement="top" />
             ));

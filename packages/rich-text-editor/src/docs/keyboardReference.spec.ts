@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { defaultPlugins } from '#/plugins';
+import { alignPlugin, defaultPlugins, resetFormattingPlugin } from '#/plugins';
 
 import { type KeyboardGroup, keyboardReference } from './keyboardReference';
 
@@ -35,5 +35,18 @@ describe('keyboardReference', () => {
         const rows = groups.flatMap((group) => group.rows);
 
         expect(rows.filter(({ key }) => key === 'Mod-k')).toEqual([{ key: 'Mod-k', label: 'Edit link' }]);
+    });
+
+    it('names a key with the words the host gave the plugin', () => {
+        const translated = keyboardReference([
+            alignPlugin({ leftTitle: 'Linksbündig' }),
+            resetFormattingPlugin({ clearMarksLabel: 'Formatierung entfernen' }),
+        ]);
+
+        expect(groupOfPlugin(translated, 'align')?.rows).toContainEqual({ key: 'Mod-Shift-l', label: 'Linksbündig' });
+        expect(groupOfPlugin(translated, 'align')?.rows).toContainEqual({ key: 'Mod-Shift-e', label: 'Align center' });
+        expect(groupOfPlugin(translated, 'reset-formatting')?.rows).toEqual([
+            { key: 'Mod-\\', label: 'Formatierung entfernen' },
+        ]);
     });
 });
