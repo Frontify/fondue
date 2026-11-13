@@ -1,5 +1,20 @@
 # @frontify/fondue
 
+## 14.0.0-rc.0
+
+### Patch Changes
+
+- [#3035](https://github.com/Frontify/fondue/pull/3035) [`cf1839b`](https://github.com/Frontify/fondue/commit/cf1839b10095b928008a8a11934056d0cf5b2581) Thanks [@noahwaldner](https://github.com/noahwaldner)! - First release candidate for Fondue v14.
+
+- Updated dependencies [[`cf1839b`](https://github.com/Frontify/fondue/commit/cf1839b10095b928008a8a11934056d0cf5b2581)]:
+  - @frontify/fondue-charts@10.0.0-rc.0
+  - @frontify/fondue-components@37.0.0-rc.0
+  - @frontify/fondue-icons@1.0.0-rc.0
+  - @frontify/fondue-rich-text-editor@0.1.0-rc.0
+  - @frontify/fondue-rte@0.2.0-rc.0
+  - @frontify/fondue-sdk@1.0.0-rc.0
+  - @frontify/fondue-tokens@6.0.0-rc.0
+
 ## 14.0.0-beta.3
 
 ### Patch Changes
@@ -57,6 +72,24 @@
   - @frontify/fondue-rte@1.0.0-beta.0
   - @frontify/fondue-sdk@1.0.0-beta.0
   - @frontify/fondue-tokens@6.0.0-beta.0
+
+## 13.11.4
+
+### Patch Changes
+
+- [#3016](https://github.com/Frontify/fondue/pull/3016) [`48899ef`](https://github.com/Frontify/fondue/commit/48899ef5a6beb9eb5e2bf36f36deb6a97918aa49) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(ColorPicker): forward the ref and id of `ColorPicker.Input` to its button, so focus returns to it when a flyout closes, and add the shown color to a name given by `aria-labelledby`
+
+- [#3016](https://github.com/Frontify/fondue/pull/3016) [`48899ef`](https://github.com/Frontify/fondue/commit/48899ef5a6beb9eb5e2bf36f36deb6a97918aa49) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(Select): don't show the no-match error of `Select.Combobox` while its input is empty
+
+- [#2991](https://github.com/Frontify/fondue/pull/2991) [`136542d`](https://github.com/Frontify/fondue/commit/136542d78767263187de2011bab9194078e79a38) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(Flyout): expose `onInteractOutside` and `aria-label` on `Flyout.Content`
+
+- [#3016](https://github.com/Frontify/fondue/pull/3016) [`48899ef`](https://github.com/Frontify/fondue/commit/48899ef5a6beb9eb5e2bf36f36deb6a97918aa49) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(OrderableList): stop making the content of a non-selectable item a tab stop when it has a drag handle
+
+- Updated dependencies [[`48899ef`](https://github.com/Frontify/fondue/commit/48899ef5a6beb9eb5e2bf36f36deb6a97918aa49), [`48899ef`](https://github.com/Frontify/fondue/commit/48899ef5a6beb9eb5e2bf36f36deb6a97918aa49), [`a59db73`](https://github.com/Frontify/fondue/commit/a59db7301cbb6d4dd9d62dcdad5bbd63542bc49b), [`136542d`](https://github.com/Frontify/fondue/commit/136542d78767263187de2011bab9194078e79a38), [`48899ef`](https://github.com/Frontify/fondue/commit/48899ef5a6beb9eb5e2bf36f36deb6a97918aa49), [`d5df360`](https://github.com/Frontify/fondue/commit/d5df3600960affc56fbf662d807ef3a31578ce20), [`e610067`](https://github.com/Frontify/fondue/commit/e610067b4878e90f675aabb4a61333002bd99105), [`66a5800`](https://github.com/Frontify/fondue/commit/66a5800ac077b4bf23f943e845b68cec8b7a7c3a), [`a711a4d`](https://github.com/Frontify/fondue/commit/a711a4d48ceda578e757296dfbef6f0baea2ad40)]:
+  - @frontify/fondue-components@36.0.3
+  - @frontify/fondue-icons@0.32.1
+  - @frontify/fondue-sdk@0.3.4
+  - @frontify/fondue-tokens@5.2.0
 
 ## 13.11.3
 
