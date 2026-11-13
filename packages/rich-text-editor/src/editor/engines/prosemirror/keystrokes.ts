@@ -131,7 +131,7 @@ const featureHotkeys = (hotkeys: PluginRegistry['hotkeys'], api: EditorControlAp
             .map(([keys, handlers]): [string, Command] => [keys, () => runUntilHandled(handlers, api)]),
     );
 
-// An inline element is a word start here, so `@name` fires after a soft break; it cannot yet tell a mention (FP-897).
+// An inline element is a word start here, so `@name` fires after a soft break; it cannot yet tell a mention from a soft break.
 const WORD_BOUNDARY_BEFORE = new RegExp(`[${WORD_START_CONTEXT}${INLINE_PLACEHOLDER}]`);
 
 /** The start of the block, or after whitespace, opening punctuation or an inline element. */
