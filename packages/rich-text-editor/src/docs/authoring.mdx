@@ -1,8 +1,15 @@
 {/* (c) Copyright Frontify Ltd., all rights reserved. */}
 
-import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import { Canvas, Meta, Source } from '@storybook/addon-docs/blocks';
 
 import * as PluginExamples from '../stories/PluginExamples.stories';
+import {
+    acmeCalloutContentExcerpt,
+    acmeEmbedContentExcerpt,
+    acmeHighlightContentExcerpt,
+    acmeHighlightPluginExcerpt,
+    underlinePluginExcerpt,
+} from './authoringExcerpts';
 
 <Meta title="Rich Text Editor/Guides/Writing a plugin" />
 
@@ -10,7 +17,7 @@ import * as PluginExamples from '../stories/PluginExamples.stories';
 
 A plugin adds a mark, a block or an inline element to the editor. A mark styles a run of text, such as bold. A block is a paragraph-sized unit, such as a quote. An inline is a small element inside a line of text, such as a mention.
 
-Every example on this page is real code. The excerpts are copied from the file named in the line above each one, except the one sketch that says it is not.
+Every example on this page is real code. Each excerpt is read from the file named in the line above it, except the one sketch that says it is not.
 
 ## A mark in one file
 
@@ -20,47 +27,11 @@ Keep them apart because the renderer reads only the content. A page that shows d
 
 Source: `src/stories/PluginExamples.stories.tsx`
 
-```tsx
-const acmeHighlightContent = defineContent({
-    marks: {
-        'acme-highlight': defineMark({
-            toHtml: () => ({
-                tag: 'mark',
-                attrs: {
-                    class: 'tw-rounded-small tw-bg-container-warning tw-text-container-warning-on-warning-container',
-                },
-                children: true,
-            }),
-            parse: [{ tag: 'mark' }],
-        }),
-    },
-});
-```
+<Source code={acmeHighlightContentExcerpt} language="tsx" />
 
 Source: `src/stories/PluginExamples.stories.tsx`
 
-```tsx
-const acmeHighlightPlugin = /* @__PURE__ */ definePlugin({
-    content: acmeHighlightContent,
-    toolbar: [
-        {
-            label: 'Highlight',
-            shortcut: 'Mod-Shift-h',
-            render: ({ isActive, toggle, label }) => (
-                <button
-                    type="button"
-                    aria-pressed={isActive}
-                    onMouseDown={(event) => event.preventDefault()}
-                    onClick={() => toggle()}
-                    className={toolbarButtonClasses(isActive)}
-                >
-                    {label}
-                </button>
-            ),
-        },
-    ],
-});
-```
+<Source code={acmeHighlightPluginExcerpt} language="tsx" />
 
 The button asks the editor instead of working things out itself: `isActive` says whether the selection has the mark, and `toggle` turns it on or off. `shortcut` binds the key to the same toggle.
 
@@ -83,23 +54,7 @@ A block uses `defineBlock`. Its `content` says what it holds: `'text'` for text 
 
 Source: `src/stories/PluginExamples.stories.tsx`
 
-```tsx
-const acmeCalloutContent = defineContent({
-    blocks: {
-        'acme-callout': defineBlock({
-            content: 'text',
-            toHtml: () => ({
-                tag: 'aside',
-                attrs: {
-                    class: 'tw-m-0 tw-rounded-medium tw-border tw-border-solid tw-border-warning tw-bg-container-warning tw-px-3 tw-py-2',
-                },
-                children: true,
-            }),
-            parse: [{ tag: 'aside' }],
-        }),
-    },
-});
-```
+<Source code={acmeCalloutContentExcerpt} language="tsx" />
 
 <Canvas of={PluginExamples.ConsumerBlock} />
 
@@ -107,20 +62,7 @@ An inline uses `defineInline`. It has no text of its own. Its value, here the pr
 
 Source: `src/stories/PluginExamples.stories.tsx`
 
-```tsx
-const acmeEmbedContent = defineContent({
-    inlines: {
-        'acme-embed': defineInline<EmbedValue>({
-            toHtml: ({ provider }) => ({
-                tag: 'span',
-                attrs: { 'data-embed': provider, class: embedClasses },
-                children: `▤ ${provider}`,
-            }),
-            parse: [{ tag: 'span[data-embed]', value: (element) => ({ provider: element.dataset.embed ?? '' }) }],
-        }),
-    },
-});
-```
+<Source code={acmeEmbedContentExcerpt} language="tsx" />
 
 This story also gives the plugin an `edit` view, a component that draws the inline while it has no value. See `acmeEmbedPlugin` in the same file.
 
@@ -140,13 +82,7 @@ A plugin lists its toolbar controls in `toolbar`. Each entry is data:
 
 Source: `src/plugins/Underline/Underline.ts`
 
-```ts
-export const underlinePlugin = /* @__PURE__ */ definePlugin({
-    content: underlineContent,
-    toolbarGroup: 'marks',
-    toolbar: [{ label: 'Underline', icon: IconTextFormatUnderline, shortcut: 'Mod-u' }],
-});
-```
+<Source code={underlinePluginExcerpt} language="ts" />
 
 For a key that does something other than toggle the entry's type, use `hotkeys`. Each binding needs a `label` and a `run` function. `Mod` is Cmd on macOS and Ctrl elsewhere. Avoid keys the system or browser takes, such as `Mod-h`, which hides the app on macOS.
 
