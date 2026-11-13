@@ -3,7 +3,6 @@
 import { defineContent, defineMark, definePlugin } from '#/core';
 
 import { declaredStyle } from '../shared/helpers/declaredStyle';
-
 import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
 
 import { ColorFlyout } from './components/ColorFlyout';
