@@ -1,3 +1,6 @@
+> [!NOTE]
+> This is the maintenance branch for Fondue v13. It only receives backported fixes. Active development happens on [`main`](https://github.com/Frontify/fondue/tree/main).
+
 # Fondue design system by Frontify
 
 [<img src="https://img.shields.io/github/actions/workflow/status/frontify/fondue/pages/pages-build-deployment?label=preview&logo=github" alt="GitHub Pages Preview status">](https://fondue-components.frontify.com/)
@@ -39,4 +42,3 @@ See [Contribution guidelines](CONTRIBUTING.md) for contributing and local develo
 
 - [Storybook](https://fondue-components.frontify.com) – Storybook for previewing Fondue components
 - [Fondue documentation](https://fondue.frontify.com) – Documentation for the Fondue design system
-
