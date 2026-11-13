@@ -1,0 +1,214 @@
+packages/rich-text-editor/src/__tests__/goldens/underline.json
+  s_26e734472ae971::t_b24b7879c8885d 1-49
+packages/rich-text-editor/src/editor/engines/prosemirror/extraAttributes.spec.tsx
+  s_26e734472ae971::t_b24b7879c8885d 1-402
+packages/rich-text-editor/src/__tests__/goldens/mention.json
+  s_26e734472ae971::t_b24b7879c8885d 1-77
+packages/rich-text-editor/src/__tests__/goldens/bold.json
+  s_26e734472ae971::t_b24b7879c8885d 1-49
+.changeset/rte-keep-undeclared-attributes.md
+  s_26e734472ae971::t_b24b7879c8885d 1-4
+packages/rich-text-editor/src/__tests__/goldens/italic.json
+  s_26e734472ae971::t_b24b7879c8885d 1-49
+packages/rich-text-editor/src/__tests__/serializeToHtml.spec.tsx
+  s_26e734472ae971::t_b24b7879c8885d 32-51
+packages/rich-text-editor/src/__tests__/goldens/numbered-list.json
+  s_26e734472ae971::t_b24b7879c8885d 1-220
+packages/fondue/src/components/Tree/helpers/getMovementAnnouncements.ts
+  s_26e734472ae971::t_b24b7879c8885d 137-140
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_26e734472ae971::t_b24b7879c8885d 97-112,268-313,570-599
+  s_26e734472ae971::t_f6785e601cd971 600
+packages/rich-text-editor/src/editor/engines/prosemirror/documentConversion.spec.tsx
+  s_26e734472ae971::t_b24b7879c8885d 18,81-84,252-371
+  s_26e734472ae971::t_6a251659045c8f 372-373
+packages/rte/src/utilities/merge.ts
+  s_26e734472ae971::t_b24b7879c8885d 8
+packages/rich-text-editor/src/__tests__/formatRegression.spec.tsx
+  s_26e734472ae971::t_b24b7879c8885d 1-396
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.ts
+  s_26e734472ae971::t_b24b7879c8885d 8-14,16-17,79-80,115,123,144,162,181
+packages/rich-text-editor/src/editor/helpers/toolbarItem.spec.ts
+  s_26e734472ae971::t_b24b7879c8885d 59-61
+packages/rte/src/components/Badge/helpers.ts
+  s_26e734472ae971::t_b24b7879c8885d 84-89
+.changeset/rte-font-color-flyout.md
+  s_26e734472ae971::t_b24b7879c8885d 1-4
+packages/rich-text-editor/src/__tests__/goldens/bullet-list.json
+  s_26e734472ae971::t_b24b7879c8885d 1-220
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_26e734472ae971::t_b24b7879c8885d 8,282-481
+  s_26e734472ae971::t_82d9d9c4f791c0 482-483
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  s_26e734472ae971::t_b24b7879c8885d 231-265
+packages/rich-text-editor/src/core/commands.ts
+  s_26e734472ae971::t_b24b7879c8885d 48-52
+packages/components/src/hooks/useTextTruncation.ts
+  s_26e734472ae971::t_b24b7879c8885d 10
+packages/components/src/components/Badge/utils.ts
+  s_26e734472ae971::t_b24b7879c8885d 9
+packages/rich-text-editor/src/core/vocabulary.ts
+  s_26e734472ae971::t_b24b7879c8885d 19-23,26-33
+  s_26e734472ae971::t_83a95dabab57c4 34
+packages/components/src/components/Tabs/Tabs.tsx
+  s_26e734472ae971::t_b24b7879c8885d 105-106,109-116
+packages/rich-text-editor/src/__tests__/goldens/column-break.json
+  s_26e734472ae971::t_b24b7879c8885d 1-38
+packages/rich-text-editor/src/__tests__/goldens/superscript.json
+  s_26e734472ae971::t_b24b7879c8885d 1-49
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.ts
+  s_26e734472ae971::t_b24b7879c8885d 15-23,102
+packages/rich-text-editor/src/editor/engines/prosemirror/warnings.ts
+  s_26e734472ae971::t_b24b7879c8885d 23-33
+packages/rich-text-editor/src/editor/labels.ts
+  s_26e734472ae971::t_b24b7879c8885d 29-30,44
+.changeset/rte-format-goldens.md
+  s_26e734472ae971::t_b24b7879c8885d 1-4
+packages/components/src/components/TextInput/styles/text.module.scss
+  s_26e734472ae971::t_b24b7879c8885d 110
+packages/fondue/src/components/Badge/helpers.ts
+  s_26e734472ae971::t_b24b7879c8885d 96-101
+packages/fondue/src/components/Tree/utils/removeFragmentsAndEnrichChildren.ts
+  s_26e734472ae971::t_b24b7879c8885d 14-15,35
+packages/components/src/components/Select/utils.ts
+  s_26e734472ae971::t_b24b7879c8885d 18-19,55-57,75-79
+packages/rich-text-editor/src/__tests__/goldens/code.json
+  s_26e734472ae971::t_b24b7879c8885d 1-49
+packages/rich-text-editor/src/__tests__/goldens/quote.json
+  s_26e734472ae971::t_b24b7879c8885d 1-33
+packages/rich-text-editor/src/editor/RichTextEditor.tsx
+  s_26e734472ae971::t_b24b7879c8885d 3,16-23,36,77-82,86-87,126,142-150,192-193,200-209,301-308
+packages/tokens/stories/components/Tokens/TokenCollectionOverview.tsx
+  s_26e734472ae971::t_b24b7879c8885d 86-121
+storybook-docs/.storybook/main.ts
+  s_26e734472ae971::t_b24b7879c8885d 23
+.changeset/tabs-single-active-tab-change.md
+  s_26e734472ae971::t_b24b7879c8885d 1-5
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_26e734472ae971::t_b24b7879c8885d 13,318-319
+.changeset/rte-reader-unknown-list-items.md
+  s_26e734472ae971::t_b24b7879c8885d 1-4
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.ts
+  s_26e734472ae971::t_b24b7879c8885d 6,9,15-16,49-64,168-172
+packages/rich-text-editor/src/__tests__/goldens/soft-break.json
+  s_26e734472ae971::t_b24b7879c8885d 1-74
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.ts
+  s_26e734472ae971::t_b24b7879c8885d 16,181-200,241-242
+packages/rich-text-editor/src/__tests__/goldens/check-list.json
+  s_26e734472ae971::t_b24b7879c8885d 1-232
+packages/charts/src/components/common/components/Tooltip/helpers/getFormattedTooltipDate.ts
+  s_26e734472ae971::t_b24b7879c8885d 11
+packages/components/src/components/Tabs/__tests__/ControlledTabs.tsx
+  s_26e734472ae971::t_b24b7879c8885d 1-39
+packages/rich-text-editor/src/core/index.ts
+  s_26e734472ae971::t_b24b7879c8885d 47
+packages/components/src/components/ColorPicker/utils.ts
+  s_26e734472ae971::t_b24b7879c8885d 10,28,44,83,98,120-121,146-148
+.github/actions/setup/action.yaml
+  s_26e734472ae971::t_b24b7879c8885d 9-10,39,44,51-59,69-81
+.github/workflows/fondue-pull-requests.yaml
+  s_26e734472ae971::t_b24b7879c8885d 130
+packages/components/src/components/Textarea/styles/textarea.module.scss
+  s_26e734472ae971::t_b24b7879c8885d 133
+packages/fondue/src/utilities/merge.ts
+  s_26e734472ae971::t_b24b7879c8885d 8
+packages/fondue/src/components/Tree/helpers/projection.ts
+  s_26e734472ae971::t_b24b7879c8885d 53,62
+packages/icons/package.json
+  s_26e734472ae971::t_b24b7879c8885d 35
+packages/rich-text-editor/src/__tests__/goldens/font-color.json
+  s_26e734472ae971::t_b24b7879c8885d 1-90
+packages/rich-text-editor/src/stories/RichTextEditor.stories.tsx
+  s_26e734472ae971::t_b24b7879c8885d 344-366
+  s_26e734472ae971::t_dfc12b595b8f95 343
+packages/components/src/hooks/useSyncRefs.ts
+  s_26e734472ae971::t_b24b7879c8885d 13-14
+packages/components/src/utilities/domUtilities.ts
+  s_26e734472ae971::t_b24b7879c8885d 12,44-45,64-65
+packages/charts/src/components/Treemap/hooks/helpers/dataGroupingHelper.ts
+  s_26e734472ae971::t_b24b7879c8885d 96-102
+packages/rich-text-editor/src/editor/warnings.ts
+  s_26e734472ae971::t_b24b7879c8885d 1-16
+packages/icons/src/Icon.stories.tsx
+  s_26e734472ae971::t_b24b7879c8885d 22-37,48,72
+.changeset/rte-unknown-block-raw-leak.md
+  s_26e734472ae971::t_b24b7879c8885d 1-4
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.spec.tsx
+  s_26e734472ae971::t_274ecc6766edbc 25-29,36-38,106-131,134-137,139,144-145,148-149,152-153,155-156,161,165,173-174,177
+  s_26e734472ae971::t_b24b7879c8885d 21-22,30-32,41,49-55,60-67,69-74,77-87,90-91,94-103
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.spec.tsx
+  s_26e734472ae971::t_b24b7879c8885d 133-184
+.changeset/declare-side-effects.md
+  s_26e734472ae971::t_b24b7879c8885d 1-6
+packages/components/package.json
+  s_26e734472ae971::t_b24b7879c8885d 16-18
+.github/workflows/continuous-deployment.yaml
+  s_26e734472ae971::t_b24b7879c8885d 119,146
+.changeset/text-input-native-border.md
+  s_26e734472ae971::t_b24b7879c8885d 1-5
+packages/components/src/components/Tabs/__tests__/Tabs.ct.tsx
+  s_26e734472ae971::t_b24b7879c8885d 7-8,688-752
+  s_26e734472ae971::t_c174df6ce8ef55 753
+.github/workflows/generate-tokens.yaml
+  s_26e734472ae971::t_b24b7879c8885d 24
+.github/workflows/icon-generation.yaml
+  s_26e734472ae971::t_b24b7879c8885d 22
+packages/rich-text-editor/src/__tests__/goldens/emoji.json
+  s_26e734472ae971::t_b24b7879c8885d 1-29
+packages/rich-text-editor/src/__tests__/goldens/subscript.json
+  s_26e734472ae971::t_b24b7879c8885d 1-49
+packages/components/scripts/transforms.ts
+  s_26e734472ae971::t_b24b7879c8885d 6,17,25
+packages/rich-text-editor/src/__tests__/goldens/text-style.json
+  s_26e734472ae971::t_b24b7879c8885d 1-94
+packages/rich-text-editor/src/editor/engines/prosemirror/documentConversion.ts
+  s_26e734472ae971::t_b24b7879c8885d 19,50-51,76,78-80,96-102,115-171,269-276,280-286,292-307,391,406-407,409,412
+packages/rich-text-editor/src/renderer/documentTree.ts
+  s_26e734472ae971::t_b24b7879c8885d 241-255,270
+packages/rte/cypress/support/component.ts
+  s_26e734472ae971::t_b24b7879c8885d 13-14
+packages/rich-text-editor/src/__tests__/goldens/align.json
+  s_26e734472ae971::t_b24b7879c8885d 1-49
+packages/rich-text-editor/src/editor/engines/prosemirror/clipboard.spec.tsx
+  s_26e734472ae971::t_b24b7879c8885d 5-6,9,31-71,91-95,99,101,104-111,113,115-116,118,120,122-132,134-159,162-163,165-166,168-169,172-176,178-180,182-206
+packages/charts/src/components/LineChart/helpers/createBackfilledSeries.ts
+  s_26e734472ae971::t_b24b7879c8885d 71
+packages/rich-text-editor/src/__tests__/goldens/link.json
+  s_26e734472ae971::t_b24b7879c8885d 1-71
+packages/rich-text-editor/src/editor/engines/prosemirror/extraAttributes.ts
+  s_26e734472ae971::t_b24b7879c8885d 1-90
+packages/rich-text-editor/src/editor/richTextEditor.module.scss
+  s_26e734472ae971::t_b24b7879c8885d 17-21
+packages/components/src/components/Select/hooks/useSelectData.tsx
+  s_26e734472ae971::t_b24b7879c8885d 77-78,108-110
+packages/charts/src/components/BarChart/components/Bars.tsx
+  s_26e734472ae971::t_b24b7879c8885d 37
+packages/rte/src/components/Flyout/hooks/useContainScroll.ts
+  s_26e734472ae971::t_b24b7879c8885d 18
+.changeset/rte-newer-version-read-only.md
+  s_26e734472ae971::t_b24b7879c8885d 1-4
+packages/fondue/tools/codemod/findDeprecatedImports.ts
+  s_26e734472ae971::t_b24b7879c8885d 30
+packages/rich-text-editor/src/__tests__/goldens/strikethrough.json
+  s_26e734472ae971::t_b24b7879c8885d 1-49
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_26e734472ae971::t_b24b7879c8885d 138-161
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.tsx
+  s_26e734472ae971::t_0e7060320211ff 77,79-80
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4aba6d55b4bfcdd0c1bb319211f0ad71c5d604ff",
+  "prompts": {},
+  "sessions": {
+    "s_26e734472ae971": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e290a8b1-bf74-4678-92c9-eca5854b6849",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
