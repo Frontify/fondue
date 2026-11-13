@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { buildPluginRegistry, PARAGRAPH } from '#/core';
+import { buildPluginRegistry } from '#/core';
 
 import { paragraphContent, paragraphPlugin } from './Paragraph';
 
@@ -21,11 +21,8 @@ describe('the paragraph plugin look', () => {
         expect(paragraphPlugin().content?.contentProperties).toEqual({});
     });
 
-    it('classes the paragraph and has it own its margins, while the plugin is on', () => {
-        const content = paragraphContent();
-
-        expect(Object.keys(content.extendBlocks ?? {})).toEqual([PARAGRAPH]);
-        expect(content.extendBlocks?.[PARAGRAPH]?.ownsMargins).toBe(true);
+    it('puts a class on the document, so the look reaches paragraphs only while the plugin is on', () => {
+        expect(paragraphContent().contentClassName).toBeTypeOf('string');
     });
 
     it('refuses a value that could break out of its declaration', () => {

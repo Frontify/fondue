@@ -29,6 +29,3 @@ export const OWN_MARGINS_ATTRIBUTE = 'data-rte-own-margins';
  * the document spaces those children apart, or tight.
  */
 export const CHILD_SPACING_ATTRIBUTE = 'data-rte-child-spacing';
-
-/** Set on the element a document is drawn in, by the editor and the renderer alike, so a test can find it. */
-export const DOCUMENT_TEST_ID = 'rte-document';

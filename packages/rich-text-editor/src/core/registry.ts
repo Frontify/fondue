@@ -12,9 +12,9 @@ import { type HtmlAttributes, type HtmlSpec, type StyleMap, withContentAttribute
 import {
     type BlockAttributeDefinition,
     type BlockDefinition,
-    type BlockLook,
     type BlockRootAttributes,
     type ChildSpacing,
+    type ContentStyles,
     type HotkeyHandler,
     type InlineDefinition,
     type MarkDefinition,
@@ -122,9 +122,10 @@ export type PluginRegistry = {
     /** Custom properties set alongside them, later plugins winning. */
     contentProperties: Readonly<Record<string, string>>;
     /**
-     * The inline style of each class the content writes, for HTML exported with `styling: 'inline'`
+     * The inline style of each class the content writes, for HTML exported with `styling: 'inline'`.
+     * Built on each call, so only that export runs the plugins' style builders.
      */
-    contentStyles: Readonly<Record<string, StyleMap>>;
+    contentStyles: () => Readonly<Required<ContentStyles>>;
 };
 
 /** A mark sits in the floating bar; a block is reached through its commands instead. */
@@ -463,9 +464,7 @@ type Draft = {
     commandOwners: Map<string, string>;
     contentClassNames: string[];
     contentProperties: Record<string, string>;
-    contentStyles: Record<string, StyleMap>;
-    /** What plugins add to a block they do not define, by block type, and who set each field. */
-    blockExtensions: Map<string, BlockExtensions>;
+    contentStyleBuilders: NonNullable<RteContent['contentStyles']>[];
     /** How often each id has come up so far, for unique toolbar keys. */
     seenIds: Map<string, number>;
     duplicateIds: Set<string>;
@@ -557,55 +556,15 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
     addEditViews(draft, plugin);
 };
 
-/** A field of a block's look as a plugin set it, with who set it. */
-type BlockExtension = { owner: string; value: NonNullable<BlockLook[keyof BlockLook]> };
-
-/** Everything plugins set on one block they do not define; `owner` is the first to name it, for an unknown block. */
-type BlockExtensions = { owner: string; fields: Map<keyof BlockLook, BlockExtension> };
-
-const addBlockExtensions = (draft: Draft, extensions: Record<string, BlockLook>, owner: string): void => {
-    for (const [type, look] of Object.entries(extensions)) {
-        const extended = draft.blockExtensions.get(type) ?? {
-            owner,
-            fields: new Map<keyof BlockLook, BlockExtension>(),
-        };
-        const { fields } = extended;
-        for (const [field, value] of Object.entries(look) as [keyof BlockLook, BlockExtension['value'] | undefined][]) {
-            if (value === undefined) {
-                continue;
-            }
-            const first = fields.get(field);
-            // The same value twice is one fact, as the same block declared twice is: a content next to its plugin.
-            if (first !== undefined && first.value !== value) {
-                throw new Error(
-                    `Duplicate ${field} for block "${type}": set by plugin "${first.owner}" and plugin "${owner}".`,
-                );
-            }
-            fields.set(field, { owner, value });
-        }
-        draft.blockExtensions.set(type, extended);
+/** Runs each content's style builder, a later one winning for a class or a tag both write. */
+const mergeContentStyles = (builders: readonly NonNullable<RteContent['contentStyles']>[]): Required<ContentStyles> => {
+    const merged: Required<ContentStyles> = { classes: {}, plainTags: {} };
+    for (const build of builders) {
+        const { classes, plainTags } = build();
+        Object.assign(merged.classes, classes);
+        Object.assign(merged.plainTags, plainTags);
     }
-};
-
-/** Replaces each extended block with a copy that carries the extension, so one definition says everything. */
-const foldBlockExtensions = (draft: Draft): void => {
-    for (const [type, { owner: extender, fields }] of draft.blockExtensions) {
-        const definition = draft.blocks.get(type);
-        if (definition === undefined) {
-            throw new Error(`Unknown block type "${type}": plugin "${extender}" extends it, but no plugin defines it.`);
-        }
-        const folded: BlockDefinition = { ...definition };
-        for (const [field, { owner, value }] of fields) {
-            if (definition[field] !== undefined && definition[field] !== value) {
-                const first = draft.blockOwners.get(type) ?? 'the editor';
-                throw new Error(
-                    `Duplicate ${field} for block "${type}": set by plugin "${first}" and plugin "${owner}".`,
-                );
-            }
-            Object.assign(folded, { [field]: value });
-        }
-        draft.blocks.set(type, folded);
-    }
+    return merged;
 };
 
 /**
@@ -616,8 +575,9 @@ const addContent = (draft: Draft, content: RteContent | undefined, owner: string
         draft.contentClassNames.push(content.contentClassName);
     }
     Object.assign(draft.contentProperties, content?.contentProperties);
-    Object.assign(draft.contentStyles, content?.contentStyles);
-    addBlockExtensions(draft, content?.extendBlocks ?? {}, owner);
+    if (content?.contentStyles) {
+        draft.contentStyleBuilders.push(content.contentStyles);
+    }
 
     register('block type', draft.blocks, draft.blockOwners, owner, content?.blocks);
     register('inline type', draft.inlines, draft.inlineOwners, owner, content?.inlines);
@@ -646,8 +606,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         commandOwners: new Map(),
         contentClassNames: [],
         contentProperties: {},
-        contentStyles: {},
-        blockExtensions: new Map(),
+        contentStyleBuilders: [],
         seenIds: new Map(),
         duplicateIds: new Set(),
         blockOwners: new Map(),
@@ -677,8 +636,6 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         }
     }
 
-    foldBlockExtensions(draft);
-
     return {
         blocks: draft.blocks,
         inlines: draft.inlines,
@@ -695,7 +652,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         commands: draft.commands,
         contentClassNames: draft.contentClassNames,
         contentProperties: draft.contentProperties,
-        contentStyles: draft.contentStyles,
+        contentStyles: () => mergeContentStyles(draft.contentStyleBuilders),
     };
 };
 
@@ -765,7 +722,7 @@ export const childSpacingOf = (attrs: HtmlAttributes | undefined): ChildSpacing 
 
 /**
  * A block's markup with what every block carries applied to its outermost
- * element — alignment on a text block, its class, the margin marker on one that owns its
+ * element — alignment on a text block, the margin marker on one that owns its
  * margins — and the child-spacing mark on the element its content sits in.
  * Shared by editor, readonly view and export so they agree.
  */
@@ -777,14 +734,6 @@ export const blockHtml = (
     let spec = definition.toHtml(blockValueOf(definition, stored));
     if (definition.content === 'text') {
         spec = withRootStyle(spec, blockAttributeStyle(registry, stored));
-    }
-    if (definition.className !== undefined) {
-        const classNames = [];
-        if (spec.attrs?.class !== undefined) {
-            classNames.push(spec.attrs.class);
-        }
-        classNames.push(definition.className);
-        spec = { ...spec, attrs: { ...spec.attrs, class: classNames.join(' ') } };
     }
     const rootAttributes = rootAttributesOf(definition);
     if (Object.keys(rootAttributes).length > 0) {

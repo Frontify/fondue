@@ -6,24 +6,24 @@ import { lookProperties, lookStyle, styleOfClass } from './look';
 
 describe('lookProperties', () => {
     it('names one custom property per field the host set', () => {
-        expect(lookProperties('imageTitle', { fontSize: 'var(--f-size)', textDecoration: 'underline' })).toEqual({
-            '--rte-image-title-font-size': 'var(--f-size)',
-            '--rte-image-title-text-decoration': 'underline',
+        expect(lookProperties('sampleStyle', { fontSize: 'var(--f-size)', textDecoration: 'underline' })).toEqual({
+            '--rte-sample-style-font-size': 'var(--f-size)',
+            '--rte-sample-style-text-decoration': 'underline',
         });
     });
 
     it('leaves a name without capitals as it is', () => {
-        expect(lookProperties('heading1', { marginBottom: '8px' })).toEqual({ '--rte-heading1-margin-bottom': '8px' });
+        expect(lookProperties('plain', { marginBottom: '8px' })).toEqual({ '--rte-plain-margin-bottom': '8px' });
     });
 
     it('writes nothing for a field that is not set', () => {
-        expect(lookProperties('heading1', {})).toEqual({});
-        expect(lookProperties('heading1', { color: undefined })).toEqual({});
+        expect(lookProperties('plain', {})).toEqual({});
+        expect(lookProperties('plain', { color: undefined })).toEqual({});
     });
 
     for (const value of ['red; display: none', 'url(https://example.com/a.png)', '}', '', '   ']) {
         it(`throws, naming the style and the field, for ${JSON.stringify(value)}`, () => {
-            expect(() => lookProperties('custom2', { letterSpacing: value })).toThrow(/"letterSpacing".*"custom2"/);
+            expect(() => lookProperties('plain', { letterSpacing: value })).toThrow(/"letterSpacing".*"plain"/);
         });
     }
 });
@@ -54,7 +54,7 @@ describe('lookStyle', () => {
 
 describe('styleOfClass', () => {
     it('keys the style by the class name', () => {
-        expect(styleOfClass('rte-quote', { color: 'red' })).toEqual({ 'rte-quote': { color: 'red' } });
+        expect(styleOfClass('sample', { color: 'red' })).toEqual({ sample: { color: 'red' } });
     });
 
     it('throws for a class without a name', () => {

@@ -2,6 +2,7 @@
 
 import {
     DOCUMENT_GAP_VARIABLES,
+    fondueToken,
     PARAGRAPH,
     type ParseRule,
     type RteInlineNode,
@@ -15,7 +16,7 @@ import styles from '../textStyle.module.scss';
 import { HEADING_GAP_VARIABLE } from './headingGap';
 
 /** The gap above a heading, as `$heading-margin-top` in `textStyle.module.scss`. */
-const HEADING_MARGIN_TOP = `var(${DOCUMENT_GAP_VARIABLES.leading}, var(${HEADING_GAP_VARIABLE}, var(--spacing-medium)))`;
+const HEADING_MARGIN_TOP = `var(${DOCUMENT_GAP_VARIABLES.leading}, var(${HEADING_GAP_VARIABLE}, ${fondueToken('spacing-medium')}))`;
 
 /** The leading and the gap above that the headings share, as `$heading-line-height` and `$heading-margin-top`. */
 const HEADING_FALLBACK: StyleMap = { 'line-height': '1.3', 'margin-top': HEADING_MARGIN_TOP };
@@ -38,8 +39,8 @@ const PRESETS = [
         className: styles.heading1,
         fallback: {
             ...HEADING_FALLBACK,
-            'font-size': 'var(--text-heading-xx-large-strong-font-size)',
-            'font-weight': 'var(--text-heading-xx-large-strong-font-weight)',
+            'font-size': fondueToken('text-heading-xx-large-strong-font-size'),
+            'font-weight': fondueToken('text-heading-xx-large-strong-font-weight'),
         },
     },
     {
@@ -49,8 +50,8 @@ const PRESETS = [
         className: styles.heading2,
         fallback: {
             ...HEADING_FALLBACK,
-            'font-size': 'var(--text-heading-x-large-strong-font-size)',
-            'font-weight': 'var(--text-heading-x-large-strong-font-weight)',
+            'font-size': fondueToken('text-heading-x-large-strong-font-size'),
+            'font-weight': fondueToken('text-heading-x-large-strong-font-weight'),
         },
     },
     {
@@ -60,8 +61,8 @@ const PRESETS = [
         className: styles.heading3,
         fallback: {
             ...HEADING_FALLBACK,
-            'font-size': 'var(--text-heading-large-default-font-size)',
-            'font-weight': 'var(--text-heading-large-default-font-weight)',
+            'font-size': fondueToken('text-heading-large-default-font-size'),
+            'font-weight': fondueToken('text-heading-large-default-font-weight'),
         },
     },
     {
@@ -71,8 +72,8 @@ const PRESETS = [
         className: styles.heading4,
         fallback: {
             ...HEADING_FALLBACK,
-            'font-size': 'var(--text-heading-medium-default-font-size)',
-            'font-weight': 'var(--text-heading-medium-default-font-weight)',
+            'font-size': fondueToken('text-heading-medium-default-font-size'),
+            'font-weight': fondueToken('text-heading-medium-default-font-weight'),
         },
     },
     {
@@ -81,8 +82,8 @@ const PRESETS = [
         tag: 'p',
         className: styles.custom1,
         fallback: {
-            'font-size': 'var(--typography-font-size-medium)',
-            'font-weight': 'var(--typography-font-weight-medium)',
+            'font-size': fondueToken('typography-font-size-medium'),
+            'font-weight': fondueToken('typography-font-weight-medium'),
             'letter-spacing': '0.02em',
         },
     },
@@ -93,7 +94,7 @@ const PRESETS = [
         className: styles.custom2,
         fallback: {
             color: MUTED_COLOR,
-            'font-size': 'var(--typography-font-size-medium)',
+            'font-size': fondueToken('typography-font-size-medium'),
             'font-style': 'italic',
         },
     },
@@ -103,9 +104,9 @@ const PRESETS = [
         tag: 'p',
         className: styles.custom3,
         fallback: {
-            'font-size': 'var(--typography-font-size-small)',
-            'letter-spacing': 'var(--typography-letter-spacing-wide)',
-            'text-transform': 'var(--typography-text-transform-uppercase)',
+            'font-size': fondueToken('typography-font-size-small'),
+            'letter-spacing': fondueToken('typography-letter-spacing-wide'),
+            'text-transform': fondueToken('typography-text-transform-uppercase'),
         },
     },
     {
@@ -114,8 +115,8 @@ const PRESETS = [
         tag: 'p',
         className: styles.imageTitle,
         fallback: {
-            'font-size': 'var(--typography-font-size-medium)',
-            'font-weight': 'var(--typography-font-weight-bold)',
+            'font-size': fondueToken('typography-font-size-medium'),
+            'font-weight': fondueToken('typography-font-weight-bold'),
         },
     },
     {
@@ -125,14 +126,12 @@ const PRESETS = [
         className: styles.imageCaption,
         fallback: {
             color: MUTED_COLOR,
-            'font-size': 'var(--typography-font-size-x-small)',
+            'font-size': fondueToken('typography-font-size-x-small'),
         },
     },
 ] as const satisfies readonly Preset[];
 
-/**
- * The value of a text block's `style` attribute
- */
+/** The value of a text block's `style` attribute. */
 export type TextStyleName =
     | 'heading1'
     | 'heading2'

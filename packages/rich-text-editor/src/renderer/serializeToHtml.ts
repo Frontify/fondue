@@ -30,8 +30,9 @@ export type SerializeToHtmlOptions = {
     /**
      * `'inline'` writes the document's and each element's look (font, size, weight, leading,
      * tracking, case, margins, colour) into its `style`, so text reads right without the package
-     * stylesheet, in an email for one. Layout still needs the stylesheet: a quote's bar, list
-     * markers and indents, check boxes, columns.
+     * stylesheet, in an email for one. The document's look sits on the wrapper, so `wrap: false`
+     * leaves it out. Layout still needs the stylesheet: a quote's bar, list markers and indents,
+     * check boxes, columns.
      *
      * @default 'classes'
      */
@@ -57,7 +58,7 @@ export const serializeToHtml = <TBlock extends RteBlockNode>(
         case 'classes':
             break;
         case 'inline':
-            blocks = inlineLooks(blocks, registry.contentStyles);
+            blocks = inlineLooks(blocks, registry.contentStyles());
             // The document's own look in place of the `--rte-*` properties, which no rule reads without the stylesheet.
             root = { ...root, attrs: { ...root.attrs, style: DOCUMENT_STYLE } };
             break;

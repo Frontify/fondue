@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    type DefaultStyle,
     type BlockDefinition,
+    type ContentStyles,
+    type DefaultStyle,
     defineBlock,
     defineContent,
     definePlugin,
@@ -100,11 +101,14 @@ const textStyleContentFor = (
     }
 
     // The same values the stylesheet falls back to (`hostStyling.ct.tsx` holds them equal), for every preset, offered or not.
-    const contentStyles: Record<string, StyleMap> = styleOfClass(UNKNOWN_STYLE_CLASS_NAME, LOOK_MARGIN_FALLBACKS);
-    for (const preset of presetsFor(ALL_TEXT_STYLES)) {
-        const look = lookStyle(presets[preset.name] ?? {}, { ...LOOK_MARGIN_FALLBACKS, ...preset.fallback });
-        Object.assign(contentStyles, styleOfClass(preset.className, look));
-    }
+    const contentStyles = (): ContentStyles => {
+        const classes: Record<string, StyleMap> = styleOfClass(UNKNOWN_STYLE_CLASS_NAME, LOOK_MARGIN_FALLBACKS);
+        for (const preset of presetsFor(ALL_TEXT_STYLES)) {
+            const look = lookStyle(presets[preset.name] ?? {}, { ...LOOK_MARGIN_FALLBACKS, ...preset.fallback });
+            Object.assign(classes, styleOfClass(preset.className, look));
+        }
+        return { classes };
+    };
 
     let block = ALL_STYLES_BLOCK;
     if (options !== ALL_TEXT_STYLES) {

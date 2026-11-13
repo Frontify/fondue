@@ -9,6 +9,7 @@ import {
     defineContent,
     definePlugin,
     DOCUMENT_GAP_VARIABLES,
+    fondueToken,
     PARAGRAPH,
     type RteDocumentOf,
 } from '../core';
@@ -19,7 +20,7 @@ import { serializeToHtml } from '../renderer/serializeToHtml';
 const CALLOUT = 'callout';
 const FIRST_TEXT = 'First';
 const LAST_TEXT = 'Last';
-const BLOCK_GAP = 'var(--spacing-x-small)';
+const BLOCK_GAP = fondueToken('spacing-x-small');
 
 const calloutPlugin = (childSpacing: ChildSpacing) =>
     definePlugin({
@@ -104,7 +105,7 @@ describe('a block that holds blocks', () => {
 
         const first = paragraphStyle(html, FIRST_TEXT);
         expect(first).toContain(gapDeclaration(DOCUMENT_GAP_VARIABLES.block, BLOCK_GAP));
-        expect(first).toContain(`margin-bottom: var(${DOCUMENT_GAP_VARIABLES.block});`);
+        expect(first).toContain(`margin-bottom: ${BLOCK_GAP};`);
         warn.mockRestore();
     });
 });

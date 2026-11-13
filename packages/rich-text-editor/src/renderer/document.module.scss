@@ -34,8 +34,9 @@
     // It spaces its own children and the content of every block that holds blocks (`childSpacing`), by structure alone.
     // The trims reset the variables, not the margin, so a block class that reads the gaps keeps them.
     // Each spaced element sets the gaps again rather than inheriting them, so a trimmed quote does not trim its own paragraphs.
+    // `:where` gives a nested block the rank of a top-level one, so one plugin rule a rank above overrides both.
     > *,
-    [data-rte-child-spacing] > * {
+    :where([data-rte-child-spacing]) > * {
         --rte-block-gap: var(--spacing-x-small);
         // Unset rather than inherited, so a block with one above it never takes an ancestor's `0`.
         --rte-leading-gap: initial;

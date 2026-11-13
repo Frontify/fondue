@@ -50,7 +50,9 @@ export const quoteContent = ({ look = {} }: QuotePluginOptions = {}) =>
         blocks: { quote: quoteBlock },
         contentProperties: lookProperties('quote', look),
         // The same values the stylesheet falls back to; `hostStyling.ct.tsx` holds them equal.
-        contentStyles: styleOfClass(styles.quote, lookStyle(look, { ...LOOK_MARGIN_FALLBACKS, color: MUTED_COLOR })),
+        contentStyles: () => ({
+            classes: styleOfClass(styles.quote, lookStyle(look, { ...LOOK_MARGIN_FALLBACKS, color: MUTED_COLOR })),
+        }),
     });
 
 /**

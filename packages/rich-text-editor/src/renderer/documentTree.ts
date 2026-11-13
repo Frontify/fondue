@@ -17,6 +17,7 @@ import {
     CHILD_SPACING_ATTRIBUTE,
     childSpacingAttributes,
     DEFAULT_CHILD_SPACING,
+    fondueToken,
     type HtmlAttributes,
     type HtmlSpec,
     type MarkDefinition,
@@ -253,7 +254,10 @@ const unknownBlockNode = (block: RteBlockNode, registry: PluginRegistry, options
     return html({ tag: 'div', attrs, children: true }, content);
 };
 
-/** A block's child. A list holds only items, so a block no plugin defines stands in one as an item of its own. */
+/**
+ * A block's child. A list holds only items, so a block no plugin defines stands in one as an item of its own:
+ * in the outermost element of the list's item, without the markup inside it, such as a check item's box.
+ */
 const childNode = (
     child: RteBlockNode,
     parent: RteBlockNode,
@@ -261,11 +265,15 @@ const childNode = (
     options: Options,
 ): DrawnNode | null => {
     const drawn = blockNode(child, registry, options);
-    const isUnknownInList = registry.itemTypeByList.has(parent.type) && !registry.blocks.has(child.type);
-    if (drawn === null || !isUnknownInList) {
+    const itemType = registry.itemTypeByList.get(parent.type);
+    if (drawn === null || itemType === undefined || registry.blocks.has(child.type)) {
         return drawn;
     }
-    return html({ tag: 'li', children: true }, [drawn]);
+    const item = registry.blocks.get(itemType);
+    if (item === undefined) {
+        throw new Error(`List "${parent.type}" holds items of type "${itemType}", which no plugin defines.`);
+    }
+    return html({ tag: blockHtml(registry, item, {}).tag, children: true }, [drawn]);
 };
 
 /** The element a component's content sits in, adding no box, as the edit view's content wrapper does. */
@@ -326,9 +334,9 @@ export const documentTree = (doc: RteDocumentOf, registry: PluginRegistry, optio
  * values as `.document` in `document.module.scss`. `pre-wrap` alone, as email clients know it.
  */
 export const DOCUMENT_STYLE: StyleMap = {
-    color: 'var(--color-primary-default)',
-    'font-family': 'var(--typography-font-family-primary)',
-    'font-size': 'var(--typography-font-size-medium)',
+    color: fondueToken('color-primary-default'),
+    'font-family': fondueToken('typography-font-family-primary'),
+    'font-size': fondueToken('typography-font-size-medium'),
     'line-height': '1.6',
     'font-variant-ligatures': 'none',
     'white-space': 'pre-wrap',

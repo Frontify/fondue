@@ -3,8 +3,6 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator } from '@playwright/test';
 
-import { DOCUMENT_TEST_ID } from '../../core/documentContract';
-
 import {
     BOXED_DOCUMENT,
     BOXED_MARGIN,
@@ -140,7 +138,8 @@ test.describe('document spacing', () => {
     test('holds a check item content tight and leaves its checkbox alone, on every surface', async ({ mount }) => {
         const drawn = await mount(<HostLooksPair value={CHECK_ITEM_DOCUMENT} />);
         for (const surface of ['renderer', 'editor']) {
-            const section = drawn.getByTestId(surface).getByTestId(DOCUMENT_TEST_ID);
+            // The check list's parent is the element the document is drawn in, in the editor and the renderer alike.
+            const section = drawn.getByTestId(surface).locator('ul').first().locator('xpath=..');
             expect(await checkMarginsIn(section)).toEqual(CHECK_MARGINS);
             expect(await marginsOf(firstCheckbox(section))).toEqual(margins(CHECKBOX_MARGIN, CHECKBOX_MARGIN));
         }

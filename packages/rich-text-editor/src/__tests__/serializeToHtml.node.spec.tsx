@@ -10,10 +10,12 @@ import {
     defineContent,
     defineMark,
     definePlugin,
+    fondueToken,
     lookVariableName,
     PARAGRAPH,
     type RteDocumentOf,
     type RtePlugin,
+    styleOfClass,
 } from '../core';
 import { type RteDocument } from '../documentFormat';
 import { alignPlugin } from '../plugins/Align';
@@ -72,18 +74,21 @@ describe('serializing without a browser', () => {
         expect(html).toMatch(/^<h2>Hello<\/h2><p>Sent from <strong>a server<\/strong>\.<\/p><p><br\s*\/?><\/p>$/);
     });
 
-    it('carries a preset look on the root so a server render matches the browser', () => {
-        const html = serializeToHtml(doc, {
-            plugins: [textStylePlugin({ presets: { heading1: { fontSize: 'var(--f-theme-settings-h1-size)' } } })],
+    it('carries the custom properties a plugin sets on the root so a server render matches the browser', () => {
+        const styled = definePlugin({
+            id: 'styled',
+            content: defineContent({ contentProperties: { '--rte-sample-font-size': 'var(--f-size)' } }),
         });
 
-        expect(html).toContain('--rte-heading1-font-size: var(--f-theme-settings-h1-size);');
+        const html = serializeToHtml(doc, { plugins: [...features, styled] });
+
+        expect(html).toContain('--rte-sample-font-size: var(--f-size);');
     });
 });
 
 describe('serializing with inline styling', () => {
     const HEADING_SIZE = 'var(--f-theme-settings-heading1-font-size)';
-    const HEADING_FONT_SIZE_TOKEN = 'var(--text-heading-xx-large-strong-font-size)';
+    const HEADING_FONT_SIZE_TOKEN = fondueToken('text-heading-xx-large-strong-font-size');
 
     const looksDoc: RteDocument = {
         version: 1,
@@ -124,7 +129,7 @@ describe('serializing with inline styling', () => {
 
         const heading = styleOfFirst(html, 'h1');
         expect(heading).toContain(`font-size: ${HEADING_SIZE};`);
-        expect(heading).toContain('font-weight: var(--text-heading-xx-large-strong-font-weight);');
+        expect(heading).toContain(`font-weight: ${fondueToken('text-heading-xx-large-strong-font-weight')};`);
         expect(heading).toContain('line-height: 1.3;');
         expect(heading).not.toContain(HEADING_FONT_SIZE_TOKEN);
     });
@@ -141,7 +146,7 @@ describe('serializing with inline styling', () => {
 
         expect(styleOfFirst(html, 'blockquote')).toContain(`color: ${MUTED_COLOR};`);
         const link = styleOfFirst(html, 'a');
-        expect(link).toContain('color: var(--color-highlight-default);');
+        expect(link).toContain(`color: ${fondueToken('color-highlight-default')};`);
         expect(link).not.toContain('margin');
     });
 
@@ -156,8 +161,8 @@ describe('serializing with inline styling', () => {
         const html = serializeToHtml(looksDoc, { plugins: [quotePlugin()], wrap: false, styling: 'inline' });
 
         const paragraph = styleOfFirst(html, 'p');
-        expect(paragraph).toContain('--rte-block-gap: var(--spacing-x-small);');
-        expect(paragraph).toContain('margin-top: 0; margin-bottom: var(--rte-block-gap);');
+        expect(paragraph).toContain(`--rte-block-gap: ${fondueToken('spacing-x-small')};`);
+        expect(paragraph).toContain(`margin-top: 0; margin-bottom: ${fondueToken('spacing-x-small')};`);
     });
 
     it('inlines each block when the document is not wrapped', () => {
@@ -165,6 +170,12 @@ describe('serializing with inline styling', () => {
 
         expect(html).toMatch(/^<h1 /);
         expect(html.match(/ style="/g)?.length).toBeGreaterThanOrEqual(5);
+    });
+
+    it('leaves the document look out when the document is not wrapped, as it sits on the wrapper', () => {
+        const html = serializeToHtml(looksDoc, { plugins: withLooks, wrap: false, styling: 'inline' });
+
+        expect(html).not.toContain('line-height: 1.6');
     });
 
     it('wraps in the document element, with its own look in place of the host look properties', () => {
@@ -181,5 +192,22 @@ describe('serializing with inline styling', () => {
         expect(serializeToHtml(looksDoc, { plugins: withLooks, styling: 'classes' })).toBe(defaultCall);
         expect(defaultCall).toContain('--rte-heading1-font-size');
         expect(defaultCall).not.toContain('font-weight: var(--text-heading');
+    });
+
+    describe('a class with no name', () => {
+        const nameless = definePlugin({
+            id: 'nameless',
+            content: defineContent({ contentStyles: () => ({ classes: styleOfClass(undefined, {}) }) }),
+        });
+        const plainDoc: RteDocument = { version: 1, blocks: [{ type: PARAGRAPH, children: [{ text: 'Plain' }] }] };
+
+        it('does not stop the default classes export, which builds no inline styles', () => {
+            expect(() => serializeToHtml(plainDoc, { plugins: [nameless] })).not.toThrow();
+            expect(() => serializeToHtml(plainDoc, { plugins: [nameless], styling: 'classes' })).not.toThrow();
+        });
+
+        it('stops the inline export rather than writing no style', () => {
+            expect(() => serializeToHtml(plainDoc, { plugins: [nameless], styling: 'inline' })).toThrow(/no name/);
+        });
     });
 });

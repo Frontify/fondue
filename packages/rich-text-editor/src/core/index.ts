@@ -28,12 +28,8 @@ export {
     safeStyleEntries,
     type StyleMap,
 } from './htmlSpec';
-export {
-    CHILD_SPACING_ATTRIBUTE,
-    DOCUMENT_GAP_VARIABLES,
-    DOCUMENT_TEST_ID,
-    OWN_MARGINS_ATTRIBUTE,
-} from './documentContract';
+export { fondueToken, fondueTokenValues, type FondueTokenName } from './fondueTokens';
+export { CHILD_SPACING_ATTRIBUTE, DOCUMENT_GAP_VARIABLES, OWN_MARGINS_ATTRIBUTE } from './documentContract';
 export {
     LOOK_MARGIN_FALLBACKS,
     lookProperties,
@@ -49,6 +45,7 @@ export {
     type BlockRootAttributes,
     type ChildSpacing,
     type ContentModel,
+    type ContentStyles,
     type DefaultStyle,
     defineBlock,
     defineContent,

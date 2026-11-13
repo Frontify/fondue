@@ -23,6 +23,9 @@ const CHILD_SPACING_MARK = /data-rte-child-[a-z0-9-]+/g;
 /** The spacing whose children the document stylesheet holds together. */
 const TIGHT: ChildSpacing = 'tight';
 
+/** An attribute selector on a `data-` attribute, such as `[data-rte-own-margins]`. */
+const DATA_ATTRIBUTE_SELECTOR = /\[data-[a-z-]+\]/g;
+
 const stylesheetTexts = (): string[] =>
     readdirSync(SOURCE_DIRECTORY, { recursive: true, encoding: 'utf8' })
         .filter((file) => file.endsWith('.scss'))
@@ -43,8 +46,10 @@ describe('the margin marker', () => {
         expect(documentStylesheet).toContain(`:not([${OWN_MARGINS_ATTRIBUTE}])`);
     });
 
-    it('is not a text style attribute, which the document stylesheet must not know', () => {
-        expect(documentStylesheet).not.toContain('data-text-style');
+    it('is, with the child-spacing mark, the only data attribute the document stylesheet selects on, so it knows no plugin', () => {
+        const attributes = documentStylesheet.match(DATA_ATTRIBUTE_SELECTOR) ?? [];
+
+        expect(new Set(attributes)).toEqual(new Set([`[${OWN_MARGINS_ATTRIBUTE}]`, `[${CHILD_SPACING_ATTRIBUTE}]`]));
     });
 });
 
@@ -58,7 +63,7 @@ describe('the child-spacing mark', () => {
     });
 
     it('is the attribute, with its tight value, the document stylesheet spaces by', () => {
-        expect(documentStylesheet).toContain(`[${CHILD_SPACING_ATTRIBUTE}] > *`);
+        expect(documentStylesheet).toContain(`:where([${CHILD_SPACING_ATTRIBUTE}]) > *`);
         expect(documentStylesheet).toContain(`[${CHILD_SPACING_ATTRIBUTE}='${TIGHT}'] > *`);
     });
 });

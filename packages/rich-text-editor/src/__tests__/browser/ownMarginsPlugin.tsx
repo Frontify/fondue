@@ -39,6 +39,8 @@ export const ownMarginsPlugin: RtePlugin = definePlugin({
                 render: { component: Boxed },
             }),
         },
-        contentStyles: styleOfClass(styles.boxed, { 'margin-top': BOXED_MARGIN, 'margin-bottom': BOXED_MARGIN }),
+        contentStyles: () => ({
+            classes: styleOfClass(styles.boxed, { 'margin-top': BOXED_MARGIN, 'margin-bottom': BOXED_MARGIN }),
+        }),
     }),
 });

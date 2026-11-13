@@ -66,6 +66,6 @@ describe('a text style no preset names', () => {
             throw new Error('The text style stylesheet has no class for an unknown style');
         }
 
-        expect(registry.contentStyles[UNKNOWN_STYLE_CLASS_NAME]).toEqual(LOOK_MARGIN_FALLBACKS);
+        expect(registry.contentStyles().classes[UNKNOWN_STYLE_CLASS_NAME]).toEqual(LOOK_MARGIN_FALLBACKS);
     });
 });
