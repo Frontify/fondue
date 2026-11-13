@@ -1,17 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { buildPluginRegistry, type RteBlockNode, type RteDocumentOf, type RtePlugin } from '#/core';
+import { buildPluginRegistry, type RteBlockNode, type RteContent, type RteDocumentOf, type RtePlugin } from '#/core';
 
 import { documentRootSpec, documentTree } from './documentTree';
 import { toHtmlString } from './toHtmlString';
 
 export type SerializeToHtmlOptions = {
     /**
-     * The plugins whose markup to draw with — the editor's list. A node whose
-     * plugin is missing is skipped (a block keeps its content), with a warning
-     * in development. The package root defaults it to `defaultPlugins`.
+     * The plugins, or only their content, whose markup to draw with. A node whose
+     * plugin is missing is skipped (a block keeps its content), with a warning in development.
+     * @default defaultContent
      */
-    plugins?: readonly RtePlugin[];
+    plugins?: readonly (RtePlugin | RteContent)[];
     /**
      * Wrap the document in the element `RichTextRenderer` draws, whose class
      * sets how it reads and carries plugins' content-wide styling (columns).

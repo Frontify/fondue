@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 
 import { fontColorPlugin } from './FontColor';
 
-const fontColor = fontColorPlugin().marks?.fontColor;
+const fontColor = fontColorPlugin.content?.marks?.fontColor;
 
 const parse = (html: string): unknown => {
     const element = document.createElement('div');

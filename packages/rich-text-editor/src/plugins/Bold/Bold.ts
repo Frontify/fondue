@@ -2,25 +2,27 @@
 
 import { IconTextFormatBold } from '@frontify/fondue-icons';
 
-import { defineMark, type RtePlugin } from '#/core';
+import { defineContent, defineMark, definePlugin } from '#/core';
 
 import { declaresBoldWeight, declaresNormalWeight } from '../shared/helpers/declaredStyle';
-import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
-/** The flag this plugin sets on text nodes: present means on, and `true` is the only value it takes. */
+/**
+ * The flag this plugin sets on text nodes
+ */
 export type BoldMark = {
+    /**
+     * Whether the text is bold. Present means on, and `true` is the only value.
+     */
     bold?: true;
 };
 
-/** The key the toolbar button names as its shortcut, so the two cannot drift apart. */
-const HOTKEY = 'Mod-b';
-
-/** Bold text: `<strong>`, `Mod-b`, and `**text**` while typing. */
-export const boldPlugin = (): RtePlugin => ({
-    id: 'bold',
+/**
+ * Bold text, written as `<strong>`
+ */
+export const boldContent = defineContent({
     marks: {
         bold: defineMark({
-            toHtml: () => ({ tag: 'strong', children: true }),
+            tag: 'strong',
             // Pasted HTML says bold in more ways than the tags: Google Docs
             // writes a span with a weight, and wraps everything it copies in
             // a `<b>` that sets the weight back to normal.
@@ -31,12 +33,14 @@ export const boldPlugin = (): RtePlugin => ({
             ],
         }),
     },
+});
+
+/**
+ * Bold text with the `Mod-b` shortcut, and `**text**` while typing
+ */
+export const boldPlugin = /* @__PURE__ */ definePlugin({
+    content: boldContent,
     toolbarGroup: 'marks',
-    toolbarItem: ({ isActive, toggle }) => (
-        <ToolbarButton title="Bold" shortcut={HOTKEY} active={isActive} onClick={() => toggle()}>
-            <IconTextFormatBold size={20} />
-        </ToolbarButton>
-    ),
-    hotkeys: { [HOTKEY]: (api) => api.marks.toggle('bold') },
-    inputRules: [{ kind: 'mark', key: 'bold', delimiter: '**' }],
+    toolbar: [{ label: 'Bold', icon: IconTextFormatBold, shortcut: 'Mod-b' }],
+    inputRules: [{ delimiter: '**' }],
 });

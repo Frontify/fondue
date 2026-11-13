@@ -85,6 +85,7 @@
         "@typescript/native-preview": "7.0.0-dev.20260707.2",
         "@vitejs/plugin-react": "^5.2.0",
         "autoprefixer": "^10.6.2",
+        "esbuild": "^0.28.2",
         "happy-dom": "^21.0.4",
         "oxfmt": "^0.74.0",
         "oxlint": "^1.90.0",

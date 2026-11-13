@@ -5,31 +5,43 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { defineBlock, defineMark, PARAGRAPH, type RteDocumentOf, type RtePlugin } from '../core';
+import {
+    defineBlock,
+    defineContent,
+    defineMark,
+    definePlugin,
+    PARAGRAPH,
+    type RteDocumentOf,
+    type RtePlugin,
+} from '../core';
 import { serializeToHtml } from '../renderer/serializeToHtml';
 
 // Serializing where an app does it: on a server, with no page — no engine, no React, no `document`.
 
 const features: RtePlugin[] = [
-    {
+    definePlugin({
         id: 'bold',
-        marks: {
-            bold: defineMark({
-                toHtml: () => ({ tag: 'strong', children: true }),
-                parse: [{ tag: 'strong' }],
-            }),
-        },
-    },
-    {
+        content: defineContent({
+            marks: {
+                bold: defineMark({
+                    toHtml: () => ({ tag: 'strong', children: true }),
+                    parse: [{ tag: 'strong' }],
+                }),
+            },
+        }),
+    }),
+    definePlugin({
         id: 'heading',
-        blocks: {
-            heading: defineBlock({
-                content: 'text',
-                toHtml: () => ({ tag: 'h2', children: true }),
-                parse: [{ tag: 'h2' }],
-            }),
-        },
-    },
+        content: defineContent({
+            blocks: {
+                heading: defineBlock({
+                    content: 'text',
+                    toHtml: () => ({ tag: 'h2', children: true }),
+                    parse: [{ tag: 'h2' }],
+                }),
+            },
+        }),
+    }),
 ];
 
 const doc: RteDocumentOf = {

@@ -2,9 +2,9 @@
 
 import { IconEraser } from '@frontify/fondue-icons';
 
-import { type EditorControlApi, PARAGRAPH, type RtePlugin } from '#/core';
-
-import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
+import { definePlugin, type EditorControlApi, PARAGRAPH, type ToolbarItemProps } from '#/core';
+import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
+import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 /**
  * Puts the selection back to plain text: marks gone, block type back to
@@ -22,14 +22,17 @@ const reset = (api: EditorControlApi): void => {
     api.blocks.resetAttributes();
 };
 
-/** A toolbar button that strips the selection back to plain text. */
-export const resetFormattingPlugin = (): RtePlugin => ({
+const ResetFormattingButton = ({ api, label }: ToolbarItemProps) => (
+    <ToolbarButton title={label} onClick={() => reset(api)}>
+        <IconEraser size={TOOLBAR_ICON_SIZE} />
+    </ToolbarButton>
+);
+
+/**
+ * A toolbar button that puts the selection back to plain text
+ */
+export const resetFormattingPlugin = /* @__PURE__ */ definePlugin({
     id: 'reset-formatting',
     toolbarGroup: 'marks',
-    toolbarItem: ({ api }) => (
-        <ToolbarButton title="Reset formatting" onClick={() => reset(api)}>
-            <IconEraser size={20} />
-        </ToolbarButton>
-    ),
-    floatingToolbar: 'inline',
+    toolbar: [{ label: 'Reset formatting', render: ResetFormattingButton, floating: 'inline' }],
 });

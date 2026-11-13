@@ -7,11 +7,13 @@ import { defineConfig } from 'oxlint';
 /**
  * The layer boundaries, as import rings. Dependencies point inward: core ←
  * plugins / renderer / editor, with ProseMirror confined to
- * `editor/engines/prosemirror/`. Another layer is reached through its `#/…`
- * alias only, so each ring bans the aliases it may not use — always the bare
- * alias too (`#/plugins`, not just `#/plugins/**`) — and bans relative paths
- * that climb out of the importing file's own layer. How far `../` may climb
- * depends on how deep the importing file sits, hence one ring per depth.
+ * `editor/engines/prosemirror/`. The shell and the plugins also draw with the
+ * shared `ui/`, which the core, the renderer and the engine never import.
+ * Another layer is reached through its `#/…` alias only, so each ring bans the
+ * aliases it may not use — always the bare alias too (`#/plugins`, not just
+ * `#/plugins/**`) — and bans relative paths that climb out of the importing
+ * file's own layer. How far `../` may climb depends on how deep the importing
+ * file sits, hence one ring per depth.
  *
  * Patterns are globs matched against the import specifier: `*` stays within one
  * path segment, `**` crosses any number, and a later `!pattern` re-allows what
@@ -41,6 +43,9 @@ const OUTER_LAYERS = [
     '#/documentFormat',
 ];
 
+/** The shared UI, which only the editor shell and the plugins may import. */
+const UI_LAYER = ['#/ui', '#/ui/**'];
+
 /** Bans relative imports that climb `up` (`..`, `../..`, …) or further. */
 const noRelativeEscape = (up: string, message: string) => ({
     group: [`${up}/**`],
@@ -49,7 +54,7 @@ const noRelativeEscape = (up: string, message: string) => ({
 
 const CORE_ONLY = {
     group: OUTER_LAYERS,
-    message: 'Plugins may only import the core surface (#/core).',
+    message: 'Plugins may only import the core surface (#/core) and the shared UI (#/ui).',
 };
 
 /**
@@ -73,7 +78,7 @@ const noEngineFromShell = (up: string) => ({
 
 const SHELL_OUTER_LAYERS = {
     group: ['#/plugins', '#/plugins/**', '#/index', '#/documentFormat'],
-    message: 'The editor shell may import core, the renderer, and the port.',
+    message: 'The editor shell may import core, the renderer, the port, and the shared UI (#/ui).',
 };
 
 const SHELL_ESCAPE_MESSAGE = 'The editor shell reaches other layers through their #/… alias, never a relative path.';
@@ -93,6 +98,7 @@ const engineRing = (allowPluginBarrel: boolean) => ({
         '#/renderer/**',
         ...(allowPluginBarrel ? [] : ['#/plugins']),
         '#/plugins/**',
+        ...UI_LAYER,
         '#/index',
         '#/documentFormat',
         '../**',
@@ -177,7 +183,7 @@ export default defineConfig({
                                 message: 'The core may use React types, never an engine or a renderer.',
                             },
                             {
-                                group: [...OUTER_LAYERS, '../**'],
+                                group: [...OUTER_LAYERS, ...UI_LAYER, '../**'],
                                 message: 'The core imports from no other layer — it is what the other layers import.',
                             },
                         ],
@@ -203,6 +209,7 @@ export default defineConfig({
                                     '#/editor/**',
                                     '#/plugins',
                                     '#/plugins/**',
+                                    ...UI_LAYER,
                                     '#/index',
                                     '#/documentFormat',
                                     '../**',

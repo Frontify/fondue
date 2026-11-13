@@ -13,8 +13,39 @@ import { defaultPlugins, RichTextEditor, RichTextRenderer } from '@frontify/fond
 import '@frontify/fondue-rich-text-editor/styles';
 
 <RichTextEditor plugins={defaultPlugins} value={doc} onChange={setDoc} />
-<RichTextRenderer plugins={defaultPlugins} value={doc} />
+<RichTextRenderer value={doc} />
 ```
+
+The renderer needs no editing code, so it reads only each feature's content, not its plugin.
+With no `plugins` it uses `defaultContent`. Pass your own content, or your plugins, when the
+document holds more than the defaults.
+
+## Writing a plugin
+
+A feature has two parts. Its content (`defineContent`) says what exists: blocks, marks and
+inlines, and how each one is written as HTML and read back. Its plugin (`definePlugin`) adds
+the editing on top: toolbar buttons, editing views, keys and typing rules. Export both from one
+file and mark the `definePlugin` call `/* @__PURE__ */`. A page that only shows documents then
+keeps the content and its bundler drops the plugin with its editing code. The content needs no
+mark: whoever imports the file uses it. A computed key or any other
+side effect in a `definePlugin` argument stops the bundler from dropping it. The package's own
+plugins are checked by a spec that fails when editing UI lands in the renderer bundle.
+
+```tsx
+export const highlightContent = defineContent({
+    marks: { highlight: defineMark({ tag: 'mark' }) },
+});
+
+export const highlightPlugin = /* @__PURE__ */ definePlugin({
+    content: highlightContent,
+    toolbar: [{ label: 'Highlight', icon: IconHighlight, shortcut: 'Mod-h' }],
+});
+
+<RichTextEditor plugins={[...defaultPlugins, highlightPlugin]} />
+<RichTextRenderer plugins={[...defaultContent, highlightContent]} value={doc} />
+```
+
+A plugin with options is a function that returns `definePlugin(...)`, like `mentionPlugin({ items })`.
 
 `@frontify/fondue-components`, `@frontify/fondue-icons` and `@frontify/fondue-tokens` are peer dependencies:
 the host installs them beside this package and loads `@frontify/fondue-tokens/styles` and
@@ -27,8 +58,9 @@ Layers import inward only; `oxlint.config.ts` enforces it.
 ```
 src/
 ├── core/            The contract: document types, RtePlugin, the registry. Imports nothing else.
-├── plugins/         One folder per feature (Bold, Link, List, …). Each imports only core and plugins/shared.
-├── renderer/        Readonly view and HTML export, both from each plugin's `toHtml`.
+├── plugins/         One folder per feature (Bold, Link, List, …). Each imports only core, ui and plugins/shared.
+├── ui/              Controls the shell and the plugins both draw with (ToolbarButton). Imports at most core.
+├── renderer/        Readonly view and HTML export, both from each feature's content (`toHtml`).
 ├── editor/          The editing shell.
 │   ├── RichTextEditor.tsx   The component a host mounts.
 │   ├── port.ts              The seam between the shell and an engine.

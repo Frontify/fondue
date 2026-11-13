@@ -5,7 +5,7 @@
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { type RteBlockNode, type RteInputRule, type RtePlugin } from '#/core';
+import { definePlugin, type RteBlockNode, type RteInputRule, type RtePlugin } from '#/core';
 import { defaultPlugins, typographyPlugin } from '#/plugins';
 
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
@@ -15,7 +15,7 @@ import { destroyEditors, editorWith, paragraph, shipped, text } from './testEdit
  * is all `typographyPlugin` declares.
  */
 
-const rulesPlugin = (...inputRules: RteInputRule[]): RtePlugin => ({ id: 'rules', inputRules });
+const rulesPlugin = (...inputRules: RteInputRule[]): RtePlugin => definePlugin({ id: 'rules', inputRules });
 
 const typed = (value: string, plugins: readonly RtePlugin[]): RteBlockNode[] | null => {
     const editor = editorWith(plugins, [paragraph()]);
@@ -26,7 +26,7 @@ const typed = (value: string, plugins: readonly RtePlugin[]): RteBlockNode[] | n
 const press = (view: EditorView, key: string): boolean =>
     view.someProp('handleKeyDown', (handle) => handle(view, new KeyboardEvent('keydown', { key }))) === true;
 
-const withTypography = [...defaultPlugins, typographyPlugin()];
+const withTypography = [...defaultPlugins, typographyPlugin];
 
 afterEach(destroyEditors);
 

@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineMark, type RtePlugin } from '#/core';
+import { defineContent, defineMark, definePlugin, type HotkeyHandler } from '#/core';
 
-import { isSafeHref, toHref } from '../shared/helpers/href';
+import { isLinkablePaste, isSafeHref, toHref, WEB_ADDRESS } from '../shared/helpers/href';
 
 import { LinkEditor } from './components/LinkEditor';
 import { LinkToolbarButton } from './components/LinkToolbarButton';
@@ -10,11 +10,11 @@ import { openNewLinkForm } from './helpers/newLinkForms';
 import { type LinkValue } from './helpers/value';
 import styles from './link.module.scss';
 
-/** Add or edit a link, as in most editors. */
-const HOTKEY = 'Mod-k';
-
 /** The value this plugin sets on text nodes. */
 export type LinkMark = {
+    /**
+     * The target of the link
+     */
     link?: LinkValue;
 };
 
@@ -22,19 +22,10 @@ const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string
     link?.openInNewTab === true ? { target: '_blank', rel: 'noopener noreferrer' } : {};
 
 /**
- * A link is a mark: the text stays text, and the target rides along on it.
- *
- * In the editor, `render.edit` draws the anchor around the text and the
- * flyout that hangs off it while the caret is inside — showing the target,
- * editing it, removing the link. The toolbar button (`toolbarItem`) is how a
- * link is made, and Mod-k does what it does.
- *
- * Only web, mail and phone links (and relative ones) are links: anything else
- * pasted in stays plain text, and a stored one is written out without its
- * target, so a `javascript:` URL is never clickable.
+ * Links as a mark on text, written as `<a href>`.
+ * Only web, mail, phone and relative targets count, so a `javascript:` URL is never clickable.
  */
-export const linkPlugin = (): RtePlugin => ({
-    id: 'link',
+export const linkContent = defineContent({
     marks: {
         link: defineMark<LinkValue>({
             // Outside every other mark, so a partly styled link still renders
@@ -78,32 +69,47 @@ export const linkPlugin = (): RtePlugin => ({
                     },
                 },
             ],
-
-            render: { edit: LinkEditor },
         }),
     },
-    toolbarGroup: 'link',
-    toolbarItem: (props) => <LinkToolbarButton {...props} shortcut={HOTKEY} />,
-    hotkeys: {
-        [HOTKEY]: (api) => {
-            if (api.marks.getRun('link') !== null) {
-                api.editors.open('link');
-                return true;
-            }
-            // Nothing selected is nothing to link, but the key is still the
-            // editor's — not the browser's search bar.
-            return api.selection.get().isCollapsed || openNewLinkForm(api);
-        },
+});
+
+// The key is a literal because a computed key keeps this plugin in the renderer; HOTKEY's type ties it to this key.
+const hotkeys = {
+    'Mod-k': (api) => {
+        if (api.marks.getRun('link') !== null) {
+            api.editors.open('link');
+            return true;
+        }
+        // Nothing selected is nothing to link, but the key is still the
+        // editor's, not the browser's search bar.
+        return api.selection.get().isCollapsed || openNewLinkForm(api);
     },
+} satisfies Record<string, HotkeyHandler>;
+
+const HOTKEY: keyof typeof hotkeys = 'Mod-k';
+
+/**
+ * Links, made with a toolbar button or `Mod-k` and edited in a flyout while the caret is inside.
+ * A web address followed by a space becomes a link, and pasting one over selected text links that text.
+ */
+export const linkPlugin = /* @__PURE__ */ definePlugin({
+    content: linkContent,
+    toolbarGroup: 'link',
+    toolbar: [{ label: 'Link', shortcut: HOTKEY, render: LinkToolbarButton }],
+    edit: { link: LinkEditor },
+    hotkeys,
     // A web address typed and followed by a space becomes a link. The pattern
     // names only web schemes, so what it matches is always a safe href.
-    inputRules: [{ kind: 'markPattern', pattern: /https?:\/\/[^\s]+/, mark: 'link', value: (href) => ({ href }) }],
+    inputRules: [{ kind: 'markPattern', pattern: WEB_ADDRESS, mark: 'link', value: (href) => ({ href }) }],
     // A web or mail address pasted over selected text links that text, as
     // in most editors; anything else pastes as usual.
     onPaste: ({ text }, api) => {
         const typed = text.trim();
         const { isCollapsed, marks } = api.selection.get();
-        const href = /^(https?:\/\/|mailto:)/i.test(typed) ? toHref(typed) : null;
+        let href: string | null = null;
+        if (isLinkablePaste(typed)) {
+            href = toHref(typed);
+        }
         if (isCollapsed || href === null || !isSafeHref(href)) {
             return false;
         }
