@@ -4,18 +4,13 @@ import { IconPeople, IconPerson, IconTarget } from '@frontify/fondue-icons';
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { readableShortcut } from '#/ui/shortcut';
-
-import { isSafeImageSrc } from '../../shared/helpers/href';
 import { isCompositionKey } from '../../shared/helpers/keys';
+import { isSafeImageSrc } from '../helpers/image';
 import { type PeopleOutcome, usePeople } from '../hooks/usePeople';
 import styles from '../mention.module.scss';
 import { type MentionItem, type MentionItems } from '../types';
 
 import { type MentionPickerLabels } from './pickerLabels';
-
-/** The key that asks again after a failed lookup. */
-const RETRY_KEY = 'Enter';
 
 /** How long a lookup runs before the list says it is searching, so a quick answer never flashes the row. */
 const SEARCHING_DELAY_MS = 300;
@@ -140,7 +135,7 @@ const statusOf = (phase: PeoplePhase, people: readonly MentionItem[], labels: Me
         case 'searching':
             return '';
         case 'failed':
-            return `${labels.failed} ${labels.retryHint}.`;
+            return labels.failed;
         case 'empty':
             return labels.noMatches;
         case 'list':
@@ -171,12 +166,45 @@ const useSlowLookup = (pending: boolean, query: string): boolean => {
     return pending && slowQuery === query;
 };
 
+type ActiveOptionIdParams = {
+    listboxShown: boolean;
+    phase: PeoplePhase;
+    active: MentionItem | undefined;
+    activeIndex: number;
+    retryId: string;
+    optionId: (index: number) => string;
+};
+
+/**
+ * The option the input points at: Retry while the search has failed, else the highlighted person.
+ */
+const activeOptionId = ({
+    listboxShown,
+    phase,
+    active,
+    activeIndex,
+    retryId,
+    optionId,
+}: ActiveOptionIdParams): string | undefined => {
+    if (!listboxShown) {
+        return undefined;
+    }
+    if (phase === 'failed') {
+        return retryId;
+    }
+    if (active === undefined) {
+        return undefined;
+    }
+    return optionId(activeIndex);
+};
+
 type MentionPopupBodyProps = {
     phase: PeoplePhase;
     people: readonly MentionItem[];
     trigger: string;
     labels: MentionPickerLabels;
     listId: string;
+    retryId: string;
     activeIndex: number;
     optionId: (index: number) => string;
     onRetry: () => void;
@@ -185,7 +213,7 @@ type MentionPopupBodyProps = {
 };
 
 /**
- * What the popup shows for a phase: a message, the retry button, or the list of people.
+ * What the popup shows for a phase: a message, the retry option, or the list of people.
  */
 const MentionPopupBody = ({
     phase,
@@ -193,6 +221,7 @@ const MentionPopupBody = ({
     trigger,
     labels,
     listId,
+    retryId,
     activeIndex,
     optionId,
     onRetry,
@@ -206,22 +235,24 @@ const MentionPopupBody = ({
             return <div className={styles.empty}>{labels.searching}</div>;
         case 'failed':
             return (
-                <div className={styles.empty}>
-                    {labels.failed}{' '}
-                    <button
-                        type="button"
-                        // Out of the Tab order and off the mouse's focus: the query keeps the caret.
-                        tabIndex={-1}
-                        onMouseDown={(event) => event.preventDefault()}
-                        onClick={onRetry}
-                        className={styles.retry}
-                    >
-                        {labels.retry}
-                    </button>
-                    <kbd aria-hidden="true" className={styles.shortcut}>
-                        {readableShortcut(RETRY_KEY)}
-                    </kbd>
-                </div>
+                <>
+                    <div className={styles.empty}>{labels.failed}</div>
+                    <ul id={listId} role="listbox" aria-label={labels.list} className={styles.list}>
+                        {/* The keyboard runs it from the input as the active option; the mouse runs it here. */}
+                        {/* oxlint-disable-next-line jsx-a11y/click-events-have-key-events */}
+                        <li
+                            id={retryId}
+                            role="option"
+                            aria-selected
+                            // Keep focus in the input: blurring would cancel before the click lands.
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={onRetry}
+                            className={`${styles.option} ${styles.optionActive}`}
+                        >
+                            {labels.retry}
+                        </li>
+                    </ul>
+                </>
             );
         case 'empty':
             return <div className={styles.empty}>{labels.noMatches}</div>;
@@ -345,7 +376,7 @@ export const MentionDraft = ({
     const phase = phaseOf({ outcome, pending, slow });
     const open = isOpen(phase, query);
     const position = useListPosition(draftRef, open);
-    const listShown = open && position !== null && phase === 'list';
+    const listboxShown = open && position !== null && (phase === 'list' || phase === 'failed');
 
     // Tagged with its query so a new query resets the highlight to the top without an effect.
     const [highlighted, setHighlighted] = useState({ query, index: 0 });
@@ -353,6 +384,7 @@ export const MentionDraft = ({
     const highlight = (index: number): void => setHighlighted({ query, index });
     const active = people[activeIndex];
     const optionId = (index: number): string => `${listId}-option-${index}`;
+    const retryId = `${listId}-retry`;
 
     useEffect(() => {
         if (focused) {
@@ -379,8 +411,11 @@ export const MentionDraft = ({
                 break;
             case 'Enter':
             case 'Tab':
-                // Only Enter retries; Tab is not trapped where nobody can be picked.
-                if (phase === 'failed' && event.key === 'Enter') {
+                // While the search has failed, Retry is the active option and Enter runs it; Tab is not trapped.
+                if (phase === 'failed') {
+                    if (event.key !== 'Enter') {
+                        return;
+                    }
                     retry();
                     break;
                 }
@@ -419,11 +454,11 @@ export const MentionDraft = ({
             <input
                 ref={inputRef}
                 role="combobox"
-                aria-expanded={listShown}
+                aria-expanded={listboxShown}
                 // Only while the listbox is in the page: an id pointing at nothing is an error.
-                aria-controls={listShown ? listId : undefined}
+                aria-controls={listboxShown ? listId : undefined}
                 aria-autocomplete="list"
-                aria-activedescendant={listShown && active ? optionId(activeIndex) : undefined}
+                aria-activedescendant={activeOptionId({ listboxShown, phase, active, activeIndex, retryId, optionId })}
                 aria-label={labels.input}
                 value={query}
                 size={Math.max(query.length, 1)}
@@ -444,6 +479,7 @@ export const MentionDraft = ({
                               trigger={trigger}
                               labels={labels}
                               listId={listId}
+                              retryId={retryId}
                               activeIndex={activeIndex}
                               optionId={optionId}
                               onRetry={retry}
