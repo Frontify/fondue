@@ -44,7 +44,7 @@ const MAX_HREF_LENGTH = 2048;
 const CONTROL_CHARACTER = /[\u0000-\u001F\u007F-\u009F]/;
 
 /** The scheme an href names, lower-cased with its colon, or null for a relative one. */
-const schemeOf = (href: string): string | null => {
+export const schemeOf = (href: string): string | null => {
     // Browsers ignore tabs, newlines and control characters in URLs, so `java\tscript:` must read as `javascript:`.
     const compact = href.replaceAll(/[\u0000- ]/g, '');
     return /^([a-z][a-z\d+.-]*:)/i.exec(compact)?.[1]?.toLowerCase() ?? null;
@@ -68,20 +68,6 @@ export const isSafeHref = (href: unknown): href is string => {
  * Whether pasted text is a web, mail or phone address that may become a link
  */
 export const isLinkablePaste = (text: string): boolean => LINKABLE_PASTE.test(text);
-
-/**
- * What an `<img>` may load: a web or relative URL; `data:`, `javascript:` and other schemes are refused
- */
-export const isSafeImageSrc = (src: unknown): src is string => {
-    if (typeof src !== 'string') {
-        return false;
-    }
-    if (!isSafeHref(src)) {
-        return false;
-    }
-    const scheme = schemeOf(src);
-    return scheme === null || scheme === 'http:' || scheme === 'https:';
-};
 
 /** Paths and fragments within the site the document is shown on, kept as typed. */
 const isRelative = (typed: string): boolean => /^(#|\/|\.\.?\/|\?)/.test(typed);

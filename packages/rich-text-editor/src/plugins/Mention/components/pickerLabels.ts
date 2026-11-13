@@ -30,11 +30,6 @@ export type MentionPickerLabels = {
      */
     failed: string;
     /**
-     * Announced after `failed`, saying how to ask again from the keyboard
-     * @default 'Press Enter to retry'
-     */
-    retryHint: string;
-    /**
      * The button that asks again after a failed search
      * @default 'Retry'
      */
@@ -62,7 +57,6 @@ export const DEFAULT_MENTION_PICKER_LABELS: MentionPickerLabels = {
     searching: 'Searching',
     noMatches: 'No matches',
     failed: 'Could not load people.',
-    retryHint: 'Press Enter to retry',
     retry: 'Retry',
     peopleCount,
 };
