@@ -50,8 +50,3 @@
         }
     }
 }
-
-/** An item holds blocks, so its text sits in a paragraph that must not add space. */
-.item > p {
-    margin: 0;
-}

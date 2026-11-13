@@ -2,9 +2,11 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { linkPlugin } from './Link';
+import { buildPluginRegistry } from '#/core';
 
-const link = linkPlugin.content?.marks?.link;
+import { linkContent, linkPlugin } from './Link';
+
+const link = linkPlugin().content?.marks?.link;
 
 describe('the link mark', () => {
     it('writes a safe target', () => {
@@ -17,5 +19,25 @@ describe('the link mark', () => {
             expect(html?.tag).toBe('a');
             expect(html?.attrs).not.toHaveProperty('href');
         }
+    });
+});
+
+describe('the link plugin look', () => {
+    it('sets a custom property for each field the host looks', () => {
+        const plugin = linkPlugin({ look: { fontWeight: '600', color: 'red' } });
+
+        expect(plugin.content?.contentProperties).toEqual({
+            '--rte-link-font-weight': '600',
+            '--rte-link-color': 'red',
+        });
+    });
+
+    it('sets nothing without a look', () => {
+        expect(linkContent().contentProperties).toEqual({});
+        expect(linkPlugin().content?.contentProperties).toEqual({});
+    });
+
+    it('registers next to the default content, which shares its mark', () => {
+        expect(() => buildPluginRegistry([linkContent(), linkPlugin({ look: { color: 'red' } })])).not.toThrow();
     });
 });

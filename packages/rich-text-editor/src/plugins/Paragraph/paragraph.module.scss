@@ -1,0 +1,10 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../styles/look.module.scss';
+
+// `.body` is on the document while the paragraph plugin is on. A plain paragraph is a `<p>` without the margin
+// marker, which a text style's `<p>` carries. `:where` keeps the rule at class rank, below a checked item's colour
+// and strike. The margins are in renderer/document.module.scss, which loads with or without this plugin.
+.body :where(p:not([data-rte-own-margins])) {
+    @include look.look('body', $except: (margin-top, margin-bottom));
+}
