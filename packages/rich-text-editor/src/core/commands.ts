@@ -54,6 +54,28 @@ export type RteSelectionSnapshot = {
 };
 
 /**
+ * How much of the document `marks.removeAll` clears at a caret: `'typing'` only stops the next typed text carrying
+ * marks, `'block'` also clears the marks of the caret's whole text block. A range clears what it covers either way.
+ */
+export type ClearMarksScope = 'typing' | 'block';
+
+/**
+ * Options for `marks.removeAll`.
+ */
+export type ClearMarksOptions = {
+    /**
+     * How much a caret clears.
+     * @default 'typing'
+     */
+    scope?: ClearMarksScope;
+    /**
+     * Leave on the marks that declare `survivesClear`.
+     * @default false
+     */
+    keepSurviving?: boolean;
+};
+
+/**
  * The API plugins are handed in their toolbar controls, hotkeys and `edit` views,
  * to drive the editor whatever the engine. Read with `selection.get()`; act with
  * one command per act, keyed by the type it acts on.
@@ -80,8 +102,14 @@ export type EditorControlApi = {
          * mark, as one undo step: how a colour is removed.
          */
         remove(type: string): void;
-        /** Strip every mark from the selection — the formatting half of "reset formatting". */
-        removeAll(): void;
+        /**
+         * Strip every mark from the selection, except those that declare `survivesClear` when `keepSurviving` is set.
+         *
+         * @param options - how much a caret clears and which marks stay; with none, a caret only stops the marks it
+         * would type with and every mark goes
+         * @returns whether any mark was removed, from the document or from the marks the caret would type with
+         */
+        removeAll(options?: ClearMarksOptions): boolean;
         /**
          * The whole run of a mark around the selection (its value and text), or
          * null. Unlike the snapshot's `marks` it is about the run, not the
@@ -93,11 +121,16 @@ export type EditorControlApi = {
     blocks: {
         /**
          * Turn every text block the selection touches into this type, with `value` as its attributes.
-         * A block inside a list is first taken out of its list, so the result stands on its own.
+         * A block inside a list is first taken out of its list, so the result stands on its own, whichever lists
+         * the selection spans.
          */
         setType(type: string, value?: Record<string, unknown>): void;
-        /** Set attributes on every block the selection touches — how alignment is applied. */
-        updateAttributes(attributes: Record<string, unknown>): void;
+        /**
+         * Set attributes on every block the selection touches — how alignment is applied.
+         *
+         * @returns whether any block changed, which is false when none of them declares the attributes or all have the values already
+         */
+        updateAttributes(attributes: Record<string, unknown>): boolean;
         /** Reset every `blockAttributes` attribute (alignment) to its default across the selection. */
         resetAttributes(): void;
     };
@@ -112,7 +145,9 @@ export type EditorControlApi = {
         indent(): boolean;
         /** Lift the current list item out one level, leaving the list entirely at the top. */
         outdent(): boolean;
-        /** Split the current list item in two — Enter inside a list. Returns false outside one. */
+        /**
+         * Split the current list item in two or, in an empty item, leave the list (outdent) — Enter inside a list. Returns false outside one.
+         */
         split(): boolean;
         /** Replace every list the selection touches with the blocks its items held, even when the selection merely contains lists. */
         unwrapAll(): boolean;
@@ -149,6 +184,21 @@ export type EditorControlApi = {
         /** Make the last undone change again. */
         redo(): void;
     };
+
+    /**
+     * Whether the document holds no text, only empty blocks (the exported `isEmpty`)
+     */
+    isEmpty(): boolean;
+
+    /**
+     * Run `run` so every command it performs is one undo step. Groups nested in `run` join it.
+     */
+    group(run: () => void): void;
+
+    /**
+     * Say `message` to screen readers through the editor's polite live region. Saying the same message twice is heard twice.
+     */
+    announce(message: string): void;
 
     /** Return focus to the editor, e.g. after closing plugin UI. */
     focus(): void;

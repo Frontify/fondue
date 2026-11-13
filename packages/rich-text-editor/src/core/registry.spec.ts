@@ -489,6 +489,22 @@ describe('the hotkeys of a registry', () => {
     });
 });
 
+describe('the descriptions of a registry', () => {
+    it("are the plugins' own, in mount order, leaving out plugins that say nothing", () => {
+        const registry = buildPluginRegistry([
+            definePlugin({ id: 'first', description: 'Press Enter to submit.' }),
+            definePlugin({ id: 'silent' }),
+            definePlugin({ id: 'second', description: 'Press Mod-\\ to reset.' }),
+        ]);
+
+        expect(registry.descriptions).toEqual(['Press Enter to submit.', 'Press Mod-\\ to reset.']);
+    });
+
+    it('are empty when no plugin describes itself', () => {
+        expect(buildPluginRegistry([definePlugin({ id: 'silent' })]).descriptions).toEqual([]);
+    });
+});
+
 describe('the menu commands of a toolbar entry', () => {
     const content = defineContent({ blocks: { quote: textBlock() } });
 

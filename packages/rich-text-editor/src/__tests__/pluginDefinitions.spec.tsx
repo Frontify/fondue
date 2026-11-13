@@ -13,15 +13,21 @@ import {
     definePlugin,
     type EditorControlApi,
     type RtePlugin,
+    type ToolbarItemProps,
 } from '../core';
 import {
+    alignPlugin,
+    type AlignPluginOptions,
     blurOnBreakPlugin,
+    type BlurOnBreakPluginOptions,
     bulletListPlugin,
     columnBreakPlugin,
     defaultPlugins,
     mentionPlugin,
     type MentionPluginOptions,
     numberedListPlugin,
+    resetFormattingPlugin,
+    type ResetFormattingPluginOptions,
     RichTextRenderer,
     serializeToHtml,
     textStylePlugin,
@@ -40,9 +46,22 @@ declare global {
 }
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
-const recordingApi = ({ inList = false } = {}) => {
+type RecordingApiOptions = {
+    inList?: boolean;
+    empty?: boolean;
+    /** The alignment of the block the selection starts in; none by default. */
+    align?: string;
+    /** What `blocks.updateAttributes` and `marks.removeAll` report: whether they changed anything. */
+    changes?: boolean;
+};
+
+const recordingApi = ({ inList = false, empty = false, align, changes = true }: RecordingApiOptions = {}) => {
     const calls: string[] = [];
     const api = {
+        isEmpty: () => empty,
+        announce: (message: string) => {
+            calls.push(`announce ${message}`);
+        },
         lists: {
             split: () => {
                 calls.push('split');
@@ -56,13 +75,62 @@ const recordingApi = ({ inList = false } = {}) => {
             setType: (type: string, value?: Record<string, unknown>) => {
                 calls.push(`blocks.setType ${type}${value ? ` ${JSON.stringify(value)}` : ''}`);
             },
+            updateAttributes: (attributes: Record<string, unknown>) => {
+                calls.push(`blocks.updateAttributes ${JSON.stringify(attributes)}`);
+                return changes;
+            },
+            resetAttributes: () => {
+                calls.push('blocks.resetAttributes');
+            },
+        },
+        marks: {
+            removeAll: (options?: Record<string, unknown>) => {
+                calls.push(`marks.removeAll ${JSON.stringify(options)}`);
+                return changes;
+            },
+        },
+        group: (run: () => void) => {
+            calls.push('group');
+            run();
         },
         blur: () => {
             calls.push('blur');
         },
-        selection: { get: () => ({ marks: {} }) },
+        selection: { get: () => ({ marks: {}, block: { type: 'paragraph', align } }) },
     } as unknown as EditorControlApi;
     return { api, calls };
+};
+
+type ClickToolbarButtonParams = { plugin: RtePlugin; api: EditorControlApi; name: string };
+
+/** Draws the plugin's toolbar entry against the fake API and presses the button with this accessible name. */
+const clickToolbarButton = ({ plugin, api, name }: ClickToolbarButtonParams): void => {
+    const entry = buildPluginRegistry([plugin]).toolbarItems[0];
+    if (entry?.control !== 'custom') {
+        throw new Error('the plugin has no custom toolbar entry');
+    }
+    const container = window.document.createElement('div');
+    window.document.body.append(container);
+    const root = createRoot(container);
+    const Entry = entry.render;
+    // The entries read `api`, `label` and `selection`; the rest is what any entry is handed.
+    const props: ToolbarItemProps = {
+        api,
+        label: entry.label,
+        selection: api.selection.get(),
+        selectedNode: null,
+        isActive: false,
+        toggle: () => {},
+        openEditor: () => {},
+    };
+    act(() => root.render(<Entry {...props} />));
+    const button = container.querySelector<HTMLElement>(`[aria-label="${name}"]`);
+    if (button === null) {
+        throw new Error(`the entry drew no button named ${name}`);
+    }
+    act(() => button.click());
+    act(() => root.unmount());
+    container.remove();
 };
 
 const PEOPLE = [
@@ -229,20 +297,206 @@ describe('mentionPlugin', () => {
 });
 
 describe('blurOnBreakPlugin', () => {
-    const enter = blurOnBreakPlugin.hotkeys?.Enter;
+    const enterOf = (options?: BlurOnBreakPluginOptions) => blurOnBreakPlugin(options).hotkeys?.Enter;
 
     it('splits the list item when Enter is pressed inside a list, and keeps focus', () => {
         const { api, calls } = recordingApi({ inList: true });
 
-        expect(enter?.(api)).toBe(true);
+        expect(enterOf({ onBreak: () => calls.push('onBreak') })?.(api)).toBe(true);
         expect(calls).toEqual(['split']);
     });
 
     it('gives up focus when Enter is pressed anywhere else, adding no paragraph', () => {
         const { api, calls } = recordingApi();
 
-        expect(enter?.(api)).toBe(true);
+        expect(enterOf()?.(api)).toBe(true);
         expect(calls).toEqual(['split', 'blur']);
+    });
+
+    it('calls onBreak before it gives up focus', () => {
+        const { api, calls } = recordingApi();
+
+        enterOf({ onBreak: () => calls.push('onBreak') })?.(api);
+
+        expect(calls).toEqual(['split', 'onBreak', 'blur']);
+    });
+
+    it("refuses an empty editor when required, with default words or the host's own", () => {
+        const first = recordingApi({ empty: true });
+        const second = recordingApi({ empty: true });
+
+        enterOf({ required: true, onBreak: () => first.calls.push('onBreak') })?.(first.api);
+        enterOf({ required: true, labels: { required: 'Write first.' } })?.(second.api);
+
+        expect(first.calls).toEqual(['split', 'announce Type something before submitting.']);
+        expect(second.calls).toEqual(['split', 'announce Write first.']);
+    });
+
+    it('commits a required editor that has something in it', () => {
+        const { api, calls } = recordingApi();
+
+        enterOf({ required: true })?.(api);
+
+        expect(calls).toEqual(['split', 'blur']);
+    });
+
+    it('describes its key for screen readers when there is something to submit', () => {
+        expect(blurOnBreakPlugin({ onBreak: () => {} }).description).toBe('Press Enter to submit.');
+    });
+
+    it("adds what is required to the description, in default words or the host's own", () => {
+        expect(blurOnBreakPlugin({ onBreak: () => {}, required: true }).description).toBe(
+            'Press Enter to submit. Type something before submitting.',
+        );
+        expect(
+            blurOnBreakPlugin({ onBreak: () => {}, required: true, labels: { required: 'Write first.' } }).description,
+        ).toBe('Press Enter to submit. Write first.');
+    });
+
+    it("says the host's own description in place of the English one, with what is required after it", () => {
+        expect(blurOnBreakPlugin({ onBreak: () => {}, labels: { description: 'Enter sends it.' } }).description).toBe(
+            'Enter sends it.',
+        );
+        expect(
+            blurOnBreakPlugin({
+                onBreak: () => {},
+                required: true,
+                labels: { description: 'Enter sends it.', required: 'Write first.' },
+            }).description,
+        ).toBe('Enter sends it. Write first.');
+    });
+
+    it('adds nothing to the description when required is false', () => {
+        expect(blurOnBreakPlugin({ onBreak: () => {}, required: false }).description).toBe('Press Enter to submit.');
+    });
+
+    it('says nothing about submitting when there is no onBreak', () => {
+        expect(blurOnBreakPlugin().description).toBeUndefined();
+    });
+
+    it('says nothing about a required field when there is no onBreak to submit to', () => {
+        expect(blurOnBreakPlugin({ required: true }).description).toBeUndefined();
+    });
+
+    it('binds Enter alone, so Shift-Enter stays with whatever else binds it', () => {
+        expect(Object.keys(blurOnBreakPlugin().hotkeys ?? {})).toEqual(['Enter']);
+    });
+});
+
+describe('alignPlugin', () => {
+    const keyOf = (shortcut: string, options?: AlignPluginOptions) => alignPlugin(options).hotkeys?.[shortcut];
+
+    it.each([
+        ['Mod-Shift-l', 'left', 'Aligned left'],
+        ['Mod-Shift-e', 'center', 'Centered'],
+        ['Mod-Shift-r', 'right', 'Aligned right'],
+        ['Mod-Shift-j', 'justify', 'Justified'],
+    ])('%s sets %s on the selected blocks and says %s', (shortcut, value, announcement) => {
+        const { api, calls } = recordingApi();
+
+        keyOf(shortcut)?.(api);
+
+        expect(calls).toEqual([`blocks.updateAttributes {"align":"${value}"}`, `announce ${announcement}`]);
+    });
+
+    it('clears the alignment when the block the selection starts in already has it, and says so', () => {
+        const { api, calls } = recordingApi({ align: 'center' });
+
+        keyOf('Mod-Shift-e')?.(api);
+
+        expect(calls).toEqual(['blocks.updateAttributes {"align":null}', 'announce Alignment cleared']);
+    });
+
+    it('sets the alignment when that block has another one', () => {
+        const { api, calls } = recordingApi({ align: 'left' });
+
+        keyOf('Mod-Shift-e')?.(api);
+
+        expect(calls).toEqual(['blocks.updateAttributes {"align":"center"}', 'announce Centered']);
+    });
+
+    it('says nothing when no block changed', () => {
+        const { api, calls } = recordingApi({ changes: false });
+
+        keyOf('Mod-Shift-e')?.(api);
+
+        expect(calls).toEqual(['blocks.updateAttributes {"align":"center"}']);
+    });
+
+    it("says the host's own words, leaving the others in English", () => {
+        const options = { labels: { center: 'Zentriert', cleared: 'Ausrichtung entfernt' } };
+        const centered = recordingApi();
+        const cleared = recordingApi({ align: 'center' });
+        const right = recordingApi();
+
+        keyOf('Mod-Shift-e', options)?.(centered.api);
+        keyOf('Mod-Shift-e', options)?.(cleared.api);
+        keyOf('Mod-Shift-r', options)?.(right.api);
+
+        expect(centered.calls).toContain('announce Zentriert');
+        expect(cleared.calls).toContain('announce Ausrichtung entfernt');
+        expect(right.calls).toContain('announce Aligned right');
+    });
+
+    it('does with a toolbar button what its key does', () => {
+        const pressed = recordingApi();
+        const cleared = recordingApi({ align: 'center' });
+        const plugin = alignPlugin();
+
+        clickToolbarButton({ plugin, api: pressed.api, name: 'Align center' });
+        clickToolbarButton({ plugin, api: cleared.api, name: 'Align center' });
+
+        expect(pressed.calls).toEqual(['blocks.updateAttributes {"align":"center"}', 'announce Centered']);
+        expect(cleared.calls).toEqual(['blocks.updateAttributes {"align":null}', 'announce Alignment cleared']);
+    });
+});
+
+describe('resetFormattingPlugin', () => {
+    const clearKey = (options?: ResetFormattingPluginOptions) => resetFormattingPlugin(options).hotkeys?.['Mod-\\'];
+
+    it('clears the marks of the block with Mod-\\, those that survive a clear excepted, and says so', () => {
+        const { api, calls } = recordingApi();
+
+        clearKey()?.(api);
+
+        expect(calls).toEqual([
+            'marks.removeAll {"scope":"block","keepSurviving":true}',
+            'announce Formatting cleared',
+        ]);
+    });
+
+    it('says nothing when Mod-\\ removed no mark', () => {
+        const { api, calls } = recordingApi({ changes: false });
+
+        clearKey()?.(api);
+
+        expect(calls).toEqual(['marks.removeAll {"scope":"block","keepSurviving":true}']);
+    });
+
+    it('resets the marks, the block type and the attributes with its button, as one group, and says so', () => {
+        const { api, calls } = recordingApi();
+
+        clickToolbarButton({ plugin: resetFormattingPlugin(), api, name: 'Reset formatting' });
+
+        expect(calls).toEqual([
+            'group',
+            'marks.removeAll {"scope":"block","keepSurviving":true}',
+            'blocks.setType paragraph',
+            'blocks.resetAttributes',
+            'announce Formatting reset',
+        ]);
+    });
+
+    it("says the host's own words for the key and the button", () => {
+        const options = { labels: { cleared: 'Gelöscht', reset: 'Zurückgesetzt' } };
+        const cleared = recordingApi();
+        const reset = recordingApi();
+
+        clearKey(options)?.(cleared.api);
+        clickToolbarButton({ plugin: resetFormattingPlugin(options), api: reset.api, name: 'Reset formatting' });
+
+        expect(cleared.calls).toContain('announce Gelöscht');
+        expect(reset.calls).toContain('announce Zurückgesetzt');
     });
 });
 

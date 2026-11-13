@@ -86,6 +86,10 @@ export type RtePlugin = {
     id: string;
     content?: RteContent;
     /**
+     * One sentence for screen readers, read with the editor: a hint about what its keys do
+     */
+    description?: string;
+    /**
      * Toolbar controls this feature offers, in the order given
      */
     toolbar?: readonly RteToolbarEntry[];
@@ -333,6 +337,11 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
      * @default false
      */
     excludesInputRules?: boolean;
+    /**
+     * Clearing marks with `keepSurviving` leaves this mark on, where clearing without it removes every mark.
+     * @default false
+     */
+    survivesClear?: boolean;
     /** What the mark carries when put on without a value (a toggle, a parse rule). Defaults to `{}`. */
     defaults?: TValue;
     /** Styles the mark's own tags show by default, which pasted HTML repeats without meaning them as formatting. */

@@ -20,6 +20,8 @@ import {
     type Paste,
     type PasteHandler,
     type PasteSource,
+    type ClearMarksOptions as ClearOptions,
+    type ClearMarksScope as ClearScope,
     type RteBlockCommand,
     type RteBlockNode,
     type RteContent,
@@ -144,6 +146,8 @@ export { underlineContent, underlinePlugin } from './plugins/Underline';
 
 // --- Plugin options ---
 
+export { type AlignLabels, type AlignPluginOptions } from './plugins/Align';
+export { type BlurOnBreakLabels, type BlurOnBreakPluginOptions } from './plugins/BlurOnBreak';
 export { type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './plugins/Emoji';
 export {
@@ -165,6 +169,7 @@ export {
     type MentionResolution,
     type MentionValue,
 } from './plugins/Mention';
+export { type ResetFormattingLabels, type ResetFormattingPluginOptions } from './plugins/ResetFormatting';
 export { type TextStylePluginOptions } from './plugins/TextStyle';
 export { type TypographyGroup, type TypographyPluginOptions } from './plugins/Typography';
 
@@ -201,6 +206,8 @@ export declare namespace RtePlugin {
     export type SelectionSnapshot = RteSelectionSnapshot;
     export type MarkState = RteMarkState;
     export type BlockCommand = RteBlockCommand;
+    export type ClearMarksOptions = ClearOptions;
+    export type ClearMarksScope = ClearScope;
     export type ToolbarItemProps = ToolbarProps;
     export type ToolbarGroup = RteToolbarGroup;
     export type PasteHandler = OnPaste;

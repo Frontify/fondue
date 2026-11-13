@@ -10,18 +10,22 @@ import {
     type NodeType as PmNodeType,
     type Schema,
 } from 'prosemirror-model';
-import { type Command, type EditorState, NodeSelection, TextSelection } from 'prosemirror-state';
+import { type Command, type EditorState, NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import {
+    type ClearMarksOptions,
+    type ClearMarksScope,
     type EditorControlApi,
     INLINE_PLACEHOLDER,
+    isEmpty,
     type PluginRegistry,
     type RteMarkState,
     type RteSelectionSnapshot,
 } from '#/core';
 
-import { EXTRA_ATTR, markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
+import { type Dispatch } from './dispatch';
+import { EXTRA_ATTR, markValueOf, shallowBlock, toRteDocument, valueAttrsFor } from './documentConversion';
 import { createListApi, liftOutOfLists } from './lists';
 import { warnUnknownType } from './warnings';
 
@@ -197,8 +201,32 @@ const findMarkRange = (state: EditorState, markType: PmMarkType): { from: number
     return range;
 };
 
+/**
+ * The text a clear covers: the selection, or at a caret in a text block with scope `'block'`, the whole block around
+ * it, so no block is left half cleared.
+ */
+const clearRangeOf = (state: EditorState, scope: ClearMarksScope): { from: number; to: number } => {
+    const { from, to, empty, $from } = state.selection;
+    switch (scope) {
+        case 'typing': {
+            return { from, to };
+        }
+        case 'block': {
+            if (empty && $from.parent.isTextblock) {
+                return { from: $from.start(), to: $from.end() };
+            }
+            return { from, to };
+        }
+    }
+};
+
 /** Whether a mark is *on* is not here: that is a field of the selection snapshot. */
-const createMarkApi = (getView: () => EditorView, schema: Schema): EditorControlApi['marks'] => ({
+const createMarkApi = (
+    getView: () => EditorView,
+    schema: Schema,
+    registry: PluginRegistry,
+    dispatch: Dispatch,
+): EditorControlApi['marks'] => ({
     toggle(type, value) {
         const markType = schema.marks[type];
         if (!markType) {
@@ -207,7 +235,7 @@ const createMarkApi = (getView: () => EditorView, schema: Schema): EditorControl
         }
         const view = getView();
         // On unless ALL of the selection carries it, matching the snapshot.
-        pmToggleMark(markType, valueAttrsFor(value), { removeWhenPresent: false })(view.state, view.dispatch);
+        pmToggleMark(markType, valueAttrsFor(value), { removeWhenPresent: false })(view.state, dispatch);
         view.focus();
     },
     set(type, value) {
@@ -227,7 +255,7 @@ const createMarkApi = (getView: () => EditorView, schema: Schema): EditorControl
                 tr.addMark(range.$from.pos, range.$to.pos, mark);
             }
         }
-        view.dispatch(tr);
+        dispatch(tr);
         view.focus();
     },
     remove(type) {
@@ -245,15 +273,40 @@ const createMarkApi = (getView: () => EditorView, schema: Schema): EditorControl
                 tr.removeMark(range.$from.pos, range.$to.pos, markType);
             }
         }
-        view.dispatch(tr);
+        dispatch(tr);
         view.focus();
     },
-    removeAll() {
+    removeAll({ scope = 'typing', keepSurviving = false }: ClearMarksOptions = {}) {
         const view = getView();
-        const { from, to, empty } = view.state.selection;
-        const transaction = empty ? view.state.tr.setStoredMarks([]) : view.state.tr.removeMark(from, to, null);
-        view.dispatch(transaction);
+        const { state } = view;
+        const { empty, $from } = state.selection;
+        const range = clearRangeOf(state, scope);
+        const keeps = (type: string): boolean => keepSurviving && registry.marks.get(type)?.survivesClear === true;
+        const transaction = state.tr;
+        let removed = false;
+        // A caret with scope 'typing' covers no text, so only what typing would carry changes.
+        if (range.from < range.to) {
+            for (const markType of Object.values(schema.marks)) {
+                if (!keeps(markType.name)) {
+                    if (state.doc.rangeHasMark(range.from, range.to, markType)) {
+                        removed = true;
+                    }
+                    transaction.removeMark(range.from, range.to, markType);
+                }
+            }
+        }
+        if (empty) {
+            // What typing here would carry, as far as it is kept.
+            const carried = state.storedMarks ?? $from.marks();
+            const kept = carried.filter((mark) => keeps(mark.type.name));
+            if (kept.length < carried.length) {
+                removed = true;
+            }
+            transaction.setStoredMarks(kept);
+        }
+        dispatch(transaction);
         view.focus();
+        return removed;
     },
     getRun(type) {
         const { state } = getView();
@@ -304,9 +357,10 @@ const createBlockApi = (
     getView: () => EditorView,
     schema: Schema,
     registry: PluginRegistry,
+    dispatch: Dispatch,
 ): EditorControlApi['blocks'] => {
-    /** Every text block the selection touches, with the given attributes applied. */
-    const applyToTextBlocks = (attributes: Record<string, unknown>): void => {
+    /** Every text block the selection touches, with the given attributes applied; whether any block changed. */
+    const applyToTextBlocks = (attributes: Record<string, unknown>): boolean => {
         const view = getView();
         const { from, to } = view.state.selection;
         const transaction = view.state.tr;
@@ -322,10 +376,12 @@ const createBlockApi = (
                 }
             }
         });
-        if (transaction.docChanged) {
-            view.dispatch(transaction);
+        const changed = transaction.docChanged;
+        if (changed) {
+            dispatch(transaction);
         }
         view.focus();
+        return changed;
     };
 
     return {
@@ -361,7 +417,7 @@ const createBlockApi = (
             }
             // Lifting alone is not enough: if the type cannot be set, nothing changes.
             if (applied && combined.docChanged) {
-                view.dispatch(combined.scrollIntoView());
+                dispatch(combined.scrollIntoView());
             }
             view.focus();
         },
@@ -398,6 +454,12 @@ const createHistoryApi = (getView: () => EditorView): EditorControlApi['history'
 
 // --- The whole api ---
 
+/** The undo group: none running, running with no change yet, or running after its first change. */
+type GroupState = { kind: 'idle' } | { kind: 'open' } | { kind: 'joined'; first: Transaction };
+
+/** prosemirror-history joins a transaction carrying this meta into the undo step of the one it names. */
+const APPENDED_TRANSACTION_META = 'appendedTransaction';
+
 /** Which type's editing UI is open, and how to redraw the views that show it. */
 export type OpenEditors = { type: string | null; repaint: () => void };
 
@@ -407,106 +469,154 @@ export const createControlApi = (
     schema: Schema,
     registry: PluginRegistry,
     openEditors: OpenEditors,
-): EditorControlApi => ({
-    selection: createSelectionApi(getView),
-    marks: createMarkApi(getView, schema),
-    blocks: createBlockApi(getView, schema, registry),
-    lists: createListApi(getView, schema, registry),
-    history: createHistoryApi(getView),
+    announce: EditorControlApi['announce'],
+): EditorControlApi => {
+    // Inside a group, the document changes after the first join that one's undo step.
+    let groupState: GroupState = { kind: 'idle' };
+    const dispatch: Dispatch = (transaction) => {
+        switch (groupState.kind) {
+            case 'idle': {
+                break;
+            }
+            case 'open': {
+                if (transaction.docChanged) {
+                    // Keeps the group's step apart from the edit before it.
+                    closeHistory(transaction);
+                    groupState = { kind: 'joined', first: transaction };
+                }
+                break;
+            }
+            case 'joined': {
+                transaction.setMeta(APPENDED_TRANSACTION_META, groupState.first);
+                break;
+            }
+        }
+        getView().dispatch(transaction);
+    };
 
-    insert(type, value) {
-        const nodeType = schema.nodes[type];
-        if (!nodeType) {
-            warnUnknownType('insert', type);
-            return;
+    const endGroup = (): void => {
+        // Keeps the next input out of the group's step.
+        if (groupState.kind === 'joined') {
+            getView().dispatch(closeHistory(getView().state.tr));
         }
-        const view = getView();
-        const transaction = view.state.tr;
-        const { selection } = view.state;
-        // A block goes in AFTER selected text rather than over it; a selected node is replaced.
-        if (!nodeType.isInline && !(selection instanceof NodeSelection) && !selection.empty) {
-            transaction.setSelection(TextSelection.create(transaction.doc, selection.to));
-        }
-        // Inline elements keep their value in one attribute; blocks keep theirs flat.
-        const engineAttrs = nodeType.isInline ? valueAttrsFor(value) : value;
-        // Inline elements carry no marks, so they must not inherit the caret's.
-        view.dispatch(transaction.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline));
-        view.focus();
-    },
-    insertText(text, marks = {}, options = {}) {
-        const undoWith = options.undo ?? 'together';
-        const view = getView();
-        let transaction = view.state.tr;
-        transaction.insertText(text);
-        // Measured back from the caret after the insert: a selected block is replaced by a new paragraph, which shifts the text.
-        const to = transaction.selection.from;
-        const from = to - text.length;
-        switch (undoWith) {
-            case 'together':
-                break;
-            case 'marksFirst':
-                // Closed on both sides: the text is a step of its own, and the marks one after it.
-                view.dispatch(closeHistory(transaction));
-                transaction = closeHistory(view.state.tr);
-                break;
-        }
-        for (const [type, value] of Object.entries(marks)) {
-            const markType = schema.marks[type];
-            if (markType) {
-                // Adding replaces a mark of the same type the caret carried.
-                transaction.addMark(from, to, markType.create(valueAttrsFor(value)));
-            } else {
-                warnUnknownType('insertText', type);
+        groupState = { kind: 'idle' };
+    };
+
+    return {
+        selection: createSelectionApi(getView),
+        marks: createMarkApi(getView, schema, registry, dispatch),
+        blocks: createBlockApi(getView, schema, registry, dispatch),
+        lists: createListApi(getView, schema, registry, dispatch),
+        history: createHistoryApi(getView),
+
+        insert(type, value) {
+            const nodeType = schema.nodes[type];
+            if (!nodeType) {
+                warnUnknownType('insert', type);
+                return;
             }
-        }
-        view.dispatch(transaction);
-        view.focus();
-    },
-    text: {
-        beforeCaret() {
-            const { selection } = getView().state;
-            const { $from, empty } = selection;
-            if (!empty || !$from.parent.isTextblock) {
-                return '';
-            }
-            return $from.parent.textBetween(0, $from.parentOffset, undefined, INLINE_PLACEHOLDER);
-        },
-        afterCaret() {
-            const { selection } = getView().state;
-            const { $from, empty } = selection;
-            if (!empty || !$from.parent.isTextblock) {
-                return '';
-            }
-            return $from.parent.textBetween(
-                $from.parentOffset,
-                $from.parent.content.size,
-                undefined,
-                INLINE_PLACEHOLDER,
-            );
-        },
-        deleteBefore(count) {
             const view = getView();
-            const { $from, empty } = view.state.selection;
-            const length = Math.min(count, $from.parentOffset);
-            if (empty && $from.parent.isTextblock && length > 0) {
-                view.dispatch(view.state.tr.delete($from.pos - length, $from.pos));
+            const transaction = view.state.tr;
+            const { selection } = view.state;
+            // A block goes in AFTER selected text rather than over it; a selected node is replaced.
+            if (!nodeType.isInline && !(selection instanceof NodeSelection) && !selection.empty) {
+                transaction.setSelection(TextSelection.create(transaction.doc, selection.to));
+            }
+            // Inline elements keep their value in one attribute; blocks keep theirs flat.
+            const engineAttrs = nodeType.isInline ? valueAttrsFor(value) : value;
+            // Inline elements carry no marks, so they must not inherit the caret's.
+            dispatch(transaction.replaceSelectionWith(nodeType.create(engineAttrs), !nodeType.isInline));
+            view.focus();
+        },
+        insertText(text, marks = {}, options = {}) {
+            const undoWith = options.undo ?? 'together';
+            const view = getView();
+            let transaction = view.state.tr;
+            transaction.insertText(text);
+            // Measured back from the caret after the insert: a selected block is replaced by a new paragraph, which shifts the text.
+            const to = transaction.selection.from;
+            const from = to - text.length;
+            switch (undoWith) {
+                case 'together':
+                    break;
+                case 'marksFirst':
+                    // Closed on both sides: the text is a step of its own, and the marks one after it.
+                    dispatch(closeHistory(transaction));
+                    transaction = closeHistory(view.state.tr);
+                    break;
+            }
+            for (const [type, value] of Object.entries(marks)) {
+                const markType = schema.marks[type];
+                if (markType) {
+                    // Adding replaces a mark of the same type the caret carried.
+                    transaction.addMark(from, to, markType.create(valueAttrsFor(value)));
+                } else {
+                    warnUnknownType('insertText', type);
+                }
+            }
+            dispatch(transaction);
+            view.focus();
+        },
+        text: {
+            beforeCaret() {
+                const { selection } = getView().state;
+                const { $from, empty } = selection;
+                if (!empty || !$from.parent.isTextblock) {
+                    return '';
+                }
+                return $from.parent.textBetween(0, $from.parentOffset, undefined, INLINE_PLACEHOLDER);
+            },
+            afterCaret() {
+                const { selection } = getView().state;
+                const { $from, empty } = selection;
+                if (!empty || !$from.parent.isTextblock) {
+                    return '';
+                }
+                return $from.parent.textBetween(
+                    $from.parentOffset,
+                    $from.parent.content.size,
+                    undefined,
+                    INLINE_PLACEHOLDER,
+                );
+            },
+            deleteBefore(count) {
+                const view = getView();
+                const { $from, empty } = view.state.selection;
+                const length = Math.min(count, $from.parentOffset);
+                if (empty && $from.parent.isTextblock && length > 0) {
+                    dispatch(view.state.tr.delete($from.pos - length, $from.pos));
+                }
+            },
+        },
+        isEmpty: () => isEmpty(toRteDocument(getView().state.doc)),
+        group(run) {
+            if (groupState.kind !== 'idle') {
+                run();
+                return;
+            }
+            groupState = { kind: 'open' };
+            try {
+                run();
+            } finally {
+                endGroup();
             }
         },
-    },
-    focus() {
-        getView().focus();
-    },
-    editors: {
-        open(type) {
-            openEditors.type = type;
-            openEditors.repaint();
+        announce,
+        focus() {
+            getView().focus();
         },
-        close() {
-            openEditors.type = null;
-            openEditors.repaint();
+        editors: {
+            open(type) {
+                openEditors.type = type;
+                openEditors.repaint();
+            },
+            close() {
+                openEditors.type = null;
+                openEditors.repaint();
+            },
         },
-    },
-    blur() {
-        getView().dom.blur();
-    },
-});
+        blur() {
+            getView().dom.blur();
+        },
+    };
+};

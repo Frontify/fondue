@@ -33,6 +33,7 @@ import { FloatingToolbar } from './components/FloatingToolbar';
 import { SlashMenu } from './components/SlashMenu';
 import { Toolbar, type ToolbarPlacement } from './components/Toolbar';
 import { commandsOf, turnIntoCommands } from './helpers/blockCommands';
+import { useAnnouncer } from './hooks/useAnnouncer';
 import { useEditorHandle } from './hooks/useEditorHandle';
 import { useFocusWithin } from './hooks/useFocusWithin';
 import { useMouseDrag } from './hooks/useMouseDrag';
@@ -297,7 +298,18 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
     const commands = useMemo(() => commandsOf(registry, labels.text), [registry, labels.text]);
 
     const editableId = useId();
-    const { hostLabels, isNamed } = hostLabelsOf({ ariaLabel, ariaLabelledBy, ariaDescribedBy });
+    const descriptionId = useId();
+    const { message: announcement, announce } = useAnnouncer();
+    const hasDescriptions = registry.descriptions.length > 0;
+    let pluginDescriptionId: string | undefined;
+    if (hasDescriptions) {
+        pluginDescriptionId = descriptionId;
+    }
+    const { hostLabels, isNamed } = hostLabelsOf({
+        ariaLabel,
+        ariaLabelledBy,
+        ariaDescribedBy: describedByOf(ariaDescribedBy, pluginDescriptionId),
+    });
     const className = [documentStyles.document, styles.content, ...registry.contentClassNames].join(' ');
     const attributes = useMemo(
         () =>
@@ -311,7 +323,17 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
             }),
         // `hostLabels` is rebuilt every render; the props it is built from are the deps.
         // eslint-disable-next-line @eslint-react/exhaustive-deps
-        [editableId, className, ariaLabel, ariaLabelledBy, ariaDescribedBy, placeholder, labels.editor],
+        [
+            editableId,
+            className,
+            ariaLabel,
+            ariaLabelledBy,
+            ariaDescribedBy,
+            placeholder,
+            labels.editor,
+            hasDescriptions,
+            descriptionId,
+        ],
     );
 
     const { containerRef, handle, editorState, viewPortals } = useEditorHandle({
@@ -325,6 +347,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
             onChange?.(doc as RteDocumentOf<TBlock>);
         },
         onDocApplied: onShown,
+        announce,
         enabled: !readOnly,
     });
     // The readonly view has no engine to report what it shows.
@@ -506,6 +529,19 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
                     {toolbar}
                 </FloatingToolbar>
             ) : null}
+            {/* Read with the editor through its `aria-describedby`: what each plugin says about its keys. */}
+            {readOnly || !hasDescriptions ? null : (
+                <div id={descriptionId} className={styles.visuallyHidden}>
+                    {registry.descriptions.join(' ')}
+                </div>
+            )}
+            {/* What `api.announce` says. The role is written out on purpose: the specs and the notice lookup find the region by it. */}
+            <output // NOSONAR
+                role="status"
+                className={styles.visuallyHidden}
+            >
+                {announcement}
+            </output>
             {/* The plugins' editing UI, portalled into the text but part of this tree, so it shares the host's context. */}
             {viewPortals}
             {/* Only worth having when a plugin offers something beyond the built-in Text. */}
@@ -559,6 +595,17 @@ const mountFocusTarget = (retryFocus: RetryFocus, readOnly: boolean): MountFocus
             }
             return 'text';
     }
+};
+
+/** The host's description of the editor, then the element holding what the plugins say about their keys. */
+const describedByOf = (hostId: string | undefined, pluginId: string | undefined): string | undefined => {
+    if (pluginId === undefined) {
+        return hostId;
+    }
+    if (hostId === undefined || hostId === '') {
+        return pluginId;
+    }
+    return `${hostId} ${pluginId}`;
 };
 
 /** What the host named and described the editor with, and whether it gave a name. */

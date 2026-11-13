@@ -71,6 +71,7 @@ const mount = ({
     onDocApplied,
     onStateChange,
     viewPortals,
+    announce,
 }: MountOptions): { mounted: MountedDocument; view: EditorView } => {
     const schema = buildSchema(registry);
     let currentPlaceholder = placeholder;
@@ -105,7 +106,7 @@ const mount = ({
         }
         return view;
     };
-    const api = createControlApi(getView, schema, registry, openEditors);
+    const api = createControlApi(getView, schema, registry, openEditors, announce);
 
     // 3. The view: node/mark views, clipboard, the initial state, and the
     //    transaction loop that feeds the host.

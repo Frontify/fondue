@@ -22,6 +22,20 @@
     margin-bottom: var(--spacing-x-small);
 }
 
+/** Read by assistive technology, never drawn: the plugins' descriptions and the live region. */
+.visuallyHidden {
+    position: absolute;
+    overflow: hidden;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
 /** The controls themselves, wherever the bar holding them ends up. The gap parts the groups. */
 .toolbar {
     display: flex;

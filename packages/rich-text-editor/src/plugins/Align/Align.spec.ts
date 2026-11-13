@@ -2,9 +2,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { alignPlugin } from './Align';
+import { alignContent } from './Align';
 
-const align = alignPlugin.content?.blockAttributes?.align;
+const align = alignContent.blockAttributes?.align;
 
 describe('the align attribute', () => {
     it('styles the block with one of the four alignments', () => {

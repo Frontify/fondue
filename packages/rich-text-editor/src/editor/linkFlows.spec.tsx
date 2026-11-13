@@ -251,6 +251,9 @@ describe('adding a link', () => {
     });
 });
 
+/** The panel's own status, not the editor's live region, which is always there. */
+const PANEL_STATUS = '[role="dialog"] output';
+
 describe('the panel of a link', () => {
     const linked = (policy = {}) => {
         const editor = mount(doc({ text: 'see ' }, { text: 'docs', link: { href: HREF } }), policy);
@@ -259,7 +262,7 @@ describe('the panel of a link', () => {
     };
 
     const status = (): HTMLElement => {
-        const element = window.document.querySelector<HTMLElement>('output');
+        const element = window.document.querySelector<HTMLElement>(PANEL_STATUS);
         if (!element) {
             throw new Error('the panel has no status');
         }
@@ -406,7 +409,7 @@ describe('the panel of a link', () => {
             const names = [...window.document.querySelectorAll('button')].map((button) => button.textContent);
             expect(names).toContain('Edit');
             expect(names).not.toContain('Copy link');
-            expect(window.document.querySelector('output')).toBeNull();
+            expect(window.document.querySelector(PANEL_STATUS)).toBeNull();
             editor.unmount();
         }
     });
@@ -440,7 +443,7 @@ describe('the destination search of a stored link', () => {
 
         expect(fieldLabelled('Link to').value).toBe(HREF);
         expect(search).not.toHaveBeenCalled();
-        expect(window.document.querySelector('output')?.textContent).toBe('');
+        expect(window.document.querySelector(PANEL_STATUS)?.textContent).toBe('');
     });
 
     it('closes the form on Escape rather than a list', async () => {

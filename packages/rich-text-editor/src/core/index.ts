@@ -4,6 +4,8 @@
 // Imports from no other layer; plugins, renderer and editor all import here.
 
 export {
+    type ClearMarksOptions,
+    type ClearMarksScope,
     type EditorControlApi,
     type InsertTextOptions,
     type InsertTextUndo,

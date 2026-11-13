@@ -75,7 +75,9 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
                 selection = { ...selection, marks: others };
             },
             removeAll: () => {
+                const removed = Object.keys(selection.marks).length > 0;
                 selection = { ...selection, marks: {} };
+                return removed;
             },
             getRun: (type) => {
                 const mark = selection.marks[type];
@@ -87,7 +89,7 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
         },
         blocks: {
             setType: (type, value) => setBlocks([{ type, ...value }, ...selection.blocks.slice(1)]),
-            updateAttributes: () => {},
+            updateAttributes: () => false,
             resetAttributes: () => {},
         },
         lists: {
@@ -111,6 +113,9 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
         },
         insertText: () => {},
         history: { undo: () => {}, redo: () => {} },
+        isEmpty: () => false,
+        group: (run) => run(),
+        announce: () => {},
         focus: () => {},
         blur: () => {},
         editors: {
