@@ -6,7 +6,8 @@ import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from 
 import { type EditProps, matchesHotkey } from '#/core';
 
 import { type LinkSearch } from '../helpers/destination';
-import { NEW_TAB_NOTE, NEW_TAB_REL, NEW_TAB_TARGET, NEW_TAB_WINDOW_FEATURES } from '../helpers/newTab';
+import { type LinkLabels } from '../helpers/labels';
+import { NEW_TAB_REL, NEW_TAB_TARGET, NEW_TAB_WINDOW_FEATURES } from '../helpers/newTab';
 import { allowsHref, type LinkPolicy } from '../helpers/policy';
 import { type LinkValue } from '../helpers/value';
 import styles from '../link.module.scss';
@@ -18,19 +19,16 @@ import { LinkTargetForm } from './LinkTargetForm';
  */
 const PANEL_CONTROLS = 'a[href], button:not([disabled])';
 
-const COPIED_TEXT = 'Link copied';
-const COPY_FAILED_TEXT = 'Could not copy the link';
-
 type CopyState = 'idle' | 'copied' | 'failed';
 
-const describeCopy = (state: CopyState): string => {
+const describeCopy = (state: CopyState, labels: LinkLabels): string => {
     switch (state) {
         case 'idle':
             return '';
         case 'copied':
-            return COPIED_TEXT;
+            return labels.linkCopied;
         case 'failed':
-            return COPY_FAILED_TEXT;
+            return labels.copyFailed;
     }
 };
 
@@ -43,13 +41,14 @@ const OPEN_LINK_CLICK = 'Mod';
 
 type CopyLinkProps = {
     href: string;
+    labels: LinkLabels;
     writeText: (text: string) => Promise<void>;
 };
 
 /**
  * Copies the target and says whether it worked, in a live region that is always in the panel.
  */
-const CopyLink = ({ href, writeText }: CopyLinkProps): ReactNode => {
+const CopyLink = ({ href, labels, writeText }: CopyLinkProps): ReactNode => {
     const [copyState, setCopyState] = useState<CopyState>('idle');
     const copy = (): void => {
         // Reset first, so the same outcome twice is announced twice.
@@ -63,15 +62,16 @@ const CopyLink = ({ href, writeText }: CopyLinkProps): ReactNode => {
     return (
         <>
             <Button size="small" emphasis="weak" onPress={copy}>
-                Copy link
+                {labels.copyLink}
             </Button>
-            <output className={styles.visuallyHidden}>{describeCopy(copyState)}</output>
+            <output className={styles.visuallyHidden}>{describeCopy(copyState, labels)}</output>
         </>
     );
 };
 
 type LinkEditorProps = EditProps<LinkValue> & {
     policy: LinkPolicy;
+    labels: LinkLabels;
     search?: LinkSearch;
 };
 
@@ -93,6 +93,7 @@ export const LinkEditor = ({
     remove,
     api,
     policy,
+    labels,
     search,
 }: LinkEditorProps): ReactNode => {
     // A flyout closed by hand stays closed until the caret leaves the link and returns.
@@ -214,6 +215,7 @@ export const LinkEditor = ({
                             initial={value}
                             kind="edit"
                             policy={policy}
+                            labels={labels}
                             search={search}
                             onSave={(next) => {
                                 // Close first: the link is rebuilt with its new value and would reopen.
@@ -240,9 +242,11 @@ export const LinkEditor = ({
                         >
                             <a href={href} target={NEW_TAB_TARGET} rel={NEW_TAB_REL} className={styles.target}>
                                 {value.href}
-                                <span className={styles.visuallyHidden}>{NEW_TAB_NOTE}</span>
+                                <span className={styles.visuallyHidden}>{labels.newTabNote}</span>
                             </a>
-                            {href === undefined ? null : <CopyLink href={href} writeText={writeToClipboard} />}
+                            {href === undefined ? null : (
+                                <CopyLink href={href} labels={labels} writeText={writeToClipboard} />
+                            )}
                             <Button size="small" emphasis="weak" onPress={() => setOpen(true)}>
                                 Edit
                             </Button>

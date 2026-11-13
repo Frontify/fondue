@@ -291,6 +291,15 @@ describe('a link in a reading view and in export', () => {
         }
     });
 
+    it('says the new-tab note with the words a host passes', () => {
+        const doc = paragraph([{ text: 'neu', link: { href: 'https://example.com', openInNewTab: true } }]);
+        const plugins = [linkPlugin({ labels: { newTabNote: ' (öffnet in neuem Tab)' } })];
+
+        const container = rendered(<RichTextRenderer value={doc} plugins={plugins} />);
+
+        expect(container.querySelector('a')?.textContent).toBe('neu (öffnet in neuem Tab)');
+    });
+
     it('says in the reading view that it opens in a new tab, after its text and inside the anchor, only when it does', () => {
         const doc = paragraph([
             { text: 'new', link: { href: 'https://example.com', openInNewTab: true } },
