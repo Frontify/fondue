@@ -40,22 +40,32 @@ $headings: h1, h2, h3, h4;
     :is(#{$blocks}) {
         --rte-block-gap: var(--spacing-x-small);
 
-        margin-block: 0 var(--rte-block-gap);
-
         &:last-child {
             --rte-block-gap: 0;
         }
     }
 
-    // A heading belongs to the text below it, so it sits further from the block above than from its own text.
-    :is(#{$headings}):not(:first-child) {
-        margin-block-start: var(--rte-heading-gap, var(--spacing-medium));
+    // A heading sets its own gap above (see the text styles); the first one has no block above to sit apart from.
+    :is(#{$headings}):first-child {
+        --rte-heading-gap: 0;
     }
 
     // A list's items sit tight: the blocks inside an item, a nested list among them, add no gap.
     li :is(#{$blocks}) {
         --rte-block-gap: 0;
         --rte-heading-gap: 0;
+    }
+
+    // Margins only for blocks that do not own theirs (`ownsMargins`): such a block reads the gaps itself,
+    // so a host margin is never trimmed.
+    :is(#{$blocks}):not([data-rte-own-margins]) {
+        margin-block: 0 var(--rte-block-gap);
+    }
+
+    // A heading belongs to the text below it, so it sits further from the block above than from its own text.
+    // The gap is `0` where no block sits above (see the first heading and a list item's blocks above).
+    :is(#{$headings}):not([data-rte-own-margins]) {
+        margin-block-start: var(--rte-heading-gap, var(--spacing-medium));
     }
 
     // Raised and lowered text without growing the line it sits on. Browsers'

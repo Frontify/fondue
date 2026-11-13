@@ -33,6 +33,9 @@ $control-min-size: 7rem;
 
 /** A row draws its option in the style it applies, previewing the scale. */
 .preview {
+    // A preview has no block above it, so a heading previews without the gap the document gives it.
+    --rte-heading-gap: 0;
+
     display: block;
     padding-block: var(--spacing-xx-small);
     // The menu is portaled out of the editor's frame, and a preview only reads as

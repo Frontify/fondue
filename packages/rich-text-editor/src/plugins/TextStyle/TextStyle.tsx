@@ -2,15 +2,18 @@
 
 import {
     type DefaultStyle,
+    type BlockDefinition,
     defineBlock,
     defineContent,
     definePlugin,
     type HotkeyHandler,
+    lookProperties,
     PARAGRAPH,
     type RteBlockCommand,
     type RteContent,
     type RteIcon,
     type RtePlugin,
+    type TextLook,
 } from '#/core';
 
 import { withoutBoldWeight } from '../shared/helpers/declaredStyle';
@@ -25,12 +28,14 @@ import {
     markdownRuleFor,
     parseRuleFor,
     presetsFor,
+    type TextStyleName,
     type TextStyleOption,
+    UNKNOWN_STYLE_CLASS_NAME,
 } from './helpers/presets';
 
 // The block this plugin contributes; the package root assembles it into the
 // official document union.
-export type { TextStyleBlock } from './helpers/presets';
+export type { TextStyleBlock, TextStyleName } from './helpers/presets';
 
 export type TextStylePluginOptions = {
     /**
@@ -39,6 +44,12 @@ export type TextStylePluginOptions = {
      * @default ALL_TEXT_STYLES
      */
     styles?: readonly TextStyleOption[];
+    /**
+     * How each preset looks, by name. A preset left out, and a field left out of one, keeps Fondue's look.
+     * A value that is empty or can end its CSS declaration early throws an error that names the preset and the
+     * field, so a mistake in the host's configuration never passes silently.
+     */
+    presets?: Partial<Record<TextStyleName, TextLook>>;
 };
 
 // Headings are bold by default, so a bold the pasted heading declares on itself is not the author's. Bold on text inside it is.
@@ -46,31 +57,54 @@ const TEXT_STYLE_DEFAULT_STYLES: readonly DefaultStyle[] = [
     { property: 'font-weight', scope: 'self', strip: withoutBoldWeight },
 ];
 
-const textStyleContentFor = (options: readonly TextStyleOption[]): RteContent => {
+const textStyleBlockFor = (options: readonly TextStyleOption[]): BlockDefinition => {
     const offered = presetsFor(options);
 
-    return defineContent({
-        blocks: {
-            textStyle: defineBlock<{ style: string }>({
-                content: 'text',
-                // Only reached by a node that arrives without one; every
-                // path that sets the attribute names a style.
-                defaults: { style: offered[0]?.name ?? FIRST_PRESET },
-                defaultStyles: TEXT_STYLE_DEFAULT_STYLES,
-                toHtml: ({ style }) => {
-                    const preset = findPreset(style);
-                    if (preset === undefined) {
-                        return { tag: 'p', children: true };
-                    }
-                    const attrs: Record<string, string | undefined> = { class: preset.className };
-                    if (preset.tag === 'p') {
-                        attrs['data-text-style'] = preset.name;
-                    }
-                    return { tag: preset.tag, attrs, children: true };
-                },
-                parse: offered.map(parseRuleFor),
-            }),
+    return defineBlock<{ style: string }>({
+        content: 'text',
+        // Each preset's stylesheet writes its margins (`look`), for the heading tags and the paragraph ones alike.
+        ownsMargins: true,
+        // Only reached by a node that arrives without one; every
+        // path that sets the attribute names a style.
+        defaults: { style: offered[0]?.name ?? FIRST_PRESET },
+        defaultStyles: TEXT_STYLE_DEFAULT_STYLES,
+        toHtml: ({ style }) => {
+            const preset = findPreset(style);
+            if (preset === undefined) {
+                return { tag: 'p', attrs: { class: UNKNOWN_STYLE_CLASS_NAME }, children: true };
+            }
+            const attrs: Record<string, string | undefined> = { class: preset.className };
+            if (preset.tag === 'p') {
+                attrs['data-text-style'] = preset.name;
+            }
+            return { tag: preset.tag, attrs, children: true };
         },
+        parse: offered.map(parseRuleFor),
+    });
+};
+
+// Shared so every content offering all styles declares the very same block, which the registry requires.
+const ALL_STYLES_BLOCK = textStyleBlockFor(ALL_TEXT_STYLES);
+
+const textStyleContentFor = (
+    options: readonly TextStyleOption[],
+    presets: TextStylePluginOptions['presets'] = {},
+): RteContent => {
+    const contentProperties: Record<string, string> = {};
+    for (const [name, look] of Object.entries(presets)) {
+        if (look !== undefined) {
+            Object.assign(contentProperties, lookProperties(name, look));
+        }
+    }
+
+    let block = ALL_STYLES_BLOCK;
+    if (options !== ALL_TEXT_STYLES) {
+        block = textStyleBlockFor(options);
+    }
+
+    return defineContent({
+        contentProperties,
+        blocks: { textStyle: block },
     });
 };
 
@@ -98,7 +132,10 @@ const HEADING_KEYWORDS: Partial<Record<number, readonly string[]>> = {
  * Rendering is not restricted the same way, so a document written by a
  * differently configured editor still displays as it was authored.
  */
-export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStylePluginOptions = {}): RtePlugin => {
+export const textStylePlugin = ({
+    styles: options = ALL_TEXT_STYLES,
+    presets,
+}: TextStylePluginOptions = {}): RtePlugin => {
     const offered = presetsFor(options);
 
     // The shortcuts other editors use: `Mod-Alt-0` for a paragraph, `Mod-Alt-1`
@@ -134,8 +171,8 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
 
     // Reuse the shared object so the default plugin and defaultContent declare the very same block definition.
     let content = textStyleContent;
-    if (options !== ALL_TEXT_STYLES) {
-        content = textStyleContentFor(options);
+    if (options !== ALL_TEXT_STYLES || presets !== undefined) {
+        content = textStyleContentFor(options, presets);
     }
 
     return definePlugin({

@@ -275,6 +275,12 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
     defaults?: TValue;
     /** Styles the block's own tags show by default, which pasted HTML repeats without meaning them as formatting. */
     defaultStyles?: readonly DefaultStyle[];
+    /**
+     * Whether the block's own stylesheet writes its margins. The document then leaves them alone;
+     * otherwise it gives the block the gap between blocks.
+     * @default false
+     */
+    ownsMargins?: boolean;
     /** The block's markup. `children: true` is where its content goes. */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<Partial<TValue>>[];

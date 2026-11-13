@@ -3,6 +3,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { type EditorControlApi, type RteSelectionSnapshot } from './commands';
+import { OWN_MARGINS_ATTRIBUTE } from './documentContract';
 import {
     defineBlock,
     defineContent,
@@ -12,7 +13,7 @@ import {
     type RteInputRule,
     type RtePlugin,
 } from './plugin';
-import { buildPluginRegistry } from './registry';
+import { blockHtml, buildPluginRegistry } from './registry';
 
 /**
  * The registry is the one place plugins are read: it gathers their
@@ -615,5 +616,30 @@ describe('bare content in a registry', () => {
                 definePlugin({ id: 'strong', content: defineContent({ marks: { bold: mark() } }) }),
             ]),
         ).toThrow('Duplicate mark type "bold": declared by plugin "bold" and plugin "strong".');
+    });
+});
+
+describe('the markup of a block', () => {
+    const blockOf = (ownsMargins?: boolean) =>
+        defineBlock({ content: 'text', ownsMargins, toHtml: () => ({ tag: 'p', children: true }), parse: [] });
+
+    it('carries the margin marker when the block owns its margins', () => {
+        const definition = blockOf(true);
+        const registry = buildPluginRegistry([defineContent({ blocks: { owner: definition } })]);
+
+        expect(blockHtml(registry, definition, {})).toEqual({
+            tag: 'p',
+            attrs: { [OWN_MARGINS_ATTRIBUTE]: '' },
+            children: true,
+        });
+    });
+
+    it('carries no marker otherwise', () => {
+        for (const ownsMargins of [undefined, false]) {
+            const definition = blockOf(ownsMargins);
+            const registry = buildPluginRegistry([defineContent({ blocks: { plain: definition } })]);
+
+            expect(blockHtml(registry, definition, {})).toEqual({ tag: 'p', children: true });
+        }
     });
 });
