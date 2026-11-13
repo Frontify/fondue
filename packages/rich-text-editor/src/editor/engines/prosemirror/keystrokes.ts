@@ -239,11 +239,6 @@ const toEngineRule = (rule: RteInputRule, context: RuleContext): InputRule | nul
 };
 
 /**
- * What may stand right before an opening delimiter of a word-bounded rule: whitespace or an opening bracket.
- */
-const OPENING_CONTEXT = String.raw`[\s(\[{]`;
-
-/**
  * A character that glues a closing delimiter to what follows it: a letter, digit, underscore or full stop.
  */
 const GLUING_CHARACTER = /[\p{L}\p{N}_.]/u;
@@ -273,7 +268,7 @@ const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | n
     // itself, or typing `**bold**` fires the italic rule on `**bold*` first.
     let before = `[^${firstChar}]`;
     if (rule.wordBounded === true) {
-        before = OPENING_CONTEXT;
+        before = `[${WORD_START_CONTEXT}]`;
     }
     const pattern = new RegExp(`(?:^|${before})${escaped}([^${firstChar}]+)${escaped}$`);
 
