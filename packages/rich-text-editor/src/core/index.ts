@@ -25,6 +25,7 @@ export {
     type BlockAttributeDefinition,
     type BlockDefinition,
     type ContentModel,
+    type DefaultStyle,
     defineBlock,
     defineContent,
     defineInline,
@@ -33,7 +34,9 @@ export {
     type EditProps,
     type HotkeyHandler,
     type InlineDefinition,
+    type MarkClearRule,
     type MarkDefinition,
+    type MarkParseRule,
     onlyTypeOf,
     type ParseRule,
     type PasteHandler,
@@ -50,6 +53,7 @@ export {
     RTE_TOOLBAR_GROUPS,
     type RteToolbarGroup,
     type SelectedNode,
+    type StyleParseRule,
     type ToolbarItemProps,
 } from './plugin';
 export {

@@ -59,13 +59,25 @@ describe('a text rule', () => {
     it('steps aside inside a mark that opts out of typing rules', () => {
         const editor = editorWith(
             [...shipped('code'), rulesPlugin({ kind: 'text', match: '->', replace: '→' })],
-            [paragraph(text('x', { code: true }))],
+            [paragraph(text('xy', { code: true }))],
         );
         editor.caretAfter('x');
 
         editor.type('->');
 
-        expect(editor.stored()).toEqual([paragraph(text('x->', { code: true }))]);
+        expect(editor.stored()).toEqual([paragraph(text('x->y', { code: true }))]);
+    });
+
+    it('leaves the text of a mark that opts out when the match reaches back into it', () => {
+        const editor = editorWith(
+            [...shipped('code'), rulesPlugin({ kind: 'text', match: '->', replace: '→' })],
+            [paragraph(text('x-', { code: true }))],
+        );
+        editor.caretAfter('x-');
+
+        editor.type('>');
+
+        expect(editor.stored()).toEqual([paragraph(text('x-', { code: true }), text('>'))]);
     });
 
     it('is taken back on Backspace, leaving what was typed', () => {

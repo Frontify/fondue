@@ -155,7 +155,16 @@ export const definePlugin = ({ id, ...plugin }: RtePluginDefinition): RtePlugin 
 /**
  * Delimiters that wrap text in the plugin's only mark, such as `{ delimiter: '**' }`
  */
-export type RteDelimiterRule = { delimiter: string };
+export type RteDelimiterRule = {
+    delimiter: string;
+    /**
+     * Fires only where the delimiters stand apart from words: the opening one follows the start of the line,
+     * whitespace or an opening bracket, and the closing one is not followed by a word character or `.`.
+     * The same flag on a `mark` rule works the same way.
+     * @default false
+     */
+    wordBounded?: boolean;
+};
 
 /**
  * A component that draws the editing UI of a node
@@ -264,6 +273,8 @@ export const defineBlock = <TValue extends object = Record<string, never>>(
 export type BlockDefinition<TValue = Record<string, unknown>> = {
     content?: ContentModel;
     defaults?: TValue;
+    /** Styles the block's own tags show by default, which pasted HTML repeats without meaning them as formatting. */
+    defaultStyles?: readonly DefaultStyle[];
     /** The block's markup. `children: true` is where its content goes. */
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<Partial<TValue>>[];
@@ -288,7 +299,7 @@ export type ContentModel = 'text' | { items: string } | { blocks: readonly strin
 /**
  * A mark that is only a tag: `tag` stands in for `toHtml` and, unless given, `parse`
  */
-type TagMarkDefinition<TValue> = { tag: string; parse?: readonly ParseRule<TValue>[]; toHtml?: never } & Omit<
+type TagMarkDefinition<TValue> = { tag: string; parse?: readonly MarkParseRule<TValue>[]; toHtml?: never } & Omit<
     MarkDefinition<TValue>,
     'toHtml' | 'parse'
 >;
@@ -315,13 +326,17 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
     nesting?: number;
     /** Text typed at the end of the mark carries it on. Defaults to true; a link says false. */
     inclusive?: boolean;
+    /** Mark types that cannot sit on the same text as this one: putting either mark on takes the other off. Naming it in one mark is enough. A type no mounted plugin registers is ignored. */
+    excludes?: readonly string[];
     /** Typing rules do not rewrite text carrying this mark — inline code keeps `--` and `**` as typed. Defaults to false. */
     excludesInputRules?: boolean;
     /** What the mark carries when put on without a value (a toggle, a parse rule). Defaults to `{}`. */
     defaults?: TValue;
+    /** Styles the mark's own tags show by default, which pasted HTML repeats without meaning them as formatting. */
+    defaultStyles?: readonly DefaultStyle[];
     /** The mark's markup around its text, which goes where `children: true` is. */
     toHtml: (value: TValue) => HtmlSpec;
-    parse: readonly ParseRule<TValue>[];
+    parse: readonly MarkParseRule<TValue>[];
     render?: {
         /** Readonly view in place of `toHtml`. */
         component?: ComponentType<{ value: TValue; children: ReactNode }>;
@@ -351,6 +366,30 @@ export type InlineDefinition<TValue = Record<string, unknown>> = {
 };
 
 /**
+ * Where a default style is declared: on the element that shows it, or on anything inside it.
+ */
+export type DefaultStyleScope = 'self' | 'inside';
+
+/**
+ * A style a node's own tags show by default is not formatting where pasted HTML repeats it: a link's underline written on a span inside it.
+ * Mark rules that read `property` see the value with `strip` applied, and nothing when it strips to empty.
+ */
+export type DefaultStyle = {
+    /**
+     * A CSS property name: `text-decoration`.
+     */
+    property: string;
+    /**
+     * `'self'` strips on the node's own tags; `'inside'` also on elements inside them.
+     */
+    scope: DefaultStyleScope;
+    /**
+     * Takes the declared value and returns it without what the node already shows.
+     */
+    strip: (cssValue: string) => string;
+};
+
+/**
  * One rule for reading pasted HTML back into a node. Leave `value` out when the
  * element carries none (`<strong>`); return null from it when the element is
  * not this node after all (a `span` without a colour is no font colour).
@@ -360,6 +399,52 @@ export type ParseRule<TValue> = {
     tag: string;
     value?: (element: HTMLElement) => TValue | null;
 };
+
+/**
+ * A rule that matches any element whose own `style` attribute declares the CSS property, handed the declared value.
+ * It never stops tag rules or other style rules from reading the same element.
+ */
+export type StyleParseRule<TValue> = {
+    /**
+     * A CSS property name: `font-weight`.
+     */
+    style: string;
+    /**
+     * Never set: lets TypeScript tell a style rule from a tag rule.
+     */
+    tag?: undefined;
+    /**
+     * Receives the declared CSS value and returns the mark's value, or null when
+     * the declaration is not this mark.
+     */
+    value: (cssValue: string) => TValue | null;
+};
+
+/**
+ * When `clears` is true for the declared value, the element's content does not carry the mark even if an ancestor set it (`<strong><span style="font-weight:normal">`).
+ */
+export type MarkClearRule = {
+    /**
+     * A CSS property name: `font-weight`.
+     */
+    style: string;
+    /**
+     * Never set: lets TypeScript tell a clear rule from a tag rule.
+     */
+    tag?: undefined;
+    /**
+     * Receives the declared CSS value and returns true when it takes the mark off.
+     */
+    clears: (cssValue: string) => boolean;
+};
+
+/**
+ * The rules a mark reads pasted HTML with: by tag, by declared style, or to clear it. The `style?: undefined` lets TypeScript type a style rule's `value`.
+ */
+export type MarkParseRule<TValue> =
+    | (ParseRule<TValue> & { style?: undefined })
+    | StyleParseRule<TValue>
+    | MarkClearRule;
 
 /**
  * What the editor hands a node's `edit` view: the same for blocks, marks
@@ -497,7 +582,7 @@ export type PasteHandler = (paste: { text: string; html: string | null }, api: E
  */
 export type RteInputRule =
     /** Wrapping delimiters turn into a mark: `**bold**`, `` `code` ``. */
-    | { kind: 'mark'; key: string; delimiter: string }
+    | { kind: 'mark'; key: string; delimiter: string; wordBounded?: boolean }
     /** A prefix turns the block into another type: `## ` becomes a level-2 heading. */
     | { kind: 'block'; match: string; block: string; attributes?: Record<string, unknown> }
     /** A prefix wraps the block in a list: `- `, `1. `. `itemAttributes` set attributes on the new item: `[x] ` starts it checked. */

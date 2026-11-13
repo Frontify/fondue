@@ -4,12 +4,15 @@ import { createElement, type ReactNode } from 'react';
 
 import {
     type BlockDefinition,
+    type DefaultStyle,
     type EditorControlApi,
     type EditProps,
     type HtmlSpec,
     type InlineDefinition,
     isEmpty,
+    type MarkClearRule,
     type MarkDefinition,
+    type MarkParseRule,
     type ParseRule,
     type PasteHandler,
     type RteBlockCommand,
@@ -24,6 +27,7 @@ import {
     type RteToolbarEntry,
     type RteToolbarGroup,
     type RtePluginDefinition,
+    type StyleParseRule,
     type ToolbarItemProps,
     toPlainText as plainText,
     type ToPlainTextOptions,
@@ -155,6 +159,10 @@ type MarkDef<TValue> = MarkDefinition<TValue>;
 type InlineDef<TValue> = InlineDefinition<TValue>;
 type EditComponentProps<TValue, TCurrent> = EditProps<TValue, TCurrent>;
 type Parse<TValue> = ParseRule<TValue>;
+type MarkParse<TValue> = MarkParseRule<TValue>;
+type StyleParse<TValue> = StyleParseRule<TValue>;
+type MarkClear = MarkClearRule;
+type DefaultStyleType = DefaultStyle;
 type Html = HtmlSpec;
 
 // oxlint-disable-next-line typescript/no-namespace -- types only; groups the authoring types under `RtePlugin`.
@@ -171,6 +179,11 @@ export declare namespace RtePlugin {
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
     export type EditProps<TValue, TCurrent = TValue> = EditComponentProps<TValue, TCurrent>;
     export type ParseRule<TValue> = Parse<TValue>;
+    export type MarkParseRule<TValue> = MarkParse<TValue>;
+    export type StyleParseRule<TValue> = StyleParse<TValue>;
+    // A namespace member cannot take the name of the type it renames, so each of these needs an alias outside.
+    export type MarkClearRule = MarkClear; // NOSONAR
+    export type DefaultStyle = DefaultStyleType; // NOSONAR
     export type HtmlSpec = Html;
     export type Content = RteContent;
     export type ToolbarEntry = RteToolbarEntry;
