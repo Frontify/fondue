@@ -3,7 +3,7 @@
 // Export without the stylesheet: each node's looks written into its own `style`,
 // from what the plugins declared for the classes it carries.
 
-import { type HtmlSpec, type StyleMap } from '#/core';
+import { fondueToken, type HtmlSpec, type StyleMap } from '#/core';
 
 import { type DrawnNode } from './documentTree';
 
@@ -23,8 +23,8 @@ const BLOCK_SPACING: Partial<Record<HtmlSpec['tag'], BlockSpacing>> = {
     ol: 'block',
     blockquote: 'block',
 };
-const BLOCK_GAP = 'var(--spacing-x-small)';
-const HEADING_GAP = 'var(--spacing-medium)';
+const BLOCK_GAP = fondueToken('spacing-x-small');
+const HEADING_GAP = fondueToken('spacing-medium');
 const NO_GAP = '0';
 
 const LIST_ITEM_TAG = 'li';

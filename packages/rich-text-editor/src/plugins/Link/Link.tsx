@@ -5,6 +5,7 @@ import {
     defineContent,
     defineMark,
     definePlugin,
+    fondueToken,
     type HotkeyHandler,
     type HtmlAttributes,
     lookProperties,
@@ -115,10 +116,14 @@ export const linkContent = ({ look = {} }: LinkPluginOptions = {}) =>
         marks: { link: linkMark },
         contentProperties: lookProperties('link', look),
         // The same values the stylesheet falls back to; `hostStyling.ct.tsx` holds them equal.
-        contentStyles: styleOfClass(
-            styles.link,
-            lookStyle(look, { color: 'var(--color-highlight-default)', 'text-underline-offset': UNDERLINE_OFFSET }),
-        ),
+        contentStyles: () =>
+            styleOfClass(
+                styles.link,
+                lookStyle(look, {
+                    color: fondueToken('color-highlight-default'),
+                    'text-underline-offset': UNDERLINE_OFFSET,
+                }),
+            ),
     });
 
 // The key is a literal because a computed key keeps this plugin in the renderer; HOTKEY's type ties it to this key.

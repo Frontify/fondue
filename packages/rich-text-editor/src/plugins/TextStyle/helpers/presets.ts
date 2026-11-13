@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PARAGRAPH, type ParseRule, type RteInlineNode, type RteInputRule, type StyleMap } from '#/core';
+import { fondueToken, PARAGRAPH, type ParseRule, type RteInlineNode, type RteInputRule, type StyleMap } from '#/core';
 
 import { MUTED_COLOR } from '../../shared/helpers/mutedText';
 import styles from '../textStyle.module.scss';
@@ -26,8 +26,8 @@ const PRESETS = [
         className: styles.heading1,
         fallback: {
             ...HEADING_FALLBACK,
-            'font-size': 'var(--text-heading-xx-large-strong-font-size)',
-            'font-weight': 'var(--text-heading-xx-large-strong-font-weight)',
+            'font-size': fondueToken('text-heading-xx-large-strong-font-size'),
+            'font-weight': fondueToken('text-heading-xx-large-strong-font-weight'),
         },
     },
     {
@@ -37,8 +37,8 @@ const PRESETS = [
         className: styles.heading2,
         fallback: {
             ...HEADING_FALLBACK,
-            'font-size': 'var(--text-heading-x-large-strong-font-size)',
-            'font-weight': 'var(--text-heading-x-large-strong-font-weight)',
+            'font-size': fondueToken('text-heading-x-large-strong-font-size'),
+            'font-weight': fondueToken('text-heading-x-large-strong-font-weight'),
         },
     },
     {
@@ -48,8 +48,8 @@ const PRESETS = [
         className: styles.heading3,
         fallback: {
             ...HEADING_FALLBACK,
-            'font-size': 'var(--text-heading-large-default-font-size)',
-            'font-weight': 'var(--text-heading-large-default-font-weight)',
+            'font-size': fondueToken('text-heading-large-default-font-size'),
+            'font-weight': fondueToken('text-heading-large-default-font-weight'),
         },
     },
     {
@@ -59,8 +59,8 @@ const PRESETS = [
         className: styles.heading4,
         fallback: {
             ...HEADING_FALLBACK,
-            'font-size': 'var(--text-heading-medium-default-font-size)',
-            'font-weight': 'var(--text-heading-medium-default-font-weight)',
+            'font-size': fondueToken('text-heading-medium-default-font-size'),
+            'font-weight': fondueToken('text-heading-medium-default-font-weight'),
         },
     },
     {
@@ -69,8 +69,8 @@ const PRESETS = [
         tag: 'p',
         className: styles.custom1,
         fallback: {
-            'font-size': 'var(--typography-font-size-medium)',
-            'font-weight': 'var(--typography-font-weight-medium)',
+            'font-size': fondueToken('typography-font-size-medium'),
+            'font-weight': fondueToken('typography-font-weight-medium'),
             'letter-spacing': '0.02em',
         },
     },
@@ -81,7 +81,7 @@ const PRESETS = [
         className: styles.custom2,
         fallback: {
             color: MUTED_COLOR,
-            'font-size': 'var(--typography-font-size-medium)',
+            'font-size': fondueToken('typography-font-size-medium'),
             'font-style': 'italic',
         },
     },
@@ -91,9 +91,9 @@ const PRESETS = [
         tag: 'p',
         className: styles.custom3,
         fallback: {
-            'font-size': 'var(--typography-font-size-small)',
-            'letter-spacing': 'var(--typography-letter-spacing-wide)',
-            'text-transform': 'var(--typography-text-transform-uppercase)',
+            'font-size': fondueToken('typography-font-size-small'),
+            'letter-spacing': fondueToken('typography-letter-spacing-wide'),
+            'text-transform': fondueToken('typography-text-transform-uppercase'),
         },
     },
     {
@@ -102,8 +102,8 @@ const PRESETS = [
         tag: 'p',
         className: styles.imageTitle,
         fallback: {
-            'font-size': 'var(--typography-font-size-medium)',
-            'font-weight': 'var(--typography-font-weight-bold)',
+            'font-size': fondueToken('typography-font-size-medium'),
+            'font-weight': fondueToken('typography-font-weight-bold'),
         },
     },
     {
@@ -113,7 +113,7 @@ const PRESETS = [
         className: styles.imageCaption,
         fallback: {
             color: MUTED_COLOR,
-            'font-size': 'var(--typography-font-size-x-small)',
+            'font-size': fondueToken('typography-font-size-x-small'),
         },
     },
 ] as const satisfies readonly Preset[];

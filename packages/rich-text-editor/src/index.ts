@@ -80,14 +80,9 @@ export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlock>(
 
 /**
  * The document as an HTML string, the same markup the editor copies to the
- * clipboard. No React or browser needed. Style it with this package's
- * stylesheet, or pass `styling: 'inline'` to write the looks into each element
- * (emails). Uses `defaultContent` when given no `plugins`; `wrap: false` leaves out the root element.
- * @example
- * const html = serializeToHtml(
- *     { version: 1, blocks: [{ type: 'paragraph', children: [{ text: 'Hello', bold: true }] }] },
- *     { wrap: false },
- * );
+ * clipboard. No React or browser needed. Uses `defaultContent` when given no
+ * `plugins`; `wrap: false` leaves out the root element. Style it with this
+ * package's stylesheet, or pass `styling: 'inline'` to write the looks into the elements.
  */
 export const serializeToHtml = <TBlock extends RteBlockNode = RteBlock>(
     doc: RteDocument<TBlock>,

@@ -36,9 +36,10 @@ export type RteContent = {
      */
     contentProperties?: Record<string, string>;
     /**
-     * The inline style of each class this content writes, for HTML exported with `styling: 'inline'`; keyed by class name
+     * The inline style of each class this content writes, keyed by class name, for HTML exported with `styling: 'inline'`.
+     * A function, so that only that export builds the styles, and a class with no name throws there alone.
      */
-    contentStyles?: Record<string, StyleMap>;
+    contentStyles?: () => Record<string, StyleMap>;
     /**
      * What a plugin adds to a block it does not define, such as core's paragraph, keyed by block type.
      * The registry folds it into the block's definition and throws for an unknown block, or for a field another

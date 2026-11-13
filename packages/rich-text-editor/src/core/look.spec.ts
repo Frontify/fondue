@@ -54,7 +54,7 @@ describe('lookStyle', () => {
 
 describe('styleOfClass', () => {
     it('keys the style by the class name', () => {
-        expect(styleOfClass('rte-quote', { color: 'red' })).toEqual({ 'rte-quote': { color: 'red' } });
+        expect(styleOfClass('sample', { color: 'red' })).toEqual({ sample: { color: 'red' } });
     });
 
     it('throws for a class without a name', () => {

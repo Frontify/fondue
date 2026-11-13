@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type HtmlAttributes, type HtmlSpec } from '#/core';
+import { fondueToken, type HtmlAttributes, type HtmlSpec } from '#/core';
 
 import { type DrawnNode } from './documentTree';
 import { inlineLooks } from './inlineLooks';
@@ -15,8 +15,8 @@ const CONTENT_STYLES = {
     bold: { 'font-weight': '700', color: 'blue' },
 };
 
-const BLOCK_GAP = 'var(--spacing-x-small)';
-const HEADING_GAP = 'var(--spacing-medium)';
+const BLOCK_GAP = fondueToken('spacing-x-small');
+const HEADING_GAP = fondueToken('spacing-medium');
 const HOST_MARGINS = { 'margin-top': '10px', 'margin-bottom': '20px' };
 
 /** A `span` by default, which the document does not space, so only its classes' styles show. */

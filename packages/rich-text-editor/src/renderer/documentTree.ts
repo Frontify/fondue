@@ -13,6 +13,7 @@ import {
     blockAttributeStyle,
     blockHtml,
     blockValueOf,
+    fondueToken,
     type HtmlSpec,
     type MarkDefinition,
     type PluginRegistry,
@@ -285,9 +286,9 @@ export const documentTree = (doc: RteDocumentOf, registry: PluginRegistry, optio
  * values as `.document` in `document.module.scss`. `pre-wrap` alone, as email clients know it.
  */
 export const DOCUMENT_STYLE: StyleMap = {
-    color: 'var(--color-primary-default)',
-    'font-family': 'var(--typography-font-family-primary)',
-    'font-size': 'var(--typography-font-size-medium)',
+    color: fondueToken('color-primary-default'),
+    'font-family': fondueToken('typography-font-family-primary'),
+    'font-size': fondueToken('typography-font-size-medium'),
     'line-height': '1.6',
     'font-variant-ligatures': 'none',
     'white-space': 'pre-wrap',

@@ -120,9 +120,10 @@ export type PluginRegistry = {
     /** Custom properties set alongside them, later plugins winning. */
     contentProperties: Readonly<Record<string, string>>;
     /**
-     * The inline style of each class the content writes, for HTML exported with `styling: 'inline'`
+     * The inline style of each class the content writes, for HTML exported with `styling: 'inline'`.
+     * Built on each call, so only that export runs the plugins' style builders.
      */
-    contentStyles: Readonly<Record<string, StyleMap>>;
+    contentStyles: () => Readonly<Record<string, StyleMap>>;
 };
 
 /** A mark sits in the floating bar; a block is reached through its commands instead. */
@@ -461,7 +462,7 @@ type Draft = {
     commandOwners: Map<string, string>;
     contentClassNames: string[];
     contentProperties: Record<string, string>;
-    contentStyles: Record<string, StyleMap>;
+    contentStyleBuilders: NonNullable<RteContent['contentStyles']>[];
     /** What plugins add to a block they do not define, by block type, and who set each field. */
     blockExtensions: Map<string, BlockExtensions>;
     /** How often each id has come up so far, for unique toolbar keys. */
@@ -606,6 +607,17 @@ const foldBlockExtensions = (draft: Draft): void => {
     }
 };
 
+/** Runs each content's style builder, a later one winning for a class both write. */
+const mergeContentStyles = (
+    builders: readonly NonNullable<RteContent['contentStyles']>[],
+): Record<string, StyleMap> => {
+    const merged: Record<string, StyleMap> = {};
+    for (const build of builders) {
+        Object.assign(merged, build());
+    }
+    return merged;
+};
+
 /**
  * What a content declares: styling hooks, block, inline and mark types, block attributes.
  */
@@ -614,7 +626,9 @@ const addContent = (draft: Draft, content: RteContent | undefined, owner: string
         draft.contentClassNames.push(content.contentClassName);
     }
     Object.assign(draft.contentProperties, content?.contentProperties);
-    Object.assign(draft.contentStyles, content?.contentStyles);
+    if (content?.contentStyles) {
+        draft.contentStyleBuilders.push(content.contentStyles);
+    }
     addBlockExtensions(draft, content?.extendBlocks ?? {}, owner);
 
     register('block type', draft.blocks, draft.blockOwners, owner, content?.blocks);
@@ -644,7 +658,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         commandOwners: new Map(),
         contentClassNames: [],
         contentProperties: {},
-        contentStyles: {},
+        contentStyleBuilders: [],
         blockExtensions: new Map(),
         seenIds: new Map(),
         duplicateIds: new Set(),
@@ -693,7 +707,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         commands: draft.commands,
         contentClassNames: draft.contentClassNames,
         contentProperties: draft.contentProperties,
-        contentStyles: draft.contentStyles,
+        contentStyles: () => mergeContentStyles(draft.contentStyleBuilders),
     };
 };
 
