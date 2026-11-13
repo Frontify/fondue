@@ -1,0 +1,61 @@
+packages/components/src/components/OrderableList/OrderableListItem.tsx
+  s_3da29b36b0ad36::t_908f9ac5fd8742 4,37-38
+.changeset/combobox-empty-input-no-error.md
+  s_3da29b36b0ad36::t_908f9ac5fd8742 1-6
+packages/components/src/components/ColorPicker/ColorPickerInput.tsx
+  s_3da29b36b0ad36::t_908f9ac5fd8742 4,52,55,58,61,63,65-66,69,84,88-90,107
+.changeset/orderable-list-handle-tab-stop.md
+  s_3da29b36b0ad36::t_908f9ac5fd8742 1-6
+.changeset/color-picker-input-button-ref.md
+  s_3da29b36b0ad36::t_908f9ac5fd8742 1-6
+.changeset/rte-font-colour-hex.md
+  s_3da29b36b0ad36::t_908f9ac5fd8742 1-4
+packages/components/src/components/OrderableList/OrderableListItemContent.tsx
+  s_3da29b36b0ad36::t_908f9ac5fd8742 11,16
+packages/rich-text-editor/src/__tests__/paste/fixtures/word-windows-paragraphs.document.json
+  s_3da29b36b0ad36::t_908f9ac5fd8742 42
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_3da29b36b0ad36::t_908f9ac5fd8742 2581,2637,2642
+packages/components/src/components/Select/__tests__/ComboboxSingle.a11y.spec.tsx
+  s_3da29b36b0ad36::t_908f9ac5fd8742 130-140
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.spec.tsx
+  s_3da29b36b0ad36::t_908f9ac5fd8742 25-28,32-36,45-47,107-114,123-336
+  s_3da29b36b0ad36::t_41e10526f92bb9 337
+packages/rich-text-editor/src/__tests__/htmlParity.spec.tsx
+  s_3da29b36b0ad36::t_908f9ac5fd8742 59-60
+packages/components/src/components/ColorPicker/__tests__/ColorPickerInput.spec.tsx
+  s_3da29b36b0ad36::t_908f9ac5fd8742 1-49
+packages/components/src/components/Select/components/ComboboxBase.tsx
+  s_3da29b36b0ad36::t_908f9ac5fd8742 268-271
+packages/rich-text-editor/src/plugins/FontColor/FontColor.spec.ts
+  s_3da29b36b0ad36::t_908f9ac5fd8742 18,20,23-31,36-51
+packages/rich-text-editor/src/plugins/FontColor/helpers/colors.spec.ts
+  s_3da29b36b0ad36::t_908f9ac5fd8742 5-67,71-72,82-128,131-146,150-152,156-267
+packages/rich-text-editor/src/plugins/FontColor/helpers/namedColors.ts
+  s_3da29b36b0ad36::t_908f9ac5fd8742 1-159
+packages/rich-text-editor/src/plugins/FontColor/helpers/colors.ts
+  s_3da29b36b0ad36::t_908f9ac5fd8742 3,5,10-11,13-14,16-47,50-56,58-125,128-129,131-154,157-259,264-272,275,278-282,285-374
+packages/rich-text-editor/src/plugins/FontColor/FontColor.tsx
+  s_3da29b36b0ad36::t_908f9ac5fd8742 8-10,34,36-41,43,48-54
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.tsx
+  s_3da29b36b0ad36::t_908f9ac5fd8742 5,12-22,26-35,47-49,72,79-89,91-94,101,105,111,114,127,138,145,158-164,180,190-194,201-206
+  s_3da29b36b0ad36::t_9811c671be3a29 55-57,90,168
+packages/components/src/components/OrderableList/__tests__/OrderableList.ct.tsx
+  s_3da29b36b0ad36::t_908f9ac5fd8742 282,478-481,491-493
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "64771b9603760ccdd58fb99bfe107caecc76807b",
+  "prompts": {},
+  "sessions": {
+    "s_3da29b36b0ad36": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52275dbb-cfd4-472c-b295-02ca60ef0ab1",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+packages/rich-text-editor/src/plugins/FontColor/content.ts
+  s_3da29b36b0ad36::t_e11128001cff71 17
+  s_fe56a9d70dc6e2::t_8585bb28d503ff 1-16,18-57
+packages/rich-text-editor/src/plugins/FontColor/FontColor.spec.ts
+  s_3da29b36b0ad36::t_fc2c4e38d7faa4 9
+packages/rich-text-editor/src/plugins/FontColor/FontColor.tsx
+  s_3da29b36b0ad36::t_42077cadbffc5a 3,6,9,11-12
+packages/rich-text-editor/src/plugins/FontColor/index.ts
+  s_3da29b36b0ad36::t_cd55b9b11cfd3e 3-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cb19f332a6d5d3a4a76b7b6810b164512aeafc88",
+  "prompts": {},
+  "sessions": {
+    "s_3da29b36b0ad36": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52275dbb-cfd4-472c-b295-02ca60ef0ab1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_fe56a9d70dc6e2": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "3c66894d-d657-4629-bc9b-c095af28d45c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
