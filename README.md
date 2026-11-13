@@ -1,42 +1,71 @@
-# Fondue design system by Frontify
+# Fondue
 
-[<img src="https://img.shields.io/github/actions/workflow/status/frontify/fondue/pages/pages-build-deployment?label=preview&logo=github" alt="GitHub Pages Preview status">](https://fondue-components.frontify.com/)
-[<img src="https://snyk.io/test/github/Frontify/fondue/badge.svg" alt="Known Vulnerabilities">](https://snyk.io/test/github/Frontify/fondue)
-[<img src="https://img.shields.io/npm/v/@frontify/fondue/latest.svg" alt="Latest npm version released">](https://www.npmjs.com/package/@frontify/fondue)
+The design system for the [Frontify](https://frontify.com) ecosystem: React components, icons, charts, design tokens and a rich text editor, shipped as one package.
 
-## Using `@frontify/fondue`
+[![CI](https://github.com/Frontify/fondue/actions/workflows/continuous-deployment.yaml/badge.svg)](https://github.com/Frontify/fondue/actions/workflows/continuous-deployment.yaml)
+[![npm](https://img.shields.io/npm/v/@frontify/fondue/latest.svg)](https://www.npmjs.com/package/@frontify/fondue)
+[![Known Vulnerabilities](https://snyk.io/test/github/Frontify/fondue/badge.svg)](https://snyk.io/test/github/Frontify/fondue)
 
-# Getting started
+**[Storybook](https://fondue-components.frontify.com)** · **[Setup guide](https://fondue-components.frontify.com/?path=/docs/documentation-getting-started--documentation)** · **[Design documentation](https://weare.frontify.com/document/1266?#/using-fondue)** · **[Contributing](CONTRIBUTING.md)**
 
-Welcome to Fondue, the design system for the [Frontify](https://frontify.com) ecosystem.
+## Quick start
 
-## Installation
-
-Add the Fondue design system package as a dependency to your project.
+Requires React 18.
 
 ```shell
 npm i @frontify/fondue
-# or
-pnpm i @frontify/fondue
-# or
-yarn add @frontify/fondue
 ```
 
-## Finding components
+Import the tokens and styles once at your app's root, then wrap the app in the `ThemeProvider`:
 
-You can browse all available components in the Storybook instance of the [Fondue design system](https://fondue-components.frontify.com).
-This Storybook contains all components from all subpackages in the Fondue monorepo. Each component will have a badge in the top bar indicating its current lifecycle state.
+```tsx
+import '@frontify/fondue/tokens/base';
+import '@frontify/fondue/components/styles';
 
-For the designers, the documentation is available in the [Fondue design system documentation](https://fondue.frontify.com).
+import { Button, ThemeProvider } from '@frontify/fondue/components';
 
-To get started, you can refer to the [Getting started](https://fondue-components.frontify.com/?path=/docs/documentation-getting-started--documentation) story in the Storybook.
+export const App = () => (
+    <ThemeProvider theme="light">
+        <Button>Hello Fondue</Button>
+    </ThemeProvider>
+);
+```
+
+Fonts aren't bundled for licensing reasons, and Tailwind needs extra config. The [setup guide](https://fondue-components.frontify.com/?path=/docs/documentation-getting-started--documentation) covers both.
+
+## What's in the package
+
+Everything is imported from `@frontify/fondue`. Each entry point is tree-shakeable.
+
+| Entry point                         | Contents                                                        |
+| ----------------------------------- | --------------------------------------------------------------- |
+| `@frontify/fondue/components`       | React components and the `ThemeProvider`                        |
+| `@frontify/fondue/icons`            | Icon components                                                 |
+| `@frontify/fondue/charts`           | Chart components                                                |
+| `@frontify/fondue/tokens/base`      | Design tokens as CSS variables                                  |
+| `@frontify/fondue/tokens/tailwind`  | Tailwind v3 preset with a class for every token                 |
+| `@frontify/fondue/rte`              | Rich text editor (legacy)                                       |
+| `@frontify/fondue/rich-text-editor` | Rich text editor (**experimental**, API and format may change)  |
+| `@frontify/fondue/sdk`              | Machine-readable metadata for components, icons, tokens, guides |
+
+Entry points with styles have a matching `/styles` import, e.g. `@frontify/fondue/charts/styles`.
+
+## Using Fondue with AI coding agents
+
+Install the Fondue skill so agents (Claude Code, Cursor, Codex, …) look up real components, props and tokens instead of guessing:
+
+```shell
+npx skills add frontify/fondue/packages/sdk
+```
+
+The skill queries the Fondue version installed in your project. See the [SDK README](packages/sdk/README.md) for the underlying API.
 
 ## Contributing
 
-See [Contribution guidelines](CONTRIBUTING.md) for contributing and local development help.
+```shell
+pnpm i
+pnpm build
+pnpm storybook   # http://localhost:6010
+```
 
-## Important links
-
-- [Storybook](https://fondue-components.frontify.com) – Storybook for previewing Fondue components
-- [Fondue documentation](https://fondue.frontify.com) – Documentation for the Fondue design system
-
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow, adding components, and releasing.
