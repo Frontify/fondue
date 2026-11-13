@@ -4,7 +4,7 @@ import { IconTextFormatItalic } from '@frontify/fondue-icons';
 
 import { defineContent, defineMark, definePlugin } from '#/core';
 
-import { declaredStyle } from '../shared/helpers/declaredStyle';
+import { isItalicStyle, isNormalStyle, markWhen } from '../shared/helpers/declaredStyle';
 
 /**
  * The flag this plugin sets on text nodes
@@ -23,11 +23,12 @@ export const italicContent = defineContent({
     marks: {
         italic: defineMark({
             tag: 'em',
-            // A span with the style is italic too: how Google Docs writes it.
+            // An element with the style is italic too: how Google Docs writes it.
             parse: [
                 { tag: 'em' },
                 { tag: 'i' },
-                { tag: 'span', value: (element) => (declaredStyle(element, 'font-style') === 'italic' ? {} : null) },
+                { style: 'font-style', value: markWhen(isItalicStyle) },
+                { style: 'font-style', clears: isNormalStyle },
             ],
         }),
     },

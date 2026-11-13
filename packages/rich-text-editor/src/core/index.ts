@@ -27,6 +27,7 @@ export {
     type BlockAttributeDefinition,
     type BlockDefinition,
     type ContentModel,
+    type DefaultStyle,
     defineBlock,
     defineContent,
     defineInline,
@@ -35,7 +36,9 @@ export {
     type EditProps,
     type HotkeyHandler,
     type InlineDefinition,
+    type MarkClearRule,
     type MarkDefinition,
+    type MarkParseRule,
     onlyTypeOf,
     type ParseRule,
     type PasteHandler,
@@ -52,6 +55,7 @@ export {
     RTE_TOOLBAR_GROUPS,
     type RteToolbarGroup,
     type SelectedNode,
+    type StyleParseRule,
     type ToolbarItemProps,
 } from './plugin';
 export {
@@ -68,4 +72,12 @@ export {
     type ToolbarEntry,
     toggleOwn,
 } from './registry';
-export { ANY_LIST, DOCUMENT_VERSION, emptyDocument, newerVersionOf, PARAGRAPH } from './vocabulary';
+export {
+    ANY_LIST,
+    DOCUMENT_VERSION,
+    emptyDocument,
+    INLINE_PLACEHOLDER,
+    newerVersionOf,
+    PARAGRAPH,
+    WORD_START_CONTEXT,
+} from './vocabulary';

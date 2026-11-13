@@ -24,6 +24,8 @@ export const codeContent = defineContent({
         code: defineMark({
             // Code is literal: `--` and `**` stay as typed inside it.
             excludesInputRules: true,
+            // Typing at the end of code does not carry it on.
+            inclusive: false,
             toHtml: () => ({ tag: 'code', attrs: { class: styles.code ?? '' }, children: true }),
             parse: [{ tag: 'code' }],
         }),

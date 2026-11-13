@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
+    type DefaultStyle,
     defineContent,
     defineMark,
     definePlugin,
@@ -10,6 +11,7 @@ import {
     type TextLook,
 } from '#/core';
 
+import { withoutDecorationLine } from '../shared/helpers/declaredStyle';
 import { isLinkablePaste, isSafeHref, toHref, WEB_ADDRESS } from '../shared/helpers/href';
 
 import { LinkEditor } from './components/LinkEditor';
@@ -28,6 +30,13 @@ export type LinkMark = {
 
 const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string, string> =>
     link?.openInNewTab === true ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+
+const withoutUnderline = (value: string): string => withoutDecorationLine(value, 'underline');
+
+const LINK_DEFAULT_STYLES: readonly DefaultStyle[] = [
+    { property: 'text-decoration', scope: 'inside', strip: withoutUnderline },
+    { property: 'text-decoration-line', scope: 'inside', strip: withoutUnderline },
+];
 
 /**
  * How links look. A link keeps its underline, and vertical margins do nothing on inline text, so neither is a field.
@@ -51,6 +60,8 @@ const linkMark = defineMark<LinkValue>({
     nesting: -2,
     // Typing at the end of a link does not extend it.
     inclusive: false,
+    // A pasted span inside a link, such as Google Docs writes, repeats the underline the link already shows.
+    defaultStyles: LINK_DEFAULT_STYLES,
 
     /**
      * The link everywhere but while editing: readonly, export, copy

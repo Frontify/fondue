@@ -1,5 +1,14 @@
 # @frontify/fondue-icons
 
+## 1.0.0-rc.0
+
+### Patch Changes
+
+- [#3035](https://github.com/Frontify/fondue/pull/3035) [`cf1839b`](https://github.com/Frontify/fondue/commit/cf1839b10095b928008a8a11934056d0cf5b2581) Thanks [@noahwaldner](https://github.com/noahwaldner)! - First release candidate for Fondue v14.
+
+- Updated dependencies [[`cf1839b`](https://github.com/Frontify/fondue/commit/cf1839b10095b928008a8a11934056d0cf5b2581)]:
+  - @frontify/fondue-tokens@6.0.0-rc.0
+
 ## 1.0.0-beta.1
 
 ### Patch Changes
@@ -16,6 +25,12 @@
 
 - Updated dependencies [[`f59824e`](https://github.com/Frontify/fondue/commit/f59824e0f9b33a4ee6b8f1f290cbfed5b67374c7)]:
   - @frontify/fondue-tokens@6.0.0-beta.0
+
+## 0.32.1
+
+### Patch Changes
+
+- [#2978](https://github.com/Frontify/fondue/pull/2978) [`a59db73`](https://github.com/Frontify/fondue/commit/a59db7301cbb6d4dd9d62dcdad5bbd63542bc49b) Thanks [@jcosta33](https://github.com/jcosta33)! - fix: declare `sideEffects` in both packages so bundlers drop the icons and components you do not import.
 
 ## 0.32.0
 
