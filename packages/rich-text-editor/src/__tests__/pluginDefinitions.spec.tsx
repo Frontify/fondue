@@ -303,6 +303,16 @@ describe('blurOnBreakPlugin', () => {
         );
     });
 
+    it("says the host's own description in place of the English one, with what is required after it", () => {
+        expect(blurOnBreakPlugin({ onBreak: () => {}, description: 'Enter sends it.' }).description).toBe(
+            'Enter sends it.',
+        );
+        expect(
+            blurOnBreakPlugin({ onBreak: () => {}, description: 'Enter sends it.', required: 'Write first.' })
+                .description,
+        ).toBe('Enter sends it. Write first.');
+    });
+
     it('adds nothing to the description when required is false', () => {
         expect(blurOnBreakPlugin({ onBreak: () => {}, required: false }).description).toBe('Press Enter to submit.');
     });
