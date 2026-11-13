@@ -15,7 +15,6 @@ import {
     type MarkIgnoreRule,
     type MarkParseRule,
     type ParsePrecedence,
-    type ParseReader as CssReader,
     type ParseRule,
     type InsertTextOptions,
     type InsertTextUndo,
@@ -152,25 +151,30 @@ export { underlineContent, underlinePlugin } from './plugins/Underline';
 
 // --- Plugin options ---
 
-export { type AlignPluginOptions } from './plugins/Align';
-export { type BlurOnBreakPluginOptions } from './plugins/BlurOnBreak';
+export { type AlignLabels, type AlignPluginOptions } from './plugins/Align';
+export { type BlurOnBreakLabels, type BlurOnBreakPluginOptions } from './plugins/BlurOnBreak';
 export { type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './plugins/Emoji';
 export {
+    type LinkContentOptions,
     type LinkDestination,
+    type LinkLabels,
     type LinkPluginOptions,
     type LinkPolicy,
     type LinkScheme,
     type LinkSearch,
 } from './plugins/Link';
 export {
+    type MentionContentLabels,
     type MentionContentOptions,
     type MentionItem,
+    type MentionLabels,
+    type MentionPickerLabels,
     type MentionPluginOptions,
     type MentionResolution,
     type MentionValue,
 } from './plugins/Mention';
-export { type ResetFormattingPluginOptions } from './plugins/ResetFormatting';
+export { type ResetFormattingLabels, type ResetFormattingPluginOptions } from './plugins/ResetFormatting';
 export { type TextStylePluginOptions } from './plugins/TextStyle';
 export { type TypographyGroup, type TypographyPluginOptions } from './plugins/Typography';
 
@@ -229,7 +233,6 @@ export declare namespace RtePlugin {
     export type InlineDefinition<TValue = Record<string, unknown>> = InlineDef<TValue>;
     export type EditProps<TValue, TCurrent = TValue> = EditComponentProps<TValue, TCurrent>;
     export type ParseRule<TValue> = Parse<TValue>;
-    export type ParseReader = CssReader;
     export type MarkParseRule<TValue> = MarkParse<TValue>;
     export type StyleParseRule<TValue> = StyleParse<TValue>;
     // Same reason as above.

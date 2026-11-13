@@ -203,7 +203,7 @@ const findMarkRange = (state: EditorState, markType: PmMarkType): { from: number
 
 /**
  * The text a clear covers: the selection, or at a caret in a text block with scope `'block'`, the whole block around
- * it, so a reset leaves no half-formatted paragraph.
+ * it, so no block is left half cleared.
  */
 const clearRangeOf = (state: EditorState, scope: ClearMarksScope): { from: number; to: number } => {
     const { from, to, empty, $from } = state.selection;
@@ -460,31 +460,6 @@ type GroupState = { kind: 'idle' } | { kind: 'open' } | { kind: 'joined'; first:
 /** prosemirror-history joins a transaction carrying this meta into the undo step of the one it names. */
 const APPENDED_TRANSACTION_META = 'appendedTransaction';
 
-type CaretSide = 'before' | 'after';
-
-/**
- * The text of the caret's block on one side of it; empty unless the selection is a caret in a text block.
- */
-const textAroundCaret = (state: EditorState, side: CaretSide): string => {
-    const { $from, empty } = state.selection;
-    if (!empty || !$from.parent.isTextblock) {
-        return '';
-    }
-    switch (side) {
-        case 'before': {
-            return $from.parent.textBetween(0, $from.parentOffset, undefined, INLINE_PLACEHOLDER);
-        }
-        case 'after': {
-            return $from.parent.textBetween(
-                $from.parentOffset,
-                $from.parent.content.size,
-                undefined,
-                INLINE_PLACEHOLDER,
-            );
-        }
-    }
-};
-
 /** Which type's editing UI is open, and how to redraw the views that show it. */
 export type OpenEditors = { type: string | null; repaint: () => void };
 
@@ -584,10 +559,25 @@ export const createControlApi = (
         },
         text: {
             beforeCaret() {
-                return textAroundCaret(getView().state, 'before');
+                const { selection } = getView().state;
+                const { $from, empty } = selection;
+                if (!empty || !$from.parent.isTextblock) {
+                    return '';
+                }
+                return $from.parent.textBetween(0, $from.parentOffset, undefined, INLINE_PLACEHOLDER);
             },
             afterCaret() {
-                return textAroundCaret(getView().state, 'after');
+                const { selection } = getView().state;
+                const { $from, empty } = selection;
+                if (!empty || !$from.parent.isTextblock) {
+                    return '';
+                }
+                return $from.parent.textBetween(
+                    $from.parentOffset,
+                    $from.parent.content.size,
+                    undefined,
+                    INLINE_PLACEHOLDER,
+                );
             },
             deleteBefore(count) {
                 const view = getView();

@@ -4,7 +4,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { readTagRule } from './parseReader';
+import { readTagRule } from './tagRule';
 
 describe('readTagRule', () => {
     const span = (): HTMLElement => document.createElement('span');
@@ -24,13 +24,13 @@ describe('readTagRule', () => {
         expect(readTagRule({ tag: 'span', value: () => null }, span())).toEqual({ kind: 'unread' });
     });
 
-    it('hands the rule the element and its reader', () => {
+    it('hands the rule the element', () => {
         const element = span();
-        element.setAttribute('style', 'color: red');
+        element.setAttribute('data-size', '3');
 
-        expect(readTagRule({ tag: 'span', value: (_element, read) => read.color('color') }, element)).toEqual({
+        expect(readTagRule({ tag: 'span', value: (read) => Number(read.dataset.size) }, element)).toEqual({
             kind: 'read',
-            value: '#ff0000',
+            value: 3,
         });
     });
 

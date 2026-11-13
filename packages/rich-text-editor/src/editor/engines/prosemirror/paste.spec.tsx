@@ -17,7 +17,7 @@ import {
 } from '#/core';
 import { defaultPlugins, linkPlugin } from '#/plugins';
 
-import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
+import { destroyEditors, editorWith, paragraph, shipped, text, token, tokenPlugin } from './testEditor';
 
 /**
  * A feature's `onPaste` runs before the editor's own paste, and the link
@@ -415,100 +415,6 @@ describe('pasting over selected text with the link plugin', () => {
         expect(editor.stored()).toEqual([paragraph(text('not a url'))]);
     });
 
-    it('inserts a web address linked at a caret', () => {
-        const editor = editorWith(shipped('link'), [paragraph(text('a'))]);
-        editor.caretAfter('a');
-
-        editor.paste('https://example.com');
-
-        expect(editor.stored()).toEqual([
-            paragraph(text('a'), text('https://example.com', link('https://example.com'))),
-        ]);
-    });
-
-    it('inserts a mail or phone address linked at a caret', () => {
-        const editor = editorWith(shipped('link'), [paragraph()]);
-
-        editor.paste('mailto:ana@example.com');
-        editor.paste(' tel:+41791234567 ');
-
-        expect(editor.stored()).toEqual([
-            paragraph(
-                text('mailto:ana@example.com', link('mailto:ana@example.com')),
-                text('tel:+41791234567', link('tel:+41791234567')),
-            ),
-        ]);
-    });
-
-    it('keeps the marks of a link copied inside the editor and pasted at a caret', () => {
-        const copied = { link: { href: 'https://example.com', openInNewTab: true }, bold: true };
-        const source = editorWith(shipped('link', 'bold'), [paragraph(text('https://example.com', copied))]);
-        source.select('https://example.com');
-        const html = source.view.serializeForClipboard(source.view.state.selection.content()).dom.innerHTML;
-        const editor = editorWith(shipped('link', 'bold'), [paragraph(text('a'))]);
-        editor.caretAfter('a');
-
-        editor.paste('https://example.com', html);
-
-        expect(editor.stored()).toEqual([paragraph(text('a'), text('https://example.com', copied))]);
-    });
-
-    it('links an address at a caret when another app on the same engine copied it', () => {
-        const editor = editorWith(shipped('link'), [paragraph(text('a'))]);
-        editor.caretAfter('a');
-
-        editor.paste('https://example.com', '<p data-pm-slice="1 1 []">https://example.com</p>');
-
-        expect(editor.stored()).toEqual([
-            paragraph(text('a'), text('https://example.com', link('https://example.com'))),
-        ]);
-    });
-
-    it('pastes an address as plain text inside a link', () => {
-        const editor = editorWith(shipped('link'), [paragraph(text('frontify', link('https://old.example')))]);
-        editor.caretAfter('fron');
-
-        editor.paste('https://example.com');
-
-        expect(editor.stored()).toEqual([paragraph(text('fronhttps://example.comtify', link('https://old.example')))]);
-    });
-
-    it('pastes text that is not an address as plain text at a caret', () => {
-        const editor = editorWith(shipped('link'), [paragraph(text('a'))]);
-        editor.caretAfter('a');
-
-        editor.paste('example.com');
-
-        expect(editor.stored()).toEqual([paragraph(text('aexample.com'))]);
-    });
-
-    it('is undone in two steps once the history pauses after the typing before it: the link, then the text', () => {
-        vi.useFakeTimers();
-        const editor = editorWith(shipped('link'), [paragraph()]);
-        editor.type('ab');
-        vi.advanceTimersByTime(1000);
-
-        editor.paste('https://example.com');
-        undo(editor.view.state, editor.view.dispatch);
-
-        expect(editor.stored()).toEqual([paragraph(text('abhttps://example.com'))]);
-
-        undo(editor.view.state, editor.view.dispatch);
-
-        expect(editor.stored()).toEqual([paragraph(text('ab'))]);
-    });
-
-    it('is its own undo step even right after typing', () => {
-        const editor = editorWith(shipped('link'), [paragraph()]);
-        editor.type('ab');
-
-        editor.paste('https://example.com');
-        undo(editor.view.state, editor.view.dispatch);
-        undo(editor.view.state, editor.view.dispatch);
-
-        expect(editor.stored()).toEqual([paragraph(text('ab'))]);
-    });
-
     it('does not link a javascript: address', () => {
         const editor = editorWith(shipped('link'), [paragraph(text('frontify'))]);
         editor.select('frontify');
@@ -519,42 +425,102 @@ describe('pasting over selected text with the link plugin', () => {
     });
 });
 
-describe('pasting a link the policy refuses', () => {
-    const plugins = [linkPlugin({ allowedHosts: ['frontify.com'] })];
+const TOKEN_PASTE = /^tok:[^\s]+$/;
 
-    it('over selected text pastes the address as plain text', () => {
-        const editor = editorWith(plugins, [paragraph(text('frontify'))]);
-        editor.select('frontify');
+/** What a feature does with a pasted token: marks the selection, or goes in marked at a caret, as its own undo step. */
+const markPastedToken: PasteHandler = ({ text: pasted, source: copiedFrom }, api) => {
+    const typed = pasted.trim();
+    if (!TOKEN_PASTE.test(typed)) {
+        return false;
+    }
+    const { isCollapsed, marks } = api.selection.get();
+    if (!isCollapsed) {
+        api.marks.toggle('token', { id: typed });
+        return true;
+    }
+    if ('token' in marks || copiedFrom === 'editor') {
+        return false;
+    }
+    api.insertText(typed, { token: { id: typed } }, { undo: 'marksFirst' });
+    return true;
+};
 
-        editor.paste('https://example.com');
+describe('a paste handler that marks what it inserts at a caret', () => {
+    const plugins = [...shipped('bold'), tokenPlugin({ onPaste: markPastedToken })];
 
-        expect(editor.stored()).toEqual([paragraph(text('https://example.com'))]);
-    });
-
-    it('still links an address the policy allows', () => {
-        const editor = editorWith(plugins, [paragraph(text('frontify'))]);
-        editor.select('frontify');
-
-        editor.paste('https://frontify.com/x');
-
-        expect(editor.stored()).toEqual([paragraph(text('frontify', { link: { href: 'https://frontify.com/x' } }))]);
-    });
-
-    it('at a caret pastes the address as plain text', () => {
+    it('inserts the token with its mark', () => {
         const editor = editorWith(plugins, [paragraph(text('a'))]);
         editor.caretAfter('a');
 
-        editor.paste('https://example.com');
+        editor.paste('tok:a');
 
-        expect(editor.stored()).toEqual([paragraph(text('ahttps://example.com'))]);
+        expect(editor.stored()).toEqual([paragraph(text('a'), token('tok:a'))]);
     });
 
-    it('as HTML keeps the text without the link', () => {
+    it('keeps the marks of text copied inside the editor and pasted at a caret', () => {
+        const copied = { token: { id: 'tok:a' }, bold: true };
+        const source = editorWith(plugins, [paragraph(text('tok:a', copied))]);
+        source.select('tok:a');
+        const html = source.view.serializeForClipboard(source.view.state.selection.content()).dom.innerHTML;
         const editor = editorWith(plugins, [paragraph(text('a'))]);
         editor.caretAfter('a');
 
-        editor.paste('see here', '<p>see <a href="https://example.com">here</a></p>');
+        editor.paste('tok:a', html);
 
-        expect(editor.stored()).toEqual([paragraph(text('asee here'))]);
+        expect(editor.stored()).toEqual([paragraph(text('a'), text('tok:a', copied))]);
+    });
+
+    it('marks the token when another app on the same engine copied it', () => {
+        const editor = editorWith(plugins, [paragraph(text('a'))]);
+        editor.caretAfter('a');
+
+        editor.paste('tok:a', '<p data-pm-slice="1 1 []">tok:a</p>');
+
+        expect(editor.stored()).toEqual([paragraph(text('a'), token('tok:a'))]);
+    });
+
+    it('pastes the token as plain text inside text that carries the mark', () => {
+        const editor = editorWith(plugins, [paragraph(token('frontify', 'old'))]);
+        editor.caretAfter('fron');
+
+        editor.paste('tok:a');
+
+        expect(editor.stored()).toEqual([paragraph(token('frontok:atify', 'old'))]);
+    });
+
+    it('pastes text the handler does not take as plain text at a caret', () => {
+        const editor = editorWith(plugins, [paragraph(text('a'))]);
+        editor.caretAfter('a');
+
+        editor.paste('example');
+
+        expect(editor.stored()).toEqual([paragraph(text('aexample'))]);
+    });
+
+    it('is undone in two steps once the history pauses after the typing before it: the mark, then the text', () => {
+        vi.useFakeTimers();
+        const editor = editorWith(plugins, [paragraph()]);
+        editor.type('ab');
+        vi.advanceTimersByTime(1000);
+
+        editor.paste('tok:a');
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual([paragraph(text('abtok:a'))]);
+
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual([paragraph(text('ab'))]);
+    });
+
+    it('is its own undo step even right after typing', () => {
+        const editor = editorWith(plugins, [paragraph()]);
+        editor.type('ab');
+
+        editor.paste('tok:a');
+        undo(editor.view.state, editor.view.dispatch);
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual([paragraph(text('ab'))]);
     });
 });

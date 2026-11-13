@@ -11,6 +11,7 @@ import { readableShortcut } from '#/ui/shortcut';
 import { type MentionItem, type MentionItems } from '../types';
 
 import { MentionDraft } from './MentionDraft';
+import { DEFAULT_MENTION_PICKER_LABELS, type MentionPickerLabels } from './pickerLabels';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -40,7 +41,10 @@ const settle = async (): Promise<void> => {
     });
 };
 
-const mountDraft = async (items: MentionItems = search) => {
+const mountDraft = async (
+    items: MentionItems = search,
+    labels: MentionPickerLabels = DEFAULT_MENTION_PICKER_LABELS,
+) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
     const root = createRoot(container);
@@ -50,6 +54,7 @@ const mountDraft = async (items: MentionItems = search) => {
         root.render(
             <MentionDraft
                 trigger="@"
+                labels={labels}
                 items={items}
                 focused
                 onChoose={onChoose}
@@ -312,9 +317,9 @@ describe('a mention being searched for', () => {
         expect(window.document.activeElement).toBe(input);
     });
 
-    it('retries on Tab like Enter instead of leaving the query', async () => {
+    it('does not retry or trap Tab when the search failed', async () => {
         const lookup = vi.fn<MentionItems>(() => Promise.reject(new Error('offline')));
-        const { input, onCancel } = await mountDraft(lookup);
+        const { input } = await mountDraft(lookup);
         await act(async () => {
             await new Promise((resolve) => requestAnimationFrame(resolve));
         });
@@ -326,9 +331,8 @@ describe('a mention being searched for', () => {
         });
         await settle();
 
-        expect(event.defaultPrevented).toBe(true);
-        expect(lookup.mock.calls).toHaveLength(callsBefore + 1);
-        expect(onCancel).not.toHaveBeenCalled();
+        expect(event.defaultPrevented).toBe(false);
+        expect(lookup.mock.calls).toHaveLength(callsBefore);
     });
 
     it('keeps the last count while a newer query is pending, and never says Searching for a static list', async () => {
@@ -432,5 +436,47 @@ describe('a picker that takes what the app gives', () => {
         expect(onCancel).not.toHaveBeenCalled();
         press(' ');
         expect(onCancel).toHaveBeenCalledWith('@zz ');
+    });
+});
+
+describe('a picker whose words come from the labels', () => {
+    const LABELS: MentionPickerLabels = {
+        input: 'Personne',
+        list: 'Gens',
+        searching: 'Recherche',
+        noMatches: 'Aucun résultat',
+        failed: 'Échec.',
+        retryHint: 'Entrée pour réessayer',
+        retry: 'Réessayer',
+        peopleCount: (count) => `${count} gens`,
+    };
+
+    it('names the input and the list, and counts the people, in its own words', async () => {
+        const { input, status } = await mountDraft(search, LABELS);
+
+        const listbox = window.document.getElementById(input.getAttribute('aria-controls') ?? '');
+        expect(input.getAttribute('aria-label')).toBe('Personne');
+        expect(listbox?.getAttribute('aria-label')).toBe('Gens');
+        expect(status()).toBe('3 gens');
+    });
+
+    it('says nobody matches in its own words', async () => {
+        const { type, status } = await mountDraft(search, LABELS);
+
+        await type('zz');
+
+        expect(status()).toBe('Aucun résultat');
+        expect(window.document.body.textContent).toContain('Aucun résultat');
+    });
+
+    it('says the search failed, and names the retry button, in its own words', async () => {
+        const { status } = await mountDraft(() => Promise.reject(new Error('offline')), LABELS);
+        await act(async () => {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+        });
+
+        expect(status()).toBe('Échec. Entrée pour réessayer.');
+        const buttons = [...window.document.querySelectorAll('button')];
+        expect(buttons.some((button) => button.textContent === 'Réessayer')).toBe(true);
     });
 });

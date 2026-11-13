@@ -236,7 +236,7 @@ export const blockParseRules = (
         tag: rule.tag,
         priority: blockPriority(rule),
         getAttrs: (element: HTMLElement) => {
-            const value = tagRuleValue(rule, element);
+            const value = rule.value ? rule.value(element) : {};
             if (value === null) {
                 return false;
             }
