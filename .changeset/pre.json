@@ -1,16 +1,16 @@
 {
   "mode": "pre",
-  "tag": "beta",
+  "tag": "rc",
   "initialVersions": {
-    "@frontify/fondue-charts": "9.1.0",
-    "@frontify/fondue-components": "36.0.2",
-    "@frontify/fondue": "13.8.1",
-    "@frontify/fondue-icons": "0.29.0",
-    "@frontify/fondue-rte": "0.1.15",
-    "@frontify/fondue-sdk": "0.2.2",
-    "@frontify/fondue-tokens": "5.1.2",
-    "@frontify/fondue-storybook-docs": "0.0.2",
-    "@frontify/fondue-rich-text-editor": "0.0.0"
+    "@frontify/fondue": "14.0.0-beta.3",
+    "@frontify/fondue-charts": "10.0.0-beta.0",
+    "@frontify/fondue-components": "37.0.0-beta.1",
+    "@frontify/fondue-icons": "1.0.0-beta.1",
+    "@frontify/fondue-rich-text-editor": "0.1.0-beta.2",
+    "@frontify/fondue-rte": "0.2.0-beta.0",
+    "@frontify/fondue-sdk": "1.0.0-beta.2",
+    "@frontify/fondue-tokens": "6.0.0-beta.1",
+    "@frontify/fondue-storybook-docs": "0.0.2"
   },
   "changesets": [
     "bright-pens-write",
