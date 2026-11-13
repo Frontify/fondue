@@ -1,0 +1,14 @@
+README.md
+  h_2139c5e5c94509 1-2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "24123e4a33991950e339cd87d6db8cb350ecec00",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
