@@ -1,0 +1,21 @@
+packages/components/src/components/Select/styles/select.module.scss
+  s_ac2234e36b6f35::t_cffc47f5b4875e 263-265
+.changeset/select-menu-list-reset.md
+  s_ac2234e36b6f35::t_b24a458539d373 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d5df3600960affc56fbf662d807ef3a31578ce20",
+  "prompts": {},
+  "sessions": {
+    "s_ac2234e36b6f35": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a7b07e70-4d8d-4ac6-a10b-a57cd7570d2d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

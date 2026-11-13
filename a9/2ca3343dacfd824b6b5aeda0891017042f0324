@@ -1,0 +1,21 @@
+packages/components/tsconfig.react19.json
+  s_dd82ea8cd614d1::t_0653057da3037a 1-10
+.github/workflows/react-19-compat.yaml
+  s_dd82ea8cd614d1::t_25a27ea85cf430 1-60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "a92ca3343dacfd824b6b5aeda0891017042f0324",
+  "prompts": {},
+  "sessions": {
+    "s_dd82ea8cd614d1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4220b360-f380-49a9-ba15-92522e15b2eb",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
