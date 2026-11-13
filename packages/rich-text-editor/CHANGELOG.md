@@ -1,5 +1,15 @@
 # @frontify/fondue-rich-text-editor
 
+## 0.1.0-rc.1
+
+### Minor Changes
+
+- [#2981](https://github.com/Frontify/fondue/pull/2981) [`6e27664`](https://github.com/Frontify/fondue/commit/6e27664788d01d3deb813b8ff54b88a9021f91d9) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(RichTextEditor): read pasted marks the way the browser does and make sub and superscript exclusive
+
+- [#2982](https://github.com/Frontify/fondue/pull/2982) [`e65f3ea`](https://github.com/Frontify/fondue/commit/e65f3ea2cf67486e3dedf6111124ce513e69b394) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(RichTextEditor): keep typing rules out of code and technical text. `typographyPlugin` is now a function: call `typographyPlugin()` or `typographyPlugin({ groups })` instead of passing `typographyPlugin`.
+
+- [#2977](https://github.com/Frontify/fondue/pull/2977) [`f5c4140`](https://github.com/Frontify/fondue/commit/f5c4140e8c0050eb64f14dc70e6b8d9d4f0ac315) Thanks [@jcosta33](https://github.com/jcosta33)! - refactor(RichTextEditor): keep plugin content apart from editing UI; plugins move their editing UI out of content
+
 ## 0.1.0-rc.0
 
 ### Patch Changes
