@@ -294,7 +294,7 @@ export const Underline: Story = {
     },
 };
 
-/** ⌘⇧X, or the toolbar button. */
+/** ⇧⌘X, or the toolbar button. */
 export const Strikethrough: Story = {
     render: () => {
         const [doc, setDoc] = useState<RteDocument>({
@@ -305,7 +305,7 @@ export const Strikethrough: Story = {
                     children: [
                         { text: 'Some ' },
                         { text: 'struck-through', strikethrough: true },
-                        { text: ' text (⌘⇧X).' },
+                        { text: ' text (⇧⌘X).' },
                     ],
                 },
             ],
@@ -1100,7 +1100,7 @@ const highlightPlugin = (): RtePlugin =>
                 },
             },
         ],
-        hotkeys: { 'Mod-h': (api) => api.marks.toggle('highlight') },
+        hotkeys: { 'Mod-h': { label: 'Highlight', run: (api) => api.marks.toggle('highlight') } },
         content: defineContent({
             marks: {
                 highlight: defineMark({
@@ -1280,7 +1280,7 @@ const embedPlugin = (): RtePlugin =>
     definePlugin({
         id: 'embed',
         // An empty embed, which its `edit` view then takes over.
-        hotkeys: { '/': (api) => api.insert('embed') },
+        hotkeys: { '/': { label: 'Insert an embed', run: (api) => api.insert('embed') } },
         content: defineContent({
             inlines: {
                 embed: defineInline<EmbedValue>({

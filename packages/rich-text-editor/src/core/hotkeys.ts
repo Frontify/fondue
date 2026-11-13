@@ -33,7 +33,11 @@ const HOTKEY_SEPARATOR = /-(?!$)/;
 
 const APPLE_PLATFORM = /Mac|iPhone|iPad/;
 
-const isApplePlatform = (): boolean => typeof navigator !== 'undefined' && APPLE_PLATFORM.test(navigator.platform);
+/**
+ * Whether this platform is an Apple system, where `Mod` is Command. The one check the editor, its engine and its UI share.
+ */
+export const isApplePlatform = (): boolean =>
+    typeof navigator !== 'undefined' && APPLE_PLATFORM.test(navigator.platform);
 
 const modifierNamed = (name: string): HotkeyModifier | undefined => MODIFIER_NAMES[name.toLowerCase()];
 

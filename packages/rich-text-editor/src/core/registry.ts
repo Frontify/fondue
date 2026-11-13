@@ -6,7 +6,8 @@
 
 import { type ReactNode } from 'react';
 
-import { type EditorControlApi, type RteMarkState, type RteSelectionSnapshot } from './commands';
+import { EDITOR_SHORTCUTS, type EditorControlApi, type RteMarkState, type RteSelectionSnapshot } from './commands';
+import { parseHotkey } from './hotkeys';
 import { type HtmlSpec, type StyleMap, withRootStyle } from './htmlSpec';
 import {
     type BlockAttributeDefinition,
@@ -78,6 +79,23 @@ export type ToolbarEntry = {
       }
 );
 
+/**
+ * Who binds a shortcut: the editor itself, or one plugin
+ */
+export type RteShortcutOwner = { kind: 'editor' } | { kind: 'plugin'; pluginId: string };
+
+/**
+ * A key the editor or a plugin binds, as the keyboard reference lists it
+ */
+export type RteShortcut = {
+    owner: RteShortcutOwner;
+    /**
+     * In `Mod-b` style
+     */
+    key: string;
+    label: string;
+};
+
 export type PluginRegistry = {
     /** Every block type, the paragraph baseline first. */
     blocks: Map<string, BlockDefinition>;
@@ -101,6 +119,10 @@ export type PluginRegistry = {
     duplicateIds: readonly string[];
     /** Key → its handlers, in mount order; they run until one handles it. */
     hotkeys: Map<string, readonly HotkeyHandler[]>;
+    /**
+     * Every key bound, labelled: the editor's own first, then each plugin's `hotkeys` and the toolbar `shortcut`s that bind a key too, plugin by plugin in declaration order.
+     */
+    shortcuts: readonly RteShortcut[];
     /**
      * Every typing rule, ordered for matching: mark rules first, longest
      * delimiter first — or `**bold**` would be read as an italic `*` wrapping
@@ -311,11 +333,11 @@ const register = <TDefinition>(
 const NOTHING_TO_TOGGLE = 'nothing to toggle: name a mark, list, text block, void block or inline with `toggles`.';
 
 /**
- * Throws unless the entry has a label. The label is the control's only accessible name, so an untyped caller cannot leave it out.
+ * Throws unless the label is a non-empty string. A toolbar label is the control's only accessible name and a hotkey's names it in the keyboard reference, so an untyped caller cannot leave it out.
  */
-const assertLabelled = (plugin: RtePlugin, entry: RteToolbarEntry): void => {
-    if (typeof entry.label !== 'string' || entry.label === '') {
-        throw new Error(`Plugin "${plugin.id}" has a toolbar entry with no \`label\`.`);
+const assertLabelled = (plugin: RtePlugin, label: unknown, subject: string): void => {
+    if (typeof label !== 'string' || label === '') {
+        throw new Error(`Plugin "${plugin.id}" has ${subject} with no \`label\`.`);
     }
 };
 
@@ -325,7 +347,7 @@ const toolbarEntryOf = (plugin: RtePlugin, entry: RteToolbarEntry, key: string):
     if (entry.toggles !== undefined && own.kind === 'none') {
         throw new Error(`Plugin "${plugin.id}" toggles "${entry.toggles}", which its content does not declare.`);
     }
-    assertLabelled(plugin, entry);
+    assertLabelled(plugin, entry.label, 'a toolbar entry');
     const shared = {
         id: plugin.id,
         key,
@@ -441,6 +463,12 @@ const withMutualExcludes = (marks: Map<string, MarkDefinition>): Map<string, Mar
 const byNesting = (marks: Map<string, MarkDefinition>): Map<string, MarkDefinition> =>
     new Map([...marks].sort(([, left], [, right]) => (left.nesting ?? 0) - (right.nesting ?? 0)));
 
+const EDITOR_SHORTCUT_ROWS: readonly RteShortcut[] = Object.values(EDITOR_SHORTCUTS).map(({ key, label }) => ({
+    owner: { kind: 'editor' },
+    key,
+    label,
+}));
+
 /**
  * What `buildPluginRegistry` fills while it walks the entries.
  */
@@ -452,6 +480,7 @@ type Draft = {
     itemTypeByList: Map<string, string>;
     edits: Map<string, RteEditView>;
     hotkeys: Map<string, HotkeyHandler[]>;
+    shortcuts: RteShortcut[];
     inputRules: RteInputRule[];
     pasteHandlers: PasteHandler[];
     toolbarItems: ToolbarEntry[];
@@ -494,7 +523,10 @@ const addShortcut = (draft: Draft, plugin: RtePlugin, item: ToolbarEntry): void 
     if (controlOf(item.own).kind === 'none') {
         throw new Error(`Plugin "${plugin.id}" names shortcut "${shortcut}" with ${NOTHING_TO_TOGGLE}`);
     }
+    // Throws for a modifier the grammar does not know, before the editor mounts.
+    parseHotkey(shortcut);
     addHotkey(draft, shortcut, (api) => toggleOwn({ own: item.own, api, selection: api.selection.get() }));
+    draft.shortcuts.push({ owner: { kind: 'plugin', pluginId: plugin.id }, key: shortcut, label: item.label });
 };
 
 const addToolbarEntries = (draft: Draft, plugin: RtePlugin, pluginKey: string): void => {
@@ -532,8 +564,12 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
         draft.duplicateIds.add(plugin.id);
     }
     draft.seenIds.set(plugin.id, occurrence + 1);
-    for (const [keys, handler] of Object.entries(plugin.hotkeys ?? {})) {
-        addHotkey(draft, keys, handler);
+    for (const [keys, hotkey] of Object.entries(plugin.hotkeys ?? {})) {
+        // Throws for a modifier the grammar does not know, before the editor mounts.
+        parseHotkey(keys);
+        assertLabelled(plugin, hotkey.label, `a hotkey "${keys}"`);
+        addHotkey(draft, keys, hotkey.run);
+        draft.shortcuts.push({ owner: { kind: 'plugin', pluginId: plugin.id }, key: keys, label: hotkey.label });
     }
     // A shared id is a mistake the editor warns about; the toolbar still keys each control apart.
     let pluginKey = plugin.id;
@@ -583,6 +619,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         itemTypeByList: new Map(),
         edits: new Map(),
         hotkeys: new Map(),
+        shortcuts: [...EDITOR_SHORTCUT_ROWS],
         inputRules: [],
         pasteHandlers: [],
         toolbarItems: [],
@@ -630,6 +667,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         ids,
         duplicateIds: [...draft.duplicateIds],
         hotkeys: draft.hotkeys,
+        shortcuts: draft.shortcuts,
         inputRules: forMatching(draft.inputRules),
         pasteHandlers: draft.pasteHandlers,
         toolbarItems: draft.toolbarItems,

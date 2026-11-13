@@ -168,7 +168,7 @@ export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
         },
         hotkeys: {
             // Inserts an empty mention that the `edit` view takes over.
-            [trigger]: (api) => api.insert('mention'),
+            [trigger]: { label: 'Mention someone', run: (api) => api.insert('mention') },
         },
     });
 };

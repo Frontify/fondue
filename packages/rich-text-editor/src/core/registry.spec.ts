@@ -2,7 +2,7 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { type EditorControlApi, type RteSelectionSnapshot } from './commands';
+import { EDITOR_SHORTCUTS, type EditorControlApi, type RteSelectionSnapshot } from './commands';
 import {
     defineBlock,
     defineContent,
@@ -480,12 +480,94 @@ describe('the hotkeys of a registry', () => {
                 id: 'bold',
                 content: boldContent,
                 toolbar: [{ icon, label: 'Bold', shortcut: 'Mod-b' }],
-                hotkeys: { 'Mod-b': own },
+                hotkeys: { 'Mod-b': { label: 'Bold', run: own } },
             }),
         ]);
 
         expect(registry.hotkeys.get('Mod-b')).toEqual([own]);
         expect(registry.toolbarItems[0]?.shortcut).toBe('Mod-b');
+    });
+
+    it('need a label, which the keyboard reference names the key by', () => {
+        expect(() =>
+            buildPluginRegistry([
+                {
+                    kind: 'plugin',
+                    id: 'bold',
+                    // @ts-expect-error -- a hotkey without a `label` fails typecheck, and still throws for an untyped caller.
+                    hotkeys: { 'Mod-b': { run: () => {} } },
+                },
+            ]),
+        ).toThrow('Plugin "bold" has a hotkey "Mod-b" with no `label`.');
+    });
+
+    it('throw for a modifier the grammar does not know', () => {
+        expect(() =>
+            buildPluginRegistry([
+                definePlugin({ id: 'bold', hotkeys: { 'Hyper-b': { label: 'Bold', run: () => {} } } }),
+            ]),
+        ).toThrow('Unknown modifier "Hyper" in hotkey "Hyper-b".');
+    });
+
+    it('need a label that is not empty', () => {
+        expect(() =>
+            buildPluginRegistry([definePlugin({ id: 'bold', hotkeys: { 'Mod-b': { label: '', run: () => {} } } })]),
+        ).toThrow('Plugin "bold" has a hotkey "Mod-b" with no `label`.');
+    });
+});
+
+describe('the shortcuts of a registry', () => {
+    const boldContent = defineContent({ marks: { bold: mark() } });
+    const editorRows = Object.values(EDITOR_SHORTCUTS).map(({ key, label }) => ({
+        owner: { kind: 'editor' },
+        key,
+        label,
+    }));
+    const pluginRow = (pluginId: string, key: string, label: string) => ({
+        owner: { kind: 'plugin', pluginId },
+        key,
+        label,
+    });
+
+    it('list the editor first, then the hotkeys of a plugin and the toolbar shortcuts that bind a key, plugin by plugin', () => {
+        const registry = buildPluginRegistry([
+            definePlugin({
+                id: 'bold',
+                content: boldContent,
+                toolbar: [{ icon, label: 'Bold', shortcut: 'Mod-b' }],
+                hotkeys: { 'Alt-x': { label: 'Extra', run: () => {} } },
+            }),
+            definePlugin({ id: 'break', hotkeys: { 'Shift-Enter': { label: 'Line break', run: () => {} } } }),
+        ]);
+
+        expect(registry.shortcuts).toEqual([
+            ...editorRows,
+            pluginRow('bold', 'Alt-x', 'Extra'),
+            pluginRow('bold', 'Mod-b', 'Bold'),
+            pluginRow('break', 'Shift-Enter', 'Line break'),
+        ]);
+    });
+
+    it('list a key the plugin binds and the toolbar shows once, by the hotkey label', () => {
+        const registry = buildPluginRegistry([
+            definePlugin({
+                id: 'bold',
+                content: boldContent,
+                toolbar: [{ icon, label: 'Bold', shortcut: 'Mod-b' }],
+                hotkeys: { 'Mod-b': { label: 'Make bold', run: () => {} } },
+            }),
+        ]);
+
+        expect(registry.shortcuts).toEqual([...editorRows, pluginRow('bold', 'Mod-b', 'Make bold')]);
+    });
+
+    it('name the editor undo and redo keys', () => {
+        expect(buildPluginRegistry([]).shortcuts).toEqual(
+            expect.arrayContaining([
+                { owner: { kind: 'editor' }, key: 'Mod-z', label: 'Undo' },
+                { owner: { kind: 'editor' }, key: 'Alt-F10', label: 'Move focus to the toolbar' },
+            ]),
+        );
     });
 });
 

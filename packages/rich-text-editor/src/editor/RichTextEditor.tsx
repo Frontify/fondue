@@ -17,7 +17,9 @@ import {
 
 import {
     buildPluginRegistry,
+    EDITOR_SHORTCUTS,
     emptyDocument,
+    matchesHotkey,
     newerVersionOf,
     type PluginRegistry,
     type RteBlockNode,
@@ -561,7 +563,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
 // Helpers
 
 /** The key that moves focus from the text to the toolbar, the usual one for rich text editors. */
-const isToolbarHotkey = (event: KeyboardEvent): boolean => event.altKey && event.key === 'F10';
+const isToolbarHotkey = (event: KeyboardEvent): boolean => matchesHotkey(EDITOR_SHORTCUTS.focusToolbar.key, event);
 
 /** The tabindex that makes an element focusable by script but not by Tab. */
 const FOCUSABLE_BY_SCRIPT_ONLY = -1;

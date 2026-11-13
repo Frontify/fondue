@@ -46,6 +46,9 @@ export type BlurOnBreakPluginOptions = {
     labels?: Partial<BlurOnBreakLabels>;
 };
 
+/** What the keyboard reference calls Enter in an editor that submits. */
+const SUBMIT_LABEL = 'Submit, outside a list';
+
 type BreakLineParams = {
     api: EditorControlApi;
     onBreak: (() => void) | undefined;
@@ -94,10 +97,13 @@ export const blurOnBreakPlugin = ({
         id: 'blur-on-break',
         description,
         hotkeys: {
-            // Enter is always this plugin's: it splits an item, refuses, or submits.
-            Enter: (api) => {
-                breakLine({ api, onBreak, required, labels });
-                return true;
+            Enter: {
+                label: SUBMIT_LABEL,
+                // Enter is always this plugin's: it splits an item, refuses, or submits.
+                run: (api) => {
+                    breakLine({ api, onBreak, required, labels });
+                    return true;
+                },
             },
         },
     });

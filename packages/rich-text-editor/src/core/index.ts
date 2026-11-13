@@ -6,7 +6,9 @@
 export {
     type ClearMarksOptions,
     type ClearMarksScope,
+    EDITOR_SHORTCUTS,
     type EditorControlApi,
+    type EditorShortcut,
     type InsertTextOptions,
     type InsertTextUndo,
     REDO_HOTKEY,
@@ -24,7 +26,14 @@ export {
     type StoredMarkValue,
 } from './document';
 export { isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
-export { type HotkeyEvent, type HotkeyModifier, matchesHotkey, type ParsedHotkey, parseHotkey } from './hotkeys';
+export {
+    type HotkeyEvent,
+    type HotkeyModifier,
+    isApplePlatform,
+    matchesHotkey,
+    type ParsedHotkey,
+    parseHotkey,
+} from './hotkeys';
 export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
 export {
     type BlockAttributeDefinition,
@@ -53,6 +62,7 @@ export {
     type RteContentDefinition,
     type RteDelimiterRule,
     type RteEditView,
+    type RteHotkey,
     type RteIcon,
     type RteInputRule,
     type RteMarkPatternTrim,
@@ -76,6 +86,8 @@ export {
     type OwnType,
     ownTypeOf,
     type PluginRegistry,
+    type RteShortcut,
+    type RteShortcutOwner,
     type ToolbarEntry,
     toggleOwn,
 } from './registry';

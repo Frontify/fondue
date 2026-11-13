@@ -26,6 +26,7 @@ import {
     type RteBlockNode,
     type RteContent,
     type RteEditView,
+    type RteHotkey,
     type RteIcon,
     type RteInlineNode,
     type RtePlugin as CorePlugin,
@@ -211,6 +212,7 @@ export declare namespace RtePlugin {
     export type ToolbarItemProps = ToolbarProps;
     export type ToolbarGroup = RteToolbarGroup;
     export type PasteHandler = OnPaste;
+    export type Hotkey = RteHotkey;
     // A namespace member cannot take the name of the type it renames, so each of these needs an alias outside.
     export type Paste = Pasted; // NOSONAR
     export type InsertTextOptions = InsertOptions; // NOSONAR

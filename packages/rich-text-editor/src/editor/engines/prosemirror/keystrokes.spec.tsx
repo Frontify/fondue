@@ -423,7 +423,7 @@ const verbatimPlugin = definePlugin({
             }),
         },
     }),
-    hotkeys: { 'Mod-q': (api) => api.marks.toggle('verbatim') },
+    hotkeys: { 'Mod-q': { label: 'Verbatim', run: (api) => api.marks.toggle('verbatim') } },
 });
 
 describe('a feature hotkey', () => {
@@ -441,8 +441,8 @@ describe('a feature hotkey', () => {
         const second = vi.fn<(api: EditorControlApi) => void>((api) => api.insertText('!'));
         const editor = editorWith(
             [
-                definePlugin({ id: 'first', hotkeys: { 'Alt-x': first } }),
-                definePlugin({ id: 'second', hotkeys: { 'Alt-x': second } }),
+                definePlugin({ id: 'first', hotkeys: { 'Alt-x': { label: 'First', run: first } } }),
+                definePlugin({ id: 'second', hotkeys: { 'Alt-x': { label: 'Second', run: second } } }),
             ],
             [paragraph(text('a'))],
         );
@@ -464,7 +464,7 @@ describe('a feature hotkey', () => {
             vi.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
             const run = vi.fn<(api: EditorControlApi) => void>((api) => api.insertText('!'));
             const editor = editorWith(
-                [definePlugin({ id: 'option', hotkeys: { [keys]: run } })],
+                [definePlugin({ id: 'option', hotkeys: { [keys]: { label: 'Option', run } } })],
                 [paragraph(text('a'))],
             );
             editor.caretAfter('a');
@@ -479,7 +479,7 @@ describe('a feature hotkey', () => {
         vi.spyOn(navigator, 'platform', 'get').mockReturnValue('Win32');
         const run = vi.fn();
         const editor = editorWith(
-            [definePlugin({ id: 'ctrl-alt', hotkeys: { 'Ctrl-Alt-x': run } })],
+            [definePlugin({ id: 'ctrl-alt', hotkeys: { 'Ctrl-Alt-x': { label: 'Ctrl Alt', run } } })],
             [paragraph(text('a'))],
         );
         editor.caretAfter('a');
@@ -492,7 +492,10 @@ describe('a feature hotkey', () => {
     it('takes a key the list keys would otherwise claim', () => {
         const claim = vi.fn(() => true);
         const editor = editorWith(
-            [...defaultPlugins, definePlugin({ id: 'claims-enter', hotkeys: { Enter: claim } })],
+            [
+                ...defaultPlugins,
+                definePlugin({ id: 'claims-enter', hotkeys: { Enter: { label: 'Claim Enter', run: claim } } }),
+            ],
             [{ type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('ab'))] }] }],
         );
         editor.caretAfter('a');
@@ -505,7 +508,10 @@ describe('a feature hotkey', () => {
 
     it('naming a character does not fire in the middle of a word', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>();
-        const editor = editorWith([definePlugin({ id: 'mention', hotkeys: { '@': mention } })], empty());
+        const editor = editorWith(
+            [definePlugin({ id: 'mention', hotkeys: { '@': { label: 'Mention', run: mention } } })],
+            empty(),
+        );
 
         editor.type('noah@frontify.com');
 
@@ -515,7 +521,10 @@ describe('a feature hotkey', () => {
 
     it('naming a character fires on that character being typed, and the character is not inserted', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>((api) => api.insertText('[mention]'));
-        const editor = editorWith([definePlugin({ id: 'mention', hotkeys: { '@': mention } })], empty());
+        const editor = editorWith(
+            [definePlugin({ id: 'mention', hotkeys: { '@': { label: 'Mention', run: mention } } })],
+            empty(),
+        );
 
         editor.type('hi @');
 
@@ -526,7 +535,11 @@ describe('a feature hotkey', () => {
     it('naming a character is typed as it is inside a mark that opts out of rules, and fires outside it', () => {
         const trigger = vi.fn<(api: EditorControlApi) => void>();
         const editor = editorWith(
-            [...defaultPlugins, verbatimPlugin, definePlugin({ id: 'trigger', hotkeys: { '@': trigger } })],
+            [
+                ...defaultPlugins,
+                verbatimPlugin,
+                definePlugin({ id: 'trigger', hotkeys: { '@': { label: 'Trigger', run: trigger } } }),
+            ],
             [paragraph(text('a b', { verbatim: true }), text(' c'))],
         );
 
@@ -545,7 +558,11 @@ describe('a feature hotkey', () => {
     it('naming a character still fires after a space in a mark that does not opt out of rules', () => {
         const trigger = vi.fn<(api: EditorControlApi) => void>();
         const editor = editorWith(
-            [...defaultPlugins, plainMarkPlugin, definePlugin({ id: 'trigger', hotkeys: { '@': trigger } })],
+            [
+                ...defaultPlugins,
+                plainMarkPlugin,
+                definePlugin({ id: 'trigger', hotkeys: { '@': { label: 'Trigger', run: trigger } } }),
+            ],
             [paragraph(text('hi ', { plain: true }))],
         );
 
@@ -558,7 +575,11 @@ describe('a feature hotkey', () => {
     it('naming a character does not fire at a caret where a mark that opts out of rules was just turned on', () => {
         const trigger = vi.fn<(api: EditorControlApi) => void>();
         const editor = editorWith(
-            [...defaultPlugins, verbatimPlugin, definePlugin({ id: 'trigger', hotkeys: { '@': trigger } })],
+            [
+                ...defaultPlugins,
+                verbatimPlugin,
+                definePlugin({ id: 'trigger', hotkeys: { '@': { label: 'Trigger', run: trigger } } }),
+            ],
             [paragraph(text('hi '))],
         );
         editor.caretAfter('hi ');
@@ -727,7 +748,10 @@ describe('typing rewrites when a composition ends', () => {
 describe('a character hotkey during IME composition', () => {
     it('does not fire: the composition owns the character', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>();
-        const editor = editorWith([definePlugin({ id: 'mention', hotkeys: { '@': mention } })], empty());
+        const editor = editorWith(
+            [definePlugin({ id: 'mention', hotkeys: { '@': { label: 'Mention', run: mention } } })],
+            empty(),
+        );
         vi.spyOn(editor.view, 'composing', 'get').mockReturnValue(true);
 
         editor.type('@');

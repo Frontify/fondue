@@ -60,7 +60,7 @@ export const emojiPlugin = (options: EmojiPluginOptions = {}): RtePlugin => {
         hotkeys: {
             // Inserts an empty draft that the `edit` view takes over. The editor
             // fires it only at a word start, so `10:30` and `https:` stay as typed.
-            [TRIGGER]: (api) => api.insert('emojiDraft'),
+            [TRIGGER]: { label: 'Insert an emoji', run: (api) => api.insert('emojiDraft') },
         },
     });
 };

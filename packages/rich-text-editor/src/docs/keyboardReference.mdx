@@ -1,0 +1,19 @@
+{/* (c) Copyright Frontify Ltd., all rights reserved. */}
+
+import { Meta } from '@storybook/addon-docs/blocks';
+
+import { defaultPlugins } from '../plugins';
+import { mentionPlugin } from '../plugins/Mention';
+import { PluginKeyboardReference } from './PluginKeyboardReference';
+
+<Meta title="Rich Text Editor/Guides/Keyboard reference" />
+
+# Keyboard reference
+
+Every key the editor binds, grouped by who binds it. `Mod` is ⌘ on Apple systems and Ctrl everywhere else, so each table shows both.
+
+Each table is written from the plugin's own hotkeys, so a key that one of the plugins below gains appears here with no edit to this page.
+
+<PluginKeyboardReference plugins={[...defaultPlugins, mentionPlugin({ items: [] })]} />
+
+An editor that submits on Enter (`blurOnBreakPlugin`) changes one key: Enter submits outside a list. Shift+Enter still breaks the line.

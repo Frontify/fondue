@@ -5,8 +5,8 @@ import autoprefixer from 'autoprefixer';
 import tailwindcss from 'tailwindcss';
 
 export default {
-    stories: ['../src/**/*.stories.@(ts|tsx)'],
-    addons: ['@storybook/addon-a11y'],
+    stories: ['../src/**/*.stories.@(ts|tsx)', '../src/**/*.mdx'],
+    addons: ['@storybook/addon-a11y', '@storybook/addon-docs'],
     framework: {
         name: '@storybook/react-vite',
         options: {},

@@ -119,7 +119,7 @@ export type RtePlugin = {
      * Alt and Shift in any case; any other throws when the editor mounts. They run
      * before the editor's own, in plugin order.
      */
-    hotkeys?: Record<string, HotkeyHandler>;
+    hotkeys?: Record<string, RteHotkey>;
     /** Text rewritten as it is typed: markdown shortcuts and autolinks. */
     inputRules?: readonly (RteInputRule | RteDelimiterRule)[];
     /** Runs before the editor's own paste, in plugin order. */
@@ -595,7 +595,20 @@ export type RteBlockCommand = {
     run: (api: EditorControlApi) => void;
 };
 
-/** A plugin's handler for one key. Return `false` to leave the key to the next handler, and in the end the editor and browser. */
+/**
+ * A keybinding: what it does, and the handler that does it
+ */
+export type RteHotkey = {
+    /**
+     * What the keyboard reference calls the binding: `Align left`
+     */
+    label: string;
+    run: HotkeyHandler;
+};
+
+/**
+ * A plugin's handler for one key. Return `false` to leave the key to the next handler, and in the end the editor and browser.
+ */
 export type HotkeyHandler = (api: EditorControlApi) => boolean | void;
 
 /**

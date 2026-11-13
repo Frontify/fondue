@@ -9,13 +9,13 @@ import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, TextSe
 import { canJoin, findWrapping } from 'prosemirror-transform';
 
 import {
+    EDITOR_SHORTCUTS,
     type EditorControlApi,
     type HotkeyHandler,
     INLINE_PLACEHOLDER,
+    isApplePlatform,
     type PluginRegistry,
-    REDO_HOTKEY,
     type RteInputRule,
-    UNDO_HOTKEY,
     WORD_START_CONTEXT,
 } from '#/core';
 
@@ -63,9 +63,9 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         // 1
         history(),
         keymap({
-            [UNDO_HOTKEY]: undoStep,
-            'Mod-y': redo,
-            [REDO_HOTKEY]: redo,
+            [EDITOR_SHORTCUTS.undo.key]: undoStep,
+            [EDITOR_SHORTCUTS.redo.key]: redo,
+            [EDITOR_SHORTCUTS.redoWithShift.key]: redo,
             Backspace: undoInputRule,
         }),
         // 2
@@ -86,8 +86,6 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
 // Text entry keys
 
 // A Mac has no AltGr key, yet Firefox on macOS reports Option as AltGraph.
-const isApple = (): boolean => typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
-
 /**
  * A key an input method or an AltGr combination sends is text, not a command:
  * Enter that commits a composition must not split the block, and AltGr+q (`@` on
@@ -95,7 +93,9 @@ const isApple = (): boolean => typeof navigator !== 'undefined' && /Mac|iPhone|i
  */
 const isTextEntryKey = (event: KeyboardEvent): boolean =>
     // `keyCode` 229 marks the input method's keydowns that `isComposing` misses, just before and after a composition.
-    event.isComposing || event.keyCode === 229 || (!isApple() && (event.getModifierState?.('AltGraph') ?? false)); // NOSONAR
+    event.isComposing ||
+    event.keyCode === 229 ||
+    (!isApplePlatform() && (event.getModifierState?.('AltGraph') ?? false)); // NOSONAR
 
 /**
  * The plugin with its key handler skipping those keys. It declines them rather

@@ -297,7 +297,7 @@ describe('mentionPlugin', () => {
 });
 
 describe('blurOnBreakPlugin', () => {
-    const enterOf = (options?: BlurOnBreakPluginOptions) => blurOnBreakPlugin(options).hotkeys?.Enter;
+    const enterOf = (options?: BlurOnBreakPluginOptions) => blurOnBreakPlugin(options).hotkeys?.Enter?.run;
 
     it('splits the list item when Enter is pressed inside a list, and keeps focus', () => {
         const { api, calls } = recordingApi({ inList: true });
@@ -384,7 +384,7 @@ describe('blurOnBreakPlugin', () => {
 });
 
 describe('alignPlugin', () => {
-    const keyOf = (shortcut: string, options?: AlignPluginOptions) => alignPlugin(options).hotkeys?.[shortcut];
+    const keyOf = (shortcut: string, options?: AlignPluginOptions) => alignPlugin(options).hotkeys?.[shortcut]?.run;
 
     it.each([
         ['Mod-Shift-l', 'left', 'Aligned left'],
@@ -452,7 +452,8 @@ describe('alignPlugin', () => {
 });
 
 describe('resetFormattingPlugin', () => {
-    const clearKey = (options?: ResetFormattingPluginOptions) => resetFormattingPlugin(options).hotkeys?.['Mod-\\'];
+    const clearKey = (options?: ResetFormattingPluginOptions) =>
+        resetFormattingPlugin(options).hotkeys?.['Mod-\\']?.run;
 
     it('clears the marks of the block with Mod-\\, those that survive a clear excepted, and says so', () => {
         const { api, calls } = recordingApi();
@@ -529,7 +530,7 @@ describe('textStylePlugin', () => {
         const hotkeys = textStylePlugin().hotkeys ?? {};
 
         for (const keys of ['Mod-Alt-0', 'Mod-Alt-1', 'Mod-Alt-4']) {
-            hotkeys[keys]?.(api);
+            hotkeys[keys]?.run(api);
         }
 
         expect(calls).toEqual([

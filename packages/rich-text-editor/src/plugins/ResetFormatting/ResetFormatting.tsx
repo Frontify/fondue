@@ -2,14 +2,20 @@
 
 import { IconEraser } from '@frontify/fondue-icons';
 
-import { definePlugin, type EditorControlApi, type HotkeyHandler, PARAGRAPH, type ToolbarItemProps } from '#/core';
+import { definePlugin, type EditorControlApi, PARAGRAPH, type RteHotkey, type ToolbarItemProps } from '#/core';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 /**
- * The words the reset button and its key say to screen readers
+ * The words the reset button and its key say: what the keyboard reference calls the key, and what screen readers hear
  */
 export type ResetFormattingLabels = {
+    /**
+     * What the keyboard reference calls `Mod-\`.
+     *
+     * @default 'Clear inline formatting, keep links'
+     */
+    clearMarksTitle: string;
     /**
      * Said after `Mod-\` removed a mark. It says nothing when there was no mark to remove.
      *
@@ -25,6 +31,7 @@ export type ResetFormattingLabels = {
 };
 
 const DEFAULT_RESET_FORMATTING_LABELS: ResetFormattingLabels = {
+    clearMarksTitle: 'Clear inline formatting, keep links',
     cleared: 'Formatting cleared',
     reset: 'Formatting reset',
 };
@@ -84,12 +91,15 @@ export const resetFormattingPlugin = (options: ResetFormattingPluginOptions = {}
         ],
         // The key is a literal because a computed key keeps this plugin in the renderer.
         hotkeys: {
-            /** Clears the marks only, those that survive a clear (links) excepted: block types, lists and alignment stay, which the toolbar button resets. */
-            'Mod-\\': (api) => {
-                if (api.marks.removeAll({ scope: 'block', keepSurviving: true })) {
-                    api.announce(labels.cleared);
-                }
+            'Mod-\\': {
+                label: labels.clearMarksTitle,
+                // Clears the marks only, those that survive a clear (links) excepted: block types, lists and alignment stay, which the toolbar button resets.
+                run: (api) => {
+                    if (api.marks.removeAll({ scope: 'block', keepSurviving: true })) {
+                        api.announce(labels.cleared);
+                    }
+                },
             },
-        } satisfies Record<string, HotkeyHandler>,
+        } satisfies Record<string, RteHotkey>,
     });
 };

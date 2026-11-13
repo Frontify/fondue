@@ -220,3 +220,22 @@ export const UNDO_HOTKEY = 'Mod-z';
 
 /** The key that makes the last undone change again. */
 export const REDO_HOTKEY = 'Mod-Shift-z';
+
+/**
+ * A key the editor binds itself, written as in a plugin's `hotkeys`
+ */
+export type EditorShortcut = {
+    key: string;
+    label: string;
+};
+
+/**
+ * The keys the editor owns rather than a plugin: the engine binds undo and redo from here, and the keyboard reference lists them all.
+ * `focusToolbar` is bound by the editor shell, which matches it with `matchesHotkey`.
+ */
+export const EDITOR_SHORTCUTS = {
+    undo: { key: UNDO_HOTKEY, label: 'Undo' },
+    redo: { key: 'Mod-y', label: 'Redo' },
+    redoWithShift: { key: REDO_HOTKEY, label: 'Redo' },
+    focusToolbar: { key: 'Alt-F10', label: 'Move focus to the toolbar' },
+} satisfies Record<string, EditorShortcut>;

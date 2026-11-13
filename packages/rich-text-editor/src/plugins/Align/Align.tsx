@@ -12,7 +12,7 @@ import {
     defineContent,
     definePlugin,
     type EditorControlApi,
-    type HotkeyHandler,
+    type RteHotkey,
     type RteSelectionSnapshot,
     type StyleMap,
     type ToolbarItemProps,
@@ -60,24 +60,51 @@ type AlignValue = NonNullable<AlignAttribute['align']>;
 /** The keys are literals because a computed key keeps this plugin in the renderer; this type ties each alignment to one. */
 type AlignShortcut = 'Mod-Shift-l' | 'Mod-Shift-e' | 'Mod-Shift-r' | 'Mod-Shift-j';
 
+/** The label that names one alignment's button and key. */
+type AlignTitleKey = 'leftTitle' | 'centerTitle' | 'rightTitle' | 'justifyTitle';
+
 type Alignment = {
     value: AlignValue;
     icon: FondueIcon;
-    title: string;
+    titleKey: AlignTitleKey;
     shortcut: AlignShortcut;
 };
 
 const ALIGNMENTS: readonly Alignment[] = [
-    { value: 'left', icon: IconTextAlignmentLeft, title: 'Align left', shortcut: 'Mod-Shift-l' },
-    { value: 'center', icon: IconTextAlignmentCentre, title: 'Align center', shortcut: 'Mod-Shift-e' },
-    { value: 'right', icon: IconTextAlignmentRight, title: 'Align right', shortcut: 'Mod-Shift-r' },
-    { value: 'justify', icon: IconTextAlignmentJustify, title: 'Justify', shortcut: 'Mod-Shift-j' },
+    { value: 'left', icon: IconTextAlignmentLeft, titleKey: 'leftTitle', shortcut: 'Mod-Shift-l' },
+    { value: 'center', icon: IconTextAlignmentCentre, titleKey: 'centerTitle', shortcut: 'Mod-Shift-e' },
+    { value: 'right', icon: IconTextAlignmentRight, titleKey: 'rightTitle', shortcut: 'Mod-Shift-r' },
+    { value: 'justify', icon: IconTextAlignmentJustify, titleKey: 'justifyTitle', shortcut: 'Mod-Shift-j' },
 ];
 
 /**
- * The words the alignment buttons and keys say to screen readers
+ * The words the alignment buttons and keys say: their names, and what screen readers hear after a choice
  */
 export type AlignLabels = {
+    /**
+     * The name of the left alignment: the button's title and what the keyboard reference calls its key.
+     *
+     * @default 'Align left'
+     */
+    leftTitle: string;
+    /**
+     * The name of the center alignment: the button's title and what the keyboard reference calls its key.
+     *
+     * @default 'Align center'
+     */
+    centerTitle: string;
+    /**
+     * The name of the right alignment: the button's title and what the keyboard reference calls its key.
+     *
+     * @default 'Align right'
+     */
+    rightTitle: string;
+    /**
+     * The name of the justified alignment: the button's title and what the keyboard reference calls its key.
+     *
+     * @default 'Justify'
+     */
+    justifyTitle: string;
     /**
      * Said after the left alignment is chosen.
      *
@@ -111,6 +138,10 @@ export type AlignLabels = {
 };
 
 const DEFAULT_ALIGN_LABELS: AlignLabels = {
+    leftTitle: 'Align left',
+    centerTitle: 'Align center',
+    rightTitle: 'Align right',
+    justifyTitle: 'Justify',
     left: 'Aligned left',
     center: 'Centered',
     right: 'Aligned right',
@@ -160,14 +191,14 @@ const AlignToolbar = ({ api, selection, label, labels }: AlignToolbarProps) => {
         // One choice of four, so a radio group: the checked one is the
         // block's alignment.
         <div role="radiogroup" aria-label={label} className={styles.group}>
-            {ALIGNMENTS.map(({ value, icon: Icon, title, shortcut }) => (
+            {ALIGNMENTS.map(({ value, icon: Icon, titleKey, shortcut }) => (
                 // A <button> underneath, which the toolbar gives its tabIndex.
                 // oxlint-disable-next-line jsx-a11y/interactive-supports-focus
                 <ToolbarButton
                     key={value}
                     role="radio"
                     aria-checked={current === value}
-                    title={title}
+                    title={labels[titleKey]}
                     shortcut={shortcut}
                     onClick={() => {
                         chooseAlignment({ api, value, labels });
@@ -196,19 +227,32 @@ export const alignPlugin = (options: AlignPluginOptions = {}) => {
                 floating: 'inline',
             },
         ],
+        // The keys are literals because a computed key keeps this plugin in the renderer; `AlignShortcut` ties each alignment to one.
         hotkeys: {
-            'Mod-Shift-l': (api) => {
-                chooseAlignment({ api, value: 'left', labels });
+            'Mod-Shift-l': {
+                label: labels.leftTitle,
+                run: (api) => {
+                    chooseAlignment({ api, value: 'left', labels });
+                },
             },
-            'Mod-Shift-e': (api) => {
-                chooseAlignment({ api, value: 'center', labels });
+            'Mod-Shift-e': {
+                label: labels.centerTitle,
+                run: (api) => {
+                    chooseAlignment({ api, value: 'center', labels });
+                },
             },
-            'Mod-Shift-r': (api) => {
-                chooseAlignment({ api, value: 'right', labels });
+            'Mod-Shift-r': {
+                label: labels.rightTitle,
+                run: (api) => {
+                    chooseAlignment({ api, value: 'right', labels });
+                },
             },
-            'Mod-Shift-j': (api) => {
-                chooseAlignment({ api, value: 'justify', labels });
+            'Mod-Shift-j': {
+                label: labels.justifyTitle,
+                run: (api) => {
+                    chooseAlignment({ api, value: 'justify', labels });
+                },
             },
-        } satisfies Record<AlignShortcut, HotkeyHandler>,
+        } satisfies Record<AlignShortcut, RteHotkey>,
     });
 };
