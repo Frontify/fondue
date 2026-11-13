@@ -20,7 +20,7 @@ import {
     type RtePlugin,
     type ToolbarItemProps,
 } from '#/core';
-import { blurOnBreakPlugin, defaultPlugins } from '#/plugins';
+import { alignPlugin, blurOnBreakPlugin, defaultPlugins, resetFormattingPlugin } from '#/plugins';
 
 import { trimTrailingPunctuation } from './autolink';
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
@@ -885,7 +885,7 @@ describe('the alignment shortcuts', () => {
         ]);
     });
 
-    it('aligns every block of a range that only some have, and clears them once all have it', () => {
+    it('follows the block the range starts in, as the button does: clears every block when it has the alignment, else sets every block', () => {
         const editor = editorWith(defaultPlugins, [
             { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },
             paragraph(text('two')),
@@ -893,13 +893,13 @@ describe('the alignment shortcuts', () => {
         editor.selectBetween('one', 'two');
 
         press(editor.view, 'E', modShift(69));
+        expect(editor.stored()).toEqual(plain());
+
+        press(editor.view, 'E', modShift(69));
         expect(editor.stored()).toEqual([
             { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },
             { type: 'paragraph', align: 'center', children: [{ text: 'two' }] },
         ]);
-
-        press(editor.view, 'E', modShift(69));
-        expect(editor.stored()).toEqual(plain());
     });
 });
 
@@ -939,10 +939,10 @@ const listItem = (value: string, marks: Record<string, unknown> = {}): RteBlockN
 });
 
 /** Clicks the toolbar's Reset formatting button, rendered from the plugin's own entry against the editor's api. */
-type ClickResetButtonParams = { api: EditorControlApi };
+type ClickResetButtonParams = { api: EditorControlApi; plugins?: readonly RtePlugin[] };
 
-const clickResetButton = ({ api }: ClickResetButtonParams): void => {
-    const entry = buildPluginRegistry(shipped('reset-formatting')).toolbarItems[0];
+const clickResetButton = ({ api, plugins = shipped('reset-formatting') }: ClickResetButtonParams): void => {
+    const entry = buildPluginRegistry(plugins).toolbarItems[0];
     if (entry?.control !== 'custom') {
         throw new Error('the reset formatting plugin has no custom toolbar entry');
     }
@@ -1172,6 +1172,34 @@ describe('the reset formatting button', () => {
         clickResetButton(editor);
 
         expect(editor.stored()).toEqual([paragraph(text('one')), paragraph(text('two'))]);
+    });
+});
+
+describe('the words the alignment and reset plugins say', () => {
+    it('lets the host name each alignment announcement, leaving the others in English', () => {
+        const announce = vi.fn<(message: string) => void>();
+        const plugins = [alignPlugin({ centerAnnouncement: 'Zentriert', clearedAnnouncement: 'Ausrichtung entfernt' })];
+        const editor = editorWith(plugins, [paragraph(text('one'))], { announce });
+        editor.caretAfter('on');
+
+        press(editor.view, 'E', modShift(69));
+        expect(announce).toHaveBeenLastCalledWith('Zentriert');
+        press(editor.view, 'E', modShift(69));
+        expect(announce).toHaveBeenLastCalledWith('Ausrichtung entfernt');
+        press(editor.view, 'R', modShift(82));
+        expect(announce).toHaveBeenLastCalledWith('Aligned right');
+    });
+
+    it('lets the host name what the clear key and the reset button say', () => {
+        const announce = vi.fn<(message: string) => void>();
+        const reset = resetFormattingPlugin({ clearedAnnouncement: 'Gelöscht', resetAnnouncement: 'Zurückgesetzt' });
+        const editor = editorWith([...shipped('bold'), reset], [paragraph(text('bold', { bold: true }))], { announce });
+        editor.caretAfter('bo');
+
+        press(editor.view, '\\', mod);
+        expect(announce).toHaveBeenLastCalledWith('Gelöscht');
+        clickResetButton({ api: editor.api, plugins: [reset] });
+        expect(announce).toHaveBeenLastCalledWith('Zurückgesetzt');
     });
 });
 

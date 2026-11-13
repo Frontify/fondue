@@ -4,7 +4,6 @@
 // Imports from no other layer; plugins, renderer and editor all import here.
 
 export {
-    type BlockAttributeToggle,
     type ClearMarksOptions,
     type ClearMarksScope,
     EDITOR_SHORTCUTS,
@@ -13,7 +12,6 @@ export {
     type InsertTextOptions,
     type InsertTextUndo,
     REDO_HOTKEY,
-    type RteAttributeState,
     type RteMarkState,
     type RteSelectionSnapshot,
     UNDO_HOTKEY,
