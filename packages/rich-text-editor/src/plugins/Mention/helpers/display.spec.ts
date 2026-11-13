@@ -67,36 +67,12 @@ describe('mentionDisplay', () => {
         ).toMatchObject({ label: '@jane', title: 'Jane Doe' });
     });
 
-    it('shows the stored value only for a mention whose resolver throws, and still resolves the others', () => {
-        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-        const john: MentionValue = { id: 'john', username: 'john', name: 'John Roe' };
-        const resolve = (mention: MentionValue) => {
-            if (mention.id === 'jane') {
-                throw new Error('offline');
-            }
-            return { status: 'current', username: 'john.r', name: 'John Roe' } as const;
-        };
-
-        expect(mentionDisplay(JANE, { href, trigger: '@', resolve })).toEqual({
-            status: 'linked',
-            label: '@jane',
-            title: 'Jane Doe',
-            href: '/u/jane',
-        });
-        expect(mentionDisplay(john, { href, trigger: '@', resolve }).label).toBe('@john.r');
-        expect(warn).toHaveBeenCalledOnce();
-    });
-
-    it('warns once for a mention whose resolver throws again', () => {
-        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    it('does not catch a resolver that throws, so the error reaches the app', () => {
         const resolve = () => {
             throw new Error('offline');
         };
 
-        mentionDisplay({ ...JANE, id: 'repeat' }, { trigger: '@', resolve });
-        mentionDisplay({ ...JANE, id: 'repeat' }, { trigger: '@', resolve });
-
-        expect(warn).toHaveBeenCalledOnce();
+        expect(() => mentionDisplay(JANE, { href, trigger: '@', resolve })).toThrow('offline');
     });
 
     it('shows the stored value for a resolver answer with no known status', () => {
