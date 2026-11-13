@@ -48,7 +48,7 @@ const dividerPlugin: RtePlugin = definePlugin({
     }),
 });
 
-/** A mark of the spec's own that declares it survives a clear, as a link does: the engine knows the declaration, not the name. */
+/** A mark of the spec's own that declares it survives a clear, as a reference does: the engine knows the declaration, not the name. */
 const pinPlugin: RtePlugin = definePlugin({
     id: 'pin',
     content: defineContent({
@@ -64,6 +64,8 @@ const plugins: RtePlugin[] = [...defaultPlugins, dividerPlugin, tagPlugin, token
 const fixtures: RtePlugin[] = [...fixturePlugins, dividerPlugin, tagPlugin, pinPlugin];
 
 const LINK = { href: 'https://example.com' };
+
+const REF = { target: 'somewhere' };
 const TOKEN = { id: 'tok:a' };
 
 const FROZEN_TIME = new Date('2026-01-01T00:00:00Z');
@@ -441,14 +443,24 @@ describe('marks.remove', () => {
 
 describe('marks.removeAll', () => {
     it('strips every mark from the selected text', () => {
-        const editor = editorWith(fixtures, [
+        const editor = editorWith(plugins, [
             paragraph(text('bold', { bold: true, italic: true }), text(' '), text('link', { link: LINK })),
         ]);
         editor.selectBetween('bold', 'link');
 
-        editor.api.marks.removeAll({ scope: 'block' });
+        editor.api.marks.removeAll();
 
         expect(editor.stored()).toEqual([paragraph(text('bold link'))]);
+    });
+
+    it('makes what is typed next at a caret carry no marks', () => {
+        const editor = editorWith(plugins, [paragraph(text('bold', { bold: true }))]);
+        editor.caretAfter('bo');
+
+        editor.api.marks.removeAll();
+        editor.api.insertText('X');
+
+        expect(editor.stored()).toEqual([paragraph(text('bo', { bold: true }), text('X'), text('ld', { bold: true }))]);
     });
 
     it('clears the whole text block around a caret with scope block, and only that block', () => {
@@ -487,7 +499,7 @@ describe('marks.removeAll', () => {
         expect(block.stored()).toEqual([paragraph(text('bold it'))]);
     });
 
-    it('makes what is typed next at a caret carry no marks', () => {
+    it('stops a mark toggled on at a caret from being typed, with scope block', () => {
         const editor = editorWith(fixtures, [paragraph(text('plain'))]);
         editor.caretAfter('plain');
         editor.api.marks.toggle('bold');
@@ -499,7 +511,7 @@ describe('marks.removeAll', () => {
     });
 
     it('removes a mark that survives a clear unless `keepSurviving` is set', () => {
-        const editor = editorWith(fixtures, [paragraph(text('pinned', { pin: true, link: LINK }))]);
+        const editor = editorWith(fixtures, [paragraph(text('pinned', { pin: true, ref: REF }))]);
         editor.select('pinned');
 
         editor.api.marks.removeAll({ scope: 'block' });
@@ -509,7 +521,7 @@ describe('marks.removeAll', () => {
 
     it('keeps every mark that declares `survivesClear` when `keepSurviving` is set, over a range and at a caret', () => {
         const blocks = [
-            paragraph(text('bold', { bold: true, link: LINK, pin: true }), text(' '), text('it', { italic: true })),
+            paragraph(text('bold', { bold: true, ref: REF, pin: true }), text(' '), text('it', { italic: true })),
         ];
         const range = editorWith(fixtures, blocks);
         range.selectBetween('bold', 'it');
@@ -518,7 +530,7 @@ describe('marks.removeAll', () => {
         caret.caretAfter('bo');
         caret.api.marks.removeAll({ scope: 'block', keepSurviving: true });
 
-        const expected = [paragraph(text('bold', { link: LINK, pin: true }), text(' it'))];
+        const expected = [paragraph(text('bold', { ref: REF, pin: true }), text(' it'))];
         expect(range.stored()).toEqual(expected);
         expect(caret.stored()).toEqual(expected);
     });
@@ -531,38 +543,38 @@ describe('marks.removeAll', () => {
         const carrying = editorWith(fixtures, [paragraph(text('plain'))]);
         carrying.caretAfter('plain');
         carrying.api.marks.toggle('bold');
-        const linkOnly = editorWith(fixtures, [paragraph(text('link', { link: LINK }))]);
-        linkOnly.caretAfter('link');
+        const refOnly = editorWith(fixtures, [paragraph(text('ref', { ref: REF }))]);
+        refOnly.caretAfter('ref');
 
         expect(formatted.api.marks.removeAll({ scope: 'block' })).toBe(true);
         expect(plain.api.marks.removeAll({ scope: 'block' })).toBe(false);
         expect(carrying.api.marks.removeAll({ scope: 'block' })).toBe(true);
-        expect(linkOnly.api.marks.removeAll({ scope: 'block', keepSurviving: true })).toBe(false);
+        expect(refOnly.api.marks.removeAll({ scope: 'block', keepSurviving: true })).toBe(false);
     });
 
     it('returns whether it removed a mark from the text over a range', () => {
         const formatted = editorWith(fixtures, [paragraph(text('bold', { bold: true }), text(' end'))]);
         formatted.selectBetween('bold', 'end');
-        const linkOnly = editorWith(fixtures, [paragraph(text('link', { link: LINK }), text(' end'))]);
-        linkOnly.selectBetween('link', 'end');
+        const refOnly = editorWith(fixtures, [paragraph(text('ref', { ref: REF }), text(' end'))]);
+        refOnly.selectBetween('ref', 'end');
 
         expect(formatted.api.marks.removeAll({ scope: 'block' })).toBe(true);
-        expect(linkOnly.api.marks.removeAll({ scope: 'block', keepSurviving: true })).toBe(false);
+        expect(refOnly.api.marks.removeAll({ scope: 'block', keepSurviving: true })).toBe(false);
     });
 
     it('with no options strips a range of every mark and, at a caret, only stops what is typed next', () => {
         const range = editorWith(fixtures, [
-            paragraph(text('bold', { bold: true, link: LINK, pin: true }), text(' end')),
+            paragraph(text('bold', { bold: true, ref: REF, pin: true }), text(' end')),
         ]);
         range.selectBetween('bold', 'end');
         range.api.marks.removeAll();
-        const caret = editorWith(fixtures, [paragraph(text('bold', { bold: true, link: LINK, pin: true }))]);
+        const caret = editorWith(fixtures, [paragraph(text('bold', { bold: true, ref: REF, pin: true }))]);
         caret.caretAfter('bold');
         caret.api.marks.removeAll();
         caret.api.insertText('X');
 
         expect(range.stored()).toEqual([paragraph(text('bold end'))]);
-        expect(caret.stored()).toEqual([paragraph(text('bold', { bold: true, link: LINK, pin: true }), text('X'))]);
+        expect(caret.stored()).toEqual([paragraph(text('bold', { bold: true, ref: REF, pin: true }), text('X'))]);
     });
 
     it('keeps a mention', () => {
@@ -806,10 +818,10 @@ describe('block attributes', () => {
         const editor = editorWith(fixtures, [paragraph(text('one'))]);
         editor.caretAfter('on');
 
-        expect(editor.api.blocks.updateAttributes({ align: 'center' })).toBe(true);
-        expect(editor.api.blocks.updateAttributes({ align: 'center' })).toBe(false);
+        expect(editor.api.blocks.updateAttributes({ tone: 'warm' })).toBe(true);
+        expect(editor.api.blocks.updateAttributes({ tone: 'warm' })).toBe(false);
         expect(editor.api.blocks.updateAttributes({ undeclared: 'x' })).toBe(false);
-        expect(editor.api.blocks.updateAttributes({ align: null })).toBe(true);
+        expect(editor.api.blocks.updateAttributes({ tone: null })).toBe(true);
     });
 
     it('are set on the paragraph inside a list item', () => {

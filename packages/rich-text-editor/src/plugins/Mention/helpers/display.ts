@@ -2,7 +2,6 @@
 
 import { warnOnce } from '#/core';
 
-import { withoutControlCharacters } from '../../shared/helpers/text';
 import {
     MENTION_KINDS,
     type MentionHref,
@@ -14,6 +13,7 @@ import {
 
 import { DEFAULT_MENTION_CONTENT_LABELS, type MentionContentLabels } from './labels';
 import { safeMentionHref } from './mention';
+import { withoutControlCharacters } from './text';
 
 /**
  * What a mention shows. Every view draws this and nothing else, so they cannot

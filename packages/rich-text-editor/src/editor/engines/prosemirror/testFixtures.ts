@@ -24,17 +24,17 @@ const markFixture = ({ name, tag }: MarkFixtureParams): RtePlugin =>
         content: defineContent({ marks: { [name]: defineMark({ tag, parse: [{ tag }] }) } }),
     });
 
-type LinkFixtureValue = { href: string };
+type RefFixtureValue = { target: string };
 
 /** A mark with a value that declares it survives a clear. */
-const linkFixture: RtePlugin = definePlugin({
-    id: 'fixture-link',
+const refFixture: RtePlugin = definePlugin({
+    id: 'fixture-ref',
     content: defineContent({
         marks: {
-            link: defineMark<LinkFixtureValue>({
+            ref: defineMark<RefFixtureValue>({
                 survivesClear: true,
-                toHtml: ({ href }) => ({ tag: 'a', attrs: { href }, children: true }),
-                parse: [{ tag: 'a', value: (element) => ({ href: element.getAttribute('href') ?? '' }) }],
+                toHtml: ({ target }) => ({ tag: 'a', attrs: { href: target }, children: true }),
+                parse: [{ tag: 'a', value: (element) => ({ target: element.getAttribute('href') ?? '' }) }],
             }),
         },
     }),
@@ -86,8 +86,8 @@ const attributeFixture: RtePlugin = definePlugin({
     id: 'fixture-attribute',
     content: defineContent({
         blockAttributes: {
-            align: {
-                style: (value): StyleMap => ({ 'text-align': String(value) }),
+            tone: {
+                style: (value): StyleMap => ({ color: String(value) }),
                 parse: () => null,
             },
         },
@@ -95,15 +95,15 @@ const attributeFixture: RtePlugin = definePlugin({
 });
 
 /**
- * Marks named `bold`, `italic`, `underline` and `code`, a `link` mark with a value that survives a clear, `bulletList`
- * and `numberedList` over one `listItem`, a `heading` block with a `level`, and an `align` block attribute.
+ * Marks named `bold`, `italic`, `underline` and `code`, a `ref` mark with a value that survives a clear, `bulletList`
+ * and `numberedList` over one `listItem`, a `heading` block with a `level`, and a `tone` block attribute.
  */
 export const fixturePlugins: RtePlugin[] = [
     markFixture({ name: 'bold', tag: 'strong' }),
     markFixture({ name: 'italic', tag: 'em' }),
     markFixture({ name: 'underline', tag: 'u' }),
     markFixture({ name: 'code', tag: 'code' }),
-    linkFixture,
+    refFixture,
     listFixture,
     headingFixture,
     attributeFixture,

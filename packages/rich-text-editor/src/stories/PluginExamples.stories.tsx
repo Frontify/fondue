@@ -1098,7 +1098,7 @@ const acmeHighlightPlugin = /* @__PURE__ */ definePlugin({
     toolbar: [
         {
             label: 'Highlight',
-            shortcut: 'Mod-Shift-h',
+            shortcut: 'Mod-Shift-u',
             render: ({ isActive, toggle, label }) => (
                 <button
                     type="button"
