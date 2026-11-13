@@ -109,6 +109,7 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
             indent: () => false,
             outdent: () => false,
             split: () => false,
+            unwrapAll: () => false,
         },
         insert: (type, value) => {
             inserted.push({ type, value });
