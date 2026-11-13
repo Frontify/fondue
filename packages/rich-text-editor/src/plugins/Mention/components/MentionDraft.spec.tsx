@@ -39,6 +39,10 @@ const settle = async (): Promise<void> => {
     });
 };
 
+/** The Retry option a failed search offers, found by its words. */
+const retryOption = (name = 'Retry'): HTMLElement | undefined =>
+    [...window.document.querySelectorAll<HTMLElement>('[role="option"]')].find((option) => option.textContent === name);
+
 const mountDraft = async (
     items: MentionItems = search,
     labels: MentionPickerLabels = DEFAULT_MENTION_PICKER_LABELS,
@@ -251,10 +255,7 @@ describe('a mention being searched for', () => {
             await frame();
             expect(popup()).toContain('Could not load people.');
 
-            const retry = [...window.document.querySelectorAll('button')].find(
-                (button) => button.textContent === 'Retry',
-            );
-            act(() => retry?.click());
+            act(() => retryOption()?.click());
             await frame();
             expect(window.document.body.textContent).not.toContain('Searching');
 
@@ -292,7 +293,7 @@ describe('a mention being searched for', () => {
         expect(status()).toBe('Could not load people.');
         expect(popup()).toContain('Could not load people.');
         expect(popup()).not.toContain('No matches');
-        const retry = [...window.document.querySelectorAll('button')].find((button) => button.textContent === 'Retry');
+        const retry = retryOption();
         expect(retry).toBeDefined();
         expect(container.contains(retry ?? null)).toBe(false);
 
@@ -310,25 +311,37 @@ describe('a mention being searched for', () => {
         expect(window.document.activeElement).toBe(input);
     });
 
-    it('does not retry on Enter or trap Tab when the search failed', async () => {
+    it('offers Retry as the active option and runs it from the keyboard alone, leaving Tab alone', async () => {
         const lookup = vi.fn<MentionItems>(() => Promise.reject(new Error('offline')));
         const { input } = await mountDraft(lookup);
         await act(async () => {
             await new Promise((resolve) => requestAnimationFrame(resolve));
         });
+        const retry = retryOption();
+
+        expect(input.getAttribute('aria-expanded')).toBe('true');
+        expect(input.getAttribute('aria-activedescendant')).toBe(retry?.id);
+        const listbox = window.document.getElementById(input.getAttribute('aria-controls') ?? '');
+        expect(listbox?.getAttribute('role')).toBe('listbox');
+        expect(listbox?.contains(retry ?? null)).toBe(true);
         const callsBefore = lookup.mock.calls.length;
 
         const tab = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
-        const enter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
         act(() => {
             input.dispatchEvent(tab);
+        });
+        await settle();
+        expect(tab.defaultPrevented).toBe(false);
+        expect(lookup.mock.calls).toHaveLength(callsBefore);
+
+        const enter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+        act(() => {
             input.dispatchEvent(enter);
         });
         await settle();
-
-        expect(tab.defaultPrevented).toBe(false);
-        expect(enter.defaultPrevented).toBe(false);
-        expect(lookup.mock.calls).toHaveLength(callsBefore);
+        expect(enter.defaultPrevented).toBe(true);
+        expect(lookup.mock.calls).toHaveLength(callsBefore + 1);
+        expect(window.document.activeElement).toBe(input);
     });
 
     it('keeps the last count while a newer query is pending, and never says Searching for a static list', async () => {
@@ -471,7 +484,6 @@ describe('a picker whose words come from the labels', () => {
         });
 
         expect(status()).toBe('Échec.');
-        const buttons = [...window.document.querySelectorAll('button')];
-        expect(buttons.some((button) => button.textContent === 'Réessayer')).toBe(true);
+        expect(retryOption('Réessayer')).toBeDefined();
     });
 });
