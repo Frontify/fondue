@@ -83,8 +83,9 @@ export type ClearMarksScope = 'typing' | 'block';
 export type ClearMarksOptions = {
     /**
      * How much a caret clears.
+     * @default 'typing'
      */
-    scope: ClearMarksScope;
+    scope?: ClearMarksScope;
     /**
      * Leave on the marks that declare `survivesClear`.
      * @default false
