@@ -1,0 +1,21 @@
+packages/rich-text-editor/src/editor/engines/prosemirror/autolink.spec.tsx
+  s_077f0b4d19cf93::t_5f1c13532fe7d6 307-315
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_077f0b4d19cf93::t_873e6fbab694a1 244-246,349,352-357
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ddda0ae2a1d639d37c8ad060e260727133ee3011",
+  "prompts": {},
+  "sessions": {
+    "s_077f0b4d19cf93": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "81baae15-1e84-4323-914e-0492f2731224",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
