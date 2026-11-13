@@ -6,6 +6,8 @@ import { definePlugin, type EditorControlApi, PARAGRAPH, type RteHotkey, type To
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
+
 /**
  * The words the reset button and its key say: what the keyboard reference calls the key, and what screen readers hear
  */
@@ -81,7 +83,7 @@ export const resetFormattingPlugin = (options: ResetFormattingPluginOptions = {}
     const labels: ResetFormattingLabels = { ...DEFAULT_RESET_FORMATTING_LABELS, ...options.labels };
     return definePlugin({
         id: 'reset-formatting',
-        toolbarGroup: 'marks',
+        toolbarGroup: TOOLBAR_GROUPS.marks,
         toolbar: [
             {
                 label: 'Reset formatting',

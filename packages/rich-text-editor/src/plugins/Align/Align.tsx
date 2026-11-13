@@ -20,6 +20,8 @@ import {
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
+
 import styles from './align.module.scss';
 
 /**
@@ -219,7 +221,7 @@ export const alignPlugin = (options: AlignPluginOptions = {}) => {
     return definePlugin({
         id: 'align',
         content: alignContent,
-        toolbarGroup: 'align',
+        toolbarGroup: TOOLBAR_GROUPS.align,
         toolbar: [
             {
                 label: 'Alignment',

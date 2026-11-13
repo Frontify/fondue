@@ -1,20 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type MutableRefObject, type ReactNode, useCallback, useRef, useState, useSyncExternalStore } from 'react';
-
 import {
-    type EditorControlApi,
-    type RteBlockCommand,
-    RTE_TOOLBAR_GROUPS,
-    type RteToolbarGroup,
-    type ToolbarEntry,
-    type ToolbarItemProps,
-} from '#/core';
+    type MouseEvent,
+    type MutableRefObject,
+    type ReactNode,
+    useCallback,
+    useRef,
+    useState,
+    useSyncExternalStore,
+} from 'react';
+
+import { type EditorControlApi, type RteBlockCommand, type ToolbarEntry, type ToolbarItemProps } from '#/core';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
 
 import { turnIntoCommands } from '../helpers/blockCommands';
+import { keepSelectionExcept, TEXT_CONTROL } from '../helpers/keepSelection';
 import { type GroupSplit, type SlotGroup, splitGroups } from '../helpers/toolbarFit';
+import { toolbarGroupsOf } from '../helpers/toolbarGroups';
 import { toolbarItemProps } from '../helpers/toolbarItem';
 import { GROUP_ATTRIBUTE, SLOT_ATTRIBUTE } from '../helpers/toolbarMarkers';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
@@ -103,7 +106,13 @@ export const Toolbar = ({
             <div key={group.key} className={styles.group} {...{ [GROUP_ATTRIBUTE]: '' }}>
                 {group.items.map((item) => (
                     // An element per slot, so the row can measure what each plugin drew.
-                    <div key={item.key} className={styles.slot} {...{ [SLOT_ATTRIBUTE]: item.key }}>
+                    // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- keeps focus where it is; the controls inside are the interactive elements
+                    <div
+                        key={item.key}
+                        className={styles.slot}
+                        onMouseDown={keepSlotSelection}
+                        {...{ [SLOT_ATTRIBUTE]: item.key }}
+                    >
                         <ToolbarItemSlot item={item} itemProps={toolbarItemProps(item, api, selection)} />
                     </div>
                 ))}
@@ -145,21 +154,21 @@ export const Toolbar = ({
     );
 };
 
+/** Every press in a slot keeps the selection, except one on a control that takes text. */
+const keepSlotSelection = (event: MouseEvent<HTMLElement>): void => keepSelectionExcept(event, TEXT_CONTROL);
+
 const UNGROUPED_GROUP_KEY = 'ungrouped';
 
-/** The items by group in drawing order, those with no group or an unknown one last; empty groups are left out. */
-const groupsOf = (items: readonly ToolbarEntry[]): SlotGroup<ToolbarEntry>[] => {
-    const known: readonly (RteToolbarGroup | undefined)[] = RTE_TOOLBAR_GROUPS;
-    const groups = [
-        ...RTE_TOOLBAR_GROUPS.map((group) => ({
-            key: group,
-            items: items.filter((item) => item.group === group),
-        })),
-        // A plugin cast past the type can name a group that is not drawn; it still gets its control.
-        { key: UNGROUPED_GROUP_KEY, items: items.filter((item) => !known.includes(item.group)) },
-    ];
-    return groups.filter((group) => group.items.length > 0);
-};
+/** Prefixed, so a group a host names "ungrouped" never shares the key of the plugins with none. */
+const GROUP_KEY_PREFIX = 'group:';
+
+const groupsOf = (items: readonly ToolbarEntry[]): SlotGroup<ToolbarEntry>[] =>
+    toolbarGroupsOf(items).map(({ id, entries }) => {
+        if (id === undefined) {
+            return { key: UNGROUPED_GROUP_KEY, items: entries };
+        }
+        return { key: `${GROUP_KEY_PREFIX}${id}`, items: entries };
+    });
 
 type ToolbarLayout = GroupSplit<ToolbarEntry> & { more: boolean };
 

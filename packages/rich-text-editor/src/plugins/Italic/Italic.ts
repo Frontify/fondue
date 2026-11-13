@@ -5,6 +5,7 @@ import { IconTextFormatItalic } from '@frontify/fondue-icons';
 import { defineContent, defineMark, definePlugin } from '#/core';
 
 import { isItalicStyle, isNormalStyle, markWhen } from '../shared/helpers/declaredStyle';
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
 
 /**
  * The flag this plugin sets on text nodes
@@ -39,7 +40,7 @@ export const italicContent = defineContent({
  */
 export const italicPlugin = /* @__PURE__ */ definePlugin({
     content: italicContent,
-    toolbarGroup: 'marks',
+    toolbarGroup: TOOLBAR_GROUPS.marks,
     toolbar: [{ label: 'Italic', icon: IconTextFormatItalic, shortcut: 'Mod-i' }],
     // `_text_` is emphasis in markdown, as `*text*` is.
     inputRules: [{ delimiter: '*' }, { delimiter: '_' }],

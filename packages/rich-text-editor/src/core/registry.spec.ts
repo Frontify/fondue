@@ -15,6 +15,7 @@ import {
     type RteContent,
     type RteInputRule,
     type RtePlugin,
+    type RteToolbarGroup,
 } from './plugin';
 import { buildPluginRegistry, isClaimedBy } from './registry';
 
@@ -811,5 +812,28 @@ describe('bare content in a registry', () => {
                 definePlugin({ id: 'strong', content: defineContent({ marks: { bold: mark() } }) }),
             ]),
         ).toThrow('Duplicate mark type "bold": declared by plugin "bold" and plugin "strong".');
+    });
+});
+
+describe('toolbar groups', () => {
+    const grouped = (id: string, group?: RteToolbarGroup) =>
+        definePlugin({ id, toolbarGroup: group, toolbar: [{ label: id, render: button }] });
+
+    it('throw when two plugins give one id two orders', () => {
+        expect(() =>
+            buildPluginRegistry([grouped('a', { id: 'shared', order: 1 }), grouped('b', { id: 'shared', order: 2 })]),
+        ).toThrow('Toolbar group "shared" has order 1 in plugin "a" and order 2 in plugin "b".');
+    });
+
+    it('throw when the id is empty', () => {
+        expect(() => buildPluginRegistry([grouped('a', { id: '', order: 1 })])).toThrow(
+            'Plugin "a" has a `toolbarGroup` with no `id`.',
+        );
+    });
+
+    it.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])('throw when the order is %s', (order) => {
+        expect(() => buildPluginRegistry([grouped('a', { id: 'odd', order })])).toThrow(
+            'Plugin "a" has toolbar group "odd" with an `order` that is not a finite number.',
+        );
     });
 });

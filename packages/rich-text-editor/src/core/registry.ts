@@ -57,7 +57,7 @@ export type ToolbarEntry = {
     own: OwnType;
     /** Where the floating bar puts it: the plugin's choice, else by what it owns. */
     floating: 'inline' | 'hidden';
-    /** The plugin's `toolbarGroup`; none puts it in the last group. */
+    /** The plugin's `toolbarGroup`; none puts it after every group. */
     group: RteToolbarGroup | undefined;
     label: string;
     shortcut?: string;
@@ -378,6 +378,9 @@ const EDITOR_SHORTCUT_ROWS: readonly RteShortcut[] = Object.values(EDITOR_SHORTC
     label,
 }));
 
+/** The first plugin to declare a toolbar group, and the order it gave it. */
+type ToolbarGroupOwner = { pluginId: string; order: number };
+
 /**
  * What `buildPluginRegistry` fills while it walks the plugins.
  */
@@ -389,6 +392,7 @@ type Draft = {
     pasteHandlers: PasteHandler[];
     pasteTransforms: Map<string, PasteTransform>;
     toolbarItems: ToolbarEntry[];
+    toolbarGroupOwners: Map<string, ToolbarGroupOwner>;
     commands: RteBlockCommand[];
     commandOwners: Map<string, string>;
     descriptions: string[];
@@ -429,7 +433,37 @@ const addShortcut = (draft: Draft, plugin: RtePlugin, item: ToolbarEntry): void 
     draft.shortcuts.push({ owner: { kind: 'plugin', pluginId: plugin.id }, key: shortcut, label: item.label });
 };
 
+/**
+ * Throws unless the plugin's toolbar group has an id and a finite order, and agrees on that order with every plugin that shares the id. The order is what the toolbar draws by, so one group with two orders has no right place.
+ */
+const assertToolbarGroup = (draft: Draft, plugin: RtePlugin): void => {
+    const group = plugin.toolbarGroup;
+    if (group === undefined) {
+        return;
+    }
+    // Falsy covers an untyped declaration with no id, as well as an empty one.
+    if (!group.id) {
+        throw new TypeError(`Plugin "${plugin.id}" has a \`toolbarGroup\` with no \`id\`.`);
+    }
+    if (!Number.isFinite(group.order)) {
+        throw new TypeError(
+            `Plugin "${plugin.id}" has toolbar group "${group.id}" with an \`order\` that is not a finite number.`,
+        );
+    }
+    const first = draft.toolbarGroupOwners.get(group.id);
+    if (first === undefined) {
+        draft.toolbarGroupOwners.set(group.id, { pluginId: plugin.id, order: group.order });
+        return;
+    }
+    if (first.order !== group.order) {
+        throw new Error(
+            `Toolbar group "${group.id}" has order ${first.order} in plugin "${first.pluginId}" and order ${group.order} in plugin "${plugin.id}".`,
+        );
+    }
+};
+
 const addToolbarEntries = (draft: Draft, plugin: RtePlugin, pluginKey: string): void => {
+    assertToolbarGroup(draft, plugin);
     for (const [index, entry] of (plugin.toolbar ?? []).entries()) {
         let key = pluginKey;
         if (index > 0) {
@@ -508,6 +542,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         pasteHandlers: [],
         pasteTransforms: new Map(),
         toolbarItems: [],
+        toolbarGroupOwners: new Map(),
         commands: [],
         commandOwners: new Map(),
         descriptions: [],

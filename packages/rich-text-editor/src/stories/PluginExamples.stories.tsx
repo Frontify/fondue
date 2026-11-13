@@ -1103,7 +1103,6 @@ const acmeHighlightPlugin = /* @__PURE__ */ definePlugin({
                 <button
                     type="button"
                     aria-pressed={isActive}
-                    onMouseDown={(event) => event.preventDefault()}
                     onClick={() => toggle()}
                     className={toolbarButtonClasses(isActive)}
                 >
@@ -1179,7 +1178,6 @@ const acmeCalloutPlugin = /* @__PURE__ */ definePlugin({
                     type="button"
                     aria-label={label}
                     aria-pressed={isActive}
-                    onMouseDown={(event) => event.preventDefault()}
                     onClick={() => toggle()}
                     className={toolbarButtonClasses(isActive)}
                 >

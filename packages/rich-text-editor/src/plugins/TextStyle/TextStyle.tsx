@@ -14,6 +14,7 @@ import {
 } from '#/core';
 
 import { withoutBoldWeight } from '../shared/helpers/declaredStyle';
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
 
 import { HEADING_LEVEL_ICONS } from './components/HeadingLevelIcon';
 import { TextStyleSelect } from './components/TextStyleSelect';
@@ -145,7 +146,7 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
     return definePlugin({
         id: 'text-style',
         content,
-        toolbarGroup: 'text',
+        toolbarGroup: TOOLBAR_GROUPS.text,
         toolbar: [{ label: 'Text style', render: (props) => <TextStyleSelect {...props} options={options} /> }],
         hotkeys,
         // `# ` through `#### `, for the headings this editor offers.

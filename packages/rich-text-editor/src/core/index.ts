@@ -79,7 +79,6 @@ export {
     type RtePlugin,
     type RtePluginDefinition,
     type RteToolbarEntry,
-    RTE_TOOLBAR_GROUPS,
     type RteToolbarGroup,
     type SelectedNode,
     type StyleParseRule,

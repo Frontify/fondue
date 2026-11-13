@@ -4,6 +4,8 @@ import { IconSpeechBubbleQuote } from '@frontify/fondue-icons';
 
 import { defineBlock, defineContent, definePlugin, type RteInlineNode } from '#/core';
 
+import * as TOOLBAR_GROUPS from '../shared/toolbarGroups';
+
 import styles from './quote.module.scss';
 
 /**
@@ -32,7 +34,7 @@ export const quoteContent = defineContent({
  */
 export const quotePlugin = /* @__PURE__ */ definePlugin({
     content: quoteContent,
-    toolbarGroup: 'text',
+    toolbarGroup: TOOLBAR_GROUPS.text,
     toolbar: [{ label: 'Quote', icon: IconSpeechBubbleQuote, menu: { keywords: ['blockquote', 'citation'] } }],
     inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
 });

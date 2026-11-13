@@ -148,6 +148,7 @@ export { superscriptContent, superscriptPlugin } from './plugins/Superscript';
 export { textStyleContent, textStylePlugin } from './plugins/TextStyle';
 export { typographyPlugin } from './plugins/Typography';
 export { underlineContent, underlinePlugin } from './plugins/Underline';
+export * as TOOLBAR_GROUPS from './plugins/shared/toolbarGroups';
 
 // --- Plugin options ---
 
