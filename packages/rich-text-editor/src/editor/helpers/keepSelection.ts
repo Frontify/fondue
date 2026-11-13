@@ -2,8 +2,11 @@
 
 import { type MouseEvent } from 'react';
 
+/** An element a user can type into; `contenteditable="false"` marks one that is not. */
+const EDITABLE_ELEMENT = '[contenteditable]:not([contenteditable="false"])';
+
 /** What takes text: a press on one must reach it, or it could never be focused. */
-export const TEXT_CONTROL = 'input, textarea, select, [role="combobox"], [contenteditable]';
+export const TEXT_CONTROL = `input, textarea, select, [role="combobox"], ${EDITABLE_ELEMENT}`;
 
 /**
  * Stops a press inside the element from taking focus, and the selection with it, unless it lands on

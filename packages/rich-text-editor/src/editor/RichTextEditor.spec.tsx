@@ -1087,6 +1087,9 @@ describe('the toolbar', () => {
                                 plain
                             </button>
                             <input type="text" aria-label="Field" data-testid="slot-field" />
+                            <span contentEditable={false} data-testid="slot-island">
+                                island
+                            </span>
                         </>
                     ),
                 },
@@ -1114,6 +1117,17 @@ describe('the toolbar', () => {
             const field = container.querySelector('[data-testid="slot-field"]');
             expect(field).toBeTruthy();
             expect(mousedownOn(field as Element)).toBe(true);
+        });
+
+        it('keeps the text selection when it lands on a span that is not editable', () => {
+            const { container, ready } = mount(() => (
+                <RichTextEditor plugins={[withControls, ...defaultPlugins]} toolbarPlacement="top" />
+            ));
+            ready();
+
+            const island = container.querySelector('[data-testid="slot-island"]');
+            expect(island?.getAttribute('contenteditable')).toBe('false');
+            expect(mousedownOn(island as Element)).toBe(false);
         });
     });
 
