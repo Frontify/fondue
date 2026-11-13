@@ -271,6 +271,7 @@ abstract class ReactEditView<TCurrent> implements Repaintable {
                     isFocused={next.focused}
                     isSelected={next.selected}
                     isOpen={next.open}
+                    editing={this.view.editable}
                     setOpen={this.setOpen}
                     api={this.api}
                     setValue={this.setValue}

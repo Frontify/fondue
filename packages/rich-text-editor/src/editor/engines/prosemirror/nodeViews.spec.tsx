@@ -104,9 +104,13 @@ const tag: RtePlugin = definePlugin({
         },
     }),
     edit: {
-        tag: ({ value, isFocused }: EditProps<{ label: string }>) => {
+        tag: ({ value, isFocused, editing }: EditProps<{ label: string }>) => {
             tagRenders();
-            return <span data-focused={String(isFocused)}>{value?.label}</span>;
+            return (
+                <span data-focused={String(isFocused)} data-editing={String(editing)}>
+                    {value?.label}
+                </span>
+            );
         },
     },
 });
@@ -408,6 +412,17 @@ describe('an inline element with editing UI', () => {
         act(() => live.handle.api.insertText('2'));
 
         expect(tagRenders).toHaveBeenCalledTimes(rendersAfterMount);
+    });
+});
+
+describe('a view that is told whether the editor takes edits', () => {
+    it('gets `editing` while the editor takes edits', () => {
+        const { container } = mount({
+            version: 1,
+            blocks: [{ type: PARAGRAPH, children: [{ text: 'ab' }, { type: 'tag', label: 'x' }, { text: 'cd' }] }],
+        });
+
+        expect(container.querySelector('[data-editing]')?.getAttribute('data-editing')).toBe('true');
     });
 });
 

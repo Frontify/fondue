@@ -192,6 +192,15 @@ const mount = ({
     const mounted: MountedDocument = {
         handle: {
             api,
+            setEditableAttributes(next) {
+                for (const [name, value] of Object.entries(next)) {
+                    if (value === null) {
+                        editorView.dom.removeAttribute(name);
+                    } else if (value !== undefined) {
+                        editorView.dom.setAttribute(name, value);
+                    }
+                }
+            },
             selectionRect: createSelectionRectReader(editorView),
             document: () => toRteDocument(editorView.state.doc, rootExtras),
             focusAtEnd: () => {

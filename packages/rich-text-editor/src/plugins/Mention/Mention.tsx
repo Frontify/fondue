@@ -102,6 +102,7 @@ export const mentionContent = ({ href, resolve, labels, trigger = '@' }: Mention
                         <MentionLink
                             value={value}
                             display={mentionDisplay(value, { resolve, href, trigger, labels: shownLabels })}
+                            placesCaret={false}
                         />
                     ),
                 },

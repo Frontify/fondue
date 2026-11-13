@@ -507,6 +507,8 @@ export type EditProps<TValue, TCurrent = TValue> = {
     isSelected: boolean;
     /** Its editing UI is open — set by `setOpen`, or from outside (the toolbar's `openEditor`). */
     isOpen: boolean;
+    /** False when the editor does not take edits. */
+    editing: boolean;
     setOpen: (open: boolean) => void;
     /** Take it away: the block, the mark (keeping its text), the inline. */
     remove: () => void;

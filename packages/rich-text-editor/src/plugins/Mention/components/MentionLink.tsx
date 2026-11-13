@@ -14,16 +14,11 @@ export const BIDI_ISOLATE_TAG = 'bdi';
 // JSX needs a capitalised name to use the shared tag as an element.
 const BidiIsolate = BIDI_ISOLATE_TAG;
 
-/** In the editor a click places the caret; the link is followed only when reading. */
-const placeCaretInEditor = (event: MouseEvent<HTMLAnchorElement>): void => {
-    if (event.currentTarget.closest('[contenteditable="true"]') !== null) {
-        event.preventDefault();
-    }
-};
-
 type MentionLinkProps = {
     value: MentionValue;
     display: MentionDisplay;
+    /** A click places the caret rather than following the link: true while the editor takes edits. */
+    placesCaret: boolean;
 };
 
 /**
@@ -33,11 +28,17 @@ type MentionLinkProps = {
  * nowhere to link to (`@all`), the mention is text, and an unavailable person
  * is text with a note after the name.
  */
-export const MentionLink = ({ value, display }: MentionLinkProps): ReactNode => {
+export const MentionLink = ({ value, display, placesCaret }: MentionLinkProps): ReactNode => {
     const attributes = {
         title: display.title,
         ...mentionAttributes(value),
         className: styles.mention,
+    };
+    // In the editor a click places the caret; the link is followed only when reading.
+    const placeCaret = (event: MouseEvent<HTMLAnchorElement>): void => {
+        if (placesCaret) {
+            event.preventDefault();
+        }
     };
     const name = (
         <>
@@ -49,7 +50,7 @@ export const MentionLink = ({ value, display }: MentionLinkProps): ReactNode => 
     switch (display.status) {
         case 'linked':
             element = (
-                <a href={display.href} {...attributes} onClick={placeCaretInEditor}>
+                <a href={display.href} {...attributes} onClick={placeCaret}>
                     {name}
                 </a>
             );

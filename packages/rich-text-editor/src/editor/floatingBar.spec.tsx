@@ -293,6 +293,19 @@ describe('the / menu', () => {
         );
     });
 
+    it("clears the text's pointers to the list once the list closes", () => {
+        const { editable } = start();
+        act(() => editable.focus());
+        type(editable, '/');
+        expect(editable.getAttribute('aria-controls')).toBeTruthy();
+
+        press(editable, 'Escape');
+
+        expect(listbox()).toBeNull();
+        expect(editable.hasAttribute('aria-controls')).toBe(false);
+        expect(editable.hasAttribute('aria-activedescendant')).toBe(false);
+    });
+
     it('narrows to what is typed after the slash', () => {
         const { editable } = start();
         act(() => editable.focus());

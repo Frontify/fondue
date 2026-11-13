@@ -312,7 +312,10 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
         ariaLabelledBy,
         ariaDescribedBy: describedByOf(ariaDescribedBy, pluginDescriptionId),
     });
-    const className = [documentStyles.document, styles.content, ...registry.contentClassNames].join(' ');
+    // The mounted editor is the editable one; `editable` is what shows the text cursor.
+    const className = [documentStyles.document, styles.content, styles.editable, ...registry.contentClassNames].join(
+        ' ',
+    );
     const attributes = useMemo(
         () =>
             editableAttributes({

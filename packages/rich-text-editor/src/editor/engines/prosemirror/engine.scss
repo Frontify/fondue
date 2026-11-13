@@ -82,3 +82,14 @@
     color: var(--color-secondary-default);
     border: var(--border-width-default) dashed var(--color-line-mid);
 }
+
+/**
+ * The placeholder's text, on the empty block the placeholder plugin marks. The
+ * `/ ''` alternative hides it from assistive technology (the field has
+ * `aria-placeholder`); the first declaration is the fallback for browsers
+ * without that syntax. The shell styles the look.
+ */
+[data-rte-editable] [data-placeholder]::before {
+    content: attr(data-placeholder);
+    content: attr(data-placeholder) / '';
+}
