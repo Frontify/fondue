@@ -3,7 +3,7 @@ name: Continuous Deployment
 on:
   push:
     branches:
-      - main
+      - v13
     paths-ignore:
       - packages/rich-text-editor/**
       - .changeset/rich-text-editor-*.md

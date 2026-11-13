@@ -6,7 +6,7 @@
     ],
     "commit": false,
     "access": "public",
-    "baseBranch": "main",
+    "baseBranch": "v13",
     "updateInternalDependencies": "patch",
     "ignore": ["@frontify/fondue-storybook-docs", "@frontify/fondue-rich-text-editor"],
     "linked": [],
