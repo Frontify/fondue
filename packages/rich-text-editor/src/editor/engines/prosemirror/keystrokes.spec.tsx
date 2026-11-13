@@ -77,6 +77,35 @@ describe('typing a mark shortcut', () => {
         ]);
     });
 
+    it.each([
+        ['foo__bar__', 'inside a word'],
+        ['self.__dict__', 'after a full stop'],
+        ['a__b__ c', 'glued to the word before it'],
+    ])('leaves %s as typed, since a word-bounded rule needs room around its delimiters (%s)', (value) => {
+        expect(typed(value)).toEqual([paragraph(text(value))]);
+    });
+
+    it.each([
+        ['at the start of a line', '__text__', [text('text', { bold: true })]],
+        ['after a space', 'a __text__', [text('a '), text('text', { bold: true })]],
+        ['after an opening bracket', '(__text__', [text('('), text('text', { bold: true })]],
+    ])('turns __text__ bold %s', (_where, value, children) => {
+        expect(typed(value)).toEqual([paragraph(...children)]);
+    });
+
+    it('leaves __text__ as typed when a word follows the closing delimiter', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('word'))]);
+        editor.caretBefore('word');
+
+        editor.type('__text__');
+
+        expect(editor.stored()).toEqual([paragraph(text('__text__word'))]);
+    });
+
+    it('keeps the ** rule inside a word', () => {
+        expect(typed('foo**bar**')).toEqual([paragraph(text('foo'), text('bar', { bold: true }))]);
+    });
+
     it('does not carry the mark on into what is typed after it', () => {
         expect(typed('**bold**x')).toEqual([paragraph(text('bold', { bold: true }), text('x'))]);
     });
