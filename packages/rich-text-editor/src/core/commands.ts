@@ -11,12 +11,6 @@
 export type RteMarkState = { coverage: 'all'; value: Record<string, unknown> } | { coverage: 'some' };
 
 /**
- * How a block attribute is carried by the text blocks the selection touches. `'all'`: every one that declares it has
- * the same `value` (`null` when unset). `'some'`: they differ.
- */
-export type RteAttributeState = { coverage: 'all'; value: unknown } | { coverage: 'some' };
-
-/**
  * How `insertText` is undone. `'together'`: the text and its marks in one step. `'marksFirst'`: the marks in a step
  * of their own, so the first undo keeps the text, as undoing a `markPattern` token does.
  */
@@ -57,19 +51,9 @@ export type RteSelectionSnapshot = {
      * example, a red-and-blue range has no one colour).
      */
     marks: Record<string, RteMarkState>;
-    /**
-     * The block attributes plugins add to every text block (for example, alignment), by name; one no selected text block declares
-     * is absent. On a caret it is the caret's block.
-     */
-    attributes: Record<string, RteAttributeState>;
     /** Whether the undo history has a change to take back or make again — what undo and redo buttons enable on. */
     history: { canUndo: boolean; canRedo: boolean };
 };
-
-/**
- * What `blocks.toggleAttribute` did: put the value on the blocks, took it off them, or found no selected text block that declares the attribute
- */
-export type BlockAttributeToggle = 'set' | 'removed' | 'unchanged';
 
 /**
  * How much of the document `marks.removeAll` clears at a caret: `'typing'` only stops the next typed text carrying
@@ -144,12 +128,12 @@ export type EditorControlApi = {
          * the selection spans.
          */
         setType(type: string, value?: Record<string, unknown>): void;
-        /** Set attributes on every block the selection touches — for example, how alignment is applied. */
-        updateAttributes(attributes: Record<string, unknown>): void;
         /**
-         * Set `name` to `value` on every text block the selection touches, or remove it (set it to null) when every one already has that value. Changes nothing when no selected text block declares `name`
+         * Set attributes on every block the selection touches (for example, how alignment is applied).
+         *
+         * @returns whether any block changed, which is false when none of them declares the attributes or all have the values already
          */
-        toggleAttribute(name: string, value: unknown): BlockAttributeToggle;
+        updateAttributes(attributes: Record<string, unknown>): boolean;
         /**
          * Reset every `blockAttributes` attribute (for example, alignment) to its default across the selection
          */

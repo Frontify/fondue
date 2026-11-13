@@ -12,15 +12,23 @@ export type BlurOnBreakPluginOptions = {
      */
     onBreak?: () => void;
     /**
-     * Enter on an empty editor refuses instead of committing, and says why: `true` or an empty string for the default words, or a string for yours
+     * Enter on an empty editor refuses instead of committing, and says why: `true` or an empty string for the default
+     * words ("Type something before submitting."), or a string for yours
      *
      * @default false
      */
     required?: boolean | string;
+    /**
+     * Said to screen readers with the editor, when `onBreak` is set, to tell that Enter submits. The reason from
+     * `required` follows it.
+     *
+     * @default 'Press Enter to submit.'
+     */
+    description?: string;
 };
 
 const REQUIRED_MESSAGE = 'Type something before submitting.';
-const DESCRIPTION = 'Press Enter to submit.';
+const DEFAULT_DESCRIPTION = 'Press Enter to submit.';
 
 /** What to say when an empty editor refuses Enter, or null when the editor need not be filled. */
 const requiredMessageOf = (required: boolean | string | undefined): string | null => {
@@ -62,10 +70,11 @@ export const blurOnBreakPlugin = (options: BlurOnBreakPluginOptions = {}) => {
     // A field with no submit to announce says nothing about submitting.
     let description: string | undefined;
     if (options.onBreak !== undefined) {
-        description = DESCRIPTION;
+        const submitDescription = options.description ?? DEFAULT_DESCRIPTION;
+        description = submitDescription;
         const requiredMessage = requiredMessageOf(options.required);
         if (requiredMessage !== null) {
-            description = `${DESCRIPTION} ${requiredMessage}`;
+            description = `${submitDescription} ${requiredMessage}`;
         }
     }
     return definePlugin({
