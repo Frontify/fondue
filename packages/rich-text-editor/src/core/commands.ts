@@ -27,9 +27,7 @@ export type InsertTextOptions = {
     undo?: InsertTextUndo;
 };
 
-/**
- * What is selected, as one value that plugin UI renders itself from. Read it in a toolbar render function, which runs on every state change.
- */
+/** What is selected, as one value that plugin UI renders itself from. Read it in a toolbar render function, which runs on every state change. */
 export type RteSelectionSnapshot = {
     /** A caret rather than a range, so it covers nothing and `text` is empty. */
     isCollapsed: boolean;

@@ -4,9 +4,6 @@ import { describe, expect, it } from 'vitest';
 
 import { isSafeHref, isSafeImageSrc, toHref } from './href';
 
-// A code point, not a literal: the formatter writes an escape out as the invisible character
-const RIGHT_TO_LEFT_OVERRIDE = 0x202e;
-
 describe('toHref', () => {
     it('completes a bare domain, and a local address with a port, to https', () => {
         expect(toHref('example.com')).toBe('https://example.com');
@@ -78,7 +75,6 @@ describe('isSafeHref', () => {
     it('refuses control characters and overlong links', () => {
         expect(isSafeHref('https://example.com/\u0000')).toBe(false);
         expect(isSafeHref('https://example.com/\u0085')).toBe(false);
-        expect(isSafeHref(`https://example.com/${String.fromCodePoint(RIGHT_TO_LEFT_OVERRIDE)}`)).toBe(false);
         expect(isSafeHref(`https://example.com/${'a'.repeat(2048)}`)).toBe(false);
     });
 

@@ -2,6 +2,8 @@
 
 import { isSafeHref, LINK_SCHEMES, type LinkScheme } from '../../shared/helpers/href';
 
+import { type LinkLabels } from './labels';
+
 export { type LinkScheme } from '../../shared/helpers/href';
 
 /**
@@ -92,18 +94,11 @@ export const allowsHref = (policy: LinkPolicy, href: unknown): href is string =>
     return allowedHosts.some((pattern) => hostMatches(pattern, url.hostname));
 };
 
-const joinOr = (items: readonly string[]): string => {
-    if (items.length < 2) {
-        return items.join('');
-    }
-    return `${items.slice(0, -1).join(', ')} or ${items[items.length - 1]}`;
-};
-
-const describeHosts = (hosts: readonly string[]): string => {
+const describeHosts = (hosts: readonly string[], labels: LinkLabels): string => {
     const lowered = hosts.map((host) => host.toLowerCase());
     const phrases = lowered.flatMap((host) => {
         if (host.startsWith(SUBDOMAIN_WILDCARD)) {
-            return [`${host.slice(SUBDOMAIN_WILDCARD.length)} (or a subdomain)`];
+            return [labels.hostAndSubdomains(host.slice(SUBDOMAIN_WILDCARD.length))];
         }
         // The wildcard's phrase names this host already.
         if (lowered.includes(`${SUBDOMAIN_WILDCARD}${host}`)) {
@@ -112,21 +107,21 @@ const describeHosts = (hosts: readonly string[]): string => {
         return [host];
     });
     if (phrases.length === 0) {
-        return 'Enter a link within this site.';
+        return labels.sameSiteOnly;
     }
-    return `Enter a link to ${joinOr(phrases)}.`;
+    return labels.hostsAllowed(phrases);
 };
 
 /**
  * What the policy allows, for the message shown when a typed link is refused. Empty when it holds no limit to name.
  */
-export const describeAllowed = ({ allowedSchemes, allowedHosts }: LinkPolicy): string => {
+export const describeAllowed = ({ allowedSchemes, allowedHosts }: LinkPolicy, labels: LinkLabels): string => {
     const sentences: string[] = [];
     if (allowedHosts !== undefined) {
-        sentences.push(describeHosts(allowedHosts));
+        sentences.push(describeHosts(allowedHosts, labels));
     }
     if (allowedSchemes !== undefined && !LINK_SCHEMES.every((scheme) => allowedSchemes.includes(scheme))) {
-        sentences.push(`Links may use ${joinOr(allowedSchemes)}.`);
+        sentences.push(labels.schemesAllowed(allowedSchemes));
     }
     return sentences.join(' ');
 };

@@ -2,7 +2,10 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { allowsHref, describeAllowed } from './policy';
+import { resolveLinkLabels } from './labels';
+import { allowsHref, describeAllowed, type LinkPolicy } from './policy';
+
+const describeWithDefaults = (policy: LinkPolicy): string => describeAllowed(policy, resolveLinkLabels());
 
 describe('allowsHref', () => {
     it('allows every safe link when the policy names nothing', () => {
@@ -75,32 +78,44 @@ describe('allowsHref', () => {
 
 describe('describeAllowed', () => {
     it('names the hosts', () => {
-        expect(describeAllowed({ allowedHosts: ['frontify.com', '*.frontify.com'] })).toBe(
+        expect(describeWithDefaults({ allowedHosts: ['frontify.com', '*.frontify.com'] })).toBe(
             'Enter a link to frontify.com (or a subdomain).',
         );
-        expect(describeAllowed({ allowedHosts: ['frontify.com'] })).toBe('Enter a link to frontify.com.');
-        expect(describeAllowed({ allowedHosts: [] })).toBe('Enter a link within this site.');
-        expect(describeAllowed({ allowedHosts: ['*.frontify.com'] })).toBe(
+        expect(describeWithDefaults({ allowedHosts: ['frontify.com'] })).toBe('Enter a link to frontify.com.');
+        expect(describeWithDefaults({ allowedHosts: [] })).toBe('Enter a link within this site.');
+        expect(describeWithDefaults({ allowedHosts: ['*.frontify.com'] })).toBe(
             'Enter a link to frontify.com (or a subdomain).',
         );
-        expect(describeAllowed({ allowedHosts: ['a.com', 'b.com'] })).toBe('Enter a link to a.com or b.com.');
-        expect(describeAllowed({ allowedHosts: ['*.frontify.com', 'b.com'] })).toBe(
+        expect(describeWithDefaults({ allowedHosts: ['a.com', 'b.com'] })).toBe('Enter a link to a.com or b.com.');
+        expect(describeWithDefaults({ allowedHosts: ['*.frontify.com', 'b.com'] })).toBe(
             'Enter a link to frontify.com (or a subdomain) or b.com.',
         );
     });
 
     it('names the schemes', () => {
-        expect(describeAllowed({ allowedSchemes: ['https', 'mailto'] })).toBe('Links may use https or mailto.');
+        expect(describeWithDefaults({ allowedSchemes: ['https', 'mailto'] })).toBe('Links may use https or mailto.');
     });
 
     it('names both', () => {
-        expect(describeAllowed({ allowedHosts: ['frontify.com'], allowedSchemes: ['https'] })).toBe(
+        expect(describeWithDefaults({ allowedHosts: ['frontify.com'], allowedSchemes: ['https'] })).toBe(
             'Enter a link to frontify.com. Links may use https.',
         );
     });
 
+    it('says it with the labels a host passes', () => {
+        const labels = resolveLinkLabels({
+            hostsAllowed: (hosts) => `Nur ${hosts.join(' oder ')}.`,
+            hostAndSubdomains: (host) => `${host} und Unterdomänen`,
+            schemesAllowed: (schemes) => `Erlaubt: ${schemes.join(', ')}.`,
+        });
+
+        expect(describeAllowed({ allowedHosts: ['*.a.com', 'b.com'], allowedSchemes: ['https'] }, labels)).toBe(
+            'Nur a.com und Unterdomänen oder b.com. Erlaubt: https.',
+        );
+    });
+
     it('names nothing when nothing is limited', () => {
-        expect(describeAllowed({})).toBe('');
-        expect(describeAllowed({ allowedSchemes: ['https', 'http', 'mailto', 'tel'] })).toBe('');
+        expect(describeWithDefaults({})).toBe('');
+        expect(describeWithDefaults({ allowedSchemes: ['https', 'http', 'mailto', 'tel'] })).toBe('');
     });
 });
