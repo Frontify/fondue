@@ -57,9 +57,10 @@ $headings: h1, h2, h3, h4;
     }
 
     // Margins only for blocks that do not own theirs (`ownsMargins`): such a block reads the gaps itself,
-    // so a host margin is never trimmed.
+    // so a host margin is never trimmed. `:where` keeps a plain paragraph's rule below the body look's margins
+    // (`paragraphPlugin`), which win by rank rather than by source order.
     :is(ul, ol),
-    :is(p, blockquote):not([data-rte-own-margins]) {
+    :where(p:not([data-rte-own-margins]), blockquote:not([data-rte-own-margins])) {
         margin-block: 0 var(--rte-block-gap);
     }
 

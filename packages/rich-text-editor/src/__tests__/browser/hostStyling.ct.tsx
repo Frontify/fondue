@@ -320,7 +320,7 @@ const looksOfBlocksIn = async (surface: Locator): Promise<Record<LookedBlock, Co
     return looks as Record<LookedBlock, ComputedLook>;
 };
 
-// Measured with the default theme on the parent branch before these looks existed (b25fe19442), in Chromium and WebKit.
+// Measured with the default theme before quotes and links could take a look, in Chromium and WebKit.
 const QUOTE_LOOK: ComputedLook = { ...PLAIN, 'margin-bottom': BLOCK_GAP, color: MUTED_COLOR };
 const LINK_LOOK: ComputedLook = { ...PLAIN, 'text-decoration-line': 'underline', color: 'rgb(182, 10, 227)' };
 

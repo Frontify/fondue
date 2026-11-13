@@ -2,9 +2,14 @@
 
 @use '../../styles/look.module.scss';
 
-// On a plain paragraph while the paragraph plugin is on (`blockClassNames`); a text style's `<p>` lacks it.
-// The plugin also declares the paragraph as owning its margins, so the look writes them here.
-// Class rank, so a checked item's colour and strike still win.
-.paragraph {
-    @include look.look('body');
+// `.body` is on the document while the paragraph plugin is on. A plain paragraph is a `<p>` without the margin
+// marker, which a text style's `<p>` carries. Two rules at two ranks, so neither source order nor `!important` decides:
+// the text rules sit at class rank (`:where`), below a checked item's colour and strike, and the margins sit above
+// the document's rule for blocks without a look (renderer/document.module.scss), which is at class rank too.
+.body :where(p:not([data-rte-own-margins])) {
+    @include look.look('body', $except: (margin-top, margin-bottom));
+}
+
+.body p:not([data-rte-own-margins]) {
+    @include look.look('body', $only: (margin-top, margin-bottom));
 }
