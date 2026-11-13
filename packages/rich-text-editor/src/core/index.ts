@@ -44,7 +44,6 @@ export {
 } from './hotkeys';
 export {
     attributeEntries,
-    type CheckedAttribute,
     checkedAttributes,
     type HtmlAttributes,
     type HtmlSpec,

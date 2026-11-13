@@ -328,34 +328,16 @@ const isCommandTarget = (target: RteCommandTarget, block: SelectionBlock): boole
     return Object.entries(target.attributes ?? {}).every(([name, value]) => block[name] === value);
 };
 
-/** Whether the type holds other blocks (`content: { blocks }`), as a list item does. */
-const holdsBlocks = (type: string, registry: ContentRegistry): boolean => {
-    const content = registry.blocks.get(type)?.content;
-    return typeof content === 'object' && 'blocks' in content;
-};
-
 /**
  * The command whose `active` block the selection is in, if any. Blocks are
  * read innermost first, so a numbered list inside a bulleted item names the
- * numbered one. A paragraph that is the content of a block holding blocks (a
- * list item) is skipped, so the container's command names the selection; any
- * other text block names it itself.
+ * numbered one.
  */
 export const activeCommand = (
     commands: readonly RteBlockCommand[],
     selection: RteSelectionSnapshot,
-    registry: ContentRegistry,
 ): RteBlockCommand | undefined => {
-    const { blocks } = selection;
-    for (let index = 0; index < blocks.length; index++) {
-        const block = blocks[index];
-        const outer = blocks[index + 1];
-        if (block === undefined) {
-            continue;
-        }
-        if (block.type === PARAGRAPH && outer !== undefined && holdsBlocks(outer.type, registry)) {
-            continue;
-        }
+    for (const block of selection.blocks) {
         const command = commands.find(
             (candidate) => candidate.active !== undefined && isCommandTarget(candidate.active, block),
         );

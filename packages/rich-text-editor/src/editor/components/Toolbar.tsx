@@ -11,7 +11,6 @@ import {
 } from 'react';
 
 import {
-    type ContentRegistry,
     type EditorControlApi,
     type RteBlockCommand,
     type ToolbarEntry,
@@ -52,8 +51,6 @@ type ToolbarProps = {
      * @default []
      */
     commands?: readonly RteBlockCommand[];
-    /** Which blocks hold other blocks, for "Turn into" to name the block the selection is in. */
-    registry: ContentRegistry;
     api: EditorControlApi;
     editorState: EditorStateStore;
     /** The row above the text sits flush with it; a floating bar is a surface of its own, inset. */
@@ -86,7 +83,6 @@ type ToolbarProps = {
 export const Toolbar = ({
     items: allItems,
     commands = [],
-    registry,
     api,
     editorState,
     placement,
@@ -156,9 +152,7 @@ export const Toolbar = ({
             // Where the bar ended up, for the stylesheet to read.
             data-placement={placement}
         >
-            {showTurnInto ? (
-                <TurnInto api={api} commands={turnInto} selection={selection} registry={registry} labels={labels} />
-            ) : null}
+            {showTurnInto ? <TurnInto api={api} commands={turnInto} selection={selection} labels={labels} /> : null}
             {drawGroups(row)}
             {moreNode}
         </div>

@@ -4,15 +4,10 @@ import { Button, Dropdown } from '@frontify/fondue-components';
 import { IconCaretDown, IconCheckMark } from '@frontify/fondue-icons';
 import { type ComponentProps, type MouseEvent, type ReactNode, useRef } from 'react';
 
-import {
-    activeCommand,
-    type ContentRegistry,
-    type EditorControlApi,
-    type RteBlockCommand,
-    type RteSelectionSnapshot,
-} from '#/core';
+import { type EditorControlApi, type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
 import { MENU_ICON_SIZE } from '#/ui/toolbarIconSize';
 
+import { currentCommand } from '../helpers/blockCommands';
 import { type RichTextEditorLabels } from '../labels';
 import styles from '../richTextEditor.module.scss';
 
@@ -58,18 +53,15 @@ export const TurnInto = ({
     api,
     commands,
     selection,
-    registry,
     labels,
 }: {
     api: EditorControlApi;
     /** The `'turnInto'` commands. */
     commands: readonly RteBlockCommand[];
     selection: RteSelectionSnapshot;
-    /** Which blocks hold other blocks, so a paragraph in a list item is read as the list's. */
-    registry: ContentRegistry;
     labels: RichTextEditorLabels;
 }): ReactNode => {
-    const active = activeCommand(commands, selection, registry);
+    const active = currentCommand(commands, selection);
     const { returnToText, contentProps } = useReturnToText(api);
     const label = active?.label ?? labels.text;
 

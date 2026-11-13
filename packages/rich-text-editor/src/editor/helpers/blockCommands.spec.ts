@@ -2,9 +2,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { PARAGRAPH, type RteBlockCommand } from '#/core';
+import { PARAGRAPH, type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
 
-import { matchCommands, TEXT_COMMAND } from './blockCommands';
+import { currentCommand, matchCommands, TEXT_COMMAND } from './blockCommands';
 
 const command = (label: string, keywords: string[] = [], group: RteBlockCommand['group'] = 'turnInto') => ({
     id: label,
@@ -46,8 +46,34 @@ describe('matching commands to what follows the slash', () => {
     });
 });
 
-describe('the built-in Text command', () => {
-    it('is the current command for a paragraph', () => {
-        expect(TEXT_COMMAND.active).toEqual({ type: PARAGRAPH });
+describe('the current command', () => {
+    const activeFor = (id: string, active: RteBlockCommand['active']): RteBlockCommand => ({
+        ...command(id),
+        active,
+    });
+    const outer = activeFor('outer', { type: 'holder' });
+    const styled = activeFor('styled', { type: 'styled', attributes: { variant: 'one' } });
+    const all = [TEXT_COMMAND, outer, styled];
+    const selectionIn = (...types: string[]): RteSelectionSnapshot => {
+        const blocks = types.map((type) => ({ type }));
+        return { block: blocks[0] ?? null, blocks } as RteSelectionSnapshot;
+    };
+
+    it('is the built-in Text for a paragraph at the top level', () => {
+        expect(currentCommand(all, selectionIn(PARAGRAPH))).toBe(TEXT_COMMAND);
+    });
+
+    it('is the plugin command, not Text, for a paragraph inside a block that has one', () => {
+        expect(currentCommand(all, selectionIn(PARAGRAPH, 'slot', 'holder'))).toBe(outer);
+    });
+
+    it('is the plugin command that matches the block, not Text, when the block has its attributes', () => {
+        const selection = { block: { type: 'styled', variant: 'one' }, blocks: [{ type: 'styled', variant: 'one' }] };
+
+        expect(currentCommand(all, selection as unknown as RteSelectionSnapshot)).toBe(styled);
+    });
+
+    it('is nothing when the selection is in no block a command names', () => {
+        expect(currentCommand(all, selectionIn('image'))).toBeUndefined();
     });
 });

@@ -872,21 +872,6 @@ describe('toolbar groups', () => {
 });
 
 describe('the active command', () => {
-    const blockOf = (content: ReturnType<typeof defineBlock>['content']) =>
-        defineBlock({ content, toHtml: () => ({ tag: 'div', children: true }), parse: [] });
-    const registry = buildPluginRegistry([
-        definePlugin({
-            id: 'blocks',
-            content: defineContent({
-                blocks: {
-                    listItem: blockOf({ blocks: ['paragraph'] }),
-                    bulletList: blockOf({ items: 'listItem' }),
-                    numberedList: blockOf({ items: 'listItem' }),
-                    textStyle: blockOf('text'),
-                },
-            }),
-        }),
-    ]);
     const command = (id: string, active?: RteBlockCommand['active']): RteBlockCommand => ({
         id,
         label: id,
@@ -894,63 +879,52 @@ describe('the active command', () => {
         active,
         run: () => {},
     });
-    const text = command('text', { type: 'paragraph' });
-    const bullet = command('bullet', { type: 'bulletList' });
-    const numbered = command('numbered', { type: 'numberedList' });
-    const heading = command('heading', { type: 'textStyle', attributes: { style: 'heading-1' } });
-    const body = command('body', { type: 'textStyle', attributes: { style: 'body' } });
-    const commands = [text, bullet, numbered, heading, body];
+    const forText = command('forText', { type: 'text' });
+    const forHolderA = command('forHolderA', { type: 'holderA' });
+    const forHolderB = command('forHolderB', { type: 'holderB' });
+    const forOne = command('forOne', { type: 'styled', attributes: { variant: 'one' } });
+    const commands = [forText, forHolderA, forHolderB, forOne];
     const selectionIn = (...blocks: RteSelectionSnapshot['blocks']): RteSelectionSnapshot =>
         ({ block: blocks[0] ?? null, blocks }) as RteSelectionSnapshot;
 
-    it('is Text for a paragraph at the top level', () => {
-        expect(activeCommand(commands, selectionIn({ type: 'paragraph' }), registry)).toBe(text);
+    it('is the command whose block the selection is in', () => {
+        expect(activeCommand(commands, selectionIn({ type: 'text' }))).toBe(forText);
     });
 
-    it('is the list for a paragraph in a list item', () => {
-        const selection = selectionIn({ type: 'paragraph' }, { type: 'listItem' }, { type: 'bulletList' });
+    it('is the command of an outer block when the inner blocks have none', () => {
+        const selection = selectionIn({ type: 'other' }, { type: 'slot' }, { type: 'holderA' });
 
-        expect(activeCommand(commands, selection, registry)).toBe(bullet);
+        expect(activeCommand(commands, selection)).toBe(forHolderA);
     });
 
-    it('is the style for a styled text block in a list item', () => {
+    it('is the command for the block that has the listed attributes', () => {
+        const selection = selectionIn({ type: 'styled', variant: 'one' }, { type: 'slot' }, { type: 'holderA' });
+
+        expect(activeCommand(commands, selection)).toBe(forOne);
+    });
+
+    it('is the inner block when the same kind of block nests', () => {
         const selection = selectionIn(
-            { type: 'textStyle', style: 'heading-1' },
-            { type: 'listItem' },
-            { type: 'bulletList' },
+            { type: 'other' },
+            { type: 'slot' },
+            { type: 'holderB' },
+            { type: 'slot' },
+            { type: 'holderA' },
         );
 
-        expect(activeCommand(commands, selection, registry)).toBe(heading);
-    });
-
-    it('is the inner list for a list nested in a list item', () => {
-        const selection = selectionIn(
-            { type: 'paragraph' },
-            { type: 'listItem' },
-            { type: 'numberedList' },
-            { type: 'listItem' },
-            { type: 'bulletList' },
-        );
-
-        expect(activeCommand(commands, selection, registry)).toBe(numbered);
+        expect(activeCommand(commands, selection)).toBe(forHolderB);
     });
 
     it('needs every listed attribute to match', () => {
-        const selection = selectionIn({ type: 'textStyle', style: 'heading-2' });
+        const selection = selectionIn({ type: 'styled', variant: 'two' });
 
-        expect(activeCommand(commands, selection, registry)).toBeUndefined();
+        expect(activeCommand(commands, selection)).toBeUndefined();
         expect(
-            activeCommand(
-                [command('both', { type: 'textStyle', attributes: { style: 'heading-2', x: 1 } })],
-                selection,
-                registry,
-            ),
+            activeCommand([command('both', { type: 'styled', attributes: { variant: 'two', extra: 1 } })], selection),
         ).toBeUndefined();
     });
 
     it('is never a command without `active`', () => {
-        const selection = selectionIn({ type: 'paragraph' });
-
-        expect(activeCommand([command('plain')], selection, registry)).toBeUndefined();
+        expect(activeCommand([command('none')], selectionIn({ type: 'text' }))).toBeUndefined();
     });
 });
