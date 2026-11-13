@@ -26,18 +26,18 @@ import { VALUE_ATTR } from './documentConversion';
 /**
  * Priorities for rules that match the same element; the engine otherwise tries
  * equal priorities in schema order. An inline element's markup may also match a
- * mark's rule (a mention `<a href data-mention-id>` matches a link's `a[href]`),
+ * mark's rule (for example, a mention `<a href data-mention-id>` matches a link's `a[href]`),
  * so inline rules outrank mark rules.
  */
 export const MARK_PRIORITY = 60;
 export const INLINE_PRIORITY = 70;
 /**
- * Style rules run before the mark tag rules, which consume their element, so `<strong style="font-style:italic">` is italic too.
+ * Style rules run before the mark tag rules, which consume their element, so (for example) `<strong style="font-style:italic">` is italic too.
  */
 const STYLE_PRIORITY = 65;
 
 /**
- * A qualified selector (`p[data-text-style=imageCaption]`, `ul[data-check-list]`)
+ * A qualified selector (for example, `p[data-text-style=imageCaption]`, `ul[data-check-list]`)
  * outranks a bare tag. Otherwise the paragraph baseline, registered first,
  * claims every pasted `<p>` and `<ul>` and drops text styles and check marks.
  */
@@ -171,7 +171,7 @@ const STYLED_ELEMENT = '[style]';
 const markStyleRule = (rule: StyleParseRule<unknown>, defaultStyles: readonly DefaultStyleRule[]): TagParseRule => ({
     tag: STYLED_ELEMENT,
     priority: STYLE_PRIORITY,
-    // One declaration, such as `text-decoration: underline line-through`, can set two marks.
+    // One declaration, for example `text-decoration: underline line-through`, can set two marks.
     consuming: false,
     getAttrs: (element: HTMLElement) => {
         const cssValue = declaredValue(element, rule.style, defaultStyles);

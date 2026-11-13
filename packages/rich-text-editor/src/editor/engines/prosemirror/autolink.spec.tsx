@@ -6,13 +6,14 @@ import { undo as pmUndo } from 'prosemirror-history';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { definePlugin } from '#/core';
+import { defineContent, defineMark, definePlugin } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import {
     destroyEditors,
     editorWith,
     paragraph,
+    shipped,
     text,
     token,
     TOKEN_TRIM,
@@ -483,5 +484,53 @@ describe('a web address next to a line break', () => {
         press(editor.view, 'Enter', { shiftKey: true });
 
         expect(editor.stored()).toEqual([paragraph(link('https://example.com'), lineBreak)]);
+    });
+});
+
+// A second `markPattern` rule gets Enter marking and Backspace undo with no change to the engine.
+
+const TAG_PATTERN = /#\w+/;
+
+const tagPlugin = definePlugin({
+    id: 'tags',
+    content: defineContent({
+        marks: {
+            tag: defineMark<{ tag: string }>({
+                toHtml: ({ tag }) => ({ tag: 'a', attrs: { href: `#${tag}` }, children: true }),
+                parse: [{ tag: 'a' }],
+            }),
+        },
+    }),
+    inputRules: [
+        {
+            kind: 'markPattern',
+            pattern: TAG_PATTERN,
+            mark: 'tag',
+            value: (token) => ({ tag: token.slice(1) }),
+        },
+    ],
+});
+
+const tag = (value: string) => text(`#${value}`, { tag: { tag: value } });
+
+describe('a token of another markPattern rule', () => {
+    it('is marked by Enter, which then splits the block', () => {
+        const editor = editorWith([...shipped('paragraph'), tagPlugin], [paragraph(text('see #news'))]);
+        editor.caretAfter('#news');
+
+        press(editor.view, 'Enter');
+
+        expect(editor.stored()).toEqual([paragraph(text('see '), tag('news')), paragraph()]);
+    });
+
+    it('is taken back by Backspace right after, keeping the new line', () => {
+        const editor = editorWith([...shipped('paragraph'), tagPlugin], [paragraph(text('#news'))]);
+        editor.caretAfter('#news');
+        press(editor.view, 'Enter');
+
+        const handled = press(editor.view, 'Backspace');
+
+        expect(handled).toBe(true);
+        expect(editor.stored()).toEqual([paragraph(text('#news')), paragraph()]);
     });
 });

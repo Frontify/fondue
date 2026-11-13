@@ -44,7 +44,7 @@ export type OwnType =
     /** A block holding other blocks, `content: { blocks }` — a list item. */
     | { kind: 'container'; type: string }
     | { kind: 'textBlock'; type: string }
-    /** A block holding nothing — a column break. */
+    /** A block holding nothing, for example a column break. */
     | { kind: 'voidBlock'; type: string }
     | { kind: 'inline'; type: string }
     | { kind: 'none' };
@@ -116,7 +116,7 @@ export type PluginRegistry = ContentRegistry & {
     shortcuts: readonly RteShortcut[];
     /**
      * Every typing rule, ordered for matching: mark rules first, longest
-     * delimiter first — or `**bold**` would be read as an italic `*` wrapping
+     * delimiter first — or (for example) `**bold**` would be read as an italic `*` wrapping
      * `*bold*` — then the rest as declared.
      */
     inputRules: readonly RteInputRule[];
@@ -324,8 +324,8 @@ const isCommandTarget = (target: RteCommandTarget, block: SelectionBlock): boole
 
 /**
  * The command whose `active` block the selection is in, if any. Blocks are
- * read innermost first, so a numbered list inside a bulleted item names the
- * numbered one.
+ * read innermost first, so a list inside an item of another list names the
+ * inner one.
  */
 export const activeCommand = (
     commands: readonly RteBlockCommand[],

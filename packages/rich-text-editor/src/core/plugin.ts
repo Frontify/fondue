@@ -25,10 +25,10 @@ export type RteContent = {
     marks?: Record<string, MarkDefinition>;
     /** Void inline elements (`defineInline`), keyed by the `type` they are stored under. */
     inlines?: Record<string, InlineDefinition>;
-    /** Attributes every text block carries, whichever plugin declared the block (alignment), keyed by stored name. */
+    /** Attributes every text block carries, whichever plugin declared the block (for example, alignment), keyed by stored name. */
     blockAttributes?: Record<string, BlockAttributeDefinition>;
     /**
-     * Class added to the editable element, for a feature that styles all content (columns)
+     * Class added to the editable element, for a feature that styles all content (for example, columns)
      */
     contentClassName?: string;
     /**
@@ -120,7 +120,7 @@ export type RtePlugin = {
      * before the editor's own, in plugin order.
      */
     hotkeys?: Record<string, RteHotkey>;
-    /** Text rewritten as it is typed: markdown shortcuts and autolinks. */
+    /** Text rewritten as it is typed: markdown shortcuts and typed tokens that become marks. */
     inputRules?: readonly (RteInputRule | RteDelimiterRule)[];
     /** Runs before the editor's own paste, in plugin order. */
     onPaste?: PasteHandler;
@@ -290,7 +290,7 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
     render?: {
         /**
          * Readonly view in place of `toHtml`. `style` carries what every text
-         * block carries (alignment); put it on the outermost element.
+         * block carries (for example, alignment); put it on the outermost element.
          */
         component?: ComponentType<{ value: TValue; children?: ReactNode; style?: CSSProperties }>;
     };
@@ -298,8 +298,8 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
 
 /**
  * What a block holds:
- * - omit            → nothing editable (column break)
- * - `'text'`        → text and inline elements (paragraph, quote, heading)
+ * - omit            → nothing editable (for example, a column break)
+ * - `'text'`        → text and inline elements (for example, a paragraph or a heading)
  * - `{ items }`     → a list of that item type
  * - `{ blocks }`    → those block types (a list item)
  */
@@ -333,12 +333,12 @@ export const defineMark = <TValue extends object = Record<string, never>>(
 export type MarkDefinition<TValue = Record<string, unknown>> = {
     /** Where the mark sits when marks nest on the same text: lower wraps higher, ties keep plugin order. Defaults to `0`. */
     nesting?: number;
-    /** Text typed at the end of the mark carries it on. Defaults to true; a link says false. */
+    /** Text typed at the end of the mark carries it on. Defaults to true; a mark that declares `inclusive: false` stops at its end. */
     inclusive?: boolean;
     /** Mark types that cannot sit on the same text as this one: putting either mark on takes the other off. Naming it in one mark is enough. A type no mounted plugin registers is ignored. */
     excludes?: readonly string[];
     /**
-     * Typing rules and single-character hotkeys do not act on text carrying this mark — inline code keeps `--`, `**` and `@` as typed.
+     * Typing rules and single-character hotkeys do not act on text carrying this mark — for example, inline code keeps `--`, `**` and `@` as typed.
      * @default false
      */
     excludesInputRules?: boolean;
@@ -366,7 +366,7 @@ export const defineInline = <TValue extends object = Record<string, never>>(
 ): InlineDefinition => definition as unknown as InlineDefinition;
 
 /**
- * A void inline element (a mention, a line break): no text of its own, its value stored flat on the document node
+ * A void inline element (for example, a mention or a line break): no text of its own, its value stored flat on the document node
  */
 export type InlineDefinition<TValue = Record<string, unknown>> = {
     /**
@@ -390,7 +390,7 @@ export type InlineDefinition<TValue = Record<string, unknown>> = {
 export type DefaultStyleScope = 'self' | 'inside';
 
 /**
- * A style a node's own tags show by default is not formatting where pasted HTML repeats it: a link's underline written on a span inside it.
+ * A style a node's own tags show by default is not formatting where pasted HTML repeats it: for example, a link's underline written on a span inside it.
  * Mark rules that read `property` see the value with `strip` applied, and nothing when it strips to empty.
  */
 export type DefaultStyle = {
@@ -411,7 +411,7 @@ export type DefaultStyle = {
 /**
  * One rule for reading pasted HTML back into a node. Leave `value` out when the
  * element carries none (`<strong>`); return null from it when the element is
- * not this node after all (a `span` without a colour is no font colour).
+ * not this node after all (for example, a `span` without a colour is no font colour).
  */
 export type ParseRule<TValue> = {
     /** A CSS selector: `strong`, `a[href]`, `li[data-checked]`. */
@@ -577,7 +577,7 @@ export type ToolbarItemProps = {
  * The entry's toggled type at the selection: a mark, a block or an inline.
  *
  * A mark is found as its whole run, edges included — a caret at the end of a
- * link still finds the link. A block is the innermost one of that type around
+ * run still finds it. A block is the innermost one of that type around
  * the selection. An inline is never found: the selection sits beside one.
  */
 export type SelectedNode = {
@@ -680,15 +680,15 @@ export type RteMarkPatternTrim = {
  * does the matching, so a plugin only says what to look for.
  */
 export type RteInputRule =
-    /** Wrapping delimiters turn into a mark: `**bold**`, `` `code` ``. */
+    /** Wrapping delimiters turn into a mark: for example, `**bold**`, `` `code` ``. */
     | { kind: 'mark'; key: string; delimiter: string; wordBounded?: boolean }
-    /** A prefix turns the block into another type: `## ` becomes a level-2 heading. */
+    /** A prefix turns the block into another type: for example, `## ` becomes a level-2 heading. */
     | { kind: 'block'; match: string; block: string; attributes?: Record<string, unknown> }
-    /** A prefix wraps the block in a list: `- `, `1. `. `itemAttributes` set attributes on the new item: `[x] ` starts it checked. */
+    /** A prefix wraps the block in a list: for example, `- `, `1. `. `itemAttributes` set attributes on the new item: for example, `[x] ` starts it checked. */
     | { kind: 'list'; match: string; list: string; itemAttributes?: Record<string, unknown> }
     /**
      * A token ended by a space, Enter or Shift-Enter (or punctuation then one
-     * of them) becomes text carrying the mark: an autolink. Backspace right
+     * of them) becomes text carrying the mark (for example, an autolink). Backspace right
      * after takes the mark back. `pattern` matches the token only; the engine
      * anchors it to the end of the text before the terminator. A `value`
      * that returns null leaves the token as typed.
@@ -711,7 +711,7 @@ export type RteInputRule =
      * say what may not come before it, and its `replace` may use `$1` to `$9`:
      * there, `$` and a digit from 1 to 9 is always a group reference, and one
      * the pattern lacks throws. An inline element reads as U+FFFC in the text. The rule steps aside when
-     * the text it would replace carries a mark that opts out (inline code).
+     * the text it would replace carries a mark that opts out (for example, inline code).
      * Only the matched text is replaced, so match a character only to look at
      * it with a lookbehind.
      */

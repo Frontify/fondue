@@ -48,8 +48,8 @@ const BLANK_TEXT = /^\s*$/;
 
 /**
  * The marks a caret would type with, or the marks EVERY text in a range
- * carries with one value — a half-bold range is not bold, and a red-and-blue
- * range has no one colour. A range also reports the marks only some of its
+ * carries with one value — a range only half covered does not carry it, and (for
+ * example) a red-and-blue range has no one colour. A range also reports the marks only some of its
  * text carries, or carries with different values.
  */
 const marksAt = (state: EditorState): RteSelectionSnapshot['marks'] => {
@@ -112,7 +112,7 @@ const blocksAt = (state: EditorState): Pick<RteSelectionSnapshot, 'block' | 'blo
         }
     }
 
-    // A selected void block (a column break): the selection sits at doc level, so
+    // A selected void block (for example, a column break): the selection sits at doc level, so
     // there is no ancestor to have found it as.
     const selected = $from.nodeAfter;
     if (block === null && selected?.type.spec.group === 'block') {
@@ -127,7 +127,7 @@ const snapshotOf = (state: EditorState): RteSelectionSnapshot => {
     const { from, to, empty } = state.selection;
     return {
         isCollapsed: empty,
-        // Void nodes (a mention, a line break) contribute nothing: only readable text.
+        // Void nodes (for example, a mention or a line break) contribute nothing: only readable text.
         text: empty ? '' : state.doc.textBetween(from, to, ' '),
         ...blocksAt(state),
         marks: marksAt(state),
@@ -153,14 +153,14 @@ const createSelectionApi = (getView: () => EditorView): EditorControlApi['select
 
 // --- Marks ---
 //
-// A mark applied by typing `**bold**` does not come through this api: the
+// A mark applied by typing a delimiter pair (for example, `**bold**`) does not come through this api: the
 // markdown shortcut builds its own transaction (see keystrokes.ts).
 
 /**
  * The stretch of text around the selection start that carries a mark, or null
  * when the mark is not there. A run is a stretch of consecutive children rather
- * than a single node, because other marks may split the text — so a partly-bold
- * link still counts as one link.
+ * than a single node, because other marks may split the text — so a run split by
+ * another mark still counts as one run.
  */
 const findMarkRange = (state: EditorState, markType: PmMarkType): { from: number; to: number } | null => {
     const { $from } = state.selection;
@@ -172,7 +172,7 @@ const findMarkRange = (state: EditorState, markType: PmMarkType): { from: number
     let runFrom: number | null = null;
     let runTo = position;
     let range: { from: number; to: number } | null = null;
-    // The mark the open run carries: a neighbour with other values (a second
+    // The mark the open run carries: a neighbour with other values (for example, a second
     // link right after the first) starts a run of its own.
     let runMark: PmMark | null = null;
     const closeRun = (): void => {
@@ -330,7 +330,7 @@ const createMarkApi = (
 
 /**
  * Attributes for a block turned into another type: the ones every text block
- * carries (alignment) stay as they were, under the new type's own. Per block,
+ * carries (for example, alignment) stay as they were, under the new type's own. Per block,
  * as the engine's `setBlockType` takes them, since blocks differ.
  */
 export const keepCarriedAttrs =

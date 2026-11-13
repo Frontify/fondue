@@ -12,7 +12,7 @@ export type RteMarkState = { coverage: 'all'; value: Record<string, unknown> } |
 
 /**
  * How `insertText` is undone. `'together'`: the text and its marks in one step. `'marksFirst'`: the marks in a step
- * of their own, so the first undo keeps the text, as undoing an autolink does.
+ * of their own, so the first undo keeps the text, as undoing a `markPattern` token does.
  */
 export type InsertTextUndo = 'together' | 'marksFirst';
 
@@ -40,13 +40,13 @@ export type RteSelectionSnapshot = {
     /**
      * The marks the selection carries, by mark type; a mark the selection does
      * not touch is absent. `coverage: 'all'` carries the mark's attributes in
-     * `value` (`{}` for a plain mark, `{ href }` for a link).
+     * `value` (`{}` for a plain mark; for example, `{ href }` for a link).
      *
      * On a caret, every entry is `'all'`: the marks typing here would carry.
      * Over a range, `'all'` is a mark every text in it carries and `'some'` one
-     * only part of it carries — a half-bold range is `'some'`, not bold. A mark
-     * all of it carries, but with different values, is `'some'` too: a
-     * red-and-blue range has no one colour.
+     * only part of it carries — a range that is half covered is `'some'`, not `'all'`. A mark
+     * all of it carries, but with different values, is `'some'` too (for
+     * example, a red-and-blue range has no one colour).
      */
     marks: Record<string, RteMarkState>;
     /** Whether the undo history has a change to take back or make again — what undo and redo buttons enable on. */
@@ -89,7 +89,7 @@ export type EditorControlApi = {
         /**
          * Toggle a mark over the selection: on when not all of it carries the
          * mark, off otherwise. `value` is what it carries when turning it on
-         * (`{ href }` for links).
+         * (for example, `{ href }` for a link).
          */
         toggle(type: string, value?: Record<string, unknown>): void;
         /**
@@ -113,7 +113,7 @@ export type EditorControlApi = {
         /**
          * The whole run of a mark around the selection (its value and text), or
          * null. Unlike the snapshot's `marks` it is about the run, not the
-         * point, so a caret at either edge of a link still finds it.
+         * point, so a caret at either edge of the run still finds it.
          */
         getRun(type: string): { value: Record<string, unknown>; text: string } | null;
     };
@@ -126,12 +126,12 @@ export type EditorControlApi = {
          */
         setType(type: string, value?: Record<string, unknown>): void;
         /**
-         * Set attributes on every block the selection touches — how alignment is applied.
+         * Set attributes on every block the selection touches (for example, how alignment is applied).
          *
          * @returns whether any block changed, which is false when none of them declares the attributes or all have the values already
          */
         updateAttributes(attributes: Record<string, unknown>): boolean;
-        /** Reset every `blockAttributes` attribute (alignment) to its default across the selection. */
+        /** Reset every `blockAttributes` attribute (for example, alignment) to its default across the selection. */
         resetAttributes(): void;
     };
 
@@ -154,8 +154,8 @@ export type EditorControlApi = {
     };
 
     /**
-     * Insert a node at the selection — how void blocks (a column break) and
-     * inline elements (mentions) get added, with `value` as what it stores.
+     * Insert a node at the selection — how void blocks (for example, a column break) and
+     * inline elements (for example, mentions) get added, with `value` as what it stores.
      * The caret ends up after what was inserted.
      */
     insert(type: string, value?: Record<string, unknown>): void;

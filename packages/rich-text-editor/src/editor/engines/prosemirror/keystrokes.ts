@@ -19,10 +19,10 @@ import {
     WORD_START_CONTEXT,
 } from '#/core';
 
-import { autolinkOnEnter, markPatternRule } from './autolink';
 import { keepCarriedAttrs, undoStep } from './controlApi';
 import { EXTRA_ATTR } from './documentConversion';
 import { listKeys } from './lists';
+import { markPatternRule, markTokenOnEnter } from './markPatternKeys';
 import {
     isInExcludedMark,
     type RuleContext,
@@ -43,13 +43,13 @@ import {
  * 0. Every handler below steps aside for keys that enter text rather than
  *    command the editor (an input method's, AltGr combinations).
  * 1. Undo / redo, and Backspace right after a typing rewrite (takes the rewrite back).
- * 2. Enter and Shift-Enter link the address before the caret once the key has acted;
- *    Backspace right after takes the link back.
+ * 2. Enter and Shift-Enter mark the token a `markPattern` rule matches before the caret
+ *    once the key has acted; Backspace right after takes the mark back.
  * 3. Feature hotkeys (Mod-b, ...). Before the list keys so a feature can take a
- *    key lists would claim (`blurOnBreak` takes Enter).
+ *    key lists would claim (for example, `blurOnBreak` takes Enter).
  * 4. List keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
- * 5. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`); held until a composition ends.
- * 6. Baseline keymap, plus Backspace resetting an emptied first heading.
+ * 5. Typing rewrites: declared `RteInputRule`s (for example, `**bold**`, `- `, `-->`); held until a composition ends.
+ * 6. Baseline keymap, plus Backspace turning an emptied first block back into the default block.
  *
  * Mark input rules build their own transaction instead of calling
  * `api.marks.toggle`, because the input-rule machinery owns undo grouping.
@@ -69,7 +69,7 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
             Backspace: undoInputRule,
         }),
         // 2
-        ...autolinkOnEnter(registry, schema),
+        ...markTokenOnEnter(registry, schema),
         // 3
         keymap(featureHotkeys(registry.hotkeys, api)),
         characterHotkeys(registry.hotkeys, excludedMarks, api),
@@ -133,7 +133,7 @@ const featureHotkeys = (hotkeys: PluginRegistry['hotkeys'], api: EditorControlAp
             .map(([keys, handlers]): [string, Command] => [keys, () => runUntilHandled(handlers, api)]),
     );
 
-// An inline element is a word start here, so `@name` fires after a soft break; it cannot yet tell a mention from a soft break.
+// An inline element is a word start here, so a character hotkey fires right after one; it cannot yet tell which kind.
 const WORD_BOUNDARY_BEFORE = new RegExp(`[${WORD_START_CONTEXT}${INLINE_PLACEHOLDER}]`);
 
 /** The start of the block, or after whitespace, opening punctuation or an inline element. */
@@ -149,8 +149,8 @@ const isAtWordStart = (state: EditorState, from: number): boolean => {
 /**
  * Character hotkeys fire on the character being TYPED, not on the keys pressed
  * (on a Swiss Mac `@` is Option-G, which a keymap would read as `Alt-@`). They
- * only fire at a word start: `@` in `noah@frontify.com` is not a mention.
- * Text carrying a mark that opts out of rules (inline code) is typed as is.
+ * only fire at a word start: for example, `@` in `noah@frontify.com` does not open a mention.
+ * Text carrying a mark that opts out of rules (for example, inline code) is typed as is.
  */
 const characterHotkeys = (
     hotkeys: PluginRegistry['hotkeys'],
@@ -187,7 +187,7 @@ const characterHotkeys = (
 
 const typingRewrites = (registry: PluginRegistry, schema: Schema): PmPlugin[] => {
     const context = ruleContext(registry, schema);
-    // The registry orders rules longest delimiter first; otherwise `**bold**`
+    // The registry orders rules longest delimiter first; otherwise (for example) `**bold**`
     // reads as an italic `*` wrapping `*bold*`.
     const rules = registry.inputRules.flatMap((rule) => toEngineRule(rule, context) ?? []);
 
@@ -272,7 +272,7 @@ const isGluedAfter = (state: EditorState, pos: number): boolean => {
 
 const escapeForRegExp = (text: string): string => text.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-/** `**bold**` -> a bold mark over `bold`. The engine ships block and text rules but no mark rule. */
+/** A delimiter pair becomes a mark over its text (for example, `**bold**` -> bold over `bold`). The engine ships block and text rules but no mark rule. */
 const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | null => {
     const markType = context.schema.marks[rule.key];
     if (!markType) {
@@ -282,7 +282,7 @@ const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | n
     const escaped = escapeForRegExp(delimiter);
     const firstChar = escapeForRegExp(delimiter.charAt(0));
     // The character before the opening delimiter must not be the delimiter
-    // itself, or typing `**bold**` fires the italic rule on `**bold*` first.
+    // itself, or typing (for example) `**bold**` fires the italic rule on `**bold*` first.
     let before = `[^${firstChar}]`;
     if (rule.wordBounded === true) {
         before = `[${WORD_START_CONTEXT}]`;
@@ -325,7 +325,7 @@ const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | n
 /**
  * `# ` at the start of a block turns it into another block type. The engine's
  * `textblockTypeInputRule`, except that the attributes every text block carries
- * (alignment) stay.
+ * (for example, alignment) stay.
  */
 const blockRule = (rule: RuleOfKind<'block'>, { schema, registry }: RuleContext): InputRule | null => {
     const nodeType = schema.nodes[rule.block];
@@ -442,7 +442,7 @@ const typingMarks = (state: EditorState): readonly PmMark[] => state.storedMarks
 
 /**
  * The marks of the first character from `start` that lies before the selection, kept by a
- * replacement even where a mark such as a link ends there. Typing marks otherwise, so text typed
+ * replacement even where a mark (for example, a link) ends there. Typing marks otherwise, so text typed
  * over a selection does not take the selected text's marks.
  */
 const replacedMarks = (state: EditorState, start: number, end: number): readonly PmMark[] => {
@@ -503,7 +503,7 @@ const runEndTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRu
 
 /**
  * Backspace in an emptied block at the very top that is not the default block
- * (a heading): nothing before it to join, so it turns back into a paragraph.
+ * (for example, a heading): nothing before it to join, so it turns back into a paragraph.
  */
 const resetEmptyFirstBlock: Command = (state, dispatch) => {
     const { $from, empty } = state.selection;

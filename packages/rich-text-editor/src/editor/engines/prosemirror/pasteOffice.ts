@@ -174,7 +174,8 @@ const keepListData = (dom: HTMLElement): void => {
  * Removes any Office list data the paste carries, then, for Word and Outlook,
  * keeps the list data of their list paragraphs as attributes and removes what
  * they write besides content: the `<o:p>` markers and each list marker, also
- * the number a heading carries. Does nothing else to a paste from elsewhere.
+ * the number a text block carries, for example a heading. Does nothing else to
+ * a paste from elsewhere.
  */
 export const tidyOffice = (dom: HTMLElement): void => {
     // Only the editor writes the Office list data, so none the paste itself carries is read.

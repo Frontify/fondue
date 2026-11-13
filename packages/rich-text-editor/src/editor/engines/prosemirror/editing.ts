@@ -84,7 +84,7 @@ const mount = ({
     // The document's own undeclared keys: only the host changes them, so they live here, not in the engine document.
     let rootExtras = rootExtrasOf(initialDoc);
 
-    // 1. Views with editing UI (blocks, inline elements, link-like marks) follow
+    // 1. Views with editing UI (blocks, inline elements, marks with their own editing UI) follow
     //    the selection, since `isFocused` does. Each state change is offered to
     //    all of them, and each re-renders only when its props changed.
     const liveViews = new LiveViews(viewPortals);
@@ -136,7 +136,7 @@ const mount = ({
                 dropCursor({ color: 'var(--color-primary-default)', width: 2 }),
             ],
         }),
-        // Clicking an inline atom (mention, ...) puts the caret after it rather than selecting it.
+        // Clicking an inline atom (for example, a mention) puts the caret after it rather than selecting it.
         handleClickOn(_view, _pos, node, nodePos) {
             if (node.isInline && node.isAtom) {
                 editorView.dispatch(

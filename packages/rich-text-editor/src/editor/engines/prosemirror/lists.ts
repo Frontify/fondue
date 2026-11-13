@@ -75,7 +75,7 @@ export const createListApi = (
             } else if (current.node.type === listType) {
                 runListCommand(liftListItem);
             } else {
-                // One step: a check list holding bullet items (or the reverse)
+                // One step: a list holding items of another list's type
                 // is invalid content, so converting in two steps would throw.
                 const converted = listType.create(
                     current.node.attrs,
