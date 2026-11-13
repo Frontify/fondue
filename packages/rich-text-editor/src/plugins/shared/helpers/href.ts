@@ -2,8 +2,6 @@
 
 import { type RteMarkPatternTrim } from '#/core';
 
-import { isControlCharacter } from './text';
-
 /**
  * The schemes a link may use, which leaves out `javascript:` and `data:`
  */
@@ -52,8 +50,8 @@ const LINKABLE_PASTE = new RegExp(`^(?:${LINKABLE_SCHEMES})`, 'i');
 /** Longer than any link someone means, and than most browsers keep. */
 const MAX_HREF_LENGTH = 2048;
 
-/** Control and bidirectional-formatting characters, which no link someone means contains. */
-const hasControlCharacter = (text: string): boolean => Array.from(text).some(isControlCharacter);
+/** C0 and C1 control characters, which no link someone means contains. */
+const CONTROL_CHARACTER = /[\u0000-\u001F\u007F-\u009F]/;
 
 /** The scheme an href names, lower-cased with its colon, or null for a relative one. */
 const schemeOf = (href: string): string | null => {
@@ -69,7 +67,7 @@ const schemeOf = (href: string): string | null => {
  * a string at all is not one either.
  */
 export const isSafeHref = (href: unknown): href is string => {
-    if (typeof href !== 'string' || href.length > MAX_HREF_LENGTH || hasControlCharacter(href)) {
+    if (typeof href !== 'string' || href.length > MAX_HREF_LENGTH || CONTROL_CHARACTER.test(href)) {
         return false;
     }
     const scheme = schemeOf(href);
@@ -95,9 +93,7 @@ export const isSafeImageSrc = (src: unknown): src is string => {
     return scheme === null || scheme === 'http:' || scheme === 'https:';
 };
 
-/**
- * Paths and fragments within the site the document is shown on, kept as typed
- */
+/** Paths and fragments within the site the document is shown on, kept as typed. */
 const isRelative = (typed: string): boolean => /^(#|\/|\.\.?\/|\?)/.test(typed);
 
 const isEmail = (typed: string): boolean => /^[^\s@/:]+@[^\s@/:]+\.[^\s@/:]+$/.test(typed);
@@ -114,7 +110,7 @@ const isHost = (hostname: string): boolean =>
  */
 export const toHref = (typed: string): string | null => {
     const trimmed = typed.trim();
-    if (trimmed === '' || /\s/.test(trimmed) || trimmed.length > MAX_HREF_LENGTH || hasControlCharacter(trimmed)) {
+    if (trimmed === '' || /\s/.test(trimmed) || trimmed.length > MAX_HREF_LENGTH || CONTROL_CHARACTER.test(trimmed)) {
         return null;
     }
     if (isRelative(trimmed)) {

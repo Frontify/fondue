@@ -4,7 +4,7 @@ import { Tooltip } from '@frontify/fondue-components';
 import { IconPeople } from '@frontify/fondue-icons';
 import { type MouseEvent, type ReactNode } from 'react';
 
-import { type MentionDisplay, mentionAttributes, UNAVAILABLE_NOTE } from '../helpers/display';
+import { type MentionDisplay, mentionAttributes } from '../helpers/display';
 import styles from '../mention.module.scss';
 import { type MentionValue } from '../types';
 
@@ -60,7 +60,7 @@ export const MentionLink = ({ value, display }: MentionLinkProps): ReactNode => 
         case 'unavailable':
             element = (
                 <span {...attributes}>
-                    {name} {UNAVAILABLE_NOTE}
+                    {name} {display.note}
                 </span>
             );
             break;

@@ -154,8 +154,11 @@ export {
     type LinkSearch,
 } from './plugins/Link';
 export {
+    type MentionContentLabels,
     type MentionContentOptions,
     type MentionItem,
+    type MentionLabels,
+    type MentionPickerLabels,
     type MentionPluginOptions,
     type MentionResolution,
     type MentionValue,

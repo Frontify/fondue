@@ -1686,32 +1686,38 @@ describe('an editor that crashes', () => {
         expect(onError).toHaveBeenCalledTimes(2);
     });
 
-    it('hands onError the error a mention resolver throws while the editor draws the mention', () => {
+    it('hands onError the error an inline view throws while the editor draws it', () => {
         silenceReact();
         const onError = errorSpy();
         const plugins = [
             ...defaultPlugins,
-            mentionPlugin({
-                items: [],
-                resolve: () => {
-                    throw new Error('resolver offline');
+            definePlugin({
+                id: 'pulse',
+                content: defineContent({
+                    inlines: {
+                        pulse: defineInline<{ id: string }>({
+                            toHtml: (value) => ({ tag: 'span', children: value.id }),
+                            parse: [],
+                        }),
+                    },
+                }),
+                edit: {
+                    pulse: () => {
+                        throw new Error('inline view broke');
+                    },
                 },
             }),
         ];
-        const value: RteDocument = {
+        // `RteDocument` names no plugin inline, so the test-only inline needs the cast.
+        const value = {
             version: 1,
-            blocks: [
-                {
-                    type: 'paragraph',
-                    children: [{ type: 'mention', id: 'jane', username: 'jane', name: 'Jane Doe' }],
-                },
-            ],
-        };
+            blocks: [{ type: 'paragraph', children: [{ type: 'pulse', id: 'p1' }] }],
+        } as unknown as RteDocument;
 
         mount(() => <RichTextEditor value={value} plugins={plugins} onError={onError} />);
 
         expect(onError).toHaveBeenCalled();
-        expect(onError.mock.calls[0]?.[0].message).toBe('resolver offline');
+        expect(onError.mock.calls[0]?.[0].message).toBe('inline view broke');
     });
 
     it('leaves focus alone after a Retry pressed without taking focus, as a mouse press may', () => {

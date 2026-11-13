@@ -9,6 +9,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
     defineContent,
     defineInline,
+    defineMark,
     definePlugin,
     type EditorControlApi,
     type RteBlockNode,
@@ -396,6 +397,22 @@ describe('Backspace', () => {
     });
 });
 
+/** A test-only mark that, like literal text, opts out of typing rules and single-character hotkeys. */
+const verbatimPlugin = definePlugin({
+    id: 'verbatim',
+    content: defineContent({
+        marks: {
+            verbatim: defineMark({
+                excludesInputRules: true,
+                inclusive: false,
+                toHtml: () => ({ tag: 'kbd', children: true }),
+                parse: [{ tag: 'kbd' }],
+            }),
+        },
+    }),
+    hotkeys: { 'Mod-q': (api) => api.marks.toggle('verbatim') },
+});
+
 describe('a feature hotkey', () => {
     it('runs when its keys are pressed — Shift-Enter breaks the line', () => {
         const editor = editorWith(defaultPlugins, [paragraph(text('ab'))]);
@@ -493,51 +510,51 @@ describe('a feature hotkey', () => {
         expect(editor.stored()).toEqual([paragraph(text('hi [mention]'))]);
     });
 
-    it('naming a character is typed as it is inside inline code, and fires outside it', () => {
-        const mention = vi.fn<(api: EditorControlApi) => void>();
+    it('naming a character is typed as it is inside a mark that opts out of rules, and fires outside it', () => {
+        const trigger = vi.fn<(api: EditorControlApi) => void>();
         const editor = editorWith(
-            [...defaultPlugins, definePlugin({ id: 'mention', hotkeys: { '@': mention } })],
-            [paragraph(text('a b', { code: true }), text(' c'))],
+            [...defaultPlugins, verbatimPlugin, definePlugin({ id: 'trigger', hotkeys: { '@': trigger } })],
+            [paragraph(text('a b', { verbatim: true }), text(' c'))],
         );
 
         editor.caretAfter('a ');
         editor.type('@');
 
-        expect(mention).not.toHaveBeenCalled();
-        expect(editor.stored()).toEqual([paragraph(text('a @b', { code: true }), text(' c'))]);
+        expect(trigger).not.toHaveBeenCalled();
+        expect(editor.stored()).toEqual([paragraph(text('a @b', { verbatim: true }), text(' c'))]);
 
         editor.caretAfter(' c');
         editor.type(' @');
 
-        expect(mention).toHaveBeenCalledTimes(1);
+        expect(trigger).toHaveBeenCalledTimes(1);
     });
 
     it('naming a character still fires after a space in bold text', () => {
-        const mention = vi.fn<(api: EditorControlApi) => void>();
+        const trigger = vi.fn<(api: EditorControlApi) => void>();
         const editor = editorWith(
-            [...defaultPlugins, definePlugin({ id: 'mention', hotkeys: { '@': mention } })],
+            [...defaultPlugins, definePlugin({ id: 'trigger', hotkeys: { '@': trigger } })],
             [paragraph(text('hi ', { bold: true }))],
         );
 
         editor.caretAfter('hi ');
         editor.type('@');
 
-        expect(mention).toHaveBeenCalledTimes(1);
+        expect(trigger).toHaveBeenCalledTimes(1);
     });
 
-    it('naming a character does not fire at a caret where inline code was just turned on', () => {
-        const mention = vi.fn<(api: EditorControlApi) => void>();
+    it('naming a character does not fire at a caret where a mark that opts out of rules was just turned on', () => {
+        const trigger = vi.fn<(api: EditorControlApi) => void>();
         const editor = editorWith(
-            [...defaultPlugins, definePlugin({ id: 'mention', hotkeys: { '@': mention } })],
+            [...defaultPlugins, verbatimPlugin, definePlugin({ id: 'trigger', hotkeys: { '@': trigger } })],
             [paragraph(text('hi '))],
         );
         editor.caretAfter('hi ');
 
-        expect(press(editor.view, 'e', mod)).toBe(true);
+        expect(press(editor.view, 'q', mod)).toBe(true);
         editor.type('@');
 
-        expect(mention).not.toHaveBeenCalled();
-        expect(editor.stored()).toEqual([paragraph(text('hi '), text('@', { code: true }))]);
+        expect(trigger).not.toHaveBeenCalled();
+        expect(editor.stored()).toEqual([paragraph(text('hi '), text('@', { verbatim: true }))]);
     });
 });
 

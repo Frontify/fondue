@@ -140,6 +140,26 @@ describe('the mention inline', () => {
     });
 });
 
+describe('the mention labels', () => {
+    it('name an empty username in the labels the plugin is given, keeping English for the rest', () => {
+        const empty = { id: 'x', username: '', name: '' };
+        const mention = mentionPlugin({ items: [], labels: { unknownPerson: 'Personne inconnue' } }).content?.inlines
+            ?.mention;
+
+        expect(mention?.toHtml(empty).children).toEqual([{ tag: BIDI_ISOLATE_TAG, children: 'Personne inconnue' }]);
+        expect(mention?.toHtml({ ...empty, kind: 'group' }).children).toEqual([
+            { tag: BIDI_ISOLATE_TAG, children: 'Unknown group' },
+        ]);
+    });
+
+    it('name an empty username in the labels the content is given', () => {
+        const empty = { id: 'x', username: '', name: '' };
+        const mention = mentionContent({ labels: { unknownPerson: 'Personne inconnue' } }).inlines?.mention;
+
+        expect(mention?.toHtml(empty).children).toEqual([{ tag: BIDI_ISOLATE_TAG, children: 'Personne inconnue' }]);
+    });
+});
+
 describe('a stored mention that is missing a field', () => {
     // Stored documents are not validated, so a field can be missing or the wrong type.
     const wrongType = { id: 'x', username: 7, name: 'X', kind: 7 } as unknown as typeof JANE;
