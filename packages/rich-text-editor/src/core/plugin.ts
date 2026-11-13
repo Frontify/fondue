@@ -86,7 +86,7 @@ export type RtePlugin = {
     id: string;
     content?: RteContent;
     /**
-     * One sentence for screen readers, read with the editor: a keyboard hint ("Press Enter to submit.")
+     * One sentence for screen readers, read with the editor: a hint about what its keys do
      */
     description?: string;
     /**
@@ -338,7 +338,7 @@ export type MarkDefinition<TValue = Record<string, unknown>> = {
      */
     excludesInputRules?: boolean;
     /**
-     * Clearing formatting with `keepSurviving` leaves this mark on: a link stays through "clear formatting" and "reset formatting".
+     * Clearing marks with `keepSurviving` leaves this mark on, where clearing without it removes every mark.
      * @default false
      */
     survivesClear?: boolean;

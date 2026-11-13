@@ -2,7 +2,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { alignPlugin, defaultPlugins, resetFormattingPlugin } from '#/plugins';
+import { defaultPlugins } from '#/plugins';
+import { alignPlugin } from '#/plugins/Align';
+import { resetFormattingPlugin } from '#/plugins/ResetFormatting';
 
 import { type KeyboardGroup, keyboardReference } from './keyboardReference';
 
@@ -38,8 +40,8 @@ describe('keyboardReference', () => {
 
     it('names a key with the words the host gave the plugin', () => {
         const translated = keyboardReference([
-            alignPlugin({ leftTitle: 'Linksbündig' }),
-            resetFormattingPlugin({ clearMarksLabel: 'Formatierung entfernen' }),
+            alignPlugin({ labels: { leftTitle: 'Linksbündig' } }),
+            resetFormattingPlugin({ labels: { clearMarksTitle: 'Formatierung entfernen' } }),
         ]);
 
         expect(groupOfPlugin(translated, 'align')?.rows).toContainEqual({

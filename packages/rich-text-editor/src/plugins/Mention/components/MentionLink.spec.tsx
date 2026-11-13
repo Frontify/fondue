@@ -52,6 +52,17 @@ describe('an unavailable mention', () => {
         expect(mention?.hasAttribute('tabindex')).toBe(false);
     });
 
+    it('says the note in the labels it is given when it is read', () => {
+        const Component = mentionContent({ resolve, labels: { unavailable: '(indisponible)' } }).inlines?.mention
+            ?.render?.component;
+        if (!Component) {
+            throw new Error('no reading view');
+        }
+        const container = mount(<Component value={JANE} />);
+
+        expect(container.querySelector('span[data-mention-id]')?.textContent).toBe('@jane (indisponible)');
+    });
+
     it('stays out of the tab order in the reading view', () => {
         const Component = mentionContent({ resolve }).inlines?.mention?.render?.component;
         if (!Component) {

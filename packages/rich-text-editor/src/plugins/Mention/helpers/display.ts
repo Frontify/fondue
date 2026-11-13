@@ -12,6 +12,7 @@ import {
     type MentionValue,
 } from '../types';
 
+import { DEFAULT_MENTION_CONTENT_LABELS, type MentionContentLabels } from './labels';
 import { safeMentionHref } from './mention';
 
 /**
@@ -19,21 +20,19 @@ import { safeMentionHref } from './mention';
  * disagree. `label` is the trigger and the username, or a name for the kind when
  * there is no username; `title` is shown on hover. A mention links only when the
  * app gives a safe target; an unavailable one never links, and only views for
- * reading add `UNAVAILABLE_NOTE` after it, so exports keep `@` and the label.
+ * reading say its `note` after it, so exports keep `@` and the label.
  */
 export type MentionDisplay =
     | { status: 'linked'; label: string; title: string; href: string }
     | { status: 'text'; label: string; title: string }
-    | { status: 'unavailable'; label: string; title: string };
+    | { status: 'unavailable'; label: string; title: string; note: string };
 
 type MentionDisplayOptions = {
     resolve?: MentionResolve;
     href?: MentionHref;
     trigger: string;
+    labels?: MentionContentLabels;
 };
-
-/** Said after the username of someone the app no longer knows. */
-export const UNAVAILABLE_NOTE = '(unavailable)';
 
 type MentionNames = { username: string; name: string };
 
@@ -88,15 +87,15 @@ const currentNames = (stored: MentionNames, current: MentionNames): MentionNames
 };
 
 /** Shown in place of a stored username that is empty or not text. */
-const unknownLabel = (kind: MentionKind | undefined): string => {
+const unknownLabel = (kind: MentionKind | undefined, labels: MentionContentLabels): string => {
     switch (kind) {
         case undefined:
         case 'user':
-            return 'Unknown person';
+            return labels.unknownPerson;
         case 'group':
-            return 'Unknown group';
+            return labels.unknownGroup;
         case 'all':
-            return 'Unknown mention';
+            return labels.unknownMention;
         default:
             // Adding a kind fails to compile here until it is handled.
             throw new Error(`Unhandled mention kind: ${JSON.stringify(kind satisfies never)}`);
@@ -106,9 +105,14 @@ const unknownLabel = (kind: MentionKind | undefined): string => {
 /**
  * The trigger and the username, or a named label when there is no username to show.
  */
-const labelOf = (username: string, trigger: string, kind: MentionKind | undefined): string => {
+const labelOf = (
+    username: string,
+    trigger: string,
+    kind: MentionKind | undefined,
+    labels: MentionContentLabels,
+): string => {
     if (username === '') {
-        return unknownLabel(kind);
+        return unknownLabel(kind, labels);
     }
     return `${trigger}${username}`;
 };
@@ -168,7 +172,7 @@ const resolutionOf = (mention: MentionValue, resolve: MentionResolve | undefined
  */
 export const mentionDisplay = (
     mention: MentionValue,
-    { resolve, href, trigger }: MentionDisplayOptions,
+    { resolve, href, trigger, labels = DEFAULT_MENTION_CONTENT_LABELS }: MentionDisplayOptions,
 ): MentionDisplay => {
     const resolution = resolutionOf(mention, resolve);
     const kind = storedKind(mention.kind);
@@ -182,12 +186,17 @@ export const mentionDisplay = (
             shown = currentNames(stored, resolution);
             break;
         case 'unavailable':
-            return { status: 'unavailable', label: labelOf(stored.username, trigger, kind), title: stored.name };
+            return {
+                status: 'unavailable',
+                label: labelOf(stored.username, trigger, kind, labels),
+                title: stored.name,
+                note: labels.unavailable,
+            };
         default:
             // Unreachable: `resolutionOf` lets only known statuses through.
             throw new Error(`Unhandled mention resolution: ${JSON.stringify(resolution satisfies never)}`);
     }
-    const label = labelOf(shown.username, trigger, kind);
+    const label = labelOf(shown.username, trigger, kind, labels);
     const target = safeMentionHref(href, mention);
     if (target === undefined) {
         return { status: 'text', label, title: shown.name };

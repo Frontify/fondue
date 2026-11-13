@@ -1,30 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 /**
- * C0 and C1 control characters, and the bidirectional marks, embeddings,
- * overrides and isolates that reorder the text around them, as code point
- * ranges: written as numbers, because the formatter turns escapes into the
- * invisible characters themselves.
+ * C0 and C1 control characters, and the bidirectional embeddings, overrides and
+ * isolates that reorder the text around them, as code point ranges: written as
+ * numbers, because the formatter turns escapes into the invisible characters
+ * themselves. The direction marks (LRM, RLM, ALM) are not here: right-to-left
+ * names keep them.
  */
 const CONTROL_RANGES: readonly (readonly [from: number, to: number])[] = [
     [0x0000, 0x001f],
     [0x007f, 0x009f],
-    [0x061c, 0x061c],
-    [0x200e, 0x200f],
     [0x202a, 0x202e],
     [0x2066, 0x2069],
 ];
 
-/**
- * Whether a character is a control or bidirectional-formatting character
- */
-export const isControlCharacter = (character: string): boolean => {
+const isControlCharacter = (character: string): boolean => {
     const code = character.codePointAt(0) ?? 0;
     return CONTROL_RANGES.some(([from, to]) => code >= from && code <= to);
 };
 
 /**
- * Text from a stored document or an app lookup as shown: without control and bidirectional-formatting characters; the letters of every script stay.
+ * Text from a stored document or an app lookup as shown: without control characters and the bidirectional embeddings, overrides and isolates that disguise it; the letters of every script and the direction marks stay.
  */
 export const withoutControlCharacters = (text: string): string =>
     Array.from(text)

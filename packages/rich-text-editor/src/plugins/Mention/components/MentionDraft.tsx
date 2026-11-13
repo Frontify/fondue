@@ -12,25 +12,13 @@ import { type PeopleOutcome, usePeople } from '../hooks/usePeople';
 import styles from '../mention.module.scss';
 import { type MentionItem, type MentionItems } from '../types';
 
-/**
- * What a failed lookup says to a screen reader: the message, then how to retry from the keyboard.
- */
-const FAILED_MESSAGE = 'Could not load people.';
-const FAILED_HINT = 'Press Enter to retry';
+import { type MentionPickerLabels } from './pickerLabels';
 
+/** The key that asks again after a failed lookup. */
 const RETRY_KEY = 'Enter';
-
-/** What the list shows, not announced, while a lookup runs past the searching delay. */
-const SEARCHING_MESSAGE = 'Searching';
 
 /** How long a lookup runs before the list says it is searching, so a quick answer never flashes the row. */
 const SEARCHING_DELAY_MS = 300;
-
-const NO_MATCHES_MESSAGE = 'No matches';
-
-const RETRY_LABEL = 'Retry';
-
-const LIST_LABEL = 'People';
 
 const AVATAR_ICON_SIZE = 12;
 
@@ -146,20 +134,17 @@ const isOpen = (phase: PeoplePhase, query: string): boolean => {
 /**
  * What a screen reader hears for a phase. Waiting and searching say nothing, so a count or a failure is not interrupted on every key.
  */
-const statusOf = (phase: PeoplePhase, people: readonly MentionItem[]): string => {
+const statusOf = (phase: PeoplePhase, people: readonly MentionItem[], labels: MentionPickerLabels): string => {
     switch (phase) {
         case 'waiting':
         case 'searching':
             return '';
         case 'failed':
-            return `${FAILED_MESSAGE} ${FAILED_HINT}.`;
+            return `${labels.failed} ${labels.retryHint}.`;
         case 'empty':
-            return NO_MATCHES_MESSAGE;
+            return labels.noMatches;
         case 'list':
-            if (people.length === 1) {
-                return '1 person';
-            }
-            return `${people.length} people`;
+            return labels.peopleCount(people.length);
         default:
             // Adding a phase fails to compile here until it is handled.
             throw new Error(`Unhandled people phase: ${JSON.stringify(phase satisfies never)}`);
@@ -190,6 +175,7 @@ type MentionPopupBodyProps = {
     phase: PeoplePhase;
     people: readonly MentionItem[];
     trigger: string;
+    labels: MentionPickerLabels;
     listId: string;
     activeIndex: number;
     optionId: (index: number) => string;
@@ -205,6 +191,7 @@ const MentionPopupBody = ({
     phase,
     people,
     trigger,
+    labels,
     listId,
     activeIndex,
     optionId,
@@ -216,11 +203,11 @@ const MentionPopupBody = ({
         case 'waiting':
             return null;
         case 'searching':
-            return <div className={styles.empty}>{SEARCHING_MESSAGE}</div>;
+            return <div className={styles.empty}>{labels.searching}</div>;
         case 'failed':
             return (
                 <div className={styles.empty}>
-                    {FAILED_MESSAGE}{' '}
+                    {labels.failed}{' '}
                     <button
                         type="button"
                         // Out of the Tab order and off the mouse's focus: the query keeps the caret.
@@ -229,7 +216,7 @@ const MentionPopupBody = ({
                         onClick={onRetry}
                         className={styles.retry}
                     >
-                        {RETRY_LABEL}
+                        {labels.retry}
                     </button>
                     <kbd aria-hidden="true" className={styles.shortcut}>
                         {readableShortcut(RETRY_KEY)}
@@ -237,10 +224,10 @@ const MentionPopupBody = ({
                 </div>
             );
         case 'empty':
-            return <div className={styles.empty}>{NO_MATCHES_MESSAGE}</div>;
+            return <div className={styles.empty}>{labels.noMatches}</div>;
         case 'list':
             return (
-                <ul id={listId} role="listbox" aria-label={LIST_LABEL} className={styles.list}>
+                <ul id={listId} role="listbox" aria-label={labels.list} className={styles.list}>
                     {people.map((person, index) => (
                         // The keyboard drives the list from the input; the mouse picks here.
                         // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
@@ -308,6 +295,19 @@ const useListPosition = (
     return open ? position : null;
 };
 
+type MentionDraftProps = {
+    trigger: string;
+    labels: MentionPickerLabels;
+    items: MentionItems;
+    /** The editor's selection is on this mention — the input takes the caret. */
+    focused: boolean;
+    onChoose: (person: MentionItem) => void;
+    /** Give up, keeping what was typed as ordinary text. */
+    onCancel: (text: string) => void;
+    /** Give up and leave nothing behind, not even the trigger. */
+    onRemove: () => void;
+};
+
 /**
  * A mention being made, from the typed trigger until a person is chosen.
  *
@@ -319,22 +319,13 @@ const useListPosition = (
  */
 export const MentionDraft = ({
     trigger,
+    labels,
     items,
     focused,
     onChoose,
     onCancel,
     onRemove,
-}: {
-    trigger: string;
-    items: MentionItems;
-    /** The editor's selection is on this mention — the input takes the caret. */
-    focused: boolean;
-    onChoose: (person: MentionItem) => void;
-    /** Give up, keeping what was typed as ordinary text. */
-    onCancel: (text: string) => void;
-    /** Give up and leave nothing behind, not even the trigger. */
-    onRemove: () => void;
-}): ReactNode => {
+}: MentionDraftProps): ReactNode => {
     const listId = useId();
     const draftRef = useRef<HTMLSpanElement | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -388,8 +379,8 @@ export const MentionDraft = ({
                 break;
             case 'Enter':
             case 'Tab':
-                // Tab retries too: leaving the query would cancel the mention.
-                if (phase === 'failed') {
+                // Only Enter retries; Tab is not trapped where nobody can be picked.
+                if (phase === 'failed' && event.key === 'Enter') {
                     retry();
                     break;
                 }
@@ -433,7 +424,7 @@ export const MentionDraft = ({
                 aria-controls={listShown ? listId : undefined}
                 aria-autocomplete="list"
                 aria-activedescendant={listShown && active ? optionId(activeIndex) : undefined}
-                aria-label="Mention someone"
+                aria-label={labels.input}
                 value={query}
                 size={Math.max(query.length, 1)}
                 onChange={(event) => setQuery(event.target.value)}
@@ -442,7 +433,7 @@ export const MentionDraft = ({
                 className={styles.input}
             />
             <span role="status" className={styles.visuallyHidden}>
-                {statusOf(phase, people)}
+                {statusOf(phase, people, labels)}
             </span>
             {open && position !== null
                 ? createPortal(
@@ -451,6 +442,7 @@ export const MentionDraft = ({
                               phase={phase}
                               people={people}
                               trigger={trigger}
+                              labels={labels}
                               listId={listId}
                               activeIndex={activeIndex}
                               optionId={optionId}

@@ -6,6 +6,7 @@ import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState 
 import { toHref } from '../../shared/helpers/href';
 import { isCompositionKey } from '../../shared/helpers/keys';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
+import { type LinkLabels } from '../helpers/labels';
 import { allowsHref, describeAllowed, type LinkPolicy } from '../helpers/policy';
 import { type LinkValue } from '../helpers/value';
 
@@ -14,7 +15,6 @@ import styles from './linkForm.module.scss';
 
 const UNREADABLE = 'Enter a web address (example.com), an email address, or a phone number (tel:…).';
 const MISSING_ADDRESS = 'Enter where the link goes.';
-const TEXT_LABEL = 'Text';
 const LINK_TO_LABEL = 'Link to';
 const NEW_TAB_LABEL = 'Open in new tab';
 const REMOVE_LABEL = 'Remove link';
@@ -27,6 +27,7 @@ const SAVE_LABEL = 'Save';
 export type LinkTargetFormProps = {
     initial: LinkValue;
     policy: LinkPolicy;
+    labels: LinkLabels;
     /**
      * Turns the "Link to" field into a search over the app's pages.
      */
@@ -72,7 +73,7 @@ const resolveMode = (props: LinkTargetFormProps): FormMode => {
  * Input is validated on save, with the reason announced under the field.
  */
 export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
-    const { initial, policy, search, onCancel, onRemove } = props;
+    const { initial, policy, labels, search, onCancel, onRemove } = props;
     const { textField, onSave } = resolveMode(props);
     // A stored link without a string target opens the form empty rather than uncontrolled.
     const [typed, setTyped] = useState(typeof initial.href === 'string' ? initial.href : '');
@@ -110,7 +111,7 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
                 setError(UNREADABLE);
             } else {
                 // A policy with nothing to name cannot be what refused it.
-                let reason = describeAllowed(policy);
+                let reason = describeAllowed(policy, labels);
                 if (reason === '') {
                     reason = UNREADABLE;
                 }
@@ -149,7 +150,7 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
         <div className={styles.fields}>
             {textField === null ? null : (
                 <div className={styles.field}>
-                    <Label htmlFor={textId}>{TEXT_LABEL}</Label>
+                    <Label htmlFor={textId}>{labels.text}</Label>
                     <TextInput
                         id={textId}
                         ref={textFieldRef}
@@ -170,6 +171,7 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
                     errorId={errorId}
                     search={search}
                     policy={policy}
+                    labels={labels}
                     onChange={(next) => {
                         setTyped(next);
                         setError(null);
