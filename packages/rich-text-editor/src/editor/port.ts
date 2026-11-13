@@ -49,8 +49,11 @@ export type MountedDocument = {
     destroy(): void;
 };
 
-/** Attributes to set on the editable element by name; `null` removes one. */
-export type EditableAttributes = Readonly<Record<string, string | null>>;
+/** The attributes the shell may set on the editable element: the pointers from the text to an open list. */
+export type EditableAriaAttribute = 'aria-controls' | 'aria-activedescendant';
+
+/** Values for the attributes to change, by name; `null` removes one and an absent name is left alone. */
+export type EditableAttributes = Readonly<Partial<Record<EditableAriaAttribute, string | null>>>;
 
 /** What a live editor offers the shell: the commands, and where the selection is on screen. */
 export type EditorHandle = {

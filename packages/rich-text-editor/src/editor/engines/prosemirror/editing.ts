@@ -196,7 +196,7 @@ const mount = ({
                 for (const [name, value] of Object.entries(next)) {
                     if (value === null) {
                         editorView.dom.removeAttribute(name);
-                    } else {
+                    } else if (value !== undefined) {
                         editorView.dom.setAttribute(name, value);
                     }
                 }
