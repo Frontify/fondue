@@ -43,5 +43,6 @@ export const boldPlugin = /* @__PURE__ */ definePlugin({
     content: boldContent,
     toolbarGroup: 'marks',
     toolbar: [{ label: 'Bold', icon: IconTextFormatBold, shortcut: 'Mod-b' }],
-    inputRules: [{ delimiter: '**' }, { delimiter: '__' }],
+    // Bounded by words, so `foo__bar__` and `self.__dict__` stay as typed.
+    inputRules: [{ delimiter: '**' }, { delimiter: '__', wordBounded: true }],
 });
