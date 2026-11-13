@@ -114,15 +114,15 @@ const labelOf = (username: string, trigger: string, kind: MentionKind | undefine
 };
 
 /**
- * Dev-only warning, once per mention id, for a resolver that threw or answered
- * with no known status; that mention shows its stored value.
+ * Dev-only warning, once per mention id, for a resolver that answered with no
+ * known status; that mention shows its stored value.
  */
-const warnResolveFailed = (mention: MentionValue, problem: unknown): void => {
+const warnUnknownAnswer = (mention: MentionValue, answer: unknown): void => {
     const id = storedString(mention.id);
     warnOnce(
-        `mention-resolve-failed:${id}`,
-        `[RichTextEditor] The mention resolver failed for "${id}", so its stored name is shown.`,
-        problem,
+        `mention-resolve-unknown-answer:${id}`,
+        `[RichTextEditor] The mention resolver answered with no known status for "${id}", so its stored name is shown.`,
+        answer,
     );
 };
 
@@ -144,23 +144,18 @@ const isResolution = (answer: unknown): answer is MentionResolution =>
     Object.prototype.hasOwnProperty.call(RESOLUTION_STATUSES, answer.status);
 
 /**
- * What the app knows now about a mention: a throw or an unknown answer means it
- * does not know, so only that mention falls back to its stored value and the
- * others still resolve.
+ * What the app knows now about a mention: an answer with no known status means
+ * it does not know, so only that mention falls back to its stored value and the
+ * others still resolve. A throw from `resolve` is not caught: it is the app's
+ * error, and reaches the editor's `onError` where the mention is drawn.
  */
 const resolutionOf = (mention: MentionValue, resolve: MentionResolve | undefined): MentionResolution | undefined => {
     if (resolve === undefined) {
         return undefined;
     }
-    let answer: unknown;
-    try {
-        answer = resolve(mention);
-    } catch (error) {
-        warnResolveFailed(mention, error);
-        return { status: 'unknown' };
-    }
+    const answer: unknown = resolve(mention);
     if (!isResolution(answer)) {
-        warnResolveFailed(mention, answer);
+        warnUnknownAnswer(mention, answer);
         return { status: 'unknown' };
     }
     return answer;
@@ -169,7 +164,7 @@ const resolutionOf = (mention: MentionValue, resolve: MentionResolve | undefined
 /**
  * What a mention shows, from the stored value and what the app knows now: the
  * current username and name, or the stored ones when the person is unavailable.
- * The stored value is never changed. A throw from `href` is not caught.
+ * The stored value is never changed. A throw from `resolve` or `href` is not caught.
  */
 export const mentionDisplay = (
     mention: MentionValue,
