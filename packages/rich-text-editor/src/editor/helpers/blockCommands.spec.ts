@@ -57,7 +57,6 @@ describe('the active command', () => {
                 block: { type: 'x' },
                 blocks: [{ type: 'x' }],
                 marks: {},
-                attributes: {},
                 history: { canUndo: false, canRedo: false },
             }),
         ).toBe(heading);
@@ -78,7 +77,6 @@ describe('the active command', () => {
             block: blocks[0] ?? null,
             blocks,
             marks: {},
-            attributes: {},
             history: { canUndo: false, canRedo: false },
         };
 
@@ -92,7 +90,6 @@ describe('the active command', () => {
             block: { type: types[0] ?? '' },
             blocks: types.map((type) => ({ type })),
             marks: {},
-            attributes: {},
             history: { canUndo: false, canRedo: false },
         });
 

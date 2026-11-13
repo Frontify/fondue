@@ -14,14 +14,12 @@ import { type Command, type EditorState, NodeSelection, TextSelection, type Tran
 import { type EditorView } from 'prosemirror-view';
 
 import {
-    type BlockAttributeToggle,
     type ClearMarksOptions,
     type ClearMarksScope,
     type EditorControlApi,
     INLINE_PLACEHOLDER,
     isEmpty,
     type PluginRegistry,
-    type RteAttributeState,
     type RteMarkState,
     type RteSelectionSnapshot,
 } from '#/core';
@@ -125,48 +123,7 @@ const blocksAt = (state: EditorState): Pick<RteSelectionSnapshot, 'block' | 'blo
     return { block, blocks };
 };
 
-/**
- * How one block attribute is carried by the text blocks the selection touches, or null when none declares it. The one
- * rule the snapshot's `attributes` and `blocks.toggleAttribute` both follow.
- */
-const attributeStateAt = (state: EditorState, name: string): RteAttributeState | null => {
-    const { from, to } = state.selection;
-    let declared = false;
-    let uniform = true;
-    let first: unknown = null;
-    state.doc.nodesBetween(from, to, (node) => {
-        if (node.isTextblock && name in node.attrs) {
-            const value: unknown = node.attrs[name] ?? null;
-            if (!declared) {
-                declared = true;
-                first = value;
-            } else if (value !== first) {
-                uniform = false;
-            }
-        }
-    });
-    if (!declared) {
-        return null;
-    }
-    if (!uniform) {
-        return { coverage: 'some' };
-    }
-    return { coverage: 'all', value: first };
-};
-
-/** The block attributes plugins add to every text block, as the selection carries them. */
-const attributesAt = (state: EditorState, { blockAttributes }: PluginRegistry): RteSelectionSnapshot['attributes'] => {
-    const attributes: RteSelectionSnapshot['attributes'] = {};
-    for (const name of blockAttributes.keys()) {
-        const attributeState = attributeStateAt(state, name);
-        if (attributeState !== null) {
-            attributes[name] = attributeState;
-        }
-    }
-    return attributes;
-};
-
-const snapshotOf = (state: EditorState, registry: PluginRegistry): RteSelectionSnapshot => {
+const snapshotOf = (state: EditorState): RteSelectionSnapshot => {
     const { from, to, empty } = state.selection;
     return {
         isCollapsed: empty,
@@ -174,12 +131,11 @@ const snapshotOf = (state: EditorState, registry: PluginRegistry): RteSelectionS
         text: empty ? '' : state.doc.textBetween(from, to, ' '),
         ...blocksAt(state),
         marks: marksAt(state),
-        attributes: attributesAt(state, registry),
         history: { canUndo: undoDepth(state) > 0, canRedo: redoDepth(state) > 0 },
     };
 };
 
-const createSelectionApi = (getView: () => EditorView, registry: PluginRegistry): EditorControlApi['selection'] => {
+const createSelectionApi = (getView: () => EditorView): EditorControlApi['selection'] => {
     // Every feature's UI reads the same snapshot, so it is built once per
     // (immutable, hence identity-keyed) editor state.
     let cached: { state: EditorState; snapshot: RteSelectionSnapshot } | null = null;
@@ -188,7 +144,7 @@ const createSelectionApi = (getView: () => EditorView, registry: PluginRegistry)
         get() {
             const { state } = getView();
             if (cached?.state !== state) {
-                cached = { state, snapshot: snapshotOf(state, registry) };
+                cached = { state, snapshot: snapshotOf(state) };
             }
             return cached.snapshot;
         },
@@ -464,18 +420,6 @@ const createBlockApi = (
             view.focus();
         },
         updateAttributes: applyToTextBlocks,
-        toggleAttribute(name, value): BlockAttributeToggle {
-            const attributeState = attributeStateAt(getView().state, name);
-            if (attributeState === null) {
-                return 'unchanged';
-            }
-            if (attributeState.coverage === 'all' && attributeState.value === (value ?? null)) {
-                applyToTextBlocks({ [name]: null });
-                return 'removed';
-            }
-            applyToTextBlocks({ [name]: value });
-            return 'set';
-        },
         resetAttributes() {
             // Resets whichever attributes features inject into text blocks; names none.
             applyToTextBlocks(
@@ -582,7 +526,7 @@ export const createControlApi = (
     };
 
     return {
-        selection: createSelectionApi(getView, registry),
+        selection: createSelectionApi(getView),
         marks: createMarkApi(getView, schema, registry, dispatch),
         blocks: createBlockApi(getView, schema, registry, dispatch),
         lists: createListApi(getView, schema, registry, dispatch),

@@ -57,12 +57,16 @@ export const alignContent = defineContent({
     },
 });
 
+type AlignValue = NonNullable<AlignAttribute['align']>;
+
+/** The keys are literals because a computed key keeps this plugin in the renderer; this type ties each alignment to one. */
+type AlignShortcut = 'Mod-Shift-l' | 'Mod-Shift-e' | 'Mod-Shift-r' | 'Mod-Shift-j';
+
 type Alignment = {
-    value: NonNullable<AlignAttribute['align']>;
+    value: AlignValue;
     icon: FondueIcon;
     title: string;
-    shortcut: keyof typeof hotkeys;
-    announcement: string;
+    shortcut: AlignShortcut;
 };
 
 const LEFT: Alignment = {
@@ -70,7 +74,6 @@ const LEFT: Alignment = {
     icon: IconTextAlignmentLeft,
     title: 'Align left',
     shortcut: 'Mod-Shift-l',
-    announcement: 'Aligned left',
 };
 
 const CENTER: Alignment = {
@@ -78,7 +81,6 @@ const CENTER: Alignment = {
     icon: IconTextAlignmentCentre,
     title: 'Align center',
     shortcut: 'Mod-Shift-e',
-    announcement: 'Centered',
 };
 
 const RIGHT: Alignment = {
@@ -86,7 +88,6 @@ const RIGHT: Alignment = {
     icon: IconTextAlignmentRight,
     title: 'Align right',
     shortcut: 'Mod-Shift-r',
-    announcement: 'Aligned right',
 };
 
 const JUSTIFY: Alignment = {
@@ -94,42 +95,95 @@ const JUSTIFY: Alignment = {
     icon: IconTextAlignmentJustify,
     title: 'Justify',
     shortcut: 'Mod-Shift-j',
-    announcement: 'Justified',
 };
 
 const ALIGNMENTS: readonly Alignment[] = [LEFT, CENTER, RIGHT, JUSTIFY];
 
-const CLEARED_ANNOUNCEMENT = 'Alignment cleared';
+const DEFAULT_LEFT_ANNOUNCEMENT = 'Aligned left';
+const DEFAULT_CENTER_ANNOUNCEMENT = 'Centered';
+const DEFAULT_RIGHT_ANNOUNCEMENT = 'Aligned right';
+const DEFAULT_JUSTIFY_ANNOUNCEMENT = 'Justified';
+const DEFAULT_CLEARED_ANNOUNCEMENT = 'Alignment cleared';
 
-/** What the selected blocks show: their one alignment, left for blocks without one, or nothing when they differ. */
-const alignOf = ({ attributes }: RteSelectionSnapshot): AlignAttribute['align'] | null => {
-    const state = attributes[ALIGN_ATTRIBUTE];
-    if (state === undefined || state.coverage === 'some') {
-        return null;
+/**
+ * What the alignment buttons and keys say to screen readers, with a default of English.
+ */
+export type AlignPluginOptions = {
+    /**
+     * Said after the left alignment is chosen.
+     *
+     * @default 'Aligned left'
+     */
+    leftAnnouncement?: string;
+    /**
+     * Said after the center alignment is chosen.
+     *
+     * @default 'Centered'
+     */
+    centerAnnouncement?: string;
+    /**
+     * Said after the right alignment is chosen.
+     *
+     * @default 'Aligned right'
+     */
+    rightAnnouncement?: string;
+    /**
+     * Said after the justified alignment is chosen.
+     *
+     * @default 'Justified'
+     */
+    justifyAnnouncement?: string;
+    /**
+     * Said after the alignment the block already had is chosen again, which removes it.
+     *
+     * @default 'Alignment cleared'
+     */
+    clearedAnnouncement?: string;
+};
+
+/** What is said after each choice; the alignment values name their own entry. */
+type AlignAnnouncements = Record<AlignValue | 'cleared', string>;
+
+const announcementsOf = (options: AlignPluginOptions): AlignAnnouncements => ({
+    left: options.leftAnnouncement ?? DEFAULT_LEFT_ANNOUNCEMENT,
+    center: options.centerAnnouncement ?? DEFAULT_CENTER_ANNOUNCEMENT,
+    right: options.rightAnnouncement ?? DEFAULT_RIGHT_ANNOUNCEMENT,
+    justify: options.justifyAnnouncement ?? DEFAULT_JUSTIFY_ANNOUNCEMENT,
+    cleared: options.clearedAnnouncement ?? DEFAULT_CLEARED_ANNOUNCEMENT,
+});
+
+/** The alignment of the block the selection is in, which is none when the block has not been given one. */
+const alignOf = ({ block }: RteSelectionSnapshot): AlignAttribute['align'] =>
+    // The block carries the attribute this plugin added, which the structural node type does not know about.
+    (block as AlignAttribute | null)?.align;
+
+type ChooseAlignmentParams = {
+    api: EditorControlApi;
+    value: AlignValue;
+    announcements: AlignAnnouncements;
+};
+
+/** What a toolbar button and its key both do: set the alignment, or clear it when the block already has it, and say so. */
+const chooseAlignment = ({ api, value, announcements }: ChooseAlignmentParams): void => {
+    let next: AlignValue | null = value;
+    let announcement = announcements[value];
+    // Choosing the alignment already set clears it, so the block inherits the editor's direction again.
+    if (alignOf(api.selection.get()) === value) {
+        next = null;
+        announcement = announcements.cleared;
     }
+    api.blocks.updateAttributes({ [ALIGN_ATTRIBUTE]: next });
+    api.announce(announcement);
+};
+
+type AlignToolbarProps = ToolbarItemProps & { announcements: AlignAnnouncements };
+
+const AlignToolbar = ({ api, selection, label, announcements }: AlignToolbarProps) => {
     // A block without one reads left to right, so left is what it shows.
-    return isAlignment(state.value) ? state.value : 'left';
-};
-
-const alignFromKeyboard = (api: EditorControlApi, { value, announcement }: Alignment) => {
-    // Choosing the alignment every selected block already has clears it, so they inherit the editor's direction again.
-    switch (api.blocks.toggleAttribute(ALIGN_ATTRIBUTE, value)) {
-        case 'removed':
-            api.announce(CLEARED_ANNOUNCEMENT);
-            return;
-        case 'set':
-            api.announce(announcement);
-            return;
-        case 'unchanged':
-            return;
-    }
-};
-
-const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
-    const current = alignOf(selection);
+    const current = alignOf(selection) ?? 'left';
     return (
         // One choice of four, so a radio group: the checked one is the
-        // blocks' alignment, none when they differ.
+        // block's alignment.
         <div role="radiogroup" aria-label={label} className={styles.group}>
             {ALIGNMENTS.map(({ value, icon: Icon, title, shortcut }) => (
                 // A <button> underneath, which the toolbar gives its tabIndex.
@@ -141,7 +195,7 @@ const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
                     title={title}
                     shortcut={shortcut}
                     onClick={() => {
-                        api.blocks.toggleAttribute(ALIGN_ATTRIBUTE, value);
+                        chooseAlignment({ api, value, announcements });
                     }}
                 >
                     <Icon size={TOOLBAR_ICON_SIZE} />
@@ -151,29 +205,35 @@ const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
     );
 };
 
-/** The keys are literals because a computed key keeps this plugin in the renderer; each alignment's `shortcut` type ties it to one. */
-const hotkeys = {
-    'Mod-Shift-l': (api) => {
-        alignFromKeyboard(api, LEFT);
-    },
-    'Mod-Shift-e': (api) => {
-        alignFromKeyboard(api, CENTER);
-    },
-    'Mod-Shift-r': (api) => {
-        alignFromKeyboard(api, RIGHT);
-    },
-    'Mod-Shift-j': (api) => {
-        alignFromKeyboard(api, JUSTIFY);
-    },
-} satisfies Record<string, HotkeyHandler>;
-
 /**
- * Text alignment, with a four-way radio group in the toolbar
+ * Text alignment, with a four-way radio group in the toolbar and a key for each alignment
  */
-export const alignPlugin = /* @__PURE__ */ definePlugin({
-    id: 'align',
-    content: alignContent,
-    toolbarGroup: 'align',
-    toolbar: [{ label: 'Alignment', render: AlignToolbar, floating: 'inline' }],
-    hotkeys,
-});
+export const alignPlugin = (options: AlignPluginOptions = {}) => {
+    const announcements = announcementsOf(options);
+    return definePlugin({
+        id: 'align',
+        content: alignContent,
+        toolbarGroup: 'align',
+        toolbar: [
+            {
+                label: 'Alignment',
+                render: (props) => <AlignToolbar {...props} announcements={announcements} />,
+                floating: 'inline',
+            },
+        ],
+        hotkeys: {
+            'Mod-Shift-l': (api) => {
+                chooseAlignment({ api, value: 'left', announcements });
+            },
+            'Mod-Shift-e': (api) => {
+                chooseAlignment({ api, value: 'center', announcements });
+            },
+            'Mod-Shift-r': (api) => {
+                chooseAlignment({ api, value: 'right', announcements });
+            },
+            'Mod-Shift-j': (api) => {
+                chooseAlignment({ api, value: 'justify', announcements });
+            },
+        } satisfies Record<AlignShortcut, HotkeyHandler>,
+    });
+};

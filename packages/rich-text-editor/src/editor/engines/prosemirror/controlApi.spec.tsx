@@ -822,65 +822,6 @@ describe('block attributes', () => {
         ]);
     });
 
-    it('toggle on only when some block lacks the value, and off when every block has it', () => {
-        const editor = editorWith(plugins, [
-            { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },
-            paragraph(text('two')),
-        ]);
-        editor.selectBetween('one', 'two');
-
-        expect(editor.api.blocks.toggleAttribute('align', 'center')).toBe('set');
-        expect(editor.stored()).toEqual([
-            { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },
-            { type: 'paragraph', align: 'center', children: [{ text: 'two' }] },
-        ]);
-
-        expect(editor.api.blocks.toggleAttribute('align', 'center')).toBe('removed');
-        expect(editor.stored()).toEqual([paragraph(text('one')), paragraph(text('two'))]);
-    });
-
-    it('toggle changes nothing when no selected block declares the attribute', () => {
-        const editor = editorWith(plugins, [paragraph(text('a')), { type: 'divider' }, paragraph(text('b'))]);
-        editor.view.dispatch(editor.view.state.tr.setSelection(NodeSelection.create(editor.view.state.doc, 3)));
-
-        expect(editor.api.blocks.toggleAttribute('align', 'center')).toBe('unchanged');
-        expect(editor.onDocChange).not.toHaveBeenCalled();
-    });
-
-    it('are in the snapshot with their value when every selected text block has it', () => {
-        const editor = editorWith(plugins, [
-            { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },
-            { type: 'textStyle', style: 'heading2', align: 'center', children: [{ text: 'two' }] },
-        ]);
-        editor.selectBetween('one', 'two');
-
-        expect(editor.api.selection.get().attributes).toEqual({ align: { coverage: 'all', value: 'center' } });
-    });
-
-    it('are in the snapshot as unset when no selected text block has a value', () => {
-        const editor = editorWith(plugins, [paragraph(text('plain'))]);
-        editor.caretAfter('pla');
-
-        expect(editor.api.selection.get().attributes).toEqual({ align: { coverage: 'all', value: null } });
-    });
-
-    it('are in the snapshot as partial when the selected text blocks differ', () => {
-        const editor = editorWith(plugins, [
-            { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },
-            paragraph(text('two')),
-        ]);
-        editor.selectBetween('one', 'two');
-
-        expect(editor.api.selection.get().attributes).toEqual({ align: { coverage: 'some' } });
-    });
-
-    it('are left out of the snapshot when no selected text block declares them', () => {
-        const editor = editorWith(plugins, [paragraph(text('a')), { type: 'divider' }, paragraph(text('b'))]);
-        editor.view.dispatch(editor.view.state.tr.setSelection(NodeSelection.create(editor.view.state.doc, 3)));
-
-        expect(editor.api.selection.get().attributes).toEqual({});
-    });
-
     it('go back to their defaults on reset, the block type kept', () => {
         const editor = editorWith(plugins, [
             { type: 'paragraph', align: 'center', children: [{ text: 'one' }] },

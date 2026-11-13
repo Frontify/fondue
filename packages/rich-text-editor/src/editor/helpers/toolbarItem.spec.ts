@@ -34,7 +34,6 @@ const snapshot = (overrides: Partial<RteSelectionSnapshot> = {}): RteSelectionSn
     block: { type: PARAGRAPH },
     blocks: [{ type: PARAGRAPH }],
     marks: {},
-    attributes: {},
     history: { canUndo: false, canRedo: false },
     ...overrides,
 });
@@ -91,7 +90,6 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
         blocks: {
             setType: (type, value) => setBlocks([{ type, ...value }, ...selection.blocks.slice(1)]),
             updateAttributes: () => {},
-            toggleAttribute: () => 'set',
             resetAttributes: () => {},
         },
         lists: {

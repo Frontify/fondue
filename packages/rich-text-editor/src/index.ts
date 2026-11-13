@@ -3,7 +3,6 @@
 import { createElement, type ReactNode } from 'react';
 
 import {
-    type BlockAttributeToggle as AttributeToggle,
     type BlockDefinition,
     type DefaultStyle,
     type EditorControlApi,
@@ -23,7 +22,6 @@ import {
     type PasteSource,
     type ClearMarksOptions as ClearOptions,
     type ClearMarksScope as ClearScope,
-    type RteAttributeState,
     type RteBlockCommand,
     type RteBlockNode,
     type RteContent,
@@ -148,6 +146,7 @@ export { underlineContent, underlinePlugin } from './plugins/Underline';
 
 // --- Plugin options ---
 
+export { type AlignPluginOptions } from './plugins/Align';
 export { type BlurOnBreakPluginOptions } from './plugins/BlurOnBreak';
 export { type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './plugins/Emoji';
@@ -165,6 +164,7 @@ export {
     type MentionResolution,
     type MentionValue,
 } from './plugins/Mention';
+export { type ResetFormattingPluginOptions } from './plugins/ResetFormatting';
 export { type TextStylePluginOptions } from './plugins/TextStyle';
 export { type TypographyGroup, type TypographyPluginOptions } from './plugins/Typography';
 
@@ -201,10 +201,8 @@ export declare namespace RtePlugin {
     export type SelectionSnapshot = RteSelectionSnapshot;
     export type MarkState = RteMarkState;
     export type BlockCommand = RteBlockCommand;
-    export type BlockAttributeToggle = AttributeToggle;
     export type ClearMarksOptions = ClearOptions;
     export type ClearMarksScope = ClearScope;
-    export type AttributeState = RteAttributeState;
     export type ToolbarItemProps = ToolbarProps;
     export type ToolbarGroup = RteToolbarGroup;
     export type PasteHandler = OnPaste;
