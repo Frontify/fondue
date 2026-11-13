@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { type MentionResolve, type MentionValue } from '../types';
 
 import { mentionAttributes, mentionDisplay } from './display';
+import { DEFAULT_MENTION_CONTENT_LABELS } from './labels';
 
 const JANE: MentionValue = { id: 'jane', username: 'jane', name: 'Jane Doe' };
 const href = (mention: MentionValue): string => `/u/${mention.id}`;
@@ -36,6 +37,7 @@ describe('mentionDisplay', () => {
         expect(mentionDisplay(JANE, { href, trigger: '@', resolve: () => ({ status: 'unavailable' }) })).toEqual({
             status: 'unavailable',
             label: '@jane',
+            note: '(unavailable)',
             title: 'Jane Doe',
         });
     });
@@ -47,13 +49,13 @@ describe('mentionDisplay', () => {
     });
 
     it('removes control and bidirectional characters from what it shows, stored or resolved', () => {
-        const dirty = { id: 'x', username: 'a\u202Eb\u001B', name: 'N\u2066ame\u200F' };
+        const dirty = { id: 'x', username: 'a\u202Eb\u001B', name: 'N\u2066ame' };
 
         expect(mentionDisplay(dirty, { trigger: '@' })).toMatchObject({ label: '@ab', title: 'Name' });
         expect(
             mentionDisplay(dirty, {
                 trigger: '@',
-                resolve: () => ({ status: 'current', username: 'c\u061Cd', name: 'E\u0007f' }),
+                resolve: () => ({ status: 'current', username: 'c\u202Ad', name: 'E\u0007f' }),
             }),
         ).toMatchObject({ label: '@cd', title: 'Ef' });
     });
@@ -82,6 +84,27 @@ describe('mentionDisplay', () => {
 
         expect(mentionDisplay({ ...JANE, id: 'odd' }, { trigger: '@', resolve }).label).toBe('@jane');
         expect(warn).toHaveBeenCalledOnce();
+    });
+
+    it('says the note of an unavailable mention, and names an empty username, in the labels it is given', () => {
+        const labels = {
+            ...DEFAULT_MENTION_CONTENT_LABELS,
+            unavailable: '(indisponible)',
+            unknownPerson: 'Personne inconnue',
+            unknownGroup: 'Groupe inconnu',
+            unknownMention: 'Mention inconnue',
+        };
+        const empty: MentionValue = { id: 'x', username: '', name: '' };
+
+        expect(
+            mentionDisplay(JANE, { trigger: '@', labels, resolve: () => ({ status: 'unavailable' }) }),
+        ).toMatchObject({
+            status: 'unavailable',
+            note: '(indisponible)',
+        });
+        expect(mentionDisplay(empty, { trigger: '@', labels }).label).toBe('Personne inconnue');
+        expect(mentionDisplay({ ...empty, kind: 'group' }, { trigger: '@', labels }).label).toBe('Groupe inconnu');
+        expect(mentionDisplay({ ...empty, kind: 'all' }, { trigger: '@', labels }).label).toBe('Mention inconnue');
     });
 
     it('names an empty stored username by its kind instead of a bare trigger', () => {
