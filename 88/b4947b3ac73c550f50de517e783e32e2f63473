@@ -1,0 +1,56 @@
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_53de767222940a::t_a1232170819e11 46
+  s_53de767222940a::t_91495e45f4ca82 679-702
+.changeset/feat-rte-typing-rules.md
+  s_53de767222940a::t_98d25004176005 1-4
+packages/rich-text-editor/src/core/plugin.ts
+  s_53de767222940a::t_a7e313ffa6ffa7 411-414
+  s_53de767222940a::t_8a16a9371c62c1 408-410,416
+packages/rich-text-editor/src/plugins/Typography/Typography.spec.ts
+  s_53de767222940a::t_fe662ee4cab187 11,20,26-34
+  s_53de767222940a::t_6c55151a3615f9 35
+packages/rich-text-editor/src/plugins/Typography/index.ts
+  s_53de767222940a::t_b13120221c228e 3
+packages/rich-text-editor/src/index.ts
+  s_53de767222940a::t_6bbdd41d07a7a6 133
+packages/rich-text-editor/src/editor/engines/prosemirror/textRules.spec.tsx
+  s_53de767222940a::t_e35df00b885e56 146-148,152-154,156-157,165-171,173-175
+  s_53de767222940a::t_c135ff1c3a81ed 172
+  s_53de767222940a::t_6bbdd41d07a7a6 29
+  s_53de767222940a::t_976209d023bff9 184-185,189
+  s_53de767222940a::t_fa79aff1436882 81,83-86,88-89,91-94,96-97,99-122,129,133-134,137-145,155,158-164,176-183,186-188,190-229
+  s_53de767222940a::t_831af26f037f4e 82,87,90,95,98
+packages/rich-text-editor/src/__tests__/formatRegression.spec.tsx
+  s_53de767222940a::t_6bbdd41d07a7a6 34
+packages/rich-text-editor/src/plugins/Typography/Typography.ts
+  s_53de767222940a::t_1825d192251be4 41
+  s_53de767222940a::t_3bfbcc8f1a5326 15,18,23,29
+  s_53de767222940a::t_a90f36aaa97d50 64
+  s_53de767222940a::t_c67dbc2f44ad53 96
+  s_53de767222940a::t_944682d78ee38a 30-37
+  s_53de767222940a::t_7827b13dce997b 94
+  s_53de767222940a::t_80c713e7f1a930 5,7-8,10-13,16,20-22,24-26,66-78,80-93,95,97-104,108-110,112-116
+  s_53de767222940a::t_1189968e3df0c5 79
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_53de767222940a::t_6d65d798e9dc1c 289-296,303-305,307,310,312-314,317-322,325-326,328
+  s_53de767222940a::t_f894dabf567b4f 297-300,311
+  s_53de767222940a::t_2651f02bf2c6fc 323
+  s_53de767222940a::t_f7ca62227e5ec7 327
+  s_53de767222940a::t_579602d10fa63c 315-316,324
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "88b4947b3ac73c550f50de517e783e32e2f63473",
+  "prompts": {},
+  "sessions": {
+    "s_53de767222940a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6f9b7337-8455-4b7f-ac95-dde194f54be3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
