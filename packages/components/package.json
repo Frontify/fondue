@@ -1,6 +1,6 @@
 {
     "name": "@frontify/fondue-components",
-    "version": "37.0.0-beta.1",
+    "version": "37.0.0-rc",
     "homepage": "https://github.com/Frontify/fondue",
     "bugs": {
         "url": "https://github.com/frontify/fondue/issues"
