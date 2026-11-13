@@ -385,9 +385,7 @@ type Draft = {
     commands: RteBlockCommand[];
     commandOwners: Map<string, string>;
     descriptions: string[];
-    /**
-     * How often each id has come up so far, for unique toolbar keys
-     */
+    /** How often each id has come up so far, for unique toolbar keys. */
     seenIds: Map<string, number>;
     duplicateIds: Set<string>;
     editOwners: Map<string, string>;
