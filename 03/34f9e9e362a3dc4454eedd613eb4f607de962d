@@ -1,0 +1,49 @@
+packages/rich-text-editor/src/core/index.ts
+  s_7cb3c06237ec80::t_aa16131dd5846f 28
+packages/rich-text-editor/src/core/plugin.ts
+  s_7cb3c06237ec80::t_40e07ce7af0919 278-279,331,337-338,370-393
+packages/rich-text-editor/src/core/registry.spec.ts
+  s_a585d10f570924::t_e643776aa4fd23 64-81
+packages/rich-text-editor/src/core/registry.ts
+  s_7cb3c06237ec80::t_53e97a191d7996 409-435,617
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.ts
+  s_7cb3c06237ec80::t_94d7fe3259b26f 264
+packages/rich-text-editor/src/editor/engines/prosemirror/paste.spec.tsx
+  s_7cb3c06237ec80::t_1204c708b04848 7,189-216
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteRules.ts
+  s_7cb3c06237ec80::t_3fa6f30a3d49fe 12,16,62,64,68,77-86,88,90-92,95,97-98,101-102,104-112,115,127,133,158,160-164,177
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.ts
+  s_a585d10f570924::t_2e75fdbb4d9b3a 25-32,138,141,145,148-152,156-157,209,211
+packages/rich-text-editor/src/index.ts
+  s_7cb3c06237ec80::t_7e6c66f575e77a 7,165,186
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_7cb3c06237ec80::t_7db1f7ec9f8698 3,5,25-31,64-66
+packages/rich-text-editor/src/plugins/TextStyle/TextStyle.tsx
+  s_7cb3c06237ec80::t_7d230e10c5374d 4,16-17,44-48,59
+packages/rich-text-editor/src/plugins/shared/helpers/declaredStyle.ts
+  s_a585d10f570924::t_a5dd77a636abe4 83-101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0334f9e9e362a3dc4454eedd613eb4f607de962d",
+  "prompts": {},
+  "sessions": {
+    "s_7cb3c06237ec80": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9e20dfb6-e7cb-4f6b-acc0-285cb775c2c8",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_a585d10f570924": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12fffd99-7ec0-43c7-a09b-65001cf93f56",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
