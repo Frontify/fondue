@@ -2,7 +2,7 @@
 
 import { type CSSProperties } from 'react';
 
-import { type RteDocument } from '../../index';
+import { type RteDocument, type TextStyleName } from '../../index';
 
 // Shared by the fixtures and the tests. Apart from the fixture components, because a component
 // test cannot import plain values from the file holding the components it mounts.
@@ -25,6 +25,16 @@ export const ALL_PRESETS_DOCUMENT: RteDocument = {
         { type: 'textStyle', style: 'custom3', children: [{ text: 'Custom 3' }] },
         { type: 'textStyle', style: 'imageTitle', children: [{ text: 'Image title' }] },
         { type: 'textStyle', style: 'imageCaption', children: [{ text: 'Image caption' }] },
+    ],
+};
+
+/** A style this version does not know, as a newer version writes it, with a paragraph after it. */
+export const UNKNOWN_STYLE_DOCUMENT: RteDocument = {
+    version: 1,
+    blocks: [
+        // The type names the styles this version knows; a newer version writes others.
+        { type: 'textStyle', style: 'fromANewerVersion' as TextStyleName, children: [{ text: 'Unknown style' }] },
+        { type: 'paragraph', children: [{ text: 'Paragraph' }] },
     ],
 };
 

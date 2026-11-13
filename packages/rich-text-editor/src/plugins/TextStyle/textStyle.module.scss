@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 @use '../../styles/look.module.scss';
-@use '../shared/mutedText' as muted;
+@use '../shared/mutedText' as shared;
 
 // Every preset. Headings use Fondue's semantic heading tokens, the rest the typography scale.
 // The presets table (helpers/presets.ts) reads these for both the block and the dropdown previews.
@@ -10,6 +10,13 @@
 $heading-line-height: 1.3;
 // A heading sits further from the block above than from its own text; the document zeroes the gap where none is above.
 $heading-margin-top: var(--rte-heading-gap, var(--spacing-medium));
+
+// A style this version does not know, from a newer one, is spaced like body text. It owns its margins like
+// every text style block, so the document leaves them to this class.
+.unknownStyle {
+    margin-top: 0;
+    margin-bottom: var(--rte-block-gap, 0);
+}
 
 .heading1 {
     @include look.look(
@@ -76,7 +83,7 @@ $heading-margin-top: var(--rte-heading-gap, var(--spacing-medium));
     @include look.look(
         'custom2',
         (
-            color: muted.$color,
+            color: shared.$color,
             font-size: var(--typography-font-size-medium),
             font-style: italic,
         )
@@ -108,7 +115,7 @@ $heading-margin-top: var(--rte-heading-gap, var(--spacing-medium));
     @include look.look(
         'image-caption',
         (
-            color: muted.$color,
+            color: shared.$color,
             font-size: var(--typography-font-size-x-small),
         )
     );

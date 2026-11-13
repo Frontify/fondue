@@ -30,6 +30,7 @@ import {
     presetsFor,
     type TextStyleName,
     type TextStyleOption,
+    UNKNOWN_STYLE_CLASS_NAME,
 } from './helpers/presets';
 
 // The block this plugin contributes; the package root assembles it into the
@@ -68,7 +69,7 @@ const textStyleBlockFor = (options: readonly TextStyleOption[]): BlockDefinition
         toHtml: ({ style }) => {
             const preset = findPreset(style);
             if (preset === undefined) {
-                return { tag: 'p', children: true };
+                return { tag: 'p', attrs: { class: UNKNOWN_STYLE_CLASS_NAME }, children: true };
             }
             const attrs: Record<string, string | undefined> = { class: preset.className };
             if (preset.tag === 'p') {

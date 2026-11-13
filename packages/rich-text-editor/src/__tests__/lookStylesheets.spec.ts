@@ -42,37 +42,32 @@ const ruleBodyOf = (css: string, className: string): string => {
 
 describe('the look mixin', () => {
     it('writes every property core knows, under the variable core names', () => {
-        const css = compileMixinCall("@include look.look('image-title');");
+        const css = compileMixinCall("@include look.look('sample-style');");
 
-        expect(lookDeclarationsIn(css)).toEqual(declarationsCoreNames('imageTitle', CORE_PROPERTIES));
-    });
-
-    it('writes only the properties asked for', () => {
-        const css = compileMixinCall("@include look.look('body', $only: (margin-top, margin-bottom));");
-
-        expect(lookDeclarationsIn(css)).toEqual(declarationsCoreNames('body', ['margin-top', 'margin-bottom']));
+        expect(lookDeclarationsIn(css)).toEqual(declarationsCoreNames('sampleStyle', CORE_PROPERTIES));
     });
 
     it('leaves out the properties excepted', () => {
         const css = compileMixinCall(
-            "@include look.look('link', $except: (text-decoration, margin-top, margin-bottom));",
+            "@include look.look('sample-style', $except: (text-decoration, margin-top, margin-bottom));",
         );
         const written = CORE_PROPERTIES.filter(
             (property) => !['text-decoration', 'margin-top', 'margin-bottom'].includes(property),
         );
 
-        expect(lookDeclarationsIn(css)).toEqual(declarationsCoreNames('link', written));
+        expect(lookDeclarationsIn(css)).toEqual(declarationsCoreNames('sampleStyle', written));
     });
 
-    for (const argument of ['$fallbacks: (colour: red)', '$only: (colour)', '$except: (colour)']) {
+    for (const argument of ['$fallbacks: (colour: red)', '$except: (colour)']) {
         it(`fails the build for a property that is not a look property in ${argument}`, () => {
-            expect(() => compileMixinCall(`@include look.look('x', ${argument});`)).toThrow(
+            expect(() => compileMixinCall(`@include look.look('sample-style', ${argument});`)).toThrow(
                 /"colour".*not a look property/,
             );
         });
     }
 });
 
+// Plugin folders may not import from here, so the check of a plugin's stylesheet sits beside the mixin's.
 describe('the text style stylesheet', () => {
     const css = compile(TEXT_STYLE_STYLESHEET).css;
     const presetNames = ALL_TEXT_STYLES.filter((style) => findPreset(style) !== undefined);

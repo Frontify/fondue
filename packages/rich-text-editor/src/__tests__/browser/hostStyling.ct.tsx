@@ -3,7 +3,6 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { type Locator } from '@playwright/test';
 
-import { DOCUMENT_TEST_ID } from '../../core/documentContract';
 import { type LinkLook, type TextLook, type TextStyleName } from '../../index';
 
 import { HostLooksPair } from './HostLooksPair';
@@ -19,6 +18,7 @@ import {
     QUOTES_DOCUMENT,
     SECTION_A_H1_COLOR,
     SECTION_B_H1_COLOR,
+    UNKNOWN_STYLE_DOCUMENT,
 } from './hostStylingValues';
 
 // Hosts set the look of each text style with `textStylePlugin({ presets })`. Without a
@@ -84,7 +84,8 @@ const computedLookOf = async (element: Locator): Promise<ComputedLook> => {
 const DOCUMENT_FONT_FAMILY = 'the document root font family';
 
 const computedLooksIn = async (surface: Locator): Promise<Record<TextStyleName, ComputedLook>> => {
-    const documentLook = await computedLookOf(surface.getByTestId(DOCUMENT_TEST_ID));
+    // The first heading's parent is the element the document is drawn in, in the editor and the renderer alike.
+    const documentLook = await computedLookOf(surface.locator(BLOCK_SELECTORS.heading1).locator('xpath=..'));
     const looks: Partial<Record<TextStyleName, ComputedLook>> = {};
     for (const name of STYLE_NAMES) {
         const look = await computedLookOf(surface.locator(BLOCK_SELECTORS[name]));
@@ -97,7 +98,7 @@ const computedLooksIn = async (surface: Locator): Promise<Record<TextStyleName, 
     return looks as Record<TextStyleName, ComputedLook>;
 };
 
-// Measured with the default theme on the parent branch before presets existed (7bb89f0e81), in Chromium and WebKit.
+// Fondue's looks as drawn before presets existed, measured with the default theme in Chromium and WebKit.
 const PLAIN: ComputedLook = {
     'font-family': DOCUMENT_FONT_FAMILY,
     'font-size': '14px',
@@ -244,6 +245,17 @@ test.describe('host styling of text styles', () => {
 
         expect(await computedLooksIn(component.getByTestId('renderer'))).toEqual(expected);
         expect(await computedLooksIn(component.getByTestId('editor'))).toEqual(expected);
+    });
+
+    test('spaces a style it does not know like body text, in the renderer and the editor', async ({ mount }) => {
+        const component = await mount(<HostStylingPair value={UNKNOWN_STYLE_DOCUMENT} />);
+
+        for (const surface of ['renderer', 'editor']) {
+            const unknown = component.getByTestId(surface).locator('p').first();
+
+            await expect(unknown).toHaveCSS('margin-top', '0px');
+            await expect(unknown).toHaveCSS('margin-bottom', BLOCK_GAP);
+        }
     });
 
     test('keeps Fondue looks for a value that resolves to an unset guideline variable', async ({ mount }) => {

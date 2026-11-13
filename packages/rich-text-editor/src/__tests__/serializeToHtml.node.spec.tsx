@@ -14,7 +14,6 @@ import {
     type RteDocumentOf,
     type RtePlugin,
 } from '../core';
-import { textStylePlugin } from '../plugins/TextStyle';
 import { serializeToHtml } from '../renderer/serializeToHtml';
 
 // Serializing where an app does it: on a server, with no page — no engine, no React, no `document`.
@@ -64,11 +63,14 @@ describe('serializing without a browser', () => {
         expect(html).toMatch(/^<h2>Hello<\/h2><p>Sent from <strong>a server<\/strong>\.<\/p><p><br\s*\/?><\/p>$/);
     });
 
-    it('carries a preset look on the root so a server render matches the browser', () => {
-        const html = serializeToHtml(doc, {
-            plugins: [textStylePlugin({ presets: { heading1: { fontSize: 'var(--f-theme-settings-h1-size)' } } })],
+    it('carries the custom properties a plugin sets on the root so a server render matches the browser', () => {
+        const styled = definePlugin({
+            id: 'styled',
+            content: defineContent({ contentProperties: { '--rte-sample-font-size': 'var(--f-size)' } }),
         });
 
-        expect(html).toContain('--rte-heading1-font-size: var(--f-theme-settings-h1-size);');
+        const html = serializeToHtml(doc, { plugins: [...features, styled] });
+
+        expect(html).toContain('--rte-sample-font-size: var(--f-size);');
     });
 });
