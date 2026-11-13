@@ -9,8 +9,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
     buildPluginRegistry,
+    defineContent,
     defineInline,
     defineMark,
+    definePlugin,
     emptyDocument,
     PARAGRAPH,
     type RteDocumentOf,
@@ -24,24 +26,28 @@ import { mountEditorForTests } from './editing';
  * and what happens then decides whether the editor is usable at all.
  */
 const plugins: RtePlugin[] = [
-    {
+    definePlugin({
         id: 'tag',
-        inlines: {
-            tag: defineInline<{ name: string }>({
-                toHtml: ({ name }) => ({ tag: 'span', children: name }),
-                parse: [],
-            }),
-        },
-    },
-    {
+        content: defineContent({
+            inlines: {
+                tag: defineInline<{ name: string }>({
+                    toHtml: ({ name }) => ({ tag: 'span', children: name }),
+                    parse: [],
+                }),
+            },
+        }),
+    }),
+    definePlugin({
         id: 'bold',
-        marks: {
-            bold: defineMark({
-                toHtml: () => ({ tag: 'strong', children: true }),
-                parse: [{ tag: 'strong' }],
-            }),
-        },
-    },
+        content: defineContent({
+            marks: {
+                bold: defineMark({
+                    toHtml: () => ({ tag: 'strong', children: true }),
+                    parse: [{ tag: 'strong' }],
+                }),
+            },
+        }),
+    }),
 ];
 
 const paragraph = (text: string): RteDocumentOf => ({

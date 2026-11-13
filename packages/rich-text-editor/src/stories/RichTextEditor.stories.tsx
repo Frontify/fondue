@@ -10,6 +10,7 @@ import {
     boldPlugin,
     columnBreakPlugin,
     defaultPlugins,
+    definePlugin,
     italicPlugin,
     linkPlugin,
     type MentionItem,
@@ -496,15 +497,21 @@ export const CommitOnBlur: Story = {
 };
 
 /** A toolbar item that throws when told to, standing in for any bug in a plugin's UI. */
-const crashingPlugin = (crash: boolean): RtePlugin => ({
-    id: 'crashing',
-    toolbarItem: () => {
-        if (crash) {
-            throw new Error('A toolbar item threw while rendering.');
-        }
-        return null;
-    },
-});
+const crashingPlugin = (crash: boolean): RtePlugin =>
+    definePlugin({
+        id: 'crashing',
+        toolbar: [
+            {
+                label: 'Crashing',
+                render: () => {
+                    if (crash) {
+                        throw new Error('A toolbar item threw while rendering.');
+                    }
+                    return null;
+                },
+            },
+        ],
+    });
 const WORKING_PLUGINS = [...defaultPlugins, crashingPlugin(false)];
 const CRASHING_PLUGINS = [...defaultPlugins, crashingPlugin(true)];
 
@@ -687,9 +694,9 @@ export const CommentBox: Story = {
                         value={doc}
                         onChange={setDoc}
                         plugins={[
-                            boldPlugin(),
-                            italicPlugin(),
-                            linkPlugin(),
+                            boldPlugin,
+                            italicPlugin,
+                            linkPlugin,
                             mentionPlugin({
                                 items: MENTIONABLE,
                                 href: profileHref,
@@ -807,7 +814,7 @@ export const TwoEditors: Story = {
                 </div>
                 <div className={LAYOUT}>
                     <div className={FRAME}>
-                        <RichTextEditor value={boldDoc} onChange={setBoldDoc} plugins={[boldPlugin()]} />
+                        <RichTextEditor value={boldDoc} onChange={setBoldDoc} plugins={[boldPlugin]} />
                     </div>
                     <pre className={JSON_PANEL}>{JSON.stringify(boldDoc, null, 2)}</pre>
                 </div>

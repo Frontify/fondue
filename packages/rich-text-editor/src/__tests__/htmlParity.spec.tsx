@@ -10,7 +10,9 @@ import { buildPluginRegistry } from '../core';
 import {
     columnBreakPlugin,
     defaultPlugins,
+    defineContent,
     defineMark,
+    definePlugin,
     mentionPlugin,
     type RteDocument,
     type RteDocumentWith,
@@ -126,20 +128,22 @@ describe('toHtml drawn by React and written out directly', () => {
 describe('a style value that could break out of its declaration', () => {
     // A plugin passing a stored value straight into `style`; the core drops
     // what it must not write, the same way on both paths.
-    const tintPlugin: RtePlugin = {
+    const tintPlugin: RtePlugin = definePlugin({
         id: 'tint',
-        marks: {
-            tint: defineMark<{ color: string }>({
-                defaults: { color: 'inherit' },
-                toHtml: ({ color }) => ({
-                    tag: 'span',
-                    attrs: { style: { color, 'font-weight': 'bold' } },
-                    children: true,
+        content: defineContent({
+            marks: {
+                tint: defineMark<{ color: string }>({
+                    defaults: { color: 'inherit' },
+                    toHtml: ({ color }) => ({
+                        tag: 'span',
+                        attrs: { style: { color, 'font-weight': 'bold' } },
+                        children: true,
+                    }),
+                    parse: [],
                 }),
-                parse: [],
-            }),
-        },
-    };
+            },
+        }),
+    });
     const tinted = (color: string): RteDocumentWith<{ mark: { tint?: { color: string } } }> => ({
         version: 1,
         blocks: [{ type: 'paragraph', children: [{ text: 'x', tint: { color } }] }],

@@ -3,22 +3,19 @@
 import { IconListCheck } from '@frontify/fondue-icons';
 import { type CSSProperties, type ReactNode, useId } from 'react';
 
-import { ANY_LIST, defineBlock, PARAGRAPH, type RteBlockNode, type RtePlugin } from '#/core';
-
-import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
+import { ANY_LIST, defineBlock, defineContent, definePlugin, PARAGRAPH, type RteBlockNode } from '#/core';
 
 import styles from './checkList.module.scss';
 
 /**
- * A to-do list: the same nesting shape as the other lists, with a `checked`
- * attribute per item: `true` when done, `'inProgress'` once started, `false`
- * otherwise. `toHtml` draws a static checkbox for export; the readonly
- * view (`render.component`) draws one that looks like the editor's but cannot
- * be changed, and the editor's `render.edit` makes it interactive via
- * `setValue`.
+ * A to-do list item with a checkbox
  */
 export type CheckItemBlock<TContent extends RteBlockNode = RteBlockNode> = {
     type: 'checkItem';
+    /**
+     * `true` when done, `'inProgress'` once started, `false` otherwise
+     * @default false
+     */
     checked?: boolean | 'inProgress';
     children: TContent[];
 };
@@ -69,16 +66,13 @@ const setIndeterminate = (input: HTMLInputElement | null, indeterminate: boolean
     }
 };
 
-/** The readonly item: the editor's look, its checkbox showing the state without letting it change. */
-const ReadonlyCheckItem = ({
-    value,
-    children,
-    style,
-}: {
+type ReadonlyCheckItemProps = {
     value: CheckValue;
     children?: ReactNode;
     style?: CSSProperties;
-}): ReactNode => {
+};
+
+const ReadonlyCheckItem = ({ value, children, style }: ReadonlyCheckItemProps): ReactNode => {
     const labelId = useId();
     const state = stateOfValue(value.checked);
     return (
@@ -102,42 +96,10 @@ const ReadonlyCheckItem = ({
     );
 };
 
-/** The item in the editor: its checkbox, named by the item's own text. */
-const EditCheckItem = ({
-    value,
-    setValue,
-    children,
-}: {
-    value: CheckValue;
-    setValue: (value: CheckValue) => void;
-    children?: ReactNode;
-}): ReactNode => {
-    const labelId = useId();
-    const state = stateOfValue(value.checked);
-    return (
-        <>
-            <input
-                ref={(input) => setIndeterminate(input, state === STARTED)}
-                type="checkbox"
-                checked={state === DONE}
-                contentEditable={false}
-                aria-labelledby={labelId}
-                // Keeps focus — and the caret — in the text, so checking an
-                // item is not the editor losing focus (and firing `onBlur`).
-                onMouseDown={(event) => event.preventDefault()}
-                onChange={() => setValue({ checked: afterClick(state).value })}
-                className={styles.checkbox}
-            />
-            <div id={labelId} className={styles.label}>
-                {children}
-            </div>
-        </>
-    );
-};
-
-/** A to-do list: `[] ` while typing starts one, and each item has a checkbox. */
-export const checkListPlugin = (): RtePlugin => ({
-    id: 'check-list',
+/**
+ * A to-do list whose items each have a checkbox
+ */
+export const checkListContent = defineContent({
     blocks: {
         checkList: defineBlock({
             content: { items: 'checkItem' },
@@ -176,19 +138,58 @@ export const checkListPlugin = (): RtePlugin => ({
                     value: (element) => ({ checked: stateOfData(element.dataset.checked).value }),
                 },
             ],
-            render: {
-                component: ReadonlyCheckItem,
-                // Only what is inside: the item keeps the `<li>` from `toHtml`.
-                edit: EditCheckItem,
-            },
+            render: { component: ReadonlyCheckItem },
         }),
     },
+});
+
+type EditCheckItemProps = {
+    value: CheckValue;
+    setValue: (value: CheckValue) => void;
+    children?: ReactNode;
+};
+
+const EditCheckItem = ({ value, setValue, children }: EditCheckItemProps): ReactNode => {
+    const labelId = useId();
+    const state = stateOfValue(value.checked);
+    return (
+        <>
+            <input
+                ref={(input) => setIndeterminate(input, state === STARTED)}
+                type="checkbox"
+                checked={state === DONE}
+                contentEditable={false}
+                aria-labelledby={labelId}
+                // Keeps focus (and the caret) in the text, so checking an
+                // item is not the editor losing focus (and firing `onBlur`).
+                onMouseDown={(event) => event.preventDefault()}
+                onChange={() => setValue({ checked: afterClick(state).value })}
+                className={styles.checkbox}
+            />
+            <div id={labelId} className={styles.label}>
+                {children}
+            </div>
+        </>
+    );
+};
+
+/**
+ * A to-do list with a toolbar button and `/` entry, and `[] ` while typing starts one
+ */
+export const checkListPlugin = /* @__PURE__ */ definePlugin({
+    id: 'check-list',
+    content: checkListContent,
     toolbarGroup: 'lists',
-    toolbarItem: ({ isActive, toggle }) => (
-        <ToolbarButton active={isActive} title="To-do list" onClick={() => toggle()}>
-            <IconListCheck size={20} />
-        </ToolbarButton>
-    ),
+    toolbar: [
+        {
+            toggles: 'checkList',
+            label: 'To-do list',
+            icon: IconListCheck,
+            menu: { keywords: ['todo', 'task', 'checkbox', 'checklist'] },
+        },
+    ],
+    // Only what is inside: the item keeps the `<li>` from `toHtml`.
+    edit: { checkItem: EditCheckItem },
     // `[] ` and `[ ] ` both start one, the two ways a to-do is written in markdown; `[x] ` starts it done, `[~] ` in progress.
     inputRules: [
         { kind: 'list', match: '[] ', list: 'checkList' },
@@ -196,16 +197,5 @@ export const checkListPlugin = (): RtePlugin => ({
         { kind: 'list', match: '[x] ', list: 'checkList', itemAttributes: { checked: true } },
         { kind: 'list', match: '[X] ', list: 'checkList', itemAttributes: { checked: true } },
         { kind: 'list', match: '[~] ', list: 'checkList', itemAttributes: { checked: IN_PROGRESS } },
-    ],
-    commands: [
-        {
-            id: 'to-do-list',
-            label: 'To-do list',
-            icon: <IconListCheck size={16} />,
-            keywords: ['todo', 'task', 'checkbox', 'checklist'],
-            group: 'turnInto',
-            isActive: (selection) => selection.blocks.some((block) => block.type === 'checkList'),
-            run: (api) => api.lists.toggle('checkList'),
-        },
     ],
 });

@@ -13,7 +13,13 @@ import {
 import { type Command, type EditorState, NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
-import { type EditorControlApi, type PluginRegistry, type RteMarkState, type RteSelectionSnapshot } from '#/core';
+import {
+    type EditorControlApi,
+    INLINE_PLACEHOLDER,
+    type PluginRegistry,
+    type RteMarkState,
+    type RteSelectionSnapshot,
+} from '#/core';
 
 import { EXTRA_ATTR, markValueOf, shallowBlock, valueAttrsFor } from './documentConversion';
 import { createListApi, liftOutOfLists } from './lists';
@@ -498,16 +504,23 @@ export const createControlApi = (
         beforeCaret() {
             const { selection } = getView().state;
             const { $from, empty } = selection;
-            return empty && $from.parent.isTextblock
-                ? $from.parent.textBetween(0, $from.parentOffset, undefined, '￼')
-                : '';
+            if (!empty || !$from.parent.isTextblock) {
+                return '';
+            }
+            return $from.parent.textBetween(0, $from.parentOffset, undefined, INLINE_PLACEHOLDER);
         },
         afterCaret() {
             const { selection } = getView().state;
             const { $from, empty } = selection;
-            return empty && $from.parent.isTextblock
-                ? $from.parent.textBetween($from.parentOffset, $from.parent.content.size, undefined, '￼')
-                : '';
+            if (!empty || !$from.parent.isTextblock) {
+                return '';
+            }
+            return $from.parent.textBetween(
+                $from.parentOffset,
+                $from.parent.content.size,
+                undefined,
+                INLINE_PLACEHOLDER,
+            );
         },
         deleteBefore(count) {
             const view = getView();

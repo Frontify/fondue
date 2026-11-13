@@ -10,6 +10,16 @@ const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']);
  */
 const HOST_AND_PORT = /^[^/:?#]+:\d+(?:[/?#]|$)/;
 
+/**
+ * A web address as it is typed in text: an http or https scheme and everything up to the next space
+ */
+export const WEB_ADDRESS = /https?:\/\/[^\s]+/;
+
+/**
+ * What pasted text starts with to link the selected text: a web or mail scheme
+ */
+const LINKABLE_PASTE = /^(https?:\/\/|mailto:)/i;
+
 /** Longer than any link someone means, and than most browsers keep. */
 const MAX_HREF_LENGTH = 2048;
 
@@ -36,6 +46,11 @@ export const isSafeHref = (href: unknown): href is string => {
     const scheme = schemeOf(href);
     return scheme === null || SAFE_SCHEMES.has(scheme);
 };
+
+/**
+ * Whether pasted text is a web or mail address that may link the selected text
+ */
+export const isLinkablePaste = (text: string): boolean => LINKABLE_PASTE.test(text);
 
 /** Paths and fragments within the site the document is shown on, kept as typed. */
 const isRelative = (typed: string): boolean => /^(#|\/|\.\.?\/|\?)/.test(typed);

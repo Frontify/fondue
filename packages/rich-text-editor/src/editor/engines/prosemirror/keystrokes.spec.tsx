@@ -6,7 +6,14 @@ import { TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { defineInline, type EditorControlApi, type RteBlockNode, type RtePlugin } from '#/core';
+import {
+    defineContent,
+    defineInline,
+    definePlugin,
+    type EditorControlApi,
+    type RteBlockNode,
+    type RtePlugin,
+} from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
@@ -33,6 +40,8 @@ const press = (view: EditorView, key: string, init: KeyboardEventInit = {}): boo
     return view.someProp('handleKeyDown', (handle) => handle(view, event)) === true;
 };
 
+const mod = /Mac|iP(hone|[oa]d)/.test(navigator.platform) ? { metaKey: true } : { ctrlKey: true };
+
 afterEach(destroyEditors);
 afterEach(() => vi.restoreAllMocks());
 
@@ -53,6 +62,42 @@ describe('typing a mark shortcut', () => {
 
     it('turns *text* italic', () => {
         expect(typed('an *aside*')).toEqual([paragraph(text('an '), text('aside', { italic: true }))]);
+    });
+
+    it('turns __text__ bold and _text_ italic', () => {
+        expect(typed('__bold__ and _aside_')).toEqual([
+            paragraph(text('bold', { bold: true }), text(' and '), text('aside', { italic: true })),
+        ]);
+    });
+
+    it.each([
+        ['foo__bar__', 'inside a word'],
+        ['self.__dict__', 'after a full stop'],
+        ['a__b__ c', 'glued to the word before it'],
+    ])('leaves %s as typed, since a word-bounded rule needs room around its delimiters (%s)', (value) => {
+        expect(typed(value)).toEqual([paragraph(text(value))]);
+    });
+
+    it.each([
+        ['at the start of a line', '__text__', [text('text', { bold: true })]],
+        ['after a space', 'a __text__', [text('a '), text('text', { bold: true })]],
+        ['after an opening bracket', '(__text__', [text('('), text('text', { bold: true })]],
+        ['after a quote', '"__x__', [text('"'), text('x', { bold: true })]],
+    ])('turns __text__ bold %s', (_where, value, children) => {
+        expect(typed(value)).toEqual([paragraph(...children)]);
+    });
+
+    it('leaves __text__ as typed when a word follows the closing delimiter', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('word'))]);
+        editor.caretBefore('word');
+
+        editor.type('__text__');
+
+        expect(editor.stored()).toEqual([paragraph(text('__text__word'))]);
+    });
+
+    it('keeps the ** rule inside a word', () => {
+        expect(typed('foo**bar**')).toEqual([paragraph(text('foo'), text('bar', { bold: true }))]);
     });
 
     it('does not carry the mark on into what is typed after it', () => {
@@ -200,12 +245,93 @@ describe('a check list shortcut inside a check list', () => {
 
 describe('a mark that opts out of typing rules', () => {
     it('keeps the delimiters typed inside it — inline code keeps `**`', () => {
-        const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
+        const editor = editorWith(defaultPlugins, [paragraph(text('xy', { code: true }))]);
         editor.caretAfter('x');
 
         editor.type(' **c**');
 
-        expect(editor.stored()).toEqual([paragraph(text('x **c**', { code: true }))]);
+        expect(editor.stored()).toEqual([paragraph(text('x **c**y', { code: true }))]);
+    });
+});
+
+describe('inline code', () => {
+    it('does not carry on into what is typed at its end', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
+        editor.caretAfter('x');
+
+        editor.type('y');
+
+        expect(editor.stored()).toEqual([paragraph(text('x', { code: true }), text('y'))]);
+    });
+
+    it('can sit inside text a mark shortcut wraps', () => {
+        expect(typed('**run `npm` now**')).toEqual([
+            paragraph(
+                text('run ', { bold: true }),
+                text('npm', { bold: true, code: true }),
+                text(' now', { bold: true }),
+            ),
+        ]);
+    });
+
+    it('lets a mark shortcut typed right after its end apply', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('foo', { code: true }))]);
+        editor.caretAfter('foo');
+
+        editor.type('**b**');
+
+        expect(editor.stored()).toEqual([paragraph(text('foo', { code: true }), text('b', { bold: true }))]);
+    });
+
+    it('keeps its text when a typing rule after its end would reach into it', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('snake_case', { code: true }))]);
+        editor.caretAfter('snake_case');
+
+        editor.type('_');
+
+        expect(editor.stored()).toEqual([paragraph(text('snake_case', { code: true }), text('_'))]);
+    });
+
+    it('carries on at its end once Mod-e turns it back on', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { code: true }))]);
+        editor.caretAfter('x');
+
+        expect(press(editor.view, 'e', mod)).toBe(true);
+        editor.type('y');
+
+        expect(editor.stored()).toEqual([paragraph(text('xy', { code: true }))]);
+    });
+});
+
+describe('subscript and superscript', () => {
+    it('turning one on over text takes the other off', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { subscript: true }))]);
+        editor.select('x');
+
+        expect(press(editor.view, '.', mod)).toBe(true);
+        expect(editor.stored()).toEqual([paragraph(text('x', { superscript: true }))]);
+
+        editor.api.marks.toggle('subscript');
+        expect(editor.stored()).toEqual([paragraph(text('x', { subscript: true }))]);
+    });
+
+    it('a stored run carrying both loses the one turned off', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { subscript: true, superscript: true }))]);
+        editor.select('x');
+
+        editor.api.marks.toggle('subscript');
+
+        expect(editor.stored()).toEqual([paragraph(text('x', { superscript: true }))]);
+    });
+
+    it('turning one on at a caret types only that one', () => {
+        const editor = editorWith(defaultPlugins, [paragraph(text('x', { subscript: true }))]);
+        editor.caretAfter('x');
+
+        expect(press(editor.view, '.', mod)).toBe(true);
+        editor.type('y');
+
+        expect(editor.stored()).toEqual([paragraph(text('x', { subscript: true }), text('y', { superscript: true }))]);
     });
 });
 
@@ -224,7 +350,6 @@ describe('undoing a typing rewrite', () => {
         const editor = editorWith(defaultPlugins, empty());
         editor.type('## ');
 
-        const mod = /Mac|iP(hone|[oa]d)/.test(navigator.platform) ? { metaKey: true } : { ctrlKey: true };
         expect(press(editor.view, 'z', mod)).toBe(true);
 
         expect(editor.stored()).toEqual([paragraph(text('## '))]);
@@ -284,8 +409,8 @@ describe('a feature hotkey', () => {
         const second = vi.fn<(api: EditorControlApi) => void>((api) => api.insertText('!'));
         const editor = editorWith(
             [
-                { id: 'first', hotkeys: { 'Alt-x': first } },
-                { id: 'second', hotkeys: { 'Alt-x': second } },
+                definePlugin({ id: 'first', hotkeys: { 'Alt-x': first } }),
+                definePlugin({ id: 'second', hotkeys: { 'Alt-x': second } }),
             ],
             [paragraph(text('a'))],
         );
@@ -306,7 +431,10 @@ describe('a feature hotkey', () => {
         it(`runs ${keys} on a Mac when Option reports AltGraph`, () => {
             vi.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
             const run = vi.fn<(api: EditorControlApi) => void>((api) => api.insertText('!'));
-            const editor = editorWith([{ id: 'option', hotkeys: { [keys]: run } }], [paragraph(text('a'))]);
+            const editor = editorWith(
+                [definePlugin({ id: 'option', hotkeys: { [keys]: run } })],
+                [paragraph(text('a'))],
+            );
             editor.caretAfter('a');
 
             expect(press(editor.view, 'x', { ...init, modifierAltGraph: true })).toBe(true);
@@ -318,7 +446,10 @@ describe('a feature hotkey', () => {
     it('leaves Ctrl-Alt-x to AltGr off a Mac', () => {
         vi.spyOn(navigator, 'platform', 'get').mockReturnValue('Win32');
         const run = vi.fn();
-        const editor = editorWith([{ id: 'ctrl-alt', hotkeys: { 'Ctrl-Alt-x': run } }], [paragraph(text('a'))]);
+        const editor = editorWith(
+            [definePlugin({ id: 'ctrl-alt', hotkeys: { 'Ctrl-Alt-x': run } })],
+            [paragraph(text('a'))],
+        );
         editor.caretAfter('a');
 
         expect(press(editor.view, 'x', { ctrlKey: true, altKey: true, modifierAltGraph: true })).toBe(false);
@@ -329,7 +460,7 @@ describe('a feature hotkey', () => {
     it('takes a key the list keys would otherwise claim', () => {
         const claim = vi.fn(() => true);
         const editor = editorWith(
-            [...defaultPlugins, { id: 'claims-enter', hotkeys: { Enter: claim } }],
+            [...defaultPlugins, definePlugin({ id: 'claims-enter', hotkeys: { Enter: claim } })],
             [{ type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('ab'))] }] }],
         );
         editor.caretAfter('a');
@@ -342,7 +473,7 @@ describe('a feature hotkey', () => {
 
     it('naming a character does not fire in the middle of a word', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>();
-        const editor = editorWith([{ id: 'mention', hotkeys: { '@': mention } }], empty());
+        const editor = editorWith([definePlugin({ id: 'mention', hotkeys: { '@': mention } })], empty());
 
         editor.type('noah@frontify.com');
 
@@ -352,7 +483,7 @@ describe('a feature hotkey', () => {
 
     it('naming a character fires on that character being typed, and the character is not inserted', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>((api) => api.insertText('[mention]'));
-        const editor = editorWith([{ id: 'mention', hotkeys: { '@': mention } }], empty());
+        const editor = editorWith([definePlugin({ id: 'mention', hotkeys: { '@': mention } })], empty());
 
         editor.type('hi @');
 
@@ -517,7 +648,7 @@ describe('typing rewrites when a composition ends', () => {
 describe('a character hotkey during IME composition', () => {
     it('does not fire: the composition owns the character', () => {
         const mention = vi.fn<(api: EditorControlApi) => void>();
-        const editor = editorWith([{ id: 'mention', hotkeys: { '@': mention } }], empty());
+        const editor = editorWith([definePlugin({ id: 'mention', hotkeys: { '@': mention } })], empty());
         vi.spyOn(editor.view, 'composing', 'get').mockReturnValue(true);
 
         editor.type('@');
@@ -527,15 +658,17 @@ describe('a character hotkey during IME composition', () => {
 });
 
 describe('a mark shortcut around content that is more than plain text', () => {
-    const tagPlugin: RtePlugin = {
+    const tagPlugin: RtePlugin = definePlugin({
         id: 'tag',
-        inlines: {
-            tag: defineInline<{ name: string }>({
-                toHtml: ({ name }) => ({ tag: 'span', children: name }),
-                parse: [],
-            }),
-        },
-    };
+        content: defineContent({
+            inlines: {
+                tag: defineInline<{ name: string }>({
+                    toHtml: ({ name }) => ({ tag: 'span', children: name }),
+                    parse: [],
+                }),
+            },
+        }),
+    });
 
     it('keeps an inline element inside it', () => {
         const editor = editorWith(

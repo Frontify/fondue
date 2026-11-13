@@ -6,7 +6,14 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { describe, expect, it } from 'vitest';
 
-import { buildPluginRegistry, defineBlock, type EditorControlApi, type RtePlugin } from '../core';
+import {
+    buildPluginRegistry,
+    defineBlock,
+    defineContent,
+    definePlugin,
+    type EditorControlApi,
+    type RtePlugin,
+} from '../core';
 import {
     blurOnBreakPlugin,
     bulletListPlugin,
@@ -52,6 +59,7 @@ const recordingApi = ({ inList = false } = {}) => {
         blur: () => {
             calls.push('blur');
         },
+        selection: { get: () => ({ marks: {} }) },
     } as unknown as EditorControlApi;
     return { api, calls };
 };
@@ -118,7 +126,7 @@ describe('mentionPlugin', () => {
 });
 
 describe('blurOnBreakPlugin', () => {
-    const enter = blurOnBreakPlugin().hotkeys?.Enter;
+    const enter = blurOnBreakPlugin.hotkeys?.Enter;
 
     it('splits the list item when Enter is pressed inside a list, and keeps focus', () => {
         const { api, calls } = recordingApi({ inList: true });
@@ -138,15 +146,16 @@ describe('blurOnBreakPlugin', () => {
 describe('the list plugins', () => {
     it('toggle their list on the shortcuts other editors use', () => {
         const { api, calls } = recordingApi();
+        const { hotkeys } = buildPluginRegistry([bulletListPlugin, numberedListPlugin]);
 
-        bulletListPlugin().hotkeys?.['Mod-Shift-8']?.(api);
-        numberedListPlugin().hotkeys?.['Mod-Shift-7']?.(api);
+        hotkeys.get('Mod-Shift-8')?.[0]?.(api);
+        hotkeys.get('Mod-Shift-7')?.[0]?.(api);
 
         expect(calls).toEqual(['lists.toggle bulletList', 'lists.toggle numberedList']);
     });
 
     it('share their item, so both can be mounted together', () => {
-        const registry = buildPluginRegistry([bulletListPlugin(), numberedListPlugin()]);
+        const registry = buildPluginRegistry([bulletListPlugin, numberedListPlugin]);
 
         expect(registry.itemTypeByList).toEqual(
             new Map([
@@ -201,22 +210,24 @@ describe('defaultPlugins', () => {
 describe('the readonly renderer', () => {
     it('redraws only the blocks that changed', () => {
         const drawn: string[] = [];
-        const notePlugin: RtePlugin = {
+        const notePlugin: RtePlugin = definePlugin({
             id: 'note',
-            blocks: {
-                note: defineBlock<{ label: string }>({
-                    defaults: { label: '' },
-                    toHtml: ({ label }) => ({ tag: 'p', children: label }),
-                    parse: [],
-                    render: {
-                        component: ({ value }) => {
-                            drawn.push(value.label);
-                            return <p>{value.label}</p>;
+            content: defineContent({
+                blocks: {
+                    note: defineBlock<{ label: string }>({
+                        defaults: { label: '' },
+                        toHtml: ({ label }) => ({ tag: 'p', children: label }),
+                        parse: [],
+                        render: {
+                            component: ({ value }) => {
+                                drawn.push(value.label);
+                                return <p>{value.label}</p>;
+                            },
                         },
-                    },
-                }),
-            },
-        };
+                    }),
+                },
+            }),
+        });
         // One list for both renders, as a host holds it: a new list is a new
         // set of plugins, which redraws everything.
         const plugins = [notePlugin];

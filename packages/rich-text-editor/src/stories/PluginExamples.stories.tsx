@@ -21,8 +21,10 @@ import {
     columnBreakPlugin,
     defaultPlugins,
     defineBlock,
+    defineContent,
     defineInline,
     defineMark,
+    definePlugin,
     emojiPlugin,
     fontColorPlugin,
     italicPlugin,
@@ -42,6 +44,7 @@ import {
     subscriptPlugin,
     superscriptPlugin,
     textStylePlugin,
+    typographyPlugin,
     underlinePlugin,
 } from '../index';
 
@@ -183,7 +186,7 @@ export const Quote: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[quotePlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[quotePlugin]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -209,7 +212,7 @@ export const Bold: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -233,7 +236,7 @@ export const Italic: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[italicPlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[italicPlugin]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -257,7 +260,7 @@ export const Underline: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[underlinePlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[underlinePlugin]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -285,7 +288,7 @@ export const Strikethrough: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[strikethroughPlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[strikethroughPlugin]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -309,7 +312,7 @@ export const Code: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[codePlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[codePlugin]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -333,7 +336,7 @@ export const Subscript: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[subscriptPlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[subscriptPlugin]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -357,7 +360,7 @@ export const Superscript: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[superscriptPlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[superscriptPlugin]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -385,7 +388,7 @@ export const FontColor: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[fontColorPlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[fontColorPlugin]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -417,7 +420,7 @@ export const Link: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[linkPlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[linkPlugin]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -446,7 +449,7 @@ export const Align: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[alignPlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[alignPlugin]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -490,7 +493,7 @@ export const BulletList: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[bulletListPlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[bulletListPlugin]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -525,7 +528,7 @@ export const NumberedList: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[numberedListPlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[numberedListPlugin]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -559,7 +562,7 @@ export const CheckList: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[checkListPlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[checkListPlugin]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -667,15 +670,46 @@ export const MarkdownShortcuts: Story = {
                         onChange={setDoc}
                         plugins={[
                             textStylePlugin(),
-                            quotePlugin(),
-                            boldPlugin(),
-                            italicPlugin(),
-                            underlinePlugin(),
-                            strikethroughPlugin(),
-                            codePlugin(),
-                            bulletListPlugin(),
-                            numberedListPlugin(),
-                            checkListPlugin(),
+                            quotePlugin,
+                            boldPlugin,
+                            italicPlugin,
+                            underlinePlugin,
+                            strikethroughPlugin,
+                            codePlugin,
+                            bulletListPlugin,
+                            numberedListPlugin,
+                            checkListPlugin,
+                        ]}
+                    />
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/** Typographic shortcuts as you type; technical text such as `--flag` or `x <= 5` stays as typed. */
+export const Typography: Story = {
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: '' }] }],
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <p className={HINT}>
+                    Try <code>a -- b</code>, <code>&lt;-&gt;</code>, <code>"quoted"</code>, <code>don't</code>,{' '}
+                    <code>3x4 </code>, <code>2^2 </code>, and see <code>--flag</code>, <code>--&gt;</code>, and{' '}
+                    <code>x &lt;= 5</code> stay as typed.
+                </p>
+                <div className={FRAME}>
+                    <RichTextEditor
+                        value={doc}
+                        onChange={setDoc}
+                        plugins={[
+                            codePlugin,
+                            typographyPlugin({ groups: ['quotes', 'ellipsis', 'dashes', 'symbols', 'numeric'] }),
                         ]}
                     />
                 </div>
@@ -702,7 +736,7 @@ export const SoftBreak: Story = {
             <div className={LAYOUT}>
                 <p className={HINT}>Shift-Enter adds a line to this block; Enter starts a new one — watch the JSON.</p>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[softBreakPlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[softBreakPlugin]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -745,13 +779,7 @@ export const ResetFormatting: Story = {
                     <RichTextEditor
                         value={doc}
                         onChange={setDoc}
-                        plugins={[
-                            textStylePlugin(),
-                            boldPlugin(),
-                            alignPlugin(),
-                            bulletListPlugin(),
-                            resetFormattingPlugin(),
-                        ]}
+                        plugins={[textStylePlugin(), boldPlugin, alignPlugin, bulletListPlugin, resetFormattingPlugin]}
                     />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
@@ -774,7 +802,7 @@ export const BlurOnBreak: Story = {
                     <RichTextEditor
                         value={doc}
                         onChange={setDoc}
-                        plugins={[boldPlugin(), italicPlugin(), blurOnBreakPlugin()]}
+                        plugins={[boldPlugin, italicPlugin, blurOnBreakPlugin]}
                     />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
@@ -916,36 +944,44 @@ type HighlightMark = {
     highlight?: boolean;
 };
 
-const highlightPlugin = (): RtePlugin => ({
-    id: 'highlight',
-    marks: {
-        highlight: defineMark({
-            toHtml: () => ({
-                tag: 'mark',
-                attrs: {
-                    class: 'tw-rounded-small tw-bg-container-warning tw-text-container-warning-on-warning-container',
+const highlightPlugin = (): RtePlugin =>
+    definePlugin({
+        id: 'highlight',
+        toolbar: [
+            {
+                label: 'Highlight',
+                render: ({ api, selection }) => {
+                    const active = selection.marks.highlight?.coverage === 'all';
+                    return (
+                        <button
+                            type="button"
+                            aria-pressed={active}
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => api.marks.toggle('highlight')}
+                            className={toolbarButtonClasses(active)}
+                        >
+                            Highlight
+                        </button>
+                    );
                 },
-                children: true,
-            }),
-            parse: [{ tag: 'mark' }],
+            },
+        ],
+        hotkeys: { 'Mod-h': (api) => api.marks.toggle('highlight') },
+        content: defineContent({
+            marks: {
+                highlight: defineMark({
+                    toHtml: () => ({
+                        tag: 'mark',
+                        attrs: {
+                            class: 'tw-rounded-small tw-bg-container-warning tw-text-container-warning-on-warning-container',
+                        },
+                        children: true,
+                    }),
+                    parse: [{ tag: 'mark' }],
+                }),
+            },
         }),
-    },
-    toolbarItem: ({ api, selection }) => {
-        const active = selection.marks.highlight?.coverage === 'all';
-        return (
-            <button
-                type="button"
-                aria-pressed={active}
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => api.marks.toggle('highlight')}
-                className={toolbarButtonClasses(active)}
-            >
-                Highlight
-            </button>
-        );
-    },
-    hotkeys: { 'Mod-h': (api) => api.marks.toggle('highlight') },
-});
+    });
 
 /**
  * The type juggling a consumer plugin costs: one type argument naming the extra
@@ -972,7 +1008,7 @@ export const ConsumerMark: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin(), highlightPlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin, highlightPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -986,36 +1022,45 @@ type CalloutBlock = {
     children: RtePlugin.InlineNode[];
 };
 
-const calloutPlugin = (): RtePlugin => ({
-    id: 'callout',
-    blocks: {
-        callout: defineBlock({
-            content: 'text',
-            toHtml: () => ({
-                tag: 'aside',
-                attrs: {
-                    class: 'tw-m-0 tw-rounded-medium tw-border tw-border-solid tw-border-warning tw-bg-container-warning tw-px-3 tw-py-2',
+const calloutPlugin = (): RtePlugin =>
+    definePlugin({
+        id: 'callout',
+        toolbar: [
+            {
+                label: 'Callout',
+                render: ({ api, selection, label }) => {
+                    const active = selection.block?.type === 'callout';
+                    return (
+                        <button
+                            type="button"
+                            aria-label={label}
+                            aria-pressed={active}
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => (active ? api.blocks.setType('paragraph') : api.blocks.setType('callout'))}
+                            className={toolbarButtonClasses(active)}
+                        >
+                            💡
+                        </button>
+                    );
                 },
-                children: true,
-            }),
-            parse: [{ tag: 'aside' }],
+            },
+        ],
+        content: defineContent({
+            blocks: {
+                callout: defineBlock({
+                    content: 'text',
+                    toHtml: () => ({
+                        tag: 'aside',
+                        attrs: {
+                            class: 'tw-m-0 tw-rounded-medium tw-border tw-border-solid tw-border-warning tw-bg-container-warning tw-px-3 tw-py-2',
+                        },
+                        children: true,
+                    }),
+                    parse: [{ tag: 'aside' }],
+                }),
+            },
         }),
-    },
-    toolbarItem: ({ api, selection }) => {
-        const active = selection.block?.type === 'callout';
-        return (
-            <button
-                type="button"
-                aria-pressed={active}
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => (active ? api.blocks.setType('paragraph') : api.blocks.setType('callout'))}
-                className={toolbarButtonClasses(active)}
-            >
-                💡
-            </button>
-        );
-    },
-});
+    });
 
 /** An extra block type joins the official union in the same type argument. */
 export const ConsumerBlock: Story = {
@@ -1037,7 +1082,7 @@ export const ConsumerBlock: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin(), calloutPlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin, calloutPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -1046,7 +1091,7 @@ export const ConsumerBlock: Story = {
 };
 
 /**
- * A consumer-defined void inline element whose `render.edit` draws its own
+ * A consumer-defined void inline element whose `edit` view draws its own
  * picker while it has no value — the same contract the shipped mention plugin
  * uses, from outside the package.
  */
@@ -1066,18 +1111,17 @@ type EmbedValue = Omit<EmbedInline, 'type'>;
 const embedClasses =
     'tw-rounded-small tw-bg-container-highlight tw-px-1 tw-font-medium tw-text-container-highlight-on-highlight-container';
 
+type EmbedDraftProps = {
+    onChoose: (provider: string) => void;
+    onRemove: () => void;
+};
+
 /**
- * A consumer-written picker, showing what an inline's `render.edit` gives
+ * A consumer-written picker, showing what an inline's `edit` view gives
  * an external plugin: the node is inserted without a value, and the component
  * completes it with `setValue` — or takes it away with `remove`.
  */
-const EmbedDraft = ({
-    onChoose,
-    onRemove,
-}: {
-    onChoose: (provider: string) => void;
-    onRemove: () => void;
-}): ReactNode => (
+const EmbedDraft = ({ onChoose, onRemove }: EmbedDraftProps): ReactNode => (
     <span role="listbox" aria-label="Embed suggestions" className="tw-inline-flex tw-gap-1">
         {EMBEDS.map((item) => (
             <button
@@ -1098,38 +1142,43 @@ const EmbedDraft = ({
     </span>
 );
 
-const embedPlugin = (): RtePlugin => ({
-    id: 'embed',
-    inlines: {
-        embed: defineInline<EmbedValue>({
-            toHtml: ({ provider }) => ({
-                tag: 'span',
-                attrs: { 'data-embed': provider, class: embedClasses },
-                children: `▤ ${provider}`,
-            }),
-            parse: [{ tag: 'span[data-embed]', value: (element) => ({ provider: element.dataset.embed ?? '' }) }],
-            render: {
-                edit: ({ value, setValue, remove, api }) =>
-                    value === null ? (
-                        <EmbedDraft
-                            onChoose={(provider) => {
-                                setValue({ provider });
-                                api.focus();
-                            }}
-                            onRemove={() => {
-                                remove();
-                                api.focus();
-                            }}
-                        />
-                    ) : (
-                        <span data-embed={value.provider} className={embedClasses}>{`▤ ${value.provider}`}</span>
-                    ),
+const embedPlugin = (): RtePlugin =>
+    definePlugin({
+        id: 'embed',
+        // An empty embed, which its `edit` view then takes over.
+        hotkeys: { '/': (api) => api.insert('embed') },
+        content: defineContent({
+            inlines: {
+                embed: defineInline<EmbedValue>({
+                    toHtml: ({ provider }) => ({
+                        tag: 'span',
+                        attrs: { 'data-embed': provider, class: embedClasses },
+                        children: `▤ ${provider}`,
+                    }),
+                    parse: [
+                        { tag: 'span[data-embed]', value: (element) => ({ provider: element.dataset.embed ?? '' }) },
+                    ],
+                }),
             },
         }),
-    },
-    // An empty embed, which its `render.edit` then takes over.
-    hotkeys: { '/': (api) => api.insert('embed') },
-});
+        edit: {
+            embed: ({ value, setValue, remove, api }: RtePlugin.EditProps<EmbedValue, EmbedValue | null>) =>
+                value === null ? (
+                    <EmbedDraft
+                        onChoose={(provider) => {
+                            setValue({ provider });
+                            api.focus();
+                        }}
+                        onRemove={() => {
+                            remove();
+                            api.focus();
+                        }}
+                    />
+                ) : (
+                    <span data-embed={value.provider} className={embedClasses}>{`▤ ${value.provider}`}</span>
+                ),
+        },
+    });
 
 /** A consumer inline element widens the same parameter as a consumer mark. */
 export const ConsumerInline: Story = {

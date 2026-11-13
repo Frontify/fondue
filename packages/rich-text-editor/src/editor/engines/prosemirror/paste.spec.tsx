@@ -4,7 +4,7 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { type PasteHandler, type RtePlugin } from '#/core';
+import { defineContent, defineMark, definePlugin, type PasteHandler, type RtePlugin } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
@@ -18,7 +18,7 @@ afterEach(destroyEditors);
 
 const withPaste = (...handlers: PasteHandler[]): RtePlugin[] => [
     ...defaultPlugins,
-    ...handlers.map((onPaste, index) => ({ id: `paste-${index}`, onPaste })),
+    ...handlers.map((onPaste, index) => definePlugin({ id: `paste-${index}`, onPaste })),
 ];
 
 describe('a plugin paste handler', () => {
@@ -67,6 +67,155 @@ describe('a plugin paste handler', () => {
         expect(first).toHaveBeenCalledOnce();
         expect(second).toHaveBeenCalledOnce();
         expect(third).not.toHaveBeenCalled();
+    });
+});
+
+describe('pasting formatted text', () => {
+    const pasted = (html: string) => {
+        const editor = editorWith(defaultPlugins, [paragraph()]);
+        editor.pasteHTML(html);
+        return editor.stored();
+    };
+
+    it.each([
+        ['<p style="font-weight: 700">x</p>', { bold: true }],
+        ['<p><font style="font-style: italic">x</font></p>', { italic: true }],
+        ['<p style="font-style: oblique 10deg">x</p>', { italic: true }],
+        ['<p><font style="text-decoration: underline">x</font></p>', { underline: true }],
+        ['<div style="text-decoration-line: line-through"><p>x</p></div>', { strikethrough: true }],
+        ['<p><span style="vertical-align: sub">x</span></p>', { subscript: true }],
+        ['<p><span style="vertical-align: super">x</span></p>', { superscript: true }],
+    ])('reads the mark off any element whose style declares it: %s', (html, marks) => {
+        expect(pasted(html)).toEqual([paragraph(text('x', marks))]);
+    });
+
+    it.each([
+        ['<p><strong style="font-style:italic">x</strong></p>', { bold: true, italic: true }],
+        ['<p><span style="color:#f00;font-weight:700">x</span></p>', { bold: true, fontColor: { color: '#ff0000' } }],
+    ])('reads a style on an element another mark already reads: %s', (html, marks) => {
+        expect(pasted(html)).toEqual([paragraph(text('x', marks))]);
+    });
+
+    it.each([
+        ['<p><span style="font-weight:650">x</span></p>', [text('x', { bold: true })]],
+        ['<p><span style="font-weight:1000">x</span></p>', [text('x', { bold: true })]],
+        ['<p><strong><span style="font-weight:500">x</span></strong></p>', [text('x')]],
+    ])('reads any weight of 600 or more as bold: %s', (html, children) => {
+        expect(pasted(html)).toEqual([paragraph(...children)]);
+    });
+
+    it('reads the underline under an anchor that is not a link', () => {
+        expect(pasted('<p><a name="x"><span style="text-decoration:underline">x</span></a></p>')).toEqual([
+            paragraph(text('x', { underline: true })),
+        ]);
+    });
+
+    it('reads every mark one element declares', () => {
+        expect(
+            pasted(
+                '<p><span style="font-weight:700;font-style:italic;text-decoration:underline line-through">x</span></p>',
+            ),
+        ).toEqual([paragraph(text('x', { bold: true, italic: true, underline: true, strikethrough: true }))]);
+    });
+
+    it('takes bold off text under a span that sets the weight back to normal', () => {
+        expect(pasted('<p><strong>a<span style="font-weight:normal">b</span></strong></p>')).toEqual([
+            paragraph(text('a', { bold: true }), text('b')),
+        ]);
+    });
+
+    it('takes italic off text under a span that sets the style back to normal', () => {
+        expect(pasted('<p><em>a<span style="font-style:normal">b</span></em></p>')).toEqual([
+            paragraph(text('a', { italic: true }), text('b')),
+        ]);
+    });
+
+    it('does not read a <b> that sets the weight back to normal as bold', () => {
+        expect(pasted('<b style="font-weight:normal"><p>x</p></b>')).toEqual([paragraph(text('x'))]);
+    });
+
+    it('keeps a line drawn by an ancestor under text-decoration: none, as a browser does', () => {
+        expect(pasted('<p><u>a<span style="text-decoration: none">b</span></u></p>')).toEqual([
+            paragraph(text('ab', { underline: true })),
+        ]);
+    });
+
+    it('does not read the underline a link shows by default as formatting', () => {
+        expect(
+            pasted('<p><a href="https://example.com"><span style="text-decoration:underline">x</span></a></p>'),
+        ).toEqual([paragraph(text('x', { link: { href: 'https://example.com' } }))]);
+    });
+
+    it('keeps the other lines a link declares beside the underline', () => {
+        expect(
+            pasted(
+                '<p><a href="https://example.com"><span style="text-decoration:underline line-through">x</span></a></p>',
+            ),
+        ).toEqual([paragraph(text('x', { link: { href: 'https://example.com' }, strikethrough: true }))]);
+    });
+
+    it('does not read the underline a link declares on itself as formatting', () => {
+        expect(pasted('<p><a href="https://example.com" style="text-decoration-line:underline">x</a></p>')).toEqual([
+            paragraph(text('x', { link: { href: 'https://example.com' } })),
+        ]);
+    });
+
+    it.each(['<p><b style="font-weight:500">x</b></p>', '<p><strong style="font-weight:lighter">x</strong></p>'])(
+        'does not read a bold tag that sets a weight under 600 as bold: %s',
+        (html) => {
+            expect(pasted(html)).toEqual([paragraph(text('x'))]);
+        },
+    );
+
+    it('keeps a line-through drawn by an ancestor under text-decoration-line: none', () => {
+        expect(pasted('<p><s>a<span style="text-decoration-line: none">b</span></s></p>')).toEqual([
+            paragraph(text('ab', { strikethrough: true })),
+        ]);
+    });
+
+    it('does not read the bold a heading declares on itself as formatting', () => {
+        expect(pasted('<h2 style="font-weight:bold">x</h2>')).toEqual([
+            { type: 'textStyle', style: 'heading2', children: [text('x')] },
+        ]);
+    });
+
+    it.each([
+        ['<h1><span style="font-weight:bold">x</span></h1>', 'heading1'],
+        ['<h3><span style="font-weight:650">x</span></h3>', 'heading3'],
+    ])('keeps the bold an author set on heading text: %s', (html, style) => {
+        expect(pasted(html)).toEqual([{ type: 'textStyle', style, children: [text('x', { bold: true })] }]);
+    });
+
+    it('keeps the underline inside a link where no link plugin is mounted', () => {
+        const editor = editorWith(shipped('underline'), [paragraph()]);
+
+        editor.pasteHTML('<p><a href="https://example.com"><span style="text-decoration:underline">x</span></a></p>');
+
+        expect(editor.stored()).toEqual([paragraph(text('x', { underline: true }))]);
+    });
+
+    it('strips the default styles a host mark declares from its own tags', () => {
+        const stripBold = (value: string) => (value === 'bold' ? '' : value);
+        const host = definePlugin({
+            id: 'host-highlight',
+            content: defineContent({
+                marks: {
+                    highlight: defineMark({
+                        tag: 'mark',
+                        defaultStyles: [{ property: 'font-weight', scope: 'self', strip: stripBold }],
+                    }),
+                },
+            }),
+        });
+        const editor = editorWith([...shipped('bold'), host], [paragraph()]);
+
+        editor.pasteHTML('<p><mark style="font-weight:bold">x</mark><span style="font-weight:bold">y</span></p>');
+
+        expect(editor.stored()).toEqual([paragraph(text('x', { highlight: true }), text('y', { bold: true }))]);
+    });
+
+    it('keeps only the inner of subscript and superscript', () => {
+        expect(pasted('<p><sub><sup>x</sup></sub></p>')).toEqual([paragraph(text('x', { superscript: true }))]);
     });
 });
 

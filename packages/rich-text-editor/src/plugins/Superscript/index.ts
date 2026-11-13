@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { superscriptPlugin, type SuperscriptMark } from './Superscript';
+export { type SuperscriptMark, superscriptContent, superscriptPlugin } from './Superscript';

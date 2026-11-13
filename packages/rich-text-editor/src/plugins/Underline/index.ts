@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { underlinePlugin, type UnderlineMark } from './Underline';
+export { type UnderlineMark, underlineContent, underlinePlugin } from './Underline';

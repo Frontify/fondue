@@ -22,7 +22,14 @@ import {
     VALUE_ATTR,
 } from './documentConversion';
 import { htmlSpecToDom } from './htmlSpecToDom';
-import { blockParseRules, INLINE_PRIORITY, MARK_PRIORITY, valueParseRules } from './pasteRules';
+import {
+    blockParseRules,
+    type DefaultStyleRule,
+    defaultStyleRules,
+    INLINE_PRIORITY,
+    markParseRules,
+    valueParseRules,
+} from './pasteRules';
 
 /**
  * The mounted features -> one engine schema (`buildSchema`, at the bottom, with
@@ -73,15 +80,17 @@ const contentExpression = (
     return `(${[...contains, UNKNOWN_BLOCK].join(' | ')})+`;
 };
 
+type BlockNodeSpecParams = {
+    registry: PluginRegistry;
+    isListItem: boolean;
+    known: Set<string>;
+    lists: Set<string>;
+};
+
 const blockNodeSpec = (
     type: string,
     definition: BlockDefinition,
-    {
-        registry,
-        isListItem,
-        known,
-        lists,
-    }: { registry: PluginRegistry; isListItem: boolean; known: Set<string>; lists: Set<string> },
+    { registry, isListItem, known, lists }: BlockNodeSpecParams,
 ): PmNodeSpec => {
     const isVoid = definition.content === undefined;
     const isList = typeof definition.content === 'object' && 'items' in definition.content;
@@ -93,7 +102,7 @@ const blockNodeSpec = (
         atom: isVoid,
         // Mod-click selects the innermost selectable node whole; for a block of
         // text that would only draw a ring around it.
-        selectable: isVoid || definition.render?.edit !== undefined,
+        selectable: isVoid || registry.edits.has(type),
         // invariant (3)
         ...(isVoid || isList || type === PARAGRAPH ? {} : { defining: true }),
         // invariant (4)
@@ -110,13 +119,13 @@ const blockNodeSpec = (
     };
 };
 
-const inlineNodeSpec = (definition: InlineDefinition): PmNodeSpec => ({
+const inlineNodeSpec = (definition: InlineDefinition, hasEditView: boolean): PmNodeSpec => ({
     group: 'inline',
     inline: true,
     atom: true,
     // With editing UI, a node inserted without a value is a draft (null) the UI
     // completes; without it, it stores the declared defaults.
-    attrs: { [VALUE_ATTR]: { default: definition.render?.edit ? null : (definition.defaults ?? {}) } },
+    attrs: { [VALUE_ATTR]: { default: hasEditView ? null : (definition.defaults ?? {}) } },
     parseDOM: valueParseRules(definition.parse, INLINE_PRIORITY),
     toDOM: (node) => {
         const value = node.attrs[VALUE_ATTR] as Record<string, unknown> | null;
@@ -125,11 +134,27 @@ const inlineNodeSpec = (definition: InlineDefinition): PmNodeSpec => ({
     },
 });
 
-const markSpec = (definition: MarkDefinition): PmMarkSpec => ({
+/**
+ * The mark itself plus the marks it excludes: the engine's list replaces its default of the mark itself.
+ * @param type - the mark's name in the schema
+ */
+const excludesSpec = (type: string, definition: MarkDefinition): string | undefined => {
+    if (!definition.excludes) {
+        return undefined;
+    }
+    return [type, ...definition.excludes].join(' ');
+};
+
+const markSpec = (
+    type: string,
+    definition: MarkDefinition,
+    defaultStyles: readonly DefaultStyleRule[],
+): PmMarkSpec => ({
     // A mark turned on without a value carries its declared defaults.
     attrs: { [VALUE_ATTR]: { default: definition.defaults ?? {} } },
     inclusive: definition.inclusive ?? true,
-    parseDOM: valueParseRules(definition.parse, MARK_PRIORITY),
+    excludes: excludesSpec(type, definition),
+    parseDOM: markParseRules(type, definition.parse, defaultStyles),
     toDOM: (mark) => htmlSpecToDom(definition.toHtml(mark.attrs[VALUE_ATTR] as Record<string, unknown>)),
 });
 
@@ -174,15 +199,16 @@ export const buildSchema = (registry: PluginRegistry): Schema => {
         nodes[type] = blockNodeSpec(type, block, { registry, isListItem: itemTypes.has(type), known, lists });
     }
     for (const [type, inline] of registry.inlines) {
-        nodes[type] = inlineNodeSpec(inline);
+        nodes[type] = inlineNodeSpec(inline, registry.edits.has(type));
     }
     nodes[UNKNOWN_BLOCK] = unknownBlockSpec;
     nodes[UNKNOWN_INLINE] = unknownInlineSpec;
 
     // invariant (2): the registry already holds marks in nesting order.
     const marks: Record<string, PmMarkSpec> = {};
+    const defaultStyles = defaultStyleRules(registry);
     for (const [type, mark] of registry.marks) {
-        marks[type] = markSpec(mark);
+        marks[type] = markSpec(type, mark, defaultStyles);
     }
     // Last, so it wraps nothing a plugin's mark would.
     marks[UNKNOWN_MARKS] = unknownMarksSpec;

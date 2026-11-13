@@ -4,14 +4,15 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { mentionPlugin, mentionValueOf } from './Mention';
+import { mentionValueOf } from './helpers/mention';
+import { mentionContent, mentionPlugin } from './Mention';
 
 const JANE = { id: 'jane', username: 'jane', name: 'Jane Doe' };
 const DESIGN = { id: 'design', username: 'design', name: 'Design team', kind: 'group' } as const;
 const ALL = { id: 'all', username: 'all', name: 'Everyone', kind: 'all' } as const;
 
 const mentionFor = (href?: string) =>
-    mentionPlugin({ items: [JANE], href: href === undefined ? undefined : () => href }).inlines?.mention;
+    mentionPlugin({ items: [JANE], href: href === undefined ? undefined : () => href }).content?.inlines?.mention;
 
 const parse = (html: string): unknown => {
     const element = document.createElement('div');
@@ -34,8 +35,8 @@ describe('the mention inline', () => {
         expect(spec?.attrs?.href).toBeUndefined();
         expect(spec?.children).toBe('@all');
         const noProfile = mentionPlugin({ items: [], href: (m) => (m.kind === 'all' ? undefined : `/u/${m.id}`) });
-        expect(noProfile.inlines?.mention?.toHtml(ALL).tag).toBe('span');
-        expect(noProfile.inlines?.mention?.toHtml(JANE).tag).toBe('a');
+        expect(noProfile.content?.inlines?.mention?.toHtml(ALL).tag).toBe('span');
+        expect(noProfile.content?.inlines?.mention?.toHtml(JANE).tag).toBe('a');
     });
 
     it('marks a group or everyone, and leaves a person as before kinds existed', () => {
@@ -46,6 +47,10 @@ describe('the mention inline', () => {
     it('keeps no avatar and no person kind in the document', () => {
         expect(mentionValueOf({ ...JANE, kind: 'user', image: '/jane.png' })).toEqual(JANE);
         expect(mentionValueOf({ ...DESIGN, image: '/design.png' })).toEqual(DESIGN);
+    });
+
+    it('refuses a trigger that is not one character, in the content too', () => {
+        expect(() => mentionContent({ trigger: '@@' })).toThrow(/exactly one character/);
     });
 
     it('reads a pasted mention back', () => {

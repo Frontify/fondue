@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineInline, type RtePlugin } from '#/core';
+import { defineContent, defineInline, definePlugin } from '#/core';
 
 /** A line break inside a block — the void inline this plugin adds. */
 export type BreakInline = {
@@ -8,16 +8,22 @@ export type BreakInline = {
 };
 
 /**
- * Shift-Enter breaks the line without ending the block. No toolbar: the
- * keybinding is the whole feature.
+ * A line break, written as `<br>`
  */
-export const softBreakPlugin = (): RtePlugin => ({
-    id: 'soft-break',
+export const softBreakContent = defineContent({
     inlines: {
         break: defineInline({
             toHtml: () => ({ tag: 'br' }),
             parse: [{ tag: 'br' }],
         }),
     },
+});
+
+/**
+ * Breaks the line without ending the block with `Shift-Enter`, and has no toolbar button
+ */
+export const softBreakPlugin = /* @__PURE__ */ definePlugin({
+    id: 'soft-break',
+    content: softBreakContent,
     hotkeys: { 'Shift-Enter': (api) => api.insert('break') },
 });
