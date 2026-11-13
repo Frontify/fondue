@@ -89,7 +89,7 @@ const fakeEditor = (initial: Partial<RteSelectionSnapshot> = {}) => {
         },
         blocks: {
             setType: (type, value) => setBlocks([{ type, ...value }, ...selection.blocks.slice(1)]),
-            updateAttributes: () => {},
+            updateAttributes: () => false,
             resetAttributes: () => {},
         },
         lists: {

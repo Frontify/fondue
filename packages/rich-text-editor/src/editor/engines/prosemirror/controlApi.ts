@@ -359,8 +359,8 @@ const createBlockApi = (
     registry: PluginRegistry,
     dispatch: Dispatch,
 ): EditorControlApi['blocks'] => {
-    /** Every text block the selection touches, with the given attributes applied. */
-    const applyToTextBlocks = (attributes: Record<string, unknown>): void => {
+    /** Every text block the selection touches, with the given attributes applied; whether any block changed. */
+    const applyToTextBlocks = (attributes: Record<string, unknown>): boolean => {
         const view = getView();
         const { from, to } = view.state.selection;
         const transaction = view.state.tr;
@@ -376,10 +376,12 @@ const createBlockApi = (
                 }
             }
         });
-        if (transaction.docChanged) {
+        const changed = transaction.docChanged;
+        if (changed) {
             dispatch(transaction);
         }
         view.focus();
+        return changed;
     };
 
     return {

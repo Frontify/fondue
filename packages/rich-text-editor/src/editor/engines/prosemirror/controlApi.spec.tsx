@@ -801,6 +801,16 @@ describe('block attributes', () => {
         ]);
     });
 
+    it('report whether any block changed: not when every block has the value or none declares the attribute', () => {
+        const editor = editorWith(plugins, [paragraph(text('one'))]);
+        editor.caretAfter('on');
+
+        expect(editor.api.blocks.updateAttributes({ align: 'center' })).toBe(true);
+        expect(editor.api.blocks.updateAttributes({ align: 'center' })).toBe(false);
+        expect(editor.api.blocks.updateAttributes({ undeclared: 'x' })).toBe(false);
+        expect(editor.api.blocks.updateAttributes({ align: null })).toBe(true);
+    });
+
     it('are set on the paragraph inside a list item', () => {
         const editor = editorWith(plugins, [
             { type: 'bulletList', children: [{ type: 'listItem', children: [paragraph(text('item'))] }] },

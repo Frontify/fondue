@@ -163,7 +163,7 @@ type ChooseAlignmentParams = {
     announcements: AlignAnnouncements;
 };
 
-/** What a toolbar button and its key both do: set the alignment, or clear it when the block already has it, and say so. */
+/** What a toolbar button and its key both do: set the alignment, or clear it when the block already has it, and say so when a block changed. */
 const chooseAlignment = ({ api, value, announcements }: ChooseAlignmentParams): void => {
     let next: AlignValue | null = value;
     let announcement = announcements[value];
@@ -172,8 +172,10 @@ const chooseAlignment = ({ api, value, announcements }: ChooseAlignmentParams): 
         next = null;
         announcement = announcements.cleared;
     }
-    api.blocks.updateAttributes({ [ALIGN_ATTRIBUTE]: next });
-    api.announce(announcement);
+    // Nothing to say when no selected block can be aligned: a screen reader user would hear a change that did not happen.
+    if (api.blocks.updateAttributes({ [ALIGN_ATTRIBUTE]: next })) {
+        api.announce(announcement);
+    }
 };
 
 type AlignToolbarProps = ToolbarItemProps & { announcements: AlignAnnouncements };

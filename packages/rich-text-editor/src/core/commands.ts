@@ -128,8 +128,12 @@ export type EditorControlApi = {
          * the selection spans.
          */
         setType(type: string, value?: Record<string, unknown>): void;
-        /** Set attributes on every block the selection touches — how alignment is applied. */
-        updateAttributes(attributes: Record<string, unknown>): void;
+        /**
+         * Set attributes on every block the selection touches — how alignment is applied.
+         *
+         * @returns whether any block changed, which is false when none of them declares the attributes or all have the values already
+         */
+        updateAttributes(attributes: Record<string, unknown>): boolean;
         /**
          * Reset every `blockAttributes` attribute (alignment) to its default across the selection
          */
