@@ -123,6 +123,20 @@ export const NEWER_STYLE_DOCUMENT: RteDocumentOf<StyledBlock> = {
     ],
 };
 
+export const COLUMN_BREAK_SELECTOR = '[data-column-break]';
+/** The margin above and below a column break, which `columnBreak.module.scss` writes: `--spacing-xx-small`. */
+export const COLUMN_BREAK_MARGIN = '4px';
+
+/** A column break between two paragraphs, where the document would give it no gap above. */
+export const COLUMN_BREAK_DOCUMENT: RteDocumentOf = {
+    version: 1,
+    blocks: [
+        { type: 'paragraph', children: [{ text: 'Before' }] },
+        { type: 'columnBreak' },
+        { type: 'paragraph', children: [{ text: 'After' }] },
+    ],
+};
+
 /** The block type of `ownMarginsPlugin.tsx`, drawn by its own component, whose class writes its margins. */
 export const BOXED_TYPE = 'boxed';
 export const BOXED_TEXT = 'Boxed';

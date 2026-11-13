@@ -3,8 +3,9 @@
 // Mounted through `pluginsWithLooks`: a block drawn by its own component in the readonly view, whose class writes
 // its margins, so the document must leave them alone in every output.
 
+import { type CSSProperties, type ReactNode } from 'react';
+
 import {
-    type BlockComponentProps,
     defineBlock,
     defineContent,
     definePlugin,
@@ -23,7 +24,11 @@ const OWN_MARGINS_MARK = { [OWN_MARGINS_ATTRIBUTE]: '' };
 const BOXED_ATTRIBUTE = 'data-boxed';
 const BOXED_MARKER = { [BOXED_ATTRIBUTE]: '' };
 
-type BoxedProps = BlockComponentProps<Record<string, never>>;
+type BoxedProps = {
+    value: Record<string, never>;
+    children?: ReactNode;
+    style?: CSSProperties;
+};
 
 const Boxed = ({ children, style }: BoxedProps) => (
     <div {...OWN_MARGINS_MARK} {...BOXED_MARKER} className={styles.boxed} style={style}>

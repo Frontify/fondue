@@ -64,25 +64,17 @@ const gapAbove = ({ spacing, isFirstChild }: Placement): string | undefined => {
 };
 
 /**
- * The margins the document hands a spaced element, as its stylesheet computes them: the gap below it, and none
- * above unless it owns its margins, which then gets only the gap above that the document sets;
- * nothing for an element the document does not space. A look's own margin replaces them.
+ * The margins the document hands a spaced element, as its stylesheet computes them: none above, the gap below;
+ * nothing for an element the document does not space, or that owns its margins, which only its look sets.
  */
 const documentMargins = (spec: HtmlSpec, placement: Placement | undefined): StyleMap => {
     if (placement === undefined) {
         return {};
     }
-    const margins: StyleMap = {};
-    if (spec.attrs?.[OWN_MARGINS_ATTRIBUTE] === undefined) {
-        margins['margin-top'] = NO_GAP;
-    } else {
-        const above = gapAbove(placement);
-        if (above !== undefined) {
-            margins['margin-top'] = above;
-        }
+    if (spec.attrs?.[OWN_MARGINS_ATTRIBUTE] !== undefined) {
+        return {};
     }
-    margins['margin-bottom'] = gapBelow(placement);
-    return margins;
+    return { 'margin-top': NO_GAP, 'margin-bottom': gapBelow(placement) };
 };
 
 /** What the document knows of its custom properties for an element: its gaps, from where it sits. */
@@ -232,9 +224,14 @@ const inlineNode = (
                 content: inlineSiblings(node.content, childSpacing, contentStyles),
             };
         }
-        // Export draws markup only: a component would leave its content without the document's looks.
-        case 'component':
-            throw new Error('A component node cannot be inlined: export draws `toHtml` markup alone.');
+        // A component has no element to place or space: its content stays among the siblings it sits with.
+        case 'component': {
+            let spacing: ChildSpacing | undefined;
+            if (placement !== undefined) {
+                spacing = placement.spacing;
+            }
+            return { ...node, content: inlineSiblings(node.content, spacing, contentStyles) };
+        }
     }
 };
 

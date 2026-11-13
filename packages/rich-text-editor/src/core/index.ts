@@ -40,7 +40,6 @@ export {
 } from './look';
 export {
     type BlockAttributeDefinition,
-    type BlockComponentProps,
     type BlockDefinition,
     type ChildSpacing,
     type ContentModel,

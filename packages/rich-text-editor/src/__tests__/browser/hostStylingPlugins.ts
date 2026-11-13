@@ -3,6 +3,7 @@
 import {
     bulletListPlugin,
     checkListPlugin,
+    columnBreakPlugin,
     fontColorPlugin,
     type LinkLook,
     linkPlugin,
@@ -26,6 +27,8 @@ export type HostLooksOptions = {
     presets?: TextStylePluginOptions['presets'];
     /** Mounts `ownMarginsPlugin`, a block drawn by its own component whose class writes its margins. */
     withOwnMarginsBlock?: boolean;
+    /** Mounts `columnBreakPlugin`, a block whose stylesheet writes its margins. */
+    withColumnBreak?: boolean;
 };
 
 export const pluginsWithLooks = ({
@@ -34,6 +37,7 @@ export const pluginsWithLooks = ({
     link,
     presets,
     withOwnMarginsBlock,
+    withColumnBreak,
 }: HostLooksOptions): RtePlugin[] => {
     const plugins = [
         textStylePlugin({ presets }),
@@ -48,6 +52,9 @@ export const pluginsWithLooks = ({
     }
     if (withOwnMarginsBlock === true) {
         plugins.push(ownMarginsPlugin);
+    }
+    if (withColumnBreak === true) {
+        plugins.push(columnBreakPlugin());
     }
     return plugins;
 };

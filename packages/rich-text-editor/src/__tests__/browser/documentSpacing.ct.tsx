@@ -9,6 +9,9 @@ import {
     BOXED_TEXT,
     CHECK_ITEM_DOCUMENT,
     CHECK_TEXTS,
+    COLUMN_BREAK_DOCUMENT,
+    COLUMN_BREAK_MARGIN,
+    COLUMN_BREAK_SELECTOR,
     NEWER_STYLE_DOCUMENT,
     NEWER_STYLE_TEXT,
     SPACING_DOCUMENT,
@@ -212,6 +215,23 @@ test.describe('document spacing', () => {
         await removeClasses(inline);
         for (const surface of [exported.getByTestId('classes'), inline]) {
             expect(await marginsOf(surface.getByText(BOXED_TEXT, { exact: true }))).toEqual(expected);
+        }
+    });
+
+    test('leaves the margins of a column break to its stylesheet, on every surface', async ({ mount }) => {
+        const expected = margins(COLUMN_BREAK_MARGIN, COLUMN_BREAK_MARGIN);
+
+        const drawn = await mount(<HostLooksPair value={COLUMN_BREAK_DOCUMENT} withColumnBreak />);
+        for (const surface of ['renderer', 'editor']) {
+            expect(await marginsOf(drawn.getByTestId(surface).locator(COLUMN_BREAK_SELECTOR))).toEqual(expected);
+        }
+        await drawn.unmount();
+
+        const exported = await mount(<ExportedLooksPair value={COLUMN_BREAK_DOCUMENT} withColumnBreak />);
+        const inline = exported.getByTestId('inline');
+        await removeClasses(inline);
+        for (const surface of [exported.getByTestId('classes'), inline]) {
+            expect(await marginsOf(surface.locator(COLUMN_BREAK_SELECTOR))).toEqual(expected);
         }
     });
 });

@@ -308,19 +308,14 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
     toHtml: (value: TValue) => HtmlSpec;
     parse: readonly ParseRule<Partial<TValue>>[];
     render?: {
-        /** Readonly view in place of `toHtml`. */
-        component?: ComponentType<BlockComponentProps<TValue>>;
+        /**
+         * Readonly view in place of `toHtml`. `style` carries what every text
+         * block carries (alignment); put it on the outermost element.
+         * A component for a block whose content holds blocks puts `CHILD_SPACING_ATTRIBUTE` (with its declared spacing)
+         * on the element that holds `children`, as the check list does.
+         */
+        component?: ComponentType<{ value: TValue; children?: ReactNode; style?: CSSProperties }>;
     };
-};
-
-/**
- * What a block's readonly component receives.
- */
-export type BlockComponentProps<TValue> = {
-    value: TValue;
-    children?: ReactNode;
-    /** What every text block carries (alignment); put it on the outermost element. */
-    style?: CSSProperties;
 };
 
 /**

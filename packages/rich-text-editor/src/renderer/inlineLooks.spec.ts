@@ -91,19 +91,20 @@ describe('inlineLooks', () => {
         });
     });
 
-    it('reaches nested elements', () => {
-        const [node] = inlineLooks([element({ class: 'big' }, [element({ class: 'bold' })])], CLASS_STYLES);
+    it('reaches nested elements and the content of components', () => {
+        const component: ComponentNode = {
+            kind: 'component',
+            component: () => null,
+            props: {},
+            content: [element({ class: 'bold' })],
+        };
+
+        const [node] = inlineLooks([element({ class: 'big' }, [component])], CLASS_STYLES);
 
         expect(node).toMatchObject({
             spec: { attrs: { style: CONTENT_STYLES.big } },
-            content: [{ spec: { attrs: { style: CONTENT_STYLES.bold } } }],
+            content: [{ kind: 'component', content: [{ spec: { attrs: { style: CONTENT_STYLES.bold } } }] }],
         });
-    });
-
-    it('throws for a component node, which export never draws, rather than leaving its content without looks', () => {
-        const component: ComponentNode = { kind: 'component', component: () => null, props: {}, content: [] };
-
-        expect(() => inlineLooks([component], NO_STYLES)).toThrow('A component node cannot be inlined');
     });
 
     it('leaves strings and elements without a styled class as they are', () => {
@@ -136,7 +137,7 @@ describe('inlineLooks plain tags', () => {
     it('leaves out an element that carries the margin marker', () => {
         const [node] = inlineLooks([block('p', [], { [OWN_MARGINS_ATTRIBUTE]: '' })], PLAIN_P_STYLES);
 
-        expect(specOf(node).attrs?.style).not.toHaveProperty('font-size');
+        expect(specOf(node).attrs?.style).toBeUndefined();
     });
 
     it('lets the style of a class win over the style of its tag', () => {
@@ -175,17 +176,17 @@ describe('inlineLooks spacing', () => {
             contentStyles,
         );
 
-        expect(specOf(first).attrs?.style).toEqual({ 'margin-top': '0', 'margin-bottom': BLOCK_GAP });
-        expect(specOf(middle).attrs?.style).toEqual({ 'margin-top': OWN_GAP_ABOVE, 'margin-bottom': BLOCK_GAP });
-        expect(specOf(last).attrs?.style).toEqual({ 'margin-top': OWN_GAP_ABOVE, 'margin-bottom': '0' });
+        expect(specOf(first).attrs?.style).toEqual({ 'margin-top': '0' });
+        expect(specOf(middle).attrs?.style).toEqual({ 'margin-top': OWN_GAP_ABOVE });
+        expect(specOf(last).attrs?.style).toEqual({ 'margin-top': OWN_GAP_ABOVE });
     });
 
-    it('keeps the literal margin of a block that owns its margins, and gives it the gap below where it sets none', () => {
+    it('gives a block that owns its margins only the margins its look sets, none from the document', () => {
         const contentStyles = { classes: { own: { 'margin-top': OWN_GAP_ABOVE } }, plainTags: {} };
 
         const [first] = inlineLooks([block('p', [], OWN_BLOCK), block('p')], contentStyles);
 
-        expect(specOf(first).attrs?.style).toEqual({ 'margin-top': OWN_GAP_ABOVE, 'margin-bottom': BLOCK_GAP });
+        expect(specOf(first).attrs?.style).toEqual({ 'margin-top': OWN_GAP_ABOVE });
     });
 
     it('places blocks among elements alone, so text beside them does not count', () => {
