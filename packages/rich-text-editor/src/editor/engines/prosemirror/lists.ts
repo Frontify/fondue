@@ -105,6 +105,35 @@ export const createListApi = (
             }
             return false;
         },
+        unwrapAll() {
+            const view = getView();
+            const { from, to } = view.state.selection;
+            const lists: { node: PmNode; pos: number }[] = [];
+            view.state.doc.nodesBetween(from, to, (node, pos) => {
+                if (!itemTypeByList.has(node.type.name)) {
+                    return true;
+                }
+                // Outermost lists only: their nested ones come along below.
+                lists.push({ node, pos });
+                return false;
+            });
+            if (lists.length === 0) {
+                return false;
+            }
+
+            const transaction = view.state.tr;
+            const contentOf = (list: PmNode): PmNode[] =>
+                mapChildren(list, (item) =>
+                    mapChildren(item, (child) => (itemTypeByList.has(child.type.name) ? contentOf(child) : [child])),
+                ).flat(2);
+            // From the end backwards, so the earlier positions stay valid.
+            for (const { node, pos } of [...lists].reverse()) {
+                transaction.replaceWith(pos, pos + node.nodeSize, contentOf(node));
+            }
+            dispatch(transaction);
+            view.focus();
+            return true;
+        },
     };
 };
 

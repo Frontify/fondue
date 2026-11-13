@@ -167,6 +167,8 @@ export type EditorControlApi = {
          * Split the current list item in two or, in an empty item, leave the list (outdent) — Enter inside a list. Returns false outside one.
          */
         split(): boolean;
+        /** Replace every list the selection touches with the blocks its items held, even when the selection merely contains lists. */
+        unwrapAll(): boolean;
     };
 
     /**
