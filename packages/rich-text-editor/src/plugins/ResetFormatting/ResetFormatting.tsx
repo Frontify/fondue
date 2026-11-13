@@ -10,11 +10,11 @@ const CLEARED_ANNOUNCEMENT = 'Formatting cleared';
 const RESET_ANNOUNCEMENT = 'Formatting reset';
 
 /**
- * What the toolbar button does: the selection back to plain text, links included, as one undo step. Mentions stay because they are no marks.
+ * What the toolbar button does: the selection back to plain text as one undo step. Marks that survive a clear (links) and mentions stay.
  */
 const reset = (api: EditorControlApi): void => {
     api.group(() => {
-        api.marks.removeAll({ scope: 'block' });
+        api.marks.removeAll({ scope: 'block', keepSurviving: true });
         api.blocks.setType(PARAGRAPH);
         // Whatever attributes plugins add to every block (alignment today) go back to their defaults, without this plugin having to name another's.
         api.blocks.resetAttributes();
@@ -23,7 +23,7 @@ const reset = (api: EditorControlApi): void => {
 
 /** The key is a literal because a computed key keeps this plugin in the renderer. */
 const hotkeys = {
-    /** Clears the marks only, those that survive a clear excepted (links): block types, lists and alignment stay. Not what the toolbar button does. */
+    /** Clears the marks only, those that survive a clear (links) excepted: block types, lists and alignment stay, which the toolbar button resets. */
     'Mod-\\': (api) => {
         if (api.marks.removeAll({ scope: 'block', keepSurviving: true })) {
             api.announce(CLEARED_ANNOUNCEMENT);
@@ -45,7 +45,7 @@ const ResetFormattingButton = ({ api, label }: ToolbarItemProps) => {
 };
 
 /**
- * A toolbar button that strips the selection back to plain text, and `Mod-\`, which only clears its marks except those that survive a clear
+ * A toolbar button that resets the selection's marks, lists, block types and attributes, and `Mod-\`, which only clears its marks. Both keep the marks that survive a clear
  */
 export const resetFormattingPlugin = /* @__PURE__ */ definePlugin({
     id: 'reset-formatting',
