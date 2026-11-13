@@ -547,6 +547,21 @@ describe('marks.removeAll', () => {
         expect(linkOnly.api.marks.removeAll({ scope: 'block', keepSurviving: true })).toBe(false);
     });
 
+    it('with no options strips a range of every mark and, at a caret, only stops what is typed next', () => {
+        const range = editorWith(pluginsWithPin, [
+            paragraph(text('bold', { bold: true, link: LINK, pin: true }), text(' end')),
+        ]);
+        range.selectBetween('bold', 'end');
+        range.api.marks.removeAll();
+        const caret = editorWith(pluginsWithPin, [paragraph(text('bold', { bold: true, link: LINK, pin: true }))]);
+        caret.caretAfter('bold');
+        caret.api.marks.removeAll();
+        caret.api.insertText('X');
+
+        expect(range.stored()).toEqual([paragraph(text('bold end'))]);
+        expect(caret.stored()).toEqual([paragraph(text('bold', { bold: true, link: LINK, pin: true }), text('X'))]);
+    });
+
     it('keeps a mention', () => {
         const mention = { type: 'tag', name: 'Ada' };
         const editor = editorWith(plugins, [paragraph(text('hi ', { bold: true }), mention)]);

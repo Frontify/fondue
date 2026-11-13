@@ -63,8 +63,9 @@ const splitBlock = (api: EditorControlApi): void => {
  * keys, so this handler splits the item itself rather than leaving Enter to
  * the list.
  * Shift-Enter does Enter's normal action instead: a new paragraph, or a new
- * list item. The plugin owns that key, so it wins over the soft break wherever
- * the two are mounted.
+ * list item. Handlers of one key run in plugin order, so mount this plugin
+ * before `defaultPlugins`; mounted after, `softBreakPlugin` takes Shift-Enter
+ * and breaks the line.
  *
  * @example
  * blurOnBreakPlugin({ onBreak: submit, required: 'Write a comment first.' })
@@ -82,7 +83,6 @@ export const blurOnBreakPlugin = (options: BlurOnBreakPluginOptions = {}) => {
     return definePlugin({
         id: 'blur-on-break',
         description,
-        ownedHotkeys: ['Shift-Enter'],
         hotkeys: {
             // Enter is always this plugin's: it splits an item, refuses, or submits.
             Enter: {
