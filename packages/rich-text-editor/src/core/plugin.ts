@@ -401,12 +401,6 @@ export type DefaultStyle = {
     strip: (cssValue: string) => string;
 };
 
-/** What a parse rule may read off its element through the editor, so every rule reads CSS the same way. */
-export type ParseReader = {
-    /** The colour the element's own style declares for `property`, as a lowercase `#rrggbb` or `#rrggbbaa`; undefined when it declares none or no colour. Default styles of mounted nodes (`defaultStyles`) are not stripped here. */
-    color: (property: string) => string | undefined;
-};
-
 /**
  * One rule for reading pasted HTML back into a node. Leave `value` out when the
  * element carries none (`<strong>`); return null from it when the element is
@@ -415,8 +409,7 @@ export type ParseReader = {
 export type ParseRule<TValue> = {
     /** A CSS selector: `strong`, `a[href]`, `li[data-checked]`. */
     tag: string;
-    /** Reads the node's value off the element; `read` reads its CSS the way the editor does, and a rule that needs none leaves it out. */
-    value?: (element: HTMLElement, read: ParseReader) => TValue | null;
+    value?: (element: HTMLElement) => TValue | null;
 };
 
 /**

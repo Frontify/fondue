@@ -4,8 +4,6 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type ParseReader } from '#/core';
-
 import { BIDI_ISOLATE_TAG } from './components/MentionLink';
 import { mentionValueOf } from './helpers/mention';
 import { mentionContent, mentionPlugin } from './Mention';
@@ -17,13 +15,10 @@ const ALL = { id: 'all', username: 'all', name: 'Everyone', kind: 'all' } as con
 const mentionFor = (href?: string) =>
     mentionPlugin({ items: [JANE], href: href === undefined ? undefined : () => href }).content?.inlines?.mention;
 
-// The mention rule reads no CSS, so its reader finds none.
-const NO_CSS_READER: ParseReader = { color: () => undefined };
-
 const parse = (html: string): unknown => {
     const element = document.createElement('div');
     element.innerHTML = html;
-    return mentionFor('/u')?.parse[0]?.value?.(element.firstElementChild as HTMLElement, NO_CSS_READER);
+    return mentionFor('/u')?.parse[0]?.value?.(element.firstElementChild as HTMLElement);
 };
 
 describe('the mention inline', () => {

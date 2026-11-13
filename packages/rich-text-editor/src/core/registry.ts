@@ -366,13 +366,11 @@ const forMatching = (rules: readonly RteInputRule[]): RteInputRule[] => [
     ...rules.filter((rule) => rule.kind !== 'mark'),
 ];
 
-/** Built per call, so no module-level code keeps this file in a bundle that only renders. */
-const editorShortcutRows = (): RteShortcut[] =>
-    Object.values(EDITOR_SHORTCUTS).map(({ key, label }) => ({
-        owner: { kind: 'editor' },
-        key,
-        label,
-    }));
+const EDITOR_SHORTCUT_ROWS: readonly RteShortcut[] = Object.values(EDITOR_SHORTCUTS).map(({ key, label }) => ({
+    owner: { kind: 'editor' },
+    key,
+    label,
+}));
 
 /**
  * What `buildPluginRegistry` fills while it walks the plugins.
@@ -494,7 +492,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
     const draft: Draft = {
         edits: new Map(),
         hotkeys: new Map(),
-        shortcuts: editorShortcutRows(),
+        shortcuts: [...EDITOR_SHORTCUT_ROWS],
         inputRules: [],
         pasteHandlers: [],
         toolbarItems: [],

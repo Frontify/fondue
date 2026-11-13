@@ -43,11 +43,9 @@ const firstTypeOf = (content: RteContent): string => typesOf(content)[0] ?? 'con
  * Adds a plugin's declared types to `target`. Two plugins declaring the same
  * type is an error (one would silently replace the other); the same definition
  * object registered twice is fine — two list plugins share their item that way.
- *
- * @param kind - What the duplicate error calls the definition: "block type", "edit view".
  */
 export const register = <TDefinition>(
-    kind: string,
+    kind: 'block type' | 'mark type' | 'inline type' | 'block attribute' | 'edit view',
     target: Map<string, TDefinition>,
     owners: Map<string, string>,
     owner: string,
