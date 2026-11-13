@@ -610,6 +610,15 @@ describe('block attributes', () => {
 
         expect(editor.onDocChange).not.toHaveBeenCalled();
     });
+
+    it('reports no change when an unset attribute is cleared with undefined', () => {
+        const editor = editorWith(plugins, [paragraph(text('plain'))]);
+        editor.select('plain');
+
+        editor.api.blocks.updateAttributes({ align: undefined });
+
+        expect(editor.onDocChange).not.toHaveBeenCalled();
+    });
 });
 
 describe('insert', () => {

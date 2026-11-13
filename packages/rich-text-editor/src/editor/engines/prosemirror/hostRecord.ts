@@ -32,7 +32,7 @@ export const hostDocAction = (record: Readonly<HostRecord>, doc: RteDocumentOf, 
     if (seq !== undefined && seq > record.hostSeq) {
         return { kind: 'echo', seq };
     }
-    // Replacing text mid-composition breaks the word being composed, so the change waits for it to end, as in Slate.
+    // Replacing text mid-composition breaks the word being composed, so the change waits for it to end.
     if (composing) {
         return { kind: 'wait' };
     }

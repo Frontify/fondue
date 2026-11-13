@@ -391,11 +391,7 @@ const inlineFromEngine = (child: PmNode): RteInlineNode | null => {
             }
             // A mark that carries nothing is stored as `true` — see `StoredMarkValue`.
             const value = markValueOf(mark);
-            if (Object.keys(value).length > 0) {
-                text[mark.type.name] = value;
-            } else {
-                text[mark.type.name] = true;
-            }
+            text[mark.type.name] = Object.keys(value).length > 0 ? value : true;
         }
         // The text run and the inline below are built to the document format, which the open inline type cannot name.
         converted = frozenInDevelopment(text) as RteInlineNode;

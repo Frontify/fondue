@@ -9,7 +9,9 @@ import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
+    ANY_LIST,
     buildPluginRegistry,
+    defineBlock,
     defineInline,
     defineMark,
     emptyDocument,
@@ -20,7 +22,7 @@ import {
 
 import { toEngineDocument } from './documentConversion';
 import { type FrameScheduler, mountEditorForTests } from './editing';
-import { type BlockInput, destroyEditors, editorWith, shipped } from './testEditor';
+import { type BlockInput, destroyEditors, editorWith } from './testEditor';
 
 // Checked independently of the source: the character the spec expects for an inline atom in text.
 const INLINE_ATOM_STAND_IN = '￼';
@@ -49,6 +51,91 @@ const plugins: RtePlugin[] = [
         },
     },
 ];
+
+/**
+ * Generic stand-ins for the shapes a document carries: marks that hold nothing
+ * and one that holds a value, a void inline, a text block with an attribute of
+ * its own, an attribute on every text block, lists that nest, and an item with
+ * a boolean attribute.
+ */
+const toggleMarksPlugin: RtePlugin = {
+    id: 'toggle-marks',
+    marks: {
+        toggleA: defineMark({ toHtml: () => ({ tag: 'strong', children: true }), parse: [] }),
+        toggleB: defineMark({ toHtml: () => ({ tag: 'em', children: true }), parse: [] }),
+        toggleC: defineMark({ toHtml: () => ({ tag: 'u', children: true }), parse: [] }),
+    },
+};
+
+const valuedMarkPlugin: RtePlugin = {
+    id: 'valued-mark',
+    marks: {
+        valued: defineMark<{ ref: string }>({
+            toHtml: ({ ref }) => ({ tag: 'a', attrs: { href: ref }, children: true }),
+            parse: [],
+        }),
+    },
+};
+
+const voidInlinePlugin: RtePlugin = {
+    id: 'void-inline',
+    inlines: { marker: defineInline({ toHtml: () => ({ tag: 'br' }), parse: [] }) },
+};
+
+const styledPlugin: RtePlugin = {
+    id: 'styled',
+    blocks: {
+        styled: defineBlock<{ style: string }>({
+            content: 'text',
+            defaults: { style: 'large' },
+            toHtml: ({ style }) => ({ tag: 'p', attrs: { 'data-style': style }, children: true }),
+            parse: [],
+        }),
+    },
+};
+
+const tonePlugin: RtePlugin = {
+    id: 'tone',
+    blockAttributes: { tone: { style: (value) => ({ color: value }) } },
+};
+
+const listsPlugin: RtePlugin = {
+    id: 'lists',
+    blocks: {
+        list: defineBlock({
+            content: { items: 'listEntry' },
+            toHtml: () => ({ tag: 'ul', children: true }),
+            parse: [],
+        }),
+        orderedList: defineBlock({
+            content: { items: 'listEntry' },
+            toHtml: () => ({ tag: 'ol', children: true }),
+            parse: [],
+        }),
+        listEntry: defineBlock({
+            content: { blocks: [PARAGRAPH, ANY_LIST] },
+            toHtml: () => ({ tag: 'li', children: true }),
+            parse: [],
+        }),
+    },
+};
+
+const checkablePlugin: RtePlugin = {
+    id: 'checkable',
+    blocks: {
+        checkableList: defineBlock({
+            content: { items: 'checkEntry' },
+            toHtml: () => ({ tag: 'ul', children: true }),
+            parse: [],
+        }),
+        checkEntry: defineBlock<{ checked: boolean }>({
+            content: { blocks: [PARAGRAPH, ANY_LIST] },
+            defaults: { checked: false },
+            toHtml: ({ checked }) => ({ tag: 'li', attrs: { 'data-checked': String(checked) }, children: true }),
+            parse: [],
+        }),
+    },
+};
 
 const paragraph = (text: string): RteDocumentOf => ({
     version: 1,
@@ -449,24 +536,24 @@ describe('a document set by the host that changes the blocks around the caret', 
     };
 
     it('keeps the caret in its block when the host only restyles it', () => {
-        const { view, editor } = editorWith(shipped('text-style'), [text('one'), text('two')]);
+        const { view, editor } = editorWith([styledPlugin], [text('one'), text('two')]);
         caretIn(view, 'one', 2);
 
-        editor.setDoc(blocksOf({ type: 'textStyle', style: 'heading1', children: [{ text: 'one' }] }, text('two')));
+        editor.setDoc(blocksOf({ type: 'styled', style: 'large', children: [{ text: 'one' }] }, text('two')));
 
-        expect(view.state.doc.child(0).type.name).toBe('textStyle');
+        expect(view.state.doc.child(0).type.name).toBe('styled');
         expect(caretAt(view)).toEqual({ block: 'one', offset: 2 });
     });
 
     it('keeps the caret in its block when the host inserts a block with the same text before it', () => {
-        const heading: BlockInput = { type: 'textStyle', style: 'heading1', children: [{ text: 'T' }] };
-        const { view, editor } = editorWith(shipped('text-style'), [heading, text('x')]);
+        const styledBlock: BlockInput = { type: 'styled', style: 'large', children: [{ text: 'T' }] };
+        const { view, editor } = editorWith([styledPlugin], [styledBlock, text('x')]);
         caretIn(view, 'T', 1);
 
-        editor.setDoc(blocksOf(text('T'), heading, text('x')));
+        editor.setDoc(blocksOf(text('T'), styledBlock, text('x')));
 
         expect(view.state.selection.$from.index(0)).toBe(1);
-        expect(view.state.selection.$from.parent.type.name).toBe('textStyle');
+        expect(view.state.selection.$from.parent.type.name).toBe('styled');
     });
 
     it('leaves the caret and undo in a block between two the host changes', () => {
@@ -543,64 +630,61 @@ describe('a document set by the host that changes the blocks around the caret', 
     });
 
     it('keeps a host restyle when the user undoes their own change to the same block', () => {
-        const { view, editor, api } = editorWith(shipped('text-style', 'align'), [text('one'), text('two')]);
+        const { view, editor, api } = editorWith([styledPlugin, tonePlugin], [text('one'), text('two')]);
         caretIn(view, 'one', 1);
-        api.blocks.updateAttributes({ align: 'center' });
+        api.blocks.updateAttributes({ tone: 'red' });
 
         editor.setDoc(
-            blocksOf(
-                { type: 'textStyle', style: 'heading1', align: 'center', children: [{ text: 'one' }] },
-                text('two'),
-            ),
+            blocksOf({ type: 'styled', style: 'large', tone: 'red', children: [{ text: 'one' }] }, text('two')),
         );
         undo(view.state, view.dispatch);
 
-        expect(view.state.doc.child(0).type.name).toBe('textStyle');
+        expect(view.state.doc.child(0).type.name).toBe('styled');
     });
 
     it('undoes only the attribute the user changed when the host changed another on the same block', () => {
-        const heading = (style: string, align?: string): BlockInput => {
-            const block: BlockInput = { type: 'textStyle', style, children: [{ text: 'one' }] };
-            if (align !== undefined) {
-                block.align = align;
+        const styledBlock = (style: string, tone?: string): BlockInput => {
+            const block: BlockInput = { type: 'styled', style, children: [{ text: 'one' }] };
+            if (tone !== undefined) {
+                block.tone = tone;
             }
             return block;
         };
-        const { view, editor, api } = editorWith(shipped('text-style', 'align'), [heading('heading1')]);
+        const { view, editor, api } = editorWith([styledPlugin, tonePlugin], [styledBlock('large')]);
         caretIn(view, 'one', 1);
-        api.blocks.updateAttributes({ align: 'center' });
+        api.blocks.updateAttributes({ tone: 'red' });
 
-        editor.setDoc(blocksOf(heading('heading2', 'center')));
+        editor.setDoc(blocksOf(styledBlock('small', 'red')));
         undo(view.state, view.dispatch);
 
-        expect(view.state.doc.child(0).attrs.style).toBe('heading2');
-        expect(view.state.doc.child(0).attrs.align ?? null).toBeNull();
+        expect(view.state.doc.child(0).attrs.style).toBe('small');
+        expect(view.state.doc.child(0).attrs.tone ?? null).toBeNull();
     });
 
-    it('keeps the alignment the host set when the user undoes the alignment they set on the same block', () => {
-        const heading = (align?: string): BlockInput => {
-            const block: BlockInput = { type: 'textStyle', style: 'heading1', children: [{ text: 'one' }] };
-            if (align !== undefined) {
-                block.align = align;
+    it('keeps the tone the host set when the user undoes the tone they set on the same block', () => {
+        const styledBlock = (tone?: string): BlockInput => {
+            const block: BlockInput = { type: 'styled', style: 'large', children: [{ text: 'one' }] };
+            if (tone !== undefined) {
+                block.tone = tone;
             }
             return block;
         };
-        const { view, editor, api } = editorWith(shipped('text-style', 'align'), [heading()]);
+        const { view, editor, api } = editorWith([styledPlugin, tonePlugin], [styledBlock()]);
         caretIn(view, 'one', 1);
-        api.blocks.updateAttributes({ align: 'center' });
+        api.blocks.updateAttributes({ tone: 'red' });
 
-        editor.setDoc(blocksOf(heading('right')));
+        editor.setDoc(blocksOf(styledBlock('blue')));
         undo(view.state, view.dispatch);
 
-        expect(view.state.doc.child(0).attrs.align).toBe('right');
+        expect(view.state.doc.child(0).attrs.tone).toBe('blue');
     });
 
     it('keeps the caret in a to-do the host ticks', () => {
         const todo = (checked: boolean): BlockInput => ({
-            type: 'checkList',
-            children: [{ type: 'checkItem', checked, children: [text('task')] }],
+            type: 'checkableList',
+            children: [{ type: 'checkEntry', checked, children: [text('task')] }],
         });
-        const { view, editor } = editorWith(shipped('check-list'), [todo(false), text('after')]);
+        const { view, editor } = editorWith([checkablePlugin], [todo(false), text('after')]);
         caretIn(view, 'task', 2);
 
         editor.setDoc(blocksOf(todo(true), text('after')));
@@ -611,10 +695,10 @@ describe('a document set by the host that changes the blocks around the caret', 
 
     it('keeps the caret in its list item when the host removes an item before it', () => {
         const list = (...items: string[]): BlockInput => ({
-            type: 'bulletList',
-            children: items.map((item) => ({ type: 'listItem', children: [text(item)] })),
+            type: 'list',
+            children: items.map((item) => ({ type: 'listEntry', children: [text(item)] })),
         });
-        const { view, editor } = editorWith(shipped('bullet-list'), [list('a', 'b', 'c')]);
+        const { view, editor } = editorWith([listsPlugin], [list('a', 'b', 'c')]);
         caretIn(view, 'c', 1);
 
         editor.setDoc(blocksOf(list('b', 'c')));
@@ -880,10 +964,10 @@ describe('a document set by the host, over generated documents', () => {
 
     const TEXTS = ['a', 'ab', 'cde', 'hello ', 'foo bar', '\u{1F600}', 'a\u{1F600}b', 'x\u{1F468}\u200D\u{1F469}y'];
     const MARKS: readonly [string, unknown][] = [
-        ['bold', true],
-        ['italic', true],
-        ['underline', true],
-        ['link', { href: 'https://example.com' }],
+        ['toggleA', true],
+        ['toggleB', true],
+        ['toggleC', true],
+        ['valued', { ref: 'https://example.com' }],
     ];
 
     const run = (random: Random): Json => {
@@ -899,15 +983,15 @@ describe('a document set by the host, over generated documents', () => {
     const runs = (random: Random): Json[] =>
         Array.from({ length: below(random, 4) }, (): Json => {
             if (random() < 0.15) {
-                return { type: 'break' };
+                return { type: 'marker' };
             }
             return run(random);
         });
     const textBlock = (random: Random): Json => {
         if (random() < 0.3) {
             return {
-                type: 'textStyle',
-                style: pick(random, ['heading1', 'heading2']),
+                type: 'styled',
+                style: pick(random, ['large', 'small']),
                 children: runs(random),
             };
         }
@@ -919,16 +1003,16 @@ describe('a document set by the host, over generated documents', () => {
             children.push(list(random, depth + 1));
         }
         const result: Json = { type, children };
-        if (type === 'checkItem') {
+        if (type === 'checkEntry') {
             result.checked = random() < 0.5;
         }
         return result;
     };
     const list = (random: Random, depth: number): Json => {
-        const type = pick(random, ['bulletList', 'numberedList', 'checkList']);
-        let itemType = 'listItem';
-        if (type === 'checkList') {
-            itemType = 'checkItem';
+        const type = pick(random, ['list', 'orderedList', 'checkableList']);
+        let itemType = 'listEntry';
+        if (type === 'checkableList') {
+            itemType = 'checkEntry';
         }
         return {
             type,
@@ -949,7 +1033,7 @@ describe('a document set by the host, over generated documents', () => {
     const textBlocks = (blocks: Json[]): Json[] =>
         blocks.flatMap((member) => {
             const children = (member.children ?? []) as Json[];
-            if (member.type === PARAGRAPH || member.type === 'textStyle') {
+            if (member.type === PARAGRAPH || member.type === 'styled') {
                 return [member];
             }
             return textBlocks(children);
@@ -960,13 +1044,13 @@ describe('a document set by the host, over generated documents', () => {
         const copy = structuredClone(doc);
         const roots = copy.blocks as unknown as Json[];
         const operation = below(random, 4);
-        // Only top-level text blocks: a list item holds paragraphs, never headings.
-        const restylable = roots.filter((member) => member.type === PARAGRAPH || member.type === 'textStyle');
+        // Only top-level text blocks: a list item holds paragraphs, never styled blocks.
+        const restylable = roots.filter((member) => member.type === PARAGRAPH || member.type === 'styled');
         if (operation === 3 && restylable.length > 0) {
             const target = pick(random, restylable);
             if (target.type === PARAGRAPH) {
-                target.type = 'textStyle';
-                target.style = 'heading2';
+                target.type = 'styled';
+                target.style = 'small';
             } else {
                 target.type = PARAGRAPH;
                 delete target.style;
@@ -979,11 +1063,11 @@ describe('a document set by the host, over generated documents', () => {
             if (random() < 0.5) {
                 target.text = pick(random, TEXTS);
             } else {
-                let bold: true | undefined;
+                let toggleA: true | undefined;
                 if (random() < 0.5) {
-                    bold = true;
+                    toggleA = true;
                 }
-                target.bold = bold;
+                target.toggleA = toggleA;
             }
             return copy;
         }
@@ -991,10 +1075,10 @@ describe('a document set by the host, over generated documents', () => {
         const collect = (members: Json[]) => {
             for (const member of members) {
                 const children = (member.children ?? []) as Json[];
-                if (member.type === 'bulletList' || member.type === 'numberedList' || member.type === 'checkList') {
-                    let itemType = 'listItem';
-                    if (member.type === 'checkList') {
-                        itemType = 'checkItem';
+                if (member.type === 'list' || member.type === 'orderedList' || member.type === 'checkableList') {
+                    let itemType = 'listEntry';
+                    if (member.type === 'checkableList') {
+                        itemType = 'checkEntry';
                     }
                     lists.push({
                         blocks: children,
@@ -1050,17 +1134,7 @@ describe('a document set by the host, over generated documents', () => {
             after = mutate(random, after);
         }
         const editor = editorWith(
-            shipped(
-                'text-style',
-                'bold',
-                'italic',
-                'underline',
-                'link',
-                'soft-break',
-                'bullet-list',
-                'numbered-list',
-                'check-list',
-            ),
+            [styledPlugin, toggleMarksPlugin, valuedMarkPlugin, voidInlinePlugin, listsPlugin, checkablePlugin],
             before.blocks,
         );
         const { view, onDocChange } = editor;

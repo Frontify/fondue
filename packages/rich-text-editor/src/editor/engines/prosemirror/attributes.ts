@@ -16,8 +16,13 @@ export const setChangedAttributes = (
     attributes: Readonly<Record<string, unknown>>,
 ): void => {
     for (const [name, value] of Object.entries(attributes)) {
-        if (name in node.attrs && node.attrs[name] !== value) {
-            transaction.setNodeAttribute(pos, name, value);
+        // An attribute is cleared with `null` or `undefined`, so both count as the same value.
+        let wanted = value;
+        if (wanted === undefined) {
+            wanted = null;
+        }
+        if (name in node.attrs && node.attrs[name] !== wanted) {
+            transaction.setNodeAttribute(pos, name, wanted);
         }
     }
 };
