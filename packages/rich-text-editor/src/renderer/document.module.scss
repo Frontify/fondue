@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../styles/look.module.scss';
+
 // The blocks the document spaces apart, and the headings among them.
 $blocks: p, h1, h2, h3, h4, ul, ol, blockquote;
 $headings: h1, h2, h3, h4;
@@ -57,11 +59,16 @@ $headings: h1, h2, h3, h4;
     }
 
     // Margins only for blocks that do not own theirs (`ownsMargins`): such a block reads the gaps itself,
-    // so a host margin is never trimmed. `:where` keeps a plain paragraph's rule below the body look's margins
-    // (`paragraphPlugin`), which win by rank rather than by source order.
+    // so a host margin is never trimmed.
     :is(ul, ol),
-    :where(p:not([data-rte-own-margins]), blockquote:not([data-rte-own-margins])) {
+    blockquote:not([data-rte-own-margins]) {
         margin-block: 0 var(--rte-block-gap);
+    }
+
+    // A plain paragraph reads the margins of the body look, which a host sets with `paragraphPlugin`, in list items too.
+    // Without one, the look's defaults are no top margin and the gap below, so this stays the same rank as the rule above.
+    p:not([data-rte-own-margins]) {
+        @include look.look('body', $only: (margin-top, margin-bottom));
     }
 
     // Raised and lowered text without growing the line it sits on. Browsers'

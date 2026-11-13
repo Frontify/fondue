@@ -7,10 +7,13 @@ import { DOCUMENT_TEST_ID } from '../../core/documentContract';
 import { type LinkLook, type TextLook, type TextStyleName } from '../../index';
 
 import { HostLooksPair } from './HostLooksPair';
+import { HostResetPair } from './HostResetPair';
 import { HostStylingPair } from './HostStylingPair';
 import { HostStylingSections } from './HostStylingSections';
 import {
     H1_COLOR_VARIABLE,
+    HOST_RESET_CSS,
+    HOST_SCOPED_CSS,
     LAST_QUOTE_TEXT,
     MIDDLE_QUOTE_TEXT,
     QUOTES_DOCUMENT,
@@ -473,6 +476,36 @@ test.describe('host styling of body text, quotes and links', () => {
 
         for (const surface of SURFACES) {
             expect(await looksOfBlocksIn(component.getByTestId(surface))).toEqual(BASELINE_LOOKS);
+        }
+    });
+});
+
+test.describe('the document next to a host page stylesheet', () => {
+    test('keeps the gap between blocks under a host reset of margins', async ({ mount }) => {
+        const component = await mount(<HostResetPair hostCss={HOST_RESET_CSS} />);
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            await expect(blockIn(section, 'body')).toHaveCSS('margin-bottom', BLOCK_GAP);
+            await expect(blockIn(section, 'quote')).toHaveCSS('margin-bottom', BLOCK_GAP);
+        }
+    });
+
+    test('keeps the gap below a paragraph under a host rule scoped to a class', async ({ mount }) => {
+        const component = await mount(<HostResetPair hostCss={HOST_SCOPED_CSS} />);
+
+        for (const surface of SURFACES) {
+            await expect(blockIn(component.getByTestId(surface), 'body')).toHaveCSS('margin-bottom', BLOCK_GAP);
+        }
+    });
+
+    test('applies the host look of body text over a host rule scoped to a class', async ({ mount }) => {
+        const component = await mount(<HostResetPair hostCss={HOST_SCOPED_CSS} body={HOST_LOOK} />);
+
+        for (const surface of SURFACES) {
+            const body = blockIn(component.getByTestId(surface), 'body');
+            await expect(body).toHaveCSS('margin-top', HOST_COMPUTED_LOOK['margin-top']);
+            await expect(body).toHaveCSS('margin-bottom', HOST_COMPUTED_LOOK['margin-bottom']);
         }
     });
 });

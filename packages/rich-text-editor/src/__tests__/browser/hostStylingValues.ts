@@ -90,3 +90,12 @@ export const QUOTES_DOCUMENT: RteDocument = {
         { type: 'quote', children: [{ text: LAST_QUOTE_TEXT }] },
     ],
 };
+
+/** The class of the element a host page wraps the document in, which its own rules can scope to. */
+export const HOST_PAGE_CLASS = 'host-page';
+
+/** A host reset of the kind a web app ships: plain element selectors, the lowest rank there is. */
+export const HOST_RESET_CSS = 'p, blockquote { margin: 0; }';
+
+/** A host rule scoped to a class, as a prose stylesheet writes it. */
+export const HOST_SCOPED_CSS = `.${HOST_PAGE_CLASS} p { margin-bottom: 50px; }`;
