@@ -125,7 +125,7 @@ export type RtePlugin = {
     /** Runs before the editor's own paste, in plugin order. */
     onPaste?: PasteHandler;
     /**
-     * Rewrites pasted HTML before the parse rules read it, in plugin order. Runs only on a paste into the editor,
+     * Rewrites pasted HTML before the parse rules read it, in plugin order. Runs only on a paste or drop into the editor,
      * never on `parseHtml`. Plugins that share a transform declare the same object, and it runs once.
      */
     pasteTransforms?: readonly PasteTransform[];
@@ -424,7 +424,8 @@ export type ParseRule<TValue> = {
     value?: (element: HTMLElement, read: ParseReader) => TValue | null;
     /**
      * Among rules of the same kind (blocks, inlines, marks) matching the same element, higher precedence is tried
-     * first; ties go to a qualified selector (`[`, `.`, `#`, `:`) over a bare tag, then mount order.
+     * first. Among blocks of the same precedence, a qualified selector (`[`, `.`, `#`, `:`) comes before a bare tag.
+     * Ties go to mount order.
      * @default 'normal'
      */
     precedence?: ParsePrecedence;
@@ -651,7 +652,7 @@ export type PasteHandler = (paste: Paste, api: EditorControlApi) => boolean;
 
 /**
  * Rewrites pasted HTML, after the editor has read the source app's own markup and before the plugins' parse rules read it.
- * Runs only on a paste into the editor, never when `parseHtml` reads HTML on the server.
+ * Runs only on a paste or drop into the editor, never when `parseHtml` reads HTML on the server.
  */
 export type PasteTransform = {
     /** Unique across plugins; plugins that share a transform declare the same object, and it runs once. */

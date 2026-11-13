@@ -50,7 +50,8 @@ const flattenPreformatted = (dom: HTMLElement, { isClaimed }: PasteTransformCont
 /**
  * Keeps pasted text from running together in structure no plugin reads. Table
  * cells are not blocks to the editor (`<td>a</td><td>b</td>` would paste as
- * `ab`), so each row becomes a line with its cells joined by a space. A
+ * `ab`), so each row becomes a line with its cells joined by a space. The join loses the columns, on purpose: a
+ * table no plugin reads has no structure to keep. A
  * `<pre>`'s newlines collapse as whitespace, so each of its lines becomes a
  * line. A table or `<pre>` a mounted plugin reads keeps its markup.
  */

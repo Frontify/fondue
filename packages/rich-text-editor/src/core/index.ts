@@ -121,7 +121,6 @@ export {
     newerVersionOf,
     OFFICE_LIST_ATTRIBUTES,
     PARAGRAPH,
-    removeOfficeListData,
     WORD_START_CONTEXT,
 } from './vocabulary';
 export { warnOnce } from './warnings';

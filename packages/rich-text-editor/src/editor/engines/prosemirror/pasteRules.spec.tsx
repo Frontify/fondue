@@ -4,10 +4,10 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { defineBlock, type MarkParseRule, type ParseRule } from '#/core';
+import { defineBlock, type MarkParseRule, type ParsePrecedence, type ParseRule } from '#/core';
 
 import { VALUE_ATTR } from './documentConversion';
-import { blockParseRules, markParseRules, valueParseRules } from './pasteRules';
+import { blockParseRules, INLINE_PRIORITY, markParseRules, MARK_PRIORITY, valueParseRules } from './pasteRules';
 
 type ColorValue = { color: string | undefined };
 
@@ -26,7 +26,7 @@ const styled = (tag: string, style: string | undefined): HTMLElement => {
 };
 
 const markAttrs = (style: string | undefined): unknown => {
-    const [rule] = valueParseRules([readColorRule]);
+    const [rule] = valueParseRules([readColorRule], MARK_PRIORITY);
     return rule?.getAttrs?.(styled('span', style));
 };
 
@@ -55,20 +55,45 @@ describe("a tag rule's reader", () => {
     });
 });
 
-describe('a mark ignore rule', () => {
-    const priorityOf = (rule: MarkParseRule<unknown>): number | undefined =>
+describe('rule priorities', () => {
+    const blockPriority = (tag: string, precedence?: ParsePrecedence): number | undefined => {
+        const block = defineBlock({
+            content: 'text',
+            toHtml: () => ({ tag: 'div', children: true }),
+            parse: [{ tag, precedence }],
+        });
+        return blockParseRules(block, [])[0]?.priority;
+    };
+    const markPriority = (rule: MarkParseRule<unknown>): number | undefined =>
         markParseRules('note', [rule], [])[0]?.priority;
+    const inlinePriority = (tag: string, precedence?: ParsePrecedence): number | undefined =>
+        valueParseRules([{ tag, precedence }], INLINE_PRIORITY)[0]?.priority;
 
-    it('sits where a mark tag rule with the same selector does', () => {
-        expect(priorityOf({ tag: 'small', ignore: true })).toBe(priorityOf({ tag: 'small' }));
-        expect(priorityOf({ tag: 'small[hidden]', ignore: true })).toBe(priorityOf({ tag: 'small[hidden]' }));
+    it('leaves a bare block rule to the engine default, below a mark tag rule', () => {
+        expect(blockPriority('div')).toBeUndefined();
+        expect(markPriority({ tag: 'div' })).toBe(MARK_PRIORITY);
     });
 
-    it('outranks a bare mark tag rule when its selector is qualified', () => {
-        const bare = priorityOf({ tag: 'small' });
-        const qualified = priorityOf({ tag: 'small[hidden]', ignore: true });
+    it('ties a qualified block rule with a mark tag rule, as before precedence existed', () => {
+        expect(blockPriority('div[data-kind]')).toBe(markPriority({ tag: 'div' }));
+    });
 
-        expect(bare).toBeDefined();
-        expect(qualified).toBe((bare ?? 0) + 1);
+    it('puts an inline rule above a mark tag rule', () => {
+        expect(inlinePriority('a')).toBe(INLINE_PRIORITY);
+        expect(INLINE_PRIORITY).toBeGreaterThan(MARK_PRIORITY);
+    });
+
+    it('leaves a rule with the normal precedence where it was without one', () => {
+        expect(blockPriority('div[data-kind]', 'normal')).toBe(blockPriority('div[data-kind]'));
+        expect(markPriority({ tag: 'div' })).toBe(MARK_PRIORITY);
+        expect(inlinePriority('a', 'normal')).toBe(inlinePriority('a'));
+    });
+
+    it('lets a high precedence beat the qualified selector of a normal one, and a low one lose to a bare one', () => {
+        const normalQualified = blockPriority('div[data-kind]', 'normal') ?? 0;
+        const normalBare = blockPriority('div', 'normal') ?? 0;
+
+        expect(blockPriority('div', 'high') ?? 0).toBeGreaterThan(normalQualified);
+        expect(blockPriority('div[data-kind]', 'low') ?? 0).toBeLessThan(normalBare);
     });
 });

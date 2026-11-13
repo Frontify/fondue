@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 
 import { OFFICE_LIST_ATTRIBUTES } from '#/core';
 
-import { keepOfficeListStyles, tidyOffice } from './pasteOffice';
+import { keepOfficeListStyles, removeOfficeListData, tidyOffice } from './pasteOffice';
 
 const timed = (run: () => void): number => {
     const start = performance.now();
@@ -130,6 +130,20 @@ describe('tidyOffice', () => {
         expect(tidied('<p class="MsoNormal"><span style="mso-list: l0 level1">keep</span></p>').textContent).toBe(
             'keep',
         );
+    });
+});
+
+describe('removeOfficeListData', () => {
+    it('removes every Office list attribute from every element that carries one, and nothing else', () => {
+        const root = document.createElement('div');
+        root.innerHTML =
+            `<p ${OFFICE_LIST_ATTRIBUTES.list}="l0 lfo1" ${OFFICE_LIST_ATTRIBUTES.level}="1" class="a">A</p>` +
+            `<div><p ${OFFICE_LIST_ATTRIBUTES.marker}="1." ${OFFICE_LIST_ATTRIBUTES.level}="2">B</p></div>` +
+            '<p class="c">C</p>';
+
+        removeOfficeListData(root);
+
+        expect(root.innerHTML).toBe('<p class="a">A</p><div><p>B</p></div><p class="c">C</p>');
     });
 });
 
