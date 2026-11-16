@@ -14,19 +14,16 @@ import {
 } from './plugin';
 import { PARAGRAPH, paragraphBlock } from './vocabulary';
 
-/** What a document's content declares, read from plugins and contents alike: all that rendering, export and plain text need. */
+/** What rendering, export and plain text read from plugins and contents. */
 export type ContentRegistry = {
     /** Every block type, the paragraph baseline first. */
     blocks: Map<string, BlockDefinition>;
     inlines: Map<string, InlineDefinition>;
-    /**
-     * Every mark, outermost first (lower `nesting` wraps higher, ties keep
-     * plugin order). Engine and renderer both read this order, so they nest alike.
-     */
+    /** Outermost first (lower `nesting` wraps higher, ties keep plugin order), so engine and renderer nest alike. */
     marks: Map<string, MarkDefinition>;
-    /** Attributes every text block carries (alignment), by name. */
+    /** Carried by every text block (alignment). */
     blockAttributes: Map<string, BlockAttributeDefinition>;
-    /** List type → its item type, inferred from `content: { items }`. */
+    /** Inferred from `content: { items }`. */
     itemTypeByList: Map<string, string>;
     /** Classes for the element holding the content (the column layout). */
     contentClassNames: readonly string[];
@@ -34,16 +31,10 @@ export type ContentRegistry = {
     contentProperties: Readonly<Record<string, string>>;
 };
 
-/**
- * Names a bare content in errors: the first type it declares.
- */
+/** A bare content has no id, so errors name it by its first type. */
 const firstTypeOf = (content: RteContent): string => typesOf(content)[0] ?? 'content';
 
-/**
- * Adds a plugin's declared types to `target`. Two plugins declaring the same
- * type is an error (one would silently replace the other); the same definition
- * object registered twice is fine — two list plugins share their item that way.
- */
+/** Throws when two plugins declare one type; the same definition twice is fine (two list plugins share their item). */
 export const register = <TDefinition>(
     kind: 'block type' | 'mark type' | 'inline type' | 'block attribute' | 'edit view',
     target: Map<string, TDefinition>,
@@ -70,9 +61,7 @@ export const register = <TDefinition>(
     }
 };
 
-/**
- * A plugin built by hand, not by `definePlugin`, can leave out its `id` or leave it empty.
- */
+/** The type requires an id, but a hand-built plugin can omit it. */
 const assertHasId = (plugin: RtePlugin): void => {
     if (typeof plugin.id === 'string' && plugin.id !== '') {
         return;
@@ -81,10 +70,7 @@ const assertHasId = (plugin: RtePlugin): void => {
     throw new Error(`Plugin has no id: ${first}`);
 };
 
-/**
- * Every mark that excludes another is excluded by it too, so one declaration covers both.
- * A name no mounted plugin registers is dropped.
- */
+/** A name no mounted plugin registers is dropped. */
 const withMutualExcludes = (marks: Map<string, MarkDefinition>): Map<string, MarkDefinition> => {
     const excluded = new Map<string, Set<string>>();
     for (const [name, mark] of marks) {
@@ -112,9 +98,6 @@ const withMutualExcludes = (marks: Map<string, MarkDefinition>): Map<string, Mar
 const byNesting = (marks: Map<string, MarkDefinition>): Map<string, MarkDefinition> =>
     new Map([...marks].sort(([, left], [, right]) => (left.nesting ?? 0) - (right.nesting ?? 0)));
 
-/**
- * What `buildContentRegistry` fills while it walks the entries.
- */
 type ContentDraft = {
     blocks: Map<string, BlockDefinition>;
     inlines: Map<string, InlineDefinition>;
@@ -129,9 +112,6 @@ type ContentDraft = {
     attributeOwners: Map<string, string>;
 };
 
-/**
- * What a content declares: styling hooks, block, inline and mark types, block attributes.
- */
 const addContent = (draft: ContentDraft, content: RteContent | undefined, owner: string): void => {
     if (content?.contentClassName) {
         draft.contentClassNames.push(content.contentClassName);
@@ -149,15 +129,7 @@ const addContent = (draft: ContentDraft, content: RteContent | undefined, owner:
     }
 };
 
-/**
- * The content every entry declares, without reading a plugin's editing parts.
- *
- * @example
- * ```ts
- * const registry = buildContentRegistry(defaultContent);
- * registry.blocks.has('paragraph'); // true
- * ```
- */
+/** Reads only each entry's content, never a plugin's editing parts. */
 export const buildContentRegistry = (entries: readonly (RtePlugin | RteContent)[]): ContentRegistry => {
     const draft: ContentDraft = {
         blocks: new Map<string, BlockDefinition>([[PARAGRAPH, paragraphBlock]]),
@@ -201,17 +173,12 @@ export const buildContentRegistry = (entries: readonly (RtePlugin | RteContent)[
     };
 };
 
-/**
- * A block's value as its `toHtml` and components receive it: the attributes it
- * declared in `defaults`, read off wherever they are stored (the document node,
- * the engine's node), the defaults filling the gaps.
- */
+/** The declared `defaults` fill the attributes missing from `stored` (the document node or the engine's node). */
 export const blockValueOf = (definition: BlockDefinition, stored: Record<string, unknown>): Record<string, unknown> => {
     const defaults = definition.defaults ?? {};
     return Object.fromEntries(Object.entries(defaults).map(([name, fallback]) => [name, stored[name] ?? fallback]));
 };
 
-/** The CSS the attributes every text block carries put on this one, by their values on it. */
 export const blockAttributeStyle = (registry: ContentRegistry, stored: Record<string, unknown>): StyleMap => {
     const style: StyleMap = {};
     for (const [name, attribute] of registry.blockAttributes) {
@@ -223,10 +190,7 @@ export const blockAttributeStyle = (registry: ContentRegistry, stored: Record<st
     return style;
 };
 
-/**
- * A block's markup with what every text block carries (alignment) applied to
- * its outermost element — shared by editor, readonly view and export so they agree.
- */
+/** Applies the block attributes to a text block's outermost element, so editor, readonly view and export agree. */
 export const blockHtml = (
     registry: ContentRegistry,
     definition: BlockDefinition,

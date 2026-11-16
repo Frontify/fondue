@@ -1,9 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// The plugin list flattened into one engine-agnostic lookup. With the content
-// registry, the only place that reads `RtePlugin` and `RteContent`: the editor
-// shell, engine and renderer read the registry, so each declaration is
-// gathered, ordered and checked once.
+// The plugin list and its editing parts flattened into one engine-agnostic lookup; content comes from `buildContentRegistry`.
 
 import { type ReactNode } from 'react';
 
@@ -372,9 +369,6 @@ const EDITOR_SHORTCUT_ROWS: readonly RteShortcut[] = Object.values(EDITOR_SHORTC
     label,
 }));
 
-/**
- * What `buildPluginRegistry` fills while it walks the plugins.
- */
 type Draft = {
     edits: Map<string, RteEditView>;
     hotkeys: Map<string, HotkeyHandler[]>;
@@ -482,9 +476,6 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
     }
 };
 
-/**
- * The content registry plus what the plugins add for editing.
- */
 export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]): PluginRegistry => {
     const content = buildContentRegistry(entries);
     const draft: Draft = {
