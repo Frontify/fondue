@@ -12,7 +12,7 @@ import { type MentionItem, type MentionItems } from '../types';
 
 import { type MentionPickerLabels } from './pickerLabels';
 
-/** How long a lookup runs before the list says it is searching, so a quick answer never flashes the row. */
+/** Keeps a quick answer from flashing the Searching row. */
 const SEARCHING_DELAY_MS = 300;
 
 const AVATAR_ICON_SIZE = 12;
@@ -50,16 +50,11 @@ const Avatar = ({ person }: AvatarProps): ReactNode => (
     </span>
 );
 
-/**
- * Where a lookup stands. `waiting` is a lookup inside the searching delay, or a newer one after an empty or failed answer: nothing is shown or announced yet.
- */
+/** `waiting` is a lookup inside the searching delay, or a newer one after an empty or failed answer: nothing is shown or announced yet. */
 type PeoplePhase = 'waiting' | 'searching' | 'failed' | 'empty' | 'list';
 
 type PhaseOfParams = { outcome: PeopleOutcome | null; pending: boolean; slow: boolean };
 
-/**
- * The people an outcome offers: none before the first answer or after a failure.
- */
 const peopleOf = (outcome: PeopleOutcome | null): readonly MentionItem[] => {
     if (outcome === null) {
         return [];
@@ -75,9 +70,6 @@ const peopleOf = (outcome: PeopleOutcome | null): readonly MentionItem[] => {
     }
 };
 
-/**
- * Where a lookup stands: people to show, else searching past the delay, else, once this lookup is answered, failed or nobody matches.
- */
 const phaseOf = ({ outcome, pending, slow }: PhaseOfParams): PeoplePhase => {
     if (peopleOf(outcome).length > 0) {
         return 'list';
@@ -107,9 +99,6 @@ const phaseOf = ({ outcome, pending, slow }: PhaseOfParams): PeoplePhase => {
     }
 };
 
-/**
- * Whether the popup is up for a phase: not while waiting, and for nobody matching only once something is typed.
- */
 const isOpen = (phase: PeoplePhase, query: string): boolean => {
     switch (phase) {
         case 'waiting':
@@ -126,9 +115,7 @@ const isOpen = (phase: PeoplePhase, query: string): boolean => {
     }
 };
 
-/**
- * What a screen reader hears for a phase. Waiting and searching say nothing, so a count or a failure is not interrupted on every key.
- */
+/** Silent while waiting or searching, so a count or a failure is not interrupted on every key. */
 const statusOf = (phase: PeoplePhase, people: readonly MentionItem[], labels: MentionPickerLabels): string => {
     switch (phase) {
         case 'waiting':
@@ -146,11 +133,7 @@ const statusOf = (phase: PeoplePhase, people: readonly MentionItem[], labels: Me
     }
 };
 
-/**
- * Whether the pending lookup for a query has run past the searching delay. The
- * timer records the query it ran for and is forgotten when the lookup settles,
- * so each new query or retry starts the delay again.
- */
+/** Whether the pending lookup has run past the searching delay; each new query or retry restarts it. */
 const useSlowLookup = (pending: boolean, query: string): boolean => {
     const [slowQuery, setSlowQuery] = useState<string | null>(null);
     useEffect(() => {
@@ -175,9 +158,6 @@ type ActiveOptionIdParams = {
     optionId: (index: number) => string;
 };
 
-/**
- * The option the input points at: Retry while the search has failed, else the highlighted person.
- */
 const activeOptionId = ({
     listboxShown,
     phase,
@@ -212,9 +192,6 @@ type MentionPopupBodyProps = {
     onHighlight: (index: number) => void;
 };
 
-/**
- * What the popup shows for a phase: a message, the retry option, or the list of people.
- */
 const MentionPopupBody = ({
     phase,
     people,
@@ -411,7 +388,7 @@ export const MentionDraft = ({
                 break;
             case 'Enter':
             case 'Tab':
-                // While the search has failed, Retry is the active option and Enter runs it; Tab is not trapped.
+                // Retry is the active option; Tab stays free so focus is never trapped.
                 if (phase === 'failed') {
                     if (event.key !== 'Enter') {
                         return;

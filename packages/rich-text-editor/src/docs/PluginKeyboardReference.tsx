@@ -12,7 +12,6 @@ const FOR_APPLE = true;
 const FOR_OTHER_PLATFORMS = false;
 const KEY_SEPARATOR = ', ';
 
-/** Every key of a row as one platform writes them */
 const keysTextOf = (keys: readonly string[], apple: boolean): string =>
     keys.map((key) => readableShortcut(key, apple)).join(KEY_SEPARATOR);
 
@@ -26,9 +25,6 @@ const ownerHeadingOf = (owner: RteShortcutOwner): ReactNode => {
 };
 
 type PluginKeyboardReferenceProps = {
-    /**
-     * The plugins whose keys are listed, as an editor would mount them
-     */
     plugins: readonly RtePlugin[];
 };
 

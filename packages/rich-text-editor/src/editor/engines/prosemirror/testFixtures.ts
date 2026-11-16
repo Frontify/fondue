@@ -11,10 +11,7 @@ import {
     type StyleMap,
 } from '#/core';
 
-/**
- * Content of the engine specs' own. The engine reads declarations (a mark that survives a clear, an item list, a
- * block attribute), never which shipped plugin makes them, so a spec built on these fails for an engine reason only.
- */
+// The engine reads declarations, never which shipped plugin makes them, so specs on these fail for engine reasons only.
 
 type MarkFixtureParams = { name: string; tag: string };
 
@@ -26,7 +23,6 @@ const markFixture = ({ name, tag }: MarkFixtureParams): RtePlugin =>
 
 type RefFixtureValue = { target: string };
 
-/** A mark with a value that declares it survives a clear. */
 const refFixture: RtePlugin = definePlugin({
     id: 'fixture-ref',
     content: defineContent({
@@ -58,7 +54,6 @@ const numberedList = defineBlock({
     parse: [{ tag: 'ol' }],
 });
 
-/** Two kinds of list that share one item. */
 const listFixture: RtePlugin = definePlugin({
     id: 'fixture-lists',
     content: defineContent({ blocks: { bulletList, numberedList, listItem } }),
@@ -66,7 +61,6 @@ const listFixture: RtePlugin = definePlugin({
 
 type HeadingFixtureValue = { level: number };
 
-/** A text block with an attribute of its own, as a block type other than the paragraph. */
 const headingFixture: RtePlugin = definePlugin({
     id: 'fixture-heading',
     content: defineContent({
@@ -81,7 +75,6 @@ const headingFixture: RtePlugin = definePlugin({
     }),
 });
 
-/** An attribute every text block carries, whichever plugin declared the block. */
 const attributeFixture: RtePlugin = definePlugin({
     id: 'fixture-attribute',
     content: defineContent({

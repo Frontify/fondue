@@ -46,7 +46,6 @@ export type BlurOnBreakPluginOptions = {
     labels?: Partial<BlurOnBreakLabels>;
 };
 
-/** What the keyboard reference calls Enter in an editor that submits. */
 const SUBMIT_LABEL = 'Submit, outside a list';
 
 type BreakLineParams = {
