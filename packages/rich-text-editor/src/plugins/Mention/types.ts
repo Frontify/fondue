@@ -32,7 +32,6 @@ export type MentionResolution =
     | { status: 'unavailable' }
     | { status: 'unknown' };
 
-/** Asks the app what it knows now about a stored mention. */
 export type MentionResolve = (mention: MentionValue) => MentionResolution;
 
 /**

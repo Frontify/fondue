@@ -46,15 +46,10 @@ const storedString = (field: unknown): string => {
     return field;
 };
 
-/**
- * A stored or pasted kind as this version knows it: an unknown kind or a non-string reads as none.
- */
+/** An unknown kind or a non-string reads as none. */
 export const storedKind = (value: unknown): MentionKind | undefined => MENTION_KINDS.find((known) => known === value);
 
-/**
- * The `data-mention-*` attributes that let copied markup paste back as a mention.
- * They carry the stored value, so the shown name never flows back into the document on paste.
- */
+/** The `data-mention-*` attributes that paste back as a mention; they carry the stored value, never the shown one. */
 export const mentionAttributes = (mention: MentionValue) => ({
     'data-mention-id': storedString(mention.id),
     'data-mention-username': storedString(mention.username),
@@ -62,16 +57,9 @@ export const mentionAttributes = (mention: MentionValue) => ({
     'data-mention-kind': storedKind(mention.kind),
 });
 
-/**
- * A stored field as shown: control and bidirectional characters removed.
- */
 const storedText = (field: unknown): string => withoutControlCharacters(storedString(field));
 
-/**
- * The names to show for a person the app still knows: the current ones. A
- * username that is not text or is empty once cleaned keeps both stored names;
- * a name that is not text keeps the stored name.
- */
+/** The current names; the stored ones where the current username is not text or is empty once cleaned. */
 const currentNames = (stored: MentionNames, current: MentionNames): MentionNames => {
     if (typeof current.username !== 'string') {
         return stored;
@@ -102,9 +90,6 @@ const unknownLabel = (kind: MentionKind | undefined, labels: MentionContentLabel
     }
 };
 
-/**
- * The trigger and the username, or a named label when there is no username to show.
- */
 const labelOf = (
     username: string,
     trigger: string,
@@ -117,10 +102,6 @@ const labelOf = (
     return `${trigger}${username}`;
 };
 
-/**
- * Dev-only warning, once per mention id, for a resolver that answered with no
- * known status; that mention shows its stored value.
- */
 const warnUnknownAnswer = (mention: MentionValue, answer: unknown): void => {
     const id = storedString(mention.id);
     warnOnce(
@@ -148,10 +129,8 @@ const isResolution = (answer: unknown): answer is MentionResolution =>
     Object.prototype.hasOwnProperty.call(RESOLUTION_STATUSES, answer.status);
 
 /**
- * What the app knows now about a mention: an answer with no known status means
- * it does not know, so only that mention falls back to its stored value and the
- * others still resolve. A throw from `resolve` is not caught: it is the app's
- * error, and reaches the editor's `onError` where the mention is drawn.
+ * An answer with no known status means the app does not know: only that mention shows its stored value. A throw is
+ * the app's error and is not caught.
  */
 const resolutionOf = (mention: MentionValue, resolve: MentionResolve | undefined): MentionResolution | undefined => {
     if (resolve === undefined) {
@@ -166,9 +145,8 @@ const resolutionOf = (mention: MentionValue, resolve: MentionResolve | undefined
 };
 
 /**
- * What a mention shows, from the stored value and what the app knows now: the
- * current username and name, or the stored ones when the person is unavailable.
- * The stored value is never changed. A throw from `resolve` or `href` is not caught.
+ * What a mention shows from the stored value and what the app knows now; the stored value never changes. A throw from
+ * `resolve` or `href` is not caught.
  */
 export const mentionDisplay = (
     mention: MentionValue,
@@ -204,9 +182,6 @@ export const mentionDisplay = (
     return { status: 'linked', label, title: shown.name, href: target };
 };
 
-/**
- * Where a shown mention links to: only a linked one has a target.
- */
 export const linkTarget = (display: MentionDisplay): string | undefined => {
     switch (display.status) {
         case 'linked':

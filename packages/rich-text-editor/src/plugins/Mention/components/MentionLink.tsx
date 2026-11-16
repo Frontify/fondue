@@ -27,11 +27,8 @@ type MentionLinkProps = {
 };
 
 /**
- * A finished mention: the shown username linking to the person, with the name
- * on hover. Carries the same attributes as `toHtml`, so copied text pastes back
- * as a mention. A group is marked with its icon, as the old editor did; with
- * nowhere to link to (`@all`), the mention is text, and an unavailable person
- * is text with a note after the name.
+ * A finished mention: the shown username linking to the person, name on hover. Carries the same attributes as
+ * `toHtml`, so copied text pastes back as a mention.
  */
 export const MentionLink = ({ value, display }: MentionLinkProps): ReactNode => {
     const attributes = {
