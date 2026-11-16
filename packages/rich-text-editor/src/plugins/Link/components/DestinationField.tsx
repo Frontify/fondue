@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { TextInput } from '@frontify/fondue-components';
-import { type KeyboardEvent, type ReactNode, type RefObject, useRef, useState } from 'react';
+import { type KeyboardEvent, type ReactNode, type RefObject, useId, useRef, useState } from 'react';
 
 import { isCompositionKey } from '../../shared/helpers/keys';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
@@ -62,14 +62,38 @@ const buttonAfterArrow = (
     }
 };
 
+type PageButtonProps = {
+    destination: LinkDestination;
+    onPick: (destination: LinkDestination) => void;
+};
+
+/**
+ * Named by the page, with its address as the description, so a screen reader does not run the two together.
+ */
+const PageButton = ({ destination, onPick }: PageButtonProps): ReactNode => {
+    const labelId = useId();
+    const hrefId = useId();
+    return (
+        <button
+            type="button"
+            className={styles.option}
+            aria-labelledby={labelId}
+            aria-describedby={hrefId}
+            onClick={() => onPick(destination)}
+        >
+            <span id={labelId}>{destination.label}</span>
+            <span id={hrefId} className={styles.optionHref}>
+                {destination.href}
+            </span>
+        </button>
+    );
+};
+
 type DestinationFieldProps = {
     id: string;
     inputRef: RefObject<HTMLInputElement>;
     value: string;
     status: 'neutral' | 'error';
-    /**
-     * The id of the message shown under the field while `status` is an error.
-     */
     errorId: string;
     /**
      * Without it the field is a plain address input.
@@ -83,8 +107,7 @@ type DestinationFieldProps = {
 };
 
 /**
- * The "Link to" field. What is typed is the address; with `search`, the pages found are offered as buttons under
- * it, and one pressed fills the field in. ArrowDown moves from the field into the list.
+ * The "Link to" field. With `search`, the pages found are offered as buttons under it.
  */
 export const DestinationField = ({
     id,
@@ -163,10 +186,7 @@ export const DestinationField = ({
                 <ul ref={listRef} aria-label={labels.results} className={styles.results} onKeyDown={onListKeyDown}>
                     {found.map((destination) => (
                         <li key={destination.id}>
-                            <button type="button" className={styles.option} onClick={() => pick(destination)}>
-                                <span>{destination.label}</span>
-                                <span className={styles.optionHref}>{destination.href}</span>
-                            </button>
+                            <PageButton destination={destination} onPick={pick} />
                         </li>
                     ))}
                 </ul>

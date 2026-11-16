@@ -22,7 +22,7 @@ const CANCEL_LABEL = 'Cancel';
 const SAVE_LABEL = 'Save';
 
 /**
- * The `kind` says whether the form makes a new link, which gets a Text field, or edits one that exists, whose text is edited in place. It also decides what `onSave` receives.
+ * A `create` form has a Text field and saves the text too. An `edit` form leaves the text to the editor.
  */
 export type LinkTargetFormProps = {
     initial: LinkValue;
@@ -43,7 +43,7 @@ export type LinkTargetFormProps = {
            */
           text: string;
           /**
-           * The text is the Text field's.
+           * The Text field's value.
            */
           onSave: (value: LinkValue, text: string) => void;
       }
@@ -68,9 +68,8 @@ const resolveMode = (props: LinkTargetFormProps): FormMode => {
 };
 
 /**
- * Where a link points, and whether it opens a new tab. An existing link's text
- * is edited in place; a new link gets a Text field, shown in `create` mode.
- * Input is validated on save, with the reason announced under the field.
+ * Where a link points, and whether it opens a new tab. Input is validated on save, with the reason announced under
+ * the field.
  */
 export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
     const { initial, policy, labels, search, onCancel, onRemove } = props;

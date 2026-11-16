@@ -5,9 +5,6 @@
  */
 export const LINK_SCHEMES = ['https', 'http', 'mailto', 'tel'] as const;
 
-/**
- * A scheme a link may use.
- */
 export type LinkScheme = (typeof LINK_SCHEMES)[number];
 
 /**
@@ -64,9 +61,6 @@ export const isSafeHref = (href: unknown): href is string => {
     return scheme === null || SAFE_SCHEMES.has(scheme);
 };
 
-/**
- * Whether pasted text is a web, mail or phone address that may become a link
- */
 export const isLinkablePaste = (text: string): boolean => LINKABLE_PASTE.test(text);
 
 /** Paths and fragments within the site the document is shown on, kept as typed. */

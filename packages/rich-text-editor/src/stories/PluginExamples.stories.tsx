@@ -441,7 +441,7 @@ const INTERNAL_PAGES: readonly LinkDestination[] = [
 /** How long the fake lookup takes, so the story shows the field while it searches. */
 const FAKE_LOOKUP_MS = 300;
 
-/** A fake lookup with a short delay that gives up when aborted, as a real request would. */
+/** A fake lookup that gives up when aborted, as a real request would. */
 const searchPages = (query: string, signal: AbortSignal): Promise<readonly LinkDestination[]> =>
     new Promise((resolve, reject) => {
         const timer = setTimeout(() => {
@@ -470,8 +470,8 @@ export const LinkWithSearch: Story = {
                 <p className={HINT}>
                     Open the link form and type <code>logo</code> in Link to: the list shows one page after a short
                     wait, and the one on example.com is held back by the policy (frontify.com and its subdomains only).
-                    Use the arrow keys and Enter to pick one, Escape to close the list, or keep typing an address. A
-                    pick fills an empty Text field with the page name.
+                    Press Down or Tab to reach the pages, then Enter or a click to pick one, or keep typing an address.
+                    A pick fills an empty Text field with the page name.
                 </p>
                 <div className={FRAME}>
                     <RichTextEditor

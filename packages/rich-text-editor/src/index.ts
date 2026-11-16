@@ -84,9 +84,8 @@ export const RichTextRenderer = <TBlock extends RteBlockNode = RteBlock>(
     });
 
 /**
- * The document as an HTML string: the reading markup `RichTextRenderer` draws,
- * as static HTML, without its screen-reader-only text (a link's new-tab note), so
- * the HTML shows nothing extra where the stylesheet is missing. No React or browser needed. Uses `defaultContent` when given no
+ * The document as an HTML string: the markup `RichTextRenderer` draws, minus its screen-reader-only text (a
+ * link's new-tab note), which would show without the stylesheet. No React or browser needed. Uses `defaultContent` when given no
  * `plugins`; `wrap: false` leaves out the root element. Style it with this
  * package's stylesheet (emails need the styles inlined).
  * @example
@@ -212,7 +211,6 @@ export declare namespace RtePlugin {
     export type ParseRule<TValue> = Parse<TValue>;
     export type MarkParseRule<TValue> = MarkParse<TValue>;
     export type StyleParseRule<TValue> = StyleParse<TValue>;
-    // Same reason as above.
     export type MarkClearRule = MarkClear; // NOSONAR
     export type MarkIgnoreRule = MarkIgnore; // NOSONAR
     export type DefaultStyle = DefaultStyleType; // NOSONAR

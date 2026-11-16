@@ -157,6 +157,18 @@ describe('the destination field', () => {
         ]);
     });
 
+    it('names each page button by the page, with its address as the description', async () => {
+        const { container, type, pages } = mountSearchForm(fixed(BRAND));
+        await type('br');
+
+        const page = pageAt(pages(), 0);
+        const textOf = (ids: string | null): string | null | undefined =>
+            ids === null ? null : container.querySelector(`[id="${ids}"]`)?.textContent;
+
+        expect(textOf(page.getAttribute('aria-labelledby'))).toBe(BRAND.label);
+        expect(textOf(page.getAttribute('aria-describedby'))).toBe(BRAND.href);
+    });
+
     it('fills the field in with a pressed page, closes the list and keeps focus in the field without saving', async () => {
         const { field, type, pages, list, onSave } = mountSearchForm(fixed(BRAND, LOGOS));
         await type('br');
