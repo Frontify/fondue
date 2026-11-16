@@ -47,7 +47,6 @@ const PRESETS: readonly { name: string; color: string }[] = [
 /** What the picker starts at on text with no one colour: white, as Fondue's picker does without one. */
 const NO_COLOR_DRAFT: PickerColor = { red: 255, green: 255, blue: 255, alpha: 1 };
 
-/** The colour typed in the picker's hex field, if the text is one. */
 const readHexField = (container: HTMLElement | null, alpha: number | undefined): PickerColor | undefined => {
     const text = container?.querySelector<HTMLInputElement>(HEX_FIELD_SELECTOR)?.value;
     return parseTypedHex(text, alpha);
@@ -107,8 +106,7 @@ export const ColorFlyout = ({ selection, api, isActive }: ColorFlyoutProps): Rea
     };
 
     const save = (): void => {
-        // Nothing chosen: an unreadable colour would otherwise be overwritten with
-        // the white the picker starts at. The draft is the last valid colour typed or picked.
+        // Unchosen, the draft can be the picker's white start, which must not overwrite an unreadable stored colour.
         if (!choseRef.current || encodePickerColor(draft) === storedColor) {
             close();
             return;
@@ -182,7 +180,6 @@ export const ColorFlyout = ({ selection, api, isActive }: ColorFlyoutProps): Rea
                             />
                         ))}
                     </div>
-                    {/* Listens for Enter and typing in the hex field. */}
                     {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions */}
                     <div
                         ref={pickerRef}
@@ -202,8 +199,7 @@ export const ColorFlyout = ({ selection, api, isActive }: ColorFlyoutProps): Rea
                             if (!(target instanceof HTMLInputElement) || !target.matches(HEX_FIELD_SELECTOR)) {
                                 return;
                             }
-                            // A valid hex is a choice even when it equals the draft; the picker sets the draft.
-                            // An unfinished one after it keeps that choice, and one before it makes none.
+                            // A valid hex is a choice even when it equals the draft, which `choose` ignores.
                             if (readHexField(pickerRef.current, draft.alpha) !== undefined) {
                                 choseRef.current = true;
                             }

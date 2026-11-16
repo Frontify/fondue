@@ -49,7 +49,7 @@ type ColorValueInputProps = {
 
 const nooperation = () => {};
 
-/** Tells whether the typed hex text is a valid colour with the same red, green and blue as the given colour. */
+/** Ignores alpha, which the hex field does not carry. */
 const showsColor = (hex: string, color: RgbaColor): boolean => {
     if (!isValidHexColor(hex)) {
         return false;
