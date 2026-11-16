@@ -20,7 +20,6 @@ import styles from './slashMenu.module.scss';
 /** The character that opens the menu. */
 const TRIGGER = '/';
 
-/** What the editable element carries while no list is open. */
 const NO_LIST_ATTRIBUTES: EditableAttributes = { 'aria-controls': null, 'aria-activedescendant': null };
 
 /** The groups in list order, each headed by the label under that key. */

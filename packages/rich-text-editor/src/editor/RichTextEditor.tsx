@@ -312,7 +312,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
         ariaLabelledBy,
         ariaDescribedBy: describedByOf(ariaDescribedBy, pluginDescriptionId),
     });
-    // The mounted editor is the editable one; `editable` is what shows the text cursor.
+    // Read-only renders without the engine, so this editor always takes edits.
     const className = [documentStyles.document, styles.content, styles.editable, ...registry.contentClassNames].join(
         ' ',
     );

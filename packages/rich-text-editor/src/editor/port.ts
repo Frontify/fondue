@@ -49,16 +49,15 @@ export type MountedDocument = {
     destroy(): void;
 };
 
-/** The attributes the shell may set on the editable element: the pointers from the text to an open list. */
 export type EditableAriaAttribute = 'aria-controls' | 'aria-activedescendant';
 
-/** Values for the attributes to change, by name; `null` removes one and an absent name is left alone. */
+/** `null` removes an attribute; an absent name leaves it alone. */
 export type EditableAttributes = Readonly<Partial<Record<EditableAriaAttribute, string | null>>>;
 
 /** What a live editor offers the shell: the commands, and where the selection is on screen. */
 export type EditorHandle = {
     api: EditorControlApi;
-    /** Set or remove attributes on the editable element, for state that changes while it is mounted (the `/` menu's active option). */
+    /** For state that changes while the editor is mounted, such as the `/` menu's active option. */
     setEditableAttributes(attributes: EditableAttributes): void;
     /**
      * The box around the selected text, or around the caret when nothing is
