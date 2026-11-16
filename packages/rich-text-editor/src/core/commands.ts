@@ -16,9 +16,6 @@ export type RteMarkState = { coverage: 'all'; value: Record<string, unknown> } |
  */
 export type InsertTextUndo = 'together' | 'marksFirst';
 
-/**
- * Options for `insertText`.
- */
 export type InsertTextOptions = {
     /**
      * How the insert is undone.
@@ -154,10 +151,9 @@ export type EditorControlApi = {
      */
     insert(type: string, value?: Record<string, unknown>): void;
     /**
-     * Insert plain text at the selection, replacing what is selected, carrying the marks typing there would plus
-     * `marks`. Unknown mark types are ignored.
+     * Insert plain text at the selection, carrying the marks typing there would plus `marks`. Unknown mark types
+     * are ignored.
      * @param marks - Marks to add, by type to value, as in `marks.toggle`.
-     * @param options - How the insert is undone.
      */
     insertText(text: string, marks?: Record<string, Record<string, unknown>>, options?: InsertTextOptions): void;
 
