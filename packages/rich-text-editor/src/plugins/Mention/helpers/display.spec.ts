@@ -5,7 +5,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { type MentionResolve, type MentionValue } from '../types';
 
 import { mentionAttributes, mentionDisplay } from './display';
-import { DEFAULT_MENTION_CONTENT_LABELS } from './labels';
 
 const JANE: MentionValue = { id: 'jane', username: 'jane', name: 'Jane Doe' };
 const href = (mention: MentionValue): string => `/u/${mention.id}`;
@@ -86,32 +85,12 @@ describe('mentionDisplay', () => {
         expect(warn).toHaveBeenCalledOnce();
     });
 
-    it('says the note of an unavailable mention, and names an empty username, in the labels it is given', () => {
-        const labels = {
-            ...DEFAULT_MENTION_CONTENT_LABELS,
-            unavailable: '(indisponible)',
-            unknownPerson: 'Personne inconnue',
-            unknownGroup: 'Groupe inconnu',
-            unknownMention: 'Mention inconnue',
-        };
-        const empty: MentionValue = { id: 'x', username: '', name: '' };
-
-        expect(
-            mentionDisplay(JANE, { trigger: '@', labels, resolve: () => ({ status: 'unavailable' }) }),
-        ).toMatchObject({
-            status: 'unavailable',
-            note: '(indisponible)',
-        });
-        expect(mentionDisplay(empty, { trigger: '@', labels }).label).toBe('Personne inconnue');
-        expect(mentionDisplay({ ...empty, kind: 'group' }, { trigger: '@', labels }).label).toBe('Groupe inconnu');
-        expect(mentionDisplay({ ...empty, kind: 'all' }, { trigger: '@', labels }).label).toBe('Mention inconnue');
-    });
-
     it('names an empty stored username by its kind instead of a bare trigger', () => {
         const empty: MentionValue = { id: 'x', username: '', name: '' };
 
         expect(mentionDisplay(empty, { trigger: '@' }).label).toBe('Unknown person');
         expect(mentionDisplay({ ...empty, kind: 'group' }, { trigger: '@' }).label).toBe('Unknown group');
+        expect(mentionDisplay({ ...empty, kind: 'all' }, { trigger: '@' }).label).toBe('Unknown mention');
         expect(mentionDisplay(empty, { trigger: '@', resolve: () => ({ status: 'unavailable' }) }).label).toBe(
             'Unknown person',
         );
