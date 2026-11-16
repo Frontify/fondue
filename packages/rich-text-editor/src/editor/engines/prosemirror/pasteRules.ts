@@ -43,12 +43,10 @@ const STYLE_PRIORITY = 65;
  */
 const qualifiedPriority = (tag: string): number | undefined => (/[[.#:]/.test(tag) ? MARK_PRIORITY : undefined);
 
-/** What the engine gives a rule with no priority. */
-const DEFAULT_PRIORITY = 50;
-/** Larger than the 10 a qualified block rule gains over a bare one, so a precedence always decides before the selector does. */
-const PRECEDENCE_STEP = 11;
+const ENGINE_DEFAULT_PRIORITY = 50;
+// One more than a qualified block rule gains over a bare one, so a precedence decides before the selector does.
+const PRECEDENCE_STEP = MARK_PRIORITY - ENGINE_DEFAULT_PRIORITY + 1;
 
-/** How far a precedence moves a rule's priority; `normal` leaves it where it was. */
 const precedenceShift = (precedence: ParsePrecedence): number => {
     switch (precedence) {
         case 'low':
@@ -60,13 +58,12 @@ const precedenceShift = (precedence: ParsePrecedence): number => {
     }
 };
 
-/** A block rule's priority: raised by a qualified selector, then moved by its declared precedence. */
 const blockPriority = (rule: ParseRule<unknown>): number | undefined => {
     const qualified = qualifiedPriority(rule.tag);
     if (rule.precedence === undefined) {
         return qualified;
     }
-    return (qualified ?? DEFAULT_PRIORITY) + precedenceShift(rule.precedence);
+    return (qualified ?? ENGINE_DEFAULT_PRIORITY) + precedenceShift(rule.precedence);
 };
 
 /**
@@ -74,9 +71,6 @@ const blockPriority = (rule: ParseRule<unknown>): number | undefined => {
  */
 const valueAttrs = (value: unknown) => (value === null ? false : { [VALUE_ATTR]: value });
 
-/**
- * A tag rule's value: what its `value` reads off the element, no attributes when it has none, and null when it reads none.
- */
 const tagRuleValue = <TValue>(rule: ParseRule<TValue>, element: HTMLElement): TValue | Record<string, never> | null => {
     const reading = readTagRule(rule, element);
     switch (reading.kind) {

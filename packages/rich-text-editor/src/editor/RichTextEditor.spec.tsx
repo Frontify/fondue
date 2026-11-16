@@ -41,7 +41,7 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 const GROUP_SELECTOR = `[${GROUP_ATTRIBUTE}]`;
 
-/** The default toolbar's buttons by group, as drawn before groups were data: history, text, marks, colour, link, lists, align, insert. */
+/** Pins the order the toolbar drew before groups were data. */
 const DEFAULT_TOOLBAR_LABELS: (string | null)[][] = [
     ['Undo', 'Redo'],
     ['Quote'],
@@ -368,7 +368,6 @@ describe('a document from a newer format version', () => {
         const { container } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} readonly />);
 
         expect(container.textContent).toContain('from the future');
-        // The editor's own live region is always there; it is empty until something is announced.
         expect(container.querySelector(NOTICE_SELECTOR)).toBeNull();
     });
 
@@ -514,7 +513,6 @@ describe('a document from a newer format version', () => {
         ready();
 
         expect(warn).not.toHaveBeenCalled();
-        // The editor's own live region is always there; it is empty until something is announced.
         expect(container.querySelector(NOTICE_SELECTOR)).toBeNull();
     });
 });
@@ -1073,7 +1071,7 @@ describe('the toolbar', () => {
     });
 
     describe('a press inside a toolbar slot', () => {
-        const mousedownOn = (target: Element): boolean =>
+        const isMousedownAllowed = (target: Element): boolean =>
             target.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
 
         const withControls = definePlugin({
@@ -1104,8 +1102,7 @@ describe('the toolbar', () => {
 
             const button = container.querySelector('[data-testid="plain-button"]');
             expect(button).toBeTruthy();
-            // `dispatchEvent` returns false once a handler called `preventDefault`.
-            expect(mousedownOn(button as Element)).toBe(false);
+            expect(isMousedownAllowed(button as Element)).toBe(false);
         });
 
         it('lets a text field in the slot take focus', () => {
@@ -1116,7 +1113,7 @@ describe('the toolbar', () => {
 
             const field = container.querySelector('[data-testid="slot-field"]');
             expect(field).toBeTruthy();
-            expect(mousedownOn(field as Element)).toBe(true);
+            expect(isMousedownAllowed(field as Element)).toBe(true);
         });
 
         it('keeps the text selection when it lands on a span that is not editable', () => {
@@ -1127,7 +1124,7 @@ describe('the toolbar', () => {
 
             const island = container.querySelector('[data-testid="slot-island"]');
             expect(island?.getAttribute('contenteditable')).toBe('false');
-            expect(mousedownOn(island as Element)).toBe(false);
+            expect(isMousedownAllowed(island as Element)).toBe(false);
         });
     });
 
@@ -1358,7 +1355,7 @@ describe('the toolbar from the keyboard', () => {
         for (const [index, alignment] of alignments.entries()) {
             const keys = radios[index]?.getAttribute('aria-keyshortcuts')?.split('+') ?? [];
             const key = keys.pop() ?? '';
-            // Meta or Control is the Mod key as `mod` presses it; keyCode is what the keymap reads for a shifted letter.
+            // keyCode is what the keymap reads for a shifted letter.
             press(editable, key, { ...mod, shiftKey: keys.includes('Shift'), keyCode: key.charCodeAt(0) });
             expect(stored()?.blocks[0]).toMatchObject({ align: alignment });
         }
@@ -1374,8 +1371,7 @@ describe('the toolbar from the keyboard', () => {
         const editable = editableIn(container);
         act(() => editable.focus());
         const center = container.querySelector<HTMLElement>('[aria-label="Align center"]');
-        // The live region takes a message on the next frame.
-        const said = (): string | null | undefined => {
+        const saidNextFrame = (): string | null | undefined => {
             act(() => {
                 vi.advanceTimersByTime(100);
             });
@@ -1384,11 +1380,11 @@ describe('the toolbar from the keyboard', () => {
 
         act(() => center?.click());
         expect(stored()?.blocks[0]).toMatchObject({ align: 'center' });
-        expect(said()).toBe('Centered');
+        expect(saidNextFrame()).toBe('Centered');
 
         act(() => center?.click());
         expect(stored()?.blocks[0]).not.toHaveProperty('align');
-        expect(said()).toBe('Alignment cleared');
+        expect(saidNextFrame()).toBe('Alignment cleared');
     });
 
     describe('in a narrow top row', () => {
