@@ -9,7 +9,6 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { defineBlock, defineContent, definePlugin, PARAGRAPH, type RteBlockNode, type RtePlugin } from '#/core';
 
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
-import { listsPlugin } from './testPlugins';
 
 /**
  * The list commands, checked by the document they leave behind: wrapping,
@@ -24,6 +23,30 @@ const numbered = (start: number, ...texts: string[]): RteBlockNode =>
     ({ ...list('numberedList', ...texts.map((value) => item(paragraph(text(value))))), start }) as RteBlockNode;
 const bullets = (...texts: string[]): RteBlockNode =>
     list('bulletList', ...texts.map((value) => item(paragraph(text(value)))));
+
+/** Two list types sharing the item type `row`, so one converts into the other in place. */
+const listsPlugin: RtePlugin = definePlugin({
+    id: 'test-lists',
+    content: defineContent({
+        blocks: {
+            dotList: defineBlock({
+                content: { items: 'row' },
+                toHtml: () => ({ tag: 'ul', children: true }),
+                parse: [{ tag: 'ul' }],
+            }),
+            stepList: defineBlock({
+                content: { items: 'row' },
+                toHtml: () => ({ tag: 'ol', children: true }),
+                parse: [{ tag: 'ol' }],
+            }),
+            row: defineBlock({
+                content: { blocks: [PARAGRAPH] },
+                toHtml: () => ({ tag: 'li', children: true }),
+                parse: [{ tag: 'li' }],
+            }),
+        },
+    }),
+});
 
 /** A list of the generic `listsPlugin`, one `row` per text; the list carries no attributes of its own. */
 const rows = (type: string, ...texts: string[]) => ({

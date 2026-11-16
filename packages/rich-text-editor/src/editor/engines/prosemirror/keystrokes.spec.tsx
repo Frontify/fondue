@@ -8,17 +8,19 @@ import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
+    ANY_LIST,
+    defineBlock,
     defineContent,
     defineInline,
     definePlugin,
     type EditorControlApi,
+    PARAGRAPH,
     type RteBlockNode,
     type RtePlugin,
 } from '#/core';
 import { defaultPlugins } from '#/plugins';
 
 import { destroyEditors, editorWith, paragraph, shipped, text } from './testEditor';
-import { listsPlugin, titlePlugin, toneAttributePlugin } from './testPlugins';
 
 /**
  * What typing and key presses do, through the pipeline `keystrokePipeline`
@@ -727,6 +729,70 @@ describe('Enter in a list over a range across items', () => {
 
         expect(editor.stored()?.[0]?.type).toBe('bulletList');
     });
+});
+
+/**
+ * Three list types: `dotList` and `stepList` share the item type `row`, so one
+ * converts into the other in place, and `taskList` holds `task` items, which
+ * carry a `done` state that starts false.
+ */
+const listsPlugin: RtePlugin = definePlugin({
+    id: 'test-lists',
+    content: defineContent({
+        blocks: {
+            dotList: defineBlock({
+                content: { items: 'row' },
+                toHtml: () => ({ tag: 'ul', children: true }),
+                parse: [{ tag: 'ul' }],
+            }),
+            stepList: defineBlock({
+                content: { items: 'row' },
+                toHtml: () => ({ tag: 'ol', children: true }),
+                parse: [{ tag: 'ol' }],
+            }),
+            row: defineBlock({
+                content: { blocks: [PARAGRAPH, ANY_LIST] },
+                toHtml: () => ({ tag: 'li', children: true }),
+                parse: [{ tag: 'li' }],
+            }),
+            taskList: defineBlock({
+                content: { items: 'task' },
+                toHtml: () => ({ tag: 'ul', attrs: { 'data-tasks': '' }, children: true }),
+                parse: [{ tag: 'ul[data-tasks]' }],
+            }),
+            task: defineBlock<{ done: boolean }>({
+                content: { blocks: [PARAGRAPH, ANY_LIST] },
+                defaults: { done: false },
+                toHtml: ({ done }) => ({ tag: 'li', attrs: { 'data-done': String(done) }, children: true }),
+                parse: [{ tag: 'li[data-done]' }],
+            }),
+        },
+    }),
+});
+
+/** An attribute every text block carries, whichever plugin declared the block. */
+const toneAttributePlugin: RtePlugin = definePlugin({
+    id: 'test-tone',
+    content: defineContent({
+        blockAttributes: {
+            tone: { style: (value) => ({ color: value }) },
+        },
+    }),
+});
+
+/** A text block other than the paragraph, which typing `## ` creates. */
+const titlePlugin: RtePlugin = definePlugin({
+    id: 'test-title',
+    content: defineContent({
+        blocks: {
+            title: defineBlock({
+                content: 'text',
+                toHtml: () => ({ tag: 'h2', children: true }),
+                parse: [{ tag: 'h2' }],
+            }),
+        },
+    }),
+    inputRules: [{ kind: 'block', match: '## ', block: 'title' }],
 });
 
 type TaskSpec = { done: boolean; text: string };
