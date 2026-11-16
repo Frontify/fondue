@@ -14,10 +14,7 @@ declare global {
 }
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
-/**
- * Making and using a link from the keyboard and the mouse, driven through the
- * public editor the way a host mounts it.
- */
+/** Driven through the public editor, as a host mounts it. */
 
 const teardown: (() => void)[] = [];
 
@@ -104,7 +101,7 @@ const press = (target: Element, key: string, init: KeyboardEventInit = {}): void
     });
 };
 
-/** Puts the selection in the first run of text the given element holds that contains `needle`, as a click or drag would. */
+/** Selects `needle` in the first text run that holds it, or puts a caret at `caretAt`. */
 const select = (editable: HTMLElement, needle: string, caretAt?: number): void => {
     const walker = window.document.createTreeWalker(editable, NodeFilter.SHOW_TEXT);
     let node = walker.nextNode();

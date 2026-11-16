@@ -37,9 +37,6 @@ export type LinkLabels = {
     schemesAllowed: (schemes: readonly string[]) => string;
 };
 
-/**
- * The items as an English list that ends in "or": `a`, `a or b`, `a, b or c`.
- */
 const joinOr = (items: readonly string[]): string => {
     if (items.length < 2) {
         return items.join('');
@@ -69,7 +66,4 @@ const DEFAULT_LABELS: LinkLabels = {
     schemesAllowed: (schemes) => `Links may use ${joinOr(schemes)}.`,
 };
 
-/**
- * The labels a host passes, with English for every one it leaves out.
- */
 export const resolveLinkLabels = (labels: Partial<LinkLabels> = {}): LinkLabels => ({ ...DEFAULT_LABELS, ...labels });

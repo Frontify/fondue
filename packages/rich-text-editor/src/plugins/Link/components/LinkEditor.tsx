@@ -14,9 +14,6 @@ import styles from '../link.module.scss';
 
 import { LinkTargetForm } from './LinkTargetForm';
 
-/**
- * The controls Tab can reach in the panel.
- */
 const PANEL_CONTROLS = 'a[href], button:not([disabled])';
 
 type CopyState = 'idle' | 'copied' | 'failed';

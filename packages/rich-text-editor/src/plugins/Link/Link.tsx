@@ -26,13 +26,9 @@ export type LinkMark = {
     link?: LinkValue;
 };
 
-/**
- * What the link content takes: the policy, and the words the reader and the export say.
- */
 export type LinkContentOptions = LinkPolicy & {
     /**
-     * The words the link says, in the language of the host. Only `newTabNote` is read here.
-     * @default English
+     * The words the link says, in the language of the host. Any word left out stays English.
      */
     labels?: Partial<LinkLabels>;
 };
@@ -76,7 +72,7 @@ const drawnLink = (policy: LinkPolicy, value: unknown): DrawnLink => {
 };
 
 /**
- * The anchor attributes the reader and the export share; each adds its own class attribute.
+ * Shared by the reader and the export, which each add the class themselves.
  */
 type LinkAnchorAttrs = {
     href?: string;
@@ -139,14 +135,10 @@ const LinkReader = ({ value, children, policy, note }: LinkReaderProps): ReactNo
     );
 };
 
-/**
- * What the renderer hands a mark's reader component.
- */
 type BoundLinkReaderProps = Omit<LinkReaderProps, 'policy' | 'note'>;
 
 /**
- * One reader component per policy and note, so a renderer handed a new `linkPlugin()` on every render keeps its links
- * mounted (and focused) rather than seeing a new component each time.
+ * Keyed by policy and note, so a `linkPlugin()` created on every render keeps its links mounted and focused.
  */
 const readers = new Map<string, ComponentType<BoundLinkReaderProps>>();
 
@@ -169,7 +161,6 @@ const readerFor = (policy: LinkPolicy, note: string): ComponentType<BoundLinkRea
  * `javascript:` URL is never clickable. By default that is any web, mail or
  * phone link, and any relative one.
  *
- * @param options - Which links are allowed, by default every web, mail, phone and relative link, and the words of the new-tab note.
  * @example
  * const content = linkContent({ allowedSchemes: ['https'] });
  */
@@ -184,9 +175,7 @@ export const linkContent = ({ labels, ...policy }: LinkContentOptions = {}) =>
                 // Clearing formatting is about how text looks; where a link goes is not.
                 survivesClear: true,
 
-                /**
-                 * The link in the export and on the clipboard, with no text of its own, so pasting it adds none
-                 */
+                // With no text of its own, so a copy pasted back adds none.
                 toHtml: (value) => ({
                     tag: 'a',
                     attrs: { ...anchorAttrs(drawnLink(policy, value)), class: styles.link },
@@ -199,7 +188,7 @@ export const linkContent = ({ labels, ...policy }: LinkContentOptions = {}) =>
                 defaultStyles: LINK_DEFAULT_STYLES,
 
                 parse: [
-                    // The hidden note the reader adds is not text of the link, when the reader is copied back in.
+                    // The reader's hidden note is not link text when its markup is pasted back.
                     { tag: NEW_TAB_NOTE_SELECTOR, ignore: true },
                     {
                         tag: 'a[href]',
@@ -282,7 +271,6 @@ export const linkPlugin = ({ search, labels, ...policy }: LinkPluginOptions = {}
                 },
             },
         ],
-        // Anything that is not an allowed web, mail or phone address pastes as usual.
         onPaste: ({ text, source }, api) => {
             const typed = text.trim();
             const { isCollapsed, marks } = api.selection.get();

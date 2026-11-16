@@ -17,7 +17,7 @@ import { tidyGoogleDocs } from './pasteGoogleDocs';
 import { tidyOffice } from './pasteOffice';
 
 /** Put on what this editor copies, so a paste can tell it came from an editor like this one. */
-const COPIED_FROM_EDITOR = 'data-rte-copy';
+export const COPIED_FROM_EDITOR = 'data-rte-copy';
 
 // Copy and paste fixes beyond what the engine does on its own.
 
