@@ -20,7 +20,6 @@ import {
 
 const count = (text: string, character: string): number => text.split(character).length - 1;
 
-/** Whether the text ends in a closing bracket with no opening one left for it to close. */
 const endsInUnbalancedBracket = (text: string, pairs: RteMarkPatternTrim['pairs']): boolean => {
     const closing = text.slice(-1);
     const opening = pairs[closing];
@@ -30,11 +29,10 @@ const endsInUnbalancedBracket = (text: string, pairs: RteMarkPatternTrim['pairs'
     return count(text, closing) > count(text, opening);
 };
 
-/** Matches `trim.punctuation` at the end of a token. */
 const trailingPunctuation = ({ punctuation }: RteMarkPatternTrim): RegExp =>
     new RegExp(`(?:${punctuation.source})$`, withoutStateFlags(punctuation));
 
-/** Drops the trailing punctuation a rule declares, and a trailing closing bracket only while it has no opening one to close. */
+/** A closing bracket is dropped only while the token holds no opening one for it. */
 export const trimTrailingPunctuation = (token: string, trim: RteMarkPatternTrim): string => {
     const trailing = trailingPunctuation(trim);
     let trimmed = token;
@@ -50,10 +48,9 @@ export const trimTrailingPunctuation = (token: string, trim: RteMarkPatternTrim)
     }
 };
 
-/** The characters core says may precede a word, as a class body that also compiles under the `v` flag, where a bracket must be escaped. */
+/** `WORD_START_CONTEXT` with brackets escaped, so it compiles under the `v` flag. */
 const WORD_START_CLASS_BODY = WORD_START_CONTEXT.replaceAll(/[([{]/g, String.raw`\$&`);
 
-/** What may come right before a token: a word start, or an inline element. */
 const TOKEN_OPENERS = `${WORD_START_CLASS_BODY}${INLINE_PLACEHOLDER}`;
 
 /** How much text before the caret a rule reads, as the engine's input rules do. */

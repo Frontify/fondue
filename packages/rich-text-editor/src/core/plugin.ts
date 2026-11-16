@@ -613,13 +613,10 @@ export type RteHotkey = {
 export type HotkeyHandler = (api: EditorControlApi) => boolean | void;
 
 /**
- * Where pasted content was copied from: an editor of this package (this one or another), whose markup pastes back as it was, or anywhere else.
+ * Where a paste was copied from: an editor of this package, whose markup pastes back as it was, or anywhere else.
  */
 export type PasteSource = 'editor' | 'elsewhere';
 
-/**
- * What a paste carries: the clipboard's text, its HTML (if any), and where it was copied from.
- */
 export type Paste = { text: string; html: string | null; source: PasteSource };
 
 /**
@@ -647,8 +644,7 @@ export type PasteTransformContext = {
  */
 export type RteMarkPatternTrim = {
     /**
-     * Characters dropped from the end of the token, one run after another.
-     * The engine anchors it to the end of the token.
+     * Characters dropped from the end of the token. The engine anchors the pattern to the token's end.
      */
     punctuation: RegExp;
     /**
