@@ -46,12 +46,12 @@ export const defaultPlugins: readonly RtePlugin[] = Object.freeze([
     superscriptPlugin,
     fontColorPlugin,
     /* @__PURE__ */ linkPlugin(),
-    /* @__PURE__ */ alignPlugin(),
+    alignPlugin,
     bulletListPlugin,
     numberedListPlugin,
     checkListPlugin,
     quotePlugin,
-    /* @__PURE__ */ resetFormattingPlugin(),
+    resetFormattingPlugin,
     // Default in the old editor too; it adds no node, only text.
     emojiPlugin(),
     // No toolbar of its own: a keybinding.
