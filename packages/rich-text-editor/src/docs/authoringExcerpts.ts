@@ -5,14 +5,8 @@ import pluginExamplesSource from '../stories/PluginExamples.stories.tsx?raw';
 
 import { excerptOf } from './excerptOf';
 
-/**
- * The line that closes a top-level declaration
- */
 const DECLARATION_END = '});';
 
-/**
- * The code excerpts of the "Writing a plugin" guide, each cut from the file it shows
- */
 export const acmeHighlightContentExcerpt = excerptOf(
     pluginExamplesSource,
     'const acmeHighlightContent = defineContent({',
