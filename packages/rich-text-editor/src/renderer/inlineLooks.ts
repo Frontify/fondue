@@ -67,8 +67,8 @@ const documentGaps = (tag: HtmlSpec['tag'], placement: Placement): StyleMap => {
 };
 
 const PARAGRAPH_TAG = 'p';
-// A text style's paragraph carries it; `textStyle.module.scss` gives the body look to `p:not([data-text-style])`.
-const TEXT_STYLE_ATTRIBUTE = 'data-text-style';
+// Mirrors the attribute `textStylePlugin` writes on its paragraphs; `documentContract.spec.ts` pins the two equal.
+export const TEXT_STYLE_ATTRIBUTE = 'data-text-style';
 
 /** What the export writes into the elements, from what the stylesheets would set. */
 export type InlineLooksOptions = {

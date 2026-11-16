@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { fondueToken, type HtmlAttributes, type HtmlSpec } from '#/core';
 
 import { type DrawnNode } from './documentTree';
-import { inlineLooks } from './inlineLooks';
+import { inlineLooks, TEXT_STYLE_ATTRIBUTE } from './inlineLooks';
 
 type HtmlNode = Extract<DrawnNode, { kind: 'html' }>;
 type ComponentNode = Extract<DrawnNode, { kind: 'component' }>;
@@ -111,7 +111,7 @@ describe('inlineLooks body look', () => {
     });
 
     it('leaves out a paragraph that carries a text style', () => {
-        const [node] = inlineLooks([block('p', [], { 'data-text-style': 'sample' })], BODY_STYLES);
+        const [node] = inlineLooks([block('p', [], { [TEXT_STYLE_ATTRIBUTE]: 'sample' })], BODY_STYLES);
 
         expect(specOf(node).attrs?.style).not.toHaveProperty('font-size');
     });
