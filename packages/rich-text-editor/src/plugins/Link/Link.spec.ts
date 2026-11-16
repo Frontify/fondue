@@ -59,7 +59,7 @@ const markPatternRule = (options: LinkPluginOptions = {}): MarkPatternRule => {
     return rule;
 };
 
-/** Whether the rule's pattern takes the whole text as one token, as the engine reads it. */
+/** Anchored the way the engine anchors the pattern. */
 const readsAsToken = (rule: MarkPatternRule, value: string): boolean =>
     new RegExp(`^(?:${rule.pattern.source})$`).test(value);
 
@@ -107,7 +107,6 @@ type PasteSetup = {
     source?: 'editor' | 'elsewhere';
 };
 
-/** Runs the link's paste handler against the three calls it makes on the editor. */
 const paste = ({ options, text, selection, source = 'elsewhere' }: PasteSetup) => {
     const insertText = vi.fn();
     const toggle = vi.fn();

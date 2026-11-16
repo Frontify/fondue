@@ -426,7 +426,6 @@ describe('pasting over selected text with the link plugin', () => {
 
 const TOKEN_PASTE = /^tok:[^\s]+$/;
 
-/** What a feature does with a pasted token: marks the selection, or goes in marked at a caret, as its own undo step. */
 const markPastedToken: PasteHandler = ({ text: pasted, source: copiedFrom }, api) => {
     const typed = pasted.trim();
     if (!TOKEN_PASTE.test(typed)) {
