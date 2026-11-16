@@ -2,6 +2,7 @@
 
 // @vitest-environment happy-dom
 
+import { undo } from 'prosemirror-history';
 import { TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -1005,5 +1006,82 @@ describe('Enter on a block with stored keys no plugin declares', () => {
                 children: [row('ab'), { type: 'row', children: [{ ...paragraph(text('c')), tone: 'warm' }] }],
             },
         ]);
+    });
+});
+
+describe('Backspace and Delete beside a list on an empty line', () => {
+    const plugins = [listsPlugin];
+
+    const list = (type: string, ...items: string[]) => ({
+        type,
+        children: items.map((value) => ({ type: 'row', children: [paragraph(text(value))] })),
+    });
+
+    const placeCaretOnEmptyLine = (view: EditorView): void => {
+        let caret: number | null = null;
+        view.state.doc.descendants((node, position) => {
+            if (node.type.name === 'paragraph' && node.content.size === 0) {
+                caret = position + 1;
+            }
+        });
+        if (caret === null) {
+            throw new Error('There is no empty line in the document');
+        }
+        view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, caret)));
+    };
+
+    const expectCaretAfter = (view: EditorView, value: string): void => {
+        const { $from } = view.state.selection;
+        expect($from.parent.textContent).toBe(value);
+        expect($from.parentOffset).toBe(value.length);
+    };
+
+    it('Backspace deletes the empty line between two lists and joins them', () => {
+        const editor = editorWith(plugins, [list('stepList', 'a', 'b'), paragraph(), list('stepList', 'c', 'd')]);
+        placeCaretOnEmptyLine(editor.view);
+
+        expect(press(editor.view, 'Backspace')).toBe(true);
+
+        expect(editor.stored()).toEqual([list('stepList', 'a', 'b', 'c', 'd')]);
+        expectCaretAfter(editor.view, 'b');
+    });
+
+    it('Delete at the end of the last item removes the empty line below and joins the lists', () => {
+        const editor = editorWith(plugins, [list('stepList', 'a', 'b'), paragraph(), list('stepList', 'c', 'd')]);
+        editor.caretAfter('b');
+
+        expect(press(editor.view, 'Delete')).toBe(true);
+
+        expect(editor.stored()).toEqual([list('stepList', 'a', 'b', 'c', 'd')]);
+        expectCaretAfter(editor.view, 'b');
+    });
+
+    it('removes the empty line but keeps lists of different types apart', () => {
+        const editor = editorWith(plugins, [list('dotList', 'a', 'b'), paragraph(), list('stepList', 'c', 'd')]);
+        placeCaretOnEmptyLine(editor.view);
+
+        expect(press(editor.view, 'Backspace')).toBe(true);
+
+        expect(editor.stored()).toEqual([list('dotList', 'a', 'b'), list('stepList', 'c', 'd')]);
+    });
+
+    it('leaves an empty line after a plain paragraph to the baseline', () => {
+        const editor = editorWith(plugins, [paragraph(text('a')), paragraph()]);
+        placeCaretOnEmptyLine(editor.view);
+
+        press(editor.view, 'Backspace');
+
+        expect(editor.stored()).toEqual([paragraph(text('a'))]);
+    });
+
+    it('is one undo step', () => {
+        const blocks = [list('stepList', 'a', 'b'), paragraph(), list('stepList', 'c', 'd')];
+        const editor = editorWith(plugins, blocks);
+        placeCaretOnEmptyLine(editor.view);
+        press(editor.view, 'Backspace');
+
+        undo(editor.view.state, editor.view.dispatch);
+
+        expect(editor.stored()).toEqual(blocks);
     });
 });

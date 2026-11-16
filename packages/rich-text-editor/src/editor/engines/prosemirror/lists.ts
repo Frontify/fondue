@@ -288,6 +288,69 @@ const inEmptyBlock = (state: EditorState): boolean => {
     return empty && $from.parent.isTextblock && $from.parent.content.size === 0;
 };
 
+/** The depth of the outermost list whose content the caret ends, or null when it ends none. */
+const outermostListEndedByCaret = (state: EditorState, itemTypeByList: Map<string, string>): number | null => {
+    const { $from } = state.selection;
+    let found: number | null = null;
+    for (let depth = $from.depth - 1; depth >= 0; depth--) {
+        // Each level between the list and the caret must close right where the caret's block closes.
+        if ($from.after(depth + 1) !== $from.end(depth)) {
+            break;
+        }
+        if (itemTypeByList.has($from.node(depth).type.name)) {
+            found = depth;
+        }
+    }
+    return found;
+};
+
+/**
+ * Backspace on an empty line right after a list, or Delete at the end of a list
+ * right before an empty line, removes that line. ProseMirror's own join would
+ * first wrap the line into the list as an empty item. Lists left side by side
+ * join as `joiningLists` says, in the same undo step.
+ * @param dir - `-1` for Backspace, `1` for Delete
+ */
+export const deleteEmptyBlockBesideList = (itemTypeByList: Map<string, string>, dir: -1 | 1): Command =>
+    joiningLists((state, dispatch) => {
+        const { $from, empty } = state.selection;
+        if (!empty) {
+            return false;
+        }
+        if (dir === -1) {
+            const before = state.doc.resolve($from.before()).nodeBefore;
+            if (!$from.parent.isTextblock || $from.parent.content.size > 0 || !before) {
+                return false;
+            }
+            if (!itemTypeByList.has(before.type.name)) {
+                return false;
+            }
+            if (dispatch) {
+                const transaction = state.tr.delete($from.before(), $from.after());
+                // The caret goes to the end of the text before the removed line.
+                const caret = Selection.near(transaction.doc.resolve(transaction.mapping.map($from.before())), -1);
+                dispatch(transaction.setSelection(caret).scrollIntoView());
+            }
+            return true;
+        }
+        if ($from.parentOffset !== $from.parent.content.size) {
+            return false;
+        }
+        const listDepth = outermostListEndedByCaret(state, itemTypeByList);
+        if (listDepth === null) {
+            return false;
+        }
+        const listEnd = $from.after(listDepth);
+        const after = state.doc.resolve(listEnd).nodeAfter;
+        if (!after?.isTextblock || after.content.size > 0) {
+            return false;
+        }
+        if (dispatch) {
+            dispatch(state.tr.delete(listEnd, listEnd + after.nodeSize).scrollIntoView());
+        }
+        return true;
+    }, itemTypeByList);
+
 /**
  * Enter, Tab, Shift-Tab and Backspace inside a list. They belong to being in a
  * list, so any feature declaring `content: { items }` gets them. Outside a list

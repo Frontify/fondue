@@ -37,7 +37,7 @@ import { autolinkOnEnter, markPatternRule } from './autolink';
 import { keepCarriedAttrs, withCarriedAttrs } from './carriedAttrs';
 import { undoStep } from './controlApi';
 import { EXTRA_ATTR } from './documentConversion';
-import { listKeys } from './lists';
+import { deleteEmptyBlockBesideList, listKeys } from './lists';
 import {
     type RuleContext,
     type RuleHandler,
@@ -64,7 +64,8 @@ import {
  * 4. List keys (Enter, Tab, Shift-Tab, Backspace); only present when a list exists.
  * 5. Typing rewrites: declared `RteInputRule`s (`**bold**`, `- `, `-->`); held until a composition ends.
  * 6. Enter keeping the attributes every text block carries, then the baseline
- *    keymap, plus Backspace resetting an emptied first heading.
+ *    keymap, plus Backspace resetting an emptied first heading, and Backspace
+ *    or Delete removing an empty line beside a list instead of wrapping it into the list.
  *
  * Mark input rules build their own transaction instead of calling
  * `api.marks.toggle`, because the input-rule machinery owns undo grouping.
@@ -92,7 +93,11 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         // 5
         ...typingRewrites(registry, schema),
         // 6
-        keymap({ Backspace: resetEmptyFirstBlock, Enter: splitKeepingCarriedAttrs(registry) }),
+        keymap({
+            Backspace: chainCommands(resetEmptyFirstBlock, deleteEmptyBlockBesideList(registry.itemTypeByList, -1)),
+            Delete: deleteEmptyBlockBesideList(registry.itemTypeByList, 1),
+            Enter: splitKeepingCarriedAttrs(registry),
+        }),
         keymap(baseKeymap),
     ].map(ignoringTextEntryKeys);
 };
