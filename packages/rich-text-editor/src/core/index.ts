@@ -43,7 +43,6 @@ export {
     type BlockDefinition,
     type ChildSpacing,
     type ContentModel,
-    type ContentStyles,
     type DefaultStyle,
     defineBlock,
     defineContent,

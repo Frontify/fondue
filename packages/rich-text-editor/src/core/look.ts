@@ -54,17 +54,6 @@ const UPPER_CASE_LETTER = /[A-Z]/g;
 const kebabCase = (key: string): string => key.replaceAll(UPPER_CASE_LETTER, (letter) => `-${letter.toLowerCase()}`);
 
 /**
- * Checks a look's value, so the rule for a usable one lives once.
- * @param subject - What the value belongs to, for the message, such as `the "custom2" look`.
- * @throws When the value is empty or could break out of its declaration, rather than dropping it silently.
- */
-const assertUsableValue = (field: string, value: string, subject: string): void => {
-    if (value.trim() === '' || !isSafeCssValue(value)) {
-        throw new Error(`The "${field}" of ${subject} is not a usable CSS value: ${JSON.stringify(value)}`);
-    }
-};
-
-/**
  * The custom property a host sets for one field of a style's look, `--rte-<key>-<css property>`.
  * The stylesheet reads it with Fondue's look as the fallback.
  *
@@ -88,7 +77,9 @@ export const lookProperties = (key: string, look: TextLook): Record<string, stri
         if (value === undefined) {
             continue;
         }
-        assertUsableValue(field, value, `the "${key}" look`);
+        if (value.trim() === '' || !isSafeCssValue(value)) {
+            throw new Error(`The "${field}" of the "${key}" look is not a usable CSS value: ${JSON.stringify(value)}`);
+        }
         properties[lookVariableName(key, property)] = value;
     }
     return properties;
@@ -108,22 +99,20 @@ export const styleOfClass = (className: string | undefined, style: StyleMap): Re
 };
 
 /**
- * The inline style a look makes, for HTML exported without the stylesheet: the
- * fallbacks, then each value the host set, by its CSS property name.
+ * The inline style a look makes, for HTML exported without the stylesheet: each field's custom property, as
+ * `lookProperties` set it, over the fallback, the way the stylesheet reads `var(--rte-<key>-<property>, <fallback>)`.
  *
+ * @param key - The style's name, such as `quote`.
+ * @param properties - The custom properties every content sets, `PluginRegistry['contentProperties']`.
  * @param fallbacks - The values the stylesheet falls back to where the host sets none.
- * @throws When a value is empty or could break out of its declaration, rather than dropping it silently.
  */
-export const lookStyle = (look: TextLook, fallbacks: StyleMap): StyleMap => {
+export const lookStyle = (key: string, properties: Readonly<Record<string, string>>, fallbacks: StyleMap): StyleMap => {
     const style: StyleMap = { ...fallbacks };
-    for (const [field, property] of Object.entries(LOOK_PROPERTIES)) {
-        // `Object.entries` widens the keys to string; they are the fields of `TextLook` by `satisfies` above.
-        const value = look[field as keyof TextLook];
-        if (value === undefined) {
-            continue;
+    for (const property of Object.values(LOOK_PROPERTIES)) {
+        const value = properties[lookVariableName(key, property)];
+        if (value !== undefined) {
+            style[property] = value;
         }
-        assertUsableValue(field, value, 'the look');
-        style[property] = value;
     }
     return style;
 };

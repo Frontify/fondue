@@ -1,10 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { buildPluginRegistry, type RteBlockNode, type RteContent, type RteDocumentOf, type RtePlugin } from '#/core';
+import {
+    buildPluginRegistry,
+    lookStyle,
+    type RteBlockNode,
+    type RteContent,
+    type RteDocumentOf,
+    type RtePlugin,
+} from '#/core';
 
 import { DOCUMENT_STYLE, documentRootSpec, documentTree } from './documentTree';
 import { inlineLooks } from './inlineLooks';
 import { toHtmlString } from './toHtmlString';
+
+/** The look `document.module.scss` gives plain paragraphs, which `textStylePlugin({ presets })` sets as `body`. */
+const BODY_LOOK = 'body';
 
 /**
  * How exported HTML carries the looks of its elements: `'classes'` leaves them to the package
@@ -58,7 +68,11 @@ export const serializeToHtml = <TBlock extends RteBlockNode>(
         case 'classes':
             break;
         case 'inline':
-            blocks = inlineLooks(blocks, registry.contentStyles());
+            blocks = inlineLooks(blocks, {
+                classes: registry.contentStyles(),
+                // No fallbacks: without a host look, a plain paragraph takes the document's own.
+                plainParagraph: lookStyle(BODY_LOOK, registry.contentProperties, {}),
+            });
             // The document's own look in place of the `--rte-*` properties, which no rule reads without the stylesheet.
             root = { ...root, attrs: { ...root.attrs, style: DOCUMENT_STYLE } };
             break;

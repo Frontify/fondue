@@ -29,7 +29,41 @@ describe('the text style plugin presets', () => {
     });
 
     it('shares the default content when there are no presets', () => {
-        expect(textStylePlugin().content).toBe(textStyleContent);
+        expect(textStylePlugin().content).toBe(textStyleContent());
+    });
+
+    it('returns the same content every time it has no styles and no presets', () => {
+        expect(textStyleContent()).toBe(textStyleContent());
+        expect(textStyleContent()).toEqual(textStylePlugin().content);
+    });
+
+    it('sets a custom property for the body, quote and link looks', () => {
+        const plugin = textStylePlugin({
+            presets: {
+                body: { fontSize: 'var(--f-body)' },
+                quote: { color: 'blue' },
+                link: { fontWeight: '600' },
+            },
+        });
+
+        expect(plugin.content?.contentProperties).toEqual({
+            '--rte-body-font-size': 'var(--f-body)',
+            '--rte-quote-color': 'blue',
+            '--rte-link-font-weight': '600',
+        });
+    });
+
+    it('refuses a link value that could break out of its declaration', () => {
+        expect(() => textStylePlugin({ presets: { link: { color: 'red; display: none' } } })).toThrow(
+            /"color".*"link"/,
+        );
+    });
+
+    it('carries the body look without the plugin, and parses no heading tag', () => {
+        const content = textStyleContent({ styles: [], presets: { body: { fontSize: '16px' } } });
+
+        expect(content.contentProperties).toEqual({ '--rte-body-font-size': '16px' });
+        expect(content.blocks?.textStyle?.parse).toEqual([]);
     });
 
     it('refuses a value that could break out of its declaration', () => {
@@ -41,13 +75,13 @@ describe('the text style plugin presets', () => {
     it('keeps the shared block when only presets differ, so it registers next to the default content', () => {
         const plugin = textStylePlugin({ presets: { heading1: { color: 'red' } } });
 
-        expect(plugin.content?.blocks?.textStyle).toBe(textStyleContent.blocks?.textStyle);
-        expect(() => buildPluginRegistry([textStyleContent, plugin])).not.toThrow();
+        expect(plugin.content?.blocks?.textStyle).toBe(textStyleContent().blocks?.textStyle);
+        expect(() => buildPluginRegistry([textStyleContent(), plugin])).not.toThrow();
     });
 });
 
 describe('a text style no preset names', () => {
-    const registry = buildPluginRegistry([textStyleContent]);
+    const registry = buildPluginRegistry([textStyleContent()]);
 
     it('draws a paragraph with the class that spaces it like body text', () => {
         const definition = registry.blocks.get('textStyle');
@@ -66,6 +100,6 @@ describe('a text style no preset names', () => {
             throw new Error('The text style stylesheet has no class for an unknown style');
         }
 
-        expect(registry.contentStyles().classes[UNKNOWN_STYLE_CLASS_NAME]).toEqual(LOOK_MARGIN_FALLBACKS);
+        expect(registry.contentStyles()[UNKNOWN_STYLE_CLASS_NAME]).toEqual(LOOK_MARGIN_FALLBACKS);
     });
 });

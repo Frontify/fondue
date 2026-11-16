@@ -3,17 +3,61 @@
 // Mounted by hostStyling.ct.tsx and documentSpacing.ct.tsx: a component test mounts imported components, and the plugin list holds functions, which cannot travel as props.
 
 import { type RteDocumentOf } from '../../core/document';
-import { RichTextEditor, RichTextRenderer } from '../../index';
+import {
+    bulletListPlugin,
+    checkListPlugin,
+    columnBreakPlugin,
+    fontColorPlugin,
+    type LinkLook,
+    linkPlugin,
+    quotePlugin,
+    RichTextEditor,
+    RichTextRenderer,
+    type RtePlugin,
+    type TextLook,
+    textStylePlugin,
+} from '../../index';
 
-import { type HostLooksOptions, pluginsWithLooks } from './hostStylingPlugins';
 import { BODY_QUOTE_LINK_DOCUMENT } from './hostStylingValues';
+import { ownMarginsPlugin } from './ownMarginsPlugin';
 
-type HostLooksPairProps = HostLooksOptions & {
+type HostLooksPairProps = {
+    body?: TextLook;
+    quote?: TextLook;
+    link?: LinkLook;
     /**
      * The document both surfaces draw.
      * @default BODY_QUOTE_LINK_DOCUMENT
      */
     value?: RteDocumentOf;
+    /** Mounts `ownMarginsPlugin`, a block drawn by its own component whose class writes its margins. */
+    withOwnMarginsBlock?: boolean;
+    /** Mounts `columnBreakPlugin`, a block whose stylesheet writes its margins. */
+    withColumnBreak?: boolean;
+};
+
+const pluginsWithLooks = ({
+    body,
+    quote,
+    link,
+    withOwnMarginsBlock,
+    withColumnBreak,
+}: HostLooksPairProps): RtePlugin[] => {
+    const plugins = [
+        textStylePlugin({ presets: { body, quote, link } }),
+        bulletListPlugin,
+        checkListPlugin,
+        fontColorPlugin,
+        quotePlugin,
+        linkPlugin,
+    ];
+    if (withOwnMarginsBlock === true) {
+        plugins.push(ownMarginsPlugin);
+    }
+    if (withColumnBreak === true) {
+        plugins.push(columnBreakPlugin());
+    }
+    return plugins;
 };
 
 /** The renderer and the editor side by side, drawing body text, a quote and links with the same looks. */

@@ -7,11 +7,9 @@ import {
     defineContent,
     definePlugin,
     LOOK_MARGIN_FALLBACKS,
-    lookProperties,
     lookStyle,
     type RteInlineNode,
     styleOfClass,
-    type TextLook,
 } from '#/core';
 
 import { MUTED_COLOR } from '../shared/helpers/mutedText';
@@ -26,42 +24,29 @@ export type QuoteBlock = {
     children: RteInlineNode[];
 };
 
-export type QuotePluginOptions = {
-    /**
-     * How block quotes look. A field left out keeps Fondue's look.
-     * @default {}
-     */
-    look?: TextLook;
-};
-
-// One definition for every content, because the registry throws when two different objects declare one type.
-const quoteBlock = defineBlock({
-    content: 'text',
-    ownsMargins: true,
-    toHtml: () => ({ tag: 'blockquote', attrs: { class: styles.quote }, children: true }),
-    parse: [{ tag: 'blockquote' }],
-});
-
 /**
  * A block quote, written as `<blockquote>`
  */
-export const quoteContent = ({ look = {} }: QuotePluginOptions = {}) =>
-    defineContent({
-        blocks: { quote: quoteBlock },
-        contentProperties: lookProperties('quote', look),
-        // The same values the stylesheet falls back to; `hostStyling.ct.tsx` holds them equal.
-        contentStyles: () => ({
-            classes: styleOfClass(styles.quote, lookStyle(look, { ...LOOK_MARGIN_FALLBACKS, color: MUTED_COLOR })),
+export const quoteContent = defineContent({
+    blocks: {
+        quote: defineBlock({
+            content: 'text',
+            ownsMargins: true,
+            toHtml: () => ({ tag: 'blockquote', attrs: { class: styles.quote }, children: true }),
+            parse: [{ tag: 'blockquote' }],
         }),
-    });
+    },
+    // The same values the stylesheet falls back to; `hostStyling.ct.tsx` holds them equal.
+    contentStyles: (properties) =>
+        styleOfClass(styles.quote, lookStyle('quote', properties, { ...LOOK_MARGIN_FALLBACKS, color: MUTED_COLOR })),
+});
 
 /**
  * A block quote, with a `/` entry, and `> ` while typing
  */
-export const quotePlugin = (options: QuotePluginOptions = {}) =>
-    definePlugin({
-        content: quoteContent(options),
-        toolbarGroup: 'text',
-        toolbar: [{ label: 'Quote', icon: IconSpeechBubbleQuote, menu: { keywords: ['blockquote', 'citation'] } }],
-        inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
-    });
+export const quotePlugin = /* @__PURE__ */ definePlugin({
+    content: quoteContent,
+    toolbarGroup: 'text',
+    toolbar: [{ label: 'Quote', icon: IconSpeechBubbleQuote, menu: { keywords: ['blockquote', 'citation'] } }],
+    inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
+});

@@ -5,7 +5,6 @@ import { describe, expect, it } from 'vitest';
 import {
     CHILD_SPACING_ATTRIBUTE,
     type ChildSpacing,
-    type ContentStyles,
     DOCUMENT_GAP_VARIABLES,
     fondueToken,
     type HtmlAttributes,
@@ -14,7 +13,7 @@ import {
 } from '#/core';
 
 import { type DrawnNode } from './documentTree';
-import { inlineLooks, resolveVariables } from './inlineLooks';
+import { inlineLooks, type InlineLooksOptions, resolveVariables } from './inlineLooks';
 
 type HtmlNode = Extract<DrawnNode, { kind: 'html' }>;
 type ComponentNode = Extract<DrawnNode, { kind: 'component' }>;
@@ -23,9 +22,9 @@ const CONTENT_STYLES = {
     big: { 'font-size': '24px', color: 'red' },
     bold: { 'font-weight': '700', color: 'blue' },
 };
-const CLASS_STYLES = { classes: CONTENT_STYLES, plainTags: {} };
-const NO_STYLES = { classes: {}, plainTags: {} };
-const PLAIN_P_STYLES = { classes: CONTENT_STYLES, plainTags: { p: { 'font-size': '13px', color: 'green' } } };
+const CLASS_STYLES = { classes: CONTENT_STYLES, plainParagraph: {} };
+const NO_STYLES = { classes: {}, plainParagraph: {} };
+const BODY_STYLES = { classes: CONTENT_STYLES, plainParagraph: { 'font-size': '13px', color: 'green' } };
 
 const BLOCK_GAP = fondueToken('spacing-x-small');
 const HOST_MARGINS = { 'margin-top': '10px', 'margin-bottom': '20px' };
@@ -64,8 +63,8 @@ const specOf = (node: DrawnNode | undefined): HtmlSpec => elementOf(node).spec;
 const contentOf = (node: DrawnNode | undefined): DrawnNode[] => elementOf(node).content;
 
 /** The nodes inlined inside an element without the child-spacing mark, so the document spaces none of them. */
-const inlineUnspaced = (nodes: DrawnNode[], contentStyles: Required<ContentStyles>): DrawnNode[] =>
-    contentOf(inlineLooks([block('div', nodes)], contentStyles)[0]);
+const inlineUnspaced = (nodes: DrawnNode[], looks: InlineLooksOptions): DrawnNode[] =>
+    contentOf(inlineLooks([block('div', nodes)], looks)[0]);
 
 describe('inlineLooks', () => {
     it('writes the style of the class and keeps the class', () => {
@@ -127,27 +126,27 @@ describe('inlineLooks', () => {
     });
 });
 
-describe('inlineLooks plain tags', () => {
-    it('writes the style of a tag on an element that does not own its margins', () => {
-        const [node] = inlineLooks([block('p')], PLAIN_P_STYLES);
+describe('inlineLooks body look', () => {
+    it('writes the body look on a plain paragraph', () => {
+        const [node] = inlineLooks([block('p')], BODY_STYLES);
 
         expect(specOf(node).attrs?.style).toMatchObject({ 'font-size': '13px', color: 'green' });
     });
 
-    it('leaves out an element that carries the margin marker', () => {
-        const [node] = inlineLooks([block('p', [], { [OWN_MARGINS_ATTRIBUTE]: '' })], PLAIN_P_STYLES);
+    it('leaves out a paragraph that carries the margin marker', () => {
+        const [node] = inlineLooks([block('p', [], { [OWN_MARGINS_ATTRIBUTE]: '' })], BODY_STYLES);
 
         expect(specOf(node).attrs?.style).toBeUndefined();
     });
 
-    it('lets the style of a class win over the style of its tag', () => {
-        const [node] = inlineLooks([block('p', [], { class: 'big' })], PLAIN_P_STYLES);
+    it('lets the style of a class win over the body look', () => {
+        const [node] = inlineLooks([block('p', [], { class: 'big' })], BODY_STYLES);
 
         expect(specOf(node).attrs?.style).toMatchObject(CONTENT_STYLES.big);
     });
 
-    it('leaves an element of a tag no content styled as it is', () => {
-        const [node] = inlineUnspaced([block('span')], PLAIN_P_STYLES);
+    it('leaves any other element as it is', () => {
+        const [node] = inlineUnspaced([block('span')], BODY_STYLES);
 
         expect(specOf(node)).toEqual({ tag: 'span', attrs: {}, children: true });
     });
@@ -169,7 +168,7 @@ describe('inlineLooks spacing', () => {
     });
 
     it('gives a block whose look reads the document gaps their value, or the look fallback where it sets none', () => {
-        const contentStyles = { classes: { own: { 'margin-top': OWN_GAP_ABOVE_READ } }, plainTags: {} };
+        const contentStyles = { classes: { own: { 'margin-top': OWN_GAP_ABOVE_READ } }, plainParagraph: {} };
 
         const [first, middle, last] = inlineLooks(
             [block('p', [], OWN_BLOCK), block('p', [], OWN_BLOCK), block('p', [], OWN_BLOCK)],
@@ -182,7 +181,7 @@ describe('inlineLooks spacing', () => {
     });
 
     it('gives a block that owns its margins only the margins its look sets, none from the document', () => {
-        const contentStyles = { classes: { own: { 'margin-top': OWN_GAP_ABOVE } }, plainTags: {} };
+        const contentStyles = { classes: { own: { 'margin-top': OWN_GAP_ABOVE } }, plainParagraph: {} };
 
         const [first] = inlineLooks([block('p', [], OWN_BLOCK), block('p')], contentStyles);
 
@@ -239,7 +238,7 @@ describe('inlineLooks spacing', () => {
     });
 
     it('keeps a host margin as given, also on the last block and in a tight container', () => {
-        const contentStyles = { classes: { spaced: HOST_MARGINS }, plainTags: {} };
+        const contentStyles = { classes: { spaced: HOST_MARGINS }, plainParagraph: {} };
         const item = block('li', [block('p', [], { class: 'spaced' })], marked('tight'));
 
         const [, last] = inlineLooks([block('h1'), block('h2', [], { class: 'spaced' })], contentStyles);
@@ -290,7 +289,7 @@ describe('resolveVariables', () => {
     });
 
     it('gives the first heading no gap above and a later one the medium gap, in the export', () => {
-        const contentStyles = { classes: { heading: { 'margin-top': HEADING_MARGIN_TOP } }, plainTags: {} };
+        const contentStyles = { classes: { heading: { 'margin-top': HEADING_MARGIN_TOP } }, plainParagraph: {} };
 
         const [first, later] = inlineLooks(
             [

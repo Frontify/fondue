@@ -50,9 +50,7 @@ export const columnBreakContent = ({ columns = 2, gap = 'normal' }: ColumnBreakP
             }),
         },
         // The same margins the stylesheet writes; `documentSpacing.ct.tsx` holds them equal.
-        contentStyles: () => ({
-            classes: styleOfClass(styles.break, { margin: `${BREAK_MARGIN} 0` }),
-        }),
+        contentStyles: () => styleOfClass(styles.break, { margin: `${BREAK_MARGIN} 0` }),
         // The layout belongs to the content as a whole, so it goes on the editable
         // element; the options reach the stylesheet as custom properties.
         contentClassName: styles.columns,

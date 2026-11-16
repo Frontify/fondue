@@ -6,6 +6,7 @@ import { type Locator } from '@playwright/test';
 import { type LinkLook, type TextLook, type TextStyleName } from '../../index';
 
 import { ExportedLooksPair } from './ExportedLooksPair';
+import { HostBodyContentPair } from './HostBodyContentPair';
 import { HostLooksPair } from './HostLooksPair';
 import { HostResetPair } from './HostResetPair';
 import { HostStylingPair } from './HostStylingPair';
@@ -288,7 +289,7 @@ test.describe('host styling of text styles', () => {
     });
 });
 
-// Body text, block quotes and links take a look through `paragraphPlugin`, `quotePlugin` and `linkPlugin`.
+// Body text, block quotes and links take a look through `textStylePlugin({ presets })`.
 
 type LookedBlock = 'body' | 'bullet' | 'check' | 'quote' | 'link' | 'custom1' | 'heading1';
 
@@ -423,6 +424,17 @@ test.describe('host styling of body text, quotes and links', () => {
                 custom1: BASELINE_LOOKS.custom1,
                 heading1: BASELINE_LOOKS.heading1,
             });
+        }
+    });
+
+    test('applies the body look from the content half alone, with no text style plugin', async ({ mount }) => {
+        const component = await mount(<HostBodyContentPair body={HOST_LOOK} />);
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            for (const block of ['body', 'bullet', 'check'] as const) {
+                expect(await computedLookOf(blockIn(section, block))).toEqual(HOST_COMPUTED_LOOK);
+            }
         }
     });
 
@@ -564,7 +576,9 @@ test.describe('inline styling of exported HTML', () => {
 
     test('reads as the class output does, with a host look for every owner', async ({ mount }) => {
         const component = await mount(
-            <ExportedLooksPair presets={HOST_PRESETS} body={HOST_LOOK} quote={HOST_LOOK} link={HOST_LINK_LOOK} />,
+            <ExportedLooksPair
+                presets={{ ...HOST_PRESETS, body: HOST_LOOK, quote: HOST_LOOK, link: HOST_LINK_LOOK }}
+            />,
         );
         const inline = component.getByTestId('inline');
 

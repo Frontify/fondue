@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../styles/look.module.scss';
+
 /**
  * How a document reads, wherever it is drawn: the editable element in the
  * editor and the root of `RichTextRenderer` both carry this class, so the two
@@ -60,6 +62,19 @@
     [data-rte-child-spacing='tight'] > * {
         --rte-block-gap: 0;
         --rte-leading-gap: 0;
+    }
+
+    // A plain paragraph reads the margins of the body look, which a host sets with `textStylePlugin({ presets })`.
+    // Without one, the look's defaults are no top margin and the gap below, so this repeats the rule above;
+    // the element makes it outrank that rule, so a host margin wins in every container.
+    p:not([data-rte-own-margins]) {
+        @include look.look('body', $only: (margin-top, margin-bottom));
+    }
+
+    // The rest of the body look, for plain paragraphs. `:where` keeps it at class rank, below a checked item's colour
+    // and strike.
+    :where(p:not([data-rte-own-margins])) {
+        @include look.look('body', $except: (margin-top, margin-bottom));
     }
 
     // Raised and lowered text without growing the line it sits on. Browsers'

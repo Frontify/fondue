@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// Mounted through `pluginsWithLooks`: a block drawn by its own component in the readonly view, whose class writes
+// Mounted by `HostLooksPair` and `ExportedLooksPair`: a block drawn by its own component in the readonly view, whose class writes
 // its margins, so the document must leave them alone in every output.
 
 import { type CSSProperties, type ReactNode } from 'react';
@@ -48,8 +48,6 @@ export const ownMarginsPlugin: RtePlugin = definePlugin({
                 render: { component: Boxed },
             }),
         },
-        contentStyles: () => ({
-            classes: styleOfClass(styles.boxed, { 'margin-top': BOXED_MARGIN, 'margin-bottom': BOXED_MARGIN }),
-        }),
+        contentStyles: () => styleOfClass(styles.boxed, { 'margin-top': BOXED_MARGIN, 'margin-bottom': BOXED_MARGIN }),
     }),
 });

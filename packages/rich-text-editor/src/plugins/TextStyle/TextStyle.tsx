@@ -2,7 +2,6 @@
 
 import {
     type BlockDefinition,
-    type ContentStyles,
     type DefaultStyle,
     defineBlock,
     defineContent,
@@ -42,7 +41,15 @@ import {
 // official document union.
 export type { TextStyleBlock, TextStyleName } from './helpers/presets';
 
-export type TextStylePluginOptions = {
+/**
+ * How links look. A link keeps its underline, and vertical margins do nothing on inline text, so neither is a field.
+ */
+export type LinkLook = Omit<TextLook, 'textDecoration' | 'marginTop' | 'marginBottom'>;
+
+/** The look of each kind of text, by name: the 9 text styles, body text, block quotes and links. */
+export type TextStylePresets = Partial<Record<TextStyleName | 'body' | 'quote', TextLook>> & { link?: LinkLook };
+
+export type TextStyleContentOptions = {
     /**
      * The styles the dropdown offers, in order, and what pasted HTML may become.
      * Include `'paragraph'` for the option that clears a style.
@@ -50,12 +57,15 @@ export type TextStylePluginOptions = {
      */
     styles?: readonly TextStyleOption[];
     /**
-     * How each preset looks, by name. A preset left out, and a field left out of one, keeps Fondue's look.
+     * How each kind of text looks, by name: a text style, `body` for plain paragraphs, `quote` and `link`.
+     * A kind left out, and a field left out of one, keeps Fondue's look.
      * A value that is empty or can end its CSS declaration early throws an error that names the preset and the
      * field, so a mistake in the host's configuration never passes silently.
      */
-    presets?: Partial<Record<TextStyleName, TextLook>>;
+    presets?: TextStylePresets;
 };
+
+export type TextStylePluginOptions = TextStyleContentOptions;
 
 // Headings are bold by default, so a bold the pasted heading declares on itself is not the author's. Bold on text inside it is.
 const TEXT_STYLE_DEFAULT_STYLES: readonly DefaultStyle[] = [
@@ -88,29 +98,26 @@ const textStyleBlockFor = (options: readonly TextStyleOption[]): BlockDefinition
     });
 };
 
+// The same values the stylesheet falls back to (`hostStyling.ct.tsx` holds them equal), for every preset, offered or not.
+const presetStyles = (properties: Readonly<Record<string, string>>): Record<string, StyleMap> => {
+    const classes: Record<string, StyleMap> = styleOfClass(UNKNOWN_STYLE_CLASS_NAME, LOOK_MARGIN_FALLBACKS);
+    for (const preset of presetsFor(ALL_TEXT_STYLES)) {
+        const look = lookStyle(preset.name, properties, { ...LOOK_MARGIN_FALLBACKS, ...preset.fallback });
+        Object.assign(classes, styleOfClass(preset.className, look));
+    }
+    return classes;
+};
+
 // Shared so every content offering all styles declares the very same block, which the registry requires.
 const ALL_STYLES_BLOCK = textStyleBlockFor(ALL_TEXT_STYLES);
 
-const textStyleContentFor = (
-    options: readonly TextStyleOption[],
-    presets: TextStylePluginOptions['presets'] = {},
-): RteContent => {
+const textStyleContentFor = (options: readonly TextStyleOption[], presets: TextStylePresets = {}): RteContent => {
     const contentProperties: Record<string, string> = {};
     for (const [name, look] of Object.entries(presets)) {
         if (look !== undefined) {
             Object.assign(contentProperties, lookProperties(name, look));
         }
     }
-
-    // The same values the stylesheet falls back to (`hostStyling.ct.tsx` holds them equal), for every preset, offered or not.
-    const contentStyles = (): ContentStyles => {
-        const classes: Record<string, StyleMap> = styleOfClass(UNKNOWN_STYLE_CLASS_NAME, LOOK_MARGIN_FALLBACKS);
-        for (const preset of presetsFor(ALL_TEXT_STYLES)) {
-            const look = lookStyle(presets[preset.name] ?? {}, { ...LOOK_MARGIN_FALLBACKS, ...preset.fallback });
-            Object.assign(classes, styleOfClass(preset.className, look));
-        }
-        return { classes };
-    };
 
     let block = ALL_STYLES_BLOCK;
     if (options !== ALL_TEXT_STYLES) {
@@ -119,15 +126,26 @@ const textStyleContentFor = (
 
     return defineContent({
         contentProperties,
-        contentStyles,
+        contentStyles: presetStyles,
         blocks: { textStyle: block },
     });
 };
 
+const DEFAULT_CONTENT = textStyleContentFor(ALL_TEXT_STYLES);
+
 /**
- * The text block carrying a style, accepting every style
+ * The text block carrying a style, accepting every style unless `styles` narrows what pasted HTML may become.
+ * It adds no toolbar, commands, hotkeys or input rules: those come with `textStylePlugin`.
+ * @example
+ * textStyleContent({ styles: [], presets: { body: { fontSize: '16px' } } })
  */
-export const textStyleContent = textStyleContentFor(ALL_TEXT_STYLES);
+export const textStyleContent = ({ styles = ALL_TEXT_STYLES, presets }: TextStyleContentOptions = {}): RteContent => {
+    // The shared object, so the default plugin and `defaultContent` declare the very same block definition.
+    if (styles === ALL_TEXT_STYLES && presets === undefined) {
+        return DEFAULT_CONTENT;
+    }
+    return textStyleContentFor(styles, presets);
+};
 
 const HEADING_LEVEL: Partial<Record<string, number>> = { h1: 1, h2: 2, h3: 3, h4: 4 };
 
@@ -185,15 +203,9 @@ export const textStylePlugin = ({
         };
     });
 
-    // Reuse the shared object so the default plugin and defaultContent declare the very same block definition.
-    let content = textStyleContent;
-    if (options !== ALL_TEXT_STYLES || presets !== undefined) {
-        content = textStyleContentFor(options, presets);
-    }
-
     return definePlugin({
         id: 'text-style',
-        content,
+        content: textStyleContent({ styles: options, presets }),
         toolbarGroup: 'text',
         toolbar: [{ label: 'Text style', render: (props) => <TextStyleSelect {...props} options={options} /> }],
         hotkeys,
