@@ -6,8 +6,8 @@ import { type Locator } from '@playwright/test';
 import { type LinkLook, type TextLook, type TextStyleName } from '../../index';
 
 import { ExportedLooksPair } from './ExportedLooksPair';
-import { HostBodyContentPair } from './HostBodyContentPair';
 import { HostLooksPair } from './HostLooksPair';
+import { HostNoHeadingsPair } from './HostNoHeadingsPair';
 import { HostResetPair } from './HostResetPair';
 import { HostStylingPair } from './HostStylingPair';
 import { HostStylingSections } from './HostStylingSections';
@@ -427,8 +427,9 @@ test.describe('host styling of body text, quotes and links', () => {
         }
     });
 
-    test('applies the body look from the content half alone, with no text style plugin', async ({ mount }) => {
-        const component = await mount(<HostBodyContentPair body={HOST_LOOK} />);
+    test('applies the body look on a surface without headings, which shows no text style picker', async ({ mount }) => {
+        const component = await mount(<HostNoHeadingsPair body={HOST_LOOK} />);
+        await expect(component.getByTestId('editor').getByRole('combobox', { name: 'Text style' })).toHaveCount(0);
 
         for (const surface of SURFACES) {
             const section = component.getByTestId(surface);
