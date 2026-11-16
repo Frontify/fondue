@@ -6,9 +6,9 @@ import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from 
 import { type EditProps, matchesHotkey } from '#/core';
 
 import { type LinkSearch } from '../helpers/destination';
-import { type LinkLabels } from '../helpers/labels';
 import { NEW_TAB_REL, NEW_TAB_TARGET, NEW_TAB_WINDOW_FEATURES } from '../helpers/newTab';
 import { allowsHref, type LinkPolicy } from '../helpers/policy';
+import { COPY_FAILED, COPY_LINK_LABEL, LINK_COPIED, NEW_TAB_NOTE } from '../helpers/strings';
 import { type LinkValue } from '../helpers/value';
 import styles from '../link.module.scss';
 
@@ -18,14 +18,14 @@ const PANEL_CONTROLS = 'a[href], button:not([disabled])';
 
 type CopyState = 'idle' | 'copied' | 'failed';
 
-const describeCopy = (state: CopyState, labels: LinkLabels): string => {
+const describeCopy = (state: CopyState): string => {
     switch (state) {
         case 'idle':
             return '';
         case 'copied':
-            return labels.linkCopied;
+            return LINK_COPIED;
         case 'failed':
-            return labels.copyFailed;
+            return COPY_FAILED;
     }
 };
 
@@ -38,14 +38,13 @@ const OPEN_LINK_CLICK = 'Mod';
 
 type CopyLinkProps = {
     href: string;
-    labels: LinkLabels;
     writeText: (text: string) => Promise<void>;
 };
 
 /**
  * Copies the target and says whether it worked, in a live region that is always in the panel.
  */
-const CopyLink = ({ href, labels, writeText }: CopyLinkProps): ReactNode => {
+const CopyLink = ({ href, writeText }: CopyLinkProps): ReactNode => {
     const [copyState, setCopyState] = useState<CopyState>('idle');
     const copy = (): void => {
         // Reset first, so the same outcome twice is announced twice.
@@ -59,16 +58,15 @@ const CopyLink = ({ href, labels, writeText }: CopyLinkProps): ReactNode => {
     return (
         <>
             <Button size="small" emphasis="weak" onPress={copy}>
-                {labels.copyLink}
+                {COPY_LINK_LABEL}
             </Button>
-            <output className={styles.visuallyHidden}>{describeCopy(copyState, labels)}</output>
+            <output className={styles.visuallyHidden}>{describeCopy(copyState)}</output>
         </>
     );
 };
 
 type LinkEditorProps = EditProps<LinkValue> & {
     policy: LinkPolicy;
-    labels: LinkLabels;
     search?: LinkSearch;
 };
 
@@ -90,7 +88,6 @@ export const LinkEditor = ({
     remove,
     api,
     policy,
-    labels,
     search,
 }: LinkEditorProps): ReactNode => {
     // A flyout closed by hand stays closed until the caret leaves the link and returns.
@@ -212,7 +209,6 @@ export const LinkEditor = ({
                             initial={value}
                             kind="edit"
                             policy={policy}
-                            labels={labels}
                             search={search}
                             onSave={(next) => {
                                 // Close first: the link is rebuilt with its new value and would reopen.
@@ -239,11 +235,9 @@ export const LinkEditor = ({
                         >
                             <a href={href} target={NEW_TAB_TARGET} rel={NEW_TAB_REL} className={styles.target}>
                                 {value.href}
-                                <span className={styles.visuallyHidden}>{labels.newTabNote}</span>
+                                <span className={styles.visuallyHidden}>{NEW_TAB_NOTE}</span>
                             </a>
-                            {href === undefined ? null : (
-                                <CopyLink href={href} labels={labels} writeText={writeToClipboard} />
-                            )}
+                            {href === undefined ? null : <CopyLink href={href} writeText={writeToClipboard} />}
                             <Button size="small" emphasis="weak" onPress={() => setOpen(true)}>
                                 Edit
                             </Button>

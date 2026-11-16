@@ -151,30 +151,23 @@ export * as TOOLBAR_GROUPS from './plugins/shared/toolbarGroups';
 
 // --- Plugin options ---
 
-export { type AlignLabels, type AlignPluginOptions } from './plugins/Align';
-export { type BlurOnBreakLabels, type BlurOnBreakPluginOptions } from './plugins/BlurOnBreak';
+export { type BlurOnBreakPluginOptions } from './plugins/BlurOnBreak';
 export { type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './plugins/Emoji';
 export {
-    type LinkContentOptions,
     type LinkDestination,
-    type LinkLabels,
     type LinkPluginOptions,
     type LinkPolicy,
     type LinkScheme,
     type LinkSearch,
 } from './plugins/Link';
 export {
-    type MentionContentLabels,
     type MentionContentOptions,
     type MentionItem,
-    type MentionLabels,
-    type MentionPickerLabels,
     type MentionPluginOptions,
     type MentionResolution,
     type MentionValue,
 } from './plugins/Mention';
-export { type ResetFormattingLabels, type ResetFormattingPluginOptions } from './plugins/ResetFormatting';
 export { type TextStylePluginOptions } from './plugins/TextStyle';
 export { type TypographyGroup, type TypographyPluginOptions } from './plugins/Typography';
 

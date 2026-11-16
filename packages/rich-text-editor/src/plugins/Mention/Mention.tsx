@@ -4,9 +4,7 @@ import { defineContent, defineInline, definePlugin, type RtePlugin } from '#/cor
 
 import { MentionEditor } from './components/MentionEditor';
 import { BIDI_ISOLATE_TAG, MentionLink } from './components/MentionLink';
-import { DEFAULT_MENTION_PICKER_LABELS, type MentionLabels } from './components/pickerLabels';
 import { linkTarget, mentionAttributes, mentionDisplay, storedKind } from './helpers/display';
-import { DEFAULT_MENTION_CONTENT_LABELS, type MentionContentLabels } from './helpers/labels';
 import { mentionValueOf } from './helpers/mention';
 import styles from './mention.module.scss';
 import { type MentionHref, type MentionItem, type MentionItems, type MentionResolve, type MentionValue } from './types';
@@ -23,10 +21,6 @@ export type MentionContentOptions = {
      * mention is drawn, so a changed `resolve` applies once the editor remounts. A throw reaches the editor's `onError`.
      */
     resolve?: MentionResolve;
-    /**
-     * What a mention says in words of its own; any left out keep their English text.
-     */
-    labels?: Partial<MentionContentLabels>;
     /**
      * The single character that starts a mention
      * @default '@'
@@ -47,16 +41,15 @@ const assertMentionTrigger = (trigger: string, factory: string): void => {
 /**
  * A mention, shown as the username linked to the person or group, with the full name on hover
  */
-export const mentionContent = ({ href, resolve, labels, trigger = '@' }: MentionContentOptions = {}) => {
+export const mentionContent = ({ href, resolve, trigger = '@' }: MentionContentOptions = {}) => {
     assertMentionTrigger(trigger, 'mentionContent');
-    const shownLabels = { ...DEFAULT_MENTION_CONTENT_LABELS, ...labels };
     return defineContent({
         inlines: {
             mention: defineInline<MentionValue>({
                 // Portable markup for the clipboard: a plain link (or text, with
                 // nowhere to link to), no tooltip.
                 toHtml: (mention) => {
-                    const shown = mentionDisplay(mention, { resolve, href, trigger, labels: shownLabels });
+                    const shown = mentionDisplay(mention, { resolve, href, trigger });
                     const target = linkTarget(shown);
                     return {
                         tag: target === undefined ? 'span' : 'a',
@@ -96,7 +89,7 @@ export const mentionContent = ({ href, resolve, labels, trigger = '@' }: Mention
                     component: ({ value }) => (
                         <MentionLink
                             value={value}
-                            display={mentionDisplay(value, { resolve, href, trigger, labels: shownLabels })}
+                            display={mentionDisplay(value, { resolve, href, trigger })}
                             placesCaret={false}
                         />
                     ),
@@ -106,11 +99,7 @@ export const mentionContent = ({ href, resolve, labels, trigger = '@' }: Mention
     });
 };
 
-export type MentionPluginOptions = Omit<MentionContentOptions, 'labels'> & {
-    /**
-     * What the mention and its list of people say in words of their own; any left out keep their English text.
-     */
-    labels?: Partial<MentionLabels>;
+export type MentionPluginOptions = MentionContentOptions & {
     /**
      * Who can be mentioned. A list is searched by username and name, ignoring case.
      * A function receives the text typed after the trigger and returns the matches, or a promise of them.
@@ -135,11 +124,6 @@ export const searchIn =
  */
 export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
     const { href, resolve, trigger = '@' } = options;
-    const labels = {
-        ...DEFAULT_MENTION_CONTENT_LABELS,
-        ...DEFAULT_MENTION_PICKER_LABELS,
-        ...options.labels,
-    };
     assertMentionTrigger(trigger, 'mentionPlugin');
     let items: MentionItems;
     if (typeof options.items === 'function') {
@@ -149,17 +133,10 @@ export const mentionPlugin = (options: MentionPluginOptions): RtePlugin => {
     }
 
     return definePlugin({
-        content: mentionContent({ href, resolve, labels, trigger }),
+        content: mentionContent({ href, resolve, trigger }),
         edit: {
             mention: (props) => (
-                <MentionEditor
-                    {...props}
-                    items={items}
-                    trigger={trigger}
-                    href={href}
-                    resolve={resolve}
-                    labels={labels}
-                />
+                <MentionEditor {...props} items={items} trigger={trigger} href={href} resolve={resolve} />
             ),
         },
         hotkeys: {
