@@ -16,12 +16,19 @@ type FrameBlock = {
 
 const paragraph = (text: string): RteBlock => ({ type: 'paragraph', children: [{ text }] });
 
-/** A paragraph, a frame holding two paragraphs, and a paragraph. */
-export const FRAME_DOCUMENT: RteDocumentWith<{ block: FrameBlock }> = {
+/** A block of a tag the document names nowhere. */
+type SectionBlock = {
+    type: 'section';
+    children: [{ text: string }];
+};
+
+/** A paragraph, a frame holding two paragraphs, a section, and a paragraph. */
+export const FRAME_DOCUMENT: RteDocumentWith<{ block: FrameBlock | SectionBlock }> = {
     version: 1,
     blocks: [
         paragraph('Before'),
         { type: 'frame', children: [paragraph('First inside'), paragraph('Last inside')] },
+        { type: 'section', children: [{ text: 'Section' }] },
         paragraph('After'),
     ],
 };

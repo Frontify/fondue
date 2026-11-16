@@ -25,7 +25,7 @@ $default-fallbacks: (
     color: inherit,
 );
 
-// The margins are handed to the document, which alone writes them (see `renderer/document.module.scss`).
+// The margins are handed to the stack that holds the block, which alone writes them (see `stack`).
 $own-margin-variables: (
     margin-top: --rte-own-margin-top,
     margin-bottom: --rte-own-margin-bottom,

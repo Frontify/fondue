@@ -1,0 +1,19 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// Spaces a container's blocks the way a layout stack does, whatever their tags. Each block takes the margins its
+// look hands over (the own-margin variables, see `look`), else none above and `$gap` below; the last one keeps no
+// gap. `$blocks` selects the blocks inside the container. The class twice outranks a host's `.prose p { margin }`,
+// and two longhands mean an invalid value voids one side only.
+@mixin stack($gap, $blocks: '> *') {
+    &#{&} #{$blocks} {
+        // On each block rather than inherited, so a last block does not trim the blocks inside it.
+        --rte-block-gap: #{$gap};
+
+        margin-block-start: var(--rte-own-margin-top, 0);
+        margin-block-end: var(--rte-own-margin-bottom, var(--rte-block-gap));
+
+        &:last-child {
+            --rte-block-gap: 0;
+        }
+    }
+}

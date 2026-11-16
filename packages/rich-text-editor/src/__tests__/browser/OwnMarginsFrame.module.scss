@@ -1,0 +1,8 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../styles/stack.module.scss';
+
+// A block that holds blocks spaces them itself, as the document spaces its own.
+.frame {
+    @include stack.stack(var(--spacing-x-small));
+}

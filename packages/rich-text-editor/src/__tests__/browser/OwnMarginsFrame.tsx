@@ -5,6 +5,7 @@
 import { OWN_MARGIN_VARIABLES } from '../../core';
 import { defineBlock, defineContent, definePlugin, RichTextEditor, RichTextRenderer } from '../../index';
 
+import styles from './OwnMarginsFrame.module.scss';
 import { FRAME_DOCUMENT, FRAME_MARGIN } from './ownMarginsValues';
 
 /** A block that sets both own-margin variables on its outermost element, as a block's look does. */
@@ -17,6 +18,7 @@ const framePlugin = definePlugin({
                 toHtml: () => ({
                     tag: 'blockquote',
                     attrs: {
+                        class: styles.frame,
                         style: {
                             [OWN_MARGIN_VARIABLES.top]: FRAME_MARGIN,
                             [OWN_MARGIN_VARIABLES.bottom]: FRAME_MARGIN,
@@ -30,9 +32,23 @@ const framePlugin = definePlugin({
     }),
 });
 
-const PLUGINS = [framePlugin];
+/** A block of a tag the document names nowhere, with nothing of its own about margins. */
+const sectionPlugin = definePlugin({
+    id: 'section',
+    content: defineContent({
+        blocks: {
+            section: defineBlock({
+                content: 'text',
+                toHtml: () => ({ tag: 'section', children: true }),
+                parse: [],
+            }),
+        },
+    }),
+});
 
-/** The renderer and the editor side by side, drawing the same document with the frame plugin. */
+const PLUGINS = [framePlugin, sectionPlugin];
+
+/** The renderer and the editor side by side, drawing the same document with the frame and section plugins. */
 export const OwnMarginsFrame = () => (
     <>
         <div data-testid="renderer">
