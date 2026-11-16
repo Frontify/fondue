@@ -16,14 +16,12 @@ type FrameBlock = {
 
 const paragraph = (text: string): RteBlock => ({ type: 'paragraph', children: [{ text }] });
 
-/** A block of a tag the document names nowhere. */
-type SectionBlock = {
+type UnlistedTagBlock = {
     type: 'section';
     children: [{ text: string }];
 };
 
-/** A paragraph, a frame holding two paragraphs, a section, and a paragraph. */
-export const FRAME_DOCUMENT: RteDocumentWith<{ block: FrameBlock | SectionBlock }> = {
+export const FRAME_DOCUMENT: RteDocumentWith<{ block: FrameBlock | UnlistedTagBlock }> = {
     version: 1,
     blocks: [
         paragraph('Before'),

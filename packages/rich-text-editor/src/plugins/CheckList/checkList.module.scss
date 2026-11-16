@@ -45,8 +45,7 @@
 }
 
 .label {
-    // An item's blocks sit tight. The editor wraps them in elements of its own, so they are found by the tags an
-    // item holds (a paragraph and lists) rather than as the label's children.
+    // The editor wraps an item's blocks in elements of its own, so they are selected by tag.
     @include stack.stack(0, ':is(p, ul, ol)');
 
     flex: 1;

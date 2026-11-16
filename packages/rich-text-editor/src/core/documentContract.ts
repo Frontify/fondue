@@ -5,7 +5,7 @@
 
 /**
  * The custom properties through which the document hands out the space between blocks.
- * The stack holding a block (the document, or a block that holds blocks) sets them on it; its look reads them.
+ * The stack holding a block sets them on it, and the block's look reads them.
  * A plugin that wants a gap of its own names that variable itself.
  */
 export const DOCUMENT_GAP_VARIABLES = {
@@ -14,7 +14,7 @@ export const DOCUMENT_GAP_VARIABLES = {
 } as const;
 
 /**
- * The custom properties through which a block's look hands its margins to the stack holding it, which writes them.
+ * The custom properties through which a block's look hands its margins to the stack holding it.
  * They are registered as not inherited, so a block's value never reaches the blocks inside it.
  */
 export const OWN_MARGIN_VARIABLES = {

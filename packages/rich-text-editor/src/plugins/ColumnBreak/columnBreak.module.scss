@@ -12,7 +12,6 @@
 
 /** The break itself: a hairline the author can see, taking up no space. */
 .break {
-    // Handed to the document, which writes every block's margins.
     --rte-own-margin-top: var(--spacing-xx-small);
     --rte-own-margin-bottom: var(--spacing-xx-small);
 

@@ -32,8 +32,7 @@ const framePlugin = definePlugin({
     }),
 });
 
-/** A block of a tag the document names nowhere, with nothing of its own about margins. */
-const sectionPlugin = definePlugin({
+const unlistedTagPlugin = definePlugin({
     id: 'section',
     content: defineContent({
         blocks: {
@@ -46,9 +45,9 @@ const sectionPlugin = definePlugin({
     }),
 });
 
-const PLUGINS = [framePlugin, sectionPlugin];
+const PLUGINS = [framePlugin, unlistedTagPlugin];
 
-/** The renderer and the editor side by side, drawing the same document with the frame and section plugins. */
+/** The renderer and the editor side by side, drawing the same document. */
 export const OwnMarginsFrame = () => (
     <>
         <div data-testid="renderer">

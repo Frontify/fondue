@@ -43,8 +43,7 @@
     // flex parent that the document sits in.
     overflow-wrap: anywhere;
 
-    // The document owns the space between its blocks, whatever their tags: host stylesheets give `1em` margins in
-    // some hosts and none in others. A block that holds blocks spaces its own (see `stack`).
+    // Host stylesheets give blocks `1em` margins in some hosts and none in others.
     @include stack.stack(var(--spacing-x-small));
 
     // Raised and lowered text without growing the line it sits on. Browsers'
