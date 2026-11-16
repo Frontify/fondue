@@ -6,11 +6,10 @@ import { createPortal } from 'react-dom';
 
 import { isCompositionKey } from '../../shared/helpers/keys';
 import { isSafeImageSrc } from '../helpers/image';
+import { MENTION_STRINGS } from '../helpers/strings';
 import { type PeopleOutcome, usePeople } from '../hooks/usePeople';
 import styles from '../mention.module.scss';
 import { type MentionItem, type MentionItems } from '../types';
-
-import { type MentionPickerLabels } from './pickerLabels';
 
 /** Keeps a quick answer from flashing the Searching row. */
 const SEARCHING_DELAY_MS = 300;
@@ -116,17 +115,17 @@ const isOpen = (phase: PeoplePhase, query: string): boolean => {
 };
 
 /** Silent while waiting or searching, so a count or a failure is not interrupted on every key. */
-const statusOf = (phase: PeoplePhase, people: readonly MentionItem[], labels: MentionPickerLabels): string => {
+const statusOf = (phase: PeoplePhase, people: readonly MentionItem[]): string => {
     switch (phase) {
         case 'waiting':
         case 'searching':
             return '';
         case 'failed':
-            return labels.failed;
+            return MENTION_STRINGS.failed;
         case 'empty':
-            return labels.noMatches;
+            return MENTION_STRINGS.noMatches;
         case 'list':
-            return labels.peopleCount(people.length);
+            return MENTION_STRINGS.peopleCount(people.length);
         default:
             // Adding a phase fails to compile here until it is handled.
             throw new Error(`Unhandled people phase: ${JSON.stringify(phase satisfies never)}`);
@@ -182,7 +181,6 @@ type MentionPopupBodyProps = {
     phase: PeoplePhase;
     people: readonly MentionItem[];
     trigger: string;
-    labels: MentionPickerLabels;
     listId: string;
     retryId: string;
     activeIndex: number;
@@ -196,7 +194,6 @@ const MentionPopupBody = ({
     phase,
     people,
     trigger,
-    labels,
     listId,
     retryId,
     activeIndex,
@@ -209,12 +206,12 @@ const MentionPopupBody = ({
         case 'waiting':
             return null;
         case 'searching':
-            return <div className={styles.empty}>{labels.searching}</div>;
+            return <div className={styles.empty}>{MENTION_STRINGS.searching}</div>;
         case 'failed':
             return (
                 <>
-                    <div className={styles.empty}>{labels.failed}</div>
-                    <ul id={listId} role="listbox" aria-label={labels.list} className={styles.list}>
+                    <div className={styles.empty}>{MENTION_STRINGS.failed}</div>
+                    <ul id={listId} role="listbox" aria-label={MENTION_STRINGS.list} className={styles.list}>
                         {/* The keyboard runs it from the input as the active option; the mouse runs it here. */}
                         {/* oxlint-disable-next-line jsx-a11y/click-events-have-key-events */}
                         <li
@@ -226,16 +223,16 @@ const MentionPopupBody = ({
                             onClick={onRetry}
                             className={`${styles.option} ${styles.optionActive}`}
                         >
-                            {labels.retry}
+                            {MENTION_STRINGS.retry}
                         </li>
                     </ul>
                 </>
             );
         case 'empty':
-            return <div className={styles.empty}>{labels.noMatches}</div>;
+            return <div className={styles.empty}>{MENTION_STRINGS.noMatches}</div>;
         case 'list':
             return (
-                <ul id={listId} role="listbox" aria-label={labels.list} className={styles.list}>
+                <ul id={listId} role="listbox" aria-label={MENTION_STRINGS.list} className={styles.list}>
                     {people.map((person, index) => (
                         // The keyboard drives the list from the input; the mouse picks here.
                         // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
@@ -305,7 +302,6 @@ const useListPosition = (
 
 type MentionDraftProps = {
     trigger: string;
-    labels: MentionPickerLabels;
     items: MentionItems;
     /** The editor's selection is on this mention — the input takes the caret. */
     focused: boolean;
@@ -327,7 +323,6 @@ type MentionDraftProps = {
  */
 export const MentionDraft = ({
     trigger,
-    labels,
     items,
     focused,
     onChoose,
@@ -436,7 +431,7 @@ export const MentionDraft = ({
                 aria-controls={listboxShown ? listId : undefined}
                 aria-autocomplete="list"
                 aria-activedescendant={activeOptionId({ listboxShown, phase, active, activeIndex, retryId, optionId })}
-                aria-label={labels.input}
+                aria-label={MENTION_STRINGS.input}
                 value={query}
                 size={Math.max(query.length, 1)}
                 onChange={(event) => setQuery(event.target.value)}
@@ -445,7 +440,7 @@ export const MentionDraft = ({
                 className={styles.input}
             />
             <span role="status" className={styles.visuallyHidden}>
-                {statusOf(phase, people, labels)}
+                {statusOf(phase, people)}
             </span>
             {open && position !== null
                 ? createPortal(
@@ -454,7 +449,6 @@ export const MentionDraft = ({
                               phase={phase}
                               people={people}
                               trigger={trigger}
-                              labels={labels}
                               listId={listId}
                               retryId={retryId}
                               activeIndex={activeIndex}

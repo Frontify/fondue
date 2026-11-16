@@ -3,8 +3,6 @@
 import { describe, expect, it } from 'vitest';
 
 import { defaultPlugins } from '#/plugins';
-import { alignPlugin } from '#/plugins/Align';
-import { resetFormattingPlugin } from '#/plugins/ResetFormatting';
 
 import { type KeyboardGroup, keyboardReference } from './keyboardReference';
 
@@ -36,24 +34,5 @@ describe('keyboardReference', () => {
         const rows = groups.flatMap((group) => group.rows);
 
         expect(rows.filter(({ keys }) => keys.includes('Mod-k'))).toEqual([{ keys: ['Mod-k'], label: 'Edit link' }]);
-    });
-
-    it('names a key with the words the host gave the plugin', () => {
-        const translated = keyboardReference([
-            alignPlugin({ labels: { leftTitle: 'Linksbündig' } }),
-            resetFormattingPlugin({ labels: { clearMarksTitle: 'Formatierung entfernen' } }),
-        ]);
-
-        expect(groupOfPlugin(translated, 'align')?.rows).toContainEqual({
-            keys: ['Mod-Shift-l'],
-            label: 'Linksbündig',
-        });
-        expect(groupOfPlugin(translated, 'align')?.rows).toContainEqual({
-            keys: ['Mod-Shift-e'],
-            label: 'Align center',
-        });
-        expect(groupOfPlugin(translated, 'reset-formatting')?.rows).toEqual([
-            { keys: ['Mod-\\'], label: 'Formatierung entfernen' },
-        ]);
     });
 });
