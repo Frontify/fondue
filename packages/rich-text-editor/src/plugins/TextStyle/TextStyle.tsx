@@ -11,6 +11,7 @@ import {
     type RteContent,
     type RteIcon,
     type RtePlugin,
+    type RteToolbarEntry,
 } from '#/core';
 
 import { withoutBoldWeight } from '../shared/helpers/declaredStyle';
@@ -138,11 +139,17 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
         content = textStyleContentFor(options);
     }
 
+    // A paragraph alone is nothing to choose, so the picker needs at least one real style.
+    const toolbar: RteToolbarEntry[] = [];
+    if (offered.length > 0) {
+        toolbar.push({ label: 'Text style', render: (props) => <TextStyleSelect {...props} options={options} /> });
+    }
+
     return definePlugin({
         id: 'text-style',
         content,
         toolbarGroup: 'text',
-        toolbar: [{ label: 'Text style', render: (props) => <TextStyleSelect {...props} options={options} /> }],
+        toolbar,
         hotkeys,
         // `# ` through `#### `, for the headings this editor offers.
         inputRules: offered.flatMap(markdownRuleFor),
