@@ -609,9 +609,6 @@ export type RteBlockCommand = {
     run: (api: EditorControlApi) => void;
 };
 
-/**
- * A keybinding: what it does, and the handler that does it
- */
 export type RteHotkey = {
     /**
      * What the keyboard reference calls the binding: `Align left`
@@ -620,9 +617,7 @@ export type RteHotkey = {
     run: HotkeyHandler;
 };
 
-/**
- * A plugin's handler for one key. Return `false` to leave the key to the next handler, and in the end the editor and browser.
- */
+/** A plugin's handler for one key. Return `false` to leave the key to the next handler, and in the end the editor and browser. */
 export type HotkeyHandler = (api: EditorControlApi) => boolean | void;
 
 /**

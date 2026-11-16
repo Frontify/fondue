@@ -22,7 +22,6 @@
     margin-bottom: var(--spacing-x-small);
 }
 
-/** Read by assistive technology, never drawn: the plugins' descriptions and the live region. */
 .visuallyHidden {
     position: absolute;
     overflow: hidden;

@@ -48,7 +48,7 @@ const dividerPlugin: RtePlugin = definePlugin({
     }),
 });
 
-/** A mark of the spec's own that declares it survives a clear, as a reference does: the engine knows the declaration, not the name. */
+/** A mark of the spec's own that survives a clear: the engine reads the declaration, not the name. */
 const pinPlugin: RtePlugin = definePlugin({
     id: 'pin',
     content: defineContent({
@@ -60,7 +60,7 @@ const pinPlugin: RtePlugin = definePlugin({
 
 const plugins: RtePlugin[] = [...defaultPlugins, dividerPlugin, tagPlugin, tokenPlugin()];
 
-/** What this spec's newer tests run on: the engine's own fixtures, never a shipped plugin. */
+/** The engine's own fixtures, never a shipped plugin. */
 const fixtures: RtePlugin[] = [...fixturePlugins, dividerPlugin, tagPlugin, pinPlugin];
 
 const LINK = { href: 'https://example.com' };
@@ -1176,8 +1176,7 @@ describe('group', () => {
         editor.api.marks.toggle('underline');
     };
 
-    /** How many undos it takes to get back to the start. */
-    const undoAll = (editor: ReturnType<typeof editorWith>): number => {
+    const countUndos = (editor: ReturnType<typeof editorWith>): number => {
         let steps = 0;
         while (undo(editor.view.state, editor.view.dispatch)) {
             steps++;
@@ -1191,7 +1190,7 @@ describe('group', () => {
         editor.api.group(() => formatEach(editor));
 
         expect(editor.stored()).not.toEqual(original);
-        expect(undoAll(editor)).toBe(1);
+        expect(countUndos(editor)).toBe(1);
         expect(editor.stored()).toEqual(original);
     });
 
@@ -1200,7 +1199,7 @@ describe('group', () => {
 
         formatEach(editor);
 
-        expect(undoAll(editor)).toBe(3);
+        expect(countUndos(editor)).toBe(3);
     });
 
     it('lets a group inside a group join the outer step', () => {
@@ -1217,7 +1216,7 @@ describe('group', () => {
             editor.api.marks.toggle('underline');
         });
 
-        expect(undoAll(editor)).toBe(1);
+        expect(countUndos(editor)).toBe(1);
         expect(editor.stored()).toEqual(original);
     });
 
@@ -1235,7 +1234,7 @@ describe('group', () => {
         editor.select('one');
         editor.api.marks.toggle('code');
 
-        expect(undoAll(editor)).toBe(3);
+        expect(countUndos(editor)).toBe(3);
     });
 
     describe('around typing', () => {
@@ -1288,7 +1287,7 @@ describe('group', () => {
         ).toThrow('boom');
         formatEach(editor);
 
-        expect(undoAll(editor)).toBe(3);
+        expect(countUndos(editor)).toBe(3);
     });
 });
 
