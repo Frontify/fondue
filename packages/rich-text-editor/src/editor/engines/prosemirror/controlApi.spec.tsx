@@ -47,7 +47,6 @@ const dividerPlugin: RtePlugin = definePlugin({
     }),
 });
 
-/** A plain mark of the spec's own, so a spec about marks does not depend on a shipped one. */
 const emphasisPlugin: RtePlugin = definePlugin({
     id: 'emphasis',
     content: defineContent({

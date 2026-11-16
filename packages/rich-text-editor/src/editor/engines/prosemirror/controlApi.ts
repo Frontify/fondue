@@ -40,10 +40,9 @@ import { warnUnknownType } from './warnings';
 
 // --- Selection snapshot: what all feature UI renders from ---
 
-/** A piece of text inside a range, cut to the range's ends. */
 type TextRun = { from: number; to: number; marks: readonly PmMark[] };
 
-/** The text a range covers, piece by piece: marks live on text only, never on inline elements. */
+/** Marks live on text only, so inline elements are skipped. */
 const textRunsBetween = (doc: PmNode, from: number, to: number): TextRun[] => {
     const runs: TextRun[] = [];
     doc.nodesBetween(from, to, (node, position) => {
@@ -79,7 +78,7 @@ const marksAt = (state: EditorState): RteSelectionSnapshot['marks'] => {
     }
 
     const textRuns = textRunsBetween(state.doc, from, to);
-    // Whitespace-only runs do not decide a mark; an all-blank range keeps them.
+    // Whitespace does not decide a mark, unless the whole range is whitespace.
     let counted = textRuns.filter((run) => !BLANK_TEXT.test(state.doc.textBetween(run.from, run.to)));
     if (counted.length === 0) {
         counted = textRuns;
@@ -208,12 +207,10 @@ const findMarkRange = (state: EditorState, markType: PmMarkType): { from: number
     return range;
 };
 
-/** What toggling a mark does: at a caret it changes the stored marks, over a range the text. */
 type MarkToggle = 'caretOff' | 'caretOn' | 'rangeOff' | 'rangeOn';
 
-/** Off exactly when the snapshot reports the mark on, so the toolbar and the toggle agree. */
 const markToggleFor = (state: EditorState, type: string): MarkToggle => {
-    // A mark only part of the selection carries is off: toggling puts it on all of it.
+    // Same rule as the toolbar: a mark on only part of the selection counts as off.
     const isOn = marksAt(state)[type]?.coverage === 'all';
     if (state.selection.empty) {
         if (isOn) {
@@ -227,14 +224,12 @@ const markToggleFor = (state: EditorState, type: string): MarkToggle => {
     return 'rangeOn';
 };
 
-/** Builds the transaction that toggles a mark on the current selection. */
 const markToggleTransaction = (
     state: EditorState,
     markType: PmMarkType,
     value: Record<string, unknown> | undefined,
 ): Transaction => {
     const { selection, tr } = state;
-    // Every case returns, so the compiler rejects one left unhandled.
     switch (markToggleFor(state, markType.name)) {
         case 'caretOff': {
             return tr.removeStoredMark(markType);
