@@ -17,7 +17,6 @@ import {
 } from '../core';
 import {
     alignPlugin,
-    type AlignPluginOptions,
     blurOnBreakPlugin,
     type BlurOnBreakPluginOptions,
     bulletListPlugin,
@@ -27,7 +26,6 @@ import {
     type MentionPluginOptions,
     numberedListPlugin,
     resetFormattingPlugin,
-    type ResetFormattingPluginOptions,
     RichTextRenderer,
     serializeToHtml,
     textStylePlugin,
@@ -315,15 +313,12 @@ describe('blurOnBreakPlugin', () => {
         expect(calls).toEqual(['split', 'onBreak', 'blur']);
     });
 
-    it("refuses an empty editor when required, with default words or the host's own", () => {
-        const first = recordingApi({ empty: true });
-        const second = recordingApi({ empty: true });
+    it('refuses an empty editor when required, and says why', () => {
+        const { api, calls } = recordingApi({ empty: true });
 
-        enterOf({ required: true, onBreak: () => first.calls.push('onBreak') })?.(first.api);
-        enterOf({ required: true, labels: { required: 'Write first.' } })?.(second.api);
+        enterOf({ required: true, onBreak: () => calls.push('onBreak') })?.(api);
 
-        expect(first.calls).toEqual(['split', 'announce Type something before submitting.']);
-        expect(second.calls).toEqual(['split', 'announce Write first.']);
+        expect(calls).toEqual(['split', 'announce Type something before submitting.']);
     });
 
     it('commits a required editor that has something in it', () => {
@@ -338,26 +333,10 @@ describe('blurOnBreakPlugin', () => {
         expect(blurOnBreakPlugin({ onBreak: () => {} }).description).toBe('Press Enter to submit.');
     });
 
-    it("adds what is required to the description, in default words or the host's own", () => {
+    it('adds what is required to the description', () => {
         expect(blurOnBreakPlugin({ onBreak: () => {}, required: true }).description).toBe(
             'Press Enter to submit. Type something before submitting.',
         );
-        expect(
-            blurOnBreakPlugin({ onBreak: () => {}, required: true, labels: { required: 'Write first.' } }).description,
-        ).toBe('Press Enter to submit. Write first.');
-    });
-
-    it("says the host's own description in place of the English one, with what is required after it", () => {
-        expect(blurOnBreakPlugin({ onBreak: () => {}, labels: { description: 'Enter sends it.' } }).description).toBe(
-            'Enter sends it.',
-        );
-        expect(
-            blurOnBreakPlugin({
-                onBreak: () => {},
-                required: true,
-                labels: { description: 'Enter sends it.', required: 'Write first.' },
-            }).description,
-        ).toBe('Enter sends it. Write first.');
     });
 
     it('adds nothing to the description when required is false', () => {
@@ -378,7 +357,7 @@ describe('blurOnBreakPlugin', () => {
 });
 
 describe('alignPlugin', () => {
-    const keyOf = (shortcut: string, options?: AlignPluginOptions) => alignPlugin(options).hotkeys?.[shortcut];
+    const keyOf = (shortcut: string) => alignPlugin.hotkeys?.[shortcut];
 
     it.each([
         ['Mod-Shift-l', 'left', 'Aligned left'],
@@ -417,25 +396,10 @@ describe('alignPlugin', () => {
         expect(calls).toEqual(['blocks.updateAttributes {"align":"center"}']);
     });
 
-    it("says the host's own words, leaving the others in English", () => {
-        const options = { labels: { center: 'Zentriert', cleared: 'Ausrichtung entfernt' } };
-        const centered = recordingApi();
-        const cleared = recordingApi({ align: 'center' });
-        const right = recordingApi();
-
-        keyOf('Mod-Shift-e', options)?.(centered.api);
-        keyOf('Mod-Shift-e', options)?.(cleared.api);
-        keyOf('Mod-Shift-r', options)?.(right.api);
-
-        expect(centered.calls).toContain('announce Zentriert');
-        expect(cleared.calls).toContain('announce Ausrichtung entfernt');
-        expect(right.calls).toContain('announce Aligned right');
-    });
-
     it('does with a toolbar button what its key does', () => {
         const pressed = recordingApi();
         const cleared = recordingApi({ align: 'center' });
-        const plugin = alignPlugin();
+        const plugin = alignPlugin;
 
         clickToolbarButton({ plugin, api: pressed.api, name: 'Align center' });
         clickToolbarButton({ plugin, api: cleared.api, name: 'Align center' });
@@ -446,7 +410,7 @@ describe('alignPlugin', () => {
 });
 
 describe('resetFormattingPlugin', () => {
-    const clearKey = (options?: ResetFormattingPluginOptions) => resetFormattingPlugin(options).hotkeys?.['Mod-\\'];
+    const clearKey = () => resetFormattingPlugin.hotkeys?.['Mod-\\'];
 
     it('clears the marks of the block with Mod-\\, those that survive a clear excepted, and says so', () => {
         const { api, calls } = recordingApi();
@@ -470,7 +434,7 @@ describe('resetFormattingPlugin', () => {
     it('resets the marks, the block type and the attributes with its button, as one group, and says so', () => {
         const { api, calls } = recordingApi();
 
-        clickToolbarButton({ plugin: resetFormattingPlugin(), api, name: 'Reset formatting' });
+        clickToolbarButton({ plugin: resetFormattingPlugin, api, name: 'Reset formatting' });
 
         expect(calls).toEqual([
             'group',
@@ -479,18 +443,6 @@ describe('resetFormattingPlugin', () => {
             'blocks.resetAttributes',
             'announce Formatting reset',
         ]);
-    });
-
-    it("says the host's own words for the key and the button", () => {
-        const options = { labels: { cleared: 'Gelöscht', reset: 'Zurückgesetzt' } };
-        const cleared = recordingApi();
-        const reset = recordingApi();
-
-        clearKey(options)?.(cleared.api);
-        clickToolbarButton({ plugin: resetFormattingPlugin(options), api: reset.api, name: 'Reset formatting' });
-
-        expect(cleared.calls).toContain('announce Gelöscht');
-        expect(reset.calls).toContain('announce Zurückgesetzt');
     });
 });
 

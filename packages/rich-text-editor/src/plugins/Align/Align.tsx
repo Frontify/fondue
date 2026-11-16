@@ -74,56 +74,14 @@ const ALIGNMENTS: readonly Alignment[] = [
     { value: 'justify', icon: IconTextAlignmentJustify, title: 'Justify', shortcut: 'Mod-Shift-j' },
 ];
 
-/**
- * The words the alignment buttons and keys say to screen readers
- */
-export type AlignLabels = {
-    /**
-     * Said after the left alignment is chosen.
-     *
-     * @default 'Aligned left'
-     */
-    left: string;
-    /**
-     * Said after the center alignment is chosen.
-     *
-     * @default 'Centered'
-     */
-    center: string;
-    /**
-     * Said after the right alignment is chosen.
-     *
-     * @default 'Aligned right'
-     */
-    right: string;
-    /**
-     * Said after the justified alignment is chosen.
-     *
-     * @default 'Justified'
-     */
-    justify: string;
-    /**
-     * Said after the alignment the block already had is chosen again, which removes it.
-     *
-     * @default 'Alignment cleared'
-     */
-    cleared: string;
-};
-
-const DEFAULT_ALIGN_LABELS: AlignLabels = {
+/** What the alignment buttons and keys say to screen readers: the alignment chosen, or that it was removed. */
+const ALIGN_STRINGS = Object.freeze({
     left: 'Aligned left',
     center: 'Centered',
     right: 'Aligned right',
     justify: 'Justified',
     cleared: 'Alignment cleared',
-};
-
-export type AlignPluginOptions = {
-    /**
-     * The words the plugin says. Each one left out stays English.
-     */
-    labels?: Partial<AlignLabels>;
-};
+});
 
 const alignOf = ({ block }: RteSelectionSnapshot): AlignAttribute['align'] =>
     // The block carries the attribute this plugin added, which the structural node type does not know about.
@@ -132,17 +90,16 @@ const alignOf = ({ block }: RteSelectionSnapshot): AlignAttribute['align'] =>
 type ChooseAlignmentParams = {
     api: EditorControlApi;
     value: AlignValue;
-    labels: AlignLabels;
 };
 
 /** What the toolbar button and its key share. */
-const chooseAlignment = ({ api, value, labels }: ChooseAlignmentParams): void => {
+const chooseAlignment = ({ api, value }: ChooseAlignmentParams): void => {
     let next: AlignValue | null = value;
-    let announcement = labels[value];
+    let announcement: string = ALIGN_STRINGS[value];
     // Choosing the alignment already set clears it, so the block inherits the editor's direction again.
     if (alignOf(api.selection.get()) === value) {
         next = null;
-        announcement = labels.cleared;
+        announcement = ALIGN_STRINGS.cleared;
     }
     // Nothing to say when no selected block can be aligned: a screen reader user would hear a change that did not happen.
     if (api.blocks.updateAttributes({ align: next })) {
@@ -150,9 +107,7 @@ const chooseAlignment = ({ api, value, labels }: ChooseAlignmentParams): void =>
     }
 };
 
-type AlignToolbarProps = ToolbarItemProps & { labels: AlignLabels };
-
-const AlignToolbar = ({ api, selection, label, labels }: AlignToolbarProps) => {
+const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
     // A block without one reads left to right, so left is what it shows.
     const current = alignOf(selection) ?? 'left';
     return (
@@ -169,7 +124,7 @@ const AlignToolbar = ({ api, selection, label, labels }: AlignToolbarProps) => {
                     title={title}
                     shortcut={shortcut}
                     onClick={() => {
-                        chooseAlignment({ api, value, labels });
+                        chooseAlignment({ api, value });
                     }}
                 >
                     <Icon size={TOOLBAR_ICON_SIZE} />
@@ -179,35 +134,28 @@ const AlignToolbar = ({ api, selection, label, labels }: AlignToolbarProps) => {
     );
 };
 
+const hotkeys = {
+    'Mod-Shift-l': (api) => {
+        chooseAlignment({ api, value: 'left' });
+    },
+    'Mod-Shift-e': (api) => {
+        chooseAlignment({ api, value: 'center' });
+    },
+    'Mod-Shift-r': (api) => {
+        chooseAlignment({ api, value: 'right' });
+    },
+    'Mod-Shift-j': (api) => {
+        chooseAlignment({ api, value: 'justify' });
+    },
+} satisfies Record<AlignShortcut, HotkeyHandler>;
+
 /**
  * Text alignment, with a four-way radio group in the toolbar and a key for each alignment
  */
-export const alignPlugin = (options: AlignPluginOptions = {}) => {
-    const labels: AlignLabels = { ...DEFAULT_ALIGN_LABELS, ...options.labels };
-    return definePlugin({
-        id: 'align',
-        content: alignContent,
-        toolbarGroup: 'align',
-        toolbar: [
-            {
-                label: 'Alignment',
-                render: (props) => <AlignToolbar {...props} labels={labels} />,
-                floating: 'inline',
-            },
-        ],
-        hotkeys: {
-            'Mod-Shift-l': (api) => {
-                chooseAlignment({ api, value: 'left', labels });
-            },
-            'Mod-Shift-e': (api) => {
-                chooseAlignment({ api, value: 'center', labels });
-            },
-            'Mod-Shift-r': (api) => {
-                chooseAlignment({ api, value: 'right', labels });
-            },
-            'Mod-Shift-j': (api) => {
-                chooseAlignment({ api, value: 'justify', labels });
-            },
-        } satisfies Record<AlignShortcut, HotkeyHandler>,
-    });
-};
+export const alignPlugin = /* @__PURE__ */ definePlugin({
+    id: 'align',
+    content: alignContent,
+    toolbarGroup: 'align',
+    toolbar: [{ label: 'Alignment', render: AlignToolbar, floating: 'inline' }],
+    hotkeys,
+});
