@@ -6,9 +6,7 @@ const TABLE_TAG = 'table';
 const PREFORMATTED_TAG = 'pre';
 /** The block each line becomes; no plugin claims it, so the parse reads it as a paragraph. */
 const LINE_TAG = 'div';
-/** Ends a line in a `<pre>`. */
 const LINE_END = /\r?\n/;
-/** Joins the cells of a row on its line. */
 const CELL_SEPARATOR = ' ';
 
 const lineBlock = (document: Document, text: string): HTMLElement => {
@@ -18,9 +16,7 @@ const lineBlock = (document: Document, text: string): HTMLElement => {
 };
 
 const flattenTables = (dom: HTMLElement, { isClaimed }: PasteTransformContext): void => {
-    // Innermost first (document order puts a nested table after its outer
-    // one), so an outer cell reads a nested table as the lines it became; and
-    // `rows` and `cells` are the table's own, so no cell is read twice.
+    // Innermost first, so an outer cell reads a nested table as the lines it became.
     for (const table of [...dom.querySelectorAll(TABLE_TAG)].reverse()) {
         if (isClaimed(table)) {
             continue;
@@ -47,14 +43,7 @@ const flattenPreformatted = (dom: HTMLElement, { isClaimed }: PasteTransformCont
     }
 };
 
-/**
- * Keeps pasted text from running together in structure no plugin reads. Table
- * cells are not blocks to the editor (`<td>a</td><td>b</td>` would paste as
- * `ab`), so each row becomes a line with its cells joined by a space. The join loses the columns, on purpose: a
- * table no plugin reads has no structure to keep. A
- * `<pre>`'s newlines collapse as whitespace, so each of its lines becomes a
- * line. A table or `<pre>` a mounted plugin reads keeps its markup.
- */
+/** Rows and `<pre>` lines would run together, so each becomes a block; joining cells drops the columns on purpose. */
 const PASTE_LINES: PasteTransform = {
     id: 'paste-lines',
     run: (dom, context) => {
@@ -63,9 +52,6 @@ const PASTE_LINES: PasteTransform = {
     },
 };
 
-/**
- * Pastes each table row and each line of preformatted text as a line of its own. In `defaultPlugins`; a host with
- * its own plugin list adds it to keep table cells and preformatted lines apart.
- */
+/** Pastes each table row and `<pre>` line as a block; in `defaultPlugins`, a host with its own list adds it. */
 export const pasteLinesPlugin = () =>
     /* @__PURE__ */ definePlugin({ id: 'paste-lines', pasteTransforms: [PASTE_LINES] });

@@ -100,17 +100,12 @@ export const clipboardSerializer = (schema: Schema): DOMSerializer => {
 // The HTML pass that keeps Word's list styles alive for `tidyOffice` after the engine reads the paste.
 export { keepOfficeListStyles } from './pasteOffice';
 
-/** What the paste parser needs besides the schema: the plugins' paste transforms and what they ask of the content. */
 export type ClipboardParserOptions = {
     schema: Schema;
     transforms: readonly PasteTransform[];
     isClaimed: PasteTransformContext['isClaimed'];
 };
 
-/**
- * Cleans what Word, Outlook and Google Docs write besides content, then runs
- * the plugins' paste transforms, before the parse rules read the paste.
- */
 class PasteParser extends PmDOMParser {
     private readonly transforms: readonly PasteTransform[];
     private readonly context: PasteTransformContext;

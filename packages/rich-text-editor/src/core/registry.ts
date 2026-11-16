@@ -545,10 +545,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
     };
 };
 
-/**
- * Whether `rule` reads `element`: a tag rule whose selector matches it, and that skips it or finds a value on it.
- * Style and clear rules read no element of their own.
- */
+/** Style and clear rules have no tag, so they read no element of their own. */
 const readsElement = (rule: MarkParseRule<unknown>, element: HTMLElement): boolean => {
     if (rule.tag === undefined || !element.matches(rule.tag)) {
         return false;
@@ -556,10 +553,6 @@ const readsElement = (rule: MarkParseRule<unknown>, element: HTMLElement): boole
     return readTagRule(rule, element).kind !== 'unread';
 };
 
-/**
- * The `isClaimed` a paste transform is handed: whether a mounted block, inline or mark reads an element by one of
- * its tag rules.
- */
 export const isClaimedBy = (registry: ContentRegistry): PasteTransformContext['isClaimed'] => {
     const rules: MarkParseRule<unknown>[] = [];
     for (const node of [...registry.blocks.values(), ...registry.inlines.values(), ...registry.marks.values()]) {

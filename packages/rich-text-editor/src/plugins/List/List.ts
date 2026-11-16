@@ -13,7 +13,7 @@ import {
     type StyleMap,
 } from '#/core';
 
-import { BULLET_LIST_TAG, LIST_ITEM_TAG, NUMBERED_LIST_TAG, START_ATTRIBUTE } from './helpers/listMarkup';
+import { BULLET_LIST_TAG, LIST_ITEM_TAG, NUMBERED_LIST_TAG, NUMBERED_LIST_START_ATTRIBUTE } from './helpers/listMarkup';
 import styles from './list.module.scss';
 import { PASTED_LISTS } from './pastedLists';
 
@@ -113,7 +113,7 @@ const numberedList = defineBlock<NumberedListValue>({
         }
         return {
             tag: NUMBERED_LIST_TAG,
-            attrs: { class: styles.numberedList, [START_ATTRIBUTE]: first, style },
+            attrs: { class: styles.numberedList, [NUMBERED_LIST_START_ATTRIBUTE]: first, style },
             children: true,
         };
     },
@@ -121,7 +121,9 @@ const numberedList = defineBlock<NumberedListValue>({
         {
             tag: NUMBERED_LIST_TAG,
             value: (element) => {
-                const start = storedStart(Number.parseInt(element.getAttribute(START_ATTRIBUTE) ?? '', 10));
+                const start = storedStart(
+                    Number.parseInt(element.getAttribute(NUMBERED_LIST_START_ATTRIBUTE) ?? '', 10),
+                );
                 if (start === null) {
                     return {};
                 }

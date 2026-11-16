@@ -124,10 +124,7 @@ export type RtePlugin = {
     inputRules?: readonly (RteInputRule | RteDelimiterRule)[];
     /** Runs before the editor's own paste, in plugin order. */
     onPaste?: PasteHandler;
-    /**
-     * Rewrites pasted HTML before the parse rules read it, in plugin order. Runs only on a paste or drop into the editor,
-     * never on `parseHtml`. Plugins that share a transform declare the same object, and it runs once.
-     */
+    /** Rewrites pasted HTML before the parse rules read it, in plugin order. */
     pasteTransforms?: readonly PasteTransform[];
 };
 
@@ -650,13 +647,9 @@ export type PasteHandler = (paste: Paste, api: EditorControlApi) => boolean;
 export type PasteTransform = {
     /** Unique across plugins; plugins that share a transform declare the same object, and it runs once. */
     id: string;
-    /** Changes `dom`, the pasted HTML, in place. */
     run: (dom: HTMLElement, context: PasteTransformContext) => void;
 };
 
-/**
- * What the editor tells a paste transform about the mounted content.
- */
 export type PasteTransformContext = {
     /** Whether a mounted block, inline or mark reads this element by one of its tag rules. */
     isClaimed: (element: HTMLElement) => boolean;
