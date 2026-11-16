@@ -48,7 +48,6 @@ const listsPlugin: RtePlugin = definePlugin({
     }),
 });
 
-/** A list of the generic `listsPlugin`, one `row` per text; the list carries no attributes of its own. */
 const rows = (type: string, ...texts: string[]) => ({
     type,
     children: texts.map((value) => ({ type: 'row', children: [paragraph(text(value))] })),

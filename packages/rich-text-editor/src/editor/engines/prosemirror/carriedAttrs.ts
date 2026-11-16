@@ -6,11 +6,7 @@ import { type PluginRegistry } from '#/core';
 
 import { EXTRA_ATTR } from './documentConversion';
 
-/**
- * Attributes for a block turned into another type: the ones every text block
- * carries (alignment) stay as they were, under the new type's own. Per block,
- * as the engine's `setBlockType` takes them, since blocks differ.
- */
+/** Attributes for a block turned into `nodeType`: its carried ones (alignment) under `attributes`. */
 export const keepCarriedAttrs =
     (
         { blockAttributes }: PluginRegistry,
@@ -27,10 +23,7 @@ export const keepCarriedAttrs =
         ...attributes,
     });
 
-/**
- * A text block's attributes with the ones every text block carries taken from
- * `source`, or null when the block has them already.
- */
+/** `block`'s attributes with the carried ones taken from `source`, or null when it has them already. */
 export const withCarriedAttrs = (registry: PluginRegistry, block: PmNode, source: PmNode): Attrs | null => {
     const attrs = { ...block.attrs, ...keepCarriedAttrs(registry, block.type, undefined)(source) };
     if (block.hasMarkup(block.type, attrs, block.marks)) {

@@ -26,7 +26,6 @@ import { warnUnknownType } from './warnings';
 
 // Where the caret is
 
-/** A node and the position it sits at. */
 type NodeAt = { node: PmNode; pos: number };
 
 /** The innermost ancestor that is a list of items, with the position it sits at. */
@@ -52,7 +51,6 @@ const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, s
 
 type MarkupChange = { pos: number; attrs: Attrs };
 
-/** The innermost ancestor of a position that is an item of `itemType`, with the position it sits at. */
 const findItem = ($pos: ResolvedPos, itemType: PmNodeType): NodeAt | null => {
     for (let depth = $pos.depth; depth > 0; depth--) {
         const node = $pos.node(depth);
@@ -63,18 +61,16 @@ const findItem = ($pos: ResolvedPos, itemType: PmNodeType): NodeAt | null => {
     return null;
 };
 
-/** Where the item a split made sits: above the caret's item after a split at its very start, else the caret's item. */
+/** After a split at the item's very start the new empty item is the one above; otherwise it is the caret's item. */
 const newItemPos = (doc: PmNode, item: NodeAt, splitAtItemStart: boolean): number => {
     const block = item.node.firstChild;
     const previous = doc.resolve(item.pos).nodeBefore;
-    // Split at the very start, the text stays in the caret's item and the empty one above is new.
     if (splitAtItemStart && block !== null && block.content.size > 0 && previous !== null) {
         return item.pos - previous.nodeSize;
     }
     return item.pos;
 };
 
-/** The item at `pos` back to its type's default attributes, or null when it has them already. */
 const resetToDefaults = (doc: PmNode, pos: number): MarkupChange | null => {
     const item = doc.nodeAt(pos);
     if (!item) {
@@ -87,7 +83,6 @@ const resetToDefaults = (doc: PmNode, pos: number): MarkupChange | null => {
     return { pos, attrs: defaults };
 };
 
-/** The item's first text block with the attributes every text block carries, or null when it has them already. */
 const carryIntoFirstBlock = (registry: PluginRegistry, item: NodeAt, source: PmNode): MarkupChange | null => {
     const block = item.node.firstChild;
     if (!block?.isTextblock) {
@@ -100,11 +95,7 @@ const carryIntoFirstBlock = (registry: PluginRegistry, item: NodeAt, source: PmN
     return { pos: item.pos + 1, attrs };
 };
 
-/**
- * `splitListItem`, except the new item starts from its type's default
- * attributes (an unchecked to-do, not a copy of the checked one) and its first
- * text block keeps the attributes every text block carries (alignment).
- */
+/** Like `splitListItem`, but the new item gets default attributes (an unchecked to-do) and its first block keeps alignment. */
 const splitListItem =
     (registry: PluginRegistry, itemType: PmNodeType): Command =>
     (state, dispatch) => {
@@ -134,7 +125,7 @@ const splitListItem =
         });
     };
 
-/** Same-type lists left side by side join, so numbering carries on; a join keeps only the first list's attributes. */
+/** Joins only same-markup lists, because a join keeps just the first list's attributes. */
 const joiningLists = (command: Command, itemTypeByList: Map<string, string>): Command =>
     autoJoin(command, (before, after) => itemTypeByList.has(before.type.name) && before.sameMarkup(after));
 
@@ -188,7 +179,7 @@ export const createListApi = (
                         current.pos + current.node.nodeSize,
                         converted,
                     );
-                    // Same structure and size, so the selection's positions still hold; mapped, it would leave the replaced list.
+                    // Mapping would move the selection out of the replaced list, and positions are unchanged.
                     transaction.setSelection(Selection.fromJSON(transaction.doc, state.selection.toJSON()));
                     dispatch?.(transaction);
                     return true;
@@ -288,13 +279,12 @@ const inEmptyBlock = (state: EditorState): boolean => {
     return empty && $from.parent.isTextblock && $from.parent.content.size === 0;
 };
 
-/** The depth of the outermost list whose content the caret ends, or null when it ends none. */
 const outermostListEndedByCaret = (state: EditorState, itemTypeByList: Map<string, string>): number | null => {
     const { $from } = state.selection;
     let found: number | null = null;
     for (let depth = $from.depth - 1; depth >= 0; depth--) {
-        // Each level between the list and the caret must close right where the caret's block closes.
-        if ($from.after(depth + 1) !== $from.end(depth)) {
+        const closesWithCaretBlock = $from.after(depth + 1) === $from.end(depth);
+        if (!closesWithCaretBlock) {
             break;
         }
         if (itemTypeByList.has($from.node(depth).type.name)) {
@@ -304,20 +294,16 @@ const outermostListEndedByCaret = (state: EditorState, itemTypeByList: Map<strin
     return found;
 };
 
-/**
- * Backspace on an empty line right after a list, or Delete at the end of a list
- * right before an empty line, removes that line. ProseMirror's own join would
- * first wrap the line into the list as an empty item. Lists left side by side
- * join as `joiningLists` says, in the same undo step.
- * @param dir - `-1` for Backspace, `1` for Delete
- */
-export const deleteEmptyBlockBesideList = (itemTypeByList: Map<string, string>, dir: -1 | 1): Command =>
+type DeleteDirection = 'backward' | 'forward';
+
+/** Removes the empty line beside a list, which ProseMirror's own join would first wrap into the list as an empty item. */
+export const deleteEmptyBlockBesideList = (itemTypeByList: Map<string, string>, direction: DeleteDirection): Command =>
     joiningLists((state, dispatch) => {
         const { $from, empty } = state.selection;
         if (!empty) {
             return false;
         }
-        if (dir === -1) {
+        if (direction === 'backward') {
             const before = state.doc.resolve($from.before()).nodeBefore;
             if (!$from.parent.isTextblock || $from.parent.content.size > 0 || !before) {
                 return false;
@@ -327,9 +313,11 @@ export const deleteEmptyBlockBesideList = (itemTypeByList: Map<string, string>, 
             }
             if (dispatch) {
                 const transaction = state.tr.delete($from.before(), $from.after());
-                // The caret goes to the end of the text before the removed line.
-                const caret = Selection.near(transaction.doc.resolve(transaction.mapping.map($from.before())), -1);
-                dispatch(transaction.setSelection(caret).scrollIntoView());
+                const endOfPreviousBlock = Selection.near(
+                    transaction.doc.resolve(transaction.mapping.map($from.before())),
+                    -1,
+                );
+                dispatch(transaction.setSelection(endOfPreviousBlock).scrollIntoView());
             }
             return true;
         }

@@ -88,8 +88,11 @@ export const keystrokePipeline = (registry: PluginRegistry, schema: Schema, api:
         ...typingRewrites(registry, schema),
         // 6
         keymap({
-            Backspace: chainCommands(resetEmptyFirstBlock, deleteEmptyBlockBesideList(registry.itemTypeByList, -1)),
-            Delete: deleteEmptyBlockBesideList(registry.itemTypeByList, 1),
+            Backspace: chainCommands(
+                resetEmptyFirstBlock,
+                deleteEmptyBlockBesideList(registry.itemTypeByList, 'backward'),
+            ),
+            Delete: deleteEmptyBlockBesideList(registry.itemTypeByList, 'forward'),
             Enter: splitKeepingCarriedAttrs(registry),
         }),
         keymap(baseKeymap),
@@ -499,12 +502,7 @@ const runEndTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRu
 
 // Baseline
 
-/**
- * The baseline keymap's Enter, except both blocks a split leaves carry the
- * attributes every text block carries (alignment). The engine's own split drops
- * them on the paragraph it makes after a block's end, and on the empty block it
- * leaves above a heading's start.
- */
+/** The engine's split drops alignment on the paragraph after a block's end and on the empty block above a heading's start. */
 const splitKeepingCarriedAttrs =
     (registry: PluginRegistry): Command =>
     (state, dispatch) => {

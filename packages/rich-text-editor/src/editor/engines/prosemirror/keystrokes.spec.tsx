@@ -731,11 +731,7 @@ describe('Enter in a list over a range across items', () => {
     });
 });
 
-/**
- * Three list types: `dotList` and `stepList` share the item type `row`, so one
- * converts into the other in place, and `taskList` holds `task` items, which
- * carry a `done` state that starts false.
- */
+/** `dotList` and `stepList` share the item `row`; `taskList` items carry `done`, default false. */
 const listsPlugin: RtePlugin = definePlugin({
     id: 'test-lists',
     content: defineContent({
@@ -770,7 +766,6 @@ const listsPlugin: RtePlugin = definePlugin({
     }),
 });
 
-/** An attribute every text block carries, whichever plugin declared the block. */
 const toneAttributePlugin: RtePlugin = definePlugin({
     id: 'test-tone',
     content: defineContent({
@@ -780,7 +775,6 @@ const toneAttributePlugin: RtePlugin = definePlugin({
     }),
 });
 
-/** A text block other than the paragraph, which typing `## ` creates. */
 const titlePlugin: RtePlugin = definePlugin({
     id: 'test-title',
     content: defineContent({
@@ -797,7 +791,7 @@ const titlePlugin: RtePlugin = definePlugin({
 
 type TaskSpec = { done: boolean; text: string };
 
-/** A `taskList` as a spec writes it: the item's own `done` sits flat on it, which the open `RteBlockNode` cannot name. */
+/** `done` sits flat on the item, which the open `RteBlockNode` cannot name. */
 const taskList = (...tasks: TaskSpec[]) => ({
     type: 'taskList',
     children: tasks.map(({ done, text: value }) => ({ type: 'task', done, children: [paragraph(text(value))] })),
@@ -1058,7 +1052,6 @@ describe('Enter on a block with stored keys no plugin declares', () => {
     });
 
     it('leaves the item a list split makes without them', () => {
-        // The item's `foo` is undeclared too.
         const row = (value: string) => ({ type: 'row', foo: 2, children: [toned(value)] });
         const editor = editorWith(plugins, [{ type: 'dotList', children: [row('ab')] }]);
         editor.caretAfter('b');
