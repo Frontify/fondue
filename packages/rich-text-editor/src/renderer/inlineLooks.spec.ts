@@ -14,9 +14,9 @@ const CONTENT_STYLES = {
     big: { 'font-size': '24px', color: 'red' },
     bold: { 'font-weight': '700', color: 'blue' },
 };
-const CLASS_STYLES = { classes: CONTENT_STYLES, plainTags: {} };
-const NO_STYLES = { classes: {}, plainTags: {} };
-const PLAIN_P_STYLES = { classes: CONTENT_STYLES, plainTags: { p: { 'font-size': '13px', color: 'green' } } };
+const CLASS_STYLES = { classes: CONTENT_STYLES, plainParagraph: {} };
+const NO_STYLES = { classes: {}, plainParagraph: {} };
+const BODY_STYLES = { classes: CONTENT_STYLES, plainParagraph: { 'font-size': '13px', color: 'green' } };
 
 const BLOCK_GAP = fondueToken('spacing-x-small');
 const HEADING_GAP = fondueToken('spacing-medium');
@@ -103,27 +103,27 @@ describe('inlineLooks', () => {
     });
 });
 
-describe('inlineLooks plain tags', () => {
-    it('writes the style of a tag on an element that does not own its margins', () => {
-        const [node] = inlineLooks([block('p')], PLAIN_P_STYLES);
+describe('inlineLooks body look', () => {
+    it('writes the body look on a plain paragraph', () => {
+        const [node] = inlineLooks([block('p')], BODY_STYLES);
 
         expect(specOf(node).attrs?.style).toMatchObject({ 'font-size': '13px', color: 'green' });
     });
 
-    it('leaves out an element that carries the margin marker', () => {
-        const [node] = inlineLooks([block('p', [], { [OWN_MARGINS_ATTRIBUTE]: '' })], PLAIN_P_STYLES);
+    it('leaves out a paragraph that carries the margin marker', () => {
+        const [node] = inlineLooks([block('p', [], { [OWN_MARGINS_ATTRIBUTE]: '' })], BODY_STYLES);
 
         expect(specOf(node).attrs?.style).not.toHaveProperty('font-size');
     });
 
-    it('lets the style of a class win over the style of its tag', () => {
-        const [node] = inlineLooks([block('p', [], { class: 'big' })], PLAIN_P_STYLES);
+    it('lets the style of a class win over the body look', () => {
+        const [node] = inlineLooks([block('p', [], { class: 'big' })], BODY_STYLES);
 
         expect(specOf(node).attrs?.style).toMatchObject(CONTENT_STYLES.big);
     });
 
-    it('leaves an element of a tag no content styled as it is', () => {
-        const [node] = inlineLooks([block('span')], PLAIN_P_STYLES);
+    it('leaves any other element as it is', () => {
+        const [node] = inlineLooks([block('span')], BODY_STYLES);
 
         expect(specOf(node)).toEqual({ tag: 'span', attrs: {}, children: true });
     });
@@ -169,7 +169,7 @@ describe('inlineLooks spacing', () => {
     });
 
     it('keeps a host margin as given, also on the last block and in a list item', () => {
-        const contentStyles = { classes: { spaced: HOST_MARGINS }, plainTags: {} };
+        const contentStyles = { classes: { spaced: HOST_MARGINS }, plainParagraph: {} };
 
         const [, last] = inlineLooks([block('h1'), block('h2', [], { class: 'spaced' })], contentStyles);
         const [list] = inlineLooks([block('ul', [block('li', [block('p', [], { class: 'spaced' })])])], contentStyles);

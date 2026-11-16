@@ -28,7 +28,6 @@ export {
     type BlockAttributeDefinition,
     type BlockDefinition,
     type ContentModel,
-    type ContentStyles,
     type DefaultStyle,
     defineBlock,
     defineContent,

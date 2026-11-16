@@ -20,7 +20,6 @@ import { type RteDocument } from '../documentFormat';
 import { alignPlugin } from '../plugins/Align';
 import { fontColorPlugin } from '../plugins/FontColor';
 import { linkPlugin } from '../plugins/Link';
-import { paragraphPlugin } from '../plugins/Paragraph';
 import { quotePlugin } from '../plugins/Quote';
 import { MUTED_COLOR } from '../plugins/shared/helpers/mutedText';
 import { textStylePlugin } from '../plugins/TextStyle';
@@ -105,11 +104,14 @@ describe('serializing with inline styling', () => {
 
     const withLooks = [
         textStylePlugin({
-            presets: { heading1: { fontSize: HEADING_SIZE }, heading2: { fontSize: '14px' } },
+            presets: {
+                heading1: { fontSize: HEADING_SIZE },
+                heading2: { fontSize: '14px' },
+                body: { fontSize: '13px' },
+            },
         }),
-        paragraphPlugin({ look: { fontSize: '13px' } }),
-        quotePlugin(),
-        linkPlugin(),
+        quotePlugin,
+        linkPlugin,
         alignPlugin,
         fontColorPlugin,
     ];
@@ -156,8 +158,20 @@ describe('serializing with inline styling', () => {
         expect(styleOfFirst(html, 'span')).toBe('color: #ff0000;');
     });
 
-    it('gives a plain paragraph the document gap in place of browser margins without a paragraph plugin', () => {
-        const html = serializeToHtml(looksDoc, { plugins: [quotePlugin()], wrap: false, styling: 'inline' });
+    it('reads the quote and link looks from the text style presets', () => {
+        const plugins = [
+            textStylePlugin({ presets: { quote: { color: 'blue' }, link: { color: 'green' } } }),
+            quotePlugin,
+            linkPlugin,
+        ];
+        const html = serializeToHtml(looksDoc, { plugins, wrap: false, styling: 'inline' });
+
+        expect(styleOfFirst(html, 'blockquote')).toContain('color: blue;');
+        expect(styleOfFirst(html, 'a')).toContain('color: green;');
+    });
+
+    it('gives a plain paragraph the document gap in place of browser margins without a body look', () => {
+        const html = serializeToHtml(looksDoc, { plugins: [quotePlugin], wrap: false, styling: 'inline' });
 
         expect(styleOfFirst(html, 'p')).toContain(`margin-top: 0; margin-bottom: ${fondueToken('spacing-x-small')};`);
     });
@@ -193,7 +207,7 @@ describe('serializing with inline styling', () => {
     describe('a class with no name', () => {
         const nameless = definePlugin({
             id: 'nameless',
-            content: defineContent({ contentStyles: () => ({ classes: styleOfClass(undefined, {}) }) }),
+            content: defineContent({ contentStyles: () => styleOfClass(undefined, {}) }),
         });
         const plainDoc: RteDocument = { version: 1, blocks: [{ type: PARAGRAPH, children: [{ text: 'Plain' }] }] };
 

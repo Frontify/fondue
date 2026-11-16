@@ -2,9 +2,18 @@
 
 // Mounted by hostStyling.ct.tsx: a component test mounts imported components, and the plugin list holds functions, which cannot travel as props.
 
-import { serializeToHtml } from '../../index';
+import {
+    bulletListPlugin,
+    checkListPlugin,
+    fontColorPlugin,
+    linkPlugin,
+    quotePlugin,
+    type RtePlugin,
+    serializeToHtml,
+    type TextStylePresets,
+    textStylePlugin,
+} from '../../index';
 
-import { type HostLooksOptions, pluginsWithLooks } from './hostStylingPlugins';
 import { EXPORT_DOCUMENT } from './hostStylingValues';
 
 type ExportedHtmlProps = {
@@ -18,11 +27,26 @@ const ExportedHtml = ({ html, testId }: ExportedHtmlProps) => (
     <div data-testid={testId} dangerouslySetInnerHTML={{ __html: html }} />
 );
 
-type ExportedLooksPairProps = HostLooksOptions;
+type ExportedLooksPairProps = {
+    /**
+     * Every look the host sets, the text styles, body text, quotes and links alike.
+     * @default {}
+     */
+    presets?: TextStylePresets;
+};
+
+const pluginsWithPresets = (presets: TextStylePresets): RtePlugin[] => [
+    textStylePlugin({ presets }),
+    bulletListPlugin,
+    checkListPlugin,
+    fontColorPlugin,
+    quotePlugin,
+    linkPlugin,
+];
 
 /** The same document exported twice, as classes and as inline styles, with the same looks. */
-export const ExportedLooksPair = (props: ExportedLooksPairProps) => {
-    const plugins = pluginsWithLooks(props);
+export const ExportedLooksPair = ({ presets = {} }: ExportedLooksPairProps) => {
+    const plugins = pluginsWithPresets(presets);
 
     return (
         <>

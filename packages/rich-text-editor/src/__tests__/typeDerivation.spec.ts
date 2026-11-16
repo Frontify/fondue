@@ -8,11 +8,11 @@
 import { type RteText } from '../documentFormat';
 import {
     defineBlock,
-    linkPlugin,
     type RteBlock,
     type RteDocument,
     type RteDocumentWith,
     type RtePlugin,
+    textStylePlugin,
 } from '../index';
 
 // The shipped case: one annotation, everything checked
@@ -161,13 +161,13 @@ const plainBlock = defineBlock({ toHtml: () => ({ tag: 'hr' }), parse: [] });
 
 // A link keeps its underline, and vertical margins do nothing on inline text
 // @ts-expect-error a link look has no text decoration
-const linkDecoration = linkPlugin({ look: { textDecoration: 'none' } });
+const linkDecoration = textStylePlugin({ presets: { link: { textDecoration: 'none' } } });
 
 // @ts-expect-error a link look has no top margin
-const linkMarginTop = linkPlugin({ look: { marginTop: '4px' } });
+const linkMarginTop = textStylePlugin({ presets: { link: { marginTop: '4px' } } });
 
 // @ts-expect-error a link look has no bottom margin
-const linkMarginBottom = linkPlugin({ look: { marginBottom: '4px' } });
+const linkMarginBottom = textStylePlugin({ presets: { link: { marginBottom: '4px' } } });
 
 export const __typeAssertions = [
     doc,

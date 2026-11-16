@@ -31,25 +31,23 @@ describe('lookProperties', () => {
 describe('lookStyle', () => {
     const FALLBACKS = { 'margin-top': '0', 'margin-bottom': '0' };
 
-    it('puts the host values over the fallbacks, by CSS property name', () => {
-        const style = lookStyle(
-            { fontSize: 'var(--f-size)', marginBottom: '8px' },
-            { ...FALLBACKS, 'font-size': '14px' },
-        );
+    it('puts the values the host set over the fallbacks, by CSS property name', () => {
+        const properties = lookProperties('sample', { fontSize: 'var(--f-size)', marginBottom: '8px' });
 
-        expect(style).toEqual({ 'margin-top': '0', 'margin-bottom': '8px', 'font-size': 'var(--f-size)' });
+        expect(lookStyle('sample', properties, { ...FALLBACKS, 'font-size': '14px' })).toEqual({
+            'margin-top': '0',
+            'margin-bottom': '8px',
+            'font-size': 'var(--f-size)',
+        });
     });
 
     it('is the fallbacks when the host sets nothing', () => {
-        expect(lookStyle({}, FALLBACKS)).toEqual(FALLBACKS);
-        expect(lookStyle({ color: undefined }, FALLBACKS)).toEqual(FALLBACKS);
+        expect(lookStyle('sample', {}, FALLBACKS)).toEqual(FALLBACKS);
     });
 
-    for (const value of ['red; display: none', 'url(https://example.com/a.png)', '}', '', '   ']) {
-        it(`throws, naming the field, for ${JSON.stringify(value)}`, () => {
-            expect(() => lookStyle({ letterSpacing: value }, {})).toThrow(/"letterSpacing"/);
-        });
-    }
+    it('reads only the look of its own style', () => {
+        expect(lookStyle('sample', lookProperties('other', { color: 'red' }), FALLBACKS)).toEqual(FALLBACKS);
+    });
 });
 
 describe('styleOfClass', () => {

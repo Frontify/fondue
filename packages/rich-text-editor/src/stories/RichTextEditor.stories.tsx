@@ -18,7 +18,6 @@ import {
     linkPlugin,
     type MentionItem,
     mentionPlugin,
-    paragraphPlugin,
     quotePlugin,
     type RteDocument,
     type RtePlugin,
@@ -703,7 +702,7 @@ export const CommentBox: Story = {
                         plugins={[
                             boldPlugin,
                             italicPlugin,
-                            linkPlugin(),
+                            linkPlugin,
                             mentionPlugin({
                                 items: MENTIONABLE,
                                 href: profileHref,
@@ -888,32 +887,28 @@ const GUIDELINE_PRESETS: TextStylePluginOptions['presets'] = {
     custom2: { color: 'var(--f-theme-settings-custom2-color)' },
     imageTitle: { color: 'var(--f-theme-settings-image-title-color)' },
     imageCaption: { fontSize: 'var(--f-theme-settings-image-caption-font-size)' },
+    body: {
+        fontSize: 'var(--f-theme-settings-body-font-size)',
+        color: 'var(--f-theme-settings-body-color)',
+    },
+    // The quote's line height is one no section defines, so it keeps Fondue's look.
+    quote: {
+        fontStyle: 'var(--f-theme-settings-quote-font-style)',
+        lineHeight: 'var(--f-theme-settings-quote-line-height)',
+        color: 'var(--f-theme-settings-quote-color)',
+    },
+    link: {
+        fontWeight: 'var(--f-theme-settings-link-font-weight)',
+        color: 'var(--f-theme-settings-link-color)',
+    },
 };
 
-/** Body text and quotes read the guideline too; the quote's line height is one no section defines. */
 const HOST_STYLING_PLUGINS = [
     textStylePlugin({ presets: GUIDELINE_PRESETS }),
     bulletListPlugin,
     checkListPlugin,
-    paragraphPlugin({
-        look: {
-            fontSize: 'var(--f-theme-settings-body-font-size)',
-            color: 'var(--f-theme-settings-body-color)',
-        },
-    }),
-    quotePlugin({
-        look: {
-            fontStyle: 'var(--f-theme-settings-quote-font-style)',
-            lineHeight: 'var(--f-theme-settings-quote-line-height)',
-            color: 'var(--f-theme-settings-quote-color)',
-        },
-    }),
-    linkPlugin({
-        look: {
-            fontWeight: 'var(--f-theme-settings-link-font-weight)',
-            color: 'var(--f-theme-settings-link-color)',
-        },
-    }),
+    quotePlugin,
+    linkPlugin,
 ];
 
 const HOST_STYLING_DOCUMENT: RteDocument = {
@@ -980,9 +975,8 @@ const HostStylingSection = ({ title, guideline }: HostStylingSectionProps) => {
 };
 
 /**
- * A host sets the look of each text style with `textStylePlugin({ presets })`, and of body text,
- * quotes and links with `paragraphPlugin`, `quotePlugin` and `linkPlugin`, usually from its
- * guideline settings: values are CSS, so `var(--f-theme-settings-…)` works and follows the section
+ * A host sets the look of each text style, body text, quotes and links with
+ * `textStylePlugin({ presets })`, usually from its guideline settings: values are CSS, so `var(--f-theme-settings-…)` works and follows the section
  * the editor sits in. Anything the host leaves out, or a variable nobody defines, keeps Fondue's look.
  * The editor and the renderer draw the same.
  */

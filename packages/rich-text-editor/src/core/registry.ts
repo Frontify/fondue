@@ -12,7 +12,6 @@ import { type HtmlSpec, type StyleMap, withRootStyle } from './htmlSpec';
 import {
     type BlockAttributeDefinition,
     type BlockDefinition,
-    type ContentStyles,
     type HotkeyHandler,
     type InlineDefinition,
     type MarkDefinition,
@@ -123,7 +122,7 @@ export type PluginRegistry = {
      * The inline style of each class the content writes, for HTML exported with `styling: 'inline'`.
      * Built on each call, so only that export runs the plugins' style builders.
      */
-    contentStyles: () => Readonly<Required<ContentStyles>>;
+    contentStyles: () => Readonly<Record<string, StyleMap>>;
 };
 
 /** A mark sits in the floating bar; a block is reached through its commands instead. */
@@ -554,13 +553,14 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
     addEditViews(draft, plugin);
 };
 
-/** Runs each content's style builder, a later one winning for a class or a tag both write. */
-const mergeContentStyles = (builders: readonly NonNullable<RteContent['contentStyles']>[]): Required<ContentStyles> => {
-    const merged: Required<ContentStyles> = { classes: {}, plainTags: {} };
+/** Runs each content's style builder on the custom properties, a later one winning for a class both write. */
+const mergeContentStyles = (
+    builders: readonly NonNullable<RteContent['contentStyles']>[],
+    properties: Readonly<Record<string, string>>,
+): Record<string, StyleMap> => {
+    const merged: Record<string, StyleMap> = {};
     for (const build of builders) {
-        const { classes, plainTags } = build();
-        Object.assign(merged.classes, classes);
-        Object.assign(merged.plainTags, plainTags);
+        Object.assign(merged, build(properties));
     }
     return merged;
 };
@@ -650,7 +650,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         commands: draft.commands,
         contentClassNames: draft.contentClassNames,
         contentProperties: draft.contentProperties,
-        contentStyles: () => mergeContentStyles(draft.contentStyleBuilders),
+        contentStyles: () => mergeContentStyles(draft.contentStyleBuilders, draft.contentProperties),
     };
 };
 
