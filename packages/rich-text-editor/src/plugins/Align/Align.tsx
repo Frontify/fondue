@@ -60,7 +60,6 @@ type AlignValue = NonNullable<AlignAttribute['align']>;
 /** The keys are literals because a computed key keeps this plugin in the renderer; this type ties each alignment to one. */
 type AlignShortcut = 'Mod-Shift-l' | 'Mod-Shift-e' | 'Mod-Shift-r' | 'Mod-Shift-j';
 
-/** The label that names one alignment's button and key. */
 type AlignTitleKey = 'leftTitle' | 'centerTitle' | 'rightTitle' | 'justifyTitle';
 
 type Alignment = {
@@ -227,7 +226,6 @@ export const alignPlugin = (options: AlignPluginOptions = {}) => {
                 floating: 'inline',
             },
         ],
-        // The keys are literals because a computed key keeps this plugin in the renderer; `AlignShortcut` ties each alignment to one.
         hotkeys: {
             'Mod-Shift-l': {
                 label: labels.leftTitle,

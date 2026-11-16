@@ -93,7 +93,7 @@ export const resetFormattingPlugin = (options: ResetFormattingPluginOptions = {}
         hotkeys: {
             'Mod-\\': {
                 label: labels.clearMarksTitle,
-                // Clears the marks only, those that survive a clear (links) excepted: block types, lists and alignment stay, which the toolbar button resets.
+                // Marks only: block type, lists and alignment stay, which the toolbar button resets.
                 run: (api) => {
                     if (api.marks.removeAll({ scope: 'block', keepSurviving: true })) {
                         api.announce(labels.cleared);

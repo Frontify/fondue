@@ -4,9 +4,6 @@ import { type HotkeyModifier, isApplePlatform, parseHotkey } from '#/core';
 
 const MODIFIER_JOINER = '+';
 
-/**
- * A key as people read it: one character is upper-cased, a named key stays as written
- */
 const keyName = (key: string): string => {
     if (key.length === 1) {
         return key.toUpperCase();
@@ -14,9 +11,6 @@ const keyName = (key: string): string => {
     return key;
 };
 
-/**
- * The names `aria-keyshortcuts` gives each modifier on Apple systems, where `Mod` is Command
- */
 const ARIA_MODIFIERS_APPLE: Record<HotkeyModifier, string> = {
     Mod: 'Meta',
     Meta: 'Meta',
@@ -25,9 +19,6 @@ const ARIA_MODIFIERS_APPLE: Record<HotkeyModifier, string> = {
     Shift: 'Shift',
 };
 
-/**
- * The names `aria-keyshortcuts` gives each modifier elsewhere, where `Mod` is Control
- */
 const ARIA_MODIFIERS_OTHER: Record<HotkeyModifier, string> = {
     Mod: 'Control',
     Meta: 'Meta',
@@ -36,9 +27,6 @@ const ARIA_MODIFIERS_OTHER: Record<HotkeyModifier, string> = {
     Shift: 'Shift',
 };
 
-/**
- * The names people read for each modifier outside Apple systems
- */
 const READABLE_MODIFIERS_OTHER: Record<HotkeyModifier, string> = {
     Mod: 'Ctrl',
     Meta: 'Meta',
@@ -52,10 +40,7 @@ type AppleModifierSymbol = {
     modifiers: readonly HotkeyModifier[];
 };
 
-/**
- * The symbols of Apple systems in the order macOS menus list them (⌃⌥⇧⌘), whatever order the shortcut is written in.
- * `Mod` and `Meta` are both Command.
- */
+/** In the order macOS menus list them (⌃⌥⇧⌘), whatever order the shortcut is written in. */
 const APPLE_MODIFIER_SYMBOLS: readonly AppleModifierSymbol[] = [
     { symbol: '⌃', modifiers: ['Ctrl'] },
     { symbol: '⌥', modifiers: ['Alt'] },
