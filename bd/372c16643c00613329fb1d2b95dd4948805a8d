@@ -1,0 +1,51 @@
+packages/components/src/components/Tree/Tree.stories.tsx
+  s_d5e1852e266641::t_99fb0a49a753b6 811,836
+packages/components/src/components/Tree/components/testutils/TestHarness.tsx
+  s_d5e1852e266641::t_99fb0a49a753b6 29,41,73,83-89
+packages/components/src/components/Tree/types.ts
+  s_d5e1852e266641::t_99fb0a49a753b6 64-68,75,150
+packages/rich-text-editor/src/__tests__/paste/vendorPaste.spec.tsx
+  s_d5e1852e266641::t_99fb0a49a753b6 314-329,347,365,496,531-562
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteGoogleDocs.ts
+  s_d5e1852e266641::t_99fb0a49a753b6 15-21,25-26,32-38,41,56-57,68-72
+.github/workflows/fondue-pull-requests.yaml
+  s_d5e1852e266641::t_99fb0a49a753b6 6-7
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteOffice.ts
+  s_d5e1852e266641::t_99fb0a49a753b6 20-23,25-26,34-36,39,42-57,68-87,90-98,130
+  s_d5e1852e266641::t_2129a403925a86 127-128
+  s_d5e1852e266641::t_f7b89e7954ef7d 129
+packages/components/MIGRATING.md
+  s_d5e1852e266641::t_99fb0a49a753b6 1881
+packages/components/src/components/Tree/utils/parseChildren.ts
+  s_d5e1852e266641::t_99fb0a49a753b6 99
+packages/components/src/components/Tree/Tree.metadata.json
+  s_d5e1852e266641::t_99fb0a49a753b6 4
+.changeset/tree-double-click-rename.md
+  s_d5e1852e266641::t_99fb0a49a753b6 1-5
+packages/rich-text-editor/src/__tests__/paste/fixtures/README.md
+  s_d5e1852e266641::t_99fb0a49a753b6 2
+.github/actions/setup/action.yaml
+  s_d5e1852e266641::t_99fb0a49a753b6 36-42,48-49
+packages/components/src/components/Tree/components/TreeRow.tsx
+  s_d5e1852e266641::t_99fb0a49a753b6 80-84
+packages/rich-text-editor/src/editor/engines/prosemirror/pasteOffice.spec.ts
+  s_d5e1852e266641::t_99fb0a49a753b6 1-159
+packages/components/src/components/Tree/components/TreeRoot.ct.tsx
+  s_d5e1852e266641::t_99fb0a49a753b6 972-1034
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bd372c16643c00613329fb1d2b95dd4948805a8d",
+  "prompts": {},
+  "sessions": {
+    "s_d5e1852e266641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1d2c35fc-f80f-4217-8f67-4d2a8d2b5e30",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
