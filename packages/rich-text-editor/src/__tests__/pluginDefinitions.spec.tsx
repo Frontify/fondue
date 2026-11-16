@@ -49,13 +49,11 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 type RecordingApiOptions = {
     inList?: boolean;
     empty?: boolean;
-    /** The alignment of the block the selection starts in; none by default. */
     align?: string;
-    /** What `blocks.updateAttributes` and `marks.removeAll` report: whether they changed anything. */
-    changes?: boolean;
+    reportsChange?: boolean;
 };
 
-const recordingApi = ({ inList = false, empty = false, align, changes = true }: RecordingApiOptions = {}) => {
+const recordingApi = ({ inList = false, empty = false, align, reportsChange = true }: RecordingApiOptions = {}) => {
     const calls: string[] = [];
     const api = {
         isEmpty: () => empty,
@@ -77,7 +75,7 @@ const recordingApi = ({ inList = false, empty = false, align, changes = true }: 
             },
             updateAttributes: (attributes: Record<string, unknown>) => {
                 calls.push(`blocks.updateAttributes ${JSON.stringify(attributes)}`);
-                return changes;
+                return reportsChange;
             },
             resetAttributes: () => {
                 calls.push('blocks.resetAttributes');
@@ -86,7 +84,7 @@ const recordingApi = ({ inList = false, empty = false, align, changes = true }: 
         marks: {
             removeAll: (options?: Record<string, unknown>) => {
                 calls.push(`marks.removeAll ${JSON.stringify(options)}`);
-                return changes;
+                return reportsChange;
             },
         },
         group: (run: () => void) => {
@@ -103,7 +101,6 @@ const recordingApi = ({ inList = false, empty = false, align, changes = true }: 
 
 type ClickToolbarButtonParams = { plugin: RtePlugin; api: EditorControlApi; name: string };
 
-/** Draws the plugin's toolbar entry against the fake API and presses the button with this accessible name. */
 const clickToolbarButton = ({ plugin, api, name }: ClickToolbarButtonParams): void => {
     const entry = buildPluginRegistry([plugin]).toolbarItems[0];
     if (entry?.control !== 'custom') {
@@ -416,7 +413,7 @@ describe('alignPlugin', () => {
     });
 
     it('says nothing when no block changed', () => {
-        const { api, calls } = recordingApi({ changes: false });
+        const { api, calls } = recordingApi({ reportsChange: false });
 
         keyOf('Mod-Shift-e')?.(api);
 
@@ -466,7 +463,7 @@ describe('resetFormattingPlugin', () => {
     });
 
     it('says nothing when Mod-\\ removed no mark', () => {
-        const { api, calls } = recordingApi({ changes: false });
+        const { api, calls } = recordingApi({ reportsChange: false });
 
         clearKey()?.(api);
 

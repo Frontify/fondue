@@ -354,7 +354,6 @@ describe('a document from a newer format version', () => {
         const { container } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} readonly />);
 
         expect(container.textContent).toContain('from the future');
-        // The editor's own live region is always there; it is empty until something is announced.
         expect(container.querySelector(NOTICE_SELECTOR)).toBeNull();
     });
 
@@ -500,7 +499,6 @@ describe('a document from a newer format version', () => {
         ready();
 
         expect(warn).not.toHaveBeenCalled();
-        // The editor's own live region is always there; it is empty until something is announced.
         expect(container.querySelector(NOTICE_SELECTOR)).toBeNull();
     });
 });
@@ -1267,7 +1265,7 @@ describe('the toolbar from the keyboard', () => {
         for (const [index, alignment] of alignments.entries()) {
             const keys = radios[index]?.getAttribute('aria-keyshortcuts')?.split('+') ?? [];
             const key = keys.pop() ?? '';
-            // Meta or Control is the Mod key as `mod` presses it; keyCode is what the keymap reads for a shifted letter.
+            // keyCode is what the keymap reads for a shifted letter.
             press(editable, key, { ...mod, shiftKey: keys.includes('Shift'), keyCode: key.charCodeAt(0) });
             expect(stored()?.blocks[0]).toMatchObject({ align: alignment });
         }
@@ -1283,8 +1281,7 @@ describe('the toolbar from the keyboard', () => {
         const editable = editableIn(container);
         act(() => editable.focus());
         const center = container.querySelector<HTMLElement>('[aria-label="Align center"]');
-        // The live region takes a message on the next frame.
-        const said = (): string | null | undefined => {
+        const saidNextFrame = (): string | null | undefined => {
             act(() => {
                 vi.advanceTimersByTime(100);
             });
@@ -1293,11 +1290,11 @@ describe('the toolbar from the keyboard', () => {
 
         act(() => center?.click());
         expect(stored()?.blocks[0]).toMatchObject({ align: 'center' });
-        expect(said()).toBe('Centered');
+        expect(saidNextFrame()).toBe('Centered');
 
         act(() => center?.click());
         expect(stored()?.blocks[0]).not.toHaveProperty('align');
-        expect(said()).toBe('Alignment cleared');
+        expect(saidNextFrame()).toBe('Alignment cleared');
     });
 
     describe('in a narrow top row', () => {
