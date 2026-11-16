@@ -433,9 +433,7 @@ const addShortcut = (draft: Draft, plugin: RtePlugin, item: ToolbarEntry): void 
     draft.shortcuts.push({ owner: { kind: 'plugin', pluginId: plugin.id }, key: shortcut, label: item.label });
 };
 
-/**
- * Throws unless the plugin's toolbar group has an id and a finite order, and agrees on that order with every plugin that shares the id. The order is what the toolbar draws by, so one group with two orders has no right place.
- */
+/** One id with two orders has no right place in the drawing order. */
 const assertToolbarGroup = (draft: Draft, plugin: RtePlugin): void => {
     const group = plugin.toolbarGroup;
     if (group === undefined) {

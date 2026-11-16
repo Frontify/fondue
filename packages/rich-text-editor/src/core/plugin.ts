@@ -103,11 +103,7 @@ export type RtePlugin = {
      *   view completes: its `value` is null until then.
      */
     edit?: Record<string, RteEditView>;
-    /**
-     * Which cluster of the toolbar its entries sit in. Groups are drawn by
-     * their `order`, entries keep mount order inside theirs, and entries of a
-     * plugin with no group come after every group, together, in mount order.
-     */
+    /** The toolbar cluster its entries sit in; a plugin with no group sits after every group. */
     toolbarGroup?: RteToolbarGroup;
     /**
      * Entries for the floating bar's "Turn into" menu and the `/` menu, in the order given
@@ -523,7 +519,6 @@ export type BlockAttributeDefinition = {
 
 // --- Toolbar ---
 
-/** A cluster of toolbar controls. Groups are drawn by `order`, lowest first; controls keep mount order inside their group. */
 export type RteToolbarGroup = {
     /** Names the group; plugins that share a group give the same id and the same order. */
     id: string;

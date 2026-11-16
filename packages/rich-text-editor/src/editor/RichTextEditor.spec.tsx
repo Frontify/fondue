@@ -41,7 +41,7 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 const GROUP_SELECTOR = `[${GROUP_ATTRIBUTE}]`;
 
-/** The default toolbar's buttons by group, as drawn before groups were data: history, text, marks, colour, link, lists, align, insert. */
+/** Pins the order the toolbar drew before groups were data. */
 const DEFAULT_TOOLBAR_LABELS: (string | null)[][] = [
     ['Undo', 'Redo'],
     ['Quote'],
@@ -1073,7 +1073,7 @@ describe('the toolbar', () => {
     });
 
     describe('a press inside a toolbar slot', () => {
-        const mousedownOn = (target: Element): boolean =>
+        const isMousedownAllowed = (target: Element): boolean =>
             target.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
 
         const withControls = definePlugin({
@@ -1104,8 +1104,7 @@ describe('the toolbar', () => {
 
             const button = container.querySelector('[data-testid="plain-button"]');
             expect(button).toBeTruthy();
-            // `dispatchEvent` returns false once a handler called `preventDefault`.
-            expect(mousedownOn(button as Element)).toBe(false);
+            expect(isMousedownAllowed(button as Element)).toBe(false);
         });
 
         it('lets a text field in the slot take focus', () => {
@@ -1116,7 +1115,7 @@ describe('the toolbar', () => {
 
             const field = container.querySelector('[data-testid="slot-field"]');
             expect(field).toBeTruthy();
-            expect(mousedownOn(field as Element)).toBe(true);
+            expect(isMousedownAllowed(field as Element)).toBe(true);
         });
 
         it('keeps the text selection when it lands on a span that is not editable', () => {
@@ -1127,7 +1126,7 @@ describe('the toolbar', () => {
 
             const island = container.querySelector('[data-testid="slot-island"]');
             expect(island?.getAttribute('contenteditable')).toBe('false');
-            expect(mousedownOn(island as Element)).toBe(false);
+            expect(isMousedownAllowed(island as Element)).toBe(false);
         });
     });
 

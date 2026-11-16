@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// The built-in toolbar groups, 100 apart so a host can place its own between two: `{ id: 'review', order: TOOLBAR_GROUPS.link.order + 10 }`.
-// One named export per group, read as a namespace (`import * as TOOLBAR_GROUPS`): a plugin's `toolbarGroup: TOOLBAR_GROUPS.marks` then stays removable by tree shaking, which a property read on an object is not.
+// One export per group, not a record, so tree shaking drops unused plugins; 100 apart so a host can fit a group between two.
 
 import { type RteToolbarGroup } from '#/core';
 
