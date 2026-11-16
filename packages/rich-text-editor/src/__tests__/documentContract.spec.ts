@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { DOCUMENT_GAP_VARIABLES, OWN_MARGINS_ATTRIBUTE } from '../core/documentContract';
+import { DOCUMENT_GAP_VARIABLES, OWN_MARGIN_VARIABLES } from '../core/documentContract';
 
 // Stylesheets cannot import core's names, so these read the stylesheets as text and compare.
 
@@ -16,8 +16,17 @@ const DOCUMENT_STYLESHEET = join(SOURCE_DIRECTORY, 'renderer', 'document.module.
 /** Whatever a stylesheet spells as a block variable: the gap the document hands a block, or a misspelling of one. */
 const GAP_VARIABLE = /--rte-block-[a-z0-9-]+/g;
 
-/** An attribute selector on a `data-` attribute, such as `[data-rte-own-margins]`. */
-const DATA_ATTRIBUTE_SELECTOR = /\[data-[a-z-]+\]/g;
+/** Whatever a stylesheet spells as an own-margin variable, or a misspelling of one. */
+const OWN_MARGIN_VARIABLE = /--rte-own-[a-z0-9-]+/g;
+
+/** An attribute selector on a `data-` attribute, such as `[data-text-style]`. */
+const DATA_ATTRIBUTE_SELECTOR = /\[data-[a-z-]+/g;
+
+/** A `@property` rule: the name it registers and the body that says how. */
+const PROPERTY_RULE = /@property\s+(--[a-z0-9-]+)\s*\{([^}]*)\}/g;
+
+/** The declaration that stops a registered custom property from inheriting. */
+const NOT_INHERITED = /inherits:\s*false\s*;/;
 
 const stylesheetTexts = (): string[] =>
     readdirSync(SOURCE_DIRECTORY, { recursive: true, encoding: 'utf8' })
@@ -32,16 +41,23 @@ describe('the gap variable of the document', () => {
     });
 });
 
-describe('the margin marker', () => {
+describe('the own-margin variables', () => {
     const documentStylesheet = readFileSync(DOCUMENT_STYLESHEET, 'utf8');
 
-    it('is the attribute the document stylesheet leaves alone', () => {
-        expect(documentStylesheet).toContain(`:not([${OWN_MARGINS_ATTRIBUTE}])`);
+    it('are the ones core names, in every stylesheet that spells one', () => {
+        const spelled = stylesheetTexts().flatMap((text) => text.match(OWN_MARGIN_VARIABLE) ?? []);
+
+        expect([...new Set(spelled)].sort()).toEqual(Object.values(OWN_MARGIN_VARIABLES).sort());
     });
 
-    it('is the only data attribute the document stylesheet selects on, so it knows no plugin', () => {
-        const attributes = documentStylesheet.match(DATA_ATTRIBUTE_SELECTOR) ?? [];
+    it('are registered by the document stylesheet as not inherited', () => {
+        const rules = [...documentStylesheet.matchAll(PROPERTY_RULE)];
+        const registered = rules.filter(([, , body = '']) => NOT_INHERITED.test(body)).map(([, name]) => name);
 
-        expect(new Set(attributes)).toEqual(new Set([`[${OWN_MARGINS_ATTRIBUTE}]`]));
+        expect([...registered].sort()).toEqual(Object.values(OWN_MARGIN_VARIABLES).sort());
+    });
+
+    it('leave the document stylesheet selecting on no data attribute, so it knows no plugin', () => {
+        expect(documentStylesheet.match(DATA_ATTRIBUTE_SELECTOR) ?? []).toEqual([]);
     });
 });

@@ -7,7 +7,6 @@
 import { type ReactNode } from 'react';
 
 import { type EditorControlApi, type RteMarkState, type RteSelectionSnapshot } from './commands';
-import { OWN_MARGINS_ATTRIBUTE } from './documentContract';
 import { type HtmlSpec, type StyleMap, withRootStyle } from './htmlSpec';
 import {
     type BlockAttributeDefinition,
@@ -655,8 +654,8 @@ export const blockAttributeStyle = (registry: PluginRegistry, stored: Record<str
 
 /**
  * A block's markup with what every block carries applied to its outermost
- * element — alignment on a text block, the margin marker on one that owns its
- * margins. Shared by editor, readonly view and export so they agree.
+ * element — alignment on a text block. Shared by editor, readonly view and
+ * export so they agree.
  */
 export const blockHtml = (
     registry: PluginRegistry,
@@ -666,9 +665,6 @@ export const blockHtml = (
     let spec = definition.toHtml(blockValueOf(definition, stored));
     if (definition.content === 'text') {
         spec = withRootStyle(spec, blockAttributeStyle(registry, stored));
-    }
-    if (definition.ownsMargins === true) {
-        spec = { ...spec, attrs: { ...spec.attrs, [OWN_MARGINS_ATTRIBUTE]: '' } };
     }
     return spec;
 };

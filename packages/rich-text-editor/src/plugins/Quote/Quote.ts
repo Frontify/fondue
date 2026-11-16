@@ -21,7 +21,6 @@ export const quoteContent = defineContent({
     blocks: {
         quote: defineBlock({
             content: 'text',
-            ownsMargins: true,
             toHtml: () => ({ tag: 'blockquote', attrs: { class: styles.quote }, children: true }),
             parse: [{ tag: 'blockquote' }],
         }),
