@@ -25,6 +25,12 @@ $default-fallbacks: (
     color: inherit,
 );
 
+// The margins are handed to the document, which alone writes them (see `renderer/document.module.scss`).
+$own-margin-variables: (
+    margin-top: --rte-own-margin-top,
+    margin-bottom: --rte-own-margin-bottom,
+);
+
 // Fails the build for a name that is not a look property, so a typo cannot pass as "no such override".
 @mixin -assert-known($properties, $argument) {
     @each $property in $properties {
@@ -45,7 +51,11 @@ $default-fallbacks: (
 
     @each $property in $look-properties {
         @if not list.index($except, $property) {
-            #{$property}: var(--rte-#{$key}-#{$property}, #{map.get($resolved, $property)});
+            $written: $property;
+            @if map.has-key($own-margin-variables, $property) {
+                $written: map.get($own-margin-variables, $property);
+            }
+            #{$written}: var(--rte-#{$key}-#{$property}, #{map.get($resolved, $property)});
         }
     }
 }

@@ -30,7 +30,6 @@ import {
     presetsFor,
     type TextStyleName,
     type TextStyleOption,
-    UNKNOWN_STYLE_CLASS_NAME,
 } from './helpers/presets';
 
 // The block this plugin contributes; the package root assembles it into the
@@ -62,8 +61,6 @@ const textStyleBlockFor = (options: readonly TextStyleOption[]): BlockDefinition
 
     return defineBlock<{ style: string }>({
         content: 'text',
-        // Each preset's stylesheet writes its margins (`look`), for the heading tags and the paragraph ones alike.
-        ownsMargins: true,
         // Only reached by a node that arrives without one; every
         // path that sets the attribute names a style.
         defaults: { style: offered[0]?.name ?? FIRST_PRESET },
@@ -71,7 +68,7 @@ const textStyleBlockFor = (options: readonly TextStyleOption[]): BlockDefinition
         toHtml: ({ style }) => {
             const preset = findPreset(style);
             if (preset === undefined) {
-                return { tag: 'p', attrs: { class: UNKNOWN_STYLE_CLASS_NAME }, children: true };
+                return { tag: 'p', children: true };
             }
             const attrs: Record<string, string | undefined> = { class: preset.className };
             if (preset.tag === 'p') {
