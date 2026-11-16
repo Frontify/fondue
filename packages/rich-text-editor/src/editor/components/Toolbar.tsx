@@ -154,7 +154,6 @@ export const Toolbar = ({
     );
 };
 
-/** Every press in a slot keeps the selection, except one on a control that takes text. */
 const keepSlotSelection = (event: MouseEvent<HTMLElement>): void => keepSelectionExcept(event, TEXT_CONTROL);
 
 const UNGROUPED_GROUP_KEY = 'ungrouped';

@@ -103,11 +103,7 @@ export type RtePlugin = {
      *   view completes: its `value` is null until then.
      */
     edit?: Record<string, RteEditView>;
-    /**
-     * Which cluster of the toolbar its entries sit in. Groups are drawn by
-     * their `order`, entries keep mount order inside theirs, and entries of a
-     * plugin with no group come after every group, together, in mount order.
-     */
+    /** The toolbar cluster its entries sit in; a plugin with no group sits after every group. */
     toolbarGroup?: RteToolbarGroup;
     /**
      * Entries for the floating bar's "Turn into" menu and the `/` menu, in the order given
@@ -124,10 +120,7 @@ export type RtePlugin = {
     inputRules?: readonly (RteInputRule | RteDelimiterRule)[];
     /** Runs before the editor's own paste, in plugin order. */
     onPaste?: PasteHandler;
-    /**
-     * Rewrites pasted HTML before the parse rules read it, in plugin order. Runs only on a paste or drop into the editor,
-     * never on `parseHtml`. Plugins that share a transform declare the same object, and it runs once.
-     */
+    /** Rewrites pasted HTML before the parse rules read it, in plugin order. */
     pasteTransforms?: readonly PasteTransform[];
 };
 
@@ -525,7 +518,6 @@ export type BlockAttributeDefinition = {
 
 // --- Toolbar ---
 
-/** A cluster of toolbar controls. Groups are drawn by `order`, lowest first; controls keep mount order inside their group. */
 export type RteToolbarGroup = {
     /** Names the group; plugins that share a group give the same id and the same order. */
     id: string;
@@ -607,9 +599,6 @@ export type RteBlockCommand = {
     run: (api: EditorControlApi) => void;
 };
 
-/**
- * A keybinding: what it does, and the handler that does it
- */
 export type RteHotkey = {
     /**
      * What the keyboard reference calls the binding: `Align left`
@@ -618,9 +607,7 @@ export type RteHotkey = {
     run: HotkeyHandler;
 };
 
-/**
- * A plugin's handler for one key. Return `false` to leave the key to the next handler, and in the end the editor and browser.
- */
+/** A plugin's handler for one key. Return `false` to leave the key to the next handler, and in the end the editor and browser. */
 export type HotkeyHandler = (api: EditorControlApi) => boolean | void;
 
 /**
@@ -645,13 +632,9 @@ export type PasteHandler = (paste: Paste, api: EditorControlApi) => boolean;
 export type PasteTransform = {
     /** Unique across plugins; plugins that share a transform declare the same object, and it runs once. */
     id: string;
-    /** Changes `dom`, the pasted HTML, in place. */
     run: (dom: HTMLElement, context: PasteTransformContext) => void;
 };
 
-/**
- * What the editor tells a paste transform about the mounted content.
- */
 export type PasteTransformContext = {
     /** Whether a mounted block, inline or mark reads this element by one of its tag rules. */
     isClaimed: (element: HTMLElement) => boolean;

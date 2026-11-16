@@ -8,7 +8,6 @@ import { pasteLinesPlugin } from './PasteLines';
 
 const TABLE = '<table><tr><td>a</td><td>b</td></tr><tr><td>c</td><td>d</td></tr></table>';
 
-/** `html`'s body after the plugin's paste transforms, with `isClaimed` answering for the elements the test names. */
 const flattened = (html: string, isClaimed: (element: HTMLElement) => boolean = () => false): HTMLElement => {
     const { body } = new DOMParser().parseFromString(html, 'text/html');
     for (const transform of pasteLinesPlugin().pasteTransforms ?? []) {

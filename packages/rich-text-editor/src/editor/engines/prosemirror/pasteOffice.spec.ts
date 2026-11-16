@@ -24,12 +24,13 @@ const tidied = (html: string): HTMLElement => {
 const item = (level: number, marker: string, text: string, list = 'l0'): string =>
     `<p style="mso-list: ${list} level${level} lfo1"><span style="mso-list: Ignore">${marker}</span>${text}</p>`;
 
-/** The paragraphs of `body` that keep list data. */
-const markedOf = (body: HTMLElement): Element[] => [...body.querySelectorAll(`[${OFFICE_LIST_ATTRIBUTES.list}]`)];
+const listParagraphsOf = (body: HTMLElement): Element[] => [
+    ...body.querySelectorAll(`[${OFFICE_LIST_ATTRIBUTES.list}]`),
+];
 
-/** Each list paragraph `body` keeps data on, in document order, as its text and the data kept. */
+/** Each as `text | list | level | marker`. */
 const listDataOf = (body: HTMLElement): string[] =>
-    markedOf(body).map((paragraph) =>
+    listParagraphsOf(body).map((paragraph) =>
         [
             paragraph.textContent,
             paragraph.getAttribute(OFFICE_LIST_ATTRIBUTES.list),
@@ -110,7 +111,7 @@ describe('tidyOffice', () => {
     });
 
     it('keeps the level digits as written, without reading them', () => {
-        expect(markedOf(tidied(item(20, '·', 'A')))[0]?.getAttribute(OFFICE_LIST_ATTRIBUTES.level)).toBe('20');
+        expect(listParagraphsOf(tidied(item(20, '·', 'A')))[0]?.getAttribute(OFFICE_LIST_ATTRIBUTES.level)).toBe('20');
     });
 
     it.each([
@@ -164,6 +165,6 @@ describe('tidyOffice on paragraphs inside paragraphs', () => {
 
         tidyOffice(body);
 
-        expect(markedOf(body)).toEqual([outer]);
+        expect(listParagraphsOf(body)).toEqual([outer]);
     });
 });

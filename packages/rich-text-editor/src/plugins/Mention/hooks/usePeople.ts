@@ -7,14 +7,8 @@ import { type MentionItem, type MentionItems } from '../types';
 /** How many people the picker offers at once. */
 const SUGGESTION_LIMIT = 8;
 
-/**
- * How a lookup ended: the people found, or a failure.
- */
 export type PeopleOutcome = { status: 'found'; people: readonly MentionItem[] } | { status: 'failed' };
 
-/**
- * The outcome of one lookup, tagged with the query and attempt it answers.
- */
 type Answer = { query: string; attempt: number; outcome: PeopleOutcome };
 
 export type UsePeopleResult = {
@@ -27,11 +21,8 @@ export type UsePeopleResult = {
 };
 
 /**
- * The people for a query. Answers are tagged with their query and attempt so a
- * slow one never overwrites a newer one; the last outcome stays up while
- * `pending`, so a server-backed list does not flicker on every key. A failed
- * lookup offers nobody rather than leaving the last list up, and `retry` asks
- * again.
+ * The people for a query. Answers are tagged with query and attempt so a slow one never overwrites a newer one; the
+ * last outcome stays up while `pending`, so a server-backed list does not flicker on every key. `retry` asks again.
  */
 export const usePeople = (items: MentionItems, query: string): UsePeopleResult => {
     const [answer, setAnswer] = useState<Answer | null>(null);

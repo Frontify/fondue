@@ -201,10 +201,7 @@ const findMarkRange = (state: EditorState, markType: PmMarkType): { from: number
     return range;
 };
 
-/**
- * The text a clear covers: the selection, or at a caret in a text block with scope `'block'`, the whole block around
- * it, so no block is left half cleared.
- */
+/** The selection, or with scope `'block'` at a caret, its whole text block. */
 const clearRangeOf = (state: EditorState, scope: ClearMarksScope): { from: number; to: number } => {
     const { from, to, empty, $from } = state.selection;
     switch (scope) {
@@ -296,7 +293,6 @@ const createMarkApi = (
             }
         }
         if (empty) {
-            // What typing here would carry, as far as it is kept.
             const carried = state.storedMarks ?? $from.marks();
             const kept = carried.filter((mark) => keeps(mark.type.name));
             if (kept.length < carried.length) {

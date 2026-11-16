@@ -6,8 +6,7 @@ import * as toolbarGroups from './toolbarGroups';
 
 const GROUP_KEYS = ['id', 'order'];
 const NOT_A_GROUP_REASON =
-    'Every export of toolbarGroups.ts must be one `{ id, order }` group. A plugin reads its group as `TOOLBAR_GROUPS.marks` from a namespace import, ' +
-    'and that stays removable by tree shaking only while each group is its own export. A property read on an exported object (a `TOOLBAR_GROUPS` record) keeps every plugin in the renderer bundle, which rendererBundle.spec.ts rejects.';
+    'Export one `{ id, order }` group per name: a property read on an exported record keeps every plugin in the renderer bundle.';
 
 it('exports only single { id, order } groups, never a record of groups', () => {
     const exports = Object.entries(toolbarGroups);
