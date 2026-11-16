@@ -7,18 +7,12 @@ import {
     liftEmptyBlock,
     newlineInCode,
     setBlockType,
-    splitBlockAs,
+    splitBlock,
 } from 'prosemirror-commands';
 import { history, redo } from 'prosemirror-history';
 import { InputRule, inputRules, undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
-import {
-    type ContentMatch,
-    type Mark as PmMark,
-    type Node as PmNode,
-    type NodeType as PmNodeType,
-    type Schema,
-} from 'prosemirror-model';
+import { type Mark as PmMark, type Node as PmNode, type Schema } from 'prosemirror-model';
 import { type Command, type EditorState, Plugin, type Plugin as PmPlugin, TextSelection } from 'prosemirror-state';
 import { canJoin, findWrapping } from 'prosemirror-transform';
 
@@ -505,58 +499,39 @@ const runEndTextRule = (rule: RuleOfKind<'text'>, context: RuleContext): InputRu
 
 // Baseline
 
-/** The block the baseline's split falls back to: the first allowed text block that needs no attributes. */
-const defaultBlockAt = (match: ContentMatch): PmNodeType | null => {
-    for (let index = 0; index < match.edgeCount; index++) {
-        const { type } = match.edge(index);
-        if (type.isTextblock && !type.hasRequiredAttrs()) {
-            return type;
-        }
-    }
-    return null;
-};
-
 /**
- * The baseline keymap's Enter, except the new block after the caret carries the
- * attributes every text block carries (alignment), which a split at the end of
- * a block would otherwise drop with the block's type.
+ * The baseline keymap's Enter, except both blocks a split leaves carry the
+ * attributes every text block carries (alignment). The engine's own split drops
+ * them on the paragraph it makes after a block's end, and on the empty block it
+ * leaves above a heading's start.
  */
 const splitKeepingCarriedAttrs =
     (registry: PluginRegistry): Command =>
     (state, dispatch) => {
-        // At the very start of a non-default block the engine retypes the empty block above to the default, dropping its attributes.
-        let splitAtStart = false;
-        const split = chainCommands(
-            newlineInCode,
-            createParagraphNear,
-            liftEmptyBlock,
-            splitBlockAs((node, atEnd, $from) => {
-                splitAtStart = !atEnd && $from.parentOffset === 0;
-                // Mid-block, the engine's own split copies the block, attributes included.
-                if (!atEnd) {
-                    return null;
-                }
-                const type = defaultBlockAt($from.node(-1).contentMatchAt($from.indexAfter(-1)));
-                if (!type) {
-                    return null;
-                }
-                return { type, attrs: keepCarriedAttrs(registry, type, undefined)(node) };
-            }),
-        );
-        if (!dispatch) {
-            return split(state);
-        }
-        return split(state, (transaction) => {
-            const { $from } = transaction.selection;
-            const above = transaction.doc.resolve($from.before()).nodeBefore;
-            if (splitAtStart && above?.isTextblock) {
-                const attrs = withCarriedAttrs(registry, above, $from.parent);
-                if (attrs) {
-                    transaction.setNodeMarkup($from.before() - above.nodeSize, undefined, attrs);
-                }
+        // Over a range the text that stays is the block the range ends in, so that block decides.
+        const source = state.selection.$to.parent;
+        const split: Command = (splitState, splitDispatch) => {
+            if (!splitDispatch) {
+                return splitBlock(splitState);
             }
-            dispatch(transaction);
-        });
+            return splitBlock(splitState, (transaction) => {
+                const { $from } = transaction.selection;
+                const below = $from.parent;
+                const above = transaction.doc.resolve($from.before()).nodeBefore;
+                const belowAttrs = withCarriedAttrs(registry, below, source);
+                if (belowAttrs) {
+                    transaction.setNodeMarkup($from.before(), undefined, belowAttrs);
+                }
+                if (above?.isTextblock) {
+                    const aboveAttrs = withCarriedAttrs(registry, above, source);
+                    if (aboveAttrs) {
+                        transaction.setNodeMarkup($from.before() - above.nodeSize, undefined, aboveAttrs);
+                    }
+                }
+                splitDispatch(transaction);
+            });
+        };
+        return chainCommands(newlineInCode, createParagraphNear, liftEmptyBlock, split)(state, dispatch);
     };
 
 /**
