@@ -653,14 +653,18 @@ export const blockAttributeStyle = (registry: PluginRegistry, stored: Record<str
 };
 
 /**
- * A block's markup with what every text block carries (alignment) applied to
- * its outermost element — shared by editor, readonly view and export so they agree.
+ * A block's markup with what every block carries applied to its outermost
+ * element — alignment on a text block. Shared by editor, readonly view and
+ * export so they agree.
  */
 export const blockHtml = (
     registry: PluginRegistry,
     definition: BlockDefinition,
     stored: Record<string, unknown>,
 ): HtmlSpec => {
-    const spec = definition.toHtml(blockValueOf(definition, stored));
-    return definition.content === 'text' ? withRootStyle(spec, blockAttributeStyle(registry, stored)) : spec;
+    let spec = definition.toHtml(blockValueOf(definition, stored));
+    if (definition.content === 'text') {
+        spec = withRootStyle(spec, blockAttributeStyle(registry, stored));
+    }
+    return spec;
 };
