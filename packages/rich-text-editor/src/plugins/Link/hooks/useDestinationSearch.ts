@@ -14,9 +14,6 @@ export type DestinationSearch =
     | { status: 'done'; results: readonly LinkDestination[] }
     | { status: 'idle' | 'searching' | 'failed' };
 
-/**
- * The answer to one query.
- */
 type Answer =
     | { query: string; status: 'done'; results: readonly LinkDestination[] }
     | { query: string; status: 'failed' };
@@ -41,11 +38,11 @@ export const useDestinationSearch = (
         }
         const controller = new AbortController();
         const lookUp = async (): Promise<void> => {
-            let found: Answer = { query: wanted, status: 'failed' };
+            let found: Answer;
             try {
                 found = { query: wanted, status: 'done', results: await search(wanted, controller.signal) };
             } catch {
-                // Left failed.
+                found = { query: wanted, status: 'failed' };
             }
             if (!controller.signal.aborted) {
                 setAnswer(found);
