@@ -18,13 +18,9 @@ export type MentionContentOptions = {
      */
     href?: MentionHref;
     /**
-     * What the app knows now about a stored mention: a renamed person shows
-     * their current username and name, a deleted or forbidden one shows the
-     * stored username marked unavailable, with no link. Without it, for
-     * `unknown`, or when it answers with no known status, the stored value shows. The document is
-     * never changed. Read when a mention is drawn: a changed `resolve` applies
-     * once the editor is remounted. A throw is not caught: it reaches the editor's `onError`
-     * when the editor draws the mention, and the caller of `serializeToHtml` otherwise.
+     * What the app knows now about a stored mention: a renamed person shows their current names, a deleted or
+     * forbidden one its stored username marked unavailable, with no link. The document never changes. Read when a
+     * mention is drawn, so a changed `resolve` applies once the editor remounts. A throw reaches the editor's `onError`.
      */
     resolve?: MentionResolve;
     /**
@@ -70,8 +66,7 @@ export const mentionContent = ({ href, resolve, labels, trigger = '@' }: Mention
                             ...mentionAttributes(mention),
                             class: styles.mention ?? '',
                         },
-                        // Isolated so a right-to-left name cannot reorder the text around it; `@` and
-                        // the label only, without the note an unavailable mention shows when read.
+                        // Without the note an unavailable mention shows when read.
                         children: [{ tag: BIDI_ISOLATE_TAG, children: shown.label }],
                     };
                 },

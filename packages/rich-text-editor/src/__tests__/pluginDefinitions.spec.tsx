@@ -188,11 +188,8 @@ describe('mentionPlugin', () => {
         expect(mentions.map((mention) => mention.tagName)).toEqual(['A', 'SPAN', 'A']);
         expect(mentions.map((mention) => mention.textContent)).toEqual(['@ana.m', '@bob (unavailable)', '@cy']);
         expect(mentions.map((mention) => mention.getAttribute('title'))).toEqual(['Ana Meier', 'Name bob', 'Name cy']);
-        // The note stays outside the isolated name.
         expect(mentions.map((mention) => mention.querySelector('bdi')?.textContent)).toEqual(['@ana.m', '@bob', '@cy']);
-        // The stored username stays in the data, whatever is shown.
         expect(mentions.map((mention) => mention.getAttribute('data-mention-username'))).toEqual(['ana', 'bob', 'cy']);
-        // The stored name travels in the markup, whatever the title shows.
         expect(mentions.map((mention) => mention.getAttribute('data-mention-name'))).toEqual([
             'Name ana',
             'Name bob',
