@@ -64,10 +64,17 @@ $headings: h1, h2, h3, h4;
         margin-block: 0 var(--rte-block-gap);
     }
 
-    // A plain paragraph reads the margins of the body look, which a host sets with `paragraphPlugin`, in list items too.
-    // Without one, the look's defaults are no top margin and the gap below, so this has the rank of the rule above.
+    // A plain paragraph reads the margins of the body look, which a host sets with `textStylePlugin({ presets })`,
+    // in list items too. Without one, the look's defaults are no top margin and the gap below, so this has the rank
+    // of the rule above.
     p:not([data-rte-own-margins]) {
         @include look.look('body', $only: (margin-top, margin-bottom));
+    }
+
+    // The rest of the body look, for plain paragraphs, in list items too. `:where` keeps it at class rank,
+    // below a checked item's colour and strike.
+    :where(p:not([data-rte-own-margins])) {
+        @include look.look('body', $except: (margin-top, margin-bottom));
     }
 
     // A heading belongs to the text below it, so it sits further from the block above than from its own text.

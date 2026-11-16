@@ -8,7 +8,6 @@ import {
     fontColorPlugin,
     type LinkLook,
     linkPlugin,
-    paragraphPlugin,
     quotePlugin,
     RichTextEditor,
     RichTextRenderer,
@@ -21,7 +20,6 @@ import {
 import { BODY_QUOTE_LINK_DOCUMENT } from './hostStylingValues';
 
 type HostLooksPairProps = {
-    /** Body text; the plugin is mounted only when this is given. */
     body?: TextLook;
     quote?: TextLook;
     link?: LinkLook;
@@ -32,20 +30,14 @@ type HostLooksPairProps = {
     value?: RteDocument;
 };
 
-const pluginsWithLooks = ({ body, quote, link }: HostLooksPairProps): RtePlugin[] => {
-    const plugins = [
-        textStylePlugin(),
-        bulletListPlugin,
-        checkListPlugin,
-        fontColorPlugin,
-        quotePlugin({ look: quote }),
-        linkPlugin({ look: link }),
-    ];
-    if (body !== undefined) {
-        plugins.push(paragraphPlugin({ look: body }));
-    }
-    return plugins;
-};
+const pluginsWithLooks = ({ body, quote, link }: HostLooksPairProps): RtePlugin[] => [
+    textStylePlugin({ presets: { body, quote, link } }),
+    bulletListPlugin,
+    checkListPlugin,
+    fontColorPlugin,
+    quotePlugin,
+    linkPlugin,
+];
 
 /** The renderer and the editor side by side, drawing body text, a quote and links with the same looks. */
 export const HostLooksPair = ({ value = BODY_QUOTE_LINK_DOCUMENT, ...looks }: HostLooksPairProps) => {

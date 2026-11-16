@@ -5,6 +5,7 @@ import { type Locator } from '@playwright/test';
 
 import { type LinkLook, type TextLook, type TextStyleName } from '../../index';
 
+import { HostBodyContentPair } from './HostBodyContentPair';
 import { HostLooksPair } from './HostLooksPair';
 import { HostResetPair } from './HostResetPair';
 import { HostStylingPair } from './HostStylingPair';
@@ -287,7 +288,7 @@ test.describe('host styling of text styles', () => {
     });
 });
 
-// Body text, block quotes and links take a look through `paragraphPlugin`, `quotePlugin` and `linkPlugin`.
+// Body text, block quotes and links take a look through `textStylePlugin({ presets })`.
 
 type LookedBlock = 'body' | 'bullet' | 'check' | 'quote' | 'link' | 'custom1' | 'heading1';
 
@@ -422,6 +423,17 @@ test.describe('host styling of body text, quotes and links', () => {
                 custom1: BASELINE_LOOKS.custom1,
                 heading1: BASELINE_LOOKS.heading1,
             });
+        }
+    });
+
+    test('applies the body look from the content half alone, with no text style plugin', async ({ mount }) => {
+        const component = await mount(<HostBodyContentPair body={HOST_LOOK} />);
+
+        for (const surface of SURFACES) {
+            const section = component.getByTestId(surface);
+            for (const block of ['body', 'bullet', 'check'] as const) {
+                expect(await computedLookOf(blockIn(section, block))).toEqual(HOST_COMPUTED_LOOK);
+            }
         }
     });
 

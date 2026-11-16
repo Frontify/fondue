@@ -10,7 +10,6 @@ import { HOST_PAGE_CLASS } from './hostStylingValues';
 type HostResetPairProps = {
     /** The host page's stylesheet. */
     hostCss: string;
-    /** Body text; the plugin is mounted only when this is given. */
     body?: TextLook;
 };
 
