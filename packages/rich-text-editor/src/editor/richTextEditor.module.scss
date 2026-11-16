@@ -22,7 +22,6 @@
     margin-bottom: var(--spacing-x-small);
 }
 
-/** Read by assistive technology, never drawn: the plugins' descriptions and the live region. */
 .visuallyHidden {
     position: absolute;
     overflow: hidden;
@@ -185,7 +184,7 @@
         }
     }
 
-    /** Drawn on the empty block so it starts where typing will; the float and zero height keep it out of the caret's way. The text is the engine's (engine.scss). */
+    /** The float and zero height keep it out of the caret's way; the engine sets the text. */
     .placeholder::before {
         float: left;
         height: 0;

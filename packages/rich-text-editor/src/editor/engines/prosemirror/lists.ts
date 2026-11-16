@@ -193,9 +193,8 @@ export const liftOutOfLists = (
     const mapping = new Mapping();
     let current = state;
     for (let round = 0; round < MAX_NESTING; round++) {
-        // The selection the caller had, moved past the lifts so far.
-        const selection = state.selection.map(current.doc, mapping);
-        const lifted = liftOnce(current, selection, itemTypeByList, itemTypes);
+        const callerSelection = state.selection.map(current.doc, mapping);
+        const lifted = liftOnce(current, callerSelection, itemTypeByList, itemTypes);
         if (lifted === null) {
             break;
         }

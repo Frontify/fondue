@@ -84,8 +84,7 @@ const selectText = (editable: HTMLElement): void => {
     });
 };
 
-/** Selects from the start of the first run of text to the end of the last, across every block between. */
-const selectAcross = (editable: HTMLElement): void => {
+const selectFirstToLastText = (editable: HTMLElement): void => {
     const walker = window.document.createTreeWalker(editable, NodeFilter.SHOW_TEXT);
     const first = walker.nextNode();
     let last = first;
@@ -242,7 +241,7 @@ describe('the floating bar', () => {
 
     it('turns a range across two lists and the text between them into plain text', () => {
         const { bar, editable, stored } = open('<ul><li>one</li></ul><p>between</p><ol><li>two</li></ol>');
-        selectAcross(editable);
+        selectFirstToLastText(editable);
 
         turnInto(bar, 'Text');
 

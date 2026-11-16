@@ -51,9 +51,7 @@ export const WORD_START_CONTEXT = String.raw`\s([{<'"“‘`;
 export const ANY_LIST = '@anyList';
 
 /**
- * What the editor keeps of the list data Word and Outlook write on a list paragraph, as attributes on that paragraph,
- * exactly as the source app wrote it and without reading it, for a paste transform to read. The editor removes any
- * the paste itself carries before it writes them, and removes all of them after the transforms have run.
+ * Word's list data as written, kept on each list paragraph for a paste transform; the editor removes it after the transforms run.
  * - `list`: the id of the source app's list (Word's `l0 lfo1`).
  * - `level`: the nesting level, as the digits Word wrote.
  * - `marker`: the text of the marker the paragraph began with, such as `1.` or `·`.

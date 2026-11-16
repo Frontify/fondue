@@ -397,7 +397,7 @@ describe('Backspace', () => {
     });
 });
 
-/** A test-only mark that, unlike `verbatimPlugin`'s, leaves typing rules and hotkeys on. */
+/** A mark that keeps typing rules and hotkeys on, unlike `verbatimPlugin`'s. */
 const plainMarkPlugin = definePlugin({
     id: 'plain',
     content: defineContent({
@@ -410,7 +410,6 @@ const plainMarkPlugin = definePlugin({
     }),
 });
 
-/** A test-only mark that, like literal text, opts out of typing rules and single-character hotkeys. */
 const verbatimPlugin = definePlugin({
     id: 'verbatim',
     content: defineContent({

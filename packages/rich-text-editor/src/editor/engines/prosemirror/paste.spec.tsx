@@ -131,8 +131,7 @@ describe('a plugin paste transform', () => {
 });
 
 describe('what a paste transform is told about the mounted content', () => {
-    /** Asks the transform's `isClaimed` about `html`'s first element while `plugins` are mounted. */
-    const claimedWith = (plugins: readonly RtePlugin[], html: string): boolean | undefined => {
+    const firstElementClaimedWith = (plugins: readonly RtePlugin[], html: string): boolean | undefined => {
         let claimed: boolean | undefined;
         const ask: PasteTransform = {
             id: 'ask',
@@ -161,15 +160,15 @@ describe('what a paste transform is told about the mounted content', () => {
     const markerPlugin = definePlugin({ id: 'marker', content: defineContent({ marks: { marker: markerMark } }) });
 
     it('says a mounted block reads the element by its tag rule', () => {
-        expect(claimedWith([tablePlugin], '<table><tr><td>a</td></tr></table>')).toBe(true);
+        expect(firstElementClaimedWith([tablePlugin], '<table><tr><td>a</td></tr></table>')).toBe(true);
     });
 
     it('says a mounted mark reads the element by its tag rule', () => {
-        expect(claimedWith([markerPlugin], '<mark>a</mark>')).toBe(true);
+        expect(firstElementClaimedWith([markerPlugin], '<mark>a</mark>')).toBe(true);
     });
 
     it('says no mounted content reads an element no rule matches', () => {
-        expect(claimedWith([tablePlugin, markerPlugin], '<pre>a</pre>')).toBe(false);
+        expect(firstElementClaimedWith([tablePlugin, markerPlugin], '<pre>a</pre>')).toBe(false);
     });
 });
 

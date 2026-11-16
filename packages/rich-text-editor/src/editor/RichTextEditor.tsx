@@ -312,7 +312,7 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
         ariaLabelledBy,
         ariaDescribedBy: describedByOf(ariaDescribedBy, pluginDescriptionId),
     });
-    // The mounted editor is the editable one; `editable` is what shows the text cursor.
+    // Read-only renders without the engine, so this editor always takes edits.
     const className = [documentStyles.document, styles.content, styles.editable, ...registry.contentClassNames].join(
         ' ',
     );
@@ -534,13 +534,12 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
                     {toolbar}
                 </FloatingToolbar>
             ) : null}
-            {/* Read with the editor through its `aria-describedby`: what each plugin says about its keys. */}
             {readOnly || !hasDescriptions ? null : (
                 <div id={descriptionId} className={styles.visuallyHidden}>
                     {registry.descriptions.join(' ')}
                 </div>
             )}
-            {/* What `api.announce` says. The role is written out on purpose: the specs and the notice lookup find the region by it. */}
+            {/* Safari does not read an `output` as a status, so the role is written out. */}
             <output // NOSONAR
                 role="status"
                 className={styles.visuallyHidden}
@@ -602,7 +601,6 @@ const mountFocusTarget = (retryFocus: RetryFocus, readOnly: boolean): MountFocus
     }
 };
 
-/** The host's description of the editor, then the element holding what the plugins say about their keys. */
 const describedByOf = (hostId: string | undefined, pluginId: string | undefined): string | undefined => {
     if (pluginId === undefined) {
         return hostId;

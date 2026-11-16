@@ -17,16 +17,12 @@ const BidiIsolate = BIDI_ISOLATE_TAG;
 type MentionLinkProps = {
     value: MentionValue;
     display: MentionDisplay;
-    /** A click places the caret rather than following the link: true while the editor takes edits. */
     placesCaret: boolean;
 };
 
 /**
- * A finished mention: the shown username linking to the person, with the name
- * on hover. Carries the same attributes as `toHtml`, so copied text pastes back
- * as a mention. A group is marked with its icon, as the old editor did; with
- * nowhere to link to (`@all`), the mention is text, and an unavailable person
- * is text with a note after the name.
+ * A finished mention: the shown username linking to the person, name on hover. Carries the same attributes as
+ * `toHtml`, so copied text pastes back as a mention.
  */
 export const MentionLink = ({ value, display, placesCaret }: MentionLinkProps): ReactNode => {
     const attributes = {
@@ -34,8 +30,7 @@ export const MentionLink = ({ value, display, placesCaret }: MentionLinkProps): 
         ...mentionAttributes(value),
         className: styles.mention,
     };
-    // In the editor a click places the caret; the link is followed only when reading.
-    const placeCaret = (event: MouseEvent<HTMLAnchorElement>): void => {
+    const followLinkOnlyWhenReading = (event: MouseEvent<HTMLAnchorElement>): void => {
         if (placesCaret) {
             event.preventDefault();
         }
@@ -50,7 +45,7 @@ export const MentionLink = ({ value, display, placesCaret }: MentionLinkProps): 
     switch (display.status) {
         case 'linked':
             element = (
-                <a href={display.href} {...attributes} onClick={placeCaret}>
+                <a href={display.href} {...attributes} onClick={followLinkOnlyWhenReading}>
                     {name}
                 </a>
             );

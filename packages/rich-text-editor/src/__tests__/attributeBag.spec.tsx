@@ -58,15 +58,13 @@ const value = { version: 1, blocks: [{ type: 'carrier', children: [{ text: 'text
 
 const BAG: HtmlAttributes = { 'data-x': 'y', popover: true, hidden: false, title: undefined };
 
-/** Attributes the markup must refuse, as an untyped plugin could still write them. */
 const REFUSED: [string, HtmlAttributes][] = [
     ['an event handler', { onclick: 'alert(1)' }],
     ['an event handler in capitals', { OnClick: 'alert(1)' }],
     ['a name with a space', { 'data x': 'y' }],
 ];
 
-/** An attribute every stored-value case carries, so the test can find the drawn element on each surface. */
-const KEPT = 'data-keep';
+const LOCATOR_ATTRIBUTE = 'data-keep';
 
 const toUntyped = (attrs: Record<string, unknown>): HtmlAttributes => attrs as unknown as HtmlAttributes;
 
@@ -143,15 +141,18 @@ describe('the attributes of markup', () => {
     });
 });
 
-/** The element each surface draws for the markup, so a stored value is judged the same on all three. */
-const drawnBy = (attrs: HtmlAttributes): Record<string, Element | null | undefined> => {
+const elementOnEachSurface = (attrs: HtmlAttributes): Record<string, Element | null | undefined> => {
     const plugin = attributesPlugin(attrs);
     const exported = window.document.createElement('div');
     exported.innerHTML = serializeToHtml(value, { plugins: [plugin], wrap: false });
     return {
-        editor: mountView(() => <RichTextEditor value={value} plugins={[plugin]} />).querySelector(`[${KEPT}]`),
-        export: exported.querySelector(`[${KEPT}]`),
-        view: mountView(() => <RichTextRenderer value={value} plugins={[plugin]} />).querySelector(`[${KEPT}]`),
+        editor: mountView(() => <RichTextEditor value={value} plugins={[plugin]} />).querySelector(
+            `[${LOCATOR_ATTRIBUTE}]`,
+        ),
+        export: exported.querySelector(`[${LOCATOR_ATTRIBUTE}]`),
+        view: mountView(() => <RichTextRenderer value={value} plugins={[plugin]} />).querySelector(
+            `[${LOCATOR_ATTRIBUTE}]`,
+        ),
     };
 };
 
@@ -159,10 +160,12 @@ describe('a stored value in the attributes of markup', () => {
     it('is left out when it is null or undefined, without a warning', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-        const surfaces = drawnBy(toUntyped({ [KEPT]: 'y', 'data-null': null, 'data-undefined': undefined }));
+        const surfaces = elementOnEachSurface(
+            toUntyped({ [LOCATOR_ATTRIBUTE]: 'y', 'data-null': null, 'data-undefined': undefined }),
+        );
 
         for (const element of Object.values(surfaces)) {
-            expect(element?.getAttribute(KEPT)).toBe('y');
+            expect(element?.getAttribute(LOCATOR_ATTRIBUTE)).toBe('y');
             expect(element?.hasAttribute('data-null')).toBe(false);
             expect(element?.hasAttribute('data-undefined')).toBe(false);
         }
@@ -170,7 +173,7 @@ describe('a stored value in the attributes of markup', () => {
     });
 
     it('is written as a string when it is a number', () => {
-        const surfaces = drawnBy(toUntyped({ [KEPT]: 'y', 'data-count': 3 }));
+        const surfaces = elementOnEachSurface(toUntyped({ [LOCATOR_ATTRIBUTE]: 'y', 'data-count': 3 }));
 
         for (const element of Object.values(surfaces)) {
             expect(element?.getAttribute('data-count')).toBe('3');
@@ -180,12 +183,17 @@ describe('a stored value in the attributes of markup', () => {
     it('is left out with one development warning when it is anything else, a style that is not a map included', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-        const surfaces = drawnBy(
-            toUntyped({ [KEPT]: 'y', 'data-object-value': { color: 'red' }, title: ['a'], style: 'color: red' }),
+        const surfaces = elementOnEachSurface(
+            toUntyped({
+                [LOCATOR_ATTRIBUTE]: 'y',
+                'data-object-value': { color: 'red' },
+                title: ['a'],
+                style: 'color: red',
+            }),
         );
 
         for (const element of Object.values(surfaces)) {
-            expect(element?.getAttribute(KEPT)).toBe('y');
+            expect(element?.getAttribute(LOCATOR_ATTRIBUTE)).toBe('y');
             expect(element?.hasAttribute('data-object-value')).toBe(false);
             expect(element?.hasAttribute('title')).toBe(false);
             expect(element?.hasAttribute('style')).toBe(false);

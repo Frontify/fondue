@@ -1279,9 +1279,6 @@ const acmeEmbedContent = defineContent({
     },
 });
 
-/**
- * The embed while editing: the picker until a provider is chosen, then the embed itself
- */
 const AcmeEmbedEdit = ({ value, setValue, remove, api }: RtePlugin.EditProps<EmbedValue, EmbedValue | null>) => {
     if (value === null) {
         return (
@@ -1302,7 +1299,6 @@ const AcmeEmbedEdit = ({ value, setValue, remove, api }: RtePlugin.EditProps<Emb
 
 const acmeEmbedPlugin = /* @__PURE__ */ definePlugin({
     content: acmeEmbedContent,
-    // An empty embed, which its `edit` view then takes over.
     // The editor's `/` menu owns the `/` key, so the embed is one of its entries.
     commands: [{ id: 'acme-embed', label: 'Embed', group: 'insert', run: (api) => api.insert('acme-embed') }],
     edit: { 'acme-embed': AcmeEmbedEdit },

@@ -1,9 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// The plugin list flattened into one engine-agnostic lookup. With the content
-// registry, the only place that reads `RtePlugin` and `RteContent`: the editor
-// shell, engine and renderer read the registry, so each declaration is
-// gathered, ordered and checked once.
+// The plugin list and its editing parts flattened into one engine-agnostic lookup; content comes from `buildContentRegistry`.
 
 import { type ReactNode } from 'react';
 
@@ -82,14 +79,8 @@ export type ToolbarEntry = {
       }
 );
 
-/**
- * Who binds a shortcut: the editor itself, or one plugin
- */
 export type RteShortcutOwner = { kind: 'editor' } | { kind: 'plugin'; pluginId: string };
 
-/**
- * A key the editor or a plugin binds, as the keyboard reference lists it
- */
 export type RteShortcut = {
     owner: RteShortcutOwner;
     /**
@@ -111,7 +102,7 @@ export type PluginRegistry = ContentRegistry & {
     /** Key → its handlers, in mount order; they run until one handles it. */
     hotkeys: Map<string, readonly HotkeyHandler[]>;
     /**
-     * Every key bound, labelled: the editor's own first, then each plugin's `hotkeys` and the toolbar `shortcut`s that bind a key too, plugin by plugin in declaration order.
+     * The editor's own keys first, then each plugin's hotkeys and toolbar shortcuts, plugin by plugin.
      */
     shortcuts: readonly RteShortcut[];
     /**
@@ -272,15 +263,9 @@ export const toggleOwn = ({ own, api, selection, value }: ToggleOwnParams): void
     }
 };
 
-/** A block's own attributes: everything but its type and children. */
 const attributesOf = (block: Record<string, unknown>): Record<string, unknown> =>
     Object.fromEntries(Object.entries(block).filter(([name]) => name !== 'type' && name !== 'children'));
 
-/**
- * The entry's type at the selection: a mark as its whole run, edges included;
- * the innermost block of that type around the selection. Null when the
- * selection is not in one, and always for an inline, which it only sits beside.
- */
 export const selectedNodeOf = (
     own: OwnType,
     api: EditorControlApi,
@@ -314,7 +299,6 @@ export const selectedNodeOf = (
 
 type SelectionBlock = RteSelectionSnapshot['blocks'][number];
 
-/** Whether the block is the one the command names: its type, and every attribute the command lists. */
 const isCommandTarget = (target: RteCommandTarget, block: SelectionBlock): boolean => {
     if (target.type !== block.type) {
         return false;
@@ -342,10 +326,14 @@ export const activeCommand = (
     return undefined;
 };
 
+const assertKnownModifiers = (keys: string): void => {
+    parseHotkey(keys);
+};
+
 const NOTHING_TO_TOGGLE = 'nothing to toggle: name a mark, list, text block, void block or inline with `toggles`.';
 
 /**
- * Throws unless the label is a non-empty string. A toolbar label is the control's only accessible name and a hotkey's names it in the keyboard reference, so an untyped caller cannot leave it out.
+ * Throws unless the label is a non-empty string: an untyped caller can leave it out.
  */
 const assertLabelled = (plugin: RtePlugin, label: unknown, subject: string): void => {
     if (typeof label !== 'string' || label === '') {
@@ -453,9 +441,6 @@ const EDITOR_SHORTCUT_ROWS: readonly RteShortcut[] = Object.values(EDITOR_SHORTC
 /** The first plugin to declare a toolbar group, and the order it gave it. */
 type ToolbarGroupOwner = { pluginId: string; order: number };
 
-/**
- * What `buildPluginRegistry` fills while it walks the plugins.
- */
 type Draft = {
     edits: Map<string, RteEditView>;
     hotkeys: Map<string, HotkeyHandler[]>;
@@ -499,15 +484,12 @@ const addShortcut = (draft: Draft, plugin: RtePlugin, item: ToolbarEntry): void 
     if (controlOf(item.own).kind === 'none') {
         throw new Error(`Plugin "${plugin.id}" names shortcut "${shortcut}" with ${NOTHING_TO_TOGGLE}`);
     }
-    // Throws for a modifier the grammar does not know, before the editor mounts.
-    parseHotkey(shortcut);
+    assertKnownModifiers(shortcut);
     addHotkey(draft, shortcut, (api) => toggleOwn({ own: item.own, api, selection: api.selection.get() }));
     draft.shortcuts.push({ owner: { kind: 'plugin', pluginId: plugin.id }, key: shortcut, label: item.label });
 };
 
-/**
- * Throws unless the plugin's toolbar group has an id and a finite order, and agrees on that order with every plugin that shares the id. The order is what the toolbar draws by, so one group with two orders has no right place.
- */
+/** One id with two orders has no right place in the drawing order. */
 const assertToolbarGroup = (draft: Draft, plugin: RtePlugin): void => {
     const group = plugin.toolbarGroup;
     if (group === undefined) {
@@ -571,8 +553,7 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
     }
     draft.seenIds.set(plugin.id, occurrence + 1);
     for (const [keys, hotkey] of Object.entries(plugin.hotkeys ?? {})) {
-        // Throws for a modifier the grammar does not know, before the editor mounts.
-        parseHotkey(keys);
+        assertKnownModifiers(keys);
         assertLabelled(plugin, hotkey.label, `a hotkey "${keys}"`);
         addHotkey(draft, keys, hotkey.run);
         draft.shortcuts.push({ owner: { kind: 'plugin', pluginId: plugin.id }, key: keys, label: hotkey.label });
@@ -601,9 +582,6 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
     }
 };
 
-/**
- * The content registry plus what the plugins add for editing.
- */
 export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]): PluginRegistry => {
     const content = buildContentRegistry(entries);
     const draft: Draft = {
@@ -652,10 +630,7 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
     };
 };
 
-/**
- * Whether `rule` reads `element`: a tag rule whose selector matches it, and that skips it or finds a value on it.
- * Style and clear rules read no element of their own.
- */
+/** Style and clear rules have no tag, so they read no element of their own. */
 const readsElement = (rule: MarkParseRule<unknown>, element: HTMLElement): boolean => {
     if (rule.tag === undefined || !element.matches(rule.tag)) {
         return false;
@@ -663,10 +638,6 @@ const readsElement = (rule: MarkParseRule<unknown>, element: HTMLElement): boole
     return readTagRule(rule, element).kind !== 'unread';
 };
 
-/**
- * The `isClaimed` a paste transform is handed: whether a mounted block, inline or mark reads an element by one of
- * its tag rules.
- */
 export const isClaimedBy = (registry: ContentRegistry): PasteTransformContext['isClaimed'] => {
     const rules: MarkParseRule<unknown>[] = [];
     for (const node of [...registry.blocks.values(), ...registry.inlines.values(), ...registry.marks.values()]) {

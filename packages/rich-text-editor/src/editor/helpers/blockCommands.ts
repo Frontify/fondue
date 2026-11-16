@@ -26,11 +26,7 @@ export const commandsOf = (registry: PluginRegistry, textLabel = TEXT_COMMAND.la
 export const turnIntoCommands = (commands: readonly RteBlockCommand[]): readonly RteBlockCommand[] =>
     commands.filter((command) => command.group === 'turnInto');
 
-/**
- * The command the selection is in. A plugin's command wins: a paragraph in a
- * list item is the list's, not plain text. The built-in Text is the current
- * one only when no plugin command is.
- */
+/** A plugin's command wins: a paragraph in a list item is the list's, not plain text. */
 export const currentCommand = (
     commands: readonly RteBlockCommand[],
     selection: RteSelectionSnapshot,

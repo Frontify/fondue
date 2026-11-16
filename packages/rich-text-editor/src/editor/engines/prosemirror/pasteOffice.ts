@@ -41,8 +41,7 @@ const PARAGRAPH_MARKER = 'o:p';
 const OFFICE_STYLED = '[class*="Mso"], [style*="mso-"]';
 /** Spans that may hold a list paragraph's marker, before their style is read. */
 const LIST_SPAN = 'span[style*="mso-list"]';
-/** The element Word writes a list item as. */
-const LIST_PARAGRAPH = 'p';
+const WORD_LIST_ITEM_TAG = 'p';
 
 /**
  * Keeps Word's list data past the engine, which merges the pasted `<style>`
@@ -75,14 +74,11 @@ export const keepOfficeListStyles = (html: string): string => {
     return parts.join('');
 };
 
-/** Every attribute of the Office list data. */
 const OFFICE_LIST_ATTRIBUTE_NAMES = Object.values(OFFICE_LIST_ATTRIBUTES);
-/** Elements carrying any attribute of the Office list data. */
-const CARRYING_OFFICE_LIST_DATA = OFFICE_LIST_ATTRIBUTE_NAMES.map((name) => `[${name}]`).join(', ');
+const ELEMENTS_WITH_OFFICE_LIST_DATA = OFFICE_LIST_ATTRIBUTE_NAMES.map((name) => `[${name}]`).join(', ');
 
-/** Removes the Office list data from every element of `root` that carries it. */
 export const removeOfficeListData = (root: ParentNode): void => {
-    for (const element of root.querySelectorAll(CARRYING_OFFICE_LIST_DATA)) {
+    for (const element of root.querySelectorAll(ELEMENTS_WITH_OFFICE_LIST_DATA)) {
         for (const name of OFFICE_LIST_ATTRIBUTE_NAMES) {
             element.removeAttribute(name);
         }
@@ -93,7 +89,6 @@ export const removeOfficeListData = (root: ParentNode): void => {
 const isOffice = (dom: HTMLElement): boolean =>
     dom.getElementsByTagName(PARAGRAPH_MARKER).length > 0 || dom.querySelector(OFFICE_STYLED) !== null;
 
-/** Word's list data on a list paragraph, as written: the list's id, the level's digits and the marker's text. */
 type ListData = { list: string; level: string; marker: string };
 
 /** The elements of `dom` that hold text other than whitespace, each ancestor added once. */
@@ -137,10 +132,9 @@ const markerSpans = (root: ParentNode): HTMLElement[] =>
         MARKER_STYLE.test(span.getAttribute('style') ?? ''),
     );
 
-/** The list data on `element`, or `undefined` when it is not a list paragraph. */
 const readListData = (element: HTMLElement): ListData | undefined => {
     // Word never puts a paragraph inside another; only parser tricks do, and list data written there would nest lists without bound.
-    if (element.parentElement?.closest(LIST_PARAGRAPH)) {
+    if (element.parentElement?.closest(WORD_LIST_ITEM_TAG)) {
         return undefined;
     }
     const style = element.getAttribute('style') ?? '';
@@ -158,9 +152,8 @@ const readListData = (element: HTMLElement): ListData | undefined => {
     };
 };
 
-/** Keeps the list data of each list paragraph, for a list plugin's paste transform to read. */
 const keepListData = (dom: HTMLElement): void => {
-    for (const paragraph of dom.querySelectorAll(LIST_PARAGRAPH)) {
+    for (const paragraph of dom.querySelectorAll(WORD_LIST_ITEM_TAG)) {
         const data = readListData(paragraph);
         if (data !== undefined) {
             paragraph.setAttribute(OFFICE_LIST_ATTRIBUTES.list, data.list);
@@ -171,11 +164,8 @@ const keepListData = (dom: HTMLElement): void => {
 };
 
 /**
- * Removes any Office list data the paste carries, then, for Word and Outlook,
- * keeps the list data of their list paragraphs as attributes and removes what
- * they write besides content: the `<o:p>` markers and each list marker, also
- * the number a text block carries, for example a heading. Does nothing else to
- * a paste from elsewhere.
+ * Strips what Word and Outlook write besides content, such as the number a text block carries (for example a
+ * heading), and keeps their list data on list paragraphs for a paste transform.
  */
 export const tidyOffice = (dom: HTMLElement): void => {
     // Only the editor writes the Office list data, so none the paste itself carries is read.

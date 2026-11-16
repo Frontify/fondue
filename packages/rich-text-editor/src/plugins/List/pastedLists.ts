@@ -2,14 +2,9 @@
 
 import { OFFICE_LIST_ATTRIBUTES, type PasteTransform } from '#/core';
 
-import { BULLET_LIST_TAG, LIST_ITEM_TAG, NUMBERED_LIST_TAG, START_ATTRIBUTE } from './helpers/listMarkup';
+import { BULLET_LIST_TAG, LIST_ITEM_TAG, NUMBERED_LIST_TAG, NUMBERED_LIST_START_ATTRIBUTE } from './helpers/listMarkup';
 
-// The editor keeps what Word and Outlook write on each list paragraph (the
-// list's id, the level and the marker text) as attributes; this reads them and
-// rebuilds the lists.
-
-/** Paragraphs the editor kept list data on. */
-const LIST_PARAGRAPH = `[${OFFICE_LIST_ATTRIBUTES.list}]`;
+const PARAGRAPHS_WITH_LIST_DATA = `[${OFFICE_LIST_ATTRIBUTES.list}]`;
 
 /** Dot-separated numbers (`1.`, `1.1.`, `1.1`) or letters with a delimiter (`iv)`, `a.`) are numbered markers; a glyph (`·`, `o`, `§`) is a bullet. */
 const NUMBERED_MARKER = /^\(?(?:\d+(?:\.\d+)*[.)]?|[a-z]+[.)])$/i;
@@ -22,10 +17,8 @@ const FIRST_LEVEL = 1;
 
 type ListKind = 'bullet' | 'numbered';
 
-/** Where an item belongs: the source app's list, its level, and its kind of list. */
 type ListPlace = { list: string; level: number; kind: ListKind };
 
-/** An item's marker: a bullet, or a number with the item's own number, when the marker has one. */
 type ListMarker = { kind: Exclude<ListKind, 'numbered'> } | { kind: 'numbered'; number: string | null };
 
 type ListParagraph = Omit<ListPlace, 'kind'> & ListMarker & { paragraph: HTMLElement };
@@ -41,7 +34,7 @@ const tagOf = (kind: ListKind): string => {
     }
 };
 
-/** Whether `item` continues `open` at its level: a bullet list runs across the source app's lists, a numbered one restarts with each, as Word numbers them. */
+/** A bullet list runs across the source app's lists; a numbered one restarts with each, as Word numbers them. */
 const continues = (open: ListPlace, item: ListPlace): boolean => {
     if (open.kind !== item.kind) {
         return false;
@@ -54,7 +47,6 @@ const continues = (open: ListPlace, item: ListPlace): boolean => {
     }
 };
 
-/** The kind of marker `text` is, and the item's own number when it is a number. */
 const readMarker = (text: string): ListMarker => {
     const marker = text.trim();
     if (!NUMBERED_MARKER.test(marker)) {
@@ -64,7 +56,6 @@ const readMarker = (text: string): ListMarker => {
     return { kind: 'numbered', number: numbers?.[numbers.length - 1] ?? null };
 };
 
-/** `node` as a list item, or `undefined` when it is not one. */
 const readListParagraph = (node: Node): ListParagraph | undefined => {
     if (!(node instanceof HTMLElement)) {
         return undefined;
@@ -105,7 +96,6 @@ const runFrom = (first: ListParagraph): ListParagraph[] => {
     return run;
 };
 
-/** Closes the open lists deeper than `item`, and the one at its level when `item` cannot join it. */
 const closeListsFor = (open: OpenList[], item: ListParagraph): void => {
     while ((open[open.length - 1]?.level ?? 0) > item.level) {
         open.pop();
@@ -119,18 +109,12 @@ const closeListsFor = (open: OpenList[], item: ListParagraph): void => {
 const createList = (document: Document, item: ListParagraph): OpenList => {
     const element = document.createElement(tagOf(item.kind));
     if (item.kind === 'numbered' && item.number !== null) {
-        element.setAttribute(START_ATTRIBUTE, item.number);
+        element.setAttribute(NUMBERED_LIST_START_ATTRIBUTE, item.number);
     }
     return { element, list: item.list, level: item.level, kind: item.kind };
 };
 
-/**
- * Rebuilds one run of list paragraphs as nested lists where it stood. A level
- * below the one before opens one list inside the last item, so no empty item
- * holds it. A numbered list starts at the number the source app wrote for its
- * first item, so one that resumes after another block, or a copy that begins
- * partway through, keeps its numbering.
- */
+/** A deeper level opens inside the last item, not an empty one; a numbered list starts at its first item's number, so a resumed list keeps its numbering. */
 const rebuildRun = (run: readonly ListParagraph[]): void => {
     const first = run[0];
     if (first === undefined) {
@@ -163,7 +147,7 @@ const rebuildRun = (run: readonly ListParagraph[]): void => {
 
 const rebuildLists = (dom: HTMLElement): void => {
     const done = new Set<Element>();
-    for (const paragraph of dom.querySelectorAll(LIST_PARAGRAPH)) {
+    for (const paragraph of dom.querySelectorAll(PARAGRAPHS_WITH_LIST_DATA)) {
         if (done.has(paragraph)) {
             continue;
         }
@@ -179,10 +163,7 @@ const rebuildLists = (dom: HTMLElement): void => {
     }
 };
 
-/**
- * Rebuilds the list items a paste carries as paragraphs with Word's list data (Word, Outlook) as nested bulleted and
- * numbered lists, which the list plugins share. The editor removes the list data once every transform has run.
- */
+/** Shared by the list plugins; the editor removes the list data after every transform has run. */
 export const PASTED_LISTS: PasteTransform = {
     id: 'pasted-lists',
     run: rebuildLists,
