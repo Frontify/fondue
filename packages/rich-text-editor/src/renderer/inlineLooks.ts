@@ -10,7 +10,6 @@ import {
     DOCUMENT_GAP_VARIABLES,
     fondueToken,
     type HtmlSpec,
-    OWN_MARGINS_ATTRIBUTE,
     type StyleMap,
 } from '#/core';
 
@@ -63,14 +62,11 @@ const gapAbove = ({ spacing, isFirstChild }: Placement): string | undefined => {
 };
 
 /**
- * The margins the document hands a spaced element, as its stylesheet computes them: none above, the gap below;
- * nothing for an element the document does not space, or that owns its margins, which only its look sets.
+ * The margins the document hands a spaced element where its look sets none, as its stylesheet computes them:
+ * none above, the gap below; nothing for an element the document does not space.
  */
-const documentMargins = (spec: HtmlSpec, placement: Placement | undefined): StyleMap => {
+const documentMargins = (placement: Placement | undefined): StyleMap => {
     if (placement === undefined) {
-        return {};
-    }
-    if (spec.attrs?.[OWN_MARGINS_ATTRIBUTE] !== undefined) {
         return {};
     }
     return { 'margin-top': NO_GAP, 'margin-bottom': gapBelow(placement) };
@@ -161,18 +157,20 @@ const resolveStyle = (style: StyleMap, known: StyleMap): StyleMap => {
 };
 
 const PARAGRAPH_TAG = 'p';
+// Mirrors the attribute `textStylePlugin` writes on its paragraphs; `documentContract.spec.ts` pins the two equal.
+export const TEXT_STYLE_ATTRIBUTE = 'data-text-style';
 
 /** What the export writes into the elements, from what the stylesheets would set. */
 export type InlineLooksOptions = {
     /** The style of each class, by class name (`registry.contentStyles()`). */
     classes: Readonly<Record<string, StyleMap>>;
-    /** The body look of a plain paragraph, one without the margin marker, as `document.module.scss` gives it. */
+    /** The body look of a plain paragraph, one with no text style, as `textStyle.module.scss` gives it. */
     plainParagraph: StyleMap;
 };
 
 /** The body look for a plain paragraph; nothing for any other element. */
 const plainParagraphStyle = (spec: HtmlSpec, plainParagraph: StyleMap): StyleMap | undefined => {
-    if (spec.tag !== PARAGRAPH_TAG || spec.attrs?.[OWN_MARGINS_ATTRIBUTE] !== undefined) {
+    if (spec.tag !== PARAGRAPH_TAG || spec.attrs?.[TEXT_STYLE_ATTRIBUTE] !== undefined) {
         return undefined;
     }
     return plainParagraph;
@@ -202,7 +200,7 @@ const inlineSpec = (spec: HtmlSpec, placement: Placement | undefined, looks: Inl
         declared = { ...declared, ...classStyle(className, looks.classes) };
     }
     const looked = {
-        ...documentMargins(spec, placement),
+        ...documentMargins(placement),
         ...resolveStyle(declared, documentVariables(placement)),
     };
     if (Object.keys(looked).length === 0) {

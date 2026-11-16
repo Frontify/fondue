@@ -29,15 +29,8 @@ export {
     type StyleMap,
 } from './htmlSpec';
 export { fondueToken, fondueTokenValues, type FondueTokenName } from './fondueTokens';
-export { CHILD_SPACING_ATTRIBUTE, DOCUMENT_GAP_VARIABLES, OWN_MARGINS_ATTRIBUTE } from './documentContract';
-export {
-    LOOK_MARGIN_FALLBACKS,
-    lookProperties,
-    lookStyle,
-    lookVariableName,
-    styleOfClass,
-    type TextLook,
-} from './look';
+export { CHILD_SPACING_ATTRIBUTE, DOCUMENT_GAP_VARIABLES, OWN_MARGIN_VARIABLES } from './documentContract';
+export { lookProperties, lookStyle, styleOfClass, type TextLook } from './look';
 export {
     type BlockAttributeDefinition,
     type BlockDefinition,

@@ -124,7 +124,7 @@ export const NEWER_STYLE_DOCUMENT: RteDocumentOf<StyledBlock> = {
 };
 
 export const COLUMN_BREAK_SELECTOR = '[data-column-break]';
-/** The margin above and below a column break, which `columnBreak.module.scss` writes: `--spacing-xx-small`. */
+/** The margin above and below a column break, which `columnBreak.module.scss` hands to the document: `--spacing-xx-small`. */
 export const COLUMN_BREAK_MARGIN = '4px';
 
 /** A column break between two paragraphs, where the document would give it no gap above. */
@@ -137,13 +137,13 @@ export const COLUMN_BREAK_DOCUMENT: RteDocumentOf = {
     ],
 };
 
-/** The block type of `ownMarginsPlugin.tsx`, drawn by its own component, whose class writes its margins. */
+/** The block type of `ownMarginsPlugin.tsx`, drawn by its own component, whose class hands its margins to the document. */
 export const BOXED_TYPE = 'boxed';
 export const BOXED_TEXT = 'Boxed';
-/** The margins `ownMarginsPlugin.module.scss` writes. */
+/** The margins `ownMarginsPlugin.module.scss` hands to the document. */
 export const BOXED_MARGIN = '20px';
 
-/** The block that owns its margins, between two paragraphs, where the document would give it none above. */
+/** The block that hands its own margins to the document, between two paragraphs, where the document would give it none above. */
 export const BOXED_DOCUMENT: RteDocumentOf = {
     version: 1,
     blocks: [

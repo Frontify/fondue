@@ -7,7 +7,7 @@
 import { type ReactNode } from 'react';
 
 import { type EditorControlApi, type RteMarkState, type RteSelectionSnapshot } from './commands';
-import { CHILD_SPACING_ATTRIBUTE, OWN_MARGINS_ATTRIBUTE } from './documentContract';
+import { CHILD_SPACING_ATTRIBUTE } from './documentContract';
 import { type HtmlAttributes, type HtmlSpec, type StyleMap, withContentAttributes, withRootStyle } from './htmlSpec';
 import {
     type BlockAttributeDefinition,
@@ -713,9 +713,8 @@ export const childSpacingOf = (attrs: HtmlAttributes | undefined): ChildSpacing 
 
 /**
  * A block's markup with what every block carries applied to its outermost
- * element — alignment on a text block, the margin marker on one that owns its
- * margins — and the child-spacing mark on the element its content sits in.
- * Shared by editor, readonly view and export so they agree.
+ * element — alignment on a text block — and the child-spacing mark on the
+ * element its content sits in. Shared by editor, readonly view and export so they agree.
  */
 export const blockHtml = (
     registry: PluginRegistry,
@@ -725,9 +724,6 @@ export const blockHtml = (
     let spec = definition.toHtml(blockValueOf(definition, stored));
     if (definition.content === 'text') {
         spec = withRootStyle(spec, blockAttributeStyle(registry, stored));
-    }
-    if (definition.ownsMargins === true) {
-        spec = { ...spec, attrs: { ...spec.attrs, [OWN_MARGINS_ATTRIBUTE]: '' } };
     }
     const childSpacing = childSpacingAttributes(definition);
     if (childSpacing !== undefined) {

@@ -6,8 +6,12 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { CHILD_SPACING_ATTRIBUTE, DOCUMENT_GAP_VARIABLES, OWN_MARGINS_ATTRIBUTE } from '../core/documentContract';
+import { CHILD_SPACING_ATTRIBUTE, DOCUMENT_GAP_VARIABLES, OWN_MARGIN_VARIABLES } from '../core/documentContract';
 import { type ChildSpacing } from '../core/plugin';
+import { type RteDocument } from '../documentFormat';
+import { textStylePlugin } from '../plugins/TextStyle';
+import { TEXT_STYLE_ATTRIBUTE } from '../renderer/inlineLooks';
+import { serializeToHtml } from '../renderer/serializeToHtml';
 
 // Stylesheets cannot import core's names, so these read the stylesheets as text and compare.
 
@@ -23,8 +27,17 @@ const CHILD_SPACING_MARK = /data-rte-child-[a-z0-9-]+/g;
 /** The spacing whose children the document stylesheet holds together. */
 const TIGHT: ChildSpacing = 'tight';
 
-/** An attribute selector on a `data-` attribute, such as `[data-rte-own-margins]`. */
-const DATA_ATTRIBUTE_SELECTOR = /\[data-[a-z-]+\]/g;
+/** Whatever a stylesheet spells as an own-margin variable, or a misspelling of one. */
+const OWN_MARGIN_VARIABLE = /--rte-own-[a-z0-9-]+/g;
+
+/** An attribute selector on a `data-` attribute, such as `[data-text-style]`. */
+const DATA_ATTRIBUTE_SELECTOR = /\[data-[a-z-]+/g;
+
+/** A `@property` rule: the name it registers and the body that says how. */
+const PROPERTY_RULE = /@property\s+(--[a-z0-9-]+)\s*\{([^}]*)\}/g;
+
+/** The declaration that stops a registered custom property from inheriting. */
+const NOT_INHERITED = /inherits:\s*false\s*;/;
 
 const stylesheetTexts = (): string[] =>
     readdirSync(SOURCE_DIRECTORY, { recursive: true, encoding: 'utf8' })
@@ -39,17 +52,20 @@ describe('the gap variables of the document', () => {
     });
 });
 
-describe('the margin marker', () => {
+describe('the own-margin variables', () => {
     const documentStylesheet = readFileSync(DOCUMENT_STYLESHEET, 'utf8');
 
-    it('is the attribute the document stylesheet leaves alone', () => {
-        expect(documentStylesheet).toContain(`:not([${OWN_MARGINS_ATTRIBUTE}])`);
+    it('are the ones core names, in every stylesheet that spells one', () => {
+        const spelled = stylesheetTexts().flatMap((text) => text.match(OWN_MARGIN_VARIABLE) ?? []);
+
+        expect([...new Set(spelled)].sort()).toEqual(Object.values(OWN_MARGIN_VARIABLES).sort());
     });
 
-    it('is, with the child-spacing mark, the only data attribute the document stylesheet selects on, so it knows no plugin', () => {
-        const attributes = documentStylesheet.match(DATA_ATTRIBUTE_SELECTOR) ?? [];
+    it('are registered by the document stylesheet as not inherited', () => {
+        const rules = [...documentStylesheet.matchAll(PROPERTY_RULE)];
+        const registered = rules.filter(([, , body = '']) => NOT_INHERITED.test(body)).map(([, name]) => name);
 
-        expect(new Set(attributes)).toEqual(new Set([`[${OWN_MARGINS_ATTRIBUTE}]`, `[${CHILD_SPACING_ATTRIBUTE}]`]));
+        expect([...registered].sort()).toEqual(Object.values(OWN_MARGIN_VARIABLES).sort());
     });
 });
 
@@ -62,8 +78,27 @@ describe('the child-spacing mark', () => {
         expect([...new Set(spelled)]).toEqual([CHILD_SPACING_ATTRIBUTE]);
     });
 
+    it('is the only data attribute the document stylesheet selects on, so it knows no plugin', () => {
+        const attributes = documentStylesheet.match(DATA_ATTRIBUTE_SELECTOR) ?? [];
+
+        expect(new Set(attributes)).toEqual(new Set([`[${CHILD_SPACING_ATTRIBUTE}`]));
+    });
+
     it('is the attribute, with its tight value, the document stylesheet spaces by', () => {
         expect(documentStylesheet).toContain(`:where([${CHILD_SPACING_ATTRIBUTE}]) > *`);
         expect(documentStylesheet).toContain(`[${CHILD_SPACING_ATTRIBUTE}='${TIGHT}'] > *`);
+    });
+});
+
+describe('the text style attribute the inline export reads', () => {
+    it('is the one the text style plugin writes on its paragraphs', () => {
+        const doc: RteDocument = {
+            version: 1,
+            blocks: [{ type: 'textStyle', style: 'custom1', children: [{ text: 'Styled' }] }],
+        };
+
+        const html = serializeToHtml(doc, { plugins: [textStylePlugin()], wrap: false });
+
+        expect(html).toMatch(new RegExp(`^<p [^>]*${TEXT_STYLE_ATTRIBUTE}="custom1"`));
     });
 });

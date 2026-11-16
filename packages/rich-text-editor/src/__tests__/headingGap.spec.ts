@@ -12,9 +12,6 @@ import { HEADING_GAP_VARIABLE } from '../plugins/TextStyle/helpers/headingGap';
 
 const STYLESHEETS = {
     'text style presets': fileURLToPath(new URL('../plugins/TextStyle/textStyle.module.scss', import.meta.url)),
-    'text style dropdown': fileURLToPath(
-        new URL('../plugins/TextStyle/components/textStyleSelect.module.scss', import.meta.url),
-    ),
 };
 const DOCUMENT_STYLESHEET = fileURLToPath(new URL('../renderer/document.module.scss', import.meta.url));
 

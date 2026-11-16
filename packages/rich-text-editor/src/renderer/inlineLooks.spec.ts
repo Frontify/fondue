@@ -9,11 +9,10 @@ import {
     fondueToken,
     type HtmlAttributes,
     type HtmlSpec,
-    OWN_MARGINS_ATTRIBUTE,
 } from '#/core';
 
 import { type DrawnNode } from './documentTree';
-import { inlineLooks, type InlineLooksOptions, resolveVariables } from './inlineLooks';
+import { inlineLooks, type InlineLooksOptions, resolveVariables, TEXT_STYLE_ATTRIBUTE } from './inlineLooks';
 
 type HtmlNode = Extract<DrawnNode, { kind: 'html' }>;
 type ComponentNode = Extract<DrawnNode, { kind: 'component' }>;
@@ -32,9 +31,8 @@ const HOST_MARGINS = { 'margin-top': '10px', 'margin-bottom': '20px' };
 /** The margins the document gives a spaced block: none above, the gap below. */
 const documentMargins = (below: string) => ({ 'margin-top': '0', 'margin-bottom': below });
 
-const OWN_MARGINS: HtmlAttributes = { [OWN_MARGINS_ATTRIBUTE]: '' };
-const OWN_BLOCK: HtmlAttributes = { ...OWN_MARGINS, class: 'own' };
-/** The gap above a block that owns its margins, as its class writes it. */
+const OWN_BLOCK: HtmlAttributes = { class: 'own' };
+/** The gap above a block, as its class writes it. */
 const OWN_GAP_ABOVE = '16px';
 /** The same gap, written to follow the document's gap above where it sets one. */
 const OWN_GAP_ABOVE_READ = `var(${DOCUMENT_GAP_VARIABLES.leading}, ${OWN_GAP_ABOVE})`;
@@ -133,10 +131,10 @@ describe('inlineLooks body look', () => {
         expect(specOf(node).attrs?.style).toMatchObject({ 'font-size': '13px', color: 'green' });
     });
 
-    it('leaves out a paragraph that carries the margin marker', () => {
-        const [node] = inlineLooks([block('p', [], { [OWN_MARGINS_ATTRIBUTE]: '' })], BODY_STYLES);
+    it('leaves out a paragraph that carries a text style', () => {
+        const [node] = inlineLooks([block('p', [], { [TEXT_STYLE_ATTRIBUTE]: 'sample' })], BODY_STYLES);
 
-        expect(specOf(node).attrs?.style).toBeUndefined();
+        expect(specOf(node).attrs?.style).not.toHaveProperty('font-size');
     });
 
     it('lets the style of a class win over the body look', () => {
@@ -175,17 +173,17 @@ describe('inlineLooks spacing', () => {
             contentStyles,
         );
 
-        expect(specOf(first).attrs?.style).toEqual({ 'margin-top': '0' });
-        expect(specOf(middle).attrs?.style).toEqual({ 'margin-top': OWN_GAP_ABOVE });
-        expect(specOf(last).attrs?.style).toEqual({ 'margin-top': OWN_GAP_ABOVE });
+        expect(specOf(first).attrs?.style).toMatchObject({ 'margin-top': '0' });
+        expect(specOf(middle).attrs?.style).toMatchObject({ 'margin-top': OWN_GAP_ABOVE });
+        expect(specOf(last).attrs?.style).toMatchObject({ 'margin-top': OWN_GAP_ABOVE });
     });
 
-    it('gives a block that owns its margins only the margins its look sets, none from the document', () => {
+    it('writes the document margins and lets the margins of the block class override them', () => {
         const contentStyles = { classes: { own: { 'margin-top': OWN_GAP_ABOVE } }, plainParagraph: {} };
 
         const [first] = inlineLooks([block('p', [], OWN_BLOCK), block('p')], contentStyles);
 
-        expect(specOf(first).attrs?.style).toEqual({ 'margin-top': OWN_GAP_ABOVE });
+        expect(specOf(first).attrs?.style).toEqual({ 'margin-top': OWN_GAP_ABOVE, 'margin-bottom': BLOCK_GAP });
     });
 
     it('places blocks among elements alone, so text beside them does not count', () => {
@@ -292,10 +290,7 @@ describe('resolveVariables', () => {
         const contentStyles = { classes: { heading: { 'margin-top': HEADING_MARGIN_TOP } }, plainParagraph: {} };
 
         const [first, later] = inlineLooks(
-            [
-                block('h2', [], { ...OWN_MARGINS, class: 'heading' }),
-                block('h2', [], { ...OWN_MARGINS, class: 'heading' }),
-            ],
+            [block('h2', [], { class: 'heading' }), block('h2', [], { class: 'heading' })],
             contentStyles,
         );
 

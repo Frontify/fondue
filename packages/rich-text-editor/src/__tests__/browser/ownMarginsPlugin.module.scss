@@ -2,5 +2,7 @@
 
 // The margins `BOXED_MARGIN` in documentSpacingValues.ts names.
 .boxed {
-    margin-block: 20px;
+    // The document writes the margins from these variables.
+    --rte-own-margin-top: 20px;
+    --rte-own-margin-bottom: 20px;
 }

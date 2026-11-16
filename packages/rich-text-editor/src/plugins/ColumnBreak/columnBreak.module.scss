@@ -13,7 +13,9 @@
 /** The break itself: a hairline the author can see, taking up no space. */
 .break {
     height: 0;
-    margin: var(--spacing-xx-small) 0;
+    // Handed to the document, which alone writes block margins.
+    --rte-own-margin-top: var(--spacing-xx-small);
+    --rte-own-margin-bottom: var(--spacing-xx-small);
     border-top: var(--border-width-default) dashed var(--color-line-mid);
     break-after: column;
 }

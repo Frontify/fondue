@@ -1,6 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@use '../styles/look.module.scss';
+// Custom properties inherit by default, and a quote's margin must not reach the paragraphs inside it.
+@property --rte-own-margin-top {
+    syntax: '*';
+    inherits: false;
+}
+
+@property --rte-own-margin-bottom {
+    syntax: '*';
+    inherits: false;
+}
 
 /**
  * How a document reads, wherever it is drawn: the editable element in the
@@ -34,7 +43,7 @@
 
     // The document owns block spacing: host stylesheets give `1em` margins in some hosts and none in others.
     // It spaces its own children and the content of every block that holds blocks (`childSpacing`), by structure alone.
-    // The trims reset the variables, not the margin, so a block class that reads the gaps keeps them.
+    // The trims reset the variables, not the margin, so a look that reads the gaps keeps them.
     // Each spaced element sets the gaps again rather than inheriting them, so a trimmed quote does not trim its own paragraphs.
     // `:where` gives a nested block the rank of a top-level one, so one plugin rule a rank above overrides both.
     > *,
@@ -50,12 +59,6 @@
         &:last-child {
             --rte-block-gap: 0;
         }
-
-        // Margins only for blocks that do not own theirs (`ownsMargins`): such a block reads the gaps itself,
-        // so a host margin is never trimmed.
-        &:not([data-rte-own-margins]) {
-            margin-block: 0 var(--rte-block-gap);
-        }
     }
 
     // A tight container's blocks sit together: no gap below, none above.
@@ -64,17 +67,12 @@
         --rte-leading-gap: 0;
     }
 
-    // A plain paragraph reads the margins of the body look, which a host sets with `textStylePlugin({ presets })`.
-    // Without one, the look's defaults are no top margin and the gap below, so this repeats the rule above;
-    // the element makes it outrank that rule, so a host margin wins in every container.
-    p:not([data-rte-own-margins]) {
-        @include look.look('body', $only: (margin-top, margin-bottom));
-    }
-
-    // The rest of the body look, for plain paragraphs. `:where` keeps it at class rank, below a checked item's colour
-    // and strike.
-    :where(p:not([data-rte-own-margins])) {
-        @include look.look('body', $except: (margin-top, margin-bottom));
+    // The document alone writes block margins; a block's look sets the two own-margin variables to hand over its own.
+    // The class twice outranks a host's `.prose p { margin }`. Two longhands, so an invalid value voids one side only.
+    &#{&} > *,
+    &#{&} :where([data-rte-child-spacing]) > * {
+        margin-block-start: var(--rte-own-margin-top, 0);
+        margin-block-end: var(--rte-own-margin-bottom, var(--rte-block-gap));
     }
 
     // Raised and lowered text without growing the line it sits on. Browsers'

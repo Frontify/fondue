@@ -198,7 +198,7 @@ test.describe('document spacing', () => {
         }
     });
 
-    test('leaves the margins of a block drawn by its own component that owns them, on every surface', async ({
+    test('lets the own margins of a block drawn by its own component win over the document gap, on every surface', async ({
         mount,
     }) => {
         const expected = margins(BOXED_MARGIN, BOXED_MARGIN);
@@ -218,7 +218,7 @@ test.describe('document spacing', () => {
         }
     });
 
-    test('leaves the margins of a column break to its stylesheet, on every surface', async ({ mount }) => {
+    test('lets the own margins of a column break win over the document gap, on every surface', async ({ mount }) => {
         const expected = margins(COLUMN_BREAK_MARGIN, COLUMN_BREAK_MARGIN);
 
         const drawn = await mount(<HostLooksPair value={COLUMN_BREAK_DOCUMENT} withColumnBreak />);

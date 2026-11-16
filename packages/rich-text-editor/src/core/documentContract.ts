@@ -19,10 +19,15 @@ export const DOCUMENT_GAP_VARIABLES = {
 } as const;
 
 /**
- * Set on the outermost element of a block that declares `ownsMargins`: the block's own stylesheet
- * writes its margins, so the document's rule for blocks without a look leaves it alone.
+ * The custom properties through which a block's look hands its margins to the document, which alone writes margins.
+ * They are registered as not inherited, so a block's value never reaches the blocks inside it.
  */
-export const OWN_MARGINS_ATTRIBUTE = 'data-rte-own-margins';
+export const OWN_MARGIN_VARIABLES = {
+    /** The margin above a block. */
+    top: '--rte-own-margin-top',
+    /** The margin below a block. */
+    bottom: '--rte-own-margin-bottom',
+} as const;
 
 /**
  * Set on the element whose children are the content of a block that holds blocks, to its `childSpacing`:

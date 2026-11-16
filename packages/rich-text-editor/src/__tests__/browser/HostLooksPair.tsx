@@ -30,9 +30,9 @@ type HostLooksPairProps = {
      * @default BODY_QUOTE_LINK_DOCUMENT
      */
     value?: RteDocumentOf;
-    /** Mounts `ownMarginsPlugin`, a block drawn by its own component whose class writes its margins. */
+    /** Mounts `ownMarginsPlugin`, a block drawn by its own component whose class hands its margins to the document. */
     withOwnMarginsBlock?: boolean;
-    /** Mounts `columnBreakPlugin`, a block whose stylesheet writes its margins. */
+    /** Mounts `columnBreakPlugin`, a block whose stylesheet hands its margins to the document. */
     withColumnBreak?: boolean;
 };
 

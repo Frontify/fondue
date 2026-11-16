@@ -35,8 +35,6 @@ export const columnBreakContent = ({ columns = 2, gap = 'normal' }: ColumnBreakP
     defineContent({
         blocks: {
             columnBreak: defineBlock({
-                // Its stylesheet writes its margins, which the document must not replace.
-                ownsMargins: true,
                 toHtml: () => ({
                     tag: 'div',
                     attrs: {
@@ -50,7 +48,7 @@ export const columnBreakContent = ({ columns = 2, gap = 'normal' }: ColumnBreakP
             }),
         },
         // The same margins the stylesheet writes; `documentSpacing.ct.tsx` holds them equal.
-        contentStyles: () => styleOfClass(styles.break, { margin: `${BREAK_MARGIN} 0` }),
+        contentStyles: () => styleOfClass(styles.break, { 'margin-top': BREAK_MARGIN, 'margin-bottom': BREAK_MARGIN }),
         // The layout belongs to the content as a whole, so it goes on the editable
         // element; the options reach the stylesheet as custom properties.
         contentClassName: styles.columns,

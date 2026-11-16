@@ -28,8 +28,8 @@ const HEADING_FALLBACK: StyleMap = { 'line-height': '1.3', 'margin-top': HEADING
  *
  * Source of truth for how each style renders (`tag` plus class) and reads
  * (`label`); order here is dropdown order. Must name every `TextStyleName`.
- * Each `fallback` is the same values `textStyle.module.scss` falls back to, for exported inline styles,
- * over the margins every look falls back to.
+ * Each `fallback` is the same values `textStyle.module.scss` falls back to, for exported inline styles;
+ * the margins are the document's gaps, which `renderer/inlineLooks.ts` writes by position, save a heading's gap above.
  */
 const PRESETS = [
     {
@@ -172,9 +172,6 @@ export const ALL_TEXT_STYLES: readonly TextStyleOption[] = [PARAGRAPH, ...PRESET
 export const FIRST_PRESET: TextStyleName = PRESETS[0].name;
 
 export const findPreset = (name: string): Preset | undefined => PRESETS.find((preset) => preset.name === name);
-
-/** The class of a text block whose style no preset names, which only gives it a body paragraph's margins. */
-export const UNKNOWN_STYLE_CLASS_NAME = styles.unknownStyle;
 
 export const labelOf = (option: TextStyleOption): string => findPreset(option)?.label ?? 'Paragraph';
 

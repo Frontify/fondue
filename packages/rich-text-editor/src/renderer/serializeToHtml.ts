@@ -13,7 +13,7 @@ import { DOCUMENT_STYLE, documentRootSpec, documentTree } from './documentTree';
 import { inlineLooks } from './inlineLooks';
 import { toHtmlString } from './toHtmlString';
 
-/** The look `document.module.scss` gives plain paragraphs, which `textStylePlugin({ presets })` sets as `body`. */
+/** The look of a paragraph with no text style, set as `body` in `textStylePlugin({ presets })`. */
 const BODY_LOOK = 'body';
 
 /**

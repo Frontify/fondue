@@ -282,12 +282,6 @@ export type BlockDefinition<TValue = Record<string, unknown>> = {
     /** Styles the block's own tags show by default, which pasted HTML repeats without meaning them as formatting. */
     defaultStyles?: readonly DefaultStyle[];
     /**
-     * Whether the block's own stylesheet writes its margins. The document then leaves them alone;
-     * otherwise it gives the block the gap between blocks.
-     * @default false
-     */
-    ownsMargins?: boolean;
-    /**
      * How a block that holds blocks spaces them. Only read for `content: { blocks }`.
      * @default 'apart'
      */
