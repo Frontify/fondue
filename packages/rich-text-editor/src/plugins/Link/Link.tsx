@@ -11,10 +11,10 @@ import { LinkEditor } from './components/LinkEditor';
 import { LinkToolbarButton } from './components/LinkToolbarButton';
 import { LINKABLE_ADDRESS_TRIM } from './helpers/address';
 import { type LinkSearch } from './helpers/destination';
-import { type LinkLabels, resolveLinkLabels } from './helpers/labels';
 import { openNewLinkForm } from './helpers/newLinkForms';
-import { DEFAULT_NEW_TAB_NOTE, NEW_TAB_NOTE_ATTRIBUTE, NEW_TAB_REL, NEW_TAB_TARGET } from './helpers/newTab';
+import { NEW_TAB_NOTE_ATTRIBUTE, NEW_TAB_REL, NEW_TAB_TARGET } from './helpers/newTab';
 import { allowsHref, type LinkPolicy } from './helpers/policy';
+import { NEW_TAB_NOTE } from './helpers/strings';
 import { type LinkValue } from './helpers/value';
 import styles from './link.module.scss';
 
@@ -26,14 +26,7 @@ export type LinkMark = {
     link?: LinkValue;
 };
 
-export type LinkContentOptions = LinkPolicy & {
-    /**
-     * The words the link says, in the language of the host. Any word left out stays English.
-     */
-    labels?: Partial<LinkLabels>;
-};
-
-export type LinkPluginOptions = LinkContentOptions & {
+export type LinkPluginOptions = LinkPolicy & {
     /**
      * Offers the app's own pages as link targets while the author types. Editing only: the content never needs it.
      */
@@ -99,7 +92,7 @@ const NEW_TAB_NOTE_MARKER = { [NEW_TAB_NOTE_ATTRIBUTE]: '' };
 /**
  * The note only a screen reader hears, on a link that opens a new tab. Same wording as the editing panel.
  */
-const newTabNote = (drawn: DrawnLink, note: string): ReactNode => {
+const newTabNote = (drawn: DrawnLink): ReactNode => {
     switch (drawn.kind) {
         case 'refused':
         case 'sameTab':
@@ -107,7 +100,7 @@ const newTabNote = (drawn: DrawnLink, note: string): ReactNode => {
         case 'newTab':
             return (
                 <span className={styles.visuallyHidden} {...NEW_TAB_NOTE_MARKER}>
-                    {note}
+                    {NEW_TAB_NOTE}
                 </span>
             );
     }
@@ -117,38 +110,36 @@ type LinkReaderProps = {
     value: LinkValue;
     children: ReactNode;
     policy: LinkPolicy;
-    /** The words of the new-tab note. */
-    note: string;
 };
 
 /**
  * A link in the reader: the export's markup, plus the new-tab note.
  */
-const LinkReader = ({ value, children, policy, note }: LinkReaderProps): ReactNode => {
+const LinkReader = ({ value, children, policy }: LinkReaderProps): ReactNode => {
     const drawn = drawnLink(policy, value);
     return (
         // A refused link keeps its anchor without a target, as the export writes it.
         <a {...anchorAttrs(drawn)} className={styles.link}>
             {children}
-            {newTabNote(drawn, note)}
+            {newTabNote(drawn)}
         </a>
     );
 };
 
-type BoundLinkReaderProps = Omit<LinkReaderProps, 'policy' | 'note'>;
+type BoundLinkReaderProps = Omit<LinkReaderProps, 'policy'>;
 
 /**
- * Keyed by policy and note, so a `linkPlugin()` created on every render keeps its links mounted and focused.
+ * Keyed by policy, so a `linkPlugin()` created on every render keeps its links mounted and focused.
  */
 const readers = new Map<string, ComponentType<BoundLinkReaderProps>>();
 
-const readerFor = (policy: LinkPolicy, note: string): ComponentType<BoundLinkReaderProps> => {
-    const key = JSON.stringify([policy.allowedSchemes ?? null, policy.allowedHosts ?? null, note]);
+const readerFor = (policy: LinkPolicy): ComponentType<BoundLinkReaderProps> => {
+    const key = JSON.stringify([policy.allowedSchemes ?? null, policy.allowedHosts ?? null]);
     const known = readers.get(key);
     if (known !== undefined) {
         return known;
     }
-    const reader = (props: BoundLinkReaderProps): ReactNode => <LinkReader {...props} policy={policy} note={note} />;
+    const reader = (props: BoundLinkReaderProps): ReactNode => <LinkReader {...props} policy={policy} />;
     readers.set(key, reader);
     return reader;
 };
@@ -164,7 +155,7 @@ const readerFor = (policy: LinkPolicy, note: string): ComponentType<BoundLinkRea
  * @example
  * const content = linkContent({ allowedSchemes: ['https'] });
  */
-export const linkContent = ({ labels, ...policy }: LinkContentOptions = {}) =>
+export const linkContent = (policy: LinkPolicy = {}) =>
     defineContent({
         marks: {
             link: defineMark<LinkValue>({
@@ -182,7 +173,7 @@ export const linkContent = ({ labels, ...policy }: LinkContentOptions = {}) =>
                     children: true,
                 }),
 
-                render: { component: readerFor(policy, labels?.newTabNote ?? DEFAULT_NEW_TAB_NOTE) },
+                render: { component: readerFor(policy) },
 
                 // A pasted span inside a link, such as Google Docs writes, repeats the underline the link already shows.
                 defaultStyles: LINK_DEFAULT_STYLES,
@@ -234,23 +225,19 @@ const HOTKEY: keyof typeof hotkeys = 'Mod-k';
  * @example
  * const links = linkPlugin({ allowedSchemes: ['https', 'mailto'], search });
  */
-export const linkPlugin = ({ search, labels, ...policy }: LinkPluginOptions = {}) =>
+export const linkPlugin = ({ search, ...policy }: LinkPluginOptions = {}) =>
     /* @__PURE__ */ definePlugin({
-        content: linkContent({ ...policy, labels }),
+        content: linkContent(policy),
         toolbarGroup: 'link',
         toolbar: [
             {
                 label: 'Link',
                 shortcut: HOTKEY,
-                render: (props) => (
-                    <LinkToolbarButton {...props} policy={policy} labels={resolveLinkLabels(labels)} search={search} />
-                ),
+                render: (props) => <LinkToolbarButton {...props} policy={policy} search={search} />,
             },
         ],
         edit: {
-            link: (props) => (
-                <LinkEditor {...props} policy={policy} labels={resolveLinkLabels(labels)} search={search} />
-            ),
+            link: (props) => <LinkEditor {...props} policy={policy} search={search} />,
         },
         hotkeys,
         // The pattern names only typed schemes, and the policy still decides which become links.

@@ -149,20 +149,15 @@ export { type BlurOnBreakPluginOptions } from './plugins/BlurOnBreak';
 export { type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
 export { type EmojiItem, type EmojiPluginOptions } from './plugins/Emoji';
 export {
-    type LinkContentOptions,
     type LinkDestination,
-    type LinkLabels,
     type LinkPluginOptions,
     type LinkPolicy,
     type LinkScheme,
     type LinkSearch,
 } from './plugins/Link';
 export {
-    type MentionContentLabels,
     type MentionContentOptions,
     type MentionItem,
-    type MentionLabels,
-    type MentionPickerLabels,
     type MentionPluginOptions,
     type MentionResolution,
     type MentionValue,
