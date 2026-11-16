@@ -2,7 +2,8 @@
 
 // The drawn tree as React elements, for the readonly view. The only place an
 // `HtmlSpec`'s attributes become React props — the counterpart of the core's
-// `attributeEntries`, both reading `checkedAttributes`; `__tests__/htmlParity.spec.tsx` holds the two to the same output.
+// `attributeEntries`, both reading `checkedAttributes`. `__tests__/htmlParity.spec.tsx`
+// holds the two to the same output.
 
 import { createElement, type CSSProperties, type ReactNode } from 'react';
 
@@ -20,16 +21,16 @@ const reactStyleName = (property: string): string =>
 const toReactStyle = (style: StyleMap): CSSProperties =>
     Object.fromEntries(safeStyleEntries(style).map(([property, value]) => [reactStyleName(property), value]));
 
-// `checked` is uncontrolled: the readonly view shows the state, it does not own it.
 const REACT_PROP_NAMES = new Map([
     ['class', 'className'],
     ['tabindex', 'tabIndex'],
+    // Uncontrolled: the readonly view shows the state, it does not own it.
     ['checked', 'defaultChecked'],
 ]);
 
 const reactPropName = (name: string): string => REACT_PROP_NAMES.get(name) ?? name;
 
-/** Boolean attributes React 18 knows by their HTML name. It writes them for `true` and drops them for `''`. */
+/** React omits these for `''`, so they take `true`. */
 const REACT_BOOLEAN_ATTRIBUTES: ReadonlySet<string> = new Set([
     'checked',
     'disabled',
@@ -44,7 +45,7 @@ const REACT_BOOLEAN_ATTRIBUTES: ReadonlySet<string> = new Set([
     'default',
 ]);
 
-/** What React needs for a present flag to reach the DOM as `name=""`, as the editor and the HTML export write it. */
+/** Written as `name=""`, like the editor and the HTML export. */
 const flagValue = (name: string): string | true => {
     if (REACT_BOOLEAN_ATTRIBUTES.has(name)) {
         return true;

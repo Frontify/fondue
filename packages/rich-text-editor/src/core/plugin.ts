@@ -588,7 +588,7 @@ export type SelectedNode = {
 
 // --- Menus, keyboard, paste, typing ---
 
-/** The block the selection must be in for a command to be the current one: its type, and any attributes it must carry. */
+/** A block by its type. Every attribute listed must match. */
 export type RteCommandTarget = { type: string; attributes?: Record<string, unknown> };
 
 /** A labelled entry a plugin offers to the "Turn into" menu and the `/` menu. */

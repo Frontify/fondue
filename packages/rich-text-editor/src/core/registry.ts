@@ -272,15 +272,9 @@ export const toggleOwn = ({ own, api, selection, value }: ToggleOwnParams): void
     }
 };
 
-/** A block's own attributes: everything but its type and children. */
 const attributesOf = (block: Record<string, unknown>): Record<string, unknown> =>
     Object.fromEntries(Object.entries(block).filter(([name]) => name !== 'type' && name !== 'children'));
 
-/**
- * The entry's type at the selection: a mark as its whole run, edges included;
- * the innermost block of that type around the selection. Null when the
- * selection is not in one, and always for an inline, which it only sits beside.
- */
 export const selectedNodeOf = (
     own: OwnType,
     api: EditorControlApi,
@@ -314,7 +308,6 @@ export const selectedNodeOf = (
 
 type SelectionBlock = RteSelectionSnapshot['blocks'][number];
 
-/** Whether the block is the one the command names: its type, and every attribute the command lists. */
 const isCommandTarget = (target: RteCommandTarget, block: SelectionBlock): boolean => {
     if (target.type !== block.type) {
         return false;

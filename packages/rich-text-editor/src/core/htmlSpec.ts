@@ -8,7 +8,7 @@ import { warnOnce } from './warnings';
 /** CSS properties by their CSS name: `{ 'text-align': 'center' }`. */
 export type StyleMap = Record<string, string>;
 
-/** The attributes markup may carry: `class` and `style` by name, any other HTML attribute by its name; true writes a boolean attribute, false or undefined leaves it out. */
+/** Any HTML attribute by its name. `true` writes a boolean attribute, and `false` or `undefined` leaves it out. */
 export type HtmlAttributes = { class?: string; style?: StyleMap } & Record<
     string,
     string | boolean | StyleMap | undefined
@@ -52,7 +52,7 @@ export const cssText = (style: StyleMap): string =>
         .map(([property, value]) => `${property}: ${value};`)
         .join(' ');
 
-/** An attribute name as HTML spells it here: lowercase letters, digits and hyphens, starting with a letter. */
+/** Lowercase only, so `OnClick` cannot pass the `on` check. */
 const ATTRIBUTE_NAME = /^[a-z][a-z0-9-]*$/;
 
 /** Event-handler attributes (`onclick`) run script, so no markup may carry one. */
@@ -60,10 +60,8 @@ const EVENT_HANDLER_PREFIX = 'on';
 
 const STYLE_ATTRIBUTE = 'style';
 
-/** One attribute that passed `checkedAttributes`, by what it holds. */
 export type CheckedAttribute =
     | { kind: 'text'; name: string; value: string }
-    /** A boolean attribute, present. */
     | { kind: 'flag'; name: string }
     | { kind: 'style'; name: string; value: StyleMap };
 
@@ -83,36 +81,31 @@ const skippedAttribute = (name: string, tag: string, value: unknown): undefined 
     return undefined;
 };
 
-// Typed `unknown`: a plugin's `toHtml` passes stored values on, whatever they hold.
-const checkedAttribute = (name: string, value: unknown, tag: string): CheckedAttribute | undefined => {
-    if (value === undefined || value === null || value === false) {
+const checkedAttribute = (name: string, storedValue: unknown, tag: string): CheckedAttribute | undefined => {
+    if (storedValue === undefined || storedValue === null || storedValue === false) {
         return undefined;
     }
     if (name === STYLE_ATTRIBUTE) {
-        if (!isStyleMap(value)) {
-            return skippedAttribute(name, tag, value);
+        if (!isStyleMap(storedValue)) {
+            return skippedAttribute(name, tag, storedValue);
         }
-        return { kind: 'style', name, value };
+        return { kind: 'style', name, value: storedValue };
     }
-    if (typeof value === 'string') {
-        return { kind: 'text', name, value };
+    if (typeof storedValue === 'string') {
+        return { kind: 'text', name, value: storedValue };
     }
-    if (typeof value === 'number' && Number.isFinite(value)) {
-        return { kind: 'text', name, value: String(value) };
+    if (typeof storedValue === 'number' && Number.isFinite(storedValue)) {
+        return { kind: 'text', name, value: String(storedValue) };
     }
-    if (value === true) {
+    if (storedValue === true) {
         return { kind: 'flag', name };
     }
-    return skippedAttribute(name, tag, value);
+    return skippedAttribute(name, tag, storedValue);
 };
 
 /**
- * The attributes an element is written with, checked once for every surface
- * (engine DOM, HTML string, React). A name that is no lowercase attribute name,
- * or starts with `on`, throws: that is an author mistake. A value never throws.
- * Null, undefined and false leave the attribute out, a number is written as a
- * string, and any other value that is not a string, boolean or style map is
- * left out with a development warning.
+ * One check for every surface (DOM, HTML string, React). A bad name throws,
+ * because it is an author mistake. A bad value is left out.
  */
 export const checkedAttributes = (tag: string, attrs: HtmlAttributes = {}): CheckedAttribute[] => {
     const checked: CheckedAttribute[] = [];
@@ -128,10 +121,7 @@ export const checkedAttributes = (tag: string, attrs: HtmlAttributes = {}): Chec
     return checked;
 };
 
-/**
- * The attributes as DOM and HTML strings spell them: style as CSS text, a true
- * boolean as `''`, false or undefined left out. Shared by engine and HTML printer.
- */
+/** The checked attributes as the DOM and HTML strings spell them, for the engine and the HTML printer. */
 export const attributeEntries = (tag: string, attrs?: HtmlAttributes): [string, string][] => {
     const entries: [string, string][] = [];
     for (const attribute of checkedAttributes(tag, attrs)) {
