@@ -9,7 +9,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { type MentionItem, type MentionItems } from '../types';
 
 import { MentionDraft } from './MentionDraft';
-import { DEFAULT_MENTION_PICKER_LABELS, type MentionPickerLabels } from './pickerLabels';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -38,13 +37,12 @@ const settle = async (): Promise<void> => {
     });
 };
 
-const retryOption = (name = 'Retry'): HTMLElement | undefined =>
-    [...window.document.querySelectorAll<HTMLElement>('[role="option"]')].find((option) => option.textContent === name);
+const retryOption = (): HTMLElement | undefined =>
+    [...window.document.querySelectorAll<HTMLElement>('[role="option"]')].find(
+        (option) => option.textContent === 'Retry',
+    );
 
-const mountDraft = async (
-    items: MentionItems = search,
-    labels: MentionPickerLabels = DEFAULT_MENTION_PICKER_LABELS,
-) => {
+const mountDraft = async (items: MentionItems = search) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
     const root = createRoot(container);
@@ -54,7 +52,6 @@ const mountDraft = async (
         root.render(
             <MentionDraft
                 trigger="@"
-                labels={labels}
                 items={items}
                 focused
                 onChoose={onChoose}
@@ -443,42 +440,16 @@ describe('a picker that takes what the app gives', () => {
     });
 });
 
-describe('a picker whose words come from the labels', () => {
-    const LABELS: MentionPickerLabels = {
-        input: 'Personne',
-        list: 'Gens',
-        searching: 'Recherche',
-        noMatches: 'Aucun résultat',
-        failed: 'Échec.',
-        retry: 'Réessayer',
-        peopleCount: (count) => `${count} gens`,
-    };
-
-    it('names the input and the list, and counts the people, in its own words', async () => {
-        const { input, status } = await mountDraft(search, LABELS);
+describe('the names of the picker', () => {
+    it('names the input and the list, and counts one person', async () => {
+        const { input, type, status } = await mountDraft();
 
         const listbox = window.document.getElementById(input.getAttribute('aria-controls') ?? '');
-        expect(input.getAttribute('aria-label')).toBe('Personne');
-        expect(listbox?.getAttribute('aria-label')).toBe('Gens');
-        expect(status()).toBe('3 gens');
-    });
+        expect(input.getAttribute('aria-label')).toBe('Mention someone');
+        expect(listbox?.getAttribute('aria-label')).toBe('People');
 
-    it('says nobody matches in its own words', async () => {
-        const { type, status } = await mountDraft(search, LABELS);
+        await type('jane');
 
-        await type('zz');
-
-        expect(status()).toBe('Aucun résultat');
-        expect(window.document.body.textContent).toContain('Aucun résultat');
-    });
-
-    it('says the search failed in its own words, and names the retry button', async () => {
-        const { status } = await mountDraft(() => Promise.reject(new Error('offline')), LABELS);
-        await act(async () => {
-            await new Promise((resolve) => requestAnimationFrame(resolve));
-        });
-
-        expect(status()).toBe('Échec.');
-        expect(retryOption('Réessayer')).toBeDefined();
+        expect(status()).toBe('1 person');
     });
 });

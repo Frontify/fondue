@@ -5,8 +5,8 @@ import { type KeyboardEvent, type ReactNode, type RefObject, useId, useRef, useS
 
 import { isCompositionKey } from '../../shared/helpers/keys';
 import { type LinkDestination, type LinkSearch } from '../helpers/destination';
-import { type LinkLabels } from '../helpers/labels';
 import { type LinkPolicy } from '../helpers/policy';
+import { NO_RESULTS, RESULTS_LABEL, resultCount, SEARCH_FAILED, SEARCHING } from '../helpers/strings';
 import { type DestinationSearch, useDestinationSearch } from '../hooks/useDestinationSearch';
 import linkStyles from '../link.module.scss';
 
@@ -14,19 +14,19 @@ import styles from './linkForm.module.scss';
 
 const URL_PLACEHOLDER = 'example.com';
 
-const describeStatus = (search: DestinationSearch, labels: LinkLabels): string => {
+const describeStatus = (search: DestinationSearch): string => {
     switch (search.status) {
         case 'idle':
             return '';
         case 'searching':
-            return labels.searching;
+            return SEARCHING;
         case 'failed':
-            return labels.searchFailed;
+            return SEARCH_FAILED;
         case 'done':
             if (search.results.length === 0) {
-                return labels.noResults;
+                return NO_RESULTS;
             }
-            return labels.resultCount(search.results.length);
+            return resultCount(search.results.length);
     }
 };
 
@@ -100,7 +100,6 @@ type DestinationFieldProps = {
      */
     search?: LinkSearch;
     policy: LinkPolicy;
-    labels: LinkLabels;
     onChange: (value: string) => void;
     onPick: (destination: LinkDestination) => void;
     onEnter: (event: KeyboardEvent<HTMLInputElement>) => void;
@@ -117,7 +116,6 @@ export const DestinationField = ({
     errorId,
     search,
     policy,
-    labels,
     onChange,
     onPick,
     onEnter,
@@ -183,7 +181,7 @@ export const DestinationField = ({
             {found.length === 0 ? null : (
                 // The arrow keys move focus between the buttons; each button is the control.
                 // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-                <ul ref={listRef} aria-label={labels.results} className={styles.results} onKeyDown={onListKeyDown}>
+                <ul ref={listRef} aria-label={RESULTS_LABEL} className={styles.results} onKeyDown={onListKeyDown}>
                     {found.map((destination) => (
                         <li key={destination.id}>
                             <PageButton destination={destination} onPick={pick} />
@@ -192,7 +190,7 @@ export const DestinationField = ({
                 </ul>
             )}
             {search === undefined ? null : (
-                <output className={linkStyles.visuallyHidden}>{describeStatus(destinationSearch, labels)}</output>
+                <output className={linkStyles.visuallyHidden}>{describeStatus(destinationSearch)}</output>
             )}
         </>
     );

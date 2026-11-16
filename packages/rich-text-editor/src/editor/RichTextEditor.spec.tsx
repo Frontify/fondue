@@ -1115,7 +1115,7 @@ describe('the toolbar from the keyboard', () => {
         id: 'needs-text',
         toolbar: [{ label: 'Needs text', render: NeedsText }],
     });
-    const plugins = [boldPlugin, alignPlugin(), linkPlugin(), needsTextPlugin];
+    const plugins = [boldPlugin, alignPlugin, linkPlugin(), needsTextPlugin];
 
     const toolbarIn = (container: HTMLElement): HTMLElement => {
         const toolbar = container.querySelector<HTMLElement>('[role="toolbar"]');
@@ -1673,7 +1673,7 @@ describe('the toolbar from the keyboard', () => {
         });
 
         it('keeps the panel usable after a text style menu opened from it is closed with Escape', async () => {
-            const withSelect = [boldPlugin, linkPlugin(), alignPlugin(), textStylePlugin()];
+            const withSelect = [boldPlugin, linkPlugin(), alignPlugin, textStylePlugin()];
             const { container, ready } = mount(() => (
                 <RichTextEditor value={paragraph('text')} plugins={withSelect} toolbarPlacement="top" />
             ));

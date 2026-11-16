@@ -11,8 +11,8 @@ import {
     type MentionValue,
 } from '../types';
 
-import { DEFAULT_MENTION_CONTENT_LABELS, type MentionContentLabels } from './labels';
 import { safeMentionHref } from './mention';
+import { MENTION_STRINGS } from './strings';
 import { withoutControlCharacters } from './text';
 
 /**
@@ -31,7 +31,6 @@ type MentionDisplayOptions = {
     resolve?: MentionResolve;
     href?: MentionHref;
     trigger: string;
-    labels?: MentionContentLabels;
 };
 
 type MentionNames = { username: string; name: string };
@@ -75,29 +74,24 @@ const currentNames = (stored: MentionNames, current: MentionNames): MentionNames
 };
 
 /** Shown in place of a stored username that is empty or not text. */
-const unknownLabel = (kind: MentionKind | undefined, labels: MentionContentLabels): string => {
+const unknownLabel = (kind: MentionKind | undefined): string => {
     switch (kind) {
         case undefined:
         case 'user':
-            return labels.unknownPerson;
+            return MENTION_STRINGS.unknownPerson;
         case 'group':
-            return labels.unknownGroup;
+            return MENTION_STRINGS.unknownGroup;
         case 'all':
-            return labels.unknownMention;
+            return MENTION_STRINGS.unknownMention;
         default:
             // Adding a kind fails to compile here until it is handled.
             throw new Error(`Unhandled mention kind: ${JSON.stringify(kind satisfies never)}`);
     }
 };
 
-const labelOf = (
-    username: string,
-    trigger: string,
-    kind: MentionKind | undefined,
-    labels: MentionContentLabels,
-): string => {
+const labelOf = (username: string, trigger: string, kind: MentionKind | undefined): string => {
     if (username === '') {
-        return unknownLabel(kind, labels);
+        return unknownLabel(kind);
     }
     return `${trigger}${username}`;
 };
@@ -150,7 +144,7 @@ const resolutionOf = (mention: MentionValue, resolve: MentionResolve | undefined
  */
 export const mentionDisplay = (
     mention: MentionValue,
-    { resolve, href, trigger, labels = DEFAULT_MENTION_CONTENT_LABELS }: MentionDisplayOptions,
+    { resolve, href, trigger }: MentionDisplayOptions,
 ): MentionDisplay => {
     const resolution = resolutionOf(mention, resolve);
     const kind = storedKind(mention.kind);
@@ -166,15 +160,15 @@ export const mentionDisplay = (
         case 'unavailable':
             return {
                 status: 'unavailable',
-                label: labelOf(stored.username, trigger, kind, labels),
+                label: labelOf(stored.username, trigger, kind),
                 title: stored.name,
-                note: labels.unavailable,
+                note: MENTION_STRINGS.unavailable,
             };
         default:
             // Unreachable: `resolutionOf` lets only known statuses through.
             throw new Error(`Unhandled mention resolution: ${JSON.stringify(resolution satisfies never)}`);
     }
-    const label = labelOf(shown.username, trigger, kind, labels);
+    const label = labelOf(shown.username, trigger, kind);
     const target = safeMentionHref(href, mention);
     if (target === undefined) {
         return { status: 'text', label, title: shown.name };
