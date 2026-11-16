@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { compile, compileString } from 'sass';
 import { describe, expect, it } from 'vitest';
 
+import { OWN_MARGIN_VARIABLES } from '../core/documentContract';
 import { LOOK_PROPERTIES, lookVariableName } from '../core/look';
 import { ALL_TEXT_STYLES, findPreset } from '../plugins/TextStyle/helpers/presets';
 
@@ -22,9 +23,21 @@ type LookDeclaration = { property: string; variable: string };
 const lookDeclarationsIn = (css: string): LookDeclaration[] =>
     [...css.matchAll(LOOK_DECLARATION)].map(([, property = '', variable = '']) => ({ property, variable }));
 
+/** The margins a look hands to the document as custom properties, which alone writes margins. */
+const HANDED_OVER_PROPERTIES: Record<string, string> = {
+    'margin-top': OWN_MARGIN_VARIABLES.top,
+    'margin-bottom': OWN_MARGIN_VARIABLES.bottom,
+};
+
+/** What a stylesheet writes for a look property: the property itself, or the variable that hands a margin over. */
+const writtenPropertyOf = (property: string): string => HANDED_OVER_PROPERTIES[property] ?? property;
+
 /** What the stylesheet must write for a style named `key` (in core's spelling) and the given properties. */
 const declarationsCoreNames = (key: string, properties: readonly string[]): LookDeclaration[] =>
-    properties.map((property) => ({ property, variable: lookVariableName(key, property) }));
+    properties.map((property) => ({
+        property: writtenPropertyOf(property),
+        variable: lookVariableName(key, property),
+    }));
 
 const CORE_PROPERTIES = Object.values(LOOK_PROPERTIES);
 
@@ -41,13 +54,13 @@ const ruleBodyOf = (css: string, className: string): string => {
 };
 
 describe('the look mixin', () => {
-    it('writes every property core knows, under the variable core names', () => {
+    it('writes every property core knows, handing the margins to the document, under the variable core names', () => {
         const css = compileMixinCall("@include look.look('sample-style');");
 
         expect(lookDeclarationsIn(css)).toEqual(declarationsCoreNames('sampleStyle', CORE_PROPERTIES));
     });
 
-    it('leaves out the properties excepted', () => {
+    it('leaves out the properties excepted, a margin variable among them', () => {
         const css = compileMixinCall(
             "@include look.look('sample-style', $except: (text-decoration, margin-top, margin-bottom));",
         );
@@ -77,7 +90,7 @@ describe('the text style stylesheet', () => {
     });
 
     for (const name of presetNames) {
-        it(`reads the ${name} look from the variables core names`, () => {
+        it(`reads the ${name} look from the variables core names and hands its margins to the document`, () => {
             expect(lookDeclarationsIn(ruleBodyOf(css, name))).toEqual(declarationsCoreNames(name, CORE_PROPERTIES));
         });
     }

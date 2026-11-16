@@ -22,7 +22,7 @@ export {
 export { isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
 export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
 export { fondueToken, fondueTokenValues, type FondueTokenName } from './fondueTokens';
-export { DOCUMENT_GAP_VARIABLES, OWN_MARGINS_ATTRIBUTE } from './documentContract';
+export { DOCUMENT_GAP_VARIABLES, OWN_MARGIN_VARIABLES } from './documentContract';
 export { lookProperties, lookStyle, styleOfClass, type TextLook } from './look';
 export {
     type BlockAttributeDefinition,

@@ -3,7 +3,7 @@
 // Export without the stylesheet: each node's looks written into its own `style`,
 // from what the plugins declared for the classes it carries.
 
-import { fondueToken, type HtmlSpec, OWN_MARGINS_ATTRIBUTE, type StyleMap } from '#/core';
+import { fondueToken, type HtmlSpec, type StyleMap } from '#/core';
 
 import { type DrawnNode } from './documentTree';
 
@@ -67,18 +67,20 @@ const documentGaps = (tag: HtmlSpec['tag'], placement: Placement): StyleMap => {
 };
 
 const PARAGRAPH_TAG = 'p';
+// A text style's paragraph carries it; `textStyle.module.scss` gives the body look to `p:not([data-text-style])`.
+const TEXT_STYLE_ATTRIBUTE = 'data-text-style';
 
 /** What the export writes into the elements, from what the stylesheets would set. */
 export type InlineLooksOptions = {
     /** The style of each class, by class name (`registry.contentStyles()`). */
     classes: Readonly<Record<string, StyleMap>>;
-    /** The body look of a plain paragraph, one without the margin marker, as `document.module.scss` gives it. */
+    /** The body look of a plain paragraph, one with no text style, as `textStyle.module.scss` gives it. */
     plainParagraph: StyleMap;
 };
 
 /** The body look for a plain paragraph; nothing for any other element. */
 const plainParagraphStyle = (spec: HtmlSpec, plainParagraph: StyleMap): StyleMap | undefined => {
-    if (spec.tag !== PARAGRAPH_TAG || spec.attrs?.[OWN_MARGINS_ATTRIBUTE] !== undefined) {
+    if (spec.tag !== PARAGRAPH_TAG || spec.attrs?.[TEXT_STYLE_ATTRIBUTE] !== undefined) {
         return undefined;
     }
     return plainParagraph;

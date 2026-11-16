@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { fondueToken, type HtmlAttributes, type HtmlSpec, OWN_MARGINS_ATTRIBUTE } from '#/core';
+import { fondueToken, type HtmlAttributes, type HtmlSpec } from '#/core';
 
 import { type DrawnNode } from './documentTree';
 import { inlineLooks } from './inlineLooks';
@@ -110,8 +110,8 @@ describe('inlineLooks body look', () => {
         expect(specOf(node).attrs?.style).toMatchObject({ 'font-size': '13px', color: 'green' });
     });
 
-    it('leaves out a paragraph that carries the margin marker', () => {
-        const [node] = inlineLooks([block('p', [], { [OWN_MARGINS_ATTRIBUTE]: '' })], BODY_STYLES);
+    it('leaves out a paragraph that carries a text style', () => {
+        const [node] = inlineLooks([block('p', [], { 'data-text-style': 'sample' })], BODY_STYLES);
 
         expect(specOf(node).attrs?.style).not.toHaveProperty('font-size');
     });

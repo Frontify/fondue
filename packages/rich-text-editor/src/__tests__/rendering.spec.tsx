@@ -176,7 +176,8 @@ describe('the element a document sits in', () => {
             expect((root as HTMLElement | null)?.style.getPropertyValue('--rte-column-gap')).toBe('24px');
         }
         expect(exportRoot?.className).toBe(view?.className);
-        expect(view?.classList.length).toBe(2);
+        // The document's own class, the text style content's and the column layout's.
+        expect(view?.classList.length).toBe(3);
     });
 
     it('is left out of export with wrap: false', () => {
