@@ -44,7 +44,7 @@ export type RteSelectionSnapshot = {
      *
      * On a caret, every entry is `'all'`: the marks typing here would carry.
      * Over a range, `'all'` is a mark every text in it carries and `'some'` one
-     * only part of it carries — a range that is half covered is `'some'`, not `'all'`. A mark
+     * only part of it carries. A mark
      * all of it carries, but with different values, is `'some'` too (for
      * example, a red-and-blue range has no one colour).
      */
@@ -126,7 +126,7 @@ export type EditorControlApi = {
          */
         setType(type: string, value?: Record<string, unknown>): void;
         /**
-         * Set attributes on every block the selection touches (for example, how alignment is applied).
+         * Set attributes on every block the selection touches.
          *
          * @returns whether any block changed, which is false when none of them declares the attributes or all have the values already
          */

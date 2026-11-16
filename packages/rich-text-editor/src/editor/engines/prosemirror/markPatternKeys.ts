@@ -142,7 +142,6 @@ export const markPatternRule = (rule: RuleOfKind<'markPattern'>, context: RuleCo
 /** A token found before the caret, with the text it had then. */
 type PendingToken = MarkRange & { text: string };
 
-/** What reading a token before the caret needs. */
 type TokenMatcher = {
     matchers: readonly MarkPatternMatcher[];
     excludedMarks: readonly PmMarkType[];

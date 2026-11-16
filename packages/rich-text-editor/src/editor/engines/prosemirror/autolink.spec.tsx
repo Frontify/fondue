@@ -487,8 +487,6 @@ describe('a web address next to a line break', () => {
     });
 });
 
-// A second `markPattern` rule gets Enter marking and Backspace undo with no change to the engine.
-
 const TAG_PATTERN = /#\w+/;
 
 const tagPlugin = definePlugin({

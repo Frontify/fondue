@@ -333,7 +333,7 @@ export const defineMark = <TValue extends object = Record<string, never>>(
 export type MarkDefinition<TValue = Record<string, unknown>> = {
     /** Where the mark sits when marks nest on the same text: lower wraps higher, ties keep plugin order. Defaults to `0`. */
     nesting?: number;
-    /** Text typed at the end of the mark carries it on. Defaults to true; a mark that declares `inclusive: false` stops at its end. */
+    /** Text typed at the end of the mark carries it on. Defaults to true. */
     inclusive?: boolean;
     /** Mark types that cannot sit on the same text as this one: putting either mark on takes the other off. Naming it in one mark is enough. A type no mounted plugin registers is ignored. */
     excludes?: readonly string[];

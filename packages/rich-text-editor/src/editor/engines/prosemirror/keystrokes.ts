@@ -272,7 +272,7 @@ const isGluedAfter = (state: EditorState, pos: number): boolean => {
 
 const escapeForRegExp = (text: string): string => text.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-/** A delimiter pair becomes a mark over its text (for example, `**bold**` -> bold over `bold`). The engine ships block and text rules but no mark rule. */
+/** The engine ships block and text rules but no mark rule. */
 const markRule = (rule: RuleOfKind<'mark'>, context: RuleContext): InputRule | null => {
     const markType = context.schema.marks[rule.key];
     if (!markType) {

@@ -48,8 +48,8 @@ const BLANK_TEXT = /^\s*$/;
 
 /**
  * The marks a caret would type with, or the marks EVERY text in a range
- * carries with one value — a range only half covered does not carry it, and (for
- * example) a red-and-blue range has no one colour. A range also reports the marks only some of its
+ * carries with one value (for example, a red-and-blue range has no one
+ * colour). A range also reports the marks only some of its
  * text carries, or carries with different values.
  */
 const marksAt = (state: EditorState): RteSelectionSnapshot['marks'] => {
@@ -154,13 +154,12 @@ const createSelectionApi = (getView: () => EditorView): EditorControlApi['select
 // --- Marks ---
 //
 // A mark applied by typing a delimiter pair (for example, `**bold**`) does not come through this api: the
-// markdown shortcut builds its own transaction (see keystrokes.ts).
+// markdown shortcut builds its own transaction.
 
 /**
  * The stretch of text around the selection start that carries a mark, or null
  * when the mark is not there. A run is a stretch of consecutive children rather
- * than a single node, because other marks may split the text — so a run split by
- * another mark still counts as one run.
+ * than a single node, because other marks may split the text.
  */
 const findMarkRange = (state: EditorState, markType: PmMarkType): { from: number; to: number } | null => {
     const { $from } = state.selection;
