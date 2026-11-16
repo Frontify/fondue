@@ -1,0 +1,97 @@
+packages/rich-text-editor/src/core/index.ts
+  s_3da29b36b0ad36::t_fff7813598236c 36
+packages/rich-text-editor/src/__tests__/htmlParity.spec.tsx
+  s_3da29b36b0ad36::t_c834ce77552134 13
+  s_3da29b36b0ad36::t_8c8ea8cdb76602 126,138
+packages/rich-text-editor/src/__tests__/pluginDefinitions.spec.tsx
+  s_3da29b36b0ad36::t_c834ce77552134 9-16
+  s_3da29b36b0ad36::t_30abaee2c17118 215,229
+packages/rich-text-editor/src/editor/helpers/toolbarItem.spec.ts
+  s_3da29b36b0ad36::t_95c877c9aafb99 120,127,131,136,141,145,149,153,157,161,165,169,173
+  s_3da29b36b0ad36::t_9284ec274fc6ef 180,184
+  s_3da29b36b0ad36::t_c834ce77552134 7
+packages/rich-text-editor/src/core/plugin.ts
+  s_3da29b36b0ad36::t_3391670d6dc6fb 153
+  s_3da29b36b0ad36::t_383ff1a6451886 67
+  s_3da29b36b0ad36::t_7a084345332009 88,90-91
+  s_3da29b36b0ad36::t_bd2ba516f3d092 132
+  s_3da29b36b0ad36::t_103eec15b04536 50-53
+  s_3da29b36b0ad36::t_477e5b6b92c6f1 22
+  s_3da29b36b0ad36::t_14973b3cb27f26 89
+  s_3da29b36b0ad36::t_51ca5a9a937f32 295-299
+  s_3da29b36b0ad36::t_b80aab41d0b352 49,174,176,205-228
+  s_17e6325854cf61::t_462c30e8f97e6e 229
+packages/rich-text-editor/src/editor/engines/prosemirror/controlApi.spec.tsx
+  s_3da29b36b0ad36::t_95c877c9aafb99 30,37,43,47,249,257,544,552
+  s_3da29b36b0ad36::t_c834ce77552134 9-17
+packages/rich-text-editor/src/plugins/defaultContent.spec.ts
+  s_3da29b36b0ad36::t_e2fc942d984fb6 5
+  s_3da29b36b0ad36::t_f76bcee5b8dbdc 31
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.spec.tsx
+  s_3da29b36b0ad36::t_95c877c9aafb99 31,38,42,49
+  s_3da29b36b0ad36::t_c834ce77552134 12
+packages/rich-text-editor/src/editor/RichTextEditor.spec.tsx
+  s_3da29b36b0ad36::t_95c877c9aafb99 521
+  s_3da29b36b0ad36::t_c834ce77552134 17
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.spec.tsx
+  s_3da29b36b0ad36::t_95c877c9aafb99 24,31,35,42,46,54,87,100,114,122,132,140,151,164
+  s_3da29b36b0ad36::t_c834ce77552134 7-15
+packages/rich-text-editor/src/core/registry.spec.ts
+  s_3da29b36b0ad36::t_95c877c9aafb99 47-49,57-59,102-103,114-115,120-121,131-132,147-148,217,221,265-266,270,277,294,440,458,481
+  s_3da29b36b0ad36::t_646072a1807a88 342-345
+  s_3da29b36b0ad36::t_a06b859c04b1f8 357
+  s_3da29b36b0ad36::t_3b23397c453aa8 282-285
+  s_3da29b36b0ad36::t_9b110daae7b61b 174-176
+  s_3da29b36b0ad36::t_c834ce77552134 138-140,224-228,237-242,278-280,430-432,466-468,476-480,493-496
+  s_3da29b36b0ad36::t_2b366dd4748a79 281
+packages/rich-text-editor/src/__tests__/rendering.spec.tsx
+  s_3da29b36b0ad36::t_c834ce77552134 12
+  s_3da29b36b0ad36::t_3d9c9e362e1db6 64,74
+packages/rich-text-editor/src/core/documentText.spec.ts
+  s_3da29b36b0ad36::t_b64f9e9e63ded1 7
+  s_3da29b36b0ad36::t_ca69bfe6f0da9b 29,42,46,50,57,61,65,67
+packages/rich-text-editor/src/editor/components/Toolbar.tsx
+  s_3da29b36b0ad36::t_c938c6aba18d63 216-234
+packages/rich-text-editor/src/editor/engines/prosemirror/documentConversion.spec.tsx
+  s_3da29b36b0ad36::t_95c877c9aafb99 32,39,43,50,54,63,67,74,78,91,95
+  s_3da29b36b0ad36::t_c834ce77552134 10
+packages/rich-text-editor/src/core/registry.ts
+  s_3da29b36b0ad36::t_0db91e2af17e1d 69-79
+  s_3da29b36b0ad36::t_61918b54d9565a 220,227-237,292,300-309,544,546-550,563
+packages/rich-text-editor/src/editor/engines/prosemirror/nodeViews.spec.tsx
+  s_3da29b36b0ad36::t_95c877c9aafb99 44,67,85,92,98,105,418,426,454,461,489,497
+  s_3da29b36b0ad36::t_c834ce77552134 14
+packages/rich-text-editor/src/editor/engines/prosemirror/keystrokes.spec.tsx
+  s_3da29b36b0ad36::t_c834ce77552134 9-16
+  s_3da29b36b0ad36::t_95c877c9aafb99 353,360
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_3da29b36b0ad36::t_c834ce77552134 24
+  s_3da29b36b0ad36::t_95c877c9aafb99 926,939,1002,1016,1105,1118
+packages/rich-text-editor/src/__tests__/serializeToHtml.node.spec.tsx
+  s_3da29b36b0ad36::t_c834ce77552134 8-16
+  s_3da29b36b0ad36::t_80865d302409af 24,31,35,43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "56e51e1db62bd11ea6b11128e787a634960b2981",
+  "prompts": {},
+  "sessions": {
+    "s_17e6325854cf61": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5dd182d0-d7de-40a0-8dd8-b9746fb93e26",
+        "model": "unknown"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    },
+    "s_3da29b36b0ad36": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52275dbb-cfd4-472c-b295-02ca60ef0ab1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}
