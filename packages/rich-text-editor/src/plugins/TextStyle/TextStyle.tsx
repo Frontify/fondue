@@ -13,6 +13,7 @@ import {
     type RteContent,
     type RteIcon,
     type RtePlugin,
+    type RteToolbarEntry,
     type TextLook,
 } from '#/core';
 
@@ -188,11 +189,17 @@ export const textStylePlugin = ({
         };
     });
 
+    // A paragraph alone is nothing to choose, so the picker needs at least one real style.
+    const toolbar: RteToolbarEntry[] = [];
+    if (offered.length > 0) {
+        toolbar.push({ label: 'Text style', render: (props) => <TextStyleSelect {...props} options={options} /> });
+    }
+
     return definePlugin({
         id: 'text-style',
         content: textStyleContent({ styles: options, presets }),
         toolbarGroup: 'text',
-        toolbar: [{ label: 'Text style', render: (props) => <TextStyleSelect {...props} options={options} /> }],
+        toolbar,
         hotkeys,
         // `# ` through `#### `, for the headings this editor offers.
         inputRules: offered.flatMap(markdownRuleFor),
