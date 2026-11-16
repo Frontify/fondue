@@ -155,7 +155,6 @@ export type AlignPluginOptions = {
     labels?: Partial<AlignLabels>;
 };
 
-/** The alignment of the block the selection is in, which is none when the block has not been given one. */
 const alignOf = ({ block }: RteSelectionSnapshot): AlignAttribute['align'] =>
     // The block carries the attribute this plugin added, which the structural node type does not know about.
     (block as AlignAttribute | null)?.align;
@@ -166,7 +165,7 @@ type ChooseAlignmentParams = {
     labels: AlignLabels;
 };
 
-/** What a toolbar button and its key both do: set the alignment, or clear it when the block already has it, and say so when a block changed. */
+/** What the toolbar button and its key share. */
 const chooseAlignment = ({ api, value, labels }: ChooseAlignmentParams): void => {
     let next: AlignValue | null = value;
     let announcement = labels[value];

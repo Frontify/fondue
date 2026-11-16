@@ -75,7 +75,7 @@ const ResetFormattingButton = ({ api, label, labels }: ResetFormattingButtonProp
 };
 
 /**
- * A toolbar button that resets the selection's marks, lists, block types and attributes, and `Mod-\`, which only clears its marks. Both keep the marks that survive a clear
+ * A toolbar button that resets the selection, and `Mod-\`, which clears only its marks. Both keep the marks that survive a clear.
  */
 export const resetFormattingPlugin = (options: ResetFormattingPluginOptions = {}) => {
     const labels: ResetFormattingLabels = { ...DEFAULT_RESET_FORMATTING_LABELS, ...options.labels };

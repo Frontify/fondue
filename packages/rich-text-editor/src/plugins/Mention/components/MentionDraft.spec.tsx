@@ -17,11 +17,10 @@ declare global {
 }
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
-const PEOPLE: MentionItem[] = [
-    { id: 'jane', username: 'jane', name: 'Jane Doe', image: '/avatars/jane.png' },
-    { id: 'john/1', username: 'john', name: 'John Roe' },
-    { id: 'design', username: 'design', name: 'Design team', kind: 'group' },
-];
+const JANE: MentionItem = { id: 'jane', username: 'jane', name: 'Jane Doe', image: '/avatars/jane.png' };
+const JOHN: MentionItem = { id: 'john/1', username: 'john', name: 'John Roe' };
+const DESIGN: MentionItem = { id: 'design', username: 'design', name: 'Design team', kind: 'group' };
+const PEOPLE: MentionItem[] = [JANE, JOHN, DESIGN];
 
 const search = (query: string): MentionItem[] => PEOPLE.filter((person) => person.username.includes(query));
 
@@ -39,7 +38,6 @@ const settle = async (): Promise<void> => {
     });
 };
 
-/** The Retry option a failed search offers, found by its words. */
 const retryOption = (name = 'Retry'): HTMLElement | undefined =>
     [...window.document.querySelectorAll<HTMLElement>('[role="option"]')].find((option) => option.textContent === name);
 
@@ -297,7 +295,6 @@ describe('a mention being searched for', () => {
         expect(retry).toBeDefined();
         expect(container.contains(retry ?? null)).toBe(false);
 
-        // The mouse press must not move focus out of the query.
         const press0 = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
         retry?.dispatchEvent(press0);
         expect(press0.defaultPrevented).toBe(true);
@@ -394,14 +391,12 @@ describe('a mention being searched for', () => {
             (query) => new Promise<MentionItem[]>((resolve) => answers.set(query, resolve)),
         );
         await type('j');
-        // The index is in range, but indexed access reads as possibly undefined.
-        act(() => answers.get('')?.([PEOPLE[2] as MentionItem]));
+        act(() => answers.get('')?.([DESIGN]));
         await settle();
 
         // The dropped answer is no earlier answer to keep showing.
         expect(status()).toBe('');
-        // Same as above: the index is in range.
-        act(() => answers.get('j')?.([PEOPLE[0] as MentionItem]));
+        act(() => answers.get('j')?.([JANE]));
         await settle();
         expect(status()).toBe('1 person');
     });
