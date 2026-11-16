@@ -73,14 +73,8 @@ export type ToolbarEntry = {
       }
 );
 
-/**
- * Who binds a shortcut: the editor itself, or one plugin
- */
 export type RteShortcutOwner = { kind: 'editor' } | { kind: 'plugin'; pluginId: string };
 
-/**
- * A key the editor or a plugin binds, as the keyboard reference lists it
- */
 export type RteShortcut = {
     owner: RteShortcutOwner;
     /**
@@ -102,7 +96,7 @@ export type PluginRegistry = ContentRegistry & {
     /** Key → its handlers, in mount order; they run until one handles it. */
     hotkeys: Map<string, readonly HotkeyHandler[]>;
     /**
-     * Every key bound, labelled: the editor's own first, then each plugin's `hotkeys` and the toolbar `shortcut`s that bind a key too, plugin by plugin in declaration order.
+     * The editor's own keys first, then each plugin's hotkeys and toolbar shortcuts, plugin by plugin.
      */
     shortcuts: readonly RteShortcut[];
     /**
@@ -261,10 +255,14 @@ export const toggleOwn = ({ own, api, selection, value }: ToggleOwnParams): void
     }
 };
 
+const assertKnownModifiers = (keys: string): void => {
+    parseHotkey(keys);
+};
+
 const NOTHING_TO_TOGGLE = 'nothing to toggle: name a mark, list, text block, void block or inline with `toggles`.';
 
 /**
- * Throws unless the label is a non-empty string. A toolbar label is the control's only accessible name and a hotkey's names it in the keyboard reference, so an untyped caller cannot leave it out.
+ * Throws unless the label is a non-empty string: an untyped caller can leave it out.
  */
 const assertLabelled = (plugin: RtePlugin, label: unknown, subject: string): void => {
     if (typeof label !== 'string' || label === '') {
@@ -409,8 +407,7 @@ const addShortcut = (draft: Draft, plugin: RtePlugin, item: ToolbarEntry): void 
     if (controlOf(item.own).kind === 'none') {
         throw new Error(`Plugin "${plugin.id}" names shortcut "${shortcut}" with ${NOTHING_TO_TOGGLE}`);
     }
-    // Throws for a modifier the grammar does not know, before the editor mounts.
-    parseHotkey(shortcut);
+    assertKnownModifiers(shortcut);
     addHotkey(draft, shortcut, (api) => toggleOwn({ own: item.own, api, selection: api.selection.get() }));
     draft.shortcuts.push({ owner: { kind: 'plugin', pluginId: plugin.id }, key: shortcut, label: item.label });
 };
@@ -451,8 +448,7 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
     }
     draft.seenIds.set(plugin.id, occurrence + 1);
     for (const [keys, hotkey] of Object.entries(plugin.hotkeys ?? {})) {
-        // Throws for a modifier the grammar does not know, before the editor mounts.
-        parseHotkey(keys);
+        assertKnownModifiers(keys);
         assertLabelled(plugin, hotkey.label, `a hotkey "${keys}"`);
         addHotkey(draft, keys, hotkey.run);
         draft.shortcuts.push({ owner: { kind: 'plugin', pluginId: plugin.id }, key: keys, label: hotkey.label });

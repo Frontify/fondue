@@ -54,14 +54,10 @@ export type RteSelectionSnapshot = {
 };
 
 /**
- * How much of the document `marks.removeAll` clears at a caret: `'typing'` only stops the next typed text carrying
- * marks, `'block'` also clears the marks of the caret's whole text block. A range clears what it covers either way.
+ * What a caret clears: the marks it would type with (`'typing'`) or its whole text block (`'block'`). A range is cleared either way.
  */
 export type ClearMarksScope = 'typing' | 'block';
 
-/**
- * Options for `marks.removeAll`.
- */
 export type ClearMarksOptions = {
     /**
      * How much a caret clears.
@@ -105,8 +101,6 @@ export type EditorControlApi = {
         /**
          * Strip every mark from the selection, except those that declare `survivesClear` when `keepSurviving` is set.
          *
-         * @param options - how much a caret clears and which marks stay; with none, a caret only stops the marks it
-         * would type with and every mark goes
          * @returns whether any mark was removed, from the document or from the marks the caret would type with
          */
         removeAll(options?: ClearMarksOptions): boolean;
@@ -221,18 +215,13 @@ export const UNDO_HOTKEY = 'Mod-z';
 /** The key that makes the last undone change again. */
 export const REDO_HOTKEY = 'Mod-Shift-z';
 
-/**
- * A key the editor binds itself, written as in a plugin's `hotkeys`
- */
+/** Written as in a plugin's `hotkeys` (`Mod-b`). */
 export type EditorShortcut = {
     key: string;
     label: string;
 };
 
-/**
- * The keys the editor owns rather than a plugin: the engine binds undo and redo from here, and the keyboard reference lists them all.
- * `focusToolbar` is bound by the editor shell, which matches it with `matchesHotkey`.
- */
+/** The editor's own keys: the engine binds undo and redo from these, the shell matches `focusToolbar`. */
 export const EDITOR_SHORTCUTS = {
     undo: { key: UNDO_HOTKEY, label: 'Undo' },
     redo: { key: 'Mod-y', label: 'Redo' },

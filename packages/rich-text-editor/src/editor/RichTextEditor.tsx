@@ -531,13 +531,12 @@ const Shell = <TBlock extends RteBlockNode = RteBlockNode>({
                     {toolbar}
                 </FloatingToolbar>
             ) : null}
-            {/* Read with the editor through its `aria-describedby`: what each plugin says about its keys. */}
             {readOnly || !hasDescriptions ? null : (
                 <div id={descriptionId} className={styles.visuallyHidden}>
                     {registry.descriptions.join(' ')}
                 </div>
             )}
-            {/* What `api.announce` says. The role is written out on purpose: the specs and the notice lookup find the region by it. */}
+            {/* Safari does not read an `output` as a status, so the role is written out. */}
             <output // NOSONAR
                 role="status"
                 className={styles.visuallyHidden}
@@ -599,7 +598,6 @@ const mountFocusTarget = (retryFocus: RetryFocus, readOnly: boolean): MountFocus
     }
 };
 
-/** The host's description of the editor, then the element holding what the plugins say about their keys. */
 const describedByOf = (hostId: string | undefined, pluginId: string | undefined): string | undefined => {
     if (pluginId === undefined) {
         return hostId;

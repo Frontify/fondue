@@ -140,9 +140,6 @@ type UseEditorHandleOptions = {
     onDocChange: (doc: RteDocumentOf) => void;
     /** The editor took on a document from the host: at mount, or through a new `document`. */
     onDocApplied: (doc: RteDocumentOf) => void;
-    /**
-     * Says a message through the live region, for `api.announce`
-     */
     announce: (message: string) => void;
     /** When false, nothing is mounted — the shell is showing the renderer. */
     enabled: boolean;

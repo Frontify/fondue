@@ -2,9 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-/**
- * How long a message stays in the live region: one that no longer applies must not be found later in browse mode.
- */
+/** A message that no longer applies must not be found later in browse mode. */
 const CLEAR_AFTER_MS = 5000;
 
 /**
@@ -14,9 +12,6 @@ const REPEAT_MARK = '\u00A0';
 
 type UseAnnouncerResult = { message: string; announce: (message: string) => void };
 
-/**
- * The text to set so a repeat differs from the last one.
- */
 const repeatSafe = (next: string, last: string): string => {
     if (next === last) {
         return next + REPEAT_MARK;
@@ -25,10 +20,8 @@ const repeatSafe = (next: string, last: string): string => {
 };
 
 /**
- * The text a polite live region holds, and how to say something through it.
- * The region is cleared first and set on the next frame, and a message equal
- * to the last one gets a no-break space added or dropped, so the same message
- * twice is two changes a screen reader announces twice.
+ * The text a polite live region holds, and how to say something through it. The region clears and fills on the next
+ * frame, so a repeated message is a change a screen reader announces again.
  */
 export const useAnnouncer = (): UseAnnouncerResult => {
     const [message, setMessage] = useState('');
