@@ -2,7 +2,7 @@
 
 import { isSafeHref, LINK_SCHEMES, type LinkScheme } from '../../shared/helpers/href';
 
-import { type LinkLabels } from './labels';
+import { hostAndSubdomains, hostsAllowed, SAME_SITE_ONLY, schemesAllowed } from './strings';
 
 export { type LinkScheme } from '../../shared/helpers/href';
 
@@ -89,11 +89,11 @@ export const allowsHref = (policy: LinkPolicy, href: unknown): href is string =>
     return allowedHosts.some((pattern) => hostMatches(pattern, url.hostname));
 };
 
-const describeHosts = (hosts: readonly string[], labels: LinkLabels): string => {
+const describeHosts = (hosts: readonly string[]): string => {
     const lowered = hosts.map((host) => host.toLowerCase());
     const phrases = lowered.flatMap((host) => {
         if (host.startsWith(SUBDOMAIN_WILDCARD)) {
-            return [labels.hostAndSubdomains(host.slice(SUBDOMAIN_WILDCARD.length))];
+            return [hostAndSubdomains(host.slice(SUBDOMAIN_WILDCARD.length))];
         }
         // The wildcard's phrase names this host already.
         if (lowered.includes(`${SUBDOMAIN_WILDCARD}${host}`)) {
@@ -102,21 +102,21 @@ const describeHosts = (hosts: readonly string[], labels: LinkLabels): string => 
         return [host];
     });
     if (phrases.length === 0) {
-        return labels.sameSiteOnly;
+        return SAME_SITE_ONLY;
     }
-    return labels.hostsAllowed(phrases);
+    return hostsAllowed(phrases);
 };
 
 /**
  * What the policy allows, for the message shown when a typed link is refused. Empty when it holds no limit to name.
  */
-export const describeAllowed = ({ allowedSchemes, allowedHosts }: LinkPolicy, labels: LinkLabels): string => {
+export const describeAllowed = ({ allowedSchemes, allowedHosts }: LinkPolicy): string => {
     const sentences: string[] = [];
     if (allowedHosts !== undefined) {
-        sentences.push(describeHosts(allowedHosts, labels));
+        sentences.push(describeHosts(allowedHosts));
     }
     if (allowedSchemes !== undefined && !LINK_SCHEMES.every((scheme) => allowedSchemes.includes(scheme))) {
-        sentences.push(labels.schemesAllowed(allowedSchemes));
+        sentences.push(schemesAllowed(allowedSchemes));
     }
     return sentences.join(' ');
 };
