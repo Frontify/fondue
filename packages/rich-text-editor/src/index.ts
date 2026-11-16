@@ -142,7 +142,12 @@ export {
     type MentionValue,
 } from './plugins/Mention';
 export { type TextLook } from './core';
-export { type TextStyleName, type TextStylePluginOptions } from './plugins/TextStyle';
+export {
+    type LinkLook,
+    type TextStyleName,
+    type TextStylePluginOptions,
+    type TextStylePresets,
+} from './plugins/TextStyle';
 export { type TypographyGroup, type TypographyPluginOptions } from './plugins/Typography';
 
 // --- Plugin authoring ---

@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../styles/look.module.scss';
+
 // The blocks the document spaces apart, and the headings among them.
 $blocks: p, h1, h2, h3, h4, ul, ol, blockquote;
 $headings: h1, h2, h3, h4;

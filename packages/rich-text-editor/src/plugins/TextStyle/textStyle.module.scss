@@ -113,3 +113,14 @@ $heading-margin-top: var(--rte-heading-gap, var(--spacing-medium));
         )
     );
 }
+
+// `presets.body` on plain paragraphs, in list items too: a text style's `<p>` carries `data-text-style`.
+// The margins go to the document through the own-margin variables, like every look's.
+.content p:not([data-text-style]) {
+    @include look.look('body', $only: (margin-top, margin-bottom));
+}
+
+// `:where` keeps the rest at class rank, below a checked item's colour and strike.
+.content :where(p:not([data-text-style])) {
+    @include look.look('body', $except: (margin-top, margin-bottom));
+}
