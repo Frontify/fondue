@@ -165,7 +165,7 @@ export const LinkTargetForm = (props: LinkTargetFormProps): ReactNode => {
                 <Label htmlFor={urlId}>{LINK_TO_LABEL}</Label>
                 <DestinationField
                     id={urlId}
-                    ref={urlFieldRef}
+                    inputRef={urlFieldRef}
                     value={typed}
                     status={error === null ? 'neutral' : 'error'}
                     errorId={errorId}

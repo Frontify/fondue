@@ -51,19 +51,24 @@
 .option {
     display: flex;
     flex-direction: column;
+    width: 100%;
     padding: var(--spacing-x-small) var(--spacing-small);
+    border: none;
     border-radius: var(--border-radius-medium);
+    background: none;
     color: var(--color-primary-default);
+    font: inherit;
+    text-align: start;
     cursor: pointer;
 
-    // The highlighted row, as the mention list highlights one.
-    &[data-highlighted='true'] {
+    &:hover,
+    &:focus-visible {
         background-color: var(--color-surface-hover);
+        outline: none;
     }
 
-    &[data-highlighted='true']:active {
+    &:active {
         background-color: var(--color-surface-active);
-        transition: none;
     }
 }
 

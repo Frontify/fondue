@@ -82,10 +82,10 @@ const mountSearchForm = (
             await vi.advanceTimersByTimeAsync(200);
         });
     };
-    const press = (key: string, init: KeyPressInit = {}): KeyboardEvent => {
+    const press = (key: string, init: KeyPressInit = {}, target: Element = field): KeyboardEvent => {
         const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init });
         act(() => {
-            field.dispatchEvent(event);
+            target.dispatchEvent(event);
         });
         return event;
     };
@@ -103,9 +103,9 @@ const mountSearchForm = (
             }
             setValue(input, value);
         },
-        options: () => [...container.querySelectorAll('[role="option"]')],
+        pages: () => [...container.querySelectorAll<HTMLButtonElement>('ul button')],
         status: () => container.querySelector('output')?.textContent ?? '',
-        listbox: () => container.querySelector('[role="listbox"]'),
+        list: () => container.querySelector('ul'),
     };
 };
 
@@ -113,6 +113,20 @@ const fixed =
     (...found: LinkDestination[]): LinkSearch =>
     () =>
         Promise.resolve(found);
+
+const pageAt = (pages: readonly HTMLButtonElement[], index: number): HTMLButtonElement => {
+    const page = pages[index];
+    if (page === undefined) {
+        throw new Error(`no page at ${index}`);
+    }
+    return page;
+};
+
+const pressButton = (button: HTMLButtonElement | undefined): void => {
+    act(() => {
+        button?.click();
+    });
+};
 
 describe('the destination field', () => {
     it('is the plain field when no search is given', () => {
@@ -122,79 +136,45 @@ describe('the destination field', () => {
         expect(container.querySelector('output')).toBeNull();
     });
 
-    it('is a combobox named "Link to" that opens a listbox of results while typing', async () => {
-        const { container, field, type, options, listbox } = mountSearchForm(fixed(BRAND, LOGOS));
-
-        expect(field.getAttribute('role')).toBe('combobox');
-        expect(field.getAttribute('aria-autocomplete')).toBe('list');
-        expect(field.getAttribute('aria-expanded')).toBe('false');
-        expect(container.querySelector(`label[for="${field.id}"]`)?.textContent).toContain('Link to');
+    it('stays a plain text field named "Link to" while it searches', async () => {
+        const { container, field, type } = mountSearchForm(fixed(BRAND, LOGOS));
 
         await type('br');
 
-        expect(field.getAttribute('aria-expanded')).toBe('true');
-        expect(field.getAttribute('aria-controls')).toBe(listbox()?.id);
-        expect(options().map((option) => option.textContent)).toEqual([
+        expect(field.getAttribute('role')).toBeNull();
+        expect(container.querySelector(`label[for="${field.id}"]`)?.textContent).toContain('Link to');
+    });
+
+    it('lists the pages found as buttons under the field, in a list named Pages', async () => {
+        const { type, pages, list } = mountSearchForm(fixed(BRAND, LOGOS));
+
+        await type('br');
+
+        expect(list()?.getAttribute('aria-label')).toBe('Pages');
+        expect(pages().map((page) => page.textContent)).toEqual([
             'Brand guidelineshttps://frontify.com/brand',
             'Logoshttps://frontify.com/logos',
         ]);
     });
 
-    it('scrolls the active option into view as the arrows move it', async () => {
-        const scrolled = vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(() => {});
-        const { type, press, options } = mountSearchForm(fixed(BRAND, LOGOS));
+    it('fills the field in with a pressed page, closes the list and keeps focus in the field without saving', async () => {
+        const { field, type, pages, list, onSave } = mountSearchForm(fixed(BRAND, LOGOS));
         await type('br');
 
-        press('ArrowUp');
+        pressButton(pages()[1]);
 
-        expect(scrolled.mock.contexts).toEqual([options()[1]]);
-        scrolled.mockRestore();
-    });
-
-    it('leaves the list where it is when the pointer highlights an option', async () => {
-        const scrolled = vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(() => {});
-        const { type, options } = mountSearchForm(fixed(BRAND, LOGOS));
-        await type('br');
-
-        act(() => {
-            options()[1]?.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
-        });
-
-        expect(options()[1]?.getAttribute('aria-selected')).toBe('true');
-        expect(scrolled).not.toHaveBeenCalled();
-        scrolled.mockRestore();
-    });
-
-    it('leaves the list where it is on hover after arrows that could not move the highlight', async () => {
-        const scrolled = vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(() => {});
-        const search = vi.fn<LinkSearch>((query) => {
-            if (query === 'b') {
-                return Promise.resolve([BRAND]);
-            }
-            return Promise.resolve([BRAND, LOGOS]);
-        });
-        const { type, press, options } = mountSearchForm(search);
-        await type('b');
-        press('ArrowDown');
-        press('ArrowDown');
-        scrolled.mockClear();
-        await type('br');
-
-        act(() => {
-            options()[1]?.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
-        });
-
-        expect(scrolled).not.toHaveBeenCalled();
-        scrolled.mockRestore();
+        expect(field.value).toBe(LOGOS.href);
+        expect(list()).toBeNull();
+        expect(window.document.activeElement).toBe(field);
+        expect(onSave).not.toHaveBeenCalled();
     });
 
     it('does not search again for the address a pick fills in', async () => {
         const search = vi.fn<LinkSearch>(fixed(BRAND, LOGOS));
-        const { type, press } = mountSearchForm(search);
+        const { type, pages } = mountSearchForm(search);
         await type('br');
-        press('ArrowDown');
-        press('Enter');
 
+        pressButton(pages()[0]);
         await act(async () => {
             await vi.advanceTimersByTimeAsync(200);
         });
@@ -202,60 +182,34 @@ describe('the destination field', () => {
         expect(search.mock.calls.map(([query]) => query)).toEqual(['br']);
     });
 
-    it('moves the active option with the arrows and picks it with Enter', async () => {
-        const { field, type, press, options, onSave } = mountSearchForm(fixed(BRAND, LOGOS));
-        await type('br');
-        // No option is active until an arrow makes one, so Enter on a typed address stays a save.
-        expect(field.getAttribute('aria-activedescendant')).toBeNull();
-
-        press('ArrowDown');
-        expect(field.getAttribute('aria-activedescendant')).toBe(options()[0]?.id);
-        press('ArrowDown');
-        expect(field.getAttribute('aria-activedescendant')).toBe(options()[1]?.id);
-        expect(options()[1]?.getAttribute('aria-selected')).toBe('true');
-        press('ArrowDown');
-        expect(field.getAttribute('aria-activedescendant')).toBe(options()[0]?.id);
-        press('ArrowUp');
-        expect(field.getAttribute('aria-activedescendant')).toBe(options()[1]?.id);
-
-        const enter = press('Enter');
-
-        expect(enter.defaultPrevented).toBe(true);
-        expect(field.value).toBe(LOGOS.href);
-        expect(onSave).not.toHaveBeenCalled();
-        expect(field.getAttribute('aria-expanded')).toBe('false');
-    });
-
-    it('picks an option on a mouse press and keeps focus in the field', async () => {
-        const { field, type, options, onSave } = mountSearchForm(fixed(BRAND, LOGOS));
+    it('moves focus into the list with ArrowDown, between pages with the arrows, and back to the field from the first', async () => {
+        const { field, type, press, pages } = mountSearchForm(fixed(BRAND, LOGOS));
         await type('br');
         field.focus();
 
-        const press = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
-        act(() => {
-            options()[1]?.dispatchEvent(press);
-        });
+        const down = press('ArrowDown');
+        expect(down.defaultPrevented).toBe(true);
+        expect(window.document.activeElement).toBe(pages()[0]);
 
-        expect(press.defaultPrevented).toBe(true);
-        expect(field.value).toBe(LOGOS.href);
+        press('ArrowDown', {}, pageAt(pages(), 0));
+        expect(window.document.activeElement).toBe(pages()[1]);
+        press('ArrowDown', {}, pageAt(pages(), 1));
+        expect(window.document.activeElement).toBe(pages()[1]);
+
+        press('ArrowUp', {}, pageAt(pages(), 1));
+        expect(window.document.activeElement).toBe(pages()[0]);
+        press('ArrowUp', {}, pageAt(pages(), 0));
         expect(window.document.activeElement).toBe(field);
-        expect(onSave).not.toHaveBeenCalled();
-        expect(field.getAttribute('aria-expanded')).toBe('false');
     });
 
-    it('moves the highlight to the option under the pointer', async () => {
-        const { field, type, options } = mountSearchForm(fixed(BRAND, LOGOS));
-        await type('br');
+    it('leaves ArrowDown to the field when nothing was found', async () => {
+        const { type, press } = mountSearchForm(fixed());
+        await type('zz');
 
-        act(() => {
-            options()[1]?.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
-        });
-
-        expect(field.getAttribute('aria-activedescendant')).toBe(options()[1]?.id);
-        expect(options()[1]?.getAttribute('data-highlighted')).toBe('true');
+        expect(press('ArrowDown').defaultPrevented).toBe(false);
     });
 
-    it('saves a typed address on Enter when no option is active', async () => {
+    it('saves a typed address on Enter, even with pages listed', async () => {
         const { type, press, onSave } = mountSearchForm(fixed(BRAND));
         await type('https://frontify.com/typed');
 
@@ -264,38 +218,19 @@ describe('the destination field', () => {
         expect(onSave).toHaveBeenCalledWith({ href: 'https://frontify.com/typed' });
     });
 
-    it('does not pick on the Enter that confirms a composition', async () => {
-        const { field, type, press, options } = mountSearchForm(fixed(BRAND));
-        await type('br');
-        press('ArrowDown');
+    it('does not save on the Enter that confirms a composition', async () => {
+        const { type, press, onSave } = mountSearchForm(fixed(BRAND));
+        await type('https://frontify.com/typed');
 
         press('Enter', { isComposing: true });
         press('Enter', { keyCode: 229 });
 
-        expect(field.value).toBe('br');
-        expect(options()).toHaveLength(1);
+        expect(onSave).not.toHaveBeenCalled();
     });
 
-    it('closes the list on Escape without the Escape reaching the flyout, then reopens it on typing', async () => {
-        const { field, type, press, listbox } = mountSearchForm(fixed(BRAND));
+    it('leaves Escape to the flyout, list or not', async () => {
+        const { type, press } = mountSearchForm(fixed(BRAND));
         await type('br');
-        const reached = vi.fn();
-        // A flyout listens on the document, in the capture phase.
-        window.document.addEventListener('keydown', reached, true);
-        teardown.push(() => window.document.removeEventListener('keydown', reached, true));
-
-        press('Escape');
-
-        expect(listbox()).toBeNull();
-        expect(field.getAttribute('aria-expanded')).toBe('false');
-        expect(reached).not.toHaveBeenCalled();
-
-        await type('bra');
-        expect(listbox()).not.toBeNull();
-    });
-
-    it('lets Escape through when the list is not open', () => {
-        const { press } = mountSearchForm(fixed(BRAND));
         const reached = vi.fn();
         window.document.addEventListener('keydown', reached, true);
         teardown.push(() => window.document.removeEventListener('keydown', reached, true));
@@ -378,36 +313,33 @@ describe('the destination field', () => {
         expect(status()).toBe('Keine Treffer');
     });
 
-    it('fills an empty Text field with the label when a result is picked, and leaves typed text alone', async () => {
+    it('fills an empty Text field with the label when a page is picked, and leaves typed text alone', async () => {
         const first = mountSearchForm(fixed(BRAND), { mode: { kind: 'create', text: '' } });
         await first.type('br');
-        first.press('ArrowDown');
-        first.press('Enter');
+        pressButton(first.pages()[0]);
         expect(first.textField()?.value).toBe(BRAND.label);
         expect(first.field.value).toBe(BRAND.href);
 
         const second = mountSearchForm(fixed(BRAND), { mode: { kind: 'create', text: 'my words' } });
         await second.type('br');
-        second.press('ArrowDown');
-        second.press('Enter');
+        pressButton(second.pages()[0]);
         expect(second.textField()?.value).toBe('my words');
 
         const third = mountSearchForm(fixed(BRAND), { mode: { kind: 'create', text: '' } });
         third.setText('typed');
         await third.type('br');
-        third.press('ArrowDown');
-        third.press('Enter');
+        pressButton(third.pages()[0]);
         expect(third.textField()?.value).toBe('typed');
     });
 
     it('never shows a result the policy refuses', async () => {
-        const { type, options, status } = mountSearchForm(fixed(BRAND, ELSEWHERE), {
+        const { type, pages, status } = mountSearchForm(fixed(BRAND, ELSEWHERE), {
             policy: { allowedHosts: ['frontify.com'] },
         });
 
         await type('a');
 
-        expect(options().map((option) => option.textContent)).toEqual(['Brand guidelineshttps://frontify.com/brand']);
+        expect(pages().map((page) => page.textContent)).toEqual(['Brand guidelineshttps://frontify.com/brand']);
         expect(status()).toBe('1 result');
     });
 });
