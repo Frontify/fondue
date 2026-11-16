@@ -7,11 +7,9 @@ import { type LinkLabels } from './labels';
 export { type LinkScheme } from '../../shared/helpers/href';
 
 /**
- * Which links an editor accepts, kept in the content so the renderer and the
- * export enforce it too, when they are given the same `linkPlugin` or `linkContent`;
- * without it, they render any safe link. Hosts apply to every link that names one; a mail or
- * phone address names none, and a relative link points at the site the document is shown on,
- * so both are always allowed by host.
+ * Which links an editor accepts. Given to `linkContent` or `linkPlugin`, the renderer and export enforce it too.
+ * Without it they render any safe link. Mail and phone links name no host, and relative links stay on the site,
+ * so hosts never refuse them.
  */
 export type LinkPolicy = {
     /**
@@ -30,9 +28,6 @@ export type LinkPolicy = {
  */
 const SUBDOMAIN_WILDCARD = '*.';
 
-/**
- * The scheme `//host/x` takes.
- */
 const HTTPS: LinkScheme = 'https';
 
 /**

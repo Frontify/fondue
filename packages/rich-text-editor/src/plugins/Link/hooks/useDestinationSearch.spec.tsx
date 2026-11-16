@@ -49,9 +49,7 @@ const mountHook = (search: LinkSearch | undefined, initialQuery: string, policy:
         // Already unmounted by a test that checks that.
         try {
             unmount();
-        } catch {
-            // nothing left to clean
-        }
+        } catch {}
     });
     return {
         current: () => latest,

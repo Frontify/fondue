@@ -161,37 +161,27 @@ export const text = (value: string, marks: Record<string, unknown> = {}): Record
     ...marks,
 });
 
-/** The tokens the generic `token` plugin marks while typing: `tok:` and everything up to the next space. */
 const TOKEN_PATTERN = /tok:[^\s]+/;
 
-/** A trim in the shape any plugin can declare: sentence punctuation and quotes, and closing brackets with no opening one. */
 export const TOKEN_TRIM: RteMarkPatternTrim = {
     punctuation: /[.,;:!?"'”’]+/,
     pairs: { ')': '(', ']': '[', '}': '{', '>': '<' },
 };
 
-/** What the `token` mark carries. */
 export type TokenValue = { id: string };
 
-/** The `token` mark as a stored text node carries it. */
 export const token = (value: string, id = value): Record<string, unknown> => text(value, { token: { id } });
 
-/** What a spec decides about the generic `token` plugin. */
 export type TokenPluginOptions = {
-    /** The trim the typing rule declares. Leave out for a rule that trims nothing. */
+    /** Leave out for a rule that trims nothing. */
     trim?: RteMarkPatternTrim;
-    /** The typing rule's pattern. */
     pattern?: RegExp;
     /** Tokens the rule refuses, which stay as typed. */
     refuses?: (value: string) => boolean;
-    /** The paste handler the plugin brings. */
     onPaste?: PasteHandler;
 };
 
-/**
- * A plugin of the engine's own specs: a mark that carries a value, a typing rule that marks a token, and
- * optionally a paste handler. It stands in for a shipped feature, so the engine is tested through its contract alone.
- */
+/** Stands in for a shipped feature, so engine specs go through the contract alone. */
 export const tokenPlugin = ({
     trim,
     pattern = TOKEN_PATTERN,
