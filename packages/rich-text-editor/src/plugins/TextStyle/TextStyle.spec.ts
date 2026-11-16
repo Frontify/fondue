@@ -25,12 +25,7 @@ describe('the text style plugin presets', () => {
     });
 
     it('shares the default content when there are no presets', () => {
-        expect(textStylePlugin().content).toBe(textStyleContent());
-    });
-
-    it('returns the same content every time it has no styles and no presets', () => {
-        expect(textStyleContent()).toBe(textStyleContent());
-        expect(textStyleContent()).toEqual(textStylePlugin().content);
+        expect(textStylePlugin().content).toBe(textStyleContent);
     });
 
     it('sets a custom property for the body, quote and link looks', () => {
@@ -55,11 +50,15 @@ describe('the text style plugin presets', () => {
         );
     });
 
-    it('carries the body look without the plugin, and parses no heading tag', () => {
-        const content = textStyleContent({ styles: [], presets: { body: { fontSize: '16px' } } });
+    it('carries the body look of a plugin that offers no styles, and adds nothing else', () => {
+        const plugin = textStylePlugin({ styles: [], presets: { body: { fontSize: '16px' } } });
 
-        expect(content.contentProperties).toEqual({ '--rte-body-font-size': '16px' });
-        expect(content.blocks?.textStyle?.parse).toEqual([]);
+        expect(plugin.content?.contentProperties).toEqual({ '--rte-body-font-size': '16px' });
+        expect(plugin.content?.blocks?.textStyle?.parse).toEqual([]);
+        expect(plugin.toolbar).toEqual([]);
+        expect(plugin.commands).toEqual([]);
+        expect(plugin.hotkeys).toEqual({});
+        expect(plugin.inputRules).toEqual([]);
     });
 
     it('refuses a value that could break out of its declaration', () => {
@@ -71,7 +70,7 @@ describe('the text style plugin presets', () => {
     it('keeps the shared block when only presets differ, so it registers next to the default content', () => {
         const plugin = textStylePlugin({ presets: { heading1: { color: 'red' } } });
 
-        expect(plugin.content?.blocks?.textStyle).toBe(textStyleContent().blocks?.textStyle);
-        expect(() => buildPluginRegistry([textStyleContent(), plugin])).not.toThrow();
+        expect(plugin.content?.blocks?.textStyle).toBe(textStyleContent.blocks?.textStyle);
+        expect(() => buildPluginRegistry([textStyleContent, plugin])).not.toThrow();
     });
 });

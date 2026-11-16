@@ -24,7 +24,7 @@ import { underlineContent } from './Underline/Underline';
  * The content of every `defaultPlugins` entry, in the same order, which the renderer reads when given no `plugins`
  */
 export const defaultContent: readonly RteContent[] = Object.freeze([
-    textStyleContent(),
+    textStyleContent,
     boldContent,
     italicContent,
     underlineContent,
