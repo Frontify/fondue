@@ -13,10 +13,6 @@ import {
     blockAttributeStyle,
     blockHtml,
     blockValueOf,
-    CHILD_SPACING_ATTRIBUTE,
-    DEFAULT_CHILD_SPACING,
-    fondueToken,
-    type HtmlAttributes,
     type HtmlSpec,
     type MarkDefinition,
     type PluginRegistry,
@@ -228,8 +224,7 @@ const isBlockLike = (node: unknown, registry: PluginRegistry): boolean => {
 
 /**
  * A block no plugin defines: its content, in a plain `div`, so the text in it
- * still reads, blocks spaced as a block holding blocks spaces them by default.
- * Nothing when it holds nothing (a void block).
+ * still reads. Nothing when it holds nothing (a void block).
  */
 const unknownBlockNode = (block: RteBlockNode, registry: PluginRegistry, options: Options): DrawnNode | null => {
     warnUnknownType('block', block.type);
@@ -237,24 +232,13 @@ const unknownBlockNode = (block: RteBlockNode, registry: PluginRegistry, options
     if (children.length === 0) {
         return null;
     }
-    let content: DrawnNode[];
-    let attrs: HtmlAttributes | undefined;
-    if (children.every((child) => isBlockLike(child, registry))) {
-        content = (children as RteBlockNode[]).flatMap((child) => blockNode(child, registry, options) ?? []);
-        attrs = { [CHILD_SPACING_ATTRIBUTE]: DEFAULT_CHILD_SPACING };
-    } else {
-        content = inlineNodes(children as RteInlineNode[], registry, options);
-    }
-    if (content.length === 0) {
-        return null;
-    }
-    return html({ tag: 'div', attrs, children: true }, content);
+    const content = children.every((child) => isBlockLike(child, registry))
+        ? (children as RteBlockNode[]).flatMap((child) => blockNode(child, registry, options) ?? [])
+        : inlineNodes(children as RteInlineNode[], registry, options);
+    return content.length === 0 ? null : html({ tag: 'div', children: true }, content);
 };
 
-/**
- * A block's child. A list holds only items, so a block no plugin defines stands in one as an item of its own:
- * in the outermost element of the list's item, without the markup inside it, such as a check item's box.
- */
+/** A block's child. A list holds only items, so a block no plugin defines stands in one as an item of its own. */
 const childNode = (
     child: RteBlockNode,
     parent: RteBlockNode,
@@ -262,15 +246,11 @@ const childNode = (
     options: Options,
 ): DrawnNode | null => {
     const drawn = blockNode(child, registry, options);
-    const itemType = registry.itemTypeByList.get(parent.type);
-    if (drawn === null || itemType === undefined || registry.blocks.has(child.type)) {
+    const isUnknownInList = registry.itemTypeByList.has(parent.type) && !registry.blocks.has(child.type);
+    if (drawn === null || !isUnknownInList) {
         return drawn;
     }
-    const item = registry.blocks.get(itemType);
-    if (item === undefined) {
-        throw new Error(`List "${parent.type}" holds items of type "${itemType}", which no plugin defines.`);
-    }
-    return html({ tag: blockHtml(registry, item, {}).tag, children: true }, [drawn]);
+    return html({ tag: 'li', children: true }, [drawn]);
 };
 
 // --- Public ---
@@ -299,20 +279,6 @@ export const blockNode = (block: RteBlockNode, registry: PluginRegistry, options
 
 export const documentTree = (doc: RteDocumentOf, registry: PluginRegistry, options: Options): DrawnNode[] =>
     doc.blocks.flatMap((block) => blockNode(block, registry, options) ?? []);
-
-/**
- * How the document reads, written inline for HTML exported without the stylesheet: the same
- * values as `.document` in `document.module.scss`. `pre-wrap` alone, as email clients know it.
- */
-export const DOCUMENT_STYLE: StyleMap = {
-    color: fondueToken('color-primary-default'),
-    'font-family': fondueToken('typography-font-family-primary'),
-    'font-size': fondueToken('typography-font-size-medium'),
-    'line-height': '1.6',
-    'font-variant-ligatures': 'none',
-    'white-space': 'pre-wrap',
-    'overflow-wrap': 'anywhere',
-};
 
 /**
  * The element a document sits in: the document's own class, plugins' content

@@ -2,11 +2,9 @@
 
 import { IconTextColumnBreak } from '@frontify/fondue-icons';
 
-import { defineBlock, defineContent, definePlugin, fondueToken, styleOfClass } from '#/core';
+import { defineBlock, defineContent, definePlugin } from '#/core';
 
 import styles from './columnBreak.module.scss';
-
-const BREAK_MARGIN = fondueToken('spacing-xx-small');
 
 /**
  * The void block this plugin adds, where the next column starts
@@ -47,8 +45,6 @@ export const columnBreakContent = ({ columns = 2, gap = 'normal' }: ColumnBreakP
                 parse: [{ tag: 'div[data-column-break]' }],
             }),
         },
-        // The same margins the stylesheet writes; `documentSpacing.ct.tsx` holds them equal.
-        contentStyles: () => styleOfClass(styles.break, { 'margin-top': BREAK_MARGIN, 'margin-bottom': BREAK_MARGIN }),
         // The layout belongs to the content as a whole, so it goes on the editable
         // element; the options reach the stylesheet as custom properties.
         contentClassName: styles.columns,

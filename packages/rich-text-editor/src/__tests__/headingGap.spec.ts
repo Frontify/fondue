@@ -7,13 +7,14 @@ import { describe, expect, it } from 'vitest';
 
 import { HEADING_GAP_VARIABLE } from '../plugins/TextStyle/helpers/headingGap';
 
-// Stylesheets cannot import the constant, so these read them as text. The document stylesheet zeroes
-// its own leading gap instead, so it must not name this one.
+// Stylesheets cannot import the constant, so these read them as text. The document stylesheet is
+// listed because it zeroes the gap where no block sits above a heading, and it is a layer of its own,
+// so this spec sits with the package-level ones.
 
 const STYLESHEETS = {
     'text style presets': fileURLToPath(new URL('../plugins/TextStyle/textStyle.module.scss', import.meta.url)),
+    document: fileURLToPath(new URL('../renderer/document.module.scss', import.meta.url)),
 };
-const DOCUMENT_STYLESHEET = fileURLToPath(new URL('../renderer/document.module.scss', import.meta.url));
 
 /** Whatever a stylesheet spells as a heading gap variable, or a misspelling of one. */
 const HEADING_VARIABLE = /--rte-heading-[a-z0-9-]+/g;
@@ -27,8 +28,4 @@ describe('the heading gap variable', () => {
             expect(new Set(spelled)).toEqual(new Set([HEADING_GAP_VARIABLE]));
         });
     }
-
-    it('is not spelled in the document stylesheet, which knows no text style', () => {
-        expect(readFileSync(DOCUMENT_STYLESHEET, 'utf8').match(HEADING_VARIABLE)).toBeNull();
-    });
 });

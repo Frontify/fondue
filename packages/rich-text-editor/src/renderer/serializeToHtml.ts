@@ -1,26 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    buildPluginRegistry,
-    lookStyle,
-    type RteBlockNode,
-    type RteContent,
-    type RteDocumentOf,
-    type RtePlugin,
-} from '#/core';
+import { buildPluginRegistry, type RteBlockNode, type RteContent, type RteDocumentOf, type RtePlugin } from '#/core';
 
-import { DOCUMENT_STYLE, documentRootSpec, documentTree } from './documentTree';
-import { inlineLooks } from './inlineLooks';
+import { documentRootSpec, documentTree } from './documentTree';
 import { toHtmlString } from './toHtmlString';
-
-/** The look of a paragraph with no text style, set as `body` in `textStylePlugin({ presets })`. */
-const BODY_LOOK = 'body';
-
-/**
- * How exported HTML carries the looks of its elements: `'classes'` leaves them to the package
- * stylesheet, `'inline'` writes them into each element's `style`.
- */
-export type HtmlStyling = 'classes' | 'inline';
 
 export type SerializeToHtmlOptions = {
     /**
@@ -37,16 +20,6 @@ export type SerializeToHtmlOptions = {
      * @default true
      */
     wrap?: boolean;
-    /**
-     * `'inline'` writes the document's and each element's look (font, size, weight, leading,
-     * tracking, case, margins, colour) into its `style`, so text reads right without the package
-     * stylesheet, in an email for one. The document's look sits on the wrapper, so `wrap: false`
-     * leaves it out. Layout still needs the stylesheet: a quote's bar, list markers and indents,
-     * check boxes, columns.
-     *
-     * @default 'classes'
-     */
-    styling?: HtmlStyling;
 };
 
 /**
@@ -54,31 +27,14 @@ export type SerializeToHtmlOptions = {
  * the editor produces — never a `render.component`, so it pastes back as it was.
  *
  * Plugin classes are in the output, so a page showing it wants the package
- * stylesheet (`@frontify/fondue-rich-text-editor/styles`). An email has none:
- * pass `styling: 'inline'` to write the looks into the elements' `style`.
+ * stylesheet (`@frontify/fondue-rich-text-editor/styles`); an email must inline
+ * the styles it needs.
  */
 export const serializeToHtml = <TBlock extends RteBlockNode>(
     doc: RteDocumentOf<TBlock>,
-    { plugins = [], wrap = true, styling = 'classes' }: SerializeToHtmlOptions = {},
+    { plugins = [], wrap = true }: SerializeToHtmlOptions = {},
 ): string => {
     const registry = buildPluginRegistry(plugins);
-    let blocks = documentTree(doc, registry, { useComponents: false });
-    let root = documentRootSpec(registry);
-    switch (styling) {
-        case 'classes':
-            break;
-        case 'inline':
-            blocks = inlineLooks(blocks, {
-                classes: registry.contentStyles(),
-                // No fallbacks: without a host look, a plain paragraph takes the document's own.
-                plainParagraph: lookStyle(BODY_LOOK, registry.contentProperties, {}),
-            });
-            // The document's own look in place of the `--rte-*` properties, which no rule reads without the stylesheet.
-            root = { ...root, attrs: { ...root.attrs, style: DOCUMENT_STYLE } };
-            break;
-    }
-    if (!wrap) {
-        return toHtmlString(blocks);
-    }
-    return toHtmlString([{ kind: 'html', spec: root, content: blocks }]);
+    const blocks = documentTree(doc, registry, { useComponents: false });
+    return toHtmlString(wrap ? [{ kind: 'html', spec: documentRootSpec(registry), content: blocks }] : blocks);
 };

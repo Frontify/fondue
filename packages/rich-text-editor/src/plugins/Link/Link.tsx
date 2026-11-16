@@ -1,15 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    type DefaultStyle,
-    defineContent,
-    defineMark,
-    definePlugin,
-    fondueToken,
-    type HotkeyHandler,
-    lookStyle,
-    styleOfClass,
-} from '#/core';
+import { type DefaultStyle, defineContent, defineMark, definePlugin, type HotkeyHandler } from '#/core';
 
 import { withoutDecorationLine } from '../shared/helpers/declaredStyle';
 import { isLinkablePaste, isSafeHref, toHref, WEB_ADDRESS } from '../shared/helpers/href';
@@ -27,9 +18,6 @@ export type LinkMark = {
      */
     link?: LinkValue;
 };
-
-/** The gap between a link's text and its underline, as `_underline.scss` writes it. */
-const UNDERLINE_OFFSET = '2px';
 
 const newTabAttrs = (link: Partial<LinkValue> | null | undefined): Record<string, string> =>
     link?.openInNewTab === true ? { target: '_blank', rel: 'noopener noreferrer' } : {};
@@ -94,15 +82,6 @@ export const linkContent = defineContent({
             ],
         }),
     },
-    // The same values the stylesheet falls back to; `hostStyling.ct.tsx` holds them equal.
-    contentStyles: (properties) =>
-        styleOfClass(
-            styles.link,
-            lookStyle('link', properties, {
-                color: fondueToken('color-highlight-default'),
-                'text-underline-offset': UNDERLINE_OFFSET,
-            }),
-        ),
 });
 
 // The key is a literal because a computed key keeps this plugin in the renderer; HOTKEY's type ties it to this key.

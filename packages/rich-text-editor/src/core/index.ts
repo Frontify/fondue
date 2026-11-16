@@ -20,21 +20,12 @@ export {
     type StoredMarkValue,
 } from './document';
 export { isEmpty, toPlainText, type ToPlainTextOptions } from './documentText';
-export {
-    attributeEntries,
-    contentElementOf,
-    type HtmlAttributes,
-    type HtmlSpec,
-    safeStyleEntries,
-    type StyleMap,
-} from './htmlSpec';
-export { fondueToken, fondueTokenValues, type FondueTokenName } from './fondueTokens';
-export { CHILD_SPACING_ATTRIBUTE, DOCUMENT_GAP_VARIABLES, OWN_MARGIN_VARIABLES } from './documentContract';
-export { lookProperties, lookStyle, styleOfClass, type TextLook } from './look';
+export { attributeEntries, type HtmlAttributes, type HtmlSpec, safeStyleEntries, type StyleMap } from './htmlSpec';
+export { DOCUMENT_GAP_VARIABLES, OWN_MARGIN_VARIABLES } from './documentContract';
+export { lookProperties, type TextLook } from './look';
 export {
     type BlockAttributeDefinition,
     type BlockDefinition,
-    type ChildSpacing,
     type ContentModel,
     type DefaultStyle,
     defineBlock,
@@ -72,9 +63,6 @@ export {
     blockHtml,
     blockValueOf,
     buildPluginRegistry,
-    childSpacingAttributes,
-    childSpacingOf,
-    DEFAULT_CHILD_SPACING,
     controlOf,
     isOwnActive,
     type OwnControl,

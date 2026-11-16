@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { isSafeCssValue, type StyleMap } from './htmlSpec';
+import { isSafeCssValue } from './htmlSpec';
 
 /**
  * How a text style looks. Each value is any CSS value, a guideline variable
@@ -73,36 +73,4 @@ export const lookProperties = (key: string, look: TextLook): Record<string, stri
         properties[lookVariableName(key, property)] = value;
     }
     return properties;
-};
-
-/**
- * One class's style, shaped as `contentStyles` takes it.
- * @throws When the class has no name, as when its stylesheet module did not load, rather than writing no style.
- */
-export const styleOfClass = (className: string | undefined, style: StyleMap): Record<string, StyleMap> => {
-    if (className === undefined) {
-        throw new Error(
-            'A class has no name, so its inline style has nothing to be keyed by: is its stylesheet loaded?',
-        );
-    }
-    return { [className]: style };
-};
-
-/**
- * The inline style a look makes, for HTML exported without the stylesheet: each field's custom property, as
- * `lookProperties` set it, over the fallback, the way the stylesheet reads `var(--rte-<key>-<property>, <fallback>)`.
- *
- * @param key - The style's name, such as `quote`.
- * @param properties - The custom properties every content sets, `PluginRegistry['contentProperties']`.
- * @param fallbacks - The values the stylesheet falls back to where the host sets none.
- */
-export const lookStyle = (key: string, properties: Readonly<Record<string, string>>, fallbacks: StyleMap): StyleMap => {
-    const style: StyleMap = { ...fallbacks };
-    for (const property of Object.values(LOOK_PROPERTIES)) {
-        const value = properties[lookVariableName(key, property)];
-        if (value !== undefined) {
-            style[property] = value;
-        }
-    }
-    return style;
 };

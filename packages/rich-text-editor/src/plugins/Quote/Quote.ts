@@ -2,9 +2,7 @@
 
 import { IconSpeechBubbleQuote } from '@frontify/fondue-icons';
 
-import { defineBlock, defineContent, definePlugin, lookStyle, type RteInlineNode, styleOfClass } from '#/core';
-
-import { MUTED_COLOR } from '../shared/helpers/mutedText';
+import { defineBlock, defineContent, definePlugin, type RteInlineNode } from '#/core';
 
 import styles from './quote.module.scss';
 
@@ -27,8 +25,6 @@ export const quoteContent = defineContent({
             parse: [{ tag: 'blockquote' }],
         }),
     },
-    // The same values the stylesheet falls back to; `hostStyling.ct.tsx` holds them equal.
-    contentStyles: (properties) => styleOfClass(styles.quote, lookStyle('quote', properties, { color: MUTED_COLOR })),
 });
 
 /**

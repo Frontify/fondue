@@ -7,12 +7,10 @@
 import { type ReactNode } from 'react';
 
 import { type EditorControlApi, type RteMarkState, type RteSelectionSnapshot } from './commands';
-import { CHILD_SPACING_ATTRIBUTE } from './documentContract';
-import { type HtmlAttributes, type HtmlSpec, type StyleMap, withContentAttributes, withRootStyle } from './htmlSpec';
+import { type HtmlSpec, type StyleMap, withRootStyle } from './htmlSpec';
 import {
     type BlockAttributeDefinition,
     type BlockDefinition,
-    type ChildSpacing,
     type HotkeyHandler,
     type InlineDefinition,
     type MarkDefinition,
@@ -119,11 +117,6 @@ export type PluginRegistry = {
     contentClassNames: readonly string[];
     /** Custom properties set alongside them, later plugins winning. */
     contentProperties: Readonly<Record<string, string>>;
-    /**
-     * The inline style of each class the content writes, for HTML exported with `styling: 'inline'`.
-     * Built on each call, so only that export runs the plugins' style builders.
-     */
-    contentStyles: () => Readonly<Record<string, StyleMap>>;
 };
 
 /** A mark sits in the floating bar; a block is reached through its commands instead. */
@@ -462,7 +455,6 @@ type Draft = {
     commandOwners: Map<string, string>;
     contentClassNames: string[];
     contentProperties: Record<string, string>;
-    contentStyleBuilders: NonNullable<RteContent['contentStyles']>[];
     /** How often each id has come up so far, for unique toolbar keys. */
     seenIds: Map<string, number>;
     duplicateIds: Set<string>;
@@ -554,18 +546,6 @@ const addEditing = (draft: Draft, plugin: RtePlugin): void => {
     addEditViews(draft, plugin);
 };
 
-/** Runs each content's style builder on the custom properties, a later one winning for a class both write. */
-const mergeContentStyles = (
-    builders: readonly NonNullable<RteContent['contentStyles']>[],
-    properties: Readonly<Record<string, string>>,
-): Record<string, StyleMap> => {
-    const merged: Record<string, StyleMap> = {};
-    for (const build of builders) {
-        Object.assign(merged, build(properties));
-    }
-    return merged;
-};
-
 /**
  * What a content declares: styling hooks, block, inline and mark types, block attributes.
  */
@@ -574,9 +554,6 @@ const addContent = (draft: Draft, content: RteContent | undefined, owner: string
         draft.contentClassNames.push(content.contentClassName);
     }
     Object.assign(draft.contentProperties, content?.contentProperties);
-    if (content?.contentStyles) {
-        draft.contentStyleBuilders.push(content.contentStyles);
-    }
 
     register('block type', draft.blocks, draft.blockOwners, owner, content?.blocks);
     register('inline type', draft.inlines, draft.inlineOwners, owner, content?.inlines);
@@ -605,7 +582,6 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         commandOwners: new Map(),
         contentClassNames: [],
         contentProperties: {},
-        contentStyleBuilders: [],
         seenIds: new Map(),
         duplicateIds: new Set(),
         blockOwners: new Map(),
@@ -651,7 +627,6 @@ export const buildPluginRegistry = (entries: readonly (RtePlugin | RteContent)[]
         commands: draft.commands,
         contentClassNames: draft.contentClassNames,
         contentProperties: draft.contentProperties,
-        contentStyles: () => mergeContentStyles(draft.contentStyleBuilders, draft.contentProperties),
     };
 };
 
@@ -677,44 +652,10 @@ export const blockAttributeStyle = (registry: PluginRegistry, stored: Record<str
     return style;
 };
 
-/** How a block spaces the blocks it holds when it does not say. */
-export const DEFAULT_CHILD_SPACING: ChildSpacing = 'apart';
-
-/**
- * The child-spacing mark for the element a block's content sits in, or undefined for a block
- * whose content is not blocks, which the document does not space.
- */
-export const childSpacingAttributes = (definition: BlockDefinition): HtmlAttributes | undefined => {
-    const { content } = definition;
-    if (typeof content !== 'object' || !('blocks' in content)) {
-        return undefined;
-    }
-    return { [CHILD_SPACING_ATTRIBUTE]: definition.childSpacing ?? DEFAULT_CHILD_SPACING };
-};
-
-/**
- * How an element spaces its children, read off its child-spacing mark; undefined for an element
- * without one, whose children the document does not space.
- * @throws When the mark holds a value that is not a `ChildSpacing`, rather than spacing by a guess.
- */
-export const childSpacingOf = (attrs: HtmlAttributes | undefined): ChildSpacing | undefined => {
-    const value = attrs?.[CHILD_SPACING_ATTRIBUTE];
-    switch (value) {
-        case undefined:
-            return undefined;
-        case 'apart':
-        case 'tight':
-            return value;
-        // The attribute is a string any markup may carry; only the two spacings are known.
-        default:
-            throw new Error(`Unknown ${CHILD_SPACING_ATTRIBUTE} value ${JSON.stringify(value)}.`);
-    }
-};
-
 /**
  * A block's markup with what every block carries applied to its outermost
- * element — alignment on a text block — and the child-spacing mark on the
- * element its content sits in. Shared by editor, readonly view and export so they agree.
+ * element — alignment on a text block. Shared by editor, readonly view and
+ * export so they agree.
  */
 export const blockHtml = (
     registry: PluginRegistry,
@@ -724,10 +665,6 @@ export const blockHtml = (
     let spec = definition.toHtml(blockValueOf(definition, stored));
     if (definition.content === 'text') {
         spec = withRootStyle(spec, blockAttributeStyle(registry, stored));
-    }
-    const childSpacing = childSpacingAttributes(definition);
-    if (childSpacing !== undefined) {
-        spec = withContentAttributes(spec, childSpacing);
     }
     return spec;
 };

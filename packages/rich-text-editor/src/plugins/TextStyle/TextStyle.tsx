@@ -1,22 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
-    type BlockDefinition,
     type DefaultStyle,
+    type BlockDefinition,
     defineBlock,
     defineContent,
     definePlugin,
     type HotkeyHandler,
     lookProperties,
-    lookStyle,
     PARAGRAPH,
     type RteBlockCommand,
     type RteContent,
     type RteIcon,
     type RtePlugin,
     type RteToolbarEntry,
-    styleOfClass,
-    type StyleMap,
     type TextLook,
 } from '#/core';
 
@@ -94,15 +91,6 @@ const textStyleBlockFor = (options: readonly TextStyleOption[]): BlockDefinition
     });
 };
 
-// The same values the stylesheet falls back to (`hostStyling.ct.tsx` holds them equal), for every preset, offered or not.
-const presetStyles = (properties: Readonly<Record<string, string>>): Record<string, StyleMap> => {
-    const classes: Record<string, StyleMap> = {};
-    for (const preset of presetsFor(ALL_TEXT_STYLES)) {
-        Object.assign(classes, styleOfClass(preset.className, lookStyle(preset.name, properties, preset.fallback)));
-    }
-    return classes;
-};
-
 // Shared so every content offering all styles declares the very same block, which the registry requires.
 const ALL_STYLES_BLOCK = textStyleBlockFor(ALL_TEXT_STYLES);
 
@@ -123,7 +111,6 @@ const textStyleContentFor = (options: readonly TextStyleOption[], presets: TextS
         // The class the body look hangs off, so it reaches plain paragraphs only where this content is mounted.
         contentClassName: styles.content,
         contentProperties,
-        contentStyles: presetStyles,
         blocks: { textStyle: block },
     });
 };

@@ -11,11 +11,6 @@
 export const DOCUMENT_GAP_VARIABLES = {
     /** The gap below a block. */
     block: '--rte-block-gap',
-    /**
-     * The gap above a block: `0` where nothing above it sits apart from it, unset elsewhere.
-     * A block that wants space above reads `var(--rte-leading-gap, <its own gap>)`.
-     */
-    leading: '--rte-leading-gap',
 } as const;
 
 /**
@@ -28,9 +23,3 @@ export const OWN_MARGIN_VARIABLES = {
     /** The margin below a block. */
     bottom: '--rte-own-margin-bottom',
 } as const;
-
-/**
- * Set on the element whose children are the content of a block that holds blocks, to its `childSpacing`:
- * the document spaces those children apart, or tight.
- */
-export const CHILD_SPACING_ATTRIBUTE = 'data-rte-child-spacing';
