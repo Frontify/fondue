@@ -74,7 +74,7 @@ export const ColorFlyout = ({ selection, api, isActive }: ColorFlyoutProps): Rea
     // Whether a colour was dragged or typed since opening. The value alone cannot
     // say: white typed over uncoloured text equals the white the picker starts at.
     const choseRef = useRef(false);
-    // Whether the hex field was typed in since opening: until then it only shows the draft.
+    // Until typed in, the hex field only mirrors the draft, so it holds no choice.
     const typedRef = useRef(false);
 
     const { returnToText, contentProps } = useFocusAfterClose(api);
@@ -117,8 +117,7 @@ export const ColorFlyout = ({ selection, api, isActive }: ColorFlyoutProps): Rea
         if (picked === undefined && choseRef.current) {
             picked = draft;
         }
-        // Nothing readable and nothing chosen: an unreadable colour would otherwise
-        // be overwritten with the white the picker starts at.
+        // Keeps an unreadable stored colour from being overwritten with the picker's starting white.
         if (picked === undefined || encodePickerColor(picked) === storedColor) {
             close();
             return;
@@ -218,7 +217,6 @@ export const ColorFlyout = ({ selection, api, isActive }: ColorFlyoutProps): Rea
                             if (!isCompleteHex(target.value)) {
                                 return;
                             }
-                            // Only a complete hex is a choice: an unfinished one after it keeps that choice, and one before it makes none.
                             const typed = readHexField(pickerRef.current, draft.alpha);
                             if (typed !== undefined) {
                                 choseRef.current = true;
