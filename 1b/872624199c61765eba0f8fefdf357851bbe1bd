@@ -1,0 +1,31 @@
+packages/components/src/components/Select/__tests__/SelectMultiple.spec.tsx
+  s_63ca59b223ebf1::t_77012b9b6f3428 166-207
+packages/components/src/components/Select/components/SelectBase.tsx
+  s_63ca59b223ebf1::t_08558096d363f7 121
+  s_63ca59b223ebf1::t_05ddfc60fc9f77 173,175
+  s_63ca59b223ebf1::t_a9da3fb735df2c 73-77
+packages/components/src/components/Select/components/ComboboxBase.tsx
+  s_63ca59b223ebf1::t_bf88e9572a09f6 138
+  s_63ca59b223ebf1::t_1e44dec4b3f660 216,219
+  s_63ca59b223ebf1::t_6c815ce4d77398 89-93
+packages/components/src/components/Select/__tests__/ComboboxMultiple.spec.tsx
+  s_63ca59b223ebf1::t_52e208c604c5ca 227-256
+packages/components/src/components/Select/Select.stories.tsx
+  s_63ca59b223ebf1::t_f2f4aef3eb139f 43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1b872624199c61765eba0f8fefdf357851bbe1bd",
+  "prompts": {},
+  "sessions": {
+    "s_63ca59b223ebf1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6b1f74a6-b0d1-473a-b0d6-96c468edb2dd",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    }
+  }
+}
