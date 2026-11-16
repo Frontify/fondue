@@ -3,13 +3,9 @@
 import { type Node as PmNode } from 'prosemirror-model';
 import { type Transaction } from 'prosemirror-state';
 
-/** A node of the document and where it sits. */
 export type NodeAt = { pos: number; node: PmNode };
 
-/**
- * Sets each of `attributes` that `target` declares and holds differently: one step per attribute, so an undo reverts
- * only what changed.
- */
+/** Sets only the attributes the node declares and holds differently, one step each, so an undo reverts only what changed. */
 export const setChangedAttributes = (
     transaction: Transaction,
     { pos, node }: NodeAt,

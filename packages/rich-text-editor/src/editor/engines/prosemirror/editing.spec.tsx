@@ -52,12 +52,6 @@ const plugins: RtePlugin[] = [
     },
 ];
 
-/**
- * Generic stand-ins for the shapes a document carries: marks that hold nothing
- * and one that holds a value, a void inline, a text block with an attribute of
- * its own, an attribute on every text block, lists that nest, and an item with
- * a boolean attribute.
- */
 const toggleMarksPlugin: RtePlugin = {
     id: 'toggle-marks',
     marks: {
@@ -220,7 +214,6 @@ describe('a document set by the host', () => {
             version: 1,
             blocks: texts.map((text) => ({ type: PARAGRAPH, children: [{ text }] })),
         });
-        /** The caret as the block it is in and its offset there. */
         const caretAt = (view: EditorView) => ({
             block: view.state.selection.$from.parent.textContent,
             offset: view.state.selection.$from.parentOffset,
@@ -715,7 +708,6 @@ describe('a document set by the host while text is being composed', () => {
         }
         view.dom.dispatchEvent(new CompositionEvent(phase, { bubbles: true }));
     };
-    /** Frames the spec runs by hand, so a held document is retried exactly when the spec says. */
     const manualFrames = () => {
         const callbacks = new Map<number, () => void>();
         let last = 0;
@@ -979,7 +971,6 @@ describe('a document set by the host, over generated documents', () => {
         }
         return result;
     };
-    // A soft break now and then, so inline elements sit between runs.
     const runs = (random: Random): Json[] =>
         Array.from({ length: below(random, 4) }, (): Json => {
             if (random() < 0.15) {
@@ -1102,7 +1093,7 @@ describe('a document set by the host, over generated documents', () => {
 
     const graphemes = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
 
-    /** A random place for the caret inside some text block, between characters as a user's caret always is. */
+    /** A random caret position inside a text block, on a character boundary. */
     const caretPosition = (random: Random, view: EditorView): number => {
         const places: number[] = [];
         view.state.doc.descendants((node, position) => {
@@ -1129,8 +1120,8 @@ describe('a document set by the host, over generated documents', () => {
         } else {
             after = mutate(random, before);
         }
-        // Some documents change in two places, so unchanged blocks can sit between changes.
-        if (seed % 3 === 0) {
+        const changesTwice = seed % 3 === 0;
+        if (changesTwice) {
             after = mutate(random, after);
         }
         const editor = editorWith(

@@ -61,7 +61,6 @@ export const mountEditorForTests = (
 /** Transaction meta marking a change that came from the host, not the user. */
 const HOST_DOC = 'rte-host-doc';
 
-/** A host document held while text is composed, with the frame that tries it again. */
 type Held = { kind: 'none' } | { kind: 'waiting'; doc: RteDocumentOf; frame: number };
 
 /**

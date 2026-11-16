@@ -30,7 +30,6 @@ type Side = 'before' | 'after';
 
 const userEditsKey = new PluginKey<readonly Edit[]>('rte-user-edits');
 
-/** The edits `step` makes, at positions in the document before or after it. */
 const editsOf = (step: Step, side: Side): Edit[] => {
     if (step instanceof AttrStep) {
         return [{ kind: 'attribute', pos: step.pos, name: step.attr }];

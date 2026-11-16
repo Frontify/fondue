@@ -13,10 +13,8 @@ export type HostRecord = {
     hostSeq: number;
 };
 
-/** What `setDoc` does with a document the host hands over. */
 export type HostDocAction = { kind: 'ignore' } | { kind: 'echo'; seq: number } | { kind: 'wait' } | { kind: 'apply' };
 
-/** A record for an editor that holds `initialDoc`, which the host handed over. */
 export const createHostRecord = (initialDoc: RteDocumentOf): HostRecord => ({
     agreed: initialDoc,
     reported: new WeakMap(),
@@ -47,7 +45,6 @@ export const recordReport = (record: HostRecord, emitted: RteDocumentOf): HostRe
     return { ...record, reportCount, agreed: null };
 };
 
-/** The host handed back the report numbered `seq`. */
 export const recordEcho = (record: HostRecord, seq: number): HostRecord => ({ ...record, hostSeq: seq });
 
 /** The host now holds a document of its own, newer than everything reported so far. */

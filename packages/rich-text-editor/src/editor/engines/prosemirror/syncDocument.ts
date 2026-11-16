@@ -11,7 +11,7 @@ const graphemes = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
 /** Stands for each inline atom in a block's text, so text offsets equal positions. */
 const INLINE_ATOM_STAND_IN = '￼';
 
-/** How far `offset` sits from the end of the character it splits in `textblock` (an emoji sequence, a letter and its accent), 0 when it splits none. */
+/** Distance from `offset` to the end of the character it splits in `textblock` (an emoji sequence, an accented letter), 0 when it splits none. */
 const graphemeRemainder = (textblock: PmNode, offset: number): number => {
     const text = textblock.textBetween(0, textblock.content.size, undefined, INLINE_ATOM_STAND_IN);
     const containing = graphemes.segment(text).containing(offset);
@@ -43,8 +43,7 @@ const reach = (row: readonly number[], diagonal: number): number => at(row, (row
 const fromHigherDiagonal = (row: readonly number[], count: number, diagonal: number): boolean =>
     diagonal === -count || (diagonal !== count && reach(row, diagonal - 1) < reach(row, diagonal + 1));
 
-/** Whether child `x` of one stretch equals child `y` of the other. */
-type Same = (x: number, y: number) => boolean;
+type Same = (indexInA: number, indexInB: number) => boolean;
 
 /**
  * Myers' forward pass over `lengthA` and `lengthB` children: the frontier before each number of changes, the last
@@ -190,7 +189,6 @@ const syncedRange = (starts: readonly number[], head: number): SyncedRange => {
     return { from: count, to: count };
 };
 
-/** A node of the document and the node it becomes. */
 type Transition = { current: PmNode; target: PmNode };
 
 /** Text block content: one replace over what differs, so a caret outside it, or before it in the block, stays put. */
@@ -221,10 +219,10 @@ const syncInline = (transaction: Transaction, from: number, { current, target }:
     transaction.replace(start, endA, target.slice(start - from, endB - from));
 };
 
-/** One child into another: restyled in place when its content still fits, so a caret inside stays, then its content synced. */
+/** One child into another, restyled in place when its content fits so a caret inside stays. */
 const syncChild = (transaction: Transaction, pos: number, transition: Transition): void => {
     const { current, target } = transition;
-    // A draft (an inline still being made) is in no document the host holds, so it alone is no change.
+    // A draft (an inline still being made) is in no host document, so it alone is no change.
     if (current.eq(target) || withoutDrafts(current).eq(target)) {
         return;
     }
@@ -242,7 +240,6 @@ const syncChild = (transaction: Transaction, pos: number, transition: Transition
     }
 };
 
-/** The content of `current`, starting at `from`, into that of `target`. */
 const syncContent = (transaction: Transaction, from: number, transition: Transition): void => {
     const { current, target } = transition;
     if (current.inlineContent) {

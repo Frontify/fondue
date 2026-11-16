@@ -343,7 +343,7 @@ const freezeDeep = (value: unknown): void => {
     }
 };
 
-/** Shared between documents and with the engine's attributes, so a host mutation would leak or corrupt: it throws in development instead. */
+/** Shared with other documents and the engine, so a host mutation would corrupt them: frozen in development to throw instead. */
 const frozenInDevelopment = <T>(value: T): T => {
     if (process.env.NODE_ENV !== 'production') {
         freezeDeep(value);
@@ -393,7 +393,7 @@ const inlineFromEngine = (child: PmNode): RteInlineNode | null => {
             const value = markValueOf(mark);
             text[mark.type.name] = Object.keys(value).length > 0 ? value : true;
         }
-        // The text run and the inline below are built to the document format, which the open inline type cannot name.
+        // Built to the document format, which the open inline type cannot name.
         converted = frozenInDevelopment(text) as RteInlineNode;
     } else {
         converted = frozenInDevelopment({
@@ -424,7 +424,7 @@ const blockFromEngine = (node: PmNode): RteBlockNode => {
         block.children = mapChildren(node, blockFromEngine);
     }
 
-    // The block is built to the document format, which the open block type cannot name.
+    // Built to the document format, which the open block type cannot name.
     const converted = frozenInDevelopment(block) as unknown as RteBlockNode;
     convertedBlocks.set(node, converted);
     engineNodeOf.set(converted, node);
