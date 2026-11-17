@@ -63,6 +63,10 @@ export const columnBreakPlugin = (options: ColumnBreakPluginOptions = {}) =>
         content: columnBreakContent(options),
         toolbarGroup: 'insert',
         toolbar: [
-            { label: 'Column break', icon: IconTextColumnBreak, menu: { keywords: ['columns', 'break', 'split'] } },
+            {
+                label: 'RichTextEditor_columnBreak',
+                icon: IconTextColumnBreak,
+                menu: { keywords: ['columns', 'break', 'split'] },
+            },
         ],
     });

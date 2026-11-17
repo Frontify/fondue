@@ -34,5 +34,5 @@ const ResetFormattingButton = ({ api, label }: ToolbarItemProps) => (
 export const resetFormattingPlugin = /* @__PURE__ */ definePlugin({
     id: 'reset-formatting',
     toolbarGroup: 'marks',
-    toolbar: [{ label: 'Reset formatting', render: ResetFormattingButton, floating: 'inline' }],
+    toolbar: [{ label: 'RichTextEditor_resetFormatting', render: ResetFormattingButton, floating: 'inline' }],
 });

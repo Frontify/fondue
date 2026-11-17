@@ -9,6 +9,7 @@ import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type RteToolbarGroup } from '#/core';
+import { deDE } from '#/locales/de-DE';
 
 // Driven through the package's public API, the way a host does: the props are
 // the whole conversation between a host and a mounted editor.
@@ -323,14 +324,14 @@ describe('a document from a newer format version', () => {
         expect(container.querySelector('[role="status"]')).not.toBeNull();
     });
 
-    it('says so in the words the host gives', () => {
+    it('says so in the language of its locale', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         teardown.push(() => warn.mockRestore());
-        const { container } = mount(() => (
-            <RichTextEditor value={newer} plugins={defaultPlugins} labels={{ newerVersion: 'Nur lesbar' }} />
-        ));
+        const { container } = mount(() => <RichTextEditor value={newer} plugins={defaultPlugins} locale={deDE} />);
 
-        expect(container.querySelector('[role="status"]')?.textContent).toBe('Nur lesbar');
+        expect(container.querySelector('[role="status"]')?.textContent).toBe(
+            deDE.translationStrings.RichTextEditor_newerVersion,
+        );
     });
 
     it('shows no notice when the host already shows it read-only', () => {
@@ -2084,21 +2085,19 @@ describe('an editor that crashes', () => {
         expect(message?.getAttribute('role')).toBe('alert');
     });
 
-    it('says what the host translated its crash texts to', () => {
+    it('says its crash texts in the language of its locale', () => {
         silenceReact();
         const { container } = mount(() => (
-            <RichTextEditor
-                value={paragraph('still here')}
-                plugins={[throwingPlugin()]}
-                labels={{ editorFailed: 'Der Editor ist ausgefallen.', retry: 'Erneut versuchen' }}
-            />
+            <RichTextEditor value={paragraph('still here')} plugins={[throwingPlugin()]} locale={deDE} />
         ));
 
         const button = [...container.querySelectorAll('button')].find(
-            (candidate) => candidate.textContent === 'Erneut versuchen',
+            (candidate) => candidate.textContent === deDE.translationStrings.RichTextEditor_retry,
         );
         const messageId = button?.getAttribute('aria-describedby') ?? '';
-        expect(window.document.getElementById(messageId)?.textContent).toBe('Der Editor ist ausgefallen.');
+        expect(window.document.getElementById(messageId)?.textContent).toBe(
+            deDE.translationStrings.RichTextEditor_editorFailed,
+        );
     });
 
     it('names the fallback by a visible label, and only when the host named the editor', () => {

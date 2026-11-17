@@ -4,6 +4,8 @@ import { IconPeople, IconPerson, IconTarget } from '@frontify/fondue-icons';
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { useTranslate } from '#/ui/translation';
+
 import styles from '../mention.module.scss';
 import { type MentionItem, type MentionItems } from '../types';
 
@@ -120,6 +122,7 @@ export const MentionDraft = ({
     /** Give up and leave nothing behind, not even the trigger. */
     onRemove: () => void;
 }): ReactNode => {
+    const translate = useTranslate();
     const listId = useId();
     const draftRef = useRef<HTMLSpanElement | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -195,11 +198,12 @@ export const MentionDraft = ({
         event.preventDefault();
     };
 
-    const status = pending
-        ? ''
-        : noMatches
-          ? 'No matches'
-          : `${people.length} ${people.length === 1 ? 'person' : 'people'}`;
+    let status = '';
+    if (!pending && noMatches) {
+        status = translate('RichTextEditor_noResults');
+    } else if (!pending) {
+        status = translate('RichTextEditor_results', { count: String(people.length) });
+    }
 
     return (
         <span ref={draftRef} className={styles.draft}>
@@ -212,7 +216,7 @@ export const MentionDraft = ({
                 aria-controls={open && position !== null && !noMatches ? listId : undefined}
                 aria-autocomplete="list"
                 aria-activedescendant={open && active ? optionId(activeIndex) : undefined}
-                aria-label="Mention someone"
+                aria-label={translate('RichTextEditor_mentionSomeone')}
                 value={query}
                 size={Math.max(query.length, 1)}
                 onChange={(event) => setQuery(event.target.value)}
@@ -227,9 +231,14 @@ export const MentionDraft = ({
                 ? createPortal(
                       <div className={styles.popup} style={{ left: position.left, top: position.top }}>
                           {noMatches ? (
-                              <div className={styles.empty}>No matches</div>
+                              <div className={styles.empty}>{translate('RichTextEditor_noResults')}</div>
                           ) : (
-                              <ul id={listId} role="listbox" aria-label="People" className={styles.list}>
+                              <ul
+                                  id={listId}
+                                  role="listbox"
+                                  aria-label={translate('RichTextEditor_people')}
+                                  className={styles.list}
+                              >
                                   {people.map((person, index) => (
                                       // The keyboard drives the list from the input; the mouse picks here.
                                       // oxlint-disable-next-line jsx-a11y/click-events-have-key-events

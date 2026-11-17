@@ -90,6 +90,9 @@ export const serializeToHtml = <TBlock extends RteBlockNode = RteBlock>(
     options: SerializeToHtmlOptions = {},
 ): string => serialize(doc, { ...options, plugins: options.plugins ?? defaultContent });
 
+/** What the editor's `locale` takes; the locales themselves come from `@frontify/fondue-rich-text-editor/locales`. */
+export { type RichTextLocale } from './locales/types';
+
 // --- Document format ---
 
 export { type RteBlock, type RteDocument, type RteDocumentWith } from './documentFormat';

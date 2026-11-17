@@ -4,6 +4,7 @@ import { Button, Flyout } from '@frontify/fondue-components';
 import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { type EditProps } from '#/core';
+import { useTranslate } from '#/ui/translation';
 
 import { isSafeHref } from '../../shared/helpers/href';
 import { type LinkValue } from '../helpers/value';
@@ -29,6 +30,7 @@ export const LinkEditor = ({
     remove,
     api,
 }: EditProps<LinkValue>): ReactNode => {
+    const translate = useTranslate();
     // A flyout closed by hand stays closed until the caret leaves the link and returns.
     const [dismissed, setDismissed] = useState(false);
     const [wasFocused, setWasFocused] = useState(isFocused);
@@ -112,7 +114,9 @@ export const LinkEditor = ({
                     className={styles.link}
                     // ARIA 1.3 global attribute that the lint rule's table does not know yet.
                     // oxlint-disable-next-line jsx-a11y/role-supports-aria-props
-                    aria-description={value.openInNewTab === true ? 'Opens in a new tab' : undefined}
+                    aria-description={
+                        value.openInNewTab === true ? translate('RichTextEditor_linkOpensInNewTab') : undefined
+                    }
                     // A click places the caret; it must neither follow the link nor toggle the flyout.
                     onClick={(event) => event.preventDefault()}
                 >
@@ -124,7 +128,7 @@ export const LinkEditor = ({
                 side="bottom"
                 align="start"
                 padding="compact"
-                aria-label={isOpen ? 'Edit link' : 'Link'}
+                aria-label={isOpen ? translate('RichTextEditor_linkEdit') : translate('RichTextEditor_link')}
                 onEscapeKeyDown={() => {
                     escapedRef.current = true;
                 }}
@@ -161,10 +165,13 @@ export const LinkEditor = ({
                                 onKeyDown={backToText}
                             >
                                 {value.href}
-                                <span className={styles.visuallyHidden}> (opens in new tab)</span>
+                                <span className={styles.visuallyHidden}>
+                                    {' '}
+                                    ({translate('RichTextEditor_linkOpensInNewTab')})
+                                </span>
                             </a>
                             <Button size="small" emphasis="weak" onPress={() => setOpen(true)}>
-                                Edit
+                                {translate('RichTextEditor_edit')}
                             </Button>
                             <Button
                                 size="small"
@@ -174,7 +181,7 @@ export const LinkEditor = ({
                                     api.focus();
                                 }}
                             >
-                                Remove
+                                {translate('RichTextEditor_remove')}
                             </Button>
                         </div>
                     )}

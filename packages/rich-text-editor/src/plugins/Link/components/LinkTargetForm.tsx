@@ -3,6 +3,8 @@
 import { Button, Checkbox, Label, TextInput } from '@frontify/fondue-components';
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
+import { useTranslate } from '#/ui/translation';
+
 import { toHref } from '../../shared/helpers/href';
 import { type LinkValue } from '../helpers/value';
 
@@ -25,6 +27,7 @@ export const LinkTargetForm = ({
     /** Offered for a link that exists: take it away, keeping its text. */
     onRemove?: () => void;
 }): ReactNode => {
+    const translate = useTranslate();
     // A stored link without a string target opens the form empty rather than uncontrolled.
     const [typed, setTyped] = useState(typeof initial.href === 'string' ? initial.href : '');
     const [openInNewTab, setOpenInNewTab] = useState(initial.openInNewTab === true);
@@ -43,9 +46,7 @@ export const LinkTargetForm = ({
         const href = toHref(typed);
         if (href === null) {
             setError(
-                typed.trim() === ''
-                    ? 'Enter where the link goes.'
-                    : 'Enter a web address (example.com), an email address, or a phone number (tel:…).',
+                typed.trim() === '' ? translate('RichTextEditor_linkEmpty') : translate('RichTextEditor_linkInvalid'),
             );
             urlFieldRef.current?.focus();
             return;
@@ -63,7 +64,7 @@ export const LinkTargetForm = ({
     return (
         <div className={styles.fields}>
             <div className={styles.field}>
-                <Label htmlFor={urlId}>Link to</Label>
+                <Label htmlFor={urlId}>{translate('RichTextEditor_linkTo')}</Label>
                 <TextInput
                     id={urlId}
                     ref={urlFieldRef}
@@ -90,19 +91,19 @@ export const LinkTargetForm = ({
                     value={openInNewTab}
                     onChange={() => setOpenInNewTab((previous) => !previous)}
                 />
-                <Label htmlFor={newTabId}>Open in new tab</Label>
+                <Label htmlFor={newTabId}>{translate('RichTextEditor_linkOpenInNewTab')}</Label>
             </div>
             <div className={styles.formActions}>
                 {onRemove ? (
                     <Button size="small" emphasis="weak" onPress={onRemove}>
-                        Remove link
+                        {translate('RichTextEditor_linkRemove')}
                     </Button>
                 ) : null}
                 <Button size="small" emphasis="weak" onPress={onCancel}>
-                    Cancel
+                    {translate('RichTextEditor_cancel')}
                 </Button>
                 <Button size="small" onPress={save}>
-                    Save
+                    {translate('RichTextEditor_save')}
                 </Button>
             </div>
         </div>

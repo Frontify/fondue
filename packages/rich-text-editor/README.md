@@ -20,6 +20,19 @@ The renderer needs no editing code, so it reads only each feature's content, not
 With no `plugins` it uses `defaultContent`. Pass your own content, or your plugins, when the
 document holds more than the defaults.
 
+## Language
+
+The editor and its shipped plugins speak the 11 languages of `@frontify/fondue-components`.
+Under a `ThemeProvider` with a `lang`, the editor loads that language itself, and shows English
+until it has loaded. The wording is fixed: a host chooses the language, not the words.
+A server-rendered host passes the locale, so the first render is already in that language:
+
+```tsx
+import { deCH } from '@frontify/fondue-rich-text-editor/locales/de-CH';
+
+<RichTextEditor locale={deCH} />
+```
+
 ## Writing a plugin
 
 A feature has two parts. Its content (`defineContent`) says what exists: blocks, marks and
@@ -46,6 +59,7 @@ export const highlightPlugin = /* @__PURE__ */ definePlugin({
 ```
 
 A plugin with options is a function that returns `definePlugin(...)`, like `mentionPlugin({ items })`.
+Your plugin's `label` and any other text it shows is your own, already in the host's language.
 
 `@frontify/fondue-components`, `@frontify/fondue-icons` and `@frontify/fondue-tokens` are peer dependencies:
 the host installs them beside this package and loads `@frontify/fondue-tokens/styles` and
@@ -59,7 +73,8 @@ Layers import inward only; `oxlint.config.ts` enforces it.
 src/
 ├── core/            The contract: document types, RtePlugin, the registry. Imports nothing else.
 ├── plugins/         One folder per feature (Bold, Link, List, …). Each imports only core, ui and plugins/shared.
-├── ui/              Controls the shell and the plugins both draw with (ToolbarButton). Imports at most core.
+├── ui/              Controls the shell and the plugins both draw with (ToolbarButton), and the translator. Imports at most core and locales.
+├── locales/         The strings of the editor and its shipped plugins, one file per language. Imports nothing.
 ├── renderer/        Readonly view and HTML export, both from each feature's content (`toHtml`).
 ├── editor/          The editing shell.
 │   ├── RichTextEditor.tsx   The component a host mounts.

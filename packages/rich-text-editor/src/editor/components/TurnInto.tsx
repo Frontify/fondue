@@ -6,9 +6,9 @@ import { type ComponentProps, type MouseEvent, type ReactNode, useId, useRef } f
 
 import { type EditorControlApi, type RteBlockCommand, type RteSelectionSnapshot } from '#/core';
 import { MENU_ICON_SIZE } from '#/ui/toolbarIconSize';
+import { useTranslate } from '#/ui/translation';
 
 import { activeCommand, availabilityOf } from '../helpers/blockCommands';
-import { type RichTextEditorLabels } from '../labels';
 import styles from '../richTextEditor.module.scss';
 
 /** Never take the selection away from the text: the controls act on it. */
@@ -53,17 +53,16 @@ export const TurnInto = ({
     api,
     commands,
     selection,
-    labels,
 }: {
     api: EditorControlApi;
     /** The `'turnInto'` commands. */
     commands: readonly RteBlockCommand[];
     selection: RteSelectionSnapshot;
-    labels: RichTextEditorLabels;
 }): ReactNode => {
+    const translate = useTranslate();
     const active = activeCommand(commands, selection);
     const { returnToText, contentProps } = useReturnToText(api);
-    const label = active?.label ?? labels.text;
+    const label = active?.label ?? translate('RichTextEditor_text');
     const menuId = useId();
 
     return (
@@ -73,8 +72,8 @@ export const TurnInto = ({
                     type="button"
                     size="small"
                     emphasis="weak"
-                    aria-label={labels.turnIntoCurrent(label)}
-                    title={labels.turnInto}
+                    aria-label={translate('RichTextEditor_turnIntoCurrent', { type: label })}
+                    title={translate('RichTextEditor_turnInto')}
                     {...keepsSelection}
                     className={styles.turnInto}
                 >
@@ -92,7 +91,11 @@ export const TurnInto = ({
                         <Dropdown.Item
                             key={command.id}
                             textValue={command.label}
-                            aria-label={isActive ? labels.currentCommand(command.label) : command.label}
+                            aria-label={
+                                isActive
+                                    ? translate('RichTextEditor_currentCommand', { command: command.label })
+                                    : command.label
+                            }
                             // Not `disabled`: that takes it out of the arrow-key order, and
                             // the reason would never be read. Listed, reachable, inert.
                             aria-disabled={availability.enabled ? undefined : true}

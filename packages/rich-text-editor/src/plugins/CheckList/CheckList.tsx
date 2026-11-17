@@ -183,7 +183,7 @@ export const checkListPlugin = /* @__PURE__ */ definePlugin({
     toolbar: [
         {
             toggles: 'checkList',
-            label: 'To-do list',
+            label: 'RichTextEditor_todoList',
             icon: IconListCheck,
             menu: { keywords: ['todo', 'task', 'checkbox', 'checklist'] },
         },

@@ -198,6 +198,23 @@ export default defineConfig({
             },
         },
         {
+            files: ['src/locales/*.ts'],
+            rules: {
+                'no-restricted-imports': [
+                    'error',
+                    {
+                        patterns: [
+                            {
+                                group: ['#/**', '../**', 'react', 'react/**'],
+                                message:
+                                    'A locale is data a host imports on its own (`./locales`), so it imports no other layer.',
+                            },
+                        ],
+                    },
+                ],
+            },
+        },
+        {
             files: ['src/renderer/**/*.{ts,tsx}'],
             rules: {
                 'no-restricted-imports': [

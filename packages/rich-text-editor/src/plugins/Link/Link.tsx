@@ -106,7 +106,7 @@ const HOTKEY: keyof typeof hotkeys = 'Mod-k';
 export const linkPlugin = /* @__PURE__ */ definePlugin({
     content: linkContent,
     toolbarGroup: 'link',
-    toolbar: [{ label: 'Link', shortcut: HOTKEY, render: LinkToolbarButton }],
+    toolbar: [{ label: 'RichTextEditor_link', shortcut: HOTKEY, render: LinkToolbarButton }],
     edit: { link: LinkEditor },
     hotkeys,
     // A web address typed and followed by a space becomes a link. The pattern

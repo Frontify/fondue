@@ -5,8 +5,10 @@ import { IconDroplet } from '@frontify/fondue-icons';
 import { type ComponentProps, type ReactNode, useId, useRef, useState } from 'react';
 
 import { type EditorControlApi, type RteSelectionSnapshot, type ToolbarItemProps } from '#/core';
+import { type RichTextStringKey } from '#/locales/types';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
+import { useTranslate } from '#/ui/translation';
 
 import { useFocusAfterClose } from '../../shared/hooks/useFocusAfterClose';
 import {
@@ -33,13 +35,15 @@ const encodePickerColor = (color: PickerColor): string =>
 const HEX_FIELD_SELECTOR = 'input[type="text"]';
 
 /** One-click colours. Fondue has no text palette, so these are our own, each at least 4.5:1 on white. */
-const PRESETS: readonly { name: string; color: string }[] = [
-    { name: 'Grey', color: '#5f6368' },
-    { name: 'Red', color: '#c5221f' },
-    { name: 'Orange', color: '#b45309' },
-    { name: 'Green', color: '#188038' },
-    { name: 'Blue', color: '#1a73e8' },
-    { name: 'Purple', color: '#8430ce' },
+type ColorPreset = { name: RichTextStringKey; color: string };
+
+const PRESETS: readonly ColorPreset[] = [
+    { name: 'RichTextEditor_colorGray', color: '#5f6368' },
+    { name: 'RichTextEditor_colorRed', color: '#c5221f' },
+    { name: 'RichTextEditor_colorOrange', color: '#b45309' },
+    { name: 'RichTextEditor_colorGreen', color: '#188038' },
+    { name: 'RichTextEditor_colorBlue', color: '#1a73e8' },
+    { name: 'RichTextEditor_colorPurple', color: '#8430ce' },
 ];
 
 /** What the picker starts at on text with no one colour: white, as Fondue's picker does without one. */
@@ -67,6 +71,7 @@ type ColorFlyoutProps = {
  * dragging, so the undo history gets one step per choice.
  */
 export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProps): ReactNode => {
+    const translate = useTranslate();
     const [open, setOpen] = useState(false);
     const [draft, setDraft] = useState<PickerColor>(NO_COLOR_DRAFT);
     const titleId = useId();
@@ -90,7 +95,7 @@ export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProp
     let title = label;
     if (storedColor !== undefined) {
         currentColor = decodeStoredColor(storedColor);
-        title += `: ${toColorName(currentColor)}`;
+        title = translate('RichTextEditor_controlValue', { label, value: toColorName(currentColor) });
     }
     // Closing from inside the flyout returns focus to the text.
     const close = (): void => {
@@ -169,13 +174,17 @@ export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProp
                     <span id={titleId}>{label}</span>
                 </Flyout.Header>
                 <Flyout.Body>
-                    <div className={styles.presets} role="group" aria-label="Suggested colours">
+                    <div
+                        className={styles.presets}
+                        role="group"
+                        aria-label={translate('RichTextEditor_suggestedColors')}
+                    >
                         {PRESETS.map(({ name, color }) => (
                             <button
                                 key={color}
                                 type="button"
-                                aria-label={name}
-                                title={name}
+                                aria-label={translate(name)}
+                                title={translate(name)}
                                 className={styles.preset}
                                 style={{ background: color }}
                                 onClick={() => apply(decodeStoredColor(color))}
@@ -216,13 +225,13 @@ export const ColorFlyout = ({ selection, api, label, isActive }: ColorFlyoutProp
                 <Flyout.Footer>
                     {hasColor ? (
                         <Button emphasis="weak" onPress={() => apply(undefined)}>
-                            Remove
+                            {translate('RichTextEditor_remove')}
                         </Button>
                     ) : null}
                     <Button emphasis="default" onPress={close}>
-                        Cancel
+                        {translate('RichTextEditor_cancel')}
                     </Button>
-                    <Button onPress={save}>Save</Button>
+                    <Button onPress={save}>{translate('RichTextEditor_save')}</Button>
                 </Flyout.Footer>
             </Flyout.Content>
         </Flyout.Root>

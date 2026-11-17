@@ -94,7 +94,7 @@ describe('a mention being made', () => {
         expect(options.map((option) => option.id)).toEqual(options.map((_, index) => `${listbox?.id}-option-${index}`));
         expect(listbox?.querySelector('button')).toBeNull();
         expect(input.getAttribute('aria-activedescendant')).toBe(options[0]?.id);
-        expect(status()).toBe('3 people');
+        expect(status()).toBe('Results: 3');
     });
 
     it('says when nobody matches, and the arrows then do nothing', async () => {
@@ -104,8 +104,8 @@ describe('a mention being made', () => {
         press('ArrowDown');
         press('ArrowUp');
 
-        expect(status()).toBe('No matches');
-        expect(window.document.body.textContent).toContain('No matches');
+        expect(status()).toBe('No results');
+        expect(window.document.body.textContent).toContain('No results');
         expect(input.getAttribute('aria-expanded')).toBe('true');
         expect(input.hasAttribute('aria-activedescendant')).toBe(false);
     });

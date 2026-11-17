@@ -5,8 +5,8 @@ import { type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
 import { type PluginRegistry, type RteDocumentOf } from '#/core';
 import { RegistryRenderer } from '#/renderer';
+import { useTranslate } from '#/ui/translation';
 
-import { type RichTextEditorLabels } from '../labels';
 import styles from '../richTextEditor.module.scss';
 
 import { EditorErrorBoundary } from './EditorErrorBoundary';
@@ -19,7 +19,6 @@ type EditorFallbackProps = {
     /** Told what this shows, for Try again. */
     onShown: (document: RteDocumentOf) => void;
     registry: PluginRegistry;
-    labels: RichTextEditorLabels;
     /** Told whether the pressed button had focus, which goes with it. */
     onRetry: (hadFocus: boolean) => void;
     /** Whether focus was in what this replaces: the editor, or a fallback whose Retry was pressed. */
@@ -41,12 +40,12 @@ export const EditorFallback = ({
     shownDocument,
     onShown,
     registry,
-    labels,
     onRetry,
     focusWasWithin,
     groupAttributes,
     onCatch,
 }: EditorFallbackProps): ReactNode => {
+    const translate = useTranslate();
     const retryRef = useRef<HTMLButtonElement | null>(null);
     const messageId = useId();
     const onPress = (): void => {
@@ -79,7 +78,7 @@ export const EditorFallback = ({
                 <RegistryRenderer value={document} registry={registry} className={styles.content} />
             </EditorErrorBoundary>
             <p id={messageId} role="alert">
-                {labels.editorFailed}
+                {translate('RichTextEditor_editorFailed')}
             </p>
             <Button
                 ref={retryRef}
@@ -89,7 +88,7 @@ export const EditorFallback = ({
                 aria-describedby={messageId}
                 onPress={onPress}
             >
-                {labels.retry}
+                {translate('RichTextEditor_retry')}
             </Button>
         </div>
     );

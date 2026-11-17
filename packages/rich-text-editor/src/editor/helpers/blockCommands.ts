@@ -15,7 +15,7 @@ import {
  */
 export const TEXT_COMMAND: RteBlockCommand = {
     id: 'paragraph',
-    label: 'Text',
+    label: 'RichTextEditor_text',
     keywords: ['paragraph', 'plain'],
     group: 'turnInto',
     // A paragraph inside a list item is the list's, not plain text.
@@ -23,9 +23,9 @@ export const TEXT_COMMAND: RteBlockCommand = {
     run: (api) => api.blocks.setType(PARAGRAPH),
 };
 
-/** Every command the menus offer: the built-in Text (named as the host says), then the plugins' in mount order. */
-export const commandsOf = (registry: PluginRegistry, textLabel = TEXT_COMMAND.label): readonly RteBlockCommand[] => [
-    textLabel === TEXT_COMMAND.label ? TEXT_COMMAND : { ...TEXT_COMMAND, label: textLabel },
+/** Every command the menus offer: the built-in Text, then the plugins' in mount order. */
+export const commandsOf = (registry: PluginRegistry): readonly RteBlockCommand[] => [
+    TEXT_COMMAND,
     ...registry.commands,
 ];
 

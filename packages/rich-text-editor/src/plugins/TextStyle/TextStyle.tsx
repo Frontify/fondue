@@ -177,7 +177,10 @@ export const textStylePlugin = ({
     // A paragraph alone is nothing to choose, so the picker needs at least one real style.
     const toolbar: RteToolbarEntry[] = [];
     if (offered.length > 0) {
-        toolbar.push({ label: 'Text style', render: (props) => <TextStyleSelect {...props} options={options} /> });
+        toolbar.push({
+            label: 'RichTextEditor_textStyle',
+            render: (props) => <TextStyleSelect {...props} options={options} />,
+        });
     }
 
     // The shared object, so the default plugin and `defaultContent` declare the very same block definition.

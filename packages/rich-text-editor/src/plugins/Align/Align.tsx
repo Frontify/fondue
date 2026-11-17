@@ -9,8 +9,10 @@ import {
 } from '@frontify/fondue-icons';
 
 import { defineContent, definePlugin, type StyleMap, type ToolbarItemProps } from '#/core';
+import { type RichTextStringKey } from '#/locales/types';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
+import { useTranslate } from '#/ui/translation';
 
 import styles from './align.module.scss';
 
@@ -47,14 +49,17 @@ export const alignContent = defineContent({
     },
 });
 
-const ALIGNMENTS: readonly { value: NonNullable<AlignAttribute['align']>; icon: FondueIcon; title: string }[] = [
-    { value: 'left', icon: IconTextAlignmentLeft, title: 'Align left' },
-    { value: 'center', icon: IconTextAlignmentCentre, title: 'Align center' },
-    { value: 'right', icon: IconTextAlignmentRight, title: 'Align right' },
-    { value: 'justify', icon: IconTextAlignmentJustify, title: 'Justify' },
+type AlignmentChoice = { value: NonNullable<AlignAttribute['align']>; icon: FondueIcon; title: RichTextStringKey };
+
+const ALIGNMENTS: readonly AlignmentChoice[] = [
+    { value: 'left', icon: IconTextAlignmentLeft, title: 'RichTextEditor_alignLeft' },
+    { value: 'center', icon: IconTextAlignmentCentre, title: 'RichTextEditor_alignCenter' },
+    { value: 'right', icon: IconTextAlignmentRight, title: 'RichTextEditor_alignRight' },
+    { value: 'justify', icon: IconTextAlignmentJustify, title: 'RichTextEditor_alignJustify' },
 ];
 
 const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
+    const translate = useTranslate();
     // The block the selection is in carries the attribute this plugin
     // added, which the structural node type does not know about.
     const align = (selection.block as AlignAttribute | null)?.align;
@@ -71,7 +76,7 @@ const AlignToolbar = ({ api, selection, label }: ToolbarItemProps) => {
                     key={value}
                     role="radio"
                     aria-checked={current === value}
-                    title={title}
+                    title={translate(title)}
                     // Choosing the alignment already set clears it, so the
                     // block inherits the editor's direction again.
                     onClick={() => {
@@ -96,5 +101,5 @@ export const alignPlugin = /* @__PURE__ */ definePlugin({
     id: 'align',
     content: alignContent,
     toolbarGroup: 'align',
-    toolbar: [{ label: 'Alignment', render: AlignToolbar, floating: 'inline' }],
+    toolbar: [{ label: 'RichTextEditor_alignment', render: AlignToolbar, floating: 'inline' }],
 });

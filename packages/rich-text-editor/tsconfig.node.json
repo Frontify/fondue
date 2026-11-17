@@ -19,6 +19,7 @@
         "package.json",
         "tsconfig.json",
         "vite.config.ts",
+        "locales.vite.config.ts",
         "oxlint.config.ts",
         "oxfmt.config.ts",
         "playwright.config.ts",

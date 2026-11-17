@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { PARAGRAPH, type ParseRule, type RteInlineNode, type RteInputRule } from '#/core';
+import { type RichTextStringKey } from '#/locales/types';
 
 import styles from '../textStyle.module.scss';
 
@@ -13,15 +14,15 @@ import styles from '../textStyle.module.scss';
  * (`label`); order here is dropdown order. Must name every `TextStyleName`.
  */
 const PRESETS = [
-    { name: 'heading1', label: 'Heading 1', tag: 'h1', className: styles.heading1 },
-    { name: 'heading2', label: 'Heading 2', tag: 'h2', className: styles.heading2 },
-    { name: 'heading3', label: 'Heading 3', tag: 'h3', className: styles.heading3 },
-    { name: 'heading4', label: 'Heading 4', tag: 'h4', className: styles.heading4 },
-    { name: 'custom1', label: 'Custom 1', tag: 'p', className: styles.custom1 },
-    { name: 'custom2', label: 'Custom 2', tag: 'p', className: styles.custom2 },
-    { name: 'custom3', label: 'Custom 3', tag: 'p', className: styles.custom3 },
-    { name: 'imageTitle', label: 'Image title', tag: 'p', className: styles.imageTitle },
-    { name: 'imageCaption', label: 'Image caption', tag: 'p', className: styles.imageCaption },
+    { name: 'heading1', label: 'RichTextEditor_heading1', tag: 'h1', className: styles.heading1 },
+    { name: 'heading2', label: 'RichTextEditor_heading2', tag: 'h2', className: styles.heading2 },
+    { name: 'heading3', label: 'RichTextEditor_heading3', tag: 'h3', className: styles.heading3 },
+    { name: 'heading4', label: 'RichTextEditor_heading4', tag: 'h4', className: styles.heading4 },
+    { name: 'custom1', label: 'RichTextEditor_custom1', tag: 'p', className: styles.custom1 },
+    { name: 'custom2', label: 'RichTextEditor_custom2', tag: 'p', className: styles.custom2 },
+    { name: 'custom3', label: 'RichTextEditor_custom3', tag: 'p', className: styles.custom3 },
+    { name: 'imageTitle', label: 'RichTextEditor_imageTitle', tag: 'p', className: styles.imageTitle },
+    { name: 'imageCaption', label: 'RichTextEditor_imageCaption', tag: 'p', className: styles.imageCaption },
 ] as const satisfies readonly Preset[];
 
 /** The value of a text block's `style` attribute. */
@@ -38,7 +39,7 @@ export type TextStyleName =
 
 type Preset = {
     name: TextStyleName;
-    label: string;
+    label: RichTextStringKey;
     tag: 'h1' | 'h2' | 'h3' | 'h4' | 'p';
     className: string | undefined;
 };
@@ -65,7 +66,8 @@ export const FIRST_PRESET: TextStyleName = PRESETS[0].name;
 
 export const findPreset = (name: string): Preset | undefined => PRESETS.find((preset) => preset.name === name);
 
-export const labelOf = (option: TextStyleOption): string => findPreset(option)?.label ?? 'Paragraph';
+export const labelOf = (option: TextStyleOption): RichTextStringKey =>
+    findPreset(option)?.label ?? 'RichTextEditor_paragraph';
 
 /** The presets an editor was configured with, in the order they were given. */
 export const presetsFor = (options: readonly TextStyleOption[]): Preset[] =>

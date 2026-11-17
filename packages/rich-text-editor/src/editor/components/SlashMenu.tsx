@@ -7,12 +7,13 @@ import { Anchor as FlyoutAnchor } from '@radix-ui/react-popover';
 import { type ReactNode, type RefObject, useEffect, useId, useRef, useState } from 'react';
 
 import { PARAGRAPH, type RteBlockCommand, type RteCommandAvailability } from '#/core';
+import { type RichTextStringKey } from '#/locales/types';
 import { MENU_ICON_SIZE } from '#/ui/toolbarIconSize';
+import { type Translate, useTranslate } from '#/ui/translation';
 
 import { availabilityOf, matchCommands } from '../helpers/blockCommands';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
 import { useSelectionAnchor } from '../hooks/useSelectionAnchor';
-import { type RichTextEditorLabels } from '../labels';
 import { type EditorHandle } from '../port';
 
 import styles from './slashMenu.module.scss';
@@ -20,10 +21,12 @@ import styles from './slashMenu.module.scss';
 /** The character that opens the menu. */
 const TRIGGER = '/';
 
-/** The groups in list order, each headed by the label under that key. */
-const GROUPS: readonly { group: RteBlockCommand['group']; label: 'turnInto' | 'insert' }[] = [
-    { group: 'turnInto', label: 'turnInto' },
-    { group: 'insert', label: 'insert' },
+type CommandGroup = { group: RteBlockCommand['group']; label: RichTextStringKey };
+
+/** The groups in list order, each headed by the string under that key. */
+const GROUPS: readonly CommandGroup[] = [
+    { group: 'turnInto', label: 'RichTextEditor_turnInto' },
+    { group: 'insert', label: 'RichTextEditor_insert' },
 ];
 
 type Session = { query: string; index: number };
@@ -35,9 +38,13 @@ type Session = { query: string; index: number };
 const inListOrder = (commands: readonly RteBlockCommand[]): RteBlockCommand[] =>
     GROUPS.flatMap(({ group }) => commands.filter((command) => command.group === group));
 
-/** `n commands`, or none — what the status region says as the list narrows. */
-const describeCount = (count: number, labels: RichTextEditorLabels): string =>
-    count === 0 ? labels.noResults : labels.commandCount(count);
+/** How many commands match, or that none does — what the status region says as the list narrows. */
+const describeCount = (count: number, translate: Translate): string => {
+    if (count === 0) {
+        return translate('RichTextEditor_noResults');
+    }
+    return translate('RichTextEditor_commandCount', { count: String(count) });
+};
 
 /**
  * The `/` menu: typed at the start of an empty paragraph it lists every block
@@ -61,13 +68,11 @@ export const SlashMenu = ({
     editorState,
     editableRef,
     commands,
-    labels,
 }: {
     handle: EditorHandle;
     editorState: EditorStateStore;
     editableRef: RefObject<HTMLElement | null>;
     commands: readonly RteBlockCommand[];
-    labels: RichTextEditorLabels;
 }): ReactNode => {
     const { api } = handle;
     // Null while closed. Escape closes it and it stays shut until a `/` is
@@ -193,7 +198,6 @@ export const SlashMenu = ({
             onHover={(index) => updateSession({ ...session, index })}
             onRun={run}
             onDismiss={() => updateSession(null)}
-            labels={labels}
         />
     );
 };
@@ -209,7 +213,6 @@ const SlashList = ({
     onHover,
     onRun,
     onDismiss,
-    labels,
 }: {
     handle: EditorHandle;
     editorState: EditorStateStore;
@@ -222,8 +225,8 @@ const SlashList = ({
     onHover: (index: number) => void;
     onRun: (command: RteBlockCommand) => void;
     onDismiss: () => void;
-    labels: RichTextEditorLabels;
 }): ReactNode => {
+    const translate = useTranslate();
     const listId = useId();
     const popupRef = useRef<HTMLDivElement | null>(null);
     const optionId = (position: number): string => `${listId}-option-${position}`;
@@ -264,7 +267,7 @@ const SlashList = ({
         <Flyout.Root open onOpenChange={(open) => !open && onDismiss()}>
             <FlyoutAnchor virtualRef={anchor} />
             <Flyout.Content
-                aria-label={labels.commands}
+                aria-label={translate('RichTextEditor_commands')}
                 side="bottom"
                 align="start"
                 padding="none"
@@ -273,7 +276,7 @@ const SlashList = ({
                 onEscapeKeyDown={(event) => event.preventDefault()}
             >
                 <span role="status" className={styles.visuallyHidden}>
-                    {describeCount(commands.length, labels)}
+                    {describeCount(commands.length, translate)}
                 </span>
                 {/* The surface; the keyboard stays in the text, the mouse picks here. */}
                 {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions */}
@@ -284,11 +287,16 @@ const SlashList = ({
                     onMouseDown={(event) => event.preventDefault()}
                 >
                     {commands.length === 0 ? (
-                        <div className={styles.empty}>{labels.noResults}</div>
+                        <div className={styles.empty}>{translate('RichTextEditor_noResults')}</div>
                     ) : (
-                        <div id={listId} role="listbox" aria-label={labels.commands} className={styles.list}>
+                        <div
+                            id={listId}
+                            role="listbox"
+                            aria-label={translate('RichTextEditor_commands')}
+                            className={styles.list}
+                        >
                             {GROUPS.map(({ group, label: labelKey }) => {
-                                const label = labels[labelKey];
+                                const label = translate(labelKey);
                                 const inGroup = commands.filter((command) => command.group === group);
                                 if (inGroup.length === 0) {
                                     return null;

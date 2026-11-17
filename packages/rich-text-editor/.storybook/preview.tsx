@@ -13,13 +13,17 @@ import './styles.css';
 
 type Globals = {
     theme?: 'light' | 'dark';
+    lang?: string;
 };
+
+/** The languages the editor ships, as `ThemeProvider`'s `lang` names them. */
+const LANGUAGES = ['en-US', 'de-CH', 'de-DE', 'es-ES', 'fr-CH', 'fr-FR', 'it-CH', 'it-IT', 'nl-NL', 'pl-PL', 'pt-PT'];
 
 const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {
     // Storybook types globals as a loose record, and `globalTypes` below declares `theme` with only these values.
-    const { theme = 'light' } = context.globals as Globals;
+    const { theme = 'light', lang = 'en-US' } = context.globals as Globals;
     return (
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={theme} lang={lang}>
             {/* The theme's colours exist only inside the provider, so the canvas is painted here, not on the body. */}
             <div className="tw-min-h-screen tw-bg-surface tw-text-primary">
                 <Story />
@@ -42,9 +46,19 @@ const preview: Preview = {
                 dynamicTitle: true,
             },
         },
+        lang: {
+            description: "Language of the editor's own UI, as a host's ThemeProvider sets it",
+            toolbar: {
+                title: 'Language',
+                icon: 'globe',
+                items: LANGUAGES,
+                dynamicTitle: true,
+            },
+        },
     },
     initialGlobals: {
         theme: 'light',
+        lang: 'en-US',
     },
     parameters: {
         layout: 'fullscreen',

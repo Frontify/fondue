@@ -36,7 +36,7 @@ export const historyPlugin = /* @__PURE__ */ definePlugin({
     id: 'history',
     toolbarGroup: 'history',
     toolbar: [
-        { label: 'Undo', render: UndoButton, floating: 'hidden' },
-        { label: 'Redo', render: RedoButton, floating: 'hidden' },
+        { label: 'RichTextEditor_undo', render: UndoButton, floating: 'hidden' },
+        { label: 'RichTextEditor_redo', render: RedoButton, floating: 'hidden' },
     ],
 });

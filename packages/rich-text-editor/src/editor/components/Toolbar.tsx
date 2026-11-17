@@ -12,6 +12,7 @@ import {
 } from '#/core';
 import { ToolbarButton } from '#/ui/ToolbarButton/ToolbarButton';
 import { TOOLBAR_ICON_SIZE } from '#/ui/toolbarIconSize';
+import { useTranslate } from '#/ui/translation';
 
 import { turnIntoCommands } from '../helpers/blockCommands';
 import { type GroupSplit, type SlotGroup, splitGroups } from '../helpers/toolbarFit';
@@ -20,7 +21,6 @@ import { GROUP_ATTRIBUTE, SLOT_ATTRIBUTE } from '../helpers/toolbarMarkers';
 import { type EditorStateStore } from '../hooks/useEditorHandle';
 import { type ToolbarFit, useToolbarFit } from '../hooks/useToolbarFit';
 import { useToolbarRoving } from '../hooks/useToolbarRoving';
-import { type RichTextEditorLabels } from '../labels';
 import styles from '../richTextEditor.module.scss';
 
 import { ToolbarMore, ToolbarMoreProbe } from './ToolbarMore';
@@ -47,8 +47,6 @@ type ToolbarProps = {
     editorState: EditorStateStore;
     /** The row above the text sits flush with it; a floating bar is a surface of its own, inset. */
     placement: ToolbarPlacement;
-    /** The editor's words: the toolbar's accessible name, and Turn into's. */
-    labels: RichTextEditorLabels;
     /** The id of the editable element the controls act on. */
     controls: string;
     /**
@@ -78,10 +76,10 @@ export const Toolbar = ({
     api,
     editorState,
     placement,
-    labels,
     controls,
     focusRequestRef,
 }: ToolbarProps): ReactNode => {
+    const translate = useTranslate();
     const getSelection = useCallback(() => api.selection.get(), [api]);
     const selection = useSyncExternalStore(editorState.subscribe, getSelection, getSelection);
     const toolbarRef = useRef<HTMLDivElement | null>(null);
@@ -113,10 +111,10 @@ export const Toolbar = ({
     let moreNode: ReactNode = null;
     if (more && panel === null && fit.kind === 'measuring') {
         // Nothing has overflowed yet: More's width is all the measuring needs.
-        moreNode = <ToolbarMoreProbe label={labels.more} />;
+        moreNode = <ToolbarMoreProbe label={translate('RichTextEditor_more')} />;
     } else if (more) {
         moreNode = (
-            <ToolbarMore label={labels.more} onPanel={setPanel}>
+            <ToolbarMore label={translate('RichTextEditor_more')} onPanel={setPanel}>
                 {drawGroups(overflow)}
             </ToolbarMore>
         );
@@ -128,7 +126,7 @@ export const Toolbar = ({
             role="toolbar"
             // Focusable in code only: the keyboard moves between the controls inside.
             tabIndex={-1}
-            aria-label={labels.toolbar}
+            aria-label={translate('RichTextEditor_toolbar')}
             aria-controls={controls}
             aria-orientation="horizontal"
             onMouseDown={roving.onMouseDown}
@@ -138,7 +136,7 @@ export const Toolbar = ({
             // Where the bar ended up, for the stylesheet to read.
             data-placement={placement}
         >
-            {showTurnInto ? <TurnInto api={api} commands={turnInto} selection={selection} labels={labels} /> : null}
+            {showTurnInto ? <TurnInto api={api} commands={turnInto} selection={selection} /> : null}
             {drawGroups(row)}
             {moreNode}
         </div>
