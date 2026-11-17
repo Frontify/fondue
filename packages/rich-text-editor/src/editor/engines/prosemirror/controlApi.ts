@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { chainCommands, setBlockType as pmSetBlockType, toggleMark as pmToggleMark } from 'prosemirror-commands';
+import { chainCommands, setBlockType as pmSetBlockType } from 'prosemirror-commands';
 import { redo, redoDepth, undo, undoDepth } from 'prosemirror-history';
 import { undoInputRule } from 'prosemirror-inputrules';
-import { type Mark as PmMark, type MarkType as PmMarkType, type Schema } from 'prosemirror-model';
-import { type Command, type EditorState, NodeSelection, TextSelection } from 'prosemirror-state';
+import { type Mark as PmMark, type MarkType as PmMarkType, type Node as PmNode, type Schema } from 'prosemirror-model';
+import { type Command, type EditorState, NodeSelection, TextSelection, type Transaction } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import {
@@ -35,6 +35,23 @@ import { warnUnknownType } from './warnings';
 
 // --- Selection snapshot: what all feature UI renders from ---
 
+type TextRun = { from: number; to: number; marks: readonly PmMark[] };
+
+/** Marks live on text only, so inline elements are skipped. */
+const textRunsBetween = (doc: PmNode, from: number, to: number): TextRun[] => {
+    const runs: TextRun[] = [];
+    doc.nodesBetween(from, to, (node, position) => {
+        if (node.isText) {
+            runs.push({
+                from: Math.max(position, from),
+                to: Math.min(position + node.nodeSize, to),
+                marks: node.marks,
+            });
+        }
+    });
+    return runs;
+};
+
 const BLANK_TEXT = /^\s*$/;
 
 /**
@@ -55,16 +72,9 @@ const marksAt = (state: EditorState): RteSelectionSnapshot['marks'] => {
         );
     }
 
-    // Only text contributes: the document stores no marks on inline elements.
-    const textRuns: { marks: readonly PmMark[]; blank: boolean }[] = [];
-    state.doc.nodesBetween(from, to, (node, pos) => {
-        if (node.isText) {
-            const text = node.textBetween(Math.max(from - pos, 0), Math.min(to - pos, node.nodeSize));
-            textRuns.push({ marks: node.marks, blank: BLANK_TEXT.test(text) });
-        }
-    });
-    // A toggle passes over whitespace-only runs, so the state it acts on does too; all-blank ranges keep them.
-    let counted = textRuns.filter((run) => !run.blank);
+    const textRuns = textRunsBetween(state.doc, from, to);
+    // Whitespace does not decide a mark, unless the whole range is whitespace.
+    let counted = textRuns.filter((run) => !BLANK_TEXT.test(state.doc.textBetween(run.from, run.to)));
     if (counted.length === 0) {
         counted = textRuns;
     }
@@ -192,6 +202,54 @@ const findMarkRange = (state: EditorState, markType: PmMarkType): { from: number
     return range;
 };
 
+type MarkToggle = 'caretOff' | 'caretOn' | 'rangeOff' | 'rangeOn';
+
+const markToggleFor = (state: EditorState, type: string): MarkToggle => {
+    // Same rule as the toolbar: a mark on only part of the selection counts as off.
+    const isOn = marksAt(state)[type]?.coverage === 'all';
+    if (state.selection.empty) {
+        if (isOn) {
+            return 'caretOff';
+        }
+        return 'caretOn';
+    }
+    if (isOn) {
+        return 'rangeOff';
+    }
+    return 'rangeOn';
+};
+
+const markToggleTransaction = (
+    state: EditorState,
+    markType: PmMarkType,
+    value: Record<string, unknown> | undefined,
+): Transaction => {
+    const { selection, tr } = state;
+    switch (markToggleFor(state, markType.name)) {
+        case 'caretOff': {
+            return tr.removeStoredMark(markType);
+        }
+        case 'caretOn': {
+            return tr.addStoredMark(markType.create(valueAttrsFor(value)));
+        }
+        case 'rangeOff': {
+            for (const range of selection.ranges) {
+                tr.removeMark(range.$from.pos, range.$to.pos, markType);
+            }
+            return tr;
+        }
+        case 'rangeOn': {
+            const mark = markType.create(valueAttrsFor(value));
+            for (const range of selection.ranges) {
+                for (const run of textRunsBetween(state.doc, range.$from.pos, range.$to.pos)) {
+                    tr.addMark(run.from, run.to, mark);
+                }
+            }
+            return tr;
+        }
+    }
+};
+
 /** Whether a mark is *on* is not here: that is a field of the selection snapshot. */
 const createMarkApi = (getView: () => EditorView, schema: Schema): EditorControlApi['marks'] => ({
     toggle(type, value) {
@@ -201,8 +259,7 @@ const createMarkApi = (getView: () => EditorView, schema: Schema): EditorControl
             return;
         }
         const view = getView();
-        // On unless ALL of the selection carries it, matching the snapshot.
-        pmToggleMark(markType, valueAttrsFor(value), { removeWhenPresent: false })(view.state, view.dispatch);
+        view.dispatch(markToggleTransaction(view.state, markType, value));
         view.focus();
     },
     set(type, value) {
