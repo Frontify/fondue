@@ -308,8 +308,18 @@ export type GridRole = 'grid' | 'row' | 'slot' | 'headerSlot';
 const MAX_GRID_SPAN = 50;
 
 /** A slot's span, stored or from markup: a whole number from 1 to 50, 1 when unreadable. */
+const numberOf = (value: unknown): number => {
+    if (typeof value === 'number') {
+        return value;
+    }
+    if (typeof value === 'string') {
+        return Number.parseInt(value, 10);
+    }
+    return Number.NaN;
+};
+
 export const gridSpanOf = (value: unknown): number => {
-    const span = typeof value === 'number' ? value : Number.parseInt(typeof value === 'string' ? value : '', 10);
+    const span = numberOf(value);
     if (!Number.isFinite(span) || span < 1) {
         return 1;
     }
