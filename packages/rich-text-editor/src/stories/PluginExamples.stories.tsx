@@ -186,7 +186,7 @@ export const Quote: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[quotePlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[quotePlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -212,7 +212,7 @@ export const Bold: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -236,7 +236,7 @@ export const Italic: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[italicPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[italicPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -260,7 +260,7 @@ export const Underline: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[underlinePlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[underlinePlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -288,7 +288,7 @@ export const Strikethrough: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[strikethroughPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[strikethroughPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -312,7 +312,7 @@ export const Code: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[codePlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[codePlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -336,7 +336,7 @@ export const Subscript: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[subscriptPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[subscriptPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -360,7 +360,7 @@ export const Superscript: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[superscriptPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[superscriptPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -388,7 +388,7 @@ export const FontColor: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[fontColorPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[fontColorPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -420,7 +420,7 @@ export const Link: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[linkPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[linkPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -449,7 +449,7 @@ export const Align: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[alignPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[alignPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -493,7 +493,7 @@ export const BulletList: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[bulletListPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[bulletListPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -528,7 +528,7 @@ export const NumberedList: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[numberedListPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[numberedListPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -562,7 +562,7 @@ export const CheckList: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[checkListPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[checkListPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -670,15 +670,15 @@ export const MarkdownShortcuts: Story = {
                         onChange={setDoc}
                         plugins={[
                             textStylePlugin(),
-                            quotePlugin,
-                            boldPlugin,
-                            italicPlugin,
-                            underlinePlugin,
-                            strikethroughPlugin,
-                            codePlugin,
-                            bulletListPlugin,
-                            numberedListPlugin,
-                            checkListPlugin,
+                            quotePlugin(),
+                            boldPlugin(),
+                            italicPlugin(),
+                            underlinePlugin(),
+                            strikethroughPlugin(),
+                            codePlugin(),
+                            bulletListPlugin(),
+                            numberedListPlugin(),
+                            checkListPlugin(),
                         ]}
                     />
                 </div>
@@ -708,7 +708,7 @@ export const Typography: Story = {
                         value={doc}
                         onChange={setDoc}
                         plugins={[
-                            codePlugin,
+                            codePlugin(),
                             typographyPlugin({ groups: ['quotes', 'ellipsis', 'dashes', 'symbols', 'numeric'] }),
                         ]}
                     />
@@ -736,7 +736,7 @@ export const SoftBreak: Story = {
             <div className={LAYOUT}>
                 <p className={HINT}>Shift-Enter adds a line to this block; Enter starts a new one — watch the JSON.</p>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[softBreakPlugin]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[softBreakPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -779,7 +779,13 @@ export const ResetFormatting: Story = {
                     <RichTextEditor
                         value={doc}
                         onChange={setDoc}
-                        plugins={[textStylePlugin(), boldPlugin, alignPlugin, bulletListPlugin, resetFormattingPlugin]}
+                        plugins={[
+                            textStylePlugin(),
+                            boldPlugin(),
+                            alignPlugin(),
+                            bulletListPlugin(),
+                            resetFormattingPlugin(),
+                        ]}
                     />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
@@ -802,7 +808,7 @@ export const BlurOnBreak: Story = {
                     <RichTextEditor
                         value={doc}
                         onChange={setDoc}
-                        plugins={[boldPlugin, italicPlugin, blurOnBreakPlugin]}
+                        plugins={[boldPlugin(), italicPlugin(), blurOnBreakPlugin()]}
                     />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
@@ -1008,7 +1014,7 @@ export const ConsumerMark: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin, highlightPlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin(), highlightPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
@@ -1082,7 +1088,7 @@ export const ConsumerBlock: Story = {
         return (
             <div className={LAYOUT}>
                 <div className={FRAME}>
-                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin, calloutPlugin()]} />
+                    <RichTextEditor value={doc} onChange={setDoc} plugins={[boldPlugin(), calloutPlugin()]} />
                 </div>
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>

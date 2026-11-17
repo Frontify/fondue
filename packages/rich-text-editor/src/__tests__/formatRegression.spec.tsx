@@ -30,7 +30,7 @@ const plugins: readonly RtePlugin[] = [
     ...defaultPlugins,
     mentionPlugin({ items: [] }),
     columnBreakPlugin(),
-    blurOnBreakPlugin,
+    blurOnBreakPlugin(),
     typographyPlugin({ groups: ['quotes', 'ellipsis', 'dashes', 'symbols', 'numeric'] }),
 ];
 

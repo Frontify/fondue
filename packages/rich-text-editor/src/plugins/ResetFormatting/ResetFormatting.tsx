@@ -31,8 +31,9 @@ const ResetFormattingButton = ({ api, label }: ToolbarItemProps) => (
 /**
  * A toolbar button that puts the selection back to plain text
  */
-export const resetFormattingPlugin = /* @__PURE__ */ definePlugin({
-    id: 'reset-formatting',
-    toolbarGroup: 'marks',
-    toolbar: [{ label: 'Reset formatting', render: ResetFormattingButton, floating: 'inline' }],
-});
+export const resetFormattingPlugin = () =>
+    definePlugin({
+        id: 'reset-formatting',
+        toolbarGroup: 'marks',
+        toolbar: [{ label: 'Reset formatting', render: ResetFormattingButton, floating: 'inline' }],
+    });
