@@ -9,8 +9,6 @@ const peopleCount = (count: number): string => {
 
 /** Every word the Mention plugin says, visibly or to assistive technology. */
 export const MENTION_STRINGS = Object.freeze({
-    /** Said after the username of someone the app no longer knows, when reading only. */
-    unavailable: '(unavailable)',
     unknownPerson: 'Unknown person',
     unknownGroup: 'Unknown group',
     unknownMention: 'Unknown mention',
