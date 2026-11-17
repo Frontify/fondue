@@ -96,6 +96,28 @@ const spokenText = (element: Element): string => {
     return copy.textContent ?? '';
 };
 
+/** A plugin with one command per menu that can never run. */
+const unavailablePlugin = (run: () => void) =>
+    definePlugin({
+        id: 'unavailable',
+        commands: [
+            {
+                id: 'big-block',
+                label: 'Big block',
+                group: 'turnInto',
+                availability: () => ({ enabled: false, reason: 'Too big here' }),
+                run,
+            },
+            {
+                id: 'big-insert',
+                label: 'Big insert',
+                group: 'insert',
+                availability: () => ({ enabled: false, reason: 'Too big here' }),
+                run,
+            },
+        ],
+    });
+
 describe('the floating bar', () => {
     const open = (html: string) => {
         const editor = mount((onChange) => (
@@ -232,6 +254,39 @@ describe('the floating bar', () => {
 
         expect(stored()).toBe(before);
         expect(stored()?.blocks[0]).toMatchObject({ type: 'bulletList' });
+    });
+
+    it('lists a command that cannot run as disabled, with its reason, and does not run it', () => {
+        const run = vi.fn();
+        const editor = mount((onChange) => (
+            <RichTextEditor
+                plugins={[...defaultPlugins, unavailablePlugin(run)]}
+                toolbarPlacement="floating"
+                onChange={onChange}
+            />
+        ));
+        paste(editor.editable, { html: '<p>text</p>' });
+        act(() => editor.editable.focus());
+        selectText(editor.editable);
+        const trigger = window.document.querySelector<HTMLElement>('[aria-label^="Turn into"]');
+        if (!trigger) {
+            throw new Error('no Turn into');
+        }
+        act(() => trigger.focus());
+        press(trigger, 'ArrowDown');
+
+        const item = [...window.document.querySelectorAll<HTMLElement>('[role="menuitem"]')].find(
+            (candidate) => candidate.getAttribute('aria-label') === 'Big block',
+        );
+        expect(item?.getAttribute('aria-disabled')).toBe('true');
+        const reason = window.document.getElementById(item?.getAttribute('aria-describedby') ?? '');
+        expect(reason?.textContent).toBe('Too big here');
+
+        act(() => item?.click());
+
+        expect(run).not.toHaveBeenCalled();
+        // Nothing was chosen, so the menu stays open.
+        expect(window.document.querySelector('[role="menu"]')).not.toBeNull();
     });
 });
 
@@ -377,5 +432,31 @@ describe('the / menu', () => {
         type(editable, ' /');
 
         expect(listbox()).toBeNull();
+    });
+
+    it('lists a command that cannot run as disabled, with its reason, and Enter or a click leaves it be', () => {
+        const run = vi.fn();
+        const { editable, stored } = mount((onChange) => (
+            <RichTextEditor plugins={[...plugins, unavailablePlugin(run)]} onChange={onChange} />
+        ));
+        act(() => editable.focus());
+        type(editable, '/');
+        type(editable, 'big insert');
+
+        const option = window.document.querySelector<HTMLElement>('[role="option"]');
+        expect(option?.getAttribute('aria-selected')).toBe('true');
+        expect(option?.getAttribute('aria-disabled')).toBe('true');
+        expect(window.document.getElementById(option?.getAttribute('aria-describedby') ?? '')?.textContent).toBe(
+            'Too big here',
+        );
+
+        // Taken, so the block is not split under the menu, but nothing runs.
+        const event = press(editable, 'Enter');
+        expect(event.defaultPrevented).toBe(true);
+        act(() => option?.click());
+
+        expect(run).not.toHaveBeenCalled();
+        expect(listbox()).not.toBeNull();
+        expect(stored()?.blocks).toEqual([{ type: 'paragraph', children: [{ text: '/big insert' }] }]);
     });
 });
